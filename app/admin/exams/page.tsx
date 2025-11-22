@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Exam } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
-import { ArrowLeft, Edit, Trash2, Eye, EyeOff, Plus, Play, StopCircle } from 'lucide-react'
+import { ArrowLeft, Edit, Trash2, Eye, EyeOff, Plus, Play, StopCircle, RotateCcw } from 'lucide-react'
 
 export default function AdminExamsPage() {
   const router = useRouter()
@@ -94,6 +94,24 @@ export default function AdminExamsPage() {
       })
 
       if (!res.ok) throw new Error('Erro ao forçar término')
+
+      const data = await res.json()
+      alert(data.message)
+      loadExams()
+    } catch (error: any) {
+      alert(error.message)
+    }
+  }
+
+  async function resetSubmissions(examId: string) {
+    if (!confirm('⚠️ ATENÇÃO! Isso irá DELETAR PERMANENTEMENTE todas as submissões desta prova.\n\nTodos os usuários poderão refazer a prova. Esta ação NÃO pode ser desfeita!\n\nDeseja continuar?')) return
+
+    try {
+      const res = await fetch(`/api/exams/${examId}/reset-submissions`, {
+        method: 'DELETE',
+      })
+
+      if (!res.ok) throw new Error('Erro ao zerar resultados')
 
       const data = await res.json()
       alert(data.message)
@@ -230,6 +248,18 @@ export default function AdminExamsPage() {
                       >
                         <StopCircle className="h-4 w-4 mr-2" />
                         Forçar Término
+                      </Button>
+                    )}
+
+                    {new Date() >= new Date(exam.startTime) && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => resetSubmissions(exam._id!.toString())}
+                        className="border-orange-500 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-950"
+                      >
+                        <RotateCcw className="h-4 w-4 mr-2" />
+                        Zerar Resultados
                       </Button>
                     )}
 
