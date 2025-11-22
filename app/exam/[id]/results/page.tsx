@@ -23,10 +23,24 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
   const [results, setResults] = useState<TRIResult[] | NormalResult[]>([])
   const [scoringMethod, setScoringMethod] = useState<'tri' | 'normal'>('normal')
   const [loading, setLoading] = useState(true)
+  const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
+    checkAuth()
     loadResults()
   }, [id])
+
+  async function checkAuth() {
+    try {
+      const res = await fetch('/api/auth/me')
+      if (res.ok) {
+        const data = await res.json()
+        setIsAdmin(data.user.role === 'admin')
+      }
+    } catch (error) {
+      // Silently fail
+    }
+  }
 
   async function loadResults() {
     try {
@@ -159,26 +173,27 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
               ) : (
                 <div className="space-y-2">
                   {/* Header */}
-                  <div className="grid grid-cols-12 gap-4 px-4 py-2 bg-muted rounded-lg font-semibold text-sm">
-                    <div className="col-span-8">Nome</div>
-                    <div className="col-span-4 text-right">
+                  <div className={`grid ${isAdmin ? 'grid-cols-12' : 'grid-cols-12'} gap-4 px-4 py-2 bg-muted rounded-lg font-semibold text-sm`}>
+                    <div className={isAdmin ? 'col-span-5' : 'col-span-8'}>Nome</div>
+                    <div className={isAdmin ? 'col-span-3' : 'col-span-4'} className="text-right">
                       {scoringMethod === 'tri' ? 'Nota TRI' : 'Pontuação'}
                     </div>
+                    {isAdmin && <div className="col-span-4 text-right">Ações</div>}
                   </div>
 
                   {/* Results */}
                   {results.map((result, index) => (
                     <div
                       key={result.userId}
-                      className="grid grid-cols-12 gap-4 px-4 py-3 border rounded-lg hover:bg-muted/50 transition-colors"
+                      className={`grid ${isAdmin ? 'grid-cols-12' : 'grid-cols-12'} gap-4 px-4 py-3 border rounded-lg hover:bg-muted/50 transition-colors items-center`}
                     >
-                      <div className="col-span-8 flex items-center space-x-3">
+                      <div className={isAdmin ? 'col-span-5' : 'col-span-8'} className="flex items-center space-x-3">
                         <span className="text-muted-foreground text-sm">
                           {index + 1}.
                         </span>
                         <span className="font-medium">{result.userName}</span>
                       </div>
-                      <div className="col-span-4 text-right">
+                      <div className={isAdmin ? 'col-span-3' : 'col-span-4'} className="text-right">
                         <span className="text-lg font-bold text-primary">
                           {scoringMethod === 'tri'
                             ? (result as TRIResult).triScore
@@ -188,6 +203,17 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
                           {scoringMethod === 'tri' ? '/ 1000' : `/ ${exam.totalPoints}`}
                         </span>
                       </div>
+                      {isAdmin && (
+                        <div className="col-span-4 text-right">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => router.push(`/exam/${id}/user/${result.userId}`)}
+                          >
+                            Ver Relatório
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
