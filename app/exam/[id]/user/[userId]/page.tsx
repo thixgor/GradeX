@@ -8,7 +8,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { Barcode } from '@/components/barcode'
 import { Exam, ExamSubmission } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
-import { ArrowLeft, User, CheckCircle, XCircle, Download } from 'lucide-react'
+import { ArrowLeft, User, CheckCircle, XCircle, Download, Clock } from 'lucide-react'
 import { downloadUserReportPDF } from '@/lib/user-report-generator'
 
 export default function UserSubmissionPage({ params }: { params: { id: string; userId: string } }) {
@@ -59,17 +59,21 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
     )
   }
 
-  // Calcular estatísticas
+  // Calcular estatísticas (apenas para questões de múltipla escolha)
+  const multipleChoiceQuestions = exam.questions.filter(q => q.type === 'multiple-choice')
+  const discursiveQuestions = exam.questions.filter(q => q.type === 'discursive')
   const totalQuestions = exam.questions.length
-  const answeredQuestions = submission.answers.filter(a => a.selectedAlternative).length
+
   const correctAnswers = submission.answers.filter(a => {
     const question = exam.questions.find(q => q.id === a.questionId)
-    if (!question) return false
+    if (!question || question.type !== 'multiple-choice') return false
     const correctAlt = question.alternatives.find(alt => alt.isCorrect)
     return correctAlt && a.selectedAlternative === correctAlt.id
   }).length
 
-  const accuracy = totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0
+  const accuracy = multipleChoiceQuestions.length > 0
+    ? (correctAnswers / multipleChoiceQuestions.length) * 100
+    : 0
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
@@ -114,7 +118,9 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
               {/* Estatísticas */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="bg-muted rounded-lg p-4 text-center">
-                  <p className="text-sm text-muted-foreground mb-1">Pontuação</p>
+                  <p className="text-sm text-muted-foreground mb-1">
+                    {multipleChoiceQuestions.length > 0 ? 'Múltipla Escolha' : 'Pontuação'}
+                  </p>
                   <p className="text-2xl font-bold text-primary">
                     {exam.scoringMethod === 'tri'
                       ? submission.triScore || 'Calculando...'
@@ -125,28 +131,48 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
                   </p>
                 </div>
 
-                <div className="bg-green-100 dark:bg-green-900 rounded-lg p-4 text-center">
-                  <p className="text-sm text-muted-foreground mb-1">Acertos</p>
-                  <p className="text-2xl font-bold text-green-700 dark:text-green-300">
-                    {correctAnswers}
-                  </p>
-                  <p className="text-xs text-muted-foreground">de {totalQuestions}</p>
-                </div>
+                {discursiveQuestions.length > 0 && (
+                  <div className="bg-purple-100 dark:bg-purple-900 rounded-lg p-4 text-center">
+                    <p className="text-sm text-muted-foreground mb-1">Discursivas</p>
+                    <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">
+                      {submission.correctionStatus === 'corrected'
+                        ? submission.discursiveScore?.toFixed(2) || 0
+                        : 'Pendente'}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {submission.correctionStatus === 'corrected'
+                        ? `/ ${discursiveQuestions.reduce((sum, q) => sum + (q.maxScore || 10), 0)}`
+                        : 'Aguardando correção'}
+                    </p>
+                  </div>
+                )}
 
-                <div className="bg-red-100 dark:bg-red-900 rounded-lg p-4 text-center">
-                  <p className="text-sm text-muted-foreground mb-1">Erros</p>
-                  <p className="text-2xl font-bold text-red-700 dark:text-red-300">
-                    {totalQuestions - correctAnswers}
-                  </p>
-                  <p className="text-xs text-muted-foreground">de {totalQuestions}</p>
-                </div>
+                {multipleChoiceQuestions.length > 0 && (
+                  <>
+                    <div className="bg-green-100 dark:bg-green-900 rounded-lg p-4 text-center">
+                      <p className="text-sm text-muted-foreground mb-1">Acertos</p>
+                      <p className="text-2xl font-bold text-green-700 dark:text-green-300">
+                        {correctAnswers}
+                      </p>
+                      <p className="text-xs text-muted-foreground">de {multipleChoiceQuestions.length}</p>
+                    </div>
 
-                <div className="bg-blue-100 dark:bg-blue-900 rounded-lg p-4 text-center">
-                  <p className="text-sm text-muted-foreground mb-1">Aproveitamento</p>
-                  <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">
-                    {accuracy.toFixed(1)}%
-                  </p>
-                </div>
+                    <div className="bg-red-100 dark:bg-red-900 rounded-lg p-4 text-center">
+                      <p className="text-sm text-muted-foreground mb-1">Erros</p>
+                      <p className="text-2xl font-bold text-red-700 dark:text-red-300">
+                        {multipleChoiceQuestions.length - correctAnswers}
+                      </p>
+                      <p className="text-xs text-muted-foreground">de {multipleChoiceQuestions.length}</p>
+                    </div>
+
+                    <div className="bg-blue-100 dark:bg-blue-900 rounded-lg p-4 text-center">
+                      <p className="text-sm text-muted-foreground mb-1">Aproveitamento</p>
+                      <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">
+                        {accuracy.toFixed(1)}%
+                      </p>
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* Assinatura */}
@@ -188,45 +214,136 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
               <div className="space-y-6">
                 {exam.questions.map((question) => {
                   const userAnswer = submission.answers.find(a => a.questionId === question.id)
-                  const selectedAlt = question.alternatives.find(alt => alt.id === userAnswer?.selectedAlternative)
-                  const correctAlt = question.alternatives.find(alt => alt.isCorrect)
-                  const isCorrect = selectedAlt?.id === correctAlt?.id
 
-                  return (
-                    <div key={question.id} className="border rounded-lg p-4">
-                      <div className="flex items-start justify-between mb-3">
-                        <h3 className="font-semibold">Questão {question.number}</h3>
-                        {isCorrect ? (
-                          <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
-                            <CheckCircle className="h-5 w-5" />
-                            <span className="text-sm font-medium">Correta</span>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-1 text-red-600 dark:text-red-400">
-                            <XCircle className="h-5 w-5" />
-                            <span className="text-sm font-medium">Incorreta</span>
-                          </div>
-                        )}
-                      </div>
+                  if (question.type === 'multiple-choice') {
+                    const selectedAlt = question.alternatives.find(alt => alt.id === userAnswer?.selectedAlternative)
+                    const correctAlt = question.alternatives.find(alt => alt.isCorrect)
+                    const isCorrect = selectedAlt?.id === correctAlt?.id
 
-                      <p className="text-sm text-muted-foreground mb-3">{question.statement}</p>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 bg-muted p-3 rounded">
-                        <div>
-                          <p className="text-xs font-medium text-muted-foreground mb-1">Resposta do Usuário:</p>
-                          <p className={`text-sm font-semibold ${isCorrect ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                            {selectedAlt ? `${selectedAlt.letter}) ${selectedAlt.text}` : 'Não respondida'}
-                          </p>
+                    return (
+                      <div key={question.id} className="border rounded-lg p-4">
+                        <div className="flex items-start justify-between mb-3">
+                          <h3 className="font-semibold">Questão {question.number} (Múltipla Escolha)</h3>
+                          {isCorrect ? (
+                            <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
+                              <CheckCircle className="h-5 w-5" />
+                              <span className="text-sm font-medium">Correta</span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1 text-red-600 dark:text-red-400">
+                              <XCircle className="h-5 w-5" />
+                              <span className="text-sm font-medium">Incorreta</span>
+                            </div>
+                          )}
                         </div>
-                        <div>
-                          <p className="text-xs font-medium text-muted-foreground mb-1">Gabarito:</p>
-                          <p className="text-sm font-semibold text-primary">
-                            {correctAlt ? `${correctAlt.letter}) ${correctAlt.text}` : 'N/A'}
-                          </p>
+
+                        <p className="text-sm text-muted-foreground mb-3">{question.statement}</p>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 bg-muted p-3 rounded">
+                          <div>
+                            <p className="text-xs font-medium text-muted-foreground mb-1">Resposta do Usuário:</p>
+                            <p className={`text-sm font-semibold ${isCorrect ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                              {selectedAlt ? `${selectedAlt.letter}) ${selectedAlt.text}` : 'Não respondida'}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-xs font-medium text-muted-foreground mb-1">Gabarito:</p>
+                            <p className="text-sm font-semibold text-primary">
+                              {correctAlt ? `${correctAlt.letter}) ${correctAlt.text}` : 'N/A'}
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  )
+                    )
+                  } else {
+                    // Questão discursiva
+                    const correction = submission.corrections?.find(c => c.questionId === question.id)
+
+                    return (
+                      <div key={question.id} className="border-2 border-purple-200 dark:border-purple-800 rounded-lg p-4">
+                        <div className="flex items-start justify-between mb-3">
+                          <h3 className="font-semibold">Questão {question.number} (Discursiva)</h3>
+                          {correction ? (
+                            <div className="flex items-center gap-1 text-purple-600 dark:text-purple-400">
+                              <CheckCircle className="h-5 w-5" />
+                              <span className="text-sm font-medium">Corrigida</span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1 text-yellow-600 dark:text-yellow-400">
+                              <Clock className="h-5 w-5" />
+                              <span className="text-sm font-medium">Aguardando Correção</span>
+                            </div>
+                          )}
+                        </div>
+
+                        <p className="text-sm text-muted-foreground mb-3">{question.statement}</p>
+                        <p className="text-sm font-medium mb-3">{question.command}</p>
+
+                        <div className="space-y-3">
+                          <div>
+                            <p className="text-xs font-medium text-muted-foreground mb-1">Sua Resposta:</p>
+                            <div className="bg-muted p-3 rounded text-sm whitespace-pre-wrap">
+                              {userAnswer?.discursiveText || 'Não respondida'}
+                            </div>
+                          </div>
+
+                          {correction && (
+                            <div className="bg-purple-50 dark:bg-purple-950 border border-purple-200 dark:border-purple-800 p-4 rounded space-y-2">
+                              <div className="flex items-center justify-between">
+                                <h4 className="font-semibold text-sm text-purple-900 dark:text-purple-100">
+                                  Correção
+                                </h4>
+                                <span className="text-sm text-purple-700 dark:text-purple-300">
+                                  {correction.method === 'ai' ? '🤖 Correção Automática' : '👤 Correção Manual'}
+                                </span>
+                              </div>
+
+                              <div className="grid grid-cols-2 gap-2 text-sm">
+                                <div>
+                                  <strong className="text-purple-900 dark:text-purple-100">Nota:</strong>
+                                  <span className="ml-2 text-2xl font-bold text-purple-700 dark:text-purple-300">
+                                    {correction.score}/{correction.maxScore}
+                                  </span>
+                                </div>
+                                <div>
+                                  <strong className="text-purple-900 dark:text-purple-100">Data:</strong>
+                                  <span className="ml-2">
+                                    {new Date(correction.correctedAt).toLocaleDateString()}
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div>
+                                <strong className="text-sm text-purple-900 dark:text-purple-100">Feedback:</strong>
+                                <p className="text-sm mt-1 text-purple-800 dark:text-purple-200">
+                                  {correction.feedback}
+                                </p>
+                              </div>
+
+                              {correction.keyPointsFound && correction.keyPointsFound.length > 0 && (
+                                <div>
+                                  <strong className="text-sm text-purple-900 dark:text-purple-100">
+                                    Pontos-Chave Identificados:
+                                  </strong>
+                                  <ul className="mt-1 space-y-1">
+                                    {correction.keyPointsFound.map((kpId) => {
+                                      const keyPoint = question.keyPoints?.find(kp => kp.id === kpId)
+                                      return keyPoint ? (
+                                        <li key={kpId} className="text-sm flex items-start gap-2">
+                                          <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                          <span>{keyPoint.description}</span>
+                                        </li>
+                                      ) : null
+                                    })}
+                                  </ul>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  }
                 })}
               </div>
             </CardContent>

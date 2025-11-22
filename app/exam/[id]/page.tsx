@@ -83,8 +83,9 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       // Inicializa respostas
       const initialAnswers: UserAnswer[] = data.exam.questions.map((q: any) => ({
         questionId: q.id,
-        selectedAlternative: '',
-        crossedAlternatives: [],
+        selectedAlternative: q.type === 'multiple-choice' ? '' : undefined,
+        crossedAlternatives: q.type === 'multiple-choice' ? [] : undefined,
+        discursiveText: q.type === 'discursive' ? '' : undefined,
       }))
       setAnswers(initialAnswers)
     } catch (error: any) {
@@ -121,16 +122,26 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     setAnswers(prev =>
       prev.map(a => {
         if (a.questionId === questionId) {
-          const crossed = a.crossedAlternatives.includes(alternativeId)
+          const crossed = a.crossedAlternatives?.includes(alternativeId) || false
           return {
             ...a,
             crossedAlternatives: crossed
-              ? a.crossedAlternatives.filter(id => id !== alternativeId)
-              : [...a.crossedAlternatives, alternativeId]
+              ? a.crossedAlternatives?.filter(id => id !== alternativeId)
+              : [...(a.crossedAlternatives || []), alternativeId]
           }
         }
         return a
       })
+    )
+  }
+
+  function handleDiscursiveText(questionId: string, text: string) {
+    setAnswers(prev =>
+      prev.map(a =>
+        a.questionId === questionId
+          ? { ...a, discursiveText: text }
+          : a
+      )
     )
   }
 
@@ -146,7 +157,16 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       return
     }
 
-    const unanswered = answers.filter(a => !a.selectedAlternative)
+    // Verificar questões não respondidas (tanto múltipla escolha quanto discursivas)
+    const unanswered = answers.filter((a, index) => {
+      const question = exam?.questions[index]
+      if (question?.type === 'multiple-choice') {
+        return !a.selectedAlternative
+      } else {
+        return !a.discursiveText || a.discursiveText.trim() === ''
+      }
+    })
+
     if (unanswered.length > 0) {
       const confirm = window.confirm(
         `Você deixou ${unanswered.length} questão(ões) sem resposta. Deseja continuar?`
@@ -554,57 +574,84 @@ export default function ExamPage({ params }: { params: { id: string } }) {
               <p className="font-medium">{currentQuestion.command}</p>
             </div>
 
-            {/* Alternativas */}
-            <div className="space-y-3">
-              {currentQuestion.alternatives.map((alt) => {
-                const isSelected = currentAnswer?.selectedAlternative === alt.id
-                const isCrossed = currentAnswer?.crossedAlternatives.includes(alt.id) || false
+            {/* Alternativas (Múltipla Escolha) */}
+            {currentQuestion.type === 'multiple-choice' && (
+              <div className="space-y-3">
+                {currentQuestion.alternatives.map((alt) => {
+                  const isSelected = currentAnswer?.selectedAlternative === alt.id
+                  const isCrossed = currentAnswer?.crossedAlternatives?.includes(alt.id) || false
 
-                return (
-                  <div
-                    key={alt.id}
-                    className={`border rounded-lg p-4 transition-all ${
-                      isSelected
-                        ? 'border-primary bg-primary/10'
-                        : isCrossed
-                        ? 'border-destructive bg-destructive/5 opacity-50'
-                        : 'border-border hover:border-primary/50'
-                    }`}
-                  >
-                    <div className="flex items-start space-x-3">
-                      <input
-                        type="radio"
-                        name={`question-${currentQuestion.id}`}
-                        checked={isSelected}
-                        onChange={() => handleSelectAlternative(currentQuestion.id, alt.id)}
-                        className="mt-1 h-4 w-4"
-                      />
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between">
-                          <span className={`font-bold ${isCrossed ? 'line-through' : ''}`}>
-                            {alt.letter})
-                          </span>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleToggleCross(currentQuestion.id, alt.id)}
-                          >
-                            {isCrossed ? (
-                              <Check className="h-4 w-4 text-destructive" />
-                            ) : (
-                              <X className="h-4 w-4" />
-                            )}
-                          </Button>
+                  return (
+                    <div
+                      key={alt.id}
+                      className={`border rounded-lg p-4 transition-all ${
+                        isSelected
+                          ? 'border-primary bg-primary/10'
+                          : isCrossed
+                          ? 'border-destructive bg-destructive/5 opacity-50'
+                          : 'border-border hover:border-primary/50'
+                      }`}
+                    >
+                      <div className="flex items-start space-x-3">
+                        <input
+                          type="radio"
+                          name={`question-${currentQuestion.id}`}
+                          checked={isSelected}
+                          onChange={() => handleSelectAlternative(currentQuestion.id, alt.id)}
+                          className="mt-1 h-4 w-4"
+                        />
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between">
+                            <span className={`font-bold ${isCrossed ? 'line-through' : ''}`}>
+                              {alt.letter})
+                            </span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleToggleCross(currentQuestion.id, alt.id)}
+                            >
+                              {isCrossed ? (
+                                <Check className="h-4 w-4 text-destructive" />
+                              ) : (
+                                <X className="h-4 w-4" />
+                              )}
+                            </Button>
+                          </div>
+                          <p className={`mt-1 ${isCrossed ? 'line-through' : ''}`}>
+                            {alt.text}
+                          </p>
                         </div>
-                        <p className={`mt-1 ${isCrossed ? 'line-through' : ''}`}>
-                          {alt.text}
-                        </p>
                       </div>
                     </div>
-                  </div>
-                )
-              })}
-            </div>
+                  )
+                })}
+              </div>
+            )}
+
+            {/* Resposta Discursiva */}
+            {currentQuestion.type === 'discursive' && (
+              <div className="space-y-3">
+                <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                  <p className="text-sm text-blue-900 dark:text-blue-100">
+                    <strong>Questão Discursiva:</strong> Escreva sua resposta completa no campo abaixo.
+                    {currentQuestion.maxScore && (
+                      <span className="ml-2">Pontuação máxima: {currentQuestion.maxScore} pontos</span>
+                    )}
+                  </p>
+                </div>
+                <Textarea
+                  value={currentAnswer?.discursiveText || ''}
+                  onChange={(e) => handleDiscursiveText(currentQuestion.id, e.target.value)}
+                  placeholder="Digite sua resposta aqui..."
+                  rows={12}
+                  className="font-serif text-base"
+                />
+                <div className="flex items-center justify-between text-sm text-muted-foreground">
+                  <span>Caracteres: {(currentAnswer?.discursiveText || '').length}</span>
+                  <span>Palavras: {(currentAnswer?.discursiveText || '').split(/\s+/).filter(w => w.length > 0).length}</span>
+                </div>
+              </div>
+            )}
 
             {/* Navegação */}
             <div className="flex justify-between pt-6 border-t">
@@ -635,7 +682,14 @@ export default function ExamPage({ params }: { params: { id: string } }) {
               <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
                 <span>Progresso</span>
                 <span>
-                  {answers.filter(a => a.selectedAlternative).length}/{exam.questions.length}{' '}
+                  {answers.filter((a, index) => {
+                    const question = exam.questions[index]
+                    if (question.type === 'multiple-choice') {
+                      return !!a.selectedAlternative
+                    } else {
+                      return !!a.discursiveText && a.discursiveText.trim().length > 0
+                    }
+                  }).length}/{exam.questions.length}{' '}
                   respondidas
                 </span>
               </div>
@@ -643,7 +697,14 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                 <div
                   className="bg-primary h-2 rounded-full transition-all"
                   style={{
-                    width: `${(answers.filter(a => a.selectedAlternative).length / exam.questions.length) * 100}%`
+                    width: `${(answers.filter((a, index) => {
+                      const question = exam.questions[index]
+                      if (question.type === 'multiple-choice') {
+                        return !!a.selectedAlternative
+                      } else {
+                        return !!a.discursiveText && a.discursiveText.trim().length > 0
+                      }
+                    }).length / exam.questions.length) * 100}%`
                   }}
                 />
               </div>

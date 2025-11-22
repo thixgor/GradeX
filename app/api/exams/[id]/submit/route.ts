@@ -58,14 +58,18 @@ export async function POST(
     }
 
     let score: number | undefined
+    let correctionStatus: 'pending' | 'corrected' | undefined
 
-    // Calcula pontuação para método normal
-    if (exam.scoringMethod === 'normal') {
+    // Verificar se há questões discursivas
+    const hasDiscursiveQuestions = exam.questions.some(q => q.type === 'discursive')
+
+    // Calcula pontuação para método normal (apenas questões de múltipla escolha)
+    if (exam.scoringMethod === 'normal' && !hasDiscursiveQuestions) {
       let correctAnswers = 0
 
       for (const answer of answers as UserAnswer[]) {
         const question = exam.questions.find(q => q.id === answer.questionId)
-        if (question) {
+        if (question && question.type === 'multiple-choice') {
           const correctAlt = question.alternatives.find(alt => alt.isCorrect)
           if (correctAlt && answer.selectedAlternative === correctAlt.id) {
             correctAnswers++
@@ -73,9 +77,17 @@ export async function POST(
         }
       }
 
-      const totalPoints = exam.totalPoints || 100
-      score = (correctAnswers / exam.numberOfQuestions) * totalPoints
-      score = Math.round(score * 100) / 100 // 2 casas decimais
+      const multipleChoiceCount = exam.questions.filter(q => q.type === 'multiple-choice').length
+      if (multipleChoiceCount > 0) {
+        const totalPoints = exam.totalPoints || 100
+        score = (correctAnswers / multipleChoiceCount) * totalPoints
+        score = Math.round(score * 100) / 100 // 2 casas decimais
+      }
+    }
+
+    // Se tem questões discursivas, marcar como pendente de correção
+    if (hasDiscursiveQuestions) {
+      correctionStatus = 'pending'
     }
 
     const submission: ExamSubmission = {
@@ -86,12 +98,23 @@ export async function POST(
       answers,
       signature,
       score,
+      corrections: hasDiscursiveQuestions ? [] : undefined,
+      correctionStatus,
       submittedAt: new Date(),
     }
 
     const result = await submissionsCollection.insertOne(submission)
 
-    // Se for método normal, retorna a pontuação
+    // Se tem questões discursivas, avisa que aguarda correção
+    if (hasDiscursiveQuestions) {
+      return NextResponse.json({
+        success: true,
+        message: 'Prova submetida! As questões discursivas serão corrigidas em breve. Você será notificado quando a correção estiver pronta.',
+        submissionId: result.insertedId.toString(),
+      })
+    }
+
+    // Se for método normal (sem discursivas), retorna a pontuação
     if (exam.scoringMethod === 'normal') {
       return NextResponse.json({
         success: true,

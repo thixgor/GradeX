@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ThemeToggle } from '@/components/theme-toggle'
 import { FileUpload } from '@/components/file-upload'
 import { TxtImport } from '@/components/txt-import'
-import { Question, Alternative, ScoringMethod } from '@/lib/types'
+import { Question, Alternative, ScoringMethod, QuestionType, KeyPoint } from '@/lib/types'
 import { generateRandomTRIParameters } from '@/lib/tri-calculator'
 import { v4 as uuidv4 } from 'uuid'
 import { ArrowLeft, Plus, Trash2, Shuffle, Save } from 'lucide-react'
@@ -35,6 +35,7 @@ export default function CreateExamPage() {
     startTime: '',
     endTime: '',
     isHidden: false,
+    questionType: 'multiple-choice' as QuestionType,
   })
 
   const [questions, setQuestions] = useState<Question[]>([])
@@ -45,36 +46,51 @@ export default function CreateExamPage() {
     const letters = ['A', 'B', 'C', 'D', 'E']
 
     for (let i = 0; i < examData.numberOfQuestions; i++) {
-      const alternatives: Alternative[] = []
-
-      for (let j = 0; j < examData.numberOfAlternatives; j++) {
-        alternatives.push({
-          id: uuidv4(),
-          letter: letters[j],
-          text: '',
-          isCorrect: j === 0,
-        })
-      }
-
-      const triParams = examData.scoringMethod === 'tri'
-        ? generateRandomTRIParameters(examData.numberOfAlternatives)
-        : {}
-
-      newQuestions.push({
+      const baseQuestion = {
         id: uuidv4(),
         number: i + 1,
+        type: examData.questionType,
         statement: '',
         statementSource: '',
         imageUrl: '',
         imageSource: '',
         command: '',
-        alternatives,
-        ...(examData.scoringMethod === 'tri' && {
-          triDiscrimination: triParams.a,
-          triDifficulty: triParams.b,
-          triGuessing: triParams.c,
-        }),
-      })
+        alternatives: [],
+      }
+
+      if (examData.questionType === 'multiple-choice') {
+        // Questões de múltipla escolha
+        const alternatives: Alternative[] = []
+        for (let j = 0; j < examData.numberOfAlternatives; j++) {
+          alternatives.push({
+            id: uuidv4(),
+            letter: letters[j],
+            text: '',
+            isCorrect: j === 0,
+          })
+        }
+
+        const triParams = examData.scoringMethod === 'tri'
+          ? generateRandomTRIParameters(examData.numberOfAlternatives)
+          : {}
+
+        newQuestions.push({
+          ...baseQuestion,
+          alternatives,
+          ...(examData.scoringMethod === 'tri' && {
+            triDiscrimination: triParams.a,
+            triDifficulty: triParams.b,
+            triGuessing: triParams.c,
+          }),
+        })
+      } else {
+        // Questões discursivas
+        newQuestions.push({
+          ...baseQuestion,
+          keyPoints: [],
+          maxScore: 10, // Pontuação padrão
+        })
+      }
     }
 
     setQuestions(newQuestions)
@@ -110,6 +126,34 @@ export default function CreateExamPage() {
     })
   }
 
+  function addKeyPoint(questionIndex: number) {
+    const newQuestions = [...questions]
+    const keyPoints = newQuestions[questionIndex].keyPoints || []
+    keyPoints.push({
+      id: uuidv4(),
+      description: '',
+      weight: 0.1,
+    })
+    newQuestions[questionIndex].keyPoints = keyPoints
+    setQuestions(newQuestions)
+  }
+
+  function updateKeyPoint(questionIndex: number, keyPointIndex: number, updates: Partial<KeyPoint>) {
+    const newQuestions = [...questions]
+    const keyPoints = newQuestions[questionIndex].keyPoints || []
+    keyPoints[keyPointIndex] = { ...keyPoints[keyPointIndex], ...updates }
+    newQuestions[questionIndex].keyPoints = keyPoints
+    setQuestions(newQuestions)
+  }
+
+  function removeKeyPoint(questionIndex: number, keyPointIndex: number) {
+    const newQuestions = [...questions]
+    const keyPoints = newQuestions[questionIndex].keyPoints || []
+    keyPoints.splice(keyPointIndex, 1)
+    newQuestions[questionIndex].keyPoints = keyPoints
+    setQuestions(newQuestions)
+  }
+
   async function handleSubmit() {
     setLoading(true)
 
@@ -127,15 +171,36 @@ export default function CreateExamPage() {
           return
         }
 
-        const hasCorrect = question.alternatives.some(alt => alt.isCorrect)
-        if (!hasCorrect) {
-          alert(`Questão ${question.number}: Marque uma alternativa como correta`)
-          return
-        }
+        if (question.type === 'multiple-choice') {
+          const hasCorrect = question.alternatives.some(alt => alt.isCorrect)
+          if (!hasCorrect) {
+            alert(`Questão ${question.number}: Marque uma alternativa como correta`)
+            return
+          }
 
-        for (const alt of question.alternatives) {
-          if (!alt.text.trim()) {
-            alert(`Questão ${question.number}: Preencha todas as alternativas`)
+          for (const alt of question.alternatives) {
+            if (!alt.text.trim()) {
+              alert(`Questão ${question.number}: Preencha todas as alternativas`)
+              return
+            }
+          }
+        } else if (question.type === 'discursive') {
+          if (!question.keyPoints || question.keyPoints.length === 0) {
+            alert(`Questão ${question.number}: Adicione pelo menos um ponto-chave`)
+            return
+          }
+
+          for (const kp of question.keyPoints) {
+            if (!kp.description.trim()) {
+              alert(`Questão ${question.number}: Preencha todos os pontos-chave`)
+              return
+            }
+          }
+
+          // Validar que a soma dos pesos não excede 1
+          const totalWeight = question.keyPoints.reduce((sum, kp) => sum + kp.weight, 0)
+          if (Math.abs(totalWeight - 1) > 0.01) {
+            alert(`Questão ${question.number}: A soma dos pesos dos pontos-chave deve ser 100% (atualmente ${(totalWeight * 100).toFixed(0)}%)`)
             return
           }
         }
@@ -263,6 +328,24 @@ export default function CreateExamPage() {
               </div>
 
               <div className="space-y-2">
+                <Label htmlFor="questionType">Tipo de Questões *</Label>
+                <select
+                  id="questionType"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  value={examData.questionType}
+                  onChange={(e) => setExamData({
+                    ...examData,
+                    questionType: e.target.value as QuestionType,
+                    // Se mudar para discursiva, desabilitar TRI
+                    ...(e.target.value === 'discursive' && examData.scoringMethod === 'tri' && { scoringMethod: 'normal' })
+                  })}
+                >
+                  <option value="multiple-choice">Múltipla Escolha</option>
+                  <option value="discursive">Discursivas (Redação/Dissertação)</option>
+                </select>
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="scoringMethod">Método de Pontuação *</Label>
                 <select
                   id="scoringMethod"
@@ -273,10 +356,18 @@ export default function CreateExamPage() {
                     scoringMethod: e.target.value as ScoringMethod,
                     ...(e.target.value === 'tri' && { totalPoints: 1000 })
                   })}
+                  disabled={examData.questionType === 'discursive'}
                 >
                   <option value="normal">Normal (Pontuação Personalizada)</option>
-                  <option value="tri">TRI - Teoria de Resposta ao Item (1000 pontos)</option>
+                  <option value="tri" disabled={examData.questionType === 'discursive'}>
+                    TRI - Teoria de Resposta ao Item (1000 pontos)
+                  </option>
                 </select>
+                {examData.questionType === 'discursive' && (
+                  <p className="text-xs text-muted-foreground">
+                    TRI não está disponível para questões discursivas
+                  </p>
+                )}
               </div>
 
               {examData.scoringMethod === 'normal' && (
@@ -437,37 +528,121 @@ export default function CreateExamPage() {
                   />
                 </div>
 
-                <div className="space-y-3">
-                  <Label>Alternativas *</Label>
-                  {currentQuestion.alternatives.map((alt, altIndex) => (
-                    <div key={alt.id} className="flex items-start space-x-2">
-                      <input
-                        type="radio"
-                        name={`correct-${currentQuestionIndex}`}
-                        checked={alt.isCorrect}
-                        onChange={() => setCorrectAlternative(currentQuestionIndex, altIndex)}
-                        className="mt-3 h-4 w-4"
-                        title="Marcar como correta"
-                      />
-                      <div className="flex-1">
-                        <Label className="text-xs text-muted-foreground">
-                          Alternativa {alt.letter}
-                        </Label>
-                        <Textarea
-                          value={alt.text}
-                          onChange={(e) => updateAlternative(currentQuestionIndex, altIndex, e.target.value)}
-                          placeholder={`Digite a alternativa ${alt.letter}...`}
-                          rows={2}
+                {currentQuestion.type === 'multiple-choice' && (
+                  <div className="space-y-3">
+                    <Label>Alternativas *</Label>
+                    {currentQuestion.alternatives.map((alt, altIndex) => (
+                      <div key={alt.id} className="flex items-start space-x-2">
+                        <input
+                          type="radio"
+                          name={`correct-${currentQuestionIndex}`}
+                          checked={alt.isCorrect}
+                          onChange={() => setCorrectAlternative(currentQuestionIndex, altIndex)}
+                          className="mt-3 h-4 w-4"
+                          title="Marcar como correta"
                         />
+                        <div className="flex-1">
+                          <Label className="text-xs text-muted-foreground">
+                            Alternativa {alt.letter}
+                          </Label>
+                          <Textarea
+                            value={alt.text}
+                            onChange={(e) => updateAlternative(currentQuestionIndex, altIndex, e.target.value)}
+                            placeholder={`Digite a alternativa ${alt.letter}...`}
+                            rows={2}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                  <p className="text-xs text-muted-foreground">
-                    Selecione o botão de rádio para marcar a alternativa correta
-                  </p>
-                </div>
+                    ))}
+                    <p className="text-xs text-muted-foreground">
+                      Selecione o botão de rádio para marcar a alternativa correta
+                    </p>
+                  </div>
+                )}
 
-                {examData.scoringMethod === 'tri' && (
+                {currentQuestion.type === 'discursive' && (
+                  <div className="space-y-4 border-t pt-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="maxScore">Pontuação Máxima *</Label>
+                      <Input
+                        id="maxScore"
+                        type="number"
+                        min="1"
+                        step="0.5"
+                        value={currentQuestion.maxScore || 10}
+                        onChange={(e) => updateQuestion(currentQuestionIndex, { maxScore: parseFloat(e.target.value) })}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Nota máxima que o aluno pode receber nesta questão
+                      </p>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <Label>Pontos-Chave para Correção *</Label>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => addKeyPoint(currentQuestionIndex)}
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          Adicionar Ponto
+                        </Button>
+                      </div>
+
+                      {currentQuestion.keyPoints && currentQuestion.keyPoints.length > 0 ? (
+                        <>
+                          {currentQuestion.keyPoints.map((kp, kpIndex) => (
+                            <div key={kp.id} className="border rounded-lg p-3 space-y-2">
+                              <div className="flex items-center justify-between">
+                                <Label className="text-xs font-semibold">
+                                  Ponto-Chave {kpIndex + 1}
+                                </Label>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => removeKeyPoint(currentQuestionIndex, kpIndex)}
+                                >
+                                  <Trash2 className="h-4 w-4 text-destructive" />
+                                </Button>
+                              </div>
+                              <Textarea
+                                value={kp.description}
+                                onChange={(e) => updateKeyPoint(currentQuestionIndex, kpIndex, { description: e.target.value })}
+                                placeholder="Descreva o que o aluno deve mencionar..."
+                                rows={2}
+                              />
+                              <div className="flex items-center space-x-2">
+                                <Label className="text-xs">Peso:</Label>
+                                <Input
+                                  type="number"
+                                  min="0"
+                                  max="1"
+                                  step="0.05"
+                                  value={kp.weight}
+                                  onChange={(e) => updateKeyPoint(currentQuestionIndex, kpIndex, { weight: parseFloat(e.target.value) })}
+                                  className="w-20"
+                                />
+                                <span className="text-xs text-muted-foreground">
+                                  ({(kp.weight * 100).toFixed(0)}% da nota)
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                          <p className="text-xs text-muted-foreground">
+                            Soma dos pesos: {((currentQuestion.keyPoints.reduce((sum, kp) => sum + kp.weight, 0)) * 100).toFixed(0)}% (deve ser 100%)
+                          </p>
+                        </>
+                      ) : (
+                        <p className="text-sm text-muted-foreground text-center py-4">
+                          Adicione pontos-chave que devem aparecer na resposta do aluno
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {examData.scoringMethod === 'tri' && currentQuestion.type === 'multiple-choice' && (
                   <div className="border-t pt-4 space-y-4">
                     <div className="flex items-center justify-between">
                       <Label className="text-base font-semibold">Parâmetros TRI</Label>
