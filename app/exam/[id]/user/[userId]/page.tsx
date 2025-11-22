@@ -11,8 +11,8 @@ import { formatDate } from '@/lib/utils'
 import { ArrowLeft, User, CheckCircle, XCircle, Download } from 'lucide-react'
 import { downloadUserReportPDF } from '@/lib/user-report-generator'
 
-export default function UserSubmissionPage({ params }: { params: { examId: string; userId: string } }) {
-  const { examId, userId } = params
+export default function UserSubmissionPage({ params }: { params: { id: string; userId: string } }) {
+  const { id, userId } = params
   const router = useRouter()
   const [exam, setExam] = useState<Exam | null>(null)
   const [submission, setSubmission] = useState<ExamSubmission | null>(null)
@@ -20,24 +20,24 @@ export default function UserSubmissionPage({ params }: { params: { examId: strin
 
   useEffect(() => {
     loadData()
-  }, [examId, userId])
+  }, [id, userId])
 
   async function loadData() {
     try {
       // Carrega a prova
-      const examRes = await fetch(`/api/exams/${examId}`)
+      const examRes = await fetch(`/api/exams/${id}`)
       const examData = await examRes.json()
       if (!examRes.ok) throw new Error(examData.error)
       setExam(examData.exam)
 
       // Carrega a submissão do usuário
-      const subRes = await fetch(`/api/exams/${examId}/submissions/${userId}`)
+      const subRes = await fetch(`/api/exams/${id}/submissions/${userId}`)
       const subData = await subRes.json()
       if (!subRes.ok) throw new Error(subData.error)
       setSubmission(subData.submission)
     } catch (error: any) {
       alert(error.message)
-      router.push(`/exam/${examId}/results`)
+      router.push(`/exam/${id}/results`)
     } finally {
       setLoading(false)
     }
@@ -76,7 +76,7 @@ export default function UserSubmissionPage({ params }: { params: { examId: strin
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="icon" onClick={() => router.push(`/exam/${examId}/results`)}>
+            <Button variant="ghost" size="icon" onClick={() => router.push(`/exam/${id}/results`)}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div>
@@ -105,7 +105,7 @@ export default function UserSubmissionPage({ params }: { params: { examId: strin
               {/* Barcode Individual */}
               <div className="border-b pb-4">
                 <Barcode
-                  value={`${examId}-${submission.userName.replace(/[^a-zA-Z0-9]/g, '').toUpperCase()}`}
+                  value={`${id}-${submission.userName.replace(/[^a-zA-Z0-9]/g, '').toUpperCase()}`}
                   height={60}
                   fontSize={14}
                 />
@@ -163,7 +163,7 @@ export default function UserSubmissionPage({ params }: { params: { examId: strin
                 onClick={() => {
                   downloadUserReportPDF({
                     exam,
-                    examId,
+                    id,
                     userName: submission.userName,
                     signature: submission.signature || '',
                     answers: submission.answers,
