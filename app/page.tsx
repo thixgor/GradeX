@@ -80,9 +80,19 @@ export default function HomePage() {
       if (now > gatesClose) {
         return { text: 'Portões fechados', color: 'text-gray-500', canTake: false }
       }
+
+      // Portões estão abertos!
+      if (now >= gatesOpen && now <= gatesClose) {
+        // Verifica se a prova já começou
+        if (now >= startTime && now <= endTime) {
+          return { text: 'Disponível - Em andamento', color: 'text-green-600', canTake: true }
+        } else if (now < startTime) {
+          return { text: 'Portões abertos - Aguardando início', color: 'text-blue-600', canTake: true }
+        }
+      }
     }
 
-    // Se passou dos portões (ou não tem portões), verifica horário de início/término
+    // Se não tem portões, verifica apenas horário de início/término
     if (now < startTime) {
       return { text: 'Aguardando início', color: 'text-yellow-600', canTake: false }
     }
