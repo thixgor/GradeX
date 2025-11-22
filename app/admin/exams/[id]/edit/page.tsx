@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { use } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -14,8 +13,8 @@ import { Question, Alternative, ScoringMethod, Exam } from '@/lib/types'
 import { generateRandomTRIParameters } from '@/lib/tri-calculator'
 import { ArrowLeft, Shuffle, Save } from 'lucide-react'
 
-export default function EditExamPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params)
+export default function EditExamPage({ params }: { params: { id: string } }) {
+  const { id } = params
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)

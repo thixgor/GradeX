@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { use } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
@@ -16,8 +15,8 @@ interface NormalResult {
   score: number
 }
 
-export default function ExamResultsPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params)
+export default function ExamResultsPage({ params }: { params: { id: string } }) {
+  const { id } = params
   const router = useRouter()
   const [exam, setExam] = useState<Exam | null>(null)
   const [results, setResults] = useState<TRIResult[] | NormalResult[]>([])

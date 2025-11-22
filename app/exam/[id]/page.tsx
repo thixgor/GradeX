@@ -2,24 +2,26 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { use } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { Countdown } from '@/components/countdown'
 import { Exam, UserAnswer } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
-import { ArrowLeft, Check, X, Send, FileDown } from 'lucide-react'
+import { ArrowLeft, Check, X, Send, FileDown, Clock } from 'lucide-react'
 
-export default function ExamPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params)
+export default function ExamPage({ params }: { params: { id: string } }) {
+  const { id } = params
   const router = useRouter()
   const [exam, setExam] = useState<Exam | null>(null)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [started, setStarted] = useState(false)
+  const [inWaitingRoom, setInWaitingRoom] = useState(false)
+  const [canStart, setCanStart] = useState(false)
 
   const [userName, setUserName] = useState('')
   const [themeTranscription, setThemeTranscription] = useState('')
@@ -29,6 +31,34 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
   useEffect(() => {
     loadExam()
   }, [id])
+
+  useEffect(() => {
+    if (!exam) return
+
+    const checkExamStatus = () => {
+      const now = new Date()
+      const startTime = new Date(exam.startTime)
+      const endTime = new Date(exam.endTime)
+
+      // Verifica se a prova já terminou
+      if (now > endTime) {
+        router.push(`/exam/${id}/results`)
+        return
+      }
+
+      // Verifica se a prova já começou
+      if (now >= startTime) {
+        setCanStart(true)
+      } else {
+        setCanStart(false)
+      }
+    }
+
+    checkExamStatus()
+    const interval = setInterval(checkExamStatus, 1000)
+
+    return () => clearInterval(interval)
+  }, [exam, id, router])
 
   async function loadExam() {
     try {
@@ -148,7 +178,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
     )
   }
 
-  if (!started) {
+  if (!started && !inWaitingRoom) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4">
         <Card className="max-w-2xl w-full">
@@ -226,10 +256,16 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
             <Button
               className="w-full"
               size="lg"
-              onClick={() => setStarted(true)}
+              onClick={() => {
+                if (canStart) {
+                  setStarted(true)
+                } else {
+                  setInWaitingRoom(true)
+                }
+              }}
               disabled={!userName.trim() || (exam.themePhrase && !themeTranscription.trim())}
             >
-              Iniciar Prova
+              {canStart ? 'Iniciar Prova' : 'Entrar na Sala'}
             </Button>
 
             <Button
@@ -240,6 +276,88 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
               <ArrowLeft className="h-4 w-4 mr-2" />
               Voltar
             </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  // Sala de espera
+  if (!started && inWaitingRoom) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4">
+        <Card className="max-w-3xl w-full">
+          <CardHeader className="text-center">
+            <CardTitle className="text-3xl mb-2">{exam.title}</CardTitle>
+            <CardDescription className="text-lg">
+              Sala de Espera
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex items-center justify-center py-4">
+              <Clock className="h-16 w-16 text-primary animate-pulse" />
+            </div>
+
+            <div className="text-center space-y-2">
+              <h3 className="text-xl font-semibold">Bem-vindo(a), {userName}!</h3>
+              <p className="text-muted-foreground">
+                Você está na sala de espera. A prova iniciará em:
+              </p>
+            </div>
+
+            <div className="py-6">
+              <Countdown
+                targetDate={new Date(exam.startTime)}
+                onComplete={() => {
+                  setCanStart(true)
+                  setTimeout(() => {
+                    alert('A prova começou! Você já pode iniciar.')
+                  }, 100)
+                }}
+              />
+            </div>
+
+            <div className="bg-muted rounded-lg p-4 space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Horário de início:</span>
+                <span className="font-semibold">{formatDate(exam.startTime)}</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Horário de término:</span>
+                <span className="font-semibold">{formatDate(exam.endTime)}</span>
+              </div>
+            </div>
+
+            {exam.pdfUrl && (
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => window.open(exam.pdfUrl, '_blank')}
+              >
+                <FileDown className="h-4 w-4 mr-2" />
+                Baixar PDF da Prova
+              </Button>
+            )}
+
+            <div className="flex gap-2">
+              <Button
+                className="flex-1"
+                size="lg"
+                onClick={() => setStarted(true)}
+                disabled={!canStart}
+              >
+                {canStart ? 'Iniciar Prova Agora' : 'Aguardando Início...'}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setInWaitingRoom(false)
+                  router.push('/')
+                }}
+              >
+                Sair
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
