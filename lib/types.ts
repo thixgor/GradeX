@@ -57,6 +57,7 @@ export interface ExamSubmission {
   userName: string
   themeTranscription?: string
   answers: UserAnswer[]
+  signature?: string
   score?: number
   triScore?: number
   submittedAt: Date

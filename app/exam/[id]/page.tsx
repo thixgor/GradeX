@@ -13,7 +13,8 @@ import { Toast } from '@/components/toast'
 import { SignaturePad } from '@/components/signature-pad'
 import { Exam, UserAnswer } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
-import { ArrowLeft, Check, X, Send, FileDown, Clock, User } from 'lucide-react'
+import { downloadUserReportPDF } from '@/lib/user-report-generator'
+import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2 } from 'lucide-react'
 
 export default function ExamPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -32,6 +33,8 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const [showToast, setShowToast] = useState(false)
   const [answers, setAnswers] = useState<UserAnswer[]>([])
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+  const [submitted, setSubmitted] = useState(false)
+  const [submissionScore, setSubmissionScore] = useState<string>('')
 
   useEffect(() => {
     loadExam()
@@ -159,6 +162,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
           userName,
           themeTranscription,
           answers,
+          signature,
         }),
       })
 
@@ -166,13 +170,15 @@ export default function ExamPage({ params }: { params: { id: string } }) {
 
       if (!res.ok) throw new Error(data.error)
 
+      // Salvar score para mostrar depois
       if (exam?.scoringMethod === 'normal') {
-        alert(`Prova submetida com sucesso!\n\nSua nota: ${data.score}`)
+        setSubmissionScore(`${data.score} pontos`)
       } else {
-        alert(data.message)
+        setSubmissionScore(data.message || 'Prova submetida com sucesso!')
       }
 
-      router.push('/')
+      // Marcar como submetido ao invés de redirecionar
+      setSubmitted(true)
     } catch (error: any) {
       alert(error.message)
     } finally {
@@ -192,6 +198,74 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-lg">Prova não encontrada</div>
+      </div>
+    )
+  }
+
+  // Tela de conclusão após submissão
+  if (submitted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4">
+        <Card className="max-w-2xl w-full">
+          <CardHeader className="text-center">
+            <div className="flex justify-center mb-4">
+              <div className="bg-green-100 dark:bg-green-900 rounded-full p-4">
+                <CheckCircle2 className="h-16 w-16 text-green-600 dark:text-green-400" />
+              </div>
+            </div>
+            <CardTitle className="text-3xl text-green-600 dark:text-green-400">
+              Prova Concluída!
+            </CardTitle>
+            <CardDescription className="text-base mt-2">
+              {submissionScore}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="bg-muted rounded-lg p-6 text-center">
+              <h3 className="text-lg font-semibold mb-2">Parabéns, {userName}!</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Sua prova foi submetida com sucesso. Você pode baixar um relatório com suas respostas para conferir quando o gabarito for divulgado.
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <Button
+                className="w-full"
+                size="lg"
+                onClick={() => {
+                  downloadUserReportPDF({
+                    exam,
+                    userName,
+                    signature,
+                    answers,
+                  })
+                }}
+              >
+                <FileDown className="h-5 w-5 mr-2" />
+                Baixar Relatório da Minha Prova
+              </Button>
+
+              {exam.pdfUrl && (
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => window.open(exam.pdfUrl, '_blank')}
+                >
+                  <FileDown className="h-4 w-4 mr-2" />
+                  Baixar PDF Original da Prova
+                </Button>
+              )}
+
+              <Button
+                variant="secondary"
+                className="w-full"
+                onClick={() => router.push('/')}
+              >
+                Voltar para Página Inicial
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     )
   }
@@ -230,17 +304,6 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                 <strong>Término:</strong> {formatDate(exam.endTime)}
               </p>
             </div>
-
-            {exam.pdfUrl && (
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => window.open(exam.pdfUrl, '_blank')}
-              >
-                <FileDown className="h-4 w-4 mr-2" />
-                Baixar PDF da Prova
-              </Button>
-            )}
 
             <div className="space-y-4 pt-4 border-t">
               <div className="space-y-2">
