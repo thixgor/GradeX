@@ -21,9 +21,18 @@ export default function HomePage() {
   const [user, setUser] = useState<User | null>(null)
   const [exams, setExams] = useState<Exam[]>([])
   const [loading, setLoading] = useState(true)
+  const [, forceUpdate] = useState(0)
 
   useEffect(() => {
     checkAuth()
+  }, [])
+
+  // Atualiza o status dos exames a cada segundo
+  useEffect(() => {
+    const interval = setInterval(() => {
+      forceUpdate(prev => prev + 1)
+    }, 1000)
+    return () => clearInterval(interval)
   }, [])
 
   async function checkAuth() {
@@ -63,36 +72,37 @@ export default function HomePage() {
     const startTime = new Date(exam.startTime)
     const endTime = new Date(exam.endTime)
 
-    // Verifica se a prova já terminou
+    // 1. Verifica se a prova já terminou
     if (now > endTime) {
       return { text: 'Finalizada', color: 'text-red-600', canTake: false }
     }
 
-    // Verifica portões (se definidos)
+    // 2. Se tem sistema de portões
     if (exam.gatesOpen && exam.gatesClose) {
       const gatesOpen = new Date(exam.gatesOpen)
       const gatesClose = new Date(exam.gatesClose)
 
+      // Portões ainda não abriram
       if (now < gatesOpen) {
         return { text: 'Portões ainda não abriram', color: 'text-gray-500', canTake: false }
       }
 
+      // Portões já fecharam
       if (now > gatesClose) {
         return { text: 'Portões fechados', color: 'text-gray-500', canTake: false }
       }
 
-      // Portões estão abertos!
-      if (now >= gatesOpen && now <= gatesClose) {
-        // Verifica se a prova já começou
-        if (now >= startTime && now <= endTime) {
-          return { text: 'Disponível - Em andamento', color: 'text-green-600', canTake: true }
-        } else if (now < startTime) {
-          return { text: 'Portões abertos - Aguardando início', color: 'text-blue-600', canTake: true }
-        }
+      // Portões estão abertos - verifica se prova começou
+      if (now >= startTime && now <= endTime) {
+        // Prova em andamento
+        return { text: 'Disponível - Em andamento', color: 'text-green-600', canTake: true }
+      } else if (now < startTime) {
+        // Prova ainda não começou - SALA DE ESPERA
+        return { text: 'Portões abertos - Aguardando início', color: 'text-blue-600', canTake: true }
       }
     }
 
-    // Se não tem portões, verifica apenas horário de início/término
+    // 3. Sem portões - verifica apenas horário de início/término
     if (now < startTime) {
       return { text: 'Aguardando início', color: 'text-yellow-600', canTake: false }
     }
@@ -239,7 +249,7 @@ export default function HomePage() {
                   <div className="mt-4">
                     {status.canTake ? (
                       <Button className="w-full" variant="default">
-                        Realizar Prova
+                        {status.text.includes('Aguardando início') ? 'Entrar na Sala' : 'Realizar Prova'}
                       </Button>
                     ) : new Date() > new Date(exam.endTime) ? (
                       <Button className="w-full" variant="outline">
