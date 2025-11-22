@@ -11,6 +11,8 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { Countdown } from '@/components/countdown'
 import { Toast } from '@/components/toast'
 import { SignaturePad } from '@/components/signature-pad'
+import { ExamTimer } from '@/components/exam-timer'
+import { Barcode } from '@/components/barcode'
 import { Exam, UserAnswer } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
 import { downloadUserReportPDF } from '@/lib/user-report-generator'
@@ -235,6 +237,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                 onClick={() => {
                   downloadUserReportPDF({
                     exam,
+                    examId: id,
                     userName,
                     signature,
                     answers,
@@ -462,6 +465,14 @@ export default function ExamPage({ params }: { params: { id: string } }) {
             </div>
           </CardContent>
         </Card>
+
+        {/* Toast de notificação quando a prova começar */}
+        {showToast && (
+          <Toast
+            message="Você já pode iniciar a prova clicando no botão abaixo."
+            onClose={() => setShowToast(false)}
+          />
+        )}
       </div>
     )
   }
@@ -472,14 +483,23 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between flex-wrap gap-4">
           <div>
             <h1 className="text-xl font-bold">{exam.title}</h1>
             <p className="text-sm text-muted-foreground">
               Questão {currentQuestionIndex + 1} de {exam.questions.length}
             </p>
           </div>
-          <ThemeToggle />
+          <div className="flex items-center gap-3">
+            <ExamTimer
+              endTime={exam.endTime}
+              onTimeUp={() => {
+                alert('O tempo da prova acabou!')
+                router.push('/')
+              }}
+            />
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 
@@ -489,6 +509,18 @@ export default function ExamPage({ params }: { params: { id: string } }) {
             <CardTitle>Questão {currentQuestion.number}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
+            {/* Barcode do Usuário */}
+            <div className="border-b pb-4">
+              <Barcode
+                value={`${id}-${userName.replace(/[^a-zA-Z0-9]/g, '').toUpperCase()}`}
+                height={50}
+                fontSize={12}
+              />
+              <p className="text-xs text-center text-muted-foreground mt-2">
+                Código Individual: Prova {id.substring(0, 8)} - {userName}
+              </p>
+            </div>
+
             {/* Enunciado */}
             <div className="space-y-2">
               <div className="prose dark:prose-invert max-w-none">
@@ -619,14 +651,6 @@ export default function ExamPage({ params }: { params: { id: string } }) {
           </CardContent>
         </Card>
       </main>
-
-      {/* Toast de notificação quando a prova começar */}
-      {showToast && (
-        <Toast
-          message="Você já pode iniciar a prova clicando no botão abaixo."
-          onClose={() => setShowToast(false)}
-        />
-      )}
     </div>
   )
 }

@@ -1,11 +1,27 @@
 import jsPDF from 'jspdf'
+import JsBarcode from 'jsbarcode'
 import { Exam, UserAnswer } from './types'
 
 interface UserReportData {
   exam: Exam
+  examId: string
   userName: string
   signature: string // base64 image
   answers: UserAnswer[]
+}
+
+// Função para gerar barcode como base64
+function generateBarcodeImage(value: string): string {
+  const canvas = document.createElement('canvas')
+  JsBarcode(canvas, value, {
+    format: 'CODE128',
+    width: 2,
+    height: 50,
+    displayValue: true,
+    fontSize: 12,
+    margin: 10,
+  })
+  return canvas.toDataURL('image/png')
 }
 
 export function generateUserReportPDF(data: UserReportData): Blob {
@@ -87,6 +103,26 @@ export function generateUserReportPDF(data: UserReportData): Blob {
       console.error('Erro ao adicionar assinatura:', error)
       y += 5
     }
+  }
+
+  y += 5
+
+  // ===== BARCODE INDIVIDUAL =====
+  try {
+    const barcodeValue = `${data.examId}-${data.userName.replace(/[^a-zA-Z0-9]/g, '').toUpperCase()}`
+    const barcodeImage = generateBarcodeImage(barcodeValue)
+
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(10)
+    doc.setTextColor(...grayColor)
+    doc.text('Código Individual:', margin, y)
+    y += 5
+
+    doc.addImage(barcodeImage, 'PNG', margin, y, 100, 30)
+    y += 35
+  } catch (error) {
+    console.error('Erro ao adicionar barcode:', error)
+    y += 5
   }
 
   y += 5

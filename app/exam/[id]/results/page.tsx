@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Exam, TRIResult } from '@/lib/types'
 import { generateGabaritoPDF, downloadPDF } from '@/lib/pdf-generator'
+import { Barcode } from '@/components/barcode'
 import { ArrowLeft, Download, FileText } from 'lucide-react'
 
 interface NormalResult {
@@ -99,6 +100,22 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
 
       <main className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="space-y-6">
+          {/* Barcode da Prova */}
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center">
+                <Barcode
+                  value={id}
+                  height={60}
+                  fontSize={14}
+                />
+                <p className="text-xs text-muted-foreground mt-2">
+                  Código da Prova: {id}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Downloads */}
           <Card>
             <CardHeader>

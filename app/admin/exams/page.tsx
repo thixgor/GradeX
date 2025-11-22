@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Exam } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
-import { ArrowLeft, Edit, Trash2, Eye, EyeOff, Plus } from 'lucide-react'
+import { ArrowLeft, Edit, Trash2, Eye, EyeOff, Plus, Play, StopCircle } from 'lucide-react'
 
 export default function AdminExamsPage() {
   const router = useRouter()
@@ -57,6 +57,46 @@ export default function AdminExamsPage() {
 
       if (!res.ok) throw new Error('Erro ao atualizar')
 
+      loadExams()
+    } catch (error: any) {
+      alert(error.message)
+    }
+  }
+
+  async function forceStart(examId: string) {
+    if (!confirm('Tem certeza que deseja forçar o início da prova AGORA?')) return
+
+    try {
+      const res = await fetch(`/api/exams/${examId}/force-time`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'start' }),
+      })
+
+      if (!res.ok) throw new Error('Erro ao forçar início')
+
+      const data = await res.json()
+      alert(data.message)
+      loadExams()
+    } catch (error: any) {
+      alert(error.message)
+    }
+  }
+
+  async function forceEnd(examId: string) {
+    if (!confirm('Tem certeza que deseja forçar o TÉRMINO da prova AGORA?')) return
+
+    try {
+      const res = await fetch(`/api/exams/${examId}/force-time`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'end' }),
+      })
+
+      if (!res.ok) throw new Error('Erro ao forçar término')
+
+      const data = await res.json()
+      alert(data.message)
       loadExams()
     } catch (error: any) {
       alert(error.message)
@@ -170,6 +210,28 @@ export default function AdminExamsPage() {
                         </>
                       )}
                     </Button>
+
+                    {new Date() < new Date(exam.startTime) && (
+                      <Button
+                        variant="default"
+                        size="sm"
+                        onClick={() => forceStart(exam._id!.toString())}
+                      >
+                        <Play className="h-4 w-4 mr-2" />
+                        Forçar Início
+                      </Button>
+                    )}
+
+                    {new Date() < new Date(exam.endTime) && new Date() >= new Date(exam.startTime) && (
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => forceEnd(exam._id!.toString())}
+                      >
+                        <StopCircle className="h-4 w-4 mr-2" />
+                        Forçar Término
+                      </Button>
+                    )}
 
                     <Button
                       variant="destructive"
