@@ -9,9 +9,11 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Countdown } from '@/components/countdown'
+import { Toast } from '@/components/toast'
+import { SignaturePad } from '@/components/signature-pad'
 import { Exam, UserAnswer } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
-import { ArrowLeft, Check, X, Send, FileDown, Clock } from 'lucide-react'
+import { ArrowLeft, Check, X, Send, FileDown, Clock, User } from 'lucide-react'
 
 export default function ExamPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -24,12 +26,16 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const [canStart, setCanStart] = useState(false)
 
   const [userName, setUserName] = useState('')
+  const [loggedUserName, setLoggedUserName] = useState('')
   const [themeTranscription, setThemeTranscription] = useState('')
+  const [signature, setSignature] = useState('')
+  const [showToast, setShowToast] = useState(false)
   const [answers, setAnswers] = useState<UserAnswer[]>([])
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
 
   useEffect(() => {
     loadExam()
+    loadUserInfo()
   }, [id])
 
   useEffect(() => {
@@ -81,6 +87,18 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       router.push('/')
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function loadUserInfo() {
+    try {
+      const res = await fetch('/api/auth/me')
+      if (res.ok) {
+        const data = await res.json()
+        setLoggedUserName(data.user.name)
+      }
+    } catch (error) {
+      // Silently fail - user can still enter name manually
     }
   }
 
@@ -226,7 +244,21 @@ export default function ExamPage({ params }: { params: { id: string } }) {
 
             <div className="space-y-4 pt-4 border-t">
               <div className="space-y-2">
-                <Label htmlFor="userName">Nome Completo *</Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="userName">Nome Completo *</Label>
+                  {loggedUserName && !userName && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setUserName(loggedUserName)}
+                      className="h-auto py-1"
+                    >
+                      <User className="h-3 w-3 mr-1" />
+                      Usar meu nome
+                    </Button>
+                  )}
+                </div>
                 <Input
                   id="userName"
                   value={userName}
@@ -311,7 +343,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                 onComplete={() => {
                   setCanStart(true)
                   setTimeout(() => {
-                    alert('A prova começou! Você já pode iniciar.')
+                    setShowToast(true)
                   }, 100)
                 }}
               />
@@ -328,7 +360,14 @@ export default function ExamPage({ params }: { params: { id: string } }) {
               </div>
             </div>
 
-            {exam.pdfUrl && (
+            {/* Campo de Assinatura */}
+            <SignaturePad
+              onSignatureChange={setSignature}
+              label="Assinatura Digital *"
+            />
+
+            {/* PDF só aparece quando a prova começar */}
+            {exam.pdfUrl && canStart && (
               <Button
                 variant="outline"
                 className="w-full"
@@ -344,9 +383,9 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                 className="flex-1"
                 size="lg"
                 onClick={() => setStarted(true)}
-                disabled={!canStart}
+                disabled={!canStart || !signature}
               >
-                {canStart ? 'Iniciar Prova Agora' : 'Aguardando Início...'}
+                {!signature ? 'Assine antes de iniciar' : canStart ? 'Iniciar Prova Agora' : 'Aguardando Início...'}
               </Button>
               <Button
                 variant="outline"
@@ -517,6 +556,14 @@ export default function ExamPage({ params }: { params: { id: string } }) {
           </CardContent>
         </Card>
       </main>
+
+      {/* Toast de notificação quando a prova começar */}
+      {showToast && (
+        <Toast
+          message="Você já pode iniciar a prova clicando no botão abaixo."
+          onClose={() => setShowToast(false)}
+        />
+      )}
     </div>
   )
 }
