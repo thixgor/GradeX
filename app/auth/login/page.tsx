@@ -8,6 +8,8 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
 
+const ADMIN_EMAILS = ['throdrigf@gmail.com', 'ecocardio93@gmail.com', 'hookeybr@gmail.com']
+
 export default function LoginPage() {
   const router = useRouter()
   const [isLogin, setIsLogin] = useState(true)
@@ -20,6 +22,8 @@ export default function LoginPage() {
     name: '',
     role: 'user'
   })
+
+  const canBeAdmin = ADMIN_EMAILS.includes(formData.email.toLowerCase().trim())
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -126,8 +130,13 @@ export default function LoginPage() {
                   onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                 >
                   <option value="user">Usuário</option>
-                  <option value="admin">Administrador</option>
+                  {canBeAdmin && <option value="admin">Administrador</option>}
                 </select>
+                {!canBeAdmin && formData.email && (
+                  <p className="text-xs text-muted-foreground">
+                    Apenas emails autorizados podem criar contas de administrador
+                  </p>
+                )}
               </div>
             )}
 

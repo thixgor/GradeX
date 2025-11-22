@@ -60,24 +60,38 @@ export default function HomePage() {
 
   function getExamStatus(exam: Exam) {
     const now = new Date()
+    const startTime = new Date(exam.startTime)
+    const endTime = new Date(exam.endTime)
 
-    if (exam.gatesOpen && now < new Date(exam.gatesOpen)) {
-      return { text: 'Portões fechados', color: 'text-gray-500', canTake: false }
-    }
-
-    if (exam.gatesClose && now > new Date(exam.gatesClose)) {
-      return { text: 'Portões fechados', color: 'text-gray-500', canTake: false }
-    }
-
-    if (now < new Date(exam.startTime)) {
-      return { text: 'Aguardando início', color: 'text-yellow-600', canTake: false }
-    }
-
-    if (now > new Date(exam.endTime)) {
+    // Verifica se a prova já terminou
+    if (now > endTime) {
       return { text: 'Finalizada', color: 'text-red-600', canTake: false }
     }
 
-    return { text: 'Disponível', color: 'text-green-600', canTake: true }
+    // Verifica portões (se definidos)
+    if (exam.gatesOpen && exam.gatesClose) {
+      const gatesOpen = new Date(exam.gatesOpen)
+      const gatesClose = new Date(exam.gatesClose)
+
+      if (now < gatesOpen) {
+        return { text: 'Portões ainda não abriram', color: 'text-gray-500', canTake: false }
+      }
+
+      if (now > gatesClose) {
+        return { text: 'Portões fechados', color: 'text-gray-500', canTake: false }
+      }
+    }
+
+    // Se passou dos portões (ou não tem portões), verifica horário de início/término
+    if (now < startTime) {
+      return { text: 'Aguardando início', color: 'text-yellow-600', canTake: false }
+    }
+
+    if (now >= startTime && now <= endTime) {
+      return { text: 'Disponível', color: 'text-green-600', canTake: true }
+    }
+
+    return { text: 'Indisponível', color: 'text-gray-500', canTake: false }
   }
 
   if (loading) {

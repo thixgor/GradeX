@@ -3,6 +3,8 @@ import { getDb } from '@/lib/mongodb'
 import { hashPassword, createToken, setAuthCookie } from '@/lib/auth'
 import { User } from '@/lib/types'
 
+const ADMIN_EMAILS = ['throdrigf@gmail.com', 'ecocardio93@gmail.com', 'hookeybr@gmail.com']
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
@@ -12,6 +14,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Todos os campos são obrigatórios' },
         { status: 400 }
+      )
+    }
+
+    // Valida se o email pode criar conta de administrador
+    if (role === 'admin' && !ADMIN_EMAILS.includes(email.toLowerCase().trim())) {
+      return NextResponse.json(
+        { error: 'Você não tem permissão para criar conta de administrador' },
+        { status: 403 }
       )
     }
 

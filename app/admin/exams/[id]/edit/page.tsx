@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { use } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -9,15 +10,15 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { FileUpload } from '@/components/file-upload'
-import { TxtImport } from '@/components/txt-import'
-import { Question, Alternative, ScoringMethod } from '@/lib/types'
+import { Question, Alternative, ScoringMethod, Exam } from '@/lib/types'
 import { generateRandomTRIParameters } from '@/lib/tri-calculator'
-import { v4 as uuidv4 } from 'uuid'
-import { ArrowLeft, Plus, Trash2, Shuffle, Save } from 'lucide-react'
+import { ArrowLeft, Shuffle, Save } from 'lucide-react'
 
-export default function CreateExamPage() {
+export default function EditExamPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params)
   const router = useRouter()
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
   const [currentStep, setCurrentStep] = useState(1)
 
   const [examData, setExamData] = useState({
@@ -40,45 +41,49 @@ export default function CreateExamPage() {
   const [questions, setQuestions] = useState<Question[]>([])
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
 
-  function initializeQuestions() {
-    const newQuestions: Question[] = []
-    const letters = ['A', 'B', 'C', 'D', 'E']
+  useEffect(() => {
+    loadExam()
+  }, [id])
 
-    for (let i = 0; i < examData.numberOfQuestions; i++) {
-      const alternatives: Alternative[] = []
+  async function loadExam() {
+    try {
+      const res = await fetch(`/api/exams/${id}`)
+      const data = await res.json()
 
-      for (let j = 0; j < examData.numberOfAlternatives; j++) {
-        alternatives.push({
-          id: uuidv4(),
-          letter: letters[j],
-          text: '',
-          isCorrect: j === 0,
-        })
+      if (!res.ok) throw new Error(data.error)
+
+      const exam: Exam = data.exam
+
+      // Formata datas para datetime-local
+      const formatDateTime = (date: Date | string) => {
+        const d = new Date(date)
+        return d.toISOString().slice(0, 16)
       }
 
-      const triParams = examData.scoringMethod === 'tri'
-        ? generateRandomTRIParameters(examData.numberOfAlternatives)
-        : {}
-
-      newQuestions.push({
-        id: uuidv4(),
-        number: i + 1,
-        statement: '',
-        statementSource: '',
-        imageUrl: '',
-        imageSource: '',
-        command: '',
-        alternatives,
-        ...(examData.scoringMethod === 'tri' && {
-          triDiscrimination: triParams.a,
-          triDifficulty: triParams.b,
-          triGuessing: triParams.c,
-        }),
+      setExamData({
+        title: exam.title,
+        description: exam.description || '',
+        coverImage: exam.coverImage || '',
+        numberOfQuestions: exam.numberOfQuestions,
+        numberOfAlternatives: exam.numberOfAlternatives,
+        themePhrase: exam.themePhrase || '',
+        scoringMethod: exam.scoringMethod,
+        totalPoints: exam.totalPoints || 100,
+        pdfUrl: exam.pdfUrl || '',
+        gatesOpen: exam.gatesOpen ? formatDateTime(exam.gatesOpen) : '',
+        gatesClose: exam.gatesClose ? formatDateTime(exam.gatesClose) : '',
+        startTime: formatDateTime(exam.startTime),
+        endTime: formatDateTime(exam.endTime),
+        isHidden: exam.isHidden,
       })
-    }
 
-    setQuestions(newQuestions)
-    setCurrentStep(2)
+      setQuestions(exam.questions)
+    } catch (error: any) {
+      alert(error.message)
+      router.push('/admin/exams')
+    } finally {
+      setLoading(false)
+    }
   }
 
   function updateQuestion(index: number, updates: Partial<Question>) {
@@ -111,7 +116,7 @@ export default function CreateExamPage() {
   }
 
   async function handleSubmit() {
-    setLoading(true)
+    setSaving(true)
 
     try {
       // Validação básica
@@ -146,8 +151,8 @@ export default function CreateExamPage() {
         questions,
       }
 
-      const res = await fetch('/api/exams', {
-        method: 'POST',
+      const res = await fetch(`/api/exams/${id}`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       })
@@ -155,16 +160,24 @@ export default function CreateExamPage() {
       const data = await res.json()
 
       if (!res.ok) {
-        throw new Error(data.error || 'Erro ao criar prova')
+        throw new Error(data.error || 'Erro ao atualizar prova')
       }
 
-      alert('Prova criada com sucesso!')
+      alert('Prova atualizada com sucesso!')
       router.push('/admin/exams')
     } catch (error: any) {
       alert(error.message)
     } finally {
-      setLoading(false)
+      setSaving(false)
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg">Carregando prova...</div>
+      </div>
+    )
   }
 
   const currentQuestion = questions[currentQuestionIndex]
@@ -174,10 +187,10 @@ export default function CreateExamPage() {
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="icon" onClick={() => router.push('/')}>
+            <Button variant="ghost" size="icon" onClick={() => router.push('/admin/exams')}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <h1 className="text-2xl font-bold">Criar Nova Prova</h1>
+            <h1 className="text-2xl font-bold">Editar Prova</h1>
           </div>
           <ThemeToggle />
         </div>
@@ -189,7 +202,7 @@ export default function CreateExamPage() {
             <CardHeader>
               <CardTitle>Informações da Prova</CardTitle>
               <CardDescription>
-                Preencha os dados básicos da prova
+                Edite os dados básicos da prova
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -223,35 +236,6 @@ export default function CreateExamPage() {
                 placeholder="Cole uma URL ou faça upload da capa"
               />
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="numberOfQuestions">Número de Questões *</Label>
-                  <Input
-                    id="numberOfQuestions"
-                    type="number"
-                    min="1"
-                    max="200"
-                    value={examData.numberOfQuestions}
-                    onChange={(e) => setExamData({ ...examData, numberOfQuestions: parseInt(e.target.value) })}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="numberOfAlternatives">Alternativas por Questão *</Label>
-                  <select
-                    id="numberOfAlternatives"
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                    value={examData.numberOfAlternatives}
-                    onChange={(e) => setExamData({ ...examData, numberOfAlternatives: parseInt(e.target.value) })}
-                  >
-                    <option value="2">2 (A, B)</option>
-                    <option value="3">3 (A, B, C)</option>
-                    <option value="4">4 (A, B, C, D)</option>
-                    <option value="5">5 (A, B, C, D, E)</option>
-                  </select>
-                </div>
-              </div>
-
               <div className="space-y-2">
                 <Label htmlFor="themePhrase">Frase-Tema (opcional)</Label>
                 <Input
@@ -263,20 +247,11 @@ export default function CreateExamPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="scoringMethod">Método de Pontuação *</Label>
-                <select
-                  id="scoringMethod"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                  value={examData.scoringMethod}
-                  onChange={(e) => setExamData({
-                    ...examData,
-                    scoringMethod: e.target.value as ScoringMethod,
-                    ...(e.target.value === 'tri' && { totalPoints: 1000 })
-                  })}
-                >
-                  <option value="normal">Normal (Pontuação Personalizada)</option>
-                  <option value="tri">TRI - Teoria de Resposta ao Item (1000 pontos)</option>
-                </select>
+                <Label>Método de Pontuação (não editável)</Label>
+                <Input
+                  value={examData.scoringMethod === 'tri' ? 'TRI - 1000 pontos' : `Normal - ${examData.totalPoints} pontos`}
+                  disabled
+                />
               </div>
 
               {examData.scoringMethod === 'normal' && (
@@ -359,19 +334,8 @@ export default function CreateExamPage() {
                 </Label>
               </div>
 
-              <TxtImport
-                numberOfQuestions={examData.numberOfQuestions}
-                numberOfAlternatives={examData.numberOfAlternatives}
-                onImport={(importedQuestions) => {
-                  setQuestions(importedQuestions)
-                  setCurrentStep(2)
-                  setCurrentQuestionIndex(0)
-                }}
-              />
-
-              <Button onClick={initializeQuestions} className="w-full" size="lg">
-                Próximo: Adicionar Questões Manualmente
-                <Plus className="ml-2 h-5 w-5" />
+              <Button onClick={() => setCurrentStep(2)} className="w-full" size="lg">
+                Próximo: Editar Questões
               </Button>
             </CardContent>
           </Card>
@@ -462,9 +426,6 @@ export default function CreateExamPage() {
                       </div>
                     </div>
                   ))}
-                  <p className="text-xs text-muted-foreground">
-                    Selecione o botão de rádio para marcar a alternativa correta
-                  </p>
                 </div>
 
                 {examData.scoringMethod === 'tri' && (
@@ -492,9 +453,6 @@ export default function CreateExamPage() {
                             triDiscrimination: parseFloat(e.target.value)
                           })}
                         />
-                        <p className="text-xs text-muted-foreground">
-                          0.5 - 2.5 (maior = mais discriminativa)
-                        </p>
                       </div>
 
                       <div className="space-y-2">
@@ -507,9 +465,6 @@ export default function CreateExamPage() {
                             triDifficulty: parseFloat(e.target.value)
                           })}
                         />
-                        <p className="text-xs text-muted-foreground">
-                          -3 a +3 (maior = mais difícil)
-                        </p>
                       </div>
 
                       <div className="space-y-2">
@@ -518,14 +473,8 @@ export default function CreateExamPage() {
                           type="number"
                           step="0.01"
                           value={currentQuestion.triGuessing || 0.2}
-                          onChange={(e) => updateQuestion(currentQuestionIndex, {
-                            triGuessing: parseFloat(e.target.value)
-                          })}
                           disabled
                         />
-                        <p className="text-xs text-muted-foreground">
-                          Calculado automaticamente
-                        </p>
                       </div>
                     </div>
                   </div>
@@ -556,9 +505,9 @@ export default function CreateExamPage() {
 
               <div className="flex space-x-2">
                 {currentQuestionIndex === questions.length - 1 ? (
-                  <Button onClick={handleSubmit} disabled={loading}>
+                  <Button onClick={handleSubmit} disabled={saving}>
                     <Save className="h-4 w-4 mr-2" />
-                    {loading ? 'Salvando...' : 'Salvar Prova'}
+                    {saving ? 'Salvando...' : 'Salvar Alterações'}
                   </Button>
                 ) : (
                   <Button
