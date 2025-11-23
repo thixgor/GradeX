@@ -183,7 +183,7 @@ export function NotificationsBell() {
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1">
                         <p className="text-sm font-medium">
-                          {notification.type === 'ticket_created'
+                          {(notification.type === 'ticket_created' || notification.type === 'ticket_reopened')
                             ? notification.ticketTitle
                             : notification.examTitle}
                         </p>

@@ -32,7 +32,7 @@ export default function AdminTicketsPage() {
           return
         }
         const data = await res.json()
-        if (data.role !== 'admin') {
+        if (data.user?.role !== 'admin') {
           router.push('/')
           showToastMessage('Acesso negado. Apenas administradores podem acessar esta página.', 'error')
         }
