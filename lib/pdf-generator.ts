@@ -1,6 +1,5 @@
 import jsPDF from 'jspdf'
-import PDFDocument from 'pdfkit'
-import bwipjs from 'bwip-js'
+import JsBarcode from 'jsbarcode'
 import { Exam, Question } from './types'
 
 export function generateGabaritoPDF(exam: Exam): Blob {
@@ -256,212 +255,255 @@ export function downloadPDF(blob: Blob, filename: string) {
   URL.revokeObjectURL(url)
 }
 
-// Gerar PDF da prova para alunos preencherem (server-side com pdfkit)
-export async function generateExamPDF(exam: Exam, userId?: string): Promise<Buffer> {
-  return new Promise((resolve, reject) => {
+// Gerar PDF da prova para alunos preencherem (client-side com jsPDF)
+export function generateExamPDF(exam: Exam, userId?: string): Blob {
+  const doc = new jsPDF()
+
+  const pageWidth = doc.internal.pageSize.getWidth()
+  const pageHeight = doc.internal.pageSize.getHeight()
+  const margin = 20
+  let y = margin
+
+  // Função auxiliar para verificar se precisa de nova página
+  const checkPage = (needed: number) => {
+    if (y + needed > pageHeight - margin) {
+      doc.addPage()
+      y = margin
+      return true
+    }
+    return false
+  }
+
+  // === CABEÇALHO ===
+  doc.setFillColor(147, 51, 234) // Roxo
+  doc.rect(0, 0, pageWidth, 40, 'F')
+
+  doc.setTextColor(255, 255, 255)
+  doc.setFontSize(22)
+  doc.setFont('helvetica', 'bold')
+  doc.text(exam.name, pageWidth / 2, 15, { align: 'center' })
+
+  if (exam.description) {
+    doc.setFontSize(11)
+    doc.setFont('helvetica', 'normal')
+    doc.text(exam.description, pageWidth / 2, 28, { align: 'center' })
+  }
+
+  y = 50
+
+  // === INFORMAÇÕES DA PROVA ===
+  doc.setTextColor(0, 0, 0)
+  doc.setFontSize(9)
+  doc.setFont('helvetica', 'normal')
+  doc.text(`Data: ${new Date().toLocaleDateString('pt-BR')}`, pageWidth - margin, y, { align: 'right' })
+  y += 5
+  doc.text(`Duração: ${exam.duration} minutos`, pageWidth - margin, y, { align: 'right' })
+  y += 10
+
+  // === IDENTIFICAÇÃO DO CANDIDATO ===
+  doc.setDrawColor(200, 200, 200)
+  doc.setLineWidth(0.5)
+  doc.line(margin, y, pageWidth - margin, y)
+  y += 8
+
+  doc.setFontSize(11)
+  doc.setFont('helvetica', 'bold')
+  doc.text('IDENTIFICAÇÃO DO CANDIDATO', margin, y)
+  y += 8
+
+  doc.setFontSize(10)
+  doc.setFont('helvetica', 'normal')
+  doc.text('Nome: _____________________________________________________________', margin, y)
+  y += 10
+
+  // Código de barras (se tiver userId)
+  if (userId) {
     try {
-      const doc = new PDFDocument({
-        size: 'A4',
-        margins: {
-          top: 50,
-          bottom: 50,
-          left: 50,
-          right: 50,
-        },
+      // Criar canvas temporário para gerar barcode
+      const canvas = document.createElement('canvas')
+      JsBarcode(canvas, userId, {
+        format: 'CODE128',
+        width: 2,
+        height: 40,
+        displayValue: true,
+        fontSize: 12,
       })
 
-      const chunks: Buffer[] = []
-
-      doc.on('data', (chunk) => chunks.push(chunk))
-      doc.on('end', () => resolve(Buffer.concat(chunks)))
-      doc.on('error', reject)
-
-      // Cabeçalho com nome da prova
-      doc.fontSize(20).font('Helvetica-Bold').text(exam.name, { align: 'center' })
-      doc.moveDown(0.5)
-
-      if (exam.description) {
-        doc.fontSize(12).font('Helvetica').text(exam.description, { align: 'center' })
-        doc.moveDown(0.5)
-      }
-
-      // Informações da prova
-      doc.fontSize(10).font('Helvetica')
-      doc.text(`Data: ${new Date().toLocaleDateString('pt-BR')}`, { align: 'right' })
-      doc.text(`Tempo: ${exam.duration} minutos`, { align: 'right' })
-      doc.moveDown(1)
-
-      // Linha divisória
-      doc.strokeColor('#000000').lineWidth(1).moveTo(50, doc.y).lineTo(545, doc.y).stroke()
-      doc.moveDown(0.5)
-
-      // Campos para preenchimento do aluno
-      doc.fontSize(11).font('Helvetica-Bold').text('IDENTIFICAÇÃO DO CANDIDATO', { underline: true })
-      doc.moveDown(0.3)
-
-      doc.fontSize(10).font('Helvetica')
-      doc.text('Nome: ____________________________________________________________________')
-      doc.moveDown(0.8)
-
-      // Gerar e incluir barcode se tiver userId
-      if (userId) {
-        try {
-          const barcodeBuffer = bwipjs.toBuffer({
-            bcid: 'code128',
-            text: userId,
-            scale: 3,
-            height: 10,
-            includetext: true,
-            textxalign: 'center',
-          })
-
-          doc.text('Código de Barras:')
-          doc.moveDown(0.3)
-          doc.image(barcodeBuffer, {
-            width: 200,
-            align: 'left',
-          })
-          doc.moveDown(0.5)
-        } catch (error) {
-          console.error('Erro ao gerar barcode:', error)
-          doc.text(`Código: ${userId}`)
-          doc.moveDown(0.5)
-        }
-      } else {
-        doc.text('Código: ____________________________________________________________________')
-        doc.moveDown(0.8)
-      }
-
-      doc.text('Assinatura: _________________________________________________________________')
-      doc.moveDown(1)
-
-      // Linha divisória
-      doc.strokeColor('#000000').lineWidth(1).moveTo(50, doc.y).lineTo(545, doc.y).stroke()
-      doc.moveDown(1)
-
-      // Instruções
-      doc.fontSize(11).font('Helvetica-Bold').text('INSTRUÇÕES:', { underline: true })
-      doc.moveDown(0.3)
-      doc.fontSize(9).font('Helvetica')
-      doc.text('• Preencha todos os campos de identificação acima.')
-      doc.text('• Leia atentamente cada questão antes de responder.')
-      doc.text('• Para questões objetivas, marque apenas UMA alternativa.')
-      doc.text('• Para questões discursivas, escreva de forma clara e legível.')
-      doc.text('• Não é permitido rasuras nas respostas.')
-      doc.moveDown(1)
-
-      // Linha divisória
-      doc.strokeColor('#000000').lineWidth(1).moveTo(50, doc.y).lineTo(545, doc.y).stroke()
-      doc.moveDown(1)
-
-      // Questões
-      for (let i = 0; i < exam.questions.length; i++) {
-        const question = exam.questions[i]
-
-        // Verificar se precisa de nova página
-        if (doc.y > 650) {
-          doc.addPage()
-        }
-
-        renderQuestionOnPDF(doc, question, i + 1)
-
-        // Espaçamento entre questões
-        if (i < exam.questions.length - 1) {
-          doc.moveDown(1.5)
-        }
-      }
-
-      // Rodapé em todas as páginas
-      const totalPages = (doc as any).bufferedPageRange().count
-      for (let i = 0; i < totalPages; i++) {
-        doc.switchToPage(i)
-        doc.fontSize(8).font('Helvetica').text(
-          `Página ${i + 1} de ${totalPages} - ${exam.name}`,
-          50,
-          doc.page.height - 30,
-          { align: 'center' }
-        )
-      }
-
-      doc.end()
+      const barcodeImage = canvas.toDataURL('image/png')
+      doc.text('Código de Barras:', margin, y)
+      y += 5
+      doc.addImage(barcodeImage, 'PNG', margin, y, 80, 20)
+      y += 25
     } catch (error) {
-      reject(error)
+      console.error('Erro ao gerar barcode:', error)
+      doc.text(`Código: ${userId}`, margin, y)
+      y += 8
     }
+  } else {
+    doc.text('Código: ___________________________________________________________', margin, y)
+    y += 10
+  }
+
+  doc.text('Assinatura: ________________________________________________________', margin, y)
+  y += 10
+
+  // Linha divisória
+  doc.setDrawColor(200, 200, 200)
+  doc.line(margin, y, pageWidth - margin, y)
+  y += 8
+
+  // === INSTRUÇÕES ===
+  doc.setFontSize(11)
+  doc.setFont('helvetica', 'bold')
+  doc.text('INSTRUÇÕES:', margin, y)
+  y += 6
+
+  doc.setFontSize(9)
+  doc.setFont('helvetica', 'normal')
+  const instructions = [
+    '• Preencha todos os campos de identificação acima.',
+    '• Leia atentamente cada questão antes de responder.',
+    '• Para questões objetivas, marque apenas UMA alternativa.',
+    '• Para questões discursivas, escreva de forma clara e legível.',
+    '• Não é permitido rasuras nas respostas.',
+  ]
+
+  instructions.forEach(instruction => {
+    doc.text(instruction, margin + 2, y)
+    y += 5
   })
-}
 
-function renderQuestionOnPDF(doc: typeof PDFDocument.prototype, question: Question, number: number) {
-  // Número e enunciado da questão
-  doc.fontSize(11).font('Helvetica-Bold').text(`Questão ${number}:`, { continued: false })
-  doc.moveDown(0.3)
+  y += 5
+  doc.setDrawColor(200, 200, 200)
+  doc.line(margin, y, pageWidth - margin, y)
+  y += 10
 
-  doc.fontSize(10).font('Helvetica')
+  // === QUESTÕES ===
+  exam.questions.forEach((question, idx) => {
+    checkPage(40)
 
-  // Enunciado
-  if (question.statement) {
-    doc.text(question.statement, { align: 'justify' })
-    doc.moveDown(0.3)
-  }
+    // Número da questão
+    doc.setFontSize(11)
+    doc.setFont('helvetica', 'bold')
+    doc.text(`Questão ${idx + 1}:`, margin, y)
+    y += 6
 
-  // Fonte do enunciado
-  if (question.statementSource) {
-    doc.fontSize(8).fillColor('#666666').text(`Fonte: ${question.statementSource}`, { italic: true })
-    doc.fillColor('#000000')
-    doc.fontSize(10)
-    doc.moveDown(0.3)
-  }
-
-  // URL da imagem (se tiver)
-  if (question.imageUrl) {
-    doc.fontSize(8).fillColor('#0066CC').text(`Imagem: ${question.imageUrl}`, { link: question.imageUrl })
-    doc.fillColor('#000000')
-    doc.fontSize(10)
-    doc.moveDown(0.3)
-  }
-
-  // Comando da questão (para discursivas)
-  if (question.command && question.type === 'discursive') {
-    doc.fontSize(10).font('Helvetica-Bold').text(question.command)
-    doc.font('Helvetica')
-    doc.moveDown(0.5)
-  }
-
-  if (question.type === 'multiple-choice') {
-    // Renderizar alternativas
-    doc.moveDown(0.3)
-
-    const alternatives = ['A', 'B', 'C', 'D', 'E']
-    question.alternatives.forEach((alt, idx) => {
-      if (doc.y > 700) {
-        doc.addPage()
-      }
-
-      const letter = alternatives[idx]
-      doc.fontSize(10)
-
-      // Checkbox
-      doc.rect(doc.x, doc.y, 10, 10).stroke()
-      doc.text(` ${letter}) ${alt.text}`, doc.x + 15, doc.y - 10)
-      doc.moveDown(0.5)
-    })
-  } else if (question.type === 'discursive') {
-    // Espaço para resposta discursiva
-    doc.fontSize(9).fillColor('#666666').text(`Espaço para resposta (máximo ${question.maxScore} pontos):`)
-    doc.fillColor('#000000')
-    doc.moveDown(0.5)
-
-    // Linhas para escrever
-    const numberOfLines = 10
-    for (let i = 0; i < numberOfLines; i++) {
-      if (doc.y > 750) {
-        doc.addPage()
-      }
-      doc.strokeColor('#CCCCCC').lineWidth(0.5)
-        .moveTo(50, doc.y)
-        .lineTo(545, doc.y)
-        .stroke()
-      doc.moveDown(0.6)
+    // Enunciado
+    if (question.statement) {
+      doc.setFontSize(10)
+      doc.setFont('helvetica', 'normal')
+      const lines = doc.splitTextToSize(question.statement, pageWidth - 2 * margin)
+      lines.forEach((line: string) => {
+        checkPage(10)
+        doc.text(line, margin, y)
+        y += 5
+      })
+      y += 2
     }
-    doc.strokeColor('#000000')
+
+    // Fonte do enunciado
+    if (question.statementSource) {
+      checkPage(8)
+      doc.setFontSize(8)
+      doc.setTextColor(100, 100, 100)
+      doc.text(`Fonte: ${question.statementSource}`, margin, y)
+      doc.setTextColor(0, 0, 0)
+      y += 5
+    }
+
+    // URL da imagem
+    if (question.imageUrl) {
+      checkPage(8)
+      doc.setFontSize(8)
+      doc.setTextColor(0, 102, 204)
+      doc.text(`Imagem: ${question.imageUrl}`, margin, y)
+      doc.setTextColor(0, 0, 0)
+      y += 5
+    }
+
+    // Comando (para discursivas)
+    if (question.command && question.type === 'discursive') {
+      checkPage(8)
+      doc.setFontSize(10)
+      doc.setFont('helvetica', 'bold')
+      const commandLines = doc.splitTextToSize(question.command, pageWidth - 2 * margin)
+      commandLines.forEach((line: string) => {
+        checkPage(8)
+        doc.text(line, margin, y)
+        y += 5
+      })
+      y += 3
+    }
+
+    if (question.type === 'multiple-choice') {
+      // Alternativas com checkboxes
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(10)
+      y += 3
+
+      const letters = ['A', 'B', 'C', 'D', 'E']
+      question.alternatives.forEach((alt, altIdx) => {
+        checkPage(12)
+
+        // Checkbox
+        doc.setDrawColor(0, 0, 0)
+        doc.setLineWidth(0.3)
+        doc.rect(margin + 2, y - 3, 4, 4)
+
+        // Alternativa
+        const altText = `${letters[altIdx]}) ${alt.text}`
+        const altLines = doc.splitTextToSize(altText, pageWidth - 2 * margin - 10)
+        altLines.forEach((line: string, lineIdx: number) => {
+          if (lineIdx > 0) checkPage(5)
+          doc.text(line, margin + 8, y)
+          y += 5
+        })
+        y += 2
+      })
+    } else if (question.type === 'discursive') {
+      // Espaço para resposta discursiva
+      checkPage(60)
+
+      doc.setFontSize(9)
+      doc.setTextColor(100, 100, 100)
+      doc.text(`Espaço para resposta (máximo ${question.maxScore} pontos):`, margin, y)
+      doc.setTextColor(0, 0, 0)
+      y += 6
+
+      // Linhas para escrever
+      const numberOfLines = 10
+      doc.setDrawColor(200, 200, 200)
+      doc.setLineWidth(0.3)
+
+      for (let i = 0; i < numberOfLines; i++) {
+        checkPage(10)
+        doc.line(margin, y, pageWidth - margin, y)
+        y += 6
+      }
+    }
+
+    y += 8
+  })
+
+  // === RODAPÉ EM TODAS AS PÁGINAS ===
+  const totalPages = doc.getNumberOfPages()
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i)
+
+    doc.setDrawColor(200, 200, 200)
+    doc.setLineWidth(0.3)
+    doc.line(margin, pageHeight - 15, pageWidth - margin, pageHeight - 15)
+
+    doc.setFontSize(8)
+    doc.setTextColor(100, 100, 100)
+    doc.setFont('helvetica', 'normal')
+    doc.text(
+      `Página ${i} de ${totalPages} - ${exam.name}`,
+      pageWidth / 2,
+      pageHeight - 10,
+      { align: 'center' }
+    )
   }
+
+  return doc.output('blob')
 }

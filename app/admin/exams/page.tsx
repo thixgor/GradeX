@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Exam } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
+import { generateExamPDF, downloadPDF } from '@/lib/pdf-generator'
 import { ArrowLeft, Edit, Trash2, Eye, EyeOff, Plus, Play, StopCircle, RotateCcw, FileCheck, FileDown } from 'lucide-react'
 
 export default function AdminExamsPage() {
@@ -121,23 +122,13 @@ export default function AdminExamsPage() {
     }
   }
 
-  async function downloadExamPDF(exam: Exam) {
+  function handleDownloadExamPDF(exam: Exam) {
     try {
-      const res = await fetch(`/api/exams/${exam._id}/generate-pdf`)
-
-      if (!res.ok) throw new Error('Erro ao gerar PDF')
-
-      const blob = await res.blob()
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `${exam.name}.pdf`
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      window.URL.revokeObjectURL(url)
+      const blob = generateExamPDF(exam)
+      downloadPDF(blob, `${exam.name}.pdf`)
     } catch (error: any) {
-      alert(error.message)
+      console.error('Erro ao gerar PDF:', error)
+      alert('Erro ao gerar PDF: ' + error.message)
     }
   }
 
@@ -298,7 +289,7 @@ export default function AdminExamsPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => downloadExamPDF(exam)}
+                      onClick={() => handleDownloadExamPDF(exam)}
                       className="border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950"
                     >
                       <FileDown className="h-4 w-4 mr-2" />
