@@ -56,10 +56,10 @@ export default function ProfilePage() {
 
   async function loadUserName() {
     try {
-      const res = await fetch('/api/auth/session')
+      const res = await fetch('/api/auth/me')
       if (res.ok) {
         const data = await res.json()
-        setUserName(data.session?.name || 'Usuario')
+        setUserName(data.user?.name || 'Usuario')
       }
     } catch (error) {
       console.error('Erro ao carregar nome:', error)

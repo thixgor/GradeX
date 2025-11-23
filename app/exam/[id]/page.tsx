@@ -106,18 +106,6 @@ export default function ExamPage({ params }: { params: { id: string } }) {
 
       setExam(data.exam)
 
-      // DEBUG: Verificar tipos das questões
-      console.log('=== DEBUG: Tipos das questões ===')
-      data.exam.questions.forEach((q: any, idx: number) => {
-        console.log(`Questão ${idx + 1}:`, {
-          id: q.id,
-          type: q.type,
-          typeof_type: typeof q.type,
-          has_alternatives: !!q.alternatives,
-          alternatives_length: q.alternatives?.length || 0
-        })
-      })
-
       // Inicializa respostas
       const initialAnswers: UserAnswer[] = data.exam.questions.map((q: any) => ({
         questionId: q.id,

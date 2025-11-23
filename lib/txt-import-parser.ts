@@ -40,6 +40,7 @@ export function parseTxtFile(content: string, numberOfAlternatives: number): Que
     const question: Question = {
       id: uuidv4(),
       number: index + 1,
+      type: 'multiple-choice', // IMPORTANTE: Define o tipo como múltipla escolha
       statement: data['ENUNCIADO'] || '',
       statementSource: data['FONTE-ENUNCIADO'] || undefined,
       imageUrl: data['URL-IMAGEM-QUESTAO'] || undefined,
