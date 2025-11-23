@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { ToastAlert } from '@/components/ui/toast-alert'
 import { ArrowLeft, CheckCircle, Clock, FileText, Download } from 'lucide-react'
 import { generateGabaritoPDF, downloadPDF } from '@/lib/pdf-generator'
 
@@ -35,6 +36,8 @@ export default function ProfilePage() {
   const [submissions, setSubmissions] = useState<UserSubmission[]>([])
   const [loading, setLoading] = useState(true)
   const [userName, setUserName] = useState('')
+  const [toastOpen, setToastOpen] = useState(false)
+  const [toastMessage, setToastMessage] = useState('')
 
   useEffect(() => {
     loadSubmissions()
@@ -89,13 +92,31 @@ export default function ProfilePage() {
       downloadPDF(blob, `Gabarito-${exam.title}.pdf`)
     } catch (error: any) {
       console.error('Erro ao baixar gabarito:', error)
-      alert('Erro ao gerar gabarito: ' + error.message)
+      setToastMessage('Erro ao gerar gabarito: ' + error.message)
+      setToastOpen(true)
     }
   }
 
   function isExamFinished(submission: UserSubmission): boolean {
-    if (!submission.examEndTime) return true // Se não tem endTime, assume que terminou
-    return new Date() > new Date(submission.examEndTime)
+    // Se não tem endTime, NÃO libera (por segurança)
+    if (!submission.examEndTime) {
+      console.log('⚠️ Prova sem examEndTime:', submission.examTitle)
+      return false
+    }
+
+    const now = new Date()
+    const endTime = new Date(submission.examEndTime)
+    const finished = now > endTime
+
+    // Debug para entender o que está acontecendo
+    console.log('🔍 Verificando prova:', {
+      title: submission.examTitle,
+      now: now.toISOString(),
+      endTime: endTime.toISOString(),
+      finished
+    })
+
+    return finished
   }
 
   function getStatusBadge(submission: UserSubmission) {
@@ -282,6 +303,13 @@ export default function ProfilePage() {
           </div>
         )}
       </main>
+
+      <ToastAlert
+        open={toastOpen}
+        onOpenChange={setToastOpen}
+        message={toastMessage}
+        type="error"
+      />
     </div>
   )
 }

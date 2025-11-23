@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { ToastAlert } from '@/components/ui/toast-alert'
 import { Barcode } from '@/components/barcode'
 import { Exam, ExamSubmission } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
@@ -17,6 +18,9 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
   const [exam, setExam] = useState<Exam | null>(null)
   const [submission, setSubmission] = useState<ExamSubmission | null>(null)
   const [loading, setLoading] = useState(true)
+  const [isExamFinished, setIsExamFinished] = useState(false)
+  const [toastOpen, setToastOpen] = useState(false)
+  const [toastMessage, setToastMessage] = useState('')
 
   useEffect(() => {
     loadData()
@@ -30,14 +34,28 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
       if (!examRes.ok) throw new Error(examData.error)
       setExam(examData.exam)
 
+      // Verifica se a prova terminou
+      const now = new Date()
+      const endTime = new Date(examData.exam.endTime)
+      const finished = now > endTime
+      setIsExamFinished(finished)
+
+      console.log('🔍 Verificando prova na página de relatório:', {
+        title: examData.exam.title,
+        now: now.toISOString(),
+        endTime: endTime.toISOString(),
+        finished
+      })
+
       // Carrega a submissão do usuário
       const subRes = await fetch(`/api/exams/${id}/submissions/${userId}`)
       const subData = await subRes.json()
       if (!subRes.ok) throw new Error(subData.error)
       setSubmission(subData.submission)
     } catch (error: any) {
-      alert(error.message)
-      router.push(`/exam/${id}/results`)
+      setToastMessage(error.message)
+      setToastOpen(true)
+      setTimeout(() => router.push(`/exam/${id}/results`), 2000)
     } finally {
       setLoading(false)
     }
@@ -207,10 +225,20 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
             <CardHeader>
               <CardTitle>Respostas Detalhadas</CardTitle>
               <CardDescription>
-                Gabarito completo com respostas do usuário
+                {isExamFinished
+                  ? 'Gabarito completo com respostas do usuário'
+                  : 'Suas respostas (gabarito liberado após término da prova)'}
               </CardDescription>
             </CardHeader>
             <CardContent>
+              {!isExamFinished && (
+                <div className="mb-6 p-4 bg-orange-50 dark:bg-orange-950 rounded-lg border border-orange-200 dark:border-orange-800">
+                  <p className="text-sm text-orange-800 dark:text-orange-200 text-center">
+                    <Clock className="h-4 w-4 inline mr-2" />
+                    A prova ainda está em andamento. O gabarito será liberado após o término.
+                  </p>
+                </div>
+              )}
               <div className="space-y-6">
                 {exam.questions.map((question) => {
                   const userAnswer = submission.answers.find(a => a.questionId === question.id)
@@ -224,34 +252,40 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
                       <div key={question.id} className="border rounded-lg p-4">
                         <div className="flex items-start justify-between mb-3">
                           <h3 className="font-semibold">Questão {question.number} (Múltipla Escolha)</h3>
-                          {isCorrect ? (
-                            <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
-                              <CheckCircle className="h-5 w-5" />
-                              <span className="text-sm font-medium">Correta</span>
-                            </div>
-                          ) : (
-                            <div className="flex items-center gap-1 text-red-600 dark:text-red-400">
-                              <XCircle className="h-5 w-5" />
-                              <span className="text-sm font-medium">Incorreta</span>
-                            </div>
+                          {isExamFinished && (
+                            <>
+                              {isCorrect ? (
+                                <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
+                                  <CheckCircle className="h-5 w-5" />
+                                  <span className="text-sm font-medium">Correta</span>
+                                </div>
+                              ) : (
+                                <div className="flex items-center gap-1 text-red-600 dark:text-red-400">
+                                  <XCircle className="h-5 w-5" />
+                                  <span className="text-sm font-medium">Incorreta</span>
+                                </div>
+                              )}
+                            </>
                           )}
                         </div>
 
                         <p className="text-sm text-muted-foreground mb-3">{question.statement}</p>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 bg-muted p-3 rounded">
+                        <div className={`grid grid-cols-1 ${isExamFinished ? 'md:grid-cols-2' : ''} gap-3 bg-muted p-3 rounded`}>
                           <div>
                             <p className="text-xs font-medium text-muted-foreground mb-1">Resposta do Usuário:</p>
-                            <p className={`text-sm font-semibold ${isCorrect ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                            <p className={`text-sm font-semibold ${isExamFinished ? (isCorrect ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400') : ''}`}>
                               {selectedAlt ? `${selectedAlt.letter}) ${selectedAlt.text}` : 'Não respondida'}
                             </p>
                           </div>
-                          <div>
-                            <p className="text-xs font-medium text-muted-foreground mb-1">Gabarito:</p>
-                            <p className="text-sm font-semibold text-primary">
-                              {correctAlt ? `${correctAlt.letter}) ${correctAlt.text}` : 'N/A'}
-                            </p>
-                          </div>
+                          {isExamFinished && (
+                            <div>
+                              <p className="text-xs font-medium text-muted-foreground mb-1">Gabarito:</p>
+                              <p className="text-sm font-semibold text-primary">
+                                {correctAlt ? `${correctAlt.letter}) ${correctAlt.text}` : 'N/A'}
+                              </p>
+                            </div>
+                          )}
                         </div>
                       </div>
                     )
@@ -350,6 +384,13 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
           </Card>
         </div>
       </main>
+
+      <ToastAlert
+        open={toastOpen}
+        onOpenChange={setToastOpen}
+        message={toastMessage}
+        type="error"
+      />
     </div>
   )
 }

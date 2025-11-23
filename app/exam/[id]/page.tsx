@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Countdown } from '@/components/countdown'
 import { Toast } from '@/components/toast'
+import { ToastAlert } from '@/components/ui/toast-alert'
 import { SignaturePad } from '@/components/signature-pad'
 import { ExamTimer } from '@/components/exam-timer'
 import { Barcode } from '@/components/barcode'
@@ -40,6 +41,15 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const [alreadySubmitted, setAlreadySubmitted] = useState(false)
   const [existingSubmissionId, setExistingSubmissionId] = useState<string>('')
   const [userId, setUserId] = useState<string>('')
+  const [toastOpen, setToastOpen] = useState(false)
+  const [toastMessage, setToastMessage] = useState('')
+  const [toastType, setToastType] = useState<'error' | 'success' | 'info'>('error')
+
+  const showToastMessage = (message: string, type: 'error' | 'success' | 'info' = 'error') => {
+    setToastMessage(message)
+    setToastType(type)
+    setToastOpen(true)
+  }
 
   useEffect(() => {
     checkExistingSubmission()
@@ -115,8 +125,8 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       }))
       setAnswers(initialAnswers)
     } catch (error: any) {
-      alert(error.message)
-      router.push('/')
+      showToastMessage(error.message)
+      setTimeout(() => router.push('/'), 2000)
     } finally {
       setLoading(false)
     }
@@ -174,12 +184,12 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   async function handleSubmit() {
     // Validações
     if (!userName.trim()) {
-      alert('Por favor, preencha seu nome completo')
+      showToastMessage('Por favor, preencha seu nome completo', 'info')
       return
     }
 
     if (exam?.themePhrase && !themeTranscription.trim()) {
-      alert('Por favor, transcreva a frase-tema')
+      showToastMessage('Por favor, transcreva a frase-tema', 'info')
       return
     }
 
@@ -228,7 +238,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       // Marcar como submetido ao invés de redirecionar
       setSubmitted(true)
     } catch (error: any) {
-      alert(error.message)
+      showToastMessage(error.message)
     } finally {
       setSubmitting(false)
     }
@@ -571,7 +581,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                         const blob = generateGabaritoPDF(data.exam)
                         downloadPDF(blob, `Gabarito-${data.exam.title}.pdf`)
                       } catch (error: any) {
-                        alert('Erro ao gerar gabarito: ' + error.message)
+                        showToastMessage('Erro ao gerar gabarito: ' + error.message)
                       }
                     }}
                     variant="outline"
@@ -615,8 +625,8 @@ export default function ExamPage({ params }: { params: { id: string } }) {
             <ExamTimer
               endTime={exam.endTime}
               onTimeUp={() => {
-                alert('O tempo da prova acabou!')
-                router.push('/')
+                showToastMessage('O tempo da prova acabou!', 'info')
+                setTimeout(() => router.push('/'), 2000)
               }}
             />
             <ThemeToggle />
@@ -813,6 +823,13 @@ export default function ExamPage({ params }: { params: { id: string } }) {
           </CardContent>
         </Card>
       </main>
+
+      <ToastAlert
+        open={toastOpen}
+        onOpenChange={setToastOpen}
+        message={toastMessage}
+        type={toastType}
+      />
     </div>
   )
 }
