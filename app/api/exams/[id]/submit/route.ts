@@ -105,7 +105,66 @@ export async function POST(
 
     const result = await submissionsCollection.insertOne(submission)
 
-    // Se tem questões discursivas, avisa que aguarda correção
+    // Se tem questões discursivas E correção automática, corrigir agora
+    if (hasDiscursiveQuestions && exam.discursiveCorrectionMethod === 'ai') {
+      try {
+        // Importar dinamicamente para evitar erro de build
+        const { correctWithGemini } = await import('@/lib/gemini-corrector')
+        const corrections: any[] = []
+
+        for (const question of exam.questions.filter(q => q.type === 'discursive')) {
+          const answer = answers.find((a: any) => a.questionId === question.id)
+          if (answer && answer.discursiveText) {
+            try {
+              const result = await correctWithGemini(
+                question,
+                answer.discursiveText,
+                exam.aiRigor || 0.45
+              )
+
+              corrections.push({
+                questionId: question.id,
+                score: result.score,
+                maxScore: result.maxScore,
+                feedback: result.feedback,
+                method: 'ai',
+                correctedAt: new Date(),
+                keyPointsFound: result.keyPointsFound,
+              })
+            } catch (error) {
+              console.error(`Erro ao corrigir questão ${question.number}:`, error)
+            }
+          }
+        }
+
+        // Atualizar submissão com correções
+        if (corrections.length > 0) {
+          const discursiveScore = corrections.reduce((sum, c) => sum + c.score, 0)
+          await submissionsCollection.updateOne(
+            { _id: result.insertedId },
+            {
+              $set: {
+                corrections,
+                discursiveScore,
+                correctionStatus: 'corrected',
+              },
+            }
+          )
+
+          return NextResponse.json({
+            success: true,
+            message: 'Prova submetida e corrigida automaticamente!',
+            score: discursiveScore,
+            submissionId: result.insertedId.toString(),
+          })
+        }
+      } catch (error) {
+        console.error('Erro na correção automática:', error)
+        // Se falhar, continua com status pending
+      }
+    }
+
+    // Se tem questões discursivas com correção manual, avisa que aguarda correção
     if (hasDiscursiveQuestions) {
       return NextResponse.json({
         success: true,

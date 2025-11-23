@@ -54,6 +54,9 @@ export interface Exam {
   endTime: Date
   createdBy: string
   isHidden: boolean
+  // Para questões discursivas
+  discursiveCorrectionMethod?: 'manual' | 'ai' // Como corrigir questões discursivas
+  aiRigor?: number // Rigor da IA (0-1) se usar correção automática
   createdAt: Date
   updatedAt: Date
 }

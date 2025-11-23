@@ -36,6 +36,8 @@ export default function CreateExamPage() {
     endTime: '',
     isHidden: false,
     questionType: 'multiple-choice' as QuestionType,
+    discursiveCorrectionMethod: 'ai' as 'manual' | 'ai',
+    aiRigor: 0.45,
   })
 
   const [questions, setQuestions] = useState<Question[]>([])
@@ -344,6 +346,64 @@ export default function CreateExamPage() {
                   <option value="discursive">Discursivas (Redação/Dissertação)</option>
                 </select>
               </div>
+
+              {examData.questionType === 'discursive' && (
+                <div className="border-t pt-4 space-y-4 bg-purple-50 dark:bg-purple-950 p-4 rounded-lg">
+                  <h3 className="font-semibold text-purple-900 dark:text-purple-100">
+                    Configurações de Correção Discursiva
+                  </h3>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="discursiveCorrectionMethod">Método de Correção *</Label>
+                    <select
+                      id="discursiveCorrectionMethod"
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                      value={examData.discursiveCorrectionMethod}
+                      onChange={(e) => setExamData({
+                        ...examData,
+                        discursiveCorrectionMethod: e.target.value as 'manual' | 'ai'
+                      })}
+                    >
+                      <option value="ai">🤖 Correção Automática por IA (Gemini 2.0)</option>
+                      <option value="manual">👤 Correção Manual pelo Professor</option>
+                    </select>
+                    <p className="text-xs text-muted-foreground">
+                      {examData.discursiveCorrectionMethod === 'ai'
+                        ? 'As questões serão corrigidas automaticamente pela IA assim que o aluno submeter a prova.'
+                        : 'Você precisará corrigir manualmente cada questão discursiva na área de correções.'}
+                    </p>
+                  </div>
+
+                  {examData.discursiveCorrectionMethod === 'ai' && (
+                    <div className="space-y-2">
+                      <Label htmlFor="aiRigor">
+                        Rigor da IA: {(examData.aiRigor * 100).toFixed(0)}%
+                      </Label>
+                      <input
+                        id="aiRigor"
+                        type="range"
+                        min="0"
+                        max="1"
+                        step="0.05"
+                        value={examData.aiRigor}
+                        onChange={(e) => setExamData({
+                          ...examData,
+                          aiRigor: parseFloat(e.target.value)
+                        })}
+                        className="w-full"
+                      />
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>Leniente (aceita menções parciais)</span>
+                        <span>Moderado (exige clareza)</span>
+                        <span>Rigoroso (exige precisão)</span>
+                      </div>
+                      <p className="text-xs text-purple-700 dark:text-purple-300">
+                        Recomendado: 45% (moderado) - A IA analisa se o aluno mencionou os pontos-chave esperados
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div className="space-y-2">
                 <Label htmlFor="scoringMethod">Método de Pontuação *</Label>

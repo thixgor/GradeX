@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Exam } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
-import { ArrowLeft, Edit, Trash2, Eye, EyeOff, Plus, Play, StopCircle, RotateCcw } from 'lucide-react'
+import { ArrowLeft, Edit, Trash2, Eye, EyeOff, Plus, Play, StopCircle, RotateCcw, FileCheck } from 'lucide-react'
 
 export default function AdminExamsPage() {
   const router = useRouter()
@@ -260,6 +260,18 @@ export default function AdminExamsPage() {
                       >
                         <RotateCcw className="h-4 w-4 mr-2" />
                         Zerar Resultados
+                      </Button>
+                    )}
+
+                    {exam.questions.some(q => q.type === 'discursive') && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => router.push(`/admin/exams/${exam._id}/corrections`)}
+                        className="border-purple-500 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-950"
+                      >
+                        <FileCheck className="h-4 w-4 mr-2" />
+                        Corrigir Discursivas
                       </Button>
                     )}
 

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { NotificationsBell } from '@/components/notifications-bell'
 import { Exam } from '@/lib/types'
 import { formatDate, isBetweenDates } from '@/lib/utils'
 import { Clock, Calendar, FileText, LogOut, Settings, Plus } from 'lucide-react'
@@ -158,6 +159,7 @@ export default function HomePage() {
                 </Button>
               </>
             )}
+            {user && <NotificationsBell />}
             <ThemeToggle />
             <Button variant="ghost" size="icon" onClick={handleLogout}>
               <LogOut className="h-5 w-5" />
