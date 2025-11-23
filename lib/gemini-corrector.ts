@@ -1,7 +1,7 @@
 import { Question, KeyPoint, Settings } from './types'
 import { getDb } from './mongodb'
 
-const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent'
+const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent'
 
 /**
  * Busca a API Key do Gemini do banco de dados
@@ -57,10 +57,11 @@ export async function correctWithGemini(
   const apiKey = await getGeminiApiKey()
 
   try {
-    const response = await fetch(`${GEMINI_ENDPOINT}?key=${apiKey}`, {
+    const response = await fetch(GEMINI_ENDPOINT, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'X-goog-api-key': apiKey,
       },
       body: JSON.stringify({
         contents: [
@@ -213,10 +214,11 @@ export async function testGeminiConnection(apiKey?: string): Promise<boolean> {
     // Usar API key fornecida ou buscar do banco
     const key = apiKey || await getGeminiApiKey()
 
-    const response = await fetch(`${GEMINI_ENDPOINT}?key=${key}`, {
+    const response = await fetch(GEMINI_ENDPOINT, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'X-goog-api-key': key,
       },
       body: JSON.stringify({
         contents: [
