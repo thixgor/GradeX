@@ -11,6 +11,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { Countdown } from '@/components/countdown'
 import { Toast } from '@/components/toast'
 import { ToastAlert } from '@/components/ui/toast-alert'
+import { BanChecker } from '@/components/ban-checker'
 import { SignaturePad } from '@/components/signature-pad'
 import { ExamTimer } from '@/components/exam-timer'
 import { Barcode } from '@/components/barcode'
@@ -538,6 +539,9 @@ export default function ExamPage({ params }: { params: { id: string } }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
+      {/* Verificador de Banimento */}
+      <BanChecker />
+
       {/* Modal - Prova já realizada */}
       {alreadySubmitted && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">

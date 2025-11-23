@@ -1,6 +1,9 @@
 import { SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
 import bcrypt from 'bcryptjs'
+import { getDb } from './mongodb'
+import { User } from './types'
+import { ObjectId } from 'mongodb'
 
 const secret = new TextEncoder().encode(
   process.env.JWT_SECRET || 'your-secret-key-change-this'
@@ -43,7 +46,28 @@ export async function getSession(): Promise<TokenPayload | null> {
 
   if (!token) return null
 
-  return verifyToken(token.value)
+  const payload = await verifyToken(token.value)
+  if (!payload) return null
+
+  // Verificar se o usuário está banido no banco de dados
+  try {
+    const db = await getDb()
+    const usersCollection = db.collection<User>('users')
+    const user = await usersCollection.findOne({ _id: new ObjectId(payload.userId) })
+
+    // Se usuário não existe ou está banido, invalida a sessão
+    if (!user || user.banned) {
+      // Remove o cookie para forçar logout
+      await removeAuthCookie()
+      return null
+    }
+
+    return payload
+  } catch (error) {
+    console.error('Error checking user ban status:', error)
+    // Em caso de erro, permite a sessão continuar (fail-safe)
+    return payload
+  }
 }
 
 export async function setAuthCookie(token: string): Promise<void> {

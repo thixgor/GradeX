@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { NotificationsBell } from '@/components/notifications-bell'
+import { BanChecker } from '@/components/ban-checker'
 import { Exam } from '@/lib/types'
 import { formatDate, isBetweenDates } from '@/lib/utils'
 import { Clock, Calendar, FileText, LogOut, Settings, Plus, User as UserIcon, Users } from 'lucide-react'
@@ -125,6 +126,9 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
+      {/* Verificador de Banimento */}
+      {user && <BanChecker />}
+
       {/* Header */}
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">

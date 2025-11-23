@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { ToastAlert } from '@/components/ui/toast-alert'
+import { BanChecker } from '@/components/ban-checker'
 import { ArrowLeft, CheckCircle, Clock, FileText, Download } from 'lucide-react'
 import { generateGabaritoPDF, downloadPDF } from '@/lib/pdf-generator'
 
@@ -148,6 +149,9 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
+      {/* Verificador de Banimento */}
+      <BanChecker />
+
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
