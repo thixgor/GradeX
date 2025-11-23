@@ -1,4 +1,6 @@
 import jsPDF from 'jspdf'
+import PDFDocument from 'pdfkit'
+import bwipjs from 'bwip-js'
 import { Exam, Question } from './types'
 
 export function generateGabaritoPDF(exam: Exam): Blob {
@@ -252,4 +254,214 @@ export function downloadPDF(blob: Blob, filename: string) {
   a.click()
   document.body.removeChild(a)
   URL.revokeObjectURL(url)
+}
+
+// Gerar PDF da prova para alunos preencherem (server-side com pdfkit)
+export async function generateExamPDF(exam: Exam, userId?: string): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    try {
+      const doc = new PDFDocument({
+        size: 'A4',
+        margins: {
+          top: 50,
+          bottom: 50,
+          left: 50,
+          right: 50,
+        },
+      })
+
+      const chunks: Buffer[] = []
+
+      doc.on('data', (chunk) => chunks.push(chunk))
+      doc.on('end', () => resolve(Buffer.concat(chunks)))
+      doc.on('error', reject)
+
+      // Cabeçalho com nome da prova
+      doc.fontSize(20).font('Helvetica-Bold').text(exam.name, { align: 'center' })
+      doc.moveDown(0.5)
+
+      if (exam.description) {
+        doc.fontSize(12).font('Helvetica').text(exam.description, { align: 'center' })
+        doc.moveDown(0.5)
+      }
+
+      // Informações da prova
+      doc.fontSize(10).font('Helvetica')
+      doc.text(`Data: ${new Date().toLocaleDateString('pt-BR')}`, { align: 'right' })
+      doc.text(`Tempo: ${exam.duration} minutos`, { align: 'right' })
+      doc.moveDown(1)
+
+      // Linha divisória
+      doc.strokeColor('#000000').lineWidth(1).moveTo(50, doc.y).lineTo(545, doc.y).stroke()
+      doc.moveDown(0.5)
+
+      // Campos para preenchimento do aluno
+      doc.fontSize(11).font('Helvetica-Bold').text('IDENTIFICAÇÃO DO CANDIDATO', { underline: true })
+      doc.moveDown(0.3)
+
+      doc.fontSize(10).font('Helvetica')
+      doc.text('Nome: ____________________________________________________________________')
+      doc.moveDown(0.8)
+
+      // Gerar e incluir barcode se tiver userId
+      if (userId) {
+        try {
+          const barcodeBuffer = bwipjs.toBuffer({
+            bcid: 'code128',
+            text: userId,
+            scale: 3,
+            height: 10,
+            includetext: true,
+            textxalign: 'center',
+          })
+
+          doc.text('Código de Barras:')
+          doc.moveDown(0.3)
+          doc.image(barcodeBuffer, {
+            width: 200,
+            align: 'left',
+          })
+          doc.moveDown(0.5)
+        } catch (error) {
+          console.error('Erro ao gerar barcode:', error)
+          doc.text(`Código: ${userId}`)
+          doc.moveDown(0.5)
+        }
+      } else {
+        doc.text('Código: ____________________________________________________________________')
+        doc.moveDown(0.8)
+      }
+
+      doc.text('Assinatura: _________________________________________________________________')
+      doc.moveDown(1)
+
+      // Linha divisória
+      doc.strokeColor('#000000').lineWidth(1).moveTo(50, doc.y).lineTo(545, doc.y).stroke()
+      doc.moveDown(1)
+
+      // Instruções
+      doc.fontSize(11).font('Helvetica-Bold').text('INSTRUÇÕES:', { underline: true })
+      doc.moveDown(0.3)
+      doc.fontSize(9).font('Helvetica')
+      doc.text('• Preencha todos os campos de identificação acima.')
+      doc.text('• Leia atentamente cada questão antes de responder.')
+      doc.text('• Para questões objetivas, marque apenas UMA alternativa.')
+      doc.text('• Para questões discursivas, escreva de forma clara e legível.')
+      doc.text('• Não é permitido rasuras nas respostas.')
+      doc.moveDown(1)
+
+      // Linha divisória
+      doc.strokeColor('#000000').lineWidth(1).moveTo(50, doc.y).lineTo(545, doc.y).stroke()
+      doc.moveDown(1)
+
+      // Questões
+      for (let i = 0; i < exam.questions.length; i++) {
+        const question = exam.questions[i]
+
+        // Verificar se precisa de nova página
+        if (doc.y > 650) {
+          doc.addPage()
+        }
+
+        renderQuestionOnPDF(doc, question, i + 1)
+
+        // Espaçamento entre questões
+        if (i < exam.questions.length - 1) {
+          doc.moveDown(1.5)
+        }
+      }
+
+      // Rodapé em todas as páginas
+      const totalPages = (doc as any).bufferedPageRange().count
+      for (let i = 0; i < totalPages; i++) {
+        doc.switchToPage(i)
+        doc.fontSize(8).font('Helvetica').text(
+          `Página ${i + 1} de ${totalPages} - ${exam.name}`,
+          50,
+          doc.page.height - 30,
+          { align: 'center' }
+        )
+      }
+
+      doc.end()
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
+function renderQuestionOnPDF(doc: typeof PDFDocument.prototype, question: Question, number: number) {
+  // Número e enunciado da questão
+  doc.fontSize(11).font('Helvetica-Bold').text(`Questão ${number}:`, { continued: false })
+  doc.moveDown(0.3)
+
+  doc.fontSize(10).font('Helvetica')
+
+  // Enunciado
+  if (question.statement) {
+    doc.text(question.statement, { align: 'justify' })
+    doc.moveDown(0.3)
+  }
+
+  // Fonte do enunciado
+  if (question.statementSource) {
+    doc.fontSize(8).fillColor('#666666').text(`Fonte: ${question.statementSource}`, { italic: true })
+    doc.fillColor('#000000')
+    doc.fontSize(10)
+    doc.moveDown(0.3)
+  }
+
+  // URL da imagem (se tiver)
+  if (question.imageUrl) {
+    doc.fontSize(8).fillColor('#0066CC').text(`Imagem: ${question.imageUrl}`, { link: question.imageUrl })
+    doc.fillColor('#000000')
+    doc.fontSize(10)
+    doc.moveDown(0.3)
+  }
+
+  // Comando da questão (para discursivas)
+  if (question.command && question.type === 'discursive') {
+    doc.fontSize(10).font('Helvetica-Bold').text(question.command)
+    doc.font('Helvetica')
+    doc.moveDown(0.5)
+  }
+
+  if (question.type === 'multiple-choice') {
+    // Renderizar alternativas
+    doc.moveDown(0.3)
+
+    const alternatives = ['A', 'B', 'C', 'D', 'E']
+    question.alternatives.forEach((alt, idx) => {
+      if (doc.y > 700) {
+        doc.addPage()
+      }
+
+      const letter = alternatives[idx]
+      doc.fontSize(10)
+
+      // Checkbox
+      doc.rect(doc.x, doc.y, 10, 10).stroke()
+      doc.text(` ${letter}) ${alt.text}`, doc.x + 15, doc.y - 10)
+      doc.moveDown(0.5)
+    })
+  } else if (question.type === 'discursive') {
+    // Espaço para resposta discursiva
+    doc.fontSize(9).fillColor('#666666').text(`Espaço para resposta (máximo ${question.maxScore} pontos):`)
+    doc.fillColor('#000000')
+    doc.moveDown(0.5)
+
+    // Linhas para escrever
+    const numberOfLines = 10
+    for (let i = 0; i < numberOfLines; i++) {
+      if (doc.y > 750) {
+        doc.addPage()
+      }
+      doc.strokeColor('#CCCCCC').lineWidth(0.5)
+        .moveTo(50, doc.y)
+        .lineTo(545, doc.y)
+        .stroke()
+      doc.moveDown(0.6)
+    }
+    doc.strokeColor('#000000')
+  }
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
-import { Bell, X } from 'lucide-react'
+import { Bell, X, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Notification } from '@/lib/types'
@@ -49,10 +49,8 @@ export function NotificationsBell() {
 
   async function markAsRead(notificationId: string) {
     try {
-      await fetch('/api/notifications', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ notificationId }),
+      await fetch(`/api/notifications/${notificationId}`, {
+        method: 'PATCH',
       })
       loadNotifications()
     } catch (error) {
@@ -60,14 +58,28 @@ export function NotificationsBell() {
     }
   }
 
-  async function markAllAsRead() {
+  async function deleteNotification(e: React.MouseEvent, notificationId: string) {
+    e.stopPropagation()
+    try {
+      await fetch(`/api/notifications/${notificationId}`, {
+        method: 'DELETE',
+      })
+      loadNotifications()
+    } catch (error) {
+      console.error('Erro ao deletar notificação:', error)
+    }
+  }
+
+  async function clearAllNotifications() {
+    if (!confirm('Deseja limpar todas as notificações?')) return
+
     try {
       await fetch('/api/notifications', {
         method: 'DELETE',
       })
       loadNotifications()
     } catch (error) {
-      console.error('Erro ao marcar todas:', error)
+      console.error('Erro ao limpar notificações:', error)
     }
   }
 
@@ -97,14 +109,15 @@ export function NotificationsBell() {
         <Card className="absolute right-0 top-12 w-80 max-w-[90vw] shadow-lg z-50 p-0 border">
           <div className="border-b p-4 flex items-center justify-between bg-card">
             <h3 className="font-semibold">Notificações</h3>
-            {unreadCount > 0 && (
+            {notifications.length > 0 && (
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={markAllAsRead}
-                className="text-xs h-auto py-1"
+                onClick={clearAllNotifications}
+                className="text-xs h-auto py-1 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
               >
-                Marcar todas
+                <Trash2 className="h-3 w-3 mr-1" />
+                Limpar todas
               </Button>
             )}
           </div>
@@ -115,33 +128,45 @@ export function NotificationsBell() {
               </div>
             ) : (
               notifications.map((notification) => (
-                <button
+                <div
                   key={notification._id}
-                  onClick={() => handleNotificationClick(notification)}
-                  className={`w-full text-left p-4 border-b hover:bg-muted transition-colors ${
+                  className={`relative group border-b hover:bg-muted transition-colors ${
                     !notification.read ? 'bg-blue-50 dark:bg-blue-950' : ''
                   }`}
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">{notification.examTitle}</p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {notification.message}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {new Date(notification.createdAt).toLocaleDateString('pt-BR', {
-                          day: '2-digit',
-                          month: 'short',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
-                      </p>
+                  <button
+                    onClick={() => handleNotificationClick(notification)}
+                    className="w-full text-left p-4 pr-12"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">{notification.examTitle}</p>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {notification.message}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {new Date(notification.createdAt).toLocaleDateString('pt-BR', {
+                            day: '2-digit',
+                            month: 'short',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </p>
+                      </div>
+                      {!notification.read && (
+                        <div className="h-2 w-2 bg-blue-500 rounded-full mt-1 flex-shrink-0" />
+                      )}
                     </div>
-                    {!notification.read && (
-                      <div className="h-2 w-2 bg-blue-500 rounded-full mt-1 flex-shrink-0" />
-                    )}
-                  </div>
-                </button>
+                  </button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={(e) => deleteNotification(e, notification._id!)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-950"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
               ))
             )}
           </div>

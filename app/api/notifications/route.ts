@@ -58,7 +58,7 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-// DELETE - Marcar todas as notificações como lidas
+// DELETE - Deletar TODAS as notificações do usuário
 export async function DELETE(request: NextRequest) {
   try {
     const session = await getSession()
@@ -69,16 +69,18 @@ export async function DELETE(request: NextRequest) {
     const db = await getDb()
     const notificationsCollection = db.collection<Notification>('notifications')
 
-    await notificationsCollection.updateMany(
-      { userId: session.userId, read: false },
-      { $set: { read: true } }
-    )
+    const result = await notificationsCollection.deleteMany({
+      userId: session.userId
+    })
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({
+      success: true,
+      deletedCount: result.deletedCount
+    })
   } catch (error) {
-    console.error('Mark all notifications read error:', error)
+    console.error('Delete all notifications error:', error)
     return NextResponse.json(
-      { error: 'Erro ao marcar notificações' },
+      { error: 'Erro ao limpar notificações' },
       { status: 500 }
     )
   }

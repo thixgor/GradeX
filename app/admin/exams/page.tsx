@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Exam } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
-import { ArrowLeft, Edit, Trash2, Eye, EyeOff, Plus, Play, StopCircle, RotateCcw, FileCheck } from 'lucide-react'
+import { ArrowLeft, Edit, Trash2, Eye, EyeOff, Plus, Play, StopCircle, RotateCcw, FileCheck, FileDown } from 'lucide-react'
 
 export default function AdminExamsPage() {
   const router = useRouter()
@@ -116,6 +116,26 @@ export default function AdminExamsPage() {
       const data = await res.json()
       alert(data.message)
       loadExams()
+    } catch (error: any) {
+      alert(error.message)
+    }
+  }
+
+  async function downloadExamPDF(exam: Exam) {
+    try {
+      const res = await fetch(`/api/exams/${exam._id}/generate-pdf`)
+
+      if (!res.ok) throw new Error('Erro ao gerar PDF')
+
+      const blob = await res.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${exam.name}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      window.URL.revokeObjectURL(url)
     } catch (error: any) {
       alert(error.message)
     }
@@ -274,6 +294,16 @@ export default function AdminExamsPage() {
                         Corrigir Discursivas
                       </Button>
                     )}
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => downloadExamPDF(exam)}
+                      className="border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950"
+                    >
+                      <FileDown className="h-4 w-4 mr-2" />
+                      Gerar PDF da Prova
+                    </Button>
 
                     <Button
                       variant="destructive"
