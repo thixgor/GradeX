@@ -30,6 +30,7 @@ export async function GET(request: NextRequest) {
           examName: exam?.name || 'Prova nao encontrada',
           examTitle: exam?.title || 'Prova nao encontrada',
           hasDiscursiveQuestions: exam?.questions.some(q => q.type === 'discursive') || false,
+          examEndTime: exam?.endTime, // Adicionar endTime para verificar se prova terminou
         }
       })
     )

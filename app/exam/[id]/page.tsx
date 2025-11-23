@@ -546,7 +546,9 @@ export default function ExamPage({ params }: { params: { id: string } }) {
             <CardContent className="space-y-4">
               <div className="p-4 bg-muted rounded-lg">
                 <p className="text-sm text-center text-muted-foreground">
-                  Você pode visualizar seu relatório ou baixar o gabarito da prova
+                  {exam && new Date() > new Date(exam.endTime)
+                    ? 'Você pode visualizar seu relatório ou baixar o gabarito da prova'
+                    : 'Você pode visualizar seu relatório. O gabarito será liberado após o término da prova.'}
                 </p>
               </div>
               <div className="flex flex-col gap-2">
@@ -558,26 +560,35 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                   <FileDown className="h-4 w-4 mr-2" />
                   Ver Meu Relatório
                 </Button>
-                <Button
-                  onClick={async () => {
-                    try {
-                      const res = await fetch(`/api/exams/${id}`)
-                      if (!res.ok) throw new Error('Erro ao buscar prova')
-                      const data = await res.json()
-                      const { generateGabaritoPDF, downloadPDF } = await import('@/lib/pdf-generator')
-                      const blob = generateGabaritoPDF(data.exam)
-                      downloadPDF(blob, `Gabarito-${data.exam.title}.pdf`)
-                    } catch (error: any) {
-                      alert('Erro ao gerar gabarito: ' + error.message)
-                    }
-                  }}
-                  variant="outline"
-                  className="w-full"
-                  size="lg"
-                >
-                  <FileDown className="h-4 w-4 mr-2" />
-                  Baixar Gabarito (PDF)
-                </Button>
+                {exam && new Date() > new Date(exam.endTime) ? (
+                  <Button
+                    onClick={async () => {
+                      try {
+                        const res = await fetch(`/api/exams/${id}`)
+                        if (!res.ok) throw new Error('Erro ao buscar prova')
+                        const data = await res.json()
+                        const { generateGabaritoPDF, downloadPDF } = await import('@/lib/pdf-generator')
+                        const blob = generateGabaritoPDF(data.exam)
+                        downloadPDF(blob, `Gabarito-${data.exam.title}.pdf`)
+                      } catch (error: any) {
+                        alert('Erro ao gerar gabarito: ' + error.message)
+                      }
+                    }}
+                    variant="outline"
+                    className="w-full"
+                    size="lg"
+                  >
+                    <FileDown className="h-4 w-4 mr-2" />
+                    Baixar Gabarito (PDF)
+                  </Button>
+                ) : (
+                  <div className="w-full p-3 bg-orange-50 dark:bg-orange-950 rounded-lg border border-orange-200 dark:border-orange-800">
+                    <p className="text-sm text-center text-orange-800 dark:text-orange-200">
+                      <Clock className="h-4 w-4 inline mr-2" />
+                      Prova ainda em andamento. O gabarito será liberado após o término.
+                    </p>
+                  </div>
+                )}
                 <Button
                   onClick={() => router.push('/')}
                   variant="ghost"

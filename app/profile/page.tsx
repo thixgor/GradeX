@@ -27,6 +27,7 @@ interface UserSubmission {
     method: string
   }>
   hasDiscursiveQuestions: boolean
+  examEndTime?: Date // Para verificar se a prova já terminou
 }
 
 export default function ProfilePage() {
@@ -90,6 +91,11 @@ export default function ProfilePage() {
       console.error('Erro ao baixar gabarito:', error)
       alert('Erro ao gerar gabarito: ' + error.message)
     }
+  }
+
+  function isExamFinished(submission: UserSubmission): boolean {
+    if (!submission.examEndTime) return true // Se não tem endTime, assume que terminou
+    return new Date() > new Date(submission.examEndTime)
   }
 
   function getStatusBadge(submission: UserSubmission) {
@@ -241,22 +247,33 @@ export default function ProfilePage() {
 
                     {/* Acoes */}
                     <div className="flex flex-wrap gap-2">
-                      <Button
-                        variant="default"
-                        size="sm"
-                        onClick={() => handleDownloadReport(submission)}
-                      >
-                        <FileText className="h-4 w-4 mr-2" />
-                        Ver Relatorio Completo
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDownloadAnswerSheet(submission.examId)}
-                      >
-                        <Download className="h-4 w-4 mr-2" />
-                        Baixar Gabarito
-                      </Button>
+                      {isExamFinished(submission) ? (
+                        <>
+                          <Button
+                            variant="default"
+                            size="sm"
+                            onClick={() => handleDownloadReport(submission)}
+                          >
+                            <FileText className="h-4 w-4 mr-2" />
+                            Ver Relatorio Completo
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDownloadAnswerSheet(submission.examId)}
+                          >
+                            <Download className="h-4 w-4 mr-2" />
+                            Baixar Gabarito
+                          </Button>
+                        </>
+                      ) : (
+                        <div className="w-full p-3 bg-orange-50 dark:bg-orange-950 rounded-lg border border-orange-200 dark:border-orange-800">
+                          <p className="text-sm text-orange-800 dark:text-orange-200">
+                            <Clock className="h-4 w-4 inline mr-2" />
+                            Prova ainda em andamento. O gabarito e o relatorio completo serao liberados apos o termino.
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </CardContent>
