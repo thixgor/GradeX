@@ -186,19 +186,19 @@ export default function ProfilePage() {
                     {/* Pontuacao */}
                     {submission.correctionStatus === 'corrected' || !submission.hasDiscursiveQuestions ? (
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-muted rounded-lg">
-                        {submission.triScore !== undefined && (
+                        {submission.triScore !== undefined && submission.triScore !== null && (
                           <div>
                             <p className="text-sm text-muted-foreground">Nota TRI</p>
                             <p className="text-2xl font-bold">{submission.triScore.toFixed(0)}</p>
                           </div>
                         )}
-                        {submission.score !== undefined && (
+                        {submission.score !== undefined && submission.score !== null && (
                           <div>
                             <p className="text-sm text-muted-foreground">Pontuacao</p>
                             <p className="text-2xl font-bold">{submission.score.toFixed(1)}</p>
                           </div>
                         )}
-                        {submission.discursiveScore !== undefined && (
+                        {submission.discursiveScore !== undefined && submission.discursiveScore !== null && (
                           <div>
                             <p className="text-sm text-muted-foreground">Nota Discursiva</p>
                             <p className="text-2xl font-bold">{submission.discursiveScore.toFixed(1)}</p>
@@ -223,7 +223,9 @@ export default function ProfilePage() {
                             <div className="flex items-center justify-between">
                               <p className="text-sm font-medium">Questao {idx + 1}</p>
                               <p className="text-sm font-bold">
-                                {correction.score.toFixed(1)} / {correction.maxScore} pontos
+                                {correction.score !== null && correction.score !== undefined
+                                  ? correction.score.toFixed(1)
+                                  : '0.0'} / {correction.maxScore} pontos
                               </p>
                             </div>
                             {correction.feedback && (
