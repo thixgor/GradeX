@@ -22,6 +22,27 @@ export default function AdminTicketsPage() {
   const [toastMessage, setToastMessage] = useState('')
   const [toastType, setToastType] = useState<'error' | 'success' | 'info'>('error')
 
+  // Verificar se é admin
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/auth/me')
+        if (!res.ok) {
+          router.push('/auth/login')
+          return
+        }
+        const data = await res.json()
+        if (data.role !== 'admin') {
+          router.push('/')
+          showToastMessage('Acesso negado. Apenas administradores podem acessar esta página.', 'error')
+        }
+      } catch (error) {
+        router.push('/auth/login')
+      }
+    }
+    checkAuth()
+  }, [router])
+
   useEffect(() => {
     loadTickets()
     const interval = setInterval(loadTickets, 5000)

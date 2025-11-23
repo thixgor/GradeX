@@ -151,7 +151,7 @@ export interface Notification {
   examTitle?: string
   ticketId?: string
   ticketTitle?: string
-  type: 'correction_ready' | 'ticket_created' // Tipo de notificação
+  type: 'correction_ready' | 'ticket_created' | 'ticket_reopened' // Tipo de notificação
   message: string
   read: boolean
   createdAt: Date

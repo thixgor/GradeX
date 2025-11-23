@@ -118,8 +118,13 @@ export function NotificationsBell() {
 
     // Redirecionar baseado no tipo de notificação
     if (notification.type === 'ticket_created') {
+      // Admin recebeu notificação de novo ticket
       router.push('/admin/tickets')
+    } else if (notification.type === 'ticket_reopened') {
+      // Usuário recebeu notificação de ticket reaberto
+      router.push('/')
     } else {
+      // Notificação de correção de prova
       router.push(`/exam/${notification.examId}/user/${notification.userId}`)
     }
 

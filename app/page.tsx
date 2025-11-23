@@ -10,7 +10,7 @@ import { BanChecker } from '@/components/ban-checker'
 import { SupportChat } from '@/components/support-chat'
 import { Exam } from '@/lib/types'
 import { formatDate, isBetweenDates } from '@/lib/utils'
-import { Clock, Calendar, FileText, LogOut, Settings, Plus, User as UserIcon, Users } from 'lucide-react'
+import { Clock, Calendar, FileText, LogOut, Settings, Plus, User as UserIcon, Users, MessageSquare } from 'lucide-react'
 
 interface User {
   id: string
@@ -170,6 +170,14 @@ export default function HomePage() {
                   title="Gerenciar Usuários"
                 >
                   <Users className="h-5 w-5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => router.push('/admin/tickets')}
+                  title="Tickets de Suporte"
+                >
+                  <MessageSquare className="h-5 w-5" />
                 </Button>
               </>
             )}

@@ -205,7 +205,7 @@ export async function PATCH(
         const notificationsCollection = db.collection('notifications')
         await notificationsCollection.insertOne({
           userId: ticket.userId,
-          type: 'ticket_created',
+          type: 'ticket_reopened',
           message: `Seu ticket "${ticket.title}" foi reaberto por ${user.name}`,
           ticketId: ticket._id!.toString(),
           ticketTitle: ticket.title,
