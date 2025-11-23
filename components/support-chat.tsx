@@ -21,25 +21,28 @@ export function SupportChat() {
   const [loading, setLoading] = useState(false)
   const [currentUserId, setCurrentUserId] = useState<string>('')
   const previousMessageCount = useRef<number>(0)
+  const loadingMessagesRef = useRef(false)
 
   useEffect(() => {
-    if (isOpen) {
+    // Carregar tickets quando o chat está aberto OU quando há ticket ativo
+    if (isOpen || activeTicket) {
       loadTickets()
       // Polling para atualizar mensagens
       const interval = setInterval(loadTickets, 5000)
       return () => clearInterval(interval)
     }
-  }, [isOpen])
+  }, [isOpen, activeTicket?._id])
 
   useEffect(() => {
-    if (activeTicket) {
+    if (activeTicket && !loadingMessagesRef.current) {
       // Marcar mensagens como lidas
       markMessagesAsRead()
     }
-  }, [activeTicket?.messages])
+  }, [activeTicket?.messages?.length])
 
   async function loadTickets() {
     try {
+      loadingMessagesRef.current = true
       const res = await fetch('/api/tickets')
       const data = await res.json()
       setTickets(data.tickets || [])
@@ -60,11 +63,15 @@ export function SupportChat() {
           }
 
           previousMessageCount.current = currentMessageCount
+
+          // Sempre atualizar o ticket ativo para refletir mudanças
           setActiveTicket(updated)
         }
       }
     } catch (error) {
       console.error('Error loading tickets:', error)
+    } finally {
+      loadingMessagesRef.current = false
     }
   }
 

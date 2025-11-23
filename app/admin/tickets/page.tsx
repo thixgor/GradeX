@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -21,6 +21,7 @@ export default function AdminTicketsPage() {
   const [toastOpen, setToastOpen] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
   const [toastType, setToastType] = useState<'error' | 'success' | 'info'>('error')
+  const loadingMessagesRef = useRef(false)
 
   // Verificar se é admin
   useEffect(() => {
@@ -45,15 +46,16 @@ export default function AdminTicketsPage() {
 
   useEffect(() => {
     loadTickets()
+    // Polling continua enquanto a página está montada
     const interval = setInterval(loadTickets, 5000)
     return () => clearInterval(interval)
   }, [])
 
   useEffect(() => {
-    if (selectedTicket) {
+    if (selectedTicket && !loadingMessagesRef.current) {
       markMessagesAsRead()
     }
-  }, [selectedTicket?.messages])
+  }, [selectedTicket?.messages?.length])
 
   const showToastMessage = (message: string, type: 'error' | 'success' | 'info' = 'error') => {
     setToastMessage(message)
@@ -63,19 +65,24 @@ export default function AdminTicketsPage() {
 
   async function loadTickets() {
     try {
+      loadingMessagesRef.current = true
       const res = await fetch('/api/tickets')
       const data = await res.json()
       setTickets(data.tickets || [])
 
-      // Atualizar ticket selecionado
+      // Atualizar ticket selecionado se existir
       if (selectedTicket) {
         const updated = data.tickets.find((t: Ticket) => t._id === selectedTicket._id)
-        if (updated) setSelectedTicket(updated)
+        if (updated) {
+          // Sempre atualizar para refletir mudanças em tempo real
+          setSelectedTicket(updated)
+        }
       }
     } catch (error) {
       console.error('Error loading tickets:', error)
     } finally {
       setLoading(false)
+      loadingMessagesRef.current = false
     }
   }
 
