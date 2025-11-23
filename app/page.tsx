@@ -8,7 +8,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { NotificationsBell } from '@/components/notifications-bell'
 import { Exam } from '@/lib/types'
 import { formatDate, isBetweenDates } from '@/lib/utils'
-import { Clock, Calendar, FileText, LogOut, Settings, Plus, User as UserIcon } from 'lucide-react'
+import { Clock, Calendar, FileText, LogOut, Settings, Plus, User as UserIcon, Users } from 'lucide-react'
 
 interface User {
   id: string
@@ -154,8 +154,17 @@ export default function HomePage() {
                   variant="ghost"
                   size="icon"
                   onClick={() => router.push('/admin/exams')}
+                  title="Gerenciar Provas"
                 >
                   <Settings className="h-5 w-5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => router.push('/admin/users')}
+                  title="Gerenciar Usuários"
+                >
+                  <Users className="h-5 w-5" />
                 </Button>
               </>
             )}

@@ -108,6 +108,7 @@ export async function DELETE(
 
     const db = await getDb()
     const examsCollection = db.collection<Exam>('exams')
+    const submissionsCollection = db.collection('submissions')
 
     const exam = await examsCollection.findOne({ _id: new ObjectId(id) })
     if (!exam) {
@@ -119,9 +120,16 @@ export async function DELETE(
       return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
     }
 
+    // Deletar todas as submissões relacionadas a essa prova
+    await submissionsCollection.deleteMany({ examId: id })
+
+    // Deletar a prova
     await examsCollection.deleteOne({ _id: new ObjectId(id) })
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({
+      success: true,
+      message: 'Prova deletada com sucesso'
+    })
   } catch (error) {
     console.error('Delete exam error:', error)
     return NextResponse.json(

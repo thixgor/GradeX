@@ -2,6 +2,24 @@ export type ScoringMethod = 'normal' | 'tri' | 'discursive'
 export type QuestionType = 'multiple-choice' | 'discursive'
 export type CorrectionMethod = 'manual' | 'ai'
 export type CorrectionStatus = 'pending' | 'corrected'
+export type BanReason =
+  | 'cheating' // Tentativa de fraude/cola
+  | 'impersonation' // Falsificação de identidade
+  | 'multiple_accounts' // Múltiplas contas
+  | 'inappropriate_behavior' // Comportamento inadequado
+  | 'security_violation' // Violação de segurança
+  | 'abuse' // Abuso do sistema
+  | 'other' // Outro motivo
+
+export const BanReasonLabels: Record<BanReason, string> = {
+  cheating: 'Tentativa de fraude ou cola',
+  impersonation: 'Falsificação de identidade',
+  multiple_accounts: 'Criação de múltiplas contas',
+  inappropriate_behavior: 'Comportamento inadequado',
+  security_violation: 'Violação de segurança',
+  abuse: 'Abuso do sistema',
+  other: 'Outro motivo'
+}
 
 export interface Alternative {
   id: string
@@ -100,11 +118,17 @@ export interface ExamSubmission {
 
 export interface User {
   _id?: string
+  name: string
   email: string
   password: string
-  name: string
   role: 'admin' | 'user'
   createdAt: Date
+  // Campos de banimento
+  banned?: boolean
+  banReason?: BanReason
+  banDetails?: string // Detalhes adicionais sobre o banimento
+  bannedBy?: string // ID do admin que baniu
+  bannedAt?: Date
 }
 
 export interface TRICalculationInput {

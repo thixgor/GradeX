@@ -36,6 +36,19 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Verifica se o usuário está banido
+    if (user.banned) {
+      return NextResponse.json(
+        {
+          error: 'banned',
+          banReason: user.banReason,
+          banDetails: user.banDetails,
+          bannedAt: user.bannedAt
+        },
+        { status: 403 }
+      )
+    }
+
     // Cria o token
     const token = await createToken({
       userId: user._id!.toString(),

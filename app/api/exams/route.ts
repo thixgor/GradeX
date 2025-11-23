@@ -117,3 +117,38 @@ export async function POST(request: NextRequest) {
     )
   }
 }
+
+// DELETE - Deletar TODAS as provas (uso administrativo)
+export async function DELETE(request: NextRequest) {
+  try {
+    const session = await getSession()
+    if (!session || session.role !== 'admin') {
+      return NextResponse.json(
+        { error: 'Sem permissão' },
+        { status: 403 }
+      )
+    }
+
+    const db = await getDb()
+    const examsCollection = db.collection<Exam>('exams')
+    const submissionsCollection = db.collection('submissions')
+
+    // Deletar todas as submissões
+    await submissionsCollection.deleteMany({})
+
+    // Deletar todas as provas
+    const result = await examsCollection.deleteMany({})
+
+    return NextResponse.json({
+      success: true,
+      message: `${result.deletedCount} prova(s) deletada(s) com sucesso`,
+      deletedCount: result.deletedCount
+    })
+  } catch (error) {
+    console.error('Delete all exams error:', error)
+    return NextResponse.json(
+      { error: 'Erro ao deletar provas' },
+      { status: 500 }
+    )
+  }
+}

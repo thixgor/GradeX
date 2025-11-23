@@ -7,6 +7,9 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
+import { BanReasonLabels, BanReason } from '@/lib/types'
+import { Ban, AlertCircle } from 'lucide-react'
 
 const ADMIN_EMAILS = ['throdrigf@gmail.com', 'ecocardio93@gmail.com', 'hookeybr@gmail.com']
 
@@ -15,6 +18,12 @@ export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showBannedDialog, setShowBannedDialog] = useState(false)
+  const [banInfo, setBanInfo] = useState<{
+    reason?: BanReason
+    details?: string
+    bannedAt?: Date
+  }>({})
 
   const [formData, setFormData] = useState({
     email: '',
@@ -45,6 +54,16 @@ export default function LoginPage() {
       const data = await res.json()
 
       if (!res.ok) {
+        // Verifica se o usuário está banido
+        if (data.error === 'banned') {
+          setBanInfo({
+            reason: data.banReason,
+            details: data.banDetails,
+            bannedAt: data.bannedAt
+          })
+          setShowBannedDialog(true)
+          return
+        }
         throw new Error(data.error || 'Erro ao autenticar')
       }
 
@@ -167,6 +186,66 @@ export default function LoginPage() {
           </CardFooter>
         </form>
       </Card>
+
+      {/* Modal de Usuário Banido */}
+      <Dialog open={showBannedDialog} onOpenChange={setShowBannedDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <div className="mx-auto w-16 h-16 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center mb-4">
+              <Ban className="h-8 w-8 text-red-600 dark:text-red-300" />
+            </div>
+            <DialogTitle className="text-center text-xl text-red-600 dark:text-red-400">
+              Acesso Negado
+            </DialogTitle>
+            <DialogDescription className="text-center">
+              <div className="space-y-4 mt-4">
+                <div className="p-4 bg-red-50 dark:bg-red-950 rounded-lg border border-red-200 dark:border-red-800">
+                  <p className="text-sm font-medium text-red-800 dark:text-red-200 mb-2">
+                    Sua conta foi banida da plataforma.
+                  </p>
+                  {banInfo.reason && (
+                    <div className="space-y-1">
+                      <p className="text-xs font-semibold text-red-700 dark:text-red-300">
+                        Motivo:
+                      </p>
+                      <p className="text-sm text-red-800 dark:text-red-200">
+                        {BanReasonLabels[banInfo.reason]}
+                      </p>
+                    </div>
+                  )}
+                  {banInfo.details && (
+                    <div className="space-y-1 mt-3">
+                      <p className="text-xs font-semibold text-red-700 dark:text-red-300">
+                        Detalhes:
+                      </p>
+                      <p className="text-sm text-red-800 dark:text-red-200">
+                        {banInfo.details}
+                      </p>
+                    </div>
+                  )}
+                  {banInfo.bannedAt && (
+                    <p className="text-xs text-red-600 dark:text-red-400 mt-3">
+                      Data do banimento: {new Date(banInfo.bannedAt).toLocaleDateString('pt-BR')}
+                    </p>
+                  )}
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Se você acredita que isso é um erro, entre em contato com o administrador da plataforma.
+                </p>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-center pt-4">
+            <Button
+              variant="outline"
+              onClick={() => setShowBannedDialog(false)}
+              className="w-full"
+            >
+              Fechar
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

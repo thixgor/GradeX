@@ -5,19 +5,31 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
+import { ToastAlert } from '@/components/ui/toast-alert'
 import { Exam } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
 import { generateExamPDF, downloadPDF } from '@/lib/pdf-generator'
-import { ArrowLeft, Edit, Trash2, Eye, EyeOff, Plus, Play, StopCircle, RotateCcw, FileCheck, FileDown } from 'lucide-react'
+import { ArrowLeft, Edit, Trash2, Eye, EyeOff, Plus, Play, StopCircle, RotateCcw, FileCheck, FileDown, AlertTriangle } from 'lucide-react'
 
 export default function AdminExamsPage() {
   const router = useRouter()
   const [exams, setExams] = useState<Exam[]>([])
   const [loading, setLoading] = useState(true)
+  const [showDeleteAllDialog, setShowDeleteAllDialog] = useState(false)
+  const [toastOpen, setToastOpen] = useState(false)
+  const [toastMessage, setToastMessage] = useState('')
+  const [toastType, setToastType] = useState<'error' | 'success' | 'info'>('error')
 
   useEffect(() => {
     loadExams()
   }, [])
+
+  const showToastMessage = (message: string, type: 'error' | 'success' | 'info' = 'error') => {
+    setToastMessage(message)
+    setToastType(type)
+    setToastOpen(true)
+  }
 
   async function loadExams() {
     try {
@@ -41,10 +53,28 @@ export default function AdminExamsPage() {
 
       if (!res.ok) throw new Error('Erro ao deletar')
 
-      alert('Prova deletada com sucesso!')
+      showToastMessage('Prova deletada com sucesso!', 'success')
       loadExams()
     } catch (error: any) {
-      alert(error.message)
+      showToastMessage(error.message)
+    }
+  }
+
+  async function handleDeleteAll() {
+    try {
+      const res = await fetch('/api/exams', {
+        method: 'DELETE',
+      })
+
+      if (!res.ok) throw new Error('Erro ao deletar')
+
+      const data = await res.json()
+      showToastMessage(data.message, 'success')
+      setShowDeleteAllDialog(false)
+      loadExams()
+    } catch (error: any) {
+      showToastMessage(error.message)
+      setShowDeleteAllDialog(false)
     }
   }
 
@@ -60,7 +90,7 @@ export default function AdminExamsPage() {
 
       loadExams()
     } catch (error: any) {
-      alert(error.message)
+      showToastMessage(error.message)
     }
   }
 
@@ -77,10 +107,10 @@ export default function AdminExamsPage() {
       if (!res.ok) throw new Error('Erro ao forçar início')
 
       const data = await res.json()
-      alert(data.message)
+      showToastMessage(data.message, 'success')
       loadExams()
     } catch (error: any) {
-      alert(error.message)
+      showToastMessage(error.message)
     }
   }
 
@@ -97,10 +127,10 @@ export default function AdminExamsPage() {
       if (!res.ok) throw new Error('Erro ao forçar término')
 
       const data = await res.json()
-      alert(data.message)
+      showToastMessage(data.message, 'success')
       loadExams()
     } catch (error: any) {
-      alert(error.message)
+      showToastMessage(error.message)
     }
   }
 
@@ -115,10 +145,10 @@ export default function AdminExamsPage() {
       if (!res.ok) throw new Error('Erro ao zerar resultados')
 
       const data = await res.json()
-      alert(data.message)
+      showToastMessage(data.message, 'success')
       loadExams()
     } catch (error: any) {
-      alert(error.message)
+      showToastMessage(error.message)
     }
   }
 
@@ -128,7 +158,7 @@ export default function AdminExamsPage() {
       downloadPDF(blob, `${exam.title}.pdf`)
     } catch (error: any) {
       console.error('Erro ao gerar PDF:', error)
-      alert('Erro ao gerar PDF: ' + error.message)
+      showToastMessage('Erro ao gerar PDF: ' + error.message)
     }
   }
 
@@ -143,6 +173,15 @@ export default function AdminExamsPage() {
             <h1 className="text-2xl font-bold">Gerenciar Provas</h1>
           </div>
           <div className="flex items-center space-x-2">
+            {exams.length > 0 && (
+              <Button
+                variant="destructive"
+                onClick={() => setShowDeleteAllDialog(true)}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Deletar Todas
+              </Button>
+            )}
             <Button onClick={() => router.push('/admin/exams/create')}>
               <Plus className="h-4 w-4 mr-2" />
               Nova Prova
@@ -321,6 +360,51 @@ export default function AdminExamsPage() {
           </div>
         )}
       </main>
+
+      {/* Dialog de confirmação para deletar todas as provas */}
+      <Dialog open={showDeleteAllDialog} onOpenChange={setShowDeleteAllDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <div className="mx-auto w-12 h-12 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center mb-4">
+              <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-300" />
+            </div>
+            <DialogTitle className="text-center text-xl">
+              Deletar Todas as Provas?
+            </DialogTitle>
+            <DialogDescription className="text-center mt-2">
+              ⚠️ <strong>ATENÇÃO!</strong> Esta ação é <strong>IRREVERSÍVEL</strong>.
+              <br /><br />
+              Todas as {exams.length} prova(s) e suas submissões serão deletadas permanentemente do sistema.
+              <br /><br />
+              Tem certeza que deseja continuar?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteAllDialog(false)}
+              className="w-full sm:w-auto"
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteAll}
+              className="w-full sm:w-auto"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Sim, Deletar Tudo
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <ToastAlert
+        open={toastOpen}
+        onOpenChange={setToastOpen}
+        message={toastMessage}
+        type={toastType}
+      />
     </div>
   )
 }
