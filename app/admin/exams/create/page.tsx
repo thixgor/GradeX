@@ -39,6 +39,8 @@ export default function CreateExamPage() {
     questionType: 'multiple-choice' as QuestionType,
     discursiveCorrectionMethod: 'ai' as 'manual' | 'ai',
     aiRigor: 0.45,
+    navigationMode: 'paginated' as 'paginated' | 'scroll',
+    duration: 120,
   })
 
   const [questions, setQuestions] = useState<Question[]>([])
@@ -481,6 +483,39 @@ export default function CreateExamPage() {
                 <Label htmlFor="isHidden" className="cursor-pointer">
                   Manter prova oculta (apenas visível para você)
                 </Label>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="duration">Duração da Prova (minutos)</Label>
+                <Input
+                  id="duration"
+                  type="number"
+                  min="1"
+                  value={examData.duration}
+                  onChange={(e) => setExamData({ ...examData, duration: parseInt(e.target.value) || 60 })}
+                  placeholder="120"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Tempo máximo que o aluno terá para realizar a prova
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="navigationMode">Modo de Navegação</Label>
+                <select
+                  id="navigationMode"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  value={examData.navigationMode}
+                  onChange={(e) => setExamData({ ...examData, navigationMode: e.target.value as 'paginated' | 'scroll' })}
+                >
+                  <option value="paginated">📄 Paginada (uma questão por vez com botões)</option>
+                  <option value="scroll">📜 Scroll (todas as questões visíveis com rolagem)</option>
+                </select>
+                <p className="text-xs text-muted-foreground">
+                  {examData.navigationMode === 'paginated'
+                    ? 'O aluno navegará entre as questões usando botões Anterior/Próximo'
+                    : 'Todas as questões ficarão visíveis numa única página. O aluno pode rolar e pular questões livremente'}
+                </p>
               </div>
 
               {examData.questionType === 'multiple-choice' ? (

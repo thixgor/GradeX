@@ -536,6 +536,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
 
   const currentQuestion = exam.questions[currentQuestionIndex]
   const currentAnswer = answers.find(a => a.questionId === currentQuestion.id)
+  const isScrollMode = exam.navigationMode === 'scroll'
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
@@ -622,7 +623,11 @@ export default function ExamPage({ params }: { params: { id: string } }) {
           <div>
             <h1 className="text-xl font-bold">{exam.title}</h1>
             <p className="text-sm text-muted-foreground">
-              Questão {currentQuestionIndex + 1} de {exam.questions.length}
+              {isScrollMode ? (
+                `${exam.questions.length} questões`
+              ) : (
+                `Questão ${currentQuestionIndex + 1} de ${exam.questions.length}`
+              )}
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -639,7 +644,187 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       </header>
 
       <main className="container mx-auto px-4 py-8 max-w-4xl">
-        <Card>
+        {/* Modo Scroll - Todas as questões visíveis */}
+        {isScrollMode ? (
+          <div className="space-y-6">
+            {exam.questions.map((question, index) => {
+              const answer = answers.find(a => a.questionId === question.id)
+
+              return (
+                <Card key={question.id} id={`question-${question.id}`}>
+                  <CardHeader>
+                    <CardTitle>Questão {question.number}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    {/* Enunciado */}
+                    <div className="space-y-2">
+                      <div className="prose dark:prose-invert max-w-none">
+                        <p className="whitespace-pre-wrap">{question.statement}</p>
+                      </div>
+                      {question.statementSource && (
+                        <p className="text-xs text-muted-foreground italic">
+                          Fonte: {question.statementSource}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Imagem */}
+                    {question.imageUrl && (
+                      <div className="space-y-2">
+                        <img
+                          src={question.imageUrl}
+                          alt="Imagem da questão"
+                          className="max-w-full h-auto rounded-lg border"
+                        />
+                        {question.imageSource && (
+                          <p className="text-xs text-muted-foreground italic">
+                            Fonte da imagem: {question.imageSource}
+                          </p>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Comando */}
+                    <div className="bg-muted p-4 rounded-lg">
+                      <p className="font-medium">{question.command}</p>
+                    </div>
+
+                    {/* Alternativas (Múltipla Escolha) */}
+                    {question.type === 'multiple-choice' && (
+                      <div className="space-y-3">
+                        {question.alternatives.map((alt) => {
+                          const isSelected = answer?.selectedAlternative === alt.id
+                          const isCrossed = answer?.crossedAlternatives?.includes(alt.id) || false
+
+                          return (
+                            <div
+                              key={alt.id}
+                              className={`border rounded-lg p-4 transition-all ${
+                                isSelected
+                                  ? 'border-primary bg-primary/10'
+                                  : isCrossed
+                                  ? 'border-destructive bg-destructive/5 opacity-50'
+                                  : 'border-border hover:border-primary/50'
+                              }`}
+                            >
+                              <div className="flex items-start space-x-3">
+                                <input
+                                  type="radio"
+                                  name={`question-${question.id}`}
+                                  checked={isSelected}
+                                  onChange={() => handleSelectAlternative(question.id, alt.id)}
+                                  className="mt-1 h-4 w-4"
+                                />
+                                <div className="flex-1">
+                                  <div className="flex items-center justify-between">
+                                    <span className={`font-bold ${isCrossed ? 'line-through' : ''}`}>
+                                      {alt.letter})
+                                    </span>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => handleToggleCross(question.id, alt.id)}
+                                    >
+                                      {isCrossed ? (
+                                        <Check className="h-4 w-4 text-destructive" />
+                                      ) : (
+                                        <X className="h-4 w-4" />
+                                      )}
+                                    </Button>
+                                  </div>
+                                  <p className={`mt-1 ${isCrossed ? 'line-through' : ''}`}>
+                                    {alt.text}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )}
+
+                    {/* Resposta Discursiva */}
+                    {question.type === 'discursive' && (
+                      <div className="space-y-3">
+                        <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                          <p className="text-sm text-blue-900 dark:text-blue-100">
+                            <strong>Questão Discursiva:</strong> Escreva sua resposta completa no campo abaixo.
+                            {question.maxScore && (
+                              <span className="ml-2">Pontuação máxima: {question.maxScore} pontos</span>
+                            )}
+                          </p>
+                        </div>
+                        <Textarea
+                          value={answer?.discursiveText || ''}
+                          onChange={(e) => handleDiscursiveText(question.id, e.target.value)}
+                          placeholder="Digite sua resposta aqui..."
+                          rows={12}
+                          className="font-serif text-base"
+                        />
+                        <div className="flex items-center justify-between text-sm text-muted-foreground">
+                          <span>Caracteres: {(answer?.discursiveText || '').length}</span>
+                          <span>Palavras: {(answer?.discursiveText || '').split(/\s+/).filter(w => w.length > 0).length}</span>
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )
+            })}
+
+            {/* Barra de progresso e botão de finalizar fixos no modo scroll */}
+            <Card className="sticky bottom-4 shadow-lg">
+              <CardContent className="py-4">
+                <div className="space-y-4">
+                  {/* Progresso */}
+                  <div>
+                    <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
+                      <span>Progresso</span>
+                      <span>
+                        {answers.filter((a, index) => {
+                          const question = exam.questions[index]
+                          if (question.type === 'multiple-choice') {
+                            return !!a.selectedAlternative
+                          } else {
+                            return !!a.discursiveText && a.discursiveText.trim().length > 0
+                          }
+                        }).length}/{exam.questions.length} respondidas
+                      </span>
+                    </div>
+                    <div className="w-full bg-muted rounded-full h-2">
+                      <div
+                        className="bg-primary h-2 rounded-full transition-all"
+                        style={{
+                          width: `${(answers.filter((a, index) => {
+                            const question = exam.questions[index]
+                            if (question.type === 'multiple-choice') {
+                              return !!a.selectedAlternative
+                            } else {
+                              return !!a.discursiveText && a.discursiveText.trim().length > 0
+                            }
+                          }).length / exam.questions.length) * 100}%`
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Botão Finalizar */}
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={submitting}
+                    className="w-full"
+                    size="lg"
+                  >
+                    <Send className="h-4 w-4 mr-2" />
+                    {submitting ? 'Enviando...' : 'Finalizar Prova'}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        ) : (
+          /* Modo Paginado - Uma questão por vez */
+          <Card>
           <CardHeader>
             <CardTitle>Questão {currentQuestion.number}</CardTitle>
           </CardHeader>
@@ -826,6 +1011,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
             </div>
           </CardContent>
         </Card>
+        )}
       </main>
 
       <ToastAlert

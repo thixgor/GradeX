@@ -75,6 +75,9 @@ export interface Exam {
   // Para questões discursivas
   discursiveCorrectionMethod?: 'manual' | 'ai' // Como corrigir questões discursivas
   aiRigor?: number // Rigor da IA (0-1) se usar correção automática
+  // Modo de navegação da prova
+  navigationMode?: 'paginated' | 'scroll' // paginated: navegação com botões, scroll: todas questões visíveis com scroll
+  duration?: number // Duração da prova em minutos
   createdAt: Date
   updatedAt: Date
 }

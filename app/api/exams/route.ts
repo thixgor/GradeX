@@ -68,6 +68,8 @@ export async function POST(request: NextRequest) {
       isHidden = false,
       discursiveCorrectionMethod,
       aiRigor,
+      navigationMode = 'paginated',
+      duration,
     } = body
 
     if (!title || !numberOfQuestions || !numberOfAlternatives || !scoringMethod || !startTime || !endTime) {
@@ -99,6 +101,8 @@ export async function POST(request: NextRequest) {
       isHidden,
       discursiveCorrectionMethod,
       aiRigor,
+      navigationMode,
+      duration,
       createdAt: new Date(),
       updatedAt: new Date(),
     }
