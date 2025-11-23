@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ThemeToggle } from '@/components/theme-toggle'
 import { FileUpload } from '@/components/file-upload'
 import { TxtImport } from '@/components/txt-import'
+import { TxtImportDiscursive } from '@/components/txt-import-discursive'
 import { Question, Alternative, ScoringMethod, QuestionType, KeyPoint } from '@/lib/types'
 import { generateRandomTRIParameters } from '@/lib/tri-calculator'
 import { v4 as uuidv4 } from 'uuid'
@@ -126,34 +127,6 @@ export default function CreateExamPage() {
       triDifficulty: params.b,
       triGuessing: params.c,
     })
-  }
-
-  function addKeyPoint(questionIndex: number) {
-    const newQuestions = [...questions]
-    const keyPoints = newQuestions[questionIndex].keyPoints || []
-    keyPoints.push({
-      id: uuidv4(),
-      description: '',
-      weight: 0.1,
-    })
-    newQuestions[questionIndex].keyPoints = keyPoints
-    setQuestions(newQuestions)
-  }
-
-  function updateKeyPoint(questionIndex: number, keyPointIndex: number, updates: Partial<KeyPoint>) {
-    const newQuestions = [...questions]
-    const keyPoints = newQuestions[questionIndex].keyPoints || []
-    keyPoints[keyPointIndex] = { ...keyPoints[keyPointIndex], ...updates }
-    newQuestions[questionIndex].keyPoints = keyPoints
-    setQuestions(newQuestions)
-  }
-
-  function removeKeyPoint(questionIndex: number, keyPointIndex: number) {
-    const newQuestions = [...questions]
-    const keyPoints = newQuestions[questionIndex].keyPoints || []
-    keyPoints.splice(keyPointIndex, 1)
-    newQuestions[questionIndex].keyPoints = keyPoints
-    setQuestions(newQuestions)
   }
 
   async function handleSubmit() {
@@ -510,15 +483,26 @@ export default function CreateExamPage() {
                 </Label>
               </div>
 
-              <TxtImport
-                numberOfQuestions={examData.numberOfQuestions}
-                numberOfAlternatives={examData.numberOfAlternatives}
-                onImport={(importedQuestions) => {
-                  setQuestions(importedQuestions)
-                  setCurrentStep(2)
-                  setCurrentQuestionIndex(0)
-                }}
-              />
+              {examData.questionType === 'multiple-choice' ? (
+                <TxtImport
+                  numberOfQuestions={examData.numberOfQuestions}
+                  numberOfAlternatives={examData.numberOfAlternatives}
+                  onImport={(importedQuestions) => {
+                    setQuestions(importedQuestions)
+                    setCurrentStep(2)
+                    setCurrentQuestionIndex(0)
+                  }}
+                />
+              ) : (
+                <TxtImportDiscursive
+                  numberOfQuestions={examData.numberOfQuestions}
+                  onImport={(importedQuestions) => {
+                    setQuestions(importedQuestions)
+                    setCurrentStep(2)
+                    setCurrentQuestionIndex(0)
+                  }}
+                />
+              )}
 
               <Button onClick={initializeQuestions} className="w-full" size="lg">
                 Próximo: Adicionar Questões Manualmente
@@ -638,65 +622,60 @@ export default function CreateExamPage() {
                     </div>
 
                     <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <Label>Pontos-Chave para Correção *</Label>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => addKeyPoint(currentQuestionIndex)}
-                        >
-                          <Plus className="h-4 w-4 mr-2" />
-                          Adicionar Ponto
-                        </Button>
-                      </div>
+                      <Label>Pontos-Chave para Correção *</Label>
+                      <p className="text-xs text-muted-foreground mb-2">
+                        Digite um ponto-chave por linha no formato: <strong>Descrição - Peso</strong>
+                        <br />
+                        Exemplo: <code className="text-xs bg-muted px-1 py-0.5 rounded">Mencionar a Lei de Newton - 0.3</code>
+                      </p>
+                      <Textarea
+                        value={currentQuestion.keyPoints?.map(kp => `${kp.description} - ${kp.weight}`).join('\n') || ''}
+                        onChange={(e) => {
+                          const lines = e.target.value.split('\n').filter(line => line.trim())
+                          const keyPoints: KeyPoint[] = []
 
-                      {currentQuestion.keyPoints && currentQuestion.keyPoints.length > 0 ? (
-                        <>
-                          {currentQuestion.keyPoints.map((kp, kpIndex) => (
-                            <div key={kp.id} className="border rounded-lg p-3 space-y-2">
-                              <div className="flex items-center justify-between">
-                                <Label className="text-xs font-semibold">
-                                  Ponto-Chave {kpIndex + 1}
-                                </Label>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => removeKeyPoint(currentQuestionIndex, kpIndex)}
-                                >
-                                  <Trash2 className="h-4 w-4 text-destructive" />
-                                </Button>
-                              </div>
-                              <Textarea
-                                value={kp.description}
-                                onChange={(e) => updateKeyPoint(currentQuestionIndex, kpIndex, { description: e.target.value })}
-                                placeholder="Descreva o que o aluno deve mencionar..."
-                                rows={2}
-                              />
-                              <div className="flex items-center space-x-2">
-                                <Label className="text-xs">Peso:</Label>
-                                <Input
-                                  type="number"
-                                  min="0"
-                                  max="1"
-                                  step="0.05"
-                                  value={kp.weight}
-                                  onChange={(e) => updateKeyPoint(currentQuestionIndex, kpIndex, { weight: parseFloat(e.target.value) })}
-                                  className="w-20"
-                                />
-                                <span className="text-xs text-muted-foreground">
-                                  ({(kp.weight * 100).toFixed(0)}% da nota)
-                                </span>
-                              </div>
+                          for (const line of lines) {
+                            const parts = line.split('-').map(p => p.trim())
+                            if (parts.length >= 2) {
+                              const description = parts.slice(0, -1).join('-').trim()
+                              const weight = parseFloat(parts[parts.length - 1])
+
+                              if (description && !isNaN(weight)) {
+                                keyPoints.push({
+                                  id: uuidv4(),
+                                  description,
+                                  weight
+                                })
+                              }
+                            }
+                          }
+
+                          updateQuestion(currentQuestionIndex, { keyPoints })
+                        }}
+                        placeholder="Mencionar a Lei de Newton - 0.3&#10;Explicar força resultante - 0.4&#10;Dar exemplo prático - 0.3"
+                        rows={8}
+                        className="font-mono text-sm"
+                      />
+
+                      {currentQuestion.keyPoints && currentQuestion.keyPoints.length > 0 && (
+                        <div className="space-y-2 p-3 bg-muted rounded-lg">
+                          <p className="text-xs font-semibold">Preview dos Pontos-Chave:</p>
+                          {currentQuestion.keyPoints.map((kp, idx) => (
+                            <div key={kp.id} className="text-xs flex items-start gap-2">
+                              <span className="font-semibold">{idx + 1}.</span>
+                              <span className="flex-1">{kp.description}</span>
+                              <span className="text-muted-foreground">
+                                {(kp.weight * 100).toFixed(0)}%
+                              </span>
                             </div>
                           ))}
-                          <p className="text-xs text-muted-foreground">
-                            Soma dos pesos: {((currentQuestion.keyPoints.reduce((sum, kp) => sum + kp.weight, 0)) * 100).toFixed(0)}% (deve ser 100%)
+                          <p className="text-xs font-semibold pt-2 border-t">
+                            Total: {((currentQuestion.keyPoints.reduce((sum, kp) => sum + kp.weight, 0)) * 100).toFixed(0)}%
+                            {Math.abs(currentQuestion.keyPoints.reduce((sum, kp) => sum + kp.weight, 0) - 1) > 0.01 && (
+                              <span className="text-destructive ml-2">⚠️ Deve somar 100%</span>
+                            )}
                           </p>
-                        </>
-                      ) : (
-                        <p className="text-sm text-muted-foreground text-center py-4">
-                          Adicione pontos-chave que devem aparecer na resposta do aluno
-                        </p>
+                        </div>
                       )}
                     </div>
                   </div>
