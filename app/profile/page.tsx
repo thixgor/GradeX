@@ -7,8 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ThemeToggle } from '@/components/theme-toggle'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { BanChecker } from '@/components/ban-checker'
-import { ArrowLeft, CheckCircle, Clock, FileText, Download } from 'lucide-react'
-import { generateGabaritoPDF, downloadPDF } from '@/lib/pdf-generator'
+import { ArrowLeft, CheckCircle, Clock, FileText, Download, Printer, ClipboardList } from 'lucide-react'
+import { generateGabaritoPDF, downloadPDF, generateExamPDF, generateStudentAnswersPDF } from '@/lib/pdf-generator'
 
 interface UserSubmission {
   _id: string
@@ -16,6 +16,7 @@ interface UserSubmission {
   examName: string
   examTitle: string
   userId: string
+  userName: string
   submittedAt: Date
   score?: number
   triScore?: number
@@ -29,7 +30,9 @@ interface UserSubmission {
     method: string
   }>
   hasDiscursiveQuestions: boolean
-  examEndTime?: Date // Para verificar se a prova já terminou
+  examEndTime?: Date
+  answers?: any[]
+  exam?: any
 }
 
 export default function ProfilePage() {
@@ -94,6 +97,46 @@ export default function ProfilePage() {
     } catch (error: any) {
       console.error('Erro ao baixar gabarito:', error)
       setToastMessage('Erro ao gerar gabarito: ' + error.message)
+      setToastOpen(true)
+    }
+  }
+
+  async function handleDownloadExamPDF(examId: string, userId: string) {
+    try {
+      const res = await fetch(`/api/exams/${examId}`)
+      if (!res.ok) throw new Error('Erro ao buscar prova')
+
+      const data = await res.json()
+      const exam = data.exam
+
+      const blob = generateExamPDF(exam, userId)
+      downloadPDF(blob, `Prova-${exam.title}.pdf`)
+    } catch (error: any) {
+      console.error('Erro ao baixar prova:', error)
+      setToastMessage('Erro ao gerar PDF da prova: ' + error.message)
+      setToastOpen(true)
+    }
+  }
+
+  async function handleDownloadAnswersPDF(submission: UserSubmission) {
+    try {
+      const res = await fetch(`/api/exams/${submission.examId}`)
+      if (!res.ok) throw new Error('Erro ao buscar prova')
+
+      const examData = await res.json()
+      const exam = examData.exam
+
+      const submissionRes = await fetch(`/api/submissions/${submission._id}`)
+      if (!submissionRes.ok) throw new Error('Erro ao buscar submissão')
+
+      const submissionData = await submissionRes.json()
+      const answers = submissionData.submission?.answers || []
+
+      const blob = generateStudentAnswersPDF(exam, answers, submission.userName || userName)
+      downloadPDF(blob, `Minhas-Respostas-${exam.title}.pdf`)
+    } catch (error: any) {
+      console.error('Erro ao baixar respostas:', error)
+      setToastMessage('Erro ao gerar PDF de respostas: ' + error.message)
       setToastOpen(true)
     }
   }
@@ -271,9 +314,32 @@ export default function ProfilePage() {
                     )}
 
                     {/* Acoes */}
-                    <div className="flex flex-wrap gap-2">
+                    <div className="space-y-3">
+                      {/* Botões sempre disponíveis */}
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDownloadExamPDF(submission.examId, submission.userId)}
+                          className="border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950"
+                        >
+                          <Printer className="h-4 w-4 mr-2" />
+                          Baixar PDF da Prova
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDownloadAnswersPDF(submission)}
+                          className="border-purple-500 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-950"
+                        >
+                          <ClipboardList className="h-4 w-4 mr-2" />
+                          Minhas Respostas (PDF)
+                        </Button>
+                      </div>
+
+                      {/* Botões liberados após término da prova */}
                       {isExamFinished(submission) ? (
-                        <>
+                        <div className="flex flex-wrap gap-2">
                           <Button
                             variant="default"
                             size="sm"
@@ -290,7 +356,7 @@ export default function ProfilePage() {
                             <Download className="h-4 w-4 mr-2" />
                             Baixar Gabarito
                           </Button>
-                        </>
+                        </div>
                       ) : (
                         <div className="w-full p-3 bg-orange-50 dark:bg-orange-950 rounded-lg border border-orange-200 dark:border-orange-800">
                           <p className="text-sm text-orange-800 dark:text-orange-200">

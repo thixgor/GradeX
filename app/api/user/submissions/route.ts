@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { ExamSubmission, Exam } from '@/lib/types'
+import { ObjectId } from 'mongodb'
 
 // GET - Buscar todas as submissoes do usuario logado
 export async function GET(request: NextRequest) {
@@ -24,7 +25,18 @@ export async function GET(request: NextRequest) {
     // Buscar informacoes das provas e filtrar provas deletadas
     const submissionsWithExams = (await Promise.all(
       submissions.map(async (submission) => {
-        const exam = await examsCollection.findOne({ _id: submission.examId })
+        // Converter examId para ObjectId se necessário
+        let examObjectId
+        try {
+          examObjectId = typeof submission.examId === 'string'
+            ? new ObjectId(submission.examId)
+            : submission.examId
+        } catch (error) {
+          console.error('Error converting examId to ObjectId:', submission.examId)
+          return null
+        }
+
+        const exam = await examsCollection.findOne({ _id: examObjectId })
 
         // Se a prova foi deletada, retorna null para filtrar depois
         if (!exam) {

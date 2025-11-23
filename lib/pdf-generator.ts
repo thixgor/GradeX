@@ -1,6 +1,6 @@
 import jsPDF from 'jspdf'
 import JsBarcode from 'jsbarcode'
-import { Exam, Question } from './types'
+import { Exam, Question, UserAnswer } from './types'
 
 export function generateGabaritoPDF(exam: Exam): Blob {
   const doc = new jsPDF()
@@ -499,6 +499,185 @@ export function generateExamPDF(exam: Exam, userId?: string): Blob {
     doc.setFont('helvetica', 'normal')
     doc.text(
       `Página ${i} de ${totalPages} - ${exam.title}`,
+      pageWidth / 2,
+      pageHeight - 10,
+      { align: 'center' }
+    )
+  }
+
+  return doc.output('blob')
+}
+
+/**
+ * Gera PDF da prova com as respostas do aluno marcadas (sem mostrar gabarito)
+ */
+export function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[], userName: string): Blob {
+  const doc = new jsPDF()
+
+  const pageWidth = doc.internal.pageSize.getWidth()
+  const pageHeight = doc.internal.pageSize.getHeight()
+  const margin = 20
+  let y = margin
+
+  const checkPage = (needed: number) => {
+    if (y + needed > pageHeight - margin) {
+      doc.addPage()
+      y = margin
+      return true
+    }
+    return false
+  }
+
+  doc.setFillColor(59, 130, 246)
+  doc.rect(0, 0, pageWidth, 40, 'F')
+
+  doc.setTextColor(255, 255, 255)
+  doc.setFontSize(22)
+  doc.setFont('helvetica', 'bold')
+  doc.text(exam.title, pageWidth / 2, 15, { align: 'center' })
+
+  doc.setFontSize(11)
+  doc.setFont('helvetica', 'normal')
+  doc.text('RELATÓRIO DE RESPOSTAS', pageWidth / 2, 28, { align: 'center' })
+
+  y = 50
+
+  doc.setTextColor(0, 0, 0)
+  doc.setFontSize(10)
+  doc.setFont('helvetica', 'bold')
+  doc.text('Aluno: ' + userName, margin, y)
+  y += 5
+  doc.setFont('helvetica', 'normal')
+  doc.text('Data: ' + new Date().toLocaleDateString('pt-BR'), margin, y)
+  y += 10
+
+  doc.setDrawColor(200, 200, 200)
+  doc.setLineWidth(0.5)
+  doc.line(margin, y, pageWidth - margin, y)
+  y += 10
+
+  exam.questions.forEach((question, idx) => {
+    checkPage(40)
+
+    doc.setFontSize(11)
+    doc.setFont('helvetica', 'bold')
+    doc.text('Questão ' + (idx + 1) + ':', margin, y)
+    y += 6
+
+    if (question.statement) {
+      doc.setFontSize(10)
+      doc.setFont('helvetica', 'normal')
+      const lines = doc.splitTextToSize(question.statement, pageWidth - 2 * margin)
+      lines.forEach((line: string) => {
+        checkPage(10)
+        doc.text(line, margin, y)
+        y += 5
+      })
+      y += 2
+    }
+
+    if (question.statementSource) {
+      checkPage(8)
+      doc.setFontSize(8)
+      doc.setTextColor(100, 100, 100)
+      doc.text('Fonte: ' + question.statementSource, margin, y)
+      doc.setTextColor(0, 0, 0)
+      y += 5
+    }
+
+    if (question.command && question.type === 'discursive') {
+      checkPage(8)
+      doc.setFontSize(10)
+      doc.setFont('helvetica', 'bold')
+      const commandLines = doc.splitTextToSize(question.command, pageWidth - 2 * margin)
+      commandLines.forEach((line: string) => {
+        checkPage(8)
+        doc.text(line, margin, y)
+        y += 5
+      })
+      y += 3
+    }
+
+    const answer = answers.find(a => a.questionId === question.id)
+
+    if (question.type === 'multiple-choice') {
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(10)
+      y += 3
+
+      const letters = ['A', 'B', 'C', 'D', 'E']
+      question.alternatives.forEach((alt, altIdx) => {
+        checkPage(12)
+
+        const isSelected = answer?.selectedAlternative === alt.id
+
+        doc.setDrawColor(0, 0, 0)
+        doc.setLineWidth(0.3)
+        doc.rect(margin + 2, y - 3, 4, 4)
+
+        if (isSelected) {
+          doc.setFillColor(59, 130, 246)
+          doc.rect(margin + 2, y - 3, 4, 4, 'F')
+        }
+
+        if (isSelected) {
+          doc.setFont('helvetica', 'bold')
+        } else {
+          doc.setFont('helvetica', 'normal')
+        }
+
+        const altText = letters[altIdx] + ') ' + alt.text
+        const altLines = doc.splitTextToSize(altText, pageWidth - 2 * margin - 10)
+        altLines.forEach((line: string, lineIdx: number) => {
+          if (lineIdx > 0) checkPage(5)
+          doc.text(line, margin + 8, y)
+          y += 5
+        })
+        y += 2
+      })
+    } else if (question.type === 'discursive') {
+      checkPage(20)
+
+      doc.setFontSize(9)
+      doc.setTextColor(100, 100, 100)
+      doc.text('Sua resposta:', margin, y)
+      doc.setTextColor(0, 0, 0)
+      y += 6
+
+      if (answer?.discursiveText) {
+        doc.setFontSize(10)
+        doc.setFont('helvetica', 'normal')
+        const answerLines = doc.splitTextToSize(answer.discursiveText, pageWidth - 2 * margin - 4)
+        answerLines.forEach((line: string) => {
+          checkPage(8)
+          doc.text(line, margin + 2, y)
+          y += 5
+        })
+      } else {
+        doc.setFontSize(10)
+        doc.setTextColor(150, 150, 150)
+        doc.text('(Não respondida)', margin + 2, y)
+        doc.setTextColor(0, 0, 0)
+        y += 5
+      }
+    }
+
+    y += 8
+  })
+
+  const totalPages = doc.getNumberOfPages()
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i)
+
+    doc.setDrawColor(200, 200, 200)
+    doc.setLineWidth(0.3)
+    doc.line(margin, pageHeight - 15, pageWidth - margin, pageHeight - 15)
+
+    doc.setFontSize(8)
+    doc.setTextColor(100, 100, 100)
+    doc.setFont('helvetica', 'normal')
+    doc.text(
+      'Página ' + i + ' de ' + totalPages + ' - Respostas de ' + userName,
       pageWidth / 2,
       pageHeight - 10,
       { align: 'center' }
