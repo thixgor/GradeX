@@ -66,6 +66,8 @@ export async function POST(request: NextRequest) {
       startTime,
       endTime,
       isHidden = false,
+      discursiveCorrectionMethod,
+      aiRigor,
     } = body
 
     if (!title || !numberOfQuestions || !numberOfAlternatives || !scoringMethod || !startTime || !endTime) {
@@ -95,6 +97,8 @@ export async function POST(request: NextRequest) {
       endTime: new Date(endTime),
       createdBy: session.userId,
       isHidden,
+      discursiveCorrectionMethod,
+      aiRigor,
       createdAt: new Date(),
       updatedAt: new Date(),
     }

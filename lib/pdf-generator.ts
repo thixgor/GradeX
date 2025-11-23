@@ -281,7 +281,7 @@ export function generateExamPDF(exam: Exam, userId?: string): Blob {
   doc.setTextColor(255, 255, 255)
   doc.setFontSize(22)
   doc.setFont('helvetica', 'bold')
-  doc.text(exam.name, pageWidth / 2, 15, { align: 'center' })
+  doc.text(exam.title, pageWidth / 2, 15, { align: 'center' })
 
   if (exam.description) {
     doc.setFontSize(11)
@@ -498,7 +498,7 @@ export function generateExamPDF(exam: Exam, userId?: string): Blob {
     doc.setTextColor(100, 100, 100)
     doc.setFont('helvetica', 'normal')
     doc.text(
-      `Página ${i} de ${totalPages} - ${exam.name}`,
+      `Página ${i} de ${totalPages} - ${exam.title}`,
       pageWidth / 2,
       pageHeight - 10,
       { align: 'center' }

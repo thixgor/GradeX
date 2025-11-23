@@ -85,7 +85,7 @@ export default function ProfilePage() {
 
       // Gerar PDF do gabarito
       const blob = generateGabaritoPDF(exam)
-      downloadPDF(blob, `Gabarito-${exam.name}.pdf`)
+      downloadPDF(blob, `Gabarito-${exam.title}.pdf`)
     } catch (error: any) {
       console.error('Erro ao baixar gabarito:', error)
       alert('Erro ao gerar gabarito: ' + error.message)

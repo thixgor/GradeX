@@ -125,7 +125,7 @@ export default function AdminExamsPage() {
   function handleDownloadExamPDF(exam: Exam) {
     try {
       const blob = generateExamPDF(exam)
-      downloadPDF(blob, `${exam.name}.pdf`)
+      downloadPDF(blob, `${exam.title}.pdf`)
     } catch (error: any) {
       console.error('Erro ao gerar PDF:', error)
       alert('Erro ao gerar PDF: ' + error.message)
