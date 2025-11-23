@@ -1,7 +1,27 @@
-import { Question, KeyPoint } from './types'
+import { Question, KeyPoint, Settings } from './types'
+import { getDb } from './mongodb'
 
-const GEMINI_API_KEY = 'AIzaSyBixtScttv4-N5bBrLNMUwzw94UvGjLGLA'
 const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent'
+
+/**
+ * Busca a API Key do Gemini do banco de dados
+ */
+async function getGeminiApiKey(): Promise<string> {
+  try {
+    const db = await getDb()
+    const settingsCollection = db.collection<Settings>('settings')
+    const settings = await settingsCollection.findOne({})
+
+    if (!settings?.geminiApiKey) {
+      throw new Error('API Key do Gemini não configurada. Configure em Configurações > API Gemini')
+    }
+
+    return settings.geminiApiKey
+  } catch (error) {
+    console.error('Erro ao buscar API Key do Gemini:', error)
+    throw error
+  }
+}
 
 interface CorrectionResult {
   score: number
@@ -33,8 +53,11 @@ export async function correctWithGemini(
   // Construir o prompt para o Gemini
   const prompt = buildCorrectionPrompt(question, studentAnswer, rigor)
 
+  // Buscar API Key do banco de dados
+  const apiKey = await getGeminiApiKey()
+
   try {
-    const response = await fetch(`${GEMINI_ENDPOINT}?key=${GEMINI_API_KEY}`, {
+    const response = await fetch(`${GEMINI_ENDPOINT}?key=${apiKey}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -185,9 +208,12 @@ function parseCorrectionResponse(response: string, question: Question): Correcti
 /**
  * Testa a conexão com a API Gemini
  */
-export async function testGeminiConnection(): Promise<boolean> {
+export async function testGeminiConnection(apiKey?: string): Promise<boolean> {
   try {
-    const response = await fetch(`${GEMINI_ENDPOINT}?key=${GEMINI_API_KEY}`, {
+    // Usar API key fornecida ou buscar do banco
+    const key = apiKey || await getGeminiApiKey()
+
+    const response = await fetch(`${GEMINI_ENDPOINT}?key=${key}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

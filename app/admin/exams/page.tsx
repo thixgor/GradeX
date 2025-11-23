@@ -10,7 +10,9 @@ import { ToastAlert } from '@/components/ui/toast-alert'
 import { Exam } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
 import { generateExamPDF, downloadPDF } from '@/lib/pdf-generator'
-import { ArrowLeft, Edit, Trash2, Eye, EyeOff, Plus, Play, StopCircle, RotateCcw, FileCheck, FileDown, AlertTriangle } from 'lucide-react'
+import { ArrowLeft, Edit, Trash2, Eye, EyeOff, Plus, Play, StopCircle, RotateCcw, FileCheck, FileDown, AlertTriangle, Settings, Check, X } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 export default function AdminExamsPage() {
   const router = useRouter()
@@ -20,9 +22,15 @@ export default function AdminExamsPage() {
   const [toastOpen, setToastOpen] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
   const [toastType, setToastType] = useState<'error' | 'success' | 'info'>('error')
+  const [showSettings, setShowSettings] = useState(false)
+  const [geminiApiKey, setGeminiApiKey] = useState('')
+  const [savedGeminiApiKey, setSavedGeminiApiKey] = useState('')
+  const [testingConnection, setTestingConnection] = useState(false)
+  const [savingSettings, setSavingSettings] = useState(false)
 
   useEffect(() => {
     loadExams()
+    loadSettings()
   }, [])
 
   const showToastMessage = (message: string, type: 'error' | 'success' | 'info' = 'error') => {
@@ -40,6 +48,70 @@ export default function AdminExamsPage() {
       console.error('Erro ao carregar provas:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function loadSettings() {
+    try {
+      const res = await fetch('/api/settings')
+      if (res.ok) {
+        const data = await res.json()
+        const apiKey = data.settings?.geminiApiKey || ''
+        setSavedGeminiApiKey(apiKey)
+        setGeminiApiKey(apiKey)
+      }
+    } catch (error) {
+      console.error('Erro ao carregar configurações:', error)
+    }
+  }
+
+  async function saveSettings() {
+    setSavingSettings(true)
+    try {
+      const res = await fetch('/api/settings', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ geminiApiKey })
+      })
+
+      if (res.ok) {
+        setSavedGeminiApiKey(geminiApiKey)
+        showToastMessage('Configurações salvas com sucesso!', 'success')
+      } else {
+        throw new Error('Erro ao salvar')
+      }
+    } catch (error: any) {
+      showToastMessage(error.message)
+    } finally {
+      setSavingSettings(false)
+    }
+  }
+
+  async function testGeminiConnection() {
+    if (!geminiApiKey.trim()) {
+      showToastMessage('Por favor, insira uma API Key', 'error')
+      return
+    }
+
+    setTestingConnection(true)
+    try {
+      const res = await fetch('/api/settings/test-gemini', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ apiKey: geminiApiKey })
+      })
+
+      const data = await res.json()
+
+      if (data.success) {
+        showToastMessage('Conexão com Gemini estabelecida com sucesso!', 'success')
+      } else {
+        showToastMessage(data.error || 'Falha ao conectar com Gemini', 'error')
+      }
+    } catch (error: any) {
+      showToastMessage('Erro ao testar conexão: ' + error.message)
+    } finally {
+      setTestingConnection(false)
     }
   }
 
@@ -173,6 +245,13 @@ export default function AdminExamsPage() {
             <h1 className="text-2xl font-bold">Gerenciar Provas</h1>
           </div>
           <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowSettings(!showSettings)}
+            >
+              <Settings className="h-4 w-4 mr-2" />
+              Configurações
+            </Button>
             {exams.length > 0 && (
               <Button
                 variant="destructive"
@@ -192,6 +271,74 @@ export default function AdminExamsPage() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
+        {/* Card de Configurações */}
+        {showSettings && (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Settings className="h-5 w-5" />
+                Configurações do Sistema
+              </CardTitle>
+              <CardDescription>
+                Configure as integrações e API keys necessárias para o funcionamento do sistema
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="gemini-api-key">API Key do Google Gemini</Label>
+                <p className="text-sm text-muted-foreground">
+                  Necessária para correção automática de questões discursivas.{' '}
+                  <a
+                    href="https://aistudio.google.com/app/apikey"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    Obter API Key
+                  </a>
+                </p>
+                <div className="flex gap-2">
+                  <Input
+                    id="gemini-api-key"
+                    type="password"
+                    value={geminiApiKey}
+                    onChange={(e) => setGeminiApiKey(e.target.value)}
+                    placeholder="AIza..."
+                    className="flex-1"
+                  />
+                  <Button
+                    variant="outline"
+                    onClick={testGeminiConnection}
+                    disabled={testingConnection || !geminiApiKey.trim()}
+                  >
+                    {testingConnection ? 'Testando...' : 'Testar'}
+                  </Button>
+                  <Button
+                    onClick={saveSettings}
+                    disabled={savingSettings || geminiApiKey === savedGeminiApiKey}
+                  >
+                    {savingSettings ? (
+                      'Salvando...'
+                    ) : geminiApiKey === savedGeminiApiKey ? (
+                      <>
+                        <Check className="h-4 w-4 mr-2" />
+                        Salvo
+                      </>
+                    ) : (
+                      'Salvar'
+                    )}
+                  </Button>
+                </div>
+                {savedGeminiApiKey && (
+                  <p className="text-sm text-green-600 dark:text-green-400">
+                    ✓ API Key configurada
+                  </p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {loading ? (
           <div className="text-center py-12">Carregando...</div>
         ) : exams.length === 0 ? (

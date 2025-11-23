@@ -184,3 +184,10 @@ export interface Ticket {
   resolvedAt?: Date
   closedAt?: Date
 }
+
+export interface Settings {
+  _id?: string
+  geminiApiKey?: string
+  updatedAt: Date
+  updatedBy?: string
+}
