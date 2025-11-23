@@ -19,6 +19,7 @@ export function SupportChat() {
   const [message, setMessage] = useState('')
   const [newMessage, setNewMessage] = useState('')
   const [loading, setLoading] = useState(false)
+  const [currentUserId, setCurrentUserId] = useState<string>('')
   const previousMessageCount = useRef<number>(0)
 
   useEffect(() => {
@@ -42,6 +43,7 @@ export function SupportChat() {
       const res = await fetch('/api/tickets')
       const data = await res.json()
       setTickets(data.tickets || [])
+      setCurrentUserId(data.currentUserId || '')
 
       // Atualizar ticket ativo se existir
       if (activeTicket) {
@@ -224,13 +226,18 @@ export function SupportChat() {
               <div className="h-full flex flex-col">
                 <div className="mb-4 pb-2 border-b">
                   <div className="flex justify-between items-start">
-                    <div>
-                      <h4 className="font-medium">{activeTicket.title}</h4>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h4 className="font-medium">{activeTicket.title}</h4>
+                        <span className="text-xs px-2 py-0.5 bg-muted rounded-md font-mono">
+                          #{activeTicket._id?.slice(-8)}
+                        </span>
+                      </div>
                       <p className="text-xs text-muted-foreground">
                         {activeTicket.status === 'open' && 'Aguardando admin...'}
                         {activeTicket.status === 'assigned' && `Atendido por ${activeTicket.assignedToName}`}
-                        {activeTicket.status === 'resolved' && 'Resolvido'}
-                        {activeTicket.status === 'closed' && 'Fechado'}
+                        {activeTicket.status === 'resolved' && '✓ Resolvido'}
+                        {activeTicket.status === 'closed' && '✓ Fechado'}
                       </p>
                     </div>
                     <Button
@@ -245,37 +252,74 @@ export function SupportChat() {
 
                 {/* Messages */}
                 <div className="flex-1 overflow-auto space-y-3 mb-4">
-                  {activeTicket.messages.map((msg) => (
-                    <div
-                      key={msg.id}
-                      className={`flex ${
-                        msg.senderId === activeTicket.userId ? 'justify-end' : 'justify-start'
-                      }`}
-                    >
+                  {activeTicket.messages.map((msg) => {
+                    const isOwnMessage = msg.senderId === currentUserId
+                    const isSystemMessage = msg.senderId === 'system'
+
+                    return (
                       <div
-                        className={`max-w-[80%] rounded-lg p-3 ${
-                          msg.senderId === activeTicket.userId
-                            ? 'bg-primary text-primary-foreground'
-                            : 'bg-muted'
+                        key={msg.id}
+                        className={`flex ${
+                          isSystemMessage
+                            ? 'justify-center'
+                            : isOwnMessage
+                            ? 'justify-end'
+                            : 'justify-start'
                         }`}
                       >
-                        <p className="text-sm">{msg.text}</p>
-                        <div className="flex items-center gap-1 justify-end mt-1">
-                          <span className="text-xs opacity-70">
-                            {new Date(msg.sentAt).toLocaleTimeString('pt-BR', {
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
-                          </span>
-                          {getMessageStatus(msg, activeTicket)}
+                        <div
+                          className={`max-w-[80%] rounded-lg p-3 ${
+                            isSystemMessage
+                              ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-900 dark:text-yellow-100 text-center text-xs italic'
+                              : isOwnMessage
+                              ? 'bg-primary text-primary-foreground'
+                              : 'bg-muted'
+                          }`}
+                        >
+                          {!isSystemMessage && msg.senderRole === 'admin' && !isOwnMessage && (
+                            <p className="text-xs font-semibold mb-1 opacity-70">{msg.senderName}</p>
+                          )}
+                          <p className="text-sm">{msg.text}</p>
+                          <div className="flex items-center gap-1 justify-end mt-1">
+                            <span className="text-xs opacity-70">
+                              {new Date(msg.sentAt).toLocaleTimeString('pt-BR', {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </span>
+                            {isOwnMessage && getMessageStatus(msg, activeTicket)}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
 
+                {/* Avisos de Status */}
+                {activeTicket.status === 'resolved' && (
+                  <div className="mb-3 p-3 bg-green-100 dark:bg-green-900 border border-green-300 dark:border-green-700 rounded-lg">
+                    <p className="text-sm text-green-800 dark:text-green-100 font-medium">
+                      ✓ Este ticket foi marcado como resolvido pelo administrador.
+                    </p>
+                    <p className="text-xs text-green-700 dark:text-green-200 mt-1">
+                      Você pode fechar o ticket se sua dúvida foi solucionada.
+                    </p>
+                  </div>
+                )}
+
+                {activeTicket.status === 'closed' && (
+                  <div className="mb-3 p-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg">
+                    <p className="text-sm text-gray-800 dark:text-gray-100 font-medium">
+                      ✓ Este ticket foi fechado.
+                    </p>
+                    <p className="text-xs text-gray-700 dark:text-gray-300 mt-1">
+                      O histórico do chat foi arquivado. Caso precise de ajuda novamente, crie um novo ticket.
+                    </p>
+                  </div>
+                )}
+
                 {/* Input */}
-                {activeTicket.status !== 'closed' && (
+                {activeTicket.status !== 'closed' && activeTicket.status !== 'resolved' && (
                   <div className="flex gap-2">
                     <Input
                       value={newMessage}
@@ -289,7 +333,18 @@ export function SupportChat() {
                   </div>
                 )}
 
-                {activeTicket.status !== 'closed' && (
+                {activeTicket.status === 'resolved' && (
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={closeTicket}
+                    className="mt-2 w-full bg-green-600 hover:bg-green-700"
+                  >
+                    Fechar Ticket
+                  </Button>
+                )}
+
+                {activeTicket.status !== 'closed' && activeTicket.status !== 'resolved' && (
                   <Button
                     variant="outline"
                     size="sm"

@@ -28,7 +28,10 @@ export async function GET(request: NextRequest) {
       .sort({ updatedAt: -1 })
       .toArray()
 
-    return NextResponse.json({ tickets })
+    return NextResponse.json({
+      tickets,
+      currentUserId: session.userId // Retornar userId da sessão
+    })
   } catch (error) {
     console.error('Get tickets error:', error)
     return NextResponse.json(

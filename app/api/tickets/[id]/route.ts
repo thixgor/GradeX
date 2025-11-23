@@ -170,6 +170,54 @@ export async function PATCH(
         updateData.closedAt = new Date()
         break
 
+      case 'reopen':
+        // Reabrir ticket (apenas admin)
+        if (session.role !== 'admin') {
+          return NextResponse.json({ error: 'Apenas admins podem reabrir tickets' }, { status: 403 })
+        }
+
+        // Adicionar mensagem do sistema
+        const reopenMessage = {
+          id: `msg_${Date.now()}_reopen`,
+          senderId: 'system',
+          senderName: 'Sistema',
+          senderRole: 'user' as const,
+          text: `O ticket foi reaberto por ${user.name} (administrador).`,
+          sentAt: new Date()
+        }
+
+        await ticketsCollection.updateOne(
+          { _id: new ObjectId(id) },
+          {
+            $set: {
+              status: 'assigned',
+              assignedTo: session.userId,
+              assignedToName: user.name,
+              updatedAt: new Date(),
+              resolvedAt: null,
+              closedAt: null
+            },
+            $push: { messages: reopenMessage }
+          }
+        )
+
+        // Criar notificação para o usuário que abriu o ticket
+        const notificationsCollection = db.collection('notifications')
+        await notificationsCollection.insertOne({
+          userId: ticket.userId,
+          type: 'ticket_created',
+          message: `Seu ticket "${ticket.title}" foi reaberto por ${user.name}`,
+          ticketId: ticket._id!.toString(),
+          ticketTitle: ticket.title,
+          read: false,
+          createdAt: new Date()
+        })
+
+        return NextResponse.json({
+          success: true,
+          message: 'Ticket reaberto com sucesso'
+        })
+
       default:
         return NextResponse.json({ error: 'Ação inválida' }, { status: 400 })
     }

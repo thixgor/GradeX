@@ -140,6 +140,25 @@ export default function AdminTicketsPage() {
     }
   }
 
+  async function reopenTicket() {
+    if (!selectedTicket) return
+
+    try {
+      const res = await fetch(`/api/tickets/${selectedTicket._id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'reopen' })
+      })
+
+      if (res.ok) {
+        showToastMessage('Ticket reaberto!', 'success')
+        loadTickets()
+      }
+    } catch (error) {
+      showToastMessage('Erro ao reabrir ticket')
+    }
+  }
+
   function getMessageStatus(msg: TicketMessage) {
     if (msg.senderRole === 'admin') {
       if (msg.readAt) {
@@ -253,8 +272,13 @@ export default function AdminTicketsPage() {
         <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col">
           <DialogHeader>
             <div className="flex items-start justify-between">
-              <div>
-                <DialogTitle>{selectedTicket?.title}</DialogTitle>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <DialogTitle>{selectedTicket?.title}</DialogTitle>
+                  <span className="text-xs px-2 py-0.5 bg-muted rounded-md font-mono">
+                    #{selectedTicket?._id?.slice(-8)}
+                  </span>
+                </div>
                 <DialogDescription>
                   {selectedTicket?.userName} ({selectedTicket?.userEmail})
                 </DialogDescription>
@@ -272,41 +296,75 @@ export default function AdminTicketsPage() {
 
           {selectedTicket && (
             <div className="flex-1 overflow-auto space-y-3 p-4">
-              {selectedTicket.messages.map((msg) => (
-                <div
-                  key={msg.id}
-                  className={`flex ${
-                    msg.senderRole === 'admin' ? 'justify-end' : 'justify-start'
-                  }`}
-                >
+              {selectedTicket.messages.map((msg) => {
+                const isSystemMessage = msg.senderId === 'system'
+
+                return (
                   <div
-                    className={`max-w-[80%] rounded-lg p-3 ${
-                      msg.senderRole === 'admin'
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-muted'
+                    key={msg.id}
+                    className={`flex ${
+                      isSystemMessage
+                        ? 'justify-center'
+                        : msg.senderRole === 'admin'
+                        ? 'justify-end'
+                        : 'justify-start'
                     }`}
                   >
-                    <p className="text-sm font-medium mb-1">{msg.senderName}</p>
-                    <p className="text-sm">{msg.text}</p>
-                    <div className="flex items-center gap-1 justify-end mt-1">
-                      <span className="text-xs opacity-70">
-                        {new Date(msg.sentAt).toLocaleString('pt-BR', {
-                          day: '2-digit',
-                          month: '2-digit',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
-                      </span>
-                      {getMessageStatus(msg)}
+                    <div
+                      className={`max-w-[80%] rounded-lg p-3 ${
+                        isSystemMessage
+                          ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-900 dark:text-yellow-100 text-center text-xs italic'
+                          : msg.senderRole === 'admin'
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-muted'
+                      }`}
+                    >
+                      <p className="text-sm font-medium mb-1">{msg.senderName}</p>
+                      <p className="text-sm">{msg.text}</p>
+                      <div className="flex items-center gap-1 justify-end mt-1">
+                        <span className="text-xs opacity-70">
+                          {new Date(msg.sentAt).toLocaleString('pt-BR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </span>
+                        {!isSystemMessage && getMessageStatus(msg)}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
 
-          {selectedTicket && selectedTicket.status !== 'closed' && (
+          {selectedTicket && (
             <div className="space-y-2 p-4 border-t">
+              {/* Avisos de Status */}
+              {selectedTicket.status === 'resolved' && (
+                <div className="p-3 bg-green-100 dark:bg-green-900 border border-green-300 dark:border-green-700 rounded-lg">
+                  <p className="text-sm text-green-800 dark:text-green-100 font-medium">
+                    ✓ Este ticket foi marcado como resolvido.
+                  </p>
+                  <p className="text-xs text-green-700 dark:text-green-200 mt-1">
+                    Aguardando o usuário fechar o ticket ou você pode reabri-lo se necessário.
+                  </p>
+                </div>
+              )}
+
+              {selectedTicket.status === 'closed' && (
+                <div className="p-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg">
+                  <p className="text-sm text-gray-800 dark:text-gray-100 font-medium">
+                    ✓ Este ticket foi fechado.
+                  </p>
+                  <p className="text-xs text-gray-700 dark:text-gray-300 mt-1">
+                    O histórico do chat está arquivado. Você pode reabrir este ticket se necessário.
+                  </p>
+                </div>
+              )}
+
+              {/* Botões de Ação */}
               {selectedTicket.status === 'open' && (
                 <Button
                   onClick={() => assignTicket(selectedTicket._id!)}
@@ -338,6 +396,17 @@ export default function AdminTicketsPage() {
                     Marcar como Resolvido
                   </Button>
                 </>
+              )}
+
+              {(selectedTicket.status === 'resolved' || selectedTicket.status === 'closed') && (
+                <Button
+                  onClick={reopenTicket}
+                  variant="outline"
+                  className="w-full"
+                >
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                  Reabrir Ticket
+                </Button>
               )}
             </div>
           )}
