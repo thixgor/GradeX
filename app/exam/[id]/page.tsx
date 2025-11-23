@@ -37,8 +37,12 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [submitted, setSubmitted] = useState(false)
   const [submissionScore, setSubmissionScore] = useState<string>('')
+  const [alreadySubmitted, setAlreadySubmitted] = useState(false)
+  const [existingSubmissionId, setExistingSubmissionId] = useState<string>('')
+  const [userId, setUserId] = useState<string>('')
 
   useEffect(() => {
+    checkExistingSubmission()
     loadExam()
     loadUserInfo()
   }, [id])
@@ -70,6 +74,28 @@ export default function ExamPage({ params }: { params: { id: string } }) {
 
     return () => clearInterval(interval)
   }, [exam, id, router])
+
+  async function checkExistingSubmission() {
+    try {
+      const resAuth = await fetch('/api/auth/me')
+      if (!resAuth.ok) return
+
+      const authData = await resAuth.json()
+      const currentUserId = authData.user.id
+      setUserId(currentUserId)
+
+      const res = await fetch(`/api/exams/${id}/check-submission`)
+      if (res.ok) {
+        const data = await res.json()
+        if (data.hasSubmitted) {
+          setAlreadySubmitted(true)
+          setExistingSubmissionId(data.submissionId)
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao verificar submissao:', error)
+    }
+  }
 
   async function loadExam() {
     try {
@@ -502,6 +528,70 @@ export default function ExamPage({ params }: { params: { id: string } }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
+      {/* Modal - Prova já realizada */}
+      {alreadySubmitted && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <Card className="max-w-md w-full shadow-2xl">
+            <CardHeader className="text-center space-y-4">
+              <div className="mx-auto w-16 h-16 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
+                <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-300" />
+              </div>
+              <div>
+                <CardTitle className="text-2xl">Prova Já Realizada!</CardTitle>
+                <CardDescription className="mt-2">
+                  Você já realizou esta prova. Não é possível refazê-la.
+                </CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="p-4 bg-muted rounded-lg">
+                <p className="text-sm text-center text-muted-foreground">
+                  Você pode visualizar seu relatório ou baixar o gabarito da prova
+                </p>
+              </div>
+              <div className="flex flex-col gap-2">
+                <Button
+                  onClick={() => router.push(`/exam/${id}/user/${userId}`)}
+                  className="w-full"
+                  size="lg"
+                >
+                  <FileDown className="h-4 w-4 mr-2" />
+                  Ver Meu Relatório
+                </Button>
+                <Button
+                  onClick={async () => {
+                    try {
+                      const res = await fetch(`/api/exams/${id}`)
+                      if (!res.ok) throw new Error('Erro ao buscar prova')
+                      const data = await res.json()
+                      const { generateGabaritoPDF, downloadPDF } = await import('@/lib/pdf-generator')
+                      const blob = generateGabaritoPDF(data.exam)
+                      downloadPDF(blob, `Gabarito-${data.exam.name}.pdf`)
+                    } catch (error: any) {
+                      alert('Erro ao gerar gabarito: ' + error.message)
+                    }
+                  }}
+                  variant="outline"
+                  className="w-full"
+                  size="lg"
+                >
+                  <FileDown className="h-4 w-4 mr-2" />
+                  Baixar Gabarito (PDF)
+                </Button>
+                <Button
+                  onClick={() => router.push('/')}
+                  variant="ghost"
+                  className="w-full"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Voltar para Início
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between flex-wrap gap-4">
           <div>

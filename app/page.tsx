@@ -8,7 +8,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { NotificationsBell } from '@/components/notifications-bell'
 import { Exam } from '@/lib/types'
 import { formatDate, isBetweenDates } from '@/lib/utils'
-import { Clock, Calendar, FileText, LogOut, Settings, Plus } from 'lucide-react'
+import { Clock, Calendar, FileText, LogOut, Settings, Plus, User as UserIcon } from 'lucide-react'
 
 interface User {
   id: string
@@ -158,6 +158,16 @@ export default function HomePage() {
                   <Settings className="h-5 w-5" />
                 </Button>
               </>
+            )}
+            {user && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => router.push('/profile')}
+                title="Meu Perfil"
+              >
+                <UserIcon className="h-5 w-5" />
+              </Button>
             )}
             {user && <NotificationsBell />}
             <ThemeToggle />
