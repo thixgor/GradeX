@@ -154,3 +154,31 @@ export interface Notification {
   read: boolean
   createdAt: Date
 }
+
+export type TicketStatus = 'open' | 'assigned' | 'resolved' | 'closed'
+
+export interface TicketMessage {
+  id: string
+  senderId: string
+  senderName: string
+  senderRole: 'admin' | 'user'
+  text: string
+  sentAt: Date
+  readAt?: Date // Quando foi lida
+}
+
+export interface Ticket {
+  _id?: string
+  userId: string
+  userName: string
+  userEmail: string
+  title: string
+  status: TicketStatus
+  assignedTo?: string // ID do admin que pegou o ticket
+  assignedToName?: string // Nome do admin
+  messages: TicketMessage[]
+  createdAt: Date
+  updatedAt: Date
+  resolvedAt?: Date
+  closedAt?: Date
+}

@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ThemeToggle } from '@/components/theme-toggle'
 import { NotificationsBell } from '@/components/notifications-bell'
 import { BanChecker } from '@/components/ban-checker'
+import { SupportChat } from '@/components/support-chat'
 import { Exam } from '@/lib/types'
 import { formatDate, isBetweenDates } from '@/lib/utils'
 import { Clock, Calendar, FileText, LogOut, Settings, Plus, User as UserIcon, Users } from 'lucide-react'
@@ -292,6 +293,9 @@ export default function HomePage() {
           })}
         </div>
       </main>
+
+      {/* Chat de Suporte */}
+      {user && <SupportChat />}
     </div>
   )
 }

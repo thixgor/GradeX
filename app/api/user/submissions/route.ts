@@ -21,19 +21,25 @@ export async function GET(request: NextRequest) {
       .sort({ submittedAt: -1 })
       .toArray()
 
-    // Buscar informacoes das provas
-    const submissionsWithExams = await Promise.all(
+    // Buscar informacoes das provas e filtrar provas deletadas
+    const submissionsWithExams = (await Promise.all(
       submissions.map(async (submission) => {
         const exam = await examsCollection.findOne({ _id: submission.examId })
+
+        // Se a prova foi deletada, retorna null para filtrar depois
+        if (!exam) {
+          return null
+        }
+
         return {
           ...submission,
-          examName: exam?.name || 'Prova nao encontrada',
-          examTitle: exam?.title || 'Prova nao encontrada',
-          hasDiscursiveQuestions: exam?.questions.some(q => q.type === 'discursive') || false,
-          examEndTime: exam?.endTime, // Adicionar endTime para verificar se prova terminou
+          examName: exam.name || exam.title,
+          examTitle: exam.title,
+          hasDiscursiveQuestions: exam.questions.some(q => q.type === 'discursive') || false,
+          examEndTime: exam.endTime, // Adicionar endTime para verificar se prova terminou
         }
       })
-    )
+    )).filter(submission => submission !== null) // Remove provas deletadas
 
     return NextResponse.json({ submissions: submissionsWithExams })
   } catch (error) {
