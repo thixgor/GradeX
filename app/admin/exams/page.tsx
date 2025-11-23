@@ -10,7 +10,7 @@ import { ToastAlert } from '@/components/ui/toast-alert'
 import { Exam } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
 import { generateExamPDF, downloadPDF } from '@/lib/pdf-generator'
-import { ArrowLeft, Edit, Trash2, Eye, EyeOff, Plus, Play, StopCircle, RotateCcw, FileCheck, FileDown, AlertTriangle, Settings, Check, X } from 'lucide-react'
+import { ArrowLeft, Edit, Trash2, Eye, EyeOff, Plus, Play, StopCircle, RotateCcw, FileCheck, FileDown, AlertTriangle, Settings, Check, X, Lock, ShieldAlert, Database } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
@@ -27,6 +27,9 @@ export default function AdminExamsPage() {
   const [savedGeminiApiKey, setSavedGeminiApiKey] = useState('')
   const [testingConnection, setTestingConnection] = useState(false)
   const [savingSettings, setSavingSettings] = useState(false)
+  const [showVaultDialog, setShowVaultDialog] = useState(false)
+  const [vaultPassword, setVaultPassword] = useState('')
+  const [resettingDatabase, setResettingDatabase] = useState(false)
 
   useEffect(() => {
     loadExams()
@@ -112,6 +115,40 @@ export default function AdminExamsPage() {
       showToastMessage('Erro ao testar conexão: ' + error.message)
     } finally {
       setTestingConnection(false)
+    }
+  }
+
+  async function resetDatabase() {
+    if (!vaultPassword) {
+      showToastMessage('Por favor, insira a senha do cofre', 'error')
+      return
+    }
+
+    setResettingDatabase(true)
+    try {
+      const res = await fetch('/api/settings/reset-database', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: vaultPassword })
+      })
+
+      const data = await res.json()
+
+      if (data.success) {
+        showToastMessage('⚠️ Banco de dados resetado! Faça logout e login novamente.', 'success')
+        setShowVaultDialog(false)
+        setVaultPassword('')
+        // Redirecionar para login após 2 segundos
+        setTimeout(() => {
+          router.push('/auth/login')
+        }, 2000)
+      } else {
+        showToastMessage(data.error || 'Falha ao resetar banco de dados', 'error')
+      }
+    } catch (error: any) {
+      showToastMessage('Erro ao resetar: ' + error.message)
+    } finally {
+      setResettingDatabase(false)
     }
   }
 
@@ -335,6 +372,27 @@ export default function AdminExamsPage() {
                   </p>
                 )}
               </div>
+
+              {/* Zona de Perigo - Reset Database */}
+              <div className="pt-6 mt-6 border-t border-red-200 dark:border-red-800">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
+                    <ShieldAlert className="h-5 w-5" />
+                    <h3 className="font-semibold text-lg">Zona de Perigo</h3>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Ações irreversíveis que afetam todo o sistema. Use com extrema cautela.
+                  </p>
+                  <Button
+                    variant="destructive"
+                    onClick={() => setShowVaultDialog(true)}
+                    className="w-full sm:w-auto bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800"
+                  >
+                    <Database className="h-4 w-4 mr-2" />
+                    Resetar Banco de Dados
+                  </Button>
+                </div>
+              </div>
             </CardContent>
           </Card>
         )}
@@ -541,6 +599,113 @@ export default function AdminExamsPage() {
             >
               <Trash2 className="h-4 w-4 mr-2" />
               Sim, Deletar Tudo
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog do Cofre de Segurança Máxima */}
+      <Dialog open={showVaultDialog} onOpenChange={(open) => {
+        setShowVaultDialog(open)
+        if (!open) setVaultPassword('')
+      }}>
+        <DialogContent className="max-w-md border-4 border-red-500 dark:border-red-700 bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-950 dark:to-orange-950">
+          <DialogHeader>
+            <div className="mx-auto w-24 h-24 rounded-full bg-gradient-to-br from-red-600 to-red-800 dark:from-red-700 dark:to-red-900 flex items-center justify-center mb-4 shadow-2xl border-4 border-red-700 dark:border-red-600 relative">
+              <div className="absolute inset-0 rounded-full bg-red-500 opacity-20 animate-pulse"></div>
+              <Lock className="h-12 w-12 text-white drop-shadow-lg relative z-10" />
+            </div>
+            <DialogTitle className="text-center text-2xl font-bold text-red-900 dark:text-red-100 uppercase tracking-wider">
+              🔒 Cofre de Segurança Máxima
+            </DialogTitle>
+            <DialogDescription className="text-center mt-4 space-y-3">
+              <div className="bg-red-100 dark:bg-red-900/50 border-2 border-red-400 dark:border-red-600 rounded-lg p-4">
+                <p className="text-red-900 dark:text-red-100 font-bold text-lg mb-2">
+                  ⚠️ AVISO CRÍTICO ⚠️
+                </p>
+                <p className="text-red-800 dark:text-red-200 text-sm leading-relaxed">
+                  Você está prestes a <strong>DESTRUIR PERMANENTEMENTE</strong> todo o banco de dados do sistema.
+                </p>
+              </div>
+
+              <div className="bg-white dark:bg-gray-900 border-2 border-red-300 dark:border-red-700 rounded-lg p-3 text-left space-y-2">
+                <p className="text-sm text-red-900 dark:text-red-100 font-semibold">
+                  Esta ação irá deletar:
+                </p>
+                <ul className="text-xs text-red-800 dark:text-red-200 space-y-1 ml-4">
+                  <li>✗ Todos os usuários</li>
+                  <li>✗ Todas as provas</li>
+                  <li>✗ Todas as submissões</li>
+                  <li>✗ Todos os tickets</li>
+                  <li>✗ Todas as notificações</li>
+                  <li>✗ Todas as configurações</li>
+                </ul>
+              </div>
+
+              <div className="bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-lg p-3 border-2 border-red-700">
+                <p className="text-sm font-bold">
+                  🔐 Esta operação NÃO pode ser desfeita!
+                </p>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="vault-password" className="text-red-900 dark:text-red-100 font-semibold flex items-center gap-2">
+                <Lock className="h-4 w-4" />
+                Senha do Cofre
+              </Label>
+              <Input
+                id="vault-password"
+                type="password"
+                value={vaultPassword}
+                onChange={(e) => setVaultPassword(e.target.value)}
+                placeholder="Digite a senha de segurança"
+                className="border-2 border-red-400 dark:border-red-600 focus:border-red-600 dark:focus:border-red-500 bg-white dark:bg-gray-900"
+                disabled={resettingDatabase}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !resettingDatabase) {
+                    resetDatabase()
+                  }
+                }}
+              />
+              <p className="text-xs text-muted-foreground">
+                Insira a senha de acesso ao cofre para prosseguir
+              </p>
+            </div>
+          </div>
+
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowVaultDialog(false)
+                setVaultPassword('')
+              }}
+              disabled={resettingDatabase}
+              className="w-full sm:w-auto"
+            >
+              <X className="h-4 w-4 mr-2" />
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={resetDatabase}
+              disabled={resettingDatabase || !vaultPassword}
+              className="w-full sm:w-auto bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 font-bold"
+            >
+              {resettingDatabase ? (
+                <>
+                  <Lock className="h-4 w-4 mr-2 animate-spin" />
+                  Resetando...
+                </>
+              ) : (
+                <>
+                  <Database className="h-4 w-4 mr-2" />
+                  Confirmar Reset Completo
+                </>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
