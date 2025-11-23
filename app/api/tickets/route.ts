@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
-import { Ticket } from '@/lib/types'
+import { Ticket, Notification } from '@/lib/types'
+import { ObjectId } from 'mongodb'
 
 // GET - Listar tickets
 export async function GET(request: NextRequest) {
@@ -58,7 +59,7 @@ export async function POST(request: NextRequest) {
     // Buscar informações do usuário
     const db = await getDb()
     const usersCollection = db.collection('users')
-    const user = await usersCollection.findOne({ _id: session.userId })
+    const user = await usersCollection.findOne({ _id: new ObjectId(session.userId) })
 
     if (!user) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
@@ -87,6 +88,24 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await ticketsCollection.insertOne(newTicket)
+
+    // Criar notificação para todos os admins
+    const admins = await usersCollection.find({ role: 'admin' }).toArray()
+    const notificationsCollection = db.collection<Notification>('notifications')
+
+    const adminNotifications = admins.map((admin) => ({
+      userId: admin._id!.toString(),
+      type: 'ticket_created' as const,
+      message: `${user.name} criou um novo ticket: "${title}"`,
+      ticketId: result.insertedId.toString(),
+      ticketTitle: title,
+      read: false,
+      createdAt: new Date()
+    }))
+
+    if (adminNotifications.length > 0) {
+      await notificationsCollection.insertMany(adminNotifications)
+    }
 
     return NextResponse.json({
       success: true,

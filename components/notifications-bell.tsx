@@ -85,7 +85,14 @@ export function NotificationsBell() {
 
   function handleNotificationClick(notification: Notification) {
     markAsRead(notification._id!)
-    router.push(`/exam/${notification.examId}/user/${notification.userId}`)
+
+    // Redirecionar baseado no tipo de notificação
+    if (notification.type === 'ticket_created') {
+      router.push('/admin/tickets')
+    } else {
+      router.push(`/exam/${notification.examId}/user/${notification.userId}`)
+    }
+
     setOpen(false)
   }
 
@@ -140,7 +147,11 @@ export function NotificationsBell() {
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1">
-                        <p className="text-sm font-medium">{notification.examTitle}</p>
+                        <p className="text-sm font-medium">
+                          {notification.type === 'ticket_created'
+                            ? notification.ticketTitle
+                            : notification.examTitle}
+                        </p>
                         <p className="text-sm text-muted-foreground mt-1">
                           {notification.message}
                         </p>

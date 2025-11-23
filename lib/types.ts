@@ -147,9 +147,11 @@ export interface TRIResult {
 export interface Notification {
   _id?: string
   userId: string
-  examId: string
-  examTitle: string
-  type: 'correction_ready' // Tipo de notificação
+  examId?: string
+  examTitle?: string
+  ticketId?: string
+  ticketTitle?: string
+  type: 'correction_ready' | 'ticket_created' // Tipo de notificação
   message: string
   read: boolean
   createdAt: Date
