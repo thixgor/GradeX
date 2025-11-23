@@ -83,10 +83,34 @@ export async function PATCH(
         if (session.role !== 'admin') {
           return NextResponse.json({ error: 'Apenas admins podem pegar tickets' }, { status: 403 })
         }
-        updateData.assignedTo = session.userId
-        updateData.assignedToName = user.name
-        updateData.status = 'assigned'
-        break
+
+        // Adicionar mensagem do sistema
+        const systemMessage = {
+          id: `msg_${Date.now()}_system`,
+          senderId: 'system',
+          senderName: 'Sistema',
+          senderRole: 'user' as const,
+          text: `Seu ticket foi atendido por um administrador. O ${user.name} falará com você a partir de agora.`,
+          sentAt: new Date()
+        }
+
+        await ticketsCollection.updateOne(
+          { _id: new ObjectId(id) },
+          {
+            $set: {
+              assignedTo: session.userId,
+              assignedToName: user.name,
+              status: 'assigned',
+              updatedAt: new Date()
+            },
+            $push: { messages: systemMessage }
+          }
+        )
+
+        return NextResponse.json({
+          success: true,
+          message: 'Ticket atribuído com sucesso'
+        })
 
       case 'send_message':
         // Enviar mensagem
@@ -101,8 +125,20 @@ export async function PATCH(
           text: message,
           sentAt: new Date()
         }
-        updateData.$push = { messages: newMessage }
-        break
+
+        // Usar $push corretamente com $set separado
+        await ticketsCollection.updateOne(
+          { _id: new ObjectId(id) },
+          {
+            $push: { messages: newMessage },
+            $set: { updatedAt: new Date() }
+          }
+        )
+
+        return NextResponse.json({
+          success: true,
+          message: 'Mensagem enviada com sucesso'
+        })
 
       case 'mark_read':
         // Marcar mensagens como lidas
@@ -138,9 +174,10 @@ export async function PATCH(
         return NextResponse.json({ error: 'Ação inválida' }, { status: 400 })
     }
 
+    // Atualizar ticket para todos os outros casos
     await ticketsCollection.updateOne(
       { _id: new ObjectId(id) },
-      updateData.$push ? updateData : { $set: updateData }
+      { $set: updateData }
     )
 
     return NextResponse.json({

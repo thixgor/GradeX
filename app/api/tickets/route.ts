@@ -81,6 +81,14 @@ export async function POST(request: NextRequest) {
           senderRole: session.role,
           text: message,
           sentAt: new Date()
+        },
+        {
+          id: `msg_${Date.now()}_system`,
+          senderId: 'system',
+          senderName: 'Sistema',
+          senderRole: 'user',
+          text: `Você criou um ticket com o título "${title}" e ele será atendido em breve por um administrador. Aguarde um momento.`,
+          sentAt: new Date()
         }
       ],
       createdAt: new Date(),

@@ -6,18 +6,38 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Notification } from '@/lib/types'
 import { useRouter } from 'next/navigation'
+import { notificationSound } from '@/lib/notification-sound'
 
 export function NotificationsBell() {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
   const [open, setOpen] = useState(false)
+  const [previousUnreadCount, setPreviousUnreadCount] = useState(0)
   const router = useRouter()
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    loadNotifications()
-    // Atualizar a cada 30 segundos
-    const interval = setInterval(loadNotifications, 30000)
+    // Carregar notificações inicialmente
+    const initialLoad = async () => {
+      try {
+        const res = await fetch('/api/notifications')
+        if (res.ok) {
+          const data = await res.json()
+          const initialNotifications = data.notifications || []
+          const initialUnreadCount = initialNotifications.filter((n: Notification) => !n.read).length
+
+          setNotifications(initialNotifications)
+          setUnreadCount(initialUnreadCount)
+          setPreviousUnreadCount(initialUnreadCount) // Inicializar sem tocar som
+        }
+      } catch (error) {
+        console.error('Erro ao carregar notificações:', error)
+      }
+    }
+
+    initialLoad()
+    // Atualizar a cada 5 segundos (tempo real)
+    const interval = setInterval(loadNotifications, 5000)
     return () => clearInterval(interval)
   }, [])
 
@@ -39,8 +59,18 @@ export function NotificationsBell() {
       const res = await fetch('/api/notifications')
       if (res.ok) {
         const data = await res.json()
-        setNotifications(data.notifications || [])
-        setUnreadCount(data.notifications?.filter((n: Notification) => !n.read).length || 0)
+        const newNotifications = data.notifications || []
+        const newUnreadCount = newNotifications.filter((n: Notification) => !n.read).length
+
+        setNotifications(newNotifications)
+        setUnreadCount(newUnreadCount)
+
+        // Tocar som se houver novas notificações não lidas
+        if (newUnreadCount > previousUnreadCount && previousUnreadCount !== 0) {
+          notificationSound?.play()
+        }
+
+        setPreviousUnreadCount(newUnreadCount)
       }
     } catch (error) {
       console.error('Erro ao carregar notificações:', error)

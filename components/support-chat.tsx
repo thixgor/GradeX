@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Label } from './ui/label'
@@ -8,6 +8,7 @@ import { Textarea } from './ui/textarea'
 import { Card } from './ui/card'
 import { Ticket, TicketMessage } from '@/lib/types'
 import { MessageCircle, X, Send, CheckCheck, Check } from 'lucide-react'
+import { notificationSound } from '@/lib/notification-sound'
 
 export function SupportChat() {
   const [isOpen, setIsOpen] = useState(false)
@@ -18,6 +19,7 @@ export function SupportChat() {
   const [message, setMessage] = useState('')
   const [newMessage, setNewMessage] = useState('')
   const [loading, setLoading] = useState(false)
+  const previousMessageCount = useRef<number>(0)
 
   useEffect(() => {
     if (isOpen) {
@@ -44,7 +46,20 @@ export function SupportChat() {
       // Atualizar ticket ativo se existir
       if (activeTicket) {
         const updated = data.tickets.find((t: Ticket) => t._id === activeTicket._id)
-        if (updated) setActiveTicket(updated)
+        if (updated) {
+          // Detectar novas mensagens do admin
+          const currentMessageCount = updated.messages.length
+          const hasNewAdminMessage = updated.messages.some(
+            (msg: TicketMessage) => msg.senderRole === 'admin' && !msg.readAt
+          )
+
+          if (currentMessageCount > previousMessageCount.current && hasNewAdminMessage) {
+            notificationSound?.play()
+          }
+
+          previousMessageCount.current = currentMessageCount
+          setActiveTicket(updated)
+        }
       }
     } catch (error) {
       console.error('Error loading tickets:', error)
