@@ -1,5 +1,6 @@
 export type ScoringMethod = 'normal' | 'tri' | 'discursive'
-export type QuestionType = 'multiple-choice' | 'discursive'
+export type QuestionType = 'multiple-choice' | 'discursive' | 'essay'
+export type EssayStyle = 'enem' | 'uerj'
 export type CorrectionMethod = 'manual' | 'ai'
 export type CorrectionStatus = 'pending' | 'corrected'
 export type BanReason =
@@ -34,10 +35,17 @@ export interface KeyPoint {
   weight: number // Peso deste ponto-chave (ex: 0.2 = 20% da nota)
 }
 
+export interface EssayCompetence {
+  name: string
+  score: number
+  maxScore: number
+  feedback: string
+}
+
 export interface Question {
   id: string
   number: number
-  type: QuestionType // 'multiple-choice' ou 'discursive'
+  type: QuestionType // 'multiple-choice', 'discursive' ou 'essay'
   statement: string
   statementSource?: string
   imageUrl?: string
@@ -52,6 +60,12 @@ export interface Question {
   // Para questões discursivas
   keyPoints?: KeyPoint[]
   maxScore?: number // Nota máxima para questão discursiva
+  // Para redações (essay)
+  essayStyle?: EssayStyle // 'enem' ou 'uerj'
+  essayTheme?: string // Tema da redação
+  essaySupportTexts?: string[] // Textos de apoio/motivadores
+  essayCorrectionMethod?: CorrectionMethod // 'manual' ou 'ai'
+  essayAiRigor?: number // Rigor da IA (0-1) para correção automática
 }
 
 export interface Exam {
@@ -90,7 +104,10 @@ export interface Correction {
   method: CorrectionMethod // 'manual' ou 'ai'
   correctedBy?: string // ID do admin que corrigiu (se manual)
   correctedAt: Date
-  keyPointsFound?: string[] // IDs dos pontos-chave identificados
+  keyPointsFound?: string[] // IDs dos pontos-chave identificados (discursivas)
+  // Para redações
+  essayCompetences?: EssayCompetence[] // Notas por competência
+  essayGeneralFeedback?: string // Feedback geral da redação
 }
 
 export interface UserAnswer {
@@ -100,6 +117,8 @@ export interface UserAnswer {
   crossedAlternatives?: string[]
   // Para questões discursivas
   discursiveText?: string
+  // Para redações (essay)
+  essayText?: string
 }
 
 export interface ExamSubmission {
