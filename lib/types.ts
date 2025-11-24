@@ -135,7 +135,8 @@ export interface ExamSubmission {
   corrections?: Correction[]
   correctionStatus?: CorrectionStatus // 'pending' ou 'corrected'
   discursiveScore?: number // Soma das notas das questões discursivas
-  submittedAt: Date
+  startedAt?: Date // Quando o aluno iniciou a prova
+  submittedAt: Date // Quando o aluno submeteu a prova
 }
 
 export interface User {

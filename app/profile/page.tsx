@@ -17,6 +17,7 @@ interface UserSubmission {
   examTitle: string
   userId: string
   userName: string
+  startedAt?: Date
   submittedAt: Date
   score?: number
   triScore?: number
@@ -33,6 +34,19 @@ interface UserSubmission {
   examEndTime?: Date
   answers?: any[]
   exam?: any
+}
+
+// Função auxiliar para calcular duração
+function calculateDuration(startTime: Date, endTime: Date): string {
+  const diffMs = new Date(endTime).getTime() - new Date(startTime).getTime()
+  const diffMins = Math.floor(diffMs / 60000)
+  const hours = Math.floor(diffMins / 60)
+  const minutes = diffMins % 60
+
+  if (hours > 0) {
+    return `${hours}h ${minutes}min`
+  }
+  return `${minutes}min`
 }
 
 export default function ProfilePage() {
@@ -243,13 +257,21 @@ export default function ProfilePage() {
                     <div className="space-y-1">
                       <CardTitle>{submission.examTitle}</CardTitle>
                       <CardDescription>
-                        Realizada em {new Date(submission.submittedAt).toLocaleDateString('pt-BR', {
-                          day: '2-digit',
-                          month: 'long',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
+                        <div>
+                          Realizada em {new Date(submission.submittedAt).toLocaleDateString('pt-BR', {
+                            day: '2-digit',
+                            month: 'long',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </div>
+                        {submission.startedAt && (
+                          <div className="flex items-center gap-1 text-xs mt-1">
+                            <Clock className="h-3 w-3" />
+                            Tempo de prova: {calculateDuration(submission.startedAt, submission.submittedAt)}
+                          </div>
+                        )}
                       </CardDescription>
                     </div>
                     {getStatusBadge(submission)}

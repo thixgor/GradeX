@@ -381,6 +381,31 @@ export default function CreateExamPage() {
                       <option value="ai">🤖 Correção por IA</option>
                       <option value="manual">👤 Correção Manual</option>
                     </select>
+
+                    {examData.discursiveCorrectionMethod === 'ai' && (
+                      <div className="space-y-2">
+                        <Label className="text-xs text-purple-900 dark:text-purple-100">
+                          Rigorosidade da IA: {(examData.discursiveAiRigor * 100).toFixed(0)}%
+                        </Label>
+                        <input
+                          type="range"
+                          min="0"
+                          max="1"
+                          step="0.05"
+                          value={examData.discursiveAiRigor}
+                          onChange={(e) => setExamData({
+                            ...examData,
+                            discursiveAiRigor: parseFloat(e.target.value)
+                          })}
+                          className="w-full"
+                        />
+                        <p className="text-xs text-purple-700 dark:text-purple-300">
+                          {examData.discursiveAiRigor < 0.3 ? '🟢 Leniente' :
+                           examData.discursiveAiRigor < 0.6 ? '🟡 Moderado' :
+                           '🔴 Rigoroso'}
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   {/* Configurações de Redação */}
@@ -410,6 +435,31 @@ export default function CreateExamPage() {
                       <option value="ai">🤖 Correção por IA</option>
                       <option value="manual">👤 Correção Manual</option>
                     </select>
+
+                    {examData.essayCorrectionMethod === 'ai' && (
+                      <div className="space-y-2">
+                        <Label className="text-xs text-blue-900 dark:text-blue-100">
+                          Rigorosidade da IA: {(examData.essayAiRigor * 100).toFixed(0)}%
+                        </Label>
+                        <input
+                          type="range"
+                          min="0"
+                          max="1"
+                          step="0.05"
+                          value={examData.essayAiRigor}
+                          onChange={(e) => setExamData({
+                            ...examData,
+                            essayAiRigor: parseFloat(e.target.value)
+                          })}
+                          className="w-full"
+                        />
+                        <p className="text-xs text-blue-700 dark:text-blue-300">
+                          {examData.essayAiRigor < 0.3 ? '🟢 Leniente' :
+                           examData.essayAiRigor < 0.6 ? '🟡 Moderado' :
+                           '🔴 Rigoroso'}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

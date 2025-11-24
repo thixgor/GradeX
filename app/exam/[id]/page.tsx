@@ -46,11 +46,42 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const [toastMessage, setToastMessage] = useState('')
   const [toastType, setToastType] = useState<'error' | 'success' | 'info'>('error')
   const [showUnansweredModal, setShowUnansweredModal] = useState(false)
+  const [examStartTime, setExamStartTime] = useState<Date | null>(null)
+  const [examDuration, setExamDuration] = useState<string>('')
 
   const showToastMessage = (message: string, type: 'error' | 'success' | 'info' = 'error') => {
     setToastMessage(message)
     setToastType(type)
     setToastOpen(true)
+  }
+
+  // Carregar tempo de início do localStorage ao montar o componente
+  useEffect(() => {
+    const savedStartTime = localStorage.getItem(`exam-${id}-start-time`)
+    if (savedStartTime) {
+      setExamStartTime(new Date(savedStartTime))
+    }
+  }, [id])
+
+  // Função para iniciar a prova e salvar o tempo de início
+  const handleStartExam = () => {
+    const startTime = new Date()
+    setExamStartTime(startTime)
+    localStorage.setItem(`exam-${id}-start-time`, startTime.toISOString())
+    setStarted(true)
+  }
+
+  // Função para calcular o tempo decorrido
+  const calculateDuration = (startTime: Date, endTime: Date): string => {
+    const diffMs = endTime.getTime() - startTime.getTime()
+    const diffMins = Math.floor(diffMs / 60000)
+    const hours = Math.floor(diffMins / 60)
+    const minutes = diffMins % 60
+
+    if (hours > 0) {
+      return `${hours}h ${minutes}min`
+    }
+    return `${minutes}min`
   }
 
   // Função para identificar questões não respondidas
@@ -263,6 +294,10 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     setSubmitting(true)
 
     try {
+      const endTime = new Date()
+      const duration = examStartTime ? calculateDuration(examStartTime, endTime) : ''
+      setExamDuration(duration)
+
       const res = await fetch(`/api/exams/${id}/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -271,12 +306,16 @@ export default function ExamPage({ params }: { params: { id: string } }) {
           themeTranscription,
           answers,
           signature,
+          startedAt: examStartTime?.toISOString(),
         }),
       })
 
       const data = await res.json()
 
       if (!res.ok) throw new Error(data.error)
+
+      // Limpar localStorage após submissão bem-sucedida
+      localStorage.removeItem(`exam-${id}-start-time`)
 
       // Salvar score para mostrar depois
       if (exam?.scoringMethod === 'normal') {
@@ -334,6 +373,12 @@ export default function ExamPage({ params }: { params: { id: string } }) {
               <p className="text-sm text-muted-foreground mb-4">
                 Sua prova foi submetida com sucesso. Você pode baixar um relatório com suas respostas para conferir quando o gabarito for divulgado.
               </p>
+              {examDuration && (
+                <div className="flex items-center justify-center gap-2 text-sm">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <span className="font-medium">Tempo de prova: {examDuration}</span>
+                </div>
+              )}
             </div>
 
             <div className="space-y-3">
@@ -462,7 +507,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
               size="lg"
               onClick={() => {
                 if (canStart) {
-                  setStarted(true)
+                  handleStartExam()
                 } else {
                   setInWaitingRoom(true)
                 }
@@ -554,7 +599,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
               <Button
                 className="flex-1"
                 size="lg"
-                onClick={() => setStarted(true)}
+                onClick={handleStartExam}
                 disabled={!canStart || !signature}
               >
                 {!signature ? 'Assine antes de iniciar' : canStart ? 'Iniciar Prova Agora' : 'Aguardando Início...'}

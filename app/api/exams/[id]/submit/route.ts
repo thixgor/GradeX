@@ -17,7 +17,7 @@ export async function POST(
     }
 
     const body = await request.json()
-    const { userName, themeTranscription, answers, signature } = body
+    const { userName, themeTranscription, answers, signature, startedAt } = body
 
     if (!userName || !answers) {
       return NextResponse.json(
@@ -109,6 +109,7 @@ export async function POST(
       score,
       corrections: needsCorrection ? [] : undefined,
       correctionStatus,
+      startedAt: startedAt ? new Date(startedAt) : undefined,
       submittedAt: new Date(),
     }
 

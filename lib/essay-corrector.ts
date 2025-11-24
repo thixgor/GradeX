@@ -52,47 +52,101 @@ ${essayText.trim() || '(Texto em branco)'}
 
 **INSTRUÇÕES DE CORREÇÃO:**
 
-Na **Competência 1** (Domínio da modalidade escrita formal da língua portuguesa), você deve avaliar ortografia, acentuação, pontuação, concordância verbal e nominal, regência verbal e nominal, emprego de tempos e modos verbais, colocação pronominal, escolha vocabular adequada ao registro formal, uso correto de crase, hifenização, letras maiúsculas e minúsculas e construção de períodos sintaticamente completos e bem estruturados. Identifique e quantifique os desvios gramaticais encontrados, classificando-os conforme a gravidade.
+**AVALIAÇÃO POR COMPETÊNCIA:**
 
-Na **Competência 2** (Compreensão da proposta de redação e aplicação de conceitos das várias áreas de conhecimento), verifique se o candidato entendeu o recorte temático solicitado, se não fugiu nem tangenciou o tema, e se conseguiu aplicar conceitos de diversas áreas do conhecimento para fundamentar sua argumentação. Identifique a tese defendida e verifique se o repertório sociocultural mobilizado é pertinente, produtivo e bem contextualizado.
+**Competência I - Domínio da modalidade escrita formal da língua portuguesa**
 
-Na **Competência 3** (Seleção, relação, organização e interpretação de informações, fatos, opiniões e argumentos), examine a coerência global do texto, sua progressão lógica, a presença de um projeto de texto bem estruturado e a capacidade do candidato de encadear ideias de forma fluida, crescente e convincente.
+Você deve avaliar ortografia, acentuação, pontuação, concordância verbal e nominal, regência verbal e nominal, emprego de tempos e modos verbais, colocação pronominal, escolha vocabular adequada ao registro formal, uso correto de crase, hifenização, letras maiúsculas e minúsculas e construção de períodos sintaticamente completos e bem estruturados.
 
-Na **Competência 4** (Conhecimento dos mecanismos linguísticos necessários para a construção da argumentação), avalie o emprego adequado de operadores argumentativos, pronomes, advérbios, sinônimos e outros recursos de referenciação, a organização dos parágrafos e a articulação entre períodos.
+Seu feedback dissertativo deve:
+- Identificar e quantificar os desvios gramaticais encontrados (ex: "O texto apresenta 3 desvios de concordância verbal...")
+- Classificar os desvios conforme a gravidade (leves, médios, graves)
+- Destacar com exemplos ESPECÍFICOS extraídos do texto do candidato
+- Apontar os pontos fortes do domínio da norma culta
+- Sugerir caminhos concretos de estudo para aprimoramento
 
-Na **Competência 5** (Elaboração de proposta de intervenção para o problema abordado, respeitando os direitos humanos), analise se a intervenção está presente, pertinente, bem articulada à argumentação, e se apresenta os cinco elementos completos: agente, ação, meio/modo, finalidade e detalhamento.
+**Competência II - Compreensão da proposta de redação e aplicação de conceitos das várias áreas de conhecimento**
+
+Verifique se o candidato entendeu o recorte temático solicitado, se não fugiu nem tangenciou o tema, e se conseguiu aplicar conceitos de diversas áreas do conhecimento para fundamentar sua argumentação.
+
+Seu feedback dissertativo deve:
+- Identificar claramente a tese defendida pelo candidato
+- Avaliar se houve fuga ou tangenciamento do tema
+- Analisar o repertório sociocultural mobilizado (histórico, sociológico, filosófico, literário, científico, etc.)
+- Verificar se o repertório é pertinente, produtivo e bem contextualizado
+- Citar EXEMPLOS ESPECÍFICOS do texto mostrando como o repertório foi (ou não) bem aplicado
+- Indicar áreas de conhecimento que poderiam ter sido melhor exploradas
+
+**Competência III - Seleção, relação, organização e interpretação de informações, fatos, opiniões e argumentos**
+
+Examine a coerência global do texto, sua progressão lógica, a presença de um projeto de texto bem estruturado e a capacidade do candidato de encadear ideias de forma fluida, crescente e convincente.
+
+Seu feedback dissertativo deve:
+- Avaliar a estrutura do texto (introdução, desenvolvimento, conclusão)
+- Analisar a progressão argumentativa (se há sequência lógica e crescente)
+- Verificar a coerência entre as partes do texto
+- Identificar EXEMPLOS ESPECÍFICOS de articulação bem-sucedida ou problemática entre ideias
+- Apontar rupturas lógicas, saltos argumentativos ou contradições, se houver
+- Sugerir como reorganizar ou fortalecer a argumentação
+
+**Competência IV - Conhecimento dos mecanismos linguísticos necessários para a construção da argumentação**
+
+Avalie o emprego adequado de operadores argumentativos, pronomes, advérbios, sinônimos e outros recursos de referenciação, a organização dos parágrafos e a articulação entre períodos.
+
+Seu feedback dissertativo deve:
+- Analisar o uso de conectivos e operadores argumentativos
+- Verificar os mecanismos de coesão referencial e sequencial
+- Avaliar a articulação entre parágrafos e entre períodos
+- Identificar EXEMPLOS ESPECÍFICOS de bom ou mau uso dos recursos coesivos
+- Apontar repetições desnecessárias, ambiguidades ou problemas de referenciação
+- Sugerir conectivos e recursos coesivos que poderiam enriquecer o texto
+
+**Competência V - Elaboração de proposta de intervenção para o problema abordado, respeitando os direitos humanos**
+
+Analise se a intervenção está presente, pertinente, bem articulada à argumentação, e se apresenta os cinco elementos completos: agente (quem), ação (o quê), meio/modo (como), finalidade (para quê) e detalhamento.
+
+Seu feedback dissertativo deve:
+- Verificar a presença de cada um dos 5 elementos (agente, ação, meio/modo, finalidade, detalhamento)
+- Avaliar se a proposta está articulada com a argumentação desenvolvida
+- Verificar se respeita os direitos humanos
+- Citar a proposta TEXTUALMENTE e analisar cada elemento presente ou ausente
+- Avaliar se a proposta é viável, específica e completa
+- Sugerir como aprimorar ou complementar a proposta de intervenção
 
 **FORMATO DE RESPOSTA (OBRIGATÓRIO):**
 Retorne APENAS um JSON no seguinte formato:
 {
   "competencia1": {
     "nota": 160,
-    "feedback": "Feedback detalhado sobre domínio da norma culta"
+    "feedback": "Texto dissertativo EXTENSO e DETALHADO (mínimo 150 palavras) analisando o domínio da norma culta, incluindo quantificação de desvios, exemplos específicos do texto, pontos fortes e sugestões de estudo."
   },
   "competencia2": {
     "nota": 180,
-    "feedback": "Feedback detalhado sobre compreensão do tema e repertório"
+    "feedback": "Texto dissertativo EXTENSO e DETALHADO (mínimo 150 palavras) analisando a compreensão do tema, identificação da tese, análise do repertório sociocultural com exemplos específicos do texto e sugestões de aprimoramento."
   },
   "competencia3": {
     "nota": 160,
-    "feedback": "Feedback detalhado sobre seleção e organização de argumentos"
+    "feedback": "Texto dissertativo EXTENSO e DETALHADO (mínimo 150 palavras) analisando a estrutura, progressão argumentativa, coerência, com exemplos específicos do texto e sugestões de reorganização."
   },
   "competencia4": {
     "nota": 140,
-    "feedback": "Feedback detalhado sobre coesão textual"
+    "feedback": "Texto dissertativo EXTENSO e DETALHADO (mínimo 150 palavras) analisando os mecanismos de coesão, uso de conectivos, referenciação, com exemplos específicos do texto e sugestões de recursos coesivos."
   },
   "competencia5": {
     "nota": 160,
-    "feedback": "Feedback detalhado sobre proposta de intervenção"
+    "feedback": "Texto dissertativo EXTENSO e DETALHADO (mínimo 150 palavras) analisando a proposta de intervenção, verificando presença dos 5 elementos (agente, ação, meio/modo, finalidade, detalhamento), citando a proposta textualmente e sugerindo melhorias."
   },
-  "feedbackGeral": "Comentário geral pedagógico sintetizando pontos fortes, aspectos que comprometeram a nota e orientações práticas de estudo"
+  "feedbackGeral": "Comentário geral pedagógico (mínimo 100 palavras) sintetizando os principais pontos fortes da redação, aspectos que mais comprometeram a pontuação e orientações práticas de estudo priorizadas."
 }
 
 IMPORTANTE:
 - Retorne APENAS o JSON, sem texto adicional antes ou depois
 - Notas devem ser múltiplos de 20 (0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200)
 - Cada competência vale de 0 a 200 pontos
-- Nota total será a soma das 5 competências (0 a 1000)`
+- Nota total será a soma das 5 competências (0 a 1000)
+- Os feedbacks de cada competência devem ser DISSERTATIVOS, EXTENSOS e DETALHADOS, com no mínimo 150 palavras cada
+- Sempre cite EXEMPLOS ESPECÍFICOS extraídos do texto do candidato
+- O feedback geral deve ter no mínimo 100 palavras`
 }
 
 /**
@@ -203,7 +257,7 @@ export async function correctEssayWithGemini(
           temperature: 0.2,
           topK: 40,
           topP: 0.95,
-          maxOutputTokens: 4096,
+          maxOutputTokens: 8192,
         },
       }),
     })
