@@ -9,8 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { FileUpload } from '@/components/file-upload'
-import { TxtImport } from '@/components/txt-import'
-import { TxtImportDiscursive } from '@/components/txt-import-discursive'
+import { TxtImportUnified } from '@/components/txt-import-unified'
 import { Question, Alternative, ScoringMethod, QuestionType, KeyPoint, EssayStyle, CorrectionMethod } from '@/lib/types'
 import { generateRandomTRIParameters } from '@/lib/tri-calculator'
 import { v4 as uuidv4 } from 'uuid'
@@ -546,9 +545,9 @@ export default function CreateExamPage() {
 
               <div className="border-t pt-4 space-y-4">
                 <div>
-                  <h3 className="font-semibold mb-2">Adicionar Questões</h3>
+                  <h3 className="font-semibold mb-2">Adicionar Questões Manualmente</h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Você pode adicionar diferentes tipos de questões à sua prova. Clique nos botões abaixo para começar:
+                    Clique nos botões abaixo para adicionar questões uma por vez:
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <Button onClick={addMultipleChoiceQuestion} variant="outline" className="h-auto py-4 flex-col">
@@ -582,6 +581,20 @@ export default function CreateExamPage() {
                     </div>
                   </div>
                 )}
+              </div>
+
+              <div className="border-t pt-4">
+                <TxtImportUnified
+                  onImport={(importedQuestions) => {
+                    setQuestions(importedQuestions)
+                    setCurrentStep(2)
+                    setCurrentQuestionIndex(0)
+                  }}
+                  defaultAlternatives={examData.numberOfAlternatives}
+                  defaultEssayStyle={examData.essayStyle}
+                  defaultEssayCorrectionMethod={examData.essayCorrectionMethod}
+                  defaultEssayAiRigor={examData.essayAiRigor}
+                />
               </div>
             </CardContent>
           </Card>
