@@ -60,11 +60,13 @@ export async function POST(
     let score: number | undefined
     let correctionStatus: 'pending' | 'corrected' | undefined
 
-    // Verificar se há questões discursivas
+    // Verificar se há questões discursivas ou redações
     const hasDiscursiveQuestions = exam.questions.some(q => q.type === 'discursive')
+    const hasEssayQuestions = exam.questions.some(q => q.type === 'essay')
+    const needsCorrection = hasDiscursiveQuestions || hasEssayQuestions
 
     // Calcula pontuação para método normal (apenas questões de múltipla escolha)
-    if (exam.scoringMethod === 'normal' && !hasDiscursiveQuestions) {
+    if (exam.scoringMethod === 'normal' && !needsCorrection) {
       let correctAnswers = 0
 
       for (const answer of answers as UserAnswer[]) {
@@ -85,8 +87,8 @@ export async function POST(
       }
     }
 
-    // Se tem questões discursivas, marcar como pendente de correção
-    if (hasDiscursiveQuestions) {
+    // Se tem questões que precisam de correção, marcar como pendente
+    if (needsCorrection) {
       correctionStatus = 'pending'
     }
 
@@ -98,77 +100,130 @@ export async function POST(
       answers,
       signature,
       score,
-      corrections: hasDiscursiveQuestions ? [] : undefined,
+      corrections: needsCorrection ? [] : undefined,
       correctionStatus,
       submittedAt: new Date(),
     }
 
     const result = await submissionsCollection.insertOne(submission)
 
-    // Se tem questões discursivas E correção automática, corrigir agora
-    if (hasDiscursiveQuestions && exam.discursiveCorrectionMethod === 'ai') {
-      try {
-        // Importar dinamicamente para evitar erro de build
-        const { correctWithGemini } = await import('@/lib/gemini-corrector')
-        const corrections: any[] = []
+    // Se tem questões com correção automática (discursivas ou redações), corrigir agora
+    if (needsCorrection) {
+      const shouldAutoCorrectDiscursive = hasDiscursiveQuestions && exam.discursiveCorrectionMethod === 'ai'
+      const hasAutoCorrectEssay = hasEssayQuestions && exam.questions.some(q => q.type === 'essay' && q.essayCorrectionMethod === 'ai')
 
-        for (const question of exam.questions.filter(q => q.type === 'discursive')) {
-          const answer = answers.find((a: any) => a.questionId === question.id)
-          if (answer && answer.discursiveText) {
-            try {
-              const result = await correctWithGemini(
-                question,
-                answer.discursiveText,
-                exam.aiRigor || 0.45
-              )
+      if (shouldAutoCorrectDiscursive || hasAutoCorrectEssay) {
+        try {
+          const corrections: any[] = []
 
-              corrections.push({
-                questionId: question.id,
-                score: result.score,
-                maxScore: result.maxScore,
-                feedback: result.feedback,
-                method: 'ai',
-                correctedAt: new Date(),
-                keyPointsFound: result.keyPointsFound,
-              })
-            } catch (error) {
-              console.error(`Erro ao corrigir questão ${question.number}:`, error)
+          // Corrigir questões discursivas
+          if (shouldAutoCorrectDiscursive) {
+            const { correctWithGemini } = await import('@/lib/gemini-corrector')
+
+            for (const question of exam.questions.filter(q => q.type === 'discursive')) {
+              const answer = answers.find((a: any) => a.questionId === question.id)
+              if (answer && answer.discursiveText) {
+                try {
+                  const result = await correctWithGemini(
+                    question,
+                    answer.discursiveText,
+                    exam.aiRigor || 0.45
+                  )
+
+                  corrections.push({
+                    questionId: question.id,
+                    score: result.score,
+                    maxScore: result.maxScore,
+                    feedback: result.feedback,
+                    method: 'ai',
+                    correctedAt: new Date(),
+                    keyPointsFound: result.keyPointsFound,
+                  })
+                } catch (error) {
+                  console.error(`Erro ao corrigir questão discursiva ${question.number}:`, error)
+                }
+              }
             }
           }
-        }
 
-        // Atualizar submissão com correções
-        if (corrections.length > 0) {
-          const discursiveScore = corrections.reduce((sum, c) => sum + c.score, 0)
-          await submissionsCollection.updateOne(
-            { _id: result.insertedId },
-            {
-              $set: {
-                corrections,
-                discursiveScore,
-                correctionStatus: 'corrected',
-              },
+          // Corrigir redações com IA
+          if (hasAutoCorrectEssay) {
+            const { correctEssayWithGemini } = await import('@/lib/essay-corrector')
+
+            for (const question of exam.questions.filter(q => q.type === 'essay' && q.essayCorrectionMethod === 'ai')) {
+              const answer = answers.find((a: any) => a.questionId === question.id)
+              if (answer && answer.essayText) {
+                try {
+                  const result = await correctEssayWithGemini(
+                    question,
+                    answer.essayText,
+                    question.essayAiRigor || 0.45
+                  )
+
+                  corrections.push({
+                    questionId: question.id,
+                    score: result.score,
+                    maxScore: result.maxScore,
+                    feedback: result.generalFeedback,
+                    method: 'ai',
+                    correctedAt: new Date(),
+                    essayCompetences: result.competences,
+                    essayGeneralFeedback: result.generalFeedback,
+                  })
+                } catch (error) {
+                  console.error(`Erro ao corrigir redação ${question.number}:`, error)
+                }
+              }
             }
-          )
+          }
 
-          return NextResponse.json({
-            success: true,
-            message: 'Prova submetida e corrigida automaticamente!',
-            score: discursiveScore,
-            submissionId: result.insertedId.toString(),
-          })
+          // Atualizar submissão com correções
+          if (corrections.length > 0) {
+            const discursiveScore = corrections.reduce((sum, c) => sum + c.score, 0)
+
+            // Verificar se TODAS as questões que precisam de correção foram corrigidas
+            const totalQuestionsNeedingCorrection = exam.questions.filter(
+              q => q.type === 'discursive' || (q.type === 'essay' && q.essayCorrectionMethod === 'ai')
+            ).length
+
+            const newCorrectionStatus = corrections.length === totalQuestionsNeedingCorrection ? 'corrected' : 'pending'
+
+            await submissionsCollection.updateOne(
+              { _id: result.insertedId },
+              {
+                $set: {
+                  corrections,
+                  discursiveScore,
+                  correctionStatus: newCorrectionStatus,
+                },
+              }
+            )
+
+            return NextResponse.json({
+              success: true,
+              message: 'Prova submetida e corrigida automaticamente!',
+              score: discursiveScore,
+              submissionId: result.insertedId.toString(),
+            })
+          }
+        } catch (error) {
+          console.error('Erro na correção automática:', error)
+          // Se falhar, continua com status pending
         }
-      } catch (error) {
-        console.error('Erro na correção automática:', error)
-        // Se falhar, continua com status pending
       }
     }
 
-    // Se tem questões discursivas com correção manual, avisa que aguarda correção
-    if (hasDiscursiveQuestions) {
+    // Se tem questões que precisam de correção manual, avisa que aguarda correção
+    if (needsCorrection) {
+      const messageType = hasDiscursiveQuestions && hasEssayQuestions
+        ? 'As questões discursivas e redações'
+        : hasEssayQuestions
+        ? 'A redação'
+        : 'As questões discursivas'
+
       return NextResponse.json({
         success: true,
-        message: 'Prova submetida! As questões discursivas serão corrigidas em breve. Você será notificado quando a correção estiver pronta.',
+        message: `Prova submetida! ${messageType} serão corrigidas em breve. Você será notificado quando a correção estiver pronta.`,
         submissionId: result.insertedId.toString(),
       })
     }

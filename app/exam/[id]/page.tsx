@@ -123,6 +123,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
         selectedAlternative: q.type === 'multiple-choice' ? '' : undefined,
         crossedAlternatives: q.type === 'multiple-choice' ? [] : undefined,
         discursiveText: q.type === 'discursive' ? '' : undefined,
+        essayText: q.type === 'essay' ? '' : undefined,
       }))
       setAnswers(initialAnswers)
     } catch (error: any) {
@@ -182,6 +183,16 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     )
   }
 
+  function handleEssayText(questionId: string, text: string) {
+    setAnswers(prev =>
+      prev.map(a =>
+        a.questionId === questionId
+          ? { ...a, essayText: text }
+          : a
+      )
+    )
+  }
+
   async function handleSubmit() {
     // Validações
     if (!userName.trim()) {
@@ -194,14 +205,17 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       return
     }
 
-    // Verificar questões não respondidas (tanto múltipla escolha quanto discursivas)
+    // Verificar questões não respondidas (múltipla escolha, discursivas e redações)
     const unanswered = answers.filter((a, index) => {
       const question = exam?.questions[index]
       if (question?.type === 'multiple-choice') {
         return !a.selectedAlternative
-      } else {
+      } else if (question?.type === 'discursive') {
         return !a.discursiveText || a.discursiveText.trim() === ''
+      } else if (question?.type === 'essay') {
+        return !a.essayText || a.essayText.trim() === ''
       }
+      return false
     })
 
     if (unanswered.length > 0) {
@@ -767,6 +781,71 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                         </div>
                       </div>
                     )}
+
+                    {/* Redação */}
+                    {question.type === 'essay' && (
+                      <div className="space-y-4">
+                        <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950 dark:to-purple-950 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
+                          <h3 className="text-lg font-bold text-blue-900 dark:text-blue-100 mb-3">
+                            ✍️ Redação {question.essayStyle === 'enem' ? 'ENEM' : 'UERJ'}
+                          </h3>
+                          <div className="space-y-2 text-sm text-blue-800 dark:text-blue-200">
+                            <p>
+                              <strong>Pontuação máxima:</strong> {question.maxScore} pontos
+                            </p>
+                            <p>
+                              <strong>Tema:</strong> {question.essayTheme}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Textos de Apoio */}
+                        {question.essaySupportTexts && question.essaySupportTexts.length > 0 && (
+                          <div className="space-y-3">
+                            <h4 className="font-semibold text-sm">Textos Motivadores:</h4>
+                            {question.essaySupportTexts.map((text, idx) => (
+                              <div key={idx} className="bg-muted p-4 rounded-lg border-l-4 border-primary">
+                                <p className="text-xs font-semibold text-muted-foreground mb-2">Texto {idx + 1}</p>
+                                <p className="text-sm whitespace-pre-wrap">{text}</p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Campo de Redação */}
+                        <div className="space-y-2">
+                          <Label htmlFor={`essay-${question.id}`} className="text-base font-semibold">
+                            Sua Redação:
+                          </Label>
+                          <div className="bg-white dark:bg-slate-900 border-2 border-primary rounded-lg p-1">
+                            <Textarea
+                              id={`essay-${question.id}`}
+                              value={answer?.essayText || ''}
+                              onChange={(e) => handleEssayText(question.id, e.target.value)}
+                              placeholder="Escreva sua redação aqui seguindo as orientações do tema proposto..."
+                              rows={25}
+                              className="font-serif text-base leading-relaxed resize-none border-0 focus-visible:ring-0"
+                            />
+                          </div>
+                          <div className="flex items-center justify-between text-sm text-muted-foreground bg-muted p-3 rounded-lg">
+                            <div className="flex gap-6">
+                              <span>📝 Linhas: {(answer?.essayText || '').split('\n').length}</span>
+                              <span>📊 Palavras: {(answer?.essayText || '').split(/\s+/).filter(w => w.length > 0).length}</span>
+                              <span>🔤 Caracteres: {(answer?.essayText || '').length}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Dica */}
+                        <div className="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+                          <p className="text-xs text-amber-900 dark:text-amber-100">
+                            💡 <strong>Dica:</strong> {question.essayStyle === 'enem'
+                              ? 'A redação ENEM deve ser um texto dissertativo-argumentativo, com introdução, desenvolvimento e conclusão. Não esqueça da proposta de intervenção!'
+                              : 'A redação UERJ permite uso de primeira pessoa, mas exige densidade argumentativa e autoria clara. Desenvolva bem cada parágrafo!'}
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               )
@@ -785,9 +864,12 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                           const question = exam.questions[index]
                           if (question.type === 'multiple-choice') {
                             return !!a.selectedAlternative
-                          } else {
+                          } else if (question.type === 'discursive') {
                             return !!a.discursiveText && a.discursiveText.trim().length > 0
+                          } else if (question.type === 'essay') {
+                            return !!a.essayText && a.essayText.trim().length > 0
                           }
+                          return false
                         }).length}/{exam.questions.length} respondidas
                       </span>
                     </div>
@@ -799,9 +881,12 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                             const question = exam.questions[index]
                             if (question.type === 'multiple-choice') {
                               return !!a.selectedAlternative
-                            } else {
+                            } else if (question.type === 'discursive') {
                               return !!a.discursiveText && a.discursiveText.trim().length > 0
+                            } else if (question.type === 'essay') {
+                              return !!a.essayText && a.essayText.trim().length > 0
                             }
+                            return false
                           }).length / exam.questions.length) * 100}%`
                         }}
                       />
@@ -953,6 +1038,71 @@ export default function ExamPage({ params }: { params: { id: string } }) {
               </div>
             )}
 
+            {/* Redação */}
+            {currentQuestion.type === 'essay' && (
+              <div className="space-y-4">
+                <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950 dark:to-purple-950 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
+                  <h3 className="text-lg font-bold text-blue-900 dark:text-blue-100 mb-3">
+                    ✍️ Redação {currentQuestion.essayStyle === 'enem' ? 'ENEM' : 'UERJ'}
+                  </h3>
+                  <div className="space-y-2 text-sm text-blue-800 dark:text-blue-200">
+                    <p>
+                      <strong>Pontuação máxima:</strong> {currentQuestion.maxScore} pontos
+                    </p>
+                    <p>
+                      <strong>Tema:</strong> {currentQuestion.essayTheme}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Textos de Apoio */}
+                {currentQuestion.essaySupportTexts && currentQuestion.essaySupportTexts.length > 0 && (
+                  <div className="space-y-3">
+                    <h4 className="font-semibold text-sm">Textos Motivadores:</h4>
+                    {currentQuestion.essaySupportTexts.map((text, idx) => (
+                      <div key={idx} className="bg-muted p-4 rounded-lg border-l-4 border-primary">
+                        <p className="text-xs font-semibold text-muted-foreground mb-2">Texto {idx + 1}</p>
+                        <p className="text-sm whitespace-pre-wrap">{text}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Campo de Redação */}
+                <div className="space-y-2">
+                  <Label htmlFor={`essay-${currentQuestion.id}`} className="text-base font-semibold">
+                    Sua Redação:
+                  </Label>
+                  <div className="bg-white dark:bg-slate-900 border-2 border-primary rounded-lg p-1">
+                    <Textarea
+                      id={`essay-${currentQuestion.id}`}
+                      value={currentAnswer?.essayText || ''}
+                      onChange={(e) => handleEssayText(currentQuestion.id, e.target.value)}
+                      placeholder="Escreva sua redação aqui seguindo as orientações do tema proposto..."
+                      rows={25}
+                      className="font-serif text-base leading-relaxed resize-none border-0 focus-visible:ring-0"
+                    />
+                  </div>
+                  <div className="flex items-center justify-between text-sm text-muted-foreground bg-muted p-3 rounded-lg">
+                    <div className="flex gap-6">
+                      <span>📝 Linhas: {(currentAnswer?.essayText || '').split('\n').length}</span>
+                      <span>📊 Palavras: {(currentAnswer?.essayText || '').split(/\s+/).filter(w => w.length > 0).length}</span>
+                      <span>🔤 Caracteres: {(currentAnswer?.essayText || '').length}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Dica */}
+                <div className="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+                  <p className="text-xs text-amber-900 dark:text-amber-100">
+                    💡 <strong>Dica:</strong> {currentQuestion.essayStyle === 'enem'
+                      ? 'A redação ENEM deve ser um texto dissertativo-argumentativo, com introdução, desenvolvimento e conclusão. Não esqueça da proposta de intervenção!'
+                      : 'A redação UERJ permite uso de primeira pessoa, mas exige densidade argumentativa e autoria clara. Desenvolva bem cada parágrafo!'}
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Navegação */}
             <div className="flex justify-between pt-6 border-t">
               <Button
@@ -986,9 +1136,12 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                     const question = exam.questions[index]
                     if (question.type === 'multiple-choice') {
                       return !!a.selectedAlternative
-                    } else {
+                    } else if (question.type === 'discursive') {
                       return !!a.discursiveText && a.discursiveText.trim().length > 0
+                    } else if (question.type === 'essay') {
+                      return !!a.essayText && a.essayText.trim().length > 0
                     }
+                    return false
                   }).length}/{exam.questions.length}{' '}
                   respondidas
                 </span>
@@ -1001,9 +1154,12 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                       const question = exam.questions[index]
                       if (question.type === 'multiple-choice') {
                         return !!a.selectedAlternative
-                      } else {
+                      } else if (question.type === 'discursive') {
                         return !!a.discursiveText && a.discursiveText.trim().length > 0
+                      } else if (question.type === 'essay') {
+                        return !!a.essayText && a.essayText.trim().length > 0
                       }
+                      return false
                     }).length / exam.questions.length) * 100}%`
                   }}
                 />

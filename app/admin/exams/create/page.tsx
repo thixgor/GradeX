@@ -11,7 +11,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { FileUpload } from '@/components/file-upload'
 import { TxtImport } from '@/components/txt-import'
 import { TxtImportDiscursive } from '@/components/txt-import-discursive'
-import { Question, Alternative, ScoringMethod, QuestionType, KeyPoint } from '@/lib/types'
+import { Question, Alternative, ScoringMethod, QuestionType, KeyPoint, EssayStyle, CorrectionMethod } from '@/lib/types'
 import { generateRandomTRIParameters } from '@/lib/tri-calculator'
 import { v4 as uuidv4 } from 'uuid'
 import { ArrowLeft, Plus, Trash2, Shuffle, Save } from 'lucide-react'
@@ -41,6 +41,10 @@ export default function CreateExamPage() {
     aiRigor: 0.45,
     navigationMode: 'paginated' as 'paginated' | 'scroll',
     duration: 120,
+    // Essay fields
+    essayStyle: 'enem' as EssayStyle,
+    essayCorrectionMethod: 'ai' as CorrectionMethod,
+    essayAiRigor: 0.45,
   })
 
   const [questions, setQuestions] = useState<Question[]>([])
@@ -88,12 +92,24 @@ export default function CreateExamPage() {
             triGuessing: triParams.c,
           }),
         })
-      } else {
+      } else if (examData.questionType === 'discursive') {
         // Questões discursivas
         newQuestions.push({
           ...baseQuestion,
           keyPoints: [],
           maxScore: 10, // Pontuação padrão
+        })
+      } else if (examData.questionType === 'essay') {
+        // Redação
+        const maxScore = examData.essayStyle === 'enem' ? 1000 : 20
+        newQuestions.push({
+          ...baseQuestion,
+          essayStyle: examData.essayStyle,
+          essayTheme: '',
+          essaySupportTexts: [],
+          essayCorrectionMethod: examData.essayCorrectionMethod,
+          essayAiRigor: examData.essayAiRigor,
+          maxScore,
         })
       }
     }
@@ -178,6 +194,16 @@ export default function CreateExamPage() {
           const totalWeight = question.keyPoints.reduce((sum, kp) => sum + kp.weight, 0)
           if (Math.abs(totalWeight - 1) > 0.01) {
             alert(`Questão ${question.number}: A soma dos pesos dos pontos-chave deve ser 100% (atualmente ${(totalWeight * 100).toFixed(0)}%)`)
+            return
+          }
+        } else if (question.type === 'essay') {
+          if (!question.essayTheme || !question.essayTheme.trim()) {
+            alert(`Questão ${question.number}: Preencha o tema da redação`)
+            return
+          }
+
+          if (!question.essayStyle) {
+            alert(`Questão ${question.number}: Escolha o estilo da redação (ENEM ou UERJ)`)
             return
           }
         }
@@ -313,12 +339,13 @@ export default function CreateExamPage() {
                   onChange={(e) => setExamData({
                     ...examData,
                     questionType: e.target.value as QuestionType,
-                    // Se mudar para discursiva, desabilitar TRI
-                    ...(e.target.value === 'discursive' && examData.scoringMethod === 'tri' && { scoringMethod: 'normal' })
+                    // Se mudar para discursiva ou redação, desabilitar TRI
+                    ...((e.target.value === 'discursive' || e.target.value === 'essay') && examData.scoringMethod === 'tri' && { scoringMethod: 'normal' })
                   })}
                 >
                   <option value="multiple-choice">Múltipla Escolha</option>
                   <option value="discursive">Discursivas (Redação/Dissertação)</option>
+                  <option value="essay">✍️ Redação (ENEM/UERJ)</option>
                 </select>
               </div>
 
@@ -380,6 +407,91 @@ export default function CreateExamPage() {
                 </div>
               )}
 
+              {examData.questionType === 'essay' && (
+                <div className="border-t pt-4 space-y-4 bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
+                  <h3 className="font-semibold text-blue-900 dark:text-blue-100">
+                    ✍️ Configurações de Redação
+                  </h3>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="essayStyle">Estilo de Redação *</Label>
+                    <select
+                      id="essayStyle"
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                      value={examData.essayStyle}
+                      onChange={(e) => setExamData({
+                        ...examData,
+                        essayStyle: e.target.value as EssayStyle
+                      })}
+                    >
+                      <option value="enem">📝 ENEM (1000 pontos - 5 competências)</option>
+                      <option value="uerj">📄 UERJ (20 pontos - 5 critérios)</option>
+                    </select>
+                    <p className="text-xs text-muted-foreground">
+                      {examData.essayStyle === 'enem'
+                        ? 'Avaliação baseada nas 5 competências do ENEM (200 pontos cada, intervalos de 20)'
+                        : 'Avaliação baseada nos 5 critérios da UERJ (4 pontos cada, aceita decimais)'}
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="essayCorrectionMethod">Método de Correção *</Label>
+                    <select
+                      id="essayCorrectionMethod"
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                      value={examData.essayCorrectionMethod}
+                      onChange={(e) => setExamData({
+                        ...examData,
+                        essayCorrectionMethod: e.target.value as CorrectionMethod
+                      })}
+                    >
+                      <option value="ai">🤖 Correção Automática por IA (Gemini 2.0)</option>
+                      <option value="manual">👤 Correção Manual pelo Professor</option>
+                    </select>
+                    <p className="text-xs text-muted-foreground">
+                      {examData.essayCorrectionMethod === 'ai'
+                        ? 'A redação será corrigida automaticamente pela IA especializada em redações ENEM/UERJ.'
+                        : 'Você precisará corrigir manualmente a redação, atribuindo notas e feedbacks por competência/critério.'}
+                    </p>
+                  </div>
+
+                  {examData.essayCorrectionMethod === 'ai' && (
+                    <div className="space-y-2">
+                      <Label htmlFor="essayAiRigor">
+                        Rigor da IA: {(examData.essayAiRigor * 100).toFixed(0)}%
+                      </Label>
+                      <input
+                        id="essayAiRigor"
+                        type="range"
+                        min="0"
+                        max="1"
+                        step="0.05"
+                        value={examData.essayAiRigor}
+                        onChange={(e) => setExamData({
+                          ...examData,
+                          essayAiRigor: parseFloat(e.target.value)
+                        })}
+                        className="w-full"
+                      />
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>Leniente</span>
+                        <span>Moderado</span>
+                        <span>Rigoroso</span>
+                      </div>
+                      <p className="text-xs text-blue-700 dark:text-blue-300">
+                        Recomendado: 45% (moderado) - A IA avalia domínio da norma, compreensão do tema, argumentação, coesão e proposta de intervenção
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg">
+                    <p className="text-xs text-blue-900 dark:text-blue-100">
+                      💡 <strong>Dica:</strong> O tema da redação e os textos de apoio serão configurados para cada questão individualmente na próxima etapa.
+                    </p>
+                  </div>
+                </div>
+              )}
+
               <div className="space-y-2">
                 <Label htmlFor="scoringMethod">Método de Pontuação *</Label>
                 <select
@@ -391,16 +503,16 @@ export default function CreateExamPage() {
                     scoringMethod: e.target.value as ScoringMethod,
                     ...(e.target.value === 'tri' && { totalPoints: 1000 })
                   })}
-                  disabled={examData.questionType === 'discursive'}
+                  disabled={examData.questionType === 'discursive' || examData.questionType === 'essay'}
                 >
                   <option value="normal">Normal (Pontuação Personalizada)</option>
-                  <option value="tri" disabled={examData.questionType === 'discursive'}>
+                  <option value="tri" disabled={examData.questionType === 'discursive' || examData.questionType === 'essay'}>
                     TRI - Teoria de Resposta ao Item (1000 pontos)
                   </option>
                 </select>
-                {examData.questionType === 'discursive' && (
+                {(examData.questionType === 'discursive' || examData.questionType === 'essay') && (
                   <p className="text-xs text-muted-foreground">
-                    TRI não está disponível para questões discursivas
+                    TRI não está disponível para questões discursivas e redações
                   </p>
                 )}
               </div>
@@ -712,6 +824,75 @@ export default function CreateExamPage() {
                           </p>
                         </div>
                       )}
+                    </div>
+                  </div>
+                )}
+
+                {currentQuestion.type === 'essay' && (
+                  <div className="space-y-4 border-t pt-4 bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
+                    <h3 className="font-semibold text-blue-900 dark:text-blue-100">
+                      ✍️ Configuração da Redação
+                    </h3>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="essayTheme">Tema da Redação *</Label>
+                      <Textarea
+                        id="essayTheme"
+                        value={currentQuestion.essayTheme || ''}
+                        onChange={(e) => updateQuestion(currentQuestionIndex, { essayTheme: e.target.value })}
+                        placeholder="Ex: Os desafios para a valorização da saúde mental no Brasil"
+                        rows={3}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Este é o tema que será apresentado ao aluno para desenvolvimento da redação
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="essaySupportTexts">Textos de Apoio (Textos Motivadores)</Label>
+                      <p className="text-xs text-muted-foreground mb-2">
+                        Digite um texto de apoio por linha. Estes textos ajudam o aluno a contextualizar o tema.
+                      </p>
+                      <Textarea
+                        id="essaySupportTexts"
+                        value={currentQuestion.essaySupportTexts?.join('\n\n---\n\n') || ''}
+                        onChange={(e) => {
+                          const texts = e.target.value
+                            .split('---')
+                            .map(t => t.trim())
+                            .filter(t => t.length > 0)
+                          updateQuestion(currentQuestionIndex, { essaySupportTexts: texts })
+                        }}
+                        placeholder="Texto 1: Dados estatísticos sobre saúde mental no Brasil...&#10;&#10;---&#10;&#10;Texto 2: Trecho de artigo científico sobre o tema...&#10;&#10;---&#10;&#10;Texto 3: Citação de especialista..."
+                        rows={12}
+                        className="text-sm"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Use <code className="bg-muted px-1 rounded">---</code> para separar diferentes textos de apoio
+                      </p>
+                      {currentQuestion.essaySupportTexts && currentQuestion.essaySupportTexts.length > 0 && (
+                        <div className="p-3 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                          <p className="text-xs font-semibold text-blue-900 dark:text-blue-100">
+                            📝 {currentQuestion.essaySupportTexts.length} texto(s) de apoio configurado(s)
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="space-y-2 bg-blue-100 dark:bg-blue-900 p-3 rounded-lg">
+                      <p className="text-xs font-semibold text-blue-900 dark:text-blue-100">
+                        ℹ️ Informações da Correção:
+                      </p>
+                      <ul className="text-xs text-blue-800 dark:text-blue-200 space-y-1 ml-4 list-disc">
+                        <li><strong>Estilo:</strong> {currentQuestion.essayStyle === 'enem' ? 'ENEM (1000 pontos)' : 'UERJ (20 pontos)'}</li>
+                        <li><strong>Método:</strong> {currentQuestion.essayCorrectionMethod === 'ai' ? 'IA (Gemini 2.0)' : 'Manual'}</li>
+                        {currentQuestion.essayCorrectionMethod === 'ai' && (
+                          <li><strong>Rigor da IA:</strong> {((currentQuestion.essayAiRigor || 0.45) * 100).toFixed(0)}%</li>
+                        )}
+                      </ul>
+                      <p className="text-xs text-blue-700 dark:text-blue-300 pt-2">
+                        💡 Para alterar o estilo ou método de correção, volte às configurações gerais da prova
+                      </p>
                     </div>
                   </div>
                 )}
