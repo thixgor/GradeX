@@ -25,7 +25,6 @@ export default function CreateExamPage() {
     title: '',
     description: '',
     coverImage: '',
-    numberOfQuestions: 10,
     numberOfAlternatives: 5,
     themePhrase: '',
     scoringMethod: 'normal' as ScoringMethod,
@@ -34,88 +33,117 @@ export default function CreateExamPage() {
     gatesOpen: '',
     gatesClose: '',
     startTime: '',
-    endTime: '',
+    durationMinutes: 120, // Duração em minutos
     isHidden: false,
-    questionType: 'multiple-choice' as QuestionType,
+    // Configurações padrão para cada tipo de questão
     discursiveCorrectionMethod: 'ai' as 'manual' | 'ai',
-    aiRigor: 0.45,
-    navigationMode: 'paginated' as 'paginated' | 'scroll',
-    duration: 120,
-    // Essay fields
+    discursiveAiRigor: 0.45,
     essayStyle: 'enem' as EssayStyle,
     essayCorrectionMethod: 'ai' as CorrectionMethod,
     essayAiRigor: 0.45,
+    navigationMode: 'paginated' as 'paginated' | 'scroll',
   })
 
   const [questions, setQuestions] = useState<Question[]>([])
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
 
-  function initializeQuestions() {
-    const newQuestions: Question[] = []
+  function addMultipleChoiceQuestion() {
     const letters = ['A', 'B', 'C', 'D', 'E']
+    const alternatives: Alternative[] = []
 
-    for (let i = 0; i < examData.numberOfQuestions; i++) {
-      const baseQuestion = {
+    for (let j = 0; j < examData.numberOfAlternatives; j++) {
+      alternatives.push({
         id: uuidv4(),
-        number: i + 1,
-        type: examData.questionType,
-        statement: '',
-        statementSource: '',
-        imageUrl: '',
-        imageSource: '',
-        command: '',
-        alternatives: [],
-      }
-
-      if (examData.questionType === 'multiple-choice') {
-        // Questões de múltipla escolha
-        const alternatives: Alternative[] = []
-        for (let j = 0; j < examData.numberOfAlternatives; j++) {
-          alternatives.push({
-            id: uuidv4(),
-            letter: letters[j],
-            text: '',
-            isCorrect: j === 0,
-          })
-        }
-
-        const triParams = examData.scoringMethod === 'tri'
-          ? generateRandomTRIParameters(examData.numberOfAlternatives)
-          : {}
-
-        newQuestions.push({
-          ...baseQuestion,
-          alternatives,
-          ...(examData.scoringMethod === 'tri' && {
-            triDiscrimination: triParams.a,
-            triDifficulty: triParams.b,
-            triGuessing: triParams.c,
-          }),
-        })
-      } else if (examData.questionType === 'discursive') {
-        // Questões discursivas
-        newQuestions.push({
-          ...baseQuestion,
-          keyPoints: [],
-          maxScore: 10, // Pontuação padrão
-        })
-      } else if (examData.questionType === 'essay') {
-        // Redação
-        const maxScore = examData.essayStyle === 'enem' ? 1000 : 20
-        newQuestions.push({
-          ...baseQuestion,
-          essayStyle: examData.essayStyle,
-          essayTheme: '',
-          essaySupportTexts: [],
-          essayCorrectionMethod: examData.essayCorrectionMethod,
-          essayAiRigor: examData.essayAiRigor,
-          maxScore,
-        })
-      }
+        letter: letters[j],
+        text: '',
+        isCorrect: j === 0,
+      })
     }
 
+    const triParams = examData.scoringMethod === 'tri'
+      ? generateRandomTRIParameters(examData.numberOfAlternatives)
+      : {}
+
+    const newQuestion: Question = {
+      id: uuidv4(),
+      number: questions.length + 1,
+      type: 'multiple-choice',
+      statement: '',
+      statementSource: '',
+      imageUrl: '',
+      imageSource: '',
+      command: '',
+      alternatives,
+      ...(examData.scoringMethod === 'tri' && {
+        triDiscrimination: triParams.a,
+        triDifficulty: triParams.b,
+        triGuessing: triParams.c,
+      }),
+    }
+
+    setQuestions([...questions, newQuestion])
+    setCurrentQuestionIndex(questions.length)
+    if (currentStep === 1) setCurrentStep(2)
+  }
+
+  function addDiscursiveQuestion() {
+    const newQuestion: Question = {
+      id: uuidv4(),
+      number: questions.length + 1,
+      type: 'discursive',
+      statement: '',
+      statementSource: '',
+      imageUrl: '',
+      imageSource: '',
+      command: '',
+      alternatives: [],
+      keyPoints: [],
+      maxScore: 10,
+    }
+
+    setQuestions([...questions, newQuestion])
+    setCurrentQuestionIndex(questions.length)
+    if (currentStep === 1) setCurrentStep(2)
+  }
+
+  function addEssayQuestion() {
+    const maxScore = examData.essayStyle === 'enem' ? 1000 : 20
+
+    const newQuestion: Question = {
+      id: uuidv4(),
+      number: questions.length + 1,
+      type: 'essay',
+      statement: '',
+      statementSource: '',
+      imageUrl: '',
+      imageSource: '',
+      command: '',
+      alternatives: [],
+      essayStyle: examData.essayStyle,
+      essayTheme: '',
+      essaySupportTexts: [],
+      essayCorrectionMethod: examData.essayCorrectionMethod,
+      essayAiRigor: examData.essayAiRigor,
+      maxScore,
+    }
+
+    setQuestions([...questions, newQuestion])
+    setCurrentQuestionIndex(questions.length)
+    if (currentStep === 1) setCurrentStep(2)
+  }
+
+  function deleteQuestion(index: number) {
+    const newQuestions = questions.filter((_, i) => i !== index)
+    // Renumerar questões
+    newQuestions.forEach((q, i) => {
+      q.number = i + 1
+    })
     setQuestions(newQuestions)
-    setCurrentStep(2)
+    if (newQuestions.length === 0) {
+      setCurrentStep(1)
+    } else if (currentQuestionIndex >= newQuestions.length) {
+      setCurrentQuestionIndex(newQuestions.length - 1)
+    }
   }
 
   function updateQuestion(index: number, updates: Partial<Question>) {
@@ -152,8 +180,13 @@ export default function CreateExamPage() {
 
     try {
       // Validação básica
-      if (!examData.title || !examData.startTime || !examData.endTime) {
-        alert('Preencha todos os campos obrigatórios')
+      if (!examData.title || !examData.startTime) {
+        alert('Preencha todos os campos obrigatórios (título e data/hora de início)')
+        return
+      }
+
+      if (questions.length === 0) {
+        alert('Adicione pelo menos uma questão à prova')
         return
       }
 
@@ -209,8 +242,15 @@ export default function CreateExamPage() {
         }
       }
 
+      // Calcular endTime baseado em startTime + durationMinutes
+      const startDate = new Date(examData.startTime)
+      const endDate = new Date(startDate.getTime() + examData.durationMinutes * 60000)
+
       const payload = {
         ...examData,
+        endTime: endDate.toISOString(),
+        duration: examData.durationMinutes,
+        numberOfQuestions: questions.length,
         questions,
       }
 
@@ -291,33 +331,22 @@ export default function CreateExamPage() {
                 placeholder="Cole uma URL ou faça upload da capa"
               />
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="numberOfQuestions">Número de Questões *</Label>
-                  <Input
-                    id="numberOfQuestions"
-                    type="number"
-                    min="1"
-                    max="200"
-                    value={examData.numberOfQuestions}
-                    onChange={(e) => setExamData({ ...examData, numberOfQuestions: parseInt(e.target.value) })}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="numberOfAlternatives">Alternativas por Questão *</Label>
-                  <select
-                    id="numberOfAlternatives"
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                    value={examData.numberOfAlternatives}
-                    onChange={(e) => setExamData({ ...examData, numberOfAlternatives: parseInt(e.target.value) })}
-                  >
-                    <option value="2">2 (A, B)</option>
-                    <option value="3">3 (A, B, C)</option>
-                    <option value="4">4 (A, B, C, D)</option>
-                    <option value="5">5 (A, B, C, D, E)</option>
-                  </select>
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="numberOfAlternatives">Alternativas por Questão (Múltipla Escolha)</Label>
+                <select
+                  id="numberOfAlternatives"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  value={examData.numberOfAlternatives}
+                  onChange={(e) => setExamData({ ...examData, numberOfAlternatives: parseInt(e.target.value) })}
+                >
+                  <option value="2">2 alternativas (A, B)</option>
+                  <option value="3">3 alternativas (A, B, C)</option>
+                  <option value="4">4 alternativas (A, B, C, D)</option>
+                  <option value="5">5 alternativas (A, B, C, D, E)</option>
+                </select>
+                <p className="text-xs text-muted-foreground">
+                  Esta configuração será aplicada às questões de múltipla escolha que você adicionar
+                </p>
               </div>
 
               <div className="space-y-2">
@@ -330,170 +359,64 @@ export default function CreateExamPage() {
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="questionType">Tipo de Questões *</Label>
-                <select
-                  id="questionType"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                  value={examData.questionType}
-                  onChange={(e) => setExamData({
-                    ...examData,
-                    questionType: e.target.value as QuestionType,
-                    // Se mudar para discursiva ou redação, desabilitar TRI
-                    ...((e.target.value === 'discursive' || e.target.value === 'essay') && examData.scoringMethod === 'tri' && { scoringMethod: 'normal' })
-                  })}
-                >
-                  <option value="multiple-choice">Múltipla Escolha</option>
-                  <option value="discursive">Discursivas (Redação/Dissertação)</option>
-                  <option value="essay">✍️ Redação (ENEM/UERJ)</option>
-                </select>
-              </div>
+              <div className="border-t pt-4 space-y-4">
+                <h3 className="font-semibold">Configurações Padrão</h3>
+                <p className="text-sm text-muted-foreground">
+                  Estas configurações serão aplicadas como padrão para novas questões. Você poderá ajustá-las individualmente para cada questão.
+                </p>
 
-              {examData.questionType === 'discursive' && (
-                <div className="border-t pt-4 space-y-4 bg-purple-50 dark:bg-purple-950 p-4 rounded-lg">
-                  <h3 className="font-semibold text-purple-900 dark:text-purple-100">
-                    Configurações de Correção Discursiva
-                  </h3>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="discursiveCorrectionMethod">Método de Correção *</Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Configurações de Questões Discursivas */}
+                  <div className="space-y-3 p-4 bg-purple-50 dark:bg-purple-950 rounded-lg">
+                    <Label className="text-sm font-semibold text-purple-900 dark:text-purple-100">
+                      Questões Discursivas (padrão)
+                    </Label>
                     <select
-                      id="discursiveCorrectionMethod"
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                      className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm"
                       value={examData.discursiveCorrectionMethod}
                       onChange={(e) => setExamData({
                         ...examData,
                         discursiveCorrectionMethod: e.target.value as 'manual' | 'ai'
                       })}
                     >
-                      <option value="ai">🤖 Correção Automática por IA (Gemini 2.0)</option>
-                      <option value="manual">👤 Correção Manual pelo Professor</option>
+                      <option value="ai">🤖 Correção por IA</option>
+                      <option value="manual">👤 Correção Manual</option>
                     </select>
-                    <p className="text-xs text-muted-foreground">
-                      {examData.discursiveCorrectionMethod === 'ai'
-                        ? 'As questões serão corrigidas automaticamente pela IA assim que o aluno submeter a prova.'
-                        : 'Você precisará corrigir manualmente cada questão discursiva na área de correções.'}
-                    </p>
                   </div>
 
-                  {examData.discursiveCorrectionMethod === 'ai' && (
-                    <div className="space-y-2">
-                      <Label htmlFor="aiRigor">
-                        Rigor da IA: {(examData.aiRigor * 100).toFixed(0)}%
-                      </Label>
-                      <input
-                        id="aiRigor"
-                        type="range"
-                        min="0"
-                        max="1"
-                        step="0.05"
-                        value={examData.aiRigor}
-                        onChange={(e) => setExamData({
-                          ...examData,
-                          aiRigor: parseFloat(e.target.value)
-                        })}
-                        className="w-full"
-                      />
-                      <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>Leniente (aceita menções parciais)</span>
-                        <span>Moderado (exige clareza)</span>
-                        <span>Rigoroso (exige precisão)</span>
-                      </div>
-                      <p className="text-xs text-purple-700 dark:text-purple-300">
-                        Recomendado: 45% (moderado) - A IA analisa se o aluno mencionou os pontos-chave esperados
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {examData.questionType === 'essay' && (
-                <div className="border-t pt-4 space-y-4 bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
-                  <h3 className="font-semibold text-blue-900 dark:text-blue-100">
-                    ✍️ Configurações de Redação
-                  </h3>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="essayStyle">Estilo de Redação *</Label>
+                  {/* Configurações de Redação */}
+                  <div className="space-y-3 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
+                    <Label className="text-sm font-semibold text-blue-900 dark:text-blue-100">
+                      Redação (padrão)
+                    </Label>
                     <select
-                      id="essayStyle"
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                      className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm"
                       value={examData.essayStyle}
                       onChange={(e) => setExamData({
                         ...examData,
                         essayStyle: e.target.value as EssayStyle
                       })}
                     >
-                      <option value="enem">📝 ENEM (1000 pontos - 5 competências)</option>
-                      <option value="uerj">📄 UERJ (20 pontos - 5 critérios)</option>
+                      <option value="enem">ENEM (1000pts)</option>
+                      <option value="uerj">UERJ (20pts)</option>
                     </select>
-                    <p className="text-xs text-muted-foreground">
-                      {examData.essayStyle === 'enem'
-                        ? 'Avaliação baseada nas 5 competências do ENEM (200 pontos cada, intervalos de 20)'
-                        : 'Avaliação baseada nos 5 critérios da UERJ (4 pontos cada, aceita decimais)'}
-                    </p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="essayCorrectionMethod">Método de Correção *</Label>
                     <select
-                      id="essayCorrectionMethod"
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                      className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm"
                       value={examData.essayCorrectionMethod}
                       onChange={(e) => setExamData({
                         ...examData,
                         essayCorrectionMethod: e.target.value as CorrectionMethod
                       })}
                     >
-                      <option value="ai">🤖 Correção Automática por IA (Gemini 2.0)</option>
-                      <option value="manual">👤 Correção Manual pelo Professor</option>
+                      <option value="ai">🤖 Correção por IA</option>
+                      <option value="manual">👤 Correção Manual</option>
                     </select>
-                    <p className="text-xs text-muted-foreground">
-                      {examData.essayCorrectionMethod === 'ai'
-                        ? 'A redação será corrigida automaticamente pela IA especializada em redações ENEM/UERJ.'
-                        : 'Você precisará corrigir manualmente a redação, atribuindo notas e feedbacks por competência/critério.'}
-                    </p>
-                  </div>
-
-                  {examData.essayCorrectionMethod === 'ai' && (
-                    <div className="space-y-2">
-                      <Label htmlFor="essayAiRigor">
-                        Rigor da IA: {(examData.essayAiRigor * 100).toFixed(0)}%
-                      </Label>
-                      <input
-                        id="essayAiRigor"
-                        type="range"
-                        min="0"
-                        max="1"
-                        step="0.05"
-                        value={examData.essayAiRigor}
-                        onChange={(e) => setExamData({
-                          ...examData,
-                          essayAiRigor: parseFloat(e.target.value)
-                        })}
-                        className="w-full"
-                      />
-                      <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>Leniente</span>
-                        <span>Moderado</span>
-                        <span>Rigoroso</span>
-                      </div>
-                      <p className="text-xs text-blue-700 dark:text-blue-300">
-                        Recomendado: 45% (moderado) - A IA avalia domínio da norma, compreensão do tema, argumentação, coesão e proposta de intervenção
-                      </p>
-                    </div>
-                  )}
-
-                  <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg">
-                    <p className="text-xs text-blue-900 dark:text-blue-100">
-                      💡 <strong>Dica:</strong> O tema da redação e os textos de apoio serão configurados para cada questão individualmente na próxima etapa.
-                    </p>
                   </div>
                 </div>
-              )}
+              </div>
 
               <div className="space-y-2">
-                <Label htmlFor="scoringMethod">Método de Pontuação *</Label>
+                <Label htmlFor="scoringMethod">Método de Pontuação (Múltipla Escolha) *</Label>
                 <select
                   id="scoringMethod"
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -503,18 +426,13 @@ export default function CreateExamPage() {
                     scoringMethod: e.target.value as ScoringMethod,
                     ...(e.target.value === 'tri' && { totalPoints: 1000 })
                   })}
-                  disabled={examData.questionType === 'discursive' || examData.questionType === 'essay'}
                 >
                   <option value="normal">Normal (Pontuação Personalizada)</option>
-                  <option value="tri" disabled={examData.questionType === 'discursive' || examData.questionType === 'essay'}>
-                    TRI - Teoria de Resposta ao Item (1000 pontos)
-                  </option>
+                  <option value="tri">TRI - Teoria de Resposta ao Item (1000 pontos)</option>
                 </select>
-                {(examData.questionType === 'discursive' || examData.questionType === 'essay') && (
-                  <p className="text-xs text-muted-foreground">
-                    TRI não está disponível para questões discursivas e redações
-                  </p>
-                )}
+                <p className="text-xs text-muted-foreground">
+                  Este método será aplicado às questões de múltipla escolha. TRI calcula pontuação baseado na dificuldade das questões.
+                </p>
               </div>
 
               {examData.scoringMethod === 'normal' && (
@@ -562,7 +480,7 @@ export default function CreateExamPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="startTime">Início da Prova *</Label>
+                  <Label htmlFor="startTime">Data/Hora de Início *</Label>
                   <Input
                     id="startTime"
                     type="datetime-local"
@@ -570,46 +488,29 @@ export default function CreateExamPage() {
                     onChange={(e) => setExamData({ ...examData, startTime: e.target.value })}
                     required
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Quando a prova estará disponível para os alunos
+                  </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="endTime">Término da Prova *</Label>
+                  <Label htmlFor="durationMinutes">Duração da Prova (minutos) *</Label>
                   <Input
-                    id="endTime"
-                    type="datetime-local"
-                    value={examData.endTime}
-                    onChange={(e) => setExamData({ ...examData, endTime: e.target.value })}
+                    id="durationMinutes"
+                    type="number"
+                    min="1"
+                    value={examData.durationMinutes}
+                    onChange={(e) => setExamData({ ...examData, durationMinutes: parseInt(e.target.value) || 120 })}
                     required
                   />
+                  <p className="text-xs text-muted-foreground">
+                    {examData.startTime && examData.durationMinutes ? (
+                      <>Término: {new Date(new Date(examData.startTime).getTime() + examData.durationMinutes * 60000).toLocaleString('pt-BR')}</>
+                    ) : (
+                      'Tempo que os alunos terão para completar a prova'
+                    )}
+                  </p>
                 </div>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="isHidden"
-                  checked={examData.isHidden}
-                  onChange={(e) => setExamData({ ...examData, isHidden: e.target.checked })}
-                  className="h-4 w-4 rounded border-input"
-                />
-                <Label htmlFor="isHidden" className="cursor-pointer">
-                  Manter prova oculta (apenas visível para você)
-                </Label>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="duration">Duração da Prova (minutos)</Label>
-                <Input
-                  id="duration"
-                  type="number"
-                  min="1"
-                  value={examData.duration}
-                  onChange={(e) => setExamData({ ...examData, duration: parseInt(e.target.value) || 60 })}
-                  placeholder="120"
-                />
-                <p className="text-xs text-muted-foreground">
-                  Tempo máximo que o aluno terá para realizar a prova
-                </p>
               </div>
 
               <div className="space-y-2">
@@ -630,31 +531,58 @@ export default function CreateExamPage() {
                 </p>
               </div>
 
-              {examData.questionType === 'multiple-choice' ? (
-                <TxtImport
-                  numberOfQuestions={examData.numberOfQuestions}
-                  numberOfAlternatives={examData.numberOfAlternatives}
-                  onImport={(importedQuestions) => {
-                    setQuestions(importedQuestions)
-                    setCurrentStep(2)
-                    setCurrentQuestionIndex(0)
-                  }}
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="isHidden"
+                  checked={examData.isHidden}
+                  onChange={(e) => setExamData({ ...examData, isHidden: e.target.checked })}
+                  className="h-4 w-4 rounded border-input"
                 />
-              ) : (
-                <TxtImportDiscursive
-                  numberOfQuestions={examData.numberOfQuestions}
-                  onImport={(importedQuestions) => {
-                    setQuestions(importedQuestions)
-                    setCurrentStep(2)
-                    setCurrentQuestionIndex(0)
-                  }}
-                />
-              )}
+                <Label htmlFor="isHidden" className="cursor-pointer">
+                  Manter prova oculta (apenas visível para você)
+                </Label>
+              </div>
 
-              <Button onClick={initializeQuestions} className="w-full" size="lg">
-                Próximo: Adicionar Questões Manualmente
-                <Plus className="ml-2 h-5 w-5" />
-              </Button>
+              <div className="border-t pt-4 space-y-4">
+                <div>
+                  <h3 className="font-semibold mb-2">Adicionar Questões</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Você pode adicionar diferentes tipos de questões à sua prova. Clique nos botões abaixo para começar:
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <Button onClick={addMultipleChoiceQuestion} variant="outline" className="h-auto py-4 flex-col">
+                      <div className="text-2xl mb-2">📝</div>
+                      <div className="font-semibold">Múltipla Escolha</div>
+                      <div className="text-xs text-muted-foreground mt-1">Questão com alternativas</div>
+                    </Button>
+                    <Button onClick={addDiscursiveQuestion} variant="outline" className="h-auto py-4 flex-col">
+                      <div className="text-2xl mb-2">✏️</div>
+                      <div className="font-semibold">Discursiva</div>
+                      <div className="text-xs text-muted-foreground mt-1">Resposta aberta</div>
+                    </Button>
+                    <Button onClick={addEssayQuestion} variant="outline" className="h-auto py-4 flex-col">
+                      <div className="text-2xl mb-2">✍️</div>
+                      <div className="font-semibold">Redação</div>
+                      <div className="text-xs text-muted-foreground mt-1">ENEM ou UERJ</div>
+                    </Button>
+                  </div>
+                </div>
+
+                {questions.length > 0 && (
+                  <div className="bg-muted p-4 rounded-lg">
+                    <p className="text-sm font-semibold mb-2">📋 Questões adicionadas: {questions.length}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {questions.map((q, idx) => (
+                        <div key={q.id} className="inline-flex items-center gap-1 px-2 py-1 bg-background rounded text-xs">
+                          <span>{q.number}.</span>
+                          <span>{q.type === 'multiple-choice' ? '📝' : q.type === 'discursive' ? '✏️' : '✍️'}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </CardContent>
           </Card>
         )}
@@ -963,9 +891,10 @@ export default function CreateExamPage() {
               </CardContent>
             </Card>
 
-            <div className="flex justify-between">
-              <div className="flex space-x-2">
-                {currentQuestionIndex === 0 && (
+            <div className="space-y-3">
+              {/* Navegação entre questões */}
+              <div className="flex justify-between items-center">
+                <div className="flex space-x-2">
                   <Button
                     variant="outline"
                     onClick={() => setCurrentStep(1)}
@@ -973,30 +902,59 @@ export default function CreateExamPage() {
                     <ArrowLeft className="h-4 w-4 mr-2" />
                     Voltar às Configurações
                   </Button>
-                )}
-                {currentQuestionIndex > 0 && (
+                  {currentQuestionIndex > 0 && (
+                    <Button
+                      variant="outline"
+                      onClick={() => setCurrentQuestionIndex(currentQuestionIndex - 1)}
+                    >
+                      ← Anterior
+                    </Button>
+                  )}
+                </div>
+
+                <div className="flex space-x-2">
                   <Button
-                    variant="outline"
-                    onClick={() => setCurrentQuestionIndex(currentQuestionIndex - 1)}
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => {
+                      if (confirm(`Deseja realmente excluir a questão ${currentQuestion.number}?`)) {
+                        deleteQuestion(currentQuestionIndex)
+                      }
+                    }}
                   >
-                    Questão Anterior
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Excluir
                   </Button>
-                )}
+                  {currentQuestionIndex < questions.length - 1 && (
+                    <Button
+                      onClick={() => setCurrentQuestionIndex(currentQuestionIndex + 1)}
+                    >
+                      Próxima →
+                    </Button>
+                  )}
+                </div>
               </div>
 
-              <div className="flex space-x-2">
-                {currentQuestionIndex === questions.length - 1 ? (
-                  <Button onClick={handleSubmit} disabled={loading}>
-                    <Save className="h-4 w-4 mr-2" />
-                    {loading ? 'Salvando...' : 'Salvar Prova'}
+              {/* Botões de ação */}
+              <div className="flex justify-between gap-3 pt-2 border-t">
+                <div className="flex gap-2">
+                  <Button onClick={addMultipleChoiceQuestion} variant="outline" size="sm">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Múltipla Escolha
                   </Button>
-                ) : (
-                  <Button
-                    onClick={() => setCurrentQuestionIndex(Math.min(questions.length - 1, currentQuestionIndex + 1))}
-                  >
-                    Próxima Questão
+                  <Button onClick={addDiscursiveQuestion} variant="outline" size="sm">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Discursiva
                   </Button>
-                )}
+                  <Button onClick={addEssayQuestion} variant="outline" size="sm">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Redação
+                  </Button>
+                </div>
+                <Button onClick={handleSubmit} disabled={loading} size="lg">
+                  <Save className="h-4 w-4 mr-2" />
+                  {loading ? 'Salvando...' : 'Salvar Prova'}
+                </Button>
               </div>
             </div>
           </div>
