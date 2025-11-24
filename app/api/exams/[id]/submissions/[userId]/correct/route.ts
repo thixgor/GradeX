@@ -138,11 +138,66 @@ export async function POST(
     // Calcular pontuação discursiva total
     const discursiveScore = corrections.reduce((sum, c) => sum + c.score, 0)
 
-    // Verificar se todas as questões discursivas foram corrigidas
-    const discursiveQuestions = exam.questions.filter(q => q.type === 'discursive')
-    const allCorrected = discursiveQuestions.every(q =>
+    // Verificar se todas as questões discursivas e redações foram corrigidas
+    const questionsNeedingCorrection = exam.questions.filter(
+      q => q.type === 'discursive' || q.type === 'essay'
+    )
+    const allCorrected = questionsNeedingCorrection.every(q =>
       corrections.some(c => c.questionId === q.id)
     )
+
+    // Calcular nota final combinando todos os tipos de questões
+    let finalScore: number | undefined
+
+    if (exam.scoringMethod === 'normal' && allCorrected) {
+      // Calcular múltipla escolha
+      const multipleChoiceQuestions = exam.questions.filter(q => q.type === 'multiple-choice')
+      let multipleChoicePercentage = 0
+
+      if (multipleChoiceQuestions.length > 0) {
+        let correctAnswers = 0
+        for (const answer of submission.answers) {
+          const question = exam.questions.find(q => q.id === answer.questionId)
+          if (question && question.type === 'multiple-choice') {
+            const correctAlt = question.alternatives.find(alt => alt.isCorrect)
+            if (correctAlt && answer.selectedAlternative === correctAlt.id) {
+              correctAnswers++
+            }
+          }
+        }
+        multipleChoicePercentage = (correctAnswers / multipleChoiceQuestions.length) * 100
+      }
+
+      // Calcular percentuais e combinar
+      const percentages: number[] = []
+      const questionCounts: number[] = []
+
+      // Múltipla escolha
+      if (multipleChoiceQuestions.length > 0) {
+        percentages.push(multipleChoicePercentage)
+        questionCounts.push(multipleChoiceQuestions.length)
+      }
+
+      // Discursivas e redações
+      for (const correction of corrections) {
+        const percentage = (correction.score / correction.maxScore) * 100
+        percentages.push(percentage)
+        questionCounts.push(1)
+      }
+
+      // Média ponderada: cada questão tem peso igual
+      const totalQuestions = questionCounts.reduce((sum, count) => sum + count, 0)
+      if (totalQuestions > 0) {
+        const weightedSum = percentages.reduce((sum, percentage, idx) => {
+          return sum + (percentage * questionCounts[idx])
+        }, 0)
+
+        const finalPercentage = weightedSum / totalQuestions
+        const totalPoints = exam.totalPoints || 100
+        finalScore = (finalPercentage / 100) * totalPoints
+        finalScore = Math.round(finalScore * 100) / 100
+      }
+    }
 
     // Atualizar submissão
     await submissionsCollection.updateOne(
@@ -152,6 +207,7 @@ export async function POST(
           corrections,
           discursiveScore,
           correctionStatus: allCorrected ? 'corrected' : 'pending',
+          ...(finalScore !== undefined && { score: finalScore }),
         },
       }
     )
@@ -276,6 +332,59 @@ export async function PUT(
     // Calcular pontuação discursiva total
     const discursiveScore = corrections.reduce((sum, c) => sum + c.score, 0)
 
+    // Calcular nota final combinando todos os tipos de questões
+    let finalScore: number | undefined
+
+    if (exam.scoringMethod === 'normal') {
+      // Calcular múltipla escolha
+      const multipleChoiceQuestions = exam.questions.filter(q => q.type === 'multiple-choice')
+      let multipleChoicePercentage = 0
+
+      if (multipleChoiceQuestions.length > 0) {
+        let correctAnswers = 0
+        for (const answer of submission.answers) {
+          const question = exam.questions.find(q => q.id === answer.questionId)
+          if (question && question.type === 'multiple-choice') {
+            const correctAlt = question.alternatives.find(alt => alt.isCorrect)
+            if (correctAlt && answer.selectedAlternative === correctAlt.id) {
+              correctAnswers++
+            }
+          }
+        }
+        multipleChoicePercentage = (correctAnswers / multipleChoiceQuestions.length) * 100
+      }
+
+      // Calcular percentuais e combinar
+      const percentages: number[] = []
+      const questionCounts: number[] = []
+
+      // Múltipla escolha
+      if (multipleChoiceQuestions.length > 0) {
+        percentages.push(multipleChoicePercentage)
+        questionCounts.push(multipleChoiceQuestions.length)
+      }
+
+      // Discursivas e redações
+      for (const correction of corrections) {
+        const percentage = (correction.score / correction.maxScore) * 100
+        percentages.push(percentage)
+        questionCounts.push(1)
+      }
+
+      // Média ponderada: cada questão tem peso igual
+      const totalQuestions = questionCounts.reduce((sum, count) => sum + count, 0)
+      if (totalQuestions > 0) {
+        const weightedSum = percentages.reduce((sum, percentage, idx) => {
+          return sum + (percentage * questionCounts[idx])
+        }, 0)
+
+        const finalPercentage = weightedSum / totalQuestions
+        const totalPoints = exam.totalPoints || 100
+        finalScore = (finalPercentage / 100) * totalPoints
+        finalScore = Math.round(finalScore * 100) / 100
+      }
+    }
+
     // Atualizar submissão
     await submissionsCollection.updateOne(
       { examId: id, userId: userId },
@@ -284,6 +393,7 @@ export async function PUT(
           corrections,
           discursiveScore,
           correctionStatus: 'corrected',
+          ...(finalScore !== undefined && { score: finalScore }),
         },
       }
     )

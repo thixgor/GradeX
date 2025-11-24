@@ -18,7 +18,7 @@ import { Barcode } from '@/components/barcode'
 import { Exam, UserAnswer } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
 import { downloadUserReportPDF } from '@/lib/user-report-generator'
-import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2 } from 'lucide-react'
+import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCircle, List } from 'lucide-react'
 
 export default function ExamPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -45,11 +45,46 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const [toastOpen, setToastOpen] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
   const [toastType, setToastType] = useState<'error' | 'success' | 'info'>('error')
+  const [showUnansweredModal, setShowUnansweredModal] = useState(false)
 
   const showToastMessage = (message: string, type: 'error' | 'success' | 'info' = 'error') => {
     setToastMessage(message)
     setToastType(type)
     setToastOpen(true)
+  }
+
+  // Função para identificar questões não respondidas
+  const getUnansweredQuestions = () => {
+    return answers
+      .map((answer, index) => {
+        const question = exam?.questions[index]
+        if (!question) return null
+
+        const isUnanswered =
+          (question.type === 'multiple-choice' && !answer.selectedAlternative) ||
+          (question.type === 'discursive' && (!answer.discursiveText || answer.discursiveText.trim() === '')) ||
+          (question.type === 'essay' && (!answer.essayText || answer.essayText.trim() === ''))
+
+        return isUnanswered ? { question, index } : null
+      })
+      .filter((item) => item !== null) as { question: any; index: number }[]
+  }
+
+  // Função para baixar PDF da prova
+  const handleDownloadExamPDF = async () => {
+    try {
+      if (exam?.pdfUrl) {
+        // Se tem PDF anexado, baixar esse
+        window.open(exam.pdfUrl, '_blank')
+      } else {
+        // Caso contrário, gerar PDF do sistema
+        const { generateExamPDF, downloadPDF } = await import('@/lib/pdf-generator')
+        const blob = generateExamPDF(exam!, userId)
+        downloadPDF(blob, `${exam!.title}.pdf`)
+      }
+    } catch (error: any) {
+      showToastMessage('Erro ao baixar PDF: ' + error.message)
+    }
   }
 
   useEffect(() => {
@@ -644,7 +679,25 @@ export default function ExamPage({ params }: { params: { id: string } }) {
               )}
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 flex-wrap">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowUnansweredModal(true)}
+              className="hidden sm:flex"
+            >
+              <AlertCircle className="h-4 w-4 mr-2" />
+              Não respondidas ({getUnansweredQuestions().length})
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDownloadExamPDF}
+              className="hidden sm:flex"
+            >
+              <FileDown className="h-4 w-4 mr-2" />
+              PDF
+            </Button>
             <ExamTimer
               endTime={exam.endTime}
               onTimeUp={() => {
@@ -1176,6 +1229,81 @@ export default function ExamPage({ params }: { params: { id: string } }) {
         message={toastMessage}
         type={toastType}
       />
+
+      {/* Modal de Questões Não Respondidas */}
+      {showUnansweredModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <Card className="max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-2xl">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <List className="h-5 w-5" />
+                  Questões Não Respondidas
+                </CardTitle>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowUnansweredModal(false)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              <CardDescription>
+                {getUnansweredQuestions().length === 0
+                  ? 'Você respondeu todas as questões!'
+                  : `Você ainda tem ${getUnansweredQuestions().length} questão(ões) não respondida(s).`}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {getUnansweredQuestions().length === 0 ? (
+                <div className="text-center py-8">
+                  <CheckCircle2 className="h-16 w-16 text-green-500 mx-auto mb-4" />
+                  <p className="text-lg font-semibold text-green-600 dark:text-green-400">
+                    Todas as questões foram respondidas!
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {getUnansweredQuestions().map(({ question, index }) => (
+                    <div
+                      key={question.id}
+                      className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors"
+                    >
+                      <div className="flex-1">
+                        <p className="font-semibold">Questão {question.number}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {question.type === 'multiple-choice' && 'Múltipla Escolha'}
+                          {question.type === 'discursive' && 'Discursiva'}
+                          {question.type === 'essay' && 'Redação'}
+                        </p>
+                      </div>
+                      <Button
+                        size="sm"
+                        onClick={() => {
+                          if (isScrollMode) {
+                            // Em modo scroll, rolar até a questão
+                            const element = document.getElementById(`question-${question.id}`)
+                            if (element) {
+                              element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                              setShowUnansweredModal(false)
+                            }
+                          } else {
+                            // Em modo navegação, ir para a questão
+                            setCurrentQuestionIndex(index)
+                            setShowUnansweredModal(false)
+                          }
+                        }}
+                      >
+                        Ir para questão
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   )
 }

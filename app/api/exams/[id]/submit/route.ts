@@ -65,8 +65,12 @@ export async function POST(
     const hasEssayQuestions = exam.questions.some(q => q.type === 'essay')
     const needsCorrection = hasDiscursiveQuestions || hasEssayQuestions
 
-    // Calcula pontuação para método normal (apenas questões de múltipla escolha)
-    if (exam.scoringMethod === 'normal' && !needsCorrection) {
+    // Calcula pontuação de múltipla escolha (sempre, se existirem)
+    let multipleChoiceScore = 0
+    let multipleChoicePercentage = 0
+    const multipleChoiceQuestions = exam.questions.filter(q => q.type === 'multiple-choice')
+
+    if (exam.scoringMethod === 'normal' && multipleChoiceQuestions.length > 0) {
       let correctAnswers = 0
 
       for (const answer of answers as UserAnswer[]) {
@@ -79,12 +83,15 @@ export async function POST(
         }
       }
 
-      const multipleChoiceCount = exam.questions.filter(q => q.type === 'multiple-choice').length
-      if (multipleChoiceCount > 0) {
-        const totalPoints = exam.totalPoints || 100
-        score = (correctAnswers / multipleChoiceCount) * totalPoints
-        score = Math.round(score * 100) / 100 // 2 casas decimais
-      }
+      multipleChoicePercentage = (correctAnswers / multipleChoiceQuestions.length) * 100
+      multipleChoiceScore = correctAnswers
+    }
+
+    // Se não tem questões que precisam de correção e só tem múltipla escolha, calcular score final
+    if (exam.scoringMethod === 'normal' && !needsCorrection && multipleChoiceQuestions.length > 0) {
+      const totalPoints = exam.totalPoints || 100
+      score = (multipleChoiceScore / multipleChoiceQuestions.length) * totalPoints
+      score = Math.round(score * 100) / 100
     }
 
     // Se tem questões que precisam de correção, marcar como pendente
@@ -188,6 +195,47 @@ export async function POST(
 
             const newCorrectionStatus = corrections.length === totalQuestionsNeedingCorrection ? 'corrected' : 'pending'
 
+            // Calcular nota final combinando todos os tipos de questões
+            let finalScore: number | undefined
+
+            if (exam.scoringMethod === 'normal') {
+              // Calcular percentual de cada tipo de questão
+              const percentages: number[] = []
+              const questionCounts: number[] = []
+
+              // Múltipla escolha
+              if (multipleChoiceQuestions.length > 0) {
+                percentages.push(multipleChoicePercentage)
+                questionCounts.push(multipleChoiceQuestions.length)
+              }
+
+              // Discursivas e redações - calcular percentual de cada uma
+              for (const correction of corrections) {
+                const question = exam.questions.find(q => q.id === correction.questionId)
+                if (question) {
+                  const percentage = (correction.score / correction.maxScore) * 100
+                  percentages.push(percentage)
+                  questionCounts.push(1)
+                }
+              }
+
+              // Média ponderada: cada questão tem peso igual
+              const totalQuestions = questionCounts.reduce((sum, count) => sum + count, 0)
+              if (totalQuestions > 0) {
+                const weightedSum = percentages.reduce((sum, percentage, idx) => {
+                  return sum + (percentage * questionCounts[idx])
+                }, 0)
+
+                // Percentual final de 0-100
+                const finalPercentage = weightedSum / totalQuestions
+
+                // Converter para pontuação total da prova
+                const totalPoints = exam.totalPoints || 100
+                finalScore = (finalPercentage / 100) * totalPoints
+                finalScore = Math.round(finalScore * 100) / 100 // 2 casas decimais
+              }
+            }
+
             await submissionsCollection.updateOne(
               { _id: result.insertedId },
               {
@@ -195,6 +243,7 @@ export async function POST(
                   corrections,
                   discursiveScore,
                   correctionStatus: newCorrectionStatus,
+                  score: finalScore,
                 },
               }
             )
@@ -202,7 +251,7 @@ export async function POST(
             return NextResponse.json({
               success: true,
               message: 'Prova submetida e corrigida automaticamente!',
-              score: discursiveScore,
+              score: finalScore,
               submissionId: result.insertedId.toString(),
             })
           }

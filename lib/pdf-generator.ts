@@ -2,6 +2,34 @@ import jsPDF from 'jspdf'
 import JsBarcode from 'jsbarcode'
 import { Exam, Question, UserAnswer } from './types'
 
+// Custom text wrapping function to fix splitTextToSize bug
+function wrapText(doc: jsPDF, text: string, maxWidth: number): string[] {
+  if (!text) return []
+
+  const words = text.split(' ')
+  const lines: string[] = []
+  let currentLine = ''
+
+  for (let i = 0; i < words.length; i++) {
+    const word = words[i]
+    const testLine = currentLine ? currentLine + ' ' + word : word
+    const testWidth = doc.getTextWidth(testLine)
+
+    if (testWidth > maxWidth && currentLine) {
+      lines.push(currentLine)
+      currentLine = word
+    } else {
+      currentLine = testLine
+    }
+  }
+
+  if (currentLine) {
+    lines.push(currentLine)
+  }
+
+  return lines
+}
+
 export function generateGabaritoPDF(exam: Exam): Blob {
   const doc = new jsPDF()
 
@@ -63,7 +91,7 @@ export function generateGabaritoPDF(exam: Exam): Blob {
     doc.setFontSize(10)
     doc.setFont('helvetica', 'normal')
     doc.setTextColor(...grayColor)
-    const descLines = doc.splitTextToSize(exam.description, pageWidth - 2 * margin)
+    const descLines = wrapText(doc, exam.description, pageWidth - 2 * margin)
     doc.text(descLines, pageWidth / 2, y, { align: 'center' })
     y += descLines.length * 5 + 8
   }
@@ -392,7 +420,7 @@ export function generateExamPDF(exam: Exam, userId?: string): Blob {
     if (question.statement) {
       doc.setFontSize(10)
       doc.setFont('helvetica', 'normal')
-      const lines = doc.splitTextToSize(question.statement, pageWidth - 2 * margin)
+      const lines = wrapText(doc, question.statement, pageWidth - 2 * margin)
       lines.forEach((line: string) => {
         checkPage(10)
         doc.text(line, margin, y)
@@ -426,7 +454,7 @@ export function generateExamPDF(exam: Exam, userId?: string): Blob {
       checkPage(8)
       doc.setFontSize(10)
       doc.setFont('helvetica', 'bold')
-      const commandLines = doc.splitTextToSize(question.command, pageWidth - 2 * margin)
+      const commandLines = wrapText(doc, question.command, pageWidth - 2 * margin)
       commandLines.forEach((line: string) => {
         checkPage(8)
         doc.text(line, margin, y)
@@ -452,7 +480,7 @@ export function generateExamPDF(exam: Exam, userId?: string): Blob {
 
         // Alternativa
         const altText = `${letters[altIdx]}) ${alt.text}`
-        const altLines = doc.splitTextToSize(altText, pageWidth - 2 * margin - 10)
+        const altLines = wrapText(doc, altText, pageWidth - 2 * margin - 10)
         altLines.forEach((line: string, lineIdx: number) => {
           if (lineIdx > 0) checkPage(5)
           doc.text(line, margin + 8, y)
@@ -567,7 +595,7 @@ export function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[], use
     if (question.statement) {
       doc.setFontSize(10)
       doc.setFont('helvetica', 'normal')
-      const lines = doc.splitTextToSize(question.statement, pageWidth - 2 * margin)
+      const lines = wrapText(doc, question.statement, pageWidth - 2 * margin)
       lines.forEach((line: string) => {
         checkPage(10)
         doc.text(line, margin, y)
@@ -589,7 +617,7 @@ export function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[], use
       checkPage(8)
       doc.setFontSize(10)
       doc.setFont('helvetica', 'bold')
-      const commandLines = doc.splitTextToSize(question.command, pageWidth - 2 * margin)
+      const commandLines = wrapText(doc, question.command, pageWidth - 2 * margin)
       commandLines.forEach((line: string) => {
         checkPage(8)
         doc.text(line, margin, y)
@@ -627,7 +655,7 @@ export function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[], use
         }
 
         const altText = letters[altIdx] + ') ' + alt.text
-        const altLines = doc.splitTextToSize(altText, pageWidth - 2 * margin - 10)
+        const altLines = wrapText(doc, altText, pageWidth - 2 * margin - 10)
         altLines.forEach((line: string, lineIdx: number) => {
           if (lineIdx > 0) checkPage(5)
           doc.text(line, margin + 8, y)
@@ -647,7 +675,7 @@ export function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[], use
       if (answer?.discursiveText) {
         doc.setFontSize(10)
         doc.setFont('helvetica', 'normal')
-        const answerLines = doc.splitTextToSize(answer.discursiveText, pageWidth - 2 * margin - 4)
+        const answerLines = wrapText(doc, answer.discursiveText, pageWidth - 2 * margin - 4)
         answerLines.forEach((line: string) => {
           checkPage(8)
           doc.text(line, margin + 2, y)
