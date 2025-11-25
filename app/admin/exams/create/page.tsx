@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ThemeToggle } from '@/components/theme-toggle'
 import { FileUpload } from '@/components/file-upload'
 import { TxtImportUnified } from '@/components/txt-import-unified'
+import { AIQuestionGenerator } from '@/components/ai-question-generator'
 import { Question, Alternative, ScoringMethod, QuestionType, KeyPoint, EssayStyle, CorrectionMethod } from '@/lib/types'
 import { generateRandomTRIParameters } from '@/lib/tri-calculator'
 import { v4 as uuidv4 } from 'uuid'
@@ -644,6 +645,23 @@ export default function CreateExamPage() {
                   defaultEssayStyle={examData.essayStyle}
                   defaultEssayCorrectionMethod={examData.essayCorrectionMethod}
                   defaultEssayAiRigor={examData.essayAiRigor}
+                />
+              </div>
+
+              <div className="border-t pt-4">
+                <AIQuestionGenerator
+                  onQuestionGenerated={(generatedQuestion) => {
+                    // Atualizar número da questão
+                    const newQuestion = {
+                      ...generatedQuestion,
+                      number: questions.length + 1,
+                    }
+                    setQuestions([...questions, newQuestion])
+                    setCurrentQuestionIndex(questions.length)
+                    if (currentStep === 1) setCurrentStep(2)
+                  }}
+                  numberOfAlternatives={examData.numberOfAlternatives}
+                  useTRI={examData.scoringMethod === 'tri'}
                 />
               </div>
             </CardContent>
