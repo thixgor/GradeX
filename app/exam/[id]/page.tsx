@@ -119,7 +119,8 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       console.log('[WS] Mensagem recebida:', message)
       // Processar mensagens WebRTC ou comandos do admin
     },
-    autoReconnect: hasProctoring && started && !submitted,
+    enabled: hasProctoring && started && !submitted, // Só conectar quando condições verdadeiras
+    autoReconnect: true,
   })
 
   // Hook de detecção de troca de abas/janelas

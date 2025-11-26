@@ -9,6 +9,7 @@ interface UseWebSocketOptions {
   userName?: string
   onMessage?: (message: any) => void
   autoReconnect?: boolean
+  enabled?: boolean // Adicionar flag para habilitar/desabilitar
 }
 
 export function useWebSocket({
@@ -18,6 +19,7 @@ export function useWebSocket({
   userName,
   onMessage,
   autoReconnect = true,
+  enabled = true, // Por padrão habilitado
 }: UseWebSocketOptions) {
   const [isConnected, setIsConnected] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -111,11 +113,13 @@ export function useWebSocket({
   }, [])
 
   useEffect(() => {
-    connect()
+    if (enabled) {
+      connect()
+    }
     return () => {
       disconnect()
     }
-  }, [connect, disconnect])
+  }, [enabled, connect, disconnect])
 
   return {
     isConnected,
