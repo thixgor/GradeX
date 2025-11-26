@@ -44,6 +44,10 @@ export default function ProctoringMonitoringPage() {
   // Mapa de PeerConnections por userId
   const peerConnectionsRef = useRef<Map<string, PeerConnectionData>>(new Map())
 
+  // Refs para WebSocket (para evitar dependências circulares)
+  const wsConnectedRef = useRef(false)
+  const wsSendMessageRef = useRef<((message: any) => void) | null>(null)
+
   // Configuração STUN
   const rtcConfig: RTCConfiguration = {
     iceServers: [
@@ -60,9 +64,9 @@ export default function ProctoringMonitoringPage() {
 
     // Listener para ICE candidates
     pc.onicecandidate = (event) => {
-      if (event.candidate && wsConnected) {
+      if (event.candidate && wsConnectedRef.current && wsSendMessageRef.current) {
         console.log(`[ADMIN WebRTC] 📤 Enviando ICE candidate para ${userName}`)
-        wsSendMessage({
+        wsSendMessageRef.current({
           type: 'webrtc-ice-candidate',
           candidate: event.candidate,
           targetId: fromId,
@@ -139,9 +143,9 @@ export default function ProctoringMonitoringPage() {
       console.log(`[ADMIN WebRTC] ✅ Answer criada para ${userName}`)
 
       // Enviar answer de volta
-      if (wsConnected) {
+      if (wsConnectedRef.current && wsSendMessageRef.current) {
         console.log(`[ADMIN WebRTC] 📤 Enviando answer para ${userName} (targetId: ${fromId})`)
-        wsSendMessage({
+        wsSendMessageRef.current({
           type: 'webrtc-answer',
           answer: pc.localDescription,
           targetId: fromId,
@@ -152,7 +156,7 @@ export default function ProctoringMonitoringPage() {
     } catch (error) {
       console.error('[ADMIN WebRTC] ❌ Erro ao processar oferta:', error)
     }
-  }, [createPeerConnection, wsConnected, wsSendMessage])
+  }, [createPeerConnection])
 
   // Processar ICE candidate
   const handleICECandidate = useCallback(async (userId: string, candidate: RTCIceCandidateInit) => {
@@ -209,6 +213,12 @@ export default function ProctoringMonitoringPage() {
     },
     autoReconnect: true,
   })
+
+  // Sincronizar refs com valores do WebSocket
+  useEffect(() => {
+    wsConnectedRef.current = wsConnected
+    wsSendMessageRef.current = wsSendMessage
+  }, [wsConnected, wsSendMessage])
 
   async function fetchSessions() {
     try {
