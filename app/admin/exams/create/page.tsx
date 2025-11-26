@@ -175,6 +175,65 @@ export default function CreateExamPage() {
     })
   }
 
+  function shuffleAlternatives(questionIndex: number) {
+    const question = questions[questionIndex]
+    if (question.type !== 'multiple-choice') return
+
+    // Encontrar qual alternativa é a correta
+    const correctIndex = question.alternatives.findIndex(alt => alt.isCorrect)
+    if (correctIndex === -1) return
+
+    // Criar cópia das alternativas
+    const shuffled = [...question.alternatives]
+
+    // Algoritmo Fisher-Yates para embaralhar
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    }
+
+    // Reatribuir as letras mantendo isCorrect
+    const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+    const newAlternatives = shuffled.map((alt, idx) => ({
+      ...alt,
+      letter: letters[idx],
+    }))
+
+    updateQuestion(questionIndex, { alternatives: newAlternatives })
+  }
+
+  function shuffleAllAlternatives() {
+    if (!confirm('Embaralhar as alternativas de TODAS as questões de múltipla escolha?')) return
+
+    const newQuestions = questions.map((question, idx) => {
+      if (question.type !== 'multiple-choice') return question
+
+      // Encontrar qual alternativa é a correta
+      const correctIndex = question.alternatives.findIndex(alt => alt.isCorrect)
+      if (correctIndex === -1) return question
+
+      // Criar cópia das alternativas
+      const shuffled = [...question.alternatives]
+
+      // Algoritmo Fisher-Yates para embaralhar
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+      }
+
+      // Reatribuir as letras mantendo isCorrect
+      const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+      const newAlternatives = shuffled.map((alt, idx) => ({
+        ...alt,
+        letter: letters[idx],
+      }))
+
+      return { ...question, alternatives: newAlternatives }
+    })
+
+    setQuestions(newQuestions)
+  }
+
   async function handleSubmit() {
     setLoading(true)
 
@@ -764,7 +823,19 @@ export default function CreateExamPage() {
 
                 {currentQuestion.type === 'multiple-choice' && (
                   <div className="space-y-3">
-                    <Label>Alternativas *</Label>
+                    <div className="flex items-center justify-between">
+                      <Label>Alternativas *</Label>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => shuffleAlternatives(currentQuestionIndex)}
+                        className="h-7"
+                      >
+                        <Shuffle className="h-4 w-4 mr-2" />
+                        Embaralhar
+                      </Button>
+                    </div>
                     {currentQuestion.alternatives.map((alt, altIndex) => (
                       <div key={alt.id} className="flex items-start space-x-2">
                         <input
@@ -1052,7 +1123,7 @@ export default function CreateExamPage() {
 
               {/* Botões de ação */}
               <div className="flex justify-between gap-3 pt-2 border-t">
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                   <Button onClick={addMultipleChoiceQuestion} variant="outline" size="sm">
                     <Plus className="h-4 w-4 mr-2" />
                     Múltipla Escolha
@@ -1065,6 +1136,17 @@ export default function CreateExamPage() {
                     <Plus className="h-4 w-4 mr-2" />
                     Redação
                   </Button>
+                  {questions.some(q => q.type === 'multiple-choice') && (
+                    <Button
+                      onClick={shuffleAllAlternatives}
+                      variant="outline"
+                      size="sm"
+                      className="border-purple-500 text-purple-700 hover:bg-purple-50 dark:text-purple-300 dark:hover:bg-purple-950"
+                    >
+                      <Shuffle className="h-4 w-4 mr-2" />
+                      Embaralhar Todas Alternativas
+                    </Button>
+                  )}
                 </div>
                 <Button onClick={handleSubmit} disabled={loading} size="lg">
                   <Save className="h-4 w-4 mr-2" />
