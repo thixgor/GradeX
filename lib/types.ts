@@ -3,6 +3,7 @@ export type QuestionType = 'multiple-choice' | 'discursive' | 'essay'
 export type EssayStyle = 'enem' | 'uerj'
 export type CorrectionMethod = 'manual' | 'ai'
 export type CorrectionStatus = 'pending' | 'corrected'
+export type ScreenCaptureMode = 'window' | 'screen' // Somente janela ou tela inteira
 export type BanReason =
   | 'cheating' // Tentativa de fraude/cola
   | 'impersonation' // Falsificação de identidade
@@ -92,6 +93,14 @@ export interface Exam {
   // Modo de navegação da prova
   navigationMode?: 'paginated' | 'scroll' // paginated: navegação com botões, scroll: todas questões visíveis com scroll
   duration?: number // Duração da prova em minutos
+  // Sistema de monitoramento (proctoring)
+  proctoring?: {
+    enabled: boolean
+    camera: boolean
+    audio: boolean
+    screen: boolean
+    screenMode?: ScreenCaptureMode // 'window' ou 'screen'
+  }
   createdAt: Date
   updatedAt: Date
 }
@@ -221,4 +230,27 @@ export interface Settings {
   customContexts?: CustomContext[] // Contextos personalizados salvos
   updatedAt: Date
   updatedBy?: string
+}
+
+export interface ProctoringSession {
+  _id?: string
+  examId: string
+  examTitle: string
+  userId: string
+  userName: string
+  submissionId?: string
+  // Status da sessão
+  isActive: boolean
+  startedAt: Date
+  endedAt?: Date
+  // Alertas e infrações
+  cameraBlackWarnings: number
+  cameraBlackAt?: Date // Quando começou o problema
+  forcedSubmit: boolean // Se foi submetido automaticamente por infração
+  forcedSubmitReason?: string
+  // Configurações de monitoramento ativas
+  cameraEnabled: boolean
+  audioEnabled: boolean
+  screenEnabled: boolean
+  screenMode?: ScreenCaptureMode
 }
