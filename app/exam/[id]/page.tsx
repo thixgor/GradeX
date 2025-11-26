@@ -533,12 +533,27 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     )
   }
 
+  // Renderizar modal de proctoring SEMPRE que necessário (independente de early returns)
+  const proctoringModal = showProctoringConsent && (
+    <ProctoringConsent
+      examTitle={exam.title}
+      camera={needsCamera}
+      audio={needsAudio}
+      screen={needsScreen}
+      screenMode={screenMode}
+      onAccept={handleProctoringAccept}
+      onReject={handleProctoringReject}
+    />
+  )
+
   // Tela de conclusão após submissão
   if (submitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4">
-        <Card className="max-w-2xl w-full">
-          <CardHeader className="text-center">
+      <>
+        {proctoringModal}
+        <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4">
+          <Card className="max-w-2xl w-full">
+            <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
               <div className="bg-green-100 dark:bg-green-900 rounded-full p-4">
                 <CheckCircle2 className="h-16 w-16 text-green-600 dark:text-green-400" />
@@ -605,13 +620,16 @@ export default function ExamPage({ params }: { params: { id: string } }) {
           </CardContent>
         </Card>
       </div>
+      </>
     )
   }
 
   if (!started && !inWaitingRoom) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4">
-        <Card className="max-w-2xl w-full">
+      <>
+        {proctoringModal}
+        <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4">
+          <Card className="max-w-2xl w-full">
           <CardHeader>
             <CardTitle className="text-3xl">{exam.title}</CardTitle>
             {exam.description && (
@@ -712,14 +730,17 @@ export default function ExamPage({ params }: { params: { id: string } }) {
           </CardContent>
         </Card>
       </div>
+      </>
     )
   }
 
   // Sala de espera
   if (!started && inWaitingRoom) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4">
-        <Card className="max-w-3xl w-full">
+      <>
+        {proctoringModal}
+        <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4">
+          <Card className="max-w-3xl w-full">
           <CardHeader className="text-center">
             <CardTitle className="text-3xl mb-2">{exam.title}</CardTitle>
             <CardDescription className="text-lg">
@@ -809,6 +830,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
           />
         )}
       </div>
+      </>
     )
   }
 
@@ -817,22 +839,11 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const isScrollMode = exam.navigationMode === 'scroll'
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted">
-      {/* Verificador de Banimento */}
-      <BanChecker />
-
-      {/* Termo de Consentimento de Proctoring */}
-      {showProctoringConsent && (
-        <ProctoringConsent
-          examTitle={exam.title}
-          camera={needsCamera}
-          audio={needsAudio}
-          screen={needsScreen}
-          screenMode={screenMode}
-          onAccept={handleProctoringAccept}
-          onReject={handleProctoringReject}
-        />
-      )}
+    <>
+      {proctoringModal}
+      <div className="min-h-screen bg-gradient-to-br from-background to-muted">
+        {/* Verificador de Banimento */}
+        <BanChecker />
 
       {/* Monitor de Câmera (durante a prova) */}
       {started && proctoringAccepted && needsCamera && cameraStream && (
@@ -1564,5 +1575,6 @@ export default function ExamPage({ params }: { params: { id: string } }) {
         </div>
       )}
     </div>
+    </>
   )
 }
