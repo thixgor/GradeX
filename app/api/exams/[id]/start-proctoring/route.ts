@@ -18,6 +18,13 @@ export async function POST(
     const body = await request.json()
     const { userName, startedAt } = body
 
+    console.log('[START-PROCTORING] Iniciando criação de sessão:', {
+      examId,
+      userId: session.userId,
+      userName,
+      startedAt
+    })
+
     const db = await getDb()
     const submissionsCollection = db.collection<Submission>('submissions')
 
@@ -28,8 +35,11 @@ export async function POST(
       submittedAt: { $exists: false },
     })
 
+    console.log('[START-PROCTORING] Submission existente:', existingSubmission ? 'SIM' : 'NÃO')
+
     if (existingSubmission) {
       // Já existe, retornar sucesso
+      console.log('[START-PROCTORING] Retornando sessão existente:', existingSubmission._id?.toString())
       return NextResponse.json({
         success: true,
         submissionId: existingSubmission._id?.toString(),
@@ -47,7 +57,11 @@ export async function POST(
       // submittedAt não existe ainda (prova em andamento)
     }
 
+    console.log('[START-PROCTORING] Criando nova submission:', newSubmission)
+
     const result = await submissionsCollection.insertOne(newSubmission)
+
+    console.log('[START-PROCTORING] Submission criada com ID:', result.insertedId.toString())
 
     return NextResponse.json({
       success: true,
