@@ -27,6 +27,22 @@ export function useWebSocket({
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const reconnectAttemptsRef = useRef(0)
 
+  // Usar refs para valores mais recentes
+  const userIdRef = useRef(userId)
+  const roleRef = useRef(role)
+  const examIdRef = useRef(examId)
+  const userNameRef = useRef(userName)
+  const onMessageRef = useRef(onMessage)
+
+  // Atualizar refs quando props mudarem
+  useEffect(() => {
+    userIdRef.current = userId
+    roleRef.current = role
+    examIdRef.current = examId
+    userNameRef.current = userName
+    onMessageRef.current = onMessage
+  }, [userId, role, examId, userName, onMessage])
+
   const connect = useCallback(() => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
       console.log('[WS Client] Já conectado')
@@ -34,12 +50,12 @@ export function useWebSocket({
     }
 
     try {
-      // Construir URL com parâmetros
+      // Construir URL com parâmetros usando refs
       const params = new URLSearchParams({
-        userId,
-        role,
-        ...(examId && { examId }),
-        ...(userName && { userName }),
+        userId: userIdRef.current,
+        role: roleRef.current,
+        ...(examIdRef.current && { examId: examIdRef.current }),
+        ...(userNameRef.current && { userName: userNameRef.current }),
       })
 
       const wsUrl = `ws://localhost:3001?${params.toString()}`
@@ -58,7 +74,7 @@ export function useWebSocket({
         try {
           const message = JSON.parse(event.data)
           console.log('[WS Client] Mensagem recebida:', message.type)
-          onMessage?.(message)
+          onMessageRef.current?.(message)
         } catch (err) {
           console.error('[WS Client] Erro ao processar mensagem:', err)
         }
@@ -74,15 +90,8 @@ export function useWebSocket({
         setIsConnected(false)
         wsRef.current = null
 
-        // Tentar reconectar
-        if (autoReconnect && reconnectAttemptsRef.current < 10) {
-          const delay = Math.min(1000 * Math.pow(2, reconnectAttemptsRef.current), 30000)
-          console.log(`[WS Client] Reconectando em ${delay}ms...`)
-          reconnectTimeoutRef.current = setTimeout(() => {
-            reconnectAttemptsRef.current++
-            connect()
-          }, delay)
-        }
+        // NÃO reconectar automaticamente - causa loop infinito
+        // O useEffect já gerencia reconexão quando enabled muda
       }
 
       wsRef.current = ws
@@ -90,7 +99,8 @@ export function useWebSocket({
       console.error('[WS Client] Erro ao conectar:', err)
       setError(err.message)
     }
-  }, [userId, role, examId, userName, onMessage, autoReconnect])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Sem dependências - valores são estáveis via refs
 
   const disconnect = useCallback(() => {
     if (reconnectTimeoutRef.current) {
@@ -115,11 +125,14 @@ export function useWebSocket({
   useEffect(() => {
     if (enabled) {
       connect()
+    } else {
+      disconnect()
     }
     return () => {
       disconnect()
     }
-  }, [enabled, connect, disconnect])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enabled]) // Apenas 'enabled' - SEM connect/disconnect para evitar loop infinito
 
   return {
     isConnected,
