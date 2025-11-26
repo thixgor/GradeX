@@ -8,7 +8,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { ProctoringSession } from '@/lib/types'
 import { useWebSocket } from '@/hooks/use-websocket'
 import { useWebRTC } from '@/hooks/use-webrtc'
-import { ArrowLeft, Camera, Mic, Monitor, AlertTriangle, RefreshCw, Users, Eye, EyeOff } from 'lucide-react'
+import { ArrowLeft, Camera, Mic, Monitor, AlertTriangle, RefreshCw, Users, Eye, EyeOff, Check } from 'lucide-react'
 
 interface Alert {
   id: string
