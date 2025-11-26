@@ -141,16 +141,21 @@ export function useProctoring({
     const stdDev = Math.sqrt(variance)
 
     // Considerações para câmera preta/bloqueada (MUITO rigoroso para evitar falsos positivos):
-    // 1. Brilho médio EXTREMAMENTE baixo (< 3) OU EXTREMAMENTE alto (> 252) = bloqueio claro
-    // 2. Variância QUASE ZERO (< 1) = imagem completamente estática/congelada
-    // 3. Precisa detectar 3 VEZES CONSECUTIVAS (6 segundos) para confirmar
-    // Isso previne falsos positivos com pessoas paradas ou iluminação baixa
+    // DETECÇÃO (rigorosa): Brilho extremo (< 3 ou > 252) E variância quase zero (< 1) por 3x consecutivas
+    // RECUPERAÇÃO (tolerante): Brilho dentro da faixa normal (10-245) OU variância detectável (> 3)
+    // Isso garante que falsos positivos sejam raros, mas recuperação seja rápida
 
     const isVeryDark = avgBrightness < 3
     const isVeryBright = avgBrightness > 252
     const isStatic = stdDev < 1
 
+    // Para detectar como BLOQUEADA: muito rigoroso
     const currentFrameIsBlack = (isVeryDark || isVeryBright) && isStatic
+
+    // Para detectar como RECUPERADA: mais tolerante (qualquer sinal de vida na câmera)
+    const hasNormalBrightness = avgBrightness >= 10 && avgBrightness <= 245
+    const hasMovement = stdDev > 3
+    const cameraIsWorking = hasNormalBrightness || hasMovement
 
     // Debug
     console.log('[CAMERA DEBUG]', {
@@ -160,10 +165,12 @@ export function useProctoring({
       isVeryBright,
       isStatic,
       currentFrameIsBlack,
+      cameraIsWorking,
+      isBlackCamera,
       consecutiveBlackFrames: consecutiveBlackFrames.current,
     })
 
-    // Lógica de confirmação consecutiva
+    // Lógica de confirmação consecutiva para DETECÇÃO
     if (currentFrameIsBlack) {
       consecutiveBlackFrames.current++
 
@@ -174,16 +181,16 @@ export function useProctoring({
         console.log('[CAMERA DEBUG] 🚨 CÂMERA BLOQUEADA CONFIRMADA (3 verificações consecutivas)')
       }
     } else {
-      // Frame OK - resetar contador
-      if (consecutiveBlackFrames.current > 0) {
-        console.log('[CAMERA DEBUG] ✅ Câmera voltou ao normal - resetando contador')
-      }
+      // Frame não é completamente preto - resetar contador
       consecutiveBlackFrames.current = 0
+    }
 
-      if (isBlackCamera) {
-        setIsBlackCamera(false)
-        onCameraRestored?.()
-      }
+    // Lógica IMEDIATA para RECUPERAÇÃO - não precisa esperar múltiplas verificações
+    if (isBlackCamera && cameraIsWorking) {
+      console.log('[CAMERA DEBUG] ✅ CÂMERA RECUPERADA - Voltando à prova imediatamente')
+      setIsBlackCamera(false)
+      onCameraRestored?.()
+      consecutiveBlackFrames.current = 0
     }
   }, [cameraStream, isBlackCamera, onCameraBlack, onCameraRestored])
 
