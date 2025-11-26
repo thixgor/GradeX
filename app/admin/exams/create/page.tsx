@@ -624,9 +624,33 @@ export default function CreateExamPage() {
                     <p className="text-sm font-semibold mb-2">📋 Questões adicionadas: {questions.length}</p>
                     <div className="flex flex-wrap gap-2">
                       {questions.map((q, idx) => (
-                        <div key={q.id} className="inline-flex items-center gap-1 px-2 py-1 bg-background rounded text-xs">
-                          <span>{q.number}.</span>
-                          <span>{q.type === 'multiple-choice' ? '📝' : q.type === 'discursive' ? '✏️' : '✍️'}</span>
+                        <div
+                          key={q.id}
+                          className="inline-flex items-center gap-1 px-2 py-1 bg-background rounded text-xs hover:bg-purple-100 dark:hover:bg-purple-900 transition-colors group relative"
+                        >
+                          <button
+                            onClick={() => {
+                              setCurrentQuestionIndex(idx)
+                              setCurrentStep(2)
+                            }}
+                            className="inline-flex items-center gap-1 cursor-pointer"
+                            title={`Ir para questão ${q.number}`}
+                          >
+                            <span className="font-semibold">{q.number}.</span>
+                            <span>{q.type === 'multiple-choice' ? '📝' : q.type === 'discursive' ? '✏️' : '✍️'}</span>
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              if (confirm(`Deseja realmente excluir a questão ${q.number}?`)) {
+                                deleteQuestion(idx)
+                              }
+                            }}
+                            className="ml-1 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 opacity-0 group-hover:opacity-100 transition-opacity"
+                            title="Excluir questão"
+                          >
+                            ✕
+                          </button>
                         </div>
                       ))}
                     </div>
@@ -657,6 +681,16 @@ export default function CreateExamPage() {
                       number: questions.length + 1,
                     }
                     setQuestions([...questions, newQuestion])
+                    setCurrentQuestionIndex(questions.length)
+                    if (currentStep === 1) setCurrentStep(2)
+                  }}
+                  onMultipleQuestionsGenerated={(generatedQuestions) => {
+                    // Adicionar múltiplas questões
+                    const newQuestions = generatedQuestions.map((q, idx) => ({
+                      ...q,
+                      number: questions.length + idx + 1,
+                    }))
+                    setQuestions([...questions, ...newQuestions])
                     setCurrentQuestionIndex(questions.length)
                     if (currentStep === 1) setCurrentStep(2)
                   }}

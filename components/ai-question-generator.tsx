@@ -4,18 +4,21 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Sparkles, Loader2 } from 'lucide-react'
 import { Question } from '@/lib/types'
 
 interface AIQuestionGeneratorProps {
   onQuestionGenerated: (question: Question) => void
+  onMultipleQuestionsGenerated?: (questions: Question[]) => void
   numberOfAlternatives: number
   useTRI: boolean
 }
 
 export function AIQuestionGenerator({
   onQuestionGenerated,
+  onMultipleQuestionsGenerated,
   numberOfAlternatives,
   useTRI,
 }: AIQuestionGeneratorProps) {
@@ -26,10 +29,29 @@ export function AIQuestionGenerator({
   const [difficulty, setDifficulty] = useState(0.5) // 50% padrão
   const [error, setError] = useState('')
 
+  // Novos estados para geração múltipla
+  const [quantity, setQuantity] = useState(1)
+  const [multipleSubjects, setMultipleSubjects] = useState('')
+  const [randomDifficulty, setRandomDifficulty] = useState(false)
+
   async function handleGenerate() {
-    if (!subject.trim()) {
-      setError('Por favor, especifique o tema/assunto da questão')
-      return
+    const isMultipleMode = quantity > 1 || multipleSubjects.trim().length > 0
+
+    // Validações
+    if (isMultipleMode) {
+      if (!multipleSubjects.trim()) {
+        setError('Por favor, especifique os temas separados por ponto-e-vírgula (;)')
+        return
+      }
+      if (quantity < 1 || quantity > 50) {
+        setError('A quantidade deve estar entre 1 e 50 questões')
+        return
+      }
+    } else {
+      if (!subject.trim()) {
+        setError('Por favor, especifique o tema/assunto da questão')
+        return
+      }
     }
 
     setGenerating(true)
@@ -42,8 +64,15 @@ export function AIQuestionGenerator({
         body: JSON.stringify({
           type: questionType,
           style,
-          subject: subject.trim(),
-          difficulty,
+          // Modo múltiplo ou único
+          ...(isMultipleMode ? {
+            quantity,
+            subjects: multipleSubjects.split(';').map(s => s.trim()).filter(s => s.length > 0),
+            randomDifficulty,
+          } : {
+            subject: subject.trim(),
+            difficulty,
+          }),
           numberOfAlternatives: questionType === 'multiple-choice' ? numberOfAlternatives : undefined,
           useTRI: questionType === 'multiple-choice' ? useTRI : undefined,
         }),
@@ -52,15 +81,25 @@ export function AIQuestionGenerator({
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Erro ao gerar questão')
+        throw new Error(data.error || 'Erro ao gerar questão(ões)')
       }
 
-      onQuestionGenerated(data.question)
-      setSubject('') // Limpar campo após sucesso
+      // Se retornou múltiplas questões
+      if (data.questions && Array.isArray(data.questions)) {
+        if (onMultipleQuestionsGenerated) {
+          onMultipleQuestionsGenerated(data.questions)
+        }
+        setMultipleSubjects('') // Limpar após sucesso
+      } else {
+        // Questão única
+        onQuestionGenerated(data.question)
+        setSubject('') // Limpar campo após sucesso
+      }
+
       setError('')
     } catch (error: any) {
       console.error('Erro ao gerar questão:', error)
-      setError(error.message || 'Erro ao gerar questão. Tente novamente.')
+      setError(error.message || 'Erro ao gerar questão(ões). Tente novamente.')
     } finally {
       setGenerating(false)
     }
@@ -138,44 +177,170 @@ export function AIQuestionGenerator({
           </p>
         </div>
 
-        {/* Tema/Assunto */}
-        <div className="space-y-2">
-          <Label htmlFor="subject">Tema/Assunto da Questão *</Label>
-          <Input
-            id="subject"
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-            placeholder="Ex: Fotossíntese, Segunda Guerra Mundial, Leis de Newton..."
-            disabled={generating}
-          />
-          <p className="text-xs text-muted-foreground">
-            Seja específico sobre o tema que deseja abordar
-          </p>
+        {/* Tema/Assunto Único ou Múltiplo */}
+        <div className="space-y-4 border rounded-lg p-4 bg-gradient-to-br from-purple-50/50 to-pink-50/50 dark:from-purple-950/20 dark:to-pink-950/20">
+          <div className="flex items-center justify-between">
+            <Label className="font-semibold">Modo de Geração</Label>
+            <p className="text-xs text-muted-foreground">
+              {quantity > 1 || multipleSubjects ? '📚 Múltiplas questões' : '📝 Questão única'}
+            </p>
+          </div>
+
+          {/* Questão Única */}
+          <div className="space-y-2">
+            <Label htmlFor="subject">Tema Único (para 1 questão)</Label>
+            <Input
+              id="subject"
+              value={subject}
+              onChange={(e) => {
+                setSubject(e.target.value)
+                if (e.target.value.trim()) {
+                  setMultipleSubjects('')
+                  setQuantity(1)
+                }
+              }}
+              placeholder="Ex: Fotossíntese"
+              disabled={generating || multipleSubjects.trim().length > 0}
+            />
+          </div>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">ou</span>
+            </div>
+          </div>
+
+          {/* Múltiplas Questões */}
+          <div className="space-y-3">
+            <div className="space-y-2">
+              <Label htmlFor="quantity">Quantidade de Questões</Label>
+              <Input
+                id="quantity"
+                type="number"
+                min="1"
+                max="50"
+                value={quantity}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value) || 1
+                  setQuantity(val)
+                  if (val > 1 && !multipleSubjects.trim()) {
+                    setSubject('')
+                  }
+                }}
+                disabled={generating}
+              />
+              <p className="text-xs text-muted-foreground">
+                Gere de 1 até 50 questões de uma vez
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="multipleSubjects">Temas Distribuídos (separados por ;) *</Label>
+              <Textarea
+                id="multipleSubjects"
+                value={multipleSubjects}
+                onChange={(e) => {
+                  setMultipleSubjects(e.target.value)
+                  if (e.target.value.trim()) {
+                    setSubject('')
+                    if (quantity === 1) setQuantity(5)
+                  }
+                }}
+                placeholder="Ex: Fotossíntese; Segunda Guerra Mundial; Leis de Newton; Revolução Francesa; Células"
+                disabled={generating || subject.trim().length > 0}
+                rows={3}
+                className="resize-none"
+              />
+              <p className="text-xs text-muted-foreground">
+                Os temas serão distribuídos homogeneamente entre as {quantity} questões
+              </p>
+              {multipleSubjects.trim() && (
+                <div className="p-2 bg-purple-100 dark:bg-purple-900 rounded text-xs">
+                  📊 {multipleSubjects.split(';').filter(s => s.trim()).length} tema(s) detectado(s)
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Dificuldade */}
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label>Dificuldade: {(difficulty * 100).toFixed(0)}%</Label>
-            <span className="text-sm font-semibold text-purple-600 dark:text-purple-400">
-              {difficultyLabel}
-            </span>
-          </div>
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.05"
-            value={difficulty}
-            onChange={(e) => setDifficulty(parseFloat(e.target.value))}
-            disabled={generating}
-            className="w-full"
-          />
-          <div className="flex justify-between text-xs text-muted-foreground">
-            <span>0% - Muito Fácil</span>
-            <span>50% - Médio</span>
-            <span>100% - Muito Difícil</span>
-          </div>
+          {(quantity > 1 || multipleSubjects.trim().length > 0) ? (
+            // Modo múltiplas questões - opção de dificuldade aleatória
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="randomDifficulty"
+                  checked={randomDifficulty}
+                  onChange={(e) => setRandomDifficulty(e.target.checked)}
+                  disabled={generating}
+                  className="h-4 w-4 rounded border-input"
+                />
+                <Label htmlFor="randomDifficulty" className="cursor-pointer">
+                  🎲 Dificuldade Aleatória
+                </Label>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {randomDifficulty
+                  ? 'Cada questão terá uma dificuldade aleatória entre 0% e 100%'
+                  : 'Todas as questões terão a mesma dificuldade definida abaixo'}
+              </p>
+              {!randomDifficulty && (
+                <>
+                  <div className="flex items-center justify-between">
+                    <Label>Dificuldade: {(difficulty * 100).toFixed(0)}%</Label>
+                    <span className="text-sm font-semibold text-purple-600 dark:text-purple-400">
+                      {difficultyLabel}
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.05"
+                    value={difficulty}
+                    onChange={(e) => setDifficulty(parseFloat(e.target.value))}
+                    disabled={generating}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>0% - Muito Fácil</span>
+                    <span>50% - Médio</span>
+                    <span>100% - Muito Difícil</span>
+                  </div>
+                </>
+              )}
+            </div>
+          ) : (
+            // Modo questão única - dificuldade fixa
+            <>
+              <div className="flex items-center justify-between">
+                <Label>Dificuldade: {(difficulty * 100).toFixed(0)}%</Label>
+                <span className="text-sm font-semibold text-purple-600 dark:text-purple-400">
+                  {difficultyLabel}
+                </span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.05"
+                value={difficulty}
+                onChange={(e) => setDifficulty(parseFloat(e.target.value))}
+                disabled={generating}
+                className="w-full"
+              />
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>0% - Muito Fácil</span>
+                <span>50% - Médio</span>
+                <span>100% - Muito Difícil</span>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Informações Adicionais */}
@@ -210,19 +375,23 @@ export function AIQuestionGenerator({
         {/* Botão Gerar */}
         <Button
           onClick={handleGenerate}
-          disabled={generating || !subject.trim()}
+          disabled={generating || (!subject.trim() && !multipleSubjects.trim())}
           className="w-full"
           size="lg"
         >
           {generating ? (
             <>
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              Gerando questão...
+              {quantity > 1 || multipleSubjects.trim()
+                ? `Gerando ${quantity} questões...`
+                : 'Gerando questão...'}
             </>
           ) : (
             <>
               <Sparkles className="h-4 w-4 mr-2" />
-              Gerar Questão com IA
+              {quantity > 1 || multipleSubjects.trim()
+                ? `Gerar ${quantity} Questões com IA`
+                : 'Gerar Questão com IA'}
             </>
           )}
         </Button>
