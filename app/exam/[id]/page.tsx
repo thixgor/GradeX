@@ -184,10 +184,29 @@ export default function ExamPage({ params }: { params: { id: string } }) {
         setProctoringAccepted(true)
         setShowProctoringConsent(false)
         setProctoringError(null)
+
         // Iniciar prova após aceitar termo
         const startTime = new Date()
         setExamStartTime(startTime)
         localStorage.setItem(`exam-${id}-start-time`, startTime.toISOString())
+
+        // Criar submission inicial para tracking de proctoring
+        // (sem respostas ainda, só para aparecer no painel admin)
+        try {
+          await fetch(`/api/exams/${id}/start-proctoring`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userName,
+              startedAt: startTime.toISOString(),
+            }),
+          })
+          console.log('[PROCTORING DEBUG] Sessão de monitoramento criada')
+        } catch (err) {
+          console.error('[PROCTORING DEBUG] Erro ao criar sessão:', err)
+          // Não bloqueia a prova se falhar
+        }
+
         setStarted(true)
       } else {
         throw new Error('Não foi possível inicializar os dispositivos de monitoramento')

@@ -104,12 +104,15 @@ export function useProctoring({
     canvas.width = video.videoWidth || 640
     canvas.height = video.videoHeight || 480
 
+    // Se vídeo ainda não está pronto, não verificar
+    if (canvas.width === 0 || canvas.height === 0) return
+
     // Capturar frame atual
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
     const pixels = imageData.data
 
-    // Calcular média de brilho dos pixels
+    // Calcular média de brilho E variância dos pixels
     let totalBrightness = 0
     let validPixels = 0
 
@@ -124,8 +127,38 @@ export function useProctoring({
 
     const avgBrightness = totalBrightness / validPixels
 
-    // Se a média de brilho for muito baixa (< 10), considerar câmera preta
-    const isBlack = avgBrightness < 10
+    // Calcular variância (desvio padrão) para detectar imagem estática
+    let variance = 0
+    for (let i = 0; i < pixels.length; i += 4) {
+      const r = pixels[i]
+      const g = pixels[i + 1]
+      const b = pixels[i + 2]
+      const brightness = (r + g + b) / 3
+      variance += Math.pow(brightness - avgBrightness, 2)
+    }
+    variance = variance / validPixels
+    const stdDev = Math.sqrt(variance)
+
+    // Considerações para câmera preta/bloqueada:
+    // 1. Brilho médio muito baixo (< 15) OU muito alto (> 240) = possível bloqueio
+    // 2. Variância muito baixa (< 5) = imagem estática/congelada
+    // Ambas condições precisam ser verdadeiras para evitar falsos positivos
+
+    const isVeryDark = avgBrightness < 15
+    const isVeryBright = avgBrightness > 240
+    const isStatic = stdDev < 5
+
+    const isBlack = (isVeryDark || isVeryBright) && isStatic
+
+    // Debug
+    console.log('[CAMERA DEBUG]', {
+      avgBrightness: avgBrightness.toFixed(2),
+      stdDev: stdDev.toFixed(2),
+      isVeryDark,
+      isVeryBright,
+      isStatic,
+      isBlack,
+    })
 
     if (isBlack && !isBlackCamera) {
       setIsBlackCamera(true)

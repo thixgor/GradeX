@@ -10,7 +10,7 @@ import { ToastAlert } from '@/components/ui/toast-alert'
 import { Exam } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
 import { generateExamPDF, downloadPDF } from '@/lib/pdf-generator'
-import { ArrowLeft, Edit, Trash2, Eye, EyeOff, Plus, Play, StopCircle, RotateCcw, FileCheck, FileDown, AlertTriangle, Settings, Check, X, Lock, ShieldAlert, Database } from 'lucide-react'
+import { ArrowLeft, Edit, Trash2, Eye, EyeOff, Plus, Play, StopCircle, RotateCcw, FileCheck, FileDown, AlertTriangle, Settings, Check, X, Lock, ShieldAlert, Database, Video } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
@@ -288,6 +288,14 @@ export default function AdminExamsPage() {
             >
               <Settings className="h-4 w-4 mr-2" />
               Configurações
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => router.push('/admin/proctoring')}
+              className="border-blue-500 text-blue-700 hover:bg-blue-50 dark:text-blue-300 dark:hover:bg-blue-950"
+            >
+              <Video className="h-4 w-4 mr-2" />
+              Monitoramento
             </Button>
             {exams.length > 0 && (
               <Button
