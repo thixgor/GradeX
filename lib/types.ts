@@ -208,9 +208,17 @@ export interface Ticket {
   closedAt?: Date
 }
 
+export interface CustomContext {
+  id: string
+  name: string
+  description?: string
+  createdAt: Date
+}
+
 export interface Settings {
   _id?: string
   geminiApiKey?: string
+  customContexts?: CustomContext[] // Contextos personalizados salvos
   updatedAt: Date
   updatedBy?: string
 }

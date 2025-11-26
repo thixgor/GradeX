@@ -1,13 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Sparkles, Loader2 } from 'lucide-react'
-import { Question } from '@/lib/types'
+import { Sparkles, Loader2, Settings } from 'lucide-react'
+import { Question, CustomContext } from '@/lib/types'
+import { CustomContextsManager } from './custom-contexts-manager'
 
 interface AIQuestionGeneratorProps {
   onQuestionGenerated: (question: Question) => void
@@ -38,6 +39,26 @@ export function AIQuestionGenerator({
   // Contexto da questão
   const [questionContext, setQuestionContext] = useState<'enem' | 'uerj' | 'outros'>('enem')
   const [customContext, setCustomContext] = useState('')
+  const [savedContexts, setSavedContexts] = useState<CustomContext[]>([])
+  const [selectedSavedContext, setSelectedSavedContext] = useState<string>('')
+  const [showContextManager, setShowContextManager] = useState(false)
+
+  // Carregar contextos salvos
+  useEffect(() => {
+    fetchSavedContexts()
+  }, [])
+
+  async function fetchSavedContexts() {
+    try {
+      const res = await fetch('/api/contexts')
+      const data = await res.json()
+      if (data.success) {
+        setSavedContexts(data.contexts)
+      }
+    } catch (error) {
+      console.error('Erro ao carregar contextos salvos:', error)
+    }
+  }
 
   async function handleGenerate() {
     const isMultipleMode = quantity > 1 || multipleSubjects.trim().length > 0
@@ -60,8 +81,8 @@ export function AIQuestionGenerator({
     }
 
     // Validar contexto customizado
-    if (questionContext === 'outros' && !customContext.trim()) {
-      setError('Por favor, especifique o contexto personalizado da questão')
+    if (questionContext === 'outros' && !selectedSavedContext && !customContext.trim()) {
+      setError('Por favor, selecione ou especifique o contexto personalizado da questão')
       return
     }
 
@@ -71,11 +92,22 @@ export function AIQuestionGenerator({
 
     try {
       // Determinar contexto
-      const context = questionContext === 'outros'
-        ? customContext.trim()
-        : questionContext === 'enem'
-          ? 'ENEM - Exame Nacional do Ensino Médio'
-          : 'UERJ - Universidade do Estado do Rio de Janeiro'
+      let context = ''
+      if (questionContext === 'enem') {
+        context = 'ENEM - Exame Nacional do Ensino Médio'
+      } else if (questionContext === 'uerj') {
+        context = 'UERJ - Universidade do Estado do Rio de Janeiro'
+      } else {
+        // Contexto personalizado
+        if (selectedSavedContext) {
+          // Usar contexto salvo
+          const savedContext = savedContexts.find(c => c.id === selectedSavedContext)
+          context = savedContext ? savedContext.name : customContext.trim()
+        } else {
+          // Usar contexto digitado
+          context = customContext.trim()
+        }
+      }
 
       if (isMultipleMode) {
         // Modo múltiplo - gerar uma por vez para mostrar progresso
@@ -162,6 +194,7 @@ export function AIQuestionGenerator({
     difficulty < 0.8 ? 'Difícil' : 'Muito Difícil'
 
   return (
+    <>
     <Card className="border-2 border-purple-500/20 bg-gradient-to-br from-purple-50/50 to-pink-50/50 dark:from-purple-950/20 dark:to-pink-950/20">
       <CardHeader>
         <div className="flex items-center gap-2">
@@ -230,12 +263,29 @@ export function AIQuestionGenerator({
 
         {/* Contexto da Questão */}
         <div className="space-y-3 border-t pt-4">
-          <Label>Contexto da Questão</Label>
+          <div className="flex items-center justify-between">
+            <Label>Contexto da Questão</Label>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowContextManager(true)}
+              disabled={generating}
+              className="h-7 text-xs"
+            >
+              <Settings className="h-3 w-3 mr-1" />
+              Gerenciar
+            </Button>
+          </div>
           <div className="grid grid-cols-3 gap-2">
             <Button
               type="button"
               variant={questionContext === 'enem' ? 'default' : 'outline'}
-              onClick={() => setQuestionContext('enem')}
+              onClick={() => {
+                setQuestionContext('enem')
+                setSelectedSavedContext('')
+                setCustomContext('')
+              }}
               disabled={generating}
               className="w-full text-xs"
             >
@@ -244,7 +294,11 @@ export function AIQuestionGenerator({
             <Button
               type="button"
               variant={questionContext === 'uerj' ? 'default' : 'outline'}
-              onClick={() => setQuestionContext('uerj')}
+              onClick={() => {
+                setQuestionContext('uerj')
+                setSelectedSavedContext('')
+                setCustomContext('')
+              }}
               disabled={generating}
               className="w-full text-xs"
             >
@@ -261,18 +315,56 @@ export function AIQuestionGenerator({
             </Button>
           </div>
           {questionContext === 'outros' && (
-            <div className="space-y-2">
-              <Label htmlFor="customContext">Contexto Personalizado *</Label>
-              <Input
-                id="customContext"
-                value={customContext}
-                onChange={(e) => setCustomContext(e.target.value)}
-                placeholder="Ex: Medicina (UNIFESP), Direito (USP), Concurso Público..."
-                disabled={generating}
-              />
-              <p className="text-xs text-muted-foreground">
-                Especifique o contexto da questão (área, vestibular, concurso, etc)
-              </p>
+            <div className="space-y-3">
+              {/* Contextos Salvos */}
+              {savedContexts.length > 0 && (
+                <div className="space-y-2">
+                  <Label htmlFor="savedContext">Contextos Salvos</Label>
+                  <select
+                    id="savedContext"
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    value={selectedSavedContext}
+                    onChange={(e) => {
+                      setSelectedSavedContext(e.target.value)
+                      if (e.target.value) {
+                        setCustomContext('')
+                      }
+                    }}
+                    disabled={generating}
+                  >
+                    <option value="">-- Selecione um contexto salvo --</option>
+                    {savedContexts.map((ctx) => (
+                      <option key={ctx.id} value={ctx.id}>
+                        {ctx.name}
+                      </option>
+                    ))}
+                  </select>
+                  {selectedSavedContext && (
+                    <div className="p-2 bg-purple-50 dark:bg-purple-950 rounded text-xs">
+                      {savedContexts.find(c => c.id === selectedSavedContext)?.description || 'Contexto selecionado'}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Campo Manual (se não tiver contexto salvo selecionado) */}
+              {!selectedSavedContext && (
+                <div className="space-y-2">
+                  <Label htmlFor="customContext">
+                    {savedContexts.length > 0 ? 'Ou digite um novo contexto' : 'Contexto Personalizado *'}
+                  </Label>
+                  <Input
+                    id="customContext"
+                    value={customContext}
+                    onChange={(e) => setCustomContext(e.target.value)}
+                    placeholder="Ex: Medicina (UNIFESP), Direito (USP), Concurso Público..."
+                    disabled={generating}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Especifique o contexto da questão (área, vestibular, concurso, etc)
+                  </p>
+                </div>
+              )}
             </div>
           )}
           <p className="text-xs text-muted-foreground">
@@ -510,5 +602,14 @@ export function AIQuestionGenerator({
         </p>
       </CardContent>
     </Card>
+
+    <CustomContextsManager
+      isOpen={showContextManager}
+      onClose={() => setShowContextManager(false)}
+      onContextsUpdated={() => {
+        fetchSavedContexts()
+      }}
+    />
+  </>
   )
 }
