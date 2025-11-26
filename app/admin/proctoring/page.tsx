@@ -1,13 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { ProctoringSession } from '@/lib/types'
 import { useWebSocket } from '@/hooks/use-websocket'
-import { useWebRTC } from '@/hooks/use-webrtc'
+import { StudentStreamViewer } from '@/components/student-stream-viewer'
 import { ArrowLeft, Camera, Mic, Monitor, AlertTriangle, RefreshCw, Users, Eye, EyeOff, Check } from 'lucide-react'
 
 interface Alert {
@@ -27,6 +27,11 @@ interface StudentStream {
   stream: MediaStream
 }
 
+interface PeerConnectionData {
+  pc: RTCPeerConnection
+  stream: MediaStream | null
+}
+
 export default function ProctoringMonitoringPage() {
   const router = useRouter()
   const [sessions, setSessions] = useState<ProctoringSession[]>([])
@@ -34,27 +39,123 @@ export default function ProctoringMonitoringPage() {
   const [autoRefresh, setAutoRefresh] = useState(true)
   const [alerts, setAlerts] = useState<Alert[]>([])
   const [adminId] = useState(() => `admin-${Date.now()}`)
-  const [studentStreams, setStudentStreams] = useState<Map<string, StudentStream>>(new Map())
+  const [studentStreams, setStudentStreams] = useState<Map<string, MediaStream>>(new Map())
 
-  // Hook WebRTC para receber streams dos alunos
-  const {
-    handleOffer: handleWebRTCOffer,
-    addIceCandidate: addWebRTCIceCandidate,
-  } = useWebRTC({
-    localStream: null, // Admin não envia stream
-    sendSignal: (signal) => {
-      // Enviar resposta WebRTC via WebSocket
-      if (wsConnected) {
-        wsSendMessage(signal)
+  // Mapa de PeerConnections por userId
+  const peerConnectionsRef = useRef<Map<string, PeerConnectionData>>(new Map())
+
+  // Configuração STUN
+  const rtcConfig: RTCConfiguration = {
+    iceServers: [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' },
+    ],
+  }
+
+  // Função para criar PeerConnection para um aluno
+  const createPeerConnection = useCallback((userId: string, userName: string, fromId: string) => {
+    console.log(`[ADMIN WebRTC] Criando PeerConnection para ${userName} (${userId})`)
+
+    const pc = new RTCPeerConnection(rtcConfig)
+
+    // Listener para ICE candidates
+    pc.onicecandidate = (event) => {
+      if (event.candidate && wsConnected) {
+        wsSendMessage({
+          type: 'webrtc-ice-candidate',
+          candidate: event.candidate,
+          targetId: fromId,
+        })
       }
-    },
-    onRemoteStream: (stream) => {
-      console.log('[ADMIN WebRTC] Stream remoto recebido')
-      // Stream do aluno recebido - adicionar ao mapa
-      // Nota: precisaríamos identificar qual aluno (usando fromUserId da mensagem)
-    },
-    enabled: true,
-  })
+    }
+
+    // Listener para stream remoto
+    pc.ontrack = (event) => {
+      console.log(`[ADMIN WebRTC] Stream recebido de ${userName}:`, event.streams[0])
+
+      setStudentStreams(prev => {
+        const newMap = new Map(prev)
+        newMap.set(userId, event.streams[0])
+        return newMap
+      })
+
+      // Atualizar ref
+      const pcData = peerConnectionsRef.current.get(userId)
+      if (pcData) {
+        pcData.stream = event.streams[0]
+      }
+    }
+
+    // Listener para estado de conexão
+    pc.onconnectionstatechange = () => {
+      console.log(`[ADMIN WebRTC] ${userName} connection state:`, pc.connectionState)
+
+      if (pc.connectionState === 'failed' || pc.connectionState === 'disconnected') {
+        // Remover stream se desconectar
+        setStudentStreams(prev => {
+          const newMap = new Map(prev)
+          newMap.delete(userId)
+          return newMap
+        })
+      }
+    }
+
+    peerConnectionsRef.current.set(userId, { pc, stream: null })
+    return pc
+  }, [rtcConfig])
+
+  // Processar oferta WebRTC de um aluno
+  const handleWebRTCOffer = useCallback(async (
+    userId: string,
+    userName: string,
+    fromId: string,
+    offer: RTCSessionDescriptionInit
+  ) => {
+    try {
+      // Verificar se já existe PeerConnection para este aluno
+      let pcData = peerConnectionsRef.current.get(userId)
+
+      if (!pcData) {
+        const pc = createPeerConnection(userId, userName, fromId)
+        pcData = peerConnectionsRef.current.get(userId)!
+      }
+
+      const { pc } = pcData
+
+      // Setar oferta remota
+      await pc.setRemoteDescription(new RTCSessionDescription(offer))
+      console.log(`[ADMIN WebRTC] Oferta de ${userName} setada`)
+
+      // Criar answer
+      const answer = await pc.createAnswer()
+      await pc.setLocalDescription(answer)
+      console.log(`[ADMIN WebRTC] Answer criada para ${userName}`)
+
+      // Enviar answer de volta
+      if (wsConnected) {
+        wsSendMessage({
+          type: 'webrtc-answer',
+          answer: pc.localDescription,
+          targetId: fromId,
+        })
+      }
+    } catch (error) {
+      console.error('[ADMIN WebRTC] Erro ao processar oferta:', error)
+    }
+  }, [createPeerConnection])
+
+  // Processar ICE candidate
+  const handleICECandidate = useCallback(async (userId: string, candidate: RTCIceCandidateInit) => {
+    const pcData = peerConnectionsRef.current.get(userId)
+    if (pcData) {
+      try {
+        await pcData.pc.addIceCandidate(new RTCIceCandidate(candidate))
+        console.log(`[ADMIN WebRTC] ICE candidate adicionado para userId ${userId}`)
+      } catch (error) {
+        console.error('[ADMIN WebRTC] Erro ao adicionar ICE candidate:', error)
+      }
+    }
+  }, [])
 
   // WebSocket para receber alertas em tempo real
   const { isConnected: wsConnected, sendMessage: wsSendMessage } = useWebSocket({
@@ -66,16 +167,14 @@ export default function ProctoringMonitoringPage() {
       // Processar mensagens WebRTC
       if (message.type === 'webrtc-offer') {
         console.log('[ADMIN WebRTC] Oferta recebida de:', message.fromUserName)
-        handleWebRTCOffer(message.offer, (answer) => {
-          // Enviar answer de volta para o aluno
-          wsSendMessage({
-            type: 'webrtc-answer',
-            answer,
-            targetId: message.fromId, // ID do cliente WebSocket do aluno
-          })
-        })
+        handleWebRTCOffer(
+          message.fromUserId,
+          message.fromUserName,
+          message.fromId,
+          message.offer
+        )
       } else if (message.type === 'webrtc-ice-candidate') {
-        addWebRTCIceCandidate(message.candidate)
+        handleICECandidate(message.fromUserId, message.candidate)
       } else if (message.type === 'alert') {
         // Novo alerta recebido
         const newAlert: Alert = {
@@ -374,6 +473,14 @@ export default function ProctoringMonitoringPage() {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  {/* Stream de Vídeo/Áudio do Aluno */}
+                  <StudentStreamViewer
+                    stream={studentStreams.get(session.userId) || null}
+                    userName={session.userName}
+                    cameraEnabled={session.cameraEnabled}
+                    audioEnabled={session.audioEnabled}
+                  />
+
                   {/* Informações da Sessão */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
