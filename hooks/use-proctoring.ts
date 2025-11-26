@@ -101,12 +101,6 @@ export function useProctoring({
 
     if (!ctx) return
 
-    // Verificar se o vídeo está realmente tocando
-    if (video.paused || video.ended || video.readyState < 2) {
-      console.log('[CAMERA DEBUG] ⚠️ Vídeo não está pronto ainda')
-      return
-    }
-
     // Usar dimensões REAIS do elemento renderizado (192x144 = w-48 h-36)
     const width = 192
     const height = 144
