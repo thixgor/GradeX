@@ -42,6 +42,12 @@ export default function CreateExamPage() {
     essayCorrectionMethod: 'ai' as CorrectionMethod,
     essayAiRigor: 0.45,
     navigationMode: 'paginated' as 'paginated' | 'scroll',
+    // Sistema de monitoramento (proctoring)
+    proctoringEnabled: false,
+    proctoringCamera: false,
+    proctoringAudio: false,
+    proctoringScreen: false,
+    proctoringScreenMode: 'window' as 'window' | 'screen',
   })
 
   const [questions, setQuestions] = useState<Question[]>([])
@@ -651,6 +657,165 @@ export default function CreateExamPage() {
                 <Label htmlFor="isHidden" className="cursor-pointer">
                   Manter prova oculta (apenas visível para você)
                 </Label>
+              </div>
+
+              {/* Sistema de Monitoramento (Proctoring) */}
+              <div className="border-t pt-4 space-y-4">
+                <div>
+                  <h3 className="font-semibold mb-1 flex items-center gap-2">
+                    🎥 Sistema de Monitoramento (Proctoring)
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Configure o monitoramento em tempo real durante a prova para prevenir fraudes
+                  </p>
+
+                  <div className="space-y-4 p-4 bg-red-50 dark:bg-red-950/20 rounded-lg border border-red-200 dark:border-red-800">
+                    {/* Habilitar Monitoramento */}
+                    <div className="flex items-start space-x-3">
+                      <input
+                        type="checkbox"
+                        id="proctoringEnabled"
+                        checked={examData.proctoringEnabled}
+                        onChange={(e) => setExamData({
+                          ...examData,
+                          proctoringEnabled: e.target.checked,
+                          ...(!e.target.checked && {
+                            proctoringCamera: false,
+                            proctoringAudio: false,
+                            proctoringScreen: false,
+                          })
+                        })}
+                        className="mt-1 h-4 w-4 rounded border-input"
+                      />
+                      <div className="flex-1">
+                        <Label htmlFor="proctoringEnabled" className="cursor-pointer font-semibold">
+                          Ativar Monitoramento de Prova
+                        </Label>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Os alunos precisarão aceitar o termo de consentimento e fornecer as permissões necessárias
+                        </p>
+                      </div>
+                    </div>
+
+                    {examData.proctoringEnabled && (
+                      <div className="space-y-3 pl-7">
+                        {/* Câmera */}
+                        <div className="flex items-start space-x-2">
+                          <input
+                            type="checkbox"
+                            id="proctoringCamera"
+                            checked={examData.proctoringCamera}
+                            onChange={(e) => setExamData({ ...examData, proctoringCamera: e.target.checked })}
+                            className="mt-1 h-4 w-4 rounded border-input"
+                          />
+                          <div className="flex-1">
+                            <Label htmlFor="proctoringCamera" className="cursor-pointer">
+                              📹 Monitoramento por Câmera
+                            </Label>
+                            <p className="text-xs text-muted-foreground">
+                              Vídeo do aluno em tempo real. Sistema detecta automaticamente câmera preta/bloqueada.
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Áudio */}
+                        <div className="flex items-start space-x-2">
+                          <input
+                            type="checkbox"
+                            id="proctoringAudio"
+                            checked={examData.proctoringAudio}
+                            onChange={(e) => setExamData({ ...examData, proctoringAudio: e.target.checked })}
+                            className="mt-1 h-4 w-4 rounded border-input"
+                          />
+                          <div className="flex-1">
+                            <Label htmlFor="proctoringAudio" className="cursor-pointer">
+                              🎤 Monitoramento por Áudio
+                            </Label>
+                            <p className="text-xs text-muted-foreground">
+                              Transmissão de áudio do ambiente do aluno
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Transmissão de Tela */}
+                        <div className="flex items-start space-x-2">
+                          <input
+                            type="checkbox"
+                            id="proctoringScreen"
+                            checked={examData.proctoringScreen}
+                            onChange={(e) => setExamData({ ...examData, proctoringScreen: e.target.checked })}
+                            className="mt-1 h-4 w-4 rounded border-input"
+                          />
+                          <div className="flex-1">
+                            <Label htmlFor="proctoringScreen" className="cursor-pointer">
+                              🖥️ Transmissão de Tela
+                            </Label>
+                            <p className="text-xs text-muted-foreground">
+                              Compartilhamento da tela do aluno
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Modo de Captura de Tela */}
+                        {examData.proctoringScreen && (
+                          <div className="space-y-2 pl-6 pt-2">
+                            <Label className="text-xs font-semibold">Modo de Captura:</Label>
+                            <div className="flex gap-3">
+                              <label className="flex items-center space-x-2 cursor-pointer">
+                                <input
+                                  type="radio"
+                                  name="proctoringScreenMode"
+                                  value="window"
+                                  checked={examData.proctoringScreenMode === 'window'}
+                                  onChange={(e) => setExamData({ ...examData, proctoringScreenMode: 'window' })}
+                                  className="h-4 w-4"
+                                />
+                                <span className="text-sm">🪟 Apenas Janela da Prova</span>
+                              </label>
+                              <label className="flex items-center space-x-2 cursor-pointer">
+                                <input
+                                  type="radio"
+                                  name="proctoringScreenMode"
+                                  value="screen"
+                                  checked={examData.proctoringScreenMode === 'screen'}
+                                  onChange={(e) => setExamData({ ...examData, proctoringScreenMode: 'screen' })}
+                                  className="h-4 w-4"
+                                />
+                                <span className="text-sm">🖥️ Tela Inteira</span>
+                              </label>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Aviso de Segurança */}
+                        {examData.proctoringCamera && (
+                          <div className="p-3 bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 rounded text-xs">
+                            <p className="font-semibold text-yellow-900 dark:text-yellow-100">⚠️ Segurança Automática:</p>
+                            <p className="text-yellow-800 dark:text-yellow-200 mt-1">
+                              Se a câmera ficar preta/bloqueada por 150 segundos (2min30s), a prova será automaticamente submetida com as respostas atuais.
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Resumo */}
+                        {(examData.proctoringCamera || examData.proctoringAudio || examData.proctoringScreen) && (
+                          <div className="p-3 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded text-xs">
+                            <p className="font-semibold text-blue-900 dark:text-blue-100">ℹ️ Resumo:</p>
+                            <ul className="text-blue-800 dark:text-blue-200 mt-1 ml-4 list-disc space-y-1">
+                              {examData.proctoringCamera && <li>Câmera será exibida no canto superior esquerdo</li>}
+                              {examData.proctoringAudio && <li>Áudio será transmitido em tempo real</li>}
+                              {examData.proctoringScreen && (
+                                <li>
+                                  Transmissão de {examData.proctoringScreenMode === 'window' ? 'janela da prova' : 'tela inteira'}
+                                </li>
+                              )}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
 
               <div className="border-t pt-4 space-y-4">
