@@ -18,6 +18,9 @@ import { Barcode } from '@/components/barcode'
 import { Exam, UserAnswer } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
 import { downloadUserReportPDF } from '@/lib/user-report-generator'
+import { ProctoringConsent } from '@/components/proctoring-consent'
+import { ProctoringMonitor } from '@/components/proctoring-monitor'
+import { useProctoring } from '@/hooks/use-proctoring'
 import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCircle, List } from 'lucide-react'
 
 export default function ExamPage({ params }: { params: { id: string } }) {
@@ -49,6 +52,47 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const [examStartTime, setExamStartTime] = useState<Date | null>(null)
   const [examDuration, setExamDuration] = useState<string>('')
 
+  // Estados de Proctoring
+  const [showProctoringConsent, setShowProctoringConsent] = useState(false)
+  const [proctoringAccepted, setProctoringAccepted] = useState(false)
+  const [blackCameraTimer, setBlackCameraTimer] = useState<number | null>(null)
+  const [proctoringError, setProctoringError] = useState<string | null>(null)
+
+  // Verificar se a prova tem proctoring habilitado
+  const hasProctoring = exam?.proctoring?.enabled || false
+  const needsCamera = exam?.proctoring?.camera || false
+  const needsAudio = exam?.proctoring?.audio || false
+  const needsScreen = exam?.proctoring?.screen || false
+  const screenMode = exam?.proctoring?.screenMode || 'window'
+
+  // Hook de Proctoring
+  const {
+    cameraStream,
+    audioStream,
+    screenStream,
+    error: proctoringHookError,
+    isBlackCamera,
+    initializeMedia,
+    cleanup,
+    videoRef,
+    canvasRef,
+  } = useProctoring({
+    camera: needsCamera,
+    audio: needsAudio,
+    screen: needsScreen,
+    screenMode,
+    onCameraBlack: () => {
+      // Iniciar timer de 150 segundos quando câmera ficar preta
+      if (blackCameraTimer === null) {
+        setBlackCameraTimer(150)
+      }
+    },
+    onCameraRestored: () => {
+      // Cancelar timer quando câmera voltar ao normal
+      setBlackCameraTimer(null)
+    },
+  })
+
   const showToastMessage = (message: string, type: 'error' | 'success' | 'info' = 'error') => {
     setToastMessage(message)
     setToastType(type)
@@ -63,12 +107,80 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     }
   }, [id])
 
+  // Timer de câmera preta com auto-submit
+  useEffect(() => {
+    if (blackCameraTimer === null || !started) return
+
+    if (blackCameraTimer <= 0) {
+      // Auto-submeter prova quando timer chegar a zero
+      handleAutoSubmit('Câmera bloqueada por mais de 2 minutos e 30 segundos')
+      return
+    }
+
+    const interval = setInterval(() => {
+      setBlackCameraTimer(prev => (prev !== null ? prev - 1 : null))
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [blackCameraTimer, started])
+
+  // Cleanup do proctoring ao sair
+  useEffect(() => {
+    return () => {
+      if (hasProctoring) {
+        cleanup()
+      }
+    }
+  }, [hasProctoring, cleanup])
+
+  // Sincronizar erro do hook de proctoring
+  useEffect(() => {
+    if (proctoringHookError) {
+      setProctoringError(proctoringHookError)
+    }
+  }, [proctoringHookError])
+
   // Função para iniciar a prova e salvar o tempo de início
   const handleStartExam = () => {
+    // Se a prova tem proctoring e ainda não foi aceito, mostrar termo
+    if (hasProctoring && !proctoringAccepted) {
+      setShowProctoringConsent(true)
+      return
+    }
+
+    // Iniciar prova normalmente
     const startTime = new Date()
     setExamStartTime(startTime)
     localStorage.setItem(`exam-${id}-start-time`, startTime.toISOString())
     setStarted(true)
+  }
+
+  // Função para aceitar termo de proctoring e inicializar mídia
+  const handleProctoringAccept = async () => {
+    try {
+      const success = await initializeMedia()
+      if (success) {
+        setProctoringAccepted(true)
+        setShowProctoringConsent(false)
+        setProctoringError(null)
+        // Iniciar prova após aceitar termo
+        const startTime = new Date()
+        setExamStartTime(startTime)
+        localStorage.setItem(`exam-${id}-start-time`, startTime.toISOString())
+        setStarted(true)
+      } else {
+        throw new Error('Não foi possível inicializar os dispositivos de monitoramento')
+      }
+    } catch (error: any) {
+      setProctoringError(error.message || 'Erro ao configurar monitoramento')
+      throw error
+    }
+  }
+
+  // Função para rejeitar termo de proctoring
+  const handleProctoringReject = () => {
+    setShowProctoringConsent(false)
+    showToastMessage('Você precisa aceitar o termo de monitoramento para iniciar a prova', 'info')
   }
 
   // Função para calcular o tempo decorrido
@@ -257,6 +369,57 @@ export default function ExamPage({ params }: { params: { id: string } }) {
           : a
       )
     )
+  }
+
+  // Função para auto-submeter a prova (chamada quando o timer de câmera preta chegar a zero)
+  async function handleAutoSubmit(reason: string) {
+    if (submitting || submitted) return
+
+    setSubmitting(true)
+
+    try {
+      const endTime = new Date()
+      const duration = examStartTime ? calculateDuration(examStartTime, endTime) : ''
+      setExamDuration(duration)
+
+      const res = await fetch(`/api/exams/${id}/submit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userName,
+          themeTranscription,
+          answers,
+          signature,
+          startedAt: examStartTime?.toISOString(),
+          forcedSubmit: true,
+          forcedSubmitReason: reason,
+        }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) throw new Error(data.error)
+
+      // Limpar localStorage
+      localStorage.removeItem(`exam-${id}-start-time`)
+
+      // Salvar score
+      if (exam?.scoringMethod === 'normal') {
+        setSubmissionScore(`${data.score} pontos (Submissão automática: ${reason})`)
+      } else {
+        setSubmissionScore(`Prova submetida automaticamente: ${reason}`)
+      }
+
+      // Limpar proctoring
+      cleanup()
+
+      setSubmitted(true)
+    } catch (error: any) {
+      console.error('Erro ao auto-submeter:', error)
+      showToastMessage('Erro ao submeter prova automaticamente: ' + error.message)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   async function handleSubmit() {
@@ -636,6 +799,36 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       {/* Verificador de Banimento */}
       <BanChecker />
+
+      {/* Termo de Consentimento de Proctoring */}
+      {showProctoringConsent && (
+        <ProctoringConsent
+          examTitle={exam.title}
+          camera={needsCamera}
+          audio={needsAudio}
+          screen={needsScreen}
+          screenMode={screenMode}
+          onAccept={handleProctoringAccept}
+          onReject={handleProctoringReject}
+        />
+      )}
+
+      {/* Monitor de Câmera (durante a prova) */}
+      {started && proctoringAccepted && needsCamera && cameraStream && (
+        <ProctoringMonitor
+          cameraStream={cameraStream}
+          isBlackCamera={isBlackCamera}
+          blackCameraTimeRemaining={blackCameraTimer || undefined}
+        />
+      )}
+
+      {/* Canvas invisível para detecção de câmera preta */}
+      {started && proctoringAccepted && needsCamera && (
+        <>
+          <video ref={videoRef} style={{ display: 'none' }} autoPlay playsInline muted />
+          <canvas ref={canvasRef} style={{ display: 'none' }} />
+        </>
+      )}
 
       {/* Modal - Prova já realizada */}
       {alreadySubmitted && (
