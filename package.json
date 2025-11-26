@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:ws": "node server/websocket-server.js",
+    "dev:all": "concurrently \"npm run dev\" \"npm run dev:ws\"",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -38,9 +40,12 @@
     "tailwindcss": "^3.4.0",
     "typescript": "^5.3.3",
     "uuid": "^9.0.1",
+    "ws": "^8.18.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@types/ws": "^8.5.10",
+    "concurrently": "^8.2.2",
     "eslint": "^8.56.0",
     "eslint-config-next": "^14.0.4"
   }

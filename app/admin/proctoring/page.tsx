@@ -6,13 +6,59 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { ProctoringSession } from '@/lib/types'
-import { ArrowLeft, Camera, Mic, Monitor, AlertTriangle, RefreshCw, Users } from 'lucide-react'
+import { useWebSocket } from '@/hooks/use-websocket'
+import { ArrowLeft, Camera, Mic, Monitor, AlertTriangle, RefreshCw, Users, Eye, EyeOff } from 'lucide-react'
+
+interface Alert {
+  id: string
+  type: 'tab-switch' | 'camera-black' | 'suspicious'
+  userId: string
+  userName: string
+  examId: string
+  timestamp: string
+  data?: any
+  acknowledged: boolean
+}
 
 export default function ProctoringMonitoringPage() {
   const router = useRouter()
   const [sessions, setSessions] = useState<ProctoringSession[]>([])
   const [loading, setLoading] = useState(true)
   const [autoRefresh, setAutoRefresh] = useState(true)
+  const [alerts, setAlerts] = useState<Alert[]>([])
+  const [adminId] = useState(() => `admin-${Date.now()}`)
+
+  // WebSocket para receber alertas em tempo real
+  const { isConnected: wsConnected, sendMessage: wsSendMessage } = useWebSocket({
+    userId: adminId,
+    role: 'admin',
+    onMessage: (message) => {
+      console.log('[ADMIN WS] Mensagem recebida:', message)
+
+      if (message.type === 'alert') {
+        // Novo alerta recebido
+        const newAlert: Alert = {
+          id: `${message.userId}-${message.timestamp}`,
+          type: message.alertType,
+          userId: message.userId,
+          userName: message.userName,
+          examId: message.examId,
+          timestamp: message.timestamp,
+          data: message.data,
+          acknowledged: false,
+        }
+
+        setAlerts(prev => [newAlert, ...prev].slice(0, 100)) // Manter últimos 100 alertas
+
+        // Tocar som de alerta (opcional)
+        if (typeof Audio !== 'undefined') {
+          const audio = new Audio('/alert-sound.mp3')
+          audio.play().catch(err => console.log('Erro ao tocar som:', err))
+        }
+      }
+    },
+    autoReconnect: true,
+  })
 
   async function fetchSessions() {
     try {
@@ -81,6 +127,22 @@ export default function ProctoringMonitoringPage() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
+        {/* Indicador de conexão WebSocket */}
+        <div className="mb-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className={`w-3 h-3 rounded-full ${wsConnected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
+            <span className="text-sm text-muted-foreground">
+              {wsConnected ? 'Conectado ao servidor em tempo real' : 'Desconectado do servidor'}
+            </span>
+          </div>
+          {alerts.filter(a => !a.acknowledged).length > 0 && (
+            <div className="flex items-center gap-2 text-red-600 font-semibold animate-pulse">
+              <AlertTriangle className="h-5 w-5" />
+              {alerts.filter(a => !a.acknowledged).length} alertas não lidos
+            </div>
+          )}
+        </div>
+
         {/* Estatísticas */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <Card>
@@ -123,7 +185,7 @@ export default function ProctoringMonitoringPage() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className={alerts.length > 0 ? 'border-red-500' : ''}>
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -137,6 +199,82 @@ export default function ProctoringMonitoringPage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Alertas em Tempo Real */}
+        {alerts.length > 0 && (
+          <Card className="mb-6 border-red-500">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5 text-red-600" />
+                Alertas em Tempo Real
+              </CardTitle>
+              <CardDescription>
+                {alerts.filter(a => !a.acknowledged).length} não lidos de {alerts.length} totais
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2 max-h-[400px] overflow-y-auto">
+                {alerts.slice(0, 20).map((alert) => (
+                  <div
+                    key={alert.id}
+                    className={`p-4 rounded-lg border ${
+                      alert.acknowledged
+                        ? 'bg-muted/50 border-muted'
+                        : 'bg-red-50 dark:bg-red-950 border-red-500 animate-pulse'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          {alert.type === 'tab-switch' && (
+                            <>
+                              <EyeOff className="h-4 w-4 text-orange-600" />
+                              <span className="font-semibold text-orange-600">Troca de Aba/Janela</span>
+                            </>
+                          )}
+                          <span className="text-sm text-muted-foreground">
+                            {new Date(alert.timestamp).toLocaleTimeString()}
+                          </span>
+                        </div>
+                        <div className="text-sm">
+                          <strong>{alert.userName}</strong>
+                          {alert.type === 'tab-switch' && (
+                            <>
+                              {alert.data?.hidden ? ' saiu da aba da prova' : ' voltou para a aba da prova'}
+                              {alert.data?.duration && ` (ficou ${Math.round(alert.data.duration / 1000)}s fora)`}
+                              {alert.data?.switchCount && ` - Total: ${alert.data.switchCount} trocas`}
+                            </>
+                          )}
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          Prova: {alert.examId}
+                        </div>
+                      </div>
+                      {!alert.acknowledged && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => {
+                            setAlerts(prev =>
+                              prev.map(a => (a.id === alert.id ? { ...a, acknowledged: true } : a))
+                            )
+                          }}
+                        >
+                          <Check className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {alerts.length > 20 && (
+                <div className="text-center text-sm text-muted-foreground mt-4">
+                  Mostrando 20 de {alerts.length} alertas
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Lista de Sessões */}
         {loading ? (

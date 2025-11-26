@@ -21,6 +21,8 @@ import { downloadUserReportPDF } from '@/lib/user-report-generator'
 import { ProctoringConsent } from '@/components/proctoring-consent'
 import { ProctoringMonitor } from '@/components/proctoring-monitor'
 import { useProctoring } from '@/hooks/use-proctoring'
+import { useWebSocket } from '@/hooks/use-websocket'
+import { useVisibilityDetection } from '@/hooks/use-visibility-detection'
 import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCircle, List } from 'lucide-react'
 
 export default function ExamPage({ params }: { params: { id: string } }) {
@@ -104,6 +106,39 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     onCameraRestored: () => {
       // Cancelar timer quando câmera voltar ao normal
       setBlackCameraTimer(null)
+    },
+  })
+
+  // Hook de WebSocket para comunicação em tempo real (apenas se proctoring ativo e prova iniciada)
+  const { isConnected: wsConnected, sendMessage: wsSendMessage } = useWebSocket({
+    userId: userId || 'temp-user',
+    role: 'student',
+    examId: id,
+    userName,
+    onMessage: (message) => {
+      console.log('[WS] Mensagem recebida:', message)
+      // Processar mensagens WebRTC ou comandos do admin
+    },
+    autoReconnect: hasProctoring && started && !submitted,
+  })
+
+  // Hook de detecção de troca de abas/janelas
+  const { isVisible, switchCount } = useVisibilityDetection({
+    enabled: hasProctoring && started && !submitted,
+    onTabSwitch: (data) => {
+      // Enviar alerta via WebSocket
+      if (wsConnected) {
+        wsSendMessage({
+          type: 'tab-switch',
+          data: {
+            ...data,
+            examId: id,
+            userName,
+            userId,
+            switchCount: switchCount + 1,
+          },
+        })
+      }
     },
   })
 
