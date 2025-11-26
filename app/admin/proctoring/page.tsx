@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ThemeToggle } from '@/components/theme-toggle'
 import { ProctoringSession } from '@/lib/types'
 import { useWebSocket } from '@/hooks/use-websocket'
+import { useWebRTC } from '@/hooks/use-webrtc'
 import { ArrowLeft, Camera, Mic, Monitor, AlertTriangle, RefreshCw, Users, Eye, EyeOff } from 'lucide-react'
 
 interface Alert {
@@ -20,6 +21,12 @@ interface Alert {
   acknowledged: boolean
 }
 
+interface StudentStream {
+  userId: string
+  userName: string
+  stream: MediaStream
+}
+
 export default function ProctoringMonitoringPage() {
   const router = useRouter()
   const [sessions, setSessions] = useState<ProctoringSession[]>([])
@@ -27,6 +34,27 @@ export default function ProctoringMonitoringPage() {
   const [autoRefresh, setAutoRefresh] = useState(true)
   const [alerts, setAlerts] = useState<Alert[]>([])
   const [adminId] = useState(() => `admin-${Date.now()}`)
+  const [studentStreams, setStudentStreams] = useState<Map<string, StudentStream>>(new Map())
+
+  // Hook WebRTC para receber streams dos alunos
+  const {
+    handleOffer: handleWebRTCOffer,
+    addIceCandidate: addWebRTCIceCandidate,
+  } = useWebRTC({
+    localStream: null, // Admin não envia stream
+    sendSignal: (signal) => {
+      // Enviar resposta WebRTC via WebSocket
+      if (wsConnected) {
+        wsSendMessage(signal)
+      }
+    },
+    onRemoteStream: (stream) => {
+      console.log('[ADMIN WebRTC] Stream remoto recebido')
+      // Stream do aluno recebido - adicionar ao mapa
+      // Nota: precisaríamos identificar qual aluno (usando fromUserId da mensagem)
+    },
+    enabled: true,
+  })
 
   // WebSocket para receber alertas em tempo real
   const { isConnected: wsConnected, sendMessage: wsSendMessage } = useWebSocket({
@@ -35,7 +63,20 @@ export default function ProctoringMonitoringPage() {
     onMessage: (message) => {
       console.log('[ADMIN WS] Mensagem recebida:', message)
 
-      if (message.type === 'alert') {
+      // Processar mensagens WebRTC
+      if (message.type === 'webrtc-offer') {
+        console.log('[ADMIN WebRTC] Oferta recebida de:', message.fromUserName)
+        handleWebRTCOffer(message.offer, (answer) => {
+          // Enviar answer de volta para o aluno
+          wsSendMessage({
+            type: 'webrtc-answer',
+            answer,
+            targetId: message.fromId, // ID do cliente WebSocket do aluno
+          })
+        })
+      } else if (message.type === 'webrtc-ice-candidate') {
+        addWebRTCIceCandidate(message.candidate)
+      } else if (message.type === 'alert') {
         // Novo alerta recebido
         const newAlert: Alert = {
           id: `${message.userId}-${message.timestamp}`,

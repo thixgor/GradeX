@@ -23,6 +23,7 @@ import { ProctoringMonitor } from '@/components/proctoring-monitor'
 import { useProctoring } from '@/hooks/use-proctoring'
 import { useWebSocket } from '@/hooks/use-websocket'
 import { useVisibilityDetection } from '@/hooks/use-visibility-detection'
+import { useWebRTC } from '@/hooks/use-webrtc'
 import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCircle, List } from 'lucide-react'
 
 export default function ExamPage({ params }: { params: { id: string } }) {
@@ -109,6 +110,23 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     },
   })
 
+  // Hook de WebRTC para streaming de vídeo/áudio/tela
+  const {
+    isConnected: webrtcConnected,
+    createOffer: createWebRTCOffer,
+    handleAnswer: handleWebRTCAnswer,
+    addIceCandidate: addWebRTCIceCandidate,
+  } = useWebRTC({
+    localStream: cameraStream, // Stream da câmera (pode adicionar screen depois)
+    sendSignal: (signal) => {
+      // Enviar sinalização WebRTC via WebSocket
+      if (wsConnected) {
+        wsSendMessage(signal)
+      }
+    },
+    enabled: hasProctoring && started && !submitted,
+  })
+
   // Hook de WebSocket para comunicação em tempo real (apenas se proctoring ativo e prova iniciada)
   const { isConnected: wsConnected, sendMessage: wsSendMessage } = useWebSocket({
     userId: userId || 'temp-user',
@@ -117,7 +135,13 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     userName,
     onMessage: (message) => {
       console.log('[WS] Mensagem recebida:', message)
-      // Processar mensagens WebRTC ou comandos do admin
+
+      // Processar mensagens WebRTC
+      if (message.type === 'webrtc-answer') {
+        handleWebRTCAnswer(message.answer)
+      } else if (message.type === 'webrtc-ice-candidate') {
+        addWebRTCIceCandidate(message.candidate)
+      }
     },
     enabled: hasProctoring && started && !submitted, // Só conectar quando condições verdadeiras
     autoReconnect: true,
@@ -142,6 +166,14 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       }
     },
   })
+
+  // Iniciar WebRTC quando WebSocket conectar e stream estiver disponível
+  useEffect(() => {
+    if (wsConnected && cameraStream && hasProctoring && started && !submitted && !webrtcConnected) {
+      console.log('[WebRTC] Iniciando oferta WebRTC...')
+      createWebRTCOffer()
+    }
+  }, [wsConnected, cameraStream, hasProctoring, started, submitted, webrtcConnected, createWebRTCOffer])
 
   const showToastMessage = (message: string, type: 'error' | 'success' | 'info' = 'error') => {
     setToastMessage(message)
