@@ -54,13 +54,14 @@ export default function ProctoringMonitoringPage() {
 
   // Função para criar PeerConnection para um aluno
   const createPeerConnection = useCallback((userId: string, userName: string, fromId: string) => {
-    console.log(`[ADMIN WebRTC] Criando PeerConnection para ${userName} (${userId})`)
+    console.log(`[ADMIN WebRTC] 🔵 Criando PeerConnection para ${userName} (${userId})`)
 
     const pc = new RTCPeerConnection(rtcConfig)
 
     // Listener para ICE candidates
     pc.onicecandidate = (event) => {
       if (event.candidate && wsConnected) {
+        console.log(`[ADMIN WebRTC] 📤 Enviando ICE candidate para ${userName}`)
         wsSendMessage({
           type: 'webrtc-ice-candidate',
           candidate: event.candidate,
@@ -71,7 +72,8 @@ export default function ProctoringMonitoringPage() {
 
     // Listener para stream remoto
     pc.ontrack = (event) => {
-      console.log(`[ADMIN WebRTC] Stream recebido de ${userName}:`, event.streams[0])
+      console.log(`[ADMIN WebRTC] 🎥 Stream recebido de ${userName}:`, event.streams[0])
+      console.log(`[ADMIN WebRTC] 🎥 Tracks no stream:`, event.streams[0].getTracks().map(t => ({ kind: t.kind, label: t.label, enabled: t.enabled })))
 
       setStudentStreams(prev => {
         const newMap = new Map(prev)
@@ -111,38 +113,46 @@ export default function ProctoringMonitoringPage() {
     fromId: string,
     offer: RTCSessionDescriptionInit
   ) => {
+    console.log(`[ADMIN WebRTC] 📥 Oferta recebida de ${userName} (userId: ${userId}, fromId: ${fromId})`)
+
     try {
       // Verificar se já existe PeerConnection para este aluno
       let pcData = peerConnectionsRef.current.get(userId)
 
       if (!pcData) {
+        console.log(`[ADMIN WebRTC] 🆕 Criando nova PeerConnection para ${userName}`)
         const pc = createPeerConnection(userId, userName, fromId)
         pcData = peerConnectionsRef.current.get(userId)!
+      } else {
+        console.log(`[ADMIN WebRTC] ♻️ Reutilizando PeerConnection existente para ${userName}`)
       }
 
       const { pc } = pcData
 
       // Setar oferta remota
       await pc.setRemoteDescription(new RTCSessionDescription(offer))
-      console.log(`[ADMIN WebRTC] Oferta de ${userName} setada`)
+      console.log(`[ADMIN WebRTC] ✅ Oferta de ${userName} setada como remote description`)
 
       // Criar answer
       const answer = await pc.createAnswer()
       await pc.setLocalDescription(answer)
-      console.log(`[ADMIN WebRTC] Answer criada para ${userName}`)
+      console.log(`[ADMIN WebRTC] ✅ Answer criada para ${userName}`)
 
       // Enviar answer de volta
       if (wsConnected) {
+        console.log(`[ADMIN WebRTC] 📤 Enviando answer para ${userName} (targetId: ${fromId})`)
         wsSendMessage({
           type: 'webrtc-answer',
           answer: pc.localDescription,
           targetId: fromId,
         })
+      } else {
+        console.error(`[ADMIN WebRTC] ❌ WebSocket não conectado - não pode enviar answer`)
       }
     } catch (error) {
-      console.error('[ADMIN WebRTC] Erro ao processar oferta:', error)
+      console.error('[ADMIN WebRTC] ❌ Erro ao processar oferta:', error)
     }
-  }, [createPeerConnection])
+  }, [createPeerConnection, wsConnected, wsSendMessage])
 
   // Processar ICE candidate
   const handleICECandidate = useCallback(async (userId: string, candidate: RTCIceCandidateInit) => {

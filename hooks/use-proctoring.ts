@@ -91,7 +91,9 @@ export function useProctoring({
     }
   }, [camera, audio, screen, screenMode])
 
-  // Detectar câmera preta - NOVA ABORDAGEM: verificar elemento visual renderizado
+  // DETECÇÃO DE CÂMERA PRETA DESABILITADA (estava com bugs)
+  // Se precisar reativar no futuro, descomentar este código
+  /*
   const checkBlackCamera = useCallback(() => {
     if (!cameraStream || !videoRef.current || !canvasRef.current) return
 
@@ -193,8 +195,10 @@ export function useProctoring({
       console.error('[CAMERA DEBUG] Erro ao capturar frame:', error)
     }
   }, [cameraStream, isBlackCamera, onCameraBlack, onCameraRestored])
+  */
 
-  // Iniciar verificação de câmera preta
+  // VERIFICAÇÃO DE CÂMERA PRETA DESABILITADA (estava com bugs)
+  /*
   useEffect(() => {
     if (camera && cameraStream && videoRef.current) {
       // Verificar a cada 2 segundos
@@ -207,6 +211,7 @@ export function useProctoring({
       }
     }
   }, [camera, cameraStream, checkBlackCamera])
+  */
 
   // Atualizar vídeo quando stream mudar
   useEffect(() => {

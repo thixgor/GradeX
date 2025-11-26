@@ -79,17 +79,30 @@ function startWebSocketServer(port = 3001) {
         break
 
       case 'webrtc-offer':
+        // Oferta do aluno: broadcast para todos os admins
+        console.log(`[WS] WebRTC Offer de ${client.userName} - broadcasting para admins`)
+        broadcastToAdmins({
+          ...message,
+          fromId: clientId,
+          fromUserId: client.userId,
+          fromUserName: client.userName,
+        })
+        break
+
       case 'webrtc-answer':
       case 'webrtc-ice-candidate':
-        // Repassar mensagem WebRTC para o destinatário
+        // Answer e ICE candidates: enviar para destinatário específico
         const targetId = message.targetId
         if (targetId) {
+          console.log(`[WS] ${message.type} para targetId: ${targetId}`)
           sendToClient(targetId, {
             ...message,
             fromId: clientId,
             fromUserId: client.userId,
             fromUserName: client.userName,
           })
+        } else {
+          console.error(`[WS] ${message.type} sem targetId!`)
         }
         break
 

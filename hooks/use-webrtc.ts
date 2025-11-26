@@ -31,8 +31,10 @@ export function useWebRTC({
 
   // Criar oferta WebRTC (aluno inicia)
   const createOffer = useCallback(async () => {
+    console.log('[WebRTC] createOffer chamado', { enabled, hasLocalStream: !!localStream })
+
     if (!enabled || !localStream) {
-      console.log('[WebRTC] Não habilitado ou sem stream local')
+      console.log('[WebRTC] ❌ Não habilitado ou sem stream local')
       return
     }
 
@@ -41,12 +43,15 @@ export function useWebRTC({
       const pc = new RTCPeerConnection(rtcConfig)
       peerConnectionRef.current = pc
 
-      console.log('[WebRTC] PeerConnection criada')
+      console.log('[WebRTC] ✅ PeerConnection criada:', pc)
 
       // Adicionar stream local às tracks
+      const tracks = localStream.getTracks()
+      console.log('[WebRTC] Tracks disponíveis:', tracks.map(t => ({ kind: t.kind, label: t.label, enabled: t.enabled })))
+
       localStream.getTracks().forEach((track) => {
         pc.addTrack(track, localStream)
-        console.log(`[WebRTC] Track adicionada: ${track.kind}`)
+        console.log(`[WebRTC] ✅ Track adicionada: ${track.kind} (${track.label})`)
       })
 
       // Listener para ICE candidates

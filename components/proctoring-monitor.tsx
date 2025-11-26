@@ -54,7 +54,8 @@ export function ProctoringMonitor({
             <Camera className="h-4 w-4 text-white drop-shadow" />
           </div>
 
-          {/* Alerta de câmera preta */}
+          {/* Alerta de câmera preta DESABILITADO (estava bugado) */}
+          {/*
           {isBlackCamera && (
             <div className="absolute inset-0 bg-red-900/90 flex flex-col items-center justify-center p-2 text-white text-center">
               <AlertTriangle className="h-8 w-8 mb-2 animate-pulse" />
@@ -66,6 +67,7 @@ export function ProctoringMonitor({
               )}
             </div>
           )}
+          */}
         </div>
 
         {/* Texto informativo */}
@@ -74,7 +76,8 @@ export function ProctoringMonitor({
         </div>
       </div>
 
-      {/* Popup de aviso quando câmera fica preta */}
+      {/* Popup de aviso DESABILITADO (estava bugado) */}
+      {/*
       {isBlackCamera && blackCameraTimeRemaining !== undefined && blackCameraTimeRemaining > 0 && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[60]">
           <div className="bg-red-600 text-white p-6 rounded-lg shadow-2xl max-w-md">
@@ -97,6 +100,7 @@ export function ProctoringMonitor({
           </div>
         </div>
       )}
+      */}
     </>
   )
 }

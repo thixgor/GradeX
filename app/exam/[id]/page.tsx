@@ -169,9 +169,20 @@ export default function ExamPage({ params }: { params: { id: string } }) {
 
   // Iniciar WebRTC quando WebSocket conectar e stream estiver disponível
   useEffect(() => {
+    console.log('[WebRTC DEBUG] Verificando condições:', {
+      wsConnected,
+      hasCameraStream: !!cameraStream,
+      hasProctoring,
+      started,
+      submitted,
+      webrtcConnected,
+    })
+
     if (wsConnected && cameraStream && hasProctoring && started && !submitted && !webrtcConnected) {
-      console.log('[WebRTC] Iniciando oferta WebRTC...')
+      console.log('[WebRTC] ✅ Todas as condições OK - Iniciando oferta WebRTC...')
       createWebRTCOffer()
+    } else {
+      console.log('[WebRTC] ❌ Condições não atendidas - aguardando...')
     }
   }, [wsConnected, cameraStream, hasProctoring, started, submitted, webrtcConnected, createWebRTCOffer])
 
