@@ -140,48 +140,57 @@ export function useProctoring({
     variance = variance / validPixels
     const stdDev = Math.sqrt(variance)
 
-    // Considerações para câmera preta/bloqueada (MUITO rigoroso para evitar falsos positivos):
-    // DETECÇÃO (rigorosa): Brilho extremo (< 3 ou > 252) E variância quase zero (< 1) por 3x consecutivas
-    // RECUPERAÇÃO (tolerante): Brilho dentro da faixa normal (10-245) OU variância detectável (> 3)
-    // Isso garante que falsos positivos sejam raros, mas recuperação seja rápida
+    // Considerações para câmera preta/bloqueada (EXTREMAMENTE rigoroso para evitar falsos positivos):
+    // DETECÇÃO (ultra rigorosa):
+    //   - Brilho EXTREMO (< 2 ou > 253) E variância PRATICAMENTE ZERO (< 0.3)
+    //   - Precisa 5 VERIFICAÇÕES CONSECUTIVAS (10 segundos) para confirmar
+    // RECUPERAÇÃO (muito tolerante):
+    //   - Brilho > 5 e < 250 OU qualquer variância > 1
+    // Isso praticamente elimina falsos positivos enquanto ainda detecta câmera tampada
 
-    const isVeryDark = avgBrightness < 3
-    const isVeryBright = avgBrightness > 252
-    const isStatic = stdDev < 1
+    const isVeryDark = avgBrightness < 2
+    const isVeryBright = avgBrightness > 253
+    const isAlmostZeroVariance = stdDev < 0.3
 
-    // Para detectar como BLOQUEADA: muito rigoroso
-    const currentFrameIsBlack = (isVeryDark || isVeryBright) && isStatic
+    // Para detectar como BLOQUEADA: ultra rigoroso
+    const currentFrameIsBlack = (isVeryDark || isVeryBright) && isAlmostZeroVariance
 
-    // Para detectar como RECUPERADA: mais tolerante (qualquer sinal de vida na câmera)
-    const hasNormalBrightness = avgBrightness >= 10 && avgBrightness <= 245
-    const hasMovement = stdDev > 3
-    const cameraIsWorking = hasNormalBrightness || hasMovement
+    // Para detectar como RECUPERADA: muito tolerante (qualquer sinal mínimo de vida)
+    const hasNormalBrightness = avgBrightness > 5 && avgBrightness < 250
+    const hasAnyMovement = stdDev > 1
+    const cameraIsWorking = hasNormalBrightness || hasAnyMovement
 
-    // Debug
+    // Debug detalhado
     console.log('[CAMERA DEBUG]', {
       avgBrightness: avgBrightness.toFixed(2),
       stdDev: stdDev.toFixed(2),
       isVeryDark,
       isVeryBright,
-      isStatic,
+      isAlmostZeroVariance,
       currentFrameIsBlack,
+      hasNormalBrightness,
+      hasAnyMovement,
       cameraIsWorking,
       isBlackCamera,
       consecutiveBlackFrames: consecutiveBlackFrames.current,
+      threshold: '5 frames necessários'
     })
 
-    // Lógica de confirmação consecutiva para DETECÇÃO
+    // Lógica de confirmação consecutiva para DETECÇÃO (agora precisa de 5 verificações = 10 segundos)
     if (currentFrameIsBlack) {
       consecutiveBlackFrames.current++
 
-      // Só ativa aviso após 3 verificações consecutivas (6 segundos)
-      if (consecutiveBlackFrames.current >= 3 && !isBlackCamera) {
+      // Só ativa aviso após 5 verificações consecutivas (10 segundos)
+      if (consecutiveBlackFrames.current >= 5 && !isBlackCamera) {
         setIsBlackCamera(true)
         onCameraBlack?.()
-        console.log('[CAMERA DEBUG] 🚨 CÂMERA BLOQUEADA CONFIRMADA (3 verificações consecutivas)')
+        console.log('[CAMERA DEBUG] 🚨 CÂMERA BLOQUEADA CONFIRMADA (5 verificações consecutivas = 10 segundos)')
       }
     } else {
       // Frame não é completamente preto - resetar contador
+      if (consecutiveBlackFrames.current > 0) {
+        console.log('[CAMERA DEBUG] ⚠️ Frame OK detectado - resetando contador (estava em', consecutiveBlackFrames.current, ')')
+      }
       consecutiveBlackFrames.current = 0
     }
 
