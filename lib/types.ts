@@ -239,6 +239,9 @@ export interface ProctoringSession {
   userId: string
   userName: string
   submissionId?: string
+  // Informações da prova
+  numberOfQuestions: number
+  totalPoints: number
   // Status da sessão
   isActive: boolean
   startedAt: Date

@@ -162,18 +162,35 @@ export default function ProctoringMonitoringPage() {
               <Card key={session.submissionId} className="border-l-4 border-l-blue-500">
                 <CardHeader>
                   <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-lg flex items-center gap-2">
+                    <div className="flex-1">
+                      <CardTitle className="text-lg flex items-center gap-2 mb-3">
                         <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
                         {session.userName}
                       </CardTitle>
-                      <CardDescription className="mt-1">
-                        <strong>Prova:</strong> {session.examTitle}
-                      </CardDescription>
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      <p>ID Aluno: {session.userId}</p>
-                      <p>ID Prova: {session.examId}</p>
+
+                      {/* Informações da Prova */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                        <div>
+                          <span className="text-muted-foreground">📋 Prova:</span>{' '}
+                          <span className="font-semibold">{session.examTitle}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">👤 ID Aluno:</span>{' '}
+                          <span className="font-mono text-xs">{session.userId}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">🔢 ID Prova:</span>{' '}
+                          <span className="font-mono text-xs">{session.examId}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">📝 Questões:</span>{' '}
+                          <span className="font-semibold">{session.numberOfQuestions}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">⭐ Valor Total:</span>{' '}
+                          <span className="font-semibold">{session.totalPoints} pontos</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </CardHeader>

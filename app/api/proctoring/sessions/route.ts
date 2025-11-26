@@ -48,6 +48,8 @@ export async function GET(request: NextRequest) {
         userId: sub.userId,
         userName: sub.userName,
         submissionId: sub._id?.toString() || '',
+        numberOfQuestions: exam?.numberOfQuestions || exam?.questions?.length || 0,
+        totalPoints: exam?.totalPoints || 0,
         isActive: true,
         startedAt: sub.startedAt || new Date(),
         cameraBlackWarnings: 0,
