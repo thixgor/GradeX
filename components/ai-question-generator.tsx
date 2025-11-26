@@ -33,6 +33,11 @@ export function AIQuestionGenerator({
   const [quantity, setQuantity] = useState(1)
   const [multipleSubjects, setMultipleSubjects] = useState('')
   const [randomDifficulty, setRandomDifficulty] = useState(false)
+  const [currentProgress, setCurrentProgress] = useState(0)
+
+  // Contexto da questão
+  const [questionContext, setQuestionContext] = useState<'enem' | 'uerj' | 'outros'>('enem')
+  const [customContext, setCustomContext] = useState('')
 
   async function handleGenerate() {
     const isMultipleMode = quantity > 1 || multipleSubjects.trim().length > 0
@@ -54,46 +59,91 @@ export function AIQuestionGenerator({
       }
     }
 
+    // Validar contexto customizado
+    if (questionContext === 'outros' && !customContext.trim()) {
+      setError('Por favor, especifique o contexto personalizado da questão')
+      return
+    }
+
     setGenerating(true)
     setError('')
+    setCurrentProgress(0)
 
     try {
-      const response = await fetch('/api/questions/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: questionType,
-          style,
-          // Modo múltiplo ou único
-          ...(isMultipleMode ? {
-            quantity,
-            subjects: multipleSubjects.split(';').map(s => s.trim()).filter(s => s.length > 0),
-            randomDifficulty,
-          } : {
+      // Determinar contexto
+      const context = questionContext === 'outros'
+        ? customContext.trim()
+        : questionContext === 'enem'
+          ? 'ENEM - Exame Nacional do Ensino Médio'
+          : 'UERJ - Universidade do Estado do Rio de Janeiro'
+
+      if (isMultipleMode) {
+        // Modo múltiplo - gerar uma por vez para mostrar progresso
+        const subjects = multipleSubjects.split(';').map(s => s.trim()).filter(s => s.length > 0)
+        const generatedQuestions = []
+
+        for (let i = 0; i < quantity; i++) {
+          setCurrentProgress(i + 1)
+
+          // Distribuir temas homogeneamente
+          const subjectIndex = i % subjects.length
+          const currentSubject = subjects[subjectIndex]
+
+          // Dificuldade aleatória ou fixa
+          const currentDifficulty = randomDifficulty ? Math.random() : difficulty
+
+          const response = await fetch('/api/questions/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: questionType,
+              style,
+              subject: currentSubject,
+              difficulty: currentDifficulty,
+              context,
+              numberOfAlternatives: questionType === 'multiple-choice' ? numberOfAlternatives : undefined,
+              useTRI: questionType === 'multiple-choice' ? useTRI : undefined,
+            }),
+          })
+
+          const data = await response.json()
+
+          if (!response.ok) {
+            throw new Error(data.error || `Erro ao gerar questão ${i + 1}`)
+          }
+
+          generatedQuestions.push(data.question)
+        }
+
+        // Retornar todas as questões geradas
+        if (onMultipleQuestionsGenerated) {
+          onMultipleQuestionsGenerated(generatedQuestions)
+        }
+        setMultipleSubjects('')
+      } else {
+        // Modo único
+        const response = await fetch('/api/questions/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: questionType,
+            style,
             subject: subject.trim(),
             difficulty,
+            context,
+            numberOfAlternatives: questionType === 'multiple-choice' ? numberOfAlternatives : undefined,
+            useTRI: questionType === 'multiple-choice' ? useTRI : undefined,
           }),
-          numberOfAlternatives: questionType === 'multiple-choice' ? numberOfAlternatives : undefined,
-          useTRI: questionType === 'multiple-choice' ? useTRI : undefined,
-        }),
-      })
+        })
 
-      const data = await response.json()
+        const data = await response.json()
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Erro ao gerar questão(ões)')
-      }
-
-      // Se retornou múltiplas questões
-      if (data.questions && Array.isArray(data.questions)) {
-        if (onMultipleQuestionsGenerated) {
-          onMultipleQuestionsGenerated(data.questions)
+        if (!response.ok) {
+          throw new Error(data.error || 'Erro ao gerar questão')
         }
-        setMultipleSubjects('') // Limpar após sucesso
-      } else {
-        // Questão única
+
         onQuestionGenerated(data.question)
-        setSubject('') // Limpar campo após sucesso
+        setSubject('')
       }
 
       setError('')
@@ -102,6 +152,7 @@ export function AIQuestionGenerator({
       setError(error.message || 'Erro ao gerar questão(ões). Tente novamente.')
     } finally {
       setGenerating(false)
+      setCurrentProgress(0)
     }
   }
 
@@ -174,6 +225,62 @@ export function AIQuestionGenerator({
             {style === 'contextualizada'
               ? 'Enunciado amplo, contextualizado e com "historinha"'
               : 'Enunciado direto e objetivo, sem rodeios'}
+          </p>
+        </div>
+
+        {/* Contexto da Questão */}
+        <div className="space-y-3 border-t pt-4">
+          <Label>Contexto da Questão</Label>
+          <div className="grid grid-cols-3 gap-2">
+            <Button
+              type="button"
+              variant={questionContext === 'enem' ? 'default' : 'outline'}
+              onClick={() => setQuestionContext('enem')}
+              disabled={generating}
+              className="w-full text-xs"
+            >
+              🎓 ENEM
+            </Button>
+            <Button
+              type="button"
+              variant={questionContext === 'uerj' ? 'default' : 'outline'}
+              onClick={() => setQuestionContext('uerj')}
+              disabled={generating}
+              className="w-full text-xs"
+            >
+              🏛️ UERJ
+            </Button>
+            <Button
+              type="button"
+              variant={questionContext === 'outros' ? 'default' : 'outline'}
+              onClick={() => setQuestionContext('outros')}
+              disabled={generating}
+              className="w-full text-xs"
+            >
+              ✨ Outros
+            </Button>
+          </div>
+          {questionContext === 'outros' && (
+            <div className="space-y-2">
+              <Label htmlFor="customContext">Contexto Personalizado *</Label>
+              <Input
+                id="customContext"
+                value={customContext}
+                onChange={(e) => setCustomContext(e.target.value)}
+                placeholder="Ex: Medicina (UNIFESP), Direito (USP), Concurso Público..."
+                disabled={generating}
+              />
+              <p className="text-xs text-muted-foreground">
+                Especifique o contexto da questão (área, vestibular, concurso, etc)
+              </p>
+            </div>
+          )}
+          <p className="text-xs text-muted-foreground">
+            {questionContext === 'enem'
+              ? '📖 Questões no estilo ENEM - interdisciplinares e interpretativas'
+              : questionContext === 'uerj'
+                ? '📖 Questões no estilo UERJ - discursivas e analíticas'
+                : '📖 Questões personalizadas para o contexto especificado'}
           </p>
         </div>
 
@@ -383,7 +490,9 @@ export function AIQuestionGenerator({
             <>
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
               {quantity > 1 || multipleSubjects.trim()
-                ? `Gerando ${quantity} questões...`
+                ? currentProgress > 0
+                  ? `Gerando ${currentProgress} de ${quantity} questões...`
+                  : `Gerando ${quantity} questões...`
                 : 'Gerando questão...'}
             </>
           ) : (

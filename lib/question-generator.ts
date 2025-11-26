@@ -31,6 +31,7 @@ export interface QuestionGenerationParams {
   difficulty: number // 0-1 (0% a 100%)
   numberOfAlternatives?: number // Para múltipla escolha (padrão 5)
   useTRI?: boolean // Se deve gerar parâmetros TRI
+  context: string // Contexto da questão (ENEM, UERJ, Medicina, etc)
 }
 
 interface GeneratedMultipleChoiceQuestion {
@@ -78,6 +79,11 @@ function buildMultipleChoicePrompt(params: QuestionGenerationParams): string {
     : `A questão deve ser RÁPIDA e DIRETA, sem rodeios. Vá direto ao ponto com um enunciado objetivo, claro e conciso de no máximo 2-3 linhas. Não use storytelling ou contextualizações longas.`
 
   return `Você é um especialista em elaboração de questões de vestibular e concursos públicos. Crie uma questão de múltipla escolha de alta qualidade sobre o tema especificado.
+
+**CONTEXTO:** ${params.context}
+${params.context.includes('ENEM') ? 'A questão deve seguir o padrão ENEM: interdisciplinar, interpretativa, com texto-base e situação-problema contextualizada.' :
+  params.context.includes('UERJ') ? 'A questão deve seguir o padrão UERJ: analítica, crítica, com ênfase em raciocínio e argumentação.' :
+  `A questão deve ser adequada para o contexto especificado: ${params.context}`}
 
 **TEMA/ASSUNTO:** ${params.subject}
 
@@ -164,6 +170,11 @@ function buildDiscursivePrompt(params: QuestionGenerationParams): string {
     : `A questão deve ser RÁPIDA e DIRETA, sem rodeios. Vá direto ao ponto com um enunciado objetivo e conciso de no máximo 2-3 linhas.`
 
   return `Você é um especialista em elaboração de questões discursivas de vestibular e concursos. Crie uma questão discursiva de alta qualidade sobre o tema especificado.
+
+**CONTEXTO:** ${params.context}
+${params.context.includes('ENEM') ? 'A questão deve seguir o padrão ENEM: interdisciplinar, interpretativa, com situação-problema e exigindo argumentação fundamentada.' :
+  params.context.includes('UERJ') ? 'A questão deve seguir o padrão UERJ: analítica, crítica, com ênfase em raciocínio, interpretação e argumentação sólida.' :
+  `A questão deve ser adequada para o contexto especificado: ${params.context}`}
 
 **TEMA/ASSUNTO:** ${params.subject}
 
