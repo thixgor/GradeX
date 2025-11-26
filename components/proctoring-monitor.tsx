@@ -32,7 +32,7 @@ export function ProctoringMonitor({
   return (
     <>
       {/* Monitor de câmera fixo no canto superior esquerdo */}
-      <div className="fixed top-4 left-4 z-50">
+      <div className="fixed top-4 left-4 z-[100]">
         <div className="relative bg-black rounded-lg overflow-hidden shadow-2xl border-2 border-white">
           {/* Vídeo da câmera */}
           <video
@@ -76,8 +76,8 @@ export function ProctoringMonitor({
 
       {/* Popup de aviso quando câmera fica preta */}
       {isBlackCamera && blackCameraTimeRemaining !== undefined && blackCameraTimeRemaining > 0 && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-40 pointer-events-none">
-          <div className="bg-red-600 text-white p-6 rounded-lg shadow-2xl max-w-md pointer-events-auto">
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[60]">
+          <div className="bg-red-600 text-white p-6 rounded-lg shadow-2xl max-w-md">
             <div className="flex items-center gap-3 mb-4">
               <AlertTriangle className="h-8 w-8 animate-pulse" />
               <h3 className="text-xl font-bold">⚠️ AVISO DE SEGURANÇA</h3>
