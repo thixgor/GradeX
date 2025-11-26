@@ -65,6 +65,20 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const needsScreen = exam?.proctoring?.screen || false
   const screenMode = exam?.proctoring?.screenMode || 'window'
 
+  // Debug: Log configurações de proctoring
+  useEffect(() => {
+    if (exam) {
+      console.log('[PROCTORING DEBUG] Configurações da prova:', {
+        hasProctoring,
+        proctoring: exam.proctoring,
+        needsCamera,
+        needsAudio,
+        needsScreen,
+        screenMode,
+      })
+    }
+  }, [exam, hasProctoring, needsCamera, needsAudio, needsScreen, screenMode])
+
   // Hook de Proctoring
   const {
     cameraStream,
@@ -142,8 +156,15 @@ export default function ExamPage({ params }: { params: { id: string } }) {
 
   // Função para iniciar a prova e salvar o tempo de início
   const handleStartExam = () => {
+    console.log('[PROCTORING DEBUG] handleStartExam chamado', {
+      hasProctoring,
+      proctoringAccepted,
+      showProctoringConsent,
+    })
+
     // Se a prova tem proctoring e ainda não foi aceito, mostrar termo
     if (hasProctoring && !proctoringAccepted) {
+      console.log('[PROCTORING DEBUG] Mostrando termo de consentimento')
       setShowProctoringConsent(true)
       return
     }

@@ -70,6 +70,12 @@ export async function POST(request: NextRequest) {
       aiRigor,
       navigationMode = 'paginated',
       duration,
+      // Campos de proctoring
+      proctoringEnabled,
+      proctoringCamera,
+      proctoringAudio,
+      proctoringScreen,
+      proctoringScreenMode,
     } = body
 
     if (!title || !numberOfQuestions || !numberOfAlternatives || !scoringMethod || !startTime || !endTime) {
@@ -103,6 +109,14 @@ export async function POST(request: NextRequest) {
       aiRigor,
       navigationMode,
       duration,
+      // Configurações de proctoring
+      proctoring: proctoringEnabled ? {
+        enabled: proctoringEnabled,
+        camera: proctoringCamera || false,
+        audio: proctoringAudio || false,
+        screen: proctoringScreen || false,
+        screenMode: proctoringScreenMode || 'window',
+      } : undefined,
       createdAt: new Date(),
       updatedAt: new Date(),
     }

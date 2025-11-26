@@ -317,6 +317,12 @@ export default function CreateExamPage() {
         duration: examData.durationMinutes,
         numberOfQuestions: questions.length,
         questions,
+        // Garantir que os campos de proctoring sejam enviados
+        proctoringEnabled: examData.proctoringEnabled,
+        proctoringCamera: examData.proctoringCamera,
+        proctoringAudio: examData.proctoringAudio,
+        proctoringScreen: examData.proctoringScreen,
+        proctoringScreenMode: examData.proctoringScreenMode,
       }
 
       const res = await fetch('/api/exams', {
