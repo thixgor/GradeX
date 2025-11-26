@@ -25,6 +25,7 @@ export function useProctoring({
   const [screenStream, setScreenStream] = useState<MediaStream | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isBlackCamera, setIsBlackCamera] = useState(false)
+  const consecutiveBlackFrames = useRef(0) // Contador de frames consecutivos detectados como preto
 
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -139,16 +140,17 @@ export function useProctoring({
     variance = variance / validPixels
     const stdDev = Math.sqrt(variance)
 
-    // Considerações para câmera preta/bloqueada:
-    // 1. Brilho médio muito baixo (< 15) OU muito alto (> 240) = possível bloqueio
-    // 2. Variância muito baixa (< 5) = imagem estática/congelada
-    // Ambas condições precisam ser verdadeiras para evitar falsos positivos
+    // Considerações para câmera preta/bloqueada (MUITO rigoroso para evitar falsos positivos):
+    // 1. Brilho médio EXTREMAMENTE baixo (< 3) OU EXTREMAMENTE alto (> 252) = bloqueio claro
+    // 2. Variância QUASE ZERO (< 1) = imagem completamente estática/congelada
+    // 3. Precisa detectar 3 VEZES CONSECUTIVAS (6 segundos) para confirmar
+    // Isso previne falsos positivos com pessoas paradas ou iluminação baixa
 
-    const isVeryDark = avgBrightness < 15
-    const isVeryBright = avgBrightness > 240
-    const isStatic = stdDev < 5
+    const isVeryDark = avgBrightness < 3
+    const isVeryBright = avgBrightness > 252
+    const isStatic = stdDev < 1
 
-    const isBlack = (isVeryDark || isVeryBright) && isStatic
+    const currentFrameIsBlack = (isVeryDark || isVeryBright) && isStatic
 
     // Debug
     console.log('[CAMERA DEBUG]', {
@@ -157,15 +159,31 @@ export function useProctoring({
       isVeryDark,
       isVeryBright,
       isStatic,
-      isBlack,
+      currentFrameIsBlack,
+      consecutiveBlackFrames: consecutiveBlackFrames.current,
     })
 
-    if (isBlack && !isBlackCamera) {
-      setIsBlackCamera(true)
-      onCameraBlack?.()
-    } else if (!isBlack && isBlackCamera) {
-      setIsBlackCamera(false)
-      onCameraRestored?.()
+    // Lógica de confirmação consecutiva
+    if (currentFrameIsBlack) {
+      consecutiveBlackFrames.current++
+
+      // Só ativa aviso após 3 verificações consecutivas (6 segundos)
+      if (consecutiveBlackFrames.current >= 3 && !isBlackCamera) {
+        setIsBlackCamera(true)
+        onCameraBlack?.()
+        console.log('[CAMERA DEBUG] 🚨 CÂMERA BLOQUEADA CONFIRMADA (3 verificações consecutivas)')
+      }
+    } else {
+      // Frame OK - resetar contador
+      if (consecutiveBlackFrames.current > 0) {
+        console.log('[CAMERA DEBUG] ✅ Câmera voltou ao normal - resetando contador')
+      }
+      consecutiveBlackFrames.current = 0
+
+      if (isBlackCamera) {
+        setIsBlackCamera(false)
+        onCameraRestored?.()
+      }
     }
   }, [cameraStream, isBlackCamera, onCameraBlack, onCameraRestored])
 
