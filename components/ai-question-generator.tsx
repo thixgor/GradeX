@@ -40,6 +40,16 @@ export function AIQuestionGenerator({
   const [alternativeType, setAlternativeType] = useState<AlternativeType>('standard')
   const [mixedStyles, setMixedStyles] = useState(false) // Misturar contextualizadas e rápidas
 
+  // Estados para geração mista com % de predominância
+  const [mixedTypes, setMixedTypes] = useState(false) // Ativar geração mista de tipos
+  const [typeDistribution, setTypeDistribution] = useState({
+    'multiple-choice': 50,
+    'discursive': 20,
+    'multiple-affirmative': 15,
+    'comparison': 10,
+    'assertion-reason': 5,
+  })
+
   // Contexto da questão
   const [questionContext, setQuestionContext] = useState<'enem' | 'uerj' | 'outros'>('enem')
   const [customContext, setCustomContext] = useState('')
@@ -64,6 +74,46 @@ export function AIQuestionGenerator({
     }
   }
 
+  // Função para determinar o tipo de questão baseado nas porcentagens
+  function getQuestionTypeByDistribution(index: number): { type: 'multiple-choice' | 'discursive', altType?: AlternativeType } {
+    if (!mixedTypes) {
+      return { type: questionType, altType: questionType === 'multiple-choice' ? alternativeType : undefined }
+    }
+
+    // Calcular total de porcentagens ativas (> 0)
+    const activeTypes = Object.entries(typeDistribution).filter(([_, pct]) => pct > 0)
+    const total = activeTypes.reduce((sum, [_, pct]) => sum + pct, 0)
+
+    // Normalizar porcentagens
+    const normalized = activeTypes.map(([type, pct]) => [type, (pct / total) * 100])
+
+    // Calcular posição normalizada do índice (0-100)
+    const position = ((index % 100) / 100) * 100
+
+    // Encontrar o tipo correspondente
+    let accumulated = 0
+    for (const [type, pct] of normalized) {
+      accumulated += pct as number
+      if (position < accumulated) {
+        // Retornar tipo apropriado
+        if (type === 'multiple-choice') {
+          return { type: 'multiple-choice', altType: 'standard' }
+        } else if (type === 'discursive') {
+          return { type: 'discursive' }
+        } else if (type === 'multiple-affirmative') {
+          return { type: 'multiple-choice', altType: 'multiple-affirmative' }
+        } else if (type === 'comparison') {
+          return { type: 'multiple-choice', altType: 'comparison' }
+        } else if (type === 'assertion-reason') {
+          return { type: 'multiple-choice', altType: 'assertion-reason' }
+        }
+      }
+    }
+
+    // Fallback
+    return { type: 'multiple-choice', altType: 'standard' }
+  }
+
   async function handleGenerate() {
     const isMultipleMode = quantity > 1 || multipleSubjects.trim().length > 0
 
@@ -76,6 +126,14 @@ export function AIQuestionGenerator({
       if (quantity < 1 || quantity > 50) {
         setError('A quantidade deve estar entre 1 e 50 questões')
         return
+      }
+      // Validar porcentagens se modo misto ativo
+      if (mixedTypes) {
+        const total = Object.values(typeDistribution).reduce((sum, pct) => sum + pct, 0)
+        if (total === 0) {
+          setError('Configure pelo menos um tipo de questão com % maior que 0')
+          return
+        }
       }
     } else {
       if (!subject.trim()) {
@@ -131,18 +189,21 @@ export function AIQuestionGenerator({
           // Estilo misto ou fixo
           const currentStyle = mixedStyles ? (i % 2 === 0 ? 'contextualizada' : 'rapida') : style
 
+          // Determinar tipo de questão baseado na distribuição
+          const { type: currentType, altType: currentAltType } = getQuestionTypeByDistribution(i)
+
           const response = await fetch('/api/questions/generate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              type: questionType,
+              type: currentType,
               style: currentStyle,
               subject: currentSubject,
               difficulty: currentDifficulty,
               context,
-              numberOfAlternatives: questionType === 'multiple-choice' ? numberOfAlternatives : undefined,
-              useTRI: questionType === 'multiple-choice' ? useTRI : undefined,
-              alternativeType: questionType === 'multiple-choice' ? alternativeType : undefined,
+              numberOfAlternatives: currentType === 'multiple-choice' ? numberOfAlternatives : undefined,
+              useTRI: currentType === 'multiple-choice' ? useTRI : undefined,
+              alternativeType: currentType === 'multiple-choice' ? currentAltType : undefined,
             }),
           })
 
@@ -272,23 +333,132 @@ export function AIQuestionGenerator({
 
           {/* Modo Misto - aparece apenas para geração múltipla */}
           {(quantity > 1 || multipleSubjects.trim().length > 0) && (
-            <div className="flex items-center space-x-2 pt-2">
-              <input
-                type="checkbox"
-                id="mixedStyles"
-                checked={mixedStyles}
-                onChange={(e) => setMixedStyles(e.target.checked)}
-                disabled={generating}
-                className="h-4 w-4 rounded border-input"
-              />
-              <Label htmlFor="mixedStyles" className="cursor-pointer text-sm">
-                🎭 Misturar estilos (alternando entre contextualizada e rápida)
-              </Label>
+            <div className="space-y-2 pt-2">
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="mixedStyles"
+                  checked={mixedStyles}
+                  onChange={(e) => setMixedStyles(e.target.checked)}
+                  disabled={generating}
+                  className="h-4 w-4 rounded border-input"
+                />
+                <Label htmlFor="mixedStyles" className="cursor-pointer text-sm">
+                  🎭 Misturar estilos (alternando entre contextualizada e rápida)
+                </Label>
+              </div>
+
+              {/* Modo Misto de Tipos */}
+              <div className="flex items-center space-x-2 pt-1">
+                <input
+                  type="checkbox"
+                  id="mixedTypes"
+                  checked={mixedTypes}
+                  onChange={(e) => setMixedTypes(e.target.checked)}
+                  disabled={generating}
+                  className="h-4 w-4 rounded border-input"
+                />
+                <Label htmlFor="mixedTypes" className="cursor-pointer text-sm">
+                  🎲 Gerar tipos mistos (múltipla escolha, dissertativa, afirmativas, etc)
+                </Label>
+              </div>
+
+              {/* Configuração de Porcentagens */}
+              {mixedTypes && (
+                <div className="space-y-3 p-3 bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-950/20 dark:to-blue-950/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                  <p className="text-xs font-semibold text-purple-700 dark:text-purple-300">
+                    Configure a % de predominância de cada tipo:
+                  </p>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <Label className="text-xs min-w-[140px]">📝 Múltipla Escolha:</Label>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={typeDistribution['multiple-choice']}
+                        onChange={(e) => setTypeDistribution({...typeDistribution, 'multiple-choice': parseInt(e.target.value)})}
+                        disabled={generating}
+                        className="flex-1"
+                      />
+                      <span className="text-xs font-mono w-10 text-right">{typeDistribution['multiple-choice']}%</span>
+                    </div>
+
+                    <div className="flex items-center justify-between gap-2">
+                      <Label className="text-xs min-w-[140px]">✏️ Dissertativa:</Label>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={typeDistribution['discursive']}
+                        onChange={(e) => setTypeDistribution({...typeDistribution, 'discursive': parseInt(e.target.value)})}
+                        disabled={generating}
+                        className="flex-1"
+                      />
+                      <span className="text-xs font-mono w-10 text-right">{typeDistribution['discursive']}%</span>
+                    </div>
+
+                    <div className="flex items-center justify-between gap-2">
+                      <Label className="text-xs min-w-[140px]">🔢 Afirmativas I-IV:</Label>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={typeDistribution['multiple-affirmative']}
+                        onChange={(e) => setTypeDistribution({...typeDistribution, 'multiple-affirmative': parseInt(e.target.value)})}
+                        disabled={generating}
+                        className="flex-1"
+                      />
+                      <span className="text-xs font-mono w-10 text-right">{typeDistribution['multiple-affirmative']}%</span>
+                    </div>
+
+                    <div className="flex items-center justify-between gap-2">
+                      <Label className="text-xs min-w-[140px]">⚖️ Comparação:</Label>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={typeDistribution['comparison']}
+                        onChange={(e) => setTypeDistribution({...typeDistribution, 'comparison': parseInt(e.target.value)})}
+                        disabled={generating}
+                        className="flex-1"
+                      />
+                      <span className="text-xs font-mono w-10 text-right">{typeDistribution['comparison']}%</span>
+                    </div>
+
+                    <div className="flex items-center justify-between gap-2">
+                      <Label className="text-xs min-w-[140px]">🔗 Asserção/Razão:</Label>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={typeDistribution['assertion-reason']}
+                        onChange={(e) => setTypeDistribution({...typeDistribution, 'assertion-reason': parseInt(e.target.value)})}
+                        disabled={generating}
+                        className="flex-1"
+                      />
+                      <span className="text-xs font-mono w-10 text-right">{typeDistribution['assertion-reason']}%</span>
+                    </div>
+
+                    <div className="pt-1 border-t border-purple-300 dark:border-purple-700">
+                      <p className="text-xs text-center font-semibold text-purple-600 dark:text-purple-400">
+                        Total: {Object.values(typeDistribution).reduce((a, b) => a + b, 0)}%
+                      </p>
+                      <p className="text-xs text-center text-muted-foreground">
+                        (não precisa somar 100%, será normalizado)
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
           <p className="text-xs text-muted-foreground">
-            {mixedStyles
+            {mixedTypes
+              ? '🎲 Gerando tipos mistos conforme distribuição configurada'
+              : mixedStyles
               ? '🎭 Questões alternadas: contextualizadas e rápidas'
               : style === 'contextualizada'
               ? '📚 Enunciado amplo, contextualizado e com "historinha"'
@@ -312,12 +482,12 @@ export function AIQuestionGenerator({
               </Button>
               <Button
                 type="button"
-                variant={alternativeType === 'true-false' ? 'default' : 'outline'}
-                onClick={() => setAlternativeType('true-false')}
+                variant={alternativeType === 'multiple-affirmative' ? 'default' : 'outline'}
+                onClick={() => setAlternativeType('multiple-affirmative')}
                 disabled={generating}
                 className="w-full text-sm"
               >
-                ✓✗ Verdadeiro/Falso
+                🔢 Afirmativas I-IV
               </Button>
               <Button
                 type="button"
@@ -340,8 +510,8 @@ export function AIQuestionGenerator({
             </div>
             <p className="text-xs text-muted-foreground">
               {alternativeType === 'standard' && '📝 Alternativas personalizadas com textos livres'}
-              {alternativeType === 'true-false' && '✓✗ Apenas 2 opções: Verdadeiro ou Falso'}
-              {alternativeType === 'comparison' && '⚖️ Compare duas afirmações (4 alternativas fixas)'}
+              {alternativeType === 'multiple-affirmative' && '🔢 Afirmações numeradas I-IV, indique quais estão corretas'}
+              {alternativeType === 'comparison' && '⚖️ Compare duas situações/conceitos (maior, menor, igual, etc)'}
               {alternativeType === 'assertion-reason' && '🔗 Relação entre asserção e razão (5 alternativas fixas)'}
             </p>
           </div>

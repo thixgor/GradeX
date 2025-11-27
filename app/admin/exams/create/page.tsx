@@ -59,20 +59,22 @@ export default function CreateExamPage() {
     let numAlternatives = examData.numberOfAlternatives
 
     // Criar alternativas baseadas no tipo
-    if (alternativeType === 'true-false') {
-      // Verdadeiro/Falso - apenas 2 alternativas
+    if (alternativeType === 'multiple-affirmative') {
+      // Afirmativas I-IV - 4 alternativas indicando quais estão corretas
       alternatives = [
-        { id: uuidv4(), letter: 'V', text: 'Verdadeiro', isCorrect: true },
-        { id: uuidv4(), letter: 'F', text: 'Falso', isCorrect: false },
+        { id: uuidv4(), letter: 'A', text: 'Apenas I e II estão corretas', isCorrect: false },
+        { id: uuidv4(), letter: 'B', text: 'Apenas II e III estão corretas', isCorrect: false },
+        { id: uuidv4(), letter: 'C', text: 'Apenas I, III e IV estão corretas', isCorrect: false },
+        { id: uuidv4(), letter: 'D', text: 'Todas as afirmações estão corretas', isCorrect: false },
       ]
-      numAlternatives = 2
+      numAlternatives = 4
     } else if (alternativeType === 'comparison') {
-      // Comparação - 4 alternativas padrão
+      // Comparação - 4 alternativas com relações quantitativas/funcionais
       alternatives = [
-        { id: uuidv4(), letter: 'A', text: 'As duas afirmações são verdadeiras', isCorrect: false },
-        { id: uuidv4(), letter: 'B', text: 'A primeira afirmação é verdadeira e a segunda é falsa', isCorrect: false },
-        { id: uuidv4(), letter: 'C', text: 'A primeira afirmação é falsa e a segunda é verdadeira', isCorrect: false },
-        { id: uuidv4(), letter: 'D', text: 'As duas afirmações são falsas', isCorrect: false },
+        { id: uuidv4(), letter: 'A', text: 'X é maior que Y', isCorrect: false },
+        { id: uuidv4(), letter: 'B', text: 'X é menor que Y', isCorrect: false },
+        { id: uuidv4(), letter: 'C', text: 'X e Y são iguais', isCorrect: false },
+        { id: uuidv4(), letter: 'D', text: 'X apresenta mais componentes que Y', isCorrect: false },
       ]
       numAlternatives = 4
     } else if (alternativeType === 'assertion-reason') {
@@ -112,9 +114,9 @@ export default function CreateExamPage() {
       command: alternativeType === 'assertion-reason'
         ? 'Analise as afirmações abaixo:'
         : alternativeType === 'comparison'
-        ? 'Compare as afirmações abaixo:'
-        : alternativeType === 'true-false'
-        ? 'Julgue a afirmação abaixo:'
+        ? 'Compare as situações/conceitos apresentados:'
+        : alternativeType === 'multiple-affirmative'
+        ? 'Julgue as afirmações abaixo e assinale a alternativa correta:'
         : '',
       alternatives,
       alternativeType,
@@ -878,15 +880,15 @@ export default function CreateExamPage() {
                         <div className="text-sm font-semibold">Padrão</div>
                         <div className="text-xs text-muted-foreground mt-1">A, B, C, D, E</div>
                       </Button>
-                      <Button onClick={() => addMultipleChoiceQuestion('true-false')} variant="outline" className="h-auto py-3 flex-col">
-                        <div className="text-xl mb-1">✓✗</div>
-                        <div className="text-sm font-semibold">V/F</div>
-                        <div className="text-xs text-muted-foreground mt-1">Verdadeiro/Falso</div>
+                      <Button onClick={() => addMultipleChoiceQuestion('multiple-affirmative')} variant="outline" className="h-auto py-3 flex-col">
+                        <div className="text-xl mb-1">🔢</div>
+                        <div className="text-sm font-semibold">Afirmativas I-IV</div>
+                        <div className="text-xs text-muted-foreground mt-1">Julgue quais corretas</div>
                       </Button>
                       <Button onClick={() => addMultipleChoiceQuestion('comparison')} variant="outline" className="h-auto py-3 flex-col">
                         <div className="text-xl mb-1">⚖️</div>
                         <div className="text-sm font-semibold">Comparação</div>
-                        <div className="text-xs text-muted-foreground mt-1">2 afirmações</div>
+                        <div className="text-xs text-muted-foreground mt-1">Compare X e Y</div>
                       </Button>
                       <Button onClick={() => addMultipleChoiceQuestion('assertion-reason')} variant="outline" className="h-auto py-3 flex-col">
                         <div className="text-xl mb-1">🔗</div>
@@ -1064,7 +1066,7 @@ export default function CreateExamPage() {
                         <Label>Alternativas *</Label>
                         {currentQuestion.alternativeType && currentQuestion.alternativeType !== 'standard' && (
                           <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded">
-                            {currentQuestion.alternativeType === 'true-false' && 'V/F'}
+                            {currentQuestion.alternativeType === 'multiple-affirmative' && 'Afirmativas I-IV'}
                             {currentQuestion.alternativeType === 'comparison' && 'Comparação'}
                             {currentQuestion.alternativeType === 'assertion-reason' && 'Asserção/Razão'}
                           </span>
@@ -1380,9 +1382,9 @@ export default function CreateExamPage() {
                     <Plus className="h-4 w-4 mr-2" />
                     MC Padrão
                   </Button>
-                  <Button onClick={() => addMultipleChoiceQuestion('true-false')} variant="outline" size="sm">
+                  <Button onClick={() => addMultipleChoiceQuestion('multiple-affirmative')} variant="outline" size="sm">
                     <Plus className="h-4 w-4 mr-2" />
-                    V/F
+                    Afirmativas I-IV
                   </Button>
                   <Button onClick={() => addMultipleChoiceQuestion('comparison')} variant="outline" size="sm">
                     <Plus className="h-4 w-4 mr-2" />

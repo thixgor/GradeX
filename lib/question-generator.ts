@@ -72,8 +72,8 @@ function buildMultipleChoicePrompt(params: QuestionGenerationParams): string {
     params.difficulty < 0.8 ? 'DIFÍCIL' : 'MUITO DIFÍCIL'
 
   const altType = params.alternativeType || 'standard'
-  const letters = altType === 'true-false' ? ['V', 'F'] : ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
-  const numAlts = altType === 'true-false' ? 2 : altType === 'comparison' ? 4 : altType === 'assertion-reason' ? 5 : (params.numberOfAlternatives || 5)
+  const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+  const numAlts = altType === 'multiple-affirmative' ? 4 : altType === 'comparison' ? 4 : altType === 'assertion-reason' ? 5 : (params.numberOfAlternatives || 5)
   const alternativeLetters = letters.slice(0, numAlts).join(', ')
 
   const styleDescription = params.style === 'contextualizada'
@@ -82,25 +82,34 @@ function buildMultipleChoicePrompt(params: QuestionGenerationParams): string {
 
   // Instruções específicas para cada tipo de alternativa
   let alternativeTypeInstructions = ''
-  if (altType === 'true-false') {
+  if (altType === 'multiple-affirmative') {
     alternativeTypeInstructions = `
-**TIPO DE QUESTÃO: VERDADEIRO/FALSO**
-- Crie uma AFIRMAÇÃO clara e objetiva no enunciado
-- O comando deve ser: "Julgue a afirmação abaixo:"
-- Apenas 2 alternativas: V (Verdadeiro) e F (Falso)
-- Indique qual é a resposta correta (V ou F)
+**TIPO DE QUESTÃO: AFIRMATIVAS CORRETAS (I-IV)**
+- Crie 4 AFIRMAÇÕES numeradas (I, II, III, IV) no enunciado
+- Cada afirmação deve ser independente e pode ser verdadeira ou falsa
+- O comando deve ser: "Julgue as afirmações abaixo e assinale a alternativa correta:" ou similar
+- As alternativas devem indicar quais afirmações são verdadeiras
+- Exemplo de alternativas:
+  A) Apenas I e II estão corretas
+  B) Apenas II e III estão corretas
+  C) Apenas I, III e IV estão corretas
+  D) Todas as afirmações estão corretas
+- A habilidade exigida é reconhecer conceitos isolados e avaliar cada afirmação independentemente
+- Distribua a resposta correta entre as alternativas (não deixe sempre "todas corretas" ou "apenas uma correta")
 `
   } else if (altType === 'comparison') {
     alternativeTypeInstructions = `
-**TIPO DE QUESTÃO: COMPARAÇÃO DE AFIRMAÇÕES**
-- Crie DUAS afirmações distintas no enunciado (Afirmação I e Afirmação II)
-- O comando deve ser: "Compare as afirmações abaixo:"
-- As alternativas são FIXAS:
-  A) As duas afirmações são verdadeiras
-  B) A primeira afirmação é verdadeira e a segunda é falsa
-  C) A primeira afirmação é falsa e a segunda é verdadeira
-  D) As duas afirmações são falsas
-- Indique qual alternativa está correta (A, B, C ou D)
+**TIPO DE QUESTÃO: COMPARAÇÃO**
+- Coloque DUAS situações, conceitos, mecanismos ou estruturas lado a lado no enunciado
+- O comando deve pedir para comparar essas duas coisas
+- As alternativas devem indicar relações quantitativas ou funcionais
+- Exemplo de alternativas:
+  A) A estrutura X é maior que a estrutura Y
+  B) A estrutura X é menor que a estrutura Y
+  C) As estruturas X e Y têm o mesmo tamanho
+  D) A estrutura X apresenta mais componentes que Y
+- A habilidade exigida é domínio de diferenças, semelhanças e relações quantitativas ou funcionais
+- Seja específico nas comparações (maior/menor, mais/menos, igual, diferente, etc)
 `
   } else if (altType === 'assertion-reason') {
     alternativeTypeInstructions = `
@@ -108,14 +117,14 @@ function buildMultipleChoicePrompt(params: QuestionGenerationParams): string {
 - Crie DUAS afirmações no enunciado:
   * ASSERÇÃO: Uma afirmação principal
   * RAZÃO: Uma justificativa ou explicação
-- O comando deve ser: "Analise as afirmações abaixo:"
+- O comando deve ser: "Analise as afirmações abaixo:" ou similar
 - As alternativas são FIXAS:
   A) As duas afirmações são verdadeiras, e a segunda justifica a primeira
   B) As duas afirmações são verdadeiras, mas a segunda não justifica a primeira
   C) A primeira afirmação é verdadeira, e a segunda é falsa
   D) A primeira afirmação é falsa, e a segunda é verdadeira
   E) As duas afirmações são falsas
-- Indique qual alternativa está correta (A, B, C, D ou E)
+- A habilidade exigida é analisar se uma afirmação explica ou justifica a outra
 `
   } else {
     alternativeTypeInstructions = `
@@ -177,34 +186,36 @@ ${params.useTRI ? `${altType === 'standard' ? '5' : '4'}. **PARÂMETROS TRI:**
 
 **FORMATO DE RESPOSTA (OBRIGATÓRIO):**
 Retorne APENAS um JSON no seguinte formato:
-${altType === 'true-false' ? `{
-  "enunciado": "Texto completo do enunciado aqui (afirmação a ser julgada)",
+${altType === 'multiple-affirmative' ? `{
+  "enunciado": "Texto completo do enunciado aqui, incluindo as 4 afirmações numeradas:\\n\\nI. Primeira afirmação...\\nII. Segunda afirmação...\\nIII. Terceira afirmação...\\nIV. Quarta afirmação...",
   "fonteEnunciado": "SOBRENOME, Nome. Título. Editora, Ano.",
-  "comando": "Julgue a afirmação abaixo:",
+  "comando": "Julgue as afirmações abaixo e assinale a alternativa correta:",
   "alternativas": [
-    { "letra": "V", "texto": "Verdadeiro", "correta": true },
-    { "letra": "F", "texto": "Falso", "correta": false }
+    { "letra": "A", "texto": "Apenas I e II estão corretas", "correta": false },
+    { "letra": "B", "texto": "Apenas II e III estão corretas", "correta": true },
+    { "letra": "C", "texto": "Apenas I, III e IV estão corretas", "correta": false },
+    { "letra": "D", "texto": "Todas as afirmações estão corretas", "correta": false }
   ],
-  "alternativaCorreta": "V"${params.useTRI ? `,
+  "alternativaCorreta": "B"${params.useTRI ? `,
   "triDiscriminacao": 1.5,
   "triDificuldade": 0.8,
   "triAcertoAcaso": 0.2` : ''}
 }` : altType === 'comparison' ? `{
-  "enunciado": "Texto completo do enunciado aqui (incluindo Afirmação I e Afirmação II)",
+  "enunciado": "Texto completo do enunciado aqui, apresentando duas situações/conceitos/estruturas para comparar (X e Y)",
   "fonteEnunciado": "SOBRENOME, Nome. Título. Editora, Ano.",
-  "comando": "Compare as afirmações abaixo:",
+  "comando": "Com base nas informações apresentadas, compare X e Y:",
   "alternativas": [
-    { "letra": "A", "texto": "As duas afirmações são verdadeiras", "correta": false },
-    { "letra": "B", "texto": "A primeira afirmação é verdadeira e a segunda é falsa", "correta": true },
-    { "letra": "C", "texto": "A primeira afirmação é falsa e a segunda é verdadeira", "correta": false },
-    { "letra": "D", "texto": "As duas afirmações são falsas", "correta": false }
+    { "letra": "A", "texto": "X é maior que Y", "correta": false },
+    { "letra": "B", "texto": "X é menor que Y", "correta": true },
+    { "letra": "C", "texto": "X e Y têm o mesmo tamanho", "correta": false },
+    { "letra": "D", "texto": "X apresenta mais componentes que Y", "correta": false }
   ],
   "alternativaCorreta": "B"${params.useTRI ? `,
   "triDiscriminacao": 1.5,
   "triDificuldade": 0.8,
   "triAcertoAcaso": 0.2` : ''}
 }` : altType === 'assertion-reason' ? `{
-  "enunciado": "Texto completo do enunciado aqui (incluindo ASSERÇÃO e RAZÃO)",
+  "enunciado": "Texto completo do enunciado aqui, incluindo:\\n\\nASSERÇÃO: Primeira afirmação principal...\\n\\nRAZÃO: Segunda afirmação que pode ou não justificar a primeira...",
   "fonteEnunciado": "SOBRENOME, Nome. Título. Editora, Ano.",
   "comando": "Analise as afirmações abaixo:",
   "alternativas": [
@@ -238,7 +249,7 @@ ${altType === 'true-false' ? `{
 IMPORTANTE:
 - Retorne APENAS o JSON, sem texto adicional
 - Garanta que EXATAMENTE uma alternativa seja marcada como correta
-- ${altType === 'true-false' ? 'Use apenas as letras V (Verdadeiro) e F (Falso)' : altType === 'comparison' || altType === 'assertion-reason' ? 'Use EXATAMENTE os textos das alternativas especificados acima' : 'As alternativas devem estar em ordem alfabética (A, B, C, D, E...)'}
+- ${altType === 'multiple-affirmative' ? 'As alternativas devem indicar quais afirmações (I, II, III, IV) estão corretas' : altType === 'comparison' ? 'As alternativas devem indicar relações de comparação específicas e quantificáveis' : altType === 'assertion-reason' ? 'Use EXATAMENTE os textos das alternativas especificados acima' : 'As alternativas devem estar em ordem alfabética (A, B, C, D, E...)'}
 - O campo "alternativaCorreta" deve corresponder à letra marcada como correta`
 }
 
