@@ -24,6 +24,18 @@ export const BanReasonLabels: Record<BanReason, string> = {
   other: 'Outro motivo'
 }
 
+export type HighlightColor = 'yellow' | 'green' | 'cyan' | 'magenta' | 'red' | 'custom'
+
+export interface TextHighlight {
+  id: string
+  text: string // Texto selecionado
+  startOffset: number // Posição inicial no texto
+  endOffset: number // Posição final no texto
+  color: HighlightColor
+  customColor?: string // Cor personalizada (se color === 'custom')
+  target: 'statement' | 'command' // Onde foi aplicado o highlight
+}
+
 export interface Alternative {
   id: string
   letter: string
@@ -130,6 +142,8 @@ export interface UserAnswer {
   discursiveText?: string
   // Para redações (essay)
   essayText?: string
+  // Highlights de texto no enunciado/comando
+  highlights?: TextHighlight[]
 }
 
 export interface ExamSubmission {

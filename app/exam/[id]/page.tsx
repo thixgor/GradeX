@@ -15,7 +15,8 @@ import { BanChecker } from '@/components/ban-checker'
 import { SignaturePad } from '@/components/signature-pad'
 import { ExamTimer } from '@/components/exam-timer'
 import { Barcode } from '@/components/barcode'
-import { Exam, UserAnswer } from '@/lib/types'
+import { Exam, UserAnswer, TextHighlight } from '@/lib/types'
+import { HighlightableText } from '@/components/highlightable-text'
 import { formatDate } from '@/lib/utils'
 import { downloadUserReportPDF } from '@/lib/user-report-generator'
 import { ProctoringConsent } from '@/components/proctoring-consent'
@@ -485,6 +486,16 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       prev.map(a =>
         a.questionId === questionId
           ? { ...a, essayText: text }
+          : a
+      )
+    )
+  }
+
+  function handleHighlights(questionId: string, highlights: TextHighlight[]) {
+    setAnswers(prev =>
+      prev.map(a =>
+        a.questionId === questionId
+          ? { ...a, highlights }
           : a
       )
     )
@@ -1094,7 +1105,13 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                     {/* Enunciado */}
                     <div className="space-y-2">
                       <div className="prose dark:prose-invert max-w-none">
-                        <p className="whitespace-pre-wrap">{question.statement}</p>
+                        <HighlightableText
+                          text={question.statement}
+                          highlights={answer?.highlights || []}
+                          target="statement"
+                          onHighlightsChange={(highlights) => handleHighlights(question.id, highlights)}
+                          className="whitespace-pre-wrap"
+                        />
                       </div>
                       {question.statementSource && (
                         <p className="text-xs text-muted-foreground italic">
@@ -1121,7 +1138,13 @@ export default function ExamPage({ params }: { params: { id: string } }) {
 
                     {/* Comando */}
                     <div className="bg-muted p-4 rounded-lg">
-                      <p className="font-medium">{question.command}</p>
+                      <HighlightableText
+                        text={question.command}
+                        highlights={answer?.highlights || []}
+                        target="command"
+                        onHighlightsChange={(highlights) => handleHighlights(question.id, highlights)}
+                        className="font-medium"
+                      />
                     </div>
 
                     {/* Alternativas (Múltipla Escolha) */}
@@ -1354,7 +1377,13 @@ export default function ExamPage({ params }: { params: { id: string } }) {
             {/* Enunciado */}
             <div className="space-y-2">
               <div className="prose dark:prose-invert max-w-none">
-                <p className="whitespace-pre-wrap">{currentQuestion.statement}</p>
+                <HighlightableText
+                  text={currentQuestion.statement}
+                  highlights={currentAnswer?.highlights || []}
+                  target="statement"
+                  onHighlightsChange={(highlights) => handleHighlights(currentQuestion.id, highlights)}
+                  className="whitespace-pre-wrap"
+                />
               </div>
               {currentQuestion.statementSource && (
                 <p className="text-xs text-muted-foreground italic">
@@ -1381,7 +1410,13 @@ export default function ExamPage({ params }: { params: { id: string } }) {
 
             {/* Comando */}
             <div className="bg-muted p-4 rounded-lg">
-              <p className="font-medium">{currentQuestion.command}</p>
+              <HighlightableText
+                text={currentQuestion.command}
+                highlights={currentAnswer?.highlights || []}
+                target="command"
+                onHighlightsChange={(highlights) => handleHighlights(currentQuestion.id, highlights)}
+                className="font-medium"
+              />
             </div>
 
             {/* Alternativas (Múltipla Escolha) */}
