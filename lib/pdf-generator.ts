@@ -449,8 +449,8 @@ export function generateExamPDF(exam: Exam, userId?: string): Blob {
       y += 5
     }
 
-    // Comando (para discursivas)
-    if (question.command && question.type === 'discursive') {
+    // Comando
+    if (question.command) {
       checkPage(8)
       doc.setFontSize(10)
       doc.setFont('helvetica', 'bold')
@@ -613,7 +613,7 @@ export function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[], use
       y += 5
     }
 
-    if (question.command && question.type === 'discursive') {
+    if (question.command) {
       checkPage(8)
       doc.setFontSize(10)
       doc.setFont('helvetica', 'bold')

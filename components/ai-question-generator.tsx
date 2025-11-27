@@ -84,11 +84,17 @@ export function AIQuestionGenerator({
     const activeTypes = Object.entries(typeDistribution).filter(([_, pct]) => pct > 0)
     const total = activeTypes.reduce((sum, [_, pct]) => sum + pct, 0)
 
-    // Normalizar porcentagens
-    const normalized = activeTypes.map(([type, pct]) => [type, (pct / total) * 100])
+    if (total === 0) {
+      return { type: 'multiple-choice', altType: 'standard' }
+    }
 
-    // Calcular posição normalizada do índice (0-100)
-    const position = ((index % 100) / 100) * 100
+    // Normalizar porcentagens (0-1)
+    const normalized = activeTypes.map(([type, pct]) => [type, pct / total])
+
+    // Usar hash do índice para distribuição mais uniforme
+    // Pegar posição de 0 a 1 baseada no índice
+    const hash = (index * 2654435761) % 2147483648 // Multiplicação por número primo grande
+    const position = hash / 2147483648 // Normalizar para 0-1
 
     // Encontrar o tipo correspondente
     let accumulated = 0

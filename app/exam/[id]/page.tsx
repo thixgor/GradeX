@@ -1134,7 +1134,8 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                           return (
                             <div
                               key={alt.id}
-                              className={`border rounded-lg p-4 transition-all ${
+                              onClick={() => handleSelectAlternative(question.id, alt.id)}
+                              className={`border rounded-lg p-4 transition-all cursor-pointer ${
                                 isSelected
                                   ? 'border-primary bg-primary/10'
                                   : isCrossed
@@ -1148,7 +1149,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                                   name={`question-${question.id}`}
                                   checked={isSelected}
                                   onChange={() => handleSelectAlternative(question.id, alt.id)}
-                                  className="mt-1 h-4 w-4"
+                                  className="mt-1 h-4 w-4 pointer-events-none"
                                 />
                                 <div className="flex-1">
                                   <div className="flex items-center justify-between">
@@ -1158,7 +1159,10 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                                     <Button
                                       variant="ghost"
                                       size="sm"
-                                      onClick={() => handleToggleCross(question.id, alt.id)}
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleToggleCross(question.id, alt.id)
+                                      }}
                                     >
                                       {isCrossed ? (
                                         <Check className="h-4 w-4 text-destructive" />
@@ -1390,7 +1394,8 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                   return (
                     <div
                       key={alt.id}
-                      className={`border rounded-lg p-4 transition-all ${
+                      onClick={() => handleSelectAlternative(currentQuestion.id, alt.id)}
+                      className={`border rounded-lg p-4 transition-all cursor-pointer ${
                         isSelected
                           ? 'border-primary bg-primary/10'
                           : isCrossed
@@ -1404,7 +1409,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                           name={`question-${currentQuestion.id}`}
                           checked={isSelected}
                           onChange={() => handleSelectAlternative(currentQuestion.id, alt.id)}
-                          className="mt-1 h-4 w-4"
+                          className="mt-1 h-4 w-4 pointer-events-none"
                         />
                         <div className="flex-1">
                           <div className="flex items-center justify-between">
@@ -1414,7 +1419,10 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => handleToggleCross(currentQuestion.id, alt.id)}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleToggleCross(currentQuestion.id, alt.id)
+                              }}
                             >
                               {isCrossed ? (
                                 <Check className="h-4 w-4 text-destructive" />
