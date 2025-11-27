@@ -1067,8 +1067,8 @@ export default function ExamPage({ params }: { params: { id: string } }) {
         </>
       )}
 
-      {/* Modal - Prova já realizada */}
-      {alreadySubmitted && (
+      {/* Modal - Prova já realizada (não exibir para provas práticas) */}
+      {alreadySubmitted && !exam?.isPracticeExam && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">
           <Card className="max-w-md w-full shadow-2xl">
             <CardHeader className="text-center space-y-4">
