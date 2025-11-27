@@ -359,6 +359,12 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   useEffect(() => {
     if (!exam) return
 
+    // Se for prova prática, sempre pode iniciar
+    if (exam.isPracticeExam) {
+      setCanStart(true)
+      return
+    }
+
     const checkExamStatus = () => {
       const now = new Date()
       const startTime = new Date(exam.startTime)
@@ -393,6 +399,15 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       const currentUserId = authData.user.id
       setUserId(currentUserId)
 
+      // Carregar exam primeiro para verificar se é prova prática
+      const resExam = await fetch(`/api/exams/${id}`)
+      const examData = await resExam.json()
+
+      // Se for prova prática, não bloquear múltiplas tentativas
+      if (examData.exam?.isPracticeExam) {
+        return
+      }
+
       const res = await fetch(`/api/exams/${id}/check-submission`)
       if (res.ok) {
         const data = await res.json()
@@ -413,10 +428,30 @@ export default function ExamPage({ params }: { params: { id: string } }) {
 
       if (!res.ok) throw new Error(data.error)
 
-      setExam(data.exam)
+      let examData = data.exam
+
+      // Se shuffleQuestions estiver ativado, embaralhar a ordem das questões
+      if (examData.shuffleQuestions) {
+        const shuffled = [...examData.questions]
+
+        // Fisher-Yates shuffle
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+        }
+
+        // Renumerar questões após embaralhar
+        shuffled.forEach((q: any, idx: number) => {
+          q.number = idx + 1
+        })
+
+        examData = { ...examData, questions: shuffled }
+      }
+
+      setExam(examData)
 
       // Inicializa respostas
-      const initialAnswers: UserAnswer[] = data.exam.questions.map((q: any) => ({
+      const initialAnswers: UserAnswer[] = examData.questions.map((q: any) => ({
         questionId: q.id,
         selectedAlternative: q.type === 'multiple-choice' ? '' : undefined,
         crossedAlternatives: q.type === 'multiple-choice' ? [] : undefined,
@@ -438,11 +473,20 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       if (res.ok) {
         const data = await res.json()
         setLoggedUserName(data.user.name)
+        // Se allowCustomName for false, usar nome do usuário automaticamente
+        // será feito no useEffect abaixo quando exam estiver carregado
       }
     } catch (error) {
       // Silently fail - user can still enter name manually
     }
   }
+
+  // Setar nome automaticamente se allowCustomName for false
+  useEffect(() => {
+    if (exam && loggedUserName && !exam.allowCustomName && !userName) {
+      setUserName(loggedUserName)
+    }
+  }, [exam, loggedUserName, userName])
 
   function handleSelectAlternative(questionId: string, alternativeId: string) {
     setAnswers(prev =>
@@ -774,7 +818,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="userName">Nome Completo *</Label>
-                  {loggedUserName && !userName && (
+                  {exam.allowCustomName && loggedUserName && !userName && (
                     <Button
                       type="button"
                       variant="ghost"
@@ -791,8 +835,15 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                   id="userName"
                   value={userName}
                   onChange={(e) => setUserName(e.target.value)}
-                  placeholder="Digite seu nome completo"
+                  placeholder={exam.allowCustomName ? "Digite seu nome completo" : "Usando nome do usuário"}
+                  disabled={!exam.allowCustomName}
+                  className={!exam.allowCustomName ? "bg-muted" : ""}
                 />
+                {!exam.allowCustomName && (
+                  <p className="text-xs text-muted-foreground">
+                    O nome será preenchido automaticamente com seu nome de usuário
+                  </p>
+                )}
               </div>
 
               {exam.themePhrase && (
@@ -891,11 +942,13 @@ export default function ExamPage({ params }: { params: { id: string } }) {
               </div>
             </div>
 
-            {/* Campo de Assinatura */}
-            <SignaturePad
-              onSignatureChange={setSignature}
-              label="Assinatura Digital *"
-            />
+            {/* Campo de Assinatura - Opcional se requireSignature for false */}
+            {exam.requireSignature !== false && (
+              <SignaturePad
+                onSignatureChange={setSignature}
+                label={`Assinatura Digital ${exam.requireSignature ? '*' : '(opcional)'}`}
+              />
+            )}
 
             {/* PDF só aparece quando a prova começar */}
             {exam.pdfUrl && canStart && (
@@ -914,9 +967,9 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                 className="flex-1"
                 size="lg"
                 onClick={handleStartExam}
-                disabled={!canStart || !signature}
+                disabled={!canStart || (exam.requireSignature && !signature)}
               >
-                {!signature ? 'Assine antes de iniciar' : canStart ? 'Iniciar Prova Agora' : 'Aguardando Início...'}
+                {(exam.requireSignature && !signature) ? 'Assine antes de iniciar' : canStart ? 'Iniciar Prova Agora' : 'Aguardando Início...'}
               </Button>
               <Button
                 variant="outline"

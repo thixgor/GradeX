@@ -117,6 +117,11 @@ export interface Exam {
     screen: boolean
     screenMode?: ScreenCaptureMode // 'window' ou 'screen'
   }
+  // Configurações adicionais
+  isPracticeExam?: boolean // Prova prática/treino: múltiplas tentativas, sem datas obrigatórias
+  allowCustomName?: boolean // Permitir que o aluno digite um nome diferente do nome de usuário
+  requireSignature?: boolean // Exigir assinatura desenhada antes de iniciar
+  shuffleQuestions?: boolean // Embaralhar a ordem das questões (não as alternativas)
   createdAt: Date
   updatedAt: Date
 }

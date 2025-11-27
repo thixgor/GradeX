@@ -14,7 +14,7 @@ import { AIQuestionGenerator } from '@/components/ai-question-generator'
 import { Question, Alternative, ScoringMethod, QuestionType, KeyPoint, EssayStyle, CorrectionMethod, AlternativeType } from '@/lib/types'
 import { generateRandomTRIParameters } from '@/lib/tri-calculator'
 import { v4 as uuidv4 } from 'uuid'
-import { ArrowLeft, Plus, Trash2, Shuffle, Save } from 'lucide-react'
+import { ArrowLeft, Plus, Trash2, Shuffle, Save, ArrowUp, ArrowDown } from 'lucide-react'
 
 export default function CreateExamPage() {
   const router = useRouter()
@@ -48,6 +48,11 @@ export default function CreateExamPage() {
     proctoringAudio: false,
     proctoringScreen: false,
     proctoringScreenMode: 'window' as 'window' | 'screen',
+    // Configurações adicionais
+    isPracticeExam: false,
+    allowCustomName: false,
+    requireSignature: false,
+    shuffleQuestions: false,
   })
 
   const [questions, setQuestions] = useState<Question[]>([])
@@ -280,13 +285,37 @@ export default function CreateExamPage() {
     setQuestions(newQuestions)
   }
 
+  function swapQuestions(index1: number, index2: number) {
+    if (index1 < 0 || index1 >= questions.length || index2 < 0 || index2 >= questions.length) return
+
+    const newQuestions = [...questions]
+    // Trocar as questões
+    ;[newQuestions[index1], newQuestions[index2]] = [newQuestions[index2], newQuestions[index1]]
+
+    // Renumerar todas as questões
+    newQuestions.forEach((q, i) => {
+      q.number = i + 1
+    })
+
+    setQuestions(newQuestions)
+
+    // Atualizar o índice atual para seguir a questão
+    setCurrentQuestionIndex(index2)
+  }
+
   async function handleSubmit() {
     setLoading(true)
 
     try {
       // Validação básica
-      if (!examData.title || !examData.startTime) {
-        alert('Preencha todos os campos obrigatórios (título e data/hora de início)')
+      if (!examData.title) {
+        alert('Preencha o título da prova')
+        return
+      }
+
+      // Se não for prova prática, exigir data de início
+      if (!examData.isPracticeExam && !examData.startTime) {
+        alert('Preencha a data/hora de início da prova (ou marque como prova prática)')
         return
       }
 
@@ -347,13 +376,17 @@ export default function CreateExamPage() {
         }
       }
 
-      // Calcular endTime baseado em startTime + durationMinutes
-      const startDate = new Date(examData.startTime)
-      const endDate = new Date(startDate.getTime() + examData.durationMinutes * 60000)
+      // Calcular endTime baseado em startTime + durationMinutes (se não for prova prática)
+      let endTimeISO = null
+      if (!examData.isPracticeExam && examData.startTime) {
+        const startDate = new Date(examData.startTime)
+        const endDate = new Date(startDate.getTime() + examData.durationMinutes * 60000)
+        endTimeISO = endDate.toISOString()
+      }
 
       const payload = {
         ...examData,
-        endTime: endDate.toISOString(),
+        endTime: endTimeISO,
         duration: examData.durationMinutes,
         numberOfQuestions: questions.length,
         questions,
@@ -363,6 +396,11 @@ export default function CreateExamPage() {
         proctoringAudio: examData.proctoringAudio,
         proctoringScreen: examData.proctoringScreen,
         proctoringScreenMode: examData.proctoringScreenMode,
+        // Novos campos
+        isPracticeExam: examData.isPracticeExam,
+        allowCustomName: examData.allowCustomName,
+        requireSignature: examData.requireSignature,
+        shuffleQuestions: examData.shuffleQuestions,
       }
 
       const res = await fetch('/api/exams', {
@@ -617,40 +655,69 @@ export default function CreateExamPage() {
                 placeholder="Cole uma URL ou faça upload do PDF"
               />
 
+              {examData.isPracticeExam && (
+                <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                  <p className="text-sm text-blue-900 dark:text-blue-100">
+                    ℹ️ <strong>Modo Prova Prática ativado:</strong> As datas de início/fim e portões são opcionais. A prova ficará disponível permanentemente e os alunos poderão fazer múltiplas tentativas.
+                  </p>
+                </div>
+              )}
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="gatesOpen">Abertura dos Portões (opcional)</Label>
+                  <Label htmlFor="gatesOpen">
+                    Abertura dos Portões {!examData.isPracticeExam && '(opcional)'}
+                  </Label>
                   <Input
                     id="gatesOpen"
                     type="datetime-local"
                     value={examData.gatesOpen}
                     onChange={(e) => setExamData({ ...examData, gatesOpen: e.target.value })}
+                    disabled={examData.isPracticeExam}
                   />
+                  {examData.isPracticeExam && (
+                    <p className="text-xs text-muted-foreground">
+                      Desabilitado em provas práticas
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="gatesClose">Fechamento dos Portões (opcional)</Label>
+                  <Label htmlFor="gatesClose">
+                    Fechamento dos Portões {!examData.isPracticeExam && '(opcional)'}
+                  </Label>
                   <Input
                     id="gatesClose"
                     type="datetime-local"
                     value={examData.gatesClose}
                     onChange={(e) => setExamData({ ...examData, gatesClose: e.target.value })}
+                    disabled={examData.isPracticeExam}
                   />
+                  {examData.isPracticeExam && (
+                    <p className="text-xs text-muted-foreground">
+                      Desabilitado em provas práticas
+                    </p>
+                  )}
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="startTime">Data/Hora de Início *</Label>
+                  <Label htmlFor="startTime">
+                    Data/Hora de Início {examData.isPracticeExam ? '(opcional)' : '*'}
+                  </Label>
                   <Input
                     id="startTime"
                     type="datetime-local"
                     value={examData.startTime}
                     onChange={(e) => setExamData({ ...examData, startTime: e.target.value })}
-                    required
+                    required={!examData.isPracticeExam}
+                    disabled={examData.isPracticeExam}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Quando a prova estará disponível para os alunos
+                    {examData.isPracticeExam
+                      ? 'Desabilitado em provas práticas - disponível permanentemente'
+                      : 'Quando a prova estará disponível para os alunos'}
                   </p>
                 </div>
 
@@ -665,7 +732,7 @@ export default function CreateExamPage() {
                     required
                   />
                   <p className="text-xs text-muted-foreground">
-                    {examData.startTime && examData.durationMinutes ? (
+                    {examData.startTime && examData.durationMinutes && !examData.isPracticeExam ? (
                       <>Término: {new Date(new Date(examData.startTime).getTime() + examData.durationMinutes * 60000).toLocaleString('pt-BR')}</>
                     ) : (
                       'Tempo que os alunos terão para completar a prova'
@@ -703,6 +770,104 @@ export default function CreateExamPage() {
                 <Label htmlFor="isHidden" className="cursor-pointer">
                   Manter prova oculta (apenas visível para você)
                 </Label>
+              </div>
+
+              {/* Configurações Adicionais */}
+              <div className="border-t pt-4 space-y-4">
+                <div>
+                  <h3 className="font-semibold mb-1 flex items-center gap-2">
+                    ⚙️ Configurações Adicionais
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Personalize o comportamento e requisitos da prova
+                  </p>
+
+                  <div className="space-y-3 p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                    {/* Prova Prática/Treino */}
+                    <div className="flex items-start space-x-3">
+                      <input
+                        type="checkbox"
+                        id="isPracticeExam"
+                        checked={examData.isPracticeExam}
+                        onChange={(e) => setExamData({
+                          ...examData,
+                          isPracticeExam: e.target.checked,
+                          ...(e.target.checked && {
+                            startTime: '',
+                            gatesOpen: '',
+                            gatesClose: '',
+                          })
+                        })}
+                        className="mt-1 h-4 w-4 rounded border-input"
+                      />
+                      <div className="flex-1">
+                        <Label htmlFor="isPracticeExam" className="cursor-pointer font-semibold">
+                          🎯 Prova Prática/Treino
+                        </Label>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Permite múltiplas tentativas e não exige datas de início/fim. Ideal para simulados e treinos.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Nome Customizado */}
+                    <div className="flex items-start space-x-3">
+                      <input
+                        type="checkbox"
+                        id="allowCustomName"
+                        checked={examData.allowCustomName}
+                        onChange={(e) => setExamData({ ...examData, allowCustomName: e.target.checked })}
+                        className="mt-1 h-4 w-4 rounded border-input"
+                      />
+                      <div className="flex-1">
+                        <Label htmlFor="allowCustomName" className="cursor-pointer font-semibold">
+                          ✏️ Permitir Nome Customizado
+                        </Label>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          O aluno poderá digitar um nome diferente do cadastrado no início da prova
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Assinatura Obrigatória */}
+                    <div className="flex items-start space-x-3">
+                      <input
+                        type="checkbox"
+                        id="requireSignature"
+                        checked={examData.requireSignature}
+                        onChange={(e) => setExamData({ ...examData, requireSignature: e.target.checked })}
+                        className="mt-1 h-4 w-4 rounded border-input"
+                      />
+                      <div className="flex-1">
+                        <Label htmlFor="requireSignature" className="cursor-pointer font-semibold">
+                          ✍️ Exigir Assinatura Digital
+                        </Label>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          O aluno deverá assinar (desenhar) antes de iniciar. A assinatura aparecerá no PDF e relatórios.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Embaralhar Questões */}
+                    <div className="flex items-start space-x-3">
+                      <input
+                        type="checkbox"
+                        id="shuffleQuestions"
+                        checked={examData.shuffleQuestions}
+                        onChange={(e) => setExamData({ ...examData, shuffleQuestions: e.target.checked })}
+                        className="mt-1 h-4 w-4 rounded border-input"
+                      />
+                      <div className="flex-1">
+                        <Label htmlFor="shuffleQuestions" className="cursor-pointer font-semibold">
+                          🔀 Embaralhar Ordem das Questões
+                        </Label>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          A ordem das questões será randomizada para cada aluno (gabarito e alternativas não mudam)
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Sistema de Monitoramento (Proctoring) */}
@@ -995,6 +1160,21 @@ export default function CreateExamPage() {
                   useTRI={examData.scoringMethod === 'tri'}
                 />
               </div>
+
+              {/* Botão de Salvar na Página Inicial */}
+              {questions.length > 0 && (
+                <div className="border-t pt-6 flex justify-end">
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={loading}
+                    size="lg"
+                    className="min-w-[200px]"
+                  >
+                    <Save className="h-4 w-4 mr-2" />
+                    {loading ? 'Salvando...' : 'Salvar Prova'}
+                  </Button>
+                </div>
+              )}
             </CardContent>
           </Card>
         )}
@@ -1007,8 +1187,32 @@ export default function CreateExamPage() {
                   <CardTitle>
                     Questão {currentQuestion.number} de {questions.length}
                   </CardTitle>
-                  <div className="text-sm text-muted-foreground">
-                    {currentQuestionIndex + 1}/{questions.length}
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => swapQuestions(currentQuestionIndex, currentQuestionIndex - 1)}
+                        disabled={currentQuestionIndex === 0}
+                        title="Mover questão para cima"
+                        className="h-8 w-8 p-0"
+                      >
+                        <ArrowUp className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => swapQuestions(currentQuestionIndex, currentQuestionIndex + 1)}
+                        disabled={currentQuestionIndex === questions.length - 1}
+                        title="Mover questão para baixo"
+                        className="h-8 w-8 p-0"
+                      >
+                        <ArrowDown className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {currentQuestionIndex + 1}/{questions.length}
+                    </div>
                   </div>
                 </div>
               </CardHeader>
