@@ -280,3 +280,39 @@ export interface ProctoringSession {
   screenEnabled: boolean
   screenMode?: ScreenCaptureMode
 }
+
+// Sistema de Anotações
+export type DrawingTool = 'pen' | 'eraser' | 'highlighter' | 'text' | 'select'
+export type EraserType = 'standard' | 'line' // padrão (circular) ou traço (linear)
+
+export interface Point {
+  x: number
+  y: number
+}
+
+export interface DrawingStroke {
+  id: string
+  tool: 'pen' | 'highlighter' // Caneta ou marca-texto
+  points: Point[] // Pontos do traço
+  color: string // Cor em formato hex
+  thickness: number // Grossura/tamanho
+  opacity?: number // Opacidade (para marca-texto)
+}
+
+export interface TextAnnotation {
+  id: string
+  text: string
+  position: Point // Posição do canto superior esquerdo
+  fontSize: number
+  color: string
+  width?: number // Largura da caixa de texto
+  height?: number // Altura da caixa de texto
+}
+
+export interface QuestionAnnotation {
+  questionId: string
+  questionNumber: number
+  strokes: DrawingStroke[] // Traços de caneta e marca-texto
+  texts: TextAnnotation[] // Caixas de texto
+  canvasDataUrl?: string // Snapshot do canvas para backup
+}

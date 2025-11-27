@@ -15,17 +15,18 @@ import { BanChecker } from '@/components/ban-checker'
 import { SignaturePad } from '@/components/signature-pad'
 import { ExamTimer } from '@/components/exam-timer'
 import { Barcode } from '@/components/barcode'
-import { Exam, UserAnswer, TextHighlight } from '@/lib/types'
+import { Exam, UserAnswer, TextHighlight, QuestionAnnotation } from '@/lib/types'
 import { HighlightableText } from '@/components/highlightable-text'
 import { formatDate } from '@/lib/utils'
 import { downloadUserReportPDF } from '@/lib/user-report-generator'
 import { ProctoringConsent } from '@/components/proctoring-consent'
 import { ProctoringMonitor } from '@/components/proctoring-monitor'
+import { QuestionNotesCanvas } from '@/components/question-notes-canvas'
 import { useProctoring } from '@/hooks/use-proctoring'
 import { useWebSocket } from '@/hooks/use-websocket'
 import { useVisibilityDetection } from '@/hooks/use-visibility-detection'
 import { useWebRTC } from '@/hooks/use-webrtc'
-import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCircle, List } from 'lucide-react'
+import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCircle, List, StickyNote } from 'lucide-react'
 
 export default function ExamPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -55,6 +56,10 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const [showUnansweredModal, setShowUnansweredModal] = useState(false)
   const [examStartTime, setExamStartTime] = useState<Date | null>(null)
   const [examDuration, setExamDuration] = useState<string>('')
+
+  // Estados de Anotações
+  const [annotations, setAnnotations] = useState<QuestionAnnotation[]>([])
+  const [editingNotesFor, setEditingNotesFor] = useState<string | null>(null)
 
   // Estados de Proctoring
   const [showProctoringConsent, setShowProctoringConsent] = useState(false)
@@ -545,6 +550,25 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     )
   }
 
+  function handleSaveAnnotation(annotation: QuestionAnnotation) {
+    setAnnotations(prev => {
+      const existing = prev.findIndex(a => a.questionId === annotation.questionId)
+      if (existing >= 0) {
+        // Update existing annotation
+        const updated = [...prev]
+        updated[existing] = annotation
+        return updated
+      } else {
+        // Add new annotation
+        return [...prev, annotation]
+      }
+    })
+  }
+
+  function getAnnotationForQuestion(questionId: string): QuestionAnnotation | undefined {
+    return annotations.find(a => a.questionId === questionId)
+  }
+
   // Função para auto-submeter a prova (chamada quando o timer de câmera preta chegar a zero)
   async function handleAutoSubmit(reason: string) {
     if (submitting || submitted) return
@@ -750,6 +774,25 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                 <FileDown className="h-5 w-5 mr-2" />
                 Baixar Relatório da Minha Prova
               </Button>
+
+              {annotations.length > 0 && (
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={async () => {
+                    try {
+                      const { generateAnnotationsPDF, downloadPDF } = await import('@/lib/pdf-generator')
+                      const blob = generateAnnotationsPDF(exam.title, annotations)
+                      downloadPDF(blob, `Anotacoes-${exam.title}.pdf`)
+                    } catch (error: any) {
+                      showToastMessage('Erro ao gerar PDF de anotações: ' + error.message)
+                    }
+                  }}
+                >
+                  <StickyNote className="h-4 w-4 mr-2" />
+                  Baixar Anotações (PDF)
+                </Button>
+              )}
 
               {exam.pdfUrl && (
                 <Button
@@ -1200,6 +1243,19 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                       />
                     </div>
 
+                    {/* Botão de Anotações */}
+                    <div className="flex justify-start">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setEditingNotesFor(question.id)}
+                        className="bg-primary/10 hover:bg-primary/20 backdrop-blur-sm text-primary border border-primary/20"
+                      >
+                        <StickyNote className="h-4 w-4 mr-2" />
+                        {getAnnotationForQuestion(question.id) ? 'Editar Anotações' : 'Adicionar Anotações'}
+                      </Button>
+                    </div>
+
                     {/* Alternativas (Múltipla Escolha) */}
                     {question.type === 'multiple-choice' && (
                       <div className="space-y-3">
@@ -1470,6 +1526,19 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                 onHighlightsChange={(highlights) => handleHighlights(currentQuestion.id, highlights)}
                 className="font-medium"
               />
+            </div>
+
+            {/* Botão de Anotações */}
+            <div className="flex justify-start">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setEditingNotesFor(currentQuestion.id)}
+                className="bg-primary/10 hover:bg-primary/20 backdrop-blur-sm text-primary border border-primary/20"
+              >
+                <StickyNote className="h-4 w-4 mr-2" />
+                {getAnnotationForQuestion(currentQuestion.id) ? 'Editar Anotações' : 'Adicionar Anotações'}
+              </Button>
             </div>
 
             {/* Alternativas (Múltipla Escolha) */}
@@ -1768,6 +1837,22 @@ export default function ExamPage({ params }: { params: { id: string } }) {
           </Card>
         </div>
       )}
+
+      {/* Modal de Anotações */}
+      {editingNotesFor && (() => {
+        const question = exam.questions.find(q => q.id === editingNotesFor)
+        if (!question) return null
+
+        return (
+          <QuestionNotesCanvas
+            questionId={question.id}
+            questionNumber={question.number}
+            initialAnnotation={getAnnotationForQuestion(question.id)}
+            onSave={handleSaveAnnotation}
+            onClose={() => setEditingNotesFor(null)}
+          />
+        )
+      })()}
     </div>
     </>
   )
