@@ -1,4 +1,4 @@
-import { Question, Alternative, KeyPoint, Settings } from './types'
+import { Question, Alternative, KeyPoint, Settings, AlternativeType } from './types'
 import { getDb } from './mongodb'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -32,6 +32,7 @@ export interface QuestionGenerationParams {
   numberOfAlternatives?: number // Para múltipla escolha (padrão 5)
   useTRI?: boolean // Se deve gerar parâmetros TRI
   context: string // Contexto da questão (ENEM, UERJ, Medicina, etc)
+  alternativeType?: AlternativeType // Tipo de alternativa (standard, true-false, comparison, assertion-reason)
 }
 
 interface GeneratedMultipleChoiceQuestion {
@@ -70,13 +71,65 @@ function buildMultipleChoicePrompt(params: QuestionGenerationParams): string {
     params.difficulty < 0.6 ? 'MÉDIO' :
     params.difficulty < 0.8 ? 'DIFÍCIL' : 'MUITO DIFÍCIL'
 
-  const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
-  const numAlts = params.numberOfAlternatives || 5
+  const altType = params.alternativeType || 'standard'
+  const letters = altType === 'true-false' ? ['V', 'F'] : ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+  const numAlts = altType === 'true-false' ? 2 : altType === 'comparison' ? 4 : altType === 'assertion-reason' ? 5 : (params.numberOfAlternatives || 5)
   const alternativeLetters = letters.slice(0, numAlts).join(', ')
 
   const styleDescription = params.style === 'contextualizada'
     ? `A questão deve ser CONTEXTUALIZADA, com um enunciado amplo e rico em contexto, apresentando uma situação, cenário ou narrativa que contextualize o tema. Use storytelling para engajar o candidato. O enunciado deve ter pelo menos 4-6 linhas e apresentar informações relevantes que contextualizem o tema abordado.`
     : `A questão deve ser RÁPIDA e DIRETA, sem rodeios. Vá direto ao ponto com um enunciado objetivo, claro e conciso de no máximo 2-3 linhas. Não use storytelling ou contextualizações longas.`
+
+  // Instruções específicas para cada tipo de alternativa
+  let alternativeTypeInstructions = ''
+  if (altType === 'true-false') {
+    alternativeTypeInstructions = `
+**TIPO DE QUESTÃO: VERDADEIRO/FALSO**
+- Crie uma AFIRMAÇÃO clara e objetiva no enunciado
+- O comando deve ser: "Julgue a afirmação abaixo:"
+- Apenas 2 alternativas: V (Verdadeiro) e F (Falso)
+- Indique qual é a resposta correta (V ou F)
+`
+  } else if (altType === 'comparison') {
+    alternativeTypeInstructions = `
+**TIPO DE QUESTÃO: COMPARAÇÃO DE AFIRMAÇÕES**
+- Crie DUAS afirmações distintas no enunciado (Afirmação I e Afirmação II)
+- O comando deve ser: "Compare as afirmações abaixo:"
+- As alternativas são FIXAS:
+  A) As duas afirmações são verdadeiras
+  B) A primeira afirmação é verdadeira e a segunda é falsa
+  C) A primeira afirmação é falsa e a segunda é verdadeira
+  D) As duas afirmações são falsas
+- Indique qual alternativa está correta (A, B, C ou D)
+`
+  } else if (altType === 'assertion-reason') {
+    alternativeTypeInstructions = `
+**TIPO DE QUESTÃO: ASSERÇÃO E RAZÃO**
+- Crie DUAS afirmações no enunciado:
+  * ASSERÇÃO: Uma afirmação principal
+  * RAZÃO: Uma justificativa ou explicação
+- O comando deve ser: "Analise as afirmações abaixo:"
+- As alternativas são FIXAS:
+  A) As duas afirmações são verdadeiras, e a segunda justifica a primeira
+  B) As duas afirmações são verdadeiras, mas a segunda não justifica a primeira
+  C) A primeira afirmação é verdadeira, e a segunda é falsa
+  D) A primeira afirmação é falsa, e a segunda é verdadeira
+  E) As duas afirmações são falsas
+- Indique qual alternativa está correta (A, B, C, D ou E)
+`
+  } else {
+    alternativeTypeInstructions = `
+**TIPO DE QUESTÃO: PADRÃO (MÚLTIPLA ESCOLHA)**
+4. **ALTERNATIVAS (${numAlts} alternativas: ${alternativeLetters}):**
+   - Crie ${numAlts} alternativas plausíveis e bem elaboradas
+   - APENAS UMA deve ser correta
+   - As incorretas devem ser plausíveis (distratores bem construídos)
+   - Evite alternativas absurdas ou obviamente erradas
+   - Mantenha paralelismo gramatical e estrutural
+   - Varie o tamanho das alternativas para não dar pistas
+   - Distribua aleatoriamente a posição da resposta correta
+`
+  }
 
   return `Você é um especialista em elaboração de questões de vestibular e concursos públicos. Crie uma questão de múltipla escolha de alta qualidade sobre o tema especificado.
 
@@ -112,18 +165,11 @@ ${styleDescription}
 
 3. **COMANDO:**
    - Elabore um comando claro e específico do que se pede
-   - Exemplos: "Com base no texto, assinale a alternativa correta:", "Considerando as informações apresentadas, é correto afirmar que:"
+   - ${altType !== 'standard' ? 'Siga o comando específico indicado para este tipo de questão' : 'Exemplos: "Com base no texto, assinale a alternativa correta:", "Considerando as informações apresentadas, é correto afirmar que:"'}
 
-4. **ALTERNATIVAS (${numAlts} alternativas: ${alternativeLetters}):**
-   - Crie ${numAlts} alternativas plausíveis e bem elaboradas
-   - APENAS UMA deve ser correta
-   - As incorretas devem ser plausíveis (distratores bem construídos)
-   - Evite alternativas absurdas ou obviamente erradas
-   - Mantenha paralelismo gramatical e estrutural
-   - Varie o tamanho das alternativas para não dar pistas
-   - Distribua aleatoriamente a posição da resposta correta
+${alternativeTypeInstructions}
 
-${params.useTRI ? `5. **PARÂMETROS TRI:**
+${params.useTRI ? `${altType === 'standard' ? '5' : '4'}. **PARÂMETROS TRI:**
    - **Discriminação (a):** ${params.difficulty < 0.4 ? '0.8-1.2' : params.difficulty < 0.7 ? '1.2-1.8' : '1.5-2.5'} - Capacidade de diferenciar candidatos
    - **Dificuldade (b):** ${params.difficulty < 0.3 ? '-2.0 a -0.5' : params.difficulty < 0.5 ? '-0.5 a 0.5' : params.difficulty < 0.7 ? '0.5 a 1.5' : '1.5 a 3.0'} - Nível de habilidade necessário
    - **Acerto ao acaso (c):** 0.15-0.25 - Probabilidade de acerto chutando
@@ -131,7 +177,48 @@ ${params.useTRI ? `5. **PARÂMETROS TRI:**
 
 **FORMATO DE RESPOSTA (OBRIGATÓRIO):**
 Retorne APENAS um JSON no seguinte formato:
-{
+${altType === 'true-false' ? `{
+  "enunciado": "Texto completo do enunciado aqui (afirmação a ser julgada)",
+  "fonteEnunciado": "SOBRENOME, Nome. Título. Editora, Ano.",
+  "comando": "Julgue a afirmação abaixo:",
+  "alternativas": [
+    { "letra": "V", "texto": "Verdadeiro", "correta": true },
+    { "letra": "F", "texto": "Falso", "correta": false }
+  ],
+  "alternativaCorreta": "V"${params.useTRI ? `,
+  "triDiscriminacao": 1.5,
+  "triDificuldade": 0.8,
+  "triAcertoAcaso": 0.2` : ''}
+}` : altType === 'comparison' ? `{
+  "enunciado": "Texto completo do enunciado aqui (incluindo Afirmação I e Afirmação II)",
+  "fonteEnunciado": "SOBRENOME, Nome. Título. Editora, Ano.",
+  "comando": "Compare as afirmações abaixo:",
+  "alternativas": [
+    { "letra": "A", "texto": "As duas afirmações são verdadeiras", "correta": false },
+    { "letra": "B", "texto": "A primeira afirmação é verdadeira e a segunda é falsa", "correta": true },
+    { "letra": "C", "texto": "A primeira afirmação é falsa e a segunda é verdadeira", "correta": false },
+    { "letra": "D", "texto": "As duas afirmações são falsas", "correta": false }
+  ],
+  "alternativaCorreta": "B"${params.useTRI ? `,
+  "triDiscriminacao": 1.5,
+  "triDificuldade": 0.8,
+  "triAcertoAcaso": 0.2` : ''}
+}` : altType === 'assertion-reason' ? `{
+  "enunciado": "Texto completo do enunciado aqui (incluindo ASSERÇÃO e RAZÃO)",
+  "fonteEnunciado": "SOBRENOME, Nome. Título. Editora, Ano.",
+  "comando": "Analise as afirmações abaixo:",
+  "alternativas": [
+    { "letra": "A", "texto": "As duas afirmações são verdadeiras, e a segunda justifica a primeira", "correta": true },
+    { "letra": "B", "texto": "As duas afirmações são verdadeiras, mas a segunda não justifica a primeira", "correta": false },
+    { "letra": "C", "texto": "A primeira afirmação é verdadeira, e a segunda é falsa", "correta": false },
+    { "letra": "D", "texto": "A primeira afirmação é falsa, e a segunda é verdadeira", "correta": false },
+    { "letra": "E", "texto": "As duas afirmações são falsas", "correta": false }
+  ],
+  "alternativaCorreta": "A"${params.useTRI ? `,
+  "triDiscriminacao": 1.5,
+  "triDificuldade": 0.8,
+  "triAcertoAcaso": 0.2` : ''}
+}` : `{
   "enunciado": "Texto completo do enunciado aqui",
   "fonteEnunciado": "SOBRENOME, Nome. Título. Editora, Ano.",
   "comando": "Texto do comando da questão",
@@ -146,12 +233,12 @@ Retorne APENAS um JSON no seguinte formato:
   "triDiscriminacao": 1.5,
   "triDificuldade": 0.8,
   "triAcertoAcaso": 0.2` : ''}
-}
+}`}
 
 IMPORTANTE:
 - Retorne APENAS o JSON, sem texto adicional
 - Garanta que EXATAMENTE uma alternativa seja marcada como correta
-- As alternativas devem estar em ordem alfabética (A, B, C, D, E...)
+- ${altType === 'true-false' ? 'Use apenas as letras V (Verdadeiro) e F (Falso)' : altType === 'comparison' || altType === 'assertion-reason' ? 'Use EXATAMENTE os textos das alternativas especificados acima' : 'As alternativas devem estar em ordem alfabética (A, B, C, D, E...)'}
 - O campo "alternativaCorreta" deve corresponder à letra marcada como correta`
 }
 
@@ -381,6 +468,7 @@ function parseMultipleChoiceResponse(response: string, params: QuestionGeneratio
       statementSource: parsed.fonteEnunciado || '',
       command: parsed.comando || '',
       alternatives,
+      alternativeType: params.alternativeType || 'standard', // Salvar o tipo de alternativa
     }
 
     // Adicionar parâmetros TRI se aplicável
