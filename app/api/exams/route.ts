@@ -76,11 +76,24 @@ export async function POST(request: NextRequest) {
       proctoringAudio,
       proctoringScreen,
       proctoringScreenMode,
+      // Configurações adicionais
+      isPracticeExam = false,
+      allowCustomName = false,
+      requireSignature = false,
+      shuffleQuestions = false,
     } = body
 
-    if (!title || !numberOfQuestions || !numberOfAlternatives || !scoringMethod || !startTime || !endTime) {
+    // Validação: Se não for prova prática, exigir startTime e endTime
+    if (!title || !numberOfQuestions || !numberOfAlternatives || !scoringMethod) {
       return NextResponse.json(
         { error: 'Campos obrigatórios faltando' },
+        { status: 400 }
+      )
+    }
+
+    if (!isPracticeExam && (!startTime || !endTime)) {
+      return NextResponse.json(
+        { error: 'Datas de início e fim são obrigatórias para provas não-práticas' },
         { status: 400 }
       )
     }
@@ -101,8 +114,8 @@ export async function POST(request: NextRequest) {
       pdfUrl,
       gatesOpen: gatesOpen ? new Date(gatesOpen) : undefined,
       gatesClose: gatesClose ? new Date(gatesClose) : undefined,
-      startTime: new Date(startTime),
-      endTime: new Date(endTime),
+      startTime: startTime ? new Date(startTime) : new Date(), // Default para data atual se não fornecido
+      endTime: endTime ? new Date(endTime) : new Date(), // Default para data atual se não fornecido
       createdBy: session.userId,
       isHidden,
       discursiveCorrectionMethod,
@@ -117,6 +130,11 @@ export async function POST(request: NextRequest) {
         screen: proctoringScreen || false,
         screenMode: proctoringScreenMode || 'window',
       } : undefined,
+      // Configurações adicionais
+      isPracticeExam,
+      allowCustomName,
+      requireSignature,
+      shuffleQuestions,
       createdAt: new Date(),
       updatedAt: new Date(),
     }
