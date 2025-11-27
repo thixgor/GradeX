@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Sparkles, Loader2, Settings } from 'lucide-react'
-import { Question, CustomContext } from '@/lib/types'
+import { Question, CustomContext, AlternativeType } from '@/lib/types'
 import { CustomContextsManager } from './custom-contexts-manager'
 
 interface AIQuestionGeneratorProps {
@@ -35,6 +35,10 @@ export function AIQuestionGenerator({
   const [multipleSubjects, setMultipleSubjects] = useState('')
   const [randomDifficulty, setRandomDifficulty] = useState(false)
   const [currentProgress, setCurrentProgress] = useState(0)
+
+  // Novos estados para tipos de alternativas e questões mistas
+  const [alternativeType, setAlternativeType] = useState<AlternativeType>('standard')
+  const [mixedStyles, setMixedStyles] = useState(false) // Misturar contextualizadas e rápidas
 
   // Contexto da questão
   const [questionContext, setQuestionContext] = useState<'enem' | 'uerj' | 'outros'>('enem')
@@ -124,17 +128,21 @@ export function AIQuestionGenerator({
           // Dificuldade aleatória ou fixa
           const currentDifficulty = randomDifficulty ? Math.random() : difficulty
 
+          // Estilo misto ou fixo
+          const currentStyle = mixedStyles ? (i % 2 === 0 ? 'contextualizada' : 'rapida') : style
+
           const response = await fetch('/api/questions/generate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               type: questionType,
-              style,
+              style: currentStyle,
               subject: currentSubject,
               difficulty: currentDifficulty,
               context,
               numberOfAlternatives: questionType === 'multiple-choice' ? numberOfAlternatives : undefined,
               useTRI: questionType === 'multiple-choice' ? useTRI : undefined,
+              alternativeType: questionType === 'multiple-choice' ? alternativeType : undefined,
             }),
           })
 
@@ -165,6 +173,7 @@ export function AIQuestionGenerator({
             context,
             numberOfAlternatives: questionType === 'multiple-choice' ? numberOfAlternatives : undefined,
             useTRI: questionType === 'multiple-choice' ? useTRI : undefined,
+            alternativeType: questionType === 'multiple-choice' ? alternativeType : undefined,
           }),
         })
 
@@ -238,8 +247,11 @@ export function AIQuestionGenerator({
             <Button
               type="button"
               variant={style === 'contextualizada' ? 'default' : 'outline'}
-              onClick={() => setStyle('contextualizada')}
-              disabled={generating}
+              onClick={() => {
+                setStyle('contextualizada')
+                setMixedStyles(false)
+              }}
+              disabled={generating || mixedStyles}
               className="w-full text-sm"
             >
               📚 Contextualizada
@@ -247,19 +259,93 @@ export function AIQuestionGenerator({
             <Button
               type="button"
               variant={style === 'rapida' ? 'default' : 'outline'}
-              onClick={() => setStyle('rapida')}
-              disabled={generating}
+              onClick={() => {
+                setStyle('rapida')
+                setMixedStyles(false)
+              }}
+              disabled={generating || mixedStyles}
               className="w-full text-sm"
             >
               ⚡ Rápida
             </Button>
           </div>
+
+          {/* Modo Misto - aparece apenas para geração múltipla */}
+          {(quantity > 1 || multipleSubjects.trim().length > 0) && (
+            <div className="flex items-center space-x-2 pt-2">
+              <input
+                type="checkbox"
+                id="mixedStyles"
+                checked={mixedStyles}
+                onChange={(e) => setMixedStyles(e.target.checked)}
+                disabled={generating}
+                className="h-4 w-4 rounded border-input"
+              />
+              <Label htmlFor="mixedStyles" className="cursor-pointer text-sm">
+                🎭 Misturar estilos (alternando entre contextualizada e rápida)
+              </Label>
+            </div>
+          )}
+
           <p className="text-xs text-muted-foreground">
-            {style === 'contextualizada'
-              ? 'Enunciado amplo, contextualizado e com "historinha"'
-              : 'Enunciado direto e objetivo, sem rodeios'}
+            {mixedStyles
+              ? '🎭 Questões alternadas: contextualizadas e rápidas'
+              : style === 'contextualizada'
+              ? '📚 Enunciado amplo, contextualizado e com "historinha"'
+              : '⚡ Enunciado direto e objetivo, sem rodeios'}
           </p>
         </div>
+
+        {/* Tipo de Alternativa - apenas para múltipla escolha */}
+        {questionType === 'multiple-choice' && (
+          <div className="space-y-3 border-t pt-4">
+            <Label>Tipo de Alternativa</Label>
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                type="button"
+                variant={alternativeType === 'standard' ? 'default' : 'outline'}
+                onClick={() => setAlternativeType('standard')}
+                disabled={generating}
+                className="w-full text-sm"
+              >
+                📝 Padrão (A, B, C...)
+              </Button>
+              <Button
+                type="button"
+                variant={alternativeType === 'true-false' ? 'default' : 'outline'}
+                onClick={() => setAlternativeType('true-false')}
+                disabled={generating}
+                className="w-full text-sm"
+              >
+                ✓✗ Verdadeiro/Falso
+              </Button>
+              <Button
+                type="button"
+                variant={alternativeType === 'comparison' ? 'default' : 'outline'}
+                onClick={() => setAlternativeType('comparison')}
+                disabled={generating}
+                className="w-full text-sm"
+              >
+                ⚖️ Comparação
+              </Button>
+              <Button
+                type="button"
+                variant={alternativeType === 'assertion-reason' ? 'default' : 'outline'}
+                onClick={() => setAlternativeType('assertion-reason')}
+                disabled={generating}
+                className="w-full text-sm"
+              >
+                🔗 Asserção/Razão
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {alternativeType === 'standard' && '📝 Alternativas personalizadas com textos livres'}
+              {alternativeType === 'true-false' && '✓✗ Apenas 2 opções: Verdadeiro ou Falso'}
+              {alternativeType === 'comparison' && '⚖️ Compare duas afirmações (4 alternativas fixas)'}
+              {alternativeType === 'assertion-reason' && '🔗 Relação entre asserção e razão (5 alternativas fixas)'}
+            </p>
+          </div>
+        )}
 
         {/* Contexto da Questão */}
         <div className="space-y-3 border-t pt-4">

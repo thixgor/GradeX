@@ -25,6 +25,7 @@ export async function POST(request: NextRequest) {
       numberOfAlternatives,
       useTRI,
       context, // Contexto da questão (ENEM, UERJ, etc)
+      alternativeType, // Tipo de alternativa (standard, true-false, comparison, assertion-reason)
       // Novos parâmetros para geração múltipla
       quantity,
       subjects,
@@ -77,6 +78,7 @@ export async function POST(request: NextRequest) {
       numberOfAlternatives: numberOfAlternatives || 5,
       useTRI: useTRI || false,
       context: context.trim(), // Adicionar contexto
+      alternativeType: alternativeType || 'standard', // Tipo de alternativa
     }
 
     // Gerar questão conforme o tipo
