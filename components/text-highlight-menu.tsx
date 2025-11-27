@@ -1,12 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { Copy, Highlighter } from 'lucide-react'
+import { Copy, Highlighter, Eraser } from 'lucide-react'
 import { HighlightColor } from '@/lib/types'
 
 interface TextHighlightMenuProps {
   position: { x: number; y: number }
   onHighlight: (color: HighlightColor, customColor?: string) => void
+  onRemoveHighlight: () => void
   onCopy: () => void
   onClose: () => void
 }
@@ -19,7 +20,7 @@ const HIGHLIGHT_COLORS: { color: HighlightColor; label: string; bgClass: string 
   { color: 'red', label: 'Vermelho', bgClass: 'bg-red-300' },
 ]
 
-export function TextHighlightMenu({ position, onHighlight, onCopy, onClose }: TextHighlightMenuProps) {
+export function TextHighlightMenu({ position, onHighlight, onRemoveHighlight, onCopy, onClose }: TextHighlightMenuProps) {
   const [showColorPicker, setShowColorPicker] = useState(false)
   const [customColor, setCustomColor] = useState('#ffff00')
 
@@ -116,6 +117,18 @@ export function TextHighlightMenu({ position, onHighlight, onCopy, onClose }: Te
               </div>
             )}
           </div>
+
+          {/* Botão Remover Grifação */}
+          <button
+            onClick={() => {
+              onRemoveHighlight()
+              onClose()
+            }}
+            className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+          >
+            <Eraser className="h-4 w-4" />
+            <span>Remover grifação</span>
+          </button>
         </div>
       </div>
     </>

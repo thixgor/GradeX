@@ -103,6 +103,23 @@ export function HighlightableText({
     window.getSelection()?.removeAllRanges()
   }
 
+  const handleRemoveHighlight = () => {
+    if (!selectionRange) return
+
+    // Remover highlights que estão dentro ou sobrepõem a seleção atual
+    const filteredHighlights = highlights.filter((h) => {
+      if (h.target !== target) return true
+      // Remover se houver qualquer sobreposição com a seleção
+      const hasOverlap = !(h.endOffset <= selectionRange.start || h.startOffset >= selectionRange.end)
+      return !hasOverlap
+    })
+
+    onHighlightsChange(filteredHighlights)
+
+    // Limpar seleção
+    window.getSelection()?.removeAllRanges()
+  }
+
   // Renderizar texto com highlights aplicados
   const renderHighlightedText = () => {
     // Filtrar highlights deste target
@@ -172,6 +189,7 @@ export function HighlightableText({
         <TextHighlightMenu
           position={contextMenu}
           onHighlight={handleHighlight}
+          onRemoveHighlight={handleRemoveHighlight}
           onCopy={handleCopy}
           onClose={() => setContextMenu(null)}
         />
