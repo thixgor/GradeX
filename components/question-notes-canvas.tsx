@@ -12,6 +12,7 @@ import {
   MousePointer2,
   Trash2,
   X,
+  RotateCw,
 } from 'lucide-react'
 import {
   DrawingTool,
@@ -40,6 +41,8 @@ export function QuestionNotesCanvas({
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null)
   const [isDrawing, setIsDrawing] = useState(false)
+  const holdTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const lastMousePosRef = useRef<Point | null>(null)
 
   // Tool states
   const [currentTool, setCurrentTool] = useState<DrawingTool>('pen')
@@ -55,6 +58,11 @@ export function QuestionNotesCanvas({
   const [texts, setTexts] = useState<TextAnnotation[]>(initialAnnotation?.texts || [])
   const [currentStroke, setCurrentStroke] = useState<Point[]>([])
 
+  // Straight line state
+  const [isHoldingForStraight, setIsHoldingForStraight] = useState(false)
+  const [straightLineAngle, setStraightLineAngle] = useState(0)
+  const [straightLineMode, setStraightLineMode] = useState(false)
+
   // Text tool states
   const [isAddingText, setIsAddingText] = useState(false)
   const [textInput, setTextInput] = useState('')
@@ -67,6 +75,7 @@ export function QuestionNotesCanvas({
   const [selectedTextIds, setSelectedTextIds] = useState<string[]>([])
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState<Point | null>(null)
+  const [dragOffset, setDragOffset] = useState<Point>({ x: 0, y: 0 })
 
   // Initialize canvas context
   useEffect(() => {
@@ -89,7 +98,7 @@ export function QuestionNotesCanvas({
     if (ctx) {
       redrawCanvas(ctx)
     }
-  }, [strokes, texts, ctx])
+  }, [strokes, texts, ctx, selectedStrokeIds, selectedTextIds])
 
   function redrawCanvas(context: CanvasRenderingContext2D) {
     const canvas = canvasRef.current
@@ -104,32 +113,89 @@ export function QuestionNotesCanvas({
 
     // Draw all strokes
     strokes.forEach((stroke) => {
-      drawStroke(context, stroke)
+      const isSelected = selectedStrokeIds.includes(stroke.id)
+      drawStroke(context, stroke, isSelected)
     })
 
     // Draw all texts
     texts.forEach((text) => {
-      drawText(context, text)
+      const isSelected = selectedTextIds.includes(text.id)
+      drawText(context, text, isSelected)
     })
 
     // Draw current stroke being drawn
     if (currentStroke.length > 0 && (currentTool === 'pen' || currentTool === 'highlighter')) {
-      const tempStroke: DrawingStroke = {
-        id: 'temp',
-        tool: currentTool,
-        points: currentStroke,
-        color: currentTool === 'pen' ? penColor : highlighterColor,
-        thickness: currentTool === 'pen' ? penThickness : highlighterSize,
-        opacity: currentTool === 'highlighter' ? 0.3 : 1,
+      if (straightLineMode && currentStroke.length >= 2) {
+        // Draw straight line
+        const start = currentStroke[0]
+        const end = currentStroke[currentStroke.length - 1]
+        const tempStroke: DrawingStroke = {
+          id: 'temp',
+          tool: currentTool,
+          points: [start, end],
+          color: currentTool === 'pen' ? penColor : highlighterColor,
+          thickness: currentTool === 'pen' ? penThickness : highlighterSize,
+          opacity: currentTool === 'highlighter' ? 0.3 : 1,
+        }
+        drawStroke(context, tempStroke)
+
+        // Draw rotation handles
+        drawRotationHandles(context, start, end)
+      } else {
+        const tempStroke: DrawingStroke = {
+          id: 'temp',
+          tool: currentTool,
+          points: currentStroke,
+          color: currentTool === 'pen' ? penColor : highlighterColor,
+          thickness: currentTool === 'pen' ? penThickness : highlighterSize,
+          opacity: currentTool === 'highlighter' ? 0.3 : 1,
+        }
+        drawStroke(context, tempStroke)
       }
-      drawStroke(context, tempStroke)
     }
   }
 
-  function drawStroke(context: CanvasRenderingContext2D, stroke: DrawingStroke) {
+  function drawRotationHandles(context: CanvasRenderingContext2D, start: Point, end: Point) {
+    context.save()
+    context.fillStyle = 'rgba(59, 130, 246, 0.5)' // Blue
+    context.strokeStyle = 'rgb(59, 130, 246)'
+    context.lineWidth = 2
+
+    // Draw handle at start
+    context.beginPath()
+    context.arc(start.x, start.y, 8, 0, 2 * Math.PI)
+    context.fill()
+    context.stroke()
+
+    // Draw handle at end
+    context.beginPath()
+    context.arc(end.x, end.y, 8, 0, 2 * Math.PI)
+    context.fill()
+    context.stroke()
+
+    context.restore()
+  }
+
+  function drawStroke(context: CanvasRenderingContext2D, stroke: DrawingStroke, isSelected = false) {
     if (stroke.points.length < 2) return
 
     context.save()
+
+    if (isSelected) {
+      // Draw selection outline
+      context.strokeStyle = 'rgba(59, 130, 246, 0.5)'
+      context.lineWidth = stroke.thickness + 6
+      context.lineCap = 'round'
+      context.lineJoin = 'round'
+
+      context.beginPath()
+      context.moveTo(stroke.points[0].x, stroke.points[0].y)
+      for (let i = 1; i < stroke.points.length; i++) {
+        context.lineTo(stroke.points[i].x, stroke.points[i].y)
+      }
+      context.stroke()
+    }
+
     context.strokeStyle = stroke.color
     context.lineWidth = stroke.thickness
     context.lineCap = 'round'
@@ -147,8 +213,23 @@ export function QuestionNotesCanvas({
     context.restore()
   }
 
-  function drawText(context: CanvasRenderingContext2D, text: TextAnnotation) {
+  function drawText(context: CanvasRenderingContext2D, text: TextAnnotation, isSelected = false) {
     context.save()
+
+    if (isSelected) {
+      // Draw selection box
+      const metrics = context.measureText(text.text)
+      const textHeight = text.fontSize
+      context.strokeStyle = 'rgba(59, 130, 246, 0.8)'
+      context.lineWidth = 2
+      context.strokeRect(
+        text.position.x - 4,
+        text.position.y - textHeight - 4,
+        metrics.width + 8,
+        textHeight + 8
+      )
+    }
+
     context.fillStyle = text.color
     context.font = `${text.fontSize}px Arial`
     context.fillText(text.text, text.position.x, text.position.y)
@@ -172,6 +253,14 @@ export function QuestionNotesCanvas({
     if (currentTool === 'pen' || currentTool === 'highlighter') {
       setIsDrawing(true)
       setCurrentStroke([point])
+      setStraightLineMode(false)
+      lastMousePosRef.current = point
+
+      // Start hold timer for straight line
+      holdTimerRef.current = setTimeout(() => {
+        setIsHoldingForStraight(true)
+        setStraightLineMode(true)
+      }, 2000)
     } else if (currentTool === 'eraser') {
       setIsDrawing(true)
       eraseAt(point)
@@ -179,36 +268,140 @@ export function QuestionNotesCanvas({
       setTextPosition(point)
       setIsAddingText(true)
     } else if (currentTool === 'select') {
-      // Selection logic would go here
-      setIsDragging(true)
-      setDragStart(point)
+      // Check if clicking on existing stroke or text
+      const clickedStroke = findStrokeAtPoint(point)
+      const clickedText = findTextAtPoint(point)
+
+      if (clickedStroke) {
+        // Toggle selection
+        if (selectedStrokeIds.includes(clickedStroke.id)) {
+          setSelectedStrokeIds([])
+        } else {
+          setSelectedStrokeIds([clickedStroke.id])
+          setSelectedTextIds([])
+        }
+        setIsDragging(true)
+        setDragStart(point)
+      } else if (clickedText) {
+        if (selectedTextIds.includes(clickedText.id)) {
+          setSelectedTextIds([])
+        } else {
+          setSelectedTextIds([clickedText.id])
+          setSelectedStrokeIds([])
+        }
+        setIsDragging(true)
+        setDragStart(point)
+      } else {
+        // Clear selection
+        setSelectedStrokeIds([])
+        setSelectedTextIds([])
+      }
     }
   }
 
   function handleMouseMove(e: React.MouseEvent<HTMLCanvasElement>) {
-    if (!isDrawing) return
-
     const point = getCanvasPoint(e)
 
+    if (!isDrawing && !isDragging) return
+
     if (currentTool === 'pen' || currentTool === 'highlighter') {
+      if (!straightLineMode) {
+        // Check if mouse has moved significantly
+        if (lastMousePosRef.current) {
+          const distance = Math.sqrt(
+            Math.pow(point.x - lastMousePosRef.current.x, 2) +
+            Math.pow(point.y - lastMousePosRef.current.y, 2)
+          )
+
+          // If mouse moved, reset the hold timer
+          if (distance > 3) {
+            if (holdTimerRef.current) {
+              clearTimeout(holdTimerRef.current)
+              setIsHoldingForStraight(false)
+            }
+            holdTimerRef.current = setTimeout(() => {
+              setIsHoldingForStraight(true)
+              setStraightLineMode(true)
+            }, 2000)
+          }
+        }
+        lastMousePosRef.current = point
+      }
+
       setCurrentStroke((prev) => [...prev, point])
       if (ctx) {
         redrawCanvas(ctx)
       }
     } else if (currentTool === 'eraser') {
       eraseAt(point)
+    } else if (currentTool === 'select' && isDragging && dragStart) {
+      const dx = point.x - dragStart.x
+      const dy = point.y - dragStart.y
+
+      // Move selected strokes
+      if (selectedStrokeIds.length > 0) {
+        setStrokes((prev) =>
+          prev.map((stroke) => {
+            if (selectedStrokeIds.includes(stroke.id)) {
+              return {
+                ...stroke,
+                points: stroke.points.map((p) => ({
+                  x: p.x + dx,
+                  y: p.y + dy,
+                })),
+              }
+            }
+            return stroke
+          })
+        )
+      }
+
+      // Move selected texts
+      if (selectedTextIds.length > 0) {
+        setTexts((prev) =>
+          prev.map((text) => {
+            if (selectedTextIds.includes(text.id)) {
+              return {
+                ...text,
+                position: {
+                  x: text.position.x + dx,
+                  y: text.position.y + dy,
+                },
+              }
+            }
+            return text
+          })
+        )
+      }
+
+      setDragStart(point)
     }
   }
 
   function handleMouseUp() {
-    if (!isDrawing) return
+    if (holdTimerRef.current) {
+      clearTimeout(holdTimerRef.current)
+      holdTimerRef.current = null
+    }
+
+    if (!isDrawing) {
+      setIsDragging(false)
+      return
+    }
 
     if (currentTool === 'pen' || currentTool === 'highlighter') {
       if (currentStroke.length > 1) {
+        let finalPoints = currentStroke
+
+        // If in straight line mode, use only start and end points
+        if (straightLineMode) {
+          finalPoints = [currentStroke[0], currentStroke[currentStroke.length - 1]]
+        }
+
         const newStroke: DrawingStroke = {
           id: `stroke-${Date.now()}-${Math.random()}`,
           tool: currentTool,
-          points: currentStroke,
+          points: finalPoints,
           color: currentTool === 'pen' ? penColor : highlighterColor,
           thickness: currentTool === 'pen' ? penThickness : highlighterSize,
           opacity: currentTool === 'highlighter' ? 0.3 : 1,
@@ -216,27 +409,100 @@ export function QuestionNotesCanvas({
         setStrokes((prev) => [...prev, newStroke])
       }
       setCurrentStroke([])
+      setStraightLineMode(false)
+      setIsHoldingForStraight(false)
     }
 
     setIsDrawing(false)
     setIsDragging(false)
+    lastMousePosRef.current = null
+  }
+
+  function findStrokeAtPoint(point: Point): DrawingStroke | null {
+    // Check in reverse order (top to bottom)
+    for (let i = strokes.length - 1; i >= 0; i--) {
+      const stroke = strokes[i]
+      for (const p of stroke.points) {
+        const distance = Math.sqrt(
+          Math.pow(p.x - point.x, 2) + Math.pow(p.y - point.y, 2)
+        )
+        if (distance < stroke.thickness / 2 + 5) {
+          return stroke
+        }
+      }
+    }
+    return null
+  }
+
+  function findTextAtPoint(point: Point): TextAnnotation | null {
+    if (!ctx) return null
+
+    for (let i = texts.length - 1; i >= 0; i--) {
+      const text = texts[i]
+      ctx.font = `${text.fontSize}px Arial`
+      const metrics = ctx.measureText(text.text)
+
+      if (
+        point.x >= text.position.x &&
+        point.x <= text.position.x + metrics.width &&
+        point.y >= text.position.y - text.fontSize &&
+        point.y <= text.position.y
+      ) {
+        return text
+      }
+    }
+    return null
   }
 
   function eraseAt(point: Point) {
     if (eraserType === 'standard') {
-      // Circular eraser - remove strokes within radius
-      setStrokes((prev) =>
-        prev.filter((stroke) => {
-          return !stroke.points.some((p) => {
+      // Borracha padrão: apaga pontos individualmente
+      setStrokes((prev) => {
+        const newStrokes: DrawingStroke[] = []
+
+        for (const stroke of prev) {
+          const remainingPoints: Point[] = []
+          const segments: Point[][] = []
+          let currentSegment: Point[] = []
+
+          for (const p of stroke.points) {
             const distance = Math.sqrt(
               Math.pow(p.x - point.x, 2) + Math.pow(p.y - point.y, 2)
             )
-            return distance < eraserSize / 2
-          })
-        })
-      )
+
+            if (distance >= eraserSize / 2) {
+              // Ponto fora do raio da borracha - manter
+              currentSegment.push(p)
+            } else {
+              // Ponto dentro do raio - apagar
+              if (currentSegment.length > 0) {
+                segments.push(currentSegment)
+                currentSegment = []
+              }
+            }
+          }
+
+          // Adicionar último segmento se existir
+          if (currentSegment.length > 0) {
+            segments.push(currentSegment)
+          }
+
+          // Criar novos strokes para cada segmento
+          for (const segment of segments) {
+            if (segment.length >= 2) {
+              newStrokes.push({
+                ...stroke,
+                id: `stroke-${Date.now()}-${Math.random()}`,
+                points: segment,
+              })
+            }
+          }
+        }
+
+        return newStrokes
+      })
     } else {
-      // Line eraser - remove entire stroke if any point is touched
+      // Borracha traço: apaga o traço inteiro se qualquer ponto for tocado
       setStrokes((prev) =>
         prev.filter((stroke) => {
           return !stroke.points.some((p) => {
@@ -279,6 +545,8 @@ export function QuestionNotesCanvas({
     if (confirm('Tem certeza que deseja limpar todas as anotações desta questão?')) {
       setStrokes([])
       setTexts([])
+      setSelectedStrokeIds([])
+      setSelectedTextIds([])
       if (ctx) {
         redrawCanvas(ctx)
       }
@@ -302,9 +570,21 @@ export function QuestionNotesCanvas({
       <div className="bg-white dark:bg-gray-900 rounded-lg shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-semibold">
-            Anotações - Questão {questionNumber}
-          </h2>
+          <div>
+            <h2 className="text-lg font-semibold">
+              Anotações - Questão {questionNumber}
+            </h2>
+            {isHoldingForStraight && (
+              <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                ✨ Segure para criar linha reta...
+              </p>
+            )}
+            {straightLineMode && (
+              <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+                ✓ Modo linha reta ativo - mova para ajustar
+              </p>
+            )}
+          </div>
           <Button variant="ghost" size="sm" onClick={onClose}>
             <X className="h-4 w-4" />
           </Button>
@@ -391,6 +671,9 @@ export function QuestionNotesCanvas({
                     />
                   </div>
                 </div>
+                <div className="text-xs text-muted-foreground bg-blue-100 dark:bg-blue-900/30 p-2 rounded">
+                  💡 Dica: Desenhe uma linha e segure por 2s para criar uma linha reta!
+                </div>
               </div>
             )}
 
@@ -428,6 +711,11 @@ export function QuestionNotesCanvas({
                         Traço
                       </Button>
                     </div>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      {eraserType === 'standard'
+                        ? '🔹 Padrão: Apaga pedacinhos conforme você passa'
+                        : '🔸 Traço: Apaga o traço inteiro ao tocar'}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -490,6 +778,33 @@ export function QuestionNotesCanvas({
                   <p className="text-xs text-muted-foreground">
                     Clique no canvas para adicionar texto
                   </p>
+                </div>
+              </div>
+            )}
+
+            {/* Select Settings */}
+            {currentTool === 'select' && (
+              <div className="space-y-3 p-3 bg-purple-50 dark:bg-purple-950/20 rounded-lg">
+                <Label className="text-xs font-semibold">Ferramenta de Seleção</Label>
+                <div className="space-y-2">
+                  <p className="text-xs text-muted-foreground">
+                    {selectedStrokeIds.length > 0 || selectedTextIds.length > 0
+                      ? '✓ Elemento selecionado - arraste para mover'
+                      : 'Clique em um traço ou texto para selecionar'}
+                  </p>
+                  {(selectedStrokeIds.length > 0 || selectedTextIds.length > 0) && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedStrokeIds([])
+                        setSelectedTextIds([])
+                      }}
+                      className="w-full"
+                    >
+                      Limpar Seleção
+                    </Button>
+                  )}
                 </div>
               </div>
             )}
