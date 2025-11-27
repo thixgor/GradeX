@@ -9,9 +9,10 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { FileUpload } from '@/components/file-upload'
-import { Question, Alternative, ScoringMethod, Exam } from '@/lib/types'
+import { Question, Alternative, ScoringMethod, Exam, QuestionType, KeyPoint, EssayStyle, CorrectionMethod, AlternativeType } from '@/lib/types'
 import { generateRandomTRIParameters } from '@/lib/tri-calculator'
-import { ArrowLeft, Shuffle, Save } from 'lucide-react'
+import { ArrowLeft, Shuffle, Save, ArrowUp, ArrowDown, Plus, Trash2 } from 'lucide-react'
+import { v4 as uuidv4 } from 'uuid'
 
 export default function EditExamPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -33,8 +34,26 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
     gatesOpen: '',
     gatesClose: '',
     startTime: '',
-    endTime: '',
+    durationMinutes: 120,
     isHidden: false,
+    // Configurações padrão para cada tipo de questão
+    discursiveCorrectionMethod: 'ai' as 'manual' | 'ai',
+    discursiveAiRigor: 0.45,
+    essayStyle: 'enem' as EssayStyle,
+    essayCorrectionMethod: 'ai' as CorrectionMethod,
+    essayAiRigor: 0.45,
+    navigationMode: 'paginated' as 'paginated' | 'scroll',
+    // Sistema de monitoramento (proctoring)
+    proctoringEnabled: false,
+    proctoringCamera: false,
+    proctoringAudio: false,
+    proctoringScreen: false,
+    proctoringScreenMode: 'window' as 'window' | 'screen',
+    // Configurações adicionais
+    isPracticeExam: false,
+    allowCustomName: false,
+    requireSignature: false,
+    shuffleQuestions: false,
   })
 
   const [questions, setQuestions] = useState<Question[]>([])
@@ -56,8 +75,14 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
       // Formata datas para datetime-local
       const formatDateTime = (date: Date | string) => {
         const d = new Date(date)
+        // Verificar se é a data futura padrão (provas práticas)
+        const year = d.getFullYear()
+        if (year === 2099) return '' // Não mostrar data para provas práticas
         return d.toISOString().slice(0, 16)
       }
+
+      // Calcular duration em minutos
+      const duration = exam.duration || 120
 
       setExamData({
         title: exam.title,
@@ -72,8 +97,25 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
         gatesOpen: exam.gatesOpen ? formatDateTime(exam.gatesOpen) : '',
         gatesClose: exam.gatesClose ? formatDateTime(exam.gatesClose) : '',
         startTime: formatDateTime(exam.startTime),
-        endTime: formatDateTime(exam.endTime),
+        durationMinutes: duration,
         isHidden: exam.isHidden,
+        discursiveCorrectionMethod: exam.discursiveCorrectionMethod || 'ai',
+        discursiveAiRigor: exam.aiRigor || 0.45,
+        essayStyle: 'enem' as EssayStyle,
+        essayCorrectionMethod: 'ai' as CorrectionMethod,
+        essayAiRigor: 0.45,
+        navigationMode: exam.navigationMode || 'paginated',
+        // Sistema de monitoramento
+        proctoringEnabled: exam.proctoring?.enabled || false,
+        proctoringCamera: exam.proctoring?.camera || false,
+        proctoringAudio: exam.proctoring?.audio || false,
+        proctoringScreen: exam.proctoring?.screen || false,
+        proctoringScreenMode: exam.proctoring?.screenMode || 'window',
+        // Configurações adicionais
+        isPracticeExam: exam.isPracticeExam || false,
+        allowCustomName: exam.allowCustomName || false,
+        requireSignature: exam.requireSignature !== false, // Default true para compatibilidade
+        shuffleQuestions: exam.shuffleQuestions || false,
       })
 
       setQuestions(exam.questions)
@@ -114,13 +156,42 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
     })
   }
 
+  function swapQuestions(index1: number, index2: number) {
+    if (index1 < 0 || index1 >= questions.length || index2 < 0 || index2 >= questions.length) return
+
+    const newQuestions = [...questions]
+    // Trocar as questões
+    ;[newQuestions[index1], newQuestions[index2]] = [newQuestions[index2], newQuestions[index1]]
+
+    // Renumerar todas as questões
+    newQuestions.forEach((q, i) => {
+      q.number = i + 1
+    })
+
+    setQuestions(newQuestions)
+
+    // Atualizar o índice atual para seguir a questão
+    setCurrentQuestionIndex(index2)
+  }
+
   async function handleSubmit() {
     setSaving(true)
 
     try {
       // Validação básica
-      if (!examData.title || !examData.startTime || !examData.endTime) {
-        alert('Preencha todos os campos obrigatórios')
+      if (!examData.title) {
+        alert('Preencha o título da prova')
+        return
+      }
+
+      // Se não for prova prática, exigir data de início
+      if (!examData.isPracticeExam && !examData.startTime) {
+        alert('Preencha a data/hora de início da prova (ou marque como prova prática)')
+        return
+      }
+
+      if (questions.length === 0) {
+        alert('Adicione pelo menos uma questão à prova')
         return
       }
 
@@ -131,23 +202,57 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
           return
         }
 
-        const hasCorrect = question.alternatives.some(alt => alt.isCorrect)
-        if (!hasCorrect) {
-          alert(`Questão ${question.number}: Marque uma alternativa como correta`)
-          return
-        }
+        if (question.type === 'multiple-choice') {
+          const hasCorrect = question.alternatives.some(alt => alt.isCorrect)
+          if (!hasCorrect) {
+            alert(`Questão ${question.number}: Marque uma alternativa como correta`)
+            return
+          }
 
-        for (const alt of question.alternatives) {
-          if (!alt.text.trim()) {
-            alert(`Questão ${question.number}: Preencha todas as alternativas`)
+          for (const alt of question.alternatives) {
+            if (!alt.text.trim()) {
+              alert(`Questão ${question.number}: Preencha todas as alternativas`)
+              return
+            }
+          }
+        } else if (question.type === 'discursive') {
+          if (!question.keyPoints || question.keyPoints.length === 0) {
+            alert(`Questão ${question.number}: Adicione pelo menos um ponto-chave`)
+            return
+          }
+        } else if (question.type === 'essay') {
+          if (!question.essayTheme || !question.essayTheme.trim()) {
+            alert(`Questão ${question.number}: Preencha o tema da redação`)
             return
           }
         }
       }
 
+      // Calcular endTime baseado em startTime + durationMinutes (se não for prova prática)
+      let endTimeISO = null
+      if (!examData.isPracticeExam && examData.startTime) {
+        const startDate = new Date(examData.startTime)
+        const endDate = new Date(startDate.getTime() + examData.durationMinutes * 60000)
+        endTimeISO = endDate.toISOString()
+      }
+
       const payload = {
         ...examData,
+        endTime: endTimeISO,
+        duration: examData.durationMinutes,
+        numberOfQuestions: questions.length,
         questions,
+        // Garantir que os campos de proctoring sejam enviados
+        proctoringEnabled: examData.proctoringEnabled,
+        proctoringCamera: examData.proctoringCamera,
+        proctoringAudio: examData.proctoringAudio,
+        proctoringScreen: examData.proctoringScreen,
+        proctoringScreenMode: examData.proctoringScreenMode,
+        // Novos campos
+        isPracticeExam: examData.isPracticeExam,
+        allowCustomName: examData.allowCustomName,
+        requireSignature: examData.requireSignature,
+        shuffleQuestions: examData.shuffleQuestions,
       }
 
       const res = await fetch(`/api/exams/${id}`, {
@@ -274,50 +379,108 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
                 placeholder="Cole uma URL ou faça upload do PDF"
               />
 
+              {examData.isPracticeExam && (
+                <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                  <p className="text-sm text-blue-900 dark:text-blue-100">
+                    ℹ️ <strong>Modo Prova Prática ativado:</strong> As datas de início/fim e portões são opcionais. A prova ficará disponível permanentemente e os alunos poderão fazer múltiplas tentativas.
+                  </p>
+                </div>
+              )}
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="gatesOpen">Abertura dos Portões (opcional)</Label>
+                  <Label htmlFor="gatesOpen">
+                    Abertura dos Portões {!examData.isPracticeExam && '(opcional)'}
+                  </Label>
                   <Input
                     id="gatesOpen"
                     type="datetime-local"
                     value={examData.gatesOpen}
                     onChange={(e) => setExamData({ ...examData, gatesOpen: e.target.value })}
+                    disabled={examData.isPracticeExam}
                   />
+                  {examData.isPracticeExam && (
+                    <p className="text-xs text-muted-foreground">
+                      Desabilitado em provas práticas
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="gatesClose">Fechamento dos Portões (opcional)</Label>
+                  <Label htmlFor="gatesClose">
+                    Fechamento dos Portões {!examData.isPracticeExam && '(opcional)'}
+                  </Label>
                   <Input
                     id="gatesClose"
                     type="datetime-local"
                     value={examData.gatesClose}
                     onChange={(e) => setExamData({ ...examData, gatesClose: e.target.value })}
+                    disabled={examData.isPracticeExam}
                   />
+                  {examData.isPracticeExam && (
+                    <p className="text-xs text-muted-foreground">
+                      Desabilitado em provas práticas
+                    </p>
+                  )}
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="startTime">Início da Prova *</Label>
+                  <Label htmlFor="startTime">
+                    Data/Hora de Início {examData.isPracticeExam ? '(opcional)' : '*'}
+                  </Label>
                   <Input
                     id="startTime"
                     type="datetime-local"
                     value={examData.startTime}
                     onChange={(e) => setExamData({ ...examData, startTime: e.target.value })}
-                    required
+                    required={!examData.isPracticeExam}
+                    disabled={examData.isPracticeExam}
                   />
+                  <p className="text-xs text-muted-foreground">
+                    {examData.isPracticeExam
+                      ? 'Desabilitado em provas práticas - disponível permanentemente'
+                      : 'Quando a prova estará disponível para os alunos'}
+                  </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="endTime">Término da Prova *</Label>
+                  <Label htmlFor="durationMinutes">Duração da Prova (minutos) *</Label>
                   <Input
-                    id="endTime"
-                    type="datetime-local"
-                    value={examData.endTime}
-                    onChange={(e) => setExamData({ ...examData, endTime: e.target.value })}
+                    id="durationMinutes"
+                    type="number"
+                    min="1"
+                    value={examData.durationMinutes}
+                    onChange={(e) => setExamData({ ...examData, durationMinutes: parseInt(e.target.value) || 120 })}
                     required
                   />
+                  <p className="text-xs text-muted-foreground">
+                    {examData.startTime && examData.durationMinutes && !examData.isPracticeExam ? (
+                      <>Término: {new Date(new Date(examData.startTime).getTime() + examData.durationMinutes * 60000).toLocaleString('pt-BR')}</>
+                    ) : (
+                      'Tempo que os alunos terão para completar a prova'
+                    )}
+                  </p>
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="navigationMode">Modo de Navegação</Label>
+                <select
+                  id="navigationMode"
+                  value={examData.navigationMode}
+                  onChange={(e) => setExamData({ ...examData, navigationMode: e.target.value as 'paginated' | 'scroll' })}
+                  className="w-full px-3 py-2 border border-input rounded-md bg-background"
+                >
+                  <option value="paginated">Paginado (uma questão por vez)</option>
+                  <option value="scroll">Scroll (todas as questões visíveis)</option>
+                </select>
+                <p className="text-xs text-muted-foreground">
+                  {examData.navigationMode === 'paginated'
+                    ? 'O aluno verá uma questão por vez e navegará com botões'
+                    : 'Todas as questões ficarão visíveis numa única página. O aluno pode rolar e pular questões livremente'}
+                </p>
               </div>
 
               <div className="flex items-center space-x-2">
@@ -331,6 +494,228 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
                 <Label htmlFor="isHidden" className="cursor-pointer">
                   Manter prova oculta (apenas visível para você)
                 </Label>
+              </div>
+
+              {/* Configurações Adicionais */}
+              <div className="border-t pt-4 space-y-4">
+                <div>
+                  <h3 className="font-semibold mb-1 flex items-center gap-2">
+                    ⚙️ Configurações Adicionais
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Personalize o comportamento e requisitos da prova
+                  </p>
+
+                  <div className="space-y-3 p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                    {/* Prova Prática/Treino */}
+                    <div className="flex items-start space-x-3">
+                      <input
+                        type="checkbox"
+                        id="isPracticeExam"
+                        checked={examData.isPracticeExam}
+                        onChange={(e) => setExamData({
+                          ...examData,
+                          isPracticeExam: e.target.checked,
+                          ...(e.target.checked && {
+                            startTime: '',
+                            gatesOpen: '',
+                            gatesClose: '',
+                          })
+                        })}
+                        className="mt-1 h-4 w-4 rounded border-input"
+                      />
+                      <div className="flex-1">
+                        <Label htmlFor="isPracticeExam" className="cursor-pointer font-semibold">
+                          🎯 Prova Prática/Treino
+                        </Label>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Permite múltiplas tentativas e não exige datas de início/fim. Ideal para simulados e treinos.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Nome Customizado */}
+                    <div className="flex items-start space-x-3">
+                      <input
+                        type="checkbox"
+                        id="allowCustomName"
+                        checked={examData.allowCustomName}
+                        onChange={(e) => setExamData({ ...examData, allowCustomName: e.target.checked })}
+                        className="mt-1 h-4 w-4 rounded border-input"
+                      />
+                      <div className="flex-1">
+                        <Label htmlFor="allowCustomName" className="cursor-pointer font-semibold">
+                          ✏️ Permitir Nome Customizado
+                        </Label>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          O aluno poderá digitar um nome diferente do cadastrado no início da prova
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Assinatura Obrigatória */}
+                    <div className="flex items-start space-x-3">
+                      <input
+                        type="checkbox"
+                        id="requireSignature"
+                        checked={examData.requireSignature}
+                        onChange={(e) => setExamData({ ...examData, requireSignature: e.target.checked })}
+                        className="mt-1 h-4 w-4 rounded border-input"
+                      />
+                      <div className="flex-1">
+                        <Label htmlFor="requireSignature" className="cursor-pointer font-semibold">
+                          ✍️ Exigir Assinatura Digital
+                        </Label>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          O aluno deverá assinar (desenhar) antes de iniciar. A assinatura aparecerá no PDF e relatórios.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Embaralhar Questões */}
+                    <div className="flex items-start space-x-3">
+                      <input
+                        type="checkbox"
+                        id="shuffleQuestions"
+                        checked={examData.shuffleQuestions}
+                        onChange={(e) => setExamData({ ...examData, shuffleQuestions: e.target.checked })}
+                        className="mt-1 h-4 w-4 rounded border-input"
+                      />
+                      <div className="flex-1">
+                        <Label htmlFor="shuffleQuestions" className="cursor-pointer font-semibold">
+                          🔀 Embaralhar Ordem das Questões
+                        </Label>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          A ordem das questões será randomizada para cada aluno (gabarito e alternativas não mudam)
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sistema de Monitoramento (Proctoring) */}
+              <div className="border-t pt-4 space-y-4">
+                <div>
+                  <h3 className="font-semibold mb-1 flex items-center gap-2">
+                    🎥 Sistema de Monitoramento (Proctoring)
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Configure o monitoramento em tempo real durante a prova para prevenir fraudes
+                  </p>
+
+                  <div className="space-y-3">
+                    <div className="flex items-start space-x-3">
+                      <input
+                        type="checkbox"
+                        id="proctoringEnabled"
+                        checked={examData.proctoringEnabled}
+                        onChange={(e) => setExamData({ ...examData, proctoringEnabled: e.target.checked })}
+                        className="mt-1 h-4 w-4 rounded border-input"
+                      />
+                      <div className="flex-1">
+                        <Label htmlFor="proctoringEnabled" className="cursor-pointer font-semibold">
+                          Ativar Monitoramento
+                        </Label>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Habilita o sistema de proctoring para esta prova
+                        </p>
+                      </div>
+                    </div>
+
+                    {examData.proctoringEnabled && (
+                      <div className="ml-7 space-y-3 p-4 bg-muted rounded-lg border">
+                        <div className="flex items-start space-x-3">
+                          <input
+                            type="checkbox"
+                            id="proctoringCamera"
+                            checked={examData.proctoringCamera}
+                            onChange={(e) => setExamData({ ...examData, proctoringCamera: e.target.checked })}
+                            className="mt-1 h-4 w-4 rounded border-input"
+                          />
+                          <div className="flex-1">
+                            <Label htmlFor="proctoringCamera" className="cursor-pointer font-semibold">
+                              📹 Câmera
+                            </Label>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Transmite vídeo da câmera do aluno em tempo real
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start space-x-3">
+                          <input
+                            type="checkbox"
+                            id="proctoringAudio"
+                            checked={examData.proctoringAudio}
+                            onChange={(e) => setExamData({ ...examData, proctoringAudio: e.target.checked })}
+                            className="mt-1 h-4 w-4 rounded border-input"
+                          />
+                          <div className="flex-1">
+                            <Label htmlFor="proctoringAudio" className="cursor-pointer font-semibold">
+                              🎤 Áudio
+                            </Label>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Transmite áudio do microfone do aluno
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start space-x-3">
+                          <input
+                            type="checkbox"
+                            id="proctoringScreen"
+                            checked={examData.proctoringScreen}
+                            onChange={(e) => setExamData({ ...examData, proctoringScreen: e.target.checked })}
+                            className="mt-1 h-4 w-4 rounded border-input"
+                          />
+                          <div className="flex-1">
+                            <Label htmlFor="proctoringScreen" className="cursor-pointer font-semibold">
+                              🖥️ Compartilhamento de Tela
+                            </Label>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Transmite a tela do aluno
+                            </p>
+                          </div>
+                        </div>
+
+                        {examData.proctoringScreen && (
+                          <div className="ml-7 space-y-2">
+                            <Label>Modo de Compartilhamento</Label>
+                            <select
+                              value={examData.proctoringScreenMode}
+                              onChange={(e) => setExamData({ ...examData, proctoringScreenMode: e.target.value as 'window' | 'screen' })}
+                              className="w-full px-3 py-2 border border-input rounded-md bg-background text-sm"
+                            >
+                              <option value="window">Janela da Prova</option>
+                              <option value="screen">Tela Inteira</option>
+                            </select>
+                            <p className="text-xs text-muted-foreground">
+                              {examData.proctoringScreenMode === 'window'
+                                ? 'Compartilha apenas a janela do navegador com a prova'
+                                : 'Compartilha toda a tela do computador do aluno'}
+                            </p>
+                          </div>
+                        )}
+
+                        {(examData.proctoringCamera || examData.proctoringAudio || examData.proctoringScreen) && (
+                          <div className="p-3 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded text-xs">
+                            <p className="font-semibold text-blue-900 dark:text-blue-100">ℹ️ Resumo:</p>
+                            <ul className="text-blue-800 dark:text-blue-200 mt-1 ml-4 list-disc space-y-1">
+                              {examData.proctoringCamera && <li>Câmera será exibida no canto superior esquerdo</li>}
+                              {examData.proctoringAudio && <li>Áudio será transmitido em tempo real</li>}
+                              {examData.proctoringScreen && (
+                                <li>
+                                  Transmissão de {examData.proctoringScreenMode === 'window' ? 'janela da prova' : 'tela inteira'}
+                                </li>
+                              )}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
 
               <Button onClick={() => setCurrentStep(2)} className="w-full" size="lg">
@@ -348,8 +733,32 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
                   <CardTitle>
                     Questão {currentQuestion.number} de {questions.length}
                   </CardTitle>
-                  <div className="text-sm text-muted-foreground">
-                    {currentQuestionIndex + 1}/{questions.length}
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => swapQuestions(currentQuestionIndex, currentQuestionIndex - 1)}
+                        disabled={currentQuestionIndex === 0}
+                        title="Mover questão para cima"
+                        className="h-8 w-8 p-0"
+                      >
+                        <ArrowUp className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => swapQuestions(currentQuestionIndex, currentQuestionIndex + 1)}
+                        disabled={currentQuestionIndex === questions.length - 1}
+                        title="Mover questão para baixo"
+                        className="h-8 w-8 p-0"
+                      >
+                        <ArrowDown className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {currentQuestionIndex + 1}/{questions.length}
+                    </div>
                   </div>
                 </div>
               </CardHeader>

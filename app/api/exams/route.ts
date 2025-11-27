@@ -101,6 +101,9 @@ export async function POST(request: NextRequest) {
     const db = await getDb()
     const examsCollection = db.collection<Exam>('exams')
 
+    // Para provas práticas sem datas, usar uma data muito distante no futuro
+    const defaultFutureDate = new Date('2099-12-31T23:59:59')
+
     const newExam: Exam = {
       title,
       description,
@@ -114,8 +117,8 @@ export async function POST(request: NextRequest) {
       pdfUrl,
       gatesOpen: gatesOpen ? new Date(gatesOpen) : undefined,
       gatesClose: gatesClose ? new Date(gatesClose) : undefined,
-      startTime: startTime ? new Date(startTime) : new Date(), // Default para data atual se não fornecido
-      endTime: endTime ? new Date(endTime) : new Date(), // Default para data atual se não fornecido
+      startTime: startTime ? new Date(startTime) : (isPracticeExam ? defaultFutureDate : new Date()),
+      endTime: endTime ? new Date(endTime) : (isPracticeExam ? defaultFutureDate : new Date()),
       createdBy: session.userId,
       isHidden,
       discursiveCorrectionMethod,

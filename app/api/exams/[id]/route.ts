@@ -66,18 +66,36 @@ export async function PUT(
       return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
     }
 
+    // Para provas práticas sem datas, usar uma data muito distante no futuro
+    const defaultFutureDate = new Date('2099-12-31T23:59:59')
+    const isPracticeExam = body.isPracticeExam !== undefined ? body.isPracticeExam : exam.isPracticeExam
+
     const updateData = {
       ...body,
       gatesOpen: body.gatesOpen ? new Date(body.gatesOpen) : undefined,
       gatesClose: body.gatesClose ? new Date(body.gatesClose) : undefined,
-      startTime: body.startTime ? new Date(body.startTime) : exam.startTime,
-      endTime: body.endTime ? new Date(body.endTime) : exam.endTime,
+      startTime: body.startTime ? new Date(body.startTime) : (isPracticeExam ? defaultFutureDate : exam.startTime),
+      endTime: body.endTime ? new Date(body.endTime) : (isPracticeExam ? defaultFutureDate : exam.endTime),
+      // Configurações de proctoring
+      proctoring: body.proctoringEnabled ? {
+        enabled: body.proctoringEnabled,
+        camera: body.proctoringCamera || false,
+        audio: body.proctoringAudio || false,
+        screen: body.proctoringScreen || false,
+        screenMode: body.proctoringScreenMode || 'window',
+      } : (body.proctoringEnabled === false ? undefined : exam.proctoring),
       updatedAt: new Date(),
     }
 
     delete updateData._id
     delete updateData.createdBy
     delete updateData.createdAt
+    // Remover campos individuais de proctoring que foram consolidados
+    delete updateData.proctoringEnabled
+    delete updateData.proctoringCamera
+    delete updateData.proctoringAudio
+    delete updateData.proctoringScreen
+    delete updateData.proctoringScreenMode
 
     await examsCollection.updateOne(
       { _id: new ObjectId(id) },
