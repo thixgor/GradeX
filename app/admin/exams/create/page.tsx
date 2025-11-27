@@ -11,7 +11,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { FileUpload } from '@/components/file-upload'
 import { TxtImportUnified } from '@/components/txt-import-unified'
 import { AIQuestionGenerator } from '@/components/ai-question-generator'
-import { Question, Alternative, ScoringMethod, QuestionType, KeyPoint, EssayStyle, CorrectionMethod } from '@/lib/types'
+import { Question, Alternative, ScoringMethod, QuestionType, KeyPoint, EssayStyle, CorrectionMethod, AlternativeType } from '@/lib/types'
 import { generateRandomTRIParameters } from '@/lib/tri-calculator'
 import { v4 as uuidv4 } from 'uuid'
 import { ArrowLeft, Plus, Trash2, Shuffle, Save } from 'lucide-react'
@@ -53,21 +53,52 @@ export default function CreateExamPage() {
   const [questions, setQuestions] = useState<Question[]>([])
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
 
-  function addMultipleChoiceQuestion() {
+  function addMultipleChoiceQuestion(alternativeType: AlternativeType = 'standard') {
     const letters = ['A', 'B', 'C', 'D', 'E']
-    const alternatives: Alternative[] = []
+    let alternatives: Alternative[] = []
+    let numAlternatives = examData.numberOfAlternatives
 
-    for (let j = 0; j < examData.numberOfAlternatives; j++) {
-      alternatives.push({
-        id: uuidv4(),
-        letter: letters[j],
-        text: '',
-        isCorrect: j === 0,
-      })
+    // Criar alternativas baseadas no tipo
+    if (alternativeType === 'true-false') {
+      // Verdadeiro/Falso - apenas 2 alternativas
+      alternatives = [
+        { id: uuidv4(), letter: 'V', text: 'Verdadeiro', isCorrect: true },
+        { id: uuidv4(), letter: 'F', text: 'Falso', isCorrect: false },
+      ]
+      numAlternatives = 2
+    } else if (alternativeType === 'comparison') {
+      // Comparação - 4 alternativas padrão
+      alternatives = [
+        { id: uuidv4(), letter: 'A', text: 'As duas afirmações são verdadeiras', isCorrect: false },
+        { id: uuidv4(), letter: 'B', text: 'A primeira afirmação é verdadeira e a segunda é falsa', isCorrect: false },
+        { id: uuidv4(), letter: 'C', text: 'A primeira afirmação é falsa e a segunda é verdadeira', isCorrect: false },
+        { id: uuidv4(), letter: 'D', text: 'As duas afirmações são falsas', isCorrect: false },
+      ]
+      numAlternatives = 4
+    } else if (alternativeType === 'assertion-reason') {
+      // Asserção/Razão - 5 alternativas padrão
+      alternatives = [
+        { id: uuidv4(), letter: 'A', text: 'As duas afirmações são verdadeiras, e a segunda justifica a primeira', isCorrect: false },
+        { id: uuidv4(), letter: 'B', text: 'As duas afirmações são verdadeiras, mas a segunda não justifica a primeira', isCorrect: false },
+        { id: uuidv4(), letter: 'C', text: 'A primeira afirmação é verdadeira, e a segunda é falsa', isCorrect: false },
+        { id: uuidv4(), letter: 'D', text: 'A primeira afirmação é falsa, e a segunda é verdadeira', isCorrect: false },
+        { id: uuidv4(), letter: 'E', text: 'As duas afirmações são falsas', isCorrect: false },
+      ]
+      numAlternatives = 5
+    } else {
+      // Alternativas padrão (standard)
+      for (let j = 0; j < examData.numberOfAlternatives; j++) {
+        alternatives.push({
+          id: uuidv4(),
+          letter: letters[j],
+          text: '',
+          isCorrect: j === 0,
+        })
+      }
     }
 
     const triParams = examData.scoringMethod === 'tri'
-      ? generateRandomTRIParameters(examData.numberOfAlternatives)
+      ? generateRandomTRIParameters(numAlternatives)
       : {}
 
     const newQuestion: Question = {
@@ -78,8 +109,15 @@ export default function CreateExamPage() {
       statementSource: '',
       imageUrl: '',
       imageSource: '',
-      command: '',
+      command: alternativeType === 'assertion-reason'
+        ? 'Analise as afirmações abaixo:'
+        : alternativeType === 'comparison'
+        ? 'Compare as afirmações abaixo:'
+        : alternativeType === 'true-false'
+        ? 'Julgue a afirmação abaixo:'
+        : '',
       alternatives,
+      alternativeType,
       ...(examData.scoringMethod === 'tri' && {
         triDiscrimination: triParams.a,
         triDifficulty: triParams.b,
@@ -830,22 +868,49 @@ export default function CreateExamPage() {
                   <p className="text-sm text-muted-foreground mb-4">
                     Clique nos botões abaixo para adicionar questões uma por vez:
                   </p>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <Button onClick={addMultipleChoiceQuestion} variant="outline" className="h-auto py-4 flex-col">
-                      <div className="text-2xl mb-2">📝</div>
-                      <div className="font-semibold">Múltipla Escolha</div>
-                      <div className="text-xs text-muted-foreground mt-1">Questão com alternativas</div>
-                    </Button>
-                    <Button onClick={addDiscursiveQuestion} variant="outline" className="h-auto py-4 flex-col">
-                      <div className="text-2xl mb-2">✏️</div>
-                      <div className="font-semibold">Discursiva</div>
-                      <div className="text-xs text-muted-foreground mt-1">Resposta aberta</div>
-                    </Button>
-                    <Button onClick={addEssayQuestion} variant="outline" className="h-auto py-4 flex-col">
-                      <div className="text-2xl mb-2">✍️</div>
-                      <div className="font-semibold">Redação</div>
-                      <div className="text-xs text-muted-foreground mt-1">ENEM ou UERJ</div>
-                    </Button>
+
+                  {/* Questões de Múltipla Escolha */}
+                  <div className="mb-4">
+                    <p className="text-xs font-semibold text-muted-foreground mb-2">QUESTÕES DE MÚLTIPLA ESCOLHA</p>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      <Button onClick={() => addMultipleChoiceQuestion('standard')} variant="outline" className="h-auto py-3 flex-col">
+                        <div className="text-xl mb-1">📝</div>
+                        <div className="text-sm font-semibold">Padrão</div>
+                        <div className="text-xs text-muted-foreground mt-1">A, B, C, D, E</div>
+                      </Button>
+                      <Button onClick={() => addMultipleChoiceQuestion('true-false')} variant="outline" className="h-auto py-3 flex-col">
+                        <div className="text-xl mb-1">✓✗</div>
+                        <div className="text-sm font-semibold">V/F</div>
+                        <div className="text-xs text-muted-foreground mt-1">Verdadeiro/Falso</div>
+                      </Button>
+                      <Button onClick={() => addMultipleChoiceQuestion('comparison')} variant="outline" className="h-auto py-3 flex-col">
+                        <div className="text-xl mb-1">⚖️</div>
+                        <div className="text-sm font-semibold">Comparação</div>
+                        <div className="text-xs text-muted-foreground mt-1">2 afirmações</div>
+                      </Button>
+                      <Button onClick={() => addMultipleChoiceQuestion('assertion-reason')} variant="outline" className="h-auto py-3 flex-col">
+                        <div className="text-xl mb-1">🔗</div>
+                        <div className="text-sm font-semibold">Asserção/Razão</div>
+                        <div className="text-xs text-muted-foreground mt-1">Afirmação + Razão</div>
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Outros tipos de questões */}
+                  <div>
+                    <p className="text-xs font-semibold text-muted-foreground mb-2">OUTROS TIPOS</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <Button onClick={addDiscursiveQuestion} variant="outline" className="h-auto py-3 flex-col">
+                        <div className="text-xl mb-1">✏️</div>
+                        <div className="text-sm font-semibold">Discursiva</div>
+                        <div className="text-xs text-muted-foreground mt-1">Resposta aberta</div>
+                      </Button>
+                      <Button onClick={addEssayQuestion} variant="outline" className="h-auto py-3 flex-col">
+                        <div className="text-xl mb-1">✍️</div>
+                        <div className="text-sm font-semibold">Redação</div>
+                        <div className="text-xs text-muted-foreground mt-1">ENEM ou UERJ</div>
+                      </Button>
+                    </div>
                   </div>
                 </div>
 
@@ -995,18 +1060,34 @@ export default function CreateExamPage() {
                 {currentQuestion.type === 'multiple-choice' && (
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <Label>Alternativas *</Label>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => shuffleAlternatives(currentQuestionIndex)}
-                        className="h-7"
-                      >
-                        <Shuffle className="h-4 w-4 mr-2" />
-                        Embaralhar
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        <Label>Alternativas *</Label>
+                        {currentQuestion.alternativeType && currentQuestion.alternativeType !== 'standard' && (
+                          <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded">
+                            {currentQuestion.alternativeType === 'true-false' && 'V/F'}
+                            {currentQuestion.alternativeType === 'comparison' && 'Comparação'}
+                            {currentQuestion.alternativeType === 'assertion-reason' && 'Asserção/Razão'}
+                          </span>
+                        )}
+                      </div>
+                      {(!currentQuestion.alternativeType || currentQuestion.alternativeType === 'standard') && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => shuffleAlternatives(currentQuestionIndex)}
+                          className="h-7"
+                        >
+                          <Shuffle className="h-4 w-4 mr-2" />
+                          Embaralhar
+                        </Button>
+                      )}
                     </div>
+                    {currentQuestion.alternativeType && currentQuestion.alternativeType !== 'standard' && (
+                      <p className="text-xs text-muted-foreground bg-blue-50 dark:bg-blue-950 p-2 rounded">
+                        ℹ️ As alternativas para este tipo de questão são pré-definidas. Apenas marque a alternativa correta.
+                      </p>
+                    )}
                     {currentQuestion.alternatives.map((alt, altIndex) => (
                       <div key={alt.id} className="flex items-start space-x-2">
                         <input
@@ -1295,9 +1376,21 @@ export default function CreateExamPage() {
               {/* Botões de ação */}
               <div className="flex justify-between gap-3 pt-2 border-t">
                 <div className="flex gap-2 flex-wrap">
-                  <Button onClick={addMultipleChoiceQuestion} variant="outline" size="sm">
+                  <Button onClick={() => addMultipleChoiceQuestion('standard')} variant="outline" size="sm">
                     <Plus className="h-4 w-4 mr-2" />
-                    Múltipla Escolha
+                    MC Padrão
+                  </Button>
+                  <Button onClick={() => addMultipleChoiceQuestion('true-false')} variant="outline" size="sm">
+                    <Plus className="h-4 w-4 mr-2" />
+                    V/F
+                  </Button>
+                  <Button onClick={() => addMultipleChoiceQuestion('comparison')} variant="outline" size="sm">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Comparação
+                  </Button>
+                  <Button onClick={() => addMultipleChoiceQuestion('assertion-reason')} variant="outline" size="sm">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Asserção/Razão
                   </Button>
                   <Button onClick={addDiscursiveQuestion} variant="outline" size="sm">
                     <Plus className="h-4 w-4 mr-2" />

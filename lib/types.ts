@@ -1,5 +1,6 @@
 export type ScoringMethod = 'normal' | 'tri' | 'discursive'
 export type QuestionType = 'multiple-choice' | 'discursive' | 'essay'
+export type AlternativeType = 'standard' | 'true-false' | 'comparison' | 'assertion-reason'
 export type EssayStyle = 'enem' | 'uerj'
 export type CorrectionMethod = 'manual' | 'ai'
 export type CorrectionStatus = 'pending' | 'corrected'
@@ -54,6 +55,7 @@ export interface Question {
   command: string
   // Para questões de múltipla escolha
   alternatives: Alternative[]
+  alternativeType?: AlternativeType // Tipo de alternativa: 'standard', 'true-false', 'comparison', 'assertion-reason'
   // TRI parameters (apenas para múltipla escolha)
   triDiscrimination?: number // parâmetro 'a'
   triDifficulty?: number // parâmetro 'b'

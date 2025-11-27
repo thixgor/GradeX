@@ -21,23 +21,61 @@ export function StudentStreamViewer({
 
   // Conectar stream de vídeo
   useEffect(() => {
-    if (stream && videoRef.current) {
-      videoRef.current.srcObject = stream
-      videoRef.current.play().catch((err) => {
+    const video = videoRef.current
+    if (!stream || !video) return
+
+    console.log('[StudentStreamViewer] 🎥 Conectando stream de vídeo:', userName)
+
+    // Evitar atualizar se já é o mesmo stream
+    if (video.srcObject === stream) {
+      console.log('[StudentStreamViewer] Stream já conectado, pulando')
+      return
+    }
+
+    video.srcObject = stream
+
+    // Aguardar loadedmetadata antes de dar play
+    const handleLoadedMetadata = () => {
+      video.play().catch((err) => {
         console.error('[StudentStreamViewer] Erro ao reproduzir vídeo:', err)
       })
     }
-  }, [stream])
+
+    video.addEventListener('loadedmetadata', handleLoadedMetadata)
+
+    return () => {
+      video.removeEventListener('loadedmetadata', handleLoadedMetadata)
+    }
+  }, [stream, userName])
 
   // Conectar stream de áudio
   useEffect(() => {
-    if (stream && audioRef.current) {
-      audioRef.current.srcObject = stream
-      audioRef.current.play().catch((err) => {
+    const audio = audioRef.current
+    if (!stream || !audio) return
+
+    console.log('[StudentStreamViewer] 🔊 Conectando stream de áudio:', userName)
+
+    // Evitar atualizar se já é o mesmo stream
+    if (audio.srcObject === stream) {
+      console.log('[StudentStreamViewer] Audio já conectado, pulando')
+      return
+    }
+
+    audio.srcObject = stream
+
+    // Aguardar loadedmetadata antes de dar play
+    const handleLoadedMetadata = () => {
+      audio.play().catch((err) => {
         console.error('[StudentStreamViewer] Erro ao reproduzir áudio:', err)
       })
     }
-  }, [stream])
+
+    audio.addEventListener('loadedmetadata', handleLoadedMetadata)
+
+    return () => {
+      audio.removeEventListener('loadedmetadata', handleLoadedMetadata)
+    }
+  }, [stream, userName])
 
   if (!stream) {
     return (
@@ -58,6 +96,7 @@ export function StudentStreamViewer({
             ref={videoRef}
             autoPlay
             playsInline
+            muted
             className="w-full h-full object-cover"
           />
 
