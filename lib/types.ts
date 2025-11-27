@@ -25,13 +25,15 @@ export const BanReasonLabels: Record<BanReason, string> = {
 }
 
 export type HighlightColor = 'yellow' | 'green' | 'cyan' | 'magenta' | 'red' | 'custom'
+export type HighlightType = 'highlight' | 'strikethrough' | 'bold' | 'underline'
 
 export interface TextHighlight {
   id: string
   text: string // Texto selecionado
   startOffset: number // Posição inicial no texto
   endOffset: number // Posição final no texto
-  color: HighlightColor
+  type: HighlightType // Tipo de marcação
+  color?: HighlightColor // Cor (apenas para type === 'highlight')
   customColor?: string // Cor personalizada (se color === 'custom')
   target: 'statement' | 'command' // Onde foi aplicado o highlight
 }

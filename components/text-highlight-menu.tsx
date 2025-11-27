@@ -1,12 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { Copy, Highlighter, Eraser } from 'lucide-react'
-import { HighlightColor } from '@/lib/types'
+import { Copy, Highlighter, Eraser, Strikethrough, Bold, Underline } from 'lucide-react'
+import { HighlightColor, HighlightType } from '@/lib/types'
 
 interface TextHighlightMenuProps {
   position: { x: number; y: number }
   onHighlight: (color: HighlightColor, customColor?: string) => void
+  onApplyStyle: (type: HighlightType) => void
   onRemoveHighlight: () => void
   onCopy: () => void
   onClose: () => void
@@ -20,7 +21,7 @@ const HIGHLIGHT_COLORS: { color: HighlightColor; label: string; bgClass: string 
   { color: 'red', label: 'Vermelho', bgClass: 'bg-red-300' },
 ]
 
-export function TextHighlightMenu({ position, onHighlight, onRemoveHighlight, onCopy, onClose }: TextHighlightMenuProps) {
+export function TextHighlightMenu({ position, onHighlight, onApplyStyle, onRemoveHighlight, onCopy, onClose }: TextHighlightMenuProps) {
   const [showColorPicker, setShowColorPicker] = useState(false)
   const [customColor, setCustomColor] = useState('#ffff00')
 
@@ -118,7 +119,49 @@ export function TextHighlightMenu({ position, onHighlight, onRemoveHighlight, on
             )}
           </div>
 
-          {/* Botão Remover Grifação */}
+          {/* Separador */}
+          <div className="border-t border-gray-200 dark:border-gray-700 my-1" />
+
+          {/* Negritar */}
+          <button
+            onClick={() => {
+              onApplyStyle('bold')
+              onClose()
+            }}
+            className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+          >
+            <Bold className="h-4 w-4" />
+            <span>Negritar</span>
+          </button>
+
+          {/* Sublinhar */}
+          <button
+            onClick={() => {
+              onApplyStyle('underline')
+              onClose()
+            }}
+            className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+          >
+            <Underline className="h-4 w-4" />
+            <span>Sublinhar</span>
+          </button>
+
+          {/* Riscar */}
+          <button
+            onClick={() => {
+              onApplyStyle('strikethrough')
+              onClose()
+            }}
+            className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+          >
+            <Strikethrough className="h-4 w-4" />
+            <span>Riscar</span>
+          </button>
+
+          {/* Separador */}
+          <div className="border-t border-gray-200 dark:border-gray-700 my-1" />
+
+          {/* Botão Remover Marcação */}
           <button
             onClick={() => {
               onRemoveHighlight()
@@ -127,7 +170,7 @@ export function TextHighlightMenu({ position, onHighlight, onRemoveHighlight, on
             className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
           >
             <Eraser className="h-4 w-4" />
-            <span>Remover grifação</span>
+            <span>Remover marcação</span>
           </button>
         </div>
       </div>

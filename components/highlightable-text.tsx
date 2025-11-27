@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { TextHighlight, HighlightColor } from '@/lib/types'
+import { TextHighlight, HighlightColor, HighlightType } from '@/lib/types'
 import { TextHighlightMenu } from './text-highlight-menu'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -20,6 +20,12 @@ const HIGHLIGHT_COLOR_MAP: Record<HighlightColor, string> = {
   magenta: 'bg-pink-300/60',
   red: 'bg-red-300/60',
   custom: '', // Será definido inline
+}
+
+interface MarkupSegment {
+  start: number
+  end: number
+  highlights: TextHighlight[]
 }
 
 export function HighlightableText({
@@ -85,15 +91,45 @@ export function HighlightableText({
       text: selectedText,
       startOffset: selectionRange.start,
       endOffset: selectionRange.end,
+      type: 'highlight',
       color,
       customColor,
       target,
     }
 
-    // Filtrar highlights que sobrepõem completamente o novo (para permitir sobrescrever)
+    // Filtrar apenas highlights do tipo 'highlight' que sobrepõem
+    // Permite múltiplos estilos (bold, underline, etc) coexistirem
     const filteredHighlights = highlights.filter((h) => {
       if (h.target !== target) return true
-      // Manter se não houver sobreposição
+      if (h.type !== 'highlight') return true // Manter outros tipos
+      // Remover apenas highlights que sobrepõem
+      return h.endOffset <= selectionRange.start || h.startOffset >= selectionRange.end
+    })
+
+    onHighlightsChange([...filteredHighlights, newHighlight])
+
+    // Limpar seleção
+    window.getSelection()?.removeAllRanges()
+  }
+
+  const handleApplyStyle = (styleType: HighlightType) => {
+    if (!selectionRange) return
+
+    const newHighlight: TextHighlight = {
+      id: uuidv4(),
+      text: selectedText,
+      startOffset: selectionRange.start,
+      endOffset: selectionRange.end,
+      type: styleType,
+      target,
+    }
+
+    // Filtrar apenas marcações do mesmo tipo que sobrepõem
+    // Isso permite ter highlight + bold + underline no mesmo texto
+    const filteredHighlights = highlights.filter((h) => {
+      if (h.target !== target) return true
+      if (h.type !== styleType) return true // Manter outros tipos
+      // Remover apenas do mesmo tipo que sobrepõem
       return h.endOffset <= selectionRange.start || h.startOffset >= selectionRange.end
     })
 
@@ -129,49 +165,71 @@ export function HighlightableText({
       return <span>{text}</span>
     }
 
-    // Ordenar por posição
-    const sortedHighlights = [...targetHighlights].sort((a, b) => a.startOffset - b.startOffset)
+    // Criar pontos de quebra para todos os highlights
+    const breakpoints = new Set<number>([0, text.length])
+    targetHighlights.forEach((h) => {
+      breakpoints.add(h.startOffset)
+      breakpoints.add(h.endOffset)
+    })
+    const sortedBreakpoints = Array.from(breakpoints).sort((a, b) => a - b)
 
-    const segments: React.ReactNode[] = []
-    let currentPos = 0
+    // Criar segmentos
+    const segments: MarkupSegment[] = []
+    for (let i = 0; i < sortedBreakpoints.length - 1; i++) {
+      const start = sortedBreakpoints[i]
+      const end = sortedBreakpoints[i + 1]
 
-    sortedHighlights.forEach((highlight, idx) => {
-      // Texto antes do highlight
-      if (currentPos < highlight.startOffset) {
-        segments.push(
-          <span key={`text-${idx}`}>{text.slice(currentPos, highlight.startOffset)}</span>
-        )
-      }
-
-      // Texto destacado
-      const bgColor =
-        highlight.color === 'custom' && highlight.customColor
-          ? highlight.customColor
-          : HIGHLIGHT_COLOR_MAP[highlight.color]
-
-      segments.push(
-        <mark
-          key={`highlight-${highlight.id}`}
-          className={highlight.color !== 'custom' ? bgColor : ''}
-          style={
-            highlight.color === 'custom' && highlight.customColor
-              ? { backgroundColor: highlight.customColor + '99' } // Adiciona transparência
-              : undefined
-          }
-        >
-          {text.slice(highlight.startOffset, highlight.endOffset)}
-        </mark>
+      // Encontrar todos os highlights que afetam este segmento
+      const activeHighlights = targetHighlights.filter(
+        (h) => h.startOffset <= start && h.endOffset >= end
       )
 
-      currentPos = highlight.endOffset
-    })
-
-    // Texto restante
-    if (currentPos < text.length) {
-      segments.push(<span key="text-end">{text.slice(currentPos)}</span>)
+      segments.push({ start, end, highlights: activeHighlights })
     }
 
-    return <>{segments}</>
+    // Renderizar segmentos
+    return (
+      <>
+        {segments.map((segment, idx) => {
+          const segmentText = text.slice(segment.start, segment.end)
+
+          if (segment.highlights.length === 0) {
+            return <span key={idx}>{segmentText}</span>
+          }
+
+          // Aplicar estilos acumulados
+          let content: React.ReactNode = segmentText
+          let className = ''
+          let style: React.CSSProperties = {}
+
+          segment.highlights.forEach((h) => {
+            if (h.type === 'highlight') {
+              if (h.color === 'custom' && h.customColor) {
+                style.backgroundColor = h.customColor + '99'
+              } else if (h.color) {
+                className += ' ' + HIGHLIGHT_COLOR_MAP[h.color]
+              }
+            } else if (h.type === 'bold') {
+              style.fontWeight = 'bold'
+            } else if (h.type === 'underline') {
+              style.textDecoration = (style.textDecoration || '') + ' underline'
+            } else if (h.type === 'strikethrough') {
+              style.textDecoration = (style.textDecoration || '') + ' line-through'
+            }
+          })
+
+          return (
+            <span
+              key={idx}
+              className={className.trim()}
+              style={Object.keys(style).length > 0 ? style : undefined}
+            >
+              {content}
+            </span>
+          )
+        })}
+      </>
+    )
   }
 
   return (
@@ -189,6 +247,7 @@ export function HighlightableText({
         <TextHighlightMenu
           position={contextMenu}
           onHighlight={handleHighlight}
+          onApplyStyle={handleApplyStyle}
           onRemoveHighlight={handleRemoveHighlight}
           onCopy={handleCopy}
           onClose={() => setContextMenu(null)}
