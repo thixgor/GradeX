@@ -12,6 +12,7 @@ const secret = new TextEncoder().encode(
 export interface TokenPayload {
   userId: string
   email: string
+  name: string
   role: 'admin' | 'user'
 }
 

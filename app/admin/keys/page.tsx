@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { ToastAlert } from '@/components/ui/toast-alert'
-import { ArrowLeft, Key, Plus, Copy, Check, Clock, Crown, Timer } from 'lucide-react'
+import { ArrowLeft, Key, Plus, Copy, Check, Clock, Crown, Timer, Trash2 } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { SerialKey, SerialKeyType } from '@/lib/types'
@@ -90,6 +90,33 @@ export default function AdminKeysPage() {
     navigator.clipboard.writeText(key)
     setCopiedKey(key)
     setTimeout(() => setCopiedKey(null), 2000)
+  }
+
+  async function handleDeleteKey(keyId: string) {
+    if (!confirm('Tem certeza que deseja deletar esta serial key?')) {
+      return
+    }
+
+    try {
+      const res = await fetch(`/api/serial-keys/${keyId}`, {
+        method: 'DELETE'
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Erro ao deletar serial key')
+      }
+
+      setToastMessage('Serial key deletada com sucesso!')
+      setToastType('success')
+      setToastOpen(true)
+      loadKeys()
+    } catch (error: any) {
+      setToastMessage(error.message)
+      setToastType('error')
+      setToastOpen(true)
+    }
   }
 
   function getTypeBadge(type: SerialKeyType) {
@@ -178,23 +205,32 @@ export default function AdminKeysPage() {
                             {getTypeBadge(key.type)}
                             {getStatusBadge(key)}
                           </div>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => copyToClipboard(key.key)}
-                          >
-                            {copiedKey === key.key ? (
-                              <>
-                                <Check className="h-4 w-4 mr-2" />
-                                Copiado!
-                              </>
-                            ) : (
-                              <>
-                                <Copy className="h-4 w-4 mr-2" />
-                                Copiar
-                              </>
-                            )}
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => copyToClipboard(key.key)}
+                            >
+                              {copiedKey === key.key ? (
+                                <>
+                                  <Check className="h-4 w-4 mr-2" />
+                                  Copiado!
+                                </>
+                              ) : (
+                                <>
+                                  <Copy className="h-4 w-4 mr-2" />
+                                  Copiar
+                                </>
+                              )}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => handleDeleteKey(key._id!)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                       </CardHeader>
                       <CardContent>

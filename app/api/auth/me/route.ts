@@ -36,6 +36,9 @@ export async function GET() {
         email: user.email,
         name: user.name,
         role: user.role,
+        accountType: user.accountType,
+        trialExpiresAt: user.trialExpiresAt,
+        trialDuration: user.trialDuration,
       },
     })
   } catch (error) {
