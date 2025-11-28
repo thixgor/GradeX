@@ -19,9 +19,9 @@ interface User {
   role: 'admin' | 'user'
 }
 
-export default function ForumPostPage({ params }: { params: Promise<{ id: string }> }) {
+export default function ForumPostPage({ params }: { params: { id: string } }) {
   const router = useRouter()
-  const [postId, setPostId] = useState<string | null>(null)
+  const postId = params.id
   const [post, setPost] = useState<ForumPost | null>(null)
   const [comments, setComments] = useState<ForumComment[]>([])
   const [user, setUser] = useState<User | null>(null)
@@ -33,18 +33,10 @@ export default function ForumPostPage({ params }: { params: Promise<{ id: string
   const [toastType, setToastType] = useState<'success' | 'error'>('success')
 
   useEffect(() => {
-    params.then(p => {
-      setPostId(p.id)
-    })
-  }, [params])
-
-  useEffect(() => {
-    if (postId) {
-      checkAuth()
-      loadPost()
-      loadComments()
-    }
-  }, [postId])
+    checkAuth()
+    loadPost()
+    loadComments()
+  }, [])
 
   async function checkAuth() {
     try {

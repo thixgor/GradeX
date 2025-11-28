@@ -20,9 +20,9 @@ interface User {
   role: 'admin' | 'user'
 }
 
-export default function EditForumPostPage({ params }: { params: Promise<{ id: string }> }) {
+export default function EditForumPostPage({ params }: { params: { id: string } }) {
   const router = useRouter()
-  const [postId, setPostId] = useState<string | null>(null)
+  const postId = params.id
   const [user, setUser] = useState<User | null>(null)
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
@@ -37,17 +37,9 @@ export default function EditForumPostPage({ params }: { params: Promise<{ id: st
   const [toastType, setToastType] = useState<'success' | 'error'>('success')
 
   useEffect(() => {
-    params.then(p => {
-      setPostId(p.id)
-    })
-  }, [params])
-
-  useEffect(() => {
-    if (postId) {
-      checkAuth()
-      loadPost()
-    }
-  }, [postId])
+    checkAuth()
+    loadPost()
+  }, [])
 
   async function checkAuth() {
     try {
