@@ -211,6 +211,46 @@ export interface SerialKey {
   customDurationMinutes?: number // Minutos
 }
 
+export type ForumType = 'discussion' | 'materials' // Discussão ou Materiais
+
+export interface ForumAttachment {
+  type: 'image' | 'pdf'
+  url: string // URL do arquivo (upload ou externa)
+  name: string
+  size: number // Tamanho em bytes
+}
+
+export interface ForumPost {
+  _id?: string
+  forumType: ForumType
+  title: string
+  content: string // HTML rico do editor
+  authorId: string
+  authorName: string
+  attachments: ForumAttachment[]
+  tags: string[]
+  commentsEnabled: boolean
+  closed: boolean // Fechado por admin
+  closedBy?: string // ID do admin que fechou
+  closedByName?: string // Nome do admin que fechou
+  closedAt?: Date
+  edited: boolean
+  editedAt?: Date
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface ForumComment {
+  _id?: string
+  postId: string
+  authorId: string
+  authorName: string
+  content: string // HTML rico
+  createdAt: Date
+  edited: boolean
+  editedAt?: Date
+}
+
 export interface TRICalculationInput {
   theta: number
   a: number
