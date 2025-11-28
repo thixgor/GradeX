@@ -1085,8 +1085,10 @@ export default function ExamPage({ params }: { params: { id: string } }) {
             <CardContent className="space-y-4">
               <div className="p-4 bg-muted rounded-lg">
                 <p className="text-sm text-center text-muted-foreground">
-                  {exam && new Date() > new Date(exam.endTime)
-                    ? 'Você pode visualizar seu relatório ou baixar o gabarito da prova'
+                  {exam && (new Date() > new Date(exam.endTime) || exam.isPracticeExam)
+                    ? exam.isPracticeExam
+                      ? 'Você pode visualizar seu relatório ou baixar o gabarito da prova (prova prática - gabarito sempre disponível)'
+                      : 'Você pode visualizar seu relatório ou baixar o gabarito da prova'
                     : 'Você pode visualizar seu relatório. O gabarito será liberado após o término da prova.'}
                 </p>
               </div>
@@ -1099,7 +1101,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                   <FileDown className="h-4 w-4 mr-2" />
                   Ver Meu Relatório
                 </Button>
-                {exam && new Date() > new Date(exam.endTime) ? (
+                {exam && (new Date() > new Date(exam.endTime) || exam.isPracticeExam) ? (
                   <Button
                     onClick={async () => {
                       try {
