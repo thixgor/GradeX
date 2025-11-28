@@ -2,7 +2,7 @@
 
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Crown, Timer, Check, Sparkles } from 'lucide-react'
+import { Crown, Timer, Check, Sparkles, Clock } from 'lucide-react'
 
 interface ActivationSuccessDialogProps {
   open: boolean
