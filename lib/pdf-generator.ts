@@ -418,15 +418,16 @@ export function generateExamPDF(exam: Exam, userId?: string): Blob {
 
     // Enunciado
     if (question.statement) {
+      checkPage(15)
       doc.setFontSize(10)
       doc.setFont('helvetica', 'normal')
       const lines = wrapText(doc, question.statement, pageWidth - 2 * margin)
       lines.forEach((line: string) => {
-        checkPage(10)
+        checkPage(8)
         doc.text(line, margin, y)
-        y += 5
+        y += 6
       })
-      y += 2
+      y += 3
     }
 
     // Fonte do enunciado
@@ -436,7 +437,7 @@ export function generateExamPDF(exam: Exam, userId?: string): Blob {
       doc.setTextColor(100, 100, 100)
       doc.text(`Fonte: ${question.statementSource}`, margin, y)
       doc.setTextColor(0, 0, 0)
-      y += 5
+      y += 6
     }
 
     // URL da imagem
@@ -446,21 +447,21 @@ export function generateExamPDF(exam: Exam, userId?: string): Blob {
       doc.setTextColor(0, 102, 204)
       doc.text(`Imagem: ${question.imageUrl}`, margin, y)
       doc.setTextColor(0, 0, 0)
-      y += 5
+      y += 6
     }
 
     // Comando
     if (question.command) {
-      checkPage(8)
+      checkPage(12)
       doc.setFontSize(10)
       doc.setFont('helvetica', 'bold')
       const commandLines = wrapText(doc, question.command, pageWidth - 2 * margin)
       commandLines.forEach((line: string) => {
         checkPage(8)
         doc.text(line, margin, y)
-        y += 5
+        y += 6
       })
-      y += 3
+      y += 4
     }
 
     if (question.type === 'multiple-choice') {
@@ -482,11 +483,11 @@ export function generateExamPDF(exam: Exam, userId?: string): Blob {
         const altText = `${letters[altIdx]}) ${alt.text}`
         const altLines = wrapText(doc, altText, pageWidth - 2 * margin - 10)
         altLines.forEach((line: string, lineIdx: number) => {
-          if (lineIdx > 0) checkPage(5)
+          if (lineIdx > 0) checkPage(6)
           doc.text(line, margin + 8, y)
-          y += 5
+          y += 6
         })
-        y += 2
+        y += 3
       })
     } else if (question.type === 'discursive') {
       // Espaço para resposta discursiva
@@ -593,15 +594,16 @@ export function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[], use
     y += 6
 
     if (question.statement) {
+      checkPage(15)
       doc.setFontSize(10)
       doc.setFont('helvetica', 'normal')
       const lines = wrapText(doc, question.statement, pageWidth - 2 * margin)
       lines.forEach((line: string) => {
-        checkPage(10)
+        checkPage(8)
         doc.text(line, margin, y)
-        y += 5
+        y += 6
       })
-      y += 2
+      y += 3
     }
 
     if (question.statementSource) {
@@ -610,20 +612,20 @@ export function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[], use
       doc.setTextColor(100, 100, 100)
       doc.text('Fonte: ' + question.statementSource, margin, y)
       doc.setTextColor(0, 0, 0)
-      y += 5
+      y += 6
     }
 
     if (question.command) {
-      checkPage(8)
+      checkPage(12)
       doc.setFontSize(10)
       doc.setFont('helvetica', 'bold')
       const commandLines = wrapText(doc, question.command, pageWidth - 2 * margin)
       commandLines.forEach((line: string) => {
         checkPage(8)
         doc.text(line, margin, y)
-        y += 5
+        y += 6
       })
-      y += 3
+      y += 4
     }
 
     const answer = answers.find(a => a.questionId === question.id)
@@ -657,11 +659,11 @@ export function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[], use
         const altText = letters[altIdx] + ') ' + alt.text
         const altLines = wrapText(doc, altText, pageWidth - 2 * margin - 10)
         altLines.forEach((line: string, lineIdx: number) => {
-          if (lineIdx > 0) checkPage(5)
+          if (lineIdx > 0) checkPage(6)
           doc.text(line, margin + 8, y)
-          y += 5
+          y += 6
         })
-        y += 2
+        y += 3
       })
     } else if (question.type === 'discursive') {
       checkPage(20)
@@ -679,18 +681,18 @@ export function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[], use
         answerLines.forEach((line: string) => {
           checkPage(8)
           doc.text(line, margin + 2, y)
-          y += 5
+          y += 6
         })
       } else {
         doc.setFontSize(10)
         doc.setTextColor(150, 150, 150)
         doc.text('(Não respondida)', margin + 2, y)
         doc.setTextColor(0, 0, 0)
-        y += 5
+        y += 6
       }
     }
 
-    y += 8
+    y += 10
   })
 
   const totalPages = doc.getNumberOfPages()
