@@ -46,26 +46,45 @@ export async function POST(request: NextRequest) {
     // Determinar o novo accountType e data de expiração (se aplicável)
     let accountType: AccountType
     let trialExpiresAt: Date | undefined
+    let durationInMs = 0
 
     if (serialKey.type === 'premium') {
       accountType = 'premium'
       trialExpiresAt = undefined // Premium é vitalício
-    } else {
+    } else if (serialKey.type === 'trial') {
       // Trial - 7 dias a partir de agora
       accountType = 'trial'
       const expirationDate = new Date()
       expirationDate.setDate(expirationDate.getDate() + 7)
       trialExpiresAt = expirationDate
+      durationInMs = 7 * 24 * 60 * 60 * 1000
+    } else {
+      // Custom - duração personalizada
+      accountType = 'trial'
+      const days = serialKey.customDurationDays || 0
+      const hours = serialKey.customDurationHours || 0
+      const minutes = serialKey.customDurationMinutes || 0
+
+      const expirationDate = new Date()
+      expirationDate.setDate(expirationDate.getDate() + days)
+      expirationDate.setHours(expirationDate.getHours() + hours)
+      expirationDate.setMinutes(expirationDate.getMinutes() + minutes)
+      trialExpiresAt = expirationDate
+
+      // Calcular duração total em milissegundos
+      durationInMs = (days * 24 * 60 * 60 + hours * 60 * 60 + minutes * 60) * 1000
     }
 
-    // Atualizar o usuário
+    // Atualizar o usuário - SEMPRE resetar o tempo ao ativar
     const updateResult = await usersCollection.updateOne(
       { _id: new ObjectId(session.userId) },
       {
         $set: {
           accountType,
           trialExpiresAt,
-          trialDuration: 7, // Padrão
+          trialDuration: serialKey.type === 'custom'
+            ? Math.ceil(durationInMs / (24 * 60 * 60 * 1000))
+            : 7,
         }
       }
     )
@@ -94,6 +113,12 @@ export async function POST(request: NextRequest) {
       message: 'Serial key ativada com sucesso',
       accountType,
       trialExpiresAt,
+      keyType: serialKey.type,
+      customDuration: serialKey.type === 'custom' ? {
+        days: serialKey.customDurationDays,
+        hours: serialKey.customDurationHours,
+        minutes: serialKey.customDurationMinutes,
+      } : undefined,
     })
   } catch (error) {
     console.error('Activate serial key error:', error)

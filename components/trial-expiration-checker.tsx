@@ -39,6 +39,8 @@ export function TrialExpirationChecker() {
         const expiresAt = new Date(user.trialExpiresAt)
 
         if (now > expiresAt) {
+          // Expirar automaticamente o usuário
+          await expireUser()
           setShowExpiredDialog(true)
         }
       }
@@ -47,6 +49,16 @@ export function TrialExpirationChecker() {
     } catch (error) {
       console.error('Erro ao verificar status do trial:', error)
       setIsChecking(false)
+    }
+  }
+
+  async function expireUser() {
+    try {
+      await fetch('/api/user/cancel-subscription', {
+        method: 'POST',
+      })
+    } catch (error) {
+      console.error('Erro ao expirar usuário:', error)
     }
   }
 

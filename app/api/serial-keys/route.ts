@@ -56,13 +56,32 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { type } = body as { type: SerialKeyType }
+    const { type, customDurationDays, customDurationHours, customDurationMinutes } = body as {
+      type: SerialKeyType
+      customDurationDays?: number
+      customDurationHours?: number
+      customDurationMinutes?: number
+    }
 
-    if (!type || (type !== 'trial' && type !== 'premium')) {
+    if (!type || !['trial', 'premium', 'custom'].includes(type)) {
       return NextResponse.json(
-        { error: 'Tipo de key inválido. Use "trial" ou "premium"' },
+        { error: 'Tipo de key inválido. Use "trial", "premium" ou "custom"' },
         { status: 400 }
       )
+    }
+
+    // Validar campos de duração personalizada
+    if (type === 'custom') {
+      const days = customDurationDays || 0
+      const hours = customDurationHours || 0
+      const minutes = customDurationMinutes || 0
+
+      if (days === 0 && hours === 0 && minutes === 0) {
+        return NextResponse.json(
+          { error: 'Para tipo "custom", especifique ao menos dias, horas ou minutos' },
+          { status: 400 }
+        )
+      }
     }
 
     const db = await getDb()
@@ -85,6 +104,13 @@ export async function POST(request: NextRequest) {
       generatedBy: session.userId,
       generatedByName: session.name,
       generatedAt: new Date(),
+    }
+
+    // Adicionar campos de duração personalizada se for custom
+    if (type === 'custom') {
+      newKey.customDurationDays = customDurationDays || 0
+      newKey.customDurationHours = customDurationHours || 0
+      newKey.customDurationMinutes = customDurationMinutes || 0
     }
 
     await keysCollection.insertOne(newKey as any)

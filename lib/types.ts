@@ -192,12 +192,12 @@ export interface User {
   trialDuration?: number // Duração personalizada do trial em dias (padrão: 7)
 }
 
-export type SerialKeyType = 'trial' | 'premium'
+export type SerialKeyType = 'trial' | 'premium' | 'custom'
 
 export interface SerialKey {
   _id?: string
   key: string // A serial key em si (ex: XXXX-XXXX-XXXX-XXXX)
-  type: SerialKeyType // 'trial' (7 dias) ou 'premium' (vitalício)
+  type: SerialKeyType // 'trial' (7 dias), 'premium' (vitalício) ou 'custom' (personalizado)
   used: boolean // Se já foi usada
   generatedBy: string // ID do admin que gerou
   generatedByName: string // Nome do admin
@@ -205,6 +205,10 @@ export interface SerialKey {
   usedBy?: string // ID do usuário que usou
   usedByName?: string // Nome do usuário que usou
   usedAt?: Date // Quando foi usada
+  // Campos para duração personalizada
+  customDurationDays?: number // Dias
+  customDurationHours?: number // Horas
+  customDurationMinutes?: number // Minutos
 }
 
 export interface TRICalculationInput {
