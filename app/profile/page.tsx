@@ -7,12 +7,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ThemeToggle } from '@/components/theme-toggle'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { BanChecker } from '@/components/ban-checker'
-import { ArrowLeft, CheckCircle, Clock, FileText, Download, Printer, ClipboardList, Trophy, BookOpen, Crown, Timer, Sparkles, Phone, Mail } from 'lucide-react'
+import { ArrowLeft, CheckCircle, Clock, FileText, Download, Printer, ClipboardList, Trophy, BookOpen, Crown, Timer, Sparkles, Phone, Mail, XCircle, Ticket, AlertTriangle } from 'lucide-react'
 import { generateGabaritoPDF, downloadPDF, generateExamPDF, generateStudentAnswersPDF } from '@/lib/pdf-generator'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { AccountType } from '@/lib/types'
+import { ActivationSuccessDialog } from '@/components/activation-success-dialog'
 
 interface UserSubmission {
   _id: string
@@ -69,6 +70,10 @@ export default function ProfilePage() {
   const [activateDialogOpen, setActivateDialogOpen] = useState(false)
   const [serialKey, setSerialKey] = useState('')
   const [activating, setActivating] = useState(false)
+  const [activationSuccessOpen, setActivationSuccessOpen] = useState(false)
+  const [activationDetails, setActivationDetails] = useState<any>(null)
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false)
+  const [cancelling, setCancelling] = useState(false)
 
   useEffect(() => {
     loadSubmissions()
@@ -141,10 +146,11 @@ export default function ProfilePage() {
         throw new Error(data.error || 'Erro ao ativar serial key')
       }
 
-      setToastMessage('Serial key ativada com sucesso!')
-      setToastOpen(true)
+      // Armazenar detalhes da ativação para o popup
+      setActivationDetails(data)
       setActivateDialogOpen(false)
       setSerialKey('')
+      setActivationSuccessOpen(true)
 
       // Recarregar dados do usuário
       loadUserData()
@@ -153,6 +159,33 @@ export default function ProfilePage() {
       setToastOpen(true)
     } finally {
       setActivating(false)
+    }
+  }
+
+  async function handleCancelSubscription() {
+    setCancelling(true)
+    try {
+      const res = await fetch('/api/user/cancel-subscription', {
+        method: 'POST',
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Erro ao cancelar assinatura')
+      }
+
+      setToastMessage(data.message)
+      setToastOpen(true)
+      setCancelDialogOpen(false)
+
+      // Recarregar dados do usuário
+      loadUserData()
+    } catch (error: any) {
+      setToastMessage(error.message)
+      setToastOpen(true)
+    } finally {
+      setCancelling(false)
     }
   }
 
@@ -401,6 +434,16 @@ export default function ProfilePage() {
                 >
                   <Crown className="h-4 w-4 mr-2" />
                   Ativar Premium
+                </Button>
+              )}
+              {userRole !== 'admin' && (accountType === 'premium' || accountType === 'trial') && (
+                <Button
+                  onClick={() => setCancelDialogOpen(true)}
+                  variant="outline"
+                  className="border-red-500 text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
+                >
+                  <XCircle className="h-4 w-4 mr-2" />
+                  Cancelar Assinatura
                 </Button>
               )}
             </div>
@@ -666,6 +709,88 @@ export default function ProfilePage() {
               {activating ? 'Ativando...' : 'Ativar'}
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Activation Success Dialog */}
+      {activationDetails && (
+        <ActivationSuccessDialog
+          open={activationSuccessOpen}
+          onOpenChange={setActivationSuccessOpen}
+          keyType={activationDetails.keyType}
+          trialExpiresAt={activationDetails.trialExpiresAt}
+          customDuration={activationDetails.customDuration}
+        />
+      )}
+
+      {/* Cancel Subscription Dialog */}
+      <Dialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-red-400 to-orange-500 flex items-center justify-center mb-4">
+              <AlertTriangle className="h-8 w-8 text-white" />
+            </div>
+            <DialogTitle className="text-center text-2xl">Cancelar Assinatura?</DialogTitle>
+            <DialogDescription className="text-center text-base">
+              Tem certeza que deseja cancelar sua assinatura {accountType === 'premium' ? 'Premium' : 'Trial'}?
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <div className="p-4 bg-red-50 dark:bg-red-950 rounded-lg border border-red-200 dark:border-red-800">
+              <p className="text-sm text-red-800 dark:text-red-200">
+                <strong>Atenção:</strong> Ao cancelar, você perderá acesso imediato a todos os recursos premium e sua conta será alterada para o plano Gratuito.
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <div className="p-4 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
+                <div className="flex items-center gap-3">
+                  <Phone className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Fale comigo antes de cancelar</p>
+                    <p className="text-lg font-semibold text-blue-600 dark:text-blue-400">(21) 99777-0936</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Posso te ajudar a resolver qualquer problema!
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-center text-sm text-muted-foreground">
+                Ou abra um ticket para que possamos conversar sobre como melhorar sua experiência.
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setCancelDialogOpen(false)
+                router.push('/tickets')
+              }}
+              className="w-full sm:w-auto"
+            >
+              <Ticket className="h-4 w-4 mr-2" />
+              Abrir Ticket
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setCancelDialogOpen(false)}
+              className="w-full sm:w-auto"
+            >
+              Manter Assinatura
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleCancelSubscription}
+              disabled={cancelling}
+              className="w-full sm:w-auto"
+            >
+              {cancelling ? 'Cancelando...' : 'Sim, Cancelar'}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
