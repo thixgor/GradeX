@@ -1263,6 +1263,90 @@ export default function CreateExamPage() {
                   />
                 </div>
 
+                {/* Tempo por Questão */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label>⏱️ Tempo Máximo por Questão (opcional)</Label>
+                    {currentQuestion.timePerQuestionSeconds && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => updateQuestion(currentQuestionIndex, { timePerQuestionSeconds: undefined })}
+                        className="h-7 text-xs"
+                      >
+                        Remover Tempo
+                      </Button>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <Label htmlFor={`time-hours-${currentQuestionIndex}`} className="text-xs">Horas</Label>
+                      <Input
+                        id={`time-hours-${currentQuestionIndex}`}
+                        type="number"
+                        min="0"
+                        max="23"
+                        value={currentQuestion.timePerQuestionSeconds ? Math.floor(currentQuestion.timePerQuestionSeconds / 3600) : 0}
+                        onChange={(e) => {
+                          const hours = parseInt(e.target.value) || 0
+                          const currentMinutes = currentQuestion.timePerQuestionSeconds ? Math.floor((currentQuestion.timePerQuestionSeconds % 3600) / 60) : 0
+                          const currentSeconds = currentQuestion.timePerQuestionSeconds ? (currentQuestion.timePerQuestionSeconds % 60) : 0
+                          const totalSeconds = hours * 3600 + currentMinutes * 60 + currentSeconds
+                          updateQuestion(currentQuestionIndex, { timePerQuestionSeconds: totalSeconds > 0 ? totalSeconds : undefined })
+                        }}
+                        placeholder="0"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor={`time-minutes-${currentQuestionIndex}`} className="text-xs">Minutos</Label>
+                      <Input
+                        id={`time-minutes-${currentQuestionIndex}`}
+                        type="number"
+                        min="0"
+                        max="59"
+                        value={currentQuestion.timePerQuestionSeconds ? Math.floor((currentQuestion.timePerQuestionSeconds % 3600) / 60) : 0}
+                        onChange={(e) => {
+                          const minutes = parseInt(e.target.value) || 0
+                          const currentHours = currentQuestion.timePerQuestionSeconds ? Math.floor(currentQuestion.timePerQuestionSeconds / 3600) : 0
+                          const currentSeconds = currentQuestion.timePerQuestionSeconds ? (currentQuestion.timePerQuestionSeconds % 60) : 0
+                          const totalSeconds = currentHours * 3600 + minutes * 60 + currentSeconds
+                          updateQuestion(currentQuestionIndex, { timePerQuestionSeconds: totalSeconds > 0 ? totalSeconds : undefined })
+                        }}
+                        placeholder="0"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor={`time-seconds-${currentQuestionIndex}`} className="text-xs">Segundos</Label>
+                      <Input
+                        id={`time-seconds-${currentQuestionIndex}`}
+                        type="number"
+                        min="0"
+                        max="59"
+                        value={currentQuestion.timePerQuestionSeconds ? (currentQuestion.timePerQuestionSeconds % 60) : 0}
+                        onChange={(e) => {
+                          const seconds = parseInt(e.target.value) || 0
+                          const currentHours = currentQuestion.timePerQuestionSeconds ? Math.floor(currentQuestion.timePerQuestionSeconds / 3600) : 0
+                          const currentMinutes = currentQuestion.timePerQuestionSeconds ? Math.floor((currentQuestion.timePerQuestionSeconds % 3600) / 60) : 0
+                          const totalSeconds = currentHours * 3600 + currentMinutes * 60 + seconds
+                          updateQuestion(currentQuestionIndex, { timePerQuestionSeconds: totalSeconds > 0 ? totalSeconds : undefined })
+                        }}
+                        placeholder="0"
+                      />
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {currentQuestion.timePerQuestionSeconds ? (
+                      <>
+                        ⚠️ Quando o tempo acabar, a questão será enviada automaticamente com a resposta atual.
+                        {examData.navigationMode === 'scroll' && ' IMPORTANTE: O modo de navegação será automaticamente alterado para "Paginado" se houver questões com tempo.'}
+                      </>
+                    ) : (
+                      'Configure um tempo limite para esta questão. Deixe em branco para sem limite.'
+                    )}
+                  </p>
+                </div>
+
                 {currentQuestion.type === 'multiple-choice' && (
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">

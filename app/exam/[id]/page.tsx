@@ -67,6 +67,12 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const [blackCameraTimer, setBlackCameraTimer] = useState<number | null>(null)
   const [proctoringError, setProctoringError] = useState<string | null>(null)
 
+  // Estados de Timer por Questão
+  const [showTimeWarningPopup, setShowTimeWarningPopup] = useState(false)
+  const [timeWarningCountdown, setTimeWarningCountdown] = useState(3)
+  const [questionTimeRemaining, setQuestionTimeRemaining] = useState<number | null>(null)
+  const [questionTimerActive, setQuestionTimerActive] = useState(false)
+
   // Verificar se a prova tem proctoring habilitado
   const hasProctoring = exam?.proctoring?.enabled || false
   const needsCamera = exam?.proctoring?.camera || false
@@ -254,11 +260,23 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       return
     }
 
+    // Verificar se alguma questão tem tempo definido
+    const hasTimedQuestions = exam?.questions.some(q => q.timePerQuestionSeconds && q.timePerQuestionSeconds > 0)
+
     // Iniciar prova normalmente
     const startTime = new Date()
     setExamStartTime(startTime)
     localStorage.setItem(`exam-${id}-start-time`, startTime.toISOString())
     setStarted(true)
+
+    // Se houver questões com tempo, mostrar popup de aviso por 3 segundos
+    if (hasTimedQuestions) {
+      setShowTimeWarningPopup(true)
+      setTimeWarningCountdown(3)
+    } else {
+      // Se não houver questões com tempo, iniciar normalmente
+      initializeQuestionTimer(0)
+    }
   }
 
   // Função para aceitar termo de proctoring e inicializar mídia
@@ -492,6 +510,111 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       setUserName(loggedUserName)
     }
   }, [exam, loggedUserName, userName])
+
+  // Auto-iniciar provas práticas
+  useEffect(() => {
+    if (exam && exam.isPracticeExam && !started && !loading) {
+      // Provas práticas iniciam automaticamente
+      const startTime = new Date()
+      setExamStartTime(startTime)
+      localStorage.setItem(`exam-${id}-start-time`, startTime.toISOString())
+      setStarted(true)
+
+      // Verificar se tem questões com tempo para mostrar popup
+      const hasTimedQuestions = exam.questions.some(q => q.timePerQuestionSeconds && q.timePerQuestionSeconds > 0)
+      if (hasTimedQuestions) {
+        setShowTimeWarningPopup(true)
+        setTimeWarningCountdown(3)
+      } else {
+        initializeQuestionTimer(0)
+      }
+    }
+  }, [exam, started, loading])
+
+  // Função para inicializar o timer de uma questão específica
+  function initializeQuestionTimer(questionIndex: number) {
+    if (!exam) return
+
+    const question = exam.questions[questionIndex]
+    if (question?.timePerQuestionSeconds && question.timePerQuestionSeconds > 0) {
+      setQuestionTimeRemaining(question.timePerQuestionSeconds)
+      setQuestionTimerActive(true)
+    } else {
+      setQuestionTimeRemaining(null)
+      setQuestionTimerActive(false)
+    }
+  }
+
+  // Countdown do popup de aviso (3 segundos)
+  useEffect(() => {
+    if (showTimeWarningPopup && timeWarningCountdown > 0) {
+      const timer = setTimeout(() => {
+        setTimeWarningCountdown(timeWarningCountdown - 1)
+      }, 1000)
+      return () => clearTimeout(timer)
+    } else if (showTimeWarningPopup && timeWarningCountdown === 0) {
+      setShowTimeWarningPopup(false)
+      // Iniciar timer da primeira questão
+      initializeQuestionTimer(currentQuestionIndex)
+    }
+  }, [showTimeWarningPopup, timeWarningCountdown])
+
+  // Timer da questão atual
+  useEffect(() => {
+    if (questionTimerActive && questionTimeRemaining !== null && questionTimeRemaining > 0 && started) {
+      const timer = setInterval(() => {
+        setQuestionTimeRemaining(prev => {
+          if (prev === null || prev <= 1) {
+            // Tempo esgotado - auto-submit da questão
+            setQuestionTimerActive(false)
+            autoSubmitCurrentQuestion()
+            return null
+          }
+          return prev - 1
+        })
+      }, 1000)
+      return () => clearInterval(timer)
+    }
+  }, [questionTimerActive, questionTimeRemaining, started])
+
+  // Auto-submeter questão atual quando o tempo acabar
+  async function autoSubmitCurrentQuestion() {
+    if (!exam) return
+
+    const isScrollMode = exam.navigationMode === 'scroll'
+
+    if (isScrollMode) {
+      // Em modo scroll, simplesmente vai para a próxima questão
+      if (currentQuestionIndex < exam.questions.length - 1) {
+        const nextIndex = currentQuestionIndex + 1
+        setCurrentQuestionIndex(nextIndex)
+        initializeQuestionTimer(nextIndex)
+
+        // Rolar até a próxima questão
+        setTimeout(() => {
+          const nextQuestion = exam.questions[nextIndex]
+          const element = document.getElementById(`question-${nextQuestion.id}`)
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          }
+        }, 100)
+      }
+    } else {
+      // Em modo paginado, avança para a próxima questão
+      if (currentQuestionIndex < exam.questions.length - 1) {
+        const nextIndex = currentQuestionIndex + 1
+        setCurrentQuestionIndex(nextIndex)
+        initializeQuestionTimer(nextIndex)
+      }
+    }
+  }
+
+  // Atualizar timer quando mudar de questão
+  useEffect(() => {
+    if (started && exam) {
+      initializeQuestionTimer(currentQuestionIndex)
+    }
+  }, [currentQuestionIndex, started, exam])
 
   function handleSelectAlternative(questionId: string, alternativeId: string) {
     setAnswers(prev =>
@@ -1144,6 +1267,42 @@ export default function ExamPage({ params }: { params: { id: string } }) {
         </div>
       )}
 
+      {/* Popup de Aviso - Tempo por Questão (3 segundos) */}
+      {showTimeWarningPopup && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[110] flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <Card className="max-w-lg w-full shadow-2xl border-2 border-orange-500">
+            <CardHeader className="text-center space-y-4 pb-4">
+              <div className="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center animate-pulse">
+                <Clock className="h-10 w-10 text-white" />
+              </div>
+              <div>
+                <CardTitle className="text-2xl font-bold">⏱️ Atenção: Tempo por Questão!</CardTitle>
+                <CardDescription className="mt-3 text-base">
+                  Esta prova possui questões com tempo limite individual
+                </CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="p-4 bg-orange-50 dark:bg-orange-950 rounded-lg border border-orange-200 dark:border-orange-800">
+                <p className="text-sm text-center text-orange-900 dark:text-orange-100 font-medium">
+                  ⚠️ Algumas questões devem ser respondidas dentro de um tempo limite específico.
+                  Quando o tempo de uma questão acabar, ela será automaticamente enviada com a resposta atual
+                  e você passará para a próxima questão.
+                </p>
+              </div>
+              <div className="text-center">
+                <p className="text-6xl font-bold text-orange-600 dark:text-orange-400 animate-pulse">
+                  {timeWarningCountdown}
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  A prova iniciará em {timeWarningCountdown} segundo{timeWarningCountdown !== 1 ? 's' : ''}...
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between flex-wrap gap-4">
           <div>
@@ -1157,6 +1316,23 @@ export default function ExamPage({ params }: { params: { id: string } }) {
             </p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
+            {/* Timer da Questão Atual */}
+            {questionTimeRemaining !== null && questionTimerActive && (
+              <div className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold ${
+                questionTimeRemaining <= 30
+                  ? 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 animate-pulse'
+                  : questionTimeRemaining <= 60
+                  ? 'bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300'
+                  : 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
+              }`}>
+                <Clock className="h-4 w-4" />
+                <span className="text-sm">
+                  {Math.floor(questionTimeRemaining / 3600) > 0 && `${Math.floor(questionTimeRemaining / 3600)}:`}
+                  {String(Math.floor((questionTimeRemaining % 3600) / 60)).padStart(2, '0')}:
+                  {String(questionTimeRemaining % 60).padStart(2, '0')}
+                </span>
+              </div>
+            )}
             <Button
               variant="outline"
               size="sm"

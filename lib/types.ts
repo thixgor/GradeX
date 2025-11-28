@@ -67,6 +67,7 @@ export interface Question {
   imageUrl?: string
   imageSource?: string
   command: string
+  timePerQuestionSeconds?: number // Tempo máximo em segundos para responder esta questão (opcional)
   // Para questões de múltipla escolha
   alternatives: Alternative[]
   alternativeType?: AlternativeType // Tipo de alternativa: 'standard', 'multiple-affirmative', 'comparison', 'assertion-reason'
