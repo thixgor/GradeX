@@ -89,12 +89,40 @@ export function QuestionNotesCanvas({
     const context = canvas.getContext('2d')
     if (!context) return
 
-    // Set canvas size
-    canvas.width = 800
-    canvas.height = 600
+    // Set canvas size - responsive for mobile/tablet
+    const updateCanvasSize = () => {
+      const maxWidth = 800
+      const maxHeight = 600
+      const windowWidth = window.innerWidth
+      const windowHeight = window.innerHeight
+
+      // Use smaller size on mobile, full size on desktop
+      if (windowWidth < 768) {
+        // Mobile
+        canvas.width = Math.min(windowWidth - 40, maxWidth)
+        canvas.height = Math.min(windowHeight * 0.5, maxHeight)
+      } else if (windowWidth < 1024) {
+        // Tablet
+        canvas.width = Math.min(windowWidth - 100, maxWidth)
+        canvas.height = Math.min(windowHeight * 0.6, maxHeight)
+      } else {
+        // Desktop
+        canvas.width = maxWidth
+        canvas.height = maxHeight
+      }
+
+      if (ctx) {
+        redrawCanvas(ctx)
+      }
+    }
+
+    updateCanvasSize()
+    window.addEventListener('resize', updateCanvasSize)
 
     setCtx(context)
     redrawCanvas(context)
+
+    return () => window.removeEventListener('resize', updateCanvasSize)
   }, [])
 
   // Redraw canvas whenever annotations change
@@ -275,6 +303,18 @@ export function QuestionNotesCanvas({
     return {
       x: e.clientX - rect.left,
       y: e.clientY - rect.top,
+    }
+  }
+
+  function getCanvasPointFromTouch(e: React.TouchEvent<HTMLCanvasElement>): Point {
+    const canvas = canvasRef.current
+    if (!canvas || e.touches.length === 0) return { x: 0, y: 0 }
+
+    const rect = canvas.getBoundingClientRect()
+    const touch = e.touches[0]
+    return {
+      x: touch.clientX - rect.left,
+      y: touch.clientY - rect.top,
     }
   }
 
@@ -512,6 +552,124 @@ export function QuestionNotesCanvas({
     setIsDrawing(false)
     setIsDragging(false)
     lastMousePosRef.current = null
+  }
+
+  // Touch event handlers for stylus/finger support
+  function handleTouchStart(e: React.TouchEvent<HTMLCanvasElement>) {
+    e.preventDefault() // Prevent scrolling when drawing
+    const point = getCanvasPointFromTouch(e)
+
+    if (currentTool === 'pen' || currentTool === 'highlighter') {
+      setIsDrawing(true)
+      setCurrentStroke([point])
+      setStraightLineMode(false)
+      lastMousePosRef.current = point
+
+      // Start hold timer for straight line
+      holdTimerRef.current = setTimeout(() => {
+        setIsHoldingForStraight(true)
+        setStraightLineMode(true)
+      }, 2000)
+    } else if (currentTool === 'eraser') {
+      setIsDrawing(true)
+      eraseAt(point)
+    } else if (currentTool === 'text') {
+      setTextPosition(point)
+      setIsAddingText(true)
+    } else if (currentTool === 'select') {
+      // Check if touching selected element to drag
+      if (selectedStrokeIds.length > 0 || selectedTextIds.length > 0) {
+        const touchedStroke = findStrokeAtPoint(point)
+        const touchedText = findTextAtPoint(point)
+
+        if (
+          (touchedStroke && selectedStrokeIds.includes(touchedStroke.id)) ||
+          (touchedText && selectedTextIds.includes(touchedText.id))
+        ) {
+          // Start dragging
+          setIsDragging(true)
+          setDragStart(point)
+          return
+        }
+      }
+
+      // Start new selection
+      setIsSelecting(true)
+      setSelectionPath([point])
+      setSelectedStrokeIds([])
+      setSelectedTextIds([])
+    }
+  }
+
+  function handleTouchMove(e: React.TouchEvent<HTMLCanvasElement>) {
+    e.preventDefault() // Prevent scrolling when drawing
+    const point = getCanvasPointFromTouch(e)
+
+    if (!isDrawing && !isDragging && !isSelecting) return
+
+    // Cancel straight line mode if moved too much
+    if (isDrawing && (currentTool === 'pen' || currentTool === 'highlighter')) {
+      if (isHoldingForStraight && currentStroke.length > 0) {
+        const startPoint = currentStroke[0]
+        const distance = Math.sqrt(
+          Math.pow(point.x - startPoint.x, 2) + Math.pow(point.y - startPoint.y, 2)
+        )
+        if (distance > 50) {
+          setIsHoldingForStraight(false)
+          setStraightLineMode(false)
+          if (holdTimerRef.current) {
+            clearTimeout(holdTimerRef.current)
+            holdTimerRef.current = null
+          }
+        }
+      }
+    }
+
+    if (isDragging && dragStart) {
+      const dx = point.x - dragStart.x
+      const dy = point.y - dragStart.y
+
+      setDragOffset({ x: dx, y: dy })
+
+      if (ctx) {
+        redrawCanvas(ctx)
+      }
+      return
+    }
+
+    if (isDrawing) {
+      if (currentTool === 'pen' || currentTool === 'highlighter') {
+        if (!straightLineMode) {
+          setCurrentStroke((prev) => [...prev, point])
+        } else {
+          setCurrentStroke((prev) => [prev[0], point])
+        }
+        lastMousePosRef.current = point
+
+        if (ctx) {
+          redrawCanvas(ctx)
+        }
+      } else if (currentTool === 'eraser') {
+        eraseAt(point)
+      }
+    }
+
+    if (isSelecting) {
+      if (selectionMode === 'rectangle') {
+        setSelectionPath([selectionPath[0], point])
+      } else {
+        setSelectionPath((prev) => [...prev, point])
+      }
+
+      if (ctx) {
+        redrawCanvas(ctx)
+      }
+    }
+  }
+
+  function handleTouchEnd(e: React.TouchEvent<HTMLCanvasElement>) {
+    e.preventDefault()
+    handleMouseUp() // Reuse the same logic as mouse up
   }
 
   function findStrokeAtPoint(point: Point): DrawingStroke | null {
@@ -958,7 +1116,12 @@ export function QuestionNotesCanvas({
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
                 onMouseLeave={handleMouseUp}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+                onTouchCancel={handleTouchEnd}
                 className="border-2 border-gray-300 dark:border-gray-700 rounded-lg shadow-lg bg-white cursor-crosshair"
+                style={{ touchAction: 'none' }}
               />
             </div>
           </div>
