@@ -284,6 +284,7 @@ export interface ProctoringSession {
 // Sistema de Anotações
 export type DrawingTool = 'pen' | 'eraser' | 'highlighter' | 'text' | 'select'
 export type EraserType = 'standard' | 'line' // padrão (circular) ou traço (linear)
+export type SelectionMode = 'lasso' | 'rectangle' // seleção livre ou retangular
 
 export interface Point {
   x: number

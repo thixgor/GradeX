@@ -17,6 +17,7 @@ import {
 import {
   DrawingTool,
   EraserType,
+  SelectionMode,
   Point,
   DrawingStroke,
   TextAnnotation,
@@ -71,11 +72,14 @@ export function QuestionNotesCanvas({
   const [textSize, setTextSize] = useState(16)
 
   // Selection tool states
+  const [selectionMode, setSelectionMode] = useState<SelectionMode>('rectangle')
   const [selectedStrokeIds, setSelectedStrokeIds] = useState<string[]>([])
   const [selectedTextIds, setSelectedTextIds] = useState<string[]>([])
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState<Point | null>(null)
   const [dragOffset, setDragOffset] = useState<Point>({ x: 0, y: 0 })
+  const [selectionPath, setSelectionPath] = useState<Point[]>([])
+  const [isSelecting, setIsSelecting] = useState(false)
 
   // Initialize canvas context
   useEffect(() => {
@@ -98,7 +102,7 @@ export function QuestionNotesCanvas({
     if (ctx) {
       redrawCanvas(ctx)
     }
-  }, [strokes, texts, ctx, selectedStrokeIds, selectedTextIds])
+  }, [strokes, texts, ctx, selectedStrokeIds, selectedTextIds, selectionPath, currentStroke])
 
   function redrawCanvas(context: CanvasRenderingContext2D) {
     const canvas = canvasRef.current
@@ -152,6 +156,33 @@ export function QuestionNotesCanvas({
         }
         drawStroke(context, tempStroke)
       }
+    }
+
+    // Draw selection path
+    if (isSelecting && selectionPath.length > 0) {
+      context.save()
+      context.strokeStyle = 'rgba(59, 130, 246, 0.8)'
+      context.lineWidth = 2
+      context.setLineDash([5, 5])
+
+      if (selectionMode === 'rectangle' && selectionPath.length >= 2) {
+        // Draw rectangle
+        const start = selectionPath[0]
+        const end = selectionPath[selectionPath.length - 1]
+        const width = end.x - start.x
+        const height = end.y - start.y
+        context.strokeRect(start.x, start.y, width, height)
+      } else if (selectionMode === 'lasso' && selectionPath.length > 1) {
+        // Draw lasso path
+        context.beginPath()
+        context.moveTo(selectionPath[0].x, selectionPath[0].y)
+        for (let i = 1; i < selectionPath.length; i++) {
+          context.lineTo(selectionPath[i].x, selectionPath[i].y)
+        }
+        context.stroke()
+      }
+
+      context.restore()
     }
   }
 
@@ -268,41 +299,34 @@ export function QuestionNotesCanvas({
       setTextPosition(point)
       setIsAddingText(true)
     } else if (currentTool === 'select') {
-      // Check if clicking on existing stroke or text
-      const clickedStroke = findStrokeAtPoint(point)
-      const clickedText = findTextAtPoint(point)
+      // Check if clicking on selected element to drag
+      if (selectedStrokeIds.length > 0 || selectedTextIds.length > 0) {
+        const clickedStroke = findStrokeAtPoint(point)
+        const clickedText = findTextAtPoint(point)
 
-      if (clickedStroke) {
-        // Toggle selection
-        if (selectedStrokeIds.includes(clickedStroke.id)) {
-          setSelectedStrokeIds([])
-        } else {
-          setSelectedStrokeIds([clickedStroke.id])
-          setSelectedTextIds([])
+        if (
+          (clickedStroke && selectedStrokeIds.includes(clickedStroke.id)) ||
+          (clickedText && selectedTextIds.includes(clickedText.id))
+        ) {
+          // Start dragging
+          setIsDragging(true)
+          setDragStart(point)
+          return
         }
-        setIsDragging(true)
-        setDragStart(point)
-      } else if (clickedText) {
-        if (selectedTextIds.includes(clickedText.id)) {
-          setSelectedTextIds([])
-        } else {
-          setSelectedTextIds([clickedText.id])
-          setSelectedStrokeIds([])
-        }
-        setIsDragging(true)
-        setDragStart(point)
-      } else {
-        // Clear selection
-        setSelectedStrokeIds([])
-        setSelectedTextIds([])
       }
+
+      // Start new selection
+      setIsSelecting(true)
+      setSelectionPath([point])
+      setSelectedStrokeIds([])
+      setSelectedTextIds([])
     }
   }
 
   function handleMouseMove(e: React.MouseEvent<HTMLCanvasElement>) {
     const point = getCanvasPoint(e)
 
-    if (!isDrawing && !isDragging) return
+    if (!isDrawing && !isDragging && !isSelecting) return
 
     if (currentTool === 'pen' || currentTool === 'highlighter') {
       if (!straightLineMode) {
@@ -375,6 +399,19 @@ export function QuestionNotesCanvas({
       }
 
       setDragStart(point)
+    } else if (currentTool === 'select' && isSelecting) {
+      // Add points to selection path
+      if (selectionMode === 'rectangle') {
+        // For rectangle, just update the end point
+        setSelectionPath([selectionPath[0], point])
+      } else {
+        // For lasso, add all points
+        setSelectionPath((prev) => [...prev, point])
+      }
+
+      if (ctx) {
+        redrawCanvas(ctx)
+      }
     }
   }
 
@@ -382,6 +419,65 @@ export function QuestionNotesCanvas({
     if (holdTimerRef.current) {
       clearTimeout(holdTimerRef.current)
       holdTimerRef.current = null
+    }
+
+    // Handle selection end
+    if (isSelecting && selectionPath.length > 0) {
+      const selectedStrokes: string[] = []
+      const selectedTexts: string[] = []
+
+      if (selectionMode === 'rectangle' && selectionPath.length >= 2) {
+        // Rectangle selection
+        const start = selectionPath[0]
+        const end = selectionPath[selectionPath.length - 1]
+        const minX = Math.min(start.x, end.x)
+        const maxX = Math.max(start.x, end.x)
+        const minY = Math.min(start.y, end.y)
+        const maxY = Math.max(start.y, end.y)
+
+        // Check strokes
+        strokes.forEach((stroke) => {
+          const isInside = stroke.points.some(
+            (p) => p.x >= minX && p.x <= maxX && p.y >= minY && p.y <= maxY
+          )
+          if (isInside) selectedStrokes.push(stroke.id)
+        })
+
+        // Check texts
+        texts.forEach((text) => {
+          if (
+            text.position.x >= minX &&
+            text.position.x <= maxX &&
+            text.position.y >= minY &&
+            text.position.y <= maxY
+          ) {
+            selectedTexts.push(text.id)
+          }
+        })
+      } else if (selectionMode === 'lasso' && selectionPath.length > 2) {
+        // Lasso selection using point-in-polygon algorithm
+        strokes.forEach((stroke) => {
+          const isInside = stroke.points.some((p) => isPointInPolygon(p, selectionPath))
+          if (isInside) selectedStrokes.push(stroke.id)
+        })
+
+        texts.forEach((text) => {
+          if (isPointInPolygon(text.position, selectionPath)) {
+            selectedTexts.push(text.id)
+          }
+        })
+      }
+
+      setSelectedStrokeIds(selectedStrokes)
+      setSelectedTextIds(selectedTexts)
+      setIsSelecting(false)
+      setSelectionPath([])
+
+      if (ctx) {
+        redrawCanvas(ctx)
+      }
+
+      return
     }
 
     if (!isDrawing) {
@@ -452,6 +548,24 @@ export function QuestionNotesCanvas({
       }
     }
     return null
+  }
+
+  function isPointInPolygon(point: Point, polygon: Point[]): boolean {
+    // Ray casting algorithm
+    let inside = false
+    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+      const xi = polygon[i].x
+      const yi = polygon[i].y
+      const xj = polygon[j].x
+      const yj = polygon[j].y
+
+      const intersect =
+        yi > point.y !== yj > point.y &&
+        point.x < ((xj - xi) * (point.y - yi)) / (yj - yi) + xi
+
+      if (intersect) inside = !inside
+    }
+    return inside
   }
 
   function eraseAt(point: Point) {
@@ -570,21 +684,9 @@ export function QuestionNotesCanvas({
       <div className="bg-white dark:bg-gray-900 rounded-lg shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
-          <div>
-            <h2 className="text-lg font-semibold">
-              Anotações - Questão {questionNumber}
-            </h2>
-            {isHoldingForStraight && (
-              <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
-                ✨ Segure para criar linha reta...
-              </p>
-            )}
-            {straightLineMode && (
-              <p className="text-xs text-green-600 dark:text-green-400 mt-1">
-                ✓ Modo linha reta ativo - mova para ajustar
-              </p>
-            )}
-          </div>
+          <h2 className="text-lg font-semibold">
+            Anotações - Questão {questionNumber}
+          </h2>
           <Button variant="ghost" size="sm" onClick={onClose}>
             <X className="h-4 w-4" />
           </Button>
@@ -787,10 +889,34 @@ export function QuestionNotesCanvas({
               <div className="space-y-3 p-3 bg-purple-50 dark:bg-purple-950/20 rounded-lg">
                 <Label className="text-xs font-semibold">Ferramenta de Seleção</Label>
                 <div className="space-y-2">
+                  <div>
+                    <Label className="text-xs">Modo de Seleção</Label>
+                    <div className="grid grid-cols-2 gap-2 mt-1">
+                      <Button
+                        variant={selectionMode === 'rectangle' ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => setSelectionMode('rectangle')}
+                      >
+                        Retângulo
+                      </Button>
+                      <Button
+                        variant={selectionMode === 'lasso' ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => setSelectionMode('lasso')}
+                      >
+                        Livre
+                      </Button>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      {selectionMode === 'rectangle'
+                        ? '🔲 Retângulo: Desenhe um retângulo tracejado'
+                        : '✏️ Livre: Desenhe um traçado livre'}
+                    </p>
+                  </div>
                   <p className="text-xs text-muted-foreground">
                     {selectedStrokeIds.length > 0 || selectedTextIds.length > 0
-                      ? '✓ Elemento selecionado - arraste para mover'
-                      : 'Clique em um traço ou texto para selecionar'}
+                      ? `✓ ${selectedStrokeIds.length + selectedTextIds.length} elemento(s) selecionado(s) - arraste para mover`
+                      : 'Desenhe para selecionar elementos'}
                   </p>
                   {(selectedStrokeIds.length > 0 || selectedTextIds.length > 0) && (
                     <Button
