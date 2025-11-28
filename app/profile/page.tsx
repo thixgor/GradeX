@@ -7,8 +7,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ThemeToggle } from '@/components/theme-toggle'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { BanChecker } from '@/components/ban-checker'
-import { ArrowLeft, CheckCircle, Clock, FileText, Download, Printer, ClipboardList } from 'lucide-react'
+import { ArrowLeft, CheckCircle, Clock, FileText, Download, Printer, ClipboardList, Trophy, BookOpen, Crown, Timer, Sparkles, Phone, Mail } from 'lucide-react'
 import { generateGabaritoPDF, downloadPDF, generateExamPDF, generateStudentAnswersPDF } from '@/lib/pdf-generator'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { AccountType } from '@/lib/types'
 
 interface UserSubmission {
   _id: string
@@ -54,12 +58,22 @@ export default function ProfilePage() {
   const [submissions, setSubmissions] = useState<UserSubmission[]>([])
   const [loading, setLoading] = useState(true)
   const [userName, setUserName] = useState('')
+  const [userRole, setUserRole] = useState<'admin' | 'user'>('user')
+  const [accountType, setAccountType] = useState<AccountType>('gratuito')
+  const [trialExpiresAt, setTrialExpiresAt] = useState<Date | null>(null)
+  const [questionsAnswered, setQuestionsAnswered] = useState(0)
+  const [examsCompleted, setExamsCompleted] = useState(0)
   const [toastOpen, setToastOpen] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
+  const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false)
+  const [activateDialogOpen, setActivateDialogOpen] = useState(false)
+  const [serialKey, setSerialKey] = useState('')
+  const [activating, setActivating] = useState(false)
 
   useEffect(() => {
     loadSubmissions()
-    loadUserName()
+    loadUserData()
+    loadStatistics()
   }, [])
 
   async function loadSubmissions() {
@@ -76,15 +90,125 @@ export default function ProfilePage() {
     }
   }
 
-  async function loadUserName() {
+  async function loadUserData() {
     try {
       const res = await fetch('/api/auth/me')
       if (res.ok) {
         const data = await res.json()
         setUserName(data.user?.name || 'Usuario')
+        setUserRole(data.user?.role || 'user')
+        setAccountType(data.user?.accountType || 'gratuito')
+        if (data.user?.trialExpiresAt) {
+          setTrialExpiresAt(new Date(data.user.trialExpiresAt))
+        }
       }
     } catch (error) {
-      console.error('Erro ao carregar nome:', error)
+      console.error('Erro ao carregar dados do usuário:', error)
+    }
+  }
+
+  async function loadStatistics() {
+    try {
+      const res = await fetch('/api/user/statistics')
+      if (res.ok) {
+        const data = await res.json()
+        setQuestionsAnswered(data.questionsAnswered || 0)
+        setExamsCompleted(data.examsCompleted || 0)
+      }
+    } catch (error) {
+      console.error('Erro ao carregar estatísticas:', error)
+    }
+  }
+
+  async function handleActivateKey() {
+    if (!serialKey.trim()) {
+      setToastMessage('Digite uma serial key válida')
+      setToastOpen(true)
+      return
+    }
+
+    setActivating(true)
+    try {
+      const res = await fetch('/api/serial-keys/activate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: serialKey.trim() })
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Erro ao ativar serial key')
+      }
+
+      setToastMessage('Serial key ativada com sucesso!')
+      setToastOpen(true)
+      setActivateDialogOpen(false)
+      setSerialKey('')
+
+      // Recarregar dados do usuário
+      loadUserData()
+    } catch (error: any) {
+      setToastMessage(error.message)
+      setToastOpen(true)
+    } finally {
+      setActivating(false)
+    }
+  }
+
+  function getTrialTimeRemaining(): string {
+    if (!trialExpiresAt) return ''
+
+    const now = new Date()
+    const expiration = new Date(trialExpiresAt)
+    const diffMs = expiration.getTime() - now.getTime()
+
+    if (diffMs <= 0) return 'Expirado'
+
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+    const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))
+
+    if (days > 0) {
+      return `${days}d ${hours}h ${minutes}min`
+    } else if (hours > 0) {
+      return `${hours}h ${minutes}min`
+    } else {
+      return `${minutes}min`
+    }
+  }
+
+  function getAccountTypeBadge() {
+    if (userRole === 'admin') {
+      return (
+        <div className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+          <Crown className="h-4 w-4 mr-1.5" />
+          Admin
+        </div>
+      )
+    }
+
+    switch (accountType) {
+      case 'premium':
+        return (
+          <div className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-gradient-to-r from-yellow-500 to-orange-500 text-white">
+            <Crown className="h-4 w-4 mr-1.5" />
+            Premium
+          </div>
+        )
+      case 'trial':
+        return (
+          <div className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-gradient-to-r from-blue-500 to-cyan-500 text-white">
+            <Timer className="h-4 w-4 mr-1.5" />
+            Trial - {getTrialTimeRemaining()}
+          </div>
+        )
+      default:
+        return (
+          <div className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-gray-500 text-white">
+            Gratuito
+          </div>
+        )
     }
   }
 
@@ -225,6 +349,64 @@ export default function ProfilePage() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
+        {/* Statistics Section */}
+        <Card className="mb-8 border-2">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <Trophy className="h-6 w-6 text-yellow-500" />
+                Estatísticas do Perfil
+              </span>
+              {getAccountTypeBadge()}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div className="flex items-center gap-4 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
+                <div className="p-3 bg-blue-500 rounded-full">
+                  <BookOpen className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Questões Respondidas</p>
+                  <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">{questionsAnswered}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4 p-4 bg-green-50 dark:bg-green-950 rounded-lg">
+                <div className="p-3 bg-green-500 rounded-full">
+                  <FileText className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Provas Realizadas</p>
+                  <p className="text-3xl font-bold text-green-600 dark:text-green-400">{examsCompleted}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Upgrade/Activate Buttons */}
+            <div className="flex flex-wrap gap-3">
+              {userRole !== 'admin' && accountType === 'gratuito' && (
+                <Button
+                  onClick={() => setUpgradeDialogOpen(true)}
+                  className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
+                >
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Faça Upgrade Agora
+                </Button>
+              )}
+              {userRole !== 'admin' && (
+                <Button
+                  onClick={() => setActivateDialogOpen(true)}
+                  variant="outline"
+                  className="border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950"
+                >
+                  <Crown className="h-4 w-4 mr-2" />
+                  Ativar Premium
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
         {loading ? (
           <div className="text-center py-12">Carregando...</div>
         ) : submissions.length === 0 ? (
@@ -402,6 +584,90 @@ export default function ProfilePage() {
         message={toastMessage}
         type="error"
       />
+
+      {/* Upgrade Dialog */}
+      <Dialog open={upgradeDialogOpen} onOpenChange={setUpgradeDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-yellow-500" />
+              Faça Upgrade para Premium
+            </DialogTitle>
+            <DialogDescription>
+              Entre em contato conosco para fazer upgrade da sua conta e ter acesso a recursos premium ilimitados.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="flex items-center gap-3 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
+              <Phone className="h-5 w-5 text-blue-600" />
+              <div>
+                <p className="text-sm font-medium">Telefone/WhatsApp</p>
+                <p className="text-lg font-semibold text-blue-600">(21) 99777-0936</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 p-4 bg-green-50 dark:bg-green-950 rounded-lg">
+              <Mail className="h-5 w-5 text-green-600" />
+              <div>
+                <p className="text-sm font-medium">E-mail</p>
+                <p className="text-lg font-semibold text-green-600">throdrigf@gmail.com</p>
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end">
+            <Button onClick={() => setUpgradeDialogOpen(false)}>
+              Fechar
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Activate Serial Key Dialog */}
+      <Dialog open={activateDialogOpen} onOpenChange={setActivateDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Crown className="h-5 w-5 text-yellow-500" />
+              Ativar Serial Key
+            </DialogTitle>
+            <DialogDescription>
+              Digite a serial key que você recebeu para ativar seu plano Premium ou Trial.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label htmlFor="serial-key">Serial Key</Label>
+              <Input
+                id="serial-key"
+                placeholder="XXXX-XXXX-XXXX-XXXX"
+                value={serialKey}
+                onChange={(e) => setSerialKey(e.target.value.toUpperCase())}
+                className="font-mono text-lg"
+                maxLength={19}
+              />
+              <p className="text-xs text-muted-foreground mt-2">
+                Formato: XXXX-XXXX-XXXX-XXXX
+              </p>
+            </div>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setActivateDialogOpen(false)
+                setSerialKey('')
+              }}
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleActivateKey}
+              disabled={activating || !serialKey.trim()}
+            >
+              {activating ? 'Ativando...' : 'Ativar'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

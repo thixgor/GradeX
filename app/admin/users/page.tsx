@@ -7,10 +7,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 import { ToastAlert } from '@/components/ui/toast-alert'
-import { User, BanReason, BanReasonLabels } from '@/lib/types'
-import { ArrowLeft, Trash2, Ban, CheckCircle, AlertTriangle, Shield } from 'lucide-react'
+import { User, BanReason, BanReasonLabels, AccountType } from '@/lib/types'
+import { ArrowLeft, Trash2, Ban, CheckCircle, AlertTriangle, Shield, Crown, Timer, Settings } from 'lucide-react'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { Input } from '@/components/ui/input'
 
 export default function AdminUsersPage() {
   const router = useRouter()
@@ -18,9 +19,12 @@ export default function AdminUsersPage() {
   const [loading, setLoading] = useState(true)
   const [showBanDialog, setShowBanDialog] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [showTierDialog, setShowTierDialog] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [banReason, setBanReason] = useState<BanReason>('other')
   const [banDetails, setBanDetails] = useState('')
+  const [selectedAccountType, setSelectedAccountType] = useState<AccountType>('gratuito')
+  const [trialDays, setTrialDays] = useState(7)
   const [toastOpen, setToastOpen] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
   const [toastType, setToastType] = useState<'error' | 'success' | 'info'>('error')
@@ -110,6 +114,58 @@ export default function AdminUsersPage() {
     }
   }
 
+  async function handleUpdateTier() {
+    if (!selectedUser) return
+
+    try {
+      const res = await fetch(`/api/users/${selectedUser._id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'update_tier',
+          accountType: selectedAccountType,
+          trialDays: selectedAccountType === 'trial' ? trialDays : undefined
+        })
+      })
+
+      if (!res.ok) throw new Error('Erro ao atualizar tier do usuário')
+
+      const data = await res.json()
+      showToastMessage(data.message, 'success')
+      setShowTierDialog(false)
+      loadUsers()
+    } catch (error: any) {
+      showToastMessage(error.message)
+    }
+  }
+
+  function getAccountTypeBadge(user: User) {
+    const accountType = user.accountType || 'gratuito'
+
+    switch (accountType) {
+      case 'premium':
+        return (
+          <span className="text-xs bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-2 py-1 rounded flex items-center gap-1 w-fit">
+            <Crown className="h-3 w-3" />
+            Premium
+          </span>
+        )
+      case 'trial':
+        return (
+          <span className="text-xs bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-2 py-1 rounded flex items-center gap-1 w-fit">
+            <Timer className="h-3 w-3" />
+            Trial
+          </span>
+        )
+      default:
+        return (
+          <span className="text-xs bg-gray-500 text-white px-2 py-1 rounded w-fit">
+            Gratuito
+          </span>
+        )
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
@@ -143,7 +199,7 @@ export default function AdminUsersPage() {
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="space-y-1">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <CardTitle>{user.name}</CardTitle>
                         {user.role === 'admin' && (
                           <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded">
@@ -151,6 +207,7 @@ export default function AdminUsersPage() {
                             Admin
                           </span>
                         )}
+                        {user.role !== 'admin' && getAccountTypeBadge(user)}
                         {user.banned && (
                           <span className="text-xs bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 px-2 py-1 rounded">
                             <Ban className="h-3 w-3 inline mr-1" />
@@ -178,6 +235,22 @@ export default function AdminUsersPage() {
                   )}
 
                   <div className="flex flex-wrap gap-2">
+                    {user.role !== 'admin' && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedUser(user)
+                          setSelectedAccountType(user.accountType || 'gratuito')
+                          setTrialDays(user.trialDuration || 7)
+                          setShowTierDialog(true)
+                        }}
+                      >
+                        <Settings className="h-4 w-4 mr-2" />
+                        Gerenciar Plano
+                      </Button>
+                    )}
+
                     {user.banned ? (
                       <Button
                         variant="outline"
@@ -290,6 +363,80 @@ export default function AdminUsersPage() {
             <Button variant="destructive" onClick={handleDelete}>
               <Trash2 className="h-4 w-4 mr-2" />
               Sim, Deletar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog de Gerenciamento de Plano */}
+      <Dialog open={showTierDialog} onOpenChange={setShowTierDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Gerenciar Plano do Usuário</DialogTitle>
+            <DialogDescription>
+              Alterar o plano de <strong>{selectedUser?.name}</strong>.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Tipo de Conta</Label>
+              <div className="grid grid-cols-3 gap-2">
+                <Button
+                  variant={selectedAccountType === 'gratuito' ? 'default' : 'outline'}
+                  onClick={() => setSelectedAccountType('gratuito')}
+                  className="h-auto py-3 flex-col gap-1"
+                  size="sm"
+                >
+                  <div className="font-semibold">Gratuito</div>
+                  <div className="text-xs opacity-80">Padrão</div>
+                </Button>
+                <Button
+                  variant={selectedAccountType === 'trial' ? 'default' : 'outline'}
+                  onClick={() => setSelectedAccountType('trial')}
+                  className="h-auto py-3 flex-col gap-1"
+                  size="sm"
+                >
+                  <Timer className="h-4 w-4" />
+                  <div className="font-semibold">Trial</div>
+                  <div className="text-xs opacity-80">Temporário</div>
+                </Button>
+                <Button
+                  variant={selectedAccountType === 'premium' ? 'default' : 'outline'}
+                  onClick={() => setSelectedAccountType('premium')}
+                  className="h-auto py-3 flex-col gap-1"
+                  size="sm"
+                >
+                  <Crown className="h-4 w-4" />
+                  <div className="font-semibold">Premium</div>
+                  <div className="text-xs opacity-80">Vitalício</div>
+                </Button>
+              </div>
+            </div>
+
+            {selectedAccountType === 'trial' && (
+              <div className="space-y-2">
+                <Label htmlFor="trial-days">Duração do Trial (dias)</Label>
+                <Input
+                  id="trial-days"
+                  type="number"
+                  min="1"
+                  max="365"
+                  value={trialDays}
+                  onChange={(e) => setTrialDays(parseInt(e.target.value) || 7)}
+                />
+                <p className="text-xs text-muted-foreground">
+                  O trial expirará {trialDays} {trialDays === 1 ? 'dia' : 'dias'} após a ativação
+                </p>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowTierDialog(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleUpdateTier}>
+              <Settings className="h-4 w-4 mr-2" />
+              Atualizar Plano
             </Button>
           </DialogFooter>
         </DialogContent>

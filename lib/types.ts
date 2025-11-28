@@ -171,6 +171,8 @@ export interface ExamSubmission {
   submittedAt: Date // Quando o aluno submeteu a prova
 }
 
+export type AccountType = 'gratuito' | 'trial' | 'premium'
+
 export interface User {
   _id?: string
   name: string
@@ -184,6 +186,25 @@ export interface User {
   banDetails?: string // Detalhes adicionais sobre o banimento
   bannedBy?: string // ID do admin que baniu
   bannedAt?: Date
+  // Sistema de assinaturas
+  accountType?: AccountType // Tipo de conta (admin não tem accountType, só role)
+  trialExpiresAt?: Date // Data de expiração do trial
+  trialDuration?: number // Duração personalizada do trial em dias (padrão: 7)
+}
+
+export type SerialKeyType = 'trial' | 'premium'
+
+export interface SerialKey {
+  _id?: string
+  key: string // A serial key em si (ex: XXXX-XXXX-XXXX-XXXX)
+  type: SerialKeyType // 'trial' (7 dias) ou 'premium' (vitalício)
+  used: boolean // Se já foi usada
+  generatedBy: string // ID do admin que gerou
+  generatedByName: string // Nome do admin
+  generatedAt: Date
+  usedBy?: string // ID do usuário que usou
+  usedByName?: string // Nome do usuário que usou
+  usedAt?: Date // Quando foi usada
 }
 
 export interface TRICalculationInput {

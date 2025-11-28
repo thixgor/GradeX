@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
-import { User } from '@/lib/types'
+import { User, AccountType } from '@/lib/types'
 import { ObjectId } from 'mongodb'
 
 // DELETE - Deletar usuário
@@ -52,7 +52,7 @@ export async function DELETE(
   }
 }
 
-// PATCH - Banir ou desbanir usuário
+// PATCH - Banir, desbanir ou atualizar tier do usuário
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -65,11 +65,11 @@ export async function PATCH(
     }
 
     const body = await request.json()
-    const { action, banReason, banDetails } = body
+    const { action, banReason, banDetails, accountType, trialDays } = body
 
-    if (!action || !['ban', 'unban'].includes(action)) {
+    if (!action || !['ban', 'unban', 'update_tier'].includes(action)) {
       return NextResponse.json(
-        { error: 'Ação inválida. Use "ban" ou "unban"' },
+        { error: 'Ação inválida. Use "ban", "unban" ou "update_tier"' },
         { status: 400 }
       )
     }
@@ -83,7 +83,7 @@ export async function PATCH(
     }
 
     // Não permite banir a si mesmo
-    if (id === session.userId) {
+    if (action === 'ban' && id === session.userId) {
       return NextResponse.json(
         { error: 'Você não pode banir sua própria conta' },
         { status: 400 }
@@ -91,6 +91,7 @@ export async function PATCH(
     }
 
     let updateData: Partial<User>
+    let successMessage: string
 
     if (action === 'ban') {
       if (!banReason) {
@@ -107,8 +108,8 @@ export async function PATCH(
         bannedBy: session.userId,
         bannedAt: new Date()
       }
-    } else {
-      // unban
+      successMessage = 'Usuário banido com sucesso'
+    } else if (action === 'unban') {
       updateData = {
         banned: false,
         banReason: undefined,
@@ -116,6 +117,42 @@ export async function PATCH(
         bannedBy: undefined,
         bannedAt: undefined
       }
+      successMessage = 'Usuário desbanido com sucesso'
+    } else {
+      // update_tier
+      if (!accountType || !['gratuito', 'trial', 'premium'].includes(accountType)) {
+        return NextResponse.json(
+          { error: 'Tipo de conta inválido' },
+          { status: 400 }
+        )
+      }
+
+      if (accountType === 'trial') {
+        const days = trialDays || 7
+        const expirationDate = new Date()
+        expirationDate.setDate(expirationDate.getDate() + days)
+
+        updateData = {
+          accountType: accountType as AccountType,
+          trialExpiresAt: expirationDate,
+          trialDuration: days
+        }
+      } else if (accountType === 'premium') {
+        updateData = {
+          accountType: accountType as AccountType,
+          trialExpiresAt: undefined,
+          trialDuration: undefined
+        }
+      } else {
+        // gratuito
+        updateData = {
+          accountType: accountType as AccountType,
+          trialExpiresAt: undefined,
+          trialDuration: undefined
+        }
+      }
+
+      successMessage = 'Plano do usuário atualizado com sucesso'
     }
 
     await usersCollection.updateOne(
@@ -125,12 +162,12 @@ export async function PATCH(
 
     return NextResponse.json({
       success: true,
-      message: action === 'ban' ? 'Usuário banido com sucesso' : 'Usuário desbanido com sucesso'
+      message: successMessage
     })
   } catch (error) {
-    console.error('Ban/unban user error:', error)
+    console.error('Update user error:', error)
     return NextResponse.json(
-      { error: 'Erro ao atualizar status do usuário' },
+      { error: 'Erro ao atualizar usuário' },
       { status: 500 }
     )
   }
