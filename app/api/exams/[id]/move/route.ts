@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { getSession } from '@/lib/auth'
 import clientPromise from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 
@@ -10,7 +9,7 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getSession()
     if (!session) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
     }
@@ -38,7 +37,7 @@ export async function PUT(
     //    - Provas que estão em grupos gerais (criados por admin)
     //    - Provas públicas (isPersonalExam=false ou undefined) que não criaram
 
-    const isAdmin = session.user?.role === 'admin'
+    const isAdmin = session.role === 'admin'
 
     // Se não for admin, validar permissões
     if (!isAdmin) {
