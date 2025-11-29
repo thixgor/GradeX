@@ -123,6 +123,9 @@ export interface Exam {
   allowCustomName?: boolean // Permitir que o aluno digite um nome diferente do nome de usuário
   requireSignature?: boolean // Exigir assinatura desenhada antes de iniciar
   shuffleQuestions?: boolean // Embaralhar a ordem das questões (não as alternativas)
+  // Tempo por questão
+  timeMode?: 'none' | 'generalized' | 'individual' // none: sem tempo, generalized: mesmo tempo para todas, individual: tempo diferente por questão
+  generalizedTimeSeconds?: number // Tempo em segundos quando timeMode = 'generalized'
   createdAt: Date
   updatedAt: Date
 }

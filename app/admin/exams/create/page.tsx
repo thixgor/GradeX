@@ -53,6 +53,9 @@ export default function CreateExamPage() {
     allowCustomName: false,
     requireSignature: false,
     shuffleQuestions: false,
+    // Tempo por questão
+    timeMode: 'none' as 'none' | 'generalized' | 'individual',
+    generalizedTimeSeconds: 0,
   })
 
   const [questions, setQuestions] = useState<Question[]>([])
@@ -384,12 +387,28 @@ export default function CreateExamPage() {
         endTimeISO = endDate.toISOString()
       }
 
+      // Aplicar tempo generalizado em todas as questões se timeMode = 'generalized'
+      let processedQuestions = [...questions]
+      if (examData.timeMode === 'generalized' && examData.generalizedTimeSeconds && examData.generalizedTimeSeconds > 0) {
+        processedQuestions = questions.map(q => ({
+          ...q,
+          timePerQuestionSeconds: examData.generalizedTimeSeconds
+        }))
+      } else if (examData.timeMode === 'none') {
+        // Remover timePerQuestionSeconds se timeMode = 'none'
+        processedQuestions = questions.map(q => ({
+          ...q,
+          timePerQuestionSeconds: undefined
+        }))
+      }
+      // Se timeMode = 'individual', usar o timePerQuestionSeconds já configurado em cada questão
+
       const payload = {
         ...examData,
         endTime: endTimeISO,
         duration: examData.durationMinutes,
         numberOfQuestions: questions.length,
-        questions,
+        questions: processedQuestions,
         // Garantir que os campos de proctoring sejam enviados
         proctoringEnabled: examData.proctoringEnabled,
         proctoringCamera: examData.proctoringCamera,
@@ -401,6 +420,9 @@ export default function CreateExamPage() {
         allowCustomName: examData.allowCustomName,
         requireSignature: examData.requireSignature,
         shuffleQuestions: examData.shuffleQuestions,
+        // Campos de tempo
+        timeMode: examData.timeMode,
+        generalizedTimeSeconds: examData.generalizedTimeSeconds,
       }
 
       const res = await fetch('/api/exams', {
@@ -745,18 +767,129 @@ export default function CreateExamPage() {
                 <Label htmlFor="navigationMode">Modo de Navegação</Label>
                 <select
                   id="navigationMode"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                   value={examData.navigationMode}
                   onChange={(e) => setExamData({ ...examData, navigationMode: e.target.value as 'paginated' | 'scroll' })}
+                  disabled={examData.timeMode !== 'none'}
                 >
                   <option value="paginated">📄 Paginada (uma questão por vez com botões)</option>
                   <option value="scroll">📜 Scroll (todas as questões visíveis com rolagem)</option>
                 </select>
                 <p className="text-xs text-muted-foreground">
-                  {examData.navigationMode === 'paginated'
-                    ? 'O aluno navegará entre as questões usando botões Anterior/Próximo'
-                    : 'Todas as questões ficarão visíveis numa única página. O aluno pode rolar e pular questões livremente'}
+                  {examData.timeMode !== 'none' ? (
+                    <span className="text-orange-600 dark:text-orange-400">
+                      🔒 Provas com tempo por questão usam obrigatoriamente o modo Paginada
+                    </span>
+                  ) : examData.navigationMode === 'paginated' ? (
+                    'O aluno navegará entre as questões usando botões Anterior/Próximo'
+                  ) : (
+                    'Todas as questões ficarão visíveis numa única página. O aluno pode rolar e pular questões livremente'
+                  )}
                 </p>
+              </div>
+
+              {/* Tempo por Questão */}
+              <div className="space-y-3 p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <div>
+                  <Label htmlFor="timeMode" className="font-semibold">⏱️ Tempo Máximo por Questão</Label>
+                  <select
+                    id="timeMode"
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm mt-2"
+                    value={examData.timeMode}
+                    onChange={(e) => {
+                      const newTimeMode = e.target.value as 'none' | 'generalized' | 'individual'
+                      setExamData({
+                        ...examData,
+                        timeMode: newTimeMode,
+                        // Forçar modo paginado quando há tempo
+                        navigationMode: newTimeMode !== 'none' ? 'paginated' : examData.navigationMode
+                      })
+                    }}
+                  >
+                    <option value="none">🚫 Sem tempo limite</option>
+                    <option value="generalized">⏱️ Tempo generalizado (mesmo tempo para todas)</option>
+                    <option value="individual">🎯 Tempo individual (configurar por questão)</option>
+                  </select>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {examData.timeMode === 'none' && 'Alunos terão tempo ilimitado para responder cada questão'}
+                    {examData.timeMode === 'generalized' && 'Todas as questões terão o mesmo tempo limite configurado abaixo'}
+                    {examData.timeMode === 'individual' && 'Você poderá configurar um tempo diferente para cada questão'}
+                  </p>
+                </div>
+
+                {examData.timeMode === 'generalized' && (
+                  <div className="space-y-2">
+                    <Label>Tempo por Questão</Label>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div>
+                        <Label htmlFor="gen-time-hours" className="text-xs">Horas</Label>
+                        <Input
+                          id="gen-time-hours"
+                          type="number"
+                          min="0"
+                          max="23"
+                          value={Math.floor((examData.generalizedTimeSeconds || 0) / 3600)}
+                          onChange={(e) => {
+                            const hours = parseInt(e.target.value) || 0
+                            const currentMinutes = Math.floor(((examData.generalizedTimeSeconds || 0) % 3600) / 60)
+                            const currentSeconds = (examData.generalizedTimeSeconds || 0) % 60
+                            setExamData({ ...examData, generalizedTimeSeconds: hours * 3600 + currentMinutes * 60 + currentSeconds })
+                          }}
+                          placeholder="0"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="gen-time-minutes" className="text-xs">Minutos</Label>
+                        <Input
+                          id="gen-time-minutes"
+                          type="number"
+                          min="0"
+                          max="59"
+                          value={Math.floor(((examData.generalizedTimeSeconds || 0) % 3600) / 60)}
+                          onChange={(e) => {
+                            const minutes = parseInt(e.target.value) || 0
+                            const currentHours = Math.floor((examData.generalizedTimeSeconds || 0) / 3600)
+                            const currentSeconds = (examData.generalizedTimeSeconds || 0) % 60
+                            setExamData({ ...examData, generalizedTimeSeconds: currentHours * 3600 + minutes * 60 + currentSeconds })
+                          }}
+                          placeholder="0"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="gen-time-seconds" className="text-xs">Segundos</Label>
+                        <Input
+                          id="gen-time-seconds"
+                          type="number"
+                          min="0"
+                          max="59"
+                          value={(examData.generalizedTimeSeconds || 0) % 60}
+                          onChange={(e) => {
+                            const seconds = parseInt(e.target.value) || 0
+                            const currentHours = Math.floor((examData.generalizedTimeSeconds || 0) / 3600)
+                            const currentMinutes = Math.floor(((examData.generalizedTimeSeconds || 0) % 3600) / 60)
+                            setExamData({ ...examData, generalizedTimeSeconds: currentHours * 3600 + currentMinutes * 60 + seconds })
+                          }}
+                          placeholder="0"
+                        />
+                      </div>
+                    </div>
+                    <p className="text-xs text-orange-600 dark:text-orange-400">
+                      ⚠️ Quando o tempo de uma questão acabar, ela será enviada automaticamente e o aluno passará para a próxima.
+                    </p>
+                  </div>
+                )}
+
+                {examData.timeMode === 'individual' && (
+                  <p className="text-xs text-blue-600 dark:text-blue-400">
+                    💡 Você poderá configurar o tempo de cada questão individualmente na edição de cada questão abaixo.
+                  </p>
+                )}
+
+                {examData.timeMode !== 'none' && (
+                  <p className="text-xs text-red-600 dark:text-red-400 font-semibold">
+                    🔒 IMPORTANTE: Provas com tempo por questão usam obrigatoriamente o modo de navegação "Paginada" e não permitem voltar para questões anteriores.
+                  </p>
+                )}
               </div>
 
               <div className="flex items-center space-x-2">
@@ -1263,7 +1396,8 @@ export default function CreateExamPage() {
                   />
                 </div>
 
-                {/* Tempo por Questão */}
+                {/* Tempo por Questão - só aparece quando timeMode = 'individual' */}
+                {examData.timeMode === 'individual' && (
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label>⏱️ Tempo Máximo por Questão (opcional)</Label>
@@ -1346,6 +1480,7 @@ export default function CreateExamPage() {
                     )}
                   </p>
                 </div>
+                )}
 
                 {currentQuestion.type === 'multiple-choice' && (
                   <div className="space-y-3">
