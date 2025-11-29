@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { getSession } from '@/lib/auth'
 import clientPromise from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 
 // GET - Listar grupos do usuário (pessoais + gerais)
 export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getSession()
     if (!session) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
     }
@@ -37,7 +36,7 @@ export async function GET(req: NextRequest) {
 // POST - Criar novo grupo
 export async function POST(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getSession()
     if (!session) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
     }
@@ -50,7 +49,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Apenas admin pode criar grupos gerais
-    if (type === 'general' && session.user?.role !== 'admin') {
+    if (type === 'general' && session.role !== 'admin') {
       return NextResponse.json(
         { error: 'Apenas administradores podem criar grupos gerais' },
         { status: 403 }
