@@ -35,26 +35,28 @@ export async function POST(
       return NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 })
     }
 
-    // Verifica se a prova já terminou
+    // Verifica se a prova já terminou (exceto para provas práticas)
     const now = new Date()
-    if (now > exam.endTime) {
+    if (!exam.isPracticeExam && now > exam.endTime) {
       return NextResponse.json(
         { error: 'Prova já encerrada' },
         { status: 400 }
       )
     }
 
-    // Verifica se já existe submissão
-    const existingSubmission = await submissionsCollection.findOne({
-      examId: id,
-      userId: session.userId,
-    })
+    // Verifica se já existe submissão (exceto para provas práticas que permitem múltiplas tentativas)
+    if (!exam.isPracticeExam) {
+      const existingSubmission = await submissionsCollection.findOne({
+        examId: id,
+        userId: session.userId,
+      })
 
-    if (existingSubmission) {
-      return NextResponse.json(
-        { error: 'Você já submeteu esta prova' },
-        { status: 400 }
-      )
+      if (existingSubmission) {
+        return NextResponse.json(
+          { error: 'Você já submeteu esta prova' },
+          { status: 400 }
+        )
+      }
     }
 
     let score: number | undefined

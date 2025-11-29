@@ -72,6 +72,8 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const [timeWarningCountdown, setTimeWarningCountdown] = useState(3)
   const [questionTimeRemaining, setQuestionTimeRemaining] = useState<number | null>(null)
   const [questionTimerActive, setQuestionTimerActive] = useState(false)
+  const [questionTimesSpent, setQuestionTimesSpent] = useState<Record<string, number>>({}) // Rastreia tempo já gasto por questão
+  const [visitedQuestions, setVisitedQuestions] = useState<Set<number>>(new Set()) // Questões já visitadas
 
   // Verificar se a prova tem proctoring habilitado
   const hasProctoring = exam?.proctoring?.enabled || false
@@ -536,9 +538,28 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     if (!exam) return
 
     const question = exam.questions[questionIndex]
+
+    // Marcar questão como visitada
+    setVisitedQuestions(prev => new Set(prev).add(questionIndex))
+
     if (question?.timePerQuestionSeconds && question.timePerQuestionSeconds > 0) {
-      setQuestionTimeRemaining(question.timePerQuestionSeconds)
-      setQuestionTimerActive(true)
+      // Se a questão já foi visitada e tem tempo salvo, usar o tempo restante
+      const timeSpent = questionTimesSpent[question.id] || 0
+      const timeRemaining = Math.max(0, question.timePerQuestionSeconds - timeSpent)
+
+      if (timeRemaining > 0) {
+        setQuestionTimeRemaining(timeRemaining)
+        setQuestionTimerActive(true)
+      } else {
+        // Tempo já esgotado, avançar automaticamente
+        setQuestionTimeRemaining(null)
+        setQuestionTimerActive(false)
+        setTimeout(() => {
+          if (questionIndex < exam.questions.length - 1) {
+            setCurrentQuestionIndex(questionIndex + 1)
+          }
+        }, 500)
+      }
     } else {
       setQuestionTimeRemaining(null)
       setQuestionTimerActive(false)
@@ -561,21 +582,39 @@ export default function ExamPage({ params }: { params: { id: string } }) {
 
   // Timer da questão atual
   useEffect(() => {
-    if (questionTimerActive && questionTimeRemaining !== null && questionTimeRemaining > 0 && started) {
+    if (questionTimerActive && questionTimeRemaining !== null && questionTimeRemaining > 0 && started && exam) {
       const timer = setInterval(() => {
+        const currentQuestion = exam.questions[currentQuestionIndex]
+
         setQuestionTimeRemaining(prev => {
           if (prev === null || prev <= 1) {
-            // Tempo esgotado - auto-submit da questão
+            // Tempo esgotado - salvar tempo total gasto
+            if (currentQuestion?.timePerQuestionSeconds) {
+              setQuestionTimesSpent(prevTimes => ({
+                ...prevTimes,
+                [currentQuestion.id]: currentQuestion.timePerQuestionSeconds || 0
+              }))
+            }
             setQuestionTimerActive(false)
             autoSubmitCurrentQuestion()
             return null
           }
+
+          // Salvar tempo gasto a cada segundo
+          if (currentQuestion?.timePerQuestionSeconds) {
+            const timeSpent = currentQuestion.timePerQuestionSeconds - prev
+            setQuestionTimesSpent(prevTimes => ({
+              ...prevTimes,
+              [currentQuestion.id]: timeSpent
+            }))
+          }
+
           return prev - 1
         })
       }, 1000)
       return () => clearInterval(timer)
     }
-  }, [questionTimerActive, questionTimeRemaining, started])
+  }, [questionTimerActive, questionTimeRemaining, started, exam, currentQuestionIndex])
 
   // Auto-submeter questão atual quando o tempo acabar
   async function autoSubmitCurrentQuestion() {
@@ -1165,6 +1204,11 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const currentQuestion = exam.questions[currentQuestionIndex]
   const currentAnswer = answers.find(a => a.questionId === currentQuestion.id)
   const isScrollMode = exam.navigationMode === 'scroll'
+
+  // Verificar se alguma questão tem tempo definido
+  const hasTimedQuestions = exam.questions.some(q => q.timePerQuestionSeconds && q.timePerQuestionSeconds > 0)
+  // Em provas com tempo, não permitir voltar para questões anteriores
+  const canGoBack = !hasTimedQuestions || currentQuestionIndex === 0
 
   return (
     <>
@@ -1872,7 +1916,8 @@ export default function ExamPage({ params }: { params: { id: string } }) {
               <Button
                 variant="outline"
                 onClick={() => setCurrentQuestionIndex(Math.max(0, currentQuestionIndex - 1))}
-                disabled={currentQuestionIndex === 0}
+                disabled={!canGoBack}
+                title={hasTimedQuestions && currentQuestionIndex > 0 ? "Não é possível voltar em provas com tempo por questão" : ""}
               >
                 Anterior
               </Button>
