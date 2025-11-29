@@ -15,12 +15,19 @@ export async function GET(request: NextRequest) {
     const db = await getDb()
     const examsCollection = db.collection<Exam>('exams')
 
-    let query = {}
+    let query: any = {}
 
-    // Administradores veem todas as provas (incluindo ocultas que criaram)
-    // Usuários comuns veem apenas provas não ocultas
+    // Administradores veem todas as provas (incluindo ocultas e pessoais de todos)
+    // Usuários comuns veem:
+    // - Provas não ocultas públicas (isPersonalExam = false ou undefined)
+    // - Suas próprias provas pessoais
     if (session.role !== 'admin') {
-      query = { isHidden: false }
+      query = {
+        $or: [
+          { isHidden: false, $or: [{ isPersonalExam: false }, { isPersonalExam: { $exists: false } }] },
+          { isPersonalExam: true, createdBy: session.userId },
+        ],
+      }
     }
 
     const exams = await examsCollection
@@ -38,14 +45,51 @@ export async function GET(request: NextRequest) {
   }
 }
 
+// Função auxiliar para resetar limites diários se necessário
+async function resetDailyLimitsIfNeeded(db: any, userId: string) {
+  const usersCollection = db.collection('users')
+  const user = await usersCollection.findOne({ _id: new ObjectId(userId) })
+  if (!user) return null
+
+  const now = new Date()
+  const lastReset = user.lastDailyReset ? new Date(user.lastDailyReset) : null
+
+  const needsReset =
+    !lastReset ||
+    now.getTime() - lastReset.getTime() > 24 * 60 * 60 * 1000 ||
+    now.getDate() !== lastReset.getDate()
+
+  if (needsReset) {
+    await usersCollection.updateOne(
+      { _id: new ObjectId(userId) },
+      {
+        $set: {
+          dailyPersonalExamsCreated: 0,
+          dailyAiQuestionsUsed: 0,
+          lastDailyReset: now,
+        },
+      }
+    )
+
+    return {
+      ...user,
+      dailyPersonalExamsCreated: 0,
+      dailyAiQuestionsUsed: 0,
+      lastDailyReset: now,
+    }
+  }
+
+  return user
+}
+
 // POST - Criar prova
 export async function POST(request: NextRequest) {
   try {
     const session = await getSession()
-    if (!session || session.role !== 'admin') {
+    if (!session) {
       return NextResponse.json(
-        { error: 'Sem permissão' },
-        { status: 403 }
+        { error: 'Não autenticado' },
+        { status: 401 }
       )
     }
 
@@ -81,6 +125,10 @@ export async function POST(request: NextRequest) {
       allowCustomName = false,
       requireSignature = false,
       shuffleQuestions = false,
+      // Novos campos
+      isPersonalExam = false,
+      groupId,
+      aiQuestionsCount = 0,
     } = body
 
     // Validação: Se não for prova prática, exigir startTime e endTime
@@ -100,6 +148,63 @@ export async function POST(request: NextRequest) {
 
     const db = await getDb()
     const examsCollection = db.collection<Exam>('exams')
+    const usersCollection = db.collection('users')
+
+    // Se for prova pessoal e não for admin, validar limites
+    if (isPersonalExam && session.role !== 'admin') {
+      // Resetar limites se necessário
+      const user = await resetDailyLimitsIfNeeded(db, session.userId)
+      if (!user) {
+        return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
+      }
+
+      const accountType = user.accountType || 'gratuito'
+      const dailyExamsUsed = user.dailyPersonalExamsCreated || 0
+      const dailyAiQuestionsUsed = user.dailyAiQuestionsUsed || 0
+
+      // Calcular limites baseado no tipo de conta
+      const dailyExamsLimit = accountType === 'premium' || accountType === 'trial' ? 10 : 5
+      const aiQuestionsPerExamLimit = accountType === 'premium' || accountType === 'trial' ? 20 : 5
+
+      // Validar limite diário de provas pessoais
+      if (dailyExamsUsed >= dailyExamsLimit) {
+        return NextResponse.json(
+          {
+            error: `Limite diário de provas pessoais atingido (${dailyExamsLimit}/dia para contas ${accountType})`,
+          },
+          { status: 403 }
+        )
+      }
+
+      // Validar limite de questões IA por prova
+      if (aiQuestionsCount > aiQuestionsPerExamLimit) {
+        return NextResponse.json(
+          {
+            error: `Limite de questões geradas por IA atingido (máximo ${aiQuestionsPerExamLimit} por prova para contas ${accountType})`,
+          },
+          { status: 403 }
+        )
+      }
+
+      // Incrementar contadores
+      await usersCollection.updateOne(
+        { _id: new ObjectId(session.userId) },
+        {
+          $inc: {
+            dailyPersonalExamsCreated: 1,
+            dailyAiQuestionsUsed: aiQuestionsCount,
+          },
+        }
+      )
+    }
+
+    // Apenas admin pode criar provas públicas (não pessoais)
+    if (!isPersonalExam && session.role !== 'admin') {
+      return NextResponse.json(
+        { error: 'Apenas administradores podem criar provas públicas' },
+        { status: 403 }
+      )
+    }
 
     // Para provas práticas sem datas, usar uma data muito distante no futuro
     const defaultFutureDate = new Date('2099-12-31T23:59:59')
@@ -138,6 +243,10 @@ export async function POST(request: NextRequest) {
       allowCustomName,
       requireSignature,
       shuffleQuestions,
+      // Novos campos
+      groupId: groupId || null,
+      isPersonalExam,
+      aiQuestionsCount: aiQuestionsCount || 0,
       createdAt: new Date(),
       updatedAt: new Date(),
     }

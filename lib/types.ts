@@ -126,6 +126,27 @@ export interface Exam {
   // Tempo por questão
   timeMode?: 'none' | 'generalized' | 'individual' // none: sem tempo, generalized: mesmo tempo para todas, individual: tempo diferente por questão
   generalizedTimeSeconds?: number // Tempo em segundos quando timeMode = 'generalized'
+  // Sistema de grupos e provas pessoais
+  groupId?: string // ID do grupo ao qual a prova pertence (null = página inicial)
+  isPersonalExam?: boolean // Se é uma prova pessoal (criada por usuário, só visível para ele)
+  aiQuestionsCount?: number // Quantidade de questões geradas por IA nesta prova (para controle de limites)
+  createdAt: Date
+  updatedAt: Date
+}
+
+export type ExamGroupType = 'personal' | 'general' // Pessoal (criado por usuário) ou Geral (criado por admin)
+
+export interface ExamGroup {
+  _id?: string
+  name: string // Nome do grupo
+  type: ExamGroupType // 'personal' ou 'general'
+  description?: string // Descrição opcional
+  color?: string // Cor do grupo (hex) para identificação visual
+  icon?: string // Ícone opcional (emoji ou nome de ícone)
+  createdBy: string // ID do usuário que criou (para grupos pessoais) ou admin (para gerais)
+  createdByName: string // Nome de quem criou
+  isPublic: boolean // Se false, só o criador vê (para grupos pessoais); se true, todos veem (grupos gerais)
+  order?: number // Ordem de exibição
   createdAt: Date
   updatedAt: Date
 }
@@ -194,6 +215,10 @@ export interface User {
   accountType?: AccountType // Tipo de conta (admin não tem accountType, só role)
   trialExpiresAt?: Date // Data de expiração do trial
   trialDuration?: number // Duração personalizada do trial em dias (padrão: 7)
+  // Limites de criação de provas pessoais e questões IA
+  dailyPersonalExamsCreated?: number // Quantidade de provas pessoais criadas hoje
+  dailyAiQuestionsUsed?: number // Quantidade de questões IA usadas hoje
+  lastDailyReset?: Date // Data do último reset diário (para limpar contadores)
 }
 
 export type SerialKeyType = 'trial' | 'premium' | 'custom'
