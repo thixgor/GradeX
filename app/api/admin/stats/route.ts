@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { getSession } from '@/lib/auth'
 import clientPromise from '@/lib/mongodb'
 
 export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getSession()
 
-    if (!session || session.user?.role !== 'admin') {
+    if (!session || session.role !== 'admin') {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
     }
 
