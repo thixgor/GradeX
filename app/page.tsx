@@ -132,88 +132,84 @@ export default function HomePage() {
 
       {/* Header */}
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-              GradeX
-            </h1>
-            {user && (
-              <span className="text-sm text-muted-foreground hidden md:block">
-                Olá, {user.name}!
-              </span>
-            )}
-          </div>
+        <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4">
+          <div className="flex items-center justify-between gap-2 sm:gap-4 flex-wrap">
+            <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+                GradeX
+              </h1>
+              {user && (
+                <span className="text-xs sm:text-sm text-muted-foreground hidden lg:block">
+                  Olá, {user.name}!
+                </span>
+              )}
+            </div>
 
-          <div className="flex items-center space-x-2">
-            {user?.role === 'admin' && (
-              <>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => router.push('/admin/exams/create')}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Nova Prova
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => router.push('/admin/exams')}
-                  title="Gerenciar Provas"
-                >
-                  <Settings className="h-5 w-5" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => router.push('/admin/users')}
-                  title="Gerenciar Usuários"
-                >
-                  <Users className="h-5 w-5" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => router.push('/admin/keys')}
-                  title="Gerenciar Serial Keys"
-                >
-                  <Key className="h-5 w-5" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => router.push('/admin/tickets')}
-                  title="Tickets de Suporte"
-                >
-                  <MessageSquare className="h-5 w-5" />
-                </Button>
-              </>
-            )}
-            {user && (
+            <div className="flex items-center gap-1 sm:gap-2 flex-wrap justify-end">
+              {user?.role === 'admin' && (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => router.push('/admin')}
+                    className="hidden sm:flex"
+                  >
+                    <Settings className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden md:inline">Admin</span>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => router.push('/admin')}
+                    title="Painel Admin"
+                    className="sm:hidden h-8 w-8"
+                  >
+                    <Settings className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => router.push('/admin/exams/create')}
+                    className="hidden md:flex"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Nova Prova
+                  </Button>
+                </>
+              )}
+              {user && (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => router.push('/profile')}
+                    title="Meu Perfil"
+                    className="h-8 w-8 sm:h-9 sm:w-9"
+                  >
+                    <UserIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => router.push('/forum')}
+                    title="Fóruns"
+                    className="h-8 w-8 sm:h-9 sm:w-9"
+                  >
+                    <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5" />
+                  </Button>
+                  <NotificationsBell />
+                </>
+              )}
+              <ThemeToggle />
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => router.push('/profile')}
-                title="Meu Perfil"
+                onClick={handleLogout}
+                className="h-8 w-8 sm:h-9 sm:w-9"
               >
-                <UserIcon className="h-5 w-5" />
+                <LogOut className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
-            )}
-            {user && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => router.push('/forum')}
-                title="Fóruns"
-              >
-                <MessageCircle className="h-5 w-5" />
-              </Button>
-            )}
-            {user && <NotificationsBell />}
-            <ThemeToggle />
-            <Button variant="ghost" size="icon" onClick={handleLogout}>
-              <LogOut className="h-5 w-5" />
-            </Button>
+            </div>
           </div>
         </div>
       </header>

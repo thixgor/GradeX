@@ -239,17 +239,24 @@ export default function EditForumPostPage({ params }: { params: { id: string } }
       <BanChecker />
 
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="icon" onClick={() => router.push(`/forum/post/${postId}`)}>
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold">Editar Postagem</h1>
-              <p className="text-sm text-muted-foreground">Atualize seu post</p>
+        <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4">
+          <div className="flex items-center justify-between gap-2 sm:gap-4">
+            <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => router.push(`/forum/post/${postId}`)}
+                className="shrink-0 h-8 w-8 sm:h-9 sm:w-9"
+              >
+                <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
+              </Button>
+              <div className="min-w-0 flex-1">
+                <h1 className="text-lg sm:text-xl md:text-2xl font-bold truncate">Editar Postagem</h1>
+                <p className="text-xs sm:text-sm text-muted-foreground truncate">Atualize seu post</p>
+              </div>
             </div>
+            <ThemeToggle />
           </div>
-          <ThemeToggle />
         </div>
       </header>
 

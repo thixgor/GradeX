@@ -1348,53 +1348,86 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       )}
 
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between flex-wrap gap-4">
-          <div>
-            <h1 className="text-xl font-bold">{exam.title}</h1>
-            <p className="text-sm text-muted-foreground">
-              {isScrollMode ? (
-                `${exam.questions.length} questões`
-              ) : (
-                `Questão ${currentQuestionIndex + 1} de ${exam.questions.length}`
+        <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3 md:py-4">
+          <div className="flex items-center justify-between gap-2 sm:gap-4 flex-wrap">
+            <div className="min-w-0 flex-shrink">
+              <h1 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold truncate">{exam.title}</h1>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                {isScrollMode ? (
+                  `${exam.questions.length} questões`
+                ) : (
+                  `Questão ${currentQuestionIndex + 1} de ${exam.questions.length}`
+                )}
+              </p>
+            </div>
+            <div className="flex items-center gap-1 sm:gap-2 flex-wrap justify-end">
+              {/* Timer da Questão Atual */}
+              {questionTimeRemaining !== null && questionTimerActive && (
+                <div className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-1 sm:py-2 rounded-lg font-semibold ${
+                  questionTimeRemaining <= 30
+                    ? 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 animate-pulse'
+                    : questionTimeRemaining <= 60
+                    ? 'bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300'
+                    : 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
+                }`}>
+                  <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="text-xs sm:text-sm">
+                    {Math.floor(questionTimeRemaining / 3600) > 0 && `${Math.floor(questionTimeRemaining / 3600)}:`}
+                    {String(Math.floor((questionTimeRemaining % 3600) / 60)).padStart(2, '0')}:
+                    {String(questionTimeRemaining % 60).padStart(2, '0')}
+                  </span>
+                </div>
               )}
-            </p>
-          </div>
-          <div className="flex items-center gap-2 flex-wrap">
-            {/* Timer da Questão Atual */}
-            {questionTimeRemaining !== null && questionTimerActive && (
-              <div className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold ${
-                questionTimeRemaining <= 30
-                  ? 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 animate-pulse'
-                  : questionTimeRemaining <= 60
-                  ? 'bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300'
-                  : 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
-              }`}>
-                <Clock className="h-4 w-4" />
-                <span className="text-sm">
-                  {Math.floor(questionTimeRemaining / 3600) > 0 && `${Math.floor(questionTimeRemaining / 3600)}:`}
-                  {String(Math.floor((questionTimeRemaining % 3600) / 60)).padStart(2, '0')}:
-                  {String(questionTimeRemaining % 60).padStart(2, '0')}
-                </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowUnansweredModal(true)}
+                className="hidden md:flex h-8"
+              >
+                <AlertCircle className="h-4 w-4 mr-2" />
+                Não respondidas ({getUnansweredQuestions().length})
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowUnansweredModal(true)}
+                title="Não respondidas"
+                className="md:hidden h-8 w-8"
+              >
+                <AlertCircle className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleDownloadExamPDF}
+                className="hidden lg:flex h-8"
+              >
+                <FileDown className="h-4 w-4 mr-2" />
+                PDF
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleDownloadExamPDF}
+                title="Baixar PDF"
+                className="lg:hidden h-8 w-8"
+              >
+                <FileDown className="h-4 w-4" />
+              </Button>
+              <div className="hidden sm:block">
+                <ExamTimer
+                  endTime={exam.endTime}
+                  onTimeUp={() => {
+                    showToastMessage('O tempo da prova acabou!', 'info')
+                    setTimeout(() => router.push('/'), 2000)
+                  }}
+                />
               </div>
-            )}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowUnansweredModal(true)}
-              className="hidden sm:flex"
-            >
-              <AlertCircle className="h-4 w-4 mr-2" />
-              Não respondidas ({getUnansweredQuestions().length})
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleDownloadExamPDF}
-              className="hidden sm:flex"
-            >
-              <FileDown className="h-4 w-4 mr-2" />
-              PDF
-            </Button>
+              <ThemeToggle />
+            </div>
+          </div>
+          {/* Exam Timer em linha separada no mobile */}
+          <div className="sm:hidden mt-2 flex justify-center">
             <ExamTimer
               endTime={exam.endTime}
               onTimeUp={() => {
@@ -1402,7 +1435,6 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                 setTimeout(() => router.push('/'), 2000)
               }}
             />
-            <ThemeToggle />
           </div>
         </div>
       </header>

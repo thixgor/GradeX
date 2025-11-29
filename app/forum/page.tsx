@@ -145,19 +145,24 @@ export default function ForumPage() {
       <BanChecker />
 
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="icon" onClick={() => router.push('/')}>
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold">Fóruns</h1>
-              <p className="text-sm text-muted-foreground">
-                Discussões e Materiais
-              </p>
+        <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4">
+          <div className="flex items-center justify-between gap-2 sm:gap-4">
+            <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => router.push('/')}
+                className="shrink-0 h-8 w-8 sm:h-9 sm:w-9"
+              >
+                <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
+              </Button>
+              <div className="min-w-0 flex-1">
+                <h1 className="text-lg sm:text-xl md:text-2xl font-bold truncate">Fóruns</h1>
+                <p className="text-xs sm:text-sm text-muted-foreground truncate">
+                  Discussões e Materiais
+                </p>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-3">
             <ThemeToggle />
           </div>
         </div>
@@ -165,21 +170,22 @@ export default function ForumPage() {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="discussion" className="space-y-6">
-          <div className="flex items-center justify-between">
-            <TabsList>
-              <TabsTrigger value="discussion" className="flex items-center gap-2">
-                <MessageSquare className="h-4 w-4" />
-                Fórum de Discussão
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+            <TabsList className="w-full sm:w-auto">
+              <TabsTrigger value="discussion" className="flex items-center gap-2 text-xs sm:text-sm flex-1 sm:flex-initial">
+                <MessageSquare className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden xs:inline">Fórum de </span>Discussão
               </TabsTrigger>
-              <TabsTrigger value="materials" className="flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                Fórum de Materiais
+              <TabsTrigger value="materials" className="flex items-center gap-2 text-xs sm:text-sm flex-1 sm:flex-initial">
+                <FileText className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden xs:inline">Fórum de </span>Materiais
               </TabsTrigger>
             </TabsList>
 
             <Button
               onClick={() => router.push('/forum/new?type=discussion')}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 w-full sm:w-auto"
+              size="sm"
             >
               <Plus className="h-4 w-4 mr-2" />
               Nova Postagem
