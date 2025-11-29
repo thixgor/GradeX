@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { getSession } from '@/lib/auth'
 import clientPromise from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 
@@ -10,7 +9,7 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getSession()
     if (!session) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
     }
@@ -34,7 +33,7 @@ export async function PUT(
     if (group.type === 'personal' && group.createdBy !== session.userId) {
       return NextResponse.json({ error: 'Sem permissão para editar este grupo' }, { status: 403 })
     }
-    if (group.type === 'general' && session.user?.role !== 'admin') {
+    if (group.type === 'general' && session.role !== 'admin') {
       return NextResponse.json({ error: 'Apenas administradores podem editar grupos gerais' }, { status: 403 })
     }
 
@@ -65,7 +64,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getSession()
     if (!session) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
     }
@@ -87,7 +86,7 @@ export async function DELETE(
     if (group.type === 'personal' && group.createdBy !== session.userId) {
       return NextResponse.json({ error: 'Sem permissão para deletar este grupo' }, { status: 403 })
     }
-    if (group.type === 'general' && session.user?.role !== 'admin') {
+    if (group.type === 'general' && session.role !== 'admin') {
       return NextResponse.json({ error: 'Apenas administradores podem deletar grupos gerais' }, { status: 403 })
     }
 
