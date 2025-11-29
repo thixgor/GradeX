@@ -109,7 +109,7 @@ export default function CreateExamPage() {
 
     const triParams = examData.scoringMethod === 'tri'
       ? generateRandomTRIParameters(numAlternatives)
-      : {}
+      : { a: 0, b: 0, c: 0 }
 
     const newQuestion: Question = {
       id: uuidv4(),
