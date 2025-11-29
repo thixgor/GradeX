@@ -1,0 +1,198 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 153 27% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 153 27% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 153 27% 10%;
+    /* Primary: Verde DomineAqui #468152 */
+    --primary: 153 27% 40%;
+    --primary-foreground: 0 0% 100%;
+    /* Secondary: Laranja #CE5929 */
+    --secondary: 18 65% 50%;
+    --secondary-foreground: 0 0% 100%;
+    /* Muted: Cinza neutro */
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Accent: Amarelo #E2A43E */
+    --accent: 40 82% 55%;
+    --accent-foreground: 153 27% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    /* Ring: Verde para focus */
+    --ring: 153 27% 40%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 153 27% 10%;
+    --foreground: 0 0% 100%;
+    --card: 153 27% 15%;
+    --card-foreground: 0 0% 100%;
+    --popover: 153 27% 15%;
+    --popover-foreground: 0 0% 100%;
+    /* Primary: Verde DomineAqui */
+    --primary: 153 27% 40%;
+    --primary-foreground: 0 0% 100%;
+    /* Secondary: Laranja */
+    --secondary: 18 65% 50%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    /* Accent: Amarelo */
+    --accent: 40 82% 55%;
+    --accent-foreground: 153 27% 10%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 153 27% 20%;
+    --input: 153 27% 20%;
+    /* Ring: Verde para focus */
+    --ring: 153 27% 40%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-body;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Liquid Glass Effects */
+  .glass {
+    @apply backdrop-blur-xl bg-white/30 dark:bg-white/10 border border-white/40 dark:border-white/20;
+  }
+
+  .glass-sm {
+    @apply backdrop-blur-lg bg-white/25 dark:bg-white/5 border border-white/30 dark:border-white/15;
+  }
+
+  .glass-lg {
+    @apply backdrop-blur-2xl bg-white/40 dark:bg-white/15 border border-white/50 dark:border-white/25;
+  }
+
+  .glass-button {
+    @apply backdrop-blur-xl bg-gradient-to-br from-white/40 to-white/20 dark:from-white/20 dark:to-white/5 border border-white/50 dark:border-white/30 hover:from-white/50 hover:to-white/30 dark:hover:from-white/30 dark:hover:to-white/10 transition-all duration-300;
+  }
+
+  .glass-card {
+    @apply backdrop-blur-2xl bg-gradient-to-br from-white/50 to-white/30 dark:from-white/15 dark:to-white/5 border border-white/60 dark:border-white/25 rounded-2xl shadow-2xl;
+  }
+
+  .glass-input {
+    @apply backdrop-blur-lg bg-white/30 dark:bg-white/10 border border-white/40 dark:border-white/20 placeholder-gray-600 dark:placeholder-gray-400 focus:bg-white/40 dark:focus:bg-white/15 focus:border-white/60 dark:focus:border-white/30 transition-all duration-300;
+  }
+
+  /* Gradient Overlays */
+  .gradient-overlay {
+    @apply bg-gradient-to-br from-[#468152]/10 via-transparent to-[#CE5929]/10;
+  }
+
+  .gradient-overlay-dark {
+    @apply dark:bg-gradient-to-br dark:from-[#468152]/20 dark:via-transparent dark:to-[#CE5929]/20;
+  }
+
+  /* Smooth Transitions */
+  .smooth-transition {
+    @apply transition-all duration-500 ease-out;
+  }
+
+  /* Glow Effects */
+  .glow-green {
+    @apply shadow-lg shadow-[#468152]/20 dark:shadow-[#468152]/40;
+  }
+
+  .glow-orange {
+    @apply shadow-lg shadow-[#CE5929]/20 dark:shadow-[#CE5929]/40;
+  }
+
+  .glow-yellow {
+    @apply shadow-lg shadow-[#E2A43E]/20 dark:shadow-[#E2A43E]/40;
+  }
+}
+
+/* Landing Page Animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce-custom {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fade-in 0.6s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.6s ease-out forwards;
+    opacity: 0;
+  }
+
+  .delay-100 {
+    animation-delay: 0.1s;
+  }
+
+  .delay-200 {
+    animation-delay: 0.2s;
+  }
+
+  .delay-300 {
+    animation-delay: 0.3s;
+  }
+
+  .delay-400 {
+    animation-delay: 0.4s;
+  }
+
+  .delay-2000 {
+    animation-delay: 2s;
+  }
+
+  .animate-bounce-custom {
+    animation: bounce-custom 2s infinite;
+  }
+}

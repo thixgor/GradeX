@@ -1,0 +1,246 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { getDb } from '@/lib/mongodb'
+import { getSession } from '@/lib/auth'
+import { Ticket } from '@/lib/types'
+import { ObjectId } from 'mongodb'
+
+export const dynamic = 'force-dynamic'
+
+// GET - Buscar ticket específico
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params
+    const session = await getSession()
+    if (!session) {
+      return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
+    }
+
+    const db = await getDb()
+    const ticketsCollection = db.collection<Ticket>('tickets')
+
+    const ticket = await ticketsCollection.findOne({ _id: new ObjectId(id) })
+
+    if (!ticket) {
+      return NextResponse.json({ error: 'Ticket não encontrado' }, { status: 404 })
+    }
+
+    // Verifica permissão: usuário só vê seu próprio ticket, admin vê todos
+    if (session.role !== 'admin' && ticket.userId !== session.userId) {
+      return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
+    }
+
+    return NextResponse.json({ ticket })
+  } catch (error) {
+    console.error('Get ticket error:', error)
+    return NextResponse.json(
+      { error: 'Erro ao buscar ticket' },
+      { status: 500 }
+    )
+  }
+}
+
+// PATCH - Atualizar ticket (pegar, enviar mensagem, resolver, fechar, marcar como lida)
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params
+    const session = await getSession()
+    if (!session) {
+      return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
+    }
+
+    const body = await request.json()
+    const { action, message, messageIds } = body
+
+    const db = await getDb()
+    const ticketsCollection = db.collection<Ticket>('tickets')
+    const usersCollection = db.collection('users')
+
+    const ticket = await ticketsCollection.findOne({ _id: new ObjectId(id) })
+
+    if (!ticket) {
+      return NextResponse.json({ error: 'Ticket não encontrado' }, { status: 404 })
+    }
+
+    // Verifica permissão
+    if (session.role !== 'admin' && ticket.userId !== session.userId) {
+      return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
+    }
+
+    const user = await usersCollection.findOne({ _id: new ObjectId(session.userId) })
+    if (!user) {
+      return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
+    }
+
+    let updateData: any = { updatedAt: new Date() }
+
+    switch (action) {
+      case 'assign':
+        // Admin pega o ticket
+        if (session.role !== 'admin') {
+          return NextResponse.json({ error: 'Apenas admins podem pegar tickets' }, { status: 403 })
+        }
+
+        // Adicionar mensagem do sistema
+        const systemMessage = {
+          id: `msg_${Date.now()}_system`,
+          senderId: 'system',
+          senderName: 'Sistema',
+          senderRole: 'user' as const,
+          text: `Seu ticket foi atendido por um administrador. O ${user.name} falará com você a partir de agora.`,
+          sentAt: new Date()
+        }
+
+        await ticketsCollection.updateOne(
+          { _id: new ObjectId(id) },
+          {
+            $set: {
+              assignedTo: session.userId,
+              assignedToName: user.name,
+              status: 'assigned',
+              updatedAt: new Date()
+            },
+            $push: { messages: systemMessage }
+          }
+        )
+
+        return NextResponse.json({
+          success: true,
+          message: 'Ticket atribuído com sucesso'
+        })
+
+      case 'send_message':
+        // Enviar mensagem
+        if (!message) {
+          return NextResponse.json({ error: 'Mensagem é obrigatória' }, { status: 400 })
+        }
+        const newMessage = {
+          id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          senderId: session.userId,
+          senderName: user.name,
+          senderRole: session.role,
+          text: message,
+          sentAt: new Date()
+        }
+
+        // Usar $push corretamente com $set separado
+        await ticketsCollection.updateOne(
+          { _id: new ObjectId(id) },
+          {
+            $push: { messages: newMessage },
+            $set: { updatedAt: new Date() }
+          }
+        )
+
+        return NextResponse.json({
+          success: true,
+          message: 'Mensagem enviada com sucesso'
+        })
+
+      case 'mark_read':
+        // Marcar mensagens como lidas
+        if (!messageIds || !Array.isArray(messageIds)) {
+          return NextResponse.json({ error: 'IDs de mensagens são obrigatórios' }, { status: 400 })
+        }
+        // Atualizar readAt de mensagens específicas
+        const updatedMessages = ticket.messages.map(msg => {
+          if (messageIds.includes(msg.id) && msg.senderId !== session.userId && !msg.readAt) {
+            return { ...msg, readAt: new Date() }
+          }
+          return msg
+        })
+        updateData.messages = updatedMessages
+        break
+
+      case 'resolve':
+        // Resolver ticket (apenas admin)
+        if (session.role !== 'admin') {
+          return NextResponse.json({ error: 'Apenas admins podem resolver tickets' }, { status: 403 })
+        }
+        updateData.status = 'resolved'
+        updateData.resolvedAt = new Date()
+        break
+
+      case 'close':
+        // Fechar ticket (usuário ou admin)
+        updateData.status = 'closed'
+        updateData.closedAt = new Date()
+        break
+
+      case 'reopen':
+        // Reabrir ticket (apenas admin)
+        if (session.role !== 'admin') {
+          return NextResponse.json({ error: 'Apenas admins podem reabrir tickets' }, { status: 403 })
+        }
+
+        // Adicionar mensagem do sistema
+        const reopenMessage = {
+          id: `msg_${Date.now()}_reopen`,
+          senderId: 'system',
+          senderName: 'Sistema',
+          senderRole: 'user' as const,
+          text: `O ticket foi reaberto por ${user.name} (administrador).`,
+          sentAt: new Date()
+        }
+
+        await ticketsCollection.updateOne(
+          { _id: new ObjectId(id) },
+          {
+            $set: {
+              status: 'assigned',
+              assignedTo: session.userId,
+              assignedToName: user.name,
+              updatedAt: new Date()
+            },
+            $unset: {
+              resolvedAt: '',
+              closedAt: ''
+            },
+            $push: { messages: reopenMessage }
+          }
+        )
+
+        // Criar notificação para o usuário que abriu o ticket
+        const notificationsCollection = db.collection('notifications')
+        await notificationsCollection.insertOne({
+          userId: ticket.userId,
+          type: 'ticket_reopened',
+          message: `Seu ticket "${ticket.title}" foi reaberto por ${user.name}`,
+          ticketId: ticket._id!.toString(),
+          ticketTitle: ticket.title,
+          read: false,
+          createdAt: new Date()
+        })
+
+        return NextResponse.json({
+          success: true,
+          message: 'Ticket reaberto com sucesso'
+        })
+
+      default:
+        return NextResponse.json({ error: 'Ação inválida' }, { status: 400 })
+    }
+
+    // Atualizar ticket para todos os outros casos
+    await ticketsCollection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: updateData }
+    )
+
+    return NextResponse.json({
+      success: true,
+      message: 'Ticket atualizado com sucesso'
+    })
+  } catch (error) {
+    console.error('Update ticket error:', error)
+    return NextResponse.json(
+      { error: 'Erro ao atualizar ticket' },
+      { status: 500 }
+    )
+  }
+}

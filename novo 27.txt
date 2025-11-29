@@ -1,0 +1,6 @@
+Ótimo mas: O monitoramento só deve aparecer na página /admin/proctoring se o usuário estiver FAZENDO A PROVA NAQUELE EXATO MOMENTO.
+
+Implemente agora:
+WebRTC para streaming de vídeo, áudio e tela em tempo real
+WebSocket para comunicação bidirecional instantânea
+Detecção de troca de abas ou janelas com aviso no /admin/proctoring
