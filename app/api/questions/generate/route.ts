@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import {
-
-export const dynamic = 'force-dynamic'
   generateMultipleChoiceQuestion,
   generateDiscursiveQuestion,
   QuestionGenerationParams,
 } from '@/lib/question-generator'
+
+export const dynamic = 'force-dynamic'
 
 // POST - Gerar questão(ões) com IA
 export async function POST(request: NextRequest) {
