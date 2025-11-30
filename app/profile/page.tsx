@@ -635,6 +635,95 @@ export default function ProfilePage() {
         type="success"
       />
 
+      {/* Upgrade Dialog */}
+      <Dialog open={upgradeDialogOpen} onOpenChange={setUpgradeDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center mb-4">
+              <Sparkles className="h-8 w-8 text-white" />
+            </div>
+            <DialogTitle className="text-center text-2xl">Faça Upgrade para Premium</DialogTitle>
+            <DialogDescription className="text-center text-base">
+              Entre em contato conosco para fazer upgrade da sua conta e ter acesso a recursos premium ilimitados.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <div className="flex items-center gap-3 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
+              <Phone className="h-5 w-5 text-blue-600" />
+              <div>
+                <p className="text-sm font-medium">Telefone/WhatsApp</p>
+                <p className="text-lg font-semibold text-blue-600">(21) 99777-0936</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 p-4 bg-green-50 dark:bg-green-950 rounded-lg">
+              <Mail className="h-5 w-5 text-green-600" />
+              <div>
+                <p className="text-sm font-medium">E-mail</p>
+                <p className="text-lg font-semibold text-green-600">throdrigf@gmail.com</p>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button
+              onClick={() => {
+                const encodedMessage = encodeURIComponent(`Olá, eu sou ${userName} e quero fazer o upgrade do meu plano no DomineAqui!`)
+                window.open(`https://wa.me/21997770936?text=${encodedMessage}`, '_blank')
+              }}
+              className="bg-green-600 hover:bg-green-700 text-white w-full"
+            >
+              <Phone className="h-4 w-4 mr-2" />
+              Enviar Mensagem WhatsApp
+            </Button>
+            <Button onClick={() => setUpgradeDialogOpen(false)} variant="outline" className="w-full">
+              Fechar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Activate Serial Key Dialog */}
+      <Dialog open={activateDialogOpen} onOpenChange={setActivateDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-cyan-500 flex items-center justify-center mb-4">
+              <Crown className="h-8 w-8 text-white" />
+            </div>
+            <DialogTitle className="text-center text-2xl">Ativar Premium com Serial Key</DialogTitle>
+            <DialogDescription className="text-center text-base">
+              Insira sua serial key para ativar o acesso premium
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Serial Key</label>
+              <input
+                type="text"
+                placeholder="Cole sua serial key aqui"
+                value={serialKey}
+                onChange={(e) => setSerialKey(e.target.value)}
+                disabled={activating}
+                className="w-full px-3 py-2 border border-muted rounded-md bg-background text-sm"
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button
+              onClick={handleActivateKey}
+              disabled={activating || !serialKey.trim()}
+              className="w-full"
+            >
+              {activating ? 'Ativando...' : 'Ativar'}
+            </Button>
+            <Button onClick={() => setActivateDialogOpen(false)} variant="outline" className="w-full sm:w-auto">
+              Cancelar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Activation Success Dialog */}
       {activationDetails && (
