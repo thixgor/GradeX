@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
@@ -14,6 +14,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { BanReasonLabels, BanReason } from '@/lib/types'
 import { Ban, AlertCircle } from 'lucide-react'
 import { ADMIN_EMAILS } from '@/lib/constants'
+import { GoogleProfileSetupDialog } from '@/components/google-profile-setup-dialog'
+
+declare global {
+  interface Window {
+    google?: any
+  }
+}
+
 export default function LoginPage() {
   const router = useRouter()
   const [isLogin, setIsLogin] = useState(true)
@@ -21,6 +29,14 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [showBannedDialog, setShowBannedDialog] = useState(false)
+  const [showProfileSetup, setShowProfileSetup] = useState(false)
+  const [googleLoading, setGoogleLoading] = useState(false)
+  const [googleData, setGoogleData] = useState<{
+    email: string
+    name?: string
+    picture?: string
+    googleId: string
+  } | null>(null)
   const [banInfo, setBanInfo] = useState<{
     reason?: BanReason
     details?: string
@@ -33,6 +49,44 @@ export default function LoginPage() {
     name: '',
     role: 'user'
   })
+
+  useEffect(() => {
+    // Carrega o script do Google
+    const script = document.createElement('script')
+    script.src = 'https://accounts.google.com/gsi/client'
+    script.async = true
+    script.defer = true
+    
+    script.onload = () => {
+      if (window.google) {
+        window.google.accounts.id.initialize({
+          client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+          callback: handleGoogleLogin,
+        })
+        
+        // Renderiza o botão quando o script carrega
+        const buttonElement = document.getElementById('google-signin-button')
+        if (buttonElement && isLogin) {
+          window.google.accounts.id.renderButton(buttonElement, {
+            type: 'standard',
+            size: 'large',
+            text: 'signin_with',
+            locale: 'pt-BR',
+          })
+        }
+      }
+    }
+    
+    document.head.appendChild(script)
+
+    return () => {
+      try {
+        document.head.removeChild(script)
+      } catch (e) {
+        // Script já foi removido
+      }
+    }
+  }, [isLogin])
 
   const canBeAdmin = ADMIN_EMAILS.includes(formData.email.toLowerCase().trim())
 
@@ -75,6 +129,81 @@ export default function LoginPage() {
       setError(err.message)
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function handleGoogleLogin(response: any) {
+    setError('')
+    setGoogleLoading(true)
+
+    try {
+      const res = await fetch('/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken: response.credential }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        if (data.error === 'banned') {
+          setBanInfo({
+            reason: data.banReason,
+            details: data.banDetails,
+            bannedAt: data.bannedAt
+          })
+          setShowBannedDialog(true)
+          return
+        }
+        throw new Error(data.error || 'Erro ao fazer login com Google')
+      }
+
+      // Se requer setup de perfil
+      if (data.requiresProfileSetup) {
+        setGoogleData(data.googleData)
+        setShowProfileSetup(true)
+        return
+      }
+
+      // Login bem-sucedido
+      router.push('/')
+      router.refresh()
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setGoogleLoading(false)
+    }
+  }
+
+  async function handleProfileSetupComplete(profileName: string) {
+    if (!googleData) return
+
+    setGoogleLoading(true)
+    try {
+      const res = await fetch('/api/auth/google/setup-profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: googleData.email,
+          profileName,
+          picture: googleData.picture,
+          googleId: googleData.googleId,
+        }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Erro ao criar perfil')
+      }
+
+      setShowProfileSetup(false)
+      router.push('/')
+      router.refresh()
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setGoogleLoading(false)
     }
   }
 
@@ -205,18 +334,10 @@ export default function LoginPage() {
                   </div>
                 </div>
 
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => {
-                    // Implementar login com Google
-                    alert('Login com Google será implementado em breve')
-                  }}
-                >
-                  <Mail className="h-4 w-4 mr-2" />
-                  Google
-                </Button>
+                <div
+                  id="google-signin-button"
+                  className="flex justify-center"
+                />
               </>
             )}
 
@@ -295,6 +416,16 @@ export default function LoginPage() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Google Profile Setup Dialog */}
+      {googleData && (
+        <GoogleProfileSetupDialog
+          open={showProfileSetup}
+          googleData={googleData}
+          onComplete={handleProfileSetupComplete}
+          isLoading={googleLoading}
+        />
+      )}
     </div>
   )
 }

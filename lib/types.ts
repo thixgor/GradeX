@@ -228,6 +228,9 @@ export interface User {
   dailyPersonalExamsRemaining?: number // Quantidade de provas pessoais restantes (para admin gerenciar)
   dailyAiQuestionsUsed?: number // Quantidade de questões IA usadas hoje
   lastDailyReset?: Date // Data do último reset diário (para limpar contadores)
+  // Campos de autenticação social
+  googleId?: string // ID do Google (sub)
+  profilePicture?: string // URL da foto de perfil
 }
 
 export type SerialKeyType = 'trial' | 'premium' | 'custom'
