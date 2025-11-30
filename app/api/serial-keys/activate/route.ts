@@ -77,6 +77,14 @@ export async function POST(request: NextRequest) {
       durationInMs = (days * 24 * 60 * 60 + hours * 60 * 60 + minutes * 60) * 1000
     }
 
+    // Definir quotas baseado no tipo de conta
+    const quotasByAccountType: Record<string, number> = {
+      gratuito: 3,
+      trial: 10,
+      premium: 20,
+    }
+    const newQuota = quotasByAccountType[accountType] || 3
+
     // Atualizar o usuário - SEMPRE resetar o tempo ao ativar
     const updateResult = await usersCollection.updateOne(
       { _id: new ObjectId(session.userId) },
@@ -87,6 +95,9 @@ export async function POST(request: NextRequest) {
           trialDuration: serialKey.type === 'custom'
             ? Math.ceil(durationInMs / (24 * 60 * 60 * 1000))
             : 7,
+          dailyPersonalExamsCreated: 0,
+          dailyPersonalExamsRemaining: newQuota,
+          lastDailyReset: new Date(),
         }
       }
     )

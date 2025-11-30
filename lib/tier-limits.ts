@@ -11,11 +11,11 @@ export const TIER_LIMITS: Record<AccountType | 'admin', TierLimits> = {
     questionsPerExam: 5,
   },
   trial: {
-    examsPerDay: 5,
+    examsPerDay: 10,
     questionsPerExam: 10,
   },
   premium: {
-    examsPerDay: 10,
+    examsPerDay: 20,
     questionsPerExam: 20,
   },
   admin: {

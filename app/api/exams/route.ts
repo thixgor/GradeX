@@ -94,8 +94,8 @@ async function resetDailyLimitsIfNeeded(db: any, userId: string, accountType: st
     // Determinar limite baseado no tipo de conta
     const limits: Record<string, number> = {
       gratuito: 3,
-      trial: 5,
-      premium: 10,
+      trial: 10,
+      premium: 20,
     }
     const examsPerDay = limits[accountType] || 3
 
@@ -221,8 +221,8 @@ export async function POST(request: NextRequest) {
       // Calcular limites baseado no tipo de conta
       const dailyExamsLimits: Record<string, number> = {
         gratuito: 3,
-        trial: 5,
-        premium: 10,
+        trial: 10,
+        premium: 20,
       }
       const aiQuestionsLimits: Record<string, number> = {
         gratuito: 5,

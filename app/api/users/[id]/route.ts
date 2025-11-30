@@ -130,6 +130,14 @@ export async function PATCH(
         )
       }
 
+      // Definir quotas baseado no tipo de conta
+      const quotasByAccountType: Record<string, number> = {
+        gratuito: 3,
+        trial: 10,
+        premium: 20,
+      }
+      const newQuota = quotasByAccountType[accountType] || 3
+
       if (accountType === 'trial') {
         const days = trialDays || 7
         const expirationDate = new Date()
@@ -138,20 +146,29 @@ export async function PATCH(
         updateData = {
           accountType: accountType as AccountType,
           trialExpiresAt: expirationDate,
-          trialDuration: days
+          trialDuration: days,
+          dailyPersonalExamsCreated: 0,
+          dailyPersonalExamsRemaining: newQuota,
+          lastDailyReset: new Date()
         }
       } else if (accountType === 'premium') {
         updateData = {
           accountType: accountType as AccountType,
           trialExpiresAt: undefined,
-          trialDuration: undefined
+          trialDuration: undefined,
+          dailyPersonalExamsCreated: 0,
+          dailyPersonalExamsRemaining: newQuota,
+          lastDailyReset: new Date()
         }
       } else {
         // gratuito
         updateData = {
           accountType: accountType as AccountType,
           trialExpiresAt: undefined,
-          trialDuration: undefined
+          trialDuration: undefined,
+          dailyPersonalExamsCreated: 0,
+          dailyPersonalExamsRemaining: newQuota,
+          lastDailyReset: new Date()
         }
       }
 
