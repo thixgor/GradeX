@@ -39,7 +39,6 @@ export default function HomePage() {
   const [exams, setExams] = useState<Exam[]>([])
   const [groups, setGroups] = useState<Group[]>([])
   const [loading, setLoading] = useState(true)
-  const [, forceUpdate] = useState(0)
   const [showLanding, setShowLanding] = useState(false)
   const [landingPageEnabled, setLandingPageEnabled] = useState(true)
   const [personalExamsEnabled, setPersonalExamsEnabled] = useState(true)
@@ -55,19 +54,11 @@ export default function HomePage() {
     checkAuth()
   }, [])
 
-  // Atualiza o status dos exames a cada segundo
-  useEffect(() => {
-    const interval = setInterval(() => {
-      forceUpdate(prev => prev + 1)
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [])
-
-  // Recarregar limites de tier a cada 5 segundos
+  // Recarregar limites de tier a cada 30 segundos (em vez de 5s)
   useEffect(() => {
     const interval = setInterval(() => {
       loadTierLimits()
-    }, 5000)
+    }, 30000)
     return () => clearInterval(interval)
   }, [])
 

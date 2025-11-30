@@ -76,8 +76,8 @@ export function TrialExpirationChecker() {
       // Verificar imediatamente
       await checkTrialStatus()
 
-      // Verificar a cada 1 minuto apenas se autenticado
-      intervalId = setInterval(checkTrialStatus, 60000)
+      // Verificar a cada 5 minutos apenas se autenticado (em vez de 1 minuto)
+      intervalId = setInterval(checkTrialStatus, 300000)
     }
 
     startChecking()

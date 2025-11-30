@@ -11,7 +11,7 @@ interface BanCheckerProps {
   checkInterval?: number // em milissegundos, padrão 10 segundos
 }
 
-export function BanChecker({ checkInterval = 10000 }: BanCheckerProps) {
+export function BanChecker({ checkInterval = 60000 }: BanCheckerProps) {
   const router = useRouter()
   const [showBannedDialog, setShowBannedDialog] = useState(false)
   const [banInfo, setBanInfo] = useState<{

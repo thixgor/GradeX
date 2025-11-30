@@ -39,7 +39,11 @@ export function NotificationsBell() {
     }
 
     try {
-      const res = await fetch('/api/notifications')
+      const res = await fetch('/api/notifications', {
+        headers: {
+          'Cache-Control': 'max-age=30',
+        },
+      })
       if (res.ok) {
         const data = await res.json()
         const newNotifications = data.notifications || []
@@ -90,8 +94,8 @@ export function NotificationsBell() {
           setUnreadCount(initialUnreadCount)
           setPreviousUnreadCount(initialUnreadCount) // Inicializar sem tocar som
 
-          // Iniciar intervalo apenas se autenticado
-          intervalRef.current = setInterval(loadNotifications, 5000)
+          // Iniciar intervalo apenas se autenticado (30s em vez de 5s)
+          intervalRef.current = setInterval(loadNotifications, 30000)
         }
       } catch (error) {
         console.error('Erro ao carregar notificações:', error)
