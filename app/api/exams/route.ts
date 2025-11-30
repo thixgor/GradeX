@@ -56,26 +56,55 @@ export async function GET(request: NextRequest) {
   }
 }
 
+// Função para obter data atual em horário de Brasília
+function getBrasiliaDate(): Date {
+  const now = new Date()
+  // Brasília é UTC-3
+  const brasiliaTime = new Date(now.getTime() - 3 * 60 * 60 * 1000)
+  return brasiliaTime
+}
+
+// Função para verificar se passou meia-noite em Brasília
+function needsDailyReset(lastReset: Date | null): boolean {
+  if (!lastReset) return true
+
+  const now = getBrasiliaDate()
+  const last = new Date(lastReset.getTime() - 3 * 60 * 60 * 1000)
+
+  // Comparar apenas a data (ano, mês, dia)
+  return (
+    now.getUTCFullYear() !== last.getUTCFullYear() ||
+    now.getUTCMonth() !== last.getUTCMonth() ||
+    now.getUTCDate() !== last.getUTCDate()
+  )
+}
+
 // Função auxiliar para resetar limites diários se necessário
-async function resetDailyLimitsIfNeeded(db: any, userId: string) {
+async function resetDailyLimitsIfNeeded(db: any, userId: string, accountType: string) {
   const usersCollection = db.collection('users')
   const user = await usersCollection.findOne({ _id: new ObjectId(userId) })
   if (!user) return null
 
-  const now = new Date()
   const lastReset = user.lastDailyReset ? new Date(user.lastDailyReset) : null
-
-  const needsReset =
-    !lastReset ||
-    now.getTime() - lastReset.getTime() > 24 * 60 * 60 * 1000 ||
-    now.getDate() !== lastReset.getDate()
+  const needsReset = needsDailyReset(lastReset)
 
   if (needsReset) {
+    const now = new Date()
+    
+    // Determinar limite baseado no tipo de conta
+    const limits: Record<string, number> = {
+      gratuito: 3,
+      trial: 5,
+      premium: 10,
+    }
+    const examsPerDay = limits[accountType] || 3
+
     await usersCollection.updateOne(
       { _id: new ObjectId(userId) },
       {
         $set: {
           dailyPersonalExamsCreated: 0,
+          dailyPersonalExamsRemaining: examsPerDay,
           dailyAiQuestionsUsed: 0,
           lastDailyReset: now,
         },
@@ -85,6 +114,7 @@ async function resetDailyLimitsIfNeeded(db: any, userId: string) {
     return {
       ...user,
       dailyPersonalExamsCreated: 0,
+      dailyPersonalExamsRemaining: examsPerDay,
       dailyAiQuestionsUsed: 0,
       lastDailyReset: now,
     }
@@ -172,19 +202,35 @@ export async function POST(request: NextRequest) {
 
     // Se for prova pessoal e não for admin, validar limites
     if (isPersonalExam && session.role !== 'admin') {
+      // Obter tipo de conta primeiro
+      const tempUser = await usersCollection.findOne({ _id: new ObjectId(session.userId) })
+      if (!tempUser) {
+        return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
+      }
+      
+      const accountType = tempUser.accountType || 'gratuito'
+      
       // Resetar limites se necessário
-      const user = await resetDailyLimitsIfNeeded(db, session.userId)
+      const user = await resetDailyLimitsIfNeeded(db, session.userId, accountType)
       if (!user) {
         return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
       }
-
-      const accountType = user.accountType || 'gratuito'
       const dailyExamsUsed = user.dailyPersonalExamsCreated || 0
       const dailyAiQuestionsUsed = user.dailyAiQuestionsUsed || 0
 
       // Calcular limites baseado no tipo de conta
-      const dailyExamsLimit = accountType === 'premium' || accountType === 'trial' ? 10 : 5
-      const aiQuestionsPerExamLimit = accountType === 'premium' || accountType === 'trial' ? 20 : 5
+      const dailyExamsLimits: Record<string, number> = {
+        gratuito: 3,
+        trial: 5,
+        premium: 10,
+      }
+      const aiQuestionsLimits: Record<string, number> = {
+        gratuito: 5,
+        trial: 10,
+        premium: 20,
+      }
+      const dailyExamsLimit = dailyExamsLimits[accountType] || 3
+      const aiQuestionsPerExamLimit = aiQuestionsLimits[accountType] || 5
 
       // Se admin setou um valor de "restantes", usar esse para calcular se pode criar
       let examsRemaining = dailyExamsLimit - dailyExamsUsed
