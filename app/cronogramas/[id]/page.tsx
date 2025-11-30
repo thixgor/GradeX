@@ -78,6 +78,20 @@ export default function CronogramaDetalhePage() {
       a.id === atividadeId ? { ...a, concluido: novoEstado } : a
     )
     setAtividades(atividadeAtualizada)
+    
+    // Atualizar também o cronograma para refletir visualmente
+    if (cronograma) {
+      const cronogramaAtualizado = {
+        ...cronograma,
+        cronograma: cronograma.cronograma.map(dia => ({
+          ...dia,
+          atividades: dia.atividades.map(a =>
+            a.id === atividadeId ? { ...a, concluido: novoEstado } : a
+          )
+        }))
+      }
+      setCronograma(cronogramaAtualizado)
+    }
 
     // Atualizar no servidor
     try {
@@ -89,7 +103,7 @@ export default function CronogramaDetalhePage() {
     } catch (error) {
       console.error('Erro ao atualizar atividade:', error)
       // Reverter estado se falhar
-      setAtividades(atividades)
+      loadCronograma()
     }
   }
 
