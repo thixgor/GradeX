@@ -632,92 +632,9 @@ export default function ProfilePage() {
         open={toastOpen}
         onOpenChange={setToastOpen}
         message={toastMessage}
-        type="error"
+        type="success"
       />
 
-      {/* Upgrade Dialog */}
-      <Dialog open={upgradeDialogOpen} onOpenChange={setUpgradeDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-yellow-500" />
-              Faça Upgrade para Premium
-            </DialogTitle>
-            <DialogDescription>
-              Entre em contato conosco para fazer upgrade da sua conta e ter acesso a recursos premium ilimitados.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="flex items-center gap-3 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
-              <Phone className="h-5 w-5 text-blue-600" />
-              <div>
-                <p className="text-sm font-medium">Telefone/WhatsApp</p>
-                <p className="text-lg font-semibold text-blue-600">(21) 99777-0936</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 p-4 bg-green-50 dark:bg-green-950 rounded-lg">
-              <Mail className="h-5 w-5 text-green-600" />
-              <div>
-                <p className="text-sm font-medium">E-mail</p>
-                <p className="text-lg font-semibold text-green-600">throdrigf@gmail.com</p>
-              </div>
-            </div>
-          </div>
-          <div className="flex justify-end">
-            <Button onClick={() => setUpgradeDialogOpen(false)}>
-              Fechar
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Activate Serial Key Dialog */}
-      <Dialog open={activateDialogOpen} onOpenChange={setActivateDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Crown className="h-5 w-5 text-yellow-500" />
-              Ativar Serial Key
-            </DialogTitle>
-            <DialogDescription>
-              Digite a serial key que você recebeu para ativar seu plano Premium ou Trial.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div>
-              <Label htmlFor="serial-key">Serial Key</Label>
-              <Input
-                id="serial-key"
-                placeholder="XXXX-XXXX-XXXX-XXXX"
-                value={serialKey}
-                onChange={(e) => setSerialKey(e.target.value.toUpperCase())}
-                className="font-mono text-lg"
-                maxLength={19}
-              />
-              <p className="text-xs text-muted-foreground mt-2">
-                Formato: XXXX-XXXX-XXXX-XXXX
-              </p>
-            </div>
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setActivateDialogOpen(false)
-                setSerialKey('')
-              }}
-            >
-              Cancelar
-            </Button>
-            <Button
-              onClick={handleActivateKey}
-              disabled={activating || !serialKey.trim()}
-            >
-              {activating ? 'Ativando...' : 'Ativar'}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
 
       {/* Activation Success Dialog */}
       {activationDetails && (

@@ -14,14 +14,14 @@ export function Dialog({ open, onOpenChange, children }: DialogProps) {
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
         onClick={() => onOpenChange(false)}
       />
       {/* Content */}
-      <div className="relative z-50 animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative z-50 animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
         {children}
       </div>
     </div>

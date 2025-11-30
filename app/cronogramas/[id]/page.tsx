@@ -69,8 +69,13 @@ export default function CronogramaDetalhePage() {
   }
 
   async function toggleAtividadeConcluida(atividadeId: string) {
+    // Encontrar o estado atual ANTES de atualizar
+    const atividadeAtual = atividades.find(a => a.id === atividadeId)
+    const novoEstado = !atividadeAtual?.concluido
+    
+    // Atualizar estado local IMEDIATAMENTE para refletir visualmente
     const atividadeAtualizada = atividades.map(a =>
-      a.id === atividadeId ? { ...a, concluido: !a.concluido } : a
+      a.id === atividadeId ? { ...a, concluido: novoEstado } : a
     )
     setAtividades(atividadeAtualizada)
 
@@ -79,10 +84,12 @@ export default function CronogramaDetalhePage() {
       await fetch(`/api/cronogramas/${cronogramaId}/atividades/${atividadeId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ concluido: !atividades.find(a => a.id === atividadeId)?.concluido })
+        body: JSON.stringify({ concluido: novoEstado })
       })
     } catch (error) {
       console.error('Erro ao atualizar atividade:', error)
+      // Reverter estado se falhar
+      setAtividades(atividades)
     }
   }
 
