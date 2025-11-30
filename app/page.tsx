@@ -11,6 +11,7 @@ import { SupportChat } from '@/components/support-chat'
 import { Logo } from '@/components/logo'
 import { ExamContextMenu } from '@/components/exam-context-menu'
 import { ExamGroup } from '@/components/exam-group'
+import { MobileMenu } from '@/components/mobile-menu'
 import { Exam } from '@/lib/types'
 import { formatDate, isBetweenDates } from '@/lib/utils'
 import { Clock, Calendar, FileText, LogOut, Settings, Plus, User as UserIcon, Users, MessageSquare, Key, MessageCircle, BookMarked } from 'lucide-react'
@@ -431,6 +432,22 @@ Contact: (21) 99777-0936`)
                     <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5" />
                   </Button>
                   <NotificationsBell />
+                  <MobileMenu
+                    onCreatePersonalExam={() => {
+                      if (tierLimitExceeded) {
+                        alert(`You've reached your creation limit.
+Upgrade to Premium for 10 exams per day with up to 20 questions per exam.
+
+Contact: (21) 99777-0936`)
+                      } else {
+                        router.push('/exams/create-personal')
+                      }
+                    }}
+                    onCreateExam={() => router.push('/admin/exams/create')}
+                    isAdmin={user?.role === 'admin'}
+                    tierLimitExceeded={tierLimitExceeded}
+                    personalExamsEnabled={personalExamsEnabled}
+                  />
                 </>
               )}
               <ThemeToggle />

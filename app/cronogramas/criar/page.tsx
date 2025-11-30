@@ -726,8 +726,8 @@ export default function CriarCronogramaPage() {
             {modelo === 'personalizado' ? (
               <CustomCronogramaBuilder topicos={topicos} onTopicosChange={setTopicos} />
             ) : (
-            /* 3-Column Layout */
-            <div className="grid grid-cols-3 gap-8 min-h-screen w-full overflow-hidden">
+            /* 3-Column Layout - Responsive */
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 w-full">
               {/* Column 1: Tópicos */}
               <Card className="flex flex-col">
                 <CardHeader className="pb-4">
@@ -747,7 +747,6 @@ export default function CriarCronogramaPage() {
                       <ToggleSwitch
                         checked={topico.incluido}
                         onChange={() => toggleTopico(topico.id)}
-                        onClick={(e) => e.stopPropagation()}
                       />
                       <div className="flex-1 text-left min-w-0">
                         <div className={`font-semibold text-base leading-snug break-words ${
@@ -793,7 +792,6 @@ export default function CriarCronogramaPage() {
                             checked={subtopico.incluido}
                             onChange={() => toggleSubtopico(selectedTopico, subtopico.id)}
                             disabled={!!(selectedTopico && !topicos.find((t) => t.id === selectedTopico)?.incluido)}
-                            onClick={(e) => e.stopPropagation()}
                           />
                           <div className="flex-1 text-left min-w-0">
                             <div className={`font-semibold text-base leading-snug break-words ${
