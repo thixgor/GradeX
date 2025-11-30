@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
-import { writeFile, mkdir } from 'fs/promises'
-import { join } from 'path'
-import { existsSync } from 'fs'
+import { getDb } from '@/lib/mongodb'
 
 export const dynamic = 'force-dynamic'
 
@@ -38,30 +36,32 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    // Criar diretório de uploads se não existir
-    const uploadsDir = join(process.cwd(), 'public', 'uploads', 'forum')
-    if (!existsSync(uploadsDir)) {
-      await mkdir(uploadsDir, { recursive: true })
-    }
-
-    // Gerar nome único para o arquivo
-    const timestamp = Date.now()
-    const randomStr = Math.random().toString(36).substring(7)
-    const extension = file.name.split('.').pop()
-    const fileName = `${timestamp}-${randomStr}.${extension}`
-    const filePath = join(uploadsDir, fileName)
-
-    // Converter o arquivo para buffer e salvar
+    // Converter arquivo para base64
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
-    await writeFile(filePath, buffer)
+    const base64 = buffer.toString('base64')
 
-    // Retornar URL pública do arquivo
-    const fileUrl = `/uploads/forum/${fileName}`
+    // Salvar no MongoDB
+    const db = await getDb()
+    const uploadsCollection = db.collection('forum_uploads')
+
+    const fileDoc = {
+      fileName: file.name,
+      originalName: file.name,
+      mimeType: file.type,
+      size: file.size,
+      data: base64,
+      uploadedBy: session.userId,
+      uploadedByName: session.name,
+      uploadedAt: new Date(),
+      type: file.type.startsWith('image/') ? 'image' : 'pdf'
+    }
+
+    const result = await uploadsCollection.insertOne(fileDoc)
 
     return NextResponse.json({
       success: true,
-      url: fileUrl,
+      url: `/api/forum/uploads/${result.insertedId}`,
       name: file.name,
       size: file.size,
       type: file.type.startsWith('image/') ? 'image' : 'pdf'
