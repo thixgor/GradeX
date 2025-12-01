@@ -4,7 +4,6 @@ import stripe from '@/lib/stripe'
 import { ObjectId } from 'mongodb'
 import { User, AccountType } from '@/lib/types'
 import { getPersonalExamsQuota } from '@/lib/tier-limits'
-import { sendPremiumActivationEmail } from '@/lib/email-service'
 
 export const dynamic = 'force-dynamic'
 
@@ -90,19 +89,6 @@ export async function POST(request: NextRequest) {
         { _id: new ObjectId(userId) },
         { $set: updateData }
       )
-
-      // Enviar email de confirmação
-      try {
-        await sendPremiumActivationEmail(
-          user.email,
-          user.name,
-          PLAN_NAMES[planId],
-          expiresAt
-        )
-      } catch (emailError) {
-        console.error('Erro ao enviar email:', emailError)
-        // Não falhar o webhook por erro de email
-      }
 
       return NextResponse.json({ success: true })
     }
