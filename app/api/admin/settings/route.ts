@@ -9,6 +9,8 @@ interface LandingSettings {
   landingPageEnabled: boolean
   videoEnabled: boolean
   personalExamsEnabled?: boolean
+  registrationBlocked?: boolean
+  registrationBlockedMessage?: string
 }
 
 // GET - Obter configurações (público)
@@ -23,7 +25,9 @@ export async function GET(req: NextRequest) {
         videoEmbedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
         landingPageEnabled: true,
         videoEnabled: true,
-        personalExamsEnabled: true
+        personalExamsEnabled: true,
+        registrationBlocked: false,
+        registrationBlockedMessage: 'Cadastro temporariamente desativado'
       })
     }
 

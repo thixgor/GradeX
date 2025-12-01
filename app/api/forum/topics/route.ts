@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
+import { getSession } from '@/lib/auth'
 import { ForumTopic, ForumType } from '@/lib/types'
 
 export async function GET(req: NextRequest) {
@@ -34,19 +35,16 @@ export async function POST(req: NextRequest) {
     const db = await getDb()
     
     // Verificar autenticação
-    const authRes = await fetch('http://localhost:3000/api/auth/me', {
-      headers: req.headers
-    })
+    const session = await getSession()
     
-    if (!authRes.ok) {
+    if (!session) {
       return NextResponse.json(
         { error: 'Não autenticado' },
         { status: 401 }
       )
     }
 
-    const userData = await authRes.json()
-    if (userData.user?.role !== 'admin') {
+    if (session.role !== 'admin') {
       return NextResponse.json(
         { error: 'Apenas administradores podem criar tópicos' },
         { status: 403 }
@@ -71,8 +69,8 @@ export async function POST(req: NextRequest) {
       forumType,
       color: color || '#3B82F6',
       icon: icon || '📁',
-      createdBy: userData.user.id,
-      createdByName: userData.user.name,
+      createdBy: session.userId,
+      createdByName: session.name,
       order: count,
       createdAt: new Date(),
       updatedAt: new Date()

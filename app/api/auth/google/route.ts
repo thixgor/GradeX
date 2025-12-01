@@ -68,6 +68,18 @@ export async function POST(request: NextRequest) {
         )
       }
     } else {
+      // Novo usuário - verificar se cadastro está bloqueado
+      const settings = await db.collection('landing_settings').findOne({})
+      if (settings?.registrationBlocked) {
+        return NextResponse.json(
+          {
+            error: 'blocked',
+            message: settings.registrationBlockedMessage || 'Cadastro temporariamente desativado'
+          },
+          { status: 403 }
+        )
+      }
+
       // Novo usuário - precisa definir o nome do perfil
       return NextResponse.json(
         {

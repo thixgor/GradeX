@@ -16,15 +16,21 @@ const spaceGrotesk = Space_Grotesk({
 })
 
 export const metadata: Metadata = {
-  title: 'DomineAqui - Plataforma de Provas',
-  description: 'Plataforma completa para criação e realização de provas com suporte a TRI e avaliação inteligente',
+  title: 'DomineAqui - Seja o Foco. Seja a Referência.',
+  description: 'Domine Aqui. Seja o Foco. Seja a Referência. Provas, Flashcards, Cronogramas, Materiais. Plataforma completa para estudo inteligente com suporte a TRI e avaliação inteligente.',
+  keywords: 'provas, flashcards, cronogramas, materiais, estudo, educação, TRI, avaliação',
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
-      { url: '/img/favicon.jpg', type: 'image/jpeg' },
+      { url: '/favicon.jpg', type: 'image/jpeg' },
     ],
     shortcut: '/favicon.ico',
-    apple: '/img/favicon.jpg',
+    apple: '/favicon.jpg',
+  },
+  openGraph: {
+    title: 'DomineAqui - Seja o Foco. Seja a Referência.',
+    description: 'Domine Aqui. Provas, Flashcards, Cronogramas, Materiais.',
+    type: 'website',
   },
 }
 

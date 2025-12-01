@@ -21,6 +21,8 @@ interface LandingSettings {
   landingPageEnabled: boolean
   videoEnabled: boolean
   personalExamsEnabled?: boolean
+  registrationBlocked?: boolean
+  registrationBlockedMessage?: string
 }
 
 interface StripeSettings {
@@ -42,7 +44,9 @@ export default function SettingsPage() {
     videoEmbedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
     landingPageEnabled: true,
     videoEnabled: true,
-    personalExamsEnabled: true
+    personalExamsEnabled: true,
+    registrationBlocked: false,
+    registrationBlockedMessage: 'Cadastro temporariamente desativado'
   })
   const [stripeSettings, setStripeSettings] = useState<StripeSettings>({
     monthly: '',
@@ -99,7 +103,9 @@ export default function SettingsPage() {
           videoEmbedUrl: data.videoEmbedUrl || 'https://www.youtube.com/embed/dQw4w9WgXcQ',
           landingPageEnabled: data.landingPageEnabled !== false,
           videoEnabled: data.videoEnabled !== false,
-          personalExamsEnabled: data.personalExamsEnabled !== false
+          personalExamsEnabled: data.personalExamsEnabled !== false,
+          registrationBlocked: data.registrationBlocked || false,
+          registrationBlockedMessage: data.registrationBlockedMessage || 'Cadastro temporariamente desativado'
         }
         setSettings(settings)
       }
@@ -303,8 +309,75 @@ export default function SettingsPage() {
                   />
                 </button>
               </div>
+
+              {/* Registration Blocked Toggle */}
+              <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                <div className="space-y-1">
+                  <Label className="text-base font-semibold">Bloquear Cadastro de Novos Usuários</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Se ativado, novos usuários não poderão se cadastrar via email ou OAuth2
+                  </p>
+                </div>
+                <button
+                  onClick={() => setSettings({ ...settings, registrationBlocked: !settings.registrationBlocked })}
+                  className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${
+                    settings.registrationBlocked ? 'bg-red-500' : 'bg-muted'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
+                      settings.registrationBlocked ? 'translate-x-7' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
             </CardContent>
           </Card>
+
+          {/* Registration Blocked Message */}
+          {settings.registrationBlocked && (
+            <Card className="border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950">
+              <CardHeader>
+                <CardTitle className="text-red-900 dark:text-red-100">Mensagem de Bloqueio de Cadastro</CardTitle>
+                <CardDescription className="text-red-800 dark:text-red-200">
+                  Esta mensagem será exibida quando usuários tentarem se cadastrar
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="blockMessage">Mensagem</Label>
+                  <textarea
+                    id="blockMessage"
+                    placeholder="Digite a mensagem que será exibida..."
+                    value={settings.registrationBlockedMessage || ''}
+                    onChange={(e) => setSettings({ ...settings, registrationBlockedMessage: e.target.value })}
+                    className="w-full p-3 border rounded-lg bg-white dark:bg-slate-900 text-foreground resize-none h-24"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Máximo 200 caracteres
+                  </p>
+                </div>
+
+                {/* Save Button */}
+                <div className="flex gap-3 pt-4">
+                  <Button
+                    onClick={handleSave}
+                    disabled={saving}
+                    className="bg-red-600 hover:bg-red-700"
+                  >
+                    {saving ? 'Salvando...' : 'Salvar Mensagem'}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => loadSettings()}
+                    disabled={saving}
+                  >
+                    Cancelar
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Video Embed Settings */}
           <Card>

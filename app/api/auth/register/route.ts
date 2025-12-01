@@ -27,6 +27,19 @@ export async function POST(request: NextRequest) {
     }
 
     const db = await getDb()
+    
+    // Verificar se o cadastro está bloqueado
+    const settings = await db.collection('landing_settings').findOne({})
+    if (settings?.registrationBlocked && role !== 'admin') {
+      return NextResponse.json(
+        { 
+          error: 'blocked',
+          message: settings.registrationBlockedMessage || 'Cadastro temporariamente desativado'
+        },
+        { status: 403 }
+      )
+    }
+
     const usersCollection = db.collection<User>('users')
 
     // Verifica se o email já existe

@@ -18,33 +18,23 @@ export async function POST(request: NextRequest) {
 
     const { planId } = await request.json()
 
+    // Mapeamento de IDs do Stripe para tipos de plano
+    const planMapping: { [key: string]: { type: string; isOneTime: boolean } } = {
+      'price_1SZEvMLawSqPVy6JDJk2SNcc': { type: 'monthly', isOneTime: false },
+      'price_1SZEvMLawSqPVy6JWHUgauU6': { type: 'quarterly', isOneTime: false },
+      'price_1SZEvMLawSqPVy6JzFkSv4OX': { type: 'semi-annual', isOneTime: false },
+      'price_1SZEvMLawSqPVy6JxOQ4JNxj': { type: 'annual', isOneTime: false },
+      'price_1SZEvMLawSqPVy6Jdbl8CArd': { type: 'lifetime', isOneTime: true },
+    }
+
     // Validar planId
-    const validPlans = ['monthly', 'quarterly', 'semi-annual', 'annual', 'lifetime']
-    if (!planId || !validPlans.includes(planId)) {
+    if (!planId || !planMapping[planId]) {
       return NextResponse.json({ error: 'Plano inválido' }, { status: 400 })
     }
 
-    // Buscar price IDs do banco de dados
-    const db = await getDb()
-    const settingsCollection = db.collection<StripeSettings>('stripe_settings')
-    const settings = await settingsCollection.findOne({})
-
-    if (!settings) {
-      return NextResponse.json(
-        { error: 'Configurações de Stripe não encontradas' },
-        { status: 500 }
-      )
-    }
-
-    const priceId = settings[planId as keyof StripeSettings] as string
-    if (!priceId || typeof priceId !== 'string') {
-      return NextResponse.json(
-        { error: `Price ID para ${planId} não configurado` },
-        { status: 500 }
-      )
-    }
-
-    const isOneTime = ONE_TIME_PRICES.includes(planId)
+    const priceId = planId
+    const planInfo = planMapping[planId]
+    const isOneTime = planInfo.isOneTime
     const mode = isOneTime ? 'payment' : 'subscription'
 
     // Criar sessão de checkout
@@ -62,7 +52,8 @@ export async function POST(request: NextRequest) {
       customer_email: session.email,
       metadata: {
         userId: session.userId,
-        planId: planId,
+        planId: planInfo.type,
+        priceId: priceId,
       },
     })
 
