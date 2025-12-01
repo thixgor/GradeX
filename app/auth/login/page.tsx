@@ -30,6 +30,8 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [showBannedDialog, setShowBannedDialog] = useState(false)
   const [showProfileSetup, setShowProfileSetup] = useState(false)
+  const [showBlockedModal, setShowBlockedModal] = useState(false)
+  const [blockedMessage, setBlockedMessage] = useState('')
   const [googleLoading, setGoogleLoading] = useState(false)
   const [googleData, setGoogleData] = useState<{
     email: string
@@ -153,6 +155,11 @@ export default function LoginPage() {
             bannedAt: data.bannedAt
           })
           setShowBannedDialog(true)
+          return
+        }
+        if (data.error === 'blocked') {
+          setBlockedMessage(data.message)
+          setShowBlockedModal(true)
           return
         }
         throw new Error(data.error || 'Erro ao fazer login com Google')
@@ -356,6 +363,38 @@ export default function LoginPage() {
           </CardFooter>
         </form>
       </Card>
+
+      {/* Modal de Cadastro Bloqueado */}
+      <Dialog open={showBlockedModal} onOpenChange={setShowBlockedModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <div className="mx-auto w-16 h-16 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center mb-4">
+              <AlertCircle className="h-8 w-8 text-red-600 dark:text-red-300" />
+            </div>
+            <DialogTitle className="text-center text-xl text-red-600 dark:text-red-400">
+              Cadastro Bloqueado
+            </DialogTitle>
+            <DialogDescription className="text-center">
+              <div className="space-y-4 mt-4">
+                <div className="p-4 bg-red-50 dark:bg-red-950 rounded-lg border border-red-200 dark:border-red-800">
+                  <p className="text-sm text-red-800 dark:text-red-200">
+                    {blockedMessage}
+                  </p>
+                </div>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-center pt-4">
+            <Button
+              variant="outline"
+              onClick={() => setShowBlockedModal(false)}
+              className="w-full"
+            >
+              Fechar
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Modal de Usuário Banido */}
       <Dialog open={showBannedDialog} onOpenChange={setShowBannedDialog}>
