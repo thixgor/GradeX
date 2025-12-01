@@ -1,14 +1,25 @@
 import { Question, Alternative, KeyPoint, Settings, AlternativeType } from './types'
 import { getDb } from './mongodb'
+import { getAIKey, AIKeySection } from './ai-keys'
 import { v4 as uuidv4 } from 'uuid'
 
 const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent'
 
 /**
  * Busca a API Key do Gemini do banco de dados
+ * Prioriza chaves específicas por seção, depois a chave padrão
  */
-async function getGeminiApiKey(): Promise<string> {
+async function getGeminiApiKey(section?: AIKeySection): Promise<string> {
   try {
+    // Se uma seção foi especificada, tentar usar a chave específica
+    if (section) {
+      const sectionKey = await getAIKey(section)
+      if (sectionKey) {
+        return sectionKey
+      }
+    }
+
+    // Fallback para chave padrão do banco de dados
     const db = await getDb()
     const settingsCollection = db.collection<Settings>('settings')
     const settings = await settingsCollection.findOne({})
@@ -22,6 +33,23 @@ async function getGeminiApiKey(): Promise<string> {
     console.error('Erro ao buscar API Key do Gemini:', error)
     throw error
   }
+}
+
+// Variável global para armazenar a seção de IA a ser usada
+let currentAIKeySection: AIKeySection | undefined = undefined
+
+/**
+ * Define qual seção de IA deve ser usada para as próximas requisições
+ */
+export function setAIKeySection(section?: AIKeySection) {
+  currentAIKeySection = section
+}
+
+/**
+ * Obtém a seção de IA atualmente configurada
+ */
+export function getAIKeySection(): AIKeySection | undefined {
+  return currentAIKeySection
 }
 
 export interface QuestionGenerationParams {
@@ -344,7 +372,8 @@ export async function generateMultipleChoiceQuestion(
   params: QuestionGenerationParams
 ): Promise<Question> {
   const prompt = buildMultipleChoicePrompt(params)
-  const apiKey = await getGeminiApiKey()
+  const section = getAIKeySection()
+  const apiKey = await getGeminiApiKey(section)
 
   try {
     const response = await fetch(GEMINI_ENDPOINT, {
@@ -398,7 +427,8 @@ export async function generateDiscursiveQuestion(
   params: QuestionGenerationParams
 ): Promise<Question> {
   const prompt = buildDiscursivePrompt(params)
-  const apiKey = await getGeminiApiKey()
+  const section = getAIKeySection()
+  const apiKey = await getGeminiApiKey(section)
 
   try {
     const response = await fetch(GEMINI_ENDPOINT, {
@@ -627,7 +657,8 @@ IMPORTANTE:
 - Use linguagem clara e educativa
 - Retorne APENAS o JSON, sem texto adicional`
 
-  const apiKey = await getGeminiApiKey()
+  const section = getAIKeySection()
+  const apiKey = await getGeminiApiKey(section)
 
   try {
     const response = await fetch(GEMINI_ENDPOINT, {

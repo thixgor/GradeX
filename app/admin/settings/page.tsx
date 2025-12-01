@@ -16,6 +16,12 @@ interface User {
   role: 'admin' | 'user'
 }
 
+interface AIKeySettings {
+  generalExams?: string
+  personalExams?: string
+  flashcards?: string
+}
+
 interface LandingSettings {
   videoEmbedUrl: string
   landingPageEnabled: boolean
@@ -23,6 +29,7 @@ interface LandingSettings {
   personalExamsEnabled?: boolean
   registrationBlocked?: boolean
   registrationBlockedMessage?: string
+  aiKeys?: AIKeySettings
 }
 
 interface StripeSettings {
@@ -46,7 +53,12 @@ export default function SettingsPage() {
     videoEnabled: true,
     personalExamsEnabled: true,
     registrationBlocked: false,
-    registrationBlockedMessage: 'Cadastro temporariamente desativado'
+    registrationBlockedMessage: 'Cadastro temporariamente desativado',
+    aiKeys: {
+      generalExams: '',
+      personalExams: '',
+      flashcards: ''
+    }
   })
   const [stripeSettings, setStripeSettings] = useState<StripeSettings>({
     monthly: '',
@@ -100,7 +112,12 @@ export default function SettingsPage() {
           videoEnabled: data.videoEnabled !== false,
           personalExamsEnabled: data.personalExamsEnabled !== false,
           registrationBlocked: data.registrationBlocked || false,
-          registrationBlockedMessage: data.registrationBlockedMessage || 'Cadastro temporariamente desativado'
+          registrationBlockedMessage: data.registrationBlockedMessage || 'Cadastro temporariamente desativado',
+          aiKeys: data.aiKeys || {
+            generalExams: '',
+            personalExams: '',
+            flashcards: ''
+          }
         }
         setSettings(settings)
       }
@@ -612,6 +629,114 @@ export default function SettingsPage() {
                   variant="outline"
                   onClick={() => loadStripeSettings()}
                   disabled={savingStripe}
+                >
+                  Cancelar
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* AI Keys Settings */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Configurações de Chaves de IA</CardTitle>
+              <CardDescription>
+                Configure diferentes API keys de IA para cada seção, reduzindo carga e RPM
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* General Exams */}
+              <div className="space-y-2">
+                <Label htmlFor="ai-general">API Key para Provas Gerais</Label>
+                <Input
+                  id="ai-general"
+                  type="password"
+                  placeholder="sk-..."
+                  value={settings.aiKeys?.generalExams || ''}
+                  onChange={(e) => setSettings({
+                    ...settings,
+                    aiKeys: { ...settings.aiKeys, generalExams: e.target.value }
+                  })}
+                  className="font-mono text-sm"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Usado em: /admin/exams/create (Criação de Provas Gerais)
+                </p>
+              </div>
+
+              {/* Personal Exams */}
+              <div className="space-y-2">
+                <Label htmlFor="ai-personal">API Key para Provas Pessoais</Label>
+                <Input
+                  id="ai-personal"
+                  type="password"
+                  placeholder="sk-..."
+                  value={settings.aiKeys?.personalExams || ''}
+                  onChange={(e) => setSettings({
+                    ...settings,
+                    aiKeys: { ...settings.aiKeys, personalExams: e.target.value }
+                  })}
+                  className="font-mono text-sm"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Usado em: /exams/personal/[id]/generate-questions (Geração de Questões)
+                </p>
+              </div>
+
+              {/* Flashcards */}
+              <div className="space-y-2">
+                <Label htmlFor="ai-flashcards">API Key para Flashcards</Label>
+                <Input
+                  id="ai-flashcards"
+                  type="password"
+                  placeholder="sk-..."
+                  value={settings.aiKeys?.flashcards || ''}
+                  onChange={(e) => setSettings({
+                    ...settings,
+                    aiKeys: { ...settings.aiKeys, flashcards: e.target.value }
+                  })}
+                  className="font-mono text-sm"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Usado em: /flashcards (Geração de Flashcards com IA)
+                </p>
+              </div>
+
+              {/* Info Card */}
+              <div className="p-4 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg">
+                <p className="text-sm text-blue-900 dark:text-blue-100">
+                  <strong>💡 Dica:</strong> Use diferentes chaves de IA para distribuir a carga e evitar limites de RPM. Se deixar vazio, usará a chave padrão do ambiente.
+                </p>
+              </div>
+
+              {/* Messages */}
+              {error && (
+                <div className="flex gap-2 p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg">
+                  <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
+                  <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
+                </div>
+              )}
+
+              {success && (
+                <div className="flex gap-2 p-3 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg">
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 shrink-0 mt-0.5" />
+                  <p className="text-sm text-green-800 dark:text-green-200">{success}</p>
+                </div>
+              )}
+
+              {/* Save Button */}
+              <div className="flex gap-3 pt-4 border-t">
+                <Button
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="bg-primary hover:bg-primary/90"
+                >
+                  {saving ? 'Salvando...' : 'Salvar Chaves de IA'}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => loadSettings()}
+                  disabled={saving}
                 >
                   Cancelar
                 </Button>

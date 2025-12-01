@@ -8,6 +8,7 @@ import {
   generateCommentedFeedback,
   shuffleAlternatives,
   QuestionGenerationParams,
+  setAIKeySection,
 } from '@/lib/question-generator'
 
 export const dynamic = 'force-dynamic'
@@ -60,6 +61,9 @@ export async function POST(
         return NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 })
       }
     }
+
+    // Definir a seção de IA para Provas Pessoais
+    setAIKeySection('personalExams')
 
     // Gerar questões com IA
     const questions = []

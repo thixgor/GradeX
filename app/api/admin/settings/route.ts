@@ -4,6 +4,12 @@ import { getSession } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
 
+interface AIKeySettings {
+  generalExams?: string
+  personalExams?: string
+  flashcards?: string
+}
+
 interface LandingSettings {
   videoEmbedUrl: string
   landingPageEnabled: boolean
@@ -11,6 +17,7 @@ interface LandingSettings {
   personalExamsEnabled?: boolean
   registrationBlocked?: boolean
   registrationBlockedMessage?: string
+  aiKeys?: AIKeySettings
 }
 
 // GET - Obter configurações (público)
@@ -27,7 +34,12 @@ export async function GET(req: NextRequest) {
         videoEnabled: true,
         personalExamsEnabled: true,
         registrationBlocked: false,
-        registrationBlockedMessage: 'Cadastro temporariamente desativado'
+        registrationBlockedMessage: 'Cadastro temporariamente desativado',
+        aiKeys: {
+          generalExams: '',
+          personalExams: '',
+          flashcards: ''
+        }
       })
     }
 
