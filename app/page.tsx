@@ -14,7 +14,7 @@ import { ExamGroup } from '@/components/exam-group'
 import { MobileMenu } from '@/components/mobile-menu'
 import { Exam } from '@/lib/types'
 import { formatDate, isBetweenDates } from '@/lib/utils'
-import { Clock, Calendar, FileText, LogOut, Settings, Plus, User as UserIcon, Users, MessageSquare, Key, MessageCircle, BookMarked, Brain } from 'lucide-react'
+import { Clock, Calendar, FileText, LogOut, Settings, Plus, User as UserIcon, Users, MessageSquare, Key, MessageCircle, BookMarked, Brain, ShoppingCart } from 'lucide-react'
 import LandingPage from '@/components/landing-page'
 
 interface User {
@@ -724,6 +724,17 @@ Contact: (21) 99777-0936`)
 
       {/* Chat de Suporte */}
       {user && <SupportChat />}
+
+      {/* Botão Flutuante de Shop (Mobile) */}
+      {user && (
+        <button
+          onClick={() => router.push('/buy')}
+          className="fixed bottom-6 right-6 md:hidden z-40 w-14 h-14 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center active:scale-95"
+          title="Ir para compras"
+        >
+          <ShoppingCart className="h-6 w-6" />
+        </button>
+      )}
     </div>
   )
 }
