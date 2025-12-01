@@ -11,7 +11,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { BanChecker } from '@/components/ban-checker'
 import { RichTextEditor } from '@/components/rich-text-editor'
-import { ArrowLeft, Upload, X, Tag as TagIcon, MessageSquare, Link as LinkIcon } from 'lucide-react'
+import { ArrowLeft, Upload, X, Tag as TagIcon, MessageSquare, Link as LinkIcon, Crown } from 'lucide-react'
 import { ForumType, ForumAttachment } from '@/lib/types'
 import { Switch } from '@/components/ui/switch'
 
@@ -31,6 +31,39 @@ function NewForumPostContent() {
   const [toastOpen, setToastOpen] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
   const [toastType, setToastType] = useState<'success' | 'error'>('success')
+  const [selectedTopic, setSelectedTopic] = useState<string>('')
+  const [topics, setTopics] = useState<any[]>([])
+  const [premiumOnly, setPremiumOnly] = useState(false)
+  const [userRole, setUserRole] = useState<'admin' | 'user'>('user')
+
+  useEffect(() => {
+    loadUserRole()
+    loadTopics()
+  }, [forumType])
+
+  async function loadUserRole() {
+    try {
+      const res = await fetch('/api/auth/me')
+      if (res.ok) {
+        const data = await res.json()
+        setUserRole(data.user?.role || 'user')
+      }
+    } catch (error) {
+      console.error('Erro ao carregar role:', error)
+    }
+  }
+
+  async function loadTopics() {
+    try {
+      const res = await fetch(`/api/forum/topics?type=${forumType}`)
+      if (res.ok) {
+        const data = await res.json()
+        setTopics(data.topics || [])
+      }
+    } catch (error) {
+      console.error('Erro ao carregar tópicos:', error)
+    }
+  }
 
   async function handleFileUpload(file: File) {
     if (attachments.length >= 3) {
@@ -136,11 +169,13 @@ function NewForumPostContent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           forumType,
+          topicId: selectedTopic || undefined,
           title,
           content,
           attachments,
           tags,
           commentsEnabled,
+          premiumOnly: forumType === 'materials' ? premiumOnly : false,
         }),
       })
 
@@ -212,6 +247,45 @@ function NewForumPostContent() {
                   required
                 />
               </div>
+
+              {/* Tópico */}
+              {topics.length > 0 && (
+                <div className="space-y-2">
+                  <Label htmlFor="topic">Tópico</Label>
+                  <select
+                    id="topic"
+                    value={selectedTopic}
+                    onChange={(e) => setSelectedTopic(e.target.value)}
+                    className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm"
+                  >
+                    <option value="">Selecione um tópico (opcional)</option>
+                    {topics.map((topic: any) => (
+                      <option key={topic._id} value={topic._id}>
+                        {topic.icon} {topic.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {/* Premium Only (apenas para materiais e admin) */}
+              {forumType === 'materials' && userRole === 'admin' && (
+                <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <Crown className="h-5 w-5 text-yellow-600" />
+                    <div>
+                      <p className="font-medium">Apenas Premium</p>
+                      <p className="text-sm text-muted-foreground">
+                        Apenas usuários premium poderão ver este material
+                      </p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={premiumOnly}
+                    onCheckedChange={setPremiumOnly}
+                  />
+                </div>
+              )}
 
               {/* Conteúdo */}
               <div className="space-y-2">

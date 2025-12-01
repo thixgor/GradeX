@@ -263,24 +263,23 @@ export default function CronogramasPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       {/* Header */}
-      <header className="glass sticky top-0 z-50 border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between gap-4 flex-wrap">
-            <div className="flex items-center gap-4">
+      <header className="glass sticky top-0 z-50 border-b w-full">
+        <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3">
+          <div className="flex items-center justify-between gap-2 sm:gap-4 min-h-[56px] sm:min-h-[64px]">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => router.push('/')}
-                className="shrink-0"
+                className="shrink-0 h-8 w-8 sm:h-9 sm:w-9"
               >
-                <ArrowLeft className="h-5 w-5" />
+                <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
-              <div>
-                <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
-                  <Calendar className="h-6 w-6 text-primary" />
-                  Cronogramas Personalizados
-                </h1>
-              </div>
+              <h1 className="text-lg sm:text-xl font-bold flex items-center gap-2 truncate">
+                <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-primary shrink-0" />
+                <span className="hidden sm:inline">Cronogramas Personalizados</span>
+                <span className="sm:hidden">Cronogramas</span>
+              </h1>
             </div>
             <ThemeToggle />
           </div>

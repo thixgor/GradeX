@@ -97,6 +97,9 @@ export default function ProfilePage() {
 
   async function loadUserData() {
     try {
+      // Verificar expiração de plano primeiro
+      await fetch('/api/user/check-plan-expiration')
+
       const res = await fetch('/api/auth/me')
       if (res.ok) {
         const data = await res.json()
@@ -165,7 +168,7 @@ export default function ProfilePage() {
   async function handleCancelSubscription() {
     setCancelling(true)
     try {
-      const res = await fetch('/api/user/cancel-subscription', {
+      const res = await fetch('/api/stripe/cancel-subscription', {
         method: 'POST',
       })
 
@@ -669,7 +672,7 @@ export default function ProfilePage() {
             <Button
               onClick={() => {
                 const encodedMessage = encodeURIComponent(`Olá, eu sou ${userName} e quero fazer o upgrade do meu plano no DomineAqui!`)
-                window.open(`https://wa.me/21997770936?text=${encodedMessage}`, '_blank')
+                window.open(`https://wa.me/5521997770936?text=${encodedMessage}`, '_blank')
               }}
               className="bg-green-600 hover:bg-green-700 text-white w-full"
             >

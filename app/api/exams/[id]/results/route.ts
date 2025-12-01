@@ -19,6 +19,11 @@ export async function GET(
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
     }
 
+    // Apenas admins podem ver os resultados
+    if (session.role !== 'admin') {
+      return NextResponse.json({ error: 'Apenas administradores podem ver os resultados' }, { status: 403 })
+    }
+
     const db = await getDb()
     const examsCollection = db.collection<Exam>('exams')
     const submissionsCollection = db.collection<ExamSubmission>('submissions')

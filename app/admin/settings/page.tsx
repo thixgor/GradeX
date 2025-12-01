@@ -23,6 +23,14 @@ interface LandingSettings {
   personalExamsEnabled?: boolean
 }
 
+interface StripeSettings {
+  monthly: string
+  quarterly: string
+  'semi-annual': string
+  annual: string
+  lifetime: string
+}
+
 export default function SettingsPage() {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
@@ -36,7 +44,17 @@ export default function SettingsPage() {
     videoEnabled: true,
     personalExamsEnabled: true
   })
+  const [stripeSettings, setStripeSettings] = useState<StripeSettings>({
+    monthly: '',
+    quarterly: '',
+    'semi-annual': '',
+    annual: '',
+    lifetime: ''
+  })
   const [videoPreview, setVideoPreview] = useState(true)
+  const [savingStripe, setSavingStripe] = useState(false)
+  const [stripeError, setStripeError] = useState('')
+  const [stripeSuccess, setStripeSuccess] = useState('')
 
   useEffect(() => {
     checkAuth()
@@ -63,6 +81,7 @@ export default function SettingsPage() {
 
       setUser(data.user)
       loadSettings()
+      loadStripeSettings()
     } catch (error) {
       router.push('/auth/login')
     } finally {
@@ -86,6 +105,54 @@ export default function SettingsPage() {
       }
     } catch (error) {
       console.error('Erro ao carregar configurações:', error)
+    }
+  }
+
+  async function loadStripeSettings() {
+    try {
+      const res = await fetch('/api/admin/stripe-settings')
+      if (res.ok) {
+        const data = await res.json()
+        setStripeSettings({
+          monthly: data.monthly || '',
+          quarterly: data.quarterly || '',
+          'semi-annual': data['semi-annual'] || '',
+          annual: data.annual || '',
+          lifetime: data.lifetime || ''
+        })
+      }
+    } catch (error) {
+      console.error('Erro ao carregar configurações de Stripe:', error)
+    }
+  }
+
+  async function handleSaveStripe() {
+    setStripeError('')
+    setStripeSuccess('')
+    setSavingStripe(true)
+
+    try {
+      const res = await fetch('/api/admin/stripe-settings', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(stripeSettings)
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setStripeError(data.error || 'Erro ao salvar configurações')
+        return
+      }
+
+      setStripeSuccess('Configurações de Stripe salvas com sucesso!')
+      setTimeout(() => {
+        loadStripeSettings()
+      }, 1000)
+    } catch (error) {
+      setStripeError('Erro ao salvar configurações de Stripe')
+    } finally {
+      setSavingStripe(false)
     }
   }
 
@@ -344,6 +411,110 @@ export default function SettingsPage() {
               <p>
                 <strong>Dailymotion:</strong> Use URLs como <code className="bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded">https://www.dailymotion.com/embed/video/...</code>
               </p>
+            </CardContent>
+          </Card>
+
+          {/* Stripe Settings */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Configurações de Stripe</CardTitle>
+              <CardDescription>
+                Gerencie os Price IDs dos planos de pagamento
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Monthly */}
+              <div className="space-y-2">
+                <Label htmlFor="stripe-monthly">Mensal (price_id)</Label>
+                <Input
+                  id="stripe-monthly"
+                  placeholder="price_1SZNGXLawSqPVy6JgWlwc7jZ"
+                  value={stripeSettings.monthly}
+                  onChange={(e) => setStripeSettings({ ...stripeSettings, monthly: e.target.value })}
+                  className="font-mono text-sm"
+                />
+              </div>
+
+              {/* Quarterly */}
+              <div className="space-y-2">
+                <Label htmlFor="stripe-quarterly">Trimestral (price_id)</Label>
+                <Input
+                  id="stripe-quarterly"
+                  placeholder="price_1SZNGwLawSqPVy6Ja5PmQ7La"
+                  value={stripeSettings.quarterly}
+                  onChange={(e) => setStripeSettings({ ...stripeSettings, quarterly: e.target.value })}
+                  className="font-mono text-sm"
+                />
+              </div>
+
+              {/* Semi-Annual */}
+              <div className="space-y-2">
+                <Label htmlFor="stripe-semi-annual">Semestral (price_id)</Label>
+                <Input
+                  id="stripe-semi-annual"
+                  placeholder="price_1SZNHALawSqPVy6J83iS9ZOE"
+                  value={stripeSettings['semi-annual']}
+                  onChange={(e) => setStripeSettings({ ...stripeSettings, 'semi-annual': e.target.value })}
+                  className="font-mono text-sm"
+                />
+              </div>
+
+              {/* Annual */}
+              <div className="space-y-2">
+                <Label htmlFor="stripe-annual">Anual (price_id)</Label>
+                <Input
+                  id="stripe-annual"
+                  placeholder="price_1SZNHcLawSqPVy6JzTZvOkDJ"
+                  value={stripeSettings.annual}
+                  onChange={(e) => setStripeSettings({ ...stripeSettings, annual: e.target.value })}
+                  className="font-mono text-sm"
+                />
+              </div>
+
+              {/* Lifetime */}
+              <div className="space-y-2">
+                <Label htmlFor="stripe-lifetime">Vitalício (price_id)</Label>
+                <Input
+                  id="stripe-lifetime"
+                  placeholder="price_1SZNI6LawSqPVy6JCtC12X3H"
+                  value={stripeSettings.lifetime}
+                  onChange={(e) => setStripeSettings({ ...stripeSettings, lifetime: e.target.value })}
+                  className="font-mono text-sm"
+                />
+              </div>
+
+              {/* Messages */}
+              {stripeError && (
+                <div className="flex gap-2 p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg">
+                  <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
+                  <p className="text-sm text-red-800 dark:text-red-200">{stripeError}</p>
+                </div>
+              )}
+
+              {stripeSuccess && (
+                <div className="flex gap-2 p-3 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg">
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 shrink-0 mt-0.5" />
+                  <p className="text-sm text-green-800 dark:text-green-200">{stripeSuccess}</p>
+                </div>
+              )}
+
+              {/* Save Button */}
+              <div className="flex gap-3 pt-4">
+                <Button
+                  onClick={handleSaveStripe}
+                  disabled={savingStripe}
+                  className="bg-primary hover:bg-primary/90"
+                >
+                  {savingStripe ? 'Salvando...' : 'Salvar Configurações de Stripe'}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => loadStripeSettings()}
+                  disabled={savingStripe}
+                >
+                  Cancelar
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>

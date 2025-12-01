@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['localhost'],
+    domains: ['localhost', 'i.imgur.com'],
   },
   // Ignorar erros TypeScript durante build
   typescript: {

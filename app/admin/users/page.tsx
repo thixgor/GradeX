@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 import { ToastAlert } from '@/components/ui/toast-alert'
-import { User, BanReason, BanReasonLabels, AccountType } from '@/lib/types'
+import { User, BanReason, BanReasonLabels, AccountType, TrialPlanType, PremiumPlanType } from '@/lib/types'
 import { ArrowLeft, Trash2, Ban, CheckCircle, AlertTriangle, Shield, Crown, Timer, Settings } from 'lucide-react'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -25,7 +25,8 @@ export default function AdminUsersPage() {
   const [banReason, setBanReason] = useState<BanReason>('other')
   const [banDetails, setBanDetails] = useState('')
   const [selectedAccountType, setSelectedAccountType] = useState<AccountType>('gratuito')
-  const [trialDays, setTrialDays] = useState(7)
+  const [selectedTrialSubtype, setSelectedTrialSubtype] = useState<TrialPlanType>('7dias')
+  const [selectedPremiumSubtype, setSelectedPremiumSubtype] = useState<PremiumPlanType>('mensal')
   const [examsQuota, setExamsQuota] = useState(0)
   const [toastOpen, setToastOpen] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
@@ -126,7 +127,8 @@ export default function AdminUsersPage() {
         body: JSON.stringify({
           action: 'update_tier',
           accountType: selectedAccountType,
-          trialDays: selectedAccountType === 'trial' ? trialDays : undefined
+          trialPlanType: selectedAccountType === 'trial' ? selectedTrialSubtype : undefined,
+          premiumPlanType: selectedAccountType === 'premium' ? selectedPremiumSubtype : undefined
         })
       })
 
@@ -269,7 +271,8 @@ export default function AdminUsersPage() {
                           onClick={() => {
                             setSelectedUser(user)
                             setSelectedAccountType(user.accountType || 'gratuito')
-                            setTrialDays(user.trialDuration || 7)
+                            setSelectedTrialSubtype(user.trialPlanType || '7dias')
+                            setSelectedPremiumSubtype(user.premiumPlanType || 'mensal')
                             setShowTierDialog(true)
                           }}
                         >
@@ -470,18 +473,80 @@ export default function AdminUsersPage() {
 
             {selectedAccountType === 'trial' && (
               <div className="space-y-2">
-                <Label htmlFor="trial-days">Duração do Trial (dias)</Label>
-                <Input
-                  id="trial-days"
-                  type="number"
-                  min="1"
-                  max="365"
-                  value={trialDays}
-                  onChange={(e) => setTrialDays(parseInt(e.target.value) || 7)}
-                />
-                <p className="text-xs text-muted-foreground">
-                  O trial expirará {trialDays} {trialDays === 1 ? 'dia' : 'dias'} após a ativação
-                </p>
+                <Label>Subtipo de Trial</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    variant={selectedTrialSubtype === 'teste' ? 'default' : 'outline'}
+                    onClick={() => setSelectedTrialSubtype('teste')}
+                    className="h-auto py-3 flex-col gap-1"
+                    size="sm"
+                  >
+                    <div className="font-semibold text-sm">Teste Dev</div>
+                    <div className="text-xs opacity-80">2 minutos</div>
+                  </Button>
+                  <Button
+                    variant={selectedTrialSubtype === '7dias' ? 'default' : 'outline'}
+                    onClick={() => setSelectedTrialSubtype('7dias')}
+                    className="h-auto py-3 flex-col gap-1"
+                    size="sm"
+                  >
+                    <div className="font-semibold text-sm">7 Dias</div>
+                    <div className="text-xs opacity-80">Uma semana</div>
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {selectedAccountType === 'premium' && (
+              <div className="space-y-2">
+                <Label>Subtipo de Premium</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    variant={selectedPremiumSubtype === 'teste' ? 'default' : 'outline'}
+                    onClick={() => setSelectedPremiumSubtype('teste')}
+                    className="h-auto py-3 flex-col gap-1"
+                    size="sm"
+                  >
+                    <div className="font-semibold text-sm">Teste Dev</div>
+                    <div className="text-xs opacity-80">2 minutos</div>
+                  </Button>
+                  <Button
+                    variant={selectedPremiumSubtype === 'mensal' ? 'default' : 'outline'}
+                    onClick={() => setSelectedPremiumSubtype('mensal')}
+                    className="h-auto py-3 flex-col gap-1"
+                    size="sm"
+                  >
+                    <div className="font-semibold text-sm">Mensal</div>
+                    <div className="text-xs opacity-80">1 mês</div>
+                  </Button>
+                  <Button
+                    variant={selectedPremiumSubtype === 'trimestral' ? 'default' : 'outline'}
+                    onClick={() => setSelectedPremiumSubtype('trimestral')}
+                    className="h-auto py-3 flex-col gap-1"
+                    size="sm"
+                  >
+                    <div className="font-semibold text-sm">Trimestral</div>
+                    <div className="text-xs opacity-80">3 meses</div>
+                  </Button>
+                  <Button
+                    variant={selectedPremiumSubtype === 'semestral' ? 'default' : 'outline'}
+                    onClick={() => setSelectedPremiumSubtype('semestral')}
+                    className="h-auto py-3 flex-col gap-1"
+                    size="sm"
+                  >
+                    <div className="font-semibold text-sm">Semestral</div>
+                    <div className="text-xs opacity-80">6 meses</div>
+                  </Button>
+                  <Button
+                    variant={selectedPremiumSubtype === 'vitalicio' ? 'default' : 'outline'}
+                    onClick={() => setSelectedPremiumSubtype('vitalicio')}
+                    className="h-auto py-3 flex-col gap-1"
+                    size="sm"
+                  >
+                    <div className="font-semibold text-sm">Vitalício</div>
+                    <div className="text-xs opacity-80">Para sempre</div>
+                  </Button>
+                </div>
               </div>
             )}
           </div>

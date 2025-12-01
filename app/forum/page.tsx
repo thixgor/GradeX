@@ -4,21 +4,38 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { BanChecker } from '@/components/ban-checker'
-import { ArrowLeft, Plus, MessageSquare, FileText, Tag, User, Calendar, Edit2, Lock } from 'lucide-react'
-import { ForumPost, ForumType } from '@/lib/types'
+import { ArrowLeft, Plus, MessageSquare, FileText, Tag, User, Calendar, Edit2, Lock, Search, Crown, ChevronDown } from 'lucide-react'
+import { ForumPost, ForumType, ForumTopic, AccountType } from '@/lib/types'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 
 export default function ForumPage() {
   const router = useRouter()
   const [discussionPosts, setDiscussionPosts] = useState<ForumPost[]>([])
   const [materialsPosts, setMaterialsPosts] = useState<ForumPost[]>([])
+  const [discussionTopics, setDiscussionTopics] = useState<ForumTopic[]>([])
+  const [materialsTopics, setMaterialsTopics] = useState<ForumTopic[]>([])
   const [loading, setLoading] = useState(true)
   const [userRole, setUserRole] = useState<'admin' | 'user'>('user')
+  const [accountType, setAccountType] = useState<AccountType>('gratuito')
   const [toastOpen, setToastOpen] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchResults, setSearchResults] = useState<ForumPost[]>([])
+  const [showSearch, setShowSearch] = useState(false)
+  const [premiumBlockedPost, setPremiumBlockedPost] = useState<ForumPost | null>(null)
+  const [showPremiumModal, setShowPremiumModal] = useState(false)
+  const [expandedTopics, setExpandedTopics] = useState<Set<string>>(new Set())
+  const [searchTopics, setSearchTopics] = useState<ForumTopic[]>([])
 
   useEffect(() => {
     loadUserRole()
@@ -31,6 +48,7 @@ export default function ForumPage() {
       if (res.ok) {
         const data = await res.json()
         setUserRole(data.user?.role || 'user')
+        setAccountType(data.user?.accountType || 'gratuito')
       }
     } catch (error) {
       console.error('Erro ao carregar role:', error)
@@ -39,6 +57,20 @@ export default function ForumPage() {
 
   async function loadPosts() {
     try {
+      // Carregar tópicos de discussão
+      const discussionTopicsRes = await fetch('/api/forum/topics?type=discussion')
+      if (discussionTopicsRes.ok) {
+        const data = await discussionTopicsRes.json()
+        setDiscussionTopics(data.topics || [])
+      }
+
+      // Carregar tópicos de materiais
+      const materialsTopicsRes = await fetch('/api/forum/topics?type=materials')
+      if (materialsTopicsRes.ok) {
+        const data = await materialsTopicsRes.json()
+        setMaterialsTopics(data.topics || [])
+      }
+
       // Carregar posts de discussão
       const discussionRes = await fetch('/api/forum/posts?type=discussion')
       if (discussionRes.ok) {
@@ -59,6 +91,46 @@ export default function ForumPage() {
     }
   }
 
+  async function handleSearch() {
+    if (!searchQuery.trim()) {
+      setShowSearch(false)
+      return
+    }
+
+    try {
+      const query = searchQuery.toLowerCase()
+      
+      // Buscar posts
+      const res = await fetch(`/api/forum/search?q=${encodeURIComponent(searchQuery)}&type=discussion`)
+      if (res.ok) {
+        const data = await res.json()
+        setSearchResults(data.posts || [])
+      }
+
+      // Buscar tópicos por nome/descrição
+      const allTopics = [...discussionTopics, ...materialsTopics]
+      const matchedTopics = allTopics.filter(topic =>
+        topic.name.toLowerCase().includes(query) ||
+        topic.description?.toLowerCase().includes(query)
+      )
+      setSearchTopics(matchedTopics)
+      
+      setShowSearch(true)
+    } catch (error) {
+      console.error('Erro ao buscar:', error)
+    }
+  }
+
+  function handlePostClick(post: ForumPost) {
+    // Verificar se é material premium bloqueado (não bloqueia admin)
+    if (post.premiumOnly && accountType === 'gratuito' && userRole !== 'admin') {
+      setPremiumBlockedPost(post)
+      setShowPremiumModal(true)
+      return
+    }
+    router.push(`/forum/post/${String(post._id)}`)
+  }
+
   function formatDate(date: Date) {
     return new Date(date).toLocaleDateString('pt-BR', {
       day: '2-digit',
@@ -69,26 +141,158 @@ export default function ForumPage() {
     })
   }
 
+  function renderPostsByTopics(posts: ForumPost[], topics: ForumTopic[]) {
+    // Agrupar posts por tópico
+    const postsByTopic: { [key: string]: ForumPost[] } = {}
+    const postsWithoutTopic: ForumPost[] = []
+
+    posts.forEach(post => {
+      if (post.topicId) {
+        if (!postsByTopic[post.topicId]) {
+          postsByTopic[post.topicId] = []
+        }
+        postsByTopic[post.topicId].push(post)
+      } else {
+        postsWithoutTopic.push(post)
+      }
+    })
+
+    return (
+      <div className="space-y-2">
+        {/* Posts com tópicos */}
+        {topics.map((topic) => {
+          const topicPosts = postsByTopic[String(topic._id)] || []
+          if (topicPosts.length === 0) return null
+
+          const isOpen = expandedTopics.has(String(topic._id))
+
+          return (
+            <Collapsible
+              key={String(topic._id)}
+              open={isOpen}
+              onOpenChange={(open: boolean) => {
+                const newExpanded = new Set(expandedTopics)
+                if (open) {
+                  newExpanded.add(String(topic._id))
+                } else {
+                  newExpanded.delete(String(topic._id))
+                }
+                setExpandedTopics(newExpanded)
+              }}
+            >
+              <CollapsibleTrigger className="w-full">
+                <div className="w-full flex items-center gap-3 px-4 py-3 rounded-xl backdrop-blur-xl bg-white/15 dark:bg-white/8 hover:bg-white/25 dark:hover:bg-white/12 border border-white/20 dark:border-white/10 transition-all hover:shadow-lg">
+                  <ChevronDown
+                    className={`h-5 w-5 text-muted-foreground transition-transform shrink-0 ${
+                      isOpen ? 'rotate-180' : ''
+                    }`}
+                  />
+                  <span className="text-xl shrink-0">{topic.icon}</span>
+                  <div className="flex-1 min-w-0 text-left">
+                    <h3 className="font-semibold text-sm text-foreground truncate">{topic.name}</h3>
+                    {topic.description && (
+                      <p className="text-xs text-muted-foreground truncate">{topic.description}</p>
+                    )}
+                  </div>
+                  <div
+                    className="w-3 h-3 rounded-full shrink-0 shadow-sm"
+                    style={{ backgroundColor: topic.color }}
+                    title={`Cor: ${topic.color}`}
+                  />
+                  <span className="text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 px-2 py-1 rounded-full shrink-0 shadow-md">
+                    {topicPosts.length}
+                  </span>
+                </div>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="space-y-2 mt-3 pl-4 border-l-2 border-white/20 dark:border-white/10">
+                  {topicPosts.map(renderPostCard)}
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          )
+        })}
+
+        {/* Posts sem tópico */}
+        {postsWithoutTopic.length > 0 && (
+          <Collapsible
+            open={expandedTopics.has('no-topic')}
+            onOpenChange={(open: boolean) => {
+              const newExpanded = new Set(expandedTopics)
+              if (open) {
+                newExpanded.add('no-topic')
+              } else {
+                newExpanded.delete('no-topic')
+              }
+              setExpandedTopics(newExpanded)
+            }}
+          >
+            <CollapsibleTrigger className="w-full">
+              <div className="w-full flex items-center gap-3 px-4 py-3 rounded-xl backdrop-blur-xl bg-white/10 dark:bg-white/5 hover:bg-white/20 dark:hover:bg-white/10 border border-white/20 dark:border-white/10 transition-all hover:shadow-lg">
+                <ChevronDown
+                  className={`h-5 w-5 text-muted-foreground transition-transform shrink-0 ${
+                    expandedTopics.has('no-topic') ? 'rotate-180' : ''
+                  }`}
+                />
+                <span className="text-xl shrink-0">📌</span>
+                <div className="flex-1 text-left">
+                  <h3 className="font-semibold text-sm text-foreground">Sem Tópico</h3>
+                  <p className="text-xs text-muted-foreground">Posts não categorizados</p>
+                </div>
+                <span className="text-xs font-bold text-white bg-gradient-to-r from-slate-600 to-slate-700 px-2 py-1 rounded-full shrink-0 shadow-md">
+                  {postsWithoutTopic.length}
+                </span>
+              </div>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <div className="space-y-2 mt-3 pl-4 border-l-2 border-white/20 dark:border-white/10">
+                {postsWithoutTopic.map(renderPostCard)}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        )}
+
+        {/* Sem posts */}
+        {posts.length === 0 && (
+          <Card className="border-dashed">
+            <CardContent className="py-12 text-center">
+              <MessageSquare className="h-12 w-12 mx-auto text-muted-foreground mb-4 opacity-50" />
+              <p className="text-muted-foreground">Nenhum post criado ainda</p>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    )
+  }
+
   function renderPostCard(post: ForumPost) {
+    const isPremiumBlocked = post.premiumOnly && accountType === 'gratuito' && userRole !== 'admin'
+
     return (
       <Card
         key={String(post._id)}
-        className="hover:shadow-lg transition-shadow cursor-pointer"
-        onClick={() => router.push(`/forum/post/${String(post._id)}`)}
+        className={`backdrop-blur-xl bg-white/15 dark:bg-white/8 border-white/20 dark:border-white/10 hover:bg-white/25 dark:hover:bg-white/12 transition-all hover:shadow-lg ${isPremiumBlocked ? 'cursor-default opacity-60' : 'cursor-pointer'}`}
+        onClick={() => handlePostClick(post)}
       >
-        <CardHeader>
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <CardTitle className="flex items-center gap-2">
-                {post.title}
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex-1 min-w-0">
+              <CardTitle className="flex items-center gap-2 flex-wrap">
+                <span className="truncate">{post.title}</span>
+                {post.premiumOnly && (
+                  <span className="text-xs bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 px-2 py-1 rounded flex items-center gap-1 shrink-0">
+                    <Crown className="h-3 w-3" />
+                    Premium
+                  </span>
+                )}
                 {post.closed && (
-                  <span className="text-xs bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 px-2 py-1 rounded flex items-center gap-1">
+                  <span className="text-xs bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 px-2 py-1 rounded flex items-center gap-1 shrink-0">
                     <Lock className="h-3 w-3" />
                     Fechado
                   </span>
                 )}
                 {post.edited && (
-                  <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded flex items-center gap-1">
+                  <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded flex items-center gap-1 shrink-0">
                     <Edit2 className="h-3 w-3" />
                     Editado
                   </span>
@@ -141,10 +345,11 @@ export default function ForumPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
       <BanChecker />
 
-      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+      {/* Liquid Glass Header */}
+      <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/10 dark:bg-black/10 border-b border-white/20 dark:border-white/10 shadow-lg">
         <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between gap-2 sm:gap-4">
             <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
@@ -152,23 +357,153 @@ export default function ForumPage() {
                 variant="ghost"
                 size="icon"
                 onClick={() => router.push('/')}
-                className="shrink-0 h-8 w-8 sm:h-9 sm:w-9"
+                className="shrink-0 h-8 w-8 sm:h-9 sm:w-9 hover:bg-white/20 dark:hover:bg-white/10 transition-colors"
               >
                 <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
               <div className="min-w-0 flex-1">
-                <h1 className="text-lg sm:text-xl md:text-2xl font-bold truncate">Fóruns</h1>
+                <h1 className="text-lg sm:text-xl md:text-2xl font-bold truncate bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Fóruns</h1>
                 <p className="text-xs sm:text-sm text-muted-foreground truncate">
                   Discussões e Materiais
                 </p>
               </div>
             </div>
-            <ThemeToggle />
+            <div className="flex items-center gap-2">
+              {userRole === 'admin' && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => router.push('/admin/forum-topics')}
+                  className="hidden sm:flex text-xs bg-white/10 dark:bg-white/5 border-white/20 dark:border-white/10 hover:bg-white/20 dark:hover:bg-white/10 backdrop-blur-sm transition-all"
+                  title="Gerenciar Tópicos"
+                >
+                  ⚙️ Tópicos
+                </Button>
+              )}
+              {userRole === 'admin' && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => router.push('/admin/forum-topics')}
+                  className="sm:hidden h-8 w-8 hover:bg-white/20 dark:hover:bg-white/10 transition-colors"
+                  title="Gerenciar Tópicos"
+                >
+                  ⚙️
+                </Button>
+              )}
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       </header>
 
       <main className="container mx-auto px-4 py-8">
+        {/* Busca - Liquid Glass */}
+        {showSearch && (
+          <div className="mb-8 space-y-4 p-4 sm:p-6 backdrop-blur-xl bg-white/10 dark:bg-white/5 rounded-2xl border border-white/20 dark:border-white/10 shadow-lg">
+            <div className="space-y-3">
+              <h3 className="font-semibold text-sm text-foreground flex items-center gap-2">
+                <span className="text-lg">🔍</span>
+                Buscar Posts
+              </h3>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Input
+                  placeholder="Buscar por tags ou palavras-chave..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleSearch()
+                  }}
+                  autoFocus
+                  className="flex-1 bg-white/20 dark:bg-white/10 border-white/30 dark:border-white/20 backdrop-blur-sm focus:bg-white/30 dark:focus:bg-white/15 transition-all"
+                />
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={handleSearch} 
+                    variant="default"
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 w-full sm:w-auto shadow-lg hover:shadow-xl transition-all"
+                  >
+                    <Search className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Buscar</span>
+                  </Button>
+                  <Button 
+                    onClick={() => {
+                      setShowSearch(false)
+                      setSearchQuery('')
+                      setSearchResults([])
+                    }} 
+                    variant="outline"
+                    className="w-full sm:w-auto bg-white/10 dark:bg-white/5 border-white/20 dark:border-white/10 hover:bg-white/20 dark:hover:bg-white/10 backdrop-blur-sm transition-all"
+                  >
+                    Cancelar
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {(searchResults.length > 0 || searchTopics.length > 0) && (
+              <div className="space-y-4 pt-4 border-t border-white/20 dark:border-white/10">
+                {/* Tópicos encontrados */}
+                {searchTopics.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
+                      🏷️ Tópicos ({searchTopics.length})
+                    </p>
+                    <div className="space-y-2">
+                      {searchTopics.map((topic) => (
+                        <div
+                          key={String(topic._id)}
+                          className="p-3 rounded-xl backdrop-blur-sm bg-white/15 dark:bg-white/8 border border-white/20 dark:border-white/10 hover:bg-white/25 dark:hover:bg-white/12 transition-all cursor-pointer shadow-sm hover:shadow-md"
+                          onClick={() => {
+                            const newExpanded = new Set(expandedTopics)
+                            newExpanded.add(String(topic._id))
+                            setExpandedTopics(newExpanded)
+                            setShowSearch(false)
+                            setSearchQuery('')
+                          }}
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg">{topic.icon}</span>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-semibold text-sm truncate">{topic.name}</p>
+                              {topic.description && (
+                                <p className="text-xs text-muted-foreground truncate">{topic.description}</p>
+                              )}
+                            </div>
+                            <div
+                              className="w-3 h-3 rounded-full shrink-0 shadow-sm"
+                              style={{ backgroundColor: topic.color }}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Posts encontrados */}
+                {searchResults.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wider">
+                      📄 Posts ({searchResults.length})
+                    </p>
+                    <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
+                      {searchResults.map(renderPostCard)}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {searchQuery.trim() && searchResults.length === 0 && searchTopics.length === 0 && (
+              <div className="text-center py-8 text-muted-foreground">
+                <p className="text-sm">Nenhum resultado encontrado para "{searchQuery}"</p>
+                <p className="text-xs mt-2">Tente buscar por outras tags, palavras-chave ou nomes de tópicos</p>
+              </div>
+            )}
+          </div>
+        )}
+
         <Tabs defaultValue="discussion" className="space-y-6">
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
             <TabsList className="w-full sm:w-auto">
@@ -182,34 +517,43 @@ export default function ForumPage() {
               </TabsTrigger>
             </TabsList>
 
-            <Button
-              onClick={() => router.push('/forum/new?type=discussion')}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 w-full sm:w-auto"
-              size="sm"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Nova Postagem
-            </Button>
+            <div className="flex gap-2 flex-col sm:flex-row">
+              <Button
+                onClick={() => setShowSearch(!showSearch)}
+                variant="outline"
+                size="sm"
+                className="w-full sm:w-auto"
+              >
+                <Search className="h-4 w-4 mr-2" />
+                Buscar
+              </Button>
+              <Button
+                onClick={() => router.push('/forum/new?type=discussion')}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 w-full sm:w-auto"
+                size="sm"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Nova Postagem
+              </Button>
+            </div>
           </div>
 
           <TabsContent value="discussion" className="space-y-4">
             {loading ? (
               <div className="text-center py-12">Carregando...</div>
-            ) : discussionPosts.length === 0 ? (
-              <Card>
-                <CardContent className="py-12 text-center">
-                  <MessageSquare className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <p className="text-muted-foreground mb-4">
-                    Nenhuma discussão criada ainda
-                  </p>
-                  <Button onClick={() => router.push('/forum/new?type=discussion')}>
+            ) : (
+              <>
+                {renderPostsByTopics(discussionPosts, discussionTopics)}
+                {discussionPosts.length === 0 && (
+                  <Button 
+                    onClick={() => router.push('/forum/new?type=discussion')}
+                    className="w-full"
+                  >
                     <Plus className="h-4 w-4 mr-2" />
                     Criar Primeira Discussão
                   </Button>
-                </CardContent>
-              </Card>
-            ) : (
-              discussionPosts.map(renderPostCard)
+                )}
+              </>
             )}
           </TabsContent>
 
@@ -217,31 +561,73 @@ export default function ForumPage() {
             {userRole === 'admin' && (
               <Button
                 onClick={() => router.push('/forum/new?type=materials')}
-                variant="outline"
-                className="w-full mb-4"
+                className="w-full mb-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Postar Novo Material (Admin)
+                Postar Novo Material
               </Button>
             )}
 
             {loading ? (
               <div className="text-center py-12">Carregando...</div>
-            ) : materialsPosts.length === 0 ? (
-              <Card>
-                <CardContent className="py-12 text-center">
-                  <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <p className="text-muted-foreground">
-                    Nenhum material disponível ainda
-                  </p>
-                </CardContent>
-              </Card>
             ) : (
-              materialsPosts.map(renderPostCard)
+              renderPostsByTopics(materialsPosts, materialsTopics)
             )}
           </TabsContent>
         </Tabs>
       </main>
+
+      {/* Modal de Material Premium Bloqueado */}
+      <Dialog open={showPremiumModal} onOpenChange={setShowPremiumModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Crown className="h-5 w-5 text-yellow-600" />
+              Conteúdo Premium
+            </DialogTitle>
+            <DialogDescription>
+              Este material é exclusivo para usuários Premium
+            </DialogDescription>
+          </DialogHeader>
+
+          {premiumBlockedPost && (
+            <div className="space-y-4">
+              <div className="p-4 bg-muted rounded-lg">
+                <h3 className="font-semibold text-sm mb-2">{premiumBlockedPost.title}</h3>
+                <p className="text-xs text-muted-foreground line-clamp-3">
+                  {premiumBlockedPost.content.replace(/<[^>]*>/g, '')}
+                </p>
+              </div>
+
+              <div className="p-4 bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                <p className="text-sm text-yellow-900 dark:text-yellow-100">
+                  💡 Faça upgrade para Premium e acesse conteúdos exclusivos, materiais avançados e muito mais!
+                </p>
+              </div>
+
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowPremiumModal(false)}
+                  className="flex-1"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={() => {
+                    router.push('/buy')
+                    setShowPremiumModal(false)
+                  }}
+                  className="flex-1 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
+                >
+                  <Crown className="h-4 w-4 mr-2" />
+                  Ir para Premium
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <ToastAlert
         open={toastOpen}

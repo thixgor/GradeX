@@ -3,24 +3,29 @@ import { AccountType } from './types'
 export interface TierLimits {
   examsPerDay: number
   questionsPerExam: number
+  personalExamsPerDay?: number
 }
 
 export const TIER_LIMITS: Record<AccountType | 'admin', TierLimits> = {
   gratuito: {
     examsPerDay: 3,
     questionsPerExam: 5,
+    personalExamsPerDay: 3,
   },
   trial: {
     examsPerDay: 10,
     questionsPerExam: 10,
+    personalExamsPerDay: 10,
   },
   premium: {
     examsPerDay: 20,
     questionsPerExam: 20,
+    personalExamsPerDay: 20,
   },
   admin: {
     examsPerDay: Infinity,
     questionsPerExam: Infinity,
+    personalExamsPerDay: Infinity,
   },
 }
 
@@ -34,6 +39,11 @@ export function getTierLimits(accountType?: AccountType, isAdmin?: boolean): Tie
   }
 
   return TIER_LIMITS[accountType]
+}
+
+export function getPersonalExamsQuota(accountType?: AccountType): number {
+  const limits = getTierLimits(accountType)
+  return limits.personalExamsPerDay || 3
 }
 
 export function getUpgradeMessage(currentTier: AccountType | undefined): string {

@@ -45,11 +45,13 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const {
       forumType,
+      topicId,
       title,
       content,
       attachments,
       tags,
-      commentsEnabled
+      commentsEnabled,
+      premiumOnly
     } = body
 
     // Validar tipo de fórum
@@ -77,6 +79,7 @@ export async function POST(request: NextRequest) {
 
     const newPost: ForumPost = {
       forumType,
+      topicId: topicId || undefined,
       title,
       content,
       authorId: session.userId,
@@ -86,6 +89,7 @@ export async function POST(request: NextRequest) {
       commentsEnabled: commentsEnabled !== false,
       closed: false,
       edited: false,
+      premiumOnly: forumType === 'materials' ? premiumOnly : false,
       createdAt: new Date(),
       updatedAt: new Date(),
     }

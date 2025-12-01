@@ -6,11 +6,23 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { ToastAlert } from '@/components/ui/toast-alert'
-import { ArrowLeft, Key, Plus, Copy, Check, Clock, Crown, Timer, Trash2, History } from 'lucide-react'
+import { ArrowLeft, Key, Plus, Copy, Check, Clock, Crown, Timer, Trash2, History, Calendar } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
-import { SerialKey, SerialKeyType } from '@/lib/types'
+import { SerialKey, SerialKeyType, SerialKeyTrialSubtype, SerialKeyPremiumSubtype } from '@/lib/types'
+
+const PREMIUM_PRICES: Record<SerialKeyPremiumSubtype, number> = {
+  'teste': 0,
+  'mensal': 24.90,
+  'trimestral': 69.90,
+  'semestral': 109.90,
+  'vitalicio': 529.00,
+}
+
+const TRIAL_PRICES: Record<SerialKeyTrialSubtype, number> = {
+  'teste': 0,
+  '7dias': 0,
+}
 
 export default function AdminKeysPage() {
   const router = useRouter()
@@ -21,11 +33,10 @@ export default function AdminKeysPage() {
   const [toastType, setToastType] = useState<'success' | 'error'>('success')
   const [generateDialogOpen, setGenerateDialogOpen] = useState(false)
   const [selectedType, setSelectedType] = useState<SerialKeyType>('trial')
+  const [selectedTrialSubtype, setSelectedTrialSubtype] = useState<SerialKeyTrialSubtype>('7dias')
+  const [selectedPremiumSubtype, setSelectedPremiumSubtype] = useState<SerialKeyPremiumSubtype>('mensal')
   const [generating, setGenerating] = useState(false)
   const [copiedKey, setCopiedKey] = useState<string | null>(null)
-  const [customDays, setCustomDays] = useState(0)
-  const [customHours, setCustomHours] = useState(0)
-  const [customMinutes, setCustomMinutes] = useState(0)
 
   useEffect(() => {
     checkAuth()
@@ -64,16 +75,11 @@ export default function AdminKeysPage() {
   async function handleGenerateKey() {
     setGenerating(true)
     try {
-      const body: any = { type: selectedType }
-
-      // Adicionar campos customizados se for custom
-      if (selectedType === 'custom') {
-        if (customDays === 0 && customHours === 0 && customMinutes === 0) {
-          throw new Error('Para tipo personalizado, especifique ao menos dias, horas ou minutos')
-        }
-        body.customDurationDays = customDays
-        body.customDurationHours = customHours
-        body.customDurationMinutes = customMinutes
+      const body: any = { 
+        type: selectedType,
+        trialSubtype: selectedTrialSubtype,
+        premiumSubtype: selectedPremiumSubtype,
+        price: selectedType === 'trial' ? TRIAL_PRICES[selectedTrialSubtype] : PREMIUM_PRICES[selectedPremiumSubtype]
       }
 
       const res = await fetch('/api/serial-keys', {
@@ -88,14 +94,11 @@ export default function AdminKeysPage() {
         throw new Error(data.error || 'Erro ao gerar serial key')
       }
 
-      setToastMessage(`Serial key ${selectedType.toUpperCase()} gerada com sucesso!`)
+      const typeLabel = selectedType === 'trial' ? `Trial (${selectedTrialSubtype})` : `Premium (${selectedPremiumSubtype})`
+      setToastMessage(`Serial key ${typeLabel} gerada com sucesso!`)
       setToastType('success')
       setToastOpen(true)
       setGenerateDialogOpen(false)
-      // Reset custom duration
-      setCustomDays(0)
-      setCustomHours(0)
-      setCustomMinutes(0)
       loadKeys()
     } catch (error: any) {
       setToastMessage(error.message)
@@ -168,29 +171,23 @@ export default function AdminKeysPage() {
 
   function getTypeBadge(key: SerialKey) {
     if (key.type === 'premium') {
+      const subtypeLabel = key.premiumSubtype === 'vitalicio' ? 'Vitalício' : 
+                          key.premiumSubtype === 'teste' ? 'Teste (2 min)' :
+                          (key.premiumSubtype || 'mensal').charAt(0).toUpperCase() + (key.premiumSubtype || 'mensal').slice(1)
+      const priceLabel = key.price ? ` - R$ ${key.price.toFixed(2)}` : ''
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-yellow-500 to-orange-500 text-white">
           <Crown className="h-3 w-3 mr-1" />
-          Premium (Vitalício)
+          Premium ({subtypeLabel}){priceLabel}
         </span>
       )
     }
-    if (key.type === 'custom') {
-      const parts = []
-      if (key.customDurationDays) parts.push(`${key.customDurationDays}d`)
-      if (key.customDurationHours) parts.push(`${key.customDurationHours}h`)
-      if (key.customDurationMinutes) parts.push(`${key.customDurationMinutes}m`)
-      return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-purple-500 to-pink-500 text-white">
-          <Timer className="h-3 w-3 mr-1" />
-          Personalizado ({parts.join(' ')})
-        </span>
-      )
-    }
+    // Trial
+    const subtypeLabel = key.trialSubtype === 'teste' ? 'Teste (2 min)' : '7 dias'
     return (
       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-blue-500 to-cyan-500 text-white">
         <Timer className="h-3 w-3 mr-1" />
-        Trial (7d)
+        Trial ({subtypeLabel})
       </span>
     )
   }
@@ -403,20 +400,21 @@ export default function AdminKeysPage() {
 
       {/* Generate Key Dialog */}
       <Dialog open={generateDialogOpen} onOpenChange={setGenerateDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Key className="h-5 w-5 text-blue-500" />
               Gerar Nova Serial Key
             </DialogTitle>
             <DialogDescription>
-              Escolha o tipo de serial key que deseja gerar.
+              Escolha o tipo e subtipo de serial key que deseja gerar.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
+          <div className="space-y-6 py-4">
+            {/* Tipo de Serial Key */}
             <div>
-              <Label>Tipo de Serial Key</Label>
-              <div className="grid grid-cols-3 gap-3 mt-2">
+              <Label className="text-base font-semibold mb-3 block">Tipo de Serial Key</Label>
+              <div className="grid grid-cols-2 gap-3">
                 <Button
                   variant={selectedType === 'trial' ? 'default' : 'outline'}
                   onClick={() => setSelectedType('trial')}
@@ -425,7 +423,7 @@ export default function AdminKeysPage() {
                   <Timer className="h-5 w-5" />
                   <div>
                     <div className="font-semibold">Trial</div>
-                    <div className="text-xs opacity-80">7 dias</div>
+                    <div className="text-xs opacity-80">Teste ou 7 dias</div>
                   </div>
                 </Button>
                 <Button
@@ -436,70 +434,104 @@ export default function AdminKeysPage() {
                   <Crown className="h-5 w-5" />
                   <div>
                     <div className="font-semibold">Premium</div>
-                    <div className="text-xs opacity-80">Vitalício</div>
-                  </div>
-                </Button>
-                <Button
-                  variant={selectedType === 'custom' ? 'default' : 'outline'}
-                  onClick={() => setSelectedType('custom')}
-                  className="h-auto py-4 flex-col gap-2"
-                >
-                  <Clock className="h-5 w-5" />
-                  <div>
-                    <div className="font-semibold">Custom</div>
-                    <div className="text-xs opacity-80">Personalizado</div>
+                    <div className="text-xs opacity-80">Vários planos</div>
                   </div>
                 </Button>
               </div>
             </div>
 
-            {selectedType === 'custom' && (
-              <div className="space-y-3 p-4 bg-muted rounded-lg">
-                <Label>Duração Personalizada</Label>
-                <div className="grid grid-cols-3 gap-3">
-                  <div>
-                    <Label htmlFor="custom-days" className="text-xs">Dias</Label>
-                    <Input
-                      id="custom-days"
-                      type="number"
-                      min="0"
-                      value={customDays}
-                      onChange={(e) => setCustomDays(parseInt(e.target.value) || 0)}
-                      className="mt-1"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="custom-hours" className="text-xs">Horas</Label>
-                    <Input
-                      id="custom-hours"
-                      type="number"
-                      min="0"
-                      max="23"
-                      value={customHours}
-                      onChange={(e) => setCustomHours(parseInt(e.target.value) || 0)}
-                      className="mt-1"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="custom-minutes" className="text-xs">Minutos</Label>
-                    <Input
-                      id="custom-minutes"
-                      type="number"
-                      min="0"
-                      max="59"
-                      value={customMinutes}
-                      onChange={(e) => setCustomMinutes(parseInt(e.target.value) || 0)}
-                      className="mt-1"
-                    />
-                  </div>
+            {/* Subtipo Trial */}
+            {selectedType === 'trial' && (
+              <div>
+                <Label className="text-base font-semibold mb-3 block">Subtipo Trial</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  <Button
+                    variant={selectedTrialSubtype === 'teste' ? 'default' : 'outline'}
+                    onClick={() => setSelectedTrialSubtype('teste')}
+                    className="h-auto py-3 flex-col gap-2"
+                  >
+                    <Clock className="h-4 w-4" />
+                    <div>
+                      <div className="font-semibold text-sm">Teste Dev</div>
+                      <div className="text-xs opacity-80">2 minutos</div>
+                    </div>
+                  </Button>
+                  <Button
+                    variant={selectedTrialSubtype === '7dias' ? 'default' : 'outline'}
+                    onClick={() => setSelectedTrialSubtype('7dias')}
+                    className="h-auto py-3 flex-col gap-2"
+                  >
+                    <Calendar className="h-4 w-4" />
+                    <div>
+                      <div className="font-semibold text-sm">7 Dias</div>
+                      <div className="text-xs opacity-80">Uma semana</div>
+                    </div>
+                  </Button>
                 </div>
-                {(customDays > 0 || customHours > 0 || customMinutes > 0) && (
-                  <p className="text-xs text-muted-foreground mt-2">
-                    📅 Duração total: {customDays}d {customHours}h {customMinutes}m
-                    <br />
-                    🕒 Expira em: {new Date(Date.now() + (customDays * 24 * 60 + customHours * 60 + customMinutes) * 60 * 1000).toLocaleString('pt-BR')}
-                  </p>
-                )}
+              </div>
+            )}
+
+            {/* Subtipo Premium */}
+            {selectedType === 'premium' && (
+              <div>
+                <Label className="text-base font-semibold mb-3 block">Subtipo Premium</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  <Button
+                    variant={selectedPremiumSubtype === 'teste' ? 'default' : 'outline'}
+                    onClick={() => setSelectedPremiumSubtype('teste')}
+                    className="h-auto py-3 flex-col gap-2"
+                  >
+                    <Clock className="h-4 w-4" />
+                    <div>
+                      <div className="font-semibold text-sm">Teste Dev</div>
+                      <div className="text-xs opacity-80">2 minutos</div>
+                    </div>
+                  </Button>
+                  <Button
+                    variant={selectedPremiumSubtype === 'mensal' ? 'default' : 'outline'}
+                    onClick={() => setSelectedPremiumSubtype('mensal')}
+                    className="h-auto py-3 flex-col gap-2"
+                  >
+                    <Crown className="h-4 w-4" />
+                    <div>
+                      <div className="font-semibold text-sm">Mensal</div>
+                      <div className="text-xs opacity-80">R$ 24,90</div>
+                    </div>
+                  </Button>
+                  <Button
+                    variant={selectedPremiumSubtype === 'trimestral' ? 'default' : 'outline'}
+                    onClick={() => setSelectedPremiumSubtype('trimestral')}
+                    className="h-auto py-3 flex-col gap-2"
+                  >
+                    <Crown className="h-4 w-4" />
+                    <div>
+                      <div className="font-semibold text-sm">Trimestral</div>
+                      <div className="text-xs opacity-80">R$ 69,90</div>
+                    </div>
+                  </Button>
+                  <Button
+                    variant={selectedPremiumSubtype === 'semestral' ? 'default' : 'outline'}
+                    onClick={() => setSelectedPremiumSubtype('semestral')}
+                    className="h-auto py-3 flex-col gap-2"
+                  >
+                    <Crown className="h-4 w-4" />
+                    <div>
+                      <div className="font-semibold text-sm">Semestral</div>
+                      <div className="text-xs opacity-80">R$ 109,90</div>
+                    </div>
+                  </Button>
+                  <Button
+                    variant={selectedPremiumSubtype === 'vitalicio' ? 'default' : 'outline'}
+                    onClick={() => setSelectedPremiumSubtype('vitalicio')}
+                    className="h-auto py-3 flex-col gap-2"
+                  >
+                    <Crown className="h-4 w-4" />
+                    <div>
+                      <div className="font-semibold text-sm">Vitalício</div>
+                      <div className="text-xs opacity-80">R$ 529,00</div>
+                    </div>
+                  </Button>
+                </div>
               </div>
             )}
           </div>

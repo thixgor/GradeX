@@ -205,6 +205,8 @@ export interface ExamSubmission {
 }
 
 export type AccountType = 'gratuito' | 'trial' | 'premium'
+export type PremiumPlanType = 'teste' | 'mensal' | 'trimestral' | 'semestral' | 'vitalicio'
+export type TrialPlanType = 'teste' | '7dias'
 
 export interface User {
   _id?: string | import('mongodb').ObjectId
@@ -221,24 +223,115 @@ export interface User {
   bannedAt?: Date
   // Sistema de assinaturas
   accountType?: AccountType // Tipo de conta (admin não tem accountType, só role)
+  // Para Trial
   trialExpiresAt?: Date // Data de expiração do trial
   trialDuration?: number // Duração personalizada do trial em dias (padrão: 7)
+  trialPlanType?: TrialPlanType // Tipo de plano trial (teste ou 7dias)
+  trialActivatedAt?: Date // Data de ativação do trial
+  // Para Premium
+  premiumPlanType?: PremiumPlanType // Tipo de plano premium (teste, mensal, trimestral, semestral, vitalicio)
+  premiumExpiresAt?: Date // Data de expiração do premium
+  premiumActivatedAt?: Date // Data de ativação do premium
+  premiumPrice?: number // Preço pago em R$
+  // Stripe
+  stripeCustomerId?: string // ID do cliente no Stripe
+  stripeSubscriptionId?: string // ID da assinatura no Stripe
   // Limites de criação de provas pessoais e questões IA
   dailyPersonalExamsCreated?: number // Quantidade de provas pessoais criadas hoje
   dailyPersonalExamsRemaining?: number // Quantidade de provas pessoais restantes (para admin gerenciar)
   dailyAiQuestionsUsed?: number // Quantidade de questões IA usadas hoje
   lastDailyReset?: Date // Data do último reset diário (para limpar contadores)
+  // Sistema de flashcards
+  dailyFlashcardsGenerated?: number // Quantos decks/flashcards IA gerou no dia
+  flashcardsActiveDecks?: number // Quantos decks ativos o usuário mantém
+  flashcardsLastReset?: Date // Último reset diário dos limites de flashcards
   // Campos de autenticação social
   googleId?: string // ID do Google (sub)
   profilePicture?: string // URL da foto de perfil
 }
 
-export type SerialKeyType = 'trial' | 'premium' | 'custom'
+export type FlashcardDifficultyFeedback = 'facil' | 'equilibrado' | 'porrada'
+
+export interface FlashcardCardObjective {
+  id: string
+  text: string
+}
+
+export interface FlashcardCard {
+  id: string
+  deckId: string
+  index: number
+  front: string
+  back: string
+  hint: string
+  objectives: FlashcardCardObjective[]
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface FlashcardDeck {
+  _id?: string | import('mongodb').ObjectId
+  userId: string
+  userName: string
+  title: string
+  theme: string
+  templateId?: string | import('mongodb').ObjectId
+  difficultyPercentage: number
+  randomDifficulty: boolean
+  cardsRequested: number
+  cardsGenerated: number
+  accountTypeSnapshot: AccountType
+  status: 'ativo' | 'concluido'
+  dailySlot?: number
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface FlashcardSessionEntry {
+  cardId: string
+  difficulty: FlashcardDifficultyFeedback
+  objectivesStruggled: string[]
+  completedAt: Date
+}
+
+export interface FlashcardSession {
+  _id?: string | import('mongodb').ObjectId
+  deckId: string
+  userId: string
+  startedAt: Date
+  finishedAt?: Date
+  entries: FlashcardSessionEntry[]
+  dominantObjectives?: string[]
+}
+
+export interface FlashcardTheme {
+  _id?: string | import('mongodb').ObjectId
+  title: string
+  description?: string
+  tags?: string[]
+  defaultDifficulty?: number
+  suggestedCardCount?: number
+  contextHint?: string
+  createdBy: string
+  createdByName: string
+  createdAt: Date
+  updatedAt: Date
+}
+
+export type SerialKeyType = 'trial' | 'premium'
+export type SerialKeyTrialSubtype = 'teste' | '7dias'
+export type SerialKeyPremiumSubtype = 'teste' | 'mensal' | 'trimestral' | 'semestral' | 'vitalicio'
 
 export interface SerialKey {
   _id?: string | import('mongodb').ObjectId
   key: string // A serial key em si (ex: XXXX-XXXX-XXXX-XXXX)
-  type: SerialKeyType // 'trial' (7 dias), 'premium' (vitalício) ou 'custom' (personalizado)
+  type: SerialKeyType // 'trial' ou 'premium'
+  // Subtipo específico
+  trialSubtype?: SerialKeyTrialSubtype // Para trial: 'teste' (2 min) ou '7dias'
+  premiumSubtype?: SerialKeyPremiumSubtype // Para premium: 'teste', 'mensal', 'trimestral', 'semestral', 'vitalicio'
+  // Preço associado
+  price?: number // Preço em R$ (para histórico)
+  // Status
   used: boolean // Se já foi usada
   generatedBy: string // ID do admin que gerou
   generatedByName: string // Nome do admin
@@ -246,13 +339,23 @@ export interface SerialKey {
   usedBy?: string // ID do usuário que usou
   usedByName?: string // Nome do usuário que usou
   usedAt?: Date // Quando foi usada
-  // Campos para duração personalizada
-  customDurationDays?: number // Dias
-  customDurationHours?: number // Horas
-  customDurationMinutes?: number // Minutos
 }
 
 export type ForumType = 'discussion' | 'materials' // Discussão ou Materiais
+
+export interface ForumTopic {
+  _id?: string | import('mongodb').ObjectId
+  name: string // Nome do tópico
+  description?: string // Descrição opcional
+  forumType: ForumType // Se é para discussão ou materiais
+  color?: string // Cor para identificação visual (hex)
+  icon?: string // Ícone (emoji)
+  createdBy: string // ID do admin que criou
+  createdByName: string // Nome do admin
+  order?: number // Ordem de exibição
+  createdAt: Date
+  updatedAt: Date
+}
 
 export interface ForumAttachment {
   type: 'image' | 'pdf'
@@ -264,6 +367,7 @@ export interface ForumAttachment {
 export interface ForumPost {
   _id?: string | import('mongodb').ObjectId
   forumType: ForumType
+  topicId?: string // ID do tópico (opcional)
   title: string
   content: string // HTML rico do editor
   authorId: string
@@ -277,6 +381,7 @@ export interface ForumPost {
   closedAt?: Date
   edited: boolean
   editedAt?: Date
+  premiumOnly?: boolean // Se true, apenas usuários premium podem ver (para materiais)
   createdAt: Date
   updatedAt: Date
 }
@@ -422,4 +527,16 @@ export interface QuestionAnnotation {
   strokes: DrawingStroke[] // Traços de caneta e marca-texto
   texts: TextAnnotation[] // Caixas de texto
   canvasDataUrl?: string // Snapshot do canvas para backup
+}
+
+// Configurações de Stripe
+export interface StripeSettings {
+  _id?: string | import('mongodb').ObjectId
+  monthly: string
+  quarterly: string
+  'semi-annual': string
+  annual: string
+  lifetime: string
+  updatedAt?: Date
+  updatedBy?: string // ID do admin que atualizou
 }

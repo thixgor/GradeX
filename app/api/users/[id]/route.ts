@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
-import { User, AccountType } from '@/lib/types'
-import { getTierLimits } from '@/lib/tier-limits'
+import { User, AccountType, TrialPlanType, PremiumPlanType } from '@/lib/types'
+import { getTierLimits, getPersonalExamsQuota } from '@/lib/tier-limits'
 import { ObjectId } from 'mongodb'
 
 export const dynamic = 'force-dynamic'
@@ -68,7 +68,7 @@ export async function PATCH(
     }
 
     const body = await request.json()
-    const { action, banReason, banDetails, accountType, trialDays, dailyPersonalExamsCreated } = body
+    const { action, banReason, banDetails, accountType, trialPlanType, premiumPlanType, dailyPersonalExamsCreated } = body
 
     if (!action || !['ban', 'unban', 'update_tier', 'update_quota'].includes(action)) {
       return NextResponse.json(
@@ -131,22 +131,22 @@ export async function PATCH(
       }
 
       // Definir quotas baseado no tipo de conta
-      const quotasByAccountType: Record<string, number> = {
-        gratuito: 3,
-        trial: 10,
-        premium: 20,
-      }
-      const newQuota = quotasByAccountType[accountType] || 3
+      const newQuota = getPersonalExamsQuota(accountType as AccountType)
 
       if (accountType === 'trial') {
-        const days = trialDays || 7
-        const expirationDate = new Date()
-        expirationDate.setDate(expirationDate.getDate() + days)
+        // Calcular duração baseado no subtipo
+        let durationMs = 7 * 24 * 60 * 60 * 1000 // 7 dias padrão
+        if (trialPlanType === 'teste') {
+          durationMs = 2 * 60 * 1000 // 2 minutos
+        }
+
+        const expirationDate = new Date(Date.now() + durationMs)
 
         updateData = {
           accountType: accountType as AccountType,
+          trialPlanType: (trialPlanType || '7dias') as TrialPlanType,
           trialExpiresAt: expirationDate,
-          trialDuration: days,
+          trialActivatedAt: new Date(),
           dailyPersonalExamsCreated: 0,
           dailyPersonalExamsRemaining: newQuota,
           lastDailyReset: new Date()
@@ -154,8 +154,10 @@ export async function PATCH(
       } else if (accountType === 'premium') {
         updateData = {
           accountType: accountType as AccountType,
-          trialExpiresAt: undefined,
-          trialDuration: undefined,
+          premiumPlanType: (premiumPlanType || 'mensal') as PremiumPlanType,
+          premiumActivatedAt: new Date(),
+          // Para premium, se não tiver expiresAt, considerar como vitalício
+          // A verificação de expiração é feita na API de subscription-status
           dailyPersonalExamsCreated: 0,
           dailyPersonalExamsRemaining: newQuota,
           lastDailyReset: new Date()
@@ -165,7 +167,9 @@ export async function PATCH(
         updateData = {
           accountType: accountType as AccountType,
           trialExpiresAt: undefined,
-          trialDuration: undefined,
+          trialPlanType: undefined,
+          premiumExpiresAt: undefined,
+          premiumPlanType: undefined,
           dailyPersonalExamsCreated: 0,
           dailyPersonalExamsRemaining: newQuota,
           lastDailyReset: new Date()

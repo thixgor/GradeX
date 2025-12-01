@@ -14,7 +14,7 @@ import { ExamGroup } from '@/components/exam-group'
 import { MobileMenu } from '@/components/mobile-menu'
 import { Exam } from '@/lib/types'
 import { formatDate, isBetweenDates } from '@/lib/utils'
-import { Clock, Calendar, FileText, LogOut, Settings, Plus, User as UserIcon, Users, MessageSquare, Key, MessageCircle, BookMarked } from 'lucide-react'
+import { Clock, Calendar, FileText, LogOut, Settings, Plus, User as UserIcon, Users, MessageSquare, Key, MessageCircle, BookMarked, Brain } from 'lucide-react'
 import LandingPage from '@/components/landing-page'
 
 interface User {
@@ -339,19 +339,28 @@ export default function HomePage() {
       {user && <BanChecker />}
 
       {/* Header */}
-      <header className="glass sticky top-0 z-50 border-b">
-        <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4">
-          <div className="flex items-center justify-between gap-2 sm:gap-4 flex-wrap">
-            <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+      <header className="glass sticky top-0 z-50 border-b w-full">
+        <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3">
+          <div className="flex items-center justify-between gap-2 sm:gap-3 min-h-[56px] sm:min-h-[64px]">
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0">
               <Logo variant="full" size="md" />
               {user && (
-                <span className="text-xs sm:text-sm text-muted-foreground hidden lg:block">
-                  Olá, {user.name}!
-                </span>
+                <>
+                  <Button
+                    onClick={() => router.push('/buy')}
+                    className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold shadow-lg hidden sm:flex"
+                    size="sm"
+                  >
+                    ⭐ Upgrade
+                  </Button>
+                  <span className="text-xs sm:text-sm text-muted-foreground hidden lg:block">
+                    Olá, {user.name}!
+                  </span>
+                </>
               )}
             </div>
 
-            <div className="flex items-center gap-1 sm:gap-2 flex-wrap justify-end">
+            <div className="flex items-center gap-1 sm:gap-2 justify-end flex-shrink-0">
               {user?.role === 'admin' && (
                 <>
                   <Button
@@ -403,6 +412,15 @@ Contact: (21) 99777-0936`)
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Prova Pessoal
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => router.push('/flashcards')}
+                    title="Flashcards"
+                    className="h-8 w-8 sm:h-9 sm:w-9"
+                  >
+                    <Brain className="h-4 w-4 sm:h-5 sm:w-5" />
                   </Button>
                   <Button
                     variant="ghost"
@@ -467,8 +485,8 @@ Contact: (21) 99777-0936`)
       {/* Contador de Provas Pessoais Restantes */}
       {user && personalExamsEnabled && examsRemaining !== null && examsLimit !== null && (
         <div className="bg-muted/50 border-b">
-          <div className="container mx-auto px-4 py-2">
-            <p className="text-sm text-muted-foreground">
+          <div className="container mx-auto px-2 sm:px-4 py-2">
+            <p className="text-xs sm:text-sm text-muted-foreground">
               Provas Pessoais Restantes: <span className="font-semibold text-foreground">{examsRemaining} / {examsLimit}</span>
             </p>
           </div>
