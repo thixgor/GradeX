@@ -31,6 +31,20 @@ export const metadata: Metadata = {
     title: 'DomineAqui - Seja o Foco. Seja a Referência.',
     description: 'Domine Aqui. Provas, Flashcards, Cronogramas, Materiais.',
     type: 'website',
+    images: [
+      {
+        url: 'https://i.imgur.com/zHm5aSx.jpeg',
+        width: 1200,
+        height: 630,
+        alt: 'DomineAqui - Plataforma de Estudo',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'DomineAqui - Seja o Foco. Seja a Referência.',
+    description: 'Domine Aqui. Provas, Flashcards, Cronogramas, Materiais.',
+    images: ['https://i.imgur.com/zHm5aSx.jpeg'],
   },
 }
 

@@ -10,8 +10,8 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { BanChecker } from '@/components/ban-checker'
 import { RichTextEditor } from '@/components/rich-text-editor'
-import { ArrowLeft, Upload, X, Tag as TagIcon, Link as LinkIcon } from 'lucide-react'
-import { ForumPost, ForumAttachment } from '@/lib/types'
+import { ArrowLeft, Upload, X, Tag as TagIcon, Link as LinkIcon, FolderOpen } from 'lucide-react'
+import { ForumPost, ForumAttachment, ForumTopic } from '@/lib/types'
 
 interface User {
   id: string
@@ -35,11 +35,20 @@ export default function EditForumPostPage({ params }: { params: { id: string } }
   const [toastOpen, setToastOpen] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
   const [toastType, setToastType] = useState<'success' | 'error'>('success')
+  const [topicId, setTopicId] = useState<string>('')
+  const [topics, setTopics] = useState<ForumTopic[]>([])
+  const [forumType, setForumType] = useState<'discussion' | 'materials'>('discussion')
 
   useEffect(() => {
     checkAuth()
     loadPost()
   }, [])
+
+  useEffect(() => {
+    if (forumType) {
+      loadTopics()
+    }
+  }, [forumType])
 
   async function checkAuth() {
     try {
@@ -83,6 +92,8 @@ export default function EditForumPostPage({ params }: { params: { id: string } }
       setContent(post.content)
       setTags(post.tags)
       setAttachments(post.attachments)
+      setTopicId(post.topicId || '')
+      setForumType(post.forumType)
     } catch (error) {
       setToastMessage('Erro ao carregar post')
       setToastType('error')
@@ -90,6 +101,18 @@ export default function EditForumPostPage({ params }: { params: { id: string } }
       setTimeout(() => router.push('/forum'), 2000)
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function loadTopics() {
+    try {
+      const res = await fetch(`/api/forum/topics?type=${forumType}`)
+      if (res.ok) {
+        const data = await res.json()
+        setTopics(data.topics || [])
+      }
+    } catch (error) {
+      console.error('Erro ao carregar tópicos:', error)
     }
   }
 
@@ -201,6 +224,7 @@ export default function EditForumPostPage({ params }: { params: { id: string } }
           content,
           attachments,
           tags,
+          topicId: topicId || undefined,
         }),
       })
 
@@ -362,6 +386,27 @@ export default function EditForumPostPage({ params }: { params: { id: string } }
                     ))}
                   </div>
                 )}
+              </div>
+
+              {/* Tópico */}
+              <div className="space-y-3">
+                <Label htmlFor="topic">Tópico</Label>
+                <select
+                  id="topic"
+                  value={topicId}
+                  onChange={(e) => setTopicId(e.target.value)}
+                  className="w-full px-3 py-2 border rounded-md bg-background text-foreground"
+                >
+                  <option value="">Sem tópico</option>
+                  {topics.map((topic) => (
+                    <option key={topic._id?.toString()} value={topic._id?.toString() || ''}>
+                      {topic.icon} {topic.name}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-xs text-muted-foreground">
+                  Selecione um tópico para organizar este post
+                </p>
               </div>
 
               {/* Tags */}

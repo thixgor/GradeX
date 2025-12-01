@@ -62,11 +62,6 @@ export default function SettingsPage() {
 
   useEffect(() => {
     checkAuth()
-    // Recarregar configurações a cada 5 segundos para manter sincronizado
-    const interval = setInterval(() => {
-      loadSettings()
-    }, 5000)
-    return () => clearInterval(interval)
   }, [])
 
   async function checkAuth() {
@@ -330,6 +325,39 @@ export default function SettingsPage() {
                     }`}
                   />
                 </button>
+              </div>
+
+              {/* Messages */}
+              {error && (
+                <div className="flex gap-2 p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg">
+                  <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
+                  <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
+                </div>
+              )}
+
+              {success && (
+                <div className="flex gap-2 p-3 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg">
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 shrink-0 mt-0.5" />
+                  <p className="text-sm text-green-800 dark:text-green-200">{success}</p>
+                </div>
+              )}
+
+              {/* Save Button */}
+              <div className="flex gap-3 pt-4 border-t">
+                <Button
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="bg-primary hover:bg-primary/90"
+                >
+                  {saving ? 'Salvando...' : 'Salvar Configurações'}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => loadSettings()}
+                  disabled={saving}
+                >
+                  Cancelar
+                </Button>
               </div>
             </CardContent>
           </Card>

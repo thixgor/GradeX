@@ -99,22 +99,31 @@ export async function PATCH(
         }, { status: 403 })
       }
 
-      const { title, content, attachments, tags, commentsEnabled } = body
+      const { title, content, attachments, tags, commentsEnabled, topicId } = body
+
+      const updateData: any = {
+        title: title || post.title,
+        content: content || post.content,
+        attachments: attachments !== undefined ? attachments : post.attachments,
+        tags: tags !== undefined ? tags : post.tags,
+        commentsEnabled: commentsEnabled !== undefined ? commentsEnabled : post.commentsEnabled,
+        edited: true,
+        editedAt: new Date(),
+        updatedAt: new Date()
+      }
+
+      // Atualizar tópico se fornecido
+      if (topicId !== undefined) {
+        if (topicId) {
+          updateData.topicId = topicId
+        } else {
+          updateData.topicId = null
+        }
+      }
 
       await postsCollection.updateOne(
         { _id: new ObjectId(id) },
-        {
-          $set: {
-            title: title || post.title,
-            content: content || post.content,
-            attachments: attachments !== undefined ? attachments : post.attachments,
-            tags: tags !== undefined ? tags : post.tags,
-            commentsEnabled: commentsEnabled !== undefined ? commentsEnabled : post.commentsEnabled,
-            edited: true,
-            editedAt: new Date(),
-            updatedAt: new Date()
-          }
-        }
+        { $set: updateData }
       )
 
       return NextResponse.json({
