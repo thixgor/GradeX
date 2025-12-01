@@ -1191,25 +1191,27 @@ export default function FlashcardsPage() {
                 </div>
               )}
 
-              <div className="space-y-2">
-                <p className="text-white font-semibold text-sm sm:text-base">Objetivos</p>
-                <div className="flex flex-wrap gap-1 sm:gap-2">
-                  {currentCard.objectives.map(obj => (
-                    <button
-                      key={obj.id}
-                      onClick={() => toggleObjective(obj.id)}
-                      className={cn(
-                        'px-2 py-1 rounded-full border text-xs sm:text-sm transition-all',
-                        objectivesSelection.includes(obj.id)
-                          ? 'border-orange-400 bg-orange-500/20 text-orange-100'
-                          : 'border-white/20 text-white/70'
-                      )}
-                    >
-                      {obj.text}
-                    </button>
-                  ))}
+              {flipped && (
+                <div className="space-y-2">
+                  <p className="text-white font-semibold text-sm sm:text-base">Objetivos</p>
+                  <div className="flex flex-wrap gap-1 sm:gap-2">
+                    {currentCard.objectives.map(obj => (
+                      <button
+                        key={obj.id}
+                        onClick={() => toggleObjective(obj.id)}
+                        className={cn(
+                          'px-2 py-1 rounded-full border text-xs sm:text-sm transition-all',
+                          objectivesSelection.includes(obj.id)
+                            ? 'border-orange-400 bg-orange-500/20 text-orange-100'
+                            : 'border-white/20 text-white/70'
+                        )}
+                      >
+                        {obj.text}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="space-y-2">
                 <p className="text-white font-semibold text-sm sm:text-base">Impacto?</p>
