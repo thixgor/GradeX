@@ -4,7 +4,6 @@ import { getDb } from '@/lib/mongodb'
 import stripe from '@/lib/stripe'
 import { User, AccountType } from '@/lib/types'
 import { getPersonalExamsQuota } from '@/lib/tier-limits'
-import { sendPremiumActivationEmail } from '@/lib/email-service'
 import { ObjectId } from 'mongodb'
 
 export const dynamic = 'force-dynamic'
@@ -99,21 +98,6 @@ export async function POST(request: NextRequest) {
 
     console.log('Resultado da atualização:', result)
     console.log('Matched:', result.matchedCount, 'Modified:', result.modifiedCount)
-
-    // Enviar email de confirmação
-    try {
-      console.log('Enviando email para:', user.email)
-      await sendPremiumActivationEmail(
-        user.email,
-        user.name,
-        PLAN_NAMES[planId],
-        expiresAt
-      )
-      console.log('Email enviado com sucesso')
-    } catch (emailError) {
-      console.error('Erro ao enviar email:', emailError)
-      // Não falhar a requisição por erro de email
-    }
 
     return NextResponse.json({
       success: true,

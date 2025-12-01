@@ -315,7 +315,7 @@ export default function BuyPage() {
                     Você adquiriu o plano <strong>Premium {successPlan ? successPlan.charAt(0).toUpperCase() + successPlan.slice(1) : ''}</strong> com sucesso!
                   </p>
                   <p className="text-sm text-blue-700 dark:text-blue-300 mb-4">
-                    Um email de confirmação foi enviado para seu cadastro. Agora você tem acesso a todos os recursos Premium, incluindo <strong>20 provas pessoais por dia</strong>.
+                    Agora você tem acesso a todos os recursos Premium, incluindo <strong>20 provas pessoais por dia</strong>. O comprovante foi enviado pelo Stripe.
                   </p>
                   <div className="flex gap-3">
                     <Button 
