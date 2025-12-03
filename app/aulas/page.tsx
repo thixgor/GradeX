@@ -56,6 +56,14 @@ export default function AulasPage() {
     }
   }, [user?.id])
 
+  // Recarregar aulas a cada 5 segundos para sincronizar com mudanças
+  useEffect(() => {
+    const interval = setInterval(() => {
+      loadAulas()
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [])
+
   async function checkAuth() {
     try {
       const res = await fetch('/api/auth/me')
