@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { ArrowLeft, Plus, Trash2, ChevronRight, Edit2, Copy, Eye, EyeOff } from 'lucide-react'
+import { ArrowLeft, Plus, Trash2, ChevronRight, Edit2, Copy, Eye, EyeOff, ChevronUp, ChevronDown } from 'lucide-react'
 import { AulaSetor, AulaTopic, AulaSubtopic, AulaModulo, AulaSubmodulo } from '@/lib/types'
 import { ToastAlert } from '@/components/ui/toast-alert'
 
@@ -361,6 +361,77 @@ export default function EstruturasPage() {
     }
   }
 
+  async function reordenarItem(id: string, type: 'setor' | 'topico' | 'subtopico' | 'modulo' | 'submodulo', direcao: 'up' | 'down') {
+    try {
+      let items: any[] = []
+      let setItems: any = null
+
+      if (type === 'setor') {
+        items = setores
+        setItems = setSetores
+      } else if (type === 'topico') {
+        items = topicosFiltrados
+        setItems = setTopicos
+      } else if (type === 'subtopico') {
+        items = subtopicosFiltrados
+        setItems = setSubtopicos
+      } else if (type === 'modulo') {
+        items = modulosFiltrados
+        setItems = setModulos
+      } else if (type === 'submodulo') {
+        items = submodulosFiltrados
+        setItems = setSubmodulos
+      }
+
+      const itemIndex = items.findIndex(i => String(i._id) === id)
+      if (itemIndex === -1) return
+
+      const novaOrdem = direcao === 'up' ? (items[itemIndex].ordem || 0) - 1 : (items[itemIndex].ordem || 0) + 1
+
+      let endpoint = ''
+      if (type === 'setor') {
+        endpoint = `/api/aulas/setores/${id}`
+      } else if (type === 'topico') {
+        endpoint = `/api/aulas/topicos/${id}`
+      } else if (type === 'subtopico') {
+        endpoint = `/api/aulas/subtopicos/${id}`
+      } else if (type === 'modulo') {
+        endpoint = `/api/aulas/modulos/${id}`
+      } else if (type === 'submodulo') {
+        endpoint = `/api/aulas/submodulos/${id}`
+      }
+
+      const res = await fetch(endpoint, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ordem: novaOrdem })
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        
+        if (type === 'setor') {
+          setSetores(setores.map(s => String(s._id) === id ? data.item : s).sort((a, b) => (a.ordem || 0) - (b.ordem || 0)))
+        } else if (type === 'topico') {
+          setTopicos(topicos.map(t => String(t._id) === id ? data.item : t).sort((a, b) => (a.ordem || 0) - (b.ordem || 0)))
+        } else if (type === 'subtopico') {
+          setSubtopicos(subtopicos.map(s => String(s._id) === id ? data.item : s).sort((a, b) => (a.ordem || 0) - (b.ordem || 0)))
+        } else if (type === 'modulo') {
+          setModulos(modulos.map(m => String(m._id) === id ? data.item : m).sort((a, b) => (a.ordem || 0) - (b.ordem || 0)))
+        } else if (type === 'submodulo') {
+          setSubmodulos(submodulos.map(sm => String(sm._id) === id ? data.item : sm).sort((a, b) => (a.ordem || 0) - (b.ordem || 0)))
+        }
+        
+        showToast(direcao === 'up' ? 'Movido para cima!' : 'Movido para baixo!')
+      } else {
+        showToast('Erro ao reordenar', 'error')
+      }
+    } catch (error) {
+      console.error('Erro:', error)
+      showToast('Erro ao reordenar', 'error')
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -412,8 +483,8 @@ export default function EstruturasPage() {
       </header>
 
       {/* Main Content */}
-      <main className="relative z-30 container mx-auto px-4 py-8 max-w-7xl">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <main className="relative z-30 container mx-auto px-4 py-8 max-w-full overflow-x-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2 lg:gap-4">
           {/* Setores */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -460,51 +531,75 @@ export default function EstruturasPage() {
                           )}
                         </div>
                       </div>
-                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex flex-wrap gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                         <Button
                           variant="ghost"
-                          size="sm"
+                          size="icon"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            reordenarItem(String(setor._id), 'setor', 'up')
+                          }}
+                          title="Mover para cima"
+                          className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
+                        >
+                          <ChevronUp className="h-3 w-3" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            reordenarItem(String(setor._id), 'setor', 'down')
+                          }}
+                          title="Mover para baixo"
+                          className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
+                        >
+                          <ChevronDown className="h-3 w-3" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           onClick={(e) => {
                             e.stopPropagation()
                             toggleOcultar(String(setor._id), 'setor', setor.oculta || false)
                           }}
                           title={setor.oculta ? 'Mostrar' : 'Ocultar'}
-                          className="text-white/60 hover:text-white hover:bg-white/10"
+                          className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
                         >
-                          {setor.oculta ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          {setor.oculta ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
                         </Button>
                         <Button
                           variant="ghost"
-                          size="sm"
+                          size="icon"
                           onClick={(e) => {
                             e.stopPropagation()
                             openCreateDialog('setor', setor)
                           }}
-                          className="text-white/60 hover:text-white hover:bg-white/10"
+                          className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
                         >
-                          <Edit2 className="h-4 w-4" />
+                          <Edit2 className="h-3 w-3" />
                         </Button>
                         <Button
                           variant="ghost"
-                          size="sm"
+                          size="icon"
                           onClick={(e) => {
                             e.stopPropagation()
                             duplicarItem(String(setor._id), 'setor', setor)
                           }}
-                          className="text-white/60 hover:text-white hover:bg-white/10"
+                          className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
                         >
-                          <Copy className="h-4 w-4" />
+                          <Copy className="h-3 w-3" />
                         </Button>
                         <Button
                           variant="ghost"
-                          size="sm"
+                          size="icon"
                           onClick={(e) => {
                             e.stopPropagation()
                             deletarItem(String(setor._id), 'setor')
                           }}
-                          className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                          className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-5 w-5"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-3 w-3" />
                         </Button>
                       </div>
                     </div>
@@ -563,18 +658,42 @@ export default function EstruturasPage() {
                             )}
                           </div>
                         </div>
-                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex flex-wrap gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                           <Button
                             variant="ghost"
-                            size="sm"
+                            size="icon"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              reordenarItem(String(topico._id), 'topico', 'up')
+                            }}
+                            title="Mover para cima"
+                            className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
+                          >
+                            <ChevronUp className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              reordenarItem(String(topico._id), 'topico', 'down')
+                            }}
+                            title="Mover para baixo"
+                            className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
+                          >
+                            <ChevronDown className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
                             onClick={(e) => {
                               e.stopPropagation()
                               toggleOcultar(String(topico._id), 'topico', topico.oculta || false)
                             }}
                             title={topico.oculta ? 'Mostrar' : 'Ocultar'}
-                            className="text-white/60 hover:text-white hover:bg-white/10"
+                            className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
                           >
-                            {topico.oculta ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            {topico.oculta ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
                           </Button>
                           <Button
                             variant="ghost"
@@ -666,18 +785,42 @@ export default function EstruturasPage() {
                             )}
                           </div>
                         </div>
-                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex flex-wrap gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                           <Button
                             variant="ghost"
-                            size="sm"
+                            size="icon"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              reordenarItem(String(subtopico._id), 'subtopico', 'up')
+                            }}
+                            title="Mover para cima"
+                            className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
+                          >
+                            <ChevronUp className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              reordenarItem(String(subtopico._id), 'subtopico', 'down')
+                            }}
+                            title="Mover para baixo"
+                            className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
+                          >
+                            <ChevronDown className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
                             onClick={(e) => {
                               e.stopPropagation()
                               toggleOcultar(String(subtopico._id), 'subtopico', subtopico.oculta || false)
                             }}
                             title={subtopico.oculta ? 'Mostrar' : 'Ocultar'}
-                            className="text-white/60 hover:text-white hover:bg-white/10"
+                            className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
                           >
-                            {subtopico.oculta ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            {subtopico.oculta ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
                           </Button>
                           <Button
                             variant="ghost"
@@ -766,18 +909,42 @@ export default function EstruturasPage() {
                             )}
                           </div>
                         </div>
-                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex flex-wrap gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                           <Button
                             variant="ghost"
-                            size="sm"
+                            size="icon"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              reordenarItem(String(modulo._id), 'modulo', 'up')
+                            }}
+                            title="Mover para cima"
+                            className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
+                          >
+                            <ChevronUp className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              reordenarItem(String(modulo._id), 'modulo', 'down')
+                            }}
+                            title="Mover para baixo"
+                            className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
+                          >
+                            <ChevronDown className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
                             onClick={(e) => {
                               e.stopPropagation()
                               toggleOcultar(String(modulo._id), 'modulo', modulo.oculta || false)
                             }}
                             title={modulo.oculta ? 'Mostrar' : 'Ocultar'}
-                            className="text-white/60 hover:text-white hover:bg-white/10"
+                            className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
                           >
-                            {modulo.oculta ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            {modulo.oculta ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
                           </Button>
                           <Button
                             variant="ghost"
@@ -804,10 +971,7 @@ export default function EstruturasPage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              deletarItem(String(modulo._id), 'modulo')
-                            }}
+                            onClick={() => deletarItem(String(modulo._id), 'modulo')}
                             className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -861,18 +1025,42 @@ export default function EstruturasPage() {
                             )}
                           </div>
                         </div>
-                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex flex-wrap gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                           <Button
                             variant="ghost"
-                            size="sm"
+                            size="icon"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              reordenarItem(String(submodulo._id), 'submodulo', 'up')
+                            }}
+                            title="Mover para cima"
+                            className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
+                          >
+                            <ChevronUp className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              reordenarItem(String(submodulo._id), 'submodulo', 'down')
+                            }}
+                            title="Mover para baixo"
+                            className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
+                          >
+                            <ChevronDown className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
                             onClick={(e) => {
                               e.stopPropagation()
                               toggleOcultar(String(submodulo._id), 'submodulo', submodulo.oculta || false)
                             }}
                             title={submodulo.oculta ? 'Mostrar' : 'Ocultar'}
-                            className="text-white/60 hover:text-white hover:bg-white/10"
+                            className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
                           >
-                            {submodulo.oculta ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            {submodulo.oculta ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
                           </Button>
                           <Button
                             variant="ghost"
