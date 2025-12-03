@@ -44,6 +44,9 @@ export default function AulasPage() {
 
   // Dialog de descrição
   const [descricaoDialog, setDescricaoDialog] = useState<{ titulo: string; descricao: string } | null>(null)
+  
+  // Estado para ordenação
+  const [sortBy, setSortBy] = useState<'ordem' | 'alfabetico'>('ordem')
 
   useEffect(() => {
     checkAuth()
@@ -109,23 +112,31 @@ export default function AulasPage() {
     return true
   }
 
+  // Função auxiliar para ordenar aulas
+  const sortAulas = (aulasArray: AulaPostagem[]) => {
+    if (sortBy === 'alfabetico') {
+      return aulasArray.sort((a, b) => a.titulo.localeCompare(b.titulo, 'pt-BR'))
+    }
+    return aulasArray.sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
+  }
+
   // Aulas do setor (sem tópico)
-  const aulasSetor = selectedSetor ? aulas.filter(a => filterAula(a) && a.setorId === selectedSetor && !a.topicoId).sort((a, b) => (a.ordem || 0) - (b.ordem || 0)) : []
+  const aulasSetor = selectedSetor ? sortAulas(aulas.filter(a => filterAula(a) && a.setorId === selectedSetor && !a.topicoId)) : []
   
   // Aulas do tópico (sem subtópico)
-  const aulasTopico = selectedTopico ? aulas.filter(a => filterAula(a) && a.topicoId === selectedTopico && !a.subtopicoId).sort((a, b) => (a.ordem || 0) - (b.ordem || 0)) : []
+  const aulasTopico = selectedTopico ? sortAulas(aulas.filter(a => filterAula(a) && a.topicoId === selectedTopico && !a.subtopicoId)) : []
   
   // Aulas do subtópico (sem módulo)
-  const aulasSubtopico = selectedSubtopico ? aulas.filter(a => filterAula(a) && a.subtopicoId === selectedSubtopico && !a.moduloId).sort((a, b) => (a.ordem || 0) - (b.ordem || 0)) : []
+  const aulasSubtopico = selectedSubtopico ? sortAulas(aulas.filter(a => filterAula(a) && a.subtopicoId === selectedSubtopico && !a.moduloId)) : []
   
   // Aulas do módulo (sem submódulo)
-  const aulasModulo = selectedModulo ? aulas.filter(a => filterAula(a) && a.moduloId === selectedModulo && !a.submoduloId).sort((a, b) => (a.ordem || 0) - (b.ordem || 0)) : []
+  const aulasModulo = selectedModulo ? sortAulas(aulas.filter(a => filterAula(a) && a.moduloId === selectedModulo && !a.submoduloId)) : []
   
   // Aulas do submódulo
-  const aulasSubmodulo = selectedSubmodulo ? aulas.filter(a => filterAula(a) && a.submoduloId === selectedSubmodulo).sort((a, b) => (a.ordem || 0) - (b.ordem || 0)) : []
+  const aulasSubmodulo = selectedSubmodulo ? sortAulas(aulas.filter(a => filterAula(a) && a.submoduloId === selectedSubmodulo)) : []
 
   // Aulas sem setor
-  const aulasSemSetor = aulas.filter(a => filterAula(a) && !a.setorId).sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
+  const aulasSemSetor = sortAulas(aulas.filter(a => filterAula(a) && !a.setorId))
 
   // Função auxiliar para contar aulas de um tópico (incluindo todos os níveis abaixo)
   const countAulasTopico = (topicoId: string): number => {
@@ -266,6 +277,24 @@ export default function AulasPage() {
               </div>
             </div>
             <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+              <div className="flex items-center gap-1 bg-white/10 rounded-lg p-1">
+                <Button
+                  onClick={() => setSortBy('ordem')}
+                  variant={sortBy === 'ordem' ? 'default' : 'ghost'}
+                  size="sm"
+                  className={`text-xs sm:text-sm ${sortBy === 'ordem' ? 'bg-emerald-600 hover:bg-emerald-700' : 'text-white hover:bg-white/10'}`}
+                >
+                  Ordem
+                </Button>
+                <Button
+                  onClick={() => setSortBy('alfabetico')}
+                  variant={sortBy === 'alfabetico' ? 'default' : 'ghost'}
+                  size="sm"
+                  className={`text-xs sm:text-sm ${sortBy === 'alfabetico' ? 'bg-emerald-600 hover:bg-emerald-700' : 'text-white hover:bg-white/10'}`}
+                >
+                  A-Z
+                </Button>
+              </div>
               {(isAdmin || user?.secondaryRole === 'monitor') && (
                 <Button
                   onClick={() => router.push('/aulas/gerenciar')}
