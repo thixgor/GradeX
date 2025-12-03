@@ -465,9 +465,13 @@ export default function AulasPage() {
               Voltar aos Setores
             </Button>
             <h2 className="text-3xl font-bold text-white mb-8">Tópicos</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {/* Aulas do setor sem tópico - renderizadas como cards */}
-              {aulasSetor.map((aula, idx) => (
+            
+            {/* Aulas do setor sem tópico */}
+            {aulasSetor.length > 0 && (
+              <div className="mb-8">
+                <h3 className="text-xl font-semibold text-white mb-4">Aulas do Setor</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                  {aulasSetor.map((aula, idx) => (
                 <div 
                   key={String(aula._id)} 
                   className="backdrop-blur-md bg-white/5 border border-emerald-500/20 rounded-2xl overflow-hidden hover:border-emerald-500/40 transition-all shadow-xl shadow-emerald-500/5 animate-fadeInUp hover-lift"
@@ -560,8 +564,17 @@ export default function AulasPage() {
                     </div>
                   </div>
                 </div>
-              ))}
-              {topicosSetor.map(topico => {
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Tópicos do setor */}
+            {topicosSetor.length > 0 && (
+              <div>
+                <h3 className="text-xl font-semibold text-white mb-4">Tópicos</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                  {topicosSetor.map(topico => {
                 const aulaCount = countAulasTopico(String(topico._id))
                 return (
                   <div
@@ -603,8 +616,10 @@ export default function AulasPage() {
                     </div>
                   </div>
                 )
-              })}
-            </div>
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         ) : !selectedSubtopico ? (
           // Tela de Subtópicos
@@ -623,9 +638,13 @@ export default function AulasPage() {
               Voltar aos Tópicos
             </Button>
             <h2 className="text-3xl font-bold text-white mb-8">Subtópicos</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {/* Aulas do tópico sem subtópico - renderizadas como cards */}
-              {aulasTopico.map((aula, idx) => (
+            
+            {/* Aulas do tópico sem subtópico */}
+            {aulasTopico.length > 0 && (
+              <div className="mb-8">
+                <h3 className="text-xl font-semibold text-white mb-4">Aulas do Tópico</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                  {aulasTopico.map((aula, idx) => (
                 <div 
                   key={String(aula._id)} 
                   className="backdrop-blur-md bg-white/5 border border-emerald-500/20 rounded-2xl overflow-hidden hover:border-emerald-500/40 transition-all shadow-xl shadow-emerald-500/5 animate-fadeInUp hover-lift"
@@ -718,8 +737,17 @@ export default function AulasPage() {
                     </div>
                   </div>
                 </div>
-              ))}
-              {subtopicosTopico.map(subtopico => {
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Subtópicos do tópico */}
+            {subtopicosTopico.length > 0 && (
+              <div>
+                <h3 className="text-xl font-semibold text-white mb-4">Subtópicos</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                  {subtopicosTopico.map(subtopico => {
                 const aulaCount = countAulasSubtopico(String(subtopico._id))
                 return (
                   <div
@@ -760,8 +788,10 @@ export default function AulasPage() {
                     </div>
                   </div>
                 )
-              })}
-            </div>
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         ) : !selectedModulo ? (
           // Tela de Módulos
