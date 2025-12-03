@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { ArrowLeft, Plus, Edit2, Trash2, Copy, Eye, EyeOff, ChevronDown, ChevronUp } from 'lucide-react'
+import { ArrowLeft, Plus, Edit2, Trash2, Copy, Eye, EyeOff, ChevronDown, ChevronUp, ChevronRight, GripVertical } from 'lucide-react'
 import { AulaPostagem, AulaSetor, AulaTopic, AulaSubtopic, AulaModulo, AulaSubmodulo } from '@/lib/types'
 import { ToastAlert } from '@/components/ui/toast-alert'
 
@@ -33,6 +33,15 @@ export default function GerenciarAulasPage() {
   const [selectedTopico, setSelectedTopico] = useState<string | null>(null)
   const [selectedSubtopico, setSelectedSubtopico] = useState<string | null>(null)
   const [selectedModulo, setSelectedModulo] = useState<string | null>(null)
+
+  // Estados para expandir/colapsar
+  const [expandedSetores, setExpandedSetores] = useState<Set<string>>(new Set())
+  const [expandedTopicos, setExpandedTopicos] = useState<Set<string>>(new Set())
+  const [expandedSubtopicos, setExpandedSubtopicos] = useState<Set<string>>(new Set())
+  const [expandedModulos, setExpandedModulos] = useState<Set<string>>(new Set())
+
+  // Drag and drop
+  const [draggedAula, setDraggedAula] = useState<string | null>(null)
 
   // Toast
   const [toastOpen, setToastOpen] = useState(false)
@@ -199,24 +208,541 @@ export default function GerenciarAulasPage() {
     return submodulos.filter(sm => sm.moduloId === moduloId && !sm.oculta)
   }
 
-  // Filtrar aulas baseado na cascata
-  function getAulasFiltradasPorCascata() {
-    let aulasFiltradaslocal = aulas
+  // Obter localização da aula
+  function getLocalizacaoAula(aula: AulaPostagem) {
+    const partes: string[] = []
+    
+    if (aula.setorId) {
+      const setor = setores.find(s => String(s._id) === aula.setorId)
+      if (setor) partes.push(setor.nome)
+    }
+    
+    if (aula.topicoId) {
+      const topico = topicos.find(t => String(t._id) === aula.topicoId)
+      if (topico) partes.push(topico.nome)
+    }
+    
+    if (aula.subtopicoId) {
+      const subtopico = subtopicos.find(s => String(s._id) === aula.subtopicoId)
+      if (subtopico) partes.push(subtopico.nome)
+    }
+    
+    if (aula.moduloId) {
+      const modulo = modulos.find(m => String(m._id) === aula.moduloId)
+      if (modulo) partes.push(modulo.nome)
+    }
+    
+    if (aula.submoduloId) {
+      const submodulo = submodulos.find(sm => String(sm._id) === aula.submoduloId)
+      if (submodulo) partes.push(submodulo.nome)
+    }
+    
+    return partes.length > 0 ? partes.join(' > ') : 'Sem localização'
+  }
 
-    if (selectedSetor) {
-      aulasFiltradaslocal = aulasFiltradaslocal.filter(a => a.setorId === selectedSetor)
-    }
-    if (selectedTopico) {
-      aulasFiltradaslocal = aulasFiltradaslocal.filter(a => a.topicoId === selectedTopico)
-    }
-    if (selectedSubtopico) {
-      aulasFiltradaslocal = aulasFiltradaslocal.filter(a => a.subtopicoId === selectedSubtopico)
-    }
-    if (selectedModulo) {
-      aulasFiltradaslocal = aulasFiltradaslocal.filter(a => a.moduloId === selectedModulo)
-    }
+  // Drag and drop handlers
+  function handleDragStart(aulaId: string) {
+    setDraggedAula(aulaId)
+  }
 
-    return aulasFiltradaslocal.sort((a: AulaPostagem, b: AulaPostagem) => (a.ordem || 0) - (b.ordem || 0))
+  function handleDragOver(e: React.DragEvent) {
+    e.preventDefault()
+  }
+
+  async function handleDropOnAula(targetAulaId: string) {
+    if (!draggedAula || draggedAula === targetAulaId) return
+
+    try {
+      const draggedIndex = aulas.findIndex(a => String(a._id) === draggedAula)
+      const targetIndex = aulas.findIndex(a => String(a._id) === targetAulaId)
+
+      if (draggedIndex === -1 || targetIndex === -1) return
+
+      const draggedAulaObj = aulas[draggedIndex]
+      const targetAulaObj = aulas[targetIndex]
+
+      // Determinar nova ordem baseado na posição
+      let novaOrdem: number
+      if (draggedIndex < targetIndex) {
+        // Movendo para baixo
+        novaOrdem = (targetAulaObj.ordem || 0) + 1
+      } else {
+        // Movendo para cima
+        novaOrdem = (targetAulaObj.ordem || 0) - 1
+      }
+      
+      const res = await fetch(`/api/aulas/${draggedAula}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ordem: novaOrdem })
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        // Atualizar imediatamente na UI
+        const novasAulas = aulas.map(a =>
+          String(a._id) === draggedAula ? { ...a, ordem: novaOrdem } : a
+        ).sort((a: AulaPostagem, b: AulaPostagem) => (a.ordem || 0) - (b.ordem || 0))
+        setAulas(novasAulas)
+        showToast('Aula reordenada com sucesso!')
+      } else {
+        showToast('Erro ao reordenar aula', 'error')
+      }
+    } catch (error) {
+      console.error('Erro ao reordenar:', error)
+      showToast('Erro ao reordenar aula', 'error')
+    } finally {
+      setDraggedAula(null)
+    }
+  }
+
+  // Renderizar hierarquia de aulas
+  function renderHierarquia() {
+    const setoresList = setores.filter(s => !s.oculta)
+
+    return (
+      <div className="space-y-2">
+        {setoresList.map(setor => {
+          const setorId = String(setor._id)
+          const isExpanded = expandedSetores.has(setorId)
+          const topicosDoSetor = topicos.filter(t => t.setorId === setorId && !t.oculta)
+          const aulasSetor = aulas.filter(a => a.setorId === setorId && !a.topicoId).sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
+
+          return (
+            <div key={setorId} className="space-y-2">
+              {/* Setor */}
+              <button
+                onClick={() => {
+                  const newSet = new Set(expandedSetores)
+                  if (newSet.has(setorId)) newSet.delete(setorId)
+                  else newSet.add(setorId)
+                  setExpandedSetores(newSet)
+                }}
+                className="w-full flex items-center gap-2 px-4 py-3 rounded-lg bg-purple-500/20 border border-purple-500/30 hover:bg-purple-500/30 transition-all text-left"
+              >
+                <ChevronRight className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                <span className="font-semibold text-white">{setor.nome}</span>
+                <span className="text-xs text-white/60 ml-auto">({topicosDoSetor.length + aulasSetor.length})</span>
+              </button>
+
+              {isExpanded && (
+                <div className="ml-4 space-y-2">
+                  {/* Aulas do setor */}
+                  {aulasSetor.map(aula => (
+                    <div
+                      key={String(aula._id)}
+                      draggable
+                      onDragStart={() => handleDragStart(String(aula._id))}
+                      onDragOver={handleDragOver}
+                      onDrop={() => handleDropOnAula(String(aula._id))}
+                      className={`p-4 rounded-lg border transition-all cursor-move ${
+                        draggedAula === String(aula._id)
+                          ? 'bg-blue-500/30 border-blue-500/50 opacity-50'
+                          : 'bg-white/5 border-white/10 hover:bg-white/10'
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <GripVertical className="h-4 w-4 text-white/40 mt-1 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-semibold text-white">{aula.titulo}</h4>
+                          <p className="text-xs text-white/50 mt-1">{getLocalizacaoAula(aula)}</p>
+                          {aula.descricao && (
+                            <p className="text-sm text-white/70 mt-2 line-clamp-1">{aula.descricao}</p>
+                          )}
+                        </div>
+                        <div className="flex gap-1 flex-shrink-0">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => toggleOcultarAula(String(aula._id), aula.oculta)}
+                            className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                          >
+                            {aula.oculta ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => router.push(`/aulas/gerenciar/aulas/${aula._id}/editar`)}
+                            className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                          >
+                            <Edit2 className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => duplicarAula(String(aula._id))}
+                            className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => deletarAula(String(aula._id))}
+                            className="border-red-500/30 text-red-400 hover:bg-red-500/10 h-8 w-8 p-0"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Tópicos */}
+                  {topicosDoSetor.map(topico => {
+                    const topicoId = String(topico._id)
+                    const isTopicoExpanded = expandedTopicos.has(topicoId)
+                    const subtopicosDoTopico = subtopicos.filter(s => s.topicoId === topicoId && !s.oculta)
+                    const aulasTopico = aulas.filter(a => a.topicoId === topicoId && !a.subtopicoId).sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
+
+                    return (
+                      <div key={topicoId} className="space-y-2">
+                        <button
+                          onClick={() => {
+                            const newSet = new Set(expandedTopicos)
+                            if (newSet.has(topicoId)) newSet.delete(topicoId)
+                            else newSet.add(topicoId)
+                            setExpandedTopicos(newSet)
+                          }}
+                          className="w-full flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 hover:bg-blue-500/30 transition-all text-left"
+                        >
+                          <ChevronRight className={`h-4 w-4 transition-transform ${isTopicoExpanded ? 'rotate-90' : ''}`} />
+                          <span className="font-medium text-white">{topico.nome}</span>
+                          <span className="text-xs text-white/60 ml-auto">({subtopicosDoTopico.length + aulasTopico.length})</span>
+                        </button>
+
+                        {isTopicoExpanded && (
+                          <div className="ml-4 space-y-2">
+                            {/* Aulas do tópico */}
+                            {aulasTopico.map(aula => (
+                              <div
+                                key={String(aula._id)}
+                                draggable
+                                onDragStart={() => handleDragStart(String(aula._id))}
+                                onDragOver={handleDragOver}
+                                onDrop={() => handleDropOnAula(String(aula._id))}
+                                className={`p-4 rounded-lg border transition-all cursor-move ${
+                                  draggedAula === String(aula._id)
+                                    ? 'bg-blue-500/30 border-blue-500/50 opacity-50'
+                                    : 'bg-white/5 border-white/10 hover:bg-white/10'
+                                }`}
+                              >
+                                <div className="flex items-start gap-3">
+                                  <GripVertical className="h-4 w-4 text-white/40 mt-1 flex-shrink-0" />
+                                  <div className="flex-1 min-w-0">
+                                    <h4 className="font-semibold text-white">{aula.titulo}</h4>
+                                    <p className="text-xs text-white/50 mt-1">{getLocalizacaoAula(aula)}</p>
+                                    {aula.descricao && (
+                                      <p className="text-sm text-white/70 mt-2 line-clamp-1">{aula.descricao}</p>
+                                    )}
+                                  </div>
+                                  <div className="flex gap-1 flex-shrink-0">
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => toggleOcultarAula(String(aula._id), aula.oculta)}
+                                      className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                    >
+                                      {aula.oculta ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                    </Button>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => router.push(`/aulas/gerenciar/aulas/${aula._id}/editar`)}
+                                      className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                    >
+                                      <Edit2 className="h-4 w-4" />
+                                    </Button>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => duplicarAula(String(aula._id))}
+                                      className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                    >
+                                      <Copy className="h-4 w-4" />
+                                    </Button>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => deletarAula(String(aula._id))}
+                                      className="border-red-500/30 text-red-400 hover:bg-red-500/10 h-8 w-8 p-0"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+
+                            {/* Subtópicos */}
+                            {subtopicosDoTopico.map(subtopico => {
+                              const subtopicoId = String(subtopico._id)
+                              const isSubtopicoExpanded = expandedSubtopicos.has(subtopicoId)
+                              const modulosDoSubtopico = modulos.filter(m => m.subtopicoId === subtopicoId && !m.oculta)
+                              const aulasSubtopico = aulas.filter(a => a.subtopicoId === subtopicoId && !a.moduloId).sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
+
+                              return (
+                                <div key={subtopicoId} className="space-y-2">
+                                  <button
+                                    onClick={() => {
+                                      const newSet = new Set(expandedSubtopicos)
+                                      if (newSet.has(subtopicoId)) newSet.delete(subtopicoId)
+                                      else newSet.add(subtopicoId)
+                                      setExpandedSubtopicos(newSet)
+                                    }}
+                                    className="w-full flex items-center gap-2 px-4 py-2 rounded-lg bg-cyan-500/20 border border-cyan-500/30 hover:bg-cyan-500/30 transition-all text-left"
+                                  >
+                                    <ChevronRight className={`h-4 w-4 transition-transform ${isSubtopicoExpanded ? 'rotate-90' : ''}`} />
+                                    <span className="font-medium text-white">{subtopico.nome}</span>
+                                    <span className="text-xs text-white/60 ml-auto">({modulosDoSubtopico.length + aulasSubtopico.length})</span>
+                                  </button>
+
+                                  {isSubtopicoExpanded && (
+                                    <div className="ml-4 space-y-2">
+                                      {/* Aulas do subtópico */}
+                                      {aulasSubtopico.map(aula => (
+                                        <div
+                                          key={String(aula._id)}
+                                          draggable
+                                          onDragStart={() => handleDragStart(String(aula._id))}
+                                          onDragOver={handleDragOver}
+                                          onDrop={() => handleDropOnAula(String(aula._id))}
+                                          className={`p-4 rounded-lg border transition-all cursor-move ${
+                                            draggedAula === String(aula._id)
+                                              ? 'bg-blue-500/30 border-blue-500/50 opacity-50'
+                                              : 'bg-white/5 border-white/10 hover:bg-white/10'
+                                          }`}
+                                        >
+                                          <div className="flex items-start gap-3">
+                                            <GripVertical className="h-4 w-4 text-white/40 mt-1 flex-shrink-0" />
+                                            <div className="flex-1 min-w-0">
+                                              <h4 className="font-semibold text-white">{aula.titulo}</h4>
+                                              <p className="text-xs text-white/50 mt-1">{getLocalizacaoAula(aula)}</p>
+                                              {aula.descricao && (
+                                                <p className="text-sm text-white/70 mt-2 line-clamp-1">{aula.descricao}</p>
+                                              )}
+                                            </div>
+                                            <div className="flex gap-1 flex-shrink-0">
+                                              <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => toggleOcultarAula(String(aula._id), aula.oculta)}
+                                                className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                              >
+                                                {aula.oculta ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                              </Button>
+                                              <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => router.push(`/aulas/gerenciar/aulas/${aula._id}/editar`)}
+                                                className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                              >
+                                                <Edit2 className="h-4 w-4" />
+                                              </Button>
+                                              <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => duplicarAula(String(aula._id))}
+                                                className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                              >
+                                                <Copy className="h-4 w-4" />
+                                              </Button>
+                                              <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => deletarAula(String(aula._id))}
+                                                className="border-red-500/30 text-red-400 hover:bg-red-500/10 h-8 w-8 p-0"
+                                              >
+                                                <Trash2 className="h-4 w-4" />
+                                              </Button>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      ))}
+
+                                      {/* Módulos */}
+                                      {modulosDoSubtopico.map(modulo => {
+                                        const moduloId = String(modulo._id)
+                                        const isModuloExpanded = expandedModulos.has(moduloId)
+                                        const submodulosDoModulo = submodulos.filter(sm => sm.moduloId === moduloId && !sm.oculta)
+                                        const aulasModulo = aulas.filter(a => a.moduloId === moduloId && !a.submoduloId).sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
+
+                                        return (
+                                          <div key={moduloId} className="space-y-2">
+                                            <button
+                                              onClick={() => {
+                                                const newSet = new Set(expandedModulos)
+                                                if (newSet.has(moduloId)) newSet.delete(moduloId)
+                                                else newSet.add(moduloId)
+                                                setExpandedModulos(newSet)
+                                              }}
+                                              className="w-full flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500/20 border border-green-500/30 hover:bg-green-500/30 transition-all text-left"
+                                            >
+                                              <ChevronRight className={`h-4 w-4 transition-transform ${isModuloExpanded ? 'rotate-90' : ''}`} />
+                                              <span className="font-medium text-white">{modulo.nome}</span>
+                                              <span className="text-xs text-white/60 ml-auto">({submodulosDoModulo.length + aulasModulo.length})</span>
+                                            </button>
+
+                                            {isModuloExpanded && (
+                                              <div className="ml-4 space-y-2">
+                                                {/* Aulas do módulo */}
+                                                {aulasModulo.map(aula => (
+                                                  <div
+                                                    key={String(aula._id)}
+                                                    draggable
+                                                    onDragStart={() => handleDragStart(String(aula._id))}
+                                                    onDragOver={handleDragOver}
+                                                    onDrop={() => handleDropOnAula(String(aula._id))}
+                                                    className={`p-4 rounded-lg border transition-all cursor-move ${
+                                                      draggedAula === String(aula._id)
+                                                        ? 'bg-blue-500/30 border-blue-500/50 opacity-50'
+                                                        : 'bg-white/5 border-white/10 hover:bg-white/10'
+                                                    }`}
+                                                  >
+                                                    <div className="flex items-start gap-3">
+                                                      <GripVertical className="h-4 w-4 text-white/40 mt-1 flex-shrink-0" />
+                                                      <div className="flex-1 min-w-0">
+                                                        <h4 className="font-semibold text-white">{aula.titulo}</h4>
+                                                        <p className="text-xs text-white/50 mt-1">{getLocalizacaoAula(aula)}</p>
+                                                        {aula.descricao && (
+                                                          <p className="text-sm text-white/70 mt-2 line-clamp-1">{aula.descricao}</p>
+                                                        )}
+                                                      </div>
+                                                      <div className="flex gap-1 flex-shrink-0">
+                                                        <Button
+                                                          variant="outline"
+                                                          size="sm"
+                                                          onClick={() => toggleOcultarAula(String(aula._id), aula.oculta)}
+                                                          className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                                        >
+                                                          {aula.oculta ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                                        </Button>
+                                                        <Button
+                                                          variant="outline"
+                                                          size="sm"
+                                                          onClick={() => router.push(`/aulas/gerenciar/aulas/${aula._id}/editar`)}
+                                                          className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                                        >
+                                                          <Edit2 className="h-4 w-4" />
+                                                        </Button>
+                                                        <Button
+                                                          variant="outline"
+                                                          size="sm"
+                                                          onClick={() => duplicarAula(String(aula._id))}
+                                                          className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                                        >
+                                                          <Copy className="h-4 w-4" />
+                                                        </Button>
+                                                        <Button
+                                                          variant="outline"
+                                                          size="sm"
+                                                          onClick={() => deletarAula(String(aula._id))}
+                                                          className="border-red-500/30 text-red-400 hover:bg-red-500/10 h-8 w-8 p-0"
+                                                        >
+                                                          <Trash2 className="h-4 w-4" />
+                                                        </Button>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                ))}
+
+                                                {/* Submódulos */}
+                                                {submodulosDoModulo.map(submodulo => {
+                                                  const aulasSubmodulo = aulas.filter(a => a.submoduloId === String(submodulo._id)).sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
+
+                                                  return (
+                                                    <div key={String(submodulo._id)} className="space-y-2">
+                                                      <div className="px-4 py-2 rounded-lg bg-amber-500/20 border border-amber-500/30">
+                                                        <span className="font-medium text-white">{submodulo.nome}</span>
+                                                        <span className="text-xs text-white/60 ml-2">({aulasSubmodulo.length})</span>
+                                                      </div>
+
+                                                      <div className="ml-4 space-y-2">
+                                                        {aulasSubmodulo.map(aula => (
+                                                          <div
+                                                            key={String(aula._id)}
+                                                            draggable
+                                                            onDragStart={() => handleDragStart(String(aula._id))}
+                                                            onDragOver={handleDragOver}
+                                                            onDrop={() => handleDropOnAula(String(aula._id))}
+                                                            className={`p-4 rounded-lg border transition-all cursor-move ${
+                                                              draggedAula === String(aula._id)
+                                                                ? 'bg-blue-500/30 border-blue-500/50 opacity-50'
+                                                                : 'bg-white/5 border-white/10 hover:bg-white/10'
+                                                            }`}
+                                                          >
+                                                            <div className="flex items-start gap-3">
+                                                              <GripVertical className="h-4 w-4 text-white/40 mt-1 flex-shrink-0" />
+                                                              <div className="flex-1 min-w-0">
+                                                                <h4 className="font-semibold text-white">{aula.titulo}</h4>
+                                                                <p className="text-xs text-white/50 mt-1">{getLocalizacaoAula(aula)}</p>
+                                                                {aula.descricao && (
+                                                                  <p className="text-sm text-white/70 mt-2 line-clamp-1">{aula.descricao}</p>
+                                                                )}
+                                                              </div>
+                                                              <div className="flex gap-1 flex-shrink-0">
+                                                                <Button
+                                                                  variant="outline"
+                                                                  size="sm"
+                                                                  onClick={() => toggleOcultarAula(String(aula._id), aula.oculta)}
+                                                                  className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                                                >
+                                                                  {aula.oculta ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                                                </Button>
+                                                                <Button
+                                                                  variant="outline"
+                                                                  size="sm"
+                                                                  onClick={() => router.push(`/aulas/gerenciar/aulas/${aula._id}/editar`)}
+                                                                  className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                                                >
+                                                                  <Edit2 className="h-4 w-4" />
+                                                                </Button>
+                                                                <Button
+                                                                  variant="outline"
+                                                                  size="sm"
+                                                                  onClick={() => duplicarAula(String(aula._id))}
+                                                                  className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                                                >
+                                                                  <Copy className="h-4 w-4" />
+                                                                </Button>
+                                                                <Button
+                                                                  variant="outline"
+                                                                  size="sm"
+                                                                  onClick={() => deletarAula(String(aula._id))}
+                                                                  className="border-red-500/30 text-red-400 hover:bg-red-500/10 h-8 w-8 p-0"
+                                                                >
+                                                                  <Trash2 className="h-4 w-4" />
+                                                                </Button>
+                                                              </div>
+                                                            </div>
+                                                          </div>
+                                                        ))}
+                                                      </div>
+                                                    </div>
+                                                  )
+                                                })}
+                                              </div>
+                                            )}
+                                          </div>
+                                        )
+                                      })}
+                                    </div>
+                                  )}
+                                </div>
+                              )
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    )
   }
 
   if (loading) {
@@ -268,209 +794,27 @@ export default function GerenciarAulasPage() {
 
       {/* Main Content */}
       <main className="relative z-30 container mx-auto px-4 py-8 max-w-6xl">
-        {/* Filtros em Cascata */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {/* Setores */}
-          <div>
-            <label className="block text-sm font-semibold text-white mb-2">Setor</label>
-            <select
-              value={selectedSetor || ''}
-              onChange={(e) => {
-                setSelectedSetor(e.target.value || null)
-                setSelectedTopico(null)
-                setSelectedSubtopico(null)
-                setSelectedModulo(null)
-              }}
-              className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:border-purple-500"
-            >
-              <option value="">Todos os Setores</option>
-              {setores.map(setor => (
-                <option key={String(setor._id)} value={String(setor._id)}>
-                  {setor.nome}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Tópicos */}
-          {selectedSetor && (
-            <div>
-              <label className="block text-sm font-semibold text-white mb-2">Tópico</label>
-              <select
-                value={selectedTopico || ''}
-                onChange={(e) => {
-                  setSelectedTopico(e.target.value || null)
-                  setSelectedSubtopico(null)
-                  setSelectedModulo(null)
-                }}
-                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:border-purple-500"
-              >
-                <option value="">Todos os Tópicos</option>
-                {getTopicosDoSetor(selectedSetor).map(topico => (
-                  <option key={String(topico._id)} value={String(topico._id)}>
-                    {topico.nome}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          {/* Subtópicos */}
-          {selectedTopico && (
-            <div>
-              <label className="block text-sm font-semibold text-white mb-2">Subtópico</label>
-              <select
-                value={selectedSubtopico || ''}
-                onChange={(e) => {
-                  setSelectedSubtopico(e.target.value || null)
-                  setSelectedModulo(null)
-                }}
-                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:border-purple-500"
-              >
-                <option value="">Todos os Subtópicos</option>
-                {getSubtopicosDoTopico(selectedTopico).map(subtopico => (
-                  <option key={String(subtopico._id)} value={String(subtopico._id)}>
-                    {subtopico.nome}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          {/* Módulos */}
-          {selectedSubtopico && (
-            <div>
-              <label className="block text-sm font-semibold text-white mb-2">Módulo</label>
-              <select
-                value={selectedModulo || ''}
-                onChange={(e) => setSelectedModulo(e.target.value || null)}
-                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:border-purple-500"
-              >
-                <option value="">Todos os Módulos</option>
-                {getModulosDoSubtopico(selectedSubtopico).map(modulo => (
-                  <option key={String(modulo._id)} value={String(modulo._id)}>
-                    {modulo.nome}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-white mb-4">Gerenciar Aulas</h2>
+          <p className="text-white/60 mb-4">Clique para expandir/colapsar seções. Arraste aulas para reordenar.</p>
+          <Button
+            onClick={() => router.push('/aulas/gerenciar/aulas/criar')}
+            className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Nova Aula
+          </Button>
         </div>
 
-        {/* Aulas */}
-        {getAulasFiltradasPorCascata().length === 0 ? (
+        {/* Hierarquia de Aulas */}
+        {aulas.length === 0 ? (
           <Card className="backdrop-blur-md bg-white/5 border-white/10">
             <CardContent className="pt-6 text-center">
               <p className="text-white/60 mb-4">Nenhuma aula encontrada</p>
-              <Button
-                onClick={() => router.push('/aulas/gerenciar/aulas/criar')}
-                className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Criar Aula
-              </Button>
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-3">
-            {getAulasFiltradasPorCascata().map((aula, idx) => (
-              <Card key={String(aula._id)} className="backdrop-blur-md bg-white/5 border-white/10 hover:bg-white/10 transition-all">
-                <CardContent className="pt-6">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-2 flex-wrap">
-                        <h3 className="font-semibold text-lg text-white">{aula.titulo}</h3>
-                        <span className={`text-xs px-2 py-1 rounded-full font-semibold ${
-                          aula.tipo === 'ao-vivo'
-                            ? 'bg-red-500/20 text-red-300 border border-red-500/30'
-                            : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
-                        }`}>
-                          {aula.tipo === 'ao-vivo' ? 'Ao Vivo' : 'Gravada'}
-                        </span>
-                        <span className={`text-xs px-2 py-1 rounded-full font-semibold ${
-                          aula.visibilidade === 'premium'
-                            ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30'
-                            : 'bg-green-500/20 text-green-300 border border-green-500/30'
-                        }`}>
-                          {aula.visibilidade === 'premium' ? 'Premium' : 'Gratuita'}
-                        </span>
-                        {aula.oculta && (
-                          <span className="text-xs px-2 py-1 rounded-full bg-gray-500/20 text-gray-300 border border-gray-500/30 font-semibold">
-                            Oculta
-                          </span>
-                        )}
-                      </div>
-                      {aula.descricao && (
-                        <p className="text-sm text-white/70 mb-2 line-clamp-2">
-                          {aula.descricao}
-                        </p>
-                      )}
-                      <p className="text-xs text-white/50">
-                        Criada em {new Date(aula.criadoEm).toLocaleDateString('pt-BR')}
-                      </p>
-                    </div>
-                    <div className="flex gap-2 flex-wrap justify-end">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => reordenarAula(String(aula._id), 'up')}
-                        title="Mover para cima"
-                        className="border-white/20 text-white hover:bg-white/10"
-                      >
-                        <ChevronUp className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => reordenarAula(String(aula._id), 'down')}
-                        title="Mover para baixo"
-                        className="border-white/20 text-white hover:bg-white/10"
-                      >
-                        <ChevronDown className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => toggleOcultarAula(String(aula._id), aula.oculta)}
-                        title={aula.oculta ? 'Mostrar' : 'Ocultar'}
-                        className="border-white/20 text-white hover:bg-white/10"
-                      >
-                        {aula.oculta ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => router.push(`/aulas/gerenciar/aulas/${aula._id}/editar`)}
-                        className="border-white/20 text-white hover:bg-white/10"
-                      >
-                        <Edit2 className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => duplicarAula(String(aula._id))}
-                        className="border-white/20 text-white hover:bg-white/10"
-                      >
-                        <Copy className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => deletarAula(String(aula._id))}
-                        className="border-red-500/30 text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          renderHierarquia()
         )}
       </main>
 
