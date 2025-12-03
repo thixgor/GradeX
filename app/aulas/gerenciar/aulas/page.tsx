@@ -261,35 +261,35 @@ export default function GerenciarAulasPage() {
 
       if (draggedIndex === -1 || targetIndex === -1) return
 
-      const draggedAulaObj = aulas[draggedIndex]
-      const targetAulaObj = aulas[targetIndex]
+      // Criar nova ordem de aulas
+      const novasAulas = [...aulas]
+      const [draggedItem] = novasAulas.splice(draggedIndex, 1)
+      novasAulas.splice(targetIndex, 0, draggedItem)
 
-      // Determinar nova ordem baseado na posição
-      let novaOrdem: number
-      if (draggedIndex < targetIndex) {
-        // Movendo para baixo
-        novaOrdem = (targetAulaObj.ordem || 0) + 1
-      } else {
-        // Movendo para cima
-        novaOrdem = (targetAulaObj.ordem || 0) - 1
-      }
-      
-      const res = await fetch(`/api/aulas/${draggedAula}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ordem: novaOrdem })
-      })
+      // Reassignar ordens sequenciais
+      const aulasComNovaOrdem = novasAulas.map((aula, idx) => ({
+        ...aula,
+        ordem: idx
+      }))
 
-      if (res.ok) {
-        const data = await res.json()
-        // Atualizar imediatamente na UI
-        const novasAulas = aulas.map(a =>
-          String(a._id) === draggedAula ? { ...a, ordem: novaOrdem } : a
-        ).sort((a: AulaPostagem, b: AulaPostagem) => (a.ordem || 0) - (b.ordem || 0))
-        setAulas(novasAulas)
-        showToast('Aula reordenada com sucesso!')
+      // Atualizar todas as aulas na API
+      const updatePromises = aulasComNovaOrdem.map(aula =>
+        fetch(`/api/aulas/${aula._id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ordem: aula.ordem })
+        })
+      )
+
+      const results = await Promise.all(updatePromises)
+      const allSuccess = results.every(r => r.ok)
+
+      if (allSuccess) {
+        // Atualizar UI imediatamente
+        setAulas(aulasComNovaOrdem)
+        showToast('Aulas reordenadas com sucesso!')
       } else {
-        showToast('Erro ao reordenar aula', 'error')
+        showToast('Erro ao reordenar algumas aulas', 'error')
       }
     } catch (error) {
       console.error('Erro ao reordenar:', error)
