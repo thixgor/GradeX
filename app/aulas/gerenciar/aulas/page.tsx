@@ -43,6 +43,9 @@ export default function GerenciarAulasPage() {
   // Drag and drop
   const [draggedAula, setDraggedAula] = useState<string | null>(null)
 
+  // Ordenação
+  const [sortBy, setSortBy] = useState<'ordem' | 'alfabetico'>('ordem')
+
   // Toast
   const [toastOpen, setToastOpen] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
@@ -296,6 +299,14 @@ export default function GerenciarAulasPage() {
     }
   }
 
+  // Função para ordenar aulas
+  function sortAulas(aulasToSort: AulaPostagem[]) {
+    if (sortBy === 'alfabetico') {
+      return [...aulasToSort].sort((a, b) => a.titulo.localeCompare(b.titulo, 'pt-BR'))
+    }
+    return [...aulasToSort].sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
+  }
+
   // Renderizar hierarquia de aulas
   function renderHierarquia() {
     const setoresList = setores.filter(s => !s.oculta)
@@ -306,7 +317,7 @@ export default function GerenciarAulasPage() {
           const setorId = String(setor._id)
           const isExpanded = expandedSetores.has(setorId)
           const topicosDoSetor = topicos.filter(t => t.setorId === setorId && !t.oculta)
-          const aulasSetor = aulas.filter(a => a.setorId === setorId && !a.topicoId).sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
+          const aulasSetor = sortAulas(aulas.filter(a => a.setorId === setorId && !a.topicoId))
 
           return (
             <div key={setorId} className="space-y-2">
@@ -393,7 +404,7 @@ export default function GerenciarAulasPage() {
                     const topicoId = String(topico._id)
                     const isTopicoExpanded = expandedTopicos.has(topicoId)
                     const subtopicosDoTopico = subtopicos.filter(s => s.topicoId === topicoId && !s.oculta)
-                    const aulasTopico = aulas.filter(a => a.topicoId === topicoId && !a.subtopicoId).sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
+                    const aulasTopico = sortAulas(aulas.filter(a => a.topicoId === topicoId && !a.subtopicoId))
 
                     return (
                       <div key={topicoId} className="space-y-2">
@@ -479,7 +490,7 @@ export default function GerenciarAulasPage() {
                               const subtopicoId = String(subtopico._id)
                               const isSubtopicoExpanded = expandedSubtopicos.has(subtopicoId)
                               const modulosDoSubtopico = modulos.filter(m => m.subtopicoId === subtopicoId && !m.oculta)
-                              const aulasSubtopico = aulas.filter(a => a.subtopicoId === subtopicoId && !a.moduloId).sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
+                              const aulasSubtopico = sortAulas(aulas.filter(a => a.subtopicoId === subtopicoId && !a.moduloId))
 
                               return (
                                 <div key={subtopicoId} className="space-y-2">
@@ -565,7 +576,7 @@ export default function GerenciarAulasPage() {
                                         const moduloId = String(modulo._id)
                                         const isModuloExpanded = expandedModulos.has(moduloId)
                                         const submodulosDoModulo = submodulos.filter(sm => sm.moduloId === moduloId && !sm.oculta)
-                                        const aulasModulo = aulas.filter(a => a.moduloId === moduloId && !a.submoduloId).sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
+                                        const aulasModulo = sortAulas(aulas.filter(a => a.moduloId === moduloId && !a.submoduloId))
 
                                         return (
                                           <div key={moduloId} className="space-y-2">
@@ -648,7 +659,7 @@ export default function GerenciarAulasPage() {
 
                                                 {/* Submódulos */}
                                                 {submodulosDoModulo.map(submodulo => {
-                                                  const aulasSubmodulo = aulas.filter(a => a.submoduloId === String(submodulo._id)).sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
+                                                  const aulasSubmodulo = sortAulas(aulas.filter(a => a.submoduloId === String(submodulo._id)))
 
                                                   return (
                                                     <div key={String(submodulo._id)} className="space-y-2">
@@ -797,13 +808,34 @@ export default function GerenciarAulasPage() {
         <div className="mb-6">
           <h2 className="text-2xl font-bold text-white mb-4">Gerenciar Aulas</h2>
           <p className="text-white/60 mb-4">Clique para expandir/colapsar seções. Arraste aulas para reordenar.</p>
-          <Button
-            onClick={() => router.push('/aulas/gerenciar/aulas/criar')}
-            className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Nova Aula
-          </Button>
+          <div className="flex gap-3 flex-wrap">
+            <Button
+              onClick={() => router.push('/aulas/gerenciar/aulas/criar')}
+              className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Nova Aula
+            </Button>
+            <div className="flex gap-2 items-center bg-white/5 border border-white/10 rounded-lg p-2">
+              <span className="text-sm text-white/70">Ordenar:</span>
+              <Button
+                onClick={() => setSortBy('ordem')}
+                variant={sortBy === 'ordem' ? 'default' : 'ghost'}
+                size="sm"
+                className={sortBy === 'ordem' ? 'bg-purple-500 hover:bg-purple-600' : 'text-white/60 hover:text-white hover:bg-white/10'}
+              >
+                Por Ordem
+              </Button>
+              <Button
+                onClick={() => setSortBy('alfabetico')}
+                variant={sortBy === 'alfabetico' ? 'default' : 'ghost'}
+                size="sm"
+                className={sortBy === 'alfabetico' ? 'bg-purple-500 hover:bg-purple-600' : 'text-white/60 hover:text-white hover:bg-white/10'}
+              >
+                Alfabético
+              </Button>
+            </div>
+          </div>
         </div>
 
         {/* Hierarquia de Aulas */}
