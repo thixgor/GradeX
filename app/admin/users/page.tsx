@@ -8,7 +8,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { User, BanReason, BanReasonLabels, AccountType, TrialPlanType, PremiumPlanType } from '@/lib/types'
-import { ArrowLeft, Trash2, Ban, CheckCircle, AlertTriangle, Shield, Crown, Timer, Settings } from 'lucide-react'
+import { ArrowLeft, Trash2, Ban, CheckCircle, AlertTriangle, Shield, Crown, Timer, Settings, Info, Zap } from 'lucide-react'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
@@ -21,6 +21,8 @@ export default function AdminUsersPage() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [showTierDialog, setShowTierDialog] = useState(false)
   const [showQuotaDialog, setShowQuotaDialog] = useState(false)
+  const [showInfoDialog, setShowInfoDialog] = useState(false)
+  const [showMonitorDialog, setShowMonitorDialog] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [banReason, setBanReason] = useState<BanReason>('other')
   const [banDetails, setBanDetails] = useState('')
@@ -167,6 +169,31 @@ export default function AdminUsersPage() {
     }
   }
 
+  async function handleToggleMonitor() {
+    if (!selectedUser) return
+
+    try {
+      const isMonitor = selectedUser.secondaryRole === 'monitor'
+      const res = await fetch(`/api/users/${selectedUser._id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'toggle_monitor',
+          secondaryRole: isMonitor ? undefined : 'monitor'
+        })
+      })
+
+      if (!res.ok) throw new Error('Erro ao atualizar cargo do usuário')
+
+      const data = await res.json()
+      showToastMessage(data.message, 'success')
+      setShowMonitorDialog(false)
+      loadUsers()
+    } catch (error: any) {
+      showToastMessage(error.message)
+    }
+  }
+
   function getAccountTypeBadge(user: User) {
     const accountType = user.accountType || 'gratuito'
 
@@ -263,8 +290,32 @@ export default function AdminUsersPage() {
                   )}
 
                   <div className="flex flex-wrap gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedUser(user)
+                        setShowInfoDialog(true)
+                      }}
+                      title="Ver informações pessoais"
+                    >
+                      <Info className="h-4 w-4" />
+                    </Button>
+
                     {user.role !== 'admin' && (
                       <>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedUser(user)
+                            setShowMonitorDialog(true)
+                          }}
+                          className={user.secondaryRole === 'monitor' ? 'border-yellow-500 text-yellow-600 dark:text-yellow-400' : ''}
+                        >
+                          <Zap className="h-4 w-4 mr-2" />
+                          {user.secondaryRole === 'monitor' ? 'Remover Monitor' : 'Tornar Monitor'}
+                        </Button>
                         <Button
                           variant="outline"
                           size="sm"
@@ -616,6 +667,102 @@ export default function AdminUsersPage() {
             <Button onClick={handleUpdateQuota}>
               <Settings className="h-4 w-4 mr-2" />
               Atualizar Quotas
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog de Informações Pessoais */}
+      <Dialog open={showInfoDialog} onOpenChange={setShowInfoDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Informações Pessoais</DialogTitle>
+            <DialogDescription>
+              Dados de <strong>{selectedUser?.name}</strong>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label className="text-xs font-semibold text-muted-foreground">CPF</Label>
+              <div className="p-3 bg-muted rounded-lg font-mono">
+                {selectedUser?.cpf ? (
+                  <p className="text-sm">
+                    {selectedUser.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')}
+                  </p>
+                ) : (
+                  <p className="text-sm text-muted-foreground italic">Não informado</p>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-xs font-semibold text-muted-foreground">Data de Nascimento</Label>
+              <div className="p-3 bg-muted rounded-lg">
+                {selectedUser?.dateOfBirth ? (
+                  <p className="text-sm">
+                    {new Date(selectedUser.dateOfBirth).toLocaleDateString('pt-BR')}
+                  </p>
+                ) : (
+                  <p className="text-sm text-muted-foreground italic">Não informado</p>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-xs font-semibold text-muted-foreground">Estudante de Medicina Afya</Label>
+              <div className="p-3 bg-muted rounded-lg">
+                <p className="text-sm">
+                  {selectedUser?.isAfyaMedicineStudent ? (
+                    <span className="text-green-600 dark:text-green-400 font-medium">✓ Sim</span>
+                  ) : (
+                    <span className="text-gray-600 dark:text-gray-400">Não</span>
+                  )}
+                </p>
+              </div>
+            </div>
+
+            {selectedUser?.isAfyaMedicineStudent && selectedUser?.afyaUnit && (
+              <div className="space-y-2">
+                <Label className="text-xs font-semibold text-muted-foreground">Unidade Afya</Label>
+                <div className="p-3 bg-muted rounded-lg">
+                  <p className="text-sm">{selectedUser.afyaUnit}</p>
+                </div>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowInfoDialog(false)}>
+              Fechar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog de Monitor */}
+      <Dialog open={showMonitorDialog} onOpenChange={setShowMonitorDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {selectedUser?.secondaryRole === 'monitor' ? 'Remover Monitor' : 'Tornar Monitor'}
+            </DialogTitle>
+            <DialogDescription>
+              {selectedUser?.secondaryRole === 'monitor'
+                ? `Tem certeza que deseja remover o cargo de Monitor de ${selectedUser?.name}?`
+                : `Tem certeza que deseja tornar ${selectedUser?.name} um Monitor? Ele poderá gerenciar aulas, tópicos, subtópicos e módulos.`}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowMonitorDialog(false)}
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleToggleMonitor}
+              className={selectedUser?.secondaryRole === 'monitor' ? 'bg-red-600 hover:bg-red-700' : 'bg-yellow-600 hover:bg-yellow-700'}
+            >
+              {selectedUser?.secondaryRole === 'monitor' ? 'Remover Monitor' : 'Tornar Monitor'}
             </Button>
           </DialogFooter>
         </DialogContent>

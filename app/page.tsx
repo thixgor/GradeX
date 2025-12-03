@@ -12,9 +12,10 @@ import { Logo } from '@/components/logo'
 import { ExamContextMenu } from '@/components/exam-context-menu'
 import { ExamGroup } from '@/components/exam-group'
 import { MobileMenu } from '@/components/mobile-menu'
+import { CompleteProfileModal } from '@/components/complete-profile-modal'
 import { Exam } from '@/lib/types'
 import { formatDate, isBetweenDates } from '@/lib/utils'
-import { Clock, Calendar, FileText, LogOut, Settings, Plus, User as UserIcon, Users, MessageSquare, Key, MessageCircle, BookMarked, Brain, ShoppingCart } from 'lucide-react'
+import { Clock, Calendar, FileText, LogOut, Settings, Plus, User as UserIcon, Users, MessageSquare, Key, MessageCircle, BookMarked, Brain, ShoppingCart, Video } from 'lucide-react'
 import LandingPage from '@/components/landing-page'
 
 interface User {
@@ -22,6 +23,10 @@ interface User {
   email: string
   name: string
   role: 'admin' | 'user'
+  cpf?: string
+  dateOfBirth?: string
+  isAfyaMedicineStudent?: boolean
+  afyaUnit?: string
 }
 
 interface Group {
@@ -50,10 +55,22 @@ export default function HomePage() {
   const [examsRemaining, setExamsRemaining] = useState<number | null>(null)
   const [examsLimit, setExamsLimit] = useState<number | null>(null)
   const [tierLimitExceeded, setTierLimitExceeded] = useState(false)
+  const [showCompleteProfileModal, setShowCompleteProfileModal] = useState(false)
+  const [completingProfile, setCompletingProfile] = useState(false)
 
   useEffect(() => {
     checkAuth()
   }, [])
+
+  // Verificar se o usuário precisa completar o perfil
+  useEffect(() => {
+    if (user && !loading) {
+      const hasCPF = user.cpf && user.cpf.trim().length > 0
+      const hasDateOfBirth = user.dateOfBirth && new Date(user.dateOfBirth).getTime() > 0
+      const needsProfileCompletion = !hasCPF || !hasDateOfBirth
+      setShowCompleteProfileModal(needsProfileCompletion)
+    }
+  }, [user, loading])
 
   // Recarregar limites de tier a cada 30 segundos (em vez de 5s)
   useEffect(() => {
@@ -269,6 +286,43 @@ export default function HomePage() {
     router.push('/auth/login')
   }
 
+  async function handleCompleteProfile(data: {
+    cpf: string
+    dateOfBirth: string
+    isAfyaMedicineStudent: boolean
+    afyaUnit?: string
+  }) {
+    setCompletingProfile(true)
+    try {
+      const res = await fetch('/api/user/complete-profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+
+      if (!res.ok) {
+        const error = await res.json()
+        throw new Error(error.error || 'Erro ao atualizar perfil')
+      }
+
+      // Atualizar o usuário no estado
+      setUser(prev => prev ? {
+        ...prev,
+        cpf: data.cpf,
+        dateOfBirth: new Date(data.dateOfBirth).toISOString(),
+        isAfyaMedicineStudent: data.isAfyaMedicineStudent,
+        afyaUnit: data.afyaUnit || undefined,
+      } : null)
+
+      setShowCompleteProfileModal(false)
+    } catch (error: any) {
+      console.error('Erro ao completar perfil:', error)
+      alert('Erro ao atualizar perfil: ' + error.message)
+    } finally {
+      setCompletingProfile(false)
+    }
+  }
+
   function getExamStatus(exam: Exam) {
     const now = new Date()
     const startTime = new Date(exam.startTime)
@@ -346,6 +400,15 @@ export default function HomePage() {
               <Logo variant="full" size="md" />
               {user && (
                 <>
+                  <Button
+                    onClick={() => router.push('/aulas')}
+                    className="hidden sm:flex"
+                    variant="outline"
+                    size="sm"
+                  >
+                    <Video className="h-4 w-4 mr-2" />
+                    Aulas
+                  </Button>
                   <Button
                     onClick={() => router.push('/buy')}
                     className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold shadow-lg hidden sm:flex"
@@ -720,6 +783,15 @@ Contact: (21) 99777-0936`)
             </CardContent>
           </Card>
         </div>
+      )}
+
+      {/* Modal de Completar Perfil */}
+      {user && (
+        <CompleteProfileModal
+          open={showCompleteProfileModal}
+          onComplete={handleCompleteProfile}
+          isLoading={completingProfile}
+        />
       )}
 
       {/* Chat de Suporte */}

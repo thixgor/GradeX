@@ -62,7 +62,7 @@ export default function GenerateQuestionsPage() {
     'assertion-reason': 10,
   })
   const [randomDifficulty, setRandomDifficulty] = useState(false)
-  const [questionContext, setQuestionContext] = useState<'enem' | 'uerj' | 'outros'>('enem')
+  const [questionContext, setQuestionContext] = useState<'medicina-afya' | 'enem' | 'uerj' | 'outros'>('medicina-afya')
   
   // Contextos personalizados
   const [savedContexts, setSavedContexts] = useState<CustomContext[]>([])
@@ -176,7 +176,9 @@ export default function GenerateQuestionsPage() {
     try {
       // Determinar contexto
       let context = ''
-      if (questionContext === 'enem') {
+      if (questionContext === 'medicina-afya') {
+        context = 'Medicina AFYA - Contextualização clínica e raciocínio aplicado'
+      } else if (questionContext === 'enem') {
         context = 'ENEM - Exame Nacional do Ensino Médio'
       } else if (questionContext === 'uerj') {
         context = 'UERJ - Universidade do Estado do Rio de Janeiro'
@@ -679,6 +681,7 @@ export default function GenerateQuestionsPage() {
                     disabled={generating}
                     className="w-full px-3 py-2 border border-muted rounded-md bg-background text-sm"
                   >
+                    <option value="medicina-afya">Medicina AFYA</option>
                     <option value="enem">ENEM</option>
                     <option value="uerj">UERJ</option>
                     <option value="outros">Outros</option>

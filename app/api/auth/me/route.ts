@@ -38,9 +38,14 @@ export async function GET() {
         email: user.email,
         name: user.name,
         role: user.role,
+        cpf: user.cpf,
+        dateOfBirth: user.dateOfBirth,
+        isAfyaMedicineStudent: user.isAfyaMedicineStudent,
+        afyaUnit: user.afyaUnit,
         accountType: user.accountType,
         trialExpiresAt: user.trialExpiresAt,
         trialDuration: user.trialDuration,
+        secondaryRole: user.secondaryRole,
       },
     })
   } catch (error) {

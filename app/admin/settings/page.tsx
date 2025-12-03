@@ -6,8 +6,10 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { ArrowLeft, Settings, AlertCircle, CheckCircle } from 'lucide-react'
+import { ArrowLeft, Settings, AlertCircle, CheckCircle, Eye, EyeOff, Trash2 } from 'lucide-react'
+import { PlanConfig } from '@/lib/types'
 
 interface User {
   id: string
@@ -71,6 +73,10 @@ export default function SettingsPage() {
   const [savingStripe, setSavingStripe] = useState(false)
   const [stripeError, setStripeError] = useState('')
   const [stripeSuccess, setStripeSuccess] = useState('')
+  const [planos, setPlanos] = useState<PlanConfig[]>([])
+  const [savingPlanos, setSavingPlanos] = useState(false)
+  const [planosError, setPlanosError] = useState('')
+  const [planosSuccess, setPlanosSuccess] = useState('')
 
   useEffect(() => {
     checkAuth()
@@ -93,10 +99,53 @@ export default function SettingsPage() {
       setUser(data.user)
       loadSettings()
       loadStripeSettings()
+      loadPlanos()
     } catch (error) {
       router.push('/auth/login')
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function loadPlanos() {
+    try {
+      const res = await fetch('/api/admin/settings/planos')
+      if (res.ok) {
+        const data = await res.json()
+        setPlanos(data.planos || [])
+      }
+    } catch (error) {
+      console.error('Erro ao carregar planos:', error)
+    }
+  }
+
+  async function savePlanos() {
+    setSavingPlanos(true)
+    setPlanosError('')
+    setPlanosSuccess('')
+
+    try {
+      const res = await fetch('/api/admin/settings/planos', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ planos })
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setPlanosError(data.error || 'Erro ao salvar planos')
+        return
+      }
+
+      setPlanosSuccess('Planos salvos com sucesso!')
+      setTimeout(() => {
+        loadPlanos()
+      }, 1000)
+    } catch (error) {
+      setPlanosError('Erro ao salvar planos')
+    } finally {
+      setSavingPlanos(false)
     }
   }
 
@@ -737,6 +786,163 @@ export default function SettingsPage() {
                   variant="outline"
                   onClick={() => loadSettings()}
                   disabled={saving}
+                >
+                  Cancelar
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Planos Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Gerenciar Planos</CardTitle>
+              <CardDescription>Configure os planos de preço disponíveis em /buy</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Planos List */}
+              <div className="space-y-4">
+                {planos.map((plano, idx) => (
+                  <div key={idx} className="p-4 border rounded-lg space-y-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-xs">Nome</Label>
+                        <Input
+                          value={plano.nome}
+                          onChange={(e) => {
+                            const updated = [...planos]
+                            updated[idx].nome = e.target.value
+                            setPlanos(updated)
+                          }}
+                          placeholder="DomineAqui PREMIUM"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Período</Label>
+                        <Input
+                          value={plano.periodo}
+                          onChange={(e) => {
+                            const updated = [...planos]
+                            updated[idx].periodo = e.target.value
+                            setPlanos(updated)
+                          }}
+                          placeholder="Plano Mensal"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Preço (R$)</Label>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          value={plano.preco}
+                          onChange={(e) => {
+                            const updated = [...planos]
+                            updated[idx].preco = parseFloat(e.target.value)
+                            setPlanos(updated)
+                          }}
+                          placeholder="24.90"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Preço Original (R$)</Label>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          value={plano.precoOriginal || ''}
+                          onChange={(e) => {
+                            const updated = [...planos]
+                            updated[idx].precoOriginal = e.target.value ? parseFloat(e.target.value) : undefined
+                            setPlanos(updated)
+                          }}
+                          placeholder="29.90"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-xs">Descrição</Label>
+                      <Input
+                        value={plano.descricao || ''}
+                        onChange={(e) => {
+                          const updated = [...planos]
+                          updated[idx].descricao = e.target.value
+                          setPlanos(updated)
+                        }}
+                        placeholder="Melhor custo-benefício"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs">Benefícios (um por linha)</Label>
+                      <Textarea
+                        value={(plano.beneficios || []).join('\n')}
+                        onChange={(e) => {
+                          const updated = [...planos]
+                          updated[idx].beneficios = e.target.value
+                            .split('\n')
+                            .map(b => b.trim())
+                            .filter(b => b.length > 0)
+                          setPlanos(updated)
+                        }}
+                        placeholder="400 Questões Pessoais por dia&#10;500 Flashcards por dia&#10;Cronogramas ilimitados&#10;Forum de materiais e discussão premium&#10;Aulas ao vivo e vídeo-aulas pós-aula&#10;Acesso a grupo de WhatsApp"
+                        rows={6}
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          const updated = [...planos]
+                          updated[idx].oculto = !updated[idx].oculto
+                          setPlanos(updated)
+                        }}
+                        className={plano.oculto ? 'text-red-600' : 'text-green-600'}
+                      >
+                        {plano.oculto ? (
+                          <>
+                            <EyeOff className="h-4 w-4 mr-2" />
+                            Oculto
+                          </>
+                        ) : (
+                          <>
+                            <Eye className="h-4 w-4 mr-2" />
+                            Visível
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Messages */}
+              {planosError && (
+                <div className="flex gap-2 p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg">
+                  <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
+                  <p className="text-sm text-red-800 dark:text-red-200">{planosError}</p>
+                </div>
+              )}
+
+              {planosSuccess && (
+                <div className="flex gap-2 p-3 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg">
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 shrink-0 mt-0.5" />
+                  <p className="text-sm text-green-800 dark:text-green-200">{planosSuccess}</p>
+                </div>
+              )}
+
+              {/* Save Button */}
+              <div className="flex gap-3 pt-4 border-t">
+                <Button
+                  onClick={savePlanos}
+                  disabled={savingPlanos}
+                  className="bg-primary hover:bg-primary/90"
+                >
+                  {savingPlanos ? 'Salvando...' : 'Salvar Planos'}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => loadPlanos()}
+                  disabled={savingPlanos}
                 >
                   Cancelar
                 </Button>

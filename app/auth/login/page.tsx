@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { BanReasonLabels, BanReason } from '@/lib/types'
 import { Ban, AlertCircle } from 'lucide-react'
 import { ADMIN_EMAILS } from '@/lib/constants'
+import { AFYA_UNITS } from '@/lib/afya-units'
 import { GoogleProfileSetupDialog } from '@/components/google-profile-setup-dialog'
 
 declare global {
@@ -49,6 +50,10 @@ export default function LoginPage() {
     email: '',
     password: '',
     name: '',
+    cpf: '',
+    dateOfBirth: '',
+    isAfyaMedicineStudent: false,
+    afyaUnit: '',
     role: 'user'
   })
 
@@ -92,16 +97,77 @@ export default function LoginPage() {
 
   const canBeAdmin = ADMIN_EMAILS.includes(formData.email.toLowerCase().trim())
 
+  const formatCPF = (value: string) => {
+    const cleaned = value.replace(/\D/g, '')
+    if (cleaned.length <= 11) {
+      return cleaned
+        .replace(/(\d{3})(\d)/, '$1.$2')
+        .replace(/(\d{3})(\d)/, '$1.$2')
+        .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
+    }
+    return cleaned.slice(0, 11)
+  }
+
+  const validateCPF = (cpf: string): boolean => {
+    const cleaned = cpf.replace(/\D/g, '')
+    if (cleaned.length !== 11) return false
+    
+    // Verifica se todos os dígitos são iguais
+    if (/^(\d)\1{10}$/.test(cleaned)) return false
+    
+    // Calcula primeiro dígito verificador
+    let sum = 0
+    for (let i = 0; i < 9; i++) {
+      sum += parseInt(cleaned[i]) * (10 - i)
+    }
+    let digit1 = 11 - (sum % 11)
+    digit1 = digit1 > 9 ? 0 : digit1
+    
+    // Calcula segundo dígito verificador
+    sum = 0
+    for (let i = 0; i < 10; i++) {
+      sum += parseInt(cleaned[i]) * (11 - i)
+    }
+    let digit2 = 11 - (sum % 11)
+    digit2 = digit2 > 9 ? 0 : digit2
+    
+    return digit1 === parseInt(cleaned[9]) && digit2 === parseInt(cleaned[10])
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
     setLoading(true)
 
     try {
+      // Validações para cadastro
+      if (!isLogin) {
+        if (!formData.name || !formData.email || !formData.password || !formData.cpf || !formData.dateOfBirth) {
+          setError('Todos os campos são obrigatórios')
+          setLoading(false)
+          return
+        }
+
+        if (!validateCPF(formData.cpf)) {
+          setError('CPF inválido')
+          setLoading(false)
+          return
+        }
+
+        if (formData.isAfyaMedicineStudent && !formData.afyaUnit) {
+          setError('Selecione sua unidade Afya')
+          setLoading(false)
+          return
+        }
+      }
+
       const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register'
       const body = isLogin
         ? { email: formData.email, password: formData.password }
-        : formData
+        : {
+            ...formData,
+            cpf: formData.cpf.replace(/\D/g, ''),
+          }
 
       const res = await fetch(endpoint, {
         method: 'POST',
@@ -182,7 +248,13 @@ export default function LoginPage() {
     }
   }
 
-  async function handleProfileSetupComplete(profileName: string) {
+  async function handleProfileSetupComplete(setupData: {
+    profileName: string
+    cpf: string
+    dateOfBirth: string
+    isAfyaMedicineStudent: boolean
+    afyaUnit?: string
+  }) {
     if (!googleData) return
 
     setGoogleLoading(true)
@@ -192,7 +264,11 @@ export default function LoginPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: googleData.email,
-          profileName,
+          profileName: setupData.profileName,
+          cpf: setupData.cpf,
+          dateOfBirth: setupData.dateOfBirth,
+          isAfyaMedicineStudent: setupData.isAfyaMedicineStudent,
+          afyaUnit: setupData.afyaUnit,
           picture: googleData.picture,
           googleId: googleData.googleId,
         }),
@@ -214,6 +290,12 @@ export default function LoginPage() {
     }
   }
 
+  function handleProfileSetupCancel() {
+    setShowProfileSetup(false)
+    setGoogleData(null)
+    setError('')
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#468152]/20 via-background to-[#E2A43E]/20 p-4">
       <div className="absolute top-4 left-4">
@@ -229,8 +311,8 @@ export default function LoginPage() {
         <ThemeToggle />
       </div>
 
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
+      <Card className="w-full max-w-md max-h-[90vh] flex flex-col">
+        <CardHeader className="space-y-1 flex-shrink-0">
           <div className="flex items-center justify-center mb-4">
             <Logo variant="full" size="lg" />
           </div>
@@ -244,8 +326,8 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
 
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+          <CardContent className="space-y-4 overflow-y-auto flex-1">
             {!isLogin && (
               <div className="space-y-2">
                 <Label htmlFor="name">Nome Completo</Label>
@@ -299,23 +381,98 @@ export default function LoginPage() {
             </div>
 
             {!isLogin && (
-              <div className="space-y-2">
-                <Label htmlFor="role">Tipo de Conta</Label>
-                <select
-                  id="role"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  value={formData.role}
-                  onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                >
-                  <option value="user">Usuário</option>
-                  {canBeAdmin && <option value="admin">Administrador</option>}
-                </select>
-                {!canBeAdmin && formData.email && (
-                  <p className="text-xs text-muted-foreground">
-                    Apenas emails autorizados podem criar contas de administrador
+              <>
+                {/* CPF */}
+                <div className="space-y-2">
+                  <Label htmlFor="cpf">CPF *</Label>
+                  <Input
+                    id="cpf"
+                    type="text"
+                    placeholder="000.000.000-00"
+                    value={formData.cpf}
+                    onChange={(e) => setFormData({ ...formData, cpf: formatCPF(e.target.value) })}
+                    maxLength={14}
+                    required
+                  />
+                </div>
+
+                {/* Data de Nascimento */}
+                <div className="space-y-2">
+                  <Label htmlFor="dateOfBirth">Data de Nascimento *</Label>
+                  <Input
+                    id="dateOfBirth"
+                    type="date"
+                    value={formData.dateOfBirth}
+                    onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                    required
+                  />
+                </div>
+
+                {/* Pergunta sobre Afya */}
+                <div className="space-y-3 p-4 bg-amber-50 dark:bg-amber-950 rounded-lg border border-amber-200 dark:border-amber-800">
+                  <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
+                    Você é estudante de Medicina da Afya?
                   </p>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant={formData.isAfyaMedicineStudent ? 'default' : 'outline'}
+                      className="flex-1 h-9"
+                      onClick={() => setFormData({ ...formData, isAfyaMedicineStudent: true })}
+                    >
+                      Sim
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={!formData.isAfyaMedicineStudent ? 'default' : 'outline'}
+                      className="flex-1 h-9"
+                      onClick={() => setFormData({ ...formData, isAfyaMedicineStudent: false, afyaUnit: '' })}
+                    >
+                      Não
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Seleção de Unidade Afya */}
+                {formData.isAfyaMedicineStudent && (
+                  <div className="space-y-2">
+                    <Label htmlFor="afyaUnit">Sua Unidade Afya *</Label>
+                    <select
+                      id="afyaUnit"
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      value={formData.afyaUnit}
+                      onChange={(e) => setFormData({ ...formData, afyaUnit: e.target.value })}
+                      required={formData.isAfyaMedicineStudent}
+                    >
+                      <option value="">Selecione sua unidade...</option>
+                      {AFYA_UNITS.map((unit) => (
+                        <option key={unit} value={unit}>
+                          {unit}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 )}
-              </div>
+
+                {/* Tipo de Conta */}
+                <div className="space-y-2">
+                  <Label htmlFor="role">Tipo de Conta</Label>
+                  <select
+                    id="role"
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    value={formData.role}
+                    onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                  >
+                    <option value="user">Usuário</option>
+                    {canBeAdmin && <option value="admin">Administrador</option>}
+                  </select>
+                  {!canBeAdmin && formData.email && (
+                    <p className="text-xs text-muted-foreground">
+                      Apenas emails autorizados podem criar contas de administrador
+                    </p>
+                  )}
+                </div>
+              </>
             )}
 
             {error && (
@@ -325,7 +482,7 @@ export default function LoginPage() {
             )}
           </CardContent>
 
-          <CardFooter className="flex flex-col space-y-4">
+          <CardFooter className="flex flex-col space-y-4 flex-shrink-0">
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? 'Carregando...' : isLogin ? 'Entrar' : 'Criar Conta'}
             </Button>
@@ -462,6 +619,7 @@ export default function LoginPage() {
           open={showProfileSetup}
           googleData={googleData}
           onComplete={handleProfileSetupComplete}
+          onCancel={handleProfileSetupCancel}
           isLoading={googleLoading}
         />
       )}

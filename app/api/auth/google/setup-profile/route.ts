@@ -8,11 +8,18 @@ export const dynamic = 'force-dynamic'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { email, profileName, picture, googleId } = body
+    const { email, profileName, cpf, dateOfBirth, isAfyaMedicineStudent, afyaUnit, picture, googleId } = body
 
-    if (!email || !profileName) {
+    if (!email || !profileName || !cpf || !dateOfBirth) {
       return NextResponse.json(
-        { error: 'Email e nome do perfil são obrigatórios' },
+        { error: 'Email, nome do perfil, CPF e data de nascimento são obrigatórios' },
+        { status: 400 }
+      )
+    }
+
+    if (isAfyaMedicineStudent && !afyaUnit) {
+      return NextResponse.json(
+        { error: 'Unidade Afya é obrigatória para estudantes de Medicina da Afya' },
         { status: 400 }
       )
     }
@@ -21,10 +28,19 @@ export async function POST(request: NextRequest) {
     const usersCollection = db.collection<User>('users')
 
     // Verifica se o email já existe
-    const existingUser = await usersCollection.findOne({ email })
-    if (existingUser) {
+    const existingUserByEmail = await usersCollection.findOne({ email })
+    if (existingUserByEmail) {
       return NextResponse.json(
         { error: 'Email já cadastrado' },
+        { status: 400 }
+      )
+    }
+
+    // Verifica se o CPF já existe
+    const existingUserByCPF = await usersCollection.findOne({ cpf })
+    if (existingUserByCPF) {
+      return NextResponse.json(
+        { error: 'CPF já cadastrado' },
         { status: 400 }
       )
     }
@@ -36,6 +52,10 @@ export async function POST(request: NextRequest) {
       password: '', // Usuário do Google não tem senha
       role: 'user',
       createdAt: new Date(),
+      cpf,
+      dateOfBirth: new Date(dateOfBirth),
+      isAfyaMedicineStudent: isAfyaMedicineStudent || false,
+      afyaUnit: isAfyaMedicineStudent ? afyaUnit : undefined,
       googleId,
       profilePicture: picture,
     }

@@ -68,6 +68,21 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-[#468152]/10">
+      <style>{`
+        @keyframes pulse-glow {
+          0%, 100% { 
+            box-shadow: 0 0 20px rgba(70, 129, 82, 0.6), 0 0 40px rgba(226, 164, 62, 0.3);
+            opacity: 1;
+          }
+          50% { 
+            box-shadow: 0 0 40px rgba(70, 129, 82, 0.9), 0 0 60px rgba(226, 164, 62, 0.5);
+            opacity: 0.8;
+          }
+        }
+        .animate-pulse-glow {
+          animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+      `}</style>
       {/* Header */}
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled ? 'bg-background/70 dark:bg-background/50 backdrop-blur-xl shadow-lg border-b border-[#468152]/10' : 'bg-transparent'
@@ -83,11 +98,10 @@ export default function LandingPage() {
             <ThemeToggle />
             <Button 
               onClick={() => router.push('/auth/login')}
-              variant="outline"
+              className="bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90 text-white font-bold shadow-lg animate-pulse-glow border-0"
               size="sm"
-              className="border-[#468152]/30 hover:bg-[#468152]/10"
             >
-              Entrar
+              ✨ Entrar Agora
             </Button>
           </div>
         </div>

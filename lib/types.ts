@@ -215,6 +215,14 @@ export interface User {
   password: string
   role: 'admin' | 'user'
   createdAt: Date
+  // Cargo secundário (independente do plano)
+  secondaryRole?: 'monitor' // Monitor pode gerenciar aulas, tópicos, etc
+  // Informações pessoais obrigatórias
+  cpf?: string // CPF do usuário (único, obrigatório no cadastro)
+  dateOfBirth?: Date // Data de nascimento (obrigatória no cadastro)
+  // Informações sobre Afya
+  isAfyaMedicineStudent?: boolean // Se é estudante de Medicina da Afya
+  afyaUnit?: string // Unidade da Afya (se isAfyaMedicineStudent = true)
   // Campos de banimento
   banned?: boolean
   banReason?: BanReason
@@ -539,4 +547,155 @@ export interface StripeSettings {
   lifetime: string
   updatedAt?: Date
   updatedBy?: string // ID do admin que atualizou
+}
+
+// Tipos para Aulas
+export type AulaType = 'ao-vivo' | 'gravada'
+export type AulaVisibility = 'premium' | 'gratuita'
+
+export interface AulaSetor {
+  _id?: string | import('mongodb').ObjectId
+  nome: string
+  descricao?: string
+  ordem: number
+  oculta?: boolean
+  criadoEm: Date
+  atualizadoEm: Date
+}
+
+export interface AulaTopic {
+  _id?: string | import('mongodb').ObjectId
+  setorId: string
+  nome: string
+  descricao?: string
+  ordem: number
+  oculta?: boolean
+  criadoEm: Date
+  atualizadoEm: Date
+}
+
+export interface AulaSubtopic {
+  _id?: string | import('mongodb').ObjectId
+  setorId: string
+  topicoId: string
+  nome: string
+  descricao?: string
+  ordem: number
+  oculta?: boolean
+  criadoEm: Date
+  atualizadoEm: Date
+}
+
+export interface AulaModulo {
+  _id?: string | import('mongodb').ObjectId
+  setorId: string
+  topicoId?: string
+  subtopicoId?: string
+  nome: string
+  descricao?: string
+  ordem: number
+  oculta?: boolean
+  criadoEm: Date
+  atualizadoEm: Date
+}
+
+export interface AulaSubmodulo {
+  _id?: string | import('mongodb').ObjectId
+  setorId: string
+  topicoId?: string
+  subtopicoId?: string
+  moduloId: string
+  nome: string
+  descricao?: string
+  ordem: number
+  oculta?: boolean
+  criadoEm: Date
+  atualizadoEm: Date
+}
+
+export interface AulaComentario {
+  _id?: string | import('mongodb').ObjectId
+  aulaId: string
+  usuarioId: string
+  nomeUsuario: string
+  isAdmin: boolean
+  conteudo: string
+  criadoEm: Date
+}
+
+export interface AulaPostagem {
+  _id?: string | import('mongodb').ObjectId
+  titulo: string
+  descricao?: string
+  tipo: AulaType // 'ao-vivo' ou 'gravada'
+  visibilidade: AulaVisibility // 'premium' ou 'gratuita'
+  setorId?: string // Pode estar em um setor específico
+  topicoId?: string
+  subtopicoId?: string
+  moduloId?: string
+  submoduloId?: string // Novo: pode estar em um submódulo
+  
+  // Para aulas ao-vivo
+  linkOuEmbed?: string // Link para entrada ou embed do vídeo
+  
+  // Para aulas gravadas
+  videoEmbed?: string // Embed do vídeo
+  
+  // Capa da aula
+  capa?: {
+    tipo: 'imagem' | 'cor' // 'imagem' ou 'cor'
+    imagem?: string // URL da imagem (se tipo === 'imagem')
+    cor?: string // Cor de fundo em hex (se tipo === 'cor')
+    titulo?: string // Título pequeno para exibir na capa (se tipo === 'cor')
+  }
+
+  // Botões de acesso (ex: Zoom, Meet, etc)
+  botoesAcesso?: Array<{
+    nome: string // Nome do botão (ex: "Entrar no Zoom", "Acessar")
+    url: string // URL para acessar
+  }>
+  
+  // Anexos
+  pdfs?: Array<{
+    nome: string
+    url: string
+    tamanho: number
+  }>
+  
+  // Datas
+  dataLiberacao: Date // Quando a aula será liberada para os alunos
+  criadoEm: Date
+  atualizadoEm: Date
+  
+  // Controle
+  oculta: boolean
+  comentarios: AulaComentario[]
+  
+  // Conclusão por usuário
+  usuariosConcluidos?: string[] // IDs de usuários que concluíram a aula
+}
+
+// Tipos para Planos/Pricing
+export type PlanType = 'mensal' | 'trimestral' | 'semestral' | 'anual' | 'vitalicio'
+
+export interface PlanConfig {
+  _id?: string
+  tipo: PlanType
+  nome: string // ex: "DomineAqui PREMIUM"
+  periodo: string // ex: "Plano Mensal"
+  preco: number // Preço principal (ex: 24.90)
+  precoOriginal?: number // Preço original com desconto (ex: 29.90)
+  descricao?: string
+  beneficios?: string[]
+  oculto: boolean // Se true, não aparece em /buy
+  ordem: number // Ordem de exibição
+  criadoEm: Date
+  atualizadoEm: Date
+}
+
+export interface AdminSettings {
+  _id?: string
+  planos: PlanConfig[]
+  criadoEm: Date
+  atualizadoEm: Date
 }

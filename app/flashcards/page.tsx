@@ -369,155 +369,161 @@ export default function FlashcardsPage() {
   function downloadDeckPDF() {
     if (!selectedDeck || cards.length === 0) return
 
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4'
-    })
+    const printWindow = window.open('', '', 'width=1200,height=800')
+    if (!printWindow) {
+      alert('Por favor, desabilite o bloqueador de pop-ups')
+      return
+    }
 
-    const pageWidth = pdf.internal.pageSize.getWidth()
-    const pageHeight = pdf.internal.pageSize.getHeight()
-    const margin = 20
-    const contentWidth = pageWidth - 2 * margin
-    let yPosition = margin
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>${selectedDeck.title}</title>
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { 
+              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+              background: #f5f5f5;
+              padding: 40px 20px;
+            }
+            .container { max-width: 1000px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+            .header { text-align: center; margin-bottom: 40px; border-bottom: 3px solid #468152; padding-bottom: 20px; }
+            .header h1 { color: #333; font-size: 28px; margin-bottom: 10px; }
+            .header p { color: #666; font-size: 14px; }
+            .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 40px; }
+            .stat-box { background: linear-gradient(135deg, #468152 0%, #5a9a63 100%); color: white; padding: 20px; border-radius: 8px; text-align: center; }
+            .stat-box .label { font-size: 12px; opacity: 0.9; margin-bottom: 5px; }
+            .stat-box .value { font-size: 24px; font-weight: bold; }
+            .cards-container { display: grid; grid-template-columns: 1fr; gap: 20px; }
+            .card { 
+              background: linear-gradient(135deg, #f0f9ff 0%, #f5f3ff 100%);
+              border: 2px solid #468152;
+              border-radius: 8px;
+              padding: 20px;
+              page-break-inside: avoid;
+            }
+            .card-number { 
+              color: #468152; 
+              font-weight: 600; 
+              font-size: 12px; 
+              margin-bottom: 10px;
+              text-transform: uppercase;
+            }
+            .card-question { 
+              background: white;
+              border-left: 4px solid #468152;
+              padding: 15px;
+              margin-bottom: 15px;
+              border-radius: 4px;
+              font-weight: 600;
+              color: #333;
+              font-size: 14px;
+              line-height: 1.5;
+            }
+            .card-answer { 
+              background: #e8f5e9;
+              border-left: 4px solid #2e7d32;
+              padding: 15px;
+              margin-bottom: 15px;
+              border-radius: 4px;
+              color: #1b5e20;
+              font-size: 13px;
+              line-height: 1.5;
+            }
+            .card-objectives { 
+              background: #fff3e0;
+              border-left: 4px solid #e65100;
+              padding: 12px;
+              margin-bottom: 10px;
+              border-radius: 4px;
+              font-size: 12px;
+              color: #e65100;
+              line-height: 1.4;
+            }
+            .card-hint { 
+              background: #f3e5f5;
+              border-left: 4px solid #7b1fa2;
+              padding: 12px;
+              border-radius: 4px;
+              font-size: 12px;
+              color: #4a148c;
+              font-style: italic;
+              line-height: 1.4;
+            }
+            .card-label { 
+              font-weight: 600; 
+              font-size: 11px; 
+              text-transform: uppercase; 
+              margin-bottom: 5px;
+              opacity: 0.8;
+            }
+            @media print {
+              body { padding: 0; background: white; }
+              .container { box-shadow: none; padding: 20px; }
+              .card { page-break-inside: avoid; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>${selectedDeck.title}</h1>
+              <p>Tema: ${selectedDeck.theme}</p>
+            </div>
+            
+            <div class="stats">
+              <div class="stat-box">
+                <div class="label">Total de Cartões</div>
+                <div class="value">${cards.length}</div>
+              </div>
+              <div class="stat-box">
+                <div class="label">Tema</div>
+                <div class="value">${selectedDeck.theme.substring(0, 15)}...</div>
+              </div>
+              <div class="stat-box">
+                <div class="label">Data de Geração</div>
+                <div class="value">${new Date().toLocaleDateString('pt-BR')}</div>
+              </div>
+            </div>
 
-    // Cores
-    const primaryColor = [59, 130, 246] // Azul
-    const accentColor = [168, 85, 247] // Roxo
-    const textColor = [30, 30, 30]
-    const lightGray = [240, 240, 240]
+            <div class="cards-container">
+              ${cards.map((card, index) => `
+                <div class="card">
+                  <div class="card-number">Cartão ${index + 1} de ${cards.length}</div>
+                  
+                  <div class="card-label">Pergunta</div>
+                  <div class="card-question">${card.front}</div>
+                  
+                  <div class="card-label">Resposta</div>
+                  <div class="card-answer">${card.back}</div>
+                  
+                  ${card.objectives && card.objectives.length > 0 ? `
+                    <div class="card-label">Objetivos</div>
+                    <div class="card-objectives">
+                      ${card.objectives.map(o => `• ${o.text}`).join('<br>')}
+                    </div>
+                  ` : ''}
+                  
+                  ${card.hint ? `
+                    <div class="card-label">Dica</div>
+                    <div class="card-hint">${card.hint}</div>
+                  ` : ''}
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </body>
+      </html>
+    `
 
-    // Logo/Header
-    pdf.setFontSize(28)
-    pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2])
-    pdf.setFont('helvetica', 'bold')
-    pdf.text('DomineAqui', margin, yPosition)
-    yPosition += 10
-
-    // Subtítulo
-    pdf.setFontSize(10)
-    pdf.setTextColor(accentColor[0], accentColor[1], accentColor[2])
-    pdf.setFont('helvetica', 'normal')
-    pdf.text('Flashcards de Estudo', margin, yPosition)
-    yPosition += 12
-
-    // Linha divisória colorida
-    pdf.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2])
-    pdf.setLineWidth(0.5)
-    pdf.line(margin, yPosition, pageWidth - margin, yPosition)
-    yPosition += 8
-
-    // Título do deck
-    pdf.setFontSize(20)
-    pdf.setTextColor(textColor[0], textColor[1], textColor[2])
-    pdf.setFont('helvetica', 'bold')
-    const titleLines = pdf.splitTextToSize(selectedDeck.title, contentWidth)
-    pdf.text(titleLines, margin, yPosition)
-    yPosition += titleLines.length * 6 + 4
-
-    // Tema
-    pdf.setFontSize(11)
-    pdf.setTextColor(100, 100, 100)
-    pdf.setFont('helvetica', 'normal')
-    pdf.text(`📚 Tema: ${selectedDeck.theme}`, margin, yPosition)
-    yPosition += 6
-
-    // Data
-    pdf.setFontSize(9)
-    pdf.setTextColor(150, 150, 150)
-    pdf.text(`📅 Gerado em: ${new Date().toLocaleDateString('pt-BR')} • Total: ${cards.length} cartões`, margin, yPosition)
-    yPosition += 10
-
-    // Linha divisória
-    pdf.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2])
-    pdf.setLineWidth(0.3)
-    pdf.line(margin, yPosition, pageWidth - margin, yPosition)
-    yPosition += 10
-
-    // Cards
-    cards.forEach((card, index) => {
-      // Verificar se precisa de nova página
-      if (yPosition > pageHeight - 50) {
-        pdf.addPage()
-        yPosition = margin
-        
-        // Header na nova página
-        pdf.setFontSize(12)
-        pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2])
-        pdf.setFont('helvetica', 'bold')
-        pdf.text('DomineAqui', margin, yPosition)
-        yPosition += 8
-        
-        pdf.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2])
-        pdf.setLineWidth(0.3)
-        pdf.line(margin, yPosition, pageWidth - margin, yPosition)
-        yPosition += 8
-      }
-
-      // Background do card
-      pdf.setFillColor(240, 248, 255) // Azul muito claro
-      pdf.rect(margin - 2, yPosition - 2, contentWidth + 4, 1, 'F')
-
-      // Número do card
-      pdf.setFontSize(11)
-      pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2])
-      pdf.setFont('helvetica', 'bold')
-      pdf.text(`🎯 Cartão ${index + 1} de ${cards.length}`, margin, yPosition)
-      yPosition += 7
-
-      // Pergunta
-      pdf.setFontSize(11)
-      pdf.setTextColor(textColor[0], textColor[1], textColor[2])
-      pdf.setFont('helvetica', 'bold')
-      const questionLines = pdf.splitTextToSize(`❓ ${card.front}`, contentWidth)
-      pdf.text(questionLines, margin, yPosition)
-      yPosition += questionLines.length * 5 + 3
-
-      // Resposta
-      pdf.setFont('helvetica', 'normal')
-      pdf.setFontSize(10)
-      pdf.setTextColor(80, 80, 80)
-      const answerLines = pdf.splitTextToSize(`✅ ${card.back}`, contentWidth)
-      pdf.text(answerLines, margin, yPosition)
-      yPosition += answerLines.length * 5 + 4
-
-      // Objetivos
-      if (card.objectives && card.objectives.length > 0) {
-        pdf.setFontSize(9)
-        pdf.setTextColor(100, 100, 100)
-        const objectivesText = `🎓 Objetivos: ${card.objectives.map(o => o.text).join(', ')}`
-        const objectivesLines = pdf.splitTextToSize(objectivesText, contentWidth)
-        pdf.text(objectivesLines, margin, yPosition)
-        yPosition += objectivesLines.length * 4 + 2
-      }
-
-      // Dica
-      if (card.hint) {
-        pdf.setFontSize(9)
-        pdf.setTextColor(150, 100, 0)
-        const hintText = `💡 Dica: ${card.hint}`
-        const hintLines = pdf.splitTextToSize(hintText, contentWidth)
-        pdf.text(hintLines, margin, yPosition)
-        yPosition += hintLines.length * 4 + 4
-      }
-
-      // Separador entre cards
-      pdf.setDrawColor(200, 200, 200)
-      pdf.setLineWidth(0.2)
-      pdf.line(margin, yPosition, pageWidth - margin, yPosition)
-      yPosition += 6
-    })
-
-    // Footer
-    yPosition = pageHeight - 15
-    pdf.setFontSize(8)
-    pdf.setTextColor(150, 150, 150)
-    pdf.text('DomineAqui • Plataforma de Estudo Inteligente', margin, yPosition)
-    pdf.text(`Página 1 de ${pdf.internal.pages.length - 1}`, pageWidth - margin - 20, yPosition)
-
-    // Salvar PDF
-    pdf.save(`DomineAqui_${selectedDeck.title}.pdf`)
-    setToast({ open: true, message: 'PDF baixado com sucesso!', type: 'success' })
+    printWindow.document.write(html)
+    printWindow.document.close()
+    
+    setTimeout(() => {
+      printWindow.print()
+    }, 250)
   }
 
   function openDeleteConfirmation(deckId: string, deckTitle: string) {

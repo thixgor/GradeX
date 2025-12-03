@@ -68,11 +68,11 @@ export async function PATCH(
     }
 
     const body = await request.json()
-    const { action, banReason, banDetails, accountType, trialPlanType, premiumPlanType, dailyPersonalExamsCreated } = body
+    const { action, banReason, banDetails, accountType, trialPlanType, premiumPlanType, dailyPersonalExamsCreated, secondaryRole } = body
 
-    if (!action || !['ban', 'unban', 'update_tier', 'update_quota'].includes(action)) {
+    if (!action || !['ban', 'unban', 'update_tier', 'update_quota', 'toggle_monitor'].includes(action)) {
       return NextResponse.json(
-        { error: 'Ação inválida. Use "ban", "unban", "update_tier" ou "update_quota"' },
+        { error: 'Ação inválida. Use "ban", "unban", "update_tier", "update_quota" ou "toggle_monitor"' },
         { status: 400 }
       )
     }
@@ -193,6 +193,15 @@ export async function PATCH(
       }
 
       successMessage = 'Quotas do usuário atualizadas com sucesso'
+    } else if (action === 'toggle_monitor') {
+      // toggle_monitor
+      updateData = {
+        secondaryRole: secondaryRole || undefined
+      }
+
+      successMessage = secondaryRole === 'monitor'
+        ? 'Usuário promovido a Monitor com sucesso'
+        : 'Cargo de Monitor removido com sucesso'
     }
 
     await usersCollection.updateOne(

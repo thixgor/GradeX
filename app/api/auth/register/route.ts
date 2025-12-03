@@ -9,11 +9,18 @@ export const dynamic = 'force-dynamic'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { email, password, name, role = 'user' } = body
+    const { email, password, name, cpf, dateOfBirth, isAfyaMedicineStudent, afyaUnit, role = 'user' } = body
 
-    if (!email || !password || !name) {
+    if (!email || !password || !name || !cpf || !dateOfBirth) {
       return NextResponse.json(
         { error: 'Todos os campos são obrigatórios' },
+        { status: 400 }
+      )
+    }
+
+    if (isAfyaMedicineStudent && !afyaUnit) {
+      return NextResponse.json(
+        { error: 'Unidade Afya é obrigatória para estudantes de Medicina da Afya' },
         { status: 400 }
       )
     }
@@ -43,10 +50,19 @@ export async function POST(request: NextRequest) {
     const usersCollection = db.collection<User>('users')
 
     // Verifica se o email já existe
-    const existingUser = await usersCollection.findOne({ email })
-    if (existingUser) {
+    const existingUserByEmail = await usersCollection.findOne({ email })
+    if (existingUserByEmail) {
       return NextResponse.json(
         { error: 'Email já cadastrado' },
+        { status: 400 }
+      )
+    }
+
+    // Verifica se o CPF já existe
+    const existingUserByCPF = await usersCollection.findOne({ cpf })
+    if (existingUserByCPF) {
+      return NextResponse.json(
+        { error: 'CPF já cadastrado' },
         { status: 400 }
       )
     }
@@ -57,6 +73,10 @@ export async function POST(request: NextRequest) {
       email,
       password: hashedPassword,
       name,
+      cpf,
+      dateOfBirth: new Date(dateOfBirth),
+      isAfyaMedicineStudent: isAfyaMedicineStudent || false,
+      afyaUnit: isAfyaMedicineStudent ? afyaUnit : undefined,
       role: role as 'admin' | 'user',
       createdAt: new Date(),
     }
