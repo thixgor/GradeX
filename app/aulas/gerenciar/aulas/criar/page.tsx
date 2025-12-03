@@ -53,6 +53,8 @@ export default function CriarAulaPage() {
   // Capa
   const [capaTipo, setCapaTipo] = useState<'imagem' | 'cor' | 'nenhuma'>('nenhuma')
   const [capaImagem, setCapaImagem] = useState('')
+  const [capaImagemUpload, setCapaImagemUpload] = useState<File | null>(null)
+  const [capaImagemPreview, setCapaImagemPreview] = useState('')
   const [capaCorHex, setCapaCorHex] = useState('#3b82f6')
   const [capaCorTitulo, setCapaCorTitulo] = useState('')
   
@@ -90,6 +92,33 @@ export default function CriarAulaPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  function handleCapaImagemUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validar tamanho (máx 3MB)
+    if (file.size > 3 * 1024 * 1024) {
+      showToast('Imagem muito grande! Máximo 3MB', 'error')
+      return
+    }
+
+    // Validar tipo
+    if (!file.type.startsWith('image/')) {
+      showToast('Arquivo deve ser uma imagem', 'error')
+      return
+    }
+
+    setCapaImagemUpload(file)
+
+    // Criar preview
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      setCapaImagemPreview(event.target?.result as string)
+      setCapaImagem(event.target?.result as string) // Salvar como base64
+    }
+    reader.readAsDataURL(file)
   }
 
   async function loadDados() {
@@ -625,18 +654,49 @@ export default function CriarAulaPage() {
               </div>
 
               {capaTipo === 'imagem' && (
-                <div>
-                  <Label htmlFor="capaImagem" className="text-white/80">URL da Imagem *</Label>
-                  <Input
-                    id="capaImagem"
-                    value={capaImagem}
-                    onChange={(e) => setCapaImagem(e.target.value)}
-                    placeholder="https://exemplo.com/imagem.jpg"
-                    className="mt-1 bg-white/5 border-white/10 text-white placeholder:text-white/40"
-                  />
-                  <p className="text-xs text-white/50 mt-2">
-                    📐 Tamanho recomendado: 16:9 (ex: 1280x720px, 1920x1080px)
-                  </p>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="capaImagemUpload" className="text-white/80">Upload de Imagem (Máx 3MB) *</Label>
+                    <div className="mt-2 flex items-center gap-3">
+                      <input
+                        id="capaImagemUpload"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleCapaImagemUpload}
+                        className="hidden"
+                      />
+                      <Button
+                        type="button"
+                        onClick={() => document.getElementById('capaImagemUpload')?.click()}
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        <Upload className="h-4 w-4 mr-2" />
+                        Escolher Imagem
+                      </Button>
+                      {capaImagemUpload && (
+                        <span className="text-sm text-white/70">{capaImagemUpload.name}</span>
+                      )}
+                    </div>
+                    <p className="text-xs text-white/50 mt-2">
+                      📐 Tamanho recomendado: 16:9 (ex: 1280x720px, 1920x1080px)
+                    </p>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="capaImagemUrl" className="text-white/80">Ou Cole a URL da Imagem</Label>
+                    <Input
+                      id="capaImagemUrl"
+                      value={capaImagemUpload ? '' : capaImagem}
+                      onChange={(e) => {
+                        setCapaImagemUpload(null)
+                        setCapaImagem(e.target.value)
+                      }}
+                      placeholder="https://exemplo.com/imagem.jpg"
+                      className="mt-1 bg-white/5 border-white/10 text-white placeholder:text-white/40"
+                      disabled={!!capaImagemUpload}
+                    />
+                  </div>
+
                   {capaImagem && (
                     <div className="mt-4 rounded-lg overflow-hidden border border-white/10">
                       <img 
