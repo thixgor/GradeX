@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Menu, X, Plus } from 'lucide-react'
+import { Menu, X, Plus, BookOpen } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 interface MobileMenuProps {
@@ -11,6 +11,7 @@ interface MobileMenuProps {
   isAdmin?: boolean
   tierLimitExceeded?: boolean
   personalExamsEnabled?: boolean
+  showAulasButton?: boolean
 }
 
 export function MobileMenu({
@@ -19,6 +20,7 @@ export function MobileMenu({
   isAdmin = false,
   tierLimitExceeded = false,
   personalExamsEnabled = true,
+  showAulasButton = false,
 }: MobileMenuProps) {
   const [open, setOpen] = useState(false)
   const router = useRouter()
@@ -49,6 +51,20 @@ export function MobileMenu({
       {open && (
         <div className="absolute top-full left-0 right-0 bg-background border-b shadow-lg md:hidden z-40">
           <div className="flex flex-col gap-2 p-4">
+            {showAulasButton && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  router.push('/aulas')
+                  setOpen(false)
+                }}
+                className="w-full justify-start"
+              >
+                <BookOpen className="h-4 w-4 mr-2" />
+                Aulas
+              </Button>
+            )}
             {isAdmin && (
               <Button
                 variant="outline"

@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { ArrowLeft, Plus, Edit2, Trash2, Copy, Eye, EyeOff } from 'lucide-react'
-import { AulaPostagem } from '@/lib/types'
+import { ArrowLeft, Plus, Edit2, Trash2, Copy, Eye, EyeOff, ChevronDown, ChevronUp } from 'lucide-react'
+import { AulaPostagem, AulaSetor, AulaTopic, AulaSubtopic, AulaModulo, AulaSubmodulo } from '@/lib/types'
 import { ToastAlert } from '@/components/ui/toast-alert'
 
 interface User {
@@ -22,6 +22,17 @@ export default function GerenciarAulasPage() {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [aulas, setAulas] = useState<AulaPostagem[]>([])
+  const [setores, setSetores] = useState<AulaSetor[]>([])
+  const [topicos, setTopicos] = useState<AulaTopic[]>([])
+  const [subtopicos, setSubtopicos] = useState<AulaSubtopic[]>([])
+  const [modulos, setModulos] = useState<AulaModulo[]>([])
+  const [submodulos, setSubmodulos] = useState<AulaSubmodulo[]>([])
+  
+  // Filtros de cascata
+  const [selectedSetor, setSelectedSetor] = useState<string | null>(null)
+  const [selectedTopico, setSelectedTopico] = useState<string | null>(null)
+  const [selectedSubtopico, setSelectedSubtopico] = useState<string | null>(null)
+  const [selectedModulo, setSelectedModulo] = useState<string | null>(null)
 
   // Toast
   const [toastOpen, setToastOpen] = useState(false)
@@ -62,7 +73,12 @@ export default function GerenciarAulasPage() {
       const res = await fetch('/api/aulas')
       if (res.ok) {
         const data = await res.json()
-        setAulas(data.aulas || [])
+        setAulas((data.aulas || []).sort((a: AulaPostagem, b: AulaPostagem) => (a.ordem || 0) - (b.ordem || 0)))
+        setSetores(data.setores || [])
+        setTopicos(data.topicos || [])
+        setSubtopicos(data.subtopicos || [])
+        setModulos(data.modulos || [])
+        setSubmodulos(data.submodulos || [])
       }
     } catch (error) {
       console.error('Erro ao carregar aulas:', error)
@@ -137,6 +153,72 @@ export default function GerenciarAulasPage() {
     }
   }
 
+  async function reordenarAula(aulaId: string, direcao: 'up' | 'down') {
+    try {
+      const aulaIndex = aulas.findIndex(a => String(a._id) === aulaId)
+      if (aulaIndex === -1) return
+
+      const novaOrdem = direcao === 'up' ? (aulas[aulaIndex].ordem || 0) - 1 : (aulas[aulaIndex].ordem || 0) + 1
+
+      const res = await fetch(`/api/aulas/${aulaId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ordem: novaOrdem })
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        const novasAulas = aulas.map(a =>
+          String(a._id) === aulaId ? data.aula : a
+        ).sort((a: AulaPostagem, b: AulaPostagem) => (a.ordem || 0) - (b.ordem || 0))
+        setAulas(novasAulas)
+        showToast(direcao === 'up' ? 'Aula movida para cima!' : 'Aula movida para baixo!')
+      } else {
+        showToast('Erro ao reordenar aula', 'error')
+      }
+    } catch (error) {
+      console.error('Erro ao reordenar aula:', error)
+      showToast('Erro ao reordenar aula', 'error')
+    }
+  }
+
+  // Funções auxiliares para cascata
+  function getTopicosDoSetor(setorId: string) {
+    return topicos.filter(t => t.setorId === setorId && !t.oculta)
+  }
+
+  function getSubtopicosDoTopico(topicoId: string) {
+    return subtopicos.filter(s => s.topicoId === topicoId && !s.oculta)
+  }
+
+  function getModulosDoSubtopico(subtopicoId: string) {
+    return modulos.filter(m => m.subtopicoId === subtopicoId && !m.oculta)
+  }
+
+  function getSubmodulosDoModulo(moduloId: string) {
+    return submodulos.filter(sm => sm.moduloId === moduloId && !sm.oculta)
+  }
+
+  // Filtrar aulas baseado na cascata
+  function getAulasFiltradasPorCascata() {
+    let aulasFiltradaslocal = aulas
+
+    if (selectedSetor) {
+      aulasFiltradaslocal = aulasFiltradaslocal.filter(a => a.setorId === selectedSetor)
+    }
+    if (selectedTopico) {
+      aulasFiltradaslocal = aulasFiltradaslocal.filter(a => a.topicoId === selectedTopico)
+    }
+    if (selectedSubtopico) {
+      aulasFiltradaslocal = aulasFiltradaslocal.filter(a => a.subtopicoId === selectedSubtopico)
+    }
+    if (selectedModulo) {
+      aulasFiltradaslocal = aulasFiltradaslocal.filter(a => a.moduloId === selectedModulo)
+    }
+
+    return aulasFiltradaslocal.sort((a: AulaPostagem, b: AulaPostagem) => (a.ordem || 0) - (b.ordem || 0))
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -186,22 +268,112 @@ export default function GerenciarAulasPage() {
 
       {/* Main Content */}
       <main className="relative z-30 container mx-auto px-4 py-8 max-w-6xl">
-        {aulas.length === 0 ? (
+        {/* Filtros em Cascata */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {/* Setores */}
+          <div>
+            <label className="block text-sm font-semibold text-white mb-2">Setor</label>
+            <select
+              value={selectedSetor || ''}
+              onChange={(e) => {
+                setSelectedSetor(e.target.value || null)
+                setSelectedTopico(null)
+                setSelectedSubtopico(null)
+                setSelectedModulo(null)
+              }}
+              className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:border-purple-500"
+            >
+              <option value="">Todos os Setores</option>
+              {setores.map(setor => (
+                <option key={String(setor._id)} value={String(setor._id)}>
+                  {setor.nome}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Tópicos */}
+          {selectedSetor && (
+            <div>
+              <label className="block text-sm font-semibold text-white mb-2">Tópico</label>
+              <select
+                value={selectedTopico || ''}
+                onChange={(e) => {
+                  setSelectedTopico(e.target.value || null)
+                  setSelectedSubtopico(null)
+                  setSelectedModulo(null)
+                }}
+                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:border-purple-500"
+              >
+                <option value="">Todos os Tópicos</option>
+                {getTopicosDoSetor(selectedSetor).map(topico => (
+                  <option key={String(topico._id)} value={String(topico._id)}>
+                    {topico.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {/* Subtópicos */}
+          {selectedTopico && (
+            <div>
+              <label className="block text-sm font-semibold text-white mb-2">Subtópico</label>
+              <select
+                value={selectedSubtopico || ''}
+                onChange={(e) => {
+                  setSelectedSubtopico(e.target.value || null)
+                  setSelectedModulo(null)
+                }}
+                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:border-purple-500"
+              >
+                <option value="">Todos os Subtópicos</option>
+                {getSubtopicosDoTopico(selectedTopico).map(subtopico => (
+                  <option key={String(subtopico._id)} value={String(subtopico._id)}>
+                    {subtopico.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {/* Módulos */}
+          {selectedSubtopico && (
+            <div>
+              <label className="block text-sm font-semibold text-white mb-2">Módulo</label>
+              <select
+                value={selectedModulo || ''}
+                onChange={(e) => setSelectedModulo(e.target.value || null)}
+                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:border-purple-500"
+              >
+                <option value="">Todos os Módulos</option>
+                {getModulosDoSubtopico(selectedSubtopico).map(modulo => (
+                  <option key={String(modulo._id)} value={String(modulo._id)}>
+                    {modulo.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+        </div>
+
+        {/* Aulas */}
+        {getAulasFiltradasPorCascata().length === 0 ? (
           <Card className="backdrop-blur-md bg-white/5 border-white/10">
             <CardContent className="pt-6 text-center">
-              <p className="text-white/60 mb-4">Nenhuma aula criada ainda</p>
+              <p className="text-white/60 mb-4">Nenhuma aula encontrada</p>
               <Button
                 onClick={() => router.push('/aulas/gerenciar/aulas/criar')}
                 className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Criar Primeira Aula
+                Criar Aula
               </Button>
             </CardContent>
           </Card>
         ) : (
           <div className="space-y-3">
-            {aulas.map(aula => (
+            {getAulasFiltradasPorCascata().map((aula, idx) => (
               <Card key={String(aula._id)} className="backdrop-blur-md bg-white/5 border-white/10 hover:bg-white/10 transition-all">
                 <CardContent className="pt-6">
                   <div className="flex items-start justify-between gap-4">
@@ -238,6 +410,24 @@ export default function GerenciarAulasPage() {
                       </p>
                     </div>
                     <div className="flex gap-2 flex-wrap justify-end">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => reordenarAula(String(aula._id), 'up')}
+                        title="Mover para cima"
+                        className="border-white/20 text-white hover:bg-white/10"
+                      >
+                        <ChevronUp className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => reordenarAula(String(aula._id), 'down')}
+                        title="Mover para baixo"
+                        className="border-white/20 text-white hover:bg-white/10"
+                      >
+                        <ChevronDown className="h-4 w-4" />
+                      </Button>
                       <Button
                         variant="outline"
                         size="sm"

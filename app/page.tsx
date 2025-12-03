@@ -528,6 +528,7 @@ Contact: (21) 99777-0936`)
                     isAdmin={user?.role === 'admin'}
                     tierLimitExceeded={tierLimitExceeded}
                     personalExamsEnabled={personalExamsEnabled}
+                    showAulasButton={true}
                   />
                 </>
               )}

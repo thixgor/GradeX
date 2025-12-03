@@ -9,6 +9,15 @@ export const dynamic = 'force-dynamic'
 // Preços que são one-time (não recorrentes)
 const ONE_TIME_PRICES = ['lifetime']
 
+// Mapeamento de tipos de plano (português) para chaves de configuração de Stripe (inglês)
+const PLAN_TYPE_MAPPING: { [key: string]: keyof StripeSettings } = {
+  'mensal': 'monthly',
+  'trimestral': 'quarterly',
+  'semestral': 'semi-annual',
+  'anual': 'annual',
+  'vitalicio': 'lifetime',
+}
+
 export async function POST(request: NextRequest) {
   try {
     const session = await getSession()
@@ -18,26 +27,33 @@ export async function POST(request: NextRequest) {
 
     const { planId } = await request.json()
 
-    // Mapeamento de IDs do Stripe para tipos de plano
-    const planMapping: { [key: string]: { type: string; isOneTime: boolean } } = {
-      'price_1SZEvMLawSqPVy6JDJk2SNcc': { type: 'monthly', isOneTime: false },
-      'price_1SZEvMLawSqPVy6JWHUgauU6': { type: 'quarterly', isOneTime: false },
-      'price_1SZEvMLawSqPVy6JzFkSv4OX': { type: 'semi-annual', isOneTime: false },
-      'price_1SZEvMLawSqPVy6JxOQ4JNxj': { type: 'annual', isOneTime: false },
-      'price_1SZEvMLawSqPVy6Jdbl8CArd': { type: 'lifetime', isOneTime: true },
+    // Buscar configurações de Stripe do banco de dados
+    const db = await getDb()
+    const settingsCollection = db.collection<StripeSettings>('stripe_settings')
+    const settings = await settingsCollection.findOne({})
+
+    if (!settings) {
+      return NextResponse.json({ error: 'Configurações de Stripe não encontradas' }, { status: 500 })
     }
 
-    // Validar planId
-    if (!planId || !planMapping[planId]) {
-      return NextResponse.json({ error: 'Plano inválido' }, { status: 400 })
+    // Validar se o planId é um tipo de plano válido
+    if (!PLAN_TYPE_MAPPING[planId]) {
+      return NextResponse.json({ error: 'Tipo de plano inválido' }, { status: 400 })
     }
 
-    const priceId = planId
-    const planInfo = planMapping[planId]
-    const isOneTime = planInfo.isOneTime
+    // Obter o price_id configurado para este tipo de plano
+    const settingKey = PLAN_TYPE_MAPPING[planId]
+    const priceId = settings[settingKey]
+
+    if (!priceId) {
+      return NextResponse.json({ error: `Price ID não configurado para o plano ${planId}` }, { status: 500 })
+    }
+
+    const isOneTime = planId === 'vitalicio'
     const mode = isOneTime ? 'payment' : 'subscription'
 
     // Criar sessão de checkout
+    // @ts-ignore - Stripe SDK type issue
     const checkoutSession = await stripe.checkout.sessions.create({
       mode: mode,
       payment_method_types: ['card'],
@@ -52,7 +68,7 @@ export async function POST(request: NextRequest) {
       customer_email: session.email,
       metadata: {
         userId: session.userId,
-        planId: planInfo.type,
+        planId: planId,
         priceId: priceId,
       },
     })

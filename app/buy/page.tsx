@@ -164,7 +164,7 @@ export default function BuyPage() {
             .filter((p: PlanConfig) => !p.oculto)
             .sort((a: PlanConfig, b: PlanConfig) => a.ordem - b.ordem)
             .map((p: PlanConfig) => ({
-              id: `price_${p.tipo}`,
+              id: p.tipo,
               name: p.nome,
               period: p.periodo,
               originalPrice: p.precoOriginal || p.preco,

@@ -102,22 +102,22 @@ export default function AulasPage() {
   }
 
   // Aulas do setor (sem tópico)
-  const aulasSetor = selectedSetor ? aulas.filter(a => filterAula(a) && a.setorId === selectedSetor && !a.topicoId) : []
+  const aulasSetor = selectedSetor ? aulas.filter(a => filterAula(a) && a.setorId === selectedSetor && !a.topicoId).sort((a, b) => (a.ordem || 0) - (b.ordem || 0)) : []
   
   // Aulas do tópico (sem subtópico)
-  const aulasTopico = selectedTopico ? aulas.filter(a => filterAula(a) && a.topicoId === selectedTopico && !a.subtopicoId) : []
+  const aulasTopico = selectedTopico ? aulas.filter(a => filterAula(a) && a.topicoId === selectedTopico && !a.subtopicoId).sort((a, b) => (a.ordem || 0) - (b.ordem || 0)) : []
   
   // Aulas do subtópico (sem módulo)
-  const aulasSubtopico = selectedSubtopico ? aulas.filter(a => filterAula(a) && a.subtopicoId === selectedSubtopico && !a.moduloId) : []
+  const aulasSubtopico = selectedSubtopico ? aulas.filter(a => filterAula(a) && a.subtopicoId === selectedSubtopico && !a.moduloId).sort((a, b) => (a.ordem || 0) - (b.ordem || 0)) : []
   
   // Aulas do módulo (sem submódulo)
-  const aulasModulo = selectedModulo ? aulas.filter(a => filterAula(a) && a.moduloId === selectedModulo && !a.submoduloId) : []
+  const aulasModulo = selectedModulo ? aulas.filter(a => filterAula(a) && a.moduloId === selectedModulo && !a.submoduloId).sort((a, b) => (a.ordem || 0) - (b.ordem || 0)) : []
   
   // Aulas do submódulo
-  const aulasSubmodulo = selectedSubmodulo ? aulas.filter(a => filterAula(a) && a.submoduloId === selectedSubmodulo) : []
+  const aulasSubmodulo = selectedSubmodulo ? aulas.filter(a => filterAula(a) && a.submoduloId === selectedSubmodulo).sort((a, b) => (a.ordem || 0) - (b.ordem || 0)) : []
 
   // Aulas sem setor
-  const aulasSemSetor = aulas.filter(a => filterAula(a) && !a.setorId)
+  const aulasSemSetor = aulas.filter(a => filterAula(a) && !a.setorId).sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
 
   // Função auxiliar para contar aulas de um tópico (incluindo todos os níveis abaixo)
   const countAulasTopico = (topicoId: string): number => {
@@ -239,33 +239,43 @@ export default function AulasPage() {
 
       {/* Header */}
       <header className="relative z-40 backdrop-blur-md bg-white/5 border-b border-emerald-500/20 sticky top-0 animate-slideInLeft">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between gap-4 flex-wrap">
-            <div className="flex items-center gap-4">
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
+          <div className="flex items-center justify-between gap-2 sm:gap-4">
+            <div className="flex items-center gap-2 sm:gap-4 min-w-0">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => router.push('/')}
-                className="shrink-0 text-white hover:bg-emerald-500/20 transition-colors"
+                className="shrink-0 text-white hover:bg-emerald-500/20 transition-colors h-8 w-8 sm:h-10 sm:w-10"
               >
-                <ArrowLeft className="h-5 w-5" />
+                <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
-              <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-white">Aulas</h1>
-                <p className="text-sm text-white/60">
+              <div className="min-w-0">
+                <h1 className="text-lg sm:text-2xl font-bold text-white truncate">Aulas</h1>
+                <p className="text-xs sm:text-sm text-white/60 hidden sm:block">
                   Aprenda com aulas ao-vivo e gravadas
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
               {(isAdmin || user?.secondaryRole === 'monitor') && (
                 <Button
                   onClick={() => router.push('/aulas/gerenciar')}
-                  className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transition-all duration-300 hover-lift"
+                  className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transition-all duration-300 hover-lift hidden sm:flex"
                   size="sm"
                 >
                   <Plus className="h-4 w-4 mr-2" />
-                  Gerenciar Aulas
+                  Gerenciar
+                </Button>
+              )}
+              {(isAdmin || user?.secondaryRole === 'monitor') && (
+                <Button
+                  onClick={() => router.push('/aulas/gerenciar')}
+                  variant="ghost"
+                  size="icon"
+                  className="text-white hover:bg-emerald-500/20 transition-colors sm:hidden h-8 w-8"
+                >
+                  <Plus className="h-4 w-4" />
                 </Button>
               )}
               <ThemeToggle />
@@ -275,16 +285,16 @@ export default function AulasPage() {
       </header>
 
       {/* Main Content */}
-      <main className="relative z-30 container mx-auto px-4 py-8 max-w-7xl">
+      <main className="relative z-30 container mx-auto px-3 sm:px-4 py-6 sm:py-8 max-w-7xl">
         {/* Navegação em Cascata com Cards */}
         {!selectedSetor ? (
           // Tela de Setores
           <div>
-            <h2 className="text-3xl font-bold text-white mb-8 flex items-center gap-3">
-              <BookOpen className="h-8 w-8 text-emerald-400" />
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6 sm:mb-8 flex items-center gap-2 sm:gap-3">
+              <BookOpen className="h-6 w-6 sm:h-8 sm:w-8 text-emerald-400" />
               Setores de Ensino
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {/* Aulas sem setor - renderizadas como cards */}
               {aulasSemSetor.map((aula, idx) => (
                 <div 
@@ -308,7 +318,7 @@ export default function AulasPage() {
 
                   {/* Capa da Aula */}
                   {aula.capa && (
-                    <div className="w-full h-40 relative overflow-hidden">
+                    <div className="w-full h-32 sm:h-40 relative overflow-hidden">
                       {aula.capa.tipo === 'imagem' && aula.capa.imagem ? (
                         <img 
                           src={aula.capa.imagem} 
@@ -323,17 +333,17 @@ export default function AulasPage() {
                           className="w-full h-full flex items-center justify-center"
                           style={{ backgroundColor: aula.capa.cor || '#3b82f6' }}
                         >
-                          <p className="text-2xl font-bold text-white text-center px-4">{aula.capa.titulo}</p>
+                          <p className="text-lg sm:text-2xl font-bold text-white text-center px-4">{aula.capa.titulo}</p>
                         </div>
                       ) : null}
                     </div>
                   )}
 
-                  <div className="p-6">
-                    <div className="flex items-start justify-between gap-4">
+                  <div className="p-4 sm:p-6">
+                    <div className="flex items-start justify-between gap-3 sm:gap-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2 flex-wrap">
-                          <h3 className="text-lg font-semibold text-white">{aula.titulo}</h3>
+                          <h3 className="text-base sm:text-lg font-semibold text-white">{aula.titulo}</h3>
                           <div className="flex gap-2 flex-wrap">
                             {aula.tipo === 'ao-vivo' ? (
                               <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-semibold animate-glowPulse">
@@ -361,7 +371,7 @@ export default function AulasPage() {
                         </div>
                         {aula.descricao && (
                           <div className="flex items-start gap-2 mb-2">
-                            <p className="text-sm text-white/70 line-clamp-2 flex-1">{aula.descricao}</p>
+                            <p className="text-xs sm:text-sm text-white/70 line-clamp-2 flex-1">{aula.descricao}</p>
                             {aula.descricao && (
                               <button
                                 onClick={(e) => {
@@ -447,7 +457,7 @@ export default function AulasPage() {
               Voltar aos Setores
             </Button>
             <h2 className="text-3xl font-bold text-white mb-8">Tópicos</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {/* Aulas do setor sem tópico - renderizadas como cards */}
               {aulasSetor.map((aula, idx) => (
                 <div 
@@ -457,7 +467,7 @@ export default function AulasPage() {
                 >
                   {/* Capa da Aula */}
                   {aula.capa && (
-                    <div className="w-full h-40 relative overflow-hidden">
+                    <div className="w-full h-32 sm:h-40 relative overflow-hidden">
                       {aula.capa.tipo === 'imagem' && aula.capa.imagem ? (
                         <img 
                           src={aula.capa.imagem} 
@@ -472,17 +482,17 @@ export default function AulasPage() {
                           className="w-full h-full flex items-center justify-center"
                           style={{ backgroundColor: aula.capa.cor || '#3b82f6' }}
                         >
-                          <p className="text-2xl font-bold text-white text-center px-4">{aula.capa.titulo}</p>
+                          <p className="text-lg sm:text-2xl font-bold text-white text-center px-4">{aula.capa.titulo}</p>
                         </div>
                       ) : null}
                     </div>
                   )}
 
-                  <div className="p-6">
-                    <div className="flex items-start justify-between gap-4">
+                  <div className="p-4 sm:p-6">
+                    <div className="flex items-start justify-between gap-3 sm:gap-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2 flex-wrap">
-                          <h3 className="text-lg font-semibold text-white">{aula.titulo}</h3>
+                          <h3 className="text-base sm:text-lg font-semibold text-white">{aula.titulo}</h3>
                           <div className="flex gap-2 flex-wrap">
                             {aula.tipo === 'ao-vivo' ? (
                               <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-semibold animate-glowPulse">
@@ -510,7 +520,7 @@ export default function AulasPage() {
                         </div>
                         {aula.descricao && (
                           <div className="flex items-start gap-2 mb-2">
-                            <p className="text-sm text-white/70 line-clamp-2 flex-1">{aula.descricao}</p>
+                            <p className="text-xs sm:text-sm text-white/70 line-clamp-2 flex-1">{aula.descricao}</p>
                             {aula.descricao && (
                               <button
                                 onClick={(e) => {
@@ -605,7 +615,7 @@ export default function AulasPage() {
               Voltar aos Tópicos
             </Button>
             <h2 className="text-3xl font-bold text-white mb-8">Subtópicos</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {/* Aulas do tópico sem subtópico - renderizadas como cards */}
               {aulasTopico.map((aula, idx) => (
                 <div 
@@ -615,7 +625,7 @@ export default function AulasPage() {
                 >
                   {/* Capa da Aula */}
                   {aula.capa && (
-                    <div className="w-full h-40 relative overflow-hidden">
+                    <div className="w-full h-32 sm:h-40 relative overflow-hidden">
                       {aula.capa.tipo === 'imagem' && aula.capa.imagem ? (
                         <img 
                           src={aula.capa.imagem} 
@@ -630,17 +640,17 @@ export default function AulasPage() {
                           className="w-full h-full flex items-center justify-center"
                           style={{ backgroundColor: aula.capa.cor || '#3b82f6' }}
                         >
-                          <p className="text-2xl font-bold text-white text-center px-4">{aula.capa.titulo}</p>
+                          <p className="text-lg sm:text-2xl font-bold text-white text-center px-4">{aula.capa.titulo}</p>
                         </div>
                       ) : null}
                     </div>
                   )}
 
-                  <div className="p-6">
-                    <div className="flex items-start justify-between gap-4">
+                  <div className="p-4 sm:p-6">
+                    <div className="flex items-start justify-between gap-3 sm:gap-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2 flex-wrap">
-                          <h3 className="text-lg font-semibold text-white">{aula.titulo}</h3>
+                          <h3 className="text-base sm:text-lg font-semibold text-white">{aula.titulo}</h3>
                           <div className="flex gap-2 flex-wrap">
                             {aula.tipo === 'ao-vivo' ? (
                               <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-semibold animate-glowPulse">
@@ -668,7 +678,7 @@ export default function AulasPage() {
                         </div>
                         {aula.descricao && (
                           <div className="flex items-start gap-2 mb-2">
-                            <p className="text-sm text-white/70 line-clamp-2 flex-1">{aula.descricao}</p>
+                            <p className="text-xs sm:text-sm text-white/70 line-clamp-2 flex-1">{aula.descricao}</p>
                             {aula.descricao && (
                               <button
                                 onClick={(e) => {
@@ -761,7 +771,7 @@ export default function AulasPage() {
               Voltar aos Subtópicos
             </Button>
             <h2 className="text-3xl font-bold text-white mb-8">Módulos</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {/* Aulas do subtópico sem módulo - renderizadas como cards */}
               {aulasSubtopico.map((aula, idx) => (
                 <div 
@@ -771,7 +781,7 @@ export default function AulasPage() {
                 >
                   {/* Capa da Aula */}
                   {aula.capa && (
-                    <div className="w-full h-40 relative overflow-hidden">
+                    <div className="w-full h-32 sm:h-40 relative overflow-hidden">
                       {aula.capa.tipo === 'imagem' && aula.capa.imagem ? (
                         <img 
                           src={aula.capa.imagem} 
@@ -786,17 +796,17 @@ export default function AulasPage() {
                           className="w-full h-full flex items-center justify-center"
                           style={{ backgroundColor: aula.capa.cor || '#3b82f6' }}
                         >
-                          <p className="text-2xl font-bold text-white text-center px-4">{aula.capa.titulo}</p>
+                          <p className="text-lg sm:text-2xl font-bold text-white text-center px-4">{aula.capa.titulo}</p>
                         </div>
                       ) : null}
                     </div>
                   )}
 
-                  <div className="p-6">
-                    <div className="flex items-start justify-between gap-4">
+                  <div className="p-4 sm:p-6">
+                    <div className="flex items-start justify-between gap-3 sm:gap-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2 flex-wrap">
-                          <h3 className="text-lg font-semibold text-white">{aula.titulo}</h3>
+                          <h3 className="text-base sm:text-lg font-semibold text-white">{aula.titulo}</h3>
                           <div className="flex gap-2 flex-wrap">
                             {aula.tipo === 'ao-vivo' ? (
                               <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-semibold animate-glowPulse">
@@ -824,7 +834,7 @@ export default function AulasPage() {
                         </div>
                         {aula.descricao && (
                           <div className="flex items-start gap-2 mb-2">
-                            <p className="text-sm text-white/70 line-clamp-2 flex-1">{aula.descricao}</p>
+                            <p className="text-xs sm:text-sm text-white/70 line-clamp-2 flex-1">{aula.descricao}</p>
                             {aula.descricao && (
                               <button
                                 onClick={(e) => {
@@ -915,7 +925,7 @@ export default function AulasPage() {
               Voltar aos Módulos
             </Button>
             <h2 className="text-3xl font-bold text-white mb-8">Submódulos</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {/* Aulas do módulo sem submódulo - renderizadas como cards */}
               {aulasModulo.map((aula, idx) => (
                 <div 
@@ -925,7 +935,7 @@ export default function AulasPage() {
                 >
                   {/* Capa da Aula */}
                   {aula.capa && (
-                    <div className="w-full h-40 relative overflow-hidden">
+                    <div className="w-full h-32 sm:h-40 relative overflow-hidden">
                       {aula.capa.tipo === 'imagem' && aula.capa.imagem ? (
                         <img 
                           src={aula.capa.imagem} 
@@ -940,17 +950,17 @@ export default function AulasPage() {
                           className="w-full h-full flex items-center justify-center"
                           style={{ backgroundColor: aula.capa.cor || '#3b82f6' }}
                         >
-                          <p className="text-2xl font-bold text-white text-center px-4">{aula.capa.titulo}</p>
+                          <p className="text-lg sm:text-2xl font-bold text-white text-center px-4">{aula.capa.titulo}</p>
                         </div>
                       ) : null}
                     </div>
                   )}
 
-                  <div className="p-6">
-                    <div className="flex items-start justify-between gap-4">
+                  <div className="p-4 sm:p-6">
+                    <div className="flex items-start justify-between gap-3 sm:gap-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2 flex-wrap">
-                          <h3 className="text-lg font-semibold text-white">{aula.titulo}</h3>
+                          <h3 className="text-base sm:text-lg font-semibold text-white">{aula.titulo}</h3>
                           <div className="flex gap-2 flex-wrap">
                             {aula.tipo === 'ao-vivo' ? (
                               <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-semibold animate-glowPulse">
@@ -978,7 +988,7 @@ export default function AulasPage() {
                         </div>
                         {aula.descricao && (
                           <div className="flex items-start gap-2 mb-2">
-                            <p className="text-sm text-white/70 line-clamp-2 flex-1">{aula.descricao}</p>
+                            <p className="text-xs sm:text-sm text-white/70 line-clamp-2 flex-1">{aula.descricao}</p>
                             {aula.descricao && (
                               <button
                                 onClick={(e) => {
@@ -1172,13 +1182,12 @@ export default function AulasPage() {
                         )}
                       </p>
                     </div>
-                    <Button
+                    <button
                       onClick={() => router.push(`/aulas/${aula._id}`)}
-                      className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transition-all duration-300 hover-lift"
-                      size="sm"
+                      className="w-full mt-3 sm:mt-4 px-3 sm:px-4 py-2 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white rounded-lg font-semibold transition-all duration-300 hover-lift flex items-center justify-center gap-2 text-sm sm:text-base"
                     >
                       Ver Aula
-                    </Button>
+                    </button>
                   </div>
                 </div>
               </div>
