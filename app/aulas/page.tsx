@@ -127,28 +127,28 @@ export default function AulasPage() {
   // Aulas sem setor
   const aulasSemSetor = aulas.filter(a => filterAula(a) && !a.setorId).sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
 
-  // Função auxiliar para contar aulas de um tópico (apenas diretas, sem subtópico)
+  // Função auxiliar para contar aulas de um tópico (incluindo todos os níveis abaixo)
   const countAulasTopico = (topicoId: string): number => {
     return aulas.filter(a => 
-      filterAula(a) && a.topicoId === topicoId && !a.subtopicoId
+      filterAula(a) && a.topicoId === topicoId
     ).length
   }
 
-  // Função auxiliar para contar aulas de um subtópico (apenas diretas, sem módulo)
+  // Função auxiliar para contar aulas de um subtópico (incluindo todos os níveis abaixo)
   const countAulasSubtopico = (subtopicoId: string): number => {
     return aulas.filter(a => 
-      filterAula(a) && a.subtopicoId === subtopicoId && !a.moduloId
+      filterAula(a) && a.subtopicoId === subtopicoId
     ).length
   }
 
-  // Função auxiliar para contar aulas de um módulo (apenas diretas, sem submódulo)
+  // Função auxiliar para contar aulas de um módulo (incluindo todos os níveis abaixo)
   const countAulasModulo = (moduloId: string): number => {
     return aulas.filter(a => 
-      filterAula(a) && a.moduloId === moduloId && !a.submoduloId
+      filterAula(a) && a.moduloId === moduloId
     ).length
   }
 
-  // Função auxiliar para contar aulas de um submódulo (todas as aulas do submódulo)
+  // Função auxiliar para contar aulas de um submódulo
   const countAulasSubmodulo = (submoduloId: string): number => {
     return aulas.filter(a => 
       filterAula(a) && a.submoduloId === submoduloId
@@ -416,7 +416,7 @@ export default function AulasPage() {
               {setores
                 .filter(s => !s.oculta)
                 .map(setor => {
-                  const aulaCount = aulas.filter(a => filterAula(a) && a.setorId === String(setor._id) && !a.topicoId).length
+                  const aulaCount = aulas.filter(a => filterAula(a) && a.setorId === String(setor._id)).length
                   return (
                     <div
                       key={String(setor._id)}

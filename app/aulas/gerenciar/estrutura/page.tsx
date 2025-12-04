@@ -93,6 +93,31 @@ export default function EstruturasPage() {
     }
   }
 
+  async function limparAulasOrfas() {
+    if (!confirm('Isso vai remover aulas órfãs (aulas que referenciam setores/tópicos/subtópicos/módulos/submódulos que não existem mais). Deseja continuar?')) {
+      return
+    }
+
+    try {
+      const res = await fetch('/api/aulas/cleanup', {
+        method: 'POST'
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        showToast(data.message)
+        // Recarregar dados
+        loadDados()
+      } else {
+        const errorData = await res.json().catch(() => ({}))
+        showToast(errorData.error || 'Erro ao limpar aulas órfãs', 'error')
+      }
+    } catch (error) {
+      console.error('Erro:', error)
+      showToast('Erro ao limpar aulas órfãs', 'error')
+    }
+  }
+
   function showToast(message: string, type: 'error' | 'success' | 'info' = 'success') {
     setToastMessage(message)
     setToastType(type)
@@ -493,7 +518,17 @@ export default function EstruturasPage() {
                 </p>
               </div>
             </div>
-            <ThemeToggle />
+            <div className="flex gap-2">
+              <Button
+                onClick={limparAulasOrfas}
+                variant="outline"
+                className="border-orange-500/30 text-orange-400 hover:bg-orange-500/10"
+                title="Remove aulas órfãs que referenciam itens deletados"
+              >
+                🧹 Limpar Órfãs
+              </Button>
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       </header>
