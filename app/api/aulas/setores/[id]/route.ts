@@ -107,7 +107,14 @@ export async function DELETE(
     }
 
     const setoresCollection = db.collection('aulas_setores')
+    const postagensCollection = db.collection('aulas_postagens')
 
+    // Deletar todas as aulas associadas ao setor
+    const deleteAulasResult = await postagensCollection.deleteMany({
+      setorId: new ObjectId(id)
+    })
+
+    // Deletar o setor
     const result = await setoresCollection.deleteOne({
       _id: new ObjectId(id)
     })
@@ -121,7 +128,8 @@ export async function DELETE(
 
     return NextResponse.json({
       success: true,
-      message: 'Setor deletado com sucesso'
+      message: `Setor deletado com sucesso (${deleteAulasResult.deletedCount} aula(s) removida(s))`,
+      deletedAulas: deleteAulasResult.deletedCount
     })
   } catch (error) {
     console.error('Delete setor error:', error)

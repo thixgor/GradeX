@@ -106,6 +106,12 @@ export async function DELETE(
     }
 
     const submodulosCollection = db.collection('aulas_submodulos')
+    const postagensCollection = db.collection('aulas_postagens')
+
+    // Deletar todas as aulas associadas ao submódulo
+    const deleteAulasResult = await postagensCollection.deleteMany({
+      submoduloId: new ObjectId(id)
+    })
 
     const result = await submodulosCollection.deleteOne({
       _id: new ObjectId(id)
@@ -120,7 +126,8 @@ export async function DELETE(
 
     return NextResponse.json({
       success: true,
-      message: 'Submódulo deletado com sucesso'
+      message: `Submódulo deletado com sucesso (${deleteAulasResult.deletedCount} aula(s) removida(s))`,
+      deletedAulas: deleteAulasResult.deletedCount
     })
   } catch (error) {
     console.error('Delete submodulo error:', error)

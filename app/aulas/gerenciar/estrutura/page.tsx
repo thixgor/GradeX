@@ -206,7 +206,15 @@ export default function EstruturasPage() {
   }
 
   async function deletarItem(id: string, type: 'setor' | 'topico' | 'subtopico' | 'modulo' | 'submodulo') {
-    if (!confirm('Tem certeza que deseja deletar?')) return
+    const typeLabel = {
+      'setor': 'Setor',
+      'topico': 'Tópico',
+      'subtopico': 'Subtópico',
+      'modulo': 'Módulo',
+      'submodulo': 'Submódulo'
+    }[type]
+
+    if (!confirm(`Tem certeza que deseja deletar este ${typeLabel}? As aulas associadas também serão deletadas.`)) return
 
     try {
       let endpoint = ''
@@ -225,6 +233,7 @@ export default function EstruturasPage() {
       const res = await fetch(endpoint, { method: 'DELETE' })
 
       if (res.ok) {
+        const data = await res.json()
         if (type === 'setor') {
           setSetores(setores.filter(s => String(s._id) !== id))
           setSelectedSetor(null)
@@ -246,7 +255,14 @@ export default function EstruturasPage() {
         } else if (type === 'submodulo') {
           setSubmodulos(submodulos.filter(sm => String(sm._id) !== id))
         }
-        showToast('Deletado com sucesso!')
+        
+        const message = data.deletedAulas > 0 
+          ? `${typeLabel} deletado com sucesso! (${data.deletedAulas} aula(s) removida(s))`
+          : `${typeLabel} deletado com sucesso!`
+        showToast(message)
+      } else {
+        const errorData = await res.json().catch(() => ({}))
+        showToast(errorData.error || `Erro ao deletar ${typeLabel}`, 'error')
       }
     } catch (error) {
       console.error('Erro:', error)

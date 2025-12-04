@@ -117,8 +117,14 @@ export async function DELETE(
       )
     }
     const modulosCollection = db.collection('aulas_modulos')
+    const postagensCollection = db.collection('aulas_postagens')
 
     const filter: any = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id }
+
+    // Deletar todas as aulas associadas ao módulo
+    const deleteAulasResult = await postagensCollection.deleteMany({
+      moduloId: new ObjectId(id)
+    })
 
     let result = await modulosCollection.deleteOne(filter)
 
@@ -133,7 +139,11 @@ export async function DELETE(
       )
     }
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({
+      success: true,
+      message: `Módulo deletado com sucesso (${deleteAulasResult.deletedCount} aula(s) removida(s))`,
+      deletedAulas: deleteAulasResult.deletedCount
+    })
   } catch (error) {
     console.error('Erro ao deletar módulo:', error)
     return NextResponse.json(

@@ -106,7 +106,14 @@ export async function DELETE(
     }
 
     const topicosCollection = db.collection('aulas_topicos')
+    const postagensCollection = db.collection('aulas_postagens')
 
+    // Deletar todas as aulas associadas ao tópico
+    const deleteAulasResult = await postagensCollection.deleteMany({
+      topicoId: new ObjectId(id)
+    })
+
+    // Deletar o tópico
     const result = await topicosCollection.deleteOne({
       _id: new ObjectId(id)
     })
@@ -118,7 +125,11 @@ export async function DELETE(
       )
     }
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({
+      success: true,
+      message: `Tópico deletado com sucesso (${deleteAulasResult.deletedCount} aula(s) removida(s))`,
+      deletedAulas: deleteAulasResult.deletedCount
+    })
   } catch (error) {
     console.error('Erro ao deletar tópico:', error)
     return NextResponse.json(

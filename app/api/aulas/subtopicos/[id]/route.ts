@@ -107,6 +107,12 @@ export async function DELETE(
       )
     }
     const subtopicosCollection = db.collection('aulas_subtopicos')
+    const postagensCollection = db.collection('aulas_postagens')
+
+    // Deletar todas as aulas associadas ao subtópico
+    const deleteAulasResult = await postagensCollection.deleteMany({
+      subtopicoId: new ObjectId(id)
+    })
 
     const result = await subtopicosCollection.deleteOne({
       _id: new ObjectId(id)
@@ -119,7 +125,11 @@ export async function DELETE(
       )
     }
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({
+      success: true,
+      message: `Subtópico deletado com sucesso (${deleteAulasResult.deletedCount} aula(s) removida(s))`,
+      deletedAulas: deleteAulasResult.deletedCount
+    })
   } catch (error) {
     console.error('Erro ao deletar subtópico:', error)
     return NextResponse.json(
