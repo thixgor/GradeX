@@ -310,9 +310,80 @@ export default function GerenciarAulasPage() {
   // Renderizar hierarquia de aulas
   function renderHierarquia() {
     const setoresList = setores.filter(s => !s.oculta)
+    const aulasGerais = sortAulas(aulas.filter(a => !a.setorId && !a.topicoId && !a.subtopicoId && !a.moduloId && !a.submoduloId))
 
     return (
       <div className="space-y-2">
+        {/* Aulas sem categorização */}
+        {aulasGerais.length > 0 && (
+          <div className="space-y-2 mb-4 pb-4 border-b border-white/10">
+            <h3 className="text-sm font-semibold text-white/70 px-4">Aulas Gerais</h3>
+            {aulasGerais.map(aula => (
+              <div
+                key={String(aula._id)}
+                draggable
+                onDragStart={() => handleDragStart(String(aula._id))}
+                onDragOver={handleDragOver}
+                onDrop={() => handleDropOnAula(String(aula._id))}
+                className={`p-4 rounded-lg border transition-all cursor-move ${
+                  draggedAula === String(aula._id)
+                    ? 'bg-blue-500/30 border-blue-500/50 opacity-50'
+                    : 'bg-white/5 border-white/10 hover:bg-white/10'
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  <GripVertical className="h-4 w-4 text-white/40 mt-1 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-semibold text-white">{aula.titulo}</h4>
+                    <p className="text-xs text-white/50 mt-1">{getLocalizacaoAula(aula)}</p>
+                    {aula.descricao && (
+                      <p className="text-sm text-white/70 mt-2 line-clamp-1">{aula.descricao}</p>
+                    )}
+                  </div>
+                  <div className="flex gap-1 flex-shrink-0">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => toggleOcultarAula(String(aula._id), aula.oculta)}
+                      className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                    >
+                      {aula.oculta ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => router.push(`/aulas/gerenciar/aulas/${aula._id}/editar`)}
+                      className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                    >
+                      <Edit2 className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => duplicarAula(String(aula._id))}
+                      className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => deletarAula(String(aula._id))}
+                      className="border-red-500/30 text-red-400 hover:bg-red-500/10 h-8 w-8 p-0"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Setores */}
+        {setoresList.length > 0 && (
+          <h3 className="text-sm font-semibold text-white/70 px-4">Por Setor</h3>
+        )}
         {setoresList.map(setor => {
           const setorId = String(setor._id)
           const isExpanded = expandedSetores.has(setorId)
