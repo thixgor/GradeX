@@ -127,28 +127,28 @@ export default function AulasPage() {
   // Aulas sem setor
   const aulasSemSetor = aulas.filter(a => filterAula(a) && !a.setorId).sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
 
-  // Função auxiliar para contar aulas de um tópico (incluindo todos os níveis abaixo)
+  // Função auxiliar para contar aulas de um tópico (apenas diretas, sem subtópico)
   const countAulasTopico = (topicoId: string): number => {
     return aulas.filter(a => 
-      filterAula(a) && a.topicoId === topicoId
+      filterAula(a) && a.topicoId === topicoId && !a.subtopicoId
     ).length
   }
 
-  // Função auxiliar para contar aulas de um subtópico (incluindo todos os níveis abaixo)
+  // Função auxiliar para contar aulas de um subtópico (apenas diretas, sem módulo)
   const countAulasSubtopico = (subtopicoId: string): number => {
     return aulas.filter(a => 
-      filterAula(a) && a.subtopicoId === subtopicoId
+      filterAula(a) && a.subtopicoId === subtopicoId && !a.moduloId
     ).length
   }
 
-  // Função auxiliar para contar aulas de um módulo (incluindo todos os níveis abaixo)
+  // Função auxiliar para contar aulas de um módulo (apenas diretas, sem submódulo)
   const countAulasModulo = (moduloId: string): number => {
     return aulas.filter(a => 
-      filterAula(a) && a.moduloId === moduloId
+      filterAula(a) && a.moduloId === moduloId && !a.submoduloId
     ).length
   }
 
-  // Função auxiliar para contar aulas de um submódulo
+  // Função auxiliar para contar aulas de um submódulo (todas as aulas do submódulo)
   const countAulasSubmodulo = (submoduloId: string): number => {
     return aulas.filter(a => 
       filterAula(a) && a.submoduloId === submoduloId
@@ -416,7 +416,7 @@ export default function AulasPage() {
               {setores
                 .filter(s => !s.oculta)
                 .map(setor => {
-                  const aulaCount = aulas.filter(a => filterAula(a) && a.setorId === String(setor._id)).length
+                  const aulaCount = aulas.filter(a => filterAula(a) && a.setorId === String(setor._id) && !a.topicoId).length
                   return (
                     <div
                       key={String(setor._id)}
