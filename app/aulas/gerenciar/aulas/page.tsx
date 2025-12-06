@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { ArrowLeft, Plus, Edit2, Trash2, Copy, Eye, EyeOff, ChevronDown, ChevronUp, ChevronRight, GripVertical } from 'lucide-react'
+import { ArrowLeft, Plus, Edit2, Trash2, Copy, Eye, EyeOff, ChevronDown, ChevronUp, ChevronRight, GripVertical, Move } from 'lucide-react'
 import { AulaPostagem, AulaSetor, AulaTopic, AulaSubtopic, AulaModulo, AulaSubmodulo } from '@/lib/types'
 import { ToastAlert } from '@/components/ui/toast-alert'
 
@@ -45,6 +45,15 @@ export default function GerenciarAulasPage() {
 
   // Ordenação
   const [sortBy, setSortBy] = useState<'ordem' | 'alfabetico'>('ordem')
+
+  // Modal "Mover para"
+  const [moverParaModal, setMoverParaModal] = useState<{ aulaId: string; aulaTitulo: string } | null>(null)
+  const [moverParaSetor, setMoverParaSetor] = useState<string | null>(null)
+  const [moverParaTopico, setMoverParaTopico] = useState<string | null>(null)
+  const [moverParaSubtopico, setMoverParaSubtopico] = useState<string | null>(null)
+  const [moverParaModulo, setMoverParaModulo] = useState<string | null>(null)
+  const [moverParaSubmodulo, setMoverParaSubmodulo] = useState<string | null>(null)
+  const [movendo, setMovendo] = useState(false)
 
   // Toast
   const [toastOpen, setToastOpen] = useState(false)
@@ -191,6 +200,46 @@ export default function GerenciarAulasPage() {
     } catch (error) {
       console.error('Erro ao reordenar aula:', error)
       showToast('Erro ao reordenar aula', 'error')
+    }
+  }
+
+  async function moverAula() {
+    if (!moverParaModal) return
+
+    setMovendo(true)
+    try {
+      const res = await fetch(`/api/aulas/${moverParaModal.aulaId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          setorId: moverParaSetor || null,
+          topicoId: moverParaTopico || null,
+          subtopicoId: moverParaSubtopico || null,
+          moduloId: moverParaModulo || null,
+          submoduloId: moverParaSubmodulo || null
+        })
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        setAulas(aulas.map(a =>
+          String(a._id) === moverParaModal.aulaId ? data.aula : a
+        ))
+        showToast('Aula movida com sucesso!')
+        setMoverParaModal(null)
+        setMoverParaSetor(null)
+        setMoverParaTopico(null)
+        setMoverParaSubtopico(null)
+        setMoverParaModulo(null)
+        setMoverParaSubmodulo(null)
+      } else {
+        showToast('Erro ao mover aula', 'error')
+      }
+    } catch (error) {
+      console.error('Erro ao mover aula:', error)
+      showToast('Erro ao mover aula', 'error')
+    } finally {
+      setMovendo(false)
     }
   }
 
@@ -346,14 +395,25 @@ export default function GerenciarAulasPage() {
                       size="sm"
                       onClick={() => toggleOcultarAula(String(aula._id), aula.oculta)}
                       className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                      title="Ocultar/Mostrar"
                     >
                       {aula.oculta ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
+                      onClick={() => setMoverParaModal({ aulaId: String(aula._id), aulaTitulo: aula.titulo })}
+                      className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                      title="Mover para"
+                    >
+                      <Move className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={() => router.push(`/aulas/gerenciar/aulas/${aula._id}/editar`)}
                       className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                      title="Editar"
                     >
                       <Edit2 className="h-4 w-4" />
                     </Button>
@@ -362,6 +422,7 @@ export default function GerenciarAulasPage() {
                       size="sm"
                       onClick={() => duplicarAula(String(aula._id))}
                       className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                      title="Duplicar"
                     >
                       <Copy className="h-4 w-4" />
                     </Button>
@@ -370,6 +431,7 @@ export default function GerenciarAulasPage() {
                       size="sm"
                       onClick={() => deletarAula(String(aula._id))}
                       className="border-red-500/30 text-red-400 hover:bg-red-500/10 h-8 w-8 p-0"
+                      title="Deletar"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -920,6 +982,141 @@ export default function GerenciarAulasPage() {
           renderHierarquia()
         )}
       </main>
+
+      {/* Modal Mover Para */}
+      {moverParaModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 border border-white/10 rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl">
+            <h2 className="text-xl font-bold text-white mb-4">Mover Aula</h2>
+            <p className="text-sm text-white/70 mb-4">{moverParaModal.aulaTitulo}</p>
+
+            <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
+              <div>
+                <label className="text-sm font-medium text-white/80 block mb-2">Setor</label>
+                <select
+                  value={moverParaSetor || ''}
+                  onChange={(e) => {
+                    setMoverParaSetor(e.target.value || null)
+                    setMoverParaTopico(null)
+                    setMoverParaSubtopico(null)
+                    setMoverParaModulo(null)
+                    setMoverParaSubmodulo(null)
+                  }}
+                  className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm"
+                >
+                  <option value="" className="bg-slate-900">Nenhum</option>
+                  {setores.map(s => (
+                    <option key={String(s._id)} value={String(s._id)} className="bg-slate-900">
+                      {s.nome}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {moverParaSetor && (
+                <div>
+                  <label className="text-sm font-medium text-white/80 block mb-2">Tópico</label>
+                  <select
+                    value={moverParaTopico || ''}
+                    onChange={(e) => {
+                      setMoverParaTopico(e.target.value || null)
+                      setMoverParaSubtopico(null)
+                      setMoverParaModulo(null)
+                      setMoverParaSubmodulo(null)
+                    }}
+                    className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm"
+                  >
+                    <option value="" className="bg-slate-900">Nenhum</option>
+                    {getTopicosDoSetor(moverParaSetor).map(t => (
+                      <option key={String(t._id)} value={String(t._id)} className="bg-slate-900">
+                        {t.nome}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {moverParaTopico && (
+                <div>
+                  <label className="text-sm font-medium text-white/80 block mb-2">Subtópico</label>
+                  <select
+                    value={moverParaSubtopico || ''}
+                    onChange={(e) => {
+                      setMoverParaSubtopico(e.target.value || null)
+                      setMoverParaModulo(null)
+                      setMoverParaSubmodulo(null)
+                    }}
+                    className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm"
+                  >
+                    <option value="" className="bg-slate-900">Nenhum</option>
+                    {getSubtopicosDoTopico(moverParaTopico).map(s => (
+                      <option key={String(s._id)} value={String(s._id)} className="bg-slate-900">
+                        {s.nome}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {moverParaSubtopico && (
+                <div>
+                  <label className="text-sm font-medium text-white/80 block mb-2">Módulo</label>
+                  <select
+                    value={moverParaModulo || ''}
+                    onChange={(e) => {
+                      setMoverParaModulo(e.target.value || null)
+                      setMoverParaSubmodulo(null)
+                    }}
+                    className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm"
+                  >
+                    <option value="" className="bg-slate-900">Nenhum</option>
+                    {getModulosDoSubtopico(moverParaSubtopico).map(m => (
+                      <option key={String(m._id)} value={String(m._id)} className="bg-slate-900">
+                        {m.nome}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {moverParaModulo && (
+                <div>
+                  <label className="text-sm font-medium text-white/80 block mb-2">Submódulo</label>
+                  <select
+                    value={moverParaSubmodulo || ''}
+                    onChange={(e) => setMoverParaSubmodulo(e.target.value || null)}
+                    className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm"
+                  >
+                    <option value="" className="bg-slate-900">Nenhum</option>
+                    {getSubmodulosDoModulo(moverParaModulo).map(sm => (
+                      <option key={String(sm._id)} value={String(sm._id)} className="bg-slate-900">
+                        {sm.nome}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-3">
+              <Button
+                onClick={() => setMoverParaModal(null)}
+                variant="outline"
+                className="flex-1 border-white/20 text-white hover:bg-white/10"
+              >
+                Cancelar
+              </Button>
+              <Button
+                onClick={moverAula}
+                disabled={movendo}
+                className="flex-1 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white"
+              >
+                {movendo ? 'Movendo...' : 'Mover'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <ToastAlert
         open={toastOpen}

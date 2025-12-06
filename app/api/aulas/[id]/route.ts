@@ -83,39 +83,33 @@ export async function PATCH(
 
     console.log('Update data:', updateData)
 
+    // Buscar aula atual para saber quais campos precisam ser limpos
+    const currentAula = await aulasCollection.findOne({ _id: new ObjectId(params.id) })
+    
     // Se setorId foi alterado, limpar tópicos/subtópicos/módulos/submódulos abaixo dele
-    if (updateData.setorId !== undefined) {
-      if (!updateData.setorId) {
-        // Se removeu o setor, limpar tudo
-        updateData.topicoId = null
-        updateData.subtopicoId = null
-        updateData.moduloId = null
-        updateData.submoduloId = null
-      }
+    if (updateData.setorId !== undefined && updateData.setorId !== currentAula?.setorId) {
+      updateData.topicoId = null
+      updateData.subtopicoId = null
+      updateData.moduloId = null
+      updateData.submoduloId = null
     }
 
     // Se topicoId foi alterado, limpar subtópicos/módulos/submódulos abaixo dele
-    if (updateData.topicoId !== undefined) {
-      if (!updateData.topicoId) {
-        updateData.subtopicoId = null
-        updateData.moduloId = null
-        updateData.submoduloId = null
-      }
+    if (updateData.topicoId !== undefined && updateData.topicoId !== currentAula?.topicoId) {
+      updateData.subtopicoId = null
+      updateData.moduloId = null
+      updateData.submoduloId = null
     }
 
     // Se subtopicoId foi alterado, limpar módulos/submódulos abaixo dele
-    if (updateData.subtopicoId !== undefined) {
-      if (!updateData.subtopicoId) {
-        updateData.moduloId = null
-        updateData.submoduloId = null
-      }
+    if (updateData.subtopicoId !== undefined && updateData.subtopicoId !== currentAula?.subtopicoId) {
+      updateData.moduloId = null
+      updateData.submoduloId = null
     }
 
     // Se moduloId foi alterado, limpar submódulos abaixo dele
-    if (updateData.moduloId !== undefined) {
-      if (!updateData.moduloId) {
-        updateData.submoduloId = null
-      }
+    if (updateData.moduloId !== undefined && updateData.moduloId !== currentAula?.moduloId) {
+      updateData.submoduloId = null
     }
 
     // Separar campos a remover (null) dos campos a atualizar
@@ -125,7 +119,7 @@ export async function PATCH(
     Object.keys(updateData).forEach(key => {
       if (updateData[key] === null) {
         fieldsToUnset[key] = 1
-      } else {
+      } else if (updateData[key] !== undefined) {
         fieldsToSet[key] = updateData[key]
       }
     })

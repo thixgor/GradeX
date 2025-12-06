@@ -82,7 +82,9 @@ export async function POST(request: Request) {
       linkOuEmbed,
       videoEmbed,
       pdfs,
-      dataLiberacao
+      dataLiberacao,
+      capa,
+      botoesAcesso
     } = body
 
     if (!titulo) {
@@ -108,6 +110,9 @@ export async function POST(request: Request) {
       videoEmbed,
       pdfs: pdfs || [],
       dataLiberacao: dataLiberacao ? new Date(dataLiberacao) : new Date('2000-01-01'),
+      capa,
+      botoesAcesso: botoesAcesso || [],
+      ordem: 0,
       criadoEm: new Date(),
       atualizadoEm: new Date(),
       oculta: false,
