@@ -9,11 +9,13 @@ import { Textarea } from '@/components/ui/textarea'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { ArrowLeft, Send, Trash2, Lock, Globe, Video, Zap, Download, CheckCircle2 } from 'lucide-react'
 import { AulaPostagem, AulaComentario } from '@/lib/types'
+import { VideoWatermark } from '@/components/video-watermark'
 
 interface User {
   id: string
   email: string
   name: string
+  cpf?: string
   role: string
   accountType?: string
   secondaryRole?: string
@@ -411,18 +413,23 @@ export default function AulaDetalhePage() {
                 <Video className="h-5 w-5 text-blue-400" />
                 Vídeo da Aula
               </h3>
-              {aula.videoEmbed.startsWith('<') ? (
-                <div
-                  dangerouslySetInnerHTML={{ __html: aula.videoEmbed }}
-                  className="w-full aspect-video rounded-lg overflow-hidden"
-                />
-              ) : (
-                <video
-                  src={aula.videoEmbed}
-                  controls
-                  className="w-full rounded-lg border border-white/10"
-                />
-              )}
+              <VideoWatermark 
+                userName={user?.name || 'Usuário'} 
+                userCpf={user?.cpf || 'CPF'}
+              >
+                {aula.videoEmbed.startsWith('<') ? (
+                  <div
+                    dangerouslySetInnerHTML={{ __html: aula.videoEmbed }}
+                    className="w-full h-full"
+                  />
+                ) : (
+                  <video
+                    src={aula.videoEmbed}
+                    controls
+                    className="w-full h-full"
+                  />
+                )}
+              </VideoWatermark>
             </div>
           )}
 
