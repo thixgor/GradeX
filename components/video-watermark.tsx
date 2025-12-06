@@ -34,18 +34,20 @@ export function VideoWatermark({
         {/* Marca d'água central grande */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div
-            className="text-white font-bold text-center whitespace-nowrap"
+            className="font-bold text-center whitespace-nowrap"
             style={{
               transform: `rotate(${rotation}deg)`,
-              fontSize: 'clamp(80px, 15vw, 200px)',
+              fontSize: 'clamp(40px, 8vw, 100px)',
               fontWeight: 'bold',
               lineHeight: '1.1',
               pointerEvents: 'none',
-              textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+              color: '#1a1a1a',
+              textShadow: '0 1px 2px rgba(255,255,255,0.5)',
+              filter: 'drop-shadow(0 1px 1px rgba(0,0,0,0.1))',
             }}
           >
             <div>{userName}</div>
-            <div style={{ fontSize: 'clamp(60px, 12vw, 150px)', marginTop: '8px' }}>
+            <div style={{ fontSize: 'clamp(30px, 6vw, 75px)', marginTop: '4px' }}>
               {userCpf}
             </div>
           </div>
@@ -56,13 +58,15 @@ export function VideoWatermark({
           {Array.from({ length: 9 }).map((_, i) => (
             <div
               key={i}
-              className="flex flex-col items-center justify-center text-white font-bold"
+              className="flex flex-col items-center justify-center font-bold"
               style={{
                 transform: `rotate(${rotation}deg)`,
-                fontSize: 'clamp(12px, 2vw, 18px)',
+                fontSize: 'clamp(10px, 1.5vw, 14px)',
                 textAlign: 'center',
                 pointerEvents: 'none',
-                textShadow: '0 1px 2px rgba(0,0,0,0.2)',
+                color: '#1a1a1a',
+                textShadow: '0 0.5px 1px rgba(255,255,255,0.5)',
+                filter: 'drop-shadow(0 0.5px 0.5px rgba(0,0,0,0.1))',
               }}
             >
               <div className="font-bold leading-tight">{userName}</div>
@@ -83,25 +87,25 @@ export function VideoWatermark({
             y1="0"
             x2="1920"
             y2="1080"
-            stroke="white"
+            stroke="#1a1a1a"
             strokeWidth="2"
-            opacity="0.1"
+            opacity="0.05"
           />
           <line
             x1="1920"
             y1="0"
             x2="0"
             y2="1080"
-            stroke="white"
+            stroke="#1a1a1a"
             strokeWidth="2"
-            opacity="0.1"
+            opacity="0.05"
           />
         </svg>
       </div>
 
       {/* Aviso visual (opcional) */}
-      <div className="absolute bottom-2 right-2 text-xs text-white/40 pointer-events-none">
-        🔒 Protegido por marca d'água
+      <div className="absolute bottom-2 right-2 text-xs pointer-events-none" style={{ color: '#1a1a1a', opacity: 0.3 }}>
+        🔒 Protegido
       </div>
     </div>
   )
