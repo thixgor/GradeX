@@ -500,14 +500,25 @@ export default function GerenciarAulasPage() {
                             size="sm"
                             onClick={() => toggleOcultarAula(String(aula._id), aula.oculta)}
                             className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                            title="Ocultar/Mostrar"
                           >
                             {aula.oculta ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                           </Button>
                           <Button
                             variant="outline"
                             size="sm"
+                            onClick={() => setMoverParaModal({ aulaId: String(aula._id), aulaTitulo: aula.titulo })}
+                            className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                            title="Mover para"
+                          >
+                            <Move className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
                             onClick={() => router.push(`/aulas/gerenciar/aulas/${aula._id}/editar`)}
                             className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                            title="Editar"
                           >
                             <Edit2 className="h-4 w-4" />
                           </Button>
@@ -516,6 +527,7 @@ export default function GerenciarAulasPage() {
                             size="sm"
                             onClick={() => duplicarAula(String(aula._id))}
                             className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                            title="Duplicar"
                           >
                             <Copy className="h-4 w-4" />
                           </Button>
@@ -524,6 +536,7 @@ export default function GerenciarAulasPage() {
                             size="sm"
                             onClick={() => deletarAula(String(aula._id))}
                             className="border-red-500/30 text-red-400 hover:bg-red-500/10 h-8 w-8 p-0"
+                            title="Deletar"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -586,14 +599,25 @@ export default function GerenciarAulasPage() {
                                       size="sm"
                                       onClick={() => toggleOcultarAula(String(aula._id), aula.oculta)}
                                       className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                      title="Ocultar/Mostrar"
                                     >
                                       {aula.oculta ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                     </Button>
                                     <Button
                                       variant="outline"
                                       size="sm"
+                                      onClick={() => setMoverParaModal({ aulaId: String(aula._id), aulaTitulo: aula.titulo })}
+                                      className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                      title="Mover para"
+                                    >
+                                      <Move className="h-4 w-4" />
+                                    </Button>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
                                       onClick={() => router.push(`/aulas/gerenciar/aulas/${aula._id}/editar`)}
                                       className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                      title="Editar"
                                     >
                                       <Edit2 className="h-4 w-4" />
                                     </Button>
@@ -602,6 +626,7 @@ export default function GerenciarAulasPage() {
                                       size="sm"
                                       onClick={() => duplicarAula(String(aula._id))}
                                       className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                      title="Duplicar"
                                     >
                                       <Copy className="h-4 w-4" />
                                     </Button>
@@ -610,6 +635,7 @@ export default function GerenciarAulasPage() {
                                       size="sm"
                                       onClick={() => deletarAula(String(aula._id))}
                                       className="border-red-500/30 text-red-400 hover:bg-red-500/10 h-8 w-8 p-0"
+                                      title="Deletar"
                                     >
                                       <Trash2 className="h-4 w-4" />
                                     </Button>
@@ -672,14 +698,25 @@ export default function GerenciarAulasPage() {
                                                 size="sm"
                                                 onClick={() => toggleOcultarAula(String(aula._id), aula.oculta)}
                                                 className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                                title="Ocultar/Mostrar"
                                               >
                                                 {aula.oculta ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                               </Button>
                                               <Button
                                                 variant="outline"
                                                 size="sm"
+                                                onClick={() => setMoverParaModal({ aulaId: String(aula._id), aulaTitulo: aula.titulo })}
+                                                className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                                title="Mover para"
+                                              >
+                                                <Move className="h-4 w-4" />
+                                              </Button>
+                                              <Button
+                                                variant="outline"
+                                                size="sm"
                                                 onClick={() => router.push(`/aulas/gerenciar/aulas/${aula._id}/editar`)}
                                                 className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                                title="Editar"
                                               >
                                                 <Edit2 className="h-4 w-4" />
                                               </Button>
@@ -688,6 +725,7 @@ export default function GerenciarAulasPage() {
                                                 size="sm"
                                                 onClick={() => duplicarAula(String(aula._id))}
                                                 className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                                title="Duplicar"
                                               >
                                                 <Copy className="h-4 w-4" />
                                               </Button>
@@ -696,6 +734,7 @@ export default function GerenciarAulasPage() {
                                                 size="sm"
                                                 onClick={() => deletarAula(String(aula._id))}
                                                 className="border-red-500/30 text-red-400 hover:bg-red-500/10 h-8 w-8 p-0"
+                                                title="Deletar"
                                               >
                                                 <Trash2 className="h-4 w-4" />
                                               </Button>
@@ -758,14 +797,25 @@ export default function GerenciarAulasPage() {
                                                           size="sm"
                                                           onClick={() => toggleOcultarAula(String(aula._id), aula.oculta)}
                                                           className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                                          title="Ocultar/Mostrar"
                                                         >
                                                           {aula.oculta ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                                         </Button>
                                                         <Button
                                                           variant="outline"
                                                           size="sm"
+                                                          onClick={() => setMoverParaModal({ aulaId: String(aula._id), aulaTitulo: aula.titulo })}
+                                                          className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                                          title="Mover para"
+                                                        >
+                                                          <Move className="h-4 w-4" />
+                                                        </Button>
+                                                        <Button
+                                                          variant="outline"
+                                                          size="sm"
                                                           onClick={() => router.push(`/aulas/gerenciar/aulas/${aula._id}/editar`)}
                                                           className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                                          title="Editar"
                                                         >
                                                           <Edit2 className="h-4 w-4" />
                                                         </Button>
@@ -774,6 +824,7 @@ export default function GerenciarAulasPage() {
                                                           size="sm"
                                                           onClick={() => duplicarAula(String(aula._id))}
                                                           className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                                          title="Duplicar"
                                                         >
                                                           <Copy className="h-4 w-4" />
                                                         </Button>
@@ -782,6 +833,7 @@ export default function GerenciarAulasPage() {
                                                           size="sm"
                                                           onClick={() => deletarAula(String(aula._id))}
                                                           className="border-red-500/30 text-red-400 hover:bg-red-500/10 h-8 w-8 p-0"
+                                                          title="Deletar"
                                                         >
                                                           <Trash2 className="h-4 w-4" />
                                                         </Button>
@@ -830,14 +882,25 @@ export default function GerenciarAulasPage() {
                                                                   size="sm"
                                                                   onClick={() => toggleOcultarAula(String(aula._id), aula.oculta)}
                                                                   className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                                                  title="Ocultar/Mostrar"
                                                                 >
                                                                   {aula.oculta ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                                                 </Button>
                                                                 <Button
                                                                   variant="outline"
                                                                   size="sm"
+                                                                  onClick={() => setMoverParaModal({ aulaId: String(aula._id), aulaTitulo: aula.titulo })}
+                                                                  className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                                                  title="Mover para"
+                                                                >
+                                                                  <Move className="h-4 w-4" />
+                                                                </Button>
+                                                                <Button
+                                                                  variant="outline"
+                                                                  size="sm"
                                                                   onClick={() => router.push(`/aulas/gerenciar/aulas/${aula._id}/editar`)}
                                                                   className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                                                  title="Editar"
                                                                 >
                                                                   <Edit2 className="h-4 w-4" />
                                                                 </Button>
@@ -846,6 +909,7 @@ export default function GerenciarAulasPage() {
                                                                   size="sm"
                                                                   onClick={() => duplicarAula(String(aula._id))}
                                                                   className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
+                                                                  title="Duplicar"
                                                                 >
                                                                   <Copy className="h-4 w-4" />
                                                                 </Button>
@@ -854,6 +918,7 @@ export default function GerenciarAulasPage() {
                                                                   size="sm"
                                                                   onClick={() => deletarAula(String(aula._id))}
                                                                   className="border-red-500/30 text-red-400 hover:bg-red-500/10 h-8 w-8 p-0"
+                                                                  title="Deletar"
                                                                 >
                                                                   <Trash2 className="h-4 w-4" />
                                                                 </Button>
