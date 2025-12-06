@@ -83,14 +83,63 @@ export async function PATCH(
 
     console.log('Update data:', updateData)
 
+    // Se setorId foi alterado, limpar tópicos/subtópicos/módulos/submódulos abaixo dele
+    if (updateData.setorId !== undefined) {
+      if (!updateData.setorId) {
+        // Se removeu o setor, limpar tudo
+        updateData.topicoId = null
+        updateData.subtopicoId = null
+        updateData.moduloId = null
+        updateData.submoduloId = null
+      }
+    }
+
+    // Se topicoId foi alterado, limpar subtópicos/módulos/submódulos abaixo dele
+    if (updateData.topicoId !== undefined) {
+      if (!updateData.topicoId) {
+        updateData.subtopicoId = null
+        updateData.moduloId = null
+        updateData.submoduloId = null
+      }
+    }
+
+    // Se subtopicoId foi alterado, limpar módulos/submódulos abaixo dele
+    if (updateData.subtopicoId !== undefined) {
+      if (!updateData.subtopicoId) {
+        updateData.moduloId = null
+        updateData.submoduloId = null
+      }
+    }
+
+    // Se moduloId foi alterado, limpar submódulos abaixo dele
+    if (updateData.moduloId !== undefined) {
+      if (!updateData.moduloId) {
+        updateData.submoduloId = null
+      }
+    }
+
+    // Separar campos a remover (null) dos campos a atualizar
+    const fieldsToUnset: any = {}
+    const fieldsToSet: any = { atualizadoEm: new Date() }
+
+    Object.keys(updateData).forEach(key => {
+      if (updateData[key] === null) {
+        fieldsToUnset[key] = 1
+      } else {
+        fieldsToSet[key] = updateData[key]
+      }
+    })
+
+    console.log('Final update data - Set:', fieldsToSet, 'Unset:', fieldsToUnset)
+
+    const updateQuery: any = { $set: fieldsToSet }
+    if (Object.keys(fieldsToUnset).length > 0) {
+      updateQuery.$unset = fieldsToUnset
+    }
+
     const result = await aulasCollection.updateOne(
       { _id: new ObjectId(params.id) },
-      {
-        $set: {
-          ...updateData,
-          atualizadoEm: new Date()
-        }
-      }
+      updateQuery
     )
 
     console.log('Update result:', { matchedCount: result.matchedCount, modifiedCount: result.modifiedCount })
