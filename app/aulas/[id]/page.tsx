@@ -386,7 +386,7 @@ export default function AulaDetalhePage() {
                 <Zap className="h-5 w-5 text-red-400" />
                 Acesso à Aula Ao Vivo
               </h3>
-              {aula.linkOuEmbed.startsWith('<iframe') ? (
+              {aula.linkOuEmbed.startsWith('<') ? (
                 <div
                   dangerouslySetInnerHTML={{ __html: aula.linkOuEmbed }}
                   className="w-full aspect-video rounded-lg overflow-hidden"
@@ -411,7 +411,7 @@ export default function AulaDetalhePage() {
                 <Video className="h-5 w-5 text-blue-400" />
                 Vídeo da Aula
               </h3>
-              {aula.videoEmbed.startsWith('<iframe') ? (
+              {aula.videoEmbed.startsWith('<') ? (
                 <div
                   dangerouslySetInnerHTML={{ __html: aula.videoEmbed }}
                   className="w-full aspect-video rounded-lg overflow-hidden"
