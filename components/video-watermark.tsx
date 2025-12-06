@@ -6,7 +6,7 @@ interface VideoWatermarkProps {
   userName: string
   userCpf: string
   children: React.ReactNode
-  opacity?: number // 0-100, padrão 8
+  opacity?: number // 0-100, padrão 15
   rotation?: number // graus, padrão -45
 }
 
@@ -14,7 +14,7 @@ export function VideoWatermark({
   userName, 
   userCpf, 
   children,
-  opacity = 8,
+  opacity = 15,
   rotation = -45
 }: VideoWatermarkProps) {
   const opacityValue = opacity / 100
@@ -104,8 +104,8 @@ export function VideoWatermark({
       </div>
 
       {/* Aviso visual (opcional) */}
-      <div className="absolute bottom-2 right-2 text-xs pointer-events-none" style={{ color: '#1a1a1a', opacity: 0.3 }}>
-        🔒 Protegido
+      <div className="absolute top-2 right-2 text-xs pointer-events-none font-semibold" style={{ color: '#1a1a1a', opacity: 0.5 }}>
+        🔒 Protegido por marca d'água
       </div>
     </div>
   )
