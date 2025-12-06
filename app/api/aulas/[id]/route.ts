@@ -74,9 +74,9 @@ export async function PATCH(
       updateData.dataLiberacao = new Date(updateData.dataLiberacao)
     }
 
-    // Remover campos undefined
+    // Remover campos undefined e null
     Object.keys(updateData).forEach(key => {
-      if (updateData[key] === undefined) {
+      if (updateData[key] === undefined || updateData[key] === null) {
         delete updateData[key]
       }
     })

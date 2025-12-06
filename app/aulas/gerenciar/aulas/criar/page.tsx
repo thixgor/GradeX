@@ -213,16 +213,16 @@ export default function CriarAulaPage() {
           descricao,
           tipo,
           visibilidade,
-          setorId: setorId || undefined,
-          topicoId: topicoId || undefined,
-          subtopicoId: subtopicoId || undefined,
-          moduloId: moduloId || undefined,
-          linkOuEmbed: tipo === 'ao-vivo' ? linkOuEmbed : undefined,
-          videoEmbed: tipo === 'gravada' ? videoEmbed : undefined,
+          setorId: setorId || null,
+          topicoId: topicoId || null,
+          subtopicoId: subtopicoId || null,
+          moduloId: moduloId || null,
+          linkOuEmbed: tipo === 'ao-vivo' ? linkOuEmbed : null,
+          videoEmbed: tipo === 'gravada' ? videoEmbed : null,
           pdfs,
-          dataLiberacao,
+          dataLiberacao: dataLiberacao || null,
           capa,
-          botoesAcesso: botoesAcesso.length > 0 ? botoesAcesso : undefined
+          botoesAcesso: botoesAcesso.length > 0 ? botoesAcesso : null
         })
       })
 
