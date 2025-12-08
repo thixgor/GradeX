@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { ArrowLeft, Settings, AlertCircle, CheckCircle, Eye, EyeOff, Trash2 } from 'lucide-react'
+import { ArrowLeft, Settings, AlertCircle, CheckCircle, Eye, EyeOff, Trash2, Zap } from 'lucide-react'
 import { PlanConfig } from '@/lib/types'
 
 interface User {
@@ -77,6 +77,8 @@ export default function SettingsPage() {
   const [savingPlanos, setSavingPlanos] = useState(false)
   const [planosError, setPlanosError] = useState('')
   const [planosSuccess, setPlanosSuccess] = useState('')
+  const [testingAIKey, setTestingAIKey] = useState<'generalExams' | 'personalExams' | 'flashcards' | null>(null)
+  const [aiKeyTestResults, setAiKeyTestResults] = useState<Record<string, { success: boolean; message: string }>>({})
 
   useEffect(() => {
     checkAuth()
@@ -220,6 +222,48 @@ export default function SettingsPage() {
       setStripeError('Erro ao salvar configurações de Stripe')
     } finally {
       setSavingStripe(false)
+    }
+  }
+
+  async function testAIKey(keyType: 'generalExams' | 'personalExams' | 'flashcards') {
+    const apiKey = settings.aiKeys?.[keyType]
+    
+    if (!apiKey?.trim()) {
+      setAiKeyTestResults(prev => ({
+        ...prev,
+        [keyType]: { success: false, message: 'Por favor, insira uma API Key' }
+      }))
+      return
+    }
+
+    setTestingAIKey(keyType)
+    try {
+      const res = await fetch('/api/settings/test-gemini', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ apiKey })
+      })
+
+      const data = await res.json()
+
+      if (data.success) {
+        setAiKeyTestResults(prev => ({
+          ...prev,
+          [keyType]: { success: true, message: 'Conexão estabelecida com sucesso!' }
+        }))
+      } else {
+        setAiKeyTestResults(prev => ({
+          ...prev,
+          [keyType]: { success: false, message: data.error || 'Falha ao conectar' }
+        }))
+      }
+    } catch (error: any) {
+      setAiKeyTestResults(prev => ({
+        ...prev,
+        [keyType]: { success: false, message: 'Erro ao testar: ' + error.message }
+      }))
+    } finally {
+      setTestingAIKey(null)
     }
   }
 
@@ -697,17 +741,42 @@ export default function SettingsPage() {
               {/* General Exams */}
               <div className="space-y-2">
                 <Label htmlFor="ai-general">API Key para Provas Gerais</Label>
-                <Input
-                  id="ai-general"
-                  type="password"
-                  placeholder="sk-..."
-                  value={settings.aiKeys?.generalExams || ''}
-                  onChange={(e) => setSettings({
-                    ...settings,
-                    aiKeys: { ...settings.aiKeys, generalExams: e.target.value }
-                  })}
-                  className="font-mono text-sm"
-                />
+                <div className="flex gap-2">
+                  <Input
+                    id="ai-general"
+                    type="password"
+                    placeholder="sk-..."
+                    value={settings.aiKeys?.generalExams || ''}
+                    onChange={(e) => setSettings({
+                      ...settings,
+                      aiKeys: { ...settings.aiKeys, generalExams: e.target.value }
+                    })}
+                    className="font-mono text-sm flex-1"
+                  />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => testAIKey('generalExams')}
+                    disabled={testingAIKey === 'generalExams'}
+                    className="shrink-0"
+                  >
+                    {testingAIKey === 'generalExams' ? 'Testando...' : 'Testar'}
+                  </Button>
+                </div>
+                {aiKeyTestResults.generalExams && (
+                  <div className={`flex gap-2 p-2 rounded-lg text-sm ${
+                    aiKeyTestResults.generalExams.success 
+                      ? 'bg-green-50 dark:bg-green-950 text-green-800 dark:text-green-200' 
+                      : 'bg-red-50 dark:bg-red-950 text-red-800 dark:text-red-200'
+                  }`}>
+                    {aiKeyTestResults.generalExams.success ? (
+                      <CheckCircle className="h-4 w-4 shrink-0 mt-0.5" />
+                    ) : (
+                      <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+                    )}
+                    <span>{aiKeyTestResults.generalExams.message}</span>
+                  </div>
+                )}
                 <p className="text-xs text-muted-foreground">
                   Usado em: /admin/exams/create (Criação de Provas Gerais)
                 </p>
@@ -716,17 +785,42 @@ export default function SettingsPage() {
               {/* Personal Exams */}
               <div className="space-y-2">
                 <Label htmlFor="ai-personal">API Key para Provas Pessoais</Label>
-                <Input
-                  id="ai-personal"
-                  type="password"
-                  placeholder="sk-..."
-                  value={settings.aiKeys?.personalExams || ''}
-                  onChange={(e) => setSettings({
-                    ...settings,
-                    aiKeys: { ...settings.aiKeys, personalExams: e.target.value }
-                  })}
-                  className="font-mono text-sm"
-                />
+                <div className="flex gap-2">
+                  <Input
+                    id="ai-personal"
+                    type="password"
+                    placeholder="sk-..."
+                    value={settings.aiKeys?.personalExams || ''}
+                    onChange={(e) => setSettings({
+                      ...settings,
+                      aiKeys: { ...settings.aiKeys, personalExams: e.target.value }
+                    })}
+                    className="font-mono text-sm flex-1"
+                  />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => testAIKey('personalExams')}
+                    disabled={testingAIKey === 'personalExams'}
+                    className="shrink-0"
+                  >
+                    {testingAIKey === 'personalExams' ? 'Testando...' : 'Testar'}
+                  </Button>
+                </div>
+                {aiKeyTestResults.personalExams && (
+                  <div className={`flex gap-2 p-2 rounded-lg text-sm ${
+                    aiKeyTestResults.personalExams.success 
+                      ? 'bg-green-50 dark:bg-green-950 text-green-800 dark:text-green-200' 
+                      : 'bg-red-50 dark:bg-red-950 text-red-800 dark:text-red-200'
+                  }`}>
+                    {aiKeyTestResults.personalExams.success ? (
+                      <CheckCircle className="h-4 w-4 shrink-0 mt-0.5" />
+                    ) : (
+                      <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+                    )}
+                    <span>{aiKeyTestResults.personalExams.message}</span>
+                  </div>
+                )}
                 <p className="text-xs text-muted-foreground">
                   Usado em: /exams/personal/[id]/generate-questions (Geração de Questões)
                 </p>
@@ -735,17 +829,42 @@ export default function SettingsPage() {
               {/* Flashcards */}
               <div className="space-y-2">
                 <Label htmlFor="ai-flashcards">API Key para Flashcards</Label>
-                <Input
-                  id="ai-flashcards"
-                  type="password"
-                  placeholder="sk-..."
-                  value={settings.aiKeys?.flashcards || ''}
-                  onChange={(e) => setSettings({
-                    ...settings,
-                    aiKeys: { ...settings.aiKeys, flashcards: e.target.value }
-                  })}
-                  className="font-mono text-sm"
-                />
+                <div className="flex gap-2">
+                  <Input
+                    id="ai-flashcards"
+                    type="password"
+                    placeholder="sk-..."
+                    value={settings.aiKeys?.flashcards || ''}
+                    onChange={(e) => setSettings({
+                      ...settings,
+                      aiKeys: { ...settings.aiKeys, flashcards: e.target.value }
+                    })}
+                    className="font-mono text-sm flex-1"
+                  />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => testAIKey('flashcards')}
+                    disabled={testingAIKey === 'flashcards'}
+                    className="shrink-0"
+                  >
+                    {testingAIKey === 'flashcards' ? 'Testando...' : 'Testar'}
+                  </Button>
+                </div>
+                {aiKeyTestResults.flashcards && (
+                  <div className={`flex gap-2 p-2 rounded-lg text-sm ${
+                    aiKeyTestResults.flashcards.success 
+                      ? 'bg-green-50 dark:bg-green-950 text-green-800 dark:text-green-200' 
+                      : 'bg-red-50 dark:bg-red-950 text-red-800 dark:text-red-200'
+                  }`}>
+                    {aiKeyTestResults.flashcards.success ? (
+                      <CheckCircle className="h-4 w-4 shrink-0 mt-0.5" />
+                    ) : (
+                      <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+                    )}
+                    <span>{aiKeyTestResults.flashcards.message}</span>
+                  </div>
+                )}
                 <p className="text-xs text-muted-foreground">
                   Usado em: /flashcards (Geração de Flashcards com IA)
                 </p>

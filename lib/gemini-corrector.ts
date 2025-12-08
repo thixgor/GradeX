@@ -230,10 +230,25 @@ export async function testGeminiConnection(apiKey?: string): Promise<boolean> {
             ],
           },
         ],
+        generationConfig: {
+          temperature: 0.3,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 100,
+        },
       }),
     })
 
-    return response.ok
+    if (!response.ok) {
+      const errorData = await response.json()
+      console.error('Erro ao testar conexão Gemini:', errorData)
+      return false
+    }
+
+    const data = await response.json()
+    const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text
+
+    return !!generatedText
   } catch (error) {
     console.error('Erro ao testar conexão Gemini:', error)
     return false
