@@ -1,7 +1,7 @@
 import { getDb } from './mongodb'
 import { Settings } from './types'
 
-export const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent'
+export const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent'
 
 /**
  * Busca a API Key do Gemini no banco de dados

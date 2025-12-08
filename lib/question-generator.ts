@@ -3,7 +3,7 @@ import { getDb } from './mongodb'
 import { getAIKey, AIKeySection } from './ai-keys'
 import { v4 as uuidv4 } from 'uuid'
 
-const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent'
+const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent'
 
 /**
  * Busca a API Key do Gemini do banco de dados
