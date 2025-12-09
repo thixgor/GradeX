@@ -482,10 +482,27 @@ function parseMultipleChoiceResponse(response: string, params: QuestionGeneratio
   try {
     const jsonMatch = response.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
-      throw new Error('Resposta do Gemini não contém JSON válido')
+      console.error('Resposta não contém JSON:', response.substring(0, 200))
+      throw new Error('Resposta do Gemini não contém JSON válido. A IA pode ter retornado um erro ou resposta inválida.')
     }
 
-    const parsed = JSON.parse(jsonMatch[0])
+    let parsed
+    try {
+      parsed = JSON.parse(jsonMatch[0])
+    } catch (parseError) {
+      console.error('Erro ao fazer parse do JSON:', parseError)
+      console.error('JSON tentado:', jsonMatch[0].substring(0, 300))
+      throw new Error('JSON retornado pela IA está malformado. Tente novamente.')
+    }
+
+    // Validar campos obrigatórios
+    if (!parsed.alternativas || !Array.isArray(parsed.alternativas)) {
+      throw new Error('Resposta não contém array de alternativas válido')
+    }
+
+    if (!parsed.enunciado) {
+      throw new Error('Resposta não contém enunciado')
+    }
 
     // Criar alternativas no formato correto
     const alternatives: Alternative[] = parsed.alternativas.map((alt: any) => ({
@@ -498,7 +515,7 @@ function parseMultipleChoiceResponse(response: string, params: QuestionGeneratio
     // Verificar se tem exatamente uma correta
     const correctCount = alternatives.filter(a => a.isCorrect).length
     if (correctCount !== 1) {
-      throw new Error(`Número incorreto de alternativas corretas: ${correctCount}`)
+      throw new Error(`Número incorreto de alternativas corretas: ${correctCount}. A IA deve gerar exatamente uma alternativa correta.`)
     }
 
     const question: Question = {
@@ -520,10 +537,10 @@ function parseMultipleChoiceResponse(response: string, params: QuestionGeneratio
     }
 
     return question
-  } catch (error) {
+  } catch (error: any) {
     console.error('Erro ao parsear resposta:', error)
-    console.error('Resposta recebida:', response)
-    throw new Error('Falha ao interpretar resposta do gerador de questões')
+    console.error('Resposta recebida:', response.substring(0, 500))
+    throw new Error(error.message || 'Falha ao interpretar resposta do gerador de questões')
   }
 }
 
@@ -534,10 +551,27 @@ function parseDiscursiveResponse(response: string, params: QuestionGenerationPar
   try {
     const jsonMatch = response.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
-      throw new Error('Resposta do Gemini não contém JSON válido')
+      console.error('Resposta não contém JSON:', response.substring(0, 200))
+      throw new Error('Resposta do Gemini não contém JSON válido. A IA pode ter retornado um erro ou resposta inválida.')
     }
 
-    const parsed = JSON.parse(jsonMatch[0])
+    let parsed
+    try {
+      parsed = JSON.parse(jsonMatch[0])
+    } catch (parseError) {
+      console.error('Erro ao fazer parse do JSON:', parseError)
+      console.error('JSON tentado:', jsonMatch[0].substring(0, 300))
+      throw new Error('JSON retornado pela IA está malformado. Tente novamente.')
+    }
+
+    // Validar campos obrigatórios
+    if (!parsed.pontosChave || !Array.isArray(parsed.pontosChave)) {
+      throw new Error('Resposta não contém array de pontos-chave válido')
+    }
+
+    if (!parsed.enunciado) {
+      throw new Error('Resposta não contém enunciado')
+    }
 
     // Criar pontos-chave no formato correto
     const keyPoints: KeyPoint[] = parsed.pontosChave.map((pt: any) => ({
@@ -568,10 +602,10 @@ function parseDiscursiveResponse(response: string, params: QuestionGenerationPar
     }
 
     return question
-  } catch (error) {
+  } catch (error: any) {
     console.error('Erro ao parsear resposta discursiva:', error)
-    console.error('Resposta recebida:', response)
-    throw new Error('Falha ao interpretar resposta do gerador de questões discursivas')
+    console.error('Resposta recebida:', response.substring(0, 500))
+    throw new Error(error.message || 'Falha ao interpretar resposta do gerador de questões discursivas')
   }
 }
 

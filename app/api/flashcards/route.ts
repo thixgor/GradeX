@@ -211,9 +211,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Gerar flashcards via IA
-    const generatedCards = await fetchFlashcardPrompt(theme, title, difficulty, randomDifficulty, cardsRequested)
-
+    // Criar deck primeiro (vazio)
     const deck: FlashcardDeck = {
       userId: session.userId,
       userName: session.userName || 'Usuário',
@@ -223,7 +221,7 @@ export async function POST(request: NextRequest) {
       difficultyPercentage: difficulty,
       randomDifficulty,
       cardsRequested,
-      cardsGenerated: generatedCards.length,
+      cardsGenerated: 0, // Será incrementado conforme os cartões são gerados
       accountTypeSnapshot: user.accountType || 'gratuito',
       status: 'ativo',
       createdAt: new Date(),
@@ -233,19 +231,39 @@ export async function POST(request: NextRequest) {
     const deckInsert = await decksCollection.insertOne(deck)
     const deckId = deckInsert.insertedId.toString()
 
-    const cards: FlashcardCard[] = generatedCards.map((card, index) => ({
-      id: uuidv4(),
-      deckId,
-      index,
-      front: card.front,
-      back: card.back,
-      hint: card.hint,
-      objectives: (card.objectives || []).map((text: string, idx: number) => ({ id: `${index}-${idx}`, text })),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }))
+    // Gerar flashcards via IA
+    const generatedCards = await fetchFlashcardPrompt(theme, title, difficulty, randomDifficulty, cardsRequested)
 
-    await cardsCollection.insertMany(cards)
+    // Salvar cartões um por um para evitar perda de dados se a IA falhar
+    let cardsGenerated = 0
+    for (let i = 0; i < generatedCards.length; i++) {
+      const card = generatedCards[i]
+      const flashcardCard: FlashcardCard = {
+        id: uuidv4(),
+        deckId,
+        index: i,
+        front: card.front,
+        back: card.back,
+        hint: card.hint,
+        objectives: (card.objectives || []).map((text: string, idx: number) => ({ id: `${i}-${idx}`, text })),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }
+
+      try {
+        await cardsCollection.insertOne(flashcardCard)
+        cardsGenerated++
+      } catch (cardError) {
+        console.error(`Erro ao salvar cartão ${i + 1}:`, cardError)
+        // Continuar salvando os próximos cartões mesmo se um falhar
+      }
+    }
+
+    // Atualizar o deck com o número real de cartões gerados
+    await decksCollection.updateOne(
+      { _id: deckInsert.insertedId },
+      { $set: { cardsGenerated } }
+    )
 
     await usersCollection.updateOne(
       { _id: new ObjectId(session.userId) },
