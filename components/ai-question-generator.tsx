@@ -15,8 +15,6 @@ interface AIQuestionGeneratorProps {
   onMultipleQuestionsGenerated?: (questions: Question[]) => void
   numberOfAlternatives: number
   useTRI: boolean
-  examId?: string // ID da prova para salvar questões automaticamente
-  autoSaveQuestions?: boolean // Se deve salvar questões uma por uma
 }
 
 export function AIQuestionGenerator({
@@ -24,8 +22,6 @@ export function AIQuestionGenerator({
   onMultipleQuestionsGenerated,
   numberOfAlternatives,
   useTRI,
-  examId,
-  autoSaveQuestions,
 }: AIQuestionGeneratorProps) {
   const [generating, setGenerating] = useState(false)
   const [questionType, setQuestionType] = useState<'multiple-choice' | 'discursive'>('multiple-choice')
@@ -75,33 +71,6 @@ export function AIQuestionGenerator({
       }
     } catch (error) {
       console.error('Erro ao carregar contextos salvos:', error)
-    }
-  }
-
-  // Função para salvar uma questão automaticamente
-  async function saveQuestionAutomatically(question: Question, examIdToUse: string) {
-    try {
-      const endpoint = examIdToUse.startsWith('temp-') 
-        ? '/api/exams/personal/save-question'
-        : '/api/exams/save-question'
-      
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          examId: examIdToUse,
-          question,
-        }),
-      })
-
-      if (!response.ok) {
-        const data = await response.json()
-        console.error('Erro ao salvar questão:', data.error)
-        // Não lançar erro para não interromper a geração
-      }
-    } catch (error) {
-      console.error('Erro ao salvar questão automaticamente:', error)
-      // Não lançar erro para não interromper a geração
     }
   }
 
@@ -247,18 +216,10 @@ export function AIQuestionGenerator({
           const data = await response.json()
 
           if (!response.ok) {
-            console.error(`Erro ao gerar questão ${i + 1}:`, data.error)
-            // Continuar com próxima questão em caso de erro
-            continue
+            throw new Error(data.error || `Erro ao gerar questão ${i + 1}`)
           }
 
-          const question = data.question
-          generatedQuestions.push(question)
-
-          // Salvar questão automaticamente se examId foi fornecido
-          if (autoSaveQuestions && examId) {
-            await saveQuestionAutomatically(question, examId)
-          }
+          generatedQuestions.push(data.question)
         }
 
         // Retornar todas as questões geradas
