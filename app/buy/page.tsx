@@ -142,6 +142,8 @@ export default function BuyPage() {
   const [subscription, setSubscription] = useState<Subscription | null>(null)
   const [loadingSubscription, setLoadingSubscription] = useState(true)
   const [userName, setUserName] = useState('')
+  const [showAlternativePayments, setShowAlternativePayments] = useState(false)
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'Pix' | 'Dinheiro' | 'Boleto' | null>(null)
   const [paymentSuccess, setPaymentSuccess] = useState(false)
   const [successPlan, setSuccessPlan] = useState<string | null>(null)
   const [plans, setPlans] = useState<Plan[]>(defaultPlans)
@@ -181,6 +183,21 @@ export default function BuyPage() {
       // Usar planos padrão em caso de erro
       setPlans(defaultPlans)
     }
+  }
+
+  const alternativePlans = [
+    { label: 'Premium Mensal', value: 'Mensal' },
+    { label: 'Premium Trimestral', value: 'Trimestral' },
+    { label: 'Premium Semestral', value: 'Semestral' },
+    { label: 'Premium Anual', value: 'Anual' },
+  ] as const
+
+  const openWhatsAppForAlternativePayment = (method: 'Pix' | 'Dinheiro' | 'Boleto', planPeriod: 'Mensal' | 'Trimestral' | 'Semestral' | 'Anual') => {
+    const displayName = (userName || '').trim() || 'Usuário'
+    const message = encodeURIComponent(
+      `Olá, sou *${displayName}* e quero adquirir o DomineAqui Premium Plano *${planPeriod}* através do método de pagamento *${method}*.`
+    )
+    window.open(`https://wa.me/5521997770936?text=${message}`, '_blank')
   }
 
   async function checkSubscription() {
@@ -417,6 +434,100 @@ export default function BuyPage() {
         {/* Plans Grid - Only show if no active subscription */}
         {!loadingSubscription && !hasActiveSubscription && (
           <>
+            <Card className="mb-10 border-2 border-amber-500/60 bg-amber-50/60 dark:bg-amber-950/30">
+              <CardContent className="pt-6">
+                <div className="flex items-start gap-4">
+                  <AlertCircle className="h-6 w-6 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <h3 className="font-bold text-lg text-amber-900 dark:text-amber-100 mb-2">
+                      Pagamento via Pix, Dinheiro ou Boleto
+                    </h3>
+                    <p className="text-sm text-amber-800 dark:text-amber-200 mb-4">
+                      Se você quiser fazer pagamento no <strong>Pix</strong>, <strong>Dinheiro</strong> ou <strong>Boleto</strong>, você deve contactar a Administração da Domine Aqui.
+                    </p>
+
+                    <div className="flex flex-col gap-3">
+                      <div className="flex gap-2 flex-wrap">
+                        <Button
+                          type="button"
+                          variant={showAlternativePayments ? 'outline' : 'default'}
+                          className={showAlternativePayments ? '' : 'bg-amber-600 hover:bg-amber-700 text-white'}
+                          onClick={() => {
+                            setShowAlternativePayments((v) => !v)
+                            if (showAlternativePayments) {
+                              setSelectedPaymentMethod(null)
+                            }
+                          }}
+                        >
+                          {showAlternativePayments ? 'Fechar opções' : 'Selecionar opção'}
+                        </Button>
+
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => {
+                            const displayName = (userName || '').trim() || 'Usuário'
+                            const message = encodeURIComponent(
+                              `Olá, sou *${displayName}* e gostaria de informações para adquirir o DomineAqui Premium via Pix, Dinheiro ou Boleto.`
+                            )
+                            window.open(`https://wa.me/5521997770936?text=${message}`, '_blank')
+                          }}
+                          className="border-amber-600 text-amber-700 hover:bg-amber-100/60 dark:hover:bg-amber-950"
+                        >
+                          <MessageCircle className="h-4 w-4 mr-2" />
+                          Falar no WhatsApp
+                        </Button>
+                      </div>
+
+                      {showAlternativePayments && (
+                        <div className="rounded-lg border bg-background/60 p-4">
+                          <div className="space-y-3">
+                            <div>
+                              <p className="text-sm font-medium mb-2">Selecione a opção</p>
+                              <div className="flex gap-2 flex-wrap">
+                                {(['Pix', 'Dinheiro', 'Boleto'] as const).map((method) => (
+                                  <Button
+                                    key={method}
+                                    type="button"
+                                    variant={selectedPaymentMethod === method ? 'default' : 'outline'}
+                                    className={selectedPaymentMethod === method ? 'bg-amber-600 hover:bg-amber-700' : ''}
+                                    onClick={() => setSelectedPaymentMethod(method)}
+                                  >
+                                    {method}
+                                  </Button>
+                                ))}
+                              </div>
+                            </div>
+
+                            {selectedPaymentMethod && (
+                              <div>
+                                <p className="text-sm font-medium mb-2">Selecione o Plano</p>
+                                <div className="flex gap-2 flex-wrap">
+                                  {alternativePlans.map((p) => (
+                                    <Button
+                                      key={p.value}
+                                      type="button"
+                                      variant="outline"
+                                      onClick={() => openWhatsAppForAlternativePayment(selectedPaymentMethod, p.value)}
+                                    >
+                                      {p.label}
+                                    </Button>
+                                  ))}
+                                </div>
+                                <p className="text-xs text-muted-foreground mt-3">
+                                  Ao selecionar, enviaremos uma mensagem automática para o WhatsApp da Administração.
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
               {plans.slice(0, 3).map((plan, idx) => (
                 <Card key={plan.id} className={`relative ${plan.highlighted ? 'border-2 border-yellow-500 shadow-lg' : ''}`}>
