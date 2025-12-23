@@ -28,7 +28,10 @@ export default function AulaDetalhePage() {
 
   const [user, setUser] = useState<User | null>(null)
   const [aula, setAula] = useState<AulaPostagem | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [authLoading, setAuthLoading] = useState(true)
+  const [aulaLoading, setAulaLoading] = useState(false)
+  const [aulaLoaded, setAulaLoaded] = useState(false)
+  const [redirecting, setRedirecting] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
   const [temAcesso, setTemAcesso] = useState(true)
   const [comentarios, setComentarios] = useState<AulaComentario[]>([])
@@ -45,12 +48,13 @@ export default function AulaDetalhePage() {
     if (user) {
       loadAula()
     }
-  }, [user?.id])
+  }, [user?.id, aulaId])
 
   async function checkAuth() {
     try {
       const res = await fetch('/api/auth/me')
       if (!res.ok) {
+        setRedirecting(true)
         router.push('/auth/login')
         return
       }
@@ -58,13 +62,16 @@ export default function AulaDetalhePage() {
       setUser(data.user)
       setIsAdmin(data.user.role === 'admin')
     } catch (error) {
+      setRedirecting(true)
       router.push('/auth/login')
     } finally {
-      setLoading(false)
+      setAuthLoading(false)
     }
   }
 
   async function loadAula() {
+    setAulaLoaded(false)
+    setAulaLoading(true)
     try {
       const res = await fetch(`/api/aulas/${aulaId}`)
       if (res.ok) {
@@ -85,11 +92,16 @@ export default function AulaDetalhePage() {
           setTemAcesso(true)
         }
       } else {
+        setRedirecting(true)
         router.push('/aulas')
       }
     } catch (error) {
       console.error('Erro ao carregar aula:', error)
+      setRedirecting(true)
       router.push('/aulas')
+    } finally {
+      setAulaLoading(false)
+      setAulaLoaded(true)
     }
   }
 
@@ -155,7 +167,7 @@ export default function AulaDetalhePage() {
     }
   }
 
-  if (loading) {
+  if (redirecting || authLoading || !user || aulaLoading || !aulaLoaded) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-lg">Carregando...</div>
