@@ -450,20 +450,24 @@ export default function AulasPage() {
         ) : !selectedTopico ? (
           // Tela de Tópicos
           <div>
-            <Button
-              onClick={() => {
-                setSelectedSetor(null)
-                setSelectedTopico(null)
-                setSelectedSubtopico(null)
-                setSelectedModulo(null)
-                setSelectedSubmodulo(null)
-              }}
-              variant="ghost"
-              className="mb-6 text-white hover:bg-white/10"
-            >
-              <ChevronRight className="h-4 w-4 rotate-180 mr-2" />
-              Voltar aos Setores
-            </Button>
+            <div className="sticky top-16 sm:top-20 z-40 mb-6">
+              <div className="inline-flex backdrop-blur-md bg-white/5 border border-white/10 rounded-xl p-1">
+                <Button
+                  onClick={() => {
+                    setSelectedSetor(null)
+                    setSelectedTopico(null)
+                    setSelectedSubtopico(null)
+                    setSelectedModulo(null)
+                    setSelectedSubmodulo(null)
+                  }}
+                  variant="ghost"
+                  className="text-white hover:bg-white/10"
+                >
+                  <ChevronRight className="h-4 w-4 rotate-180 mr-2" />
+                  Voltar aos Setores
+                </Button>
+              </div>
+            </div>
             <h2 className="text-3xl font-bold text-white mb-8">Tópicos</h2>
             
             {/* Aulas do setor sem tópico */}
@@ -624,19 +628,23 @@ export default function AulasPage() {
         ) : !selectedSubtopico ? (
           // Tela de Subtópicos
           <div>
-            <Button
-              onClick={() => {
-                setSelectedTopico(null)
-                setSelectedSubtopico(null)
-                setSelectedModulo(null)
-                setSelectedSubmodulo(null)
-              }}
-              variant="ghost"
-              className="mb-6 text-white hover:bg-white/10"
-            >
-              <ChevronRight className="h-4 w-4 rotate-180 mr-2" />
-              Voltar aos Tópicos
-            </Button>
+            <div className="sticky top-16 sm:top-20 z-40 mb-6">
+              <div className="inline-flex backdrop-blur-md bg-white/5 border border-white/10 rounded-xl p-1">
+                <Button
+                  onClick={() => {
+                    setSelectedTopico(null)
+                    setSelectedSubtopico(null)
+                    setSelectedModulo(null)
+                    setSelectedSubmodulo(null)
+                  }}
+                  variant="ghost"
+                  className="text-white hover:bg-white/10"
+                >
+                  <ChevronRight className="h-4 w-4 rotate-180 mr-2" />
+                  Voltar aos Tópicos
+                </Button>
+              </div>
+            </div>
             <h2 className="text-3xl font-bold text-white mb-8">Subtópicos</h2>
             
             {/* Aulas do tópico sem subtópico */}
@@ -796,18 +804,22 @@ export default function AulasPage() {
         ) : !selectedModulo ? (
           // Tela de Módulos
           <div>
-            <Button
-              onClick={() => {
-                setSelectedSubtopico(null)
-                setSelectedModulo(null)
-                setSelectedSubmodulo(null)
-              }}
-              variant="ghost"
-              className="mb-6 text-white hover:bg-white/10"
-            >
-              <ChevronRight className="h-4 w-4 rotate-180 mr-2" />
-              Voltar aos Subtópicos
-            </Button>
+            <div className="sticky top-16 sm:top-20 z-40 mb-6">
+              <div className="inline-flex backdrop-blur-md bg-white/5 border border-white/10 rounded-xl p-1">
+                <Button
+                  onClick={() => {
+                    setSelectedSubtopico(null)
+                    setSelectedModulo(null)
+                    setSelectedSubmodulo(null)
+                  }}
+                  variant="ghost"
+                  className="text-white hover:bg-white/10"
+                >
+                  <ChevronRight className="h-4 w-4 rotate-180 mr-2" />
+                  Voltar aos Subtópicos
+                </Button>
+              </div>
+            </div>
             <h2 className="text-3xl font-bold text-white mb-8">Módulos</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {/* Aulas do subtópico sem módulo - renderizadas como cards */}
@@ -951,17 +963,21 @@ export default function AulasPage() {
         ) : !selectedSubmodulo ? (
           // Tela de Submódulos
           <div>
-            <Button
-              onClick={() => {
-                setSelectedModulo(null)
-                setSelectedSubmodulo(null)
-              }}
-              variant="ghost"
-              className="mb-6 text-white hover:bg-white/10"
-            >
-              <ChevronRight className="h-4 w-4 rotate-180 mr-2" />
-              Voltar aos Módulos
-            </Button>
+            <div className="sticky top-16 sm:top-20 z-40 mb-6">
+              <div className="inline-flex backdrop-blur-md bg-white/5 border border-white/10 rounded-xl p-1">
+                <Button
+                  onClick={() => {
+                    setSelectedModulo(null)
+                    setSelectedSubmodulo(null)
+                  }}
+                  variant="ghost"
+                  className="text-white hover:bg-white/10"
+                >
+                  <ChevronRight className="h-4 w-4 rotate-180 mr-2" />
+                  Voltar aos Módulos
+                </Button>
+              </div>
+            </div>
             <h2 className="text-3xl font-bold text-white mb-8">Submódulos</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {/* Aulas do módulo sem submódulo - renderizadas como cards */}
@@ -1102,14 +1118,18 @@ export default function AulasPage() {
         ) : (
           // Tela de Aulas
           <div>
-            <Button
-              onClick={() => setSelectedSubmodulo(null)}
-              variant="ghost"
-              className="mb-6 text-white hover:bg-white/10"
-            >
-              <ChevronRight className="h-4 w-4 rotate-180 mr-2" />
-              Voltar aos Submódulos
-            </Button>
+            <div className="sticky top-16 sm:top-20 z-40 mb-6">
+              <div className="inline-flex backdrop-blur-md bg-white/5 border border-white/10 rounded-xl p-1">
+                <Button
+                  onClick={() => setSelectedSubmodulo(null)}
+                  variant="ghost"
+                  className="text-white hover:bg-white/10"
+                >
+                  <ChevronRight className="h-4 w-4 rotate-180 mr-2" />
+                  Voltar aos Submódulos
+                </Button>
+              </div>
+            </div>
 
             <h2 className="text-3xl font-bold text-white mb-8">Aulas</h2>
             {searchTerm && (
