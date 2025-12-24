@@ -374,10 +374,10 @@ export default function AulasPage() {
 
                   {/* Bloqueio por Data de Liberação */}
                   {isAulaBloqueadaPorData(aula) && (
-                    <div className="absolute inset-0 bg-red-950/20 rounded-2xl flex items-center justify-center backdrop-blur-[1px] z-10 shadow-[0_0_80px_rgba(239,68,68,0.25)]">
+                    <div className="absolute inset-0 bg-black/35 rounded-2xl flex items-center justify-center backdrop-blur-sm z-10">
                       <div className="text-center px-6">
-                        <AlertCircle className="h-8 w-8 text-red-300 mx-auto mb-2" />
-                        <p className="text-sm font-semibold text-red-200">Ainda não liberada</p>
+                        <AlertCircle className="h-8 w-8 text-cyan-300 mx-auto mb-2" />
+                        <p className="text-sm font-semibold text-cyan-200">Ainda não liberada</p>
                         <p className="text-xs text-white/70 mt-1">
                           Disponível em {formatarDataLiberacao(new Date(aula.dataLiberacao))}
                         </p>
@@ -571,10 +571,10 @@ export default function AulasPage() {
                       )}
                       {/* Bloqueio por Data de Liberação */}
                       {isAulaBloqueadaPorData(aula) && (
-                        <div className="absolute inset-0 bg-red-950/20 rounded-2xl flex items-center justify-center backdrop-blur-[1px] z-10 shadow-[0_0_80px_rgba(239,68,68,0.25)]">
+                        <div className="absolute inset-0 bg-black/35 rounded-2xl flex items-center justify-center backdrop-blur-sm z-10">
                           <div className="text-center px-6">
-                            <AlertCircle className="h-8 w-8 text-red-300 mx-auto mb-2" />
-                            <p className="text-sm font-semibold text-red-200">Ainda não liberada</p>
+                            <AlertCircle className="h-8 w-8 text-cyan-300 mx-auto mb-2" />
+                            <p className="text-sm font-semibold text-cyan-200">Ainda não liberada</p>
                             <p className="text-xs text-white/70 mt-1">
                               Disponível em {formatarDataLiberacao(new Date(aula.dataLiberacao))}
                             </p>
@@ -787,10 +787,10 @@ export default function AulasPage() {
                       )}
                       {/* Bloqueio por Data de Liberação */}
                       {isAulaBloqueadaPorData(aula) && (
-                        <div className="absolute inset-0 bg-red-950/20 rounded-2xl flex items-center justify-center backdrop-blur-[1px] z-10 shadow-[0_0_80px_rgba(239,68,68,0.25)]">
+                        <div className="absolute inset-0 bg-black/35 rounded-2xl flex items-center justify-center backdrop-blur-sm z-10">
                           <div className="text-center px-6">
-                            <AlertCircle className="h-8 w-8 text-red-300 mx-auto mb-2" />
-                            <p className="text-sm font-semibold text-red-200">Ainda não liberada</p>
+                            <AlertCircle className="h-8 w-8 text-cyan-300 mx-auto mb-2" />
+                            <p className="text-sm font-semibold text-cyan-200">Ainda não liberada</p>
                             <p className="text-xs text-white/70 mt-1">
                               Disponível em {formatarDataLiberacao(new Date(aula.dataLiberacao))}
                             </p>
@@ -997,10 +997,10 @@ export default function AulasPage() {
                   )}
                   {/* Bloqueio por Data de Liberação */}
                   {isAulaBloqueadaPorData(aula) && (
-                    <div className="absolute inset-0 bg-red-950/20 rounded-2xl flex items-center justify-center backdrop-blur-[1px] z-10 shadow-[0_0_80px_rgba(239,68,68,0.25)]">
+                    <div className="absolute inset-0 bg-black/35 rounded-2xl flex items-center justify-center backdrop-blur-sm z-10">
                       <div className="text-center px-6">
-                        <AlertCircle className="h-8 w-8 text-red-300 mx-auto mb-2" />
-                        <p className="text-sm font-semibold text-red-200">Ainda não liberada</p>
+                        <AlertCircle className="h-8 w-8 text-cyan-300 mx-auto mb-2" />
+                        <p className="text-sm font-semibold text-cyan-200">Ainda não liberada</p>
                         <p className="text-xs text-white/70 mt-1">
                           Disponível em {formatarDataLiberacao(new Date(aula.dataLiberacao))}
                         </p>
@@ -1194,10 +1194,10 @@ export default function AulasPage() {
                   )}
                   {/* Bloqueio por Data de Liberação */}
                   {isAulaBloqueadaPorData(aula) && (
-                    <div className="absolute inset-0 bg-red-950/20 rounded-2xl flex items-center justify-center backdrop-blur-[1px] z-10 shadow-[0_0_80px_rgba(239,68,68,0.25)]">
+                    <div className="absolute inset-0 bg-black/35 rounded-2xl flex items-center justify-center backdrop-blur-sm z-10">
                       <div className="text-center px-6">
-                        <AlertCircle className="h-8 w-8 text-red-300 mx-auto mb-2" />
-                        <p className="text-sm font-semibold text-red-200">Ainda não liberada</p>
+                        <AlertCircle className="h-8 w-8 text-cyan-300 mx-auto mb-2" />
+                        <p className="text-sm font-semibold text-cyan-200">Ainda não liberada</p>
                         <p className="text-xs text-white/70 mt-1">
                           Disponível em {formatarDataLiberacao(new Date(aula.dataLiberacao))}
                         </p>
@@ -1423,10 +1423,10 @@ export default function AulasPage() {
                 )}
                 {/* Bloqueio por Data de Liberação */}
                 {isAulaBloqueadaPorData(aula) && (
-                  <div className="absolute inset-0 bg-red-950/20 rounded-2xl flex items-center justify-center backdrop-blur-[1px] z-10 shadow-[0_0_80px_rgba(239,68,68,0.25)]">
+                  <div className="absolute inset-0 bg-black/35 rounded-2xl flex items-center justify-center backdrop-blur-sm z-10">
                     <div className="text-center px-6">
-                      <AlertCircle className="h-8 w-8 text-red-300 mx-auto mb-2" />
-                      <p className="text-sm font-semibold text-red-200">Ainda não liberada</p>
+                      <AlertCircle className="h-8 w-8 text-cyan-300 mx-auto mb-2" />
+                      <p className="text-sm font-semibold text-cyan-200">Ainda não liberada</p>
                       <p className="text-xs text-white/70 mt-1">
                         Disponível em {formatarDataLiberacao(new Date(aula.dataLiberacao))}
                       </p>
@@ -1552,7 +1552,7 @@ export default function AulasPage() {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
             <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-6 max-w-lg w-full shadow-2xl">
               <div className="flex items-start gap-3">
-                <AlertCircle className="h-6 w-6 text-red-300 mt-0.5" />
+                <AlertCircle className="h-6 w-6 text-cyan-300 mt-0.5" />
                 <div className="flex-1">
                   <h2 className="text-xl font-bold text-white">{bloqueioDialog.titulo}</h2>
                   <p className="text-white/80 whitespace-pre-wrap leading-relaxed mt-2">{bloqueioDialog.mensagem}</p>
