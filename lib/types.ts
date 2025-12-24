@@ -668,6 +668,7 @@ export interface AulaPostagem {
   atualizadoEm: Date
   
   // Controle
+  ocultarAteLiberacao?: boolean
   oculta: boolean
   ordem: number // Ordem de exibição na página inicial
   comentarios: AulaComentario[]

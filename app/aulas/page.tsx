@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { ArrowLeft, Plus, Lock, Globe, Video, Zap, Search, ChevronRight, Info, BookOpen, AlertCircle } from 'lucide-react'
+import { ArrowLeft, Plus, Lock, Globe, Video, Zap, Search, ChevronRight, Info, BookOpen, AlertCircle, Pencil } from 'lucide-react'
 import { useState as useStateDialog } from 'react'
 import { AulaSetor, AulaTopic, AulaSubtopic, AulaModulo, AulaSubmodulo, AulaPostagem } from '@/lib/types'
 
@@ -44,6 +44,7 @@ export default function AulasPage() {
 
   // Dialog de descrição
   const [descricaoDialog, setDescricaoDialog] = useState<{ titulo: string; descricao: string } | null>(null)
+  const [bloqueioDialog, setBloqueioDialog] = useState<{ titulo: string; mensagem: string } | null>(null)
 
   useEffect(() => {
     checkAuth()
@@ -100,11 +101,45 @@ export default function AulasPage() {
   }
 
   // Funções auxiliares para filtrar dados
+  const isAulaLiberada = (aula: AulaPostagem) => {
+    return new Date(aula.dataLiberacao) <= new Date()
+  }
+
+  const isAulaBloqueadaPorData = (aula: AulaPostagem) => {
+    if (!aula.dataLiberacao) return false
+    if (isAulaLiberada(aula)) return false
+    return !aula.ocultarAteLiberacao
+  }
+
+  const formatarDataLiberacao = (data: Date) => {
+    return data.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  }
+
+  const formatarTempoRestante = (target: Date) => {
+    const diffMs = target.getTime() - Date.now()
+    if (diffMs <= 0) return 'agora'
+
+    const totalMinutes = Math.floor(diffMs / 60000)
+    const days = Math.floor(totalMinutes / (60 * 24))
+    const hours = Math.floor((totalMinutes % (60 * 24)) / 60)
+    const minutes = totalMinutes % 60
+
+    if (days > 0) return `${days}d ${hours}h`
+    if (hours > 0) return `${hours}h ${minutes}m`
+    return `${minutes}m`
+  }
+
   const filterAula = (aula: AulaPostagem) => {
     // Verificar se não está oculta (apenas admin vê ocultas)
     if (aula.oculta && !isAdmin && user?.secondaryRole !== 'monitor') return false
-    // Verificar se foi liberada
-    if (new Date(aula.dataLiberacao) > new Date()) return false
+    // Verificar se foi liberada (ou se deve ficar oculta até a liberação)
+    if (!isAulaLiberada(aula) && aula.ocultarAteLiberacao && !isAdmin && user?.secondaryRole !== 'monitor') return false
     // Mostrar aulas premium para todos (mas bloqueadas visualmente para não-premium)
     return true
   }
@@ -314,12 +349,41 @@ export default function AulasPage() {
                   }`}
                   style={{animationDelay: `${idx * 0.1}s`}}
                 >
+                  {(isAdmin || user?.secondaryRole === 'monitor') && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        router.push(`/aulas/gerenciar/aulas/${aula._id}/editar`)
+                      }}
+                      className="absolute bottom-2 right-2 z-20 p-2 rounded-lg bg-black/30 border border-white/20 hover:bg-black/40 transition-colors"
+                      title="Editar aula"
+                    >
+                      <Pencil className="h-3.5 w-3.5 text-white" />
+                    </button>
+                  )}
                   {/* Bloqueio Premium */}
                   {aula.visibilidade === 'premium' && user?.accountType !== 'premium' && !isAdmin && user?.secondaryRole !== 'monitor' && (
                     <div className="absolute inset-0 bg-black/40 rounded-2xl flex items-center justify-center backdrop-blur-sm z-10">
                       <div className="text-center">
                         <Lock className="h-8 w-8 text-yellow-300 mx-auto mb-2" />
                         <p className="text-sm font-semibold text-yellow-300">Conteúdo Premium</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Bloqueio por Data de Liberação */}
+                  {isAulaBloqueadaPorData(aula) && (
+                    <div className="absolute inset-0 bg-red-950/20 rounded-2xl flex items-center justify-center backdrop-blur-[1px] z-10 shadow-[0_0_80px_rgba(239,68,68,0.25)]">
+                      <div className="text-center px-6">
+                        <AlertCircle className="h-8 w-8 text-red-300 mx-auto mb-2" />
+                        <p className="text-sm font-semibold text-red-200">Ainda não liberada</p>
+                        <p className="text-xs text-white/70 mt-1">
+                          Disponível em {formatarDataLiberacao(new Date(aula.dataLiberacao))}
+                        </p>
+                        <p className="text-xs text-white/60 mt-1">
+                          Faltam {formatarTempoRestante(new Date(aula.dataLiberacao))}
+                        </p>
                       </div>
                     </div>
                   )}
@@ -402,8 +466,19 @@ export default function AulasPage() {
                         </p>
                       </div>
                       <Button
-                        onClick={() => router.push(`/aulas/${aula._id}`)}
-                        className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transition-all duration-300 hover-lift"
+                        onClick={() => {
+                          if (isAulaBloqueadaPorData(aula)) {
+                            setBloqueioDialog({
+                              titulo: aula.titulo,
+                              mensagem: `Esta aula será liberada em ${formatarDataLiberacao(new Date(aula.dataLiberacao))}.\n\nVocê pode ver a aula na lista, mas não pode acessá-la antes do lançamento.`
+                            })
+                            return
+                          }
+                          router.push(`/aulas/${aula._id}`)
+                        }}
+                        className={`bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transition-all duration-300 hover-lift ${
+                          isAulaBloqueadaPorData(aula) ? 'opacity-70' : ''
+                        }`}
                         size="sm"
                       >
                         Ver Aula
@@ -476,98 +551,137 @@ export default function AulasPage() {
                 <h3 className="text-xl font-semibold text-white mb-4">Aulas do Setor</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                   {aulasSetor.map((aula, idx) => (
-                <div 
-                  key={String(aula._id)} 
-                  className="backdrop-blur-md bg-white/5 border border-emerald-500/20 rounded-2xl overflow-hidden hover:border-emerald-500/40 transition-all shadow-xl shadow-emerald-500/5 animate-fadeInUp hover-lift"
-                  style={{animationDelay: `${idx * 0.1}s`}}
-                >
-                  {/* Capa da Aula */}
-                  {aula.capa && (
-                    <div className="w-full h-32 sm:h-40 relative overflow-hidden">
-                      {aula.capa.tipo === 'imagem' && aula.capa.imagem ? (
-                        <img 
-                          src={aula.capa.imagem} 
-                          alt={aula.titulo}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none'
+                    <div 
+                      key={String(aula._id)} 
+                      className="backdrop-blur-md bg-white/5 border border-emerald-500/20 rounded-2xl overflow-hidden hover:border-emerald-500/40 transition-all shadow-xl shadow-emerald-500/5 animate-fadeInUp hover-lift relative"
+                      style={{animationDelay: `${idx * 0.1}s`}}
+                    >
+                      {(isAdmin || user?.secondaryRole === 'monitor') && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            router.push(`/aulas/gerenciar/aulas/${aula._id}/editar`)
                           }}
-                        />
-                      ) : aula.capa.tipo === 'cor' ? (
-                        <div 
-                          className="w-full h-full flex items-center justify-center"
-                          style={{ backgroundColor: aula.capa.cor || '#3b82f6' }}
+                          className="absolute bottom-2 right-2 z-20 p-2 rounded-lg bg-black/30 border border-white/20 hover:bg-black/40 transition-colors"
+                          title="Editar aula"
                         >
-                          <p className="text-lg sm:text-2xl font-bold text-white text-center px-4">{aula.capa.titulo}</p>
+                          <Pencil className="h-3.5 w-3.5 text-white" />
+                        </button>
+                      )}
+                      {/* Bloqueio por Data de Liberação */}
+                      {isAulaBloqueadaPorData(aula) && (
+                        <div className="absolute inset-0 bg-red-950/20 rounded-2xl flex items-center justify-center backdrop-blur-[1px] z-10 shadow-[0_0_80px_rgba(239,68,68,0.25)]">
+                          <div className="text-center px-6">
+                            <AlertCircle className="h-8 w-8 text-red-300 mx-auto mb-2" />
+                            <p className="text-sm font-semibold text-red-200">Ainda não liberada</p>
+                            <p className="text-xs text-white/70 mt-1">
+                              Disponível em {formatarDataLiberacao(new Date(aula.dataLiberacao))}
+                            </p>
+                            <p className="text-xs text-white/60 mt-1">
+                              Faltam {formatarTempoRestante(new Date(aula.dataLiberacao))}
+                            </p>
+                          </div>
                         </div>
-                      ) : null}
-                    </div>
-                  )}
+                      )}
+                      {/* Capa da Aula */}
+                      {aula.capa && (
+                        <div className="w-full h-32 sm:h-40 relative overflow-hidden">
+                          {aula.capa.tipo === 'imagem' && aula.capa.imagem ? (
+                            <img 
+                              src={aula.capa.imagem} 
+                              alt={aula.titulo}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none'
+                              }}
+                            />
+                          ) : aula.capa.tipo === 'cor' ? (
+                            <div 
+                              className="w-full h-full flex items-center justify-center"
+                              style={{ backgroundColor: aula.capa.cor || '#3b82f6' }}
+                            >
+                              <p className="text-lg sm:text-2xl font-bold text-white text-center px-4">{aula.capa.titulo}</p>
+                            </div>
+                          ) : null}
+                        </div>
+                      )}
 
-                  <div className="p-4 sm:p-6">
-                    <div className="flex items-start justify-between gap-3 sm:gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2 flex-wrap">
-                          <h3 className="text-base sm:text-lg font-semibold text-white">{aula.titulo}</h3>
-                          <div className="flex gap-2 flex-wrap">
-                            {aula.tipo === 'ao-vivo' ? (
-                              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-semibold animate-glowPulse">
-                                <Zap className="h-3 w-3" />
-                                Ao Vivo
-                              </span>
-                            ) : (
-                              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 text-xs font-semibold">
-                                <Video className="h-3 w-3" />
-                                Gravada
-                              </span>
-                            )}
-                            {aula.visibilidade === 'premium' ? (
-                              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 text-xs font-semibold">
-                                <Lock className="h-3 w-3" />
-                                Premium
-                              </span>
-                            ) : (
-                              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold">
-                                <Globe className="h-3 w-3" />
-                                Gratuita
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        {aula.descricao && (
-                          <div className="flex items-start gap-2 mb-2">
-                            <p className="text-xs sm:text-sm text-white/70 line-clamp-2 flex-1">{aula.descricao}</p>
+                      <div className="p-4 sm:p-6">
+                        <div className="flex items-start justify-between gap-3 sm:gap-4">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2 flex-wrap">
+                              <h3 className="text-base sm:text-lg font-semibold text-white">{aula.titulo}</h3>
+                              <div className="flex gap-2 flex-wrap">
+                                {aula.tipo === 'ao-vivo' ? (
+                                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-semibold animate-glowPulse">
+                                    <Zap className="h-3 w-3" />
+                                    Ao Vivo
+                                  </span>
+                                ) : (
+                                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 text-xs font-semibold">
+                                    <Video className="h-3 w-3" />
+                                    Gravada
+                                  </span>
+                                )}
+                                {aula.visibilidade === 'premium' ? (
+                                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 text-xs font-semibold">
+                                    <Lock className="h-3 w-3" />
+                                    Premium
+                                  </span>
+                                ) : (
+                                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold">
+                                    <Globe className="h-3 w-3" />
+                                    Gratuita
+                                  </span>
+                                )}
+                              </div>
+                            </div>
                             {aula.descricao && (
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  setDescricaoDialog({ titulo: aula.titulo, descricao: aula.descricao || '' })
-                                }}
-                                className="p-1 hover:bg-emerald-500/30 rounded transition-colors flex-shrink-0"
-                                title="Ver descrição completa"
-                              >
-                                <Info className="h-4 w-4 text-emerald-400" />
-                              </button>
+                              <div className="flex items-start gap-2 mb-2">
+                                <p className="text-xs sm:text-sm text-white/70 line-clamp-2 flex-1">{aula.descricao}</p>
+                                {aula.descricao && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      setDescricaoDialog({ titulo: aula.titulo, descricao: aula.descricao || '' })
+                                    }}
+                                    className="p-1 hover:bg-emerald-500/30 rounded transition-colors flex-shrink-0"
+                                    title="Ver descrição completa"
+                                  >
+                                    <Info className="h-4 w-4 text-emerald-400" />
+                                  </button>
+                                )}
+                              </div>
                             )}
+                            <p className="text-xs text-white/50">
+                              Postada em {new Date(aula.criadoEm).toLocaleDateString('pt-BR')}
+                              {aula.criadoEm !== aula.atualizadoEm && (
+                                <> • Atualizada em {new Date(aula.atualizadoEm).toLocaleDateString('pt-BR')}</>
+                              )}
+                            </p>
                           </div>
-                        )}
-                        <p className="text-xs text-white/50">
-                          Postada em {new Date(aula.criadoEm).toLocaleDateString('pt-BR')}
-                          {aula.criadoEm !== aula.atualizadoEm && (
-                            <> • Atualizada em {new Date(aula.atualizadoEm).toLocaleDateString('pt-BR')}</>
-                          )}
-                        </p>
+                          <Button
+                            onClick={() => {
+                              if (isAulaBloqueadaPorData(aula)) {
+                                setBloqueioDialog({
+                                  titulo: aula.titulo,
+                                  mensagem: `Esta aula será liberada em ${formatarDataLiberacao(new Date(aula.dataLiberacao))}.\n\nVocê pode ver a aula na lista, mas não pode acessá-la antes do lançamento.`
+                                })
+                                return
+                              }
+                              router.push(`/aulas/${aula._id}`)
+                            }}
+                            className={`bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transition-all duration-300 hover-lift ${
+                              isAulaBloqueadaPorData(aula) ? 'opacity-70' : ''
+                            }`}
+                            size="sm"
+                          >
+                            Ver Aula
+                          </Button>
+                        </div>
                       </div>
-                      <Button
-                        onClick={() => router.push(`/aulas/${aula._id}`)}
-                        className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transition-all duration-300 hover-lift"
-                        size="sm"
-                      >
-                        Ver Aula
-                      </Button>
                     </div>
-                  </div>
-                </div>
                   ))}
                 </div>
               </div>
@@ -579,47 +693,47 @@ export default function AulasPage() {
                 <h3 className="text-xl font-semibold text-white mb-4">Tópicos</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                   {topicosSetor.map(topico => {
-                const aulaCount = countAulasTopico(String(topico._id))
-                return (
-                  <div
-                    key={String(topico._id)}
-                    onClick={() => {
-                      setSelectedTopico(String(topico._id))
-                      setSelectedSubtopico(null)
-                      setSelectedModulo(null)
-                      setSelectedSubmodulo(null)
-                    }}
-                    className="backdrop-blur-md bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-blue-500/30 rounded-2xl p-6 hover:border-blue-500/60 hover:bg-blue-500/30 transition-all cursor-pointer shadow-xl shadow-blue-500/10 hover-lift group"
-                  >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex-1">
-                        <h3 className="text-xl font-bold text-white group-hover:text-blue-200 transition-colors line-clamp-2">{topico.nome}</h3>
-                      </div>
-                      <div className="flex gap-2 flex-shrink-0 ml-2">
+                    const aulaCount = countAulasTopico(String(topico._id))
+                    return (
+                      <div
+                        key={String(topico._id)}
+                        onClick={() => {
+                          setSelectedTopico(String(topico._id))
+                          setSelectedSubtopico(null)
+                          setSelectedModulo(null)
+                          setSelectedSubmodulo(null)
+                        }}
+                        className="backdrop-blur-md bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-blue-500/30 rounded-2xl p-6 hover:border-blue-500/60 hover:bg-blue-500/30 transition-all cursor-pointer shadow-xl shadow-blue-500/10 hover-lift group"
+                      >
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex-1">
+                            <h3 className="text-xl font-bold text-white group-hover:text-blue-200 transition-colors line-clamp-2">{topico.nome}</h3>
+                          </div>
+                          <div className="flex gap-2 flex-shrink-0 ml-2">
+                            {topico.descricao && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setDescricaoDialog({ titulo: topico.nome, descricao: topico.descricao || '' })
+                                }}
+                                className="p-1 hover:bg-blue-500/30 rounded transition-colors"
+                                title="Ver descrição completa"
+                              >
+                                <Info className="h-5 w-5 text-blue-400" />
+                              </button>
+                            )}
+                            <ChevronRight className="h-6 w-6 text-blue-400 group-hover:translate-x-1 transition-transform" />
+                          </div>
+                        </div>
                         {topico.descricao && (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              setDescricaoDialog({ titulo: topico.nome, descricao: topico.descricao || '' })
-                            }}
-                            className="p-1 hover:bg-blue-500/30 rounded transition-colors"
-                            title="Ver descrição completa"
-                          >
-                            <Info className="h-5 w-5 text-blue-400" />
-                          </button>
+                          <p className="text-white/60 text-sm mb-4 line-clamp-2">{topico.descricao}</p>
                         )}
-                        <ChevronRight className="h-6 w-6 text-blue-400 group-hover:translate-x-1 transition-transform" />
+                        <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                          <span className="text-white/70 text-sm">Aulas</span>
+                          <span className="text-2xl font-bold text-blue-300">{aulaCount}</span>
+                        </div>
                       </div>
-                    </div>
-                    {topico.descricao && (
-                      <p className="text-white/60 text-sm mb-4 line-clamp-2">{topico.descricao}</p>
-                    )}
-                    <div className="flex items-center justify-between pt-4 border-t border-white/10">
-                      <span className="text-white/70 text-sm">Aulas</span>
-                      <span className="text-2xl font-bold text-blue-300">{aulaCount}</span>
-                    </div>
-                  </div>
-                )
+                    )
                   })}
                 </div>
               </div>
@@ -653,11 +767,39 @@ export default function AulasPage() {
                 <h3 className="text-xl font-semibold text-white mb-4">Aulas do Tópico</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                   {aulasTopico.map((aula, idx) => (
-                <div 
-                  key={String(aula._id)} 
-                  className="backdrop-blur-md bg-white/5 border border-emerald-500/20 rounded-2xl overflow-hidden hover:border-emerald-500/40 transition-all shadow-xl shadow-emerald-500/5 animate-fadeInUp hover-lift"
-                  style={{animationDelay: `${idx * 0.1}s`}}
-                >
+                    <div 
+                      key={String(aula._id)} 
+                      className="backdrop-blur-md bg-white/5 border border-emerald-500/20 rounded-2xl overflow-hidden hover:border-emerald-500/40 transition-all shadow-xl shadow-emerald-500/5 animate-fadeInUp hover-lift relative"
+                      style={{animationDelay: `${idx * 0.1}s`}}
+                    >
+                      {(isAdmin || user?.secondaryRole === 'monitor') && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            router.push(`/aulas/gerenciar/aulas/${aula._id}/editar`)
+                          }}
+                          className="absolute bottom-2 right-2 z-20 p-2 rounded-lg bg-black/30 border border-white/20 hover:bg-black/40 transition-colors"
+                          title="Editar aula"
+                        >
+                          <Pencil className="h-3.5 w-3.5 text-white" />
+                        </button>
+                      )}
+                      {/* Bloqueio por Data de Liberação */}
+                      {isAulaBloqueadaPorData(aula) && (
+                        <div className="absolute inset-0 bg-red-950/20 rounded-2xl flex items-center justify-center backdrop-blur-[1px] z-10 shadow-[0_0_80px_rgba(239,68,68,0.25)]">
+                          <div className="text-center px-6">
+                            <AlertCircle className="h-8 w-8 text-red-300 mx-auto mb-2" />
+                            <p className="text-sm font-semibold text-red-200">Ainda não liberada</p>
+                            <p className="text-xs text-white/70 mt-1">
+                              Disponível em {formatarDataLiberacao(new Date(aula.dataLiberacao))}
+                            </p>
+                            <p className="text-xs text-white/60 mt-1">
+                              Faltam {formatarTempoRestante(new Date(aula.dataLiberacao))}
+                            </p>
+                          </div>
+                        </div>
+                      )}
                   {/* Capa da Aula */}
                   {aula.capa && (
                     <div className="w-full h-32 sm:h-40 relative overflow-hidden">
@@ -736,8 +878,19 @@ export default function AulasPage() {
                         </p>
                       </div>
                       <Button
-                        onClick={() => router.push(`/aulas/${aula._id}`)}
-                        className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transition-all duration-300 hover-lift"
+                        onClick={() => {
+                          if (isAulaBloqueadaPorData(aula)) {
+                            setBloqueioDialog({
+                              titulo: aula.titulo,
+                              mensagem: `Esta aula será liberada em ${formatarDataLiberacao(new Date(aula.dataLiberacao))}.\n\nVocê pode ver a aula na lista, mas não pode acessá-la antes do lançamento.`
+                            })
+                            return
+                          }
+                          router.push(`/aulas/${aula._id}`)
+                        }}
+                        className={`bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transition-all duration-300 hover-lift ${
+                          isAulaBloqueadaPorData(aula) ? 'opacity-70' : ''
+                        }`}
                         size="sm"
                       >
                         Ver Aula
@@ -826,9 +979,37 @@ export default function AulasPage() {
               {aulasSubtopico.map((aula, idx) => (
                 <div 
                   key={String(aula._id)} 
-                  className="backdrop-blur-md bg-white/5 border border-emerald-500/20 rounded-2xl overflow-hidden hover:border-emerald-500/40 transition-all shadow-xl shadow-emerald-500/5 animate-fadeInUp hover-lift"
+                  className="backdrop-blur-md bg-white/5 border border-emerald-500/20 rounded-2xl overflow-hidden hover:border-emerald-500/40 transition-all shadow-xl shadow-emerald-500/5 animate-fadeInUp hover-lift relative"
                   style={{animationDelay: `${idx * 0.1}s`}}
                 >
+                  {(isAdmin || user?.secondaryRole === 'monitor') && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        router.push(`/aulas/gerenciar/aulas/${aula._id}/editar`)
+                      }}
+                      className="absolute bottom-2 right-2 z-20 p-2 rounded-lg bg-black/30 border border-white/20 hover:bg-black/40 transition-colors"
+                      title="Editar aula"
+                    >
+                      <Pencil className="h-3.5 w-3.5 text-white" />
+                    </button>
+                  )}
+                  {/* Bloqueio por Data de Liberação */}
+                  {isAulaBloqueadaPorData(aula) && (
+                    <div className="absolute inset-0 bg-red-950/20 rounded-2xl flex items-center justify-center backdrop-blur-[1px] z-10 shadow-[0_0_80px_rgba(239,68,68,0.25)]">
+                      <div className="text-center px-6">
+                        <AlertCircle className="h-8 w-8 text-red-300 mx-auto mb-2" />
+                        <p className="text-sm font-semibold text-red-200">Ainda não liberada</p>
+                        <p className="text-xs text-white/70 mt-1">
+                          Disponível em {formatarDataLiberacao(new Date(aula.dataLiberacao))}
+                        </p>
+                        <p className="text-xs text-white/60 mt-1">
+                          Faltam {formatarTempoRestante(new Date(aula.dataLiberacao))}
+                        </p>
+                      </div>
+                    </div>
+                  )}
                   {/* Capa da Aula */}
                   {aula.capa && (
                     <div className="w-full h-32 sm:h-40 relative overflow-hidden">
@@ -907,8 +1088,19 @@ export default function AulasPage() {
                         </p>
                       </div>
                       <Button
-                        onClick={() => router.push(`/aulas/${aula._id}`)}
-                        className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transition-all duration-300 hover-lift"
+                        onClick={() => {
+                          if (isAulaBloqueadaPorData(aula)) {
+                            setBloqueioDialog({
+                              titulo: aula.titulo,
+                              mensagem: `Esta aula será liberada em ${formatarDataLiberacao(new Date(aula.dataLiberacao))}.\n\nVocê pode ver a aula na lista, mas não pode acessá-la antes do lançamento.`
+                            })
+                            return
+                          }
+                          router.push(`/aulas/${aula._id}`)
+                        }}
+                        className={`bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transition-all duration-300 hover-lift ${
+                          isAulaBloqueadaPorData(aula) ? 'opacity-70' : ''
+                        }`}
                         size="sm"
                       >
                         Ver Aula
@@ -984,9 +1176,37 @@ export default function AulasPage() {
               {aulasModulo.map((aula, idx) => (
                 <div 
                   key={String(aula._id)} 
-                  className="backdrop-blur-md bg-white/5 border border-emerald-500/20 rounded-2xl overflow-hidden hover:border-emerald-500/40 transition-all shadow-xl shadow-emerald-500/5 animate-fadeInUp hover-lift"
+                  className="backdrop-blur-md bg-white/5 border border-emerald-500/20 rounded-2xl overflow-hidden hover:border-emerald-500/40 transition-all shadow-xl shadow-emerald-500/5 animate-fadeInUp hover-lift relative"
                   style={{animationDelay: `${idx * 0.1}s`}}
                 >
+                  {(isAdmin || user?.secondaryRole === 'monitor') && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        router.push(`/aulas/gerenciar/aulas/${aula._id}/editar`)
+                      }}
+                      className="absolute bottom-2 right-2 z-20 p-2 rounded-lg bg-black/30 border border-white/20 hover:bg-black/40 transition-colors"
+                      title="Editar aula"
+                    >
+                      <Pencil className="h-3.5 w-3.5 text-white" />
+                    </button>
+                  )}
+                  {/* Bloqueio por Data de Liberação */}
+                  {isAulaBloqueadaPorData(aula) && (
+                    <div className="absolute inset-0 bg-red-950/20 rounded-2xl flex items-center justify-center backdrop-blur-[1px] z-10 shadow-[0_0_80px_rgba(239,68,68,0.25)]">
+                      <div className="text-center px-6">
+                        <AlertCircle className="h-8 w-8 text-red-300 mx-auto mb-2" />
+                        <p className="text-sm font-semibold text-red-200">Ainda não liberada</p>
+                        <p className="text-xs text-white/70 mt-1">
+                          Disponível em {formatarDataLiberacao(new Date(aula.dataLiberacao))}
+                        </p>
+                        <p className="text-xs text-white/60 mt-1">
+                          Faltam {formatarTempoRestante(new Date(aula.dataLiberacao))}
+                        </p>
+                      </div>
+                    </div>
+                  )}
                   {/* Capa da Aula */}
                   {aula.capa && (
                     <div className="w-full h-32 sm:h-40 relative overflow-hidden">
@@ -1065,8 +1285,19 @@ export default function AulasPage() {
                         </p>
                       </div>
                       <Button
-                        onClick={() => router.push(`/aulas/${aula._id}`)}
-                        className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transition-all duration-300 hover-lift"
+                        onClick={() => {
+                          if (isAulaBloqueadaPorData(aula)) {
+                            setBloqueioDialog({
+                              titulo: aula.titulo,
+                              mensagem: `Esta aula será liberada em ${formatarDataLiberacao(new Date(aula.dataLiberacao))}.\n\nVocê pode ver a aula na lista, mas não pode acessá-la antes do lançamento.`
+                            })
+                            return
+                          }
+                          router.push(`/aulas/${aula._id}`)
+                        }}
+                        className={`bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transition-all duration-300 hover-lift ${
+                          isAulaBloqueadaPorData(aula) ? 'opacity-70' : ''
+                        }`}
                         size="sm"
                       >
                         Ver Aula
@@ -1174,9 +1405,37 @@ export default function AulasPage() {
                         {aulasParaMostrar.map((aula, idx) => (
               <div 
                 key={String(aula._id)} 
-                className="backdrop-blur-md bg-white/5 border border-emerald-500/20 rounded-2xl overflow-hidden hover:border-emerald-500/40 transition-all shadow-xl shadow-emerald-500/5 animate-fadeInUp hover-lift"
+                className="backdrop-blur-md bg-white/5 border border-emerald-500/20 rounded-2xl overflow-hidden hover:border-emerald-500/40 transition-all shadow-xl shadow-emerald-500/5 animate-fadeInUp hover-lift relative"
                 style={{animationDelay: `${idx * 0.1}s`}}
               >
+                {(isAdmin || user?.secondaryRole === 'monitor') && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      router.push(`/aulas/gerenciar/aulas/${aula._id}/editar`)
+                    }}
+                    className="absolute bottom-2 right-2 z-20 p-2 rounded-lg bg-black/30 border border-white/20 hover:bg-black/40 transition-colors"
+                    title="Editar aula"
+                  >
+                    <Pencil className="h-3.5 w-3.5 text-white" />
+                  </button>
+                )}
+                {/* Bloqueio por Data de Liberação */}
+                {isAulaBloqueadaPorData(aula) && (
+                  <div className="absolute inset-0 bg-red-950/20 rounded-2xl flex items-center justify-center backdrop-blur-[1px] z-10 shadow-[0_0_80px_rgba(239,68,68,0.25)]">
+                    <div className="text-center px-6">
+                      <AlertCircle className="h-8 w-8 text-red-300 mx-auto mb-2" />
+                      <p className="text-sm font-semibold text-red-200">Ainda não liberada</p>
+                      <p className="text-xs text-white/70 mt-1">
+                        Disponível em {formatarDataLiberacao(new Date(aula.dataLiberacao))}
+                      </p>
+                      <p className="text-xs text-white/60 mt-1">
+                        Faltam {formatarTempoRestante(new Date(aula.dataLiberacao))}
+                      </p>
+                    </div>
+                  </div>
+                )}
                 {/* Capa da Aula */}
                 {aula.capa && (
                   <div className="w-full h-40 relative overflow-hidden">
@@ -1241,8 +1500,19 @@ export default function AulasPage() {
                       </p>
                     </div>
                     <button
-                      onClick={() => router.push(`/aulas/${aula._id}`)}
-                      className="w-full mt-3 sm:mt-4 px-3 sm:px-4 py-2 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white rounded-lg font-semibold transition-all duration-300 hover-lift flex items-center justify-center gap-2 text-sm sm:text-base"
+                      onClick={() => {
+                        if (isAulaBloqueadaPorData(aula)) {
+                          setBloqueioDialog({
+                            titulo: aula.titulo,
+                            mensagem: `Esta aula será liberada em ${formatarDataLiberacao(new Date(aula.dataLiberacao))}.\n\nVocê pode ver a aula na lista, mas não pode acessá-la antes do lançamento.`
+                          })
+                          return
+                        }
+                        router.push(`/aulas/${aula._id}`)
+                      }}
+                      className={`w-full mt-3 sm:mt-4 px-3 sm:px-4 py-2 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white rounded-lg font-semibold transition-all duration-300 hover-lift flex items-center justify-center gap-2 text-sm sm:text-base ${
+                        isAulaBloqueadaPorData(aula) ? 'opacity-70' : ''
+                      }`}
                     >
                       Ver Aula
                     </button>
@@ -1273,6 +1543,29 @@ export default function AulasPage() {
                 </button>
               </div>
               <p className="text-white/80 whitespace-pre-wrap leading-relaxed">{descricaoDialog.descricao}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Dialog de Bloqueio */}
+        {bloqueioDialog && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+            <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-6 max-w-lg w-full shadow-2xl">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="h-6 w-6 text-red-300 mt-0.5" />
+                <div className="flex-1">
+                  <h2 className="text-xl font-bold text-white">{bloqueioDialog.titulo}</h2>
+                  <p className="text-white/80 whitespace-pre-wrap leading-relaxed mt-2">{bloqueioDialog.mensagem}</p>
+                  <div className="mt-4 flex justify-end">
+                    <Button
+                      onClick={() => setBloqueioDialog(null)}
+                      className="bg-white/10 hover:bg-white/20 text-white border border-white/20"
+                    >
+                      Entendi
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}

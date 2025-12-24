@@ -83,6 +83,7 @@ export async function POST(request: Request) {
       videoEmbed,
       pdfs,
       dataLiberacao,
+      ocultarAteLiberacao,
       capa,
       botoesAcesso
     } = body
@@ -115,6 +116,7 @@ export async function POST(request: Request) {
       ordem: 0,
       criadoEm: new Date(),
       atualizadoEm: new Date(),
+      ocultarAteLiberacao: !!ocultarAteLiberacao,
       oculta: false,
       comentarios: []
     }

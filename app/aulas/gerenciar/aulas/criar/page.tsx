@@ -43,6 +43,7 @@ export default function CriarAulaPage() {
   const [videoEmbed, setVideoEmbed] = useState('')
   const [dataLiberacao, setDataLiberacao] = useState('')
   const [dataLiberacaoHabilitada, setDataLiberacaoHabilitada] = useState(false)
+  const [ocultarAteLiberacao, setOcultarAteLiberacao] = useState(false)
   const [pdfs, setPdfs] = useState<Array<{ nome: string; url: string; tamanho: number }>>([])
   
   // Botões de acesso
@@ -221,6 +222,7 @@ export default function CriarAulaPage() {
           videoEmbed: tipo === 'gravada' ? videoEmbed : null,
           pdfs,
           dataLiberacao: dataLiberacao || null,
+          ocultarAteLiberacao: dataLiberacaoHabilitada ? ocultarAteLiberacao : false,
           capa,
           botoesAcesso: botoesAcesso.length > 0 ? botoesAcesso : null
         })
@@ -350,6 +352,7 @@ export default function CriarAulaPage() {
                         setDataLiberacao(new Date().toISOString().slice(0, 16))
                       } else {
                         setDataLiberacao('')
+                        setOcultarAteLiberacao(false)
                       }
                     }}
                     className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${
@@ -362,13 +365,34 @@ export default function CriarAulaPage() {
                   </button>
                 </div>
                 {dataLiberacaoHabilitada && (
-                  <Input
-                    id="dataLiberacao"
-                    type="datetime-local"
-                    value={dataLiberacao}
-                    onChange={(e) => setDataLiberacao(e.target.value)}
-                    className="mt-1 bg-white/5 border-white/10 text-white"
-                  />
+                  <div className="space-y-3">
+                    <Input
+                      id="dataLiberacao"
+                      type="datetime-local"
+                      value={dataLiberacao}
+                      onChange={(e) => setDataLiberacao(e.target.value)}
+                      className="mt-1 bg-white/5 border-white/10 text-white"
+                    />
+                    <div className="flex items-center justify-between gap-3 p-3 rounded-xl bg-white/5 border border-white/10">
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-white">Ocultar aula até o dia do lançamento</p>
+                        <p className="text-xs text-white/60">
+                          Se desabilitado, a aula aparece em /aulas mas fica bloqueada até a liberação
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setOcultarAteLiberacao(!ocultarAteLiberacao)}
+                        className={`px-3 py-1 rounded-md text-xs font-medium transition-all shrink-0 ${
+                          ocultarAteLiberacao
+                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30'
+                            : 'bg-white/10 text-white/60 border border-white/20 hover:bg-white/20'
+                        }`}
+                      >
+                        {ocultarAteLiberacao ? '✓ Sim' : 'Não'}
+                      </button>
+                    </div>
+                  </div>
                 )}
                 <p className="text-xs text-white/50 mt-1">
                   {dataLiberacaoHabilitada 

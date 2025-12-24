@@ -34,6 +34,7 @@ export default function AulaDetalhePage() {
   const [redirecting, setRedirecting] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
   const [temAcesso, setTemAcesso] = useState(true)
+  const [bloqueadaPorData, setBloqueadaPorData] = useState(false)
   const [comentarios, setComentarios] = useState<AulaComentario[]>([])
   const [novoComentario, setNovoComentario] = useState('')
   const [enviandoComentario, setEnviandoComentario] = useState(false)
@@ -85,6 +86,11 @@ export default function AulaDetalhePage() {
         const userIsPremium = user?.accountType === 'premium'
         const userIsAdmin = user?.role === 'admin'
         const userIsMonitor = user?.secondaryRole === 'monitor'
+
+        const liberadaPorData = new Date(data.aula.dataLiberacao) <= new Date()
+        const shouldHideUntilRelease = !!data.aula.ocultarAteLiberacao
+        const isBlockedByDate = !liberadaPorData && !shouldHideUntilRelease
+        setBloqueadaPorData(isBlockedByDate)
         
         if (isPremium && !userIsPremium && !userIsAdmin && !userIsMonitor) {
           setTemAcesso(false)
@@ -268,6 +274,34 @@ export default function AulaDetalhePage() {
           </div>
         )}
 
+        {/* Bloqueio por Data de Liberação */}
+        {bloqueadaPorData && (
+          <div className="mb-8 backdrop-blur-md bg-cyan-500/10 border border-cyan-500/30 rounded-2xl p-8 shadow-xl shadow-cyan-500/10 animate-fadeInUp">
+            <div className="flex items-start gap-4">
+              <Lock className="h-8 w-8 text-cyan-300 flex-shrink-0 mt-1" />
+              <div className="flex-1">
+                <h2 className="text-2xl font-bold text-cyan-200 mb-2">Aula ainda não liberada</h2>
+                <p className="text-cyan-100/80 mb-4">
+                  Esta aula está agendada para liberação em{' '}
+                  {new Date(aula.dataLiberacao).toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}.
+                </p>
+                <Button
+                  onClick={() => router.push('/aulas')}
+                  className="bg-white/10 hover:bg-white/20 text-white border border-white/20 backdrop-blur-md transition-all duration-300"
+                >
+                  Voltar para Aulas
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Capa da Aula */}
         {aula.capa && (
           <div className="mb-8 rounded-2xl overflow-hidden border border-emerald-500/20 shadow-xl shadow-emerald-500/10 animate-fadeInUp">
@@ -371,7 +405,7 @@ export default function AulaDetalhePage() {
         </div>
 
         {/* Conteúdo da Aula */}
-        {temAcesso ? (
+        {temAcesso && !bloqueadaPorData ? (
         <div className="space-y-6 mb-8">
           {/* Botões de Acesso */}
           {aula.botoesAcesso && aula.botoesAcesso.length > 0 && (
@@ -477,7 +511,7 @@ export default function AulaDetalhePage() {
         ) : null}
 
         {/* Comentários */}
-        {temAcesso && (
+        {temAcesso && !bloqueadaPorData && (
         <div className="backdrop-blur-md bg-white/5 border border-emerald-500/20 rounded-2xl p-6 shadow-xl shadow-emerald-500/10 animate-fadeInUp" style={{animationDelay: '0.4s'}}>
           <h3 className="text-lg font-semibold text-white mb-6">Comentários ({comentarios.length})</h3>
           <div className="space-y-6">
