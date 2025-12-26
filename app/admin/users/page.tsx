@@ -13,10 +13,21 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 
+type OnlineUser = {
+  id?: string
+  name: string
+  email: string
+  lastLoginAt?: string
+}
+
 export default function AdminUsersPage() {
   const router = useRouter()
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
+  const [onlineCount, setOnlineCount] = useState<number | null>(null)
+  const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([])
+  const [onlineLoading, setOnlineLoading] = useState(false)
+  const [showOnlineDialog, setShowOnlineDialog] = useState(false)
   const [showBanDialog, setShowBanDialog] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [showTierDialog, setShowTierDialog] = useState(false)
@@ -36,6 +47,12 @@ export default function AdminUsersPage() {
 
   useEffect(() => {
     loadUsers()
+    loadOnlineCount()
+    const intervalId = setInterval(() => {
+      loadOnlineCount()
+    }, 30000)
+
+    return () => clearInterval(intervalId)
   }, [])
 
   const showToastMessage = (message: string, type: 'error' | 'success' | 'info' = 'error') => {
@@ -53,6 +70,38 @@ export default function AdminUsersPage() {
       console.error('Erro ao carregar usuários:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function loadOnlineCount() {
+    try {
+      const res = await fetch('/api/admin/users/online/count')
+      if (!res.ok) {
+        setOnlineCount(null)
+        return
+      }
+      const data = await res.json()
+      setOnlineCount(typeof data.count === 'number' ? data.count : 0)
+    } catch {
+      setOnlineCount(null)
+    }
+  }
+
+  async function openOnlineUsersDialog() {
+    setShowOnlineDialog(true)
+    setOnlineLoading(true)
+    try {
+      const res = await fetch('/api/admin/users/online/list')
+      if (!res.ok) {
+        throw new Error('Erro ao buscar usuários online')
+      }
+      const data = await res.json()
+      setOnlineUsers(Array.isArray(data.users) ? data.users : [])
+    } catch (e: any) {
+      setOnlineUsers([])
+      showToastMessage(e?.message || 'Erro ao buscar usuários online')
+    } finally {
+      setOnlineLoading(false)
     }
   }
 
@@ -248,6 +297,16 @@ export default function AdminUsersPage() {
           <div className="space-y-4">
             <div className="mb-4">
               <p className="text-sm text-muted-foreground">{users.length} usuário(s) no sistema</p>
+              <button
+                type="button"
+                onClick={openOnlineUsersDialog}
+                className="mt-1 text-sm text-muted-foreground hover:text-foreground underline-offset-4 hover:underline"
+              >
+                Usuários online:{' '}
+                <span className="text-foreground font-medium">
+                  {onlineCount === null ? '--' : onlineCount}
+                </span>
+              </button>
             </div>
             {users.map((user) => (
               <Card key={user._id?.toString()}>
@@ -766,6 +825,55 @@ export default function AdminUsersPage() {
               className={selectedUser?.secondaryRole === 'monitor' ? 'bg-red-600 hover:bg-red-700' : 'bg-yellow-600 hover:bg-yellow-700'}
             >
               {selectedUser?.secondaryRole === 'monitor' ? 'Remover Monitor' : 'Tornar Monitor'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog de Usuários Online */}
+      <Dialog
+        open={showOnlineDialog}
+        onOpenChange={(open) => {
+          setShowOnlineDialog(open)
+          if (!open) {
+            setOnlineUsers([])
+            setOnlineLoading(false)
+          }
+        }}
+      >
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Usuários Online</DialogTitle>
+            <DialogDescription>
+              Lista de usuários com atividade recente.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="py-4">
+            {onlineLoading ? (
+              <div className="text-sm text-muted-foreground">Carregando...</div>
+            ) : onlineUsers.length === 0 ? (
+              <div className="text-sm text-muted-foreground">Nenhum usuário online no momento.</div>
+            ) : (
+              <div className="space-y-3">
+                {onlineUsers.map((u) => (
+                  <div key={u.id || u.email} className="rounded-lg border bg-muted/30 p-3">
+                    <div className="text-sm font-medium break-words">{u.name}</div>
+                    <div className="text-xs text-muted-foreground break-words mt-1">{u.email}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowOnlineDialog(false)
+              }}
+            >
+              Fechar
             </Button>
           </DialogFooter>
         </DialogContent>
