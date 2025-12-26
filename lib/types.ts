@@ -215,6 +215,7 @@ export interface User {
   password: string
   role: 'admin' | 'user'
   createdAt: Date
+  lastLoginAt?: Date
   // Cargo secundário (independente do plano)
   secondaryRole?: 'monitor' // Monitor pode gerenciar aulas, tópicos, etc
   // Informações pessoais obrigatórias

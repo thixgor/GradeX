@@ -52,6 +52,7 @@ export async function POST(request: NextRequest) {
       password: '', // Usuário do Google não tem senha
       role: 'user',
       createdAt: new Date(),
+      lastLoginAt: new Date(),
       cpf,
       dateOfBirth: new Date(dateOfBirth),
       isAfyaMedicineStudent: isAfyaMedicineStudent || false,

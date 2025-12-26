@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { CustomCronogramaBuilder } from '@/components/custom-cronograma-builder'
+import { CustomCalendar } from '@/components/custom-calendar'
 import { ArrowLeft, ChevronRight, Info } from 'lucide-react'
 import { TEMPLATES, ModelType, UserDifficulty, StudyTime, TopicItem, SubtopicItem, ModuleItem, MedicinaAFYAPeriodo } from '@/lib/cronograma-types'
 import { ToggleSwitch } from '@/components/ui/toggle-switch'
@@ -666,12 +667,11 @@ export default function CriarCronogramaPage() {
             <CardContent className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="data-termino">Data de Término</Label>
-                <Input
-                  id="data-termino"
-                  type="date"
+                <CustomCalendar
                   value={dataTermino}
-                  onChange={(e) => setDataTermino(e.target.value)}
+                  onChange={setDataTermino}
                   min={new Date().toISOString().split('T')[0]}
+                  placeholder="Selecione a data de término"
                 />
               </div>
 

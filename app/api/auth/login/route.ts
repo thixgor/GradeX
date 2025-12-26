@@ -51,6 +51,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Atualiza último login
+    await usersCollection.updateOne(
+      { _id: user._id },
+      { $set: { lastLoginAt: new Date() } }
+    )
+
     // Cria o token
     const token = await createToken({
       userId: user._id!.toString(),

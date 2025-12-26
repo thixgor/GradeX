@@ -32,6 +32,16 @@ export async function GET() {
       )
     }
 
+    // Atualiza último login (best-effort) para registrar atividade mesmo quando o usuário já tinha sessão válida
+    try {
+      await usersCollection.updateOne(
+        { _id: new ObjectId(session.userId) },
+        { $set: { lastLoginAt: new Date() } }
+      )
+    } catch (e) {
+      // best-effort
+    }
+
     return NextResponse.json({
       user: {
         id: user._id!.toString(),

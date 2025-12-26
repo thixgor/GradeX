@@ -15,7 +15,8 @@ import { MobileMenu } from '@/components/mobile-menu'
 import { CompleteProfileModal } from '@/components/complete-profile-modal'
 import { Exam } from '@/lib/types'
 import { formatDate, isBetweenDates } from '@/lib/utils'
-import { Clock, Calendar, FileText, LogOut, Settings, Plus, User as UserIcon, Users, MessageSquare, Key, MessageCircle, BookMarked, Brain, ShoppingCart, Video } from 'lucide-react'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Clock, Calendar, FileText, LogOut, Settings, Plus, User as UserIcon, Users, MessageSquare, Key, MessageCircle, BookMarked, Brain, ShoppingCart, Video, Info } from 'lucide-react'
 import LandingPage from '@/components/landing-page'
 
 interface User {
@@ -57,6 +58,7 @@ export default function HomePage() {
   const [tierLimitExceeded, setTierLimitExceeded] = useState(false)
   const [showCompleteProfileModal, setShowCompleteProfileModal] = useState(false)
   const [completingProfile, setCompletingProfile] = useState(false)
+  const [showExamsInfo, setShowExamsInfo] = useState(false)
 
   useEffect(() => {
     checkAuth()
@@ -559,14 +561,96 @@ Contact: (21) 99777-0936`)
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-2">Provas Disponíveis</h2>
-          <p className="text-muted-foreground">
-            {exams.length === 0
-              ? 'Nenhuma prova disponível no momento'
-              : 'Selecione uma prova para realizar'}
-          </p>
+        <div className="mb-8 rounded-xl border bg-card/50 backdrop-blur-sm p-4 sm:p-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 shrink-0 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                  <FileText className="h-5 w-5" />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h2 className="text-2xl font-bold leading-tight">Provas Disponíveis</h2>
+                    <span className="inline-flex items-center rounded-full border bg-background/60 px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+                      {exams.length} {exams.length === 1 ? 'prova' : 'provas'}
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {exams.length === 0
+                      ? 'Nenhuma prova disponível no momento'
+                      : 'Selecione uma prova para realizar'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setShowExamsInfo(true)}
+              className="h-9 self-start sm:self-auto rounded-full"
+            >
+              <Info className="h-4 w-4 mr-2" />
+              O que são essas Provas?
+            </Button>
+          </div>
         </div>
+
+        <Dialog open={showExamsInfo} onOpenChange={setShowExamsInfo}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>O que são essas Provas?</DialogTitle>
+            </DialogHeader>
+
+            <div className="px-6 pb-2 text-sm leading-relaxed">
+              <div className="space-y-4">
+                <p>
+                  Na DomineAqui, você treina do jeito certo — como se estivesse no dia da prova.
+                </p>
+                <p>
+                  Aqui, você tem acesso a Provas Gerais e Provas Pessoais, pensadas para maximizar seu desempenho e eliminar surpresas na avaliação real.
+                </p>
+
+                <div className="space-y-2">
+                  <p className="font-semibold">🔹 Provas Gerais</p>
+                  <p className="text-muted-foreground">
+                    São elaboradas e aplicadas pela equipe da DomineAqui, seguindo o mesmo padrão, nível de dificuldade e tempo das provas que você enfrenta. O gabarito é liberado apenas após o término do tempo, garantindo uma experiência realista e fiel à prova oficial.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <p className="font-semibold">🔹 Provas Pessoais</p>
+                  <p className="text-muted-foreground">
+                    Você cria suas próprias provas, totalmente adaptadas às suas necessidades, focando nos conteúdos que mais caem — ou naqueles que você precisa dominar de vez. Tudo no formato mais fiel possível ao seu exame.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <p className="font-semibold">💡 Funcionalidades que fazem a diferença</p>
+                  <div className="text-muted-foreground">
+                    <p>Anote diretamente na prova</p>
+                    <p>Treine com foco, estratégia e controle de tempo</p>
+                    <p>Simule, analise e evolua de forma inteligente</p>
+                  </div>
+                </div>
+
+                <p>
+                  Aqui, você não apenas estuda.
+                  <br />
+                  Você treina, corrige erros, ganha confiança e chega preparado para vencer a prova.
+                </p>
+                <p className="font-semibold">DomineAqui — Seja o Foco, Seja a Referência</p>
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button type="button" onClick={() => setShowExamsInfo(false)}>
+                Entendi
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
         <div className="space-y-6">
           {/* Provas sem grupo (página principal) */}

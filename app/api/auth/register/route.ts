@@ -79,6 +79,7 @@ export async function POST(request: NextRequest) {
       afyaUnit: isAfyaMedicineStudent ? afyaUnit : undefined,
       role: role as 'admin' | 'user',
       createdAt: new Date(),
+      lastLoginAt: new Date(),
     }
 
     const result = await usersCollection.insertOne(newUser)

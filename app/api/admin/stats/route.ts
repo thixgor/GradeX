@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
-import clientPromise from '@/lib/mongodb'
+import { getDb } from '@/lib/mongodb'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const session = await getSession()
 
@@ -12,8 +12,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
     }
 
-    const client = await clientPromise
-    const db = client.db('DomineAqui')
+    const db = await getDb()
     const examsCollection = db.collection('exams')
     const usersCollection = db.collection('users')
     const submissionsCollection = db.collection('submissions')
@@ -41,18 +40,17 @@ export async function GET(req: NextRequest) {
       submittedAt: { $gte: startOfMonth },
     })
 
-    // Média geral de pontuação
-    const submissionsWithScore = await submissionsCollection
-      .find({ score: { $exists: true, $ne: null } })
+    // Média geral de pontuação (evita carregar todas as submissões em memória)
+    const averageScoreAgg = await submissionsCollection
+      .aggregate([
+        { $match: { score: { $exists: true, $ne: null } } },
+        { $group: { _id: null, avg: { $avg: '$score' } } },
+      ])
       .toArray()
-    const averageScore =
-      submissionsWithScore.length > 0
-        ? submissionsWithScore.reduce((sum, sub) => sum + (sub.score || 0), 0) /
-          submissionsWithScore.length
-        : 0
+    const averageScore = averageScoreAgg[0]?.avg || 0
 
-    // Provas mais populares (com mais submissões)
-    const popularExams = await submissionsCollection
+    // Provas mais populares (com mais submissões) + título via $lookup
+    const popularExamsWithTitles = await submissionsCollection
       .aggregate([
         {
           $group: {
@@ -63,24 +61,40 @@ export async function GET(req: NextRequest) {
         },
         { $sort: { submissionCount: -1 } },
         { $limit: 5 },
+        {
+          $addFields: {
+            examObjectId: {
+              $convert: {
+                input: '$_id',
+                to: 'objectId',
+                onError: null,
+                onNull: null,
+              },
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'exams',
+            localField: 'examObjectId',
+            foreignField: '_id',
+            as: 'exam',
+          },
+        },
+        { $unwind: { path: '$exam', preserveNullAndEmptyArrays: true } },
+        {
+          $project: {
+            _id: 1,
+            title: { $ifNull: ['$exam.title', 'Prova sem título'] },
+            submissionCount: 1,
+            averageScore: { $ifNull: ['$averageScore', 0] },
+          },
+        },
       ])
       .toArray()
 
-    // Buscar títulos das provas populares
-    const popularExamsWithTitles = await Promise.all(
-      popularExams.map(async (exam) => {
-        const examDoc = await examsCollection.findOne({ _id: exam._id })
-        return {
-          _id: exam._id,
-          title: examDoc?.title || 'Prova sem título',
-          submissionCount: exam.submissionCount,
-          averageScore: exam.averageScore || 0,
-        }
-      })
-    )
-
-    // Usuários mais ativos (com mais submissões)
-    const topUsers = await submissionsCollection
+    // Usuários mais ativos (com mais submissões) + nome via $lookup
+    const topUsersWithNames = await submissionsCollection
       .aggregate([
         {
           $group: {
@@ -91,26 +105,39 @@ export async function GET(req: NextRequest) {
         },
         { $sort: { submissionCount: -1 } },
         { $limit: 5 },
+        {
+          $addFields: {
+            userObjectId: {
+              $convert: {
+                input: '$_id',
+                to: 'objectId',
+                onError: null,
+                onNull: null,
+              },
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'userObjectId',
+            foreignField: '_id',
+            as: 'user',
+          },
+        },
+        { $unwind: { path: '$user', preserveNullAndEmptyArrays: true } },
+        {
+          $project: {
+            _id: 1,
+            name: { $ifNull: ['$user.name', 'Usuário desconhecido'] },
+            submissionCount: 1,
+            averageScore: { $ifNull: ['$averageScore', 0] },
+          },
+        },
       ])
       .toArray()
 
-    // Buscar nomes dos usuários
-    const topUsersWithNames = await Promise.all(
-      topUsers.map(async (user) => {
-        const userDoc = await usersCollection.findOne({ _id: user._id })
-        return {
-          _id: user._id,
-          name: userDoc?.name || 'Usuário desconhecido',
-          submissionCount: user.submissionCount,
-          averageScore: user.averageScore || 0,
-        }
-      })
-    )
-
     // Atividade recente (últimos 7 dias)
-    const sevenDaysAgo = new Date()
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
-
     const recentActivity = []
     for (let i = 6; i >= 0; i--) {
       const date = new Date()

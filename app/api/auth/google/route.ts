@@ -61,12 +61,15 @@ export async function POST(request: NextRequest) {
       }
 
       // Atualiza a foto de perfil se fornecida
+      const updateData: any = { lastLoginAt: new Date() }
       if (picture && !user.profilePicture) {
-        await usersCollection.updateOne(
-          { _id: user._id },
-          { $set: { profilePicture: picture, googleId: sub } }
-        )
+        updateData.profilePicture = picture
+        updateData.googleId = sub
       }
+      await usersCollection.updateOne(
+        { _id: user._id },
+        { $set: updateData }
+      )
     } else {
       // Novo usuário - verificar se cadastro está bloqueado
       const settings = await db.collection('landing_settings').findOne({})

@@ -289,6 +289,15 @@ export default function AdminUsersPage() {
                     </div>
                   )}
 
+                  <div className="mb-4 text-xs text-muted-foreground">
+                    Último login:{' '}
+                    <span className="text-foreground">
+                      {user.lastLoginAt
+                        ? new Date(user.lastLoginAt).toLocaleString('pt-BR')
+                        : 'Nunca'}
+                    </span>
+                  </div>
+
                   <div className="flex flex-wrap gap-2">
                     <Button
                       variant="outline"
@@ -674,61 +683,55 @@ export default function AdminUsersPage() {
 
       {/* Dialog de Informações Pessoais */}
       <Dialog open={showInfoDialog} onOpenChange={setShowInfoDialog}>
-        <DialogContent>
+        <DialogContent className="max-w-2xl overflow-x-hidden">
           <DialogHeader>
             <DialogTitle>Informações Pessoais</DialogTitle>
-            <DialogDescription>
-              Dados de <strong>{selectedUser?.name}</strong>
+            <DialogDescription className="break-words">
+              Dados de <strong className="break-words">{selectedUser?.name}</strong>
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label className="text-xs font-semibold text-muted-foreground">CPF</Label>
-              <div className="p-3 bg-muted rounded-lg font-mono">
-                {selectedUser?.cpf ? (
-                  <p className="text-sm">
-                    {selectedUser.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')}
-                  </p>
-                ) : (
-                  <p className="text-sm text-muted-foreground italic">Não informado</p>
-                )}
+          <div className="py-4 space-y-4 overflow-x-hidden">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="rounded-xl border bg-muted/40 p-4 min-w-0">
+                <p className="text-xs font-semibold text-muted-foreground">CPF</p>
+                <p className="mt-2 font-mono text-sm break-words">
+                  {selectedUser?.cpf
+                    ? selectedUser.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
+                    : <span className="text-muted-foreground italic">Não informado</span>}
+                </p>
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label className="text-xs font-semibold text-muted-foreground">Data de Nascimento</Label>
-              <div className="p-3 bg-muted rounded-lg">
-                {selectedUser?.dateOfBirth ? (
-                  <p className="text-sm">
-                    {new Date(selectedUser.dateOfBirth).toLocaleDateString('pt-BR')}
-                  </p>
-                ) : (
-                  <p className="text-sm text-muted-foreground italic">Não informado</p>
-                )}
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-xs font-semibold text-muted-foreground">Estudante de Medicina Afya</Label>
-              <div className="p-3 bg-muted rounded-lg">
-                <p className="text-sm">
-                  {selectedUser?.isAfyaMedicineStudent ? (
-                    <span className="text-green-600 dark:text-green-400 font-medium">✓ Sim</span>
-                  ) : (
-                    <span className="text-gray-600 dark:text-gray-400">Não</span>
-                  )}
+              <div className="rounded-xl border bg-muted/40 p-4 min-w-0">
+                <p className="text-xs font-semibold text-muted-foreground">Data de Nascimento</p>
+                <p className="mt-2 text-sm break-words">
+                  {selectedUser?.dateOfBirth
+                    ? new Date(selectedUser.dateOfBirth).toLocaleDateString('pt-BR')
+                    : <span className="text-muted-foreground italic">Não informado</span>}
                 </p>
               </div>
             </div>
 
-            {selectedUser?.isAfyaMedicineStudent && selectedUser?.afyaUnit && (
-              <div className="space-y-2">
-                <Label className="text-xs font-semibold text-muted-foreground">Unidade Afya</Label>
-                <div className="p-3 bg-muted rounded-lg">
-                  <p className="text-sm">{selectedUser.afyaUnit}</p>
+            <div className="rounded-xl border bg-muted/40 p-4 min-w-0">
+              <p className="text-xs font-semibold text-muted-foreground">Estudante de Medicina Afya</p>
+              <p className="mt-2 text-sm">
+                {selectedUser?.isAfyaMedicineStudent ? (
+                  <span className="text-green-600 dark:text-green-400 font-medium">✓ Sim</span>
+                ) : (
+                  <span className="text-gray-600 dark:text-gray-400">Não</span>
+                )}
+              </p>
+
+              {selectedUser?.isAfyaMedicineStudent && (
+                <div className="mt-4">
+                  <p className="text-xs font-semibold text-muted-foreground">Unidade Afya</p>
+                  <p className="mt-2 text-sm break-words">
+                    {selectedUser?.afyaUnit
+                      ? selectedUser.afyaUnit
+                      : <span className="text-muted-foreground italic">Não informado</span>}
+                  </p>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowInfoDialog(false)}>
