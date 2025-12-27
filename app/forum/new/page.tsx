@@ -12,7 +12,7 @@ import { ToastAlert } from '@/components/ui/toast-alert'
 import { BanChecker } from '@/components/ban-checker'
 import { RichTextEditor } from '@/components/rich-text-editor'
 import { ArrowLeft, Upload, X, Tag as TagIcon, MessageSquare, Link as LinkIcon, Crown } from 'lucide-react'
-import { ForumType, ForumAttachment } from '@/lib/types'
+import { ForumType, ForumAttachment, AccountType, ForumPostCreationFreezeMode } from '@/lib/types'
 import { Switch } from '@/components/ui/switch'
 
 function NewForumPostContent() {
@@ -35,11 +35,44 @@ function NewForumPostContent() {
   const [topics, setTopics] = useState<any[]>([])
   const [premiumOnly, setPremiumOnly] = useState(false)
   const [userRole, setUserRole] = useState<'admin' | 'user'>('user')
+  const [accountType, setAccountType] = useState<AccountType>('gratuito')
+  const [secondaryRole, setSecondaryRole] = useState<string | undefined>(undefined)
+  const [postCreationFreezeMode, setPostCreationFreezeMode] = useState<ForumPostCreationFreezeMode>('off')
 
   useEffect(() => {
     loadUserRole()
+    loadForumSettings()
     loadTopics()
   }, [forumType])
+
+  function isPostCreationBlocked(params: {
+    freezeMode: ForumPostCreationFreezeMode
+    isAdmin: boolean
+    isMonitor: boolean
+    accountType: 'gratuito' | 'trial' | 'premium'
+  }) {
+    const { freezeMode, isAdmin, isMonitor, accountType } = params
+    const isCommonUser = !isAdmin && !isMonitor
+
+    switch (freezeMode) {
+      case 'off':
+        return false
+      case 'pause_all':
+        return true
+      case 'pause_all_except_admins':
+        return !isAdmin
+      case 'pause_all_except_common_users':
+        return !isCommonUser
+      case 'pause_only_free_common':
+        return isCommonUser && accountType === 'gratuito'
+      case 'pause_only_free_common_and_monitors':
+        return isMonitor || (isCommonUser && accountType === 'gratuito')
+      case 'pause_only_free_common_and_premium_common':
+        return isCommonUser && (accountType === 'gratuito' || accountType === 'premium')
+      default:
+        return false
+    }
+  }
 
   async function loadUserRole() {
     try {
@@ -47,9 +80,23 @@ function NewForumPostContent() {
       if (res.ok) {
         const data = await res.json()
         setUserRole(data.user?.role || 'user')
+        setAccountType(data.user?.accountType || 'gratuito')
+        setSecondaryRole(data.user?.secondaryRole)
       }
     } catch (error) {
       console.error('Erro ao carregar role:', error)
+    }
+  }
+
+  async function loadForumSettings() {
+    try {
+      const res = await fetch('/api/forum/settings')
+      if (res.ok) {
+        const data = await res.json()
+        setPostCreationFreezeMode(data.settings?.postCreationFreezeMode || 'off')
+      }
+    } catch (error) {
+      console.error('Erro ao carregar configurações do fórum:', error)
     }
   }
 
@@ -155,6 +202,22 @@ function NewForumPostContent() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
 
+    const isAdmin = userRole === 'admin'
+    const isMonitor = secondaryRole === 'monitor'
+    const isBlocked = isPostCreationBlocked({
+      freezeMode: postCreationFreezeMode,
+      isAdmin,
+      isMonitor,
+      accountType: (accountType || 'gratuito') as 'gratuito' | 'trial' | 'premium',
+    })
+
+    if (isBlocked) {
+      setToastMessage('Envio de novos posts está temporariamente paralisado')
+      setToastType('error')
+      setToastOpen(true)
+      return
+    }
+
     if (!title.trim() || !content.trim()) {
       setToastMessage('Título e conteúdo são obrigatórios')
       setToastType('error')
@@ -202,6 +265,25 @@ function NewForumPostContent() {
   }
 
   return (
+    (() => {
+      const isBlocked = isPostCreationBlocked({
+        freezeMode: postCreationFreezeMode,
+        isAdmin: userRole === 'admin',
+        isMonitor: secondaryRole === 'monitor',
+        accountType: (accountType || 'gratuito') as 'gratuito' | 'trial' | 'premium',
+      })
+
+      const freezeModeLabels: Record<ForumPostCreationFreezeMode, string> = {
+        off: 'Não paralisado',
+        pause_all: 'Paralisado para todos',
+        pause_all_except_admins: 'Paralisado (exceto admins)',
+        pause_all_except_common_users: 'Paralisado (exceto usuários comuns)',
+        pause_only_free_common: 'Paralisado (apenas gratuito comum)',
+        pause_only_free_common_and_monitors: 'Paralisado (gratuito comum + monitores)',
+        pause_only_free_common_and_premium_common: 'Paralisado (gratuito comum + premium comum)',
+      }
+
+      return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       <BanChecker />
 
@@ -230,6 +312,17 @@ function NewForumPostContent() {
       </header>
 
       <main className="container mx-auto px-4 py-8 max-w-4xl">
+        {isBlocked && (
+          <div className="mb-6 p-4 rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950 text-sm text-red-800 dark:text-red-200">
+            <div className="flex items-center gap-2">
+              <MessageSquare className="h-4 w-4" />
+              <span>
+                Envio de novos posts está temporariamente paralisado
+                <span className="opacity-80"> — Status: {freezeModeLabels[postCreationFreezeMode]}</span>
+              </span>
+            </div>
+          </div>
+        )}
         <form onSubmit={handleSubmit}>
           <Card>
             <CardHeader>
@@ -461,6 +554,8 @@ function NewForumPostContent() {
         type={toastType}
       />
     </div>
+      )
+    })()
   )
 }
 

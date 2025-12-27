@@ -10,7 +10,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { BanChecker } from '@/components/ban-checker'
 import { ArrowLeft, Plus, MessageSquare, FileText, Tag, User, Calendar, Edit2, Lock, Search, Crown, ChevronDown } from 'lucide-react'
-import { ForumPost, ForumType, ForumTopic, AccountType } from '@/lib/types'
+import { ForumPost, ForumType, ForumTopic, AccountType, ForumPostCreationFreezeMode } from '@/lib/types'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Collapsible,
@@ -27,8 +27,14 @@ export default function ForumPage() {
   const [loading, setLoading] = useState(true)
   const [userRole, setUserRole] = useState<'admin' | 'user'>('user')
   const [accountType, setAccountType] = useState<AccountType>('gratuito')
+  const [secondaryRole, setSecondaryRole] = useState<string | undefined>(undefined)
+  const [postCreationFreezeMode, setPostCreationFreezeMode] = useState<ForumPostCreationFreezeMode>('off')
+  const [loadedPostCreationFreezeMode, setLoadedPostCreationFreezeMode] = useState<ForumPostCreationFreezeMode>('off')
+  const [savingForumSettings, setSavingForumSettings] = useState(false)
+  const [adminSettingsOpen, setAdminSettingsOpen] = useState(false)
   const [toastOpen, setToastOpen] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
+  const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('error')
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState<ForumPost[]>([])
   const [showSearch, setShowSearch] = useState(false)
@@ -39,8 +45,38 @@ export default function ForumPage() {
 
   useEffect(() => {
     loadUserRole()
+    loadForumSettings()
     loadPosts()
   }, [])
+
+  function isPostCreationBlocked(params: {
+    freezeMode: ForumPostCreationFreezeMode
+    isAdmin: boolean
+    isMonitor: boolean
+    accountType: 'gratuito' | 'trial' | 'premium'
+  }) {
+    const { freezeMode, isAdmin, isMonitor, accountType } = params
+    const isCommonUser = !isAdmin && !isMonitor
+
+    switch (freezeMode) {
+      case 'off':
+        return false
+      case 'pause_all':
+        return true
+      case 'pause_all_except_admins':
+        return !isAdmin
+      case 'pause_all_except_common_users':
+        return !isCommonUser
+      case 'pause_only_free_common':
+        return isCommonUser && accountType === 'gratuito'
+      case 'pause_only_free_common_and_monitors':
+        return isMonitor || (isCommonUser && accountType === 'gratuito')
+      case 'pause_only_free_common_and_premium_common':
+        return isCommonUser && (accountType === 'gratuito' || accountType === 'premium')
+      default:
+        return false
+    }
+  }
 
   async function loadUserRole() {
     try {
@@ -49,9 +85,57 @@ export default function ForumPage() {
         const data = await res.json()
         setUserRole(data.user?.role || 'user')
         setAccountType(data.user?.accountType || 'gratuito')
+        setSecondaryRole(data.user?.secondaryRole)
       }
     } catch (error) {
       console.error('Erro ao carregar role:', error)
+    }
+  }
+
+  async function loadForumSettings() {
+    try {
+      const res = await fetch('/api/forum/settings')
+      if (res.ok) {
+        const data = await res.json()
+        const mode = (data.settings?.postCreationFreezeMode || 'off') as ForumPostCreationFreezeMode
+        setPostCreationFreezeMode(mode)
+        setLoadedPostCreationFreezeMode(mode)
+      }
+    } catch (error) {
+      console.error('Erro ao carregar configurações do fórum:', error)
+    }
+  }
+
+  async function saveForumSettings() {
+    if (userRole !== 'admin') return
+
+    setSavingForumSettings(true)
+    try {
+      const res = await fetch('/api/forum/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ postCreationFreezeMode }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setToastMessage(data.error || 'Erro ao salvar configurações do fórum')
+        setToastType('error')
+        setToastOpen(true)
+        return
+      }
+
+      setToastMessage('Configurações do fórum salvas com sucesso!')
+      setToastType('success')
+      setToastOpen(true)
+      setPostCreationFreezeMode(data.settings?.postCreationFreezeMode || postCreationFreezeMode)
+    } catch (error) {
+      setToastMessage('Erro ao salvar configurações do fórum')
+      setToastType('error')
+      setToastOpen(true)
+    } finally {
+      setSavingForumSettings(false)
     }
   }
 
@@ -345,6 +429,81 @@ export default function ForumPage() {
   }
 
   return (
+    (() => {
+      const isAdmin = userRole === 'admin'
+      const isMonitor = secondaryRole === 'monitor'
+      const isBlocked = isPostCreationBlocked({
+        freezeMode: postCreationFreezeMode,
+        isAdmin,
+        isMonitor,
+        accountType: (accountType || 'gratuito') as 'gratuito' | 'trial' | 'premium',
+      })
+
+      const freezeModeLabels: Record<ForumPostCreationFreezeMode, string> = {
+        off: 'Não paralisado',
+        pause_all: 'Paralisado para todos',
+        pause_all_except_admins: 'Paralisado (exceto admins)',
+        pause_all_except_common_users: 'Paralisado (exceto usuários comuns)',
+        pause_only_free_common: 'Paralisado (apenas gratuito comum)',
+        pause_only_free_common_and_monitors: 'Paralisado (gratuito comum + monitores)',
+        pause_only_free_common_and_premium_common: 'Paralisado (gratuito comum + premium comum)',
+      }
+
+      const freezeOptions: Array<{
+        mode: ForumPostCreationFreezeMode
+        title: string
+        description: string
+      }> = [
+        {
+          mode: 'off',
+          title: 'Não paralisar',
+          description: 'Permite novos posts normalmente.',
+        },
+        {
+          mode: 'pause_all',
+          title: 'Paralisar para todos (padrão)',
+          description: 'Bloqueia inclusive administradores, monitores, gratuitos, trial e premium.',
+        },
+        {
+          mode: 'pause_all_except_admins',
+          title: 'Paralisar para todos, menos Administradores',
+          description: 'Somente administradores conseguem postar.',
+        },
+        {
+          mode: 'pause_all_except_common_users',
+          title: 'Paralisar para todos, menos usuários comuns',
+          description: 'Usuários comuns (gratuito/trial/premium) conseguem postar; admins e monitores ficam bloqueados.',
+        },
+        {
+          mode: 'pause_only_free_common',
+          title: 'Paralisar apenas usuários Gratuitos (comuns)',
+          description: 'Bloqueia usuários comuns gratuitos; libera trial/premium e também admins/monitores.',
+        },
+        {
+          mode: 'pause_only_free_common_and_monitors',
+          title: 'Paralisar usuários Gratuitos (comuns) e Monitores',
+          description: 'Bloqueia monitores e também usuários comuns gratuitos.',
+        },
+        {
+          mode: 'pause_only_free_common_and_premium_common',
+          title: 'Paralisar usuários Gratuitos (comuns) e Premium',
+          description: 'Bloqueia usuários comuns gratuitos e usuários comuns premium; libera trial comum e admins/monitores.',
+        },
+      ]
+
+      const hasUnsavedForumSettings = postCreationFreezeMode !== loadedPostCreationFreezeMode
+
+      const freezeModeImpact: Record<ForumPostCreationFreezeMode, string> = {
+        off: 'Efeito: ninguém é bloqueado para criar posts.',
+        pause_all: 'Efeito: todos são bloqueados (inclui admin, monitor, gratuito, trial e premium).',
+        pause_all_except_admins: 'Efeito: somente administradores podem criar posts.',
+        pause_all_except_common_users: 'Efeito: somente usuários comuns podem criar posts (gratuito/trial/premium).',
+        pause_only_free_common: 'Efeito: bloqueia apenas usuário comum gratuito; libera trial/premium e admin/monitor.',
+        pause_only_free_common_and_monitors: 'Efeito: bloqueia monitores e também usuário comum gratuito.',
+        pause_only_free_common_and_premium_common: 'Efeito: bloqueia usuário comum gratuito e usuário comum premium; libera trial e admin/monitor.',
+      }
+
+      return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
       <BanChecker />
 
@@ -398,6 +557,95 @@ export default function ForumPage() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
+        {userRole === 'admin' && (
+          <Card className="mb-6 backdrop-blur-xl bg-white/10 dark:bg-white/5 border-white/20 dark:border-white/10">
+            <CardHeader className="pb-3">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <CardTitle className="text-base">Envio de novos posts</CardTitle>
+                  <CardDescription>
+                    Status atual: {freezeModeLabels[postCreationFreezeMode]}
+                    {hasUnsavedForumSettings ? ' (alterações pendentes)' : ''}
+                  </CardDescription>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setAdminSettingsOpen(!adminSettingsOpen)}
+                >
+                  {adminSettingsOpen ? 'Fechar' : 'Configurar'}
+                </Button>
+              </div>
+            </CardHeader>
+            {adminSettingsOpen && (
+              <CardContent className="space-y-3">
+                <div className="grid gap-2">
+                  {freezeOptions.map((opt) => {
+                    const selected = postCreationFreezeMode === opt.mode
+                    return (
+                      <button
+                        key={opt.mode}
+                        type="button"
+                        aria-pressed={selected}
+                        className={`w-full text-left group flex items-start justify-between gap-4 p-4 rounded-2xl border backdrop-blur-xl transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+                          selected
+                            ? 'bg-white/25 dark:bg-white/12 border-white/35 dark:border-white/25 shadow-lg'
+                            : 'bg-white/10 dark:bg-white/5 border-white/20 dark:border-white/10 hover:bg-white/20 dark:hover:bg-white/10 hover:shadow-md'
+                        }`}
+                        onClick={() => setPostCreationFreezeMode(opt.mode)}
+                      >
+                        <div className="min-w-0">
+                          <div className="text-sm font-semibold leading-snug">{opt.title}</div>
+                          <div className="text-xs text-muted-foreground leading-snug mt-1">{opt.description}</div>
+                        </div>
+                        <div
+                          className={`shrink-0 mt-0.5 h-6 px-2 rounded-full text-xs font-semibold border transition-colors ${
+                            selected
+                              ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white border-white/20'
+                              : 'bg-white/10 dark:bg-white/5 text-muted-foreground border-white/20 dark:border-white/10 group-hover:text-foreground'
+                          }`}
+                        >
+                          {selected ? 'Selecionado' : 'Selecionar'}
+                        </div>
+                      </button>
+                    )
+                  })}
+                </div>
+
+                <div className="text-xs text-muted-foreground px-1">
+                  {freezeModeImpact[postCreationFreezeMode]}
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-2 pt-2">
+                  <Button
+                    onClick={saveForumSettings}
+                    disabled={savingForumSettings || !hasUnsavedForumSettings}
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                  >
+                    {savingForumSettings ? 'Salvando...' : 'Salvar alterações'}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={loadForumSettings}
+                    disabled={savingForumSettings}
+                  >
+                    Desfazer
+                  </Button>
+                </div>
+              </CardContent>
+            )}
+          </Card>
+        )}
+
+        {isBlocked && (
+          <div className="mb-6 p-4 rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950 text-sm text-red-800 dark:text-red-200">
+            <div className="flex items-center gap-2">
+              <Lock className="h-4 w-4" />
+              <span>Envio de novos posts está temporariamente paralisado</span>
+            </div>
+          </div>
+        )}
+
         {/* Busca - Liquid Glass */}
         {showSearch && (
           <div className="mb-8 space-y-4 p-4 sm:p-6 backdrop-blur-xl bg-white/10 dark:bg-white/5 rounded-2xl border border-white/20 dark:border-white/10 shadow-lg">
@@ -528,7 +776,15 @@ export default function ForumPage() {
                 Buscar
               </Button>
               <Button
-                onClick={() => router.push('/forum/new?type=discussion')}
+                onClick={() => {
+                  if (isBlocked) {
+                    setToastMessage('Envio de novos posts está temporariamente paralisado')
+                    setToastType('info')
+                    setToastOpen(true)
+                    return
+                  }
+                  router.push('/forum/new?type=discussion')
+                }}
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 w-full sm:w-auto"
                 size="sm"
               >
@@ -546,7 +802,15 @@ export default function ForumPage() {
                 {renderPostsByTopics(discussionPosts, discussionTopics)}
                 {discussionPosts.length === 0 && (
                   <Button 
-                    onClick={() => router.push('/forum/new?type=discussion')}
+                    onClick={() => {
+                      if (isBlocked) {
+                        setToastMessage('Envio de novos posts está temporariamente paralisado')
+                        setToastType('info')
+                        setToastOpen(true)
+                        return
+                      }
+                      router.push('/forum/new?type=discussion')
+                    }}
                     className="w-full"
                   >
                     <Plus className="h-4 w-4 mr-2" />
@@ -560,7 +824,15 @@ export default function ForumPage() {
           <TabsContent value="materials" className="space-y-4">
             {userRole === 'admin' && (
               <Button
-                onClick={() => router.push('/forum/new?type=materials')}
+                onClick={() => {
+                  if (isBlocked) {
+                    setToastMessage('Envio de novos posts está temporariamente paralisado')
+                    setToastType('info')
+                    setToastOpen(true)
+                    return
+                  }
+                  router.push('/forum/new?type=materials')
+                }}
                 className="w-full mb-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
               >
                 <Plus className="h-4 w-4 mr-2" />
@@ -633,8 +905,10 @@ export default function ForumPage() {
         open={toastOpen}
         onOpenChange={setToastOpen}
         message={toastMessage}
-        type="error"
+        type={toastType}
       />
     </div>
+      )
+    })()
   )
 }

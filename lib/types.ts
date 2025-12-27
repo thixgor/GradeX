@@ -352,6 +352,22 @@ export interface SerialKey {
 
 export type ForumType = 'discussion' | 'materials' // Discussão ou Materiais
 
+export type ForumPostCreationFreezeMode =
+  | 'off'
+  | 'pause_all'
+  | 'pause_all_except_admins'
+  | 'pause_all_except_common_users'
+  | 'pause_only_free_common'
+  | 'pause_only_free_common_and_monitors'
+  | 'pause_only_free_common_and_premium_common'
+
+export interface ForumSettings {
+  _id?: string | import('mongodb').ObjectId
+  postCreationFreezeMode: ForumPostCreationFreezeMode
+  updatedAt: Date
+  updatedBy?: string
+}
+
 export interface ForumTopic {
   _id?: string | import('mongodb').ObjectId
   name: string // Nome do tópico
