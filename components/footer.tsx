@@ -7,6 +7,13 @@ export function Footer() {
         <div className="flex flex-col items-center justify-center gap-4 text-center">
           <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground">
             <Link
+              href="/equipe"
+              className="hover:text-foreground transition-colors underline underline-offset-4"
+            >
+              Equipe
+            </Link>
+            <span className="hidden sm:inline">•</span>
+            <Link
               href="/termos-de-servico"
               className="hover:text-foreground transition-colors underline underline-offset-4"
             >
