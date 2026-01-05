@@ -3,6 +3,7 @@ import { Inter, Rowdies, Space_Grotesk } from 'next/font/google'
 import './globals.css'
 import { ThemeProvider } from '@/components/theme-provider'
 import { TrialExpirationChecker } from '@/components/trial-expiration-checker'
+import { Footer } from '@/components/footer'
 
 const inter = Inter({ subsets: ['latin'] })
 const rowdies = Rowdies({ 
@@ -55,7 +56,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR" suppressHydrationWarning className={`${rowdies.variable} ${spaceGrotesk.variable}`}>
-      <body className={`${spaceGrotesk.className} gradient-overlay gradient-overlay-dark`}>
+      <body className={`${spaceGrotesk.className} gradient-overlay gradient-overlay-dark flex flex-col min-h-screen`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -63,7 +64,10 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <TrialExpirationChecker />
-          {children}
+          <div className="flex-1 flex flex-col">
+            {children}
+          </div>
+          <Footer />
         </ThemeProvider>
       </body>
     </html>
