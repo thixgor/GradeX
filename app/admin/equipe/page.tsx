@@ -1,18 +1,20 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowLeft, Save, RotateCcw } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { ArrowLeft, Save, Plus, Trash2, ChevronUp, ChevronDown, Edit2, X } from 'lucide-react'
 
 interface TeamMember {
   name: string
   role: string
   image?: string
   description?: string
-  imageOffsetY?: number // Offset vertical em porcentagem (0-100)
-  imageZoom?: number // Zoom da imagem em porcentagem (100 = normal, 150 = 1.5x zoom)
+  imageOffsetY?: number
+  imageZoom?: number
 }
 
 interface DraggingState {
@@ -28,72 +30,10 @@ export default function AdminEquipePage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [dragging, setDragging] = useState<DraggingState | null>(null)
+  const [editingMember, setEditingMember] = useState<{ type: 'leadership' | 'instructors', index: number } | null>(null)
 
-  const [leadership, setLeadership] = useState<TeamMember[]>([
-    {
-      name: 'Thiago Ferreira Rodrigues',
-      role: 'CEO, Fundador & Líder de Desenvolvimento',
-      image: 'https://i.imgur.com/z1pX1ze.jpeg',
-      imageOffsetY: 50,
-      imageZoom: 100
-    },
-    {
-      name: 'Joaquim Henrique Soares',
-      role: 'Sócio Co-Fundador',
-      imageOffsetY: 50,
-      imageZoom: 100
-    }
-  ])
-
-  const [instructors, setInstructors] = useState<TeamMember[]>([
-    {
-      name: 'Gisele Grubitsch Mietzsch',
-      role: 'Ministrante Parceira',
-      image: 'https://i.imgur.com/mrWGYVv.jpeg',
-      imageOffsetY: 50,
-      imageZoom: 100
-    },
-    {
-      name: 'Ronaldo Campos Rodrigues',
-      role: 'Ministrante Parceiro',
-      image: 'https://i.imgur.com/6rs82bt.jpeg',
-      imageOffsetY: 50,
-      imageZoom: 100
-    },
-    {
-      name: 'Amanda Santiago',
-      role: 'Ministrante Parceira',
-      image: 'https://i.imgur.com/kIoOynM.jpeg',
-      imageOffsetY: 50,
-      imageZoom: 100
-    },
-    {
-      name: 'Maria Rita Meyer Assunção',
-      role: 'Ministrante Parceira',
-      image: 'https://i.imgur.com/8FVj8fl.png',
-      imageOffsetY: 50,
-      imageZoom: 100
-    },
-    {
-      name: 'João Henrique Pimentel',
-      role: 'Ministrante Parceiro',
-      image: 'https://i.imgur.com/oHEjiJE.png',
-      imageOffsetY: 50,
-      imageZoom: 100
-    },
-    {
-      name: 'Gustavo Murillo Gonçalves Caúla',
-      role: 'Ministrante Parceiro',
-      imageOffsetY: 50,
-      imageZoom: 100
-    },
-    {
-      name: 'Gabriel da Silva Quirino dos Santos',
-      role: 'Ministrante Parceiro',
-      imageOffsetY: 50,
-      imageZoom: 100
-    }
-  ])
+  const [leadership, setLeadership] = useState<TeamMember[]>([])
+  const [instructors, setInstructors] = useState<TeamMember[]>([])
 
   useEffect(() => {
     checkAuth()
@@ -111,19 +51,12 @@ export default function AdminEquipePage() {
       if (res.ok) {
         const data = await res.json()
 
-        // Atualizar com dados salvos
         if (data.leadership) {
-          setLeadership(prev => prev.map(member => {
-            const saved = data.leadership.find((l: any) => l.name === member.name)
-            return saved ? { ...member, imageOffsetY: saved.imageOffsetY, imageZoom: saved.imageZoom || 100 } : member
-          }))
+          setLeadership(data.leadership)
         }
 
         if (data.instructors) {
-          setInstructors(prev => prev.map(member => {
-            const saved = data.instructors.find((i: any) => i.name === member.name)
-            return saved ? { ...member, imageOffsetY: saved.imageOffsetY, imageZoom: saved.imageZoom || 100 } : member
-          }))
+          setInstructors(data.instructors)
         }
       }
     } catch (error) {
@@ -197,20 +130,6 @@ export default function AdminEquipePage() {
     })
   }
 
-  const resetPosition = (type: 'leadership' | 'instructors', index: number) => {
-    if (type === 'leadership') {
-      const updated = [...leadership]
-      updated[index].imageOffsetY = 50
-      updated[index].imageZoom = 100
-      setLeadership(updated)
-    } else {
-      const updated = [...instructors]
-      updated[index].imageOffsetY = 50
-      updated[index].imageZoom = 100
-      setInstructors(updated)
-    }
-  }
-
   const handleZoomChange = (type: 'leadership' | 'instructors', index: number, zoom: number) => {
     if (type === 'leadership') {
       const updated = [...leadership]
@@ -223,6 +142,67 @@ export default function AdminEquipePage() {
     }
   }
 
+  const addMember = (type: 'leadership' | 'instructors') => {
+    const newMember: TeamMember = {
+      name: '',
+      role: '',
+      image: '',
+      description: '',
+      imageOffsetY: 50,
+      imageZoom: 100
+    }
+
+    if (type === 'leadership') {
+      setLeadership([...leadership, newMember])
+      setEditingMember({ type, index: leadership.length })
+    } else {
+      setInstructors([...instructors, newMember])
+      setEditingMember({ type, index: instructors.length })
+    }
+  }
+
+  const removeMember = (type: 'leadership' | 'instructors', index: number) => {
+    if (confirm('Tem certeza que deseja remover este membro?')) {
+      if (type === 'leadership') {
+        setLeadership(leadership.filter((_, i) => i !== index))
+      } else {
+        setInstructors(instructors.filter((_, i) => i !== index))
+      }
+      if (editingMember?.type === type && editingMember?.index === index) {
+        setEditingMember(null)
+      }
+    }
+  }
+
+  const moveMember = (type: 'leadership' | 'instructors', index: number, direction: 'up' | 'down') => {
+    const members = type === 'leadership' ? [...leadership] : [...instructors]
+    const newIndex = direction === 'up' ? index - 1 : index + 1
+
+    if (newIndex < 0 || newIndex >= members.length) return
+
+    const temp = members[index]
+    members[index] = members[newIndex]
+    members[newIndex] = temp
+
+    if (type === 'leadership') {
+      setLeadership(members)
+    } else {
+      setInstructors(members)
+    }
+  }
+
+  const updateMember = (type: 'leadership' | 'instructors', index: number, field: keyof TeamMember, value: any) => {
+    if (type === 'leadership') {
+      const updated = [...leadership]
+      updated[index] = { ...updated[index], [field]: value }
+      setLeadership(updated)
+    } else {
+      const updated = [...instructors]
+      updated[index] = { ...updated[index], [field]: value }
+      setInstructors(updated)
+    }
+  }
+
   const handleSave = async () => {
     setSaving(true)
     try {
@@ -230,13 +210,14 @@ export default function AdminEquipePage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          leadership: leadership.map(m => ({ name: m.name, imageOffsetY: m.imageOffsetY, imageZoom: m.imageZoom })),
-          instructors: instructors.map(m => ({ name: m.name, imageOffsetY: m.imageOffsetY, imageZoom: m.imageZoom }))
+          leadership,
+          instructors
         })
       })
 
       if (res.ok) {
         alert('Configurações salvas com sucesso!')
+        setEditingMember(null)
       } else {
         throw new Error('Erro ao salvar')
       }
@@ -255,6 +236,153 @@ export default function AdminEquipePage() {
     )
   }
 
+  const renderMemberCard = (member: TeamMember, index: number, type: 'leadership' | 'instructors') => {
+    const isEditing = editingMember?.type === type && editingMember?.index === index
+    const members = type === 'leadership' ? leadership : instructors
+
+    return (
+      <Card key={index} className="relative">
+        <CardContent className="p-4">
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex-1">
+              {isEditing ? (
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-xs font-medium mb-1 block">Nome</label>
+                    <Input
+                      value={member.name}
+                      onChange={(e) => updateMember(type, index, 'name', e.target.value)}
+                      placeholder="Nome completo"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium mb-1 block">Cargo</label>
+                    <Input
+                      value={member.role}
+                      onChange={(e) => updateMember(type, index, 'role', e.target.value)}
+                      placeholder="Ex: Ministrante Parceiro"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium mb-1 block">URL da Imagem (Imgur)</label>
+                    <Input
+                      value={member.image || ''}
+                      onChange={(e) => updateMember(type, index, 'image', e.target.value)}
+                      placeholder="https://i.imgur.com/..."
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium mb-1 block">Descrição</label>
+                    <Textarea
+                      value={member.description || ''}
+                      onChange={(e) => updateMember(type, index, 'description', e.target.value)}
+                      placeholder="Descrição do membro..."
+                      rows={4}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <h3 className="font-semibold text-sm">{member.name || 'Sem nome'}</h3>
+                  <p className="text-xs text-muted-foreground">{member.role || 'Sem cargo'}</p>
+                </>
+              )}
+            </div>
+
+            <div className="flex gap-1 ml-2">
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setEditingMember(isEditing ? null : { type, index })}
+                className="h-8 w-8 p-0"
+              >
+                {isEditing ? <X className="h-4 w-4" /> : <Edit2 className="h-4 w-4" />}
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => moveMember(type, index, 'up')}
+                disabled={index === 0}
+                className="h-8 w-8 p-0"
+              >
+                <ChevronUp className="h-4 w-4" />
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => moveMember(type, index, 'down')}
+                disabled={index === members.length - 1}
+                className="h-8 w-8 p-0"
+              >
+                <ChevronDown className="h-4 w-4" />
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => removeMember(type, index)}
+                className="h-8 w-8 p-0 text-red-500 hover:text-red-600"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+
+          {member.image && (
+            <>
+              <div
+                id={`drag-container-${type}-${index}`}
+                className="relative w-64 h-96 mx-auto overflow-hidden rounded-lg bg-muted border-2 border-dashed border-primary/30 cursor-move hover:border-primary transition-colors"
+                onMouseDown={(e) => handleMouseDown(type, index, e)}
+                style={{ userSelect: 'none' }}
+              >
+                <img
+                  src={member.image}
+                  alt={member.name}
+                  className="w-full h-full object-cover pointer-events-none"
+                  style={{
+                    objectPosition: `50% ${member.imageOffsetY || 50}%`,
+                    transform: `scale(${(member.imageZoom || 100) / 100})`
+                  }}
+                  draggable={false}
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement
+                    target.style.display = 'none'
+                  }}
+                />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity pointer-events-none">
+                  <div className="bg-white/90 dark:bg-black/90 px-3 py-1 rounded-full text-xs font-semibold">
+                    Arraste para ajustar
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4 space-y-3">
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground mb-1 block">
+                    Posição Vertical: {Math.round(member.imageOffsetY || 50)}%
+                  </label>
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground mb-1 block">
+                    Zoom: {Math.round(member.imageZoom || 100)}%
+                  </label>
+                  <input
+                    type="range"
+                    min="50"
+                    max="200"
+                    value={member.imageZoom || 100}
+                    onChange={(e) => handleZoomChange(type, index, parseInt(e.target.value))}
+                    className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
+                  />
+                </div>
+              </div>
+            </>
+          )}
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted p-4">
       <div className="container mx-auto max-w-6xl">
@@ -268,172 +396,59 @@ export default function AdminEquipePage() {
 
         <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg">
           <p className="text-sm text-blue-900 dark:text-blue-100">
-            <strong>Como usar:</strong> Clique e arraste a imagem verticalmente para ajustar a posição. Use o slider para dar zoom. Use o botão "Resetar" para voltar aos padrões.
+            <strong>Como usar:</strong> Adicione, edite, remova e reordene membros da equipe. Clique no ícone de edição para modificar informações. Arraste as imagens verticalmente para ajustar a posição. Use o slider para dar zoom.
           </p>
         </div>
 
         {/* Administração */}
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Administração</CardTitle>
-            <CardDescription>Arraste as imagens para ajustar a posição vertical e use o slider para zoom</CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Administração</CardTitle>
+                <CardDescription>Gerencie os membros da administração</CardDescription>
+              </div>
+              <Button onClick={() => addMember('leadership')} size="sm" className="gap-2">
+                <Plus className="h-4 w-4" />
+                Adicionar
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {leadership.map((member, index) => (
-                <div key={member.name} className="border rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <div>
-                      <h3 className="font-semibold">{member.name}</h3>
-                      <p className="text-sm text-muted-foreground">{member.role}</p>
-                    </div>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => resetPosition('leadership', index)}
-                      className="gap-1"
-                    >
-                      <RotateCcw className="h-3 w-3" />
-                      Resetar
-                    </Button>
-                  </div>
-
-                  {member.image ? (
-                    <>
-                      <div
-                        id={`drag-container-leadership-${index}`}
-                        className="relative w-64 h-96 mx-auto overflow-hidden rounded-lg bg-muted border-2 border-dashed border-primary/30 cursor-move hover:border-primary transition-colors"
-                        onMouseDown={(e) => handleMouseDown('leadership', index, e)}
-                        style={{ userSelect: 'none' }}
-                      >
-                        <img
-                          src={member.image}
-                          alt={member.name}
-                          className="w-full h-full object-cover pointer-events-none"
-                          style={{
-                            objectPosition: `50% ${member.imageOffsetY || 50}%`,
-                            transform: `scale(${(member.imageZoom || 100) / 100})`
-                          }}
-                          draggable={false}
-                        />
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity pointer-events-none">
-                          <div className="bg-white/90 dark:bg-black/90 px-4 py-2 rounded-full text-sm font-semibold">
-                            Arraste para ajustar
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="mt-4 space-y-3">
-                        <div>
-                          <label className="text-xs font-medium text-muted-foreground mb-1 block">
-                            Posição Vertical: {Math.round(member.imageOffsetY || 50)}%
-                          </label>
-                        </div>
-                        <div>
-                          <label className="text-xs font-medium text-muted-foreground mb-1 block">
-                            Zoom: {Math.round(member.imageZoom || 100)}%
-                          </label>
-                          <input
-                            type="range"
-                            min="50"
-                            max="200"
-                            value={member.imageZoom || 100}
-                            onChange={(e) => handleZoomChange('leadership', index, parseInt(e.target.value))}
-                            className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
-                          />
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="w-64 h-96 mx-auto flex items-center justify-center bg-muted rounded-lg">
-                      <p className="text-sm text-muted-foreground">Sem imagem</p>
-                    </div>
-                  )}
-                </div>
-              ))}
+              {leadership.map((member, index) => renderMemberCard(member, index, 'leadership'))}
             </div>
+            {leadership.length === 0 && (
+              <div className="text-center py-8 text-muted-foreground">
+                Nenhum membro na administração. Clique em "Adicionar" para começar.
+              </div>
+            )}
           </CardContent>
         </Card>
 
-        {/* Ministrantes */}
+        {/* Ministrantes Parceiros */}
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Ministrantes Parceiros</CardTitle>
-            <CardDescription>Arraste as imagens para ajustar a posição vertical</CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Ministrantes Parceiros</CardTitle>
+                <CardDescription>Gerencie os ministrantes parceiros</CardDescription>
+              </div>
+              <Button onClick={() => addMember('instructors')} size="sm" className="gap-2">
+                <Plus className="h-4 w-4" />
+                Adicionar
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {instructors.map((member, index) => (
-                <div key={member.name} className="border rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="min-w-0 flex-1">
-                      <h3 className="font-semibold text-sm truncate">{member.name}</h3>
-                      <p className="text-xs text-muted-foreground truncate">{member.role}</p>
-                    </div>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => resetPosition('instructors', index)}
-                      className="gap-1 ml-2 flex-shrink-0"
-                    >
-                      <RotateCcw className="h-3 w-3" />
-                    </Button>
-                  </div>
-
-                  {member.image ? (
-                    <>
-                      <div
-                        id={`drag-container-instructors-${index}`}
-                        className="relative w-64 h-96 mx-auto overflow-hidden rounded-lg bg-muted border-2 border-dashed border-primary/30 cursor-move hover:border-primary transition-colors"
-                        onMouseDown={(e) => handleMouseDown('instructors', index, e)}
-                        style={{ userSelect: 'none' }}
-                      >
-                        <img
-                          src={member.image}
-                          alt={member.name}
-                          className="w-full h-full object-cover pointer-events-none"
-                          style={{
-                            objectPosition: `50% ${member.imageOffsetY || 50}%`,
-                            transform: `scale(${(member.imageZoom || 100) / 100})`
-                          }}
-                          draggable={false}
-                        />
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity pointer-events-none">
-                          <div className="bg-white/90 dark:bg-black/90 px-3 py-1 rounded-full text-xs font-semibold">
-                            Arraste
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="mt-4 space-y-3">
-                        <div>
-                          <label className="text-xs font-medium text-muted-foreground mb-1 block">
-                            Posição: {Math.round(member.imageOffsetY || 50)}%
-                          </label>
-                        </div>
-                        <div>
-                          <label className="text-xs font-medium text-muted-foreground mb-1 block">
-                            Zoom: {Math.round(member.imageZoom || 100)}%
-                          </label>
-                          <input
-                            type="range"
-                            min="50"
-                            max="200"
-                            value={member.imageZoom || 100}
-                            onChange={(e) => handleZoomChange('instructors', index, parseInt(e.target.value))}
-                            className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
-                          />
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="w-64 h-96 mx-auto flex items-center justify-center bg-muted rounded-lg">
-                      <p className="text-xs text-muted-foreground">Sem imagem</p>
-                    </div>
-                  )}
-                </div>
-              ))}
+              {instructors.map((member, index) => renderMemberCard(member, index, 'instructors'))}
             </div>
+            {instructors.length === 0 && (
+              <div className="text-center py-8 text-muted-foreground">
+                Nenhum ministrante parceiro. Clique em "Adicionar" para começar.
+              </div>
+            )}
           </CardContent>
         </Card>
 

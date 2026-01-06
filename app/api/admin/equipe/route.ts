@@ -4,6 +4,9 @@ import { getSession } from '@/lib/auth'
 
 interface TeamMemberConfig {
   name: string
+  role: string
+  image?: string
+  description?: string
   imageOffsetY: number
   imageZoom?: number
 }
@@ -23,19 +26,8 @@ export async function GET(req: NextRequest) {
     if (!config) {
       // Retorna configuração padrão
       return NextResponse.json({
-        leadership: [
-          { name: 'Thiago Ferreira Rodrigues', imageOffsetY: 50, imageZoom: 100 },
-          { name: 'Joaquim Henrique Soares', imageOffsetY: 50, imageZoom: 100 }
-        ],
-        instructors: [
-          { name: 'Gisele Grubitsch Mietzsch', imageOffsetY: 50, imageZoom: 100 },
-          { name: 'Ronaldo Campos Rodrigues', imageOffsetY: 50, imageZoom: 100 },
-          { name: 'Amanda Santiago', imageOffsetY: 50, imageZoom: 100 },
-          { name: 'Maria Rita Meyer Assunção', imageOffsetY: 50, imageZoom: 100 },
-          { name: 'João Henrique Pimentel', imageOffsetY: 50, imageZoom: 100 },
-          { name: 'Gustavo Murillo Gonçalves Caúla', imageOffsetY: 50, imageZoom: 100 },
-          { name: 'Gabriel da Silva Quirino dos Santos', imageOffsetY: 50, imageZoom: 100 }
-        ]
+        leadership: [],
+        instructors: []
       })
     }
 

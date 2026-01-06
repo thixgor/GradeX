@@ -18,73 +18,8 @@ export default function EquipePage() {
   const router = useRouter()
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set())
-  const [leadership, setLeadership] = useState<TeamMember[]>([
-    {
-      name: 'Thiago Ferreira Rodrigues',
-      role: 'CEO, Fundador & Líder de Desenvolvimento',
-      description: 'Visionário e desenvolvedor por trás da DomineAqui, Thiago criou toda a plataforma do zero com ideias bem fundamentadas. Jovem e extremamente obstinado, possui a capacidade única de transformar ideias simples em produtos excepcionais. Lidera a empresa com foco em inovação educacional, excelência técnica e design inteligente.',
-      image: 'https://i.imgur.com/z1pX1ze.jpeg',
-      imageOffsetY: 50
-    },
-    {
-      name: 'Joaquim Henrique Soares',
-      role: 'Sócio Co-Fundador',
-      description: 'Estrategista e parceiro essencial no desenvolvimento e crescimento da plataforma. Trabalha lado a lado com Thiago para expandir o alcance da DomineAqui e garantir que a visão da empresa se transforme em realidade.',
-      image: undefined,
-      imageOffsetY: 50
-    }
-  ])
-
-  const [instructors, setInstructors] = useState<TeamMember[]>([
-    {
-      name: 'Gisele Grubitsch Mietzsch',
-      role: 'Ministrante Parceira - Nutricionista e Estudante de Medicina',
-      description: 'Gisele tem 41 anos e é nutricionista pós-graduada em Metabolismo e Emagrecimento. Acredita na nutrição como ferramenta essencial para promoção, manutenção e recuperação da saúde. Atualmente cursa Medicina, buscando aprofundamento técnico-científico para oferecer o melhor cuidado aos seus pacientes. Apaixonada pelo ensino, encontra realização profissional na troca contínua de conhecimento entre quem ensina e quem aprende.',
-      image: 'https://i.imgur.com/mrWGYVv.jpeg',
-      imageOffsetY: 50
-    },
-    {
-      name: 'Ronaldo Campos Rodrigues',
-      role: 'Ministrante Parceiro - Mestre em Cardiologia',
-      description: 'Com mais de 30 anos de atuação na medicina, Ronaldo é Mestre em Cardiologia, Especialista em Ecocardiografia e Professor apaixonado pela arte de ensinar. Domina profundamente a área cardiovascular e dedica-se a transmitir as fundamentações e integrações patológicas, demonstrando a importância vital dos fatores cardiovasculares no cotidiano médico. Sua expertise abrange medicina cardiológica atlética e disfunções patológicas. Fundador do ECO-RJ em Recreio dos Bandeirantes, ministra cursos presenciais focados na aprendizagem prática de exames cardiovasculares, incluindo rastreios, análise de ateroscleroses, danos vasculares induzidos por medicamentos e alterações morfológicas cardiovasculares congênitas ou por condicionamento.',
-      image: 'https://i.imgur.com/6rs82bt.jpeg',
-      imageOffsetY: 50
-    },
-    {
-      name: 'Amanda Santiago',
-      role: 'Ministrante Parceira - Estudante de Medicina',
-      description: 'Amanda é apaixonada por neurologia, saúde do idoso, manejo da dor e farmacologia, construindo sua trajetória com foco em anestesiologia. Possui cursos de extensão em neurociência do TDAH e em neurodegeneração e neurofarmacologia pela UFF, além de certificação em anestesiologia para acadêmicos pelo Instituto SBA e curso de diagnóstico precoce do Alzheimer pela ABN Lab. Entusiasta da criação de cenários simulados para educação médica, atua como monitora de Habilidades e Atitudes Médicas, demonstrando comprometimento com o ensino e a prática clínica fundamentada.',
-      image: 'https://i.imgur.com/kIoOynM.jpeg',
-      imageOffsetY: 50
-    },
-    {
-      name: 'Maria Rita Meyer Assunção',
-      role: 'Ministrante Parceira - Estudante de Medicina',
-      description: 'Natural do Rio Grande do Sul, Maria Rita chegou ao Rio de Janeiro com o sonho de se tornar médica, movida pela admiração pela cidade maravilhosa e pela dedicação à medicina. Com um coração gentil e determinado, trilha sua jornada acadêmica com dedicação e entusiasmo. Certificada pelo curso de anestesiologia para acadêmicos da Sociedade Brasileira de Anestesiologia (SBA), demonstra interesse precoce por áreas de alta complexidade e compromisso com a formação médica de excelência. Sua trajetória reflete coragem, perseverança e a busca constante por aprendizado.',
-      image: 'https://i.imgur.com/8FVj8fl.png',
-      imageOffsetY: 50
-    },
-    {
-      name: 'João Henrique Pimentel',
-      role: 'Ministrante Parceiro - Estudante de Medicina',
-      description: 'João Henrique é um estudante profundamente vocacionado para a Medicina e para a área da Saúde. Com especial interesse em Cirurgia, Neuroanatomia e Sistema Cardiovascular, destaca-se pela postura obstinada, curiosa e rigorosa no estudo dos fundamentos científicos. Presidente da Liga de Anatomia LAANATO, atua como monitor de Habilidades e Atitudes Médicas e é monitor vinculado à Sociedade Brasileira de Anestesiologia (SBA), demonstrando interesse precoce por áreas de alta complexidade e liderança acadêmica. Reconhecido pelo comprometimento e pela constante disposição em aprender, constrói sua trajetória pautada na disciplina, respeito ao paciente e busca permanente pela evolução pessoal e profissional.',
-      image: 'https://i.imgur.com/oHEjiJE.png',
-      imageOffsetY: 50
-    },
-    {
-      name: 'Gustavo Murillo Gonçalves Caúla',
-      role: 'Ministrante Parceiro',
-      image: undefined,
-      imageOffsetY: 50
-    },
-    {
-      name: 'Gabriel da Silva Quirino dos Santos',
-      role: 'Ministrante Parceiro - Estudante de Medicina',
-      description: 'Gabriel é um estudante dedicado à Medicina, com genuíno interesse pelo cuidado humano e pela excelência acadêmica. Atua como monitor de Habilidades e Atitudes Médicas, demonstrando comprometimento com o desenvolvimento de competências essenciais para a prática médica. Com uma abordagem atenciosa e focada no aprendizado contínuo, constrói sua trajetória pautada na ética, no respeito ao paciente e na busca constante por conhecimento.',
-      image: undefined,
-      imageOffsetY: 50
-    }
-  ])
+  const [leadership, setLeadership] = useState<TeamMember[]>([])
+  const [instructors, setInstructors] = useState<TeamMember[]>([])
 
   useEffect(() => {
     loadConfig()
@@ -96,19 +31,12 @@ export default function EquipePage() {
       if (res.ok) {
         const data = await res.json()
 
-        // Atualizar com dados salvos
         if (data.leadership) {
-          setLeadership(prev => prev.map(member => {
-            const saved = data.leadership.find((l: any) => l.name === member.name)
-            return saved ? { ...member, imageOffsetY: saved.imageOffsetY, imageZoom: saved.imageZoom || 100 } : member
-          }))
+          setLeadership(data.leadership)
         }
 
         if (data.instructors) {
-          setInstructors(prev => prev.map(member => {
-            const saved = data.instructors.find((i: any) => i.name === member.name)
-            return saved ? { ...member, imageOffsetY: saved.imageOffsetY, imageZoom: saved.imageZoom || 100 } : member
-          }))
+          setInstructors(data.instructors)
         }
       }
     } catch (error) {
