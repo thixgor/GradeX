@@ -12,6 +12,7 @@ interface TeamMember {
   image?: string
   description?: string
   imageOffsetY?: number // Offset vertical em porcentagem (0-100)
+  imageZoom?: number // Zoom da imagem em porcentagem (100 = normal, 150 = 1.5x zoom)
 }
 
 interface DraggingState {
@@ -33,12 +34,14 @@ export default function AdminEquipePage() {
       name: 'Thiago Ferreira Rodrigues',
       role: 'CEO, Fundador & Líder de Desenvolvimento',
       image: 'https://i.imgur.com/z1pX1ze.jpeg',
-      imageOffsetY: 50
+      imageOffsetY: 50,
+      imageZoom: 100
     },
     {
       name: 'Joaquim Henrique Soares',
       role: 'Sócio Co-Fundador',
-      imageOffsetY: 50
+      imageOffsetY: 50,
+      imageZoom: 100
     }
   ])
 
@@ -47,34 +50,48 @@ export default function AdminEquipePage() {
       name: 'Gisele Grubitsch Mietzsch',
       role: 'Ministrante Parceira',
       image: 'https://i.imgur.com/mrWGYVv.jpeg',
-      imageOffsetY: 50
+      imageOffsetY: 50,
+      imageZoom: 100
     },
     {
       name: 'Ronaldo Campos Rodrigues',
       role: 'Ministrante Parceiro',
       image: 'https://i.imgur.com/6rs82bt.jpeg',
-      imageOffsetY: 50
+      imageOffsetY: 50,
+      imageZoom: 100
     },
     {
       name: 'Amanda Santiago',
       role: 'Ministrante Parceira',
-      imageOffsetY: 50
+      image: 'https://i.imgur.com/kIoOynM.jpeg',
+      imageOffsetY: 50,
+      imageZoom: 100
     },
     {
       name: 'Maria Rita Meyer Assunção',
       role: 'Ministrante Parceira',
-      imageOffsetY: 50
+      image: 'https://i.imgur.com/8FVj8fl.png',
+      imageOffsetY: 50,
+      imageZoom: 100
     },
     {
       name: 'João Henrique Pimentel',
       role: 'Ministrante Parceiro',
       image: 'https://i.imgur.com/oHEjiJE.png',
-      imageOffsetY: 50
+      imageOffsetY: 50,
+      imageZoom: 100
     },
     {
       name: 'Gustavo Murillo Gonçalves Caúla',
       role: 'Ministrante Parceiro',
-      imageOffsetY: 50
+      imageOffsetY: 50,
+      imageZoom: 100
+    },
+    {
+      name: 'Gabriel da Silva Quirino dos Santos',
+      role: 'Ministrante Parceiro',
+      imageOffsetY: 50,
+      imageZoom: 100
     }
   ])
 
@@ -98,14 +115,14 @@ export default function AdminEquipePage() {
         if (data.leadership) {
           setLeadership(prev => prev.map(member => {
             const saved = data.leadership.find((l: any) => l.name === member.name)
-            return saved ? { ...member, imageOffsetY: saved.imageOffsetY } : member
+            return saved ? { ...member, imageOffsetY: saved.imageOffsetY, imageZoom: saved.imageZoom || 100 } : member
           }))
         }
 
         if (data.instructors) {
           setInstructors(prev => prev.map(member => {
             const saved = data.instructors.find((i: any) => i.name === member.name)
-            return saved ? { ...member, imageOffsetY: saved.imageOffsetY } : member
+            return saved ? { ...member, imageOffsetY: saved.imageOffsetY, imageZoom: saved.imageZoom || 100 } : member
           }))
         }
       }
@@ -184,10 +201,24 @@ export default function AdminEquipePage() {
     if (type === 'leadership') {
       const updated = [...leadership]
       updated[index].imageOffsetY = 50
+      updated[index].imageZoom = 100
       setLeadership(updated)
     } else {
       const updated = [...instructors]
       updated[index].imageOffsetY = 50
+      updated[index].imageZoom = 100
+      setInstructors(updated)
+    }
+  }
+
+  const handleZoomChange = (type: 'leadership' | 'instructors', index: number, zoom: number) => {
+    if (type === 'leadership') {
+      const updated = [...leadership]
+      updated[index].imageZoom = zoom
+      setLeadership(updated)
+    } else {
+      const updated = [...instructors]
+      updated[index].imageZoom = zoom
       setInstructors(updated)
     }
   }
@@ -199,8 +230,8 @@ export default function AdminEquipePage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          leadership: leadership.map(m => ({ name: m.name, imageOffsetY: m.imageOffsetY })),
-          instructors: instructors.map(m => ({ name: m.name, imageOffsetY: m.imageOffsetY }))
+          leadership: leadership.map(m => ({ name: m.name, imageOffsetY: m.imageOffsetY, imageZoom: m.imageZoom })),
+          instructors: instructors.map(m => ({ name: m.name, imageOffsetY: m.imageOffsetY, imageZoom: m.imageZoom }))
         })
       })
 
@@ -237,15 +268,15 @@ export default function AdminEquipePage() {
 
         <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg">
           <p className="text-sm text-blue-900 dark:text-blue-100">
-            <strong>Como usar:</strong> Clique e arraste a imagem verticalmente para ajustar a posição. Use o botão "Resetar" para voltar ao centro.
+            <strong>Como usar:</strong> Clique e arraste a imagem verticalmente para ajustar a posição. Use o slider para dar zoom. Use o botão "Resetar" para voltar aos padrões.
           </p>
         </div>
 
-        {/* Liderança */}
+        {/* Administração */}
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Liderança</CardTitle>
-            <CardDescription>Arraste as imagens para ajustar a posição vertical</CardDescription>
+            <CardTitle>Administração</CardTitle>
+            <CardDescription>Arraste as imagens para ajustar a posição vertical e use o slider para zoom</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -268,36 +299,54 @@ export default function AdminEquipePage() {
                   </div>
 
                   {member.image ? (
-                    <div
-                      id={`drag-container-leadership-${index}`}
-                      className="relative h-64 sm:h-80 overflow-hidden rounded-lg bg-muted border-2 border-dashed border-primary/30 cursor-move hover:border-primary transition-colors"
-                      onMouseDown={(e) => handleMouseDown('leadership', index, e)}
-                      style={{ userSelect: 'none' }}
-                    >
-                      <img
-                        src={member.image}
-                        alt={member.name}
-                        className="w-full h-full object-cover pointer-events-none"
-                        style={{
-                          objectPosition: `50% ${member.imageOffsetY || 50}%`
-                        }}
-                        draggable={false}
-                      />
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity pointer-events-none">
-                        <div className="bg-white/90 dark:bg-black/90 px-4 py-2 rounded-full text-sm font-semibold">
-                          Arraste para ajustar
+                    <>
+                      <div
+                        id={`drag-container-leadership-${index}`}
+                        className="relative w-64 h-96 mx-auto overflow-hidden rounded-lg bg-muted border-2 border-dashed border-primary/30 cursor-move hover:border-primary transition-colors"
+                        onMouseDown={(e) => handleMouseDown('leadership', index, e)}
+                        style={{ userSelect: 'none' }}
+                      >
+                        <img
+                          src={member.image}
+                          alt={member.name}
+                          className="w-full h-full object-cover pointer-events-none"
+                          style={{
+                            objectPosition: `50% ${member.imageOffsetY || 50}%`,
+                            transform: `scale(${(member.imageZoom || 100) / 100})`
+                          }}
+                          draggable={false}
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity pointer-events-none">
+                          <div className="bg-white/90 dark:bg-black/90 px-4 py-2 rounded-full text-sm font-semibold">
+                            Arraste para ajustar
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="h-64 sm:h-80 flex items-center justify-center bg-muted rounded-lg">
-                      <p className="text-sm text-muted-foreground">Sem imagem</p>
-                    </div>
-                  )}
 
-                  {member.image && (
-                    <div className="mt-2 text-xs text-center text-muted-foreground">
-                      Posição: {Math.round(member.imageOffsetY || 50)}%
+                      <div className="mt-4 space-y-3">
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground mb-1 block">
+                            Posição Vertical: {Math.round(member.imageOffsetY || 50)}%
+                          </label>
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground mb-1 block">
+                            Zoom: {Math.round(member.imageZoom || 100)}%
+                          </label>
+                          <input
+                            type="range"
+                            min="50"
+                            max="200"
+                            value={member.imageZoom || 100}
+                            onChange={(e) => handleZoomChange('leadership', index, parseInt(e.target.value))}
+                            className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
+                          />
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="w-64 h-96 mx-auto flex items-center justify-center bg-muted rounded-lg">
+                      <p className="text-sm text-muted-foreground">Sem imagem</p>
                     </div>
                   )}
                 </div>
@@ -332,36 +381,54 @@ export default function AdminEquipePage() {
                   </div>
 
                   {member.image ? (
-                    <div
-                      id={`drag-container-instructors-${index}`}
-                      className="relative h-56 overflow-hidden rounded-lg bg-muted border-2 border-dashed border-primary/30 cursor-move hover:border-primary transition-colors"
-                      onMouseDown={(e) => handleMouseDown('instructors', index, e)}
-                      style={{ userSelect: 'none' }}
-                    >
-                      <img
-                        src={member.image}
-                        alt={member.name}
-                        className="w-full h-full object-cover pointer-events-none"
-                        style={{
-                          objectPosition: `50% ${member.imageOffsetY || 50}%`
-                        }}
-                        draggable={false}
-                      />
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity pointer-events-none">
-                        <div className="bg-white/90 dark:bg-black/90 px-3 py-1 rounded-full text-xs font-semibold">
-                          Arraste
+                    <>
+                      <div
+                        id={`drag-container-instructors-${index}`}
+                        className="relative w-64 h-96 mx-auto overflow-hidden rounded-lg bg-muted border-2 border-dashed border-primary/30 cursor-move hover:border-primary transition-colors"
+                        onMouseDown={(e) => handleMouseDown('instructors', index, e)}
+                        style={{ userSelect: 'none' }}
+                      >
+                        <img
+                          src={member.image}
+                          alt={member.name}
+                          className="w-full h-full object-cover pointer-events-none"
+                          style={{
+                            objectPosition: `50% ${member.imageOffsetY || 50}%`,
+                            transform: `scale(${(member.imageZoom || 100) / 100})`
+                          }}
+                          draggable={false}
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity pointer-events-none">
+                          <div className="bg-white/90 dark:bg-black/90 px-3 py-1 rounded-full text-xs font-semibold">
+                            Arraste
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="h-56 flex items-center justify-center bg-muted rounded-lg">
-                      <p className="text-xs text-muted-foreground">Sem imagem</p>
-                    </div>
-                  )}
 
-                  {member.image && (
-                    <div className="mt-2 text-xs text-center text-muted-foreground">
-                      Posição: {Math.round(member.imageOffsetY || 50)}%
+                      <div className="mt-4 space-y-3">
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground mb-1 block">
+                            Posição: {Math.round(member.imageOffsetY || 50)}%
+                          </label>
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground mb-1 block">
+                            Zoom: {Math.round(member.imageZoom || 100)}%
+                          </label>
+                          <input
+                            type="range"
+                            min="50"
+                            max="200"
+                            value={member.imageZoom || 100}
+                            onChange={(e) => handleZoomChange('instructors', index, parseInt(e.target.value))}
+                            className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
+                          />
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="w-64 h-96 mx-auto flex items-center justify-center bg-muted rounded-lg">
+                      <p className="text-xs text-muted-foreground">Sem imagem</p>
                     </div>
                   )}
                 </div>

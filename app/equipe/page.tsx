@@ -11,6 +11,7 @@ interface TeamMember {
   image?: string
   description?: string
   imageOffsetY?: number // Offset vertical em porcentagem (0-100)
+  imageZoom?: number // Zoom da imagem em porcentagem (100 = normal, 150 = 1.5x zoom)
 }
 
 export default function EquipePage() {
@@ -51,26 +52,35 @@ export default function EquipePage() {
     },
     {
       name: 'Amanda Santiago',
-      role: 'Ministrante Parceira',
-      image: undefined,
+      role: 'Ministrante Parceira - Estudante de Medicina',
+      description: 'Amanda é apaixonada por neurologia, saúde do idoso, manejo da dor e farmacologia, construindo sua trajetória com foco em anestesiologia. Possui cursos de extensão em neurociência do TDAH e em neurodegeneração e neurofarmacologia pela UFF, além de certificação em anestesiologia para acadêmicos pelo Instituto SBA e curso de diagnóstico precoce do Alzheimer pela ABN Lab. Entusiasta da criação de cenários simulados para educação médica, atua como monitora de Habilidades e Atitudes Médicas, demonstrando comprometimento com o ensino e a prática clínica fundamentada.',
+      image: 'https://i.imgur.com/kIoOynM.jpeg',
       imageOffsetY: 50
     },
     {
       name: 'Maria Rita Meyer Assunção',
-      role: 'Ministrante Parceira',
-      image: undefined,
+      role: 'Ministrante Parceira - Estudante de Medicina',
+      description: 'Natural do Rio Grande do Sul, Maria Rita chegou ao Rio de Janeiro com o sonho de se tornar médica, movida pela admiração pela cidade maravilhosa e pela dedicação à medicina. Com um coração gentil e determinado, trilha sua jornada acadêmica com dedicação e entusiasmo. Certificada pelo curso de anestesiologia para acadêmicos da Sociedade Brasileira de Anestesiologia (SBA), demonstra interesse precoce por áreas de alta complexidade e compromisso com a formação médica de excelência. Sua trajetória reflete coragem, perseverança e a busca constante por aprendizado.',
+      image: 'https://i.imgur.com/8FVj8fl.png',
       imageOffsetY: 50
     },
     {
       name: 'João Henrique Pimentel',
       role: 'Ministrante Parceiro - Estudante de Medicina',
-      description: 'João Henrique é um estudante profundamente vocacionado para a Medicina e para a área da Saúde. Com especial interesse em Cirurgia, Neuroanatomia e Sistema Cardiovascular, destaca-se pela postura obstinada, curiosa e rigorosa no estudo dos fundamentos científicos. Atua como monitor de Habilidades e Atitudes Médicas e é monitor vinculado à Sociedade Brasileira de Anestesiologia (SBA), demonstrando interesse precoce por áreas de alta complexidade. Reconhecido pelo comprometimento e pela constante disposição em aprender, constrói sua trajetória pautada na disciplina, respeito ao paciente e busca permanente pela evolução pessoal e profissional.',
+      description: 'João Henrique é um estudante profundamente vocacionado para a Medicina e para a área da Saúde. Com especial interesse em Cirurgia, Neuroanatomia e Sistema Cardiovascular, destaca-se pela postura obstinada, curiosa e rigorosa no estudo dos fundamentos científicos. Presidente da Liga de Anatomia LAANATO, atua como monitor de Habilidades e Atitudes Médicas e é monitor vinculado à Sociedade Brasileira de Anestesiologia (SBA), demonstrando interesse precoce por áreas de alta complexidade e liderança acadêmica. Reconhecido pelo comprometimento e pela constante disposição em aprender, constrói sua trajetória pautada na disciplina, respeito ao paciente e busca permanente pela evolução pessoal e profissional.',
       image: 'https://i.imgur.com/oHEjiJE.png',
       imageOffsetY: 50
     },
     {
       name: 'Gustavo Murillo Gonçalves Caúla',
       role: 'Ministrante Parceiro',
+      image: undefined,
+      imageOffsetY: 50
+    },
+    {
+      name: 'Gabriel da Silva Quirino dos Santos',
+      role: 'Ministrante Parceiro - Estudante de Medicina',
+      description: 'Gabriel é um estudante dedicado à Medicina, com genuíno interesse pelo cuidado humano e pela excelência acadêmica. Atua como monitor de Habilidades e Atitudes Médicas, demonstrando comprometimento com o desenvolvimento de competências essenciais para a prática médica. Com uma abordagem atenciosa e focada no aprendizado contínuo, constrói sua trajetória pautada na ética, no respeito ao paciente e na busca constante por conhecimento.',
       image: undefined,
       imageOffsetY: 50
     }
@@ -90,14 +100,14 @@ export default function EquipePage() {
         if (data.leadership) {
           setLeadership(prev => prev.map(member => {
             const saved = data.leadership.find((l: any) => l.name === member.name)
-            return saved ? { ...member, imageOffsetY: saved.imageOffsetY } : member
+            return saved ? { ...member, imageOffsetY: saved.imageOffsetY, imageZoom: saved.imageZoom || 100 } : member
           }))
         }
 
         if (data.instructors) {
           setInstructors(prev => prev.map(member => {
             const saved = data.instructors.find((i: any) => i.name === member.name)
-            return saved ? { ...member, imageOffsetY: saved.imageOffsetY } : member
+            return saved ? { ...member, imageOffsetY: saved.imageOffsetY, imageZoom: saved.imageZoom || 100 } : member
           }))
         }
       }
@@ -142,77 +152,75 @@ export default function EquipePage() {
             </p>
           </div>
 
-          {/* Liderança */}
+          {/* Administração */}
           <section className="mb-16">
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold mb-2">Liderança</h2>
+              <h2 className="text-3xl font-bold mb-2">Administração</h2>
               <div className="w-20 h-1 bg-gradient-to-r from-primary/50 to-primary mx-auto rounded-full"></div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="space-y-8">
               {leadership.map((member, index) => (
                 <div
                   key={member.name}
-                  className="group relative bg-card/50 backdrop-blur-sm rounded-2xl border overflow-hidden transition-all duration-500 hover:shadow-2xl hover:-translate-y-3"
+                  className="group relative bg-card/50 backdrop-blur-sm rounded-xl border overflow-hidden transition-all duration-500 hover:shadow-2xl"
                   style={{
                     animationDelay: `${index * 150}ms`,
                     animation: 'fadeInUp 0.6s ease-out forwards',
                     opacity: 0
                   }}
-                  onMouseEnter={() => setHoveredIndex(index)}
-                  onMouseLeave={() => setHoveredIndex(null)}
                 >
                   {/* Animated Gradient Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
 
                   {/* Floating Glow Effect */}
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
+                  <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
 
-                  {/* Image Container */}
-                  <div className="relative h-64 sm:h-80 overflow-hidden bg-gradient-to-br from-primary/20 to-primary/5">
-                    {member.image ? (
-                      <img
-                        src={member.image}
-                        alt={member.name}
-                        className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-110"
-                        style={{
-                          objectPosition: `50% ${member.imageOffsetY || 50}%`
-                        }}
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement
-                          target.style.display = 'none'
-                        }}
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-4xl font-bold text-white group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
-                          {member.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                  <div className="flex flex-col md:flex-row">
+                    {/* Image Container */}
+                    <div className="relative w-full md:w-64 h-80 md:h-96 overflow-hidden bg-gradient-to-br from-primary/20 to-primary/5 flex-shrink-0">
+                      {member.image ? (
+                        <img
+                          src={member.image}
+                          alt={member.name}
+                          className="w-full h-full object-cover transition-all duration-700 group-hover:brightness-110"
+                          style={{
+                            objectPosition: `50% ${member.imageOffsetY || 50}%`,
+                            transform: `scale(${((member.imageZoom || 100) / 100)})`
+                          }}
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement
+                            target.style.display = 'none'
+                          }}
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-4xl font-bold text-white group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+                            {member.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
 
-                    {/* Animated Decorative Elements */}
-                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
-                    <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-transparent via-primary to-transparent transform scale-y-0 group-hover:scale-y-100 transition-transform duration-700 delay-100"></div>
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-primary/30 to-transparent transform translate-x-12 -translate-y-12 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-500"></div>
+                      {/* Animated Corner Accent */}
+                      <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-primary/40 to-transparent transform translate-x-10 -translate-y-10 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-500"></div>
+                    </div>
 
-                    {/* Bottom Gradient */}
-                    <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-card/90 to-transparent"></div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-6 relative z-10">
-                    <h3 className="text-xl font-bold mb-1 group-hover:text-primary transition-colors duration-300">
-                      {member.name}
-                    </h3>
-                    <p className="text-sm font-semibold text-primary/80 mb-3">
-                      {member.role}
-                    </p>
-                    {member.description && (
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        {member.description}
+                    {/* Content */}
+                    <div className="p-6 md:p-8 relative flex-1">
+                      <h3 className="text-xl md:text-2xl font-bold mb-2 group-hover:text-primary transition-colors duration-300">
+                        {member.name}
+                      </h3>
+                      <p className="text-sm text-primary/70 font-medium mb-4">
+                        {member.role}
                       </p>
-                    )}
+
+                      {member.description && (
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          {member.description}
+                        </p>
+                      )}
+                    </div>
                   </div>
 
                   {/* Shine Effect */}
@@ -228,41 +236,39 @@ export default function EquipePage() {
               <h2 className="text-3xl font-bold mb-2">Ministrantes Parceiros</h2>
               <div className="w-20 h-1 bg-gradient-to-r from-primary/50 to-primary mx-auto rounded-full"></div>
               <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">
-                Profissionais dedicados que compartilham conhecimento e experiência para elevar o nível de preparação dos nossos alunos.
+                Pessoas dedicadas que compartilham conhecimento e experiência para elevar o nível de preparação dos nossos alunos.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {instructors.map((member, index) => {
-                const cardId = `instructor-${index}`
-                const isExpanded = expandedCards.has(cardId)
+            <div className="space-y-8">
+              {instructors.map((member, index) => (
+                <div
+                  key={member.name}
+                  className="group relative bg-card/50 backdrop-blur-sm rounded-xl border overflow-hidden transition-all duration-500 hover:shadow-2xl"
+                  style={{
+                    animationDelay: `${(index + 2) * 100}ms`,
+                    animation: 'fadeInUp 0.6s ease-out forwards',
+                    opacity: 0
+                  }}
+                >
+                  {/* Animated Gradient Border */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
 
-                return (
-                  <div
-                    key={member.name}
-                    className="group relative bg-card/50 backdrop-blur-sm rounded-xl border overflow-hidden transition-all duration-500 hover:shadow-2xl hover:-translate-y-2"
-                    style={{
-                      animationDelay: `${(index + 2) * 100}ms`,
-                      animation: 'fadeInUp 0.6s ease-out forwards',
-                      opacity: 0
-                    }}
-                  >
-                    {/* Animated Gradient Border */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none animate-pulse"></div>
+                  {/* Floating Particles Effect */}
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
+                  <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
 
-                    {/* Floating Particles Effect */}
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
-                    <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
-
+                  <div className="flex flex-col md:flex-row">
                     {/* Image Container */}
-                    <div className="relative h-56 overflow-hidden bg-gradient-to-br from-primary/10 to-primary/5">
+                    <div className="relative w-full md:w-64 h-80 md:h-96 overflow-hidden bg-gradient-to-br from-primary/10 to-primary/5 flex-shrink-0">
                       {member.image ? (
                         <img
                           src={member.image}
                           alt={member.name}
-                          className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-110"
+                          className="w-full h-full object-cover transition-all duration-700 group-hover:brightness-110"
                           style={{
-                            objectPosition: `50% ${member.imageOffsetY || 50}%`
+                            objectPosition: `50% ${member.imageOffsetY || 50}%`,
+                            transform: `scale(${((member.imageZoom || 100) / 100)})`
                           }}
                           onError={(e) => {
                             const target = e.target as HTMLImageElement
@@ -279,58 +285,29 @@ export default function EquipePage() {
 
                       {/* Animated Corner Accent */}
                       <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-primary/40 to-transparent transform translate-x-10 -translate-y-10 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-500"></div>
-
-                      {/* Bottom Gradient Overlay */}
-                      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-card/80 to-transparent"></div>
                     </div>
 
                     {/* Content */}
-                    <div className="p-5 relative">
-                      <h3 className="text-lg font-bold mb-1 group-hover:text-primary transition-colors duration-300">
+                    <div className="p-6 md:p-8 relative flex-1">
+                      <h3 className="text-xl md:text-2xl font-bold mb-2 group-hover:text-primary transition-colors duration-300">
                         {member.name}
                       </h3>
-                      <p className="text-xs text-primary/70 font-medium mb-3">
+                      <p className="text-sm text-primary/70 font-medium mb-4">
                         {member.role}
                       </p>
 
                       {member.description && (
-                        <>
-                          <p className={`text-xs text-muted-foreground leading-relaxed transition-all duration-300 ${isExpanded ? '' : 'line-clamp-4'} lg:line-clamp-4 lg:group-hover:line-clamp-none`}>
-                            {member.description}
-                          </p>
-
-                          {/* Mobile Expand Button - Only visible on mobile/tablet */}
-                          <button
-                            onClick={() => toggleCardExpansion(cardId)}
-                            className="mt-3 flex items-center gap-1 text-xs text-primary font-medium hover:text-primary/80 transition-colors lg:hidden"
-                          >
-                            <span>{isExpanded ? 'Ver menos' : 'Ler mais'}</span>
-                            <svg
-                              className={`w-3 h-3 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                          </button>
-
-                          {/* Desktop Hover Indicator - Only visible on desktop */}
-                          <div className="mt-3 hidden lg:flex items-center gap-1 text-xs text-primary/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <span>Passe o mouse para ler mais</span>
-                            <svg className="w-3 h-3 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                          </div>
-                        </>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          {member.description}
+                        </p>
                       )}
                     </div>
-
-                    {/* Shine Effect on Hover */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 pointer-events-none"></div>
                   </div>
-                )
-              })}
+
+                  {/* Shine Effect on Hover */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 pointer-events-none"></div>
+                </div>
+              ))}
             </div>
           </section>
 
