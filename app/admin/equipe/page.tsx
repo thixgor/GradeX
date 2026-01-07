@@ -13,6 +13,7 @@ interface TeamMember {
   role: string
   image?: string
   description?: string
+  imageOffsetX?: number
   imageOffsetY?: number
   imageZoom?: number
 }
@@ -20,7 +21,10 @@ interface TeamMember {
 interface DraggingState {
   type: 'leadership' | 'instructors'
   index: number
+  pointerId: number
+  startX: number
   startY: number
+  startOffsetX: number
   startOffset: number
 }
 
@@ -66,36 +70,53 @@ export default function AdminEquipePage() {
 
   useEffect(() => {
     if (dragging) {
-      const handleMouseMove = (e: MouseEvent) => {
+      const handlePointerMove = (e: PointerEvent) => {
+        if (e.pointerId !== dragging.pointerId) return
+        const deltaX = e.clientX - dragging.startX
         const deltaY = e.clientY - dragging.startY
         const container = document.getElementById(`drag-container-${dragging.type}-${dragging.index}`)
         if (!container) return
 
         const containerHeight = container.clientHeight
-        const offsetChange = (deltaY / containerHeight) * 100
-        let newOffset = Math.max(0, Math.min(100, dragging.startOffset + offsetChange))
+        const containerWidth = container.clientWidth
+
+        const offsetChangeX = (deltaX / containerWidth) * 100
+        const offsetChangeY = (deltaY / containerHeight) * 100
+
+        let newOffsetX = Math.max(0, Math.min(100, dragging.startOffsetX + offsetChangeX))
+        let newOffsetY = Math.max(0, Math.min(100, dragging.startOffset + offsetChangeY))
 
         if (dragging.type === 'leadership') {
           const updated = [...leadership]
-          updated[dragging.index].imageOffsetY = newOffset
+          updated[dragging.index].imageOffsetX = newOffsetX
+          updated[dragging.index].imageOffsetY = newOffsetY
           setLeadership(updated)
         } else {
           const updated = [...instructors]
-          updated[dragging.index].imageOffsetY = newOffset
+          updated[dragging.index].imageOffsetX = newOffsetX
+          updated[dragging.index].imageOffsetY = newOffsetY
           setInstructors(updated)
         }
       }
 
-      const handleMouseUp = () => {
+      const handlePointerUp = (e: PointerEvent) => {
+        if (e.pointerId !== dragging.pointerId) return
         setDragging(null)
       }
 
-      document.addEventListener('mousemove', handleMouseMove)
-      document.addEventListener('mouseup', handleMouseUp)
+      const handlePointerCancel = (e: PointerEvent) => {
+        if (e.pointerId !== dragging.pointerId) return
+        setDragging(null)
+      }
+
+      document.addEventListener('pointermove', handlePointerMove)
+      document.addEventListener('pointerup', handlePointerUp)
+      document.addEventListener('pointercancel', handlePointerCancel)
 
       return () => {
-        document.removeEventListener('mousemove', handleMouseMove)
-        document.removeEventListener('mouseup', handleMouseUp)
+        document.removeEventListener('pointermove', handlePointerMove)
+        document.removeEventListener('pointerup', handlePointerUp)
+        document.removeEventListener('pointercancel', handlePointerCancel)
       }
     }
   }, [dragging, leadership, instructors])
@@ -120,14 +141,58 @@ export default function AdminEquipePage() {
     }
   }
 
-  const handleMouseDown = (type: 'leadership' | 'instructors', index: number, e: React.MouseEvent) => {
-    const currentOffset = type === 'leadership' ? leadership[index].imageOffsetY || 50 : instructors[index].imageOffsetY || 50
+  const handlePointerDown = (type: 'leadership' | 'instructors', index: number, e: React.PointerEvent) => {
+    const currentOffsetX = type === 'leadership' ? leadership[index].imageOffsetX ?? 50 : instructors[index].imageOffsetX ?? 50
+    const currentOffsetY = type === 'leadership' ? leadership[index].imageOffsetY ?? 50 : instructors[index].imageOffsetY ?? 50
+
+    // Captura o ponteiro para funcionar bem em mobile (touch) e desktop (mouse)
+    ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
+
     setDragging({
       type,
       index,
+      pointerId: e.pointerId,
+      startX: e.clientX,
       startY: e.clientY,
-      startOffset: currentOffset
+      startOffsetX: currentOffsetX,
+      startOffset: currentOffsetY
     })
+  }
+
+  const handlePositionChange = (
+    type: 'leadership' | 'instructors',
+    index: number,
+    axis: 'x' | 'y',
+    value: number
+  ) => {
+    const clamped = Math.max(0, Math.min(100, value))
+    if (type === 'leadership') {
+      const updated = [...leadership]
+      if (axis === 'x') updated[index].imageOffsetX = clamped
+      else updated[index].imageOffsetY = clamped
+      setLeadership(updated)
+    } else {
+      const updated = [...instructors]
+      if (axis === 'x') updated[index].imageOffsetX = clamped
+      else updated[index].imageOffsetY = clamped
+      setInstructors(updated)
+    }
+  }
+
+  const handleResetImage = (type: 'leadership' | 'instructors', index: number) => {
+    if (type === 'leadership') {
+      const updated = [...leadership]
+      updated[index].imageOffsetX = 50
+      updated[index].imageOffsetY = 50
+      updated[index].imageZoom = 100
+      setLeadership(updated)
+    } else {
+      const updated = [...instructors]
+      updated[index].imageOffsetX = 50
+      updated[index].imageOffsetY = 50
+      updated[index].imageZoom = 100
+      setInstructors(updated)
+    }
   }
 
   const handleZoomChange = (type: 'leadership' | 'instructors', index: number, zoom: number) => {
@@ -148,6 +213,7 @@ export default function AdminEquipePage() {
       role: '',
       image: '',
       description: '',
+      imageOffsetX: 50,
       imageOffsetY: 50,
       imageZoom: 100
     }
@@ -331,16 +397,16 @@ export default function AdminEquipePage() {
             <>
               <div
                 id={`drag-container-${type}-${index}`}
-                className="relative w-64 h-96 mx-auto overflow-hidden rounded-lg bg-muted border-2 border-dashed border-primary/30 cursor-move hover:border-primary transition-colors"
-                onMouseDown={(e) => handleMouseDown(type, index, e)}
-                style={{ userSelect: 'none' }}
+                className="relative w-full max-w-[260px] sm:max-w-[280px] md:w-64 h-80 sm:h-96 mx-auto overflow-hidden rounded-lg bg-muted border-2 border-dashed border-primary/30 cursor-grab active:cursor-grabbing hover:border-primary transition-colors"
+                onPointerDown={(e) => handlePointerDown(type, index, e)}
+                style={{ userSelect: 'none', touchAction: 'none' }}
               >
                 <img
                   src={member.image}
                   alt={member.name}
                   className="w-full h-full object-cover pointer-events-none"
                   style={{
-                    objectPosition: `50% ${member.imageOffsetY || 50}%`,
+                    objectPosition: `${member.imageOffsetX ?? 50}% ${member.imageOffsetY ?? 50}%`,
                     transform: `scale(${(member.imageZoom || 100) / 100})`
                   }}
                   draggable={false}
@@ -349,9 +415,23 @@ export default function AdminEquipePage() {
                     target.style.display = 'none'
                   }}
                 />
+
+                <div className="absolute inset-0 pointer-events-none">
+                  <div className="absolute inset-0 grid grid-cols-3 grid-rows-3">
+                    <div className="border-r border-b border-white/10" />
+                    <div className="border-r border-b border-white/10" />
+                    <div className="border-b border-white/10" />
+                    <div className="border-r border-b border-white/10" />
+                    <div className="border-r border-b border-white/10" />
+                    <div className="border-b border-white/10" />
+                    <div className="border-r border-white/10" />
+                    <div className="border-r border-white/10" />
+                    <div className="" />
+                  </div>
+                </div>
                 <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity pointer-events-none">
                   <div className="bg-white/90 dark:bg-black/90 px-3 py-1 rounded-full text-xs font-semibold">
-                    Arraste para ajustar
+                    Arraste para ajustar (X/Y)
                   </div>
                 </div>
               </div>
@@ -359,21 +439,56 @@ export default function AdminEquipePage() {
               <div className="mt-4 space-y-3">
                 <div>
                   <label className="text-xs font-medium text-muted-foreground mb-1 block">
-                    Posição Vertical: {Math.round(member.imageOffsetY || 50)}%
+                    Posição Horizontal: {Math.round(member.imageOffsetX ?? 50)}%
                   </label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={member.imageOffsetX ?? 50}
+                    onChange={(e) => handlePositionChange(type, index, 'x', parseInt(e.target.value))}
+                    className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
+                  />
                 </div>
+
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground mb-1 block">
+                    Posição Vertical: {Math.round(member.imageOffsetY ?? 50)}%
+                  </label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={member.imageOffsetY ?? 50}
+                    onChange={(e) => handlePositionChange(type, index, 'y', parseInt(e.target.value))}
+                    className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
+                  />
+                </div>
+
                 <div>
                   <label className="text-xs font-medium text-muted-foreground mb-1 block">
                     Zoom: {Math.round(member.imageZoom || 100)}%
                   </label>
                   <input
                     type="range"
-                    min="50"
-                    max="200"
+                    min="80"
+                    max="250"
                     value={member.imageZoom || 100}
                     onChange={(e) => handleZoomChange(type, index, parseInt(e.target.value))}
                     className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
                   />
+                </div>
+
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleResetImage(type, index)}
+                    className="flex-1"
+                  >
+                    Centralizar / Reset
+                  </Button>
                 </div>
               </div>
             </>

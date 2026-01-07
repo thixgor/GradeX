@@ -10,6 +10,7 @@ interface TeamMember {
   role: string
   image?: string
   description?: string
+  imageOffsetX?: number // Offset horizontal em porcentagem (0-100)
   imageOffsetY?: number // Offset vertical em porcentagem (0-100)
   imageZoom?: number // Zoom da imagem em porcentagem (100 = normal, 150 = 1.5x zoom)
 }
@@ -114,7 +115,7 @@ export default function EquipePage() {
                           alt={member.name}
                           className="w-full h-full object-cover transition-all duration-700 group-hover:brightness-110"
                           style={{
-                            objectPosition: `50% ${member.imageOffsetY || 50}%`,
+                            objectPosition: `${member.imageOffsetX ?? 50}% ${member.imageOffsetY ?? 50}%`,
                             transform: `scale(${((member.imageZoom || 100) / 100)})`
                           }}
                           onError={(e) => {
@@ -195,7 +196,7 @@ export default function EquipePage() {
                           alt={member.name}
                           className="w-full h-full object-cover transition-all duration-700 group-hover:brightness-110"
                           style={{
-                            objectPosition: `50% ${member.imageOffsetY || 50}%`,
+                            objectPosition: `${member.imageOffsetX ?? 50}% ${member.imageOffsetY ?? 50}%`,
                             transform: `scale(${((member.imageZoom || 100) / 100)})`
                           }}
                           onError={(e) => {

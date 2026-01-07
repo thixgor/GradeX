@@ -7,7 +7,8 @@ interface TeamMemberConfig {
   role: string
   image?: string
   description?: string
-  imageOffsetY: number
+  imageOffsetX?: number
+  imageOffsetY?: number
   imageZoom?: number
 }
 
