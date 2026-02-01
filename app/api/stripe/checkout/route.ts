@@ -53,10 +53,18 @@ export async function POST(request: NextRequest) {
     const mode = isOneTime ? 'payment' : 'subscription'
 
     // Criar sessão de checkout
+    const paymentMethodTypes = ['card', 'boleto']
+
+    // Pix só funciona em modo 'payment' (pagamento único)
+    // Para assinaturas (subscription), só card e boleto são suportados nativamente com facilidade
+    if (mode === 'payment') {
+      paymentMethodTypes.push('pix')
+    }
+
     // @ts-ignore - Stripe SDK type issue
     const checkoutSession = await stripe.checkout.sessions.create({
       mode: mode,
-      payment_method_types: ['card'],
+      payment_method_types: paymentMethodTypes,
       line_items: [
         {
           price: priceId,
@@ -76,7 +84,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ url: checkoutSession.url })
   } catch (error: any) {
     console.error('Stripe checkout error:', error)
-    
+
     // Log detalhado do erro
     if (error.type === 'StripeInvalidRequestError') {
       console.error('Stripe API Error:', error.message)
@@ -85,7 +93,7 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
-    
+
     return NextResponse.json(
       { error: 'Erro ao criar sessão de pagamento' },
       { status: 500 }

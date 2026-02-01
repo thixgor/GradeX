@@ -172,3 +172,90 @@ export async function sendAccountDeletedEmail(email: string, name: string) {
     html,
   })
 }
+
+export async function sendPlanPurchasedEmail(email: string, name: string, planName: string, durationMonths: number) {
+  const firstName = name.split(' ')[0]
+  const durationText = durationMonths === 0 || durationMonths > 300 ? 'Vitalício' : `${durationMonths} meses`
+
+  const content = `
+    <h1 class="h1">Você agora é Premium! 🎉</h1>
+    <p>Olá, ${firstName}!</p>
+    <p>Estamos muito felizes em ter você como aluno Premium no <strong>DomineAqui</strong>.</p>
+    <p>Seu plano <strong>${planName}</strong> (${durationText}) foi ativado com sucesso.</p>
+    
+    <div style="background-color: #e8f5e9; border-left: 4px solid #43a047; padding: 15px; margin: 20px 0; border-radius: 4px;">
+      <p style="margin: 0; color: #1b5e20;"><strong>Agora você tem acesso a:</strong></p>
+      <ul style="margin-top: 10px; margin-bottom: 0; padding-left: 20px;">
+        <li>Questões ilimitadas</li>
+        <li>Flashcards exclusivos</li>
+        <li>Cronogramas personalizados</li>
+        <li>Aulas e conteúdos premium</li>
+      </ul>
+    </div>
+
+    <p>Aproveite ao máximo seus estudos e conte conosco para sua aprovação!</p>
+
+    <div style="text-align: center;">
+      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard" class="button" target="_blank">Começar a Estudar</a>
+    </div>
+  `
+
+  const html = getEmailTemplate('Bem-vindo ao Premium! 🚀', content)
+
+  await transporter.sendMail({
+    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+    to: email,
+    subject: 'Parabéns! Sua jornada Premium começou 🚀',
+    html,
+  })
+}
+
+export async function sendSubscriptionCancelledEmail(email: string, name: string) {
+  const firstName = name.split(' ')[0]
+
+  const content = `
+    <h1 class="h1">Sentiremos sua falta 😢</h1>
+    <p>Olá, ${firstName}.</p>
+    <p>Confirmamos o cancelamento da sua assinatura no <strong>DomineAqui</strong>.</p>
+    <p>Sua conta retornou para o plano Gratuito.</p>
+    
+    <p>Se houve algo que não atendeu às suas expectativas ou se houve algum erro, adoraríamos saber como melhorar. Você pode nos responder neste e-mail ou falar diretamente em <a href="mailto:contato@domineaqui.com.br">contato@domineaqui.com.br</a>.</p>
+
+    <p>Esperamos ver você de volta em breve! Nossa plataforma está sempre evoluindo.</p>
+  `
+
+  const html = getEmailTemplate('Confirmação de Cancelamento', content)
+
+  await transporter.sendMail({
+    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+    to: email,
+    subject: 'Sobre sua assinatura no DomineAqui',
+    html,
+  })
+}
+
+export async function sendOneTimePaymentEndedEmail(email: string, name: string) {
+  const firstName = name.split(' ')[0]
+
+  const content = `
+    <h1 class="h1">Seu acesso expirou ⌛</h1>
+    <p>Olá, ${firstName}.</p>
+    <p>O período do seu plano no <strong>DomineAqui</strong> chegou ao fim.</p>
+    <p>Esperamos que os estudos tenham sido produtivos! Para continuar acessando as funcionalidades exclusivas (questões ilimitadas, flashcards, aulas), você pode renovar seu acesso agora mesmo.</p>
+
+    <div style="text-align: center;">
+      <a href="${process.env.NEXT_PUBLIC_APP_URL}/buy" class="button" target="_blank">Renovar Acesso Premium</a>
+    </div>
+
+    <p style="margin-top: 15px;">Se preferir outro método de pagamento ou tiver dúvidas, entre em contato conosco.</p>
+  `
+
+  const html = getEmailTemplate('Seu plano expirou', content)
+
+  await transporter.sendMail({
+    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+    to: email,
+    subject: 'Renove seu acesso ao DomineAqui',
+    html,
+  })
+}

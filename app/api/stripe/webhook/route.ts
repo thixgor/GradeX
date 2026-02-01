@@ -4,6 +4,7 @@ import stripe from '@/lib/stripe'
 import { ObjectId } from 'mongodb'
 import { User, AccountType } from '@/lib/types'
 import { getPersonalExamsQuota } from '@/lib/tier-limits'
+import { sendPlanPurchasedEmail } from '@/lib/mail'
 
 export const dynamic = 'force-dynamic'
 
@@ -125,6 +126,16 @@ export async function POST(request: NextRequest) {
         { _id: new ObjectId(userId) },
         { $set: updateData }
       )
+
+      // Enviar e-mail de boas-vindas ao plano
+
+      const duration = planoConfig?.durationMonths || 0
+      const planName = planoConfig?.nome || 'Plano Premium'
+
+      // Enviar e-mail sem travar a resposta do webhook
+      sendPlanPurchasedEmail(user.email, user.name, planName, duration).catch(error => {
+        console.error('Erro ao enviar e-mail de compra:', error)
+      })
 
       return NextResponse.json({ success: true })
     }

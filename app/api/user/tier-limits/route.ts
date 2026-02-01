@@ -3,6 +3,7 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { getTierLimits, getCronogramasLimit, getFlashcardsLimit, getPersonalExamsLifetimeLimit } from '@/lib/tier-limits'
 import { ObjectId } from 'mongodb'
+import { sendOneTimePaymentEndedEmail } from '@/lib/mail'
 
 export const dynamic = 'force-dynamic'
 
@@ -71,6 +72,11 @@ export async function GET(request: NextRequest) {
         { _id: new ObjectId(session.userId) },
         { $set: updateData }
       )
+
+      // Enviar e-mail avisando que acabou
+      sendOneTimePaymentEndedEmail(user.email, user.name).catch(err => {
+        console.error('Erro ao enviar email de fim de plano:', err)
+      })
     }
     // -----------------------
 

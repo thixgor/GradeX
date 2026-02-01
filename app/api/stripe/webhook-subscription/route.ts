@@ -4,6 +4,7 @@ import stripe from '@/lib/stripe'
 import { User, AccountType } from '@/lib/types'
 import { getPersonalExamsQuota } from '@/lib/tier-limits'
 import { ObjectId } from 'mongodb'
+import { sendSubscriptionCancelledEmail, sendOneTimePaymentEndedEmail } from '@/lib/mail'
 
 export const dynamic = 'force-dynamic'
 
@@ -133,6 +134,11 @@ export async function POST(request: NextRequest) {
           }
         }
       )
+
+      // Enviar e-mail de cancelamento
+      sendSubscriptionCancelledEmail(user.email, user.name).catch(err => {
+        console.error('Erro ao enviar email de cancelamento:', err)
+      })
     }
 
     return NextResponse.json({ success: true })
