@@ -321,26 +321,28 @@ export async function POST(req: Request) {
 
                     const { width, height, words, grid } = generateCrosswordLayout(wordsList)
 
-                    // Assign clues
-                    words.forEach(w => {
-                        w.clue = d[`DICA-${w.word}`] || clue
-                    })
+                    if (words.length > 0) {
+                        // Assign clues
+                        words.forEach(w => {
+                            w.clue = d[`DICA-${w.word}`] || clue
+                        })
 
-                    const puzzle = {
-                        title: d['TITULO'] || `Cruzadinha: ${wordsList[0]}...`,
-                        description: `Palavras cruzadas sobre ${topicName}`,
-                        module: moduleName,
-                        topic: topicName,
-                        topicId: topicId,
-                        difficulty: ['facil', 'medio', 'dificil'].includes(difficulty) ? difficulty : 'medio',
-                        words,
-                        grid,
-                        width,
-                        height,
-                        createdAt: new Date()
+                        const puzzle = {
+                            title: d['TITULO'] || `Cruzadinha: ${wordsList[0]}...`,
+                            description: `Palavras cruzadas sobre ${topicName}`,
+                            module: moduleName,
+                            topic: topicName,
+                            topicId: topicId,
+                            difficulty: ['facil', 'medio', 'dificil'].includes(difficulty) ? difficulty : 'medio',
+                            words,
+                            grid,
+                            width,
+                            height,
+                            createdAt: new Date()
+                        }
+                        await db.collection('games_crosswords').insertOne(puzzle)
+                        summary.crossword++
                     }
-                    await db.collection('games_crosswords').insertOne(puzzle)
-                    summary.crossword++
                 }
             }
 
