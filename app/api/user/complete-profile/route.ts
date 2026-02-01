@@ -17,11 +17,11 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { cpf, dateOfBirth, isAfyaMedicineStudent, afyaUnit } = body
+    const { dateOfBirth, isAfyaMedicineStudent, afyaUnit } = body
 
-    if (!cpf || !dateOfBirth) {
+    if (!dateOfBirth) {
       return NextResponse.json(
-        { error: 'CPF e data de nascimento são obrigatórios' },
+        { error: 'Data de nascimento é obrigatória' },
         { status: 400 }
       )
     }
@@ -36,25 +36,13 @@ export async function POST(request: NextRequest) {
     const db = await getDb()
     const usersCollection = db.collection<User>('users')
 
-    // Verifica se o CPF já existe em outro usuário
-    const existingUserWithCPF = await usersCollection.findOne({
-      cpf,
-      _id: { $ne: new ObjectId(session.userId) }
-    })
 
-    if (existingUserWithCPF) {
-      return NextResponse.json(
-        { error: 'CPF já cadastrado' },
-        { status: 400 }
-      )
-    }
 
     // Atualiza o usuário
     const result = await usersCollection.updateOne(
       { _id: new ObjectId(session.userId) },
       {
         $set: {
-          cpf,
           dateOfBirth: new Date(dateOfBirth),
           isAfyaMedicineStudent: isAfyaMedicineStudent || false,
           afyaUnit: isAfyaMedicineStudent ? afyaUnit : undefined,

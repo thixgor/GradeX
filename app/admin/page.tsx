@@ -19,7 +19,8 @@ import {
   Sliders,
   Database,
   Megaphone,
-  Gamepad2 as GamepadIcon
+  Gamepad2 as GamepadIcon,
+  Mail
 } from 'lucide-react'
 
 interface User {
@@ -129,6 +130,13 @@ export default function AdminDashboard() {
       icon: GamepadIcon,
       href: '/admin/games',
       color: 'from-rose-500 to-pink-500'
+    },
+    {
+      title: 'Enviar E-mails',
+      description: 'Enviar e-mails em massa para usuários. Templates prontos e editor visual.',
+      icon: Mail,
+      href: '/admin/emails',
+      color: 'from-sky-500 to-blue-500'
     }
   ]
 

@@ -53,7 +53,6 @@ export default function LoginPage() {
     email: '',
     password: '',
     name: '',
-    cpf: '',
     dateOfBirth: '',
     isAfyaMedicineStudent: false,
     afyaUnit: '',
@@ -131,44 +130,9 @@ export default function LoginPage() {
     }
   }, [isLogin])
 
-  const canBeAdmin = ADMIN_EMAILS.includes(formData.email.toLowerCase().trim())
+  const canBeAdmin = ['throdrigf@gmail.com', 'ecocardio93@gmail.com'].includes(formData.email.toLowerCase().trim())
 
-  const formatCPF = (value: string) => {
-    const cleaned = value.replace(/\D/g, '')
-    if (cleaned.length <= 11) {
-      return cleaned
-        .replace(/(\d{3})(\d)/, '$1.$2')
-        .replace(/(\d{3})(\d)/, '$1.$2')
-        .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
-    }
-    return cleaned.slice(0, 11)
-  }
 
-  const validateCPF = (cpf: string): boolean => {
-    const cleaned = cpf.replace(/\D/g, '')
-    if (cleaned.length !== 11) return false
-
-    // Verifica se todos os dígitos são iguais
-    if (/^(\d)\1{10}$/.test(cleaned)) return false
-
-    // Calcula primeiro dígito verificador
-    let sum = 0
-    for (let i = 0; i < 9; i++) {
-      sum += parseInt(cleaned[i]) * (10 - i)
-    }
-    let digit1 = 11 - (sum % 11)
-    digit1 = digit1 > 9 ? 0 : digit1
-
-    // Calcula segundo dígito verificador
-    sum = 0
-    for (let i = 0; i < 10; i++) {
-      sum += parseInt(cleaned[i]) * (11 - i)
-    }
-    let digit2 = 11 - (sum % 11)
-    digit2 = digit2 > 9 ? 0 : digit2
-
-    return digit1 === parseInt(cleaned[9]) && digit2 === parseInt(cleaned[10])
-  }
 
   const [isRegistered, setIsRegistered] = useState(false)
 
@@ -198,17 +162,13 @@ export default function LoginPage() {
       setRecaptchaToken(token)
 
       if (!isLogin) {
-        if (!formData.name || !formData.email || !formData.password || !formData.cpf || !formData.dateOfBirth) {
-          setError('Todos os campos são obrigatórios')
+        if (!formData.name || !formData.email || !formData.password || !formData.dateOfBirth) {
+          setError('Nome, email, senha e data de nascimento são obrigatórios')
           setLoading(false)
           return
         }
 
-        if (!validateCPF(formData.cpf)) {
-          setError('CPF inválido')
-          setLoading(false)
-          return
-        }
+
 
         if (formData.isAfyaMedicineStudent && !formData.afyaUnit) {
           setError('Selecione sua unidade Afya')
@@ -222,7 +182,6 @@ export default function LoginPage() {
         ? { email: formData.email, password: formData.password, recaptchaToken: token }
         : {
           ...formData,
-          cpf: formData.cpf.replace(/\D/g, ''),
           recaptchaToken: token,
         }
 
@@ -310,7 +269,6 @@ export default function LoginPage() {
 
   async function handleProfileSetupComplete(setupData: {
     profileName: string
-    cpf: string
     dateOfBirth: string
     isAfyaMedicineStudent: boolean
     afyaUnit?: string
@@ -325,7 +283,6 @@ export default function LoginPage() {
         body: JSON.stringify({
           email: googleData.email,
           profileName: setupData.profileName,
-          cpf: setupData.cpf,
           dateOfBirth: setupData.dateOfBirth,
           isAfyaMedicineStudent: setupData.isAfyaMedicineStudent,
           afyaUnit: setupData.afyaUnit,
@@ -478,19 +435,7 @@ export default function LoginPage() {
 
               {!isLogin && (
                 <>
-                  {/* CPF */}
-                  <div className="space-y-2">
-                    <Label htmlFor="cpf">CPF *</Label>
-                    <Input
-                      id="cpf"
-                      type="text"
-                      placeholder="000.000.000-00"
-                      value={formData.cpf}
-                      onChange={(e) => setFormData({ ...formData, cpf: formatCPF(e.target.value) })}
-                      maxLength={14}
-                      required
-                    />
-                  </div>
+
 
                   {/* Data de Nascimento */}
                   <div className="space-y-2">
@@ -550,24 +495,20 @@ export default function LoginPage() {
                     </div>
                   )}
 
-                  {/* Tipo de Conta */}
-                  <div className="space-y-2">
-                    <Label htmlFor="role">Tipo de Conta</Label>
-                    <select
-                      id="role"
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                      value={formData.role}
-                      onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                    >
-                      <option value="user">Usuário</option>
-                      {canBeAdmin && <option value="admin">Administrador</option>}
-                    </select>
-                    {!canBeAdmin && formData.email && (
-                      <p className="text-xs text-muted-foreground">
-                        Apenas emails autorizados podem criar contas de administrador
-                      </p>
-                    )}
-                  </div>
+                  {canBeAdmin && (
+                    <div className="space-y-2">
+                      <Label htmlFor="role">Tipo de Conta</Label>
+                      <select
+                        id="role"
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        value={formData.role}
+                        onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                      >
+                        <option value="user">Usuário</option>
+                        <option value="admin">Administrador</option>
+                      </select>
+                    </div>
+                  )}
                 </>
               )}
 

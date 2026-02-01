@@ -11,7 +11,7 @@ import { AFYA_UNITS } from '@/lib/afya-units'
 interface CompleteProfileModalProps {
   open: boolean
   onComplete: (data: {
-    cpf: string
+
     dateOfBirth: string
     isAfyaMedicineStudent: boolean
     afyaUnit?: string
@@ -24,60 +24,19 @@ export function CompleteProfileModal({
   onComplete,
   isLoading,
 }: CompleteProfileModalProps) {
-  const [cpf, setCpf] = useState('')
+
   const [dateOfBirth, setDateOfBirth] = useState('')
   const [isAfyaMedicineStudent, setIsAfyaMedicineStudent] = useState(false)
   const [afyaUnit, setAfyaUnit] = useState('')
   const [error, setError] = useState('')
 
-  const formatCPF = (value: string) => {
-    const cleaned = value.replace(/\D/g, '')
-    if (cleaned.length <= 3) return cleaned
-    if (cleaned.length <= 6) return `${cleaned.slice(0, 3)}.${cleaned.slice(3)}`
-    if (cleaned.length <= 9) return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6)}`
-    return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${cleaned.slice(9, 11)}`
-  }
 
-  const validateCPF = (cpf: string): boolean => {
-    const cleaned = cpf.replace(/\D/g, '')
-    if (cleaned.length !== 11) return false
-
-    let sum = 0
-    let remainder
-
-    for (let i = 1; i <= 9; i++) {
-      sum += parseInt(cleaned.substring(i - 1, i)) * (11 - i)
-    }
-
-    remainder = (sum * 10) % 11
-    if (remainder === 10 || remainder === 11) remainder = 0
-    if (remainder !== parseInt(cleaned.substring(9, 10))) return false
-
-    sum = 0
-    for (let i = 1; i <= 10; i++) {
-      sum += parseInt(cleaned.substring(i - 1, i)) * (12 - i)
-    }
-
-    remainder = (sum * 10) % 11
-    if (remainder === 10 || remainder === 11) remainder = 0
-    if (remainder !== parseInt(cleaned.substring(10, 11))) return false
-
-    return true
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
 
-    if (!cpf.trim()) {
-      setError('CPF é obrigatório')
-      return
-    }
 
-    if (!validateCPF(cpf)) {
-      setError('CPF inválido')
-      return
-    }
 
     if (!dateOfBirth) {
       setError('Data de nascimento é obrigatória')
@@ -91,7 +50,6 @@ export function CompleteProfileModal({
 
     try {
       await onComplete({
-        cpf: cpf.replace(/\D/g, ''),
         dateOfBirth,
         isAfyaMedicineStudent,
         afyaUnit: afyaUnit || undefined,
@@ -121,17 +79,7 @@ export function CompleteProfileModal({
               </div>
             )}
 
-            <div className="space-y-2">
-              <Label htmlFor="cpf">CPF</Label>
-              <Input
-                id="cpf"
-                placeholder="XXX.XXX.XXX-XX"
-                value={cpf}
-                onChange={(e) => setCpf(formatCPF(e.target.value))}
-                disabled={isLoading}
-                maxLength={14}
-              />
-            </div>
+
 
             <div className="space-y-2">
               <Label htmlFor="dateOfBirth">Data de Nascimento</Label>

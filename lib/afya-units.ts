@@ -1,4 +1,6 @@
 export const AFYA_UNITS = [
+  'Afya Unigranrio Barra da Tijuca - Rio de Janeiro (RJ)',
+  'Afya Unigranrio Duque de Caxias - Duque de Caxias (RJ)',
   'Afya Abaetetuba - Abaetetuba (PA)',
   'Afya Araguaína - Araguaína (TO)',
   'Afya Barreiras - Barreiras (BA)',
@@ -29,8 +31,6 @@ export const AFYA_UNITS = [
   'Afya Salvador - Salvador (BA)',
   'Afya Santa Inês - Santa Inês (MA)',
   'Afya São João del-Rei - São João del-Rei (MG)',
-  'Afya Unigranrio Barra da Tijuca - Rio de Janeiro (RJ)',
-  'Afya Unigranrio Duque de Caxias - Duque de Caxias (RJ)',
   'Afya UNINOVAFAPI - Teresina (PI)',
   'Afya UNIVAÇO - Governador Valadares (MG)',
   'Não encontro minha unidade aqui',

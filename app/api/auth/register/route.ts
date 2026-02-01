@@ -13,11 +13,11 @@ export const dynamic = 'force-dynamic'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { email, password, name, cpf, dateOfBirth, isAfyaMedicineStudent, afyaUnit, role = 'user', recaptchaToken } = body
+    const { email, password, name, dateOfBirth, isAfyaMedicineStudent, afyaUnit, role = 'user', recaptchaToken } = body
 
-    if (!email || !password || !name || !cpf || !dateOfBirth) {
+    if (!email || !password || !name || !dateOfBirth) {
       return NextResponse.json(
-        { error: 'Todos os campos são obrigatórios' },
+        { error: 'Email, senha, nome e data de nascimento são obrigatórios' },
         { status: 400 }
       )
     }
@@ -69,14 +69,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Verifica se o CPF já existe
-    const existingUserByCPF = await usersCollection.findOne({ cpf })
-    if (existingUserByCPF) {
-      return NextResponse.json(
-        { error: 'CPF já cadastrado' },
-        { status: 400 }
-      )
-    }
+
 
     // Gerar token de verificação
     const verificationToken = crypto.randomBytes(32).toString('hex')
@@ -87,7 +80,6 @@ export async function POST(request: NextRequest) {
       email,
       password: hashedPassword,
       name,
-      cpf,
       dateOfBirth: new Date(dateOfBirth),
       isAfyaMedicineStudent: isAfyaMedicineStudent || false,
       afyaUnit: isAfyaMedicineStudent ? afyaUnit : undefined,

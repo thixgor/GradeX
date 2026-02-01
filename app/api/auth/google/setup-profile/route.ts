@@ -8,11 +8,11 @@ export const dynamic = 'force-dynamic'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { email, profileName, cpf, dateOfBirth, isAfyaMedicineStudent, afyaUnit, picture, googleId } = body
+    const { email, profileName, dateOfBirth, isAfyaMedicineStudent, afyaUnit, picture, googleId } = body
 
-    if (!email || !profileName || !cpf || !dateOfBirth) {
+    if (!email || !profileName || !dateOfBirth) {
       return NextResponse.json(
-        { error: 'Email, nome do perfil, CPF e data de nascimento são obrigatórios' },
+        { error: 'Email, nome do perfil e data de nascimento são obrigatórios' },
         { status: 400 }
       )
     }
@@ -36,14 +36,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Verifica se o CPF já existe
-    const existingUserByCPF = await usersCollection.findOne({ cpf })
-    if (existingUserByCPF) {
-      return NextResponse.json(
-        { error: 'CPF já cadastrado' },
-        { status: 400 }
-      )
-    }
+
 
     // Cria o novo usuário
     const newUser: User = {
@@ -53,7 +46,6 @@ export async function POST(request: NextRequest) {
       role: 'user',
       createdAt: new Date(),
       lastLoginAt: new Date(),
-      cpf,
       dateOfBirth: new Date(dateOfBirth),
       isAfyaMedicineStudent: isAfyaMedicineStudent || false,
       afyaUnit: isAfyaMedicineStudent ? afyaUnit : undefined,
@@ -69,6 +61,7 @@ export async function POST(request: NextRequest) {
       email,
       name: profileName,
       role: 'user',
+      emailVerified: true, // Google accounts are auto-verified
     })
 
     // Define o cookie
