@@ -21,6 +21,7 @@ import {
   X,
   Database,
   Lock,
+  Gamepad2,
 } from 'lucide-react'
 
 interface SidebarProps {
@@ -104,6 +105,12 @@ export function Sidebar({
       icon: <MessageCircle className="h-5 w-5" />,
       label: 'Fórum',
       href: '/forum',
+    },
+    {
+      icon: <Gamepad2 className="h-5 w-5" />,
+      label: 'Games',
+      href: '/games',
+      badge: 'Novo',
     },
   ]
 

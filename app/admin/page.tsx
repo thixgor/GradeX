@@ -18,7 +18,8 @@ import {
   BookOpen,
   Sliders,
   Database,
-  Megaphone
+  Megaphone,
+  Gamepad2 as GamepadIcon
 } from 'lucide-react'
 
 interface User {
@@ -121,6 +122,13 @@ export default function AdminDashboard() {
       icon: Megaphone,
       href: '/admin/anuncios',
       color: 'from-amber-500 to-orange-500'
+    },
+    {
+      title: 'Games Educativos',
+      description: 'Gerenciar conteúdo dos jogos: Palavras Cruzadas, Forca e Caça aos Erros.',
+      icon: GamepadIcon,
+      href: '/admin/games',
+      color: 'from-rose-500 to-pink-500'
     }
   ]
 
