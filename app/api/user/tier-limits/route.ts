@@ -45,8 +45,36 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
     }
 
+    // --- CHECK EXPIRATION ---
+    const now = new Date()
+    let accountType = user.accountType || 'gratuito'
+
+    // Verificar expiração de Premium, Essential ou Trial
+    const isPaid = accountType === 'premium' || accountType === 'essential'
+    const expiresAt = isPaid ? user.premiumExpiresAt : (accountType === 'trial' ? user.trialExpiresAt : null)
+
+    if (expiresAt && new Date(expiresAt) <= now && session.role !== 'admin') {
+      console.log(`Plano ${accountType} expirou para o usuário ${user._id}. Revertendo para gratuito.`)
+      accountType = 'gratuito'
+      const updateData: any = {
+        accountType: 'gratuito',
+        dailyPersonalExamsCreated: 0,
+        lastDailyReset: now
+      }
+      if (isPaid) {
+        updateData.premiumExpiresAt = null
+      } else {
+        updateData.trialExpiresAt = null
+      }
+
+      await usersCollection.updateOne(
+        { _id: new ObjectId(session.userId) },
+        { $set: updateData }
+      )
+    }
+    // -----------------------
+
     const isAdmin = session.role === 'admin'
-    const accountType = user.accountType || 'gratuito'
     const limits = getTierLimits(accountType, isAdmin)
 
     // Obter limites vitais
@@ -59,8 +87,6 @@ export async function GET(request: NextRequest) {
     const needsReset = needsDailyReset(lastReset)
 
     if (needsReset && !isAdmin) {
-      const now = new Date()
-      
       // Resetar contadores
       await usersCollection.updateOne(
         { _id: new ObjectId(session.userId) },
@@ -88,7 +114,7 @@ export async function GET(request: NextRequest) {
 
     const examsCreatedToday = user.dailyPersonalExamsCreated || 0
     const questionsUsedToday = user.dailyAiQuestionsUsed || 0
-    
+
     // Se admin setou um valor de "restantes", usar esse valor
     // Caso contrário, calcular baseado em "criadas"
     const examsRemaining = user.dailyPersonalExamsRemaining !== undefined

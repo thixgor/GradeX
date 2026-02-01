@@ -26,10 +26,10 @@ export async function GET(request: NextRequest) {
     let updated = false
     let updateData: Partial<User> = {}
 
-    // Verificar expiração de Premium
-    if (user.accountType === 'premium' && user.premiumExpiresAt) {
+    // Verificar expiração de Premium ou Essential
+    if ((user.accountType === 'premium' || user.accountType === 'essential') && user.premiumExpiresAt) {
       if (new Date(user.premiumExpiresAt) <= now) {
-        // Premium expirou, reverter para Gratuito
+        // Plano expirou, reverter para Gratuito
         const gratuitoQuota = getPersonalExamsQuota('gratuito')
         updateData = {
           accountType: 'gratuito',

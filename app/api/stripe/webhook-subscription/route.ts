@@ -7,15 +7,6 @@ import { ObjectId } from 'mongodb'
 
 export const dynamic = 'force-dynamic'
 
-// Mapeamento de duração de planos em milissegundos
-const PLAN_DURATIONS: Record<string, number | null> = {
-  monthly: 30 * 24 * 60 * 60 * 1000, // 1 mês
-  quarterly: 3 * 30 * 24 * 60 * 60 * 1000, // 3 meses
-  'semi-annual': 6 * 30 * 24 * 60 * 60 * 1000, // 6 meses
-  annual: 365 * 24 * 60 * 60 * 1000, // 1 ano
-  lifetime: null // null = sem expiração
-}
-
 // Mapeamento de nomes de planos em português
 const PLAN_NAMES: Record<string, string> = {
   monthly: 'Mensal',
@@ -64,28 +55,50 @@ export async function POST(request: NextRequest) {
       // Se a assinatura foi renovada (status = active)
       if (subscription.status === 'active') {
         const planId = user.premiumPlanType
-        if (planId && PLAN_DURATIONS[planId] !== undefined) {
-          const now = new Date()
-          let expiresAt: Date | undefined
-          if (PLAN_DURATIONS[planId] !== null) {
+        const now = new Date()
+
+        // Buscar configurações do plano
+        const settings = await db.collection('admin_settings').findOne({})
+        const planos = settings?.planos || []
+        const planoConfig = planos.find((p: any) => p.tipo === planId || p.stripePriceId === planId)
+
+        let expiresAt: Date | undefined
+        const currentRole = user.accountType || 'premium'
+
+        if (planoConfig) {
+          if (planoConfig.durationMonths && planoConfig.durationMonths > 0) {
+            const nextDate = new Date(now)
+            nextDate.setMonth(nextDate.getMonth() + planoConfig.durationMonths)
+            expiresAt = nextDate
+          }
+        } else {
+          // Fallback para hardcoded antigo se não achar no admin
+          const PLAN_DURATIONS: Record<string, number | null> = {
+            monthly: 30 * 24 * 60 * 60 * 1000,
+            quarterly: 3 * 30 * 24 * 60 * 60 * 1000,
+            'semi-annual': 6 * 30 * 24 * 60 * 60 * 1000,
+            annual: 365 * 24 * 60 * 60 * 1000,
+            lifetime: null
+          }
+          if (planId && PLAN_DURATIONS[planId] !== undefined && PLAN_DURATIONS[planId] !== null) {
             expiresAt = new Date(now.getTime() + (PLAN_DURATIONS[planId] || 0))
           }
-
-          console.log('Renovando assinatura do usuário:', user._id, 'Novo vencimento:', expiresAt)
-
-          await usersCollection.updateOne(
-            { _id: user._id },
-            {
-              $set: {
-                premiumActivatedAt: now,
-                premiumExpiresAt: expiresAt,
-                dailyPersonalExamsCreated: 0,
-                dailyPersonalExamsRemaining: getPersonalExamsQuota('premium'),
-                lastDailyReset: now
-              }
-            }
-          )
         }
+
+        console.log('Renovando assinatura do usuário:', user._id, 'Novo vencimento:', expiresAt)
+
+        await usersCollection.updateOne(
+          { _id: user._id },
+          {
+            $set: {
+              premiumActivatedAt: now,
+              premiumExpiresAt: expiresAt,
+              dailyPersonalExamsCreated: 0,
+              dailyPersonalExamsRemaining: getPersonalExamsQuota(currentRole),
+              lastDailyReset: now
+            }
+          }
+        )
       }
     }
 
