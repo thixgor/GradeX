@@ -56,8 +56,15 @@ function generateCrosswordLayout(words: string[]): { width: number; height: numb
     try {
         // Sort by length desc and clean
         const sortedWords = [...words]
-            .map(w => w.toUpperCase().trim().replace(/[^A-Z]/g, ''))
-            .filter(w => w.length > 0)
+            .map(w => {
+                // Remove content in parentheses e.g. "Veias (obs...)"
+                let clean = w.replace(/\(.*?\)/g, '')
+                // Normalize accents: Á -> A, Ç -> C
+                clean = clean.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                // Keep only A-Z
+                return clean.toUpperCase().replace(/[^A-Z]/g, '')
+            })
+            .filter(w => w.length > 1) // Ignore single letters or empty
             .sort((a, b) => b.length - a.length)
 
         if (sortedWords.length === 0) {
