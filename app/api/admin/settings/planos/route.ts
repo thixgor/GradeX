@@ -122,7 +122,7 @@ export async function PUT(req: NextRequest) {
     }
 
     const db = await getDb()
-    
+
     // Validar e processar planos
     const processedPlanos = planos.map((plan: any) => ({
       tipo: plan.tipo,
@@ -134,17 +134,22 @@ export async function PUT(req: NextRequest) {
       beneficios: plan.beneficios,
       oculto: plan.oculto || false,
       ordem: plan.ordem || 0,
+      destaque: plan.destaque || false,
+      badge: plan.badge,
+      role: plan.role || 'premium',
+      durationMonths: plan.durationMonths !== undefined ? parseInt(plan.durationMonths) : 0,
+      stripePriceId: plan.stripePriceId,
       criadoEm: plan.criadoEm ? new Date(plan.criadoEm) : new Date(),
       atualizadoEm: new Date()
     }))
 
     const result = await db.collection('admin_settings').updateOne(
       {},
-      { 
-        $set: { 
+      {
+        $set: {
           planos: processedPlanos,
           atualizadoEm: new Date()
-        } 
+        }
       },
       { upsert: true }
     )

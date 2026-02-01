@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { ArrowLeft, Settings, AlertCircle, CheckCircle, Eye, EyeOff, Trash2, Zap } from 'lucide-react'
+import { ArrowLeft, Settings, AlertCircle, CheckCircle, Eye, EyeOff, Trash2, Zap, Plus, ArrowUp, ArrowDown } from 'lucide-react'
 import { PlanConfig } from '@/lib/types'
 
 interface User {
@@ -227,7 +227,7 @@ export default function SettingsPage() {
 
   async function testAIKey(keyType: 'generalExams' | 'personalExams' | 'flashcards') {
     const apiKey = settings.aiKeys?.[keyType]
-    
+
     if (!apiKey?.trim()) {
       setAiKeyTestResults(prev => ({
         ...prev,
@@ -359,14 +359,12 @@ export default function SettingsPage() {
                 </div>
                 <button
                   onClick={() => setSettings({ ...settings, landingPageEnabled: !settings.landingPageEnabled })}
-                  className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${
-                    settings.landingPageEnabled ? 'bg-primary' : 'bg-muted'
-                  }`}
+                  className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${settings.landingPageEnabled ? 'bg-primary' : 'bg-muted'
+                    }`}
                 >
                   <span
-                    className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
-                      settings.landingPageEnabled ? 'translate-x-7' : 'translate-x-1'
-                    }`}
+                    className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${settings.landingPageEnabled ? 'translate-x-7' : 'translate-x-1'
+                      }`}
                   />
                 </button>
               </div>
@@ -381,14 +379,12 @@ export default function SettingsPage() {
                 </div>
                 <button
                   onClick={() => setSettings({ ...settings, videoEnabled: !settings.videoEnabled })}
-                  className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${
-                    settings.videoEnabled ? 'bg-primary' : 'bg-muted'
-                  }`}
+                  className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${settings.videoEnabled ? 'bg-primary' : 'bg-muted'
+                    }`}
                 >
                   <span
-                    className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
-                      settings.videoEnabled ? 'translate-x-7' : 'translate-x-1'
-                    }`}
+                    className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${settings.videoEnabled ? 'translate-x-7' : 'translate-x-1'
+                      }`}
                   />
                 </button>
               </div>
@@ -403,14 +399,12 @@ export default function SettingsPage() {
                 </div>
                 <button
                   onClick={() => setSettings({ ...settings, personalExamsEnabled: !settings.personalExamsEnabled })}
-                  className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${
-                    settings.personalExamsEnabled ? 'bg-primary' : 'bg-muted'
-                  }`}
+                  className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${settings.personalExamsEnabled ? 'bg-primary' : 'bg-muted'
+                    }`}
                 >
                   <span
-                    className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
-                      settings.personalExamsEnabled ? 'translate-x-7' : 'translate-x-1'
-                    }`}
+                    className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${settings.personalExamsEnabled ? 'translate-x-7' : 'translate-x-1'
+                      }`}
                   />
                 </button>
               </div>
@@ -425,14 +419,12 @@ export default function SettingsPage() {
                 </div>
                 <button
                   onClick={() => setSettings({ ...settings, registrationBlocked: !settings.registrationBlocked })}
-                  className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${
-                    settings.registrationBlocked ? 'bg-red-500' : 'bg-muted'
-                  }`}
+                  className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${settings.registrationBlocked ? 'bg-red-500' : 'bg-muted'
+                    }`}
                 >
                   <span
-                    className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
-                      settings.registrationBlocked ? 'translate-x-7' : 'translate-x-1'
-                    }`}
+                    className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${settings.registrationBlocked ? 'translate-x-7' : 'translate-x-1'
+                      }`}
                   />
                 </button>
               </div>
@@ -764,11 +756,10 @@ export default function SettingsPage() {
                   </Button>
                 </div>
                 {aiKeyTestResults.generalExams && (
-                  <div className={`flex gap-2 p-2 rounded-lg text-sm ${
-                    aiKeyTestResults.generalExams.success 
-                      ? 'bg-green-50 dark:bg-green-950 text-green-800 dark:text-green-200' 
-                      : 'bg-red-50 dark:bg-red-950 text-red-800 dark:text-red-200'
-                  }`}>
+                  <div className={`flex gap-2 p-2 rounded-lg text-sm ${aiKeyTestResults.generalExams.success
+                    ? 'bg-green-50 dark:bg-green-950 text-green-800 dark:text-green-200'
+                    : 'bg-red-50 dark:bg-red-950 text-red-800 dark:text-red-200'
+                    }`}>
                     {aiKeyTestResults.generalExams.success ? (
                       <CheckCircle className="h-4 w-4 shrink-0 mt-0.5" />
                     ) : (
@@ -808,11 +799,10 @@ export default function SettingsPage() {
                   </Button>
                 </div>
                 {aiKeyTestResults.personalExams && (
-                  <div className={`flex gap-2 p-2 rounded-lg text-sm ${
-                    aiKeyTestResults.personalExams.success 
-                      ? 'bg-green-50 dark:bg-green-950 text-green-800 dark:text-green-200' 
-                      : 'bg-red-50 dark:bg-red-950 text-red-800 dark:text-red-200'
-                  }`}>
+                  <div className={`flex gap-2 p-2 rounded-lg text-sm ${aiKeyTestResults.personalExams.success
+                    ? 'bg-green-50 dark:bg-green-950 text-green-800 dark:text-green-200'
+                    : 'bg-red-50 dark:bg-red-950 text-red-800 dark:text-red-200'
+                    }`}>
                     {aiKeyTestResults.personalExams.success ? (
                       <CheckCircle className="h-4 w-4 shrink-0 mt-0.5" />
                     ) : (
@@ -852,11 +842,10 @@ export default function SettingsPage() {
                   </Button>
                 </div>
                 {aiKeyTestResults.flashcards && (
-                  <div className={`flex gap-2 p-2 rounded-lg text-sm ${
-                    aiKeyTestResults.flashcards.success 
-                      ? 'bg-green-50 dark:bg-green-950 text-green-800 dark:text-green-200' 
-                      : 'bg-red-50 dark:bg-red-950 text-red-800 dark:text-red-200'
-                  }`}>
+                  <div className={`flex gap-2 p-2 rounded-lg text-sm ${aiKeyTestResults.flashcards.success
+                    ? 'bg-green-50 dark:bg-green-950 text-green-800 dark:text-green-200'
+                    : 'bg-red-50 dark:bg-red-950 text-red-800 dark:text-red-200'
+                    }`}>
                     {aiKeyTestResults.flashcards.success ? (
                       <CheckCircle className="h-4 w-4 shrink-0 mt-0.5" />
                     ) : (
@@ -922,10 +911,79 @@ export default function SettingsPage() {
               {/* Planos List */}
               <div className="space-y-4">
                 {planos.map((plano, idx) => (
-                  <div key={idx} className="p-4 border rounded-lg space-y-3">
+                  <div key={idx} className="p-4 border rounded-lg space-y-3 bg-card relative">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => {
+                            if (idx === 0) return
+                            const updated = [...planos]
+                            const temp = updated[idx]
+                            updated[idx] = updated[idx - 1]
+                            updated[idx - 1] = temp
+                            // Update ordem
+                            updated.forEach((p, i) => p.ordem = i)
+                            setPlanos(updated)
+                          }}
+                          disabled={idx === 0}
+                          title="Mover para cima"
+                        >
+                          <ArrowUp className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => {
+                            if (idx === planos.length - 1) return
+                            const updated = [...planos]
+                            const temp = updated[idx]
+                            updated[idx] = updated[idx + 1]
+                            updated[idx + 1] = temp
+                            // Update ordem
+                            updated.forEach((p, i) => p.ordem = i)
+                            setPlanos(updated)
+                          }}
+                          disabled={idx === planos.length - 1}
+                          title="Mover para baixo"
+                        >
+                          <ArrowDown className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          if (confirm('Tem certeza que deseja remover este plano?')) {
+                            const updated = planos.filter((_, i) => i !== idx)
+                            setPlanos(updated)
+                          }
+                        }}
+                        className="text-red-500 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-950/50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label className="text-xs">Nome</Label>
+                        <Label className="text-xs">ID do Tipo (ex: questoes_mensal)</Label>
+                        <Input
+                          value={plano.tipo}
+                          onChange={(e) => {
+                            const updated = [...planos]
+                            updated[idx].tipo = e.target.value
+                            setPlanos(updated)
+                          }}
+                          placeholder="unique_id"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Nome (ex: DomineAqui PREMIUM)</Label>
                         <Input
                           value={plano.nome}
                           onChange={(e) => {
@@ -933,11 +991,11 @@ export default function SettingsPage() {
                             updated[idx].nome = e.target.value
                             setPlanos(updated)
                           }}
-                          placeholder="DomineAqui PREMIUM"
+                          placeholder="Nome do Plano"
                         />
                       </div>
                       <div>
-                        <Label className="text-xs">Período</Label>
+                        <Label className="text-xs">Período (ex: Plano Mensal)</Label>
                         <Input
                           value={plano.periodo}
                           onChange={(e) => {
@@ -945,37 +1003,102 @@ export default function SettingsPage() {
                             updated[idx].periodo = e.target.value
                             setPlanos(updated)
                           }}
-                          placeholder="Plano Mensal"
+                          placeholder="Período"
                         />
                       </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <Label className="text-xs">Preço (R$)</Label>
+                          <Input
+                            type="number"
+                            step="0.01"
+                            value={plano.preco}
+                            onChange={(e) => {
+                              const updated = [...planos]
+                              updated[idx].preco = parseFloat(e.target.value)
+                              setPlanos(updated)
+                            }}
+                            placeholder="0.00"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs">De (R$)</Label>
+                          <Input
+                            type="number"
+                            step="0.01"
+                            value={plano.precoOriginal || ''}
+                            onChange={(e) => {
+                              const updated = [...planos]
+                              updated[idx].precoOriginal = e.target.value ? parseFloat(e.target.value) : undefined
+                              setPlanos(updated)
+                            }}
+                            placeholder="0.00"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Role and Duration Config */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-muted/30 p-3 rounded-lg border border-dashed">
                       <div>
-                        <Label className="text-xs">Preço (R$)</Label>
-                        <Input
-                          type="number"
-                          step="0.01"
-                          value={plano.preco}
+                        <Label className="text-xs">Cargo a Atribuir</Label>
+                        <select
+                          value={plano.role || 'premium'}
                           onChange={(e) => {
                             const updated = [...planos]
-                            updated[idx].preco = parseFloat(e.target.value)
+                            updated[idx].role = e.target.value as any
                             setPlanos(updated)
                           }}
-                          placeholder="24.90"
-                        />
+                          className="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors"
+                        >
+                          <option value="premium">Premium</option>
+                          <option value="essential">Essential</option>
+                          <option value="trial">Trial</option>
+                          <option value="gratuito">Gratuito</option>
+                        </select>
                       </div>
                       <div>
-                        <Label className="text-xs">Preço Original (R$)</Label>
+                        <Label className="text-xs">Duração em Meses (0 = Vitalício)</Label>
                         <Input
                           type="number"
-                          step="0.01"
-                          value={plano.precoOriginal || ''}
+                          min="0"
+                          value={plano.durationMonths || 0}
                           onChange={(e) => {
                             const updated = [...planos]
-                            updated[idx].precoOriginal = e.target.value ? parseFloat(e.target.value) : undefined
+                            updated[idx].durationMonths = parseInt(e.target.value) || 0
                             setPlanos(updated)
                           }}
-                          placeholder="29.90"
+                          placeholder="Ex: 1 (Mensal), 12 (Anual)"
                         />
                       </div>
+                      <div className="md:col-span-2">
+                        <Label className="text-xs">Stripe Price ID (Opcional)</Label>
+                        <Input
+                          value={plano.stripePriceId || ''}
+                          onChange={(e) => {
+                            const updated = [...planos]
+                            updated[idx].stripePriceId = e.target.value
+                            setPlanos(updated)
+                          }}
+                          placeholder="price_..."
+                        />
+                        <p className="text-[10px] text-muted-foreground mt-1">
+                          Se preenchido, o checkout usará este ID. Se vazio, usará o valor antigo do stripeSettings.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label className="text-xs">Badge (ex: MAIS POPULAR)</Label>
+                      <Input
+                        value={plano.badge || ''}
+                        onChange={(e) => {
+                          const updated = [...planos]
+                          updated[idx].badge = e.target.value
+                          setPlanos(updated)
+                        }}
+                        placeholder="Texto da etiqueta"
+                      />
                     </div>
                     <div>
                       <Label className="text-xs">Descrição</Label>
@@ -986,7 +1109,7 @@ export default function SettingsPage() {
                           updated[idx].descricao = e.target.value
                           setPlanos(updated)
                         }}
-                        placeholder="Melhor custo-benefício"
+                        placeholder="Breve descrição"
                       />
                     </div>
                     <div>
@@ -997,11 +1120,15 @@ export default function SettingsPage() {
                           const updated = [...planos]
                           updated[idx].beneficios = e.target.value
                             .split('\n')
-                            .map(b => b.trim())
-                            .filter(b => b.length > 0)
+                          // Remove empty lines handling logic to allow empty lines while typing, but clean up on save if needed?
+                          // Actually, split('\n') is fine, we can filter empty strings or not. 
+                          // The original code filtered: .filter(b => b.length > 0). I will keep that behavior or refine it.
+                          // Better to keep all lines while typing so user can press enter.
+                          // I'll filter empty strings *only* when saving or rendering, but let's keep it simple here.
+                          // Just assign the array.
                           setPlanos(updated)
                         }}
-                        placeholder="400 Questões Pessoais por dia&#10;500 Flashcards por dia&#10;Cronogramas ilimitados&#10;Forum de materiais e discussão premium&#10;Aulas ao vivo e vídeo-aulas pós-aula&#10;Acesso a grupo de WhatsApp"
+                        placeholder="Lista de benefícios..."
                         rows={6}
                       />
                     </div>
@@ -1017,6 +1144,7 @@ export default function SettingsPage() {
                         }}
                         className={plano.oculto ? 'text-red-600' : 'text-green-600'}
                       >
+                        {/* Icons are already imported */}
                         {plano.oculto ? (
                           <>
                             <EyeOff className="h-4 w-4 mr-2" />
@@ -1029,9 +1157,48 @@ export default function SettingsPage() {
                           </>
                         )}
                       </Button>
+
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          const updated = [...planos]
+                          updated[idx].destaque = !updated[idx].destaque
+                          setPlanos(updated)
+                        }}
+                        className={plano.destaque ? 'text-yellow-600 border-yellow-200 bg-yellow-50 dark:bg-yellow-950/30' : 'text-gray-500'}
+                      >
+                        <Zap className={`h-4 w-4 mr-2 ${plano.destaque ? 'fill-current' : ''}`} />
+                        {plano.destaque ? 'Em Destaque' : 'Destacar'}
+                      </Button>
                     </div>
                   </div>
                 ))}
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full border-dashed p-8"
+                  onClick={() => {
+                    const newPlan = {
+                      tipo: `custom_${Date.now()}`,
+                      nome: 'Novo Plano',
+                      periodo: 'Mensal',
+                      preco: 0,
+                      descricao: '',
+                      beneficios: [],
+                      oculto: true, // Start hidden
+                      ordem: planos.length,
+                      criadoEm: new Date(),
+                      atualizadoEm: new Date()
+                    }
+                    setPlanos([...planos, newPlan])
+                  }}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Adicionar Novo Plano
+                </Button>
               </div>
 
               {/* Messages */}

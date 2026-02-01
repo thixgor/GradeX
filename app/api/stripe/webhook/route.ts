@@ -67,21 +67,57 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'User not found' }, { status: 404 })
       }
 
-      // Calcular data de expiração
+      // Buscar configurações de planos do admin
+      const settings = await db.collection('admin_settings').findOne({})
+      const planos = settings?.planos || []
+
+      // Encontrar o plano comprado
+      // Pode ser pelo planId (tipo) ou stripePriceId se estiver no metadata
+      // O metadata vem do checkout, que usa o ID do plano (ex: 'mensal', 'questoes_anual')
+      const planoConfig = planos.find((p: any) => p.tipo === planId || p.stripePriceId === planId)
+
+      // Calcular data de expiração e role
       const now = new Date()
       let expiresAt: Date | undefined
-      if (PLAN_DURATIONS[planId] !== null) {
-        expiresAt = new Date(now.getTime() + (PLAN_DURATIONS[planId] || 0))
+      let assignedRole: AccountType = 'premium' // Padrão se não achar
+
+      if (planoConfig) {
+        // Usar configuração do plano
+        if (planoConfig.durationMonths && planoConfig.durationMonths > 0) {
+          // Adicionar meses à data atual
+          const futureDate = new Date(now)
+          futureDate.setMonth(futureDate.getMonth() + planoConfig.durationMonths)
+          expiresAt = futureDate
+        } else {
+          // Vitalício ou duração 0
+          expiresAt = undefined
+        }
+
+        if (planoConfig.role) {
+          assignedRole = planoConfig.role
+        }
+      } else {
+        // Fallback para hardcoded antigo se não achar no admin (compatibilidade)
+        const PLAN_DURATIONS: Record<string, number | null> = {
+          monthly: 30 * 24 * 60 * 60 * 1000,
+          quarterly: 3 * 30 * 24 * 60 * 60 * 1000,
+          'semi-annual': 6 * 30 * 24 * 60 * 60 * 1000,
+          annual: 365 * 24 * 60 * 60 * 1000,
+          lifetime: null
+        }
+        if (PLAN_DURATIONS[planId] !== null && PLAN_DURATIONS[planId] !== undefined) {
+          expiresAt = new Date(now.getTime() + (PLAN_DURATIONS[planId] || 0))
+        }
       }
 
       // Atualizar usuário
       const updateData: Partial<User> = {
-        accountType: 'premium' as AccountType,
-        premiumPlanType: planId as any,
+        accountType: assignedRole,
+        premiumPlanType: planId as any, // Salva o ID do plano original
         premiumActivatedAt: now,
         premiumExpiresAt: expiresAt,
         dailyPersonalExamsCreated: 0,
-        dailyPersonalExamsRemaining: getPersonalExamsQuota('premium'),
+        dailyPersonalExamsRemaining: getPersonalExamsQuota(assignedRole),
         lastDailyReset: now
       }
 

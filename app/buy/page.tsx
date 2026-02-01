@@ -173,6 +173,8 @@ export default function BuyPage() {
               price: p.preco,
               description: p.descricao || '',
               features: p.beneficios || [],
+              highlighted: p.destaque,
+              badge: p.badge,
               icon: <Zap className="h-6 w-6" />
             }))
           setPlans(convertedPlans)
@@ -205,10 +207,10 @@ export default function BuyPage() {
       console.log('Verificando assinatura...')
       // Verificar expiração de plano primeiro
       await fetch('/api/user/check-plan-expiration')
-      
+
       const res = await fetch('/api/user/subscription-status')
       console.log('Response status:', res.status)
-      
+
       if (res.ok) {
         const data = await res.json()
         console.log('Subscription data:', data)
@@ -244,7 +246,7 @@ export default function BuyPage() {
     if (params.get('success') === 'true') {
       const sessionId = params.get('session_id')
       const plan = localStorage.getItem('lastPurchasedPlan')
-      
+
       if (sessionId) {
         try {
           console.log('Processando sucesso de pagamento com sessionId:', sessionId)
@@ -347,13 +349,13 @@ export default function BuyPage() {
                     Agora você tem acesso a todos os recursos Premium, incluindo <strong>20 provas pessoais por dia</strong>. O comprovante foi enviado pelo Stripe.
                   </p>
                   <div className="flex gap-3">
-                    <Button 
+                    <Button
                       onClick={() => router.push('/profile')}
                       className="bg-[#468152] hover:bg-[#468152]/90"
                     >
                       Ir para Meu Perfil
                     </Button>
-                    <Button 
+                    <Button
                       variant="outline"
                       onClick={() => setPaymentSuccess(false)}
                     >
@@ -508,120 +510,80 @@ export default function BuyPage() {
               </CardContent>
             </Card>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-              {plans.slice(0, 3).map((plan, idx) => (
-                <Card key={plan.id} className={`relative ${plan.highlighted ? 'border-2 border-yellow-500 shadow-lg' : ''}`}>
+            {/* Plans Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-12 items-start justify-center">
+              {plans.map((plan) => (
+                <Card
+                  key={plan.id}
+                  className={`relative flex flex-col h-full hover:shadow-xl transition-all duration-300 ${plan.highlighted
+                    ? 'border-2 border-primary shadow-lg scale-105 z-10'
+                    : 'border opacity-90 hover:opacity-100 hover:scale-[1.02]'
+                    }`}
+                >
                   {plan.badge && (
-                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                      <span className="bg-yellow-500 text-white px-4 py-1 rounded-full text-xs font-bold">
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-full text-center">
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm ${plan.highlighted ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+                        }`}>
                         {plan.badge}
                       </span>
                     </div>
                   )}
-                  <CardHeader className={plan.highlighted ? 'pt-8' : ''}>
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        {plan.icon}
-                        <div>
-                          <CardTitle className="text-xl">{plan.name}</CardTitle>
-                          <CardDescription>{plan.period}</CardDescription>
-                        </div>
-                      </div>
+
+                  <CardHeader className="p-5 pb-2 text-center">
+                    <div className="mx-auto mb-3 p-2 bg-primary/5 rounded-full w-fit">
+                      {plan.icon}
                     </div>
+                    <CardTitle className="text-lg font-bold">{plan.name}</CardTitle>
+                    <CardDescription className="text-xs uppercase tracking-wide font-medium">{plan.period}</CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div>
-                      <div className="flex items-baseline gap-2 mb-2">
-                        <span className={`text-4xl font-bold ${plan.highlighted ? 'text-yellow-600' : ''}`}>
+
+                  <CardContent className="p-5 pt-0 flex-1 flex flex-col">
+                    <div className="text-center mb-4">
+                      <div className="flex items-center justify-center gap-2 items-baseline">
+                        <span className="text-3xl font-extrabold tracking-tight">
                           R$ {plan.price.toFixed(2)}
                         </span>
-                        <span className="text-sm text-muted-foreground line-through">
-                          R$ {plan.originalPrice.toFixed(2)}
-                        </span>
+                        {(plan.originalPrice > plan.price) && (
+                          <span className="text-sm text-muted-foreground line-through decoration-red-500/50">
+                            R$ {plan.originalPrice.toFixed(2)}
+                          </span>
+                        )}
                       </div>
-                      <p className="text-sm text-muted-foreground">{idx === 0 ? '/mês' : idx === 1 ? '/3 meses' : '/6 meses'}</p>
+
                       {plan.discountLabel && (
-                        <p className="text-xs text-green-600 font-medium mt-2">{plan.discountLabel}</p>
-                      )}
-                    </div>
-
-                    <ul className="space-y-3">
-                      {plan.features.map((feature, featureIdx) => (
-                        <li key={featureIdx} className="flex items-start gap-3">
-                          <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                          <span className="text-sm">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <Button
-                      className={`w-full ${plan.highlighted ? 'bg-yellow-500 hover:bg-yellow-600' : ''}`}
-                      onClick={() => handleSelectPlan(plan.id)}
-                      disabled={selectedPlan === plan.id}
-                    >
-                      {selectedPlan === plan.id ? 'Processando...' : 'Escolher Plano'}
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            {/* Annual and Lifetime Plans - Full Width */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
-              {plans.slice(3).map((plan) => (
-                <Card key={plan.id} className={`relative border-2 ${plan.badge?.includes('MELHOR') ? 'border-purple-500' : 'border-red-500'} shadow-lg`}>
-                  {plan.badge && (
-                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                      <span className={`${plan.badge?.includes('MELHOR') ? 'bg-purple-500' : 'bg-red-500'} text-white px-4 py-1 rounded-full text-xs font-bold`}>
-                        {plan.badge}
-                      </span>
-                    </div>
-                  )}
-                  <CardHeader className="pt-8">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        {plan.icon}
-                        <div>
-                          <CardTitle className="text-xl">{plan.name}</CardTitle>
-                          <CardDescription>{plan.period}</CardDescription>
-                        </div>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div>
-                      <div className="flex items-baseline gap-2 mb-2">
-                        <span className={`text-4xl font-bold ${plan.badge?.includes('MELHOR') ? 'text-purple-600' : 'text-red-600'}`}>
-                          R$ {plan.price.toFixed(2)}
-                        </span>
-                        <span className="text-sm text-muted-foreground line-through">
-                          R$ {plan.originalPrice.toFixed(2)}
-                        </span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{plan.badge?.includes('VITALÍCIO') ? 'pagamento único' : '/ano'}</p>
-                      {plan.discountLabel && (
-                        <p className={`text-xs font-medium mt-2 ${plan.badge?.includes('MELHOR') ? 'text-green-600' : 'text-red-600'}`}>
+                        <div className="mt-2 inline-block bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs px-2 py-0.5 rounded-md font-medium">
                           {plan.discountLabel}
-                        </p>
+                        </div>
                       )}
                     </div>
 
-                    <ul className="space-y-3">
-                      {plan.features.map((feature, featureIdx) => (
-                        <li key={featureIdx} className="flex items-start gap-3">
-                          <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                          <span className="text-sm">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
+                    <div className="space-y-3 flex-1">
+                      <ul className="space-y-2.5">
+                        {plan.features.map((feature, featureIdx) => (
+                          <li key={featureIdx} className="flex items-start gap-2.5 text-sm group">
+                            <Check className="h-4 w-4 text-primary flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
+                            <span className="text-muted-foreground leading-tight group-hover:text-foreground transition-colors">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
 
-                    <Button
-                      className={`w-full ${plan.badge?.includes('MELHOR') ? 'bg-purple-500 hover:bg-purple-600' : 'bg-red-500 hover:bg-red-600'}`}
-                      onClick={() => handleSelectPlan(plan.id)}
-                      disabled={selectedPlan === plan.id}
-                    >
-                      {selectedPlan === plan.id ? 'Processando...' : 'Escolher Plano'}
-                    </Button>
+                    <div className="mt-6 pt-4 border-t">
+                      <Button
+                        className={`w-full font-semibold transition-all ${plan.highlighted
+                          ? 'bg-primary hover:bg-primary/90 shadow-md hover:shadow-lg'
+                          : 'variant-outline'
+                          }`}
+                        variant={plan.highlighted ? 'default' : 'outline'}
+                        onClick={() => handleSelectPlan(plan.id)}
+                        disabled={selectedPlan === plan.id}
+                      >
+                        {selectedPlan === plan.id ? 'Processando...' : 'Escolher Plano'}
+                      </Button>
+                      <p className="text-[10px] text-center text-muted-foreground mt-2">
+                        {plan.id.includes('vitalicio') ? 'Pagamento único' : 'Renovação automática. Cancele quando quiser.'}
+                      </p>
+                    </div>
                   </CardContent>
                 </Card>
               ))}

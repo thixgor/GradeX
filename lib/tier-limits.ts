@@ -38,6 +38,15 @@ export const TIER_LIMITS: Record<AccountType | 'admin', TierLimits> = {
     flashcardsTotal: Infinity,
     personalExamsTotal: Infinity,
   },
+  essential: {
+    examsPerDay: 20,
+    questionsPerExam: 20,
+    personalExamsPerDay: 20,
+    bancoQuestoes: true,
+    cronogramasTotal: Infinity,
+    flashcardsTotal: Infinity,
+    personalExamsTotal: Infinity,
+  },
   admin: {
     examsPerDay: Infinity,
     questionsPerExam: Infinity,

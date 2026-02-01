@@ -204,7 +204,7 @@ export interface ExamSubmission {
   submittedAt: Date // Quando o aluno submeteu a prova
 }
 
-export type AccountType = 'gratuito' | 'trial' | 'premium'
+export type AccountType = 'gratuito' | 'trial' | 'premium' | 'essential'
 export type PremiumPlanType = 'teste' | 'mensal' | 'trimestral' | 'semestral' | 'vitalicio'
 export type TrialPlanType = 'teste' | '7dias'
 
@@ -708,7 +708,7 @@ export interface AulaPostagem {
 }
 
 // Tipos para Planos/Pricing
-export type PlanType = 'mensal' | 'trimestral' | 'semestral' | 'anual' | 'vitalicio'
+export type PlanType = string // 'mensal' | 'trimestral' | 'semestral' | 'anual' | 'vitalicio' ou personalizados
 
 export interface PlanConfig {
   _id?: string
@@ -721,9 +721,15 @@ export interface PlanConfig {
   beneficios?: string[]
   oculto: boolean // Se true, não aparece em /buy
   ordem: number // Ordem de exibição
+  destaque?: boolean // Se true, ganha destaque visual
+  badge?: string // Texto do badge (ex: "MAIS POPULAR")
+  role?: AccountType // Cargo que o usuário ganha (premium, essential, trial)
+  durationMonths?: number // Duração em meses (0 ou undefined = infinito/vitalício)
+  stripePriceId?: string // ID do preço no Stripe para automação
   criadoEm: Date
   atualizadoEm: Date
 }
+
 
 export interface AdminSettings {
   _id?: string

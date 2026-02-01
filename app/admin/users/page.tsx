@@ -254,6 +254,13 @@ export default function AdminUsersPage() {
             Premium
           </span>
         )
+      case 'essential':
+        return (
+          <span className="text-xs bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-2 py-1 rounded flex items-center gap-1 w-fit">
+            <Zap className="h-3 w-3" />
+            Essential
+          </span>
+        )
       case 'trial':
         return (
           <span className="text-xs bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-2 py-1 rounded flex items-center gap-1 w-fit">
@@ -408,16 +415,16 @@ export default function AdminUsersPage() {
                             const remaining = user.dailyPersonalExamsRemaining !== undefined
                               ? user.dailyPersonalExamsRemaining
                               : (() => {
-                                  const accountType = user.accountType || 'gratuito'
-                                  const tierLimits = {
-                                    gratuito: 3,
-                                    trial: 5,
-                                    premium: 10
-                                  }
-                                  const limit = tierLimits[accountType as keyof typeof tierLimits] || 3
-                                  const examsCreated = user.dailyPersonalExamsCreated || 0
-                                  return Math.max(0, limit - examsCreated)
-                                })()
+                                const accountType = user.accountType || 'gratuito'
+                                const tierLimits = {
+                                  gratuito: 3,
+                                  trial: 5,
+                                  premium: 10
+                                }
+                                const limit = tierLimits[accountType as keyof typeof tierLimits] || 3
+                                const examsCreated = user.dailyPersonalExamsCreated || 0
+                                return Math.max(0, limit - examsCreated)
+                              })()
                             setExamsQuota(remaining)
                             setShowQuotaDialog(true)
                           }}
@@ -588,6 +595,18 @@ export default function AdminUsersPage() {
                   <div className="text-xs opacity-80">Vitalício</div>
                 </Button>
               </div>
+              <div className="grid grid-cols-3 gap-2 mt-2">
+                <Button
+                  variant={selectedAccountType === 'essential' ? 'default' : 'outline'}
+                  onClick={() => setSelectedAccountType('essential')}
+                  className="h-auto py-3 flex-col gap-1"
+                  size="sm"
+                >
+                  <Zap className="h-4 w-4" />
+                  <div className="font-semibold">Essential</div>
+                  <div className="text-xs opacity-80">Sem Aulas</div>
+                </Button>
+              </div>
             </div>
 
             {selectedAccountType === 'trial' && (
@@ -720,9 +739,9 @@ export default function AdminUsersPage() {
                   const remaining = selectedUser?.dailyPersonalExamsRemaining !== undefined
                     ? selectedUser.dailyPersonalExamsRemaining
                     : Math.max(0, limit - examsCreated)
-                  
-                  return remaining === limit 
-                    ? '✓ Quota disponível' 
+
+                  return remaining === limit
+                    ? '✓ Quota disponível'
                     : `⚠ ${examsCreated} provas criadas hoje (${remaining} restantes)`
                 })()}
               </p>
@@ -885,6 +904,6 @@ export default function AdminUsersPage() {
         message={toastMessage}
         type={toastType}
       />
-    </div>
+    </div >
   )
 }

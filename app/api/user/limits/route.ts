@@ -57,7 +57,7 @@ function calculateLimits(accountType: string | undefined, role: string) {
   }
 
   // Baseado no tipo de conta
-  if (accountType === 'premium' || accountType === 'trial') {
+  if (accountType === 'premium' || accountType === 'trial' || accountType === 'essential') {
     return {
       dailyExamsLimit: 10,
       aiQuestionsPerExamLimit: 20,
