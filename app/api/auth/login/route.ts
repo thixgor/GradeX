@@ -72,6 +72,7 @@ export async function POST(request: NextRequest) {
       email: user.email,
       name: user.name,
       role: user.role,
+      emailVerified: !!user.emailVerified,
     })
 
     // Define o cookie

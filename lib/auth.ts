@@ -14,6 +14,7 @@ export interface TokenPayload {
   email: string
   name: string
   role: 'admin' | 'user'
+  emailVerified: boolean
   [key: string]: any
 }
 
@@ -64,7 +65,10 @@ export async function getSession(): Promise<TokenPayload | null> {
       return null
     }
 
-    return payload
+    return {
+      ...payload,
+      emailVerified: !!user.emailVerified
+    }
   } catch (error) {
     console.error('Error checking user ban status:', error)
     // Em caso de erro, permite a sessão continuar (fail-safe)

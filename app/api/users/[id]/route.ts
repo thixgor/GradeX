@@ -4,6 +4,7 @@ import { getSession } from '@/lib/auth'
 import { User, AccountType, TrialPlanType, PremiumPlanType } from '@/lib/types'
 import { getTierLimits, getPersonalExamsQuota } from '@/lib/tier-limits'
 import { ObjectId } from 'mongodb'
+import { sendAccountDeletedEmail } from '@/lib/mail'
 
 export const dynamic = 'force-dynamic'
 
@@ -38,6 +39,14 @@ export async function DELETE(
 
     // Deletar todas as submissões do usuário
     await submissionsCollection.deleteMany({ userId: id })
+
+    // Enviar email notificando a exclusão
+    try {
+      await sendAccountDeletedEmail(user.email, user.name)
+    } catch (error) {
+      console.error('Erro ao enviar email de exclusão:', error)
+      // Não impede a deleção se o email falhar
+    }
 
     // Deletar o usuário
     await usersCollection.deleteOne({ _id: new ObjectId(id) })

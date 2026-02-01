@@ -1,9 +1,12 @@
+
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { hashPassword, createToken, setAuthCookie } from '@/lib/auth'
 import { verifyRecaptcha } from '@/lib/recaptcha'
 import { User } from '@/lib/types'
 import { ADMIN_EMAILS } from '@/lib/constants'
+import { sendWelcomeEmail, sendVerificationEmail } from '@/lib/mail'
+import crypto from 'crypto'
 
 export const dynamic = 'force-dynamic'
 
@@ -42,12 +45,12 @@ export async function POST(request: NextRequest) {
     }
 
     const db = await getDb()
-    
+
     // Verificar se o cadastro está bloqueado
     const settings = await db.collection('landing_settings').findOne({})
     if (settings?.registrationBlocked && role !== 'admin') {
       return NextResponse.json(
-        { 
+        {
           error: 'blocked',
           message: settings.registrationBlockedMessage || 'Cadastro temporariamente desativado'
         },
@@ -75,6 +78,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Gerar token de verificação
+    const verificationToken = crypto.randomBytes(32).toString('hex')
+
     // Cria o usuário
     const hashedPassword = await hashPassword(password)
     const newUser: User = {
@@ -88,20 +94,35 @@ export async function POST(request: NextRequest) {
       role: role as 'admin' | 'user',
       createdAt: new Date(),
       lastLoginAt: new Date(),
+      emailVerified: false,
+      verificationToken
     }
 
     const result = await usersCollection.insertOne(newUser)
 
-    // Cria o token
+    // Cria o token de sessão (ainda permite login, mas verificação pode ser checada no frontend)
     const token = await createToken({
       userId: result.insertedId.toString(),
       email,
       name,
       role: newUser.role,
+      emailVerified: false // Adicionado ao payload
     })
 
     // Define o cookie
     await setAuthCookie(token)
+
+    // Enviar emails em paralelo para não travar
+    Promise.allSettled([
+      sendWelcomeEmail(email, name),
+      sendVerificationEmail(email, verificationToken, name)
+    ]).then((results) => {
+      results.forEach((result, index) => {
+        if (result.status === 'rejected') {
+          console.error(`Erro ao enviar email ${index === 0 ? 'boas-vindas' : 'verificação'}:`, result.reason)
+        }
+      })
+    })
 
     return NextResponse.json({
       success: true,
@@ -110,6 +131,7 @@ export async function POST(request: NextRequest) {
         email,
         name,
         role: newUser.role,
+        emailVerified: false
       },
     })
   } catch (error) {

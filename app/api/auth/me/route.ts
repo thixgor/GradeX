@@ -56,6 +56,7 @@ export async function GET() {
         trialExpiresAt: user.trialExpiresAt,
         trialDuration: user.trialDuration,
         secondaryRole: user.secondaryRole,
+        emailVerified: !!user.emailVerified,
       },
     })
   } catch (error) {

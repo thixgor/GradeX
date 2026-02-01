@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { Logo } from '@/components/logo'
-import { Eye, EyeOff, Mail } from 'lucide-react'
+import { Eye, EyeOff, Mail, CheckCircle2 } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { BanReasonLabels, BanReason } from '@/lib/types'
 import { Ban, AlertCircle } from 'lucide-react'
@@ -170,6 +170,8 @@ export default function LoginPage() {
     return digit1 === parseInt(cleaned[9]) && digit2 === parseInt(cleaned[10])
   }
 
+  const [isRegistered, setIsRegistered] = useState(false)
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
@@ -245,8 +247,12 @@ export default function LoginPage() {
         throw new Error(data.error || 'Erro ao autenticar')
       }
 
-      router.push('/')
-      router.refresh()
+      if (!isLogin) {
+        setIsRegistered(true)
+      } else {
+        router.push('/')
+        router.refresh()
+      }
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -380,208 +386,236 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
 
-        <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
-          <CardContent className="space-y-4 overflow-y-auto flex-1">
-            {!isLogin && (
-              <div className="space-y-2">
-                <Label htmlFor="name">Nome Completo</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="João Silva"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  required={!isLogin}
-                />
-              </div>
-            )}
-
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="seu@email.com"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                required
-              />
+        {isRegistered ? (
+          <CardContent className="space-y-6 pt-6 flex flex-col items-center">
+            <div className="h-20 w-20 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
+              <CheckCircle2 className="h-10 w-10 text-green-600 dark:text-green-300" />
             </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Senha</Label>
-                <Link
-                  href="/auth/forgot-password"
-                  className="text-xs text-muted-foreground hover:text-primary transition-colors"
-                  tabIndex={-1}
-                >
-                  Esqueceu a senha?
-                </Link>
-              </div>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  required
-                  className="pr-10"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
+            <div className="text-center space-y-2">
+              <h3 className="text-xl font-bold font-heading">Conta criada com sucesso!</h3>
+              <p className="text-sm text-muted-foreground">
+                Enviamos um link de confirmação para o seu e-mail: <br />
+                <span className="font-semibold text-foreground">{formData.email}</span>
+              </p>
             </div>
-
-            {!isLogin && (
-              <>
-                {/* CPF */}
-                <div className="space-y-2">
-                  <Label htmlFor="cpf">CPF *</Label>
-                  <Input
-                    id="cpf"
-                    type="text"
-                    placeholder="000.000.000-00"
-                    value={formData.cpf}
-                    onChange={(e) => setFormData({ ...formData, cpf: formatCPF(e.target.value) })}
-                    maxLength={14}
-                    required
-                  />
-                </div>
-
-                {/* Data de Nascimento */}
-                <div className="space-y-2">
-                  <Label htmlFor="dateOfBirth">Data de Nascimento *</Label>
-                  <Input
-                    id="dateOfBirth"
-                    type="date"
-                    value={formData.dateOfBirth}
-                    onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
-                    required
-                  />
-                </div>
-
-                {/* Pergunta sobre Afya */}
-                <div className="space-y-3 p-4 bg-amber-50 dark:bg-amber-950 rounded-lg border border-amber-200 dark:border-amber-800">
-                  <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
-                    Você é estudante de Medicina da Afya?
-                  </p>
-                  <div className="flex gap-2">
-                    <Button
-                      type="button"
-                      variant={formData.isAfyaMedicineStudent ? 'default' : 'outline'}
-                      className="flex-1 h-9"
-                      onClick={() => setFormData({ ...formData, isAfyaMedicineStudent: true })}
-                    >
-                      Sim
-                    </Button>
-                    <Button
-                      type="button"
-                      variant={!formData.isAfyaMedicineStudent ? 'default' : 'outline'}
-                      className="flex-1 h-9"
-                      onClick={() => setFormData({ ...formData, isAfyaMedicineStudent: false, afyaUnit: '' })}
-                    >
-                      Não
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Seleção de Unidade Afya */}
-                {formData.isAfyaMedicineStudent && (
-                  <div className="space-y-2">
-                    <Label htmlFor="afyaUnit">Sua Unidade Afya *</Label>
-                    <select
-                      id="afyaUnit"
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                      value={formData.afyaUnit}
-                      onChange={(e) => setFormData({ ...formData, afyaUnit: e.target.value })}
-                      required={formData.isAfyaMedicineStudent}
-                    >
-                      <option value="">Selecione sua unidade...</option>
-                      {AFYA_UNITS.map((unit) => (
-                        <option key={unit} value={unit}>
-                          {unit}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-
-                {/* Tipo de Conta */}
-                <div className="space-y-2">
-                  <Label htmlFor="role">Tipo de Conta</Label>
-                  <select
-                    id="role"
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    value={formData.role}
-                    onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                  >
-                    <option value="user">Usuário</option>
-                    {canBeAdmin && <option value="admin">Administrador</option>}
-                  </select>
-                  {!canBeAdmin && formData.email && (
-                    <p className="text-xs text-muted-foreground">
-                      Apenas emails autorizados podem criar contas de administrador
-                    </p>
-                  )}
-                </div>
-              </>
-            )}
-
-            {error && (
-              <div className="text-sm text-destructive text-center p-2 bg-destructive/10 rounded">
-                {error}
-              </div>
-            )}
+            <div className="p-4 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg">
+              <p className="text-xs text-amber-800 dark:text-amber-200 text-center">
+                <strong>Atenção:</strong> Você precisa confirmar seu e-mail para ter acesso completo a todas as ferramentas da plataforma.
+              </p>
+            </div>
+            <div className="w-full space-y-3">
+              <Button onClick={() => router.push('/')} className="w-full">
+                Ir para o Início
+              </Button>
+              <Button variant="outline" onClick={() => setIsLogin(true)} className="w-full">
+                Fazer Login Agora
+              </Button>
+            </div>
           </CardContent>
-
-          <CardFooter className="flex flex-col space-y-4 flex-shrink-0">
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Carregando...' : isLogin ? 'Entrar' : 'Criar Conta'}
-            </Button>
-
-            {isLogin && (
-              <>
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t border-muted"></span>
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-background px-2 text-muted-foreground">Ou continue com</span>
-                  </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+            <CardContent className="space-y-4 overflow-y-auto flex-1">
+              {!isLogin && (
+                <div className="space-y-2">
+                  <Label htmlFor="name">Nome Completo</Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="João Silva"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    required={!isLogin}
+                  />
                 </div>
+              )}
 
-                <div
-                  id="google-signin-button"
-                  className="flex justify-center"
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="seu@email.com"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  required
                 />
-              </>
-            )}
+              </div>
 
-            <button
-              type="button"
-              className="text-sm text-muted-foreground hover:text-primary transition-colors"
-              onClick={() => {
-                setIsLogin(!isLogin)
-                setError('')
-              }}
-            >
-              {isLogin
-                ? 'Não tem uma conta? Criar conta'
-                : 'Já tem uma conta? Entrar'}
-            </button>
-          </CardFooter>
-        </form>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password">Senha</Label>
+                  <Link
+                    href="/auth/forgot-password"
+                    className="text-xs text-muted-foreground hover:text-primary transition-colors"
+                    tabIndex={-1}
+                  >
+                    Esqueceu a senha?
+                  </Link>
+                </div>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    required
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {!isLogin && (
+                <>
+                  {/* CPF */}
+                  <div className="space-y-2">
+                    <Label htmlFor="cpf">CPF *</Label>
+                    <Input
+                      id="cpf"
+                      type="text"
+                      placeholder="000.000.000-00"
+                      value={formData.cpf}
+                      onChange={(e) => setFormData({ ...formData, cpf: formatCPF(e.target.value) })}
+                      maxLength={14}
+                      required
+                    />
+                  </div>
+
+                  {/* Data de Nascimento */}
+                  <div className="space-y-2">
+                    <Label htmlFor="dateOfBirth">Data de Nascimento *</Label>
+                    <Input
+                      id="dateOfBirth"
+                      type="date"
+                      value={formData.dateOfBirth}
+                      onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  {/* Pergunta sobre Afya */}
+                  <div className="space-y-3 p-4 bg-amber-50 dark:bg-amber-950 rounded-lg border border-amber-200 dark:border-amber-800">
+                    <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
+                      Você é estudante de Medicina da Afya?
+                    </p>
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        variant={formData.isAfyaMedicineStudent ? 'default' : 'outline'}
+                        className="flex-1 h-9"
+                        onClick={() => setFormData({ ...formData, isAfyaMedicineStudent: true })}
+                      >
+                        Sim
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={!formData.isAfyaMedicineStudent ? 'default' : 'outline'}
+                        className="flex-1 h-9"
+                        onClick={() => setFormData({ ...formData, isAfyaMedicineStudent: false, afyaUnit: '' })}
+                      >
+                        Não
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Seleção de Unidade Afya */}
+                  {formData.isAfyaMedicineStudent && (
+                    <div className="space-y-2">
+                      <Label htmlFor="afyaUnit">Sua Unidade Afya *</Label>
+                      <select
+                        id="afyaUnit"
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        value={formData.afyaUnit}
+                        onChange={(e) => setFormData({ ...formData, afyaUnit: e.target.value })}
+                        required={formData.isAfyaMedicineStudent}
+                      >
+                        <option value="">Selecione sua unidade...</option>
+                        {AFYA_UNITS.map((unit) => (
+                          <option key={unit} value={unit}>
+                            {unit}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
+                  {/* Tipo de Conta */}
+                  <div className="space-y-2">
+                    <Label htmlFor="role">Tipo de Conta</Label>
+                    <select
+                      id="role"
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      value={formData.role}
+                      onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                    >
+                      <option value="user">Usuário</option>
+                      {canBeAdmin && <option value="admin">Administrador</option>}
+                    </select>
+                    {!canBeAdmin && formData.email && (
+                      <p className="text-xs text-muted-foreground">
+                        Apenas emails autorizados podem criar contas de administrador
+                      </p>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {error && (
+                <div className="text-sm text-destructive text-center p-2 bg-destructive/10 rounded">
+                  {error}
+                </div>
+              )}
+            </CardContent>
+
+            <CardFooter className="flex flex-col space-y-4 flex-shrink-0">
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? 'Carregando...' : isLogin ? 'Entrar' : 'Criar Conta'}
+              </Button>
+
+              {isLogin && (
+                <>
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t border-muted"></span>
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-background px-2 text-muted-foreground">Ou continue com</span>
+                    </div>
+                  </div>
+
+                  <div
+                    id="google-signin-button"
+                    className="flex justify-center"
+                  />
+                </>
+              )}
+
+              <button
+                type="button"
+                className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                onClick={() => {
+                  setIsLogin(!isLogin)
+                  setError('')
+                }}
+              >
+                {isLogin
+                  ? 'Não tem uma conta? Criar conta'
+                  : 'Já tem uma conta? Entrar'}
+              </button>
+            </CardFooter>
+          </form>
+        )}
       </Card>
 
       {/* Modal de Cadastro Bloqueado */}

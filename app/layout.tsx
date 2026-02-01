@@ -5,14 +5,15 @@ import { ThemeProvider } from '@/components/theme-provider'
 import { TrialExpirationChecker } from '@/components/trial-expiration-checker'
 import { Footer } from '@/components/footer'
 import { ImageProtectionProvider } from '@/components/image-protection-provider'
+import { VerifyEmailBanner } from '@/components/verify-email-banner'
 
 const inter = Inter({ subsets: ['latin'] })
-const rowdies = Rowdies({ 
+const rowdies = Rowdies({
   weight: ['400', '700'],
   subsets: ['latin'],
   variable: '--font-rowdies'
 })
-const spaceGrotesk = Space_Grotesk({ 
+const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
   variable: '--font-space-grotesk'
 })
@@ -64,6 +65,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <VerifyEmailBanner />
           <ImageProtectionProvider>
             <TrialExpirationChecker />
             <div className="flex-1 flex flex-col">

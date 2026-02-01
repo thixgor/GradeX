@@ -267,6 +267,9 @@ export interface User {
   // Recuperação de senha
   resetPasswordToken?: string
   resetPasswordExpires?: Date
+  // Verificação de Email
+  emailVerified?: boolean
+  verificationToken?: string
 }
 
 export type FlashcardDifficultyFeedback = 'facil' | 'equilibrado' | 'porrada'
