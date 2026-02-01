@@ -335,10 +335,16 @@ function NewForumPostContent() {
                 <Input
                   id="title"
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={(e) => setTitle(e.target.value.slice(0, 150))}
                   placeholder="Digite o título do post"
                   required
+                  maxLength={150}
                 />
+                <div className="text-xs text-muted-foreground text-right">
+                  <span className={title.length >= 150 ? 'text-red-500 font-medium' : ''}>
+                    {title.length} / 150 caracteres
+                  </span>
+                </div>
               </div>
 
               {/* Tópico */}
@@ -388,6 +394,12 @@ function NewForumPostContent() {
                   onChange={setContent}
                   placeholder="Digite o conteúdo do post..."
                 />
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Use Enter para pular linhas. O texto será formatado automaticamente.</span>
+                  <span className={content.length > (userRole === 'admin' ? 50000 : 10000) ? 'text-red-500 font-medium' : ''}>
+                    {content.length} / {userRole === 'admin' ? '50.000' : '10.000'} caracteres
+                  </span>
+                </div>
               </div>
 
               {/* Anexos */}

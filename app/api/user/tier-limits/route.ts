@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
-import { getTierLimits } from '@/lib/tier-limits'
+import { getTierLimits, getCronogramasLimit, getFlashcardsLimit, getPersonalExamsLifetimeLimit } from '@/lib/tier-limits'
 import { ObjectId } from 'mongodb'
 
 export const dynamic = 'force-dynamic'
@@ -49,6 +49,11 @@ export async function GET(request: NextRequest) {
     const accountType = user.accountType || 'gratuito'
     const limits = getTierLimits(accountType, isAdmin)
 
+    // Obter limites vitais
+    const cronogramasLimit = getCronogramasLimit(accountType)
+    const flashcardsLimit = getFlashcardsLimit(accountType)
+    const personalExamsLifetimeLimit = getPersonalExamsLifetimeLimit(accountType)
+
     // Verificar se precisa fazer reset diário (baseado em horário de Brasília)
     const lastReset = user.lastDailyReset ? new Date(user.lastDailyReset) : null
     const needsReset = needsDailyReset(lastReset)
@@ -75,6 +80,9 @@ export async function GET(request: NextRequest) {
         questionsRemaining: limits.questionsPerExam,
         accountType,
         isAdmin,
+        cronogramasLimit,
+        flashcardsLimit,
+        personalExamsLifetimeLimit,
       })
     }
 
@@ -87,6 +95,14 @@ export async function GET(request: NextRequest) {
       ? user.dailyPersonalExamsRemaining
       : Math.max(0, limits.examsPerDay - examsCreatedToday)
 
+    // Obter contadores vitais
+    const cronogramasUsed = await db.collection('cronogramas').countDocuments({ usuarioId: session.userId })
+    const flashcardsUsed = await db.collection('flashcardCards').countDocuments({ userId: session.userId })
+    const personalExamsUsed = await db.collection('exams').countDocuments({
+      isPersonalExam: true,
+      createdBy: session.userId
+    })
+
     return NextResponse.json({
       limits,
       examsRemaining,
@@ -95,6 +111,12 @@ export async function GET(request: NextRequest) {
       questionsUsedToday,
       accountType,
       isAdmin,
+      cronogramasLimit,
+      flashcardsLimit,
+      personalExamsLifetimeLimit,
+      cronogramasUsed,
+      flashcardsUsed,
+      personalExamsUsed,
     })
   } catch (error: any) {
     console.error('Erro ao obter limites de tier:', error)

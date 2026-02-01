@@ -220,6 +220,10 @@ export default function GenerateQuestionsPage() {
         await saveExamWithQuestions(data.questions)
       } else {
         const error = await res.json()
+        if (error.requiresUpgrade) {
+          router.push('/buy')
+          return
+        }
         alert(`Erro: ${error.error}`)
         setCurrentStep('config')
       }
@@ -255,6 +259,10 @@ export default function GenerateQuestionsPage() {
           router.push(`/exam/${data.examId}`)
         } else {
           const error = await res.json()
+          if (error.requiresUpgrade) {
+            router.push('/buy')
+            return
+          }
           alert(`Erro: ${error.error}`)
           setCurrentStep('config')
         }
@@ -309,6 +317,10 @@ export default function GenerateQuestionsPage() {
           router.push(`/`)
         } else {
           const error = await res.json()
+          if (error.requiresUpgrade) {
+            router.push('/buy')
+            return
+          }
           alert(`Erro: ${error.error}`)
         }
       } else {

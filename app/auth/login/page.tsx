@@ -20,6 +20,7 @@ import { GoogleProfileSetupDialog } from '@/components/google-profile-setup-dial
 declare global {
   interface Window {
     google?: any
+    grecaptcha?: any
   }
 }
 
@@ -40,6 +41,7 @@ export default function LoginPage() {
     picture?: string
     googleId: string
   } | null>(null)
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
   const [banInfo, setBanInfo] = useState<{
     reason?: BanReason
     details?: string
@@ -58,40 +60,73 @@ export default function LoginPage() {
   })
 
   useEffect(() => {
-    // Carrega o script do Google
-    const script = document.createElement('script')
-    script.src = 'https://accounts.google.com/gsi/client'
-    script.async = true
-    script.defer = true
-    
-    script.onload = () => {
-      if (window.google) {
-        window.google.accounts.id.initialize({
-          client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-          callback: handleGoogleLogin,
-        })
-        
-        // Renderiza o botão quando o script carrega
-        const buttonElement = document.getElementById('google-signin-button')
-        if (buttonElement && isLogin) {
-          window.google.accounts.id.renderButton(buttonElement, {
-            type: 'standard',
-            size: 'large',
-            text: 'signin_with',
-            locale: 'pt-BR',
+    const loadRecaptchaScript = () => {
+      const script = document.createElement('script')
+      script.src = `https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`
+      script.async = true
+      script.defer = true
+      
+      script.onload = () => {
+        if (window.grecaptcha) {
+          window.grecaptcha.ready(() => {
+            console.log('reCAPTCHA carregado com sucesso')
           })
         }
       }
+      
+      document.head.appendChild(script)
+
+      return () => {
+        try {
+          document.head.removeChild(script)
+        } catch (e) {
+          // Script já foi removido
+        }
+      }
     }
-    
-    document.head.appendChild(script)
+
+    const loadGoogleScript = () => {
+      const script = document.createElement('script')
+      script.src = 'https://accounts.google.com/gsi/client'
+      script.async = true
+      script.defer = true
+      
+      script.onload = () => {
+        if (window.google) {
+          window.google.accounts.id.initialize({
+            client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+            callback: handleGoogleLogin,
+          })
+          
+          const buttonElement = document.getElementById('google-signin-button')
+          if (buttonElement && isLogin) {
+            window.google.accounts.id.renderButton(buttonElement, {
+              type: 'standard',
+              size: 'large',
+              text: 'signin_with',
+              locale: 'pt-BR',
+            })
+          }
+        }
+      }
+      
+      document.head.appendChild(script)
+
+      return () => {
+        try {
+          document.head.removeChild(script)
+        } catch (e) {
+          // Script já foi removido
+        }
+      }
+    }
+
+    const cleanupRecaptcha = loadRecaptchaScript()
+    const cleanupGoogle = loadGoogleScript()
 
     return () => {
-      try {
-        document.head.removeChild(script)
-      } catch (e) {
-        // Script já foi removido
-      }
+      cleanupRecaptcha?.()
+      cleanupGoogle?.()
     }
   }, [isLogin])
 
@@ -140,7 +175,25 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      // Validações para cadastro
+      if (!window.grecaptcha) {
+        setError('reCAPTCHA não carregado. Tente novamente.')
+        setLoading(false)
+        return
+      }
+
+      const token = await window.grecaptcha.execute(
+        process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
+        { action: isLogin ? 'login' : 'register' }
+      )
+
+      if (!token) {
+        setError('Falha ao verificar reCAPTCHA. Tente novamente.')
+        setLoading(false)
+        return
+      }
+
+      setRecaptchaToken(token)
+
       if (!isLogin) {
         if (!formData.name || !formData.email || !formData.password || !formData.cpf || !formData.dateOfBirth) {
           setError('Todos os campos são obrigatórios')
@@ -163,10 +216,11 @@ export default function LoginPage() {
 
       const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register'
       const body = isLogin
-        ? { email: formData.email, password: formData.password }
+        ? { email: formData.email, password: formData.password, recaptchaToken: token }
         : {
             ...formData,
             cpf: formData.cpf.replace(/\D/g, ''),
+            recaptchaToken: token,
           }
 
       const res = await fetch(endpoint, {
@@ -178,7 +232,6 @@ export default function LoginPage() {
       const data = await res.json()
 
       if (!res.ok) {
-        // Verifica se o usuário está banido
         if (data.error === 'banned') {
           setBanInfo({
             reason: data.banReason,

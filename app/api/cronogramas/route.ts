@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
+import { getCronogramasLimit } from '@/lib/tier-limits'
 import { ObjectId } from 'mongodb'
 
 export const dynamic = 'force-dynamic'
@@ -46,6 +47,31 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const db = await getDb()
 
+    const usersCollection = db.collection('users')
+    const user = await usersCollection.findOne({ _id: new ObjectId(session.userId) })
+    
+    if (!user) {
+      return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
+    }
+
+    const isAdmin = session.role === 'admin'
+    const accountType = user.accountType || 'gratuito'
+    const cronogramasLimit = getCronogramasLimit(accountType)
+
+    const existingCronogramas = await db
+      .collection('cronogramas')
+      .countDocuments({ usuarioId: session.userId })
+
+    if (!isAdmin && cronogramasLimit !== Infinity && existingCronogramas >= cronogramasLimit) {
+      return NextResponse.json({
+        error: `Limite de cronogramas atingido (${cronogramasLimit} no total). Faça upgrade para Premium para criar mais cronogramas.`,
+        requiresUpgrade: true,
+        upgradeUrl: '/buy',
+        limit: cronogramasLimit,
+        used: existingCronogramas
+      }, { status: 403 })
+    }
+
     const cronograma = {
       usuarioId: session.userId,
       titulo: body.titulo,
@@ -60,6 +86,12 @@ export async function POST(req: NextRequest) {
     }
 
     const result = await db.collection('cronogramas').insertOne(cronograma)
+
+    // Atualizar contador total do usuário
+    await usersCollection.updateOne(
+      { _id: new ObjectId(session.userId) },
+      { $inc: { totalCronogramasCreated: 1 } }
+    )
 
     return NextResponse.json({
       success: true,

@@ -4,28 +4,38 @@ export interface FlashcardTierLimits {
   dailyDecks: number
   maxActiveDecks: number | null
   cardsPerDeck: number
+  totalCardsLifetime: number
+  totalDecksLifetime: number
 }
 
 const FLASHCARD_LIMITS: Record<AccountType | 'admin', FlashcardTierLimits> = {
   gratuito: {
-    dailyDecks: 3,
+    dailyDecks: Infinity,
     maxActiveDecks: 10,
     cardsPerDeck: 5,
+    totalCardsLifetime: Infinity,
+    totalDecksLifetime: 5,
   },
   trial: {
     dailyDecks: 10,
     maxActiveDecks: 10,
     cardsPerDeck: 10,
+    totalCardsLifetime: Infinity,
+    totalDecksLifetime: Infinity,
   },
   premium: {
     dailyDecks: 25,
     maxActiveDecks: null,
     cardsPerDeck: 20,
+    totalCardsLifetime: Infinity,
+    totalDecksLifetime: Infinity,
   },
   admin: {
     dailyDecks: Infinity,
     maxActiveDecks: null,
     cardsPerDeck: Infinity,
+    totalCardsLifetime: Infinity,
+    totalDecksLifetime: Infinity,
   },
 }
 

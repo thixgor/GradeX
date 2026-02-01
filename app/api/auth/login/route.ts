@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { verifyPassword, createToken, setAuthCookie } from '@/lib/auth'
+import { verifyRecaptcha } from '@/lib/recaptcha'
 import { User } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -8,11 +9,19 @@ export const dynamic = 'force-dynamic'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { email, password } = body
+    const { email, password, recaptchaToken } = body
 
     if (!email || !password) {
       return NextResponse.json(
         { error: 'Email e senha são obrigatórios' },
+        { status: 400 }
+      )
+    }
+
+    const recaptchaResult = await verifyRecaptcha(recaptchaToken)
+    if (!recaptchaResult.success) {
+      return NextResponse.json(
+        { error: recaptchaResult.error || 'Falha na verificação do reCAPTCHA' },
         { status: 400 }
       )
     }

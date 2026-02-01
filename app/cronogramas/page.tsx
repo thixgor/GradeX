@@ -2,19 +2,22 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ThemeToggle } from '@/components/theme-toggle'
-import { Logo } from '@/components/logo'
 import { ProgressRing } from '@/components/progress-ring'
-import { ArrowLeft, Plus, Calendar, Download, Edit2, Trash2 } from 'lucide-react'
+import { LimitWarning } from '@/components/limit-warning'
+import { Plus, Calendar, Download, Edit2, Trash2 } from 'lucide-react'
 import { CronogramaGerado } from '@/lib/cronograma-types'
+import { AccountType } from '@/lib/types'
+import { getCronogramasLimit } from '@/lib/tier-limits'
 
 interface User {
   id: string
   email: string
   name: string
   role: 'admin' | 'user'
+  accountType?: AccountType
 }
 
 export default function CronogramasPage() {
@@ -22,6 +25,8 @@ export default function CronogramasPage() {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [cronogramas, setCronogramas] = useState<CronogramaGerado[]>([])
+  const [accountType, setAccountType] = useState<AccountType>('gratuito')
+  const [userRole, setUserRole] = useState<'admin' | 'user'>('user')
 
   useEffect(() => {
     checkAuth()
@@ -36,6 +41,8 @@ export default function CronogramasPage() {
       }
       const data = await res.json()
       setUser(data.user)
+      setAccountType(data.user?.accountType || 'gratuito')
+      setUserRole(data.user?.role || 'user')
       loadCronogramas()
     } catch (error) {
       router.push('/auth/login')
@@ -261,33 +268,8 @@ export default function CronogramasPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted">
-      {/* Header */}
-      <header className="glass sticky top-0 z-50 border-b w-full">
-        <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3">
-          <div className="flex items-center justify-between gap-2 sm:gap-4 min-h-[56px] sm:min-h-[64px]">
-            <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => router.push('/')}
-                className="shrink-0 h-8 w-8 sm:h-9 sm:w-9"
-              >
-                <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
-              </Button>
-              <h1 className="text-lg sm:text-xl font-bold flex items-center gap-2 truncate">
-                <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-primary shrink-0" />
-                <span className="hidden sm:inline">Cronogramas Personalizados</span>
-                <span className="sm:hidden">Cronogramas</span>
-              </h1>
-            </div>
-            <ThemeToggle />
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8 max-w-6xl">
+    <AppShell headerTitle="Cronogramas" headerSubtitle="Organize seus estudos">
+      <div className="container mx-auto px-4 py-8 max-w-5xl">
         {/* Hero Section */}
         <div className="mb-12 text-center space-y-4">
           <h2 className="font-heading text-4xl md:text-5xl font-bold">
@@ -301,16 +283,29 @@ export default function CronogramasPage() {
           </p>
         </div>
 
+        {/* Limit Warning for Free Users */}
+        {user && userRole !== 'admin' && accountType === 'gratuito' && (
+          <LimitWarning
+            current={cronogramas.length}
+            max={getCronogramasLimit(accountType)}
+            itemName="Cronogramas"
+          />
+        )}
+
         {/* CTA Button */}
         <div className="flex justify-center mb-12">
           <Button
             onClick={() => router.push('/cronogramas/criar')}
             size="lg"
+            disabled={userRole !== 'admin' && accountType === 'gratuito' && cronogramas.length >= getCronogramasLimit(accountType)}
             className="bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90"
           >
             <Plus className="mr-2 h-5 w-5" />
             Criar Novo Cronograma
           </Button>
+          {userRole !== 'admin' && accountType === 'gratuito' && cronogramas.length >= getCronogramasLimit(accountType) && (
+            <p className="text-sm text-red-600 mt-2">Limite de {getCronogramasLimit(accountType)} cronogramas atingido</p>
+          )}
         </div>
 
         {/* Cronogramas List */}
@@ -423,7 +418,7 @@ export default function CronogramasPage() {
             })}
           </div>
         )}
-      </main>
-    </div>
+      </div>
+    </AppShell>
   )
 }

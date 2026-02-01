@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ThemeToggle } from '@/components/theme-toggle'
-import { ArrowLeft, Check, Zap, Crown, Infinity, Sparkles, AlertCircle, MessageCircle } from 'lucide-react'
+import { Check, Zap, Crown, Infinity, Sparkles, AlertCircle, MessageCircle } from 'lucide-react'
+import { AppShell } from '@/components/app-shell'
 import Image from 'next/image'
 import { PremiumLogo } from '@/components/premium-logo'
 import { PlanConfig } from '@/lib/types'
@@ -310,32 +310,12 @@ export default function BuyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted">
-      {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={() => router.push('/')}
-            className="hover:bg-muted"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold">Planos Premium</h1>
-            <p className="text-sm text-muted-foreground">Escolha o plano perfeito para você</p>
-          </div>
-          <ThemeToggle />
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-12 max-w-7xl">
+    <AppShell headerTitle="Planos Premium" headerSubtitle="Escolha o plano perfeito para você">
+      <div className="min-h-screen bg-gradient-to-br from-background to-muted p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
         {/* Hero Section */}
         <div className="text-center mb-12">
           <div className="flex justify-center mb-6">
-            <PremiumLogo />
+            <PremiumLogo size="xl" />
           </div>
           <h2 className="text-4xl font-bold mb-4 flex items-center justify-center gap-2">
             <Sparkles className="h-8 w-8 text-yellow-500" />
@@ -352,24 +332,24 @@ export default function BuyPage() {
 
         {/* Payment Success Alert */}
         {paymentSuccess && (
-          <Card className="mb-12 border-2 border-blue-500 bg-blue-50 dark:bg-blue-950 animate-in fade-in slide-in-from-top-2 duration-500">
+          <Card className="mb-12 border-2 border-[#468152] bg-[#468152]/10 dark:bg-[#468152]/20 animate-in fade-in slide-in-from-top-2 duration-500">
             <CardContent className="pt-6">
               <div className="flex items-start gap-4">
-                <Check className="h-6 w-6 text-blue-600 flex-shrink-0 mt-0.5 animate-bounce" />
+                <Check className="h-6 w-6 text-[#468152] flex-shrink-0 mt-0.5 animate-bounce" />
                 <div className="flex-1">
-                  <h3 className="font-bold text-lg text-blue-900 dark:text-blue-100 mb-2">
+                  <h3 className="font-bold text-lg text-[#468152] dark:text-[#468152] mb-2">
                     🎉 Parabéns! Seu Pagamento foi Aprovado!
                   </h3>
-                  <p className="text-blue-800 dark:text-blue-200 mb-3">
+                  <p className="text-[#468152]/90 mb-3">
                     Você adquiriu o plano <strong>Premium {successPlan ? successPlan.charAt(0).toUpperCase() + successPlan.slice(1) : ''}</strong> com sucesso!
                   </p>
-                  <p className="text-sm text-blue-700 dark:text-blue-300 mb-4">
+                  <p className="text-sm text-[#468152]/80 mb-4">
                     Agora você tem acesso a todos os recursos Premium, incluindo <strong>20 provas pessoais por dia</strong>. O comprovante foi enviado pelo Stripe.
                   </p>
                   <div className="flex gap-3">
                     <Button 
                       onClick={() => router.push('/profile')}
-                      className="bg-blue-600 hover:bg-blue-700"
+                      className="bg-[#468152] hover:bg-[#468152]/90"
                     >
                       Ir para Meu Perfil
                     </Button>
@@ -698,7 +678,7 @@ export default function BuyPage() {
             </Card>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </AppShell>
   )
 }

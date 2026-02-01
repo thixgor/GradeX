@@ -6,10 +6,9 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { ThemeToggle } from '@/components/theme-toggle'
 import { ToastAlert } from '@/components/ui/toast-alert'
-import { BanChecker } from '@/components/ban-checker'
-import { ArrowLeft, Plus, MessageSquare, FileText, Tag, User, Calendar, Edit2, Lock, Search, Crown, ChevronDown } from 'lucide-react'
+import { AppShell } from '@/components/app-shell'
+import { Plus, MessageSquare, FileText, Tag, User, Calendar, Edit2, Lock, Search, Crown, ChevronDown } from 'lucide-react'
 import { ForumPost, ForumType, ForumTopic, AccountType, ForumPostCreationFreezeMode } from '@/lib/types'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
@@ -394,8 +393,12 @@ export default function ForumPage() {
         </CardHeader>
         <CardContent>
           <div
-            className="prose prose-sm dark:prose-invert line-clamp-3"
-            dangerouslySetInnerHTML={{ __html: post.content }}
+            className="prose prose-sm dark:prose-invert line-clamp-2 max-h-12 overflow-hidden"
+            dangerouslySetInnerHTML={{
+              __html: post.content.length > 200
+                ? post.content.substring(0, 200).replace(/<[^>]*$/, '') + '...'
+                : post.content
+            }}
           />
 
           {post.tags.length > 0 && (
@@ -504,59 +507,22 @@ export default function ForumPage() {
       }
 
       return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
-      <BanChecker />
-
-      {/* Liquid Glass Header */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/10 dark:bg-black/10 border-b border-white/20 dark:border-white/10 shadow-lg">
-        <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4">
-          <div className="flex items-center justify-between gap-2 sm:gap-4">
-            <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => router.push('/')}
-                className="shrink-0 h-8 w-8 sm:h-9 sm:w-9 hover:bg-white/20 dark:hover:bg-white/10 transition-colors"
-              >
-                <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
-              </Button>
-              <div className="min-w-0 flex-1">
-                <h1 className="text-lg sm:text-xl md:text-2xl font-bold truncate bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Fóruns</h1>
-                <p className="text-xs sm:text-sm text-muted-foreground truncate">
-                  Discussões e Materiais
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              {userRole === 'admin' && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => router.push('/admin/forum-topics')}
-                  className="hidden sm:flex text-xs bg-white/10 dark:bg-white/5 border-white/20 dark:border-white/10 hover:bg-white/20 dark:hover:bg-white/10 backdrop-blur-sm transition-all"
-                  title="Gerenciar Tópicos"
-                >
-                  ⚙️ Tópicos
-                </Button>
-              )}
-              {userRole === 'admin' && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => router.push('/admin/forum-topics')}
-                  className="sm:hidden h-8 w-8 hover:bg-white/20 dark:hover:bg-white/10 transition-colors"
-                  title="Gerenciar Tópicos"
-                >
-                  ⚙️
-                </Button>
-              )}
-              <ThemeToggle />
-            </div>
+    <AppShell headerTitle="Fóruns" headerSubtitle="Discussões e Materiais">
+      <div className="container mx-auto px-4 py-8">
+        {/* Admin Topic Management Button */}
+        {userRole === 'admin' && (
+          <div className="flex justify-end mb-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => router.push('/admin/forum-topics')}
+              className="text-xs"
+              title="Gerenciar Tópicos"
+            >
+              Gerenciar Tópicos
+            </Button>
           </div>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-4 py-8">
+        )}
         {userRole === 'admin' && (
           <Card className="mb-6 backdrop-blur-xl bg-white/10 dark:bg-white/5 border-white/20 dark:border-white/10">
             <CardHeader className="pb-3">
@@ -847,7 +813,6 @@ export default function ForumPage() {
             )}
           </TabsContent>
         </Tabs>
-      </main>
 
       {/* Modal de Material Premium Bloqueado */}
       <Dialog open={showPremiumModal} onOpenChange={setShowPremiumModal}>
@@ -907,7 +872,8 @@ export default function ForumPage() {
         message={toastMessage}
         type={toastType}
       />
-    </div>
+      </div>
+    </AppShell>
       )
     })()
   )

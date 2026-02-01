@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { hashPassword, createToken, setAuthCookie } from '@/lib/auth'
+import { verifyRecaptcha } from '@/lib/recaptcha'
 import { User } from '@/lib/types'
 import { ADMIN_EMAILS } from '@/lib/constants'
 
@@ -9,11 +10,19 @@ export const dynamic = 'force-dynamic'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { email, password, name, cpf, dateOfBirth, isAfyaMedicineStudent, afyaUnit, role = 'user' } = body
+    const { email, password, name, cpf, dateOfBirth, isAfyaMedicineStudent, afyaUnit, role = 'user', recaptchaToken } = body
 
     if (!email || !password || !name || !cpf || !dateOfBirth) {
       return NextResponse.json(
         { error: 'Todos os campos são obrigatórios' },
+        { status: 400 }
+      )
+    }
+
+    const recaptchaResult = await verifyRecaptcha(recaptchaToken)
+    if (!recaptchaResult.success) {
+      return NextResponse.json(
+        { error: recaptchaResult.error || 'Falha na verificação do reCAPTCHA' },
         { status: 400 }
       )
     }
@@ -25,7 +34,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Valida se o email pode criar conta de administrador
     if (role === 'admin' && !ADMIN_EMAILS.includes(email.toLowerCase().trim())) {
       return NextResponse.json(
         { error: 'Você não tem permissão para criar conta de administrador' },

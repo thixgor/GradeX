@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { Exam } from '@/lib/types'
+import { getPersonalExamsLifetimeLimit } from '@/lib/tier-limits'
 import { ObjectId } from 'mongodb'
 
 export const dynamic = 'force-dynamic'
@@ -27,16 +28,16 @@ export async function GET(request: NextRequest) {
     // - Suas próprias provas pessoais (isPersonalExam = true E createdBy = userId)
     query = {
       $or: [
-        { 
-          isHidden: false, 
+        {
+          isHidden: false,
           $or: [
-            { isPersonalExam: false }, 
+            { isPersonalExam: false },
             { isPersonalExam: { $exists: false } }
-          ] 
+          ]
         },
-        { 
-          isPersonalExam: true, 
-          createdBy: session.userId 
+        {
+          isPersonalExam: true,
+          createdBy: session.userId
         },
       ],
     }
@@ -90,7 +91,7 @@ async function resetDailyLimitsIfNeeded(db: any, userId: string, accountType: st
 
   if (needsReset) {
     const now = new Date()
-    
+
     // Determinar limite baseado no tipo de conta
     const limits: Record<string, number> = {
       gratuito: 3,
@@ -207,9 +208,9 @@ export async function POST(request: NextRequest) {
       if (!tempUser) {
         return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
       }
-      
+
       const accountType = tempUser.accountType || 'gratuito'
-      
+
       // Resetar limites se necessário
       const user = await resetDailyLimitsIfNeeded(db, session.userId, accountType)
       if (!user) {
@@ -231,6 +232,30 @@ export async function POST(request: NextRequest) {
       }
       const dailyExamsLimit = dailyExamsLimits[accountType] || 3
       const aiQuestionsPerExamLimit = aiQuestionsLimits[accountType] || 5
+
+      // Validar limite vitalício de provas pessoais para usuários gratuitos
+      const personalExamsLifetimeLimit = getPersonalExamsLifetimeLimit(accountType)
+      if (personalExamsLifetimeLimit !== Infinity) {
+        // Usar contador vitalício se existir, senão contar documentos ativos como fallback
+        let existingPersonalExams = user.totalPersonalExamsCreated
+
+        if (typeof existingPersonalExams !== 'number') {
+          existingPersonalExams = await examsCollection.countDocuments({
+            isPersonalExam: true,
+            createdBy: session.userId
+          })
+        }
+
+        if (existingPersonalExams >= personalExamsLifetimeLimit) {
+          return NextResponse.json({
+            error: `Limite vitalício de provas pessoais atingido (${personalExamsLifetimeLimit} no total). Faça upgrade para Premium para criar mais provas.`,
+            requiresUpgrade: true,
+            upgradeUrl: '/buy',
+            limit: personalExamsLifetimeLimit,
+            used: existingPersonalExams
+          }, { status: 403 })
+        }
+      }
 
       // Se admin setou um valor de "restantes", usar esse para calcular se pode criar
       let examsRemaining = dailyExamsLimit - dailyExamsUsed
@@ -263,9 +288,10 @@ export async function POST(request: NextRequest) {
         $inc: {
           dailyPersonalExamsCreated: 1,
           dailyAiQuestionsUsed: aiQuestionsCount,
+          totalPersonalExamsCreated: 1,
         },
       }
-      
+
       // Se admin setou um valor de "restantes", decrementar esse valor também
       if (user.dailyPersonalExamsRemaining !== undefined) {
         updateData.$inc.dailyPersonalExamsRemaining = -1

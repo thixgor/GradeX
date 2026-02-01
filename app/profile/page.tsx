@@ -4,10 +4,11 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ThemeToggle } from '@/components/theme-toggle'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { BanChecker } from '@/components/ban-checker'
-import { ArrowLeft, CheckCircle, Clock, FileText, Download, Printer, ClipboardList, Trophy, BookOpen, Crown, Timer, Sparkles, Phone, Mail, XCircle, Ticket, AlertTriangle } from 'lucide-react'
+import { AppShell } from '@/components/app-shell'
+import { PlanLimitsCard } from '@/components/plan-limits-card'
+import { CheckCircle, Clock, FileText, Download, Printer, ClipboardList, Trophy, BookOpen, Crown, Timer, Sparkles, Phone, Mail, XCircle, Ticket, AlertTriangle } from 'lucide-react'
 import { generateGabaritoPDF, downloadPDF, generateExamPDF, generateStudentAnswersPDF } from '@/lib/pdf-generator'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
@@ -64,6 +65,16 @@ export default function ProfilePage() {
   const [trialExpiresAt, setTrialExpiresAt] = useState<Date | null>(null)
   const [questionsAnswered, setQuestionsAnswered] = useState(0)
   const [examsCompleted, setExamsCompleted] = useState(0)
+  const [questionsAnsweredExams, setQuestionsAnsweredExams] = useState(0)
+  const [questionsAnsweredBank, setQuestionsAnsweredBank] = useState(0)
+  const [questionsCorrectBank, setQuestionsCorrectBank] = useState(0)
+  const [questionsWrongBank, setQuestionsWrongBank] = useState(0)
+  const [bankAccuracyRate, setBankAccuracyRate] = useState(0)
+  const [userTotals, setUserTotals] = useState({
+    totalCronogramasCreated: 0,
+    totalFlashcardsCreated: 0,
+    totalPersonalExamsCreated: 0,
+  })
   const [toastOpen, setToastOpen] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
   const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false)
@@ -97,9 +108,6 @@ export default function ProfilePage() {
 
   async function loadUserData() {
     try {
-      // Verificar expiração de plano primeiro
-      await fetch('/api/user/check-plan-expiration')
-
       const res = await fetch('/api/auth/me')
       if (res.ok) {
         const data = await res.json()
@@ -109,6 +117,11 @@ export default function ProfilePage() {
         if (data.user?.trialExpiresAt) {
           setTrialExpiresAt(new Date(data.user.trialExpiresAt))
         }
+        setUserTotals({
+          totalCronogramasCreated: data.user?.totalCronogramasCreated || 0,
+          totalFlashcardsCreated: data.user?.totalFlashcardsCreated || 0,
+          totalPersonalExamsCreated: data.user?.totalPersonalExamsCreated || 0,
+        })
       }
     } catch (error) {
       console.error('Erro ao carregar dados do usuário:', error)
@@ -122,6 +135,11 @@ export default function ProfilePage() {
         const data = await res.json()
         setQuestionsAnswered(data.questionsAnswered || 0)
         setExamsCompleted(data.examsCompleted || 0)
+        setQuestionsAnsweredExams(data.questionsAnsweredExams || 0)
+        setQuestionsAnsweredBank(data.questionsAnsweredBank || 0)
+        setQuestionsCorrectBank(data.questionsCorrectBank || 0)
+        setQuestionsWrongBank(data.questionsWrongBank || 0)
+        setBankAccuracyRate(data.bankAccuracyRate || 0)
       }
     } catch (error) {
       console.error('Erro ao carregar estatísticas:', error)
@@ -365,68 +383,169 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted">
-      {/* Verificador de Banimento */}
+    <AppShell headerTitle="Meu Perfil" headerSubtitle={userName}>
       <BanChecker />
-
-      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4">
-          <div className="flex items-center justify-between gap-2 sm:gap-4">
-            <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => router.push('/')}
-                className="shrink-0 h-8 w-8 sm:h-9 sm:w-9"
-              >
-                <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
-              </Button>
-              <div className="min-w-0 flex-1">
-                <h1 className="text-lg sm:text-xl md:text-2xl font-bold truncate">Meu Perfil</h1>
-                <p className="text-xs sm:text-sm text-muted-foreground truncate">{userName}</p>
-              </div>
-            </div>
-            <ThemeToggle />
-          </div>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-4 py-8">
-        {/* Statistics Section */}
-        <Card className="mb-8 border-2">
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span className="flex items-center gap-2">
-                <Trophy className="h-6 w-6 text-yellow-500" />
-                Estatísticas do Perfil
-              </span>
-              {getAccountTypeBadge()}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div className="flex items-center gap-4 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
-                <div className="p-3 bg-blue-500 rounded-full">
-                  <BookOpen className="h-6 w-6 text-white" />
+      <div className="container mx-auto px-4 py-8 max-w-5xl space-y-6">
+        {/* Header Card com Badge */}
+        <Card className="border-0 bg-gradient-to-r from-[#468152] to-[#E2A43E] text-white overflow-hidden">
+          <CardContent className="py-8">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="flex items-center gap-4">
+                <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                  <Trophy className="h-10 w-10 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Questões Respondidas</p>
-                  <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">{questionsAnswered}</p>
+                  <h2 className="text-2xl md:text-3xl font-bold">{userName}</h2>
+                  <div className="mt-2">{getAccountTypeBadge()}</div>
                 </div>
               </div>
-              <div className="flex items-center gap-4 p-4 bg-green-50 dark:bg-green-950 rounded-lg">
-                <div className="p-3 bg-green-500 rounded-full">
+              <div className="text-center md:text-right">
+                <p className="text-white/80 text-sm">Total de Questões</p>
+                <p className="text-5xl font-bold">{questionsAnswered}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Statistics Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Provas Realizadas */}
+          <Card className="backdrop-blur-xl bg-white/15 dark:bg-white/8 border-white/20 dark:border-white/10">
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl shadow-lg">
                   <FileText className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Provas Realizadas</p>
-                  <p className="text-3xl font-bold text-green-600 dark:text-green-400">{examsCompleted}</p>
+                  <p className="text-sm text-muted-foreground">Provas</p>
+                  <p className="text-3xl font-bold">{examsCompleted}</p>
                 </div>
               </div>
-            </div>
+            </CardContent>
+          </Card>
 
-            {/* Upgrade/Activate Buttons */}
-            <div className="flex flex-wrap gap-3">
+          {/* Questões em Provas */}
+          <Card className="backdrop-blur-xl bg-white/15 dark:bg-white/8 border-white/20 dark:border-white/10">
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg">
+                  <ClipboardList className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Questões (Provas)</p>
+                  <p className="text-3xl font-bold">{questionsAnsweredExams}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Questões no Banco */}
+          <Card className="backdrop-blur-xl bg-white/15 dark:bg-white/8 border-white/20 dark:border-white/10">
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl shadow-lg">
+                  <BookOpen className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Banco de Questões</p>
+                  <p className="text-3xl font-bold">{questionsAnsweredBank}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Taxa de Acerto */}
+          <Card className="backdrop-blur-xl bg-white/15 dark:bg-white/8 border-white/20 dark:border-white/10">
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-4">
+                <div className={`p-3 rounded-xl shadow-lg ${
+                  bankAccuracyRate >= 70
+                    ? 'bg-gradient-to-br from-green-500 to-emerald-600'
+                    : bankAccuracyRate >= 50
+                      ? 'bg-gradient-to-br from-yellow-500 to-orange-600'
+                      : 'bg-gradient-to-br from-red-500 to-rose-600'
+                }`}>
+                  {bankAccuracyRate >= 70 ? (
+                    <CheckCircle className="h-6 w-6 text-white" />
+                  ) : (
+                    <Trophy className="h-6 w-6 text-white" />
+                  )}
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Taxa de Acerto</p>
+                  <p className="text-3xl font-bold">{bankAccuracyRate}%</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Plan Limits Card */}
+        {!loading && (
+          <PlanLimitsCard
+            accountType={accountType}
+            isAdmin={userRole === 'admin'}
+            cronogramasCreated={userTotals.totalCronogramasCreated}
+            flashcardsCreated={userTotals.totalFlashcardsCreated}
+            personalExamsCreated={userTotals.totalPersonalExamsCreated}
+            showUpgradeButton
+          />
+        )}
+
+        {/* Detalhamento do Banco de Questões */}
+        {questionsAnsweredBank > 0 && (
+          <Card className="backdrop-blur-xl bg-white/15 dark:bg-white/8 border-white/20 dark:border-white/10">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <BookOpen className="h-5 w-5 text-purple-500" />
+                Desempenho no Banco de Questões
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="flex items-center gap-3 p-4 bg-green-50 dark:bg-green-950/50 rounded-xl">
+                  <CheckCircle className="h-8 w-8 text-green-600" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Acertos</p>
+                    <p className="text-2xl font-bold text-green-600">{questionsCorrectBank}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-4 bg-red-50 dark:bg-red-950/50 rounded-xl">
+                  <XCircle className="h-8 w-8 text-red-600" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Erros</p>
+                    <p className="text-2xl font-bold text-red-600">{questionsWrongBank}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-4 bg-blue-50 dark:bg-blue-950/50 rounded-xl">
+                  <Trophy className="h-8 w-8 text-blue-600" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Aproveitamento</p>
+                    <p className="text-2xl font-bold text-blue-600">{bankAccuracyRate}%</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Barra de progresso visual */}
+              <div className="mt-4">
+                <div className="h-3 bg-muted rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-green-500 to-emerald-600 transition-all duration-500"
+                    style={{ width: `${bankAccuracyRate}%` }}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground mt-2 text-center">
+                  Continue praticando para melhorar seu desempenho!
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Upgrade/Activate Buttons */}
+        <Card className="backdrop-blur-xl bg-white/15 dark:bg-white/8 border-white/20 dark:border-white/10">
+          <CardContent className="py-6">
+            <div className="flex flex-wrap gap-3 justify-center">
               {userRole !== 'admin' && accountType === 'gratuito' && (
                 <Button
                   onClick={() => setUpgradeDialogOpen(true)}
@@ -456,6 +575,14 @@ export default function ProfilePage() {
                   Cancelar Assinatura
                 </Button>
               )}
+              <Button
+                onClick={() => router.push('/banco-questoes')}
+                variant="outline"
+                className="border-purple-500 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-950"
+              >
+                <BookOpen className="h-4 w-4 mr-2" />
+                Ir para Banco de Questões
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -629,7 +756,6 @@ export default function ProfilePage() {
             ))}
           </div>
         )}
-      </main>
 
       <ToastAlert
         open={toastOpen}
@@ -809,6 +935,7 @@ export default function ProfilePage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+      </div>
+    </AppShell>
   )
 }

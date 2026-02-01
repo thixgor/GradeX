@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
+import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { ThemeToggle } from '@/components/theme-toggle'
 import { ArrowLeft, Send, Trash2, Lock, Globe, Video, Zap, Download, CheckCircle2 } from 'lucide-react'
 import { AulaPostagem, AulaComentario } from '@/lib/types'
 import { VideoWatermark } from '@/components/video-watermark'
@@ -70,6 +70,18 @@ export default function AulaDetalhePage() {
     }
   }
 
+  async function registrarVisita(aulaId: string) {
+    try {
+      await fetch('/api/user/ultima-aula', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ aulaId })
+      })
+    } catch (error) {
+      console.error('Erro ao registrar visita:', error)
+    }
+  }
+
   async function loadAula() {
     setAulaLoaded(false)
     setAulaLoading(true)
@@ -80,7 +92,10 @@ export default function AulaDetalhePage() {
         setAula(data.aula)
         setComentarios(data.aula.comentarios || [])
         setAulaConcluida(data.aula.usuariosConcluidos?.includes(user?.id) || false)
-        
+
+        // Registrar visita à aula
+        registrarVisita(aulaId)
+
         // Verificar acesso
         const isPremium = data.aula.visibilidade === 'premium'
         const userIsPremium = user?.accountType === 'premium'
@@ -91,7 +106,7 @@ export default function AulaDetalhePage() {
         const shouldHideUntilRelease = !!data.aula.ocultarAteLiberacao
         const isBlockedByDate = !liberadaPorData && !shouldHideUntilRelease
         setBloqueadaPorData(isBlockedByDate)
-        
+
         if (isPremium && !userIsPremium && !userIsAdmin && !userIsMonitor) {
           setTemAcesso(false)
         } else {
@@ -175,29 +190,34 @@ export default function AulaDetalhePage() {
 
   if (redirecting || authLoading || !user || aulaLoading || !aulaLoaded) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Carregando...</div>
-      </div>
+      <AppShell headerTitle="Carregando...">
+        <div className="min-h-[60vh] flex items-center justify-center">
+          <div className="text-lg">Carregando...</div>
+        </div>
+      </AppShell>
     )
   }
 
   if (!aula) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Card>
-          <CardContent className="pt-6">
-            <p className="text-lg mb-4">Aula não encontrada</p>
-            <Button onClick={() => router.push('/aulas')}>
-              Voltar para Aulas
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+      <AppShell headerTitle="Aula">
+        <div className="min-h-[60vh] flex items-center justify-center">
+          <Card>
+            <CardContent className="pt-6">
+              <p className="text-lg mb-4">Aula não encontrada</p>
+              <Button onClick={() => router.push('/aulas')}>
+                Voltar para Aulas
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </AppShell>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <AppShell headerTitle={aula.titulo} headerSubtitle={aula.tipo === 'ao-vivo' ? 'Ao Vivo' : 'Gravada'}>
+      <div className="min-h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       <style>{`
         @keyframes fadeInUp {
           from {
@@ -229,27 +249,24 @@ export default function AulaDetalhePage() {
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-emerald-600/5 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
       </div>
 
-      {/* Header */}
-      <header className="relative z-40 backdrop-blur-md bg-white/5 border-b border-emerald-500/20 sticky top-0 animate-fadeInUp">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between gap-4 flex-wrap">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => router.push('/aulas')}
-                className="shrink-0 text-white hover:bg-emerald-500/20 transition-colors"
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-              <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-white">{aula.titulo}</h1>
-              </div>
-            </div>
-            <ThemeToggle />
-          </div>
-        </div>
-      </header>
+      {/* Back button */}
+      <div className="container mx-auto px-4 pt-4">
+        <Button
+          variant="ghost"
+          onClick={() => {
+            // Tentar voltar pela history para manter a cascata aberta
+            if (window.history.length > 1) {
+              router.back()
+            } else {
+              router.push('/aulas')
+            }
+          }}
+          className="text-white hover:bg-emerald-500/20 transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Voltar para Aulas
+        </Button>
+      </div>
 
       {/* Main Content */}
       <main className="relative z-30 container mx-auto px-4 py-8 max-w-5xl">
@@ -588,5 +605,6 @@ export default function AulaDetalhePage() {
         )}
       </main>
     </div>
+    </AppShell>
   )
 }

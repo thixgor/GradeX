@@ -139,13 +139,36 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
+    // Limite de caracteres para usuários não-admin
+    const MAX_TITLE_LENGTH = 150
+    const MAX_CONTENT_LENGTH_ADMIN = 50000
+    const MAX_CONTENT_LENGTH_USER = 10000
+
+    if (title.length > MAX_TITLE_LENGTH) {
+      return NextResponse.json({
+        error: `Título muito longo. Máximo de ${MAX_TITLE_LENGTH} caracteres.`
+      }, { status: 400 })
+    }
+
+    const maxContentLength = isAdmin ? MAX_CONTENT_LENGTH_ADMIN : MAX_CONTENT_LENGTH_USER
+    if (content.length > maxContentLength) {
+      return NextResponse.json({
+        error: `Conteúdo muito longo. Máximo de ${maxContentLength} caracteres.`
+      }, { status: 400 })
+    }
+
+    // Converter quebras de linha em <br> para preservar formatação
+    const processedContent = content
+      .replace(/\r\n/g, '\n')
+      .replace(/\n/g, '<br>')
+
     const postsCollection = db.collection<ForumPost>('forum_posts')
 
     const newPost: ForumPost = {
       forumType,
       topicId: topicId || undefined,
       title,
-      content,
+      content: processedContent,
       authorId: session.userId,
       authorName: session.name,
       attachments: attachments || [],

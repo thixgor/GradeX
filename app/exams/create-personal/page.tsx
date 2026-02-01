@@ -6,7 +6,19 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { ArrowLeft, Loader2 } from 'lucide-react'
+import {
+  ArrowLeft,
+  ArrowRight,
+  Loader2,
+  Sparkles,
+  Clock,
+  ListChecks,
+  Zap,
+  MessageSquare,
+  CheckCircle2,
+  Crown,
+  Info
+} from 'lucide-react'
 
 interface User {
   id: string
@@ -16,16 +28,20 @@ interface User {
   accountType?: 'gratuito' | 'trial' | 'premium'
 }
 
+interface AccountLimits {
+  dailyExams: number
+  aiQuestionsPerExam: number
+}
+
 export default function CreatePersonalExamPage() {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [creating, setCreating] = useState(false)
-  const [personalExamsEnabled, setPersonalExamsEnabled] = useState(true)
 
   // Form state
   const [title, setTitle] = useState('')
-  const [numberOfAlternatives, setNumberOfAlternatives] = useState(4)
+  const [numberOfAlternatives, setNumberOfAlternatives] = useState(5)
   const [scoringMethod, setScoringMethod] = useState<'normal' | 'tri'>('normal')
   const [totalPoints, setTotalPoints] = useState(100)
   const [navigationMode, setNavigationMode] = useState<'paginated' | 'scroll'>('paginated')
@@ -45,8 +61,7 @@ export default function CreatePersonalExamPage() {
       }
       const data = await res.json()
       setUser(data.user)
-      
-      // Verificar se provas pessoais estão habilitadas
+
       const settingsRes = await fetch('/api/admin/settings')
       if (settingsRes.ok) {
         const settings = await settingsRes.json()
@@ -63,14 +78,24 @@ export default function CreatePersonalExamPage() {
     }
   }
 
-  const getAccountLimits = () => {
+  const getAccountLimits = (): AccountLimits => {
     const accountType = user?.accountType || 'gratuito'
     const limits = {
-      gratuito: { dailyExams: 3, aiQuestionsPerExam: 5 },
-      trial: { dailyExams: 8, aiQuestionsPerExam: 10 },
-      premium: { dailyExams: 10, aiQuestionsPerExam: 20 },
+      gratuito: { dailyExams: 5, aiQuestionsPerExam: 5 },
+      trial: { dailyExams: 10, aiQuestionsPerExam: 10 },
+      premium: { dailyExams: 25, aiQuestionsPerExam: 20 },
     }
     return limits[accountType]
+  }
+
+  const getAccountTypeLabel = () => {
+    const accountType = user?.accountType || 'gratuito'
+    const labels = {
+      gratuito: { label: 'Gratuito', color: 'text-gray-600 bg-gray-100 dark:bg-gray-800' },
+      trial: { label: 'Trial', color: 'text-blue-600 bg-blue-100 dark:bg-blue-900/50' },
+      premium: { label: 'Premium', color: 'text-yellow-600 bg-yellow-100 dark:bg-yellow-900/50' },
+    }
+    return labels[accountType]
   }
 
   const handleCreateExam = async () => {
@@ -84,7 +109,6 @@ export default function CreatePersonalExamPage() {
       return
     }
 
-    // Feedback imediato só funciona em modo paginado
     if (feedbackMode === 'immediate' && navigationMode !== 'paginated') {
       alert('Feedback imediato só funciona em modo de navegação paginada')
       return
@@ -92,7 +116,6 @@ export default function CreatePersonalExamPage() {
 
     setCreating(true)
     try {
-      // Armazenar dados da prova no sessionStorage para usar depois
       const examData = {
         title,
         numberOfAlternatives,
@@ -104,10 +127,9 @@ export default function CreatePersonalExamPage() {
         isPersonalExam: true,
         feedbackMode,
       }
-      
+
       sessionStorage.setItem('pendingExamData', JSON.stringify(examData))
-      
-      // Gerar um ID temporário para a página de geração
+
       const tempId = 'temp-' + Date.now()
       router.push(`/exams/personal/${tempId}/generate-questions`)
     } catch (error) {
@@ -121,96 +143,181 @@ export default function CreatePersonalExamPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }
 
   const limits = getAccountLimits()
+  const accountType = getAccountTypeLabel()
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <Button
-          variant="ghost"
-          onClick={() => router.back()}
-          className="mb-6"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Voltar
-        </Button>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-purple-500/5">
+      {/* Header */}
+      <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-lg border-b">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <Button
+              variant="ghost"
+              onClick={() => router.back()}
+              className="gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Voltar
+            </Button>
 
-        <div className="max-w-2xl mx-auto">
-          <Card>
-            <CardHeader>
-              <CardTitle>Criar Prova Pessoal</CardTitle>
-              <CardDescription>
-                Crie uma prova personalizada com questões geradas por IA
-              </CardDescription>
-            </CardHeader>
+            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${accountType.color}`}>
+              {user?.accountType === 'premium' && <Crown className="h-4 w-4" />}
+              {accountType.label}
+            </div>
+          </div>
+        </div>
+      </div>
 
-            <CardContent className="space-y-6">
-              {/* Informações da Conta */}
-              <div className="bg-muted p-4 rounded-lg">
-                <p className="text-sm">
-                  <strong>Tipo de Conta:</strong> {user?.accountType || 'Gratuito'}
-                </p>
-                <p className="text-sm">
-                  <strong>Limite Diário:</strong> {limits.dailyExams} provas/dia
-                </p>
-                <p className="text-sm">
-                  <strong>Questões IA por Prova:</strong> até {limits.aiQuestionsPerExam}
-                </p>
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        {/* Title Section */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 text-white mb-4 shadow-lg shadow-purple-500/30">
+            <Sparkles className="h-8 w-8" />
+          </div>
+          <h1 className="text-3xl font-bold mb-2">Criar Prova Pessoal</h1>
+          <p className="text-muted-foreground max-w-md mx-auto">
+            Configure sua prova personalizada com questões geradas por IA
+          </p>
+        </div>
+
+        {/* Account Limits Info */}
+        <Card className="mb-8 border-purple-200 dark:border-purple-800 bg-gradient-to-r from-purple-50 to-transparent dark:from-purple-950/30 dark:to-transparent">
+          <CardContent className="py-4">
+            <div className="flex flex-wrap items-center justify-center gap-6 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-lg bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center">
+                  <ListChecks className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs">
+                    {user?.accountType === 'gratuito' ? 'Limite Total' : 'Provas por dia'}
+                  </p>
+                  <p className="font-semibold">{limits.dailyExams}</p>
+                </div>
               </div>
-
-              {/* Título */}
-              <div className="space-y-2">
-                <Label htmlFor="title">Título da Prova *</Label>
-                <Input
-                  id="title"
-                  placeholder="Ex: Simulado de Matemática"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  disabled={creating}
-                />
+              <div className="h-8 w-px bg-border hidden sm:block" />
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-lg bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center">
+                  <Zap className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs">Questões IA por prova</p>
+                  <p className="font-semibold">até {limits.aiQuestionsPerExam}</p>
+                </div>
               </div>
-
-              {/* Alternativas por Questão */}
-              <div className="space-y-2">
-                <Label htmlFor="alternatives">Alternativas por Questão *</Label>
-                <select
-                  id="alternatives"
-                  value={numberOfAlternatives}
-                  onChange={(e) => setNumberOfAlternatives(parseInt(e.target.value))}
-                  disabled={creating}
-                  className="w-full px-3 py-2 border border-muted rounded-md bg-background text-sm"
-                >
-                  <option value="2">2 alternativas</option>
-                  <option value="3">3 alternativas</option>
-                  <option value="4">4 alternativas</option>
-                  <option value="5">5 alternativas</option>
-                </select>
-              </div>
-
-              {/* Método de Pontuação */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="scoring">Método de Pontuação *</Label>
-                  <select
-                    id="scoring"
-                    value={scoringMethod}
-                    onChange={(e) => setScoringMethod(e.target.value as 'normal' | 'tri')}
-                    disabled={creating}
-                    className="w-full px-3 py-2 border border-muted rounded-md bg-background text-sm"
+              {user?.accountType !== 'premium' && (
+                <>
+                  <div className="h-8 w-px bg-border hidden sm:block" />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => router.push('/buy')}
+                    className="gap-2 border-yellow-400 text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-900/20"
                   >
-                    <option value="normal">Normal</option>
-                    <option value="tri">TRI (1000 pontos)</option>
-                  </select>
+                    <Crown className="h-4 w-4" />
+                    Fazer Upgrade
+                  </Button>
+                </>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Main Form */}
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Left Column - Basic Settings */}
+          <div className="space-y-6">
+            <Card>
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Sparkles className="h-4 w-4 text-primary" />
+                  </div>
+                  Informações Básicas
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Title */}
+                <div className="space-y-2">
+                  <Label htmlFor="title" className="text-sm font-medium">
+                    Título da Prova <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="title"
+                    placeholder="Ex: Simulado de Fisiologia Cardíaca"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    disabled={creating}
+                    className="h-11"
+                  />
                 </div>
 
+                {/* Alternatives */}
+                <div className="space-y-2">
+                  <Label htmlFor="alternatives" className="text-sm font-medium">
+                    Alternativas por Questão
+                  </Label>
+                  <div className="grid grid-cols-4 gap-2">
+                    {[2, 3, 4, 5].map((num) => (
+                      <button
+                        key={num}
+                        type="button"
+                        onClick={() => setNumberOfAlternatives(num)}
+                        disabled={creating}
+                        className={`h-11 rounded-lg border-2 font-semibold transition-all ${numberOfAlternatives === num
+                            ? 'border-primary bg-primary text-primary-foreground'
+                            : 'border-muted hover:border-primary/50 bg-background'
+                          }`}
+                      >
+                        {num}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Scoring Method */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Método de Pontuação</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setScoringMethod('normal')}
+                      disabled={creating}
+                      className={`p-3 rounded-lg border-2 text-left transition-all ${scoringMethod === 'normal'
+                          ? 'border-primary bg-primary/5'
+                          : 'border-muted hover:border-primary/50'
+                        }`}
+                    >
+                      <p className="font-semibold text-sm">Normal</p>
+                      <p className="text-xs text-muted-foreground">Pontuação simples</p>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setScoringMethod('tri')}
+                      disabled={creating}
+                      className={`p-3 rounded-lg border-2 text-left transition-all ${scoringMethod === 'tri'
+                          ? 'border-primary bg-primary/5'
+                          : 'border-muted hover:border-primary/50'
+                        }`}
+                    >
+                      <p className="font-semibold text-sm">TRI</p>
+                      <p className="text-xs text-muted-foreground">1000 pontos</p>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Total Points (only for normal) */}
                 {scoringMethod === 'normal' && (
                   <div className="space-y-2">
-                    <Label htmlFor="points">Pontuação Total *</Label>
+                    <Label htmlFor="points" className="text-sm font-medium">
+                      Pontuação Total
+                    </Label>
                     <Input
                       id="points"
                       type="number"
@@ -218,97 +325,165 @@ export default function CreatePersonalExamPage() {
                       value={totalPoints}
                       onChange={(e) => setTotalPoints(parseInt(e.target.value) || 100)}
                       disabled={creating}
+                      className="h-11"
                     />
                   </div>
                 )}
-              </div>
+              </CardContent>
+            </Card>
+          </div>
 
-              {/* Modo de Navegação */}
-              <div className="space-y-2">
-                <Label htmlFor="navigation">Modo de Navegação *</Label>
-                <select
-                  id="navigation"
-                  value={navigationMode}
-                  onChange={(e) => setNavigationMode(e.target.value as 'paginated' | 'scroll')}
-                  disabled={creating || feedbackMode === 'immediate'}
-                  className="w-full px-3 py-2 border border-muted rounded-md bg-background text-sm"
-                >
-                  <option value="paginated">Paginada (uma questão por página)</option>
-                  <option value="scroll" disabled={feedbackMode === 'immediate'}>Scroll (todas as questões visíveis)</option>
-                </select>
-                {feedbackMode === 'immediate' && (
-                  <p className="text-xs text-muted-foreground">
-                    Feedback imediato requer modo de navegação paginado
-                  </p>
-                )}
-              </div>
+          {/* Right Column - Advanced Settings */}
+          <div className="space-y-6">
+            <Card>
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Clock className="h-4 w-4 text-primary" />
+                  </div>
+                  Configurações Avançadas
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Navigation Mode */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Modo de Navegação</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setNavigationMode('paginated')}
+                      disabled={creating || feedbackMode === 'immediate'}
+                      className={`p-3 rounded-lg border-2 text-left transition-all ${navigationMode === 'paginated'
+                          ? 'border-primary bg-primary/5'
+                          : 'border-muted hover:border-primary/50'
+                        }`}
+                    >
+                      <p className="font-semibold text-sm">Paginada</p>
+                      <p className="text-xs text-muted-foreground">Uma por vez</p>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setNavigationMode('scroll')}
+                      disabled={creating || feedbackMode === 'immediate'}
+                      className={`p-3 rounded-lg border-2 text-left transition-all ${navigationMode === 'scroll'
+                          ? 'border-primary bg-primary/5'
+                          : 'border-muted hover:border-primary/50'
+                        } ${feedbackMode === 'immediate' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      <p className="font-semibold text-sm">Scroll</p>
+                      <p className="text-xs text-muted-foreground">Todas visíveis</p>
+                    </button>
+                  </div>
+                </div>
 
-              {/* Tempo por Questão */}
-              <div className="space-y-2">
-                <Label htmlFor="time">Tempo Máximo por Questão (minutos)</Label>
-                <Input
-                  id="time"
-                  type="number"
-                  min="0"
-                  placeholder="0 = sem limite"
-                  value={timePerQuestion}
-                  onChange={(e) => setTimePerQuestion(parseInt(e.target.value) || 0)}
-                  disabled={creating}
-                />
-              </div>
+                {/* Time per Question */}
+                <div className="space-y-2">
+                  <Label htmlFor="time" className="text-sm font-medium flex items-center gap-2">
+                    Tempo por Questão (minutos)
+                    <span className="text-xs text-muted-foreground font-normal">(0 = sem limite)</span>
+                  </Label>
+                  <Input
+                    id="time"
+                    type="number"
+                    min="0"
+                    max="60"
+                    placeholder="0"
+                    value={timePerQuestion || ''}
+                    onChange={(e) => setTimePerQuestion(parseInt(e.target.value) || 0)}
+                    disabled={creating}
+                    className="h-11"
+                  />
+                </div>
 
-              {/* Modo de Feedback */}
-              <div className="space-y-2">
-                <Label htmlFor="feedback">Modo de Feedback *</Label>
-                <select
-                  id="feedback"
-                  value={feedbackMode}
-                  onChange={(e) => {
-                    const newFeedbackMode = e.target.value as 'immediate' | 'end'
-                    setFeedbackMode(newFeedbackMode)
-                    // Se selecionar feedback imediato, forçar modo paginado
-                    if (newFeedbackMode === 'immediate') {
-                      setNavigationMode('paginated')
-                    }
-                  }}
-                  disabled={creating}
-                  className="w-full px-3 py-2 border border-muted rounded-md bg-background text-sm"
-                >
-                  <option value="end">Respostas ao finalizar</option>
-                  <option value="immediate">Feedback imediato (após cada questão)</option>
-                </select>
-                <p className="text-xs text-muted-foreground">
-                  Feedback imediato requer modo de navegação paginado
-                </p>
-              </div>
+                {/* Feedback Mode */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium flex items-center gap-2">
+                    <MessageSquare className="h-4 w-4" />
+                    Modo de Feedback
+                  </Label>
+                  <div className="grid grid-cols-1 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setFeedbackMode('end')}
+                      disabled={creating}
+                      className={`p-3 rounded-lg border-2 text-left transition-all flex items-start gap-3 ${feedbackMode === 'end'
+                          ? 'border-primary bg-primary/5'
+                          : 'border-muted hover:border-primary/50'
+                        }`}
+                    >
+                      <CheckCircle2 className={`h-5 w-5 mt-0.5 ${feedbackMode === 'end' ? 'text-primary' : 'text-muted-foreground'}`} />
+                      <div>
+                        <p className="font-semibold text-sm">Ao Finalizar</p>
+                        <p className="text-xs text-muted-foreground">Respostas reveladas após terminar a prova</p>
+                      </div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFeedbackMode('immediate')
+                        setNavigationMode('paginated')
+                      }}
+                      disabled={creating}
+                      className={`p-3 rounded-lg border-2 text-left transition-all flex items-start gap-3 ${feedbackMode === 'immediate'
+                          ? 'border-primary bg-primary/5'
+                          : 'border-muted hover:border-primary/50'
+                        }`}
+                    >
+                      <Zap className={`h-5 w-5 mt-0.5 ${feedbackMode === 'immediate' ? 'text-primary' : 'text-muted-foreground'}`} />
+                      <div>
+                        <p className="font-semibold text-sm">Feedback Imediato</p>
+                        <p className="text-xs text-muted-foreground">Saber resposta após cada questão (requer paginada)</p>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-              {/* Botões */}
-              <div className="flex gap-3 pt-6">
-                <Button
-                  variant="outline"
-                  onClick={() => router.back()}
-                  disabled={creating}
-                  className="flex-1"
-                >
-                  Cancelar
-                </Button>
-                <Button
-                  onClick={handleCreateExam}
-                  disabled={creating || !title.trim()}
-                  className="flex-1"
-                >
-                  {creating ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Criando...
-                    </>
-                  ) : (
-                    'Próximo: Gerar Questões'
-                  )}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+            {/* Info Card */}
+            <Card className="border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-950/20">
+              <CardContent className="py-4">
+                <div className="flex gap-3">
+                  <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+                  <div className="text-sm">
+                    <p className="font-medium text-blue-700 dark:text-blue-300 mb-1">Dica</p>
+                    <p className="text-blue-600/80 dark:text-blue-400/80">
+                      Na próxima etapa, você poderá definir o tema e gerar questões com nossa IA avançada.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-3 mt-8 pt-6 border-t">
+          <Button
+            variant="outline"
+            onClick={() => router.back()}
+            disabled={creating}
+            className="sm:flex-1 h-12"
+          >
+            Cancelar
+          </Button>
+          <Button
+            onClick={handleCreateExam}
+            disabled={creating || !title.trim()}
+            className="sm:flex-1 h-12 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white shadow-lg shadow-purple-500/30"
+          >
+            {creating ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Preparando...
+              </>
+            ) : (
+              <>
+                Próximo: Gerar Questões
+                <ArrowRight className="h-4 w-4 ml-2" />
+              </>
+            )}
+          </Button>
         </div>
       </div>
     </div>

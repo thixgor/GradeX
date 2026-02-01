@@ -1,0 +1,181 @@
+// Arquivo temporário com as correções necessárias
+
+// Adicionar importação de Alert no topo do arquivo:
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+
+// Modificar a função loadInitialData:
+/*
+  async function loadInitialData() {
+    try {
+      // Carregar tipo de conta primeiro
+      const authRes = await fetch('/api/auth/me')
+      let userAccountType = 'gratuito'
+      if (authRes.ok) {
+        const authData = await authRes.json()
+        userAccountType = authData.user?.accountType || 'gratuito'
+        setAccountType(userAccountType as 'gratuito' | 'trial' | 'premium' | 'admin')
+      }
+
+      const res = await fetch('/api/banco/periodos')
+      if (res.status === 403) {
+        const data = await res.json()
+        if (data.requiresPremium) {
+          setRequiresPremium(true)
+          setLoading(false)
+          return
+        }
+      }
+      if (res.ok) {
+        const data = await res.json()
+        setPeriodos(data.periodos)
+        
+        // Se for usuário gratuito, mostrar seletor de período
+        if (userAccountType === 'gratuito') {
+          setShowPeriodSelector(true)
+          setLoading(false)
+          return
+        }
+      }
+
+      // Carregar estatísticas
+      const statsRes = await fetch('/api/banco/estatisticas')
+      if (statsRes.ok) {
+        const statsData = await statsRes.json()
+        setEstatisticas({
+          totalResolvidas: statsData.estatisticas.totalResolvidas,
+          percentualAcerto: statsData.estatisticas.percentualAcerto
+        })
+      }
+    } catch (error) {
+      console.error('Erro ao carregar dados:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+*/
+
+// Adicionar função handleSelectPeriodo após as funções de carregamento:
+/*
+  async function handleSelectPeriodo(periodoId: string) {
+    setSelectedPeriodo(periodoId)
+    setLoadingPeriodo(true)
+    setPeriodoError('')
+
+    try {
+      // Verificar se há pelo menos 5 questões no período selecionado
+      const params = new URLSearchParams()
+      params.set('periodoId', periodoId)
+      params.set('limit', '5')
+
+      const res = await fetch(`/api/banco/questoes?${params.toString()}`)
+      
+      if (!res.ok) {
+        const error = await res.json()
+        setPeriodoError(`Erro ao carregar questões: ${error.error}`)
+        setLoadingPeriodo(false)
+        return
+      }
+
+      const data = await res.json()
+
+      if (data.questoes.length < 5) {
+        setPeriodoError(`Desculpe, ainda não temos 5 questões suficientes para este período. Por favor, selecione outro período.`)
+        setLoadingPeriodo(false)
+        return
+      }
+
+      // Carregar as 5 questões
+      setQuestoes(data.questoes)
+      setFiltros({ periodoId })
+      setShowPeriodSelector(false)
+      setLoadingPeriodo(false)
+    } catch (error) {
+      console.error('Erro ao selecionar período:', error)
+      setPeriodoError('Erro ao carregar questões. Tente novamente.')
+      setLoadingPeriodo(false)
+    }
+  }
+*/
+
+// Adicionar modal de seletor de período antes da condição de requiresPremium:
+/*
+  // Modal de seletor de período para usuários gratuitos
+  if (showPeriodSelector) {
+    return (
+      <AppShell headerTitle="Banco de Questões">
+        <div className="mx-auto w-full max-w-2xl px-4 py-12">
+          <Card>
+            <CardHeader className="text-center">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500">
+                <GraduationCap className="h-8 w-8 text-white" />
+              </div>
+              <CardTitle className="text-2xl">Banco de Questões Gratuito</CardTitle>
+              <CardDescription className="text-base">
+                Olá! No plano Gratuito, você pode ver 5 questões por período.
+                Selecione o período do AFYA que você está cursando:
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="periodo-select" className="text-base font-semibold">
+                  Qual período você está?
+                </Label>
+                <Select
+                  value={selectedPeriodo}
+                  onValueChange={handleSelectPeriodo}
+                  disabled={loadingPeriodo}
+                >
+                  <SelectTrigger id="periodo-select" className="h-12 text-base">
+                    <SelectValue placeholder="Selecione seu período (1° ao 5°)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {periodos.filter(p => p.nome.includes('°') || p.nome.includes('º')).map((periodo) => (
+                      <SelectItem key={periodo._id?.toString()} value={periodo._id?.toString() || ''}>
+                        {periodo.nome}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {periodoError && (
+                <Alert variant="destructive">
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertTitle>Erro</AlertTitle>
+                  <AlertDescription>{periodoError}</AlertDescription>
+                </Alert>
+              )}
+
+              {loadingPeriodo && (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground mr-2" />
+                  <span className="text-sm text-muted-foreground">Carregando questões...</span>
+                </div>
+              )}
+
+              <div className="space-y-3 pt-4">
+                <Alert>
+                  <Sparkles className="h-4 w-4" />
+                  <AlertTitle>Sabe que você pode ter mais?</AlertTitle>
+                  <AlertDescription>
+                    Faça upgrade para Premium e tenha acesso a mais de 1.000 questões de Medicina, 
+                    com filtros avançados e criação de listas personalizadas!
+                  </AlertDescription>
+                </Alert>
+
+                <Button
+                  onClick={() => router.push('/buy')}
+                  className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
+                  size="lg"
+                >
+                  <Sparkles className="h-5 w-5 mr-2" />
+                  Fazer Upgrade para Premium
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </AppShell>
+    )
+  }
+*/

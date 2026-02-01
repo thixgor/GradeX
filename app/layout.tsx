@@ -4,6 +4,7 @@ import './globals.css'
 import { ThemeProvider } from '@/components/theme-provider'
 import { TrialExpirationChecker } from '@/components/trial-expiration-checker'
 import { Footer } from '@/components/footer'
+import { ImageProtectionProvider } from '@/components/image-protection-provider'
 
 const inter = Inter({ subsets: ['latin'] })
 const rowdies = Rowdies({ 
@@ -63,11 +64,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <TrialExpirationChecker />
-          <div className="flex-1 flex flex-col">
-            {children}
-          </div>
-          <Footer />
+          <ImageProtectionProvider>
+            <TrialExpirationChecker />
+            <div className="flex-1 flex flex-col">
+              {children}
+            </div>
+            <Footer />
+          </ImageProtectionProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -4,28 +4,48 @@ export interface TierLimits {
   examsPerDay: number
   questionsPerExam: number
   personalExamsPerDay?: number
+  bancoQuestoes: boolean
+  cronogramasTotal: number
+  flashcardsTotal: number
+  personalExamsTotal: number
 }
 
 export const TIER_LIMITS: Record<AccountType | 'admin', TierLimits> = {
   gratuito: {
     examsPerDay: 3,
     questionsPerExam: 5,
-    personalExamsPerDay: 3,
+    personalExamsPerDay: Infinity,
+    bancoQuestoes: false,
+    cronogramasTotal: 5,
+    flashcardsTotal: 5,
+    personalExamsTotal: 5,
   },
   trial: {
     examsPerDay: 10,
     questionsPerExam: 10,
     personalExamsPerDay: 10,
+    bancoQuestoes: false,
+    cronogramasTotal: Infinity,
+    flashcardsTotal: Infinity,
+    personalExamsTotal: Infinity,
   },
   premium: {
     examsPerDay: 20,
     questionsPerExam: 20,
     personalExamsPerDay: 20,
+    bancoQuestoes: true,
+    cronogramasTotal: Infinity,
+    flashcardsTotal: Infinity,
+    personalExamsTotal: Infinity,
   },
   admin: {
     examsPerDay: Infinity,
     questionsPerExam: Infinity,
     personalExamsPerDay: Infinity,
+    bancoQuestoes: true,
+    cronogramasTotal: Infinity,
+    flashcardsTotal: Infinity,
+    personalExamsTotal: Infinity,
   },
 }
 
@@ -44,6 +64,21 @@ export function getTierLimits(accountType?: AccountType, isAdmin?: boolean): Tie
 export function getPersonalExamsQuota(accountType?: AccountType): number {
   const limits = getTierLimits(accountType)
   return limits.personalExamsPerDay || 3
+}
+
+export function getCronogramasLimit(accountType?: AccountType): number {
+  const limits = getTierLimits(accountType)
+  return limits.cronogramasTotal
+}
+
+export function getFlashcardsLimit(accountType?: AccountType): number {
+  const limits = getTierLimits(accountType)
+  return limits.flashcardsTotal
+}
+
+export function getPersonalExamsLifetimeLimit(accountType?: AccountType): number {
+  const limits = getTierLimits(accountType)
+  return limits.personalExamsTotal
 }
 
 export function getUpgradeMessage(currentTier: AccountType | undefined): string {

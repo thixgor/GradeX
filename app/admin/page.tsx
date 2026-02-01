@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { ThemeToggle } from '@/components/theme-toggle'
 import { BanChecker } from '@/components/ban-checker'
+import { AppShell } from '@/components/app-shell'
 import {
   FileText,
   Key,
@@ -16,7 +16,9 @@ import {
   Shield,
   Calendar,
   BookOpen,
-  Sliders
+  Sliders,
+  Database,
+  Megaphone
 } from 'lucide-react'
 
 interface User {
@@ -105,43 +107,27 @@ export default function AdminDashboard() {
       icon: Sliders,
       href: '/admin/settings',
       color: 'from-indigo-500 to-purple-500'
+    },
+    {
+      title: 'Banco de Questões',
+      description: 'Gerenciar questões, hierarquia e importar questões em massa.',
+      icon: Database,
+      href: '/admin/banco-questoes',
+      color: 'from-teal-500 to-cyan-500'
+    },
+    {
+      title: 'Anúncios',
+      description: 'Gerenciar banners e anúncios rotativos da plataforma.',
+      icon: Megaphone,
+      href: '/admin/anuncios',
+      color: 'from-amber-500 to-orange-500'
     }
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted">
+    <AppShell headerTitle="Painel Administrativo" headerSubtitle={`Bem-vindo, ${user.name}`}>
       <BanChecker />
-
-      {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between gap-4 flex-wrap">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => router.push('/')}
-                className="shrink-0"
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-              <div>
-                <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
-                  <Shield className="h-6 w-6 text-primary" />
-                  Painel Administrativo
-                </h1>
-                <p className="text-sm text-muted-foreground hidden sm:block">
-                  Bem-vindo, {user.name}
-                </p>
-              </div>
-            </div>
-            <ThemeToggle />
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8 max-w-6xl">
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="mb-8">
           <h2 className="text-2xl sm:text-3xl font-bold mb-2">Ferramentas de Administração</h2>
           <p className="text-muted-foreground">
@@ -227,7 +213,7 @@ export default function AdminDashboard() {
             </Button>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </AppShell>
   )
 }

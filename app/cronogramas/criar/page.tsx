@@ -233,6 +233,10 @@ export default function CriarCronogramaPage() {
         router.push('/cronogramas')
       } else {
         const error = await res.json()
+        if (error.requiresUpgrade) {
+          router.push('/buy')
+          return
+        }
         alert(`Erro ao gerar cronograma: ${error.error}`)
       }
     } catch (error) {

@@ -200,6 +200,33 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: `Seu plano permite no máximo ${limits.cardsPerDeck} cartões por flashcard` }, { status: 403 })
     }
 
+    const totalDecksCreated = user.totalFlashcardDecksCreated || 0
+    if (limits.totalDecksLifetime !== Infinity && totalDecksCreated >= limits.totalDecksLifetime) {
+      return NextResponse.json({
+        error: `Limite vitalício de decks atingido (${limits.totalDecksLifetime} decks). Faça upgrade para Premium para criar mais.`,
+        requiresUpgrade: true,
+        upgradeUrl: '/buy',
+        limit: limits.totalDecksLifetime,
+        used: totalDecksCreated
+      }, { status: 403 })
+    }
+
+    if (limits.totalCardsLifetime !== Infinity) {
+      const totalCardsCreated = await cardsCollection.countDocuments({ userId: session.userId })
+      const cardsToCreate = Math.min(cardsRequested, limits.cardsPerDeck)
+      const newTotal = totalCardsCreated + cardsToCreate
+
+      if (newTotal > limits.totalCardsLifetime) {
+        return NextResponse.json({
+          error: `Limite vitalício de cartões atingido (${limits.totalCardsLifetime} cartões). Faça upgrade para Premium para criar mais flashcards.`,
+          requiresUpgrade: true,
+          upgradeUrl: '/buy',
+          limit: limits.totalCardsLifetime,
+          used: totalCardsCreated
+        }, { status: 403 })
+      }
+    }
+
     let template = null
     if (templateId) {
       if (!ObjectId.isValid(templateId)) {
@@ -253,6 +280,8 @@ export async function POST(request: NextRequest) {
         $inc: {
           dailyFlashcardsGenerated: 1,
           flashcardsActiveDecks: 1,
+          totalFlashcardsCreated: cards.length,
+          totalFlashcardDecksCreated: 1,
         },
       }
     )

@@ -254,9 +254,16 @@ export interface User {
   dailyFlashcardsGenerated?: number // Quantos decks/flashcards IA gerou no dia
   flashcardsActiveDecks?: number // Quantos decks ativos o usuário mantém
   flashcardsLastReset?: Date // Último reset diário dos limites de flashcards
+  // Contadores vitais (total na vida da conta)
+  totalCronogramasCreated?: number // Total de cronogramas criados (para cache)
+  totalFlashcardsCreated?: number // Total de flashcards criados (para cache)
+  totalFlashcardDecksCreated?: number // Total de decks criados (para cache)
+  totalPersonalExamsCreated?: number // Total de provas pessoais criadas (para cache)
   // Campos de autenticação social
   googleId?: string // ID do Google (sub)
   profilePicture?: string // URL da foto de perfil
+  // Banco de questões gratuito - questões fixas por período
+  freeQuestionsByPeriod?: { [periodoId: string]: string[] } // Mapa: periodoId -> array de IDs de questões (5 questões por período)
 }
 
 export type FlashcardDifficultyFeedback = 'facil' | 'equilibrado' | 'porrada'
@@ -651,13 +658,13 @@ export interface AulaPostagem {
   subtopicoId?: string
   moduloId?: string
   submoduloId?: string // Novo: pode estar em um submódulo
-  
+
   // Para aulas ao-vivo
   linkOuEmbed?: string // Link para entrada ou embed do vídeo
-  
+
   // Para aulas gravadas
   videoEmbed?: string // Embed do vídeo
-  
+
   // Capa da aula
   capa?: {
     tipo: 'imagem' | 'cor' // 'imagem' ou 'cor'
@@ -671,25 +678,25 @@ export interface AulaPostagem {
     nome: string // Nome do botão (ex: "Entrar no Zoom", "Acessar")
     url: string // URL para acessar
   }>
-  
+
   // Anexos
   pdfs?: Array<{
     nome: string
     url: string
     tamanho: number
   }>
-  
+
   // Datas
   dataLiberacao: Date // Quando a aula será liberada para os alunos
   criadoEm: Date
   atualizadoEm: Date
-  
+
   // Controle
   ocultarAteLiberacao?: boolean
   oculta: boolean
   ordem: number // Ordem de exibição na página inicial
   comentarios: AulaComentario[]
-  
+
   // Conclusão por usuário
   usuariosConcluidos?: string[] // IDs de usuários que concluíram a aula
 }
