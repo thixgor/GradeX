@@ -264,6 +264,9 @@ export interface User {
   profilePicture?: string // URL da foto de perfil
   // Banco de questões gratuito - questões fixas por período
   freeQuestionsByPeriod?: { [periodoId: string]: string[] } // Mapa: periodoId -> array de IDs de questões (5 questões por período)
+  // Recuperação de senha
+  resetPasswordToken?: string
+  resetPasswordExpires?: Date
 }
 
 export type FlashcardDifficultyFeedback = 'facil' | 'equilibrado' | 'porrada'

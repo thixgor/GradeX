@@ -12,15 +12,11 @@ interface ImportBlock {
 }
 
 async function ensureTopic(db: any, moduleName: string, topicName: string, gameType: string) {
-    // Normaliza para busca
     const query = {
         name: topicName,
-        // module: moduleName, // Optional: if we want strict module separation
         type: gameType
     }
 
-    // Atualiza se existir, cria se não (upsert)
-    // Usamos findOneAndUpdate para obter o ID
     let topic = await db.collection('games_topics').findOne(query)
 
     if (!topic) {
@@ -54,6 +50,8 @@ interface PlacedWord {
 
 function generateCrosswordLayout(words: string[]): { width: number; height: number; words: any[], grid: any[] } {
     try {
+        console.log('Generating Layout for words:', words.length)
+
         // Sort by length desc and clean
         const sortedWords = [...words]
             .map(w => {
@@ -67,14 +65,17 @@ function generateCrosswordLayout(words: string[]): { width: number; height: numb
             .filter(w => w.length > 1) // Ignore single letters or empty
             .sort((a, b) => b.length - a.length)
 
+        console.log('Cleaned Words:', sortedWords)
+
         if (sortedWords.length === 0) {
+            console.error('No valid words after cleaning')
             return { width: 10, height: 10, words: [], grid: createEmptyGrid(10, 10) }
         }
 
         const placedWords: PlacedWord[] = []
         const gridMap = new Map<string, string>() // "row,col" -> char
 
-        const size = 100 // Virtual huge grid to prevent early boundary issues
+        const size = 100
         const center = Math.floor(size / 2)
 
         // Place first word horizontally center
@@ -96,13 +97,11 @@ function generateCrosswordLayout(words: string[]): { width: number; height: numb
                 const char = word[i]
                 if (placed) break
 
-                // Find all positions of this char on grid
                 const entries = Array.from(gridMap.entries())
                 for (const [pos, gridChar] of entries) {
                     if (gridChar === char && !placed) {
                         const [r, c] = pos.split(',').map(Number)
 
-                        // Check neighbors
                         const hasHNeighbor = gridMap.has(`${r},${c - 1}`) || gridMap.has(`${r},${c + 1}`)
                         const hasVNeighbor = gridMap.has(`${r - 1},${c}`) || gridMap.has(`${r + 1},${c}`)
 
@@ -137,7 +136,6 @@ function generateCrosswordLayout(words: string[]): { width: number; height: numb
                     const r = parseInt(pos.split(',')[0])
                     if (r > maxRow) maxRow = r
                 }
-                // Fallback if map is empty (rare)
                 if (maxRow === -Infinity) maxRow = center
 
                 const newRow = maxRow + 2
@@ -165,13 +163,11 @@ function generateCrosswordLayout(words: string[]): { width: number; height: numb
             }
         }
 
-        // Add padding
         minR -= 1; maxR += 1; minC -= 1; maxC += 1
 
         let height = maxR - minR + 1
         let width = maxC - minC + 1
 
-        // Safety Limits
         if (width < 5) width = 5
         if (height < 5) height = 5
         if (width > 50) width = 50
@@ -189,7 +185,6 @@ function generateCrosswordLayout(words: string[]): { width: number; height: numb
             clue: '',
             solved: false
         })).filter(w => {
-            // Ensure words fit in the final grid constraints
             const endRow = w.direction === 'across' ? w.startRow : w.startRow + w.word.length
             const endCol = w.direction === 'across' ? w.startCol + w.word.length : w.startCol
             return w.startRow >= 0 && w.startCol >= 0 && endRow <= height && endCol <= width
@@ -209,6 +204,7 @@ function generateCrosswordLayout(words: string[]): { width: number; height: numb
             }
         })
 
+        console.log(`Generated Grid: ${finalWords.length} words`)
         return { width, height, words: finalWords, grid }
 
     } catch (error) {
@@ -232,9 +228,8 @@ function canPlace(word: string, row: number, col: number, direction: 'across' | 
         const char = word[i]
         const current = gridMap.get(`${r},${c}`)
 
-        if (current && current !== char) return false // Conflict
+        if (current && current !== char) return false
 
-        // Ensure no unintended adjacency
         if (!current) {
             const neighbors = [[-1, 0], [1, 0], [0, -1], [0, 1]]
             for (const [dr, dc] of neighbors) {
@@ -242,7 +237,6 @@ function canPlace(word: string, row: number, col: number, direction: 'across' | 
             }
         }
     }
-    // Check boundaries
     const rStart = direction === 'across' ? row : row - 1
     const cStart = direction === 'across' ? col - 1 : col
     if (gridMap.has(`${rStart},${cStart}`)) return false
@@ -307,9 +301,13 @@ export async function POST(req: Request) {
     try {
         const body = await req.json()
         const content = body.content
+        console.log('--- START IMPORT ---')
+
         if (!content) return NextResponse.json({ error: 'Conteúdo vazio' }, { status: 400 })
 
         const blocks = parseBlocks(content)
+        console.log(`Parsed ${blocks.length} blocks`)
+
         const db = await getDb()
         const summary = { crossword: 0, hangman: 0, errorHunt: 0 }
 
@@ -320,7 +318,11 @@ export async function POST(req: Request) {
             const difficulty = (d['DIFICULDADE'] || 'medio').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') as any
 
             if (block.type === 'CROSSWORD') {
-                const wordsList = (d['PALAVRAS'] || '').split(';').map(w => w.trim()).filter(w => w)
+                console.log('Processing Crossword Block...')
+                const rawWords = d['PALAVRAS'] || ''
+                console.log('Raw Words Input:', rawWords)
+
+                const wordsList = rawWords.split(';').map(w => w.trim()).filter(w => w)
                 const clue = d['DICA'] || 'Sem dica'
 
                 if (wordsList.length > 0) {
@@ -335,7 +337,7 @@ export async function POST(req: Request) {
                         })
 
                         const puzzle = {
-                            title: d['TITULO'] || `Cruzadinha: ${wordsList[0]}...`,
+                            title: d['TITULO'] || `Cross: ${wordsList[0]}...`,
                             description: `Palavras cruzadas sobre ${topicName}`,
                             module: moduleName,
                             topic: topicName,
@@ -349,7 +351,12 @@ export async function POST(req: Request) {
                         }
                         await db.collection('games_crosswords').insertOne(puzzle)
                         summary.crossword++
+                        console.log('Crossword Saved!')
+                    } else {
+                        console.error('FAILED: No words placed for crossword')
                     }
+                } else {
+                    console.error('FAILED: No words list extracted')
                 }
             }
 
@@ -404,6 +411,7 @@ export async function POST(req: Request) {
             }
         }
 
+        console.log('--- IMPORT END ---')
         return NextResponse.json({
             success: true,
             summary: `Importado: ${summary.crossword} puzzles, ${summary.hangman} palavras, ${summary.errorHunt} casta-erros.`

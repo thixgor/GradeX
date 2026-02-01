@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -65,7 +66,7 @@ export default function LoginPage() {
       script.src = `https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`
       script.async = true
       script.defer = true
-      
+
       script.onload = () => {
         if (window.grecaptcha) {
           window.grecaptcha.ready(() => {
@@ -73,7 +74,7 @@ export default function LoginPage() {
           })
         }
       }
-      
+
       document.head.appendChild(script)
 
       return () => {
@@ -90,14 +91,14 @@ export default function LoginPage() {
       script.src = 'https://accounts.google.com/gsi/client'
       script.async = true
       script.defer = true
-      
+
       script.onload = () => {
         if (window.google) {
           window.google.accounts.id.initialize({
             client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
             callback: handleGoogleLogin,
           })
-          
+
           const buttonElement = document.getElementById('google-signin-button')
           if (buttonElement && isLogin) {
             window.google.accounts.id.renderButton(buttonElement, {
@@ -109,7 +110,7 @@ export default function LoginPage() {
           }
         }
       }
-      
+
       document.head.appendChild(script)
 
       return () => {
@@ -146,10 +147,10 @@ export default function LoginPage() {
   const validateCPF = (cpf: string): boolean => {
     const cleaned = cpf.replace(/\D/g, '')
     if (cleaned.length !== 11) return false
-    
+
     // Verifica se todos os dígitos são iguais
     if (/^(\d)\1{10}$/.test(cleaned)) return false
-    
+
     // Calcula primeiro dígito verificador
     let sum = 0
     for (let i = 0; i < 9; i++) {
@@ -157,7 +158,7 @@ export default function LoginPage() {
     }
     let digit1 = 11 - (sum % 11)
     digit1 = digit1 > 9 ? 0 : digit1
-    
+
     // Calcula segundo dígito verificador
     sum = 0
     for (let i = 0; i < 10; i++) {
@@ -165,7 +166,7 @@ export default function LoginPage() {
     }
     let digit2 = 11 - (sum % 11)
     digit2 = digit2 > 9 ? 0 : digit2
-    
+
     return digit1 === parseInt(cleaned[9]) && digit2 === parseInt(cleaned[10])
   }
 
@@ -218,10 +219,10 @@ export default function LoginPage() {
       const body = isLogin
         ? { email: formData.email, password: formData.password, recaptchaToken: token }
         : {
-            ...formData,
-            cpf: formData.cpf.replace(/\D/g, ''),
-            recaptchaToken: token,
-          }
+          ...formData,
+          cpf: formData.cpf.replace(/\D/g, ''),
+          recaptchaToken: token,
+        }
 
       const res = await fetch(endpoint, {
         method: 'POST',
@@ -352,8 +353,8 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#468152]/20 via-background to-[#E2A43E]/20 p-4">
       <div className="absolute top-4 left-4">
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           size="sm"
           onClick={() => router.push('/')}
         >
@@ -408,7 +409,16 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Senha</Label>
+                <Link
+                  href="/auth/forgot-password"
+                  className="text-xs text-muted-foreground hover:text-primary transition-colors"
+                  tabIndex={-1}
+                >
+                  Esqueceu a senha?
+                </Link>
+              </div>
               <div className="relative">
                 <Input
                   id="password"
