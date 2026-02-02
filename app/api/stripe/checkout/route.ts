@@ -13,16 +13,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
     }
 
-    const { planId } = await request.json()
+    const { planId, mode: requestedMode } = await request.json()
 
     // 1. Buscar configurações gerais do banco de dados
     const db = await getDb()
 
-    // Buscar planos do admin_settings (onde os novos planos são salvos)
+    // Buscar planos do admin_settings
     const adminSettings = await db.collection('admin_settings').findOne({})
     const planos = adminSettings?.planos || []
 
-    // Tentar encontrar o plano pelo 'tipo' (id amigável)
     const planoConfig = planos.find((p: any) => p.tipo === planId)
 
     if (!planoConfig) {
@@ -30,16 +29,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Tipo de plano inválido ou não configurado' }, { status: 400 })
     }
 
-    const priceId = planoConfig.stripePriceId
+    // Priorizar o modo solicitado pelo front-end
+    let mode = requestedMode || (planoConfig.durationMonths === 0 ? 'payment' : 'subscription')
 
+    // Decidir qual Price ID usar
+    let priceId = mode === 'payment' ? planoConfig.stripeOneTimePriceId : planoConfig.stripePriceId
+
+    // Fallback: Se solicitou payment mas não tem o ID de payment, tenta o subscription (e vice-versa)
     if (!priceId) {
-      return NextResponse.json({ error: `Este plano (${planId}) não possui um ID de Preço do Stripe vinculado.` }, { status: 500 })
+      priceId = planoConfig.stripePriceId || planoConfig.stripeOneTimePriceId
+      // Se trocou o ID, ajusta o modo para ser compatível com o ID que sobrou
+      if (priceId === planoConfig.stripeOneTimePriceId) mode = 'payment'
+      if (priceId === planoConfig.stripePriceId) mode = 'subscription'
     }
 
-    // Determinar se é recorrência ou pagamento único
-    // Vitalício ou duração 0 = payment. Outros = subscription.
-    const isOneTime = planId === 'vitalicio' || planoConfig.tipo === 'vitalicio' || planoConfig.durationMonths === 0
-    const mode = isOneTime ? 'payment' : 'subscription'
+    if (!priceId) {
+      return NextResponse.json({ error: `Este plano (${planId}) não possui IDs de Preço configurados no Stripe.` }, { status: 500 })
+    }
 
     // Criar sessão de checkout
     const paymentMethodTypes = ['card', 'boleto']
