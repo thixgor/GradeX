@@ -1072,7 +1072,7 @@ export default function SettingsPage() {
                         />
                       </div>
                       <div className="md:col-span-2">
-                        <Label className="text-xs">Stripe Price ID (Opcional)</Label>
+                        <Label className="text-xs">Stripe Subscription Price ID (Recorrente/Cartão)</Label>
                         <Input
                           value={plano.stripePriceId || ''}
                           onChange={(e) => {
@@ -1081,6 +1081,20 @@ export default function SettingsPage() {
                             setPlanos(updated)
                           }}
                           placeholder="price_..."
+                          className="font-mono text-xs"
+                        />
+                      </div>
+                      <div className="md:col-span-2">
+                        <Label className="text-xs">Stripe One-Time Price ID (Pix/Boleto - Pagamento Único)</Label>
+                        <Input
+                          value={plano.stripeOneTimePriceId || ''}
+                          onChange={(e) => {
+                            const updated = [...planos]
+                            updated[idx].stripeOneTimePriceId = e.target.value
+                            setPlanos(updated)
+                          }}
+                          placeholder="price_... (Opcional - Ativa Pix)"
+                          className="font-mono text-xs"
                         />
                         <p className="text-[10px] text-muted-foreground mt-1">
                           Se preenchido, o checkout usará este ID. Se vazio, usará o valor antigo do stripeSettings.

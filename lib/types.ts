@@ -725,7 +725,8 @@ export interface PlanConfig {
   badge?: string // Texto do badge (ex: "MAIS POPULAR")
   role?: AccountType // Cargo que o usuário ganha (premium, essential, trial)
   durationMonths?: number // Duração em meses (0 ou undefined = infinito/vitalício)
-  stripePriceId?: string // ID do preço no Stripe para automação
+  stripePriceId?: string // ID do preço no Stripe para automação (Recorrente/Subscription)
+  stripeOneTimePriceId?: string // ID do preço no Stripe para pagamento único (Pix/Boleto one-time)
   criadoEm: Date
   atualizadoEm: Date
 }

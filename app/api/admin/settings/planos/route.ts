@@ -139,6 +139,7 @@ export async function PUT(req: NextRequest) {
       role: plan.role || 'premium',
       durationMonths: plan.durationMonths !== undefined ? parseInt(plan.durationMonths) : 0,
       stripePriceId: plan.stripePriceId,
+      stripeOneTimePriceId: plan.stripeOneTimePriceId,
       criadoEm: plan.criadoEm ? new Date(plan.criadoEm) : new Date(),
       atualizadoEm: new Date()
     }))

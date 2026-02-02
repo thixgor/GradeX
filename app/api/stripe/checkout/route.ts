@@ -37,14 +37,18 @@ export async function POST(request: NextRequest) {
     }
 
     // Determinar se é recorrência ou pagamento único
-    // O usuário solicitou que PIX funcionasse para tudo.
-    // PIX exige mode: 'payment'.
-    // Isso significa que planos "recorrentes" (Mensal, etc) serão cobrados apenas uma vez
-    // e o usuário terá que renovar manualmente (comportamento "pre-paid").
-    const mode = 'payment'
+    // Vitalício ou duração 0 = payment. Outros = subscription.
+    const isOneTime = planId === 'vitalicio' || planoConfig.tipo === 'vitalicio' || planoConfig.durationMonths === 0
+    const mode = isOneTime ? 'payment' : 'subscription'
 
     // Criar sessão de checkout
-    const paymentMethodTypes = ['card', 'boleto', 'pix']
+    const paymentMethodTypes = ['card', 'boleto']
+
+    // Pix só funciona em modo 'payment' (pagamento único)
+    // Para assinaturas (subscription), só card e boleto são suportados nativamente com facilidade
+    if (mode === 'payment') {
+      paymentMethodTypes.push('pix')
+    }
 
     // @ts-ignore - Stripe SDK type issue
     const checkoutSession = await stripe.checkout.sessions.create({
