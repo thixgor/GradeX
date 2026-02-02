@@ -259,7 +259,7 @@ export default function PublicFormPage() {
                                             {block.questionType === 'short-text' && (
                                                 <Input
                                                     placeholder="Sua resposta aqui..."
-                                                    className="bg-slate-50 border-slate-200 h-12 text-lg focus:bg-white transition-all"
+                                                    className="bg-slate-50 border-slate-200 h-12 text-lg focus:bg-white transition-all text-slate-900"
                                                     value={answers[block.id] || ''}
                                                     onChange={e => handleAnswer(block.id, e.target.value)}
                                                     required={block.required}
@@ -271,7 +271,7 @@ export default function PublicFormPage() {
                                                 <div className="space-y-1">
                                                     <Textarea
                                                         placeholder="Fale um pouco mais detalhadamente..."
-                                                        className="bg-slate-50 border-slate-200 min-h-[120px] text-lg focus:bg-white transition-all"
+                                                        className="bg-slate-50 border-slate-200 min-h-[120px] text-lg focus:bg-white transition-all text-slate-900"
                                                         value={answers[block.id] || ''}
                                                         onChange={e => handleAnswer(block.id, e.target.value)}
                                                         required={block.required}
@@ -288,7 +288,7 @@ export default function PublicFormPage() {
                                                     <Input
                                                         type="email"
                                                         placeholder="exemplo@email.com"
-                                                        className="bg-slate-50 border-slate-200 h-12 text-lg pl-10 focus:bg-white transition-all"
+                                                        className="bg-slate-50 border-slate-200 h-12 text-lg pl-10 focus:bg-white transition-all text-slate-900"
                                                         value={answers[block.id] || ''}
                                                         onChange={e => handleAnswer(block.id, e.target.value)}
                                                         required={block.required}
@@ -302,7 +302,7 @@ export default function PublicFormPage() {
                                                     <Input
                                                         type="tel"
                                                         placeholder="(00) 00000-0000"
-                                                        className="bg-slate-50 border-slate-200 h-12 text-lg pl-10 focus:bg-white transition-all"
+                                                        className="bg-slate-50 border-slate-200 h-12 text-lg pl-10 focus:bg-white transition-all text-slate-900"
                                                         value={answers[block.id] || ''}
                                                         onChange={e => handleAnswer(block.id, e.target.value)}
                                                         required={block.required}
@@ -320,7 +320,7 @@ export default function PublicFormPage() {
                                                     {block.options?.map((option, i) => (
                                                         <div key={i} className="flex items-center space-x-3 bg-slate-50 p-4 rounded-xl border border-transparent hover:border-primary/30 transition-all cursor-pointer group">
                                                             <RadioGroupItem value={option} id={`${block.id}-${i}`} className="border-primary text-primary" />
-                                                            <Label htmlFor={`${block.id}-${i}`} className="flex-1 cursor-pointer text-lg font-medium group-hover:text-primary transition-colors">{option}</Label>
+                                                            <Label htmlFor={`${block.id}-${i}`} className="flex-1 cursor-pointer text-lg font-medium group-hover:text-primary transition-colors text-slate-900">{option}</Label>
                                                             <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity text-primary" />
                                                         </div>
                                                     ))}
@@ -344,7 +344,7 @@ export default function PublicFormPage() {
                                                                         handleAnswer(block.id, newVal)
                                                                     }}
                                                                 />
-                                                                <Label htmlFor={`${block.id}-${i}`} className="flex-1 cursor-pointer text-lg font-medium group-hover:text-primary transition-colors">{option}</Label>
+                                                                <Label htmlFor={`${block.id}-${i}`} className="flex-1 cursor-pointer text-lg font-medium group-hover:text-primary transition-colors text-slate-900">{option}</Label>
                                                             </div>
                                                         )
                                                     })}
