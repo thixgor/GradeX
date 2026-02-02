@@ -933,9 +933,9 @@ export async function generateFormResponsePDF(
 
   doc.setTextColor(...CINZA_TEXTO)
   doc.setFontSize(10)
-  const dateStr = new Date().toLocaleDateString('pt-BR')
-  const timeStr = new Date().toLocaleTimeString('pt-BR')
-  doc.text(`Submetido em: ${dateStr} às ${timeStr}`, margin, y)
+  const dateStr = new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })
+  const timeStr = new Date().toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo' })
+  doc.text(`Submetido em: ${dateStr} às ${timeStr} (Horário de Brasília)`, margin, y)
   y += 15
 
   // Questions and Answers

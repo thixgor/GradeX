@@ -20,6 +20,7 @@ import {
 import { Form, FormResponse } from '@/lib/types'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import { Badge } from '@/components/ui/badge'
 
 export default function FormResponsesPage() {
     const router = useRouter()
@@ -128,10 +129,10 @@ export default function FormResponsesPage() {
                                             const answer = resp.answers[block.id]
                                             return (
                                                 <div key={block.id} className="space-y-2">
-                                                    <p className="font-bold text-sm text-slate-700 flex items-center gap-2">
+                                                    <p className="font-bold text-sm text-foreground flex items-center gap-2">
                                                         <FileText className="h-3 w-3 text-primary" /> {block.title}
                                                     </p>
-                                                    <div className="p-3 bg-white rounded-lg border shadow-sm text-sm">
+                                                    <div className="p-3 bg-white dark:bg-slate-900 rounded-lg border shadow-sm text-sm text-slate-900 dark:text-slate-100">
                                                         {Array.isArray(answer) ? (
                                                             <div className="flex flex-wrap gap-1">
                                                                 {answer.map((a, i) => <Badge key={i} variant="secondary">{a}</Badge>)}
