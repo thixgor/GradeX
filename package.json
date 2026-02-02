@@ -39,6 +39,7 @@
     "next-themes": "^0.2.1",
     "nodemailer": "^7.0.13",
     "postcss": "^8.4.32",
+    "qrcode.react": "^4.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.49.3",

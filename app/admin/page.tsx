@@ -20,7 +20,8 @@ import {
   Database,
   Megaphone,
   Gamepad2 as GamepadIcon,
-  Mail
+  Mail,
+  ClipboardList
 } from 'lucide-react'
 
 interface User {
@@ -137,6 +138,13 @@ export default function AdminDashboard() {
       icon: Mail,
       href: '/admin/emails',
       color: 'from-sky-500 to-blue-500'
+    },
+    {
+      title: 'Pesquisas e Formulários',
+      description: 'Criar e gerenciar pesquisas, formulários de inscrição e feedbacks dos usuários.',
+      icon: ClipboardList,
+      href: '/admin/forms',
+      color: 'from-fuchsia-500 to-purple-600'
     }
   ]
 

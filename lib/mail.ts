@@ -259,3 +259,32 @@ export async function sendOneTimePaymentEndedEmail(email: string, name: string) 
     html,
   })
 }
+
+export async function sendFormSubmissionEmail(email: string, formTitle: string, pdfBuffer: Buffer, pdfName: string) {
+  const content = `
+    <h1 class="h1">Pesquisa Recebida! ✅</h1>
+    <p>Olá,</p>
+    <p>Obrigado por responder à pesquisa <strong>"${formTitle}"</strong>.</p>
+    <p>Recebemos suas respostas com sucesso.</p>
+    
+    <p>Em anexo, você encontrará um PDF com o resumo das suas respostas.</p>
+    
+    <p>Agradecemos sua participação!</p>
+  `
+
+  const html = getEmailTemplate(`Recebemos sua resposta: ${formTitle}`, content)
+
+  await transporter.sendMail({
+    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+    to: email,
+    subject: `Confirmação de resposta: ${formTitle}`,
+    html,
+    attachments: [
+      {
+        filename: pdfName,
+        content: pdfBuffer,
+        contentType: 'application/pdf',
+      },
+    ],
+  })
+}

@@ -738,3 +738,57 @@ export interface AdminSettings {
   criadoEm: Date
   atualizadoEm: Date
 }
+
+// === SISTEMA DE FORMULÁRIOS ===
+
+export type FormBlockType = 'question' | 'text' | 'image' | 'video' | 'link'
+export type FormQuestionType = 'short-text' | 'long-text' | 'email' | 'phone' | 'multiple-choice' | 'checklist'
+
+export interface FormBlock {
+  id: string
+  type: FormBlockType
+  // Conteúdo Comum
+  title?: string // Enunciado da pergunta ou Título do card
+  description?: string // Descrição auxiliar
+
+  // Específico de Questão
+  questionType?: FormQuestionType
+  required?: boolean
+  options?: string[] // Para múltipla escolha ou checklist
+
+  // Específico de Mídia/Conteúdo
+  content?: string // Texto do card, URL da imagem ou URL do vídeo
+  linkUrl?: string // URL para o botão (tipo link)
+  buttonText?: string // Texto do botão (tipo link)
+}
+
+export interface FormSettings {
+  isActive: boolean
+  deadline?: Date // Data de encerramento (horário de Brasília)
+  sendConfirmationEmail: boolean
+  emailQuestionId?: string // ID da pergunta que coleta o e-mail para envio da confirmação
+  responseLimit?: number // Limite total de respostas
+}
+
+export interface Form {
+  _id?: string | import('mongodb').ObjectId
+  title: string
+  description?: string
+  blocks: FormBlock[]
+  settings: FormSettings
+
+  createdBy: string // ID do admin
+  createdAt: Date
+  updatedAt: Date
+
+  // Cache
+  responseCount: number
+}
+
+export interface FormResponse {
+  _id?: string | import('mongodb').ObjectId
+  formId: string
+  answers: Record<string, string | string[]> // blockId -> resposta
+  submittedAt: Date
+  userEmail?: string // E-mail extraído da resposta (se configurado)
+}

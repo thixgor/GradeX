@@ -1,6 +1,6 @@
 import jsPDF from 'jspdf'
 import JsBarcode from 'jsbarcode'
-import { Exam, Question, UserAnswer, QuestionAnnotation } from './types'
+import { Exam, Question, UserAnswer, QuestionAnnotation, Form, FormBlock } from './types'
 
 // Cores da paleta DomineAqui
 const VERDE_ESCURO = [26, 71, 42] as const
@@ -798,98 +798,90 @@ export function generateAnnotationsPDF(
     doc.text('Nenhuma anotação foi feita durante esta prova.', pageWidth / 2, y, {
       align: 'center',
     })
+  } else {
+    // === ANOTAÇÕES ===
+    // Ordenar por número da questão
+    const sortedAnnotations = [...annotations].sort(
+      (a, b) => a.questionNumber - b.questionNumber
+    )
 
-    const totalPages = doc.getNumberOfPages()
-    for (let i = 1; i <= totalPages; i++) {
-      doc.setPage(i)
-      addDomineAquiFooter(doc, i, totalPages, pageWidth, pageHeight, margin)
-    }
+    for (const annotation of sortedAnnotations) {
+      // Verificar se há espaço para o título da questão
+      checkPage(30)
 
-    return doc.output('blob')
-  }
+      // Título da questão
+      doc.setFillColor(...VERDE_MEDIO)
+      doc.roundedRect(margin, y, pageWidth - 2 * margin, 12, 2, 2, 'F')
 
-  // === ANOTAÇÕES ===
-  // Ordenar por número da questão
-  const sortedAnnotations = [...annotations].sort(
-    (a, b) => a.questionNumber - b.questionNumber
-  )
+      doc.setTextColor(255, 255, 255)
+      doc.setFontSize(12)
+      doc.setFont('helvetica', 'bold')
+      doc.text(`Questão ${annotation.questionNumber}`, margin + 5, y + 8)
 
-  for (const annotation of sortedAnnotations) {
-    // Verificar se há espaço para o título da questão
-    checkPage(30)
+      y += 20
 
-    // Título da questão
-    doc.setFillColor(...VERDE_MEDIO)
-    doc.roundedRect(margin, y, pageWidth - 2 * margin, 12, 2, 2, 'F')
+      // Verificar se há canvas data URL
+      if (annotation.canvasDataUrl) {
+        // Calcular dimensões para a imagem
+        const maxImageWidth = pageWidth - 2 * margin
+        const maxImageHeight = 150 // Altura máxima para cada anotação
 
-    doc.setTextColor(255, 255, 255)
-    doc.setFontSize(12)
-    doc.setFont('helvetica', 'bold')
-    doc.text(`Questão ${annotation.questionNumber}`, margin + 5, y + 8)
+        // Adicionar a imagem do canvas
+        try {
+          // Criar nova página se necessário para a imagem
+          checkPage(maxImageHeight + 10)
 
-    y += 20
+          doc.addImage(
+            annotation.canvasDataUrl,
+            'PNG',
+            margin,
+            y,
+            maxImageWidth,
+            maxImageHeight
+          )
 
-    // Verificar se há canvas data URL
-    if (annotation.canvasDataUrl) {
-      // Calcular dimensões para a imagem
-      const maxImageWidth = pageWidth - 2 * margin
-      const maxImageHeight = 150 // Altura máxima para cada anotação
-
-      // Adicionar a imagem do canvas
-      try {
-        // Criar nova página se necessário para a imagem
-        checkPage(maxImageHeight + 10)
-
-        doc.addImage(
-          annotation.canvasDataUrl,
-          'PNG',
-          margin,
-          y,
-          maxImageWidth,
-          maxImageHeight
-        )
-
-        y += maxImageHeight + 15
-      } catch (error) {
-        // Se houver erro ao adicionar a imagem, mostrar mensagem
-        doc.setFontSize(10)
-        doc.setTextColor(200, 0, 0)
-        doc.text('Erro ao carregar anotação', margin, y)
-        y += 15
-      }
-    } else {
-      // Se não houver canvas data URL, mostrar apenas os textos
-      if (annotation.texts && annotation.texts.length > 0) {
-        doc.setFontSize(10)
-        doc.setTextColor(...CINZA_TEXTO)
-        doc.text('Anotações de texto:', margin, y)
-        y += 8
-
-        for (const text of annotation.texts) {
-          checkPage(10)
-          const lines = wrapText(doc, text.text, pageWidth - 2 * margin - 10)
-          for (const line of lines) {
-            checkPage(6)
-            doc.text(`• ${line}`, margin + 5, y)
-            y += 6
-          }
+          y += maxImageHeight + 15
+        } catch (error) {
+          // Se houver erro ao adicionar a imagem, mostrar mensagem
+          doc.setFontSize(10)
+          doc.setTextColor(200, 0, 0)
+          doc.text('Erro ao carregar anotação', margin, y)
+          y += 15
         }
-        y += 10
       } else {
-        // Sem anotações
-        doc.setFontSize(10)
-        doc.setTextColor(150, 150, 150)
-        doc.text('(Sem anotações para esta questão)', margin, y)
-        y += 15
-      }
-    }
+        // Se não houver canvas data URL, mostrar apenas os textos
+        if (annotation.texts && annotation.texts.length > 0) {
+          doc.setFontSize(10)
+          doc.setTextColor(...CINZA_TEXTO)
+          doc.text('Anotações de texto:', margin, y)
+          y += 8
 
-    // Linha separadora entre questões
-    checkPage(5)
-    doc.setDrawColor(...LARANJA)
-    doc.setLineWidth(0.5)
-    doc.line(margin, y, pageWidth - margin, y)
-    y += 10
+          for (const text of annotation.texts) {
+            checkPage(10)
+            const lines = wrapText(doc, text.text, pageWidth - 2 * margin - 10)
+            for (const line of lines) {
+              checkPage(6)
+              doc.text(`• ${line}`, margin + 5, y)
+              y += 6
+            }
+          }
+          y += 10
+        } else {
+          // Sem anotações
+          doc.setFontSize(10)
+          doc.setTextColor(150, 150, 150)
+          doc.text('(Sem anotações para esta questão)', margin, y)
+          y += 15
+        }
+      }
+
+      // Linha separadora entre questões
+      checkPage(5)
+      doc.setDrawColor(...LARANJA)
+      doc.setLineWidth(0.5)
+      doc.line(margin, y, pageWidth - margin, y)
+      y += 10
+    }
   }
 
   // === RODAPÉ EM TODAS AS PÁGINAS ===
@@ -897,6 +889,114 @@ export function generateAnnotationsPDF(
   for (let i = 1; i <= totalPages; i++) {
     doc.setPage(i)
     addDomineAquiFooter(doc, i, totalPages, pageWidth, pageHeight, margin, `Anotações - ${examTitle}`)
+  }
+
+  return doc.output('blob')
+}
+
+/**
+ * Gera PDF com o resumo dos dados de uma pesquisa submetida
+ */
+export async function generateFormResponsePDF(
+  form: Form,
+  answers: Record<string, string | string[]>
+): Promise<Blob> {
+  const doc = new jsPDF()
+  const pageWidth = doc.internal.pageSize.getWidth()
+  const pageHeight = doc.internal.pageSize.getHeight()
+  const margin = 20
+  let y = margin
+
+  const checkPage = (needed: number) => {
+    if (y + needed > pageHeight - 25) {
+      doc.addPage()
+      y = addDomineAquiHeader(doc, pageWidth, margin, 'Resumo da Pesquisa')
+      return true
+    }
+    return false
+  }
+
+  // Header
+  y = addDomineAquiHeader(doc, pageWidth, margin, 'Resumo da Pesquisa')
+
+  // Form Title
+  doc.setFillColor(...LARANJA_CLARO)
+  doc.setDrawColor(...VERDE_MEDIO)
+  doc.roundedRect(margin, y, pageWidth - 2 * margin, 20, 2, 2, 'FD')
+
+  doc.setTextColor(...VERDE_ESCURO)
+  doc.setFontSize(14)
+  doc.setFont('helvetica', 'bold')
+  doc.text(form.title, pageWidth / 2, y + 13, { align: 'center' })
+
+  y += 30
+
+  doc.setTextColor(...CINZA_TEXTO)
+  doc.setFontSize(10)
+  const dateStr = new Date().toLocaleDateString('pt-BR')
+  const timeStr = new Date().toLocaleTimeString('pt-BR')
+  doc.text(`Submetido em: ${dateStr} às ${timeStr}`, margin, y)
+  y += 15
+
+  // Questions and Answers
+  form.blocks.forEach((block: FormBlock) => {
+    if (block.type === 'question') {
+      checkPage(30)
+
+      // Question Title Wrapper
+      doc.setFillColor(...VERDE_MEDIO)
+      doc.roundedRect(margin, y, pageWidth - 2 * margin, 10, 2, 2, 'F')
+      doc.setTextColor(255, 255, 255)
+      doc.setFontSize(10)
+      doc.setFont('helvetica', 'bold')
+      doc.text('PERGUNTA', margin + 5, y + 7)
+      y += 15
+
+      // Question Content
+      doc.setTextColor(...VERDE_ESCURO)
+      doc.setFontSize(11)
+      doc.setFont('helvetica', 'bold')
+      const titleText = block.title || 'Sem título'
+      const titleLines = wrapText(doc, titleText, pageWidth - 2 * margin)
+      titleLines.forEach(line => {
+        checkPage(8)
+        doc.text(line, margin, y)
+        y += 6
+      })
+      y += 2
+
+      // Answer Text
+      doc.setTextColor(...CINZA_TEXTO)
+      doc.setFontSize(10)
+      doc.setFont('helvetica', 'normal')
+
+      const answer = answers[block.id]
+      let answerText = ''
+
+      if (Array.isArray(answer)) {
+        answerText = answer.join(', ')
+      } else if (answer) {
+        answerText = answer
+      } else {
+        answerText = '(Sem resposta)'
+      }
+
+      const answerLines = wrapText(doc, String(answerText), pageWidth - 2 * margin)
+      answerLines.forEach(line => {
+        checkPage(8)
+        doc.text(line, margin, y)
+        y += 6
+      })
+
+      y += 10
+    }
+  })
+
+  // Footer
+  const totalPages = doc.getNumberOfPages()
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i)
+    addDomineAquiFooter(doc, i, totalPages, pageWidth, pageHeight, margin, form.title)
   }
 
   return doc.output('blob')
