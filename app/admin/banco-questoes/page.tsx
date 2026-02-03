@@ -16,7 +16,8 @@ import {
   BarChart3,
   BookOpen,
   CheckCircle2,
-  Loader2
+  Loader2,
+  ArrowRightLeft
 } from 'lucide-react'
 import { BancoEstatisticasAdmin } from '@/lib/types/banco-questoes'
 
@@ -110,6 +111,13 @@ export default function AdminBancoQuestoes() {
       icon: Upload,
       href: '/admin/banco-questoes/importar',
       color: 'from-purple-500 to-pink-500'
+    },
+    {
+      title: 'Extrair Questões',
+      description: 'Mover questões de um tópico para outro via TXT.',
+      icon: ArrowRightLeft,
+      href: '/admin/banco-questoes/extrair',
+      color: 'from-orange-500 to-amber-500'
     }
   ]
 
