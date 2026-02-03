@@ -24,6 +24,12 @@ export async function GET(
         const client = await clientPromise
         const db = client.db()
 
+        // Garantir índices para evitar scans completos e deadlocks
+        await Promise.all([
+            db.collection('leads').createIndex({ campaignId: 1 }),
+            db.collection('lead_page_views').createIndex({ campaignId: 1, ip: 1 })
+        ])
+
         const campaign = await db.collection('lead_campaigns').findOne({ _id: new ObjectId(id) })
         if (!campaign) {
             return NextResponse.json({ error: 'Campanha não encontrada' }, { status: 404 })
@@ -36,10 +42,17 @@ export async function GET(
             .sort({ createdAt: -1 })
             .toArray()
 
-        // Contar views únicas
-        const uniqueViews = await db
+        // Contar views únicas via Aggregation (mais performático que distinct em grandes datasets)
+        const uniqueViewsResult = await db
             .collection('lead_page_views')
-            .distinct('ip', { campaignId: id })
+            .aggregate([
+                { $match: { campaignId: id } },
+                { $group: { _id: '$ip' } },
+                { $count: 'total' }
+            ])
+            .toArray()
+
+        const uniqueViewsCount = uniqueViewsResult[0]?.total || 0
 
         // Agregar leads por estado para gráfico
         const stateStats = await db.collection('leads').aggregate([
@@ -61,7 +74,7 @@ export async function GET(
             stats: {
                 totalLeads: leads.length,
                 uniqueEmails: new Set(leads.map(l => l.email.toLowerCase())).size,
-                totalViews: uniqueViews.length
+                totalViews: uniqueViewsCount
             },
             stateData
         })

@@ -56,6 +56,9 @@ export async function GET(
         const userAgent = req.headers.get('user-agent') || undefined
 
         // Verificar se este IP já visualizou esta campanha
+        // Garantir índice para performance
+        await db.collection('lead_page_views').createIndex({ campaignId: 1, ip: 1 })
+
         const existingView = await db.collection('lead_page_views').findOne({
             campaignId: campaign._id.toString(),
             ip: ip
@@ -137,6 +140,9 @@ export async function POST(
             'unknown'
 
         // Verificar se email já existe nesta campanha
+        // Garantir índice
+        await db.collection('leads').createIndex({ campaignId: 1, email: 1 })
+
         const existingLead = await db.collection('leads').findOne({
             campaignId: campaign._id.toString(),
             email: normalizedEmail

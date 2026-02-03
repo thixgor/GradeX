@@ -75,7 +75,7 @@ const pulse = {
             ease: "easeInOut"
         }
     }
-}
+} as const
 
 const float = {
     animate: {
@@ -86,7 +86,7 @@ const float = {
             ease: "easeInOut"
         }
     }
-}
+} as const
 
 export default function LeadCapturePage() {
     const params = useParams()
@@ -457,7 +457,7 @@ export default function LeadCapturePage() {
                                                 type="text"
                                                 value={name}
                                                 onChange={(e) => setName(e.target.value)}
-                                                placeholder="Digite seu nome completo"
+                                                placeholder="Diga-nos seu nome"
                                                 className="pl-10 sm:pl-11 bg-[#0a1f13] border-[#1a4d28] text-white placeholder:text-gray-500 h-11 sm:h-12 rounded-xl focus:border-[#E2A43E] focus:ring-[#E2A43E]/20 text-sm sm:text-base transition-all"
                                             />
                                         </div>
