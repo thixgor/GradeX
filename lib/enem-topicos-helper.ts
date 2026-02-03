@@ -2,7 +2,6 @@ import { TopicItem } from './cronograma-types'
 
 export function getENEMTopicos(): TopicItem[] {
   return [
-    // @ts-ignore - submodulos é opcional em ModuleItem
     {
       id: 'enem-portugues',
       nome: 'Português e Literatura',

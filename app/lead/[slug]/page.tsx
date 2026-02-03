@@ -72,10 +72,10 @@ const pulse = {
         transition: {
             duration: 2,
             repeat: Infinity,
-            ease: "easeInOut"
+            ease: "easeInOut" as const
         }
     }
-} as const
+}
 
 const float = {
     animate: {
@@ -83,10 +83,10 @@ const float = {
         transition: {
             duration: 3,
             repeat: Infinity,
-            ease: "easeInOut"
+            ease: "easeInOut" as const
         }
     }
-} as const
+}
 
 export default function LeadCapturePage() {
     const params = useParams()

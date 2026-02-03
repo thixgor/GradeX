@@ -15,12 +15,18 @@ export interface StudyTime {
   domingo: number
 }
 
+export interface SubmoduleItem {
+  id: string
+  nome: string
+}
+
 export interface ModuleItem {
   id: string
   nome: string
   horasEstimadas: number
   dificuldadeUsuario?: UserDifficulty // Dificuldade do usuário neste módulo
   incluido: boolean
+  submodulos?: SubmoduleItem[] // Submódulos opcionais (ex: ENEM)
 }
 
 export interface SubtopicItem {

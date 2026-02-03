@@ -340,7 +340,7 @@ export interface FlashcardTheme {
   updatedAt: Date
 }
 
-export type SerialKeyType = 'trial' | 'premium'
+export type SerialKeyType = 'trial' | 'premium' | 'custom'
 export type SerialKeyTrialSubtype = 'teste' | '7dias'
 export type SerialKeyPremiumSubtype = 'teste' | 'mensal' | 'trimestral' | 'semestral' | 'vitalicio'
 
@@ -353,6 +353,10 @@ export interface SerialKey {
   premiumSubtype?: SerialKeyPremiumSubtype // Para premium: 'teste', 'mensal', 'trimestral', 'semestral', 'vitalicio'
   // Preço associado
   price?: number // Preço em R$ (para histórico)
+  // Duração personalizada (para keys custom)
+  customDurationDays?: number
+  customDurationHours?: number
+  customDurationMinutes?: number
   // Status
   used: boolean // Se já foi usada
   generatedBy: string // ID do admin que gerou

@@ -135,7 +135,7 @@ function AulasPageContent() {
 
   // Dialog de editar aviso (admin)
   const [editarAvisoDialog, setEditarAvisoDialog] = useState(false)
-  const [avisoForm, setAvisoForm] = useState({ titulo: '', mensagem: '', tipo: 'info' as const })
+  const [avisoForm, setAvisoForm] = useState<{ titulo: string; mensagem: string; tipo: 'info' | 'warning' | 'success' | 'error' }>({ titulo: '', mensagem: '', tipo: 'info' })
   const [salvandoAviso, setSalvandoAviso] = useState(false)
 
   useEffect(() => {

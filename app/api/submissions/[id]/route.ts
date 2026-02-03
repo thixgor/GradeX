@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
-import { getSession } from '@/lib/auth'
 import { ExamSubmission } from '@/lib/types'
 import { ObjectId } from 'mongodb'
+import { secureApiEndpoint, verifyOwnership } from '@/lib/api-security'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,10 +13,20 @@ export async function GET(
 ) {
   try {
     const { id } = await params
-    const session = await getSession()
-    if (!session) {
-      return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
+
+    // Verificar rate limit e autorizacao
+    const security = await secureApiEndpoint(request, {
+      rateLimit: 'READ',
+      auth: {
+        requireAuth: true
+      }
+    })
+
+    if (!security.success || security.errorResponse) {
+      return security.errorResponse
     }
+
+    const session = security.session!
 
     const db = await getDb()
     const submissionsCollection = db.collection<ExamSubmission>('submissions')

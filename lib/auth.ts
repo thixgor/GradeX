@@ -5,9 +5,24 @@ import { getDb } from './mongodb'
 import { User } from './types'
 import { ObjectId } from 'mongodb'
 
+// Configuracoes de segurança da sessao
+const JWT_CONFIG = {
+  // Duracao do token de acesso (mais curto para maior segurança)
+  ACCESS_TOKEN_EXPIRY: process.env.NODE_ENV === 'production' ? '24h' : '7d',
+  // Duracao maxima do cookie
+  COOKIE_MAX_AGE: process.env.NODE_ENV === 'production' ? 60 * 60 * 24 : 60 * 60 * 24 * 7, // 24h em prod, 7d em dev
+  // SameSite mais restritivo em producao
+  SAME_SITE: (process.env.NODE_ENV === 'production' ? 'strict' : 'lax') as 'strict' | 'lax' | 'none'
+}
+
 const secret = new TextEncoder().encode(
   process.env.JWT_SECRET || 'your-secret-key-change-this'
 )
+
+// Verificar se JWT_SECRET esta configurado em producao
+if (process.env.NODE_ENV === 'production' && (!process.env.JWT_SECRET || process.env.JWT_SECRET === 'your-secret-key-change-this')) {
+  console.error('SECURITY WARNING: JWT_SECRET nao esta configurado corretamente em producao!')
+}
 
 export interface TokenPayload {
   userId: string
@@ -15,11 +30,14 @@ export interface TokenPayload {
   name: string
   role: 'admin' | 'user'
   emailVerified: boolean
+  // Token ID para invalidacao (opcional)
+  jti?: string
   [key: string]: any
 }
 
 export async function hashPassword(password: string): Promise<string> {
-  return bcrypt.hash(password, 10)
+  // Usar fator de custo maior para maior segurança
+  return bcrypt.hash(password, 12)
 }
 
 export async function verifyPassword(password: string, hashedPassword: string): Promise<boolean> {
@@ -27,10 +45,13 @@ export async function verifyPassword(password: string, hashedPassword: string): 
 }
 
 export async function createToken(payload: TokenPayload): Promise<string> {
-  return new SignJWT(payload)
+  // Gerar ID unico para o token (permite invalidacao futura)
+  const tokenId = crypto.randomUUID()
+
+  return new SignJWT({ ...payload, jti: tokenId })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime('7d')
+    .setExpirationTime(JWT_CONFIG.ACCESS_TOKEN_EXPIRY)
     .sign(secret)
 }
 
@@ -81,8 +102,8 @@ export async function setAuthCookie(token: string): Promise<void> {
   cookieStore.set('auth-token', token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    maxAge: 60 * 60 * 24 * 7, // 7 dias
+    sameSite: JWT_CONFIG.SAME_SITE,
+    maxAge: JWT_CONFIG.COOKIE_MAX_AGE,
     path: '/',
   })
 }

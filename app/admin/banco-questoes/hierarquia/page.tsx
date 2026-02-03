@@ -390,7 +390,7 @@ export default function AdminHierarquiaPage() {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8 max-w-6xl">
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <Tabs value={activeTab} onValueChange={setActiveTab} defaultValue="periodos">
           <TabsList className="grid w-full grid-cols-4 mb-6">
             <TabsTrigger value="periodos">Períodos</TabsTrigger>
             <TabsTrigger value="modulos">Módulos</TabsTrigger>

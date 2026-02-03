@@ -23,6 +23,13 @@ const FLASHCARD_LIMITS: Record<AccountType | 'admin', FlashcardTierLimits> = {
     totalCardsLifetime: Infinity,
     totalDecksLifetime: Infinity,
   },
+  essential: {
+    dailyDecks: 15,
+    maxActiveDecks: 15,
+    cardsPerDeck: 15,
+    totalCardsLifetime: Infinity,
+    totalDecksLifetime: Infinity,
+  },
   premium: {
     dailyDecks: 25,
     maxActiveDecks: null,

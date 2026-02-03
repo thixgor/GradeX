@@ -225,7 +225,13 @@ function HangmanManager() {
                         <DialogHeader><DialogTitle>{isCreating ? 'Nova Palavra' : 'Editar Palavra'}</DialogTitle></DialogHeader>
                         {(() => {
                             const target = isCreating ? newWordData : editing
-                            const setTarget = isCreating ? setNewWordData : setEditing
+                            const setTarget = (data: Partial<HangmanWord>) => {
+                                if (isCreating) {
+                                    setNewWordData(data)
+                                } else {
+                                    setEditing(data as HangmanWord)
+                                }
+                            }
                             if (!target) return null
                             return (
                                 <div className="space-y-3 py-2">
@@ -233,7 +239,7 @@ function HangmanManager() {
                                     <Input placeholder="Descrição" value={target.description || ''} onChange={e => setTarget({ ...target, description: e.target.value })} />
                                     <Input placeholder="Dica" value={target.hint || ''} onChange={e => setTarget({ ...target, hint: e.target.value })} />
                                     <Input placeholder="Explicação" value={target.explanation || ''} onChange={e => setTarget({ ...target, explanation: e.target.value })} />
-                                    <select className="w-full p-2 border rounded" value={target.difficulty} onChange={e => setTarget({ ...target, difficulty: e.target.value } as any)}>
+                                    <select className="w-full p-2 border rounded" value={target.difficulty} onChange={e => setTarget({ ...target, difficulty: e.target.value })}>
                                         <option value="facil">Fácil</option><option value="medio">Médio</option><option value="dificil">Difícil</option>
                                     </select>
                                 </div>
@@ -337,7 +343,13 @@ function ErrorHuntManager() {
                         <DialogHeader><DialogTitle>{isCreating ? 'Nova Questão' : 'Editar Questão'}</DialogTitle></DialogHeader>
                         {(() => {
                             const target = isCreating ? newData : editing
-                            const setTarget = isCreating ? setNewData : setEditing
+                            const setTarget = (data: Partial<ErrorQuestion>) => {
+                                if (isCreating) {
+                                    setNewData(data)
+                                } else {
+                                    setEditing(data as ErrorQuestion)
+                                }
+                            }
                             if (!target) return null
                             return (
                                 <div className="space-y-3 py-2 max-h-[60vh] overflow-y-auto pr-2">

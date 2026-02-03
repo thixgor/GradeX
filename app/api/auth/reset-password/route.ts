@@ -1,17 +1,28 @@
 
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { hashPassword } from '@/lib/auth'
 import crypto from 'crypto'
 import { z } from 'zod'
+import { secureApiEndpoint } from '@/lib/api-security'
 
 const resetPasswordSchema = z.object({
     token: z.string(),
     password: z.string().min(6, 'A senha deve ter no mínimo 6 caracteres'),
 })
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
+        // Rate limit para reset password (endpoint sensivel)
+        const security = await secureApiEndpoint(req, {
+            rateLimit: 'AUTH',
+            auth: { requireAuth: false }
+        })
+
+        if (!security.success || security.errorResponse) {
+            return security.errorResponse
+        }
+
         const body = await req.json()
         const result = resetPasswordSchema.safeParse(body)
 

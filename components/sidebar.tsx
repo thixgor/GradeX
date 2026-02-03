@@ -39,8 +39,8 @@ interface SidebarProps {
   examsRemaining?: number | null
   examsLimit?: number | null
   tierLimitExceeded?: boolean
-  collapsed: boolean
-  onCollapse: (collapsed: boolean) => void
+  collapsed?: boolean
+  onCollapse?: (collapsed: boolean) => void
 }
 
 interface NavItem {
@@ -201,7 +201,7 @@ export function Sidebar({
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => onCollapse(!collapsed)}
+            onClick={() => onCollapse?.(!collapsed)}
             className="hidden lg:flex h-8 w-8"
           >
             {collapsed ? (

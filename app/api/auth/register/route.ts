@@ -7,11 +7,22 @@ import { User } from '@/lib/types'
 import { ADMIN_EMAILS } from '@/lib/constants'
 import { sendWelcomeEmail, sendVerificationEmail } from '@/lib/mail'
 import crypto from 'crypto'
+import { secureApiEndpoint } from '@/lib/api-security'
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit para registro (endpoint sensivel)
+    const security = await secureApiEndpoint(request, {
+      rateLimit: 'AUTH',
+      auth: { requireAuth: false }
+    })
+
+    if (!security.success || security.errorResponse) {
+      return security.errorResponse
+    }
+
     const body = await request.json()
     const { email, password, name, dateOfBirth, isAfyaMedicineStudent, afyaUnit, role = 'user', recaptchaToken } = body
 
@@ -22,7 +33,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const recaptchaResult = await verifyRecaptcha(recaptchaToken)
+    // Usar score mais alto para registro (acao de alto risco)
+    const recaptchaResult = await verifyRecaptcha(recaptchaToken, 'HIGH_RISK', 'register')
     if (!recaptchaResult.success) {
       return NextResponse.json(
         { error: recaptchaResult.error || 'Falha na verificação do reCAPTCHA' },

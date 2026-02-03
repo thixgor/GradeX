@@ -3,11 +3,22 @@ import { getDb } from '@/lib/mongodb'
 import { verifyPassword, createToken, setAuthCookie } from '@/lib/auth'
 import { verifyRecaptcha } from '@/lib/recaptcha'
 import { User } from '@/lib/types'
+import { secureApiEndpoint } from '@/lib/api-security'
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit para login (endpoint sensivel)
+    const security = await secureApiEndpoint(request, {
+      rateLimit: 'AUTH',
+      auth: { requireAuth: false }
+    })
+
+    if (!security.success || security.errorResponse) {
+      return security.errorResponse
+    }
+
     const body = await request.json()
     const { email, password, recaptchaToken } = body
 
@@ -18,7 +29,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const recaptchaResult = await verifyRecaptcha(recaptchaToken)
+    // Usar score mais alto para login (acao de alto risco)
+    const recaptchaResult = await verifyRecaptcha(recaptchaToken, 'HIGH_RISK', 'login')
     if (!recaptchaResult.success) {
       return NextResponse.json(
         { error: recaptchaResult.error || 'Falha na verificação do reCAPTCHA' },

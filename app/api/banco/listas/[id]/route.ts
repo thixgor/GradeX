@@ -181,7 +181,7 @@ export async function PUT(
       await db.collection('banco_listas_usuario').updateOne(
         { _id: new ObjectId(id) },
         {
-          $pull: { questaoIds: new ObjectId(body.removerQuestao) },
+          $pull: { questaoIds: new ObjectId(body.removerQuestao) } as any,
           $set: { updatedAt: new Date() }
         }
       )

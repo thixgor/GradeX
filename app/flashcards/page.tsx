@@ -75,6 +75,12 @@ const tierLimits: Record<AccountType | 'admin', { daily: number | string; active
     cards: 10,
     summary: 'Test drive com nitro: 10 decks por dia, 10 cartões cada, 10 decks ativos.',
   },
+  essential: {
+    daily: 15,
+    active: '15 decks ativos',
+    cards: 15,
+    summary: 'Plano essencial: 15 decks por dia, 15 cartões cada, 15 decks ativos.',
+  },
   premium: {
     daily: 25,
     active: 'Ilimitado',

@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
-import { getSession } from '@/lib/auth'
 import { User, AccountType, TrialPlanType, PremiumPlanType } from '@/lib/types'
-import { getTierLimits, getPersonalExamsQuota } from '@/lib/tier-limits'
+import { getPersonalExamsQuota } from '@/lib/tier-limits'
 import { ObjectId } from 'mongodb'
 import { sendAccountDeletedEmail } from '@/lib/mail'
+import { secureApiEndpoint, canAdminModifyUser } from '@/lib/api-security'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,9 +15,29 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params
-    const session = await getSession()
-    if (!session || session.role !== 'admin') {
-      return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
+
+    // Verificar rate limit e autorizacao
+    const security = await secureApiEndpoint(request, {
+      rateLimit: 'ADMIN',
+      auth: {
+        requireAuth: true,
+        allowedRoles: ['admin']
+      }
+    })
+
+    if (!security.success || security.errorResponse) {
+      return security.errorResponse
+    }
+
+    const session = security.session!
+
+    // Verificar se pode modificar o usuario alvo (protege admin de deletar admin)
+    const canModify = await canAdminModifyUser(session.userId, id, 'delete')
+    if (!canModify.allowed) {
+      return NextResponse.json(
+        { error: canModify.reason },
+        { status: 403 }
+      )
     }
 
     const db = await getDb()
@@ -27,14 +47,6 @@ export async function DELETE(
     const user = await usersCollection.findOne({ _id: new ObjectId(id) })
     if (!user) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
-    }
-
-    // Não permite deletar o próprio usuário
-    if (id === session.userId) {
-      return NextResponse.json(
-        { error: 'Você não pode deletar sua própria conta' },
-        { status: 400 }
-      )
     }
 
     // Deletar todas as submissões do usuário
@@ -71,10 +83,21 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params
-    const session = await getSession()
-    if (!session || session.role !== 'admin') {
-      return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
+
+    // Verificar rate limit e autorizacao
+    const security = await secureApiEndpoint(request, {
+      rateLimit: 'ADMIN',
+      auth: {
+        requireAuth: true,
+        allowedRoles: ['admin']
+      }
+    })
+
+    if (!security.success || security.errorResponse) {
+      return security.errorResponse
     }
+
+    const session = security.session!
 
     const body = await request.json()
     const { action, banReason, banDetails, accountType, trialPlanType, premiumPlanType, dailyPersonalExamsCreated, secondaryRole } = body
@@ -86,20 +109,23 @@ export async function PATCH(
       )
     }
 
+    // Verificar se pode modificar o usuario alvo para acoes de ban
+    if (action === 'ban') {
+      const canModify = await canAdminModifyUser(session.userId, id, 'ban')
+      if (!canModify.allowed) {
+        return NextResponse.json(
+          { error: canModify.reason },
+          { status: 403 }
+        )
+      }
+    }
+
     const db = await getDb()
     const usersCollection = db.collection<User>('users')
 
     const user = await usersCollection.findOne({ _id: new ObjectId(id) })
     if (!user) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
-    }
-
-    // Não permite banir a si mesmo
-    if (action === 'ban' && id === session.userId) {
-      return NextResponse.json(
-        { error: 'Você não pode banir sua própria conta' },
-        { status: 400 }
-      )
     }
 
     let updateData: Partial<User> = {}
