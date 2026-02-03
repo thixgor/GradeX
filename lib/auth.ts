@@ -15,14 +15,29 @@ const JWT_CONFIG = {
   SAME_SITE: (process.env.NODE_ENV === 'production' ? 'strict' : 'lax') as 'strict' | 'lax' | 'none'
 }
 
-const secret = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'your-secret-key-change-this'
-)
+// CRÍTICO: Verificar JWT_SECRET em produção
+const DEFAULT_SECRET = 'your-secret-key-change-this'
+const jwtSecretValue = process.env.JWT_SECRET || DEFAULT_SECRET
 
-// Verificar se JWT_SECRET esta configurado em producao
-if (process.env.NODE_ENV === 'production' && (!process.env.JWT_SECRET || process.env.JWT_SECRET === 'your-secret-key-change-this')) {
-  console.error('SECURITY WARNING: JWT_SECRET nao esta configurado corretamente em producao!')
+// Em produção, FALHA se JWT_SECRET não estiver configurado corretamente
+if (process.env.NODE_ENV === 'production') {
+  if (!process.env.JWT_SECRET || process.env.JWT_SECRET === DEFAULT_SECRET) {
+    console.error('='.repeat(60))
+    console.error('ERRO CRÍTICO DE SEGURANÇA!')
+    console.error('JWT_SECRET não está configurado corretamente em produção!')
+    console.error('Configure a variável de ambiente JWT_SECRET antes de executar.')
+    console.error('='.repeat(60))
+    // Em produção, isso vai causar erro na inicialização, forçando a configuração
+    throw new Error('JWT_SECRET must be configured in production environment')
+  }
+
+  // Verificar se o secret é forte o suficiente (mínimo 32 caracteres)
+  if (process.env.JWT_SECRET.length < 32) {
+    console.error('AVISO DE SEGURANÇA: JWT_SECRET deve ter no mínimo 32 caracteres!')
+  }
 }
+
+const secret = new TextEncoder().encode(jwtSecretValue)
 
 export interface TokenPayload {
   userId: string

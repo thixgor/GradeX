@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSession } from '@/lib/auth'
 import clientPromise from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
+import {
+  secureApiEndpoint,
+  isValidObjectId,
+  sanitizeHtml,
+  validateStringInput
+} from '@/lib/api-security'
 
 export const dynamic = 'force-dynamic'
 
@@ -11,13 +16,34 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getSession()
-    if (!session) {
-      return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
+    // Validar ObjectId primeiro
+    if (!isValidObjectId(params.id)) {
+      return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
     }
 
+    // Verificar autenticação e rate limit
+    const security = await secureApiEndpoint(req, {
+      rateLimit: 'WRITE',
+      auth: { requireAuth: true }
+    })
+
+    if (!security.success || security.errorResponse) {
+      return security.errorResponse
+    }
+
+    const session = security.session!
     const { id } = params
-    const { name, description, color, icon } = await req.json()
+    const body = await req.json()
+
+    // Validar e sanitizar inputs
+    const nameValidation = validateStringInput(body.name, 'Nome', { maxLength: 100 })
+    const descValidation = validateStringInput(body.description, 'Descrição', { maxLength: 500 })
+
+    // Sanitizar contra XSS
+    const name = nameValidation.value ? sanitizeHtml(nameValidation.value) : undefined
+    const description = descValidation.value ? sanitizeHtml(descValidation.value) : undefined
+    const color = body.color
+    const icon = body.icon ? sanitizeHtml(body.icon) : undefined
 
     const client = await clientPromise
     const db = client.db('DomineAqui')
@@ -43,8 +69,8 @@ export async function PUT(
     const updateData: any = {
       updatedAt: new Date(),
     }
-    if (name !== undefined) updateData.name = name.trim()
-    if (description !== undefined) updateData.description = description.trim()
+    if (name !== undefined) updateData.name = name
+    if (description !== undefined) updateData.description = description
     if (color !== undefined) updateData.color = color
     if (icon !== undefined) updateData.icon = icon
 
@@ -54,9 +80,9 @@ export async function PUT(
     )
 
     return NextResponse.json({ message: 'Grupo atualizado com sucesso' })
-  } catch (error: any) {
+  } catch (error) {
     console.error('Erro ao atualizar grupo:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 })
   }
 }
 
@@ -66,11 +92,22 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getSession()
-    if (!session) {
-      return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
+    // Validar ObjectId primeiro
+    if (!isValidObjectId(params.id)) {
+      return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
     }
 
+    // Verificar autenticação e rate limit
+    const security = await secureApiEndpoint(req, {
+      rateLimit: 'WRITE',
+      auth: { requireAuth: true }
+    })
+
+    if (!security.success || security.errorResponse) {
+      return security.errorResponse
+    }
+
+    const session = security.session!
     const { id } = params
 
     const client = await clientPromise
@@ -102,8 +139,8 @@ export async function DELETE(
     await groupsCollection.deleteOne({ _id: new ObjectId(id) })
 
     return NextResponse.json({ message: 'Grupo deletado com sucesso' })
-  } catch (error: any) {
+  } catch (error) {
     console.error('Erro ao deletar grupo:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 })
   }
 }

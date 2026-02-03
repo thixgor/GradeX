@@ -3,6 +3,189 @@ import { getSession, TokenPayload } from './auth'
 import { getDb } from './mongodb'
 import { User } from './types'
 import { ObjectId } from 'mongodb'
+import crypto from 'crypto'
+
+// ==========================================
+// VALIDACAO DE OBJECTID (NoSQL Injection Protection)
+// ==========================================
+
+export function isValidObjectId(id: string): boolean {
+  if (!id || typeof id !== 'string') return false
+  return ObjectId.isValid(id) && new ObjectId(id).toString() === id
+}
+
+export function validateObjectId(id: string): { valid: boolean; error?: string } {
+  if (!id) {
+    return { valid: false, error: 'ID não fornecido' }
+  }
+  if (!isValidObjectId(id)) {
+    return { valid: false, error: 'ID inválido' }
+  }
+  return { valid: true }
+}
+
+// ==========================================
+// XSS SANITIZATION
+// ==========================================
+
+// Caracteres HTML perigosos
+const HTML_ENTITIES: Record<string, string> = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#x27;',
+  '/': '&#x2F;',
+  '`': '&#x60;',
+  '=': '&#x3D;'
+}
+
+// Sanitiza string contra XSS
+export function sanitizeHtml(input: string): string {
+  if (!input || typeof input !== 'string') return ''
+  return input.replace(/[&<>"'`=/]/g, char => HTML_ENTITIES[char] || char)
+}
+
+// Sanitiza objeto recursivamente
+export function sanitizeObject<T extends Record<string, any>>(obj: T, fieldsToSanitize?: string[]): T {
+  if (!obj || typeof obj !== 'object') return obj
+
+  const result: any = Array.isArray(obj) ? [] : {}
+
+  for (const [key, value] of Object.entries(obj)) {
+    if (typeof value === 'string') {
+      // Se fieldsToSanitize for especificado, só sanitiza esses campos
+      if (!fieldsToSanitize || fieldsToSanitize.includes(key)) {
+        result[key] = sanitizeHtml(value)
+      } else {
+        result[key] = value
+      }
+    } else if (typeof value === 'object' && value !== null) {
+      result[key] = sanitizeObject(value, fieldsToSanitize)
+    } else {
+      result[key] = value
+    }
+  }
+
+  return result
+}
+
+// Remove tags HTML completamente
+export function stripHtml(input: string): string {
+  if (!input || typeof input !== 'string') return ''
+  return input
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '') // Remove scripts
+    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')    // Remove styles
+    .replace(/<[^>]+>/g, '')                                            // Remove todas as tags
+    .replace(/\s+/g, ' ')                                               // Normaliza espaços
+    .trim()
+}
+
+// ==========================================
+// CSRF PROTECTION
+// ==========================================
+
+const CSRF_TOKEN_LENGTH = 32
+const CSRF_COOKIE_NAME = 'csrf-token'
+const CSRF_HEADER_NAME = 'x-csrf-token'
+
+// Gera token CSRF
+export function generateCsrfToken(): string {
+  return crypto.randomBytes(CSRF_TOKEN_LENGTH).toString('hex')
+}
+
+// Verifica token CSRF
+export function verifyCsrfToken(request: NextRequest): { valid: boolean; error?: string } {
+  const cookieToken = request.cookies.get(CSRF_COOKIE_NAME)?.value
+  const headerToken = request.headers.get(CSRF_HEADER_NAME)
+
+  if (!cookieToken || !headerToken) {
+    return { valid: false, error: 'Token CSRF ausente' }
+  }
+
+  // Comparação segura contra timing attacks
+  if (cookieToken.length !== headerToken.length) {
+    return { valid: false, error: 'Token CSRF inválido' }
+  }
+
+  const cookieBuffer = Buffer.from(cookieToken)
+  const headerBuffer = Buffer.from(headerToken)
+
+  if (!crypto.timingSafeEqual(cookieBuffer, headerBuffer)) {
+    return { valid: false, error: 'Token CSRF inválido' }
+  }
+
+  return { valid: true }
+}
+
+// Cria response com cookie CSRF
+export function setCsrfCookie(response: NextResponse, token?: string): NextResponse {
+  const csrfToken = token || generateCsrfToken()
+  response.cookies.set(CSRF_COOKIE_NAME, csrfToken, {
+    httpOnly: false, // Precisa ser acessível pelo JS para enviar no header
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    path: '/',
+    maxAge: 60 * 60 * 24 // 24 horas
+  })
+  return response
+}
+
+// ==========================================
+// INPUT VALIDATION HELPERS
+// ==========================================
+
+// Valida e limita tamanho de string
+export function validateStringInput(
+  input: any,
+  fieldName: string,
+  options: { minLength?: number; maxLength?: number; required?: boolean } = {}
+): { valid: boolean; value?: string; error?: string } {
+  const { minLength = 0, maxLength = 10000, required = false } = options
+
+  if (input === undefined || input === null || input === '') {
+    if (required) {
+      return { valid: false, error: `${fieldName} é obrigatório` }
+    }
+    return { valid: true, value: '' }
+  }
+
+  if (typeof input !== 'string') {
+    return { valid: false, error: `${fieldName} deve ser texto` }
+  }
+
+  const trimmed = input.trim()
+
+  if (trimmed.length < minLength) {
+    return { valid: false, error: `${fieldName} deve ter no mínimo ${minLength} caracteres` }
+  }
+
+  if (trimmed.length > maxLength) {
+    return { valid: false, error: `${fieldName} deve ter no máximo ${maxLength} caracteres` }
+  }
+
+  return { valid: true, value: trimmed }
+}
+
+// Valida email
+export function validateEmail(email: any): { valid: boolean; value?: string; error?: string } {
+  if (!email || typeof email !== 'string') {
+    return { valid: false, error: 'Email é obrigatório' }
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  const trimmed = email.trim().toLowerCase()
+
+  if (!emailRegex.test(trimmed)) {
+    return { valid: false, error: 'Email inválido' }
+  }
+
+  if (trimmed.length > 254) {
+    return { valid: false, error: 'Email muito longo' }
+  }
+
+  return { valid: true, value: trimmed }
+}
 
 // ==========================================
 // RATE LIMITING
@@ -273,6 +456,11 @@ export async function verifyOwnership(
   ownerField: string = 'userId'
 ): Promise<{ owned: boolean; resource?: any }> {
   try {
+    // Validar ObjectId primeiro
+    if (!isValidObjectId(resourceId)) {
+      return { owned: false }
+    }
+
     const db = await getDb()
     const resource = await db.collection(collection).findOne({
       _id: new ObjectId(resourceId)
@@ -288,6 +476,71 @@ export async function verifyOwnership(
     return { owned, resource }
   } catch {
     return { owned: false }
+  }
+}
+
+// Verifica ownership com suporte a admin e monitor
+export async function verifyResourceAccess(
+  collection: string,
+  resourceId: string,
+  session: TokenPayload,
+  options: {
+    ownerField?: string
+    allowAdmin?: boolean
+    allowMonitor?: boolean
+    monitorOwnerField?: string // Campo que indica quem criou (para monitores)
+  } = {}
+): Promise<{ allowed: boolean; resource?: any; reason?: string }> {
+  const {
+    ownerField = 'userId',
+    allowAdmin = true,
+    allowMonitor = false,
+    monitorOwnerField = 'criadoPor'
+  } = options
+
+  // Validar ObjectId primeiro
+  if (!isValidObjectId(resourceId)) {
+    return { allowed: false, reason: 'ID inválido' }
+  }
+
+  try {
+    const db = await getDb()
+    const resource = await db.collection(collection).findOne({
+      _id: new ObjectId(resourceId)
+    })
+
+    if (!resource) {
+      return { allowed: false, reason: 'Recurso não encontrado' }
+    }
+
+    // Admin sempre tem acesso (se permitido)
+    if (allowAdmin && session.role === 'admin') {
+      return { allowed: true, resource }
+    }
+
+    // Verifica se é o dono
+    const ownerId = resource[ownerField]
+    if (ownerId === session.userId || ownerId?.toString() === session.userId) {
+      return { allowed: true, resource }
+    }
+
+    // Verifica se é monitor e criou o recurso
+    if (allowMonitor) {
+      const user = await db.collection<User>('users').findOne({
+        _id: new ObjectId(session.userId)
+      })
+
+      if (user?.secondaryRole === 'monitor') {
+        const creatorId = resource[monitorOwnerField]
+        if (creatorId === session.userId || creatorId?.toString() === session.userId) {
+          return { allowed: true, resource }
+        }
+      }
+    }
+
+    return { allowed: false, reason: 'Sem permissão para acessar este recurso' }
+  } catch {
+    return { allowed: false, reason: 'Erro ao verificar permissão' }
   }
 }
 

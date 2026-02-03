@@ -1,33 +1,58 @@
-import { NextResponse } from 'next/server'
-import { getSession } from '@/lib/auth'
+import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { AulaPostagem, AulaComentario } from '@/lib/types'
+import {
+  secureApiEndpoint,
+  isValidObjectId,
+  sanitizeHtml,
+  validateStringInput
+} from '@/lib/api-security'
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getSession()
-    if (!session) {
+    // Validar ObjectId primeiro
+    if (!isValidObjectId(params.id)) {
       return NextResponse.json(
-        { error: 'Não autenticado' },
-        { status: 401 }
-      )
-    }
-
-    const body = await request.json()
-    const { conteudo } = body
-
-    if (!conteudo || !conteudo.trim()) {
-      return NextResponse.json(
-        { error: 'Comentário não pode estar vazio' },
+        { error: 'ID inválido' },
         { status: 400 }
       )
     }
+
+    // Verificar autenticação e rate limit
+    const security = await secureApiEndpoint(request, {
+      rateLimit: 'WRITE',
+      auth: { requireAuth: true }
+    })
+
+    if (!security.success || security.errorResponse) {
+      return security.errorResponse
+    }
+
+    const session = security.session!
+    const body = await request.json()
+
+    // Validar e sanitizar conteúdo
+    const contentValidation = validateStringInput(body.conteudo, 'Comentário', {
+      required: true,
+      minLength: 1,
+      maxLength: 5000
+    })
+
+    if (!contentValidation.valid) {
+      return NextResponse.json(
+        { error: contentValidation.error },
+        { status: 400 }
+      )
+    }
+
+    // Sanitizar contra XSS
+    const conteudo = sanitizeHtml(contentValidation.value!)
 
     const db = await getDb()
     const aulasCollection = db.collection<AulaPostagem>('aulas_postagens')
@@ -49,7 +74,7 @@ export async function POST(
       _id: new ObjectId(),
       aulaId: params.id,
       usuarioId: session.userId,
-      nomeUsuario: usuario.name || usuario.email,
+      nomeUsuario: sanitizeHtml(usuario.name || usuario.email),
       isAdmin: session.role === 'admin',
       conteudo,
       criadoEm: new Date()

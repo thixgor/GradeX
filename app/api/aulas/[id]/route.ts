@@ -1,16 +1,29 @@
-import { NextResponse } from 'next/server'
-import { getSession } from '@/lib/auth'
+import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { AulaPostagem } from '@/lib/types'
+import {
+  secureApiEndpoint,
+  verifyResourceAccess,
+  isValidObjectId,
+  sanitizeObject
+} from '@/lib/api-security'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
+    // Validar ObjectId para prevenir NoSQL injection/DoS
+    if (!isValidObjectId(params.id)) {
+      return NextResponse.json(
+        { error: 'ID inválido' },
+        { status: 400 }
+      )
+    }
+
     const db = await getDb()
     const aulasCollection = db.collection<AulaPostagem>('aulas_postagens')
 
@@ -36,39 +49,67 @@ export async function GET(
 }
 
 export async function PATCH(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getSession()
-    if (!session) {
+    // Validar ObjectId primeiro
+    if (!isValidObjectId(params.id)) {
       return NextResponse.json(
-        { error: 'Não autenticado' },
-        { status: 401 }
+        { error: 'ID inválido' },
+        { status: 400 }
       )
     }
 
-    const isAdmin = session.role === 'admin'
-    const db = await getDb()
-    const usersCollection = db.collection('users')
-    const user = await usersCollection.findOne({ _id: new ObjectId(session.userId) })
-    const isMonitor = user?.secondaryRole === 'monitor'
+    // Verificar autenticação e rate limit
+    const security = await secureApiEndpoint(request, {
+      rateLimit: 'WRITE',
+      auth: {
+        requireAuth: true,
+        allowedRoles: ['admin'],
+        allowSecondaryRoles: ['monitor']
+      }
+    })
 
-    if (!isAdmin && !isMonitor) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
+    if (!security.success || security.errorResponse) {
+      return security.errorResponse
+    }
+
+    const session = security.session!
+    const db = await getDb()
+    const aulasCollection = db.collection<AulaPostagem>('aulas_postagens')
+
+    // Verificar se o monitor tem permissão para editar esta aula
+    // (deve ser o criador ou admin)
+    if (session.role !== 'admin') {
+      const access = await verifyResourceAccess(
+        'aulas_postagens',
+        params.id,
+        session,
+        {
+          ownerField: 'criadoPor',
+          allowAdmin: true,
+          allowMonitor: true,
+          monitorOwnerField: 'criadoPor'
+        }
       )
+
+      if (!access.allowed) {
+        return NextResponse.json(
+          { error: access.reason || 'Sem permissão para editar esta aula' },
+          { status: 403 }
+        )
+      }
     }
 
     const body = await request.json()
-    const aulasCollection = db.collection<AulaPostagem>('aulas_postagens')
 
-    console.log('PATCH /api/aulas/[id]:', { aulaId: params.id, body })
+    // Sanitizar campos de texto contra XSS
+    const sanitizedBody = sanitizeObject(body, ['titulo', 'descricao', 'conteudo', 'resumo'])
 
     // Processar campos que precisam de conversão
-    const updateData: any = { ...body }
-    
+    const updateData: any = { ...sanitizedBody }
+
     // Converter dataLiberacao para Date se for string
     if (updateData.dataLiberacao && typeof updateData.dataLiberacao === 'string') {
       updateData.dataLiberacao = new Date(updateData.dataLiberacao)
@@ -81,11 +122,9 @@ export async function PATCH(
       }
     })
 
-    console.log('Update data:', updateData)
-
     // Buscar aula atual para saber quais campos precisam ser limpos
     const currentAula = await aulasCollection.findOne({ _id: new ObjectId(params.id) })
-    
+
     // Se setorId foi alterado, limpar tópicos/subtópicos/módulos/submódulos abaixo dele
     if (updateData.setorId !== undefined && updateData.setorId !== currentAula?.setorId) {
       updateData.topicoId = null
@@ -124,8 +163,6 @@ export async function PATCH(
       }
     })
 
-    console.log('Final update data - Set:', fieldsToSet, 'Unset:', fieldsToUnset)
-
     const updateQuery: any = { $set: fieldsToSet }
     if (Object.keys(fieldsToUnset).length > 0) {
       updateQuery.$unset = fieldsToUnset
@@ -135,8 +172,6 @@ export async function PATCH(
       { _id: new ObjectId(params.id) },
       updateQuery
     )
-
-    console.log('Update result:', { matchedCount: result.matchedCount, modifiedCount: result.modifiedCount })
 
     if (result.matchedCount === 0) {
       return NextResponse.json(
@@ -160,32 +195,58 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getSession()
-    if (!session) {
+    // Validar ObjectId primeiro
+    if (!isValidObjectId(params.id)) {
       return NextResponse.json(
-        { error: 'Não autenticado' },
-        { status: 401 }
+        { error: 'ID inválido' },
+        { status: 400 }
       )
     }
 
-    const isAdmin = session.role === 'admin'
+    // Verificar autenticação e rate limit
+    const security = await secureApiEndpoint(request, {
+      rateLimit: 'WRITE',
+      auth: {
+        requireAuth: true,
+        allowedRoles: ['admin'],
+        allowSecondaryRoles: ['monitor']
+      }
+    })
+
+    if (!security.success || security.errorResponse) {
+      return security.errorResponse
+    }
+
+    const session = security.session!
     const db = await getDb()
-    const usersCollection = db.collection('users')
-    const user = await usersCollection.findOne({ _id: new ObjectId(session.userId) })
-    const isMonitor = user?.secondaryRole === 'monitor'
-
-    if (!isAdmin && !isMonitor) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
-      )
-    }
-
     const aulasCollection = db.collection<AulaPostagem>('aulas_postagens')
+
+    // Verificar se o monitor tem permissão para deletar esta aula
+    // (deve ser o criador ou admin)
+    if (session.role !== 'admin') {
+      const access = await verifyResourceAccess(
+        'aulas_postagens',
+        params.id,
+        session,
+        {
+          ownerField: 'criadoPor',
+          allowAdmin: true,
+          allowMonitor: true,
+          monitorOwnerField: 'criadoPor'
+        }
+      )
+
+      if (!access.allowed) {
+        return NextResponse.json(
+          { error: access.reason || 'Sem permissão para deletar esta aula' },
+          { status: 403 }
+        )
+      }
+    }
 
     const result = await aulasCollection.deleteOne({
       _id: new ObjectId(params.id)
