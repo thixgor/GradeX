@@ -134,7 +134,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const txt = sanitizeHtml(txtValidation.value!)
+    // Don't use sanitizeHtml here as it converts >> to &gt;&gt;
+    // We'll sanitize individual values after parsing
+    const txt = txtValidation.value!
 
     // Parse the TXT input
     const { entries, errors: parseErrors } = parseTxtInput(txt)
