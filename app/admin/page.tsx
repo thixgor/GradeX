@@ -21,7 +21,8 @@ import {
   Megaphone,
   Gamepad2 as GamepadIcon,
   Mail,
-  ClipboardList
+  ClipboardList,
+  Target
 } from 'lucide-react'
 
 interface User {
@@ -145,6 +146,13 @@ export default function AdminDashboard() {
       icon: ClipboardList,
       href: '/admin/forms',
       color: 'from-fuchsia-500 to-purple-600'
+    },
+    {
+      title: 'Captura de Leads',
+      description: 'Criar páginas de captura de leads com materiais gratuitos. Coletar e-mails e nomes.',
+      icon: Target,
+      href: '/admin/leads',
+      color: 'from-lime-500 to-green-500'
     }
   ]
 

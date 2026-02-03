@@ -288,3 +288,108 @@ export async function sendFormSubmissionEmail(email: string, formTitle: string, 
     ],
   })
 }
+
+// Interface para blocos de lead
+interface LeadBlockForEmail {
+  id: string
+  type: 'text' | 'button' | 'card' | 'embed'
+  content?: string
+  buttonText?: string
+  buttonUrl?: string
+  buttonColor?: string
+  isPdfButton?: boolean
+  cardTitle?: string
+  cardDescription?: string
+  cardImageUrl?: string
+  embedType?: 'video' | 'podcast' | 'audio'
+  embedUrl?: string
+  embedTitle?: string
+  embedDescription?: string
+}
+
+function renderLeadBlocksToHtml(blocks: LeadBlockForEmail[]): string {
+  return blocks.map(block => {
+    switch (block.type) {
+      case 'text':
+        return `<div style="margin: 20px 0;">${block.content || ''}</div>`
+
+      case 'button':
+        const btnColor = block.buttonColor || '#f57c00'
+        return `
+          <div style="text-align: center; margin: 25px 0;">
+            <a href="${block.buttonUrl || '#'}" 
+               style="display: inline-block; background-color: ${btnColor}; color: #ffffff !important; 
+                      text-decoration: none; padding: 14px 28px; border-radius: 8px; 
+                      font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.2);" 
+               target="_blank">
+              ${block.isPdfButton ? '📄 ' : ''}${block.buttonText || 'Acessar'}
+            </a>
+          </div>
+        `
+
+      case 'card':
+        return `
+          <div style="border: 1px solid #e1e4e8; border-radius: 12px; padding: 20px; margin: 20px 0; background: #fafbfc;">
+            ${block.cardImageUrl ? `<img src="${block.cardImageUrl}" alt="" style="width: 100%; max-height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 15px;" />` : ''}
+            ${block.cardTitle ? `<h3 style="margin: 0 0 10px 0; color: #0f3d2e; font-size: 18px;">${block.cardTitle}</h3>` : ''}
+            ${block.cardDescription ? `<p style="margin: 0; color: #4a5568;">${block.cardDescription}</p>` : ''}
+          </div>
+        `
+
+      case 'embed':
+        return `
+          <div style="margin: 25px 0; padding: 20px; background: linear-gradient(135deg, #0f3d2e 0%, #1a5c45 100%); border-radius: 12px;">
+            ${block.embedTitle ? `<h3 style="margin: 0 0 10px 0; color: #ffffff; font-size: 16px;">${block.embedTitle}</h3>` : ''}
+            ${block.embedDescription ? `<p style="margin: 0 0 15px 0; color: rgba(255,255,255,0.8); font-size: 14px;">${block.embedDescription}</p>` : ''}
+            <a href="${block.embedUrl || '#'}" 
+               style="display: inline-block; background-color: #f57c00; color: #ffffff !important; 
+                      text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: 600;" 
+               target="_blank">
+              ${block.embedType === 'video' ? '▶️ Assistir' : block.embedType === 'podcast' ? '🎙️ Ouvir Podcast' : '🎵 Ouvir Áudio'}
+            </a>
+          </div>
+        `
+
+      default:
+        return ''
+    }
+  }).join('')
+}
+
+export async function sendLeadMaterialEmail(
+  email: string,
+  name: string,
+  campaignName: string,
+  subject: string,
+  blocks: LeadBlockForEmail[]
+) {
+  const firstName = name.split(' ')[0]
+  const blocksHtml = renderLeadBlocksToHtml(blocks)
+
+  const content = `
+    <h1 class="h1">Olá, ${firstName}! 🎁</h1>
+    <p>Obrigado pelo seu interesse em <strong>"${campaignName}"</strong>.</p>
+    <p>Aqui está seu material exclusivo:</p>
+    
+    <hr style="border: 0; height: 1px; background: #edf2f7; margin: 25px 0;" />
+    
+    ${blocksHtml}
+    
+    <hr style="border: 0; height: 1px; background: #edf2f7; margin: 25px 0;" />
+    
+    <div style="background-color: #fff8e1; border-left: 4px solid #f57c00; padding: 15px; margin: 20px 0; border-radius: 4px;">
+      <p style="margin: 0; color: #795548;"><strong>Gostou do conteúdo?</strong> Siga-nos no Instagram para mais materiais exclusivos!</p>
+      <p style="margin-top: 10px;"><a href="https://instagram.com/domineaqui.br" style="color: #f57c00; font-weight: bold; text-decoration: none;">👉 Seguir @domineaqui.br</a></p>
+    </div>
+  `
+
+  const html = getEmailTemplate(subject, content)
+
+  await transporter.sendMail({
+    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+    to: email,
+    subject: subject,
+    html,
+  })
+}
+

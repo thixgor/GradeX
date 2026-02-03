@@ -792,3 +792,78 @@ export interface FormResponse {
   submittedAt: Date
   userEmail?: string // E-mail extraído da resposta (se configurado)
 }
+
+// === SISTEMA DE LEADS (CAPTURA DE LEADS) ===
+
+export type LeadBlockType = 'text' | 'button' | 'card' | 'embed'
+export type LeadEmbedType = 'video' | 'podcast' | 'audio'
+
+export interface LeadBlock {
+  id: string
+  type: LeadBlockType
+  // Para textos
+  content?: string // Texto rico (HTML ou markdown)
+  // Para botões
+  buttonText?: string
+  buttonUrl?: string // URL para PDF ou link externo
+  buttonColor?: string // Cor do botão (hex)
+  isPdfButton?: boolean // Se é um botão para abrir PDF
+  // Para cards
+  cardTitle?: string
+  cardDescription?: string
+  cardImageUrl?: string
+  // Para embeds (videos, podcasts, audio)
+  embedType?: LeadEmbedType
+  embedUrl?: string // URL do embed (YouTube, Spotify, etc)
+  embedTitle?: string
+  embedDescription?: string
+}
+
+export interface LeadCampaign {
+  _id?: string | import('mongodb').ObjectId
+  name: string // Nome da campanha (ex: "E-book Estudos")
+  slug: string // URL amigável (ex: "ebook-estudos")
+  description?: string // Descrição opcional (para admin)
+  imageUrl?: string // Imagem de capa opcional
+
+  // Conteúdo do material
+  welcomeMessage?: string // Mensagem inicial: "Aqui está o material, {nome}!"
+  blocks: LeadBlock[] // Blocos de conteúdo
+  collectButtonText?: string // Texto do botão de coleta final (padrão: "Receber Material")
+
+  // Configurações de email
+  sendEmail: boolean // Se deve enviar email com o material
+  emailSubject?: string // Assunto do email
+  emailBlocks?: LeadBlock[] // Blocos de conteúdo do email (pode ser diferente da página)
+
+  // Status
+  isActive: boolean
+
+  // Métricas (caches)
+  totalLeads: number // Total de leads coletados
+  totalViews: number // Total de visualizações (IPs únicos)
+
+  // Controle
+  createdBy: string
+  createdByName: string
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface Lead {
+  _id?: string | import('mongodb').ObjectId
+  campaignId: string // ID da campanha
+  name: string // Nome do lead
+  email: string // Email do lead
+  emailSentAt?: Date // Quando o email foi enviado (se enviado)
+  emailSent: boolean // Se o email já foi enviado para este lead
+  createdAt: Date
+}
+
+export interface LeadPageView {
+  _id?: string | import('mongodb').ObjectId
+  campaignId: string
+  ip: string // IP do visitante
+  userAgent?: string // User agent do navegador
+  viewedAt: Date
+}
