@@ -26,6 +26,7 @@ export interface BootstrapUser {
   email: string
   name: string
   role: 'admin' | 'user'
+  secondaryRole?: 'monitor' | string
   emailVerified: boolean
   accountType: 'free' | 'trial' | 'premium'
   trialExpiresAt?: string

@@ -36,6 +36,8 @@ interface User {
   name: string
   role: 'admin' | 'user'
   accountType?: 'gratuito' | 'trial' | 'premium'
+  secondaryRole?: string
+  emailVerified?: boolean
 }
 
 interface AppShellContextType {
@@ -47,6 +49,11 @@ interface AppShellContextType {
   examsRemaining: number | null
   examsLimit: number | null
   refetchBootstrap: () => void
+  // Extended user info for child pages (avoid extra /api/auth/me calls)
+  isAdmin: boolean
+  accountType: 'gratuito' | 'trial' | 'premium'
+  secondaryRole?: string
+  loading: boolean
 }
 
 const AppShellContext = createContext<AppShellContextType | null>(null)
@@ -101,8 +108,14 @@ export function AppShell({
       name: bootstrapUser.name,
       role: bootstrapUser.role,
       accountType: bootstrapUser.accountType === 'free' ? 'gratuito' : bootstrapUser.accountType,
+      secondaryRole: bootstrapUser.secondaryRole,
+      emailVerified: bootstrapUser.emailVerified,
     }
   }, [bootstrapUser])
+
+  // Derived values for easy access in child pages
+  const accountType = user?.accountType || 'gratuito'
+  const secondaryRole = user?.secondaryRole
 
   // Calculate tier limits from bootstrap data
   const examsLimit = tierLimits?.examsPerMonth ?? null
@@ -152,6 +165,11 @@ Contato: (21) 99777-0936`)
     examsRemaining,
     examsLimit,
     refetchBootstrap,
+    // Extended user info for child pages (avoid extra /api/auth/me calls)
+    isAdmin,
+    accountType,
+    secondaryRole,
+    loading,
   }
 
   return (

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { AppShell } from '@/components/app-shell'
+import { AppShell, useAppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ProgressRing } from '@/components/progress-ring'
@@ -12,53 +12,29 @@ import { CronogramaGerado } from '@/lib/cronograma-types'
 import { AccountType } from '@/lib/types'
 import { getCronogramasLimit } from '@/lib/tier-limits'
 
-interface User {
-  id: string
-  email: string
-  name: string
-  role: 'admin' | 'user'
-  accountType?: AccountType
-}
-
-export default function CronogramasPage() {
+function CronogramasContent() {
   const router = useRouter()
-  const [user, setUser] = useState<User | null>(null)
+  // Get user data from AppShell context (no extra API call!)
+  const { user, isAdmin, accountType: contextAccountType } = useAppShell()
+
   const [loading, setLoading] = useState(true)
   const [cronogramas, setCronogramas] = useState<CronogramaGerado[]>([])
-  const [accountType, setAccountType] = useState<AccountType>('gratuito')
-  const [userRole, setUserRole] = useState<'admin' | 'user'>('user')
+  // Use context values
+  const accountType = contextAccountType as AccountType
+  const userRole = isAdmin ? 'admin' : 'user'
 
   useEffect(() => {
-    checkAuth()
+    loadCronogramas()
   }, [])
-
-  async function checkAuth() {
-    try {
-      const res = await fetch('/api/auth/me')
-      if (!res.ok) {
-        router.push('/auth/login')
-        return
-      }
-      const data = await res.json()
-      setUser(data.user)
-      setAccountType(data.user?.accountType || 'gratuito')
-      setUserRole(data.user?.role || 'user')
-      loadCronogramas()
-    } catch (error) {
-      router.push('/auth/login')
-    } finally {
-      setLoading(false)
-    }
-  }
 
   async function loadCronogramas() {
     try {
       const res = await fetch('/api/cronogramas')
       if (res.ok) {
         const data = await res.json()
-        const cronogramas = data.cronogramas || []
+        const cronogramasData = data.cronogramas || []
         // Garantir que _id é string
-        const cronogramasFormatados = cronogramas.map((c: any) => ({
+        const cronogramasFormatados = cronogramasData.map((c: any) => ({
           ...c,
           _id: typeof c._id === 'string' ? c._id : c._id?.toString()
         }))
@@ -68,6 +44,8 @@ export default function CronogramasPage() {
       }
     } catch (error) {
       console.error('Erro ao carregar cronogramas:', error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -255,20 +233,8 @@ export default function CronogramasPage() {
     }, 250)
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Carregando...</div>
-      </div>
-    )
-  }
-
-  if (!user) {
-    return null
-  }
-
   return (
-    <AppShell headerTitle="Cronogramas" headerSubtitle="Organize seus estudos">
+    <>
       <div className="container mx-auto px-4 py-8 max-w-5xl">
         {/* Hero Section */}
         <div className="mb-12 text-center space-y-4">
@@ -419,6 +385,15 @@ export default function CronogramasPage() {
           </div>
         )}
       </div>
+    </>
+  )
+}
+
+// Main page component - wraps content in AppShell
+export default function CronogramasPage() {
+  return (
+    <AppShell headerTitle="Cronogramas" headerSubtitle="Organize seus estudos">
+      <CronogramasContent />
     </AppShell>
   )
 }

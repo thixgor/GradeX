@@ -25,6 +25,7 @@ interface BootstrapResponse {
     email: string
     name: string
     role: 'admin' | 'user'
+    secondaryRole?: 'monitor' | string
     emailVerified: boolean
     accountType: 'free' | 'trial' | 'premium'
     trialExpiresAt?: string
@@ -86,7 +87,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   })
 
   if (!security.success) {
-    return security.errorResponse
+    return security.errorResponse!
   }
 
   try {
@@ -135,6 +136,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         email: userDoc.email,
         name: userDoc.name,
         role: userDoc.role || 'user',
+        secondaryRole: userDoc.secondaryRole,
         emailVerified: userDoc.emailVerified || false,
         accountType: userDoc.accountType || 'free',
         trialExpiresAt: userDoc.trialExpiresAt,

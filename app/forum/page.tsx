@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { ToastAlert } from '@/components/ui/toast-alert'
-import { AppShell } from '@/components/app-shell'
+import { AppShell, useAppShell } from '@/components/app-shell'
 import { Plus, MessageSquare, FileText, Tag, User, Calendar, Edit2, Lock, Search, Crown, ChevronDown } from 'lucide-react'
 import { ForumPost, ForumType, ForumTopic, AccountType, ForumPostCreationFreezeMode } from '@/lib/types'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -17,16 +17,21 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
 
-export default function ForumPage() {
+function ForumContent() {
   const router = useRouter()
+  // Get user data from AppShell context (no extra API call!)
+  const { user, isAdmin, accountType: contextAccountType, secondaryRole: contextSecondaryRole } = useAppShell()
+
   const [discussionPosts, setDiscussionPosts] = useState<ForumPost[]>([])
   const [materialsPosts, setMaterialsPosts] = useState<ForumPost[]>([])
   const [discussionTopics, setDiscussionTopics] = useState<ForumTopic[]>([])
   const [materialsTopics, setMaterialsTopics] = useState<ForumTopic[]>([])
   const [loading, setLoading] = useState(true)
-  const [userRole, setUserRole] = useState<'admin' | 'user'>('user')
-  const [accountType, setAccountType] = useState<AccountType>('gratuito')
-  const [secondaryRole, setSecondaryRole] = useState<string | undefined>(undefined)
+  // Use context values instead of state
+  const userRole = isAdmin ? 'admin' : 'user'
+  const accountType = contextAccountType as AccountType
+  const secondaryRole = contextSecondaryRole
+
   const [postCreationFreezeMode, setPostCreationFreezeMode] = useState<ForumPostCreationFreezeMode>('off')
   const [loadedPostCreationFreezeMode, setLoadedPostCreationFreezeMode] = useState<ForumPostCreationFreezeMode>('off')
   const [savingForumSettings, setSavingForumSettings] = useState(false)
@@ -43,7 +48,7 @@ export default function ForumPage() {
   const [searchTopics, setSearchTopics] = useState<ForumTopic[]>([])
 
   useEffect(() => {
-    loadUserRole()
+    // No need to loadUserRole - using context!
     loadForumSettings()
     loadPosts()
   }, [])
@@ -77,19 +82,7 @@ export default function ForumPage() {
     }
   }
 
-  async function loadUserRole() {
-    try {
-      const res = await fetch('/api/auth/me')
-      if (res.ok) {
-        const data = await res.json()
-        setUserRole(data.user?.role || 'user')
-        setAccountType(data.user?.accountType || 'gratuito')
-        setSecondaryRole(data.user?.secondaryRole)
-      }
-    } catch (error) {
-      console.error('Erro ao carregar role:', error)
-    }
-  }
+  // loadUserRole removed - now using AppShell context
 
   async function loadForumSettings() {
     try {
@@ -507,7 +500,7 @@ export default function ForumPage() {
       }
 
       return (
-    <AppShell headerTitle="Fóruns" headerSubtitle="Discussões e Materiais">
+    <>
       <div className="container mx-auto px-4 py-8">
         {/* Admin Topic Management Button */}
         {userRole === 'admin' && (
@@ -873,8 +866,17 @@ export default function ForumPage() {
         type={toastType}
       />
       </div>
-    </AppShell>
+    </>
       )
     })()
+  )
+}
+
+// Main page component - wraps content in AppShell
+export default function ForumPage() {
+  return (
+    <AppShell headerTitle="Fóruns" headerSubtitle="Discussões e Materiais">
+      <ForumContent />
+    </AppShell>
   )
 }
