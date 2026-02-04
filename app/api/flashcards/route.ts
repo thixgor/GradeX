@@ -150,7 +150,14 @@ export async function GET(request: NextRequest) {
       templateId: deck.templateId ? deck.templateId.toString() : undefined,
     }))
 
-    return NextResponse.json({ decks: normalizedDecks })
+    // Add cache headers to reduce serverless invocations
+    // Private cache (user-specific data) for 5 minutes
+    const headers = new Headers({
+      'Cache-Control': 'private, max-age=300, stale-while-revalidate=600',
+      'Content-Type': 'application/json',
+    })
+
+    return NextResponse.json({ decks: normalizedDecks }, { headers })
   } catch (error) {
     console.error('Erro ao listar flashcards:', error)
     return NextResponse.json({ error: 'Erro ao listar flashcards' }, { status: 500 })

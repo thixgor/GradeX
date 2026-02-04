@@ -47,7 +47,14 @@ export async function GET(request: NextRequest) {
       .sort({ createdAt: -1 })
       .toArray()
 
-    return NextResponse.json({ exams })
+    // Add cache headers to reduce serverless invocations
+    // Private cache (user-specific data) for 2 minutes
+    const headers = new Headers({
+      'Cache-Control': 'private, max-age=120, stale-while-revalidate=300',
+      'Content-Type': 'application/json',
+    })
+
+    return NextResponse.json({ exams }, { headers })
   } catch (error) {
     console.error('Get exams error:', error)
     return NextResponse.json(

@@ -7,111 +7,85 @@ import { Card } from '@/components/ui/card'
 import { Notification } from '@/lib/types'
 import { useRouter } from 'next/navigation'
 import { notificationSound } from '@/lib/notification-sound'
+import { useBootstrap } from '@/hooks/use-bootstrap'
+import { useApi, useMutation } from '@/hooks/use-api'
+import { invalidateCache, CACHE_DURATIONS } from '@/lib/api-client'
 
+/**
+ * NotificationsBell Component - Optimized Version
+ *
+ * Previous implementation:
+ * - Made 2 separate fetch calls every 30 seconds (/api/auth/me + /api/notifications)
+ * - Each call checked authentication independently
+ * - ~5.8M invocations/day per 1000 users
+ *
+ * Optimized implementation:
+ * - Uses useBootstrap for auth check (shared cache, no extra calls)
+ * - Uses useApi hook for notifications (60-second polling, deduplicated)
+ * - Only polls when component is mounted and user is authenticated
+ * - ~1.4M invocations/day per 1000 users (76% reduction)
+ */
 export function NotificationsBell() {
-  const [notifications, setNotifications] = useState<Notification[]>([])
-  const [unreadCount, setUnreadCount] = useState(0)
   const [open, setOpen] = useState(false)
   const [previousUnreadCount, setPreviousUnreadCount] = useState(0)
   const router = useRouter()
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const initializedRef = useRef(false)
 
-  const intervalRef = useRef<NodeJS.Timeout | null>(null)
+  // Use bootstrap to check authentication (shared across all components)
+  const { isAuthenticated, loading: authLoading } = useBootstrap()
 
-  const loadNotifications = useCallback(async () => {
-    // Verificar autenticação antes de carregar
-    try {
-      const authRes = await fetch('/api/auth/me')
-      if (!authRes.ok) {
-        // Se não houver usuário autenticado, parar o intervalo
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current)
-          intervalRef.current = null
-        }
-        return
-      }
-    } catch {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-        intervalRef.current = null
-      }
+  // Use the optimized API hook for notifications
+  // 60-second polling interval - better balance of UX and cost
+  const {
+    data: notificationsData,
+    loading: notificationsLoading,
+    refetch: refetchNotifications,
+  } = useApi<{ notifications: Notification[] }>(
+    '/api/notifications',
+    {
+      skip: !isAuthenticated || authLoading,
+      cacheDuration: CACHE_DURATIONS.NOTIFICATIONS,
+      refetchInterval: 60 * 1000, // 60 seconds - reduced from 30s
+    }
+  )
+
+  const notifications = notificationsData?.notifications || []
+  const unreadCount = notifications.filter((n: Notification) => !n.read).length
+
+  // Mutation hooks for actions
+  const { mutate: patchNotification } = useMutation(
+    '',
+    'PATCH',
+    { invalidateEndpoints: ['/api/notifications'] }
+  )
+
+  const { mutate: deleteNotificationMutation } = useMutation(
+    '',
+    'DELETE',
+    { invalidateEndpoints: ['/api/notifications'] }
+  )
+
+  // Play sound on new notifications (only after initial load)
+  useEffect(() => {
+    if (notificationsLoading) return
+
+    if (!initializedRef.current) {
+      // First load - just record the count, don't play sound
+      initializedRef.current = true
+      setPreviousUnreadCount(unreadCount)
       return
     }
 
-    try {
-      const res = await fetch('/api/notifications', {
-        headers: {
-          'Cache-Control': 'max-age=30',
-        },
-      })
-      if (res.ok) {
-        const data = await res.json()
-        const newNotifications = data.notifications || []
-        const newUnreadCount = newNotifications.filter((n: Notification) => !n.read).length
-
-        setNotifications(newNotifications)
-        setUnreadCount(newUnreadCount)
-
-        // Tocar som se houver novas notificações não lidas
-        setPreviousUnreadCount(prev => {
-          if (newUnreadCount > prev && prev !== 0) {
-            notificationSound?.play()
-          }
-          return newUnreadCount
-        })
-      }
-    } catch (error) {
-      console.error('Erro ao carregar notificações:', error)
-    }
-  }, [])
-
-  useEffect(() => {
-    async function checkAuth() {
-      try {
-        const res = await fetch('/api/auth/me')
-        return res.ok
-      } catch {
-        return false
-      }
+    // Play sound if new unread notifications
+    if (unreadCount > previousUnreadCount && previousUnreadCount !== 0) {
+      notificationSound?.play()
     }
 
-    // Carregar notificações inicialmente
-    const initialLoad = async () => {
-      // Verificar autenticação antes de carregar
-      const isAuthenticated = await checkAuth()
-      if (!isAuthenticated) {
-        return
-      }
+    setPreviousUnreadCount(unreadCount)
+  }, [unreadCount, notificationsLoading])
 
-      try {
-        const res = await fetch('/api/notifications')
-        if (res.ok) {
-          const data = await res.json()
-          const initialNotifications = data.notifications || []
-          const initialUnreadCount = initialNotifications.filter((n: Notification) => !n.read).length
-
-          setNotifications(initialNotifications)
-          setUnreadCount(initialUnreadCount)
-          setPreviousUnreadCount(initialUnreadCount) // Inicializar sem tocar som
-
-          // Iniciar intervalo apenas se autenticado (30s em vez de 5s)
-          intervalRef.current = setInterval(loadNotifications, 30000)
-        }
-      } catch (error) {
-        console.error('Erro ao carregar notificações:', error)
-      }
-    }
-
-    initialLoad()
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-        intervalRef.current = null
-      }
-    }
-  }, [loadNotifications])
-
+  // Handle click outside to close dropdown
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -130,9 +104,10 @@ export function NotificationsBell() {
       await fetch(`/api/notifications/${notificationId}`, {
         method: 'PATCH',
       })
-      loadNotifications()
+      invalidateCache('/api/notifications')
+      refetchNotifications()
     } catch (error) {
-      console.error('Erro ao marcar notificação:', error)
+      console.error('Erro ao marcar notificacao:', error)
     }
   }
 
@@ -142,41 +117,45 @@ export function NotificationsBell() {
       await fetch(`/api/notifications/${notificationId}`, {
         method: 'DELETE',
       })
-      loadNotifications()
+      invalidateCache('/api/notifications')
+      refetchNotifications()
     } catch (error) {
-      console.error('Erro ao deletar notificação:', error)
+      console.error('Erro ao deletar notificacao:', error)
     }
   }
 
   async function clearAllNotifications() {
-    if (!confirm('Deseja limpar todas as notificações?')) return
+    if (!confirm('Deseja limpar todas as notificacoes?')) return
 
     try {
       await fetch('/api/notifications', {
         method: 'DELETE',
       })
-      loadNotifications()
+      invalidateCache('/api/notifications')
+      refetchNotifications()
     } catch (error) {
-      console.error('Erro ao limpar notificações:', error)
+      console.error('Erro ao limpar notificacoes:', error)
     }
   }
 
   function handleNotificationClick(notification: Notification) {
     markAsRead(String(notification._id!))
 
-    // Redirecionar baseado no tipo de notificação
+    // Redirect based on notification type
     if (notification.type === 'ticket_created') {
-      // Admin recebeu notificação de novo ticket
       router.push('/admin/tickets')
     } else if (notification.type === 'ticket_reopened') {
-      // Usuário recebeu notificação de ticket reaberto
       router.push('/')
     } else {
-      // Notificação de correção de prova
       router.push(`/exam/${notification.examId}/user/${notification.userId}`)
     }
 
     setOpen(false)
+  }
+
+  // Don't render if not authenticated
+  if (!isAuthenticated && !authLoading) {
+    return null
   }
 
   return (
@@ -198,7 +177,7 @@ export function NotificationsBell() {
       {open && (
         <Card className="absolute right-0 top-12 w-80 max-w-[90vw] shadow-lg z-50 p-0 border">
           <div className="border-b p-4 flex items-center justify-between bg-card">
-            <h3 className="font-semibold">Notificações</h3>
+            <h3 className="font-semibold">Notificacoes</h3>
             {notifications.length > 0 && (
               <Button
                 variant="ghost"
@@ -214,7 +193,7 @@ export function NotificationsBell() {
           <div className="max-h-[400px] overflow-y-auto bg-card">
             {notifications.length === 0 ? (
               <div className="p-8 text-center text-sm text-muted-foreground">
-                Nenhuma notificação
+                Nenhuma notificacao
               </div>
             ) : (
               notifications.map((notification) => (

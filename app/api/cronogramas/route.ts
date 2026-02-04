@@ -21,12 +21,19 @@ export async function GET(req: NextRequest) {
       .sort({ dataCriacao: -1 })
       .toArray()
 
-    return NextResponse.json({ 
+    // Add cache headers to reduce serverless invocations
+    // Private cache (user-specific data) for 5 minutes
+    const headers = new Headers({
+      'Cache-Control': 'private, max-age=300, stale-while-revalidate=600',
+      'Content-Type': 'application/json',
+    })
+
+    return NextResponse.json({
       cronogramas: cronogramas.map(c => ({
         ...c,
         _id: c._id?.toString() // Converter ObjectId para string
       }))
-    })
+    }, { headers })
   } catch (error) {
     console.error('Erro ao listar cronogramas:', error)
     return NextResponse.json(

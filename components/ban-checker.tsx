@@ -1,110 +1,80 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { BanReason, BanReasonLabels } from '@/lib/types'
 import { Ban } from 'lucide-react'
+import { useBootstrapBanStatus, clearBootstrapCache } from '@/hooks/use-bootstrap'
 
-interface BanCheckerProps {
-  checkInterval?: number // em milissegundos, padrão 10 segundos
-}
-
-export function BanChecker({ checkInterval = 60000 }: BanCheckerProps) {
+/**
+ * BanChecker Component - Optimized Version
+ *
+ * Previous implementation:
+ * - Made 2 separate fetch calls every 60 seconds (/api/auth/me + /api/auth/check-ban)
+ * - ~2.9M invocations/day per 1000 users
+ *
+ * Optimized implementation:
+ * - Uses centralized useBootstrapBanStatus hook
+ * - Ban status comes from /api/bootstrap (cached 5 minutes)
+ * - Refetch interval: 5 minutes (300000ms) - security appropriate
+ * - Shares data with other components using the bootstrap
+ * - ~288K invocations/day per 1000 users (90% reduction)
+ */
+export function BanChecker() {
   const router = useRouter()
   const [showBannedDialog, setShowBannedDialog] = useState(false)
-  const [banInfo, setBanInfo] = useState<{
-    reason?: BanReason
-    details?: string
-    bannedAt?: Date
-  }>({})
+  const hasHandledBan = useRef(false)
 
+  // Use the optimized bootstrap hook with 5-minute refetch interval
+  // This is security-appropriate as ban checks don't need to be instant
+  const {
+    isBanned,
+    banReason,
+    banDetails,
+    bannedAt,
+    loading,
+    error,
+  } = useBootstrapBanStatus({
+    refetchInterval: 5 * 60 * 1000, // 5 minutes - appropriate for ban checking
+  })
+
+  // Handle ban detection
   useEffect(() => {
-    let intervalId: NodeJS.Timeout | null = null
-    let isActive = true
+    if (loading || hasHandledBan.current) return
 
-    async function checkAuth() {
-      try {
-        const res = await fetch('/api/auth/me')
-        return res.ok
-      } catch {
-        return false
-      }
+    if (isBanned) {
+      hasHandledBan.current = true
+      setShowBannedDialog(true)
+
+      // Perform logout
+      fetch('/api/auth/logout', { method: 'POST' })
+        .then(() => {
+          // Clear all cached data
+          clearBootstrapCache()
+        })
+        .catch(console.error)
     }
+  }, [isBanned, loading])
 
-    async function checkBanStatus() {
-      // Verificar se ainda há usuário autenticado antes de fazer o check
-      const isAuthenticated = await checkAuth()
-      
-      if (!isAuthenticated) {
-        // Se não houver usuário autenticado, parar os checks
-        if (intervalId) {
-          clearInterval(intervalId)
-          intervalId = null
-        }
-        return
-      }
-
-      try {
-        const res = await fetch('/api/auth/check-ban')
-        const data = await res.json()
-
-        if (data.banned) {
-          // Usuário foi banido!
-          setBanInfo({
-            reason: data.banReason,
-            details: data.banDetails,
-            bannedAt: data.bannedAt
-          })
-          setShowBannedDialog(true)
-
-          // Fazer logout
-          await fetch('/api/auth/logout', { method: 'POST' })
-          
-          // Parar os checks após logout
-          if (intervalId) {
-            clearInterval(intervalId)
-            intervalId = null
-          }
-        }
-      } catch (error) {
-        console.error('Error checking ban status:', error)
-      }
+  // Reset ban handling flag when dialog closes (for edge cases)
+  useEffect(() => {
+    if (!showBannedDialog) {
+      hasHandledBan.current = false
     }
-
-    async function startChecking() {
-      // Verificar autenticação antes de iniciar
-      const isAuthenticated = await checkAuth()
-      
-      if (!isAuthenticated) {
-        // Se não houver usuário, não iniciar os checks
-        return
-      }
-
-      // Verificar imediatamente ao montar
-      await checkBanStatus()
-
-      // Depois verificar a cada intervalo
-      intervalId = setInterval(checkBanStatus, checkInterval)
-    }
-
-    startChecking()
-
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId)
-        intervalId = null
-      }
-      isActive = false
-    }
-  }, [checkInterval])
+  }, [showBannedDialog])
 
   function handleClose() {
     setShowBannedDialog(false)
-    // Redirecionar para login
+    // Redirect to login
     router.push('/auth/login')
     router.refresh()
+  }
+
+  // Don't render anything if not banned
+  if (!showBannedDialog) {
+    return null
   }
 
   return (
@@ -123,29 +93,29 @@ export function BanChecker({ checkInterval = 60000 }: BanCheckerProps) {
                 <p className="text-sm font-medium text-red-800 dark:text-red-200 mb-2">
                   Sua conta foi banida da plataforma.
                 </p>
-                {banInfo.reason && (
+                {banReason && (
                   <div className="space-y-1">
                     <p className="text-xs font-semibold text-red-700 dark:text-red-300">
                       Motivo:
                     </p>
                     <p className="text-sm text-red-800 dark:text-red-200">
-                      {BanReasonLabels[banInfo.reason]}
+                      {BanReasonLabels[banReason as BanReason] || banReason}
                     </p>
                   </div>
                 )}
-                {banInfo.details && (
+                {banDetails && (
                   <div className="space-y-1 mt-3">
                     <p className="text-xs font-semibold text-red-700 dark:text-red-300">
                       Detalhes:
                     </p>
                     <p className="text-sm text-red-800 dark:text-red-200">
-                      {banInfo.details}
+                      {banDetails}
                     </p>
                   </div>
                 )}
-                {banInfo.bannedAt && (
+                {bannedAt && (
                   <p className="text-xs text-red-600 dark:text-red-400 mt-3">
-                    Data do banimento: {new Date(banInfo.bannedAt).toLocaleDateString('pt-BR')}
+                    Data do banimento: {new Date(bannedAt).toLocaleDateString('pt-BR')}
                   </p>
                 )}
               </div>

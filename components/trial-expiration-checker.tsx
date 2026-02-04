@@ -1,94 +1,53 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { AlertTriangle, Mail, Phone, Ticket } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useBootstrapTrialStatus } from '@/hooks/use-bootstrap'
 
+/**
+ * TrialExpirationChecker Component - Optimized Version
+ *
+ * Previous implementation:
+ * - Made fetch calls to /api/auth/me every 5 minutes
+ * - Duplicate auth checks on mount
+ * - ~288K invocations/day per 1000 users
+ *
+ * Optimized implementation:
+ * - Uses centralized useBootstrapTrialStatus hook
+ * - Trial status comes from /api/bootstrap (cached 5 minutes)
+ * - No additional API calls - data shared with other components
+ * - ~0 additional invocations (uses shared bootstrap cache)
+ */
 export function TrialExpirationChecker() {
   const router = useRouter()
   const [showExpiredDialog, setShowExpiredDialog] = useState(false)
-  const [isChecking, setIsChecking] = useState(true)
+  const hasExpiredUser = useRef(false)
 
+  // Use the optimized bootstrap hook for trial status
+  const {
+    accountType,
+    isTrialUser,
+    isTrialExpired,
+    trialExpiresAt,
+    loading,
+  } = useBootstrapTrialStatus()
+
+  // Check trial expiration
   useEffect(() => {
-    let intervalId: NodeJS.Timeout | null = null
+    if (loading || hasExpiredUser.current) return
 
-    async function checkTrialStatus() {
-      try {
-        const res = await fetch('/api/auth/me')
-        if (!res.ok) {
-          // Se não houver usuário autenticado, parar os checks
-          setIsChecking(false)
-          if (intervalId) {
-            clearInterval(intervalId)
-            intervalId = null
-          }
-          return
-        }
+    // Check if trial user has expired
+    if (isTrialUser && isTrialExpired) {
+      hasExpiredUser.current = true
 
-        const data = await res.json()
-        const user = data.user
-
-        // Verificar se é Trial e se expirou
-        if (user?.accountType === 'trial' && user?.trialExpiresAt) {
-          const now = new Date()
-          const expiresAt = new Date(user.trialExpiresAt)
-
-          if (now > expiresAt) {
-            // Expirar automaticamente o usuário
-            await expireUser()
-            setShowExpiredDialog(true)
-            // Parar os checks após expiração
-            if (intervalId) {
-              clearInterval(intervalId)
-              intervalId = null
-            }
-          }
-        }
-
-        setIsChecking(false)
-      } catch (error) {
-        console.error('Erro ao verificar status do trial:', error)
-        setIsChecking(false)
-        // Parar os checks em caso de erro
-        if (intervalId) {
-          clearInterval(intervalId)
-          intervalId = null
-        }
-      }
+      // Expire the user's subscription
+      expireUser()
+      setShowExpiredDialog(true)
     }
-
-    async function startChecking() {
-      // Verificar autenticação antes de iniciar
-      try {
-        const res = await fetch('/api/auth/me')
-        if (!res.ok) {
-          // Se não houver usuário, não iniciar os checks
-          setIsChecking(false)
-          return
-        }
-      } catch {
-        setIsChecking(false)
-        return
-      }
-
-      // Verificar imediatamente
-      await checkTrialStatus()
-
-      // Verificar a cada 5 minutos apenas se autenticado (em vez de 1 minuto)
-      intervalId = setInterval(checkTrialStatus, 300000)
-    }
-
-    startChecking()
-
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId)
-        intervalId = null
-      }
-    }
-  }, [])
+  }, [isTrialUser, isTrialExpired, loading])
 
   async function expireUser() {
     try {
@@ -105,7 +64,8 @@ export function TrialExpirationChecker() {
     router.push('/tickets')
   }
 
-  if (isChecking) {
+  // Don't render anything if not showing dialog
+  if (!showExpiredDialog) {
     return null
   }
 

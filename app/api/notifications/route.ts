@@ -22,7 +22,14 @@ export async function GET(request: NextRequest) {
       .limit(50)
       .toArray()
 
-    return NextResponse.json({ notifications })
+    // Add cache headers to reduce serverless invocations
+    // Short cache (30 seconds) for notifications to maintain responsiveness
+    const headers = new Headers({
+      'Cache-Control': 'private, max-age=30, stale-while-revalidate=60',
+      'Content-Type': 'application/json',
+    })
+
+    return NextResponse.json({ notifications }, { headers })
   } catch (error) {
     console.error('Get notifications error:', error)
     return NextResponse.json(

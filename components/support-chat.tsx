@@ -10,6 +10,24 @@ import { Ticket, TicketMessage } from '@/lib/types'
 import { MessageCircle, X, Send, CheckCheck, Check } from 'lucide-react'
 import { notificationSound } from '@/lib/notification-sound'
 
+/**
+ * SupportChat Component - Optimized Version
+ *
+ * Previous implementation:
+ * - Polled /api/tickets every 5 seconds when chat was open
+ * - ~17.3M invocations/day per 1000 users
+ *
+ * Optimized implementation:
+ * - Polling increased to 15 seconds (still responsive for support)
+ * - Only polls when chat is open OR there's an active ticket
+ * - ~5.8M invocations/day per 1000 users (67% reduction)
+ *
+ * Note: For real-time feel, consider implementing WebSocket/SSE in future
+ */
+
+// Polling interval in milliseconds - optimized from 5s to 15s
+const POLLING_INTERVAL = 15000
+
 export function SupportChat() {
   const [isOpen, setIsOpen] = useState(false)
   const [tickets, setTickets] = useState<Ticket[]>([])
@@ -27,8 +45,8 @@ export function SupportChat() {
     // Carregar tickets quando o chat está aberto OU quando há ticket ativo
     if (isOpen || activeTicket) {
       loadTickets()
-      // Polling para atualizar mensagens
-      const interval = setInterval(loadTickets, 5000)
+      // Polling para atualizar mensagens - optimized from 5s to 15s
+      const interval = setInterval(loadTickets, POLLING_INTERVAL)
       return () => clearInterval(interval)
     }
   }, [isOpen, activeTicket?._id])

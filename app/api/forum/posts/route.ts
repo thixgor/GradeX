@@ -54,7 +54,14 @@ export async function GET(request: NextRequest) {
       .sort({ createdAt: -1 })
       .toArray()
 
-    return NextResponse.json({ posts })
+    // Add cache headers to reduce serverless invocations
+    // Cache for 60 seconds at edge, revalidate in background for up to 120 seconds
+    const headers = new Headers({
+      'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
+      'Content-Type': 'application/json',
+    })
+
+    return NextResponse.json({ posts }, { headers })
   } catch (error) {
     console.error('Get forum posts error:', error)
     return NextResponse.json(
