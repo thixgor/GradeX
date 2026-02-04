@@ -91,7 +91,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   try {
     const db = await getDb()
-    const userId = new ObjectId(security.userId)
+    const userId = new ObjectId(security.session!.userId)
 
     // Single optimized database query with aggregation
     const userDoc = await db.collection('users').findOne({ _id: userId })
@@ -113,10 +113,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       ])
 
     // Get notification count
+    // Note: notifications use string userId (from session.userId), not ObjectId
     const notificationCount = await db
       .collection('notifications')
       .countDocuments({
-        userId: userDoc._id,
+        userId: security.session!.userId,
         read: false,
       })
 
