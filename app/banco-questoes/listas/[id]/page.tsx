@@ -725,6 +725,15 @@ export default function ListaDetalhePage() {
             src={modalImageUrl}
             alt="Imagem da questão"
           />
+
+          {/* Modal de Relatar Erro */}
+          {reportQuestionId && (
+            <ReportQuestionModal
+              questionId={reportQuestionId}
+              isOpen={!!reportQuestionId}
+              onClose={() => setReportQuestionId(null)}
+            />
+          )}
         </div>
       </AppShell >
     )

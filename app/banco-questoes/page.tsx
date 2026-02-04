@@ -1316,8 +1316,8 @@ export default function BancoQuestoesPage() {
                 Filtros <span className="text-xs font-normal">(opcional)</span>
               </h4>
 
-              {/* Linha 1: Período e Módulo */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Linha 1: Período, Módulo e Tópico */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs">Período</Label>
                   <Select
@@ -1370,6 +1370,34 @@ export default function BancoQuestoesPage() {
                       {randomModulos.map((modulo) => (
                         <SelectItem key={String(modulo._id)} value={String(modulo._id)}>
                           {modulo.nome}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Tópico</Label>
+                  <Select
+                    value={randomListForm.topicoId || 'all'}
+                    onValueChange={(value) => {
+                      const isAll = value === 'all'
+                      setRandomListForm(prev => ({
+                        ...prev,
+                        topicoId: isAll ? '' : value,
+                        subtopicoId: ''
+                      }))
+                    }}
+                    disabled={!randomListForm.moduloId}
+                  >
+                    <SelectTrigger className="bg-background">
+                      <SelectValue placeholder="Todos os tópicos" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos os tópicos</SelectItem>
+                      {randomTopicos.map((topico) => (
+                        <SelectItem key={String(topico._id)} value={String(topico._id)}>
+                          {topico.nome}
                         </SelectItem>
                       ))}
                     </SelectContent>
