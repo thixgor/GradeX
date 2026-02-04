@@ -57,8 +57,8 @@ export function TextHighlightMenu({ position, onHighlight, onApplyStyle, onRemov
           {/* Separador */}
           <div className="border-t border-gray-200 dark:border-gray-700 my-1" />
 
-          {/* Grifar - Expandível */}
-          <div className="relative">
+          {/* Grifar - Mostrar cores direto no menu se aberto */}
+          <div className="space-y-1">
             <button
               onClick={() => setShowColorPicker(!showColorPicker)}
               className="w-full flex items-center justify-between gap-2 px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
@@ -67,13 +67,12 @@ export function TextHighlightMenu({ position, onHighlight, onApplyStyle, onRemov
                 <Highlighter className="h-4 w-4" />
                 <span>Grifar</span>
               </div>
-              <span className="text-xs text-gray-400">▶</span>
+              <span className="text-xs text-gray-400">{showColorPicker ? '▼' : '▶'}</span>
             </button>
 
-            {/* Submenu de cores */}
             {showColorPicker && (
-              <div className="absolute left-full top-0 ml-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl p-2">
-                <div className="space-y-1">
+              <div className="px-2 py-2 bg-gray-50 dark:bg-gray-900/50 rounded-md mx-1 border border-gray-100 dark:border-gray-800">
+                <div className="grid grid-cols-5 gap-2 mb-2">
                   {HIGHLIGHT_COLORS.map(({ color, label, bgClass }) => (
                     <button
                       key={color}
@@ -81,38 +80,30 @@ export function TextHighlightMenu({ position, onHighlight, onApplyStyle, onRemov
                         onHighlight(color)
                         onClose()
                       }}
-                      className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
-                    >
-                      <div className={`w-5 h-5 rounded ${bgClass} border border-gray-300`} />
-                      <span className="whitespace-nowrap">{label}</span>
-                    </button>
+                      title={label}
+                      className={`w-8 h-8 rounded-full ${bgClass} border border-gray-300 dark:border-gray-600 hover:scale-110 transition-transform flex-shrink-0`}
+                    />
                   ))}
+                </div>
 
-                  {/* Separador */}
-                  <div className="border-t border-gray-200 dark:border-gray-700 my-1" />
-
-                  {/* Cor personalizada */}
-                  <div className="px-3 py-2">
-                    <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">
-                      Cor personalizada:
-                    </label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="color"
-                        value={customColor}
-                        onChange={(e) => setCustomColor(e.target.value)}
-                        className="w-8 h-8 rounded cursor-pointer"
-                      />
-                      <button
-                        onClick={() => {
-                          onHighlight('custom', customColor)
-                          onClose()
-                        }}
-                        className="flex-1 px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-                      >
-                        Aplicar
-                      </button>
-                    </div>
+                {/* Cor personalizada inline */}
+                <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={customColor}
+                      onChange={(e) => setCustomColor(e.target.value)}
+                      className="w-6 h-6 rounded-full cursor-pointer border-none p-0 bg-transparent"
+                    />
+                    <button
+                      onClick={() => {
+                        onHighlight('custom', customColor)
+                        onClose()
+                      }}
+                      className="flex-1 px-2 py-1 text-[10px] bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors uppercase font-bold"
+                    >
+                      Cor Personalizada
+                    </button>
                   </div>
                 </div>
               </div>

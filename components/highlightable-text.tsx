@@ -53,9 +53,14 @@ export function HighlightableText({
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault()
+    handleSelection(e.clientX, e.clientY)
+  }
 
+  const handleSelection = (clickX?: number, clickY?: number) => {
     const selection = window.getSelection()
     if (!selection || selection.isCollapsed || !textRef.current) {
+      // Se clicou fora ou não tem seleção, a gente não fecha aqui 
+      // para permitir clicar nos botões do menu. O overlay cuida disso.
       return
     }
 
@@ -65,16 +70,51 @@ export function HighlightableText({
     }
 
     // Calcular offsets relativos ao texto completo
-    const range = selection.getRangeAt(0)
-    const preSelectionRange = range.cloneRange()
-    preSelectionRange.selectNodeContents(textRef.current)
-    preSelectionRange.setEnd(range.startContainer, range.startOffset)
-    const start = preSelectionRange.toString().length
-    const end = start + selectedText.length
+    try {
+      const range = selection.getRangeAt(0)
 
-    setSelectedText(selectedText)
-    setSelectionRange({ start, end })
-    setContextMenu({ x: e.clientX, y: e.clientY })
+      // Verificar se a seleção está dentro do nosso container
+      if (!textRef.current.contains(range.commonAncestorContainer)) {
+        return
+      }
+
+      const preSelectionRange = range.cloneRange()
+      preSelectionRange.selectNodeContents(textRef.current)
+      preSelectionRange.setEnd(range.startContainer, range.startOffset)
+      const start = preSelectionRange.toString().length
+      const end = start + selectedText.length
+
+      setSelectedText(selectedText)
+      setSelectionRange({ start, end })
+
+      // Posicionamento inteligente
+      let x = clickX
+      let y = clickY
+
+      // Se não houver coordenadas de clique (ex: via teclado ou outro evento),
+      // usa o retângulo da seleção
+      if (x === undefined || y === undefined) {
+        const rect = range.getBoundingClientRect()
+        x = rect.left + rect.width / 2
+        y = rect.top // Acima da seleção
+      }
+
+      // Ajustes para não sair da tela
+      const menuWidth = 200 // Estimado
+      const menuHeight = 250 // Estimado
+
+      x = Math.max(10, Math.min(x, window.innerWidth - menuWidth - 10))
+      y = Math.max(10, Math.min(y, window.innerHeight - menuHeight - 10))
+
+      setContextMenu({ x, y })
+    } catch (err) {
+      console.error('Erro ao processar seleção:', err)
+    }
+  }
+
+  const handlePointerUp = (e: React.PointerEvent) => {
+    // Pequeno delay para garantir que o Selection API atualizou
+    setTimeout(() => handleSelection(e.clientX, e.clientY), 10)
   }
 
   const handleCopy = () => {
@@ -237,6 +277,7 @@ export function HighlightableText({
       <div
         ref={textRef}
         onContextMenu={handleContextMenu}
+        onPointerUp={handlePointerUp}
         className={`select-text ${className}`}
         style={{ userSelect: 'text' }}
       >
