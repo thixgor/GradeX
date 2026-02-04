@@ -6,6 +6,7 @@ import { Sidebar } from '@/components/sidebar'
 import { CreateExamModal } from '@/components/create-exam-modal'
 import { BanChecker } from '@/components/ban-checker'
 import { SupportChat } from '@/components/support-chat'
+import { PageLoading } from '@/components/page-loading'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { NotificationsBell } from '@/components/notifications-bell'
@@ -133,11 +134,7 @@ Contato: (21) 99777-0936`)
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    )
+    return <PageLoading variant="fullscreen" message="Carregando..." />
   }
 
   if (!user) {

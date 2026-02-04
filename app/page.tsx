@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import LandingPage from '@/components/landing-page'
+import { PageLoading } from '@/components/page-loading'
 
 function HomeContent() {
   const router = useRouter()
@@ -49,11 +50,7 @@ function HomeContent() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    )
+    return <PageLoading variant="fullscreen" />
   }
 
   if (showLanding && landingPageEnabled) {
@@ -70,12 +67,9 @@ function HomeContent() {
 
 export default function HomePage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    }>
+    <Suspense fallback={<PageLoading variant="fullscreen" />}>
       <HomeContent />
     </Suspense>
   )
 }
+

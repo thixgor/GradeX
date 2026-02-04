@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { AppShell, useAppShell } from '@/components/app-shell'
+import { PageLoading } from '@/components/page-loading'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ExamContextMenu } from '@/components/exam-context-menu'
@@ -204,11 +205,7 @@ function ProvasContent() {
   }
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-16">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    )
+    return <PageLoading variant="fullscreen" />
   }
 
   const ungroupedExams = exams.filter(e => !e.groupId)
@@ -265,11 +262,10 @@ function ProvasContent() {
                 return (
                   <Card
                     key={exam._id?.toString()}
-                    className={`group hover:shadow-lg transition-all duration-200 cursor-pointer overflow-hidden border-l-4 ${
-                      exam.isPersonalExam
-                        ? 'border-l-purple-500 dark:border-l-purple-400'
-                        : 'border-l-[#468152] dark:border-l-[#468152]'
-                    }`}
+                    className={`group hover:shadow-lg transition-all duration-200 cursor-pointer overflow-hidden border-l-4 ${exam.isPersonalExam
+                      ? 'border-l-purple-500 dark:border-l-purple-400'
+                      : 'border-l-[#468152] dark:border-l-[#468152]'
+                      }`}
                     onContextMenu={(e) => handleExamContextMenu(exam, e)}
                     onClick={() => {
                       if (status.canTake) {
@@ -293,11 +289,10 @@ function ProvasContent() {
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1 flex-wrap">
-                            <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${
-                              exam.isPersonalExam
-                                ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300'
-                                : 'bg-[#468152]/10 text-[#468152] dark:bg-[#468152]/20'
-                            }`}>
+                            <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${exam.isPersonalExam
+                              ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300'
+                              : 'bg-[#468152]/10 text-[#468152] dark:bg-[#468152]/20'
+                              }`}>
                               {exam.isPersonalExam ? (
                                 <><Sparkles className="h-3 w-3" /> Pessoal</>
                               ) : (

@@ -355,8 +355,13 @@ export async function GET(
       // Dificuldade se existir
       if (questao.dificuldade) {
         const dificuldadeLabel = questao.dificuldade === 'facil' ? 'Fácil' :
-                                  questao.dificuldade === 'medio' ? 'Médio' : 'Difícil'
+          questao.dificuldade === 'medio' ? 'Médio' : 'Difícil'
         doc.text(`| ${dificuldadeLabel}`, margin + 60, yPosition + 7)
+      }
+
+      // Ano
+      if (questao.ano) {
+        doc.text(`| ${questao.ano}`, margin + 85, yPosition + 7)
       }
 
       yPosition += 15

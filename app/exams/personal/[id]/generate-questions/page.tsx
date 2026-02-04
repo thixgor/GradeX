@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { CustomContext } from '@/lib/types'
+import { PageLoading } from '@/components/page-loading'
 
 interface Question {
   id: string
@@ -63,7 +64,7 @@ export default function GenerateQuestionsPage() {
   })
   const [randomDifficulty, setRandomDifficulty] = useState(false)
   const [questionContext, setQuestionContext] = useState<'medicina-afya' | 'enem' | 'uerj' | 'outros'>('medicina-afya')
-  
+
   // Contextos personalizados
   const [savedContexts, setSavedContexts] = useState<CustomContext[]>([])
   const [selectedSavedContext, setSelectedSavedContext] = useState<string>('')
@@ -350,11 +351,7 @@ export default function GenerateQuestionsPage() {
   }
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    )
+    return <PageLoading variant="fullscreen" />
   }
 
   return (
@@ -770,11 +767,11 @@ export default function GenerateQuestionsPage() {
           {currentStep === 'generating' && (
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-12">
-                <Loader2 className="h-12 w-12 animate-spin mb-4" />
-                <p className="text-lg font-semibold">Gerando questões...</p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Isso pode levar alguns minutos
-                </p>
+                <PageLoading
+                  variant="default"
+                  background="transparent"
+                  message="Gerando questões... Isso pode levar alguns minutos"
+                />
               </CardContent>
             </Card>
           )}

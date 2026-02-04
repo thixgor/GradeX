@@ -7,6 +7,7 @@ import { DashboardHeader } from '@/components/dashboard-header'
 import { CreateExamModal } from '@/components/create-exam-modal'
 import { BanChecker } from '@/components/ban-checker'
 import { SupportChat } from '@/components/support-chat'
+import { PageLoading } from '@/components/page-loading'
 
 interface User {
   id: string
@@ -90,11 +91,7 @@ Contato: (21) 99777-0936`)
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    )
+    return <PageLoading variant="fullscreen" message="Carregando..." />
   }
 
   if (!user) {

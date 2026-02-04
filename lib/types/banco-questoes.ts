@@ -197,6 +197,7 @@ export interface BancoEstatisticasAdmin {
   totalResolucoes: number
   resolucoesHoje: number
   mediaAcertos: number
+  relatosPendentes: number
 }
 
 // ============================================

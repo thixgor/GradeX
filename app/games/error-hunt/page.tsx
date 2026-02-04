@@ -22,6 +22,7 @@ import {
     ArrowRight,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { PageLoading } from '@/components/page-loading'
 import { Input } from '@/components/ui/input'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
@@ -166,7 +167,7 @@ function TopicSelector({ onStartGame }: { onStartGame: (questions: ErrorQuestion
             })
     }
 
-    if (loading) return <div className="text-center py-20"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto" /></div>
+    if (loading) return <PageLoading variant="minimal" background="transparent" />
 
     return (
         <div className="space-y-8">

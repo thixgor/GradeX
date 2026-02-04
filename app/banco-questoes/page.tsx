@@ -49,8 +49,9 @@ import {
   Target,
   Zap,
   GraduationCap,
-  AlertTriangle
+  AlertTriangle,
 } from 'lucide-react'
+import { PageLoading } from '@/components/page-loading'
 import {
   BancoPeriodoComContagem,
   BancoModuloComContagem,
@@ -549,9 +550,7 @@ export default function BancoQuestoesPage() {
   if (loading) {
     return (
       <AppShell headerTitle="Banco de Questões">
-        <div className="flex items-center justify-center h-[60vh]">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
+        <PageLoading variant="default" />
       </AppShell>
     )
   }
@@ -604,10 +603,7 @@ export default function BancoQuestoesPage() {
               )}
 
               {loadingPeriodo && (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground mr-2" />
-                  <span className="text-sm text-muted-foreground">Carregando questões...</span>
-                </div>
+                <PageLoading variant="minimal" message="Carregando questões..." />
               )}
 
               <div className="space-y-3 pt-4">
@@ -1048,6 +1044,11 @@ export default function BancoQuestoesPage() {
                           {questao.moduloNome && (
                             <Badge variant="outline" className="text-xs">
                               {questao.moduloNome}
+                            </Badge>
+                          )}
+                          {questao.topicoNome && (
+                            <Badge variant="outline" className="text-xs">
+                              {questao.topicoNome}
                             </Badge>
                           )}
                           {questao.ano && (

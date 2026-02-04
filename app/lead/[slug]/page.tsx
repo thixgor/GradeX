@@ -282,11 +282,125 @@ export default function LeadCapturePage() {
     if (loading) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-[#0a1f13] via-[#0d2818] to-[#0a1f13] flex items-center justify-center">
+                {/* Background Elements */}
+                <div className="fixed inset-0 pointer-events-none overflow-hidden">
+                    <motion.div
+                        className="absolute -top-32 -left-32 w-64 sm:w-96 h-64 sm:h-96 bg-[#1a5c45] rounded-full blur-[100px] opacity-30"
+                        animate={{
+                            scale: [1, 1.2, 1],
+                            opacity: [0.3, 0.4, 0.3]
+                        }}
+                        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                    />
+                    <motion.div
+                        className="absolute -bottom-32 -right-32 w-64 sm:w-96 h-64 sm:h-96 bg-[#E2A43E] rounded-full blur-[100px] opacity-20"
+                        animate={{
+                            scale: [1, 1.3, 1],
+                            opacity: [0.2, 0.3, 0.2]
+                        }}
+                        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                    />
+                </div>
+
+                {/* Loading Content */}
                 <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="flex flex-col items-center gap-6 z-10"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.4 }}
                 >
-                    <Loader2 className="h-10 w-10 text-[#E2A43E]" />
+                    {/* Logo with pulse */}
+                    <div className="relative">
+                        {/* Glow ring */}
+                        <motion.div
+                            className="absolute inset-0 rounded-full bg-gradient-to-r from-[#E2A43E]/20 via-[#1a5c45]/20 to-[#E2A43E]/20"
+                            style={{ width: 140, height: 140, left: -20, top: -20 }}
+                            animate={{
+                                scale: [1, 1.1, 1],
+                                opacity: [0.3, 0.5, 0.3],
+                            }}
+                            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                        />
+
+                        {/* Orbiting particles */}
+                        {[0, 1, 2].map((i) => (
+                            <motion.div
+                                key={i}
+                                className="absolute w-2 h-2 rounded-full bg-[#E2A43E]"
+                                style={{
+                                    top: '50%',
+                                    left: '50%',
+                                    marginTop: -4,
+                                    marginLeft: -4,
+                                    transformOrigin: '4px 70px',
+                                }}
+                                animate={{ rotate: 360 }}
+                                transition={{
+                                    duration: 2.5,
+                                    repeat: Infinity,
+                                    ease: "linear",
+                                    delay: i * 0.3,
+                                }}
+                            />
+                        ))}
+
+                        {/* Logo */}
+                        <motion.div
+                            className="relative z-10 rounded-2xl overflow-hidden shadow-2xl bg-[#0d2818]/80 backdrop-blur-sm p-4 border border-[#1a4d28]"
+                            animate={{
+                                scale: [1, 1.03, 1],
+                            }}
+                            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                        >
+                            <Image
+                                src="/logo.png"
+                                alt="Carregando..."
+                                width={100}
+                                height={100}
+                                className="object-contain"
+                                priority
+                            />
+                        </motion.div>
+
+                        {/* Shimmer */}
+                        <motion.div
+                            className="absolute inset-0 z-20 rounded-2xl overflow-hidden pointer-events-none"
+                            style={{
+                                background: 'linear-gradient(90deg, transparent 0%, rgba(226, 164, 62, 0.1) 50%, transparent 100%)',
+                            }}
+                            animate={{ x: ['-200%', '200%'] }}
+                            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", repeatDelay: 1 }}
+                        />
+                    </div>
+
+                    {/* Loading bar */}
+                    <div className="w-24 h-1 bg-[#1a4d28] rounded-full overflow-hidden">
+                        <motion.div
+                            className="h-full bg-gradient-to-r from-[#E2A43E] via-[#E2A43E]/80 to-[#E2A43E] rounded-full"
+                            animate={{ x: ['-100%', '100%'] }}
+                            transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
+                        />
+                    </div>
+
+                    {/* Animated dots */}
+                    <div className="flex items-center gap-1.5">
+                        {[0, 1, 2].map((i) => (
+                            <motion.div
+                                key={i}
+                                className="w-1.5 h-1.5 rounded-full bg-[#E2A43E]/60"
+                                animate={{
+                                    y: [0, -6, 0],
+                                    opacity: [0.6, 1, 0.6],
+                                }}
+                                transition={{
+                                    duration: 0.8,
+                                    repeat: Infinity,
+                                    ease: "easeInOut",
+                                    delay: i * 0.15,
+                                }}
+                            />
+                        ))}
+                    </div>
                 </motion.div>
             </div>
         )

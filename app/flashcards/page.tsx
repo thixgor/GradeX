@@ -25,6 +25,7 @@ import {
   ChevronDown,
   Download,
 } from 'lucide-react'
+import { PageLoading } from '@/components/page-loading'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -820,6 +821,71 @@ export default function FlashcardsPage() {
             </div>
           </LiquidGlassPanel>
 
+
+          {/* Meus Decks Section */}
+          <div className="mb-10">
+            <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+              <Layers className="h-5 w-5" /> Meus Decks
+            </h2>
+
+            {loadingDecks ? (
+              <PageLoading variant="minimal" message="Carregando seus decks..." />
+            ) : decks.length > 0 ? (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {decks.map((deck) => (
+                  <div
+                    key={deck._id}
+                    className="group relative rounded-3xl border border-slate-300 dark:border-white/20 bg-slate-50 dark:bg-white/5 p-5 transition-all hover:shadow-lg hover:border-emerald-500/50 dark:hover:border-emerald-500/50"
+                  >
+                    <div className="flex justify-between items-start mb-3">
+                      <div className="space-y-1 cursor-pointer flex-1" onClick={() => openDeck(deck)}>
+                        <h3 className="font-semibold text-lg text-slate-900 dark:text-white line-clamp-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                          {deck.title}
+                        </h3>
+                        <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-white/60">
+                          <span className="line-clamp-1">{deck.theme}</span>
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 -mr-2 -mt-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          openDeleteConfirmation(deck._id, deck.title)
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+
+                    <div className="flex items-center gap-2 mt-4">
+                      <Button
+                        className="flex-1 bg-white hover:bg-emerald-500 hover:text-white dark:bg-white/10 dark:hover:bg-emerald-600 text-slate-900 dark:text-white border border-slate-200 dark:border-white/10 transition-all h-9 text-sm shadow-sm"
+                        onClick={() => openDeck(deck)}
+                      >
+                        <PlayCircle className="h-4 w-4 mr-2" />
+                        Estudar
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12 border-2 border-dashed border-slate-300 dark:border-white/10 rounded-3xl bg-slate-50/50 dark:bg-white/5">
+                <Layers className="h-12 w-12 mx-auto text-slate-300 dark:text-white/20 mb-3" />
+                <p className="text-slate-500 dark:text-white/50">Você ainda não criou nenhum deck.</p>
+                <Button
+                  variant="link"
+                  className="text-emerald-600 dark:text-emerald-400"
+                  onClick={() => setShowCreationForm(true)}
+                >
+                  Criar meu primeiro deck
+                </Button>
+              </div>
+            )}
+          </div>
+
           {!loadingThemes && themes.length > 0 && (
             <div className="mb-10">
               <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
@@ -1160,7 +1226,7 @@ export default function FlashcardsPage() {
               </div>
             ) : (
               <div className="flex justify-center items-center flex-1">
-                <Loader2 className="h-6 w-6 animate-spin" />
+                <PageLoading variant="minimal" background="transparent" />
               </div>
             )}
           </DialogContent>

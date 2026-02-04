@@ -27,13 +27,15 @@ import {
   List,
   X,
   StickyNote,
-  ZoomIn
+  ZoomIn,
+  Flag
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { BancoListaUsuario, BancoQuestaoComHierarquia } from '@/lib/types/banco-questoes'
 import { QuestionAnnotation } from '@/lib/types'
 import { QuestionNotesCanvas } from '@/components/question-notes-canvas'
 import { ImageModal } from '@/components/image-modal'
+import { ReportQuestionModal } from '@/components/report-question-modal'
 
 type ModoVisualizacao = 'lista' | 'simulado'
 type ModoCorrecao = 'imediato' | 'final'
@@ -71,6 +73,9 @@ export default function ListaDetalhePage() {
   // Estados de Anotações
   const [annotations, setAnnotations] = useState<QuestionAnnotation[]>([])
   const [editingNotesFor, setEditingNotesFor] = useState<string | null>(null)
+
+  // Report Modal
+  const [reportQuestionId, setReportQuestionId] = useState<string | null>(null)
 
   // Modal de imagem expandida
   const [showImageModal, setShowImageModal] = useState(false)
@@ -398,7 +403,8 @@ export default function ListaDetalhePage() {
 
           {/* Questão atual */}
           <Card>
-            <CardHeader>
+
+            <CardHeader className="flex flex-row items-center justify-between py-2 pb-2">
               <div className="flex items-center gap-2 flex-wrap">
                 <Badge variant={questao.tipo === 'objetiva' ? 'default' : 'secondary'}>
                   {questao.tipo === 'objetiva' ? 'Objetiva' : 'Discursiva'}
@@ -416,6 +422,16 @@ export default function ListaDetalhePage() {
                   </Badge>
                 )}
               </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground hover:text-orange-500"
+                onClick={() => setReportQuestionId(String(questao._id))}
+                title="Relatar erro na questão"
+              >
+                <Flag className="h-4 w-4 mr-2" />
+                Relatar Erro
+              </Button>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Enunciado */}
@@ -688,9 +704,9 @@ export default function ListaDetalhePage() {
           {editingNotesFor && (() => {
             const questaoParaAnotar = questoes.find(q => String(q._id) === editingNotesFor)
             if (!questaoParaAnotar) return null
-            
+
             const indexQuestao = questoes.findIndex(q => String(q._id) === editingNotesFor)
-            
+
             return (
               <QuestionNotesCanvas
                 questionId={String(questaoParaAnotar._id)}
@@ -710,7 +726,7 @@ export default function ListaDetalhePage() {
             alt="Imagem da questão"
           />
         </div>
-      </AppShell>
+      </AppShell >
     )
   }
 
@@ -828,6 +844,11 @@ export default function ListaDetalhePage() {
                               {questao.moduloNome}
                             </Badge>
                           )}
+                          {questao.topicoNome && (
+                            <Badge variant="outline" className="text-xs">
+                              {questao.topicoNome}
+                            </Badge>
+                          )}
                           {questao.ano && (
                             <Badge variant="outline" className="bg-primary/10 text-xs">
                               {questao.ano}
@@ -891,9 +912,9 @@ export default function ListaDetalhePage() {
         {editingNotesFor && (() => {
           const questaoParaAnotar = questoes.find(q => String(q._id) === editingNotesFor)
           if (!questaoParaAnotar) return null
-          
+
           const indexQuestao = questoes.findIndex(q => String(q._id) === editingNotesFor)
-          
+
           return (
             <QuestionNotesCanvas
               questionId={String(questaoParaAnotar._id)}
@@ -913,6 +934,15 @@ export default function ListaDetalhePage() {
           alt="Imagem da questão"
         />
       </div>
+
+      {/* Modal de Relatar Erro */}
+      {reportQuestionId && (
+        <ReportQuestionModal
+          questionId={reportQuestionId}
+          isOpen={!!reportQuestionId}
+          onClose={() => setReportQuestionId(null)}
+        />
+      )}
     </AppShell>
   )
 }

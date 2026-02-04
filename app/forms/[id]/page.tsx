@@ -22,6 +22,7 @@ import {
     AtSign,
     Phone
 } from 'lucide-react'
+import { PageLoading } from '@/components/page-loading'
 import { Badge } from '@/components/ui/badge'
 
 export default function PublicFormPage() {
@@ -86,12 +87,7 @@ export default function PublicFormPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-                <div className="text-center animate-pulse">
-                    <Loader2 className="h-10 w-10 text-primary animate-spin mx-auto mb-4" />
-                    <p className="text-muted-foreground font-medium">Carregando formulário...</p>
-                </div>
-            </div>
+            <PageLoading variant="fullscreen" message="Carregando formulário..." />
         )
     }
 

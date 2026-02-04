@@ -20,6 +20,7 @@ import {
     Zap,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { PageLoading } from '@/components/page-loading'
 import { Input } from '@/components/ui/input'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
@@ -220,11 +221,7 @@ function TopicSelector({ onSelectPuzzle }: { onSelectPuzzle: (puzzle: CrosswordP
     }
 
     if (loading) {
-        return (
-            <div className="flex items-center justify-center py-20">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500" />
-            </div>
-        )
+        return <PageLoading variant="minimal" background="transparent" />
     }
 
     if (selectedTopic) {

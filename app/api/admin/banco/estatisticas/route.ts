@@ -91,6 +91,9 @@ export async function GET(request: NextRequest) {
       ? Math.round((acertosResult[0].acertos / acertosResult[0].total) * 100)
       : 0
 
+    // Relatos pendentes
+    const relatosPendentes = await db.collection('banco_questoes_reports').countDocuments({ status: 'pending' })
+
     const estatisticas: BancoEstatisticasAdmin = {
       totalQuestoes,
       questoesPorTipo: {
@@ -106,7 +109,8 @@ export async function GET(request: NextRequest) {
       },
       totalResolucoes,
       resolucoesHoje,
-      mediaAcertos
+      mediaAcertos,
+      relatosPendentes
     }
 
     return NextResponse.json({ estatisticas })

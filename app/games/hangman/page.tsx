@@ -15,6 +15,7 @@ import {
     Sparkles,
     Skull,
 } from 'lucide-react'
+import { PageLoading } from '@/components/page-loading'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
@@ -213,7 +214,7 @@ function TopicSelector({ onSelectWord }: { onSelectWord: (word: HangmanWord) => 
         }
     }
 
-    if (loading) return <div className="text-center py-20"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto" /></div>
+    if (loading) return <PageLoading variant="minimal" background="transparent" />
 
     if (selectedTopic) {
         return (

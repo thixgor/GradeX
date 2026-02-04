@@ -17,7 +17,8 @@ import {
   BookOpen,
   CheckCircle2,
   Loader2,
-  ArrowRightLeft
+  ArrowRightLeft,
+  AlertCircle
 } from 'lucide-react'
 import { BancoEstatisticasAdmin } from '@/lib/types/banco-questoes'
 
@@ -118,6 +119,14 @@ export default function AdminBancoQuestoes() {
       icon: ArrowRightLeft,
       href: '/admin/banco-questoes/extrair',
       color: 'from-orange-500 to-amber-500'
+    },
+    {
+      title: 'Relatar Erros',
+      description: 'Gerenciar relatos de problemas enviados pelos usuários.',
+      icon: AlertCircle,
+      href: '/admin/banco-questoes/relatos',
+      color: 'from-red-500 to-rose-500',
+      badge: estatisticas?.relatosPendentes
     }
   ]
 
@@ -236,6 +245,11 @@ export default function AdminBancoQuestoes() {
                         <section.icon className="h-5 w-5 text-white" />
                       </div>
                       {section.title}
+                      {(section as any).badge ? (
+                        <span className="ml-auto inline-flex items-center justify-center h-6 min-w-6 px-2 rounded-full bg-red-600 text-white text-xs font-bold shadow-sm animate-pulse">
+                          {(section as any).badge}
+                        </span>
+                      ) : null}
                     </CardTitle>
                     <CardDescription className="text-sm">
                       {section.description}

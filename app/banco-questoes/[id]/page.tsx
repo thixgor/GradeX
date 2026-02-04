@@ -35,12 +35,14 @@ import {
   AlertCircle,
   X,
   StickyNote,
-  ZoomIn
+  ZoomIn,
+  Flag
 } from 'lucide-react'
 import { BancoQuestaoComHierarquia, BancoListaUsuario } from '@/lib/types/banco-questoes'
 import { QuestionAnnotation } from '@/lib/types'
 import { QuestionNotesCanvas } from '@/components/question-notes-canvas'
 import { ImageModal } from '@/components/image-modal'
+import { ReportQuestionModal } from '@/components/report-question-modal'
 import { cn } from '@/lib/utils'
 
 export default function QuestaoPage() {
@@ -91,6 +93,9 @@ export default function QuestaoPage() {
   // Modal de imagem expandida
   const [showImageModal, setShowImageModal] = useState(false)
   const [modalImageUrl, setModalImageUrl] = useState('')
+
+  // Report Modal
+  const [showReportModal, setShowReportModal] = useState(false)
 
   // Handler para ver gabarito da última resolução
   function handleVerGabarito() {
@@ -376,23 +381,33 @@ export default function QuestaoPage() {
                 questao.dificuldade === 'facil'
                   ? 'border-green-500 text-green-600'
                   : questao.dificuldade === 'medio'
-                  ? 'border-yellow-500 text-yellow-600'
-                  : 'border-red-500 text-red-600'
+                    ? 'border-yellow-500 text-yellow-600'
+                    : 'border-red-500 text-red-600'
               }
             >
               {questao.dificuldade === 'facil' ? 'Fácil' :
-               questao.dificuldade === 'medio' ? 'Médio' : 'Difícil'}
+                questao.dificuldade === 'medio' ? 'Médio' : 'Difícil'}
             </Badge>
           )}
         </div>
 
         {/* Enunciado */}
         <Card>
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-lg flex items-center gap-2">
               <BookOpen className="h-5 w-5" />
               Enunciado
             </CardTitle>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground hover:text-orange-500"
+              onClick={() => setShowReportModal(true)}
+              title="Relatar erro na questão"
+            >
+              <Flag className="h-4 w-4 mr-2" />
+              Relatar Erro
+            </Button>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
@@ -801,6 +816,15 @@ export default function QuestaoPage() {
           src={modalImageUrl}
           alt="Imagem da questão"
         />
+
+        {/* Modal de Relatar Erro */}
+        {questao && (
+          <ReportQuestionModal
+            questionId={String(questao._id)}
+            isOpen={showReportModal}
+            onClose={() => setShowReportModal(false)}
+          />
+        )}
       </div>
     </AppShell>
   )

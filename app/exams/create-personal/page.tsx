@@ -19,6 +19,7 @@ import {
   Crown,
   Info
 } from 'lucide-react'
+import { PageLoading } from '@/components/page-loading'
 
 interface User {
   id: string
@@ -141,11 +142,7 @@ export default function CreatePersonalExamPage() {
   }
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    )
+    return <PageLoading variant="fullscreen" />
   }
 
   const limits = getAccountLimits()
@@ -271,8 +268,8 @@ export default function CreatePersonalExamPage() {
                         onClick={() => setNumberOfAlternatives(num)}
                         disabled={creating}
                         className={`h-11 rounded-lg border-2 font-semibold transition-all ${numberOfAlternatives === num
-                            ? 'border-primary bg-primary text-primary-foreground'
-                            : 'border-muted hover:border-primary/50 bg-background'
+                          ? 'border-primary bg-primary text-primary-foreground'
+                          : 'border-muted hover:border-primary/50 bg-background'
                           }`}
                       >
                         {num}
@@ -290,8 +287,8 @@ export default function CreatePersonalExamPage() {
                       onClick={() => setScoringMethod('normal')}
                       disabled={creating}
                       className={`p-3 rounded-lg border-2 text-left transition-all ${scoringMethod === 'normal'
-                          ? 'border-primary bg-primary/5'
-                          : 'border-muted hover:border-primary/50'
+                        ? 'border-primary bg-primary/5'
+                        : 'border-muted hover:border-primary/50'
                         }`}
                     >
                       <p className="font-semibold text-sm">Normal</p>
@@ -302,8 +299,8 @@ export default function CreatePersonalExamPage() {
                       onClick={() => setScoringMethod('tri')}
                       disabled={creating}
                       className={`p-3 rounded-lg border-2 text-left transition-all ${scoringMethod === 'tri'
-                          ? 'border-primary bg-primary/5'
-                          : 'border-muted hover:border-primary/50'
+                        ? 'border-primary bg-primary/5'
+                        : 'border-muted hover:border-primary/50'
                         }`}
                     >
                       <p className="font-semibold text-sm">TRI</p>
@@ -354,8 +351,8 @@ export default function CreatePersonalExamPage() {
                       onClick={() => setNavigationMode('paginated')}
                       disabled={creating || feedbackMode === 'immediate'}
                       className={`p-3 rounded-lg border-2 text-left transition-all ${navigationMode === 'paginated'
-                          ? 'border-primary bg-primary/5'
-                          : 'border-muted hover:border-primary/50'
+                        ? 'border-primary bg-primary/5'
+                        : 'border-muted hover:border-primary/50'
                         }`}
                     >
                       <p className="font-semibold text-sm">Paginada</p>
@@ -366,8 +363,8 @@ export default function CreatePersonalExamPage() {
                       onClick={() => setNavigationMode('scroll')}
                       disabled={creating || feedbackMode === 'immediate'}
                       className={`p-3 rounded-lg border-2 text-left transition-all ${navigationMode === 'scroll'
-                          ? 'border-primary bg-primary/5'
-                          : 'border-muted hover:border-primary/50'
+                        ? 'border-primary bg-primary/5'
+                        : 'border-muted hover:border-primary/50'
                         } ${feedbackMode === 'immediate' ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       <p className="font-semibold text-sm">Scroll</p>
@@ -407,8 +404,8 @@ export default function CreatePersonalExamPage() {
                       onClick={() => setFeedbackMode('end')}
                       disabled={creating}
                       className={`p-3 rounded-lg border-2 text-left transition-all flex items-start gap-3 ${feedbackMode === 'end'
-                          ? 'border-primary bg-primary/5'
-                          : 'border-muted hover:border-primary/50'
+                        ? 'border-primary bg-primary/5'
+                        : 'border-muted hover:border-primary/50'
                         }`}
                     >
                       <CheckCircle2 className={`h-5 w-5 mt-0.5 ${feedbackMode === 'end' ? 'text-primary' : 'text-muted-foreground'}`} />
@@ -425,8 +422,8 @@ export default function CreatePersonalExamPage() {
                       }}
                       disabled={creating}
                       className={`p-3 rounded-lg border-2 text-left transition-all flex items-start gap-3 ${feedbackMode === 'immediate'
-                          ? 'border-primary bg-primary/5'
-                          : 'border-muted hover:border-primary/50'
+                        ? 'border-primary bg-primary/5'
+                        : 'border-muted hover:border-primary/50'
                         }`}
                     >
                       <Zap className={`h-5 w-5 mt-0.5 ${feedbackMode === 'immediate' ? 'text-primary' : 'text-muted-foreground'}`} />
