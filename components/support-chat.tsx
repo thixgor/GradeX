@@ -26,7 +26,7 @@ import { notificationSound } from '@/lib/notification-sound'
  */
 
 // Polling interval in milliseconds - optimized from 5s to 15s
-const POLLING_INTERVAL = 15000
+const POLLING_INTERVAL = 30000 // 30 seconds - reduced from 15s
 
 export function SupportChat() {
   const [isOpen, setIsOpen] = useState(false)

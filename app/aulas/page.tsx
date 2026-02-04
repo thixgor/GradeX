@@ -8,25 +8,27 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Plus, Lock, Globe, Video, Zap, Search, ChevronRight, Info, BookOpen, AlertCircle, Pencil, Clock, History, X, Bell, Trash2 } from 'lucide-react'
 import { RotatingAds } from '@/components/rotating-ads'
-import { AppShell } from '@/components/app-shell'
+import { AppShell, useAppShell } from '@/components/app-shell'
 import { useState as useStateDialog } from 'react'
 import { AulaSetor, AulaTopic, AulaSubtopic, AulaModulo, AulaSubmodulo, AulaPostagem } from '@/lib/types'
-
-interface User {
-  id: string
-  email: string
-  name: string
-  role: string
-  secondaryRole?: string
-  accountType?: string
-}
 
 function AulasPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [user, setUser] = useState<User | null>(null)
+  // Get user data from AppShell context (no extra /api/auth/me call!)
+  const { user: contextUser, isAdmin } = useAppShell()
+
+  // Map context user to local format
+  const user = contextUser ? {
+    id: contextUser.id,
+    email: contextUser.email,
+    name: contextUser.name,
+    role: contextUser.role,
+    secondaryRole: contextUser.secondaryRole,
+    accountType: contextUser.accountType,
+  } : null
+
   const [loading, setLoading] = useState(true)
-  const [isAdmin, setIsAdmin] = useState(false)
   const [initialParamsLoaded, setInitialParamsLoaded] = useState(false)
 
   // Estados para dados
@@ -138,44 +140,18 @@ function AulasPageContent() {
   const [avisoForm, setAvisoForm] = useState<{ titulo: string; mensagem: string; tipo: 'info' | 'warning' | 'success' | 'error' }>({ titulo: '', mensagem: '', tipo: 'info' })
   const [salvandoAviso, setSalvandoAviso] = useState(false)
 
-  useEffect(() => {
-    checkAuth()
-  }, [])
-
-  // Recarregar aulas quando user muda
+  // Load data when component mounts (user already available from AppShell context)
   useEffect(() => {
     if (user) {
       loadAulas()
+      loadUltimaAula()
+      loadAviso()
+      setLoading(false)
     }
   }, [user?.id])
 
-  // Recarregar aulas a cada 5 segundos para sincronizar com mudanças
-  useEffect(() => {
-    const interval = setInterval(() => {
-      loadAulas()
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [])
-
-  async function checkAuth() {
-    try {
-      const res = await fetch('/api/auth/me')
-      if (!res.ok) {
-        router.push('/auth/login')
-        return
-      }
-      const data = await res.json()
-      setUser(data.user)
-      setIsAdmin(data.user.role === 'admin')
-      loadAulas()
-      loadUltimaAula()
-      loadAviso()
-    } catch (error) {
-      router.push('/auth/login')
-    } finally {
-      setLoading(false)
-    }
-  }
+  // REMOVED: checkAuth - now using AppShell context (no extra /api/auth/me call!)
+  // REMOVED: Aggressive 5-second polling was destroying serverless quota
 
   async function loadUltimaAula() {
     try {

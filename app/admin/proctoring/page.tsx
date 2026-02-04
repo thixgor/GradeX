@@ -239,13 +239,13 @@ export default function ProctoringMonitoringPage() {
     fetchSessions()
   }, [])
 
-  // Auto-refresh a cada 5 segundos
+  // Auto-refresh a cada 15 segundos (changed from 5s to reduce serverless invocations)
   useEffect(() => {
     if (!autoRefresh) return
 
     const interval = setInterval(() => {
       fetchSessions()
-    }, 5000)
+    }, 15000)
 
     return () => clearInterval(interval)
   }, [autoRefresh])

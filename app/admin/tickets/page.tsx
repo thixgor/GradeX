@@ -46,8 +46,9 @@ export default function AdminTicketsPage() {
 
   useEffect(() => {
     loadTickets()
-    // Polling continua enquanto a página está montada
-    const interval = setInterval(loadTickets, 5000)
+    // CHANGED: Polling reduced from 5s to 60s to reduce serverless invocations
+    // For real-time chat, consider WebSockets instead of polling
+    const interval = setInterval(loadTickets, 60000)
     return () => clearInterval(interval)
   }, [])
 

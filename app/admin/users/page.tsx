@@ -48,9 +48,10 @@ export default function AdminUsersPage() {
   useEffect(() => {
     loadUsers()
     loadOnlineCount()
+    // CHANGED: Polling reduced from 30s to 60s to reduce serverless invocations
     const intervalId = setInterval(() => {
       loadOnlineCount()
-    }, 30000)
+    }, 60000)
 
     return () => clearInterval(intervalId)
   }, [])
