@@ -35,10 +35,11 @@ export function TextHighlightMenu({ position, onHighlight, onApplyStyle, onRemov
 
       {/* Menu principal */}
       <div
-        className="fixed z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl"
+        className="fixed z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl select-none"
         style={{
           left: `${position.x}px`,
           top: `${position.y}px`,
+          WebkitTapHighlightColor: 'transparent',
         }}
       >
         <div className="p-1 min-w-[200px]">

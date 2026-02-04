@@ -59,13 +59,17 @@ export function HighlightableText({
   const handleSelection = (clickX?: number, clickY?: number) => {
     const selection = window.getSelection()
     if (!selection || selection.isCollapsed || !textRef.current) {
-      // Se clicou fora ou não tem seleção, a gente não fecha aqui 
-      // para permitir clicar nos botões do menu. O overlay cuida disso.
       return
     }
 
     const selectedText = selection.toString()
-    if (!selectedText.trim()) {
+    // Evitar seleções muito curtas ou muito longas (provavelmente erro no mobile)
+    if (selectedText.trim().length < 3 || selectedText.length > 1000) {
+      return
+    }
+
+    // Se selecionou praticamente o texto todo, ignorar (provavelmente "Selecionar Tudo" por engano)
+    if (selectedText.length >= text.length - 2) {
       return
     }
 
@@ -73,8 +77,8 @@ export function HighlightableText({
     try {
       const range = selection.getRangeAt(0)
 
-      // Verificar se a seleção está dentro do nosso container
-      if (!textRef.current.contains(range.commonAncestorContainer)) {
+      // Verificar se a seleção está RIGOROSAMENTE dentro do nosso container
+      if (!textRef.current.contains(range.startContainer) || !textRef.current.contains(range.endContainer)) {
         return
       }
 
@@ -91,30 +95,41 @@ export function HighlightableText({
       let x = clickX
       let y = clickY
 
-      // Se não houver coordenadas de clique (ex: via teclado ou outro evento),
-      // usa o retângulo da seleção
-      if (x === undefined || y === undefined) {
-        const rect = range.getBoundingClientRect()
-        x = rect.left + rect.width / 2
-        y = rect.top // Acima da seleção
+      const rects = range.getClientRects()
+      const firstRect = rects[0]
+      const lastRect = rects[rects.length - 1]
+
+      if (firstRect) {
+        x = firstRect.left + firstRect.width / 2
+        y = firstRect.top - 10
       }
 
       // Ajustes para não sair da tela
-      const menuWidth = 200 // Estimado
-      const menuHeight = 250 // Estimado
+      const menuWidth = 220
+      const menuHeight = 280
 
+      x = (x || window.innerWidth / 2) - (menuWidth / 2)
       x = Math.max(10, Math.min(x, window.innerWidth - menuWidth - 10))
+
+      y = (y || 100)
+      if (y < 60 && lastRect) {
+        y = lastRect.bottom + 10
+      } else {
+        y = y - menuHeight
+      }
+
       y = Math.max(10, Math.min(y, window.innerHeight - menuHeight - 10))
 
       setContextMenu({ x, y })
     } catch (err) {
-      console.error('Erro ao processar seleção:', err)
+      // Ignorar erros na seleção
     }
   }
 
   const handlePointerUp = (e: React.PointerEvent) => {
     // Pequeno delay para garantir que o Selection API atualizou
-    setTimeout(() => handleSelection(e.clientX, e.clientY), 10)
+    const isTouch = e.pointerType === 'touch'
+    setTimeout(() => handleSelection(e.clientX, e.clientY), isTouch ? 150 : 20)
   }
 
   const handleCopy = () => {
