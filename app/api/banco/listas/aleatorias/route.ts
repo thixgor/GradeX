@@ -77,13 +77,22 @@ export async function POST(request: NextRequest) {
     }
 
     // Buscar questões aleatórias
+    // TENTATIVA DE MELHORIA DE ALEATORIEDADE:
+    // O usuário relatou que parecem vir sempre as "últimas".
+    // O $sample do Mongo pode ter viés se a amostragem for feita em blocos de disco contíguos (onde os últimos inserts estão).
+    // Solução: Pedir uma amostra muito maior (ex: 5x) e fazer um embaralhamento (shuffle) em memória (Fisher-Yates).
+
+    const fatorAmostra = 5
+    const limiteAmostra = 1000 // Limite de segurança para não explodir memória
+    const tamanhoAmostra = Math.min(body.quantidade * fatorAmostra, limiteAmostra)
+
     const pipeline = [
       { $match: matchStage },
-      { $sample: { size: body.quantidade } },
+      { $sample: { size: tamanhoAmostra } },
       { $project: { _id: 1 } }
     ]
 
-    const questoesAleatorias = await db.collection('banco_questoes')
+    let questoesAleatorias = await db.collection('banco_questoes')
       .aggregate(pipeline)
       .toArray()
 
@@ -93,7 +102,15 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    const questaoIds = questoesAleatorias.map(q => q._id)
+    // Algoritmo Fisher-Yates para garantir aleatoriedade imparcial no array retornado
+    for (let i = questoesAleatorias.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [questoesAleatorias[i], questoesAleatorias[j]] = [questoesAleatorias[j], questoesAleatorias[i]];
+    }
+
+    // Cortar para o tamanho exato solicitado
+    const questoesSelecionadas = questoesAleatorias.slice(0, body.quantidade)
+    const questaoIds = questoesSelecionadas.map(q => q._id)
 
     // Criar a lista
     const novaLista: Omit<BancoListaUsuario, '_id'> = {
