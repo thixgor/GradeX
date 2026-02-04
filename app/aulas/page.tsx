@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Plus, Lock, Globe, Video, Zap, Search, ChevronRight, Info, BookOpen, AlertCircle, Pencil, Clock, History, X, Bell, Trash2 } from 'lucide-react'
 import { RotatingAds } from '@/components/rotating-ads'
 import { AppShell, useAppShell } from '@/components/app-shell'
+import { LogoLoading } from '@/components/logo-loading'
 import { useState as useStateDialog } from 'react'
 import { AulaSetor, AulaTopic, AulaSubtopic, AulaModulo, AulaSubmodulo, AulaPostagem } from '@/lib/types'
 
@@ -348,11 +349,7 @@ function AulasPageContent() {
   const submodulosModulo = selectedModulo ? submodulos.filter(sm => sm.moduloId === selectedModulo && !sm.oculta) : []
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Carregando...</div>
-      </div>
-    )
+    return <LogoLoading message="Carregando aulas..." size="lg" fullscreen />
   }
 
   return (

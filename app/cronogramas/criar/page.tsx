@@ -13,6 +13,7 @@ import { ArrowLeft, ChevronRight, Info } from 'lucide-react'
 import { TEMPLATES, ModelType, UserDifficulty, StudyTime, TopicItem, SubtopicItem, ModuleItem, MedicinaAFYAPeriodo } from '@/lib/cronograma-types'
 import { ToggleSwitch } from '@/components/ui/toggle-switch'
 import { getMedicinaAFYATopicos } from '@/lib/medicina-afya-periodos-helper'
+import { LogoLoading } from '@/components/logo-loading'
 
 interface User {
   id: string
@@ -248,11 +249,7 @@ export default function CriarCronogramaPage() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Carregando...</div>
-      </div>
-    )
+    return <LogoLoading message="Carregando..." size="lg" fullscreen />
   }
 
   if (!user) {

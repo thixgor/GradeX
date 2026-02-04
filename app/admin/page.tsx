@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { BanChecker } from '@/components/ban-checker'
 import { AppShell } from '@/components/app-shell'
+import { LogoLoading } from '@/components/logo-loading'
 import {
   FileText,
   Key,
@@ -65,11 +66,7 @@ export default function AdminDashboard() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Carregando...</div>
-      </div>
-    )
+    return <LogoLoading message="Carregando painel admin..." size="lg" fullscreen />
   }
 
   if (!user) {

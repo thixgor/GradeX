@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { LogoLoading } from '@/components/logo-loading'
 import { BanChecker } from '@/components/ban-checker'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import {
@@ -126,11 +127,7 @@ export default function AdminImportarPage() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    )
+    return <LogoLoading message="Carregando..." size="lg" fullscreen />
   }
 
   return (

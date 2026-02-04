@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
+import { LogoLoading } from '@/components/logo-loading'
 import { Card, CardContent } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { ArrowLeft, Plus, Edit2, Trash2, Copy, Eye, EyeOff, ChevronDown, ChevronUp, ChevronRight, GripVertical, Move } from 'lucide-react'
@@ -955,11 +956,7 @@ export default function GerenciarAulasPage() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Carregando...</div>
-      </div>
-    )
+    return <LogoLoading message="Carregando..." size="lg" fullscreen />
   }
 
   return (

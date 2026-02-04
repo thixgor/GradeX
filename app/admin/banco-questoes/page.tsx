@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { LogoLoading } from '@/components/logo-loading'
 import { BanChecker } from '@/components/ban-checker'
 import {
   Database,
@@ -80,11 +81,7 @@ export default function AdminBancoQuestoes() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    )
+    return <LogoLoading message="Carregando..." size="lg" fullscreen />
   }
 
   if (!user) {

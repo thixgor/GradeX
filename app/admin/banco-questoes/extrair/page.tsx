@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { LogoLoading } from '@/components/logo-loading'
 import { BanChecker } from '@/components/ban-checker'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import {
@@ -118,11 +119,7 @@ export default function AdminExtrairQuestoes() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    )
+    return <LogoLoading message="Carregando..." size="lg" fullscreen />
   }
 
   return (

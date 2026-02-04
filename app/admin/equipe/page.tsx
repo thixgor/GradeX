@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { ArrowLeft, Save, Plus, Trash2, ChevronUp, ChevronDown, Edit2, X } from 'lucide-react'
+import { LogoLoading } from '@/components/logo-loading'
 
 interface TeamMember {
   name: string
@@ -295,11 +296,7 @@ export default function AdminEquipePage() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Carregando...</div>
-      </div>
-    )
+    return <LogoLoading message="Carregando equipe..." size="lg" fullscreen />
   }
 
   const renderMemberCard = (member: TeamMember, index: number, type: 'leadership' | 'instructors') => {

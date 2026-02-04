@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { ArrowLeft, Upload, X } from 'lucide-react'
 import { AulaTopic, AulaSubtopic, AulaModulo, AulaType, AulaVisibility, AulaPostagem } from '@/lib/types'
+import { LogoLoading } from '@/components/logo-loading'
 import { ToastAlert } from '@/components/ui/toast-alert'
 
 interface User {
@@ -275,11 +276,7 @@ export default function EditarAulaPage() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Carregando...</div>
-      </div>
-    )
+    return <LogoLoading message="Carregando..." size="lg" fullscreen />
   }
 
   return (

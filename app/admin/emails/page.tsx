@@ -11,6 +11,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ToastAlert } from '@/components/ui/toast-alert'
+import { LogoLoading } from '@/components/logo-loading'
 import {
     ArrowLeft,
     Mail,
@@ -361,13 +362,7 @@ export default function AdminEmailsPage() {
     }
 
     if (loading) {
-        return (
-            <AppShell headerTitle="Enviar E-mails">
-                <div className="min-h-screen flex items-center justify-center">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                </div>
-            </AppShell>
-        )
+        return <LogoLoading message="Carregando..." size="lg" fullscreen />
     }
 
     return (

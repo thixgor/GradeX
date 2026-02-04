@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { LogoLoading } from '@/components/logo-loading'
 import { Countdown } from '@/components/countdown'
 import { Toast } from '@/components/toast'
 import { ToastAlert } from '@/components/ui/toast-alert'
@@ -918,11 +919,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Carregando...</div>
-      </div>
-    )
+    return <LogoLoading message="Carregando prova..." size="lg" fullscreen />
   }
 
   if (!exam) {

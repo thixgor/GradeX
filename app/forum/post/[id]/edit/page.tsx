@@ -12,6 +12,7 @@ import { BanChecker } from '@/components/ban-checker'
 import { RichTextEditor } from '@/components/rich-text-editor'
 import { ArrowLeft, Upload, X, Tag as TagIcon, Link as LinkIcon, FolderOpen } from 'lucide-react'
 import { ForumPost, ForumAttachment, ForumTopic } from '@/lib/types'
+import { LogoLoading } from '@/components/logo-loading'
 
 interface User {
   id: string
@@ -251,11 +252,7 @@ export default function EditForumPostPage({ params }: { params: { id: string } }
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Carregando...</div>
-      </div>
-    )
+    return <LogoLoading message="Carregando..." size="lg" fullscreen />
   }
 
   return (

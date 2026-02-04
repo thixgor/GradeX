@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { LogoLoading } from '@/components/logo-loading'
 import { ArrowLeft, Download, CheckCircle2 } from 'lucide-react'
 import { CronogramaGerado, AtividadeCronograma } from '@/lib/cronograma-types'
 
@@ -293,11 +294,7 @@ export default function CronogramaDetalhePage() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Carregando...</div>
-      </div>
-    )
+    return <LogoLoading message="Carregando cronograma..." size="lg" fullscreen />
   }
 
   if (!cronograma) {

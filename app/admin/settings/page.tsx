@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { LogoLoading } from '@/components/logo-loading'
 import { ArrowLeft, Settings, AlertCircle, CheckCircle, Eye, EyeOff, Trash2, Zap, Plus, ArrowUp, ArrowDown } from 'lucide-react'
 import { PlanConfig } from '@/lib/types'
 
@@ -299,11 +300,7 @@ export default function SettingsPage() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Carregando...</div>
-      </div>
-    )
+    return <LogoLoading message="Carregando configurações..." size="lg" fullscreen />
   }
 
   if (!user) {

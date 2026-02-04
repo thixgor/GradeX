@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { LogoLoading } from '@/components/logo-loading'
 import { ArrowLeft, Bot, CheckCircle, Clock, Send, Sparkles } from 'lucide-react'
 import { ExamSubmission } from '@/lib/types'
 
@@ -179,11 +180,7 @@ export default function AdminCorrectionsPage({ params }: { params: { id: string 
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Carregando...</div>
-      </div>
-    )
+    return <LogoLoading message="Carregando..." size="lg" fullscreen />
   }
 
   if (!exam) return null
