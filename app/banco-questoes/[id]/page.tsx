@@ -39,8 +39,9 @@ import {
   Flag
 } from 'lucide-react'
 import { BancoQuestaoComHierarquia, BancoListaUsuario } from '@/lib/types/banco-questoes'
-import { QuestionAnnotation } from '@/lib/types'
+import { QuestionAnnotation, TextHighlight } from '@/lib/types'
 import { QuestionNotesCanvas } from '@/components/question-notes-canvas'
+import { HighlightableText } from '@/components/highlightable-text'
 import { ImageModal } from '@/components/image-modal'
 import { ReportQuestionModal } from '@/components/report-question-modal'
 import { cn } from '@/lib/utils'
@@ -96,6 +97,9 @@ export default function QuestaoPage() {
 
   // Report Modal
   const [showReportModal, setShowReportModal] = useState(false)
+
+  // Highlights de texto
+  const [highlights, setHighlights] = useState<TextHighlight[]>([])
 
   // Handler para ver gabarito da última resolução
   function handleVerGabarito() {
@@ -411,7 +415,13 @@ export default function QuestaoPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
-              {questao.enunciado}
+              <HighlightableText
+                text={questao.enunciado}
+                highlights={highlights}
+                target="statement"
+                onHighlightsChange={setHighlights}
+                className="select-text"
+              />
             </div>
 
             {/* Imagem da questão */}

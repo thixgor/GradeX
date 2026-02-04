@@ -32,8 +32,9 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { BancoListaUsuario, BancoQuestaoComHierarquia } from '@/lib/types/banco-questoes'
-import { QuestionAnnotation } from '@/lib/types'
+import { QuestionAnnotation, TextHighlight } from '@/lib/types'
 import { QuestionNotesCanvas } from '@/components/question-notes-canvas'
+import { HighlightableText } from '@/components/highlightable-text'
 import { ImageModal } from '@/components/image-modal'
 import { ReportQuestionModal } from '@/components/report-question-modal'
 
@@ -80,6 +81,9 @@ export default function ListaDetalhePage() {
   // Modal de imagem expandida
   const [showImageModal, setShowImageModal] = useState(false)
   const [modalImageUrl, setModalImageUrl] = useState('')
+
+  // Highlights de texto por questão
+  const [highlights, setHighlights] = useState<Record<string, TextHighlight[]>>({})
 
   // Funções de anotações
   function handleSaveAnnotation(annotation: QuestionAnnotation) {
@@ -436,7 +440,18 @@ export default function ListaDetalhePage() {
             <CardContent className="space-y-6">
               {/* Enunciado */}
               <div className="prose dark:prose-invert max-w-none">
-                <p className="whitespace-pre-wrap">{questao.enunciado}</p>
+                <HighlightableText
+                  text={questao.enunciado}
+                  highlights={highlights[String(questao._id)] || []}
+                  target="statement"
+                  onHighlightsChange={(newHighlights) => {
+                    setHighlights(prev => ({
+                      ...prev,
+                      [String(questao._id)]: newHighlights
+                    }))
+                  }}
+                  className="select-text"
+                />
               </div>
 
               {/* Imagem */}
