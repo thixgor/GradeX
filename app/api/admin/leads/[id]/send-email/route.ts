@@ -1,5 +1,3 @@
-'use server'
-
 import { NextRequest, NextResponse } from 'next/server'
 import { ObjectId } from 'mongodb'
 import clientPromise from '@/lib/mongodb'
@@ -9,7 +7,7 @@ import { sendLeadMaterialEmail } from '@/lib/mail'
 // POST - Enviar email manualmente para um lead específico
 export async function POST(
     req: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
+    { params }: { params: { id: string } }
 ) {
     try {
         const session = await getSession()
@@ -17,7 +15,7 @@ export async function POST(
             return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         }
 
-        const { id } = await params // ID da campanha
+        const { id } = params // ID da campanha
         const body = await req.json()
         const { leadId } = body
 

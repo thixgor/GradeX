@@ -1,5 +1,3 @@
-'use server'
-
 import { NextRequest, NextResponse } from 'next/server'
 import { ObjectId } from 'mongodb'
 import clientPromise from '@/lib/mongodb'
@@ -29,13 +27,12 @@ async function isValidEmail(email: string): Promise<boolean> {
     return true
 }
 
-// GET - Obter campanha pública pelo slug (sem autenticação)
 export async function GET(
     req: NextRequest,
-    { params }: { params: Promise<{ slug: string }> }
+    { params }: { params: { slug: string } }
 ) {
     try {
-        const { slug } = await params
+        const { slug } = params
 
         const client = await clientPromise
         const db = client.db()
@@ -56,8 +53,6 @@ export async function GET(
         const userAgent = req.headers.get('user-agent') || undefined
 
         // Verificar se este IP já visualizou esta campanha
-        // Garantir índice para performance
-        await db.collection('lead_page_views').createIndex({ campaignId: 1, ip: 1 })
 
         const existingView = await db.collection('lead_page_views').findOne({
             campaignId: campaign._id.toString(),
@@ -95,13 +90,12 @@ export async function GET(
     }
 }
 
-// POST - Cadastrar lead e obter material
 export async function POST(
     req: NextRequest,
-    { params }: { params: Promise<{ slug: string }> }
+    { params }: { params: { slug: string } }
 ) {
     try {
-        const { slug } = await params
+        const { slug } = params
         const body = await req.json()
         const { name, email } = body
 
@@ -140,8 +134,6 @@ export async function POST(
             'unknown'
 
         // Verificar se email já existe nesta campanha
-        // Garantir índice
-        await db.collection('leads').createIndex({ campaignId: 1, email: 1 })
 
         const existingLead = await db.collection('leads').findOne({
             campaignId: campaign._id.toString(),

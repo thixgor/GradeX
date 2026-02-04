@@ -17,12 +17,28 @@ declare global {
 if (process.env.NODE_ENV === 'development') {
   if (!global._mongoClientPromise) {
     client = new MongoClient(uri, options)
-    global._mongoClientPromise = client.connect()
+    global._mongoClientPromise = client.connect().then(async (client) => {
+      const db = client.db('gradex')
+      // Criar índices essenciais uma única vez
+      await Promise.all([
+        db.collection('leads').createIndex({ campaignId: 1, email: 1 }),
+        db.collection('lead_page_views').createIndex({ campaignId: 1, ip: 1 })
+      ]).catch(err => console.error('Erro ao criar índices iniciais:', err))
+      return client
+    })
   }
   clientPromise = global._mongoClientPromise
 } else {
   client = new MongoClient(uri, options)
-  clientPromise = client.connect()
+  clientPromise = client.connect().then(async (client) => {
+    const db = client.db('gradex')
+    // Criar índices essenciais uma única vez
+    await Promise.all([
+      db.collection('leads').createIndex({ campaignId: 1, email: 1 }),
+      db.collection('lead_page_views').createIndex({ campaignId: 1, ip: 1 })
+    ]).catch(err => console.error('Erro ao criar índices iniciais:', err))
+    return client
+  })
 }
 
 export async function getDb(): Promise<Db> {

@@ -1,14 +1,11 @@
-'use server'
-
 import { NextRequest, NextResponse } from 'next/server'
 import { ObjectId } from 'mongodb'
 import clientPromise from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 
-// GET - Obter uma campanha específica com seus leads
 export async function GET(
     req: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
+    { params }: { params: { id: string } }
 ) {
     try {
         const session = await getSession()
@@ -16,7 +13,7 @@ export async function GET(
             return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         }
 
-        const { id } = await params
+        const { id } = params
         if (!ObjectId.isValid(id)) {
             return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
         }
@@ -24,11 +21,6 @@ export async function GET(
         const client = await clientPromise
         const db = client.db()
 
-        // Garantir índices para evitar scans completos e deadlocks
-        await Promise.all([
-            db.collection('leads').createIndex({ campaignId: 1 }),
-            db.collection('lead_page_views').createIndex({ campaignId: 1, ip: 1 })
-        ])
 
         const campaign = await db.collection('lead_campaigns').findOne({ _id: new ObjectId(id) })
         if (!campaign) {
@@ -84,10 +76,9 @@ export async function GET(
     }
 }
 
-// PUT - Atualizar campanha
 export async function PUT(
     req: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
+    { params }: { params: { id: string } }
 ) {
     try {
         const session = await getSession()
@@ -95,7 +86,7 @@ export async function PUT(
             return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         }
 
-        const { id } = await params
+        const { id } = params
         if (!ObjectId.isValid(id)) {
             return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
         }
@@ -148,10 +139,9 @@ export async function PUT(
     }
 }
 
-// DELETE - Excluir campanha
 export async function DELETE(
     req: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
+    { params }: { params: { id: string } }
 ) {
     try {
         const session = await getSession()
@@ -159,7 +149,7 @@ export async function DELETE(
             return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         }
 
-        const { id } = await params
+        const { id } = params
         if (!ObjectId.isValid(id)) {
             return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
         }
