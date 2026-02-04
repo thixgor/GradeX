@@ -132,12 +132,15 @@ Contato: (21) 99777-0936`)
     }
   }
 
+  // Handle loading state
   if (loading) {
     return <PageLoading variant="fullscreen" message="Carregando..." />
   }
 
-  if (!user) {
-    return null
+  // Handle error or unauthenticated state
+  // The useBootstrap hook with redirectOnUnauth will handle the redirect
+  if (error || !user) {
+    return <PageLoading variant="fullscreen" message="Redirecionando..." />
   }
 
   const contextValue: AppShellContextType = {

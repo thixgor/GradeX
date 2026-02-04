@@ -119,11 +119,22 @@ async function fetchBootstrap(force = false): Promise<BootstrapResponse> {
   }
 
   // Start new fetch
-  globalBootstrapPromise = fetchAPI<BootstrapResponse>('/api/bootstrap', {
+  globalBootstrapPromise = fetch('/api/bootstrap', {
     method: 'GET',
-    cacheDuration: CACHE_DURATION,
-    skipCache: force,
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
   })
+    .then(async (response) => {
+      if (!response.ok) {
+        // Create error with status code for proper handling
+        const error = new Error(`API Error: ${response.status}`)
+        ;(error as any).status = response.status
+        throw error
+      }
+      return response.json()
+    })
     .then(data => {
       globalBootstrapData = data
       globalBootstrapError = null
@@ -202,7 +213,12 @@ export function useBootstrap(options: {
     if (skip) return
 
     fetchBootstrap().catch(error => {
-      if (redirectOnUnauth && (error.message.includes('401') || error.message.includes('403'))) {
+      // Check for auth errors (401, 403) and redirect if configured
+      const status = (error as any).status
+      const isAuthError = status === 401 || status === 403 ||
+        error.message.includes('401') || error.message.includes('403')
+
+      if (redirectOnUnauth && isAuthError) {
         router.push('/auth/login')
       }
     })
