@@ -129,10 +129,9 @@ function generateCrosswordLayout(words: string[]): { width: number; height: numb
                 }
             }
 
-            // If could not intersect, try to place somewhere independent below everything
             if (!placed) {
                 let maxRow = -Infinity
-                for (const [pos] of gridMap.keys()) {
+                for (const pos of gridMap.keys()) {
                     const r = parseInt(pos.split(',')[0])
                     if (r > maxRow) maxRow = r
                 }
@@ -154,7 +153,7 @@ function generateCrosswordLayout(words: string[]): { width: number; height: numb
         if (gridMap.size === 0) {
             minR = 0; maxR = 9; minC = 0; maxC = 9;
         } else {
-            for (const [pos] of gridMap.keys()) {
+            for (const pos of gridMap.keys()) {
                 const [r, c] = pos.split(',').map(Number)
                 if (r < minR) minR = r
                 if (r > maxR) maxR = r
