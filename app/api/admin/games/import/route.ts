@@ -271,7 +271,7 @@ function parseBlocks(text: string): ImportBlock[] {
         if (!line) continue
 
         // Detect tags like [PALAVRAS-CRUZADAS] or [ Palavras Cruzadas ]
-        const tagMatch = line.match(/^\[(.*?)\]/)
+        const tagMatch = line.match(/^\[\s*(.*?)\s*\]/)
         if (tagMatch) {
             if (currentBlock) blocks.push(currentBlock)
 
@@ -282,9 +282,9 @@ function parseBlocks(text: string): ImportBlock[] {
             const tag = rawTag.replace(/[\s-]/g, '_')
 
             let type: ImportBlock['type'] | null = null
-            if (tag === 'PALAVRAS_CRUZADAS') type = 'CROSSWORD'
-            else if (tag === 'FORCA_MEDICA') type = 'HANGMAN'
-            else if (tag === 'CACA_AOS_ERROS' || tag === 'CACA_ERROS') type = 'ERROR_HUNT'
+            if (tag === 'PALAVRAS_CRUZADAS' || tag === 'PALAVRA_CRUZADA' || tag === 'CRUZADA' || tag === 'CRUZADAS') type = 'CROSSWORD'
+            else if (tag === 'FORCA_MEDICA' || tag === 'FORCA' || tag === 'HANGMAN') type = 'HANGMAN'
+            else if (tag === 'CACA_AOS_ERROS' || tag === 'CACA_ERROS' || tag === 'ERRO_HUNT' || tag === 'ERROR_HUNT') type = 'ERROR_HUNT'
 
             if (type) {
                 currentBlock = { type, data: {} }
@@ -330,10 +330,10 @@ export async function POST(req: Request) {
 
             if (block.type === 'CROSSWORD') {
                 console.log('Processing Crossword Block...')
-                const rawWords = d['PALAVRAS'] || ''
+                const rawWords = d['PALAVRAS'] || d['PALAVRA'] || ''
                 console.log('Raw Words Input:', rawWords)
 
-                const wordsList = rawWords.split(';').map(w => w.trim()).filter(w => w)
+                const wordsList = rawWords.split(/[;,]/).map(w => w.trim()).filter(w => w)
                 const clue = d['DICA'] || 'Sem dica'
 
                 if (wordsList.length > 0) {
