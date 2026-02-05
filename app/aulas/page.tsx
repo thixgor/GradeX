@@ -427,9 +427,9 @@ function AulasPageContent() {
         {aviso && !avisoFechado && (
           <div className="relative z-40 px-3 sm:px-4 pt-4">
             <div className={`relative backdrop-blur-md rounded-2xl p-4 sm:p-6 border-2 ${aviso.tipo === 'info' ? 'bg-blue-500/20 border-blue-400/50' :
-                aviso.tipo === 'warning' ? 'bg-yellow-500/20 border-yellow-400/50' :
-                  aviso.tipo === 'success' ? 'bg-emerald-500/20 border-emerald-400/50' :
-                    'bg-red-500/20 border-red-400/50'
+              aviso.tipo === 'warning' ? 'bg-yellow-500/20 border-yellow-400/50' :
+                aviso.tipo === 'success' ? 'bg-emerald-500/20 border-emerald-400/50' :
+                  'bg-red-500/20 border-red-400/50'
               }`}>
               <button
                 onClick={() => setAvisoFechado(true)}
@@ -439,9 +439,9 @@ function AulasPageContent() {
               </button>
               <div className="flex items-start gap-3">
                 <Bell className={`h-6 w-6 flex-shrink-0 ${aviso.tipo === 'info' ? 'text-blue-400' :
-                    aviso.tipo === 'warning' ? 'text-yellow-400' :
-                      aviso.tipo === 'success' ? 'text-emerald-400' :
-                        'text-red-400'
+                  aviso.tipo === 'warning' ? 'text-yellow-400' :
+                    aviso.tipo === 'success' ? 'text-emerald-400' :
+                      'text-red-400'
                   }`} />
                 <div className="flex-1">
                   <h3 className="text-lg font-bold text-white">{aviso.titulo}</h3>
@@ -566,8 +566,8 @@ function AulasPageContent() {
                   <div
                     key={String(aula._id)}
                     className={`backdrop-blur-md rounded-2xl overflow-hidden transition-all animate-fadeInUp hover-lift relative ${aula.visibilidade === 'premium'
-                        ? 'bg-gradient-to-br from-yellow-500/10 to-amber-500/10 border-2 border-yellow-500/40 shadow-xl shadow-yellow-500/20 hover:border-yellow-500/60 hover:shadow-yellow-500/30'
-                        : 'bg-white/5 border border-emerald-500/20 shadow-xl shadow-emerald-500/5 hover:border-emerald-500/40'
+                      ? 'bg-gradient-to-br from-yellow-500/10 to-amber-500/10 border-2 border-yellow-500/40 shadow-xl shadow-yellow-500/20 hover:border-yellow-500/60 hover:shadow-yellow-500/30'
+                      : 'bg-white/5 border border-emerald-500/20 shadow-xl shadow-emerald-500/5 hover:border-emerald-500/40'
                       }`}
                     style={{ animationDelay: `${idx * 0.1}s` }}
                   >
@@ -1868,11 +1868,11 @@ function AulasPageContent() {
                           key={tipo}
                           onClick={() => setAvisoForm({ ...avisoForm, tipo })}
                           className={`px-3 py-1.5 rounded-lg border transition-all ${avisoForm.tipo === tipo
-                              ? tipo === 'info' ? 'bg-blue-500/30 border-blue-400 text-blue-300' :
-                                tipo === 'warning' ? 'bg-yellow-500/30 border-yellow-400 text-yellow-300' :
-                                  tipo === 'success' ? 'bg-emerald-500/30 border-emerald-400 text-emerald-300' :
-                                    'bg-red-500/30 border-red-400 text-red-300'
-                              : 'bg-white/5 border-white/20 text-white/60 hover:bg-white/10'
+                            ? tipo === 'info' ? 'bg-blue-500/30 border-blue-400 text-blue-300' :
+                              tipo === 'warning' ? 'bg-yellow-500/30 border-yellow-400 text-yellow-300' :
+                                tipo === 'success' ? 'bg-emerald-500/30 border-emerald-400 text-emerald-300' :
+                                  'bg-red-500/30 border-red-400 text-red-300'
+                            : 'bg-white/5 border-white/20 text-white/60 hover:bg-white/10'
                             }`}
                         >
                           {tipo === 'info' ? 'Informação' :
@@ -1917,11 +1917,7 @@ function AulasPageContent() {
 // Wrapper com Suspense para usar useSearchParams
 export default function AulasPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Carregando...</div>
-      </div>
-    }>
+    <Suspense fallback={<LogoLoading message="Iniciando módulo de aulas..." size="lg" fullscreen />}>
       <AulasPageContent />
     </Suspense>
   )
