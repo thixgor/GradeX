@@ -4,21 +4,35 @@ import { getDb } from '@/lib/mongodb'
 export async function GET() {
     try {
         const db = await getDb()
-        // Aggregation to find unique topics and count puzzles
-        const topics = await db.collection('games_crosswords').aggregate([
+
+        // 1. Get explicitly created topics from 'games_topics'
+        const explicitTopics = await db.collection('games_topics').find({ type: 'crossword' }).toArray()
+
+        // 2. Map counts to explicit topics
+        const topicsWithCounts = await Promise.all(explicitTopics.map(async (t) => {
+            const count = await db.collection('games_crosswords').countDocuments({
+                $or: [{ topicId: t._id.toString() }, { topic: t.name }]
+            })
+            return {
+                ...t,
+                puzzleCount: count
+            }
+        }))
+
+        // 3. Find unique topics already in 'games_crosswords' that might not be in 'games_topics' (redundancy)
+        const existingPuzzleTopics = await db.collection('games_crosswords').aggregate([
             {
                 $group: {
                     _id: "$topic",
                     module: { $first: "$module" },
-                    description: { $first: "$description" }, // Just pick first one for now
+                    description: { $first: "$description" },
                     puzzleCount: { $sum: 1 }
                 }
             },
             {
                 $project: {
-                    _id: "$_id", // This is the topic name
+                    _id: "$_id",
                     name: "$_id",
-                    // Use module in name if needed, or just return as is
                     module: "$module",
                     description: "$description",
                     puzzleCount: "$puzzleCount"
@@ -26,7 +40,17 @@ export async function GET() {
             }
         ]).toArray()
 
-        return NextResponse.json({ topics })
+        // 4. Merge but favor the explicit ones (those with a real ObjectId in games_topics)
+        const finalTopics = [...topicsWithCounts] as any[]
+
+        existingPuzzleTopics.forEach(ept => {
+            const exists = finalTopics.find(ft => (ft as any).name === (ept as any).name)
+            if (!exists) {
+                finalTopics.push(ept)
+            }
+        })
+
+        return NextResponse.json({ topics: finalTopics })
     } catch (error) {
         return NextResponse.json({ error: 'Failed to fetch topics' }, { status: 500 })
     }

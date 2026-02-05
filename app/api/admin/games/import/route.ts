@@ -273,11 +273,15 @@ function parseBlocks(text: string): ImportBlock[] {
         if (line.startsWith('[') && line.endsWith(']')) {
             if (currentBlock) blocks.push(currentBlock)
 
-            const tag = line.replace('[', '').replace(']', '').toUpperCase()
-            let type: any = null
-            if (tag === 'PALAVRAS-CRUZADAS') type = 'CROSSWORD'
-            if (tag === 'FORCA-MÉDICA') type = 'HANGMAN'
-            if (tag === 'CAÇA AOS ERROS') type = 'ERROR_HUNT'
+            let tag = line.replace('[', '').replace(']', '').trim().toUpperCase()
+            // Normalize spaces and dashes for better comparison
+            const normalizedTag = tag.replace(/[\s-]/g, '_')
+
+            let type: 'CROSSWORD' | 'HANGMAN' | 'ERROR_HUNT' | null = null
+
+            if (normalizedTag === 'PALAVRAS_CRUZADAS') type = 'CROSSWORD'
+            else if (normalizedTag === 'FORCA_MEDICA' || normalizedTag === 'FORCA_MÉDICA') type = 'HANGMAN'
+            else if (normalizedTag === 'CACA_AOS_ERROS' || normalizedTag === 'CAÇA_AOS_ERROS' || normalizedTag === 'CACA_ERROS' || normalizedTag === 'CAÇA_ERROS') type = 'ERROR_HUNT'
 
             if (type) {
                 currentBlock = { type, data: {} }
