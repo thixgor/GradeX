@@ -270,18 +270,21 @@ function parseBlocks(text: string): ImportBlock[] {
         line = line.trim()
         if (!line) continue
 
-        if (line.startsWith('[') && line.endsWith(']')) {
+        // Detect tags like [PALAVRAS-CRUZADAS] or [ Palavras Cruzadas ]
+        const tagMatch = line.match(/^\[(.*?)\]/)
+        if (tagMatch) {
             if (currentBlock) blocks.push(currentBlock)
 
-            let tag = line.replace('[', '').replace(']', '').trim().toUpperCase()
-            // Normalize spaces and dashes for better comparison
-            const normalizedTag = tag.replace(/[\s-]/g, '_')
+            // Normalize tag: remove accents, spaces/dashes to underscore
+            const rawTag = tagMatch[1].trim()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .toUpperCase()
+            const tag = rawTag.replace(/[\s-]/g, '_')
 
-            let type: 'CROSSWORD' | 'HANGMAN' | 'ERROR_HUNT' | null = null
-
-            if (normalizedTag === 'PALAVRAS_CRUZADAS') type = 'CROSSWORD'
-            else if (normalizedTag === 'FORCA_MEDICA' || normalizedTag === 'FORCA_MÉDICA') type = 'HANGMAN'
-            else if (normalizedTag === 'CACA_AOS_ERROS' || normalizedTag === 'CAÇA_AOS_ERROS' || normalizedTag === 'CACA_ERROS' || normalizedTag === 'CAÇA_ERROS') type = 'ERROR_HUNT'
+            let type: ImportBlock['type'] | null = null
+            if (tag === 'PALAVRAS_CRUZADAS') type = 'CROSSWORD'
+            else if (tag === 'FORCA_MEDICA') type = 'HANGMAN'
+            else if (tag === 'CACA_AOS_ERROS' || tag === 'CACA_ERROS') type = 'ERROR_HUNT'
 
             if (type) {
                 currentBlock = { type, data: {} }
@@ -291,7 +294,11 @@ function parseBlocks(text: string): ImportBlock[] {
         } else if (currentBlock) {
             const separatorIndex = line.indexOf(':')
             if (separatorIndex !== -1) {
-                const key = line.substring(0, separatorIndex).trim().toUpperCase()
+                // Normalize key: remove accents, spaces/dashes to underscore
+                const rawKey = line.substring(0, separatorIndex).trim()
+                    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                    .toUpperCase()
+                const key = rawKey.replace(/[\s-]/g, '_')
                 const value = line.substring(separatorIndex + 1).trim()
                 currentBlock.data[key] = value
             }
@@ -317,8 +324,8 @@ export async function POST(req: Request) {
 
         for (const block of blocks) {
             const d = block.data
-            const moduleName = d['MÓDULO'] || d['MODULO'] || 'Geral'
-            const topicName = d['TÓPICO'] || d['TOPICO'] || 'Geral'
+            const moduleName = d['MODULO'] || 'Geral'
+            const topicName = d['TOPICO'] || 'Geral'
             const difficulty = (d['DIFICULDADE'] || 'medio').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') as any
 
             if (block.type === 'CROSSWORD') {
@@ -337,7 +344,8 @@ export async function POST(req: Request) {
                     if (words.length > 0) {
                         // Assign clues
                         words.forEach(w => {
-                            w.clue = d[`DICA-${w.word}`] || clue
+                            // Normalized key for Dica-Word: DICA_WORD
+                            w.clue = d[`DICA_${w.word}`] || clue
                         })
 
                         const puzzle = {
@@ -376,8 +384,8 @@ export async function POST(req: Request) {
                         theme: d['TEMA'] || topicName,
                         word: word,
                         hint: d['DICA'] || '',
-                        description: d['DESCRIÇÃO'] || d['DESCRICAO'] || '',
-                        explanation: d['EXPLICAÇÃO'] || d['EXPLICACAO'] || '',
+                        description: d['DESCRICAO'] || '',
+                        explanation: d['EXPLICACAO'] || '',
                         difficulty: ['facil', 'medio', 'dificil'].includes(difficulty) ? difficulty : 'medio',
                         createdAt: new Date()
                     }
@@ -388,9 +396,9 @@ export async function POST(req: Request) {
 
             if (block.type === 'ERROR_HUNT') {
                 const statement = d['FRASE']
-                const correct = d['FRASE-CORRIGIDA'] || d['RESPOSTA'] || d['CORREÇÃO'] || d['CORRECAO']
+                const correct = d['FRASE_CORRIGIDA'] || d['RESPOSTA'] || d['CORRECAO']
 
-                const keywords = (d['PALAVRAS-CHAVE'] || '').split(';').map(k => k.trim())
+                const keywords = (d['PALAVRAS_CHAVE'] || '').split(';').map(k => k.trim())
 
                 if (statement) {
                     const topicId = await ensureTopic(db, moduleName, topicName, 'error-hunt')
@@ -402,8 +410,8 @@ export async function POST(req: Request) {
                         statement: statement,
                         correctAnswer: correct || 'Correção não fornecida',
                         keywords: keywords,
-                        explanation: d['EXPLICAÇÃO'] || d['EXPLICACAO'] || '',
-                        examTip: d['DICA-DE-PROVA'] || '',
+                        explanation: d['EXPLICACAO'] || '',
+                        examTip: d['DICA_DE_PROVA'] || '',
                         hint: d['DICA'] || '',
                         difficulty: ['facil', 'medio', 'dificil'].includes(difficulty) ? difficulty : 'medio',
                         type: 'correction',
@@ -418,7 +426,7 @@ export async function POST(req: Request) {
         console.log('--- IMPORT END ---')
         return NextResponse.json({
             success: true,
-            summary: `Importado: ${summary.crossword} puzzles, ${summary.hangman} palavras, ${summary.errorHunt} casta-erros.`
+            summary: `Importado: ${summary.crossword} puzzles, ${summary.hangman} palavras, ${summary.errorHunt} caça-erros.`
         })
 
     } catch (error: any) {
