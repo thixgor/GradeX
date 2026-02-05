@@ -4,31 +4,55 @@ import { getDb } from '@/lib/mongodb'
 export async function GET() {
     try {
         const db = await getDb()
-        // Mesma agregação usada no admin para listar tópicos
-        const topics = await db.collection('games_topics').find({ type: 'crossword' }).toArray()
 
-        // Populate count if needed, or rely on aggregation from puzzles if preferred.
-        // The admin route used aggregation from crosswords collection directly in one version, 
-        // and games_topics in another. Let's use games_topics for consistency if imported.
-        // But wait, the admin route for crossword topics used aggregation on 'games_crosswords'.
-        // Let's check what I implemented in admin route step 182.
+        // 1. Get explicitly created topics from 'games_topics'
+        const explicitTopics = await db.collection('games_topics').find({ type: 'crossword' }).toArray()
 
-        // Actually, Step 182 implemented aggregation on 'games_crosswords'.
-        // Then I updated import to use 'games_topics'.
-        // Let's use 'games_topics' as primary source, and count puzzles.
-
-        const topicsWithCounts = await Promise.all(topics.map(async (t) => {
-            // Count puzzles for this topic
+        // 2. Map counts to explicit topics
+        const topicsWithCounts = await Promise.all(explicitTopics.map(async (t) => {
             const count = await db.collection('games_crosswords').countDocuments({
                 $or: [{ topicId: t._id.toString() }, { topic: t.name }]
             })
-            // If count > 0 or we want to show empty topics
-            return { ...t, puzzleCount: count }
+            return {
+                ...t,
+                puzzleCount: count,
+                name: t.name
+            }
         }))
 
-        // Filter out topics with 0 puzzles if desired for end-users? 
-        // Let's keep them to match admin view or filter? Users only want playable content.
-        const activeTopics = topicsWithCounts.filter(t => t.puzzleCount > 0)
+        // 3. Find unique topics already in 'games_crosswords' for redundancy
+        const existingPuzzleTopics = await db.collection('games_crosswords').aggregate([
+            {
+                $group: {
+                    _id: "$topic",
+                    module: { $first: "$module" },
+                    description: { $first: "$description" },
+                    puzzleCount: { $sum: 1 }
+                }
+            },
+            {
+                $project: {
+                    _id: "$_id",
+                    name: "$_id",
+                    module: "$module",
+                    description: "$description",
+                    puzzleCount: "$puzzleCount"
+                }
+            }
+        ]).toArray()
+
+        // 4. Merge but favor the explicit ones
+        const finalTopics = [...topicsWithCounts] as any[]
+
+        existingPuzzleTopics.forEach(ept => {
+            const exists = finalTopics.find(ft => ft.name === ept.name)
+            if (!exists) {
+                finalTopics.push(ept)
+            }
+        })
+
+        // Filter out topics with 0 puzzles (users shouldn't see empty rooms)
+        const activeTopics = finalTopics.filter(t => t.puzzleCount > 0)
 
         return NextResponse.json({ topics: activeTopics })
     } catch (error) {
