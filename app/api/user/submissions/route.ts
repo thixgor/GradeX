@@ -51,6 +51,7 @@ export async function GET(request: NextRequest) {
           examTitle: exam.title,
           hasDiscursiveQuestions: exam.questions.some(q => q.type === 'discursive') || false,
           examEndTime: exam.endTime, // Adicionar endTime para verificar se prova terminou
+          isPracticeExam: exam.isPracticeExam || false,
         }
       })
     )).filter(submission => submission !== null) // Remove provas deletadas

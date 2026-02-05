@@ -34,10 +34,11 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
       if (!examRes.ok) throw new Error(examData.error)
       setExam(examData.exam)
 
-      // Verifica se a prova terminou
+      // Verifica se a prova terminou ou se é prova prática
       const now = new Date()
       const endTime = new Date(examData.exam.endTime)
-      const finished = now > endTime
+      const isPractice = examData.exam.isPracticeExam
+      const finished = isPractice || now > endTime
       setIsExamFinished(finished)
 
       console.log('🔍 Verificando prova na página de relatório:', {
