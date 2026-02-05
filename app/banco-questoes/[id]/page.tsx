@@ -436,7 +436,7 @@ export default function QuestaoPage() {
                 <img
                   src={questao.imagemUrl}
                   alt="Imagem da questão"
-                  className="max-w-md max-h-80 w-auto h-auto rounded-lg border object-contain transition-all group-hover:scale-[1.02] group-hover:shadow-lg"
+                  className="max-w-full md:max-w-md max-h-80 w-auto h-auto rounded-lg border object-contain transition-all group-hover:scale-[1.02] group-hover:shadow-lg"
                 />
               </div>
             )}
