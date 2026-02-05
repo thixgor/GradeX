@@ -349,11 +349,11 @@ function AulasPageContent() {
   const submodulosModulo = selectedModulo ? submodulos.filter(sm => sm.moduloId === selectedModulo && !sm.oculta) : []
 
   if (loading) {
-    return <LogoLoading message="Carregando aulas..." size="lg" fullscreen />
+    return <LogoLoading message="Carregando aulas..." size="lg" />
   }
 
   return (
-    <AppShell headerTitle="Aulas" headerSubtitle="Aprenda com aulas ao-vivo e gravadas">
+    <>
       <style>{`
         @keyframes fadeInUp {
           from {
@@ -1910,7 +1910,7 @@ function AulasPageContent() {
           </div>
         </main>
       </div>
-    </AppShell>
+    </>
   )
 }
 
@@ -1918,7 +1918,9 @@ function AulasPageContent() {
 export default function AulasPage() {
   return (
     <Suspense fallback={<LogoLoading message="Iniciando módulo de aulas..." size="lg" fullscreen />}>
-      <AulasPageContent />
+      <AppShell headerTitle="Aulas" headerSubtitle="Aprenda com aulas ao-vivo e gravadas">
+        <AulasPageContent />
+      </AppShell>
     </Suspense>
   )
 }
