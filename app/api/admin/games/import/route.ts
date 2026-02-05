@@ -316,8 +316,12 @@ export async function POST(req: Request) {
 
         if (!content) return NextResponse.json({ error: 'Conteúdo vazio' }, { status: 400 })
 
+        const details: string[] = []
         const blocks = parseBlocks(content)
         console.log(`Parsed ${blocks.length} blocks`)
+        if (blocks.length === 0) {
+            details.push("Nenhum bloco detectado. Verifique se as tags (ex: [PALAVRAS-CRUZADAS]) estão presentes e no início da linha.")
+        }
 
         const db = await getDb()
         const summary = { crossword: 0, hangman: 0, errorHunt: 0 }
@@ -329,104 +333,109 @@ export async function POST(req: Request) {
             const difficulty = (d['DIFICULDADE'] || 'medio').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') as any
 
             if (block.type === 'CROSSWORD') {
-                console.log('Processing Crossword Block...')
                 const rawWords = d['PALAVRAS'] || d['PALAVRA'] || ''
-                console.log('Raw Words Input:', rawWords)
-
                 const wordsList = rawWords.split(/[;,]/).map(w => w.trim()).filter(w => w)
                 const clue = d['DICA'] || 'Sem dica'
 
                 if (wordsList.length > 0) {
-                    const topicId = await ensureTopic(db, moduleName, topicName, 'crossword')
+                    try {
+                        const topicId = await ensureTopic(db, moduleName, topicName, 'crossword')
+                        const { width, height, words, grid } = generateCrosswordLayout(wordsList)
 
-                    const { width, height, words, grid } = generateCrosswordLayout(wordsList)
+                        if (words.length > 0) {
+                            words.forEach(w => {
+                                w.clue = d[`DICA_${w.word}`] || clue
+                            })
 
-                    if (words.length > 0) {
-                        // Assign clues
-                        words.forEach(w => {
-                            // Normalized key for Dica-Word: DICA_WORD
-                            w.clue = d[`DICA_${w.word}`] || clue
-                        })
-
-                        const puzzle = {
-                            title: d['TITULO'] || `Cross: ${wordsList[0]}...`,
-                            description: `Palavras cruzadas sobre ${topicName}`,
-                            module: moduleName,
-                            topic: topicName,
-                            topicId: topicId,
-                            difficulty: ['facil', 'medio', 'dificil'].includes(difficulty) ? difficulty : 'medio',
-                            words,
-                            grid,
-                            width,
-                            height,
-                            createdAt: new Date()
+                            const puzzle = {
+                                title: d['TITULO'] || `Cross: ${wordsList[0]}...`,
+                                description: `Palavras cruzadas sobre ${topicName}`,
+                                module: moduleName,
+                                topic: topicName,
+                                topicId: topicId,
+                                difficulty: ['facil', 'medio', 'dificil'].includes(difficulty) ? difficulty : 'medio',
+                                words,
+                                grid,
+                                width,
+                                height,
+                                createdAt: new Date()
+                            }
+                            await db.collection('games_crosswords').insertOne(puzzle)
+                            summary.crossword++
+                        } else {
+                            details.push(`Bloco Cruzadas ignore: falha ao gerar layout (palavras enviadas: ${wordsList.length})`)
                         }
-                        await db.collection('games_crosswords').insertOne(puzzle)
-                        summary.crossword++
-                        console.log('Crossword Saved!')
-                    } else {
-                        console.error('FAILED: No words placed for crossword')
+                    } catch (err: any) {
+                        details.push(`Erro no Bloco Cruzadas: ${err.message}`)
                     }
                 } else {
-                    console.error('FAILED: No words list extracted')
+                    details.push(`Bloco Cruzadas ignorado: lista de palavras vazia ou chave 'Palavras' não encontrada. Verifique se o formato está correto (ex: Palavras: Arroz; Feijao)`)
                 }
             }
-
             if (block.type === 'HANGMAN') {
                 const word = (d['RESPOSTA'] || '').toUpperCase()
                 if (word) {
-                    const topicId = await ensureTopic(db, moduleName, topicName, 'hangman')
-
-                    const item = {
-                        module: moduleName,
-                        topic: topicName,
-                        topicId: topicId,
-                        theme: d['TEMA'] || topicName,
-                        word: word,
-                        hint: d['DICA'] || '',
-                        description: d['DESCRICAO'] || '',
-                        explanation: d['EXPLICACAO'] || '',
-                        difficulty: ['facil', 'medio', 'dificil'].includes(difficulty) ? difficulty : 'medio',
-                        createdAt: new Date()
+                    try {
+                        const topicId = await ensureTopic(db, moduleName, topicName, 'hangman')
+                        const item = {
+                            module: moduleName,
+                            topic: topicName,
+                            topicId: topicId,
+                            theme: d['TEMA'] || topicName,
+                            word: word,
+                            hint: d['DICA'] || '',
+                            description: d['DESCRICAO'] || '',
+                            explanation: d['EXPLICACAO'] || '',
+                            difficulty: ['facil', 'medio', 'dificil'].includes(difficulty) ? difficulty : 'medio',
+                            createdAt: new Date()
+                        }
+                        await db.collection('games_hangman').insertOne(item)
+                        summary.hangman++
+                    } catch (err: any) {
+                        details.push(`Erro no Bloco Forca: ${err.message}`)
                     }
-                    await db.collection('games_hangman').insertOne(item)
-                    summary.hangman++
+                } else {
+                    details.push(`Bloco Forca ignorado: chave 'Resposta' não encontrada.`)
                 }
             }
 
             if (block.type === 'ERROR_HUNT') {
                 const statement = d['FRASE']
                 const correct = d['FRASE_CORRIGIDA'] || d['RESPOSTA'] || d['CORRECAO']
-
                 const keywords = (d['PALAVRAS_CHAVE'] || '').split(';').map(k => k.trim())
 
                 if (statement) {
-                    const topicId = await ensureTopic(db, moduleName, topicName, 'error-hunt')
-
-                    const item = {
-                        module: moduleName,
-                        topic: topicName,
-                        topicId: topicId,
-                        statement: statement,
-                        correctAnswer: correct || 'Correção não fornecida',
-                        keywords: keywords,
-                        explanation: d['EXPLICACAO'] || '',
-                        examTip: d['DICA_DE_PROVA'] || '',
-                        hint: d['DICA'] || '',
-                        difficulty: ['facil', 'medio', 'dificil'].includes(difficulty) ? difficulty : 'medio',
-                        type: 'correction',
-                        createdAt: new Date()
+                    try {
+                        const topicId = await ensureTopic(db, moduleName, topicName, 'error-hunt')
+                        const item = {
+                            module: moduleName,
+                            topic: topicName,
+                            topicId: topicId,
+                            statement: statement,
+                            correctAnswer: correct || 'Correção não fornecida',
+                            keywords: keywords,
+                            explanation: d['EXPLICACAO'] || '',
+                            examTip: d['DICA_DE_PROVA'] || '',
+                            hint: d['DICA'] || '',
+                            difficulty: ['facil', 'medio', 'dificil'].includes(difficulty) ? difficulty : 'medio',
+                            type: 'correction',
+                            createdAt: new Date()
+                        }
+                        await db.collection('games_error_hunt').insertOne(item)
+                        summary.errorHunt++
+                    } catch (err: any) {
+                        details.push(`Erro no Bloco Caça-Erros: ${err.message}`)
                     }
-                    await db.collection('games_error_hunt').insertOne(item)
-                    summary.errorHunt++
+                } else {
+                    details.push(`Bloco Caça-Erros ignorado: chave 'Frase' não encontrada.`)
                 }
             }
         }
 
-        console.log('--- IMPORT END ---')
+        const debugInfo = details.length > 0 ? ` [Detalhes: ${details.join(' | ')}]` : ''
         return NextResponse.json({
             success: true,
-            summary: `Importado: ${summary.crossword} puzzles, ${summary.hangman} palavras, ${summary.errorHunt} caça-erros.`
+            summary: `Importado: ${summary.crossword} puzzles, ${summary.hangman} palavras, ${summary.errorHunt} caça-erros.${debugInfo}`
         })
 
     } catch (error: any) {
