@@ -13,7 +13,8 @@ import { LogoLoading } from '@/components/logo-loading'
 import { useState as useStateDialog } from 'react'
 import { AulaSetor, AulaTopic, AulaSubtopic, AulaModulo, AulaSubmodulo, AulaPostagem } from '@/lib/types'
 
-function AulasPageContent() {
+// Inner content component that uses AppShell context (must be inside AppShell)
+function AulasInnerContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   // Get user data from AppShell context (no extra /api/auth/me call!)
@@ -349,11 +350,11 @@ function AulasPageContent() {
   const submodulosModulo = selectedModulo ? submodulos.filter(sm => sm.moduloId === selectedModulo && !sm.oculta) : []
 
   if (loading) {
-    return <LogoLoading message="Carregando aulas..." size="lg" fullscreen />
+    return <LogoLoading message="Carregando aulas..." size="lg" />
   }
 
   return (
-    <AppShell headerTitle="Aulas" headerSubtitle="Aprenda com aulas ao-vivo e gravadas">
+    <>
       <style>{`
         @keyframes fadeInUp {
           from {
