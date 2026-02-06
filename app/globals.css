@@ -211,3 +211,109 @@
     animation: bounce-custom 2s infinite;
   }
 }
+
+/* ============================================
+   Focus Session Animations
+   ============================================ */
+
+/* Subtle pulse for active session indicator dot */
+@keyframes focus-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.4);
+  }
+}
+
+.focus-session-pulse {
+  animation: focus-pulse 2s ease-in-out infinite;
+}
+
+/* Subtle glow on the icon when session is active */
+@keyframes focus-icon-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 2px rgba(70, 129, 82, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 6px rgba(70, 129, 82, 0.5));
+  }
+}
+
+.dark .focus-session-icon-glow {
+  animation: focus-icon-glow-dark 3s ease-in-out infinite;
+}
+
+.focus-session-icon-glow {
+  animation: focus-icon-glow 3s ease-in-out infinite;
+}
+
+@keyframes focus-icon-glow-dark {
+  0%, 100% {
+    filter: drop-shadow(0 0 2px rgba(226, 164, 62, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 6px rgba(226, 164, 62, 0.5));
+  }
+}
+
+/* Active button subtle gradient animation */
+@keyframes focus-active-bg {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.focus-session-active {
+  background-size: 200% 200%;
+  animation: focus-active-bg 4s ease-in-out infinite;
+}
+
+/* Blinking effect for paused timer */
+@keyframes focus-blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.focus-session-blink {
+  animation: focus-blink 1.5s ease-in-out infinite;
+}
+
+/* Colon blink for active stopwatch separator */
+@keyframes focus-colon-blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.focus-session-colon-blink {
+  animation: focus-colon-blink 1s steps(1) infinite;
+}
+
+/* Slide-in from bottom for popover */
+@keyframes slide-in-from-bottom-4 {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-in-from-bottom-4 {
+  animation: slide-in-from-bottom-4 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}

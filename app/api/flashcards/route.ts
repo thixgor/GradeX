@@ -171,7 +171,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
     }
 
-    const { title, theme, difficulty, randomDifficulty, cardsRequested, templateId } = await request.json()
+    const body = await request.json()
+    const title = String(body.title || '').slice(0, 100).trim()
+    const theme = String(body.theme || '').slice(0, 100).trim()
+    const { difficulty, randomDifficulty, cardsRequested, templateId } = body
 
     if (!title || !theme) {
       return NextResponse.json({ error: 'Título e tema são obrigatórios' }, { status: 400 })

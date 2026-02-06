@@ -14,6 +14,8 @@ import { Logo } from '@/components/logo'
 import { cn } from '@/lib/utils'
 import { Menu } from 'lucide-react'
 import { useBootstrap, clearBootstrapCache } from '@/hooks/use-bootstrap'
+import { FocusSessionProvider } from '@/hooks/use-focus-session'
+import { FocusSessionButton } from '@/components/focus-session-button'
 
 /**
  * AppShell Component - Optimized Version
@@ -174,6 +176,7 @@ Contato: (21) 99777-0936`)
 
   return (
     <AppShellContext.Provider value={contextValue}>
+      <FocusSessionProvider>
       <div className="min-h-screen bg-background">
         <BanChecker />
 
@@ -238,6 +241,7 @@ Contato: (21) 99777-0936`)
 
                 {/* Right side */}
                 <div className="flex items-center gap-2">
+                  <FocusSessionButton />
                   <NotificationsBell />
                   <ThemeToggle />
                 </div>
@@ -262,6 +266,7 @@ Contato: (21) 99777-0936`)
         {/* Support Chat */}
         <SupportChat />
       </div>
+      </FocusSessionProvider>
     </AppShellContext.Provider>
   )
 }

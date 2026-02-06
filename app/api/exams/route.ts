@@ -143,13 +143,16 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
+
+    // Sanitize and limit string inputs
+    const title = String(body.title || '').slice(0, 150).trim()
+    const description = body.description ? String(body.description).slice(0, 1000) : undefined
+    const themePhrase = body.themePhrase ? String(body.themePhrase).slice(0, 200) : undefined
+
     const {
-      title,
-      description,
       coverImage,
       numberOfQuestions,
       numberOfAlternatives,
-      themePhrase,
       scoringMethod,
       totalPoints,
       questions,
@@ -181,16 +184,21 @@ export async function POST(request: NextRequest) {
       feedbackMode = 'end',
     } = body
 
+    // Numeric validation
+    const numQuestions = Math.min(Math.max(0, Number(numberOfQuestions) || 0), 1000)
+    const numAlternatives = Math.min(Math.max(0, Number(numberOfAlternatives) || 0), 10)
+    const pointsTotal = Math.min(Math.max(0, Number(totalPoints) || 0), 1000000)
+
     // Validação: campos obrigatórios
-    if (!title || !numberOfAlternatives || !scoringMethod) {
+    if (!title || !numAlternatives || !scoringMethod) {
       return NextResponse.json(
-        { error: 'Campos obrigatórios faltando' },
+        { error: 'Campos obrigatórios faltando ou inválidos' },
         { status: 400 }
       )
     }
 
     // Para provas não-pessoais, numberOfQuestions é obrigatório
-    if (!isPersonalExam && !numberOfQuestions) {
+    if (!isPersonalExam && !numQuestions) {
       return NextResponse.json(
         { error: 'Número de questões é obrigatório para provas públicas' },
         { status: 400 }
@@ -326,11 +334,11 @@ export async function POST(request: NextRequest) {
       title,
       description,
       coverImage,
-      numberOfQuestions,
-      numberOfAlternatives,
+      numberOfQuestions: numQuestions,
+      numberOfAlternatives: numAlternatives,
       themePhrase,
       scoringMethod,
-      totalPoints,
+      totalPoints: pointsTotal,
       questions: questions || [],
       pdfUrl,
       gatesOpen: gatesOpen ? new Date(gatesOpen) : undefined,

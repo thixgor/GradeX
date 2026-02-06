@@ -158,10 +158,11 @@ export async function PUT(
     }
 
     if (body.nome !== undefined) {
-      if (body.nome.trim() === '') {
+      const nome = String(body.nome || '').slice(0, 100).trim()
+      if (nome === '') {
         return NextResponse.json({ error: 'Nome da lista é obrigatório' }, { status: 400 })
       }
-      updateData.nome = body.nome.trim()
+      updateData.nome = nome
     }
 
     if (body.questaoIds !== undefined) {

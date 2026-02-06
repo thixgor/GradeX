@@ -74,15 +74,16 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
+    const nome = String(body.nome || '').slice(0, 100).trim()
 
-    if (!body.nome || body.nome.trim() === '') {
+    if (!nome) {
       return NextResponse.json({ error: 'Nome da lista é obrigatório' }, { status: 400 })
     }
 
     // Verificar se já existe uma lista com esse nome para o usuário
     const existente = await db.collection('banco_listas_usuario').findOne({
       userId: new ObjectId(session.userId),
-      nome: body.nome.trim()
+      nome: nome
     })
 
     if (existente) {
@@ -91,7 +92,7 @@ export async function POST(request: NextRequest) {
 
     const novaLista: Omit<BancoListaUsuario, '_id'> = {
       userId: new ObjectId(session.userId),
-      nome: body.nome.trim(),
+      nome: nome,
       questaoIds: body.questaoIds?.map((id: string) => new ObjectId(id)) || [],
       modoResposta: body.modoResposta || 'imediato',
       createdAt: new Date(),

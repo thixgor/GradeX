@@ -40,6 +40,8 @@ import { AccountType, FlashcardDeck, FlashcardCard, FlashcardDifficultyFeedback 
 import { TopicItem, MedicinaAFYAPeriodo, TEMPLATES } from '@/lib/cronograma-types'
 import { getMedicinaAFYATopicos } from '@/lib/medicina-afya-periodos-helper'
 import { AppShell as LayoutShell } from '@/components/app-shell'
+import { FocusSessionButton } from '@/components/focus-session-button'
+import { NotificationsBell } from '@/components/notifications-bell'
 import jsPDF from 'jspdf'
 
 interface DeckWithId extends FlashcardDeck {
@@ -697,9 +699,8 @@ export default function FlashcardsPage() {
                 >
                   <BookMarked className="h-4 w-4 sm:h-5 sm:w-5" />
                 </Button>
-                <div className="text-xs sm:text-sm text-slate-600 dark:text-white/70 hidden md:block whitespace-nowrap">
-                  <span className="font-semibold text-slate-900 dark:text-white">{displayAccountType.toUpperCase()}</span>
-                </div>
+                <FocusSessionButton />
+                <NotificationsBell />
                 <ThemeToggle />
               </div>
             </div>

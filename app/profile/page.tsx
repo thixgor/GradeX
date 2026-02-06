@@ -8,13 +8,15 @@ import { ToastAlert } from '@/components/ui/toast-alert'
 import { BanChecker } from '@/components/ban-checker'
 import { AppShell } from '@/components/app-shell'
 import { PlanLimitsCard } from '@/components/plan-limits-card'
-import { CheckCircle, Clock, FileText, Download, Printer, ClipboardList, Trophy, BookOpen, Crown, Timer, Sparkles, Phone, Mail, XCircle, Ticket, AlertTriangle } from 'lucide-react'
+import { CheckCircle, Clock, FileText, Download, Printer, ClipboardList, Trophy, BookOpen, Crown, Timer, Sparkles, Phone, Mail, XCircle, Ticket, AlertTriangle, ChevronDown, ChevronUp, Target, BarChart3, GraduationCap } from 'lucide-react'
+import { FocusSessionsProfile } from '@/components/focus-sessions-profile'
 import { generateGabaritoPDF, downloadPDF, generateExamPDF, generateStudentAnswersPDF } from '@/lib/pdf-generator'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { AccountType } from '@/lib/types'
 import { ActivationSuccessDialog } from '@/components/activation-success-dialog'
+import { cn } from '@/lib/utils'
 
 interface UserSubmission {
   _id: string
@@ -43,16 +45,12 @@ interface UserSubmission {
   exam?: any
 }
 
-// Função auxiliar para calcular duração
 function calculateDuration(startTime: Date, endTime: Date): string {
   const diffMs = new Date(endTime).getTime() - new Date(startTime).getTime()
   const diffMins = Math.floor(diffMs / 60000)
   const hours = Math.floor(diffMins / 60)
   const minutes = diffMins % 60
-
-  if (hours > 0) {
-    return `${hours}h ${minutes}min`
-  }
+  if (hours > 0) return `${hours}h ${minutes}min`
   return `${minutes}min`
 }
 
@@ -86,6 +84,7 @@ export default function ProfilePage() {
   const [activationDetails, setActivationDetails] = useState<any>(null)
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false)
   const [cancelling, setCancelling] = useState(false)
+  const [expandedSubmission, setExpandedSubmission] = useState<string | null>(null)
 
   useEffect(() => {
     loadSubmissions()
@@ -125,7 +124,7 @@ export default function ProfilePage() {
         })
       }
     } catch (error) {
-      console.error('Erro ao carregar dados do usuário:', error)
+      console.error('Erro ao carregar dados do usuario:', error)
     }
   }
 
@@ -143,17 +142,16 @@ export default function ProfilePage() {
         setBankAccuracyRate(data.bankAccuracyRate || 0)
       }
     } catch (error) {
-      console.error('Erro ao carregar estatísticas:', error)
+      console.error('Erro ao carregar estatisticas:', error)
     }
   }
 
   async function handleActivateKey() {
     if (!serialKey.trim()) {
-      setToastMessage('Digite uma serial key válida')
+      setToastMessage('Digite uma serial key valida')
       setToastOpen(true)
       return
     }
-
     setActivating(true)
     try {
       const res = await fetch('/api/serial-keys/activate', {
@@ -161,20 +159,12 @@ export default function ProfilePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ key: serialKey.trim() })
       })
-
       const data = await res.json()
-
-      if (!res.ok) {
-        throw new Error(data.error || 'Erro ao ativar serial key')
-      }
-
-      // Armazenar detalhes da ativação para o popup
+      if (!res.ok) throw new Error(data.error || 'Erro ao ativar serial key')
       setActivationDetails(data)
       setActivateDialogOpen(false)
       setSerialKey('')
       setActivationSuccessOpen(true)
-
-      // Recarregar dados do usuário
       loadUserData()
     } catch (error: any) {
       setToastMessage(error.message)
@@ -187,21 +177,12 @@ export default function ProfilePage() {
   async function handleCancelSubscription() {
     setCancelling(true)
     try {
-      const res = await fetch('/api/stripe/cancel-subscription', {
-        method: 'POST',
-      })
-
+      const res = await fetch('/api/stripe/cancel-subscription', { method: 'POST' })
       const data = await res.json()
-
-      if (!res.ok) {
-        throw new Error(data.error || 'Erro ao cancelar assinatura')
-      }
-
+      if (!res.ok) throw new Error(data.error || 'Erro ao cancelar assinatura')
       setToastMessage(data.message)
       setToastOpen(true)
       setCancelDialogOpen(false)
-
-      // Recarregar dados do usuário
       loadUserData()
     } catch (error: any) {
       setToastMessage(error.message)
@@ -213,82 +194,44 @@ export default function ProfilePage() {
 
   function getTrialTimeRemaining(): string {
     if (!trialExpiresAt) return ''
-
     const now = new Date()
     const expiration = new Date(trialExpiresAt)
     const diffMs = expiration.getTime() - now.getTime()
-
     if (diffMs <= 0) return 'Expirado'
-
     const days = Math.floor(diffMs / (1000 * 60 * 60 * 24))
     const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
     const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))
-
-    if (days > 0) {
-      return `${days}d ${hours}h ${minutes}min`
-    } else if (hours > 0) {
-      return `${hours}h ${minutes}min`
-    } else {
-      return `${minutes}min`
-    }
+    if (days > 0) return `${days}d ${hours}h ${minutes}min`
+    if (hours > 0) return `${hours}h ${minutes}min`
+    return `${minutes}min`
   }
 
-  function getAccountTypeBadge() {
+  function getAccountBadge() {
     if (userRole === 'admin') {
-      return (
-        <div className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-gradient-to-r from-purple-600 to-pink-600 text-white">
-          <Crown className="h-4 w-4 mr-1.5" />
-          Admin
-        </div>
-      )
+      return { label: 'Admin', colors: 'from-purple-600 to-pink-600', icon: <Crown className="h-3.5 w-3.5" /> }
     }
-
     switch (accountType) {
       case 'premium':
-        return (
-          <div className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-gradient-to-r from-yellow-500 to-orange-500 text-white">
-            <Crown className="h-4 w-4 mr-1.5" />
-            Premium
-          </div>
-        )
+        return { label: 'Premium', colors: 'from-yellow-500 to-orange-500', icon: <Crown className="h-3.5 w-3.5" /> }
       case 'trial':
-        return (
-          <div className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-gradient-to-r from-blue-500 to-cyan-500 text-white">
-            <Timer className="h-4 w-4 mr-1.5" />
-            Trial - {getTrialTimeRemaining()}
-          </div>
-        )
+        return { label: `Trial - ${getTrialTimeRemaining()}`, colors: 'from-blue-500 to-cyan-500', icon: <Timer className="h-3.5 w-3.5" /> }
       default:
-        return (
-          <div className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-gray-500 text-white">
-            Gratuito
-          </div>
-        )
+        return { label: 'Gratuito', colors: 'from-gray-400 to-gray-500', icon: null }
     }
   }
 
   async function handleDownloadReport(submission: UserSubmission) {
-    try {
-      router.push(`/exam/${submission.examId}/user/${submission.userId}`)
-    } catch (error) {
-      console.error('Erro ao abrir relatorio:', error)
-    }
+    router.push(`/exam/${submission.examId}/user/${submission.userId}`)
   }
 
   async function handleDownloadAnswerSheet(examId: string) {
     try {
-      // Buscar detalhes da prova
       const res = await fetch(`/api/exams/${examId}`)
       if (!res.ok) throw new Error('Erro ao buscar prova')
-
       const data = await res.json()
-      const exam = data.exam
-
-      // Gerar PDF do gabarito
-      const blob = generateGabaritoPDF(exam)
-      downloadPDF(blob, `Gabarito-${exam.title}.pdf`)
+      const blob = generateGabaritoPDF(data.exam)
+      downloadPDF(blob, `Gabarito-${data.exam.title}.pdf`)
     } catch (error: any) {
-      console.error('Erro ao baixar gabarito:', error)
       setToastMessage('Erro ao gerar gabarito: ' + error.message)
       setToastOpen(true)
     }
@@ -298,14 +241,10 @@ export default function ProfilePage() {
     try {
       const res = await fetch(`/api/exams/${examId}`)
       if (!res.ok) throw new Error('Erro ao buscar prova')
-
       const data = await res.json()
-      const exam = data.exam
-
-      const blob = generateExamPDF(exam, userId)
-      downloadPDF(blob, `Prova-${exam.title}.pdf`)
+      const blob = generateExamPDF(data.exam, userId)
+      downloadPDF(blob, `Prova-${data.exam.title}.pdf`)
     } catch (error: any) {
-      console.error('Erro ao baixar prova:', error)
       setToastMessage('Erro ao gerar PDF da prova: ' + error.message)
       setToastOpen(true)
     }
@@ -315,504 +254,368 @@ export default function ProfilePage() {
     try {
       const res = await fetch(`/api/exams/${submission.examId}`)
       if (!res.ok) throw new Error('Erro ao buscar prova')
-
       const examData = await res.json()
-      const exam = examData.exam
-
       const submissionRes = await fetch(`/api/submissions/${submission._id}`)
-      if (!submissionRes.ok) throw new Error('Erro ao buscar submissão')
-
+      if (!submissionRes.ok) throw new Error('Erro ao buscar submissao')
       const submissionData = await submissionRes.json()
       const answers = submissionData.submission?.answers || []
-
-      const blob = generateStudentAnswersPDF(exam, answers, submission.userName || userName)
-      downloadPDF(blob, `Minhas-Respostas-${exam.title}.pdf`)
+      const blob = generateStudentAnswersPDF(examData.exam, answers, submission.userName || userName)
+      downloadPDF(blob, `Minhas-Respostas-${examData.exam.title}.pdf`)
     } catch (error: any) {
-      console.error('Erro ao baixar respostas:', error)
       setToastMessage('Erro ao gerar PDF de respostas: ' + error.message)
       setToastOpen(true)
     }
   }
 
   function isExamFinished(submission: UserSubmission): boolean {
-    // Se for prova prática/treino, sempre permite ver (múltiplas tentativas)
-    if (submission.isPracticeExam) {
-      return true
-    }
-
-    // Se não tem endTime, NÃO libera (por segurança)
-    if (!submission.examEndTime) {
-      console.log('⚠️ Prova sem examEndTime:', submission.examTitle)
-      return false
-    }
-
-    const now = new Date()
-    const endTime = new Date(submission.examEndTime)
-    const finished = now > endTime
-
-    // Debug para entender o que está acontecendo
-    console.log('🔍 Verificando prova:', {
-      title: submission.examTitle,
-      now: now.toISOString(),
-      endTime: endTime.toISOString(),
-      finished
-    })
-
-    return finished
+    if (submission.isPracticeExam) return true
+    if (!submission.examEndTime) return false
+    return new Date() > new Date(submission.examEndTime)
   }
 
-  function getStatusBadge(submission: UserSubmission) {
-    if (!submission.hasDiscursiveQuestions) {
-      return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-          <CheckCircle className="h-3 w-3 mr-1" />
-          Corrigida
-        </span>
-      )
-    }
-
-    if (submission.correctionStatus === 'corrected') {
-      return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-          <CheckCircle className="h-3 w-3 mr-1" />
-          Corrigida
-        </span>
-      )
-    }
-
-    return (
-      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
-        <Clock className="h-3 w-3 mr-1" />
-        Aguardando Correcao
-      </span>
-    )
-  }
+  const badge = getAccountBadge()
 
   return (
     <AppShell headerTitle="Meu Perfil" headerSubtitle={userName}>
       <BanChecker />
-      <div className="container mx-auto px-4 py-8 max-w-5xl space-y-6">
-        {/* Header Card com Badge */}
-        <Card className="border-0 bg-gradient-to-r from-[#468152] to-[#E2A43E] text-white overflow-hidden">
-          <CardContent className="py-8">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="flex items-center gap-4">
-                <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                  <Trophy className="h-10 w-10 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-2xl md:text-3xl font-bold">{userName}</h2>
-                  <div className="mt-2">{getAccountTypeBadge()}</div>
-                </div>
-              </div>
-              <div className="text-center md:text-right">
-                <p className="text-white/80 text-sm">Total de Questões</p>
-                <p className="text-5xl font-bold">{questionsAnswered}</p>
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+
+        {/* ====== SECTION 1: Profile Header ====== */}
+        <section className="mb-10">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
+            {/* Avatar */}
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#468152] to-[#E2A43E] flex items-center justify-center shadow-lg shrink-0">
+              <span className="text-2xl font-bold text-white">
+                {userName.charAt(0).toUpperCase()}
+              </span>
+            </div>
+            {/* Info */}
+            <div className="flex-1 text-center sm:text-left">
+              <h1 className="text-2xl font-bold tracking-tight">{userName}</h1>
+              <div className={cn('mt-1.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold text-white bg-gradient-to-r shadow-sm', badge.colors)}
+              >
+                {badge.icon}
+                {badge.label}
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Statistics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Provas Realizadas */}
-          <Card className="backdrop-blur-xl bg-white/15 dark:bg-white/8 border-white/20 dark:border-white/10">
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl shadow-lg">
-                  <FileText className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Provas</p>
-                  <p className="text-3xl font-bold">{examsCompleted}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Questões em Provas */}
-          <Card className="backdrop-blur-xl bg-white/15 dark:bg-white/8 border-white/20 dark:border-white/10">
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg">
-                  <ClipboardList className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Questões (Provas)</p>
-                  <p className="text-3xl font-bold">{questionsAnsweredExams}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Questões no Banco */}
-          <Card className="backdrop-blur-xl bg-white/15 dark:bg-white/8 border-white/20 dark:border-white/10">
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl shadow-lg">
-                  <BookOpen className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Banco de Questões</p>
-                  <p className="text-3xl font-bold">{questionsAnsweredBank}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Taxa de Acerto */}
-          <Card className="backdrop-blur-xl bg-white/15 dark:bg-white/8 border-white/20 dark:border-white/10">
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className={`p-3 rounded-xl shadow-lg ${bankAccuracyRate >= 70
-                  ? 'bg-gradient-to-br from-green-500 to-emerald-600'
-                  : bankAccuracyRate >= 50
-                    ? 'bg-gradient-to-br from-yellow-500 to-orange-600'
-                    : 'bg-gradient-to-br from-red-500 to-rose-600'
-                  }`}>
-                  {bankAccuracyRate >= 70 ? (
-                    <CheckCircle className="h-6 w-6 text-white" />
-                  ) : (
-                    <Trophy className="h-6 w-6 text-white" />
-                  )}
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Taxa de Acerto</p>
-                  <p className="text-3xl font-bold">{bankAccuracyRate}%</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Plan Limits Card */}
-        {!loading && (
-          <PlanLimitsCard
-            accountType={accountType}
-            isAdmin={userRole === 'admin'}
-            cronogramasCreated={userTotals.totalCronogramasCreated}
-            flashcardsCreated={userTotals.totalFlashcardsCreated}
-            personalExamsCreated={userTotals.totalPersonalExamsCreated}
-            showUpgradeButton
-          />
-        )}
-
-        {/* Detalhamento do Banco de Questões */}
-        {questionsAnsweredBank > 0 && (
-          <Card className="backdrop-blur-xl bg-white/15 dark:bg-white/8 border-white/20 dark:border-white/10">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <BookOpen className="h-5 w-5 text-purple-500" />
-                Desempenho no Banco de Questões
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="flex items-center gap-3 p-4 bg-green-50 dark:bg-green-950/50 rounded-xl">
-                  <CheckCircle className="h-8 w-8 text-green-600" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Acertos</p>
-                    <p className="text-2xl font-bold text-green-600">{questionsCorrectBank}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 p-4 bg-red-50 dark:bg-red-950/50 rounded-xl">
-                  <XCircle className="h-8 w-8 text-red-600" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Erros</p>
-                    <p className="text-2xl font-bold text-red-600">{questionsWrongBank}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 p-4 bg-blue-50 dark:bg-blue-950/50 rounded-xl">
-                  <Trophy className="h-8 w-8 text-blue-600" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Aproveitamento</p>
-                    <p className="text-2xl font-bold text-blue-600">{bankAccuracyRate}%</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Barra de progresso visual */}
-              <div className="mt-4">
-                <div className="h-3 bg-muted rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-green-500 to-emerald-600 transition-all duration-500"
-                    style={{ width: `${bankAccuracyRate}%` }}
-                  />
-                </div>
-                <p className="text-xs text-muted-foreground mt-2 text-center">
-                  Continue praticando para melhorar seu desempenho!
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Upgrade/Activate Buttons */}
-        <Card className="backdrop-blur-xl bg-white/15 dark:bg-white/8 border-white/20 dark:border-white/10">
-          <CardContent className="py-6">
-            <div className="flex flex-wrap gap-3 justify-center">
+            {/* Quick Actions */}
+            <div className="flex gap-2 shrink-0">
               {userRole !== 'admin' && accountType === 'gratuito' && (
-                <Button
-                  onClick={() => setUpgradeDialogOpen(true)}
-                  className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
-                >
-                  <Sparkles className="h-4 w-4 mr-2" />
-                  Faça Upgrade Agora
+                <Button size="sm" onClick={() => setUpgradeDialogOpen(true)}
+                  className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white text-xs h-8 gap-1.5">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  Upgrade
                 </Button>
               )}
               {userRole !== 'admin' && (
-                <Button
-                  onClick={() => setActivateDialogOpen(true)}
-                  variant="outline"
-                  className="border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950"
-                >
-                  <Crown className="h-4 w-4 mr-2" />
-                  Ativar Premium
+                <Button size="sm" variant="outline" onClick={() => setActivateDialogOpen(true)}
+                  className="text-xs h-8 gap-1.5">
+                  <Crown className="h-3.5 w-3.5" />
+                  Ativar Key
                 </Button>
               )}
-              {userRole !== 'admin' && (accountType === 'premium' || accountType === 'trial') && (
-                <Button
-                  onClick={() => setCancelDialogOpen(true)}
-                  variant="outline"
-                  className="border-red-500 text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
-                >
-                  <XCircle className="h-4 w-4 mr-2" />
-                  Cancelar Assinatura
-                </Button>
-              )}
-              <Button
-                onClick={() => router.push('/banco-questoes')}
-                variant="outline"
-                className="border-purple-500 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-950"
-              >
-                <BookOpen className="h-4 w-4 mr-2" />
-                Ir para Banco de Questões
-              </Button>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </section>
 
-        {loading ? (
-          <div className="text-center py-12">Carregando...</div>
-        ) : submissions.length === 0 ? (
-          <Card>
-            <CardContent className="py-12 text-center">
-              <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground mb-4">
-                Voce ainda nao fez nenhuma prova
-              </p>
-              <Button onClick={() => router.push('/')}>
-                Ver Provas Disponiveis
-              </Button>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-xl font-bold">Minhas Provas</h2>
-                <p className="text-sm text-muted-foreground">
-                  {submissions.length} {submissions.length === 1 ? 'prova realizada' : 'provas realizadas'}
-                </p>
+        {/* ====== SECTION 2: Statistics Overview ====== */}
+        <section className="mb-10">
+          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Estatisticas</h2>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="p-4 rounded-xl bg-muted/40 border border-border/50">
+              <div className="flex items-center gap-2.5 mb-2">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
+                  <GraduationCap className="h-4 w-4 text-white" />
+                </div>
+                <span className="text-xs text-muted-foreground">Questoes</span>
+              </div>
+              <p className="text-2xl font-bold">{questionsAnswered}</p>
+            </div>
+            <div className="p-4 rounded-xl bg-muted/40 border border-border/50">
+              <div className="flex items-center gap-2.5 mb-2">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                  <FileText className="h-4 w-4 text-white" />
+                </div>
+                <span className="text-xs text-muted-foreground">Provas</span>
+              </div>
+              <p className="text-2xl font-bold">{examsCompleted}</p>
+            </div>
+            <div className="p-4 rounded-xl bg-muted/40 border border-border/50">
+              <div className="flex items-center gap-2.5 mb-2">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center">
+                  <BookOpen className="h-4 w-4 text-white" />
+                </div>
+                <span className="text-xs text-muted-foreground">Banco</span>
+              </div>
+              <p className="text-2xl font-bold">{questionsAnsweredBank}</p>
+            </div>
+            <div className="p-4 rounded-xl bg-muted/40 border border-border/50">
+              <div className="flex items-center gap-2.5 mb-2">
+                <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br',
+                  bankAccuracyRate >= 70 ? 'from-green-500 to-emerald-600'
+                    : bankAccuracyRate >= 50 ? 'from-yellow-500 to-orange-600'
+                    : 'from-red-500 to-rose-600'
+                )}>
+                  <BarChart3 className="h-4 w-4 text-white" />
+                </div>
+                <span className="text-xs text-muted-foreground">Acerto</span>
+              </div>
+              <p className="text-2xl font-bold">{bankAccuracyRate}%</p>
+            </div>
+          </div>
+        </section>
+
+        {/* ====== SECTION 3: Performance Detail (if has bank data) ====== */}
+        {questionsAnsweredBank > 0 && (
+          <section className="mb-10">
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Desempenho no Banco</h2>
+            <div className="p-5 rounded-xl bg-muted/30 border border-border/50">
+              <div className="grid grid-cols-3 gap-4 mb-4">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-green-600">{questionsCorrectBank}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Acertos</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-red-500">{questionsWrongBank}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Erros</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-blue-600">{bankAccuracyRate}%</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Aproveitamento</p>
+                </div>
+              </div>
+              <div className="h-2 bg-muted rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-green-500 to-emerald-600 transition-all duration-700 rounded-full"
+                  style={{ width: `${bankAccuracyRate}%` }}
+                />
               </div>
             </div>
-
-            {submissions.map((submission) => (
-              <Card key={submission._id}>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <CardTitle>{submission.examTitle}</CardTitle>
-                      <CardDescription>
-                        <div>
-                          Realizada em {new Date(submission.submittedAt).toLocaleDateString('pt-BR', {
-                            day: '2-digit',
-                            month: 'long',
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </div>
-                        {submission.startedAt && (
-                          <div className="flex items-center gap-1 text-xs mt-1">
-                            <Clock className="h-3 w-3" />
-                            Tempo de prova: {calculateDuration(submission.startedAt, submission.submittedAt)}
-                          </div>
-                        )}
-                      </CardDescription>
-                    </div>
-                    {getStatusBadge(submission)}
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {/* Pontuacao */}
-                    {submission.correctionStatus === 'corrected' || !submission.hasDiscursiveQuestions ? (
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-muted rounded-lg">
-                        {submission.triScore !== undefined && submission.triScore !== null && (
-                          <div>
-                            <p className="text-sm text-muted-foreground">Nota TRI</p>
-                            <p className="text-2xl font-bold">{submission.triScore.toFixed(0)}</p>
-                          </div>
-                        )}
-                        {submission.score !== undefined && submission.score !== null && (
-                          <div>
-                            <p className="text-sm text-muted-foreground">Pontuacao</p>
-                            <p className="text-2xl font-bold">{submission.score.toFixed(1)}</p>
-                          </div>
-                        )}
-                        {submission.discursiveScore !== undefined && submission.discursiveScore !== null && (
-                          <div>
-                            <p className="text-sm text-muted-foreground">Nota Discursiva</p>
-                            <p className="text-2xl font-bold">{submission.discursiveScore.toFixed(1)}</p>
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="p-4 bg-yellow-50 dark:bg-yellow-950 rounded-lg">
-                        <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                          <Clock className="h-4 w-4 inline mr-2" />
-                          Sua prova esta aguardando correcao das questoes discursivas.
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Correcoes discursivas */}
-                    {submission.corrections && submission.corrections.length > 0 && (
-                      <div className="space-y-2">
-                        <h4 className="font-semibold text-sm">Correcoes das Questoes Discursivas:</h4>
-                        {submission.corrections.map((correction, idx) => (
-                          <div key={idx} className="p-3 bg-muted rounded-lg space-y-1">
-                            <div className="flex items-center justify-between">
-                              <p className="text-sm font-medium">Questao {idx + 1}</p>
-                              <p className="text-sm font-bold">
-                                {correction.score !== null && correction.score !== undefined
-                                  ? correction.score.toFixed(1)
-                                  : '0.0'} / {correction.maxScore} pontos
-                              </p>
-                            </div>
-                            {correction.feedback && (
-                              <p className="text-sm text-muted-foreground">{correction.feedback}</p>
-                            )}
-                            <p className="text-xs text-muted-foreground">
-                              Metodo: {correction.method === 'ai' ? 'IA (Gemini 2.0)' : 'Manual'}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Acoes */}
-                    <div className="space-y-3">
-                      {/* Botões sempre disponíveis */}
-                      <div className="flex flex-wrap gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleDownloadExamPDF(submission.examId, submission.userId)}
-                          className="border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950"
-                        >
-                          <Printer className="h-4 w-4 mr-2" />
-                          Baixar PDF da Prova
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleDownloadAnswersPDF(submission)}
-                          className="border-purple-500 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-950"
-                        >
-                          <ClipboardList className="h-4 w-4 mr-2" />
-                          Minhas Respostas (PDF)
-                        </Button>
-                      </div>
-
-                      {/* Botões liberados após término da prova */}
-                      {isExamFinished(submission) ? (
-                        <div className="flex flex-wrap gap-2">
-                          <Button
-                            variant="default"
-                            size="sm"
-                            onClick={() => handleDownloadReport(submission)}
-                          >
-                            <FileText className="h-4 w-4 mr-2" />
-                            Ver Relatorio Completo
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleDownloadAnswerSheet(submission.examId)}
-                          >
-                            <Download className="h-4 w-4 mr-2" />
-                            Baixar Gabarito
-                          </Button>
-                        </div>
-                      ) : (
-                        <div className="w-full p-3 bg-orange-50 dark:bg-orange-950 rounded-lg border border-orange-200 dark:border-orange-800">
-                          <p className="text-sm text-orange-800 dark:text-orange-200">
-                            <Clock className="h-4 w-4 inline mr-2" />
-                            Prova ainda em andamento. O gabarito e o relatorio completo serao liberados apos o termino.
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          </section>
         )}
 
-        <ToastAlert
-          open={toastOpen}
-          onOpenChange={setToastOpen}
-          message={toastMessage}
-          type="success"
-        />
+        {/* ====== SECTION 4: Plan Limits ====== */}
+        {!loading && (
+          <section className="mb-10">
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Limites do Plano</h2>
+            <PlanLimitsCard
+              accountType={accountType}
+              isAdmin={userRole === 'admin'}
+              cronogramasCreated={userTotals.totalCronogramasCreated}
+              flashcardsCreated={userTotals.totalFlashcardsCreated}
+              personalExamsCreated={userTotals.totalPersonalExamsCreated}
+              showUpgradeButton
+            />
+          </section>
+        )}
+
+        {/* ====== SECTION 5: Focus Sessions ====== */}
+        <section className="mb-10">
+          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Sessoes de Foco</h2>
+          <FocusSessionsProfile />
+        </section>
+
+        {/* ====== SECTION 6: Submissions ====== */}
+        <section className="mb-10">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Minhas Provas</h2>
+            {submissions.length > 0 && (
+              <span className="text-xs text-muted-foreground">
+                {submissions.length} {submissions.length === 1 ? 'prova' : 'provas'}
+              </span>
+            )}
+          </div>
+
+          {loading ? (
+            <div className="text-center py-12 text-sm text-muted-foreground">Carregando...</div>
+          ) : submissions.length === 0 ? (
+            <div className="text-center py-12 rounded-xl bg-muted/30 border border-border/50">
+              <FileText className="h-10 w-10 mx-auto text-muted-foreground/30 mb-3" />
+              <p className="text-sm text-muted-foreground mb-4">Nenhuma prova realizada</p>
+              <Button size="sm" variant="outline" onClick={() => router.push('/')}>
+                Ver Provas Disponiveis
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {submissions.map((submission) => {
+                const isExpanded = expandedSubmission === submission._id
+                const isCorrected = submission.correctionStatus === 'corrected' || !submission.hasDiscursiveQuestions
+                const finished = isExamFinished(submission)
+
+                return (
+                  <div key={submission._id} className="rounded-xl border border-border/50 bg-card overflow-hidden transition-all duration-200">
+                    {/* Summary row */}
+                    <button
+                      onClick={() => setExpandedSubmission(isExpanded ? null : submission._id)}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-muted/30 transition-colors"
+                    >
+                      {/* Status dot */}
+                      <div className={cn('w-2 h-2 rounded-full shrink-0',
+                        isCorrected ? 'bg-green-500' : 'bg-yellow-500'
+                      )} />
+                      {/* Title + date */}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{submission.examTitle}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(submission.submittedAt).toLocaleDateString('pt-BR', {
+                            day: '2-digit', month: 'short', year: 'numeric'
+                          })}
+                          {submission.startedAt && ` · ${calculateDuration(submission.startedAt, submission.submittedAt)}`}
+                        </p>
+                      </div>
+                      {/* Score preview */}
+                      {isCorrected && submission.triScore != null && (
+                        <span className="text-sm font-bold tabular-nums shrink-0">{submission.triScore.toFixed(0)}</span>
+                      )}
+                      <ChevronDown className={cn('w-4 h-4 text-muted-foreground shrink-0 transition-transform', isExpanded && 'rotate-180')} />
+                    </button>
+
+                    {/* Expanded detail */}
+                    {isExpanded && (
+                      <div className="px-4 pb-4 pt-1 border-t border-border/50 space-y-3 animate-fade-in">
+                        {/* Scores */}
+                        {isCorrected ? (
+                          <div className="flex gap-4 flex-wrap">
+                            {submission.triScore != null && (
+                              <div>
+                                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Nota TRI</p>
+                                <p className="text-xl font-bold">{submission.triScore.toFixed(0)}</p>
+                              </div>
+                            )}
+                            {submission.score != null && (
+                              <div>
+                                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Pontuacao</p>
+                                <p className="text-xl font-bold">{submission.score.toFixed(1)}</p>
+                              </div>
+                            )}
+                            {submission.discursiveScore != null && (
+                              <div>
+                                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Discursiva</p>
+                                <p className="text-xl font-bold">{submission.discursiveScore.toFixed(1)}</p>
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <p className="text-xs text-yellow-700 dark:text-yellow-300 bg-yellow-50 dark:bg-yellow-950/50 px-3 py-2 rounded-lg">
+                            Aguardando correcao das questoes discursivas.
+                          </p>
+                        )}
+
+                        {/* Discursive corrections */}
+                        {submission.corrections && submission.corrections.length > 0 && (
+                          <div className="space-y-1.5">
+                            <p className="text-xs font-semibold text-muted-foreground">Correcoes Discursivas</p>
+                            {submission.corrections.map((c, idx) => (
+                              <div key={idx} className="flex items-center justify-between px-3 py-2 bg-muted/30 rounded-lg text-xs">
+                                <span>Questao {idx + 1}</span>
+                                <span className="font-bold">
+                                  {(c.score ?? 0).toFixed(1)} / {c.maxScore}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Actions */}
+                        <div className="flex flex-wrap gap-2 pt-1">
+                          <Button variant="outline" size="sm" className="text-xs h-7"
+                            onClick={() => handleDownloadExamPDF(submission.examId, submission.userId)}>
+                            <Printer className="h-3 w-3 mr-1.5" />Prova PDF
+                          </Button>
+                          <Button variant="outline" size="sm" className="text-xs h-7"
+                            onClick={() => handleDownloadAnswersPDF(submission)}>
+                            <ClipboardList className="h-3 w-3 mr-1.5" />Respostas PDF
+                          </Button>
+                          {finished && (
+                            <>
+                              <Button size="sm" className="text-xs h-7"
+                                onClick={() => handleDownloadReport(submission)}>
+                                <FileText className="h-3 w-3 mr-1.5" />Relatorio
+                              </Button>
+                              <Button variant="outline" size="sm" className="text-xs h-7"
+                                onClick={() => handleDownloadAnswerSheet(submission.examId)}>
+                                <Download className="h-3 w-3 mr-1.5" />Gabarito
+                              </Button>
+                            </>
+                          )}
+                        </div>
+                        {!finished && (
+                          <p className="text-[11px] text-orange-600 dark:text-orange-400">
+                            Prova em andamento. Gabarito e relatorio liberados apos o termino.
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </section>
+
+        {/* ====== SECTION 7: Account Actions ====== */}
+        <section className="mb-10">
+          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Conta</h2>
+          <div className="flex flex-wrap gap-2">
+            {userRole !== 'admin' && (accountType === 'premium' || accountType === 'trial') && (
+              <Button variant="outline" size="sm" className="text-xs h-8 text-red-600 border-red-200 dark:border-red-800 hover:bg-red-50 dark:hover:bg-red-950"
+                onClick={() => setCancelDialogOpen(true)}>
+                <XCircle className="h-3.5 w-3.5 mr-1.5" />
+                Cancelar Assinatura
+              </Button>
+            )}
+            <Button variant="outline" size="sm" className="text-xs h-8"
+              onClick={() => router.push('/banco-questoes')}>
+              <BookOpen className="h-3.5 w-3.5 mr-1.5" />
+              Banco de Questoes
+            </Button>
+          </div>
+        </section>
+
+        {/* ====== DIALOGS ====== */}
+        <ToastAlert open={toastOpen} onOpenChange={setToastOpen} message={toastMessage} type="success" />
 
         {/* Upgrade Dialog */}
         <Dialog open={upgradeDialogOpen} onOpenChange={setUpgradeDialogOpen}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <div className="mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center mb-4">
-                <Sparkles className="h-8 w-8 text-white" />
+              <div className="mx-auto w-14 h-14 rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center mb-3">
+                <Sparkles className="h-7 w-7 text-white" />
               </div>
-              <DialogTitle className="text-center text-2xl">Faça Upgrade para Premium</DialogTitle>
-              <DialogDescription className="text-center text-base">
-                Entre em contato conosco para fazer upgrade da sua conta e ter acesso a recursos premium ilimitados.
+              <DialogTitle className="text-center text-xl">Upgrade para Premium</DialogTitle>
+              <DialogDescription className="text-center text-sm">
+                Entre em contato para ter acesso a recursos premium ilimitados.
               </DialogDescription>
             </DialogHeader>
-
-            <div className="space-y-4 py-4">
-              <div className="flex items-center gap-3 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
-                <Phone className="h-5 w-5 text-blue-600" />
+            <div className="space-y-3 py-3">
+              <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-xl">
+                <Phone className="h-4 w-4 text-blue-600 shrink-0" />
                 <div>
-                  <p className="text-sm font-medium">Telefone/WhatsApp</p>
-                  <p className="text-lg font-semibold text-blue-600">(21) 99777-0936</p>
+                  <p className="text-xs text-muted-foreground">WhatsApp</p>
+                  <p className="text-sm font-semibold">(21) 99777-0936</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-4 bg-green-50 dark:bg-green-950 rounded-lg">
-                <Mail className="h-5 w-5 text-green-600" />
+              <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-xl">
+                <Mail className="h-4 w-4 text-green-600 shrink-0" />
                 <div>
-                  <p className="text-sm font-medium">E-mail</p>
-                  <p className="text-lg font-semibold text-green-600">throdrigf@gmail.com</p>
+                  <p className="text-xs text-muted-foreground">E-mail</p>
+                  <p className="text-sm font-semibold">throdrigf@gmail.com</p>
                 </div>
               </div>
             </div>
-
-            <DialogFooter className="flex-col sm:flex-row gap-2">
+            <DialogFooter className="flex-col gap-2">
               <Button
                 onClick={() => {
-                  const encodedMessage = encodeURIComponent(`Olá, eu sou ${userName} e quero fazer o upgrade do meu plano no DomineAqui!`)
-                  window.open(`https://wa.me/5521997770936?text=${encodedMessage}`, '_blank')
+                  const msg = encodeURIComponent(`Ola, eu sou ${userName} e quero fazer o upgrade do meu plano no DomineAqui!`)
+                  window.open(`https://wa.me/5521997770936?text=${msg}`, '_blank')
                 }}
                 className="bg-green-600 hover:bg-green-700 text-white w-full"
               >
                 <Phone className="h-4 w-4 mr-2" />
-                Enviar Mensagem WhatsApp
+                WhatsApp
               </Button>
-              <Button onClick={() => setUpgradeDialogOpen(false)} variant="outline" className="w-full">
-                Fechar
-              </Button>
+              <Button onClick={() => setUpgradeDialogOpen(false)} variant="outline" className="w-full">Fechar</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -821,45 +624,35 @@ export default function ProfilePage() {
         <Dialog open={activateDialogOpen} onOpenChange={setActivateDialogOpen}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <div className="mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-cyan-500 flex items-center justify-center mb-4">
-                <Crown className="h-8 w-8 text-white" />
+              <div className="mx-auto w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-400 to-cyan-500 flex items-center justify-center mb-3">
+                <Crown className="h-7 w-7 text-white" />
               </div>
-              <DialogTitle className="text-center text-2xl">Ativar Premium com Serial Key</DialogTitle>
-              <DialogDescription className="text-center text-base">
+              <DialogTitle className="text-center text-xl">Ativar Premium</DialogTitle>
+              <DialogDescription className="text-center text-sm">
                 Insira sua serial key para ativar o acesso premium
               </DialogDescription>
             </DialogHeader>
-
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Serial Key</label>
-                <input
-                  type="text"
-                  placeholder="Cole sua serial key aqui"
-                  value={serialKey}
-                  onChange={(e) => setSerialKey(e.target.value)}
-                  disabled={activating}
-                  className="w-full px-3 py-2 border border-muted rounded-md bg-background text-sm"
-                />
-              </div>
+            <div className="py-3">
+              <label className="text-xs font-medium text-muted-foreground">Serial Key</label>
+              <input
+                type="text"
+                placeholder="Cole sua serial key aqui"
+                value={serialKey}
+                onChange={(e) => setSerialKey(e.target.value)}
+                disabled={activating}
+                className="w-full mt-1.5 px-3 py-2 border border-border rounded-lg bg-background text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+              />
             </div>
-
-            <DialogFooter className="flex-col sm:flex-row gap-2">
-              <Button
-                onClick={handleActivateKey}
-                disabled={activating || !serialKey.trim()}
-                className="w-full"
-              >
+            <DialogFooter className="flex-col gap-2">
+              <Button onClick={handleActivateKey} disabled={activating || !serialKey.trim()} className="w-full">
                 {activating ? 'Ativando...' : 'Ativar'}
               </Button>
-              <Button onClick={() => setActivateDialogOpen(false)} variant="outline" className="w-full sm:w-auto">
-                Cancelar
-              </Button>
+              <Button onClick={() => setActivateDialogOpen(false)} variant="outline" className="w-full">Cancelar</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
 
-        {/* Activation Success Dialog */}
+        {/* Activation Success */}
         {activationDetails && (
           <ActivationSuccessDialog
             open={activationSuccessOpen}
@@ -874,67 +667,32 @@ export default function ProfilePage() {
         <Dialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <div className="mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-red-400 to-orange-500 flex items-center justify-center mb-4">
-                <AlertTriangle className="h-8 w-8 text-white" />
+              <div className="mx-auto w-14 h-14 rounded-2xl bg-gradient-to-br from-red-400 to-orange-500 flex items-center justify-center mb-3">
+                <AlertTriangle className="h-7 w-7 text-white" />
               </div>
-              <DialogTitle className="text-center text-2xl">Cancelar Assinatura?</DialogTitle>
-              <DialogDescription className="text-center text-base">
+              <DialogTitle className="text-center text-xl">Cancelar Assinatura?</DialogTitle>
+              <DialogDescription className="text-center text-sm">
                 Tem certeza que deseja cancelar sua assinatura {accountType === 'premium' ? 'Premium' : 'Trial'}?
               </DialogDescription>
             </DialogHeader>
-
-            <div className="space-y-4 py-4">
-              <div className="p-4 bg-red-50 dark:bg-red-950 rounded-lg border border-red-200 dark:border-red-800">
-                <p className="text-sm text-red-800 dark:text-red-200">
-                  <strong>Atenção:</strong> Ao cancelar, você perderá acesso imediato a todos os recursos premium e sua conta será alterada para o plano Gratuito.
-                </p>
-              </div>
-
-              <div className="space-y-3">
-                <div className="p-4 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
-                  <div className="flex items-center gap-3">
-                    <Phone className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Fale comigo antes de cancelar</p>
-                      <p className="text-lg font-semibold text-blue-600 dark:text-blue-400">(21) 99777-0936</p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Posso te ajudar a resolver qualquer problema!
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="text-center text-sm text-muted-foreground">
-                  Ou abra um ticket para que possamos conversar sobre como melhorar sua experiência.
+            <div className="space-y-3 py-3">
+              <p className="text-xs text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/50 px-3 py-2 rounded-lg">
+                Ao cancelar, voce perdera acesso imediato a todos os recursos premium.
+              </p>
+              <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-xl">
+                <Phone className="h-4 w-4 text-blue-600 shrink-0" />
+                <div>
+                  <p className="text-xs text-muted-foreground">Fale comigo antes</p>
+                  <p className="text-sm font-semibold">(21) 99777-0936</p>
                 </div>
               </div>
             </div>
-
-            <DialogFooter className="flex-col sm:flex-row gap-2">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setCancelDialogOpen(false)
-                  router.push('/tickets')
-                }}
-                className="w-full sm:w-auto"
-              >
-                <Ticket className="h-4 w-4 mr-2" />
-                Abrir Ticket
+            <DialogFooter className="flex-col gap-2">
+              <Button variant="outline" onClick={() => { setCancelDialogOpen(false); router.push('/tickets') }} className="w-full">
+                <Ticket className="h-4 w-4 mr-2" />Abrir Ticket
               </Button>
-              <Button
-                variant="outline"
-                onClick={() => setCancelDialogOpen(false)}
-                className="w-full sm:w-auto"
-              >
-                Manter Assinatura
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={handleCancelSubscription}
-                disabled={cancelling}
-                className="w-full sm:w-auto"
-              >
+              <Button variant="outline" onClick={() => setCancelDialogOpen(false)} className="w-full">Manter Assinatura</Button>
+              <Button variant="destructive" onClick={handleCancelSubscription} disabled={cancelling} className="w-full">
                 {cancelling ? 'Cancelando...' : 'Sim, Cancelar'}
               </Button>
             </DialogFooter>

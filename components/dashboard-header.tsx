@@ -5,6 +5,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { NotificationsBell } from '@/components/notifications-bell'
 import { Logo } from '@/components/logo'
 import { Menu, Plus } from 'lucide-react'
+import { FocusSessionButton } from '@/components/focus-session-button'
 
 interface DashboardHeaderProps {
   user: {
@@ -63,6 +64,7 @@ export function DashboardHeader({
             Nova Prova
           </Button>
 
+          <FocusSessionButton />
           <NotificationsBell />
           <ThemeToggle />
         </div>
