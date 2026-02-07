@@ -201,9 +201,8 @@ export default function LandingPage() {
         }
       `}</style>
       {/* Header */}
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-background/70 dark:bg-background/50 backdrop-blur-xl shadow-lg border-b border-[#468152]/10' : 'bg-transparent'
-      }`}>
+      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-background/70 dark:bg-background/50 backdrop-blur-xl shadow-lg border-b border-[#468152]/10' : 'bg-transparent'
+        }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Logo variant="full" size="md" />
@@ -321,9 +320,8 @@ export default function LandingPage() {
 
           <div className="grid md:grid-cols-3 gap-8 mb-16">
             {/* Feature 1 - Flashcards */}
-            <div className={`group bg-gradient-to-br from-[#468152]/20 via-[#468152]/10 to-transparent border border-[#468152]/30 rounded-3xl p-8 hover:border-[#468152]/60 transition-all duration-300 hover:shadow-2xl hover:shadow-[#468152]/20 hover:scale-105 backdrop-blur-xl ${
-              showFeatures ? 'animate-slide-up' : 'opacity-0'
-            }`}>
+            <div className={`group bg-gradient-to-br from-[#468152]/20 via-[#468152]/10 to-transparent border border-[#468152]/30 rounded-3xl p-8 hover:border-[#468152]/60 transition-all duration-300 hover:shadow-2xl hover:shadow-[#468152]/20 hover:scale-105 backdrop-blur-xl ${showFeatures ? 'animate-slide-up' : 'opacity-0'
+              }`}>
               <div className="bg-gradient-to-br from-[#468152] to-[#468152]/70 w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg shadow-[#468152]/30">
                 <Brain className="w-7 h-7 text-white" />
               </div>
@@ -335,9 +333,8 @@ export default function LandingPage() {
             </div>
 
             {/* Feature 2 - Cronogramas */}
-            <div className={`group bg-gradient-to-br from-[#E2A43E]/20 via-[#E2A43E]/10 to-transparent border border-[#E2A43E]/30 rounded-3xl p-8 hover:border-[#E2A43E]/60 transition-all duration-300 hover:shadow-2xl hover:shadow-[#E2A43E]/20 hover:scale-105 backdrop-blur-xl ${
-              showFeatures ? 'animate-slide-up delay-100' : 'opacity-0'
-            }`}>
+            <div className={`group bg-gradient-to-br from-[#E2A43E]/20 via-[#E2A43E]/10 to-transparent border border-[#E2A43E]/30 rounded-3xl p-8 hover:border-[#E2A43E]/60 transition-all duration-300 hover:shadow-2xl hover:shadow-[#E2A43E]/20 hover:scale-105 backdrop-blur-xl ${showFeatures ? 'animate-slide-up delay-100' : 'opacity-0'
+              }`}>
               <div className="bg-gradient-to-br from-[#E2A43E] to-[#E2A43E]/70 w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg shadow-[#E2A43E]/30">
                 <Calendar className="w-7 h-7 text-white" />
               </div>
@@ -349,9 +346,8 @@ export default function LandingPage() {
             </div>
 
             {/* Feature 3 - Reforços */}
-            <div className={`group bg-gradient-to-br from-[#468152]/20 via-[#468152]/10 to-transparent border border-[#468152]/30 rounded-3xl p-8 hover:border-[#468152]/60 transition-all duration-300 hover:shadow-2xl hover:shadow-[#468152]/20 hover:scale-105 backdrop-blur-xl ${
-              showFeatures ? 'animate-slide-up delay-200' : 'opacity-0'
-            }`}>
+            <div className={`group bg-gradient-to-br from-[#468152]/20 via-[#468152]/10 to-transparent border border-[#468152]/30 rounded-3xl p-8 hover:border-[#468152]/60 transition-all duration-300 hover:shadow-2xl hover:shadow-[#468152]/20 hover:scale-105 backdrop-blur-xl ${showFeatures ? 'animate-slide-up delay-200' : 'opacity-0'
+              }`}>
               <div className="bg-gradient-to-br from-[#468152] to-[#468152]/70 w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg shadow-[#468152]/30">
                 <Lightbulb className="w-7 h-7 text-white" />
               </div>
@@ -363,9 +359,8 @@ export default function LandingPage() {
             </div>
 
             {/* Feature 4 - Provas com IA */}
-            <div className={`group bg-gradient-to-br from-[#E2A43E]/20 via-[#E2A43E]/10 to-transparent border border-[#E2A43E]/30 rounded-3xl p-8 hover:border-[#E2A43E]/60 transition-all duration-300 hover:shadow-2xl hover:shadow-[#E2A43E]/20 hover:scale-105 backdrop-blur-xl ${
-              showFeatures ? 'animate-slide-up delay-300' : 'opacity-0'
-            }`}>
+            <div className={`group bg-gradient-to-br from-[#E2A43E]/20 via-[#E2A43E]/10 to-transparent border border-[#E2A43E]/30 rounded-3xl p-8 hover:border-[#E2A43E]/60 transition-all duration-300 hover:shadow-2xl hover:shadow-[#E2A43E]/20 hover:scale-105 backdrop-blur-xl ${showFeatures ? 'animate-slide-up delay-300' : 'opacity-0'
+              }`}>
               <div className="bg-gradient-to-br from-[#E2A43E] to-[#E2A43E]/70 w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg shadow-[#E2A43E]/30">
                 <Zap className="w-7 h-7 text-white" />
               </div>
@@ -376,9 +371,8 @@ export default function LandingPage() {
             </div>
 
             {/* Feature 5 - Questionários */}
-            <div className={`group bg-gradient-to-br from-[#468152]/20 via-[#468152]/10 to-transparent border border-[#468152]/30 rounded-3xl p-8 hover:border-[#468152]/60 transition-all duration-300 hover:shadow-2xl hover:shadow-[#468152]/20 hover:scale-105 backdrop-blur-xl ${
-              showFeatures ? 'animate-slide-up delay-400' : 'opacity-0'
-            }`}>
+            <div className={`group bg-gradient-to-br from-[#468152]/20 via-[#468152]/10 to-transparent border border-[#468152]/30 rounded-3xl p-8 hover:border-[#468152]/60 transition-all duration-300 hover:shadow-2xl hover:shadow-[#468152]/20 hover:scale-105 backdrop-blur-xl ${showFeatures ? 'animate-slide-up delay-400' : 'opacity-0'
+              }`}>
               <div className="bg-gradient-to-br from-[#468152] to-[#468152]/70 w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg shadow-[#468152]/30">
                 <FileText className="w-7 h-7 text-white" />
               </div>
@@ -389,9 +383,8 @@ export default function LandingPage() {
             </div>
 
             {/* Feature 6 - Comunidade */}
-            <div className={`group bg-gradient-to-br from-[#E2A43E]/20 via-[#E2A43E]/10 to-transparent border border-[#E2A43E]/30 rounded-3xl p-8 hover:border-[#E2A43E]/60 transition-all duration-300 hover:shadow-2xl hover:shadow-[#E2A43E]/20 hover:scale-105 backdrop-blur-xl ${
-              showFeatures ? 'animate-slide-up delay-500' : 'opacity-0'
-            }`}>
+            <div className={`group bg-gradient-to-br from-[#E2A43E]/20 via-[#E2A43E]/10 to-transparent border border-[#E2A43E]/30 rounded-3xl p-8 hover:border-[#E2A43E]/60 transition-all duration-300 hover:shadow-2xl hover:shadow-[#E2A43E]/20 hover:scale-105 backdrop-blur-xl ${showFeatures ? 'animate-slide-up delay-500' : 'opacity-0'
+              }`}>
               <div className="bg-gradient-to-br from-[#E2A43E] to-[#E2A43E]/70 w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg shadow-[#E2A43E]/30">
                 <MessageSquare className="w-7 h-7 text-white" />
               </div>
@@ -403,9 +396,8 @@ export default function LandingPage() {
           </div>
 
           {/* Banco de Questões Highlight */}
-          <div className={`mt-16 bg-gradient-to-br from-[#468152]/25 via-[#E2A43E]/15 to-[#468152]/10 border-2 border-[#468152]/40 rounded-3xl p-8 md:p-12 backdrop-blur-xl shadow-2xl shadow-[#468152]/15 ${
-            showFeatures ? 'animate-slide-up delay-600' : 'opacity-0'
-          }`}>
+          <div className={`mt-16 bg-gradient-to-br from-[#468152]/25 via-[#E2A43E]/15 to-[#468152]/10 border-2 border-[#468152]/40 rounded-3xl p-8 md:p-12 backdrop-blur-xl shadow-2xl shadow-[#468152]/15 ${showFeatures ? 'animate-slide-up delay-600' : 'opacity-0'
+            }`}>
             <div className="flex flex-col md:flex-row items-center gap-8">
               <div className="flex-shrink-0">
                 <div className="bg-gradient-to-br from-[#468152] to-[#E2A43E] w-20 h-20 rounded-2xl flex items-center justify-center shadow-2xl shadow-[#468152]/40">
@@ -447,9 +439,8 @@ export default function LandingPage() {
           </div>
 
           {/* CTA Section - Após Banco de Questões */}
-          <div className={`mt-16 text-center py-12 bg-gradient-to-r from-[#468152]/10 via-[#E2A43E]/10 to-[#468152]/10 rounded-3xl backdrop-blur-xl border border-[#468152]/20 ${
-            showFeatures ? 'animate-slide-up delay-700' : 'opacity-0'
-          }`}>
+          <div className={`mt-16 text-center py-12 bg-gradient-to-r from-[#468152]/10 via-[#E2A43E]/10 to-[#468152]/10 rounded-3xl backdrop-blur-xl border border-[#468152]/20 ${showFeatures ? 'animate-slide-up delay-700' : 'opacity-0'
+            }`}>
             <h3 className="font-heading text-2xl md:text-3xl font-bold mb-4 bg-gradient-to-r from-[#468152] to-[#E2A43E] bg-clip-text text-transparent">
               Pronto para começar sua jornada?
             </h3>
@@ -475,19 +466,18 @@ export default function LandingPage() {
 
           {/* Video Demo Section */}
           {videoEnabled && (
-            <div className={`bg-gradient-to-br from-[#468152]/20 via-[#E2A43E]/10 to-transparent border border-[#468152]/30 rounded-3xl p-8 md:p-12 backdrop-blur-xl shadow-2xl shadow-[#468152]/10 ${
-              showFeatures ? 'animate-slide-up delay-400' : 'opacity-0'
-            }`}>
+            <div className={`bg-gradient-to-br from-[#468152]/20 via-[#E2A43E]/10 to-transparent border border-[#468152]/30 rounded-3xl p-8 md:p-12 backdrop-blur-xl shadow-2xl shadow-[#468152]/10 ${showFeatures ? 'animate-slide-up delay-400' : 'opacity-0'
+              }`}>
               <h3 className="font-heading text-3xl font-bold text-center mb-8 bg-gradient-to-r from-[#468152] to-[#E2A43E] bg-clip-text text-transparent">Veja a Plataforma em Ação</h3>
               <div className="aspect-video bg-gradient-to-br from-black/40 to-black/60 rounded-2xl overflow-hidden flex items-center justify-center border border-[#468152]/20 backdrop-blur-sm">
-                <iframe 
-                  width="100%" 
-                  height="100%" 
+                <iframe
+                  width="100%"
+                  height="100%"
                   src={videoEmbedUrl}
-                  title="Demonstração da Plataforma" 
-                  frameBorder="0" 
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                  referrerPolicy="strict-origin-when-cross-origin" 
+                  title="Demonstração da Plataforma"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
                   allowFullScreen
                   className="w-full h-full"
                 ></iframe>
@@ -497,9 +487,8 @@ export default function LandingPage() {
 
           {/* CTA Section - Após Vídeo Demo */}
           {videoEnabled && (
-            <div className={`mt-16 text-center py-12 bg-gradient-to-r from-[#E2A43E]/10 via-[#468152]/10 to-[#E2A43E]/10 rounded-3xl backdrop-blur-xl border border-[#E2A43E]/20 ${
-              showFeatures ? 'animate-slide-up delay-500' : 'opacity-0'
-            }`}>
+            <div className={`mt-16 text-center py-12 bg-gradient-to-r from-[#E2A43E]/10 via-[#468152]/10 to-[#E2A43E]/10 rounded-3xl backdrop-blur-xl border border-[#E2A43E]/20 ${showFeatures ? 'animate-slide-up delay-500' : 'opacity-0'
+              }`}>
               <h3 className="font-heading text-2xl md:text-3xl font-bold mb-4 bg-gradient-to-r from-[#E2A43E] to-[#468152] bg-clip-text text-transparent">
                 Gostou do que viu?
               </h3>
@@ -649,7 +638,29 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="border-t border-border/50 py-8 px-4 bg-gradient-to-b from-transparent to-[#468152]/5">
         <div className="max-w-6xl mx-auto text-center text-muted-foreground">
-          <p>© 2025 DomineAqui. Todos os direitos reservados.</p>
+          <div className="flex items-center justify-center gap-6 mb-4">
+            <a
+              href="https://instagram.com/domineaqui.br"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-[#E1306C] transition-all hover:scale-110"
+              title="Instagram"
+            >
+              <Instagram size={22} />
+            </a>
+            <a
+              href="https://discord.gg/vdfHcvDdMw"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-[#5865F2] transition-all hover:scale-110"
+              title="Discord"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.29a.074.074 0 0 1 .077-.01c3.927 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.196.373.29a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.874.89.076.076 0 0 0-.041.106c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+              </svg>
+            </a>
+          </div>
+          <p>© {new Date().getFullYear()} DomineAqui. Todos os direitos reservados.</p>
           <p className="mt-2 text-sm">Seja o Foco. Seja a Referência.</p>
         </div>
       </footer>

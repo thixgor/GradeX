@@ -1,7 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
-  "regions": ["gru1"],
+  "regions": [
+    "gru1"
+  ],
   "functions": {
     "app/api/**/*.ts": {
       "maxDuration": 30
@@ -16,5 +18,29 @@
       "maxDuration": 60
     }
   },
-  "crons": []
+  "crons": [],
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "instagram.domineaqui.com.br"
+        }
+      ],
+      "destination": "https://instagram.com/domineaqui.br",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "discord.domineaqui.com.br"
+        }
+      ],
+      "destination": "https://discord.gg/vdfHcvDdMw",
+      "permanent": true
+    }
+  ]
 }
