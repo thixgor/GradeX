@@ -27,6 +27,7 @@ export async function GET(request: NextRequest) {
     // - Provas não ocultas públicas (isPersonalExam = false ou undefined)
     // - Suas próprias provas pessoais (isPersonalExam = true E createdBy = userId)
     query = {
+      isDeleted: { $ne: true }, // Extra safety filter
       $or: [
         {
           isHidden: false,
@@ -48,9 +49,9 @@ export async function GET(request: NextRequest) {
       .toArray()
 
     // Add cache headers to reduce serverless invocations
-    // Private cache (user-specific data) for 2 minutes
+    // Use low cache for list to ensure UI updates after deletions
     const headers = new Headers({
-      'Cache-Control': 'private, max-age=120, stale-while-revalidate=300',
+      'Cache-Control': 'no-store, max-age=0',
       'Content-Type': 'application/json',
     })
 

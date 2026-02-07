@@ -164,6 +164,7 @@ export default function AdminExamsPage() {
 
       showToastMessage('Prova deletada com sucesso!', 'success')
       loadExams()
+      router.refresh()
     } catch (error: any) {
       showToastMessage(error.message)
     }
@@ -181,6 +182,7 @@ export default function AdminExamsPage() {
       showToastMessage(data.message, 'success')
       setShowDeleteAllDialog(false)
       loadExams()
+      router.refresh()
     } catch (error: any) {
       showToastMessage(error.message)
       setShowDeleteAllDialog(false)

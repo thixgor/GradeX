@@ -24,6 +24,7 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
   const [scoringMethod, setScoringMethod] = useState<'tri' | 'normal'>('normal')
   const [loading, setLoading] = useState(true)
   const [isAdmin, setIsAdmin] = useState(false)
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
 
   useEffect(() => {
     checkAuth()
@@ -36,6 +37,7 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
       if (res.ok) {
         const data = await res.json()
         setIsAdmin(data.user.role === 'admin')
+        setCurrentUserId(data.user._id || data.user.id)
       }
     } catch (error) {
       // Silently fail
@@ -204,14 +206,14 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
                           {scoringMethod === 'tri' ? '/ 1000' : `/ ${exam.totalPoints}`}
                         </span>
                       </div>
-                      {isAdmin && (
+                      {(isAdmin || exam.createdBy === currentUserId || result.userId === currentUserId) && (
                         <div className="col-span-4 text-right">
                           <Button
                             size="sm"
                             variant="outline"
                             onClick={() => router.push(`/exam/${id}/user/${result.userId}`)}
                           >
-                            Ver Relatório
+                            {result.userId === currentUserId ? 'Ver Meu Relatório' : 'Ver Relatório'}
                           </Button>
                         </div>
                       )}
@@ -240,14 +242,14 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
                     <p className="text-3xl font-bold">
                       {scoringMethod === 'tri'
                         ? Math.round(
-                            (results as TRIResult[]).reduce((sum, r) => sum + r.triScore, 0) /
-                              results.length
-                          )
+                          (results as TRIResult[]).reduce((sum, r) => sum + r.triScore, 0) /
+                          results.length
+                        )
                         : Math.round(
-                            ((results as NormalResult[]).reduce((sum, r) => sum + r.score, 0) /
-                              results.length) *
-                              100
-                          ) / 100}
+                          ((results as NormalResult[]).reduce((sum, r) => sum + r.score, 0) /
+                            results.length) *
+                          100
+                        ) / 100}
                     </p>
                   </div>
 

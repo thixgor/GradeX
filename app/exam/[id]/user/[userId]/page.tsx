@@ -289,6 +289,49 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
                             </div>
                           )}
                         </div>
+
+                        {/* Feedback Comentado da IA */}
+                        {isExamFinished && (question as any).commentedFeedback?.explanations && (
+                          <div className="mt-4 bg-blue-50 dark:bg-blue-950 rounded-lg p-4 space-y-3 border border-blue-200 dark:border-blue-800">
+                            <h4 className="font-semibold text-sm text-blue-900 dark:text-blue-100 flex items-center gap-2">
+                              <span>🤖</span> Análise das Alternativas (IA):
+                            </h4>
+                            <div className="space-y-2">
+                              {Object.entries((question as any).commentedFeedback.explanations).map(([letter, explanation]) => {
+                                const isThisCorrect = letter === (question as any).commentedFeedback?.correctAlternative;
+                                return (
+                                  <div
+                                    key={letter}
+                                    className={`p-3 rounded border-l-4 ${isThisCorrect
+                                        ? 'border-l-green-500 bg-green-50/50 dark:bg-green-950/30'
+                                        : 'border-l-red-500 bg-red-50/50 dark:bg-red-950/30'
+                                      }`}
+                                  >
+                                    <p className={`text-sm font-semibold ${isThisCorrect
+                                        ? 'text-green-700 dark:text-green-300'
+                                        : 'text-red-700 dark:text-red-300'
+                                      }`}>
+                                      {letter}) {isThisCorrect ? '✓ Correta' : '✗ Incorreta'}
+                                    </p>
+                                    <p className="text-sm text-muted-foreground mt-1">
+                                      {explanation as string}
+                                    </p>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Explicação Geral */}
+                        {isExamFinished && question.explanation && (
+                          <div className="mt-3 bg-muted rounded-lg p-4 space-y-2">
+                            <h4 className="font-semibold text-sm">Explicação Geral:</h4>
+                            <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                              {question.explanation}
+                            </p>
+                          </div>
+                        )}
                       </div>
                     )
                   } else {
@@ -385,7 +428,7 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
             </CardContent>
           </Card>
         </div>
-      </main>
+      </main >
 
       <ToastAlert
         open={toastOpen}
@@ -393,6 +436,6 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
         message={toastMessage}
         type="error"
       />
-    </div>
+    </div >
   )
 }

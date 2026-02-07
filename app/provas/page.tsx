@@ -189,6 +189,7 @@ function ProvasContent() {
       if (res.ok) {
         setExams(exams.filter(e => e._id?.toString() !== examId))
         setDeleteConfirmation(null)
+        router.refresh()
       } else {
         const data = await res.json()
         throw new Error(data.error || 'Erro ao deletar prova')
@@ -260,13 +261,13 @@ function ProvasContent() {
           <div className="h-20 rounded-2xl skeleton-pulse" />
           {/* Skeleton stats */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            {[1,2,3,4].map(i => (
+            {[1, 2, 3, 4].map(i => (
               <div key={i} className="h-24 rounded-2xl skeleton-pulse" />
             ))}
           </div>
           {/* Skeleton cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            {[1,2,3].map(i => <ExamSkeleton key={i} />)}
+            {[1, 2, 3].map(i => <ExamSkeleton key={i} />)}
           </div>
         </div>
       </div>
@@ -405,11 +406,10 @@ function ProvasContent() {
                     <div className="p-5 space-y-3">
                       {/* Badges */}
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className={`inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-                          exam.isPersonalExam
+                        <span className={`inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full ${exam.isPersonalExam
                             ? 'bg-violet-500/10 text-violet-600 dark:text-violet-400'
                             : 'bg-[#468152]/10 text-[#468152]'
-                        }`}>
+                          }`}>
                           {exam.isPersonalExam ? (
                             <><Sparkles className="h-2.5 w-2.5" /> Pessoal</>
                           ) : (

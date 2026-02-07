@@ -55,10 +55,9 @@ export async function PUT(
   try {
     const { id } = await params
     const session = await getSession()
-    if (!session || session.role !== 'admin') {
-      return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
+    if (!session) {
+      return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
     }
-
     const body = await request.json()
     const db = await getDb()
     const examsCollection = db.collection<Exam>('exams')
@@ -68,8 +67,11 @@ export async function PUT(
       return NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 })
     }
 
-    // Apenas o criador pode editar
-    if (exam.createdBy !== session.userId) {
+    // Apenas admin ou o criador da prova pode editar/deletar
+    const isAdmin = session.role === 'admin'
+    const isCreator = exam.createdBy === session.userId
+
+    if (!isAdmin && !isCreator) {
       return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
     }
 
@@ -153,7 +155,7 @@ export async function DELETE(
     // - Criador pode deletar sua própria prova (pessoal ou geral)
     const isAdmin = session.role === 'admin'
     const isCreator = exam.createdBy === session.userId
-    
+
     if (!isAdmin && !isCreator) {
       return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
     }

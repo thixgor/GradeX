@@ -71,6 +71,10 @@ export async function GET(request: NextRequest) {
       bankAccuracyRate: questionsAnsweredBank > 0
         ? Math.round((questionsCorrectBank / questionsAnsweredBank) * 100)
         : 0
+    }, {
+      headers: {
+        'Cache-Control': 'no-store, max-age=0'
+      }
     })
   } catch (error) {
     console.error('Get user statistics error:', error)
