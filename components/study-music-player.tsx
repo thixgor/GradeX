@@ -13,7 +13,8 @@ import {
     Gauge,
     Check,
     Music,
-    Loader2
+    Loader2,
+    SkipForward
 } from 'lucide-react'
 
 interface StudyPlaylist {
@@ -327,6 +328,11 @@ export function StudyMusicPlayer() {
         }
     }
 
+    const handleNextTrack = () => {
+        if (!playerRef.current) return
+        playerRef.current.nextVideo()
+    }
+
     const handlePlaylistChange = (playlist: StudyPlaylist) => {
         setState(prev => ({
             ...prev,
@@ -541,6 +547,16 @@ export function StudyMusicPlayer() {
                                             ) : (
                                                 <Play className="w-6 h-6 text-white ml-0.5" fill="white" />
                                             )}
+                                        </button>
+
+                                        {/* Next Track Button */}
+                                        <button
+                                            onClick={handleNextTrack}
+                                            disabled={!playerReady}
+                                            className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 transition-all text-white/70 hover:text-white disabled:opacity-50"
+                                            title="Próxima música"
+                                        >
+                                            <SkipForward className="w-5 h-5" />
                                         </button>
 
                                         {/* Playback Rate */}
