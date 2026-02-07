@@ -151,6 +151,7 @@ export function Sidebar({
   // Bubble tracking state
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   const [isInNav, setIsInNav] = useState(false)
+  const mouseInsideRef = useRef(false) // ref mirror — survives re-renders
   // Mobile: track touch drag
   const [isTouching, setIsTouching] = useState(false)
 
@@ -196,8 +197,12 @@ export function Sidebar({
   }
 
   // ─── Mouse handlers (desktop) ───
-  const handleNavMouseEnter = useCallback(() => setIsInNav(true), [])
+  const handleNavMouseEnter = useCallback(() => {
+    mouseInsideRef.current = true
+    setIsInNav(true)
+  }, [])
   const handleNavMouseLeave = useCallback(() => {
+    mouseInsideRef.current = false
     setIsInNav(false)
     setHoveredIndex(null)
   }, [])
@@ -236,6 +241,24 @@ export function Sidebar({
     setIsTouching(false)
     setHoveredIndex(null)
   }, [hoveredIndex])
+
+  // ─── Re-establish bubble after navigation ───
+  // When pathname changes (client-side navigation), the bubble may vanish
+  // because React re-renders without re-firing mouseenter. We use the ref
+  // to detect if the mouse is still inside and show the active item's bubble.
+  useEffect(() => {
+    if (!mouseInsideRef.current || !navRef.current) return
+    // Mouse is still inside nav after navigation — ensure bubble stays visible
+    setIsInNav(true)
+
+    // Find the newly active item and highlight it
+    const allItems = [...mainNavItems, ...secondaryNavItems]
+    const activeIdx = allItems.findIndex(item => isActive(item.href))
+    if (activeIdx !== -1) {
+      setHoveredIndex(activeIdx)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname])
 
   const bubbleVisible = isInNav || isTouching
 
