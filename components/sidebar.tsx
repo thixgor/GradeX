@@ -2,7 +2,7 @@
 
 import { useRouter, usePathname } from 'next/navigation'
 import { useRef, useState, useCallback, useEffect } from 'react'
-import { motion, useMotionValue, useSpring, AnimatePresence } from 'framer-motion'
+import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/logo'
 import { cn } from '@/lib/utils'
@@ -90,9 +90,11 @@ function FluidGlassBubble({
 
     const navRect = navEl.getBoundingClientRect()
     const itemRect = item.getBoundingClientRect()
+    // Account for scroll position inside the nav container
+    const scrollTop = navEl.scrollTop
 
     const newTarget = {
-      top: itemRect.top - navRect.top,
+      top: itemRect.top - navRect.top + scrollTop,
       height: itemRect.height,
       width: itemRect.width,
     }
@@ -112,15 +114,17 @@ function FluidGlassBubble({
     }
   }, [hoveredIndex, isInNav, scaleX])
 
-  // Light position follows cursor within the bubble
-  const lightY = useSpring(useMotionValue(0.5), { stiffness: 200, damping: 25 })
+  // Light position follows cursor within the bubble (reactive via useTransform)
+  const lightYValue = useMotionValue(0.5)
+  const lightY = useSpring(lightYValue, { stiffness: 200, damping: 25 })
+  const lightTop = useTransform(lightY, (v) => `${v * 100}%`)
 
   useEffect(() => {
     if (target && mouseY > 0) {
       const relativeY = (mouseY - target.top) / target.height
-      lightY.set(Math.max(0, Math.min(1, relativeY)))
+      lightYValue.set(Math.max(0, Math.min(1, relativeY)))
     }
-  }, [mouseY, target, lightY])
+  }, [mouseY, target, lightYValue])
 
   return (
     <AnimatePresence>
@@ -153,9 +157,7 @@ function FluidGlassBubble({
           {/* Cursor-reactive light spot */}
           <motion.div
             className="liquid-glass-light-spot"
-            style={{
-              top: lightY.get() ? `${lightY.get() * 100}%` : '50%',
-            }}
+            style={{ top: lightTop }}
           />
         </motion.div>
       )}
