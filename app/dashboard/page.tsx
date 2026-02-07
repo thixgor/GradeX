@@ -395,8 +395,8 @@ function DashboardContent() {
                 transition={{ duration: 0.4, delay: 0.1 + index * 0.08 }}
                 className={`
                   glass-stat stat-card-glow rounded-2xl p-4 sm:p-5
-                  hover:shadow-lg transition-all duration-300
-                  hover:-translate-y-0.5 cursor-default group
+                  hover-glow-brand hover-lift
+                  transition-all duration-300 cursor-default group
                 `}
               >
                 <div className="flex items-start justify-between mb-3">
@@ -466,9 +466,8 @@ function DashboardContent() {
                   onClick={() => router.push(action.href)}
                   className={`
                     glass-action group relative p-5 sm:p-6 rounded-2xl text-left
-                    transition-all duration-300 hover:shadow-xl
-                    hover:-translate-y-1 hover:scale-[1.02]
-                    active:scale-[0.98]
+                    transition-all duration-300 hover-glow-green hover-lift
+                    hover:scale-[1.02] active:scale-[0.98]
                     bg-gradient-to-br ${action.gradient} ${action.hoverGradient}
                   `}
                 >
@@ -540,8 +539,8 @@ function DashboardContent() {
                   onClick={() => router.push(`/exam/${exam._id}`)}
                   className="
                     glass-stat min-w-[260px] sm:min-w-[300px] flex-shrink-0 p-5 rounded-2xl
-                    cursor-pointer group hover:shadow-lg transition-all duration-300
-                    hover:-translate-y-0.5
+                    cursor-pointer group hover-glow-green hover-lift
+                    transition-all duration-300
                   "
                 >
                   <div className="flex items-start justify-between mb-3">
@@ -628,7 +627,8 @@ function DashboardContent() {
                   transition={{ duration: 0.35, delay: 0.75 + index * 0.08 }}
                   className="
                     glass-stat p-5 rounded-2xl
-                    hover:shadow-md transition-all duration-300
+                    hover-glow-orange hover-lift
+                    transition-all duration-300
                     group cursor-default
                   "
                 >

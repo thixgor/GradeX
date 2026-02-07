@@ -11,7 +11,24 @@ import { ExamGroup } from '@/components/exam-group'
 import { Exam } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Clock, Calendar, FileText, Info, Sparkles, Users, Plus } from 'lucide-react'
+import { motion } from 'framer-motion'
+import {
+  Clock,
+  Calendar,
+  FileText,
+  Info,
+  Sparkles,
+  Users,
+  Plus,
+  Trophy,
+  CheckCircle2,
+  BarChart3,
+  ArrowRight,
+  ChevronRight,
+  AlertCircle,
+  Play,
+  Eye,
+} from 'lucide-react'
 
 interface Group {
   _id: string
@@ -21,6 +38,25 @@ interface Group {
   icon?: string
   type: 'personal' | 'general'
   createdBy: string
+}
+
+// ─── Skeleton Loader ──────────────────────────────────────────
+function ExamSkeleton() {
+  return (
+    <div className="glass-page-card rounded-2xl p-5 space-y-4 animate-pulse">
+      <div className="flex items-center gap-3">
+        <div className="h-5 w-16 rounded-full skeleton-pulse" />
+        <div className="h-4 w-20 rounded-full skeleton-pulse" />
+      </div>
+      <div className="h-5 w-3/4 rounded skeleton-pulse" />
+      <div className="h-4 w-1/2 rounded skeleton-pulse" />
+      <div className="flex gap-4">
+        <div className="h-4 w-24 rounded skeleton-pulse" />
+        <div className="h-4 w-20 rounded skeleton-pulse" />
+      </div>
+      <div className="h-10 w-full rounded-xl skeleton-pulse" />
+    </div>
+  )
 }
 
 function ProvasContent() {
@@ -171,7 +207,7 @@ function ProvasContent() {
     const endTime = new Date(exam.endTime)
 
     if (now > endTime) {
-      return { text: 'Finalizada', color: 'text-red-600', canTake: false }
+      return { text: 'Finalizada', color: 'text-red-500', bgColor: 'bg-red-500/10', dotColor: 'bg-red-500', canTake: false }
     }
 
     if (exam.gatesOpen && exam.gatesClose) {
@@ -179,48 +215,83 @@ function ProvasContent() {
       const gatesClose = new Date(exam.gatesClose)
 
       if (now < gatesOpen) {
-        return { text: 'Portões ainda não abriram', color: 'text-gray-500', canTake: false }
+        return { text: 'Portoes fechados', color: 'text-muted-foreground', bgColor: 'bg-muted', dotColor: 'bg-gray-400', canTake: false }
       }
 
       if (now > gatesClose) {
-        return { text: 'Portões fechados', color: 'text-gray-500', canTake: false }
+        return { text: 'Portoes fechados', color: 'text-muted-foreground', bgColor: 'bg-muted', dotColor: 'bg-gray-400', canTake: false }
       }
 
       if (now >= startTime && now <= endTime) {
-        return { text: 'Disponível', color: 'text-green-600', canTake: true }
+        return { text: 'Disponivel', color: 'text-emerald-600 dark:text-emerald-400', bgColor: 'bg-emerald-500/10', dotColor: 'bg-emerald-500', canTake: true }
       } else if (now < startTime) {
-        return { text: 'Aguardando início', color: 'text-blue-600', canTake: true }
+        return { text: 'Aguardando', color: 'text-blue-600 dark:text-blue-400', bgColor: 'bg-blue-500/10', dotColor: 'bg-blue-500', canTake: true }
       }
     }
 
     if (now < startTime) {
-      return { text: 'Aguardando início', color: 'text-yellow-600', canTake: false }
+      return { text: 'Aguardando', color: 'text-amber-600 dark:text-amber-400', bgColor: 'bg-amber-500/10', dotColor: 'bg-amber-500', canTake: false }
     }
 
     if (now >= startTime && now <= endTime) {
-      return { text: 'Disponível', color: 'text-green-600', canTake: true }
+      return { text: 'Disponivel', color: 'text-emerald-600 dark:text-emerald-400', bgColor: 'bg-emerald-500/10', dotColor: 'bg-emerald-500', canTake: true }
     }
 
-    return { text: 'Indisponível', color: 'text-gray-500', canTake: false }
+    return { text: 'Indisponivel', color: 'text-muted-foreground', bgColor: 'bg-muted', dotColor: 'bg-gray-400', canTake: false }
   }
 
-  if (loading) {
-    return <PageLoading variant="fullscreen" />
-  }
+  // ─── Computed Stats ──────────────────────────────────────────
+  const completedExams = exams.filter(e => new Date() > new Date(e.endTime)).length
+  const availableExams = exams.filter(e => {
+    const s = getExamStatus(e)
+    return s.canTake
+  }).length
+  const personalExams = exams.filter(e => e.isPersonalExam).length
+  const generalExams = exams.filter(e => !e.isPersonalExam).length
 
   const ungroupedExams = exams.filter(e => !e.groupId)
 
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+        <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+          {/* Skeleton header */}
+          <div className="h-20 rounded-2xl skeleton-pulse" />
+          {/* Skeleton stats */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            {[1,2,3,4].map(i => (
+              <div key={i} className="h-24 rounded-2xl skeleton-pulse" />
+            ))}
+          </div>
+          {/* Skeleton cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {[1,2,3].map(i => <ExamSkeleton key={i} />)}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted p-4 sm:p-6 lg:p-8">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+      <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+
+        {/* ═══════════════════════════════════════════════════
+            HEADER
+           ═══════════════════════════════════════════════════ */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+        >
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold">Provas</h1>
-            <p className="text-muted-foreground mt-1">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Provas</h1>
+            <p className="text-sm text-muted-foreground mt-1">
               {exams.length === 0
-                ? 'Nenhuma prova disponível no momento'
-                : `${exams.length} ${exams.length === 1 ? 'prova disponível' : 'provas disponíveis'}`}
+                ? 'Nenhuma prova disponivel no momento'
+                : `${exams.length} ${exams.length === 1 ? 'prova disponivel' : 'provas disponiveis'}`}
             </p>
           </div>
 
@@ -229,43 +300,88 @@ function ProvasContent() {
               variant="outline"
               size="sm"
               onClick={() => setShowExamsInfo(true)}
+              className="hover-glow-green rounded-xl text-xs"
             >
-              <Info className="h-4 w-4 mr-2" />
+              <Info className="h-3.5 w-3.5 mr-1.5" />
               Sobre as Provas
             </Button>
             <Button
               onClick={handleCreateExam}
               disabled={tierLimitExceeded}
               size="sm"
-              className="bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90 text-white"
+              className="btn-brand-glow text-white rounded-xl text-xs font-semibold"
             >
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="h-3.5 w-3.5 mr-1.5" />
               Nova Prova
             </Button>
           </div>
-        </div>
-      </div>
+        </motion.div>
 
-      {/* Exams Grid */}
-      <div className="space-y-8">
-        {/* Ungrouped Exams */}
+        {/* ═══════════════════════════════════════════════════
+            DASHBOARD STATS
+           ═══════════════════════════════════════════════════ */}
+        <section className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {[
+            { label: 'Disponiveis', value: availableExams, icon: Play, color: '#468152', iconBg: 'bg-emerald-500/10 dark:bg-emerald-500/20' },
+            { label: 'Finalizadas', value: completedExams, icon: CheckCircle2, color: '#E2A43E', iconBg: 'bg-amber-500/10 dark:bg-amber-500/20' },
+            { label: 'Pessoais', value: personalExams, icon: Sparkles, color: '#8b5cf6', iconBg: 'bg-violet-500/10 dark:bg-violet-500/20' },
+            { label: 'Gerais', value: generalExams, icon: Users, color: '#3b82f6', iconBg: 'bg-blue-500/10 dark:bg-blue-500/20' },
+          ].map((stat, index) => {
+            const Icon = stat.icon
+            return (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, delay: 0.05 + index * 0.06 }}
+                className="glass-stat rounded-2xl p-4 hover-glow-brand hover-lift transition-all duration-300 group cursor-default"
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`p-2 rounded-xl ${stat.iconBg} group-hover:scale-110 transition-transform duration-300`}>
+                    <Icon className="h-4 w-4" style={{ color: stat.color }} />
+                  </div>
+                  <div>
+                    <p className="text-xl sm:text-2xl font-bold tracking-tight">{stat.value}</p>
+                    <p className="text-[11px] text-muted-foreground">{stat.label}</p>
+                  </div>
+                </div>
+              </motion.div>
+            )
+          })}
+        </section>
+
+        {/* ═══════════════════════════════════════════════════
+            UNGROUPED EXAMS (Main exams)
+           ═══════════════════════════════════════════════════ */}
         {ungroupedExams.length > 0 && (
-          <div>
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <FileText className="h-5 w-5 text-muted-foreground" />
-              Provas Principais
-            </h2>
+          <motion.section
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.3 }}
+          >
+            <div className="flex items-center gap-2 mb-4">
+              <FileText className="h-4 w-4 text-muted-foreground" />
+              <h2 className="text-lg font-semibold tracking-tight">Suas Provas</h2>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              {ungroupedExams.map((exam) => {
+              {ungroupedExams.map((exam, index) => {
                 const status = getExamStatus(exam)
 
                 return (
-                  <Card
+                  <motion.div
                     key={exam._id?.toString()}
-                    className={`group hover:shadow-lg transition-all duration-200 cursor-pointer overflow-hidden border-l-4 ${exam.isPersonalExam
-                      ? 'border-l-purple-500 dark:border-l-purple-400'
-                      : 'border-l-[#468152] dark:border-l-[#468152]'
-                      }`}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.35, delay: 0.35 + index * 0.05 }}
+                    className={`
+                      glass-page-card rounded-2xl overflow-hidden group cursor-pointer
+                      hover-glow-green hover-lift transition-all duration-300
+                      border-l-[3px] ${exam.isPersonalExam
+                        ? 'border-l-violet-500'
+                        : 'border-l-[#468152]'
+                      }
+                    `}
                     onContextMenu={(e) => handleExamContextMenu(exam, e)}
                     onClick={() => {
                       if (status.canTake) {
@@ -275,80 +391,100 @@ function ProvasContent() {
                       }
                     }}
                   >
+                    {/* Cover Image */}
                     {exam.coverImage && (
-                      <div className="h-40 overflow-hidden">
+                      <div className="h-36 overflow-hidden">
                         <img
                           src={exam.coverImage}
                           alt={exam.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       </div>
                     )}
 
-                    <CardHeader className="pb-2">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1 flex-wrap">
-                            <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${exam.isPersonalExam
-                              ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300'
-                              : 'bg-[#468152]/10 text-[#468152] dark:bg-[#468152]/20'
-                              }`}>
-                              {exam.isPersonalExam ? (
-                                <><Sparkles className="h-3 w-3" /> Pessoal</>
-                              ) : (
-                                <><Users className="h-3 w-3" /> Geral</>
-                              )}
-                            </span>
-                            <span className={`text-xs font-medium ${status.color}`}>
-                              {status.text}
-                            </span>
-                          </div>
-                          <CardTitle className="text-base line-clamp-2">{exam.title}</CardTitle>
-                        </div>
+                    <div className="p-5 space-y-3">
+                      {/* Badges */}
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className={`inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                          exam.isPersonalExam
+                            ? 'bg-violet-500/10 text-violet-600 dark:text-violet-400'
+                            : 'bg-[#468152]/10 text-[#468152]'
+                        }`}>
+                          {exam.isPersonalExam ? (
+                            <><Sparkles className="h-2.5 w-2.5" /> Pessoal</>
+                          ) : (
+                            <><Users className="h-2.5 w-2.5" /> Geral</>
+                          )}
+                        </span>
+                        <span className={`inline-flex items-center gap-1.5 text-[10px] font-medium px-2 py-0.5 rounded-full ${status.bgColor}`}>
+                          <span className={`h-1.5 w-1.5 rounded-full ${status.dotColor}`} />
+                          <span className={status.color}>{status.text}</span>
+                        </span>
                       </div>
-                      {exam.description && (
-                        <CardDescription className="line-clamp-2 text-sm">
-                          {exam.description}
-                        </CardDescription>
-                      )}
-                    </CardHeader>
 
-                    <CardContent className="pt-0">
-                      <div className="flex flex-wrap gap-3 text-xs text-muted-foreground mb-4">
+                      {/* Title */}
+                      <h3 className="font-semibold text-sm sm:text-base line-clamp-2 group-hover:text-primary transition-colors">
+                        {exam.title}
+                      </h3>
+
+                      {exam.description && (
+                        <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                          {exam.description}
+                        </p>
+                      )}
+
+                      {/* Meta info */}
+                      <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
                         <div className="flex items-center gap-1">
-                          <FileText className="h-3.5 w-3.5" />
-                          <span>{exam.numberOfQuestions} questões</span>
+                          <FileText className="h-3 w-3" />
+                          <span>{exam.numberOfQuestions} questoes</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <Clock className="h-3.5 w-3.5" />
+                          <BarChart3 className="h-3 w-3" />
                           <span>
                             {exam.scoringMethod === 'tri' ? 'TRI' : `${exam.totalPoints} pts`}
                           </span>
                         </div>
                       </div>
 
-                      <div className="text-xs text-muted-foreground border-t pt-3 space-y-1">
-                        <div className="flex items-center gap-2">
-                          <Calendar className="h-3.5 w-3.5" />
-                          <span>Início: {formatDate(exam.startTime)}</span>
+                      {/* Dates */}
+                      <div className="text-[11px] text-muted-foreground/70 space-y-0.5 pt-2 border-t border-border/50">
+                        <div className="flex items-center gap-1.5">
+                          <Calendar className="h-3 w-3" />
+                          <span>Inicio: {formatDate(exam.startTime)}</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Calendar className="h-3.5 w-3.5" />
+                        <div className="flex items-center gap-1.5">
+                          <Clock className="h-3 w-3" />
                           <span>Fim: {formatDate(exam.endTime)}</span>
                         </div>
                       </div>
 
-                      <div className="mt-4 flex gap-2">
+                      {/* CTA */}
+                      <div className="flex gap-2 pt-1">
                         {status.canTake ? (
-                          <Button className="flex-1" size="sm">
+                          <Button
+                            className="flex-1 btn-brand-glow text-white rounded-xl text-xs font-semibold h-9"
+                            size="sm"
+                          >
+                            <Play className="h-3.5 w-3.5 mr-1.5" />
                             {status.text.includes('Aguardando') ? 'Entrar na Sala' : 'Realizar Prova'}
                           </Button>
                         ) : new Date() > new Date(exam.endTime) ? (
-                          <Button className="flex-1" variant="outline" size="sm">
+                          <Button
+                            className="flex-1 rounded-xl text-xs h-9"
+                            variant="outline"
+                            size="sm"
+                          >
+                            <Eye className="h-3.5 w-3.5 mr-1.5" />
                             Ver Resultados
                           </Button>
                         ) : (
-                          <Button className="flex-1" variant="secondary" size="sm" disabled>
+                          <Button
+                            className="flex-1 rounded-xl text-xs h-9"
+                            variant="secondary"
+                            size="sm"
+                            disabled
+                          >
                             {status.text}
                           </Button>
                         )}
@@ -357,6 +493,7 @@ function ProvasContent() {
                           <Button
                             variant="destructive"
                             size="sm"
+                            className="rounded-xl text-xs h-9"
                             onClick={(e) => {
                               e.stopPropagation()
                               setDeleteConfirmation({
@@ -369,15 +506,17 @@ function ProvasContent() {
                           </Button>
                         )}
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </motion.div>
                 )
               })}
             </div>
-          </div>
+          </motion.section>
         )}
 
-        {/* Grouped Exams */}
+        {/* ═══════════════════════════════════════════════════
+            GROUPED EXAMS
+           ═══════════════════════════════════════════════════ */}
         {groups.map((group) => {
           const groupExams = exams.filter(e => e.groupId === group._id)
 
@@ -402,21 +541,32 @@ function ProvasContent() {
           )
         })}
 
-        {/* Empty State */}
+        {/* ═══════════════════════════════════════════════════
+            EMPTY STATE
+           ═══════════════════════════════════════════════════ */}
         {exams.length === 0 && (
-          <div className="text-center py-16">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-muted mb-4">
-              <FileText className="h-8 w-8 text-muted-foreground" />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+            className="text-center py-16"
+          >
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#468152]/10 mb-4">
+              <FileText className="h-8 w-8 text-[#468152]" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">Nenhuma prova disponível</h3>
-            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-              Crie sua primeira prova pessoal com questões geradas por IA ou aguarde provas gerais.
+            <h3 className="text-lg font-semibold mb-2">Nenhuma prova disponivel</h3>
+            <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto leading-relaxed">
+              Crie sua primeira prova pessoal com questoes geradas por IA ou aguarde provas gerais.
             </p>
-            <Button onClick={handleCreateExam} disabled={tierLimitExceeded}>
+            <Button
+              onClick={handleCreateExam}
+              disabled={tierLimitExceeded}
+              className="btn-brand-glow text-white rounded-xl"
+            >
               <Plus className="h-4 w-4 mr-2" />
               Criar Prova
             </Button>
-          </div>
+          </motion.div>
         )}
       </div>
 
@@ -444,47 +594,52 @@ function ProvasContent() {
       <Dialog open={showExamsInfo} onOpenChange={setShowExamsInfo}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>O que são essas Provas?</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              <div className="p-2 rounded-xl bg-[#468152]/10">
+                <Info className="h-5 w-5 text-[#468152]" />
+              </div>
+              O que sao essas Provas?
+            </DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4 text-sm">
-            <p>
-              Na DomineAqui, você treina do jeito certo — como se estivesse no dia da prova.
+            <p className="text-muted-foreground">
+              Na DomineAqui, voce treina do jeito certo — como se estivesse no dia da prova.
             </p>
 
             <div className="space-y-2">
-              <div className="flex items-start gap-3 p-3 rounded-lg bg-[#468152]/10 border border-[#468152]/20">
-                <Users className="h-5 w-5 text-[#468152] mt-0.5" />
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-[#468152]/5 border border-[#468152]/15 hover-glow-green transition-all">
+                <Users className="h-5 w-5 text-[#468152] mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="font-semibold text-[#468152]">Provas Gerais</p>
-                  <p className="text-muted-foreground">
-                    Elaboradas pela equipe DomineAqui, seguindo o padrão das provas reais. Gabarito liberado após o término.
+                  <p className="text-muted-foreground text-xs mt-1">
+                    Elaboradas pela equipe DomineAqui, seguindo o padrao das provas reais. Gabarito liberado apos o termino.
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 p-3 rounded-lg bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800">
-                <Sparkles className="h-5 w-5 text-purple-600 dark:text-purple-400 mt-0.5" />
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-violet-500/5 border border-violet-500/15 hover-glow-brand transition-all">
+                <Sparkles className="h-5 w-5 text-violet-600 dark:text-violet-400 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="font-semibold text-purple-700 dark:text-purple-300">Provas Pessoais</p>
-                  <p className="text-muted-foreground">
-                    Crie suas próprias provas com IA, focando nos conteúdos que você precisa dominar.
+                  <p className="font-semibold text-violet-700 dark:text-violet-300">Provas Pessoais</p>
+                  <p className="text-muted-foreground text-xs mt-1">
+                    Crie suas proprias provas com IA, focando nos conteudos que voce precisa dominar.
                   </p>
                 </div>
               </div>
             </div>
 
-            <p className="text-muted-foreground">
-              Treine com foco, estratégia e controle de tempo. Simule, analise e evolua de forma inteligente.
+            <p className="text-muted-foreground text-xs">
+              Treine com foco, estrategia e controle de tempo. Simule, analise e evolua de forma inteligente.
             </p>
 
-            <p className="font-semibold text-primary">
-              DomineAqui — Seja o Foco, Seja a Referência
+            <p className="font-semibold text-primary text-xs">
+              DomineAqui — Seja o Foco, Seja a Referencia
             </p>
           </div>
 
           <DialogFooter>
-            <Button onClick={() => setShowExamsInfo(false)}>Entendi</Button>
+            <Button onClick={() => setShowExamsInfo(false)} className="rounded-xl">Entendi</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -492,25 +647,34 @@ function ProvasContent() {
       {/* Delete Confirmation Modal */}
       {deleteConfirmation && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <Card className="max-w-md w-full shadow-2xl">
-            <CardHeader>
-              <CardTitle className="text-red-600 dark:text-red-400">
-                Deletar Prova
-              </CardTitle>
-              <CardDescription>
-                Tem certeza que deseja deletar esta prova?
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="bg-muted rounded-lg p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="max-w-md w-full glass-page-card rounded-2xl overflow-hidden shadow-2xl"
+          >
+            <div className="p-6 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-red-500/10">
+                  <AlertCircle className="h-5 w-5 text-red-500" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-red-600 dark:text-red-400">Deletar Prova</h3>
+                  <p className="text-xs text-muted-foreground">Esta acao e irreversivel</p>
+                </div>
+              </div>
+
+              <div className="bg-muted/50 rounded-xl p-4">
                 <p className="font-semibold text-sm">{deleteConfirmation.examTitle}</p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Esta ação é irreversível. Todas as submissões relacionadas também serão deletadas.
+                  Todas as submissoes relacionadas tambem serao deletadas.
                 </p>
               </div>
+
               <div className="flex gap-2 justify-end">
                 <Button
                   variant="outline"
+                  size="sm"
+                  className="rounded-xl"
                   onClick={() => setDeleteConfirmation(null)}
                   disabled={isDeleting}
                 >
@@ -518,14 +682,16 @@ function ProvasContent() {
                 </Button>
                 <Button
                   variant="destructive"
+                  size="sm"
+                  className="rounded-xl"
                   onClick={() => handleDeleteExam(deleteConfirmation.examId)}
                   disabled={isDeleting}
                 >
                   {isDeleting ? 'Deletando...' : 'Deletar'}
                 </Button>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </motion.div>
         </div>
       )}
     </div>

@@ -549,84 +549,99 @@ export default function BancoQuestoesPage() {
 
   if (loading) {
     return (
-      <AppShell headerTitle="Banco de Questões">
-        <PageLoading variant="default" />
+      <AppShell headerTitle="Banco de Questoes">
+        <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+          <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+            <div className="h-12 w-64 rounded-xl skeleton-pulse" />
+            <div className="grid gap-3 md:grid-cols-4">
+              {[1,2,3,4].map(i => <div key={i} className="h-24 rounded-2xl skeleton-pulse" />)}
+            </div>
+            <div className="h-64 rounded-2xl skeleton-pulse" />
+            <div className="space-y-3">
+              {[1,2,3].map(i => <div key={i} className="h-28 rounded-2xl skeleton-pulse" />)}
+            </div>
+          </div>
+        </div>
       </AppShell>
     )
   }
 
-  // Modal de seletor de período para usuários gratuitos
+  // Modal de seletor de periodo para usuarios gratuitos
   if (showPeriodSelector) {
     return (
-      <AppShell headerTitle="Banco de Questões">
-        <div className="mx-auto w-full max-w-2xl px-4 py-12">
-          <Card>
-            <CardHeader className="text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500">
-                <GraduationCap className="h-8 w-8 text-white" />
+      <AppShell headerTitle="Banco de Questoes">
+        <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+          <div className="mx-auto w-full max-w-2xl px-4 py-12">
+            <div className="glass-page-card rounded-2xl overflow-hidden">
+              <div className="p-8 text-center space-y-4">
+                <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#468152]/20 to-[#E2A43E]/20">
+                  <GraduationCap className="h-8 w-8 text-[#468152]" />
+                </div>
+                <h2 className="text-2xl font-bold tracking-tight">Banco de Questoes Gratuito</h2>
+                <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                  No plano Gratuito, voce pode ver 5 questoes por periodo.
+                  Selecione o periodo do AFYA que voce esta cursando:
+                </p>
               </div>
-              <CardTitle className="text-2xl">Banco de Questões Gratuito</CardTitle>
-              <CardDescription className="text-base">
-                Olá! No plano Gratuito, você pode ver 5 questões por período.
-                Selecione o período do AFYA que você está cursando:
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="periodo-select" className="text-base font-semibold">
-                  Qual período você está?
-                </Label>
-                <Select
-                  value={selectedPeriodo}
-                  onValueChange={handleSelectPeriodo}
-                  disabled={loadingPeriodo}
-                >
-                  <SelectTrigger id="periodo-select" className="h-12 text-base">
-                    <SelectValue placeholder="Selecione seu período (1° ao 5°)" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {periodos.filter(p => p.nome.includes('°') || p.nome.includes('º')).map((periodo) => (
-                      <SelectItem key={periodo._id?.toString()} value={periodo._id?.toString() || ''}>
-                        {periodo.nome}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="p-8 pt-0 space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="periodo-select" className="text-base font-semibold">
+                    Qual periodo voce esta?
+                  </Label>
+                  <Select
+                    value={selectedPeriodo}
+                    onValueChange={handleSelectPeriodo}
+                    disabled={loadingPeriodo}
+                  >
+                    <SelectTrigger id="periodo-select" className="h-12 text-base rounded-xl">
+                      <SelectValue placeholder="Selecione seu periodo (1 ao 5)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {periodos.filter(p => p.nome.includes('°') || p.nome.includes('º')).map((periodo) => (
+                        <SelectItem key={periodo._id?.toString()} value={periodo._id?.toString() || ''}>
+                          {periodo.nome}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {periodoError && (
+                  <Alert variant="destructive">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertTitle>Erro</AlertTitle>
+                    <AlertDescription>{periodoError}</AlertDescription>
+                  </Alert>
+                )}
+
+                {loadingPeriodo && (
+                  <PageLoading variant="minimal" message="Carregando questoes..." />
+                )}
+
+                <div className="space-y-3 pt-4">
+                  <div className="glass-stat rounded-xl p-4 flex items-start gap-3">
+                    <Sparkles className="h-4 w-4 text-[#E2A43E] mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-semibold">Sabe que voce pode ter mais?</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Faca upgrade para Premium e tenha acesso a mais de 1.000 questoes de Medicina,
+                        com filtros avancados e criacao de listas personalizadas!
+                      </p>
+                    </div>
+                  </div>
+
+                  <Button
+                    onClick={() => router.push('/buy')}
+                    className="w-full btn-brand-glow text-white rounded-xl"
+                    size="lg"
+                  >
+                    <Sparkles className="h-5 w-5 mr-2" />
+                    Fazer Upgrade para Premium
+                  </Button>
+                </div>
               </div>
-
-              {periodoError && (
-                <Alert variant="destructive">
-                  <AlertTriangle className="h-4 w-4" />
-                  <AlertTitle>Erro</AlertTitle>
-                  <AlertDescription>{periodoError}</AlertDescription>
-                </Alert>
-              )}
-
-              {loadingPeriodo && (
-                <PageLoading variant="minimal" message="Carregando questões..." />
-              )}
-
-              <div className="space-y-3 pt-4">
-                <Alert>
-                  <Sparkles className="h-4 w-4" />
-                  <AlertTitle>Sabe que você pode ter mais?</AlertTitle>
-                  <AlertDescription>
-                    Faça upgrade para Premium e tenha acesso a mais de 1.000 questões de Medicina,
-                    com filtros avançados e criação de listas personalizadas!
-                  </AlertDescription>
-                </Alert>
-
-                <Button
-                  onClick={() => router.push('/buy')}
-                  className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
-                  size="lg"
-                >
-                  <Sparkles className="h-5 w-5 mr-2" />
-                  Fazer Upgrade para Premium
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       </AppShell>
     )
@@ -634,55 +649,46 @@ export default function BancoQuestoesPage() {
 
   if (requiresPremium) {
     return (
-      <AppShell headerTitle="Banco de Questões">
-        <div className="mx-auto w-full max-w-2xl px-4 py-12">
-          <Card className="text-center">
-            <CardHeader>
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">
-                <Lock className="h-8 w-8 text-amber-600" />
+      <AppShell headerTitle="Banco de Questoes">
+        <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+          <div className="mx-auto w-full max-w-2xl px-4 py-12">
+            <div className="glass-page-card rounded-2xl overflow-hidden text-center">
+              <div className="p-8 space-y-4">
+                <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-500/10">
+                  <Lock className="h-8 w-8 text-amber-600" />
+                </div>
+                <h2 className="text-2xl font-bold tracking-tight">Acesso Premium</h2>
+                <p className="text-sm text-muted-foreground">
+                  O Banco de Questoes e exclusivo para assinantes Premium
+                </p>
               </div>
-              <CardTitle className="text-2xl">Acesso Premium</CardTitle>
-              <CardDescription className="text-base">
-                O Banco de Questões é exclusivo para assinantes Premium
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-3 text-left bg-muted/50 rounded-lg p-4">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-green-600" />
-                  <span>1.000+ questões de Medicina</span>
+              <div className="p-8 pt-0 space-y-6">
+                <div className="space-y-3 text-left glass-stat rounded-xl p-5">
+                  {[
+                    '1.000+ questoes de Medicina',
+                    'Organizadas por periodo e modulo',
+                    'Questoes objetivas e discursivas',
+                    'Acompanhe seu progresso',
+                    'Crie listas personalizadas',
+                    'Exporte suas listas em PDF',
+                  ].map((text, i) => (
+                    <div key={i} className="flex items-center gap-2.5 text-sm">
+                      <CheckCircle2 className="h-4 w-4 text-[#468152] flex-shrink-0" />
+                      <span>{text}</span>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-green-600" />
-                  <span>Organizadas por período e módulo</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-green-600" />
-                  <span>Questões objetivas e discursivas</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-green-600" />
-                  <span>Acompanhe seu progresso</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-green-600" />
-                  <span>Crie listas personalizadas</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-green-600" />
-                  <span>Exporte suas listas em PDF</span>
-                </div>
-              </div>
 
-              <Button
-                onClick={() => router.push('/buy')}
-                className="w-full bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90"
-                size="lg"
-              >
-                Assinar Premium
-              </Button>
-            </CardContent>
-          </Card>
+                <Button
+                  onClick={() => router.push('/buy')}
+                  className="w-full btn-brand-glow text-white rounded-xl"
+                  size="lg"
+                >
+                  Assinar Premium
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
       </AppShell>
     )
@@ -691,102 +697,82 @@ export default function BancoQuestoesPage() {
   const totalQuestoes = periodos.reduce((acc, p) => acc + p.totalQuestoes, 0);
 
   return (
-    <AppShell headerTitle="Banco de Questões" headerSubtitle={`${totalQuestoes.toLocaleString()}+ questões disponíveis`}>
-      <div className="mx-auto w-full max-w-7xl px-4 py-6 space-y-6">
-        {/* Banner para usuários gratuitos */}
+    <AppShell headerTitle="Banco de Questoes" headerSubtitle={`${totalQuestoes.toLocaleString()}+ questoes disponiveis`}>
+      <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
-        {/* Cards de estatísticas e ações */}
-        <div className="grid gap-4 md:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Total de Questões</CardTitle>
-              <Database className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalQuestoes.toLocaleString()}</div>
-              <p className="text-xs text-muted-foreground">
-                Em {periodos.length} períodos
-              </p>
-            </CardContent>
-          </Card>
+        {/* Stats Cards */}
+        <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
+          {[
+            { label: 'Total de Questoes', value: totalQuestoes.toLocaleString(), sub: `Em ${periodos.length} periodos`, icon: Database, color: '#468152', iconBg: 'bg-emerald-500/10 dark:bg-emerald-500/20' },
+            { label: 'Resolvidas', value: String(estatisticas?.totalResolvidas || 0), sub: 'questoes completadas', icon: BookOpen, color: '#3b82f6', iconBg: 'bg-blue-500/10 dark:bg-blue-500/20' },
+            { label: 'Taxa de Acerto', value: `${estatisticas?.percentualAcerto || 0}%`, sub: 'nas objetivas', icon: BarChart3, color: '#E2A43E', iconBg: 'bg-amber-500/10 dark:bg-amber-500/20' },
+            { label: 'Minhas Listas', value: String(listas.length), sub: '', icon: List, color: '#468152', iconBg: 'bg-emerald-500/10 dark:bg-emerald-500/20', isListas: true },
+          ].map((stat, index) => {
+            const Icon = stat.icon
+            return (
+              <div
+                key={index}
+                className="glass-stat rounded-2xl p-4 hover-glow-brand hover-lift transition-all duration-300 group cursor-default"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-[11px] font-medium text-muted-foreground">{stat.label}</p>
+                  <div className={`p-1.5 rounded-lg ${stat.iconBg} group-hover:scale-110 transition-transform duration-300`}>
+                    <Icon className="h-3.5 w-3.5" style={{ color: stat.color }} />
+                  </div>
+                </div>
+                <p className="text-xl sm:text-2xl font-bold tracking-tight">{stat.value}</p>
+                {stat.sub && (
+                  <p className="text-[10px] text-muted-foreground mt-0.5">{stat.sub}</p>
+                )}
+                {'isListas' in stat && stat.isListas && (
+                  <div className="flex gap-2 mt-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="text-[10px] h-6 rounded-lg hover-glow-green"
+                      onClick={() => router.push('/banco-questoes/listas')}
+                    >
+                      Ver listas
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="text-[10px] h-6 rounded-lg btn-brand-glow text-white"
+                      onClick={() => setShowRandomListModal(true)}
+                    >
+                      <Shuffle className="h-2.5 w-2.5 mr-1" />
+                      Criar
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )
+          })
+        }</div>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Resolvidas</CardTitle>
-              <BookOpen className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{estatisticas?.totalResolvidas || 0}</div>
-              <p className="text-xs text-muted-foreground">
-                questões completadas
-              </p>
-            </CardContent>
-          </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Taxa de Acerto</CardTitle>
-              <BarChart3 className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{estatisticas?.percentualAcerto || 0}%</div>
-              <p className="text-xs text-muted-foreground">
-                nas objetivas
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gradient-to-br from-[#468152]/10 to-[#E2A43E]/10 border-[#468152]/30">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Minhas Listas</CardTitle>
-              <List className="h-4 w-4 text-[#468152]" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{listas.length}</div>
-              <div className="flex gap-2 mt-2">
+        {/* Filtros */}
+        {!(userRole !== 'admin' && accountType !== 'premium' && accountType !== 'trial' && selectedPeriodo) && (
+          <div className="glass-page-card rounded-2xl overflow-hidden">
+            <div className="p-5 sm:p-6">
+              <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded-lg bg-[#468152]/10">
+                    <ListFilter className="h-4 w-4 text-[#468152]" />
+                  </div>
+                  <h3 className="text-sm font-semibold">Filtros</h3>
+                </div>
                 <Button
-                  size="sm"
                   variant="outline"
-                  className="text-xs h-7"
-                  onClick={() => router.push('/banco-questoes/listas')}
-                >
-                  Ver listas
-                </Button>
-                <Button
                   size="sm"
-                  className="text-xs h-7 bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90"
+                  className="text-xs rounded-xl hover-glow-green"
                   onClick={() => setShowRandomListModal(true)}
                 >
                   <Shuffle className="h-3 w-3 mr-1" />
-                  Criar Lista
+                  Lista Aleatoria
                 </Button>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-
-
-        {/* Filtros - Esconde para usuários gratuitos (não admin) que já selecionaram período */}
-        {!(userRole !== 'admin' && accountType !== 'premium' && accountType !== 'trial' && selectedPeriodo) && (
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <ListFilter className="h-5 w-5" />
-                  Filtros
-                </CardTitle>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-primary"
-                  onClick={() => setShowRandomListModal(true)}
-                >
-                  <Shuffle className="h-4 w-4 mr-1" />
-                  Lista Aleatória
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
+            <div className="space-y-4">
               {/* Período */}
               <div className="space-y-2">
                 <Label>Período</Label>
@@ -978,59 +964,62 @@ export default function BancoQuestoesPage() {
 
                 {paginacao && (
                   <span className="text-sm text-muted-foreground ml-auto">
-                    {paginacao.total} questão(ões) encontrada(s)
+                    {paginacao.total} questao(oes) encontrada(s)
                   </span>
                 )}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+            </div>
+          </div>
         )}
 
-        {/* Banner para usuários gratuitos selecionarem outro período */}
+        {/* Banner para usuarios gratuitos */}
         {accountType === 'gratuito' && selectedPeriodo && (
-          <Alert>
-            <GraduationCap className="h-4 w-4" />
-            <AlertTitle>Você está visualizando 5 questões gratuitas</AlertTitle>
-            <AlertDescription>
-              Para ver questões de outro período ou usar filtros, faça upgrade para Premium!
-              <div className="mt-2">
-                <Button
-                  size="sm"
-                  onClick={() => router.push('/buy')}
-                  className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
-                >
-                  <Sparkles className="h-4 w-4 mr-1" />
-                  Fazer Upgrade
-                </Button>
-              </div>
-            </AlertDescription>
-          </Alert>
+          <div className="glass-stat rounded-2xl p-4 flex items-start gap-3 hover-glow-orange transition-all">
+            <div className="p-2 rounded-xl bg-amber-500/10 flex-shrink-0">
+              <GraduationCap className="h-4 w-4 text-amber-600" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold">Voce esta visualizando 5 questoes gratuitas</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Para ver questoes de outro periodo ou usar filtros, faca upgrade para Premium!
+              </p>
+              <Button
+                size="sm"
+                onClick={() => router.push('/buy')}
+                className="mt-2 btn-brand-glow text-white rounded-xl text-xs h-8"
+              >
+                <Sparkles className="h-3 w-3 mr-1" />
+                Fazer Upgrade
+              </Button>
+            </div>
+          </div>
         )}
 
-        {/* Lista de questões */}
+        {/* Lista de questoes */}
         <div className="space-y-3">
           {loadingQuestoes ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <div className="space-y-3">
+              {[1,2,3].map(i => <div key={i} className="h-28 rounded-2xl skeleton-pulse" />)}
             </div>
           ) : questoes.length === 0 ? (
-            <Card>
-              <CardContent className="py-12 text-center">
-                <Database className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-medium">Nenhuma questão encontrada</h3>
-                <p className="text-muted-foreground">
-                  Tente ajustar os filtros para encontrar questões
-                </p>
-              </CardContent>
-            </Card>
+            <div className="text-center py-16">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-muted/50 mb-4">
+                <Database className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <h3 className="text-lg font-semibold mb-1">Nenhuma questao encontrada</h3>
+              <p className="text-sm text-muted-foreground">
+                Tente ajustar os filtros para encontrar questoes
+              </p>
+            </div>
           ) : (
             <>
               {questoes.map((questao) => (
-                <Card
+                <div
                   key={String(questao._id)}
-                  className="group hover:border-primary/50 transition-colors"
+                  className="glass-page-card rounded-2xl group hover-glow-green hover-lift transition-all duration-300"
                 >
-                  <CardContent className="p-4">
+                  <div className="p-4 sm:p-5">
                     <div className="flex items-start gap-4">
                       <div
                         className="flex-1 cursor-pointer"
@@ -1124,8 +1113,8 @@ export default function BancoQuestoesPage() {
                         </Button>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               ))}
 
               {/* Paginação */}
@@ -1154,8 +1143,9 @@ export default function BancoQuestoesPage() {
           )}
         </div>
       </div>
+      </div>
 
-      {/* Modal de Adicionar à Lista */}
+      {/* Modal de Adicionar a Lista */}
       <Dialog open={showAddToListModal} onOpenChange={setShowAddToListModal}>
         <DialogContent>
           <DialogHeader>
@@ -1477,7 +1467,7 @@ export default function BancoQuestoesPage() {
             <Button
               onClick={handleCreateRandomList}
               disabled={!randomListForm.nome.trim() || creatingRandomList}
-              className="bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90"
+              className="btn-brand-glow text-white rounded-xl"
             >
               {creatingRandomList ? (
                 <Loader2 className="h-4 w-4 animate-spin mr-2" />
