@@ -3,7 +3,11 @@ import { getDb } from './mongodb'
 import { getAIKey, AIKeySection } from './ai-keys'
 import { v4 as uuidv4 } from 'uuid'
 
-const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent'
+const GEMINI_MODELS = [
+  'gemini-3-flash-preview', // Tentativa principal (conforme solicitado pelo usuário, mas pode não existir oficialmente)
+  'gemini-2.0-flash-exp', // Tentativa secundária (se usuário confundiu com 2.0)
+  'gemini-1.5-flash',     // Fallback estável
+]
 
 /**
  * Busca a API Key do Gemini do banco de dados
@@ -375,49 +379,63 @@ export async function generateMultipleChoiceQuestion(
   const section = getAIKeySection()
   const apiKey = await getGeminiApiKey(section)
 
-  try {
-    const response = await fetch(GEMINI_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-goog-api-key': apiKey,
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text: prompt,
-              },
-            ],
-          },
-        ],
-        generationConfig: {
-          temperature: 0.8, // Mais criatividade para gerar questões variadas
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 4096,
+  let lastError: any = null
+
+  // Tentar modelos em ordem de prioridade
+  for (const model of GEMINI_MODELS) {
+    try {
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`
+
+      console.log(`Tentando gerar questão com modelo: ${model}`)
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-goog-api-key': apiKey,
         },
-      }),
-    })
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text: prompt,
+                },
+              ],
+            },
+          ],
+          generationConfig: {
+            temperature: 0.8,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: 4096,
+          },
+        }),
+      })
 
-    if (!response.ok) {
-      const errorData = await response.json()
-      throw new Error(`Gemini API error: ${errorData.error?.message || response.statusText}`)
+      if (!response.ok) {
+        const errorData = await response.json()
+        console.warn(`Falha com modelo ${model}:`, JSON.stringify(errorData, null, 2))
+        throw new Error(`Gemini API error (${model}): ${errorData.error?.message || response.statusText}`)
+      }
+
+      const data = await response.json()
+      const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text
+
+      if (!generatedText) {
+        throw new Error(`Resposta vazia da API Gemini (${model})`)
+      }
+
+      return parseMultipleChoiceResponse(generatedText, params)
+    } catch (error) {
+      console.error(`Erro ao gerar questão com modelo ${model}:`, error)
+      lastError = error
+      // Continuar para o próximo modelo se houver erro
     }
-
-    const data = await response.json()
-    const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text
-
-    if (!generatedText) {
-      throw new Error('Resposta vazia da API Gemini')
-    }
-
-    return parseMultipleChoiceResponse(generatedText, params)
-  } catch (error) {
-    console.error('Erro ao gerar questão com Gemini:', error)
-    throw error
   }
+
+  // Se todos falharem
+  throw lastError || new Error('Falha ao gerar questão com todos os modelos disponíveis')
 }
 
 /**
@@ -430,49 +448,61 @@ export async function generateDiscursiveQuestion(
   const section = getAIKeySection()
   const apiKey = await getGeminiApiKey(section)
 
-  try {
-    const response = await fetch(GEMINI_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-goog-api-key': apiKey,
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text: prompt,
-              },
-            ],
-          },
-        ],
-        generationConfig: {
-          temperature: 0.8,
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 4096,
+  let lastError: any = null
+
+  // Tentar modelos em ordem de prioridade
+  for (const model of GEMINI_MODELS) {
+    try {
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`
+
+      console.log(`Tentando gerar questão discursiva com modelo: ${model}`)
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-goog-api-key': apiKey,
         },
-      }),
-    })
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text: prompt,
+                },
+              ],
+            },
+          ],
+          generationConfig: {
+            temperature: 0.8,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: 4096,
+          },
+        }),
+      })
 
-    if (!response.ok) {
-      const errorData = await response.json()
-      throw new Error(`Gemini API error: ${errorData.error?.message || response.statusText}`)
+      if (!response.ok) {
+        const errorData = await response.json()
+        console.warn(`Falha discursiva com modelo ${model}:`, JSON.stringify(errorData, null, 2))
+        throw new Error(`Gemini API error (${model}): ${errorData.error?.message || response.statusText}`)
+      }
+
+      const data = await response.json()
+      const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text
+
+      if (!generatedText) {
+        throw new Error(`Resposta vazia da API Gemini (${model})`)
+      }
+
+      return parseDiscursiveResponse(generatedText, params)
+    } catch (error) {
+      console.error(`Erro ao gerar questão discursiva com modelo ${model}:`, error)
+      lastError = error
     }
-
-    const data = await response.json()
-    const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text
-
-    if (!generatedText) {
-      throw new Error('Resposta vazia da API Gemini')
-    }
-
-    return parseDiscursiveResponse(generatedText, params)
-  } catch (error) {
-    console.error('Erro ao gerar questão discursiva com Gemini:', error)
-    throw error
   }
+
+  throw lastError || new Error('Falha ao gerar questão discursiva com todos os modelos disponíveis')
 }
 
 /**
@@ -597,7 +627,8 @@ export function shuffleAlternatives(question: Question): Question {
     [texts[i], texts[j]] = [texts[j], texts[i]]
   }
 
-  // Reatribuir textos shuffled mantendo as letras fixas
+  // Reatribuir textos shuffled mantendo as letras fixas (A, B, C, D, E)
+  // IMPORTANTE: Isso pressupõe que `alternatives` já tenha as letras corretas
   const shuffledAlternatives = question.alternatives.map((alt, index) => ({
     ...alt,
     text: texts[index],
@@ -660,60 +691,71 @@ IMPORTANTE:
   const section = getAIKeySection()
   const apiKey = await getGeminiApiKey(section)
 
-  try {
-    const response = await fetch(GEMINI_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-goog-api-key': apiKey,
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text: prompt,
-              },
-            ],
-          },
-        ],
-        generationConfig: {
-          temperature: 0.7,
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 2048,
+  let lastError: any = null
+
+  // Tentar modelos em ordem de prioridade (para feedback também)
+  for (const model of GEMINI_MODELS) {
+    try {
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-goog-api-key': apiKey,
         },
-      }),
-    })
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text: prompt,
+                },
+              ],
+            },
+          ],
+          generationConfig: {
+            temperature: 0.7,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: 2048,
+          },
+        }),
+      })
 
-    if (!response.ok) {
-      const errorData = await response.json()
-      throw new Error(`Gemini API error: ${errorData.error?.message || response.statusText}`)
+      if (!response.ok) {
+        const errorData = await response.json()
+        console.warn(`Falha feedback com modelo ${model}:`, JSON.stringify(errorData, null, 2))
+        throw new Error(`Gemini API error (${model}): ${errorData.error?.message || response.statusText}`)
+      }
+
+      const data = await response.json()
+      const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text
+
+      if (!generatedText) {
+        throw new Error(`Resposta vazia da API Gemini (${model})`)
+      }
+
+      // Parsear JSON da resposta
+      const jsonMatch = generatedText.match(/\{[\s\S]*\}/)
+      if (!jsonMatch) {
+        // Se falhar o parse no modelo principal, tenta o próximo
+        throw new Error('Resposta do Gemini não contém JSON válido')
+      }
+
+      const explanations = JSON.parse(jsonMatch[0])
+
+      return {
+        correctAlternative: correctAlt.letter,
+        explanations,
+      }
+    } catch (error) {
+      console.error(`Erro ao gerar feedback com modelo ${model}:`, error)
+      lastError = error
     }
-
-    const data = await response.json()
-    const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text
-
-    if (!generatedText) {
-      throw new Error('Resposta vazia da API Gemini')
-    }
-
-    // Parsear JSON da resposta
-    const jsonMatch = generatedText.match(/\{[\s\S]*\}/)
-    if (!jsonMatch) {
-      throw new Error('Resposta do Gemini não contém JSON válido')
-    }
-
-    const explanations = JSON.parse(jsonMatch[0])
-
-    return {
-      correctAlternative: correctAlt.letter,
-      explanations,
-    }
-  } catch (error) {
-    console.error('Erro ao gerar feedback comentado:', error)
-    throw error
   }
+
+  throw lastError || new Error('Falha ao gerar feedback com todos os modelos disponíveis')
 }
 
 /**
