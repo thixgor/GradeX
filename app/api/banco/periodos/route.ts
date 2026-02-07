@@ -15,34 +15,41 @@ export async function GET(request: NextRequest) {
     const db = await getDb()
 
     // Buscar períodos com contagem de questões e módulos
+    // Uses sub-pipeline $lookup to count without loading full docs into memory
     const periodos = await db.collection<BancoPeriodo>('banco_periodos')
       .aggregate<BancoPeriodoComContagem>([
         {
           $lookup: {
             from: 'banco_questoes',
-            localField: '_id',
-            foreignField: 'periodoId',
-            as: 'questoes'
+            let: { periodoId: '$_id' },
+            pipeline: [
+              { $match: { $expr: { $eq: ['$periodoId', '$$periodoId'] } } },
+              { $count: 'count' }
+            ],
+            as: '_qCount'
           }
         },
         {
           $lookup: {
             from: 'banco_modulos',
-            localField: '_id',
-            foreignField: 'periodoId',
-            as: 'modulos'
+            let: { periodoId: '$_id' },
+            pipeline: [
+              { $match: { $expr: { $eq: ['$periodoId', '$$periodoId'] } } },
+              { $count: 'count' }
+            ],
+            as: '_mCount'
           }
         },
         {
           $addFields: {
-            totalQuestoes: { $size: '$questoes' },
-            totalModulos: { $size: '$modulos' }
+            totalQuestoes: { $ifNull: [{ $arrayElemAt: ['$_qCount.count', 0] }, 0] },
+            totalModulos: { $ifNull: [{ $arrayElemAt: ['$_mCount.count', 0] }, 0] }
           }
         },
         {
           $project: {
-            questoes: 0,
-            modulos: 0
+            _qCount: 0,
+            _mCount: 0
           }
         },
         { $sort: { ordem: 1 } }

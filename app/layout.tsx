@@ -6,6 +6,7 @@ import { TrialExpirationChecker } from '@/components/trial-expiration-checker'
 import { Footer } from '@/components/footer'
 import { ImageProtectionProvider } from '@/components/image-protection-provider'
 import { VerifyEmailBanner } from '@/components/verify-email-banner'
+import { StudyMusicPlayer } from '@/components/study-music-player'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 
@@ -74,6 +75,7 @@ export default function RootLayout({
               {children}
             </div>
             <Footer />
+            <StudyMusicPlayer />
           </ImageProtectionProvider>
           <Analytics />
           <SpeedInsights />

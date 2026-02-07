@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
-import { AppShell } from '@/components/app-shell'
+import { AppShell, useAppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -77,11 +77,22 @@ interface ListaComContagem extends BancoListaUsuario {
 }
 
 export default function BancoQuestoesPage() {
+  return (
+    <AppShell headerTitle="Banco de Questoes">
+      <BancoQuestoesContent />
+    </AppShell>
+  )
+}
+
+function BancoQuestoesContent() {
   const router = useRouter()
+  const { user, isAdmin, accountType: appAccountType } = useAppShell()
   const [loading, setLoading] = useState(true)
   const [requiresPremium, setRequiresPremium] = useState(false)
-  const [accountType, setAccountType] = useState<'gratuito' | 'trial' | 'premium' | 'admin'>('gratuito')
-  const [userRole, setUserRole] = useState<'admin' | 'user'>('user')
+
+  // Derive from useAppShell instead of extra /api/auth/me call
+  const accountType = isAdmin ? 'admin' as const : (appAccountType === 'gratuito' ? 'gratuito' as const : appAccountType as 'gratuito' | 'trial' | 'premium' | 'admin')
+  const userRole = user?.role || 'user'
 
   // Seletor de período para usuários gratuitos
   const [showPeriodSelector, setShowPeriodSelector] = useState(false)
@@ -143,12 +154,16 @@ export default function BancoQuestoesPage() {
   const [randomTopicos, setRandomTopicos] = useState<BancoTopicoComContagem[]>([])
   const [randomSubtopicos, setRandomSubtopicos] = useState<BancoSubtopicoComContagem[]>([])
 
+  // Ref to prevent double loadQuestoes during initial load
+  const initialLoadDone = useRef(false)
+
   useEffect(() => {
     loadInitialData()
-    loadListas()
   }, [])
 
   useEffect(() => {
+    // Skip the first trigger — loadInitialData handles initial questoes load
+    if (!initialLoadDone.current) return
     if (!requiresPremium) {
       loadQuestoes()
     }
@@ -211,47 +226,42 @@ export default function BancoQuestoesPage() {
 
   async function loadInitialData() {
     try {
-      // Carregar tipo de conta primeiro
-      const authRes = await fetch('/api/auth/me')
-      let currentUserRole: 'admin' | 'user' = 'user'
-      let currentAccountType: 'gratuito' | 'trial' | 'premium' | 'admin' = 'gratuito'
+      // Use user data from useAppShell — no extra /api/auth/me call needed
+      const currentUserRole = userRole
+      const isFreeUser = currentUserRole !== 'admin' &&
+        accountType !== 'premium' &&
+        accountType !== 'trial' &&
+        accountType !== 'admin'
 
-      if (authRes.ok) {
-        const authData = await authRes.json()
-        currentUserRole = authData.user?.role || 'user'
-        currentAccountType = authData.user?.accountType || 'gratuito'
-        setAccountType(currentAccountType)
-        setUserRole(currentUserRole)
-      }
+      // Parallelize all independent API calls
+      const [periodosRes, ...extraResults] = await Promise.all([
+        fetch('/api/banco/periodos'),
+        // Only fetch stats + listas for premium/admin users
+        ...(!isFreeUser ? [
+          fetch('/api/banco/estatisticas'),
+          fetch('/api/banco/listas'),
+        ] : []),
+      ])
 
-      const res = await fetch('/api/banco/periodos')
-      if (res.status === 403) {
-        const data = await res.json()
+      if (periodosRes.status === 403) {
+        const data = await periodosRes.json()
         if (data.requiresPremium) {
           setRequiresPremium(true)
           setLoading(false)
           return
         }
       }
-      if (res.ok) {
-        const data = await res.json()
+
+      if (periodosRes.ok) {
+        const data = await periodosRes.json()
         setPeriodos(data.periodos)
 
-        // Se for usuário gratuito E não for admin, verificar se já tem período selecionado
-        // IMPORTANTE: Usar variáveis locais, não o estado (que não atualizou ainda)
-        const isFreeUser = currentUserRole !== 'admin' &&
-          currentAccountType !== 'premium' &&
-          currentAccountType !== 'trial'
-
         if (isFreeUser) {
-          // Verificar se já tem período salvo no localStorage
           const savedPeriodo = localStorage.getItem('banco-questoes-periodo')
           if (savedPeriodo) {
-            // Carregar as 5 questões do período salvo
             setSelectedPeriodo(savedPeriodo)
             setShowPeriodSelector(false)
 
-            // Carregar questões do período salvo (API irá retornar as 5 questões fixas)
             const params = new URLSearchParams()
             params.set('periodoId', savedPeriodo)
 
@@ -262,26 +272,35 @@ export default function BancoQuestoesPage() {
               setFiltros({ periodoId: savedPeriodo })
             }
           } else {
-            // Mostrar seletor de período
             setShowPeriodSelector(true)
           }
+          initialLoadDone.current = true
           setLoading(false)
           return
         }
       }
 
-      // Carregar estatísticas
-      const statsRes = await fetch('/api/banco/estatisticas')
-      if (statsRes.ok) {
-        const statsData = await statsRes.json()
-        setEstatisticas({
-          totalResolvidas: statsData.estatisticas.totalResolvidas,
-          percentualAcerto: statsData.estatisticas.percentualAcerto
-        })
+      // Process parallel results for premium/admin users
+      if (extraResults.length >= 2) {
+        const [statsRes, listasRes] = extraResults
+
+        if (statsRes.ok) {
+          const statsData = await statsRes.json()
+          setEstatisticas({
+            totalResolvidas: statsData.estatisticas.totalResolvidas,
+            percentualAcerto: statsData.estatisticas.percentualAcerto
+          })
+        }
+
+        if (listasRes.ok) {
+          const listasData = await listasRes.json()
+          setListas(listasData.listas)
+        }
       }
     } catch (error) {
       console.error('Erro ao carregar dados:', error)
     } finally {
+      initialLoadDone.current = true
       setLoading(false)
     }
   }
@@ -558,134 +577,82 @@ export default function BancoQuestoesPage() {
 
   if (loading) {
     return (
-      <AppShell headerTitle="Banco de Questoes">
-        <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
-          <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
-            <div className="h-12 w-64 rounded-xl skeleton-pulse" />
-            <div className="grid gap-3 md:grid-cols-4">
-              {[1,2,3,4].map(i => <div key={i} className="h-24 rounded-2xl skeleton-pulse" />)}
-            </div>
-            <div className="h-64 rounded-2xl skeleton-pulse" />
-            <div className="space-y-3">
-              {[1,2,3].map(i => <div key={i} className="h-28 rounded-2xl skeleton-pulse" />)}
-            </div>
+      <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+        <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+          <div className="h-12 w-64 rounded-xl skeleton-pulse" />
+          <div className="grid gap-3 md:grid-cols-4">
+            {[1,2,3,4].map(i => <div key={i} className="h-24 rounded-2xl skeleton-pulse" />)}
+          </div>
+          <div className="h-64 rounded-2xl skeleton-pulse" />
+          <div className="space-y-3">
+            {[1,2,3].map(i => <div key={i} className="h-28 rounded-2xl skeleton-pulse" />)}
           </div>
         </div>
-      </AppShell>
+      </div>
     )
   }
 
   // Modal de seletor de periodo para usuarios gratuitos
   if (showPeriodSelector) {
     return (
-      <AppShell headerTitle="Banco de Questoes">
-        <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
-          <div className="mx-auto w-full max-w-2xl px-4 py-12">
-            <div className="glass-page-card rounded-2xl overflow-hidden">
-              <div className="p-8 text-center space-y-4">
-                <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#468152]/20 to-[#E2A43E]/20">
-                  <GraduationCap className="h-8 w-8 text-[#468152]" />
-                </div>
-                <h2 className="text-2xl font-bold tracking-tight">Banco de Questoes Gratuito</h2>
-                <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                  No plano Gratuito, voce pode ver 5 questoes por periodo.
-                  Selecione o periodo do AFYA que voce esta cursando:
-                </p>
+      <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+        <div className="mx-auto w-full max-w-2xl px-4 py-12">
+          <div className="glass-page-card rounded-2xl overflow-hidden">
+            <div className="p-8 text-center space-y-4">
+              <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#468152]/20 to-[#E2A43E]/20">
+                <GraduationCap className="h-8 w-8 text-[#468152]" />
               </div>
-              <div className="p-8 pt-0 space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="periodo-select" className="text-base font-semibold">
-                    Qual periodo voce esta?
-                  </Label>
-                  <Select
-                    value={selectedPeriodo}
-                    onValueChange={handleSelectPeriodo}
-                    disabled={loadingPeriodo}
-                  >
-                    <SelectTrigger id="periodo-select" className="h-12 text-base rounded-xl">
-                      <SelectValue placeholder="Selecione seu periodo (1 ao 5)" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {periodos.filter(p => p.nome.includes('°') || p.nome.includes('º')).map((periodo) => (
-                        <SelectItem key={periodo._id?.toString()} value={periodo._id?.toString() || ''}>
-                          {periodo.nome}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {periodoError && (
-                  <Alert variant="destructive">
-                    <AlertTriangle className="h-4 w-4" />
-                    <AlertTitle>Erro</AlertTitle>
-                    <AlertDescription>{periodoError}</AlertDescription>
-                  </Alert>
-                )}
-
-                {loadingPeriodo && (
-                  <PageLoading variant="minimal" message="Carregando questoes..." />
-                )}
-
-                <div className="space-y-3 pt-4">
-                  <div className="glass-stat rounded-xl p-4 flex items-start gap-3">
-                    <Sparkles className="h-4 w-4 text-[#E2A43E] mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="text-sm font-semibold">Sabe que voce pode ter mais?</p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Faca upgrade para Premium e tenha acesso a mais de 1.000 questoes de Medicina,
-                        com filtros avancados e criacao de listas personalizadas!
-                      </p>
-                    </div>
-                  </div>
-
-                  <Button
-                    onClick={() => router.push('/buy')}
-                    className="w-full btn-brand-glow text-white rounded-xl"
-                    size="lg"
-                  >
-                    <Sparkles className="h-5 w-5 mr-2" />
-                    Fazer Upgrade para Premium
-                  </Button>
-                </div>
-              </div>
+              <h2 className="text-2xl font-bold tracking-tight">Banco de Questoes Gratuito</h2>
+              <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                No plano Gratuito, voce pode ver 5 questoes por periodo.
+                Selecione o periodo do AFYA que voce esta cursando:
+              </p>
             </div>
-          </div>
-        </div>
-      </AppShell>
-    )
-  }
-
-  if (requiresPremium) {
-    return (
-      <AppShell headerTitle="Banco de Questoes">
-        <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
-          <div className="mx-auto w-full max-w-2xl px-4 py-12">
-            <div className="glass-page-card rounded-2xl overflow-hidden text-center">
-              <div className="p-8 space-y-4">
-                <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-500/10">
-                  <Lock className="h-8 w-8 text-amber-600" />
-                </div>
-                <h2 className="text-2xl font-bold tracking-tight">Acesso Premium</h2>
-                <p className="text-sm text-muted-foreground">
-                  O Banco de Questoes e exclusivo para assinantes Premium
-                </p>
+            <div className="p-8 pt-0 space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="periodo-select" className="text-base font-semibold">
+                  Qual periodo voce esta?
+                </Label>
+                <Select
+                  value={selectedPeriodo}
+                  onValueChange={handleSelectPeriodo}
+                  disabled={loadingPeriodo}
+                >
+                  <SelectTrigger id="periodo-select" className="h-12 text-base rounded-xl">
+                    <SelectValue placeholder="Selecione seu periodo (1 ao 5)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {periodos.filter(p => p.nome.includes('°') || p.nome.includes('º')).map((periodo) => (
+                      <SelectItem key={periodo._id?.toString()} value={periodo._id?.toString() || ''}>
+                        {periodo.nome}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-              <div className="p-8 pt-0 space-y-6">
-                <div className="space-y-3 text-left glass-stat rounded-xl p-5">
-                  {[
-                    '1.000+ questoes de Medicina',
-                    'Organizadas por periodo e modulo',
-                    'Questoes objetivas e discursivas',
-                    'Acompanhe seu progresso',
-                    'Crie listas personalizadas',
-                    'Exporte suas listas em PDF',
-                  ].map((text, i) => (
-                    <div key={i} className="flex items-center gap-2.5 text-sm">
-                      <CheckCircle2 className="h-4 w-4 text-[#468152] flex-shrink-0" />
-                      <span>{text}</span>
-                    </div>
-                  ))}
+
+              {periodoError && (
+                <Alert variant="destructive">
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertTitle>Erro</AlertTitle>
+                  <AlertDescription>{periodoError}</AlertDescription>
+                </Alert>
+              )}
+
+              {loadingPeriodo && (
+                <PageLoading variant="minimal" message="Carregando questoes..." />
+              )}
+
+              <div className="space-y-3 pt-4">
+                <div className="glass-stat rounded-xl p-4 flex items-start gap-3">
+                  <Sparkles className="h-4 w-4 text-[#E2A43E] mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-semibold">Sabe que voce pode ter mais?</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Faca upgrade para Premium e tenha acesso a mais de 1.000 questoes de Medicina,
+                      com filtros avancados e criacao de listas personalizadas!
+                    </p>
+                  </div>
                 </div>
 
                 <Button
@@ -693,13 +660,59 @@ export default function BancoQuestoesPage() {
                   className="w-full btn-brand-glow text-white rounded-xl"
                   size="lg"
                 >
-                  Assinar Premium
+                  <Sparkles className="h-5 w-5 mr-2" />
+                  Fazer Upgrade para Premium
                 </Button>
               </div>
             </div>
           </div>
         </div>
-      </AppShell>
+      </div>
+    )
+  }
+
+  if (requiresPremium) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+        <div className="mx-auto w-full max-w-2xl px-4 py-12">
+          <div className="glass-page-card rounded-2xl overflow-hidden text-center">
+            <div className="p-8 space-y-4">
+              <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-500/10">
+                <Lock className="h-8 w-8 text-amber-600" />
+              </div>
+              <h2 className="text-2xl font-bold tracking-tight">Acesso Premium</h2>
+              <p className="text-sm text-muted-foreground">
+                O Banco de Questoes e exclusivo para assinantes Premium
+              </p>
+            </div>
+            <div className="p-8 pt-0 space-y-6">
+              <div className="space-y-3 text-left glass-stat rounded-xl p-5">
+                {[
+                  '1.000+ questoes de Medicina',
+                  'Organizadas por periodo e modulo',
+                  'Questoes objetivas e discursivas',
+                  'Acompanhe seu progresso',
+                  'Crie listas personalizadas',
+                  'Exporte suas listas em PDF',
+                ].map((text, i) => (
+                  <div key={i} className="flex items-center gap-2.5 text-sm">
+                    <CheckCircle2 className="h-4 w-4 text-[#468152] flex-shrink-0" />
+                    <span>{text}</span>
+                  </div>
+                ))}
+              </div>
+
+              <Button
+                onClick={() => router.push('/buy')}
+                className="w-full btn-brand-glow text-white rounded-xl"
+                size="lg"
+              >
+                Assinar Premium
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
     )
   }
 
@@ -712,7 +725,7 @@ export default function BancoQuestoesPage() {
   ].filter(Boolean).length;
 
   return (
-    <AppShell headerTitle="Banco de Questoes" headerSubtitle={`${totalQuestoes.toLocaleString()}+ questoes disponiveis`}>
+    <>
       <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
@@ -1114,10 +1127,8 @@ export default function BancoQuestoesPage() {
           ) : (
             <>
               {questoes.map((questao) => (
-                <GlassGlow
+                <div
                   key={String(questao._id)}
-                  glowColor="rgba(70, 129, 82, 0.25)"
-                  glowSize={200}
                   className="glass-page-card rounded-2xl group hover-lift transition-all duration-300"
                 >
                   <div className="p-4 sm:p-5">
@@ -1215,7 +1226,7 @@ export default function BancoQuestoesPage() {
                       </div>
                     </div>
                   </div>
-                </GlassGlow>
+                </div>
               ))}
 
               {/* Paginação */}
@@ -1580,6 +1591,6 @@ export default function BancoQuestoesPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </AppShell>
+    </>
   )
 }

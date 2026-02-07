@@ -32,103 +32,107 @@ export async function GET(request: NextRequest) {
 
     const userId = new ObjectId(session.userId)
 
-    // Estatísticas gerais
-    const totalResolvidas = await db.collection('banco_resolucoes')
-      .countDocuments({ userId })
-
-    const totalAcertos = await db.collection('banco_resolucoes')
-      .countDocuments({ userId, correta: true })
-
-    const totalErros = await db.collection('banco_resolucoes')
-      .countDocuments({ userId, correta: false, tipo: 'objetiva' })
-
-    // Questões por período
-    const questoesPorPeriodo = await db.collection('banco_resolucoes')
+    // Single $facet aggregation — replaces 6 sequential DB queries with 1 round trip
+    const [facetResult] = await db.collection('banco_resolucoes')
       .aggregate([
         { $match: { userId } },
         {
-          $lookup: {
-            from: 'banco_questoes',
-            localField: 'questaoId',
-            foreignField: '_id',
-            as: 'questao'
-          }
-        },
-        { $unwind: '$questao' },
-        {
-          $lookup: {
-            from: 'banco_periodos',
-            localField: 'questao.periodoId',
-            foreignField: '_id',
-            as: 'periodo'
-          }
-        },
-        { $unwind: '$periodo' },
-        {
-          $group: {
-            _id: '$questao.periodoId',
-            periodoNome: { $first: '$periodo.nome' },
-            total: { $sum: 1 },
-            acertos: {
-              $sum: {
-                $cond: [{ $eq: ['$correta', true] }, 1, 0]
+          $facet: {
+            // Contagens gerais
+            counts: [
+              {
+                $group: {
+                  _id: null,
+                  totalResolvidas: { $sum: 1 },
+                  totalAcertos: { $sum: { $cond: [{ $eq: ['$correta', true] }, 1, 0] } },
+                  totalErros: {
+                    $sum: {
+                      $cond: [
+                        { $and: [{ $eq: ['$correta', false] }, { $eq: ['$tipo', 'objetiva'] }] },
+                        1, 0
+                      ]
+                    }
+                  }
+                }
               }
-            }
-          }
-        },
-        {
-          $project: {
-            _id: 0,
-            periodoId: { $toString: '$_id' },
-            periodoNome: 1,
-            total: 1,
-            acertos: 1
+            ],
+            // Questões por período
+            questoesPorPeriodo: [
+              {
+                $lookup: {
+                  from: 'banco_questoes',
+                  localField: 'questaoId',
+                  foreignField: '_id',
+                  as: 'questao'
+                }
+              },
+              { $unwind: '$questao' },
+              {
+                $lookup: {
+                  from: 'banco_periodos',
+                  localField: 'questao.periodoId',
+                  foreignField: '_id',
+                  as: 'periodo'
+                }
+              },
+              { $unwind: '$periodo' },
+              {
+                $group: {
+                  _id: '$questao.periodoId',
+                  periodoNome: { $first: '$periodo.nome' },
+                  total: { $sum: 1 },
+                  acertos: { $sum: { $cond: [{ $eq: ['$correta', true] }, 1, 0] } }
+                }
+              },
+              {
+                $project: {
+                  _id: 0,
+                  periodoId: { $toString: '$_id' },
+                  periodoNome: 1,
+                  total: 1,
+                  acertos: 1
+                }
+              }
+            ],
+            // Questões por tipo
+            questoesPorTipo: [
+              {
+                $group: {
+                  _id: '$tipo',
+                  total: { $sum: 1 },
+                  acertos: { $sum: { $cond: [{ $eq: ['$correta', true] }, 1, 0] } }
+                }
+              },
+              {
+                $project: {
+                  _id: 0,
+                  tipo: '$_id',
+                  total: 1,
+                  acertos: 1
+                }
+              }
+            ],
+            // Últimas resoluções
+            ultimasResolucoes: [
+              { $sort: { createdAt: -1 } },
+              { $limit: 10 }
+            ]
           }
         }
       ])
       .toArray()
 
-    // Questões por tipo
-    const questoesPorTipo = await db.collection('banco_resolucoes')
-      .aggregate([
-        { $match: { userId } },
-        {
-          $group: {
-            _id: '$tipo',
-            total: { $sum: 1 },
-            acertos: {
-              $sum: {
-                $cond: [{ $eq: ['$correta', true] }, 1, 0]
-              }
-            }
-          }
-        },
-        {
-          $project: {
-            _id: 0,
-            tipo: '$_id',
-            total: 1,
-            acertos: 1
-          }
-        }
-      ])
-      .toArray()
-
-    // Últimas resoluções
-    const ultimasResolucoes = await db.collection('banco_resolucoes')
-      .find({ userId })
-      .sort({ createdAt: -1 })
-      .limit(10)
-      .toArray()
+    const counts = facetResult.counts[0] || { totalResolvidas: 0, totalAcertos: 0, totalErros: 0 }
+    const { totalResolvidas, totalAcertos, totalErros } = counts
 
     const estatisticas: BancoEstatisticasUsuario = {
       totalResolvidas,
       totalAcertos,
       totalErros,
       percentualAcerto: totalResolvidas > 0 ? Math.round((totalAcertos / totalResolvidas) * 100) : 0,
-      questoesPorPeriodo: questoesPorPeriodo as any,
-      questoesPorTipo: questoesPorTipo as any,
-      ultimasResolucoes: ultimasResolucoes as any
+      questoesPorPeriodo: facetResult.questoesPorPeriodo as any,
+      questoesPorTipo: facetResult.questoesPorTipo as any,
+      ultimasResolucoes: facetResult.ultimasResolucoes as any
     }
 
     return NextResponse.json({ estatisticas })

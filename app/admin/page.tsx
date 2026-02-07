@@ -23,7 +23,8 @@ import {
   Gamepad2 as GamepadIcon,
   Mail,
   ClipboardList,
-  Target
+  Target,
+  Music
 } from 'lucide-react'
 
 interface User {
@@ -150,6 +151,13 @@ export default function AdminDashboard() {
       icon: Target,
       href: '/admin/leads',
       color: 'from-lime-500 to-green-500'
+    },
+    {
+      title: 'Playlists de Estudo',
+      description: 'Gerenciar playlists do YouTube para o player de música ambiente. Foco e concentração.',
+      icon: Music,
+      href: '/admin/study-playlists',
+      color: 'from-violet-500 to-purple-500'
     }
   ]
 
