@@ -10,7 +10,7 @@ import { Barcode } from '@/components/barcode'
 import { Exam, ExamSubmission } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
 import { ArrowLeft, User, CheckCircle, XCircle, Download, Clock } from 'lucide-react'
-import { downloadUserReportPDF } from '@/lib/user-report-generator'
+// User report generator loaded dynamically to reduce initial bundle size
 
 export default function UserSubmissionPage({ params }: { params: { id: string; userId: string } }) {
   const { id, userId } = params
@@ -205,7 +205,8 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
               {/* Botão Download PDF */}
               <Button
                 className="w-full"
-                onClick={() => {
+                onClick={async () => {
+                  const { downloadUserReportPDF } = await import('@/lib/user-report-generator')
                   downloadUserReportPDF({
                     exam,
                     examId: id,

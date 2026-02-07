@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Exam, TRIResult } from '@/lib/types'
-import { generateGabaritoPDF, downloadPDF } from '@/lib/pdf-generator'
+// PDF generator loaded dynamically to reduce initial bundle size
 import { Barcode } from '@/components/barcode'
 import { ArrowLeft, Download, FileText } from 'lucide-react'
 
@@ -66,9 +66,10 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
     }
   }
 
-  function handleDownloadGabarito() {
+  async function handleDownloadGabarito() {
     if (!exam) return
 
+    const { generateGabaritoPDF, downloadPDF } = await import('@/lib/pdf-generator')
     const blob = generateGabaritoPDF(exam)
     downloadPDF(blob, `gabarito-${exam.title.replace(/\s/g, '-')}.pdf`)
   }

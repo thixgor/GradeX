@@ -51,7 +51,12 @@ export async function GET() {
 
         const activeTopics = finalTopics.filter(t => t.wordCount > 0)
 
-        return NextResponse.json({ topics: activeTopics })
+        const headers = new Headers({
+            'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=1200',
+            'Content-Type': 'application/json',
+        })
+
+        return NextResponse.json({ topics: activeTopics }, { headers })
     } catch (error) {
         return NextResponse.json({ error: 'Failed' }, { status: 500 })
     }

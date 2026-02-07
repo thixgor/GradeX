@@ -1,23 +1,16 @@
-'use client'
+import { Metadata } from 'next'
+import { BackButton } from '@/components/back-button'
 
-import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { ArrowLeft } from 'lucide-react'
+export const metadata: Metadata = {
+  title: 'Termos de Serviço - DomineAqui',
+  description: 'Termos de Serviço da plataforma DomineAqui.',
+}
 
 export default function TermosDeServicoPage() {
-  const router = useRouter()
-
   return (
     <div className="bg-gradient-to-br from-background to-muted flex flex-col flex-1">
       <div className="container mx-auto px-4 py-8">
-        <Button
-          variant="ghost"
-          onClick={() => router.back()}
-          className="mb-6"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Voltar
-        </Button>
+        <BackButton />
 
         <div className="max-w-4xl mx-auto bg-card/50 backdrop-blur-sm rounded-xl border p-6 sm:p-8 shadow-lg">
           <h1 className="text-3xl sm:text-4xl font-bold mb-2">Termos de Serviço</h1>

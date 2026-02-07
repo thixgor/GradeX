@@ -6,6 +6,8 @@ import { TrialExpirationChecker } from '@/components/trial-expiration-checker'
 import { Footer } from '@/components/footer'
 import { ImageProtectionProvider } from '@/components/image-protection-provider'
 import { VerifyEmailBanner } from '@/components/verify-email-banner'
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 const inter = Inter({ subsets: ['latin'] })
 const rowdies = Rowdies({
@@ -73,6 +75,8 @@ export default function RootLayout({
             </div>
             <Footer />
           </ImageProtectionProvider>
+          <Analytics />
+          <SpeedInsights />
         </ThemeProvider>
       </body>
     </html>

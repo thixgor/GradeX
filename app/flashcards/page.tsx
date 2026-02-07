@@ -42,7 +42,6 @@ import { getMedicinaAFYATopicos } from '@/lib/medicina-afya-periodos-helper'
 import { AppShell as LayoutShell } from '@/components/app-shell'
 import { FocusSessionButton } from '@/components/focus-session-button'
 import { NotificationsBell } from '@/components/notifications-bell'
-import jsPDF from 'jspdf'
 
 interface DeckWithId extends FlashcardDeck {
   _id: string

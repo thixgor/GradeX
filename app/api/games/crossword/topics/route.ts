@@ -54,7 +54,13 @@ export async function GET() {
         // Filter out topics with 0 puzzles (users shouldn't see empty rooms)
         const activeTopics = finalTopics.filter(t => t.puzzleCount > 0)
 
-        return NextResponse.json({ topics: activeTopics })
+        // Cache game topics for 10 minutes (rarely change)
+        const headers = new Headers({
+            'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=1200',
+            'Content-Type': 'application/json',
+        })
+
+        return NextResponse.json({ topics: activeTopics }, { headers })
     } catch (error) {
         return NextResponse.json({ error: 'Failed' }, { status: 500 })
     }

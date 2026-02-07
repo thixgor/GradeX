@@ -26,6 +26,12 @@ export async function GET() {
       aulasCollection.find({}).sort({ criadoEm: -1 }).toArray()
     ])
 
+    // Cache aulas data for 5 minutes (content changes infrequently)
+    const headers = new Headers({
+      'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+      'Content-Type': 'application/json',
+    })
+
     return NextResponse.json({
       setores,
       topicos,
@@ -33,7 +39,7 @@ export async function GET() {
       modulos,
       submodulos,
       aulas
-    })
+    }, { headers })
   } catch (error) {
     console.error('Erro ao buscar aulas:', error)
     return NextResponse.json(

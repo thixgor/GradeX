@@ -1,23 +1,16 @@
-'use client'
+import { Metadata } from 'next'
+import { BackButton } from '@/components/back-button'
 
-import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { ArrowLeft } from 'lucide-react'
+export const metadata: Metadata = {
+  title: 'Política de Privacidade - DomineAqui',
+  description: 'Política de Privacidade da plataforma DomineAqui.',
+}
 
 export default function PoliticaDePrivacidadePage() {
-  const router = useRouter()
-
   return (
     <div className="bg-gradient-to-br from-background to-muted flex flex-col flex-1">
       <div className="container mx-auto px-4 py-8">
-        <Button
-          variant="ghost"
-          onClick={() => router.back()}
-          className="mb-6"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Voltar
-        </Button>
+        <BackButton />
 
         <div className="max-w-4xl mx-auto bg-card/50 backdrop-blur-sm rounded-xl border p-6 sm:p-8 shadow-lg">
           <h1 className="text-3xl sm:text-4xl font-bold mb-2">Política de Privacidade</h1>
@@ -29,7 +22,7 @@ export default function PoliticaDePrivacidadePage() {
             <section>
               <h2 className="text-2xl font-semibold mb-3">1. Introdução</h2>
               <p className="text-muted-foreground leading-relaxed">
-                A DomineAqui LTDA ("nós", "nosso" ou "DomineAqui") está comprometida em proteger sua privacidade. Esta Política de Privacidade explica como coletamos, usamos, divulgamos e protegemos suas informações quando você utiliza nossa plataforma educacional.
+                A DomineAqui LTDA (&quot;nós&quot;, &quot;nosso&quot; ou &quot;DomineAqui&quot;) está comprometida em proteger sua privacidade. Esta Política de Privacidade explica como coletamos, usamos, divulgamos e protegemos suas informações quando você utiliza nossa plataforma educacional.
               </p>
             </section>
 

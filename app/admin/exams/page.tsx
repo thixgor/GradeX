@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { Exam } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
-import { generateExamPDF, downloadPDF } from '@/lib/pdf-generator'
+// PDF generator loaded dynamically to reduce initial bundle size
 import { ArrowLeft, Edit, Trash2, Eye, EyeOff, Plus, Play, StopCircle, RotateCcw, FileCheck, FileDown, AlertTriangle, Settings, Check, X, Lock, ShieldAlert, Database, Video } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -261,8 +261,9 @@ export default function AdminExamsPage() {
     }
   }
 
-  function handleDownloadExamPDF(exam: Exam) {
+  async function handleDownloadExamPDF(exam: Exam) {
     try {
+      const { generateExamPDF, downloadPDF } = await import('@/lib/pdf-generator')
       const blob = generateExamPDF(exam)
       downloadPDF(blob, `${exam.title}.pdf`)
     } catch (error: any) {

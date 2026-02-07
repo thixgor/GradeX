@@ -10,7 +10,7 @@ import { AppShell } from '@/components/app-shell'
 import { PlanLimitsCard } from '@/components/plan-limits-card'
 import { CheckCircle, Clock, FileText, Download, Printer, ClipboardList, Trophy, BookOpen, Crown, Timer, Sparkles, Phone, Mail, XCircle, Ticket, AlertTriangle, ChevronDown, ChevronUp, Target, BarChart3, GraduationCap } from 'lucide-react'
 import { FocusSessionsProfile } from '@/components/focus-sessions-profile'
-import { generateGabaritoPDF, downloadPDF, generateExamPDF, generateStudentAnswersPDF } from '@/lib/pdf-generator'
+// PDF generator loaded dynamically to reduce initial bundle size (~200KB)
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -229,6 +229,7 @@ export default function ProfilePage() {
       const res = await fetch(`/api/exams/${examId}`)
       if (!res.ok) throw new Error('Erro ao buscar prova')
       const data = await res.json()
+      const { generateGabaritoPDF, downloadPDF } = await import('@/lib/pdf-generator')
       const blob = generateGabaritoPDF(data.exam)
       downloadPDF(blob, `Gabarito-${data.exam.title}.pdf`)
     } catch (error: any) {
@@ -242,6 +243,7 @@ export default function ProfilePage() {
       const res = await fetch(`/api/exams/${examId}`)
       if (!res.ok) throw new Error('Erro ao buscar prova')
       const data = await res.json()
+      const { generateExamPDF, downloadPDF } = await import('@/lib/pdf-generator')
       const blob = generateExamPDF(data.exam, userId)
       downloadPDF(blob, `Prova-${data.exam.title}.pdf`)
     } catch (error: any) {
@@ -259,6 +261,7 @@ export default function ProfilePage() {
       if (!submissionRes.ok) throw new Error('Erro ao buscar submissao')
       const submissionData = await submissionRes.json()
       const answers = submissionData.submission?.answers || []
+      const { generateStudentAnswersPDF, downloadPDF } = await import('@/lib/pdf-generator')
       const blob = generateStudentAnswersPDF(examData.exam, answers, submission.userName || userName)
       downloadPDF(blob, `Minhas-Respostas-${examData.exam.title}.pdf`)
     } catch (error: any) {

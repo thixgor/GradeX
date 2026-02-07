@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Logo } from '@/components/logo'
@@ -238,10 +239,13 @@ export default function LandingPage() {
               <div className="logo-ring-reverse absolute w-72 h-72 md:w-96 md:h-96 rounded-full border-2 border-dashed border-[#468152]/30"></div>
               <div className="logo-ring absolute w-80 h-80 md:w-[420px] md:h-[420px] rounded-full border-2 border-dotted border-[#E2A43E]/20"></div>
               <div className="logo-image relative z-10 bg-gradient-to-br from-[#468152]/10 via-transparent to-[#E2A43E]/10 rounded-full p-8 md:p-12 backdrop-blur-xl border border-[#468152]/20">
-                <img
+                <Image
                   src="/logo.png"
                   alt="DomineAqui Logo"
+                  width={256}
+                  height={256}
                   className="w-48 h-48 md:w-64 md:h-64 object-contain drop-shadow-2xl"
+                  priority
                 />
               </div>
             </div>
