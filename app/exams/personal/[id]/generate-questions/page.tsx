@@ -220,12 +220,20 @@ export default function GenerateQuestionsPage() {
         // Salvar diretamente sem passar pela revisão
         await saveExamWithQuestions(data.questions)
       } else {
-        const error = await res.json()
-        if (error.requiresUpgrade) {
-          router.push('/buy')
-          return
+        let errorMessage = 'Erro ao gerar questões'
+        try {
+          const error = await res.json()
+          if (error.requiresUpgrade) {
+            router.push('/buy')
+            return
+          }
+          errorMessage = error.error || errorMessage
+        } catch (e) {
+          // Se não conseguir parsear JSON, usa o statusText ou mensagem padrão
+          errorMessage = `Erro ${res.status}: ${res.statusText || 'Falha na comunicação com o servidor'}`
         }
-        alert(`Erro: ${error.error}`)
+
+        alert(`Erro: ${errorMessage}`)
         setCurrentStep('config')
       }
     } catch (error) {
@@ -259,12 +267,18 @@ export default function GenerateQuestionsPage() {
           // Ir direto para a prova
           router.push(`/exam/${data.examId}`)
         } else {
-          const error = await res.json()
-          if (error.requiresUpgrade) {
-            router.push('/buy')
-            return
+          let errorMessage = 'Erro ao salvar prova'
+          try {
+            const error = await res.json()
+            if (error.requiresUpgrade) {
+              router.push('/buy')
+              return
+            }
+            errorMessage = error.error || errorMessage
+          } catch (e) {
+            errorMessage = `Erro ${res.status}: ${res.statusText || 'Falha ao salvar prova'}`
           }
-          alert(`Erro: ${error.error}`)
+          alert(`Erro: ${errorMessage}`)
           setCurrentStep('config')
         }
       } else {
@@ -281,8 +295,14 @@ export default function GenerateQuestionsPage() {
           // Ir direto para a prova
           router.push(`/exam/${examId}`)
         } else {
-          const error = await res.json()
-          alert(`Erro: ${error.error}`)
+          let errorMessage = 'Erro ao atualizar prova'
+          try {
+            const error = await res.json()
+            errorMessage = error.error || errorMessage
+          } catch (e) {
+            errorMessage = `Erro ${res.status}: ${res.statusText || 'Falha ao atualizar prova'}`
+          }
+          alert(`Erro: ${errorMessage}`)
           setCurrentStep('config')
         }
       }

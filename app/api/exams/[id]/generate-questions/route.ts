@@ -45,7 +45,7 @@ export async function POST(
 
     // Para IDs temporários, não validar no banco de dados
     const isTemporaryId = params.id.startsWith('temp-')
-    
+
     if (!isTemporaryId) {
       const db = await getDb()
       const examsCollection = db.collection('exams')
@@ -66,9 +66,8 @@ export async function POST(
     setAIKeySection('personalExams')
 
     // Gerar questões com IA
-    const questions = []
-
-    for (let i = 0; i < numberOfQuestions; i++) {
+    // Gerar questões com IA em PARALELO para evitar timeout
+    const questionsPromises = Array.from({ length: numberOfQuestions }).map(async (_, i) => {
       // Distribuir temas homogeneamente
       const themeIndex = i % themes.length
       const currentTheme = themes[themeIndex]
@@ -92,13 +91,13 @@ export async function POST(
 
       try {
         // Gerar questão com tipo apropriado
-        let question = alternativeType === 'mixed' 
+        let question = alternativeType === 'mixed'
           ? await generateMixedTypeQuestion(params)
           : await generateMultipleChoiceQuestion(params)
-        
+
         // 1. Embaralhar alternativas ANTES de gerar feedback comentado
         question = shuffleAlternatives(question)
-        
+
         // 2. Gerar feedback comentado para provas pessoais (após shuffle)
         try {
           const commentedFeedback = await generateCommentedFeedback(question, context || 'Prova Pessoal')
@@ -107,13 +106,16 @@ export async function POST(
           console.error(`Erro ao gerar feedback comentado para questão ${i + 1}:`, feedbackError)
           // Continuar sem feedback comentado se houver erro
         }
-        
-        questions.push(question)
+
+        return question
       } catch (error) {
         console.error(`Erro ao gerar questão ${i + 1}:`, error)
-        // Continuar com próxima questão em caso de erro
+        return null
       }
-    }
+    })
+
+    const results = await Promise.all(questionsPromises)
+    const questions = results.filter((q): q is any => q !== null)
 
     if (questions.length === 0) {
       return NextResponse.json(
