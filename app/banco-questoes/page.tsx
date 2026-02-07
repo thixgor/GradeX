@@ -296,6 +296,9 @@ function BancoQuestoesContent() {
           const listasData = await listasRes.json()
           setListas(listasData.listas)
         }
+
+        // Load initial questions for premium users
+        await loadQuestoes()
       }
     } catch (error) {
       console.error('Erro ao carregar dados:', error)
@@ -581,11 +584,11 @@ function BancoQuestoesContent() {
         <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
           <div className="h-12 w-64 rounded-xl skeleton-pulse" />
           <div className="grid gap-3 md:grid-cols-4">
-            {[1,2,3,4].map(i => <div key={i} className="h-24 rounded-2xl skeleton-pulse" />)}
+            {[1, 2, 3, 4].map(i => <div key={i} className="h-24 rounded-2xl skeleton-pulse" />)}
           </div>
           <div className="h-64 rounded-2xl skeleton-pulse" />
           <div className="space-y-3">
-            {[1,2,3].map(i => <div key={i} className="h-28 rounded-2xl skeleton-pulse" />)}
+            {[1, 2, 3].map(i => <div key={i} className="h-28 rounded-2xl skeleton-pulse" />)}
           </div>
         </div>
       </div>
@@ -727,534 +730,533 @@ function BancoQuestoesContent() {
   return (
     <>
       <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
-        {/* Stats Cards */}
-        <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
-          {[
-            { label: 'Total de Questões', value: totalQuestoes.toLocaleString(), sub: `Em ${periodos.length} períodos`, icon: Database, color: '#468152', glowColor: 'rgba(70, 129, 82, 0.3)' },
-            { label: 'Resolvidas', value: String(estatisticas?.totalResolvidas || 0), sub: 'questões completadas', icon: BookOpen, color: '#3b82f6', glowColor: 'rgba(59, 130, 246, 0.3)' },
-            { label: 'Taxa de Acerto', value: `${estatisticas?.percentualAcerto || 0}%`, sub: 'nas objetivas', icon: BarChart3, color: '#E2A43E', glowColor: 'rgba(226, 164, 62, 0.3)' },
-            { label: 'Minhas Listas', value: String(listas.length), sub: '', icon: List, color: '#468152', glowColor: 'rgba(70, 129, 82, 0.3)', isListas: true },
-          ].map((stat, index) => {
-            const Icon = stat.icon
-            return (
-              <GlassGlow
-                key={index}
-                glowColor={stat.glowColor}
-                glowSize={160}
-                className="glass-stat rounded-2xl p-4 hover-lift transition-all duration-300 group cursor-default"
+          {/* Stats Cards */}
+          <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
+            {[
+              { label: 'Total de Questões', value: totalQuestoes.toLocaleString(), sub: `Em ${periodos.length} períodos`, icon: Database, color: '#468152', glowColor: 'rgba(70, 129, 82, 0.3)' },
+              { label: 'Resolvidas', value: String(estatisticas?.totalResolvidas || 0), sub: 'questões completadas', icon: BookOpen, color: '#3b82f6', glowColor: 'rgba(59, 130, 246, 0.3)' },
+              { label: 'Taxa de Acerto', value: `${estatisticas?.percentualAcerto || 0}%`, sub: 'nas objetivas', icon: BarChart3, color: '#E2A43E', glowColor: 'rgba(226, 164, 62, 0.3)' },
+              { label: 'Minhas Listas', value: String(listas.length), sub: '', icon: List, color: '#468152', glowColor: 'rgba(70, 129, 82, 0.3)', isListas: true },
+            ].map((stat, index) => {
+              const Icon = stat.icon
+              return (
+                <GlassGlow
+                  key={index}
+                  glowColor={stat.glowColor}
+                  glowSize={160}
+                  className="glass-stat rounded-2xl p-4 hover-lift transition-all duration-300 group cursor-default"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-[11px] font-medium text-muted-foreground">{stat.label}</p>
+                    <div className="p-1.5 rounded-lg bg-white/10 dark:bg-white/5 group-hover:scale-110 transition-transform duration-300">
+                      <Icon className="h-3.5 w-3.5" style={{ color: stat.color }} />
+                    </div>
+                  </div>
+                  <p className="text-xl sm:text-2xl font-bold tracking-tight">{stat.value}</p>
+                  {stat.sub && (
+                    <p className="text-[10px] text-muted-foreground mt-0.5">{stat.sub}</p>
+                  )}
+                  {'isListas' in stat && stat.isListas && (
+                    <div className="flex gap-2 mt-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-[10px] h-6 rounded-lg"
+                        onClick={() => router.push('/banco-questoes/listas')}
+                      >
+                        Ver listas
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="text-[10px] h-6 rounded-lg btn-brand-glow text-white"
+                        onClick={() => setShowRandomListModal(true)}
+                      >
+                        <Shuffle className="h-2.5 w-2.5 mr-1" />
+                        Criar
+                      </Button>
+                    </div>
+                  )}
+                </GlassGlow>
+              )
+            })
+            }</div>
+
+
+          {/* ─── Collapsible Filter Panel ─── */}
+          {!(userRole !== 'admin' && accountType !== 'premium' && accountType !== 'trial' && selectedPeriodo) && (
+            <div className="glass-page-card rounded-2xl overflow-hidden">
+              {/* Filter Header — always visible, clickable to toggle */}
+              <button
+                onClick={() => setFiltersOpen(prev => !prev)}
+                className="w-full flex items-center justify-between p-4 sm:p-5 cursor-pointer hover:bg-white/5 transition-colors duration-200"
               >
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-[11px] font-medium text-muted-foreground">{stat.label}</p>
-                  <div className="p-1.5 rounded-lg bg-white/10 dark:bg-white/5 group-hover:scale-110 transition-transform duration-300">
-                    <Icon className="h-3.5 w-3.5" style={{ color: stat.color }} />
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-xl bg-[#468152]/10 dark:bg-[#468152]/20">
+                    <SlidersHorizontal className="h-4 w-4 text-[#468152]" />
                   </div>
-                </div>
-                <p className="text-xl sm:text-2xl font-bold tracking-tight">{stat.value}</p>
-                {stat.sub && (
-                  <p className="text-[10px] text-muted-foreground mt-0.5">{stat.sub}</p>
-                )}
-                {'isListas' in stat && stat.isListas && (
-                  <div className="flex gap-2 mt-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="text-[10px] h-6 rounded-lg"
-                      onClick={() => router.push('/banco-questoes/listas')}
-                    >
-                      Ver listas
-                    </Button>
-                    <Button
-                      size="sm"
-                      className="text-[10px] h-6 rounded-lg btn-brand-glow text-white"
-                      onClick={() => setShowRandomListModal(true)}
-                    >
-                      <Shuffle className="h-2.5 w-2.5 mr-1" />
-                      Criar
-                    </Button>
+                  <div className="text-left">
+                    <h3 className="text-sm font-semibold">Filtros</h3>
+                    <p className="text-[11px] text-muted-foreground">
+                      {activeFilterCount > 0 ? `${activeFilterCount} filtro(s) ativo(s)` : 'Refine sua busca'}
+                    </p>
                   </div>
-                )}
-              </GlassGlow>
-            )
-          })
-        }</div>
-
-
-        {/* ─── Collapsible Filter Panel ─── */}
-        {!(userRole !== 'admin' && accountType !== 'premium' && accountType !== 'trial' && selectedPeriodo) && (
-          <div className="glass-page-card rounded-2xl overflow-hidden">
-            {/* Filter Header — always visible, clickable to toggle */}
-            <button
-              onClick={() => setFiltersOpen(prev => !prev)}
-              className="w-full flex items-center justify-between p-4 sm:p-5 cursor-pointer hover:bg-white/5 transition-colors duration-200"
-            >
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-[#468152]/10 dark:bg-[#468152]/20">
-                  <SlidersHorizontal className="h-4 w-4 text-[#468152]" />
+                  {activeFilterCount > 0 && (
+                    <span className="ml-2 h-5 min-w-5 px-1.5 rounded-full bg-[#468152] text-white text-[10px] font-bold flex items-center justify-center">
+                      {activeFilterCount}
+                    </span>
+                  )}
                 </div>
-                <div className="text-left">
-                  <h3 className="text-sm font-semibold">Filtros</h3>
-                  <p className="text-[11px] text-muted-foreground">
-                    {activeFilterCount > 0 ? `${activeFilterCount} filtro(s) ativo(s)` : 'Refine sua busca'}
-                  </p>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-xs rounded-xl hidden sm:flex"
+                    onClick={(e) => { e.stopPropagation(); setShowRandomListModal(true) }}
+                  >
+                    <Shuffle className="h-3 w-3 mr-1" />
+                    Lista Aleatória
+                  </Button>
+                  <motion.div
+                    animate={{ rotate: filtersOpen ? 180 : 0 }}
+                    transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                  </motion.div>
                 </div>
-                {activeFilterCount > 0 && (
-                  <span className="ml-2 h-5 min-w-5 px-1.5 rounded-full bg-[#468152] text-white text-[10px] font-bold flex items-center justify-center">
-                    {activeFilterCount}
-                  </span>
+              </button>
+
+              {/* Active filter pills — shown when collapsed */}
+              <AnimatePresence>
+                {!filtersOpen && activeFilterCount > 0 && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="px-4 sm:px-5 pb-3 flex flex-wrap gap-1.5">
+                      {filtros.periodoId && (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-medium bg-[#468152]/10 text-[#468152] px-2 py-1 rounded-full">
+                          Período
+                          <X className="h-2.5 w-2.5 cursor-pointer hover:text-red-500" onClick={() => setFiltros(prev => ({ ...prev, periodoId: undefined, moduloId: undefined, topicoId: undefined, subtopicoId: undefined }))} />
+                        </span>
+                      )}
+                      {filtros.moduloId && (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-medium bg-blue-500/10 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-full">
+                          Módulo
+                          <X className="h-2.5 w-2.5 cursor-pointer hover:text-red-500" onClick={() => setFiltros(prev => ({ ...prev, moduloId: undefined, topicoId: undefined, subtopicoId: undefined }))} />
+                        </span>
+                      )}
+                      {filtros.tipo && (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-medium bg-purple-500/10 text-purple-600 dark:text-purple-400 px-2 py-1 rounded-full">
+                          {filtros.tipo === 'objetiva' ? 'Objetiva' : 'Discursiva'}
+                          <X className="h-2.5 w-2.5 cursor-pointer hover:text-red-500" onClick={() => setFiltros(prev => ({ ...prev, tipo: undefined }))} />
+                        </span>
+                      )}
+                      {filtros.dificuldade && (
+                        <span className={`inline-flex items-center gap-1 text-[10px] font-medium px-2 py-1 rounded-full ${filtros.dificuldade === 'facil' ? 'bg-green-500/10 text-green-600 dark:text-green-400' :
+                            filtros.dificuldade === 'medio' ? 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400' :
+                              'bg-red-500/10 text-red-600 dark:text-red-400'
+                          }`}>
+                          {filtros.dificuldade === 'facil' ? 'Fácil' : filtros.dificuldade === 'medio' ? 'Médio' : 'Difícil'}
+                          <X className="h-2.5 w-2.5 cursor-pointer hover:text-red-500" onClick={() => setFiltros(prev => ({ ...prev, dificuldade: undefined }))} />
+                        </span>
+                      )}
+                      {busca && (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-medium bg-muted text-muted-foreground px-2 py-1 rounded-full">
+                          &quot;{busca}&quot;
+                          <X className="h-2.5 w-2.5 cursor-pointer hover:text-red-500" onClick={() => { setBusca(''); loadQuestoes(1) }} />
+                        </span>
+                      )}
+                    </div>
+                  </motion.div>
                 )}
-              </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-xs rounded-xl hidden sm:flex"
-                  onClick={(e) => { e.stopPropagation(); setShowRandomListModal(true) }}
-                >
-                  <Shuffle className="h-3 w-3 mr-1" />
-                  Lista Aleatória
-                </Button>
-                <motion.div
-                  animate={{ rotate: filtersOpen ? 180 : 0 }}
-                  transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                </motion.div>
-              </div>
-            </button>
+              </AnimatePresence>
 
-            {/* Active filter pills — shown when collapsed */}
-            <AnimatePresence>
-              {!filtersOpen && activeFilterCount > 0 && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="overflow-hidden"
-                >
-                  <div className="px-4 sm:px-5 pb-3 flex flex-wrap gap-1.5">
-                    {filtros.periodoId && (
-                      <span className="inline-flex items-center gap-1 text-[10px] font-medium bg-[#468152]/10 text-[#468152] px-2 py-1 rounded-full">
-                        Período
-                        <X className="h-2.5 w-2.5 cursor-pointer hover:text-red-500" onClick={() => setFiltros(prev => ({ ...prev, periodoId: undefined, moduloId: undefined, topicoId: undefined, subtopicoId: undefined }))} />
-                      </span>
-                    )}
-                    {filtros.moduloId && (
-                      <span className="inline-flex items-center gap-1 text-[10px] font-medium bg-blue-500/10 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-full">
-                        Módulo
-                        <X className="h-2.5 w-2.5 cursor-pointer hover:text-red-500" onClick={() => setFiltros(prev => ({ ...prev, moduloId: undefined, topicoId: undefined, subtopicoId: undefined }))} />
-                      </span>
-                    )}
-                    {filtros.tipo && (
-                      <span className="inline-flex items-center gap-1 text-[10px] font-medium bg-purple-500/10 text-purple-600 dark:text-purple-400 px-2 py-1 rounded-full">
-                        {filtros.tipo === 'objetiva' ? 'Objetiva' : 'Discursiva'}
-                        <X className="h-2.5 w-2.5 cursor-pointer hover:text-red-500" onClick={() => setFiltros(prev => ({ ...prev, tipo: undefined }))} />
-                      </span>
-                    )}
-                    {filtros.dificuldade && (
-                      <span className={`inline-flex items-center gap-1 text-[10px] font-medium px-2 py-1 rounded-full ${
-                        filtros.dificuldade === 'facil' ? 'bg-green-500/10 text-green-600 dark:text-green-400' :
-                        filtros.dificuldade === 'medio' ? 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400' :
-                        'bg-red-500/10 text-red-600 dark:text-red-400'
-                      }`}>
-                        {filtros.dificuldade === 'facil' ? 'Fácil' : filtros.dificuldade === 'medio' ? 'Médio' : 'Difícil'}
-                        <X className="h-2.5 w-2.5 cursor-pointer hover:text-red-500" onClick={() => setFiltros(prev => ({ ...prev, dificuldade: undefined }))} />
-                      </span>
-                    )}
-                    {busca && (
-                      <span className="inline-flex items-center gap-1 text-[10px] font-medium bg-muted text-muted-foreground px-2 py-1 rounded-full">
-                        &quot;{busca}&quot;
-                        <X className="h-2.5 w-2.5 cursor-pointer hover:text-red-500" onClick={() => { setBusca(''); loadQuestoes(1) }} />
-                      </span>
-                    )}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+              {/* Expandable filter body */}
+              <AnimatePresence initial={false}>
+                {filtersOpen && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                    className="overflow-hidden"
+                  >
+                    <div className="px-4 sm:px-5 pb-5 space-y-4">
+                      {/* Row 1: Hierarchy filters in grid */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <div className="space-y-1.5">
+                          <Label className="text-xs font-medium text-muted-foreground">Período</Label>
+                          <Select
+                            value={filtros.periodoId || 'all-periodos'}
+                            onValueChange={(value) => {
+                              const isAll = value === 'all-periodos'
+                              setFiltros(prev => ({ ...prev, periodoId: isAll ? undefined : value, moduloId: undefined, topicoId: undefined, subtopicoId: undefined }))
+                            }}
+                          >
+                            <SelectTrigger className="h-10 rounded-xl bg-background/50 border-white/10 dark:border-white/5">
+                              <SelectValue placeholder="Todos" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all-periodos">Todos os períodos</SelectItem>
+                              {periodos.map((periodo) => (
+                                <SelectItem key={String(periodo._id)} value={String(periodo._id)}>
+                                  {periodo.nome} ({periodo.totalQuestoes})
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
 
-            {/* Expandable filter body */}
-            <AnimatePresence initial={false}>
-              {filtersOpen && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                  className="overflow-hidden"
-                >
-                  <div className="px-4 sm:px-5 pb-5 space-y-4">
-                    {/* Row 1: Hierarchy filters in grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                      <div className="space-y-1.5">
-                        <Label className="text-xs font-medium text-muted-foreground">Período</Label>
-                        <Select
-                          value={filtros.periodoId || 'all-periodos'}
-                          onValueChange={(value) => {
-                            const isAll = value === 'all-periodos'
-                            setFiltros(prev => ({ ...prev, periodoId: isAll ? undefined : value, moduloId: undefined, topicoId: undefined, subtopicoId: undefined }))
-                          }}
-                        >
-                          <SelectTrigger className="h-10 rounded-xl bg-background/50 border-white/10 dark:border-white/5">
-                            <SelectValue placeholder="Todos" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all-periodos">Todos os períodos</SelectItem>
-                            {periodos.map((periodo) => (
-                              <SelectItem key={String(periodo._id)} value={String(periodo._id)}>
-                                {periodo.nome} ({periodo.totalQuestoes})
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <div className="space-y-1.5">
+                          <Label className="text-xs font-medium text-muted-foreground">Módulo</Label>
+                          <Select
+                            value={filtros.moduloId || 'all-modulos'}
+                            onValueChange={(value) => {
+                              const isAll = value === 'all-modulos'
+                              setFiltros(prev => ({ ...prev, moduloId: isAll ? undefined : value, topicoId: undefined, subtopicoId: undefined }))
+                            }}
+                            disabled={!filtros.periodoId}
+                          >
+                            <SelectTrigger className={cn('h-10 rounded-xl bg-background/50 border-white/10 dark:border-white/5', !filtros.periodoId && 'opacity-50')}>
+                              <SelectValue placeholder="Todos" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all-modulos">Todos</SelectItem>
+                              {modulos.map((modulo) => (
+                                <SelectItem key={String(modulo._id)} value={String(modulo._id)}>
+                                  {modulo.nome} ({modulo.totalQuestoes})
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <Label className="text-xs font-medium text-muted-foreground">Tópico</Label>
+                          <Select
+                            value={filtros.topicoId || 'all-topicos'}
+                            onValueChange={(value) => {
+                              const isAll = value === 'all-topicos'
+                              setFiltros(prev => ({ ...prev, topicoId: isAll ? undefined : value, subtopicoId: undefined }))
+                            }}
+                            disabled={!filtros.moduloId}
+                          >
+                            <SelectTrigger className={cn('h-10 rounded-xl bg-background/50 border-white/10 dark:border-white/5', !filtros.moduloId && 'opacity-50')}>
+                              <SelectValue placeholder="Todos" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all-topicos">Todos</SelectItem>
+                              {topicos.map((topico) => (
+                                <SelectItem key={String(topico._id)} value={String(topico._id)}>
+                                  {topico.nome} ({topico.totalQuestoes})
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <Label className="text-xs font-medium text-muted-foreground">Subtópico</Label>
+                          <Select
+                            value={filtros.subtopicoId || 'all-subtopicos'}
+                            onValueChange={(value) => {
+                              const isAll = value === 'all-subtopicos'
+                              setFiltros(prev => ({ ...prev, subtopicoId: isAll ? undefined : value }))
+                            }}
+                            disabled={!filtros.topicoId}
+                          >
+                            <SelectTrigger className={cn('h-10 rounded-xl bg-background/50 border-white/10 dark:border-white/5', !filtros.topicoId && 'opacity-50')}>
+                              <SelectValue placeholder="Todos" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all-subtopicos">Todos</SelectItem>
+                              {subtopicos.map((sub) => (
+                                <SelectItem key={String(sub._id)} value={String(sub._id)}>
+                                  {sub.nome} ({sub.totalQuestoes})
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
                       </div>
 
-                      <div className="space-y-1.5">
-                        <Label className="text-xs font-medium text-muted-foreground">Módulo</Label>
-                        <Select
-                          value={filtros.moduloId || 'all-modulos'}
-                          onValueChange={(value) => {
-                            const isAll = value === 'all-modulos'
-                            setFiltros(prev => ({ ...prev, moduloId: isAll ? undefined : value, topicoId: undefined, subtopicoId: undefined }))
-                          }}
-                          disabled={!filtros.periodoId}
-                        >
-                          <SelectTrigger className={cn('h-10 rounded-xl bg-background/50 border-white/10 dark:border-white/5', !filtros.periodoId && 'opacity-50')}>
-                            <SelectValue placeholder="Todos" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all-modulos">Todos</SelectItem>
-                            {modulos.map((modulo) => (
-                              <SelectItem key={String(modulo._id)} value={String(modulo._id)}>
-                                {modulo.nome} ({modulo.totalQuestoes})
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                      {/* Row 2: Type + Difficulty + Search */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div className="space-y-1.5">
+                          <Label className="text-xs font-medium text-muted-foreground">Tipo</Label>
+                          <Select
+                            value={filtros.tipo || 'all-tipos'}
+                            onValueChange={(value) => {
+                              const isAll = value === 'all-tipos'
+                              setFiltros(prev => ({ ...prev, tipo: isAll ? undefined : (value as BancoQuestaoTipo) }))
+                            }}
+                          >
+                            <SelectTrigger className="h-10 rounded-xl bg-background/50 border-white/10 dark:border-white/5">
+                              <SelectValue placeholder="Todos" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all-tipos">Todos os tipos</SelectItem>
+                              <SelectItem value="objetiva">Objetiva</SelectItem>
+                              <SelectItem value="discursiva">Discursiva</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <Label className="text-xs font-medium text-muted-foreground">Dificuldade</Label>
+                          <Select
+                            value={filtros.dificuldade || 'all-dificuldades'}
+                            onValueChange={(value) => {
+                              const isAll = value === 'all-dificuldades'
+                              setFiltros(prev => ({ ...prev, dificuldade: isAll ? undefined : (value as BancoDificuldade) }))
+                            }}
+                          >
+                            <SelectTrigger className="h-10 rounded-xl bg-background/50 border-white/10 dark:border-white/5">
+                              <SelectValue placeholder="Todas" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all-dificuldades">Todas</SelectItem>
+                              <SelectItem value="facil"><span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-green-500" />Fácil</span></SelectItem>
+                              <SelectItem value="medio"><span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-yellow-500" />Médio</span></SelectItem>
+                              <SelectItem value="dificil"><span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-red-500" />Difícil</span></SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <Label className="text-xs font-medium text-muted-foreground">Buscar</Label>
+                          <div className="flex gap-1.5">
+                            <Input
+                              placeholder="Buscar no enunciado..."
+                              value={busca}
+                              onChange={(e) => setBusca(e.target.value)}
+                              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                              className="flex-1 h-10 rounded-xl bg-background/50 border-white/10 dark:border-white/5"
+                            />
+                            <Button variant="outline" size="icon" onClick={handleSearch} className="h-10 w-10 rounded-xl shrink-0">
+                              <Search className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
                       </div>
 
-                      <div className="space-y-1.5">
-                        <Label className="text-xs font-medium text-muted-foreground">Tópico</Label>
-                        <Select
-                          value={filtros.topicoId || 'all-topicos'}
-                          onValueChange={(value) => {
-                            const isAll = value === 'all-topicos'
-                            setFiltros(prev => ({ ...prev, topicoId: isAll ? undefined : value, subtopicoId: undefined }))
-                          }}
-                          disabled={!filtros.moduloId}
-                        >
-                          <SelectTrigger className={cn('h-10 rounded-xl bg-background/50 border-white/10 dark:border-white/5', !filtros.moduloId && 'opacity-50')}>
-                            <SelectValue placeholder="Todos" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all-topicos">Todos</SelectItem>
-                            {topicos.map((topico) => (
-                              <SelectItem key={String(topico._id)} value={String(topico._id)}>
-                                {topico.nome} ({topico.totalQuestoes})
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
+                      {/* Row 3: Checkbox + Actions */}
+                      <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-white/5">
+                        <label className="flex items-center gap-2 cursor-pointer select-none">
+                          <Checkbox
+                            id="naoResolvidas"
+                            checked={filtros.apenasNaoResolvidas || false}
+                            onCheckedChange={(checked) => setFiltros(prev => ({ ...prev, apenasNaoResolvidas: checked as boolean }))}
+                          />
+                          <span className="text-xs text-muted-foreground">Apenas não resolvidas</span>
+                        </label>
 
-                      <div className="space-y-1.5">
-                        <Label className="text-xs font-medium text-muted-foreground">Subtópico</Label>
-                        <Select
-                          value={filtros.subtopicoId || 'all-subtopicos'}
-                          onValueChange={(value) => {
-                            const isAll = value === 'all-subtopicos'
-                            setFiltros(prev => ({ ...prev, subtopicoId: isAll ? undefined : value }))
-                          }}
-                          disabled={!filtros.topicoId}
-                        >
-                          <SelectTrigger className={cn('h-10 rounded-xl bg-background/50 border-white/10 dark:border-white/5', !filtros.topicoId && 'opacity-50')}>
-                            <SelectValue placeholder="Todos" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all-subtopicos">Todos</SelectItem>
-                            {subtopicos.map((sub) => (
-                              <SelectItem key={String(sub._id)} value={String(sub._id)}>
-                                {sub.nome} ({sub.totalQuestoes})
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        {activeFilterCount > 0 && (
+                          <Button variant="ghost" size="sm" className="text-xs h-7 text-muted-foreground hover:text-foreground" onClick={clearFilters}>
+                            <X className="h-3 w-3 mr-1" />
+                            Limpar filtros
+                          </Button>
+                        )}
+
+                        <div className="flex items-center gap-2 ml-auto">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-xs rounded-xl sm:hidden"
+                            onClick={() => setShowRandomListModal(true)}
+                          >
+                            <Shuffle className="h-3 w-3 mr-1" />
+                            Lista Aleatória
+                          </Button>
+                          {paginacao && (
+                            <span className="text-[11px] text-muted-foreground">
+                              {paginacao.total} resultado(s)
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
 
-                    {/* Row 2: Type + Difficulty + Search */}
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                      <div className="space-y-1.5">
-                        <Label className="text-xs font-medium text-muted-foreground">Tipo</Label>
-                        <Select
-                          value={filtros.tipo || 'all-tipos'}
-                          onValueChange={(value) => {
-                            const isAll = value === 'all-tipos'
-                            setFiltros(prev => ({ ...prev, tipo: isAll ? undefined : (value as BancoQuestaoTipo) }))
-                          }}
+          {/* Banner para usuarios gratuitos */}
+          {accountType === 'gratuito' && selectedPeriodo && (
+            <div className="glass-stat rounded-2xl p-4 flex items-start gap-3 hover-glow-orange transition-all">
+              <div className="p-2 rounded-xl bg-amber-500/10 flex-shrink-0">
+                <GraduationCap className="h-4 w-4 text-amber-600" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold">Voce esta visualizando 5 questoes gratuitas</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Para ver questoes de outro periodo ou usar filtros, faca upgrade para Premium!
+                </p>
+                <Button
+                  size="sm"
+                  onClick={() => router.push('/buy')}
+                  className="mt-2 btn-brand-glow text-white rounded-xl text-xs h-8"
+                >
+                  <Sparkles className="h-3 w-3 mr-1" />
+                  Fazer Upgrade
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Lista de questoes */}
+          <div className="space-y-3">
+            {loadingQuestoes ? (
+              <div className="space-y-3">
+                {[1, 2, 3].map(i => <div key={i} className="h-28 rounded-2xl skeleton-pulse" />)}
+              </div>
+            ) : questoes.length === 0 ? (
+              <div className="text-center py-16">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-muted/50 mb-4">
+                  <Database className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <h3 className="text-lg font-semibold mb-1">Nenhuma questao encontrada</h3>
+                <p className="text-sm text-muted-foreground">
+                  Tente ajustar os filtros para encontrar questoes
+                </p>
+              </div>
+            ) : (
+              <>
+                {questoes.map((questao) => (
+                  <div
+                    key={String(questao._id)}
+                    className="glass-page-card rounded-2xl group hover-lift transition-all duration-300"
+                  >
+                    <div className="p-4 sm:p-5">
+                      <div className="flex items-start gap-4">
+                        <div
+                          className="flex-1 cursor-pointer"
+                          onClick={() => router.push(`/banco-questoes/${questao._id}`)}
                         >
-                          <SelectTrigger className="h-10 rounded-xl bg-background/50 border-white/10 dark:border-white/5">
-                            <SelectValue placeholder="Todos" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all-tipos">Todos os tipos</SelectItem>
-                            <SelectItem value="objetiva">Objetiva</SelectItem>
-                            <SelectItem value="discursiva">Discursiva</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+                          <div className="flex items-center gap-2 flex-wrap mb-2">
+                            <Badge variant={questao.tipo === 'objetiva' ? 'default' : 'secondary'}>
+                              {questao.tipo === 'objetiva' ? 'Objetiva' : 'Discursiva'}
+                            </Badge>
+                            <Badge variant="outline">{questao.periodoNome}</Badge>
+                            {questao.moduloNome && (
+                              <Badge variant="outline" className="text-xs">
+                                {questao.moduloNome}
+                              </Badge>
+                            )}
+                            {questao.topicoNome && (
+                              <Badge variant="outline" className="text-xs">
+                                {questao.topicoNome}
+                              </Badge>
+                            )}
+                            {questao.ano && (
+                              <Badge variant="outline" className="bg-primary/10 text-xs">
+                                {questao.ano}
+                              </Badge>
+                            )}
+                            {questao.dificuldade && (
+                              <Badge
+                                variant="outline"
+                                className={
+                                  questao.dificuldade === 'facil'
+                                    ? 'border-green-500 text-green-600'
+                                    : questao.dificuldade === 'medio'
+                                      ? 'border-yellow-500 text-yellow-600'
+                                      : 'border-red-500 text-red-600'
+                                }
+                              >
+                                {questao.dificuldade === 'facil' ? 'Fácil' :
+                                  questao.dificuldade === 'medio' ? 'Médio' : 'Difícil'}
+                              </Badge>
+                            )}
+                          </div>
 
-                      <div className="space-y-1.5">
-                        <Label className="text-xs font-medium text-muted-foreground">Dificuldade</Label>
-                        <Select
-                          value={filtros.dificuldade || 'all-dificuldades'}
-                          onValueChange={(value) => {
-                            const isAll = value === 'all-dificuldades'
-                            setFiltros(prev => ({ ...prev, dificuldade: isAll ? undefined : (value as BancoDificuldade) }))
-                          }}
-                        >
-                          <SelectTrigger className="h-10 rounded-xl bg-background/50 border-white/10 dark:border-white/5">
-                            <SelectValue placeholder="Todas" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all-dificuldades">Todas</SelectItem>
-                            <SelectItem value="facil"><span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-green-500" />Fácil</span></SelectItem>
-                            <SelectItem value="medio"><span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-yellow-500" />Médio</span></SelectItem>
-                            <SelectItem value="dificil"><span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-red-500" />Difícil</span></SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+                          <p className="text-sm line-clamp-2 mb-2">
+                            {questao.enunciado}
+                          </p>
 
-                      <div className="space-y-1.5">
-                        <Label className="text-xs font-medium text-muted-foreground">Buscar</Label>
-                        <div className="flex gap-1.5">
-                          <Input
-                            placeholder="Buscar no enunciado..."
-                            value={busca}
-                            onChange={(e) => setBusca(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                            className="flex-1 h-10 rounded-xl bg-background/50 border-white/10 dark:border-white/5"
-                          />
-                          <Button variant="outline" size="icon" onClick={handleSearch} className="h-10 w-10 rounded-xl shrink-0">
-                            <Search className="h-4 w-4" />
+                          {questao.jaResolvida && (
+                            <div className="flex items-center gap-1 text-xs">
+                              {questao.ultimaResolucao?.correta ? (
+                                <>
+                                  <CheckCircle2 className="h-4 w-4 text-green-600" />
+                                  <span className="text-green-600">Acertou</span>
+                                </>
+                              ) : questao.tipo === 'objetiva' ? (
+                                <>
+                                  <XCircle className="h-4 w-4 text-red-600" />
+                                  <span className="text-red-600">Errou</span>
+                                </>
+                              ) : (
+                                <>
+                                  <CheckCircle2 className="h-4 w-4 text-blue-600" />
+                                  <span className="text-blue-600">Respondida</span>
+                                </>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <Plus className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => openAddToListModal(String(questao._id))}>
+                                <List className="h-4 w-4 mr-2" />
+                                Adicionar à lista
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => router.push(`/banco-questoes/${questao._id}`)}
+                          >
+                            <ChevronRight className="h-4 w-4" />
                           </Button>
                         </div>
                       </div>
                     </div>
-
-                    {/* Row 3: Checkbox + Actions */}
-                    <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-white/5">
-                      <label className="flex items-center gap-2 cursor-pointer select-none">
-                        <Checkbox
-                          id="naoResolvidas"
-                          checked={filtros.apenasNaoResolvidas || false}
-                          onCheckedChange={(checked) => setFiltros(prev => ({ ...prev, apenasNaoResolvidas: checked as boolean }))}
-                        />
-                        <span className="text-xs text-muted-foreground">Apenas não resolvidas</span>
-                      </label>
-
-                      {activeFilterCount > 0 && (
-                        <Button variant="ghost" size="sm" className="text-xs h-7 text-muted-foreground hover:text-foreground" onClick={clearFilters}>
-                          <X className="h-3 w-3 mr-1" />
-                          Limpar filtros
-                        </Button>
-                      )}
-
-                      <div className="flex items-center gap-2 ml-auto">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="text-xs rounded-xl sm:hidden"
-                          onClick={() => setShowRandomListModal(true)}
-                        >
-                          <Shuffle className="h-3 w-3 mr-1" />
-                          Lista Aleatória
-                        </Button>
-                        {paginacao && (
-                          <span className="text-[11px] text-muted-foreground">
-                            {paginacao.total} resultado(s)
-                          </span>
-                        )}
-                      </div>
-                    </div>
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        )}
+                ))}
 
-        {/* Banner para usuarios gratuitos */}
-        {accountType === 'gratuito' && selectedPeriodo && (
-          <div className="glass-stat rounded-2xl p-4 flex items-start gap-3 hover-glow-orange transition-all">
-            <div className="p-2 rounded-xl bg-amber-500/10 flex-shrink-0">
-              <GraduationCap className="h-4 w-4 text-amber-600" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold">Voce esta visualizando 5 questoes gratuitas</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Para ver questoes de outro periodo ou usar filtros, faca upgrade para Premium!
-              </p>
-              <Button
-                size="sm"
-                onClick={() => router.push('/buy')}
-                className="mt-2 btn-brand-glow text-white rounded-xl text-xs h-8"
-              >
-                <Sparkles className="h-3 w-3 mr-1" />
-                Fazer Upgrade
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {/* Lista de questoes */}
-        <div className="space-y-3">
-          {loadingQuestoes ? (
-            <div className="space-y-3">
-              {[1,2,3].map(i => <div key={i} className="h-28 rounded-2xl skeleton-pulse" />)}
-            </div>
-          ) : questoes.length === 0 ? (
-            <div className="text-center py-16">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-muted/50 mb-4">
-                <Database className="h-8 w-8 text-muted-foreground" />
-              </div>
-              <h3 className="text-lg font-semibold mb-1">Nenhuma questao encontrada</h3>
-              <p className="text-sm text-muted-foreground">
-                Tente ajustar os filtros para encontrar questoes
-              </p>
-            </div>
-          ) : (
-            <>
-              {questoes.map((questao) => (
-                <div
-                  key={String(questao._id)}
-                  className="glass-page-card rounded-2xl group hover-lift transition-all duration-300"
-                >
-                  <div className="p-4 sm:p-5">
-                    <div className="flex items-start gap-4">
-                      <div
-                        className="flex-1 cursor-pointer"
-                        onClick={() => router.push(`/banco-questoes/${questao._id}`)}
-                      >
-                        <div className="flex items-center gap-2 flex-wrap mb-2">
-                          <Badge variant={questao.tipo === 'objetiva' ? 'default' : 'secondary'}>
-                            {questao.tipo === 'objetiva' ? 'Objetiva' : 'Discursiva'}
-                          </Badge>
-                          <Badge variant="outline">{questao.periodoNome}</Badge>
-                          {questao.moduloNome && (
-                            <Badge variant="outline" className="text-xs">
-                              {questao.moduloNome}
-                            </Badge>
-                          )}
-                          {questao.topicoNome && (
-                            <Badge variant="outline" className="text-xs">
-                              {questao.topicoNome}
-                            </Badge>
-                          )}
-                          {questao.ano && (
-                            <Badge variant="outline" className="bg-primary/10 text-xs">
-                              {questao.ano}
-                            </Badge>
-                          )}
-                          {questao.dificuldade && (
-                            <Badge
-                              variant="outline"
-                              className={
-                                questao.dificuldade === 'facil'
-                                  ? 'border-green-500 text-green-600'
-                                  : questao.dificuldade === 'medio'
-                                    ? 'border-yellow-500 text-yellow-600'
-                                    : 'border-red-500 text-red-600'
-                              }
-                            >
-                              {questao.dificuldade === 'facil' ? 'Fácil' :
-                                questao.dificuldade === 'medio' ? 'Médio' : 'Difícil'}
-                            </Badge>
-                          )}
-                        </div>
-
-                        <p className="text-sm line-clamp-2 mb-2">
-                          {questao.enunciado}
-                        </p>
-
-                        {questao.jaResolvida && (
-                          <div className="flex items-center gap-1 text-xs">
-                            {questao.ultimaResolucao?.correta ? (
-                              <>
-                                <CheckCircle2 className="h-4 w-4 text-green-600" />
-                                <span className="text-green-600">Acertou</span>
-                              </>
-                            ) : questao.tipo === 'objetiva' ? (
-                              <>
-                                <XCircle className="h-4 w-4 text-red-600" />
-                                <span className="text-red-600">Errou</span>
-                              </>
-                            ) : (
-                              <>
-                                <CheckCircle2 className="h-4 w-4 text-blue-600" />
-                                <span className="text-blue-600">Respondida</span>
-                              </>
-                            )}
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <Plus className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => openAddToListModal(String(questao._id))}>
-                              <List className="h-4 w-4 mr-2" />
-                              Adicionar à lista
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => router.push(`/banco-questoes/${questao._id}`)}
-                        >
-                          <ChevronRight className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
+                {/* Paginação */}
+                {paginacao && paginacao.totalPages > 1 && (
+                  <div className="flex items-center justify-center gap-2 py-4">
+                    <Button
+                      variant="outline"
+                      disabled={paginacao.page <= 1}
+                      onClick={() => loadQuestoes(paginacao.page - 1)}
+                    >
+                      Anterior
+                    </Button>
+                    <span className="text-sm text-muted-foreground">
+                      Página {paginacao.page} de {paginacao.totalPages}
+                    </span>
+                    <Button
+                      variant="outline"
+                      disabled={paginacao.page >= paginacao.totalPages}
+                      onClick={() => loadQuestoes(paginacao.page + 1)}
+                    >
+                      Próxima
+                    </Button>
                   </div>
-                </div>
-              ))}
-
-              {/* Paginação */}
-              {paginacao && paginacao.totalPages > 1 && (
-                <div className="flex items-center justify-center gap-2 py-4">
-                  <Button
-                    variant="outline"
-                    disabled={paginacao.page <= 1}
-                    onClick={() => loadQuestoes(paginacao.page - 1)}
-                  >
-                    Anterior
-                  </Button>
-                  <span className="text-sm text-muted-foreground">
-                    Página {paginacao.page} de {paginacao.totalPages}
-                  </span>
-                  <Button
-                    variant="outline"
-                    disabled={paginacao.page >= paginacao.totalPages}
-                    onClick={() => loadQuestoes(paginacao.page + 1)}
-                  >
-                    Próxima
-                  </Button>
-                </div>
-              )}
-            </>
-          )}
+                )}
+              </>
+            )}
+          </div>
         </div>
-      </div>
       </div>
 
       {/* Modal de Adicionar a Lista */}
