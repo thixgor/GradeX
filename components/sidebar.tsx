@@ -231,6 +231,10 @@ function NavItemButton({
   )
 }
 
+// ─── Module-level state (survives component remount across navigations) ───
+let _mouseInsideSidebar = false
+let _lastClickedIndex: number | null = null
+
 // ─── Sidebar ─────────────────────────────────────────────────
 export function Sidebar({
   user,
@@ -249,11 +253,10 @@ export function Sidebar({
   const navRef = useRef<HTMLElement>(null)
 
   // Bubble tracking state
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
-  const [isInNav, setIsInNav] = useState(false)
-  const mouseInsideRef = useRef(false) // ref mirror — survives re-renders
-  // Track last clicked index so bubble stays after navigation
-  const clickedIndexRef = useRef<number | null>(null)
+  // Initialize from module-level vars so bubble persists across page navigations
+  // (each page mounts a new AppShell → new Sidebar instance)
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(_lastClickedIndex)
+  const [isInNav, setIsInNav] = useState(_mouseInsideSidebar)
   // Mobile: track touch drag
   const [isTouching, setIsTouching] = useState(false)
 
@@ -287,8 +290,8 @@ export function Sidebar({
   const logoutIndex = mainNavItems.length + secondaryNavItems.length
 
   const handleNavClick = (item: NavItem, index: number) => {
-    // Remember clicked index so bubble persists through navigation
-    clickedIndexRef.current = index
+    // Remember clicked index at module level so it survives remount
+    _lastClickedIndex = index
     setHoveredIndex(index)
 
     if (item.onClick) item.onClick()
@@ -304,12 +307,12 @@ export function Sidebar({
 
   // ─── Mouse handlers (desktop) ───
   const handleNavMouseEnter = useCallback(() => {
-    mouseInsideRef.current = true
+    _mouseInsideSidebar = true
     setIsInNav(true)
   }, [])
   const handleNavMouseLeave = useCallback(() => {
-    mouseInsideRef.current = false
-    clickedIndexRef.current = null
+    _mouseInsideSidebar = false
+    _lastClickedIndex = null
     setIsInNav(false)
     setHoveredIndex(null)
   }, [])
@@ -354,21 +357,19 @@ export function Sidebar({
   }, [hoveredIndex])
 
   // ─── Re-establish bubble after navigation ───
-  // When pathname changes (client-side navigation), the bubble may vanish
-  // because React re-renders without re-firing mouseenter. We use the ref
-  // to detect if the mouse is still inside and show the active item's bubble.
+  // When pathname changes, a new Sidebar instance may mount. The module-level
+  // vars (_mouseInsideSidebar, _lastClickedIndex) survive across mounts,
+  // so initial state is already set. This effect handles subsequent pathname
+  // changes within the same mount.
   useEffect(() => {
-    // If user clicked a nav item, keep bubble on that item
-    if (clickedIndexRef.current !== null) {
+    if (_lastClickedIndex !== null) {
       setIsInNav(true)
-      setHoveredIndex(clickedIndexRef.current)
+      setHoveredIndex(_lastClickedIndex)
       return
     }
-    if (!mouseInsideRef.current || !navRef.current) return
-    // Mouse is still inside nav after navigation — ensure bubble stays visible
+    if (!_mouseInsideSidebar) return
     setIsInNav(true)
 
-    // Find the newly active item and highlight it
     const allItems = [...mainNavItems, ...secondaryNavItems]
     const activeIdx = allItems.findIndex(item => isActive(item.href))
     if (activeIdx !== -1) {
