@@ -66,56 +66,96 @@ export async function POST(
     setAIKeySection('personalExams')
 
     // Gerar questões com IA
-    // Gerar questões com IA em PARALELO para evitar timeout
-    const questionsPromises = Array.from({ length: numberOfQuestions }).map(async (_, i) => {
-      // Distribuir temas homogeneamente
-      const themeIndex = i % themes.length
-      const currentTheme = themes[themeIndex]
+    // Gerar questões com IA em lotes pequenos para evitar rate limits
+    const BATCH_SIZE = 3
+    const MAX_RETRIES = 3
+    const RETRY_DELAY_MS = 1000
 
-      // Dificuldade aleatória ou fixa
-      const currentDifficulty = randomDifficulty ? Math.random() : difficulty
+    const questions: any[] = []
 
-      // Estilo misto ou fixo
-      const currentStyle = mixedStyles ? (i % 2 === 0 ? 'contextualizada' : 'rapida') : style
+    // Função auxiliar para esperar
+    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
-      const params: QuestionGenerationParams = {
-        type: 'multiple-choice',
-        style: currentStyle,
-        subject: currentTheme,
-        difficulty: currentDifficulty,
-        numberOfAlternatives,
-        useTRI: false,
-        context: context || 'Prova Pessoal',
-        alternativeType: alternativeType,
-      }
+    // Função para gerar uma única questão com retry
+    const generateQuestionWithRetry = async (index: number): Promise<any | null> => {
+      let attempts = 0
 
-      try {
-        // Gerar questão com tipo apropriado
-        let question = alternativeType === 'mixed'
-          ? await generateMixedTypeQuestion(params)
-          : await generateMultipleChoiceQuestion(params)
-
-        // 1. Embaralhar alternativas ANTES de gerar feedback comentado
-        question = shuffleAlternatives(question)
-
-        // 2. Gerar feedback comentado para provas pessoais (após shuffle)
+      while (attempts < MAX_RETRIES) {
         try {
-          const commentedFeedback = await generateCommentedFeedback(question, context || 'Prova Pessoal')
-          question.commentedFeedback = commentedFeedback
-        } catch (feedbackError) {
-          console.error(`Erro ao gerar feedback comentado para questão ${i + 1}:`, feedbackError)
-          // Continuar sem feedback comentado se houver erro
+          // Distribuir temas homogeneamente
+          const themeIndex = index % themes.length
+          const currentTheme = themes[themeIndex]
+
+          // Dificuldade aleatória ou fixa
+          const currentDifficulty = randomDifficulty ? Math.random() : difficulty
+
+          // Estilo misto ou fixo
+          const currentStyle = mixedStyles ? (index % 2 === 0 ? 'contextualizada' : 'rapida') : style
+
+          const params: QuestionGenerationParams = {
+            type: 'multiple-choice',
+            style: currentStyle,
+            subject: currentTheme,
+            difficulty: currentDifficulty,
+            numberOfAlternatives,
+            useTRI: false,
+            context: context || 'Prova Pessoal',
+            alternativeType: alternativeType,
+          }
+
+          // Gerar questão com tipo apropriado
+          let question = alternativeType === 'mixed'
+            ? await generateMixedTypeQuestion(params)
+            : await generateMultipleChoiceQuestion(params)
+
+          // 1. Embaralhar alternativas ANTES de gerar feedback comentado
+          question = shuffleAlternatives(question)
+
+          // 2. Gerar feedback comentado para provas pessoais (após shuffle)
+          try {
+            const commentedFeedback = await generateCommentedFeedback(question, context || 'Prova Pessoal')
+            question.commentedFeedback = commentedFeedback
+          } catch (feedbackError) {
+            console.error(`Erro ao gerar feedback comentado para questão ${index + 1}:`, feedbackError)
+            // Continuar sem feedback comentado se houver erro
+          }
+
+          return question
+        } catch (error: any) {
+          attempts++
+          console.error(`Erro ao gerar questão ${index + 1} (Tentativa ${attempts}/${MAX_RETRIES}):`, error.message)
+
+          if (attempts < MAX_RETRIES) {
+            // Backoff exponencial simples
+            await delay(RETRY_DELAY_MS * attempts)
+          }
         }
-
-        return question
-      } catch (error) {
-        console.error(`Erro ao gerar questão ${i + 1}:`, error)
-        return null
       }
-    })
 
-    const results = await Promise.all(questionsPromises)
-    const questions = results.filter((q): q is any => q !== null)
+      return null
+    }
+
+    // Processar em lotes
+    for (let i = 0; i < numberOfQuestions; i += BATCH_SIZE) {
+      const batchPromises = []
+
+      // Criar promessas para o lote atual
+      for (let j = 0; j < BATCH_SIZE && (i + j) < numberOfQuestions; j++) {
+        batchPromises.push(generateQuestionWithRetry(i + j))
+      }
+
+      // Aguardar o lote atual terminar
+      const batchResults = await Promise.all(batchPromises)
+
+      // Adicionar resultados válidos
+      const validResults = batchResults.filter((q): q is any => q !== null)
+      questions.push(...validResults)
+
+      // Pequena pausa entre lotes se ainda houver mais por vir
+      if (i + BATCH_SIZE < numberOfQuestions) {
+        await delay(500)
+      }
+    }
 
     if (questions.length === 0) {
       return NextResponse.json(
