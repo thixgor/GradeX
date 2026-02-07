@@ -194,6 +194,18 @@ Contato: (21) 99777-0936`)
           onCollapse={setSidebarCollapsed}
         />
 
+        {/* Floating mobile menu button — visible when header is hidden */}
+        {!showHeader && (
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setSidebarOpen(true)}
+            className="fixed top-3 left-3 z-40 lg:hidden h-10 w-10 rounded-xl bg-background/80 backdrop-blur-md border-border/50 shadow-lg"
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+        )}
+
         {/* Main Content Area - no padding on mobile (sidebar is overlay), padding on desktop */}
         <div
           className={cn(

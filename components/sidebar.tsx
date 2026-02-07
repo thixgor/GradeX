@@ -407,7 +407,12 @@ export function Sidebar({
         )}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
+        <div className={cn(
+          'border-b',
+          collapsed
+            ? 'flex flex-col items-center gap-2 py-3 px-2'
+            : 'flex items-center justify-between p-4'
+        )}>
           <motion.div
             className="cursor-pointer"
             onClick={() => router.push('/?landing=true')}
@@ -416,7 +421,7 @@ export function Sidebar({
             transition={{ type: 'spring', stiffness: 400, damping: 20 }}
           >
             {!collapsed && <Logo variant="full" size="md" />}
-            {collapsed && <Logo variant="icon" size="md" />}
+            {collapsed && <Logo variant="icon" size="lg" />}
           </motion.div>
 
           <Button variant="ghost" size="icon" onClick={onClose} className="lg:hidden h-8 w-8">
@@ -433,9 +438,9 @@ export function Sidebar({
               variant="ghost"
               size="icon"
               onClick={() => onCollapse?.(!collapsed)}
-              className="h-8 w-8"
+              className="h-7 w-7"
             >
-              {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+              {collapsed ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronLeft className="h-4 w-4" />}
             </Button>
           </motion.div>
         </div>
