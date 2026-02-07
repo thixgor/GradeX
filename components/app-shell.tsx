@@ -84,8 +84,19 @@ export function AppShell({
   const router = useRouter()
   const pathname = usePathname()
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('sidebar-collapsed') === 'true'
+    }
+    return false
+  })
   const [showCreateExamModal, setShowCreateExamModal] = useState(false)
+
+  // Persist collapsed state to localStorage
+  const handleSidebarCollapse = (collapsed: boolean) => {
+    setSidebarCollapsed(collapsed)
+    localStorage.setItem('sidebar-collapsed', String(collapsed))
+  }
 
   // Use the centralized bootstrap hook - single source of truth
   const {
@@ -191,7 +202,7 @@ Contato: (21) 99777-0936`)
           examsLimit={examsLimit}
           tierLimitExceeded={tierLimitExceeded}
           collapsed={sidebarCollapsed}
-          onCollapse={setSidebarCollapsed}
+          onCollapse={handleSidebarCollapse}
         />
 
         {/* Floating mobile menu button — visible when header is hidden */}
