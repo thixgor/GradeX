@@ -21,6 +21,7 @@ const publicPrefixes = [
   '/api/auth/',
   '/api/stripe/webhook',
   '/api/leads/',
+  '/api/study-playlists',
   '/_next/',
   '/img/',
   '/favicon',

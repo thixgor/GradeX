@@ -117,9 +117,13 @@ export function StudyMusicPlayer() {
     useEffect(() => {
         async function fetchPlaylists() {
             try {
+                console.log('[StudyMusicPlayer] Fetching playlists...')
                 const res = await fetch('/api/study-playlists')
                 const data = await res.json()
+                console.log('[StudyMusicPlayer] API Response:', data)
+
                 if (data.success && data.playlists.length > 0) {
+                    console.log('[StudyMusicPlayer] Found playlists:', data.playlists.length)
                     setPlaylists(data.playlists)
 
                     // Load saved state from localStorage
@@ -149,9 +153,11 @@ export function StudyMusicPlayer() {
                         // First time - select random playlist
                         selectRandomPlaylist(data.playlists)
                     }
+                } else {
+                    console.log('[StudyMusicPlayer] No playlists found or API error')
                 }
             } catch (error) {
-                console.error('Error loading playlists:', error)
+                console.error('[StudyMusicPlayer] Error loading playlists:', error)
             } finally {
                 setLoading(false)
             }
@@ -345,8 +351,17 @@ export function StudyMusicPlayer() {
     }
 
     // Don't render if no playlists
-    if (loading) return null
-    if (playlists.length === 0) return null
+    console.log('[StudyMusicPlayer] Render check - loading:', loading, 'playlists:', playlists.length)
+    if (loading) {
+        console.log('[StudyMusicPlayer] Still loading, not rendering')
+        return null
+    }
+    if (playlists.length === 0) {
+        console.log('[StudyMusicPlayer] No playlists, not rendering')
+        return null
+    }
+
+    console.log('[StudyMusicPlayer] Rendering player widget')
 
     return (
         <>
@@ -568,8 +583,8 @@ export function StudyMusicPlayer() {
                                                             key={playlist._id}
                                                             onClick={() => handlePlaylistChange(playlist)}
                                                             className={`w-full py-2 px-3 rounded-lg flex items-center justify-between text-left transition-colors ${state.currentPlaylistId === playlist._id
-                                                                    ? 'bg-violet-500/20 text-violet-300'
-                                                                    : 'hover:bg-white/5 text-white/70 hover:text-white/90'
+                                                                ? 'bg-violet-500/20 text-violet-300'
+                                                                : 'hover:bg-white/5 text-white/70 hover:text-white/90'
                                                                 }`}
                                                         >
                                                             <span className="text-sm truncate">{playlist.name}</span>
