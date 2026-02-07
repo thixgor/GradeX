@@ -1113,9 +1113,11 @@ export default function BancoQuestoesPage() {
           ) : (
             <>
               {questoes.map((questao) => (
-                <div
+                <GlassGlow
                   key={String(questao._id)}
-                  className="glass-page-card rounded-2xl group hover-glow-green hover-lift transition-all duration-300"
+                  glowColor="rgba(70, 129, 82, 0.25)"
+                  glowSize={200}
+                  className="glass-page-card rounded-2xl group hover-lift transition-all duration-300"
                 >
                   <div className="p-4 sm:p-5">
                     <div className="flex items-start gap-4">
@@ -1212,7 +1214,7 @@ export default function BancoQuestoesPage() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </GlassGlow>
               ))}
 
               {/* Paginação */}
