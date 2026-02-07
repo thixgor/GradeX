@@ -404,26 +404,36 @@ export function StudyMusicPlayer() {
                             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                             className="relative"
                         >
-                            {/* Glassmorphism Container */}
+                            {/* Glassmorphism Container - Ultra Premium */}
                             <div
                                 className="relative w-72 rounded-3xl overflow-hidden"
                                 style={{
-                                    background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)',
-                                    backdropFilter: 'blur(40px) saturate(180%)',
-                                    WebkitBackdropFilter: 'blur(40px) saturate(180%)',
+                                    background: 'linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%)',
+                                    backdropFilter: 'blur(60px) saturate(200%)',
+                                    WebkitBackdropFilter: 'blur(60px) saturate(200%)',
                                     boxShadow: `
-                    0 8px 32px rgba(0, 0, 0, 0.3),
-                    0 0 0 1px rgba(255, 255, 255, 0.08),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                    inset 0 -1px 0 rgba(0, 0, 0, 0.1)
+                    0 8px 32px rgba(0, 0, 0, 0.4),
+                    0 16px 64px rgba(0, 0, 0, 0.2),
+                    0 0 0 1px rgba(255, 255, 255, 0.15),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                    inset 0 -1px 0 rgba(0, 0, 0, 0.2)
                   `
                                 }}
                             >
-                                {/* Glass Reflection Effect */}
+                                {/* Primary Glass Reflection Effect */}
                                 <div
                                     className="absolute inset-0 pointer-events-none"
                                     style={{
-                                        background: 'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 40%)',
+                                        background: 'linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 50%)',
+                                        borderRadius: 'inherit'
+                                    }}
+                                />
+
+                                {/* Secondary Shimmer Effect */}
+                                <div
+                                    className="absolute inset-0 pointer-events-none opacity-50"
+                                    style={{
+                                        background: 'radial-gradient(circle at 30% 20%, rgba(255,255,255,0.1) 0%, transparent 50%)',
                                         borderRadius: 'inherit'
                                     }}
                                 />
@@ -492,7 +502,7 @@ export function StudyMusicPlayer() {
                                         <div className="relative">
                                             <button
                                                 onClick={() => setShowVolumeSlider(!showVolumeSlider)}
-                                                className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 transition-all text-white/70 hover:text-white"
+                                                className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 hover:bg-white/20 active:bg-white/30 transition-colors duration-200 text-white/70 hover:text-white"
                                             >
                                                 {state.volume === 0 ? (
                                                     <VolumeX className="w-5 h-5" />
@@ -509,9 +519,9 @@ export function StudyMusicPlayer() {
                                                         exit={{ opacity: 0, y: 10 }}
                                                         className="absolute bottom-14 left-1/2 -translate-x-1/2 p-3 rounded-2xl"
                                                         style={{
-                                                            background: 'rgba(0, 0, 0, 0.6)',
+                                                            background: 'rgba(20, 20, 25, 0.8)',
                                                             backdropFilter: 'blur(20px)',
-                                                            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
+                                                            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255,255,255,0.1)'
                                                         }}
                                                     >
                                                         <input
@@ -522,7 +532,7 @@ export function StudyMusicPlayer() {
                                                             onChange={(e) => handleVolumeChange(parseInt(e.target.value))}
                                                             className="w-24 h-1.5 rounded-full appearance-none cursor-pointer"
                                                             style={{
-                                                                background: `linear-gradient(to right, rgba(139, 92, 246, 0.8) 0%, rgba(139, 92, 246, 0.8) ${state.volume}%, rgba(255,255,255,0.2) ${state.volume}%, rgba(255,255,255,0.2) 100%)`,
+                                                                background: `linear-gradient(to right, rgba(139, 92, 246, 0.8) 0%, rgba(139, 92, 246, 0.8) ${state.volume}%, rgba(255,255,255,0.1) ${state.volume}%, rgba(255,255,255,0.1) 100%)`,
                                                             }}
                                                         />
                                                     </motion.div>
@@ -534,18 +544,18 @@ export function StudyMusicPlayer() {
                                         <button
                                             onClick={handlePlayPause}
                                             disabled={!playerReady}
-                                            className="w-14 h-14 rounded-full flex items-center justify-center transition-all disabled:opacity-50"
+                                            className="w-16 h-16 rounded-full flex items-center justify-center transition-transform duration-200 active:scale-95 disabled:opacity-50 disabled:scale-100"
                                             style={{
-                                                background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(168, 85, 247, 0.9) 100%)',
-                                                boxShadow: '0 8px 24px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255,255,255,0.2)'
+                                                background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(124, 58, 237, 0.9) 100%)',
+                                                boxShadow: '0 8px 24px rgba(139, 92, 246, 0.3), inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.2)'
                                             }}
                                         >
                                             {isBuffering ? (
-                                                <Loader2 className="w-6 h-6 text-white animate-spin" />
+                                                <Loader2 className="w-7 h-7 text-white animate-spin" />
                                             ) : state.isPlaying ? (
-                                                <Pause className="w-6 h-6 text-white" fill="white" />
+                                                <Pause className="w-7 h-7 text-white" fill="white" />
                                             ) : (
-                                                <Play className="w-6 h-6 text-white ml-0.5" fill="white" />
+                                                <Play className="w-7 h-7 text-white ml-1" fill="white" />
                                             )}
                                         </button>
 
@@ -553,7 +563,7 @@ export function StudyMusicPlayer() {
                                         <button
                                             onClick={handleNextTrack}
                                             disabled={!playerReady}
-                                            className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 transition-all text-white/70 hover:text-white disabled:opacity-50"
+                                            className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 hover:bg-white/20 active:bg-white/30 transition-colors duration-200 text-white/70 hover:text-white disabled:opacity-30"
                                             title="Próxima música"
                                         >
                                             <SkipForward className="w-5 h-5" />
@@ -562,7 +572,7 @@ export function StudyMusicPlayer() {
                                         {/* Playback Rate */}
                                         <button
                                             onClick={handlePlaybackRateChange}
-                                            className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 transition-all text-white/70 hover:text-white"
+                                            className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 hover:bg-white/20 active:bg-white/30 transition-colors duration-200 text-white/70 hover:text-white"
                                         >
                                             <span className="text-xs font-bold">{state.playbackRate}x</span>
                                         </button>
@@ -571,16 +581,16 @@ export function StudyMusicPlayer() {
                                     {/* Playlist Selector */}
                                     <button
                                         onClick={() => setShowPlaylistSelector(!showPlaylistSelector)}
-                                        className="w-full py-2.5 px-4 rounded-xl flex items-center justify-between hover:bg-white/5 transition-colors group"
+                                        className="w-full py-3 px-4 rounded-xl flex items-center justify-between bg-white/5 hover:bg-white/10 active:bg-white/15 transition-colors duration-200 group border border-white/5"
                                     >
                                         <div className="flex items-center gap-2">
-                                            <ListMusic className="w-4 h-4 text-white/50 group-hover:text-white/70" />
-                                            <span className="text-sm text-white/70 group-hover:text-white/90">
+                                            <ListMusic className="w-4 h-4 text-white/50 group-hover:text-white/80 transition-colors" />
+                                            <span className="text-sm font-medium text-white/70 group-hover:text-white/90 transition-colors">
                                                 Trocar playlist
                                             </span>
                                         </div>
                                         <ChevronDown
-                                            className={`w-4 h-4 text-white/50 transition-transform ${showPlaylistSelector ? 'rotate-180' : ''
+                                            className={`w-4 h-4 text-white/50 transition-transform duration-300 ${showPlaylistSelector ? 'rotate-180' : ''
                                                 }`}
                                         />
                                     </button>
@@ -588,24 +598,24 @@ export function StudyMusicPlayer() {
                                     <AnimatePresence>
                                         {showPlaylistSelector && (
                                             <motion.div
-                                                initial={{ opacity: 0, height: 0 }}
-                                                animate={{ opacity: 1, height: 'auto' }}
-                                                exit={{ opacity: 0, height: 0 }}
+                                                initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                                                animate={{ opacity: 1, height: 'auto', marginTop: 8 }}
+                                                exit={{ opacity: 0, height: 0, marginTop: 0 }}
                                                 className="overflow-hidden"
                                             >
-                                                <div className="pt-2 space-y-1 max-h-40 overflow-y-auto custom-scrollbar">
+                                                <div className="space-y-1 max-h-40 overflow-y-auto custom-scrollbar p-1">
                                                     {playlists.map((playlist) => (
                                                         <button
                                                             key={playlist._id}
                                                             onClick={() => handlePlaylistChange(playlist)}
-                                                            className={`w-full py-2 px-3 rounded-lg flex items-center justify-between text-left transition-colors ${state.currentPlaylistId === playlist._id
-                                                                ? 'bg-violet-500/20 text-violet-300'
-                                                                : 'hover:bg-white/5 text-white/70 hover:text-white/90'
+                                                            className={`w-full py-2.5 px-3 rounded-lg flex items-center justify-between text-left transition-colors duration-200 ${state.currentPlaylistId === playlist._id
+                                                                ? 'bg-violet-500/20 text-violet-200'
+                                                                : 'hover:bg-white/10 text-white/70 hover:text-white'
                                                                 }`}
                                                         >
-                                                            <span className="text-sm truncate">{playlist.name}</span>
+                                                            <span className="text-sm font-medium truncate">{playlist.name}</span>
                                                             {state.currentPlaylistId === playlist._id && (
-                                                                <Check className="w-4 h-4 flex-shrink-0" />
+                                                                <Check className="w-4 h-4 flex-shrink-0 text-violet-400" />
                                                             )}
                                                         </button>
                                                     ))}
@@ -649,49 +659,42 @@ export function StudyMusicPlayer() {
                                 }}
                             />
 
-                            {/* Main Orb */}
+                            {/* Main Orb - Ultra Glass */}
                             <div
-                                className="relative w-14 h-14 rounded-full flex items-center justify-center overflow-hidden"
+                                className="relative w-16 h-16 rounded-full flex items-center justify-center overflow-hidden"
                                 style={{
-                                    background: 'linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%)',
-                                    backdropFilter: 'blur(40px) saturate(180%)',
-                                    WebkitBackdropFilter: 'blur(40px) saturate(180%)',
+                                    background: 'linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%)',
+                                    backdropFilter: 'blur(30px) saturate(180%)',
+                                    WebkitBackdropFilter: 'blur(30px) saturate(180%)',
                                     boxShadow: `
-                    0 8px 32px rgba(0, 0, 0, 0.3),
-                    0 0 0 1px rgba(255, 255, 255, 0.1),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.15),
-                    inset 0 -1px 0 rgba(0, 0, 0, 0.1),
-                    ${state.isPlaying ? '0 0 20px rgba(139, 92, 246, 0.3)' : '0 0 0 transparent'}
+                    0 8px 32px rgba(0, 0, 0, 0.4),
+                    0 4px 12px rgba(0,0,0,0.1),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                    inset 0 -1px 0 rgba(0, 0, 0, 0.2),
+                    ${state.isPlaying ? '0 0 30px rgba(139, 92, 246, 0.4)' : '0 0 0 transparent'}
                   `
                                 }}
                             >
-                                {/* Inner Gradient */}
+                                {/* Reflection */}
                                 <div
-                                    className="absolute inset-0"
+                                    className="absolute inset-0 pointer-events-none"
                                     style={{
-                                        background: 'linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 50%)',
+                                        background: 'linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 45%)',
                                         borderRadius: '50%'
                                     }}
                                 />
 
-                                {/* Animated Ring when playing */}
-                                {state.isPlaying && (
-                                    <motion.div
-                                        className="absolute inset-1 rounded-full border-2 border-violet-400/30"
-                                        animate={{
-                                            scale: [1, 1.1, 1],
-                                            opacity: [0.3, 0.5, 0.3]
-                                        }}
-                                        transition={{
-                                            duration: 2,
-                                            repeat: Infinity,
-                                            ease: 'easeInOut'
-                                        }}
-                                    />
-                                )}
+                                {/* Bottom Inner Light */}
+                                <div
+                                    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-1/2 pointer-events-none opacity-30"
+                                    style={{
+                                        background: 'radial-gradient(ellipse at bottom, rgba(139, 92, 246, 0.6) 0%, transparent 70%)',
+                                        filter: 'blur(5px)'
+                                    }}
+                                />
 
                                 {/* Icon */}
-                                <div className="relative z-10">
+                                <div className="relative z-10 drop-shadow-md">
                                     {isBuffering ? (
                                         <Loader2 className="w-6 h-6 text-white/90 animate-spin" />
                                     ) : state.isPlaying ? (
