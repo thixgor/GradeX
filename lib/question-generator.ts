@@ -3,7 +3,7 @@ import { getDb } from './mongodb'
 import { getAIKey, AIKeySection } from './ai-keys'
 import { v4 as uuidv4 } from 'uuid'
 
-const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent'
+const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent'
 
 /**
  * Busca a API Key do Gemini do banco de dados
@@ -96,8 +96,8 @@ function buildMultipleChoicePrompt(params: QuestionGenerationParams): string {
   const difficultyPercentage = (params.difficulty * 100).toFixed(0)
   const difficultyLevel =
     params.difficulty < 0.3 ? 'FÁCIL' :
-    params.difficulty < 0.6 ? 'MÉDIO' :
-    params.difficulty < 0.8 ? 'DIFÍCIL' : 'MUITO DIFÍCIL'
+      params.difficulty < 0.6 ? 'MÉDIO' :
+        params.difficulty < 0.8 ? 'DIFÍCIL' : 'MUITO DIFÍCIL'
 
   const altType = params.alternativeType || 'standard'
   const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
@@ -172,16 +172,16 @@ function buildMultipleChoicePrompt(params: QuestionGenerationParams): string {
 
 **CONTEXTO:** ${params.context}
 ${params.context.includes('ENEM') ? 'A questão deve seguir o padrão ENEM: interdisciplinar, interpretativa, com texto-base e situação-problema contextualizada.' :
-  params.context.includes('UERJ') ? 'A questão deve seguir o padrão UERJ: analítica, crítica, com ênfase em raciocínio e argumentação.' :
-  `A questão deve ser adequada para o contexto especificado: ${params.context}`}
+      params.context.includes('UERJ') ? 'A questão deve seguir o padrão UERJ: analítica, crítica, com ênfase em raciocínio e argumentação.' :
+        `A questão deve ser adequada para o contexto especificado: ${params.context}`}
 
 **TEMA/ASSUNTO:** ${params.subject}
 
 **NÍVEL DE DIFICULDADE:** ${difficultyLevel} (${difficultyPercentage}%)
 ${params.difficulty < 0.3 ? 'Questão básica, conceitos fundamentais, raciocínio simples.' :
-  params.difficulty < 0.6 ? 'Questão de complexidade média, exige raciocínio e conexão entre conceitos.' :
-  params.difficulty < 0.8 ? 'Questão avançada, exige domínio profundo e raciocínio complexo.' :
-  'Questão de altíssima complexidade, para candidatos de excelência.'}
+      params.difficulty < 0.6 ? 'Questão de complexidade média, exige raciocínio e conexão entre conceitos.' :
+        params.difficulty < 0.8 ? 'Questão avançada, exige domínio profundo e raciocínio complexo.' :
+          'Questão de altíssima complexidade, para candidatos de excelência.'}
 
 **ESTILO:** ${params.style === 'contextualizada' ? 'CONTEXTUALIZADA' : 'RÁPIDA'}
 ${styleDescription}
@@ -288,8 +288,8 @@ function buildDiscursivePrompt(params: QuestionGenerationParams): string {
   const difficultyPercentage = (params.difficulty * 100).toFixed(0)
   const difficultyLevel =
     params.difficulty < 0.3 ? 'FÁCIL' :
-    params.difficulty < 0.6 ? 'MÉDIO' :
-    params.difficulty < 0.8 ? 'DIFÍCIL' : 'MUITO DIFÍCIL'
+      params.difficulty < 0.6 ? 'MÉDIO' :
+        params.difficulty < 0.8 ? 'DIFÍCIL' : 'MUITO DIFÍCIL'
 
   const styleDescription = params.style === 'contextualizada'
     ? `A questão deve ser CONTEXTUALIZADA, com um enunciado amplo e rico em contexto, apresentando uma situação, cenário ou narrativa que contextualize o tema. O enunciado deve ter pelo menos 4-6 linhas e apresentar informações relevantes.`
@@ -299,16 +299,16 @@ function buildDiscursivePrompt(params: QuestionGenerationParams): string {
 
 **CONTEXTO:** ${params.context}
 ${params.context.includes('ENEM') ? 'A questão deve seguir o padrão ENEM: interdisciplinar, interpretativa, com situação-problema e exigindo argumentação fundamentada.' :
-  params.context.includes('UERJ') ? 'A questão deve seguir o padrão UERJ: analítica, crítica, com ênfase em raciocínio, interpretação e argumentação sólida.' :
-  `A questão deve ser adequada para o contexto especificado: ${params.context}`}
+      params.context.includes('UERJ') ? 'A questão deve seguir o padrão UERJ: analítica, crítica, com ênfase em raciocínio, interpretação e argumentação sólida.' :
+        `A questão deve ser adequada para o contexto especificado: ${params.context}`}
 
 **TEMA/ASSUNTO:** ${params.subject}
 
 **NÍVEL DE DIFICULDADE:** ${difficultyLevel} (${difficultyPercentage}%)
 ${params.difficulty < 0.3 ? 'Questão básica, conceitos fundamentais, resposta simples.' :
-  params.difficulty < 0.6 ? 'Questão de complexidade média, exige análise e síntese.' :
-  params.difficulty < 0.8 ? 'Questão avançada, exige domínio profundo e argumentação complexa.' :
-  'Questão de altíssima complexidade, para candidatos de excelência.'}
+      params.difficulty < 0.6 ? 'Questão de complexidade média, exige análise e síntese.' :
+        params.difficulty < 0.8 ? 'Questão avançada, exige domínio profundo e argumentação complexa.' :
+          'Questão de altíssima complexidade, para candidatos de excelência.'}
 
 **ESTILO:** ${params.style === 'contextualizada' ? 'CONTEXTUALIZADA' : 'RÁPIDA'}
 ${styleDescription}
@@ -590,7 +590,7 @@ export function shuffleAlternatives(question: Question): Question {
 
   // Extrair os textos das alternativas
   const texts = question.alternatives.map(alt => alt.text)
-  
+
   // Fisher-Yates shuffle dos textos
   for (let i = texts.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
