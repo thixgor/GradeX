@@ -32,27 +32,27 @@
   }
 
   .dark {
-    --background: 153 27% 10%;
-    --foreground: 0 0% 100%;
-    --card: 153 27% 15%;
-    --card-foreground: 0 0% 100%;
-    --popover: 153 27% 15%;
-    --popover-foreground: 0 0% 100%;
+    --background: 222 47% 8%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
     /* Primary: Verde DomineAqui */
     --primary: 153 27% 40%;
     --primary-foreground: 0 0% 100%;
     /* Secondary: Laranja */
     --secondary: 18 65% 50%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 217.2 32.6% 17.5%;
+    --muted: 222 47% 14%;
     --muted-foreground: 215 20.2% 65.1%;
     /* Accent: Amarelo */
     --accent: 40 82% 55%;
     --accent-foreground: 153 27% 10%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 153 27% 20%;
-    --input: 153 27% 20%;
+    --border: 222 30% 18%;
+    --input: 222 30% 18%;
     /* Ring: Verde para focus */
     --ring: 153 27% 40%;
   }
@@ -144,6 +144,75 @@
 
   .glow-yellow {
     @apply shadow-lg shadow-[#E2A43E]/20 dark:shadow-[#E2A43E]/40;
+  }
+}
+
+/* ============================================
+   Dashboard Premium Animations
+   ============================================ */
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(70, 129, 82, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(70, 129, 82, 0.3);
+  }
+}
+
+@keyframes counter-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes orbit {
+  from {
+    transform: rotate(0deg) translateX(120px) rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg) translateX(120px) rotate(-360deg);
   }
 }
 
@@ -316,4 +385,116 @@
 
 .slide-in-from-bottom-4 {
   animation: slide-in-from-bottom-4 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ============================================
+   Dashboard Premium Utilities
+   ============================================ */
+
+.dashboard-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.stat-card-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card-glow::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.05),
+    transparent
+  );
+  animation: shimmer 3s ease-in-out infinite;
+  background-size: 200% 100%;
+}
+
+.dark .glass-stat {
+  background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(20px);
+}
+
+.glass-stat {
+  background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.5) 100%);
+  border: 1px solid rgba(255,255,255,0.6);
+  backdrop-filter: blur(20px);
+}
+
+.dark .glass-action {
+  background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+  border: 1px solid rgba(255,255,255,0.06);
+  backdrop-filter: blur(16px);
+}
+
+.glass-action {
+  background: linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.4) 100%);
+  border: 1px solid rgba(255,255,255,0.5);
+  backdrop-filter: blur(16px);
+}
+
+.hero-gradient {
+  background: linear-gradient(135deg, #0f1729 0%, #1a2744 30%, #162235 60%, #0d1520 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-gradient::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 80%, rgba(70, 129, 82, 0.2), transparent),
+    radial-gradient(ellipse 60% 40% at 80% 20%, rgba(99, 102, 241, 0.12), transparent),
+    radial-gradient(ellipse 50% 50% at 60% 60%, rgba(226, 164, 62, 0.08), transparent);
+  pointer-events: none;
+}
+
+.light .hero-gradient {
+  background: linear-gradient(135deg, #468152 0%, #3a7048 30%, #2d5a3a 60%, #3d6b47 100%);
+}
+
+.light .hero-gradient::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 80%, rgba(255, 255, 255, 0.1), transparent),
+    radial-gradient(ellipse 60% 40% at 80% 20%, rgba(226, 164, 62, 0.15), transparent);
+}
+
+.progress-ring {
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+.progress-ring-circle {
+  transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-counter-up {
+  animation: counter-up 0.6s ease-out forwards;
+}
+
+.animate-gradient-shift {
+  background-size: 200% 200%;
+  animation: gradient-shift 6s ease infinite;
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+.animate-orbit {
+  animation: orbit 20s linear infinite;
 }
