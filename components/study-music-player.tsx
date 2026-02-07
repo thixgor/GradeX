@@ -244,7 +244,9 @@ export function StudyMusicPlayer() {
             events: {
                 onReady: (event) => {
                     setPlayerReady(true)
-                    event.target.setVolume(state.volume)
+                    // Apply logarithmic volume curve for better low-volume control
+                    const logVolume = Math.floor(Math.pow(state.volume / 100, 2.5) * 100)
+                    event.target.setVolume(logVolume)
                     event.target.setPlaybackRate(state.playbackRate)
                 },
                 onStateChange: (event) => {
@@ -317,7 +319,10 @@ export function StudyMusicPlayer() {
     const handleVolumeChange = (value: number) => {
         setState(prev => ({ ...prev, volume: value }))
         if (playerRef.current) {
-            playerRef.current.setVolume(value)
+            // Apply logarithmic volume curve: (val/100)^2.5 * 100
+            // This gives much more precision at lower volumes which is better for background music
+            const logVolume = Math.floor(Math.pow(value / 100, 2.5) * 100)
+            playerRef.current.setVolume(logVolume)
         }
     }
 
