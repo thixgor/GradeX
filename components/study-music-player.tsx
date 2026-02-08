@@ -17,6 +17,7 @@ import {
     SkipForward,
     SkipBack
 } from 'lucide-react'
+import { useAuthUser } from '@/hooks/use-auth-user'
 
 interface StudyPlaylist {
     _id: string
@@ -24,14 +25,18 @@ interface StudyPlaylist {
     youtubePlaylistId: string
 }
 
+type PlaybackRate = 0.5 | 0.75 | 1 | 1.25 | 1.5 | 2
+
 interface PlayerState {
     isExpanded: boolean
     isPlaying: boolean
     volume: number
-    playbackRate: 1 | 2
+    playbackRate: PlaybackRate
     currentPlaylistId: string | null
     currentPlaylistName: string
 }
+
+const PLAYBACK_RATES: PlaybackRate[] = [0.5, 0.75, 1, 1.25, 1.5, 2]
 
 const STORAGE_KEY = 'study-music-player-state'
 
@@ -85,21 +90,48 @@ declare global {
 }
 
 export function StudyMusicPlayer() {
+    const { isAuthenticated, loading: authLoading } = useAuthUser()
     const [playlists, setPlaylists] = useState<StudyPlaylist[]>([])
     const [loading, setLoading] = useState(true)
     const [playerReady, setPlayerReady] = useState(false)
     const [showPlaylistSelector, setShowPlaylistSelector] = useState(false)
     const [showVolumeSlider, setShowVolumeSlider] = useState(false)
     const [isBuffering, setIsBuffering] = useState(false)
+    const [hydrated, setHydrated] = useState(false)
 
-    const [state, setState] = useState<PlayerState>({
-        isExpanded: false,
-        isPlaying: false,
-        volume: 50,
-        playbackRate: 1,
-        currentPlaylistId: null,
-        currentPlaylistName: ''
+    // Read saved state from localStorage synchronously on first render to avoid color flash
+    const [state, setState] = useState<PlayerState>(() => {
+        if (typeof window !== 'undefined') {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY)
+                if (saved) {
+                    const parsed = JSON.parse(saved)
+                    const savedRate = PLAYBACK_RATES.includes(parsed.playbackRate) ? parsed.playbackRate : 1
+                    return {
+                        isExpanded: false,
+                        isPlaying: false,
+                        volume: parsed.volume ?? 50,
+                        playbackRate: savedRate as PlaybackRate,
+                        currentPlaylistId: parsed.currentPlaylistId ?? null,
+                        currentPlaylistName: ''
+                    }
+                }
+            } catch {}
+        }
+        return {
+            isExpanded: false,
+            isPlaying: false,
+            volume: 50,
+            playbackRate: 1,
+            currentPlaylistId: null,
+            currentPlaylistName: ''
+        }
     })
+
+    // Mark as hydrated after first render to avoid SSR mismatch flash
+    useEffect(() => {
+        setHydrated(true)
+    }, [])
 
     const playerRef = useRef<YT.Player | null>(null)
     const containerRef = useRef<HTMLDivElement>(null)
@@ -326,12 +358,14 @@ export function StudyMusicPlayer() {
         }
     }
 
-    const handlePlaybackRateChange = () => {
-        const newRate = state.playbackRate === 1 ? 2 : 1
-        setState(prev => ({ ...prev, playbackRate: newRate as 1 | 2 }))
+    const [showSpeedPicker, setShowSpeedPicker] = useState(false)
+
+    const handlePlaybackRateChange = (rate: PlaybackRate) => {
+        setState(prev => ({ ...prev, playbackRate: rate }))
         if (playerRef.current) {
-            playerRef.current.setPlaybackRate(newRate)
+            playerRef.current.setPlaybackRate(rate)
         }
+        setShowSpeedPicker(false)
     }
 
     const handleNextTrack = () => {
@@ -365,20 +399,15 @@ export function StudyMusicPlayer() {
         setState(prev => ({ ...prev, isExpanded: !prev.isExpanded }))
         setShowPlaylistSelector(false)
         setShowVolumeSlider(false)
+        setShowSpeedPicker(false)
     }
 
+    // Don't render until hydrated (prevents SSR flash)
+    if (!hydrated) return null
+    // Don't render if user is not authenticated
+    if (authLoading || !isAuthenticated) return null
     // Don't render if no playlists
-    console.log('[StudyMusicPlayer] Render check - loading:', loading, 'playlists:', playlists.length)
-    if (loading) {
-        console.log('[StudyMusicPlayer] Still loading, not rendering')
-        return null
-    }
-    if (playlists.length === 0) {
-        console.log('[StudyMusicPlayer] No playlists, not rendering')
-        return null
-    }
-
-    console.log('[StudyMusicPlayer] Rendering player widget')
+    if (loading || playlists.length === 0) return null
 
     return (
         <>
@@ -593,12 +622,55 @@ export function StudyMusicPlayer() {
                                         </div>
 
                                         {/* Playback Rate */}
-                                        <button
-                                            onClick={handlePlaybackRateChange}
-                                            className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 hover:bg-white/20 active:bg-white/30 transition-colors duration-200 text-white/70 hover:text-white"
-                                        >
-                                            <span className="text-xs font-bold">{state.playbackRate}x</span>
-                                        </button>
+                                        <div className="relative">
+                                            <button
+                                                onClick={() => setShowSpeedPicker(!showSpeedPicker)}
+                                                className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 hover:bg-white/20 active:bg-white/30 transition-colors duration-200 text-white/70 hover:text-white"
+                                                title="Velocidade de reprodução"
+                                            >
+                                                <motion.span
+                                                    key={state.playbackRate}
+                                                    initial={{ scale: 0.6, opacity: 0 }}
+                                                    animate={{ scale: 1, opacity: 1 }}
+                                                    className="text-xs font-bold"
+                                                >
+                                                    {state.playbackRate === 1 ? '1x' : `${state.playbackRate}x`}
+                                                </motion.span>
+                                            </button>
+
+                                            <AnimatePresence>
+                                                {showSpeedPicker && (
+                                                    <motion.div
+                                                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                                        className="absolute bottom-14 left-1/2 -translate-x-1/2 p-2 rounded-2xl"
+                                                        style={{
+                                                            background: 'rgba(20, 20, 25, 0.85)',
+                                                            backdropFilter: 'blur(24px)',
+                                                            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255,255,255,0.1)'
+                                                        }}
+                                                    >
+                                                        <div className="flex flex-col gap-0.5 min-w-[52px]">
+                                                            {PLAYBACK_RATES.map((rate) => (
+                                                                <button
+                                                                    key={rate}
+                                                                    onClick={() => handlePlaybackRateChange(rate)}
+                                                                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 ${
+                                                                        state.playbackRate === rate
+                                                                            ? 'bg-violet-500/30 text-violet-200'
+                                                                            : 'text-white/60 hover:text-white hover:bg-white/10'
+                                                                    }`}
+                                                                >
+                                                                    {rate}x
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        </div>
                                     </div>
 
                                     {/* Playlist Selector */}

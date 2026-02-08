@@ -158,8 +158,12 @@ export async function POST(
     }
 
     if (questions.length === 0) {
+      // Tentar capturar o último erro para diagnóstico
       return NextResponse.json(
-        { error: 'Não foi possível gerar nenhuma questão. Tente novamente.' },
+        {
+          error: 'Não foi possível gerar nenhuma questão. Verifique a API Key ou reduza a quantidade.',
+          details: 'Todas as tentativas falharam.'
+        },
         { status: 500 }
       )
     }

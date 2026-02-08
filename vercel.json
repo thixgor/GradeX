@@ -14,6 +14,9 @@
     "app/api/questions/generate/route.ts": {
       "maxDuration": 60
     },
+    "app/api/exams/[id]/generate-questions/route.ts": {
+      "maxDuration": 60
+    },
     "app/api/admin/emails/send/route.ts": {
       "maxDuration": 60
     }
