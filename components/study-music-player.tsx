@@ -307,10 +307,11 @@ export function StudyMusicPlayer() {
         if (playerReady && state.currentPlaylistId) {
             const playlist = playlists.find(p => p._id === state.currentPlaylistId)
             if (playlist && playerRef.current) {
-                playerRef.current.cuePlaylist({
+                playerRef.current.loadPlaylist({
                     list: playlist.youtubePlaylistId,
                     listType: 'playlist'
                 })
+                playerRef.current.pauseVideo()
             }
         }
     }, [state.currentPlaylistId, playerReady, playlists])
@@ -446,7 +447,7 @@ export function StudyMusicPlayer() {
                         >
                             {/* Glassmorphism Container - Ultra Premium */}
                             <div
-                                className="relative w-72 rounded-3xl overflow-hidden"
+                                className="relative w-72 rounded-3xl"
                                 style={{
                                     background: 'linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%)',
                                     backdropFilter: 'blur(60px) saturate(200%)',
