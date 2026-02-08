@@ -184,11 +184,11 @@ function NavItemButton({
       <motion.span
         animate={{
           scale: isHovered ? 1.15 : 1,
-          rotate: isHovered ? [0, -8, 8, -4, 0] : 0,
+          rotate: isHovered ? [-6, 0] : 0,
         }}
         transition={{
           scale: { type: 'spring', stiffness: 400, damping: 17 },
-          rotate: { duration: 0.5, ease: 'easeInOut' },
+          rotate: { type: 'spring', stiffness: 300, damping: 12 },
         }}
         className="flex-shrink-0"
       >
