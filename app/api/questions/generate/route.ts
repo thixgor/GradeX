@@ -7,6 +7,7 @@ import {
 } from '@/lib/question-generator'
 
 export const dynamic = 'force-dynamic'
+export const maxDuration = 120 // Permitir até 120s para geração de questões com IA
 
 // POST - Gerar questão(ões) com IA
 export async function POST(request: NextRequest) {

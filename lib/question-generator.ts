@@ -4,10 +4,22 @@ import { getAIKey, AIKeySection } from './ai-keys'
 import { v4 as uuidv4 } from 'uuid'
 
 const GEMINI_MODELS = [
-  'gemini-3-flash-preview', // Tentativa principal (conforme solicitado pelo usuário, mas pode não existir oficialmente)
-  'gemini-2.0-flash-exp', // Tentativa secundária (se usuário confundiu com 2.0)
+  'gemini-2.0-flash',     // Modelo principal (estável e rápido)
+  'gemini-2.0-flash-exp', // Fallback experimental
   'gemini-1.5-flash',     // Fallback estável
 ]
+
+// Timeout para cada chamada individual ao Gemini (25 segundos)
+const GEMINI_FETCH_TIMEOUT_MS = 25000
+
+/**
+ * Cria um AbortSignal com timeout para fetch
+ */
+function createTimeoutSignal(ms: number): AbortSignal {
+  const controller = new AbortController()
+  setTimeout(() => controller.abort(), ms)
+  return controller.signal
+}
 
 /**
  * Busca a API Key do Gemini do banco de dados
@@ -411,6 +423,7 @@ export async function generateMultipleChoiceQuestion(
             maxOutputTokens: 4096,
           },
         }),
+        signal: createTimeoutSignal(GEMINI_FETCH_TIMEOUT_MS),
       })
 
       if (!response.ok) {
@@ -427,10 +440,12 @@ export async function generateMultipleChoiceQuestion(
       }
 
       return parseMultipleChoiceResponse(generatedText, params)
-    } catch (error) {
-      console.error(`Erro ao gerar questão com modelo ${model}:`, error)
+    } catch (error: any) {
+      const isTimeout = error?.name === 'AbortError'
+      console.error(`Erro ao gerar questão com modelo ${model}${isTimeout ? ' (TIMEOUT)' : ''}:`, error?.message || error)
       lastError = error
-      // Continuar para o próximo modelo se houver erro
+      // Se deu timeout, pular direto para o próximo modelo (não adianta retry no mesmo)
+      if (isTimeout) continue
     }
   }
 
@@ -480,6 +495,7 @@ export async function generateDiscursiveQuestion(
             maxOutputTokens: 4096,
           },
         }),
+        signal: createTimeoutSignal(GEMINI_FETCH_TIMEOUT_MS),
       })
 
       if (!response.ok) {
@@ -496,9 +512,11 @@ export async function generateDiscursiveQuestion(
       }
 
       return parseDiscursiveResponse(generatedText, params)
-    } catch (error) {
-      console.error(`Erro ao gerar questão discursiva com modelo ${model}:`, error)
+    } catch (error: any) {
+      const isTimeout = error?.name === 'AbortError'
+      console.error(`Erro ao gerar questão discursiva com modelo ${model}${isTimeout ? ' (TIMEOUT)' : ''}:`, error?.message || error)
       lastError = error
+      if (isTimeout) continue
     }
   }
 
@@ -721,6 +739,7 @@ IMPORTANTE:
             maxOutputTokens: 2048,
           },
         }),
+        signal: createTimeoutSignal(GEMINI_FETCH_TIMEOUT_MS),
       })
 
       if (!response.ok) {
@@ -749,9 +768,11 @@ IMPORTANTE:
         correctAlternative: correctAlt.letter,
         explanations,
       }
-    } catch (error) {
-      console.error(`Erro ao gerar feedback com modelo ${model}:`, error)
+    } catch (error: any) {
+      const isTimeout = error?.name === 'AbortError'
+      console.error(`Erro ao gerar feedback com modelo ${model}${isTimeout ? ' (TIMEOUT)' : ''}:`, error?.message || error)
       lastError = error
+      if (isTimeout) continue
     }
   }
 

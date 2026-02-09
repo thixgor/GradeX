@@ -12,6 +12,7 @@ import {
 } from '@/lib/question-generator'
 
 export const dynamic = 'force-dynamic'
+export const maxDuration = 120 // Permitir até 120s para geração de questões com IA
 
 // POST - Gerar questões por IA
 export async function POST(
@@ -68,8 +69,8 @@ export async function POST(
     // Gerar questões com IA
     // Gerar questões com IA em lotes pequenos para evitar rate limits
     const BATCH_SIZE = 3
-    const MAX_RETRIES = 3
-    const RETRY_DELAY_MS = 1000
+    const MAX_RETRIES = 2
+    const RETRY_DELAY_MS = 800
 
     const questions: any[] = []
 
