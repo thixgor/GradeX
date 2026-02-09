@@ -3,14 +3,13 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { ToastAlert } from '@/components/ui/toast-alert'
 import { Logo } from '@/components/logo'
-import { Eye, EyeOff, Mail, CheckCircle2 } from 'lucide-react'
+import { Eye, EyeOff, Mail, CheckCircle2, ArrowRight, Loader2 } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { BanReasonLabels, BanReason } from '@/lib/types'
 import { Ban, AlertCircle } from 'lucide-react'
@@ -80,7 +79,7 @@ export default function LoginPage() {
         try {
           document.head.removeChild(script)
         } catch (e) {
-          // Script já foi removido
+          // Script already removed
         }
       }
     }
@@ -116,7 +115,7 @@ export default function LoginPage() {
         try {
           document.head.removeChild(script)
         } catch (e) {
-          // Script já foi removido
+          // Script already removed
         }
       }
     }
@@ -132,8 +131,6 @@ export default function LoginPage() {
 
   const canBeAdmin = ['throdrigf@gmail.com', 'ecocardio93@gmail.com'].includes(formData.email.toLowerCase().trim())
 
-
-
   const [isRegistered, setIsRegistered] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
@@ -143,7 +140,7 @@ export default function LoginPage() {
 
     try {
       if (!window.grecaptcha) {
-        setError('reCAPTCHA não carregado. Tente novamente.')
+        setError('reCAPTCHA nao carregado. Tente novamente.')
         setLoading(false)
         return
       }
@@ -163,12 +160,10 @@ export default function LoginPage() {
 
       if (!isLogin) {
         if (!formData.name || !formData.email || !formData.password || !formData.dateOfBirth) {
-          setError('Nome, email, senha e data de nascimento são obrigatórios')
+          setError('Nome, email, senha e data de nascimento sao obrigatorios')
           setLoading(false)
           return
         }
-
-
 
         if (formData.isAfyaMedicineStudent && !formData.afyaUnit) {
           setError('Selecione sua unidade Afya')
@@ -250,14 +245,12 @@ export default function LoginPage() {
         throw new Error(data.error || 'Erro ao fazer login com Google')
       }
 
-      // Se requer setup de perfil
       if (data.requiresProfileSetup) {
         setGoogleData(data.googleData)
         setShowProfileSetup(true)
         return
       }
 
-      // Login bem-sucedido
       router.push('/')
       router.refresh()
     } catch (err: any) {
@@ -314,80 +307,124 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#468152]/20 via-background to-[#E2A43E]/20 p-4">
-      <div className="absolute top-4 left-4">
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-gradient-to-br from-background via-background to-background">
+      {/* Ambient floating blobs */}
+      <div className="auth-bg-blob w-[500px] h-[500px] bg-[#468152]/30 top-[-10%] left-[-10%]" />
+      <div className="auth-bg-blob w-[400px] h-[400px] bg-[#E2A43E]/25 bottom-[-5%] right-[-5%]" style={{ animationDelay: '-4s' }} />
+      <div className="auth-bg-blob w-[300px] h-[300px] bg-[#CE5929]/15 top-[40%] right-[20%]" style={{ animationDelay: '-8s' }} />
+
+      {/* Top bar */}
+      <div className="absolute top-4 left-4 z-20">
         <Button
-          variant="outline"
+          variant="ghost"
           size="sm"
           onClick={() => router.push('/')}
+          className="soul-light rounded-xl backdrop-blur-sm bg-white/20 dark:bg-white/5 border border-white/30 dark:border-white/10 hover:bg-white/30 dark:hover:bg-white/10"
         >
-          ← Voltar
+          <ArrowRight className="h-4 w-4 mr-2 rotate-180" />
+          Voltar
         </Button>
       </div>
-      <div className="absolute top-4 right-4">
+      <div className="absolute top-4 right-4 z-20">
         <ThemeToggle />
       </div>
 
-      <Card className="w-full max-w-md max-h-[90vh] flex flex-col">
-        <CardHeader className="space-y-1 flex-shrink-0">
-          <div className="flex items-center justify-center mb-4">
+      {/* Main card */}
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        className="w-full max-w-md auth-glass-card max-h-[90vh] flex flex-col relative z-10"
+      >
+        {/* Header */}
+        <div className="p-6 pb-2 flex-shrink-0 text-center space-y-3">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            className="flex justify-center mb-2"
+          >
             <Logo variant="full" size="lg" />
-          </div>
-          <CardTitle className="font-heading text-2xl text-center">
-            {isLogin ? 'Entrar' : 'Criar Conta'}
-          </CardTitle>
-          <CardDescription className="text-center">
-            {isLogin
-              ? 'Entre com suas credenciais para continuar'
-              : 'Preencha os dados para criar sua conta'}
-          </CardDescription>
-        </CardHeader>
+          </motion.div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={isLogin ? 'login' : 'register'}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.3 }}
+            >
+              <h1 className="font-heading text-2xl font-bold">
+                {isLogin ? 'Entrar' : 'Criar Conta'}
+              </h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                {isLogin
+                  ? 'Entre com suas credenciais para continuar'
+                  : 'Preencha os dados para criar sua conta'}
+              </p>
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
         {isRegistered ? (
-          <CardContent className="space-y-6 pt-6 flex flex-col items-center">
-            <div className="h-20 w-20 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
-              <CheckCircle2 className="h-10 w-10 text-green-600 dark:text-green-300" />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="p-6 space-y-5 flex flex-col items-center"
+          >
+            <div className="h-20 w-20 rounded-full bg-[#468152]/10 flex items-center justify-center">
+              <CheckCircle2 className="h-10 w-10 text-[#468152]" />
             </div>
             <div className="text-center space-y-2">
               <h3 className="text-xl font-bold font-heading">Conta criada com sucesso!</h3>
               <p className="text-sm text-muted-foreground">
-                Enviamos um link de confirmação para o seu e-mail: <br />
+                Enviamos um link de confirmacao para o seu e-mail: <br />
                 <span className="font-semibold text-foreground">{formData.email}</span>
               </p>
             </div>
-            <div className="p-4 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg">
-              <p className="text-xs text-amber-800 dark:text-amber-200 text-center">
-                <strong>Atenção:</strong> Você precisa confirmar seu e-mail para ter acesso completo a todas as ferramentas da plataforma.
+            <div className="p-3 rounded-xl bg-[#E2A43E]/10 border border-[#E2A43E]/20">
+              <p className="text-xs text-center">
+                <strong>Atencao:</strong> Voce precisa confirmar seu e-mail para ter acesso completo a todas as ferramentas da plataforma.
               </p>
             </div>
-            <div className="w-full space-y-3">
-              <Button onClick={() => router.push('/')} className="w-full">
-                Ir para o Início
+            <div className="w-full space-y-2">
+              <Button onClick={() => router.push('/')} className="w-full soul-light soul-light-brand btn-brand-glow text-white rounded-xl h-11">
+                Ir para o Inicio
               </Button>
-              <Button variant="outline" onClick={() => setIsLogin(true)} className="w-full">
+              <Button variant="outline" onClick={() => setIsLogin(true)} className="w-full soul-light rounded-xl h-11 backdrop-blur-sm">
                 Fazer Login Agora
               </Button>
             </div>
-          </CardContent>
+          </motion.div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
-            <CardContent className="space-y-4 overflow-y-auto flex-1">
-              {!isLogin && (
-                <div className="space-y-2">
-                  <Label htmlFor="name">Nome Completo</Label>
-                  <Input
-                    id="name"
-                    type="text"
-                    placeholder="João Silva"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    required={!isLogin}
-                  />
-                </div>
-              )}
+            <div className="space-y-4 overflow-y-auto flex-1 px-6 py-4">
+              <AnimatePresence mode="wait">
+                {!isLogin && (
+                  <motion.div
+                    key="name-field"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="space-y-2"
+                  >
+                    <Label htmlFor="name" className="text-xs font-medium">Nome Completo</Label>
+                    <Input
+                      id="name"
+                      type="text"
+                      placeholder="Joao Silva"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      required={!isLogin}
+                      className="auth-glass-input rounded-xl h-11"
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-xs font-medium">Email</Label>
                 <Input
                   id="email"
                   type="email"
@@ -395,19 +432,22 @@ export default function LoginPage() {
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
+                  className="auth-glass-input rounded-xl h-11"
                 />
               </div>
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Senha</Label>
-                  <Link
-                    href="/auth/forgot-password"
-                    className="text-xs text-muted-foreground hover:text-primary transition-colors"
-                    tabIndex={-1}
-                  >
-                    Esqueceu a senha?
-                  </Link>
+                  <Label htmlFor="password" className="text-xs font-medium">Senha</Label>
+                  {isLogin && (
+                    <Link
+                      href="/auth/forgot-password"
+                      className="text-xs text-muted-foreground hover:text-[#468152] transition-colors"
+                      tabIndex={-1}
+                    >
+                      Esqueceu a senha?
+                    </Link>
+                  )}
                 </div>
                 <div className="relative">
                   <Input
@@ -417,110 +457,125 @@ export default function LoginPage() {
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     required
-                    className="pr-10"
+                    className="auth-glass-input rounded-xl h-11 pr-10"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </div>
 
-              {!isLogin && (
-                <>
-
-
-                  {/* Data de Nascimento */}
-                  <div className="space-y-2">
-                    <Label htmlFor="dateOfBirth">Data de Nascimento *</Label>
-                    <Input
-                      id="dateOfBirth"
-                      type="date"
-                      value={formData.dateOfBirth}
-                      onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
-                      required
-                    />
-                  </div>
-
-                  {/* Pergunta sobre Afya */}
-                  <div className="space-y-3 p-4 bg-amber-50 dark:bg-amber-950 rounded-lg border border-amber-200 dark:border-amber-800">
-                    <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
-                      Você é estudante de Medicina da Afya?
-                    </p>
-                    <div className="flex gap-2">
-                      <Button
-                        type="button"
-                        variant={formData.isAfyaMedicineStudent ? 'default' : 'outline'}
-                        className="flex-1 h-9"
-                        onClick={() => setFormData({ ...formData, isAfyaMedicineStudent: true })}
-                      >
-                        Sim
-                      </Button>
-                      <Button
-                        type="button"
-                        variant={!formData.isAfyaMedicineStudent ? 'default' : 'outline'}
-                        className="flex-1 h-9"
-                        onClick={() => setFormData({ ...formData, isAfyaMedicineStudent: false, afyaUnit: '' })}
-                      >
-                        Não
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Seleção de Unidade Afya */}
-                  {formData.isAfyaMedicineStudent && (
+              <AnimatePresence mode="wait">
+                {!isLogin && (
+                  <motion.div
+                    key="register-fields"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="space-y-4"
+                  >
                     <div className="space-y-2">
-                      <Label htmlFor="afyaUnit">Sua Unidade Afya *</Label>
-                      <select
-                        id="afyaUnit"
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                        value={formData.afyaUnit}
-                        onChange={(e) => setFormData({ ...formData, afyaUnit: e.target.value })}
-                        required={formData.isAfyaMedicineStudent}
-                      >
-                        <option value="">Selecione sua unidade...</option>
-                        {AFYA_UNITS.map((unit) => (
-                          <option key={unit} value={unit}>
-                            {unit}
-                          </option>
-                        ))}
-                      </select>
+                      <Label htmlFor="dateOfBirth" className="text-xs font-medium">Data de Nascimento *</Label>
+                      <Input
+                        id="dateOfBirth"
+                        type="date"
+                        value={formData.dateOfBirth}
+                        onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                        required
+                        className="auth-glass-input rounded-xl h-11"
+                      />
                     </div>
-                  )}
 
-                  {canBeAdmin && (
-                    <div className="space-y-2">
-                      <Label htmlFor="role">Tipo de Conta</Label>
-                      <select
-                        id="role"
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                        value={formData.role}
-                        onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                      >
-                        <option value="user">Usuário</option>
-                        <option value="admin">Administrador</option>
-                      </select>
+                    <div className="space-y-3 p-4 rounded-xl bg-[#E2A43E]/5 border border-[#E2A43E]/15">
+                      <p className="text-sm font-medium">
+                        Voce e estudante de Medicina da Afya?
+                      </p>
+                      <div className="flex gap-2">
+                        <Button
+                          type="button"
+                          variant={formData.isAfyaMedicineStudent ? 'default' : 'outline'}
+                          className={`flex-1 h-9 rounded-xl soul-light ${formData.isAfyaMedicineStudent ? 'bg-[#468152] hover:bg-[#468152]/90' : ''}`}
+                          onClick={() => setFormData({ ...formData, isAfyaMedicineStudent: true })}
+                        >
+                          Sim
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={!formData.isAfyaMedicineStudent ? 'default' : 'outline'}
+                          className={`flex-1 h-9 rounded-xl soul-light ${!formData.isAfyaMedicineStudent ? 'bg-muted-foreground/80 hover:bg-muted-foreground/70' : ''}`}
+                          onClick={() => setFormData({ ...formData, isAfyaMedicineStudent: false, afyaUnit: '' })}
+                        >
+                          Nao
+                        </Button>
+                      </div>
                     </div>
-                  )}
-                </>
-              )}
+
+                    {formData.isAfyaMedicineStudent && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="space-y-2"
+                      >
+                        <Label htmlFor="afyaUnit" className="text-xs font-medium">Sua Unidade Afya *</Label>
+                        <select
+                          id="afyaUnit"
+                          className="flex h-11 w-full rounded-xl auth-glass-input px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          value={formData.afyaUnit}
+                          onChange={(e) => setFormData({ ...formData, afyaUnit: e.target.value })}
+                          required={formData.isAfyaMedicineStudent}
+                        >
+                          <option value="">Selecione sua unidade...</option>
+                          {AFYA_UNITS.map((unit) => (
+                            <option key={unit} value={unit}>{unit}</option>
+                          ))}
+                        </select>
+                      </motion.div>
+                    )}
+
+                    {canBeAdmin && (
+                      <div className="space-y-2">
+                        <Label htmlFor="role" className="text-xs font-medium">Tipo de Conta</Label>
+                        <select
+                          id="role"
+                          className="flex h-11 w-full rounded-xl auth-glass-input px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          value={formData.role}
+                          onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                        >
+                          <option value="user">Usuario</option>
+                          <option value="admin">Administrador</option>
+                        </select>
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {error && (
-                <div className="text-sm text-destructive text-center p-2 bg-destructive/10 rounded">
+                <motion.div
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-sm text-destructive text-center p-3 rounded-xl bg-destructive/10 border border-destructive/20"
+                >
                   {error}
-                </div>
+                </motion.div>
               )}
-            </CardContent>
+            </div>
 
-            <CardFooter className="flex flex-col space-y-4 flex-shrink-0">
-              <Button type="submit" className="w-full" disabled={loading}>
+            <div className="px-6 pb-6 pt-2 flex-shrink-0 space-y-4">
+              <Button
+                type="submit"
+                className="w-full h-11 rounded-xl soul-light soul-light-brand btn-brand-glow text-white font-semibold"
+                disabled={loading}
+              >
+                {loading ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : null}
                 {loading ? 'Carregando...' : isLogin ? 'Entrar' : 'Criar Conta'}
               </Button>
 
@@ -528,10 +583,10 @@ export default function LoginPage() {
                 <>
                   <div className="relative">
                     <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t border-muted"></span>
+                      <span className="w-full border-t border-border/40"></span>
                     </div>
                     <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-background px-2 text-muted-foreground">Ou continue com</span>
+                      <span className="bg-transparent px-2 text-muted-foreground backdrop-blur-sm">Ou continue com</span>
                     </div>
                   </div>
 
@@ -544,107 +599,89 @@ export default function LoginPage() {
 
               <button
                 type="button"
-                className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                className="w-full text-sm text-muted-foreground hover:text-[#468152] transition-colors py-1"
                 onClick={() => {
                   setIsLogin(!isLogin)
                   setError('')
                 }}
               >
                 {isLogin
-                  ? 'Não tem uma conta? Criar conta'
-                  : 'Já tem uma conta? Entrar'}
+                  ? 'Nao tem uma conta? Criar conta'
+                  : 'Ja tem uma conta? Entrar'}
               </button>
-            </CardFooter>
+            </div>
           </form>
         )}
-      </Card>
+      </motion.div>
 
       {/* Modal de Cadastro Bloqueado */}
       <Dialog open={showBlockedModal} onOpenChange={setShowBlockedModal}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md auth-glass-card border-none">
           <DialogHeader>
-            <div className="mx-auto w-16 h-16 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center mb-4">
-              <AlertCircle className="h-8 w-8 text-red-600 dark:text-red-300" />
+            <div className="mx-auto w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
+              <AlertCircle className="h-8 w-8 text-red-500" />
             </div>
-            <DialogTitle className="text-center text-xl text-red-600 dark:text-red-400">
+            <DialogTitle className="text-center text-xl text-red-500">
               Cadastro Bloqueado
             </DialogTitle>
             <DialogDescription className="text-center">
               <div className="space-y-4 mt-4">
-                <div className="p-4 bg-red-50 dark:bg-red-950 rounded-lg border border-red-200 dark:border-red-800">
-                  <p className="text-sm text-red-800 dark:text-red-200">
-                    {blockedMessage}
-                  </p>
+                <div className="p-4 rounded-xl bg-red-500/5 border border-red-500/10">
+                  <p className="text-sm">{blockedMessage}</p>
                 </div>
               </div>
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-center pt-4">
-            <Button
-              variant="outline"
-              onClick={() => setShowBlockedModal(false)}
-              className="w-full"
-            >
+            <Button variant="outline" onClick={() => setShowBlockedModal(false)} className="w-full rounded-xl soul-light">
               Fechar
             </Button>
           </div>
         </DialogContent>
       </Dialog>
 
-      {/* Modal de Usuário Banido */}
+      {/* Modal de Usuario Banido */}
       <Dialog open={showBannedDialog} onOpenChange={setShowBannedDialog}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md auth-glass-card border-none">
           <DialogHeader>
-            <div className="mx-auto w-16 h-16 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center mb-4">
-              <Ban className="h-8 w-8 text-red-600 dark:text-red-300" />
+            <div className="mx-auto w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
+              <Ban className="h-8 w-8 text-red-500" />
             </div>
-            <DialogTitle className="text-center text-xl text-red-600 dark:text-red-400">
+            <DialogTitle className="text-center text-xl text-red-500">
               Acesso Negado
             </DialogTitle>
             <DialogDescription className="text-center">
               <div className="space-y-4 mt-4">
-                <div className="p-4 bg-red-50 dark:bg-red-950 rounded-lg border border-red-200 dark:border-red-800">
-                  <p className="text-sm font-medium text-red-800 dark:text-red-200 mb-2">
+                <div className="p-4 rounded-xl bg-red-500/5 border border-red-500/10">
+                  <p className="text-sm font-medium mb-2">
                     Sua conta foi banida da plataforma.
                   </p>
                   {banInfo.reason && (
                     <div className="space-y-1">
-                      <p className="text-xs font-semibold text-red-700 dark:text-red-300">
-                        Motivo:
-                      </p>
-                      <p className="text-sm text-red-800 dark:text-red-200">
-                        {BanReasonLabels[banInfo.reason]}
-                      </p>
+                      <p className="text-xs font-semibold">Motivo:</p>
+                      <p className="text-sm">{BanReasonLabels[banInfo.reason]}</p>
                     </div>
                   )}
                   {banInfo.details && (
                     <div className="space-y-1 mt-3">
-                      <p className="text-xs font-semibold text-red-700 dark:text-red-300">
-                        Detalhes:
-                      </p>
-                      <p className="text-sm text-red-800 dark:text-red-200">
-                        {banInfo.details}
-                      </p>
+                      <p className="text-xs font-semibold">Detalhes:</p>
+                      <p className="text-sm">{banInfo.details}</p>
                     </div>
                   )}
                   {banInfo.bannedAt && (
-                    <p className="text-xs text-red-600 dark:text-red-400 mt-3">
+                    <p className="text-xs mt-3 opacity-70">
                       Data do banimento: {new Date(banInfo.bannedAt).toLocaleDateString('pt-BR')}
                     </p>
                   )}
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Se você acredita que isso é um erro, entre em contato com o administrador da plataforma.
+                  Se voce acredita que isso e um erro, entre em contato com o administrador da plataforma.
                 </p>
               </div>
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-center pt-4">
-            <Button
-              variant="outline"
-              onClick={() => setShowBannedDialog(false)}
-              className="w-full"
-            >
+            <Button variant="outline" onClick={() => setShowBannedDialog(false)} className="w-full rounded-xl soul-light">
               Fechar
             </Button>
           </div>

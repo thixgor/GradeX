@@ -24,6 +24,7 @@ import {
 } from 'lucide-react'
 import { PageLoading } from '@/components/page-loading'
 import { Badge } from '@/components/ui/badge'
+import { motion } from 'framer-motion'
 
 export default function PublicFormPage() {
     const params = useParams()
@@ -93,35 +94,45 @@ export default function PublicFormPage() {
 
     if (error && !form) {
         return (
-            <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-                <Card className="max-w-md w-full border-red-200">
-                    <CardHeader className="text-center">
+            <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30 flex items-center justify-center p-4">
+                <div className="auth-glass-card max-w-md w-full rounded-2xl p-0">
+                    <div className="text-center p-6 pb-4">
                         <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
-                        <CardTitle className="text-destructive">Opa! Algo deu errado</CardTitle>
-                        <CardDescription>{error}</CardDescription>
-                    </CardHeader>
-                    <CardFooter className="justify-center">
+                        <h2 className="text-xl font-semibold text-destructive">Opa! Algo deu errado</h2>
+                        <p className="text-sm text-muted-foreground mt-2">{error}</p>
+                    </div>
+                    <div className="flex justify-center p-6 pt-0">
                         <Button variant="outline" onClick={() => window.location.reload()}>Tentar Novamente</Button>
-                    </CardFooter>
-                </Card>
+                    </div>
+                </div>
             </div>
         )
     }
 
     if (submitted) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-primary/10 flex items-center justify-center p-4">
-                <Card className="max-w-lg w-full shadow-2xl border-primary/20 animate-in zoom-in-95 duration-500">
-                    <CardHeader className="text-center pb-8 border-b">
+            <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30 flex items-center justify-center p-4 relative overflow-hidden">
+                {/* Ambient blobs */}
+                <div className="pointer-events-none fixed inset-0 overflow-hidden">
+                    <div className="absolute -top-40 -left-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl" />
+                    <div className="absolute -bottom-40 -right-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
+                </div>
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="auth-glass-card max-w-lg w-full rounded-2xl p-0 relative z-10"
+                >
+                    <div className="text-center p-8 pb-6 border-b border-white/10">
                         <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
                             <CheckCircle2 className="h-12 w-12 text-primary" />
                         </div>
-                        <CardTitle className="text-3xl font-bold text-primary">Sucesso!</CardTitle>
-                        <CardDescription className="text-lg mt-2">
+                        <h2 className="text-3xl font-bold text-primary">Sucesso!</h2>
+                        <p className="text-lg mt-2 text-muted-foreground">
                             Obrigado por sua participação. Suas respostas foram enviadas com sucesso.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="py-8 text-center space-y-4">
+                        </p>
+                    </div>
+                    <div className="py-8 text-center space-y-4 px-8">
                         <p className="text-muted-foreground">
                             {form?.settings.sendConfirmationEmail
                                 ? "Você receberá um e-mail com o resumo das suas respostas em instantes."
@@ -130,35 +141,51 @@ export default function PublicFormPage() {
                         <Button variant="outline" className="group" onClick={() => window.location.href = 'https://domineaqui.com.br'}>
                             Visitar Site <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                         </Button>
-                    </CardContent>
-                </Card>
+                    </div>
+                </motion.div>
             </div>
         )
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-3xl mx-auto space-y-8">
+        <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+            {/* Ambient blobs */}
+            <div className="pointer-events-none fixed inset-0 overflow-hidden">
+                <div className="absolute -top-40 -left-40 w-96 h-96 bg-primary/8 rounded-full blur-3xl" />
+                <div className="absolute top-1/3 -right-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
+                <div className="absolute -bottom-40 left-1/3 w-72 h-72 bg-primary/6 rounded-full blur-3xl" />
+            </div>
+
+            <div className="max-w-3xl mx-auto space-y-8 relative z-10">
                 {/* Header Section */}
-                <div className="text-center space-y-4 mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
-                    <Badge variant="outline" className="px-4 py-1 border-primary/30 text-primary bg-primary/5">
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="text-center space-y-4 mb-12"
+                >
+                    <Badge variant="outline" className="px-4 py-1 border-white/20 dark:border-white/10 text-primary bg-background/50 backdrop-blur-sm">
                         {form?.settings.isActive ? "Pesquisa Disponível" : "Inativo"}
                     </Badge>
-                    <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900 leading-tight">
+                    <h1 className="text-4xl md:text-5xl font-black tracking-tight text-foreground leading-tight">
                         {form?.title}
                     </h1>
                     {form?.description && (
-                        <p className="text-xl text-slate-600 max-w-2xl mx-auto balance leading-relaxed">
+                        <p className="text-xl text-muted-foreground max-w-2xl mx-auto balance leading-relaxed">
                             {form.description}
                         </p>
                     )}
-                </div>
+                </motion.div>
 
                 {error && (
-                    <div className="p-4 bg-red-50 border border-red-100 text-red-700 rounded-xl flex items-center gap-3 animate-shake">
+                    <motion.div
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="p-4 bg-destructive/10 border border-destructive/20 text-destructive rounded-xl flex items-center gap-3"
+                    >
                         <AlertCircle className="h-5 w-5 flex-shrink-0" />
                         <p className="text-sm font-medium">{error}</p>
-                    </div>
+                    </motion.div>
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-8">
@@ -166,42 +193,42 @@ export default function PublicFormPage() {
                         const isQuestion = block.type === 'question'
 
                         return (
-                            <div
+                            <motion.div
                                 key={block.id}
-                                className={`animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both`}
-                                style={{ animationDelay: `${index * 100}ms` }}
+                                initial={{ opacity: 0, y: 30 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5, delay: index * 0.1 }}
                             >
                                 {/* BLoco de Conteúdo */}
                                 {block.type === 'text' && (
-                                    <Card className="border-none shadow-xl bg-gradient-to-br from-primary to-indigo-800 text-white overflow-hidden">
-                                        <CardHeader>
-                                            <CardTitle className="text-2xl">{block.title}</CardTitle>
-                                            {block.description && <CardDescription className="text-white/80">{block.description}</CardDescription>}
-                                        </CardHeader>
-                                        <CardContent>
-                                            <p className="whitespace-pre-wrap text-lg opacity-90">{block.content}</p>
-                                        </CardContent>
-                                    </Card>
+                                    <div className="form-glass-card rounded-2xl overflow-hidden relative">
+                                        <div className="absolute inset-0 bg-gradient-to-br from-primary/90 to-primary/70 dark:from-primary/80 dark:to-primary/60" />
+                                        <div className="relative z-10 p-6">
+                                            <h3 className="text-2xl font-semibold text-white">{block.title}</h3>
+                                            {block.description && <p className="text-white/80 text-sm mt-1">{block.description}</p>}
+                                            <p className="whitespace-pre-wrap text-lg text-white/90 mt-4">{block.content}</p>
+                                        </div>
+                                    </div>
                                 )}
 
                                 {block.type === 'image' && (
-                                    <Card className="overflow-hidden shadow-xl group border-none">
+                                    <div className="form-glass-card rounded-2xl overflow-hidden group">
                                         <img
                                             src={block.content}
                                             alt={block.title}
                                             className="w-full h-auto max-h-[500px] object-cover group-hover:scale-105 transition-transform duration-700"
                                         />
                                         {(block.title || block.description) && (
-                                            <CardHeader className="bg-white">
-                                                <CardTitle className="text-xl">{block.title}</CardTitle>
-                                                <CardDescription>{block.description}</CardDescription>
-                                            </CardHeader>
+                                            <div className="p-6 bg-background/50 backdrop-blur-sm">
+                                                <h3 className="text-xl font-semibold text-foreground">{block.title}</h3>
+                                                <p className="text-sm text-muted-foreground mt-1">{block.description}</p>
+                                            </div>
                                         )}
-                                    </Card>
+                                    </div>
                                 )}
 
                                 {block.type === 'video' && (
-                                    <Card className="overflow-hidden shadow-xl border-none">
+                                    <div className="form-glass-card rounded-2xl overflow-hidden">
                                         <div className="aspect-video">
                                             <iframe
                                                 src={block.content}
@@ -211,20 +238,20 @@ export default function PublicFormPage() {
                                             />
                                         </div>
                                         {(block.title || block.description) && (
-                                            <CardHeader>
-                                                <CardTitle className="flex items-center gap-2">
+                                            <div className="p-6">
+                                                <h3 className="flex items-center gap-2 text-xl font-semibold text-foreground">
                                                     <Video className="h-5 w-5 text-primary" /> {block.title}
-                                                </CardTitle>
-                                                <CardDescription>{block.description}</CardDescription>
-                                            </CardHeader>
+                                                </h3>
+                                                <p className="text-sm text-muted-foreground mt-1">{block.description}</p>
+                                            </div>
                                         )}
-                                    </Card>
+                                    </div>
                                 )}
 
                                 {block.type === 'link' && (
-                                    <Card className="border-none shadow-md bg-white border-l-4 border-l-primary flex flex-col sm:flex-row items-center justify-between p-6 gap-4">
+                                    <div className="form-glass-card rounded-2xl flex flex-col sm:flex-row items-center justify-between p-6 gap-4 border-l-4 border-l-primary">
                                         <div className="space-y-1 text-center sm:text-left">
-                                            <h3 className="font-bold text-lg">{block.title}</h3>
+                                            <h3 className="font-bold text-lg text-foreground">{block.title}</h3>
                                             {block.description && <p className="text-sm text-muted-foreground">{block.description}</p>}
                                         </div>
                                         <Button asChild className="rounded-full px-8 shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-shadow">
@@ -232,30 +259,30 @@ export default function PublicFormPage() {
                                                 {block.buttonText || 'Acessar'} <ExternalLink className="ml-2 h-4 w-4" />
                                             </a>
                                         </Button>
-                                    </Card>
+                                    </div>
                                 )}
 
                                 {/* Bloco de Pergunta */}
                                 {isQuestion && (
-                                    <Card className="shadow-lg border-none bg-white/80 backdrop-blur-sm hover:shadow-xl transition-shadow border-t-4 border-t-primary/20 focus-within:border-t-primary duration-300">
-                                        <CardHeader className="pb-4">
+                                    <div className="form-glass-card soul-light rounded-2xl hover-lift transition-all duration-300 focus-within:ring-2 focus-within:ring-primary/30">
+                                        <div className="p-6 pb-4">
                                             <div className="flex items-start justify-between">
-                                                <CardTitle className="text-xl font-bold text-slate-800 leading-snug">
+                                                <h3 className="text-xl font-bold text-foreground leading-snug">
                                                     {block.title}
                                                     {block.required && <span className="text-red-500 ml-1" title="Obrigatório">*</span>}
-                                                </CardTitle>
+                                                </h3>
                                             </div>
                                             {block.description && (
-                                                <CardDescription className="text-slate-500 italic mt-1 font-medium">
+                                                <p className="text-muted-foreground italic mt-1 text-sm font-medium">
                                                     {block.description}
-                                                </CardDescription>
+                                                </p>
                                             )}
-                                        </CardHeader>
-                                        <CardContent className="pt-0">
+                                        </div>
+                                        <div className="px-6 pb-6 pt-0">
                                             {block.questionType === 'short-text' && (
                                                 <Input
                                                     placeholder="Sua resposta aqui..."
-                                                    className="bg-slate-50 border-slate-200 h-12 text-lg focus:bg-white transition-all text-slate-900"
+                                                    className="auth-glass-input rounded-xl h-12 text-lg transition-all"
                                                     value={answers[block.id] || ''}
                                                     onChange={e => handleAnswer(block.id, e.target.value)}
                                                     required={block.required}
@@ -267,7 +294,7 @@ export default function PublicFormPage() {
                                                 <div className="space-y-1">
                                                     <Textarea
                                                         placeholder="Fale um pouco mais detalhadamente..."
-                                                        className="bg-slate-50 border-slate-200 min-h-[120px] text-lg focus:bg-white transition-all text-slate-900"
+                                                        className="auth-glass-input rounded-xl min-h-[120px] text-lg transition-all"
                                                         value={answers[block.id] || ''}
                                                         onChange={e => handleAnswer(block.id, e.target.value)}
                                                         required={block.required}
@@ -284,7 +311,7 @@ export default function PublicFormPage() {
                                                     <Input
                                                         type="email"
                                                         placeholder="exemplo@email.com"
-                                                        className="bg-slate-50 border-slate-200 h-12 text-lg pl-10 focus:bg-white transition-all text-slate-900"
+                                                        className="auth-glass-input rounded-xl h-12 text-lg pl-10 transition-all"
                                                         value={answers[block.id] || ''}
                                                         onChange={e => handleAnswer(block.id, e.target.value)}
                                                         required={block.required}
@@ -298,7 +325,7 @@ export default function PublicFormPage() {
                                                     <Input
                                                         type="tel"
                                                         placeholder="(00) 00000-0000"
-                                                        className="bg-slate-50 border-slate-200 h-12 text-lg pl-10 focus:bg-white transition-all text-slate-900"
+                                                        className="auth-glass-input rounded-xl h-12 text-lg pl-10 transition-all"
                                                         value={answers[block.id] || ''}
                                                         onChange={e => handleAnswer(block.id, e.target.value)}
                                                         required={block.required}
@@ -314,9 +341,9 @@ export default function PublicFormPage() {
                                                     required={block.required}
                                                 >
                                                     {block.options?.map((option, i) => (
-                                                        <div key={i} className="flex items-center space-x-3 bg-slate-50 p-4 rounded-xl border border-transparent hover:border-primary/30 transition-all cursor-pointer group">
+                                                        <div key={i} className="flex items-center space-x-3 rounded-xl bg-background/30 backdrop-blur-sm border border-white/20 dark:border-white/5 p-4 hover:soul-light transition-all cursor-pointer group">
                                                             <RadioGroupItem value={option} id={`${block.id}-${i}`} className="border-primary text-primary" />
-                                                            <Label htmlFor={`${block.id}-${i}`} className="flex-1 cursor-pointer text-lg font-medium group-hover:text-primary transition-colors text-slate-900">{option}</Label>
+                                                            <Label htmlFor={`${block.id}-${i}`} className="flex-1 cursor-pointer text-lg font-medium group-hover:text-primary transition-colors text-foreground">{option}</Label>
                                                             <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity text-primary" />
                                                         </div>
                                                     ))}
@@ -329,7 +356,7 @@ export default function PublicFormPage() {
                                                         const current = answers[block.id] || []
                                                         const isChecked = current.includes(option)
                                                         return (
-                                                            <div key={i} className={`flex items-center space-x-3 p-4 rounded-xl border transition-all cursor-pointer group ${isChecked ? 'bg-primary/5 border-primary/20 shadow-sm' : 'bg-slate-50 border-transparent hover:border-primary/30'}`}>
+                                                            <div key={i} className={`flex items-center space-x-3 p-4 rounded-xl backdrop-blur-sm border transition-all cursor-pointer group ${isChecked ? 'bg-primary/10 border-primary/30 shadow-sm' : 'bg-background/30 border-white/20 dark:border-white/5 hover:border-primary/30'}`}>
                                                                 <Checkbox
                                                                     id={`${block.id}-${i}`}
                                                                     checked={isChecked}
@@ -340,23 +367,28 @@ export default function PublicFormPage() {
                                                                         handleAnswer(block.id, newVal)
                                                                     }}
                                                                 />
-                                                                <Label htmlFor={`${block.id}-${i}`} className="flex-1 cursor-pointer text-lg font-medium group-hover:text-primary transition-colors text-slate-900">{option}</Label>
+                                                                <Label htmlFor={`${block.id}-${i}`} className="flex-1 cursor-pointer text-lg font-medium group-hover:text-primary transition-colors text-foreground">{option}</Label>
                                                             </div>
                                                         )
                                                     })}
                                                 </div>
                                             )}
-                                        </CardContent>
-                                    </Card>
+                                        </div>
+                                    </div>
                                 )}
-                            </div>
+                            </motion.div>
                         )
                     })}
 
-                    <div className="pt-8 animate-in fade-in slide-in-from-bottom-8 duration-1000 fill-mode-both delay-500">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: (form?.blocks.length || 0) * 0.1 + 0.2 }}
+                        className="pt-8"
+                    >
                         <Button
                             disabled={submitting}
-                            className="w-full h-16 text-xl font-black bg-primary hover:bg-primary/90 text-white shadow-2xl shadow-primary/30 rounded-2xl group overflow-hidden relative"
+                            className="btn-brand-glow text-white soul-light soul-light-brand rounded-2xl w-full h-16 text-xl font-black group overflow-hidden relative"
                         >
                             {submitting ? (
                                 <>
@@ -375,20 +407,9 @@ export default function PublicFormPage() {
                         <p className="text-center text-sm text-muted-foreground mt-4 font-medium opacity-70">
                             Sua privacidade é importante. Seus dados estão protegidos.
                         </p>
-                    </div>
+                    </motion.div>
                 </form>
             </div>
-
-            <style jsx global>{`
-        @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-5px); }
-          75% { transform: translateX(5px); }
-        }
-        .animate-shake {
-          animation: shake 0.5s ease-in-out;
-        }
-      `}</style>
         </div>
     )
 }

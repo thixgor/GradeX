@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
 import { AppShell, useAppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ProgressRing } from '@/components/progress-ring'
 import { LimitWarning } from '@/components/limit-warning'
 import { Plus, Calendar, Download, Edit2, Trash2 } from 'lucide-react'
@@ -108,8 +108,8 @@ function CronogramasContent() {
           <title>${cronograma.titulo}</title>
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { 
-              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            body {
+              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
               background: #f5f5f5;
               padding: 40px 20px;
             }
@@ -126,11 +126,11 @@ function CronogramasContent() {
             .dias-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
             .dia { background: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 6px; padding: 15px; }
             .dia-header { background: #e8f5e9; padding: 10px 12px; border-radius: 4px; margin-bottom: 12px; font-weight: 600; color: #2e7d32; font-size: 13px; }
-            .atividade { 
-              background: white; 
-              border-left: 4px solid #468152; 
-              padding: 12px; 
-              margin-bottom: 10px; 
+            .atividade {
+              background: white;
+              border-left: 4px solid #468152;
+              padding: 12px;
+              margin-bottom: 10px;
               border-radius: 4px;
               font-size: 13px;
             }
@@ -138,11 +138,11 @@ function CronogramasContent() {
             .atividade-subtitulo { font-size: 12px; color: #666; margin-bottom: 6px; }
             .atividade-footer { display: flex; justify-content: space-between; align-items: center; font-size: 11px; }
             .horas { background: #468152; color: white; padding: 2px 8px; border-radius: 3px; font-weight: 600; }
-            .dificuldade { 
-              display: inline-block; 
-              padding: 3px 8px; 
-              border-radius: 3px; 
-              font-size: 11px; 
+            .dificuldade {
+              display: inline-block;
+              padding: 3px 8px;
+              border-radius: 3px;
+              font-size: 11px;
               font-weight: 600;
             }
             .facil { background: #d4edda; color: #155724; }
@@ -162,7 +162,7 @@ function CronogramasContent() {
               <h1>${cronograma.titulo}</h1>
               <p>Modelo: ${cronograma.modelo.toUpperCase()} • Total: ${cronograma.totalHoras}h</p>
             </div>
-            
+
             <div class="stats">
               <div class="stat-box">
                 <div class="label">Total de Horas</div>
@@ -181,7 +181,7 @@ function CronogramasContent() {
             ${cronograma.cronograma.map((dia: any, index: number) => {
               const semanaNum = Math.floor(index / 7) + 1
               const diaNumSemana = index % 7
-              
+
               if (diaNumSemana === 0) {
                 return `
                   <div class="semana">
@@ -208,7 +208,7 @@ function CronogramasContent() {
       return `
         <div class="dia">
           <div class="dia-header">${dia.dia} - ${dia.data}</div>
-          ${dia.atividades.length === 0 
+          ${dia.atividades.length === 0
             ? '<div class="vazio">Sem atividades</div>'
             : dia.atividades.map((ativ: any) => `
               <div class="atividade">
@@ -227,7 +227,7 @@ function CronogramasContent() {
 
     printWindow.document.write(html)
     printWindow.document.close()
-    
+
     setTimeout(() => {
       printWindow.print()
     }, 250)
@@ -235,155 +235,183 @@ function CronogramasContent() {
 
   return (
     <>
-      <div className="container mx-auto px-4 py-8 max-w-5xl">
-        {/* Hero Section */}
-        <div className="mb-12 text-center space-y-4">
-          <h2 className="font-heading text-4xl md:text-5xl font-bold">
-            Cronograma Comum Todo Mundo Tem.
-          </h2>
-          <p className="font-heading text-2xl md:text-3xl bg-gradient-to-r from-[#468152] to-[#E2A43E] bg-clip-text text-transparent">
-            O Nosso é Feito Sob Medida Pra Te Arrancar da Mediocridade.
-          </p>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Crie um cronograma personalizado baseado em suas dificuldades, disponibilidade de tempo e objetivos específicos.
-          </p>
-        </div>
-
-        {/* Limit Warning for Free Users */}
-        {user && userRole !== 'admin' && accountType === 'gratuito' && (
-          <LimitWarning
-            current={cronogramas.length}
-            max={getCronogramasLimit(accountType)}
-            itemName="Cronogramas"
-          />
-        )}
-
-        {/* CTA Button */}
-        <div className="flex justify-center mb-12">
-          <Button
-            onClick={() => router.push('/cronogramas/criar')}
-            size="lg"
-            disabled={userRole !== 'admin' && accountType === 'gratuito' && cronogramas.length >= getCronogramasLimit(accountType)}
-            className="bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90"
+      <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+        <div className="container mx-auto px-4 py-8 max-w-5xl">
+          {/* Hero Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+            className="mb-12 text-center space-y-4"
           >
-            <Plus className="mr-2 h-5 w-5" />
-            Criar Novo Cronograma
-          </Button>
-          {userRole !== 'admin' && accountType === 'gratuito' && cronogramas.length >= getCronogramasLimit(accountType) && (
-            <p className="text-sm text-red-600 mt-2">Limite de {getCronogramasLimit(accountType)} cronogramas atingido</p>
+            <h2 className="font-heading text-4xl md:text-5xl font-bold">
+              Cronograma Comum Todo Mundo Tem.
+            </h2>
+            <p className="font-heading text-2xl md:text-3xl bg-gradient-to-r from-[#468152] to-[#E2A43E] bg-clip-text text-transparent">
+              O Nosso é Feito Sob Medida Pra Te Arrancar da Mediocridade.
+            </p>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              Crie um cronograma personalizado baseado em suas dificuldades, disponibilidade de tempo e objetivos específicos.
+            </p>
+          </motion.div>
+
+          {/* Limit Warning for Free Users */}
+          {user && userRole !== 'admin' && accountType === 'gratuito' && (
+            <LimitWarning
+              current={cronogramas.length}
+              max={getCronogramasLimit(accountType)}
+              itemName="Cronogramas"
+            />
+          )}
+
+          {/* CTA Button */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.15 }}
+            className="flex flex-col items-center mb-12"
+          >
+            <Button
+              onClick={() => router.push('/cronogramas/criar')}
+              size="lg"
+              disabled={userRole !== 'admin' && accountType === 'gratuito' && cronogramas.length >= getCronogramasLimit(accountType)}
+              className="bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90 soul-light soul-light-brand"
+            >
+              <Plus className="mr-2 h-5 w-5" />
+              Criar Novo Cronograma
+            </Button>
+            {userRole !== 'admin' && accountType === 'gratuito' && cronogramas.length >= getCronogramasLimit(accountType) && (
+              <p className="text-sm text-red-600 mt-2">Limite de {getCronogramasLimit(accountType)} cronogramas atingido</p>
+            )}
+          </motion.div>
+
+          {/* Cronogramas List */}
+          {cronogramas.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, delay: 0.25 }}
+              className="glass-page-card rounded-2xl text-center py-12"
+            >
+              <div className="px-6">
+                <Calendar className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                <h3 className="text-lg font-semibold mb-2 text-foreground">Nenhum cronograma criado ainda</h3>
+                <p className="text-muted-foreground mb-6">
+                  Comece criando seu primeiro cronograma personalizado
+                </p>
+                <Button
+                  onClick={() => router.push('/cronogramas/criar')}
+                  variant="outline"
+                  className="soul-light rounded-xl"
+                >
+                  Criar Cronograma
+                </Button>
+              </div>
+            </motion.div>
+          ) : (
+            <div className="grid gap-6">
+              {cronogramas.map((cronograma, index) => {
+                const totalHoras = cronograma.totalHoras || 0
+                const dataCriacao = new Date(cronograma.dataCriacao)
+                const progress = calculateProgress(cronograma)
+
+                return (
+                  <motion.div
+                    key={cronograma._id}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.35, delay: 0.2 + index * 0.07 }}
+                  >
+                    <div className="glass-page-card rounded-2xl soul-light hover-lift p-5">
+                      {/* Card Header */}
+                      <div className="mb-4">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                              {cronograma.titulo}
+                              {(cronograma as any).concluido && (
+                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 text-xs font-semibold">
+                                  ✓ Concluído
+                                </span>
+                              )}
+                            </h3>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              Modelo: {cronograma.modelo.toUpperCase()} • {totalHoras}h total
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-6">
+                            <ProgressRing
+                              percentage={progress}
+                              size={80}
+                              strokeWidth={3}
+                              label="Progresso"
+                            />
+                            <div className="text-right text-sm text-muted-foreground whitespace-nowrap">
+                              <div>{dataCriacao.toLocaleDateString('pt-BR')}</div>
+                              <div className="text-xs">{dataCriacao.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      {/* Card Content */}
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                          <div>
+                            <p className="text-muted-foreground">Período</p>
+                            <p className="font-semibold text-foreground">
+                              {cronograma.config?.modelo === 'medicina-afya'
+                                ? `Período ${cronograma.config?.tempoEstudo ? Object.keys(cronograma.config).length : '?'}`
+                                : 'Geral'
+                              }
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">Dias de Estudo</p>
+                            <p className="font-semibold text-foreground">
+                              {cronograma.tempoEstudo
+                                ? Object.values(cronograma.tempoEstudo).filter(h => h > 0).length
+                                : 0
+                              } dias/semana
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex gap-2 flex-wrap">
+                          <Button
+                            variant="default"
+                            size="sm"
+                            onClick={() => router.push(`/cronogramas/${cronograma._id}`)}
+                            className="soul-light rounded-xl"
+                          >
+                            <Edit2 className="h-4 w-4 mr-2" />
+                            Visualizar
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => downloadPDFDiretamente(cronograma)}
+                            className="soul-light rounded-xl"
+                          >
+                            <Download className="h-4 w-4 mr-2" />
+                            Baixar PDF
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => deleteCronograma(cronograma._id!)}
+                            className="soul-light rounded-xl"
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Deletar
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )
+              })}
+            </div>
           )}
         </div>
-
-        {/* Cronogramas List */}
-        {cronogramas.length === 0 ? (
-          <Card className="text-center py-12">
-            <CardContent>
-              <Calendar className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-              <h3 className="text-lg font-semibold mb-2">Nenhum cronograma criado ainda</h3>
-              <p className="text-muted-foreground mb-6">
-                Comece criando seu primeiro cronograma personalizado
-              </p>
-              <Button
-                onClick={() => router.push('/cronogramas/criar')}
-                variant="outline"
-              >
-                Criar Cronograma
-              </Button>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid gap-6">
-            {cronogramas.map((cronograma) => {
-              const totalHoras = cronograma.totalHoras || 0
-              const dataCriacao = new Date(cronograma.dataCriacao)
-              const progress = calculateProgress(cronograma)
-              
-              return (
-                <Card key={cronograma._id} className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <CardTitle className="flex items-center gap-2">
-                          {cronograma.titulo}
-                          {(cronograma as any).concluido && (
-                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 text-xs font-semibold">
-                              ✓ Concluído
-                            </span>
-                          )}
-                        </CardTitle>
-                        <CardDescription>
-                          Modelo: {cronograma.modelo.toUpperCase()} • {totalHoras}h total
-                        </CardDescription>
-                      </div>
-                      <div className="flex items-center gap-6">
-                        <ProgressRing 
-                          percentage={progress}
-                          size={80}
-                          strokeWidth={3}
-                          label="Progresso"
-                        />
-                        <div className="text-right text-sm text-muted-foreground whitespace-nowrap">
-                          <div>{dataCriacao.toLocaleDateString('pt-BR')}</div>
-                          <div className="text-xs">{dataCriacao.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</div>
-                        </div>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <p className="text-muted-foreground">Período</p>
-                          <p className="font-semibold">
-                            {cronograma.config?.modelo === 'medicina-afya' 
-                              ? `Período ${cronograma.config?.tempoEstudo ? Object.keys(cronograma.config).length : '?'}`
-                              : 'Geral'
-                            }
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-muted-foreground">Dias de Estudo</p>
-                          <p className="font-semibold">
-                            {cronograma.tempoEstudo 
-                              ? Object.values(cronograma.tempoEstudo).filter(h => h > 0).length
-                              : 0
-                            } dias/semana
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex gap-2 flex-wrap">
-                        <Button
-                          variant="default"
-                          size="sm"
-                          onClick={() => router.push(`/cronogramas/${cronograma._id}`)}
-                        >
-                          <Edit2 className="h-4 w-4 mr-2" />
-                          Visualizar
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => downloadPDFDiretamente(cronograma)}
-                        >
-                          <Download className="h-4 w-4 mr-2" />
-                          Baixar PDF
-                        </Button>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => deleteCronograma(cronograma._id!)}
-                        >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Deletar
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              )
-            })}
-          </div>
-        )}
       </div>
     </>
   )

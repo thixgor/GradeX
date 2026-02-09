@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -9,7 +10,7 @@ import { Label } from '@/components/ui/label'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { CustomCronogramaBuilder } from '@/components/custom-cronograma-builder'
 import { CustomCalendar } from '@/components/custom-calendar'
-import { ArrowLeft, ChevronRight, Info } from 'lucide-react'
+import { ArrowLeft, ChevronRight, Info, Sparkles } from 'lucide-react'
 import { TEMPLATES, ModelType, UserDifficulty, StudyTime, TopicItem, SubtopicItem, ModuleItem, MedicinaAFYAPeriodo } from '@/lib/cronograma-types'
 import { ToggleSwitch } from '@/components/ui/toggle-switch'
 import { getMedicinaAFYATopicos } from '@/lib/medicina-afya-periodos-helper'
@@ -384,9 +385,16 @@ export default function CriarCronogramaPage() {
   const totalHoras = Object.values(tempoEstudo).reduce((a, b) => a + b, 0)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30 relative overflow-hidden">
+      {/* Ambient floating blobs */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="auth-bg-blob w-[500px] h-[500px] bg-[#468152]/15 top-[-10%] left-[-10%]" />
+        <div className="auth-bg-blob w-[400px] h-[400px] bg-[#E2A43E]/12 bottom-[-5%] right-[-5%]" style={{ animationDelay: '-4s' }} />
+        <div className="auth-bg-blob w-[300px] h-[300px] bg-[#CE5929]/8 top-[40%] right-[20%]" style={{ animationDelay: '-8s' }} />
+      </div>
+
       {/* Header */}
-      <header className="glass sticky top-0 z-50 border-b">
+      <header className="glass sticky top-0 z-50 border-b border-white/20 dark:border-white/5 backdrop-blur-xl">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-4">
@@ -394,6 +402,7 @@ export default function CriarCronogramaPage() {
                 variant="ghost"
                 size="icon"
                 onClick={() => router.push('/cronogramas')}
+                className="soul-light rounded-xl backdrop-blur-sm bg-white/20 dark:bg-white/5 border border-white/30 dark:border-white/10 hover:bg-white/30 dark:hover:bg-white/10"
               >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
@@ -405,118 +414,160 @@ export default function CriarCronogramaPage() {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8 max-w-2xl">
+      <main className="container mx-auto px-4 py-8 max-w-2xl relative z-10">
         {/* Step Indicator */}
-        <div className="mb-8 flex justify-between items-center">
-          {(['modelo', 'periodo', 'tempo', 'data', 'topicos', 'confirmacao'] as const).map((s, i) => (
-            <div key={s} className="flex items-center">
-              <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-colors ${
-                  step === s
-                    ? 'bg-primary text-white'
-                    : i < (['modelo', 'periodo', 'tempo', 'data', 'topicos', 'confirmacao'] as const).indexOf(step)
-                    ? 'bg-green-500 text-white'
-                    : 'bg-muted text-muted-foreground'
-                }`}
-              >
-                {i + 1}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-8 flex justify-between items-center"
+        >
+          {(['modelo', 'periodo', 'tempo', 'data', 'topicos', 'confirmacao'] as const).map((s, i) => {
+            const currentIndex = (['modelo', 'periodo', 'tempo', 'data', 'topicos', 'confirmacao'] as const).indexOf(step)
+            const isActive = step === s
+            const isCompleted = i < currentIndex
+            return (
+              <div key={s} className="flex items-center">
+                <motion.div
+                  initial={false}
+                  animate={{
+                    scale: isActive ? 1.1 : 1,
+                    backgroundColor: isActive ? 'rgb(var(--primary))' : isCompleted ? '#468152' : 'rgb(var(--muted))'
+                  }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-colors shadow-md ${
+                    isActive
+                      ? 'bg-primary text-white shadow-primary/30'
+                      : isCompleted
+                      ? 'bg-[#468152] text-white shadow-[#468152]/20'
+                      : 'bg-muted text-muted-foreground'
+                  }`}
+                >
+                  {isCompleted ? '✓' : i + 1}
+                </motion.div>
+                {i < 5 && (
+                  <div className={`w-12 h-1 mx-2 rounded-full transition-colors duration-500 ${
+                    i < currentIndex ? 'bg-[#468152]' : 'bg-muted'
+                  }`} />
+                )}
               </div>
-              {i < 5 && <div className="w-12 h-1 bg-muted mx-2" />}
-            </div>
-          ))}
-        </div>
+            )
+          })}
+        </motion.div>
 
         {/* Step 1: Modelo */}
         {step === 'modelo' && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Escolha o Modelo</CardTitle>
-              <CardDescription>
-                Selecione qual modelo de cronograma você deseja criar
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {Object.values(TEMPLATES).map((template) => (
-                <button
-                  key={template.id}
-                  onClick={() => setModelo(template.modelo)}
-                  className={`w-full p-4 border-2 rounded-lg text-left transition-all ${
-                    modelo === template.modelo
-                      ? 'border-primary bg-primary/10'
-                      : 'border-muted hover:border-primary/50'
-                  }`}
-                >
-                  <h3 className="font-semibold">{template.nome}</h3>
-                  <p className="text-sm text-muted-foreground">{template.descricao}</p>
-                </button>
-              ))}
-              <Button
-                onClick={() => {
-                  if (modelo === 'medicina-afya') {
-                    setStep('periodo')
-                  } else if (modelo === 'personalizado') {
-                    setStep('topicos')
-                  } else {
-                    setStep('tempo')
-                  }
-                }}
-                className="w-full mt-6"
-              >
-                Próximo
-                <ChevronRight className="ml-2 h-4 w-4" />
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Step 2: Período (apenas para Medicina AFYA) */}
-        {step === 'periodo' && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Escolha seu Período</CardTitle>
-              <CardDescription>
-                Selecione qual período você está cursando (1º ao 5º)
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-5 gap-3">
-                {[1, 2, 3, 4, 5].map((p) => (
-                  <button
-                    key={p}
-                    onClick={() => setPeriodo(p as MedicinaAFYAPeriodo)}
-                    className={`p-4 border-2 rounded-lg font-semibold transition-all ${
-                      periodo === p
-                        ? 'border-primary bg-primary text-white'
-                        : 'border-muted hover:border-primary/50'
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="glass-page-card rounded-2xl overflow-hidden">
+              <div className="p-6 pb-3">
+                <h2 className="text-2xl font-bold">Escolha o Modelo</h2>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Selecione qual modelo de cronograma você deseja criar
+                </p>
+              </div>
+              <div className="px-6 pb-6 space-y-3">
+                {Object.values(TEMPLATES).map((template, index) => (
+                  <motion.button
+                    key={template.id}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.08 }}
+                    onClick={() => setModelo(template.modelo)}
+                    className={`w-full p-4 rounded-xl text-left transition-all soul-light ${
+                      modelo === template.modelo
+                        ? 'border-2 border-primary bg-primary/10 shadow-md shadow-primary/10'
+                        : 'border-2 border-white/30 dark:border-white/10 backdrop-blur-sm bg-white/20 dark:bg-white/5 hover:border-primary/50 hover:bg-white/30 dark:hover:bg-white/10'
                     }`}
                   >
-                    {p}º
-                  </button>
+                    <h3 className="font-semibold">{template.nome}</h3>
+                    <p className="text-sm text-muted-foreground">{template.descricao}</p>
+                  </motion.button>
                 ))}
-              </div>
-              <div className="mt-6 flex gap-3">
                 <Button
-                  onClick={() => setStep('modelo')}
-                  variant="outline"
-                  className="flex-1"
-                >
-                  Voltar
-                </Button>
-                <Button
-                  onClick={() => setStep(modelo === 'personalizado' ? 'topicos' : 'tempo')}
-                  className="flex-1"
+                  onClick={() => {
+                    if (modelo === 'medicina-afya') {
+                      setStep('periodo')
+                    } else if (modelo === 'personalizado') {
+                      setStep('topicos')
+                    } else {
+                      setStep('tempo')
+                    }
+                  }}
+                  className="w-full mt-6 h-11 rounded-xl soul-light soul-light-brand btn-brand-glow text-white font-semibold"
                 >
                   Próximo
                   <ChevronRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Step 2: Período (apenas para Medicina AFYA) */}
+        {step === 'periodo' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="glass-page-card rounded-2xl overflow-hidden">
+              <div className="p-6 pb-3">
+                <h2 className="text-2xl font-bold">Escolha seu Período</h2>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Selecione qual período você está cursando (1º ao 5º)
+                </p>
+              </div>
+              <div className="px-6 pb-6 space-y-4">
+                <div className="grid grid-cols-5 gap-3">
+                  {[1, 2, 3, 4, 5].map((p) => (
+                    <motion.button
+                      key={p}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setPeriodo(p as MedicinaAFYAPeriodo)}
+                      className={`p-4 rounded-xl font-semibold transition-all soul-light ${
+                        periodo === p
+                          ? 'border-2 border-primary bg-primary text-white shadow-lg shadow-primary/20'
+                          : 'border-2 border-white/30 dark:border-white/10 backdrop-blur-sm bg-white/20 dark:bg-white/5 hover:border-primary/50'
+                      }`}
+                    >
+                      {p}º
+                    </motion.button>
+                  ))}
+                </div>
+                <div className="mt-6 flex gap-3">
+                  <Button
+                    onClick={() => setStep('modelo')}
+                    variant="outline"
+                    className="flex-1 rounded-xl soul-light h-11"
+                  >
+                    Voltar
+                  </Button>
+                  <Button
+                    onClick={() => setStep(modelo === 'personalizado' ? 'topicos' : 'tempo')}
+                    className="flex-1 h-11 rounded-xl soul-light soul-light-brand btn-brand-glow text-white font-semibold"
+                  >
+                    Próximo
+                    <ChevronRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         )}
 
         {/* Step 3: Tempo de Estudo */}
         {step === 'tempo' && (
-          <div className="space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            className="space-y-6"
+          >
             <div>
               <h2 className="text-2xl font-bold mb-2">Tempo de Estudo por Dia</h2>
               <p className="text-muted-foreground">
@@ -526,11 +577,11 @@ export default function CriarCronogramaPage() {
 
             <div className="grid grid-cols-2 gap-6">
               {/* Left: Sliders */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Configurar Horas</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+              <div className="glass-page-card rounded-2xl overflow-hidden">
+                <div className="p-6 pb-3">
+                  <h3 className="text-lg font-bold">Configurar Horas</h3>
+                </div>
+                <div className="px-6 pb-6 space-y-4">
                   {dias.map((dia, i) => (
                     <div key={dia} className="space-y-2">
                       <div className="flex items-center justify-between">
@@ -554,15 +605,15 @@ export default function CriarCronogramaPage() {
                       />
                     </div>
                   ))}
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
               {/* Right: Gráfico Setorial */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Resumo Semanal</CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-col items-center justify-center space-y-4">
+              <div className="glass-page-card rounded-2xl overflow-hidden">
+                <div className="p-6 pb-3">
+                  <h3 className="text-lg font-bold">Resumo Semanal</h3>
+                </div>
+                <div className="px-6 pb-6 flex flex-col items-center justify-center space-y-4">
                   {/* Pie Chart SVG */}
                   <svg width="200" height="200" viewBox="0 0 200 200" className="drop-shadow-lg">
                     {dias.map((dia, i) => {
@@ -625,8 +676,8 @@ export default function CriarCronogramaPage() {
                       </div>
                     ))}
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </div>
 
             <div className="flex gap-3">
@@ -641,77 +692,92 @@ export default function CriarCronogramaPage() {
                     setStep('modelo')
                   }
                 }}
-                className="flex-1"
+                className="flex-1 rounded-xl soul-light h-11"
               >
                 Voltar
               </Button>
               <Button
                 onClick={() => setStep('data')}
-                className="flex-1"
+                className="flex-1 h-11 rounded-xl soul-light soul-light-brand btn-brand-glow text-white font-semibold"
               >
                 Próximo
                 <ChevronRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Step 4: Data de Término */}
         {step === 'data' && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Quando você quer terminar?</CardTitle>
-              <CardDescription>
-                Escolha a data em que deseja terminar o cronograma. Quanto mais próximo, mais conteúdo por dia.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="data-termino">Data de Término</Label>
-                <CustomCalendar
-                  value={dataTermino}
-                  onChange={setDataTermino}
-                  min={new Date().toISOString().split('T')[0]}
-                  placeholder="Selecione a data de término"
-                />
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="glass-page-card rounded-2xl overflow-hidden">
+              <div className="p-6 pb-3">
+                <h2 className="text-2xl font-bold">Quando você quer terminar?</h2>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Escolha a data em que deseja terminar o cronograma. Quanto mais próximo, mais conteúdo por dia.
+                </p>
               </div>
-
-              {dataTermino && (
-                <div className="bg-muted p-4 rounded-lg space-y-2">
-                  <p className="text-sm font-medium">Resumo:</p>
-                  <p className="text-sm text-muted-foreground">
-                    Você tem <strong>{Math.ceil((new Date(dataTermino).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} dias</strong> para completar o cronograma
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    Com <strong>{Object.values(tempoEstudo).reduce((a, b) => a + b, 0)}h/semana</strong>, você terá aproximadamente <strong>{Math.ceil((Object.values(tempoEstudo).reduce((a, b) => a + b, 0) * Math.ceil((new Date(dataTermino).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24 * 7))))}h</strong> totais
-                  </p>
+              <div className="px-6 pb-6 space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="data-termino">Data de Término</Label>
+                  <CustomCalendar
+                    value={dataTermino}
+                    onChange={setDataTermino}
+                    min={new Date().toISOString().split('T')[0]}
+                    placeholder="Selecione a data de término"
+                  />
                 </div>
-              )}
 
-              <div className="flex gap-3">
-                <Button
-                  variant="outline"
-                  onClick={() => setStep(modelo === 'personalizado' ? 'topicos' : 'tempo')}
-                  className="flex-1"
-                >
-                  Voltar
-                </Button>
-                <Button
-                  onClick={() => setStep('topicos')}
-                  className="flex-1"
-                  disabled={!dataTermino}
-                >
-                  Próximo
-                  <ChevronRight className="ml-2 h-4 w-4" />
-                </Button>
+                {dataTermino && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="backdrop-blur-sm bg-white/20 dark:bg-white/5 border border-white/30 dark:border-white/10 p-4 rounded-xl space-y-2"
+                  >
+                    <p className="text-sm font-medium">Resumo:</p>
+                    <p className="text-sm text-muted-foreground">
+                      Você tem <strong>{Math.ceil((new Date(dataTermino).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} dias</strong> para completar o cronograma
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Com <strong>{Object.values(tempoEstudo).reduce((a, b) => a + b, 0)}h/semana</strong>, você terá aproximadamente <strong>{Math.ceil((Object.values(tempoEstudo).reduce((a, b) => a + b, 0) * Math.ceil((new Date(dataTermino).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24 * 7))))}h</strong> totais
+                    </p>
+                  </motion.div>
+                )}
+
+                <div className="flex gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => setStep(modelo === 'personalizado' ? 'topicos' : 'tempo')}
+                    className="flex-1 rounded-xl soul-light h-11"
+                  >
+                    Voltar
+                  </Button>
+                  <Button
+                    onClick={() => setStep('topicos')}
+                    className="flex-1 h-11 rounded-xl soul-light soul-light-brand btn-brand-glow text-white font-semibold"
+                    disabled={!dataTermino}
+                  >
+                    Próximo
+                    <ChevronRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </motion.div>
         )}
 
         {/* Step 5: Seleção de Tópicos */}
         {step === 'topicos' && (
-          <div className="space-y-6 w-full overflow-hidden">
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            className="space-y-6 w-full overflow-hidden"
+          >
             <div>
               <h2 className="text-2xl font-bold mb-2">
                 {modelo === 'personalizado' ? 'Criar Tópicos Personalizados' : 'Selecione Tópicos'}
@@ -730,18 +796,18 @@ export default function CriarCronogramaPage() {
             /* 3-Column Layout - Responsive */
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 w-full">
               {/* Column 1: Tópicos */}
-              <Card className="flex flex-col">
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-xl font-bold">Tópicos</CardTitle>
-                </CardHeader>
-                <CardContent className="flex-1 overflow-y-auto space-y-3 pr-4">
+              <div className="glass-page-card rounded-2xl flex flex-col overflow-hidden">
+                <div className="p-6 pb-4">
+                  <h3 className="text-xl font-bold">Tópicos</h3>
+                </div>
+                <div className="px-6 pb-6 flex-1 overflow-y-auto space-y-3">
                   {topicos.map((topico) => (
                     <div
                       key={topico.id}
-                      className={`flex items-start gap-3 p-3 rounded-lg border-2 transition-all cursor-pointer ${
+                      className={`flex items-start gap-3 p-3 rounded-xl transition-all cursor-pointer soul-light ${
                         selectedTopico === topico.id
-                          ? 'border-primary bg-primary/5'
-                          : 'border-muted hover:border-primary/50 hover:bg-muted/50'
+                          ? 'border-2 border-primary bg-primary/5 shadow-sm'
+                          : 'border-2 border-white/30 dark:border-white/10 backdrop-blur-sm bg-white/20 dark:bg-white/5 hover:border-primary/50 hover:bg-white/30 dark:hover:bg-white/10'
                       }`}
                       onClick={() => setSelectedTopico(topico.id)}
                     >
@@ -761,16 +827,16 @@ export default function CriarCronogramaPage() {
                       </div>
                     </div>
                   ))}
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
               {/* Column 2: Subtópicos */}
-              <Card className="flex flex-col">
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-xl font-bold">Subtópicos</CardTitle>
-                </CardHeader>
-                <CardContent
-                  className={`flex-1 overflow-y-auto space-y-3 pr-4 transition-all ${
+              <div className="glass-page-card rounded-2xl flex flex-col overflow-hidden">
+                <div className="p-6 pb-4">
+                  <h3 className="text-xl font-bold">Subtópicos</h3>
+                </div>
+                <div
+                  className={`px-6 pb-6 flex-1 overflow-y-auto space-y-3 transition-all ${
                     selectedTopico && !topicos.find((t) => t.id === selectedTopico)?.incluido
                       ? 'blur-sm opacity-50 pointer-events-none'
                       : ''
@@ -782,10 +848,10 @@ export default function CriarCronogramaPage() {
                       ?.subtopicos.map((subtopico) => (
                         <div
                           key={subtopico.id}
-                          className={`flex items-start gap-3 p-3 rounded-lg border-2 transition-all cursor-pointer ${
+                          className={`flex items-start gap-3 p-3 rounded-xl transition-all cursor-pointer soul-light ${
                             selectedSubtopico === subtopico.id
-                              ? 'border-primary bg-primary/5'
-                              : 'border-muted hover:border-primary/50 hover:bg-muted/50'
+                              ? 'border-2 border-primary bg-primary/5 shadow-sm'
+                              : 'border-2 border-white/30 dark:border-white/10 backdrop-blur-sm bg-white/20 dark:bg-white/5 hover:border-primary/50 hover:bg-white/30 dark:hover:bg-white/10'
                           }`}
                           onClick={() => setSelectedSubtopico(subtopico.id)}
                         >
@@ -811,14 +877,14 @@ export default function CriarCronogramaPage() {
                       Selecione um tópico
                     </div>
                   )}
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
               {/* Column 3: Módulos */}
-              <Card className="flex flex-col">
-                <CardHeader className="pb-4">
+              <div className="glass-page-card rounded-2xl flex flex-col overflow-hidden">
+                <div className="p-6 pb-4">
                   <div className="flex items-center justify-between gap-2">
-                    <CardTitle className="text-xl font-bold">Módulos</CardTitle>
+                    <h3 className="text-xl font-bold">Módulos</h3>
                     {selectedSubtopico && selectedTopico && topicos.find((t) => t.id === selectedTopico)?.incluido && (
                       <button
                         onClick={() => {
@@ -832,9 +898,9 @@ export default function CriarCronogramaPage() {
                       </button>
                     )}
                   </div>
-                </CardHeader>
-                <CardContent
-                  className={`flex-1 overflow-y-auto space-y-3 pr-4 transition-all ${
+                </div>
+                <div
+                  className={`px-6 pb-6 flex-1 overflow-y-auto space-y-3 transition-all ${
                     selectedTopico && !topicos.find((t) => t.id === selectedTopico)?.incluido
                       ? 'blur-sm opacity-50 pointer-events-none'
                       : selectedSubtopico && !topicos.find((t) => t.id === selectedTopico)?.subtopicos.find((s) => s.id === selectedSubtopico)?.incluido
@@ -851,7 +917,7 @@ export default function CriarCronogramaPage() {
                         return (
                           <div
                             key={modulo.id}
-                            className="p-4 rounded-lg border-2 border-muted bg-background hover:bg-muted/30 transition-colors space-y-3"
+                            className="p-4 rounded-xl border-2 border-white/30 dark:border-white/10 backdrop-blur-sm bg-white/20 dark:bg-white/5 hover:bg-white/30 dark:hover:bg-white/10 transition-colors space-y-3"
                           >
                             <div className="flex items-center justify-between gap-2">
                               <div className="font-semibold text-base flex-1 leading-snug break-words">{modulo.nome}</div>
@@ -866,8 +932,8 @@ export default function CriarCronogramaPage() {
                                       <Info className="w-4 h-4 text-muted-foreground hover:text-primary" />
                                     </button>
                                     {moduloInfoAberto === modulo.id && (
-                                      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-                                        <div className="bg-background border border-muted rounded-lg shadow-lg p-6 w-96 max-h-96 flex flex-col animate-in fade-in zoom-in-95 duration-200">
+                                      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-md">
+                                        <div className="auth-glass-card border-none shadow-2xl p-6 w-96 max-h-96 flex flex-col animate-in fade-in zoom-in-95 duration-200">
                                           <div className="flex items-center justify-between mb-4">
                                             <div className="font-semibold text-lg text-primary">Submódulos: {modulo.nome}</div>
                                             <button
@@ -935,8 +1001,8 @@ export default function CriarCronogramaPage() {
                       Selecione um subtópico
                     </div>
                   )}
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </div>
             )}
 
@@ -944,77 +1010,87 @@ export default function CriarCronogramaPage() {
               <Button
                 variant="outline"
                 onClick={() => setStep(modelo === 'personalizado' ? 'modelo' : 'data')}
-                className="flex-1"
+                className="flex-1 rounded-xl soul-light h-11"
               >
                 Voltar
               </Button>
               <Button
                 onClick={() => setStep('confirmacao')}
-                className="flex-1"
+                className="flex-1 h-11 rounded-xl soul-light soul-light-brand btn-brand-glow text-white font-semibold"
                 disabled={topicos.filter(t => t.incluido).length === 0}
               >
                 Próximo
                 <ChevronRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Step 6: Confirmação */}
         {step === 'confirmacao' && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Confirmar Cronograma</CardTitle>
-              <CardDescription>
-                Revise as informações antes de gerar
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>Título do Cronograma</Label>
-                <Input
-                  value={titulo}
-                  onChange={(e) => setTitulo(e.target.value)}
-                  placeholder="Ex: Cronograma ENEM 2024"
-                />
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="glass-page-card rounded-2xl overflow-hidden">
+              <div className="p-6 pb-3">
+                <h2 className="text-2xl font-bold flex items-center gap-2">
+                  <Sparkles className="h-6 w-6 text-[#E2A43E]" />
+                  Confirmar Cronograma
+                </h2>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Revise as informações antes de gerar
+                </p>
               </div>
-              <div className="bg-muted p-4 rounded-lg space-y-2 text-sm">
-                <p><strong>Modelo:</strong> {TEMPLATES[modelo].nome}</p>
-                {modelo !== 'personalizado' && (
-                  <>
-                    <p><strong>Total de horas/semana:</strong> {Object.values(tempoEstudo).reduce((a, b) => a + b, 0)} horas</p>
-                    <p><strong>Data de término:</strong> {new Date(dataTermino).toLocaleDateString('pt-BR')}</p>
-                    <p><strong>Dias disponíveis:</strong> {Math.ceil((new Date(dataTermino).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))}</p>
-                  </>
-                )}
-                {modelo === 'personalizado' && (
-                  <>
-                    <p><strong>Tópicos:</strong> {topicos.length}</p>
-                    <p><strong>Subtópicos:</strong> {topicos.reduce((sum, t) => sum + t.subtopicos.length, 0)}</p>
-                    <p><strong>Módulos:</strong> {topicos.reduce((sum, t) => sum + t.subtopicos.reduce((s, st) => s + st.modulos.length, 0), 0)}</p>
-                    <p><strong>Horas totais:</strong> {topicos.reduce((sum, t) => sum + t.subtopicos.reduce((s, st) => s + st.modulos.reduce((m, mod) => m + (mod.incluido ? mod.horasEstimadas : 0), 0), 0), 0)}h</p>
-                  </>
-                )}
+              <div className="px-6 pb-6 space-y-4">
+                <div className="space-y-2">
+                  <Label>Título do Cronograma</Label>
+                  <Input
+                    value={titulo}
+                    onChange={(e) => setTitulo(e.target.value)}
+                    placeholder="Ex: Cronograma ENEM 2024"
+                    className="auth-glass-input rounded-xl h-11"
+                  />
+                </div>
+                <div className="backdrop-blur-sm bg-white/20 dark:bg-white/5 border border-white/30 dark:border-white/10 p-4 rounded-xl space-y-2 text-sm">
+                  <p><strong>Modelo:</strong> {TEMPLATES[modelo].nome}</p>
+                  {modelo !== 'personalizado' && (
+                    <>
+                      <p><strong>Total de horas/semana:</strong> {Object.values(tempoEstudo).reduce((a, b) => a + b, 0)} horas</p>
+                      <p><strong>Data de término:</strong> {new Date(dataTermino).toLocaleDateString('pt-BR')}</p>
+                      <p><strong>Dias disponíveis:</strong> {Math.ceil((new Date(dataTermino).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))}</p>
+                    </>
+                  )}
+                  {modelo === 'personalizado' && (
+                    <>
+                      <p><strong>Tópicos:</strong> {topicos.length}</p>
+                      <p><strong>Subtópicos:</strong> {topicos.reduce((sum, t) => sum + t.subtopicos.length, 0)}</p>
+                      <p><strong>Módulos:</strong> {topicos.reduce((sum, t) => sum + t.subtopicos.reduce((s, st) => s + st.modulos.length, 0), 0)}</p>
+                      <p><strong>Horas totais:</strong> {topicos.reduce((sum, t) => sum + t.subtopicos.reduce((s, st) => s + st.modulos.reduce((m, mod) => m + (mod.incluido ? mod.horasEstimadas : 0), 0), 0), 0)}h</p>
+                    </>
+                  )}
+                </div>
+                <div className="flex gap-3 mt-6">
+                  <Button
+                    variant="outline"
+                    onClick={() => setStep('topicos')}
+                    className="flex-1 rounded-xl soul-light h-11"
+                    disabled={gerando}
+                  >
+                    Voltar
+                  </Button>
+                  <Button
+                    onClick={gerarCronograma}
+                    className="flex-1 h-11 rounded-xl soul-light soul-light-brand btn-brand-glow text-white font-semibold"
+                    disabled={gerando}
+                  >
+                    {gerando ? 'Gerando...' : 'Gerar Cronograma'}
+                  </Button>
+                </div>
               </div>
-              <div className="flex gap-3 mt-6">
-                <Button
-                  variant="outline"
-                  onClick={() => setStep('topicos')}
-                  className="flex-1"
-                  disabled={gerando}
-                >
-                  Voltar
-                </Button>
-                <Button
-                  onClick={gerarCronograma}
-                  className="flex-1"
-                  disabled={gerando}
-                >
-                  {gerando ? 'Gerando...' : 'Gerar Cronograma'}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+          </motion.div>
         )}
       </main>
     </div>
