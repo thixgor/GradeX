@@ -4,9 +4,9 @@ import { getAIKey, AIKeySection } from './ai-keys'
 import { v4 as uuidv4 } from 'uuid'
 
 const GEMINI_MODELS = [
-  'gemini-2.0-flash',     // Modelo principal (estável e rápido)
-  'gemini-2.0-flash-exp', // Fallback experimental
-  'gemini-1.5-flash',     // Fallback estável
+  'gemini-2.5-flash',     // Modelo principal (mesmo usado no teste de conexão)
+  'gemini-2.0-flash',     // Fallback estável
+  'gemini-1.5-flash',     // Fallback legado
 ]
 
 // Timeout para cada chamada individual ao Gemini (25 segundos)
@@ -31,8 +31,10 @@ async function getGeminiApiKey(section?: AIKeySection): Promise<string> {
     if (section) {
       const sectionKey = await getAIKey(section)
       if (sectionKey) {
+        console.log(`[Gemini] Usando API key da seção: ${section}`)
         return sectionKey
       }
+      console.warn(`[Gemini] Nenhuma API key encontrada para seção "${section}", tentando fallback...`)
     }
 
     // Fallback para chave padrão do banco de dados
@@ -40,11 +42,20 @@ async function getGeminiApiKey(section?: AIKeySection): Promise<string> {
     const settingsCollection = db.collection<Settings>('settings')
     const settings = await settingsCollection.findOne({})
 
-    if (!settings?.geminiApiKey) {
-      throw new Error('API Key do Gemini não configurada. Configure em Configurações > API Gemini')
+    if (settings?.geminiApiKey) {
+      console.log('[Gemini] Usando API key padrão da collection settings')
+      return settings.geminiApiKey
     }
 
-    return settings.geminiApiKey
+    // Último fallback: tentar a key genérica de landing_settings (qualquer seção disponível)
+    const allKeys = await import('./ai-keys').then(m => m.getAllAIKeys())
+    const anyKey = allKeys.generalExams || allKeys.personalExams || allKeys.flashcards
+    if (anyKey) {
+      console.log('[Gemini] Usando API key de outra seção como fallback')
+      return anyKey
+    }
+
+    throw new Error('API Key do Gemini não configurada. Configure em Configurações > API Gemini')
   } catch (error) {
     console.error('Erro ao buscar API Key do Gemini:', error)
     throw error
