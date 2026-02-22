@@ -214,7 +214,7 @@ export default function LandingPage() {
             <ThemeToggle />
             <Button
               onClick={() => router.push(isLoggedIn ? '/dashboard' : '/auth/login')}
-              className="bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90 text-white font-bold shadow-lg animate-pulse-glow border-0"
+              className="bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90 text-white font-bold shadow-lg animate-pulse-glow border-0 soul-light soul-light-brand"
               size="sm"
             >
               {isLoggedIn ? '🏠 Ir para Dashboard' : '✨ Entrar Agora'}
@@ -277,14 +277,14 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-slide-up delay-200">
             <button
               onClick={() => router.push('/auth/register')}
-              className="group relative inline-flex items-center gap-2 bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90 text-white font-bold px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl text-lg shadow-lg shadow-[#468152]/30"
+              className="group relative inline-flex items-center gap-2 bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90 text-white font-bold px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl text-lg shadow-lg shadow-[#468152]/30 soul-light soul-light-brand"
             >
               <span>✨ Começar Gratuitamente</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
             <button
               onClick={() => router.push('/auth/login')}
-              className="group inline-flex items-center gap-2 bg-gradient-to-r from-[#E2A43E] to-[#468152] hover:from-[#E2A43E]/90 hover:to-[#468152]/90 text-white font-bold px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl text-lg shadow-lg shadow-[#E2A43E]/30"
+              className="group inline-flex items-center gap-2 bg-gradient-to-r from-[#E2A43E] to-[#468152] hover:from-[#E2A43E]/90 hover:to-[#468152]/90 text-white font-bold px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl text-lg shadow-lg shadow-[#E2A43E]/30 soul-light soul-light-brand"
             >
               <span>🎯 Já Sou Daqui!</span>
             </button>
@@ -297,7 +297,7 @@ export default function LandingPage() {
             </p>
             <button
               onClick={openInstagram}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#E1306C] to-[#FD1D1D] hover:from-[#E1306C]/90 hover:to-[#FD1D1D]/90 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-lg"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#E1306C] to-[#FD1D1D] hover:from-[#E1306C]/90 hover:to-[#FD1D1D]/90 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-lg soul-light"
             >
               <Instagram className="w-5 h-5" />
               @domineaqui.br
@@ -450,14 +450,14 @@ export default function LandingPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => router.push('/auth/register')}
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90 text-white font-bold px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90 text-white font-bold px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl soul-light soul-light-brand"
               >
                 <span>✨ Começar Gratuitamente</span>
                 <ArrowRight className="w-5 h-5" />
               </button>
               <button
                 onClick={() => router.push('/auth/login')}
-                className="inline-flex items-center gap-2 border-2 border-[#468152]/50 hover:bg-[#468152]/10 text-[#468152] font-bold px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105"
+                className="inline-flex items-center gap-2 border-2 border-[#468152]/50 hover:bg-[#468152]/10 text-[#468152] font-bold px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105 soul-light"
               >
                 <span>🎯 Já Sou Daqui!</span>
               </button>
@@ -498,14 +498,14 @@ export default function LandingPage() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button
                   onClick={() => router.push('/auth/register')}
-                  className="inline-flex items-center gap-2 bg-gradient-to-r from-[#E2A43E] to-[#468152] hover:from-[#E2A43E]/90 hover:to-[#468152]/90 text-white font-bold px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-[#E2A43E] to-[#468152] hover:from-[#E2A43E]/90 hover:to-[#468152]/90 text-white font-bold px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl soul-light soul-light-brand"
                 >
                   <span>✨ Começar Gratuitamente</span>
                   <ArrowRight className="w-5 h-5" />
                 </button>
                 <button
                   onClick={() => router.push('/auth/login')}
-                  className="inline-flex items-center gap-2 border-2 border-[#E2A43E]/50 hover:bg-[#E2A43E]/10 text-[#E2A43E] font-bold px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105"
+                  className="inline-flex items-center gap-2 border-2 border-[#E2A43E]/50 hover:bg-[#E2A43E]/10 text-[#E2A43E] font-bold px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105 soul-light"
                 >
                   <span>🎯 Já Sou Daqui!</span>
                 </button>
@@ -566,7 +566,7 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={openInstagram}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#E1306C] to-[#FD1D1D] hover:from-[#E1306C]/90 hover:to-[#FD1D1D]/90 text-white font-semibold px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-lg"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#E1306C] to-[#FD1D1D] hover:from-[#E1306C]/90 hover:to-[#FD1D1D]/90 text-white font-semibold px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-lg soul-light"
             >
               <Instagram className="w-5 h-5" />
               Seguir @domineaqui.br
@@ -575,14 +575,14 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={() => router.push('/auth/register')}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90 text-white font-bold px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90 text-white font-bold px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl soul-light soul-light-brand"
             >
               <span>✨ Começar Gratuitamente</span>
               <ArrowRight className="w-5 h-5" />
             </button>
             <button
               onClick={() => router.push('/auth/login')}
-              className="inline-flex items-center gap-2 border-2 border-[#468152]/50 hover:bg-[#468152]/10 text-[#468152] font-bold px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105"
+              className="inline-flex items-center gap-2 border-2 border-[#468152]/50 hover:bg-[#468152]/10 text-[#468152] font-bold px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105 soul-light"
             >
               <span>🎯 Já Sou Daqui!</span>
             </button>
@@ -624,7 +624,7 @@ export default function LandingPage() {
                 </button>
                 {openFaq === index && (
                   <div className="px-6 pb-5 pt-0 border-t border-border/50">
-                    <p className="text-muted-foreground leading-relaxed pl-8">
+                    <p className="text-muted-foreground leading-relaxed pl-8 whitespace-pre-line">
                       {faq.answer}
                     </p>
                   </div>

@@ -511,7 +511,7 @@ export default function QuestaoPage() {
                         )}
                       </span>
                       <span className={cn(
-                        "flex-1 pt-1",
+                        "flex-1 pt-1 whitespace-pre-line",
                         isRiscada && "line-through text-muted-foreground"
                       )}>
                         {alt.texto}
@@ -638,7 +638,7 @@ export default function QuestaoPage() {
               {questao.fonte && (
                 <div className="space-y-2">
                   <Label className="font-medium">Fonte:</Label>
-                  <div className="p-4 bg-muted rounded-lg">
+                  <div className="p-4 bg-muted rounded-lg whitespace-pre-wrap">
                     {questao.fonte}
                   </div>
                 </div>

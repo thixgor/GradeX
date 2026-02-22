@@ -1176,7 +1176,7 @@ function BancoQuestoesContent() {
                             )}
                           </div>
 
-                          <p className="text-sm line-clamp-2 mb-2">
+                          <p className="text-sm line-clamp-2 whitespace-pre-line mb-2">
                             {questao.enunciado}
                           </p>
 

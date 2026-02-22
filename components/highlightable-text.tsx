@@ -293,7 +293,7 @@ export function HighlightableText({
         ref={textRef}
         onContextMenu={handleContextMenu}
         onPointerUp={handlePointerUp}
-        className={`select-text ${className}`}
+        className={`select-text whitespace-pre-line ${className}`}
         style={{ userSelect: 'text' }}
       >
         {renderHighlightedText()}

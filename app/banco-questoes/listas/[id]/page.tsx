@@ -530,7 +530,7 @@ export default function ListaDetalhePage() {
                           {isSelected && <div className="w-3 h-3 rounded-full bg-white" />}
                         </div>
                         <span className={cn(
-                          "flex-1",
+                          "flex-1 whitespace-pre-line",
                           isRiscada && "line-through text-muted-foreground"
                         )}>
                           <span className="font-semibold mr-2">{alt.letra})</span>
@@ -880,7 +880,7 @@ export default function ListaDetalhePage() {
                           )}
                         </div>
 
-                        <p className="text-sm line-clamp-2">
+                        <p className="text-sm line-clamp-2 whitespace-pre-line">
                           {questao.enunciado}
                         </p>
 

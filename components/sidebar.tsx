@@ -484,7 +484,7 @@ export function Sidebar({
               onClick={onCreateExam}
               disabled={tierLimitExceeded}
               className={cn(
-                'w-full justify-start gap-3 bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90 text-white font-semibold',
+                'w-full justify-start gap-3 bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90 text-white font-semibold soul-light soul-light-brand',
                 collapsed && 'justify-center px-0'
               )}
             >
