@@ -20,11 +20,19 @@ import {
   ChevronDown,
   Check,
   Dices,
+  Calendar,
+  X,
+  Minus,
+  Database,
+  Combine,
+  Globe,
 } from 'lucide-react'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { CustomContext } from '@/lib/types'
 import { PageLoading } from '@/components/page-loading'
+import { TEMPLATES, TopicItem, MedicinaAFYAPeriodo } from '@/lib/cronograma-types'
+import { getMedicinaAFYATopicos } from '@/lib/medicina-afya-periodos-helper'
 
 // ─── Iridescent Glass Panel ─────────────────────────────────
 // Reusable glassmorphism container with animated chromatic border
@@ -217,6 +225,175 @@ interface Exam {
   questions: Question[]
 }
 
+// ─── Bank Filters Panel ─────────────────────────────────────
+function BankFiltersPanel({
+  bankFilters, setBankFilters, periodos, modulos, topicos, subtopicos, anosDisponiveis,
+  questionCount, setQuestionCount, maxCount, disabled, label,
+}: {
+  bankFilters: any
+  setBankFilters: (fn: any) => void
+  periodos: any[]
+  modulos: any[]
+  topicos: any[]
+  subtopicos: any[]
+  anosDisponiveis: number[]
+  questionCount: number
+  setQuestionCount: (n: number) => void
+  maxCount: number
+  disabled: boolean
+  label: string
+}) {
+  return (
+    <div className="space-y-4">
+      <SectionHeader
+        icon={<Database className="w-4.5 h-4.5 text-emerald-400" />}
+        title={label}
+        subtitle="Filtros do banco de questoes"
+      />
+
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">Periodo</Label>
+          <select
+            value={bankFilters.periodoId}
+            onChange={(e) => setBankFilters((prev: any) => ({ ...prev, periodoId: e.target.value, moduloId: '', topicoId: '', subtopicoId: '' }))}
+            disabled={disabled}
+            className="glass-select w-full"
+          >
+            <option value="">Todos</option>
+            {periodos.map((p: any) => (
+              <option key={String(p._id)} value={String(p._id)}>{p.nome} ({p.totalQuestoes})</option>
+            ))}
+          </select>
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">Modulo</Label>
+          <select
+            value={bankFilters.moduloId}
+            onChange={(e) => setBankFilters((prev: any) => ({ ...prev, moduloId: e.target.value, topicoId: '', subtopicoId: '' }))}
+            disabled={disabled || !bankFilters.periodoId}
+            className="glass-select w-full"
+          >
+            <option value="">Todos</option>
+            {modulos.map((m: any) => (
+              <option key={String(m._id)} value={String(m._id)}>{m.nome} ({m.totalQuestoes})</option>
+            ))}
+          </select>
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">Topico</Label>
+          <select
+            value={bankFilters.topicoId}
+            onChange={(e) => setBankFilters((prev: any) => ({ ...prev, topicoId: e.target.value, subtopicoId: '' }))}
+            disabled={disabled || !bankFilters.moduloId}
+            className="glass-select w-full"
+          >
+            <option value="">Todos</option>
+            {topicos.map((t: any) => (
+              <option key={String(t._id)} value={String(t._id)}>{t.nome} ({t.totalQuestoes})</option>
+            ))}
+          </select>
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">Subtopico</Label>
+          <select
+            value={bankFilters.subtopicoId}
+            onChange={(e) => setBankFilters((prev: any) => ({ ...prev, subtopicoId: e.target.value }))}
+            disabled={disabled || !bankFilters.topicoId}
+            className="glass-select w-full"
+          >
+            <option value="">Todos</option>
+            {subtopicos.map((s: any) => (
+              <option key={String(s._id)} value={String(s._id)}>{s.nome} ({s.totalQuestoes})</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">Tipo</Label>
+          <select
+            value={bankFilters.tipo}
+            onChange={(e) => setBankFilters((prev: any) => ({ ...prev, tipo: e.target.value }))}
+            disabled={disabled}
+            className="glass-select w-full"
+          >
+            <option value="">Todos</option>
+            <option value="objetiva">Objetiva</option>
+            <option value="discursiva">Discursiva</option>
+          </select>
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">Dificuldade</Label>
+          <select
+            value={bankFilters.dificuldade}
+            onChange={(e) => setBankFilters((prev: any) => ({ ...prev, dificuldade: e.target.value }))}
+            disabled={disabled}
+            className="glass-select w-full"
+          >
+            <option value="">Todas</option>
+            <option value="facil">Facil</option>
+            <option value="medio">Medio</option>
+            <option value="dificil">Dificil</option>
+          </select>
+        </div>
+      </div>
+
+      {anosDisponiveis.length > 0 && (
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">Ano</Label>
+          <div className="flex flex-wrap gap-1.5">
+            {anosDisponiveis.map((ano) => {
+              const isSelected = bankFilters.anos.includes(ano)
+              return (
+                <button
+                  key={ano}
+                  type="button"
+                  onClick={() => {
+                    setBankFilters((prev: any) => ({
+                      ...prev,
+                      anos: isSelected ? prev.anos.filter((a: number) => a !== ano) : [...prev.anos, ano]
+                    }))
+                  }}
+                  disabled={disabled}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+                    isSelected
+                      ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/25'
+                      : 'bg-muted/50 text-muted-foreground border border-transparent hover:bg-muted'
+                  }`}
+                >
+                  {ano}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      <div className="space-y-3 pt-2">
+        <div className="flex items-center justify-between">
+          <SectionHeader
+            icon={<Hash className="w-4.5 h-4.5 text-emerald-400" />}
+            title="Quantidade de Questoes"
+          />
+        </div>
+        <GlassSlider
+          value={questionCount}
+          onChange={(v) => setQuestionCount(Math.round(v))}
+          min={1}
+          max={maxCount}
+          step={1}
+          disabled={disabled}
+          leftLabel="1"
+          rightLabel={String(maxCount)}
+          centerLabel={String(questionCount)}
+        />
+      </div>
+    </div>
+  )
+}
+
 // ─────────────────────────────────────────────────────────────
 export default function GenerateQuestionsPage() {
   const router = useRouter()
@@ -252,6 +429,40 @@ export default function GenerateQuestionsPage() {
   const [savedContexts, setSavedContexts] = useState<CustomContext[]>([])
   const [selectedSavedContext, setSelectedSavedContext] = useState<string>('')
   const [customContext, setCustomContext] = useState('')
+
+  // Cronograma modal
+  const [showCronogramaModal, setShowCronogramaModal] = useState(false)
+  const [cronogramas, setCronogramas] = useState<any[]>([])
+  const [loadingCronogramas, setLoadingCronogramas] = useState(false)
+  const [cronogramaThemeTags, setCronogramaThemeTags] = useState<{ tag: string; source: 'cronograma' | 'modelo' }[]>([])
+  const [selectedCronogramaId, setSelectedCronogramaId] = useState<string>('')
+  const [cronogramaSelections, setCronogramaSelections] = useState<Set<string>>(new Set())
+  const [cronogramaModalTab, setCronogramaModalTab] = useState<'meus' | 'modelos'>('modelos')
+  const [modeloTemplateId, setModeloTemplateId] = useState<string>('medicina-afya')
+  const [afyaPeriodo, setAfyaPeriodo] = useState<MedicinaAFYAPeriodo>(1)
+
+  // Exam mode state
+  const [examMode, setExamMode] = useState<'ai' | 'banco' | 'misto'>('ai')
+
+  // Bank questions state
+  const [bankFilters, setBankFilters] = useState({
+    periodoId: '',
+    moduloId: '',
+    topicoId: '',
+    subtopicoId: '',
+    tipo: '' as string,
+    dificuldade: '' as string,
+    anos: [] as number[],
+  })
+  const [bankQuestionCount, setBankQuestionCount] = useState(5)
+  const [aiQuestionCount, setAiQuestionCount] = useState(5)
+
+  // Hierarchy data for banco filters
+  const [periodos, setPeriodos] = useState<any[]>([])
+  const [bankModulos, setBankModulos] = useState<any[]>([])
+  const [bankTopicos, setBankTopicos] = useState<any[]>([])
+  const [bankSubtopicos, setBankSubtopicos] = useState<any[]>([])
+  const [anosDisponiveis, setAnosDisponiveis] = useState<number[]>([])
 
   // Expandable sections
   const [showAdvanced, setShowAdvanced] = useState(false)
@@ -297,7 +508,9 @@ export default function GenerateQuestionsPage() {
       if (examId.startsWith('temp-')) {
         const data = sessionStorage.getItem('pendingExamData')
         if (data) {
-          setExamData(JSON.parse(data))
+          const parsed = JSON.parse(data)
+          setExamData(parsed)
+          setExamMode(parsed.examMode || 'ai')
           const tempExam: Exam = {
             _id: examId,
             title: JSON.parse(data).title,
@@ -342,9 +555,386 @@ export default function GenerateQuestionsPage() {
     }
   }
 
+  async function loadCronogramas() {
+    setLoadingCronogramas(true)
+    try {
+      const res = await fetch('/api/cronogramas')
+      if (res.ok) {
+        const data = await res.json()
+        setCronogramas(data.cronogramas || [])
+      }
+    } catch (error) {
+      console.error('Erro ao carregar cronogramas:', error)
+    } finally {
+      setLoadingCronogramas(false)
+    }
+  }
+
+  // ─── Bank hierarchy loading ───
+  async function loadBankHierarchy() {
+    try {
+      const [periodosRes, anosRes] = await Promise.all([
+        fetch('/api/banco/periodos'),
+        fetch('/api/banco/anos'),
+      ])
+      if (periodosRes.ok) {
+        const data = await periodosRes.json()
+        setPeriodos(data.periodos || [])
+      }
+      if (anosRes.ok) {
+        const data = await anosRes.json()
+        setAnosDisponiveis(data.anos || [])
+      }
+    } catch (error) {
+      console.error('Erro ao carregar hierarquia:', error)
+    }
+  }
+
+  async function loadBankModulos(periodoId: string) {
+    try {
+      const res = await fetch(`/api/banco/modulos?periodoId=${periodoId}`)
+      if (res.ok) {
+        const data = await res.json()
+        setBankModulos(data.modulos || [])
+      }
+    } catch (error) {
+      console.error('Erro ao carregar modulos:', error)
+    }
+  }
+
+  async function loadBankTopicos(moduloId: string) {
+    try {
+      const res = await fetch(`/api/banco/topicos?moduloId=${moduloId}`)
+      if (res.ok) {
+        const data = await res.json()
+        setBankTopicos(data.topicos || [])
+      }
+    } catch (error) {
+      console.error('Erro ao carregar topicos:', error)
+    }
+  }
+
+  async function loadBankSubtopicos(topicoId: string) {
+    try {
+      const res = await fetch(`/api/banco/subtopicos?topicoId=${topicoId}`)
+      if (res.ok) {
+        const data = await res.json()
+        setBankSubtopicos(data.subtopicos || [])
+      }
+    } catch (error) {
+      console.error('Erro ao carregar subtopicos:', error)
+    }
+  }
+
+  useEffect(() => {
+    if (examMode === 'banco' || examMode === 'misto') {
+      loadBankHierarchy()
+    }
+  }, [examMode])
+
+  useEffect(() => {
+    if (bankFilters.periodoId) {
+      loadBankModulos(bankFilters.periodoId)
+    } else {
+      setBankModulos([])
+      setBankTopicos([])
+      setBankSubtopicos([])
+    }
+  }, [bankFilters.periodoId])
+
+  useEffect(() => {
+    if (bankFilters.moduloId) {
+      loadBankTopicos(bankFilters.moduloId)
+    } else {
+      setBankTopicos([])
+      setBankSubtopicos([])
+    }
+  }, [bankFilters.moduloId])
+
+  useEffect(() => {
+    if (bankFilters.topicoId) {
+      loadBankSubtopicos(bankFilters.topicoId)
+    } else {
+      setBankSubtopicos([])
+    }
+  }, [bankFilters.topicoId])
+
+  // ─── Bank question fetching ───
+  async function fetchBankQuestions(count: number): Promise<Question[]> {
+    const params = new URLSearchParams()
+    params.set('limit', String(count))
+    params.set('random', 'true')
+    if (bankFilters.periodoId) params.set('periodoId', bankFilters.periodoId)
+    if (bankFilters.moduloId) params.set('moduloId', bankFilters.moduloId)
+    if (bankFilters.topicoId) params.set('topicoId', bankFilters.topicoId)
+    if (bankFilters.subtopicoId) params.set('subtopicoId', bankFilters.subtopicoId)
+    if (bankFilters.tipo) params.set('tipo', bankFilters.tipo)
+    if (bankFilters.dificuldade) params.set('dificuldade', bankFilters.dificuldade)
+    if (bankFilters.anos.length > 0) params.set('anos', bankFilters.anos.join(','))
+
+    const res = await fetch(`/api/banco/questoes/random?${params.toString()}`)
+    if (!res.ok) {
+      const error = await res.json()
+      throw new Error(error.error || 'Erro ao buscar questoes do banco')
+    }
+    const data = await res.json()
+    return data.questions
+  }
+
+  async function handleGenerateBankOnly() {
+    if (bankQuestionCount < 1) {
+      alert('Selecione pelo menos 1 questao')
+      return
+    }
+    setGenerating(true)
+    setCurrentStep('generating')
+    try {
+      const questions = await fetchBankQuestions(bankQuestionCount)
+      if (questions.length === 0) {
+        alert('Nenhuma questao encontrada com os filtros selecionados')
+        setCurrentStep('config')
+        setGenerating(false)
+        return
+      }
+      setGeneratedQuestions(questions)
+      await saveExamWithQuestions(questions)
+    } catch (error: any) {
+      console.error('Erro:', error)
+      alert(error.message || 'Erro ao buscar questoes')
+      setCurrentStep('config')
+    } finally {
+      setGenerating(false)
+    }
+  }
+
+  async function handleGenerateMixed() {
+    if (bankQuestionCount < 1 && aiQuestionCount < 1) {
+      alert('Configure pelo menos 1 questao')
+      return
+    }
+    if (aiQuestionCount > 0 && !themes.trim() && cronogramaThemeTags.length === 0) {
+      alert('Digite os temas para as questoes de IA')
+      return
+    }
+    setGenerating(true)
+    setCurrentStep('generating')
+    try {
+      let allQuestions: Question[] = []
+
+      // 1. Fetch bank questions
+      if (bankQuestionCount > 0) {
+        const bankQuestions = await fetchBankQuestions(bankQuestionCount)
+        allQuestions.push(...bankQuestions.map(q => ({ ...q, origin: 'banco' as const } as any)))
+      }
+
+      // 2. Generate AI questions
+      if (aiQuestionCount > 0) {
+        let context = ''
+        if (questionContext === 'medicina-afya') {
+          context = 'Medicina AFYA - Contextualizacao clinica e raciocinio aplicado'
+        } else if (questionContext === 'enem') {
+          context = 'ENEM - Exame Nacional do Ensino Medio'
+        } else if (questionContext === 'uerj') {
+          context = 'UERJ - Universidade do Estado do Rio de Janeiro'
+        } else {
+          const savedContext = savedContexts.find(c => c.id === selectedSavedContext)
+          context = savedContext ? savedContext.name : customContext.trim()
+        }
+
+        const res = await fetch(`/api/exams/${examId}/generate-questions`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            themes: [
+              ...themes.split(';').map(t => t.trim()).filter(t => t),
+              ...cronogramaThemeTags.map(t => t.tag),
+            ],
+            difficulty,
+            numberOfQuestions: aiQuestionCount,
+            numberOfAlternatives: exam?.numberOfAlternatives || 4,
+            style,
+            mixedStyles,
+            alternativeType,
+            mixedAlternativeTypes,
+            alternativeTypeDistribution,
+            randomDifficulty,
+            questionContext,
+            context,
+          }),
+        })
+
+        if (!res.ok) {
+          const error = await res.json()
+          if (error.requiresUpgrade) {
+            router.push('/buy')
+            return
+          }
+          throw new Error(error.error || 'Erro ao gerar questoes de IA')
+        }
+
+        const data = await res.json()
+        allQuestions.push(...data.questions.map((q: Question) => ({ ...q, origin: 'ia' as const } as any)))
+      }
+
+      // 3. Renumber all questions
+      allQuestions = allQuestions.map((q, i) => ({ ...q, number: i + 1 }))
+
+      setGeneratedQuestions(allQuestions)
+      await saveExamWithQuestions(allQuestions)
+    } catch (error: any) {
+      console.error('Erro:', error)
+      alert(error.message || 'Erro ao gerar prova')
+      setCurrentStep('config')
+    } finally {
+      setGenerating(false)
+    }
+  }
+
+  function buildCronogramaTree(cronograma: any) {
+    const tree: Record<string, Record<string, Set<string>>> = {}
+    for (const item of cronograma.cronograma || []) {
+      for (const atividade of item.atividades || []) {
+        const { topico, subtopico, modulo } = atividade
+        if (!tree[topico]) tree[topico] = {}
+        if (!tree[topico][subtopico]) tree[topico][subtopico] = new Set()
+        tree[topico][subtopico].add(modulo)
+      }
+    }
+    return tree
+  }
+
+  function buildTemplateTree(topicos: TopicItem[]): Record<string, Record<string, Set<string>>> {
+    const tree: Record<string, Record<string, Set<string>>> = {}
+    for (const topico of topicos) {
+      if (!tree[topico.nome]) tree[topico.nome] = {}
+      for (const subtopico of topico.subtopicos) {
+        if (!tree[topico.nome][subtopico.nome]) tree[topico.nome][subtopico.nome] = new Set()
+        for (const modulo of subtopico.modulos) {
+          tree[topico.nome][subtopico.nome].add(modulo.nome)
+        }
+      }
+    }
+    return tree
+  }
+
+  // Get available global model templates (exclude 'personalizado'; include medicina-afya even though topicos is empty since it loads dynamically)
+  const globalModels = Object.values(TEMPLATES).filter(
+    t => t.modelo !== 'personalizado' && (t.topicos.length > 0 || t.modelo === 'medicina-afya')
+  )
+
+  function renderTreeView(tree: Record<string, Record<string, Set<string>>>) {
+    const topicos = Object.keys(tree).sort()
+    return (
+      <div className="space-y-1">
+        {topicos.map((topico) => {
+          const subtopicos = Object.keys(tree[topico]).sort()
+          const allModulosInTopic: string[] = []
+          subtopicos.forEach(sub => tree[topico][sub].forEach(mod => allModulosInTopic.push(`${topico} > ${sub} > ${mod}`)))
+          const topicSelected = allModulosInTopic.every(m => cronogramaSelections.has(m))
+          const topicPartial = !topicSelected && allModulosInTopic.some(m => cronogramaSelections.has(m))
+
+          return (
+            <div key={topico} className="glass-inset rounded-xl overflow-hidden">
+              <button
+                type="button"
+                className="w-full flex items-center gap-2 p-3 hover:bg-white/5 transition-colors text-left"
+                onClick={() => {
+                  setCronogramaSelections(prev => {
+                    const next = new Set(prev)
+                    if (topicSelected) {
+                      allModulosInTopic.forEach(m => next.delete(m))
+                    } else {
+                      allModulosInTopic.forEach(m => next.add(m))
+                    }
+                    return next
+                  })
+                }}
+              >
+                <div className={`w-4 h-4 rounded border flex items-center justify-center text-[10px] ${
+                  topicSelected ? 'bg-emerald-500 border-emerald-500 text-white' :
+                  topicPartial ? 'border-emerald-500 bg-emerald-500/20' : 'border-muted-foreground/30'
+                }`}>
+                  {topicSelected ? <Check className="w-3 h-3" /> : topicPartial ? <Minus className="w-3 h-3 text-emerald-400" /> : null}
+                </div>
+                <span className="text-sm font-medium flex-1">{topico}</span>
+                <span className="text-xs text-muted-foreground">{allModulosInTopic.length} módulos</span>
+              </button>
+
+              <div className="pl-6 pb-1">
+                {subtopicos.map((subtopico) => {
+                  const modulos = Array.from(tree[topico][subtopico]).sort()
+                  const subModPaths = modulos.map(m => `${topico} > ${subtopico} > ${m}`)
+                  const subSelected = subModPaths.every(m => cronogramaSelections.has(m))
+                  const subPartial = !subSelected && subModPaths.some(m => cronogramaSelections.has(m))
+
+                  return (
+                    <div key={subtopico}>
+                      <button
+                        type="button"
+                        className="w-full flex items-center gap-2 px-3 py-2 hover:bg-white/5 transition-colors text-left"
+                        onClick={() => {
+                          setCronogramaSelections(prev => {
+                            const next = new Set(prev)
+                            if (subSelected) {
+                              subModPaths.forEach(m => next.delete(m))
+                            } else {
+                              subModPaths.forEach(m => next.add(m))
+                            }
+                            return next
+                          })
+                        }}
+                      >
+                        <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center ${
+                          subSelected ? 'bg-emerald-500 border-emerald-500 text-white' :
+                          subPartial ? 'border-emerald-500 bg-emerald-500/20' : 'border-muted-foreground/30'
+                        }`}>
+                          {subSelected ? <Check className="w-2.5 h-2.5" /> : subPartial ? <Minus className="w-2.5 h-2.5 text-emerald-400" /> : null}
+                        </div>
+                        <span className="text-xs text-muted-foreground flex-1">{subtopico}</span>
+                      </button>
+
+                      <div className="pl-6">
+                        {modulos.map((modulo) => {
+                          const path = `${topico} > ${subtopico} > ${modulo}`
+                          const isSelected = cronogramaSelections.has(path)
+                          return (
+                            <button
+                              key={modulo}
+                              type="button"
+                              className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-white/5 transition-colors text-left"
+                              onClick={() => {
+                                setCronogramaSelections(prev => {
+                                  const next = new Set(prev)
+                                  if (isSelected) next.delete(path)
+                                  else next.add(path)
+                                  return next
+                                })
+                              }}
+                            >
+                              <div className={`w-3 h-3 rounded-sm border flex items-center justify-center ${
+                                isSelected ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-muted-foreground/30'
+                              }`}>
+                                {isSelected && <Check className="w-2 h-2" />}
+                              </div>
+                              <span className="text-xs text-muted-foreground">{modulo}</span>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
+
   async function handleGenerateQuestions() {
-    if (!themes.trim()) {
-      alert('Digite os temas para as questões (separados por ;)')
+    if (!themes.trim() && cronogramaThemeTags.length === 0) {
+      alert('Digite os temas para as questões ou selecione do cronograma')
       return
     }
 
@@ -377,7 +967,10 @@ export default function GenerateQuestionsPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          themes: themes.split(';').map(t => t.trim()).filter(t => t),
+          themes: [
+            ...themes.split(';').map(t => t.trim()).filter(t => t),
+            ...cronogramaThemeTags.map(t => t.tag)
+          ],
           difficulty,
           numberOfQuestions,
           numberOfAlternatives: exam?.numberOfAlternatives || 4,
@@ -527,7 +1120,9 @@ export default function GenerateQuestionsPage() {
                       <Sparkles className="w-6 h-6 text-violet-400" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h1 className="text-lg font-bold text-foreground">Gerar Questões por IA</h1>
+                      <h1 className="text-lg font-bold text-foreground">
+                        {examMode === 'ai' ? 'Gerar Questões por IA' : examMode === 'banco' ? 'Selecionar do Banco' : 'Prova Mista (IA + Banco)'}
+                      </h1>
                       <p className="text-sm text-muted-foreground truncate">
                         {exam?.title}
                       </p>
@@ -535,6 +1130,107 @@ export default function GenerateQuestionsPage() {
                   </div>
                 </div>
               </GlassPanel>
+
+              {/* === MODE: BANCO ONLY === */}
+              {examMode === 'banco' && (
+                <GlassPanel delay={0.05}>
+                  <div className="p-6">
+                    <BankFiltersPanel
+                      bankFilters={bankFilters}
+                      setBankFilters={setBankFilters}
+                      periodos={periodos}
+                      modulos={bankModulos}
+                      topicos={bankTopicos}
+                      subtopicos={bankSubtopicos}
+                      anosDisponiveis={anosDisponiveis}
+                      questionCount={bankQuestionCount}
+                      setQuestionCount={setBankQuestionCount}
+                      maxCount={50}
+                      disabled={generating}
+                      label="Questoes do Banco"
+                    />
+                  </div>
+                </GlassPanel>
+              )}
+
+              {/* === MODE: MISTO === */}
+              {examMode === 'misto' && (
+                <>
+                  {/* Total summary */}
+                  <GlassPanel delay={0.05}>
+                    <div className="p-6">
+                      <div className="flex items-center justify-between">
+                        <SectionHeader
+                          icon={<Combine className="w-4.5 h-4.5 text-amber-400" />}
+                          title="Distribuicao de Questoes"
+                          subtitle="Configure a quantidade de cada tipo"
+                        />
+                        <div className="text-right">
+                          <p className="text-2xl font-bold text-foreground">{bankQuestionCount + aiQuestionCount}</p>
+                          <p className="text-xs text-muted-foreground">total</p>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4 mt-4">
+                        <div className="glass-inset rounded-xl p-4 space-y-2">
+                          <div className="flex items-center gap-2">
+                            <Database className="w-4 h-4 text-emerald-400" />
+                            <Label className="text-xs font-medium">Banco de Questoes</Label>
+                          </div>
+                          <input
+                            type="number"
+                            min={0}
+                            max={50}
+                            value={bankQuestionCount}
+                            onChange={(e) => setBankQuestionCount(Math.max(0, parseInt(e.target.value) || 0))}
+                            disabled={generating}
+                            className="glass-number-input w-full text-center text-lg font-bold"
+                          />
+                        </div>
+                        <div className="glass-inset rounded-xl p-4 space-y-2">
+                          <div className="flex items-center gap-2">
+                            <Sparkles className="w-4 h-4 text-violet-400" />
+                            <Label className="text-xs font-medium">Geradas por IA</Label>
+                          </div>
+                          <input
+                            type="number"
+                            min={0}
+                            max={questionsLimit}
+                            value={aiQuestionCount}
+                            onChange={(e) => setAiQuestionCount(Math.max(0, Math.min(questionsLimit, parseInt(e.target.value) || 0)))}
+                            disabled={generating}
+                            className="glass-number-input w-full text-center text-lg font-bold"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </GlassPanel>
+
+                  {/* Bank filters for mixed mode */}
+                  {bankQuestionCount > 0 && (
+                    <GlassPanel delay={0.1}>
+                      <div className="p-6">
+                        <BankFiltersPanel
+                          bankFilters={bankFilters}
+                          setBankFilters={setBankFilters}
+                          periodos={periodos}
+                          modulos={bankModulos}
+                          topicos={bankTopicos}
+                          subtopicos={bankSubtopicos}
+                          anosDisponiveis={anosDisponiveis}
+                          questionCount={bankQuestionCount}
+                          setQuestionCount={setBankQuestionCount}
+                          maxCount={50}
+                          disabled={generating}
+                          label="Filtros do Banco"
+                        />
+                      </div>
+                    </GlassPanel>
+                  )}
+                </>
+              )}
+
+              {/* === AI CONFIG (shown for 'ai' and 'misto' when aiQuestionCount > 0) === */}
+              {(examMode === 'ai' || (examMode === 'misto' && aiQuestionCount > 0)) && (<>
 
               {/* Themes */}
               <GlassPanel delay={0.05}>
@@ -552,6 +1248,22 @@ export default function GenerateQuestionsPage() {
                     rows={3}
                     className="glass-input resize-none"
                   />
+                  <div className="flex items-center gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        loadCronogramas()
+                        setShowCronogramaModal(true)
+                      }}
+                      disabled={generating}
+                      className="glass-chip text-xs gap-1.5"
+                    >
+                      <Calendar className="h-3.5 w-3.5" />
+                      Selecionar Temas (AFYA, ENEM, UERJ...)
+                    </Button>
+                  </div>
                   {themes.trim() && (
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
@@ -564,6 +1276,37 @@ export default function GenerateQuestionsPage() {
                           className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-violet-500/10 text-violet-400 border border-violet-500/20"
                         >
                           {theme}
+                        </span>
+                      ))}
+                    </motion.div>
+                  )}
+                  {cronogramaThemeTags.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      className="flex flex-wrap gap-1.5"
+                    >
+                      {cronogramaThemeTags.map((item, i) => (
+                        <span
+                          key={`crono-${i}`}
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium ${
+                            item.source === 'modelo'
+                              ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+                              : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                          }`}
+                        >
+                          {item.source === 'modelo' ? <Globe className="h-3 w-3" /> : <Calendar className="h-3 w-3" />}
+                          {item.tag}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newTags = cronogramaThemeTags.filter((_, idx) => idx !== i)
+                              setCronogramaThemeTags(newTags)
+                            }}
+                            className="ml-0.5 hover:text-red-400 transition-colors"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
                         </span>
                       ))}
                     </motion.div>
@@ -611,6 +1354,8 @@ export default function GenerateQuestionsPage() {
                     />
                   </div>
 
+                  {examMode !== 'misto' && (
+                  <>
                   <div className="border-t border-border/50" />
 
                   {/* Number of Questions */}
@@ -636,6 +1381,8 @@ export default function GenerateQuestionsPage() {
                       centerLabel={String(numberOfQuestions)}
                     />
                   </div>
+                  </>
+                  )}
                 </div>
               </GlassPanel>
 
@@ -868,6 +1615,9 @@ export default function GenerateQuestionsPage() {
                 </div>
               </GlassPanel>
 
+              {/* Close AI config conditional */}
+              </>)}
+
               {/* Action Buttons */}
               <GlassPanel delay={0.3}>
                 <div className="p-6">
@@ -882,19 +1632,27 @@ export default function GenerateQuestionsPage() {
                     </Button>
                     <motion.div className="flex-1" whileTap={{ scale: 0.98 }}>
                       <Button
-                        onClick={handleGenerateQuestions}
-                        disabled={generating || !themes.trim()}
+                        onClick={() => {
+                          if (examMode === 'banco') handleGenerateBankOnly()
+                          else if (examMode === 'misto') handleGenerateMixed()
+                          else handleGenerateQuestions()
+                        }}
+                        disabled={generating || (
+                          examMode === 'ai' ? (!themes.trim() && cronogramaThemeTags.length === 0) :
+                          examMode === 'banco' ? bankQuestionCount < 1 :
+                          (bankQuestionCount + aiQuestionCount < 1) || (aiQuestionCount > 0 && !themes.trim() && cronogramaThemeTags.length === 0)
+                        )}
                         className="w-full glass-button-primary gap-2"
                       >
                         {generating ? (
                           <>
                             <Loader2 className="h-4 w-4 animate-spin" />
-                            Gerando...
+                            {examMode === 'banco' ? 'Buscando...' : 'Gerando...'}
                           </>
                         ) : (
                           <>
-                            <Sparkles className="h-4 w-4" />
-                            Gerar Questões
+                            {examMode === 'banco' ? <Database className="h-4 w-4" /> : <Sparkles className="h-4 w-4" />}
+                            {examMode === 'banco' ? 'Montar Prova' : examMode === 'misto' ? 'Gerar Prova Mista' : 'Gerar Questões'}
                           </>
                         )}
                       </Button>
@@ -925,6 +1683,232 @@ export default function GenerateQuestionsPage() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Cronograma Selection Modal */}
+      <AnimatePresence>
+        {showCronogramaModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            onClick={() => setShowCronogramaModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+              className="glass-panel w-full max-w-2xl max-h-[80vh] flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="p-6 border-b border-white/5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="glass-icon-badge flex items-center justify-center w-9 h-9 rounded-xl">
+                      <Calendar className="w-4.5 h-4.5 text-emerald-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold">Selecionar Temas</h3>
+                      <p className="text-xs text-muted-foreground">Escolha temas de cronogramas ou modelos globais</p>
+                    </div>
+                  </div>
+                  <button onClick={() => setShowCronogramaModal(false)} className="text-muted-foreground hover:text-foreground">
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+
+                {/* Tabs */}
+                <div className="flex gap-1.5 mt-4 p-1.5 rounded-xl glass-inset">
+                  <button
+                    type="button"
+                    onClick={() => { setCronogramaModalTab('modelos'); setCronogramaSelections(new Set()) }}
+                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                      cronogramaModalTab === 'modelos'
+                        ? 'bg-blue-500/15 text-blue-400 border border-blue-500/30 shadow-sm'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+                    }`}
+                  >
+                    <Globe className="h-4 w-4" />
+                    Modelos
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setCronogramaModalTab('meus'); setCronogramaSelections(new Set()) }}
+                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                      cronogramaModalTab === 'meus'
+                        ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-sm'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+                    }`}
+                  >
+                    <Calendar className="h-4 w-4" />
+                    Meus Cronogramas
+                  </button>
+                </div>
+              </div>
+
+              {/* Body */}
+              <div className="flex-1 overflow-auto p-6 space-y-4">
+                {cronogramaModalTab === 'meus' ? (
+                  /* ─── TAB: Meus Cronogramas ─── */
+                  loadingCronogramas ? (
+                    <div className="flex justify-center py-8">
+                      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                    </div>
+                  ) : cronogramas.length === 0 ? (
+                    <div className="text-center py-8">
+                      <p className="text-sm text-muted-foreground">Nenhum cronograma encontrado</p>
+                      <p className="text-xs text-muted-foreground mt-1">Crie um cronograma primeiro em /cronogramas</p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="space-y-2">
+                        <Label className="text-xs text-muted-foreground">Cronograma</Label>
+                        <select
+                          value={selectedCronogramaId}
+                          onChange={(e) => {
+                            setSelectedCronogramaId(e.target.value)
+                            setCronogramaSelections(new Set())
+                          }}
+                          className="glass-select w-full"
+                        >
+                          <option value="">Selecione um cronograma...</option>
+                          {cronogramas.map((c) => (
+                            <option key={c._id} value={c._id}>
+                              {c.titulo} ({c.modelo})
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {selectedCronogramaId && (() => {
+                        const selected = cronogramas.find(c => c._id === selectedCronogramaId)
+                        if (!selected) return null
+                        const tree = buildCronogramaTree(selected)
+                        return renderTreeView(tree)
+                      })()}
+                    </>
+                  )
+                ) : (
+                  /* ─── TAB: Modelos Globais ─── */
+                  globalModels.length === 0 ? (
+                    <div className="text-center py-8">
+                      <p className="text-sm text-muted-foreground">Nenhum modelo global disponível</p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="space-y-2">
+                        <Label className="text-xs text-muted-foreground">Modelo</Label>
+                        <select
+                          value={modeloTemplateId}
+                          onChange={(e) => {
+                            setModeloTemplateId(e.target.value)
+                            setCronogramaSelections(new Set())
+                          }}
+                          className="glass-select w-full"
+                        >
+                          <option value="">Selecione um modelo...</option>
+                          {globalModels.map((t) => (
+                            <option key={t.id} value={t.id}>
+                              {t.nome} — {t.descricao}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {modeloTemplateId && (() => {
+                        const template = TEMPLATES[modeloTemplateId as keyof typeof TEMPLATES]
+                        if (!template) return null
+
+                        // Medicina AFYA: period selection + dynamic topics
+                        if (template.modelo === 'medicina-afya') {
+                          const afyaTopicos = getMedicinaAFYATopicos(afyaPeriodo)
+                          const tree = buildTemplateTree(afyaTopicos as TopicItem[])
+                          return (
+                            <div className="space-y-4">
+                              <div className="space-y-2">
+                                <Label className="text-xs text-muted-foreground">Período</Label>
+                                <div className="grid grid-cols-5 gap-2">
+                                  {([1, 2, 3, 4, 5] as MedicinaAFYAPeriodo[]).map((p) => (
+                                    <button
+                                      key={p}
+                                      type="button"
+                                      onClick={() => {
+                                        setAfyaPeriodo(p)
+                                        setCronogramaSelections(new Set())
+                                      }}
+                                      className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
+                                        afyaPeriodo === p
+                                          ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                                          : 'glass-inset text-muted-foreground hover:text-foreground hover:bg-white/5'
+                                      }`}
+                                    >
+                                      {p}º Período
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                              {renderTreeView(tree)}
+                            </div>
+                          )
+                        }
+
+                        // Other models with static topics
+                        if (template.topicos.length === 0) return (
+                          <div className="text-center py-4">
+                            <p className="text-xs text-muted-foreground">Este modelo não possui tópicos predefinidos</p>
+                          </div>
+                        )
+                        const tree = buildTemplateTree(template.topicos)
+                        return renderTreeView(tree)
+                      })()}
+                    </>
+                  )
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="p-6 border-t border-white/5 flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">
+                  {cronogramaSelections.size} item(ns) selecionado(s)
+                </span>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowCronogramaModal(false)}
+                    className="glass-button-outline"
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    size="sm"
+                    disabled={cronogramaSelections.size === 0}
+                    onClick={() => {
+                      const source = cronogramaModalTab === 'modelos' ? 'modelo' as const : 'cronograma' as const
+                      const newTags = Array.from(cronogramaSelections)
+                      setCronogramaThemeTags(prev => [
+                        ...prev,
+                        ...newTags
+                          .filter(t => !prev.some(p => p.tag === t))
+                          .map(t => ({ tag: t, source }))
+                      ])
+                      setShowCronogramaModal(false)
+                      setCronogramaSelections(new Set())
+                      setSelectedCronogramaId('')
+                      setModeloTemplateId('medicina-afya')
+                    }}
+                    className="glass-button-primary"
+                  >
+                    Adicionar Temas
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Glass Panel + Component Styles */}
       <style jsx global>{`
@@ -1023,38 +2007,40 @@ export default function GenerateQuestionsPage() {
 
         /* ─── Glass Chip (option selector) ─── */
         .glass-chip {
-          border: 1px solid rgba(255,255,255,0.06);
-          background: rgba(255,255,255,0.02);
+          border: 1px solid rgba(0,0,0,0.1);
+          background: rgba(255,255,255,0.5);
           transition: all 0.2s ease;
+          color: inherit;
         }
         .glass-chip-active {
-          background: rgba(52, 211, 153, 0.08);
-          border-color: rgba(52, 211, 153, 0.2);
+          background: rgba(52, 211, 153, 0.1);
+          border-color: rgba(52, 211, 153, 0.3);
         }
         .dark .glass-chip {
-          border-color: rgba(255,255,255,0.04);
-          background: rgba(255,255,255,0.015);
+          border-color: rgba(255,255,255,0.08);
+          background: rgba(255,255,255,0.04);
         }
         .dark .glass-chip-active {
-          background: rgba(52, 211, 153, 0.1);
-          border-color: rgba(52, 211, 153, 0.25);
+          background: rgba(52, 211, 153, 0.12);
+          border-color: rgba(52, 211, 153, 0.3);
         }
 
         /* ─── Glass Inset Area ─── */
         .glass-inset {
           background: rgba(0, 0, 0, 0.04);
-          border: 1px solid rgba(255,255,255,0.04);
+          border: 1px solid rgba(0,0,0,0.06);
         }
         .dark .glass-inset {
-          background: rgba(0, 0, 0, 0.2);
-          border-color: rgba(255,255,255,0.04);
+          background: rgba(0, 0, 0, 0.25);
+          border-color: rgba(255,255,255,0.06);
         }
 
         /* ─── Glass Input ─── */
         .glass-input {
-          background: rgba(255,255,255,0.03) !important;
-          border: 1px solid rgba(255,255,255,0.08) !important;
+          background: rgba(255,255,255,0.8) !important;
+          border: 1px solid rgba(0,0,0,0.1) !important;
           border-radius: 12px !important;
+          color: hsl(var(--foreground)) !important;
           transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
         }
         .glass-input:focus {
@@ -1062,17 +2048,17 @@ export default function GenerateQuestionsPage() {
           box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.1) !important;
         }
         .dark .glass-input {
-          background: rgba(255,255,255,0.02) !important;
-          border-color: rgba(255,255,255,0.06) !important;
+          background: rgba(30, 30, 40, 0.8) !important;
+          border-color: rgba(255,255,255,0.08) !important;
         }
 
         /* ─── Glass Select ─── */
         .glass-select {
           padding: 8px 12px;
           border-radius: 12px;
-          background: rgba(255,255,255,0.03);
-          border: 1px solid rgba(255,255,255,0.08);
-          color: inherit;
+          background: rgba(255,255,255,0.85);
+          border: 1px solid rgba(0,0,0,0.12);
+          color: hsl(var(--foreground));
           font-size: 14px;
           outline: none;
           transition: border-color 0.2s ease;
@@ -1081,17 +2067,23 @@ export default function GenerateQuestionsPage() {
           border-color: rgba(139, 92, 246, 0.4);
         }
         .dark .glass-select {
-          background: rgba(255,255,255,0.02);
-          border-color: rgba(255,255,255,0.06);
+          background: rgba(30, 30, 40, 0.9);
+          border-color: rgba(255,255,255,0.1);
+          color: hsl(var(--foreground));
+          color-scheme: dark;
+        }
+        .glass-select option {
+          background: hsl(var(--background));
+          color: hsl(var(--foreground));
         }
 
         /* ─── Glass Number Input ─── */
         .glass-number-input {
           padding: 4px 6px;
           border-radius: 8px;
-          background: rgba(255,255,255,0.04);
-          border: 1px solid rgba(255,255,255,0.08);
-          color: inherit;
+          background: rgba(255,255,255,0.8);
+          border: 1px solid rgba(0,0,0,0.1);
+          color: hsl(var(--foreground));
           font-size: 13px;
           outline: none;
           transition: border-color 0.2s ease;
@@ -1100,8 +2092,8 @@ export default function GenerateQuestionsPage() {
           border-color: rgba(139, 92, 246, 0.4);
         }
         .dark .glass-number-input {
-          background: rgba(255,255,255,0.03);
-          border-color: rgba(255,255,255,0.06);
+          background: rgba(30, 30, 40, 0.8);
+          border-color: rgba(255,255,255,0.1);
         }
 
         /* ─── Glass Slider ─── */
