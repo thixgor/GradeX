@@ -14,16 +14,17 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url)
-    const periodoId = searchParams.get('periodoId')
+    const periodoIdParam = searchParams.get('periodoId')
 
     const db = await getDb()
 
     const pipeline: any[] = []
 
-    // Filtrar por período se fornecido
-    if (periodoId) {
+    // Filtrar por período(s) se fornecido — aceita IDs separados por vírgula
+    if (periodoIdParam) {
+      const ids = periodoIdParam.split(',').filter(Boolean).map(id => new ObjectId(id.trim()))
       pipeline.push({
-        $match: { periodoId: new ObjectId(periodoId) }
+        $match: ids.length === 1 ? { periodoId: ids[0] } : { periodoId: { $in: ids } }
       })
     }
 

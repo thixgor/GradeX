@@ -29,6 +29,8 @@ import {
 } from 'lucide-react'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Checkbox } from '@/components/ui/checkbox'
 import { CustomContext } from '@/lib/types'
 import { PageLoading } from '@/components/page-loading'
 import { TEMPLATES, TopicItem, MedicinaAFYAPeriodo, PsicologiaAFYAPeriodo, BiomedicinaAFYAPeriodo, OdontologiaAFYAPeriodo } from '@/lib/cronograma-types'
@@ -243,6 +245,72 @@ interface Exam {
   questions: Question[]
 }
 
+// ─── Multi-Select Dropdown for hierarchy filters ────────────
+function MultiSelectDropdown({
+  label,
+  items,
+  selectedIds,
+  onToggle,
+  disabled,
+  placeholder = 'Todos',
+}: {
+  label: string
+  items: { id: string; nome: string; count?: number }[]
+  selectedIds: string[]
+  onToggle: (id: string) => void
+  disabled?: boolean
+  placeholder?: string
+}) {
+  const displayText = selectedIds.length === 0
+    ? placeholder
+    : selectedIds.length === 1
+      ? items.find(i => i.id === selectedIds[0])?.nome || '1 selecionado'
+      : `${selectedIds.length} selecionados`
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          disabled={disabled}
+          className={`glass-select w-full text-left flex items-center justify-between gap-1 ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+        >
+          <span className={`truncate text-sm ${selectedIds.length > 0 ? 'text-foreground' : 'text-muted-foreground'}`}>
+            {displayText}
+          </span>
+          <ChevronDown className="h-3.5 w-3.5 flex-shrink-0 opacity-50" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-64 max-h-60 overflow-auto">
+        {items.length === 0 ? (
+          <DropdownMenuItem disabled>
+            <span className="text-xs text-muted-foreground">Nenhum disponível</span>
+          </DropdownMenuItem>
+        ) : (
+          items.map((item) => (
+            <DropdownMenuItem
+              key={item.id}
+              onSelect={(e) => {
+                e.preventDefault()
+                onToggle(item.id)
+              }}
+            >
+              <Checkbox
+                checked={selectedIds.includes(item.id)}
+                className="mr-2"
+              />
+              <span className="flex-1 truncate text-sm">{item.nome}</span>
+              {item.count !== undefined && (
+                <span className="text-xs text-muted-foreground ml-1">({item.count})</span>
+              )}
+            </DropdownMenuItem>
+          ))
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
 // ─── Bank Filters Panel ─────────────────────────────────────
 function BankFiltersPanel({
   bankFilters, setBankFilters, periodos, modulos, topicos, subtopicos, anosDisponiveis,
@@ -266,65 +334,65 @@ function BankFiltersPanel({
       <SectionHeader
         icon={<Database className="w-4.5 h-4.5 text-emerald-400" />}
         title={label}
-        subtitle="Filtros do banco de questoes"
+        subtitle="Filtros do banco de questoes — selecione múltiplos"
       />
 
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1.5">
-          <Label className="text-xs text-muted-foreground">Periodo</Label>
-          <select
-            value={bankFilters.periodoId}
-            onChange={(e) => setBankFilters((prev: any) => ({ ...prev, periodoId: e.target.value, moduloId: '', topicoId: '', subtopicoId: '' }))}
+          <Label className="text-xs text-muted-foreground">Período(s)</Label>
+          <MultiSelectDropdown
+            label="Período"
+            items={periodos.map((p: any) => ({ id: String(p._id), nome: p.nome, count: p.totalQuestoes }))}
+            selectedIds={bankFilters.periodoIds}
+            onToggle={(id) => setBankFilters((prev: any) => {
+              const cur = prev.periodoIds || []
+              const updated = cur.includes(id) ? cur.filter((x: string) => x !== id) : [...cur, id]
+              return { ...prev, periodoIds: updated, moduloIds: [], topicoIds: [], subtopicoIds: [] }
+            })}
             disabled={disabled}
-            className="glass-select w-full"
-          >
-            <option value="">Todos</option>
-            {periodos.map((p: any) => (
-              <option key={String(p._id)} value={String(p._id)}>{p.nome} ({p.totalQuestoes})</option>
-            ))}
-          </select>
+          />
         </div>
         <div className="space-y-1.5">
-          <Label className="text-xs text-muted-foreground">Modulo</Label>
-          <select
-            value={bankFilters.moduloId}
-            onChange={(e) => setBankFilters((prev: any) => ({ ...prev, moduloId: e.target.value, topicoId: '', subtopicoId: '' }))}
-            disabled={disabled || !bankFilters.periodoId}
-            className="glass-select w-full"
-          >
-            <option value="">Todos</option>
-            {modulos.map((m: any) => (
-              <option key={String(m._id)} value={String(m._id)}>{m.nome} ({m.totalQuestoes})</option>
-            ))}
-          </select>
+          <Label className="text-xs text-muted-foreground">Módulo(s)</Label>
+          <MultiSelectDropdown
+            label="Módulo"
+            items={modulos.map((m: any) => ({ id: String(m._id), nome: m.nome, count: m.totalQuestoes }))}
+            selectedIds={bankFilters.moduloIds}
+            onToggle={(id) => setBankFilters((prev: any) => {
+              const cur = prev.moduloIds || []
+              const updated = cur.includes(id) ? cur.filter((x: string) => x !== id) : [...cur, id]
+              return { ...prev, moduloIds: updated, topicoIds: [], subtopicoIds: [] }
+            })}
+            disabled={disabled || bankFilters.periodoIds.length === 0}
+          />
         </div>
         <div className="space-y-1.5">
-          <Label className="text-xs text-muted-foreground">Topico</Label>
-          <select
-            value={bankFilters.topicoId}
-            onChange={(e) => setBankFilters((prev: any) => ({ ...prev, topicoId: e.target.value, subtopicoId: '' }))}
-            disabled={disabled || !bankFilters.moduloId}
-            className="glass-select w-full"
-          >
-            <option value="">Todos</option>
-            {topicos.map((t: any) => (
-              <option key={String(t._id)} value={String(t._id)}>{t.nome} ({t.totalQuestoes})</option>
-            ))}
-          </select>
+          <Label className="text-xs text-muted-foreground">Tópico(s)</Label>
+          <MultiSelectDropdown
+            label="Tópico"
+            items={topicos.map((t: any) => ({ id: String(t._id), nome: t.nome, count: t.totalQuestoes }))}
+            selectedIds={bankFilters.topicoIds}
+            onToggle={(id) => setBankFilters((prev: any) => {
+              const cur = prev.topicoIds || []
+              const updated = cur.includes(id) ? cur.filter((x: string) => x !== id) : [...cur, id]
+              return { ...prev, topicoIds: updated, subtopicoIds: [] }
+            })}
+            disabled={disabled || bankFilters.moduloIds.length === 0}
+          />
         </div>
         <div className="space-y-1.5">
-          <Label className="text-xs text-muted-foreground">Subtopico</Label>
-          <select
-            value={bankFilters.subtopicoId}
-            onChange={(e) => setBankFilters((prev: any) => ({ ...prev, subtopicoId: e.target.value }))}
-            disabled={disabled || !bankFilters.topicoId}
-            className="glass-select w-full"
-          >
-            <option value="">Todos</option>
-            {subtopicos.map((s: any) => (
-              <option key={String(s._id)} value={String(s._id)}>{s.nome} ({s.totalQuestoes})</option>
-            ))}
-          </select>
+          <Label className="text-xs text-muted-foreground">Subtópico(s)</Label>
+          <MultiSelectDropdown
+            label="Subtópico"
+            items={subtopicos.map((s: any) => ({ id: String(s._id), nome: s.nome, count: s.totalQuestoes }))}
+            selectedIds={bankFilters.subtopicoIds}
+            onToggle={(id) => setBankFilters((prev: any) => {
+              const cur = prev.subtopicoIds || []
+              const updated = cur.includes(id) ? cur.filter((x: string) => x !== id) : [...cur, id]
+              return { ...prev, subtopicoIds: updated }
+            })}
+            disabled={disabled || bankFilters.topicoIds.length === 0}
+          />
         </div>
       </div>
 
@@ -351,9 +419,9 @@ function BankFiltersPanel({
             className="glass-select w-full"
           >
             <option value="">Todas</option>
-            <option value="facil">Facil</option>
-            <option value="medio">Medio</option>
-            <option value="dificil">Dificil</option>
+            <option value="facil">Fácil</option>
+            <option value="medio">Médio</option>
+            <option value="dificil">Difícil</option>
           </select>
         </div>
       </div>
@@ -465,12 +533,12 @@ export default function GenerateQuestionsPage() {
   // Exam mode state
   const [examMode, setExamMode] = useState<'ai' | 'banco' | 'misto'>('ai')
 
-  // Bank questions state
+  // Bank questions state — arrays para multi-select
   const [bankFilters, setBankFilters] = useState({
-    periodoId: '',
-    moduloId: '',
-    topicoId: '',
-    subtopicoId: '',
+    periodoIds: [] as string[],
+    moduloIds: [] as string[],
+    topicoIds: [] as string[],
+    subtopicoIds: [] as string[],
     tipo: '' as string,
     dificuldade: '' as string,
     anos: [] as number[],
@@ -611,9 +679,9 @@ export default function GenerateQuestionsPage() {
     }
   }
 
-  async function loadBankModulos(periodoId: string) {
+  async function loadBankModulos(periodoIds: string[]) {
     try {
-      const res = await fetch(`/api/banco/modulos?periodoId=${periodoId}`)
+      const res = await fetch(`/api/banco/modulos?periodoId=${periodoIds.join(',')}`)
       if (res.ok) {
         const data = await res.json()
         setBankModulos(data.modulos || [])
@@ -623,9 +691,9 @@ export default function GenerateQuestionsPage() {
     }
   }
 
-  async function loadBankTopicos(moduloId: string) {
+  async function loadBankTopicos(moduloIds: string[]) {
     try {
-      const res = await fetch(`/api/banco/topicos?moduloId=${moduloId}`)
+      const res = await fetch(`/api/banco/topicos?moduloId=${moduloIds.join(',')}`)
       if (res.ok) {
         const data = await res.json()
         setBankTopicos(data.topicos || [])
@@ -635,9 +703,9 @@ export default function GenerateQuestionsPage() {
     }
   }
 
-  async function loadBankSubtopicos(topicoId: string) {
+  async function loadBankSubtopicos(topicoIds: string[]) {
     try {
-      const res = await fetch(`/api/banco/subtopicos?topicoId=${topicoId}`)
+      const res = await fetch(`/api/banco/subtopicos?topicoId=${topicoIds.join(',')}`)
       if (res.ok) {
         const data = await res.json()
         setBankSubtopicos(data.subtopicos || [])
@@ -654,41 +722,41 @@ export default function GenerateQuestionsPage() {
   }, [examMode])
 
   useEffect(() => {
-    if (bankFilters.periodoId) {
-      loadBankModulos(bankFilters.periodoId)
+    if (bankFilters.periodoIds.length > 0) {
+      loadBankModulos(bankFilters.periodoIds)
     } else {
       setBankModulos([])
       setBankTopicos([])
       setBankSubtopicos([])
     }
-  }, [bankFilters.periodoId])
+  }, [bankFilters.periodoIds.join(',')])
 
   useEffect(() => {
-    if (bankFilters.moduloId) {
-      loadBankTopicos(bankFilters.moduloId)
+    if (bankFilters.moduloIds.length > 0) {
+      loadBankTopicos(bankFilters.moduloIds)
     } else {
       setBankTopicos([])
       setBankSubtopicos([])
     }
-  }, [bankFilters.moduloId])
+  }, [bankFilters.moduloIds.join(',')])
 
   useEffect(() => {
-    if (bankFilters.topicoId) {
-      loadBankSubtopicos(bankFilters.topicoId)
+    if (bankFilters.topicoIds.length > 0) {
+      loadBankSubtopicos(bankFilters.topicoIds)
     } else {
       setBankSubtopicos([])
     }
-  }, [bankFilters.topicoId])
+  }, [bankFilters.topicoIds.join(',')])
 
   // ─── Bank question fetching ───
   async function fetchBankQuestions(count: number): Promise<Question[]> {
     const params = new URLSearchParams()
     params.set('limit', String(count))
     params.set('random', 'true')
-    if (bankFilters.periodoId) params.set('periodoId', bankFilters.periodoId)
-    if (bankFilters.moduloId) params.set('moduloId', bankFilters.moduloId)
-    if (bankFilters.topicoId) params.set('topicoId', bankFilters.topicoId)
-    if (bankFilters.subtopicoId) params.set('subtopicoId', bankFilters.subtopicoId)
+    if (bankFilters.periodoIds.length > 0) params.set('periodoId', bankFilters.periodoIds.join(','))
+    if (bankFilters.moduloIds.length > 0) params.set('moduloId', bankFilters.moduloIds.join(','))
+    if (bankFilters.topicoIds.length > 0) params.set('topicoId', bankFilters.topicoIds.join(','))
+    if (bankFilters.subtopicoIds.length > 0) params.set('subtopicoId', bankFilters.subtopicoIds.join(','))
     if (bankFilters.tipo) params.set('tipo', bankFilters.tipo)
     if (bankFilters.dificuldade) params.set('dificuldade', bankFilters.dificuldade)
     if (bankFilters.anos.length > 0) params.set('anos', bankFilters.anos.join(','))
@@ -1178,7 +1246,7 @@ export default function GenerateQuestionsPage() {
                       anosDisponiveis={anosDisponiveis}
                       questionCount={bankQuestionCount}
                       setQuestionCount={setBankQuestionCount}
-                      maxCount={50}
+                      maxCount={500}
                       disabled={generating}
                       label="Questoes do Banco"
                     />
@@ -1212,7 +1280,7 @@ export default function GenerateQuestionsPage() {
                           <input
                             type="number"
                             min={0}
-                            max={50}
+                            max={500}
                             value={bankQuestionCount}
                             onChange={(e) => setBankQuestionCount(Math.max(0, parseInt(e.target.value) || 0))}
                             disabled={generating}
@@ -1252,7 +1320,7 @@ export default function GenerateQuestionsPage() {
                           anosDisponiveis={anosDisponiveis}
                           questionCount={bankQuestionCount}
                           setQuestionCount={setBankQuestionCount}
-                          maxCount={50}
+                          maxCount={500}
                           disabled={generating}
                           label="Filtros do Banco"
                         />

@@ -205,10 +205,10 @@ export interface BancoEstatisticasAdmin {
 // ============================================
 
 export interface BancoQuestoesFiltros {
-  periodoId?: string
-  moduloId?: string
-  topicoId?: string
-  subtopicoId?: string
+  periodoId?: string | string[]
+  moduloId?: string | string[]
+  topicoId?: string | string[]
+  subtopicoId?: string | string[]
   tipo?: BancoQuestaoTipo
   dificuldade?: BancoDificuldade
   apenasNaoResolvidas?: boolean

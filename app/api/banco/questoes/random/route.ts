@@ -13,11 +13,11 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url)
-    const limit = Math.min(parseInt(searchParams.get('limit') || '10'), 50)
+    const limit = Math.min(parseInt(searchParams.get('limit') || '10'), 500)
 
     const db = await getDb()
 
-    // Build match stage from filters
+    // Build match stage from filters — aceita múltiplos IDs separados por vírgula
     const matchStage: any = {}
 
     const periodoId = searchParams.get('periodoId')
@@ -28,10 +28,20 @@ export async function GET(request: NextRequest) {
     const dificuldade = searchParams.get('dificuldade')
     const anosParam = searchParams.get('anos')
 
-    if (periodoId) matchStage.periodoId = new ObjectId(periodoId)
-    if (moduloId) matchStage.moduloId = new ObjectId(moduloId)
-    if (topicoId) matchStage.topicoId = new ObjectId(topicoId)
-    if (subtopicoId) matchStage.subtopicoId = new ObjectId(subtopicoId)
+    function buildIdFilter(param: string | null) {
+      if (!param) return null
+      const ids = param.split(',').filter(Boolean).map(id => new ObjectId(id.trim()))
+      return ids.length === 1 ? ids[0] : { $in: ids }
+    }
+
+    const pf = buildIdFilter(periodoId)
+    if (pf) matchStage.periodoId = pf
+    const mf = buildIdFilter(moduloId)
+    if (mf) matchStage.moduloId = mf
+    const tf = buildIdFilter(topicoId)
+    if (tf) matchStage.topicoId = tf
+    const sf = buildIdFilter(subtopicoId)
+    if (sf) matchStage.subtopicoId = sf
     if (tipo) matchStage.tipo = tipo
     if (dificuldade) matchStage.dificuldade = dificuldade
     if (anosParam) {

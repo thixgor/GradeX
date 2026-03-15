@@ -37,8 +37,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Nome da lista é obrigatório' }, { status: 400 })
     }
 
-    if (!body.quantidade || body.quantidade < 1 || body.quantidade > 100) {
-      return NextResponse.json({ error: 'Quantidade deve ser entre 1 e 100' }, { status: 400 })
+    if (!body.quantidade || body.quantidade < 1 || body.quantidade > 500) {
+      return NextResponse.json({ error: 'Quantidade deve ser entre 1 e 500' }, { status: 400 })
     }
 
     // Verificar se já existe uma lista com esse nome para o usuário
@@ -51,21 +51,26 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Já existe uma lista com esse nome' }, { status: 400 })
     }
 
+    // Helper para construir filtro com $in quando múltiplos IDs
+    function buildIdFilter(param: string | string[] | undefined) {
+      if (!param) return null
+      const raw = Array.isArray(param) ? param : param.split(',').filter(Boolean)
+      const ids = raw.map(id => new ObjectId(id.trim()))
+      if (ids.length === 0) return null
+      return ids.length === 1 ? ids[0] : { $in: ids }
+    }
+
     // Construir query para buscar questões
     const matchStage: any = {}
 
-    if (body.periodoId) {
-      matchStage.periodoId = new ObjectId(body.periodoId)
-    }
-    if (body.moduloId) {
-      matchStage.moduloId = new ObjectId(body.moduloId)
-    }
-    if (body.topicoId) {
-      matchStage.topicoId = new ObjectId(body.topicoId)
-    }
-    if (body.subtopicoId) {
-      matchStage.subtopicoid = new ObjectId(body.subtopicoId)
-    }
+    const periodoFilter = buildIdFilter(body.periodoId)
+    if (periodoFilter) matchStage.periodoId = periodoFilter
+    const moduloFilter = buildIdFilter(body.moduloId)
+    if (moduloFilter) matchStage.moduloId = moduloFilter
+    const topicoFilter = buildIdFilter(body.topicoId)
+    if (topicoFilter) matchStage.topicoId = topicoFilter
+    const subtopicoFilter = buildIdFilter(body.subtopicoId)
+    if (subtopicoFilter) matchStage.subtopicoid = subtopicoFilter
     if (body.tipo) {
       matchStage.tipo = body.tipo
     }
@@ -83,7 +88,7 @@ export async function POST(request: NextRequest) {
     // Solução: Pedir uma amostra muito maior (ex: 5x) e fazer um embaralhamento (shuffle) em memória (Fisher-Yates).
 
     const fatorAmostra = 5
-    const limiteAmostra = 1000 // Limite de segurança para não explodir memória
+    const limiteAmostra = 2500 // Limite de segurança para memória
     const tamanhoAmostra = Math.min(body.quantidade * fatorAmostra, limiteAmostra)
 
     const pipeline = [

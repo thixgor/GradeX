@@ -136,10 +136,10 @@ function BancoQuestoesContent() {
   const [randomListForm, setRandomListForm] = useState({
     nome: '',
     quantidade: 10,
-    periodoId: '',
-    moduloId: '',
-    topicoId: '',
-    subtopicoId: '',
+    periodoIds: [] as string[],
+    moduloIds: [] as string[],
+    topicoIds: [] as string[],
+    subtopicoIds: [] as string[],
     tipo: '' as BancoQuestaoTipo | '',
     dificuldade: '' as BancoDificuldade | '',
     ano: '' as string,
@@ -171,59 +171,65 @@ function BancoQuestoesContent() {
   }, [filtros])
 
   useEffect(() => {
-    if (filtros.periodoId) {
-      loadModulos(filtros.periodoId)
+    const ids = filtros.periodoId
+    const hasIds = Array.isArray(ids) ? ids.length > 0 : !!ids
+    if (hasIds) {
+      loadModulos(ids!)
     } else {
       setModulos([])
       setTopicos([])
       setSubtopicos([])
     }
-  }, [filtros.periodoId])
+  }, [Array.isArray(filtros.periodoId) ? filtros.periodoId.join(',') : filtros.periodoId])
 
   useEffect(() => {
-    if (filtros.moduloId) {
-      loadTopicos(filtros.moduloId)
+    const ids = filtros.moduloId
+    const hasIds = Array.isArray(ids) ? ids.length > 0 : !!ids
+    if (hasIds) {
+      loadTopicos(ids!)
     } else {
       setTopicos([])
       setSubtopicos([])
     }
-  }, [filtros.moduloId])
+  }, [Array.isArray(filtros.moduloId) ? filtros.moduloId.join(',') : filtros.moduloId])
 
   useEffect(() => {
-    if (filtros.topicoId) {
-      loadSubtopicos(filtros.topicoId)
+    const ids = filtros.topicoId
+    const hasIds = Array.isArray(ids) ? ids.length > 0 : !!ids
+    if (hasIds) {
+      loadSubtopicos(ids!)
     } else {
       setSubtopicos([])
     }
-  }, [filtros.topicoId])
+  }, [Array.isArray(filtros.topicoId) ? filtros.topicoId.join(',') : filtros.topicoId])
 
   // Hierarquia para modal aleatório
   useEffect(() => {
-    if (randomListForm.periodoId) {
-      loadRandomModulos(randomListForm.periodoId)
+    if (randomListForm.periodoIds.length > 0) {
+      loadRandomModulos(randomListForm.periodoIds)
     } else {
       setRandomModulos([])
       setRandomTopicos([])
       setRandomSubtopicos([])
     }
-  }, [randomListForm.periodoId])
+  }, [randomListForm.periodoIds.join(',')])
 
   useEffect(() => {
-    if (randomListForm.moduloId) {
-      loadRandomTopicos(randomListForm.moduloId)
+    if (randomListForm.moduloIds.length > 0) {
+      loadRandomTopicos(randomListForm.moduloIds)
     } else {
       setRandomTopicos([])
       setRandomSubtopicos([])
     }
-  }, [randomListForm.moduloId])
+  }, [randomListForm.moduloIds.join(',')])
 
   useEffect(() => {
-    if (randomListForm.topicoId) {
-      loadRandomSubtopicos(randomListForm.topicoId)
+    if (randomListForm.topicoIds.length > 0) {
+      loadRandomSubtopicos(randomListForm.topicoIds)
     } else {
       setRandomSubtopicos([])
     }
-  }, [randomListForm.topicoId])
+  }, [randomListForm.topicoIds.join(',')])
 
   async function loadInitialData() {
     try {
@@ -327,9 +333,10 @@ function BancoQuestoesContent() {
     }
   }
 
-  async function loadModulos(periodoId: string) {
+  async function loadModulos(periodoId: string | string[]) {
     try {
-      const res = await fetch(`/api/banco/modulos?periodoId=${periodoId}`)
+      const ids = Array.isArray(periodoId) ? periodoId.join(',') : periodoId
+      const res = await fetch(`/api/banco/modulos?periodoId=${ids}`)
       if (res.ok) {
         const data = await res.json()
         setModulos(data.modulos)
@@ -339,9 +346,10 @@ function BancoQuestoesContent() {
     }
   }
 
-  async function loadTopicos(moduloId: string) {
+  async function loadTopicos(moduloId: string | string[]) {
     try {
-      const res = await fetch(`/api/banco/topicos?moduloId=${moduloId}`)
+      const ids = Array.isArray(moduloId) ? moduloId.join(',') : moduloId
+      const res = await fetch(`/api/banco/topicos?moduloId=${ids}`)
       if (res.ok) {
         const data = await res.json()
         setTopicos(data.topicos)
@@ -351,9 +359,10 @@ function BancoQuestoesContent() {
     }
   }
 
-  async function loadSubtopicos(topicoId: string) {
+  async function loadSubtopicos(topicoId: string | string[]) {
     try {
-      const res = await fetch(`/api/banco/subtopicos?topicoId=${topicoId}`)
+      const ids = Array.isArray(topicoId) ? topicoId.join(',') : topicoId
+      const res = await fetch(`/api/banco/subtopicos?topicoId=${ids}`)
       if (res.ok) {
         const data = await res.json()
         setSubtopicos(data.subtopicos)
@@ -363,9 +372,10 @@ function BancoQuestoesContent() {
     }
   }
 
-  async function loadRandomModulos(periodoId: string) {
+  async function loadRandomModulos(periodoId: string | string[]) {
     try {
-      const res = await fetch(`/api/banco/modulos?periodoId=${periodoId}`)
+      const ids = Array.isArray(periodoId) ? periodoId.join(',') : periodoId
+      const res = await fetch(`/api/banco/modulos?periodoId=${ids}`)
       if (res.ok) {
         const data = await res.json()
         setRandomModulos(data.modulos)
@@ -375,9 +385,10 @@ function BancoQuestoesContent() {
     }
   }
 
-  async function loadRandomTopicos(moduloId: string) {
+  async function loadRandomTopicos(moduloId: string | string[]) {
     try {
-      const res = await fetch(`/api/banco/topicos?moduloId=${moduloId}`)
+      const ids = Array.isArray(moduloId) ? moduloId.join(',') : moduloId
+      const res = await fetch(`/api/banco/topicos?moduloId=${ids}`)
       if (res.ok) {
         const data = await res.json()
         setRandomTopicos(data.topicos)
@@ -387,9 +398,10 @@ function BancoQuestoesContent() {
     }
   }
 
-  async function loadRandomSubtopicos(topicoId: string) {
+  async function loadRandomSubtopicos(topicoId: string | string[]) {
     try {
-      const res = await fetch(`/api/banco/subtopicos?topicoId=${topicoId}`)
+      const ids = Array.isArray(topicoId) ? topicoId.join(',') : topicoId
+      const res = await fetch(`/api/banco/subtopicos?topicoId=${ids}`)
       if (res.ok) {
         const data = await res.json()
         setRandomSubtopicos(data.subtopicos)
@@ -449,10 +461,10 @@ function BancoQuestoesContent() {
       params.set('page', page.toString())
       params.set('limit', '20')
 
-      if (filtros.periodoId) params.set('periodoId', filtros.periodoId)
-      if (filtros.moduloId) params.set('moduloId', filtros.moduloId)
-      if (filtros.topicoId) params.set('topicoId', filtros.topicoId)
-      if (filtros.subtopicoId) params.set('subtopicoId', filtros.subtopicoId)
+      if (filtros.periodoId) params.set('periodoId', Array.isArray(filtros.periodoId) ? filtros.periodoId.join(',') : filtros.periodoId)
+      if (filtros.moduloId) params.set('moduloId', Array.isArray(filtros.moduloId) ? filtros.moduloId.join(',') : filtros.moduloId)
+      if (filtros.topicoId) params.set('topicoId', Array.isArray(filtros.topicoId) ? filtros.topicoId.join(',') : filtros.topicoId)
+      if (filtros.subtopicoId) params.set('subtopicoId', Array.isArray(filtros.subtopicoId) ? filtros.subtopicoId.join(',') : filtros.subtopicoId)
       if (filtros.tipo) params.set('tipo', filtros.tipo)
       if (filtros.dificuldade) params.set('dificuldade', filtros.dificuldade)
       if (filtros.apenasNaoResolvidas) params.set('apenasNaoResolvidas', 'true')
@@ -558,10 +570,10 @@ function BancoQuestoesContent() {
         body: JSON.stringify({
           nome: randomListForm.nome.trim(),
           quantidade: randomListForm.quantidade,
-          periodoId: randomListForm.periodoId || undefined,
-          moduloId: randomListForm.moduloId || undefined,
-          topicoId: randomListForm.topicoId || undefined,
-          subtopicoId: randomListForm.subtopicoId || undefined,
+          periodoId: randomListForm.periodoIds.length > 0 ? randomListForm.periodoIds.join(',') : undefined,
+          moduloId: randomListForm.moduloIds.length > 0 ? randomListForm.moduloIds.join(',') : undefined,
+          topicoId: randomListForm.topicoIds.length > 0 ? randomListForm.topicoIds.join(',') : undefined,
+          subtopicoId: randomListForm.subtopicoIds.length > 0 ? randomListForm.subtopicoIds.join(',') : undefined,
           tipo: randomListForm.tipo || undefined,
           dificuldade: randomListForm.dificuldade || undefined,
           ano: randomListForm.ano ? parseInt(randomListForm.ano) : undefined,
@@ -730,10 +742,11 @@ function BancoQuestoesContent() {
   const totalQuestoes = periodos.reduce((acc, p) => acc + p.totalQuestoes, 0);
 
   // Count active filters for badge
+  const hasIds = (v: string | string[] | undefined) => Array.isArray(v) ? v.length > 0 : !!v
   const activeFilterCount = [
-    filtros.periodoId, filtros.moduloId, filtros.topicoId, filtros.subtopicoId,
-    filtros.tipo, filtros.dificuldade, filtros.apenasNaoResolvidas, busca,
-    filtros.anos?.length
+    hasIds(filtros.periodoId), hasIds(filtros.moduloId), hasIds(filtros.topicoId), hasIds(filtros.subtopicoId),
+    !!filtros.tipo, !!filtros.dificuldade, !!filtros.apenasNaoResolvidas, !!busca,
+    !!(filtros.anos && filtros.anos.length > 0)
   ].filter(Boolean).length;
 
   return (
@@ -852,15 +865,15 @@ function BancoQuestoesContent() {
                     className="overflow-hidden"
                   >
                     <div className="px-4 sm:px-5 pb-3 flex flex-wrap gap-1.5">
-                      {filtros.periodoId && (
+                      {hasIds(filtros.periodoId) && (
                         <span className="inline-flex items-center gap-1 text-[10px] font-medium bg-[#468152]/10 text-[#468152] px-2 py-1 rounded-full">
-                          Período
+                          {Array.isArray(filtros.periodoId) ? `${filtros.periodoId.length} período(s)` : 'Período'}
                           <X className="h-2.5 w-2.5 cursor-pointer hover:text-red-500" onClick={() => setFiltros(prev => ({ ...prev, periodoId: undefined, moduloId: undefined, topicoId: undefined, subtopicoId: undefined }))} />
                         </span>
                       )}
-                      {filtros.moduloId && (
+                      {hasIds(filtros.moduloId) && (
                         <span className="inline-flex items-center gap-1 text-[10px] font-medium bg-blue-500/10 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-full">
-                          Módulo
+                          {Array.isArray(filtros.moduloId) ? `${filtros.moduloId.length} módulo(s)` : 'Módulo'}
                           <X className="h-2.5 w-2.5 cursor-pointer hover:text-red-500" onClick={() => setFiltros(prev => ({ ...prev, moduloId: undefined, topicoId: undefined, subtopicoId: undefined }))} />
                         </span>
                       )}
@@ -909,99 +922,172 @@ function BancoQuestoesContent() {
                     <div className="px-4 sm:px-5 pb-5 space-y-4">
                       {/* Row 1: Hierarchy filters in grid */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                        {/* Período multi-select */}
                         <div className="space-y-1.5">
                           <Label className="text-xs font-medium text-muted-foreground">Período</Label>
-                          <Select
-                            value={filtros.periodoId || 'all-periodos'}
-                            onValueChange={(value) => {
-                              const isAll = value === 'all-periodos'
-                              setFiltros(prev => ({ ...prev, periodoId: isAll ? undefined : value, moduloId: undefined, topicoId: undefined, subtopicoId: undefined }))
-                            }}
-                          >
-                            <SelectTrigger className="h-10 rounded-xl bg-background/50 border-white/10 dark:border-white/5">
-                              <SelectValue placeholder="Todos" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="all-periodos">Todos os períodos</SelectItem>
-                              {periodos.map((periodo) => (
-                                <SelectItem key={String(periodo._id)} value={String(periodo._id)}>
-                                  {periodo.nome} ({periodo.totalQuestoes})
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="outline" className="w-full h-10 rounded-xl bg-background/50 border-white/10 dark:border-white/5 justify-between text-sm font-normal">
+                                {(() => {
+                                  const sel = Array.isArray(filtros.periodoId) ? filtros.periodoId : filtros.periodoId ? [filtros.periodoId] : []
+                                  if (sel.length === 0) return 'Todos'
+                                  if (sel.length === 1) {
+                                    const p = periodos.find(p => String(p._id) === sel[0])
+                                    return p ? p.nome : '1 selecionado'
+                                  }
+                                  return `${sel.length} selecionados`
+                                })()}
+                                <ChevronDown className="h-3.5 w-3.5 ml-2 opacity-50" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="start" className="w-64 max-h-60 overflow-auto">
+                              {periodos.map((periodo) => {
+                                const id = String(periodo._id)
+                                const current = Array.isArray(filtros.periodoId) ? filtros.periodoId : filtros.periodoId ? [filtros.periodoId] : []
+                                const checked = current.includes(id)
+                                return (
+                                  <DropdownMenuItem
+                                    key={id}
+                                    className="flex items-center gap-2 cursor-pointer"
+                                    onSelect={(e) => {
+                                      e.preventDefault()
+                                      const updated = checked ? current.filter(x => x !== id) : [...current, id]
+                                      setFiltros(prev => ({ ...prev, periodoId: updated.length > 0 ? updated : undefined, moduloId: undefined, topicoId: undefined, subtopicoId: undefined }))
+                                    }}
+                                  >
+                                    <Checkbox checked={checked} className="pointer-events-none" />
+                                    <span className="truncate">{periodo.nome} ({periodo.totalQuestoes})</span>
+                                  </DropdownMenuItem>
+                                )
+                              })}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
 
+                        {/* Módulo multi-select */}
                         <div className="space-y-1.5">
                           <Label className="text-xs font-medium text-muted-foreground">Módulo</Label>
-                          <Select
-                            value={filtros.moduloId || 'all-modulos'}
-                            onValueChange={(value) => {
-                              const isAll = value === 'all-modulos'
-                              setFiltros(prev => ({ ...prev, moduloId: isAll ? undefined : value, topicoId: undefined, subtopicoId: undefined }))
-                            }}
-                            disabled={!filtros.periodoId}
-                          >
-                            <SelectTrigger className={cn('h-10 rounded-xl bg-background/50 border-white/10 dark:border-white/5', !filtros.periodoId && 'opacity-50')}>
-                              <SelectValue placeholder="Todos" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="all-modulos">Todos</SelectItem>
-                              {modulos.map((modulo) => (
-                                <SelectItem key={String(modulo._id)} value={String(modulo._id)}>
-                                  {modulo.nome} ({modulo.totalQuestoes})
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="outline" disabled={!hasIds(filtros.periodoId)} className={cn('w-full h-10 rounded-xl bg-background/50 border-white/10 dark:border-white/5 justify-between text-sm font-normal', !hasIds(filtros.periodoId) && 'opacity-50')}>
+                                {(() => {
+                                  const sel = Array.isArray(filtros.moduloId) ? filtros.moduloId : filtros.moduloId ? [filtros.moduloId] : []
+                                  if (sel.length === 0) return 'Todos'
+                                  if (sel.length === 1) {
+                                    const m = modulos.find(m => String(m._id) === sel[0])
+                                    return m ? m.nome : '1 selecionado'
+                                  }
+                                  return `${sel.length} selecionados`
+                                })()}
+                                <ChevronDown className="h-3.5 w-3.5 ml-2 opacity-50" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="start" className="w-64 max-h-60 overflow-auto">
+                              {modulos.map((modulo) => {
+                                const id = String(modulo._id)
+                                const current = Array.isArray(filtros.moduloId) ? filtros.moduloId : filtros.moduloId ? [filtros.moduloId] : []
+                                const checked = current.includes(id)
+                                return (
+                                  <DropdownMenuItem
+                                    key={id}
+                                    className="flex items-center gap-2 cursor-pointer"
+                                    onSelect={(e) => {
+                                      e.preventDefault()
+                                      const updated = checked ? current.filter(x => x !== id) : [...current, id]
+                                      setFiltros(prev => ({ ...prev, moduloId: updated.length > 0 ? updated : undefined, topicoId: undefined, subtopicoId: undefined }))
+                                    }}
+                                  >
+                                    <Checkbox checked={checked} className="pointer-events-none" />
+                                    <span className="truncate">{modulo.nome} ({modulo.totalQuestoes})</span>
+                                  </DropdownMenuItem>
+                                )
+                              })}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
 
+                        {/* Tópico multi-select */}
                         <div className="space-y-1.5">
                           <Label className="text-xs font-medium text-muted-foreground">Tópico</Label>
-                          <Select
-                            value={filtros.topicoId || 'all-topicos'}
-                            onValueChange={(value) => {
-                              const isAll = value === 'all-topicos'
-                              setFiltros(prev => ({ ...prev, topicoId: isAll ? undefined : value, subtopicoId: undefined }))
-                            }}
-                            disabled={!filtros.moduloId}
-                          >
-                            <SelectTrigger className={cn('h-10 rounded-xl bg-background/50 border-white/10 dark:border-white/5', !filtros.moduloId && 'opacity-50')}>
-                              <SelectValue placeholder="Todos" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="all-topicos">Todos</SelectItem>
-                              {topicos.map((topico) => (
-                                <SelectItem key={String(topico._id)} value={String(topico._id)}>
-                                  {topico.nome} ({topico.totalQuestoes})
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="outline" disabled={!hasIds(filtros.moduloId)} className={cn('w-full h-10 rounded-xl bg-background/50 border-white/10 dark:border-white/5 justify-between text-sm font-normal', !hasIds(filtros.moduloId) && 'opacity-50')}>
+                                {(() => {
+                                  const sel = Array.isArray(filtros.topicoId) ? filtros.topicoId : filtros.topicoId ? [filtros.topicoId] : []
+                                  if (sel.length === 0) return 'Todos'
+                                  if (sel.length === 1) {
+                                    const t = topicos.find(t => String(t._id) === sel[0])
+                                    return t ? t.nome : '1 selecionado'
+                                  }
+                                  return `${sel.length} selecionados`
+                                })()}
+                                <ChevronDown className="h-3.5 w-3.5 ml-2 opacity-50" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="start" className="w-64 max-h-60 overflow-auto">
+                              {topicos.map((topico) => {
+                                const id = String(topico._id)
+                                const current = Array.isArray(filtros.topicoId) ? filtros.topicoId : filtros.topicoId ? [filtros.topicoId] : []
+                                const checked = current.includes(id)
+                                return (
+                                  <DropdownMenuItem
+                                    key={id}
+                                    className="flex items-center gap-2 cursor-pointer"
+                                    onSelect={(e) => {
+                                      e.preventDefault()
+                                      const updated = checked ? current.filter(x => x !== id) : [...current, id]
+                                      setFiltros(prev => ({ ...prev, topicoId: updated.length > 0 ? updated : undefined, subtopicoId: undefined }))
+                                    }}
+                                  >
+                                    <Checkbox checked={checked} className="pointer-events-none" />
+                                    <span className="truncate">{topico.nome} ({topico.totalQuestoes})</span>
+                                  </DropdownMenuItem>
+                                )
+                              })}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
 
+                        {/* Subtópico multi-select */}
                         <div className="space-y-1.5">
                           <Label className="text-xs font-medium text-muted-foreground">Subtópico</Label>
-                          <Select
-                            value={filtros.subtopicoId || 'all-subtopicos'}
-                            onValueChange={(value) => {
-                              const isAll = value === 'all-subtopicos'
-                              setFiltros(prev => ({ ...prev, subtopicoId: isAll ? undefined : value }))
-                            }}
-                            disabled={!filtros.topicoId}
-                          >
-                            <SelectTrigger className={cn('h-10 rounded-xl bg-background/50 border-white/10 dark:border-white/5', !filtros.topicoId && 'opacity-50')}>
-                              <SelectValue placeholder="Todos" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="all-subtopicos">Todos</SelectItem>
-                              {subtopicos.map((sub) => (
-                                <SelectItem key={String(sub._id)} value={String(sub._id)}>
-                                  {sub.nome} ({sub.totalQuestoes})
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="outline" disabled={!hasIds(filtros.topicoId)} className={cn('w-full h-10 rounded-xl bg-background/50 border-white/10 dark:border-white/5 justify-between text-sm font-normal', !hasIds(filtros.topicoId) && 'opacity-50')}>
+                                {(() => {
+                                  const sel = Array.isArray(filtros.subtopicoId) ? filtros.subtopicoId : filtros.subtopicoId ? [filtros.subtopicoId] : []
+                                  if (sel.length === 0) return 'Todos'
+                                  if (sel.length === 1) {
+                                    const s = subtopicos.find(s => String(s._id) === sel[0])
+                                    return s ? s.nome : '1 selecionado'
+                                  }
+                                  return `${sel.length} selecionados`
+                                })()}
+                                <ChevronDown className="h-3.5 w-3.5 ml-2 opacity-50" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="start" className="w-64 max-h-60 overflow-auto">
+                              {subtopicos.map((sub) => {
+                                const id = String(sub._id)
+                                const current = Array.isArray(filtros.subtopicoId) ? filtros.subtopicoId : filtros.subtopicoId ? [filtros.subtopicoId] : []
+                                const checked = current.includes(id)
+                                return (
+                                  <DropdownMenuItem
+                                    key={id}
+                                    className="flex items-center gap-2 cursor-pointer"
+                                    onSelect={(e) => {
+                                      e.preventDefault()
+                                      const updated = checked ? current.filter(x => x !== id) : [...current, id]
+                                      setFiltros(prev => ({ ...prev, subtopicoId: updated.length > 0 ? updated : undefined }))
+                                    }}
+                                  >
+                                    <Checkbox checked={checked} className="pointer-events-none" />
+                                    <span className="truncate">{sub.nome} ({sub.totalQuestoes})</span>
+                                  </DropdownMenuItem>
+                                )
+                              })}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
                       </div>
 
@@ -1415,13 +1501,13 @@ function BancoQuestoesContent() {
                   <Input
                     type="number"
                     min={1}
-                    max={100}
+                    max={500}
                     value={randomListForm.quantidade}
                     onChange={(e) => setRandomListForm(prev => ({ ...prev, quantidade: parseInt(e.target.value) || 10 }))}
-                    className="w-20 bg-background"
+                    className="w-24 bg-background"
                   />
                   <div className="flex flex-wrap gap-1">
-                    {[5, 10, 20, 30, 50].map((n) => (
+                    {[5, 10, 20, 50, 100, 200].map((n) => (
                       <Button
                         key={n}
                         variant={randomListForm.quantidade === n ? 'default' : 'outline'}
@@ -1481,92 +1567,158 @@ function BancoQuestoesContent() {
                 Filtros <span className="text-xs font-normal">(opcional)</span>
               </h4>
 
-              {/* Linha 1: Período, Módulo e Tópico */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {/* Linha 1: Período, Módulo, Tópico e Subtópico — multi-select */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs">Período</Label>
-                  <Select
-                    value={randomListForm.periodoId || 'all'}
-                    onValueChange={(value) => {
-                      const isAll = value === 'all'
-                      setRandomListForm(prev => ({
-                        ...prev,
-                        periodoId: isAll ? '' : value,
-                        moduloId: '',
-                        topicoId: '',
-                        subtopicoId: ''
-                      }))
-                    }}
-                  >
-                    <SelectTrigger className="bg-background">
-                      <SelectValue placeholder="Todos os períodos" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Todos os períodos</SelectItem>
-                      {periodos.map((periodo) => (
-                        <SelectItem key={String(periodo._id)} value={String(periodo._id)}>
-                          {periodo.nome}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="w-full justify-between text-sm font-normal bg-background">
+                        {randomListForm.periodoIds.length === 0
+                          ? 'Todos os períodos'
+                          : randomListForm.periodoIds.length === 1
+                            ? periodos.find(p => String(p._id) === randomListForm.periodoIds[0])?.nome || '1 selecionado'
+                            : `${randomListForm.periodoIds.length} selecionados`}
+                        <ChevronDown className="h-3.5 w-3.5 ml-2 opacity-50" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-64 max-h-60 overflow-auto">
+                      {periodos.map((periodo) => {
+                        const id = String(periodo._id)
+                        const checked = randomListForm.periodoIds.includes(id)
+                        return (
+                          <DropdownMenuItem
+                            key={id}
+                            className="flex items-center gap-2 cursor-pointer"
+                            onSelect={(e) => {
+                              e.preventDefault()
+                              setRandomListForm(prev => {
+                                const updated = checked ? prev.periodoIds.filter(x => x !== id) : [...prev.periodoIds, id]
+                                return { ...prev, periodoIds: updated, moduloIds: [], topicoIds: [], subtopicoIds: [] }
+                              })
+                            }}
+                          >
+                            <Checkbox checked={checked} className="pointer-events-none" />
+                            <span className="truncate">{periodo.nome}</span>
+                          </DropdownMenuItem>
+                        )
+                      })}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
 
                 <div className="space-y-1.5">
                   <Label className="text-xs">Módulo</Label>
-                  <Select
-                    value={randomListForm.moduloId || 'all'}
-                    onValueChange={(value) => {
-                      const isAll = value === 'all'
-                      setRandomListForm(prev => ({
-                        ...prev,
-                        moduloId: isAll ? '' : value,
-                        topicoId: '',
-                        subtopicoId: ''
-                      }))
-                    }}
-                    disabled={!randomListForm.periodoId}
-                  >
-                    <SelectTrigger className="bg-background">
-                      <SelectValue placeholder="Todos os módulos" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Todos os módulos</SelectItem>
-                      {randomModulos.map((modulo) => (
-                        <SelectItem key={String(modulo._id)} value={String(modulo._id)}>
-                          {modulo.nome}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" disabled={randomListForm.periodoIds.length === 0} className={cn('w-full justify-between text-sm font-normal bg-background', randomListForm.periodoIds.length === 0 && 'opacity-50')}>
+                        {randomListForm.moduloIds.length === 0
+                          ? 'Todos os módulos'
+                          : randomListForm.moduloIds.length === 1
+                            ? randomModulos.find(m => String(m._id) === randomListForm.moduloIds[0])?.nome || '1 selecionado'
+                            : `${randomListForm.moduloIds.length} selecionados`}
+                        <ChevronDown className="h-3.5 w-3.5 ml-2 opacity-50" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-64 max-h-60 overflow-auto">
+                      {randomModulos.map((modulo) => {
+                        const id = String(modulo._id)
+                        const checked = randomListForm.moduloIds.includes(id)
+                        return (
+                          <DropdownMenuItem
+                            key={id}
+                            className="flex items-center gap-2 cursor-pointer"
+                            onSelect={(e) => {
+                              e.preventDefault()
+                              setRandomListForm(prev => {
+                                const updated = checked ? prev.moduloIds.filter(x => x !== id) : [...prev.moduloIds, id]
+                                return { ...prev, moduloIds: updated, topicoIds: [], subtopicoIds: [] }
+                              })
+                            }}
+                          >
+                            <Checkbox checked={checked} className="pointer-events-none" />
+                            <span className="truncate">{modulo.nome}</span>
+                          </DropdownMenuItem>
+                        )
+                      })}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
 
                 <div className="space-y-1.5">
                   <Label className="text-xs">Tópico</Label>
-                  <Select
-                    value={randomListForm.topicoId || 'all'}
-                    onValueChange={(value) => {
-                      const isAll = value === 'all'
-                      setRandomListForm(prev => ({
-                        ...prev,
-                        topicoId: isAll ? '' : value,
-                        subtopicoId: ''
-                      }))
-                    }}
-                    disabled={!randomListForm.moduloId}
-                  >
-                    <SelectTrigger className="bg-background">
-                      <SelectValue placeholder="Todos os tópicos" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Todos os tópicos</SelectItem>
-                      {randomTopicos.map((topico) => (
-                        <SelectItem key={String(topico._id)} value={String(topico._id)}>
-                          {topico.nome}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" disabled={randomListForm.moduloIds.length === 0} className={cn('w-full justify-between text-sm font-normal bg-background', randomListForm.moduloIds.length === 0 && 'opacity-50')}>
+                        {randomListForm.topicoIds.length === 0
+                          ? 'Todos os tópicos'
+                          : randomListForm.topicoIds.length === 1
+                            ? randomTopicos.find(t => String(t._id) === randomListForm.topicoIds[0])?.nome || '1 selecionado'
+                            : `${randomListForm.topicoIds.length} selecionados`}
+                        <ChevronDown className="h-3.5 w-3.5 ml-2 opacity-50" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-64 max-h-60 overflow-auto">
+                      {randomTopicos.map((topico) => {
+                        const id = String(topico._id)
+                        const checked = randomListForm.topicoIds.includes(id)
+                        return (
+                          <DropdownMenuItem
+                            key={id}
+                            className="flex items-center gap-2 cursor-pointer"
+                            onSelect={(e) => {
+                              e.preventDefault()
+                              setRandomListForm(prev => {
+                                const updated = checked ? prev.topicoIds.filter(x => x !== id) : [...prev.topicoIds, id]
+                                return { ...prev, topicoIds: updated, subtopicoIds: [] }
+                              })
+                            }}
+                          >
+                            <Checkbox checked={checked} className="pointer-events-none" />
+                            <span className="truncate">{topico.nome}</span>
+                          </DropdownMenuItem>
+                        )
+                      })}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Subtópico</Label>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" disabled={randomListForm.topicoIds.length === 0} className={cn('w-full justify-between text-sm font-normal bg-background', randomListForm.topicoIds.length === 0 && 'opacity-50')}>
+                        {randomListForm.subtopicoIds.length === 0
+                          ? 'Todos os subtópicos'
+                          : randomListForm.subtopicoIds.length === 1
+                            ? randomSubtopicos.find(s => String(s._id) === randomListForm.subtopicoIds[0])?.nome || '1 selecionado'
+                            : `${randomListForm.subtopicoIds.length} selecionados`}
+                        <ChevronDown className="h-3.5 w-3.5 ml-2 opacity-50" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-64 max-h-60 overflow-auto">
+                      {randomSubtopicos.map((sub) => {
+                        const id = String(sub._id)
+                        const checked = randomListForm.subtopicoIds.includes(id)
+                        return (
+                          <DropdownMenuItem
+                            key={id}
+                            className="flex items-center gap-2 cursor-pointer"
+                            onSelect={(e) => {
+                              e.preventDefault()
+                              setRandomListForm(prev => {
+                                const updated = checked ? prev.subtopicoIds.filter(x => x !== id) : [...prev.subtopicoIds, id]
+                                return { ...prev, subtopicoIds: updated }
+                              })
+                            }}
+                          >
+                            <Checkbox checked={checked} className="pointer-events-none" />
+                            <span className="truncate">{sub.nome}</span>
+                          </DropdownMenuItem>
+                        )
+                      })}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
 

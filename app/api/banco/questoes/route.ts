@@ -174,12 +174,17 @@ export async function GET(request: NextRequest) {
     }
 
     // LÓGICA NORMAL PARA ADMIN E PREMIUM
-    // Extrair filtros
+    // Extrair filtros — agora aceita múltiplos IDs separados por vírgula
+    const periodoIdParam = searchParams.get('periodoId') || undefined
+    const moduloIdParam = searchParams.get('moduloId') || undefined
+    const topicoIdParam = searchParams.get('topicoId') || undefined
+    const subtopicoIdParam = searchParams.get('subtopicoId') || undefined
+
     const filtros: BancoQuestoesFiltros = {
-      periodoId: searchParams.get('periodoId') || undefined,
-      moduloId: searchParams.get('moduloId') || undefined,
-      topicoId: searchParams.get('topicoId') || undefined,
-      subtopicoId: searchParams.get('subtopicoId') || undefined,
+      periodoId: periodoIdParam,
+      moduloId: moduloIdParam,
+      topicoId: topicoIdParam,
+      subtopicoId: subtopicoIdParam,
       tipo: searchParams.get('tipo') as BancoQuestoesFiltros['tipo'] || undefined,
       dificuldade: searchParams.get('dificuldade') as BancoQuestoesFiltros['dificuldade'] || undefined,
       apenasNaoResolvidas: searchParams.get('apenasNaoResolvidas') === 'true',
@@ -195,21 +200,28 @@ export async function GET(request: NextRequest) {
     const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 50)
     const skip = (page - 1) * limit
 
+    // Helper para construir filtro com $in quando múltiplos IDs
+    function buildIdFilter(param: string | undefined) {
+      if (!param) return null
+      const ids = param.split(',').filter(Boolean).map(id => new ObjectId(id.trim()))
+      return ids.length === 1 ? ids[0] : { $in: ids }
+    }
+
     // Construir query
     const matchStage: any = {}
 
-    if (filtros.periodoId) {
-      matchStage.periodoId = new ObjectId(filtros.periodoId)
-    }
-    if (filtros.moduloId) {
-      matchStage.moduloId = new ObjectId(filtros.moduloId)
-    }
-    if (filtros.topicoId) {
-      matchStage.topicoId = new ObjectId(filtros.topicoId)
-    }
-    if (filtros.subtopicoId) {
-      matchStage.subtopicoid = new ObjectId(filtros.subtopicoId)
-    }
+    const periodoFilter = buildIdFilter(periodoIdParam)
+    if (periodoFilter) matchStage.periodoId = periodoFilter
+
+    const moduloFilter = buildIdFilter(moduloIdParam)
+    if (moduloFilter) matchStage.moduloId = moduloFilter
+
+    const topicoFilter = buildIdFilter(topicoIdParam)
+    if (topicoFilter) matchStage.topicoId = topicoFilter
+
+    const subtopicoFilter = buildIdFilter(subtopicoIdParam)
+    if (subtopicoFilter) matchStage.subtopicoid = subtopicoFilter
+
     if (filtros.tipo) {
       matchStage.tipo = filtros.tipo
     }

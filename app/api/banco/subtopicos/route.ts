@@ -14,16 +14,17 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url)
-    const topicoId = searchParams.get('topicoId')
+    const topicoIdParam = searchParams.get('topicoId')
 
     const db = await getDb()
 
     const pipeline: any[] = []
 
-    // Filtrar por tópico se fornecido
-    if (topicoId) {
+    // Filtrar por tópico(s) se fornecido — aceita IDs separados por vírgula
+    if (topicoIdParam) {
+      const ids = topicoIdParam.split(',').filter(Boolean).map(id => new ObjectId(id.trim()))
       pipeline.push({
-        $match: { topicoId: new ObjectId(topicoId) }
+        $match: ids.length === 1 ? { topicoId: ids[0] } : { topicoId: { $in: ids } }
       })
     }
 

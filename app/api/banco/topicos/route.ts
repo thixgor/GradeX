@@ -14,16 +14,17 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url)
-    const moduloId = searchParams.get('moduloId')
+    const moduloIdParam = searchParams.get('moduloId')
 
     const db = await getDb()
 
     const pipeline: any[] = []
 
-    // Filtrar por módulo se fornecido
-    if (moduloId) {
+    // Filtrar por módulo(s) se fornecido — aceita IDs separados por vírgula
+    if (moduloIdParam) {
+      const ids = moduloIdParam.split(',').filter(Boolean).map(id => new ObjectId(id.trim()))
       pipeline.push({
-        $match: { moduloId: new ObjectId(moduloId) }
+        $match: ids.length === 1 ? { moduloId: ids[0] } : { moduloId: { $in: ids } }
       })
     }
 
