@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
+import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
@@ -10,7 +11,7 @@ import { Label } from '@/components/ui/label'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { CustomCronogramaBuilder } from '@/components/custom-cronograma-builder'
 import { CustomCalendar } from '@/components/custom-calendar'
-import { ArrowLeft, ChevronRight, Info, Sparkles } from 'lucide-react'
+import { ArrowLeft, ChevronLeft, ChevronRight, Info, Sparkles } from 'lucide-react'
 import { TEMPLATES, ModelType, UserDifficulty, StudyTime, TopicItem, SubtopicItem, ModuleItem, MedicinaAFYAPeriodo, PsicologiaAFYAPeriodo } from '@/lib/cronograma-types'
 import { ToggleSwitch } from '@/components/ui/toggle-switch'
 import { getMedicinaAFYATopicos } from '@/lib/medicina-afya-periodos-helper'
@@ -50,6 +51,7 @@ export default function CriarCronogramaPage() {
   })
   const [topicos, setTopicos] = useState<TopicItem[]>([])
   const [moduloInfoAberto, setModuloInfoAberto] = useState<string | null>(null)
+  const [mobileTab, setMobileTab] = useState('topicos' as 'topicos' | 'subtopicos' | 'modulos')
   const [gerando, setGerando] = useState(false)
   const [dataTermino, setDataTermino] = useState<string>('')
 
@@ -387,6 +389,20 @@ export default function CriarCronogramaPage() {
   }
 
   const totalHoras = Object.values(tempoEstudo).reduce((a, b) => a + b, 0)
+
+  // Find the currently open module for the submódulos modal
+  const moduloAberto = useMemo(() => {
+    if (!moduloInfoAberto || !selectedTopico) return null
+    for (const topico of topicos) {
+      for (const subtopico of topico.subtopicos) {
+        const modulo = subtopico.modulos.find(m => m.id === moduloInfoAberto)
+        if (modulo && (modulo as any).submodulos?.length > 0) {
+          return { modulo, submodulos: (modulo as any).submodulos as { id: string; nome: string }[] }
+        }
+      }
+    }
+    return null
+  }, [moduloInfoAberto, topicos, selectedTopico])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30 relative overflow-hidden">
@@ -805,35 +821,293 @@ export default function CriarCronogramaPage() {
             {modelo === 'personalizado' ? (
               <CustomCronogramaBuilder topicos={topicos} onTopicosChange={setTopicos} />
             ) : (
-            /* 3-Column Layout - Responsive */
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 w-full">
-              {/* Column 1: Tópicos */}
-              <div className="glass-page-card rounded-2xl flex flex-col overflow-hidden">
-                <div className="p-6 pb-4">
-                  <h3 className="text-xl font-bold">Tópicos</h3>
+            <div className="w-full space-y-6">
+            {/* ===== MOBILE: Tabbed single-panel drill-down ===== */}
+            <div className="lg:hidden w-full space-y-4">
+              {/* Tab bar */}
+              <div className="flex rounded-xl overflow-hidden border border-white/20 dark:border-white/10 glass-page-card">
+                <button
+                  onClick={() => setMobileTab('topicos')}
+                  className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
+                    mobileTab === 'topicos'
+                      ? 'bg-primary text-white'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  Tópicos
+                </button>
+                <button
+                  onClick={() => { if (selectedTopico) setMobileTab('subtopicos') }}
+                  className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
+                    mobileTab === 'subtopicos'
+                      ? 'bg-primary text-white'
+                      : selectedTopico ? 'text-muted-foreground hover:text-foreground' : 'text-muted-foreground/40 cursor-not-allowed'
+                  }`}
+                >
+                  Subtópicos
+                </button>
+                <button
+                  onClick={() => { if (selectedSubtopico) setMobileTab('modulos') }}
+                  className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
+                    mobileTab === 'modulos'
+                      ? 'bg-primary text-white'
+                      : selectedSubtopico ? 'text-muted-foreground hover:text-foreground' : 'text-muted-foreground/40 cursor-not-allowed'
+                  }`}
+                >
+                  Módulos
+                </button>
+              </div>
+
+              {/* Breadcrumb */}
+              {mobileTab !== 'topicos' && (
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground px-1 flex-wrap">
+                  <button onClick={() => setMobileTab('topicos')} className="hover:text-primary transition-colors">Tópicos</button>
+                  {selectedTopico && (
+                    <>
+                      <ChevronRight className="w-3 h-3 flex-shrink-0" />
+                      <button
+                        onClick={() => setMobileTab('subtopicos')}
+                        className="hover:text-primary transition-colors truncate max-w-[150px]"
+                      >
+                        {topicos.find(t => t.id === selectedTopico)?.nome}
+                      </button>
+                    </>
+                  )}
+                  {mobileTab === 'modulos' && selectedSubtopico && (
+                    <>
+                      <ChevronRight className="w-3 h-3 flex-shrink-0" />
+                      <span className="text-foreground truncate max-w-[150px]">
+                        {topicos.find(t => t.id === selectedTopico)?.subtopicos.find(s => s.id === selectedSubtopico)?.nome}
+                      </span>
+                    </>
+                  )}
                 </div>
-                <div className="px-6 pb-6 flex-1 overflow-y-auto space-y-3">
+              )}
+
+              {/* Panel content */}
+              <div className="glass-page-card rounded-2xl overflow-hidden">
+                {/* Mobile: Tópicos */}
+                {mobileTab === 'topicos' && (
+                  <div className="p-4 space-y-3 max-h-[55vh] overflow-y-auto overscroll-contain">
+                    {topicos.map((topico) => (
+                      <div
+                        key={topico.id}
+                        className={`flex items-start gap-3 p-4 rounded-xl transition-all cursor-pointer soul-light ${
+                          selectedTopico === topico.id
+                            ? 'border-2 border-primary bg-primary/5 shadow-sm'
+                            : 'border-2 border-white/30 dark:border-white/10 backdrop-blur-sm bg-white/20 dark:bg-white/5 hover:border-primary/50'
+                        }`}
+                        onClick={() => {
+                          setSelectedTopico(topico.id)
+                          setMobileTab('subtopicos')
+                        }}
+                      >
+                        <div className="flex-shrink-0 mt-0.5" onClick={(e) => e.stopPropagation()}>
+                          <ToggleSwitch
+                            checked={topico.incluido}
+                            onChange={() => toggleTopico(topico.id)}
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className={`font-semibold text-[15px] leading-relaxed break-words ${
+                            selectedTopico === topico.id ? 'text-primary' : ''
+                          }`}>
+                            {topico.nome}
+                          </div>
+                          <div className="text-xs text-muted-foreground mt-1">
+                            {topico.subtopicos.length} subtópicos
+                          </div>
+                        </div>
+                        <ChevronRight className="w-4 h-4 flex-shrink-0 text-muted-foreground mt-1" />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Mobile: Subtópicos */}
+                {mobileTab === 'subtopicos' && (
+                  <div>
+                    <div className="p-3 border-b border-white/10 flex items-center gap-2">
+                      <button onClick={() => setMobileTab('topicos')} className="p-1 rounded-lg hover:bg-muted transition-colors">
+                        <ChevronLeft className="w-5 h-5" />
+                      </button>
+                      <span className="font-semibold text-sm truncate">
+                        {topicos.find(t => t.id === selectedTopico)?.nome}
+                      </span>
+                    </div>
+                    <div
+                      className={`p-4 space-y-3 max-h-[50vh] overflow-y-auto overscroll-contain ${
+                        selectedTopico && !topicos.find((t) => t.id === selectedTopico)?.incluido
+                          ? 'blur-sm opacity-50 pointer-events-none' : ''
+                      }`}
+                    >
+                      {selectedTopico && topicos
+                        .find((t) => t.id === selectedTopico)
+                        ?.subtopicos.map((subtopico) => (
+                          <div
+                            key={subtopico.id}
+                            className={`flex items-start gap-3 p-4 rounded-xl transition-all cursor-pointer soul-light ${
+                              selectedSubtopico === subtopico.id
+                                ? 'border-2 border-primary bg-primary/5 shadow-sm'
+                                : 'border-2 border-white/30 dark:border-white/10 backdrop-blur-sm bg-white/20 dark:bg-white/5 hover:border-primary/50'
+                            }`}
+                            onClick={() => {
+                              setSelectedSubtopico(subtopico.id)
+                              setMobileTab('modulos')
+                            }}
+                          >
+                            <div className="flex-shrink-0 mt-0.5" onClick={(e) => e.stopPropagation()}>
+                              <ToggleSwitch
+                                checked={subtopico.incluido}
+                                onChange={() => toggleSubtopico(selectedTopico, subtopico.id)}
+                                disabled={!topicos.find((t) => t.id === selectedTopico)?.incluido}
+                              />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className={`font-semibold text-[15px] leading-relaxed break-words ${
+                                selectedSubtopico === subtopico.id ? 'text-primary' : ''
+                              }`}>
+                                {subtopico.nome}
+                              </div>
+                              <div className="text-xs text-muted-foreground mt-1">
+                                {subtopico.modulos.length} módulos
+                              </div>
+                            </div>
+                            <ChevronRight className="w-4 h-4 flex-shrink-0 text-muted-foreground mt-1" />
+                          </div>
+                        ))
+                      }
+                    </div>
+                  </div>
+                )}
+
+                {/* Mobile: Módulos */}
+                {mobileTab === 'modulos' && (
+                  <div>
+                    <div className="p-3 border-b border-white/10 flex items-center justify-between">
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
+                        <button onClick={() => setMobileTab('subtopicos')} className="p-1 rounded-lg hover:bg-muted transition-colors flex-shrink-0">
+                          <ChevronLeft className="w-5 h-5" />
+                        </button>
+                        <span className="font-semibold text-sm truncate">
+                          {topicos.find(t => t.id === selectedTopico)?.subtopicos.find(s => s.id === selectedSubtopico)?.nome}
+                        </span>
+                      </div>
+                      {selectedSubtopico && selectedTopico && topicos.find((t) => t.id === selectedTopico)?.incluido && (
+                        <button
+                          onClick={() => {
+                            if (selectedTopico && selectedSubtopico) {
+                              toggleTodosModulosSubtopico(selectedTopico, selectedSubtopico)
+                            }
+                          }}
+                          className="text-xs px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors flex-shrink-0 font-medium ml-2"
+                        >
+                          Marcar Tudo
+                        </button>
+                      )}
+                    </div>
+                    <div
+                      className={`p-4 space-y-3 max-h-[50vh] overflow-y-auto overscroll-contain ${
+                        selectedTopico && !topicos.find((t) => t.id === selectedTopico)?.incluido
+                          ? 'blur-sm opacity-50 pointer-events-none'
+                          : selectedSubtopico && !topicos.find((t) => t.id === selectedTopico)?.subtopicos.find((s) => s.id === selectedSubtopico)?.incluido
+                          ? 'blur-sm opacity-50 pointer-events-none'
+                          : ''
+                      }`}
+                    >
+                      {selectedSubtopico && topicos
+                        .find((t) => t.id === selectedTopico)
+                        ?.subtopicos.find((s) => s.id === selectedSubtopico)
+                        ?.modulos.map((modulo) => {
+                          const temSubmodulos = (modulo as any).submodulos && (modulo as any).submodulos.length > 0
+                          return (
+                            <div
+                              key={modulo.id}
+                              className="p-4 rounded-xl border-2 border-white/30 dark:border-white/10 backdrop-blur-sm bg-white/20 dark:bg-white/5 transition-colors space-y-3"
+                            >
+                              <div className="flex items-start gap-3">
+                                <div className="flex-1 min-w-0">
+                                  <div className="font-semibold text-[15px] leading-relaxed break-words">{modulo.nome}</div>
+                                </div>
+                                <div className="flex items-center gap-2 flex-shrink-0 mt-0.5">
+                                  {temSubmodulos && (
+                                    <button
+                                      onClick={() => setModuloInfoAberto(moduloInfoAberto === modulo.id ? null : modulo.id)}
+                                      className="p-1.5 rounded-lg hover:bg-muted transition-colors"
+                                      title="Ver submódulos"
+                                    >
+                                      <Info className="w-4 h-4 text-muted-foreground" />
+                                    </button>
+                                  )}
+                                  <ToggleSwitch
+                                    checked={modulo.incluido}
+                                    onChange={() => {
+                                      if (selectedTopico && selectedSubtopico) {
+                                        toggleModulo(selectedTopico, selectedSubtopico, modulo.id)
+                                      }
+                                    }}
+                                    disabled={!topicos.find((t) => t.id === selectedTopico)?.incluido || !topicos.find((t) => t.id === selectedTopico)?.subtopicos.find((s) => s.id === selectedSubtopico)?.incluido}
+                                  />
+                                </div>
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs text-muted-foreground">{modulo.horasEstimadas}h</span>
+                                <select
+                                  value={modulo.dificuldadeUsuario || 'medio'}
+                                  onChange={(e) => {
+                                    if (selectedTopico && selectedSubtopico) {
+                                      setModuloDificuldade(selectedTopico, selectedSubtopico, modulo.id, e.target.value as UserDifficulty)
+                                    }
+                                  }}
+                                  className="text-xs px-2.5 py-1.5 rounded-lg border border-muted bg-background cursor-pointer"
+                                  disabled={!topicos.find((t) => t.id === selectedTopico)?.incluido || !topicos.find((t) => t.id === selectedTopico)?.subtopicos.find((s) => s.id === selectedSubtopico)?.incluido}
+                                >
+                                  <option value="facil">Fácil</option>
+                                  <option value="medio">Médio</option>
+                                  <option value="dificil">Difícil</option>
+                                </select>
+                              </div>
+                            </div>
+                          )
+                        })
+                      }
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* ===== DESKTOP: 3-Column Layout (lg+) ===== */}
+            <div className="hidden lg:grid lg:grid-cols-3 gap-5 w-full">
+              {/* Column 1: Tópicos */}
+              <div className="glass-page-card rounded-2xl flex flex-col overflow-hidden max-h-[65vh]">
+                <div className="p-5 pb-3 border-b border-white/10">
+                  <h3 className="text-lg font-bold">Tópicos</h3>
+                </div>
+                <div className="p-4 flex-1 overflow-y-auto space-y-2.5 overscroll-contain">
                   {topicos.map((topico) => (
                     <div
                       key={topico.id}
-                      className={`flex items-start gap-3 p-3 rounded-xl transition-all cursor-pointer soul-light ${
+                      className={`flex items-start gap-3 p-3.5 rounded-xl transition-all cursor-pointer soul-light ${
                         selectedTopico === topico.id
                           ? 'border-2 border-primary bg-primary/5 shadow-sm'
                           : 'border-2 border-white/30 dark:border-white/10 backdrop-blur-sm bg-white/20 dark:bg-white/5 hover:border-primary/50 hover:bg-white/30 dark:hover:bg-white/10'
                       }`}
                       onClick={() => setSelectedTopico(topico.id)}
                     >
-                      <ToggleSwitch
-                        checked={topico.incluido}
-                        onChange={() => toggleTopico(topico.id)}
-                      />
+                      <div className="flex-shrink-0 mt-0.5">
+                        <ToggleSwitch
+                          checked={topico.incluido}
+                          onChange={() => toggleTopico(topico.id)}
+                        />
+                      </div>
                       <div className="flex-1 text-left min-w-0">
-                        <div className={`font-semibold text-base leading-snug break-words ${
+                        <div className={`font-semibold text-[15px] leading-relaxed break-words ${
                           selectedTopico === topico.id ? 'text-primary' : ''
                         }`}>
                           {topico.nome}
                         </div>
-                        <div className="text-sm text-muted-foreground mt-2 whitespace-nowrap">
+                        <div className="text-xs text-muted-foreground mt-1.5">
                           {topico.subtopicos.length} subtópicos
                         </div>
                       </div>
@@ -843,12 +1117,12 @@ export default function CriarCronogramaPage() {
               </div>
 
               {/* Column 2: Subtópicos */}
-              <div className="glass-page-card rounded-2xl flex flex-col overflow-hidden">
-                <div className="p-6 pb-4">
-                  <h3 className="text-xl font-bold">Subtópicos</h3>
+              <div className="glass-page-card rounded-2xl flex flex-col overflow-hidden max-h-[65vh]">
+                <div className="p-5 pb-3 border-b border-white/10">
+                  <h3 className="text-lg font-bold">Subtópicos</h3>
                 </div>
                 <div
-                  className={`px-6 pb-6 flex-1 overflow-y-auto space-y-3 transition-all ${
+                  className={`p-4 flex-1 overflow-y-auto space-y-2.5 overscroll-contain transition-all ${
                     selectedTopico && !topicos.find((t) => t.id === selectedTopico)?.incluido
                       ? 'blur-sm opacity-50 pointer-events-none'
                       : ''
@@ -860,25 +1134,27 @@ export default function CriarCronogramaPage() {
                       ?.subtopicos.map((subtopico) => (
                         <div
                           key={subtopico.id}
-                          className={`flex items-start gap-3 p-3 rounded-xl transition-all cursor-pointer soul-light ${
+                          className={`flex items-start gap-3 p-3.5 rounded-xl transition-all cursor-pointer soul-light ${
                             selectedSubtopico === subtopico.id
                               ? 'border-2 border-primary bg-primary/5 shadow-sm'
                               : 'border-2 border-white/30 dark:border-white/10 backdrop-blur-sm bg-white/20 dark:bg-white/5 hover:border-primary/50 hover:bg-white/30 dark:hover:bg-white/10'
                           }`}
                           onClick={() => setSelectedSubtopico(subtopico.id)}
                         >
-                          <ToggleSwitch
-                            checked={subtopico.incluido}
-                            onChange={() => toggleSubtopico(selectedTopico, subtopico.id)}
-                            disabled={!!(selectedTopico && !topicos.find((t) => t.id === selectedTopico)?.incluido)}
-                          />
+                          <div className="flex-shrink-0 mt-0.5">
+                            <ToggleSwitch
+                              checked={subtopico.incluido}
+                              onChange={() => toggleSubtopico(selectedTopico, subtopico.id)}
+                              disabled={!topicos.find((t) => t.id === selectedTopico)?.incluido}
+                            />
+                          </div>
                           <div className="flex-1 text-left min-w-0">
-                            <div className={`font-semibold text-base leading-snug break-words ${
+                            <div className={`font-semibold text-[15px] leading-relaxed break-words ${
                               selectedSubtopico === subtopico.id ? 'text-primary' : ''
                             }`}>
                               {subtopico.nome}
                             </div>
-                            <div className="text-sm text-muted-foreground mt-2 whitespace-nowrap">
+                            <div className="text-xs text-muted-foreground mt-1.5">
                               {subtopico.modulos.length} módulos
                             </div>
                           </div>
@@ -893,10 +1169,10 @@ export default function CriarCronogramaPage() {
               </div>
 
               {/* Column 3: Módulos */}
-              <div className="glass-page-card rounded-2xl flex flex-col overflow-hidden">
-                <div className="p-6 pb-4">
+              <div className="glass-page-card rounded-2xl flex flex-col overflow-hidden max-h-[65vh]">
+                <div className="p-5 pb-3 border-b border-white/10">
                   <div className="flex items-center justify-between gap-2">
-                    <h3 className="text-xl font-bold">Módulos</h3>
+                    <h3 className="text-lg font-bold">Módulos</h3>
                     {selectedSubtopico && selectedTopico && topicos.find((t) => t.id === selectedTopico)?.incluido && (
                       <button
                         onClick={() => {
@@ -904,7 +1180,7 @@ export default function CriarCronogramaPage() {
                             toggleTodosModulosSubtopico(selectedTopico, selectedSubtopico)
                           }
                         }}
-                        className="text-xs px-2 py-1 rounded bg-primary/10 text-primary hover:bg-primary/20 transition-colors flex-shrink-0"
+                        className="text-xs px-2.5 py-1 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors flex-shrink-0 font-medium"
                       >
                         Marcar Tudo
                       </button>
@@ -912,7 +1188,7 @@ export default function CriarCronogramaPage() {
                   </div>
                 </div>
                 <div
-                  className={`px-6 pb-6 flex-1 overflow-y-auto space-y-3 transition-all ${
+                  className={`p-4 flex-1 overflow-y-auto space-y-2.5 overscroll-contain transition-all ${
                     selectedTopico && !topicos.find((t) => t.id === selectedTopico)?.incluido
                       ? 'blur-sm opacity-50 pointer-events-none'
                       : selectedSubtopico && !topicos.find((t) => t.id === selectedTopico)?.subtopicos.find((s) => s.id === selectedSubtopico)?.incluido
@@ -931,43 +1207,18 @@ export default function CriarCronogramaPage() {
                             key={modulo.id}
                             className="p-4 rounded-xl border-2 border-white/30 dark:border-white/10 backdrop-blur-sm bg-white/20 dark:bg-white/5 hover:bg-white/30 dark:hover:bg-white/10 transition-colors space-y-3"
                           >
-                            <div className="flex items-center justify-between gap-2">
-                              <div className="font-semibold text-base flex-1 leading-snug break-words">{modulo.nome}</div>
-                              <div className="flex items-center gap-1 flex-shrink-0">
+                            <div className="flex items-start gap-3">
+                              <div className="font-semibold text-[15px] flex-1 leading-relaxed break-words min-w-0">{modulo.nome}</div>
+                              <div className="flex items-center gap-1.5 flex-shrink-0 mt-0.5">
                                 {temSubmodulos && (
                                   <div className="relative">
                                     <button
                                       onClick={() => setModuloInfoAberto(moduloInfoAberto === modulo.id ? null : modulo.id)}
-                                      className="p-1 rounded hover:bg-muted transition-colors"
+                                      className="p-1.5 rounded-lg hover:bg-muted transition-colors"
                                       title="Ver submódulos"
                                     >
                                       <Info className="w-4 h-4 text-muted-foreground hover:text-primary" />
                                     </button>
-                                    {moduloInfoAberto === modulo.id && (
-                                      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-md">
-                                        <div className="auth-glass-card border-none shadow-2xl p-6 w-96 max-h-96 flex flex-col animate-in fade-in zoom-in-95 duration-200">
-                                          <div className="flex items-center justify-between mb-4">
-                                            <div className="font-semibold text-lg text-primary">Submódulos: {modulo.nome}</div>
-                                            <button
-                                              onClick={() => setModuloInfoAberto(null)}
-                                              className="p-1 hover:bg-muted rounded transition-colors"
-                                            >
-                                              ✕
-                                            </button>
-                                          </div>
-                                          <div className="space-y-2 overflow-y-auto flex-1">
-                                            {(modulo as any).submodulos.map((submodulo: any) => (
-                                              <div key={submodulo.id} className="text-sm p-3 rounded bg-muted/50 border border-muted/30 text-foreground hover:bg-muted transition-colors">
-                                                <div className="flex items-start gap-2">
-                                                  <span className="text-primary font-semibold mt-0.5">▸</span>
-                                                  <span>{submodulo.nome}</span>
-                                                </div>
-                                              </div>
-                                            ))}
-                                          </div>
-                                        </div>
-                                      </div>
-                                    )}
                                   </div>
                                 )}
                                 <ToggleSwitch
@@ -977,7 +1228,7 @@ export default function CriarCronogramaPage() {
                                       toggleModulo(selectedTopico, selectedSubtopico, modulo.id)
                                     }
                                   }}
-                                  disabled={!!(selectedTopico && !topicos.find((t) => t.id === selectedTopico)?.incluido) || !!(selectedSubtopico && !topicos.find((t) => t.id === selectedTopico)?.subtopicos.find((s) => s.id === selectedSubtopico)?.incluido)}
+                                  disabled={!topicos.find((t) => t.id === selectedTopico)?.incluido || !topicos.find((t) => t.id === selectedTopico)?.subtopicos.find((s) => s.id === selectedSubtopico)?.incluido}
                                 />
                               </div>
                             </div>
@@ -997,8 +1248,8 @@ export default function CriarCronogramaPage() {
                                     )
                                   }
                                 }}
-                                className="text-xs px-2 py-1 rounded border border-muted bg-background cursor-pointer"
-                                disabled={!!(selectedTopico && !topicos.find((t) => t.id === selectedTopico)?.incluido) || !!(selectedSubtopico && !topicos.find((t) => t.id === selectedTopico)?.subtopicos.find((s) => s.id === selectedSubtopico)?.incluido)}
+                                className="text-xs px-2.5 py-1.5 rounded-lg border border-muted bg-background cursor-pointer"
+                                disabled={!topicos.find((t) => t.id === selectedTopico)?.incluido || !topicos.find((t) => t.id === selectedTopico)?.subtopicos.find((s) => s.id === selectedSubtopico)?.incluido}
                               >
                                 <option value="facil">Fácil</option>
                                 <option value="medio">Médio</option>
@@ -1015,6 +1266,7 @@ export default function CriarCronogramaPage() {
                   )}
                 </div>
               </div>
+            </div>
             </div>
             )}
 
@@ -1105,6 +1357,42 @@ export default function CriarCronogramaPage() {
           </motion.div>
         )}
       </main>
+
+      {/* Submódulos Modal - rendered via portal to avoid overflow clipping */}
+      {moduloAberto && typeof document !== 'undefined' && createPortal(
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-md"
+          onClick={() => setModuloInfoAberto(null)}
+        >
+          <div
+            className="glass-page-card rounded-2xl shadow-2xl p-5 sm:p-6 w-full max-w-md max-h-[80vh] flex flex-col animate-in fade-in zoom-in-95 duration-200 border border-white/20 dark:border-white/10"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-3 mb-4">
+              <div className="font-semibold text-base sm:text-lg text-primary leading-relaxed break-words min-w-0 flex-1">
+                Submódulos: {moduloAberto.modulo.nome}
+              </div>
+              <button
+                onClick={() => setModuloInfoAberto(null)}
+                className="p-2 hover:bg-muted rounded-xl transition-colors flex-shrink-0"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="space-y-2 overflow-y-auto flex-1 overscroll-contain">
+              {moduloAberto.submodulos.map((submodulo) => (
+                <div key={submodulo.id} className="text-sm p-3.5 rounded-xl bg-muted/50 border border-muted/30 text-foreground">
+                  <div className="flex items-start gap-2.5">
+                    <span className="text-primary font-semibold mt-0.5 flex-shrink-0">▸</span>
+                    <span className="break-words leading-relaxed">{submodulo.nome}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   )
 }
