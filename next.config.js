@@ -26,9 +26,6 @@ const nextConfig = {
   // Compressão automática
   compress: true,
 
-  // Otimização de output para Vercel (standalone reduz cold starts)
-  output: 'standalone',
-
   // Habilitar otimização de pacotes pesados
   experimental: {
     optimizePackageImports: [
@@ -39,6 +36,14 @@ const nextConfig = {
       '@radix-ui/react-select',
       '@radix-ui/react-radio-group',
       '@radix-ui/react-progress',
+      'react-hook-form',
+      '@hookform/resolvers',
+      'zod',
+      'class-variance-authority',
+      'clsx',
+      'tailwind-merge',
+      'jose',
+      'stripe',
     ],
   },
 
@@ -128,8 +133,19 @@ const nextConfig = {
         crypto: false,
       }
     }
+
+    // Desabilitar cache de filesystem em produção (Vercel já faz cache)
+    // e otimizar resolução de módulos
+    config.resolve.symlinks = false
+
     return config
   },
+
+  // Desabilitar source maps em produção para build mais rápido
+  productionBrowserSourceMaps: false,
+
+  // Desabilitar powered by header (micro otimização)
+  poweredByHeader: false,
 }
 
 module.exports = nextConfig

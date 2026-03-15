@@ -1,0 +1,26 @@
+# Development files
+.claude/
+.git/
+.vscode/
+.env.local
+.env.example
+nul
+
+# Server-side only (not needed for Vercel deployment)
+server/
+scripts/
+
+# Documentation and data files in public (not used by the app)
+public/*.md
+public/*.MD
+
+# Dev config
+*.log
+.eslintrc*
+.prettierrc*
+tsconfig.tsbuildinfo
+
+# Tests
+__tests__/
+*.test.*
+*.spec.*
