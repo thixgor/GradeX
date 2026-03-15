@@ -8,7 +8,31 @@
       "Bash(npx shadcn@latest add:*)",
       "Bash(npm install:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(grep -E \"\\\\.\\(ts|tsx\\)$\")",
+      "Bash(find /e/GradeX -maxdepth 2 -type f -name *.ts -o -name *.tsx)",
+      "Bash(find /e/GradeX/app -type f \\\\\\(-name *exam* -o -name *prova* -o -name *question* -o -name *gerador* \\\\\\) \\\\\\(-name *.tsx -o -name *.ts \\\\\\))",
+      "Bash(find /e/GradeX -path \"*filters*\\\\|*Filter*\" -type f \\\\\\( -name \"*.tsx\" -o -name \"*.ts\" \\\\\\))",
+      "Bash(node -e \"const lucide = require\\(''lucide-react''\\); const names = Object.keys\\(lucide\\).filter\\(k => k[0] === k[0].toUpperCase\\(\\) && typeof lucide[k] !== ''function''\\).sort\\(\\); const matches = names.filter\\(n => /mix|merge|combine|split|grid|layout|shuffle|intersect/i.test\\(n\\)\\); console.log\\(matches.join\\(''\\\\n''\\)\\)\")",
+      "Bash(node -e \"const lucide = require\\(''lucide-react''\\); const names = Object.keys\\(lucide\\).filter\\(k => k[0] === k[0].toUpperCase\\(\\)\\).sort\\(\\); const matches = names.filter\\(n => /mix|merge|combine|split|shuffle|intersect|layers|grid/i.test\\(n\\)\\); console.log\\(matches.join\\(''\\\\n''\\)\\)\")",
+      "Bash(npx next:*)",
+      "Bash(find E:GradeX/app -type f -name *cronograma*)",
+      "Bash(xargs grep:*)",
+      "Bash(grep -n \"cronogramaModalTab\" app/exams/personal/[id]/generate-questions/page.tsx)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(git push:*)",
+      "Bash(find E:GradeX -maxdepth 2 -type d \\\\\\(-name context* -o -name provider* \\\\\\))",
+      "Bash(grep -n \"return \\(\" /e/GradeX/app/exam/[id]/page.tsx)",
+      "Bash(wc -l /e/GradeX/app/exam/[id]/page.tsx)",
+      "Bash(grep -n \"question.statement\\\\|question.alternatives\\\\|question.imageUrl\\\\|alternatives.map\\\\|imageUrl\" /e/GradeX/app/exam/[id]/page.tsx)",
+      "Bash(grep -n \"question.statement\\\\|question.alternatives\\\\|question.imageUrl\\\\|alternatives.map\\\\|imageUrl\" /e/GradeX/app/exam/[id]/user/[userId]/page.tsx)",
+      "Bash(grep -n \"question.statement\\\\|question.alternatives\\\\|question.imageUrl\\\\|generatedQuestions\\\\|questions.map\\\\|alternatives\" /e/GradeX/app/exams/personal/[id]/generate-questions/page.tsx)",
+      "Bash(grep -n \"return \\(\" /e/GradeX/app/exams/personal/[id]/generate-questions/page.tsx)",
+      "Bash(grep -n \"currentStep === ''review''\" /e/GradeX/app/exams/personal/[id]/generate-questions/page.tsx)",
+      "Bash(grep -n \"generatedQuestions.map\\\\|question\\\\.\" /e/GradeX/app/exams/personal/[id]/generate-questions/page.tsx)",
+      "Bash(wc -l /e/GradeX/app/exams/personal/[id]/generate-questions/page.tsx)",
+      "Bash(grep -n \"currentStep === \" /e/GradeX/app/exams/personal/[id]/generate-questions/page.tsx)",
+      "Bash(git diff:*)"
     ]
   }
 }

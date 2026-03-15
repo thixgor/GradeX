@@ -207,15 +207,30 @@ function GlassSlider({
 interface Question {
   id: string
   number: number
+  type?: 'multiple-choice' | 'discursive' | 'essay'
   statement: string
+  statementSource?: string
   command: string
+  imageUrl?: string
+  imageSource?: string
   alternatives: Array<{
     id: string
     letter: string
     text: string
     isCorrect: boolean
   }>
+  alternativeImages?: Record<string, string>
   explanation: string
+  commentedFeedback?: {
+    correctAlternative: string
+    explanations: Record<string, string>
+  }
+  origin?: 'banco' | 'ia'
+  sourceInfo?: string
+  ano?: number
+  dificuldade?: string
+  keyPoints?: Array<{ id: string; description: string; weight: number }>
+  maxScore?: number
 }
 
 interface Exam {

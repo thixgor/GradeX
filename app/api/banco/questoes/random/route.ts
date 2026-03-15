@@ -39,11 +39,6 @@ export async function GET(request: NextRequest) {
       if (anos.length > 0) matchStage.ano = { $in: anos }
     }
 
-    // Only fetch objetiva questions (they have alternatives) unless explicitly filtered
-    if (!tipo) {
-      matchStage.tipo = 'objetiva'
-    }
-
     const pipeline: any[] = [
       { $match: matchStage },
       { $sample: { size: limit } },
@@ -92,24 +87,73 @@ export async function GET(request: NextRequest) {
       .toArray()
 
     // Transform to exam Question format
-    const questions = rawQuestions.map((q, index) => ({
-      id: q._id.toString(),
-      number: index + 1,
-      statement: q.enunciado,
-      command: '',
-      alternatives: (q.alternativas || []).map((alt: any) => ({
-        id: `${q._id}-${alt.letra}`,
-        letter: alt.letra,
-        text: alt.texto,
-        isCorrect: alt.correta,
-      })),
-      explanation: q.explicacao || '',
-      origin: 'banco',
-      sourceInfo: [q.periodoNome, q.moduloNome, q.topicoNome].filter(Boolean).join(' > '),
-      ano: q.ano,
-      dificuldade: q.dificuldade,
-      imagemUrl: q.imagemUrl,
-    }))
+    const questions = rawQuestions.map((q, index) => {
+      const isObjetiva = q.tipo === 'objetiva'
+      const questionType = isObjetiva ? 'multiple-choice' : 'discursive'
+
+      // Build alternatives for objetiva
+      const alternatives = isObjetiva
+        ? (q.alternativas || []).map((alt: any) => ({
+            id: `${q._id}-${alt.letra}`,
+            letter: alt.letra,
+            text: alt.texto,
+            isCorrect: alt.correta === true,
+          }))
+        : []
+
+      // Build commentedFeedback from alternatives for objetiva
+      let commentedFeedback = undefined
+      if (isObjetiva && alternatives.length > 0) {
+        const correctAlt = alternatives.find((a: any) => a.isCorrect)
+        if (correctAlt) {
+          const explanations: Record<string, string> = {}
+          for (const alt of (q.alternativas || [])) {
+            if (alt.correta) {
+              explanations[alt.letra] = alt.explicacao || alt.texto || 'Alternativa correta.'
+            } else {
+              explanations[alt.letra] = alt.explicacao || 'Alternativa incorreta.'
+            }
+          }
+          commentedFeedback = {
+            correctAlternative: correctAlt.letter,
+            explanations,
+          }
+        }
+      }
+
+      // Build alternative images map
+      const alternativeImages = (q.imagensAlternativas || []).reduce((acc: any, img: any) => {
+        acc[img.letra] = img.url
+        return acc
+      }, {})
+
+      // Source info from hierarchy
+      const sourceInfo = [q.periodoNome, q.moduloNome, q.topicoNome].filter(Boolean).join(' > ')
+
+      return {
+        id: q._id.toString(),
+        number: index + 1,
+        type: questionType,
+        statement: q.enunciado || '',
+        statementSource: q.fonte || (sourceInfo ? `Banco de Questões — ${sourceInfo}` : 'Banco de Questões'),
+        command: isObjetiva ? '' : (q.comando || ''),
+        imageUrl: q.imagemUrl || undefined,
+        imageSource: q.fonteImagem || undefined,
+        alternatives,
+        alternativeImages: Object.keys(alternativeImages).length > 0 ? alternativeImages : undefined,
+        explanation: q.explicacao || (isObjetiva ? '' : (q.respostaModelo || '')),
+        commentedFeedback,
+        origin: 'banco',
+        sourceInfo,
+        ano: q.ano,
+        dificuldade: q.dificuldade,
+        // Discursive-specific fields
+        ...(questionType === 'discursive' ? {
+          keyPoints: q.pontosChave || undefined,
+          maxScore: q.notaMaxima || 10,
+        } : {}),
+      }
+    })
 
     return NextResponse.json({ questions })
   } catch (error) {
