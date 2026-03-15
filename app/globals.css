@@ -1071,3 +1071,44 @@
     0 6px 16px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
+
+/* ==========================================
+   LITE MODE — Performance optimizations
+   ========================================== */
+
+/* Remove todas as animações e transições */
+.lite-mode *,
+.lite-mode *::before,
+.lite-mode *::after {
+  animation-duration: 0ms !important;
+  animation-delay: 0ms !important;
+  transition-duration: 0ms !important;
+  transition-delay: 0ms !important;
+}
+
+/* Remove efeitos visuais pesados */
+.lite-mode * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+/* Remove gradientes de background */
+.lite-mode [style*="background-image"],
+.lite-mode [class*="gradient"] {
+  background-image: none !important;
+}
+
+/* Simplifica tipografia */
+.lite-mode * {
+  font-family: system-ui, sans-serif !important;
+  letter-spacing: normal !important;
+  word-spacing: normal !important;
+}
+
+/* Remove border-radius excessivo */
+.lite-mode * {
+  border-radius: 4px !important;
+}

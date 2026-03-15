@@ -797,11 +797,14 @@ function BancoQuestoesContent() {
           {!(userRole !== 'admin' && accountType !== 'premium' && accountType !== 'trial' && selectedPeriodo) && (
             <div className="glass-page-card rounded-2xl overflow-hidden">
               {/* Filter Header — always visible, clickable to toggle */}
-              <button
-                onClick={() => setFiltersOpen(prev => !prev)}
-                className="w-full flex items-center justify-between p-4 sm:p-5 cursor-pointer hover:bg-white/5 transition-colors duration-200"
-              >
-                <div className="flex items-center gap-3">
+              <div className="w-full flex items-center justify-between p-4 sm:p-5">
+                <div
+                  className="flex items-center gap-3 flex-1 cursor-pointer hover:opacity-80 transition-opacity duration-200"
+                  onClick={() => setFiltersOpen(prev => !prev)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setFiltersOpen(prev => !prev) } }}
+                >
                   <div className="p-2 rounded-xl bg-[#468152]/10 dark:bg-[#468152]/20">
                     <SlidersHorizontal className="h-4 w-4 text-[#468152]" />
                   </div>
@@ -822,19 +825,21 @@ function BancoQuestoesContent() {
                     variant="outline"
                     size="sm"
                     className="text-xs rounded-xl hidden sm:flex"
-                    onClick={(e) => { e.stopPropagation(); setShowRandomListModal(true) }}
+                    onClick={() => setShowRandomListModal(true)}
                   >
                     <Shuffle className="h-3 w-3 mr-1" />
                     Lista Aleatória
                   </Button>
                   <motion.div
+                    className="cursor-pointer p-1"
                     animate={{ rotate: filtersOpen ? 180 : 0 }}
                     transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                    onClick={() => setFiltersOpen(prev => !prev)}
                   >
                     <ChevronDown className="h-4 w-4 text-muted-foreground" />
                   </motion.div>
                 </div>
-              </button>
+              </div>
 
               {/* Active filter pills — shown when collapsed */}
               <AnimatePresence>

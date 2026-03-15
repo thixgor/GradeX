@@ -17,6 +17,7 @@ import { Label } from '@/components/ui/label'
 import { AccountType } from '@/lib/types'
 import { ActivationSuccessDialog } from '@/components/activation-success-dialog'
 import { cn } from '@/lib/utils'
+import { useLiteMode } from '@/hooks/use-lite-mode'
 
 interface UserSubmission {
   _id: string
@@ -85,6 +86,7 @@ export default function ProfilePage() {
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false)
   const [cancelling, setCancelling] = useState(false)
   const [expandedSubmission, setExpandedSubmission] = useState<string | null>(null)
+  const { liteMode, toggleLiteMode } = useLiteMode()
 
   useEffect(() => {
     loadSubmissions()
@@ -557,7 +559,37 @@ export default function ProfilePage() {
           )}
         </section>
 
-        {/* ====== SECTION 7: Account Actions ====== */}
+        {/* ====== SECTION 7: Preferences ====== */}
+        <section className="mb-10">
+          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Preferencias</h2>
+          <div className="p-4 rounded-xl bg-muted/30 border border-border/50">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium">Lite Mode</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Melhora o desempenho em dispositivos mais lentos</p>
+              </div>
+              <button
+                onClick={toggleLiteMode}
+                className={cn(
+                  'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                  liteMode ? 'bg-green-600' : 'bg-muted-foreground/30'
+                )}
+                role="switch"
+                aria-checked={liteMode}
+                aria-label="Ativar Lite Mode"
+              >
+                <span
+                  className={cn(
+                    'pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-lg ring-0 transition-transform duration-200 ease-in-out',
+                    liteMode ? 'translate-x-5' : 'translate-x-0'
+                  )}
+                />
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* ====== SECTION 8: Account Actions ====== */}
         <section className="mb-10">
           <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Conta</h2>
           <div className="flex flex-wrap gap-2">

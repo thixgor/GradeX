@@ -9,6 +9,7 @@ import { VerifyEmailBanner } from '@/components/verify-email-banner'
 import { StudyMusicPlayer } from '@/components/study-music-player'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import { LiteModeProvider } from '@/context/LiteModeContext'
 
 const inter = Inter({ subsets: ['latin'] })
 const rowdies = Rowdies({
@@ -61,7 +62,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR" suppressHydrationWarning className={`${rowdies.variable} ${spaceGrotesk.variable}`}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem('lite-mode')==='true'){document.documentElement.classList.add('lite-mode')}}catch(e){}`,
+          }}
+        />
+      </head>
       <body className={`${spaceGrotesk.className} gradient-overlay gradient-overlay-dark flex flex-col min-h-screen`}>
+        <LiteModeProvider>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -80,6 +89,7 @@ export default function RootLayout({
           <Analytics />
           <SpeedInsights />
         </ThemeProvider>
+        </LiteModeProvider>
       </body>
     </html>
   )
