@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -391,8 +391,8 @@ export default function CriarCronogramaPage() {
   const totalHoras = Object.values(tempoEstudo).reduce((a, b) => a + b, 0)
 
   // Find the currently open module for the submódulos modal
-  const moduloAberto = useMemo(() => {
-    if (!moduloInfoAberto || !selectedTopico) return null
+  const moduloAberto = (() => {
+    if (!moduloInfoAberto) return null
     for (const topico of topicos) {
       for (const subtopico of topico.subtopicos) {
         const modulo = subtopico.modulos.find(m => m.id === moduloInfoAberto)
@@ -402,7 +402,7 @@ export default function CriarCronogramaPage() {
       }
     }
     return null
-  }, [moduloInfoAberto, topicos, selectedTopico])
+  })()
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30 relative overflow-hidden">
