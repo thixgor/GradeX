@@ -337,10 +337,10 @@ function DashboardContent() {
                   {firstName}, seja o foco.
                 </h1>
                 <p className="text-white/60 max-w-lg text-sm sm:text-base leading-relaxed">
-                  Continue sua jornada de estudos. Cada questao resolvida te aproxima do seu objetivo.
+                  Cronogramas, flashcards e provas com ementas completas de Medicina, Psicologia, Biomedicina e Odontologia AFYA.
                 </p>
 
-                {/* Academic Focus Badge */}
+                {/* Academic Focus Badges */}
                 <div className="flex flex-wrap items-center gap-2 pt-1">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-medium border border-white/10">
                     <GraduationCap className="h-3.5 w-3.5" />
@@ -348,7 +348,15 @@ function DashboardContent() {
                   </span>
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-medium border border-white/10">
                     <BookOpen className="h-3.5 w-3.5" />
-                    SOI e HAM
+                    Psicologia AFYA
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-medium border border-white/10">
+                    <BookOpen className="h-3.5 w-3.5" />
+                    Biomedicina AFYA
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-medium border border-white/10">
+                    <BookOpen className="h-3.5 w-3.5" />
+                    Odontologia AFYA
                   </span>
                 </div>
               </div>

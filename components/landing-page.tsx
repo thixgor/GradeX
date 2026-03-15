@@ -50,7 +50,7 @@ export default function LandingPage() {
     },
     {
       question: "E os Flashcards? Como que eles funcionam pra fixar o conhecimento?",
-      answer: "Os flashcards aqui são nível elite. Cada um é criado com base na Taxonomia de Bloom – aquela pirâmide que vai do básico (lembrar, entender) até o top (analisar, avaliar, criar) e com a dificuldade que você quer em %. Então, não é só memorização burra: a gente mira em objetivos que te fazem pensar de verdade.\n\nDepois de cada card, rola uma revisão pós-card imediata: outro flashcard criado a partir de suas dificuldades pra você fixar imensamente o conteúdo.\n\nE o cronograma? Tudo atrelado à Matriz AFYA, com aprofundamento máximo. Pra SOI (Sistemas Orgânicos e Integrados) vai de SOI I a SOI V, cobrindo desde os fundamentos até casos avançados. Pra HAM (Habilidades e Atitudes Médicas), de HAM I a HAM V, com foco em estações práticas, OSCE e POV pra te preparar pro caos real. A plataforma sincroniza tudo: flashcards estão atrelados ao cronograma das ementas, revisões espaçadas pra fixar no longo prazo, e integração com o banco de questões. É estudo inteligente, não só repetição."
+      answer: "Os flashcards aqui são nível elite. Cada um é criado com base na Taxonomia de Bloom – aquela pirâmide que vai do básico (lembrar, entender) até o top (analisar, avaliar, criar) e com a dificuldade que você quer em %. Então, não é só memorização burra: a gente mira em objetivos que te fazem pensar de verdade.\n\nDepois de cada card, rola uma revisão pós-card imediata: outro flashcard criado a partir de suas dificuldades pra você fixar imensamente o conteúdo.\n\nE o cronograma? Tudo atrelado às ementas AFYA de 4 cursos, com aprofundamento máximo:\n• Medicina AFYA – SOI I a V e HAM I a V (1° ao 5° período)\n• Psicologia AFYA – 1° ao 10° período\n• Biomedicina AFYA – 1° ao 7° período\n• Odontologia AFYA – 1° ao 10° período\n\nA plataforma sincroniza tudo: flashcards estão atrelados ao cronograma das ementas de cada curso, revisões espaçadas pra fixar no longo prazo, e integração com o banco de questões. É estudo inteligente, não só repetição."
     },
     {
       question: "Como rola a assinatura? Tem promoção, desconto, essas coisas?",
@@ -58,15 +58,15 @@ export default function LandingPage() {
     },
     {
       question: "Como são os cronogramas? Dá pra personalizar tudo?",
-      answer: "Os cronogramas são o coração da plataforma – todos 100% atrelados à Matriz AFYA, pra você não perder tempo com coisa aleatória. São extremamente personalizados: você ajusta por hora do dia da semana (tipo, quantas horas você tem pra estudar por dia da semana), dificuldade por conteúdo (começa fácil e vai pro hard mode), e cobre todos os módulos, submódulos, tópicos e subtópicos da ementa dos cursos SOI e HAM.\n\nPra SOI: de I a V, mergulhando em semiologia integrada, diagnósticos, tratamentos – tudo aprofundado com aulas, flashcards e questões ligadas.\n\nPra HAM: I a V, com ênfase em habilidades práticas, estações clínicas, comunicação e decisões éticas.\n\nA gente usa IA pra adaptar ao seu ritmo: se você tá voando em um tópico, avança; se empaca, reforça com mais prática. É como um coach pessoal que sabe exatamente o que a Matriz AFYA cobra. Bora planejar sua vitória diária."
+      answer: "Os cronogramas são o coração da plataforma – 100% atrelados às ementas AFYA de 4 cursos, pra você não perder tempo com coisa aleatória. São extremamente personalizados: você ajusta por hora do dia da semana, dificuldade por conteúdo, e cobre todos os módulos, submódulos, tópicos e subtópicos.\n\nCursos disponíveis:\n• Medicina AFYA – SOI I a V e HAM I a V (1° ao 5° período)\n• Psicologia AFYA – 1° ao 10° período, com todas as disciplinas e eixos temáticos\n• Biomedicina AFYA – 1° ao 7° período, cobrindo do básico ao avançado\n• Odontologia AFYA – 1° ao 10° período, com toda a grade clínica e pré-clínica\n• Além de modelos ENEM e UERJ\n\nA gente usa IA pra adaptar ao seu ritmo: se você tá voando em um tópico, avança; se empaca, reforça com mais prática. É como um coach pessoal que sabe exatamente o que cada ementa cobra. Bora planejar sua vitória diária."
     },
     {
       question: "O que são as provas gerais que a equipe solta?",
-      answer: "As provas gerais são aquelas que a nossa equipe monta e libera pra galera toda – tipo um simulado coletivo pra todo mundo se testar no mesmo nível. Elas são baseadas na Matriz AFYA, com questões reais e autorais idênticas, cobrindo módulos de SOI e HAM. Tem até ranking!\n\nRola periodicamente, tipo semanal ou mensal, pra você medir seu progresso contra o padrão das avaliações. Depois, análise completa: acertos, erros, tempo gasto, e dicas da equipe pra melhorar. É motivação em grupo – vê como você tá no ranking e ajusta o jogo."
+      answer: "As provas gerais são aquelas que a nossa equipe monta e libera pra galera toda – tipo um simulado coletivo pra todo mundo se testar no mesmo nível. Elas são baseadas nas ementas AFYA (Medicina, Psicologia, Biomedicina e Odontologia), com questões reais e autorais idênticas. Tem até ranking!\n\nRola periodicamente, tipo semanal ou mensal, pra você medir seu progresso contra o padrão das avaliações. Depois, análise completa: acertos, erros, tempo gasto, e dicas da equipe pra melhorar. É motivação em grupo – vê como você tá no ranking e ajusta o jogo."
     },
     {
       question: "E as provas individuais? Como rola com IA personalizada?",
-      answer: "As provas individuais são o auge da customização: você monta do zero com a IA, num contexto completamente personalizado. Escolhe módulos (SOI I-V, HAM I-V), submódulos, tópicos específicos, dificuldade, número de questões, tempo limite – tudo atrelado à Matriz AFYA.\n\nA IA gera questões novas, idênticas as da Matriz AFYA, adaptadas ao seu histórico: se você erra muito em um subtópico, foca ali. Depois da prova, relatório insano: análise por Bloom (onde você tá fraco em aplicação vs. análise), sugestões de revisão, e integração com flashcards e cronograma. É treino sob medida, pra você simular as avaliações no seu ritmo e estilo."
+      answer: "As provas individuais são o auge da customização: você monta do zero com a IA, num contexto completamente personalizado. Escolhe o curso (Medicina, Psicologia, Biomedicina ou Odontologia AFYA), o período, módulos, submódulos, tópicos específicos, dificuldade, número de questões, tempo limite – tudo atrelado à ementa do seu curso.\n\nA IA gera questões novas, adaptadas ao seu histórico: se você erra muito em um subtópico, foca ali. Depois da prova, relatório insano: análise por Bloom (onde você tá fraco em aplicação vs. análise), sugestões de revisão, e integração com flashcards e cronograma. É treino sob medida, pra você simular as avaliações no seu ritmo e estilo."
     },
     {
       question: "A plataforma vai ficar parada no tempo ou vai rolar atualização constante?",
@@ -260,14 +260,35 @@ export default function LandingPage() {
             </h1>
           </div>
 
-          {/* AFYA Focus Badge */}
+          {/* AFYA Focus Badges */}
           <div className="animate-slide-up delay-150">
-            <div className="inline-flex items-center gap-3 bg-gradient-to-r from-[#468152]/20 to-[#E2A43E]/20 border border-[#468152]/40 rounded-full px-6 py-3 backdrop-blur-sm">
-              <div className="flex items-center gap-2">
-                <span className="text-2xl">🩺</span>
+            <div className="flex flex-wrap justify-center gap-3">
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#468152]/20 to-[#E2A43E]/20 border border-[#468152]/40 rounded-full px-4 py-2 backdrop-blur-sm">
+                <span className="text-lg">🩺</span>
                 <div className="text-left">
-                  <p className="text-sm font-bold text-foreground">Foco em Medicina AFYA</p>
-                  <p className="text-xs text-muted-foreground">SOI e HAM • 1° ao 5° Período</p>
+                  <p className="text-xs font-bold text-foreground">Medicina AFYA</p>
+                  <p className="text-[10px] text-muted-foreground">SOI e HAM • 1° ao 5° Período</p>
+                </div>
+              </div>
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#468152]/20 to-[#E2A43E]/20 border border-[#468152]/40 rounded-full px-4 py-2 backdrop-blur-sm">
+                <span className="text-lg">🧠</span>
+                <div className="text-left">
+                  <p className="text-xs font-bold text-foreground">Psicologia AFYA</p>
+                  <p className="text-[10px] text-muted-foreground">1° ao 10° Período</p>
+                </div>
+              </div>
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#468152]/20 to-[#E2A43E]/20 border border-[#468152]/40 rounded-full px-4 py-2 backdrop-blur-sm">
+                <span className="text-lg">🔬</span>
+                <div className="text-left">
+                  <p className="text-xs font-bold text-foreground">Biomedicina AFYA</p>
+                  <p className="text-[10px] text-muted-foreground">1° ao 7° Período</p>
+                </div>
+              </div>
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#468152]/20 to-[#E2A43E]/20 border border-[#468152]/40 rounded-full px-4 py-2 backdrop-blur-sm">
+                <span className="text-lg">🦷</span>
+                <div className="text-left">
+                  <p className="text-xs font-bold text-foreground">Odontologia AFYA</p>
+                  <p className="text-[10px] text-muted-foreground">1° ao 10° Período</p>
                 </div>
               </div>
             </div>
@@ -327,7 +348,7 @@ export default function LandingPage() {
               </div>
               <h3 className="font-heading text-2xl font-bold mb-3">Flashcards Inteligentes</h3>
               <p className="text-muted-foreground mb-4">
-                Sistema de repetição espaçada com IA que aprende seu ritmo. Domine qualquer conteúdo com a metodologia mais eficaz de memorização.
+                Sistema de repetição espaçada com IA que aprende seu ritmo. Flashcards atrelados às ementas de Medicina, Psicologia, Biomedicina e Odontologia AFYA.
               </p>
               <div className="text-sm text-[#468152] font-semibold">✨ Metodologia comprovada</div>
             </div>
@@ -340,7 +361,7 @@ export default function LandingPage() {
               </div>
               <h3 className="font-heading text-2xl font-bold mb-3">Cronogramas Personalizados</h3>
               <p className="text-muted-foreground mb-4">
-                Planeje seus estudos de forma inteligente. Nosso algoritmo cria cronogramas adaptados ao seu ritmo e objetivos.
+                Cronogramas com ementas completas de Medicina, Psicologia, Biomedicina e Odontologia AFYA, além de ENEM e UERJ. Adaptados ao seu ritmo.
               </p>
               <div className="text-sm text-[#E2A43E] font-semibold">⚡ Otimizado para resultados</div>
             </div>
@@ -366,7 +387,7 @@ export default function LandingPage() {
               </div>
               <h3 className="font-heading text-2xl font-bold mb-3">Provas com IA</h3>
               <p className="text-muted-foreground">
-                Incrivelmente diversificadas, de acordo com o que você quer. Contextos personalizáveis para cada necessidade.
+                Provas personalizadas com IA para Medicina, Psicologia, Biomedicina e Odontologia AFYA. Contextos adaptados a cada curso.
               </p>
             </div>
 
