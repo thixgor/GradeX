@@ -1,6 +1,7 @@
 export type UserDifficulty = 'facil' | 'medio' | 'dificil'
-export type ModelType = 'enem' | 'uerj' | 'medicina-afya' | 'personalizado'
+export type ModelType = 'enem' | 'uerj' | 'medicina-afya' | 'psicologia-afya' | 'personalizado'
 export type MedicinaAFYAPeriodo = 1 | 2 | 3 | 4 | 5
+export type PsicologiaAFYAPeriodo = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
 
 // Importar função para ENEM
 import { getENEMTopicos } from './enem-topicos-helper'
@@ -343,6 +344,13 @@ export const TEMPLATES: Record<ModelType, CronogramaTemplate> = {
     nome: 'Medicina AFYA',
     modelo: 'medicina-afya',
     descricao: 'Prepare-se para medicina com cronograma AFYA (SOI I-V + HAM I-V)',
+    topicos: []
+  },
+  'psicologia-afya': {
+    id: 'psicologia-afya',
+    nome: 'Psicologia AFYA',
+    modelo: 'psicologia-afya',
+    descricao: 'Prepare-se para psicologia com cronograma AFYA (1º ao 10º período)',
     topicos: []
   },
   'personalizado': {

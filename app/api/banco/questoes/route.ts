@@ -186,6 +186,10 @@ export async function GET(request: NextRequest) {
       busca: searchParams.get('busca') || undefined
     }
 
+    // Parse anos param
+    const anosParam = searchParams.get('anos')
+    const anos = anosParam ? anosParam.split(',').map(Number).filter(n => !isNaN(n)) : undefined
+
     // Paginação
     const page = parseInt(searchParams.get('page') || '1')
     const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 50)
@@ -214,6 +218,9 @@ export async function GET(request: NextRequest) {
     }
     if (filtros.busca) {
       matchStage.enunciado = { $regex: filtros.busca, $options: 'i' }
+    }
+    if (anos && anos.length > 0) {
+      matchStage.ano = { $in: anos }
     }
 
     const pipeline: any[] = [

@@ -105,6 +105,7 @@ function BancoQuestoesContent() {
   const [modulos, setModulos] = useState<BancoModuloComContagem[]>([])
   const [topicos, setTopicos] = useState<BancoTopicoComContagem[]>([])
   const [subtopicos, setSubtopicos] = useState<BancoSubtopicoComContagem[]>([])
+  const [anosDisponiveis, setAnosDisponiveis] = useState<number[]>([])
 
   // Filtros
   const [filtros, setFiltros] = useState<BancoQuestoesFiltros>({})
@@ -234,14 +235,20 @@ function BancoQuestoesContent() {
         accountType !== 'admin'
 
       // Parallelize all independent API calls
-      const [periodosRes, ...extraResults] = await Promise.all([
+      const [periodosRes, anosRes, ...extraResults] = await Promise.all([
         fetch('/api/banco/periodos'),
+        fetch('/api/banco/anos'),
         // Only fetch stats + listas for premium/admin users
         ...(!isFreeUser ? [
           fetch('/api/banco/estatisticas'),
           fetch('/api/banco/listas'),
         ] : []),
       ])
+
+      if (anosRes.ok) {
+        const anosData = await anosRes.json()
+        setAnosDisponiveis(anosData.anos || [])
+      }
 
       if (periodosRes.status === 403) {
         const data = await periodosRes.json()
@@ -449,6 +456,7 @@ function BancoQuestoesContent() {
       if (filtros.tipo) params.set('tipo', filtros.tipo)
       if (filtros.dificuldade) params.set('dificuldade', filtros.dificuldade)
       if (filtros.apenasNaoResolvidas) params.set('apenasNaoResolvidas', 'true')
+      if (filtros.anos && filtros.anos.length > 0) params.set('anos', filtros.anos.join(','))
       if (busca) params.set('busca', busca)
 
       const res = await fetch(`/api/banco/questoes?${params.toString()}`)
@@ -724,7 +732,8 @@ function BancoQuestoesContent() {
   // Count active filters for badge
   const activeFilterCount = [
     filtros.periodoId, filtros.moduloId, filtros.topicoId, filtros.subtopicoId,
-    filtros.tipo, filtros.dificuldade, filtros.apenasNaoResolvidas, busca
+    filtros.tipo, filtros.dificuldade, filtros.apenasNaoResolvidas, busca,
+    filtros.anos?.length
   ].filter(Boolean).length;
 
   return (
@@ -865,6 +874,12 @@ function BancoQuestoesContent() {
                           <X className="h-2.5 w-2.5 cursor-pointer hover:text-red-500" onClick={() => setFiltros(prev => ({ ...prev, dificuldade: undefined }))} />
                         </span>
                       )}
+                      {filtros.anos && filtros.anos.length > 0 && (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-medium bg-orange-500/10 text-orange-600 dark:text-orange-400 px-2 py-1 rounded-full">
+                          {filtros.anos.length === 1 ? filtros.anos[0] : `${filtros.anos.length} anos`}
+                          <X className="h-2.5 w-2.5 cursor-pointer hover:text-red-500" onClick={() => setFiltros(prev => ({ ...prev, anos: undefined }))} />
+                        </span>
+                      )}
                       {busca && (
                         <span className="inline-flex items-center gap-1 text-[10px] font-medium bg-muted text-muted-foreground px-2 py-1 rounded-full">
                           &quot;{busca}&quot;
@@ -985,8 +1000,8 @@ function BancoQuestoesContent() {
                         </div>
                       </div>
 
-                      {/* Row 2: Type + Difficulty + Search */}
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      {/* Row 2: Type + Difficulty + Ano + Search */}
+                      <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
                         <div className="space-y-1.5">
                           <Label className="text-xs font-medium text-muted-foreground">Tipo</Label>
                           <Select
@@ -1026,6 +1041,47 @@ function BancoQuestoesContent() {
                               <SelectItem value="dificil"><span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-red-500" />Difícil</span></SelectItem>
                             </SelectContent>
                           </Select>
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <Label className="text-xs font-medium text-muted-foreground">Ano</Label>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className="w-full h-10 rounded-xl bg-background/50 border-white/10 dark:border-white/5 justify-between text-sm font-normal"
+                              >
+                                {filtros.anos && filtros.anos.length > 0
+                                  ? `${filtros.anos.length} ano(s)`
+                                  : 'Todos'}
+                                <ChevronDown className="h-3.5 w-3.5 ml-2 opacity-50" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="start" className="w-48 max-h-60 overflow-auto">
+                              {anosDisponiveis.map((ano) => (
+                                <DropdownMenuItem
+                                  key={ano}
+                                  className="flex items-center gap-2 cursor-pointer"
+                                  onSelect={(e) => {
+                                    e.preventDefault()
+                                    setFiltros(prev => {
+                                      const current = prev.anos || []
+                                      const updated = current.includes(ano)
+                                        ? current.filter(a => a !== ano)
+                                        : [...current, ano]
+                                      return { ...prev, anos: updated.length > 0 ? updated : undefined }
+                                    })
+                                  }}
+                                >
+                                  <Checkbox
+                                    checked={filtros.anos?.includes(ano) || false}
+                                    className="pointer-events-none"
+                                  />
+                                  <span>{ano}</span>
+                                </DropdownMenuItem>
+                              ))}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
 
                         <div className="space-y-1.5">

@@ -17,7 +17,9 @@ import {
   MessageSquare,
   CheckCircle2,
   Crown,
-  Info
+  Info,
+  Database,
+  Combine,
 } from 'lucide-react'
 import { PageLoading } from '@/components/page-loading'
 
@@ -39,6 +41,9 @@ export default function CreatePersonalExamPage() {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [creating, setCreating] = useState(false)
+
+  // Mode state
+  const [examMode, setExamMode] = useState<'ai' | 'banco' | 'misto'>('ai')
 
   // Form state
   const [title, setTitle] = useState('')
@@ -127,6 +132,7 @@ export default function CreatePersonalExamPage() {
         isPracticeExam: true,
         isPersonalExam: true,
         feedbackMode,
+        examMode,
       }
 
       sessionStorage.setItem('pendingExamData', JSON.stringify(examData))
@@ -179,7 +185,7 @@ export default function CreatePersonalExamPage() {
           </div>
           <h1 className="text-3xl font-bold mb-2">Criar Prova Pessoal</h1>
           <p className="text-muted-foreground max-w-md mx-auto">
-            Configure sua prova personalizada com questões geradas por IA
+            Configure sua prova personalizada
           </p>
         </div>
 
@@ -225,6 +231,72 @@ export default function CreatePersonalExamPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Mode Selection */}
+        <div className="mb-8">
+          <Label className="text-sm font-medium mb-3 block">Modo de Criacao</Label>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {([
+              {
+                value: 'ai' as const,
+                label: 'Apenas IA',
+                description: 'Questoes geradas por inteligencia artificial',
+                icon: Sparkles,
+                gradient: 'from-violet-500 to-purple-600',
+                glowColor: 'shadow-violet-500/20',
+                borderActive: 'border-violet-500',
+                bgActive: 'bg-violet-500/5',
+              },
+              {
+                value: 'banco' as const,
+                label: 'Banco de Questoes',
+                description: 'Questoes do banco com filtros avancados',
+                icon: Database,
+                gradient: 'from-emerald-500 to-green-600',
+                glowColor: 'shadow-emerald-500/20',
+                borderActive: 'border-emerald-500',
+                bgActive: 'bg-emerald-500/5',
+              },
+              {
+                value: 'misto' as const,
+                label: 'Misto (IA + Banco)',
+                description: 'Combine questoes de IA e do banco',
+                icon: Combine,
+                gradient: 'from-amber-500 to-orange-600',
+                glowColor: 'shadow-amber-500/20',
+                borderActive: 'border-amber-500',
+                bgActive: 'bg-amber-500/5',
+              },
+            ] as const).map((mode) => {
+              const Icon = mode.icon
+              const isSelected = examMode === mode.value
+              return (
+                <button
+                  key={mode.value}
+                  type="button"
+                  onClick={() => setExamMode(mode.value)}
+                  disabled={creating}
+                  className={`relative p-5 rounded-2xl border-2 text-left transition-all duration-300 group ${
+                    isSelected
+                      ? `${mode.borderActive} ${mode.bgActive} shadow-lg ${mode.glowColor}`
+                      : 'border-muted hover:border-primary/30 bg-background hover:shadow-md'
+                  }`}
+                >
+                  <div className={`inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br ${mode.gradient} text-white mb-3 shadow-lg ${mode.glowColor} group-hover:scale-105 transition-transform`}>
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <p className="font-semibold text-sm mb-1">{mode.label}</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{mode.description}</p>
+                  {isSelected && (
+                    <div className={`absolute top-3 right-3 w-5 h-5 rounded-full bg-gradient-to-br ${mode.gradient} flex items-center justify-center`}>
+                      <CheckCircle2 className="h-3.5 w-3.5 text-white" />
+                    </div>
+                  )}
+                </button>
+              )
+            })}
+          </div>
+        </div>
 
         {/* Main Form */}
         <div className="grid gap-6 md:grid-cols-2">
@@ -445,7 +517,9 @@ export default function CreatePersonalExamPage() {
                   <div className="text-sm">
                     <p className="font-medium text-blue-700 dark:text-blue-300 mb-1">Dica</p>
                     <p className="text-blue-600/80 dark:text-blue-400/80">
-                      Na próxima etapa, você poderá definir o tema e gerar questões com nossa IA avançada.
+                      {examMode === 'ai' && 'Na próxima etapa, você poderá definir o tema e gerar questões com nossa IA avançada.'}
+                      {examMode === 'banco' && 'Na próxima etapa, você poderá filtrar e selecionar questões do banco de questões.'}
+                      {examMode === 'misto' && 'Na próxima etapa, você configurará a quantidade de questões de IA e do banco.'}
                     </p>
                   </div>
                 </div>
@@ -476,7 +550,7 @@ export default function CreatePersonalExamPage() {
               </>
             ) : (
               <>
-                Próximo: Gerar Questões
+                {examMode === 'ai' ? 'Próximo: Gerar Questões' : examMode === 'banco' ? 'Próximo: Selecionar Questões' : 'Próximo: Configurar Prova'}
                 <ArrowRight className="h-4 w-4 ml-2" />
               </>
             )}

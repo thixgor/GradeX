@@ -214,6 +214,7 @@ export interface BancoQuestoesFiltros {
   apenasNaoResolvidas?: boolean
   tags?: string[]
   busca?: string
+  anos?: number[]
 }
 
 export interface BancoPaginacao {

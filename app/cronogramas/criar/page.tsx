@@ -11,9 +11,10 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { CustomCronogramaBuilder } from '@/components/custom-cronograma-builder'
 import { CustomCalendar } from '@/components/custom-calendar'
 import { ArrowLeft, ChevronRight, Info, Sparkles } from 'lucide-react'
-import { TEMPLATES, ModelType, UserDifficulty, StudyTime, TopicItem, SubtopicItem, ModuleItem, MedicinaAFYAPeriodo } from '@/lib/cronograma-types'
+import { TEMPLATES, ModelType, UserDifficulty, StudyTime, TopicItem, SubtopicItem, ModuleItem, MedicinaAFYAPeriodo, PsicologiaAFYAPeriodo } from '@/lib/cronograma-types'
 import { ToggleSwitch } from '@/components/ui/toggle-switch'
 import { getMedicinaAFYATopicos } from '@/lib/medicina-afya-periodos-helper'
+import { getPsicologiaAFYATopicos } from '@/lib/psicologia-afya-periodos-helper'
 import { LogoLoading } from '@/components/logo-loading'
 
 interface User {
@@ -35,6 +36,7 @@ export default function CriarCronogramaPage() {
   const [titulo, setTitulo] = useState('')
   const [modelo, setModelo] = useState<ModelType>('enem')
   const [periodo, setPeriodo] = useState<MedicinaAFYAPeriodo>(1)
+  const [periodoPsi, setPeriodoPsi] = useState<PsicologiaAFYAPeriodo>(1)
   const [selectedTopico, setSelectedTopico] = useState<string | null>(null)
   const [selectedSubtopico, setSelectedSubtopico] = useState<string | null>(null)
   const [tempoEstudo, setTempoEstudo] = useState<StudyTime>({
@@ -55,9 +57,11 @@ export default function CriarCronogramaPage() {
   useEffect(() => {
     let topicosCopiados: TopicItem[] = []
     
-    // Se for Medicina AFYA, usar a função helper para obter tópicos por período
+    // Se for Medicina AFYA ou Psicologia AFYA, usar a função helper para obter tópicos por período
     if (modelo === 'medicina-afya') {
       topicosCopiados = JSON.parse(JSON.stringify(getMedicinaAFYATopicos(periodo)))
+    } else if (modelo === 'psicologia-afya') {
+      topicosCopiados = JSON.parse(JSON.stringify(getPsicologiaAFYATopicos(periodoPsi)))
     } else if (modelo === 'personalizado') {
       // Para cronograma personalizado, começar com array vazio
       topicosCopiados = []
@@ -68,7 +72,7 @@ export default function CriarCronogramaPage() {
     setTopicos(topicosCopiados)
     setSelectedTopico(null)
     setSelectedSubtopico(null)
-  }, [modelo, periodo])
+  }, [modelo, periodo, periodoPsi])
 
   useEffect(() => {
     checkAuth()
@@ -489,7 +493,7 @@ export default function CriarCronogramaPage() {
                 ))}
                 <Button
                   onClick={() => {
-                    if (modelo === 'medicina-afya') {
+                    if (modelo === 'medicina-afya' || modelo === 'psicologia-afya') {
                       setStep('periodo')
                     } else if (modelo === 'personalizado') {
                       setStep('topicos')
@@ -507,7 +511,7 @@ export default function CriarCronogramaPage() {
           </motion.div>
         )}
 
-        {/* Step 2: Período (apenas para Medicina AFYA) */}
+        {/* Step 2: Período (para Medicina AFYA e Psicologia AFYA) */}
         {step === 'periodo' && (
           <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.97 }}
@@ -518,19 +522,27 @@ export default function CriarCronogramaPage() {
               <div className="p-6 pb-3">
                 <h2 className="text-2xl font-bold">Escolha seu Período</h2>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Selecione qual período você está cursando (1º ao 5º)
+                  {modelo === 'psicologia-afya'
+                    ? 'Selecione qual período você está cursando (1º ao 10º)'
+                    : 'Selecione qual período você está cursando (1º ao 5º)'}
                 </p>
               </div>
               <div className="px-6 pb-6 space-y-4">
-                <div className="grid grid-cols-5 gap-3">
-                  {[1, 2, 3, 4, 5].map((p) => (
+                <div className={`grid ${modelo === 'psicologia-afya' ? 'grid-cols-5' : 'grid-cols-5'} gap-3`}>
+                  {(modelo === 'psicologia-afya' ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] : [1, 2, 3, 4, 5]).map((p) => (
                     <motion.button
                       key={p}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={() => setPeriodo(p as MedicinaAFYAPeriodo)}
+                      onClick={() => {
+                        if (modelo === 'psicologia-afya') {
+                          setPeriodoPsi(p as PsicologiaAFYAPeriodo)
+                        } else {
+                          setPeriodo(p as MedicinaAFYAPeriodo)
+                        }
+                      }}
                       className={`p-4 rounded-xl font-semibold transition-all soul-light ${
-                        periodo === p
+                        (modelo === 'psicologia-afya' ? periodoPsi === p : periodo === p)
                           ? 'border-2 border-primary bg-primary text-white shadow-lg shadow-primary/20'
                           : 'border-2 border-white/30 dark:border-white/10 backdrop-blur-sm bg-white/20 dark:bg-white/5 hover:border-primary/50'
                       }`}
@@ -684,7 +696,7 @@ export default function CriarCronogramaPage() {
               <Button
                 variant="outline"
                 onClick={() => {
-                  if (modelo === 'medicina-afya') {
+                  if (modelo === 'medicina-afya' || modelo === 'psicologia-afya') {
                     setStep('periodo')
                   } else if (modelo === 'personalizado') {
                     setStep('topicos')

@@ -31,8 +31,9 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { CustomContext } from '@/lib/types'
 import { PageLoading } from '@/components/page-loading'
-import { TEMPLATES, TopicItem, MedicinaAFYAPeriodo } from '@/lib/cronograma-types'
+import { TEMPLATES, TopicItem, MedicinaAFYAPeriodo, PsicologiaAFYAPeriodo } from '@/lib/cronograma-types'
 import { getMedicinaAFYATopicos } from '@/lib/medicina-afya-periodos-helper'
+import { getPsicologiaAFYATopicos } from '@/lib/psicologia-afya-periodos-helper'
 
 // ─── Iridescent Glass Panel ─────────────────────────────────
 // Reusable glassmorphism container with animated chromatic border
@@ -424,7 +425,7 @@ export default function GenerateQuestionsPage() {
     'assertion-reason': 10,
   })
   const [randomDifficulty, setRandomDifficulty] = useState(false)
-  const [questionContext, setQuestionContext] = useState<'medicina-afya' | 'enem' | 'uerj' | 'outros'>('medicina-afya')
+  const [questionContext, setQuestionContext] = useState<'medicina-afya' | 'psicologia-afya' | 'enem' | 'uerj' | 'outros'>('medicina-afya')
 
   const [savedContexts, setSavedContexts] = useState<CustomContext[]>([])
   const [selectedSavedContext, setSelectedSavedContext] = useState<string>('')
@@ -440,6 +441,7 @@ export default function GenerateQuestionsPage() {
   const [cronogramaModalTab, setCronogramaModalTab] = useState<'meus' | 'modelos'>('modelos')
   const [modeloTemplateId, setModeloTemplateId] = useState<string>('medicina-afya')
   const [afyaPeriodo, setAfyaPeriodo] = useState<MedicinaAFYAPeriodo>(1)
+  const [psiAfyaPeriodo, setPsiAfyaPeriodo] = useState<PsicologiaAFYAPeriodo>(1)
 
   // Exam mode state
   const [examMode, setExamMode] = useState<'ai' | 'banco' | 'misto'>('ai')
@@ -732,6 +734,8 @@ export default function GenerateQuestionsPage() {
         let context = ''
         if (questionContext === 'medicina-afya') {
           context = 'Medicina AFYA - Contextualizacao clinica e raciocinio aplicado'
+        } else if (questionContext === 'psicologia-afya') {
+          context = 'Psicologia AFYA - Contextualização clínica e raciocínio psicológico aplicado'
         } else if (questionContext === 'enem') {
           context = 'ENEM - Exame Nacional do Ensino Medio'
         } else if (questionContext === 'uerj') {
@@ -817,9 +821,9 @@ export default function GenerateQuestionsPage() {
     return tree
   }
 
-  // Get available global model templates (exclude 'personalizado'; include medicina-afya even though topicos is empty since it loads dynamically)
+  // Get available global model templates (exclude 'personalizado'; include medicina-afya and psicologia-afya even though topicos is empty since they load dynamically)
   const globalModels = Object.values(TEMPLATES).filter(
-    t => t.modelo !== 'personalizado' && (t.topicos.length > 0 || t.modelo === 'medicina-afya')
+    t => t.modelo !== 'personalizado' && (t.topicos.length > 0 || t.modelo === 'medicina-afya' || t.modelo === 'psicologia-afya')
   )
 
   function renderTreeView(tree: Record<string, Record<string, Set<string>>>) {
@@ -950,6 +954,8 @@ export default function GenerateQuestionsPage() {
       let context = ''
       if (questionContext === 'medicina-afya') {
         context = 'Medicina AFYA - Contextualização clínica e raciocínio aplicado'
+      } else if (questionContext === 'psicologia-afya') {
+        context = 'Psicologia AFYA - Contextualização clínica e raciocínio psicológico aplicado'
       } else if (questionContext === 'enem') {
         context = 'ENEM - Exame Nacional do Ensino Médio'
       } else if (questionContext === 'uerj') {
@@ -1432,6 +1438,7 @@ export default function GenerateQuestionsPage() {
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     {([
                       { value: 'medicina-afya' as const, label: 'Medicina AFYA' },
+                      { value: 'psicologia-afya' as const, label: 'Psicologia AFYA' },
                       { value: 'enem' as const, label: 'ENEM' },
                       { value: 'uerj' as const, label: 'UERJ' },
                       { value: 'outros' as const, label: 'Outros' },
@@ -1841,6 +1848,39 @@ export default function GenerateQuestionsPage() {
                                       className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
                                         afyaPeriodo === p
                                           ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                                          : 'glass-inset text-muted-foreground hover:text-foreground hover:bg-white/5'
+                                      }`}
+                                    >
+                                      {p}º Período
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                              {renderTreeView(tree)}
+                            </div>
+                          )
+                        }
+
+                        // Psicologia AFYA: period selection (1-10) + dynamic topics
+                        if (template.modelo === 'psicologia-afya') {
+                          const psiTopicos = getPsicologiaAFYATopicos(psiAfyaPeriodo)
+                          const tree = buildTemplateTree(psiTopicos as TopicItem[])
+                          return (
+                            <div className="space-y-4">
+                              <div className="space-y-2">
+                                <Label className="text-xs text-muted-foreground">Período</Label>
+                                <div className="grid grid-cols-5 gap-2">
+                                  {([1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as PsicologiaAFYAPeriodo[]).map((p) => (
+                                    <button
+                                      key={p}
+                                      type="button"
+                                      onClick={() => {
+                                        setPsiAfyaPeriodo(p)
+                                        setCronogramaSelections(new Set())
+                                      }}
+                                      className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
+                                        psiAfyaPeriodo === p
+                                          ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
                                           : 'glass-inset text-muted-foreground hover:text-foreground hover:bg-white/5'
                                       }`}
                                     >
