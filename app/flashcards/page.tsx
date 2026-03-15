@@ -37,9 +37,11 @@ import { ToastAlert } from '@/components/ui/toast-alert'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { cn } from '@/lib/utils'
 import { AccountType, FlashcardDeck, FlashcardCard, FlashcardDifficultyFeedback } from '@/lib/types'
-import { TopicItem, MedicinaAFYAPeriodo, PsicologiaAFYAPeriodo, TEMPLATES } from '@/lib/cronograma-types'
+import { TopicItem, MedicinaAFYAPeriodo, PsicologiaAFYAPeriodo, BiomedicinaAFYAPeriodo, OdontologiaAFYAPeriodo, TEMPLATES } from '@/lib/cronograma-types'
 import { getMedicinaAFYATopicos } from '@/lib/medicina-afya-periodos-helper'
 import { getPsicologiaAFYATopicos } from '@/lib/psicologia-afya-periodos-helper'
+import { getBiomedicinaAFYATopicos } from '@/lib/biomedicina-afya-periodos-helper'
+import { getOdontologiaAFYATopicos } from '@/lib/odontologia-afya-periodos-helper'
 import { AppShell as LayoutShell } from '@/components/app-shell'
 import { FocusSessionButton } from '@/components/focus-session-button'
 import { NotificationsBell } from '@/components/notifications-bell'
@@ -137,9 +139,11 @@ export default function FlashcardsPage() {
 
   // Cronograma states
   const [showCronogramaSelector, setShowCronogramaSelector] = useState(false)
-  const [selectedCronogramaType, setSelectedCronogramaType] = useState<'enem' | 'medicina-afya' | 'psicologia-afya' | 'uerj' | null>(null)
+  const [selectedCronogramaType, setSelectedCronogramaType] = useState<'enem' | 'medicina-afya' | 'psicologia-afya' | 'biomedicina-afya' | 'odontologia-afya' | 'uerj' | null>(null)
   const [selectedMedicinaAFYAPeriodo, setSelectedMedicinaAFYAPeriodo] = useState<MedicinaAFYAPeriodo>(1)
   const [selectedPsicologiaAFYAPeriodo, setSelectedPsicologiaAFYAPeriodo] = useState<PsicologiaAFYAPeriodo>(1)
+  const [selectedBiomedicinaAFYAPeriodo, setSelectedBiomedicinaAFYAPeriodo] = useState<BiomedicinaAFYAPeriodo>(1)
+  const [selectedOdontologiaAFYAPeriodo, setSelectedOdontologiaAFYAPeriodo] = useState<OdontologiaAFYAPeriodo>(1)
   const [cronogramaTopicos, setCronogramaTopicos] = useState<TopicItem[]>([])
   const [selectedTopicos, setSelectedTopicos] = useState<string[]>([])
   const [selectedSubtopicos, setSelectedSubtopicos] = useState<string[]>([])
@@ -278,9 +282,9 @@ export default function FlashcardsPage() {
     }
   }
 
-  function handleCronogramaTypeSelect(type: 'enem' | 'medicina-afya' | 'psicologia-afya' | 'uerj') {
+  function handleCronogramaTypeSelect(type: 'enem' | 'medicina-afya' | 'psicologia-afya' | 'biomedicina-afya' | 'odontologia-afya' | 'uerj') {
     setSelectedCronogramaType(type as any)
-    if (type === 'medicina-afya' || type === 'psicologia-afya') {
+    if (type === 'medicina-afya' || type === 'psicologia-afya' || type === 'biomedicina-afya' || type === 'odontologia-afya') {
       setShowPeriodoSelector(true)
     } else if (type === 'enem' || type === 'uerj') {
       const topicos = TEMPLATES[type].topicos
@@ -298,6 +302,20 @@ export default function FlashcardsPage() {
   function handlePsicologiaAFYAPeriodoChange(periodo: PsicologiaAFYAPeriodo) {
     setSelectedPsicologiaAFYAPeriodo(periodo)
     const topicos = getPsicologiaAFYATopicos(periodo)
+    setCronogramaTopicos(topicos)
+    setShowPeriodoSelector(false)
+  }
+
+  function handleBiomedicinaAFYAPeriodoChange(periodo: BiomedicinaAFYAPeriodo) {
+    setSelectedBiomedicinaAFYAPeriodo(periodo)
+    const topicos = getBiomedicinaAFYATopicos(periodo)
+    setCronogramaTopicos(topicos)
+    setShowPeriodoSelector(false)
+  }
+
+  function handleOdontologiaAFYAPeriodoChange(periodo: OdontologiaAFYAPeriodo) {
+    setSelectedOdontologiaAFYAPeriodo(periodo)
+    const topicos = getOdontologiaAFYATopicos(periodo)
     setCronogramaTopicos(topicos)
     setShowPeriodoSelector(false)
   }
@@ -973,6 +991,20 @@ export default function FlashcardsPage() {
                     <p className="text-xs text-white/70 mt-1">Psicologia</p>
                   </button>
                   <button
+                    onClick={() => handleCronogramaTypeSelect('biomedicina-afya')}
+                    className="p-4 rounded-2xl border-2 border-white/20 bg-white/5 hover:border-blue-500 hover:bg-blue-500/10 transition-all text-center"
+                  >
+                    <p className="font-semibold text-white text-sm sm:text-base">Biomedicina AFYA</p>
+                    <p className="text-xs text-white/70 mt-1">Biomedicina</p>
+                  </button>
+                  <button
+                    onClick={() => handleCronogramaTypeSelect('odontologia-afya')}
+                    className="p-4 rounded-2xl border-2 border-white/20 bg-white/5 hover:border-blue-500 hover:bg-blue-500/10 transition-all text-center"
+                  >
+                    <p className="font-semibold text-white text-sm sm:text-base">Odontologia AFYA</p>
+                    <p className="text-xs text-white/70 mt-1">Odontologia</p>
+                  </button>
+                  <button
                     onClick={() => handleCronogramaTypeSelect('uerj')}
                     className="p-4 rounded-2xl border-2 border-white/20 bg-white/5 hover:border-blue-500 hover:bg-blue-500/10 transition-all text-center"
                   >
@@ -986,8 +1018,10 @@ export default function FlashcardsPage() {
                 <div>
                   <Label className="text-white/80 text-sm sm:text-base">Selecione o Período</Label>
                   <div className="grid grid-cols-5 gap-2 mt-3">
-                    {(selectedCronogramaType === 'psicologia-afya'
+                    {(selectedCronogramaType === 'psicologia-afya' || selectedCronogramaType === 'odontologia-afya'
                       ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                      : selectedCronogramaType === 'biomedicina-afya'
+                      ? [1, 2, 3, 4, 5, 6, 7]
                       : [1, 2, 3, 4, 5]
                     ).map(p => (
                       <button
@@ -995,6 +1029,10 @@ export default function FlashcardsPage() {
                         onClick={() => {
                           if (selectedCronogramaType === 'psicologia-afya') {
                             handlePsicologiaAFYAPeriodoChange(p as PsicologiaAFYAPeriodo)
+                          } else if (selectedCronogramaType === 'biomedicina-afya') {
+                            handleBiomedicinaAFYAPeriodoChange(p as BiomedicinaAFYAPeriodo)
+                          } else if (selectedCronogramaType === 'odontologia-afya') {
+                            handleOdontologiaAFYAPeriodoChange(p as OdontologiaAFYAPeriodo)
                           } else {
                             handleMedicinaAFYAPeriodoChange(p as MedicinaAFYAPeriodo)
                           }
@@ -1003,6 +1041,10 @@ export default function FlashcardsPage() {
                           'p-3 rounded-xl border-2 transition-all font-semibold text-sm',
                           (selectedCronogramaType === 'psicologia-afya'
                             ? selectedPsicologiaAFYAPeriodo === p
+                            : selectedCronogramaType === 'biomedicina-afya'
+                            ? selectedBiomedicinaAFYAPeriodo === p
+                            : selectedCronogramaType === 'odontologia-afya'
+                            ? selectedOdontologiaAFYAPeriodo === p
                             : selectedMedicinaAFYAPeriodo === p)
                             ? 'border-blue-500 bg-blue-500/30 text-blue-200'
                             : 'border-white/20 bg-white/5 text-white hover:border-blue-500'

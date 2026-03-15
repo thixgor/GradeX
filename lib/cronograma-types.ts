@@ -1,7 +1,9 @@
 export type UserDifficulty = 'facil' | 'medio' | 'dificil'
-export type ModelType = 'enem' | 'uerj' | 'medicina-afya' | 'psicologia-afya' | 'personalizado'
+export type ModelType = 'enem' | 'uerj' | 'medicina-afya' | 'psicologia-afya' | 'biomedicina-afya' | 'odontologia-afya' | 'personalizado'
 export type MedicinaAFYAPeriodo = 1 | 2 | 3 | 4 | 5
 export type PsicologiaAFYAPeriodo = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
+export type BiomedicinaAFYAPeriodo = 1 | 2 | 3 | 4 | 5 | 6 | 7
+export type OdontologiaAFYAPeriodo = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
 
 // Importar função para ENEM
 import { getENEMTopicos } from './enem-topicos-helper'
@@ -351,6 +353,20 @@ export const TEMPLATES: Record<ModelType, CronogramaTemplate> = {
     nome: 'Psicologia AFYA',
     modelo: 'psicologia-afya',
     descricao: 'Prepare-se para psicologia com cronograma AFYA (1º ao 10º período)',
+    topicos: []
+  },
+  'biomedicina-afya': {
+    id: 'biomedicina-afya',
+    nome: 'Biomedicina AFYA',
+    modelo: 'biomedicina-afya',
+    descricao: 'Prepare-se para biomedicina com cronograma AFYA (1º ao 7º período)',
+    topicos: []
+  },
+  'odontologia-afya': {
+    id: 'odontologia-afya',
+    nome: 'Odontologia AFYA',
+    modelo: 'odontologia-afya',
+    descricao: 'Prepare-se para odontologia com cronograma AFYA (1º ao 10º período)',
     topicos: []
   },
   'personalizado': {

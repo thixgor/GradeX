@@ -31,9 +31,11 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { CustomContext } from '@/lib/types'
 import { PageLoading } from '@/components/page-loading'
-import { TEMPLATES, TopicItem, MedicinaAFYAPeriodo, PsicologiaAFYAPeriodo } from '@/lib/cronograma-types'
+import { TEMPLATES, TopicItem, MedicinaAFYAPeriodo, PsicologiaAFYAPeriodo, BiomedicinaAFYAPeriodo, OdontologiaAFYAPeriodo } from '@/lib/cronograma-types'
 import { getMedicinaAFYATopicos } from '@/lib/medicina-afya-periodos-helper'
 import { getPsicologiaAFYATopicos } from '@/lib/psicologia-afya-periodos-helper'
+import { getBiomedicinaAFYATopicos } from '@/lib/biomedicina-afya-periodos-helper'
+import { getOdontologiaAFYATopicos } from '@/lib/odontologia-afya-periodos-helper'
 
 // ─── Iridescent Glass Panel ─────────────────────────────────
 // Reusable glassmorphism container with animated chromatic border
@@ -440,7 +442,7 @@ export default function GenerateQuestionsPage() {
     'assertion-reason': 10,
   })
   const [randomDifficulty, setRandomDifficulty] = useState(false)
-  const [questionContext, setQuestionContext] = useState<'medicina-afya' | 'psicologia-afya' | 'enem' | 'uerj' | 'outros'>('medicina-afya')
+  const [questionContext, setQuestionContext] = useState<'medicina-afya' | 'psicologia-afya' | 'biomedicina-afya' | 'odontologia-afya' | 'enem' | 'uerj' | 'outros'>('medicina-afya')
 
   const [savedContexts, setSavedContexts] = useState<CustomContext[]>([])
   const [selectedSavedContext, setSelectedSavedContext] = useState<string>('')
@@ -457,6 +459,8 @@ export default function GenerateQuestionsPage() {
   const [modeloTemplateId, setModeloTemplateId] = useState<string>('medicina-afya')
   const [afyaPeriodo, setAfyaPeriodo] = useState<MedicinaAFYAPeriodo>(1)
   const [psiAfyaPeriodo, setPsiAfyaPeriodo] = useState<PsicologiaAFYAPeriodo>(1)
+  const [bioAfyaPeriodo, setBioAfyaPeriodo] = useState<BiomedicinaAFYAPeriodo>(1)
+  const [odoAfyaPeriodo, setOdoAfyaPeriodo] = useState<OdontologiaAFYAPeriodo>(1)
 
   // Exam mode state
   const [examMode, setExamMode] = useState<'ai' | 'banco' | 'misto'>('ai')
@@ -751,6 +755,10 @@ export default function GenerateQuestionsPage() {
           context = 'Medicina AFYA - Contextualizacao clinica e raciocinio aplicado'
         } else if (questionContext === 'psicologia-afya') {
           context = 'Psicologia AFYA - Contextualização clínica e raciocínio psicológico aplicado'
+        } else if (questionContext === 'biomedicina-afya') {
+          context = 'Biomedicina AFYA - Contextualização laboratorial e raciocínio biomédico aplicado'
+        } else if (questionContext === 'odontologia-afya') {
+          context = 'Odontologia AFYA - Contextualização clínica e raciocínio odontológico aplicado'
         } else if (questionContext === 'enem') {
           context = 'ENEM - Exame Nacional do Ensino Medio'
         } else if (questionContext === 'uerj') {
@@ -838,7 +846,7 @@ export default function GenerateQuestionsPage() {
 
   // Get available global model templates (exclude 'personalizado'; include medicina-afya and psicologia-afya even though topicos is empty since they load dynamically)
   const globalModels = Object.values(TEMPLATES).filter(
-    t => t.modelo !== 'personalizado' && (t.topicos.length > 0 || t.modelo === 'medicina-afya' || t.modelo === 'psicologia-afya')
+    t => t.modelo !== 'personalizado' && (t.topicos.length > 0 || t.modelo === 'medicina-afya' || t.modelo === 'psicologia-afya' || t.modelo === 'biomedicina-afya' || t.modelo === 'odontologia-afya')
   )
 
   function renderTreeView(tree: Record<string, Record<string, Set<string>>>) {
@@ -971,6 +979,10 @@ export default function GenerateQuestionsPage() {
         context = 'Medicina AFYA - Contextualização clínica e raciocínio aplicado'
       } else if (questionContext === 'psicologia-afya') {
         context = 'Psicologia AFYA - Contextualização clínica e raciocínio psicológico aplicado'
+      } else if (questionContext === 'biomedicina-afya') {
+        context = 'Biomedicina AFYA - Contextualização laboratorial e raciocínio biomédico aplicado'
+      } else if (questionContext === 'odontologia-afya') {
+        context = 'Odontologia AFYA - Contextualização clínica e raciocínio odontológico aplicado'
       } else if (questionContext === 'enem') {
         context = 'ENEM - Exame Nacional do Ensino Médio'
       } else if (questionContext === 'uerj') {
@@ -1454,6 +1466,8 @@ export default function GenerateQuestionsPage() {
                     {([
                       { value: 'medicina-afya' as const, label: 'Medicina AFYA' },
                       { value: 'psicologia-afya' as const, label: 'Psicologia AFYA' },
+                      { value: 'biomedicina-afya' as const, label: 'Biomedicina AFYA' },
+                      { value: 'odontologia-afya' as const, label: 'Odontologia AFYA' },
                       { value: 'enem' as const, label: 'ENEM' },
                       { value: 'uerj' as const, label: 'UERJ' },
                       { value: 'outros' as const, label: 'Outros' },
@@ -1896,6 +1910,72 @@ export default function GenerateQuestionsPage() {
                                       className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
                                         psiAfyaPeriodo === p
                                           ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
+                                          : 'glass-inset text-muted-foreground hover:text-foreground hover:bg-white/5'
+                                      }`}
+                                    >
+                                      {p}º Período
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                              {renderTreeView(tree)}
+                            </div>
+                          )
+                        }
+
+                        // Biomedicina AFYA: period selection (1-7) + dynamic topics
+                        if (template.modelo === 'biomedicina-afya') {
+                          const bioTopicos = getBiomedicinaAFYATopicos(bioAfyaPeriodo)
+                          const tree = buildTemplateTree(bioTopicos as TopicItem[])
+                          return (
+                            <div className="space-y-4">
+                              <div className="space-y-2">
+                                <Label className="text-xs text-muted-foreground">Período</Label>
+                                <div className="grid grid-cols-5 gap-2">
+                                  {([1, 2, 3, 4, 5, 6, 7] as BiomedicinaAFYAPeriodo[]).map((p) => (
+                                    <button
+                                      key={p}
+                                      type="button"
+                                      onClick={() => {
+                                        setBioAfyaPeriodo(p)
+                                        setCronogramaSelections(new Set())
+                                      }}
+                                      className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
+                                        bioAfyaPeriodo === p
+                                          ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                                          : 'glass-inset text-muted-foreground hover:text-foreground hover:bg-white/5'
+                                      }`}
+                                    >
+                                      {p}º Período
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                              {renderTreeView(tree)}
+                            </div>
+                          )
+                        }
+
+                        // Odontologia AFYA: period selection (1-10) + dynamic topics
+                        if (template.modelo === 'odontologia-afya') {
+                          const odoTopicos = getOdontologiaAFYATopicos(odoAfyaPeriodo)
+                          const tree = buildTemplateTree(odoTopicos as TopicItem[])
+                          return (
+                            <div className="space-y-4">
+                              <div className="space-y-2">
+                                <Label className="text-xs text-muted-foreground">Período</Label>
+                                <div className="grid grid-cols-5 gap-2">
+                                  {([1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as OdontologiaAFYAPeriodo[]).map((p) => (
+                                    <button
+                                      key={p}
+                                      type="button"
+                                      onClick={() => {
+                                        setOdoAfyaPeriodo(p)
+                                        setCronogramaSelections(new Set())
+                                      }}
+                                      className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
+                                        odoAfyaPeriodo === p
+                                          ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
                                           : 'glass-inset text-muted-foreground hover:text-foreground hover:bg-white/5'
                                       }`}
                                     >
