@@ -729,20 +729,31 @@ function AulasPageContent() {
                           setSelectedModulo(null)
                           setSelectedSubmodulo(null)
                         }}
-                        className="backdrop-blur-md bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30 rounded-2xl p-6 hover:border-emerald-500/60 hover:bg-emerald-500/30 transition-all cursor-pointer shadow-xl shadow-emerald-500/10 hover-lift group block"
+                        className="backdrop-blur-md bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30 rounded-2xl overflow-hidden hover:border-emerald-500/60 hover:bg-emerald-500/30 transition-all cursor-pointer shadow-xl shadow-emerald-500/10 hover-lift group block"
                       >
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex-1">
-                            <h3 className="text-xl font-bold text-white group-hover:text-emerald-200 transition-colors line-clamp-2">{setor.nome}</h3>
+                        {setor.imagem && (
+                          <div className="w-full h-36 overflow-hidden">
+                            <img
+                              src={setor.imagem}
+                              alt={setor.nome}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
                           </div>
-                          <ChevronRight className="h-6 w-6 text-emerald-400 group-hover:translate-x-1 transition-transform flex-shrink-0 ml-2" />
-                        </div>
-                        {setor.descricao && (
-                          <p className="text-white/60 text-sm mb-4 line-clamp-2">{setor.descricao}</p>
                         )}
-                        <div className="flex items-center justify-between pt-4 border-t border-white/10">
-                          <span className="text-white/70 text-sm">Aulas</span>
-                          <span className="text-2xl font-bold text-emerald-300">{aulaCount}</span>
+                        <div className="p-6">
+                          <div className="flex items-start justify-between mb-4">
+                            <div className="flex-1">
+                              <h3 className="text-xl font-bold text-white group-hover:text-emerald-200 transition-colors line-clamp-2">{setor.nome}</h3>
+                            </div>
+                            <ChevronRight className="h-6 w-6 text-emerald-400 group-hover:translate-x-1 transition-transform flex-shrink-0 ml-2" />
+                          </div>
+                          {setor.descricao && (
+                            <p className="text-white/60 text-sm mb-4 line-clamp-2">{setor.descricao}</p>
+                          )}
+                          <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                            <span className="text-white/70 text-sm">Aulas</span>
+                            <span className="text-2xl font-bold text-emerald-300">{aulaCount}</span>
+                          </div>
                         </div>
                       </Link>
                     )

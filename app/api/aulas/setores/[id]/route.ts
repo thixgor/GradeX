@@ -37,7 +37,7 @@ export async function PATCH(
     }
 
     const body = await request.json()
-    const { nome, descricao, oculta, ordem } = body
+    const { nome, descricao, imagem, oculta, ordem } = body
 
     const setoresCollection = db.collection('aulas_setores')
 
@@ -47,6 +47,7 @@ export async function PATCH(
 
     if (nome !== undefined) updateData.nome = nome
     if (descricao !== undefined) updateData.descricao = descricao
+    if (imagem !== undefined) updateData.imagem = imagem
     if (oculta !== undefined) updateData.oculta = oculta
     if (ordem !== undefined) updateData.ordem = ordem
 

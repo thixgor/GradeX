@@ -591,6 +591,7 @@ export interface AulaSetor {
   _id?: string | import('mongodb').ObjectId
   nome: string
   descricao?: string
+  imagem?: string
   ordem: number
   oculta?: boolean
   criadoEm: Date

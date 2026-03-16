@@ -32,7 +32,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json()
-    const { nome, descricao, ordem } = body
+    const { nome, descricao, imagem, ordem } = body
 
     if (!nome) {
       return NextResponse.json(
@@ -46,6 +46,7 @@ export async function POST(request: Request) {
     const novoSetor: AulaSetor = {
       nome,
       descricao,
+      imagem,
       ordem: ordem || 0,
       criadoEm: new Date(),
       atualizadoEm: new Date()
