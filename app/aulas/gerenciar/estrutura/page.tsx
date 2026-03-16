@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { ArrowLeft, Plus, Trash2, ChevronRight, Edit2, Copy, Eye, EyeOff, ChevronUp, ChevronDown, X } from 'lucide-react'
+import { ArrowLeft, Plus, Trash2, ChevronRight, Edit2, Copy, Eye, EyeOff, ChevronUp, ChevronDown, X, Info } from 'lucide-react'
 import { AulaSetor, AulaTopic, AulaSubtopic, AulaModulo, AulaSubmodulo } from '@/lib/types'
 import { ToastAlert } from '@/components/ui/toast-alert'
 
@@ -407,71 +407,81 @@ export default function EstruturasPage() {
   async function reordenarItem(id: string, type: 'setor' | 'topico' | 'subtopico' | 'modulo' | 'submodulo', direcao: 'up' | 'down') {
     try {
       let items: any[] = []
-      let setItems: any = null
 
       if (type === 'setor') {
-        items = setores
-        setItems = setSetores
+        items = [...setores].sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
       } else if (type === 'topico') {
-        items = topicosFiltrados
-        setItems = setTopicos
+        items = [...topicosFiltrados].sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
       } else if (type === 'subtopico') {
-        items = subtopicosFiltrados
-        setItems = setSubtopicos
+        items = [...subtopicosFiltrados].sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
       } else if (type === 'modulo') {
-        items = modulosFiltrados
-        setItems = setModulos
+        items = [...modulosFiltrados].sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
       } else if (type === 'submodulo') {
-        items = submodulosFiltrados
-        setItems = setSubmodulos
+        items = [...submodulosFiltrados].sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
       }
 
       const itemIndex = items.findIndex(i => String(i._id) === id)
       if (itemIndex === -1) return
 
-      const novaOrdem = direcao === 'up' ? (items[itemIndex].ordem || 0) - 1 : (items[itemIndex].ordem || 0) + 1
+      const swapIndex = direcao === 'up' ? itemIndex - 1 : itemIndex + 1
+      if (swapIndex < 0 || swapIndex >= items.length) return
 
-      let endpoint = ''
+      const currentItem = items[itemIndex]
+      const swapItem = items[swapIndex]
+      const currentOrdem = currentItem.ordem ?? 0
+      const swapOrdem = swapItem.ordem ?? 0
+
+      // Optimistically swap in UI
+      const updateItem = (list: any[], idA: string, ordemA: number, idB: string, ordemB: number) =>
+        list.map(i => {
+          if (String(i._id) === idA) return { ...i, ordem: ordemB }
+          if (String(i._id) === idB) return { ...i, ordem: ordemA }
+          return i
+        }).sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0))
+
+      const idA = String(currentItem._id)
+      const idB = String(swapItem._id)
+
       if (type === 'setor') {
-        endpoint = `/api/aulas/setores/${id}`
+        setSetores(updateItem(setores, idA, currentOrdem, idB, swapOrdem))
       } else if (type === 'topico') {
-        endpoint = `/api/aulas/topicos/${id}`
+        setTopicos(updateItem(topicos, idA, currentOrdem, idB, swapOrdem))
       } else if (type === 'subtopico') {
-        endpoint = `/api/aulas/subtopicos/${id}`
+        setSubtopicos(updateItem(subtopicos, idA, currentOrdem, idB, swapOrdem))
       } else if (type === 'modulo') {
-        endpoint = `/api/aulas/modulos/${id}`
+        setModulos(updateItem(modulos, idA, currentOrdem, idB, swapOrdem))
       } else if (type === 'submodulo') {
-        endpoint = `/api/aulas/submodulos/${id}`
+        setSubmodulos(updateItem(submodulos, idA, currentOrdem, idB, swapOrdem))
       }
 
-      const res = await fetch(endpoint, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ordem: novaOrdem })
-      })
+      // Send both PATCH requests in parallel
+      const endpointMap: Record<string, string> = {
+        setor: 'setores', topico: 'topicos', subtopico: 'subtopicos',
+        modulo: 'modulos', submodulo: 'submodulos'
+      }
+      const base = `/api/aulas/${endpointMap[type]}`
 
-      if (res.ok) {
-        const data = await res.json()
-        
-        if (type === 'setor') {
-          setSetores(setores.map(s => String(s._id) === id ? data.item : s).sort((a, b) => (a.ordem || 0) - (b.ordem || 0)))
-        } else if (type === 'topico') {
-          setTopicos(topicos.map(t => String(t._id) === id ? data.item : t).sort((a, b) => (a.ordem || 0) - (b.ordem || 0)))
-        } else if (type === 'subtopico') {
-          setSubtopicos(subtopicos.map(s => String(s._id) === id ? data.item : s).sort((a, b) => (a.ordem || 0) - (b.ordem || 0)))
-        } else if (type === 'modulo') {
-          setModulos(modulos.map(m => String(m._id) === id ? data.item : m).sort((a, b) => (a.ordem || 0) - (b.ordem || 0)))
-        } else if (type === 'submodulo') {
-          setSubmodulos(submodulos.map(sm => String(sm._id) === id ? data.item : sm).sort((a, b) => (a.ordem || 0) - (b.ordem || 0)))
-        }
-        
-        showToast(direcao === 'up' ? 'Movido para cima!' : 'Movido para baixo!')
-      } else {
+      const [res1, res2] = await Promise.all([
+        fetch(`${base}/${idA}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ordem: swapOrdem })
+        }),
+        fetch(`${base}/${idB}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ordem: currentOrdem })
+        })
+      ])
+
+      if (!res1.ok || !res2.ok) {
         showToast('Erro ao reordenar', 'error')
+        loadDados()
       }
     } catch (error) {
       console.error('Erro:', error)
       showToast('Erro ao reordenar', 'error')
+      loadDados()
     }
   }
 
@@ -581,6 +591,20 @@ export default function EstruturasPage() {
                         </div>
                       </div>
                       <div className="flex flex-wrap gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                        {setor.descricao && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              showToast(setor.descricao || '', 'info')
+                            }}
+                            title="Ver descrição"
+                            className="text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 h-5 w-5"
+                          >
+                            <Info className="h-3 w-3" />
+                          </Button>
+                        )}
                         <Button
                           variant="ghost"
                           size="icon"
