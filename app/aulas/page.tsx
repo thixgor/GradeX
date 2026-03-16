@@ -745,7 +745,23 @@ function AulasPageContent() {
                             <div className="flex-1">
                               <h3 className="text-xl font-bold text-white group-hover:text-emerald-200 transition-colors line-clamp-2">{setor.nome}</h3>
                             </div>
-                            <ChevronRight className="h-6 w-6 text-emerald-400 group-hover:translate-x-1 transition-transform flex-shrink-0 ml-2" />
+                            <div className="flex items-center gap-1 flex-shrink-0 ml-2">
+                              {setor.descricao && (
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.preventDefault()
+                                    e.stopPropagation()
+                                    alert(setor.descricao)
+                                  }}
+                                  className="p-1.5 rounded-lg hover:bg-white/10 transition-colors"
+                                  title="Ver descrição"
+                                >
+                                  <Info className="h-5 w-5 text-emerald-400" />
+                                </button>
+                              )}
+                              <ChevronRight className="h-6 w-6 text-emerald-400 group-hover:translate-x-1 transition-transform" />
+                            </div>
                           </div>
                           {setor.descricao && (
                             <p className="text-white/60 text-sm mb-4 line-clamp-2">{setor.descricao}</p>
