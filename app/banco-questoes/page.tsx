@@ -754,6 +754,16 @@ function BancoQuestoesContent() {
       <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
+          {/* Banner */}
+          <div className="w-full overflow-hidden rounded-2xl">
+            <img
+              src="https://i.imgur.com/OX66Ovb.png"
+              alt="Banner Banco de Questões"
+              className="w-full h-auto object-cover"
+              style={{ maxHeight: '300px' }}
+            />
+          </div>
+
           {/* Stats Cards */}
           <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
             {[
