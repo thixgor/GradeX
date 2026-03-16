@@ -752,7 +752,7 @@ function AulasPageContent() {
                                   onClick={(e) => {
                                     e.preventDefault()
                                     e.stopPropagation()
-                                    alert(setor.descricao)
+                                    setDescricaoDialog({ titulo: setor.nome, descricao: setor.descricao || '' })
                                   }}
                                   className="p-1.5 rounded-lg hover:bg-white/10 transition-colors"
                                   title="Ver descrição"
