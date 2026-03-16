@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { ArrowLeft, Plus, Trash2, ChevronRight, Edit2, Copy, Eye, EyeOff, ChevronUp, ChevronDown, ImagePlus, X } from 'lucide-react'
+import { ArrowLeft, Plus, Trash2, ChevronRight, Edit2, Copy, Eye, EyeOff, ChevronUp, ChevronDown, X } from 'lucide-react'
 import { AulaSetor, AulaTopic, AulaSubtopic, AulaModulo, AulaSubmodulo } from '@/lib/types'
 import { ToastAlert } from '@/components/ui/toast-alert'
 
@@ -43,7 +43,6 @@ export default function EstruturasPage() {
   const [dialogType, setDialogType] = useState<'setor' | 'topico' | 'subtopico' | 'modulo' | 'submodulo'>('setor')
   const [formData, setFormData] = useState({ nome: '', descricao: '', imagem: '' })
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [uploadingImage, setUploadingImage] = useState(false)
 
   // Toast
   const [toastOpen, setToastOpen] = useState(false)
@@ -136,44 +135,6 @@ export default function EstruturasPage() {
       setEditingId(null)
     }
     setShowDialog(true)
-  }
-
-  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    if (!file.type.startsWith('image/')) {
-      showToast('Apenas imagens são permitidas', 'error')
-      return
-    }
-
-    if (file.size > 3 * 1024 * 1024) {
-      showToast('Imagem deve ter no máximo 3MB', 'error')
-      return
-    }
-
-    setUploadingImage(true)
-    try {
-      const formDataUpload = new FormData()
-      formDataUpload.append('file', file)
-
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formDataUpload
-      })
-
-      if (res.ok) {
-        const data = await res.json()
-        setFormData(prev => ({ ...prev, imagem: data.url }))
-        showToast('Imagem enviada!')
-      } else {
-        showToast('Erro ao enviar imagem', 'error')
-      }
-    } catch {
-      showToast('Erro ao enviar imagem', 'error')
-    } finally {
-      setUploadingImage(false)
-    }
   }
 
   async function salvarItem() {
@@ -1221,41 +1182,31 @@ export default function EstruturasPage() {
             </div>
             {dialogType === 'setor' && (
               <div>
-                <label className="text-sm font-medium text-white/80">Imagem do Card (Opcional)</label>
-                {formData.imagem ? (
-                  <div className="mt-2 relative group">
-                    <img
-                      src={formData.imagem}
-                      alt="Preview"
-                      className="w-full h-40 object-cover rounded-lg border border-white/10"
-                    />
+                <label className="text-sm font-medium text-white/80">URL da Imagem do Card (Opcional)</label>
+                <div className="flex gap-2 mt-1">
+                  <Input
+                    value={formData.imagem}
+                    onChange={(e) => setFormData({ ...formData, imagem: e.target.value })}
+                    placeholder="https://exemplo.com/imagem.png"
+                    className="bg-white/5 border-white/10 text-white placeholder:text-white/40"
+                  />
+                  {formData.imagem && (
                     <button
                       type="button"
                       onClick={() => setFormData(prev => ({ ...prev, imagem: '' }))}
-                      className="absolute top-2 right-2 p-1.5 rounded-full bg-red-500/80 text-white hover:bg-red-500 transition-colors"
+                      className="p-2 rounded-md bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors shrink-0"
                     >
                       <X className="h-4 w-4" />
                     </button>
-                  </div>
-                ) : (
-                  <label className="mt-2 flex flex-col items-center justify-center h-32 border-2 border-dashed border-white/20 rounded-lg cursor-pointer hover:border-white/40 transition-colors">
-                    {uploadingImage ? (
-                      <span className="text-white/60 text-sm">Enviando...</span>
-                    ) : (
-                      <>
-                        <ImagePlus className="h-8 w-8 text-white/40 mb-2" />
-                        <span className="text-white/60 text-sm">Clique para enviar imagem</span>
-                        <span className="text-white/40 text-xs mt-1">Máx. 3MB</span>
-                      </>
-                    )}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                      disabled={uploadingImage}
-                    />
-                  </label>
+                  )}
+                </div>
+                {formData.imagem && (
+                  <img
+                    src={formData.imagem}
+                    alt="Preview"
+                    className="mt-2 w-full h-36 object-cover rounded-lg border border-white/10"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                  />
                 )}
               </div>
             )}
