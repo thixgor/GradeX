@@ -55,7 +55,7 @@ export async function PATCH(
       { returnDocument: 'after' }
     )
 
-    if (!result || !result.value) {
+    if (!result) {
       return NextResponse.json(
         { error: 'Tópico não encontrado' },
         { status: 404 }
@@ -64,7 +64,7 @@ export async function PATCH(
 
     return NextResponse.json({
       success: true,
-      item: result.value
+      item: result
     })
   } catch (error) {
     console.error('Update tópico error:', error)

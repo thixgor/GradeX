@@ -59,7 +59,7 @@ export async function PATCH(
       { returnDocument: 'after' }
     )
 
-    if ((!result || !result.value) && ObjectId.isValid(id)) {
+    if (!result && ObjectId.isValid(id)) {
       result = await modulosCollection.findOneAndUpdate(
         { _id: id } as any,
         { $set: updateData },
@@ -67,7 +67,7 @@ export async function PATCH(
       )
     }
 
-    if (!result || !result.value) {
+    if (!result) {
       return NextResponse.json(
         { error: 'Módulo não encontrado' },
         { status: 404 }
@@ -76,7 +76,7 @@ export async function PATCH(
 
     return NextResponse.json({
       success: true,
-      item: result.value
+      item: result
     })
   } catch (error) {
     console.error('Update módulo error:', error)
