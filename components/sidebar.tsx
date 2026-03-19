@@ -24,6 +24,7 @@ import {
   Database,
   Lock,
   Gamepad2,
+  HeartPulse,
 } from 'lucide-react'
 
 interface SidebarProps {
@@ -276,6 +277,7 @@ export function Sidebar({
     { icon: <BookMarked className="h-5 w-5" />, label: 'Cronogramas', href: '/cronogramas' },
     { icon: <MessageCircle className="h-5 w-5" />, label: 'Fórum', href: '/forum' },
     { icon: <Gamepad2 className="h-5 w-5" />, label: 'Games', href: '/games', badge: 'Novo' },
+    { icon: <HeartPulse className="h-5 w-5" />, label: 'Manual Clínico', href: '/manual-clinico' },
   ]
 
   const secondaryNavItems: NavItem[] = [

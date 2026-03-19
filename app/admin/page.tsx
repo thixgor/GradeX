@@ -24,7 +24,8 @@ import {
   Mail,
   ClipboardList,
   Target,
-  Music
+  Music,
+  HeartPulse
 } from 'lucide-react'
 
 interface User {
@@ -158,6 +159,13 @@ export default function AdminDashboard() {
       icon: Music,
       href: '/admin/study-playlists',
       color: 'from-violet-500 to-purple-500'
+    },
+    {
+      title: 'Manual Clínico',
+      description: 'Gerenciar patologias do manual clínico. Importar, cadastrar e editar fichas de estudo.',
+      icon: HeartPulse,
+      href: '/admin/manual-clinico',
+      color: 'from-red-500 to-rose-500'
     }
   ]
 
