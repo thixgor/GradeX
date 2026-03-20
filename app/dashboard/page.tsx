@@ -30,6 +30,7 @@ import {
   Lightbulb,
   GraduationCap,
   Activity,
+  HeartPulse,
 } from 'lucide-react'
 
 // ─── Circular Progress Ring ─────────────────────────────────────
@@ -241,6 +242,15 @@ function DashboardContent() {
       color: '#E2A43E',
       gradient: 'from-amber-500/10 to-amber-600/5',
       hoverGradient: 'hover:from-amber-500/20 hover:to-amber-600/10',
+    },
+    {
+      title: 'Manual Clínico',
+      description: 'Patologias e farmacologia',
+      icon: HeartPulse,
+      href: '/manual-clinico',
+      color: '#ef4444',
+      gradient: 'from-red-500/10 to-rose-600/5',
+      hoverGradient: 'hover:from-red-500/20 hover:to-rose-600/10',
     },
     {
       title: 'Forum',

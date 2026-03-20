@@ -95,24 +95,32 @@ interface RichTextRendererProps {
 export function RichTextRenderer({ text, className = '' }: RichTextRendererProps) {
   if (!text) return null
 
-  const lines = text.split('\n')
+  // Split into paragraphs by double newline, preserve single newlines within paragraphs
+  const paragraphs = text.split(/\n\s*\n/)
 
   return (
-    <div className={className}>
-      {lines.map((line, lineIdx) => {
-        if (line.trim() === '') {
-          return <br key={lineIdx} />
-        }
+    <div className={`${className} space-y-4`}>
+      {paragraphs.map((paragraph, pIdx) => {
+        const trimmed = paragraph.trim()
+        if (!trimmed) return null
 
-        const tokens = tokenizeLine(line)
+        // Within a paragraph, single newlines become <br />
+        const lines = trimmed.split('\n')
 
         return (
-          <Fragment key={lineIdx}>
-            {lineIdx > 0 && lines[lineIdx - 1].trim() !== '' && <br />}
-            {tokens.map((token, tokenIdx) => (
-              <RenderToken key={tokenIdx} token={token} />
-            ))}
-          </Fragment>
+          <p key={pIdx}>
+            {lines.map((line, lineIdx) => {
+              const tokens = tokenizeLine(line)
+              return (
+                <Fragment key={lineIdx}>
+                  {lineIdx > 0 && <br />}
+                  {tokens.map((token, tokenIdx) => (
+                    <RenderToken key={tokenIdx} token={token} />
+                  ))}
+                </Fragment>
+              )
+            })}
+          </p>
         )
       })}
     </div>
