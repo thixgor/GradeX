@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { AREAS_SAUDE, SISTEMAS_FISIOLOGICOS, type AreaSaude, type SistemaFisiologico, type Farmaco } from '@/lib/types/manual-clinico'
 import { Plus, Trash2, Save, ArrowLeft, ChevronDown, ChevronUp } from 'lucide-react'
+import { RichTextArea } from './rich-text-area'
 
 interface Props {
   initialData?: any
@@ -285,11 +286,11 @@ export function PatologiaForm({ initialData, editId }: Props) {
           <SectionHeader id="classificacao" title="Classificação" />
           {expandedSections.classificacao && (
             <CardContent className="pt-0">
-              <textarea
+              <RichTextArea
                 value={classificacao}
-                onChange={e => setClassificacao(e.target.value)}
-                className="w-full min-h-[120px] px-3 py-2 rounded-md border bg-background text-sm resize-y"
+                onChange={setClassificacao}
                 placeholder="Classificação clínica/etiológica..."
+                minHeight="120px"
               />
             </CardContent>
           )}
@@ -300,11 +301,11 @@ export function PatologiaForm({ initialData, editId }: Props) {
           <SectionHeader id="fisiopatologia" title="Fisiopatologia" />
           {expandedSections.fisiopatologia && (
             <CardContent className="pt-0">
-              <textarea
+              <RichTextArea
                 value={fisiopatologia}
-                onChange={e => setFisiopatologia(e.target.value)}
-                className="w-full min-h-[150px] px-3 py-2 rounded-md border bg-background text-sm resize-y"
+                onChange={setFisiopatologia}
                 placeholder="Mecanismo fisiopatológico detalhado..."
+                minHeight="150px"
               />
             </CardContent>
           )}
@@ -317,29 +318,29 @@ export function PatologiaForm({ initialData, editId }: Props) {
             <CardContent className="pt-0 space-y-4">
               <div>
                 <Label>Diagnóstico Semiológico</Label>
-                <textarea
+                <RichTextArea
                   value={diagnosticoSemiologico}
-                  onChange={e => setDiagnosticoSemiologico(e.target.value)}
-                  className="w-full min-h-[120px] px-3 py-2 rounded-md border bg-background text-sm resize-y"
+                  onChange={setDiagnosticoSemiologico}
                   placeholder="Sinais, sintomas e exame físico..."
+                  minHeight="120px"
                 />
               </div>
               <div>
                 <Label>Diagnósticos Diferenciais</Label>
-                <textarea
+                <RichTextArea
                   value={diagnosticosDiferenciais}
-                  onChange={e => setDiagnosticosDiferenciais(e.target.value)}
-                  className="w-full min-h-[100px] px-3 py-2 rounded-md border bg-background text-sm resize-y"
+                  onChange={setDiagnosticosDiferenciais}
                   placeholder="Diagnósticos diferenciais com critérios..."
+                  minHeight="100px"
                 />
               </div>
               <div>
                 <Label>Gravidade</Label>
-                <textarea
+                <RichTextArea
                   value={gravidade}
-                  onChange={e => setGravidade(e.target.value)}
-                  className="w-full min-h-[80px] px-3 py-2 rounded-md border bg-background text-sm resize-y"
+                  onChange={setGravidade}
                   placeholder="Escala de gravidade..."
+                  minHeight="80px"
                 />
               </div>
             </CardContent>
@@ -353,11 +354,11 @@ export function PatologiaForm({ initialData, editId }: Props) {
             <CardContent className="pt-0 space-y-4">
               <div>
                 <Label>Tratamento</Label>
-                <textarea
+                <RichTextArea
                   value={tratamento}
-                  onChange={e => setTratamento(e.target.value)}
-                  className="w-full min-h-[120px] px-3 py-2 rounded-md border bg-background text-sm resize-y"
+                  onChange={setTratamento}
                   placeholder="Abordagem terapêutica não-farmacológica e farmacológica..."
+                  minHeight="120px"
                 />
               </div>
               <div>
@@ -392,11 +393,11 @@ export function PatologiaForm({ initialData, editId }: Props) {
             <CardContent className="pt-0 space-y-4">
               <div>
                 <Label>Observações Clínicas</Label>
-                <textarea
+                <RichTextArea
                   value={observacoes}
-                  onChange={e => setObservacoes(e.target.value)}
-                  className="w-full min-h-[80px] px-3 py-2 rounded-md border bg-background text-sm resize-y"
+                  onChange={setObservacoes}
                   placeholder="Perlas clínicas, alertas..."
+                  minHeight="80px"
                 />
               </div>
               <div>

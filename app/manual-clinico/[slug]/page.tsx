@@ -3,73 +3,102 @@
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { AppShell } from '@/components/app-shell'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import {
   ArrowLeft,
-  BookOpen,
   Dna,
   Stethoscope,
-  Scale,
   Pill,
   GitBranch,
   AlertTriangle,
   FileText,
-  Image as ImageIcon,
   ChevronDown,
   ChevronUp,
   Download,
   Activity,
   Layers,
-  ClipboardList
+  ClipboardList,
+  CircleDot,
+  Zap,
+  Heart,
+  Syringe,
+  BookMarked,
+  ShieldAlert,
+  FlaskConical
 } from 'lucide-react'
 import { type Patologia, type AreaSaude } from '@/lib/types/manual-clinico'
+import { RichTextRenderer } from '@/components/manual-clinico/rich-text-renderer'
 
-const AREA_COLORS: Record<AreaSaude, string> = {
-  'Medicina': 'bg-blue-500 text-white',
-  'Psicologia': 'bg-purple-500 text-white',
-  'Odontologia': 'bg-emerald-500 text-white',
-  'Biomedicina': 'bg-orange-500 text-white',
+const AREA_BADGE: Record<AreaSaude, string> = {
+  'Medicina': 'bg-blue-500/20 text-blue-300 border-blue-400/30',
+  'Psicologia': 'bg-purple-500/20 text-purple-300 border-purple-400/30',
+  'Odontologia': 'bg-emerald-500/20 text-emerald-300 border-emerald-400/30',
+  'Biomedicina': 'bg-orange-500/20 text-orange-300 border-orange-400/30',
 }
 
-function Section({ title, icon: Icon, children, defaultOpen = true }: {
+/* ═══════════════════════════════════════════
+   COLLAPSIBLE SECTION
+   ═══════════════════════════════════════════ */
+function Section({ title, icon: Icon, children, defaultOpen = true, variant = 'default' }: {
   title: string
   icon: any
   children: React.ReactNode
   defaultOpen?: boolean
+  variant?: 'default' | 'warning'
 }) {
   const [open, setOpen] = useState(defaultOpen)
 
+  const borderColor = variant === 'warning' ? 'border-amber-500/20' : 'border-border/60'
+  const hoverBorder = variant === 'warning' ? 'hover:border-amber-500/30' : 'hover:border-border'
+
   return (
-    <Card className="overflow-hidden">
+    <div className={`rounded-2xl border ${borderColor} bg-card/50 backdrop-blur-sm overflow-hidden transition-all duration-200 ${hoverBorder}`}>
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between p-4 sm:p-5 hover:bg-accent/50 transition-colors text-left"
+        className="w-full flex items-center justify-between gap-3 p-5 hover:bg-accent/30 transition-colors text-left"
         aria-expanded={open}
       >
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-primary/10">
-            <Icon className="h-5 w-5 text-primary" />
+        <div className="flex items-center gap-3 min-w-0">
+          <div className={`shrink-0 p-2.5 rounded-xl ${variant === 'warning' ? 'bg-amber-500/10' : 'bg-primary/10'}`}>
+            <Icon className={`h-5 w-5 ${variant === 'warning' ? 'text-amber-500' : 'text-primary'}`} />
           </div>
-          <h2 className="font-semibold text-lg">{title}</h2>
+          <h2 className="font-bold text-[17px] text-foreground truncate">{title}</h2>
         </div>
-        {open ? <ChevronUp className="h-5 w-5 text-muted-foreground" /> : <ChevronDown className="h-5 w-5 text-muted-foreground" />}
+        <div className={`shrink-0 p-1.5 rounded-full transition-colors ${open ? 'bg-primary/10' : 'bg-accent/50'}`}>
+          {open
+            ? <ChevronUp className="h-4 w-4 text-primary" />
+            : <ChevronDown className="h-4 w-4 text-muted-foreground" />
+          }
+        </div>
       </button>
+
       {open && (
-        <CardContent className="pt-0 px-4 sm:px-5 pb-5">
-          <div className="border-t pt-4">
+        <div className="px-5 pb-5">
+          <div className="border-t border-border/40 pt-4">
             {children}
           </div>
-        </CardContent>
+        </div>
       )}
-    </Card>
+    </div>
   )
 }
 
+/* ═══════════════════════════════════════════
+   CONTENT BLOCK — rich text with white color
+   ═══════════════════════════════════════════ */
+function ContentBlock({ children }: { children: string }) {
+  return (
+    <RichTextRenderer
+      text={children}
+      className="text-[15px] leading-[1.8] text-foreground/90 selection:bg-primary/20"
+    />
+  )
+}
+
+/* ═══════════════════════════════════════════
+   FLUXOGRAMA RENDERER
+   ═══════════════════════════════════════════ */
 function FluxogramaRenderer({ text }: { text: string }) {
-  // Parse flowchart text into visual nodes
-  // Supports lines like "Step text", "→ Next step", "↓", arrows, conditionals with "Se/If ... → ..."
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean)
 
   return (
@@ -81,31 +110,29 @@ function FluxogramaRenderer({ text }: { text: string }) {
 
         if (isArrow) {
           return (
-            <div key={i} className="flex flex-col items-center text-primary/60">
-              <div className="w-0.5 h-4 bg-primary/30" />
-              <ChevronDown className="h-4 w-4 -mt-1" />
+            <div key={i} className="flex flex-col items-center py-0.5">
+              <div className="w-0.5 h-5 bg-primary/30 rounded-full" />
+              <ChevronDown className="h-4 w-4 text-primary/50 -mt-1" />
             </div>
           )
         }
 
+        const prevIsArrow = i > 0 && (/^[→↓⬇|▼►➜➔⇒]+$/.test(lines[i - 1]) || lines[i - 1] === '|' || lines[i - 1] === 'v' || lines[i - 1] === 'V')
+
         if (isSplit) {
           const parts = line.split(' → ').map(s => s.trim())
           return (
-            <div key={i} className="w-full">
-              <div className="flex flex-col items-center text-primary/60 mb-1">
-                <div className="w-0.5 h-3 bg-primary/30" />
-              </div>
-              <div className="relative border-2 border-amber-500/40 bg-amber-500/5 rounded-xl p-3 text-center max-w-md mx-auto" style={{ clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' }}>
-                <p className="text-sm font-medium text-amber-700 dark:text-amber-400 px-6">{parts[0]}</p>
+            <div key={i} className="w-full max-w-md">
+              {!prevIsArrow && <FlowConnector />}
+              <div className="relative border-2 border-amber-500/30 bg-amber-950/30 rounded-xl p-3.5 text-center mx-auto">
+                <Zap className="h-3.5 w-3.5 text-amber-400 mx-auto mb-1.5" />
+                <p className="text-sm font-semibold text-amber-200">{parts[0]}</p>
               </div>
               {parts.length > 1 && (
                 <>
-                  <div className="flex flex-col items-center text-primary/60 my-1">
-                    <div className="w-0.5 h-3 bg-primary/30" />
-                    <ChevronDown className="h-3 w-3 -mt-0.5" />
-                  </div>
-                  <div className="border border-primary/20 bg-primary/5 rounded-lg p-3 text-center max-w-sm mx-auto">
-                    <p className="text-sm text-foreground">{parts.slice(1).join(' → ')}</p>
+                  <FlowConnector />
+                  <div className="border border-border/60 bg-card/80 rounded-xl p-3 text-center mx-auto max-w-sm">
+                    <p className="text-sm text-foreground/80">{parts.slice(1).join(' → ')}</p>
                   </div>
                 </>
               )}
@@ -115,39 +142,33 @@ function FluxogramaRenderer({ text }: { text: string }) {
 
         if (isConditional) {
           return (
-            <div key={i} className="w-full">
-              <div className="flex flex-col items-center text-primary/60 mb-1">
-                <div className="w-0.5 h-3 bg-primary/30" />
-              </div>
-              <div className="relative border-2 border-amber-500/40 bg-amber-500/5 rounded-xl p-3 text-center max-w-md mx-auto" style={{ clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' }}>
-                <p className="text-sm font-medium text-amber-700 dark:text-amber-400 px-6">{line}</p>
+            <div key={i} className="w-full max-w-md">
+              {!prevIsArrow && <FlowConnector />}
+              <div className="relative border-2 border-amber-500/30 bg-amber-950/30 rounded-xl p-3.5 text-center mx-auto">
+                <p className="text-sm font-semibold text-amber-200">{line}</p>
               </div>
             </div>
           )
         }
 
-        // Regular step node
         const isFirst = i === 0
         const isLast = i === lines.length - 1
-        const stepNumber = lines.slice(0, i + 1).filter((l, j) => {
-          return !/^[→↓⬇|▼►➜➔⇒]+$/.test(l) && l !== '|' && l !== 'v' && l !== 'V'
-        }).length
 
         return (
-          <div key={i} className="w-full">
-            {i > 0 && !(/^[→↓⬇|▼►➜➔⇒]+$/.test(lines[i - 1]) || lines[i - 1] === '|' || lines[i - 1] === 'v' || lines[i - 1] === 'V') && (
-              <div className="flex flex-col items-center text-primary/60">
-                <div className="w-0.5 h-4 bg-primary/30" />
-                <ChevronDown className="h-4 w-4 -mt-1" />
-              </div>
-            )}
-            <div className={`border rounded-lg p-3 max-w-md mx-auto text-center ${
-              isFirst ? 'bg-primary/10 border-primary/30 shadow-sm' :
-              isLast ? 'bg-emerald-500/10 border-emerald-500/30 shadow-sm' :
-              'bg-card border-border hover:border-primary/20'
-            } transition-colors`}>
-              <p className={`text-sm ${isFirst || isLast ? 'font-semibold' : ''} ${
-                isFirst ? 'text-primary' : isLast ? 'text-emerald-700 dark:text-emerald-400' : 'text-foreground'
+          <div key={i} className="w-full max-w-md">
+            {i > 0 && !prevIsArrow && <FlowConnector />}
+            <div className={`relative border rounded-xl p-3.5 text-center mx-auto transition-colors ${
+              isFirst
+                ? 'border-primary/40 bg-primary/10'
+                : isLast
+                ? 'border-emerald-500/40 bg-emerald-950/20'
+                : 'border-border/60 bg-card/60 hover:bg-card/80'
+            }`}>
+              {isFirst && <CircleDot className="h-3.5 w-3.5 text-primary mx-auto mb-1" />}
+              <p className={`text-sm font-medium ${
+                isFirst ? 'text-primary' :
+                isLast ? 'text-emerald-400' :
+                'text-foreground/90'
               }`}>
                 {line}
               </p>
@@ -159,44 +180,68 @@ function FluxogramaRenderer({ text }: { text: string }) {
   )
 }
 
+function FlowConnector() {
+  return (
+    <div className="flex flex-col items-center">
+      <div className="w-0.5 h-4 bg-border/50 rounded-full" />
+      <ChevronDown className="h-3 w-3 text-border -mt-0.5" />
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════════════
+   FARMACO CARD
+   ═══════════════════════════════════════════ */
 function FarmacoCard({ farmaco }: { farmaco: any }) {
   return (
-    <div className="border rounded-lg p-4 bg-card">
-      <h4 className="font-semibold text-base">{farmaco.medicamento}</h4>
-      {farmaco.classe && (
-        <p className="text-sm text-muted-foreground mt-0.5">{farmaco.classe}</p>
-      )}
-      <div className="mt-3 space-y-2 text-sm">
+    <div className="rounded-xl border border-border/60 bg-card/60 p-5 hover:bg-card/80 transition-colors">
+      {/* Header */}
+      <div className="flex items-start gap-3 mb-4">
+        <div className="p-2 rounded-xl bg-primary/10 shrink-0">
+          <Syringe className="h-4 w-4 text-primary" />
+        </div>
+        <div className="min-w-0">
+          <h4 className="font-bold text-base text-foreground">{farmaco.medicamento}</h4>
+          {farmaco.classe && (
+            <p className="text-sm text-muted-foreground mt-0.5">{farmaco.classe}</p>
+          )}
+        </div>
+      </div>
+
+      <div className="space-y-3">
         {farmaco.mecanismo_acao && (
-          <div>
-            <span className="font-medium text-primary">Mecanismo de Ação:</span>
-            <p className="mt-0.5 text-muted-foreground">{farmaco.mecanismo_acao}</p>
+          <div className="rounded-lg bg-primary/[0.05] border border-primary/10 p-3">
+            <p className="text-[11px] uppercase tracking-wider font-semibold text-primary mb-1.5">Mecanismo de Ação</p>
+            <p className="text-[13px] leading-relaxed text-foreground/85">{farmaco.mecanismo_acao}</p>
           </div>
         )}
+
         {farmaco.dose_usual && (
-          <div>
-            <span className="font-medium text-primary">Dose Usual:</span>
-            <span className="ml-2 text-muted-foreground">{farmaco.dose_usual}</span>
+          <div className="flex items-baseline gap-2">
+            <span className="text-[11px] uppercase tracking-wider font-semibold text-primary shrink-0">Dose:</span>
+            <span className="text-[13px] text-foreground/85">{farmaco.dose_usual}</span>
           </div>
         )}
+
         {farmaco.efeitos_colaterais?.length > 0 && (
           <div>
-            <span className="font-medium text-yellow-600 dark:text-yellow-400">Efeitos Colaterais:</span>
-            <div className="flex flex-wrap gap-1 mt-1">
+            <p className="text-[11px] uppercase tracking-wider font-semibold text-amber-400 mb-2">Efeitos Colaterais</p>
+            <div className="flex flex-wrap gap-1.5">
               {farmaco.efeitos_colaterais.map((e: string, i: number) => (
-                <span key={i} className="text-xs px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border border-yellow-500/20">
+                <span key={i} className="text-xs px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-300 border border-amber-500/20 font-medium">
                   {e}
                 </span>
               ))}
             </div>
           </div>
         )}
+
         {farmaco.contraindicacoes?.length > 0 && (
           <div>
-            <span className="font-medium text-red-600 dark:text-red-400">Contraindicações:</span>
-            <div className="flex flex-wrap gap-1 mt-1">
+            <p className="text-[11px] uppercase tracking-wider font-semibold text-red-400 mb-2">Contraindicações</p>
+            <div className="flex flex-wrap gap-1.5">
               {farmaco.contraindicacoes.map((c: string, i: number) => (
-                <span key={i} className="text-xs px-2 py-0.5 rounded-full bg-red-500/10 text-red-700 dark:text-red-400 border border-red-500/20">
+                <span key={i} className="text-xs px-2.5 py-1 rounded-lg bg-red-500/10 text-red-300 border border-red-500/20 font-medium">
                   {c}
                 </span>
               ))}
@@ -208,6 +253,9 @@ function FarmacoCard({ farmaco }: { farmaco: any }) {
   )
 }
 
+/* ═══════════════════════════════════════════
+   PAGE WRAPPER
+   ═══════════════════════════════════════════ */
 export default function PatologiaPage() {
   return (
     <AppShell showHeader={false}>
@@ -216,6 +264,9 @@ export default function PatologiaPage() {
   )
 }
 
+/* ═══════════════════════════════════════════
+   MAIN CONTENT
+   ═══════════════════════════════════════════ */
 function PatologiaContent() {
   const params = useParams()
   const router = useRouter()
@@ -227,14 +278,9 @@ function PatologiaContent() {
     async function load() {
       try {
         const res = await fetch(`/api/manual-clinico/${params.slug}`)
-        if (!res.ok) {
-          router.push('/manual-clinico')
-          return
-        }
+        if (!res.ok) { router.push('/manual-clinico'); return }
         const data = await res.json()
         setPatologia(data)
-
-        // SEO - atualizar título
         document.title = `${data.nome} — Manual Clínico | DomineAqui`
       } catch {
         router.push('/manual-clinico')
@@ -247,8 +293,12 @@ function PatologiaContent() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      <div className="flex flex-col items-center justify-center min-h-screen gap-3">
+        <div className="relative">
+          <div className="h-10 w-10 rounded-full border-2 border-primary/20" />
+          <div className="absolute inset-0 h-10 w-10 rounded-full border-2 border-transparent border-t-primary animate-spin" />
+        </div>
+        <span className="text-sm text-muted-foreground">Carregando...</span>
       </div>
     )
   }
@@ -262,85 +312,111 @@ function PatologiaContent() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-6 max-w-4xl">
-        {/* Voltar + PDF */}
-        <div className="flex items-center justify-between mb-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => router.push('/manual-clinico')}
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Voltar ao Manual
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={async () => {
-              const { generatePatologiaPDF } = await import('@/lib/patologia-pdf-generator')
-              const blob = generatePatologiaPDF(patologia)
-              const url = URL.createObjectURL(blob)
-              const a = document.createElement('a')
-              a.href = url
-              a.download = `${patologia.slug || 'patologia'}.pdf`
-              a.click()
-              URL.revokeObjectURL(url)
-            }}
-          >
-            <Download className="h-4 w-4 mr-2" />
-            Baixar PDF
-          </Button>
-        </div>
 
-        {/* Cabeçalho */}
-        <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold font-heading mb-2">{patologia.nome}</h1>
+      {/* ══════════════════════════════════════
+           HERO HEADER
+         ══════════════════════════════════════ */}
+      <div className="relative overflow-hidden">
+        {/* Gradients */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.07] via-background to-background" />
+        <div className="absolute top-0 right-0 w-[500px] h-[300px] bg-primary/[0.04] rounded-full blur-[100px]" />
+
+        <div className="relative container mx-auto px-4 sm:px-6 pt-5 pb-8 max-w-4xl">
+          {/* Nav row */}
+          <div className="flex items-center justify-between mb-8">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => router.push('/manual-clinico')}
+              className="rounded-xl"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Manual Clínico
+            </Button>
+            <Button
+              size="sm"
+              onClick={async () => {
+                const { generatePatologiaPDF } = await import('@/lib/patologia-pdf-generator')
+                const blob = generatePatologiaPDF(patologia)
+                const url = URL.createObjectURL(blob)
+                const a = document.createElement('a')
+                a.href = url
+                a.download = `${patologia.slug || 'patologia'}.pdf`
+                a.click()
+                URL.revokeObjectURL(url)
+              }}
+              className="rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Baixar PDF
+            </Button>
+          </div>
+
+          {/* Disease name */}
+          <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-extrabold text-foreground leading-tight tracking-tight">
+            {patologia.nome}
+          </h1>
+
+          {/* Sinônimos */}
           {patologia.sinonimos.length > 0 && (
-            <p className="text-muted-foreground mb-3">
-              {patologia.sinonimos.join(' • ')}
+            <p className="text-muted-foreground mt-2.5 text-[15px]">
+              {patologia.sinonimos.join(' · ')}
             </p>
           )}
-          <div className="flex flex-wrap items-center gap-2">
+
+          {/* Badges row */}
+          <div className="flex flex-wrap items-center gap-2 mt-5">
             {patologia.cid10 && (
-              <Badge variant="outline" className="font-mono text-sm">{patologia.cid10}</Badge>
+              <span className="px-3.5 py-1.5 rounded-lg text-xs font-bold font-mono bg-foreground/10 border border-foreground/20 text-foreground">
+                CID-10: {patologia.cid10}
+              </span>
             )}
             {patologia.areas.map(area => (
-              <Badge key={area} className={AREA_COLORS[area]}>{area}</Badge>
+              <span key={area} className={`px-3.5 py-1.5 rounded-lg text-xs font-bold border ${AREA_BADGE[area]}`}>
+                {area}
+              </span>
             ))}
-            <Badge variant="secondary">{patologia.sistema}</Badge>
           </div>
+
+          {/* Sistema pill */}
+          {patologia.sistema && (
+            <div className="mt-3">
+              <span className="text-sm text-muted-foreground">{patologia.sistema}</span>
+            </div>
+          )}
         </div>
 
-        {/* Seções */}
-        <div className="space-y-4">
-          {/* Classificação */}
+        {/* Bottom border */}
+        <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+      </div>
+
+      {/* ══════════════════════════════════════
+           SECTIONS
+         ══════════════════════════════════════ */}
+      <div className="container mx-auto px-4 sm:px-6 py-6 max-w-4xl">
+        <div className="flex flex-col gap-3">
+
           {patologia.classificacao && (
             <Section title="Classificação" icon={Layers}>
-              <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
-                {patologia.classificacao}
-              </div>
+              <ContentBlock>{patologia.classificacao}</ContentBlock>
             </Section>
           )}
 
-          {/* Fisiopatologia */}
           {patologia.fisiopatologia && (
             <Section title="Fisiopatologia" icon={Dna}>
-              <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
-                {patologia.fisiopatologia}
-              </div>
-              {/* Imagens de mecanismo */}
+              <ContentBlock>{patologia.fisiopatologia}</ContentBlock>
               {patologia.imagens_mecanismo && patologia.imagens_mecanismo.length > 0 && (
-                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {patologia.imagens_mecanismo.map((img, i) => (
-                    <div key={i} className="border rounded-lg overflow-hidden">
+                    <div key={i} className="rounded-xl overflow-hidden border border-border/60 bg-card/50">
                       <img
                         src={img}
-                        alt={patologia.legenda_imagens?.[i] || `Mecanismo de ação ${i + 1}`}
+                        alt={patologia.legenda_imagens?.[i] || `Mecanismo ${i + 1}`}
                         className="w-full h-auto"
                         loading="lazy"
                       />
                       {patologia.legenda_imagens?.[i] && (
-                        <p className="text-xs text-muted-foreground p-2 bg-muted/50">
+                        <p className="text-xs text-muted-foreground p-3 border-t border-border/40">
                           {patologia.legenda_imagens[i]}
                         </p>
                       )}
@@ -351,51 +427,43 @@ function PatologiaContent() {
             </Section>
           )}
 
-          {/* Diagnóstico Semiológico */}
           {patologia.diagnostico_semiologico && (
             <Section title="Diagnóstico Semiológico" icon={Stethoscope}>
-              <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
-                {patologia.diagnostico_semiologico}
-              </div>
+              <ContentBlock>{patologia.diagnostico_semiologico}</ContentBlock>
             </Section>
           )}
 
-          {/* Diagnósticos Diferenciais */}
           {patologia.diagnosticos_diferenciais && (
             <Section title="Diagnósticos Diferenciais" icon={ClipboardList}>
-              <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
-                {patologia.diagnosticos_diferenciais}
-              </div>
+              <ContentBlock>{patologia.diagnosticos_diferenciais}</ContentBlock>
             </Section>
           )}
 
-          {/* Gravidade */}
           {patologia.gravidade && (
-            <Section title="Gravidade" icon={Activity}>
-              <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
-                {patologia.gravidade}
-              </div>
+            <Section title="Gravidade e Classificação" icon={ShieldAlert}>
+              <ContentBlock>{patologia.gravidade}</ContentBlock>
             </Section>
           )}
 
-          {/* Tratamento */}
           {patologia.tratamento && (
-            <Section title="Tratamento" icon={Pill}>
-              <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
-                {patologia.tratamento}
-              </div>
+            <Section title="Tratamento" icon={Heart}>
+              <ContentBlock>{patologia.tratamento}</ContentBlock>
             </Section>
           )}
 
-          {/* Farmacologia */}
+          {/* ══════ FARMACOLOGIA ══════ */}
           {farma && (farma.primeira_linha?.length > 0 || farma.segunda_linha?.length > 0) && (
-            <Section title="Farmacologia" icon={Pill}>
-              {/* Tabs */}
-              <div className="flex gap-1 mb-4 bg-muted rounded-lg p-1">
+            <Section title="Farmacologia" icon={FlaskConical}>
+              {/* Tab bar */}
+              <div className="flex gap-1 p-1 mb-5 rounded-xl bg-muted/50 border border-border/40">
                 {farma.primeira_linha?.length > 0 && (
                   <button
                     onClick={() => setFarmaTab('primeira')}
-                    className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${farmaTab === 'primeira' ? 'bg-background shadow text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                    className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-semibold transition-all ${
+                      farmaTab === 'primeira'
+                        ? 'bg-primary text-primary-foreground shadow-md shadow-primary/25'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
+                    }`}
                   >
                     1ª Linha
                   </button>
@@ -403,7 +471,11 @@ function PatologiaContent() {
                 {farma.segunda_linha?.length > 0 && (
                   <button
                     onClick={() => setFarmaTab('segunda')}
-                    className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${farmaTab === 'segunda' ? 'bg-background shadow text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                    className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-semibold transition-all ${
+                      farmaTab === 'segunda'
+                        ? 'bg-primary text-primary-foreground shadow-md shadow-primary/25'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
+                    }`}
                   >
                     2ª Linha
                   </button>
@@ -411,52 +483,67 @@ function PatologiaContent() {
                 {farma.terceira_linha && farma.terceira_linha.length > 0 && (
                   <button
                     onClick={() => setFarmaTab('terceira')}
-                    className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${farmaTab === 'terceira' ? 'bg-background shadow text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                    className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-semibold transition-all ${
+                      farmaTab === 'terceira'
+                        ? 'bg-primary text-primary-foreground shadow-md shadow-primary/25'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
+                    }`}
                   >
                     3ª Linha
                   </button>
                 )}
               </div>
-              <div className="space-y-3">
+
+              <div className="flex flex-col gap-3">
                 {farmaTabData?.map((farmaco, i) => (
                   <FarmacoCard key={i} farmaco={farmaco} />
                 ))}
                 {(!farmaTabData || farmaTabData.length === 0) && (
-                  <p className="text-sm text-muted-foreground">Nenhum fármaco cadastrado para esta linha.</p>
+                  <p className="text-sm text-muted-foreground text-center py-8">Nenhum fármaco cadastrado para esta linha.</p>
                 )}
               </div>
             </Section>
           )}
 
-          {/* Fluxograma de Tratamento */}
+          {/* ══════ FLUXOGRAMA ══════ */}
           {patologia.fluxograma_tratamento && (
             <Section title="Fluxograma de Tratamento" icon={GitBranch}>
-              <div className="bg-muted/20 rounded-xl p-4 sm:p-6 border">
+              <div className="rounded-xl bg-muted/30 border border-border/40 p-5 sm:p-8">
                 <FluxogramaRenderer text={patologia.fluxograma_tratamento} />
               </div>
             </Section>
           )}
 
-          {/* Observações Clínicas */}
+          {/* ══════ OBSERVAÇÕES ══════ */}
           {patologia.observacoes_clinicas && (
-            <Section title="Observações Clínicas" icon={AlertTriangle}>
-              <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
-                <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
-                  {patologia.observacoes_clinicas}
+            <Section title="Observações Clínicas" icon={AlertTriangle} variant="warning">
+              <div className="relative rounded-xl bg-amber-500/[0.06] border border-amber-500/20 p-5 overflow-hidden">
+                <div className="absolute -top-10 -right-10 w-40 h-40 bg-amber-500/[0.05] rounded-full blur-3xl pointer-events-none" />
+                <div className="relative">
+                  <div className="flex items-center gap-2 mb-3">
+                    <AlertTriangle className="h-4 w-4 text-amber-400" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-amber-400">Atenção</span>
+                  </div>
+                  <RichTextRenderer
+                    text={patologia.observacoes_clinicas}
+                    className="text-[15px] leading-[1.8] text-foreground/90"
+                  />
                 </div>
               </div>
             </Section>
           )}
 
-          {/* Referências */}
+          {/* ══════ REFERÊNCIAS ══════ */}
           {patologia.referencias && (
-            <Section title="Referências" icon={FileText} defaultOpen={false}>
-              <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap text-muted-foreground">
+            <Section title="Referências" icon={BookMarked} defaultOpen={false}>
+              <div className="whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">
                 {patologia.referencias}
               </div>
             </Section>
           )}
         </div>
+
+        <div className="h-12" />
       </div>
     </div>
   )
