@@ -416,9 +416,12 @@ function PatologiaContent() {
                         loading="lazy"
                       />
                       {patologia.legenda_imagens?.[i] && (
-                        <p className="text-xs text-muted-foreground p-3 border-t border-border/40">
-                          {patologia.legenda_imagens[i]}
-                        </p>
+                        <div className="p-3 border-t border-border/40">
+                          <RichTextRenderer
+                            text={patologia.legenda_imagens[i]}
+                            className="text-xs text-muted-foreground"
+                          />
+                        </div>
                       )}
                     </div>
                   ))}
