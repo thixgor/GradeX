@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef, type PointerEvent as RPointerEvent } from 'react'
 import { createPortal } from 'react-dom'
+import { motion, useSpring, useMotionValue, AnimatePresence } from 'framer-motion'
 import { useParams, useRouter } from 'next/navigation'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
@@ -334,95 +335,312 @@ interface SectionEntry {
   sub?: boolean
 }
 
+/** Liquid-glass bubble that follows the hovered / active item */
+function NavGlassBubble({
+  navRef,
+  hoveredIndex,
+  visible,
+}: {
+  navRef: React.RefObject<HTMLElement | null>
+  hoveredIndex: number | null
+  visible: boolean
+}) {
+  const springY = { stiffness: 500, damping: 38, mass: 0.6 }
+  const springH = { stiffness: 400, damping: 32, mass: 0.4 }
+  const squeeze = useSpring(useMotionValue(1), { stiffness: 600, damping: 28 })
+  const bubbleY = useSpring(useMotionValue(0), springY)
+  const bubbleH = useSpring(useMotionValue(36), springH)
+
+  useEffect(() => {
+    if (hoveredIndex === null || !navRef.current) return
+    const items = navRef.current.querySelectorAll<HTMLElement>('[data-nav-item]')
+    const item = items[hoveredIndex]
+    if (!item) return
+    const navRect = navRef.current.getBoundingClientRect()
+    const itemRect = item.getBoundingClientRect()
+    bubbleY.set(itemRect.top - navRect.top + navRef.current.scrollTop)
+    bubbleH.set(itemRect.height)
+    squeeze.set(0.97)
+    const t = setTimeout(() => squeeze.set(1), 60)
+    return () => clearTimeout(t)
+  }, [hoveredIndex, navRef, bubbleY, bubbleH, squeeze])
+
+  return (
+    <AnimatePresence>
+      {visible && hoveredIndex !== null && (
+        <motion.div
+          className="liquid-glass-bubble"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.92 }}
+          transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 4,
+            right: 4,
+            y: bubbleY,
+            height: bubbleH,
+            scaleX: squeeze,
+            borderRadius: 14,
+            zIndex: 0,
+            pointerEvents: 'none',
+            willChange: 'transform',
+          }}
+        >
+          <div className="liquid-glass-surface" />
+          <div className="liquid-glass-refraction-top" />
+          <div className="liquid-glass-refraction-bottom" />
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
+}
+
 function SectionNav({ sections }: { sections: SectionEntry[] }) {
   const [activeId, setActiveId] = useState<string | null>(null)
-  const [isHovered, setIsHovered] = useState(false)
-  const navRef = useRef<HTMLDivElement>(null)
+  const [expanded, setExpanded] = useState(false)
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  const [isTouching, setIsTouching] = useState(false)
+  const navRef = useRef<HTMLElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
 
-  // Intersection Observer to track which section is in view
+  // ── Draggable position ──────────────────────────────────────────
+  const [pos, setPos] = useState<{ x: number; y: number } | null>(null)
+  const dragRef = useRef<{ startX: number; startY: number; origX: number; origY: number; moved: boolean } | null>(null)
+
+  // Set initial position on mount (top-right corner)
+  useEffect(() => {
+    setPos({ x: window.innerWidth - 56, y: 72 })
+    const onResize = () => {
+      setPos(prev => {
+        if (!prev) return { x: window.innerWidth - 56, y: 72 }
+        return {
+          x: Math.min(prev.x, window.innerWidth - 44),
+          y: Math.max(12, Math.min(prev.y, window.innerHeight - 44)),
+        }
+      })
+    }
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
+  // ── Intersection Observer ───────────────────────────────────────
   useEffect(() => {
     const ids = sections.map(s => s.id)
     const observer = new IntersectionObserver(
       (entries) => {
-        // Find the first section that's intersecting from top
         const visible = entries
           .filter(e => e.isIntersecting)
           .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
-        if (visible.length > 0) {
-          setActiveId(visible[0].target.id)
-        }
+        if (visible.length > 0) setActiveId(visible[0].target.id)
       },
       { rootMargin: '-80px 0px -60% 0px', threshold: 0 }
     )
-
     ids.forEach(id => {
       const el = document.getElementById(id)
       if (el) observer.observe(el)
     })
-
     return () => observer.disconnect()
   }, [sections])
 
-  const scrollTo = (id: string) => {
+  // ── Close when clicking outside ─────────────────────────────────
+  useEffect(() => {
+    if (!expanded) return
+    const onClick = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setExpanded(false)
+        setHoveredIndex(null)
+      }
+    }
+    document.addEventListener('pointerdown', onClick)
+    return () => document.removeEventListener('pointerdown', onClick)
+  }, [expanded])
+
+  // ── Drag handlers (pointer events, works for mouse + touch) ─────
+  const onDragStart = useCallback((e: RPointerEvent<HTMLButtonElement>) => {
+    if (!pos) return
+    dragRef.current = { startX: e.clientX, startY: e.clientY, origX: pos.x, origY: pos.y, moved: false }
+    ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
+  }, [pos])
+
+  const onDragMove = useCallback((e: RPointerEvent<HTMLButtonElement>) => {
+    if (!dragRef.current) return
+    const dx = e.clientX - dragRef.current.startX
+    const dy = e.clientY - dragRef.current.startY
+    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) dragRef.current.moved = true
+    if (!dragRef.current.moved) return
+    setPos({
+      x: Math.max(12, Math.min(window.innerWidth - 44, dragRef.current.origX + dx)),
+      y: Math.max(12, Math.min(window.innerHeight - 44, dragRef.current.origY + dy)),
+    })
+  }, [])
+
+  const onDragEnd = useCallback(() => {
+    const wasDrag = dragRef.current?.moved
+    dragRef.current = null
+    if (!wasDrag) setExpanded(prev => !prev)
+  }, [])
+
+  // ── Touch nav: drag finger across items to select ───────────────
+  const findItemIndexAtY = useCallback((clientY: number) => {
+    if (!navRef.current) return null
+    const items = navRef.current.querySelectorAll<HTMLElement>('[data-nav-item]')
+    for (let i = 0; i < items.length; i++) {
+      const rect = items[i].getBoundingClientRect()
+      if (clientY >= rect.top && clientY <= rect.bottom) return i
+    }
+    return null
+  }, [])
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    e.preventDefault()
+    setIsTouching(true)
+    const idx = findItemIndexAtY(e.touches[0].clientY)
+    if (idx !== null) setHoveredIndex(idx)
+  }, [findItemIndexAtY])
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    e.preventDefault()
+    const idx = findItemIndexAtY(e.touches[0].clientY)
+    if (idx !== null) setHoveredIndex(idx)
+  }, [findItemIndexAtY])
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    e.preventDefault()
+    if (hoveredIndex !== null && navRef.current) {
+      const items = navRef.current.querySelectorAll<HTMLElement>('[data-nav-item]')
+      const item = items[hoveredIndex]
+      if (item) item.click()
+    }
+    setIsTouching(false)
+    setHoveredIndex(null)
+  }, [hoveredIndex])
+
+  const scrollTo = useCallback((id: string) => {
     const el = document.getElementById(id)
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      setExpanded(false)
     }
-  }
+  }, [])
 
-  if (sections.length === 0) return null
+  if (sections.length === 0 || !pos) return null
+
+  // Determine which side the panel opens to (left vs right of screen center)
+  const opensLeft = pos.x > window.innerWidth / 2
 
   return (
     <div
-      ref={navRef}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onTouchStart={() => setIsHovered(true)}
-      className={`fixed right-3 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col transition-all duration-500 ease-out ${
-        isHovered ? 'opacity-100' : 'opacity-40 hover:opacity-100'
-      }`}
+      ref={containerRef}
+      className="fixed z-50"
+      style={{ left: pos.x, top: pos.y }}
     >
-      <div className="relative">
-        {/* Glass surface */}
+      {/* ── FAB (draggable floating button) ── */}
+      <button
+        onPointerDown={onDragStart}
+        onPointerMove={onDragMove}
+        onPointerUp={onDragEnd}
+        className={`relative w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-300 touch-none select-none ${
+          expanded
+            ? 'opacity-0 pointer-events-none scale-75'
+            : 'opacity-70 hover:opacity-100 active:scale-95'
+        }`}
+        aria-label="Navegação de seções"
+      >
         <div className="liquid-glass-surface !rounded-2xl" />
-        <div className="liquid-glass-refraction-top !left-[12%] !right-[12%]" style={{ borderRadius: '16px' }} />
-        <div className="liquid-glass-refraction-bottom !left-[16%] !right-[16%]" style={{ borderRadius: '16px' }} />
-
-        {/* Content */}
-        <div className="relative z-10 py-3 px-1.5 flex flex-col gap-0.5">
-          {sections.map((section) => {
-            const Icon = section.icon
-            const isActive = activeId === section.id
-            return (
-              <button
-                key={section.id}
-                onClick={() => scrollTo(section.id)}
-                className={`group flex items-center gap-2.5 rounded-xl py-2 transition-all duration-200 text-left ${
-                  section.sub ? 'px-3 ml-2' : 'px-3'
-                } ${
-                  isActive
-                    ? 'bg-primary/15 text-primary'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-white/[0.08]'
-                }`}
-                title={section.label}
-              >
-                <Icon className={`${section.sub ? 'h-3 w-3' : 'h-3.5 w-3.5'} shrink-0 transition-colors ${
-                  isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
-                }`} />
-                <span className={`${section.sub ? 'text-[10px]' : 'text-[11px]'} font-medium whitespace-nowrap overflow-hidden transition-all duration-500 ease-out ${
-                  isHovered ? 'max-w-[140px] opacity-100' : 'max-w-0 opacity-0'
-                }`}>
-                  {section.label}
-                </span>
-                {/* Active dot when collapsed */}
-                {isActive && !isHovered && (
-                  <span className="absolute right-1.5 w-1.5 h-1.5 rounded-full bg-primary shadow-sm shadow-primary/50" />
-                )}
-              </button>
-            )
-          })}
+        <div className="liquid-glass-refraction-top" style={{ borderRadius: '16px' }} />
+        <div className="liquid-glass-refraction-bottom" style={{ borderRadius: '16px' }} />
+        <div className="relative z-10 flex flex-col items-center gap-[3px]">
+          <span className="block w-3.5 h-[2px] rounded-full bg-foreground/60" />
+          <span className="block w-2.5 h-[2px] rounded-full bg-foreground/40" />
+          <span className="block w-3.5 h-[2px] rounded-full bg-foreground/60" />
         </div>
-      </div>
+        {/* Active section dot indicator */}
+        {activeId && (
+          <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-primary shadow-sm shadow-primary/50 border border-background" />
+        )}
+      </button>
+
+      {/* ── Expanded panel ── */}
+      <AnimatePresence>
+        {expanded && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.85, y: -8 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.85, y: -8 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute top-0"
+            style={{ [opensLeft ? 'right' : 'left']: 0 }}
+          >
+            <div className="relative min-w-[180px]">
+              {/* Glass background */}
+              <div className="liquid-glass-surface !rounded-2xl" />
+              <div className="liquid-glass-refraction-top !left-[8%] !right-[8%]" style={{ borderRadius: '16px' }} />
+              <div className="liquid-glass-refraction-bottom !left-[12%] !right-[12%]" style={{ borderRadius: '16px' }} />
+
+              {/* Header with drag handle + close */}
+              <div className="relative z-10 flex items-center justify-between px-3 pt-2.5 pb-1">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">Seções</span>
+                <button
+                  onClick={() => { setExpanded(false); setHoveredIndex(null) }}
+                  className="p-1 rounded-lg hover:bg-white/[0.1] text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+
+              {/* Nav items */}
+              <nav
+                ref={navRef}
+                className="relative z-10 px-1.5 pb-2.5 select-none max-h-[60vh] overflow-y-auto"
+                style={{ touchAction: 'none' }}
+                onMouseEnter={() => setHoveredIndex(sections.findIndex(s => s.id === activeId))}
+                onMouseLeave={() => { if (!isTouching) setHoveredIndex(null) }}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+              >
+                <NavGlassBubble
+                  navRef={navRef}
+                  hoveredIndex={hoveredIndex}
+                  visible={hoveredIndex !== null}
+                />
+
+                {sections.map((section, i) => {
+                  const Icon = section.icon
+                  const isActive = activeId === section.id
+                  return (
+                    <button
+                      key={section.id}
+                      data-nav-item
+                      onClick={() => scrollTo(section.id)}
+                      onMouseEnter={() => setHoveredIndex(i)}
+                      className={`relative z-10 w-full flex items-center gap-2.5 rounded-xl py-2 transition-colors duration-150 text-left ${
+                        section.sub ? 'px-3 pl-7' : 'px-3'
+                      } ${
+                        isActive
+                          ? 'text-primary'
+                          : 'text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      <Icon className={`${section.sub ? 'h-3 w-3' : 'h-3.5 w-3.5'} shrink-0 transition-colors ${
+                        isActive ? 'text-primary' : ''
+                      }`} />
+                      <span className={`${section.sub ? 'text-[11px]' : 'text-[12px]'} font-medium whitespace-nowrap`}>
+                        {section.label}
+                      </span>
+                      {isActive && (
+                        <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary shadow-sm shadow-primary/50 shrink-0" />
+                      )}
+                    </button>
+                  )
+                })}
+              </nav>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
