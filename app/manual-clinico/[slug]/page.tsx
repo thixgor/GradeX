@@ -399,7 +399,9 @@ function NavGlassBubble({
 
 function SectionNav({ sections }: { sections: SectionEntry[] }) {
   const [activeId, setActiveId] = useState<string | null>(null)
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(() =>
+    typeof window !== 'undefined' && window.innerWidth >= 1024
+  )
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   const [isTouching, setIsTouching] = useState(false)
   const navRef = useRef<HTMLElement>(null)
@@ -444,10 +446,11 @@ function SectionNav({ sections }: { sections: SectionEntry[] }) {
     return () => observer.disconnect()
   }, [sections])
 
-  // ── Close when clicking outside ─────────────────────────────────
+  // ── Close when clicking outside (mobile only) ───────────────────
   useEffect(() => {
     if (!expanded) return
     const onClick = (e: MouseEvent) => {
+      if (window.innerWidth >= 1024) return // desktop stays open
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setExpanded(false)
         setHoveredIndex(null)
@@ -521,7 +524,8 @@ function SectionNav({ sections }: { sections: SectionEntry[] }) {
     const el = document.getElementById(id)
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      setExpanded(false)
+      // On mobile, collapse after navigation; on desktop, stay expanded
+      if (window.innerWidth < 1024) setExpanded(false)
     }
   }, [])
 
@@ -541,7 +545,7 @@ function SectionNav({ sections }: { sections: SectionEntry[] }) {
         onPointerDown={onDragStart}
         onPointerMove={onDragMove}
         onPointerUp={onDragEnd}
-        className={`relative w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-300 touch-none select-none ${
+        className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center transition-all duration-300 touch-none select-none ${
           expanded
             ? 'opacity-0 pointer-events-none scale-75'
             : 'opacity-70 hover:opacity-100 active:scale-95'
@@ -551,14 +555,14 @@ function SectionNav({ sections }: { sections: SectionEntry[] }) {
         <div className="liquid-glass-surface !rounded-2xl" />
         <div className="liquid-glass-refraction-top" style={{ borderRadius: '16px' }} />
         <div className="liquid-glass-refraction-bottom" style={{ borderRadius: '16px' }} />
-        <div className="relative z-10 flex flex-col items-center gap-[3px]">
-          <span className="block w-3.5 h-[2px] rounded-full bg-foreground/60" />
-          <span className="block w-2.5 h-[2px] rounded-full bg-foreground/40" />
-          <span className="block w-3.5 h-[2px] rounded-full bg-foreground/60" />
+        <div className="relative z-10 flex flex-col items-center gap-1">
+          <span className="block w-4 sm:w-5 h-[2.5px] rounded-full bg-foreground/60" />
+          <span className="block w-3 sm:w-3.5 h-[2.5px] rounded-full bg-foreground/40" />
+          <span className="block w-4 sm:w-5 h-[2.5px] rounded-full bg-foreground/60" />
         </div>
         {/* Active section dot indicator */}
         {activeId && (
-          <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-primary shadow-sm shadow-primary/50 border border-background" />
+          <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-primary shadow-sm shadow-primary/50 border border-background" />
         )}
       </button>
 
