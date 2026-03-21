@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { useParams, useRouter } from 'next/navigation'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
@@ -25,7 +26,8 @@ import {
   BookMarked,
   ShieldAlert,
   FlaskConical,
-  X
+  X,
+  Maximize2
 } from 'lucide-react'
 import { type Patologia, type AreaSaude } from '@/lib/types/manual-clinico'
 import { RichTextRenderer } from '@/components/manual-clinico/rich-text-renderer'
@@ -47,12 +49,13 @@ const AREA_BADGE: Record<AreaSaude, string> = {
 /* ═══════════════════════════════════════════
    COLLAPSIBLE SECTION
    ═══════════════════════════════════════════ */
-function Section({ title, icon: Icon, children, defaultOpen = true, variant = 'default' }: {
+function Section({ title, icon: Icon, children, defaultOpen = true, variant = 'default', sectionId }: {
   title: string
   icon: any
   children: React.ReactNode
   defaultOpen?: boolean
   variant?: 'default' | 'warning'
+  sectionId?: string
 }) {
   const [open, setOpen] = useState(defaultOpen)
 
@@ -60,7 +63,7 @@ function Section({ title, icon: Icon, children, defaultOpen = true, variant = 'd
   const hoverBorder = variant === 'warning' ? 'hover:border-amber-500/30' : 'hover:border-border'
 
   return (
-    <div className={`rounded-2xl border ${borderColor} bg-card/50 backdrop-blur-sm transition-all duration-200 ${hoverBorder}`}>
+    <div id={sectionId} className={`rounded-2xl border ${borderColor} bg-card/50 backdrop-blur-sm transition-all duration-200 ${hoverBorder} scroll-mt-6`}>
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between gap-3 p-5 hover:bg-accent/30 transition-colors text-left"
@@ -242,6 +245,185 @@ function FarmacoCard({ farmaco }: { farmaco: any }) {
 }
 
 /* ═══════════════════════════════════════════
+   IMAGE LIGHTBOX
+   ═══════════════════════════════════════════ */
+function ImageLightbox({
+  src, alt, caption, onClose,
+}: {
+  src: string
+  alt: string
+  caption?: string
+  onClose: () => void
+}) {
+  const [showCaption, setShowCaption] = useState(false)
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', onKey)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = ''
+    }
+  }, [onClose])
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center"
+      onClick={onClose}
+    >
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+
+      {/* Close button */}
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+        aria-label="Fechar"
+      >
+        <X className="h-5 w-5" />
+      </button>
+
+      {/* Image container */}
+      <div
+        className="relative z-10 max-w-[90vw] max-h-[90vh] flex flex-col items-center"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <img
+          src={src}
+          alt={alt}
+          className="max-w-full max-h-[80vh] object-contain rounded-xl shadow-2xl"
+          draggable={false}
+        />
+
+        {/* Caption toggle + content */}
+        {caption && (
+          <div className="mt-3 w-full max-w-2xl">
+            <button
+              onClick={() => setShowCaption(!showCaption)}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white/80 text-sm font-medium transition-colors mx-auto"
+            >
+              <FileText className="h-3.5 w-3.5" />
+              {showCaption ? 'Ocultar legenda' : 'Ver legenda'}
+              {showCaption
+                ? <ChevronUp className="h-3.5 w-3.5" />
+                : <ChevronDown className="h-3.5 w-3.5" />
+              }
+            </button>
+            {showCaption && (
+              <div className="mt-2 px-5 py-3 rounded-xl bg-white/10 backdrop-blur-md text-white/90 text-sm leading-relaxed">
+                <RichTextRenderer text={caption} className="text-white/90 [&_strong]:text-white [&_em]:text-white/80 [&_a]:text-primary" />
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>,
+    document.body
+  )
+}
+
+/* ═══════════════════════════════════════════
+   SECTION NAV (floating glassmorphism TOC)
+   ═══════════════════════════════════════════ */
+interface SectionEntry {
+  id: string
+  label: string
+  icon: any
+}
+
+function SectionNav({ sections }: { sections: SectionEntry[] }) {
+  const [activeId, setActiveId] = useState<string | null>(null)
+  const [isHovered, setIsHovered] = useState(false)
+  const navRef = useRef<HTMLDivElement>(null)
+
+  // Intersection Observer to track which section is in view
+  useEffect(() => {
+    const ids = sections.map(s => s.id)
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Find the first section that's intersecting from top
+        const visible = entries
+          .filter(e => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
+        if (visible.length > 0) {
+          setActiveId(visible[0].target.id)
+        }
+      },
+      { rootMargin: '-80px 0px -60% 0px', threshold: 0 }
+    )
+
+    ids.forEach(id => {
+      const el = document.getElementById(id)
+      if (el) observer.observe(el)
+    })
+
+    return () => observer.disconnect()
+  }, [sections])
+
+  const scrollTo = (id: string) => {
+    const el = document.getElementById(id)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
+
+  if (sections.length === 0) return null
+
+  return (
+    <div
+      ref={navRef}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onTouchStart={() => setIsHovered(true)}
+      className={`fixed right-3 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col transition-all duration-500 ease-out ${
+        isHovered ? 'opacity-100' : 'opacity-40 hover:opacity-100'
+      }`}
+    >
+      <div className="relative">
+        {/* Glass surface */}
+        <div className="liquid-glass-surface !rounded-2xl" />
+        <div className="liquid-glass-refraction-top !left-[12%] !right-[12%]" style={{ borderRadius: '16px' }} />
+        <div className="liquid-glass-refraction-bottom !left-[16%] !right-[16%]" style={{ borderRadius: '16px' }} />
+
+        {/* Content */}
+        <div className="relative z-10 py-3 px-1.5 flex flex-col gap-0.5">
+          {sections.map((section) => {
+            const Icon = section.icon
+            const isActive = activeId === section.id
+            return (
+              <button
+                key={section.id}
+                onClick={() => scrollTo(section.id)}
+                className={`group flex items-center gap-2.5 rounded-xl px-3 py-2 transition-all duration-200 text-left ${
+                  isActive
+                    ? 'bg-primary/15 text-primary'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-white/[0.08]'
+                }`}
+                title={section.label}
+              >
+                <Icon className={`h-3.5 w-3.5 shrink-0 transition-colors ${
+                  isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
+                }`} />
+                <span className={`text-[11px] font-medium whitespace-nowrap overflow-hidden transition-all duration-500 ease-out ${
+                  isHovered ? 'max-w-[140px] opacity-100' : 'max-w-0 opacity-0'
+                }`}>
+                  {section.label}
+                </span>
+                {/* Active dot when collapsed */}
+                {isActive && !isHovered && (
+                  <span className="absolute right-1.5 w-1.5 h-1.5 rounded-full bg-primary shadow-sm shadow-primary/50" />
+                )}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════════════
    PAGE WRAPPER
    ═══════════════════════════════════════════ */
 export default function PatologiaPage() {
@@ -263,6 +445,7 @@ function PatologiaContent() {
   const [patologia, setPatologia] = useState<Patologia | null>(null)
   const [loading, setLoading] = useState(true)
   const [farmaTab, setFarmaTab] = useState<'primeira' | 'segunda' | 'terceira'>('primeira')
+  const [lightbox, setLightbox] = useState<{ src: string; alt: string; caption?: string } | null>(null)
 
   // ── Highlights ────────────────────────────────────────────────────
   const [highlights, setHighlights] = useState<SlugHighlights>({})
@@ -308,6 +491,26 @@ function PatologiaContent() {
     load()
   }, [slug, router])
 
+  // ── Build sections list for floating nav (must be before early returns) ──
+  const farma = patologia?.farmacologia
+  const navSections = useMemo<SectionEntry[]>(() => {
+    if (!patologia) return []
+    const s: SectionEntry[] = []
+    if (patologia.classificacao) s.push({ id: 'sec-classificacao', label: 'Classificação', icon: Layers })
+    if (patologia.fisiopatologia) s.push({ id: 'sec-fisiopatologia', label: 'Fisiopatologia', icon: Dna })
+    if (patologia.diagnostico_semiologico) s.push({ id: 'sec-diagnostico', label: 'Diagnóstico', icon: Stethoscope })
+    if (patologia.diagnosticos_diferenciais) s.push({ id: 'sec-diferenciais', label: 'Diferenciais', icon: ClipboardList })
+    if (patologia.gravidade) s.push({ id: 'sec-gravidade', label: 'Gravidade', icon: ShieldAlert })
+    if (patologia.tratamento) s.push({ id: 'sec-tratamento', label: 'Tratamento', icon: Heart })
+    if (farma && (farma.primeira_linha?.length > 0 || farma.segunda_linha?.length > 0)) {
+      s.push({ id: 'sec-farmacologia', label: 'Farmacologia', icon: FlaskConical })
+    }
+    if (patologia.fluxograma_tratamento) s.push({ id: 'sec-fluxograma', label: 'Fluxograma', icon: GitBranch })
+    if (patologia.observacoes_clinicas) s.push({ id: 'sec-observacoes', label: 'Observações', icon: AlertTriangle })
+    if (patologia.referencias) s.push({ id: 'sec-referencias', label: 'Referências', icon: BookMarked })
+    return s
+  }, [patologia, farma])
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen gap-3">
@@ -322,7 +525,6 @@ function PatologiaContent() {
 
   if (!patologia) return null
 
-  const farma = patologia.farmacologia
   const farmaTabData = farmaTab === 'primeira' ? farma?.primeira_linha
     : farmaTab === 'segunda' ? farma?.segunda_linha
     : farma?.terceira_linha
@@ -340,6 +542,8 @@ function PatologiaContent() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Floating section nav */}
+      <SectionNav sections={navSections} />
 
       {/* ══════════════════════════════════════
            HERO HEADER
@@ -436,24 +640,39 @@ function PatologiaContent() {
         <div className="flex flex-col gap-3">
 
           {patologia.classificacao && (
-            <Section title="Classificação" icon={Layers}>
+            <Section title="Classificação" icon={Layers} sectionId="sec-classificacao">
               <HL field="classificacao">{patologia.classificacao}</HL>
             </Section>
           )}
 
           {patologia.fisiopatologia && (
-            <Section title="Fisiopatologia" icon={Dna}>
+            <Section title="Fisiopatologia" icon={Dna} sectionId="sec-fisiopatologia">
               <HL field="fisiopatologia">{patologia.fisiopatologia}</HL>
               {patologia.imagens_mecanismo && patologia.imagens_mecanismo.length > 0 && (
                 <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {patologia.imagens_mecanismo.map((img, i) => (
-                    <div key={i} className="rounded-xl overflow-hidden border border-border/60 bg-card/50">
-                      <img
-                        src={img}
-                        alt={patologia.legenda_imagens?.[i] || `Mecanismo ${i + 1}`}
-                        className="w-full h-auto"
-                        loading="lazy"
-                      />
+                    <div
+                      key={i}
+                      className="rounded-xl overflow-hidden border border-border/60 bg-card/50 cursor-pointer group transition-all duration-200 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
+                      onClick={() => setLightbox({
+                        src: img,
+                        alt: patologia.legenda_imagens?.[i] || `Mecanismo ${i + 1}`,
+                        caption: patologia.legenda_imagens?.[i],
+                      })}
+                    >
+                      <div className="relative overflow-hidden">
+                        <img
+                          src={img}
+                          alt={patologia.legenda_imagens?.[i] || `Mecanismo ${i + 1}`}
+                          className="w-full h-auto transition-transform duration-300 group-hover:scale-[1.02]"
+                          loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200 flex items-center justify-center">
+                          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-2.5 rounded-full bg-white/20 backdrop-blur-sm">
+                            <Maximize2 className="h-4 w-4 text-white" />
+                          </div>
+                        </div>
+                      </div>
                       {patologia.legenda_imagens?.[i] && (
                         <div className="p-3 border-t border-border/40">
                           <RichTextRenderer
@@ -470,32 +689,32 @@ function PatologiaContent() {
           )}
 
           {patologia.diagnostico_semiologico && (
-            <Section title="Diagnóstico Semiológico" icon={Stethoscope}>
+            <Section title="Diagnóstico Semiológico" icon={Stethoscope} sectionId="sec-diagnostico">
               <HL field="diagnostico_semiologico">{patologia.diagnostico_semiologico}</HL>
             </Section>
           )}
 
           {patologia.diagnosticos_diferenciais && (
-            <Section title="Diagnósticos Diferenciais" icon={ClipboardList}>
+            <Section title="Diagnósticos Diferenciais" icon={ClipboardList} sectionId="sec-diferenciais">
               <HL field="diagnosticos_diferenciais">{patologia.diagnosticos_diferenciais}</HL>
             </Section>
           )}
 
           {patologia.gravidade && (
-            <Section title="Gravidade e Classificação" icon={ShieldAlert}>
+            <Section title="Gravidade e Classificação" icon={ShieldAlert} sectionId="sec-gravidade">
               <HL field="gravidade">{patologia.gravidade}</HL>
             </Section>
           )}
 
           {patologia.tratamento && (
-            <Section title="Tratamento" icon={Heart}>
+            <Section title="Tratamento" icon={Heart} sectionId="sec-tratamento">
               <HL field="tratamento">{patologia.tratamento}</HL>
             </Section>
           )}
 
           {/* ══════ FARMACOLOGIA ══════ */}
           {farma && (farma.primeira_linha?.length > 0 || farma.segunda_linha?.length > 0) && (
-            <Section title="Farmacologia" icon={FlaskConical}>
+            <Section title="Farmacologia" icon={FlaskConical} sectionId="sec-farmacologia">
               <div className="flex gap-1 p-1 mb-5 rounded-xl bg-muted/50 border border-border/40">
                 {farma.primeira_linha?.length > 0 && (
                   <button
@@ -548,7 +767,7 @@ function PatologiaContent() {
 
           {/* ══════ FLUXOGRAMA ══════ */}
           {patologia.fluxograma_tratamento && (
-            <Section title="Fluxograma de Tratamento" icon={GitBranch}>
+            <Section title="Fluxograma de Tratamento" icon={GitBranch} sectionId="sec-fluxograma">
               <div className="rounded-xl bg-muted/30 border border-border/40 p-5 sm:p-8">
                 <FluxogramaRenderer text={patologia.fluxograma_tratamento} />
               </div>
@@ -557,7 +776,7 @@ function PatologiaContent() {
 
           {/* ══════ OBSERVAÇÕES ══════ */}
           {patologia.observacoes_clinicas && (
-            <Section title="Observações Clínicas" icon={AlertTriangle} variant="warning">
+            <Section title="Observações Clínicas" icon={AlertTriangle} variant="warning" sectionId="sec-observacoes">
               <div className="relative rounded-xl bg-amber-500/[0.06] border border-amber-500/20 p-5 overflow-hidden">
                 <div className="absolute -top-10 -right-10 w-40 h-40 bg-amber-500/[0.05] rounded-full blur-3xl pointer-events-none" />
                 <div className="relative">
@@ -573,16 +792,24 @@ function PatologiaContent() {
 
           {/* ══════ REFERÊNCIAS ══════ */}
           {patologia.referencias && (
-            <Section title="Referências" icon={BookMarked} defaultOpen={false}>
-              <div className="whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">
-                {patologia.referencias}
-              </div>
+            <Section title="Referências" icon={BookMarked} defaultOpen={false} sectionId="sec-referencias">
+              <HL field="referencias">{patologia.referencias}</HL>
             </Section>
           )}
         </div>
 
         <div className="h-12" />
       </div>
+
+      {/* Image lightbox */}
+      {lightbox && (
+        <ImageLightbox
+          src={lightbox.src}
+          alt={lightbox.alt}
+          caption={lightbox.caption}
+          onClose={() => setLightbox(null)}
+        />
+      )}
     </div>
   )
 }
