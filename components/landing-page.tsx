@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
@@ -13,7 +13,6 @@ import {
   Zap,
   FileText,
   MessageSquare,
-  PenTool,
   ArrowRight,
   Instagram,
   Brain,
@@ -23,13 +22,56 @@ import {
   CheckCircle2,
   Video,
   HelpCircle,
-  ChevronUp
+  ChevronUp,
+  GraduationCap,
+  Stethoscope,
+  FlaskConical,
+  Sparkles,
+  BarChart3,
+  Shield,
+  Clock,
+  Target,
+  Play
 } from 'lucide-react'
+
+function useInView(threshold = 0.15) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [isVisible, setIsVisible] = useState(false)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setIsVisible(true); obs.disconnect() } },
+      { threshold }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [threshold])
+  return { ref, isVisible }
+}
+
+function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: string }) {
+  const [count, setCount] = useState(0)
+  const { ref, isVisible } = useInView()
+  useEffect(() => {
+    if (!isVisible) return
+    let start = 0
+    const duration = 1800
+    const step = (ts: number) => {
+      if (!start) start = ts
+      const progress = Math.min((ts - start) / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setCount(Math.floor(eased * target))
+      if (progress < 1) requestAnimationFrame(step)
+    }
+    requestAnimationFrame(step)
+  }, [isVisible, target])
+  return <span ref={ref}>{count.toLocaleString('pt-BR')}{suffix}</span>
+}
 
 export default function LandingPage() {
   const router = useRouter()
   const [isScrolled, setIsScrolled] = useState(false)
-  const [showFeatures, setShowFeatures] = useState(false)
   const [videoEmbedUrl, setVideoEmbedUrl] = useState('https://www.youtube.com/embed/dQw4w9WgXcQ')
   const [videoEnabled, setVideoEnabled] = useState(true)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -37,62 +79,39 @@ export default function LandingPage() {
 
   const faqs = [
     {
-      question: "Como funciona esse Banco de Questões?",
-      answer: "O nosso banco é focado 100% nas questões que realmente caem nas provas da Matriz AFYA. A gente organizou tudo de um jeito inteligente pra você filtrar, montar lista personalizada, baixar PDF e mandar ver nos treinos. Toda semana entra coisa nova.\n\nMas ó: a Matriz AFYA é relativamente nova, então o volume ainda não é infinito. A gente tá catalogando umas 600–800 questões reais dela. E o melhor: já estamos criando questões autorais idênticas no estilo, na pegada e na dificuldade da Matriz, seguindo a mesma bibliografia. Quando você ver, vai pirar de tão parecida e útil."
+      question: "Como funciona o Banco de Questões?",
+      answer: "Nosso banco é focado 100% nas questões que realmente caem nas provas da Matriz AFYA. Tudo organizado para você filtrar, montar listas personalizadas, baixar PDF e treinar. Toda semana entra conteúdo novo.\n\nEstamos catalogando 600–800 questões reais da Matriz AFYA, além de questões autorais idênticas no estilo, pegada e dificuldade, seguindo a mesma bibliografia."
     },
     {
-      question: "As aulas são aquelas de encher linguiça ou realmente aprofundam?",
-      answer: "Aqui não tem enrolação de 20 minutos só raspando a superfície. As aulas são pesadas, bem aprofundadas, do jeito que precisa pra residência. Slides didáticos + material complementar pra você treinar na hora (questões, resumos, fluxogramas, o que for preciso).\n\nO lance é: ou aprofunda de verdade ou não adianta. A gente entrega o pacote completo pra você sair da aula sabendo muito e conseguindo resolver qualquer pegadinha."
+      question: "As aulas realmente aprofundam o conteúdo?",
+      answer: "Sem enrolação. As aulas são densas e aprofundadas, do jeito que precisa para residência. Slides didáticos + material complementar para treinar na hora — questões, resumos, fluxogramas.\n\nAs aulas de HAM usam formato OSCE com dinâmica em POV (primeira pessoa), baseado em estudos que mostram melhora na performance prática e habilidades não-técnicas."
     },
     {
-      question: "E as aulas de HAM? Como que são?",
-      answer: "As aulas de HAM são montadas pra te colocar dentro da prova mesmo. A gente usa o formato de estações OSCE (aquele exame prático estruturado que muitas residências cobram) + dinâmica em POV (ponto de vista em primeira pessoa).\n\nVocê literalmente se sente na estação, lidando com o paciente, tomando decisão na hora, sentindo a pressão. Atualmente, tem estudo mostrando que vídeo em primeira pessoa antes de simulação melhora performance prática e habilidades não-técnicas (tipo comunicação, calma sob pressão). A gente trouxe essa ciência pra dentro da sua tela. É o mais próximo que você chega de treinar HAM sem estar na prova de verdade. Vai te salvar na hora H."
+      question: "Como funcionam os Flashcards?",
+      answer: "Cada flashcard é criado com base na Taxonomia de Bloom — do básico (lembrar, entender) até o avançado (analisar, avaliar, criar), com dificuldade ajustável. Após cada card, rola revisão pós-card imediata para fixação.\n\nTudo atrelado às ementas AFYA de 4 cursos, com revisões espaçadas e integração com o banco de questões."
     },
     {
-      question: "E os Flashcards? Como que eles funcionam pra fixar o conhecimento?",
-      answer: "Os flashcards aqui são nível elite. Cada um é criado com base na Taxonomia de Bloom – aquela pirâmide que vai do básico (lembrar, entender) até o top (analisar, avaliar, criar) e com a dificuldade que você quer em %. Então, não é só memorização burra: a gente mira em objetivos que te fazem pensar de verdade.\n\nDepois de cada card, rola uma revisão pós-card imediata: outro flashcard criado a partir de suas dificuldades pra você fixar imensamente o conteúdo.\n\nE o cronograma? Tudo atrelado às ementas AFYA de 4 cursos, com aprofundamento máximo:\n• Medicina AFYA – SOI I a V e HAM I a V (1° ao 5° período)\n• Psicologia AFYA – 1° ao 10° período\n• Biomedicina AFYA – 1° ao 7° período\n• Odontologia AFYA – 1° ao 10° período\n\nA plataforma sincroniza tudo: flashcards estão atrelados ao cronograma das ementas de cada curso, revisões espaçadas pra fixar no longo prazo, e integração com o banco de questões. É estudo inteligente, não só repetição."
+      question: "Os cronogramas são personalizáveis?",
+      answer: "100% personalizados e atrelados às ementas AFYA. Ajuste por hora do dia, dificuldade por conteúdo, cobrindo todos os módulos, submódulos, tópicos e subtópicos.\n\nCursos: Medicina (SOI/HAM I-V), Psicologia (1°-10°), Biomedicina (1°-7°), Odontologia (1°-10°), além de ENEM e UERJ. A IA adapta ao seu ritmo automaticamente."
     },
     {
-      question: "Como rola a assinatura? Tem promoção, desconto, essas coisas?",
-      answer: "Sim, a gente solta descontos e promoções de tempos em tempos pra você entrar com o pé direito e aproveitar todos os recursos novos que vão saindo. Fica de olho no site, no email e nas redes que a gente avisa quando rolar cupom maroto ou condição especial. Quanto mais cedo você entrar, mais tempo você tem pra dominar tudo."
+      question: "Como funcionam as provas com IA?",
+      answer: "Provas individuais totalmente customizáveis: escolha o curso, período, módulos, tópicos, dificuldade, número de questões e tempo limite. A IA gera questões adaptadas ao seu histórico.\n\nTambém temos provas gerais — simulados coletivos com ranking, análise completa de acertos, erros e tempo gasto."
     },
     {
-      question: "Como são os cronogramas? Dá pra personalizar tudo?",
-      answer: "Os cronogramas são o coração da plataforma – 100% atrelados às ementas AFYA de 4 cursos, pra você não perder tempo com coisa aleatória. São extremamente personalizados: você ajusta por hora do dia da semana, dificuldade por conteúdo, e cobre todos os módulos, submódulos, tópicos e subtópicos.\n\nCursos disponíveis:\n• Medicina AFYA – SOI I a V e HAM I a V (1° ao 5° período)\n• Psicologia AFYA – 1° ao 10° período, com todas as disciplinas e eixos temáticos\n• Biomedicina AFYA – 1° ao 7° período, cobrindo do básico ao avançado\n• Odontologia AFYA – 1° ao 10° período, com toda a grade clínica e pré-clínica\n• Além de modelos ENEM e UERJ\n\nA gente usa IA pra adaptar ao seu ritmo: se você tá voando em um tópico, avança; se empaca, reforça com mais prática. É como um coach pessoal que sabe exatamente o que cada ementa cobra. Bora planejar sua vitória diária."
+      question: "A plataforma recebe atualizações?",
+      answer: "Constantemente. Já temos mais de 20 atualizações mapeadas no roadmap: melhorias de usabilidade, novas funcionalidades, mais questões e ferramentas de revisão inteligente. A plataforma evolui junto com você."
     },
     {
-      question: "O que são as provas gerais que a equipe solta?",
-      answer: "As provas gerais são aquelas que a nossa equipe monta e libera pra galera toda – tipo um simulado coletivo pra todo mundo se testar no mesmo nível. Elas são baseadas nas ementas AFYA (Medicina, Psicologia, Biomedicina e Odontologia), com questões reais e autorais idênticas. Tem até ranking!\n\nRola periodicamente, tipo semanal ou mensal, pra você medir seu progresso contra o padrão das avaliações. Depois, análise completa: acertos, erros, tempo gasto, e dicas da equipe pra melhorar. É motivação em grupo – vê como você tá no ranking e ajusta o jogo."
-    },
-    {
-      question: "E as provas individuais? Como rola com IA personalizada?",
-      answer: "As provas individuais são o auge da customização: você monta do zero com a IA, num contexto completamente personalizado. Escolhe o curso (Medicina, Psicologia, Biomedicina ou Odontologia AFYA), o período, módulos, submódulos, tópicos específicos, dificuldade, número de questões, tempo limite – tudo atrelado à ementa do seu curso.\n\nA IA gera questões novas, adaptadas ao seu histórico: se você erra muito em um subtópico, foca ali. Depois da prova, relatório insano: análise por Bloom (onde você tá fraco em aplicação vs. análise), sugestões de revisão, e integração com flashcards e cronograma. É treino sob medida, pra você simular as avaliações no seu ritmo e estilo."
-    },
-    {
-      question: "A plataforma vai ficar parada no tempo ou vai rolar atualização constante?",
-      answer: "Relaxa, a gente tá só começando. Já tem pelo menos 20 atualizações mapeadas pro roadmap: melhorias na usabilidade, novas funções insanas pro estudo, mais questões, ferramentas de revisão inteligente, talvez até gamificação pra não deixar o ânimo cair.\n\nA ideia é evoluir junto com você. Sempre que sair algo novo que ajude de verdade, entra na plataforma. Pode confiar."
-    },
-    {
-      question: "Posso sugerir questões, aulas ou melhorias? Tem como falar com vocês?",
-      answer: "Claro que pode! A gente ama um feedback, sugestão de tema, dúvida pesada, crítica construtiva… tudo ajuda a ficar mais sensacional. Manda bala pro email: contato@domineaqui.com.br\n\nBora construir isso juntos."
-    },
-    {
-      question: "Tem grupo, comunidade ou suporte pra tirar dúvida na hora?",
-      answer: "O suporte é direto por email (contato@domineaqui.com.br) e a gente responde rápido."
+      question: "Posso sugerir melhorias?",
+      answer: "Claro! Feedback, sugestões de tema, dúvidas — tudo é bem-vindo. Entre em contato pelo email contato@domineaqui.com.br."
     }
   ]
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
-    }
+    const handleScroll = () => setIsScrolled(window.scrollY > 50)
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  useEffect(() => {
-    const timer = setTimeout(() => setShowFeatures(true), 500)
-    return () => clearTimeout(timer)
   }, [])
 
   useEffect(() => {
@@ -103,12 +122,8 @@ export default function LandingPage() {
   async function checkAuth() {
     try {
       const res = await fetch('/api/auth/me')
-      if (res.ok) {
-        setIsLoggedIn(true)
-      }
-    } catch (error) {
-      // Usuário não logado
-    }
+      if (res.ok) setIsLoggedIn(true)
+    } catch {}
   }
 
   async function loadSettings() {
@@ -119,503 +134,324 @@ export default function LandingPage() {
         setVideoEmbedUrl(data.videoEmbedUrl)
         setVideoEnabled(data.videoEnabled !== false)
       }
-    } catch (error) {
-      console.error('Erro ao carregar configurações:', error)
-    }
+    } catch {}
   }
 
-  const scrollToFeatures = () => {
-    const element = document.getElementById('features')
-    element?.scrollIntoView({ behavior: 'smooth' })
-  }
+  const features = [
+    {
+      icon: Brain,
+      title: 'Flashcards Inteligentes',
+      description: 'Repetição espaçada com IA que aprende seu ritmo. Atrelados às ementas de todos os cursos AFYA.',
+      accent: 'primary' as const,
+    },
+    {
+      icon: Calendar,
+      title: 'Cronogramas Personalizados',
+      description: 'Ementas completas de Medicina, Psicologia, Biomedicina e Odontologia. Adaptados ao seu ritmo.',
+      accent: 'secondary' as const,
+    },
+    {
+      icon: Zap,
+      title: 'Provas com IA',
+      description: 'Provas personalizadas com contextos adaptados a cada curso. Simulados coletivos com ranking.',
+      accent: 'primary' as const,
+    },
+    {
+      icon: Database,
+      title: 'Banco de Questões',
+      description: '1.000+ questões organizadas por período, módulo e tópico. Objetivas, discursivas e TRI.',
+      accent: 'secondary' as const,
+    },
+    {
+      icon: Video,
+      title: 'Aulas Aprofundadas',
+      description: 'Aulas densas focadas em residência. HAM em formato OSCE com dinâmica POV em primeira pessoa.',
+      accent: 'primary' as const,
+    },
+    {
+      icon: MessageSquare,
+      title: 'Comunidade & Fórum',
+      description: 'Fóruns de discussão e comunidade focada. Aprenda e evolua junto com outros estudantes.',
+      accent: 'secondary' as const,
+    },
+  ]
 
-  const openInstagram = () => {
-    window.open('https://instagram.com/domineaqui.br', '_blank')
-  }
+  const stats = [
+    { value: 1000, suffix: '+', label: 'Questões no banco' },
+    { value: 4, suffix: '', label: 'Cursos AFYA' },
+    { value: 10, suffix: '+', label: 'Ferramentas de estudo' },
+    { value: 20, suffix: '+', label: 'Atualizações planejadas' },
+  ]
+
+  const courses = [
+    { icon: Stethoscope, name: 'Medicina AFYA', detail: 'SOI e HAM — 1° ao 5° Período' },
+    { icon: Brain, name: 'Psicologia AFYA', detail: '1° ao 10° Período' },
+    { icon: FlaskConical, name: 'Biomedicina AFYA', detail: '1° ao 7° Período' },
+    { icon: GraduationCap, name: 'Odontologia AFYA', detail: '1° ao 10° Período' },
+  ]
+
+  const heroSection = useInView(0.1)
+  const statsSection = useInView()
+  const featuresSection = useInView(0.08)
+  const coursesSection = useInView()
+  const videoSection = useInView()
+  const ctaSection = useInView()
+  const faqSection = useInView(0.08)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-[#468152]/10">
-      <style>{`
-        @keyframes pulse-glow {
-          0%, 100% { 
-            box-shadow: 0 0 20px rgba(70, 129, 82, 0.6), 0 0 40px rgba(226, 164, 62, 0.3);
-            opacity: 1;
-          }
-          50% { 
-            box-shadow: 0 0 40px rgba(70, 129, 82, 0.9), 0 0 60px rgba(226, 164, 62, 0.5);
-            opacity: 0.8;
-          }
-        }
-        .animate-pulse-glow {
-          animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        @keyframes logo-float {
-          0%, 100% {
-            transform: translateY(0px) rotate(0deg);
-          }
-          25% {
-            transform: translateY(-10px) rotate(2deg);
-          }
-          50% {
-            transform: translateY(-5px) rotate(0deg);
-          }
-          75% {
-            transform: translateY(-15px) rotate(-2deg);
-          }
-        }
-        @keyframes logo-glow {
-          0%, 100% {
-            filter: drop-shadow(0 0 20px rgba(70, 129, 82, 0.5)) drop-shadow(0 0 40px rgba(226, 164, 62, 0.3));
-          }
-          50% {
-            filter: drop-shadow(0 0 40px rgba(70, 129, 82, 0.8)) drop-shadow(0 0 60px rgba(226, 164, 62, 0.5));
-          }
-        }
-        @keyframes logo-scale {
-          0%, 100% {
-            transform: scale(1);
-          }
-          50% {
-            transform: scale(1.05);
-          }
-        }
-        @keyframes logo-rotate-slow {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
-        }
-        .logo-container {
-          animation: logo-float 6s ease-in-out infinite, logo-glow 3s ease-in-out infinite;
-        }
-        .logo-image {
-          animation: logo-scale 4s ease-in-out infinite;
-        }
-        .logo-ring {
-          animation: logo-rotate-slow 20s linear infinite;
-        }
-        .logo-ring-reverse {
-          animation: logo-rotate-slow 25s linear infinite reverse;
-        }
-      `}</style>
-      {/* Header */}
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-background/70 dark:bg-background/50 backdrop-blur-xl shadow-lg border-b border-[#468152]/10' : 'bg-transparent'
-        }`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+    <div className="min-h-screen bg-background text-foreground">
+      {/* Navbar — floating, glass, matching inner pages */}
+      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        isScrolled
+          ? 'bg-background/80 backdrop-blur-2xl shadow-lg shadow-black/[0.04] dark:shadow-black/[0.2] border-b border-border/50'
+          : 'bg-transparent'
+      }`}>
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-3">
             <Logo variant="full" size="md" />
-            <span className="text-xs font-semibold px-3 py-1 rounded-full bg-gradient-to-r from-[#468152]/20 to-[#E2A43E]/20 border border-[#468152]/30 text-[#468152] dark:text-[#E2A43E]">
-              Acesso Antecipado
-            </span>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <ThemeToggle />
             <Button
               onClick={() => router.push(isLoggedIn ? '/dashboard' : '/auth/login')}
-              className="bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90 text-white font-bold shadow-lg animate-pulse-glow border-0 soul-light soul-light-brand"
+              variant="outline"
               size="sm"
+              className="hidden sm:inline-flex border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50 transition-colors"
             >
-              {isLoggedIn ? '🏠 Ir para Dashboard' : '✨ Entrar Agora'}
+              {isLoggedIn ? 'Dashboard' : 'Entrar'}
+            </Button>
+            <Button
+              onClick={() => router.push(isLoggedIn ? '/dashboard' : '/auth/register')}
+              size="sm"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-sm transition-colors"
+            >
+              {isLoggedIn ? 'Ir para Dashboard' : 'Começar Grátis'}
             </Button>
           </div>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="min-h-screen flex items-center justify-center pt-20 px-4 relative overflow-hidden">
-        {/* Animated background elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-[#468152]/20 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-10 w-72 h-72 bg-[#E2A43E]/20 rounded-full mix-blend-multiply filter blur-3xl animate-pulse delay-2000"></div>
+      {/* Hero */}
+      <section className="relative min-h-[92vh] flex items-center justify-center pt-16 overflow-hidden">
+        {/* Subtle ambient background */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/[0.07] rounded-full blur-[120px]" />
+          <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-secondary/[0.05] rounded-full blur-[120px]" />
         </div>
+        {/* Grid pattern overlay */}
+        <div className="absolute inset-0 pointer-events-none opacity-[0.03] dark:opacity-[0.05]"
+          style={{ backgroundImage: 'radial-gradient(circle, currentColor 1px, transparent 1px)', backgroundSize: '32px 32px' }}
+        />
 
-        <div className="relative z-10 max-w-4xl mx-auto text-center space-y-8 animate-fade-in">
-          {/* Logo Animation */}
-          <div className="animate-slide-up relative">
-            <div className="logo-container relative inline-flex items-center justify-center">
-              <div className="logo-ring-reverse absolute w-72 h-72 md:w-96 md:h-96 rounded-full border-2 border-dashed border-[#468152]/30"></div>
-              <div className="logo-ring absolute w-80 h-80 md:w-[420px] md:h-[420px] rounded-full border-2 border-dotted border-[#E2A43E]/20"></div>
-              <div className="logo-image relative z-10 bg-gradient-to-br from-[#468152]/10 via-transparent to-[#E2A43E]/10 rounded-full p-8 md:p-12 backdrop-blur-xl border border-[#468152]/20">
-                <Image
-                  src="/logo.png"
-                  alt="DomineAqui Logo"
-                  width={256}
-                  height={256}
-                  className="w-48 h-48 md:w-64 md:h-64 object-contain drop-shadow-2xl"
-                  priority
-                />
-              </div>
+        <div ref={heroSection.ref} className={`relative z-10 max-w-5xl mx-auto px-6 text-center transition-all duration-1000 ${heroSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/20 bg-primary/[0.06] mb-8">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
+            </span>
+            <span className="text-sm font-medium text-primary">Acesso Antecipado</span>
+          </div>
+
+          {/* Logo */}
+          <div className="mb-10">
+            <div className="inline-flex items-center justify-center p-6 rounded-3xl bg-gradient-to-br from-primary/10 to-secondary/10 border border-primary/10">
+              <Image
+                src="/logo.png"
+                alt="DomineAqui Logo"
+                width={160}
+                height={160}
+                className="w-28 h-28 md:w-40 md:h-40 object-contain"
+                priority
+              />
             </div>
           </div>
 
-          {/* Main Headline */}
-          <div className="space-y-4">
-            <h1 className="font-heading text-5xl md:text-7xl font-bold bg-gradient-to-r from-[#468152] via-primary to-[#E2A43E] bg-clip-text text-transparent animate-slide-up">
-              Seja o Foco.
-            </h1>
-            <h1 className="font-heading text-5xl md:text-7xl font-bold bg-gradient-to-r from-[#E2A43E] via-primary to-[#468152] bg-clip-text text-transparent animate-slide-up delay-100">
+          {/* Headline */}
+          <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6">
+            <span className="text-foreground">Seja o Foco.</span>
+            <br />
+            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               Seja a Referência.
-            </h1>
-          </div>
+            </span>
+          </h1>
 
-          {/* AFYA Focus Badges */}
-          <div className="animate-slide-up delay-150">
-            <div className="flex flex-wrap justify-center gap-3">
-              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#468152]/20 to-[#E2A43E]/20 border border-[#468152]/40 rounded-full px-4 py-2 backdrop-blur-sm">
-                <span className="text-lg">🩺</span>
-                <div className="text-left">
-                  <p className="text-xs font-bold text-foreground">Medicina AFYA</p>
-                  <p className="text-[10px] text-muted-foreground">SOI e HAM • 1° ao 5° Período</p>
-                </div>
-              </div>
-              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#468152]/20 to-[#E2A43E]/20 border border-[#468152]/40 rounded-full px-4 py-2 backdrop-blur-sm">
-                <span className="text-lg">🧠</span>
-                <div className="text-left">
-                  <p className="text-xs font-bold text-foreground">Psicologia AFYA</p>
-                  <p className="text-[10px] text-muted-foreground">1° ao 10° Período</p>
-                </div>
-              </div>
-              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#468152]/20 to-[#E2A43E]/20 border border-[#468152]/40 rounded-full px-4 py-2 backdrop-blur-sm">
-                <span className="text-lg">🔬</span>
-                <div className="text-left">
-                  <p className="text-xs font-bold text-foreground">Biomedicina AFYA</p>
-                  <p className="text-[10px] text-muted-foreground">1° ao 7° Período</p>
-                </div>
-              </div>
-              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#468152]/20 to-[#E2A43E]/20 border border-[#468152]/40 rounded-full px-4 py-2 backdrop-blur-sm">
-                <span className="text-lg">🦷</span>
-                <div className="text-left">
-                  <p className="text-xs font-bold text-foreground">Odontologia AFYA</p>
-                  <p className="text-[10px] text-muted-foreground">1° ao 10° Período</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Main CTA Buttons - COMEÇAR GRÁTIS + JÁ SOU DAQUI */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-slide-up delay-200">
-            <button
-              onClick={() => router.push('/auth/register')}
-              className="group relative inline-flex items-center gap-2 bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90 text-white font-bold px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl text-lg shadow-lg shadow-[#468152]/30 soul-light soul-light-brand"
-            >
-              <span>✨ Começar Gratuitamente</span>
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </button>
-            <button
-              onClick={() => router.push('/auth/login')}
-              className="group inline-flex items-center gap-2 bg-gradient-to-r from-[#E2A43E] to-[#468152] hover:from-[#E2A43E]/90 hover:to-[#468152]/90 text-white font-bold px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl text-lg shadow-lg shadow-[#E2A43E]/30 soul-light soul-light-brand"
-            >
-              <span>🎯 Já Sou Daqui!</span>
-            </button>
-          </div>
-
-          {/* Instagram CTA */}
-          <div className="bg-gradient-to-br from-[#468152]/15 via-[#E2A43E]/10 to-transparent border border-[#468152]/25 rounded-3xl p-6 md:p-8 backdrop-blur-xl animate-slide-up delay-300 shadow-xl shadow-[#468152]/10">
-            <p className="text-lg md:text-xl text-foreground mb-4">
-              Siga nosso Instagram, faça um post e você pode receber um <span className="font-bold bg-gradient-to-r from-[#468152] to-[#E2A43E] bg-clip-text text-transparent">presente exclusivo</span>
-            </p>
-            <button
-              onClick={openInstagram}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#E1306C] to-[#FD1D1D] hover:from-[#E1306C]/90 hover:to-[#FD1D1D]/90 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-lg soul-light"
-            >
-              <Instagram className="w-5 h-5" />
-              @domineaqui.br
-            </button>
-          </div>
-
-          {/* Scroll indicator */}
-          <div className="pt-8 animate-bounce-custom">
-            <ChevronDown className="w-8 h-8 mx-auto text-muted-foreground" />
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section id="features" className="py-20 px-4 bg-gradient-to-b from-transparent via-[#468152]/3 to-[#E2A43E]/3">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="font-heading text-4xl md:text-5xl font-bold text-center mb-16 bg-gradient-to-r from-[#468152] to-[#E2A43E] bg-clip-text text-transparent">
-            Tudo que você precisa para dominar
-          </h2>
-
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
-            {/* Feature 1 - Flashcards */}
-            <div className={`group bg-gradient-to-br from-[#468152]/20 via-[#468152]/10 to-transparent border border-[#468152]/30 rounded-3xl p-8 hover:border-[#468152]/60 transition-all duration-300 hover:shadow-2xl hover:shadow-[#468152]/20 hover:scale-105 backdrop-blur-xl ${showFeatures ? 'animate-slide-up' : 'opacity-0'
-              }`}>
-              <div className="bg-gradient-to-br from-[#468152] to-[#468152]/70 w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg shadow-[#468152]/30">
-                <Brain className="w-7 h-7 text-white" />
-              </div>
-              <h3 className="font-heading text-2xl font-bold mb-3">Flashcards Inteligentes</h3>
-              <p className="text-muted-foreground mb-4">
-                Sistema de repetição espaçada com IA que aprende seu ritmo. Flashcards atrelados às ementas de Medicina, Psicologia, Biomedicina e Odontologia AFYA.
-              </p>
-              <div className="text-sm text-[#468152] font-semibold">✨ Metodologia comprovada</div>
-            </div>
-
-            {/* Feature 2 - Cronogramas */}
-            <div className={`group bg-gradient-to-br from-[#E2A43E]/20 via-[#E2A43E]/10 to-transparent border border-[#E2A43E]/30 rounded-3xl p-8 hover:border-[#E2A43E]/60 transition-all duration-300 hover:shadow-2xl hover:shadow-[#E2A43E]/20 hover:scale-105 backdrop-blur-xl ${showFeatures ? 'animate-slide-up delay-100' : 'opacity-0'
-              }`}>
-              <div className="bg-gradient-to-br from-[#E2A43E] to-[#E2A43E]/70 w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg shadow-[#E2A43E]/30">
-                <Calendar className="w-7 h-7 text-white" />
-              </div>
-              <h3 className="font-heading text-2xl font-bold mb-3">Cronogramas Personalizados</h3>
-              <p className="text-muted-foreground mb-4">
-                Cronogramas com ementas completas de Medicina, Psicologia, Biomedicina e Odontologia AFYA, além de ENEM e UERJ. Adaptados ao seu ritmo.
-              </p>
-              <div className="text-sm text-[#E2A43E] font-semibold">⚡ Otimizado para resultados</div>
-            </div>
-
-            {/* Feature 3 - Reforços */}
-            <div className={`group bg-gradient-to-br from-[#468152]/20 via-[#468152]/10 to-transparent border border-[#468152]/30 rounded-3xl p-8 hover:border-[#468152]/60 transition-all duration-300 hover:shadow-2xl hover:shadow-[#468152]/20 hover:scale-105 backdrop-blur-xl ${showFeatures ? 'animate-slide-up delay-200' : 'opacity-0'
-              }`}>
-              <div className="bg-gradient-to-br from-[#468152] to-[#468152]/70 w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg shadow-[#468152]/30">
-                <Lightbulb className="w-7 h-7 text-white" />
-              </div>
-              <h3 className="font-heading text-2xl font-bold mb-3">Reforços de Conteúdo</h3>
-              <p className="text-muted-foreground mb-4">
-                Resumos estratégicos e conteúdos curados. Reforços para consolidar aprendizado e dominar tópicos complexos.
-              </p>
-              <div className="text-sm text-[#468152] font-semibold">🎯 Conteúdo estratégico</div>
-            </div>
-
-            {/* Feature 4 - Provas com IA */}
-            <div className={`group bg-gradient-to-br from-[#E2A43E]/20 via-[#E2A43E]/10 to-transparent border border-[#E2A43E]/30 rounded-3xl p-8 hover:border-[#E2A43E]/60 transition-all duration-300 hover:shadow-2xl hover:shadow-[#E2A43E]/20 hover:scale-105 backdrop-blur-xl ${showFeatures ? 'animate-slide-up delay-300' : 'opacity-0'
-              }`}>
-              <div className="bg-gradient-to-br from-[#E2A43E] to-[#E2A43E]/70 w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg shadow-[#E2A43E]/30">
-                <Zap className="w-7 h-7 text-white" />
-              </div>
-              <h3 className="font-heading text-2xl font-bold mb-3">Provas com IA</h3>
-              <p className="text-muted-foreground">
-                Provas personalizadas com IA para Medicina, Psicologia, Biomedicina e Odontologia AFYA. Contextos adaptados a cada curso.
-              </p>
-            </div>
-
-            {/* Feature 5 - Questionários */}
-            <div className={`group bg-gradient-to-br from-[#468152]/20 via-[#468152]/10 to-transparent border border-[#468152]/30 rounded-3xl p-8 hover:border-[#468152]/60 transition-all duration-300 hover:shadow-2xl hover:shadow-[#468152]/20 hover:scale-105 backdrop-blur-xl ${showFeatures ? 'animate-slide-up delay-400' : 'opacity-0'
-              }`}>
-              <div className="bg-gradient-to-br from-[#468152] to-[#468152]/70 w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg shadow-[#468152]/30">
-                <FileText className="w-7 h-7 text-white" />
-              </div>
-              <h3 className="font-heading text-2xl font-bold mb-3">Questionários Avançados</h3>
-              <p className="text-muted-foreground">
-                Questionários discursivos, TRI e Geração de PDFs. Tudo integrado para sua melhor experiência.
-              </p>
-            </div>
-
-            {/* Feature 6 - Comunidade */}
-            <div className={`group bg-gradient-to-br from-[#E2A43E]/20 via-[#E2A43E]/10 to-transparent border border-[#E2A43E]/30 rounded-3xl p-8 hover:border-[#E2A43E]/60 transition-all duration-300 hover:shadow-2xl hover:shadow-[#E2A43E]/20 hover:scale-105 backdrop-blur-xl ${showFeatures ? 'animate-slide-up delay-500' : 'opacity-0'
-              }`}>
-              <div className="bg-gradient-to-br from-[#E2A43E] to-[#E2A43E]/70 w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg shadow-[#E2A43E]/30">
-                <MessageSquare className="w-7 h-7 text-white" />
-              </div>
-              <h3 className="font-heading text-2xl font-bold mb-3">Comunidade Engajada</h3>
-              <p className="text-muted-foreground">
-                Fóruns de discussão e uma verdadeira comunidade de foco brutal. Aprenda junto com outros.
-              </p>
-            </div>
-          </div>
-
-          {/* Banco de Questões Highlight */}
-          <div className={`mt-16 bg-gradient-to-br from-[#468152]/25 via-[#E2A43E]/15 to-[#468152]/10 border-2 border-[#468152]/40 rounded-3xl p-8 md:p-12 backdrop-blur-xl shadow-2xl shadow-[#468152]/15 ${showFeatures ? 'animate-slide-up delay-600' : 'opacity-0'
-            }`}>
-            <div className="flex flex-col md:flex-row items-center gap-8">
-              <div className="flex-shrink-0">
-                <div className="bg-gradient-to-br from-[#468152] to-[#E2A43E] w-20 h-20 rounded-2xl flex items-center justify-center shadow-2xl shadow-[#468152]/40">
-                  <Database className="w-10 h-10 text-white" />
-                </div>
-              </div>
-              <div className="flex-1 text-center md:text-left">
-                <div className="flex items-center justify-center md:justify-start gap-3 mb-3">
-                  <h3 className="font-heading text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#468152] to-[#E2A43E] bg-clip-text text-transparent">
-                    Banco de Questões
-                  </h3>
-                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-gradient-to-r from-[#E2A43E] to-[#468152] text-white uppercase tracking-wide">
-                    Premium
-                  </span>
-                </div>
-                <p className="text-lg text-muted-foreground mb-6">
-                  Mais de <span className="font-bold text-foreground">1.000+ questões</span> organizadas por período, módulo e tópico. Questões objetivas e discursivas para você dominar qualquer assunto.
-                </p>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle2 className="w-5 h-5 text-[#468152]" />
-                    <span>Objetivas e Discursivas</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle2 className="w-5 h-5 text-[#468152]" />
-                    <span>Filtros avançados</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle2 className="w-5 h-5 text-[#468152]" />
-                    <span>Listas personalizadas</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle2 className="w-5 h-5 text-[#468152]" />
-                    <span>Acompanhe seu progresso</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* CTA Section - Após Banco de Questões */}
-          <div className={`mt-16 text-center py-12 bg-gradient-to-r from-[#468152]/10 via-[#E2A43E]/10 to-[#468152]/10 rounded-3xl backdrop-blur-xl border border-[#468152]/20 ${showFeatures ? 'animate-slide-up delay-700' : 'opacity-0'
-            }`}>
-            <h3 className="font-heading text-2xl md:text-3xl font-bold mb-4 bg-gradient-to-r from-[#468152] to-[#E2A43E] bg-clip-text text-transparent">
-              Pronto para começar sua jornada?
-            </h3>
-            <p className="text-lg text-muted-foreground mb-6">
-              Junte-se a milhares de estudantes que já estão dominando seus estudos
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button
-                onClick={() => router.push('/auth/register')}
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90 text-white font-bold px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl soul-light soul-light-brand"
-              >
-                <span>✨ Começar Gratuitamente</span>
-                <ArrowRight className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => router.push('/auth/login')}
-                className="inline-flex items-center gap-2 border-2 border-[#468152]/50 hover:bg-[#468152]/10 text-[#468152] font-bold px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105 soul-light"
-              >
-                <span>🎯 Já Sou Daqui!</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Video Demo Section */}
-          {videoEnabled && (
-            <div className={`bg-gradient-to-br from-[#468152]/20 via-[#E2A43E]/10 to-transparent border border-[#468152]/30 rounded-3xl p-8 md:p-12 backdrop-blur-xl shadow-2xl shadow-[#468152]/10 ${showFeatures ? 'animate-slide-up delay-400' : 'opacity-0'
-              }`}>
-              <h3 className="font-heading text-3xl font-bold text-center mb-8 bg-gradient-to-r from-[#468152] to-[#E2A43E] bg-clip-text text-transparent">Veja a Plataforma em Ação</h3>
-              <div className="aspect-video bg-gradient-to-br from-black/40 to-black/60 rounded-2xl overflow-hidden flex items-center justify-center border border-[#468152]/20 backdrop-blur-sm">
-                <iframe
-                  width="100%"
-                  height="100%"
-                  src={videoEmbedUrl}
-                  title="Demonstração da Plataforma"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  allowFullScreen
-                  className="w-full h-full"
-                ></iframe>
-              </div>
-            </div>
-          )}
-
-          {/* CTA Section - Após Vídeo Demo */}
-          {videoEnabled && (
-            <div className={`mt-16 text-center py-12 bg-gradient-to-r from-[#E2A43E]/10 via-[#468152]/10 to-[#E2A43E]/10 rounded-3xl backdrop-blur-xl border border-[#E2A43E]/20 ${showFeatures ? 'animate-slide-up delay-500' : 'opacity-0'
-              }`}>
-              <h3 className="font-heading text-2xl md:text-3xl font-bold mb-4 bg-gradient-to-r from-[#E2A43E] to-[#468152] bg-clip-text text-transparent">
-                Gostou do que viu?
-              </h3>
-              <p className="text-lg text-muted-foreground mb-6">
-                Crie sua conta gratuita e comece a estudar agora mesmo
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button
-                  onClick={() => router.push('/auth/register')}
-                  className="inline-flex items-center gap-2 bg-gradient-to-r from-[#E2A43E] to-[#468152] hover:from-[#E2A43E]/90 hover:to-[#468152]/90 text-white font-bold px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl soul-light soul-light-brand"
-                >
-                  <span>✨ Começar Gratuitamente</span>
-                  <ArrowRight className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => router.push('/auth/login')}
-                  className="inline-flex items-center gap-2 border-2 border-[#E2A43E]/50 hover:bg-[#E2A43E]/10 text-[#E2A43E] font-bold px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105 soul-light"
-                >
-                  <span>🎯 Já Sou Daqui!</span>
-                </button>
-              </div>
-            </div>
-          )}
-
-        </div>
-      </section>
-
-      {/* Aulas ao Vivo Section */}
-      <section className="py-20 px-4 bg-gradient-to-b from-[#468152]/3 via-transparent to-[#E2A43E]/3">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex justify-center">
-            {/* Aulas ao Vivo */}
-            <div className="group w-full max-w-2xl bg-gradient-to-br from-[#468152]/25 via-[#468152]/12 to-transparent border-2 border-[#468152]/50 rounded-3xl p-8 md:p-12 hover:border-[#468152]/70 transition-all duration-300 hover:shadow-2xl hover:shadow-[#468152]/25 backdrop-blur-xl text-center">
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <div className="bg-gradient-to-br from-[#468152] to-[#E2A43E] w-16 h-16 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-[#468152]/40">
-                  <Video className="w-8 h-8 text-white" />
-                </div>
-              </div>
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <h3 className="font-heading text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#468152] to-[#E2A43E] bg-clip-text text-transparent">Aulas ao Vivo</h3>
-                <span className="text-xs font-bold px-3 py-1 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 text-white uppercase tracking-wide animate-pulse">
-                  Disponível
-                </span>
-              </div>
-              <p className="text-muted-foreground mb-6 text-lg">
-                Interaja em tempo real com instrutores especializados. Aprenda de forma dinâmica e tire suas dúvidas ao vivo com professores experientes.
-              </p>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-                <div className="flex items-center justify-center gap-2 text-sm">
-                  <CheckCircle2 className="w-5 h-5 text-[#468152]" />
-                  <span>Aulas semanais</span>
-                </div>
-                <div className="flex items-center justify-center gap-2 text-sm">
-                  <CheckCircle2 className="w-5 h-5 text-[#468152]" />
-                  <span>Tira-dúvidas ao vivo</span>
-                </div>
-                <div className="flex items-center justify-center gap-2 text-sm">
-                  <CheckCircle2 className="w-5 h-5 text-[#468152]" />
-                  <span>Gravações disponíveis</span>
-                </div>
-              </div>
-              <div className="text-sm text-[#468152] font-semibold">🎓 Aprendizado em tempo real</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-b from-transparent via-[#468152]/2 to-[#E2A43E]/2">
-        <div className="max-w-4xl mx-auto text-center space-y-8">
-          <h2 className="font-heading text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#468152] to-[#E2A43E] bg-clip-text text-transparent">Pronto para começar?</h2>
-          <p className="text-xl text-muted-foreground">
-            Siga nosso Instagram, faça um post e você pode receber um presente exclusivo.
+          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
+            Plataforma completa de estudo para alunos AFYA. Questões, flashcards, cronogramas, provas com IA e aulas — tudo integrado para você dominar.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={openInstagram}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#E1306C] to-[#FD1D1D] hover:from-[#E1306C]/90 hover:to-[#FD1D1D]/90 text-white font-semibold px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-lg soul-light"
-            >
-              <Instagram className="w-5 h-5" />
-              Seguir @domineaqui.br
-            </button>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
+
+          {/* CTA */}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-12">
+            <Button
               onClick={() => router.push('/auth/register')}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90 text-white font-bold px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl soul-light soul-light-brand"
+              size="lg"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 h-12 text-base shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/25 cursor-pointer"
             >
-              <span>✨ Começar Gratuitamente</span>
-              <ArrowRight className="w-5 h-5" />
-            </button>
-            <button
+              Começar Gratuitamente
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+            <Button
               onClick={() => router.push('/auth/login')}
-              className="inline-flex items-center gap-2 border-2 border-[#468152]/50 hover:bg-[#468152]/10 text-[#468152] font-bold px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105 soul-light"
+              variant="outline"
+              size="lg"
+              className="border-border hover:bg-muted/50 font-semibold px-8 h-12 text-base transition-colors cursor-pointer"
             >
-              <span>🎯 Já Sou Daqui!</span>
-            </button>
+              Já tenho conta
+            </Button>
+          </div>
+
+          {/* Course badges */}
+          <div className="flex flex-wrap justify-center gap-2">
+            {courses.map((course) => (
+              <div
+                key={course.name}
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-card/80 border border-border/60 text-sm"
+              >
+                <course.icon className="w-3.5 h-3.5 text-primary" />
+                <span className="font-medium text-foreground">{course.name}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Scroll hint */}
+          <div className="mt-16 animate-bounce">
+            <ChevronDown className="w-5 h-5 mx-auto text-muted-foreground/50" />
           </div>
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="py-20 px-4 bg-gradient-to-b from-transparent via-[#468152]/2 to-[#E2A43E]/2">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="font-heading text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#468152] to-[#E2A43E] bg-clip-text text-transparent mb-4">
+      {/* Social Proof — Stats */}
+      <section className="py-20 px-6 border-t border-border/30">
+        <div ref={statsSection.ref} className={`max-w-5xl mx-auto transition-all duration-700 ${statsSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {stats.map((stat) => (
+              <div key={stat.label} className="text-center">
+                <div className="text-3xl md:text-4xl font-bold text-foreground mb-1">
+                  <AnimatedCounter target={stat.value} suffix={stat.suffix} />
+                </div>
+                <div className="text-sm text-muted-foreground">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="py-24 px-6">
+        <div ref={featuresSection.ref} className="max-w-6xl mx-auto">
+          <div className={`text-center mb-16 transition-all duration-700 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Tudo que você precisa para dominar
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+              Ferramentas integradas e inteligentes, desenhadas para a Matriz AFYA
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {features.map((feature, i) => (
+              <div
+                key={feature.title}
+                className={`group relative p-6 rounded-2xl border border-border/60 bg-card/50 backdrop-blur-sm hover:bg-card hover:border-primary/30 hover:shadow-lg hover:shadow-primary/[0.06] transition-all duration-300 cursor-default ${
+                  featuresSection.isVisible
+                    ? 'opacity-100 translate-y-0'
+                    : 'opacity-0 translate-y-6'
+                }`}
+                style={{ transitionDelay: featuresSection.isVisible ? `${i * 80}ms` : '0ms' }}
+              >
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${
+                  feature.accent === 'primary'
+                    ? 'bg-primary/10 text-primary'
+                    : 'bg-secondary/10 text-secondary'
+                }`}>
+                  <feature.icon className="w-5 h-5" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">{feature.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Courses Detail */}
+      <section className="py-24 px-6 border-t border-border/30">
+        <div ref={coursesSection.ref} className="max-w-5xl mx-auto">
+          <div className={`text-center mb-16 transition-all duration-700 ${coursesSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Cobertura completa das ementas
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+              Cronogramas, questões e flashcards organizados por curso, período, módulo e tópico
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-4">
+            {courses.map((course, i) => (
+              <div
+                key={course.name}
+                className={`flex items-center gap-4 p-5 rounded-2xl border border-border/60 bg-card/50 backdrop-blur-sm hover:bg-card hover:border-primary/20 transition-all duration-300 ${
+                  coursesSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+                }`}
+                style={{ transitionDelay: coursesSection.isVisible ? `${i * 100}ms` : '0ms' }}
+              >
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <course.icon className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">{course.name}</h3>
+                  <p className="text-sm text-muted-foreground">{course.detail}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Additional offerings */}
+          <div className={`mt-6 flex flex-wrap justify-center gap-3 transition-all duration-700 delay-500 ${coursesSection.isVisible ? 'opacity-100' : 'opacity-0'}`}>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted/50 border border-border/40 text-sm text-muted-foreground">
+              <Target className="w-3.5 h-3.5" /> ENEM
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted/50 border border-border/40 text-sm text-muted-foreground">
+              <Target className="w-3.5 h-3.5" /> UERJ
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* Video Demo */}
+      {videoEnabled && (
+        <section className="py-24 px-6 border-t border-border/30">
+          <div ref={videoSection.ref} className={`max-w-4xl mx-auto transition-all duration-700 ${videoSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+            <div className="text-center mb-10">
+              <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
+                Veja a plataforma em ação
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Conheça as ferramentas que vão transformar seu estudo
+              </p>
+            </div>
+            <div className="aspect-video rounded-2xl overflow-hidden border border-border/60 bg-card shadow-xl shadow-black/[0.06] dark:shadow-black/[0.2]">
+              <iframe
+                width="100%"
+                height="100%"
+                src={videoEmbedUrl}
+                title="Demonstração da Plataforma"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+                className="w-full h-full"
+              />
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* FAQ */}
+      <section className="py-24 px-6 border-t border-border/30">
+        <div ref={faqSection.ref} className="max-w-3xl mx-auto">
+          <div className={`text-center mb-14 transition-all duration-700 ${faqSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
               Perguntas Frequentes
             </h2>
             <p className="text-lg text-muted-foreground">
@@ -623,66 +459,114 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3">
             {faqs.map((faq, index) => (
               <div
                 key={index}
-                className="bg-card border border-border rounded-xl overflow-hidden transition-all duration-300 hover:border-[#468152]/50 shadow-sm hover:shadow-md"
+                className={`rounded-xl border border-border/60 bg-card/50 overflow-hidden transition-all duration-300 hover:border-primary/20 ${
+                  openFaq === index ? 'border-primary/30 bg-card shadow-sm' : ''
+                } ${faqSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                style={{ transitionDelay: faqSection.isVisible ? `${index * 50}ms` : '0ms' }}
               >
                 <button
                   onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                  className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-muted/50 transition-colors"
+                  className="w-full px-5 py-4 flex items-center justify-between text-left cursor-pointer hover:bg-muted/30 transition-colors"
                 >
-                  <div className="flex items-center gap-3 pr-4">
-                    <HelpCircle className="h-5 w-5 text-[#468152] flex-shrink-0" />
-                    <span className="font-semibold text-lg">{faq.question}</span>
-                  </div>
-                  {openFaq === index ? (
-                    <ChevronUp className="h-5 w-5 text-[#468152] flex-shrink-0" />
-                  ) : (
-                    <ChevronDown className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                  )}
+                  <span className="font-medium text-foreground pr-4">{faq.question}</span>
+                  <ChevronDown className={`h-4 w-4 text-muted-foreground flex-shrink-0 transition-transform duration-200 ${
+                    openFaq === index ? 'rotate-180' : ''
+                  }`} />
                 </button>
-                {openFaq === index && (
-                  <div className="px-6 pb-5 pt-0 border-t border-border/50">
-                    <p className="text-muted-foreground leading-relaxed pl-8 whitespace-pre-line">
+                <div className={`overflow-hidden transition-all duration-300 ${
+                  openFaq === index ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+                }`}>
+                  <div className="px-5 pb-4 pt-0">
+                    <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
                       {faq.answer}
                     </p>
                   </div>
-                )}
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border/50 py-8 px-4 bg-gradient-to-b from-transparent to-[#468152]/5">
-        <div className="max-w-6xl mx-auto text-center text-muted-foreground">
-          <div className="flex items-center justify-center gap-6 mb-4">
+      {/* Final CTA */}
+      <section className="py-24 px-6 border-t border-border/30">
+        <div ref={ctaSection.ref} className={`max-w-3xl mx-auto text-center transition-all duration-700 ${ctaSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+          <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
+            Pronto para dominar seus estudos?
+          </h2>
+          <p className="text-lg text-muted-foreground mb-8 max-w-lg mx-auto">
+            Crie sua conta gratuita e acesse todas as ferramentas da plataforma agora mesmo.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-8">
+            <Button
+              onClick={() => router.push('/auth/register')}
+              size="lg"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 h-12 text-base shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/25 cursor-pointer"
+            >
+              Começar Gratuitamente
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+            <Button
+              onClick={() => router.push('/auth/login')}
+              variant="outline"
+              size="lg"
+              className="border-border hover:bg-muted/50 font-semibold px-8 h-12 text-base transition-colors cursor-pointer"
+            >
+              Já tenho conta
+            </Button>
+          </div>
+
+          {/* Instagram subtle */}
+          <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+            <span>Siga no Instagram</span>
             <a
               href="https://instagram.com/domineaqui.br"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-[#E1306C] transition-all hover:scale-110"
+              className="inline-flex items-center gap-1.5 text-primary hover:text-primary/80 font-medium transition-colors"
+            >
+              <Instagram className="w-4 h-4" />
+              @domineaqui.br
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-border/50 py-8 px-6">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <Logo variant="icon" size="sm" />
+            <span className="text-sm text-muted-foreground">
+              © {new Date().getFullYear()} DomineAqui
+            </span>
+          </div>
+          <div className="flex items-center gap-4">
+            <a
+              href="https://instagram.com/domineaqui.br"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-foreground transition-colors"
               title="Instagram"
             >
-              <Instagram size={22} />
+              <Instagram size={18} />
             </a>
             <a
               href="https://discord.gg/vdfHcvDdMw"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-[#5865F2] transition-all hover:scale-110"
+              className="text-muted-foreground hover:text-foreground transition-colors"
               title="Discord"
             >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.29a.074.074 0 0 1 .077-.01c3.927 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.196.373.29a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.874.89.076.076 0 0 0-.041.106c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
               </svg>
             </a>
           </div>
-          <p>© {new Date().getFullYear()} DomineAqui. Todos os direitos reservados.</p>
-          <p className="mt-2 text-sm">Seja o Foco. Seja a Referência.</p>
         </div>
       </footer>
     </div>
