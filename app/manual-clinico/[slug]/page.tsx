@@ -413,10 +413,13 @@ function SectionNav({ sections }: { sections: SectionEntry[] }) {
 
   // Set initial position on mount (top-right corner)
   useEffect(() => {
-    setPos({ x: window.innerWidth - 56, y: 72 })
+    const isDesktop = window.innerWidth >= 1024
+    // On desktop, offset enough for the expanded panel (~200px); on mobile just the FAB
+    const rightOffset = isDesktop ? 210 : 60
+    setPos({ x: window.innerWidth - rightOffset, y: isDesktop ? 120 : 72 })
     const onResize = () => {
       setPos(prev => {
-        if (!prev) return { x: window.innerWidth - 56, y: 72 }
+        if (!prev) return { x: window.innerWidth - 210, y: 120 }
         return {
           x: Math.min(prev.x, window.innerWidth - 44),
           y: Math.max(12, Math.min(prev.y, window.innerHeight - 44)),
