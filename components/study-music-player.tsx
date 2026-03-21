@@ -151,10 +151,9 @@ export function StudyMusicPlayer() {
     useEffect(() => {
         async function fetchPlaylists() {
             try {
-                console.log('[StudyMusicPlayer] Fetching playlists...')
                 const res = await fetch('/api/study-playlists')
+                if (!res.ok) return
                 const data = await res.json()
-                console.log('[StudyMusicPlayer] API Response:', data)
 
                 if (data.success && data.playlists.length > 0) {
                     console.log('[StudyMusicPlayer] Found playlists:', data.playlists.length)
@@ -187,11 +186,9 @@ export function StudyMusicPlayer() {
                         // First time - select random playlist
                         selectRandomPlaylist(data.playlists)
                     }
-                } else {
-                    console.log('[StudyMusicPlayer] No playlists found or API error')
                 }
-            } catch (error) {
-                console.error('[StudyMusicPlayer] Error loading playlists:', error)
+            } catch {
+                // Silently ignore — network may be unavailable
             } finally {
                 setLoading(false)
             }

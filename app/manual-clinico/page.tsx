@@ -30,9 +30,14 @@ import {
   X,
   Filter,
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  FileDown,
+  Highlighter,
+  Loader2,
+  RotateCcw
 } from 'lucide-react'
 import { AREAS_SAUDE, SISTEMAS_FISIOLOGICOS, type AreaSaude, type SistemaFisiologico } from '@/lib/types/manual-clinico'
+import { clearAllManualHighlights, hasAnyManualHighlights } from '@/lib/manual-clinico-highlights'
 
 const SISTEMA_ICONS: Record<string, any> = {
   'Sistema Cardiovascular': Heart,
@@ -114,6 +119,44 @@ function ManualClinicoContent() {
   const [totalPages, setTotalPages] = useState(0)
   const [loading, setLoading] = useState(false)
   const [searched, setSearched] = useState(false)
+  const [pdfLoading, setPdfLoading] = useState(false)
+  const [hasHighlights, setHasHighlights] = useState(false)
+  const [resetConfirm, setResetConfirm] = useState(false)
+
+  useEffect(() => {
+    setHasHighlights(hasAnyManualHighlights())
+  }, [])
+
+  async function handleGeneratePDF() {
+    setPdfLoading(true)
+    try {
+      const res = await fetch('/api/manual-clinico?export=true')
+      const data = await res.json()
+      const { generateManualCompletoPDF } = await import('@/lib/patologia-pdf-generator')
+      const blob = generateManualCompletoPDF(data.patologias || [])
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `manual-clinico-completo-${new Date().toISOString().slice(0, 10)}.pdf`
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch (err) {
+      console.error('Erro ao gerar PDF:', err)
+    } finally {
+      setPdfLoading(false)
+    }
+  }
+
+  function handleResetHighlights() {
+    if (!resetConfirm) {
+      setResetConfirm(true)
+      setTimeout(() => setResetConfirm(false), 3000)
+      return
+    }
+    clearAllManualHighlights()
+    setHasHighlights(false)
+    setResetConfirm(false)
+  }
 
   const fetchPatologias = useCallback(async () => {
     setLoading(true)
@@ -207,6 +250,39 @@ function ManualClinicoContent() {
                   </span>
                 </div>
               )}
+
+              {/* ── Action buttons ── */}
+              <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+                <button
+                  onClick={handleGeneratePDF}
+                  disabled={pdfLoading}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
+                    bg-primary text-primary-foreground shadow-lg shadow-primary/25
+                    hover:bg-primary/90 active:scale-[0.97] transition-all duration-200
+                    disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {pdfLoading
+                    ? <Loader2 className="h-4 w-4 animate-spin" />
+                    : <FileDown className="h-4 w-4" />}
+                  {pdfLoading ? 'Gerando PDF...' : 'Baixar Manual Completo (PDF)'}
+                </button>
+
+                {hasHighlights && (
+                  <button
+                    onClick={handleResetHighlights}
+                    className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold border transition-all duration-200 active:scale-[0.97]
+                      ${resetConfirm
+                        ? 'bg-red-500/10 text-red-400 border-red-500/30 hover:bg-red-500/20'
+                        : 'bg-white/[0.05] text-muted-foreground border-white/[0.12] hover:bg-white/[0.1] hover:text-foreground'
+                      }`}
+                  >
+                    {resetConfirm
+                      ? <><RotateCcw className="h-4 w-4" /> Confirmar reset de marcações</>
+                      : <><Highlighter className="h-4 w-4" /> Resetar Marcações</>
+                    }
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 

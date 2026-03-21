@@ -27,8 +27,8 @@ export function VerifyEmailBanner() {
                     const data = await res.json()
                     setSession(data.user)
                 }
-            } catch (err) {
-                console.error('Failed to fetch session:', err)
+            } catch {
+                // Silently ignore — network may be unavailable
             } finally {
                 setLoading(false)
             }

@@ -10,12 +10,23 @@ export async function GET(request: NextRequest) {
     const busca = searchParams.get('busca')
     const area = searchParams.get('area')
     const sistema = searchParams.get('sistema')
+    const exportAll = searchParams.get('export') === 'true'
     const page = parseInt(searchParams.get('page') || '1')
     const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 50)
     const skip = (page - 1) * limit
 
     const db = await getDb()
     const filter: any = {}
+
+    // Export mode: return all pathologies with full data (for PDF generation)
+    if (exportAll) {
+      const patologias = await db
+        .collection('patologias')
+        .find(filter)
+        .sort({ sistema: 1, nome: 1 })
+        .toArray()
+      return NextResponse.json({ patologias, total: patologias.length })
+    }
 
     if (busca && busca.trim()) {
       // Usar full-text search do MongoDB

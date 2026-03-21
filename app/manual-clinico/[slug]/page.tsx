@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
@@ -24,10 +24,18 @@ import {
   Syringe,
   BookMarked,
   ShieldAlert,
-  FlaskConical
+  FlaskConical,
+  X
 } from 'lucide-react'
 import { type Patologia, type AreaSaude } from '@/lib/types/manual-clinico'
 import { RichTextRenderer } from '@/components/manual-clinico/rich-text-renderer'
+import { HighlightableRichText } from '@/components/manual-clinico/highlightable-rich-text'
+import {
+  type SlugHighlights,
+  type ManualHighlight,
+  loadHighlights,
+  saveHighlights,
+} from '@/lib/manual-clinico-highlights'
 
 const AREA_BADGE: Record<AreaSaude, string> = {
   'Medicina': 'bg-blue-500/20 text-blue-300 border-blue-400/30',
@@ -52,7 +60,7 @@ function Section({ title, icon: Icon, children, defaultOpen = true, variant = 'd
   const hoverBorder = variant === 'warning' ? 'hover:border-amber-500/30' : 'hover:border-border'
 
   return (
-    <div className={`rounded-2xl border ${borderColor} bg-card/50 backdrop-blur-sm overflow-hidden transition-all duration-200 ${hoverBorder}`}>
+    <div className={`rounded-2xl border ${borderColor} bg-card/50 backdrop-blur-sm transition-all duration-200 ${hoverBorder}`}>
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between gap-3 p-5 hover:bg-accent/30 transition-colors text-left"
@@ -80,18 +88,6 @@ function Section({ title, icon: Icon, children, defaultOpen = true, variant = 'd
         </div>
       )}
     </div>
-  )
-}
-
-/* ═══════════════════════════════════════════
-   CONTENT BLOCK — rich text with white color
-   ═══════════════════════════════════════════ */
-function ContentBlock({ children }: { children: string }) {
-  return (
-    <RichTextRenderer
-      text={children}
-      className="text-[15px] leading-[1.8] text-foreground/90 selection:bg-primary/20"
-    />
   )
 }
 
@@ -195,7 +191,6 @@ function FlowConnector() {
 function FarmacoCard({ farmaco }: { farmaco: any }) {
   return (
     <div className="rounded-xl border border-border/60 bg-card/60 p-5 hover:bg-card/80 transition-colors">
-      {/* Header */}
       <div className="flex items-start gap-3 mb-4">
         <div className="p-2 rounded-xl bg-primary/10 shrink-0">
           <Syringe className="h-4 w-4 text-primary" />
@@ -215,35 +210,28 @@ function FarmacoCard({ farmaco }: { farmaco: any }) {
             <p className="text-[13px] leading-relaxed text-foreground/85">{farmaco.mecanismo_acao}</p>
           </div>
         )}
-
         {farmaco.dose_usual && (
           <div className="flex items-baseline gap-2">
             <span className="text-[11px] uppercase tracking-wider font-semibold text-primary shrink-0">Dose:</span>
             <span className="text-[13px] text-foreground/85">{farmaco.dose_usual}</span>
           </div>
         )}
-
         {farmaco.efeitos_colaterais?.length > 0 && (
           <div>
             <p className="text-[11px] uppercase tracking-wider font-semibold text-amber-400 mb-2">Efeitos Colaterais</p>
             <div className="flex flex-wrap gap-1.5">
               {farmaco.efeitos_colaterais.map((e: string, i: number) => (
-                <span key={i} className="text-xs px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-300 border border-amber-500/20 font-medium">
-                  {e}
-                </span>
+                <span key={i} className="text-xs px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-300 border border-amber-500/20 font-medium">{e}</span>
               ))}
             </div>
           </div>
         )}
-
         {farmaco.contraindicacoes?.length > 0 && (
           <div>
             <p className="text-[11px] uppercase tracking-wider font-semibold text-red-400 mb-2">Contraindicações</p>
             <div className="flex flex-wrap gap-1.5">
               {farmaco.contraindicacoes.map((c: string, i: number) => (
-                <span key={i} className="text-xs px-2.5 py-1 rounded-lg bg-red-500/10 text-red-300 border border-red-500/20 font-medium">
-                  {c}
-                </span>
+                <span key={i} className="text-xs px-2.5 py-1 rounded-lg bg-red-500/10 text-red-300 border border-red-500/20 font-medium">{c}</span>
               ))}
             </div>
           </div>
@@ -270,14 +258,43 @@ export default function PatologiaPage() {
 function PatologiaContent() {
   const params = useParams()
   const router = useRouter()
+  const slug = params.slug as string
+
   const [patologia, setPatologia] = useState<Patologia | null>(null)
   const [loading, setLoading] = useState(true)
   const [farmaTab, setFarmaTab] = useState<'primeira' | 'segunda' | 'terceira'>('primeira')
 
+  // ── Highlights ────────────────────────────────────────────────────
+  const [highlights, setHighlights] = useState<SlugHighlights>({})
+  const [hasHL, setHasHL] = useState(false)
+
+  // Load highlights when slug is known
+  useEffect(() => {
+    if (!slug) return
+    const loaded = loadHighlights(slug)
+    setHighlights(loaded)
+    setHasHL(Object.values(loaded).some(arr => arr.length > 0))
+  }, [slug])
+
+  const updateField = useCallback((field: string, arr: ManualHighlight[]) => {
+    setHighlights(prev => {
+      const next = { ...prev, [field]: arr }
+      if (slug) saveHighlights(slug, next)
+      setHasHL(Object.values(next).some(a => a.length > 0))
+      return next
+    })
+  }, [slug])
+
+  function clearPageHighlights() {
+    setHighlights({})
+    if (slug) saveHighlights(slug, {})
+    setHasHL(false)
+  }
+
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch(`/api/manual-clinico/${params.slug}`)
+        const res = await fetch(`/api/manual-clinico/${slug}`)
         if (!res.ok) { router.push('/manual-clinico'); return }
         const data = await res.json()
         setPatologia(data)
@@ -289,7 +306,7 @@ function PatologiaContent() {
       }
     }
     load()
-  }, [params.slug, router])
+  }, [slug, router])
 
   if (loading) {
     return (
@@ -310,6 +327,17 @@ function PatologiaContent() {
     : farmaTab === 'segunda' ? farma?.segunda_linha
     : farma?.terceira_linha
 
+  // ── Highlightable content block (always active, like Provas) ──────
+  function HL({ field, children }: { field: string; children: string }) {
+    return (
+      <HighlightableRichText
+        text={children}
+        highlights={highlights[field] || []}
+        onHighlightsChange={(arr) => updateField(field, arr)}
+      />
+    )
+  }
+
   return (
     <div className="min-h-screen bg-background">
 
@@ -317,13 +345,12 @@ function PatologiaContent() {
            HERO HEADER
          ══════════════════════════════════════ */}
       <div className="relative overflow-hidden">
-        {/* Gradients */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.07] via-background to-background" />
         <div className="absolute top-0 right-0 w-[500px] h-[300px] bg-primary/[0.04] rounded-full blur-[100px]" />
 
         <div className="relative container mx-auto px-4 sm:px-6 pt-5 pb-8 max-w-4xl">
           {/* Nav row */}
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-8 gap-3 flex-wrap">
             <Button
               variant="outline"
               size="sm"
@@ -333,23 +360,39 @@ function PatologiaContent() {
               <ArrowLeft className="h-4 w-4 mr-2" />
               Manual Clínico
             </Button>
-            <Button
-              size="sm"
-              onClick={async () => {
-                const { generatePatologiaPDF } = await import('@/lib/patologia-pdf-generator')
-                const blob = generatePatologiaPDF(patologia)
-                const url = URL.createObjectURL(blob)
-                const a = document.createElement('a')
-                a.href = url
-                a.download = `${patologia.slug || 'patologia'}.pdf`
-                a.click()
-                URL.revokeObjectURL(url)
-              }}
-              className="rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
-            >
-              <Download className="h-4 w-4 mr-2" />
-              Baixar PDF
-            </Button>
+
+            <div className="flex items-center gap-2">
+              {/* Clear this page's highlights */}
+              {hasHL && (
+                <button
+                  onClick={clearPageHighlights}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium border border-white/[0.1] text-muted-foreground hover:text-red-400 hover:border-red-500/30 hover:bg-red-500/[0.05] transition-all duration-200"
+                  title="Limpar marcações desta página"
+                >
+                  <X className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Limpar marcações</span>
+                </button>
+              )}
+
+              {/* PDF download */}
+              <Button
+                size="sm"
+                onClick={async () => {
+                  const { generatePatologiaPDF } = await import('@/lib/patologia-pdf-generator')
+                  const blob = generatePatologiaPDF(patologia)
+                  const url = URL.createObjectURL(blob)
+                  const a = document.createElement('a')
+                  a.href = url
+                  a.download = `${patologia.slug || 'patologia'}.pdf`
+                  a.click()
+                  URL.revokeObjectURL(url)
+                }}
+                className="rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Baixar PDF
+              </Button>
+            </div>
           </div>
 
           {/* Disease name */}
@@ -357,14 +400,12 @@ function PatologiaContent() {
             {patologia.nome}
           </h1>
 
-          {/* Sinônimos */}
           {patologia.sinonimos.length > 0 && (
             <p className="text-muted-foreground mt-2.5 text-[15px]">
               {patologia.sinonimos.join(' · ')}
             </p>
           )}
 
-          {/* Badges row */}
           <div className="flex flex-wrap items-center gap-2 mt-5">
             {patologia.cid10 && (
               <span className="px-3.5 py-1.5 rounded-lg text-xs font-bold font-mono bg-foreground/10 border border-foreground/20 text-foreground">
@@ -378,7 +419,6 @@ function PatologiaContent() {
             ))}
           </div>
 
-          {/* Sistema pill */}
           {patologia.sistema && (
             <div className="mt-3">
               <span className="text-sm text-muted-foreground">{patologia.sistema}</span>
@@ -386,7 +426,6 @@ function PatologiaContent() {
           )}
         </div>
 
-        {/* Bottom border */}
         <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
       </div>
 
@@ -398,13 +437,13 @@ function PatologiaContent() {
 
           {patologia.classificacao && (
             <Section title="Classificação" icon={Layers}>
-              <ContentBlock>{patologia.classificacao}</ContentBlock>
+              <HL field="classificacao">{patologia.classificacao}</HL>
             </Section>
           )}
 
           {patologia.fisiopatologia && (
             <Section title="Fisiopatologia" icon={Dna}>
-              <ContentBlock>{patologia.fisiopatologia}</ContentBlock>
+              <HL field="fisiopatologia">{patologia.fisiopatologia}</HL>
               {patologia.imagens_mecanismo && patologia.imagens_mecanismo.length > 0 && (
                 <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {patologia.imagens_mecanismo.map((img, i) => (
@@ -432,32 +471,31 @@ function PatologiaContent() {
 
           {patologia.diagnostico_semiologico && (
             <Section title="Diagnóstico Semiológico" icon={Stethoscope}>
-              <ContentBlock>{patologia.diagnostico_semiologico}</ContentBlock>
+              <HL field="diagnostico_semiologico">{patologia.diagnostico_semiologico}</HL>
             </Section>
           )}
 
           {patologia.diagnosticos_diferenciais && (
             <Section title="Diagnósticos Diferenciais" icon={ClipboardList}>
-              <ContentBlock>{patologia.diagnosticos_diferenciais}</ContentBlock>
+              <HL field="diagnosticos_diferenciais">{patologia.diagnosticos_diferenciais}</HL>
             </Section>
           )}
 
           {patologia.gravidade && (
             <Section title="Gravidade e Classificação" icon={ShieldAlert}>
-              <ContentBlock>{patologia.gravidade}</ContentBlock>
+              <HL field="gravidade">{patologia.gravidade}</HL>
             </Section>
           )}
 
           {patologia.tratamento && (
             <Section title="Tratamento" icon={Heart}>
-              <ContentBlock>{patologia.tratamento}</ContentBlock>
+              <HL field="tratamento">{patologia.tratamento}</HL>
             </Section>
           )}
 
           {/* ══════ FARMACOLOGIA ══════ */}
           {farma && (farma.primeira_linha?.length > 0 || farma.segunda_linha?.length > 0) && (
             <Section title="Farmacologia" icon={FlaskConical}>
-              {/* Tab bar */}
               <div className="flex gap-1 p-1 mb-5 rounded-xl bg-muted/50 border border-border/40">
                 {farma.primeira_linha?.length > 0 && (
                   <button
@@ -527,10 +565,7 @@ function PatologiaContent() {
                     <AlertTriangle className="h-4 w-4 text-amber-400" />
                     <span className="text-xs font-bold uppercase tracking-wider text-amber-400">Atenção</span>
                   </div>
-                  <RichTextRenderer
-                    text={patologia.observacoes_clinicas}
-                    className="text-[15px] leading-[1.8] text-foreground/90"
-                  />
+                  <HL field="observacoes_clinicas">{patologia.observacoes_clinicas}</HL>
                 </div>
               </div>
             </Section>
