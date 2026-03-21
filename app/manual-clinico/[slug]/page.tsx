@@ -27,7 +27,8 @@ import {
   ShieldAlert,
   FlaskConical,
   X,
-  Maximize2
+  Maximize2,
+  Image as ImageIcon
 } from 'lucide-react'
 import { type Patologia, type AreaSaude } from '@/lib/types/manual-clinico'
 import { RichTextRenderer } from '@/components/manual-clinico/rich-text-renderer'
@@ -298,7 +299,7 @@ function ImageLightbox({
 
         {/* Caption toggle + content */}
         {caption && (
-          <div className="mt-3 w-full max-w-2xl">
+          <div className="mt-3 w-full max-w-3xl">
             <button
               onClick={() => setShowCaption(!showCaption)}
               className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white/80 text-sm font-medium transition-colors mx-auto"
@@ -311,7 +312,7 @@ function ImageLightbox({
               }
             </button>
             {showCaption && (
-              <div className="mt-2 px-5 py-3 rounded-xl bg-white/10 backdrop-blur-md text-white/90 text-sm leading-relaxed">
+              <div className="mt-2 px-5 py-4 rounded-xl bg-white/10 backdrop-blur-md text-white/90 text-sm leading-relaxed max-h-[40vh] overflow-y-auto">
                 <RichTextRenderer text={caption} className="text-white/90 [&_strong]:text-white [&_em]:text-white/80 [&_a]:text-primary" />
               </div>
             )}
@@ -330,6 +331,7 @@ interface SectionEntry {
   id: string
   label: string
   icon: any
+  sub?: boolean
 }
 
 function SectionNav({ sections }: { sections: SectionEntry[] }) {
@@ -395,17 +397,19 @@ function SectionNav({ sections }: { sections: SectionEntry[] }) {
               <button
                 key={section.id}
                 onClick={() => scrollTo(section.id)}
-                className={`group flex items-center gap-2.5 rounded-xl px-3 py-2 transition-all duration-200 text-left ${
+                className={`group flex items-center gap-2.5 rounded-xl py-2 transition-all duration-200 text-left ${
+                  section.sub ? 'px-3 ml-2' : 'px-3'
+                } ${
                   isActive
                     ? 'bg-primary/15 text-primary'
                     : 'text-muted-foreground hover:text-foreground hover:bg-white/[0.08]'
                 }`}
                 title={section.label}
               >
-                <Icon className={`h-3.5 w-3.5 shrink-0 transition-colors ${
+                <Icon className={`${section.sub ? 'h-3 w-3' : 'h-3.5 w-3.5'} shrink-0 transition-colors ${
                   isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
                 }`} />
-                <span className={`text-[11px] font-medium whitespace-nowrap overflow-hidden transition-all duration-500 ease-out ${
+                <span className={`${section.sub ? 'text-[10px]' : 'text-[11px]'} font-medium whitespace-nowrap overflow-hidden transition-all duration-500 ease-out ${
                   isHovered ? 'max-w-[140px] opacity-100' : 'max-w-0 opacity-0'
                 }`}>
                   {section.label}
@@ -497,7 +501,12 @@ function PatologiaContent() {
     if (!patologia) return []
     const s: SectionEntry[] = []
     if (patologia.classificacao) s.push({ id: 'sec-classificacao', label: 'Classificação', icon: Layers })
-    if (patologia.fisiopatologia) s.push({ id: 'sec-fisiopatologia', label: 'Fisiopatologia', icon: Dna })
+    if (patologia.fisiopatologia) {
+      s.push({ id: 'sec-fisiopatologia', label: 'Fisiopatologia', icon: Dna })
+      if (patologia.imagens_mecanismo && patologia.imagens_mecanismo.length > 0) {
+        s.push({ id: 'sec-figuras', label: 'Figuras', icon: ImageIcon, sub: true })
+      }
+    }
     if (patologia.diagnostico_semiologico) s.push({ id: 'sec-diagnostico', label: 'Diagnóstico', icon: Stethoscope })
     if (patologia.diagnosticos_diferenciais) s.push({ id: 'sec-diferenciais', label: 'Diferenciais', icon: ClipboardList })
     if (patologia.gravidade) s.push({ id: 'sec-gravidade', label: 'Gravidade', icon: ShieldAlert })
@@ -649,40 +658,48 @@ function PatologiaContent() {
             <Section title="Fisiopatologia" icon={Dna} sectionId="sec-fisiopatologia">
               <HL field="fisiopatologia">{patologia.fisiopatologia}</HL>
               {patologia.imagens_mecanismo && patologia.imagens_mecanismo.length > 0 && (
-                <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {patologia.imagens_mecanismo.map((img, i) => (
-                    <div
-                      key={i}
-                      className="rounded-xl overflow-hidden border border-border/60 bg-card/50 cursor-pointer group transition-all duration-200 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
-                      onClick={() => setLightbox({
-                        src: img,
-                        alt: patologia.legenda_imagens?.[i] || `Mecanismo ${i + 1}`,
-                        caption: patologia.legenda_imagens?.[i],
-                      })}
-                    >
-                      <div className="relative overflow-hidden">
-                        <img
-                          src={img}
-                          alt={patologia.legenda_imagens?.[i] || `Mecanismo ${i + 1}`}
-                          className="w-full h-auto transition-transform duration-300 group-hover:scale-[1.02]"
-                          loading="lazy"
-                        />
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200 flex items-center justify-center">
-                          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-2.5 rounded-full bg-white/20 backdrop-blur-sm">
-                            <Maximize2 className="h-4 w-4 text-white" />
+                <div id="sec-figuras" className="mt-6 scroll-mt-6">
+                  <div className="flex items-center gap-2.5 mb-4">
+                    <div className="p-2 rounded-lg bg-primary/10">
+                      <ImageIcon className="h-4 w-4 text-primary" />
+                    </div>
+                    <h3 className="font-semibold text-[15px] text-foreground">Figuras</h3>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {patologia.imagens_mecanismo.map((img, i) => (
+                      <div
+                        key={i}
+                        className="rounded-xl overflow-hidden border border-border/60 bg-card/50 cursor-pointer group transition-all duration-200 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
+                        onClick={() => setLightbox({
+                          src: img,
+                          alt: patologia.legenda_imagens?.[i] || `Mecanismo ${i + 1}`,
+                          caption: patologia.legenda_imagens?.[i],
+                        })}
+                      >
+                        <div className="relative overflow-hidden">
+                          <img
+                            src={img}
+                            alt={patologia.legenda_imagens?.[i] || `Mecanismo ${i + 1}`}
+                            className="w-full h-auto transition-transform duration-300 group-hover:scale-[1.02]"
+                            loading="lazy"
+                          />
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200 flex items-center justify-center">
+                            <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-2.5 rounded-full bg-white/20 backdrop-blur-sm">
+                              <Maximize2 className="h-4 w-4 text-white" />
+                            </div>
                           </div>
                         </div>
+                        {patologia.legenda_imagens?.[i] && (
+                          <div className="p-3 border-t border-border/40">
+                            <RichTextRenderer
+                              text={patologia.legenda_imagens[i]}
+                              className="text-xs text-muted-foreground"
+                            />
+                          </div>
+                        )}
                       </div>
-                      {patologia.legenda_imagens?.[i] && (
-                        <div className="p-3 border-t border-border/40">
-                          <RichTextRenderer
-                            text={patologia.legenda_imagens[i]}
-                            className="text-xs text-muted-foreground"
-                          />
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               )}
             </Section>
