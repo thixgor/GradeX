@@ -127,13 +127,13 @@ function FluxogramaRenderer({ text }: { text: string }) {
               {!prevIsArrow && <FlowConnector />}
               <div className="relative border-2 border-amber-500/30 bg-amber-950/30 rounded-xl p-3.5 text-center mx-auto">
                 <Zap className="h-3.5 w-3.5 text-amber-400 mx-auto mb-1.5" />
-                <p className="text-sm font-semibold text-amber-200">{parts[0]}</p>
+                <RichTextRenderer text={parts[0]} className="text-sm font-semibold text-amber-200" />
               </div>
               {parts.length > 1 && (
                 <>
                   <FlowConnector />
                   <div className="border border-border/60 bg-card/80 rounded-xl p-3 text-center mx-auto max-w-sm">
-                    <p className="text-sm text-foreground/80">{parts.slice(1).join(' → ')}</p>
+                    <RichTextRenderer text={parts.slice(1).join(' → ')} className="text-sm text-foreground/80" />
                   </div>
                 </>
               )}
@@ -146,7 +146,7 @@ function FluxogramaRenderer({ text }: { text: string }) {
             <div key={i} className="w-full max-w-md">
               {!prevIsArrow && <FlowConnector />}
               <div className="relative border-2 border-amber-500/30 bg-amber-950/30 rounded-xl p-3.5 text-center mx-auto">
-                <p className="text-sm font-semibold text-amber-200">{line}</p>
+                <RichTextRenderer text={line} className="text-sm font-semibold text-amber-200" />
               </div>
             </div>
           )
@@ -166,13 +166,11 @@ function FluxogramaRenderer({ text }: { text: string }) {
                 : 'border-border/60 bg-card/60 hover:bg-card/80'
             }`}>
               {isFirst && <CircleDot className="h-3.5 w-3.5 text-primary mx-auto mb-1" />}
-              <p className={`text-sm font-medium ${
+              <RichTextRenderer text={line} className={`text-sm font-medium ${
                 isFirst ? 'text-primary' :
                 isLast ? 'text-emerald-400' :
                 'text-foreground/90'
-              }`}>
-                {line}
-              </p>
+              }`} />
             </div>
           </div>
         )
@@ -201,9 +199,9 @@ function FarmacoCard({ farmaco }: { farmaco: any }) {
           <Syringe className="h-4 w-4 text-primary" />
         </div>
         <div className="min-w-0">
-          <h4 className="font-bold text-base text-foreground">{farmaco.medicamento}</h4>
+          <h4 className="font-bold text-base text-foreground"><RichTextRenderer text={farmaco.medicamento} className="inline" /></h4>
           {farmaco.classe && (
-            <p className="text-sm text-muted-foreground mt-0.5">{farmaco.classe}</p>
+            <RichTextRenderer text={farmaco.classe} className="text-sm text-muted-foreground mt-0.5" />
           )}
         </div>
       </div>
@@ -212,13 +210,13 @@ function FarmacoCard({ farmaco }: { farmaco: any }) {
         {farmaco.mecanismo_acao && (
           <div className="rounded-lg bg-primary/[0.05] border border-primary/10 p-3">
             <p className="text-[11px] uppercase tracking-wider font-semibold text-primary mb-1.5">Mecanismo de Ação</p>
-            <p className="text-[13px] leading-relaxed text-foreground/85">{farmaco.mecanismo_acao}</p>
+            <RichTextRenderer text={farmaco.mecanismo_acao} className="text-[13px] leading-relaxed text-foreground/85" />
           </div>
         )}
         {farmaco.dose_usual && (
           <div className="flex items-baseline gap-2">
             <span className="text-[11px] uppercase tracking-wider font-semibold text-primary shrink-0">Dose:</span>
-            <span className="text-[13px] text-foreground/85">{farmaco.dose_usual}</span>
+            <RichTextRenderer text={farmaco.dose_usual} className="text-[13px] text-foreground/85 inline" />
           </div>
         )}
         {farmaco.efeitos_colaterais?.length > 0 && (
