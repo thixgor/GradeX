@@ -56,10 +56,10 @@ export function PatologiaForm({ initialData, editId }: Props) {
     basico: true,
     classificacao: true,
     fisiopatologia: true,
-    diagnostico: false,
-    tratamento: false,
-    farmacologia: false,
-    extras: false,
+    diagnostico: !!editId,
+    tratamento: !!editId,
+    farmacologia: !!editId,
+    extras: !!editId,
   })
 
   function toggleSection(key: string) {
@@ -185,7 +185,7 @@ export function PatologiaForm({ initialData, editId }: Props) {
                 <textarea
                   value={farmaco.mecanismo_acao}
                   onChange={e => updateFarmaco(linha, i, 'mecanismo_acao', e.target.value)}
-                  className="w-full min-h-[60px] px-3 py-2 rounded-md border bg-background text-sm resize-y"
+                  className="w-full min-h-[80px] px-3 py-2 rounded-md border bg-background text-sm resize-y"
                   placeholder="Mecanismo molecular/receptor"
                 />
               </div>
@@ -290,7 +290,7 @@ export function PatologiaForm({ initialData, editId }: Props) {
                 value={classificacao}
                 onChange={setClassificacao}
                 placeholder="Classificação clínica/etiológica..."
-                minHeight="120px"
+                minHeight="200px"
               />
             </CardContent>
           )}
@@ -305,7 +305,7 @@ export function PatologiaForm({ initialData, editId }: Props) {
                 value={fisiopatologia}
                 onChange={setFisiopatologia}
                 placeholder="Mecanismo fisiopatológico detalhado..."
-                minHeight="150px"
+                minHeight="250px"
               />
             </CardContent>
           )}
@@ -322,7 +322,7 @@ export function PatologiaForm({ initialData, editId }: Props) {
                   value={diagnosticoSemiologico}
                   onChange={setDiagnosticoSemiologico}
                   placeholder="Sinais, sintomas e exame físico..."
-                  minHeight="120px"
+                  minHeight="200px"
                 />
               </div>
               <div>
@@ -331,7 +331,7 @@ export function PatologiaForm({ initialData, editId }: Props) {
                   value={diagnosticosDiferenciais}
                   onChange={setDiagnosticosDiferenciais}
                   placeholder="Diagnósticos diferenciais com critérios..."
-                  minHeight="100px"
+                  minHeight="160px"
                 />
               </div>
               <div>
@@ -340,7 +340,7 @@ export function PatologiaForm({ initialData, editId }: Props) {
                   value={gravidade}
                   onChange={setGravidade}
                   placeholder="Escala de gravidade..."
-                  minHeight="80px"
+                  minHeight="120px"
                 />
               </div>
             </CardContent>
@@ -358,7 +358,7 @@ export function PatologiaForm({ initialData, editId }: Props) {
                   value={tratamento}
                   onChange={setTratamento}
                   placeholder="Abordagem terapêutica não-farmacológica e farmacológica..."
-                  minHeight="120px"
+                  minHeight="200px"
                 />
               </div>
               <div>
@@ -366,7 +366,7 @@ export function PatologiaForm({ initialData, editId }: Props) {
                 <textarea
                   value={fluxograma}
                   onChange={e => setFluxograma(e.target.value)}
-                  className="w-full min-h-[120px] px-3 py-2 rounded-md border bg-background text-sm resize-y font-mono"
+                  className="w-full min-h-[200px] px-3 py-2 rounded-md border bg-background text-sm resize-y font-mono"
                   placeholder="Etapas do fluxo decisório..."
                 />
               </div>
@@ -397,7 +397,7 @@ export function PatologiaForm({ initialData, editId }: Props) {
                   value={observacoes}
                   onChange={setObservacoes}
                   placeholder="Perlas clínicas, alertas..."
-                  minHeight="80px"
+                  minHeight="120px"
                 />
               </div>
               <div>

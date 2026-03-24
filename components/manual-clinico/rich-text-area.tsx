@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useCallback, useEffect } from 'react'
+import { useState, useRef, useCallback, useEffect, useLayoutEffect } from 'react'
 import { Bold, Italic, Link, Search, X, Stethoscope } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -20,8 +20,9 @@ interface PatologiaResult {
   sistema: string
 }
 
-export function RichTextArea({ value, onChange, placeholder, minHeight = '120px', className = '' }: RichTextAreaProps) {
+export function RichTextArea({ value, onChange, placeholder, minHeight = '160px', className = '' }: RichTextAreaProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const pendingCursor = useRef<{ pos: number; scrollTop: number } | null>(null)
 
   // Link modal state
   const [showLinkModal, setShowLinkModal] = useState(false)
@@ -34,6 +35,29 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '120px'
   const [patologiaResults, setPatologiaResults] = useState<PatologiaResult[]>([])
   const [patologiaLoading, setPatologiaLoading] = useState(false)
   const [patologiaSelection, setPatologiaSelection] = useState({ start: 0, end: 0, text: '' })
+
+  // Auto-resize textarea to fit content
+  const autoResize = useCallback(() => {
+    const ta = textareaRef.current
+    if (!ta) return
+    ta.style.height = 'auto'
+    ta.style.height = Math.max(ta.scrollHeight, parseInt(minHeight)) + 'px'
+  }, [minHeight])
+
+  useEffect(() => {
+    autoResize()
+  }, [value, autoResize])
+
+  // Restore cursor + scroll after React re-renders the textarea value
+  useLayoutEffect(() => {
+    const ta = textareaRef.current
+    const pending = pendingCursor.current
+    if (!ta || !pending) return
+    pendingCursor.current = null
+    ta.focus()
+    ta.setSelectionRange(pending.pos, pending.pos)
+    ta.scrollTop = pending.scrollTop
+  }, [value])
 
   // Get current selection from textarea
   function getSelection() {
@@ -52,16 +76,14 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '120px'
     if (!ta) return
 
     const sel = getSelection()
+    const scrollTop = ta.scrollTop
     const selectedText = sel.text || 'texto'
+    const cursorPos = sel.start + before.length + selectedText.length + after.length
     const newValue = value.substring(0, sel.start) + before + selectedText + after + value.substring(sel.end)
-    onChange(newValue)
 
-    // Restore cursor position after the inserted text
-    setTimeout(() => {
-      ta.focus()
-      const cursorPos = sel.start + before.length + selectedText.length + after.length
-      ta.setSelectionRange(cursorPos, cursorPos)
-    }, 0)
+    // Schedule cursor + scroll restore for after React re-renders
+    pendingCursor.current = { pos: cursorPos, scrollTop }
+    onChange(newValue)
   }
 
   function handleBold() {
@@ -86,13 +108,13 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '120px'
 
   function confirmLink() {
     if (!linkUrl) return
-    const newValue = value.substring(0, linkSelection.start) +
-      `[${linkSelection.text}](${linkUrl})` +
-      value.substring(linkSelection.end)
+    const linkMarkup = `[${linkSelection.text}](${linkUrl})`
+    const cursorPos = linkSelection.start + linkMarkup.length
+    const newValue = value.substring(0, linkSelection.start) + linkMarkup + value.substring(linkSelection.end)
+    pendingCursor.current = { pos: cursorPos, scrollTop: textareaRef.current?.scrollTop || 0 }
     onChange(newValue)
     setShowLinkModal(false)
     setLinkUrl('')
-    setTimeout(() => textareaRef.current?.focus(), 0)
   }
 
   function handlePatologiaLink() {
@@ -132,14 +154,15 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '120px'
   function selectPatologia(pat: PatologiaResult) {
     const displayText = patologiaSelection.text || pat.nome
     const linkMarkup = `[${displayText}](/manual-clinico/${pat.slug})`
+    const cursorPos = patologiaSelection.start + linkMarkup.length
     const newValue = value.substring(0, patologiaSelection.start) +
       linkMarkup +
       value.substring(patologiaSelection.end)
+    pendingCursor.current = { pos: cursorPos, scrollTop: textareaRef.current?.scrollTop || 0 }
     onChange(newValue)
     setShowPatologiaModal(false)
     setPatologiaBusca('')
     setPatologiaResults([])
-    setTimeout(() => textareaRef.current?.focus(), 0)
   }
 
   return (
@@ -188,7 +211,7 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '120px'
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
-        className={`w-full px-3 py-2 rounded-md rounded-t-none border bg-background text-sm resize-y ${className}`}
+        className={`w-full px-3 py-2 rounded-md rounded-t-none border bg-background text-sm resize-none overflow-hidden ${className}`}
         style={{ minHeight }}
       />
 
