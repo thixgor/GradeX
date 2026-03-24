@@ -133,7 +133,7 @@ function ManualClinicoContent() {
       const res = await fetch('/api/manual-clinico?export=true')
       const data = await res.json()
       const { generateManualCompletoPDF } = await import('@/lib/patologia-pdf-generator')
-      const blob = generateManualCompletoPDF(data.patologias || [])
+      const blob = await generateManualCompletoPDF(data.patologias || [])
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url

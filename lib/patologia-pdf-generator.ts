@@ -1,7 +1,20 @@
 import jsPDF from 'jspdf'
 import { Patologia, SISTEMAS_FISIOLOGICOS } from './types/manual-clinico'
 
-// Cores da paleta DomineAqui
+// ── Types ────────────────────────────────────────────────────────
+
+type FontStyle = 'normal' | 'bold' | 'italic' | 'bolditalic'
+
+interface StyledWord {
+  text: string
+  style: FontStyle
+  isLink: boolean
+}
+
+type RichLine = StyledWord[]
+
+// ── Cores da paleta DomineAqui ───────────────────────────────────
+
 const VERDE_ESCURO = [26, 71, 42] as const
 const VERDE_MEDIO = [70, 129, 82] as const
 const LARANJA = [226, 164, 62] as const
@@ -9,61 +22,198 @@ const CINZA_TEXTO = [51, 51, 51] as const
 const CINZA_CLARO = [245, 245, 245] as const
 const CINZA_MEDIO = [200, 200, 200] as const
 const BRANCO = [255, 255, 255] as const
+const AZUL_LINK = [37, 99, 235] as const
+
+// ── Layout constants ─────────────────────────────────────────────
 
 const MARGIN = 15
 const PAGE_WIDTH = 210
 const PAGE_HEIGHT = 297
 const CONTENT_WIDTH = PAGE_WIDTH - MARGIN * 2
 const FOOTER_SPACE = 22
-const LINE_HEIGHT = 4.5
-const PARAGRAPH_GAP = 2.5
+const LINE_HEIGHT = 5.5
+const PARAGRAPH_GAP = 3
 
-function wrapText(doc: jsPDF, text: string, maxWidth: number): string[] {
+// ── Rich Text Parsing ────────────────────────────────────────────
+// Parses **bold**, *italic*, [text](url) into styled word tokens
+
+function parseRichSegments(text: string): { text: string; style: FontStyle; isLink: boolean }[] {
+  if (!text) return []
+  const segments: { text: string; style: FontStyle; isLink: boolean }[] = []
+  // Order matters: ** before *
+  const regex = /\*\*(.+?)\*\*|\*(.+?)\*|\[([^\]]+)\]\([^)]+\)/g
+  let lastIndex = 0
+  let match
+
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      segments.push({ text: text.slice(lastIndex, match.index), style: 'normal', isLink: false })
+    }
+    if (match[1] !== undefined) {
+      segments.push({ text: match[1], style: 'bold', isLink: false })
+    } else if (match[2] !== undefined) {
+      segments.push({ text: match[2], style: 'italic', isLink: false })
+    } else if (match[3] !== undefined) {
+      segments.push({ text: match[3], style: 'normal', isLink: true })
+    }
+    lastIndex = match.index + match[0].length
+  }
+
+  if (lastIndex < text.length) {
+    segments.push({ text: text.slice(lastIndex), style: 'normal', isLink: false })
+  }
+
+  return segments.length > 0 ? segments : [{ text, style: 'normal', isLink: false }]
+}
+
+function segmentsToWords(segments: { text: string; style: FontStyle; isLink: boolean }[]): StyledWord[] {
+  const words: StyledWord[] = []
+  for (const seg of segments) {
+    const parts = seg.text.split(/(\s+)/)
+    for (const part of parts) {
+      if (!part || /^\s+$/.test(part)) continue
+      words.push({ text: part, style: seg.style, isLink: seg.isLink })
+    }
+  }
+  return words
+}
+
+function wordWidth(doc: jsPDF, word: StyledWord, fontSize: number): number {
+  doc.setFontSize(fontSize)
+  doc.setFont('helvetica', word.style)
+  return doc.getTextWidth(word.text)
+}
+
+function spaceWidth(doc: jsPDF, fontSize: number): number {
+  doc.setFontSize(fontSize)
+  doc.setFont('helvetica', 'normal')
+  return doc.getTextWidth(' ')
+}
+
+function wrapRichText(doc: jsPDF, text: string, maxWidth: number, fontSize: number): RichLine[] {
   if (!text) return []
   const paragraphs = text.split(/\n/)
-  const allLines: string[] = []
-  for (const paragraph of paragraphs) {
-    if (paragraph.trim() === '') {
-      allLines.push('')
+  const allLines: RichLine[] = []
+  const sw = spaceWidth(doc, fontSize)
+
+  for (const para of paragraphs) {
+    if (para.trim() === '') {
+      allLines.push([]) // empty line = paragraph break
       continue
     }
-    const words = paragraph.split(' ')
-    let currentLine = ''
-    for (const word of words) {
-      const testLine = currentLine ? currentLine + ' ' + word : word
-      if (doc.getTextWidth(testLine) > maxWidth && currentLine) {
+    const segments = parseRichSegments(para.trim())
+    const words = segmentsToWords(segments)
+    if (words.length === 0) { allLines.push([]); continue }
+
+    let currentLine: StyledWord[] = []
+    let currentWidth = 0
+
+    for (const w of words) {
+      const ww = wordWidth(doc, w, fontSize)
+      const needed = currentLine.length > 0 ? sw + ww : ww
+
+      if (currentWidth + needed > maxWidth && currentLine.length > 0) {
         allLines.push(currentLine)
-        currentLine = word
+        currentLine = [w]
+        currentWidth = ww
       } else {
-        currentLine = testLine
+        currentLine.push(w)
+        currentWidth += needed
       }
     }
-    if (currentLine) allLines.push(currentLine)
+    if (currentLine.length > 0) allLines.push(currentLine)
   }
+
   return allLines
 }
 
-function addHeader(doc: jsPDF, patologia: Patologia) {
-  // Barra superior verde escuro
+function renderRichLine(doc: jsPDF, line: RichLine, x: number, y: number, fontSize: number): void {
+  if (line.length === 0) return
+  doc.setFontSize(fontSize)
+  const sw = spaceWidth(doc, fontSize)
+  let cx = x
+
+  for (let i = 0; i < line.length; i++) {
+    const w = line[i]
+    doc.setFontSize(fontSize)
+    doc.setFont('helvetica', w.style)
+    doc.setTextColor(...(w.isLink ? AZUL_LINK : CINZA_TEXTO))
+    doc.text(w.text, cx, y)
+    cx += doc.getTextWidth(w.text)
+    if (i < line.length - 1) cx += sw
+  }
+}
+
+// ── Image Loading ────────────────────────────────────────────────
+
+interface LoadedImage {
+  data: string
+  w: number
+  h: number
+}
+
+async function loadImage(url: string): Promise<LoadedImage | null> {
+  try {
+    return await new Promise<LoadedImage | null>((resolve) => {
+      const img = new Image()
+      img.crossOrigin = 'anonymous'
+      const timeout = setTimeout(() => resolve(null), 8000)
+      img.onload = () => {
+        clearTimeout(timeout)
+        try {
+          const canvas = document.createElement('canvas')
+          canvas.width = img.naturalWidth
+          canvas.height = img.naturalHeight
+          const ctx = canvas.getContext('2d')
+          if (!ctx) { resolve(null); return }
+          ctx.drawImage(img, 0, 0)
+          resolve({ data: canvas.toDataURL('image/jpeg', 0.85), w: img.naturalWidth, h: img.naturalHeight })
+        } catch { resolve(null) }
+      }
+      img.onerror = () => { clearTimeout(timeout); resolve(null) }
+      img.src = url
+    })
+  } catch { return null }
+}
+
+async function preloadImages(urls: string[]): Promise<Map<string, LoadedImage>> {
+  const map = new Map<string, LoadedImage>()
+  const results = await Promise.all(urls.map(u => loadImage(u)))
+  urls.forEach((url, i) => { if (results[i]) map.set(url, results[i]!) })
+  return map
+}
+
+// ── Ensure Space (page break logic) ─────────────────────────────
+
+type EnsureSpaceFn = (doc: jsPDF, y: number, needed: number) => number
+
+function makeEnsureSpace(addHeaderFn: (doc: jsPDF) => number): EnsureSpaceFn {
+  return (doc, y, needed) => {
+    if (y + needed > PAGE_HEIGHT - FOOTER_SPACE) {
+      doc.addPage()
+      return addHeaderFn(doc)
+    }
+    return y
+  }
+}
+
+// ── Individual PDF: Header & Footer ──────────────────────────────
+
+function addHeader(doc: jsPDF): number {
   doc.setFillColor(...VERDE_ESCURO)
   doc.rect(0, 0, PAGE_WIDTH, 30, 'F')
-
-  // Detalhe laranja
   doc.setFillColor(...LARANJA)
   doc.rect(PAGE_WIDTH - 65, 0, 65, 30, 'F')
 
-  // Título
   doc.setTextColor(...BRANCO)
   doc.setFontSize(16)
   doc.setFont('helvetica', 'bold')
   doc.text('DomineAqui', MARGIN, 13)
 
-  // Subtítulo
   doc.setFontSize(9)
   doc.setFont('helvetica', 'normal')
   doc.text('Manual Cl\u00ednico', MARGIN, 21)
 
-  // URL no canto laranja
   doc.setFontSize(8)
   doc.setTextColor(...VERDE_ESCURO)
   doc.text('www.domineaqui.com.br', PAGE_WIDTH - 62, 18)
@@ -71,197 +221,333 @@ function addHeader(doc: jsPDF, patologia: Patologia) {
   return 40
 }
 
-function addFooter(doc: jsPDF, pageNum: number, totalPages: number) {
-  const footerY = PAGE_HEIGHT - 12
-
+function addFooter(doc: jsPDF, pageNum: number, totalPages: number): void {
+  const fy = PAGE_HEIGHT - 12
   doc.setFillColor(...CINZA_CLARO)
-  doc.rect(0, footerY - 5, PAGE_WIDTH, 17, 'F')
-
-  // Linha decorativa
+  doc.rect(0, fy - 5, PAGE_WIDTH, 17, 'F')
   doc.setDrawColor(...VERDE_MEDIO)
   doc.setLineWidth(1)
-  doc.line(0, footerY - 5, PAGE_WIDTH * 0.7, footerY - 5)
+  doc.line(0, fy - 5, PAGE_WIDTH * 0.7, fy - 5)
   doc.setDrawColor(...LARANJA)
-  doc.line(PAGE_WIDTH * 0.7, footerY - 5, PAGE_WIDTH, footerY - 5)
+  doc.line(PAGE_WIDTH * 0.7, fy - 5, PAGE_WIDTH, fy - 5)
 
   doc.setFontSize(8)
   doc.setTextColor(70, 70, 70)
   doc.setFont('helvetica', 'bold')
-  doc.text('DomineAqui', MARGIN, footerY + 2)
+  doc.text('DomineAqui', MARGIN, fy + 2)
   doc.setFont('helvetica', 'normal')
-  doc.text(' - Manual Cl\u00ednico', MARGIN + doc.getTextWidth('DomineAqui') + 1, footerY + 2)
-
-  doc.text(`P\u00e1gina ${pageNum} de ${totalPages}`, PAGE_WIDTH - MARGIN, footerY + 2, { align: 'right' })
+  doc.text(' - Manual Cl\u00ednico', MARGIN + doc.getTextWidth('DomineAqui') + 1, fy + 2)
+  doc.text(`P\u00e1gina ${pageNum} de ${totalPages}`, PAGE_WIDTH - MARGIN, fy + 2, { align: 'right' })
 
   const dataGeracao = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })
   doc.setFontSize(7)
   doc.setTextColor(100, 100, 100)
-  doc.text(`Gerado em ${dataGeracao}`, PAGE_WIDTH / 2, footerY + 2, { align: 'center' })
+  doc.text(`Gerado em ${dataGeracao}`, PAGE_WIDTH / 2, fy + 2, { align: 'center' })
 }
 
-function ensureSpace(doc: jsPDF, y: number, needed: number, patologia: Patologia): number {
-  if (y + needed > PAGE_HEIGHT - FOOTER_SPACE) {
-    doc.addPage()
-    return addHeader(doc, patologia)
-  }
-  return y
-}
+// ── Shared Drawing Helpers ───────────────────────────────────────
 
-function drawSectionTitle(doc: jsPDF, title: string, y: number, patologia: Patologia): number {
-  y = ensureSpace(doc, y, 16, patologia)
-
-  // Barra verde à esquerda + fundo cinza claro
+function drawSectionTitle(doc: jsPDF, title: string, y: number, ensure: EnsureSpaceFn, fontSize: number = 11): number {
+  y = ensure(doc, y, 16)
   doc.setFillColor(...CINZA_CLARO)
   doc.rect(MARGIN, y - 5, CONTENT_WIDTH, 10, 'F')
   doc.setFillColor(...VERDE_MEDIO)
   doc.rect(MARGIN, y - 5, 3, 10, 'F')
-
-  doc.setFontSize(11)
+  doc.setFontSize(fontSize)
   doc.setFont('helvetica', 'bold')
   doc.setTextColor(...VERDE_ESCURO)
   doc.text(title, MARGIN + 7, y + 2)
-
   return y + 14
 }
 
-function drawTextBlock(doc: jsPDF, text: string, y: number, patologia: Patologia, fontSize: number = 9): number {
+function drawRichTextBlock(doc: jsPDF, text: string, y: number, ensure: EnsureSpaceFn, fontSize: number = 9.5): number {
   if (!text) return y
-
-  doc.setFontSize(fontSize)
-  doc.setFont('helvetica', 'normal')
-  doc.setTextColor(...CINZA_TEXTO)
-
-  const lines = wrapText(doc, text, CONTENT_WIDTH - 6)
+  const lines = wrapRichText(doc, text, CONTENT_WIDTH - 6, fontSize)
   for (const line of lines) {
-    y = ensureSpace(doc, y, LINE_HEIGHT + 1, patologia)
-    if (line === '') {
+    y = ensure(doc, y, LINE_HEIGHT + 1)
+    if (line.length === 0) {
       y += PARAGRAPH_GAP
     } else {
-      doc.text(line, MARGIN + 3, y)
+      renderRichLine(doc, line, MARGIN + 3, y, fontSize)
       y += LINE_HEIGHT
     }
   }
   return y + PARAGRAPH_GAP
 }
 
-function drawLabelValue(doc: jsPDF, label: string, value: string, y: number, patologia: Patologia): number {
+function drawLabelValue(doc: jsPDF, label: string, value: string, y: number, ensure: EnsureSpaceFn): number {
   if (!value) return y
+  const fontSize = 9.5
 
-  // Draw the label
-  doc.setFontSize(9)
+  // Measure the label
+  doc.setFontSize(fontSize)
   doc.setFont('helvetica', 'bold')
-  doc.setTextColor(...VERDE_ESCURO)
-
   const labelText = label + ': '
-  const labelWidth = doc.getTextWidth(labelText)
-  const availableForValue = CONTENT_WIDTH - 8 - labelWidth
+  const labelW = doc.getTextWidth(labelText)
 
-  // If value fits on same line as label
+  // Measure the value (plain, for inline check)
   doc.setFont('helvetica', 'normal')
-  doc.setTextColor(...CINZA_TEXTO)
-  const valueWidth = doc.getTextWidth(value)
+  const plainValue = value.replace(/\*\*(.+?)\*\*/g, '$1').replace(/\*(.+?)\*/g, '$1').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+  const valueW = doc.getTextWidth(plainValue)
+  const availableForValue = CONTENT_WIDTH - 8 - labelW
 
-  if (valueWidth <= availableForValue) {
-    y = ensureSpace(doc, y, LINE_HEIGHT + 1, patologia)
+  if (valueW <= availableForValue) {
+    // Single line: label + value
+    y = ensure(doc, y, LINE_HEIGHT + 1)
+    doc.setFontSize(fontSize)
     doc.setFont('helvetica', 'bold')
     doc.setTextColor(...VERDE_ESCURO)
     doc.text(labelText, MARGIN + 4, y)
-    doc.setFont('helvetica', 'normal')
-    doc.setTextColor(...CINZA_TEXTO)
-    doc.text(value, MARGIN + 4 + labelWidth, y)
+
+    // Render value with rich text inline
+    const segments = parseRichSegments(value)
+    const words = segmentsToWords(segments)
+    let cx = MARGIN + 4 + labelW
+    const sw = spaceWidth(doc, fontSize)
+    for (let i = 0; i < words.length; i++) {
+      const w = words[i]
+      doc.setFontSize(fontSize)
+      doc.setFont('helvetica', w.style === 'normal' && !w.isLink ? 'normal' : w.style)
+      doc.setTextColor(...(w.isLink ? AZUL_LINK : CINZA_TEXTO))
+      doc.text(w.text, cx, y)
+      cx += doc.getTextWidth(w.text)
+      if (i < words.length - 1) cx += sw
+    }
     return y + LINE_HEIGHT
   }
 
-  // Value needs wrapping — label on its own line, value below
-  y = ensureSpace(doc, y, LINE_HEIGHT * 2 + 1, patologia)
+  // Multi-line: label on own line, value wrapped below
+  y = ensure(doc, y, LINE_HEIGHT * 2 + 1)
+  doc.setFontSize(fontSize)
   doc.setFont('helvetica', 'bold')
   doc.setTextColor(...VERDE_ESCURO)
   doc.text(labelText, MARGIN + 4, y)
   y += LINE_HEIGHT
 
-  // Wrap the value text
-  doc.setFont('helvetica', 'normal')
-  doc.setTextColor(...CINZA_TEXTO)
-  const wrappedLines = wrapText(doc, value, CONTENT_WIDTH - 10)
+  const wrappedLines = wrapRichText(doc, value, CONTENT_WIDTH - 10, fontSize)
   for (const line of wrappedLines) {
-    y = ensureSpace(doc, y, LINE_HEIGHT + 1, patologia)
-    doc.text(line, MARGIN + 6, y)
-    y += LINE_HEIGHT
+    y = ensure(doc, y, LINE_HEIGHT + 1)
+    if (line.length === 0) {
+      y += PARAGRAPH_GAP
+    } else {
+      renderRichLine(doc, line, MARGIN + 6, y, fontSize)
+      y += LINE_HEIGHT
+    }
   }
-
   return y + 1
 }
 
-function drawFarmacoBlock(doc: jsPDF, farmaco: any, y: number, patologia: Patologia): number {
-  // Estimate how much space we need (minimum)
-  y = ensureSpace(doc, y, 20, patologia)
-
+function drawFarmacoBlock(doc: jsPDF, farmaco: any, y: number, ensure: EnsureSpaceFn): number {
+  y = ensure(doc, y, 24)
   const startY = y
 
+  // Background card
+  doc.setFillColor(250, 251, 250)
+  doc.setDrawColor(230, 232, 230)
+  doc.setLineWidth(0.3)
+
   // Farmaco name
-  doc.setFontSize(10)
+  doc.setFontSize(10.5)
   doc.setFont('helvetica', 'bold')
   doc.setTextColor(...VERDE_ESCURO)
-  doc.text(farmaco.medicamento || 'Sem nome', MARGIN + 6, y)
+  doc.text(farmaco.medicamento || 'Sem nome', MARGIN + 8, y)
 
   if (farmaco.classe) {
-    const nameWidth = doc.getTextWidth(farmaco.medicamento + '  ')
-    doc.setFontSize(8)
-    doc.setFont('helvetica', 'normal')
-    doc.setTextColor(120, 120, 120)
+    doc.setFontSize(8.5)
+    doc.setFont('helvetica', 'italic')
+    doc.setTextColor(100, 100, 100)
     const classeText = `(${farmaco.classe})`
-    const availableWidth = CONTENT_WIDTH - 10 - nameWidth
-    if (doc.getTextWidth(classeText) <= availableWidth) {
-      doc.text(classeText, MARGIN + 6 + nameWidth, y)
+    const nameW = doc.getTextWidth((farmaco.medicamento || '') + '  ')
+    doc.setFontSize(10.5)
+    doc.setFont('helvetica', 'bold')
+    const fullNameW = doc.getTextWidth((farmaco.medicamento || '') + '  ')
+    doc.setFontSize(8.5)
+    doc.setFont('helvetica', 'italic')
+    if (fullNameW + doc.getTextWidth(classeText) <= CONTENT_WIDTH - 12) {
+      doc.text(classeText, MARGIN + 8 + fullNameW, y)
     } else {
       y += LINE_HEIGHT
-      doc.text(classeText, MARGIN + 6, y)
+      doc.text(classeText, MARGIN + 8, y)
     }
   }
-  y += LINE_HEIGHT + 1
+  y += LINE_HEIGHT + 2
 
-  // Reset font for fields
-  doc.setFontSize(9)
+  if (farmaco.mecanismo_acao) y = drawLabelValue(doc, 'Mecanismo', farmaco.mecanismo_acao, y, ensure)
+  if (farmaco.dose_usual) y = drawLabelValue(doc, 'Dose usual', farmaco.dose_usual, y, ensure)
+  if (farmaco.efeitos_colaterais?.length > 0) y = drawLabelValue(doc, 'Efeitos colaterais', farmaco.efeitos_colaterais.join('; '), y, ensure)
+  if (farmaco.contraindicacoes?.length > 0) y = drawLabelValue(doc, 'Contraindica\u00e7\u00f5es', farmaco.contraindicacoes.join('; '), y, ensure)
 
-  if (farmaco.mecanismo_acao) {
-    y = drawLabelValue(doc, 'Mecanismo', farmaco.mecanismo_acao, y, patologia)
-  }
-  if (farmaco.dose_usual) {
-    y = drawLabelValue(doc, 'Dose usual', farmaco.dose_usual, y, patologia)
-  }
-  if (farmaco.efeitos_colaterais?.length > 0) {
-    y = drawLabelValue(doc, 'Efeitos colaterais', farmaco.efeitos_colaterais.join('; '), y, patologia)
-  }
-  if (farmaco.contraindicacoes?.length > 0) {
-    y = drawLabelValue(doc, 'Contraindica\u00e7\u00f5es', farmaco.contraindicacoes.join('; '), y, patologia)
-  }
-
-  // Draw card border around everything we just drew
-  const cardHeight = y - startY + 3
-  doc.setDrawColor(...CINZA_MEDIO)
-  doc.setLineWidth(0.3)
-  doc.setFillColor(252, 252, 252)
-  // We need to draw the border BEHIND the text, but jsPDF doesn't support z-order
-  // So we draw a left accent bar instead
+  // Draw card decorations
+  const cardH = y - startY + 4
   doc.setFillColor(...VERDE_MEDIO)
-  doc.rect(MARGIN + 2, startY - 4, 2, cardHeight, 'F')
-  doc.setDrawColor(230, 230, 230)
+  doc.rect(MARGIN + 3, startY - 5, 2.5, cardH, 'F')
+  doc.setDrawColor(225, 228, 225)
   doc.setLineWidth(0.2)
-  doc.line(MARGIN + 2, startY - 4, MARGIN + CONTENT_WIDTH - 2, startY - 4)
-  doc.line(MARGIN + 2, startY - 4 + cardHeight, MARGIN + CONTENT_WIDTH - 2, startY - 4 + cardHeight)
+  doc.line(MARGIN + 3, startY - 5, MARGIN + CONTENT_WIDTH - 3, startY - 5)
+  doc.line(MARGIN + 3, startY - 5 + cardH, MARGIN + CONTENT_WIDTH - 3, startY - 5 + cardH)
 
-  return y + 5
+  return y + 6
 }
 
-export function generatePatologiaPDF(patologia: Patologia): Blob {
-  const doc = new jsPDF()
-  let y = addHeader(doc, patologia)
+function drawFluxogramaBlock(doc: jsPDF, text: string, y: number, ensure: EnsureSpaceFn): number {
+  if (!text) return y
 
-  // === TÍTULO DA PATOLOGIA ===
+  const steps = text.split(/\n/).filter(s => s.trim())
+  const stepHeight = 9
+  const arrowHeight = 6
+  const boxWidth = CONTENT_WIDTH - 20
+  const boxX = MARGIN + 10
+
+  for (let i = 0; i < steps.length; i++) {
+    const step = steps[i].trim()
+    const totalNeeded = stepHeight + (i < steps.length - 1 ? arrowHeight : 0) + 4
+
+    y = ensure(doc, y, totalNeeded + 4)
+
+    // Step box
+    const isDecision = step.includes('?') || step.toLowerCase().startsWith('se ')
+    const bgColor: readonly [number, number, number] = isDecision ? [255, 248, 235] : [240, 248, 243]
+    const borderColor: readonly [number, number, number] = isDecision ? LARANJA : VERDE_MEDIO
+
+    doc.setFillColor(...bgColor)
+    doc.setDrawColor(...borderColor)
+    doc.setLineWidth(0.5)
+
+    // Measure text to determine box height
+    doc.setFontSize(8.5)
+    doc.setFont('helvetica', 'normal')
+    const wrappedLines = doc.splitTextToSize(step, boxWidth - 12)
+    const boxH = Math.max(stepHeight, wrappedLines.length * 4.5 + 5)
+
+    doc.roundedRect(boxX, y - 2, boxWidth, boxH, 2, 2, 'FD')
+
+    // Step number circle
+    doc.setFillColor(...borderColor)
+    doc.circle(boxX + 5, y + boxH / 2 - 2, 3, 'F')
+    doc.setFontSize(7)
+    doc.setFont('helvetica', 'bold')
+    doc.setTextColor(...BRANCO)
+    doc.text(String(i + 1), boxX + 5, y + boxH / 2 - 0.8, { align: 'center' })
+
+    // Step text
+    doc.setFontSize(8.5)
+    doc.setFont('helvetica', 'normal')
+    doc.setTextColor(...CINZA_TEXTO)
+    for (let l = 0; l < wrappedLines.length; l++) {
+      doc.text(wrappedLines[l], boxX + 12, y + 3 + l * 4.5)
+    }
+
+    y += boxH + 1
+
+    // Arrow between steps
+    if (i < steps.length - 1) {
+      const arrowX = boxX + boxWidth / 2
+      doc.setDrawColor(...VERDE_MEDIO)
+      doc.setLineWidth(0.6)
+      doc.line(arrowX, y, arrowX, y + arrowHeight - 2)
+      // Arrowhead
+      doc.setFillColor(...VERDE_MEDIO)
+      doc.triangle(
+        arrowX - 2, y + arrowHeight - 3,
+        arrowX + 2, y + arrowHeight - 3,
+        arrowX, y + arrowHeight,
+        'F'
+      )
+      y += arrowHeight + 1
+    }
+  }
+
+  return y + 4
+}
+
+function drawImagesBlock(
+  doc: jsPDF,
+  urls: string[],
+  captions: string[],
+  y: number,
+  ensure: EnsureSpaceFn,
+  imageMap: Map<string, LoadedImage>
+): number {
+  for (let i = 0; i < urls.length; i++) {
+    const img = imageMap.get(urls[i])
+    const caption = captions[i] || ''
+
+    if (!img) {
+      // Image failed to load — show placeholder
+      y = ensure(doc, y, 16)
+      doc.setFillColor(...CINZA_CLARO)
+      doc.setDrawColor(...CINZA_MEDIO)
+      doc.setLineWidth(0.3)
+      doc.roundedRect(MARGIN + 20, y, CONTENT_WIDTH - 40, 12, 2, 2, 'FD')
+      doc.setFontSize(8)
+      doc.setFont('helvetica', 'italic')
+      doc.setTextColor(150, 150, 150)
+      doc.text('[Imagem n\u00e3o dispon\u00edvel]', PAGE_WIDTH / 2, y + 7, { align: 'center' })
+      y += 14
+      if (caption) {
+        doc.setFontSize(8)
+        doc.setFont('helvetica', 'italic')
+        doc.setTextColor(100, 100, 100)
+        doc.text(caption, PAGE_WIDTH / 2, y, { align: 'center' })
+        y += 6
+      }
+      continue
+    }
+
+    // Scale image to fit
+    const maxW = CONTENT_WIDTH - 20
+    const maxH = 110
+    const ratio = Math.min(maxW / img.w, maxH / img.h, 1)
+    const drawW = img.w * ratio
+    const drawH = img.h * ratio
+
+    y = ensure(doc, y, drawH + (caption ? 12 : 4) + 4)
+
+    // Border around image
+    const imgX = MARGIN + (CONTENT_WIDTH - drawW) / 2
+    doc.setDrawColor(220, 220, 220)
+    doc.setLineWidth(0.3)
+    doc.roundedRect(imgX - 1, y - 1, drawW + 2, drawH + 2, 1, 1, 'S')
+
+    doc.addImage(img.data, 'JPEG', imgX, y, drawW, drawH)
+    y += drawH + 3
+
+    // Caption
+    if (caption) {
+      doc.setFontSize(8)
+      doc.setFont('helvetica', 'italic')
+      doc.setTextColor(100, 100, 100)
+      const capLines = doc.splitTextToSize(caption, CONTENT_WIDTH - 20)
+      for (const cl of capLines) {
+        doc.text(cl, PAGE_WIDTH / 2, y, { align: 'center' })
+        y += 4
+      }
+      y += 2
+    }
+
+    y += 4
+  }
+
+  return y
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  INDIVIDUAL PATOLOGIA PDF
+// ═══════════════════════════════════════════════════════════════════
+
+export async function generatePatologiaPDF(patologia: Patologia): Promise<Blob> {
+  // Preload images
+  const imageMap = await preloadImages(patologia.imagens_mecanismo || [])
+
+  const doc = new jsPDF()
+  const ensure = makeEnsureSpace(() => addHeader(doc))
+  let y = addHeader(doc)
+
+  // ── Título ──────────────────────────────────────────────────────
   doc.setFontSize(18)
   doc.setFont('helvetica', 'bold')
   doc.setTextColor(...VERDE_ESCURO)
-  const titleLines = wrapText(doc, patologia.nome, CONTENT_WIDTH)
+  const titleLines = doc.splitTextToSize(patologia.nome, CONTENT_WIDTH)
   for (const line of titleLines) {
     doc.text(line, MARGIN, y)
     y += 8
@@ -273,7 +559,7 @@ export function generatePatologiaPDF(patologia: Patologia): Blob {
     doc.setFontSize(9)
     doc.setFont('helvetica', 'italic')
     doc.setTextColor(100, 100, 100)
-    const sinLines = wrapText(doc, patologia.sinonimos.join(' \u2022 '), CONTENT_WIDTH)
+    const sinLines = doc.splitTextToSize(patologia.sinonimos.join(' \u2022 '), CONTENT_WIDTH)
     for (const line of sinLines) {
       doc.text(line, MARGIN, y)
       y += LINE_HEIGHT
@@ -281,23 +567,21 @@ export function generatePatologiaPDF(patologia: Patologia): Blob {
     y += 1
   }
 
-  // Badges: CID-10, Áreas, Sistema
+  // Badges
   doc.setFontSize(8)
   doc.setFont('helvetica', 'bold')
   let badgeX = MARGIN
 
-  // CID-10 badge
   if (patologia.cid10) {
     doc.setFillColor(...VERDE_ESCURO)
     const cidText = `CID-10: ${patologia.cid10}`
-    const cidWidth = doc.getTextWidth(cidText) + 6
-    doc.roundedRect(badgeX, y - 3, cidWidth, 5.5, 1.5, 1.5, 'F')
+    const cidW = doc.getTextWidth(cidText) + 6
+    doc.roundedRect(badgeX, y - 3, cidW, 5.5, 1.5, 1.5, 'F')
     doc.setTextColor(...BRANCO)
     doc.text(cidText, badgeX + 3, y + 0.5)
-    badgeX += cidWidth + 3
+    badgeX += cidW + 3
   }
 
-  // Area badges
   const areaColors: Record<string, [number, number, number]> = {
     'Medicina': [59, 130, 246],
     'Psicologia': [147, 51, 234],
@@ -307,21 +591,18 @@ export function generatePatologiaPDF(patologia: Patologia): Blob {
   for (const area of patologia.areas || []) {
     const color = areaColors[area] || VERDE_MEDIO
     doc.setFillColor(...color)
+    doc.setFontSize(8)
+    doc.setFont('helvetica', 'bold')
     const areaText = area
-    const areaWidth = doc.getTextWidth(areaText) + 6
-    // Wrap to next line if needed
-    if (badgeX + areaWidth > PAGE_WIDTH - MARGIN) {
-      y += 7
-      badgeX = MARGIN
-    }
-    doc.roundedRect(badgeX, y - 3, areaWidth, 5.5, 1.5, 1.5, 'F')
+    const areaW = doc.getTextWidth(areaText) + 6
+    if (badgeX + areaW > PAGE_WIDTH - MARGIN) { y += 7; badgeX = MARGIN }
+    doc.roundedRect(badgeX, y - 3, areaW, 5.5, 1.5, 1.5, 'F')
     doc.setTextColor(...BRANCO)
     doc.text(areaText, badgeX + 3, y + 0.5)
-    badgeX += areaWidth + 3
+    badgeX += areaW + 3
   }
   y += 6
 
-  // Sistema
   if (patologia.sistema) {
     doc.setFontSize(8)
     doc.setFont('helvetica', 'normal')
@@ -330,118 +611,107 @@ export function generatePatologiaPDF(patologia: Patologia): Blob {
     y += 6
   }
 
-  // Linha separadora
+  // Divider
   doc.setDrawColor(...LARANJA)
   doc.setLineWidth(0.8)
   doc.line(MARGIN, y, PAGE_WIDTH - MARGIN, y)
   y += 8
 
-  // === SEÇÕES DE CONTEÚDO ===
+  // ── Seções de conteúdo ──────────────────────────────────────────
 
   if (patologia.classificacao) {
-    y = drawSectionTitle(doc, 'Classifica\u00e7\u00e3o', y, patologia)
-    y = drawTextBlock(doc, patologia.classificacao, y, patologia)
+    y = drawSectionTitle(doc, 'Classifica\u00e7\u00e3o', y, ensure)
+    y = drawRichTextBlock(doc, patologia.classificacao, y, ensure)
   }
 
   if (patologia.fisiopatologia) {
-    y = drawSectionTitle(doc, 'Fisiopatologia', y, patologia)
-    y = drawTextBlock(doc, patologia.fisiopatologia, y, patologia)
+    y = drawSectionTitle(doc, 'Fisiopatologia', y, ensure)
+    y = drawRichTextBlock(doc, patologia.fisiopatologia, y, ensure)
+  }
+
+  // Images after fisiopatologia
+  if (patologia.imagens_mecanismo?.length) {
+    y = drawSectionTitle(doc, 'Imagens do Mecanismo', y, ensure)
+    y = drawImagesBlock(doc, patologia.imagens_mecanismo, patologia.legenda_imagens || [], y, ensure, imageMap)
   }
 
   if (patologia.diagnostico_semiologico) {
-    y = drawSectionTitle(doc, 'Diagn\u00f3stico Semiol\u00f3gico', y, patologia)
-    y = drawTextBlock(doc, patologia.diagnostico_semiologico, y, patologia)
+    y = drawSectionTitle(doc, 'Diagn\u00f3stico Semiol\u00f3gico', y, ensure)
+    y = drawRichTextBlock(doc, patologia.diagnostico_semiologico, y, ensure)
   }
 
   if (patologia.diagnosticos_diferenciais) {
-    y = drawSectionTitle(doc, 'Diagn\u00f3sticos Diferenciais', y, patologia)
-    y = drawTextBlock(doc, patologia.diagnosticos_diferenciais, y, patologia)
+    y = drawSectionTitle(doc, 'Diagn\u00f3sticos Diferenciais', y, ensure)
+    y = drawRichTextBlock(doc, patologia.diagnosticos_diferenciais, y, ensure)
   }
 
   if (patologia.gravidade) {
-    y = drawSectionTitle(doc, 'Gravidade', y, patologia)
-    y = drawTextBlock(doc, patologia.gravidade, y, patologia)
+    y = drawSectionTitle(doc, 'Gravidade', y, ensure)
+    y = drawRichTextBlock(doc, patologia.gravidade, y, ensure)
   }
 
   if (patologia.tratamento) {
-    y = drawSectionTitle(doc, 'Tratamento', y, patologia)
-    y = drawTextBlock(doc, patologia.tratamento, y, patologia)
+    y = drawSectionTitle(doc, 'Tratamento', y, ensure)
+    y = drawRichTextBlock(doc, patologia.tratamento, y, ensure)
   }
 
-  // === FARMACOLOGIA ===
+  // ── Farmacologia ────────────────────────────────────────────────
+
   const farma = patologia.farmacologia
   if (farma) {
     if (farma.primeira_linha?.length > 0) {
-      y = drawSectionTitle(doc, 'Farmacologia \u2014 1\u00aa Linha', y, patologia)
-      for (const f of farma.primeira_linha) {
-        y = drawFarmacoBlock(doc, f, y, patologia)
-      }
+      y = drawSectionTitle(doc, 'Farmacologia \u2014 1\u00aa Linha', y, ensure)
+      for (const f of farma.primeira_linha) y = drawFarmacoBlock(doc, f, y, ensure)
     }
     if (farma.segunda_linha?.length > 0) {
-      y = drawSectionTitle(doc, 'Farmacologia \u2014 2\u00aa Linha', y, patologia)
-      for (const f of farma.segunda_linha) {
-        y = drawFarmacoBlock(doc, f, y, patologia)
-      }
+      y = drawSectionTitle(doc, 'Farmacologia \u2014 2\u00aa Linha', y, ensure)
+      for (const f of farma.segunda_linha) y = drawFarmacoBlock(doc, f, y, ensure)
     }
-    if (farma.terceira_linha && farma.terceira_linha.length > 0) {
-      y = drawSectionTitle(doc, 'Farmacologia \u2014 3\u00aa Linha', y, patologia)
-      for (const f of farma.terceira_linha) {
-        y = drawFarmacoBlock(doc, f, y, patologia)
-      }
+    if (farma.terceira_linha?.length > 0) {
+      y = drawSectionTitle(doc, 'Farmacologia \u2014 3\u00aa Linha', y, ensure)
+      for (const f of farma.terceira_linha) y = drawFarmacoBlock(doc, f, y, ensure)
     }
   }
 
-  // === FLUXOGRAMA DE TRATAMENTO ===
+  // ── Fluxograma ──────────────────────────────────────────────────
+
   if (patologia.fluxograma_tratamento) {
-    y = drawSectionTitle(doc, 'Fluxograma de Tratamento', y, patologia)
-
-    doc.setFontSize(8)
-    doc.setFont('courier', 'normal')
-    doc.setTextColor(...CINZA_TEXTO)
-
-    const fluxLines = wrapText(doc, patologia.fluxograma_tratamento, CONTENT_WIDTH - 14)
-
-    for (const line of fluxLines) {
-      y = ensureSpace(doc, y, LINE_HEIGHT + 1, patologia)
-      if (line === '') {
-        y += PARAGRAPH_GAP
-      } else {
-        // Light background for each line
-        doc.setFillColor(245, 247, 245)
-        doc.rect(MARGIN + 3, y - 3.2, CONTENT_WIDTH - 6, LINE_HEIGHT, 'F')
-        doc.setTextColor(...CINZA_TEXTO)
-        doc.text(line, MARGIN + 6, y)
-        y += LINE_HEIGHT
-      }
-    }
-    doc.setFont('helvetica', 'normal')
-    y += 4
+    y = drawSectionTitle(doc, 'Fluxograma de Tratamento', y, ensure)
+    y = drawFluxogramaBlock(doc, patologia.fluxograma_tratamento, y, ensure)
   }
 
-  // === OBSERVAÇÕES CLÍNICAS ===
-  if (patologia.observacoes_clinicas) {
-    y = drawSectionTitle(doc, 'Observa\u00e7\u00f5es Cl\u00ednicas', y, patologia)
-    y = ensureSpace(doc, y, 12, patologia)
+  // ── Observações clínicas ────────────────────────────────────────
 
-    // Orange accent bar
+  if (patologia.observacoes_clinicas) {
+    y = drawSectionTitle(doc, 'Observa\u00e7\u00f5es Cl\u00ednicas', y, ensure)
+    y = ensure(doc, y, 14)
+
+    // Attention bar
+    doc.setFillColor(255, 245, 230)
+    doc.setDrawColor(...LARANJA)
+    doc.setLineWidth(0.5)
+    doc.roundedRect(MARGIN + 3, y - 4, CONTENT_WIDTH - 6, 10, 1.5, 1.5, 'FD')
     doc.setFillColor(...LARANJA)
-    doc.rect(MARGIN + 3, y - 3, 2, 8, 'F')
-    doc.setFontSize(8)
+    doc.rect(MARGIN + 3, y - 4, 3, 10, 'F')
+
+    doc.setFontSize(8.5)
     doc.setFont('helvetica', 'bold')
     doc.setTextColor(...LARANJA)
-    doc.text('ATEN\u00c7\u00c3O', MARGIN + 8, y + 1)
-    y += 7
+    doc.text('\u26A0  ATEN\u00c7\u00c3O', MARGIN + 10, y + 2)
+    y += 10
 
-    y = drawTextBlock(doc, patologia.observacoes_clinicas, y, patologia)
+    y = drawRichTextBlock(doc, patologia.observacoes_clinicas, y, ensure)
   }
 
-  // === REFERÊNCIAS ===
+  // ── Referências ─────────────────────────────────────────────────
+
   if (patologia.referencias) {
-    y = drawSectionTitle(doc, 'Refer\u00eancias', y, patologia)
-    y = drawTextBlock(doc, patologia.referencias, y, patologia, 8)
+    y = drawSectionTitle(doc, 'Refer\u00eancias', y, ensure)
+    y = drawRichTextBlock(doc, patologia.referencias, y, ensure, 8.5)
   }
 
-  // Adicionar footers em todas as páginas
+  // ── Footers ─────────────────────────────────────────────────────
+
   const totalPages = doc.getNumberOfPages()
   for (let i = 1; i <= totalPages; i++) {
     doc.setPage(i)
@@ -451,61 +721,46 @@ export function generatePatologiaPDF(patologia: Patologia): Blob {
   return doc.output('blob')
 }
 
-// ─────────────────────────────────────────────────────────────────
-//  MANUAL CLÍNICO COMPLETO — PDF com capa, sumário e todas as
-//  patologias organizadas por sistema fisiológico
-// ─────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════
+//  MANUAL CLÍNICO COMPLETO
+// ═══════════════════════════════════════════════════════════════════
 
 function addCoverPage(doc: jsPDF, totalPatologias: number): void {
-  // Full-page green background
   doc.setFillColor(...VERDE_ESCURO)
   doc.rect(0, 0, PAGE_WIDTH, PAGE_HEIGHT, 'F')
 
-  // Orange accent strip (top)
   doc.setFillColor(...LARANJA)
   doc.rect(0, 0, PAGE_WIDTH, 8, 'F')
-
-  // Orange accent strip (bottom)
   doc.rect(0, PAGE_HEIGHT - 8, PAGE_WIDTH, 8, 'F')
 
-  // Decorative large circle
-  doc.setFillColor(255, 255, 255)
-  doc.setDrawColor(255, 255, 255)
-  doc.setLineWidth(0.3)
-  // Subtle circles
+  // Decorative circles
   ;[160, 130, 100].forEach(r => {
-    const alpha = r === 160 ? '05' : r === 130 ? '08' : '12'
-    doc.setFillColor(255, 255, 255)
     doc.setGState(doc.GState({ opacity: r === 160 ? 0.05 : r === 130 ? 0.08 : 0.12 }))
+    doc.setFillColor(255, 255, 255)
     doc.circle(PAGE_WIDTH - 30, 60, r, 'F')
   })
   doc.setGState(doc.GState({ opacity: 1 }))
 
-  // Logo / Brand
   doc.setFontSize(28)
   doc.setFont('helvetica', 'bold')
   doc.setTextColor(...BRANCO)
   doc.text('DomineAqui', MARGIN, 55)
 
-  // Subtitle
   doc.setFontSize(11)
   doc.setFont('helvetica', 'normal')
   doc.setTextColor(...LARANJA)
   doc.text('Plataforma de Aprendizado M\u00e9dico', MARGIN, 64)
 
-  // Orange divider
   doc.setDrawColor(...LARANJA)
   doc.setLineWidth(1.5)
   doc.line(MARGIN, 72, PAGE_WIDTH / 2, 72)
 
-  // Main title
   doc.setFontSize(38)
   doc.setFont('helvetica', 'bold')
   doc.setTextColor(...BRANCO)
   doc.text('Manual', MARGIN, 108)
   doc.text('Cl\u00ednico', MARGIN, 124)
 
-  // Subtitle line
   doc.setFontSize(14)
   doc.setFont('helvetica', 'normal')
   doc.setTextColor(...LARANJA)
@@ -524,14 +779,16 @@ function addCoverPage(doc: jsPDF, totalPatologias: number): void {
 
   doc.setFontSize(9)
   doc.setFont('helvetica', 'normal')
-  doc.text(totalPatologias === 1 ? 'patologia cadastrada' : 'patologias cadastradas', MARGIN + 8 + doc.getTextWidth(String(totalPatologias)) + 3, 168)
+  doc.text(
+    totalPatologias === 1 ? 'patologia cadastrada' : 'patologias cadastradas',
+    MARGIN + 8 + doc.getTextWidth(String(totalPatologias)) + 3,
+    168
+  )
 
-  // Systems count
   doc.setFontSize(9)
   doc.setTextColor(200, 220, 200)
   doc.text('15 sistemas fisiol\u00f3gicos', MARGIN + 8, 174)
 
-  // Description
   doc.setFontSize(10)
   doc.setTextColor(200, 220, 200)
   const descLines = doc.splitTextToSize(
@@ -540,7 +797,6 @@ function addCoverPage(doc: jsPDF, totalPatologias: number): void {
   )
   doc.text(descLines, MARGIN, 192)
 
-  // Bottom info
   const dataGeracao = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
   doc.setFontSize(8)
   doc.setTextColor(150, 200, 150)
@@ -585,7 +841,7 @@ function addCompleteFooter(doc: jsPDF, pageNum: number, totalPages: number): voi
   doc.setFont('helvetica', 'bold')
   doc.text('DomineAqui', MARGIN, fy + 2)
   doc.setFont('helvetica', 'normal')
-  doc.text(' — Manual Cl\u00ednico Completo', MARGIN + doc.getTextWidth('DomineAqui') + 1, fy + 2)
+  doc.text(' \u2014 Manual Cl\u00ednico Completo', MARGIN + doc.getTextWidth('DomineAqui') + 1, fy + 2)
   doc.text(`P\u00e1g. ${pageNum} / ${totalPages}`, PAGE_WIDTH - MARGIN, fy + 2, { align: 'right' })
 
   const dataGeracao = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })
@@ -594,123 +850,52 @@ function addCompleteFooter(doc: jsPDF, pageNum: number, totalPages: number): voi
   doc.text(dataGeracao, PAGE_WIDTH / 2, fy + 2, { align: 'center' })
 }
 
-function ensureCompleteSpace(doc: jsPDF, y: number, needed: number): number {
-  if (y + needed > PAGE_HEIGHT - FOOTER_SPACE) {
-    doc.addPage()
-    return addCompleteHeader(doc)
-  }
-  return y
-}
+function renderSystemDivider(doc: jsPDF, sistema: string): number {
+  doc.addPage()
+  doc.setFillColor(...VERDE_ESCURO)
+  doc.rect(0, 0, PAGE_WIDTH, PAGE_HEIGHT, 'F')
 
-function drawCompleteTextBlock(doc: jsPDF, text: string, y: number, fontSize: number = 9): number {
-  if (!text) return y
-  doc.setFontSize(fontSize)
-  doc.setFont('helvetica', 'normal')
-  doc.setTextColor(...CINZA_TEXTO)
-  const lines = wrapText(doc, text, CONTENT_WIDTH - 6)
-  for (const line of lines) {
-    y = ensureCompleteSpace(doc, y, LINE_HEIGHT + 1)
-    if (line === '') {
-      y += PARAGRAPH_GAP
-    } else {
-      doc.text(line, MARGIN + 3, y)
-      y += LINE_HEIGHT
-    }
-  }
-  return y + PARAGRAPH_GAP
-}
+  doc.setFillColor(...LARANJA)
+  doc.rect(0, 0, PAGE_WIDTH, 6, 'F')
+  doc.rect(0, PAGE_HEIGHT - 6, PAGE_WIDTH, 6, 'F')
 
-function drawCompleteSectionTitle(doc: jsPDF, title: string, y: number): number {
-  y = ensureCompleteSpace(doc, y, 16)
-  doc.setFillColor(...CINZA_CLARO)
-  doc.rect(MARGIN, y - 5, CONTENT_WIDTH, 10, 'F')
-  doc.setFillColor(...VERDE_MEDIO)
-  doc.rect(MARGIN, y - 5, 3, 10, 'F')
-  doc.setFontSize(10)
-  doc.setFont('helvetica', 'bold')
-  doc.setTextColor(...VERDE_ESCURO)
-  doc.text(title, MARGIN + 7, y + 2)
-  return y + 14
-}
-
-function drawCompleteLabelValue(doc: jsPDF, label: string, value: string, y: number): number {
-  if (!value) return y
   doc.setFontSize(9)
-  const labelText = label + ': '
-  const labelWidth = doc.getTextWidth(labelText)
-  const available = CONTENT_WIDTH - 8 - labelWidth
   doc.setFont('helvetica', 'normal')
-  doc.setTextColor(...CINZA_TEXTO)
-  const valueWidth = doc.getTextWidth(value)
-  if (valueWidth <= available) {
-    y = ensureCompleteSpace(doc, y, LINE_HEIGHT + 1)
-    doc.setFont('helvetica', 'bold')
-    doc.setTextColor(...VERDE_ESCURO)
-    doc.text(labelText, MARGIN + 4, y)
-    doc.setFont('helvetica', 'normal')
-    doc.setTextColor(...CINZA_TEXTO)
-    doc.text(value, MARGIN + 4 + labelWidth, y)
-    return y + LINE_HEIGHT
-  }
-  y = ensureCompleteSpace(doc, y, LINE_HEIGHT * 2 + 1)
+  doc.setTextColor(...LARANJA)
+  const labelY = PAGE_HEIGHT / 2 - 20
+  doc.text('Sistema Fisiol\u00f3gico', PAGE_WIDTH / 2, labelY, { align: 'center' })
+
+  doc.setTextColor(...BRANCO)
+  doc.setFontSize(26)
   doc.setFont('helvetica', 'bold')
-  doc.setTextColor(...VERDE_ESCURO)
-  doc.text(labelText, MARGIN + 4, y)
-  y += LINE_HEIGHT
-  doc.setFont('helvetica', 'normal')
-  doc.setTextColor(...CINZA_TEXTO)
-  const wrapped = wrapText(doc, value, CONTENT_WIDTH - 10)
-  for (const line of wrapped) {
-    y = ensureCompleteSpace(doc, y, LINE_HEIGHT + 1)
-    doc.text(line, MARGIN + 6, y)
-    y += LINE_HEIGHT
-  }
-  return y + 1
+  const wrapped = doc.splitTextToSize(sistema, PAGE_WIDTH - MARGIN * 4)
+  const totalH = wrapped.length * 10
+  const startY = labelY + 14
+  wrapped.forEach((line: string, i: number) => {
+    doc.text(line, PAGE_WIDTH / 2, startY + i * 10, { align: 'center' })
+  })
+
+  doc.setDrawColor(...LARANJA)
+  doc.setLineWidth(2)
+  doc.line(PAGE_WIDTH / 2 - 30, startY + totalH + 4, PAGE_WIDTH / 2 + 30, startY + totalH + 4)
+
+  doc.addPage()
+  return addCompleteHeader(doc)
 }
 
-function drawCompleteFarmacoBlock(doc: jsPDF, farmaco: any, y: number): number {
-  y = ensureCompleteSpace(doc, y, 20)
-  const startY = y
-  doc.setFontSize(10)
-  doc.setFont('helvetica', 'bold')
-  doc.setTextColor(...VERDE_ESCURO)
-  doc.text(farmaco.medicamento || 'Sem nome', MARGIN + 6, y)
-  if (farmaco.classe) {
-    const nameWidth = doc.getTextWidth(farmaco.medicamento + '  ')
-    doc.setFontSize(8)
-    doc.setFont('helvetica', 'normal')
-    doc.setTextColor(120, 120, 120)
-    const classeText = `(${farmaco.classe})`
-    if (doc.getTextWidth(classeText) <= CONTENT_WIDTH - 10 - nameWidth) {
-      doc.text(classeText, MARGIN + 6 + nameWidth, y)
-    } else {
-      y += LINE_HEIGHT
-      doc.text(classeText, MARGIN + 6, y)
-    }
-  }
-  y += LINE_HEIGHT + 1
-  doc.setFontSize(9)
-  if (farmaco.mecanismo_acao) y = drawCompleteLabelValue(doc, 'Mecanismo', farmaco.mecanismo_acao, y)
-  if (farmaco.dose_usual) y = drawCompleteLabelValue(doc, 'Dose usual', farmaco.dose_usual, y)
-  if (farmaco.efeitos_colaterais?.length > 0) y = drawCompleteLabelValue(doc, 'Efeitos colaterais', farmaco.efeitos_colaterais.join('; '), y)
-  if (farmaco.contraindicacoes?.length > 0) y = drawCompleteLabelValue(doc, 'Contraindica\u00e7\u00f5es', farmaco.contraindicacoes.join('; '), y)
-  const cardH = y - startY + 3
-  doc.setFillColor(...VERDE_MEDIO)
-  doc.rect(MARGIN + 2, startY - 4, 2, cardH, 'F')
-  doc.setDrawColor(230, 230, 230)
-  doc.setLineWidth(0.2)
-  doc.line(MARGIN + 2, startY - 4, MARGIN + CONTENT_WIDTH - 2, startY - 4)
-  doc.line(MARGIN + 2, startY - 4 + cardH, MARGIN + CONTENT_WIDTH - 2, startY - 4 + cardH)
-  return y + 5
-}
-
-function renderPatologiaInComplete(doc: jsPDF, patologia: Patologia, y: number): number {
+function renderPatologiaInComplete(
+  doc: jsPDF,
+  patologia: Patologia,
+  y: number,
+  ensure: EnsureSpaceFn,
+  imageMap: Map<string, LoadedImage>
+): number {
   // Disease name
-  y = ensureCompleteSpace(doc, y, 22)
+  y = ensure(doc, y, 22)
   doc.setFontSize(14)
   doc.setFont('helvetica', 'bold')
   doc.setTextColor(...VERDE_ESCURO)
-  const nameLines = wrapText(doc, patologia.nome, CONTENT_WIDTH - 4)
+  const nameLines = doc.splitTextToSize(patologia.nome, CONTENT_WIDTH - 4)
   for (const line of nameLines) {
     doc.text(line, MARGIN, y)
     y += 6
@@ -725,9 +910,9 @@ function renderPatologiaInComplete(doc: jsPDF, patologia: Patologia, y: number):
     if (patologia.cid10) sinParts.push(`CID-10: ${patologia.cid10}`)
     if (patologia.sinonimos?.length > 0) sinParts.push(patologia.sinonimos.join(' \u2022 '))
     const sinText = sinParts.join('  \u2014  ')
-    const sinLines = wrapText(doc, sinText, CONTENT_WIDTH)
+    const sinLines = doc.splitTextToSize(sinText, CONTENT_WIDTH)
     for (const line of sinLines) {
-      y = ensureCompleteSpace(doc, y, LINE_HEIGHT)
+      y = ensure(doc, y, LINE_HEIGHT)
       doc.text(line, MARGIN, y)
       y += LINE_HEIGHT
     }
@@ -741,134 +926,97 @@ function renderPatologiaInComplete(doc: jsPDF, patologia: Patologia, y: number):
 
   // Content sections
   if (patologia.classificacao) {
-    y = drawCompleteSectionTitle(doc, 'Classifica\u00e7\u00e3o', y)
-    y = drawCompleteTextBlock(doc, patologia.classificacao, y)
+    y = drawSectionTitle(doc, 'Classifica\u00e7\u00e3o', y, ensure, 10)
+    y = drawRichTextBlock(doc, patologia.classificacao, y, ensure)
   }
   if (patologia.fisiopatologia) {
-    y = drawCompleteSectionTitle(doc, 'Fisiopatologia', y)
-    y = drawCompleteTextBlock(doc, patologia.fisiopatologia, y)
+    y = drawSectionTitle(doc, 'Fisiopatologia', y, ensure, 10)
+    y = drawRichTextBlock(doc, patologia.fisiopatologia, y, ensure)
+  }
+  if (patologia.imagens_mecanismo?.length) {
+    y = drawSectionTitle(doc, 'Imagens do Mecanismo', y, ensure, 10)
+    y = drawImagesBlock(doc, patologia.imagens_mecanismo, patologia.legenda_imagens || [], y, ensure, imageMap)
   }
   if (patologia.diagnostico_semiologico) {
-    y = drawCompleteSectionTitle(doc, 'Diagn\u00f3stico Semiol\u00f3gico', y)
-    y = drawCompleteTextBlock(doc, patologia.diagnostico_semiologico, y)
+    y = drawSectionTitle(doc, 'Diagn\u00f3stico Semiol\u00f3gico', y, ensure, 10)
+    y = drawRichTextBlock(doc, patologia.diagnostico_semiologico, y, ensure)
   }
   if (patologia.diagnosticos_diferenciais) {
-    y = drawCompleteSectionTitle(doc, 'Diagn\u00f3sticos Diferenciais', y)
-    y = drawCompleteTextBlock(doc, patologia.diagnosticos_diferenciais, y)
+    y = drawSectionTitle(doc, 'Diagn\u00f3sticos Diferenciais', y, ensure, 10)
+    y = drawRichTextBlock(doc, patologia.diagnosticos_diferenciais, y, ensure)
   }
   if (patologia.gravidade) {
-    y = drawCompleteSectionTitle(doc, 'Gravidade', y)
-    y = drawCompleteTextBlock(doc, patologia.gravidade, y)
+    y = drawSectionTitle(doc, 'Gravidade', y, ensure, 10)
+    y = drawRichTextBlock(doc, patologia.gravidade, y, ensure)
   }
   if (patologia.tratamento) {
-    y = drawCompleteSectionTitle(doc, 'Tratamento', y)
-    y = drawCompleteTextBlock(doc, patologia.tratamento, y)
+    y = drawSectionTitle(doc, 'Tratamento', y, ensure, 10)
+    y = drawRichTextBlock(doc, patologia.tratamento, y, ensure)
   }
 
   // Farmacologia
   const farma = patologia.farmacologia
   if (farma) {
     if (farma.primeira_linha?.length > 0) {
-      y = drawCompleteSectionTitle(doc, 'Farmacologia \u2014 1\u00aa Linha', y)
-      for (const f of farma.primeira_linha) y = drawCompleteFarmacoBlock(doc, f, y)
+      y = drawSectionTitle(doc, 'Farmacologia \u2014 1\u00aa Linha', y, ensure, 10)
+      for (const f of farma.primeira_linha) y = drawFarmacoBlock(doc, f, y, ensure)
     }
     if (farma.segunda_linha?.length > 0) {
-      y = drawCompleteSectionTitle(doc, 'Farmacologia \u2014 2\u00aa Linha', y)
-      for (const f of farma.segunda_linha) y = drawCompleteFarmacoBlock(doc, f, y)
+      y = drawSectionTitle(doc, 'Farmacologia \u2014 2\u00aa Linha', y, ensure, 10)
+      for (const f of farma.segunda_linha) y = drawFarmacoBlock(doc, f, y, ensure)
     }
-    if (farma.terceira_linha && farma.terceira_linha.length > 0) {
-      y = drawCompleteSectionTitle(doc, 'Farmacologia \u2014 3\u00aa Linha', y)
-      for (const f of farma.terceira_linha) y = drawCompleteFarmacoBlock(doc, f, y)
+    if (farma.terceira_linha?.length > 0) {
+      y = drawSectionTitle(doc, 'Farmacologia \u2014 3\u00aa Linha', y, ensure, 10)
+      for (const f of farma.terceira_linha) y = drawFarmacoBlock(doc, f, y, ensure)
     }
   }
 
   // Fluxograma
   if (patologia.fluxograma_tratamento) {
-    y = drawCompleteSectionTitle(doc, 'Fluxograma de Tratamento', y)
-    doc.setFontSize(7.5)
-    doc.setFont('courier', 'normal')
-    doc.setTextColor(...CINZA_TEXTO)
-    const fluxLines = wrapText(doc, patologia.fluxograma_tratamento, CONTENT_WIDTH - 14)
-    for (const line of fluxLines) {
-      y = ensureCompleteSpace(doc, y, LINE_HEIGHT + 1)
-      if (line === '') {
-        y += PARAGRAPH_GAP
-      } else {
-        doc.setFillColor(245, 247, 245)
-        doc.rect(MARGIN + 3, y - 3.2, CONTENT_WIDTH - 6, LINE_HEIGHT, 'F')
-        doc.setTextColor(...CINZA_TEXTO)
-        doc.text(line, MARGIN + 6, y)
-        y += LINE_HEIGHT
-      }
-    }
-    doc.setFont('helvetica', 'normal')
-    y += 3
+    y = drawSectionTitle(doc, 'Fluxograma de Tratamento', y, ensure, 10)
+    y = drawFluxogramaBlock(doc, patologia.fluxograma_tratamento, y, ensure)
   }
 
   // Observações
   if (patologia.observacoes_clinicas) {
-    y = drawCompleteSectionTitle(doc, 'Observa\u00e7\u00f5es Cl\u00ednicas', y)
-    y = ensureCompleteSpace(doc, y, 10)
+    y = drawSectionTitle(doc, 'Observa\u00e7\u00f5es Cl\u00ednicas', y, ensure, 10)
+    y = ensure(doc, y, 14)
+
+    doc.setFillColor(255, 245, 230)
+    doc.setDrawColor(...LARANJA)
+    doc.setLineWidth(0.5)
+    doc.roundedRect(MARGIN + 3, y - 4, CONTENT_WIDTH - 6, 10, 1.5, 1.5, 'FD')
     doc.setFillColor(...LARANJA)
-    doc.rect(MARGIN + 3, y - 2, 2, 7, 'F')
-    doc.setFontSize(7.5)
+    doc.rect(MARGIN + 3, y - 4, 3, 10, 'F')
+
+    doc.setFontSize(8.5)
     doc.setFont('helvetica', 'bold')
     doc.setTextColor(...LARANJA)
-    doc.text('ATEN\u00c7\u00c3O', MARGIN + 8, y + 2)
-    y += 6
-    y = drawCompleteTextBlock(doc, patologia.observacoes_clinicas, y)
+    doc.text('\u26A0  ATEN\u00c7\u00c3O', MARGIN + 10, y + 2)
+    y += 10
+
+    y = drawRichTextBlock(doc, patologia.observacoes_clinicas, y, ensure)
   }
 
   return y + 4
 }
 
-function renderSystemDivider(doc: jsPDF, sistema: string): number {
-  doc.addPage()
-  // Full-width green bar
-  doc.setFillColor(...VERDE_ESCURO)
-  doc.rect(0, 0, PAGE_WIDTH, PAGE_HEIGHT, 'F')
-
-  doc.setFillColor(...LARANJA)
-  doc.rect(0, 0, PAGE_WIDTH, 6, 'F')
-  doc.rect(0, PAGE_HEIGHT - 6, PAGE_WIDTH, 6, 'F')
-
-  // System name (centered, large)
-  doc.setTextColor(...BRANCO)
-  doc.setFontSize(26)
-  doc.setFont('helvetica', 'bold')
-
-  // Wrap long system names
-  const wrapped = doc.splitTextToSize(sistema, PAGE_WIDTH - MARGIN * 4)
-  const totalH = wrapped.length * 10
-  const startY = PAGE_HEIGHT / 2 - totalH / 2
-  wrapped.forEach((line: string, i: number) => {
-    doc.text(line, PAGE_WIDTH / 2, startY + i * 10, { align: 'center' })
-  })
-
-  // Orange underline
-  doc.setDrawColor(...LARANJA)
-  doc.setLineWidth(2)
-  doc.line(PAGE_WIDTH / 2 - 30, startY + totalH + 4, PAGE_WIDTH / 2 + 30, startY + totalH + 4)
-
-  // "Sistema Fisiológico" label
-  doc.setFontSize(9)
-  doc.setFont('helvetica', 'normal')
-  doc.setTextColor(...LARANJA)
-  doc.text('Sistema Fisiol\u00f3gico', PAGE_WIDTH / 2, startY - 12, { align: 'center' })
-
-  // Next page for content
-  doc.addPage()
-  return addCompleteHeader(doc)
-}
-
 /** Gera PDF completo do Manual Clínico com capa, sumário e conteúdo por sistema. */
-export function generateManualCompletoPDF(patologias: Patologia[]): Blob {
-  const doc = new jsPDF()
+export async function generateManualCompletoPDF(patologias: Patologia[]): Promise<Blob> {
+  // Preload all images from all patologias
+  const allUrls: string[] = []
+  for (const p of patologias) {
+    if (p.imagens_mecanismo?.length) allUrls.push(...p.imagens_mecanismo)
+  }
+  const imageMap = await preloadImages(allUrls)
 
-  // ── Capa ──────────────────────────────────────────────────────────
+  const doc = new jsPDF()
+  const ensure = makeEnsureSpace(() => addCompleteHeader(doc))
+
+  // ── Capa ────────────────────────────────────────────────────────
   addCoverPage(doc, patologias.length)
 
-  // ── Sumário ───────────────────────────────────────────────────────
+  // ── Sumário ─────────────────────────────────────────────────────
   doc.addPage()
   let y = addCompleteHeader(doc)
 
@@ -882,7 +1030,7 @@ export function generateManualCompletoPDF(patologias: Patologia[]): Blob {
   doc.line(MARGIN, y, PAGE_WIDTH - MARGIN, y)
   y += 8
 
-  // Group patologias by system (order by SISTEMAS_FISIOLOGICOS)
+  // Group by system
   const bySystem = new Map<string, Patologia[]>()
   for (const s of SISTEMAS_FISIOLOGICOS) bySystem.set(s, [])
   for (const p of patologias) {
@@ -894,9 +1042,8 @@ export function generateManualCompletoPDF(patologias: Patologia[]): Blob {
     const list = bySystem.get(sistema) || []
     if (list.length === 0) continue
 
-    y = ensureCompleteSpace(doc, y, 14)
+    y = ensure(doc, y, 14)
 
-    // System heading in TOC
     doc.setFillColor(...CINZA_CLARO)
     doc.rect(MARGIN, y - 4, CONTENT_WIDTH, 9, 'F')
     doc.setFillColor(...VERDE_ESCURO)
@@ -907,21 +1054,18 @@ export function generateManualCompletoPDF(patologias: Patologia[]): Blob {
     doc.text(sistema, MARGIN + 6, y + 2)
     y += 12
 
-    // Diseases in two columns
     const colW = CONTENT_WIDTH / 2 - 3
     for (let i = 0; i < list.length; i += 2) {
-      y = ensureCompleteSpace(doc, y, LINE_HEIGHT + 1)
+      y = ensure(doc, y, LINE_HEIGHT + 1)
       doc.setFontSize(8)
       doc.setFont('helvetica', 'normal')
       doc.setTextColor(...CINZA_TEXTO)
 
-      // Left column
       const left = list[i]
       const leftText = '\u2022 ' + left.nome + (left.cid10 ? ` (${left.cid10})` : '')
       const leftTrimmed = doc.splitTextToSize(leftText, colW)[0]
       doc.text(leftTrimmed, MARGIN + 4, y)
 
-      // Right column (if exists)
       if (list[i + 1]) {
         const right = list[i + 1]
         const rightText = '\u2022 ' + right.nome + (right.cid10 ? ` (${right.cid10})` : '')
@@ -934,20 +1078,18 @@ export function generateManualCompletoPDF(patologias: Patologia[]): Blob {
     y += 3
   }
 
-  // ── Conteúdo por sistema ──────────────────────────────────────────
+  // ── Conteúdo por sistema ────────────────────────────────────────
   for (const sistema of SISTEMAS_FISIOLOGICOS) {
     const list = bySystem.get(sistema) || []
     if (list.length === 0) continue
 
-    // Full-page system divider
     y = renderSystemDivider(doc, sistema)
 
     for (let i = 0; i < list.length; i++) {
-      y = renderPatologiaInComplete(doc, list[i], y)
+      y = renderPatologiaInComplete(doc, list[i], y, ensure, imageMap)
 
-      // Separator between diseases (not after last)
       if (i < list.length - 1) {
-        y = ensureCompleteSpace(doc, y, 10)
+        y = ensure(doc, y, 10)
         doc.setDrawColor(...CINZA_MEDIO)
         doc.setLineWidth(0.3)
         doc.line(MARGIN + 10, y, PAGE_WIDTH - MARGIN - 10, y)
@@ -956,10 +1098,9 @@ export function generateManualCompletoPDF(patologias: Patologia[]): Blob {
     }
   }
 
-  // ── Footers em todas as páginas ───────────────────────────────────
+  // ── Footers ─────────────────────────────────────────────────────
   const totalPages = doc.getNumberOfPages()
   for (let i = 2; i <= totalPages; i++) {
-    // Skip cover page (page 1)
     doc.setPage(i)
     addCompleteFooter(doc, i - 1, totalPages - 1)
   }

@@ -815,7 +815,7 @@ function PatologiaContent() {
                 size="sm"
                 onClick={async () => {
                   const { generatePatologiaPDF } = await import('@/lib/patologia-pdf-generator')
-                  const blob = generatePatologiaPDF(patologia)
+                  const blob = await generatePatologiaPDF(patologia)
                   const url = URL.createObjectURL(blob)
                   const a = document.createElement('a')
                   a.href = url
