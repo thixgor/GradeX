@@ -709,7 +709,7 @@ function MediaCard({ item, onExpand }: { item: MediaItem; onExpand: () => void }
               <Icon className={`h-3 w-3 ${config.color}`} />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-foreground truncate">
+              <p className="text-xs font-medium text-foreground break-words">
                 <InlineCaption text={item.caption || 'Vídeo'} />
               </p>
               <p className="text-[10px] text-muted-foreground/50">{item.section}</p>
@@ -752,7 +752,7 @@ function MediaCard({ item, onExpand }: { item: MediaItem; onExpand: () => void }
             <Icon className={`h-3 w-3 ${config.color}`} />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-medium text-foreground truncate">
+            <p className="text-xs font-medium text-foreground break-words">
               <InlineCaption text={item.caption || config.label} />
             </p>
             <p className="text-[10px] text-muted-foreground/50">{item.section}</p>

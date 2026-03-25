@@ -147,6 +147,7 @@ export function AudioEmbed({ embed }: { embed: Embed }) {
   const [muted, setMuted] = useState(false)
   const [dragging, setDragging] = useState(false)
   const [showVolume, setShowVolume] = useState(false)
+  const [captionExpanded, setCaptionExpanded] = useState(false)
 
   // Create hidden YT player
   useEffect(() => {
@@ -344,8 +345,10 @@ export function AudioEmbed({ embed }: { embed: Embed }) {
               </span>
             )}
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm sm:text-[15px] font-semibold text-foreground truncate leading-tight">
+          <div className="flex-1 min-w-0" onClick={() => embed.caption && embed.caption.length > 25 && setCaptionExpanded(v => !v)}>
+            <p className={`text-sm sm:text-[15px] font-semibold text-foreground leading-tight ${
+              captionExpanded ? 'whitespace-normal break-words' : 'truncate'
+            } ${embed.caption && embed.caption.length > 25 ? 'cursor-pointer' : ''}`}>
               {embed.caption || 'Áudio'}
             </p>
             <p className="text-[11px] sm:text-xs text-muted-foreground/70 mt-0.5">
