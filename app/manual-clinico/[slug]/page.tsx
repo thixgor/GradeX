@@ -29,10 +29,14 @@ import {
   FlaskConical,
   X,
   Maximize2,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Film,
+  Volume2,
+  Play,
+  GalleryHorizontalEnd,
 } from 'lucide-react'
 import { type Patologia, type AreaSaude } from '@/lib/types/manual-clinico'
-import { RichTextRenderer } from '@/components/manual-clinico/rich-text-renderer'
+import { RichTextRenderer, extractYouTubeId } from '@/components/manual-clinico/rich-text-renderer'
 import { HighlightableRichText } from '@/components/manual-clinico/highlightable-rich-text'
 import {
   type SlugHighlights,
@@ -395,13 +399,372 @@ function NavGlassBubble({
   )
 }
 
-function SectionNav({ sections }: { sections: SectionEntry[] }) {
+/* ═══════════════════════════════════════════
+   MEDIA ITEM TYPES & EXTRACTION
+   ═══════════════════════════════════════════ */
+type MediaType = 'video' | 'audio' | 'image' | 'figure'
+
+interface MediaItem {
+  type: MediaType
+  url: string
+  caption: string
+  section: string // human-readable section name
+  ytId?: string | null
+}
+
+const EMBED_REGEX_G = /^!(video|audio|image)\[([^\]]*)\]\(([^)]+)\)\s*$/gm
+
+/** Scan all text fields + imagens_mecanismo to extract every media item */
+function extractMedia(p: Patologia): MediaItem[] {
+  const items: MediaItem[] = []
+
+  // Scan text fields for embeds
+  const fields: { key: string; label: string }[] = [
+    { key: 'classificacao', label: 'Classificação' },
+    { key: 'fisiopatologia', label: 'Fisiopatologia' },
+    { key: 'diagnostico_semiologico', label: 'Diagnóstico Semiológico' },
+    { key: 'diagnosticos_diferenciais', label: 'Diagnósticos Diferenciais' },
+    { key: 'gravidade', label: 'Gravidade' },
+    { key: 'tratamento', label: 'Tratamento' },
+    { key: 'observacoes_clinicas', label: 'Observações Clínicas' },
+    { key: 'referencias', label: 'Referências' },
+  ]
+
+  for (const { key, label } of fields) {
+    const text = (p as any)[key] as string | undefined
+    if (!text) continue
+    const regex = new RegExp(EMBED_REGEX_G.source, 'gm')
+    let m
+    while ((m = regex.exec(text)) !== null) {
+      const type = m[1] as 'video' | 'audio' | 'image'
+      items.push({
+        type,
+        url: m[3],
+        caption: m[2] || '',
+        section: label,
+        ytId: (type === 'video' || type === 'audio') ? extractYouTubeId(m[3]) : null,
+      })
+    }
+  }
+
+  // Figures from imagens_mecanismo
+  if (p.imagens_mecanismo && p.imagens_mecanismo.length > 0) {
+    p.imagens_mecanismo.forEach((img, i) => {
+      items.push({
+        type: 'figure',
+        url: img,
+        caption: p.legenda_imagens?.[i] || `Figura ${i + 1}`,
+        section: 'Fisiopatologia',
+      })
+    })
+  }
+
+  return items
+}
+
+/* ═══════════════════════════════════════════
+   MEDIA GALLERY MODAL
+   ═══════════════════════════════════════════ */
+const MEDIA_TABS: { type: MediaType | 'all'; label: string; icon: any }[] = [
+  { type: 'all', label: 'Tudo', icon: GalleryHorizontalEnd },
+  { type: 'video', label: 'Vídeos', icon: Film },
+  { type: 'audio', label: 'Áudios', icon: Volume2 },
+  { type: 'image', label: 'Imagens', icon: ImageIcon },
+  { type: 'figure', label: 'Figuras', icon: Maximize2 },
+]
+
+function MediaGalleryModal({
+  media,
+  onClose,
+}: {
+  media: MediaItem[]
+  onClose: () => void
+}) {
+  const [activeTab, setActiveTab] = useState<MediaType | 'all'>('all')
+  const [lightbox, setLightbox] = useState<MediaItem | null>(null)
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (lightbox) setLightbox(null)
+        else onClose()
+      }
+    }
+    document.addEventListener('keydown', onKey)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = ''
+    }
+  }, [onClose, lightbox])
+
+  const filtered = activeTab === 'all' ? media : media.filter(m => m.type === activeTab)
+
+  // Count per type for badge
+  const counts: Record<string, number> = { all: media.length }
+  for (const m of media) counts[m.type] = (counts[m.type] || 0) + 1
+
+  // Available tabs (only show tabs that have items)
+  const availableTabs = MEDIA_TABS.filter(t => (counts[t.type] || 0) > 0)
+
+  return createPortal(
+    <div className="fixed inset-0 z-[90] flex items-end sm:items-center justify-center">
+      {/* Backdrop */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        className="absolute inset-0 bg-black/60 backdrop-blur-md"
+        onClick={onClose}
+      />
+
+      {/* Modal */}
+      <motion.div
+        initial={{ opacity: 0, y: 40, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 40, scale: 0.97 }}
+        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+        className="relative z-10 w-full sm:max-w-2xl lg:max-w-3xl max-h-[92vh] sm:max-h-[85vh] flex flex-col
+          rounded-t-3xl sm:rounded-2xl overflow-hidden"
+      >
+        {/* Glass background */}
+        <div className="liquid-glass-surface !rounded-t-3xl sm:!rounded-2xl" />
+        <div className="liquid-glass-refraction-top !left-[5%] !right-[5%]" style={{ borderRadius: '24px 24px 0 0' }} />
+        <div className="liquid-glass-refraction-bottom !left-[10%] !right-[10%]" />
+
+        {/* ── Header ── */}
+        <div className="relative z-10 flex items-center justify-between px-5 sm:px-6 pt-5 pb-3">
+          {/* Drag indicator (mobile) */}
+          <div className="absolute top-2 left-1/2 -translate-x-1/2 w-10 h-1 rounded-full bg-foreground/15 sm:hidden" />
+
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-primary/10">
+              <GalleryHorizontalEnd className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <h2 className="text-base sm:text-lg font-bold text-foreground">Galeria de Mídia</h2>
+              <p className="text-[11px] text-muted-foreground/60">{media.length} item{media.length !== 1 ? 's' : ''}</p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 rounded-xl hover:bg-white/[0.08] active:scale-90 transition-all text-muted-foreground hover:text-foreground touch-manipulation"
+            aria-label="Fechar"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* ── Filter tabs ── */}
+        <div className="relative z-10 px-4 sm:px-6 pb-3">
+          <div className="flex gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
+            {availableTabs.map(tab => {
+              const Icon = tab.icon
+              const isActive = activeTab === tab.type
+              const count = counts[tab.type] || 0
+              return (
+                <button
+                  key={tab.type}
+                  onClick={() => setActiveTab(tab.type)}
+                  className={`shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-200 active:scale-95 touch-manipulation
+                    ${isActive
+                      ? 'bg-primary/90 text-primary-foreground shadow-[0_2px_12px_hsl(var(--primary)/0.3)]'
+                      : 'bg-white/[0.05] text-muted-foreground hover:bg-white/[0.08] hover:text-foreground'
+                    }`}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  <span>{tab.label}</span>
+                  <span className={`ml-0.5 text-[10px] px-1.5 py-0.5 rounded-md font-bold
+                    ${isActive ? 'bg-white/20 text-primary-foreground' : 'bg-white/[0.06] text-muted-foreground/60'}`}>
+                    {count}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* ── Content ── */}
+        <div className="relative z-10 flex-1 overflow-y-auto px-4 sm:px-6 pb-6 overscroll-contain">
+          {filtered.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 gap-3">
+              <div className="p-4 rounded-2xl bg-white/[0.04]">
+                <GalleryHorizontalEnd className="h-8 w-8 text-muted-foreground/30" />
+              </div>
+              <p className="text-sm text-muted-foreground/50">Nenhuma mídia encontrada</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {filtered.map((item, i) => (
+                <MediaCard
+                  key={`${item.type}-${i}`}
+                  item={item}
+                  onExpand={() => {
+                    if (item.type === 'image' || item.type === 'figure') setLightbox(item)
+                  }}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </motion.div>
+
+      {/* Image/Figure Lightbox inside gallery */}
+      <AnimatePresence>
+        {lightbox && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[110] flex items-center justify-center"
+            onClick={() => setLightbox(null)}
+          >
+            <div className="absolute inset-0 bg-black/85 backdrop-blur-sm" />
+            <button
+              onClick={() => setLightbox(null)}
+              className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors touch-manipulation"
+              aria-label="Fechar"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <div className="relative z-10 max-w-[92vw] max-h-[90vh] flex flex-col items-center" onClick={e => e.stopPropagation()}>
+              <img
+                src={lightbox.url}
+                alt={lightbox.caption}
+                className="max-w-full max-h-[80vh] object-contain rounded-xl shadow-2xl"
+                draggable={false}
+              />
+              {lightbox.caption && (
+                <div className="mt-3 px-5 py-3 rounded-xl bg-white/10 backdrop-blur-md text-white/90 text-sm leading-relaxed max-w-3xl text-center">
+                  {lightbox.caption}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>,
+    document.body
+  )
+}
+
+/* ── Individual media card ── */
+function MediaCard({ item, onExpand }: { item: MediaItem; onExpand: () => void }) {
+  const typeConfig = {
+    video: { icon: Film, color: 'text-red-400', bg: 'bg-red-500/10', label: 'Vídeo' },
+    audio: { icon: Volume2, color: 'text-violet-400', bg: 'bg-violet-500/10', label: 'Áudio' },
+    image: { icon: ImageIcon, color: 'text-emerald-400', bg: 'bg-emerald-500/10', label: 'Imagem' },
+    figure: { icon: Maximize2, color: 'text-cyan-400', bg: 'bg-cyan-500/10', label: 'Figura' },
+  }
+  const config = typeConfig[item.type]
+  const Icon = config.icon
+
+  if (item.type === 'video') {
+    const ytId = item.ytId || extractYouTubeId(item.url)
+    return (
+      <div className="relative rounded-xl overflow-hidden liquid-glass-bubble group">
+        <div className="liquid-glass-surface !rounded-xl" />
+        <div className="relative z-10 p-1.5">
+          {ytId ? (
+            <div className="relative rounded-lg overflow-hidden" style={{ paddingBottom: '56.25%' }}>
+              <iframe
+                className="absolute inset-0 w-full h-full rounded-lg"
+                src={`https://www.youtube-nocookie.com/embed/${ytId}`}
+                title={item.caption || 'Vídeo'}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          ) : (
+            <div className="aspect-video flex items-center justify-center rounded-lg bg-red-500/5">
+              <span className="text-xs text-red-400">URL inválida</span>
+            </div>
+          )}
+          <div className="px-2.5 py-2 flex items-center gap-2">
+            <div className={`shrink-0 p-1 rounded-md ${config.bg}`}>
+              <Icon className={`h-3 w-3 ${config.color}`} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-medium text-foreground truncate">{item.caption || 'Vídeo'}</p>
+              <p className="text-[10px] text-muted-foreground/50">{item.section}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (item.type === 'audio') {
+    return (
+      <div className="relative rounded-xl overflow-hidden liquid-glass-bubble">
+        <div className="liquid-glass-surface !rounded-xl" />
+        <div className="relative z-10 p-3.5">
+          <div className="flex items-center gap-3">
+            <div className={`shrink-0 p-2.5 rounded-xl ${config.bg}`}>
+              <Icon className={`h-5 w-5 ${config.color}`} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-foreground truncate">{item.caption || 'Áudio'}</p>
+              <p className="text-[11px] text-muted-foreground/50 mt-0.5">{item.section}</p>
+            </div>
+            {/* Inline play: scroll to section where embed is */}
+            <div className="shrink-0 p-2 rounded-xl bg-primary/10">
+              <Play className="h-4 w-4 text-primary ml-0.5" fill="currentColor" />
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // image or figure — clickable with thumbnail
+  return (
+    <div
+      className="relative rounded-xl overflow-hidden liquid-glass-bubble cursor-pointer group"
+      onClick={onExpand}
+    >
+      <div className="liquid-glass-surface !rounded-xl" />
+      <div className="relative z-10 p-1.5">
+        <div className="relative rounded-lg overflow-hidden">
+          <img
+            src={item.url}
+            alt={item.caption || 'Imagem'}
+            className="w-full h-auto max-h-48 object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+            <div className="opacity-0 group-hover:opacity-100 transition-opacity p-2 rounded-full bg-white/20 backdrop-blur-sm">
+              <Maximize2 className="h-4 w-4 text-white" />
+            </div>
+          </div>
+        </div>
+        <div className="px-2.5 py-2 flex items-center gap-2">
+          <div className={`shrink-0 p-1 rounded-md ${config.bg}`}>
+            <Icon className={`h-3 w-3 ${config.color}`} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-medium text-foreground truncate">{item.caption || config.label}</p>
+            <p className="text-[10px] text-muted-foreground/50">{item.section}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════════════
+   SECTION NAV (floating glassmorphism TOC)
+   ═══════════════════════════════════════════ */
+function SectionNav({ sections, media = [] }: { sections: SectionEntry[]; media?: MediaItem[] }) {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [expanded, setExpanded] = useState(() =>
     typeof window !== 'undefined' && window.innerWidth >= 1024
   )
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   const [isTouching, setIsTouching] = useState(false)
+  const [showMediaGallery, setShowMediaGallery] = useState(false)
   const navRef = useRef<HTMLElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -642,8 +1005,37 @@ function SectionNav({ sections }: { sections: SectionEntry[] }) {
                   )
                 })}
               </nav>
+
+              {/* Media gallery button */}
+              {media.length > 0 && (
+                <div className="relative z-10 px-2.5 pb-2.5">
+                  <div className="h-px bg-foreground/[0.06] mx-1 mb-2" />
+                  <button
+                    onClick={() => { setShowMediaGallery(true); if (window.innerWidth < 1024) setExpanded(false) }}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left
+                      bg-primary/[0.06] hover:bg-primary/[0.12] active:scale-[0.97]
+                      text-primary transition-all duration-200 touch-manipulation"
+                  >
+                    <GalleryHorizontalEnd className="h-3.5 w-3.5 shrink-0" />
+                    <span className="text-[12px] font-semibold whitespace-nowrap">Galeria de Mídia</span>
+                    <span className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-primary/10">
+                      {media.length}
+                    </span>
+                  </button>
+                </div>
+              )}
             </div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Media Gallery Modal */}
+      <AnimatePresence>
+        {showMediaGallery && media.length > 0 && (
+          <MediaGalleryModal
+            media={media}
+            onClose={() => setShowMediaGallery(false)}
+          />
         )}
       </AnimatePresence>
     </div>
@@ -743,6 +1135,12 @@ function PatologiaContent() {
     return s
   }, [patologia, farma])
 
+  // ── Extract all media items for gallery ─────────────────────────
+  const mediaItems = useMemo<MediaItem[]>(() => {
+    if (!patologia) return []
+    return extractMedia(patologia)
+  }, [patologia])
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen gap-3">
@@ -775,7 +1173,7 @@ function PatologiaContent() {
   return (
     <div className="min-h-screen bg-background">
       {/* Floating section nav */}
-      <SectionNav sections={navSections} />
+      <SectionNav sections={navSections} media={mediaItems} />
 
       {/* ══════════════════════════════════════
            HERO HEADER
