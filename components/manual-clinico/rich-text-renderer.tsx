@@ -132,7 +132,7 @@ function formatTime(s: number): string {
   return `${mins}:${secs.toString().padStart(2, '0')}`
 }
 
-function AudioEmbed({ embed }: { embed: Embed }) {
+export function AudioEmbed({ embed }: { embed: Embed }) {
   const ytId = extractYouTubeId(embed.url)
   const containerRef = useRef<HTMLDivElement>(null)
   const playerRef = useRef<any>(null)

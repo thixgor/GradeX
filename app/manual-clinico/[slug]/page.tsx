@@ -36,7 +36,7 @@ import {
   GalleryHorizontalEnd,
 } from 'lucide-react'
 import { type Patologia, type AreaSaude } from '@/lib/types/manual-clinico'
-import { RichTextRenderer, extractYouTubeId, tokenizeLine } from '@/components/manual-clinico/rich-text-renderer'
+import { RichTextRenderer, extractYouTubeId, tokenizeLine, AudioEmbed } from '@/components/manual-clinico/rich-text-renderer'
 import { HighlightableRichText } from '@/components/manual-clinico/highlightable-rich-text'
 import {
   type SlugHighlights,
@@ -722,26 +722,7 @@ function MediaCard({ item, onExpand }: { item: MediaItem; onExpand: () => void }
 
   if (item.type === 'audio') {
     return (
-      <div className="relative rounded-xl overflow-hidden liquid-glass-bubble">
-        <div className="liquid-glass-surface !rounded-xl" />
-        <div className="relative z-10 p-3.5">
-          <div className="flex items-center gap-3">
-            <div className={`shrink-0 p-2.5 rounded-xl ${config.bg}`}>
-              <Icon className={`h-5 w-5 ${config.color}`} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-foreground truncate">
-                <InlineCaption text={item.caption || 'Áudio'} />
-              </p>
-              <p className="text-[11px] text-muted-foreground/50 mt-0.5">{item.section}</p>
-            </div>
-            {/* Inline play: scroll to section where embed is */}
-            <div className="shrink-0 p-2 rounded-xl bg-primary/10">
-              <Play className="h-4 w-4 text-primary ml-0.5" fill="currentColor" />
-            </div>
-          </div>
-        </div>
-      </div>
+      <AudioEmbed embed={{ type: 'audio', url: item.url, caption: item.caption || 'Áudio' }} />
     )
   }
 
