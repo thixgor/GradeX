@@ -36,7 +36,7 @@ import {
   GalleryHorizontalEnd,
 } from 'lucide-react'
 import { type Patologia, type AreaSaude } from '@/lib/types/manual-clinico'
-import { RichTextRenderer, extractYouTubeId } from '@/components/manual-clinico/rich-text-renderer'
+import { RichTextRenderer, extractYouTubeId, tokenizeLine } from '@/components/manual-clinico/rich-text-renderer'
 import { HighlightableRichText } from '@/components/manual-clinico/highlightable-rich-text'
 import {
   type SlugHighlights,
@@ -650,6 +650,28 @@ function MediaGalleryModal({
   )
 }
 
+/* ── Inline caption with bold/italic support ── */
+function InlineCaption({ text, className = '' }: { text: string; className?: string }) {
+  if (!text) return null
+  const tokens = tokenizeLine(text)
+  return (
+    <span className={className}>
+      {tokens.map((t, i) => {
+        switch (t.type) {
+          case 'bold':
+            return <strong key={i} className="font-bold">{t.content}</strong>
+          case 'italic':
+            return <em key={i} className="italic">{t.content}</em>
+          case 'link':
+            return <a key={i} href={t.href} target="_blank" rel="noopener noreferrer" className="underline text-primary">{t.content}</a>
+          default:
+            return <span key={i}>{t.content}</span>
+        }
+      })}
+    </span>
+  )
+}
+
 /* ── Individual media card ── */
 function MediaCard({ item, onExpand }: { item: MediaItem; onExpand: () => void }) {
   const typeConfig = {
@@ -687,7 +709,9 @@ function MediaCard({ item, onExpand }: { item: MediaItem; onExpand: () => void }
               <Icon className={`h-3 w-3 ${config.color}`} />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-foreground truncate">{item.caption || 'Vídeo'}</p>
+              <p className="text-xs font-medium text-foreground truncate">
+                <InlineCaption text={item.caption || 'Vídeo'} />
+              </p>
               <p className="text-[10px] text-muted-foreground/50">{item.section}</p>
             </div>
           </div>
@@ -706,7 +730,9 @@ function MediaCard({ item, onExpand }: { item: MediaItem; onExpand: () => void }
               <Icon className={`h-5 w-5 ${config.color}`} />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-foreground truncate">{item.caption || 'Áudio'}</p>
+              <p className="text-sm font-semibold text-foreground truncate">
+                <InlineCaption text={item.caption || 'Áudio'} />
+              </p>
               <p className="text-[11px] text-muted-foreground/50 mt-0.5">{item.section}</p>
             </div>
             {/* Inline play: scroll to section where embed is */}
@@ -745,7 +771,9 @@ function MediaCard({ item, onExpand }: { item: MediaItem; onExpand: () => void }
             <Icon className={`h-3 w-3 ${config.color}`} />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-medium text-foreground truncate">{item.caption || config.label}</p>
+            <p className="text-xs font-medium text-foreground truncate">
+              <InlineCaption text={item.caption || config.label} />
+            </p>
             <p className="text-[10px] text-muted-foreground/50">{item.section}</p>
           </div>
         </div>

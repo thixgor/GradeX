@@ -413,11 +413,11 @@ function drawFluxogramaBlock(doc: jsPDF, text: string, y: number, ensure: Ensure
     doc.setDrawColor(...borderColor)
     doc.setLineWidth(0.5)
 
-    // Measure text to determine box height
-    doc.setFontSize(8.5)
-    doc.setFont('helvetica', 'normal')
-    const wrappedLines = doc.splitTextToSize(step, boxWidth - 12)
-    const boxH = Math.max(stepHeight, wrappedLines.length * 4.5 + 5)
+    // Measure text to determine box height — use rich text wrapping for bold/italic
+    const richFontSize = 8.5
+    const richLines = wrapRichText(doc, step, boxWidth - 14, richFontSize)
+    const lineH = 4.5
+    const boxH = Math.max(stepHeight, richLines.length * lineH + 5)
 
     doc.roundedRect(boxX, y - 2, boxWidth, boxH, 2, 2, 'FD')
 
@@ -429,12 +429,12 @@ function drawFluxogramaBlock(doc: jsPDF, text: string, y: number, ensure: Ensure
     doc.setTextColor(...BRANCO)
     doc.text(String(i + 1), boxX + 5, y + boxH / 2 - 0.8, { align: 'center' })
 
-    // Step text
-    doc.setFontSize(8.5)
-    doc.setFont('helvetica', 'normal')
+    // Step text — render with bold/italic support
     doc.setTextColor(...CINZA_TEXTO)
-    for (let l = 0; l < wrappedLines.length; l++) {
-      doc.text(wrappedLines[l], boxX + 12, y + 3 + l * 4.5)
+    for (let l = 0; l < richLines.length; l++) {
+      if (richLines[l].length > 0) {
+        renderRichLine(doc, richLines[l], boxX + 12, y + 3 + l * lineH, richFontSize)
+      }
     }
 
     y += boxH + 1

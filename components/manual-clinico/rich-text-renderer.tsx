@@ -94,23 +94,35 @@ function VideoEmbed({ embed }: { embed: Embed }) {
 }
 
 // ── YouTube IFrame API loader (singleton) ────────────────────────
-let ytApiReady = false
+let ytApiLoading = false
 let ytApiCallbacks: (() => void)[] = []
 
 function ensureYTApi(cb: () => void) {
-  if (ytApiReady && (window as any).YT?.Player) { cb(); return }
+  // Already fully loaded — call immediately
+  if ((window as any).YT?.Player) { cb(); return }
+
   ytApiCallbacks.push(cb)
-  if (typeof document === 'undefined') return
-  if (document.getElementById('yt-iframe-api')) return
+
+  if (typeof document === 'undefined' || ytApiLoading) return
+  ytApiLoading = true
+
+  // Remove stale script tag if present (HMR / re-mount)
+  const old = document.getElementById('yt-iframe-api')
+  if (old) old.remove()
+
+  // Clear previous global callback
+  delete (window as any).onYouTubeIframeAPIReady
+
   const tag = document.createElement('script')
   tag.id = 'yt-iframe-api'
   tag.src = 'https://www.youtube.com/iframe_api'
-  document.head.appendChild(tag)
   ;(window as any).onYouTubeIframeAPIReady = () => {
-    ytApiReady = true
-    ytApiCallbacks.forEach(fn => fn())
+    ytApiLoading = false
+    const cbs = [...ytApiCallbacks]
     ytApiCallbacks = []
+    cbs.forEach(fn => fn())
   }
+  document.head.appendChild(tag)
 }
 
 function formatTime(s: number): string {
@@ -139,49 +151,74 @@ function AudioEmbed({ embed }: { embed: Embed }) {
   // Create hidden YT player
   useEffect(() => {
     if (!ytId) return
+    let destroyed = false
     const divId = `yt-audio-${ytId}-${Math.random().toString(36).slice(2, 8)}`
 
-    ensureYTApi(() => {
-      if (!containerRef.current) return
+    function createPlayer() {
+      if (destroyed) return
+      // Create a hidden host element in document.body (avoids container ref issues)
+      const host = document.createElement('div')
+      host.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;pointer-events:none;'
       const el = document.createElement('div')
       el.id = divId
-      containerRef.current!.appendChild(el)
+      host.appendChild(el)
+      document.body.appendChild(host)
 
-      playerRef.current = new (window as any).YT.Player(divId, {
-        videoId: ytId,
-        height: '0',
-        width: '0',
-        playerVars: {
-          autoplay: 0,
-          controls: 0,
-          disablekb: 1,
-          fs: 0,
-          modestbranding: 1,
-          rel: 0,
-          playsinline: 1,
-        },
-        events: {
-          onReady: (e: any) => {
-            setReady(true)
-            setDuration(e.target.getDuration() || 0)
-            e.target.setVolume(volume)
+      // Store host ref for cleanup
+      containerRef.current = host as any
+
+      try {
+        playerRef.current = new (window as any).YT.Player(divId, {
+          videoId: ytId,
+          height: '1',
+          width: '1',
+          playerVars: {
+            autoplay: 0,
+            controls: 0,
+            disablekb: 1,
+            fs: 0,
+            modestbranding: 1,
+            rel: 0,
+            playsinline: 1,
+            origin: window.location.origin,
           },
-          onStateChange: (e: any) => {
-            const YT = (window as any).YT
-            if (e.data === YT.PlayerState.PLAYING) {
-              setPlaying(true)
+          events: {
+            onReady: (e: any) => {
+              if (destroyed) return
+              setReady(true)
               setDuration(e.target.getDuration() || 0)
-            } else if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED) {
-              setPlaying(false)
-            }
+              e.target.setVolume(volume)
+            },
+            onStateChange: (e: any) => {
+              if (destroyed) return
+              const YT = (window as any).YT
+              if (e.data === YT.PlayerState.PLAYING) {
+                setPlaying(true)
+                setDuration(e.target.getDuration() || 0)
+              } else if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED) {
+                setPlaying(false)
+              }
+            },
+            onError: () => {
+              if (destroyed) return
+              // On error, still mark ready so user doesn't see infinite loading
+              setReady(true)
+            },
           },
-        },
-      })
-    })
+        })
+      } catch {
+        setReady(true) // fail gracefully
+      }
+    }
+
+    ensureYTApi(createPlayer)
 
     return () => {
+      destroyed = true
       if (intervalRef.current) clearInterval(intervalRef.current)
       try { playerRef.current?.destroy() } catch {}
+      // Remove the host element from body
+      try { (containerRef.current as any)?.remove?.() } catch {}
     }
   }, [ytId])
 
@@ -282,8 +319,7 @@ function AudioEmbed({ embed }: { embed: Embed }) {
       <div className="liquid-glass-refraction-top" style={{ borderRadius: '16px' }} />
       <div className="liquid-glass-refraction-bottom" style={{ borderRadius: '16px' }} />
 
-      {/* Hidden YT player container */}
-      <div ref={containerRef} className="overflow-hidden pointer-events-none" style={{ position: 'absolute', left: -9999, width: 0, height: 0 }} />
+      {/* YT player is created in document.body via useEffect — no container needed here */}
 
       {/* ── Player content ── */}
       <div className="relative z-10 px-4 sm:px-5 pt-4 pb-3.5">

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useCallback, useEffect, useLayoutEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { Bold, Italic, Link, Search, X, Stethoscope, Film, Volume2, Image as ImageIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -22,6 +23,7 @@ interface PatologiaResult {
 
 export function RichTextArea({ value, onChange, placeholder, minHeight = '160px', className = '' }: RichTextAreaProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const toolbarRef = useRef<HTMLDivElement>(null)
   const pendingCursor = useRef<{ pos: number; scrollTop: number } | null>(null)
 
   // Link modal state
@@ -41,6 +43,9 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '160px'
   const [embedType, setEmbedType] = useState<'video' | 'audio' | 'image'>('video')
   const [embedUrl, setEmbedUrl] = useState('')
   const [embedCaption, setEmbedCaption] = useState('')
+
+  // Track if any modal is open
+  const anyModalOpen = showLinkModal || showPatologiaModal || showEmbedModal
 
   // Auto-resize textarea to fit content
   const autoResize = useCallback(() => {
@@ -87,23 +92,16 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '160px'
     const cursorPos = sel.start + before.length + selectedText.length + after.length
     const newValue = value.substring(0, sel.start) + before + selectedText + after + value.substring(sel.end)
 
-    // Schedule cursor + scroll restore for after React re-renders
     pendingCursor.current = { pos: cursorPos, scrollTop }
     onChange(newValue)
   }
 
-  function handleBold() {
-    wrapSelection('**', '**')
-  }
-
-  function handleItalic() {
-    wrapSelection('*', '*')
-  }
+  function handleBold() { wrapSelection('**', '**') }
+  function handleItalic() { wrapSelection('*', '*') }
 
   function handleLink() {
     const sel = getSelection()
     if (!sel.text) {
-      // No selection — insert placeholder
       wrapSelection('[', '](https://)')
       return
     }
@@ -129,31 +127,22 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '160px'
     setPatologiaBusca(sel.text || '')
     setPatologiaResults([])
     setShowPatologiaModal(true)
-    if (sel.text) {
-      searchPatologias(sel.text)
-    }
+    if (sel.text) searchPatologias(sel.text)
   }
 
-  // Debounced search
   const searchTimeout = useRef<NodeJS.Timeout>()
   function searchPatologias(query: string) {
     setPatologiaBusca(query)
     if (searchTimeout.current) clearTimeout(searchTimeout.current)
-    if (!query.trim()) {
-      setPatologiaResults([])
-      return
-    }
+    if (!query.trim()) { setPatologiaResults([]); return }
     searchTimeout.current = setTimeout(async () => {
       setPatologiaLoading(true)
       try {
         const res = await fetch(`/api/manual-clinico?busca=${encodeURIComponent(query)}&limit=8`)
         const data = await res.json()
         setPatologiaResults(data.patologias || [])
-      } catch {
-        setPatologiaResults([])
-      } finally {
-        setPatologiaLoading(false)
-      }
+      } catch { setPatologiaResults([]) }
+      finally { setPatologiaLoading(false) }
     }, 300)
   }
 
@@ -161,9 +150,7 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '160px'
     const displayText = patologiaSelection.text || pat.nome
     const linkMarkup = `[${displayText}](/manual-clinico/${pat.slug})`
     const cursorPos = patologiaSelection.start + linkMarkup.length
-    const newValue = value.substring(0, patologiaSelection.start) +
-      linkMarkup +
-      value.substring(patologiaSelection.end)
+    const newValue = value.substring(0, patologiaSelection.start) + linkMarkup + value.substring(patologiaSelection.end)
     pendingCursor.current = { pos: cursorPos, scrollTop: textareaRef.current?.scrollTop || 0 }
     onChange(newValue)
     setShowPatologiaModal(false)
@@ -184,7 +171,6 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '160px'
     const scrollTop = ta?.scrollTop || 0
     const pos = ta?.selectionStart ?? value.length
 
-    // Ensure embed is on its own line
     const before = value.substring(0, pos)
     const after = value.substring(pos)
     const needNewlineBefore = before.length > 0 && !before.endsWith('\n') ? '\n' : ''
@@ -199,67 +185,59 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '160px'
     setEmbedCaption('')
   }
 
+  // ── Fixed overlay modal (portalled to body) ──────────────────────
+  function FixedModal({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
+    useEffect(() => {
+      const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+      document.addEventListener('keydown', onKey)
+      return () => document.removeEventListener('keydown', onKey)
+    }, [onClose])
+
+    return createPortal(
+      <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+        <div className="relative z-10 w-full max-w-md bg-popover border border-border rounded-2xl shadow-2xl p-5 space-y-3 animate-in fade-in zoom-in-95 duration-200">
+          {children}
+        </div>
+      </div>,
+      document.body
+    )
+  }
+
   return (
     <div className="relative">
-      {/* Toolbar */}
-      <div className="flex items-center gap-1 mb-1.5 p-1 rounded-t-lg border border-b-0 bg-muted/30 border-border">
-        <button
-          type="button"
-          onClick={handleBold}
-          className="p-1.5 rounded hover:bg-accent transition-colors"
-          title="Negrito (**texto**)"
-        >
+      {/* ── Sticky Toolbar ── */}
+      <div
+        ref={toolbarRef}
+        className="sticky top-0 z-30 flex items-center gap-1 p-1.5 rounded-t-lg border border-b-0 bg-background/95 backdrop-blur-sm border-border shadow-sm"
+      >
+        <button type="button" onClick={handleBold} className="p-2 rounded-lg hover:bg-accent active:scale-95 transition-all touch-manipulation" title="Negrito">
           <Bold className="h-4 w-4" />
         </button>
-        <button
-          type="button"
-          onClick={handleItalic}
-          className="p-1.5 rounded hover:bg-accent transition-colors"
-          title="Itálico (*texto*)"
-        >
+        <button type="button" onClick={handleItalic} className="p-2 rounded-lg hover:bg-accent active:scale-95 transition-all touch-manipulation" title="Itálico">
           <Italic className="h-4 w-4" />
         </button>
-        <div className="w-px h-5 bg-border mx-1" />
-        <button
-          type="button"
-          onClick={handleLink}
-          className="p-1.5 rounded hover:bg-accent transition-colors"
-          title="Link externo [texto](url)"
-        >
+        <div className="w-px h-5 bg-border mx-0.5" />
+        <button type="button" onClick={handleLink} className="p-2 rounded-lg hover:bg-accent active:scale-95 transition-all touch-manipulation" title="Link">
           <Link className="h-4 w-4" />
         </button>
         <button
           type="button"
           onClick={handlePatologiaLink}
-          className="flex items-center gap-1.5 px-2 py-1.5 rounded hover:bg-accent transition-colors text-xs font-medium"
-          title="Linkar a outra patologia"
+          className="flex items-center gap-1.5 px-2.5 py-2 rounded-lg hover:bg-accent active:scale-95 transition-all text-xs font-medium touch-manipulation"
+          title="Linkar patologia"
         >
           <Stethoscope className="h-4 w-4 text-primary" />
-          <span className="hidden sm:inline text-muted-foreground">Linkar Patologia</span>
+          <span className="hidden sm:inline text-muted-foreground">Patologia</span>
         </button>
-        <div className="w-px h-5 bg-border mx-1" />
-        <button
-          type="button"
-          onClick={() => openEmbedModal('video')}
-          className="p-1.5 rounded hover:bg-accent transition-colors"
-          title="Inserir vídeo (YouTube)"
-        >
+        <div className="w-px h-5 bg-border mx-0.5" />
+        <button type="button" onClick={() => openEmbedModal('video')} className="p-2 rounded-lg hover:bg-accent active:scale-95 transition-all touch-manipulation" title="Vídeo">
           <Film className="h-4 w-4 text-red-400" />
         </button>
-        <button
-          type="button"
-          onClick={() => openEmbedModal('audio')}
-          className="p-1.5 rounded hover:bg-accent transition-colors"
-          title="Inserir áudio (YouTube)"
-        >
+        <button type="button" onClick={() => openEmbedModal('audio')} className="p-2 rounded-lg hover:bg-accent active:scale-95 transition-all touch-manipulation" title="Áudio">
           <Volume2 className="h-4 w-4 text-violet-400" />
         </button>
-        <button
-          type="button"
-          onClick={() => openEmbedModal('image')}
-          className="p-1.5 rounded hover:bg-accent transition-colors"
-          title="Inserir imagem (URL)"
-        >
+        <button type="button" onClick={() => openEmbedModal('image')} className="p-2 rounded-lg hover:bg-accent active:scale-95 transition-all touch-manipulation" title="Imagem">
           <ImageIcon className="h-4 w-4 text-emerald-400" />
         </button>
       </div>
@@ -274,179 +252,158 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '160px'
         style={{ minHeight }}
       />
 
-      {/* Link URL Modal */}
+      {/* ═══ LINK MODAL ═══ */}
       {showLinkModal && (
-        <div className="absolute z-50 top-12 left-0 right-0 mx-4">
-          <div className="bg-popover border border-border rounded-xl shadow-xl p-4 space-y-3">
-            <div className="flex items-center justify-between">
-              <h4 className="text-sm font-semibold">Inserir Link</h4>
-              <button type="button" onClick={() => setShowLinkModal(false)} className="p-1 rounded hover:bg-accent">
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Texto selecionado: <span className="font-medium text-foreground">&quot;{linkSelection.text}&quot;</span>
-            </p>
-            <Input
-              value={linkUrl}
-              onChange={e => setLinkUrl(e.target.value)}
-              placeholder="https://exemplo.com"
-              autoFocus
-              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); confirmLink() } }}
-            />
-            <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" size="sm" onClick={() => setShowLinkModal(false)}>
-                Cancelar
-              </Button>
-              <Button type="button" size="sm" onClick={confirmLink} disabled={!linkUrl}>
-                Inserir
-              </Button>
-            </div>
+        <FixedModal onClose={() => setShowLinkModal(false)}>
+          <div className="flex items-center justify-between">
+            <h4 className="text-sm font-semibold">Inserir Link</h4>
+            <button type="button" onClick={() => setShowLinkModal(false)} className="p-1.5 rounded-lg hover:bg-accent">
+              <X className="h-4 w-4" />
+            </button>
           </div>
-        </div>
+          <p className="text-xs text-muted-foreground">
+            Texto: <span className="font-medium text-foreground">&quot;{linkSelection.text}&quot;</span>
+          </p>
+          <Input
+            value={linkUrl}
+            onChange={e => setLinkUrl(e.target.value)}
+            placeholder="https://exemplo.com"
+            autoFocus
+            onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); confirmLink() } }}
+          />
+          <div className="flex justify-end gap-2 pt-1">
+            <Button type="button" variant="outline" size="sm" onClick={() => setShowLinkModal(false)}>Cancelar</Button>
+            <Button type="button" size="sm" onClick={confirmLink} disabled={!linkUrl}>Inserir</Button>
+          </div>
+        </FixedModal>
       )}
 
-      {/* Pathology Link Modal */}
+      {/* ═══ PATOLOGIA LINK MODAL ═══ */}
       {showPatologiaModal && (
-        <div className="absolute z-50 top-12 left-0 right-0 mx-4">
-          <div className="bg-popover border border-border rounded-xl shadow-xl p-4 space-y-3">
-            <div className="flex items-center justify-between">
-              <h4 className="text-sm font-semibold flex items-center gap-2">
-                <Stethoscope className="h-4 w-4 text-primary" />
-                Linkar a Patologia
-              </h4>
-              <button type="button" onClick={() => setShowPatologiaModal(false)} className="p-1 rounded hover:bg-accent">
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            {patologiaSelection.text && (
-              <p className="text-xs text-muted-foreground">
-                Texto selecionado: <span className="font-medium text-foreground">&quot;{patologiaSelection.text}&quot;</span>
-              </p>
-            )}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                value={patologiaBusca}
-                onChange={e => searchPatologias(e.target.value)}
-                placeholder="Buscar patologia por nome..."
-                className="pl-9"
-                autoFocus
-              />
-            </div>
-            <div className="max-h-48 overflow-y-auto space-y-1">
-              {patologiaLoading && (
-                <div className="text-center py-3">
-                  <div className="h-5 w-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin mx-auto" />
-                </div>
-              )}
-              {!patologiaLoading && patologiaResults.length === 0 && patologiaBusca.trim() && (
-                <p className="text-xs text-muted-foreground text-center py-3">Nenhuma patologia encontrada</p>
-              )}
-              {patologiaResults.map(pat => (
-                <button
-                  key={pat._id}
-                  type="button"
-                  onClick={() => selectPatologia(pat)}
-                  className="w-full text-left px-3 py-2.5 rounded-lg hover:bg-accent transition-colors flex items-center justify-between gap-2"
-                >
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium truncate">{pat.nome}</p>
-                    <p className="text-xs text-muted-foreground truncate">{pat.sistema}</p>
-                  </div>
-                  <span className="text-xs text-primary shrink-0">Selecionar</span>
-                </button>
-              ))}
-            </div>
-            <div className="flex justify-end">
-              <Button type="button" variant="outline" size="sm" onClick={() => setShowPatologiaModal(false)}>
-                Cancelar
-              </Button>
-            </div>
+        <FixedModal onClose={() => setShowPatologiaModal(false)}>
+          <div className="flex items-center justify-between">
+            <h4 className="text-sm font-semibold flex items-center gap-2">
+              <Stethoscope className="h-4 w-4 text-primary" />
+              Linkar a Patologia
+            </h4>
+            <button type="button" onClick={() => setShowPatologiaModal(false)} className="p-1.5 rounded-lg hover:bg-accent">
+              <X className="h-4 w-4" />
+            </button>
           </div>
-        </div>
+          {patologiaSelection.text && (
+            <p className="text-xs text-muted-foreground">
+              Texto: <span className="font-medium text-foreground">&quot;{patologiaSelection.text}&quot;</span>
+            </p>
+          )}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              value={patologiaBusca}
+              onChange={e => searchPatologias(e.target.value)}
+              placeholder="Buscar patologia por nome..."
+              className="pl-9"
+              autoFocus
+            />
+          </div>
+          <div className="max-h-52 overflow-y-auto space-y-1 -mx-1 px-1">
+            {patologiaLoading && (
+              <div className="text-center py-4">
+                <div className="h-5 w-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin mx-auto" />
+              </div>
+            )}
+            {!patologiaLoading && patologiaResults.length === 0 && patologiaBusca.trim() && (
+              <p className="text-xs text-muted-foreground text-center py-4">Nenhuma patologia encontrada</p>
+            )}
+            {patologiaResults.map(pat => (
+              <button
+                key={pat._id}
+                type="button"
+                onClick={() => selectPatologia(pat)}
+                className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-accent transition-colors flex items-center justify-between gap-2"
+              >
+                <div className="min-w-0">
+                  <p className="text-sm font-medium truncate">{pat.nome}</p>
+                  <p className="text-xs text-muted-foreground truncate">{pat.sistema}</p>
+                </div>
+                <span className="text-xs text-primary shrink-0 font-medium">Selecionar</span>
+              </button>
+            ))}
+          </div>
+          <div className="flex justify-end pt-1">
+            <Button type="button" variant="outline" size="sm" onClick={() => setShowPatologiaModal(false)}>Cancelar</Button>
+          </div>
+        </FixedModal>
       )}
 
-      {/* Embed Modal (Video / Audio / Image) */}
+      {/* ═══ EMBED MODAL (Video / Audio / Image) ═══ */}
       {showEmbedModal && (
-        <div className="absolute z-50 top-12 left-0 right-0 mx-4">
-          <div className="bg-popover border border-border rounded-xl shadow-xl p-4 space-y-3">
-            <div className="flex items-center justify-between">
-              <h4 className="text-sm font-semibold flex items-center gap-2">
-                {embedType === 'video' && <Film className="h-4 w-4 text-red-400" />}
-                {embedType === 'audio' && <Volume2 className="h-4 w-4 text-violet-400" />}
-                {embedType === 'image' && <ImageIcon className="h-4 w-4 text-emerald-400" />}
-                {embedType === 'video' ? 'Inserir Vídeo' : embedType === 'audio' ? 'Inserir Áudio' : 'Inserir Imagem'}
-              </h4>
-              <button type="button" onClick={() => setShowEmbedModal(false)} className="p-1 rounded hover:bg-accent">
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-
-            {/* Type selector tabs */}
-            <div className="flex gap-1 p-1 rounded-lg bg-muted/50 border border-border/40">
-              {(['video', 'audio', 'image'] as const).map(t => (
-                <button
-                  key={t}
-                  type="button"
-                  onClick={() => setEmbedType(t)}
-                  className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-md text-xs font-medium transition-all ${
-                    embedType === t
-                      ? 'bg-primary text-primary-foreground shadow-sm'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
-                  }`}
-                >
-                  {t === 'video' && <Film className="h-3 w-3" />}
-                  {t === 'audio' && <Volume2 className="h-3 w-3" />}
-                  {t === 'image' && <ImageIcon className="h-3 w-3" />}
-                  {t === 'video' ? 'Vídeo' : t === 'audio' ? 'Áudio' : 'Imagem'}
-                </button>
-              ))}
-            </div>
-
-            <div>
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">
-                {embedType === 'image' ? 'URL da imagem' : 'URL do YouTube'}
-              </label>
-              <Input
-                value={embedUrl}
-                onChange={e => setEmbedUrl(e.target.value)}
-                placeholder={embedType === 'image'
-                  ? 'https://exemplo.com/imagem.png'
-                  : 'https://youtube.com/watch?v=...'
-                }
-                autoFocus
-                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); confirmEmbed() } }}
-              />
-            </div>
-            <div>
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">
-                Legenda (opcional)
-              </label>
-              <Input
-                value={embedCaption}
-                onChange={e => setEmbedCaption(e.target.value)}
-                placeholder="Descrição do conteúdo..."
-                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); confirmEmbed() } }}
-              />
-            </div>
-
-            <p className="text-[11px] text-muted-foreground/60">
-              {embedType === 'video' && 'O vídeo será embutido como player do YouTube.'}
-              {embedType === 'audio' && 'O áudio será reproduzido via YouTube em formato compacto.'}
-              {embedType === 'image' && 'A imagem será exibida inline com a legenda abaixo.'}
-            </p>
-
-            <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" size="sm" onClick={() => setShowEmbedModal(false)}>
-                Cancelar
-              </Button>
-              <Button type="button" size="sm" onClick={confirmEmbed} disabled={!embedUrl.trim()}>
-                Inserir
-              </Button>
-            </div>
+        <FixedModal onClose={() => setShowEmbedModal(false)}>
+          <div className="flex items-center justify-between">
+            <h4 className="text-sm font-semibold flex items-center gap-2">
+              {embedType === 'video' && <Film className="h-4 w-4 text-red-400" />}
+              {embedType === 'audio' && <Volume2 className="h-4 w-4 text-violet-400" />}
+              {embedType === 'image' && <ImageIcon className="h-4 w-4 text-emerald-400" />}
+              {embedType === 'video' ? 'Inserir Vídeo' : embedType === 'audio' ? 'Inserir Áudio' : 'Inserir Imagem'}
+            </h4>
+            <button type="button" onClick={() => setShowEmbedModal(false)} className="p-1.5 rounded-lg hover:bg-accent">
+              <X className="h-4 w-4" />
+            </button>
           </div>
-        </div>
+
+          {/* Type tabs */}
+          <div className="flex gap-1 p-1 rounded-xl bg-muted/50 border border-border/40">
+            {(['video', 'audio', 'image'] as const).map(t => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setEmbedType(t)}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-medium transition-all ${
+                  embedType === t
+                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
+                }`}
+              >
+                {t === 'video' && <Film className="h-3 w-3" />}
+                {t === 'audio' && <Volume2 className="h-3 w-3" />}
+                {t === 'image' && <ImageIcon className="h-3 w-3" />}
+                {t === 'video' ? 'Vídeo' : t === 'audio' ? 'Áudio' : 'Imagem'}
+              </button>
+            ))}
+          </div>
+
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">
+              {embedType === 'image' ? 'URL da imagem' : 'URL do YouTube'}
+            </label>
+            <Input
+              value={embedUrl}
+              onChange={e => setEmbedUrl(e.target.value)}
+              placeholder={embedType === 'image' ? 'https://exemplo.com/imagem.png' : 'https://youtube.com/watch?v=...'}
+              autoFocus
+              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); confirmEmbed() } }}
+            />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Legenda (opcional)</label>
+            <Input
+              value={embedCaption}
+              onChange={e => setEmbedCaption(e.target.value)}
+              placeholder="Descrição do conteúdo..."
+              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); confirmEmbed() } }}
+            />
+          </div>
+
+          <p className="text-[11px] text-muted-foreground/60">
+            {embedType === 'video' && 'O vídeo será embutido como player do YouTube.'}
+            {embedType === 'audio' && 'O áudio será reproduzido via YouTube em formato compacto.'}
+            {embedType === 'image' && 'A imagem será exibida inline com a legenda abaixo.'}
+          </p>
+
+          <div className="flex justify-end gap-2 pt-1">
+            <Button type="button" variant="outline" size="sm" onClick={() => setShowEmbedModal(false)}>Cancelar</Button>
+            <Button type="button" size="sm" onClick={confirmEmbed} disabled={!embedUrl.trim()}>Inserir</Button>
+          </div>
+        </FixedModal>
       )}
     </div>
   )
