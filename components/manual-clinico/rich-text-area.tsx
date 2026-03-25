@@ -84,9 +84,14 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '160px'
     const pending = pendingCursor.current
     if (!ta || !pending) return
     pendingCursor.current = null
-    ta.focus()
+    // Save page scroll so focus() doesn't jump the viewport
+    const scrollX = window.scrollX
+    const scrollY = window.scrollY
+    ta.focus({ preventScroll: true })
     ta.setSelectionRange(pending.pos, pending.pos)
     ta.scrollTop = pending.scrollTop
+    // Restore page scroll in case the browser still shifted it
+    window.scrollTo(scrollX, scrollY)
   }, [value])
 
   // Get current selection from textarea
@@ -177,7 +182,15 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '160px'
     setPatologiaResults([])
   }
 
+  // Save cursor position when opening embed modal (before textarea loses focus)
+  const embedCursorRef = useRef<{ pos: number; scrollTop: number }>({ pos: 0, scrollTop: 0 })
+
   function openEmbedModal(type: 'video' | 'audio' | 'image') {
+    const ta = textareaRef.current
+    embedCursorRef.current = {
+      pos: ta?.selectionStart ?? value.length,
+      scrollTop: ta?.scrollTop || 0,
+    }
     setEmbedType(type)
     setEmbedUrl('')
     setEmbedCaption('')
@@ -186,9 +199,7 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '160px'
 
   function confirmEmbed() {
     if (!embedUrl) return
-    const ta = textareaRef.current
-    const scrollTop = ta?.scrollTop || 0
-    const pos = ta?.selectionStart ?? value.length
+    const { pos, scrollTop } = embedCursorRef.current
 
     const before = value.substring(0, pos)
     const after = value.substring(pos)
