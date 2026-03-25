@@ -66,12 +66,17 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '160px'
   // Track if any modal is open
   const anyModalOpen = showLinkModal || showPatologiaModal || showEmbedModal
 
-  // Auto-resize textarea to fit content
+  // Auto-resize textarea to fit content — preserve page scroll to avoid viewport jumps
   const autoResize = useCallback(() => {
     const ta = textareaRef.current
     if (!ta) return
-    ta.style.height = 'auto'
+    const scrollX = window.scrollX
+    const scrollY = window.scrollY
+    // Temporarily collapse to measure true scrollHeight, but prevent layout shift
+    ta.style.height = '0px'
     ta.style.height = Math.max(ta.scrollHeight, parseInt(minHeight)) + 'px'
+    // Restore page scroll — collapsing height can cause browser to reposition viewport
+    window.scrollTo(scrollX, scrollY)
   }, [minHeight])
 
   useEffect(() => {
