@@ -21,6 +21,25 @@ interface PatologiaResult {
   sistema: string
 }
 
+// ── Fixed overlay modal (portalled to body) — must be outside component to avoid remount on every keystroke ──
+function FixedModal({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [onClose])
+
+  return createPortal(
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative z-10 w-full max-w-md bg-popover border border-border rounded-2xl shadow-2xl p-5 space-y-3 animate-in fade-in zoom-in-95 duration-200">
+        {children}
+      </div>
+    </div>,
+    document.body
+  )
+}
+
 export function RichTextArea({ value, onChange, placeholder, minHeight = '160px', className = '' }: RichTextAreaProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const toolbarRef = useRef<HTMLDivElement>(null)
@@ -183,25 +202,6 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '160px'
     setShowEmbedModal(false)
     setEmbedUrl('')
     setEmbedCaption('')
-  }
-
-  // ── Fixed overlay modal (portalled to body) ──────────────────────
-  function FixedModal({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
-    useEffect(() => {
-      const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
-      document.addEventListener('keydown', onKey)
-      return () => document.removeEventListener('keydown', onKey)
-    }, [onClose])
-
-    return createPortal(
-      <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
-        <div className="relative z-10 w-full max-w-md bg-popover border border-border rounded-2xl shadow-2xl p-5 space-y-3 animate-in fade-in zoom-in-95 duration-200">
-          {children}
-        </div>
-      </div>,
-      document.body
-    )
   }
 
   return (
