@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useCallback, useEffect, useLayoutEffect } from 'react'
-import { Bold, Italic, Link, Search, X, Stethoscope } from 'lucide-react'
+import { Bold, Italic, Link, Search, X, Stethoscope, Film, Volume2, Image as ImageIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
@@ -35,6 +35,12 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '160px'
   const [patologiaResults, setPatologiaResults] = useState<PatologiaResult[]>([])
   const [patologiaLoading, setPatologiaLoading] = useState(false)
   const [patologiaSelection, setPatologiaSelection] = useState({ start: 0, end: 0, text: '' })
+
+  // Embed modal state
+  const [showEmbedModal, setShowEmbedModal] = useState(false)
+  const [embedType, setEmbedType] = useState<'video' | 'audio' | 'image'>('video')
+  const [embedUrl, setEmbedUrl] = useState('')
+  const [embedCaption, setEmbedCaption] = useState('')
 
   // Auto-resize textarea to fit content
   const autoResize = useCallback(() => {
@@ -165,6 +171,34 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '160px'
     setPatologiaResults([])
   }
 
+  function openEmbedModal(type: 'video' | 'audio' | 'image') {
+    setEmbedType(type)
+    setEmbedUrl('')
+    setEmbedCaption('')
+    setShowEmbedModal(true)
+  }
+
+  function confirmEmbed() {
+    if (!embedUrl) return
+    const ta = textareaRef.current
+    const scrollTop = ta?.scrollTop || 0
+    const pos = ta?.selectionStart ?? value.length
+
+    // Ensure embed is on its own line
+    const before = value.substring(0, pos)
+    const after = value.substring(pos)
+    const needNewlineBefore = before.length > 0 && !before.endsWith('\n') ? '\n' : ''
+    const needNewlineAfter = after.length > 0 && !after.startsWith('\n') ? '\n' : ''
+    const embedMarkup = `${needNewlineBefore}!${embedType}[${embedCaption}](${embedUrl})${needNewlineAfter}`
+    const cursorPos = pos + embedMarkup.length
+
+    pendingCursor.current = { pos: cursorPos, scrollTop }
+    onChange(before + embedMarkup + after)
+    setShowEmbedModal(false)
+    setEmbedUrl('')
+    setEmbedCaption('')
+  }
+
   return (
     <div className="relative">
       {/* Toolbar */}
@@ -202,6 +236,31 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '160px'
         >
           <Stethoscope className="h-4 w-4 text-primary" />
           <span className="hidden sm:inline text-muted-foreground">Linkar Patologia</span>
+        </button>
+        <div className="w-px h-5 bg-border mx-1" />
+        <button
+          type="button"
+          onClick={() => openEmbedModal('video')}
+          className="p-1.5 rounded hover:bg-accent transition-colors"
+          title="Inserir vídeo (YouTube)"
+        >
+          <Film className="h-4 w-4 text-red-400" />
+        </button>
+        <button
+          type="button"
+          onClick={() => openEmbedModal('audio')}
+          className="p-1.5 rounded hover:bg-accent transition-colors"
+          title="Inserir áudio (YouTube)"
+        >
+          <Volume2 className="h-4 w-4 text-violet-400" />
+        </button>
+        <button
+          type="button"
+          onClick={() => openEmbedModal('image')}
+          className="p-1.5 rounded hover:bg-accent transition-colors"
+          title="Inserir imagem (URL)"
+        >
+          <ImageIcon className="h-4 w-4 text-emerald-400" />
         </button>
       </div>
 
@@ -302,6 +361,88 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '160px'
             <div className="flex justify-end">
               <Button type="button" variant="outline" size="sm" onClick={() => setShowPatologiaModal(false)}>
                 Cancelar
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Embed Modal (Video / Audio / Image) */}
+      {showEmbedModal && (
+        <div className="absolute z-50 top-12 left-0 right-0 mx-4">
+          <div className="bg-popover border border-border rounded-xl shadow-xl p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-semibold flex items-center gap-2">
+                {embedType === 'video' && <Film className="h-4 w-4 text-red-400" />}
+                {embedType === 'audio' && <Volume2 className="h-4 w-4 text-violet-400" />}
+                {embedType === 'image' && <ImageIcon className="h-4 w-4 text-emerald-400" />}
+                {embedType === 'video' ? 'Inserir Vídeo' : embedType === 'audio' ? 'Inserir Áudio' : 'Inserir Imagem'}
+              </h4>
+              <button type="button" onClick={() => setShowEmbedModal(false)} className="p-1 rounded hover:bg-accent">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Type selector tabs */}
+            <div className="flex gap-1 p-1 rounded-lg bg-muted/50 border border-border/40">
+              {(['video', 'audio', 'image'] as const).map(t => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setEmbedType(t)}
+                  className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-md text-xs font-medium transition-all ${
+                    embedType === t
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
+                  }`}
+                >
+                  {t === 'video' && <Film className="h-3 w-3" />}
+                  {t === 'audio' && <Volume2 className="h-3 w-3" />}
+                  {t === 'image' && <ImageIcon className="h-3 w-3" />}
+                  {t === 'video' ? 'Vídeo' : t === 'audio' ? 'Áudio' : 'Imagem'}
+                </button>
+              ))}
+            </div>
+
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">
+                {embedType === 'image' ? 'URL da imagem' : 'URL do YouTube'}
+              </label>
+              <Input
+                value={embedUrl}
+                onChange={e => setEmbedUrl(e.target.value)}
+                placeholder={embedType === 'image'
+                  ? 'https://exemplo.com/imagem.png'
+                  : 'https://youtube.com/watch?v=...'
+                }
+                autoFocus
+                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); confirmEmbed() } }}
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">
+                Legenda (opcional)
+              </label>
+              <Input
+                value={embedCaption}
+                onChange={e => setEmbedCaption(e.target.value)}
+                placeholder="Descrição do conteúdo..."
+                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); confirmEmbed() } }}
+              />
+            </div>
+
+            <p className="text-[11px] text-muted-foreground/60">
+              {embedType === 'video' && 'O vídeo será embutido como player do YouTube.'}
+              {embedType === 'audio' && 'O áudio será reproduzido via YouTube em formato compacto.'}
+              {embedType === 'image' && 'A imagem será exibida inline com a legenda abaixo.'}
+            </p>
+
+            <div className="flex justify-end gap-2">
+              <Button type="button" variant="outline" size="sm" onClick={() => setShowEmbedModal(false)}>
+                Cancelar
+              </Button>
+              <Button type="button" size="sm" onClick={confirmEmbed} disabled={!embedUrl.trim()}>
+                Inserir
               </Button>
             </div>
           </div>

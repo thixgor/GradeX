@@ -7,32 +7,16 @@ import { v4 as uuidv4 } from 'uuid'
 import { TextHighlightMenu } from '@/components/text-highlight-menu'
 import { type ManualHighlight } from '@/lib/manual-clinico-highlights'
 import { type HighlightColor, type HighlightType } from '@/lib/types'
+import { RichTextRenderer, tokenizeLine } from '@/components/manual-clinico/rich-text-renderer'
 
-// ── Inline token parser (same logic as RichTextRenderer) ──────────
+// ── Inline token parser (re-exported from RichTextRenderer) ──────
 interface Token {
   type: 'text' | 'bold' | 'italic' | 'link'
   content: string
   href?: string
 }
 
-function tokenizeLine(line: string): Token[] {
-  const tokens: Token[] = []
-  const regex = /(\*\*(.+?)\*\*)|(\*(.+?)\*)|(\[(.+?)\]\((.+?)\))/g
-  let lastIndex = 0
-  let match: RegExpExecArray | null
-
-  while ((match = regex.exec(line)) !== null) {
-    if (match.index > lastIndex) {
-      tokens.push({ type: 'text', content: line.substring(lastIndex, match.index) })
-    }
-    if (match[1]) tokens.push({ type: 'bold', content: match[2] })
-    else if (match[3]) tokens.push({ type: 'italic', content: match[4] })
-    else if (match[5]) tokens.push({ type: 'link', content: match[6], href: match[7] })
-    lastIndex = match.index + match[0].length
-  }
-  if (lastIndex < line.length) tokens.push({ type: 'text', content: line.substring(lastIndex) })
-  return tokens
-}
+const EMBED_REGEX = /^!(video|audio|image)\[([^\]]*)\]\(([^)]+)\)\s*$/
 
 // ── Highlight color CSS classes ───────────────────────────────────
 const HL_COLOR: Record<HighlightColor, string> = {
@@ -106,7 +90,20 @@ function renderHighlighted(rawText: string, highlights: ManualHighlight[]): Reac
     const lineNodes: React.ReactNode[] = []
 
     lines.forEach((line, lineIdx) => {
-      if (lineIdx > 0) lineNodes.push(<br key={`br-${pIdx}-${lineIdx}`} />)
+      // Check if this line is an embed — render via RichTextRenderer (no highlighting)
+      if (EMBED_REGEX.test(line.trim())) {
+        // Flush accumulated inline nodes as a paragraph first
+        if (lineNodes.length > 0) {
+          nodes.push(<p key={`${pIdx}-pre-${lineIdx}`}>{[...lineNodes]}</p>)
+          lineNodes.length = 0
+        }
+        nodes.push(
+          <RichTextRenderer key={`embed-${pIdx}-${lineIdx}`} text={line.trim()} />
+        )
+        return
+      }
+
+      if (lineIdx > 0 && lineNodes.length > 0) lineNodes.push(<br key={`br-${pIdx}-${lineIdx}`} />)
 
       tokenizeLine(line).forEach((token, tIdx) => {
         const tokenStart = pos
@@ -136,7 +133,9 @@ function renderHighlighted(rawText: string, highlights: ManualHighlight[]): Reac
       })
     })
 
-    nodes.push(<p key={pIdx}>{lineNodes}</p>)
+    if (lineNodes.length > 0) {
+      nodes.push(<p key={pIdx}>{lineNodes}</p>)
+    }
   })
 
   return <div className="space-y-4">{nodes}</div>

@@ -28,10 +28,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ patologias, total: patologias.length })
     }
 
-    if (busca && busca.trim()) {
-      // Usar full-text search do MongoDB
-      filter.$text = { $search: busca.trim() }
-    }
     if (area) {
       const areas = area.split(',').filter(Boolean)
       if (areas.length > 0) filter.areas = { $in: areas }
@@ -48,22 +44,67 @@ export async function GET(request: NextRequest) {
       gravidade: 1,
     }
 
-    let query = db.collection('patologias').find(filter, { projection })
+    const searchTerm = busca?.trim() || ''
+    let patologias: any[] = []
+    let total = 0
 
-    // Se houver busca textual, ordenar por relevância
-    if (busca && busca.trim()) {
-      query = db.collection('patologias').find(
-        { ...filter },
-        { projection: { ...projection, score: { $meta: 'textScore' } } }
-      ).sort({ score: { $meta: 'textScore' } })
+    if (searchTerm) {
+      // 1) Try MongoDB full-text search first
+      try {
+        const textFilter = { ...filter, $text: { $search: searchTerm } }
+        const textProjection = { ...projection, score: { $meta: 'textScore' } }
+        const [textResults, textCount] = await Promise.all([
+          db.collection('patologias')
+            .find(textFilter, { projection: textProjection })
+            .sort({ score: { $meta: 'textScore' } })
+            .skip(skip).limit(limit).toArray(),
+          db.collection('patologias').countDocuments(textFilter)
+        ])
+        patologias = textResults
+        total = textCount
+      } catch {
+        // $text index may not exist — fall through to regex
+      }
+
+      // 2) If $text returned nothing, fallback to regex across nome, sinonimos, cid10
+      if (patologias.length === 0) {
+        const escaped = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        const regex = { $regex: escaped, $options: 'i' }
+        const regexFilter = {
+          ...filter,
+          $or: [
+            { nome: regex },
+            { sinonimos: regex },
+            { cid10: regex },
+            { classificacao: regex },
+            { fisiopatologia: regex },
+            { diagnostico_semiologico: regex },
+            { tratamento: regex },
+            { observacoes_clinicas: regex },
+          ]
+        }
+        const [regexResults, regexCount] = await Promise.all([
+          db.collection('patologias')
+            .find(regexFilter, { projection })
+            .sort({ nome: 1 })
+            .skip(skip).limit(limit).toArray(),
+          db.collection('patologias').countDocuments(regexFilter)
+        ])
+        patologias = regexResults
+        total = regexCount
+      }
     } else {
-      query = query.sort({ nome: 1 })
+      // No search term — just list with filters
+      const [results, count] = await Promise.all([
+        db.collection('patologias')
+          .find(filter, { projection })
+          .sort({ nome: 1 })
+          .skip(skip).limit(limit).toArray(),
+        db.collection('patologias').countDocuments(filter)
+      ])
+      patologias = results
+      total = count
     }
-
-    const [patologias, total] = await Promise.all([
-      query.skip(skip).limit(limit).toArray(),
-      db.collection('patologias').countDocuments(filter)
-    ])
 
     return NextResponse.json({
       patologias,
