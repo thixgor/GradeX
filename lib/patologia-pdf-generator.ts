@@ -948,9 +948,9 @@ function collectEmbedUrls(patologia: Patologia): { imageUrls: string[]; mediaUrl
 async function buildQRMap(mediaUrls: { url: string; type: string }[], slug: string): Promise<Map<string, string>> {
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://domineaqui.com.br'
   const qrMap = new Map<string, string>()
-  const galleryUrl = `${baseUrl}/manual-clinico/${slug}?galeria=1`
   await Promise.all(mediaUrls.map(async ({ url }) => {
     try {
+      const galleryUrl = `${baseUrl}/manual-clinico/${slug}?galeria=1&media=${encodeURIComponent(url)}`
       const qrDataUrl = await generateQRDataUrl(galleryUrl)
       qrMap.set(url, qrDataUrl)
     } catch { /* skip */ }
@@ -1465,10 +1465,10 @@ export async function generateManualCompletoPDF(patologias: Patologia[]): Promis
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://domineaqui.com.br'
   await Promise.all(patologias.map(async (p) => {
     const { mediaUrls } = collectEmbedUrls(p)
-    const galleryUrl = `${baseUrl}/manual-clinico/${p.slug}?galeria=1`
     for (const { url } of mediaUrls) {
       if (!qrMap.has(url)) {
         try {
+          const galleryUrl = `${baseUrl}/manual-clinico/${p.slug}?galeria=1&media=${encodeURIComponent(url)}`
           qrMap.set(url, await generateQRDataUrl(galleryUrl))
         } catch { /* skip */ }
       }

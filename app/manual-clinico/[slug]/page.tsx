@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect, useCallback, useMemo, useRef, type PointerEvent as RPointerEvent } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef, Suspense, type PointerEvent as RPointerEvent } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, useSpring, useMotionValue, AnimatePresence } from 'framer-motion'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
 import {
@@ -476,12 +476,38 @@ const MEDIA_TABS: { type: MediaType | 'all'; label: string; icon: any }[] = [
 function MediaGalleryModal({
   media,
   onClose,
+  highlightUrl,
 }: {
   media: MediaItem[]
   onClose: () => void
+  highlightUrl?: string | null
 }) {
   const [activeTab, setActiveTab] = useState<MediaType | 'all'>('all')
   const [lightbox, setLightbox] = useState<MediaItem | null>(null)
+  const [highlightedUrl, setHighlightedUrl] = useState<string | null>(highlightUrl || null)
+  const highlightRef = useRef<HTMLDivElement>(null)
+
+  // Auto-switch to the correct tab and scroll to highlighted item
+  useEffect(() => {
+    if (highlightUrl) {
+      const item = media.find(m => m.url === highlightUrl)
+      if (item) {
+        setActiveTab(item.type)
+      }
+    }
+  }, [highlightUrl, media])
+
+  // Scroll to highlighted item after render
+  useEffect(() => {
+    if (highlightedUrl && highlightRef.current) {
+      setTimeout(() => {
+        highlightRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }, 300)
+      // Remove highlight after 3 seconds
+      const timer = setTimeout(() => setHighlightedUrl(null), 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [highlightedUrl, activeTab])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -596,15 +622,23 @@ function MediaGalleryModal({
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {filtered.map((item, i) => (
-                <MediaCard
-                  key={`${item.type}-${i}`}
-                  item={item}
-                  onExpand={() => {
-                    if (item.type === 'image' || item.type === 'figure') setLightbox(item)
-                  }}
-                />
-              ))}
+              {filtered.map((item, i) => {
+                const isHighlighted = highlightedUrl === item.url
+                return (
+                  <div
+                    key={`${item.type}-${i}`}
+                    ref={isHighlighted ? highlightRef : undefined}
+                    className={isHighlighted ? 'rounded-xl ring-2 ring-emerald-400 ring-offset-2 ring-offset-transparent animate-pulse' : ''}
+                  >
+                    <MediaCard
+                      item={item}
+                      onExpand={() => {
+                        if (item.type === 'image' || item.type === 'figure') setLightbox(item)
+                      }}
+                    />
+                  </div>
+                )
+              })}
             </div>
           )}
         </div>
@@ -774,6 +808,8 @@ function SectionNav({ sections, media = [] }: { sections: SectionEntry[]; media?
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   const [isTouching, setIsTouching] = useState(false)
   const [showMediaGallery, setShowMediaGallery] = useState(false)
+  const [mediaHighlightUrl, setMediaHighlightUrl] = useState<string | null>(null)
+  const searchParams = useSearchParams()
   const navRef = useRef<HTMLElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -799,6 +835,18 @@ function SectionNav({ sections, media = [] }: { sections: SectionEntry[]; media?
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
   }, [])
+
+  // ── Auto-open gallery from URL params (QR code deep link) ──────
+  useEffect(() => {
+    const galeriaParam = searchParams.get('galeria')
+    const mediaParam = searchParams.get('media')
+    if (galeriaParam === '1' && media.length > 0) {
+      setShowMediaGallery(true)
+      if (mediaParam) {
+        setMediaHighlightUrl(decodeURIComponent(mediaParam))
+      }
+    }
+  }, [searchParams, media])
 
   // ── Intersection Observer ───────────────────────────────────────
   useEffect(() => {
@@ -1043,7 +1091,8 @@ function SectionNav({ sections, media = [] }: { sections: SectionEntry[]; media?
         {showMediaGallery && media.length > 0 && (
           <MediaGalleryModal
             media={media}
-            onClose={() => setShowMediaGallery(false)}
+            onClose={() => { setShowMediaGallery(false); setMediaHighlightUrl(null) }}
+            highlightUrl={mediaHighlightUrl}
           />
         )}
       </AnimatePresence>
@@ -1182,7 +1231,7 @@ function PatologiaContent() {
   return (
     <div className="min-h-screen bg-background">
       {/* Floating section nav */}
-      <SectionNav sections={navSections} media={mediaItems} />
+      <Suspense><SectionNav sections={navSections} media={mediaItems} /></Suspense>
 
       {/* ══════════════════════════════════════
            HERO HEADER
