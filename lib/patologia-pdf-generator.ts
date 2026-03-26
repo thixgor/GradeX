@@ -383,55 +383,114 @@ function drawEmbedImage(
 function drawMediaQR(
   doc: jsPDF, type: 'video' | 'audio', caption: string, qrDataUrl: string, y: number, ensure: EnsureSpaceFn
 ): number {
-  const cardH = 32
+  const isVideo = type === 'video'
+  const accentColor: readonly [number, number, number] = isVideo ? [200, 60, 60] : [100, 70, 180]
+  const bgColor: [number, number, number] = isVideo ? [255, 247, 247] : [248, 245, 255]
+  const lightAccent: [number, number, number] = isVideo ? [240, 200, 200] : [210, 195, 240]
+
+  // Calculate caption height to size the card dynamically
+  const cardX = MARGIN + 8
+  const cardW = CONTENT_WIDTH - 16
+  const qrSize = 26
+  const maxCaptionW = cardW - qrSize - 28
+  let captionLines: string[] = []
+  if (caption) {
+    doc.setFontSize(8.5)
+    doc.setFont('helvetica', 'normal')
+    captionLines = doc.splitTextToSize(caption, maxCaptionW)
+    if (captionLines.length > 3) captionLines = captionLines.slice(0, 3)
+  }
+  const cardH = Math.max(36, 18 + captionLines.length * 4.5 + 8)
+
   y = ensure(doc, y, cardH + 6)
 
-  const accentColor: readonly [number, number, number] = type === 'video' ? [220, 80, 80] : [140, 100, 200]
+  // Card shadow
+  doc.setFillColor(230, 230, 230)
+  doc.roundedRect(cardX + 0.8, y + 0.8, cardW, cardH, 3, 3, 'F')
 
   // Card background
-  const cardX = MARGIN + 10
-  const cardW = CONTENT_WIDTH - 20
-  doc.setFillColor(type === 'video' ? 255 : 248, type === 'video' ? 245 : 243, type === 'video' ? 245 : 255)
-  doc.setDrawColor(...accentColor)
-  doc.setLineWidth(0.4)
-  doc.roundedRect(cardX, y, cardW, cardH, 2, 2, 'FD')
+  doc.setFillColor(...bgColor)
+  doc.setDrawColor(...lightAccent)
+  doc.setLineWidth(0.5)
+  doc.roundedRect(cardX, y, cardW, cardH, 3, 3, 'FD')
 
-  // Accent bar
+  // Left accent bar with rounded feel
   doc.setFillColor(...accentColor)
-  doc.rect(cardX, y, 3, cardH, 'F')
+  doc.rect(cardX, y + 3, 4, cardH - 6, 'F')
 
-  // QR code
-  const qrSize = 24
-  const qrX = cardX + cardW - qrSize - 4
+  // Icon circle
+  const iconCX = cardX + 12
+  const iconCY = y + 10
+  doc.setFillColor(...accentColor)
+  doc.circle(iconCX, iconCY, 5, 'F')
+
+  // Draw play triangle (video) or music bars (audio) icon in white
+  doc.setFillColor(255, 255, 255)
+  if (isVideo) {
+    // Play triangle
+    doc.triangle(
+      iconCX - 1.8, iconCY - 2.5,
+      iconCX - 1.8, iconCY + 2.5,
+      iconCX + 2.5, iconCY,
+      'F'
+    )
+  } else {
+    // Simple music note bars
+    doc.setDrawColor(255, 255, 255)
+    doc.setLineWidth(1)
+    doc.line(iconCX - 2.5, iconCY + 2, iconCX - 2.5, iconCY - 3)
+    doc.line(iconCX - 0.5, iconCY + 1, iconCX - 0.5, iconCY - 3.5)
+    doc.line(iconCX + 1.5, iconCY + 2.5, iconCX + 1.5, iconCY - 2)
+    doc.line(iconCX + 3.5, iconCY + 1.5, iconCX + 3.5, iconCY - 2.5)
+    doc.setLineWidth(0.5)
+  }
+
+  // Type label
+  const textX = cardX + 20
+  doc.setFontSize(8)
+  doc.setFont('helvetica', 'bold')
+  setTC(doc, accentColor)
+  doc.text(isVideo ? 'VIDEO' : 'AUDIO', textX, y + 9)
+
+  // Decorative dot separator
+  doc.setFillColor(...accentColor)
+  const dotX = textX + doc.getTextWidth(isVideo ? 'VIDEO' : 'AUDIO') + 2
+  doc.circle(dotX, y + 8, 0.6, 'F')
+
+  // "Galeria de Midia" sub-label
+  doc.setFontSize(6.5)
+  doc.setFont('helvetica', 'normal')
+  doc.setTextColor(140, 140, 140)
+  doc.text('Galeria de Midia', dotX + 2, y + 9)
+
+  // Caption text
+  if (captionLines.length > 0) {
+    doc.setFontSize(8.5)
+    doc.setFont('helvetica', 'normal')
+    setTC(doc, CINZA_TEXTO)
+    for (let i = 0; i < captionLines.length; i++) {
+      doc.text(captionLines[i], textX, y + 16 + i * 4.5)
+    }
+  }
+
+  // Bottom helper text
+  doc.setFontSize(6)
+  doc.setFont('helvetica', 'italic')
+  doc.setTextColor(150, 150, 150)
+  doc.text('Escaneie o QR Code para acessar na plataforma', textX, y + cardH - 4)
+
+  // QR code with border
+  const qrX = cardX + cardW - qrSize - 5
   const qrY = y + (cardH - qrSize) / 2
+  doc.setFillColor(255, 255, 255)
+  doc.setDrawColor(...lightAccent)
+  doc.setLineWidth(0.3)
+  doc.roundedRect(qrX - 1.5, qrY - 1.5, qrSize + 3, qrSize + 3, 1.5, 1.5, 'FD')
   try {
     doc.addImage(qrDataUrl, 'PNG', qrX, qrY, qrSize, qrSize)
   } catch { /* QR failed */ }
 
-  // Icon + text
-  const textX = cardX + 8
-  doc.setFontSize(7)
-  doc.setFont('helvetica', 'bold')
-  setTC(doc, accentColor)
-  doc.text(type === 'video' ? '▶  VÍDEO' : '♫  ÁUDIO', textX, y + 7)
-
-  if (caption) {
-    doc.setFontSize(8.5)
-    doc.setFont('helvetica', 'normal')
-    setTC(doc, CINZA_TEXTO)
-    const maxCaptionW = cardW - qrSize - 20
-    const capLines = doc.splitTextToSize(caption, maxCaptionW)
-    for (let i = 0; i < Math.min(capLines.length, 2); i++) {
-      doc.text(capLines[i], textX, y + 13 + i * 4.5)
-    }
-  }
-
-  doc.setFontSize(6.5)
-  doc.setFont('helvetica', 'italic')
-  doc.setTextColor(120, 120, 120)
-  doc.text('Escaneie o QR Code para acessar', textX, y + cardH - 4)
-
-  return y + cardH + 4
+  return y + cardH + 5
 }
 
 async function drawRichTextBlockWithEmbeds(
@@ -482,13 +541,15 @@ function drawLabelValue(doc: jsPDF, label: string, value: string, y: number, ens
   const labelText = label + ': '
   const labelW = doc.getTextWidth(labelText)
 
-  // Measure the value (plain, for inline check)
+  // Measure the value (plain, for inline check) — use splitTextToSize for reliable width check
   doc.setFont('helvetica', 'normal')
   const plainValue = value.replace(/\*\*(.+?)\*\*/g, '$1').replace(/\*(.+?)\*/g, '$1').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-  const valueW = doc.getTextWidth(plainValue)
-  const availableForValue = CONTENT_WIDTH - 8 - labelW
+  const availableForValue = CONTENT_WIDTH - 10 - labelW
+  // Use splitTextToSize to check if value fits on one line (more reliable than getTextWidth)
+  const testLines = doc.splitTextToSize(plainValue, availableForValue)
+  const fitsOnOneLine = testLines.length <= 1
 
-  if (valueW <= availableForValue) {
+  if (fitsOnOneLine) {
     // Single line: label + value
     y = ensure(doc, y, LINE_HEIGHT + 1)
     doc.setFontSize(fontSize)
@@ -534,7 +595,7 @@ function drawLabelValue(doc: jsPDF, label: string, value: string, y: number, ens
   doc.text(labelText, MARGIN + 4, y)
   y += LINE_HEIGHT
 
-  const wrappedLines = wrapRichText(doc, value, CONTENT_WIDTH - 10, fontSize)
+  const wrappedLines = wrapRichText(doc, value, CONTENT_WIDTH - 12, fontSize)
   for (const line of wrappedLines) {
     y = ensure(doc, y, LINE_HEIGHT + 1)
     if (line.length === 0) {
@@ -548,53 +609,73 @@ function drawLabelValue(doc: jsPDF, label: string, value: string, y: number, ens
 }
 
 function drawFarmacoBlock(doc: jsPDF, farmaco: any, y: number, ensure: EnsureSpaceFn): number {
+  // Collect all content lines to estimate total height for page-break safety
+  const contentParts: { label: string; value: string }[] = []
+  if (farmaco.mecanismo_acao) contentParts.push({ label: 'Mecanismo', value: farmaco.mecanismo_acao })
+  if (farmaco.dose_usual) contentParts.push({ label: 'Dose usual', value: farmaco.dose_usual })
+  if (farmaco.efeitos_colaterais?.length > 0) contentParts.push({ label: 'Efeitos colaterais', value: farmaco.efeitos_colaterais.join('; ') })
+  if (farmaco.contraindicacoes?.length > 0) contentParts.push({ label: 'Contraindica\u00e7\u00f5es', value: farmaco.contraindicacoes.join('; ') })
+
+  // Ensure at least space for name + first field
   y = ensure(doc, y, 24)
+
+  // Accent bar start position (track for drawing after content)
   const startY = y
+  const startPage = doc.getCurrentPageInfo().pageNumber
 
-  // Background card
-  doc.setFillColor(250, 251, 250)
-  doc.setDrawColor(230, 232, 230)
-  doc.setLineWidth(0.3)
-
-  // Farmaco name
+  // Farmaco name — wrap if too long
   doc.setFontSize(10.5)
   doc.setFont('helvetica', 'bold')
   setTC(doc, VERDE_ESCURO)
-  doc.text(farmaco.medicamento || 'Sem nome', MARGIN + 8, y)
+  const nameText = farmaco.medicamento || 'Sem nome'
+  const maxNameW = CONTENT_WIDTH - 12
+  const nameLines = doc.splitTextToSize(nameText, maxNameW)
+  for (const nl of nameLines) {
+    y = ensure(doc, y, LINE_HEIGHT + 2)
+    doc.setFontSize(10.5)
+    doc.setFont('helvetica', 'bold')
+    setTC(doc, VERDE_ESCURO)
+    doc.text(nl, MARGIN + 8, y)
+    y += LINE_HEIGHT
+  }
 
   if (farmaco.classe) {
     doc.setFontSize(8.5)
     doc.setFont('helvetica', 'italic')
     doc.setTextColor(100, 100, 100)
     const classeText = `(${farmaco.classe})`
-    const nameW = doc.getTextWidth((farmaco.medicamento || '') + '  ')
-    doc.setFontSize(10.5)
-    doc.setFont('helvetica', 'bold')
-    const fullNameW = doc.getTextWidth((farmaco.medicamento || '') + '  ')
-    doc.setFontSize(8.5)
-    doc.setFont('helvetica', 'italic')
-    if (fullNameW + doc.getTextWidth(classeText) <= CONTENT_WIDTH - 12) {
-      doc.text(classeText, MARGIN + 8 + fullNameW, y)
-    } else {
+    const classeLines = doc.splitTextToSize(classeText, maxNameW)
+    for (const cl of classeLines) {
+      y = ensure(doc, y, LINE_HEIGHT)
+      doc.setFontSize(8.5)
+      doc.setFont('helvetica', 'italic')
+      doc.setTextColor(100, 100, 100)
+      doc.text(cl, MARGIN + 8, y)
       y += LINE_HEIGHT
-      doc.text(classeText, MARGIN + 8, y)
     }
   }
-  y += LINE_HEIGHT + 2
+  y += 2
 
-  if (farmaco.mecanismo_acao) y = drawLabelValue(doc, 'Mecanismo', farmaco.mecanismo_acao, y, ensure)
-  if (farmaco.dose_usual) y = drawLabelValue(doc, 'Dose usual', farmaco.dose_usual, y, ensure)
-  if (farmaco.efeitos_colaterais?.length > 0) y = drawLabelValue(doc, 'Efeitos colaterais', farmaco.efeitos_colaterais.join('; '), y, ensure)
-  if (farmaco.contraindicacoes?.length > 0) y = drawLabelValue(doc, 'Contraindica\u00e7\u00f5es', farmaco.contraindicacoes.join('; '), y, ensure)
+  for (const part of contentParts) {
+    y = drawLabelValue(doc, part.label, part.value, y, ensure)
+  }
 
-  // Draw card decorations
-  const cardH = y - startY + 4
-  doc.setFillColor(...VERDE_MEDIO)
-  doc.rect(MARGIN + 3, startY - 5, 2.5, cardH, 'F')
-  doc.setDrawColor(225, 228, 225)
-  doc.setLineWidth(0.2)
-  doc.line(MARGIN + 3, startY - 5, MARGIN + CONTENT_WIDTH - 3, startY - 5)
-  doc.line(MARGIN + 3, startY - 5 + cardH, MARGIN + CONTENT_WIDTH - 3, startY - 5 + cardH)
+  // Draw accent bar on each page that has content from this block
+  const endPage = doc.getCurrentPageInfo().pageNumber
+  const endY = y
+  for (let pg = startPage; pg <= endPage; pg++) {
+    doc.setPage(pg)
+    const barTop = pg === startPage ? startY - 5 : 25
+    const barBot = pg === endPage ? endY + 2 : PAGE_HEIGHT - FOOTER_SPACE
+    doc.setFillColor(...VERDE_MEDIO)
+    doc.rect(MARGIN + 3, barTop, 2.5, barBot - barTop, 'F')
+    doc.setDrawColor(225, 228, 225)
+    doc.setLineWidth(0.2)
+    doc.line(MARGIN + 3, barTop, MARGIN + CONTENT_WIDTH - 3, barTop)
+    doc.line(MARGIN + 3, barBot, MARGIN + CONTENT_WIDTH - 3, barBot)
+  }
+  // Restore to last page
+  if (endPage !== startPage) doc.setPage(endPage)
 
   return y + 8
 }
