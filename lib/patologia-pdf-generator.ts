@@ -1,5 +1,4 @@
 import jsPDF from 'jspdf'
-import QRCode from 'qrcode'
 import { Patologia, SISTEMAS_FISIOLOGICOS } from './types/manual-clinico'
 
 // ── Types ────────────────────────────────────────────────────────
@@ -31,9 +30,9 @@ const MARGIN = 15
 const PAGE_WIDTH = 210
 const PAGE_HEIGHT = 297
 const CONTENT_WIDTH = PAGE_WIDTH - MARGIN * 2
-const FOOTER_SPACE = 22
-const LINE_HEIGHT = 5.5
-const PARAGRAPH_GAP = 3
+const FOOTER_SPACE = 24
+const LINE_HEIGHT = 5.8
+const PARAGRAPH_GAP = 3.5
 
 // ── Rich Text Parsing ────────────────────────────────────────────
 // Parses **bold**, *italic*, [text](url) into styled word tokens
@@ -85,9 +84,9 @@ function wordWidth(doc: jsPDF, word: StyledWord, fontSize: number): number {
   return doc.getTextWidth(word.text)
 }
 
-function spaceWidth(doc: jsPDF, fontSize: number): number {
+function spaceWidthForStyle(doc: jsPDF, fontSize: number, style: FontStyle): number {
   doc.setFontSize(fontSize)
-  doc.setFont('helvetica', 'normal')
+  doc.setFont('helvetica', style)
   return doc.getTextWidth(' ')
 }
 
@@ -95,7 +94,6 @@ function wrapRichText(doc: jsPDF, text: string, maxWidth: number, fontSize: numb
   if (!text) return []
   const paragraphs = text.split(/\n/)
   const allLines: RichLine[] = []
-  const sw = spaceWidth(doc, fontSize)
 
   for (const para of paragraphs) {
     if (para.trim() === '') {
@@ -111,15 +109,16 @@ function wrapRichText(doc: jsPDF, text: string, maxWidth: number, fontSize: numb
 
     for (const w of words) {
       const ww = wordWidth(doc, w, fontSize)
-      const needed = currentLine.length > 0 ? sw + ww : ww
+      // Use space width of the current word's style for consistency with rendering
+      const sw = currentLine.length > 0 ? spaceWidthForStyle(doc, fontSize, w.style) : 0
 
-      if (currentWidth + needed > maxWidth && currentLine.length > 0) {
+      if (currentWidth + sw + ww > maxWidth && currentLine.length > 0) {
         allLines.push(currentLine)
         currentLine = [w]
         currentWidth = ww
       } else {
         currentLine.push(w)
-        currentWidth += needed
+        currentWidth += sw + ww
       }
     }
     if (currentLine.length > 0) allLines.push(currentLine)
@@ -131,17 +130,49 @@ function wrapRichText(doc: jsPDF, text: string, maxWidth: number, fontSize: numb
 function renderRichLine(doc: jsPDF, line: RichLine, x: number, y: number, fontSize: number): void {
   if (line.length === 0) return
   doc.setFontSize(fontSize)
-  const sw = spaceWidth(doc, fontSize)
-  let cx = x
 
-  for (let i = 0; i < line.length; i++) {
-    const w = line[i]
+  // Optimisation: if every word shares the same style, render as a single
+  // doc.text() call — this lets jsPDF handle internal kerning/spacing and
+  // eliminates cumulative floating-point drift entirely.
+  const firstStyle = line[0].style
+  const firstLink = line[0].isLink
+  const allSame = line.every(w => w.style === firstStyle && w.isLink === firstLink)
+
+  if (allSame) {
+    const fullText = line.map(w => w.text).join(' ')
+    doc.setFont('helvetica', firstStyle)
+    doc.setTextColor(...(firstLink ? AZUL_LINK : CINZA_TEXTO))
+    doc.text(fullText, x, y)
+    return
+  }
+
+  // Mixed styles — group consecutive same-style words so each group is
+  // rendered with a single doc.text() call (minimises cumulative error).
+  interface StyledGroup { text: string; style: FontStyle; isLink: boolean }
+  const groups: StyledGroup[] = []
+  for (const w of line) {
+    const last = groups[groups.length - 1]
+    if (last && last.style === w.style && last.isLink === w.isLink) {
+      last.text += ' ' + w.text
+    } else {
+      groups.push({ text: w.text, style: w.style, isLink: w.isLink })
+    }
+  }
+
+  let cx = x
+  for (let i = 0; i < groups.length; i++) {
+    const g = groups[i]
     doc.setFontSize(fontSize)
-    doc.setFont('helvetica', w.style)
-    doc.setTextColor(...(w.isLink ? AZUL_LINK : CINZA_TEXTO))
-    doc.text(w.text, cx, y)
-    cx += doc.getTextWidth(w.text)
-    if (i < line.length - 1) cx += sw
+    doc.setFont('helvetica', g.style)
+    doc.setTextColor(...(g.isLink ? AZUL_LINK : CINZA_TEXTO))
+
+    // Add a space between groups (measured with the current group's font)
+    if (i > 0) {
+      cx += doc.getTextWidth(' ')
+    }
+
+    doc.text(g.text, cx, y)
+    cx += doc.getTextWidth(g.text)
   }
 }
 
@@ -235,21 +266,27 @@ function addFooter(doc: jsPDF, pageNum: number, totalPages: number): void {
   doc.setFontSize(8)
   doc.setTextColor(70, 70, 70)
   doc.setFont('helvetica', 'bold')
-  doc.text('DomineAqui', MARGIN, fy + 2)
+  doc.text('DomineAqui', MARGIN, fy + 1)
   doc.setFont('helvetica', 'normal')
-  doc.text(' - Manual Cl\u00ednico', MARGIN + doc.getTextWidth('DomineAqui') + 1, fy + 2)
-  doc.text(`P\u00e1gina ${pageNum} de ${totalPages}`, PAGE_WIDTH - MARGIN, fy + 2, { align: 'right' })
+  doc.setFontSize(8)
+  const daqW = doc.getTextWidth('DomineAqui')
+  doc.text(' - Manual Cl\u00ednico', MARGIN + daqW + 1, fy + 1)
+  doc.text(`P\u00e1gina ${pageNum} de ${totalPages}`, PAGE_WIDTH - MARGIN, fy + 1, { align: 'right' })
 
-  const dataGeracao = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })
-  doc.setFontSize(7)
+  doc.setFontSize(6.5)
   doc.setTextColor(100, 100, 100)
-  doc.text(`Gerado em ${dataGeracao}`, PAGE_WIDTH / 2, fy + 2, { align: 'center' })
+  const dataGeracao = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })
+  doc.text(`Gerado em ${dataGeracao}`, PAGE_WIDTH / 2, fy, { align: 'center' })
+  doc.setFont('helvetica', 'italic')
+  doc.text('Criado por Thiago Rodrigues', PAGE_WIDTH / 2, fy + 4, { align: 'center' })
 }
 
 // ── Shared Drawing Helpers ───────────────────────────────────────
 
 function drawSectionTitle(doc: jsPDF, title: string, y: number, ensure: EnsureSpaceFn, fontSize: number = 11): number {
-  y = ensure(doc, y, 16)
+  y = ensure(doc, y, 18)
+  // Extra gap before section title to separate from previous content
+  y += 2
   doc.setFillColor(...CINZA_CLARO)
   doc.rect(MARGIN, y - 5, CONTENT_WIDTH, 10, 'F')
   doc.setFillColor(...VERDE_MEDIO)
@@ -258,18 +295,18 @@ function drawSectionTitle(doc: jsPDF, title: string, y: number, ensure: EnsureSp
   doc.setFont('helvetica', 'bold')
   doc.setTextColor(...VERDE_ESCURO)
   doc.text(title, MARGIN + 7, y + 2)
-  return y + 14
+  return y + 15
 }
 
 function drawRichTextBlock(doc: jsPDF, text: string, y: number, ensure: EnsureSpaceFn, fontSize: number = 9.5): number {
   if (!text) return y
-  const lines = wrapRichText(doc, text, CONTENT_WIDTH - 6, fontSize)
+  const lines = wrapRichText(doc, text, CONTENT_WIDTH - 8, fontSize)
   for (const line of lines) {
-    y = ensure(doc, y, LINE_HEIGHT + 1)
+    y = ensure(doc, y, LINE_HEIGHT + 2)
     if (line.length === 0) {
       y += PARAGRAPH_GAP
     } else {
-      renderRichLine(doc, line, MARGIN + 3, y, fontSize)
+      renderRichLine(doc, line, MARGIN + 4, y, fontSize)
       y += LINE_HEIGHT
     }
   }
@@ -288,6 +325,7 @@ function extractYouTubeId(url: string): string | null {
 }
 
 async function generateQRDataUrl(text: string): Promise<string> {
+  const QRCode = (await import('qrcode')).default
   return QRCode.toDataURL(text, { width: 200, margin: 1, color: { dark: '#1a472a', light: '#ffffff' } })
 }
 
@@ -465,19 +503,28 @@ function drawLabelValue(doc: jsPDF, label: string, value: string, y: number, ens
     doc.setTextColor(...VERDE_ESCURO)
     doc.text(labelText, MARGIN + 4, y)
 
-    // Render value with rich text inline
+    // Render value with rich text inline — group same-style words
     const segments = parseRichSegments(value)
     const words = segmentsToWords(segments)
+    interface InlineGroup { text: string; style: FontStyle; isLink: boolean }
+    const groups: InlineGroup[] = []
+    for (const w of words) {
+      const last = groups[groups.length - 1]
+      if (last && last.style === w.style && last.isLink === w.isLink) {
+        last.text += ' ' + w.text
+      } else {
+        groups.push({ text: w.text, style: w.style, isLink: w.isLink })
+      }
+    }
     let cx = MARGIN + 4 + labelW
-    const sw = spaceWidth(doc, fontSize)
-    for (let i = 0; i < words.length; i++) {
-      const w = words[i]
+    for (let i = 0; i < groups.length; i++) {
+      const g = groups[i]
       doc.setFontSize(fontSize)
-      doc.setFont('helvetica', w.style === 'normal' && !w.isLink ? 'normal' : w.style)
-      doc.setTextColor(...(w.isLink ? AZUL_LINK : CINZA_TEXTO))
-      doc.text(w.text, cx, y)
-      cx += doc.getTextWidth(w.text)
-      if (i < words.length - 1) cx += sw
+      doc.setFont('helvetica', g.style)
+      doc.setTextColor(...(g.isLink ? AZUL_LINK : CINZA_TEXTO))
+      if (i > 0) cx += doc.getTextWidth(' ')
+      doc.text(g.text, cx, y)
+      cx += doc.getTextWidth(g.text)
     }
     return y + LINE_HEIGHT
   }
@@ -552,7 +599,7 @@ function drawFarmacoBlock(doc: jsPDF, farmaco: any, y: number, ensure: EnsureSpa
   doc.line(MARGIN + 3, startY - 5, MARGIN + CONTENT_WIDTH - 3, startY - 5)
   doc.line(MARGIN + 3, startY - 5 + cardH, MARGIN + CONTENT_WIDTH - 3, startY - 5 + cardH)
 
-  return y + 6
+  return y + 8
 }
 
 function drawFluxogramaBlock(doc: jsPDF, text: string, y: number, ensure: EnsureSpaceFn): number {
@@ -581,9 +628,9 @@ function drawFluxogramaBlock(doc: jsPDF, text: string, y: number, ensure: Ensure
 
     // Measure text to determine box height — use rich text wrapping for bold/italic
     const richFontSize = 8.5
-    const richLines = wrapRichText(doc, step, boxWidth - 14, richFontSize)
-    const lineH = 4.5
-    const boxH = Math.max(stepHeight, richLines.length * lineH + 5)
+    const richLines = wrapRichText(doc, step, boxWidth - 16, richFontSize)
+    const lineH = 5
+    const boxH = Math.max(stepHeight + 2, richLines.length * lineH + 7)
 
     doc.roundedRect(boxX, y - 2, boxWidth, boxH, 2, 2, 'FD')
 
@@ -597,13 +644,14 @@ function drawFluxogramaBlock(doc: jsPDF, text: string, y: number, ensure: Ensure
 
     // Step text — render with bold/italic support
     doc.setTextColor(...CINZA_TEXTO)
+    const textStartY = y + (boxH - richLines.length * lineH) / 2 + 1
     for (let l = 0; l < richLines.length; l++) {
       if (richLines[l].length > 0) {
-        renderRichLine(doc, richLines[l], boxX + 12, y + 3 + l * lineH, richFontSize)
+        renderRichLine(doc, richLines[l], boxX + 12, textStartY + l * lineH, richFontSize)
       }
     }
 
-    y += boxH + 1
+    y += boxH + 2
 
     // Arrow between steps
     if (i < steps.length - 1) {
@@ -1013,8 +1061,11 @@ function addCoverPage(doc: jsPDF, totalPatologias: number): void {
   const dataGeracao = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
   doc.setFontSize(8)
   doc.setTextColor(150, 200, 150)
-  doc.text(`Gerado em ${dataGeracao}`, MARGIN, PAGE_HEIGHT - 15)
-  doc.text('www.domineaqui.com.br', PAGE_WIDTH - MARGIN, PAGE_HEIGHT - 15, { align: 'right' })
+  doc.text(`Gerado em ${dataGeracao}`, MARGIN, PAGE_HEIGHT - 20)
+  doc.text('www.domineaqui.com.br', PAGE_WIDTH - MARGIN, PAGE_HEIGHT - 20, { align: 'right' })
+  doc.setFont('helvetica', 'italic')
+  doc.setTextColor(200, 220, 200)
+  doc.text('Criado por Thiago Rodrigues', MARGIN, PAGE_HEIGHT - 13)
 }
 
 function addCompleteHeader(doc: jsPDF): number {
@@ -1052,15 +1103,19 @@ function addCompleteFooter(doc: jsPDF, pageNum: number, totalPages: number): voi
   doc.setFontSize(7.5)
   doc.setTextColor(70, 70, 70)
   doc.setFont('helvetica', 'bold')
-  doc.text('DomineAqui', MARGIN, fy + 2)
+  doc.text('DomineAqui', MARGIN, fy + 1)
   doc.setFont('helvetica', 'normal')
-  doc.text(' \u2014 Manual Cl\u00ednico Completo', MARGIN + doc.getTextWidth('DomineAqui') + 1, fy + 2)
-  doc.text(`P\u00e1g. ${pageNum} / ${totalPages}`, PAGE_WIDTH - MARGIN, fy + 2, { align: 'right' })
+  doc.setFontSize(7.5)
+  const daqW = doc.getTextWidth('DomineAqui')
+  doc.text(' \u2014 Manual Cl\u00ednico Completo', MARGIN + daqW + 1, fy + 1)
+  doc.text(`P\u00e1g. ${pageNum} / ${totalPages}`, PAGE_WIDTH - MARGIN, fy + 1, { align: 'right' })
 
-  const dataGeracao = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })
-  doc.setFontSize(6.5)
+  doc.setFontSize(6)
   doc.setTextColor(120, 120, 120)
-  doc.text(dataGeracao, PAGE_WIDTH / 2, fy + 2, { align: 'center' })
+  const dataGeracao = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })
+  doc.text(dataGeracao, PAGE_WIDTH / 2, fy, { align: 'center' })
+  doc.setFont('helvetica', 'italic')
+  doc.text('Criado por Thiago Rodrigues', PAGE_WIDTH / 2, fy + 4, { align: 'center' })
 }
 
 function renderSystemDivider(doc: jsPDF, sistema: string): number {
