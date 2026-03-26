@@ -33,7 +33,9 @@ function setTC(doc: jsPDF, c: readonly [number, number, number]) {
 // ── Font name (Roboto if loaded, else helvetica) ─────────────────
 
 let FONT = 'helvetica'
-let fontsRegistered = false
+
+// Cache font data so we can register on every new jsPDF instance
+const fontCache: { file: string; style: FontStyle; b64: string }[] = []
 
 function arrayBufferToBase64(buffer: ArrayBuffer): string {
   const bytes = new Uint8Array(buffer)
@@ -46,7 +48,12 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
 }
 
 async function registerFonts(doc: jsPDF): Promise<void> {
-  if (fontsRegistered) {
+  // If we already have cached font data, register on this new instance
+  if (fontCache.length > 0) {
+    for (const f of fontCache) {
+      doc.addFileToVFS(f.file, f.b64)
+      doc.addFont(f.file, 'Roboto', f.style)
+    }
     FONT = 'Roboto'
     doc.setFont('Roboto')
     return
@@ -69,9 +76,10 @@ async function registerFonts(doc: jsPDF): Promise<void> {
       const b64 = arrayBufferToBase64(r.data)
       doc.addFileToVFS(r.file, b64)
       doc.addFont(r.file, 'Roboto', r.style)
+      // Cache for future instances
+      fontCache.push({ file: r.file, style: r.style, b64 })
     }
     FONT = 'Roboto'
-    fontsRegistered = true
     doc.setFont('Roboto')
   } catch {
     // Fonts not available — fall back to helvetica + sanitizer
