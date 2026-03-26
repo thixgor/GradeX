@@ -30,6 +30,92 @@ function setTC(doc: jsPDF, c: readonly [number, number, number]) {
   doc.setTextColor(c[0], c[1], c[2])
 }
 
+// ── Font name (Roboto if loaded, else helvetica) ─────────────────
+
+let FONT = 'helvetica'
+let fontsRegistered = false
+
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+  const bytes = new Uint8Array(buffer)
+  const chunks: string[] = []
+  const chunkSize = 8192
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    chunks.push(String.fromCharCode(...bytes.subarray(i, i + chunkSize)))
+  }
+  return btoa(chunks.join(''))
+}
+
+async function registerFonts(doc: jsPDF): Promise<void> {
+  if (fontsRegistered) {
+    FONT = 'Roboto'
+    doc.setFont('Roboto')
+    return
+  }
+  try {
+    const variants: { file: string; style: FontStyle }[] = [
+      { file: 'Roboto-Regular.ttf', style: 'normal' },
+      { file: 'Roboto-Bold.ttf', style: 'bold' },
+      { file: 'Roboto-Italic.ttf', style: 'italic' },
+      { file: 'Roboto-BoldItalic.ttf', style: 'bolditalic' },
+    ]
+    const results = await Promise.all(
+      variants.map(async (v) => {
+        const res = await fetch(`/fonts/${v.file}`)
+        if (!res.ok) throw new Error(`Font not found: ${v.file}`)
+        return { ...v, data: await res.arrayBuffer() }
+      })
+    )
+    for (const r of results) {
+      const b64 = arrayBufferToBase64(r.data)
+      doc.addFileToVFS(r.file, b64)
+      doc.addFont(r.file, 'Roboto', r.style)
+    }
+    FONT = 'Roboto'
+    fontsRegistered = true
+    doc.setFont('Roboto')
+  } catch {
+    // Fonts not available — fall back to helvetica + sanitizer
+    FONT = 'helvetica'
+  }
+}
+
+// ── Text sanitizer for Helvetica fallback ────────────────────────
+// jsPDF's built-in Helvetica only supports Windows-1252 encoding.
+// Characters outside this set (subscripts, ≥, ≤, Greek, arrows, etc.)
+// render as bullets (•) and corrupt width calculations / layout.
+// When using Roboto (TTF with full Unicode), sanitization is minimal.
+
+function sanitizeForPdf(text: string): string {
+  if (!text) return text
+  // Always remove zero-width / invisible chars
+  let t = text.replace(/[\u200B\u200C\u200D\uFEFF\u00AD]/g, '')
+  // If Roboto is loaded, it handles full Unicode — no further sanitization needed
+  if (FONT === 'Roboto') return t
+  // Helvetica fallback: replace non-Windows-1252 characters
+  return t
+    // Subscript digits
+    .replace(/₀/g, '0').replace(/₁/g, '1').replace(/₂/g, '2')
+    .replace(/₃/g, '3').replace(/₄/g, '4').replace(/₅/g, '5')
+    .replace(/₆/g, '6').replace(/₇/g, '7').replace(/₈/g, '8').replace(/₉/g, '9')
+    // Superscript digits not in Win-1252 (¹²³ ARE in Win-1252)
+    .replace(/⁰/g, '0').replace(/⁴/g, '4').replace(/⁵/g, '5')
+    .replace(/⁶/g, '6').replace(/⁷/g, '7').replace(/⁸/g, '8').replace(/⁹/g, '9')
+    // Math comparisons
+    .replace(/≥/g, '>=').replace(/≤/g, '<=').replace(/≠/g, '!=').replace(/≈/g, '~')
+    // Arrows
+    .replace(/→/g, '->').replace(/←/g, '<-').replace(/↑/g, '^').replace(/↓/g, 'v')
+    .replace(/↔/g, '<->')
+    // Greek letters common in medicine
+    .replace(/α/g, 'alfa').replace(/β/g, 'beta').replace(/γ/g, 'gama')
+    .replace(/δ/g, 'delta').replace(/Δ/g, 'Delta').replace(/ε/g, 'epsilon')
+    .replace(/μ/g, 'u').replace(/Ω/g, 'Ohm')
+    // Misc symbols
+    .replace(/✓/g, 'V').replace(/✔/g, 'V').replace(/✗/g, 'X').replace(/✘/g, 'X')
+    .replace(/★/g, '*').replace(/☆/g, '*')
+    .replace(/♫/g, '').replace(/♪/g, '').replace(/▶/g, '>').replace(/◀/g, '<')
+    .replace(/∞/g, 'inf')
+}
+
 // ── Layout constants ─────────────────────────────────────────────
 
 const MARGIN = 15
@@ -45,6 +131,7 @@ const PARAGRAPH_GAP = 3.5
 
 function parseRichSegments(text: string): { text: string; style: FontStyle; isLink: boolean }[] {
   if (!text) return []
+  text = sanitizeForPdf(text)
   const segments: { text: string; style: FontStyle; isLink: boolean }[] = []
   // Order matters: ** before *
   const regex = /\*\*(.+?)\*\*|\*(.+?)\*|\[([^\]]+)\]\([^)]+\)/g
@@ -86,13 +173,13 @@ function segmentsToWords(segments: { text: string; style: FontStyle; isLink: boo
 
 function wordWidth(doc: jsPDF, word: StyledWord, fontSize: number): number {
   doc.setFontSize(fontSize)
-  doc.setFont('helvetica', word.style)
+  doc.setFont(FONT, word.style)
   return doc.getTextWidth(word.text)
 }
 
 function spaceWidth(doc: jsPDF, fontSize: number): number {
   doc.setFontSize(fontSize)
-  doc.setFont('helvetica', 'normal')
+  doc.setFont(FONT, 'normal')
   return doc.getTextWidth(' ')
 }
 
@@ -141,7 +228,7 @@ function renderRichLine(doc: jsPDF, line: RichLine, x: number, y: number, fontSi
   // jsPDF handles all character spacing internally — zero drift.
   const f0 = line[0]
   if (line.every(w => w.style === f0.style && w.isLink === f0.isLink)) {
-    doc.setFont('helvetica', f0.style)
+    doc.setFont(FONT, f0.style)
     if (f0.isLink) {
       doc.setTextColor(AZUL_LINK[0], AZUL_LINK[1], AZUL_LINK[2])
     } else {
@@ -157,7 +244,7 @@ function renderRichLine(doc: jsPDF, line: RichLine, x: number, y: number, fontSi
   for (let i = 0; i < line.length; i++) {
     const w = line[i]
     doc.setFontSize(fontSize)
-    doc.setFont('helvetica', w.style)
+    doc.setFont(FONT, w.style)
     if (w.isLink) {
       doc.setTextColor(AZUL_LINK[0], AZUL_LINK[1], AZUL_LINK[2])
     } else {
@@ -232,11 +319,11 @@ function addHeader(doc: jsPDF): number {
 
   setTC(doc, BRANCO)
   doc.setFontSize(16)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   doc.text('DomineAqui', MARGIN, 13)
 
   doc.setFontSize(9)
-  doc.setFont('helvetica', 'normal')
+  doc.setFont(FONT, 'normal')
   doc.text('Manual Cl\u00ednico', MARGIN, 21)
 
   doc.setFontSize(8)
@@ -258,9 +345,9 @@ function addFooter(doc: jsPDF, pageNum: number, totalPages: number): void {
 
   doc.setFontSize(8)
   doc.setTextColor(70, 70, 70)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   doc.text('DomineAqui', MARGIN, fy + 1)
-  doc.setFont('helvetica', 'normal')
+  doc.setFont(FONT, 'normal')
   doc.setFontSize(8)
   const daqW = doc.getTextWidth('DomineAqui')
   doc.text(' - Manual Cl\u00ednico', MARGIN + daqW + 1, fy + 1)
@@ -270,13 +357,14 @@ function addFooter(doc: jsPDF, pageNum: number, totalPages: number): void {
   doc.setTextColor(100, 100, 100)
   const dataGeracao = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })
   doc.text(`Gerado em ${dataGeracao}`, PAGE_WIDTH / 2, fy, { align: 'center' })
-  doc.setFont('helvetica', 'italic')
+  doc.setFont(FONT, 'italic')
   doc.text('Criado por Thiago Rodrigues', PAGE_WIDTH / 2, fy + 4, { align: 'center' })
 }
 
 // ── Shared Drawing Helpers ───────────────────────────────────────
 
 function drawSectionTitle(doc: jsPDF, title: string, y: number, ensure: EnsureSpaceFn, fontSize: number = 11): number {
+  title = sanitizeForPdf(title)
   y = ensure(doc, y, 18)
   // Extra gap before section title to separate from previous content
   y += 2
@@ -285,7 +373,7 @@ function drawSectionTitle(doc: jsPDF, title: string, y: number, ensure: EnsureSp
   doc.setFillColor(...VERDE_MEDIO)
   doc.rect(MARGIN, y - 5, 3, 10, 'F')
   doc.setFontSize(fontSize)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   setTC(doc, VERDE_ESCURO)
   doc.text(title, MARGIN + 7, y + 2)
   return y + 15
@@ -293,6 +381,7 @@ function drawSectionTitle(doc: jsPDF, title: string, y: number, ensure: EnsureSp
 
 function drawRichTextBlock(doc: jsPDF, text: string, y: number, ensure: EnsureSpaceFn, fontSize: number = 9.5): number {
   if (!text) return y
+  text = sanitizeForPdf(text)
   const lines = wrapRichText(doc, text, CONTENT_WIDTH - 8, fontSize)
   for (const line of lines) {
     y = ensure(doc, y, LINE_HEIGHT + 2)
@@ -325,6 +414,7 @@ async function generateQRDataUrl(text: string): Promise<string> {
 function drawEmbedImage(
   doc: jsPDF, url: string, caption: string, y: number, ensure: EnsureSpaceFn, imageMap: Map<string, LoadedImage>
 ): number {
+  caption = sanitizeForPdf(caption)
   const img = imageMap.get(url)
   if (!img) {
     // Placeholder
@@ -334,13 +424,13 @@ function drawEmbedImage(
     doc.setLineWidth(0.3)
     doc.roundedRect(MARGIN + 20, y, CONTENT_WIDTH - 40, 12, 2, 2, 'FD')
     doc.setFontSize(8)
-    doc.setFont('helvetica', 'italic')
+    doc.setFont(FONT, 'italic')
     doc.setTextColor(150, 150, 150)
     doc.text('[Imagem não disponível]', PAGE_WIDTH / 2, y + 7, { align: 'center' })
     y += 14
     if (caption) {
       doc.setFontSize(8)
-      doc.setFont('helvetica', 'italic')
+      doc.setFont(FONT, 'italic')
       doc.setTextColor(100, 100, 100)
       const capLines = doc.splitTextToSize(caption, CONTENT_WIDTH - 20)
       for (const cl of capLines) {
@@ -368,7 +458,7 @@ function drawEmbedImage(
 
   if (caption) {
     doc.setFontSize(8)
-    doc.setFont('helvetica', 'italic')
+    doc.setFont(FONT, 'italic')
     doc.setTextColor(100, 100, 100)
     const capLines = doc.splitTextToSize(caption, CONTENT_WIDTH - 20)
     for (const cl of capLines) {
@@ -396,7 +486,7 @@ function drawMediaQR(
   let captionLines: string[] = []
   if (caption) {
     doc.setFontSize(8.5)
-    doc.setFont('helvetica', 'normal')
+    doc.setFont(FONT, 'normal')
     captionLines = doc.splitTextToSize(caption, maxCaptionW)
     if (captionLines.length > 3) captionLines = captionLines.slice(0, 3)
   }
@@ -448,7 +538,7 @@ function drawMediaQR(
   // Type label
   const textX = cardX + 20
   doc.setFontSize(8)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   setTC(doc, accentColor)
   doc.text(isVideo ? 'VIDEO' : 'AUDIO', textX, y + 9)
 
@@ -459,14 +549,14 @@ function drawMediaQR(
 
   // "Galeria de Midia" sub-label
   doc.setFontSize(6.5)
-  doc.setFont('helvetica', 'normal')
+  doc.setFont(FONT, 'normal')
   doc.setTextColor(140, 140, 140)
   doc.text('Galeria de Midia', dotX + 2, y + 9)
 
   // Caption text
   if (captionLines.length > 0) {
     doc.setFontSize(8.5)
-    doc.setFont('helvetica', 'normal')
+    doc.setFont(FONT, 'normal')
     setTC(doc, CINZA_TEXTO)
     for (let i = 0; i < captionLines.length; i++) {
       doc.text(captionLines[i], textX, y + 16 + i * 4.5)
@@ -475,7 +565,7 @@ function drawMediaQR(
 
   // Bottom helper text
   doc.setFontSize(6)
-  doc.setFont('helvetica', 'italic')
+  doc.setFont(FONT, 'italic')
   doc.setTextColor(150, 150, 150)
   doc.text('Escaneie o QR Code para acessar na plataforma', textX, y + cardH - 4)
 
@@ -533,16 +623,17 @@ async function drawRichTextBlockWithEmbeds(
 
 function drawLabelValue(doc: jsPDF, label: string, value: string, y: number, ensure: EnsureSpaceFn): number {
   if (!value) return y
+  value = sanitizeForPdf(value)
   const fontSize = 9.5
 
   // Measure the label
   doc.setFontSize(fontSize)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   const labelText = label + ': '
   const labelW = doc.getTextWidth(labelText)
 
   // Measure the value (plain, for inline check) — use splitTextToSize for reliable width check
-  doc.setFont('helvetica', 'normal')
+  doc.setFont(FONT, 'normal')
   const plainValue = value.replace(/\*\*(.+?)\*\*/g, '$1').replace(/\*(.+?)\*/g, '$1').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
   const availableForValue = CONTENT_WIDTH - 10 - labelW
   // Use splitTextToSize to check if value fits on one line (more reliable than getTextWidth)
@@ -553,7 +644,7 @@ function drawLabelValue(doc: jsPDF, label: string, value: string, y: number, ens
     // Single line: label + value
     y = ensure(doc, y, LINE_HEIGHT + 1)
     doc.setFontSize(fontSize)
-    doc.setFont('helvetica', 'bold')
+    doc.setFont(FONT, 'bold')
     setTC(doc, VERDE_ESCURO)
     doc.text(labelText, MARGIN + 4, y)
 
@@ -564,7 +655,7 @@ function drawLabelValue(doc: jsPDF, label: string, value: string, y: number, ens
     // If all words are same style, render as single doc.text() call
     const allPlain = words.every(w => w.style === 'normal' && !w.isLink)
     if (allPlain) {
-      doc.setFont('helvetica', 'normal')
+      doc.setFont(FONT, 'normal')
       doc.setTextColor(CINZA_TEXTO[0], CINZA_TEXTO[1], CINZA_TEXTO[2])
       doc.text(words.map(w => w.text).join(' '), MARGIN + 4 + labelW, y)
     } else {
@@ -573,7 +664,7 @@ function drawLabelValue(doc: jsPDF, label: string, value: string, y: number, ens
       for (let i = 0; i < words.length; i++) {
         const w = words[i]
         doc.setFontSize(fontSize)
-        doc.setFont('helvetica', w.style)
+        doc.setFont(FONT, w.style)
         if (w.isLink) {
           doc.setTextColor(AZUL_LINK[0], AZUL_LINK[1], AZUL_LINK[2])
         } else {
@@ -590,7 +681,7 @@ function drawLabelValue(doc: jsPDF, label: string, value: string, y: number, ens
   // Multi-line: label on own line, value wrapped below
   y = ensure(doc, y, LINE_HEIGHT * 2 + 1)
   doc.setFontSize(fontSize)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   setTC(doc, VERDE_ESCURO)
   doc.text(labelText, MARGIN + 4, y)
   y += LINE_HEIGHT
@@ -609,6 +700,10 @@ function drawLabelValue(doc: jsPDF, label: string, value: string, y: number, ens
 }
 
 function drawFarmacoBlock(doc: jsPDF, farmaco: any, y: number, ensure: EnsureSpaceFn): number {
+  // Sanitize all farmaco text fields
+  const nome = sanitizeForPdf(farmaco.medicamento || 'Sem nome')
+  const classe = farmaco.classe ? sanitizeForPdf(farmaco.classe) : ''
+
   // Collect all content lines to estimate total height for page-break safety
   const contentParts: { label: string; value: string }[] = []
   if (farmaco.mecanismo_acao) contentParts.push({ label: 'Mecanismo', value: farmaco.mecanismo_acao })
@@ -625,30 +720,29 @@ function drawFarmacoBlock(doc: jsPDF, farmaco: any, y: number, ensure: EnsureSpa
 
   // Farmaco name — wrap if too long
   doc.setFontSize(10.5)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   setTC(doc, VERDE_ESCURO)
-  const nameText = farmaco.medicamento || 'Sem nome'
   const maxNameW = CONTENT_WIDTH - 12
-  const nameLines = doc.splitTextToSize(nameText, maxNameW)
+  const nameLines = doc.splitTextToSize(nome, maxNameW)
   for (const nl of nameLines) {
     y = ensure(doc, y, LINE_HEIGHT + 2)
     doc.setFontSize(10.5)
-    doc.setFont('helvetica', 'bold')
+    doc.setFont(FONT, 'bold')
     setTC(doc, VERDE_ESCURO)
     doc.text(nl, MARGIN + 8, y)
     y += LINE_HEIGHT
   }
 
-  if (farmaco.classe) {
+  if (classe) {
     doc.setFontSize(8.5)
-    doc.setFont('helvetica', 'italic')
+    doc.setFont(FONT, 'italic')
     doc.setTextColor(100, 100, 100)
-    const classeText = `(${farmaco.classe})`
+    const classeText = `(${classe})`
     const classeLines = doc.splitTextToSize(classeText, maxNameW)
     for (const cl of classeLines) {
       y = ensure(doc, y, LINE_HEIGHT)
       doc.setFontSize(8.5)
-      doc.setFont('helvetica', 'italic')
+      doc.setFont(FONT, 'italic')
       doc.setTextColor(100, 100, 100)
       doc.text(cl, MARGIN + 8, y)
       y += LINE_HEIGHT
@@ -716,7 +810,7 @@ function drawFluxogramaBlock(doc: jsPDF, text: string, y: number, ensure: Ensure
     doc.setFillColor(...borderColor)
     doc.circle(boxX + 5, y + boxH / 2 - 2, 3, 'F')
     doc.setFontSize(7)
-    doc.setFont('helvetica', 'bold')
+    doc.setFont(FONT, 'bold')
     setTC(doc, BRANCO)
     doc.text(String(i + 1), boxX + 5, y + boxH / 2 - 0.8, { align: 'center' })
 
@@ -762,7 +856,7 @@ function drawImagesBlock(
 ): number {
   for (let i = 0; i < urls.length; i++) {
     const img = imageMap.get(urls[i])
-    const caption = captions[i] || ''
+    const caption = sanitizeForPdf(captions[i] || '')
 
     if (!img) {
       // Image failed to load — show placeholder
@@ -772,13 +866,13 @@ function drawImagesBlock(
       doc.setLineWidth(0.3)
       doc.roundedRect(MARGIN + 20, y, CONTENT_WIDTH - 40, 12, 2, 2, 'FD')
       doc.setFontSize(8)
-      doc.setFont('helvetica', 'italic')
+      doc.setFont(FONT, 'italic')
       doc.setTextColor(150, 150, 150)
       doc.text('[Imagem n\u00e3o dispon\u00edvel]', PAGE_WIDTH / 2, y + 7, { align: 'center' })
       y += 14
       if (caption) {
         doc.setFontSize(8)
-        doc.setFont('helvetica', 'italic')
+        doc.setFont(FONT, 'italic')
         doc.setTextColor(100, 100, 100)
         doc.text(caption, PAGE_WIDTH / 2, y, { align: 'center' })
         y += 6
@@ -807,7 +901,7 @@ function drawImagesBlock(
     // Caption
     if (caption) {
       doc.setFontSize(8)
-      doc.setFont('helvetica', 'italic')
+      doc.setFont(FONT, 'italic')
       doc.setTextColor(100, 100, 100)
       const capLines = doc.splitTextToSize(caption, CONTENT_WIDTH - 20)
       for (const cl of capLines) {
@@ -876,14 +970,15 @@ export async function generatePatologiaPDF(patologia: Patologia): Promise<Blob> 
   const qrMap = await buildQRMap(mediaUrls, patologia.slug)
 
   const doc = new jsPDF()
+  await registerFonts(doc)
   const ensure = makeEnsureSpace(() => addHeader(doc))
   let y = addHeader(doc)
 
   // ── Título ──────────────────────────────────────────────────────
   doc.setFontSize(18)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   setTC(doc, VERDE_ESCURO)
-  const titleLines = doc.splitTextToSize(patologia.nome, CONTENT_WIDTH)
+  const titleLines = doc.splitTextToSize(sanitizeForPdf(patologia.nome), CONTENT_WIDTH)
   for (const line of titleLines) {
     doc.text(line, MARGIN, y)
     y += 8
@@ -893,9 +988,9 @@ export async function generatePatologiaPDF(patologia: Patologia): Promise<Blob> 
   // Sinônimos
   if (patologia.sinonimos?.length > 0) {
     doc.setFontSize(9)
-    doc.setFont('helvetica', 'italic')
+    doc.setFont(FONT, 'italic')
     doc.setTextColor(100, 100, 100)
-    const sinLines = doc.splitTextToSize(patologia.sinonimos.join(' \u2022 '), CONTENT_WIDTH)
+    const sinLines = doc.splitTextToSize(sanitizeForPdf(patologia.sinonimos.join(' \u2022 ')), CONTENT_WIDTH)
     for (const line of sinLines) {
       doc.text(line, MARGIN, y)
       y += LINE_HEIGHT
@@ -905,12 +1000,12 @@ export async function generatePatologiaPDF(patologia: Patologia): Promise<Blob> 
 
   // Badges
   doc.setFontSize(8)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   let badgeX = MARGIN
 
   if (patologia.cid10) {
     doc.setFillColor(...VERDE_ESCURO)
-    const cidText = `CID-10: ${patologia.cid10}`
+    const cidText = sanitizeForPdf(`CID-10: ${patologia.cid10}`)
     const cidW = doc.getTextWidth(cidText) + 6
     doc.roundedRect(badgeX, y - 3, cidW, 5.5, 1.5, 1.5, 'F')
     setTC(doc, BRANCO)
@@ -928,7 +1023,7 @@ export async function generatePatologiaPDF(patologia: Patologia): Promise<Blob> 
     const color = areaColors[area] || VERDE_MEDIO
     doc.setFillColor(...color)
     doc.setFontSize(8)
-    doc.setFont('helvetica', 'bold')
+    doc.setFont(FONT, 'bold')
     const areaText = area
     const areaW = doc.getTextWidth(areaText) + 6
     if (badgeX + areaW > PAGE_WIDTH - MARGIN) { y += 7; badgeX = MARGIN }
@@ -941,9 +1036,9 @@ export async function generatePatologiaPDF(patologia: Patologia): Promise<Blob> 
 
   if (patologia.sistema) {
     doc.setFontSize(8)
-    doc.setFont('helvetica', 'normal')
+    doc.setFont(FONT, 'normal')
     doc.setTextColor(100, 100, 100)
-    doc.text(patologia.sistema, MARGIN, y)
+    doc.text(sanitizeForPdf(patologia.sistema), MARGIN, y)
     y += 6
   }
 
@@ -1034,7 +1129,7 @@ export async function generatePatologiaPDF(patologia: Patologia): Promise<Blob> 
     doc.rect(MARGIN + 3, y - 4, 3, 10, 'F')
 
     doc.setFontSize(8.5)
-    doc.setFont('helvetica', 'bold')
+    doc.setFont(FONT, 'bold')
     setTC(doc, LARANJA)
     doc.text('\u26A0  ATEN\u00c7\u00c3O', MARGIN + 10, y + 2)
     y += 10
@@ -1081,12 +1176,12 @@ function addCoverPage(doc: jsPDF, totalPatologias: number): void {
   doc.setGState(doc.GState({ opacity: 1 }))
 
   doc.setFontSize(28)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   setTC(doc, BRANCO)
   doc.text('DomineAqui', MARGIN, 55)
 
   doc.setFontSize(11)
-  doc.setFont('helvetica', 'normal')
+  doc.setFont(FONT, 'normal')
   setTC(doc, LARANJA)
   doc.text('Plataforma de Aprendizado M\u00e9dico', MARGIN, 64)
 
@@ -1095,13 +1190,13 @@ function addCoverPage(doc: jsPDF, totalPatologias: number): void {
   doc.line(MARGIN, 72, PAGE_WIDTH / 2, 72)
 
   doc.setFontSize(38)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   setTC(doc, BRANCO)
   doc.text('Manual', MARGIN, 108)
   doc.text('Cl\u00ednico', MARGIN, 124)
 
   doc.setFontSize(14)
-  doc.setFont('helvetica', 'normal')
+  doc.setFont(FONT, 'normal')
   setTC(doc, LARANJA)
   doc.text('Completo', MARGIN, 136)
 
@@ -1112,12 +1207,12 @@ function addCoverPage(doc: jsPDF, totalPatologias: number): void {
   doc.setGState(doc.GState({ opacity: 1 }))
 
   doc.setFontSize(20)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   setTC(doc, BRANCO)
   doc.text(String(totalPatologias), MARGIN + 8, 168)
 
   doc.setFontSize(9)
-  doc.setFont('helvetica', 'normal')
+  doc.setFont(FONT, 'normal')
   doc.text(
     totalPatologias === 1 ? 'patologia cadastrada' : 'patologias cadastradas',
     MARGIN + 8 + doc.getTextWidth(String(totalPatologias)) + 3,
@@ -1141,7 +1236,7 @@ function addCoverPage(doc: jsPDF, totalPatologias: number): void {
   doc.setTextColor(150, 200, 150)
   doc.text(`Gerado em ${dataGeracao}`, MARGIN, PAGE_HEIGHT - 20)
   doc.text('www.domineaqui.com.br', PAGE_WIDTH - MARGIN, PAGE_HEIGHT - 20, { align: 'right' })
-  doc.setFont('helvetica', 'italic')
+  doc.setFont(FONT, 'italic')
   doc.setTextColor(200, 220, 200)
   doc.text('Criado por Thiago Rodrigues', MARGIN, PAGE_HEIGHT - 13)
 }
@@ -1153,12 +1248,12 @@ function addCompleteHeader(doc: jsPDF): number {
   doc.rect(PAGE_WIDTH - 45, 0, 45, 20, 'F')
 
   doc.setFontSize(12)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   setTC(doc, BRANCO)
   doc.text('DomineAqui', MARGIN, 13)
 
   doc.setFontSize(7.5)
-  doc.setFont('helvetica', 'normal')
+  doc.setFont(FONT, 'normal')
   doc.text('Manual Cl\u00ednico', MARGIN + doc.getTextWidth('DomineAqui') + 3, 13)
 
   doc.setFontSize(7.5)
@@ -1180,9 +1275,9 @@ function addCompleteFooter(doc: jsPDF, pageNum: number, totalPages: number): voi
 
   doc.setFontSize(7.5)
   doc.setTextColor(70, 70, 70)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   doc.text('DomineAqui', MARGIN, fy + 1)
-  doc.setFont('helvetica', 'normal')
+  doc.setFont(FONT, 'normal')
   doc.setFontSize(7.5)
   const daqW = doc.getTextWidth('DomineAqui')
   doc.text(' \u2014 Manual Cl\u00ednico Completo', MARGIN + daqW + 1, fy + 1)
@@ -1192,7 +1287,7 @@ function addCompleteFooter(doc: jsPDF, pageNum: number, totalPages: number): voi
   doc.setTextColor(120, 120, 120)
   const dataGeracao = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })
   doc.text(dataGeracao, PAGE_WIDTH / 2, fy, { align: 'center' })
-  doc.setFont('helvetica', 'italic')
+  doc.setFont(FONT, 'italic')
   doc.text('Criado por Thiago Rodrigues', PAGE_WIDTH / 2, fy + 4, { align: 'center' })
 }
 
@@ -1206,14 +1301,14 @@ function renderSystemDivider(doc: jsPDF, sistema: string): number {
   doc.rect(0, PAGE_HEIGHT - 6, PAGE_WIDTH, 6, 'F')
 
   doc.setFontSize(9)
-  doc.setFont('helvetica', 'normal')
+  doc.setFont(FONT, 'normal')
   setTC(doc, LARANJA)
   const labelY = PAGE_HEIGHT / 2 - 20
   doc.text('Sistema Fisiol\u00f3gico', PAGE_WIDTH / 2, labelY, { align: 'center' })
 
   setTC(doc, BRANCO)
   doc.setFontSize(26)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   const wrapped = doc.splitTextToSize(sistema, PAGE_WIDTH - MARGIN * 4)
   const totalH = wrapped.length * 10
   const startY = labelY + 14
@@ -1240,9 +1335,9 @@ async function renderPatologiaInComplete(
   // Disease name
   y = ensure(doc, y, 22)
   doc.setFontSize(14)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   setTC(doc, VERDE_ESCURO)
-  const nameLines = doc.splitTextToSize(patologia.nome, CONTENT_WIDTH - 4)
+  const nameLines = doc.splitTextToSize(sanitizeForPdf(patologia.nome), CONTENT_WIDTH - 4)
   for (const line of nameLines) {
     doc.text(line, MARGIN, y)
     y += 6
@@ -1251,12 +1346,12 @@ async function renderPatologiaInComplete(
   // Synonyms & CID
   if (patologia.sinonimos?.length > 0 || patologia.cid10) {
     doc.setFontSize(8)
-    doc.setFont('helvetica', 'italic')
+    doc.setFont(FONT, 'italic')
     doc.setTextColor(100, 100, 100)
     const sinParts: string[] = []
     if (patologia.cid10) sinParts.push(`CID-10: ${patologia.cid10}`)
     if (patologia.sinonimos?.length > 0) sinParts.push(patologia.sinonimos.join(' \u2022 '))
-    const sinText = sinParts.join('  \u2014  ')
+    const sinText = sanitizeForPdf(sinParts.join('  \u2014  '))
     const sinLines = doc.splitTextToSize(sinText, CONTENT_WIDTH)
     for (const line of sinLines) {
       y = ensure(doc, y, LINE_HEIGHT)
@@ -1341,7 +1436,7 @@ async function renderPatologiaInComplete(
     doc.rect(MARGIN + 3, y - 4, 3, 10, 'F')
 
     doc.setFontSize(8.5)
-    doc.setFont('helvetica', 'bold')
+    doc.setFont(FONT, 'bold')
     setTC(doc, LARANJA)
     doc.text('\u26A0  ATEN\u00c7\u00c3O', MARGIN + 10, y + 2)
     y += 10
@@ -1381,6 +1476,7 @@ export async function generateManualCompletoPDF(patologias: Patologia[]): Promis
   }))
 
   const doc = new jsPDF()
+  await registerFonts(doc)
   const ensure = makeEnsureSpace(() => addCompleteHeader(doc))
 
   // ── Capa ────────────────────────────────────────────────────────
@@ -1391,7 +1487,7 @@ export async function generateManualCompletoPDF(patologias: Patologia[]): Promis
   let y = addCompleteHeader(doc)
 
   doc.setFontSize(18)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   setTC(doc, VERDE_ESCURO)
   doc.text('Sum\u00e1rio', MARGIN, y)
   y += 4
@@ -1419,7 +1515,7 @@ export async function generateManualCompletoPDF(patologias: Patologia[]): Promis
     doc.setFillColor(...VERDE_ESCURO)
     doc.rect(MARGIN, y - 4, 3, 9, 'F')
     doc.setFontSize(9.5)
-    doc.setFont('helvetica', 'bold')
+    doc.setFont(FONT, 'bold')
     setTC(doc, VERDE_ESCURO)
     doc.text(sistema, MARGIN + 6, y + 2)
     y += 12
@@ -1428,7 +1524,7 @@ export async function generateManualCompletoPDF(patologias: Patologia[]): Promis
     for (let i = 0; i < list.length; i += 2) {
       y = ensure(doc, y, LINE_HEIGHT + 1)
       doc.setFontSize(8)
-      doc.setFont('helvetica', 'normal')
+      doc.setFont(FONT, 'normal')
       setTC(doc, CINZA_TEXTO)
 
       const left = list[i]
