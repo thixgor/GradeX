@@ -1,4 +1,5 @@
 import jsPDF from 'jspdf'
+import QRCode from 'qrcode'
 import { Patologia, SISTEMAS_FISIOLOGICOS } from './types/manual-clinico'
 
 // ── Types ────────────────────────────────────────────────────────
@@ -275,6 +276,171 @@ function drawRichTextBlock(doc: jsPDF, text: string, y: number, ensure: EnsureSp
   return y + PARAGRAPH_GAP
 }
 
+// ── Embed-aware text block ──────────────────────────────────────
+// Splits text into regular lines and embed lines (!video, !audio, !image)
+// Regular lines are rendered as rich text; embeds are rendered as images or QR codes
+
+const EMBED_LINE_REGEX = /^!(video|audio|image)\[([^\]]*)\]\(([^)]+)\)\s*$/
+
+function extractYouTubeId(url: string): string | null {
+  const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/)
+  return m ? m[1] : null
+}
+
+async function generateQRDataUrl(text: string): Promise<string> {
+  return QRCode.toDataURL(text, { width: 200, margin: 1, color: { dark: '#1a472a', light: '#ffffff' } })
+}
+
+function drawEmbedImage(
+  doc: jsPDF, url: string, caption: string, y: number, ensure: EnsureSpaceFn, imageMap: Map<string, LoadedImage>
+): number {
+  const img = imageMap.get(url)
+  if (!img) {
+    // Placeholder
+    y = ensure(doc, y, 16)
+    doc.setFillColor(...CINZA_CLARO)
+    doc.setDrawColor(...CINZA_MEDIO)
+    doc.setLineWidth(0.3)
+    doc.roundedRect(MARGIN + 20, y, CONTENT_WIDTH - 40, 12, 2, 2, 'FD')
+    doc.setFontSize(8)
+    doc.setFont('helvetica', 'italic')
+    doc.setTextColor(150, 150, 150)
+    doc.text('[Imagem não disponível]', PAGE_WIDTH / 2, y + 7, { align: 'center' })
+    y += 14
+    if (caption) {
+      doc.setFontSize(8)
+      doc.setFont('helvetica', 'italic')
+      doc.setTextColor(100, 100, 100)
+      const capLines = doc.splitTextToSize(caption, CONTENT_WIDTH - 20)
+      for (const cl of capLines) {
+        doc.text(cl, PAGE_WIDTH / 2, y, { align: 'center' })
+        y += 4
+      }
+      y += 2
+    }
+    return y + 2
+  }
+
+  const maxW = CONTENT_WIDTH - 20
+  const maxH = 110
+  const ratio = Math.min(maxW / img.w, maxH / img.h, 1)
+  const drawW = img.w * ratio
+  const drawH = img.h * ratio
+
+  y = ensure(doc, y, drawH + (caption ? 12 : 4) + 4)
+  const imgX = MARGIN + (CONTENT_WIDTH - drawW) / 2
+  doc.setDrawColor(220, 220, 220)
+  doc.setLineWidth(0.3)
+  doc.roundedRect(imgX - 1, y - 1, drawW + 2, drawH + 2, 1, 1, 'S')
+  doc.addImage(img.data, 'JPEG', imgX, y, drawW, drawH)
+  y += drawH + 3
+
+  if (caption) {
+    doc.setFontSize(8)
+    doc.setFont('helvetica', 'italic')
+    doc.setTextColor(100, 100, 100)
+    const capLines = doc.splitTextToSize(caption, CONTENT_WIDTH - 20)
+    for (const cl of capLines) {
+      doc.text(cl, PAGE_WIDTH / 2, y, { align: 'center' })
+      y += 4
+    }
+    y += 2
+  }
+  return y + 2
+}
+
+function drawMediaQR(
+  doc: jsPDF, type: 'video' | 'audio', caption: string, qrDataUrl: string, y: number, ensure: EnsureSpaceFn
+): number {
+  const cardH = 32
+  y = ensure(doc, y, cardH + 6)
+
+  const accentColor: readonly [number, number, number] = type === 'video' ? [220, 80, 80] : [140, 100, 200]
+
+  // Card background
+  const cardX = MARGIN + 10
+  const cardW = CONTENT_WIDTH - 20
+  doc.setFillColor(type === 'video' ? 255 : 248, type === 'video' ? 245 : 243, type === 'video' ? 245 : 255)
+  doc.setDrawColor(...accentColor)
+  doc.setLineWidth(0.4)
+  doc.roundedRect(cardX, y, cardW, cardH, 2, 2, 'FD')
+
+  // Accent bar
+  doc.setFillColor(...accentColor)
+  doc.rect(cardX, y, 3, cardH, 'F')
+
+  // QR code
+  const qrSize = 24
+  const qrX = cardX + cardW - qrSize - 4
+  const qrY = y + (cardH - qrSize) / 2
+  try {
+    doc.addImage(qrDataUrl, 'PNG', qrX, qrY, qrSize, qrSize)
+  } catch { /* QR failed */ }
+
+  // Icon + text
+  const textX = cardX + 8
+  doc.setFontSize(7)
+  doc.setFont('helvetica', 'bold')
+  doc.setTextColor(...accentColor)
+  doc.text(type === 'video' ? '▶  VÍDEO' : '♫  ÁUDIO', textX, y + 7)
+
+  if (caption) {
+    doc.setFontSize(8.5)
+    doc.setFont('helvetica', 'normal')
+    doc.setTextColor(...CINZA_TEXTO)
+    const maxCaptionW = cardW - qrSize - 20
+    const capLines = doc.splitTextToSize(caption, maxCaptionW)
+    for (let i = 0; i < Math.min(capLines.length, 2); i++) {
+      doc.text(capLines[i], textX, y + 13 + i * 4.5)
+    }
+  }
+
+  doc.setFontSize(6.5)
+  doc.setFont('helvetica', 'italic')
+  doc.setTextColor(120, 120, 120)
+  doc.text('Escaneie o QR Code para acessar', textX, y + cardH - 4)
+
+  return y + cardH + 4
+}
+
+async function drawRichTextBlockWithEmbeds(
+  doc: jsPDF, text: string, y: number, ensure: EnsureSpaceFn,
+  imageMap: Map<string, LoadedImage>, qrMap: Map<string, string>,
+  slug: string, fontSize: number = 9.5
+): Promise<number> {
+  if (!text) return y
+  const lines = text.split(/\n/)
+  let buffer = ''
+
+  for (const line of lines) {
+    const embedMatch = line.match(EMBED_LINE_REGEX)
+    if (embedMatch) {
+      // Flush text buffer
+      if (buffer.trim()) {
+        y = drawRichTextBlock(doc, buffer, y, ensure, fontSize)
+        buffer = ''
+      }
+      const [, type, caption, url] = embedMatch
+      if (type === 'image') {
+        y = drawEmbedImage(doc, url, caption, y, ensure, imageMap)
+      } else {
+        const qrKey = url
+        const qrDataUrl = qrMap.get(qrKey)
+        if (qrDataUrl) {
+          y = drawMediaQR(doc, type as 'video' | 'audio', caption, qrDataUrl, y, ensure)
+        }
+      }
+    } else {
+      buffer += (buffer ? '\n' : '') + line
+    }
+  }
+  // Flush remaining buffer
+  if (buffer.trim()) {
+    y = drawRichTextBlock(doc, buffer, y, ensure, fontSize)
+  }
+  return y
+}
+
 function drawLabelValue(doc: jsPDF, label: string, value: string, y: number, ensure: EnsureSpaceFn): number {
   if (!value) return y
   const fontSize = 9.5
@@ -535,9 +701,53 @@ function drawImagesBlock(
 //  INDIVIDUAL PATOLOGIA PDF
 // ═══════════════════════════════════════════════════════════════════
 
+// ── Helpers: collect embed URLs from all text fields ────────────
+
+function collectEmbedUrls(patologia: Patologia): { imageUrls: string[]; mediaUrls: { url: string; type: string }[] } {
+  const textFields = [
+    patologia.classificacao, patologia.fisiopatologia,
+    patologia.diagnostico_semiologico, patologia.diagnosticos_diferenciais,
+    patologia.gravidade, patologia.tratamento,
+    patologia.observacoes_clinicas, patologia.referencias,
+  ]
+  const imageUrls: string[] = []
+  const mediaUrls: { url: string; type: string }[] = []
+  for (const field of textFields) {
+    if (!field) continue
+    for (const line of field.split('\n')) {
+      const m = line.match(EMBED_LINE_REGEX)
+      if (!m) continue
+      const [, type, , url] = m
+      if (type === 'image') imageUrls.push(url)
+      else mediaUrls.push({ url, type })
+    }
+  }
+  return { imageUrls, mediaUrls }
+}
+
+async function buildQRMap(mediaUrls: { url: string; type: string }[], slug: string): Promise<Map<string, string>> {
+  const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://domineaqui.com.br'
+  const qrMap = new Map<string, string>()
+  const galleryUrl = `${baseUrl}/manual-clinico/${slug}?galeria=1`
+  await Promise.all(mediaUrls.map(async ({ url }) => {
+    try {
+      const qrDataUrl = await generateQRDataUrl(galleryUrl)
+      qrMap.set(url, qrDataUrl)
+    } catch { /* skip */ }
+  }))
+  return qrMap
+}
+
 export async function generatePatologiaPDF(patologia: Patologia): Promise<Blob> {
-  // Preload images
-  const imageMap = await preloadImages(patologia.imagens_mecanismo || [])
+  // Collect all embed URLs from text fields
+  const { imageUrls: embedImageUrls, mediaUrls } = collectEmbedUrls(patologia)
+
+  // Preload images (mechanism images + inline embed images)
+  const allImageUrls = [...(patologia.imagens_mecanismo || []), ...embedImageUrls]
+  const imageMap = await preloadImages(allImageUrls)
+
+  // Generate QR codes for video/audio embeds
+  const qrMap = await buildQRMap(mediaUrls, patologia.slug)
 
   const doc = new jsPDF()
   const ensure = makeEnsureSpace(() => addHeader(doc))
@@ -618,15 +828,18 @@ export async function generatePatologiaPDF(patologia: Patologia): Promise<Blob> 
   y += 8
 
   // ── Seções de conteúdo ──────────────────────────────────────────
+  // Helper to render text with embed support
+  const drawSection = async (text: string, yy: number, fs?: number) =>
+    drawRichTextBlockWithEmbeds(doc, text, yy, ensure, imageMap, qrMap, patologia.slug, fs)
 
   if (patologia.classificacao) {
     y = drawSectionTitle(doc, 'Classifica\u00e7\u00e3o', y, ensure)
-    y = drawRichTextBlock(doc, patologia.classificacao, y, ensure)
+    y = await drawSection(patologia.classificacao, y)
   }
 
   if (patologia.fisiopatologia) {
     y = drawSectionTitle(doc, 'Fisiopatologia', y, ensure)
-    y = drawRichTextBlock(doc, patologia.fisiopatologia, y, ensure)
+    y = await drawSection(patologia.fisiopatologia, y)
   }
 
   // Images after fisiopatologia
@@ -637,22 +850,22 @@ export async function generatePatologiaPDF(patologia: Patologia): Promise<Blob> 
 
   if (patologia.diagnostico_semiologico) {
     y = drawSectionTitle(doc, 'Diagn\u00f3stico Semiol\u00f3gico', y, ensure)
-    y = drawRichTextBlock(doc, patologia.diagnostico_semiologico, y, ensure)
+    y = await drawSection(patologia.diagnostico_semiologico, y)
   }
 
   if (patologia.diagnosticos_diferenciais) {
     y = drawSectionTitle(doc, 'Diagn\u00f3sticos Diferenciais', y, ensure)
-    y = drawRichTextBlock(doc, patologia.diagnosticos_diferenciais, y, ensure)
+    y = await drawSection(patologia.diagnosticos_diferenciais, y)
   }
 
   if (patologia.gravidade) {
     y = drawSectionTitle(doc, 'Gravidade', y, ensure)
-    y = drawRichTextBlock(doc, patologia.gravidade, y, ensure)
+    y = await drawSection(patologia.gravidade, y)
   }
 
   if (patologia.tratamento) {
     y = drawSectionTitle(doc, 'Tratamento', y, ensure)
-    y = drawRichTextBlock(doc, patologia.tratamento, y, ensure)
+    y = await drawSection(patologia.tratamento, y)
   }
 
   // ── Farmacologia ────────────────────────────────────────────────
@@ -700,14 +913,14 @@ export async function generatePatologiaPDF(patologia: Patologia): Promise<Blob> 
     doc.text('\u26A0  ATEN\u00c7\u00c3O', MARGIN + 10, y + 2)
     y += 10
 
-    y = drawRichTextBlock(doc, patologia.observacoes_clinicas, y, ensure)
+    y = await drawSection(patologia.observacoes_clinicas, y)
   }
 
   // ── Referências ─────────────────────────────────────────────────
 
   if (patologia.referencias) {
     y = drawSectionTitle(doc, 'Refer\u00eancias', y, ensure)
-    y = drawRichTextBlock(doc, patologia.referencias, y, ensure, 8.5)
+    y = await drawSection(patologia.referencias, y, 8.5)
   }
 
   // ── Footers ─────────────────────────────────────────────────────
@@ -883,13 +1096,14 @@ function renderSystemDivider(doc: jsPDF, sistema: string): number {
   return addCompleteHeader(doc)
 }
 
-function renderPatologiaInComplete(
+async function renderPatologiaInComplete(
   doc: jsPDF,
   patologia: Patologia,
   y: number,
   ensure: EnsureSpaceFn,
-  imageMap: Map<string, LoadedImage>
-): number {
+  imageMap: Map<string, LoadedImage>,
+  qrMap: Map<string, string>
+): Promise<number> {
   // Disease name
   y = ensure(doc, y, 22)
   doc.setFontSize(14)
@@ -924,14 +1138,18 @@ function renderPatologiaInComplete(
   doc.line(MARGIN, y + 1, PAGE_WIDTH - MARGIN, y + 1)
   y += 6
 
+  // Helper for embed-aware text rendering
+  const drawSection = async (text: string, yy: number) =>
+    drawRichTextBlockWithEmbeds(doc, text, yy, ensure, imageMap, qrMap, patologia.slug)
+
   // Content sections
   if (patologia.classificacao) {
     y = drawSectionTitle(doc, 'Classifica\u00e7\u00e3o', y, ensure, 10)
-    y = drawRichTextBlock(doc, patologia.classificacao, y, ensure)
+    y = await drawSection(patologia.classificacao, y)
   }
   if (patologia.fisiopatologia) {
     y = drawSectionTitle(doc, 'Fisiopatologia', y, ensure, 10)
-    y = drawRichTextBlock(doc, patologia.fisiopatologia, y, ensure)
+    y = await drawSection(patologia.fisiopatologia, y)
   }
   if (patologia.imagens_mecanismo?.length) {
     y = drawSectionTitle(doc, 'Imagens do Mecanismo', y, ensure, 10)
@@ -939,19 +1157,19 @@ function renderPatologiaInComplete(
   }
   if (patologia.diagnostico_semiologico) {
     y = drawSectionTitle(doc, 'Diagn\u00f3stico Semiol\u00f3gico', y, ensure, 10)
-    y = drawRichTextBlock(doc, patologia.diagnostico_semiologico, y, ensure)
+    y = await drawSection(patologia.diagnostico_semiologico, y)
   }
   if (patologia.diagnosticos_diferenciais) {
     y = drawSectionTitle(doc, 'Diagn\u00f3sticos Diferenciais', y, ensure, 10)
-    y = drawRichTextBlock(doc, patologia.diagnosticos_diferenciais, y, ensure)
+    y = await drawSection(patologia.diagnosticos_diferenciais, y)
   }
   if (patologia.gravidade) {
     y = drawSectionTitle(doc, 'Gravidade', y, ensure, 10)
-    y = drawRichTextBlock(doc, patologia.gravidade, y, ensure)
+    y = await drawSection(patologia.gravidade, y)
   }
   if (patologia.tratamento) {
     y = drawSectionTitle(doc, 'Tratamento', y, ensure, 10)
-    y = drawRichTextBlock(doc, patologia.tratamento, y, ensure)
+    y = await drawSection(patologia.tratamento, y)
   }
 
   // Farmacologia
@@ -995,7 +1213,7 @@ function renderPatologiaInComplete(
     doc.text('\u26A0  ATEN\u00c7\u00c3O', MARGIN + 10, y + 2)
     y += 10
 
-    y = drawRichTextBlock(doc, patologia.observacoes_clinicas, y, ensure)
+    y = await drawSection(patologia.observacoes_clinicas, y)
   }
 
   return y + 4
@@ -1003,12 +1221,31 @@ function renderPatologiaInComplete(
 
 /** Gera PDF completo do Manual Clínico com capa, sumário e conteúdo por sistema. */
 export async function generateManualCompletoPDF(patologias: Patologia[]): Promise<Blob> {
-  // Preload all images from all patologias
+  // Preload all images from all patologias (mechanism images + embed images)
   const allUrls: string[] = []
+  const allMediaUrls: { url: string; type: string }[] = []
   for (const p of patologias) {
     if (p.imagens_mecanismo?.length) allUrls.push(...p.imagens_mecanismo)
+    const { imageUrls, mediaUrls } = collectEmbedUrls(p)
+    allUrls.push(...imageUrls)
+    allMediaUrls.push(...mediaUrls.map(m => ({ ...m, slug: p.slug })))
   }
   const imageMap = await preloadImages(allUrls)
+
+  // Generate QR codes for all video/audio embeds across all patologias
+  const qrMap = new Map<string, string>()
+  const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://domineaqui.com.br'
+  await Promise.all(patologias.map(async (p) => {
+    const { mediaUrls } = collectEmbedUrls(p)
+    const galleryUrl = `${baseUrl}/manual-clinico/${p.slug}?galeria=1`
+    for (const { url } of mediaUrls) {
+      if (!qrMap.has(url)) {
+        try {
+          qrMap.set(url, await generateQRDataUrl(galleryUrl))
+        } catch { /* skip */ }
+      }
+    }
+  }))
 
   const doc = new jsPDF()
   const ensure = makeEnsureSpace(() => addCompleteHeader(doc))
@@ -1086,7 +1323,7 @@ export async function generateManualCompletoPDF(patologias: Patologia[]): Promis
     y = renderSystemDivider(doc, sistema)
 
     for (let i = 0; i < list.length; i++) {
-      y = renderPatologiaInComplete(doc, list[i], y, ensure, imageMap)
+      y = await renderPatologiaInComplete(doc, list[i], y, ensure, imageMap, qrMap)
 
       if (i < list.length - 1) {
         y = ensure(doc, y, 10)

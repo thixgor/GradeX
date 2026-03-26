@@ -63,6 +63,9 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '160px'
   const [embedUrl, setEmbedUrl] = useState('')
   const [embedCaption, setEmbedCaption] = useState('')
 
+  // Ref for saved scroll when opening embed modal
+  const embedSavedScroll = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
+
   // Track if any modal is open
   const anyModalOpen = showLinkModal || showPatologiaModal || showEmbedModal
 
@@ -141,13 +144,18 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '160px'
 
   function confirmLink() {
     if (!linkUrl) return
+    const savedScrollX = window.scrollX
+    const savedScrollY = window.scrollY
     const linkMarkup = `[${linkSelection.text}](${linkUrl})`
     const cursorPos = linkSelection.start + linkMarkup.length
     const newValue = value.substring(0, linkSelection.start) + linkMarkup + value.substring(linkSelection.end)
     pendingCursor.current = { pos: cursorPos, scrollTop: textareaRef.current?.scrollTop || 0 }
-    onChange(newValue)
     setShowLinkModal(false)
     setLinkUrl('')
+    requestAnimationFrame(() => {
+      onChange(newValue)
+      requestAnimationFrame(() => window.scrollTo(savedScrollX, savedScrollY))
+    })
   }
 
   function handlePatologiaLink() {
@@ -176,15 +184,20 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '160px'
   }
 
   function selectPatologia(pat: PatologiaResult) {
+    const savedScrollX = window.scrollX
+    const savedScrollY = window.scrollY
     const displayText = patologiaSelection.text || pat.nome
     const linkMarkup = `[${displayText}](/manual-clinico/${pat.slug})`
     const cursorPos = patologiaSelection.start + linkMarkup.length
     const newValue = value.substring(0, patologiaSelection.start) + linkMarkup + value.substring(patologiaSelection.end)
     pendingCursor.current = { pos: cursorPos, scrollTop: textareaRef.current?.scrollTop || 0 }
-    onChange(newValue)
     setShowPatologiaModal(false)
     setPatologiaBusca('')
     setPatologiaResults([])
+    requestAnimationFrame(() => {
+      onChange(newValue)
+      requestAnimationFrame(() => window.scrollTo(savedScrollX, savedScrollY))
+    })
   }
 
   // Save cursor position when opening embed modal (before textarea loses focus)
@@ -196,6 +209,7 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '160px'
       pos: ta?.selectionStart ?? value.length,
       scrollTop: ta?.scrollTop || 0,
     }
+    embedSavedScroll.current = { x: window.scrollX, y: window.scrollY }
     setEmbedType(type)
     setEmbedUrl('')
     setEmbedCaption('')
@@ -205,6 +219,7 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '160px'
   function confirmEmbed() {
     if (!embedUrl) return
     const { pos, scrollTop } = embedCursorRef.current
+    const { x: savedScrollX, y: savedScrollY } = embedSavedScroll.current
 
     const before = value.substring(0, pos)
     const after = value.substring(pos)
@@ -214,10 +229,20 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '160px'
     const cursorPos = pos + embedMarkup.length
 
     pendingCursor.current = { pos: cursorPos, scrollTop }
-    onChange(before + embedMarkup + after)
     setShowEmbedModal(false)
     setEmbedUrl('')
     setEmbedCaption('')
+
+    // Use requestAnimationFrame to change value AFTER modal is gone, then restore scroll
+    requestAnimationFrame(() => {
+      onChange(before + embedMarkup + after)
+      // Restore scroll after React processes the value change — use the scroll from when modal opened
+      requestAnimationFrame(() => {
+        window.scrollTo(savedScrollX, savedScrollY)
+        // Double-check after autoResize runs
+        setTimeout(() => window.scrollTo(savedScrollX, savedScrollY), 50)
+      })
+    })
   }
 
   return (
@@ -391,21 +416,27 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '160px'
             <label className="text-xs font-medium text-muted-foreground mb-1 block">
               {embedType === 'image' ? 'URL da imagem' : 'URL do YouTube'}
             </label>
-            <Input
+            <input
+              id="embed-url-input"
+              type="text"
+              autoFocus
               value={embedUrl}
               onChange={e => setEmbedUrl(e.target.value)}
               placeholder={embedType === 'image' ? 'https://exemplo.com/imagem.png' : 'https://youtube.com/watch?v=...'}
-              autoFocus
               onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); confirmEmbed() } }}
+              className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             />
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-1 block">Legenda (opcional)</label>
-            <Input
+            <input
+              id="embed-caption-input"
+              type="text"
               value={embedCaption}
               onChange={e => setEmbedCaption(e.target.value)}
               placeholder="Descrição do conteúdo..."
               onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); confirmEmbed() } }}
+              className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             />
           </div>
 
