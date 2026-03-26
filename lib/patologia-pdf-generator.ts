@@ -274,24 +274,41 @@ interface LoadedImage {
 
 async function loadImage(url: string): Promise<LoadedImage | null> {
   try {
+    // For data URLs, load directly
+    if (url.startsWith('data:')) {
+      return await new Promise<LoadedImage | null>((resolve) => {
+        const img = new Image()
+        img.onload = () => resolve({ data: url, w: img.naturalWidth, h: img.naturalHeight })
+        img.onerror = () => resolve(null)
+        img.src = url
+      })
+    }
+
+    // For external URLs, use our server-side proxy to avoid CORS issues
+    const isExternal = url.startsWith('http://') || url.startsWith('https://')
+    const fetchUrl = isExternal
+      ? `/api/image-proxy?url=${encodeURIComponent(url)}`
+      : url
+
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 15000)
+    const response = await fetch(fetchUrl, { signal: controller.signal })
+    clearTimeout(timeout)
+
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
+    const blob = await response.blob()
+
     return await new Promise<LoadedImage | null>((resolve) => {
-      const img = new Image()
-      img.crossOrigin = 'anonymous'
-      const timeout = setTimeout(() => resolve(null), 8000)
-      img.onload = () => {
-        clearTimeout(timeout)
-        try {
-          const canvas = document.createElement('canvas')
-          canvas.width = img.naturalWidth
-          canvas.height = img.naturalHeight
-          const ctx = canvas.getContext('2d')
-          if (!ctx) { resolve(null); return }
-          ctx.drawImage(img, 0, 0)
-          resolve({ data: canvas.toDataURL('image/jpeg', 0.85), w: img.naturalWidth, h: img.naturalHeight })
-        } catch { resolve(null) }
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        const dataUrl = reader.result as string
+        const img = new Image()
+        img.onload = () => resolve({ data: dataUrl, w: img.naturalWidth, h: img.naturalHeight })
+        img.onerror = () => resolve(null)
+        img.src = dataUrl
       }
-      img.onerror = () => { clearTimeout(timeout); resolve(null) }
-      img.src = url
+      reader.onerror = () => resolve(null)
+      reader.readAsDataURL(blob)
     })
   } catch { return null }
 }
