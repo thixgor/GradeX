@@ -24,6 +24,12 @@ const CINZA_MEDIO = [200, 200, 200] as const
 const BRANCO = [255, 255, 255] as const
 const AZUL_LINK = [37, 99, 235] as const
 
+// ── Safe color helpers (avoid spread on readonly tuples) ─────────
+
+function setTC(doc: jsPDF, c: readonly [number, number, number]) {
+  doc.setTextColor(c[0], c[1], c[2])
+}
+
 // ── Layout constants ─────────────────────────────────────────────
 
 const MARGIN = 15
@@ -84,9 +90,9 @@ function wordWidth(doc: jsPDF, word: StyledWord, fontSize: number): number {
   return doc.getTextWidth(word.text)
 }
 
-function spaceWidthForStyle(doc: jsPDF, fontSize: number, style: FontStyle): number {
+function spaceWidth(doc: jsPDF, fontSize: number): number {
   doc.setFontSize(fontSize)
-  doc.setFont('helvetica', style)
+  doc.setFont('helvetica', 'normal')
   return doc.getTextWidth(' ')
 }
 
@@ -94,6 +100,7 @@ function wrapRichText(doc: jsPDF, text: string, maxWidth: number, fontSize: numb
   if (!text) return []
   const paragraphs = text.split(/\n/)
   const allLines: RichLine[] = []
+  const sw = spaceWidth(doc, fontSize)
 
   for (const para of paragraphs) {
     if (para.trim() === '') {
@@ -109,16 +116,15 @@ function wrapRichText(doc: jsPDF, text: string, maxWidth: number, fontSize: numb
 
     for (const w of words) {
       const ww = wordWidth(doc, w, fontSize)
-      // Use space width of the current word's style for consistency with rendering
-      const sw = currentLine.length > 0 ? spaceWidthForStyle(doc, fontSize, w.style) : 0
+      const needed = currentLine.length > 0 ? sw + ww : ww
 
-      if (currentWidth + sw + ww > maxWidth && currentLine.length > 0) {
+      if (currentWidth + needed > maxWidth && currentLine.length > 0) {
         allLines.push(currentLine)
         currentLine = [w]
         currentWidth = ww
       } else {
         currentLine.push(w)
-        currentWidth += sw + ww
+        currentWidth += needed
       }
     }
     if (currentLine.length > 0) allLines.push(currentLine)
@@ -131,48 +137,35 @@ function renderRichLine(doc: jsPDF, line: RichLine, x: number, y: number, fontSi
   if (line.length === 0) return
   doc.setFontSize(fontSize)
 
-  // Optimisation: if every word shares the same style, render as a single
-  // doc.text() call — this lets jsPDF handle internal kerning/spacing and
-  // eliminates cumulative floating-point drift entirely.
-  const firstStyle = line[0].style
-  const firstLink = line[0].isLink
-  const allSame = line.every(w => w.style === firstStyle && w.isLink === firstLink)
-
-  if (allSame) {
-    const fullText = line.map(w => w.text).join(' ')
-    doc.setFont('helvetica', firstStyle)
-    doc.setTextColor(...(firstLink ? AZUL_LINK : CINZA_TEXTO))
-    doc.text(fullText, x, y)
+  // Fast path: all words share the same style → single doc.text() call.
+  // jsPDF handles all character spacing internally — zero drift.
+  const f0 = line[0]
+  if (line.every(w => w.style === f0.style && w.isLink === f0.isLink)) {
+    doc.setFont('helvetica', f0.style)
+    if (f0.isLink) {
+      doc.setTextColor(AZUL_LINK[0], AZUL_LINK[1], AZUL_LINK[2])
+    } else {
+      doc.setTextColor(CINZA_TEXTO[0], CINZA_TEXTO[1], CINZA_TEXTO[2])
+    }
+    doc.text(line.map(w => w.text).join(' '), x, y)
     return
   }
 
-  // Mixed styles — group consecutive same-style words so each group is
-  // rendered with a single doc.text() call (minimises cumulative error).
-  interface StyledGroup { text: string; style: FontStyle; isLink: boolean }
-  const groups: StyledGroup[] = []
-  for (const w of line) {
-    const last = groups[groups.length - 1]
-    if (last && last.style === w.style && last.isLink === w.isLink) {
-      last.text += ' ' + w.text
-    } else {
-      groups.push({ text: w.text, style: w.style, isLink: w.isLink })
-    }
-  }
-
+  // Mixed styles: word-by-word rendering with fixed space width.
+  const sw = spaceWidth(doc, fontSize)
   let cx = x
-  for (let i = 0; i < groups.length; i++) {
-    const g = groups[i]
+  for (let i = 0; i < line.length; i++) {
+    const w = line[i]
     doc.setFontSize(fontSize)
-    doc.setFont('helvetica', g.style)
-    doc.setTextColor(...(g.isLink ? AZUL_LINK : CINZA_TEXTO))
-
-    // Add a space between groups (measured with the current group's font)
-    if (i > 0) {
-      cx += doc.getTextWidth(' ')
+    doc.setFont('helvetica', w.style)
+    if (w.isLink) {
+      doc.setTextColor(AZUL_LINK[0], AZUL_LINK[1], AZUL_LINK[2])
+    } else {
+      doc.setTextColor(CINZA_TEXTO[0], CINZA_TEXTO[1], CINZA_TEXTO[2])
     }
-
-    doc.text(g.text, cx, y)
-    cx += doc.getTextWidth(g.text)
+    doc.text(w.text, cx, y)
+    cx += doc.getTextWidth(w.text)
+    if (i < line.length - 1) cx += sw
   }
 }
 
@@ -237,7 +230,7 @@ function addHeader(doc: jsPDF): number {
   doc.setFillColor(...LARANJA)
   doc.rect(PAGE_WIDTH - 65, 0, 65, 30, 'F')
 
-  doc.setTextColor(...BRANCO)
+  setTC(doc, BRANCO)
   doc.setFontSize(16)
   doc.setFont('helvetica', 'bold')
   doc.text('DomineAqui', MARGIN, 13)
@@ -247,7 +240,7 @@ function addHeader(doc: jsPDF): number {
   doc.text('Manual Cl\u00ednico', MARGIN, 21)
 
   doc.setFontSize(8)
-  doc.setTextColor(...VERDE_ESCURO)
+  setTC(doc, VERDE_ESCURO)
   doc.text('www.domineaqui.com.br', PAGE_WIDTH - 62, 18)
 
   return 40
@@ -293,7 +286,7 @@ function drawSectionTitle(doc: jsPDF, title: string, y: number, ensure: EnsureSp
   doc.rect(MARGIN, y - 5, 3, 10, 'F')
   doc.setFontSize(fontSize)
   doc.setFont('helvetica', 'bold')
-  doc.setTextColor(...VERDE_ESCURO)
+  setTC(doc, VERDE_ESCURO)
   doc.text(title, MARGIN + 7, y + 2)
   return y + 15
 }
@@ -419,13 +412,13 @@ function drawMediaQR(
   const textX = cardX + 8
   doc.setFontSize(7)
   doc.setFont('helvetica', 'bold')
-  doc.setTextColor(...accentColor)
+  setTC(doc, accentColor)
   doc.text(type === 'video' ? '▶  VÍDEO' : '♫  ÁUDIO', textX, y + 7)
 
   if (caption) {
     doc.setFontSize(8.5)
     doc.setFont('helvetica', 'normal')
-    doc.setTextColor(...CINZA_TEXTO)
+    setTC(doc, CINZA_TEXTO)
     const maxCaptionW = cardW - qrSize - 20
     const capLines = doc.splitTextToSize(caption, maxCaptionW)
     for (let i = 0; i < Math.min(capLines.length, 2); i++) {
@@ -500,31 +493,35 @@ function drawLabelValue(doc: jsPDF, label: string, value: string, y: number, ens
     y = ensure(doc, y, LINE_HEIGHT + 1)
     doc.setFontSize(fontSize)
     doc.setFont('helvetica', 'bold')
-    doc.setTextColor(...VERDE_ESCURO)
+    setTC(doc, VERDE_ESCURO)
     doc.text(labelText, MARGIN + 4, y)
 
-    // Render value with rich text inline — group same-style words
+    // Render value with rich text inline
     const segments = parseRichSegments(value)
     const words = segmentsToWords(segments)
-    interface InlineGroup { text: string; style: FontStyle; isLink: boolean }
-    const groups: InlineGroup[] = []
-    for (const w of words) {
-      const last = groups[groups.length - 1]
-      if (last && last.style === w.style && last.isLink === w.isLink) {
-        last.text += ' ' + w.text
-      } else {
-        groups.push({ text: w.text, style: w.style, isLink: w.isLink })
+
+    // If all words are same style, render as single doc.text() call
+    const allPlain = words.every(w => w.style === 'normal' && !w.isLink)
+    if (allPlain) {
+      doc.setFont('helvetica', 'normal')
+      doc.setTextColor(CINZA_TEXTO[0], CINZA_TEXTO[1], CINZA_TEXTO[2])
+      doc.text(words.map(w => w.text).join(' '), MARGIN + 4 + labelW, y)
+    } else {
+      let cx = MARGIN + 4 + labelW
+      const sw = spaceWidth(doc, fontSize)
+      for (let i = 0; i < words.length; i++) {
+        const w = words[i]
+        doc.setFontSize(fontSize)
+        doc.setFont('helvetica', w.style)
+        if (w.isLink) {
+          doc.setTextColor(AZUL_LINK[0], AZUL_LINK[1], AZUL_LINK[2])
+        } else {
+          doc.setTextColor(CINZA_TEXTO[0], CINZA_TEXTO[1], CINZA_TEXTO[2])
+        }
+        doc.text(w.text, cx, y)
+        cx += doc.getTextWidth(w.text)
+        if (i < words.length - 1) cx += sw
       }
-    }
-    let cx = MARGIN + 4 + labelW
-    for (let i = 0; i < groups.length; i++) {
-      const g = groups[i]
-      doc.setFontSize(fontSize)
-      doc.setFont('helvetica', g.style)
-      doc.setTextColor(...(g.isLink ? AZUL_LINK : CINZA_TEXTO))
-      if (i > 0) cx += doc.getTextWidth(' ')
-      doc.text(g.text, cx, y)
-      cx += doc.getTextWidth(g.text)
     }
     return y + LINE_HEIGHT
   }
@@ -533,7 +530,7 @@ function drawLabelValue(doc: jsPDF, label: string, value: string, y: number, ens
   y = ensure(doc, y, LINE_HEIGHT * 2 + 1)
   doc.setFontSize(fontSize)
   doc.setFont('helvetica', 'bold')
-  doc.setTextColor(...VERDE_ESCURO)
+  setTC(doc, VERDE_ESCURO)
   doc.text(labelText, MARGIN + 4, y)
   y += LINE_HEIGHT
 
@@ -562,7 +559,7 @@ function drawFarmacoBlock(doc: jsPDF, farmaco: any, y: number, ensure: EnsureSpa
   // Farmaco name
   doc.setFontSize(10.5)
   doc.setFont('helvetica', 'bold')
-  doc.setTextColor(...VERDE_ESCURO)
+  setTC(doc, VERDE_ESCURO)
   doc.text(farmaco.medicamento || 'Sem nome', MARGIN + 8, y)
 
   if (farmaco.classe) {
@@ -639,11 +636,11 @@ function drawFluxogramaBlock(doc: jsPDF, text: string, y: number, ensure: Ensure
     doc.circle(boxX + 5, y + boxH / 2 - 2, 3, 'F')
     doc.setFontSize(7)
     doc.setFont('helvetica', 'bold')
-    doc.setTextColor(...BRANCO)
+    setTC(doc, BRANCO)
     doc.text(String(i + 1), boxX + 5, y + boxH / 2 - 0.8, { align: 'center' })
 
     // Step text — render with bold/italic support
-    doc.setTextColor(...CINZA_TEXTO)
+    setTC(doc, CINZA_TEXTO)
     const textStartY = y + (boxH - richLines.length * lineH) / 2 + 1
     for (let l = 0; l < richLines.length; l++) {
       if (richLines[l].length > 0) {
@@ -804,7 +801,7 @@ export async function generatePatologiaPDF(patologia: Patologia): Promise<Blob> 
   // ── Título ──────────────────────────────────────────────────────
   doc.setFontSize(18)
   doc.setFont('helvetica', 'bold')
-  doc.setTextColor(...VERDE_ESCURO)
+  setTC(doc, VERDE_ESCURO)
   const titleLines = doc.splitTextToSize(patologia.nome, CONTENT_WIDTH)
   for (const line of titleLines) {
     doc.text(line, MARGIN, y)
@@ -835,7 +832,7 @@ export async function generatePatologiaPDF(patologia: Patologia): Promise<Blob> 
     const cidText = `CID-10: ${patologia.cid10}`
     const cidW = doc.getTextWidth(cidText) + 6
     doc.roundedRect(badgeX, y - 3, cidW, 5.5, 1.5, 1.5, 'F')
-    doc.setTextColor(...BRANCO)
+    setTC(doc, BRANCO)
     doc.text(cidText, badgeX + 3, y + 0.5)
     badgeX += cidW + 3
   }
@@ -855,7 +852,7 @@ export async function generatePatologiaPDF(patologia: Patologia): Promise<Blob> 
     const areaW = doc.getTextWidth(areaText) + 6
     if (badgeX + areaW > PAGE_WIDTH - MARGIN) { y += 7; badgeX = MARGIN }
     doc.roundedRect(badgeX, y - 3, areaW, 5.5, 1.5, 1.5, 'F')
-    doc.setTextColor(...BRANCO)
+    setTC(doc, BRANCO)
     doc.text(areaText, badgeX + 3, y + 0.5)
     badgeX += areaW + 3
   }
@@ -957,7 +954,7 @@ export async function generatePatologiaPDF(patologia: Patologia): Promise<Blob> 
 
     doc.setFontSize(8.5)
     doc.setFont('helvetica', 'bold')
-    doc.setTextColor(...LARANJA)
+    setTC(doc, LARANJA)
     doc.text('\u26A0  ATEN\u00c7\u00c3O', MARGIN + 10, y + 2)
     y += 10
 
@@ -1004,12 +1001,12 @@ function addCoverPage(doc: jsPDF, totalPatologias: number): void {
 
   doc.setFontSize(28)
   doc.setFont('helvetica', 'bold')
-  doc.setTextColor(...BRANCO)
+  setTC(doc, BRANCO)
   doc.text('DomineAqui', MARGIN, 55)
 
   doc.setFontSize(11)
   doc.setFont('helvetica', 'normal')
-  doc.setTextColor(...LARANJA)
+  setTC(doc, LARANJA)
   doc.text('Plataforma de Aprendizado M\u00e9dico', MARGIN, 64)
 
   doc.setDrawColor(...LARANJA)
@@ -1018,13 +1015,13 @@ function addCoverPage(doc: jsPDF, totalPatologias: number): void {
 
   doc.setFontSize(38)
   doc.setFont('helvetica', 'bold')
-  doc.setTextColor(...BRANCO)
+  setTC(doc, BRANCO)
   doc.text('Manual', MARGIN, 108)
   doc.text('Cl\u00ednico', MARGIN, 124)
 
   doc.setFontSize(14)
   doc.setFont('helvetica', 'normal')
-  doc.setTextColor(...LARANJA)
+  setTC(doc, LARANJA)
   doc.text('Completo', MARGIN, 136)
 
   // Stats box
@@ -1035,7 +1032,7 @@ function addCoverPage(doc: jsPDF, totalPatologias: number): void {
 
   doc.setFontSize(20)
   doc.setFont('helvetica', 'bold')
-  doc.setTextColor(...BRANCO)
+  setTC(doc, BRANCO)
   doc.text(String(totalPatologias), MARGIN + 8, 168)
 
   doc.setFontSize(9)
@@ -1076,7 +1073,7 @@ function addCompleteHeader(doc: jsPDF): number {
 
   doc.setFontSize(12)
   doc.setFont('helvetica', 'bold')
-  doc.setTextColor(...BRANCO)
+  setTC(doc, BRANCO)
   doc.text('DomineAqui', MARGIN, 13)
 
   doc.setFontSize(7.5)
@@ -1084,7 +1081,7 @@ function addCompleteHeader(doc: jsPDF): number {
   doc.text('Manual Cl\u00ednico', MARGIN + doc.getTextWidth('DomineAqui') + 3, 13)
 
   doc.setFontSize(7.5)
-  doc.setTextColor(...VERDE_ESCURO)
+  setTC(doc, VERDE_ESCURO)
   doc.text('domineaqui.com.br', PAGE_WIDTH - 42, 13)
 
   return 28
@@ -1129,11 +1126,11 @@ function renderSystemDivider(doc: jsPDF, sistema: string): number {
 
   doc.setFontSize(9)
   doc.setFont('helvetica', 'normal')
-  doc.setTextColor(...LARANJA)
+  setTC(doc, LARANJA)
   const labelY = PAGE_HEIGHT / 2 - 20
   doc.text('Sistema Fisiol\u00f3gico', PAGE_WIDTH / 2, labelY, { align: 'center' })
 
-  doc.setTextColor(...BRANCO)
+  setTC(doc, BRANCO)
   doc.setFontSize(26)
   doc.setFont('helvetica', 'bold')
   const wrapped = doc.splitTextToSize(sistema, PAGE_WIDTH - MARGIN * 4)
@@ -1163,7 +1160,7 @@ async function renderPatologiaInComplete(
   y = ensure(doc, y, 22)
   doc.setFontSize(14)
   doc.setFont('helvetica', 'bold')
-  doc.setTextColor(...VERDE_ESCURO)
+  setTC(doc, VERDE_ESCURO)
   const nameLines = doc.splitTextToSize(patologia.nome, CONTENT_WIDTH - 4)
   for (const line of nameLines) {
     doc.text(line, MARGIN, y)
@@ -1264,7 +1261,7 @@ async function renderPatologiaInComplete(
 
     doc.setFontSize(8.5)
     doc.setFont('helvetica', 'bold')
-    doc.setTextColor(...LARANJA)
+    setTC(doc, LARANJA)
     doc.text('\u26A0  ATEN\u00c7\u00c3O', MARGIN + 10, y + 2)
     y += 10
 
@@ -1314,7 +1311,7 @@ export async function generateManualCompletoPDF(patologias: Patologia[]): Promis
 
   doc.setFontSize(18)
   doc.setFont('helvetica', 'bold')
-  doc.setTextColor(...VERDE_ESCURO)
+  setTC(doc, VERDE_ESCURO)
   doc.text('Sum\u00e1rio', MARGIN, y)
   y += 4
   doc.setDrawColor(...LARANJA)
@@ -1342,7 +1339,7 @@ export async function generateManualCompletoPDF(patologias: Patologia[]): Promis
     doc.rect(MARGIN, y - 4, 3, 9, 'F')
     doc.setFontSize(9.5)
     doc.setFont('helvetica', 'bold')
-    doc.setTextColor(...VERDE_ESCURO)
+    setTC(doc, VERDE_ESCURO)
     doc.text(sistema, MARGIN + 6, y + 2)
     y += 12
 
@@ -1351,7 +1348,7 @@ export async function generateManualCompletoPDF(patologias: Patologia[]): Promis
       y = ensure(doc, y, LINE_HEIGHT + 1)
       doc.setFontSize(8)
       doc.setFont('helvetica', 'normal')
-      doc.setTextColor(...CINZA_TEXTO)
+      setTC(doc, CINZA_TEXTO)
 
       const left = list[i]
       const leftText = '\u2022 ' + left.nome + (left.cid10 ? ` (${left.cid10})` : '')
