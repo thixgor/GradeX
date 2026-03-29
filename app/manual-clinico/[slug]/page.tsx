@@ -37,6 +37,7 @@ import {
   GalleryHorizontalEnd,
 } from 'lucide-react'
 import { type Patologia, type AreaSaude } from '@/lib/types/manual-clinico'
+import { FocusSessionButton } from '@/components/focus-session-button'
 import { RichTextRenderer, extractYouTubeId, tokenizeLine, AudioEmbed } from '@/components/manual-clinico/rich-text-renderer'
 import { HighlightableRichText } from '@/components/manual-clinico/highlightable-rich-text'
 import {
@@ -799,6 +800,30 @@ function MediaCard({ item, onExpand }: { item: MediaItem; onExpand: () => void }
 }
 
 /* ═══════════════════════════════════════════
+   FLOATING FOCUS SESSION (glassmorphism + iridescent)
+   ═══════════════════════════════════════════ */
+function FloatingFocusSession() {
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => { setMounted(true) }, [])
+  if (!mounted) return null
+  return createPortal(
+    <div className="fixed top-3 right-3 sm:top-4 sm:right-4 z-[55]">
+      <div className="relative liquid-glass-bubble overflow-visible rounded-full">
+        {/* Glass surface + iridescent wave */}
+        <div className="liquid-glass-surface !rounded-full" />
+        <div className="liquid-glass-refraction-top !left-[10%] !right-[10%] !rounded-full" />
+        <div className="liquid-glass-refraction-bottom !left-[14%] !right-[14%] !rounded-full" />
+        {/* The actual button — sits above glass layers */}
+        <div className="relative z-10">
+          <FocusSessionButton />
+        </div>
+      </div>
+    </div>,
+    document.body
+  )
+}
+
+/* ═══════════════════════════════════════════
    FLOATING DISEASE NAME BAR
    ═══════════════════════════════════════════ */
 function FloatingDiseaseName({ nome, heroRef }: { nome: string; heroRef: React.RefObject<HTMLDivElement | null> }) {
@@ -1420,6 +1445,9 @@ function PatologiaContent() {
     <div className="min-h-screen bg-background">
       {/* Floating section nav */}
       <Suspense><SectionNav sections={navSections} media={mediaItems} /></Suspense>
+
+      {/* Floating focus session (glassmorphism + iridescent wave) */}
+      <FloatingFocusSession />
 
       {/* Floating disease name bar */}
       <FloatingDiseaseName nome={patologia.nome} heroRef={heroRef} />

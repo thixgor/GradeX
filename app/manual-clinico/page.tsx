@@ -1,8 +1,10 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import { AppShell } from '@/components/app-shell'
+import { FocusSessionButton } from '@/components/focus-session-button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
@@ -105,6 +107,25 @@ export default function ManualClinicoPage() {
     <AppShell showHeader={false}>
       <ManualClinicoContent />
     </AppShell>
+  )
+}
+
+function FloatingFocusGlass() {
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => { setMounted(true) }, [])
+  if (!mounted) return null
+  return createPortal(
+    <div className="fixed top-3 right-3 sm:top-4 sm:right-4 z-[55]">
+      <div className="relative liquid-glass-bubble overflow-visible rounded-full">
+        <div className="liquid-glass-surface !rounded-full" />
+        <div className="liquid-glass-refraction-top !left-[10%] !right-[10%] !rounded-full" />
+        <div className="liquid-glass-refraction-bottom !left-[14%] !right-[14%] !rounded-full" />
+        <div className="relative z-10">
+          <FocusSessionButton />
+        </div>
+      </div>
+    </div>,
+    document.body
   )
 }
 
@@ -215,6 +236,9 @@ function ManualClinicoContent() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Floating focus session (glassmorphism + iridescent wave) */}
+      <FloatingFocusGlass />
+
       {/* ══════════ HERO ══════════ */}
       <div className="relative overflow-hidden">
         {/* Background image — visible */}

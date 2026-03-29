@@ -192,7 +192,7 @@ export function FocusSessionButton() {
 
       {/* Dropdown Popover */}
       {open && (
-        <Card className="absolute right-0 top-12 w-80 max-w-[90vw] shadow-2xl z-50 p-0 border overflow-hidden slide-in-from-bottom-4">
+        <Card className="absolute right-0 top-12 w-80 max-w-[90vw] shadow-2xl z-50 p-0 border overflow-visible slide-in-from-bottom-4 liquid-glass-bubble backdrop-blur-2xl">
           {/* Timer area */}
           <div className={cn(
             'px-5 pt-5 pb-4',
