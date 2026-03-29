@@ -143,7 +143,8 @@ function BancoQuestoesContent() {
     tipo: '' as BancoQuestaoTipo | '',
     dificuldade: '' as BancoDificuldade | '',
     ano: '' as string,
-    modoResposta: 'imediato' as BancoModoResposta
+    modoResposta: 'imediato' as BancoModoResposta,
+    excluirJaResolvidas: false
   })
   const [creatingRandomList, setCreatingRandomList] = useState(false)
 
@@ -577,7 +578,8 @@ function BancoQuestoesContent() {
           tipo: randomListForm.tipo || undefined,
           dificuldade: randomListForm.dificuldade || undefined,
           ano: randomListForm.ano ? parseInt(randomListForm.ano) : undefined,
-          modoResposta: randomListForm.modoResposta
+          modoResposta: randomListForm.modoResposta,
+          excluirJaResolvidas: randomListForm.excluirJaResolvidas || undefined
         })
       })
 
@@ -1568,6 +1570,30 @@ function BancoQuestoesContent() {
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Opção: Excluir questões já resolvidas */}
+            <div
+              onClick={() => setRandomListForm(prev => ({ ...prev, excluirJaResolvidas: !prev.excluirJaResolvidas }))}
+              className={cn(
+                'flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all',
+                randomListForm.excluirJaResolvidas
+                  ? 'border-[#468152] bg-[#468152]/10'
+                  : 'border-muted hover:border-[#468152]/50'
+              )}
+            >
+              <Checkbox
+                checked={randomListForm.excluirJaResolvidas}
+                onCheckedChange={(checked) => setRandomListForm(prev => ({ ...prev, excluirJaResolvidas: !!checked }))}
+                className="pointer-events-none"
+              />
+              <div className="flex-1">
+                <span className="font-medium text-sm">Não repetir questões já resolvidas</span>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Exclui questões que você já respondeu anteriormente (em listas ou individualmente)
+                </p>
+              </div>
+              <Sparkles className={cn('h-5 w-5', randomListForm.excluirJaResolvidas ? 'text-[#468152]' : 'text-muted-foreground/40')} />
             </div>
 
             {/* Seção 3: Filtros */}

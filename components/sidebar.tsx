@@ -197,37 +197,49 @@ function NavItemButton({
       </motion.span>
 
       {/* Label with slide-in */}
-      {!collapsed && (
-        <motion.span
-          className="truncate"
-          animate={{ x: isHovered ? 2 : 0 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-        >
-          {item.label}
-        </motion.span>
-      )}
+      <AnimatePresence mode="wait">
+        {!collapsed && (
+          <motion.span
+            className="truncate"
+            initial={{ opacity: 0, width: 0 }}
+            animate={{ opacity: 1, width: 'auto', x: isHovered ? 2 : 0 }}
+            exit={{ opacity: 0, width: 0 }}
+            transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+          >
+            {item.label}
+          </motion.span>
+        )}
+      </AnimatePresence>
 
       {/* Badge */}
-      {!collapsed && item.badge && (
-        <motion.span
-          className="ml-auto text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: 'spring', stiffness: 500, damping: 25, delay: staggerDelay + 0.1 }}
-        >
-          {item.badge}
-        </motion.span>
-      )}
+      <AnimatePresence>
+        {!collapsed && item.badge && (
+          <motion.span
+            className="ml-auto text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full"
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 500, damping: 25, delay: staggerDelay + 0.1 }}
+          >
+            {item.badge}
+          </motion.span>
+        )}
+      </AnimatePresence>
 
       {/* Gradient PRO badge */}
-      {!collapsed && isGradient && (
-        <motion.span
-          className="ml-auto text-[10px] font-bold bg-gradient-to-r from-amber-500 to-orange-500 text-transparent bg-clip-text"
-          animate={{ opacity: isHovered ? 1 : 0.8 }}
-        >
-          PRO
-        </motion.span>
-      )}
+      <AnimatePresence>
+        {!collapsed && isGradient && (
+          <motion.span
+            className="ml-auto text-[10px] font-bold bg-gradient-to-r from-amber-500 to-orange-500 text-transparent bg-clip-text"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isHovered ? 1 : 0.8 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            PRO
+          </motion.span>
+        )}
+      </AnimatePresence>
     </motion.button>
   )
 }
@@ -402,7 +414,7 @@ export function Sidebar({
       <aside
         className={cn(
           'fixed top-0 left-0 z-50 h-full bg-background border-r flex flex-col',
-          'transition-all duration-300 ease-in-out',
+          'transition-[width,transform] duration-[350ms] ease-[cubic-bezier(0.25,0.1,0.25,1)]',
           collapsed ? 'lg:w-[72px]' : 'lg:w-[280px]',
           'w-[280px]',
           isOpen ? 'translate-x-0' : '-translate-x-full',
@@ -411,7 +423,7 @@ export function Sidebar({
       >
         {/* Header */}
         <div className={cn(
-          'border-b',
+          'border-b transition-[padding] duration-[350ms] ease-[cubic-bezier(0.25,0.1,0.25,1)]',
           collapsed
             ? 'flex flex-col items-center gap-2 py-3 px-2'
             : 'flex items-center justify-between p-4'
@@ -423,8 +435,29 @@ export function Sidebar({
             whileTap={{ scale: 0.97 }}
             transition={{ type: 'spring', stiffness: 400, damping: 20 }}
           >
-            {!collapsed && <Logo variant="full" size="md" />}
-            {collapsed && <Logo variant="icon" size="lg" />}
+            <AnimatePresence mode="wait">
+              {collapsed ? (
+                <motion.div
+                  key="icon"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Logo variant="icon" size="lg" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="full"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Logo variant="full" size="md" />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
 
           <Button variant="ghost" size="icon" onClick={onClose} className="lg:hidden h-8 w-8">
@@ -497,15 +530,35 @@ export function Sidebar({
               >
                 <Plus className="h-5 w-5" />
               </motion.span>
-              {!collapsed && <span>Nova Prova</span>}
+              <AnimatePresence>
+                {!collapsed && (
+                  <motion.span
+                    initial={{ opacity: 0, width: 0 }}
+                    animate={{ opacity: 1, width: 'auto' }}
+                    exit={{ opacity: 0, width: 0 }}
+                    transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+                    className="overflow-hidden whitespace-nowrap"
+                  >
+                    Nova Prova
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </Button>
           </motion.div>
 
-          {!collapsed && examsRemaining !== null && examsLimit !== null && (
-            <p className="text-xs text-muted-foreground mt-2 text-center">
-              {examsRemaining} / {examsLimit} provas restantes hoje
-            </p>
-          )}
+          <AnimatePresence>
+            {!collapsed && examsRemaining !== null && examsLimit !== null && (
+              <motion.p
+                className="text-xs text-muted-foreground mt-2 text-center overflow-hidden"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                {examsRemaining} / {examsLimit} provas restantes hoje
+              </motion.p>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* ─── Navigation ─── */}

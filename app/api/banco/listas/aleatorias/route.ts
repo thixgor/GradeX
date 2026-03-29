@@ -81,6 +81,16 @@ export async function POST(request: NextRequest) {
       matchStage.ano = body.ano
     }
 
+    // Se o usuário quer excluir questões já resolvidas, buscar IDs resolvidos
+    if (body.excluirJaResolvidas) {
+      const resolucoes = await db.collection('banco_resolucoes')
+        .distinct('questaoId', { userId: new ObjectId(session.userId) })
+      if (resolucoes.length > 0) {
+        // resolucoes pode conter ObjectId ou string; garantir ObjectId para o filtro
+        matchStage._id = { $nin: resolucoes.map((id: any) => new ObjectId(String(id))) }
+      }
+    }
+
     // Buscar questões aleatórias
     // TENTATIVA DE MELHORIA DE ALEATORIEDADE:
     // O usuário relatou que parecem vir sempre as "últimas".

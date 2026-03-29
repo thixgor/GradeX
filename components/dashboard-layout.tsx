@@ -115,7 +115,7 @@ Contato: (21) 99777-0936`)
       />
 
       {/* Main Content Area */}
-      <div className="lg:pl-[280px] min-h-screen flex flex-col transition-all duration-300">
+      <div className="lg:pl-[280px] min-h-screen flex flex-col transition-[padding-left] duration-[350ms] ease-[cubic-bezier(0.25,0.1,0.25,1)]">
         {/* Header */}
         <DashboardHeader
           user={user}

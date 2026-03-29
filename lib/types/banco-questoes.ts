@@ -310,4 +310,5 @@ export interface BancoListaAleatoriaFiltros {
   quantidade: number
   modoResposta: BancoModoResposta
   nome: string
+  excluirJaResolvidas?: boolean
 }
