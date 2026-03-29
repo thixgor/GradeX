@@ -28,6 +28,7 @@ import {
   ShieldAlert,
   FlaskConical,
   X,
+  EyeOff,
   Maximize2,
   Image as ImageIcon,
   Film,
@@ -798,6 +799,123 @@ function MediaCard({ item, onExpand }: { item: MediaItem; onExpand: () => void }
 }
 
 /* ═══════════════════════════════════════════
+   FLOATING DISEASE NAME BAR
+   ═══════════════════════════════════════════ */
+function FloatingDiseaseName({ nome, heroRef }: { nome: string; heroRef: React.RefObject<HTMLDivElement | null> }) {
+  const [visible, setVisible] = useState(false)
+  const [hidden, setHidden] = useState(false)
+  const [modalOpen, setModalOpen] = useState(false)
+
+  // Show bar when user scrolls past the hero header
+  useEffect(() => {
+    const onScroll = () => {
+      if (!heroRef.current) return
+      const rect = heroRef.current.getBoundingClientRect()
+      setVisible(rect.bottom < 0)
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [heroRef])
+
+  if (!visible || hidden) return null
+
+  return createPortal(
+    <>
+      {/* ── Floating bar ── */}
+      <motion.div
+        initial={{ opacity: 0, y: -20, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: -20, scale: 0.95 }}
+        transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+        className="fixed top-3 left-1/2 -translate-x-1/2 z-[60] max-w-[90vw] sm:max-w-md cursor-pointer group"
+        onClick={() => setModalOpen(true)}
+      >
+        <div className="relative px-4 py-2.5 rounded-2xl">
+          {/* Glass background */}
+          <div className="liquid-glass-surface !rounded-2xl" />
+          <div className="liquid-glass-refraction-top !left-[8%] !right-[8%]" style={{ borderRadius: '16px' }} />
+          <div className="liquid-glass-refraction-bottom !left-[12%] !right-[12%]" style={{ borderRadius: '16px' }} />
+
+          {/* Content */}
+          <div className="relative z-10 flex items-center gap-2.5 min-w-0">
+            <div className="shrink-0 w-2 h-2 rounded-full bg-primary shadow-sm shadow-primary/50" />
+            <span className="text-[13px] sm:text-sm font-semibold text-foreground truncate">
+              {nome}
+            </span>
+            <ChevronDown className="shrink-0 h-3 w-3 text-muted-foreground/60 group-hover:text-foreground transition-colors" />
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ── Modal overlay ── */}
+      <AnimatePresence>
+        {modalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="fixed inset-0 z-[70] flex items-start justify-center pt-16 px-4"
+            onClick={() => setModalOpen(false)}
+          >
+            {/* Backdrop */}
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+
+            {/* Modal card */}
+            <motion.div
+              initial={{ opacity: 0, y: -20, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.9 }}
+              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="relative w-full max-w-sm rounded-2xl overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="liquid-glass-surface !rounded-2xl" />
+              <div className="liquid-glass-refraction-top !left-[8%] !right-[8%]" style={{ borderRadius: '16px' }} />
+              <div className="liquid-glass-refraction-bottom !left-[12%] !right-[12%]" style={{ borderRadius: '16px' }} />
+
+              <div className="relative z-10 p-5">
+                {/* Close button */}
+                <button
+                  onClick={() => setModalOpen(false)}
+                  className="absolute top-3 right-3 p-1.5 rounded-xl hover:bg-white/[0.1] text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+
+                {/* Disease name */}
+                <div className="pr-8">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                    Patologia
+                  </span>
+                  <h3 className="text-lg font-bold text-foreground mt-1 leading-snug">
+                    {nome}
+                  </h3>
+                </div>
+
+                {/* Hide button */}
+                <button
+                  onClick={() => {
+                    setHidden(true)
+                    setModalOpen(false)
+                  }}
+                  className="mt-5 w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.08] text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-200"
+                >
+                  <EyeOff className="h-4 w-4" />
+                  Ocultar barra flutuante
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>,
+    document.body
+  )
+}
+
+/* ═══════════════════════════════════════════
    SECTION NAV (floating glassmorphism TOC)
    ═══════════════════════════════════════════ */
 function SectionNav({ sections, media = [] }: { sections: SectionEntry[]; media?: MediaItem[] }) {
@@ -1123,6 +1241,7 @@ function PatologiaContent() {
   const [loading, setLoading] = useState(true)
   const [farmaTab, setFarmaTab] = useState<'primeira' | 'segunda' | 'terceira'>('primeira')
   const [lightbox, setLightbox] = useState<{ src: string; alt: string; caption?: string } | null>(null)
+  const heroRef = useRef<HTMLDivElement>(null)
 
   // ── Highlights ────────────────────────────────────────────────────
   const [highlights, setHighlights] = useState<SlugHighlights>({})
@@ -1233,10 +1352,13 @@ function PatologiaContent() {
       {/* Floating section nav */}
       <Suspense><SectionNav sections={navSections} media={mediaItems} /></Suspense>
 
+      {/* Floating disease name bar */}
+      <FloatingDiseaseName nome={patologia.nome} heroRef={heroRef} />
+
       {/* ══════════════════════════════════════
            HERO HEADER
          ══════════════════════════════════════ */}
-      <div className="relative overflow-hidden">
+      <div ref={heroRef} className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.07] via-background to-background" />
         <div className="absolute top-0 right-0 w-[500px] h-[300px] bg-primary/[0.04] rounded-full blur-[100px]" />
 
