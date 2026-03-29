@@ -806,6 +806,16 @@ function FloatingDiseaseName({ nome, heroRef }: { nome: string; heroRef: React.R
   const [hidden, setHidden] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
 
+  /* ── Drag state ── */
+  const dragX = useMotionValue(0)
+  const dragY = useMotionValue(0)
+  const springX = useSpring(dragX, { stiffness: 300, damping: 30 })
+  const springY = useSpring(dragY, { stiffness: 300, damping: 30 })
+  const isDragging = useRef(false)
+  const dragStartPos = useRef({ x: 0, y: 0, mx: 0, my: 0 })
+  const wasDragged = useRef(false)
+  const barRef = useRef<HTMLDivElement>(null)
+
   // Show bar when user scrolls past the hero header
   useEffect(() => {
     const onScroll = () => {
@@ -818,32 +828,85 @@ function FloatingDiseaseName({ nome, heroRef }: { nome: string; heroRef: React.R
     return () => window.removeEventListener('scroll', onScroll)
   }, [heroRef])
 
+  /* ── Pointer-based drag handlers ── */
+  const onPointerDown = useCallback((e: RPointerEvent<HTMLDivElement>) => {
+    // Only main button / single touch
+    if (e.button !== 0) return
+    isDragging.current = true
+    wasDragged.current = false
+    dragStartPos.current = { x: dragX.get(), y: dragY.get(), mx: e.clientX, my: e.clientY }
+    ;(e.target as HTMLElement).setPointerCapture?.(e.pointerId)
+    e.preventDefault()
+  }, [dragX, dragY])
+
+  const onPointerMove = useCallback((e: RPointerEvent<HTMLDivElement>) => {
+    if (!isDragging.current) return
+    const dx = e.clientX - dragStartPos.current.mx
+    const dy = e.clientY - dragStartPos.current.my
+    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) wasDragged.current = true
+
+    let newX = dragStartPos.current.x + dx
+    let newY = dragStartPos.current.y + dy
+
+    // Constrain within viewport
+    if (barRef.current) {
+      const rect = barRef.current.getBoundingClientRect()
+      const bw = rect.width
+      const bh = rect.height
+      // Bar is initially centered at top: calculate base position
+      const baseX = (window.innerWidth - bw) / 2
+      const baseY = 12 // top-3 = 12px
+      const minX = -baseX
+      const maxX = window.innerWidth - baseX - bw
+      const minY = -baseY
+      const maxY = window.innerHeight - baseY - bh - 8
+      newX = Math.max(minX, Math.min(maxX, newX))
+      newY = Math.max(minY, Math.min(maxY, newY))
+    }
+
+    dragX.set(newX)
+    dragY.set(newY)
+  }, [dragX, dragY])
+
+  const onPointerUp = useCallback((e: RPointerEvent<HTMLDivElement>) => {
+    isDragging.current = false
+    ;(e.target as HTMLElement).releasePointerCapture?.(e.pointerId)
+    // Only open modal on tap, not drag
+    if (!wasDragged.current) {
+      setModalOpen(true)
+    }
+  }, [])
+
   if (!visible || hidden) return null
 
   return createPortal(
     <>
-      {/* ── Floating bar ── */}
+      {/* ── Floating draggable bar ── */}
       <motion.div
+        ref={barRef}
         initial={{ opacity: 0, y: -20, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: -20, scale: 0.95 }}
         transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-        className="fixed top-3 left-1/2 -translate-x-1/2 z-[60] max-w-[90vw] sm:max-w-md cursor-pointer group"
-        onClick={() => setModalOpen(true)}
+        style={{ x: springX, y: springY }}
+        className="fixed top-3 left-1/2 -translate-x-1/2 z-[60] max-w-[90vw] sm:max-w-md select-none touch-none group"
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
       >
-        <div className="relative px-4 py-2.5 rounded-2xl">
-          {/* Glass background */}
+        <div className="relative px-4 py-2.5 rounded-2xl liquid-glass-bubble overflow-visible cursor-grab active:cursor-grabbing">
+          {/* Glass surface + iridescent border wave */}
           <div className="liquid-glass-surface !rounded-2xl" />
-          <div className="liquid-glass-refraction-top !left-[8%] !right-[8%]" style={{ borderRadius: '16px' }} />
-          <div className="liquid-glass-refraction-bottom !left-[12%] !right-[12%]" style={{ borderRadius: '16px' }} />
+          <div className="liquid-glass-refraction-top !left-[6%] !right-[6%]" style={{ borderRadius: '16px' }} />
+          <div className="liquid-glass-refraction-bottom !left-[10%] !right-[10%]" style={{ borderRadius: '16px' }} />
 
           {/* Content */}
           <div className="relative z-10 flex items-center gap-2.5 min-w-0">
-            <div className="shrink-0 w-2 h-2 rounded-full bg-primary shadow-sm shadow-primary/50" />
-            <span className="text-[13px] sm:text-sm font-semibold text-foreground truncate">
+            <div className="shrink-0 w-2.5 h-2.5 rounded-full bg-primary shadow-md shadow-primary/40 animate-pulse" />
+            <span className="text-[13px] sm:text-sm font-semibold text-foreground truncate drop-shadow-sm">
               {nome}
             </span>
-            <ChevronDown className="shrink-0 h-3 w-3 text-muted-foreground/60 group-hover:text-foreground transition-colors" />
+            <ChevronDown className="shrink-0 h-3.5 w-3.5 text-muted-foreground/60 group-hover:text-foreground transition-colors" />
           </div>
         </div>
       </motion.div>
@@ -860,7 +923,7 @@ function FloatingDiseaseName({ nome, heroRef }: { nome: string; heroRef: React.R
             onClick={() => setModalOpen(false)}
           >
             {/* Backdrop */}
-            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-md" />
 
             {/* Modal card */}
             <motion.div
@@ -868,31 +931,37 @@ function FloatingDiseaseName({ nome, heroRef }: { nome: string; heroRef: React.R
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -20, scale: 0.9 }}
               transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="relative w-full max-w-sm rounded-2xl overflow-hidden"
+              className="relative w-full max-w-sm rounded-2xl overflow-visible liquid-glass-bubble"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="liquid-glass-surface !rounded-2xl" />
-              <div className="liquid-glass-refraction-top !left-[8%] !right-[8%]" style={{ borderRadius: '16px' }} />
-              <div className="liquid-glass-refraction-bottom !left-[12%] !right-[12%]" style={{ borderRadius: '16px' }} />
+              <div className="liquid-glass-refraction-top !left-[6%] !right-[6%]" style={{ borderRadius: '16px' }} />
+              <div className="liquid-glass-refraction-bottom !left-[10%] !right-[10%]" style={{ borderRadius: '16px' }} />
 
-              <div className="relative z-10 p-5">
+              <div className="relative z-10 p-6">
                 {/* Close button */}
                 <button
                   onClick={() => setModalOpen(false)}
-                  className="absolute top-3 right-3 p-1.5 rounded-xl hover:bg-white/[0.1] text-muted-foreground hover:text-foreground transition-colors"
+                  className="absolute top-3 right-3 p-1.5 rounded-xl hover:bg-white/[0.12] text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <X className="h-4 w-4" />
                 </button>
 
-                {/* Disease name */}
-                <div className="pr-8">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                {/* Decorative pulse dot */}
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-2 h-2 rounded-full bg-primary shadow-md shadow-primary/50 animate-pulse" />
+                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">
                     Patologia
                   </span>
-                  <h3 className="text-lg font-bold text-foreground mt-1 leading-snug">
-                    {nome}
-                  </h3>
                 </div>
+
+                {/* Disease name */}
+                <h3 className="text-lg font-bold text-foreground leading-snug pr-6">
+                  {nome}
+                </h3>
+
+                {/* Divider */}
+                <div className="mt-4 mb-4 h-px bg-gradient-to-r from-transparent via-white/[0.1] to-transparent" />
 
                 {/* Hide button */}
                 <button
@@ -900,7 +969,7 @@ function FloatingDiseaseName({ nome, heroRef }: { nome: string; heroRef: React.R
                     setHidden(true)
                     setModalOpen(false)
                   }}
-                  className="mt-5 w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.08] text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-200"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.08] active:scale-[0.98] text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-200"
                 >
                   <EyeOff className="h-4 w-4" />
                   Ocultar barra flutuante
