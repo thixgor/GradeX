@@ -2049,7 +2049,7 @@ ${respostaAluno}`
                         </div>
 
                         {/* Ações de correção discursiva para provas pessoais */}
-                        {(exam as any)?.isPersonalExam && question.explanation && (
+                        {question.explanation && (
                           <div className="space-y-3 pt-2">
                             {/* Botão Copiar Prompt */}
                             <Button
@@ -2406,7 +2406,7 @@ ${respostaAluno}`
                 </div>
 
                 {/* Ações de correção discursiva para provas pessoais */}
-                {(exam as any)?.isPersonalExam && currentQuestion.explanation && (
+                {currentQuestion.explanation && (
                   <div className="space-y-3 pt-2">
                     {/* Botão Copiar Prompt */}
                     <Button

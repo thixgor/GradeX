@@ -78,6 +78,8 @@ export default function CreateExamPage() {
   const [bancoPage, setBancoPage] = useState(1)
   const [bancoTotal, setBancoTotal] = useState(0)
   const [bancoSelectedIds, setBancoSelectedIds] = useState<Set<string>>(new Set())
+  const [bancoAddedIds, setBancoAddedIds] = useState<Set<string>>(new Set()) // IDs já adicionados
+  const [bancoAddedMessage, setBancoAddedMessage] = useState('')
 
   // Carregar hierarquia do banco
   useEffect(() => {
@@ -186,10 +188,17 @@ export default function CreateExamPage() {
     // Renumerar
     questions.forEach((q, i) => { q.number = i + 1 })
     setQuestions([...questions])
-    setCurrentQuestionIndex(questions.length - 1)
+
+    // Marcar como adicionadas (para UI) e limpar seleção, mas NÃO fechar o modal
+    const addedCount = selectedQuestions.length
+    setBancoAddedIds(prev => {
+      const next = new Set(prev)
+      selectedQuestions.forEach(q => next.add(q._id?.toString()))
+      return next
+    })
     setBancoSelectedIds(new Set())
-    setShowBancoModal(false)
-    if (currentStep === 1) setCurrentStep(2)
+    setBancoAddedMessage(`${addedCount} questao(oes) adicionada(s) com sucesso!`)
+    setTimeout(() => setBancoAddedMessage(''), 3000)
   }
 
   function addMultipleChoiceQuestion(alternativeType: AlternativeType = 'standard') {
@@ -1854,6 +1863,20 @@ export default function CreateExamPage() {
                   </div>
                 )}
 
+                {/* Resposta Comentada (opcional - para todos os tipos de questão) */}
+                <div className="space-y-2 border-t pt-4">
+                  <Label>Resposta Comentada (opcional)</Label>
+                  <Textarea
+                    value={currentQuestion.explanation || ''}
+                    onChange={(e) => updateQuestion(currentQuestionIndex, { explanation: e.target.value })}
+                    placeholder="Explicação detalhada da resposta correta. Será exibida como feedback após o aluno responder."
+                    rows={4}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Esta explicação será mostrada ao aluno como feedback. Para questões discursivas, também é usada no prompt de correção.
+                  </p>
+                </div>
+
                 {examData.scoringMethod === 'tri' && currentQuestion.type === 'multiple-choice' && (
                   <div className="border-t pt-4 space-y-4">
                     <div className="flex items-center justify-between">
@@ -2124,10 +2147,12 @@ export default function CreateExamPage() {
                   {bancoResults.map((q: any) => {
                     const qId = q._id?.toString()
                     const isSelected = bancoSelectedIds.has(qId)
+                    const isAlreadyAdded = bancoAddedIds.has(qId)
                     return (
                       <div
                         key={qId}
                         onClick={() => {
+                          if (isAlreadyAdded) return
                           setBancoSelectedIds(prev => {
                             const next = new Set(prev)
                             if (next.has(qId)) next.delete(qId)
@@ -2135,19 +2160,25 @@ export default function CreateExamPage() {
                             return next
                           })
                         }}
-                        className={`p-3 rounded-lg border cursor-pointer transition-colors ${
-                          isSelected
-                            ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
-                            : 'border-muted hover:bg-muted/50'
+                        className={`p-3 rounded-lg border transition-colors ${
+                          isAlreadyAdded
+                            ? 'border-green-300 bg-green-50/50 dark:bg-green-950/30 opacity-60 cursor-default'
+                            : isSelected
+                            ? 'border-primary bg-primary/5 ring-2 ring-primary/20 cursor-pointer'
+                            : 'border-muted hover:bg-muted/50 cursor-pointer'
                         }`}
                       >
                         <div className="flex items-start gap-3">
+                          {isAlreadyAdded ? (
+                            <span className="mt-1 text-xs font-semibold text-green-600 dark:text-green-400">✓</span>
+                          ) : (
                           <input
                             type="checkbox"
                             checked={isSelected}
                             onChange={() => {}}
                             className="mt-1 h-4 w-4 rounded"
                           />
+                          )}
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
                               <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
@@ -2213,21 +2244,43 @@ export default function CreateExamPage() {
             </div>
 
             {/* Footer */}
-            <div className="border-t p-4 flex items-center justify-between flex-shrink-0">
-              <p className="text-sm text-muted-foreground">
-                {bancoSelectedIds.size} questao(oes) selecionada(s)
-              </p>
-              <div className="flex gap-2">
-                <Button variant="outline" onClick={() => setShowBancoModal(false)}>
-                  Cancelar
-                </Button>
-                <Button
-                  onClick={addQuestionsFromBanco}
-                  disabled={bancoSelectedIds.size === 0}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Adicionar {bancoSelectedIds.size > 0 ? `(${bancoSelectedIds.size})` : ''}
-                </Button>
+            <div className="border-t p-4 flex-shrink-0 space-y-2">
+              {bancoAddedMessage && (
+                <div className="flex items-center gap-2 p-2 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg">
+                  <span className="text-sm text-green-700 dark:text-green-300 font-medium">{bancoAddedMessage}</span>
+                </div>
+              )}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <p className="text-sm text-muted-foreground">
+                    {bancoSelectedIds.size} selecionada(s)
+                  </p>
+                  {bancoAddedIds.size > 0 && (
+                    <p className="text-xs text-green-600 dark:text-green-400">
+                      {bancoAddedIds.size} ja adicionada(s)
+                    </p>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setShowBancoModal(false)
+                      setBancoAddedIds(new Set())
+                      setBancoAddedMessage('')
+                      if (questions.length > 0 && currentStep === 1) setCurrentStep(2)
+                    }}
+                  >
+                    Fechar
+                  </Button>
+                  <Button
+                    onClick={addQuestionsFromBanco}
+                    disabled={bancoSelectedIds.size === 0}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Adicionar {bancoSelectedIds.size > 0 ? `(${bancoSelectedIds.size})` : ''}
+                  </Button>
+                </div>
               </div>
             </div>
           </Card>
