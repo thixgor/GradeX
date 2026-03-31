@@ -38,6 +38,7 @@ interface Group {
   icon?: string
   type: 'personal' | 'general'
   createdBy: string
+  parentGroupId?: string | null
 }
 
 // ─── Skeleton Loader ──────────────────────────────────────────
@@ -125,7 +126,7 @@ function ProvasContent() {
     setContextMenu({ x: e.clientX, y: e.clientY })
   }
 
-  async function handleCreateGroup(name: string, type: 'personal' | 'general') {
+  async function handleCreateGroup(name: string, type: 'personal' | 'general', parentGroupId?: string | null) {
     try {
       const res = await fetch('/api/groups', {
         method: 'POST',
@@ -136,6 +137,7 @@ function ProvasContent() {
           description: '',
           color: '#3B82F6',
           icon: '',
+          parentGroupId: parentGroupId || null,
         }),
       })
 
@@ -161,7 +163,16 @@ function ProvasContent() {
       })
 
       if (res.ok) {
-        setGroups(groups.filter(g => g._id !== groupId))
+        const deletedGroup = groups.find(g => g._id === groupId)
+        const parentGroupId = deletedGroup?.parentGroupId || null
+        // Remover o grupo e reparentar seus subgrupos
+        setGroups(groups
+          .filter(g => g._id !== groupId)
+          .map(g => g.parentGroupId === groupId
+            ? { ...g, parentGroupId: parentGroupId }
+            : g
+          )
+        )
         setExams(exams.map(e =>
           e.groupId === groupId
             ? { ...e, groupId: undefined }
@@ -515,9 +526,9 @@ function ProvasContent() {
         )}
 
         {/* ═══════════════════════════════════════════════════
-            GROUPED EXAMS
+            GROUPED EXAMS (grupos raiz - sem parentGroupId)
            ═══════════════════════════════════════════════════ */}
-        {groups.map((group) => {
+        {groups.filter(g => !g.parentGroupId).map((group) => {
           const groupExams = exams.filter(e => e.groupId === group._id)
 
           return (
@@ -525,6 +536,8 @@ function ProvasContent() {
               key={group._id}
               group={group}
               exams={groupExams}
+              allGroups={groups}
+              allExams={exams}
               currentUserId={user?.id || ''}
               userRole={user?.role || 'user'}
               onExamClick={(exam) => {
@@ -537,6 +550,13 @@ function ProvasContent() {
               }}
               onExamContextMenu={handleExamContextMenu}
               onDeleteGroup={handleDeleteGroup}
+              onCreateSubgroup={(parentGroupId) => {
+                const name = prompt('Nome do subgrupo:')
+                if (name) {
+                  const parentGroup = groups.find(g => g._id === parentGroupId)
+                  handleCreateGroup(name, parentGroup?.type || 'personal', parentGroupId)
+                }
+              }}
             />
           )
         })}

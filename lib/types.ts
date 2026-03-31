@@ -154,6 +154,7 @@ export interface ExamGroup {
   createdBy: string // ID do usuário que criou (para grupos pessoais) ou admin (para gerais)
   createdByName: string // Nome de quem criou
   isPublic: boolean // Se false, só o criador vê (para grupos pessoais); se true, todos veem (grupos gerais)
+  parentGroupId?: string | null // ID do grupo pai para subgrupos (null = grupo raiz)
   order?: number // Ordem de exibição
   createdAt: Date
   updatedAt: Date
@@ -180,6 +181,7 @@ export interface UserAnswer {
   crossedAlternatives?: string[]
   // Para questões discursivas
   discursiveText?: string
+  discursiveSelfScore?: number // Auto-avaliação 0-100% em intervalos de 10%
   // Para redações (essay)
   essayText?: string
   // Highlights de texto no enunciado/comando

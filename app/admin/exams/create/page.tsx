@@ -14,7 +14,7 @@ import { AIQuestionGenerator } from '@/components/ai-question-generator'
 import { Question, Alternative, ScoringMethod, QuestionType, KeyPoint, EssayStyle, CorrectionMethod, AlternativeType } from '@/lib/types'
 import { generateRandomTRIParameters } from '@/lib/tri-calculator'
 import { v4 as uuidv4 } from 'uuid'
-import { ArrowLeft, Plus, Trash2, Shuffle, Save, ArrowUp, ArrowDown } from 'lucide-react'
+import { ArrowLeft, Plus, Trash2, Shuffle, Save, ArrowUp, ArrowDown, Search, Database, Loader2 } from 'lucide-react'
 
 export default function CreateExamPage() {
   const router = useRouter()
@@ -36,7 +36,7 @@ export default function CreateExamPage() {
     durationMinutes: 120, // Duração em minutos
     isHidden: false,
     // Configurações padrão para cada tipo de questão
-    discursiveCorrectionMethod: 'ai' as 'manual' | 'ai',
+    discursiveCorrectionMethod: 'prompt' as 'manual' | 'ai' | 'prompt',
     discursiveAiRigor: 0.45,
     essayStyle: 'enem' as EssayStyle,
     essayCorrectionMethod: 'ai' as CorrectionMethod,
@@ -61,6 +61,136 @@ export default function CreateExamPage() {
   const [questions, setQuestions] = useState<Question[]>([])
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [keyPointsInput, setKeyPointsInput] = useState('')
+
+  // Estados do Banco de Questões
+  const [showBancoModal, setShowBancoModal] = useState(false)
+  const [bancoSearch, setBancoSearch] = useState('')
+  const [bancoPeriodos, setBancoPeriodos] = useState<any[]>([])
+  const [bancoModulos, setBancoModulos] = useState<any[]>([])
+  const [bancoTopicos, setBancoTopicos] = useState<any[]>([])
+  const [bancoFilterPeriodo, setBancoFilterPeriodo] = useState('')
+  const [bancoFilterModulo, setBancoFilterModulo] = useState('')
+  const [bancoFilterTopico, setBancoFilterTopico] = useState('')
+  const [bancoFilterTipo, setBancoFilterTipo] = useState<'' | 'objetiva' | 'discursiva'>('')
+  const [bancoFilterDificuldade, setBancoFilterDificuldade] = useState<'' | 'facil' | 'medio' | 'dificil'>('')
+  const [bancoResults, setBancoResults] = useState<any[]>([])
+  const [bancoLoading, setBancoLoading] = useState(false)
+  const [bancoPage, setBancoPage] = useState(1)
+  const [bancoTotal, setBancoTotal] = useState(0)
+  const [bancoSelectedIds, setBancoSelectedIds] = useState<Set<string>>(new Set())
+
+  // Carregar hierarquia do banco
+  useEffect(() => {
+    if (showBancoModal && bancoPeriodos.length === 0) {
+      fetch('/api/banco/periodos')
+        .then(r => r.json())
+        .then(d => setBancoPeriodos(d.periodos || d || []))
+        .catch(() => {})
+    }
+  }, [showBancoModal])
+
+  useEffect(() => {
+    if (bancoFilterPeriodo) {
+      fetch(`/api/banco/modulos?periodoId=${bancoFilterPeriodo}`)
+        .then(r => r.json())
+        .then(d => setBancoModulos(d.modulos || d || []))
+        .catch(() => {})
+    } else {
+      setBancoModulos([])
+      setBancoFilterModulo('')
+    }
+  }, [bancoFilterPeriodo])
+
+  useEffect(() => {
+    if (bancoFilterModulo) {
+      fetch(`/api/banco/topicos?moduloId=${bancoFilterModulo}`)
+        .then(r => r.json())
+        .then(d => setBancoTopicos(d.topicos || d || []))
+        .catch(() => {})
+    } else {
+      setBancoTopicos([])
+      setBancoFilterTopico('')
+    }
+  }, [bancoFilterModulo])
+
+  async function searchBancoQuestoes(page = 1) {
+    setBancoLoading(true)
+    setBancoPage(page)
+    try {
+      const params = new URLSearchParams()
+      if (bancoSearch) params.set('busca', bancoSearch)
+      if (bancoFilterPeriodo) params.set('periodoId', bancoFilterPeriodo)
+      if (bancoFilterModulo) params.set('moduloId', bancoFilterModulo)
+      if (bancoFilterTopico) params.set('topicoId', bancoFilterTopico)
+      if (bancoFilterTipo) params.set('tipo', bancoFilterTipo)
+      if (bancoFilterDificuldade) params.set('dificuldade', bancoFilterDificuldade)
+      params.set('page', page.toString())
+      params.set('limit', '10')
+
+      const res = await fetch(`/api/banco/questoes?${params.toString()}`)
+      const data = await res.json()
+      setBancoResults(data.questoes || [])
+      setBancoTotal(data.paginacao?.total || 0)
+    } catch (err) {
+      console.error('Erro ao buscar questoes:', err)
+    } finally {
+      setBancoLoading(false)
+    }
+  }
+
+  function addQuestionsFromBanco() {
+    const selectedQuestions = bancoResults.filter(q => bancoSelectedIds.has(q._id?.toString()))
+    const letters = ['A', 'B', 'C', 'D', 'E']
+
+    for (const bq of selectedQuestions) {
+      if (bq.tipo === 'objetiva') {
+        const alternatives: Alternative[] = (bq.alternativas || []).map((alt: any, idx: number) => ({
+          id: uuidv4(),
+          letter: alt.letra || letters[idx] || String.fromCharCode(65 + idx),
+          text: alt.texto || '',
+          isCorrect: alt.correta || false,
+        }))
+
+        const newQuestion: Question = {
+          id: uuidv4(),
+          number: questions.length + 1,
+          type: 'multiple-choice',
+          statement: bq.enunciado || '',
+          statementSource: bq.fonte || '',
+          imageUrl: bq.imagemUrl || '',
+          imageSource: '',
+          command: 'Assinale a alternativa correta:',
+          alternatives,
+          explanation: bq.explicacao || '',
+        }
+        questions.push(newQuestion)
+      } else if (bq.tipo === 'discursiva') {
+        const newQuestion: Question = {
+          id: uuidv4(),
+          number: questions.length + 1,
+          type: 'discursive',
+          statement: bq.enunciado || '',
+          statementSource: bq.fonte || '',
+          imageUrl: bq.imagemUrl || '',
+          imageSource: '',
+          command: '',
+          alternatives: [],
+          keyPoints: [],
+          maxScore: 10,
+          explanation: bq.respostaModelo || bq.explicacao || '',
+        }
+        questions.push(newQuestion)
+      }
+    }
+
+    // Renumerar
+    questions.forEach((q, i) => { q.number = i + 1 })
+    setQuestions([...questions])
+    setCurrentQuestionIndex(questions.length - 1)
+    setBancoSelectedIds(new Set())
+    setShowBancoModal(false)
+    if (currentStep === 1) setCurrentStep(2)
+  }
 
   function addMultipleChoiceQuestion(alternativeType: AlternativeType = 'standard') {
     const letters = ['A', 'B', 'C', 'D', 'E']
@@ -557,9 +687,10 @@ export default function CreateExamPage() {
                       value={examData.discursiveCorrectionMethod}
                       onChange={(e) => setExamData({
                         ...examData,
-                        discursiveCorrectionMethod: e.target.value as 'manual' | 'ai'
+                        discursiveCorrectionMethod: e.target.value as 'manual' | 'ai' | 'prompt'
                       })}
                     >
+                      <option value="prompt">📋 Correção por Prompt (copiar e colar)</option>
                       <option value="ai">🤖 Correção por IA</option>
                       <option value="manual">👤 Correção Manual</option>
                     </select>
@@ -1304,6 +1435,28 @@ export default function CreateExamPage() {
                 />
               </div>
 
+              {/* Buscar no Banco de Questões */}
+              <div className="border-t pt-4 space-y-3">
+                <h3 className="font-semibold flex items-center gap-2">
+                  <Database className="h-4 w-4" />
+                  Buscar no Banco de Questoes
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Adicione questoes ja existentes do banco de questoes da plataforma.
+                </p>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowBancoModal(true)
+                    searchBancoQuestoes(1)
+                  }}
+                  className="w-full h-auto py-3"
+                >
+                  <Search className="h-4 w-4 mr-2" />
+                  Abrir Banco de Questoes
+                </Button>
+              </div>
+
               {/* Botão de Salvar na Página Inicial */}
               {questions.length > 0 && (
                 <div className="border-t pt-6 flex justify-end">
@@ -1859,6 +2012,227 @@ export default function CreateExamPage() {
           </div>
         )}
       </main>
+
+      {/* Modal de Banco de Questões */}
+      {showBancoModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+          <Card className="max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+            <CardHeader className="border-b flex-shrink-0">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-xl flex items-center gap-2">
+                    <Database className="h-5 w-5" />
+                    Banco de Questoes
+                  </CardTitle>
+                  <CardDescription>Busque e selecione questoes para adicionar a prova</CardDescription>
+                </div>
+                <Button variant="ghost" size="sm" onClick={() => setShowBancoModal(false)}>
+                  ✕
+                </Button>
+              </div>
+            </CardHeader>
+
+            <div className="p-4 border-b flex-shrink-0 space-y-3">
+              {/* Barra de busca */}
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Buscar por enunciado..."
+                  value={bancoSearch}
+                  onChange={(e) => setBancoSearch(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && searchBancoQuestoes(1)}
+                  className="flex-1"
+                />
+                <Button onClick={() => searchBancoQuestoes(1)} disabled={bancoLoading}>
+                  {bancoLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+                </Button>
+              </div>
+
+              {/* Filtros */}
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+                <select
+                  className="flex h-9 w-full rounded-md border border-input bg-background px-2 py-1 text-xs"
+                  value={bancoFilterPeriodo}
+                  onChange={(e) => setBancoFilterPeriodo(e.target.value)}
+                >
+                  <option value="">Todos Periodos</option>
+                  {bancoPeriodos.map((p: any) => (
+                    <option key={p._id} value={p._id}>{p.nome}</option>
+                  ))}
+                </select>
+                <select
+                  className="flex h-9 w-full rounded-md border border-input bg-background px-2 py-1 text-xs"
+                  value={bancoFilterModulo}
+                  onChange={(e) => setBancoFilterModulo(e.target.value)}
+                  disabled={!bancoFilterPeriodo}
+                >
+                  <option value="">Todos Modulos</option>
+                  {bancoModulos.map((m: any) => (
+                    <option key={m._id} value={m._id}>{m.nome}</option>
+                  ))}
+                </select>
+                <select
+                  className="flex h-9 w-full rounded-md border border-input bg-background px-2 py-1 text-xs"
+                  value={bancoFilterTopico}
+                  onChange={(e) => setBancoFilterTopico(e.target.value)}
+                  disabled={!bancoFilterModulo}
+                >
+                  <option value="">Todos Topicos</option>
+                  {bancoTopicos.map((t: any) => (
+                    <option key={t._id} value={t._id}>{t.nome}</option>
+                  ))}
+                </select>
+                <select
+                  className="flex h-9 w-full rounded-md border border-input bg-background px-2 py-1 text-xs"
+                  value={bancoFilterTipo}
+                  onChange={(e) => setBancoFilterTipo(e.target.value as any)}
+                >
+                  <option value="">Todos Tipos</option>
+                  <option value="objetiva">Objetiva</option>
+                  <option value="discursiva">Discursiva</option>
+                </select>
+                <select
+                  className="flex h-9 w-full rounded-md border border-input bg-background px-2 py-1 text-xs"
+                  value={bancoFilterDificuldade}
+                  onChange={(e) => setBancoFilterDificuldade(e.target.value as any)}
+                >
+                  <option value="">Todas Dificuldades</option>
+                  <option value="facil">Facil</option>
+                  <option value="medio">Medio</option>
+                  <option value="dificil">Dificil</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Resultados */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-2">
+              {bancoLoading ? (
+                <div className="text-center py-8">
+                  <Loader2 className="h-8 w-8 animate-spin mx-auto text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground mt-2">Buscando questoes...</p>
+                </div>
+              ) : bancoResults.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-sm text-muted-foreground">
+                    {bancoTotal === 0 ? 'Nenhuma questao encontrada. Ajuste os filtros ou busca.' : 'Use os filtros e clique em buscar.'}
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <p className="text-xs text-muted-foreground mb-2">
+                    {bancoTotal} questoes encontradas - Pagina {bancoPage} de {Math.ceil(bancoTotal / 10)}
+                  </p>
+                  {bancoResults.map((q: any) => {
+                    const qId = q._id?.toString()
+                    const isSelected = bancoSelectedIds.has(qId)
+                    return (
+                      <div
+                        key={qId}
+                        onClick={() => {
+                          setBancoSelectedIds(prev => {
+                            const next = new Set(prev)
+                            if (next.has(qId)) next.delete(qId)
+                            else next.add(qId)
+                            return next
+                          })
+                        }}
+                        className={`p-3 rounded-lg border cursor-pointer transition-colors ${
+                          isSelected
+                            ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
+                            : 'border-muted hover:bg-muted/50'
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => {}}
+                            className="mt-1 h-4 w-4 rounded"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
+                                q.tipo === 'objetiva'
+                                  ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200'
+                                  : 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-200'
+                              }`}>
+                                {q.tipo === 'objetiva' ? 'Objetiva' : 'Discursiva'}
+                              </span>
+                              {q.dificuldade && (
+                                <span className={`text-xs px-2 py-0.5 rounded-full ${
+                                  q.dificuldade === 'facil' ? 'bg-green-100 text-green-700' :
+                                  q.dificuldade === 'medio' ? 'bg-yellow-100 text-yellow-700' :
+                                  'bg-red-100 text-red-700'
+                                }`}>
+                                  {q.dificuldade}
+                                </span>
+                              )}
+                              {q.periodoNome && (
+                                <span className="text-xs text-muted-foreground">{q.periodoNome}</span>
+                              )}
+                            </div>
+                            <p className="text-sm line-clamp-3">{q.enunciado}</p>
+                            {q.tipo === 'objetiva' && q.alternativas && (
+                              <div className="mt-2 space-y-0.5">
+                                {q.alternativas.slice(0, 5).map((alt: any, idx: number) => (
+                                  <p key={idx} className={`text-xs ${alt.correta ? 'text-green-600 font-semibold' : 'text-muted-foreground'}`}>
+                                    {alt.letra}) {alt.texto?.substring(0, 80)}{alt.texto?.length > 80 ? '...' : ''}
+                                  </p>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+
+                  {/* Paginação */}
+                  <div className="flex items-center justify-between pt-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => searchBancoQuestoes(bancoPage - 1)}
+                      disabled={bancoPage <= 1 || bancoLoading}
+                    >
+                      Anterior
+                    </Button>
+                    <span className="text-xs text-muted-foreground">
+                      Pagina {bancoPage} de {Math.ceil(bancoTotal / 10)}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => searchBancoQuestoes(bancoPage + 1)}
+                      disabled={bancoPage >= Math.ceil(bancoTotal / 10) || bancoLoading}
+                    >
+                      Proxima
+                    </Button>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="border-t p-4 flex items-center justify-between flex-shrink-0">
+              <p className="text-sm text-muted-foreground">
+                {bancoSelectedIds.size} questao(oes) selecionada(s)
+              </p>
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={() => setShowBancoModal(false)}>
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={addQuestionsFromBanco}
+                  disabled={bancoSelectedIds.size === 0}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Adicionar {bancoSelectedIds.size > 0 ? `(${bancoSelectedIds.size})` : ''}
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
     </div>
   )
 }

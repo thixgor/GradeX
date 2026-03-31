@@ -16,7 +16,7 @@ interface ExamContextMenuProps {
   userRole: 'admin' | 'user'
   groups: any[]
   onMoveToGroup: (groupId: string | null) => Promise<void>
-  onCreateGroup?: (name: string, type: 'personal' | 'general') => Promise<void>
+  onCreateGroup?: (name: string, type: 'personal' | 'general', parentGroupId?: string | null) => Promise<void>
   position: { x: number; y: number } | null
   onClose: () => void
 }
@@ -39,6 +39,7 @@ export function ExamContextMenu({
   const [showCreateGroupModal, setShowCreateGroupModal] = useState(false)
   const [newGroupName, setNewGroupName] = useState('')
   const [newGroupType, setNewGroupType] = useState<'personal' | 'general'>('personal')
+  const [newGroupParentId, setNewGroupParentId] = useState<string | null>(null)
   const [isCreatingGroup, setIsCreatingGroup] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const modalRef = useRef<HTMLDivElement>(null)
@@ -116,8 +117,9 @@ export function ExamContextMenu({
     setIsCreatingGroup(true)
     try {
       if (onCreateGroup) {
-        await onCreateGroup(newGroupName, newGroupType)
+        await onCreateGroup(newGroupName, newGroupType, newGroupParentId)
         setNewGroupName('')
+        setNewGroupParentId(null)
         setShowCreateGroupModal(false)
         onClose()
       }
@@ -263,11 +265,32 @@ export function ExamContextMenu({
                   disabled={isCreatingGroup || userRole !== 'admin'}
                   className="w-full px-3 py-2 border border-muted rounded-md bg-background text-sm"
                 >
-                  <option value="personal">Pessoal (apenas para você)</option>
+                  <option value="personal">Pessoal (apenas para voce)</option>
                   {userRole === 'admin' && (
                     <option value="general">Geral (para todos)</option>
                   )}
                 </select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="group-parent">Grupo Pai (opcional)</Label>
+                <select
+                  id="group-parent"
+                  value={newGroupParentId || ''}
+                  onChange={(e) => setNewGroupParentId(e.target.value || null)}
+                  disabled={isCreatingGroup}
+                  className="w-full px-3 py-2 border border-muted rounded-md bg-background text-sm"
+                >
+                  <option value="">Nenhum (grupo raiz)</option>
+                  {availableGroups.map((g) => (
+                    <option key={g._id} value={g._id}>
+                      {g.icon || '📁'} {g.name} {g.type === 'general' ? '(Geral)' : ''}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-xs text-muted-foreground">
+                  Crie dentro de um grupo existente para organizar como pastas
+                </p>
               </div>
 
               <div className="flex gap-2 pt-4">

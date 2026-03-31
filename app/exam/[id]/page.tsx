@@ -24,11 +24,12 @@ import { downloadUserReportPDF } from '@/lib/user-report-generator'
 import { ProctoringConsent } from '@/components/proctoring-consent'
 import { ProctoringMonitor } from '@/components/proctoring-monitor'
 import { QuestionNotesCanvas } from '@/components/question-notes-canvas'
+import { ReportQuestionModal } from '@/components/report-question-modal'
 import { useProctoring } from '@/hooks/use-proctoring'
 import { useWebSocket } from '@/hooks/use-websocket'
 import { useVisibilityDetection } from '@/hooks/use-visibility-detection'
 import { useWebRTC } from '@/hooks/use-webrtc'
-import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCircle, List, StickyNote } from 'lucide-react'
+import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCircle, List, StickyNote, Copy, ClipboardCheck, Flag } from 'lucide-react'
 
 export default function ExamPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -95,6 +96,11 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const [showCheckButton, setShowCheckButton] = useState(false) // Mostrar botão "Check & Continue"
   const [showFinalFeedback, setShowFinalFeedback] = useState(false) // Mostrar feedback final
   const [currentFeedbackIndex, setCurrentFeedbackIndex] = useState(0) // Índice do feedback atual
+  const [copiedPromptId, setCopiedPromptId] = useState<string | null>(null) // ID da questão cujo prompt foi copiado
+  const [reportQuestionId, setReportQuestionId] = useState<string | null>(null) // ID da questão sendo relatada
+  const [showSelfScoreModal, setShowSelfScoreModal] = useState(false) // Modal de auto-avaliação discursiva
+  const [selfScoreQuestionId, setSelfScoreQuestionId] = useState<string | null>(null) // Questão sendo auto-avaliada
+  const [pendingSelfScore, setPendingSelfScore] = useState<number | null>(null) // Nota pendente de confirmação
 
   // Verificar se a prova tem proctoring habilitado
   // Provas pessoais não suportam proctoring
@@ -754,6 +760,65 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     )
   }
 
+  function handleCopyDiscursivePrompt(question: any, answer: any) {
+    const enunciado = question.statement || ''
+    const comando = question.command || ''
+    const respostaComentada = question.explanation || ''
+    const respostaAluno = answer?.discursiveText || ''
+
+    const prompt = `Você é um corretor de questões de Medicina. Você é humano, experiente e pedagogicamente sensato — não é um corretor mecânico nem perfeccionista. Sua filosofia de correção parte do princípio de que o objetivo é avaliar se o aluno compreende o conteúdo, não se ele decorou palavras-chave ou seguiu exatamente a estrutura do gabarito.
+
+Ao corrigir, você considera três pilares: (1) a resposta comentada oficial, que serve como referência de conteúdo, não como template obrigatório; (2) os requisitos mínimos implícitos no enunciado, ou seja, o que a questão realmente está pedindo; e (3) a profundidade e coerência do raciocínio demonstrado pelo aluno, pois um aluno que domina mecanismos complexos — como cascatas imunológicas, fisiopatologia celular ou farmacologia de receptores — claramente domina também os conceitos mais simples que orbitam esse tema, mesmo que não os tenha escrito explicitamente.
+
+Você aceita e valoriza amplitude e generalidade nas respostas. Se o aluno abordou aspectos que o enunciado não explicitou, mas que são clinicamente ou conceitualmente pertinentes, isso conta a favor, não contra. Você nunca penaliza o aluno por demonstrar conhecimento além do esperado, nem por usar terminologia diferente da do gabarito quando o conteúdo está correto.
+
+Você também leva em conta o esforço e a construção da resposta. O aluno dedicou tempo para elaborar um raciocínio e para escrever tentando abordar o que ele acha que a questão quer — sua correção respeita isso.
+
+A seguir, serão apresentados: o enunciado da questão, a resposta comentada oficial e a resposta do aluno.
+Ao final, você deve atribuir uma nota de 0% a 100% em intervalos de 10%, justificando brevemente sua avaliação com foco no que o aluno acertou, no que ficou incompleto e, se for o caso, no que estava equivocado. Seja direto, humano e justo.
+
+---
+
+ENUNCIADO DA QUESTÃO:
+${enunciado}${comando ? `\n\nCOMANDO:\n${comando}` : ''}
+
+---
+
+RESPOSTA COMENTADA (GABARITO):
+${respostaComentada}
+
+---
+
+RESPOSTA DO ALUNO:
+${respostaAluno}`
+
+    navigator.clipboard.writeText(prompt).then(() => {
+      setCopiedPromptId(question.id)
+      setTimeout(() => setCopiedPromptId(null), 2500)
+    })
+  }
+
+  function handleOpenSelfScore(questionId: string) {
+    setSelfScoreQuestionId(questionId)
+    setPendingSelfScore(null)
+    setShowSelfScoreModal(true)
+  }
+
+  function handleConfirmSelfScore() {
+    if (selfScoreQuestionId === null || pendingSelfScore === null) return
+    setAnswers(prev =>
+      prev.map(a =>
+        a.questionId === selfScoreQuestionId
+          ? { ...a, discursiveSelfScore: pendingSelfScore }
+          : a
+      )
+    )
+    setLockedQuestions(prev => new Set(prev).add(selfScoreQuestionId))
+    setShowSelfScoreModal(false)
+    setSelfScoreQuestionId(null)
+    setPendingSelfScore(null)
+  }
+
   function handleEssayText(questionId: string, text: string) {
     setAnswers(prev =>
       prev.map(a =>
@@ -1055,6 +1120,73 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       </div>
 
       {/* Modal de Feedback Final para Todas as Questões */}
+      {/* Modal de Relatar Questão */}
+      {reportQuestionId && (
+        <ReportQuestionModal
+          questionId={reportQuestionId}
+          examId={id}
+          isOpen={!!reportQuestionId}
+          onClose={() => setReportQuestionId(null)}
+        />
+      )}
+
+      {/* Modal de Auto-Avaliação Discursiva */}
+      {showSelfScoreModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[110] flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <Card className="max-w-md w-full shadow-2xl">
+            <CardHeader>
+              <CardTitle className="text-xl text-center">Atribuir Nota</CardTitle>
+              <CardDescription className="text-center">
+                Após corrigir sua questão discursiva com o prompt, selecione a nota que você alcançou.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-3 gap-2">
+                {[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map(score => (
+                  <Button
+                    key={score}
+                    variant={pendingSelfScore === score ? 'default' : 'outline'}
+                    className={`text-lg font-bold h-14 ${
+                      pendingSelfScore === score
+                        ? score >= 70
+                          ? 'bg-green-600 hover:bg-green-700'
+                          : score >= 40
+                          ? 'bg-yellow-600 hover:bg-yellow-700'
+                          : 'bg-red-600 hover:bg-red-700'
+                        : ''
+                    }`}
+                    onClick={() => setPendingSelfScore(score)}
+                  >
+                    {score}%
+                  </Button>
+                ))}
+              </div>
+
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => {
+                    setShowSelfScoreModal(false)
+                    setSelfScoreQuestionId(null)
+                    setPendingSelfScore(null)
+                  }}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  className="flex-1"
+                  disabled={pendingSelfScore === null}
+                  onClick={handleConfirmSelfScore}
+                >
+                  Confirmar Nota
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       {showFinalFeedback && exam && exam.questions && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">
           <Card className="max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
@@ -1088,6 +1220,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                   ? question.alternatives.find(a => a.isCorrect)
                   : null
                 const isCorrect = selectedAlt?.isCorrect || false
+                const selfScore = answer?.discursiveSelfScore
 
                 return (
                   <>
@@ -1101,23 +1234,47 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                           {question.type === 'essay' && 'Redação'}
                         </p>
                       </div>
-                      <div className={`flex items-center gap-2 px-3 py-1 rounded-full ${
-                        isCorrect 
-                          ? 'bg-green-100 dark:bg-green-900' 
-                          : 'bg-red-100 dark:bg-red-900'
-                      }`}>
-                        {isCorrect ? (
-                          <>
-                            <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
-                            <span className="text-sm font-semibold text-green-700 dark:text-green-300">Correta</span>
-                          </>
-                        ) : (
-                          <>
-                            <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
-                            <span className="text-sm font-semibold text-red-700 dark:text-red-300">Incorreta</span>
-                          </>
-                        )}
-                      </div>
+                      {question.type === 'discursive' ? (
+                        <div className={`flex items-center gap-2 px-3 py-1 rounded-full ${
+                          selfScore !== undefined
+                            ? selfScore >= 70
+                              ? 'bg-green-100 dark:bg-green-900'
+                              : selfScore >= 40
+                              ? 'bg-yellow-100 dark:bg-yellow-900'
+                              : 'bg-red-100 dark:bg-red-900'
+                            : 'bg-gray-100 dark:bg-gray-800'
+                        }`}>
+                          <span className={`text-sm font-semibold ${
+                            selfScore !== undefined
+                              ? selfScore >= 70
+                                ? 'text-green-700 dark:text-green-300'
+                                : selfScore >= 40
+                                ? 'text-yellow-700 dark:text-yellow-300'
+                                : 'text-red-700 dark:text-red-300'
+                              : 'text-gray-600 dark:text-gray-400'
+                          }`}>
+                            {selfScore !== undefined ? `${selfScore}%` : 'Sem nota'}
+                          </span>
+                        </div>
+                      ) : (
+                        <div className={`flex items-center gap-2 px-3 py-1 rounded-full ${
+                          isCorrect
+                            ? 'bg-green-100 dark:bg-green-900'
+                            : 'bg-red-100 dark:bg-red-900'
+                        }`}>
+                          {isCorrect ? (
+                            <>
+                              <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
+                              <span className="text-sm font-semibold text-green-700 dark:text-green-300">Correta</span>
+                            </>
+                          ) : (
+                            <>
+                              <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
+                              <span className="text-sm font-semibold text-red-700 dark:text-red-300">Incorreta</span>
+                            </>
+                          )}
+                        </div>
+                      )}
                     </div>
 
                     {/* Enunciado */}
@@ -1194,10 +1351,33 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                       </div>
                     )}
 
+                    {/* Resposta Discursiva do Aluno */}
+                    {question.type === 'discursive' && (
+                      <div className="space-y-4">
+                        <div className="bg-amber-50 dark:bg-amber-950 rounded-lg p-4 border border-amber-200 dark:border-amber-800">
+                          <h4 className="font-semibold text-sm text-amber-900 dark:text-amber-100 mb-2">Sua Resposta:</h4>
+                          <p className="text-sm whitespace-pre-wrap">
+                            {answer?.discursiveText || 'Não respondida'}
+                          </p>
+                        </div>
+                        {selfScore !== undefined && (
+                          <div className={`rounded-lg p-4 border text-center ${
+                            selfScore >= 70
+                              ? 'bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800'
+                              : selfScore >= 40
+                              ? 'bg-yellow-50 dark:bg-yellow-950 border-yellow-200 dark:border-yellow-800'
+                              : 'bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800'
+                          }`}>
+                            <p className="text-lg font-bold">Nota auto-atribuída: {selfScore}%</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                     {/* Explicação Geral */}
                     {question.explanation && (
                       <div className="bg-muted rounded-lg p-4 space-y-2">
-                        <h4 className="font-semibold text-sm">Explicação Geral:</h4>
+                        <h4 className="font-semibold text-sm">{question.type === 'discursive' ? 'Resposta Comentada:' : 'Explicação Geral:'}</h4>
                         <p className="text-sm text-muted-foreground whitespace-pre-wrap">
                           {question.explanation}
                         </p>
@@ -1711,7 +1891,21 @@ export default function ExamPage({ params }: { params: { id: string } }) {
               return (
                 <Card key={question.id} id={`question-${question.id}`}>
                   <CardHeader>
-                    <CardTitle>Questão {question.number}</CardTitle>
+                    <div className="flex items-center justify-between">
+                      <CardTitle>Questão {question.number}</CardTitle>
+                      {!exam?.isPersonalExam && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-muted-foreground hover:text-orange-500"
+                          onClick={() => setReportQuestionId(question.id)}
+                          title="Relatar erro na questão"
+                        >
+                          <Flag className="h-4 w-4 mr-1" />
+                          <span className="text-xs">Relatar</span>
+                        </Button>
+                      )}
+                    </div>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     {/* Enunciado */}
@@ -1847,11 +2041,55 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                           placeholder="Digite sua resposta aqui..."
                           rows={12}
                           className="font-serif text-base"
+                          disabled={lockedQuestions.has(question.id)}
                         />
                         <div className="flex items-center justify-between text-sm text-muted-foreground">
                           <span>Caracteres: {(answer?.discursiveText || '').length}</span>
                           <span>Palavras: {(answer?.discursiveText || '').split(/\s+/).filter(w => w.length > 0).length}</span>
                         </div>
+
+                        {/* Ações de correção discursiva para provas pessoais */}
+                        {(exam as any)?.isPersonalExam && question.explanation && (
+                          <div className="space-y-3 pt-2">
+                            {/* Botão Copiar Prompt */}
+                            <Button
+                              variant="outline"
+                              className="w-full"
+                              onClick={() => handleCopyDiscursivePrompt(question, answer)}
+                              disabled={!answer?.discursiveText?.trim()}
+                            >
+                              {copiedPromptId === question.id ? (
+                                <>
+                                  <ClipboardCheck className="h-4 w-4 mr-2 text-green-600" />
+                                  Prompt Copiado!
+                                </>
+                              ) : (
+                                <>
+                                  <Copy className="h-4 w-4 mr-2" />
+                                  Copiar Prompt de Correção
+                                </>
+                              )}
+                            </Button>
+
+                            {/* Botão Atribuir Nota ou Nota já atribuída */}
+                            {answer?.discursiveSelfScore !== undefined ? (
+                              <div className="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg p-4 text-center">
+                                <p className="text-sm font-semibold text-green-700 dark:text-green-300">
+                                  Nota auto-atribuída: {answer.discursiveSelfScore}%
+                                </p>
+                              </div>
+                            ) : (
+                              <Button
+                                variant="default"
+                                className="w-full bg-purple-600 hover:bg-purple-700"
+                                onClick={() => handleOpenSelfScore(question.id)}
+                                disabled={!answer?.discursiveText?.trim()}
+                              >
+                                Atribuir Minha Nota (0-100%)
+                              </Button>
+                            )}
+                          </div>
+                        )}
                       </div>
                     )}
 
@@ -1984,7 +2222,21 @@ export default function ExamPage({ params }: { params: { id: string } }) {
           /* Modo Paginado - Uma questão por vez */
           <Card>
           <CardHeader>
-            <CardTitle>Questão {currentQuestion.number}</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle>Questão {currentQuestion.number}</CardTitle>
+              {!exam?.isPersonalExam && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-muted-foreground hover:text-orange-500"
+                  onClick={() => setReportQuestionId(currentQuestion.id)}
+                  title="Relatar erro na questão"
+                >
+                  <Flag className="h-4 w-4 mr-1" />
+                  <span className="text-xs">Relatar</span>
+                </Button>
+              )}
+            </div>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Barcode do Usuário */}
@@ -2146,11 +2398,55 @@ export default function ExamPage({ params }: { params: { id: string } }) {
                   placeholder="Digite sua resposta aqui..."
                   rows={12}
                   className="font-serif text-base"
+                  disabled={lockedQuestions.has(currentQuestion.id)}
                 />
                 <div className="flex items-center justify-between text-sm text-muted-foreground">
                   <span>Caracteres: {(currentAnswer?.discursiveText || '').length}</span>
                   <span>Palavras: {(currentAnswer?.discursiveText || '').split(/\s+/).filter(w => w.length > 0).length}</span>
                 </div>
+
+                {/* Ações de correção discursiva para provas pessoais */}
+                {(exam as any)?.isPersonalExam && currentQuestion.explanation && (
+                  <div className="space-y-3 pt-2">
+                    {/* Botão Copiar Prompt */}
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => handleCopyDiscursivePrompt(currentQuestion, currentAnswer)}
+                      disabled={!currentAnswer?.discursiveText?.trim()}
+                    >
+                      {copiedPromptId === currentQuestion.id ? (
+                        <>
+                          <ClipboardCheck className="h-4 w-4 mr-2 text-green-600" />
+                          Prompt Copiado!
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="h-4 w-4 mr-2" />
+                          Copiar Prompt de Correção
+                        </>
+                      )}
+                    </Button>
+
+                    {/* Botão Atribuir Nota ou Nota já atribuída */}
+                    {currentAnswer?.discursiveSelfScore !== undefined ? (
+                      <div className="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg p-4 text-center">
+                        <p className="text-sm font-semibold text-green-700 dark:text-green-300">
+                          Nota auto-atribuída: {currentAnswer.discursiveSelfScore}%
+                        </p>
+                      </div>
+                    ) : (
+                      <Button
+                        variant="default"
+                        className="w-full bg-purple-600 hover:bg-purple-700"
+                        onClick={() => handleOpenSelfScore(currentQuestion.id)}
+                        disabled={!currentAnswer?.discursiveText?.trim()}
+                      >
+                        Atribuir Minha Nota (0-100%)
+                      </Button>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 

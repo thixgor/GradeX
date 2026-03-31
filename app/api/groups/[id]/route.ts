@@ -135,6 +135,13 @@ export async function DELETE(
       { $set: { groupId: null, updatedAt: new Date() } }
     )
 
+    // Mover subgrupos para o grupo pai (ou para raiz se não tem pai)
+    const parentGroupId = group.parentGroupId || null
+    await groupsCollection.updateMany(
+      { parentGroupId: id },
+      { $set: { parentGroupId: parentGroupId, updatedAt: new Date() } }
+    )
+
     // Deletar grupo
     await groupsCollection.deleteOne({ _id: new ObjectId(id) })
 

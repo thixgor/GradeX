@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
     }
 
-    const { name, description, color, icon, type } = await req.json()
+    const { name, description, color, icon, type, parentGroupId } = await req.json()
 
     // Validação
     if (!name || !name.trim()) {
@@ -75,6 +75,21 @@ export async function POST(req: NextRequest) {
       // Continuar mesmo se não encontrar o usuário
     }
 
+    // Se parentGroupId foi fornecido, validar que o grupo pai existe
+    if (parentGroupId) {
+      const parentGroup = await groupsCollection.findOne({ _id: new ObjectId(parentGroupId) })
+      if (!parentGroup) {
+        return NextResponse.json({ error: 'Grupo pai não encontrado' }, { status: 404 })
+      }
+      // Herdar tipo do grupo pai
+      if (parentGroup.type === 'general' && session.role !== 'admin') {
+        return NextResponse.json(
+          { error: 'Apenas administradores podem criar subgrupos dentro de grupos gerais' },
+          { status: 403 }
+        )
+      }
+    }
+
     // Criar grupo
     const newGroup = {
       name: name.trim(),
@@ -85,6 +100,7 @@ export async function POST(req: NextRequest) {
       createdBy: session.userId,
       createdByName: userName,
       isPublic: type === 'general',
+      parentGroupId: parentGroupId || null,
       order: 0,
       createdAt: new Date(),
       updatedAt: new Date(),

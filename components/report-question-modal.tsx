@@ -18,13 +18,14 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 interface ReportQuestionModalProps {
     questionId: string
+    examId?: string // Se fornecido, usa o endpoint de prova ao invés do banco
     isOpen: boolean
     onClose: () => void
 }
 
 type ReportReason = 'erro_gabarito' | 'enunciado_confuso' | 'imagem_ruim' | 'conteudo_desatualizado' | 'outros'
 
-export function ReportQuestionModal({ questionId, isOpen, onClose }: ReportQuestionModalProps) {
+export function ReportQuestionModal({ questionId, examId, isOpen, onClose }: ReportQuestionModalProps) {
     const [reason, setReason] = useState<ReportReason>('erro_gabarito')
     const [description, setDescription] = useState('')
     const [loading, setLoading] = useState(false)
@@ -49,13 +50,18 @@ export function ReportQuestionModal({ questionId, isOpen, onClose }: ReportQuest
         setError(null)
 
         try {
-            const res = await fetch(`/api/banco/questoes/${questionId}/report`, {
+            const url = examId
+                ? `/api/exams/${examId}/report-question`
+                : `/api/banco/questoes/${questionId}/report`
+
+            const bodyPayload = examId
+                ? { reason, description: description.trim(), questionId }
+                : { reason, description: description.trim() }
+
+            const res = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    reason,
-                    description: description.trim()
-                })
+                body: JSON.stringify(bodyPayload)
             })
 
             if (!res.ok) {
