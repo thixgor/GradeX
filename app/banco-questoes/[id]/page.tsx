@@ -36,7 +36,10 @@ import {
   X,
   StickyNote,
   ZoomIn,
-  Flag
+  Flag,
+  Copy,
+  ClipboardCheck,
+  Star
 } from 'lucide-react'
 import { BancoQuestaoComHierarquia, BancoListaUsuario } from '@/lib/types/banco-questoes'
 import { QuestionAnnotation, TextHighlight } from '@/lib/types'
@@ -100,6 +103,12 @@ export default function QuestaoPage() {
 
   // Highlights de texto
   const [highlights, setHighlights] = useState<TextHighlight[]>([])
+
+  // Copy prompt e auto-avaliação para discursivas
+  const [copiedPrompt, setCopiedPrompt] = useState(false)
+  const [selfScore, setSelfScore] = useState<number | null>(null)
+  const [pendingSelfScore, setPendingSelfScore] = useState<number | null>(null)
+  const [showSelfScoreModal, setShowSelfScoreModal] = useState(false)
 
   // Handler para ver gabarito da última resolução
   function handleVerGabarito() {
@@ -218,6 +227,51 @@ export default function QuestaoPage() {
     setMostrarResposta(false)
     setResultado(null)
     setAlternativasRiscadas(new Set())
+    setSelfScore(null)
+    setCopiedPrompt(false)
+  }
+
+  function handleCopyDiscursivePrompt() {
+    if (!questao) return
+    const enunciado = questao.enunciado || ''
+    const respostaComentada = resultado?.respostaModelo || resultado?.explicacao || questao.respostaModelo || questao.explicacao || ''
+    const respostaAluno = respostaDiscursiva || ''
+
+    const prompt = `Você é um corretor de questões de Medicina. Você é humano, experiente e pedagogicamente sensato — não é um corretor mecânico nem perfeccionista. Sua filosofia de correção parte do princípio de que o objetivo é avaliar se o aluno compreende o conteúdo, não se ele decorou palavras-chave ou seguiu exatamente a estrutura do gabarito.
+
+Você aceita e valoriza amplitude e generalidade nas respostas. Se o aluno abordou aspectos que o enunciado não explicitou, mas que são clinicamente ou conceitualmente pertinentes, isso conta a favor, não contra. Você nunca penaliza o aluno por demonstrar conhecimento além do esperado, nem por usar terminologia diferente da do gabarito quando o conteúdo está correto.
+
+Você também leva em conta o esforço e a construção da resposta. O aluno dedicou tempo para elaborar um raciocínio e para escrever tentando abordar o que ele acha que a questão quer — sua correção respeita isso.
+
+A seguir, serão apresentados: o enunciado da questão, a resposta comentada oficial e a resposta do aluno.
+Ao final, você deve atribuir uma nota de 0% a 100% em intervalos de 10%, justificando brevemente sua avaliação com foco no que o aluno acertou, no que ficou incompleto e, se for o caso, no que estava equivocado. Seja direto, humano e justo.
+
+---
+
+ENUNCIADO DA QUESTÃO:
+${enunciado}
+
+---
+
+RESPOSTA COMENTADA (GABARITO):
+${respostaComentada}
+
+---
+
+RESPOSTA DO ALUNO:
+${respostaAluno}`
+
+    navigator.clipboard.writeText(prompt).then(() => {
+      setCopiedPrompt(true)
+      setTimeout(() => setCopiedPrompt(false), 2500)
+    })
+  }
+
+  function handleConfirmSelfScore() {
+    if (pendingSelfScore === null) return
+    setSelfScore(pendingSelfScore)
+    setShowSelfScoreModal(false)
+    setPendingSelfScore(null)
   }
 
   async function handleResponder() {
@@ -647,6 +701,56 @@ export default function QuestaoPage() {
           </Card>
         )}
 
+        {/* Correção por Prompt e Auto-avaliação (discursivas) */}
+        {mostrarResposta && questao.tipo === 'discursiva' && (
+          <Card className="border-violet-500/30 bg-violet-50/50 dark:bg-violet-900/10">
+            <CardContent className="py-5 space-y-4">
+              <h4 className="font-semibold text-sm flex items-center gap-2">
+                <Star className="h-4 w-4 text-violet-600" />
+                Correção via IA (Prompt)
+              </h4>
+              <p className="text-xs text-muted-foreground">
+                Copie o prompt abaixo e cole no ChatGPT, Claude ou outra IA para obter uma correção detalhada da sua resposta.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCopyDiscursivePrompt}
+                >
+                  {copiedPrompt ? (
+                    <>
+                      <ClipboardCheck className="h-4 w-4 mr-2 text-green-600" />
+                      Prompt Copiado!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-4 w-4 mr-2" />
+                      Copiar Prompt de Correção
+                    </>
+                  )}
+                </Button>
+
+                {selfScore !== null ? (
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-violet-100 dark:bg-violet-900/30 border border-violet-300 dark:border-violet-700">
+                    <Star className="h-4 w-4 text-violet-600" />
+                    <span className="text-sm font-medium">Nota: {selfScore}%</span>
+                  </div>
+                ) : (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => { setPendingSelfScore(null); setShowSelfScoreModal(true) }}
+                  >
+                    <Star className="h-4 w-4 mr-2" />
+                    Atribuir Nota
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Ações após resposta */}
         {mostrarResposta && (
           <div className="flex justify-center gap-4">
@@ -835,6 +939,51 @@ export default function QuestaoPage() {
             onClose={() => setShowReportModal(false)}
           />
         )}
+
+        {/* Modal de Auto-avaliação */}
+        <Dialog open={showSelfScoreModal} onOpenChange={setShowSelfScoreModal}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Star className="h-5 w-5 text-violet-600" />
+                Auto-avaliação
+              </DialogTitle>
+              <DialogDescription>
+                Após corrigir com a IA, atribua uma nota de 0% a 100% para sua resposta.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4 space-y-3">
+              <div className="grid grid-cols-6 gap-2">
+                {[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((score) => (
+                  <Button
+                    key={score}
+                    variant={pendingSelfScore === score ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setPendingSelfScore(score)}
+                    className={cn(
+                      "text-xs",
+                      pendingSelfScore === score && "bg-violet-600 hover:bg-violet-700"
+                    )}
+                  >
+                    {score}%
+                  </Button>
+                ))}
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowSelfScoreModal(false)}>
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleConfirmSelfScore}
+                disabled={pendingSelfScore === null}
+                className="bg-violet-600 hover:bg-violet-700"
+              >
+                Confirmar Nota
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </AppShell>
   )

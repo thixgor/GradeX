@@ -129,6 +129,8 @@ export function TxtImportUnified({
         correctAlt.isCorrect = true
       }
 
+      const respostaComentada = extractField(fullText, 'RESPOSTA-COMENTADA')
+
       const question: Question = {
         id: uuidv4(),
         number: questionNumber,
@@ -138,6 +140,7 @@ export function TxtImportUnified({
         imageUrl,
         command,
         alternatives,
+        explanation: respostaComentada || undefined,
       }
 
       // TRI parameters (opcional)
@@ -175,6 +178,8 @@ export function TxtImportUnified({
         }
       }
 
+      const respostaComentada = extractField(fullText, 'RESPOSTA-COMENTADA')
+
       return {
         id: uuidv4(),
         number: questionNumber,
@@ -186,6 +191,7 @@ export function TxtImportUnified({
         alternatives: [],
         keyPoints,
         maxScore: 10,
+        explanation: respostaComentada || undefined,
       }
     }
 
@@ -199,6 +205,8 @@ export function TxtImportUnified({
         : []
 
       const maxScore = defaultEssayStyle === 'enem' ? 1000 : 20
+
+      const respostaComentada = extractField(fullText, 'RESPOSTA-COMENTADA')
 
       return {
         id: uuidv4(),
@@ -215,6 +223,7 @@ export function TxtImportUnified({
         essayCorrectionMethod: defaultEssayCorrectionMethod,
         essayAiRigor: defaultEssayAiRigor,
         maxScore,
+        explanation: respostaComentada || undefined,
       }
     }
 
@@ -293,6 +302,7 @@ ALT-C:"Brasília"
 ALT-D:"Salvador"
 ALT-E:"Belo Horizonte"
 ALT-CORRETA:"C"
+RESPOSTA-COMENTADA:"Brasília é a capital do Brasil desde 1960"
 DISCRIMINACAO-QUESTAO-PARAMETROA-TRI:"1.2"
 DIFICULDADE-QUESTAO-PARAMETROB-TRI:"0.5"
 ACERTOAOACASO-QUESTAO-PARAMETROC-TRI:"0.2"
@@ -303,6 +313,7 @@ FONTE-ENUNCIADO:""
 URL-IMAGEM-QUESTAO:""
 COMANDO-QUESTÃO:"Descreva detalhadamente"
 PONTOS-CHAVE-E-SEUS-PESOS:"Mencionar clorofila_0.3 ; Explicar luz solar_0.4 ; Citar CO2 e água_0.3"
+RESPOSTA-COMENTADA:"A fotossíntese é o processo pelo qual..."
 
 --REDAÇÃO
 ENUNCIADO:"Contexto sobre saúde mental no Brasil"
@@ -328,6 +339,9 @@ TEXTOS DE APOIO:"Texto 1: Dados estatísticos... --- Texto 2: Artigo científico
             • <code>--Q1-MULTIPLA-ESCOLHA</code> - Questão de múltipla escolha<br />
             • <code>--Q2-DISCURSIVA</code> - Questão discursiva<br />
             • <code>--REDAÇÃO</code> - Redação ENEM/UERJ<br />
+            <br />
+            <strong>Campo opcional para todos os tipos:</strong><br />
+            • <code>RESPOSTA-COMENTADA:"texto"</code> - Explicação/gabarito comentado<br />
             <br />
             Você pode misturar diferentes tipos no mesmo arquivo!
           </p>
