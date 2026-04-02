@@ -35,6 +35,9 @@ import {
   Volume2,
   Play,
   GalleryHorizontalEnd,
+  Share2,
+  Check,
+  Link2,
 } from 'lucide-react'
 import { type Patologia, type AreaSaude } from '@/lib/types/manual-clinico'
 import { FocusSessionButton } from '@/components/focus-session-button'
@@ -479,15 +482,18 @@ function MediaGalleryModal({
   media,
   onClose,
   highlightUrl,
+  slug,
 }: {
   media: MediaItem[]
   onClose: () => void
   highlightUrl?: string | null
+  slug: string
 }) {
   const [activeTab, setActiveTab] = useState<MediaType | 'all'>('all')
   const [lightbox, setLightbox] = useState<MediaItem | null>(null)
   const [highlightedUrl, setHighlightedUrl] = useState<string | null>(highlightUrl || null)
   const highlightRef = useRef<HTMLDivElement>(null)
+  const [copiedUrl, setCopiedUrl] = useState<string | null>(null)
 
   // Auto-switch to the correct tab and scroll to highlighted item
   useEffect(() => {
@@ -626,11 +632,12 @@ function MediaGalleryModal({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {filtered.map((item, i) => {
                 const isHighlighted = highlightedUrl === item.url
+                const isCopied = copiedUrl === item.url
                 return (
                   <div
                     key={`${item.type}-${i}`}
                     ref={isHighlighted ? highlightRef : undefined}
-                    className={isHighlighted ? 'rounded-xl ring-2 ring-emerald-400 ring-offset-2 ring-offset-transparent animate-pulse' : ''}
+                    className={`relative group/share ${isHighlighted ? 'rounded-xl ring-2 ring-emerald-400 ring-offset-2 ring-offset-transparent animate-pulse' : ''}`}
                   >
                     <MediaCard
                       item={item}
@@ -638,6 +645,27 @@ function MediaGalleryModal({
                         if (item.type === 'image' || item.type === 'figure') setLightbox(item)
                       }}
                     />
+                    {/* Share media button */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        const shareUrl = `${window.location.origin}/manual-clinico/${slug}?galeria=1&media=${encodeURIComponent(item.url)}`
+                        navigator.clipboard.writeText(shareUrl)
+                        setCopiedUrl(item.url)
+                        setTimeout(() => setCopiedUrl(null), 2000)
+                      }}
+                      className={`absolute top-3 right-3 z-20 p-1.5 rounded-lg backdrop-blur-md transition-all duration-200 touch-manipulation
+                        ${isCopied
+                          ? 'bg-emerald-500/90 text-white scale-100 opacity-100'
+                          : 'bg-black/40 text-white/80 hover:bg-black/60 hover:text-white opacity-0 group-hover/share:opacity-100 focus:opacity-100'
+                        }`}
+                      title="Copiar link de compartilhamento"
+                    >
+                      {isCopied
+                        ? <Check className="h-3.5 w-3.5" />
+                        : <Link2 className="h-3.5 w-3.5" />
+                      }
+                    </button>
                   </div>
                 )
               })}
@@ -826,10 +854,11 @@ function FloatingFocusSession() {
 /* ═══════════════════════════════════════════
    FLOATING DISEASE NAME BAR
    ═══════════════════════════════════════════ */
-function FloatingDiseaseName({ nome, heroRef }: { nome: string; heroRef: React.RefObject<HTMLDivElement | null> }) {
+function FloatingDiseaseName({ nome, heroRef, slug }: { nome: string; heroRef: React.RefObject<HTMLDivElement | null>; slug: string }) {
   const [visible, setVisible] = useState(false)
   const [hidden, setHidden] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
+  const [floatingShareCopied, setFloatingShareCopied] = useState(false)
 
   /* ── Drag state ── */
   const dragX = useMotionValue(0)
@@ -988,6 +1017,33 @@ function FloatingDiseaseName({ nome, heroRef }: { nome: string; heroRef: React.R
                 {/* Divider */}
                 <div className="mt-4 mb-4 h-px bg-gradient-to-r from-transparent via-white/[0.1] to-transparent" />
 
+                {/* Share button */}
+                <button
+                  onClick={() => {
+                    const url = `${window.location.origin}/manual-clinico/${slug}`
+                    navigator.clipboard.writeText(url)
+                    setFloatingShareCopied(true)
+                    setTimeout(() => setFloatingShareCopied(false), 2000)
+                  }}
+                  className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all duration-200 active:scale-[0.98] mb-2 ${
+                    floatingShareCopied
+                      ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400'
+                      : 'border-white/[0.08] bg-white/[0.04] hover:bg-primary/10 hover:border-primary/30 text-muted-foreground hover:text-primary'
+                  }`}
+                >
+                  {floatingShareCopied ? (
+                    <>
+                      <Check className="h-4 w-4" />
+                      Link copiado!
+                    </>
+                  ) : (
+                    <>
+                      <Share2 className="h-4 w-4" />
+                      Compartilhar patologia
+                    </>
+                  )}
+                </button>
+
                 {/* Hide button */}
                 <button
                   onClick={() => {
@@ -1012,7 +1068,7 @@ function FloatingDiseaseName({ nome, heroRef }: { nome: string; heroRef: React.R
 /* ═══════════════════════════════════════════
    SECTION NAV (floating glassmorphism TOC)
    ═══════════════════════════════════════════ */
-function SectionNav({ sections, media = [] }: { sections: SectionEntry[]; media?: MediaItem[] }) {
+function SectionNav({ sections, media = [], slug }: { sections: SectionEntry[]; media?: MediaItem[]; slug: string }) {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [expanded, setExpanded] = useState(() =>
     typeof window !== 'undefined' && window.innerWidth >= 1024
@@ -1305,6 +1361,7 @@ function SectionNav({ sections, media = [] }: { sections: SectionEntry[]; media?
             media={media}
             onClose={() => { setShowMediaGallery(false); setMediaHighlightUrl(null) }}
             highlightUrl={mediaHighlightUrl}
+            slug={slug}
           />
         )}
       </AnimatePresence>
@@ -1335,6 +1392,7 @@ function PatologiaContent() {
   const [loading, setLoading] = useState(true)
   const [farmaTab, setFarmaTab] = useState<'primeira' | 'segunda' | 'terceira'>('primeira')
   const [lightbox, setLightbox] = useState<{ src: string; alt: string; caption?: string } | null>(null)
+  const [shareCopied, setShareCopied] = useState(false)
   const heroRef = useRef<HTMLDivElement>(null)
 
   // ── Highlights ────────────────────────────────────────────────────
@@ -1444,13 +1502,13 @@ function PatologiaContent() {
   return (
     <div className="min-h-screen bg-background">
       {/* Floating section nav */}
-      <Suspense><SectionNav sections={navSections} media={mediaItems} /></Suspense>
+      <Suspense><SectionNav sections={navSections} media={mediaItems} slug={slug} /></Suspense>
 
       {/* Floating focus session (glassmorphism + iridescent wave) */}
       <FloatingFocusSession />
 
       {/* Floating disease name bar */}
-      <FloatingDiseaseName nome={patologia.nome} heroRef={heroRef} />
+      <FloatingDiseaseName nome={patologia.nome} heroRef={heroRef} slug={slug} />
 
       {/* ══════════════════════════════════════
            HERO HEADER
@@ -1484,6 +1542,31 @@ function PatologiaContent() {
                   <span className="hidden sm:inline">Limpar marcações</span>
                 </button>
               )}
+
+              {/* Share pathology link */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const url = `${window.location.origin}/manual-clinico/${patologia.slug}`
+                  navigator.clipboard.writeText(url)
+                  setShareCopied(true)
+                  setTimeout(() => setShareCopied(false), 2000)
+                }}
+                className="rounded-xl"
+              >
+                {shareCopied ? (
+                  <>
+                    <Check className="h-4 w-4 mr-2 text-emerald-500" />
+                    <span className="text-emerald-500">Copiado!</span>
+                  </>
+                ) : (
+                  <>
+                    <Share2 className="h-4 w-4 mr-2" />
+                    Compartilhar
+                  </>
+                )}
+              </Button>
 
               {/* PDF download */}
               <Button

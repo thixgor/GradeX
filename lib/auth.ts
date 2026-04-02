@@ -7,10 +7,10 @@ import { ObjectId } from 'mongodb'
 
 // Configuracoes de segurança da sessao
 const JWT_CONFIG = {
-  // Duracao do token de acesso (mais curto para maior segurança)
-  ACCESS_TOKEN_EXPIRY: process.env.NODE_ENV === 'production' ? '24h' : '7d',
+  // Duracao do token de acesso (7 dias em prod e dev)
+  ACCESS_TOKEN_EXPIRY: process.env.NODE_ENV === 'production' ? '7d' : '7d',
   // Duracao maxima do cookie
-  COOKIE_MAX_AGE: process.env.NODE_ENV === 'production' ? 60 * 60 * 24 : 60 * 60 * 24 * 7, // 24h em prod, 7d em dev
+  COOKIE_MAX_AGE: process.env.NODE_ENV === 'production' ? 60 * 60 * 24 * 7 : 60 * 60 * 24 * 7, // 7d em prod e dev
   // SameSite mais restritivo em producao
   SAME_SITE: (process.env.NODE_ENV === 'production' ? 'strict' : 'lax') as 'strict' | 'lax' | 'none'
 }

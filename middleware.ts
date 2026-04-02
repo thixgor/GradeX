@@ -107,7 +107,19 @@ export async function middleware(request: NextRequest) {
     return response
   } catch {
     // Token inválido ou expirado
-    const res = NextResponse.redirect(new URL('/auth/login', request.url))
+    if (pathname.startsWith('/api/')) {
+      // API routes: retornar 401 JSON em vez de redirecionar (evita 404)
+      const res = NextResponse.json(
+        { error: 'Token expirado ou inválido' },
+        { status: 401 }
+      )
+      res.cookies.delete('auth-token')
+      return res
+    }
+    // Pages: redirecionar para login preservando a URL de retorno
+    const loginUrl = new URL('/auth/login', request.url)
+    loginUrl.searchParams.set('redirect', pathname)
+    const res = NextResponse.redirect(loginUrl)
     res.cookies.delete('auth-token')
     return res
   }

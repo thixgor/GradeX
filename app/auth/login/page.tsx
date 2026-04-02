@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
@@ -26,6 +26,8 @@ declare global {
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirect') || '/'
   const [isLogin, setIsLogin] = useState(true)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -204,7 +206,7 @@ export default function LoginPage() {
       if (!isLogin) {
         setIsRegistered(true)
       } else {
-        router.push('/')
+        router.push(redirectTo)
         router.refresh()
       }
     } catch (err: any) {
@@ -251,7 +253,7 @@ export default function LoginPage() {
         return
       }
 
-      router.push('/')
+      router.push(redirectTo)
       router.refresh()
     } catch (err: any) {
       setError(err.message)
@@ -291,7 +293,7 @@ export default function LoginPage() {
       }
 
       setShowProfileSetup(false)
-      router.push('/')
+      router.push(redirectTo)
       router.refresh()
     } catch (err: any) {
       setError(err.message)
