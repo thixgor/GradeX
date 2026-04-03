@@ -17,8 +17,11 @@ const LOGO_URL = 'https://i.imgur.com/1QmchqF.png'
 function wrapText(doc: jsPDF, text: string, maxWidth: number): string[] {
   if (!text) return []
 
+  // Replace \nl with actual newlines first
+  const cleaned = text.replace(/\\nl/g, '\n')
+
   // Preservar quebras de linha existentes
-  const paragraphs = text.split(/\n/)
+  const paragraphs = cleaned.split(/\n/)
   const allLines: string[] = []
 
   for (const paragraph of paragraphs) {
@@ -514,25 +517,32 @@ export function generateExamPDF(exam: Exam, userId?: string): Blob {
 
     if (question.type === 'multiple-choice') {
       // Alternativas com checkboxes
-      doc.setFont('helvetica', 'normal')
-      doc.setFontSize(10)
-      doc.setTextColor(...CINZA_TEXTO)
       y += 3
 
-      const letters = ['A', 'B', 'C', 'D', 'E']
-      question.alternatives.forEach((alt, altIdx) => {
+      question.alternatives.forEach((alt) => {
         checkPage(12)
+
+        // Reset font for each alternative to prevent color/size leaks
+        doc.setFont('helvetica', 'normal')
+        doc.setFontSize(10)
+        doc.setTextColor(...CINZA_TEXTO)
 
         // Checkbox estilizado
         doc.setDrawColor(...VERDE_MEDIO)
         doc.setLineWidth(0.5)
         doc.roundedRect(margin + 2, y - 3.5, 5, 5, 1, 1)
 
-        // Alternativa
-        const altText = `${letters[altIdx]}) ${alt.text}`
+        // Alternativa - use alt.letter from data instead of hardcoded array
+        const altText = `${alt.letter}) ${alt.text}`
         const altLines = wrapText(doc, altText, pageWidth - 2 * margin - 12)
         altLines.forEach((line: string, lineIdx: number) => {
-          if (lineIdx > 0) checkPage(6)
+          if (lineIdx > 0) {
+            checkPage(6)
+            // Re-set after potential page break
+            doc.setFont('helvetica', 'normal')
+            doc.setFontSize(10)
+            doc.setTextColor(...CINZA_TEXTO)
+          }
           doc.text(line, margin + 10, y)
           y += 6
         })
@@ -675,12 +685,9 @@ export function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[], use
     const answer = answers.find(a => a.questionId === question.id)
 
     if (question.type === 'multiple-choice') {
-      doc.setFont('helvetica', 'normal')
-      doc.setFontSize(10)
       y += 3
 
-      const letters = ['A', 'B', 'C', 'D', 'E']
-      question.alternatives.forEach((alt, altIdx) => {
+      question.alternatives.forEach((alt) => {
         checkPage(12)
 
         const isSelected = answer?.selectedAlternative === alt.id
@@ -695,6 +702,7 @@ export function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[], use
           doc.roundedRect(margin + 2, y - 3.5, 5, 5, 1, 1, 'F')
         }
 
+        // Reset font/color explicitly per alternative
         if (isSelected) {
           doc.setFont('helvetica', 'bold')
           doc.setTextColor(...VERDE_ESCURO)
@@ -702,11 +710,23 @@ export function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[], use
           doc.setFont('helvetica', 'normal')
           doc.setTextColor(...CINZA_TEXTO)
         }
+        doc.setFontSize(10)
 
-        const altText = letters[altIdx] + ') ' + alt.text
+        const altText = alt.letter + ') ' + alt.text
         const altLines = wrapText(doc, altText, pageWidth - 2 * margin - 12)
         altLines.forEach((line: string, lineIdx: number) => {
-          if (lineIdx > 0) checkPage(6)
+          if (lineIdx > 0) {
+            checkPage(6)
+            // Re-set after potential page break
+            doc.setFontSize(10)
+            if (isSelected) {
+              doc.setFont('helvetica', 'bold')
+              doc.setTextColor(...VERDE_ESCURO)
+            } else {
+              doc.setFont('helvetica', 'normal')
+              doc.setTextColor(...CINZA_TEXTO)
+            }
+          }
           doc.text(line, margin + 10, y)
           y += 6
         })

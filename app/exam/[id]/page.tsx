@@ -30,7 +30,7 @@ import { useProctoring } from '@/hooks/use-proctoring'
 import { useWebSocket } from '@/hooks/use-websocket'
 import { useVisibilityDetection } from '@/hooks/use-visibility-detection'
 import { useWebRTC } from '@/hooks/use-webrtc'
-import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCircle, List, StickyNote, Copy, ClipboardCheck, Flag } from 'lucide-react'
+import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCircle, List, StickyNote, Copy, ClipboardCheck, Flag, ChevronRight } from 'lucide-react'
 
 export default function ExamPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -1054,6 +1054,9 @@ ${respostaAluno}`
     />
   )
 
+  // Helper: replace \nl with actual newlines
+  const formatText = (text: string) => text?.replace(/\\nl/g, '\n') || ''
+
   // Tela de conclusão após submissão
   if (submitted) {
     // Calcular resultados para provas práticas/pessoais
@@ -1080,155 +1083,189 @@ ${respostaAluno}`
       const answer = answers.find(a => a.questionId === q.id)
       return answer?.discursiveText?.trim() && answer?.discursiveSelfScore === undefined
     })
+    const discursiveAvg = discursiveWithScore.length > 0
+      ? Math.round(discursiveWithScore.reduce((sum, q) => {
+          const a = answers.find(a => a.questionId === q.id)
+          return sum + (a?.discursiveSelfScore || 0)
+        }, 0) / discursiveWithScore.length)
+      : null
+
+    // Overall score
+    let overallScore = submissionScore
+    if (!overallScore && isPracticeOrPersonal) {
+      if (discursiveAvg !== null && mcTotal > 0) {
+        overallScore = `${Math.round((mcPercentage + discursiveAvg) / 2)}%`
+      } else {
+        overallScore = `${mcPercentage}%`
+      }
+    }
+
+    // Estado de questão expandida no gabarito
+    const [expandedQuestion, setExpandedQuestion] = useState<string | null>(null)
 
     return (
       <>
         {proctoringModal}
-        <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
-          <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
-            {/* Header de conclusão */}
-            <div className="text-center space-y-4 py-6">
+        <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
+          <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
+
+            {/* ═══ HEADER ═══ */}
+            <div className="text-center space-y-5 py-8">
               <div className="flex justify-center">
-                <div className="bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-full p-5 shadow-lg shadow-green-500/20">
-                  <CheckCircle2 className="h-14 w-14 text-green-600 dark:text-green-400" />
+                <div className="relative">
+                  <div className="absolute inset-0 bg-green-500/20 rounded-full blur-2xl animate-pulse" />
+                  <div className="relative bg-gradient-to-br from-green-400 to-emerald-600 rounded-full p-5 shadow-2xl shadow-green-500/30">
+                    <CheckCircle2 className="h-12 w-12 text-white" />
+                  </div>
                 </div>
               </div>
-              <h1 className="text-3xl font-bold text-green-600 dark:text-green-400">
-                Prova Concluída!
-              </h1>
-              <p className="text-muted-foreground">{exam.title}</p>
+              <div>
+                <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-500 bg-clip-text text-transparent">
+                  Prova Concluída!
+                </h1>
+                <p className="text-muted-foreground mt-2 text-lg">{exam.title}</p>
+              </div>
               {examDuration && (
-                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                <div className="inline-flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 backdrop-blur-sm px-4 py-2 rounded-full border border-border/50">
                   <Clock className="h-4 w-4" />
-                  <span>{examDuration}</span>
+                  <span>Duração: {examDuration}</span>
                 </div>
               )}
             </div>
 
-            {/* Painel de Resultados (para provas práticas/pessoais) */}
+            {/* ═══ SCORE CARDS ═══ */}
             {isPracticeOrPersonal && (
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {/* Objetivas */}
                 {mcTotal > 0 && (
-                  <Card className="overflow-hidden">
-                    <div className={`h-1.5 ${mcPercentage >= 70 ? 'bg-green-500' : mcPercentage >= 40 ? 'bg-yellow-500' : 'bg-red-500'}`} />
-                    <CardContent className="pt-5 pb-4 text-center">
-                      <div className="text-4xl font-bold mb-1">{mcCorrect}/{mcTotal}</div>
-                      <div className="text-sm text-muted-foreground">Objetivas</div>
-                      <div className={`text-2xl font-bold mt-2 ${mcPercentage >= 70 ? 'text-green-600' : mcPercentage >= 40 ? 'text-yellow-600' : 'text-red-600'}`}>
-                        {mcPercentage}%
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-background/60 backdrop-blur-md p-6 text-center shadow-lg">
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-cyan-400" />
+                    <div className="absolute -top-12 -right-12 w-32 h-32 bg-blue-500/5 rounded-full" />
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">Objetivas</p>
+                    <div className="text-5xl font-black tracking-tight">{mcCorrect}<span className="text-xl text-muted-foreground font-normal">/{mcTotal}</span></div>
+                    <div className={`text-2xl font-bold mt-2 ${mcPercentage >= 70 ? 'text-green-600' : mcPercentage >= 40 ? 'text-amber-600' : 'text-red-600'}`}>
+                      {mcPercentage}%
+                    </div>
+                  </div>
                 )}
-
-                {/* Discursivas */}
                 {discursiveQuestions.length > 0 && (
-                  <Card className="overflow-hidden">
-                    <div className="h-1.5 bg-violet-500" />
-                    <CardContent className="pt-5 pb-4 text-center">
-                      <div className="text-4xl font-bold mb-1">{discursiveWithScore.length}/{discursiveQuestions.length}</div>
-                      <div className="text-sm text-muted-foreground">Discursivas Avaliadas</div>
-                      {discursiveWithScore.length > 0 && (
-                        <div className="text-2xl font-bold mt-2 text-violet-600">
-                          {Math.round(discursiveWithScore.reduce((sum, q) => {
-                            const a = answers.find(a => a.questionId === q.id)
-                            return sum + (a?.discursiveSelfScore || 0)
-                          }, 0) / discursiveWithScore.length)}%
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
+                  <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-background/60 backdrop-blur-md p-6 text-center shadow-lg">
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-500 to-purple-400" />
+                    <div className="absolute -top-12 -right-12 w-32 h-32 bg-violet-500/5 rounded-full" />
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">Discursivas</p>
+                    <div className="text-5xl font-black tracking-tight">{discursiveWithScore.length}<span className="text-xl text-muted-foreground font-normal">/{discursiveQuestions.length}</span></div>
+                    <div className="text-sm text-muted-foreground mt-1">avaliadas</div>
+                    {discursiveAvg !== null && (
+                      <div className={`text-2xl font-bold mt-1 ${discursiveAvg >= 70 ? 'text-green-600' : discursiveAvg >= 40 ? 'text-amber-600' : 'text-red-600'}`}>
+                        {discursiveAvg}%
+                      </div>
+                    )}
+                  </div>
                 )}
-
-                {/* Nota geral */}
-                <Card className="overflow-hidden">
-                  <div className="h-1.5 bg-gradient-to-r from-[#468152] to-[#E2A43E]" />
-                  <CardContent className="pt-5 pb-4 text-center">
-                    <div className="text-sm text-muted-foreground mb-2">Nota Geral</div>
-                    <div className="text-4xl font-bold bg-gradient-to-r from-[#468152] to-[#E2A43E] bg-clip-text text-transparent">
-                      {submissionScore || `${mcPercentage}%`}
-                    </div>
-                    <div className="text-xs text-muted-foreground mt-2">
-                      {exam.questions.length} questões
-                    </div>
-                  </CardContent>
-                </Card>
+                <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-background/60 backdrop-blur-md p-6 text-center shadow-lg">
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#468152] to-[#E2A43E]" />
+                  <div className="absolute -top-12 -right-12 w-32 h-32 bg-[#468152]/5 rounded-full" />
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">Nota Geral</p>
+                  <div className="text-5xl font-black bg-gradient-to-r from-[#468152] to-[#E2A43E] bg-clip-text text-transparent">
+                    {overallScore}
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-2">{exam.questions.length} questões</div>
+                </div>
               </div>
             )}
 
-            {/* Aviso de discursivas pendentes de auto-avaliação */}
-            {isPracticeOrPersonal && discursivePending.length > 0 && (
-              <Card className="border-violet-500/30 bg-violet-50/50 dark:bg-violet-900/10">
-                <CardContent className="py-5">
-                  <div className="flex items-start gap-3">
-                    <div className="p-2 rounded-lg bg-violet-500/10">
-                      <Copy className="h-5 w-5 text-violet-600" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-sm">
-                        {discursivePending.length} {discursivePending.length === 1 ? 'questão discursiva precisa' : 'questões discursivas precisam'} de auto-avaliação
-                      </h3>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Copie o prompt de correção, cole em uma IA (ChatGPT, Claude) e atribua sua nota abaixo.
-                      </p>
-                      <div className="mt-3 space-y-2">
-                        {discursivePending.map((q, idx) => {
-                          const answer = answers.find(a => a.questionId === q.id)
-                          return (
-                            <div key={q.id} className="flex items-center gap-2 p-3 rounded-lg bg-background border">
-                              <span className="text-sm font-medium flex-shrink-0">Q{q.number}</span>
-                              <span className="text-xs text-muted-foreground flex-1 truncate">{q.statement?.slice(0, 80)}...</span>
-                              <div className="flex gap-2 flex-shrink-0">
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => {
-                                    const enunciado = q.statement || ''
-                                    const comando = q.command || ''
-                                    const respostaComentada = q.explanation || ''
-                                    const respostaAluno = answer?.discursiveText || ''
-                                    const prompt = `Você é um corretor de questões de Medicina. Você é humano, experiente e pedagogicamente sensato — não é um corretor mecânico nem perfeccionista. Sua filosofia de correção parte do princípio de que o objetivo é avaliar se o aluno compreende o conteúdo, não se ele decorou palavras-chave ou seguiu exatamente a estrutura do gabarito.\n\nVocê aceita e valoriza amplitude e generalidade nas respostas. Se o aluno abordou aspectos que o enunciado não explicitou, mas que são clinicamente ou conceitualmente pertinentes, isso conta a favor, não contra. Você nunca penaliza o aluno por demonstrar conhecimento além do esperado, nem por usar terminologia diferente da do gabarito quando o conteúdo está correto.\n\nVocê também leva em conta o esforço e a construção da resposta. O aluno dedicou tempo para elaborar um raciocínio e para escrever tentando abordar o que ele acha que a questão quer — sua correção respeita isso.\n\nA seguir, serão apresentados: o enunciado da questão, a resposta comentada oficial e a resposta do aluno.\nAo final, você deve atribuir uma nota de 0% a 100% em intervalos de 10%, justificando brevemente sua avaliação com foco no que o aluno acertou, no que ficou incompleto e, se for o caso, no que estava equivocado. Seja direto, humano e justo.\n\n---\n\nENUNCIADO DA QUESTÃO:\n${enunciado}${comando ? `\n\nCOMANDO:\n${comando}` : ''}\n\n---\n\nRESPOSTA COMENTADA (GABARITO):\n${respostaComentada}\n\n---\n\nRESPOSTA DO ALUNO:\n${respostaAluno}`
-                                    navigator.clipboard.writeText(prompt).then(() => {
-                                      setCopiedPromptId(q.id)
-                                      setTimeout(() => setCopiedPromptId(null), 2500)
-                                    })
-                                  }}
-                                >
-                                  {copiedPromptId === q.id ? (
-                                    <ClipboardCheck className="h-3.5 w-3.5 text-green-600" />
-                                  ) : (
-                                    <Copy className="h-3.5 w-3.5" />
-                                  )}
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleOpenSelfScore(q.id)}
-                                  className="text-violet-600 border-violet-300"
-                                >
-                                  Nota
-                                </Button>
-                              </div>
-                            </div>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+            {/* ═══ NON-PRACTICE CONGRATS ═══ */}
+            {!isPracticeOrPersonal && (
+              <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-background/60 backdrop-blur-md p-8 text-center shadow-lg">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#468152] to-[#E2A43E]" />
+                <h3 className="text-xl font-bold mb-2">Parabéns, {userName}!</h3>
+                <p className="text-muted-foreground">Sua prova foi submetida com sucesso.</p>
+                {submissionScore && (
+                  <p className="text-3xl font-black mt-3 bg-gradient-to-r from-[#468152] to-[#E2A43E] bg-clip-text text-transparent">{submissionScore}</p>
+                )}
+              </div>
             )}
 
-            {/* Gabarito completo para provas práticas/pessoais */}
+            {/* ═══ DISCURSIVE PENDING SELF-SCORE ═══ */}
+            {isPracticeOrPersonal && discursivePending.length > 0 && (
+              <div className="relative overflow-hidden rounded-2xl border border-violet-500/30 bg-violet-50/30 dark:bg-violet-950/20 backdrop-blur-md p-6 shadow-lg">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-500 to-purple-400" />
+                <div className="flex items-start gap-4">
+                  <div className="p-3 rounded-xl bg-violet-500/10 flex-shrink-0">
+                    <Copy className="h-6 w-6 text-violet-600 dark:text-violet-400" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-base">
+                      {discursivePending.length} {discursivePending.length === 1 ? 'questão discursiva precisa' : 'questões discursivas precisam'} de auto-avaliação
+                    </h3>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Copie o prompt, cole em uma IA (ChatGPT, Claude) e atribua sua nota.
+                    </p>
+                    <div className="mt-4 space-y-3">
+                      {discursivePending.map((q) => {
+                        const answer = answers.find(a => a.questionId === q.id)
+                        return (
+                          <div key={q.id} className="flex items-center gap-3 p-4 rounded-xl bg-background/80 border border-border/50 backdrop-blur-sm">
+                            <div className="w-10 h-10 rounded-full bg-violet-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                              {q.number}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium truncate">{formatText(q.statement || '').slice(0, 100)}...</p>
+                            </div>
+                            <div className="flex gap-2 flex-shrink-0">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="rounded-xl"
+                                onClick={() => {
+                                  const enunciado = formatText(q.statement || '')
+                                  const comando = formatText(q.command || '')
+                                  const respostaComentada = formatText(q.explanation || '')
+                                  const respostaAluno = answer?.discursiveText || ''
+                                  const prompt = `Você é um corretor de questões de Medicina. Você é humano, experiente e pedagogicamente sensato — não é um corretor mecânico nem perfeccionista. Sua filosofia de correção parte do princípio de que o objetivo é avaliar se o aluno compreende o conteúdo, não se ele decorou palavras-chave ou seguiu exatamente a estrutura do gabarito.\n\nVocê aceita e valoriza amplitude e generalidade nas respostas. Se o aluno abordou aspectos que o enunciado não explicitou, mas que são clinicamente ou conceitualmente pertinentes, isso conta a favor, não contra. Você nunca penaliza o aluno por demonstrar conhecimento além do esperado, nem por usar terminologia diferente da do gabarito quando o conteúdo está correto.\n\nVocê também leva em conta o esforço e a construção da resposta. O aluno dedicou tempo para elaborar um raciocínio e para escrever tentando abordar o que ele acha que a questão quer — sua correção respeita isso.\n\nA seguir, serão apresentados: o enunciado da questão, a resposta comentada oficial e a resposta do aluno.\nAo final, você deve atribuir uma nota de 0% a 100% em intervalos de 10%, justificando brevemente sua avaliação com foco no que o aluno acertou, no que ficou incompleto e, se for o caso, no que estava equivocado. Seja direto, humano e justo.\n\n---\n\nENUNCIADO DA QUESTÃO:\n${enunciado}${comando ? `\n\nCOMANDO:\n${comando}` : ''}\n\n---\n\nRESPOSTA COMENTADA (GABARITO):\n${respostaComentada}\n\n---\n\nRESPOSTA DO ALUNO:\n${respostaAluno}`
+                                  navigator.clipboard.writeText(prompt).then(() => {
+                                    setCopiedPromptId(q.id)
+                                    setTimeout(() => setCopiedPromptId(null), 2500)
+                                  })
+                                }}
+                              >
+                                {copiedPromptId === q.id ? (
+                                  <><ClipboardCheck className="h-3.5 w-3.5 text-green-600 mr-1.5" /> Copiado</>
+                                ) : (
+                                  <><Copy className="h-3.5 w-3.5 mr-1.5" /> Prompt</>
+                                )}
+                              </Button>
+                              <Button
+                                size="sm"
+                                className="rounded-xl bg-violet-600 hover:bg-violet-700 text-white"
+                                onClick={() => handleOpenSelfScore(q.id)}
+                              >
+                                Atribuir Nota
+                              </Button>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ═══ GABARITO COMPLETO ═══ */}
             {isPracticeOrPersonal && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Gabarito Completo</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {exam.questions.map((q, idx) => {
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-xl bg-[#468152]/10">
+                    <List className="h-5 w-5 text-[#468152]" />
+                  </div>
+                  <h2 className="text-xl font-bold">Gabarito Completo</h2>
+                  <div className="flex-1 h-px bg-border/50" />
+                </div>
+
+                <div className="space-y-3">
+                  {exam.questions.map((q) => {
                     const answer = answers.find(a => a.questionId === q.id)
+                    const isExpanded = expandedQuestion === q.id
 
                     if (q.type === 'multiple-choice') {
                       const correctAlt = q.alternatives.find(a => a.isCorrect)
@@ -1236,30 +1273,129 @@ ${respostaAluno}`
                       const isCorrect = correctAlt?.id === answer?.selectedAlternative
 
                       return (
-                        <div key={q.id} className={`p-4 rounded-lg border-l-4 ${isCorrect ? 'border-l-green-500 bg-green-50/50 dark:bg-green-900/10' : 'border-l-red-500 bg-red-50/50 dark:bg-red-900/10'}`}>
-                          <div className="flex items-start gap-3">
-                            <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold ${isCorrect ? 'bg-green-500' : 'bg-red-500'}`}>
+                        <div
+                          key={q.id}
+                          className={`relative overflow-hidden rounded-2xl border backdrop-blur-md transition-all duration-300 cursor-pointer ${
+                            isCorrect
+                              ? 'border-green-500/30 bg-green-50/30 dark:bg-green-950/15'
+                              : 'border-red-500/30 bg-red-50/30 dark:bg-red-950/15'
+                          }`}
+                          onClick={() => setExpandedQuestion(isExpanded ? null : q.id)}
+                        >
+                          {/* Compact view */}
+                          <div className="p-4 flex items-center gap-4">
+                            <div className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-white text-sm font-bold shadow-md ${
+                              isCorrect ? 'bg-gradient-to-br from-green-500 to-emerald-600' : 'bg-gradient-to-br from-red-500 to-rose-600'
+                            }`}>
                               {q.number}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm line-clamp-2 mb-2">{q.statement}</p>
-                              <div className="flex flex-wrap gap-2 text-xs">
+                              <p className="text-sm font-medium line-clamp-1">{formatText(q.statement || '')}</p>
+                              <div className="flex flex-wrap items-center gap-2 mt-1">
                                 {selectedAlt && (
-                                  <span className={`px-2 py-1 rounded ${isCorrect ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'}`}>
+                                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                                    isCorrect ? 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400' : 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-400'
+                                  }`}>
                                     Sua: {selectedAlt.letter}
                                   </span>
                                 )}
                                 {!isCorrect && correctAlt && (
-                                  <span className="px-2 py-1 rounded bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
+                                  <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400">
                                     Correta: {correctAlt.letter}
                                   </span>
                                 )}
+                                {!selectedAlt && (
+                                  <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+                                    Não respondida
+                                  </span>
+                                )}
                               </div>
-                              {q.explanation && (
-                                <p className="text-xs text-muted-foreground mt-2 line-clamp-3">{q.explanation}</p>
-                              )}
                             </div>
+                            <ChevronRight className={`h-4 w-4 text-muted-foreground transition-transform duration-200 flex-shrink-0 ${isExpanded ? 'rotate-90' : ''}`} />
                           </div>
+
+                          {/* Expanded content */}
+                          {isExpanded && (
+                            <div className="px-4 pb-5 space-y-4 border-t border-border/30 pt-4" onClick={(e) => e.stopPropagation()}>
+                              {/* Enunciado completo */}
+                              <div className="bg-background/60 rounded-xl p-4 border border-border/30">
+                                <h4 className="font-semibold text-xs text-muted-foreground uppercase tracking-wider mb-2">Enunciado</h4>
+                                <p className="text-sm whitespace-pre-wrap leading-relaxed">{formatText(q.statement || '')}</p>
+                              </div>
+
+                              {q.command && (
+                                <div className="bg-blue-50/50 dark:bg-blue-950/30 rounded-xl p-4 border border-blue-200/50 dark:border-blue-800/30">
+                                  <h4 className="font-semibold text-xs text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-2">Comando</h4>
+                                  <p className="text-sm whitespace-pre-wrap text-blue-900 dark:text-blue-100 leading-relaxed">{formatText(q.command)}</p>
+                                </div>
+                              )}
+
+                              {/* Todas as alternativas */}
+                              <div className="space-y-2">
+                                <h4 className="font-semibold text-xs text-muted-foreground uppercase tracking-wider">Alternativas</h4>
+                                {q.alternatives.map(alt => {
+                                  const isSelected = alt.id === answer?.selectedAlternative
+                                  const isCorrectAlt = alt.isCorrect
+                                  return (
+                                    <div
+                                      key={alt.id}
+                                      className={`p-3 rounded-xl text-sm border ${
+                                        isCorrectAlt
+                                          ? 'bg-green-50 dark:bg-green-950/30 border-green-300 dark:border-green-800'
+                                          : isSelected
+                                          ? 'bg-red-50 dark:bg-red-950/30 border-red-300 dark:border-red-800'
+                                          : 'bg-background/40 border-border/30'
+                                      }`}
+                                    >
+                                      <span className={`font-bold ${
+                                        isCorrectAlt ? 'text-green-700 dark:text-green-400' : isSelected ? 'text-red-700 dark:text-red-400' : ''
+                                      }`}>
+                                        {alt.letter})
+                                      </span>{' '}
+                                      <span className="whitespace-pre-wrap">{formatText(alt.text)}</span>
+                                      {isCorrectAlt && <span className="ml-2 text-green-600 font-bold text-xs">✓ CORRETA</span>}
+                                      {isSelected && !isCorrectAlt && <span className="ml-2 text-red-600 font-bold text-xs">✗ SUA RESPOSTA</span>}
+                                    </div>
+                                  )
+                                })}
+                              </div>
+
+                              {/* Feedback comentado por alternativa */}
+                              {(q as any).commentedFeedback?.explanations && (
+                                <div className="bg-indigo-50/50 dark:bg-indigo-950/20 rounded-xl p-4 border border-indigo-200/50 dark:border-indigo-800/30 space-y-3">
+                                  <h4 className="font-semibold text-xs text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">Análise das Alternativas</h4>
+                                  {Object.entries((q as any).commentedFeedback.explanations).map(([letter, explanation]) => (
+                                    <div key={letter} className={`p-3 rounded-lg border-l-4 ${
+                                      letter === (q as any).commentedFeedback?.correctAlternative
+                                        ? 'border-l-green-500 bg-green-50/50 dark:bg-green-950/20'
+                                        : 'border-l-gray-300 dark:border-l-gray-600 bg-background/40'
+                                    }`}>
+                                      <p className="text-xs font-bold mb-1">{letter}) {letter === (q as any).commentedFeedback?.correctAlternative ? '✓ Correta' : ''}</p>
+                                      <p className="text-sm text-muted-foreground whitespace-pre-wrap">{formatText(explanation as string)}</p>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+
+                              {/* Resposta Comentada / Explicação */}
+                              {q.explanation && (
+                                <div className="bg-amber-50/50 dark:bg-amber-950/20 rounded-xl p-4 border border-amber-200/50 dark:border-amber-800/30">
+                                  <h4 className="font-semibold text-xs text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-2">Resposta Comentada</h4>
+                                  <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{formatText(q.explanation)}</p>
+                                </div>
+                              )}
+
+                              {/* Botão reportar */}
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-xs text-muted-foreground"
+                                onClick={() => setReportQuestionId(q.id)}
+                              >
+                                <Flag className="h-3 w-3 mr-1" /> Reportar questão
+                              </Button>
+                            </div>
+                          )}
                         </div>
                       )
                     }
@@ -1267,68 +1403,137 @@ ${respostaAluno}`
                     if (q.type === 'discursive') {
                       const selfScore = answer?.discursiveSelfScore
                       return (
-                        <div key={q.id} className="p-4 rounded-lg border-l-4 border-l-violet-500 bg-violet-50/50 dark:bg-violet-900/10">
-                          <div className="flex items-start gap-3">
-                            <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold bg-violet-500">
+                        <div
+                          key={q.id}
+                          className="relative overflow-hidden rounded-2xl border border-violet-500/30 bg-violet-50/30 dark:bg-violet-950/15 backdrop-blur-md transition-all duration-300 cursor-pointer"
+                          onClick={() => setExpandedQuestion(isExpanded ? null : q.id)}
+                        >
+                          <div className="p-4 flex items-center gap-4">
+                            <div className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-white text-sm font-bold shadow-md bg-gradient-to-br from-violet-500 to-purple-600">
                               {q.number}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm line-clamp-2 mb-2">{q.statement}</p>
-                              {selfScore !== undefined && (
-                                <span className={`text-xs px-2 py-1 rounded font-medium ${
-                                  selfScore >= 70 ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' :
-                                  selfScore >= 40 ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400' :
-                                  'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
-                                }`}>
-                                  Auto-avaliação: {selfScore}%
-                                </span>
-                              )}
-                              {q.explanation && (
-                                <p className="text-xs text-muted-foreground mt-2 line-clamp-3">{q.explanation}</p>
-                              )}
+                              <p className="text-sm font-medium line-clamp-1">{formatText(q.statement || '')}</p>
+                              <div className="flex items-center gap-2 mt-1">
+                                <span className="text-xs text-violet-600 dark:text-violet-400 font-medium">Discursiva</span>
+                                {selfScore !== undefined && (
+                                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                                    selfScore >= 70 ? 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400' :
+                                    selfScore >= 40 ? 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400' :
+                                    'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-400'
+                                  }`}>
+                                    {selfScore}%
+                                  </span>
+                                )}
+                                {selfScore === undefined && answer?.discursiveText?.trim() && (
+                                  <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 font-medium">Pendente</span>
+                                )}
+                              </div>
                             </div>
+                            <ChevronRight className={`h-4 w-4 text-muted-foreground transition-transform duration-200 flex-shrink-0 ${isExpanded ? 'rotate-90' : ''}`} />
                           </div>
+
+                          {isExpanded && (
+                            <div className="px-4 pb-5 space-y-4 border-t border-border/30 pt-4" onClick={(e) => e.stopPropagation()}>
+                              <div className="bg-background/60 rounded-xl p-4 border border-border/30">
+                                <h4 className="font-semibold text-xs text-muted-foreground uppercase tracking-wider mb-2">Enunciado</h4>
+                                <p className="text-sm whitespace-pre-wrap leading-relaxed">{formatText(q.statement || '')}</p>
+                              </div>
+
+                              {q.command && (
+                                <div className="bg-blue-50/50 dark:bg-blue-950/30 rounded-xl p-4 border border-blue-200/50 dark:border-blue-800/30">
+                                  <h4 className="font-semibold text-xs text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-2">Comando</h4>
+                                  <p className="text-sm whitespace-pre-wrap text-blue-900 dark:text-blue-100 leading-relaxed">{formatText(q.command)}</p>
+                                </div>
+                              )}
+
+                              <div className="bg-background/60 rounded-xl p-4 border border-border/30">
+                                <h4 className="font-semibold text-xs text-muted-foreground uppercase tracking-wider mb-2">Sua Resposta</h4>
+                                <p className="text-sm whitespace-pre-wrap leading-relaxed">{answer?.discursiveText || 'Não respondida'}</p>
+                              </div>
+
+                              {q.explanation && (
+                                <div className="bg-amber-50/50 dark:bg-amber-950/20 rounded-xl p-4 border border-amber-200/50 dark:border-amber-800/30">
+                                  <h4 className="font-semibold text-xs text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-2">Resposta Comentada</h4>
+                                  <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{formatText(q.explanation)}</p>
+                                </div>
+                              )}
+
+                              {selfScore !== undefined && (
+                                <div className={`rounded-xl p-4 text-center border ${
+                                  selfScore >= 70 ? 'bg-green-50/50 dark:bg-green-950/20 border-green-300/50' :
+                                  selfScore >= 40 ? 'bg-amber-50/50 dark:bg-amber-950/20 border-amber-300/50' :
+                                  'bg-red-50/50 dark:bg-red-950/20 border-red-300/50'
+                                }`}>
+                                  <p className="text-lg font-bold">Nota auto-atribuída: {selfScore}%</p>
+                                </div>
+                              )}
+
+                              {selfScore === undefined && answer?.discursiveText?.trim() && (
+                                <div className="flex gap-2">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="rounded-xl flex-1"
+                                    onClick={() => {
+                                      const enunciado = formatText(q.statement || '')
+                                      const comando = formatText(q.command || '')
+                                      const respostaComentada = formatText(q.explanation || '')
+                                      const respostaAluno = answer?.discursiveText || ''
+                                      const prompt = `Você é um corretor de questões de Medicina. Você é humano, experiente e pedagogicamente sensato — não é um corretor mecânico nem perfeccionista. Sua filosofia de correção parte do princípio de que o objetivo é avaliar se o aluno compreende o conteúdo, não se ele decorou palavras-chave ou seguiu exatamente a estrutura do gabarito.\n\nVocê aceita e valoriza amplitude e generalidade nas respostas. Se o aluno abordou aspectos que o enunciado não explicitou, mas que são clinicamente ou conceitualmente pertinentes, isso conta a favor, não contra. Você nunca penaliza o aluno por demonstrar conhecimento além do esperado, nem por usar terminologia diferente da do gabarito quando o conteúdo está correto.\n\nVocê também leva em conta o esforço e a construção da resposta. O aluno dedicou tempo para elaborar um raciocínio e para escrever tentando abordar o que ele acha que a questão quer — sua correção respeita isso.\n\nA seguir, serão apresentados: o enunciado da questão, a resposta comentada oficial e a resposta do aluno.\nAo final, você deve atribuir uma nota de 0% a 100% em intervalos de 10%, justificando brevemente sua avaliação com foco no que o aluno acertou, no que ficou incompleto e, se for o caso, no que estava equivocado. Seja direto, humano e justo.\n\n---\n\nENUNCIADO DA QUESTÃO:\n${enunciado}${comando ? `\n\nCOMANDO:\n${comando}` : ''}\n\n---\n\nRESPOSTA COMENTADA (GABARITO):\n${respostaComentada}\n\n---\n\nRESPOSTA DO ALUNO:\n${respostaAluno}`
+                                      navigator.clipboard.writeText(prompt).then(() => {
+                                        setCopiedPromptId(q.id)
+                                        setTimeout(() => setCopiedPromptId(null), 2500)
+                                      })
+                                    }}
+                                  >
+                                    {copiedPromptId === q.id ? <><ClipboardCheck className="h-3.5 w-3.5 mr-1.5 text-green-600" /> Copiado</> : <><Copy className="h-3.5 w-3.5 mr-1.5" /> Copiar Prompt</>}
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    className="rounded-xl bg-violet-600 hover:bg-violet-700 text-white flex-1"
+                                    onClick={() => handleOpenSelfScore(q.id)}
+                                  >
+                                    Atribuir Minha Nota (0-100%)
+                                  </Button>
+                                </div>
+                              )}
+
+                              <Button variant="ghost" size="sm" className="text-xs text-muted-foreground" onClick={() => setReportQuestionId(q.id)}>
+                                <Flag className="h-3 w-3 mr-1" /> Reportar questão
+                              </Button>
+                            </div>
+                          )}
                         </div>
                       )
                     }
 
                     // Essay
                     return (
-                      <div key={q.id} className="p-4 rounded-lg border-l-4 border-l-blue-500 bg-blue-50/50 dark:bg-blue-900/10">
-                        <div className="flex items-start gap-3">
-                          <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold bg-blue-500">
+                      <div key={q.id} className="relative overflow-hidden rounded-2xl border border-blue-500/30 bg-blue-50/30 dark:bg-blue-950/15 backdrop-blur-md p-4">
+                        <div className="flex items-center gap-4">
+                          <div className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-white text-sm font-bold shadow-md bg-gradient-to-br from-blue-500 to-sky-600">
                             {q.number}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm line-clamp-2">{q.essayTheme || q.statement}</p>
-                            <span className="text-xs text-muted-foreground">Redação</span>
+                            <p className="text-sm font-medium">{q.essayTheme || formatText(q.statement || '')}</p>
+                            <span className="text-xs text-blue-600 dark:text-blue-400 font-medium">Redação</span>
                           </div>
                         </div>
                       </div>
                     )
                   })}
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             )}
 
-            {/* Ações */}
-            <Card>
-              <CardContent className="py-5 space-y-3">
-                {!isPracticeOrPersonal && (
-                  <div className="bg-muted rounded-lg p-5 text-center mb-3">
-                    <h3 className="text-lg font-semibold mb-1">Parabéns, {userName}!</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Sua prova foi submetida com sucesso.
-                    </p>
-                    {submissionScore && (
-                      <p className="text-lg font-bold mt-2">{submissionScore}</p>
-                    )}
-                  </div>
-                )}
+            {/* ═══ AÇÕES / DOWNLOADS ═══ */}
+            <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-background/60 backdrop-blur-md p-6 shadow-lg space-y-3">
+              <h3 className="font-bold text-sm text-muted-foreground uppercase tracking-wider mb-4">Downloads e Ações</h3>
 
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <Button
-                  className="w-full"
-                  size="lg"
+                  className="w-full rounded-xl h-12 bg-gradient-to-r from-[#468152] to-[#3a6d44] hover:from-[#3a6d44] hover:to-[#2f5a38] text-white font-semibold shadow-md"
                   onClick={() => {
                     downloadUserReportPDF({
                       exam,
@@ -1340,45 +1545,69 @@ ${respostaAluno}`
                   }}
                 >
                   <FileDown className="h-5 w-5 mr-2" />
-                  Baixar Relatório da Minha Prova
+                  Relatório (sem gabarito)
                 </Button>
-
-                {annotations.length > 0 && (
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={async () => {
-                      try {
-                        const { generateAnnotationsPDF, downloadPDF } = await import('@/lib/pdf-generator')
-                        const blob = generateAnnotationsPDF(exam.title, annotations)
-                        downloadPDF(blob, `Anotacoes-${exam.title}.pdf`)
-                      } catch (error: any) {
-                        showToastMessage('Erro ao gerar PDF de anotações: ' + error.message)
-                      }
-                    }}
-                  >
-                    <StickyNote className="h-4 w-4 mr-2" />
-                    Baixar Anotações (PDF)
-                  </Button>
-                )}
-
-                {exam.pdfUrl && (
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => window.open(exam.pdfUrl, '_blank')}
-                  >
-                    <FileDown className="h-4 w-4 mr-2" />
-                    Baixar PDF Original da Prova
-                  </Button>
-                )}
 
                 {isPracticeOrPersonal && (
                   <Button
+                    className="w-full rounded-xl h-12 bg-gradient-to-r from-[#E2A43E] to-[#d4912e] hover:from-[#d4912e] hover:to-[#c07f22] text-white font-semibold shadow-md"
+                    onClick={async () => {
+                      try {
+                        const { generateUserReportWithGabaritoPDF } = await import('@/lib/user-report-generator')
+                        generateUserReportWithGabaritoPDF({
+                          exam,
+                          examId: id,
+                          userName,
+                          signature,
+                          answers,
+                        })
+                      } catch (error: any) {
+                        showToastMessage('Erro ao gerar PDF: ' + error.message)
+                      }
+                    }}
+                  >
+                    <FileDown className="h-5 w-5 mr-2" />
+                    Relatório + Gabarito
+                  </Button>
+                )}
+              </div>
+
+              {annotations.length > 0 && (
+                <Button
+                  variant="outline"
+                  className="w-full rounded-xl"
+                  onClick={async () => {
+                    try {
+                      const { generateAnnotationsPDF, downloadPDF } = await import('@/lib/pdf-generator')
+                      const blob = generateAnnotationsPDF(exam.title, annotations)
+                      downloadPDF(blob, `Anotacoes-${exam.title}.pdf`)
+                    } catch (error: any) {
+                      showToastMessage('Erro ao gerar PDF de anotações: ' + error.message)
+                    }
+                  }}
+                >
+                  <StickyNote className="h-4 w-4 mr-2" />
+                  Baixar Anotações (PDF)
+                </Button>
+              )}
+
+              {exam.pdfUrl && (
+                <Button
+                  variant="outline"
+                  className="w-full rounded-xl"
+                  onClick={() => window.open(exam.pdfUrl, '_blank')}
+                >
+                  <FileDown className="h-4 w-4 mr-2" />
+                  PDF Original da Prova
+                </Button>
+              )}
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                {isPracticeOrPersonal && (
+                  <Button
                     variant="outline"
-                    className="w-full"
+                    className="w-full rounded-xl"
                     onClick={() => {
-                      // Refazer a prova - voltar ao config
                       setSubmitted(false)
                       setStarted(false)
                       setShowPracticeConfig(true)
@@ -1390,20 +1619,18 @@ ${respostaAluno}`
                     Refazer Prova
                   </Button>
                 )}
-
                 <Button
                   variant="secondary"
-                  className="w-full"
+                  className="w-full rounded-xl"
                   onClick={() => router.push('/')}
                 >
-                  Voltar para Página Inicial
+                  Voltar para Início
                 </Button>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         </div>
 
-      {/* Modal de Feedback Final para Todas as Questões */}
       {/* Modal de Relatar Questão */}
       {reportQuestionId && (
         <ReportQuestionModal
@@ -1414,42 +1641,56 @@ ${respostaAluno}`
         />
       )}
 
-      {/* Modal de Auto-Avaliação Discursiva */}
+      {/* Modal de Auto-Avaliação Discursiva - Glassmorphism */}
       {showSelfScoreModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[110] flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <Card className="max-w-md w-full shadow-2xl">
-            <CardHeader>
-              <CardTitle className="text-xl text-center">Atribuir Nota</CardTitle>
-              <CardDescription className="text-center">
-                Após corrigir sua questão discursiva com o prompt, selecione a nota que você alcançou.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-3 gap-2">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-[110] flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="max-w-md w-full rounded-2xl border border-border/50 bg-background/80 backdrop-blur-xl shadow-2xl overflow-hidden">
+            <div className="bg-gradient-to-r from-violet-600 to-purple-600 p-5 text-center">
+              <h2 className="text-xl font-bold text-white">Atribuir Minha Nota</h2>
+              <p className="text-violet-200 text-sm mt-1">
+                Selecione a nota que a IA atribuiu à sua resposta
+              </p>
+            </div>
+            <div className="p-6 space-y-5">
+              <div className="grid grid-cols-4 gap-2">
                 {[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map(score => (
-                  <Button
+                  <button
                     key={score}
-                    variant={pendingSelfScore === score ? 'default' : 'outline'}
-                    className={`text-lg font-bold h-14 ${
+                    className={`h-14 rounded-xl text-lg font-bold transition-all duration-200 border-2 ${
                       pendingSelfScore === score
                         ? score >= 70
-                          ? 'bg-green-600 hover:bg-green-700'
+                          ? 'bg-green-600 border-green-500 text-white scale-105 shadow-lg shadow-green-500/30'
                           : score >= 40
-                          ? 'bg-yellow-600 hover:bg-yellow-700'
-                          : 'bg-red-600 hover:bg-red-700'
-                        : ''
-                    }`}
+                          ? 'bg-amber-500 border-amber-400 text-white scale-105 shadow-lg shadow-amber-500/30'
+                          : 'bg-red-600 border-red-500 text-white scale-105 shadow-lg shadow-red-500/30'
+                        : 'bg-background border-border/50 hover:bg-muted hover:scale-[1.02]'
+                    } ${score === 100 ? 'col-span-4 sm:col-span-3' : ''}`}
                     onClick={() => setPendingSelfScore(score)}
                   >
                     {score}%
-                  </Button>
+                  </button>
                 ))}
               </div>
+
+              {pendingSelfScore !== null && (
+                <div className={`text-center p-3 rounded-xl ${
+                  pendingSelfScore >= 70 ? 'bg-green-50 dark:bg-green-950/20' :
+                  pendingSelfScore >= 40 ? 'bg-amber-50 dark:bg-amber-950/20' :
+                  'bg-red-50 dark:bg-red-950/20'
+                }`}>
+                  <p className="text-sm font-medium">
+                    {pendingSelfScore >= 90 ? 'Excelente!' :
+                     pendingSelfScore >= 70 ? 'Bom desempenho!' :
+                     pendingSelfScore >= 40 ? 'Pode melhorar' :
+                     'Precisa revisar'}
+                  </p>
+                </div>
+              )}
 
               <div className="flex gap-3">
                 <Button
                   variant="outline"
-                  className="flex-1"
+                  className="flex-1 rounded-xl h-12"
                   onClick={() => {
                     setShowSelfScoreModal(false)
                     setSelfScoreQuestionId(null)
@@ -1459,45 +1700,43 @@ ${respostaAluno}`
                   Cancelar
                 </Button>
                 <Button
-                  className="flex-1"
+                  className="flex-1 rounded-xl h-12 bg-violet-600 hover:bg-violet-700 text-white font-semibold"
                   disabled={pendingSelfScore === null}
                   onClick={handleConfirmSelfScore}
                 >
                   Confirmar Nota
                 </Button>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       )}
 
       {showFinalFeedback && exam && exam.questions && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <Card className="max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-            <CardHeader className="sticky top-0 bg-background border-b">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="max-w-4xl w-full max-h-[90vh] overflow-y-auto rounded-2xl border border-border/50 bg-background/90 backdrop-blur-xl shadow-2xl">
+            <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-md border-b border-border/50 p-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-2xl">
-                    Feedback de Todas as Questões
-                  </CardTitle>
-                  <CardDescription className="mt-2">
+                  <h2 className="text-xl font-bold">Feedback Completo</h2>
+                  <p className="text-sm text-muted-foreground mt-1">
                     Questão {currentFeedbackIndex + 1} de {exam.questions.length}
-                  </CardDescription>
+                  </p>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowFinalFeedback(false)}
-                >
+                <Button variant="ghost" size="sm" className="rounded-xl" onClick={() => setShowFinalFeedback(false)}>
                   <X className="h-4 w-4" />
                 </Button>
               </div>
-            </CardHeader>
-            <CardContent className="space-y-6 pt-6">
+              {/* Progress bar */}
+              <div className="mt-3 h-1.5 bg-muted rounded-full overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-[#468152] to-[#E2A43E] transition-all duration-300 rounded-full" style={{ width: `${((currentFeedbackIndex + 1) / exam.questions.length) * 100}%` }} />
+              </div>
+            </div>
+            <div className="p-6 space-y-5">
               {(() => {
                 const question = exam.questions[currentFeedbackIndex]
                 const answer = answers.find(a => a.questionId === question.id)
-                const selectedAlt = question.type === 'multiple-choice' 
+                const selectedAlt = question.type === 'multiple-choice'
                   ? question.alternatives.find(a => a.id === answer?.selectedAlternative)
                   : null
                 const correctAlt = question.type === 'multiple-choice'
@@ -1508,173 +1747,113 @@ ${respostaAluno}`
 
                 return (
                   <>
-                    {/* Número e Tipo da Questão */}
-                    <div className="flex items-center justify-between pb-4 border-b">
-                      <div>
-                        <h3 className="text-xl font-bold">Questão {question.number}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          {question.type === 'multiple-choice' && 'Múltipla Escolha'}
-                          {question.type === 'discursive' && 'Discursiva'}
-                          {question.type === 'essay' && 'Redação'}
-                        </p>
-                      </div>
-                      {question.type === 'discursive' ? (
-                        <div className={`flex items-center gap-2 px-3 py-1 rounded-full ${
-                          selfScore !== undefined
-                            ? selfScore >= 70
-                              ? 'bg-green-100 dark:bg-green-900'
-                              : selfScore >= 40
-                              ? 'bg-yellow-100 dark:bg-yellow-900'
-                              : 'bg-red-100 dark:bg-red-900'
-                            : 'bg-gray-100 dark:bg-gray-800'
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold shadow-md ${
+                          question.type === 'discursive' ? 'bg-gradient-to-br from-violet-500 to-purple-600' :
+                          isCorrect ? 'bg-gradient-to-br from-green-500 to-emerald-600' : 'bg-gradient-to-br from-red-500 to-rose-600'
                         }`}>
-                          <span className={`text-sm font-semibold ${
-                            selfScore !== undefined
-                              ? selfScore >= 70
-                                ? 'text-green-700 dark:text-green-300'
-                                : selfScore >= 40
-                                ? 'text-yellow-700 dark:text-yellow-300'
-                                : 'text-red-700 dark:text-red-300'
-                              : 'text-gray-600 dark:text-gray-400'
-                          }`}>
-                            {selfScore !== undefined ? `${selfScore}%` : 'Sem nota'}
-                          </span>
+                          {question.number}
                         </div>
-                      ) : (
-                        <div className={`flex items-center gap-2 px-3 py-1 rounded-full ${
-                          isCorrect
-                            ? 'bg-green-100 dark:bg-green-900'
-                            : 'bg-red-100 dark:bg-red-900'
+                        <div>
+                          <h3 className="text-lg font-bold">Questão {question.number}</h3>
+                          <p className="text-xs text-muted-foreground">
+                            {question.type === 'multiple-choice' ? 'Múltipla Escolha' : question.type === 'discursive' ? 'Discursiva' : 'Redação'}
+                          </p>
+                        </div>
+                      </div>
+                      {question.type === 'multiple-choice' && (
+                        <div className={`px-4 py-2 rounded-xl font-semibold text-sm ${
+                          isCorrect ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
                         }`}>
-                          {isCorrect ? (
-                            <>
-                              <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
-                              <span className="text-sm font-semibold text-green-700 dark:text-green-300">Correta</span>
-                            </>
-                          ) : (
-                            <>
-                              <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
-                              <span className="text-sm font-semibold text-red-700 dark:text-red-300">Incorreta</span>
-                            </>
-                          )}
+                          {isCorrect ? '✓ Correta' : '✗ Incorreta'}
+                        </div>
+                      )}
+                      {question.type === 'discursive' && selfScore !== undefined && (
+                        <div className={`px-4 py-2 rounded-xl font-semibold text-sm ${
+                          selfScore >= 70 ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' :
+                          selfScore >= 40 ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400' :
+                          'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+                        }`}>
+                          {selfScore}%
                         </div>
                       )}
                     </div>
 
-                    {/* Enunciado */}
                     {question.statement && (
-                      <div className="bg-muted rounded-lg p-4 space-y-2">
-                        <h4 className="font-semibold text-sm">Enunciado:</h4>
-                        <p className="text-sm whitespace-pre-wrap">
-                          {question.statement}
-                        </p>
+                      <div className="bg-muted/50 rounded-xl p-5 border border-border/30">
+                        <h4 className="font-semibold text-xs text-muted-foreground uppercase tracking-wider mb-3">Enunciado</h4>
+                        <p className="text-sm whitespace-pre-wrap leading-relaxed">{formatText(question.statement)}</p>
                       </div>
                     )}
 
-                    {/* Comando */}
                     {question.command && (
-                      <div className="bg-blue-50 dark:bg-blue-950 rounded-lg p-4 space-y-2 border border-blue-200 dark:border-blue-800">
-                        <h4 className="font-semibold text-sm text-blue-900 dark:text-blue-100">Comando:</h4>
-                        <p className="text-sm whitespace-pre-wrap text-blue-800 dark:text-blue-200">
-                          {question.command}
-                        </p>
+                      <div className="bg-blue-50/50 dark:bg-blue-950/30 rounded-xl p-5 border border-blue-200/50 dark:border-blue-800/30">
+                        <h4 className="font-semibold text-xs text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-3">Comando</h4>
+                        <p className="text-sm whitespace-pre-wrap leading-relaxed">{formatText(question.command)}</p>
                       </div>
                     )}
 
-                    {/* Resposta do Usuário e Gabarito */}
                     {question.type === 'multiple-choice' && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="bg-amber-50 dark:bg-amber-950 rounded-lg p-4 border border-amber-200 dark:border-amber-800">
-                          <h4 className="font-semibold text-sm text-amber-900 dark:text-amber-100 mb-2">Sua Resposta:</h4>
-                          <p className="text-sm">
-                            {selectedAlt 
-                              ? `${selectedAlt.letter}) ${selectedAlt.text}`
-                              : 'Não respondida'
-                            }
-                          </p>
-                        </div>
-                        <div className="bg-green-50 dark:bg-green-950 rounded-lg p-4 border border-green-200 dark:border-green-800">
-                          <h4 className="font-semibold text-sm text-green-900 dark:text-green-100 mb-2">Resposta Correta:</h4>
-                          <p className="text-sm">
-                            {correctAlt 
-                              ? `${correctAlt.letter}) ${correctAlt.text}`
-                              : 'N/A'
-                            }
-                          </p>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Feedback Comentado */}
-                    {question.type === 'multiple-choice' && (question as any).commentedFeedback?.explanations && (
-                      <div className="bg-blue-50 dark:bg-blue-950 rounded-lg p-4 space-y-3 border border-blue-200 dark:border-blue-800">
-                        <h4 className="font-semibold text-sm text-blue-900 dark:text-blue-100">Análise das Alternativas:</h4>
-                        <div className="space-y-2">
-                          {Object.entries((question as any).commentedFeedback.explanations).map(([letter, explanation]) => (
-                            <div 
-                              key={letter}
-                              className={`p-3 rounded border-l-4 ${
-                                letter === (question as any).commentedFeedback?.correctAlternative
-                                  ? 'border-l-green-500 bg-green-50 dark:bg-green-950'
-                                  : 'border-l-red-500 bg-red-50 dark:bg-red-950'
-                              }`}
-                            >
-                              <p className={`text-sm font-semibold ${
-                                letter === (question as any).commentedFeedback?.correctAlternative
-                                  ? 'text-green-700 dark:text-green-300'
-                                  : 'text-red-700 dark:text-red-300'
-                              }`}>
-                                {letter}) {letter === (question as any).commentedFeedback?.correctAlternative ? '✓ Correta' : '✗ Incorreta'}
-                              </p>
-                              <p className="text-sm text-muted-foreground mt-1">
-                                {explanation as string}
-                              </p>
+                      <div className="space-y-2">
+                        {question.alternatives.map(alt => {
+                          const isSelected = alt.id === answer?.selectedAlternative
+                          const isCorrectAlt = alt.isCorrect
+                          return (
+                            <div key={alt.id} className={`p-4 rounded-xl text-sm border ${
+                              isCorrectAlt ? 'bg-green-50/50 dark:bg-green-950/20 border-green-300/50' :
+                              isSelected ? 'bg-red-50/50 dark:bg-red-950/20 border-red-300/50' :
+                              'bg-background/40 border-border/30'
+                            }`}>
+                              <span className={`font-bold ${isCorrectAlt ? 'text-green-700 dark:text-green-400' : isSelected ? 'text-red-700 dark:text-red-400' : ''}`}>
+                                {alt.letter})
+                              </span>{' '}
+                              <span className="whitespace-pre-wrap">{formatText(alt.text)}</span>
+                              {isCorrectAlt && <span className="ml-2 text-green-600 font-bold text-xs">✓ CORRETA</span>}
+                              {isSelected && !isCorrectAlt && <span className="ml-2 text-red-600 font-bold text-xs">✗ SUA</span>}
                             </div>
-                          ))}
-                        </div>
+                          )
+                        })}
                       </div>
                     )}
 
-                    {/* Resposta Discursiva do Aluno */}
                     {question.type === 'discursive' && (
-                      <div className="space-y-4">
-                        <div className="bg-amber-50 dark:bg-amber-950 rounded-lg p-4 border border-amber-200 dark:border-amber-800">
-                          <h4 className="font-semibold text-sm text-amber-900 dark:text-amber-100 mb-2">Sua Resposta:</h4>
-                          <p className="text-sm whitespace-pre-wrap">
-                            {answer?.discursiveText || 'Não respondida'}
-                          </p>
-                        </div>
-                        {selfScore !== undefined && (
-                          <div className={`rounded-lg p-4 border text-center ${
-                            selfScore >= 70
-                              ? 'bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800'
-                              : selfScore >= 40
-                              ? 'bg-yellow-50 dark:bg-yellow-950 border-yellow-200 dark:border-yellow-800'
-                              : 'bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800'
+                      <div className="bg-background/60 rounded-xl p-5 border border-border/30">
+                        <h4 className="font-semibold text-xs text-muted-foreground uppercase tracking-wider mb-3">Sua Resposta</h4>
+                        <p className="text-sm whitespace-pre-wrap leading-relaxed">{answer?.discursiveText || 'Não respondida'}</p>
+                      </div>
+                    )}
+
+                    {(question as any).commentedFeedback?.explanations && (
+                      <div className="bg-indigo-50/50 dark:bg-indigo-950/20 rounded-xl p-5 border border-indigo-200/50 dark:border-indigo-800/30 space-y-3">
+                        <h4 className="font-semibold text-xs text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">Análise das Alternativas</h4>
+                        {Object.entries((question as any).commentedFeedback.explanations).map(([letter, explanation]) => (
+                          <div key={letter} className={`p-3 rounded-lg border-l-4 ${
+                            letter === (question as any).commentedFeedback?.correctAlternative
+                              ? 'border-l-green-500 bg-green-50/50 dark:bg-green-950/20' : 'border-l-gray-300 dark:border-l-gray-600 bg-background/40'
                           }`}>
-                            <p className="text-lg font-bold">Nota auto-atribuída: {selfScore}%</p>
+                            <p className="text-xs font-bold mb-1">{letter}) {letter === (question as any).commentedFeedback?.correctAlternative ? '✓ Correta' : ''}</p>
+                            <p className="text-sm text-muted-foreground whitespace-pre-wrap">{formatText(explanation as string)}</p>
                           </div>
-                        )}
+                        ))}
                       </div>
                     )}
 
-                    {/* Explicação Geral */}
                     {question.explanation && (
-                      <div className="bg-muted rounded-lg p-4 space-y-2">
-                        <h4 className="font-semibold text-sm">{question.type === 'discursive' ? 'Resposta Comentada:' : 'Explicação Geral:'}</h4>
-                        <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                          {question.explanation}
-                        </p>
+                      <div className="bg-amber-50/50 dark:bg-amber-950/20 rounded-xl p-5 border border-amber-200/50 dark:border-amber-800/30">
+                        <h4 className="font-semibold text-xs text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-3">
+                          {question.type === 'discursive' ? 'Resposta Comentada' : 'Resposta Comentada'}
+                        </h4>
+                        <p className="text-sm whitespace-pre-wrap leading-relaxed">{formatText(question.explanation)}</p>
                       </div>
                     )}
 
-                    {/* Navegação */}
-                    <div className="flex gap-3 pt-6 border-t">
+                    <div className="flex gap-3 pt-4 border-t border-border/30">
                       <Button
                         variant="outline"
                         onClick={() => setCurrentFeedbackIndex(Math.max(0, currentFeedbackIndex - 1))}
                         disabled={currentFeedbackIndex === 0}
-                        className="flex-1"
+                        className="flex-1 rounded-xl h-11"
                       >
                         ← Anterior
                       </Button>
@@ -1682,7 +1861,7 @@ ${respostaAluno}`
                         variant="outline"
                         onClick={() => setCurrentFeedbackIndex(Math.min(exam.questions.length - 1, currentFeedbackIndex + 1))}
                         disabled={currentFeedbackIndex === exam.questions.length - 1}
-                        className="flex-1"
+                        className="flex-1 rounded-xl h-11"
                       >
                         Próxima →
                       </Button>
@@ -1690,8 +1869,8 @@ ${respostaAluno}`
                   </>
                 )
               })()}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       )}
       </>
@@ -2210,7 +2389,7 @@ ${respostaAluno}`
                     <div className="space-y-2">
                       <div className="prose dark:prose-invert max-w-none">
                         <HighlightableText
-                          text={question.statement}
+                          text={formatText(question.statement)}
                           highlights={answer?.highlights || []}
                           target="statement"
                           onHighlightsChange={(highlights) => handleHighlights(question.id, highlights)}
@@ -2243,7 +2422,7 @@ ${respostaAluno}`
                     {/* Comando */}
                     <div className="bg-muted p-4 rounded-lg">
                       <HighlightableText
-                        text={question.command}
+                        text={formatText(question.command)}
                         highlights={answer?.highlights || []}
                         target="command"
                         onHighlightsChange={(highlights) => handleHighlights(question.id, highlights)}
@@ -2311,8 +2490,8 @@ ${respostaAluno}`
                                       )}
                                     </Button>
                                   </div>
-                                  <p className={`mt-1 ${isCrossed ? 'line-through' : ''}`}>
-                                    {alt.text}
+                                  <p className={`mt-1 whitespace-pre-wrap ${isCrossed ? 'line-through' : ''}`}>
+                                    {formatText(alt.text)}
                                   </p>
                                 </div>
                               </div>
@@ -3007,7 +3186,7 @@ ${respostaAluno}`
                 <div className="bg-muted rounded-lg p-4 space-y-2">
                   <h4 className="font-semibold text-sm">Enunciado da Questão:</h4>
                   <p className="text-sm whitespace-pre-wrap">
-                    {feedbackData.statement}
+                    {formatText(feedbackData.statement)}
                   </p>
                 </div>
               )}
@@ -3017,7 +3196,7 @@ ${respostaAluno}`
                 <div className="bg-blue-50 dark:bg-blue-950 rounded-lg p-4 space-y-2 border border-blue-200 dark:border-blue-800">
                   <h4 className="font-semibold text-sm text-blue-900 dark:text-blue-100">Comando da Questão:</h4>
                   <p className="text-sm whitespace-pre-wrap text-blue-800 dark:text-blue-200">
-                    {feedbackData.command}
+                    {formatText(feedbackData.command)}
                   </p>
                 </div>
               )}
@@ -3028,7 +3207,7 @@ ${respostaAluno}`
                   <h4 className="font-semibold text-sm text-blue-900 dark:text-blue-100">Análise das Alternativas:</h4>
                   <div className="space-y-2">
                     {Object.entries(feedbackData.commentedFeedback.explanations).map(([letter, explanation]) => (
-                      <div 
+                      <div
                         key={letter}
                         className={`p-3 rounded border-l-4 ${
                           letter === feedbackData.commentedFeedback?.correctAlternative
@@ -3043,8 +3222,8 @@ ${respostaAluno}`
                         }`}>
                           {letter}) {letter === feedbackData.commentedFeedback?.correctAlternative ? '✓ Correta' : '✗ Incorreta'}
                         </p>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {explanation}
+                        <p className="text-sm text-muted-foreground mt-1 whitespace-pre-wrap">
+                          {formatText(explanation as string)}
                         </p>
                       </div>
                     ))}
@@ -3055,9 +3234,9 @@ ${respostaAluno}`
               {/* Explicação Geral */}
               {feedbackData.explanation && (
                 <div className="bg-muted rounded-lg p-4 space-y-2">
-                  <h4 className="font-semibold text-sm">Explicação Geral:</h4>
+                  <h4 className="font-semibold text-sm">Resposta Comentada:</h4>
                   <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                    {feedbackData.explanation}
+                    {formatText(feedbackData.explanation)}
                   </p>
                 </div>
               )}
