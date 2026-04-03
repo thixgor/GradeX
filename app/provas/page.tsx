@@ -28,7 +28,12 @@ import {
   AlertCircle,
   Play,
   Eye,
+  GraduationCap,
+  BookOpen,
+  Layers,
+  ArrowLeft,
 } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface Group {
   _id: string
@@ -37,8 +42,17 @@ interface Group {
   color?: string
   icon?: string
   type: 'personal' | 'general'
+  category?: 'faculdade' | 'plataforma'
+  course?: string
   createdBy: string
   parentGroupId?: string | null
+}
+
+const COURSE_LABELS: Record<string, { label: string; color: string; icon: string }> = {
+  'medicina-afya': { label: 'Medicina AFYA', color: '#DC2626', icon: '🩺' },
+  'psicologia-afya': { label: 'Psicologia AFYA', color: '#7C3AED', icon: '🧠' },
+  'biomedicina-afya': { label: 'Biomedicina AFYA', color: '#059669', icon: '🔬' },
+  'odontologia-afya': { label: 'Odontologia AFYA', color: '#2563EB', icon: '🦷' },
 }
 
 // ─── Skeleton Loader ──────────────────────────────────────────
@@ -60,6 +74,8 @@ function ExamSkeleton() {
   )
 }
 
+type ViewMode = 'home' | 'faculdade' | 'plataforma'
+
 function ProvasContent() {
   const router = useRouter()
   const { user, handleCreateExam, tierLimitExceeded } = useAppShell()
@@ -72,6 +88,7 @@ function ProvasContent() {
   const [deleteConfirmation, setDeleteConfirmation] = useState<{ examId: string; examTitle: string } | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
   const [showExamsInfo, setShowExamsInfo] = useState(false)
+  const [viewMode, setViewMode] = useState<ViewMode>('home')
 
   useEffect(() => {
     loadExamsAndGroups()
@@ -126,7 +143,7 @@ function ProvasContent() {
     setContextMenu({ x: e.clientX, y: e.clientY })
   }
 
-  async function handleCreateGroup(name: string, type: 'personal' | 'general', parentGroupId?: string | null) {
+  async function handleCreateGroup(name: string, type: 'personal' | 'general', parentGroupId?: string | null, category?: string, course?: string) {
     try {
       const res = await fetch('/api/groups', {
         method: 'POST',
@@ -138,6 +155,8 @@ function ProvasContent() {
           color: '#3B82F6',
           icon: '',
           parentGroupId: parentGroupId || null,
+          ...(category && { category }),
+          ...(course && { course }),
         }),
       })
 
@@ -165,7 +184,6 @@ function ProvasContent() {
       if (res.ok) {
         const deletedGroup = groups.find(g => g._id === groupId)
         const parentGroupId = deletedGroup?.parentGroupId || null
-        // Remover o grupo e reparentar seus subgrupos
         setGroups(groups
           .filter(g => g._id !== groupId)
           .map(g => g.parentGroupId === groupId
@@ -218,6 +236,10 @@ function ProvasContent() {
     const startTime = new Date(exam.startTime)
     const endTime = new Date(exam.endTime)
 
+    if (exam.isPracticeExam) {
+      return { text: 'Praticar', color: 'text-emerald-600 dark:text-emerald-400', bgColor: 'bg-emerald-500/10', dotColor: 'bg-emerald-500', canTake: true }
+    }
+
     if (now > endTime) {
       return { text: 'Finalizada', color: 'text-red-500', bgColor: 'bg-red-500/10', dotColor: 'bg-red-500', canTake: false }
     }
@@ -252,67 +274,278 @@ function ProvasContent() {
     return { text: 'Indisponivel', color: 'text-muted-foreground', bgColor: 'bg-muted', dotColor: 'bg-gray-400', canTake: false }
   }
 
-  // ─── Computed Stats ──────────────────────────────────────────
-  const completedExams = exams.filter(e => new Date() > new Date(e.endTime)).length
-  const availableExams = exams.filter(e => {
-    const s = getExamStatus(e)
-    return s.canTake
-  }).length
-  const personalExams = exams.filter(e => e.isPersonalExam).length
-  const generalExams = exams.filter(e => !e.isPersonalExam).length
-
+  // ─── Computed Data ──────────────────────────────────────────
+  const faculdadeGroups = groups.filter(g => g.category === 'faculdade' && !g.parentGroupId)
+  const plataformaGroups = groups.filter(g => g.category !== 'faculdade' && g.type === 'general' && !g.parentGroupId)
+  const personalGroups = groups.filter(g => g.type === 'personal' && !g.parentGroupId)
   const ungroupedExams = exams.filter(e => !e.groupId)
+  const personalExams = ungroupedExams.filter(e => e.isPersonalExam)
+  const generalUngroupedExams = ungroupedExams.filter(e => !e.isPersonalExam)
+
+  // Contadores
+  const faculdadeExamCount = faculdadeGroups.reduce((sum, g) => {
+    function countRec(gid: string): number {
+      const direct = exams.filter(e => e.groupId === gid).length
+      const children = groups.filter(c => c.parentGroupId === gid)
+      return direct + children.reduce((s, c) => s + countRec(c._id), 0)
+    }
+    return sum + countRec(g._id)
+  }, 0)
+
+  const plataformaExamCount = exams.length - faculdadeExamCount
 
   // Loading state
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
         <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
-          {/* Skeleton header */}
           <div className="h-20 rounded-2xl skeleton-pulse" />
-          {/* Skeleton stats */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            {[1, 2, 3, 4].map(i => (
-              <div key={i} className="h-24 rounded-2xl skeleton-pulse" />
+          <div className="grid grid-cols-2 gap-4">
+            {[1, 2].map(i => (
+              <div key={i} className="h-48 rounded-2xl skeleton-pulse" />
             ))}
-          </div>
-          {/* Skeleton cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            {[1, 2, 3].map(i => <ExamSkeleton key={i} />)}
           </div>
         </div>
       </div>
     )
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
-      <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+  // ─── EXAM CARD (reusable) ──────────────────────────────────
+  function ExamCard({ exam, index = 0 }: { exam: Exam; index?: number }) {
+    const status = getExamStatus(exam)
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, delay: 0.1 + index * 0.04 }}
+        className={cn(
+          "glass-page-card rounded-2xl overflow-hidden group cursor-pointer",
+          "hover-glow-green hover-lift transition-all duration-300",
+          "border-l-[3px]",
+          exam.isPersonalExam ? 'border-l-violet-500' : 'border-l-[#468152]'
+        )}
+        onContextMenu={(e) => handleExamContextMenu(exam, e)}
+        onClick={() => {
+          if (status.canTake) {
+            router.push(`/exam/${exam._id}`)
+          } else if (new Date() > new Date(exam.endTime)) {
+            router.push(`/exam/${exam._id}/results`)
+          }
+        }}
+      >
+        {exam.coverImage && (
+          <div className="h-32 overflow-hidden">
+            <img
+              src={exam.coverImage}
+              alt={exam.title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+          </div>
+        )}
 
-        {/* ═══════════════════════════════════════════════════
-            HEADER
-           ═══════════════════════════════════════════════════ */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
-        >
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Provas</h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              {exams.length === 0
-                ? 'Nenhuma prova disponivel no momento'
-                : `${exams.length} ${exams.length === 1 ? 'prova disponivel' : 'provas disponiveis'}`}
-            </p>
+        <div className="p-4 space-y-2.5">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className={cn(
+              "inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full",
+              exam.isPersonalExam
+                ? 'bg-violet-500/10 text-violet-600 dark:text-violet-400'
+                : 'bg-[#468152]/10 text-[#468152]'
+            )}>
+              {exam.isPersonalExam ? (
+                <><Sparkles className="h-2.5 w-2.5" /> Pessoal</>
+              ) : (
+                <><Users className="h-2.5 w-2.5" /> Geral</>
+              )}
+            </span>
+            <span className={cn("inline-flex items-center gap-1.5 text-[10px] font-medium px-2 py-0.5 rounded-full", status.bgColor)}>
+              <span className={cn("h-1.5 w-1.5 rounded-full", status.dotColor)} />
+              <span className={status.color}>{status.text}</span>
+            </span>
           </div>
 
-          <div className="flex gap-2">
+          <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition-colors">
+            {exam.title}
+          </h3>
+
+          {exam.description && (
+            <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{exam.description}</p>
+          )}
+
+          <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <FileText className="h-3 w-3" />
+              <span>{exam.numberOfQuestions} questoes</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <BarChart3 className="h-3 w-3" />
+              <span>{exam.scoringMethod === 'tri' ? 'TRI' : `${exam.totalPoints} pts`}</span>
+            </div>
+          </div>
+
+          <div className="flex gap-2 pt-1">
+            {status.canTake ? (
+              <Button className="flex-1 btn-brand-glow text-white rounded-xl text-xs font-semibold h-9" size="sm">
+                <Play className="h-3.5 w-3.5 mr-1.5" />
+                {exam.isPracticeExam ? 'Praticar' : status.text.includes('Aguardando') ? 'Entrar na Sala' : 'Realizar Prova'}
+              </Button>
+            ) : new Date() > new Date(exam.endTime) ? (
+              <Button className="flex-1 rounded-xl text-xs h-9" variant="outline" size="sm">
+                <Eye className="h-3.5 w-3.5 mr-1.5" /> Ver Resultados
+              </Button>
+            ) : (
+              <Button className="flex-1 rounded-xl text-xs h-9" variant="secondary" size="sm" disabled>
+                {status.text}
+              </Button>
+            )}
+
+            {exam.isPersonalExam && exam.createdBy === user?.id && (
+              <Button
+                variant="destructive"
+                size="sm"
+                className="rounded-xl text-xs h-9"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setDeleteConfirmation({ examId: exam._id?.toString() || '', examTitle: exam.title })
+                }}
+              >
+                Deletar
+              </Button>
+            )}
+          </div>
+        </div>
+      </motion.div>
+    )
+  }
+
+  // ═══════════════════════════════════════════════════
+  // HOME VIEW - Seletor principal
+  // ═══════════════════════════════════════════════════
+  if (viewMode === 'home') {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+        <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="text-center space-y-2 pt-4"
+          >
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Provas</h1>
+            <p className="text-muted-foreground">O que voce quer treinar hoje?</p>
+          </motion.div>
+
+          {/* Dois cards principais */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {/* Card Provas da Faculdade */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <button
+                onClick={() => setViewMode('faculdade')}
+                className="w-full text-left group"
+              >
+                <div className="relative overflow-hidden rounded-2xl border-2 border-transparent hover:border-[#DC2626]/30 bg-gradient-to-br from-red-50/80 via-background to-orange-50/50 dark:from-red-950/20 dark:via-background dark:to-orange-950/10 p-6 sm:p-8 transition-all duration-300 hover:shadow-xl hover:shadow-red-500/10 hover:scale-[1.01]">
+                  {/* Glow */}
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-red-500/10 to-transparent rounded-bl-full" />
+
+                  <div className="relative space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="p-3 rounded-xl bg-red-500/10 group-hover:bg-red-500/20 transition-colors">
+                        <GraduationCap className="h-7 w-7 text-red-600 dark:text-red-400" />
+                      </div>
+                      <div className="flex-1">
+                        <h2 className="text-lg sm:text-xl font-bold">Provas da Faculdade</h2>
+                        <p className="text-xs text-muted-foreground">
+                          Provas antigas para treinar e melhorar
+                        </p>
+                      </div>
+                      <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-red-500 group-hover:translate-x-1 transition-all" />
+                    </div>
+
+                    {/* Cursos disponíveis */}
+                    <div className="flex flex-wrap gap-2">
+                      {Object.entries(COURSE_LABELS).map(([key, val]) => {
+                        const courseGroupCount = groups.filter(g => g.course === key).length
+                        return (
+                          <span key={key} className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-lg bg-background/80 border border-border/50">
+                            <span>{val.icon}</span>
+                            <span>{val.label.replace(' AFYA', '')}</span>
+                          </span>
+                        )
+                      })}
+                    </div>
+
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <span className="font-semibold text-foreground">{faculdadeExamCount} provas</span>
+                      <span>{faculdadeGroups.length} grupos</span>
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </motion.div>
+
+            {/* Card Provas da Plataforma */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <button
+                onClick={() => setViewMode('plataforma')}
+                className="w-full text-left group"
+              >
+                <div className="relative overflow-hidden rounded-2xl border-2 border-transparent hover:border-[#468152]/30 bg-gradient-to-br from-emerald-50/80 via-background to-amber-50/50 dark:from-emerald-950/20 dark:via-background dark:to-amber-950/10 p-6 sm:p-8 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/10 hover:scale-[1.01]">
+                  {/* Glow */}
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-emerald-500/10 to-transparent rounded-bl-full" />
+
+                  <div className="relative space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="p-3 rounded-xl bg-[#468152]/10 group-hover:bg-[#468152]/20 transition-colors">
+                        <BookOpen className="h-7 w-7 text-[#468152]" />
+                      </div>
+                      <div className="flex-1">
+                        <h2 className="text-lg sm:text-xl font-bold">Provas da Plataforma</h2>
+                        <p className="text-xs text-muted-foreground">
+                          Provas gerais, pessoais e simulados
+                        </p>
+                      </div>
+                      <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-[#468152] group-hover:translate-x-1 transition-all" />
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      <span className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-lg bg-[#468152]/10 text-[#468152]">
+                        <Users className="h-3 w-3" /> Gerais
+                      </span>
+                      <span className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-lg bg-violet-500/10 text-violet-600 dark:text-violet-400">
+                        <Sparkles className="h-3 w-3" /> Pessoais
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <span className="font-semibold text-foreground">{plataformaExamCount} provas</span>
+                      <span>{personalExams.length} pessoais</span>
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </motion.div>
+          </div>
+
+          {/* Quick Actions */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.35 }}
+            className="flex justify-center gap-3"
+          >
             <Button
               variant="outline"
               size="sm"
               onClick={() => setShowExamsInfo(true)}
-              className="hover-glow-green rounded-xl text-xs"
+              className="rounded-xl text-xs"
             >
               <Info className="h-3.5 w-3.5 mr-1.5" />
               Sobre as Provas
@@ -326,18 +559,234 @@ function ProvasContent() {
               <Plus className="h-3.5 w-3.5 mr-1.5" />
               Nova Prova
             </Button>
+          </motion.div>
+        </div>
+
+        {/* Info Dialog */}
+        {renderInfoDialog()}
+      </div>
+    )
+  }
+
+  // ═══════════════════════════════════════════════════
+  // FACULDADE VIEW
+  // ═══════════════════════════════════════════════════
+  if (viewMode === 'faculdade') {
+    // Agrupar por curso
+    const courseMap = new Map<string, Group[]>()
+    const uncategorizedFacGroups: Group[] = []
+
+    faculdadeGroups.forEach(g => {
+      if (g.course && COURSE_LABELS[g.course]) {
+        if (!courseMap.has(g.course)) courseMap.set(g.course, [])
+        courseMap.get(g.course)!.push(g)
+      } else {
+        uncategorizedFacGroups.push(g)
+      }
+    })
+
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+        <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="flex items-center gap-4"
+          >
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setViewMode('home')}
+              className="rounded-xl"
+            >
+              <ArrowLeft className="h-4 w-4 mr-1" />
+              Voltar
+            </Button>
+            <div className="flex-1">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-red-500/10">
+                  <GraduationCap className="h-5 w-5 text-red-600 dark:text-red-400" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold">Provas da Faculdade</h1>
+                  <p className="text-xs text-muted-foreground">{faculdadeExamCount} provas disponiveis para treino</p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Grupos por curso */}
+          {Array.from(courseMap.entries()).map(([courseKey, courseGroups], idx) => {
+            const courseInfo = COURSE_LABELS[courseKey]
+            return (
+              <motion.section
+                key={courseKey}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.1 + idx * 0.08 }}
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="text-lg">{courseInfo.icon}</span>
+                  <h2 className="text-lg font-semibold" style={{ color: courseInfo.color }}>
+                    {courseInfo.label}
+                  </h2>
+                  <div className="flex-1 h-px bg-border/50" />
+                </div>
+
+                <div className="space-y-1">
+                  {courseGroups.map((group) => {
+                    const groupExams = exams.filter(e => e.groupId === group._id)
+                    return (
+                      <ExamGroup
+                        key={group._id}
+                        group={group}
+                        exams={groupExams}
+                        allGroups={groups}
+                        allExams={exams}
+                        currentUserId={user?.id || ''}
+                        userRole={user?.role || 'user'}
+                        onExamClick={(exam) => {
+                          const status = getExamStatus(exam)
+                          if (status.canTake) router.push(`/exam/${exam._id}`)
+                          else if (new Date() > new Date(exam.endTime)) router.push(`/exam/${exam._id}/results`)
+                        }}
+                        onExamContextMenu={handleExamContextMenu}
+                        onDeleteGroup={handleDeleteGroup}
+                        onCreateSubgroup={(parentGroupId) => {
+                          const name = prompt('Nome do subgrupo:')
+                          if (name) handleCreateGroup(name, 'general', parentGroupId)
+                        }}
+                      />
+                    )
+                  })}
+                </div>
+              </motion.section>
+            )
+          })}
+
+          {/* Grupos de faculdade sem curso */}
+          {uncategorizedFacGroups.length > 0 && (
+            <motion.section
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.3 }}
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <Layers className="h-4 w-4 text-muted-foreground" />
+                <h2 className="text-lg font-semibold">Outros</h2>
+                <div className="flex-1 h-px bg-border/50" />
+              </div>
+
+              <div className="space-y-1">
+                {uncategorizedFacGroups.map((group) => {
+                  const groupExams = exams.filter(e => e.groupId === group._id)
+                  return (
+                    <ExamGroup
+                      key={group._id}
+                      group={group}
+                      exams={groupExams}
+                      allGroups={groups}
+                      allExams={exams}
+                      currentUserId={user?.id || ''}
+                      userRole={user?.role || 'user'}
+                      onExamClick={(exam) => {
+                        const status = getExamStatus(exam)
+                        if (status.canTake) router.push(`/exam/${exam._id}`)
+                        else if (new Date() > new Date(exam.endTime)) router.push(`/exam/${exam._id}/results`)
+                      }}
+                      onExamContextMenu={handleExamContextMenu}
+                      onDeleteGroup={handleDeleteGroup}
+                      onCreateSubgroup={(parentGroupId) => {
+                        const name = prompt('Nome do subgrupo:')
+                        if (name) handleCreateGroup(name, 'general', parentGroupId)
+                      }}
+                    />
+                  )
+                })}
+              </div>
+            </motion.section>
+          )}
+
+          {/* Empty */}
+          {faculdadeGroups.length === 0 && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center py-16"
+            >
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-red-500/10 mb-4">
+                <GraduationCap className="h-8 w-8 text-red-500" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Nenhuma prova da faculdade</h3>
+              <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                Provas antigas da faculdade serao adicionadas aqui pelo administrador.
+              </p>
+            </motion.div>
+          )}
+        </div>
+
+        {/* Context Menu & Modals */}
+        {renderContextMenu()}
+        {renderDeleteModal()}
+      </div>
+    )
+  }
+
+  // ═══════════════════════════════════════════════════
+  // PLATAFORMA VIEW
+  // ═══════════════════════════════════════════════════
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+      <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+        >
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setViewMode('home')}
+              className="rounded-xl"
+            >
+              <ArrowLeft className="h-4 w-4 mr-1" />
+              Voltar
+            </Button>
+            <div>
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-[#468152]/10">
+                  <BookOpen className="h-5 w-5 text-[#468152]" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold">Provas da Plataforma</h1>
+                  <p className="text-xs text-muted-foreground">{plataformaExamCount} provas</p>
+                </div>
+              </div>
+            </div>
           </div>
+          <Button
+            onClick={handleCreateExam}
+            disabled={tierLimitExceeded}
+            size="sm"
+            className="btn-brand-glow text-white rounded-xl text-xs font-semibold"
+          >
+            <Plus className="h-3.5 w-3.5 mr-1.5" />
+            Nova Prova
+          </Button>
         </motion.div>
 
-        {/* ═══════════════════════════════════════════════════
-            DASHBOARD STATS
-           ═══════════════════════════════════════════════════ */}
+        {/* Stats */}
         <section className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {[
-            { label: 'Disponiveis', value: availableExams, icon: Play, color: '#468152', iconBg: 'bg-emerald-500/10 dark:bg-emerald-500/20' },
-            { label: 'Finalizadas', value: completedExams, icon: CheckCircle2, color: '#E2A43E', iconBg: 'bg-amber-500/10 dark:bg-amber-500/20' },
-            { label: 'Pessoais', value: personalExams, icon: Sparkles, color: '#8b5cf6', iconBg: 'bg-violet-500/10 dark:bg-violet-500/20' },
-            { label: 'Gerais', value: generalExams, icon: Users, color: '#3b82f6', iconBg: 'bg-blue-500/10 dark:bg-blue-500/20' },
+            { label: 'Disponiveis', value: exams.filter(e => getExamStatus(e).canTake).length, icon: Play, color: '#468152', iconBg: 'bg-emerald-500/10 dark:bg-emerald-500/20' },
+            { label: 'Finalizadas', value: exams.filter(e => !e.isPracticeExam && new Date() > new Date(e.endTime)).length, icon: CheckCircle2, color: '#E2A43E', iconBg: 'bg-amber-500/10 dark:bg-amber-500/20' },
+            { label: 'Pessoais', value: personalExams.length, icon: Sparkles, color: '#8b5cf6', iconBg: 'bg-violet-500/10 dark:bg-violet-500/20' },
+            { label: 'Gerais', value: generalUngroupedExams.length + plataformaGroups.length, icon: Users, color: '#3b82f6', iconBg: 'bg-blue-500/10 dark:bg-blue-500/20' },
           ].map((stat, index) => {
             const Icon = stat.icon
             return (
@@ -349,7 +798,7 @@ function ProvasContent() {
                 className="glass-stat rounded-2xl p-4 hover-glow-brand hover-lift transition-all duration-300 group cursor-default"
               >
                 <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-xl ${stat.iconBg} group-hover:scale-110 transition-transform duration-300`}>
+                  <div className={cn("p-2 rounded-xl group-hover:scale-110 transition-transform duration-300", stat.iconBg)}>
                     <Icon className="h-4 w-4" style={{ color: stat.color }} />
                   </div>
                   <div>
@@ -362,9 +811,7 @@ function ProvasContent() {
           })}
         </section>
 
-        {/* ═══════════════════════════════════════════════════
-            UNGROUPED EXAMS (Main exams)
-           ═══════════════════════════════════════════════════ */}
+        {/* Ungrouped exams */}
         {ungroupedExams.length > 0 && (
           <motion.section
             initial={{ opacity: 0, y: 16 }}
@@ -375,162 +822,17 @@ function ProvasContent() {
               <FileText className="h-4 w-4 text-muted-foreground" />
               <h2 className="text-lg font-semibold tracking-tight">Suas Provas</h2>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              {ungroupedExams.map((exam, index) => {
-                const status = getExamStatus(exam)
-
-                return (
-                  <motion.div
-                    key={exam._id?.toString()}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.35, delay: 0.35 + index * 0.05 }}
-                    className={`
-                      glass-page-card rounded-2xl overflow-hidden group cursor-pointer
-                      hover-glow-green hover-lift transition-all duration-300
-                      border-l-[3px] ${exam.isPersonalExam
-                        ? 'border-l-violet-500'
-                        : 'border-l-[#468152]'
-                      }
-                    `}
-                    onContextMenu={(e) => handleExamContextMenu(exam, e)}
-                    onClick={() => {
-                      if (status.canTake) {
-                        router.push(`/exam/${exam._id}`)
-                      } else if (new Date() > new Date(exam.endTime)) {
-                        router.push(`/exam/${exam._id}/results`)
-                      }
-                    }}
-                  >
-                    {/* Cover Image */}
-                    {exam.coverImage && (
-                      <div className="h-36 overflow-hidden">
-                        <img
-                          src={exam.coverImage}
-                          alt={exam.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      </div>
-                    )}
-
-                    <div className="p-5 space-y-3">
-                      {/* Badges */}
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className={`inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full ${exam.isPersonalExam
-                            ? 'bg-violet-500/10 text-violet-600 dark:text-violet-400'
-                            : 'bg-[#468152]/10 text-[#468152]'
-                          }`}>
-                          {exam.isPersonalExam ? (
-                            <><Sparkles className="h-2.5 w-2.5" /> Pessoal</>
-                          ) : (
-                            <><Users className="h-2.5 w-2.5" /> Geral</>
-                          )}
-                        </span>
-                        <span className={`inline-flex items-center gap-1.5 text-[10px] font-medium px-2 py-0.5 rounded-full ${status.bgColor}`}>
-                          <span className={`h-1.5 w-1.5 rounded-full ${status.dotColor}`} />
-                          <span className={status.color}>{status.text}</span>
-                        </span>
-                      </div>
-
-                      {/* Title */}
-                      <h3 className="font-semibold text-sm sm:text-base line-clamp-2 group-hover:text-primary transition-colors">
-                        {exam.title}
-                      </h3>
-
-                      {exam.description && (
-                        <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-                          {exam.description}
-                        </p>
-                      )}
-
-                      {/* Meta info */}
-                      <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <FileText className="h-3 w-3" />
-                          <span>{exam.numberOfQuestions} questoes</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <BarChart3 className="h-3 w-3" />
-                          <span>
-                            {exam.scoringMethod === 'tri' ? 'TRI' : `${exam.totalPoints} pts`}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Dates */}
-                      <div className="text-[11px] text-muted-foreground/70 space-y-0.5 pt-2 border-t border-border/50">
-                        <div className="flex items-center gap-1.5">
-                          <Calendar className="h-3 w-3" />
-                          <span>Inicio: {formatDate(exam.startTime)}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <Clock className="h-3 w-3" />
-                          <span>Fim: {formatDate(exam.endTime)}</span>
-                        </div>
-                      </div>
-
-                      {/* CTA */}
-                      <div className="flex gap-2 pt-1">
-                        {status.canTake ? (
-                          <Button
-                            className="flex-1 btn-brand-glow text-white rounded-xl text-xs font-semibold h-9"
-                            size="sm"
-                          >
-                            <Play className="h-3.5 w-3.5 mr-1.5" />
-                            {status.text.includes('Aguardando') ? 'Entrar na Sala' : 'Realizar Prova'}
-                          </Button>
-                        ) : new Date() > new Date(exam.endTime) ? (
-                          <Button
-                            className="flex-1 rounded-xl text-xs h-9"
-                            variant="outline"
-                            size="sm"
-                          >
-                            <Eye className="h-3.5 w-3.5 mr-1.5" />
-                            Ver Resultados
-                          </Button>
-                        ) : (
-                          <Button
-                            className="flex-1 rounded-xl text-xs h-9"
-                            variant="secondary"
-                            size="sm"
-                            disabled
-                          >
-                            {status.text}
-                          </Button>
-                        )}
-
-                        {exam.isPersonalExam && exam.createdBy === user?.id && (
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            className="rounded-xl text-xs h-9"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              setDeleteConfirmation({
-                                examId: exam._id?.toString() || '',
-                                examTitle: exam.title
-                              })
-                            }}
-                          >
-                            Deletar
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </motion.div>
-                )
-              })}
+              {ungroupedExams.map((exam, index) => (
+                <ExamCard key={exam._id?.toString()} exam={exam} index={index} />
+              ))}
             </div>
           </motion.section>
         )}
 
-        {/* ═══════════════════════════════════════════════════
-            GROUPED EXAMS (grupos raiz - sem parentGroupId)
-           ═══════════════════════════════════════════════════ */}
-        {groups.filter(g => !g.parentGroupId).map((group) => {
+        {/* Plataforma groups + Personal groups */}
+        {[...plataformaGroups, ...personalGroups].map((group) => {
           const groupExams = exams.filter(e => e.groupId === group._id)
-
           return (
             <ExamGroup
               key={group._id}
@@ -542,11 +844,8 @@ function ProvasContent() {
               userRole={user?.role || 'user'}
               onExamClick={(exam) => {
                 const status = getExamStatus(exam)
-                if (status.canTake) {
-                  router.push(`/exam/${exam._id}`)
-                } else if (new Date() > new Date(exam.endTime)) {
-                  router.push(`/exam/${exam._id}/results`)
-                }
+                if (status.canTake) router.push(`/exam/${exam._id}`)
+                else if (new Date() > new Date(exam.endTime)) router.push(`/exam/${exam._id}/results`)
               }}
               onExamContextMenu={handleExamContextMenu}
               onDeleteGroup={handleDeleteGroup}
@@ -561,21 +860,18 @@ function ProvasContent() {
           )
         })}
 
-        {/* ═══════════════════════════════════════════════════
-            EMPTY STATE
-           ═══════════════════════════════════════════════════ */}
-        {exams.length === 0 && (
+        {/* Empty state */}
+        {ungroupedExams.length === 0 && plataformaGroups.length === 0 && personalGroups.length === 0 && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
             className="text-center py-16"
           >
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#468152]/10 mb-4">
               <FileText className="h-8 w-8 text-[#468152]" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">Nenhuma prova disponivel</h3>
-            <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto leading-relaxed">
+            <h3 className="text-lg font-semibold mb-2">Nenhuma prova ainda</h3>
+            <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto">
               Crie sua primeira prova pessoal com questoes geradas por IA ou aguarde provas gerais.
             </p>
             <Button
@@ -590,27 +886,75 @@ function ProvasContent() {
         )}
       </div>
 
-      {/* Context Menu */}
-      {selectedExam && (
-        <ExamContextMenu
-          examId={selectedExam._id?.toString() || ''}
-          examGroupId={selectedExam.groupId || null}
-          isPersonalExam={selectedExam.isPersonalExam || false}
-          createdBy={selectedExam.createdBy}
-          currentUserId={user?.id || ''}
-          userRole={user?.role || 'user'}
-          groups={groups}
-          onMoveToGroup={(groupId) => handleMoveExamToGroup(selectedExam._id?.toString() || '', groupId)}
-          onCreateGroup={handleCreateGroup}
-          position={contextMenu}
-          onClose={() => {
-            setContextMenu(null)
-            setSelectedExam(null)
-          }}
-        />
-      )}
+      {/* Context Menu & Modals */}
+      {renderContextMenu()}
+      {renderDeleteModal()}
+      {renderInfoDialog()}
+    </div>
+  )
 
-      {/* Exams Info Dialog */}
+  // ─── Shared Modals ──────────────────────────────────────────
+  function renderContextMenu() {
+    if (!selectedExam) return null
+    return (
+      <ExamContextMenu
+        examId={selectedExam._id?.toString() || ''}
+        examGroupId={selectedExam.groupId || null}
+        isPersonalExam={selectedExam.isPersonalExam || false}
+        createdBy={selectedExam.createdBy}
+        currentUserId={user?.id || ''}
+        userRole={user?.role || 'user'}
+        groups={groups}
+        onMoveToGroup={(groupId) => handleMoveExamToGroup(selectedExam._id?.toString() || '', groupId)}
+        onCreateGroup={handleCreateGroup}
+        position={contextMenu}
+        onClose={() => {
+          setContextMenu(null)
+          setSelectedExam(null)
+        }}
+      />
+    )
+  }
+
+  function renderDeleteModal() {
+    if (!deleteConfirmation) return null
+    return (
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="max-w-md w-full glass-page-card rounded-2xl overflow-hidden shadow-2xl"
+        >
+          <div className="p-6 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-red-500/10">
+                <AlertCircle className="h-5 w-5 text-red-500" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-red-600 dark:text-red-400">Deletar Prova</h3>
+                <p className="text-xs text-muted-foreground">Esta acao e irreversivel</p>
+              </div>
+            </div>
+            <div className="bg-muted/50 rounded-xl p-4">
+              <p className="font-semibold text-sm">{deleteConfirmation.examTitle}</p>
+              <p className="text-xs text-muted-foreground mt-1">Todas as submissoes tambem serao deletadas.</p>
+            </div>
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" size="sm" className="rounded-xl" onClick={() => setDeleteConfirmation(null)} disabled={isDeleting}>
+                Cancelar
+              </Button>
+              <Button variant="destructive" size="sm" className="rounded-xl" onClick={() => handleDeleteExam(deleteConfirmation.examId)} disabled={isDeleting}>
+                {isDeleting ? 'Deletando...' : 'Deletar'}
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    )
+  }
+
+  function renderInfoDialog() {
+    return (
       <Dialog open={showExamsInfo} onOpenChange={setShowExamsInfo}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
@@ -621,24 +965,28 @@ function ProvasContent() {
               O que sao essas Provas?
             </DialogTitle>
           </DialogHeader>
-
           <div className="space-y-4 text-sm">
-            <p className="text-muted-foreground">
-              Na DomineAqui, voce treina do jeito certo — como se estivesse no dia da prova.
-            </p>
-
+            <p className="text-muted-foreground">Na DomineAqui, voce treina do jeito certo.</p>
             <div className="space-y-2">
-              <div className="flex items-start gap-3 p-4 rounded-xl bg-[#468152]/5 border border-[#468152]/15 hover-glow-green transition-all">
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-red-500/5 border border-red-500/15">
+                <GraduationCap className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="font-semibold text-red-700 dark:text-red-300">Provas da Faculdade</p>
+                  <p className="text-muted-foreground text-xs mt-1">
+                    Provas antigas organizadas por curso. Treine com questoes reais para se preparar melhor.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-[#468152]/5 border border-[#468152]/15">
                 <Users className="h-5 w-5 text-[#468152] mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="font-semibold text-[#468152]">Provas Gerais</p>
                   <p className="text-muted-foreground text-xs mt-1">
-                    Elaboradas pela equipe DomineAqui, seguindo o padrao das provas reais. Gabarito liberado apos o termino.
+                    Elaboradas pela equipe DomineAqui, seguindo o padrao das provas reais.
                   </p>
                 </div>
               </div>
-
-              <div className="flex items-start gap-3 p-4 rounded-xl bg-violet-500/5 border border-violet-500/15 hover-glow-brand transition-all">
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-violet-500/5 border border-violet-500/15">
                 <Sparkles className="h-5 w-5 text-violet-600 dark:text-violet-400 mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="font-semibold text-violet-700 dark:text-violet-300">Provas Pessoais</p>
@@ -648,79 +996,20 @@ function ProvasContent() {
                 </div>
               </div>
             </div>
-
-            <p className="text-muted-foreground text-xs">
-              Treine com foco, estrategia e controle de tempo. Simule, analise e evolua de forma inteligente.
-            </p>
-
-            <p className="font-semibold text-primary text-xs">
-              DomineAqui — Seja o Foco, Seja a Referencia
-            </p>
+            <p className="font-semibold text-primary text-xs">DomineAqui — Seja o Foco, Seja a Referencia</p>
           </div>
-
           <DialogFooter>
             <Button onClick={() => setShowExamsInfo(false)} className="rounded-xl">Entendi</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      {/* Delete Confirmation Modal */}
-      {deleteConfirmation && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="max-w-md w-full glass-page-card rounded-2xl overflow-hidden shadow-2xl"
-          >
-            <div className="p-6 space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-red-500/10">
-                  <AlertCircle className="h-5 w-5 text-red-500" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-red-600 dark:text-red-400">Deletar Prova</h3>
-                  <p className="text-xs text-muted-foreground">Esta acao e irreversivel</p>
-                </div>
-              </div>
-
-              <div className="bg-muted/50 rounded-xl p-4">
-                <p className="font-semibold text-sm">{deleteConfirmation.examTitle}</p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Todas as submissoes relacionadas tambem serao deletadas.
-                </p>
-              </div>
-
-              <div className="flex gap-2 justify-end">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-xl"
-                  onClick={() => setDeleteConfirmation(null)}
-                  disabled={isDeleting}
-                >
-                  Cancelar
-                </Button>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  className="rounded-xl"
-                  onClick={() => handleDeleteExam(deleteConfirmation.examId)}
-                  disabled={isDeleting}
-                >
-                  {isDeleting ? 'Deletando...' : 'Deletar'}
-                </Button>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      )}
-    </div>
-  )
+    )
+  }
 }
 
 export default function ProvasPage() {
   return (
-    <AppShell headerTitle="Provas" headerSubtitle="Simulados e provas pessoais">
+    <AppShell headerTitle="Provas" headerSubtitle="Simulados e provas">
       <ProvasContent />
     </AppShell>
   )

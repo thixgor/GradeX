@@ -55,9 +55,11 @@ interface NavItem {
   variant?: 'default' | 'primary' | 'gradient'
 }
 
+// Shared easing & duration for all sidebar collapse animations
+const SB_DUR = '400ms'
+const SB_EASE = 'cubic-bezier(0.4, 0, 0.2, 1)'
+
 // ─── Fluid Glass Bubble ─────────────────────────────────────
-// Single animated glass rectangle that follows the hovered item.
-// Uses Framer Motion springs for physically natural movement.
 function FluidGlassBubble({
   navRef,
   hoveredIndex,
@@ -69,7 +71,6 @@ function FluidGlassBubble({
   isVisible: boolean
   collapsed: boolean
 }) {
-  // Spring config — feels like a physical object with slight overshoot
   const springY = { stiffness: 500, damping: 38, mass: 0.6 }
   const springSize = { stiffness: 400, damping: 32, mass: 0.4 }
 
@@ -88,13 +89,9 @@ function FluidGlassBubble({
     const itemRect = item.getBoundingClientRect()
     const scrollTop = navRef.current.scrollTop
 
-    const top = itemRect.top - navRect.top + scrollTop
-    const height = itemRect.height
+    bubbleY.set(itemRect.top - navRect.top + scrollTop)
+    bubbleH.set(itemRect.height)
 
-    bubbleY.set(top)
-    bubbleH.set(height)
-
-    // Micro-squeeze on index change
     squeeze.set(0.97)
     const t = setTimeout(() => squeeze.set(1), 60)
     return () => clearTimeout(t)
@@ -132,8 +129,9 @@ function FluidGlassBubble({
   )
 }
 
-// ─── Nav Item with animations ────────────────────────────────
-// Staggered entrance + icon bounce on hover + smooth label slide
+// ─── Nav Item ────────────────────────────────────────────────
+// Labels/badges collapse via pure CSS transitions synced with the sidebar width.
+// No AnimatePresence on text — avoids layout-shift bugs (e.g. Games icon jump).
 function NavItemButton({
   item,
   index,
@@ -157,6 +155,9 @@ function NavItemButton({
   const isGradient = item.variant === 'gradient'
   const isLogout = item.label === 'Sair'
 
+  // Stagger: each item's label fades slightly after the previous
+  const staggerMs = index * 25
+
   return (
     <motion.button
       data-nav-item
@@ -169,9 +170,8 @@ function NavItemButton({
       }}
       onMouseEnter={() => onHover(index)}
       className={cn(
-        'sidebar-fluid-item w-full flex items-center gap-3 h-11 px-3 text-sm font-medium rounded-[14px] cursor-pointer relative z-[1]',
-        'transition-colors duration-150 select-none',
-        collapsed && 'justify-center px-0',
+        'sidebar-fluid-item w-full flex items-center h-11 rounded-[14px] cursor-pointer relative z-[1]',
+        'select-none overflow-hidden',
         isLogout
           ? cn('text-muted-foreground', isHovered && 'text-red-500 dark:text-red-400')
           : isGradient
@@ -179,6 +179,13 @@ function NavItemButton({
             : cn('text-muted-foreground', isHovered && 'text-foreground'),
         isItemActive && !isGradient && !isLogout && 'sidebar-fluid-item-active text-primary font-semibold'
       )}
+      style={{
+        paddingLeft: collapsed ? 0 : 12,
+        paddingRight: collapsed ? 0 : 12,
+        gap: collapsed ? 0 : 12,
+        justifyContent: collapsed ? 'center' : 'flex-start',
+        transition: `padding ${SB_DUR} ${SB_EASE}, gap ${SB_DUR} ${SB_EASE}, color 150ms ease`,
+      }}
       onClick={onClick}
     >
       {/* Icon with spring bounce */}
@@ -196,50 +203,54 @@ function NavItemButton({
         {item.icon}
       </motion.span>
 
-      {/* Label with slide-in */}
-      <AnimatePresence mode="wait">
-        {!collapsed && (
-          <motion.span
-            className="truncate"
-            initial={{ opacity: 0, width: 0 }}
-            animate={{ opacity: 1, width: 'auto', x: isHovered ? 2 : 0 }}
-            exit={{ opacity: 0, width: 0 }}
-            transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-          >
-            {item.label}
-          </motion.span>
-        )}
-      </AnimatePresence>
+      {/* Label — always rendered, collapsed via CSS max-width + opacity */}
+      <span
+        className="truncate text-sm font-medium whitespace-nowrap"
+        style={{
+          maxWidth: collapsed ? 0 : 200,
+          opacity: collapsed ? 0 : 1,
+          overflow: 'hidden',
+          transition: collapsed
+            ? `opacity 150ms ${SB_EASE} ${staggerMs}ms, max-width ${SB_DUR} ${SB_EASE}`
+            : `opacity 250ms ${SB_EASE} ${180 + staggerMs}ms, max-width ${SB_DUR} ${SB_EASE}`,
+        }}
+      >
+        {item.label}
+      </span>
 
       {/* Badge */}
-      <AnimatePresence>
-        {!collapsed && item.badge && (
-          <motion.span
-            className="ml-auto text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full"
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            transition={{ type: 'spring', stiffness: 500, damping: 25, delay: staggerDelay + 0.1 }}
-          >
-            {item.badge}
-          </motion.span>
-        )}
-      </AnimatePresence>
+      {item.badge && (
+        <span
+          className="text-[10px] bg-primary/10 text-primary rounded-full whitespace-nowrap"
+          style={{
+            maxWidth: collapsed ? 0 : 100,
+            opacity: collapsed ? 0 : 1,
+            paddingLeft: collapsed ? 0 : 8,
+            paddingRight: collapsed ? 0 : 8,
+            paddingTop: collapsed ? 0 : 2,
+            paddingBottom: collapsed ? 0 : 2,
+            overflow: 'hidden',
+            transition: `opacity 150ms ${SB_EASE}, max-width ${SB_DUR} ${SB_EASE}, padding ${SB_DUR} ${SB_EASE}`,
+          }}
+        >
+          {item.badge}
+        </span>
+      )}
 
       {/* Gradient PRO badge */}
-      <AnimatePresence>
-        {!collapsed && isGradient && (
-          <motion.span
-            className="ml-auto text-[10px] font-bold bg-gradient-to-r from-amber-500 to-orange-500 text-transparent bg-clip-text"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: isHovered ? 1 : 0.8 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            PRO
-          </motion.span>
-        )}
-      </AnimatePresence>
+      {isGradient && (
+        <span
+          className="text-[10px] font-bold bg-gradient-to-r from-amber-500 to-orange-500 text-transparent bg-clip-text whitespace-nowrap"
+          style={{
+            maxWidth: collapsed ? 0 : 40,
+            opacity: collapsed ? 0 : (isHovered ? 1 : 0.8),
+            overflow: 'hidden',
+            transition: `opacity 200ms ${SB_EASE}, max-width ${SB_DUR} ${SB_EASE}`,
+          }}
+        >
+          PRO
+        </span>
+      )}
     </motion.button>
   )
 }
@@ -265,12 +276,8 @@ export function Sidebar({
   const pathname = usePathname()
   const navRef = useRef<HTMLElement>(null)
 
-  // Bubble tracking state
-  // Initialize from module-level vars so bubble persists across page navigations
-  // (each page mounts a new AppShell → new Sidebar instance)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(_lastClickedIndex)
   const [isInNav, setIsInNav] = useState(_mouseInsideSidebar)
-  // Mobile: track touch drag
   const [isTouching, setIsTouching] = useState(false)
 
   const isAdmin = user?.role === 'admin'
@@ -304,7 +311,6 @@ export function Sidebar({
   const logoutIndex = mainNavItems.length + secondaryNavItems.length
 
   const handleNavClick = (item: NavItem, index: number) => {
-    // Remember clicked index at module level so it survives remount
     _lastClickedIndex = index
     setHoveredIndex(index)
 
@@ -319,7 +325,6 @@ export function Sidebar({
     return pathname.startsWith(href)
   }
 
-  // ─── Mouse handlers (desktop) ───
   const handleNavMouseEnter = useCallback(() => {
     _mouseInsideSidebar = true
     setIsInNav(true)
@@ -331,8 +336,6 @@ export function Sidebar({
     setHoveredIndex(null)
   }, [])
 
-  // ─── Touch handlers (mobile) ───
-  // Prevents: page scroll, page refresh (pull-to-refresh), text selection
   const findItemIndexAtY = useCallback((clientY: number) => {
     if (!navRef.current) return null
     const items = navRef.current.querySelectorAll<HTMLElement>('[data-nav-item]')
@@ -344,7 +347,7 @@ export function Sidebar({
   }, [])
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    e.preventDefault() // prevent text selection + scroll
+    e.preventDefault()
     setIsTouching(true)
     const touch = e.touches[0]
     const idx = findItemIndexAtY(touch.clientY)
@@ -352,15 +355,14 @@ export function Sidebar({
   }, [findItemIndexAtY])
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    e.preventDefault() // prevent page scroll + pull-to-refresh
+    e.preventDefault()
     const touch = e.touches[0]
     const idx = findItemIndexAtY(touch.clientY)
     if (idx !== null) setHoveredIndex(idx)
   }, [findItemIndexAtY])
 
   const handleTouchEnd = useCallback((e: React.TouchEvent) => {
-    e.preventDefault() // prevent ghost click / page jump
-    // Navigate to the last hovered item
+    e.preventDefault()
     if (hoveredIndex !== null && navRef.current) {
       const items = navRef.current.querySelectorAll<HTMLElement>('[data-nav-item]')
       const item = items[hoveredIndex]
@@ -370,11 +372,6 @@ export function Sidebar({
     setHoveredIndex(null)
   }, [hoveredIndex])
 
-  // ─── Re-establish bubble after navigation ───
-  // When pathname changes, a new Sidebar instance may mount. The module-level
-  // vars (_mouseInsideSidebar, _lastClickedIndex) survive across mounts,
-  // so initial state is already set. This effect handles subsequent pathname
-  // changes within the same mount.
   useEffect(() => {
     if (_lastClickedIndex !== null) {
       setIsInNav(true)
@@ -413,46 +410,52 @@ export function Sidebar({
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed top-0 left-0 z-50 h-full bg-background border-r flex flex-col',
-          'transition-[width,transform] duration-[350ms] ease-[cubic-bezier(0.25,0.1,0.25,1)]',
+          'fixed top-0 left-0 z-50 h-full bg-background border-r flex flex-col overflow-hidden',
           collapsed ? 'lg:w-[72px]' : 'lg:w-[280px]',
           'w-[280px]',
           isOpen ? 'translate-x-0' : '-translate-x-full',
           'lg:translate-x-0'
         )}
+        style={{
+          transition: `width ${SB_DUR} ${SB_EASE}, transform ${SB_DUR} ${SB_EASE}`,
+        }}
       >
         {/* Header */}
-        <div className={cn(
-          'border-b transition-[padding] duration-[350ms] ease-[cubic-bezier(0.25,0.1,0.25,1)]',
-          collapsed
-            ? 'flex flex-col items-center gap-2 py-3 px-2'
-            : 'flex items-center justify-between p-4'
-        )}>
+        <div
+          className="border-b flex items-center shrink-0"
+          style={{
+            padding: collapsed ? '12px 8px' : '16px',
+            justifyContent: collapsed ? 'center' : 'space-between',
+            flexDirection: collapsed ? 'column' : 'row',
+            gap: collapsed ? 8 : 0,
+            transition: `padding ${SB_DUR} ${SB_EASE}`,
+          }}
+        >
           <motion.div
-            className="cursor-pointer"
+            className="cursor-pointer flex-shrink-0"
             onClick={() => router.push('/?landing=true')}
             whileHover={{ scale: 1.02, opacity: 0.85 }}
             whileTap={{ scale: 0.97 }}
             transition={{ type: 'spring', stiffness: 400, damping: 20 }}
           >
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="wait" initial={false}>
               {collapsed ? (
                 <motion.div
                   key="icon"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  transition={{ duration: 0.2 }}
+                  initial={{ opacity: 0, scale: 0.7, rotate: -10 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  exit={{ opacity: 0, scale: 0.7 }}
+                  transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                 >
                   <Logo variant="icon" size="lg" />
                 </motion.div>
               ) : (
                 <motion.div
                   key="full"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.2 }}
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -8 }}
+                  transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                 >
                   <Logo variant="full" size="md" />
                 </motion.div>
@@ -464,36 +467,37 @@ export function Sidebar({
             <X className="h-5 w-5" />
           </Button>
 
-          <motion.div
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9, rotate: collapsed ? 180 : -180 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-            className="hidden lg:flex"
-          >
+          {/* Collapse toggle — chevron rotates smoothly instead of swapping icons */}
+          <div className="hidden lg:flex">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => onCollapse?.(!collapsed)}
               className="h-7 w-7"
             >
-              {collapsed ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronLeft className="h-4 w-4" />}
+              <motion.div
+                animate={{ rotate: collapsed ? 180 : 0 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </motion.div>
             </Button>
-          </motion.div>
+          </div>
         </div>
 
         {/* User Info */}
-        <AnimatePresence>
+        <AnimatePresence initial={false}>
           {user && !collapsed && (
             <motion.div
-              className="p-4 border-b"
+              className="p-4 border-b overflow-hidden shrink-0"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
             >
               <div className="flex items-center gap-3">
                 <motion.div
-                  className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold"
+                  className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold flex-shrink-0"
                   whileHover={{ scale: 1.08, rotate: [0, -5, 5, 0] }}
                   transition={{ type: 'spring', stiffness: 300, damping: 15 }}
                 >
@@ -509,7 +513,7 @@ export function Sidebar({
         </AnimatePresence>
 
         {/* Create Exam Button */}
-        <div className="p-3 border-b">
+        <div className="p-3 border-b shrink-0 overflow-hidden">
           <motion.div
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
@@ -518,47 +522,52 @@ export function Sidebar({
             <Button
               onClick={onCreateExam}
               disabled={tierLimitExceeded}
-              className={cn(
-                'w-full justify-start gap-3 bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90 text-white font-semibold soul-light soul-light-brand',
-                collapsed && 'justify-center px-0'
-              )}
+              className="w-full bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90 text-white font-semibold soul-light soul-light-brand overflow-hidden"
+              style={{
+                justifyContent: collapsed ? 'center' : 'flex-start',
+                gap: collapsed ? 0 : 12,
+                paddingLeft: collapsed ? 0 : undefined,
+                paddingRight: collapsed ? 0 : undefined,
+                transition: `gap ${SB_DUR} ${SB_EASE}, padding ${SB_DUR} ${SB_EASE}`,
+              }}
             >
               <motion.span
                 animate={{ rotate: 0 }}
                 whileHover={{ rotate: 90 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+                className="flex-shrink-0"
               >
                 <Plus className="h-5 w-5" />
               </motion.span>
-              <AnimatePresence>
-                {!collapsed && (
-                  <motion.span
-                    initial={{ opacity: 0, width: 0 }}
-                    animate={{ opacity: 1, width: 'auto' }}
-                    exit={{ opacity: 0, width: 0 }}
-                    transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-                    className="overflow-hidden whitespace-nowrap"
-                  >
-                    Nova Prova
-                  </motion.span>
-                )}
-              </AnimatePresence>
+              <span
+                className="whitespace-nowrap overflow-hidden"
+                style={{
+                  maxWidth: collapsed ? 0 : 150,
+                  opacity: collapsed ? 0 : 1,
+                  transition: `opacity 200ms ${SB_EASE}, max-width ${SB_DUR} ${SB_EASE}`,
+                }}
+              >
+                Nova Prova
+              </span>
             </Button>
           </motion.div>
 
-          <AnimatePresence>
-            {!collapsed && examsRemaining !== null && examsLimit !== null && (
-              <motion.p
-                className="text-xs text-muted-foreground mt-2 text-center overflow-hidden"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.2 }}
-              >
+          {/* Exams remaining counter */}
+          <div
+            className="overflow-hidden"
+            style={{
+              maxHeight: collapsed ? 0 : 30,
+              opacity: collapsed ? 0 : 1,
+              marginTop: collapsed ? 0 : 8,
+              transition: `max-height ${SB_DUR} ${SB_EASE}, opacity 200ms ${SB_EASE}, margin ${SB_DUR} ${SB_EASE}`,
+            }}
+          >
+            {examsRemaining !== null && examsLimit !== null && (
+              <p className="text-xs text-muted-foreground text-center whitespace-nowrap">
                 {examsRemaining} / {examsLimit} provas restantes hoje
-              </motion.p>
+              </p>
             )}
-          </AnimatePresence>
+          </div>
         </div>
 
         {/* ─── Navigation ─── */}
@@ -572,7 +581,6 @@ export function Sidebar({
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          {/* Glass Bubble */}
           <FluidGlassBubble
             navRef={navRef}
             hoveredIndex={hoveredIndex}
@@ -580,7 +588,6 @@ export function Sidebar({
             collapsed={!!collapsed}
           />
 
-          {/* Main items */}
           <div className="space-y-0.5">
             {mainNavItems.map((item, index) => (
               <NavItemButton
@@ -599,7 +606,6 @@ export function Sidebar({
 
           <div className="my-3 border-t mx-1" />
 
-          {/* Secondary items */}
           <div className="space-y-0.5">
             {secondaryNavItems.map((item, index) => {
               const globalIndex = mainNavItems.length + index
@@ -619,7 +625,6 @@ export function Sidebar({
             })}
           </div>
 
-          {/* Logout */}
           <div className="mt-3 pt-3 border-t mx-1">
             <NavItemButton
               item={{ icon: <LogOut className="h-5 w-5" />, label: 'Sair' }}

@@ -144,10 +144,15 @@ export interface Exam {
 
 export type ExamGroupType = 'personal' | 'general' // Pessoal (criado por usuário) ou Geral (criado por admin)
 
+export type ExamGroupCategory = 'faculdade' | 'plataforma'
+export type ExamGroupCourse = 'medicina-afya' | 'psicologia-afya' | 'biomedicina-afya' | 'odontologia-afya' | string
+
 export interface ExamGroup {
   _id?: string | import('mongodb').ObjectId
   name: string // Nome do grupo
   type: ExamGroupType // 'personal' ou 'general'
+  category?: ExamGroupCategory // 'faculdade' (provas antigas da faculdade) ou 'plataforma'
+  course?: ExamGroupCourse // Curso vinculado (ex: 'medicina-afya')
   description?: string // Descrição opcional
   color?: string // Cor do grupo (hex) para identificação visual
   icon?: string // Ícone opcional (emoji ou nome de ícone)

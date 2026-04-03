@@ -7,6 +7,13 @@ import { FolderOpen, FolderPlus, Home, X, ChevronRight } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
+const COURSE_OPTIONS: { value: string; label: string; icon: string }[] = [
+  { value: 'medicina-afya', label: 'Medicina AFYA', icon: '🩺' },
+  { value: 'psicologia-afya', label: 'Psicologia AFYA', icon: '🧠' },
+  { value: 'biomedicina-afya', label: 'Biomedicina AFYA', icon: '🔬' },
+  { value: 'odontologia-afya', label: 'Odontologia AFYA', icon: '🦷' },
+]
+
 interface ExamContextMenuProps {
   examId: string
   examGroupId: string | null
@@ -16,7 +23,7 @@ interface ExamContextMenuProps {
   userRole: 'admin' | 'user'
   groups: any[]
   onMoveToGroup: (groupId: string | null) => Promise<void>
-  onCreateGroup?: (name: string, type: 'personal' | 'general', parentGroupId?: string | null) => Promise<void>
+  onCreateGroup?: (name: string, type: 'personal' | 'general', parentGroupId?: string | null, category?: string, course?: string) => Promise<void>
   position: { x: number; y: number } | null
   onClose: () => void
 }
@@ -99,6 +106,8 @@ export function ExamContextMenu({
   const [newGroupName, setNewGroupName] = useState('')
   const [newGroupType, setNewGroupType] = useState<'personal' | 'general'>('personal')
   const [newGroupParentId, setNewGroupParentId] = useState<string | null>(null)
+  const [newGroupCategory, setNewGroupCategory] = useState<string>('')
+  const [newGroupCourse, setNewGroupCourse] = useState<string>('')
   const [isCreatingGroup, setIsCreatingGroup] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const modalRef = useRef<HTMLDivElement>(null)
@@ -176,9 +185,17 @@ export function ExamContextMenu({
     setIsCreatingGroup(true)
     try {
       if (onCreateGroup) {
-        await onCreateGroup(newGroupName, newGroupType, newGroupParentId)
+        await onCreateGroup(
+          newGroupName,
+          newGroupType,
+          newGroupParentId,
+          newGroupType === 'general' && newGroupCategory ? newGroupCategory : undefined,
+          newGroupType === 'general' && newGroupCourse ? newGroupCourse : undefined
+        )
         setNewGroupName('')
         setNewGroupParentId(null)
+        setNewGroupCategory('')
+        setNewGroupCourse('')
         setShowCreateGroupModal(false)
         onClose()
       }
@@ -341,6 +358,48 @@ export function ExamContextMenu({
                   Crie dentro de um grupo existente para organizar como pastas
                 </p>
               </div>
+
+              {/* Categoria e Curso - apenas admin + grupo geral */}
+              {userRole === 'admin' && newGroupType === 'general' && (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="group-category">Categoria</Label>
+                    <select
+                      id="group-category"
+                      value={newGroupCategory}
+                      onChange={(e) => {
+                        setNewGroupCategory(e.target.value)
+                        if (!e.target.value) setNewGroupCourse('')
+                      }}
+                      disabled={isCreatingGroup}
+                      className="w-full px-3 py-2 border border-muted rounded-md bg-background text-sm"
+                    >
+                      <option value="">Sem categoria (Plataforma)</option>
+                      <option value="faculdade">Provas da Faculdade</option>
+                    </select>
+                  </div>
+
+                  {newGroupCategory === 'faculdade' && (
+                    <div className="space-y-2">
+                      <Label htmlFor="group-course">Curso</Label>
+                      <select
+                        id="group-course"
+                        value={newGroupCourse}
+                        onChange={(e) => setNewGroupCourse(e.target.value)}
+                        disabled={isCreatingGroup}
+                        className="w-full px-3 py-2 border border-muted rounded-md bg-background text-sm"
+                      >
+                        <option value="">Selecionar curso...</option>
+                        {COURSE_OPTIONS.map((c) => (
+                          <option key={c.value} value={c.value}>
+                            {c.icon} {c.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                </>
+              )}
 
               <div className="flex gap-2 pt-4">
                 <Button

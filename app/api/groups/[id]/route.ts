@@ -73,6 +73,9 @@ export async function PUT(
     if (description !== undefined) updateData.description = description
     if (color !== undefined) updateData.color = color
     if (icon !== undefined) updateData.icon = icon
+    // Campos de categoria/curso (apenas admin)
+    if (body.category !== undefined && session.role === 'admin') updateData.category = body.category
+    if (body.course !== undefined && session.role === 'admin') updateData.course = body.course
 
     await groupsCollection.updateOne(
       { _id: new ObjectId(id) },

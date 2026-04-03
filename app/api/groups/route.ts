@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
     }
 
-    const { name, description, color, icon, type, parentGroupId } = await req.json()
+    const { name, description, color, icon, type, parentGroupId, category, course } = await req.json()
 
     // Validação
     if (!name || !name.trim()) {
@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Criar grupo
-    const newGroup = {
+    const newGroup: Record<string, any> = {
       name: name.trim(),
       type: type || 'personal',
       description: description?.trim() || '',
@@ -104,6 +104,14 @@ export async function POST(req: NextRequest) {
       order: 0,
       createdAt: new Date(),
       updatedAt: new Date(),
+    }
+
+    // Campos opcionais de categoria/curso (apenas admin para grupos gerais)
+    if (category && session.role === 'admin') {
+      newGroup.category = category
+    }
+    if (course && session.role === 'admin') {
+      newGroup.course = course
     }
 
     const result = await groupsCollection.insertOne(newGroup)
