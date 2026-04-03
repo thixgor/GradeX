@@ -25,7 +25,7 @@ export default function CreateExamPage() {
     title: '',
     description: '',
     coverImage: '',
-    numberOfAlternatives: 5,
+    numberOfAlternatives: 4,
     themePhrase: '',
     scoringMethod: 'normal' as ScoringMethod,
     totalPoints: 100,
@@ -202,7 +202,7 @@ export default function CreateExamPage() {
   }
 
   function addMultipleChoiceQuestion(alternativeType: AlternativeType = 'standard') {
-    const letters = ['A', 'B', 'C', 'D', 'E']
+    const letters = ['A', 'B', 'C', 'D', 'E', 'F']
     let alternatives: Alternative[] = []
     let numAlternatives = examData.numberOfAlternatives
 
@@ -488,23 +488,20 @@ export default function CreateExamPage() {
             }
           }
         } else if (question.type === 'discursive') {
-          if (!question.keyPoints || question.keyPoints.length === 0) {
-            alert(`Questão ${question.number}: Adicione pelo menos um ponto-chave`)
-            return
-          }
+          // Pontos-chave são opcionais
+          if (question.keyPoints && question.keyPoints.length > 0) {
+            for (const kp of question.keyPoints) {
+              if (!kp.description.trim()) {
+                alert(`Questão ${question.number}: Preencha todos os pontos-chave ou remova-os`)
+                return
+              }
+            }
 
-          for (const kp of question.keyPoints) {
-            if (!kp.description.trim()) {
-              alert(`Questão ${question.number}: Preencha todos os pontos-chave`)
+            const totalWeight = question.keyPoints.reduce((sum, kp) => sum + kp.weight, 0)
+            if (Math.abs(totalWeight - 1) > 0.01) {
+              alert(`Questão ${question.number}: A soma dos pesos dos pontos-chave deve ser 100% (atualmente ${(totalWeight * 100).toFixed(0)}%)`)
               return
             }
-          }
-
-          // Validar que a soma dos pesos não excede 1
-          const totalWeight = question.keyPoints.reduce((sum, kp) => sum + kp.weight, 0)
-          if (Math.abs(totalWeight - 1) > 0.01) {
-            alert(`Questão ${question.number}: A soma dos pesos dos pontos-chave deve ser 100% (atualmente ${(totalWeight * 100).toFixed(0)}%)`)
-            return
           }
         } else if (question.type === 'essay') {
           if (!question.essayTheme || !question.essayTheme.trim()) {

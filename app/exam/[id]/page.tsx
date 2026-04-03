@@ -25,6 +25,7 @@ import { ProctoringConsent } from '@/components/proctoring-consent'
 import { ProctoringMonitor } from '@/components/proctoring-monitor'
 import { QuestionNotesCanvas } from '@/components/question-notes-canvas'
 import { ReportQuestionModal } from '@/components/report-question-modal'
+import { PracticeExamConfig, PracticeExamSettings } from '@/components/practice-exam-config'
 import { useProctoring } from '@/hooks/use-proctoring'
 import { useWebSocket } from '@/hooks/use-websocket'
 import { useVisibilityDetection } from '@/hooks/use-visibility-detection'
@@ -101,6 +102,9 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const [showSelfScoreModal, setShowSelfScoreModal] = useState(false) // Modal de auto-avaliação discursiva
   const [selfScoreQuestionId, setSelfScoreQuestionId] = useState<string | null>(null) // Questão sendo auto-avaliada
   const [pendingSelfScore, setPendingSelfScore] = useState<number | null>(null) // Nota pendente de confirmação
+  const [showPracticeConfig, setShowPracticeConfig] = useState(false) // Tela de configuração para provas práticas
+  const [practiceTimeLimitMs, setPracticeTimeLimitMs] = useState<number | null>(null) // Tempo limite para provas práticas
+  const [practiceFeedbackMode, setPracticeFeedbackMode] = useState<'immediate' | 'end'>('end') // Modo de feedback para provas práticas
 
   // Verificar se a prova tem proctoring habilitado
   // Provas pessoais não suportam proctoring
@@ -541,25 +545,55 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     }
   }, [exam, loggedUserName, userName])
 
-  // Auto-iniciar provas práticas
+  // Mostrar tela de configuração para provas práticas ao invés de auto-iniciar
   useEffect(() => {
-    if (exam && exam.isPracticeExam && !started && !loading) {
-      // Provas práticas iniciam automaticamente
-      const startTime = new Date()
-      setExamStartTime(startTime)
-      localStorage.setItem(`exam-${id}-start-time`, startTime.toISOString())
-      setStarted(true)
-
-      // Verificar se tem questões com tempo para mostrar popup
-      const hasTimedQuestions = exam.questions.some(q => q.timePerQuestionSeconds && q.timePerQuestionSeconds > 0)
-      if (hasTimedQuestions) {
-        setShowTimeWarningPopup(true)
-        setTimeWarningCountdown(3)
-      } else {
-        initializeQuestionTimer(0)
-      }
+    if (exam && exam.isPracticeExam && !started && !loading && !showPracticeConfig) {
+      setShowPracticeConfig(true)
     }
   }, [exam, started, loading])
+
+  function handlePracticeStart(config: PracticeExamSettings) {
+    if (!exam) return
+
+    // Aplicar configurações escolhidas pelo usuário
+    exam.navigationMode = config.navigationMode
+    ;(exam as any).feedbackMode = config.feedbackMode === 'immediate' ? 'immediate' : 'end'
+    setPracticeFeedbackMode(config.feedbackMode)
+
+    // Embaralhar questões se escolhido
+    if (config.shuffleQuestions) {
+      const shuffled = [...exam.questions]
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+      }
+      shuffled.forEach((q, idx) => { q.number = idx + 1 })
+      exam.questions = shuffled
+      // Re-inicializar respostas para ordem embaralhada
+      setAnswers(shuffled.map(q => ({ questionId: q.id })))
+    }
+
+    // Aplicar limite de tempo
+    if (config.timeLimitMinutes) {
+      setPracticeTimeLimitMs(config.timeLimitMinutes * 60 * 1000)
+    }
+
+    // Iniciar prova
+    setShowPracticeConfig(false)
+    const startTime = new Date()
+    setExamStartTime(startTime)
+    localStorage.setItem(`exam-${id}-start-time`, startTime.toISOString())
+    setStarted(true)
+
+    // Verificar se tem questões com tempo individual
+    const hasTimedQuestions = exam.questions.some(q => q.timePerQuestionSeconds && q.timePerQuestionSeconds > 0)
+    if (hasTimedQuestions) {
+      setShowTimeWarningPopup(true)
+      setTimeWarningCountdown(3)
+    } else {
+      initializeQuestionTimer(0)
+    }
+  }
 
   // Função para inicializar o timer de uma questão específica
   function initializeQuestionTimer(questionIndex: number) {
@@ -697,8 +731,8 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       )
     )
 
-    // Se for prova pessoal com feedback imediato, mostrar botão "Check & Continue"
-    if (exam?.feedbackMode === 'immediate' && (exam as any).isPersonalExam) {
+    // Se for prova pessoal/prática com feedback imediato, mostrar botão "Check & Continue"
+    if (exam?.feedbackMode === 'immediate' && ((exam as any).isPersonalExam || exam.isPracticeExam)) {
       setShowCheckButton(true)
     }
   }
@@ -996,6 +1030,17 @@ ${respostaAluno}`
   }
 
 
+  // Tela de configuração para provas práticas
+  if (showPracticeConfig && exam && exam.isPracticeExam && !started) {
+    return (
+      <PracticeExamConfig
+        exam={exam}
+        onStart={handlePracticeStart}
+        onBack={() => router.push('/')}
+      />
+    )
+  }
+
   // Renderizar modal de proctoring SEMPRE que necessário (independente de early returns)
   const proctoringModal = showProctoringConsent && (
     <ProctoringConsent
@@ -1011,113 +1056,352 @@ ${respostaAluno}`
 
   // Tela de conclusão após submissão
   if (submitted) {
+    // Calcular resultados para provas práticas/pessoais
+    const isPracticeOrPersonal = exam.isPracticeExam || (exam as any)?.isPersonalExam
+    const mcQuestions = exam.questions.filter(q => q.type === 'multiple-choice')
+    const discursiveQuestions = exam.questions.filter(q => q.type === 'discursive')
+    let mcCorrect = 0
+    let mcTotal = mcQuestions.length
+
+    mcQuestions.forEach(q => {
+      const answer = answers.find(a => a.questionId === q.id)
+      const correctAlt = q.alternatives.find(a => a.isCorrect)
+      if (correctAlt && answer?.selectedAlternative === correctAlt.id) {
+        mcCorrect++
+      }
+    })
+
+    const mcPercentage = mcTotal > 0 ? Math.round((mcCorrect / mcTotal) * 100) : 0
+    const discursiveWithScore = discursiveQuestions.filter(q => {
+      const answer = answers.find(a => a.questionId === q.id)
+      return answer?.discursiveSelfScore !== undefined
+    })
+    const discursivePending = discursiveQuestions.filter(q => {
+      const answer = answers.find(a => a.questionId === q.id)
+      return answer?.discursiveText?.trim() && answer?.discursiveSelfScore === undefined
+    })
+
     return (
       <>
         {proctoringModal}
-        <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4">
-          <Card className="max-w-2xl w-full">
-            <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
-              <div className="bg-green-100 dark:bg-green-900 rounded-full p-4">
-                <CheckCircle2 className="h-16 w-16 text-green-600 dark:text-green-400" />
+        <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
+          <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
+            {/* Header de conclusão */}
+            <div className="text-center space-y-4 py-6">
+              <div className="flex justify-center">
+                <div className="bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-full p-5 shadow-lg shadow-green-500/20">
+                  <CheckCircle2 className="h-14 w-14 text-green-600 dark:text-green-400" />
+                </div>
               </div>
-            </div>
-            <CardTitle className="text-3xl text-green-600 dark:text-green-400">
-              Prova Concluída!
-            </CardTitle>
-            <CardDescription className="text-base mt-2">
-              {submissionScore}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="bg-muted rounded-lg p-6 text-center">
-              <h3 className="text-lg font-semibold mb-2">Parabéns, {userName}!</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Sua prova foi submetida com sucesso. Você pode baixar um relatório com suas respostas para conferir quando o gabarito for divulgado.
-              </p>
+              <h1 className="text-3xl font-bold text-green-600 dark:text-green-400">
+                Prova Concluída!
+              </h1>
+              <p className="text-muted-foreground">{exam.title}</p>
               {examDuration && (
-                <div className="flex items-center justify-center gap-2 text-sm">
-                  <Clock className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">Tempo de prova: {examDuration}</span>
+                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                  <Clock className="h-4 w-4" />
+                  <span>{examDuration}</span>
                 </div>
               )}
             </div>
 
-            <div className="space-y-3">
-              {/* Botão de Feedback Final para Provas Pessoais */}
-              {(exam as any)?.isPersonalExam && (
+            {/* Painel de Resultados (para provas práticas/pessoais) */}
+            {isPracticeOrPersonal && (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {/* Objetivas */}
+                {mcTotal > 0 && (
+                  <Card className="overflow-hidden">
+                    <div className={`h-1.5 ${mcPercentage >= 70 ? 'bg-green-500' : mcPercentage >= 40 ? 'bg-yellow-500' : 'bg-red-500'}`} />
+                    <CardContent className="pt-5 pb-4 text-center">
+                      <div className="text-4xl font-bold mb-1">{mcCorrect}/{mcTotal}</div>
+                      <div className="text-sm text-muted-foreground">Objetivas</div>
+                      <div className={`text-2xl font-bold mt-2 ${mcPercentage >= 70 ? 'text-green-600' : mcPercentage >= 40 ? 'text-yellow-600' : 'text-red-600'}`}>
+                        {mcPercentage}%
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Discursivas */}
+                {discursiveQuestions.length > 0 && (
+                  <Card className="overflow-hidden">
+                    <div className="h-1.5 bg-violet-500" />
+                    <CardContent className="pt-5 pb-4 text-center">
+                      <div className="text-4xl font-bold mb-1">{discursiveWithScore.length}/{discursiveQuestions.length}</div>
+                      <div className="text-sm text-muted-foreground">Discursivas Avaliadas</div>
+                      {discursiveWithScore.length > 0 && (
+                        <div className="text-2xl font-bold mt-2 text-violet-600">
+                          {Math.round(discursiveWithScore.reduce((sum, q) => {
+                            const a = answers.find(a => a.questionId === q.id)
+                            return sum + (a?.discursiveSelfScore || 0)
+                          }, 0) / discursiveWithScore.length)}%
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Nota geral */}
+                <Card className="overflow-hidden">
+                  <div className="h-1.5 bg-gradient-to-r from-[#468152] to-[#E2A43E]" />
+                  <CardContent className="pt-5 pb-4 text-center">
+                    <div className="text-sm text-muted-foreground mb-2">Nota Geral</div>
+                    <div className="text-4xl font-bold bg-gradient-to-r from-[#468152] to-[#E2A43E] bg-clip-text text-transparent">
+                      {submissionScore || `${mcPercentage}%`}
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-2">
+                      {exam.questions.length} questões
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+
+            {/* Aviso de discursivas pendentes de auto-avaliação */}
+            {isPracticeOrPersonal && discursivePending.length > 0 && (
+              <Card className="border-violet-500/30 bg-violet-50/50 dark:bg-violet-900/10">
+                <CardContent className="py-5">
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 rounded-lg bg-violet-500/10">
+                      <Copy className="h-5 w-5 text-violet-600" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-sm">
+                        {discursivePending.length} {discursivePending.length === 1 ? 'questão discursiva precisa' : 'questões discursivas precisam'} de auto-avaliação
+                      </h3>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Copie o prompt de correção, cole em uma IA (ChatGPT, Claude) e atribua sua nota abaixo.
+                      </p>
+                      <div className="mt-3 space-y-2">
+                        {discursivePending.map((q, idx) => {
+                          const answer = answers.find(a => a.questionId === q.id)
+                          return (
+                            <div key={q.id} className="flex items-center gap-2 p-3 rounded-lg bg-background border">
+                              <span className="text-sm font-medium flex-shrink-0">Q{q.number}</span>
+                              <span className="text-xs text-muted-foreground flex-1 truncate">{q.statement?.slice(0, 80)}...</span>
+                              <div className="flex gap-2 flex-shrink-0">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    const enunciado = q.statement || ''
+                                    const comando = q.command || ''
+                                    const respostaComentada = q.explanation || ''
+                                    const respostaAluno = answer?.discursiveText || ''
+                                    const prompt = `Você é um corretor de questões de Medicina. Você é humano, experiente e pedagogicamente sensato — não é um corretor mecânico nem perfeccionista. Sua filosofia de correção parte do princípio de que o objetivo é avaliar se o aluno compreende o conteúdo, não se ele decorou palavras-chave ou seguiu exatamente a estrutura do gabarito.\n\nVocê aceita e valoriza amplitude e generalidade nas respostas. Se o aluno abordou aspectos que o enunciado não explicitou, mas que são clinicamente ou conceitualmente pertinentes, isso conta a favor, não contra. Você nunca penaliza o aluno por demonstrar conhecimento além do esperado, nem por usar terminologia diferente da do gabarito quando o conteúdo está correto.\n\nVocê também leva em conta o esforço e a construção da resposta. O aluno dedicou tempo para elaborar um raciocínio e para escrever tentando abordar o que ele acha que a questão quer — sua correção respeita isso.\n\nA seguir, serão apresentados: o enunciado da questão, a resposta comentada oficial e a resposta do aluno.\nAo final, você deve atribuir uma nota de 0% a 100% em intervalos de 10%, justificando brevemente sua avaliação com foco no que o aluno acertou, no que ficou incompleto e, se for o caso, no que estava equivocado. Seja direto, humano e justo.\n\n---\n\nENUNCIADO DA QUESTÃO:\n${enunciado}${comando ? `\n\nCOMANDO:\n${comando}` : ''}\n\n---\n\nRESPOSTA COMENTADA (GABARITO):\n${respostaComentada}\n\n---\n\nRESPOSTA DO ALUNO:\n${respostaAluno}`
+                                    navigator.clipboard.writeText(prompt).then(() => {
+                                      setCopiedPromptId(q.id)
+                                      setTimeout(() => setCopiedPromptId(null), 2500)
+                                    })
+                                  }}
+                                >
+                                  {copiedPromptId === q.id ? (
+                                    <ClipboardCheck className="h-3.5 w-3.5 text-green-600" />
+                                  ) : (
+                                    <Copy className="h-3.5 w-3.5" />
+                                  )}
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleOpenSelfScore(q.id)}
+                                  className="text-violet-600 border-violet-300"
+                                >
+                                  Nota
+                                </Button>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Gabarito completo para provas práticas/pessoais */}
+            {isPracticeOrPersonal && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Gabarito Completo</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {exam.questions.map((q, idx) => {
+                    const answer = answers.find(a => a.questionId === q.id)
+
+                    if (q.type === 'multiple-choice') {
+                      const correctAlt = q.alternatives.find(a => a.isCorrect)
+                      const selectedAlt = q.alternatives.find(a => a.id === answer?.selectedAlternative)
+                      const isCorrect = correctAlt?.id === answer?.selectedAlternative
+
+                      return (
+                        <div key={q.id} className={`p-4 rounded-lg border-l-4 ${isCorrect ? 'border-l-green-500 bg-green-50/50 dark:bg-green-900/10' : 'border-l-red-500 bg-red-50/50 dark:bg-red-900/10'}`}>
+                          <div className="flex items-start gap-3">
+                            <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold ${isCorrect ? 'bg-green-500' : 'bg-red-500'}`}>
+                              {q.number}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm line-clamp-2 mb-2">{q.statement}</p>
+                              <div className="flex flex-wrap gap-2 text-xs">
+                                {selectedAlt && (
+                                  <span className={`px-2 py-1 rounded ${isCorrect ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'}`}>
+                                    Sua: {selectedAlt.letter}
+                                  </span>
+                                )}
+                                {!isCorrect && correctAlt && (
+                                  <span className="px-2 py-1 rounded bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
+                                    Correta: {correctAlt.letter}
+                                  </span>
+                                )}
+                              </div>
+                              {q.explanation && (
+                                <p className="text-xs text-muted-foreground mt-2 line-clamp-3">{q.explanation}</p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    }
+
+                    if (q.type === 'discursive') {
+                      const selfScore = answer?.discursiveSelfScore
+                      return (
+                        <div key={q.id} className="p-4 rounded-lg border-l-4 border-l-violet-500 bg-violet-50/50 dark:bg-violet-900/10">
+                          <div className="flex items-start gap-3">
+                            <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold bg-violet-500">
+                              {q.number}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm line-clamp-2 mb-2">{q.statement}</p>
+                              {selfScore !== undefined && (
+                                <span className={`text-xs px-2 py-1 rounded font-medium ${
+                                  selfScore >= 70 ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' :
+                                  selfScore >= 40 ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400' :
+                                  'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+                                }`}>
+                                  Auto-avaliação: {selfScore}%
+                                </span>
+                              )}
+                              {q.explanation && (
+                                <p className="text-xs text-muted-foreground mt-2 line-clamp-3">{q.explanation}</p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    }
+
+                    // Essay
+                    return (
+                      <div key={q.id} className="p-4 rounded-lg border-l-4 border-l-blue-500 bg-blue-50/50 dark:bg-blue-900/10">
+                        <div className="flex items-start gap-3">
+                          <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold bg-blue-500">
+                            {q.number}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm line-clamp-2">{q.essayTheme || q.statement}</p>
+                            <span className="text-xs text-muted-foreground">Redação</span>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Ações */}
+            <Card>
+              <CardContent className="py-5 space-y-3">
+                {!isPracticeOrPersonal && (
+                  <div className="bg-muted rounded-lg p-5 text-center mb-3">
+                    <h3 className="text-lg font-semibold mb-1">Parabéns, {userName}!</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Sua prova foi submetida com sucesso.
+                    </p>
+                    {submissionScore && (
+                      <p className="text-lg font-bold mt-2">{submissionScore}</p>
+                    )}
+                  </div>
+                )}
+
                 <Button
                   className="w-full"
                   size="lg"
-                  variant="default"
                   onClick={() => {
-                    console.log('Abrindo feedback final...')
-                    setShowFinalFeedback(true)
-                    setCurrentFeedbackIndex(0)
+                    downloadUserReportPDF({
+                      exam,
+                      examId: id,
+                      userName,
+                      signature,
+                      answers,
+                    })
                   }}
                 >
-                  📊 Ver Feedback de Todas as Questões
+                  <FileDown className="h-5 w-5 mr-2" />
+                  Baixar Relatório da Minha Prova
                 </Button>
-              )}
 
-              <Button
-                className="w-full"
-                size="lg"
-                onClick={() => {
-                  downloadUserReportPDF({
-                    exam,
-                    examId: id,
-                    userName,
-                    signature,
-                    answers,
-                  })
-                }}
-              >
-                <FileDown className="h-5 w-5 mr-2" />
-                Baixar Relatório da Minha Prova
-              </Button>
+                {annotations.length > 0 && (
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={async () => {
+                      try {
+                        const { generateAnnotationsPDF, downloadPDF } = await import('@/lib/pdf-generator')
+                        const blob = generateAnnotationsPDF(exam.title, annotations)
+                        downloadPDF(blob, `Anotacoes-${exam.title}.pdf`)
+                      } catch (error: any) {
+                        showToastMessage('Erro ao gerar PDF de anotações: ' + error.message)
+                      }
+                    }}
+                  >
+                    <StickyNote className="h-4 w-4 mr-2" />
+                    Baixar Anotações (PDF)
+                  </Button>
+                )}
 
-              {annotations.length > 0 && (
+                {exam.pdfUrl && (
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => window.open(exam.pdfUrl, '_blank')}
+                  >
+                    <FileDown className="h-4 w-4 mr-2" />
+                    Baixar PDF Original da Prova
+                  </Button>
+                )}
+
+                {isPracticeOrPersonal && (
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => {
+                      // Refazer a prova - voltar ao config
+                      setSubmitted(false)
+                      setStarted(false)
+                      setShowPracticeConfig(true)
+                      setAnswers(exam.questions.map(q => ({ questionId: q.id })))
+                      setCurrentQuestionIndex(0)
+                      setLockedQuestions(new Set())
+                    }}
+                  >
+                    Refazer Prova
+                  </Button>
+                )}
+
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   className="w-full"
-                  onClick={async () => {
-                    try {
-                      const { generateAnnotationsPDF, downloadPDF } = await import('@/lib/pdf-generator')
-                      const blob = generateAnnotationsPDF(exam.title, annotations)
-                      downloadPDF(blob, `Anotacoes-${exam.title}.pdf`)
-                    } catch (error: any) {
-                      showToastMessage('Erro ao gerar PDF de anotações: ' + error.message)
-                    }
-                  }}
+                  onClick={() => router.push('/')}
                 >
-                  <StickyNote className="h-4 w-4 mr-2" />
-                  Baixar Anotações (PDF)
+                  Voltar para Página Inicial
                 </Button>
-              )}
-
-              {exam.pdfUrl && (
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => window.open(exam.pdfUrl, '_blank')}
-                >
-                  <FileDown className="h-4 w-4 mr-2" />
-                  Baixar PDF Original da Prova
-                </Button>
-              )}
-
-              <Button
-                variant="secondary"
-                className="w-full"
-                onClick={() => router.push('/')}
-              >
-                Voltar para Página Inicial
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
 
       {/* Modal de Feedback Final para Todas as Questões */}
       {/* Modal de Relatar Questão */}
@@ -1858,10 +2142,17 @@ ${respostaAluno}`
               </Button>
               <div className="hidden sm:block">
                 <ExamTimer
-                  endTime={exam.endTime}
+                  endTime={practiceTimeLimitMs && examStartTime
+                    ? new Date(examStartTime.getTime() + practiceTimeLimitMs).toISOString()
+                    : exam.endTime}
                   onTimeUp={() => {
-                    showToastMessage('O tempo da prova acabou!', 'info')
-                    setTimeout(() => router.push('/'), 2000)
+                    if (exam.isPracticeExam) {
+                      showToastMessage('Tempo esgotado! Finalizando prova...', 'info')
+                      handleSubmitExam()
+                    } else {
+                      showToastMessage('O tempo da prova acabou!', 'info')
+                      setTimeout(() => router.push('/'), 2000)
+                    }
                   }}
                 />
               </div>
@@ -1871,10 +2162,17 @@ ${respostaAluno}`
           {/* Exam Timer em linha separada no mobile */}
           <div className="sm:hidden mt-2 flex justify-center">
             <ExamTimer
-              endTime={exam.endTime}
+              endTime={practiceTimeLimitMs && examStartTime
+                ? new Date(examStartTime.getTime() + practiceTimeLimitMs).toISOString()
+                : exam.endTime}
               onTimeUp={() => {
-                showToastMessage('O tempo da prova acabou!', 'info')
-                setTimeout(() => router.push('/'), 2000)
+                if (exam.isPracticeExam) {
+                  showToastMessage('Tempo esgotado! Finalizando prova...', 'info')
+                  handleSubmitExam()
+                } else {
+                  showToastMessage('O tempo da prova acabou!', 'info')
+                  setTimeout(() => router.push('/'), 2000)
+                }
               }}
             />
           </div>
@@ -2527,7 +2825,7 @@ ${respostaAluno}`
               </Button>
 
               {/* Botão "Check & Continue" para feedback imediato */}
-              {exam?.feedbackMode === 'immediate' && (exam as any).isPersonalExam && showCheckButton && (
+              {exam?.feedbackMode === 'immediate' && ((exam as any).isPersonalExam || exam.isPracticeExam) && showCheckButton && (
                 <Button
                   onClick={handleCheckAnswer}
                   className="bg-green-600 hover:bg-green-700"
