@@ -275,6 +275,14 @@ export default function AdminExamsPage() {
     }
   }
 
+  const q = search.trim().toLowerCase()
+  const filteredExams = q
+    ? exams.filter(e =>
+        e.title.toLowerCase().includes(q) ||
+        (e.description || '').toLowerCase().includes(q)
+      )
+    : exams
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
@@ -436,24 +444,16 @@ export default function AdminExamsPage() {
               </Button>
             </CardContent>
           </Card>
-        ) : (() => {
-          const q = search.trim().toLowerCase()
-          const filtered = q
-            ? exams.filter(e =>
-                e.title.toLowerCase().includes(q) ||
-                (e.description || '').toLowerCase().includes(q)
-              )
-            : exams
-          return filtered.length === 0 ? (
-            <Card>
-              <CardContent className="py-12 text-center">
-                <Search className="h-8 w-8 text-muted-foreground mx-auto mb-3 opacity-40" />
-                <p className="text-muted-foreground">Nenhuma prova encontrada para "{search}"</p>
-              </CardContent>
-            </Card>
-          ) : (
+        ) : filteredExams.length === 0 ? (
+          <Card>
+            <CardContent className="py-12 text-center">
+              <Search className="h-8 w-8 text-muted-foreground mx-auto mb-3 opacity-40" />
+              <p className="text-muted-foreground">Nenhuma prova encontrada para "{search}"</p>
+            </CardContent>
+          </Card>
+        ) : (
           <div className="space-y-4">
-            {filtered.map((exam) => (
+            {filteredExams.map((exam) => (
               <Card key={exam._id?.toString()}>
                 <CardHeader>
                   <div className="flex items-start justify-between">
@@ -603,9 +603,7 @@ export default function AdminExamsPage() {
               </Card>
             ))}
           </div>
-          )
-        }
-        })()}
+        )}
       </main>
 
       {/* Dialog de confirmação para deletar todas as provas */}
