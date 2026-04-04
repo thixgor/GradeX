@@ -1,10 +1,12 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { X, SkipForward } from 'lucide-react'
+import { SkipForward, Heart, BookOpen, Trophy, Zap, Lock } from 'lucide-react'
 import { DoacaoContent } from './doacao-content'
+import { DoacaoRanking } from './doacao-ranking'
 import { DoacaoForm } from './doacao-form'
-import { shouldShowInterstitial, markInterstitialShown } from '@/lib/doacao-interstitial'
+import { DoacaoEcgAnimation } from './doacao-ecg-animation'
+import { shouldShowInterstitial } from '@/lib/doacao-interstitial'
 
 type InterstitialContext = 'manual-clinico' | 'exam'
 
@@ -13,6 +15,13 @@ interface DoacaoInterstitialProps {
   onClose: () => void
 }
 
+const IMPACT_ITEMS = [
+  { icon: BookOpen, text: 'Manual Clínico completo e gratuito para todos os estudantes' },
+  { icon: Zap,      text: 'Questões ilimitadas, flashcards e simulados sem paywall' },
+  { icon: Lock,     text: 'Sua doação evita que conteúdo essencial vire pago' },
+  { icon: Trophy,   text: 'Forme médicos melhores — o impacto vai além da tela' },
+]
+
 export function DoacaoInterstitial({ context, onClose }: DoacaoInterstitialProps) {
   const [visible, setVisible] = useState(false)
   const [formOpen, setFormOpen] = useState(false)
@@ -20,12 +29,8 @@ export function DoacaoInterstitial({ context, onClose }: DoacaoInterstitialProps
 
   useEffect(() => {
     setMounted(true)
-    // Verificar se deve mostrar (localStorage + settings da API)
     async function check() {
-      if (!shouldShowInterstitial(context)) {
-        onClose()
-        return
-      }
+      if (!shouldShowInterstitial(context)) { onClose(); return }
 
       try {
         const res = await fetch('/api/doacoes/settings')
@@ -33,18 +38,12 @@ export function DoacaoInterstitial({ context, onClose }: DoacaoInterstitialProps
         const flagKey = context === 'manual-clinico'
           ? 'doacaoInterstitialManualClinico'
           : 'doacaoInterstitialExams'
-
-        if (!data[flagKey]) {
-          onClose()
-          return
-        }
+        if (!data[flagKey]) { onClose(); return }
       } catch {
-        onClose()
-        return
+        onClose(); return
       }
 
       setVisible(true)
-      markInterstitialShown(context)
     }
     check()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -52,53 +51,150 @@ export function DoacaoInterstitial({ context, onClose }: DoacaoInterstitialProps
 
   function handleClose() {
     setVisible(false)
-    setTimeout(onClose, 300)
+    setTimeout(onClose, 250)
   }
 
   if (!mounted || !visible) return null
 
   return (
     <>
-      {/* Overlay */}
+      {/* ── Overlay ── */}
       <div
-        className="fixed inset-0 z-[200] bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6"
-        style={{ animation: 'fadeIn 0.3s ease' }}
+        className="fixed inset-0 z-[200] flex items-center justify-center p-3 sm:p-6"
+        style={{
+          background: 'rgba(0,0,0,0.75)',
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
+          animation: 'doacaoFadeIn 0.25s ease',
+        }}
       >
+        {/* ── Painel glass ── */}
         <div
-          className="w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-2xl bg-background border border-border shadow-2xl relative"
-          style={{ animation: 'slideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)' }}
+          className="relative w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-3xl flex flex-col"
+          style={{
+            animation: 'doacaoSlideUp 0.35s cubic-bezier(0.34,1.15,0.64,1)',
+            background: 'linear-gradient(145deg, rgba(12,22,14,0.94) 0%, rgba(8,18,10,0.97) 100%)',
+            backdropFilter: 'blur(40px)',
+            WebkitBackdropFilter: 'blur(40px)',
+            border: '1px solid rgba(70,129,82,0.20)',
+            boxShadow: '0 24px 80px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.06)',
+          }}
         >
-          {/* Topo da interstitial */}
-          <div className="sticky top-0 z-10 flex items-center justify-between px-4 py-3 bg-background/95 backdrop-blur-sm border-b border-border/50">
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <span className="text-base">❤️</span>
-              <span className="font-medium text-foreground">Apoie o DomineAqui</span>
+          {/* Reflexo topo */}
+          <div className="absolute top-0 left-12 right-12 h-px bg-gradient-to-r from-transparent via-emerald-400/35 to-transparent pointer-events-none" />
+
+          {/* ECG topo */}
+          <div className="absolute top-0 left-0 right-0 h-12 opacity-20 pointer-events-none overflow-hidden rounded-t-3xl">
+            <DoacaoEcgAnimation color="#4ade80" opacity={1} />
+          </div>
+
+          {/* Grid sutil */}
+          <div className="absolute inset-0 opacity-[0.025] pointer-events-none rounded-3xl" style={{
+            backgroundImage: 'linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px)',
+            backgroundSize: '28px 28px',
+          }} />
+
+          {/* ── Header ── */}
+          <div
+            className="sticky top-0 z-10 flex items-center justify-between px-5 py-4 flex-shrink-0"
+            style={{
+              background: 'linear-gradient(180deg, rgba(8,18,10,0.98) 65%, transparent 100%)',
+              backdropFilter: 'blur(20px)',
+            }}
+          >
+            <div className="flex items-center gap-3">
+              <div
+                className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(220,38,38,0.25) 0%, rgba(239,68,68,0.15) 100%)',
+                  border: '1px solid rgba(239,68,68,0.25)',
+                }}
+              >
+                <span className="doacao-heart text-lg leading-none">❤️</span>
+              </div>
+              <div>
+                <h2 className="font-bold text-white text-sm sm:text-base leading-tight">Antes de continuar…</h2>
+                <p className="text-emerald-400/60 text-[11px] mt-0.5">
+                  {context === 'manual-clinico' ? 'Manual Clínico gratuito — ajude a mantê-lo assim' : 'Provas gratuitas — ajude a mantê-las assim'}
+                </p>
+              </div>
             </div>
             <button
               onClick={handleClose}
-              className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-muted/60 hover:bg-muted text-muted-foreground hover:text-foreground transition-all border border-border/50 hover:border-border"
+              className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl transition-all"
+              style={{
+                background: 'rgba(255,255,255,0.07)',
+                border: '1px solid rgba(255,255,255,0.10)',
+                color: 'rgba(255,255,255,0.55)',
+              }}
             >
-              <SkipForward className="h-3.5 w-3.5" />
+              <SkipForward className="h-3 w-3" />
               Pular
             </button>
           </div>
 
-          {/* Conteúdo */}
-          <div className="p-4 sm:p-5">
+          {/* ── Conteúdo principal ── */}
+          <div className="px-4 sm:px-5 pb-2 space-y-5 flex-1">
+
+            {/* Por que doar — glass pills */}
+            <div
+              className="rounded-2xl p-4"
+              style={{
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(255,255,255,0.07)',
+              }}
+            >
+              <p className="text-emerald-300/80 text-xs font-bold uppercase tracking-widest mb-3">
+                Por que sua doação é essencial?
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {IMPACT_ITEMS.map(({ icon: Icon, text }) => (
+                  <div key={text} className="flex items-start gap-2.5">
+                    <div
+                      className="flex-shrink-0 w-6 h-6 rounded-lg flex items-center justify-center mt-0.5"
+                      style={{ background: 'rgba(70,129,82,0.20)', border: '1px solid rgba(70,129,82,0.25)' }}
+                    >
+                      <Icon className="h-3 w-3 text-emerald-400" />
+                    </div>
+                    <p className="text-white/65 text-xs leading-relaxed">{text}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Doação */}
             <DoacaoContent
-              compact={false}
+              compact
               onDonateClick={() => {
                 setVisible(false)
                 setFormOpen(true)
               }}
             />
+
+            {/* Divisor */}
+            <div className="flex items-center gap-3">
+              <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, rgba(70,129,82,0.35), transparent)' }} />
+              <div className="flex items-center gap-1.5 text-[11px] font-medium" style={{ color: 'rgba(134,239,172,0.5)' }}>
+                <Trophy className="h-3 w-3" />
+                Quem já apoiou
+              </div>
+              <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, rgba(70,129,82,0.35), transparent)' }} />
+            </div>
+
+            {/* Ranking */}
+            <DoacaoRanking compact glass />
           </div>
 
-          {/* Rodapé com pular */}
-          <div className="px-4 pb-4">
+          {/* ── Rodapé ── */}
+          <div className="px-4 py-4 flex-shrink-0">
             <button
               onClick={handleClose}
-              className="w-full text-center text-xs text-muted-foreground hover:text-foreground py-2 transition-colors underline underline-offset-2"
+              className="w-full text-center text-xs py-2.5 rounded-xl transition-all"
+              style={{
+                color: 'rgba(255,255,255,0.30)',
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(255,255,255,0.06)',
+              }}
             >
               Pular por agora e continuar
             </button>
@@ -106,23 +202,19 @@ export function DoacaoInterstitial({ context, onClose }: DoacaoInterstitialProps
         </div>
       </div>
 
-      {/* Formulário de confirmação de doação */}
       <DoacaoForm
         open={formOpen}
-        onClose={() => {
-          setFormOpen(false)
-          onClose()
-        }}
+        onClose={() => { setFormOpen(false); onClose() }}
       />
 
       <style jsx global>{`
-        @keyframes fadeIn {
+        @keyframes doacaoFadeIn {
           from { opacity: 0; }
-          to { opacity: 1; }
+          to   { opacity: 1; }
         }
-        @keyframes slideUp {
-          from { opacity: 0; transform: translateY(20px) scale(0.97); }
-          to { opacity: 1; transform: translateY(0) scale(1); }
+        @keyframes doacaoSlideUp {
+          from { opacity: 0; transform: translateY(24px) scale(0.96); }
+          to   { opacity: 1; transform: translateY(0) scale(1); }
         }
       `}</style>
     </>
