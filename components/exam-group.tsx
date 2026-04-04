@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { ChevronDown, ChevronRight, Trash2, Edit2, FolderPlus, MoreHorizontal, ArrowUp, ArrowDown, Share2 } from 'lucide-react'
+import { ChevronDown, ChevronRight, Trash2, Edit2, FolderPlus, MoreHorizontal, ArrowUp, ArrowDown, Share2, Download } from 'lucide-react'
 import { Exam } from '@/lib/types'
 
 interface GroupData {
@@ -32,6 +32,7 @@ interface ExamGroupProps {
   onEditGroup?: (group: any) => void
   onCreateSubgroup?: (parentGroupId: string) => void
   onReorderExam?: (examId: string, direction: 'up' | 'down') => Promise<void>
+  onDownloadPDF?: (exam: Exam) => void
   depth?: number
   highlightGroupId?: string | null
 }
@@ -56,6 +57,7 @@ export function ExamGroup({
   onEditGroup,
   onCreateSubgroup,
   onReorderExam,
+  onDownloadPDF,
   depth = 0,
   highlightGroupId,
 }: ExamGroupProps) {
@@ -285,11 +287,20 @@ export function ExamGroup({
                     {exam.isPracticeExam && (
                       <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium">
                         Treino
-      </span>
+                      </span>
                     )}
                     <span className="text-[11px] text-muted-foreground/50 tabular-nums">
                       {exam.numberOfQuestions}q
                     </span>
+                    {exam.isPracticeExam && onDownloadPDF && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); onDownloadPDF(exam) }}
+                        className="opacity-0 group-hover/exam:opacity-100 transition-opacity p-1 rounded-lg hover:bg-emerald-500/10 text-muted-foreground hover:text-emerald-600 dark:hover:text-emerald-400"
+                        title="Baixar PDF"
+                      >
+                        <Download className="h-3.5 w-3.5" />
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -314,6 +325,7 @@ export function ExamGroup({
                 onEditGroup={onEditGroup}
                 onCreateSubgroup={onCreateSubgroup}
                 onReorderExam={onReorderExam}
+                onDownloadPDF={onDownloadPDF}
                 depth={depth + 1}
                 highlightGroupId={highlightGroupId}
               />

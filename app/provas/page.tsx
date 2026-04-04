@@ -33,6 +33,10 @@ import {
   Layers,
   ArrowLeft,
   Edit2,
+  Download,
+  FileDown,
+  BookOpenCheck,
+  ListChecks,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -96,6 +100,8 @@ function ProvasContent() {
   const [editGroupForm, setEditGroupForm] = useState({ name: '', description: '', color: '#3B82F6', icon: '', imageUrl: '', category: '', course: '' })
   const [isSavingGroup, setIsSavingGroup] = useState(false)
   const [highlightGroupId, setHighlightGroupId] = useState<string | null>(null)
+  const [pdfModalExam, setPdfModalExam] = useState<Exam | null>(null)
+  const [pdfLoading, setPdfLoading] = useState<string | null>(null)
 
   // Handle ?grupo=xxx shareable links
   useEffect(() => {
@@ -335,6 +341,29 @@ function ProvasContent() {
     }
   }
 
+  async function handleDownloadPDF(exam: Exam, type: 'exam' | 'with-answers' | 'gabarito') {
+    setPdfLoading(type)
+    try {
+      const { generateExamPDF, generateExamWithAnswersPDF, generateGabaritoPDF, downloadPDF } = await import('@/lib/pdf-generator')
+      const slug = exam.title.replace(/\s+/g, '-').toLowerCase()
+
+      if (type === 'exam') {
+        const blob = await generateExamPDF(exam)
+        downloadPDF(blob, `prova-${slug}.pdf`)
+      } else if (type === 'with-answers') {
+        const blob = await generateExamWithAnswersPDF(exam)
+        downloadPDF(blob, `prova-gabarito-comentado-${slug}.pdf`)
+      } else {
+        const blob = generateGabaritoPDF(exam)
+        downloadPDF(blob, `gabarito-${slug}.pdf`)
+      }
+    } catch (err) {
+      console.error('Erro ao gerar PDF:', err)
+    } finally {
+      setPdfLoading(null)
+    }
+  }
+
   function getExamStatus(exam: Exam) {
     const now = new Date()
     const startTime = new Date(exam.startTime)
@@ -499,6 +528,17 @@ function ProvasContent() {
             ) : (
               <Button className="flex-1 rounded-xl text-xs h-9" variant="secondary" size="sm" disabled>
                 {status.text}
+              </Button>
+            )}
+
+            {exam.isPracticeExam && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-xl text-xs h-9 border-emerald-500/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10"
+                onClick={(e) => { e.stopPropagation(); setPdfModalExam(exam) }}
+              >
+                <Download className="h-3.5 w-3.5 mr-1" /> PDF
               </Button>
             )}
 
@@ -669,6 +709,7 @@ function ProvasContent() {
         {/* Dialogs */}
         {renderInfoDialog()}
         {renderEditGroupModal()}
+        {renderPdfModal()}
       </div>
     )
   }
@@ -762,6 +803,7 @@ function ProvasContent() {
                         onDeleteGroup={handleDeleteGroup}
                         onEditGroup={handleEditGroup}
                         onReorderExam={handleReorderExam}
+                        onDownloadPDF={setPdfModalExam}
                         onCreateSubgroup={(parentGroupId) => {
                           const name = prompt('Nome do subgrupo:')
                           if (name) handleCreateGroup(name, 'general', parentGroupId)
@@ -809,6 +851,7 @@ function ProvasContent() {
                       onDeleteGroup={handleDeleteGroup}
                       onEditGroup={handleEditGroup}
                       onReorderExam={handleReorderExam}
+                      onDownloadPDF={setPdfModalExam}
                       onCreateSubgroup={(parentGroupId) => {
                         const name = prompt('Nome do subgrupo:')
                         if (name) handleCreateGroup(name, 'general', parentGroupId)
@@ -842,6 +885,7 @@ function ProvasContent() {
         {renderContextMenu()}
         {renderDeleteModal()}
         {renderEditGroupModal()}
+        {renderPdfModal()}
       </div>
     )
   }
@@ -964,6 +1008,7 @@ function ProvasContent() {
               onDeleteGroup={handleDeleteGroup}
               onEditGroup={handleEditGroup}
               onReorderExam={handleReorderExam}
+              onDownloadPDF={setPdfModalExam}
               onCreateSubgroup={(parentGroupId) => {
                 const name = prompt('Nome do subgrupo:')
                 if (name) {
@@ -1006,10 +1051,105 @@ function ProvasContent() {
       {renderDeleteModal()}
       {renderInfoDialog()}
       {renderEditGroupModal()}
+      {renderPdfModal()}
     </div>
   )
 
   // ─── Shared Modals ──────────────────────────────────────────
+  function renderPdfModal() {
+    if (!pdfModalExam) return null
+    const exam = pdfModalExam
+
+    const options = [
+      {
+        key: 'exam' as const,
+        icon: <FileText className="h-7 w-7 text-emerald-600 dark:text-emerald-400" />,
+        title: 'PDF da Prova',
+        description: 'Questões em branco para imprimir e resolver no papel.',
+        badge: null,
+        gradient: 'from-emerald-500/10 to-emerald-600/5',
+        border: 'border-emerald-500/20 hover:border-emerald-500/50',
+      },
+      {
+        key: 'with-answers' as const,
+        icon: <BookOpenCheck className="h-7 w-7 text-blue-600 dark:text-blue-400" />,
+        title: 'Prova com Gabarito e Resposta Comentada',
+        description: 'Questões completas com alternativa correta destacada e explicações.',
+        badge: 'Completo',
+        gradient: 'from-blue-500/10 to-blue-600/5',
+        border: 'border-blue-500/20 hover:border-blue-500/50',
+      },
+      {
+        key: 'gabarito' as const,
+        icon: <ListChecks className="h-7 w-7 text-amber-600 dark:text-amber-400" />,
+        title: 'Somente o Gabarito',
+        description: 'Tabela compacta com as letras das respostas corretas.',
+        badge: null,
+        gradient: 'from-amber-500/10 to-amber-600/5',
+        border: 'border-amber-500/20 hover:border-amber-500/50',
+      },
+    ]
+
+    return (
+      <Dialog open={!!pdfModalExam} onOpenChange={(open) => { if (!open && !pdfLoading) setPdfModalExam(null) }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileDown className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+              Baixar PDF
+            </DialogTitle>
+            <p className="text-sm text-muted-foreground mt-0.5 truncate">{exam.title}</p>
+          </DialogHeader>
+
+          <div className="space-y-3 py-2">
+            {options.map((opt) => {
+              const isLoading = pdfLoading === opt.key
+              return (
+                <button
+                  key={opt.key}
+                  disabled={!!pdfLoading}
+                  onClick={() => handleDownloadPDF(exam, opt.key)}
+                  className={`w-full text-left rounded-xl border p-4 transition-all duration-200 bg-gradient-to-br ${opt.gradient} ${opt.border}
+                    ${!!pdfLoading && !isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer active:scale-[0.98]'}
+                    ${isLoading ? 'ring-2 ring-primary/30' : ''}
+                  `}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex-shrink-0">
+                      {isLoading ? (
+                        <div className="h-7 w-7 rounded-full border-2 border-current border-t-transparent animate-spin opacity-60" />
+                      ) : opt.icon}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-semibold text-sm">{opt.title}</span>
+                        {opt.badge && (
+                          <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-500/15 text-blue-600 dark:text-blue-400 font-semibold">
+                            {opt.badge}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-0.5">{opt.description}</p>
+                    </div>
+                    {!isLoading && (
+                      <Download className="h-4 w-4 text-muted-foreground/50 flex-shrink-0" />
+                    )}
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+
+          <DialogFooter>
+            <Button variant="ghost" size="sm" onClick={() => setPdfModalExam(null)} disabled={!!pdfLoading}>
+              Fechar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    )
+  }
+
   function renderContextMenu() {
     if (!selectedExam) return null
     return (

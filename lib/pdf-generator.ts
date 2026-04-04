@@ -373,6 +373,230 @@ export function downloadPDF(blob: Blob, filename: string) {
   URL.revokeObjectURL(url)
 }
 
+/**
+ * Gera PDF da prova com gabarito e respostas comentadas (para provas práticas/treino)
+ * Mostra cada questão com a alternativa correta destacada em verde e a explicação abaixo.
+ */
+export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
+  const imageMap = await prefetchExamImages(exam.questions)
+
+  const doc = new jsPDF()
+  const pageWidth = doc.internal.pageSize.getWidth()
+  const pageHeight = doc.internal.pageSize.getHeight()
+  const margin = 20
+  let y = margin
+
+  const checkPage = (needed: number) => {
+    if (y + needed > pageHeight - 25) {
+      doc.addPage()
+      y = addDomineAquiHeader(doc, pageWidth, margin, 'Prova com Gabarito')
+      return true
+    }
+    return false
+  }
+
+  y = addDomineAquiHeader(doc, pageWidth, margin, 'Prova com Gabarito')
+
+  // Título
+  doc.setFillColor(...LARANJA_CLARO)
+  doc.setDrawColor(...VERDE_MEDIO)
+  doc.roundedRect(margin, y, pageWidth - 2 * margin, 25, 3, 3, 'FD')
+  doc.setTextColor(...VERDE_ESCURO)
+  doc.setFontSize(16)
+  doc.setFont('helvetica', 'bold')
+  doc.text(exam.title, pageWidth / 2, y + 10, { align: 'center' })
+  if (exam.description) {
+    doc.setFontSize(10)
+    doc.setFont('helvetica', 'normal')
+    doc.text(exam.description, pageWidth / 2, y + 18, { align: 'center' })
+  }
+  y += 33
+
+  // Badge "com gabarito"
+  doc.setFillColor(26, 71, 42)
+  doc.roundedRect(margin, y, pageWidth - 2 * margin, 9, 2, 2, 'F')
+  doc.setTextColor(255, 255, 255)
+  doc.setFontSize(9)
+  doc.setFont('helvetica', 'bold')
+  doc.text('✓  GABARITO COMENTADO  —  Alternativas corretas destacadas em verde', pageWidth / 2, y + 6, { align: 'center' })
+  y += 16
+
+  // Questões
+  exam.questions.forEach((question, idx) => {
+    checkPage(50)
+
+    // Header da questão
+    doc.setFillColor(...VERDE_MEDIO)
+    doc.roundedRect(margin, y, pageWidth - 2 * margin, 10, 2, 2, 'F')
+    doc.setTextColor(255, 255, 255)
+    doc.setFontSize(11)
+    doc.setFont('helvetica', 'bold')
+    doc.text(`Questão ${question.number ?? idx + 1}`, margin + 5, y + 7)
+
+    // Tipo
+    const typeLabel = question.type === 'discursive' ? 'Discursiva' : question.type === 'essay' ? 'Redação' : 'Múltipla Escolha'
+    doc.setFontSize(8)
+    doc.setFont('helvetica', 'normal')
+    doc.text(typeLabel, pageWidth - margin - 2, y + 7, { align: 'right' })
+    y += 15
+
+    // Enunciado
+    if (question.statement) {
+      checkPage(15)
+      doc.setFontSize(10)
+      doc.setFont('helvetica', 'normal')
+      doc.setTextColor(...CINZA_TEXTO)
+      const lines = wrapText(doc, question.statement, pageWidth - 2 * margin)
+      lines.forEach((line: string) => {
+        checkPage(8)
+        doc.text(line, margin, y)
+        y += 6
+      })
+      y += 2
+    }
+
+    // Fonte do enunciado
+    if (question.statementSource) {
+      checkPage(8)
+      doc.setFontSize(8)
+      doc.setTextColor(100, 100, 100)
+      doc.text(`Fonte: ${question.statementSource}`, margin, y)
+      y += 6
+    }
+
+    // Imagem
+    if (question.imageUrl) {
+      const imgData = imageMap.get(question.imageUrl)
+      if (imgData) {
+        const maxImgWidth = pageWidth - 2 * margin - 10
+        const maxImgHeight = 80
+        const ratio = Math.min(maxImgWidth / imgData.width, maxImgHeight / imgData.height, 1)
+        const imgW = imgData.width * ratio
+        const imgH = imgData.height * ratio
+        checkPage(imgH + 8)
+        try {
+          doc.addImage(imgData.dataUrl, 'PNG', margin + 5, y, imgW, imgH)
+          y += imgH + 5
+        } catch {
+          doc.setFontSize(8)
+          doc.setTextColor(150, 150, 150)
+          doc.text(`[Imagem: ${question.imageUrl}]`, margin, y)
+          y += 6
+        }
+      }
+      if (question.imageSource) {
+        doc.setFontSize(7)
+        doc.setTextColor(120, 120, 120)
+        doc.text(`Fonte: ${question.imageSource}`, margin + 5, y)
+        y += 5
+      }
+    }
+
+    // Comando
+    if (question.command) {
+      checkPage(12)
+      doc.setFontSize(10)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(...VERDE_ESCURO)
+      const commandLines = wrapText(doc, question.command, pageWidth - 2 * margin)
+      commandLines.forEach((line: string) => {
+        checkPage(8)
+        doc.text(line, margin, y)
+        y += 6
+      })
+      y += 3
+    }
+
+    if (question.type === 'multiple-choice') {
+      y += 2
+      question.alternatives.forEach((alt) => {
+        const isCorrect = alt.isCorrect
+        checkPage(12)
+
+        // Fundo verde claro para alternativa correta
+        if (isCorrect) {
+          doc.setFillColor(220, 245, 225)
+          doc.setDrawColor(70, 129, 82)
+          doc.setLineWidth(0.4)
+          doc.roundedRect(margin + 1, y - 4, pageWidth - 2 * margin - 2, 8, 1.5, 1.5, 'FD')
+        }
+
+        doc.setFont('helvetica', isCorrect ? 'bold' : 'normal')
+        doc.setFontSize(10)
+        doc.setTextColor(isCorrect ? 26 : CINZA_TEXTO[0], isCorrect ? 71 : CINZA_TEXTO[1], isCorrect ? 42 : CINZA_TEXTO[2])
+
+        // Ícone de correto/errado
+        if (isCorrect) {
+          doc.text('✓', margin + 3, y)
+        } else {
+          doc.setDrawColor(...VERDE_MEDIO)
+          doc.setLineWidth(0.4)
+          doc.roundedRect(margin + 2, y - 3.5, 5, 5, 1, 1)
+        }
+
+        const altText = `${alt.letter}) ${alt.text}`
+        const altLines = wrapText(doc, altText, pageWidth - 2 * margin - 12)
+        altLines.forEach((line: string, lineIdx: number) => {
+          if (lineIdx > 0) {
+            checkPage(6)
+            doc.setFont('helvetica', isCorrect ? 'bold' : 'normal')
+            doc.setFontSize(10)
+            doc.setTextColor(isCorrect ? 26 : CINZA_TEXTO[0], isCorrect ? 71 : CINZA_TEXTO[1], isCorrect ? 42 : CINZA_TEXTO[2])
+          }
+          doc.text(line, margin + 10, y)
+          y += 6
+        })
+        y += 2
+      })
+    } else if (question.type === 'discursive') {
+      checkPage(20)
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'italic')
+      doc.setTextColor(100, 100, 100)
+      doc.text('(Questão discursiva — ver gabarito/pontos-chave abaixo)', margin + 2, y)
+      y += 8
+    }
+
+    // Resposta comentada / explanation
+    if (question.explanation) {
+      checkPage(20)
+      const expLines = wrapText(doc, question.explanation, pageWidth - 2 * margin - 14)
+      const boxH = expLines.length * 5.5 + 14
+
+      doc.setFillColor(245, 250, 246)
+      doc.setDrawColor(70, 129, 82)
+      doc.setLineWidth(0.5)
+      doc.roundedRect(margin, y, pageWidth - 2 * margin, boxH, 2, 2, 'FD')
+
+      doc.setFontSize(8.5)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(...VERDE_ESCURO)
+      doc.text('💬 Resposta Comentada:', margin + 4, y + 8)
+
+      doc.setFont('helvetica', 'normal')
+      doc.setTextColor(...CINZA_TEXTO)
+      let ey = y + 14
+      expLines.forEach((line: string) => {
+        checkPage(6)
+        doc.text(line, margin + 4, ey)
+        ey += 5.5
+      })
+      y = ey + 4
+    }
+
+    y += 8
+  })
+
+  // Rodapé
+  const totalPages = doc.getNumberOfPages()
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i)
+    addDomineAquiFooter(doc, i, totalPages, pageWidth, pageHeight, margin, exam.title)
+  }
+
+  return doc.output('blob')
+}
+
 // Gerar PDF da prova para alunos preencherem (client-side com jsPDF)
 export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob> {
   // Pre-fetch all question images
