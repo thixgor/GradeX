@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
     }
 
-    const { name, description, color, icon, type, parentGroupId, category, course } = await req.json()
+    const { name, description, color, icon, type, parentGroupId, category, course, imageUrl } = await req.json()
 
     // Validação
     if (!name || !name.trim()) {
@@ -106,7 +106,8 @@ export async function POST(req: NextRequest) {
       updatedAt: new Date(),
     }
 
-    // Campos opcionais de categoria/curso (apenas admin para grupos gerais)
+    // Campos opcionais
+    if (imageUrl) newGroup.imageUrl = imageUrl
     if (category && session.role === 'admin') {
       newGroup.category = category
     }

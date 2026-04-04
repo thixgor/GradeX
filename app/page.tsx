@@ -12,38 +12,49 @@ function HomeContent() {
   const [showLanding, setShowLanding] = useState(false)
   const [landingPageEnabled, setLandingPageEnabled] = useState(true)
 
-  // Se ?landing=true, não redireciona para dashboard
   const forceLanding = searchParams.get('landing') === 'true'
 
   useEffect(() => {
+    // Timeout de segurança - se após 6s ainda não resolveu, mostrar landing
+    const safetyTimeout = setTimeout(() => {
+      if (loading) {
+        setShowLanding(true)
+        setLoading(false)
+      }
+    }, 6000)
+
     checkAuth()
+
+    return () => clearTimeout(safetyTimeout)
   }, [forceLanding])
 
   async function checkAuth() {
     try {
-      const res = await fetch('/api/auth/me')
-      if (res.ok && !forceLanding) {
-        // User is logged in e não está forçando landing, redirect to dashboard
+      // Fazer as duas requests em paralelo
+      const [authRes, settingsRes] = await Promise.all([
+        fetch('/api/auth/me').catch(() => null),
+        fetch('/api/admin/settings').catch(() => null),
+      ])
+
+      // Processar settings
+      if (settingsRes?.ok) {
+        try {
+          const data = await settingsRes.json()
+          setLandingPageEnabled(data.landingPageEnabled !== false)
+        } catch { /* ignore */ }
+      }
+
+      // Processar auth
+      if (authRes?.ok && !forceLanding) {
         router.replace('/dashboard')
         return
       }
-      // User is not logged in ou está forçando landing, check landing page settings
-      await checkLandingPageSettings()
-    } catch (error) {
-      await checkLandingPageSettings()
-    }
-  }
 
-  async function checkLandingPageSettings() {
-    try {
-      const res = await fetch('/api/admin/settings')
-      if (res.ok) {
-        const data = await res.json()
-        setLandingPageEnabled(data.landingPageEnabled !== false)
-      }
+      // Não autenticado ou forçando landing
+      setShowLanding(true)
+      setLoading(false)
     } catch (error) {
-      console.error('Erro ao carregar configurações:', error)
-    } finally {
+      // Em caso de erro, mostrar landing
       setShowLanding(true)
       setLoading(false)
     }
@@ -59,10 +70,10 @@ function HomeContent() {
 
   if (showLanding && !landingPageEnabled) {
     router.push('/auth/login')
-    return null
+    return <PageLoading variant="fullscreen" message="Redirecionando..." />
   }
 
-  return null
+  return <PageLoading variant="fullscreen" />
 }
 
 export default function HomePage() {
@@ -72,4 +83,3 @@ export default function HomePage() {
     </Suspense>
   )
 }
-

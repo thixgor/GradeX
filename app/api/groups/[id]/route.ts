@@ -73,6 +73,7 @@ export async function PUT(
     if (description !== undefined) updateData.description = description
     if (color !== undefined) updateData.color = color
     if (icon !== undefined) updateData.icon = icon
+    if (body.imageUrl !== undefined) updateData.imageUrl = body.imageUrl ? sanitizeHtml(body.imageUrl) : null
     // Campos de categoria/curso (apenas admin)
     if (body.category !== undefined && session.role === 'admin') updateData.category = body.category
     if (body.course !== undefined && session.role === 'admin') updateData.course = body.course

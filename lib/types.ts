@@ -156,6 +156,7 @@ export interface ExamGroup {
   description?: string // Descrição opcional
   color?: string // Cor do grupo (hex) para identificação visual
   icon?: string // Ícone opcional (emoji ou nome de ícone)
+  imageUrl?: string | null // URL de imagem de capa do grupo
   createdBy: string // ID do usuário que criou (para grupos pessoais) ou admin (para gerais)
   createdByName: string // Nome de quem criou
   isPublic: boolean // Se false, só o criador vê (para grupos pessoais); se true, todos veem (grupos gerais)

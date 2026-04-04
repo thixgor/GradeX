@@ -105,6 +105,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const [showPracticeConfig, setShowPracticeConfig] = useState(false) // Tela de configuração para provas práticas
   const [practiceTimeLimitMs, setPracticeTimeLimitMs] = useState<number | null>(null) // Tempo limite para provas práticas
   const [practiceFeedbackMode, setPracticeFeedbackMode] = useState<'immediate' | 'end'>('end') // Modo de feedback para provas práticas
+  const [expandedQuestion, setExpandedQuestion] = useState<string | null>(null) // Questão expandida no gabarito pós-submissão
 
   // Verificar se a prova tem proctoring habilitado
   // Provas pessoais não suportam proctoring
@@ -840,17 +841,28 @@ ${respostaAluno}`
 
   function handleConfirmSelfScore() {
     if (selfScoreQuestionId === null || pendingSelfScore === null) return
-    setAnswers(prev =>
-      prev.map(a =>
-        a.questionId === selfScoreQuestionId
-          ? { ...a, discursiveSelfScore: pendingSelfScore }
-          : a
-      )
+    const updatedAnswers = answers.map(a =>
+      a.questionId === selfScoreQuestionId
+        ? { ...a, discursiveSelfScore: pendingSelfScore }
+        : a
     )
+    setAnswers(updatedAnswers)
     setLockedQuestions(prev => new Set(prev).add(selfScoreQuestionId))
     setShowSelfScoreModal(false)
     setSelfScoreQuestionId(null)
     setPendingSelfScore(null)
+
+    // Persist self-score to server if already submitted
+    if (submitted && existingSubmissionId) {
+      fetch(`/api/submissions/${existingSubmissionId}/self-score`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          questionId: selfScoreQuestionId,
+          selfScore: pendingSelfScore,
+        }),
+      }).catch(err => console.error('Erro ao salvar auto-avaliação:', err))
+    }
   }
 
   function handleEssayText(questionId: string, text: string) {
@@ -931,6 +943,11 @@ ${respostaAluno}`
         setSubmissionScore(`Prova submetida automaticamente: ${reason}`)
       }
 
+      // Salvar ID da submissão
+      if (data.submissionId) {
+        setExistingSubmissionId(data.submissionId)
+      }
+
       // Limpar proctoring
       cleanup()
 
@@ -1006,6 +1023,11 @@ ${respostaAluno}`
         setSubmissionScore(`${data.score} pontos`)
       } else {
         setSubmissionScore(data.message || 'Prova submetida com sucesso!')
+      }
+
+      // Salvar ID da submissão para permitir auto-avaliação posterior
+      if (data.submissionId) {
+        setExistingSubmissionId(data.submissionId)
       }
 
       // Marcar como submetido ao invés de redirecionar
@@ -1099,9 +1121,6 @@ ${respostaAluno}`
         overallScore = `${mcPercentage}%`
       }
     }
-
-    // Estado de questão expandida no gabarito
-    const [expandedQuestion, setExpandedQuestion] = useState<string | null>(null)
 
     return (
       <>

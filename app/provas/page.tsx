@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { AppShell, useAppShell } from '@/components/app-shell'
 import { PageLoading } from '@/components/page-loading'
 import { Button } from '@/components/ui/button'
@@ -32,6 +32,7 @@ import {
   BookOpen,
   Layers,
   ArrowLeft,
+  Edit2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -41,6 +42,7 @@ interface Group {
   description?: string
   color?: string
   icon?: string
+  imageUrl?: string | null
   type: 'personal' | 'general'
   category?: 'faculdade' | 'plataforma'
   course?: string
@@ -78,6 +80,7 @@ type ViewMode = 'home' | 'faculdade' | 'plataforma'
 
 function ProvasContent() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { user, handleCreateExam, tierLimitExceeded } = useAppShell()
 
   const [exams, setExams] = useState<Exam[]>([])
@@ -89,6 +92,28 @@ function ProvasContent() {
   const [isDeleting, setIsDeleting] = useState(false)
   const [showExamsInfo, setShowExamsInfo] = useState(false)
   const [viewMode, setViewMode] = useState<ViewMode>('home')
+  const [editingGroup, setEditingGroup] = useState<Group | null>(null)
+  const [editGroupForm, setEditGroupForm] = useState({ name: '', description: '', color: '#3B82F6', icon: '', imageUrl: '', category: '', course: '' })
+  const [isSavingGroup, setIsSavingGroup] = useState(false)
+  const [highlightGroupId, setHighlightGroupId] = useState<string | null>(null)
+
+  // Handle ?grupo=xxx shareable links
+  useEffect(() => {
+    const grupoParam = searchParams.get('grupo')
+    if (grupoParam && groups.length > 0) {
+      const targetGroup = groups.find(g => g._id === grupoParam)
+      if (targetGroup) {
+        if (targetGroup.category === 'faculdade') {
+          setViewMode('faculdade')
+        } else {
+          setViewMode('plataforma')
+        }
+        setHighlightGroupId(grupoParam)
+        // Clear highlight after 3s
+        setTimeout(() => setHighlightGroupId(null), 3000)
+      }
+    }
+  }, [searchParams, groups])
 
   useEffect(() => {
     loadExamsAndGroups()
@@ -228,6 +253,75 @@ function ProvasContent() {
       alert('Erro ao deletar prova: ' + error.message)
     } finally {
       setIsDeleting(false)
+    }
+  }
+
+  function handleEditGroup(group: Group) {
+    setEditingGroup(group)
+    setEditGroupForm({
+      name: group.name,
+      description: group.description || '',
+      color: group.color || '#3B82F6',
+      icon: group.icon || '',
+      imageUrl: (group as any).imageUrl || '',
+      category: group.category || '',
+      course: group.course || '',
+    })
+  }
+
+  async function handleSaveGroup() {
+    if (!editingGroup) return
+    setIsSavingGroup(true)
+    try {
+      const res = await fetch(`/api/groups/${editingGroup._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: editGroupForm.name,
+          description: editGroupForm.description,
+          color: editGroupForm.color,
+          icon: editGroupForm.icon,
+          imageUrl: editGroupForm.imageUrl || null,
+          category: editGroupForm.category || undefined,
+          course: editGroupForm.course || undefined,
+        }),
+      })
+      if (res.ok) {
+        setGroups(groups.map(g => g._id === editingGroup._id ? {
+          ...g,
+          name: editGroupForm.name,
+          description: editGroupForm.description,
+          color: editGroupForm.color,
+          icon: editGroupForm.icon,
+          imageUrl: editGroupForm.imageUrl || null,
+          category: (editGroupForm.category || undefined) as any,
+          course: editGroupForm.course || undefined,
+        } : g))
+        setEditingGroup(null)
+      } else {
+        const data = await res.json()
+        alert(data.error || 'Erro ao salvar grupo')
+      }
+    } catch (error) {
+      alert('Erro ao salvar grupo')
+    } finally {
+      setIsSavingGroup(false)
+    }
+  }
+
+  async function handleReorderExam(examId: string, direction: 'up' | 'down') {
+    try {
+      const res = await fetch(`/api/exams/${examId}/reorder`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ direction }),
+      })
+      if (res.ok) {
+        // Reload to get updated order
+        loadExamsAndGroups()
+      }
+    } catch (error) {
+      console.error('Erro ao reordenar:', error)
     }
   }
 
@@ -562,8 +656,9 @@ function ProvasContent() {
           </motion.div>
         </div>
 
-        {/* Info Dialog */}
+        {/* Dialogs */}
         {renderInfoDialog()}
+        {renderEditGroupModal()}
       </div>
     )
   }
@@ -654,6 +749,8 @@ function ProvasContent() {
                         }}
                         onExamContextMenu={handleExamContextMenu}
                         onDeleteGroup={handleDeleteGroup}
+                        onEditGroup={handleEditGroup}
+                        onReorderExam={handleReorderExam}
                         onCreateSubgroup={(parentGroupId) => {
                           const name = prompt('Nome do subgrupo:')
                           if (name) handleCreateGroup(name, 'general', parentGroupId)
@@ -698,6 +795,8 @@ function ProvasContent() {
                       }}
                       onExamContextMenu={handleExamContextMenu}
                       onDeleteGroup={handleDeleteGroup}
+                      onEditGroup={handleEditGroup}
+                      onReorderExam={handleReorderExam}
                       onCreateSubgroup={(parentGroupId) => {
                         const name = prompt('Nome do subgrupo:')
                         if (name) handleCreateGroup(name, 'general', parentGroupId)
@@ -730,6 +829,7 @@ function ProvasContent() {
         {/* Context Menu & Modals */}
         {renderContextMenu()}
         {renderDeleteModal()}
+        {renderEditGroupModal()}
       </div>
     )
   }
@@ -849,6 +949,8 @@ function ProvasContent() {
               }}
               onExamContextMenu={handleExamContextMenu}
               onDeleteGroup={handleDeleteGroup}
+              onEditGroup={handleEditGroup}
+              onReorderExam={handleReorderExam}
               onCreateSubgroup={(parentGroupId) => {
                 const name = prompt('Nome do subgrupo:')
                 if (name) {
@@ -890,6 +992,7 @@ function ProvasContent() {
       {renderContextMenu()}
       {renderDeleteModal()}
       {renderInfoDialog()}
+      {renderEditGroupModal()}
     </div>
   )
 
@@ -953,6 +1056,121 @@ function ProvasContent() {
     )
   }
 
+  function renderEditGroupModal() {
+    if (!editingGroup) return null
+    const isAdmin = user?.role === 'admin'
+    return (
+      <Dialog open={!!editingGroup} onOpenChange={(open) => { if (!open) setEditingGroup(null) }}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Edit2 className="h-4 w-4" />
+              Editar Grupo
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">Nome</label>
+              <input
+                type="text"
+                value={editGroupForm.name}
+                onChange={(e) => setEditGroupForm({ ...editGroupForm, name: e.target.value })}
+                className="w-full px-3 py-2 rounded-xl border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">Descricao</label>
+              <input
+                type="text"
+                value={editGroupForm.description}
+                onChange={(e) => setEditGroupForm({ ...editGroupForm, description: e.target.value })}
+                className="w-full px-3 py-2 rounded-xl border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                placeholder="Descricao opcional"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-medium text-muted-foreground mb-1 block">Cor</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    value={editGroupForm.color}
+                    onChange={(e) => setEditGroupForm({ ...editGroupForm, color: e.target.value })}
+                    className="w-8 h-8 rounded-lg border cursor-pointer"
+                  />
+                  <span className="text-xs text-muted-foreground">{editGroupForm.color}</span>
+                </div>
+              </div>
+              <div>
+                <label className="text-xs font-medium text-muted-foreground mb-1 block">Icone (emoji)</label>
+                <input
+                  type="text"
+                  value={editGroupForm.icon}
+                  onChange={(e) => setEditGroupForm({ ...editGroupForm, icon: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  placeholder="📁"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">URL da Imagem (opcional)</label>
+              <input
+                type="url"
+                value={editGroupForm.imageUrl}
+                onChange={(e) => setEditGroupForm({ ...editGroupForm, imageUrl: e.target.value })}
+                className="w-full px-3 py-2 rounded-xl border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                placeholder="https://..."
+              />
+              {editGroupForm.imageUrl && (
+                <div className="mt-2 w-16 h-16 rounded-xl overflow-hidden border">
+                  <img src={editGroupForm.imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                </div>
+              )}
+            </div>
+            {isAdmin && editingGroup.type === 'general' && (
+              <>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground mb-1 block">Categoria</label>
+                  <select
+                    value={editGroupForm.category}
+                    onChange={(e) => setEditGroupForm({ ...editGroupForm, category: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  >
+                    <option value="">Plataforma (padrao)</option>
+                    <option value="faculdade">Faculdade</option>
+                  </select>
+                </div>
+                {editGroupForm.category === 'faculdade' && (
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground mb-1 block">Curso</label>
+                    <select
+                      value={editGroupForm.course}
+                      onChange={(e) => setEditGroupForm({ ...editGroupForm, course: e.target.value })}
+                      className="w-full px-3 py-2 rounded-xl border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    >
+                      <option value="">Selecione o curso</option>
+                      {Object.entries(COURSE_LABELS).map(([key, val]) => (
+                        <option key={key} value={key}>{val.icon} {val.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" size="sm" className="rounded-xl" onClick={() => setEditingGroup(null)} disabled={isSavingGroup}>
+              Cancelar
+            </Button>
+            <Button size="sm" className="rounded-xl btn-brand-glow text-white" onClick={handleSaveGroup} disabled={isSavingGroup || !editGroupForm.name.trim()}>
+              {isSavingGroup ? 'Salvando...' : 'Salvar'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    )
+  }
+
   function renderInfoDialog() {
     return (
       <Dialog open={showExamsInfo} onOpenChange={setShowExamsInfo}>
@@ -1010,7 +1228,9 @@ function ProvasContent() {
 export default function ProvasPage() {
   return (
     <AppShell headerTitle="Provas" headerSubtitle="Simulados e provas">
-      <ProvasContent />
+      <Suspense fallback={<PageLoading />}>
+        <ProvasContent />
+      </Suspense>
     </AppShell>
   )
 }
