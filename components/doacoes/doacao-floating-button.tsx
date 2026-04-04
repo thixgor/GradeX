@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Heart, X, Trophy } from 'lucide-react'
+import { useAppShell } from '@/components/app-shell'
 import { DoacaoContent } from './doacao-content'
 import { DoacaoForm } from './doacao-form'
 import { DoacaoRanking } from './doacao-ranking'
@@ -10,6 +11,12 @@ import { DoacaoEcgAnimation } from './doacao-ecg-animation'
 export function DoacaoFloatingButton() {
   const [open, setOpen] = useState(false)
   const [formOpen, setFormOpen] = useState(false)
+  const { sidebarCollapsed } = useAppShell()
+
+  // Empurra o botão para não ficar atrás do sidebar no desktop
+  // Mobile: sidebar é overlay (não empurra), fica em bottom-5 left-5
+  // Desktop: sidebar collapsed=72px, expanded=280px — adiciona 20px de margem
+  const leftOffset = sidebarCollapsed ? 'lg:left-[92px]' : 'lg:left-[300px]'
 
   return (
     <>
@@ -17,7 +24,7 @@ export function DoacaoFloatingButton() {
       <button
         onClick={() => setOpen(true)}
         aria-label="Apoiar com doação Pix"
-        className="fixed bottom-5 left-5 z-40 group flex items-center gap-2.5 doacao-float-idle"
+        className={`fixed bottom-5 left-5 ${leftOffset} z-40 group flex items-center gap-2.5 doacao-float-idle transition-[left] duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)]`}
         style={{ filter: 'drop-shadow(0 0 16px rgba(70,129,82,0.45))' }}
       >
         {/* Anel de pulso externo */}
@@ -31,13 +38,7 @@ export function DoacaoFloatingButton() {
 
         {/* Corpo do botão — glassmorphism */}
         <span
-          className={`
-            relative flex items-center gap-2.5 px-4 py-2.5 rounded-2xl
-            border border-emerald-400/25
-            transition-all duration-300
-            group-hover:border-emerald-400/50 group-hover:pr-5
-            active:scale-95
-          `}
+          className="relative flex items-center gap-2.5 px-4 py-2.5 rounded-2xl border border-emerald-400/25 transition-all duration-300 group-hover:border-emerald-400/50 active:scale-95"
           style={{
             background: 'linear-gradient(135deg, rgba(21,61,31,0.82) 0%, rgba(15,45,26,0.90) 100%)',
             backdropFilter: 'blur(20px)',
@@ -49,21 +50,14 @@ export function DoacaoFloatingButton() {
           <span className="absolute top-0 left-3 right-3 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-full pointer-events-none" />
 
           <Heart className="h-4 w-4 text-rose-400 fill-rose-400 flex-shrink-0 doacao-heart" />
-
-          <span
-            className="text-xs font-semibold text-white/90 whitespace-nowrap overflow-hidden transition-all duration-300"
-            style={{ maxWidth: '0', opacity: 0 }}
-          >
-            Apoiar
-          </span>
           <span className="text-xs font-semibold text-emerald-200 whitespace-nowrap">Apoiar</span>
         </span>
       </button>
 
-      {/* ── Modal de doação — glassmorphism ── */}
+      {/* ── Modal de doação — glassmorphism centralizado ── */}
       {open && (
         <div
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:justify-start p-0 sm:p-6"
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6"
           style={{ animation: 'fadeIn 0.2s ease' }}
         >
           {/* Backdrop */}
@@ -94,7 +88,8 @@ export function DoacaoFloatingButton() {
             </div>
 
             {/* Header */}
-            <div className="sticky top-0 z-10 flex items-center justify-between px-5 py-4"
+            <div
+              className="sticky top-0 z-10 flex items-center justify-between px-5 py-4"
               style={{
                 background: 'linear-gradient(180deg, rgba(10,25,15,0.98) 60%, transparent 100%)',
                 backdropFilter: 'blur(20px)',
@@ -110,10 +105,7 @@ export function DoacaoFloatingButton() {
               <button
                 onClick={() => setOpen(false)}
                 className="p-2 rounded-xl transition-all"
-                style={{
-                  background: 'rgba(255,255,255,0.06)',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                }}
+                style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)' }}
               >
                 <X className="h-4 w-4 text-white/60" />
               </button>
@@ -156,7 +148,7 @@ export function DoacaoFloatingButton() {
         }
         @keyframes slideUpModal {
           from { opacity: 0; transform: translateY(28px) scale(0.97); }
-          to   { opacity: 1; transform: translateY(0)    scale(1); }
+          to   { opacity: 1; transform: translateY(0) scale(1); }
         }
       `}</style>
     </>

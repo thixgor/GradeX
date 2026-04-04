@@ -57,6 +57,7 @@ interface AppShellContextType {
   accountType: 'gratuito' | 'trial' | 'premium'
   secondaryRole?: string
   loading: boolean
+  sidebarCollapsed: boolean
 }
 
 const AppShellContext = createContext<AppShellContextType | null>(null)
@@ -184,6 +185,7 @@ Contato: (21) 99777-0936`)
     accountType,
     secondaryRole,
     loading,
+    sidebarCollapsed,
   }
 
   return (
