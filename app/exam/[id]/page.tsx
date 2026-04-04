@@ -107,6 +107,8 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const [practiceTimeLimitMs, setPracticeTimeLimitMs] = useState<number | null>(null) // Tempo limite para provas práticas
   const [practiceFeedbackMode, setPracticeFeedbackMode] = useState<'immediate' | 'end'>('end') // Modo de feedback para provas práticas
   const [expandedQuestion, setExpandedQuestion] = useState<string | null>(null) // Questão expandida no gabarito pós-submissão
+  const [streak, setStreak] = useState(0) // Sequência de acertos consecutivos (immediate feedback)
+  const [streakJustIncremented, setStreakJustIncremented] = useState(false) // Trigger de animação
 
   // Verificar se a prova tem proctoring habilitado
   // Provas pessoais não suportam proctoring
@@ -769,7 +771,16 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       })
       setShowFeedbackModal(true)
       setShowCheckButton(false)
-      
+
+      // Streak de acertos consecutivos
+      if (selectedAlt.isCorrect) {
+        setStreak(prev => prev + 1)
+        setStreakJustIncremented(true)
+        setTimeout(() => setStreakJustIncremented(false), 600)
+      } else {
+        setStreak(0)
+      }
+
       // Bloquear questão
       setLockedQuestions(prev => new Set(prev).add(currentQuestion.id))
     }
@@ -2292,6 +2303,25 @@ ${respostaAluno}`
               </div>
             </div>
             <div className="flex items-center gap-1 sm:gap-2 flex-wrap justify-end">
+              {/* 🔥 Streak Fire Widget */}
+              {exam?.feedbackMode === 'immediate' && streak >= 3 && (
+                <div
+                  className={`streak-badge flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full select-none ${streakJustIncremented ? 'streak-pop' : ''}`}
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(251,146,60,0.15) 0%, rgba(239,68,68,0.15) 100%)',
+                    border: '1px solid rgba(251,146,60,0.35)',
+                  }}
+                >
+                  <span className="flame-icon text-base sm:text-lg leading-none">🔥</span>
+                  <span
+                    className={`font-bold tabular-nums text-orange-500 dark:text-orange-400 text-sm sm:text-base leading-none ${streakJustIncremented ? 'streak-number-in' : ''}`}
+                    style={{ textShadow: '0 0 8px rgba(251,146,60,0.6)' }}
+                  >
+                    {streak}
+                  </span>
+                </div>
+              )}
+
               {/* Timer da Questão Atual */}
               {questionTimeRemaining !== null && questionTimerActive && (
                 <div className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-1 sm:py-2 rounded-lg font-semibold ${
