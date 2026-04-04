@@ -10,7 +10,7 @@ import { ToastAlert } from '@/components/ui/toast-alert'
 import { Exam } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
 // PDF generator loaded dynamically to reduce initial bundle size
-import { ArrowLeft, Edit, Trash2, Eye, EyeOff, Plus, Play, StopCircle, RotateCcw, FileCheck, FileDown, AlertTriangle, Settings, Check, X, Lock, ShieldAlert, Database, Video } from 'lucide-react'
+import { ArrowLeft, Edit, Trash2, Eye, EyeOff, Plus, Play, StopCircle, RotateCcw, FileCheck, FileDown, AlertTriangle, Settings, Check, X, Lock, ShieldAlert, Database, Video, Search } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
@@ -30,6 +30,7 @@ export default function AdminExamsPage() {
   const [showVaultDialog, setShowVaultDialog] = useState(false)
   const [vaultPassword, setVaultPassword] = useState('')
   const [resettingDatabase, setResettingDatabase] = useState(false)
+  const [search, setSearch] = useState('')
 
   useEffect(() => {
     loadExams()
@@ -408,6 +409,19 @@ export default function AdminExamsPage() {
           </Card>
         )}
 
+        {/* Campo de busca */}
+        {!loading && exams.length > 0 && (
+          <div className="relative mb-6">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+            <Input
+              placeholder="Pesquisar provas por título ou descrição…"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+        )}
+
         {loading ? (
           <div className="text-center py-12">Carregando...</div>
         ) : exams.length === 0 ? (
@@ -422,9 +436,24 @@ export default function AdminExamsPage() {
               </Button>
             </CardContent>
           </Card>
-        ) : (
+        ) : (() => {
+          const q = search.trim().toLowerCase()
+          const filtered = q
+            ? exams.filter(e =>
+                e.title.toLowerCase().includes(q) ||
+                (e.description || '').toLowerCase().includes(q)
+              )
+            : exams
+          return filtered.length === 0 ? (
+            <Card>
+              <CardContent className="py-12 text-center">
+                <Search className="h-8 w-8 text-muted-foreground mx-auto mb-3 opacity-40" />
+                <p className="text-muted-foreground">Nenhuma prova encontrada para "{search}"</p>
+              </CardContent>
+            </Card>
+          ) : (
           <div className="space-y-4">
-            {exams.map((exam) => (
+            {filtered.map((exam) => (
               <Card key={exam._id?.toString()}>
                 <CardHeader>
                   <div className="flex items-start justify-between">
@@ -574,7 +603,9 @@ export default function AdminExamsPage() {
               </Card>
             ))}
           </div>
-        )}
+          )
+        }
+        })()}
       </main>
 
       {/* Dialog de confirmação para deletar todas as provas */}
