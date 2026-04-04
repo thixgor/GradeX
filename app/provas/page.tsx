@@ -103,13 +103,23 @@ function ProvasContent() {
     if (grupoParam && groups.length > 0) {
       const targetGroup = groups.find(g => g._id === grupoParam)
       if (targetGroup) {
-        if (targetGroup.category === 'faculdade') {
+        // Walk up parent chain to find root group and determine category
+        let rootGroup = targetGroup
+        let safety = 0
+        while (rootGroup.parentGroupId && safety < 20) {
+          const parent = groups.find(g => g._id === rootGroup.parentGroupId)
+          if (parent) rootGroup = parent
+          else break
+          safety++
+        }
+        // Use root group's category, or the target's own category
+        const effectiveCategory = rootGroup.category || targetGroup.category
+        if (effectiveCategory === 'faculdade') {
           setViewMode('faculdade')
         } else {
           setViewMode('plataforma')
         }
         setHighlightGroupId(grupoParam)
-        // Clear highlight after 3s
         setTimeout(() => setHighlightGroupId(null), 3000)
       }
     }

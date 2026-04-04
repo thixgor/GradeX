@@ -18,9 +18,47 @@ const LARANJA_CLARO: [number, number, number] = [245, 216, 154]
 const CINZA_TEXTO: [number, number, number] = [51, 51, 51]
 const CINZA_CLARO: [number, number, number] = [245, 245, 245]
 
-// Helper: replace \nl with newlines
+// Fetch image URL and return base64 data URL + natural dimensions
+async function fetchImageAsBase64(url: string): Promise<{ dataUrl: string; width: number; height: number } | null> {
+  try {
+    return await new Promise((resolve) => {
+      const img = new Image()
+      img.crossOrigin = 'anonymous'
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas')
+          canvas.width = img.naturalWidth
+          canvas.height = img.naturalHeight
+          const ctx = canvas.getContext('2d')
+          if (!ctx) { resolve(null); return }
+          ctx.drawImage(img, 0, 0)
+          const dataUrl = canvas.toDataURL('image/png')
+          resolve({ dataUrl, width: img.naturalWidth, height: img.naturalHeight })
+        } catch { resolve(null) }
+      }
+      img.onerror = () => resolve(null)
+      setTimeout(() => resolve(null), 8000)
+      img.src = url
+    })
+  } catch { return null }
+}
+
+// Pre-fetch all question images
+async function prefetchImages(questions: { imageUrl?: string }[]): Promise<Map<string, { dataUrl: string; width: number; height: number }>> {
+  const imageMap = new Map<string, { dataUrl: string; width: number; height: number }>()
+  const fetches = questions
+    .filter(q => q.imageUrl)
+    .map(async (q) => {
+      const result = await fetchImageAsBase64(q.imageUrl!)
+      if (result) imageMap.set(q.imageUrl!, result)
+    })
+  await Promise.all(fetches)
+  return imageMap
+}
+
+// Helper: replace \nl and \n with newlines
 function cleanText(text: string): string {
-  return text?.replace(/\\nl/g, '\n') || ''
+  return text?.replace(/\\nl/g, '\n').replace(/\\n/g, '\n') || ''
 }
 
 // Custom text wrapping
@@ -119,7 +157,8 @@ function generateBarcodeImage(value: string): string {
  * RELATÓRIO SEM GABARITO
  * Mostra as respostas do aluno sem indicar as corretas
  */
-export function generateUserReportPDF(data: UserReportData): Blob {
+export async function generateUserReportPDF(data: UserReportData): Promise<Blob> {
+  const imageMap = await prefetchImages(data.exam.questions)
   const doc = new jsPDF()
   const pageWidth = doc.internal.pageSize.getWidth()
   const pageHeight = doc.internal.pageSize.getHeight()
@@ -391,7 +430,8 @@ export function generateUserReportPDF(data: UserReportData): Blob {
  * RELATÓRIO COM GABARITO
  * Mostra respostas do aluno + gabarito + respostas comentadas
  */
-function generateUserReportWithGabaritoPDFBlob(data: UserReportData): Blob {
+async function generateUserReportWithGabaritoPDFBlob(data: UserReportData): Promise<Blob> {
+  const imageMap = await prefetchImages(data.exam.questions)
   const doc = new jsPDF()
   const pageWidth = doc.internal.pageSize.getWidth()
   const pageHeight = doc.internal.pageSize.getHeight()
@@ -508,6 +548,29 @@ function generateUserReportWithGabaritoPDFBlob(data: UserReportData): Blob {
         y += 5.5
       })
       y += 3
+    }
+
+    // Imagem da questão
+    if (question.imageUrl) {
+      const imgData = imageMap.get(question.imageUrl)
+      if (imgData) {
+        const maxW = pageWidth - 2 * margin - 10
+        const maxH = 75
+        const ratio = Math.min(maxW / imgData.width, maxH / imgData.height, 1)
+        const imgW = imgData.width * ratio
+        const imgH = imgData.height * ratio
+        checkPage(imgH + 8)
+        try {
+          doc.addImage(imgData.dataUrl, 'PNG', margin + 5, y, imgW, imgH)
+          y += imgH + 4
+        } catch { /* skip */ }
+      }
+      if (question.imageSource) {
+        doc.setFontSize(7)
+        doc.setTextColor(120, 120, 120)
+        doc.text(`Fonte: ${question.imageSource}`, margin + 5, y)
+        y += 5
+      }
     }
 
     // Comando
@@ -711,8 +774,8 @@ function generateUserReportWithGabaritoPDFBlob(data: UserReportData): Blob {
   return doc.output('blob')
 }
 
-export function downloadUserReportPDF(data: UserReportData) {
-  const blob = generateUserReportPDF(data)
+export async function downloadUserReportPDF(data: UserReportData) {
+  const blob = await generateUserReportPDF(data)
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href = url
@@ -723,8 +786,8 @@ export function downloadUserReportPDF(data: UserReportData) {
   URL.revokeObjectURL(url)
 }
 
-export function generateUserReportWithGabaritoPDF(data: UserReportData) {
-  const blob = generateUserReportWithGabaritoPDFBlob(data)
+export async function generateUserReportWithGabaritoPDF(data: UserReportData) {
+  const blob = await generateUserReportWithGabaritoPDFBlob(data)
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href = url

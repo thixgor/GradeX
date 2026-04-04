@@ -246,7 +246,7 @@ export default function ProfilePage() {
       if (!res.ok) throw new Error('Erro ao buscar prova')
       const data = await res.json()
       const { generateExamPDF, downloadPDF } = await import('@/lib/pdf-generator')
-      const blob = generateExamPDF(data.exam, userId)
+      const blob = await generateExamPDF(data.exam, userId)
       downloadPDF(blob, `Prova-${data.exam.title}.pdf`)
     } catch (error: any) {
       setToastMessage('Erro ao gerar PDF da prova: ' + error.message)
@@ -264,7 +264,7 @@ export default function ProfilePage() {
       const submissionData = await submissionRes.json()
       const answers = submissionData.submission?.answers || []
       const { generateStudentAnswersPDF, downloadPDF } = await import('@/lib/pdf-generator')
-      const blob = generateStudentAnswersPDF(examData.exam, answers, submission.userName || userName)
+      const blob = await generateStudentAnswersPDF(examData.exam, answers, submission.userName || userName)
       downloadPDF(blob, `Minhas-Respostas-${examData.exam.title}.pdf`)
     } catch (error: any) {
       setToastMessage('Erro ao gerar PDF de respostas: ' + error.message)

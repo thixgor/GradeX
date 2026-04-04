@@ -400,7 +400,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       } else {
         // Caso contrário, gerar PDF do sistema
         const { generateExamPDF, downloadPDF } = await import('@/lib/pdf-generator')
-        const blob = generateExamPDF(exam!, userId)
+        const blob = await generateExamPDF(exam!, userId)
         downloadPDF(blob, `${exam!.title}.pdf`)
       }
     } catch (error: any) {
@@ -1077,7 +1077,7 @@ ${respostaAluno}`
   )
 
   // Helper: replace \nl with actual newlines
-  const formatText = (text: string) => text?.replace(/\\nl/g, '\n') || ''
+  const formatText = (text: string) => text?.replace(/\\nl/g, '\n').replace(/\\n/g, '\n') || ''
 
   // Tela de conclusão após submissão
   if (submitted) {
@@ -1553,8 +1553,8 @@ ${respostaAluno}`
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <Button
                   className="w-full rounded-xl h-12 bg-gradient-to-r from-[#468152] to-[#3a6d44] hover:from-[#3a6d44] hover:to-[#2f5a38] text-white font-semibold shadow-md"
-                  onClick={() => {
-                    downloadUserReportPDF({
+                  onClick={async () => {
+                    await downloadUserReportPDF({
                       exam,
                       examId: id,
                       userName,
@@ -1573,7 +1573,7 @@ ${respostaAluno}`
                     onClick={async () => {
                       try {
                         const { generateUserReportWithGabaritoPDF } = await import('@/lib/user-report-generator')
-                        generateUserReportWithGabaritoPDF({
+                        await generateUserReportWithGabaritoPDF({
                           exam,
                           examId: id,
                           userName,

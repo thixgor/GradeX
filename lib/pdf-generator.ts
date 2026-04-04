@@ -17,8 +17,8 @@ const LOGO_URL = 'https://i.imgur.com/1QmchqF.png'
 function wrapText(doc: jsPDF, text: string, maxWidth: number): string[] {
   if (!text) return []
 
-  // Replace \nl with actual newlines first
-  const cleaned = text.replace(/\\nl/g, '\n')
+  // Replace \nl and \n with actual newlines first
+  const cleaned = text.replace(/\\nl/g, '\n').replace(/\\n/g, '\n')
 
   // Preservar quebras de linha existentes
   const paragraphs = cleaned.split(/\n/)
@@ -65,6 +65,47 @@ function calculateProportionalDimensions(
   const standardHeight = Math.min(50, maxHeight)
 
   return { width: standardWidth, height: standardHeight }
+}
+
+// Fetch image URL and return base64 data URL + natural dimensions
+async function fetchImageAsBase64(url: string): Promise<{ dataUrl: string; width: number; height: number } | null> {
+  try {
+    return await new Promise((resolve) => {
+      const img = new Image()
+      img.crossOrigin = 'anonymous'
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas')
+          canvas.width = img.naturalWidth
+          canvas.height = img.naturalHeight
+          const ctx = canvas.getContext('2d')
+          if (!ctx) { resolve(null); return }
+          ctx.drawImage(img, 0, 0)
+          const dataUrl = canvas.toDataURL('image/png')
+          resolve({ dataUrl, width: img.naturalWidth, height: img.naturalHeight })
+        } catch { resolve(null) }
+      }
+      img.onerror = () => resolve(null)
+      // Timeout after 8s
+      setTimeout(() => resolve(null), 8000)
+      img.src = url
+    })
+  } catch {
+    return null
+  }
+}
+
+// Pre-fetch all question images for an exam
+async function prefetchExamImages(questions: Question[]): Promise<Map<string, { dataUrl: string; width: number; height: number }>> {
+  const imageMap = new Map<string, { dataUrl: string; width: number; height: number }>()
+  const fetches = questions
+    .filter(q => q.imageUrl)
+    .map(async (q) => {
+      const result = await fetchImageAsBase64(q.imageUrl!)
+      if (result) imageMap.set(q.imageUrl!, result)
+    })
+  await Promise.all(fetches)
+  return imageMap
 }
 
 // Adiciona header padrão DomineAqui
@@ -333,7 +374,10 @@ export function downloadPDF(blob: Blob, filename: string) {
 }
 
 // Gerar PDF da prova para alunos preencherem (client-side com jsPDF)
-export function generateExamPDF(exam: Exam, userId?: string): Blob {
+export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob> {
+  // Pre-fetch all question images
+  const imageMap = await prefetchExamImages(exam.questions)
+
   const doc = new jsPDF()
 
   const pageWidth = doc.internal.pageSize.getWidth()
@@ -491,13 +535,38 @@ export function generateExamPDF(exam: Exam, userId?: string): Blob {
       y += 6
     }
 
-    // URL da imagem
+    // Imagem da questão
     if (question.imageUrl) {
-      checkPage(8)
-      doc.setFontSize(8)
-      doc.setTextColor(...VERDE_MEDIO)
-      doc.text(`Imagem: ${question.imageUrl}`, margin, y)
-      y += 6
+      const imgData = imageMap.get(question.imageUrl)
+      if (imgData) {
+        const maxImgWidth = pageWidth - 2 * margin - 10
+        const maxImgHeight = 80
+        const ratio = Math.min(maxImgWidth / imgData.width, maxImgHeight / imgData.height, 1)
+        const imgW = imgData.width * ratio
+        const imgH = imgData.height * ratio
+        checkPage(imgH + 8)
+        try {
+          doc.addImage(imgData.dataUrl, 'PNG', margin + 5, y, imgW, imgH)
+          y += imgH + 5
+        } catch {
+          doc.setFontSize(8)
+          doc.setTextColor(150, 150, 150)
+          doc.text(`[Imagem: ${question.imageUrl}]`, margin, y)
+          y += 6
+        }
+      } else {
+        checkPage(8)
+        doc.setFontSize(8)
+        doc.setTextColor(150, 150, 150)
+        doc.text(`[Imagem não carregada: ${question.imageUrl.slice(0, 60)}]`, margin, y)
+        y += 6
+      }
+      if (question.imageSource) {
+        doc.setFontSize(7)
+        doc.setTextColor(120, 120, 120)
+        doc.text(`Fonte: ${question.imageSource}`, margin + 5, y)
+        y += 5
+      }
     }
 
     // Comando
@@ -586,7 +655,8 @@ export function generateExamPDF(exam: Exam, userId?: string): Blob {
 /**
  * Gera PDF da prova com as respostas do aluno marcadas (sem mostrar gabarito)
  */
-export function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[], userName: string): Blob {
+export async function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[], userName: string): Promise<Blob> {
+  const imageMap = await prefetchExamImages(exam.questions)
   const doc = new jsPDF()
 
   const pageWidth = doc.internal.pageSize.getWidth()
@@ -666,6 +736,29 @@ export function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[], use
       doc.setTextColor(100, 100, 100)
       doc.text('Fonte: ' + question.statementSource, margin, y)
       y += 6
+    }
+
+    // Imagem da questão
+    if (question.imageUrl) {
+      const imgData = imageMap.get(question.imageUrl)
+      if (imgData) {
+        const maxW = pageWidth - 2 * margin - 10
+        const maxH = 75
+        const ratio = Math.min(maxW / imgData.width, maxH / imgData.height, 1)
+        const imgW = imgData.width * ratio
+        const imgH = imgData.height * ratio
+        checkPage(imgH + 8)
+        try {
+          doc.addImage(imgData.dataUrl, 'PNG', margin + 5, y, imgW, imgH)
+          y += imgH + 4
+        } catch { /* skip */ }
+      }
+      if (question.imageSource) {
+        doc.setFontSize(7)
+        doc.setTextColor(120, 120, 120)
+        doc.text(`Fonte imagem: ${question.imageSource}`, margin + 5, y)
+        y += 5
+      }
     }
 
     if (question.command) {
