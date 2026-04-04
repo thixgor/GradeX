@@ -657,20 +657,21 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
     }
   }
 
+  // Sincronizar keyPointsInput quando a questão muda (deve estar antes de qualquer early return)
+  useEffect(() => {
+    const q = questions[currentQuestionIndex]
+    if (q?.type === 'discursive' && q?.keyPoints) {
+      setKeyPointsInput(q.keyPoints.map(kp => `${kp.description} - ${kp.weight}`).join('\n'))
+    } else {
+      setKeyPointsInput('')
+    }
+  }, [currentQuestionIndex, questions])
+
   if (loading) {
     return <LogoLoading message="Carregando prova..." size="lg" fullscreen />
   }
 
   const currentQuestion = questions[currentQuestionIndex]
-
-  // Sincronizar keyPointsInput quando a questão muda
-  useEffect(() => {
-    if (currentQuestion?.type === 'discursive' && currentQuestion?.keyPoints) {
-      setKeyPointsInput(currentQuestion.keyPoints.map(kp => `${kp.description} - ${kp.weight}`).join('\n'))
-    } else {
-      setKeyPointsInput('')
-    }
-  }, [currentQuestionIndex, currentQuestion?.type])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
