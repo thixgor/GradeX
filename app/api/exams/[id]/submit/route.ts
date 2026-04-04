@@ -67,12 +67,16 @@ export async function POST(
     // Verificar se há questões discursivas ou redações
     const hasDiscursiveQuestions = exam.questions.some(q => q.type === 'discursive')
     const hasEssayQuestions = exam.questions.some(q => q.type === 'essay')
-    const needsCorrection = hasDiscursiveQuestions || hasEssayQuestions
+
+    // Discursivas em modo 'prompt' são autoavaliadas pelo aluno — não precisam de correção externa
+    const discursiveNeedsCorrection = hasDiscursiveQuestions && exam.discursiveCorrectionMethod !== 'prompt'
+    const needsCorrection = discursiveNeedsCorrection || hasEssayQuestions
 
     // Calcula pontuação de múltipla escolha (sempre, se existirem)
     let multipleChoiceScore = 0
     let multipleChoicePercentage = 0
     const multipleChoiceQuestions = exam.questions.filter(q => q.type === 'multiple-choice')
+    const discursiveQuestions = exam.questions.filter(q => q.type === 'discursive')
 
     if (exam.scoringMethod === 'normal' && multipleChoiceQuestions.length > 0) {
       let correctAnswers = 0
@@ -91,14 +95,42 @@ export async function POST(
       multipleChoiceScore = correctAnswers
     }
 
-    // Se não tem questões que precisam de correção e só tem múltipla escolha, calcular score final
-    if (exam.scoringMethod === 'normal' && !needsCorrection && multipleChoiceQuestions.length > 0) {
+    // Calcular score final quando não precisa de correção externa
+    if (exam.scoringMethod === 'normal' && !needsCorrection) {
       const totalPoints = exam.totalPoints || 100
-      score = (multipleChoiceScore / multipleChoiceQuestions.length) * totalPoints
-      score = Math.round(score * 100) / 100
+      const totalQuestions = exam.questions.length
+
+      if (totalQuestions > 0) {
+        let totalWeightedScore = 0
+
+        // MC score (0-100% of MC weight)
+        if (multipleChoiceQuestions.length > 0) {
+          const mcWeight = multipleChoiceQuestions.length / totalQuestions
+          totalWeightedScore += mcWeight * (multipleChoiceScore / multipleChoiceQuestions.length)
+        }
+
+        // Self-score discursive (mode: prompt)
+        if (discursiveQuestions.length > 0 && exam.discursiveCorrectionMethod === 'prompt') {
+          const discWeight = discursiveQuestions.length / totalQuestions
+          let discAvgPct = 0
+          let scored = 0
+          for (const dq of discursiveQuestions) {
+            const ans = (answers as UserAnswer[]).find(a => a.questionId === dq.id)
+            if (ans?.discursiveSelfScore !== undefined) {
+              discAvgPct += ans.discursiveSelfScore / 100
+              scored++
+            }
+          }
+          if (scored > 0) {
+            totalWeightedScore += discWeight * (discAvgPct / scored)
+          }
+        }
+
+        score = Math.round(totalWeightedScore * totalPoints * 100) / 100
+      }
     }
 
-    // Se tem questões que precisam de correção, marcar como pendente
+    // Se tem questões que precisam de correção externa, marcar como pendente
     if (needsCorrection) {
       correctionStatus = 'pending'
     }
@@ -267,9 +299,9 @@ export async function POST(
       }
     }
 
-    // Se tem questões que precisam de correção manual, avisa que aguarda correção
+    // Se tem questões que precisam de correção externa (ai/manual), avisa
     if (needsCorrection) {
-      const messageType = hasDiscursiveQuestions && hasEssayQuestions
+      const messageType = discursiveNeedsCorrection && hasEssayQuestions
         ? 'As questões discursivas e redações'
         : hasEssayQuestions
         ? 'A redação'
@@ -282,7 +314,7 @@ export async function POST(
       })
     }
 
-    // Se for método normal (sem discursivas), retorna a pontuação
+    // Se for método normal, retorna a pontuação calculada
     if (exam.scoringMethod === 'normal') {
       return NextResponse.json({
         success: true,

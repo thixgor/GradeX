@@ -88,6 +88,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     explanation?: string
     statement?: string
     command?: string
+    alternatives?: { id: string; letter: string; text: string; isCorrect: boolean }[]
     commentedFeedback?: {
       correctAlternative: string
       explanations: Record<string, string>
@@ -758,6 +759,12 @@ export default function ExamPage({ params }: { params: { id: string } }) {
         explanation: currentQuestion.explanation,
         statement: currentQuestion.statement,
         command: currentQuestion.command,
+        alternatives: currentQuestion.alternatives.map(a => ({
+          id: a.id,
+          letter: a.letter,
+          text: a.text,
+          isCorrect: a.isCorrect,
+        })),
         commentedFeedback: (currentQuestion as any).commentedFeedback
       })
       setShowFeedbackModal(true)
@@ -3062,7 +3069,11 @@ ${respostaAluno}`
               ) : (
                 <Button
                   onClick={() => setCurrentQuestionIndex(currentQuestionIndex + 1)}
-                  disabled={exam?.feedbackMode === 'immediate' && !lockedQuestions.has(currentQuestion.id)}
+                  disabled={
+                    exam?.feedbackMode === 'immediate' &&
+                    currentQuestion.type === 'multiple-choice' &&
+                    !lockedQuestions.has(currentQuestion.id)
+                  }
                 >
                   Próxima
                 </Button>
@@ -3242,41 +3253,63 @@ ${respostaAluno}`
                 </div>
               )}
 
-              {/* Feedback Comentado */}
-              {feedbackData.commentedFeedback && feedbackData.commentedFeedback.explanations && (
-                <div className="bg-blue-50 dark:bg-blue-950 rounded-lg p-4 space-y-3 border border-blue-200 dark:border-blue-800">
-                  <h4 className="font-semibold text-sm text-blue-900 dark:text-blue-100">Análise das Alternativas:</h4>
-                  <div className="space-y-2">
-                    {Object.entries(feedbackData.commentedFeedback.explanations).map(([letter, explanation]) => (
+              {/* Alternativas */}
+              {feedbackData.alternatives && feedbackData.alternatives.length > 0 && (
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-sm">Alternativas:</h4>
+                  {feedbackData.alternatives.map(alt => {
+                    const isSelected = alt.letter === feedbackData.selectedAlternative
+                    const isCorrect = alt.isCorrect
+                    const hasPerAltExplanation = feedbackData.commentedFeedback?.explanations?.[alt.letter]
+                    return (
                       <div
-                        key={letter}
-                        className={`p-3 rounded border-l-4 ${
-                          letter === feedbackData.commentedFeedback?.correctAlternative
-                            ? 'border-l-green-500 bg-green-50 dark:bg-green-950'
-                            : 'border-l-red-500 bg-red-50 dark:bg-red-950'
+                        key={alt.id}
+                        className={`p-3 rounded-xl border-l-4 text-sm ${
+                          isCorrect
+                            ? 'border-l-green-500 bg-green-50 dark:bg-green-950/40'
+                            : isSelected
+                            ? 'border-l-red-500 bg-red-50 dark:bg-red-950/40'
+                            : 'border-l-border bg-muted/40'
                         }`}
                       >
-                        <p className={`text-sm font-semibold ${
-                          letter === feedbackData.commentedFeedback?.correctAlternative
-                            ? 'text-green-700 dark:text-green-300'
-                            : 'text-red-700 dark:text-red-300'
-                        }`}>
-                          {letter}) {letter === feedbackData.commentedFeedback?.correctAlternative ? '✓ Correta' : '✗ Incorreta'}
-                        </p>
-                        <p className="text-sm text-muted-foreground mt-1 whitespace-pre-wrap">
-                          {formatText(explanation as string)}
-                        </p>
+                        <div className="flex items-start gap-2">
+                          <span className={`font-bold flex-shrink-0 ${
+                            isCorrect ? 'text-green-700 dark:text-green-300'
+                            : isSelected ? 'text-red-700 dark:text-red-300'
+                            : 'text-muted-foreground'
+                          }`}>
+                            {alt.letter})
+                          </span>
+                          <div className="flex-1">
+                            <p className={`whitespace-pre-wrap leading-relaxed ${
+                              isCorrect ? 'text-green-900 dark:text-green-100 font-medium'
+                              : isSelected ? 'text-red-900 dark:text-red-100'
+                              : 'text-foreground'
+                            }`}>
+                              {formatText(alt.text)}
+                            </p>
+                            {/* Per-alternative explanation */}
+                            {hasPerAltExplanation && (
+                              <p className="mt-1.5 text-xs text-muted-foreground italic whitespace-pre-wrap">
+                                {formatText(hasPerAltExplanation)}
+                              </p>
+                            )}
+                          </div>
+                          <span className="flex-shrink-0 text-xs font-bold">
+                            {isCorrect ? '✓' : isSelected ? '✗' : ''}
+                          </span>
+                        </div>
                       </div>
-                    ))}
-                  </div>
+                    )
+                  })}
                 </div>
               )}
 
-              {/* Explicação Geral */}
+              {/* Explicação Geral / Resposta Comentada */}
               {feedbackData.explanation && (
-                <div className="bg-muted rounded-lg p-4 space-y-2">
-                  <h4 className="font-semibold text-sm">Resposta Comentada:</h4>
-                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                <div className="bg-amber-50 dark:bg-amber-950/30 rounded-xl p-4 space-y-2 border border-amber-200/50 dark:border-amber-800/30">
+                  <h4 className="font-semibold text-sm text-amber-800 dark:text-amber-200">💡 Resposta Comentada:</h4>
+                  <p className="text-sm text-amber-900 dark:text-amber-100 whitespace-pre-wrap leading-relaxed">
                     {formatText(feedbackData.explanation)}
                   </p>
                 </div>
