@@ -1059,6 +1059,19 @@ ${respostaAluno}`
     }
   }
 
+  // Carregar interstitial de doação (deve ficar ANTES dos early returns para não violar Rules of Hooks)
+  useEffect(() => {
+    let cancelled = false
+    import('@/components/doacoes/doacao-interstitial').then(m => {
+      if (!cancelled) setDoacaoInterstitialComp(() => m.DoacaoInterstitial)
+    })
+    import('@/lib/doacao-interstitial').then(({ shouldShowInterstitial }) => {
+      if (!cancelled && shouldShowInterstitial('exam')) setShowDoacaoInterstitial(true)
+    })
+    return () => { cancelled = true }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   if (loading) {
     return <LogoLoading message="Carregando prova..." size="lg" fullscreen />
   }
@@ -1915,19 +1928,6 @@ ${respostaAluno}`
       </>
     )
   }
-
-  // Carregar interstitial de doação ao exibir tela pré-prova
-  useEffect(() => {
-    let cancelled = false
-    import('@/components/doacoes/doacao-interstitial').then(m => {
-      if (!cancelled) setDoacaoInterstitialComp(() => m.DoacaoInterstitial)
-    })
-    import('@/lib/doacao-interstitial').then(({ shouldShowInterstitial }) => {
-      if (!cancelled && shouldShowInterstitial('exam')) setShowDoacaoInterstitial(true)
-    })
-    return () => { cancelled = true }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   if (!started && !inWaitingRoom) {
     return (

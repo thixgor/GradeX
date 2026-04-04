@@ -9,9 +9,7 @@ const PIX_CODE = '00020126670014BR.GOV.BCB.PIX0124pix@thiago-rodrigues.com0217DO
 const QR_CODE_URL = 'https://i.imgur.com/mMW0lmw.png'
 
 const PIX_KEYS = [
-  { label: 'E-mail', value: 'pix@thiago-rodrigues.com', icon: '📧' },
-  { label: 'Celular', value: '(21) 99777-0936', icon: '📱' },
-  { label: 'CPF', value: '195.344.617-50', icon: '🪪' },
+  { label: 'E-mail Pix', value: 'pix@thiago-rodrigues.com', icon: '📧' },
 ]
 
 interface DoacaoContentProps {

@@ -18,7 +18,7 @@ export function DoacaoFloatingButton() {
         onClick={() => setOpen(true)}
         aria-label="Apoiar com doação Pix"
         className={`
-          fixed bottom-5 right-5 z-40
+          fixed bottom-[4.75rem] right-5 z-40
           flex items-center gap-2 px-3 py-3 sm:px-4 sm:py-3
           rounded-full
           bg-gradient-to-br from-[#153D1F] to-[#1e4d2a]
