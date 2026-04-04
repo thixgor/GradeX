@@ -1,11 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { Heart, X, ChevronDown } from 'lucide-react'
-import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { Heart, X, Trophy } from 'lucide-react'
 import { DoacaoContent } from './doacao-content'
 import { DoacaoForm } from './doacao-form'
 import { DoacaoRanking } from './doacao-ranking'
+import { DoacaoEcgAnimation } from './doacao-ecg-animation'
 
 export function DoacaoFloatingButton() {
   const [open, setOpen] = useState(false)
@@ -13,48 +13,114 @@ export function DoacaoFloatingButton() {
 
   return (
     <>
-      {/* Botão flutuante */}
+      {/* ── Botão flutuante — canto inferior esquerdo ── */}
       <button
         onClick={() => setOpen(true)}
         aria-label="Apoiar com doação Pix"
-        className={`
-          fixed bottom-[4.75rem] right-5 z-40
-          flex items-center gap-2 px-3 py-3 sm:px-4 sm:py-3
-          rounded-full
-          bg-gradient-to-br from-[#153D1F] to-[#1e4d2a]
-          border border-emerald-500/30
-          text-white shadow-xl shadow-emerald-900/40
-          hover:shadow-emerald-700/50 hover:border-emerald-400/50
-          transition-all duration-300 hover:scale-105 active:scale-95
-          doacao-float-idle
-          backdrop-blur-sm
-        `}
-        style={{ boxShadow: '0 0 20px 2px rgba(70,129,82,0.25), 0 8px 32px rgba(0,0,0,0.3)' }}
+        className="fixed bottom-5 left-5 z-40 group flex items-center gap-2.5 doacao-float-idle"
+        style={{ filter: 'drop-shadow(0 0 16px rgba(70,129,82,0.45))' }}
       >
-        <Heart className="h-5 w-5 text-rose-400 fill-rose-400 flex-shrink-0 doacao-heart" />
-        <span className="hidden sm:inline text-sm font-semibold text-emerald-100 whitespace-nowrap">Apoiar</span>
+        {/* Anel de pulso externo */}
+        <span
+          className="absolute inset-0 rounded-full pointer-events-none"
+          style={{
+            animation: 'doacao-ring-pulse 2.4s ease-out infinite',
+            background: 'radial-gradient(circle, rgba(70,129,82,0.18) 0%, transparent 70%)',
+          }}
+        />
+
+        {/* Corpo do botão — glassmorphism */}
+        <span
+          className={`
+            relative flex items-center gap-2.5 px-4 py-2.5 rounded-2xl
+            border border-emerald-400/25
+            transition-all duration-300
+            group-hover:border-emerald-400/50 group-hover:pr-5
+            active:scale-95
+          `}
+          style={{
+            background: 'linear-gradient(135deg, rgba(21,61,31,0.82) 0%, rgba(15,45,26,0.90) 100%)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            boxShadow: '0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 0 1px rgba(70,129,82,0.2)',
+          }}
+        >
+          {/* Reflexo topo */}
+          <span className="absolute top-0 left-3 right-3 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-full pointer-events-none" />
+
+          <Heart className="h-4 w-4 text-rose-400 fill-rose-400 flex-shrink-0 doacao-heart" />
+
+          <span
+            className="text-xs font-semibold text-white/90 whitespace-nowrap overflow-hidden transition-all duration-300"
+            style={{ maxWidth: '0', opacity: 0 }}
+          >
+            Apoiar
+          </span>
+          <span className="text-xs font-semibold text-emerald-200 whitespace-nowrap">Apoiar</span>
+        </span>
       </button>
 
-      {/* Modal de doação */}
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-2xl max-h-[92vh] overflow-y-auto p-0 gap-0 bg-transparent border-0 shadow-none">
-          <div className="bg-background rounded-2xl overflow-hidden border border-border shadow-2xl">
-            {/* Fechar */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-muted/30">
-              <div className="flex items-center gap-2">
-                <span className="text-lg">❤️</span>
-                <h2 className="font-bold text-sm sm:text-base">Apoiar o DomineAqui</h2>
+      {/* ── Modal de doação — glassmorphism ── */}
+      {open && (
+        <div
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:justify-start p-0 sm:p-6"
+          style={{ animation: 'fadeIn 0.2s ease' }}
+        >
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 cursor-pointer"
+            style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}
+            onClick={() => setOpen(false)}
+          />
+
+          {/* Painel glass */}
+          <div
+            className="relative w-full sm:max-w-xl max-h-[92vh] sm:max-h-[88vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl flex flex-col"
+            style={{
+              animation: 'slideUpModal 0.35s cubic-bezier(0.34,1.2,0.64,1)',
+              background: 'linear-gradient(145deg, rgba(15,20,15,0.92) 0%, rgba(10,25,15,0.96) 100%)',
+              backdropFilter: 'blur(40px)',
+              WebkitBackdropFilter: 'blur(40px)',
+              border: '1px solid rgba(70,129,82,0.18)',
+              boxShadow: '0 -8px 64px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04), inset 0 1px 0 rgba(255,255,255,0.06)',
+            }}
+          >
+            {/* Reflexo superior */}
+            <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-emerald-400/30 to-transparent" />
+
+            {/* ECG decoração topo */}
+            <div className="absolute top-0 left-0 right-0 h-14 opacity-25 pointer-events-none overflow-hidden rounded-t-3xl">
+              <DoacaoEcgAnimation color="#4ade80" opacity={1} />
+            </div>
+
+            {/* Header */}
+            <div className="sticky top-0 z-10 flex items-center justify-between px-5 py-4"
+              style={{
+                background: 'linear-gradient(180deg, rgba(10,25,15,0.98) 60%, transparent 100%)',
+                backdropFilter: 'blur(20px)',
+              }}
+            >
+              <div className="flex items-center gap-3">
+                <span className="doacao-heart text-xl leading-none">❤️</span>
+                <div>
+                  <h2 className="font-bold text-white text-sm sm:text-base leading-tight">Apoie o DomineAqui</h2>
+                  <p className="text-emerald-400/70 text-[11px] mt-0.5">Educação médica acessível para todos</p>
+                </div>
               </div>
               <button
                 onClick={() => setOpen(false)}
-                className="p-1.5 rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+                className="p-2 rounded-xl transition-all"
+                style={{
+                  background: 'rgba(255,255,255,0.06)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                }}
               >
-                <X className="h-4 w-4" />
+                <X className="h-4 w-4 text-white/60" />
               </button>
             </div>
 
-            <div className="p-4 sm:p-5 space-y-5">
-              {/* Conteúdo principal */}
+            {/* Conteúdo */}
+            <div className="px-4 sm:px-5 pb-6 space-y-5 flex-1">
               <DoacaoContent
                 compact={false}
                 onDonateClick={() => {
@@ -63,22 +129,36 @@ export function DoacaoFloatingButton() {
                 }}
               />
 
-              {/* Ranking */}
-              <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="h-px flex-1 bg-border/60" />
-                  <span className="text-xs text-muted-foreground font-medium px-2">Ranking de Doadores</span>
-                  <div className="h-px flex-1 bg-border/60" />
+              {/* Divisor */}
+              <div className="flex items-center gap-3">
+                <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, rgba(70,129,82,0.4), transparent)' }} />
+                <div className="flex items-center gap-1.5 text-[11px] text-emerald-400/60 font-medium">
+                  <Trophy className="h-3 w-3" />
+                  Ranking de Doadores
                 </div>
-                <DoacaoRanking />
+                <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, rgba(70,129,82,0.4), transparent)' }} />
               </div>
+
+              <DoacaoRanking glass />
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+      )}
 
       {/* Formulário de confirmação */}
       <DoacaoForm open={formOpen} onClose={() => setFormOpen(false)} />
+
+      <style jsx global>{`
+        @keyframes doacao-ring-pulse {
+          0% { transform: scale(0.9); opacity: 0.7; }
+          70% { transform: scale(1.8); opacity: 0; }
+          100% { transform: scale(1.8); opacity: 0; }
+        }
+        @keyframes slideUpModal {
+          from { opacity: 0; transform: translateY(28px) scale(0.97); }
+          to   { opacity: 1; transform: translateY(0)    scale(1); }
+        }
+      `}</style>
     </>
   )
 }
