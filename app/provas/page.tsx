@@ -752,6 +752,7 @@ function ProvasContent() {
                         allExams={exams}
                         currentUserId={user?.id || ''}
                         userRole={user?.role || 'user'}
+                        highlightGroupId={highlightGroupId}
                         onExamClick={(exam) => {
                           const status = getExamStatus(exam)
                           if (status.canTake) router.push(`/exam/${exam._id}`)
@@ -798,6 +799,7 @@ function ProvasContent() {
                       allExams={exams}
                       currentUserId={user?.id || ''}
                       userRole={user?.role || 'user'}
+                      highlightGroupId={highlightGroupId}
                       onExamClick={(exam) => {
                         const status = getExamStatus(exam)
                         if (status.canTake) router.push(`/exam/${exam._id}`)
@@ -952,6 +954,7 @@ function ProvasContent() {
               allExams={exams}
               currentUserId={user?.id || ''}
               userRole={user?.role || 'user'}
+              highlightGroupId={highlightGroupId}
               onExamClick={(exam) => {
                 const status = getExamStatus(exam)
                 if (status.canTake) router.push(`/exam/${exam._id}`)

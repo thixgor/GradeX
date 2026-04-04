@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { ChevronDown, ChevronRight, Trash2, Edit2, FolderPlus, MoreHorizontal, ArrowUp, ArrowDown, Share2, ExternalLink } from 'lucide-react'
+import { ChevronDown, ChevronRight, Trash2, Edit2, FolderPlus, MoreHorizontal, ArrowUp, ArrowDown, Share2 } from 'lucide-react'
 import { Exam } from '@/lib/types'
 
 interface GroupData {
@@ -33,6 +33,14 @@ interface ExamGroupProps {
   onCreateSubgroup?: (parentGroupId: string) => void
   onReorderExam?: (examId: string, direction: 'up' | 'down') => Promise<void>
   depth?: number
+  highlightGroupId?: string | null
+}
+
+/** Returns true if `targetId` is `groupId` OR a descendant of `groupId` */
+function isInSubtree(groupId: string, targetId: string, allGroups: GroupData[]): boolean {
+  if (groupId === targetId) return true
+  const children = allGroups.filter(g => g.parentGroupId === groupId)
+  return children.some(c => isInSubtree(c._id, targetId, allGroups))
 }
 
 export function ExamGroup({
@@ -49,11 +57,31 @@ export function ExamGroup({
   onCreateSubgroup,
   onReorderExam,
   depth = 0,
+  highlightGroupId,
 }: ExamGroupProps) {
-  const [isExpanded, setIsExpanded] = useState(depth === 0)
+  const isTarget = highlightGroupId === group._id
+  const isAncestorOfTarget = !!highlightGroupId && !isTarget && isInSubtree(group._id, highlightGroupId, allGroups)
+
+  // Expand if: root depth, OR this group IS the target, OR it's an ancestor of the target
+  const [isExpanded, setIsExpanded] = useState(
+    depth === 0 || isTarget || isAncestorOfTarget
+  )
   const [isDeleting, setIsDeleting] = useState(false)
   const [showActions, setShowActions] = useState(false)
   const [copiedLink, setCopiedLink] = useState(false)
+  const [highlighted, setHighlighted] = useState(isTarget)
+
+  // Re-evaluate expansion when highlightGroupId changes (e.g. after groups load)
+  useEffect(() => {
+    const target = !!highlightGroupId && highlightGroupId === group._id
+    const ancestor = !!highlightGroupId && !target && isInSubtree(group._id, highlightGroupId, allGroups)
+    if (target || ancestor) setIsExpanded(true)
+    setHighlighted(target)
+    if (target) {
+      const timer = setTimeout(() => setHighlighted(false), 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [highlightGroupId, group._id, allGroups])
 
   const isCreator = group.createdBy === currentUserId
   const isAdmin = userRole === 'admin'
@@ -103,7 +131,11 @@ export function ExamGroup({
     <div className={`${depth > 0 ? 'ml-3' : ''}`}>
       {/* ─── Group Header ─── */}
       <div
-        className="flex items-center gap-3 py-3 px-4 rounded-2xl cursor-pointer select-none hover:bg-muted/50 transition-all duration-200 group/header"
+        className={`flex items-center gap-3 py-3 px-4 rounded-2xl cursor-pointer select-none transition-all duration-300 group/header
+          ${highlighted
+            ? 'bg-primary/10 border-2 border-primary/40 shadow-md shadow-primary/10 ring-2 ring-primary/20'
+            : 'hover:bg-muted/50 border-2 border-transparent'
+          }`}
         onClick={() => setIsExpanded(!isExpanded)}
       >
         {/* Expand icon */}
@@ -113,7 +145,7 @@ export function ExamGroup({
 
         {/* Group image or color dot */}
         {group.imageUrl ? (
-          <div className="w-9 h-9 rounded-xl overflow-hidden flex-shrink-0 border border-border/50">
+          <div className={`w-9 h-9 rounded-xl overflow-hidden flex-shrink-0 border ${highlighted ? 'border-primary/50' : 'border-border/50'}`}>
             <img src={group.imageUrl} alt="" className="w-full h-full object-cover" />
           </div>
         ) : (
@@ -128,13 +160,18 @@ export function ExamGroup({
         {/* Name + description */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold truncate">{group.name}</span>
-            {group.type === 'general' && (
+            <span className={`text-sm font-semibold truncate ${highlighted ? 'text-primary' : ''}`}>{group.name}</span>
+            {highlighted && (
+              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-primary/15 text-primary font-semibold flex-shrink-0 animate-pulse">
+                ← aqui
+              </span>
+            )}
+            {group.type === 'general' && !highlighted && (
               <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 font-medium flex-shrink-0">
                 Geral
               </span>
             )}
-            {group.category === 'faculdade' && (
+            {group.category === 'faculdade' && !highlighted && (
               <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-red-500/10 text-red-600 dark:text-red-400 font-medium flex-shrink-0">
                 Faculdade
               </span>
@@ -196,7 +233,7 @@ export function ExamGroup({
 
       {/* ─── Expanded Content ─── */}
       {isExpanded && (
-        <div className={`${depth === 0 ? 'ml-6 pl-5 border-l-2' : 'ml-5 pl-4 border-l'} border-border/30 space-y-1 pb-2 mt-1`}>
+        <div className={`${depth === 0 ? 'ml-6 pl-5 border-l-2' : 'ml-5 pl-4 border-l'} ${highlighted ? 'border-primary/30' : 'border-border/30'} space-y-1 pb-2 mt-1`}>
           {/* Exams */}
           {sortedExams.map((exam, examIdx) => {
             const examId = exam._id?.toString() || ''
@@ -248,7 +285,7 @@ export function ExamGroup({
                     {exam.isPracticeExam && (
                       <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium">
                         Treino
-                      </span>
+      </span>
                     )}
                     <span className="text-[11px] text-muted-foreground/50 tabular-nums">
                       {exam.numberOfQuestions}q
@@ -278,6 +315,7 @@ export function ExamGroup({
                 onCreateSubgroup={onCreateSubgroup}
                 onReorderExam={onReorderExam}
                 depth={depth + 1}
+                highlightGroupId={highlightGroupId}
               />
             )
           })}
