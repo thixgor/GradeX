@@ -166,6 +166,13 @@ export default function AdminDashboard() {
       icon: HeartPulse,
       href: '/admin/manual-clinico',
       color: 'from-red-500 to-rose-500'
+    },
+    {
+      title: 'Doações Pix',
+      description: 'Gerenciar doações, aprovar pendentes, editar ranking e configurar exibição nos interstitials.',
+      icon: HeartPulse,
+      href: '/admin/doacoes',
+      color: 'from-rose-500 to-pink-500'
     }
   ]
 

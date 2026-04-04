@@ -880,3 +880,22 @@ export interface LeadPageView {
   userAgent?: string // User agent do navegador
   viewedAt: Date
 }
+
+// ─── Doações Pix ──────────────────────────────────────────────
+export type DoacaoStatus = 'pending' | 'approved' | 'rejected'
+
+export interface Doacao {
+  _id?: string | import('mongodb').ObjectId
+  nomeCompleto: string      // Nome da conta bancária
+  apelido: string           // Nome público no ranking
+  valor: number             // Valor em R$
+  mensagem?: string         // Mensagem opcional
+  dataDoacao: Date          // Data da doação
+  status: DoacaoStatus
+  userId?: string           // ID do usuário autenticado (se houver)
+  reviewedBy?: string       // Admin que aprovou/rejeitou
+  reviewedAt?: Date
+  addedByAdmin?: boolean    // true se adicionado manualmente pelo admin
+  createdAt: Date
+  updatedAt: Date
+}

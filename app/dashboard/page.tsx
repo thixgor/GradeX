@@ -31,7 +31,11 @@ import {
   GraduationCap,
   Activity,
   HeartPulse,
+  Heart,
 } from 'lucide-react'
+import { DoacaoContent } from '@/components/doacoes/doacao-content'
+import { DoacaoRanking } from '@/components/doacoes/doacao-ranking'
+import { DoacaoForm } from '@/components/doacoes/doacao-form'
 
 // ─── Circular Progress Ring ─────────────────────────────────────
 function ProgressRing({
@@ -669,8 +673,49 @@ function DashboardContent() {
             })}
           </div>
         </motion.section>
+
+        {/* ═══════════════════════════════════════════════════════
+            6. DOAÇÕES PIX — Apoie o DomineAqui
+           ═══════════════════════════════════════════════════════ */}
+        <DashboardDoacaoSection />
       </div>
     </div>
+  )
+}
+
+// ─── Dashboard Donation Section ─────────────────────────────────
+function DashboardDoacaoSection() {
+  const [formOpen, setFormOpen] = useState(false)
+
+  return (
+    <>
+      <motion.section
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, delay: 0.9 }}
+      >
+        <div className="flex items-center gap-2 mb-4">
+          <Heart className="h-4 w-4 text-rose-500 fill-rose-500" />
+          <h2 className="text-lg font-semibold tracking-tight">Apoie o DomineAqui</h2>
+        </div>
+
+        <div className="grid gap-4 lg:grid-cols-[1fr_380px]">
+          {/* Conteúdo de doação (compacto) */}
+          <DoacaoContent compact onDonateClick={() => setFormOpen(true)} />
+
+          {/* Ranking lateral */}
+          <div className="glass-stat rounded-2xl p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Trophy className="h-4 w-4 text-yellow-500" />
+              <h3 className="text-sm font-semibold">Top Doadores</h3>
+            </div>
+            <DoacaoRanking compact />
+          </div>
+        </div>
+      </motion.section>
+
+      <DoacaoForm open={formOpen} onClose={() => setFormOpen(false)} />
+    </>
   )
 }
 

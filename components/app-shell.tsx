@@ -16,6 +16,7 @@ import { Menu } from 'lucide-react'
 import { useBootstrap, clearBootstrapCache } from '@/hooks/use-bootstrap'
 import { FocusSessionProvider } from '@/hooks/use-focus-session'
 import { FocusSessionButton } from '@/components/focus-session-button'
+import { DoacaoFloatingButton } from '@/components/doacoes/doacao-floating-button'
 
 /**
  * AppShell Component - Optimized Version
@@ -288,6 +289,9 @@ Contato: (21) 99777-0936`)
 
         {/* Support Chat */}
         <SupportChat />
+
+        {/* Floating donation button */}
+        <DoacaoFloatingButton />
       </div>
       </FocusSessionProvider>
     </AppShellContext.Provider>

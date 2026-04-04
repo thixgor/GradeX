@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import { AppShell } from '@/components/app-shell'
@@ -103,11 +103,39 @@ interface PatologiaResumo {
 }
 
 export default function ManualClinicoPage() {
+  const [showInterstitial, setShowInterstitial] = useState(false)
+  const [interstitialChecked, setInterstitialChecked] = useState(false)
+
+  useEffect(() => {
+    setShowInterstitial(true)
+    setInterstitialChecked(true)
+  }, [])
+
   return (
     <AppShell showHeader={false}>
+      {interstitialChecked && showInterstitial && (
+        <DoacaoInterstitialLazy
+          context="manual-clinico"
+          onClose={() => setShowInterstitial(false)}
+        />
+      )}
       <ManualClinicoContent />
     </AppShell>
   )
+}
+
+// Lazy interstitial to avoid SSR issues
+function DoacaoInterstitialLazy({ context, onClose }: { context: 'manual-clinico' | 'exam'; onClose: () => void }) {
+  const [Component, setComponent] = useState<React.ComponentType<{ context: 'manual-clinico' | 'exam'; onClose: () => void }> | null>(null)
+
+  useEffect(() => {
+    import('@/components/doacoes/doacao-interstitial').then(m => {
+      setComponent(() => m.DoacaoInterstitial)
+    })
+  }, [])
+
+  if (!Component) return null
+  return <Component context={context} onClose={onClose} />
 }
 
 function FloatingFocusGlass() {

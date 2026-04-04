@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -41,6 +41,8 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const [started, setStarted] = useState(false)
   const [inWaitingRoom, setInWaitingRoom] = useState(false)
   const [canStart, setCanStart] = useState(false)
+  const [showDoacaoInterstitial, setShowDoacaoInterstitial] = useState(false)
+  const [DoacaoInterstitialComp, setDoacaoInterstitialComp] = useState<React.ComponentType<{ context: 'manual-clinico' | 'exam'; onClose: () => void }> | null>(null)
 
   const [userName, setUserName] = useState('')
   const [loggedUserName, setLoggedUserName] = useState('')
@@ -1914,10 +1916,27 @@ ${respostaAluno}`
     )
   }
 
+  // Carregar interstitial de doação ao exibir tela pré-prova
+  useEffect(() => {
+    let cancelled = false
+    import('@/components/doacoes/doacao-interstitial').then(m => {
+      if (!cancelled) setDoacaoInterstitialComp(() => m.DoacaoInterstitial)
+    })
+    import('@/lib/doacao-interstitial').then(({ shouldShowInterstitial }) => {
+      if (!cancelled && shouldShowInterstitial('exam')) setShowDoacaoInterstitial(true)
+    })
+    return () => { cancelled = true }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   if (!started && !inWaitingRoom) {
     return (
       <>
         {proctoringModal}
+        {/* Interstitial de doação antes da prova */}
+        {showDoacaoInterstitial && DoacaoInterstitialComp && (
+          <DoacaoInterstitialComp context="exam" onClose={() => setShowDoacaoInterstitial(false)} />
+        )}
         <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4">
           <Card className="max-w-2xl w-full">
           <CardHeader>
