@@ -937,10 +937,10 @@ ${respostaAluno}`
       localStorage.removeItem(`exam-${id}-start-time`)
 
       // Salvar score
-      if (exam?.scoringMethod === 'normal') {
-        setSubmissionScore(`${data.score} pontos (Submissão automática: ${reason})`)
-      } else {
-        setSubmissionScore(`Prova submetida automaticamente: ${reason}`)
+      if (exam?.scoringMethod === 'normal' && data.score !== undefined) {
+        setSubmissionScore(`${data.score} pontos`)
+      } else if (data.message) {
+        setSubmissionScore(data.message)
       }
 
       // Salvar ID da submissão
@@ -1019,10 +1019,10 @@ ${respostaAluno}`
       localStorage.removeItem(`exam-${id}-start-time`)
 
       // Salvar score para mostrar depois
-      if (exam?.scoringMethod === 'normal') {
+      if (exam?.scoringMethod === 'normal' && data.score !== undefined) {
         setSubmissionScore(`${data.score} pontos`)
-      } else {
-        setSubmissionScore(data.message || 'Prova submetida com sucesso!')
+      } else if (data.message) {
+        setSubmissionScore(data.message)
       }
 
       // Salvar ID da submissão para permitir auto-avaliação posterior
@@ -1665,9 +1665,9 @@ ${respostaAluno}`
         <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-[110] flex items-center justify-center p-4 animate-in fade-in duration-200">
           <div className="max-w-md w-full rounded-2xl border border-border/50 bg-background/80 backdrop-blur-xl shadow-2xl overflow-hidden">
             <div className="bg-gradient-to-r from-violet-600 to-purple-600 p-5 text-center">
-              <h2 className="text-xl font-bold text-white">Atribuir Minha Nota</h2>
+              <h2 className="text-xl font-bold text-white">Autoavaliação</h2>
               <p className="text-violet-200 text-sm mt-1">
-                Selecione a nota que a IA atribuiu à sua resposta
+                Como você avalia sua resposta nesta questão?
               </p>
             </div>
             <div className="p-6 space-y-5">
@@ -2523,68 +2523,79 @@ ${respostaAluno}`
                     {/* Resposta Discursiva */}
                     {question.type === 'discursive' && (
                       <div className="space-y-3">
-                        <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                          <p className="text-sm text-blue-900 dark:text-blue-100">
-                            <strong>Questão Discursiva:</strong> Escreva sua resposta completa no campo abaixo.
-                            {question.maxScore && (
-                              <span className="ml-2">Pontuação máxima: {question.maxScore} pontos</span>
-                            )}
-                          </p>
-                        </div>
                         <Textarea
                           value={answer?.discursiveText || ''}
                           onChange={(e) => handleDiscursiveText(question.id, e.target.value)}
                           placeholder="Digite sua resposta aqui..."
-                          rows={12}
+                          rows={10}
                           className="font-serif text-base"
                           disabled={lockedQuestions.has(question.id)}
                         />
-                        <div className="flex items-center justify-between text-sm text-muted-foreground">
-                          <span>Caracteres: {(answer?.discursiveText || '').length}</span>
-                          <span>Palavras: {(answer?.discursiveText || '').split(/\s+/).filter(w => w.length > 0).length}</span>
+                        <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
+                          <span>{(answer?.discursiveText || '').length} caracteres</span>
+                          <span>{(answer?.discursiveText || '').split(/\s+/).filter(w => w.length > 0).length} palavras</span>
                         </div>
 
-                        {/* Ações de correção discursiva para provas pessoais */}
-                        {question.explanation && (
-                          <div className="space-y-3 pt-2">
-                            {/* Botão Copiar Prompt */}
-                            <Button
-                              variant="outline"
-                              className="w-full"
-                              onClick={() => handleCopyDiscursivePrompt(question, answer)}
-                              disabled={!answer?.discursiveText?.trim()}
-                            >
-                              {copiedPromptId === question.id ? (
-                                <>
-                                  <ClipboardCheck className="h-4 w-4 mr-2 text-green-600" />
-                                  Prompt Copiado!
-                                </>
-                              ) : (
-                                <>
-                                  <Copy className="h-4 w-4 mr-2" />
-                                  Copiar Prompt de Correção
-                                </>
-                              )}
-                            </Button>
-
-                            {/* Botão Atribuir Nota ou Nota já atribuída */}
-                            {answer?.discursiveSelfScore !== undefined ? (
-                              <div className="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg p-4 text-center">
-                                <p className="text-sm font-semibold text-green-700 dark:text-green-300">
-                                  Nota auto-atribuída: {answer.discursiveSelfScore}%
-                                </p>
+                        {/* Autoavaliação inline — sempre visível para questões discursivas */}
+                        {answer?.discursiveText?.trim() && (
+                          <div className="rounded-2xl border border-violet-200/60 dark:border-violet-800/40 bg-gradient-to-br from-violet-50/80 to-purple-50/50 dark:from-violet-950/30 dark:to-purple-950/20 p-4 space-y-3">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-violet-500 animate-pulse" />
+                                <p className="text-xs font-semibold text-violet-700 dark:text-violet-300 uppercase tracking-wider">Autoavaliação</p>
                               </div>
-                            ) : (
-                              <Button
-                                variant="default"
-                                className="w-full bg-purple-600 hover:bg-purple-700"
-                                onClick={() => handleOpenSelfScore(question.id)}
-                                disabled={!answer?.discursiveText?.trim()}
-                              >
-                                Atribuir Minha Nota (0-100%)
-                              </Button>
+                              {answer?.discursiveSelfScore !== undefined && (
+                                <span className={`text-sm font-bold px-2 py-0.5 rounded-full ${
+                                  answer.discursiveSelfScore >= 70 ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' :
+                                  answer.discursiveSelfScore >= 40 ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300' :
+                                  'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300'
+                                }`}>
+                                  {answer.discursiveSelfScore}%
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs text-muted-foreground">Como você avalia sua resposta?</p>
+                            <div className="grid grid-cols-6 gap-1.5">
+                              {[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map(score => (
+                                <button
+                                  key={score}
+                                  onClick={() => {
+                                    setAnswers(prev => prev.map(a =>
+                                      a.questionId === question.id ? { ...a, discursiveSelfScore: score } : a
+                                    ))
+                                  }}
+                                  className={`h-10 rounded-xl text-sm font-bold transition-all duration-150 border-2 focus:outline-none
+                                    ${score === 100 ? 'col-span-2' : ''}
+                                    ${answer?.discursiveSelfScore === score
+                                      ? score >= 70 ? 'bg-green-500 border-green-400 text-white shadow-md shadow-green-500/30 scale-105'
+                                        : score >= 40 ? 'bg-amber-500 border-amber-400 text-white shadow-md shadow-amber-500/30 scale-105'
+                                        : 'bg-red-500 border-red-400 text-white shadow-md shadow-red-500/30 scale-105'
+                                      : 'bg-white/70 dark:bg-background/40 border-border/40 hover:bg-violet-50 dark:hover:bg-violet-950/40 hover:border-violet-300 hover:scale-[1.03]'
+                                    }`}
+                                >
+                                  {score}%
+                                </button>
+                              ))}
+                            </div>
+                            {answer?.discursiveSelfScore !== undefined && (
+                              <p className="text-xs text-center font-medium text-muted-foreground">
+                                {answer.discursiveSelfScore >= 90 ? '🏆 Excelente!' :
+                                 answer.discursiveSelfScore >= 70 ? '✅ Bom desempenho' :
+                                 answer.discursiveSelfScore >= 40 ? '📈 Pode melhorar' :
+                                 '📚 Precisa revisar'}
+                              </p>
                             )}
                           </div>
+                        )}
+
+                        {/* Copiar Prompt de correção (apenas se tiver explanation) */}
+                        {question.explanation && answer?.discursiveText?.trim() && (
+                          <Button variant="outline" size="sm" className="w-full text-xs rounded-xl"
+                            onClick={() => handleCopyDiscursivePrompt(question, answer)}>
+                            {copiedPromptId === question.id
+                              ? <><ClipboardCheck className="h-3.5 w-3.5 mr-1.5 text-green-600" />Prompt Copiado!</>
+                              : <><Copy className="h-3.5 w-3.5 mr-1.5" />Copiar Prompt de Correção</>}
+                          </Button>
                         )}
                       </div>
                     )}
@@ -2880,14 +2891,6 @@ ${respostaAluno}`
             {/* Resposta Discursiva */}
             {currentQuestion.type === 'discursive' && (
               <div className="space-y-3">
-                <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                  <p className="text-sm text-blue-900 dark:text-blue-100">
-                    <strong>Questão Discursiva:</strong> Escreva sua resposta completa no campo abaixo.
-                    {currentQuestion.maxScore && (
-                      <span className="ml-2">Pontuação máxima: {currentQuestion.maxScore} pontos</span>
-                    )}
-                  </p>
-                </div>
                 <Textarea
                   value={currentAnswer?.discursiveText || ''}
                   onChange={(e) => handleDiscursiveText(currentQuestion.id, e.target.value)}
@@ -2896,52 +2899,71 @@ ${respostaAluno}`
                   className="font-serif text-base"
                   disabled={lockedQuestions.has(currentQuestion.id)}
                 />
-                <div className="flex items-center justify-between text-sm text-muted-foreground">
-                  <span>Caracteres: {(currentAnswer?.discursiveText || '').length}</span>
-                  <span>Palavras: {(currentAnswer?.discursiveText || '').split(/\s+/).filter(w => w.length > 0).length}</span>
+                <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
+                  <span>{(currentAnswer?.discursiveText || '').length} caracteres</span>
+                  <span>{(currentAnswer?.discursiveText || '').split(/\s+/).filter(w => w.length > 0).length} palavras</span>
                 </div>
 
-                {/* Ações de correção discursiva para provas pessoais */}
-                {currentQuestion.explanation && (
-                  <div className="space-y-3 pt-2">
-                    {/* Botão Copiar Prompt */}
-                    <Button
-                      variant="outline"
-                      className="w-full"
-                      onClick={() => handleCopyDiscursivePrompt(currentQuestion, currentAnswer)}
-                      disabled={!currentAnswer?.discursiveText?.trim()}
-                    >
-                      {copiedPromptId === currentQuestion.id ? (
-                        <>
-                          <ClipboardCheck className="h-4 w-4 mr-2 text-green-600" />
-                          Prompt Copiado!
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="h-4 w-4 mr-2" />
-                          Copiar Prompt de Correção
-                        </>
-                      )}
-                    </Button>
-
-                    {/* Botão Atribuir Nota ou Nota já atribuída */}
-                    {currentAnswer?.discursiveSelfScore !== undefined ? (
-                      <div className="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg p-4 text-center">
-                        <p className="text-sm font-semibold text-green-700 dark:text-green-300">
-                          Nota auto-atribuída: {currentAnswer.discursiveSelfScore}%
-                        </p>
+                {/* Autoavaliação inline — aparece quando há texto */}
+                {currentAnswer?.discursiveText?.trim() && (
+                  <div className="rounded-2xl border border-violet-200/60 dark:border-violet-800/40 bg-gradient-to-br from-violet-50/80 to-purple-50/50 dark:from-violet-950/30 dark:to-purple-950/20 p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-violet-500 animate-pulse" />
+                        <p className="text-xs font-semibold text-violet-700 dark:text-violet-300 uppercase tracking-wider">Autoavaliação</p>
                       </div>
-                    ) : (
-                      <Button
-                        variant="default"
-                        className="w-full bg-purple-600 hover:bg-purple-700"
-                        onClick={() => handleOpenSelfScore(currentQuestion.id)}
-                        disabled={!currentAnswer?.discursiveText?.trim()}
-                      >
-                        Atribuir Minha Nota (0-100%)
-                      </Button>
+                      {currentAnswer?.discursiveSelfScore !== undefined && (
+                        <span className={`text-sm font-bold px-2 py-0.5 rounded-full ${
+                          currentAnswer.discursiveSelfScore >= 70 ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' :
+                          currentAnswer.discursiveSelfScore >= 40 ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300' :
+                          'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300'
+                        }`}>
+                          {currentAnswer.discursiveSelfScore}%
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground">Como você avalia sua resposta?</p>
+                    <div className="grid grid-cols-6 gap-1.5">
+                      {[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map(score => (
+                        <button
+                          key={score}
+                          onClick={() => {
+                            setAnswers(prev => prev.map(a =>
+                              a.questionId === currentQuestion.id ? { ...a, discursiveSelfScore: score } : a
+                            ))
+                          }}
+                          className={`h-11 rounded-xl text-sm font-bold transition-all duration-150 border-2 focus:outline-none
+                            ${score === 100 ? 'col-span-2' : ''}
+                            ${currentAnswer?.discursiveSelfScore === score
+                              ? score >= 70 ? 'bg-green-500 border-green-400 text-white shadow-md shadow-green-500/30 scale-105'
+                                : score >= 40 ? 'bg-amber-500 border-amber-400 text-white shadow-md shadow-amber-500/30 scale-105'
+                                : 'bg-red-500 border-red-400 text-white shadow-md shadow-red-500/30 scale-105'
+                              : 'bg-white/70 dark:bg-background/40 border-border/40 hover:bg-violet-50 dark:hover:bg-violet-950/40 hover:border-violet-300 hover:scale-[1.03]'
+                            }`}
+                        >
+                          {score}%
+                        </button>
+                      ))}
+                    </div>
+                    {currentAnswer?.discursiveSelfScore !== undefined && (
+                      <p className="text-xs text-center font-medium text-muted-foreground">
+                        {currentAnswer.discursiveSelfScore >= 90 ? '🏆 Excelente!' :
+                         currentAnswer.discursiveSelfScore >= 70 ? '✅ Bom desempenho' :
+                         currentAnswer.discursiveSelfScore >= 40 ? '📈 Pode melhorar' :
+                         '📚 Precisa revisar'}
+                      </p>
                     )}
                   </div>
+                )}
+
+                {/* Copiar Prompt de correção (apenas se tiver explanation) */}
+                {currentQuestion.explanation && currentAnswer?.discursiveText?.trim() && (
+                  <Button variant="outline" size="sm" className="w-full text-xs rounded-xl"
+                    onClick={() => handleCopyDiscursivePrompt(currentQuestion, currentAnswer)}>
+                    {copiedPromptId === currentQuestion.id
+                      ? <><ClipboardCheck className="h-3.5 w-3.5 mr-1.5 text-green-600" />Prompt Copiado!</>
+                      : <><Copy className="h-3.5 w-3.5 mr-1.5" />Copiar Prompt de Correção</>}
+                  </Button>
                 )}
               </div>
             )}
