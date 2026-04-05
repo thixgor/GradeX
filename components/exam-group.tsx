@@ -124,8 +124,18 @@ export function ExamGroup({
 
   const accentColor = group.color || '#3B82F6'
 
-  // Practice exams directly in THIS group (not recursive) — used for group PDF button
-  const directPracticeExams = exams.filter(e => e.isPracticeExam)
+  // Collect all practice exams recursively from this group and all descendant groups,
+  // sorted by their orderInGroup so the merge order is consistent with what the user sees.
+  function collectPracticeExamsRecursive(groupId: string): Exam[] {
+    const direct = allExams
+      .filter(e => e.groupId === groupId && e.isPracticeExam)
+      .sort((a, b) => ((a as any).orderInGroup ?? 999) - ((b as any).orderInGroup ?? 999))
+    const children = allGroups.filter(g => g.parentGroupId === groupId)
+    const nested = children.flatMap(c => collectPracticeExamsRecursive(c._id))
+    return [...direct, ...nested]
+  }
+
+  const allPracticeExams = collectPracticeExamsRecursive(group._id)
 
   // Sort exams by orderInGroup
   const sortedExams = [...exams].sort((a, b) => {
@@ -196,12 +206,12 @@ export function ExamGroup({
         </span>
 
         {/* Group PDF download button — only when this group has direct practice exams */}
-        {directPracticeExams.length > 0 && onGroupDownloadPDF && (
+        {allPracticeExams.length > 0 && onGroupDownloadPDF && (
           <div className="relative opacity-0 group-hover/header:opacity-100 transition-opacity" onClick={e => e.stopPropagation()}>
             <button
               onClick={() => setShowGroupDownload(v => !v)}
               className="p-1.5 rounded-lg hover:bg-emerald-500/10 transition-colors text-muted-foreground hover:text-emerald-600 dark:hover:text-emerald-400"
-              title={`Baixar PDFs do grupo (${directPracticeExams.length} provas)`}
+              title={`Baixar PDFs do grupo (${allPracticeExams.length} provas)`}
             >
               <FileDown className="h-4 w-4" />
             </button>
@@ -212,7 +222,7 @@ export function ExamGroup({
               >
                 <div className="px-3 py-2 border-b border-border/50">
                   <p className="text-xs font-semibold text-foreground">{group.name}</p>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">{directPracticeExams.length} provas · ordem de baixo pra cima</p>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">{allPracticeExams.length} provas · ordem de baixo pra cima</p>
                 </div>
                 {([
                   { type: 'exam', label: 'PDF da Prova', desc: 'Apenas as questões', icon: '📄' },
@@ -223,13 +233,8 @@ export function ExamGroup({
                     key={opt.type}
                     onClick={() => {
                       setShowGroupDownload(false)
-                      // Reversed: bottom → top (last in sort = first in PDF)
-                      const sorted = [...directPracticeExams].sort((a, b) => {
-                        const oa = (a as any).orderInGroup ?? 999
-                        const ob = (b as any).orderInGroup ?? 999
-                        return oa !== ob ? oa - ob : 0
-                      }).reverse()
-                      onGroupDownloadPDF(sorted, opt.type, group.name)
+                      // allPracticeExams is already sorted top→bottom; reverse for bottom→top PDF order
+                      onGroupDownloadPDF([...allPracticeExams].reverse(), opt.type, group.name)
                     }}
                     className="w-full flex items-start gap-3 px-3 py-2.5 hover:bg-muted/60 transition-colors text-left"
                   >

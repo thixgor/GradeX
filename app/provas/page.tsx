@@ -328,7 +328,7 @@ function ProvasContent() {
 
   async function handleReorderExam(examId: string, direction: 'up' | 'down') {
     try {
-      const res = await fetch(`/api/exams/${examId}/reorder`, {
+      const res = await fetch(`/api/exams/${examId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ direction }),

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -43,6 +43,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const [canStart, setCanStart] = useState(false)
   const [showDoacaoInterstitial, setShowDoacaoInterstitial] = useState(false)
   const [DoacaoInterstitialComp, setDoacaoInterstitialComp] = useState<React.ComponentType<{ context: 'manual-clinico' | 'exam'; onClose: () => void }> | null>(null)
+  const pendingStartRef = useRef<(() => void) | null>(null)
 
   const [userName, setUserName] = useState('')
   const [loggedUserName, setLoggedUserName] = useState('')
@@ -360,6 +361,17 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     }
   }
 
+  // Mostra o interstitial de doação antes de iniciar — se disponível.
+  // Caso contrário (componente ainda carregando ou API desativada), executa startFn diretamente.
+  function triggerInterstitialThenStart(startFn: () => void) {
+    if (DoacaoInterstitialComp) {
+      pendingStartRef.current = startFn
+      setShowDoacaoInterstitial(true)
+    } else {
+      startFn()
+    }
+  }
+
   // Função para rejeitar termo de proctoring
   const handleProctoringReject = () => {
     setShowProctoringConsent(false)
@@ -584,21 +596,23 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       setPracticeTimeLimitMs(config.timeLimitMinutes * 60 * 1000)
     }
 
-    // Iniciar prova
+    // Iniciar prova (via interstitial de doação se disponível)
     setShowPracticeConfig(false)
-    const startTime = new Date()
-    setExamStartTime(startTime)
-    localStorage.setItem(`exam-${id}-start-time`, startTime.toISOString())
-    setStarted(true)
+    triggerInterstitialThenStart(() => {
+      const startTime = new Date()
+      setExamStartTime(startTime)
+      localStorage.setItem(`exam-${id}-start-time`, startTime.toISOString())
+      setStarted(true)
 
-    // Verificar se tem questões com tempo individual
-    const hasTimedQuestions = exam.questions.some(q => q.timePerQuestionSeconds && q.timePerQuestionSeconds > 0)
-    if (hasTimedQuestions) {
-      setShowTimeWarningPopup(true)
-      setTimeWarningCountdown(3)
-    } else {
-      initializeQuestionTimer(0)
-    }
+      // Verificar se tem questões com tempo individual
+      const hasTimedQuestions = exam.questions.some(q => q.timePerQuestionSeconds && q.timePerQuestionSeconds > 0)
+      if (hasTimedQuestions) {
+        setShowTimeWarningPopup(true)
+        setTimeWarningCountdown(3)
+      } else {
+        initializeQuestionTimer(0)
+      }
+    })
   }
 
   // Função para inicializar o timer de uma questão específica
@@ -1059,14 +1073,11 @@ ${respostaAluno}`
     }
   }
 
-  // Carregar interstitial de doação (deve ficar ANTES dos early returns para não violar Rules of Hooks)
+  // Pré-carregar o componente do interstitial (não mostrar ainda — será mostrado ao clicar em iniciar)
   useEffect(() => {
     let cancelled = false
     import('@/components/doacoes/doacao-interstitial').then(m => {
       if (!cancelled) setDoacaoInterstitialComp(() => m.DoacaoInterstitial)
-    })
-    import('@/lib/doacao-interstitial').then(({ shouldShowInterstitial }) => {
-      if (!cancelled && shouldShowInterstitial('exam')) setShowDoacaoInterstitial(true)
     })
     return () => { cancelled = true }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1935,7 +1946,12 @@ ${respostaAluno}`
         {proctoringModal}
         {/* Interstitial de doação antes da prova */}
         {showDoacaoInterstitial && DoacaoInterstitialComp && (
-          <DoacaoInterstitialComp context="exam" onClose={() => setShowDoacaoInterstitial(false)} />
+          <DoacaoInterstitialComp context="exam" onClose={() => {
+            setShowDoacaoInterstitial(false)
+            const fn = pendingStartRef.current
+            pendingStartRef.current = null
+            fn?.()
+          }} />
         )}
         <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4">
           <Card className="max-w-2xl w-full">
@@ -2025,7 +2041,7 @@ ${respostaAluno}`
               size="lg"
               onClick={() => {
                 if (canStart) {
-                  handleStartExam()
+                  triggerInterstitialThenStart(handleStartExam)
                 } else {
                   setInWaitingRoom(true)
                 }
