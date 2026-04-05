@@ -564,7 +564,7 @@ export default function LandingPage() {
               Gratuito porque você acreditou
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              A DomineAqui é 100% gratuita e mantida pela comunidade. Cada doação garante que o conteúdo continue livre e acessível para todos os estudantes.
+              Banco de questões, provas e simulados são gratuitos e mantidos pela comunidade. Ferramentas com IA e aulas são pagas — mas cada doação ajuda a manter o núcleo da plataforma livre e acessível para todos.
             </p>
           </div>
 
