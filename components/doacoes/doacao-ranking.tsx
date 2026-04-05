@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Heart, Stethoscope, Activity, Clock, Trophy, Loader2 } from 'lucide-react'
+import { Heart, Stethoscope, Activity, Clock, Trophy, Loader2, ChevronDown } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 interface DoacaoPublic {
@@ -43,6 +43,7 @@ export function DoacaoRanking({ compact = false, defaultTab = 'top', glass = fal
   const [topData, setTopData] = useState<DoacaoPublic[]>([])
   const [recentData, setRecentData] = useState<DoacaoPublic[]>([])
   const [loading, setLoading] = useState(true)
+  const [expandedMsg, setExpandedMsg] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
@@ -184,14 +185,30 @@ export function DoacaoRanking({ compact = false, defaultTab = 'top', glass = fal
                     </span>
                   )}
                 </div>
-                {donor.mensagem && (
-                  <p
-                    className="text-xs truncate mt-0.5 italic"
-                    style={{ color: glass ? 'rgba(255,255,255,0.35)' : undefined }}
-                  >
-                    "{donor.mensagem}"
-                  </p>
-                )}
+                {donor.mensagem && (() => {
+                  const isLong = donor.mensagem.length > 60
+                  const isOpen = expandedMsg === donor._id
+                  return (
+                    <div className="mt-0.5">
+                      <p
+                        className={`text-xs italic leading-relaxed ${!isOpen && isLong ? 'line-clamp-1' : ''}`}
+                        style={{ color: glass ? 'rgba(255,255,255,0.40)' : undefined }}
+                      >
+                        "{donor.mensagem}"
+                      </p>
+                      {isLong && (
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setExpandedMsg(isOpen ? null : donor._id) }}
+                          className="flex items-center gap-0.5 mt-0.5 text-[10px] font-medium transition-colors"
+                          style={{ color: glass ? 'rgba(134,239,172,0.55)' : 'hsl(var(--muted-foreground))' }}
+                        >
+                          <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+                          {isOpen ? 'Ver menos' : 'Ver mais'}
+                        </button>
+                      )}
+                    </div>
+                  )
+                })()}
                 {!compact && (
                   <p
                     className="text-[10px] flex items-center gap-1 mt-0.5"
