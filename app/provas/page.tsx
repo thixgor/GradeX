@@ -326,6 +326,10 @@ function ProvasContent() {
     }
   }
 
+  function handleSortGroup(_groupId: string) {
+    loadExamsAndGroups()
+  }
+
   async function handleReorderExam(examId: string, direction: 'up' | 'down') {
     try {
       const res = await fetch(`/api/exams/${examId}`, {
@@ -826,6 +830,7 @@ function ProvasContent() {
                         onDeleteGroup={handleDeleteGroup}
                         onEditGroup={handleEditGroup}
                         onReorderExam={handleReorderExam}
+                        onSortGroup={handleSortGroup}
                         onDownloadPDF={setPdfModalExam}
                         onGroupDownloadPDF={handleGroupDownloadPDF}
                         onCreateSubgroup={(parentGroupId) => {

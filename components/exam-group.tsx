@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { ChevronDown, ChevronRight, Trash2, Edit2, FolderPlus, MoreHorizontal, ArrowUp, ArrowDown, Share2, Download, FileDown } from 'lucide-react'
+import { ChevronDown, ChevronRight, Trash2, Edit2, FolderPlus, MoreHorizontal, ArrowUp, ArrowDown, Share2, Download, FileDown, ArrowDownAZ } from 'lucide-react'
 import { Exam } from '@/lib/types'
 
 interface GroupData {
@@ -32,6 +32,7 @@ interface ExamGroupProps {
   onEditGroup?: (group: any) => void
   onCreateSubgroup?: (parentGroupId: string) => void
   onReorderExam?: (examId: string, direction: 'up' | 'down') => Promise<void>
+  onSortGroup?: (groupId: string) => void
   onDownloadPDF?: (exam: Exam) => void
   onGroupDownloadPDF?: (exams: Exam[], type: 'exam' | 'with-answers' | 'gabarito', groupName: string) => void
   depth?: number
@@ -58,6 +59,7 @@ export function ExamGroup({
   onEditGroup,
   onCreateSubgroup,
   onReorderExam,
+  onSortGroup,
   onDownloadPDF,
   onGroupDownloadPDF,
   depth = 0,
@@ -75,6 +77,7 @@ export function ExamGroup({
   const [copiedLink, setCopiedLink] = useState(false)
   const [highlighted, setHighlighted] = useState(isTarget)
   const [showGroupDownload, setShowGroupDownload] = useState(false)
+  const [isSorting, setIsSorting] = useState(false)
 
   // Re-evaluate expansion when highlightGroupId changes (e.g. after groups load)
   useEffect(() => {
@@ -120,6 +123,18 @@ export function ExamGroup({
       setCopiedLink(true)
       setTimeout(() => setCopiedLink(false), 2000)
     })
+  }
+
+  const handleSortAlpha = async () => {
+    if (!confirm(`Ordenar todas as provas de "${group.name}" em ordem alfanumérica reversa?\nIsso sobrescreve a ordem atual.`)) return
+    setIsSorting(true)
+    try {
+      await fetch(`/api/groups/${group._id}/sort-exams`, { method: 'PATCH' })
+      onSortGroup?.(group._id)
+    } finally {
+      setIsSorting(false)
+      setShowActions(false)
+    }
   }
 
   const accentColor = group.color || '#3B82F6'
@@ -267,6 +282,13 @@ export function ExamGroup({
               <FolderPlus className="h-3 w-3" /> Subgrupo
             </Button>
           )}
+          {isAdmin && exams.length > 0 && (
+            <Button variant="ghost" size="sm" onClick={handleSortAlpha}
+              disabled={isSorting} className="h-7 text-xs gap-1 text-muted-foreground hover:text-foreground rounded-lg">
+              <ArrowDownAZ className="h-3 w-3" />
+              {isSorting ? 'Ordenando…' : 'A→Z reverso'}
+            </Button>
+          )}
           {onEditGroup && (
             <Button variant="ghost" size="sm" onClick={() => { onEditGroup(group); setShowActions(false) }}
               disabled={isDeleting} className="h-7 text-xs gap-1 text-muted-foreground hover:text-foreground rounded-lg">
@@ -378,6 +400,7 @@ export function ExamGroup({
                 onEditGroup={onEditGroup}
                 onCreateSubgroup={onCreateSubgroup}
                 onReorderExam={onReorderExam}
+                onSortGroup={onSortGroup}
                 onDownloadPDF={onDownloadPDF}
                 onGroupDownloadPDF={onGroupDownloadPDF}
                 depth={depth + 1}
