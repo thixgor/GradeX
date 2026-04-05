@@ -72,7 +72,7 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
     if (!exam) return
 
     const { generateGabaritoPDF, downloadPDF } = await import('@/lib/pdf-generator')
-    const blob = generateGabaritoPDF(exam)
+    const blob = await generateGabaritoPDF(exam)
     downloadPDF(blob, `gabarito-${exam.title.replace(/\s/g, '-')}.pdf`)
   }
 

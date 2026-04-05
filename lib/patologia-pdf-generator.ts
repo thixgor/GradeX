@@ -264,6 +264,19 @@ function renderRichLine(doc: jsPDF, line: RichLine, x: number, y: number, fontSi
   }
 }
 
+// ── Logo Loading ─────────────────────────────────────────────────
+
+let logoCache: string | null | undefined = undefined
+
+async function loadLogoForPdf(): Promise<string | null> {
+  if (logoCache !== undefined) return logoCache
+  try {
+    const img = await loadImage('/logo.png')
+    logoCache = img ? img.data : null
+    return logoCache
+  } catch { logoCache = null; return null }
+}
+
 // ── Image Loading ────────────────────────────────────────────────
 
 interface LoadedImage {
@@ -336,24 +349,31 @@ function makeEnsureSpace(addHeaderFn: (doc: jsPDF) => number): EnsureSpaceFn {
 
 // ── Individual PDF: Header & Footer ──────────────────────────────
 
+let _headerLogo: string | null = null
+
 function addHeader(doc: jsPDF): number {
   doc.setFillColor(...VERDE_ESCURO)
   doc.rect(0, 0, PAGE_WIDTH, 30, 'F')
   doc.setFillColor(...LARANJA)
   doc.rect(PAGE_WIDTH - 65, 0, 65, 30, 'F')
 
+  if (_headerLogo) {
+    try { doc.addImage(_headerLogo, 'PNG', MARGIN, 4, 22, 22) } catch {}
+  }
+  const tx = _headerLogo ? MARGIN + 26 : MARGIN
+
   setTC(doc, BRANCO)
   doc.setFontSize(16)
   doc.setFont(FONT, 'bold')
-  doc.text('DomineAqui', MARGIN, 13)
+  doc.text('DomineAqui', tx, 13)
 
   doc.setFontSize(9)
   doc.setFont(FONT, 'normal')
-  doc.text('Manual Cl\u00ednico', MARGIN, 21)
+  doc.text('Manual Cl\u00ednico', tx, 21)
 
-  doc.setFontSize(8)
-  setTC(doc, VERDE_ESCURO)
-  doc.text('www.domineaqui.com.br', PAGE_WIDTH - 62, 18)
+  doc.setFontSize(7.5)
+  setTC(doc, BRANCO)
+  doc.text('www.domineaqui.com.br', PAGE_WIDTH - 62, 19)
 
   return 40
 }
@@ -996,6 +1016,7 @@ export async function generatePatologiaPDF(patologia: Patologia): Promise<Blob> 
 
   const doc = new jsPDF()
   await registerFonts(doc)
+  _headerLogo = await loadLogoForPdf()
   const ensure = makeEnsureSpace(() => addHeader(doc))
   let y = addHeader(doc)
 
@@ -1272,17 +1293,22 @@ function addCompleteHeader(doc: jsPDF): number {
   doc.setFillColor(...LARANJA)
   doc.rect(PAGE_WIDTH - 45, 0, 45, 20, 'F')
 
+  if (_headerLogo) {
+    try { doc.addImage(_headerLogo, 'PNG', MARGIN, 2, 16, 16) } catch {}
+  }
+  const tx = _headerLogo ? MARGIN + 19 : MARGIN
+
   doc.setFontSize(12)
   doc.setFont(FONT, 'bold')
   setTC(doc, BRANCO)
-  doc.text('DomineAqui', MARGIN, 13)
+  doc.text('DomineAqui', tx, 13)
 
   doc.setFontSize(7.5)
   doc.setFont(FONT, 'normal')
-  doc.text('Manual Cl\u00ednico', MARGIN + doc.getTextWidth('DomineAqui') + 3, 13)
+  doc.text('Manual Cl\u00ednico', tx + doc.getTextWidth('DomineAqui') + 3, 13)
 
   doc.setFontSize(7.5)
-  setTC(doc, VERDE_ESCURO)
+  setTC(doc, BRANCO)
   doc.text('domineaqui.com.br', PAGE_WIDTH - 42, 13)
 
   return 28
@@ -1502,6 +1528,7 @@ export async function generateManualCompletoPDF(patologias: Patologia[]): Promis
 
   const doc = new jsPDF()
   await registerFonts(doc)
+  _headerLogo = await loadLogoForPdf()
   const ensure = makeEnsureSpace(() => addCompleteHeader(doc))
 
   // ── Capa ────────────────────────────────────────────────────────

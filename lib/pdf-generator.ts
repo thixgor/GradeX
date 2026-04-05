@@ -2,7 +2,7 @@ import jsPDF from 'jspdf'
 import JsBarcode from 'jsbarcode'
 import { Exam, Question, UserAnswer, QuestionAnnotation, Form, FormBlock } from './types'
 
-// Cores da paleta DomineAqui
+// ── Cores da paleta DomineAqui ───────────────────────────────────
 const VERDE_ESCURO = [26, 71, 42] as const
 const VERDE_MEDIO = [70, 129, 82] as const
 const LARANJA = [226, 164, 62] as const
@@ -10,15 +10,112 @@ const LARANJA_CLARO = [245, 216, 154] as const
 const CINZA_TEXTO = [51, 51, 51] as const
 const CINZA_CLARO = [245, 245, 245] as const
 
-// URL da logo oficial do DomineAqui
-const LOGO_URL = 'https://i.imgur.com/1QmchqF.png'
+// ── Font registration (Roboto TTF for full Unicode/PT-BR) ────────
+type FontStyle = 'normal' | 'bold' | 'italic' | 'bolditalic'
+let FONT = 'helvetica'
+const fontCache: { file: string; style: FontStyle; b64: string }[] = []
+
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+  const bytes = new Uint8Array(buffer)
+  const chunks: string[] = []
+  const chunkSize = 8192
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    chunks.push(String.fromCharCode(...bytes.subarray(i, i + chunkSize)))
+  }
+  return btoa(chunks.join(''))
+}
+
+async function registerFonts(doc: jsPDF): Promise<void> {
+  if (fontCache.length > 0) {
+    for (const f of fontCache) {
+      doc.addFileToVFS(f.file, f.b64)
+      doc.addFont(f.file, 'Roboto', f.style)
+    }
+    FONT = 'Roboto'
+    doc.setFont('Roboto')
+    return
+  }
+  try {
+    const variants: { file: string; style: FontStyle }[] = [
+      { file: 'Roboto-Regular.ttf', style: 'normal' },
+      { file: 'Roboto-Bold.ttf', style: 'bold' },
+      { file: 'Roboto-Italic.ttf', style: 'italic' },
+      { file: 'Roboto-BoldItalic.ttf', style: 'bolditalic' },
+    ]
+    const results = await Promise.all(
+      variants.map(async (v) => {
+        const res = await fetch(`/fonts/${v.file}`)
+        if (!res.ok) throw new Error(`Font not found: ${v.file}`)
+        return { ...v, data: await res.arrayBuffer() }
+      })
+    )
+    for (const r of results) {
+      const b64 = arrayBufferToBase64(r.data)
+      doc.addFileToVFS(r.file, b64)
+      doc.addFont(r.file, 'Roboto', r.style)
+      fontCache.push({ file: r.file, style: r.style, b64 })
+    }
+    FONT = 'Roboto'
+    doc.setFont('Roboto')
+  } catch {
+    FONT = 'helvetica'
+  }
+}
+
+// ── Text sanitizer (Helvetica fallback only) ─────────────────────
+function sanitizeForPdf(text: string): string {
+  if (!text) return text
+  let t = text.replace(/[\u200B\u200C\u200D\uFEFF\u00AD]/g, '')
+  if (FONT === 'Roboto') return t
+  return t
+    .replace(/₀/g,'0').replace(/₁/g,'1').replace(/₂/g,'2').replace(/₃/g,'3')
+    .replace(/₄/g,'4').replace(/₅/g,'5').replace(/₆/g,'6').replace(/₇/g,'7')
+    .replace(/₈/g,'8').replace(/₉/g,'9')
+    .replace(/⁰/g,'0').replace(/⁴/g,'4').replace(/⁵/g,'5').replace(/⁶/g,'6')
+    .replace(/⁷/g,'7').replace(/⁸/g,'8').replace(/⁹/g,'9')
+    .replace(/≥/g,'>=').replace(/≤/g,'<=').replace(/≠/g,'!=').replace(/≈/g,'~')
+    .replace(/→/g,'->').replace(/←/g,'<-').replace(/↑/g,'^').replace(/↓/g,'v')
+    .replace(/↔/g,'<->').replace(/∞/g,'inf')
+    .replace(/α/g,'alfa').replace(/β/g,'beta').replace(/γ/g,'gama')
+    .replace(/δ/g,'delta').replace(/Δ/g,'Delta').replace(/μ/g,'u')
+    .replace(/✓/g,'V').replace(/✔/g,'V').replace(/✗/g,'X').replace(/✘/g,'X')
+}
+
+// ── Logo (cached from /logo.png) ─────────────────────────────────
+let logoCache: string | null | undefined = undefined
+
+async function loadLogo(): Promise<string | null> {
+  if (logoCache !== undefined) return logoCache
+  try {
+    return await new Promise<string | null>((resolve) => {
+      const img = new Image()
+      img.crossOrigin = 'anonymous'
+      const timeout = setTimeout(() => { logoCache = null; resolve(null) }, 6000)
+      img.onload = () => {
+        clearTimeout(timeout)
+        try {
+          const canvas = document.createElement('canvas')
+          canvas.width = img.naturalWidth
+          canvas.height = img.naturalHeight
+          const ctx = canvas.getContext('2d')
+          if (!ctx) { logoCache = null; resolve(null); return }
+          ctx.drawImage(img, 0, 0)
+          logoCache = canvas.toDataURL('image/png')
+          resolve(logoCache)
+        } catch { logoCache = null; resolve(null) }
+      }
+      img.onerror = () => { clearTimeout(timeout); logoCache = null; resolve(null) }
+      img.src = '/logo.png'
+    })
+  } catch { logoCache = null; return null }
+}
 
 // Custom text wrapping function - melhorada para preservar quebras de linha
 function wrapText(doc: jsPDF, text: string, maxWidth: number): string[] {
   if (!text) return []
 
-  // Replace \nl and \n with actual newlines first
-  const cleaned = text.replace(/\\nl/g, '\n').replace(/\\n/g, '\n')
+  // Replace \nl and \n with actual newlines first, then sanitize
+  const cleaned = sanitizeForPdf(text.replace(/\\nl/g, '\n').replace(/\\n/g, '\n'))
 
   // Preservar quebras de linha existentes
   const paragraphs = cleaned.split(/\n/)
@@ -108,96 +205,93 @@ async function prefetchExamImages(questions: Question[]): Promise<Map<string, { 
   return imageMap
 }
 
-// Adiciona header padrão DomineAqui
-function addDomineAquiHeader(doc: jsPDF, pageWidth: number, margin: number, subtitle?: string) {
+// Adiciona header padrão DomineAqui (com logo se disponível)
+function addDomineAquiHeader(doc: jsPDF, pageWidth: number, margin: number, subtitle?: string, logoData?: string | null) {
   // Barra superior verde escuro
   doc.setFillColor(...VERDE_ESCURO)
-  doc.rect(0, 0, pageWidth, 28, 'F')
+  doc.rect(0, 0, pageWidth, 30, 'F')
 
   // Detalhe laranja no canto
   doc.setFillColor(...LARANJA)
-  doc.rect(pageWidth - 60, 0, 60, 28, 'F')
+  doc.rect(pageWidth - 65, 0, 65, 30, 'F')
 
-  // Logo/Título
+  // Logo image or text fallback
+  if (logoData) {
+    try {
+      doc.addImage(logoData, 'PNG', margin, 4, 22, 22)
+    } catch { logoData = null }
+  }
+  const textX = logoData ? margin + 26 : margin
+
   doc.setTextColor(255, 255, 255)
-  doc.setFontSize(18)
-  doc.setFont('helvetica', 'bold')
-  doc.text('DomineAqui', margin, 14)
+  doc.setFontSize(16)
+  doc.setFont(FONT, 'bold')
+  doc.text('DomineAqui', textX, subtitle ? 12 : 18)
 
-  // Subtítulo
   if (subtitle) {
-    doc.setFontSize(10)
-    doc.setFont('helvetica', 'normal')
-    doc.text(subtitle, margin, 22)
+    doc.setFontSize(9)
+    doc.setFont(FONT, 'normal')
+    doc.text(sanitizeForPdf(subtitle), textX, 22)
   }
 
-  // Link da plataforma
-  doc.setFontSize(8)
-  doc.setTextColor(...VERDE_ESCURO)
-  doc.text('www.domineaqui.com.br', pageWidth - margin - 35, 16)
+  // Link (laranja box area — white text)
+  doc.setFontSize(7.5)
+  doc.setTextColor(255, 255, 255)
+  doc.text('www.domineaqui.com.br', pageWidth - 62, 19, { align: 'left' })
 
-  return 38
+  return 40
 }
 
 // Adiciona footer padrão DomineAqui
 function addDomineAquiFooter(doc: jsPDF, pageNum: number, totalPages: number, pageWidth: number, pageHeight: number, margin: number, extraText?: string) {
   const footerY = pageHeight - 12
 
-  // Barra de footer
   doc.setFillColor(...CINZA_CLARO)
-  doc.rect(0, footerY - 5, pageWidth, 17, 'F')
+  doc.rect(0, footerY - 6, pageWidth, 18, 'F')
 
-  // Linha decorativa verde e laranja
   doc.setDrawColor(...VERDE_MEDIO)
   doc.setLineWidth(1)
-  doc.line(0, footerY - 5, pageWidth * 0.7, footerY - 5)
+  doc.line(0, footerY - 6, pageWidth * 0.7, footerY - 6)
   doc.setDrawColor(...LARANJA)
-  doc.line(pageWidth * 0.7, footerY - 5, pageWidth, footerY - 5)
+  doc.line(pageWidth * 0.7, footerY - 6, pageWidth, footerY - 6)
 
-  // Texto do footer
   doc.setFontSize(8)
   doc.setTextColor(70, 70, 70)
-  doc.setFont('helvetica', 'bold')
-  doc.text('DomineAqui', margin, footerY + 2)
-  doc.setFont('helvetica', 'normal')
-  doc.text(' - www.domineaqui.com.br', margin + 18, footerY + 2)
+  doc.setFont(FONT, 'bold')
+  doc.text('DomineAqui', margin, footerY + 1)
+  doc.setFont(FONT, 'normal')
+  const daqW = doc.getTextWidth('DomineAqui')
+  doc.text(' - Manual / Provas', margin + daqW + 1, footerY + 1)
+  doc.text(`Página ${pageNum} de ${totalPages}`, pageWidth - margin, footerY + 1, { align: 'right' })
 
-  // Página
-  doc.text(`Página ${pageNum} de ${totalPages}`, pageWidth - margin - 20, footerY + 2)
-
-  // Data e slogan
-  const dataGeracao = new Date().toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  })
-  doc.setFontSize(7)
+  const dataGeracao = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })
+  doc.setFontSize(6.5)
   doc.setTextColor(100, 100, 100)
-  const centerText = extraText || `Gerado em ${dataGeracao} | Seja o Foco. Seja a Referência.`
-  doc.text(centerText, pageWidth / 2, footerY + 2, { align: 'center' })
+  doc.text(sanitizeForPdf(extraText || `Gerado em ${dataGeracao}`), pageWidth / 2, footerY - 1, { align: 'center' })
+  doc.setFont(FONT, 'italic')
+  doc.text('Criado por Thiago Rodrigues', pageWidth / 2, footerY + 4, { align: 'center' })
 }
 
-export function generateGabaritoPDF(exam: Exam): Blob {
+export async function generateGabaritoPDF(exam: Exam): Promise<Blob> {
   const doc = new jsPDF()
+  await registerFonts(doc)
+  const logo = await loadLogo()
 
-  // Configurações
   const pageWidth = doc.internal.pageSize.getWidth()
   const pageHeight = doc.internal.pageSize.getHeight()
   const margin = 20
   let y = margin
 
-  // Função auxiliar para adicionar nova página se necessário
   const checkPage = (needed: number) => {
     if (y + needed > pageHeight - 25) {
       doc.addPage()
-      y = addDomineAquiHeader(doc, pageWidth, margin, 'Gabarito Oficial')
+      y = addDomineAquiHeader(doc, pageWidth, margin, 'Gabarito Oficial', logo)
       return true
     }
     return false
   }
 
-  // === CABEÇALHO ===
-  y = addDomineAquiHeader(doc, pageWidth, margin, 'Gabarito Oficial')
+  y = addDomineAquiHeader(doc, pageWidth, margin, 'Gabarito Oficial', logo)
 
   // === INFORMAÇÕES DA PROVA ===
   // Box com título da prova
@@ -207,7 +301,7 @@ export function generateGabaritoPDF(exam: Exam): Blob {
 
   doc.setTextColor(0, 0, 0)
   doc.setFontSize(14)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   doc.text(exam.title, pageWidth / 2, y + 13, { align: 'center' })
 
   y += 28
@@ -215,7 +309,7 @@ export function generateGabaritoPDF(exam: Exam): Blob {
   // Descrição se existir
   if (exam.description) {
     doc.setFontSize(10)
-    doc.setFont('helvetica', 'normal')
+    doc.setFont(FONT, 'normal')
     doc.setTextColor(100, 100, 100)
     const descLines = wrapText(doc, exam.description, pageWidth - 2 * margin)
     doc.text(descLines, pageWidth / 2, y, { align: 'center' })
@@ -230,10 +324,10 @@ export function generateGabaritoPDF(exam: Exam): Blob {
   doc.roundedRect(margin, y, colWidth, 25, 2, 2, 'F')
   doc.setFontSize(9)
   doc.setTextColor(...VERDE_ESCURO)
-  doc.setFont('helvetica', 'normal')
+  doc.setFont(FONT, 'normal')
   doc.text('TOTAL DE QUESTÕES', margin + 5, y + 8)
   doc.setFontSize(16)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   doc.text(exam.numberOfQuestions.toString(), margin + 5, y + 19)
 
   // Coluna 2 - Pontuação
@@ -241,10 +335,10 @@ export function generateGabaritoPDF(exam: Exam): Blob {
   doc.roundedRect(margin + colWidth + 10, y, colWidth, 25, 2, 2, 'F')
   doc.setFontSize(9)
   doc.setTextColor(...VERDE_ESCURO)
-  doc.setFont('helvetica', 'normal')
+  doc.setFont(FONT, 'normal')
   doc.text('PONTUAÇÃO', margin + colWidth + 15, y + 8)
   doc.setFontSize(16)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   doc.text(
     exam.scoringMethod === 'tri' ? '1000 pontos (TRI)' : `${exam.totalPoints} pontos`,
     margin + colWidth + 15,
@@ -258,7 +352,7 @@ export function generateGabaritoPDF(exam: Exam): Blob {
   doc.rect(margin, y, pageWidth - 2 * margin, 10, 'F')
   doc.setTextColor(255, 255, 255)
   doc.setFontSize(11)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   doc.text('GABARITO', pageWidth / 2, y + 7, { align: 'center' })
 
   y += 18
@@ -295,13 +389,13 @@ export function generateGabaritoPDF(exam: Exam): Blob {
     // Número da questão
     doc.setTextColor(100, 100, 100)
     doc.setFontSize(9)
-    doc.setFont('helvetica', 'normal')
+    doc.setFont(FONT, 'normal')
     doc.text(`${question.number}.`, x + cellPadding, cellY)
 
     // Resposta
     doc.setTextColor(...VERDE_ESCURO)
     doc.setFontSize(11)
-    doc.setFont('helvetica', 'bold')
+    doc.setFont(FONT, 'bold')
     doc.text(answerLetter, x + cellPadding + 12, cellY)
 
     currentCol++
@@ -330,12 +424,12 @@ export function generateGabaritoPDF(exam: Exam): Blob {
 
   doc.setTextColor(...VERDE_ESCURO)
   doc.setFontSize(11)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
 
   if (exam.scoringMethod === 'tri') {
     doc.text('SISTEMA DE PONTUAÇÃO: TRI (Teoria de Resposta ao Item)', margin + 5, y + 10)
     doc.setFontSize(9)
-    doc.setFont('helvetica', 'normal')
+    doc.setFont(FONT, 'normal')
     doc.setTextColor(...CINZA_TEXTO)
     doc.text('A pontuação será calculada considerando:', margin + 5, y + 20)
     doc.text('• Dificuldade de cada questão (parâmetro b)', margin + 10, y + 27)
@@ -344,7 +438,7 @@ export function generateGabaritoPDF(exam: Exam): Blob {
   } else {
     doc.text(`SISTEMA DE PONTUAÇÃO: Normal`, margin + 5, y + 10)
     doc.setFontSize(9)
-    doc.setFont('helvetica', 'normal')
+    doc.setFont(FONT, 'normal')
     doc.setTextColor(...CINZA_TEXTO)
     const pointsPerQuestion = (exam.totalPoints || 100) / exam.numberOfQuestions
     doc.text(`Pontuação máxima: ${exam.totalPoints} pontos`, margin + 5, y + 20)
@@ -378,9 +472,10 @@ export function downloadPDF(blob: Blob, filename: string) {
  * Mostra cada questão com a alternativa correta destacada em verde e a explicação abaixo.
  */
 export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
-  const imageMap = await prefetchExamImages(exam.questions)
+  const [imageMap, logo] = await Promise.all([prefetchExamImages(exam.questions), loadLogo()])
 
   const doc = new jsPDF()
+  await registerFonts(doc)
   const pageWidth = doc.internal.pageSize.getWidth()
   const pageHeight = doc.internal.pageSize.getHeight()
   const margin = 20
@@ -389,13 +484,13 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
   const checkPage = (needed: number) => {
     if (y + needed > pageHeight - 25) {
       doc.addPage()
-      y = addDomineAquiHeader(doc, pageWidth, margin, 'Prova com Gabarito')
+      y = addDomineAquiHeader(doc, pageWidth, margin, 'Prova com Gabarito', logo)
       return true
     }
     return false
   }
 
-  y = addDomineAquiHeader(doc, pageWidth, margin, 'Prova com Gabarito')
+  y = addDomineAquiHeader(doc, pageWidth, margin, 'Prova com Gabarito', logo)
 
   // Título
   doc.setFillColor(...LARANJA_CLARO)
@@ -403,11 +498,11 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
   doc.roundedRect(margin, y, pageWidth - 2 * margin, 25, 3, 3, 'FD')
   doc.setTextColor(...VERDE_ESCURO)
   doc.setFontSize(16)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   doc.text(exam.title, pageWidth / 2, y + 10, { align: 'center' })
   if (exam.description) {
     doc.setFontSize(10)
-    doc.setFont('helvetica', 'normal')
+    doc.setFont(FONT, 'normal')
     doc.text(exam.description, pageWidth / 2, y + 18, { align: 'center' })
   }
   y += 33
@@ -417,7 +512,7 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
   doc.roundedRect(margin, y, pageWidth - 2 * margin, 9, 2, 2, 'F')
   doc.setTextColor(255, 255, 255)
   doc.setFontSize(9)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   doc.text('✓  GABARITO COMENTADO  —  Alternativas corretas destacadas em verde', pageWidth / 2, y + 6, { align: 'center' })
   y += 16
 
@@ -430,13 +525,13 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
     doc.roundedRect(margin, y, pageWidth - 2 * margin, 10, 2, 2, 'F')
     doc.setTextColor(255, 255, 255)
     doc.setFontSize(11)
-    doc.setFont('helvetica', 'bold')
+    doc.setFont(FONT, 'bold')
     doc.text(`Questão ${question.number ?? idx + 1}`, margin + 5, y + 7)
 
     // Tipo
     const typeLabel = question.type === 'discursive' ? 'Discursiva' : question.type === 'essay' ? 'Redação' : 'Múltipla Escolha'
     doc.setFontSize(8)
-    doc.setFont('helvetica', 'normal')
+    doc.setFont(FONT, 'normal')
     doc.text(typeLabel, pageWidth - margin - 2, y + 7, { align: 'right' })
     y += 15
 
@@ -444,7 +539,7 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
     if (question.statement) {
       checkPage(15)
       doc.setFontSize(10)
-      doc.setFont('helvetica', 'normal')
+      doc.setFont(FONT, 'normal')
       doc.setTextColor(...CINZA_TEXTO)
       const lines = wrapText(doc, question.statement, pageWidth - 2 * margin)
       lines.forEach((line: string) => {
@@ -496,7 +591,7 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
     if (question.command) {
       checkPage(12)
       doc.setFontSize(10)
-      doc.setFont('helvetica', 'bold')
+      doc.setFont(FONT, 'bold')
       doc.setTextColor(...VERDE_ESCURO)
       const commandLines = wrapText(doc, question.command, pageWidth - 2 * margin)
       commandLines.forEach((line: string) => {
@@ -521,7 +616,7 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
           doc.roundedRect(margin + 1, y - 4, pageWidth - 2 * margin - 2, 8, 1.5, 1.5, 'FD')
         }
 
-        doc.setFont('helvetica', isCorrect ? 'bold' : 'normal')
+        doc.setFont(FONT, isCorrect ? 'bold' : 'normal')
         doc.setFontSize(10)
         doc.setTextColor(isCorrect ? 26 : CINZA_TEXTO[0], isCorrect ? 71 : CINZA_TEXTO[1], isCorrect ? 42 : CINZA_TEXTO[2])
 
@@ -539,7 +634,7 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
         altLines.forEach((line: string, lineIdx: number) => {
           if (lineIdx > 0) {
             checkPage(6)
-            doc.setFont('helvetica', isCorrect ? 'bold' : 'normal')
+            doc.setFont(FONT, isCorrect ? 'bold' : 'normal')
             doc.setFontSize(10)
             doc.setTextColor(isCorrect ? 26 : CINZA_TEXTO[0], isCorrect ? 71 : CINZA_TEXTO[1], isCorrect ? 42 : CINZA_TEXTO[2])
           }
@@ -551,7 +646,7 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
     } else if (question.type === 'discursive') {
       checkPage(20)
       doc.setFontSize(9)
-      doc.setFont('helvetica', 'italic')
+      doc.setFont(FONT, 'italic')
       doc.setTextColor(100, 100, 100)
       doc.text('(Questão discursiva — ver gabarito/pontos-chave abaixo)', margin + 2, y)
       y += 8
@@ -569,11 +664,11 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
       doc.roundedRect(margin, y, pageWidth - 2 * margin, boxH, 2, 2, 'FD')
 
       doc.setFontSize(8.5)
-      doc.setFont('helvetica', 'bold')
+      doc.setFont(FONT, 'bold')
       doc.setTextColor(...VERDE_ESCURO)
       doc.text('💬 Resposta Comentada:', margin + 4, y + 8)
 
-      doc.setFont('helvetica', 'normal')
+      doc.setFont(FONT, 'normal')
       doc.setTextColor(...CINZA_TEXTO)
       let ey = y + 14
       expLines.forEach((line: string) => {
@@ -599,28 +694,26 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
 
 // Gerar PDF da prova para alunos preencherem (client-side com jsPDF)
 export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob> {
-  // Pre-fetch all question images
-  const imageMap = await prefetchExamImages(exam.questions)
+  const [imageMap, logo] = await Promise.all([prefetchExamImages(exam.questions), loadLogo()])
 
   const doc = new jsPDF()
+  await registerFonts(doc)
 
   const pageWidth = doc.internal.pageSize.getWidth()
   const pageHeight = doc.internal.pageSize.getHeight()
   const margin = 20
   let y = margin
 
-  // Função auxiliar para verificar se precisa de nova página
   const checkPage = (needed: number) => {
     if (y + needed > pageHeight - 25) {
       doc.addPage()
-      y = addDomineAquiHeader(doc, pageWidth, margin, 'Prova')
+      y = addDomineAquiHeader(doc, pageWidth, margin, 'Prova', logo)
       return true
     }
     return false
   }
 
-  // === CABEÇALHO ===
-  y = addDomineAquiHeader(doc, pageWidth, margin, 'Prova')
+  y = addDomineAquiHeader(doc, pageWidth, margin, 'Prova', logo)
 
   // === TÍTULO DA PROVA ===
   doc.setFillColor(...LARANJA_CLARO)
@@ -629,12 +722,12 @@ export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob
 
   doc.setTextColor(...VERDE_ESCURO)
   doc.setFontSize(16)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   doc.text(exam.title, pageWidth / 2, y + 10, { align: 'center' })
 
   if (exam.description) {
     doc.setFontSize(10)
-    doc.setFont('helvetica', 'normal')
+    doc.setFont(FONT, 'normal')
     doc.text(exam.description, pageWidth / 2, y + 18, { align: 'center' })
   }
 
@@ -643,7 +736,7 @@ export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob
   // === INFORMAÇÕES DA PROVA ===
   doc.setTextColor(...CINZA_TEXTO)
   doc.setFontSize(9)
-  doc.setFont('helvetica', 'normal')
+  doc.setFont(FONT, 'normal')
   doc.text(`Data: ${new Date().toLocaleDateString('pt-BR')}`, pageWidth - margin, y, { align: 'right' })
   y += 5
   doc.text(`Duração: ${exam.duration} minutos | Questões: ${exam.numberOfQuestions}`, pageWidth - margin, y, { align: 'right' })
@@ -654,13 +747,13 @@ export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob
   doc.rect(margin, y, pageWidth - 2 * margin, 8, 'F')
   doc.setTextColor(255, 255, 255)
   doc.setFontSize(10)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   doc.text('IDENTIFICAÇÃO DO CANDIDATO', margin + 5, y + 5.5)
   y += 15
 
   doc.setTextColor(...CINZA_TEXTO)
   doc.setFontSize(10)
-  doc.setFont('helvetica', 'normal')
+  doc.setFont(FONT, 'normal')
   doc.text('Nome: _____________________________________________________________', margin, y)
   y += 10
 
@@ -700,12 +793,12 @@ export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob
   doc.rect(margin, y, pageWidth - 2 * margin, 8, 'F')
   doc.setTextColor(255, 255, 255)
   doc.setFontSize(10)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   doc.text('INSTRUÇÕES', margin + 5, y + 5.5)
   y += 12
 
   doc.setFontSize(9)
-  doc.setFont('helvetica', 'normal')
+  doc.setFont(FONT, 'normal')
   doc.setTextColor(...CINZA_TEXTO)
   const instructions = [
     '• Preencha todos os campos de identificação acima.',
@@ -731,7 +824,7 @@ export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob
     doc.roundedRect(margin, y, pageWidth - 2 * margin, 10, 2, 2, 'F')
     doc.setTextColor(255, 255, 255)
     doc.setFontSize(11)
-    doc.setFont('helvetica', 'bold')
+    doc.setFont(FONT, 'bold')
     doc.text(`Questão ${idx + 1}`, margin + 5, y + 7)
     y += 15
 
@@ -739,7 +832,7 @@ export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob
     if (question.statement) {
       checkPage(15)
       doc.setFontSize(10)
-      doc.setFont('helvetica', 'normal')
+      doc.setFont(FONT, 'normal')
       doc.setTextColor(...CINZA_TEXTO)
       const lines = wrapText(doc, question.statement, pageWidth - 2 * margin)
       lines.forEach((line: string) => {
@@ -797,7 +890,7 @@ export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob
     if (question.command) {
       checkPage(12)
       doc.setFontSize(10)
-      doc.setFont('helvetica', 'bold')
+      doc.setFont(FONT, 'bold')
       doc.setTextColor(...VERDE_ESCURO)
       const commandLines = wrapText(doc, question.command, pageWidth - 2 * margin)
       commandLines.forEach((line: string) => {
@@ -816,7 +909,7 @@ export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob
         checkPage(12)
 
         // Reset font for each alternative to prevent color/size leaks
-        doc.setFont('helvetica', 'normal')
+        doc.setFont(FONT, 'normal')
         doc.setFontSize(10)
         doc.setTextColor(...CINZA_TEXTO)
 
@@ -832,7 +925,7 @@ export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob
           if (lineIdx > 0) {
             checkPage(6)
             // Re-set after potential page break
-            doc.setFont('helvetica', 'normal')
+            doc.setFont(FONT, 'normal')
             doc.setFontSize(10)
             doc.setTextColor(...CINZA_TEXTO)
           }
@@ -847,7 +940,7 @@ export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob
 
       doc.setFontSize(9)
       doc.setTextColor(...LARANJA)
-      doc.setFont('helvetica', 'bold')
+      doc.setFont(FONT, 'bold')
       doc.text(`Espaço para resposta (máximo ${question.maxScore} pontos):`, margin, y)
       y += 6
 
@@ -880,8 +973,9 @@ export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob
  * Gera PDF da prova com as respostas do aluno marcadas (sem mostrar gabarito)
  */
 export async function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[], userName: string): Promise<Blob> {
-  const imageMap = await prefetchExamImages(exam.questions)
+  const [imageMap, logo] = await Promise.all([prefetchExamImages(exam.questions), loadLogo()])
   const doc = new jsPDF()
+  await registerFonts(doc)
 
   const pageWidth = doc.internal.pageSize.getWidth()
   const pageHeight = doc.internal.pageSize.getHeight()
@@ -891,14 +985,13 @@ export async function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[
   const checkPage = (needed: number) => {
     if (y + needed > pageHeight - 25) {
       doc.addPage()
-      y = addDomineAquiHeader(doc, pageWidth, margin, 'Relatório de Respostas')
+      y = addDomineAquiHeader(doc, pageWidth, margin, 'Relatório de Respostas', logo)
       return true
     }
     return false
   }
 
-  // === CABEÇALHO ===
-  y = addDomineAquiHeader(doc, pageWidth, margin, 'Relatório de Respostas')
+  y = addDomineAquiHeader(doc, pageWidth, margin, 'Relatório de Respostas', logo)
 
   // === TÍTULO DA PROVA ===
   doc.setFillColor(...LARANJA_CLARO)
@@ -907,7 +1000,7 @@ export async function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[
 
   doc.setTextColor(...VERDE_ESCURO)
   doc.setFontSize(14)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   doc.text(exam.title, pageWidth / 2, y + 12, { align: 'center' })
 
   y += 25
@@ -915,10 +1008,10 @@ export async function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[
   // === INFORMAÇÕES DO ALUNO ===
   doc.setTextColor(...CINZA_TEXTO)
   doc.setFontSize(10)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   doc.text('Aluno: ' + userName, margin, y)
   y += 5
-  doc.setFont('helvetica', 'normal')
+  doc.setFont(FONT, 'normal')
   doc.text('Data: ' + new Date().toLocaleDateString('pt-BR'), margin, y)
   y += 10
 
@@ -936,14 +1029,14 @@ export async function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[
     doc.roundedRect(margin, y, pageWidth - 2 * margin, 8, 2, 2, 'F')
     doc.setTextColor(255, 255, 255)
     doc.setFontSize(10)
-    doc.setFont('helvetica', 'bold')
+    doc.setFont(FONT, 'bold')
     doc.text('Questão ' + (idx + 1), margin + 5, y + 5.5)
     y += 12
 
     if (question.statement) {
       checkPage(15)
       doc.setFontSize(10)
-      doc.setFont('helvetica', 'normal')
+      doc.setFont(FONT, 'normal')
       doc.setTextColor(...CINZA_TEXTO)
       const lines = wrapText(doc, question.statement, pageWidth - 2 * margin)
       lines.forEach((line: string) => {
@@ -988,7 +1081,7 @@ export async function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[
     if (question.command) {
       checkPage(12)
       doc.setFontSize(10)
-      doc.setFont('helvetica', 'bold')
+      doc.setFont(FONT, 'bold')
       doc.setTextColor(...VERDE_ESCURO)
       const commandLines = wrapText(doc, question.command, pageWidth - 2 * margin)
       commandLines.forEach((line: string) => {
@@ -1021,10 +1114,10 @@ export async function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[
 
         // Reset font/color explicitly per alternative
         if (isSelected) {
-          doc.setFont('helvetica', 'bold')
+          doc.setFont(FONT, 'bold')
           doc.setTextColor(...VERDE_ESCURO)
         } else {
-          doc.setFont('helvetica', 'normal')
+          doc.setFont(FONT, 'normal')
           doc.setTextColor(...CINZA_TEXTO)
         }
         doc.setFontSize(10)
@@ -1037,10 +1130,10 @@ export async function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[
             // Re-set after potential page break
             doc.setFontSize(10)
             if (isSelected) {
-              doc.setFont('helvetica', 'bold')
+              doc.setFont(FONT, 'bold')
               doc.setTextColor(...VERDE_ESCURO)
             } else {
-              doc.setFont('helvetica', 'normal')
+              doc.setFont(FONT, 'normal')
               doc.setTextColor(...CINZA_TEXTO)
             }
           }
@@ -1054,13 +1147,13 @@ export async function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[
 
       doc.setFontSize(9)
       doc.setTextColor(...LARANJA)
-      doc.setFont('helvetica', 'bold')
+      doc.setFont(FONT, 'bold')
       doc.text('Sua resposta:', margin, y)
       y += 6
 
       if (answer?.discursiveText) {
         doc.setFontSize(10)
-        doc.setFont('helvetica', 'normal')
+        doc.setFont(FONT, 'normal')
         doc.setTextColor(...CINZA_TEXTO)
         const answerLines = wrapText(doc, answer.discursiveText, pageWidth - 2 * margin - 4)
         answerLines.forEach((line: string) => {
@@ -1092,29 +1185,29 @@ export async function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[
 /**
  * Gera PDF com as anotações feitas pelo aluno durante a prova
  */
-export function generateAnnotationsPDF(
+export async function generateAnnotationsPDF(
   examTitle: string,
   annotations: QuestionAnnotation[]
-): Blob {
+): Promise<Blob> {
   const doc = new jsPDF()
+  await registerFonts(doc)
+  const logo = await loadLogo()
 
   const pageWidth = doc.internal.pageSize.getWidth()
   const pageHeight = doc.internal.pageSize.getHeight()
   const margin = 20
   let y = margin
 
-  // Função auxiliar para adicionar nova página se necessário
   const checkPage = (needed: number) => {
     if (y + needed > pageHeight - 25) {
       doc.addPage()
-      y = addDomineAquiHeader(doc, pageWidth, margin, 'Anotações da Prova')
+      y = addDomineAquiHeader(doc, pageWidth, margin, 'Anotações da Prova', logo)
       return true
     }
     return false
   }
 
-  // === CABEÇALHO ===
-  y = addDomineAquiHeader(doc, pageWidth, margin, 'Anotações da Prova')
+  y = addDomineAquiHeader(doc, pageWidth, margin, 'Anotações da Prova', logo)
 
   // === TÍTULO DA PROVA ===
   doc.setDrawColor(...VERDE_MEDIO)
@@ -1123,7 +1216,7 @@ export function generateAnnotationsPDF(
 
   doc.setTextColor(...VERDE_ESCURO)
   doc.setFontSize(14)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   doc.text(examTitle, pageWidth / 2, y + 13, { align: 'center' })
 
   y += 30
@@ -1152,7 +1245,7 @@ export function generateAnnotationsPDF(
 
       doc.setTextColor(255, 255, 255)
       doc.setFontSize(12)
-      doc.setFont('helvetica', 'bold')
+      doc.setFont(FONT, 'bold')
       doc.text(`Questão ${annotation.questionNumber}`, margin + 5, y + 8)
 
       y += 20
@@ -1239,6 +1332,8 @@ export async function generateFormResponsePDF(
   answers: Record<string, string | string[]>
 ): Promise<Blob> {
   const doc = new jsPDF()
+  await registerFonts(doc)
+  const logo = await loadLogo()
   const pageWidth = doc.internal.pageSize.getWidth()
   const pageHeight = doc.internal.pageSize.getHeight()
   const margin = 20
@@ -1247,14 +1342,13 @@ export async function generateFormResponsePDF(
   const checkPage = (needed: number) => {
     if (y + needed > pageHeight - 25) {
       doc.addPage()
-      y = addDomineAquiHeader(doc, pageWidth, margin, 'Resumo da Pesquisa')
+      y = addDomineAquiHeader(doc, pageWidth, margin, 'Resumo da Pesquisa', logo)
       return true
     }
     return false
   }
 
-  // Header
-  y = addDomineAquiHeader(doc, pageWidth, margin, 'Resumo da Pesquisa')
+  y = addDomineAquiHeader(doc, pageWidth, margin, 'Resumo da Pesquisa', logo)
 
   // Form Title
   doc.setFillColor(...LARANJA_CLARO)
@@ -1263,7 +1357,7 @@ export async function generateFormResponsePDF(
 
   doc.setTextColor(...VERDE_ESCURO)
   doc.setFontSize(14)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(FONT, 'bold')
   doc.text(form.title, pageWidth / 2, y + 13, { align: 'center' })
 
   y += 30
@@ -1285,14 +1379,14 @@ export async function generateFormResponsePDF(
       doc.roundedRect(margin, y, pageWidth - 2 * margin, 10, 2, 2, 'F')
       doc.setTextColor(255, 255, 255)
       doc.setFontSize(10)
-      doc.setFont('helvetica', 'bold')
+      doc.setFont(FONT, 'bold')
       doc.text('PERGUNTA', margin + 5, y + 7)
       y += 15
 
       // Question Content
       doc.setTextColor(...VERDE_ESCURO)
       doc.setFontSize(11)
-      doc.setFont('helvetica', 'bold')
+      doc.setFont(FONT, 'bold')
       const titleText = block.title || 'Sem título'
       const titleLines = wrapText(doc, titleText, pageWidth - 2 * margin)
       titleLines.forEach(line => {
@@ -1305,7 +1399,7 @@ export async function generateFormResponsePDF(
       // Answer Text
       doc.setTextColor(...CINZA_TEXTO)
       doc.setFontSize(10)
-      doc.setFont('helvetica', 'normal')
+      doc.setFont(FONT, 'normal')
 
       const answer = answers[block.id]
       let answerText = ''

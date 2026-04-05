@@ -354,7 +354,7 @@ function ProvasContent() {
         const blob = await generateExamWithAnswersPDF(exam)
         downloadPDF(blob, `prova-gabarito-comentado-${slug}.pdf`)
       } else {
-        const blob = generateGabaritoPDF(exam)
+        const blob = await generateGabaritoPDF(exam)
         downloadPDF(blob, `gabarito-${slug}.pdf`)
       }
     } catch (err) {

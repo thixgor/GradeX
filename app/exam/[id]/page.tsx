@@ -1631,7 +1631,7 @@ ${respostaAluno}`
                   onClick={async () => {
                     try {
                       const { generateAnnotationsPDF, downloadPDF } = await import('@/lib/pdf-generator')
-                      const blob = generateAnnotationsPDF(exam.title, annotations)
+                      const blob = await generateAnnotationsPDF(exam.title, annotations)
                       downloadPDF(blob, `Anotacoes-${exam.title}.pdf`)
                     } catch (error: any) {
                       showToastMessage('Erro ao gerar PDF de anotações: ' + error.message)
@@ -2227,7 +2227,7 @@ ${respostaAluno}`
                         if (!res.ok) throw new Error('Erro ao buscar prova')
                         const data = await res.json()
                         const { generateGabaritoPDF, downloadPDF } = await import('@/lib/pdf-generator')
-                        const blob = generateGabaritoPDF(data.exam)
+                        const blob = await generateGabaritoPDF(data.exam)
                         downloadPDF(blob, `Gabarito-${data.exam.title}.pdf`)
                       } catch (error: any) {
                         showToastMessage('Erro ao gerar gabarito: ' + error.message)

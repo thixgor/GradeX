@@ -232,7 +232,7 @@ export default function ProfilePage() {
       if (!res.ok) throw new Error('Erro ao buscar prova')
       const data = await res.json()
       const { generateGabaritoPDF, downloadPDF } = await import('@/lib/pdf-generator')
-      const blob = generateGabaritoPDF(data.exam)
+      const blob = await generateGabaritoPDF(data.exam)
       downloadPDF(blob, `Gabarito-${data.exam.title}.pdf`)
     } catch (error: any) {
       setToastMessage('Erro ao gerar gabarito: ' + error.message)
