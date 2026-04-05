@@ -535,6 +535,10 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
     doc.text(typeLabel, pageWidth - margin - 2, y + 7, { align: 'right' })
     y += 15
 
+    // Reset color after header (prevents white text leaking into body)
+    doc.setTextColor(...CINZA_TEXTO)
+    doc.setFont(FONT, 'normal')
+
     // Enunciado
     if (question.statement) {
       checkPage(15)
@@ -544,6 +548,10 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
       const lines = wrapText(doc, question.statement, pageWidth - 2 * margin)
       lines.forEach((line: string) => {
         checkPage(8)
+        // Re-apply color/font after possible page break
+        doc.setFontSize(10)
+        doc.setFont(FONT, 'normal')
+        doc.setTextColor(...CINZA_TEXTO)
         doc.text(line, margin, y)
         y += 6
       })
@@ -554,6 +562,7 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
     if (question.statementSource) {
       checkPage(8)
       doc.setFontSize(8)
+      doc.setFont(FONT, 'normal')
       doc.setTextColor(100, 100, 100)
       doc.text(`Fonte: ${question.statementSource}`, margin, y)
       y += 6
@@ -614,24 +623,32 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
         const isCorrect = alt.isCorrect
         const altText = `${alt.letter}) ${alt.text}`
         const altLines = wrapText(doc, altText, pageWidth - 2 * margin - 12)
-        const altH = altLines.length * 6 + 4 // dynamic height
-        checkPage(altH + 2)
+        // rect height: covers text lines with top/bottom padding (3+2), no bleed into gap
+        const rectH = altLines.length * 6 + 3
+        checkPage(rectH + 3)
 
-        // Fundo verde claro dinâmico para alternativa correta (cobre todas as linhas)
+        // Fundo verde claro dinâmico para alternativa correta
         if (isCorrect) {
           doc.setFillColor(220, 245, 225)
           doc.setDrawColor(70, 129, 82)
-          doc.setLineWidth(0.4)
-          doc.roundedRect(margin + 1, y - 4, pageWidth - 2 * margin - 2, altH, 1.5, 1.5, 'FD')
+          doc.setLineWidth(0.5)
+          doc.roundedRect(margin + 1, y - 3, pageWidth - 2 * margin - 2, rectH, 1.5, 1.5, 'FD')
         }
 
         doc.setFont(FONT, isCorrect ? 'bold' : 'normal')
         doc.setFontSize(10)
         doc.setTextColor(isCorrect ? 26 : CINZA_TEXTO[0], isCorrect ? 71 : CINZA_TEXTO[1], isCorrect ? 42 : CINZA_TEXTO[2])
 
-        // Ícone de correto/errado
+        // Ícone: checkmark desenhado com linhas (correto) ou checkbox vazio (errado)
         if (isCorrect) {
-          doc.text('✓', margin + 3, y)
+          // Círculo verde preenchido com checkmark via linhas
+          doc.setFillColor(70, 129, 82)
+          doc.setDrawColor(70, 129, 82)
+          doc.circle(margin + 4.5, y - 1.5, 3, 'F')
+          doc.setDrawColor(255, 255, 255)
+          doc.setLineWidth(0.7)
+          doc.line(margin + 3.2, y - 1.5, margin + 4.3, y - 0.3)
+          doc.line(margin + 4.3, y - 0.3, margin + 6, y - 3)
         } else {
           doc.setDrawColor(...VERDE_MEDIO)
           doc.setLineWidth(0.4)
@@ -647,7 +664,7 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
           doc.text(line, margin + 10, y)
           y += 6
         })
-        y += 2
+        y += 3
       })
     } else if (question.type === 'discursive') {
       checkPage(20)
