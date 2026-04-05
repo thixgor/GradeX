@@ -1467,16 +1467,140 @@ export async function generateFormResponsePDF(
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Group PDF: merge multiple exam PDFs into one using pdf-lib
+// Group PDF: cover pages + merge using pdf-lib
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type GroupPDFType = 'exam' | 'with-answers' | 'gabarito'
 
+const TYPE_LABELS: Record<GroupPDFType, { title: string; subtitle: string; accent: readonly [number, number, number] }> = {
+  'exam':         { title: 'CADERNO DE PROVAS',          subtitle: 'Questões',                        accent: VERDE_MEDIO },
+  'with-answers': { title: 'CADERNO COM GABARITO',       subtitle: 'Questões + Respostas Comentadas', accent: [70, 110, 180] as const },
+  'gabarito':     { title: 'CADERNO DE GABARITOS',       subtitle: 'Gabarito Oficial',                accent: [180, 120, 30] as const },
+}
+
 /**
- * Merges an array of exam Blobs (in-order) into a single PDF using pdf-lib.
- * Exams should already be sorted in the desired output order.
+ * Generates a single full-page cover for one exam inside the group PDF.
  */
-async function mergeExamBlobs(blobs: Blob[]): Promise<Blob> {
+async function generateExamCoverBlob(
+  exam: Exam,
+  index: number,
+  total: number,
+  type: GroupPDFType
+): Promise<Blob> {
+  const doc = new jsPDF()
+  await registerFonts(doc)
+
+  const W = doc.internal.pageSize.getWidth()
+  const H = doc.internal.pageSize.getHeight()
+  const { accent } = TYPE_LABELS[type]
+
+  // ── Dark header band ──────────────────────────────────────────
+  doc.setFillColor(...VERDE_ESCURO)
+  doc.rect(0, 0, W, 52, 'F')
+
+  // ── Accent stripe ─────────────────────────────────────────────
+  doc.setFillColor(...accent)
+  doc.rect(0, 52, W, 6, 'F')
+
+  // ── Logo area ─────────────────────────────────────────────────
+  const logo = await loadLogo()
+  if (logo) {
+    try { doc.addImage(logo, 'PNG', 10, 8, 34, 34) } catch {}
+  }
+
+  // ── DomineAqui wordmark ───────────────────────────────────────
+  doc.setFont(FONT, 'bold')
+  doc.setFontSize(18)
+  doc.setTextColor(255, 255, 255)
+  doc.text('DomineAqui', 50, 26, { baseline: 'middle' })
+
+  doc.setFont(FONT, 'normal')
+  doc.setFontSize(8)
+  doc.setTextColor(180, 210, 190)
+  doc.text('Plataforma de Estudos Médicos', 50, 36, { baseline: 'middle' })
+
+  // ── Type badge ────────────────────────────────────────────────
+  const { title: typeTitle, subtitle: typeSub } = TYPE_LABELS[type]
+  doc.setFont(FONT, 'bold')
+  doc.setFontSize(9)
+  doc.setTextColor(...accent)
+  doc.text(typeTitle, W - 10, 20, { align: 'right', baseline: 'middle' })
+  doc.setFont(FONT, 'normal')
+  doc.setFontSize(7)
+  doc.setTextColor(180, 210, 190)
+  doc.text(typeSub, W - 10, 32, { align: 'right', baseline: 'middle' })
+
+  // ── Center card ───────────────────────────────────────────────
+  const cardTop = 80
+  const cardH = 110
+  const mx = 20
+
+  doc.setFillColor(248, 250, 248)
+  doc.roundedRect(mx, cardTop, W - mx * 2, cardH, 4, 4, 'F')
+  doc.setDrawColor(...accent)
+  doc.setLineWidth(0.6)
+  doc.roundedRect(mx, cardTop, W - mx * 2, cardH, 4, 4, 'S')
+
+  // Left accent bar
+  doc.setFillColor(...accent)
+  doc.roundedRect(mx, cardTop, 4, cardH, 2, 2, 'F')
+
+  // Exam number pill
+  const pillX = mx + 12
+  const pillY = cardTop + 14
+  doc.setFillColor(...accent)
+  doc.roundedRect(pillX, pillY - 5, 36, 10, 3, 3, 'F')
+  doc.setFont(FONT, 'bold')
+  doc.setFontSize(7)
+  doc.setTextColor(255, 255, 255)
+  doc.text(`PROVA ${index + 1} DE ${total}`, pillX + 18, pillY, { align: 'center', baseline: 'middle' })
+
+  // Exam title
+  const titleLines = doc.splitTextToSize(sanitizeForPdf(exam.title), W - mx * 2 - 24)
+  doc.setFont(FONT, 'bold')
+  doc.setFontSize(16)
+  doc.setTextColor(...VERDE_ESCURO)
+  doc.text(titleLines, mx + 12, cardTop + 34)
+
+  // Description
+  if (exam.description) {
+    const descLines = doc.splitTextToSize(sanitizeForPdf(exam.description), W - mx * 2 - 24)
+    doc.setFont(FONT, 'normal')
+    doc.setFontSize(9)
+    doc.setTextColor(100, 100, 100)
+    doc.text(descLines.slice(0, 3), mx + 12, cardTop + 58)
+  }
+
+  // Divider
+  doc.setDrawColor(220, 230, 220)
+  doc.setLineWidth(0.4)
+  doc.line(mx + 10, cardTop + cardH - 26, W - mx - 10, cardTop + cardH - 26)
+
+  // Meta row
+  doc.setFont(FONT, 'normal')
+  doc.setFontSize(8)
+  doc.setTextColor(100, 100, 100)
+  const meta: string[] = []
+  if (exam.numberOfQuestions) meta.push(`${exam.numberOfQuestions} questões`)
+  if (exam.totalPoints)       meta.push(`${exam.totalPoints} pts`)
+  if (exam.scoringMethod === 'tri') meta.push('TRI')
+  if (meta.length) doc.text(meta.join('  ·  '), mx + 12, cardTop + cardH - 13)
+
+  // ── Bottom bar ────────────────────────────────────────────────
+  doc.setFillColor(...VERDE_ESCURO)
+  doc.rect(0, H - 18, W, 18, 'F')
+  doc.setFont(FONT, 'normal')
+  doc.setFontSize(7)
+  doc.setTextColor(150, 200, 160)
+  doc.text('domineaqui.com.br', W / 2, H - 9, { align: 'center', baseline: 'middle' })
+
+  return doc.output('blob')
+}
+
+/**
+ * Merges an interleaved array of [cover, exam, cover, exam, …] Blobs into one PDF.
+ */
+async function mergeBlobs(blobs: Blob[]): Promise<Blob> {
   const { PDFDocument } = await import('pdf-lib')
   const merged = await PDFDocument.create()
   for (const blob of blobs) {
@@ -1491,7 +1615,7 @@ async function mergeExamBlobs(blobs: Blob[]): Promise<Blob> {
 
 /**
  * Generates a combined PDF for all practice exams in a group.
- * `exams` must be pre-sorted in the desired output order (caller reverses for bottom→top).
+ * Each exam is preceded by a cover page. Order: as provided (caller reverses for bottom→top).
  */
 export async function generateGroupPDF(
   exams: Exam[],
@@ -1501,16 +1625,23 @@ export async function generateGroupPDF(
   const blobs: Blob[] = []
   for (let i = 0; i < exams.length; i++) {
     const exam = exams[i]
-    let blob: Blob
+
+    // Cover page for this exam
+    const cover = await generateExamCoverBlob(exam, i, exams.length, type)
+    blobs.push(cover)
+
+    // Exam content
+    let content: Blob
     if (type === 'gabarito') {
-      blob = await generateGabaritoPDF(exam)
+      content = await generateGabaritoPDF(exam)
     } else if (type === 'with-answers') {
-      blob = await generateExamWithAnswersPDF(exam)
+      content = await generateExamWithAnswersPDF(exam)
     } else {
-      blob = await generateExamPDF(exam)
+      content = await generateExamPDF(exam)
     }
-    blobs.push(blob)
+    blobs.push(content)
+
     onProgress?.(i + 1, exams.length)
   }
-  return mergeExamBlobs(blobs)
+  return mergeBlobs(blobs)
 }
