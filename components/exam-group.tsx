@@ -205,21 +205,21 @@ export function ExamGroup({
           {totalExamCount} {totalExamCount === 1 ? 'prova' : 'provas'}
         </span>
 
-        {/* Group PDF download button — only when this group has direct practice exams */}
+        {/* Group PDF download button — visible whenever this group has practice exams */}
         {allPracticeExams.length > 0 && onGroupDownloadPDF && (
-          <div className="relative opacity-0 group-hover/header:opacity-100 transition-opacity" onClick={e => e.stopPropagation()}>
+          <div className="relative flex-shrink-0" onClick={e => e.stopPropagation()}>
             <button
               onClick={() => setShowGroupDownload(v => !v)}
-              className="p-1.5 rounded-lg hover:bg-emerald-500/10 transition-colors text-muted-foreground hover:text-emerald-600 dark:hover:text-emerald-400"
-              title={`Baixar PDFs do grupo (${allPracticeExams.length} provas)`}
+              className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium transition-colors text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 border border-emerald-500/20 hover:border-emerald-500/40"
+              title={`Baixar PDFs (${allPracticeExams.length} provas)`}
             >
-              <FileDown className="h-4 w-4" />
+              <FileDown className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">PDF</span>
             </button>
             {showGroupDownload && (
-              <div
-                className="absolute right-0 top-full mt-1 z-50 w-64 rounded-xl border border-border bg-popover shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150"
-                onMouseLeave={() => setShowGroupDownload(false)}
-              >
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setShowGroupDownload(false)} />
+                <div className="absolute right-0 top-full mt-1 z-50 w-64 rounded-xl border border-border bg-popover shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150">
                 <div className="px-3 py-2 border-b border-border/50">
                   <p className="text-xs font-semibold text-foreground">{group.name}</p>
                   <p className="text-[10px] text-muted-foreground mt-0.5">{allPracticeExams.length} provas · ordem de baixo pra cima</p>
@@ -245,7 +245,8 @@ export function ExamGroup({
                     </div>
                   </button>
                 ))}
-              </div>
+                </div>
+              </>
             )}
           </div>
         )}

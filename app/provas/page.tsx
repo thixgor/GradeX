@@ -876,6 +876,7 @@ function ProvasContent() {
                       onEditGroup={handleEditGroup}
                       onReorderExam={handleReorderExam}
                       onDownloadPDF={setPdfModalExam}
+                      onGroupDownloadPDF={handleGroupDownloadPDF}
                       onCreateSubgroup={(parentGroupId) => {
                         const name = prompt('Nome do subgrupo:')
                         if (name) handleCreateGroup(name, 'general', parentGroupId)
@@ -1033,6 +1034,7 @@ function ProvasContent() {
               onEditGroup={handleEditGroup}
               onReorderExam={handleReorderExam}
               onDownloadPDF={setPdfModalExam}
+              onGroupDownloadPDF={handleGroupDownloadPDF}
               onCreateSubgroup={(parentGroupId) => {
                 const name = prompt('Nome do subgrupo:')
                 if (name) {
