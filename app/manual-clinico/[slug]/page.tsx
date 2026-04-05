@@ -1423,6 +1423,9 @@ function PatologiaContent() {
   }
 
   useEffect(() => {
+    // Pre-warm PDF fonts + logo in background while content loads
+    import('@/lib/patologia-pdf-generator').then(m => m.prewarmManualClinicoPDFAssets()).catch(() => {})
+
     async function load() {
       try {
         const res = await fetch(`/api/manual-clinico/${slug}`)

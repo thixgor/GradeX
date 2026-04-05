@@ -326,9 +326,24 @@ async function loadImage(url: string): Promise<LoadedImage | null> {
   } catch { return null }
 }
 
+// Session-level image cache — avoids re-fetching the same image across multiple PDF generations
+const _sessionImgCache = new Map<string, LoadedImage | null>()
+const _imgInFlight = new Map<string, Promise<LoadedImage | null>>()
+
+async function loadImageCached(url: string): Promise<LoadedImage | null> {
+  if (_sessionImgCache.has(url)) return _sessionImgCache.get(url) ?? null
+  if (_imgInFlight.has(url)) return _imgInFlight.get(url)!
+  const promise = loadImage(url)
+  _imgInFlight.set(url, promise)
+  const result = await promise
+  _sessionImgCache.set(url, result)
+  _imgInFlight.delete(url)
+  return result
+}
+
 async function preloadImages(urls: string[]): Promise<Map<string, LoadedImage>> {
   const map = new Map<string, LoadedImage>()
-  const results = await Promise.all(urls.map(u => loadImage(u)))
+  const results = await Promise.all(urls.map(u => loadImageCached(u)))
   urls.forEach((url, i) => { if (results[i]) map.set(url, results[i]!) })
   return map
 }
@@ -350,6 +365,37 @@ function makeEnsureSpace(addHeaderFn: (doc: jsPDF) => number): EnsureSpaceFn {
 // ── Individual PDF: Header & Footer ──────────────────────────────
 
 let _headerLogo: string | null = null
+
+/** Pre-warms fonts + logo so they're ready before user clicks download */
+export async function prewarmManualClinicoPDFAssets(): Promise<void> {
+  if (typeof window === 'undefined') return
+  await Promise.all([
+    loadLogoForPdf().catch(() => {}),
+    // kick off font fetch by creating a temp jsPDF and registering
+    (async () => {
+      if (fontCache.length > 0) return
+      try {
+        const variants: { file: string; style: FontStyle }[] = [
+          { file: 'Roboto-Regular.ttf', style: 'normal' },
+          { file: 'Roboto-Bold.ttf', style: 'bold' },
+          { file: 'Roboto-Italic.ttf', style: 'italic' },
+          { file: 'Roboto-BoldItalic.ttf', style: 'bolditalic' },
+        ]
+        const results = await Promise.all(
+          variants.map(async (v) => {
+            const res = await fetch(`/fonts/${v.file}`)
+            if (!res.ok) throw new Error()
+            return { ...v, data: await res.arrayBuffer() }
+          })
+        )
+        for (const r of results) {
+          fontCache.push({ file: r.file, style: r.style as FontStyle, b64: arrayBufferToBase64(r.data) })
+        }
+        FONT = 'Roboto'
+      } catch { FONT = 'helvetica' }
+    })(),
+  ])
+}
 
 function addHeader(doc: jsPDF): number {
   doc.setFillColor(...VERDE_ESCURO)

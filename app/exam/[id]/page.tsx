@@ -433,6 +433,8 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     checkExistingSubmission()
     loadExam()
     loadUserInfo()
+    // Pre-warm PDF assets in background
+    import('@/lib/pdf-generator').then(m => m.prewarmPDFAssets()).catch(() => {})
   }, [id])
 
   useEffect(() => {

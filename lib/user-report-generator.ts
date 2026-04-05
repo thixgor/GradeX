@@ -18,41 +18,55 @@ const LARANJA_CLARO: [number, number, number] = [245, 216, 154]
 const CINZA_TEXTO: [number, number, number] = [51, 51, 51]
 const CINZA_CLARO: [number, number, number] = [245, 245, 245]
 
-// Fetch image URL and return base64 data URL + natural dimensions
-async function fetchImageAsBase64(url: string): Promise<{ dataUrl: string; width: number; height: number } | null> {
-  try {
-    return await new Promise((resolve) => {
-      const img = new Image()
-      img.crossOrigin = 'anonymous'
-      img.onload = () => {
-        try {
-          const canvas = document.createElement('canvas')
-          canvas.width = img.naturalWidth
-          canvas.height = img.naturalHeight
-          const ctx = canvas.getContext('2d')
-          if (!ctx) { resolve(null); return }
-          ctx.drawImage(img, 0, 0)
-          const dataUrl = canvas.toDataURL('image/png')
-          resolve({ dataUrl, width: img.naturalWidth, height: img.naturalHeight })
-        } catch { resolve(null) }
-      }
-      img.onerror = () => resolve(null)
-      setTimeout(() => resolve(null), 8000)
-      img.src = url
-    })
-  } catch { return null }
+// ── Session-level image cache shared with pdf-generator ──────────
+type ImgData = { dataUrl: string; width: number; height: number }
+const _sessionImageCache = new Map<string, ImgData | null>()
+const _imageInFlight = new Map<string, Promise<ImgData | null>>()
+
+async function fetchImageAsBase64(url: string): Promise<ImgData | null> {
+  if (_sessionImageCache.has(url)) return _sessionImageCache.get(url) ?? null
+  if (_imageInFlight.has(url)) return _imageInFlight.get(url)!
+  const promise = (async (): Promise<ImgData | null> => {
+    try {
+      return await new Promise((resolve) => {
+        const img = new Image()
+        img.crossOrigin = 'anonymous'
+        img.onload = () => {
+          try {
+            const canvas = document.createElement('canvas')
+            canvas.width = img.naturalWidth
+            canvas.height = img.naturalHeight
+            const ctx = canvas.getContext('2d')
+            if (!ctx) { resolve(null); return }
+            ctx.drawImage(img, 0, 0)
+            // JPEG: faster encode, smaller Base64
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.88)
+            resolve({ dataUrl, width: img.naturalWidth, height: img.naturalHeight })
+          } catch { resolve(null) }
+        }
+        img.onerror = () => resolve(null)
+        setTimeout(() => resolve(null), 8000)
+        img.src = url
+      })
+    } catch { return null }
+  })()
+  _imageInFlight.set(url, promise)
+  const result = await promise
+  _sessionImageCache.set(url, result)
+  _imageInFlight.delete(url)
+  return result
 }
 
-// Pre-fetch all question images
-async function prefetchImages(questions: { imageUrl?: string }[]): Promise<Map<string, { dataUrl: string; width: number; height: number }>> {
-  const imageMap = new Map<string, { dataUrl: string; width: number; height: number }>()
-  const fetches = questions
-    .filter(q => q.imageUrl)
-    .map(async (q) => {
-      const result = await fetchImageAsBase64(q.imageUrl!)
-      if (result) imageMap.set(q.imageUrl!, result)
-    })
-  await Promise.all(fetches)
+async function prefetchImages(questions: { imageUrl?: string }[]): Promise<Map<string, ImgData>> {
+  const imageMap = new Map<string, ImgData>()
+  await Promise.all(
+    questions
+      .filter(q => q.imageUrl)
+      .map(async (q) => {
+        const result = await fetchImageAsBase64(q.imageUrl!)
+        if (result) imageMap.set(q.imageUrl!, result)
+      })
+  )
   return imageMap
 }
 

@@ -14,6 +14,8 @@ const CINZA_CLARO = [245, 245, 245] as const
 type FontStyle = 'normal' | 'bold' | 'italic' | 'bolditalic'
 let FONT = 'helvetica'
 const fontCache: { file: string; style: FontStyle; b64: string }[] = []
+// Ongoing prewarm promise so multiple callers don't trigger parallel fetches
+let _fontPrewarmPromise: Promise<void> | null = null
 
 function arrayBufferToBase64(buffer: ArrayBuffer): string {
   const bytes = new Uint8Array(buffer)
@@ -25,7 +27,38 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
   return btoa(chunks.join(''))
 }
 
+/** Populates fontCache without needing a jsPDF instance.  Safe to call early. */
+async function prewarmFontsCache(): Promise<void> {
+  if (fontCache.length > 0) return
+  if (_fontPrewarmPromise) return _fontPrewarmPromise
+  _fontPrewarmPromise = (async () => {
+    try {
+      const variants: { file: string; style: FontStyle }[] = [
+        { file: 'Roboto-Regular.ttf',    style: 'normal' },
+        { file: 'Roboto-Bold.ttf',        style: 'bold' },
+        { file: 'Roboto-Italic.ttf',      style: 'italic' },
+        { file: 'Roboto-BoldItalic.ttf',  style: 'bolditalic' },
+      ]
+      const results = await Promise.all(
+        variants.map(async (v) => {
+          const res = await fetch(`/fonts/${v.file}`)
+          if (!res.ok) throw new Error(`Font not found: ${v.file}`)
+          return { ...v, data: await res.arrayBuffer() }
+        })
+      )
+      for (const r of results) {
+        fontCache.push({ file: r.file, style: r.style, b64: arrayBufferToBase64(r.data) })
+      }
+      FONT = 'Roboto'
+    } catch {
+      FONT = 'helvetica'
+    }
+  })()
+  return _fontPrewarmPromise
+}
+
 async function registerFonts(doc: jsPDF): Promise<void> {
+  await prewarmFontsCache()
   if (fontCache.length > 0) {
     for (const f of fontCache) {
       doc.addFileToVFS(f.file, f.b64)
@@ -33,33 +66,17 @@ async function registerFonts(doc: jsPDF): Promise<void> {
     }
     FONT = 'Roboto'
     doc.setFont('Roboto')
-    return
   }
-  try {
-    const variants: { file: string; style: FontStyle }[] = [
-      { file: 'Roboto-Regular.ttf', style: 'normal' },
-      { file: 'Roboto-Bold.ttf', style: 'bold' },
-      { file: 'Roboto-Italic.ttf', style: 'italic' },
-      { file: 'Roboto-BoldItalic.ttf', style: 'bolditalic' },
-    ]
-    const results = await Promise.all(
-      variants.map(async (v) => {
-        const res = await fetch(`/fonts/${v.file}`)
-        if (!res.ok) throw new Error(`Font not found: ${v.file}`)
-        return { ...v, data: await res.arrayBuffer() }
-      })
-    )
-    for (const r of results) {
-      const b64 = arrayBufferToBase64(r.data)
-      doc.addFileToVFS(r.file, b64)
-      doc.addFont(r.file, 'Roboto', r.style)
-      fontCache.push({ file: r.file, style: r.style, b64 })
-    }
-    FONT = 'Roboto'
-    doc.setFont('Roboto')
-  } catch {
-    FONT = 'helvetica'
-  }
+}
+
+/**
+ * Export for pages to call on mount so fonts+logo are hot by the time
+ * the user clicks a PDF button.
+ */
+export function prewarmPDFAssets(): void {
+  if (typeof window === 'undefined') return
+  prewarmFontsCache().catch(() => {})
+  loadLogo().catch(() => {})
 }
 
 // ── Text sanitizer (Helvetica fallback only) ─────────────────────
@@ -100,7 +117,7 @@ async function loadLogo(): Promise<string | null> {
           const ctx = canvas.getContext('2d')
           if (!ctx) { logoCache = null; resolve(null); return }
           ctx.drawImage(img, 0, 0)
-          logoCache = canvas.toDataURL('image/png')
+          logoCache = canvas.toDataURL('image/jpeg', 0.92)
           resolve(logoCache)
         } catch { logoCache = null; resolve(null) }
       }
@@ -164,44 +181,61 @@ function calculateProportionalDimensions(
   return { width: standardWidth, height: standardHeight }
 }
 
-// Fetch image URL and return base64 data URL + natural dimensions
-async function fetchImageAsBase64(url: string): Promise<{ dataUrl: string; width: number; height: number } | null> {
-  try {
-    return await new Promise((resolve) => {
-      const img = new Image()
-      img.crossOrigin = 'anonymous'
-      img.onload = () => {
-        try {
-          const canvas = document.createElement('canvas')
-          canvas.width = img.naturalWidth
-          canvas.height = img.naturalHeight
-          const ctx = canvas.getContext('2d')
-          if (!ctx) { resolve(null); return }
-          ctx.drawImage(img, 0, 0)
-          const dataUrl = canvas.toDataURL('image/png')
-          resolve({ dataUrl, width: img.naturalWidth, height: img.naturalHeight })
-        } catch { resolve(null) }
-      }
-      img.onerror = () => resolve(null)
-      // Timeout after 8s
-      setTimeout(() => resolve(null), 8000)
-      img.src = url
-    })
-  } catch {
-    return null
-  }
+// ── Session-level image cache — persists across all PDF calls in one tab ──
+type ImgData = { dataUrl: string; width: number; height: number }
+const _sessionImageCache = new Map<string, ImgData | null>()
+// Per-URL in-flight promises to avoid duplicate fetches
+const _imageInFlight = new Map<string, Promise<ImgData | null>>()
+
+async function fetchImageAsBase64(url: string): Promise<ImgData | null> {
+  // Cache hit
+  if (_sessionImageCache.has(url)) return _sessionImageCache.get(url) ?? null
+  // Deduplicate concurrent fetches for the same URL
+  if (_imageInFlight.has(url)) return _imageInFlight.get(url)!
+
+  const promise = (async (): Promise<ImgData | null> => {
+    try {
+      return await new Promise((resolve) => {
+        const img = new Image()
+        img.crossOrigin = 'anonymous'
+        img.onload = () => {
+          try {
+            const canvas = document.createElement('canvas')
+            canvas.width = img.naturalWidth
+            canvas.height = img.naturalHeight
+            const ctx = canvas.getContext('2d')
+            if (!ctx) { resolve(null); return }
+            ctx.drawImage(img, 0, 0)
+            // JPEG is 3-5× faster to encode than PNG and produces 60-80% smaller strings
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.88)
+            resolve({ dataUrl, width: img.naturalWidth, height: img.naturalHeight })
+          } catch { resolve(null) }
+        }
+        img.onerror = () => resolve(null)
+        setTimeout(() => resolve(null), 8000)
+        img.src = url
+      })
+    } catch { return null }
+  })()
+
+  _imageInFlight.set(url, promise)
+  const result = await promise
+  _sessionImageCache.set(url, result)
+  _imageInFlight.delete(url)
+  return result
 }
 
-// Pre-fetch all question images for an exam
-async function prefetchExamImages(questions: Question[]): Promise<Map<string, { dataUrl: string; width: number; height: number }>> {
-  const imageMap = new Map<string, { dataUrl: string; width: number; height: number }>()
-  const fetches = questions
-    .filter(q => q.imageUrl)
-    .map(async (q) => {
-      const result = await fetchImageAsBase64(q.imageUrl!)
-      if (result) imageMap.set(q.imageUrl!, result)
-    })
-  await Promise.all(fetches)
+// Pre-fetch all question images for an exam (uses session cache automatically)
+async function prefetchExamImages(questions: Question[]): Promise<Map<string, ImgData>> {
+  const imageMap = new Map<string, ImgData>()
+  await Promise.all(
+    questions
+      .filter(q => q.imageUrl)
+      .map(async (q) => {
+        const result = await fetchImageAsBase64(q.imageUrl!)
+        if (result) imageMap.set(q.imageUrl!, result)
+      })
+  )
   return imageMap
 }
 
@@ -1610,38 +1644,52 @@ async function mergeBlobs(blobs: Blob[]): Promise<Blob> {
     pages.forEach(p => merged.addPage(p))
   }
   const bytes = await merged.save()
-  return new Blob([bytes], { type: 'application/pdf' })
+  return new Blob([bytes.buffer as ArrayBuffer], { type: 'application/pdf' })
 }
 
 /**
  * Generates a combined PDF for all practice exams in a group.
  * Each exam is preceded by a cover page. Order: as provided (caller reverses for bottom→top).
+ *
+ * Parallelism: up to CONCURRENCY exams generated simultaneously, dramatically
+ * reducing wall-clock time (e.g. 10 exams: ~50s sequential → ~15s parallel).
  */
 export async function generateGroupPDF(
   exams: Exam[],
   type: GroupPDFType,
   onProgress?: (done: number, total: number) => void
 ): Promise<Blob> {
-  const blobs: Blob[] = []
-  for (let i = 0; i < exams.length; i++) {
-    const exam = exams[i]
+  // Pre-warm fonts + logo once so all parallel workers share the cache
+  await Promise.all([prewarmFontsCache(), loadLogo()])
 
-    // Cover page for this exam
-    const cover = await generateExamCoverBlob(exam, i, exams.length, type)
-    blobs.push(cover)
+  const CONCURRENCY = 3
+  const results: [Blob, Blob][] = new Array(exams.length)
+  let nextIdx = 0
+  let completed = 0
 
-    // Exam content
-    let content: Blob
-    if (type === 'gabarito') {
-      content = await generateGabaritoPDF(exam)
-    } else if (type === 'with-answers') {
-      content = await generateExamWithAnswersPDF(exam)
-    } else {
-      content = await generateExamPDF(exam)
+  // Worker function — grabs the next exam index until all are done
+  async function worker() {
+    while (true) {
+      const i = nextIdx++
+      if (i >= exams.length) break
+      const exam = exams[i]
+      // Generate cover and content in parallel for each exam
+      const [cover, content] = await Promise.all([
+        generateExamCoverBlob(exam, i, exams.length, type),
+        type === 'gabarito'      ? generateGabaritoPDF(exam) :
+        type === 'with-answers'  ? generateExamWithAnswersPDF(exam) :
+                                   generateExamPDF(exam),
+      ])
+      results[i] = [cover, content]
+      completed++
+      onProgress?.(completed, exams.length)
     }
-    blobs.push(content)
-
-    onProgress?.(i + 1, exams.length)
   }
+
+  // Launch CONCURRENCY workers in parallel
+  await Promise.all(Array.from({ length: CONCURRENCY }, worker))
+
+  // Flatten in order: [cover1, content1, cover2, content2, …]
+  const blobs = results.flatMap(([cover, content]) => [cover, content])
   return mergeBlobs(blobs)
 }

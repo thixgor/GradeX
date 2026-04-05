@@ -134,6 +134,8 @@ function ProvasContent() {
 
   useEffect(() => {
     loadExamsAndGroups()
+    // Pre-warm fonts + logo so they're cached before user clicks a PDF button
+    import('@/lib/pdf-generator').then(m => m.prewarmPDFAssets()).catch(() => {})
   }, [])
 
   async function loadExamsAndGroups() {
