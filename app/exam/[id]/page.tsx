@@ -46,6 +46,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const [DoacaoInterstitialComp, setDoacaoInterstitialComp] = useState<React.ComponentType<{ context: 'manual-clinico' | 'exam'; onClose: () => void }> | null>(null)
   const pendingStartRef = useRef<(() => void) | null>(null)
   const [examImageModal, setExamImageModal] = useState<{ src: string } | null>(null)
+  const [pdfGenerating, setPdfGenerating] = useState<string | null>(null)
 
   const [userName, setUserName] = useState('')
   const [loggedUserName, setLoggedUserName] = useState('')
@@ -414,16 +415,17 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const handleDownloadExamPDF = async () => {
     try {
       if (exam?.pdfUrl) {
-        // Se tem PDF anexado, baixar esse
         window.open(exam.pdfUrl, '_blank')
       } else {
-        // Caso contrário, gerar PDF do sistema
+        setPdfGenerating('Prova')
         const { generateExamPDF, downloadPDF } = await import('@/lib/pdf-generator')
         const blob = await generateExamPDF(exam!, userId)
         downloadPDF(blob, `${exam!.title}.pdf`)
       }
     } catch (error: any) {
       showToastMessage('Erro ao baixar PDF: ' + error.message)
+    } finally {
+      setPdfGenerating(null)
     }
   }
 
@@ -1599,14 +1601,20 @@ ${respostaAluno}`
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <Button
                   className="w-full rounded-xl h-12 bg-gradient-to-r from-[#468152] to-[#3a6d44] hover:from-[#3a6d44] hover:to-[#2f5a38] text-white font-semibold shadow-md"
+                  disabled={!!pdfGenerating}
                   onClick={async () => {
-                    await downloadUserReportPDF({
-                      exam,
-                      examId: id,
-                      userName,
-                      signature,
-                      answers,
-                    })
+                    try {
+                      setPdfGenerating('Relatório')
+                      await downloadUserReportPDF({
+                        exam,
+                        examId: id,
+                        userName,
+                        signature,
+                        answers,
+                      })
+                    } finally {
+                      setPdfGenerating(null)
+                    }
                   }}
                 >
                   <FileDown className="h-5 w-5 mr-2" />
@@ -1616,8 +1624,10 @@ ${respostaAluno}`
                 {isPracticeOrPersonal && (
                   <Button
                     className="w-full rounded-xl h-12 bg-gradient-to-r from-[#E2A43E] to-[#d4912e] hover:from-[#d4912e] hover:to-[#c07f22] text-white font-semibold shadow-md"
+                    disabled={!!pdfGenerating}
                     onClick={async () => {
                       try {
+                        setPdfGenerating('Relatório + Gabarito')
                         const { generateUserReportWithGabaritoPDF } = await import('@/lib/user-report-generator')
                         await generateUserReportWithGabaritoPDF({
                           exam,
@@ -1628,6 +1638,8 @@ ${respostaAluno}`
                         })
                       } catch (error: any) {
                         showToastMessage('Erro ao gerar PDF: ' + error.message)
+                      } finally {
+                        setPdfGenerating(null)
                       }
                     }}
                   >
@@ -1714,6 +1726,17 @@ ${respostaAluno}`
           src={examImageModal.src}
           alt="Imagem da questão"
         />
+      )}
+
+      {/* PDF generating toast */}
+      {pdfGenerating && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[300] flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-2xl bg-card border border-border animate-in slide-in-from-bottom-4 duration-300">
+          <span className="h-4 w-4 rounded-full border-2 border-muted-foreground/30 border-t-emerald-500 animate-spin flex-shrink-0" />
+          <div>
+            <p className="text-sm font-semibold text-foreground">Gerando PDF…</p>
+            <p className="text-xs text-muted-foreground">{pdfGenerating}</p>
+          </div>
+        </div>
       )}
 
       {/* Modal de Auto-Avaliação Discursiva - Glassmorphism */}
@@ -2251,6 +2274,7 @@ ${respostaAluno}`
                   <Button
                     onClick={async () => {
                       try {
+                        setPdfGenerating('Gabarito')
                         const res = await fetch(`/api/exams/${id}`)
                         if (!res.ok) throw new Error('Erro ao buscar prova')
                         const data = await res.json()
@@ -2259,14 +2283,16 @@ ${respostaAluno}`
                         downloadPDF(blob, `Gabarito-${data.exam.title}.pdf`)
                       } catch (error: any) {
                         showToastMessage('Erro ao gerar gabarito: ' + error.message)
+                      } finally {
+                        setPdfGenerating(null)
                       }
                     }}
+                    disabled={!!pdfGenerating}
                     variant="outline"
                     className="w-full"
                     size="lg"
                   >
-                    <FileDown className="h-4 w-4 mr-2" />
-                    Baixar Gabarito (PDF)
+                    {pdfGenerating === 'Gabarito' ? <><span className="h-4 w-4 mr-2 rounded-full border-2 border-current border-t-transparent animate-spin inline-block" />Gerando…</> : <><FileDown className="h-4 w-4 mr-2" />Baixar Gabarito (PDF)</>}
                   </Button>
                 ) : (
                   <div className="w-full p-3 bg-orange-50 dark:bg-orange-950 rounded-lg border border-orange-200 dark:border-orange-800">

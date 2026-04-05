@@ -15,13 +15,13 @@ function HomeContent() {
   const forceLanding = searchParams.get('landing') === 'true'
 
   useEffect(() => {
-    // Timeout de segurança - se após 6s ainda não resolveu, mostrar landing
+    // Timeout de segurança - se após 3s ainda não resolveu, mostrar landing
     const safetyTimeout = setTimeout(() => {
       if (loading) {
         setShowLanding(true)
         setLoading(false)
       }
-    }, 6000)
+    }, 3000)
 
     checkAuth()
 

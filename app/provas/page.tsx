@@ -1084,9 +1084,22 @@ function ProvasContent() {
       {renderEditGroupModal()}
       {renderPdfModal()}
 
+      {/* Single PDF generation toast */}
+      {pdfLoading && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-2xl bg-card border border-border animate-in slide-in-from-bottom-4 duration-300">
+          <span className="h-4 w-4 rounded-full border-2 border-muted-foreground/30 border-t-emerald-500 animate-spin flex-shrink-0" />
+          <div>
+            <p className="text-sm font-semibold text-foreground">Gerando PDF…</p>
+            <p className="text-xs text-muted-foreground">
+              {pdfLoading === 'exam' ? 'Prova sem gabarito' : pdfLoading === 'with-answers' ? 'Prova com gabarito comentado' : 'Gabarito'}
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Group PDF generation progress toast */}
       {groupPdfProgress && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-3 px-5 py-3 rounded-2xl shadow-2xl bg-card border border-border">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-2xl bg-card border border-border animate-in slide-in-from-bottom-4 duration-300">
           <span className="h-4 w-4 rounded-full border-2 border-muted-foreground/30 border-t-primary animate-spin flex-shrink-0" />
           <div>
             <p className="text-sm font-semibold text-foreground">{groupPdfProgress.label}</p>

@@ -48,6 +48,13 @@ function useInView(threshold = 0.15) {
   useEffect(() => {
     const el = ref.current
     if (!el) return
+    // If element is already in the viewport on mount (above-fold), reveal immediately
+    // without waiting for the async IntersectionObserver callback — prevents blank flash.
+    const rect = el.getBoundingClientRect()
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      setIsVisible(true)
+      return
+    }
     const obs = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) { setIsVisible(true); obs.disconnect() } },
       { threshold }
