@@ -445,7 +445,7 @@ export default function ProfilePage() {
             <div className="space-y-2">
               {submissions.map((submission) => {
                 const isExpanded = expandedSubmission === submission._id
-                const isCorrected = submission.correctionStatus === 'corrected' || !submission.hasDiscursiveQuestions
+                const isCorrected = submission.correctionStatus === 'corrected' || !submission.hasDiscursiveQuestions || !!submission.isPracticeExam
                 const finished = isExamFinished(submission)
 
                 return (
