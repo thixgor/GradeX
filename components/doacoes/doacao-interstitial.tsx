@@ -54,7 +54,18 @@ export function DoacaoInterstitial({ context, onClose }: DoacaoInterstitialProps
     setTimeout(onClose, 250)
   }
 
-  if (!mounted || !visible) return null
+  if (!mounted) return null
+
+  // While the settings API call is in flight, show a blocking overlay so the
+  // underlying name-form doesn't flash through for 1-2 seconds.
+  if (!visible) {
+    return (
+      <div
+        className="fixed inset-0 z-[200]"
+        style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}
+      />
+    )
+  }
 
   return (
     <>
