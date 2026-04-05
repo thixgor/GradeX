@@ -580,10 +580,16 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
         }
       }
       if (question.imageSource) {
+        checkPage(6)
         doc.setFontSize(7)
+        doc.setFont(FONT, 'italic')
         doc.setTextColor(120, 120, 120)
-        doc.text(`Fonte: ${question.imageSource}`, margin + 5, y)
-        y += 5
+        const srcLines = wrapText(doc, `Fonte: ${question.imageSource}`, pageWidth - 2 * margin - 10)
+        srcLines.forEach((line: string) => {
+          doc.text(line, margin + 5, y)
+          y += 4.5
+        })
+        y += 1
       }
     }
 
@@ -606,14 +612,17 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
       y += 2
       question.alternatives.forEach((alt) => {
         const isCorrect = alt.isCorrect
-        checkPage(12)
+        const altText = `${alt.letter}) ${alt.text}`
+        const altLines = wrapText(doc, altText, pageWidth - 2 * margin - 12)
+        const altH = altLines.length * 6 + 4 // dynamic height
+        checkPage(altH + 2)
 
-        // Fundo verde claro para alternativa correta
+        // Fundo verde claro dinâmico para alternativa correta (cobre todas as linhas)
         if (isCorrect) {
           doc.setFillColor(220, 245, 225)
           doc.setDrawColor(70, 129, 82)
           doc.setLineWidth(0.4)
-          doc.roundedRect(margin + 1, y - 4, pageWidth - 2 * margin - 2, 8, 1.5, 1.5, 'FD')
+          doc.roundedRect(margin + 1, y - 4, pageWidth - 2 * margin - 2, altH, 1.5, 1.5, 'FD')
         }
 
         doc.setFont(FONT, isCorrect ? 'bold' : 'normal')
@@ -629,11 +638,8 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
           doc.roundedRect(margin + 2, y - 3.5, 5, 5, 1, 1)
         }
 
-        const altText = `${alt.letter}) ${alt.text}`
-        const altLines = wrapText(doc, altText, pageWidth - 2 * margin - 12)
         altLines.forEach((line: string, lineIdx: number) => {
           if (lineIdx > 0) {
-            checkPage(6)
             doc.setFont(FONT, isCorrect ? 'bold' : 'normal')
             doc.setFontSize(10)
             doc.setTextColor(isCorrect ? 26 : CINZA_TEXTO[0], isCorrect ? 71 : CINZA_TEXTO[1], isCorrect ? 42 : CINZA_TEXTO[2])
@@ -654,9 +660,14 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
 
     // Resposta comentada / explanation
     if (question.explanation) {
-      checkPage(20)
       const expLines = wrapText(doc, question.explanation, pageWidth - 2 * margin - 14)
-      const boxH = expLines.length * 5.5 + 14
+      const lineH = 5.5
+      const headerH = 14
+      const paddingBot = 6
+      const boxH = expLines.length * lineH + headerH + paddingBot
+
+      // Always move to a new page if the whole box doesn't fit
+      checkPage(boxH)
 
       doc.setFillColor(245, 250, 246)
       doc.setDrawColor(70, 129, 82)
@@ -666,17 +677,16 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
       doc.setFontSize(8.5)
       doc.setFont(FONT, 'bold')
       doc.setTextColor(...VERDE_ESCURO)
-      doc.text('💬 Resposta Comentada:', margin + 4, y + 8)
+      doc.text('Resposta Comentada:', margin + 4, y + 8)
 
       doc.setFont(FONT, 'normal')
       doc.setTextColor(...CINZA_TEXTO)
-      let ey = y + 14
+      let ey = y + headerH
       expLines.forEach((line: string) => {
-        checkPage(6)
         doc.text(line, margin + 4, ey)
-        ey += 5.5
+        ey += lineH
       })
-      y = ey + 4
+      y = ey + paddingBot
     }
 
     y += 8
@@ -879,10 +889,16 @@ export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob
         y += 6
       }
       if (question.imageSource) {
+        checkPage(6)
         doc.setFontSize(7)
+        doc.setFont(FONT, 'italic')
         doc.setTextColor(120, 120, 120)
-        doc.text(`Fonte: ${question.imageSource}`, margin + 5, y)
-        y += 5
+        const srcLines = wrapText(doc, `Fonte: ${question.imageSource}`, pageWidth - 2 * margin - 10)
+        srcLines.forEach((line: string) => {
+          doc.text(line, margin + 5, y)
+          y += 4.5
+        })
+        y += 1
       }
     }
 
