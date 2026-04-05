@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, lazy, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
@@ -31,8 +31,16 @@ import {
   Shield,
   Clock,
   Target,
-  Play
+  Play,
+  Heart,
+  AlertCircle,
+  BookMarked,
+  Scale
 } from 'lucide-react'
+import { DoacaoContent } from '@/components/doacoes/doacao-content'
+import { DoacaoRanking } from '@/components/doacoes/doacao-ranking'
+import { DoacaoForm } from '@/components/doacoes/doacao-form'
+import { DoacaoEcgAnimation } from '@/components/doacoes/doacao-ecg-animation'
 
 function useInView(threshold = 0.15) {
   const ref = useRef<HTMLDivElement>(null)
@@ -197,6 +205,9 @@ export default function LandingPage() {
   const videoSection = useInView()
   const ctaSection = useInView()
   const faqSection = useInView(0.08)
+  const doacaoSection = useInView(0.1)
+  const afyaSection = useInView(0.1)
+  const [doacaoFormOpen, setDoacaoFormOpen] = useState(false)
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -446,6 +457,161 @@ export default function LandingPage() {
           </div>
         </section>
       )}
+
+      {/* ══════════════════════════════════════════
+          SEÇÃO AFYA MATRIZ
+      ══════════════════════════════════════════ */}
+      <section className="py-20 px-6 border-t border-border/30 relative overflow-hidden">
+        {/* Background subtle */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-red-500/5 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl" />
+        </div>
+
+        <div
+          ref={afyaSection.ref}
+          className={`max-w-5xl mx-auto transition-all duration-700 ${afyaSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+        >
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold mb-4 bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20">
+              <GraduationCap className="w-3.5 h-3.5" />
+              Provas da Matriz AFYA
+            </div>
+            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Treine com provas reais da sua faculdade
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Acesse e treine com simulados baseados nas provas aplicadas na Matriz AFYA — organizados por curso, período e disciplina.
+            </p>
+          </div>
+
+          {/* Cards de cursos */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+            {[
+              { icon: '🩺', label: 'Medicina', sub: 'SOI / HAM · 1°–5° Período', color: '#DC2626', bg: 'rgba(220,38,38,0.08)', border: 'rgba(220,38,38,0.20)' },
+              { icon: '🧠', label: 'Psicologia', sub: '1°–10° Período', color: '#7C3AED', bg: 'rgba(124,58,237,0.08)', border: 'rgba(124,58,237,0.20)' },
+              { icon: '🔬', label: 'Biomedicina', sub: '1°–7° Período', color: '#059669', bg: 'rgba(5,150,105,0.08)', border: 'rgba(5,150,105,0.20)' },
+              { icon: '🦷', label: 'Odontologia', sub: '1°–10° Período', color: '#2563EB', bg: 'rgba(37,99,235,0.08)', border: 'rgba(37,99,235,0.20)' },
+            ].map((c, i) => (
+              <div
+                key={c.label}
+                className={`relative rounded-2xl p-4 text-center transition-all duration-500 hover:-translate-y-1 hover:shadow-lg`}
+                style={{
+                  background: c.bg,
+                  border: `1px solid ${c.border}`,
+                  transitionDelay: afyaSection.isVisible ? `${i * 80}ms` : '0ms',
+                }}
+              >
+                <div className="text-3xl mb-2">{c.icon}</div>
+                <p className="font-bold text-sm text-foreground">{c.label}</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">{c.sub}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Destaques */}
+          <div className="grid sm:grid-cols-3 gap-4 mb-10">
+            {[
+              { icon: BookMarked, title: 'Provas organizadas', desc: 'Por disciplina, período e semestre — fácil de achar o que você precisa.' },
+              { icon: BarChart3, title: 'Gabarito comentado', desc: 'Baixe PDF com gabarito e respostas comentadas para revisão.' },
+              { icon: Zap, title: 'Modo treino', desc: 'Receba feedback imediato questão a questão enquanto pratica.' },
+            ].map(({ icon: Icon, title, desc }) => (
+              <div key={title} className="flex items-start gap-3 p-4 rounded-2xl bg-muted/40 border border-border/40">
+                <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <Icon className="w-4 h-4 text-primary" />
+                </div>
+                <div>
+                  <p className="font-semibold text-sm text-foreground">{title}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Disclaimer jurídico */}
+          <div className="flex items-start gap-3 p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-800/30">
+            <Scale className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-xs font-semibold text-amber-800 dark:text-amber-300 mb-1">Aviso Legal</p>
+              <p className="text-xs text-amber-700 dark:text-amber-400 leading-relaxed">
+                Este conteúdo é disponibilizado exclusivamente para fins educacionais e de preparação acadêmica dos próprios alunos. As provas e questões presentes na plataforma são de domínio dos respectivos estudantes que as compartilharam para uso coletivo. A DomineAqui não possui vínculo, parceria ou endosso com a Afya Educacional ou qualquer instituição da Matriz AFYA. Todos os direitos dos materiais originais pertencem às respectivas instituições.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          SEÇÃO DOAÇÃO
+      ══════════════════════════════════════════ */}
+      <section className="py-20 px-6 border-t border-border/30 relative overflow-hidden">
+        {/* Fundo glassmorphism escuro */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full opacity-20 blur-3xl"
+            style={{ background: 'radial-gradient(ellipse, rgba(70,129,82,0.5) 0%, transparent 70%)' }} />
+        </div>
+
+        <div
+          ref={doacaoSection.ref}
+          className={`max-w-5xl mx-auto transition-all duration-700 ${doacaoSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+        >
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold mb-4 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+              <Heart className="w-3.5 h-3.5" />
+              Apoie a plataforma
+            </div>
+            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Gratuito porque você acreditou
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              A DomineAqui é 100% gratuita e mantida pela comunidade. Cada doação garante que o conteúdo continue livre e acessível para todos os estudantes.
+            </p>
+          </div>
+
+          {/* Glass panel — mesmo estilo dos modais */}
+          <div
+            className="relative rounded-3xl overflow-hidden"
+            style={{
+              background: 'linear-gradient(145deg, rgba(12,22,14,0.96) 0%, rgba(8,18,10,0.98) 100%)',
+              border: '1px solid rgba(70,129,82,0.22)',
+              boxShadow: '0 24px 80px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05)',
+            }}
+          >
+            {/* ECG topo */}
+            <div className="absolute top-0 left-0 right-0 h-12 opacity-15 pointer-events-none overflow-hidden">
+              <DoacaoEcgAnimation color="#4ade80" opacity={1} />
+            </div>
+            {/* Reflexo topo */}
+            <div className="absolute top-0 left-16 right-16 h-px bg-gradient-to-r from-transparent via-emerald-400/30 to-transparent pointer-events-none" />
+            {/* Grid sutil */}
+            <div className="absolute inset-0 opacity-[0.02] pointer-events-none" style={{
+              backgroundImage: 'linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px)',
+              backgroundSize: '28px 28px',
+            }} />
+
+            <div className="relative z-10 p-6 sm:p-8">
+              <div className="grid lg:grid-cols-2 gap-8 items-start">
+                {/* Conteúdo de doação */}
+                <DoacaoContent
+                  onDonateClick={() => setDoacaoFormOpen(true)}
+                />
+
+                {/* Ranking */}
+                <div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, rgba(70,129,82,0.4))' }} />
+                    <span className="text-xs font-semibold text-emerald-400/60">Quem já apoiou</span>
+                    <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, rgba(70,129,82,0.4), transparent)' }} />
+                  </div>
+                  <DoacaoRanking glass />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <DoacaoForm open={doacaoFormOpen} onClose={() => setDoacaoFormOpen(false)} />
 
       {/* FAQ */}
       <section className="py-24 px-6 border-t border-border/30">

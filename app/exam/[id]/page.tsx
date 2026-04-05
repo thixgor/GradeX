@@ -31,6 +31,7 @@ import { useWebSocket } from '@/hooks/use-websocket'
 import { useVisibilityDetection } from '@/hooks/use-visibility-detection'
 import { useWebRTC } from '@/hooks/use-webrtc'
 import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCircle, List, StickyNote, Copy, ClipboardCheck, Flag, ChevronRight } from 'lucide-react'
+import { ImageModal } from '@/components/image-modal'
 
 export default function ExamPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -44,6 +45,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const [showDoacaoInterstitial, setShowDoacaoInterstitial] = useState(false)
   const [DoacaoInterstitialComp, setDoacaoInterstitialComp] = useState<React.ComponentType<{ context: 'manual-clinico' | 'exam'; onClose: () => void }> | null>(null)
   const pendingStartRef = useRef<(() => void) | null>(null)
+  const [examImageModal, setExamImageModal] = useState<{ src: string } | null>(null)
 
   const [userName, setUserName] = useState('')
   const [loggedUserName, setLoggedUserName] = useState('')
@@ -1704,6 +1706,16 @@ ${respostaAluno}`
         />
       )}
 
+      {/* Modal de imagem expandida */}
+      {examImageModal && (
+        <ImageModal
+          isOpen={!!examImageModal}
+          onClose={() => setExamImageModal(null)}
+          src={examImageModal.src}
+          alt="Imagem da questão"
+        />
+      )}
+
       {/* Modal de Auto-Avaliação Discursiva - Glassmorphism */}
       {showSelfScoreModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-[110] flex items-center justify-center p-4 animate-in fade-in duration-200">
@@ -2497,11 +2509,19 @@ ${respostaAluno}`
                     {/* Imagem */}
                     {question.imageUrl && (
                       <div className="space-y-2">
-                        <img
-                          src={question.imageUrl}
-                          alt="Imagem da questão"
-                          className="max-w-full h-auto rounded-lg border"
-                        />
+                        <div
+                          className="group relative cursor-zoom-in inline-block w-full"
+                          onClick={() => setExamImageModal({ src: question.imageUrl! })}
+                        >
+                          <img
+                            src={question.imageUrl}
+                            alt="Imagem da questão"
+                            className="max-w-full h-auto rounded-lg border transition-all group-hover:scale-[1.01] group-hover:shadow-lg"
+                          />
+                          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="bg-black/50 text-white text-xs px-2 py-1 rounded-lg backdrop-blur-sm">Clique para ampliar</div>
+                          </div>
+                        </div>
                         {question.imageSource && (
                           <p className="text-xs text-muted-foreground italic">
                             Fonte da imagem: {question.imageSource}
@@ -2851,11 +2871,19 @@ ${respostaAluno}`
             {/* Imagem */}
             {currentQuestion.imageUrl && (
               <div className="space-y-2">
-                <img
-                  src={currentQuestion.imageUrl}
-                  alt="Imagem da questão"
-                  className="max-w-full h-auto rounded-lg border"
-                />
+                <div
+                  className="group relative cursor-zoom-in inline-block w-full"
+                  onClick={() => setExamImageModal({ src: currentQuestion.imageUrl! })}
+                >
+                  <img
+                    src={currentQuestion.imageUrl}
+                    alt="Imagem da questão"
+                    className="max-w-full h-auto rounded-lg border transition-all group-hover:scale-[1.01] group-hover:shadow-lg"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="bg-black/50 text-white text-xs px-2 py-1 rounded-lg backdrop-blur-sm">Clique para ampliar</div>
+                  </div>
+                </div>
                 {currentQuestion.imageSource && (
                   <p className="text-xs text-muted-foreground italic">
                     Fonte da imagem: {currentQuestion.imageSource}
