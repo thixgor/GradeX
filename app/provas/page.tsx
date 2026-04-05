@@ -102,6 +102,7 @@ function ProvasContent() {
   const [highlightGroupId, setHighlightGroupId] = useState<string | null>(null)
   const [pdfModalExam, setPdfModalExam] = useState<Exam | null>(null)
   const [pdfLoading, setPdfLoading] = useState<string | null>(null)
+  const [groupPdfProgress, setGroupPdfProgress] = useState<{ done: number; total: number; label: string } | null>(null)
 
   // Handle ?grupo=xxx shareable links
   useEffect(() => {
@@ -338,6 +339,28 @@ function ProvasContent() {
       }
     } catch (error) {
       console.error('Erro ao reordenar:', error)
+    }
+  }
+
+  async function handleGroupDownloadPDF(
+    groupExams: Exam[],
+    type: 'exam' | 'with-answers' | 'gabarito',
+    groupName: string
+  ) {
+    const labels = { exam: 'Provas', 'with-answers': 'Provas + Gabarito Comentado', gabarito: 'Gabaritos' }
+    setGroupPdfProgress({ done: 0, total: groupExams.length, label: labels[type] })
+    try {
+      const { generateGroupPDF, downloadPDF } = await import('@/lib/pdf-generator')
+      const slug = groupName.replace(/\s+/g, '-').toLowerCase()
+      const suffixes = { exam: 'provas', 'with-answers': 'provas-gabarito', gabarito: 'gabaritos' }
+      const blob = await generateGroupPDF(groupExams, type, (done, total) => {
+        setGroupPdfProgress({ done, total, label: labels[type] })
+      })
+      downloadPDF(blob, `${slug}-${suffixes[type]}.pdf`)
+    } catch (err) {
+      console.error('Erro ao gerar PDF do grupo:', err)
+    } finally {
+      setGroupPdfProgress(null)
     }
   }
 
@@ -804,6 +827,7 @@ function ProvasContent() {
                         onEditGroup={handleEditGroup}
                         onReorderExam={handleReorderExam}
                         onDownloadPDF={setPdfModalExam}
+                        onGroupDownloadPDF={handleGroupDownloadPDF}
                         onCreateSubgroup={(parentGroupId) => {
                           const name = prompt('Nome do subgrupo:')
                           if (name) handleCreateGroup(name, 'general', parentGroupId)
@@ -1052,6 +1076,19 @@ function ProvasContent() {
       {renderInfoDialog()}
       {renderEditGroupModal()}
       {renderPdfModal()}
+
+      {/* Group PDF generation progress toast */}
+      {groupPdfProgress && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-3 px-5 py-3 rounded-2xl shadow-2xl bg-card border border-border">
+          <span className="h-4 w-4 rounded-full border-2 border-muted-foreground/30 border-t-primary animate-spin flex-shrink-0" />
+          <div>
+            <p className="text-sm font-semibold text-foreground">{groupPdfProgress.label}</p>
+            <p className="text-xs text-muted-foreground">
+              Gerando {groupPdfProgress.done} de {groupPdfProgress.total} provas…
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   )
 

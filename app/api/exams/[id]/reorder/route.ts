@@ -35,11 +35,17 @@ export async function PATCH(
       return NextResponse.json({ error: 'Prova não está em um grupo' }, { status: 400 })
     }
 
-    // Get all exams in same group, sorted by orderInGroup then createdAt
-    const groupExams = await examsCollection
+    // Get all exams in same group, then sort to match the frontend sort:
+    // missing orderInGroup → treated as 999 (pushed to end), same as exam-group.tsx
+    const rawGroupExams = await examsCollection
       .find({ groupId })
-      .sort({ orderInGroup: 1, createdAt: 1 })
       .toArray()
+
+    const groupExams = rawGroupExams.sort((a, b) => {
+      const oa = a.orderInGroup ?? 999
+      const ob = b.orderInGroup ?? 999
+      return oa !== ob ? oa - ob : 0
+    })
 
     const currentIndex = groupExams.findIndex(e => e._id.toString() === params.id)
     if (currentIndex === -1) return NextResponse.json({ error: 'Erro interno' }, { status: 500 })
@@ -49,17 +55,24 @@ export async function PATCH(
       return NextResponse.json({ message: 'Já está no limite' })
     }
 
-    // Swap orderInGroup values
-    const currentOrder = groupExams[currentIndex].orderInGroup ?? currentIndex
-    const swapOrder = groupExams[swapIndex].orderInGroup ?? swapIndex
+    // Normalize all exams in the group so every exam has an explicit orderInGroup.
+    // This prevents the null-vs-999 mismatch between frontend and MongoDB on future reorders.
+    const updateOps = groupExams.map((e, idx) => ({
+      updateOne: {
+        filter: { _id: e._id },
+        update: { $set: { orderInGroup: idx } },
+      }
+    }))
+    if (updateOps.length > 0) await examsCollection.bulkWrite(updateOps)
 
+    // Now swap the two target exams
     await examsCollection.updateOne(
       { _id: groupExams[currentIndex]._id },
-      { $set: { orderInGroup: swapOrder } }
+      { $set: { orderInGroup: swapIndex } }
     )
     await examsCollection.updateOne(
       { _id: groupExams[swapIndex]._id },
-      { $set: { orderInGroup: currentOrder } }
+      { $set: { orderInGroup: currentIndex } }
     )
 
     return NextResponse.json({ message: 'Reordenado com sucesso' })

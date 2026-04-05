@@ -1465,3 +1465,52 @@ export async function generateFormResponsePDF(
 
   return doc.output('blob')
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Group PDF: merge multiple exam PDFs into one using pdf-lib
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type GroupPDFType = 'exam' | 'with-answers' | 'gabarito'
+
+/**
+ * Merges an array of exam Blobs (in-order) into a single PDF using pdf-lib.
+ * Exams should already be sorted in the desired output order.
+ */
+async function mergeExamBlobs(blobs: Blob[]): Promise<Blob> {
+  const { PDFDocument } = await import('pdf-lib')
+  const merged = await PDFDocument.create()
+  for (const blob of blobs) {
+    const arrayBuffer = await blob.arrayBuffer()
+    const src = await PDFDocument.load(arrayBuffer)
+    const pages = await merged.copyPages(src, src.getPageIndices())
+    pages.forEach(p => merged.addPage(p))
+  }
+  const bytes = await merged.save()
+  return new Blob([bytes], { type: 'application/pdf' })
+}
+
+/**
+ * Generates a combined PDF for all practice exams in a group.
+ * `exams` must be pre-sorted in the desired output order (caller reverses for bottom→top).
+ */
+export async function generateGroupPDF(
+  exams: Exam[],
+  type: GroupPDFType,
+  onProgress?: (done: number, total: number) => void
+): Promise<Blob> {
+  const blobs: Blob[] = []
+  for (let i = 0; i < exams.length; i++) {
+    const exam = exams[i]
+    let blob: Blob
+    if (type === 'gabarito') {
+      blob = await generateGabaritoPDF(exam)
+    } else if (type === 'with-answers') {
+      blob = await generateExamWithAnswersPDF(exam)
+    } else {
+      blob = await generateExamPDF(exam)
+    }
+    blobs.push(blob)
+    onProgress?.(i + 1, exams.length)
+  }
+  return mergeExamBlobs(blobs)
+}
