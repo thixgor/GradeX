@@ -116,6 +116,9 @@ async function loadLogo(): Promise<string | null> {
           canvas.height = img.naturalHeight
           const ctx = canvas.getContext('2d')
           if (!ctx) { logoCache = null; resolve(null); return }
+          // Fill with header background so transparent pixels don't go black in JPEG
+          ctx.fillStyle = 'rgb(26, 71, 41)'
+          ctx.fillRect(0, 0, canvas.width, canvas.height)
           ctx.drawImage(img, 0, 0)
           logoCache = canvas.toDataURL('image/jpeg', 0.92)
           resolve(logoCache)

@@ -1393,6 +1393,7 @@ function PatologiaContent() {
   const [farmaTab, setFarmaTab] = useState<'primeira' | 'segunda' | 'terceira'>('primeira')
   const [lightbox, setLightbox] = useState<{ src: string; alt: string; caption?: string } | null>(null)
   const [shareCopied, setShareCopied] = useState(false)
+  const [pdfProgress, setPdfProgress] = useState<{ label: string; pct: number } | null>(null)
   const heroRef = useRef<HTMLDivElement>(null)
 
   // ── Highlights ────────────────────────────────────────────────────
@@ -1574,20 +1575,37 @@ function PatologiaContent() {
               {/* PDF download */}
               <Button
                 size="sm"
+                disabled={!!pdfProgress}
                 onClick={async () => {
-                  const { generatePatologiaPDF } = await import('@/lib/patologia-pdf-generator')
-                  const blob = await generatePatologiaPDF(patologia)
-                  const url = URL.createObjectURL(blob)
-                  const a = document.createElement('a')
-                  a.href = url
-                  a.download = `${patologia.slug || 'patologia'}.pdf`
-                  a.click()
-                  URL.revokeObjectURL(url)
+                  try {
+                    setPdfProgress({ label: 'Iniciando…', pct: 0 })
+                    const { generatePatologiaPDF } = await import('@/lib/patologia-pdf-generator')
+                    const blob = await generatePatologiaPDF(patologia, (label, pct) => {
+                      setPdfProgress({ label, pct })
+                    })
+                    const url = URL.createObjectURL(blob)
+                    const a = document.createElement('a')
+                    a.href = url
+                    a.download = `${patologia.slug || 'patologia'}.pdf`
+                    a.click()
+                    URL.revokeObjectURL(url)
+                  } finally {
+                    setPdfProgress(null)
+                  }
                 }}
                 className="rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
               >
-                <Download className="h-4 w-4 mr-2" />
-                Baixar PDF
+                {pdfProgress ? (
+                  <>
+                    <Activity className="h-4 w-4 mr-2 animate-pulse" />
+                    {pdfProgress.pct}%
+                  </>
+                ) : (
+                  <>
+                    <Download className="h-4 w-4 mr-2" />
+                    Baixar PDF
+                  </>
+                )}
               </Button>
             </div>
           </div>
@@ -1810,6 +1828,23 @@ function PatologiaContent() {
           caption={lightbox.caption}
           onClose={() => setLightbox(null)}
         />
+      )}
+
+      {/* PDF progress toast */}
+      {pdfProgress && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[300] flex flex-col gap-1.5 bg-card/95 border border-border/60 backdrop-blur-md shadow-2xl rounded-2xl px-5 py-3.5 min-w-[260px] max-w-[340px] w-full">
+          <div className="flex items-center gap-2.5">
+            <Activity className="h-4 w-4 text-primary animate-pulse shrink-0" />
+            <span className="text-sm font-medium text-foreground truncate flex-1">{pdfProgress.label}</span>
+            <span className="text-xs font-bold text-primary tabular-nums">{pdfProgress.pct}%</span>
+          </div>
+          <div className="w-full h-1.5 rounded-full bg-accent/50 overflow-hidden">
+            <div
+              className="h-full rounded-full bg-primary transition-all duration-300"
+              style={{ width: `${pdfProgress.pct}%` }}
+            />
+          </div>
+        </div>
       )}
     </div>
   )

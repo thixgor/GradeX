@@ -264,6 +264,17 @@ function renderRichLine(doc: jsPDF, line: RichLine, x: number, y: number, fontSi
   }
 }
 
+// ── Yield helper — prevents "Page Unresponsive" on long synchronous work ──
+//
+// scheduler.yield() (Chrome 129+) has better task-priority semantics than
+// setTimeout. Both give the browser a chance to repaint + handle events.
+function yieldToEventLoop(): Promise<void> {
+  if (typeof (globalThis as any).scheduler?.yield === 'function') {
+    return (globalThis as any).scheduler.yield()
+  }
+  return new Promise(resolve => setTimeout(resolve, 0))
+}
+
 // ── Logo Loading ─────────────────────────────────────────────────
 
 let logoCache: string | null | undefined = undefined
@@ -1049,7 +1060,15 @@ async function buildQRMap(mediaUrls: { url: string; type: string }[], slug: stri
   return qrMap
 }
 
-export async function generatePatologiaPDF(patologia: Patologia): Promise<Blob> {
+export async function generatePatologiaPDF(
+  patologia: Patologia,
+  onProgress?: (label: string, pct: number) => void,
+): Promise<Blob> {
+  const report = (label: string, pct: number) => onProgress?.(label, pct)
+
+  report('Carregando imagens…', 5)
+  await yieldToEventLoop()
+
   // Collect all embed URLs from text fields
   const { imageUrls: embedImageUrls, mediaUrls } = collectEmbedUrls(patologia)
 
@@ -1057,8 +1076,14 @@ export async function generatePatologiaPDF(patologia: Patologia): Promise<Blob> 
   const allImageUrls = [...(patologia.imagens_mecanismo || []), ...embedImageUrls]
   const imageMap = await preloadImages(allImageUrls)
 
+  report('Gerando QR codes…', 15)
+  await yieldToEventLoop()
+
   // Generate QR codes for video/audio embeds
   const qrMap = await buildQRMap(mediaUrls, patologia.slug)
+
+  report('Construindo documento…', 25)
+  await yieldToEventLoop()
 
   const doc = new jsPDF()
   await registerFonts(doc)
@@ -1146,37 +1171,44 @@ export async function generatePatologiaPDF(patologia: Patologia): Promise<Blob> 
     drawRichTextBlockWithEmbeds(doc, text, yy, ensure, imageMap, qrMap, patologia.slug, fs)
 
   if (patologia.classificacao) {
+    report('Classificação…', 30); await yieldToEventLoop()
     y = drawSectionTitle(doc, 'Classifica\u00e7\u00e3o', y, ensure)
     y = await drawSection(patologia.classificacao, y)
   }
 
   if (patologia.fisiopatologia) {
+    report('Fisiopatologia…', 40); await yieldToEventLoop()
     y = drawSectionTitle(doc, 'Fisiopatologia', y, ensure)
     y = await drawSection(patologia.fisiopatologia, y)
   }
 
   // Images after fisiopatologia
   if (patologia.imagens_mecanismo?.length) {
+    report('Imagens…', 48); await yieldToEventLoop()
     y = drawSectionTitle(doc, 'Imagens do Mecanismo', y, ensure)
     y = drawImagesBlock(doc, patologia.imagens_mecanismo, patologia.legenda_imagens || [], y, ensure, imageMap)
   }
 
   if (patologia.diagnostico_semiologico) {
+    report('Diagnóstico Semiológico…', 55); await yieldToEventLoop()
     y = drawSectionTitle(doc, 'Diagn\u00f3stico Semiol\u00f3gico', y, ensure)
     y = await drawSection(patologia.diagnostico_semiologico, y)
   }
 
   if (patologia.diagnosticos_diferenciais) {
+    report('Diagnósticos Diferenciais…', 62); await yieldToEventLoop()
     y = drawSectionTitle(doc, 'Diagn\u00f3sticos Diferenciais', y, ensure)
     y = await drawSection(patologia.diagnosticos_diferenciais, y)
   }
 
   if (patologia.gravidade) {
+    report('Gravidade…', 68); await yieldToEventLoop()
     y = drawSectionTitle(doc, 'Gravidade', y, ensure)
     y = await drawSection(patologia.gravidade, y)
   }
 
   if (patologia.tratamento) {
+    report('Tratamento…', 74); await yieldToEventLoop()
     y = drawSectionTitle(doc, 'Tratamento', y, ensure)
     y = await drawSection(patologia.tratamento, y)
   }
@@ -1185,15 +1217,18 @@ export async function generatePatologiaPDF(patologia: Patologia): Promise<Blob> 
 
   const farma = patologia.farmacologia
   if (farma) {
+    report('Farmacologia…', 80); await yieldToEventLoop()
     if (farma.primeira_linha?.length > 0) {
       y = drawSectionTitle(doc, 'Farmacologia \u2014 1\u00aa Linha', y, ensure)
       for (const f of farma.primeira_linha) y = drawFarmacoBlock(doc, f, y, ensure)
     }
     if (farma.segunda_linha?.length > 0) {
+      await yieldToEventLoop()
       y = drawSectionTitle(doc, 'Farmacologia \u2014 2\u00aa Linha', y, ensure)
       for (const f of farma.segunda_linha) y = drawFarmacoBlock(doc, f, y, ensure)
     }
     if (farma.terceira_linha?.length > 0) {
+      await yieldToEventLoop()
       y = drawSectionTitle(doc, 'Farmacologia \u2014 3\u00aa Linha', y, ensure)
       for (const f of farma.terceira_linha) y = drawFarmacoBlock(doc, f, y, ensure)
     }
@@ -1202,6 +1237,7 @@ export async function generatePatologiaPDF(patologia: Patologia): Promise<Blob> 
   // ── Fluxograma ──────────────────────────────────────────────────
 
   if (patologia.fluxograma_tratamento) {
+    report('Fluxograma…', 85); await yieldToEventLoop()
     y = drawSectionTitle(doc, 'Fluxograma de Tratamento', y, ensure)
     y = drawFluxogramaBlock(doc, patologia.fluxograma_tratamento, y, ensure)
   }
@@ -1209,6 +1245,7 @@ export async function generatePatologiaPDF(patologia: Patologia): Promise<Blob> 
   // ── Observações clínicas ────────────────────────────────────────
 
   if (patologia.observacoes_clinicas) {
+    report('Observações Clínicas…', 88); await yieldToEventLoop()
     y = drawSectionTitle(doc, 'Observa\u00e7\u00f5es Cl\u00ednicas', y, ensure)
     y = ensure(doc, y, 14)
 
@@ -1232,19 +1269,25 @@ export async function generatePatologiaPDF(patologia: Patologia): Promise<Blob> 
   // ── Referências ─────────────────────────────────────────────────
 
   if (patologia.referencias) {
+    report('Referências…', 92); await yieldToEventLoop()
     y = drawSectionTitle(doc, 'Refer\u00eancias', y, ensure)
     y = await drawSection(patologia.referencias, y, 8.5)
   }
 
-  // ── Footers ─────────────────────────────────────────────────────
+  // ── Footers — yield every 20 pages so tab stays responsive ──────
 
+  report('Finalizando…', 95); await yieldToEventLoop()
   const totalPages = doc.getNumberOfPages()
   for (let i = 1; i <= totalPages; i++) {
+    if (i % 20 === 0) await yieldToEventLoop()
     doc.setPage(i)
     addFooter(doc, i, totalPages)
   }
 
-  return doc.output('blob')
+  report('Gerando arquivo…', 98); await yieldToEventLoop()
+  const blob = doc.output('blob')
+  report('Concluído', 100)
+  return blob
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -1545,7 +1588,15 @@ async function renderPatologiaInComplete(
 }
 
 /** Gera PDF completo do Manual Clínico com capa, sumário e conteúdo por sistema. */
-export async function generateManualCompletoPDF(patologias: Patologia[]): Promise<Blob> {
+export async function generateManualCompletoPDF(
+  patologias: Patologia[],
+  onProgress?: (label: string, pct: number) => void,
+): Promise<Blob> {
+  const report = (label: string, pct: number) => onProgress?.(label, pct)
+
+  report('Carregando imagens…', 2)
+  await yieldToEventLoop()
+
   // Preload all images from all patologias (mechanism images + embed images)
   const allUrls: string[] = []
   const allMediaUrls: { url: string; type: string }[] = []
@@ -1572,6 +1623,9 @@ export async function generateManualCompletoPDF(patologias: Patologia[]): Promis
     }
   }))
 
+  report('Gerando estrutura…', 10)
+  await yieldToEventLoop()
+
   const doc = new jsPDF()
   await registerFonts(doc)
   _headerLogo = await loadLogoForPdf()
@@ -1579,6 +1633,7 @@ export async function generateManualCompletoPDF(patologias: Patologia[]): Promis
 
   // ── Capa ────────────────────────────────────────────────────────
   addCoverPage(doc, patologias.length)
+  await yieldToEventLoop()
 
   // ── Sumário ─────────────────────────────────────────────────────
   doc.addPage()
@@ -1643,13 +1698,22 @@ export async function generateManualCompletoPDF(patologias: Patologia[]): Promis
   }
 
   // ── Conteúdo por sistema ────────────────────────────────────────
+  const totalPatologias = patologias.length || 1
+  let doneCount = 0
+
   for (const sistema of SISTEMAS_FISIOLOGICOS) {
     const list = bySystem.get(sistema) || []
     if (list.length === 0) continue
 
     y = renderSystemDivider(doc, sistema)
+    await yieldToEventLoop()
 
     for (let i = 0; i < list.length; i++) {
+      doneCount++
+      const pct = 15 + Math.round((doneCount / totalPatologias) * 75)
+      report(`Gerando: ${list[i].nome}`, pct)
+      await yieldToEventLoop()
+
       y = await renderPatologiaInComplete(doc, list[i], y, ensure, imageMap, qrMap)
 
       if (i < list.length - 1) {
@@ -1659,15 +1723,24 @@ export async function generateManualCompletoPDF(patologias: Patologia[]): Promis
         doc.line(MARGIN + 10, y, PAGE_WIDTH - MARGIN - 10, y)
         y += 8
       }
+
+      await yieldToEventLoop()
     }
   }
 
   // ── Footers ─────────────────────────────────────────────────────
+  report('Finalizando…', 92)
+  await yieldToEventLoop()
+
   const totalPages = doc.getNumberOfPages()
   for (let i = 2; i <= totalPages; i++) {
+    if (i % 20 === 0) await yieldToEventLoop()
     doc.setPage(i)
     addCompleteFooter(doc, i - 1, totalPages - 1)
   }
+
+  report('Preparando download…', 98)
+  await yieldToEventLoop()
 
   return doc.output('blob')
 }
