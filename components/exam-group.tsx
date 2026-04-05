@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { ChevronDown, ChevronRight, Trash2, Edit2, FolderPlus, MoreHorizontal, ArrowUp, ArrowDown, Share2, Download, FileDown, ArrowDownAZ } from 'lucide-react'
+import { ChevronDown, ChevronRight, Trash2, Edit2, FolderPlus, MoreHorizontal, ArrowUp, ArrowDown, Share2, Download, FileDown, ArrowDownAZ, BookOpen } from 'lucide-react'
 import { Exam } from '@/lib/types'
 
 interface GroupData {
@@ -39,7 +39,6 @@ interface ExamGroupProps {
   highlightGroupId?: string | null
 }
 
-/** Returns true if `targetId` is `groupId` OR a descendant of `groupId` */
 function isInSubtree(groupId: string, targetId: string, allGroups: GroupData[]): boolean {
   if (groupId === targetId) return true
   const children = allGroups.filter(g => g.parentGroupId === groupId)
@@ -68,10 +67,7 @@ export function ExamGroup({
   const isTarget = highlightGroupId === group._id
   const isAncestorOfTarget = !!highlightGroupId && !isTarget && isInSubtree(group._id, highlightGroupId, allGroups)
 
-  // Expand if: root depth, OR this group IS the target, OR it's an ancestor of the target
-  const [isExpanded, setIsExpanded] = useState(
-    depth === 0 || isTarget || isAncestorOfTarget
-  )
+  const [isExpanded, setIsExpanded] = useState(depth === 0 || isTarget || isAncestorOfTarget)
   const [isDeleting, setIsDeleting] = useState(false)
   const [showActions, setShowActions] = useState(false)
   const [copiedLink, setCopiedLink] = useState(false)
@@ -79,7 +75,6 @@ export function ExamGroup({
   const [showGroupDownload, setShowGroupDownload] = useState(false)
   const [isSorting, setIsSorting] = useState(false)
 
-  // Re-evaluate expansion when highlightGroupId changes (e.g. after groups load)
   useEffect(() => {
     const target = !!highlightGroupId && highlightGroupId === group._id
     const ancestor = !!highlightGroupId && !target && isInSubtree(group._id, highlightGroupId, allGroups)
@@ -94,7 +89,6 @@ export function ExamGroup({
   const isCreator = group.createdBy === currentUserId
   const isAdmin = userRole === 'admin'
   const canManageGroup = isAdmin || (isCreator && group.type === 'personal')
-
   const childGroups = allGroups.filter(g => g.parentGroupId === group._id)
 
   function countExamsRecursive(groupId: string): number {
@@ -110,11 +104,7 @@ export function ExamGroup({
     if (!onDeleteGroup) return
     if (!confirm(`Deletar "${group.name}"? Subgrupos serão movidos para o nível acima.`)) return
     setIsDeleting(true)
-    try {
-      await onDeleteGroup(group._id)
-    } finally {
-      setIsDeleting(false)
-    }
+    try { await onDeleteGroup(group._id) } finally { setIsDeleting(false) }
   }
 
   const handleShareLink = () => {
@@ -139,170 +129,169 @@ export function ExamGroup({
 
   const accentColor = group.color || '#3B82F6'
 
-  // Sort exams by orderInGroup
   const sortedExams = [...exams].sort((a, b) => {
     const oa = (a as any).orderInGroup ?? 999
     const ob = (b as any).orderInGroup ?? 999
-    if (oa !== ob) return oa - ob
-    return 0
+    return oa !== ob ? oa - ob : 0
   })
 
-  // Only practice exams DIRECTLY in this group (not recursive).
-  // Parent groups whose exams live only in subgroups will NOT get a button.
   const directPracticeExams = sortedExams.filter(e => e.isPracticeExam)
 
+  // Visual depth: cap indent so deep nesting doesn't destroy mobile space
+  const indentClass = depth === 0 ? '' : depth === 1 ? 'ml-3 sm:ml-4' : 'ml-2 sm:ml-3'
+  const borderAccent = highlighted ? 'border-l-primary' : 'border-l-border/40'
+
   return (
-    <div className={`${depth > 0 ? 'ml-3' : ''}`}>
+    <div className={indentClass}>
       {/* ─── Group Header ─── */}
       <div
-        className={`flex items-center gap-3 py-3 px-4 rounded-2xl cursor-pointer select-none transition-all duration-300 group/header
+        className={`group/header relative flex items-start gap-2.5 rounded-2xl cursor-pointer select-none transition-all duration-200
+          ${depth === 0 ? 'px-3 py-3.5' : 'px-2.5 py-3'}
           ${highlighted
-            ? 'bg-primary/10 border-2 border-primary/40 shadow-md shadow-primary/10 ring-2 ring-primary/20'
-            : 'hover:bg-muted/50 border-2 border-transparent'
+            ? 'bg-primary/10 ring-2 ring-primary/25 shadow-sm'
+            : 'hover:bg-muted/60 active:bg-muted/80'
           }`}
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        {/* Expand icon */}
-        <div className="text-muted-foreground/50 group-hover/header:text-muted-foreground transition-colors">
-          {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+        {/* Expand chevron */}
+        <div className={`flex-shrink-0 mt-0.5 transition-transform duration-200 ${isExpanded ? 'rotate-0' : '-rotate-90'} text-muted-foreground/60`}>
+          <ChevronDown className={depth === 0 ? 'h-4 w-4' : 'h-3.5 w-3.5'} />
         </div>
 
-        {/* Group image or color dot */}
+        {/* Group avatar */}
         {group.imageUrl ? (
-          <div className={`w-9 h-9 rounded-xl overflow-hidden flex-shrink-0 border ${highlighted ? 'border-primary/50' : 'border-border/50'}`}>
+          <div className={`flex-shrink-0 rounded-xl overflow-hidden border border-border/40 ${depth === 0 ? 'w-10 h-10' : 'w-8 h-8'}`}>
             <img src={group.imageUrl} alt="" className="w-full h-full object-cover" />
           </div>
         ) : (
           <div
-            className="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center text-white text-sm font-bold"
+            className={`flex-shrink-0 rounded-xl flex items-center justify-center text-white font-bold shadow-sm ${depth === 0 ? 'w-10 h-10 text-sm' : 'w-8 h-8 text-xs'}`}
             style={{ backgroundColor: accentColor }}
           >
             {group.icon && group.icon !== '📁' ? group.icon : group.name.charAt(0).toUpperCase()}
           </div>
         )}
 
-        {/* Name + description */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <span className={`text-sm font-semibold truncate ${highlighted ? 'text-primary' : ''}`}>{group.name}</span>
+        {/* Name + meta */}
+        <div className="flex-1 min-w-0 space-y-0.5">
+          <div className="flex items-start gap-2 flex-wrap">
+            <span className={`font-semibold leading-snug break-words ${depth === 0 ? 'text-sm sm:text-base' : 'text-sm'} ${highlighted ? 'text-primary' : 'text-foreground'}`}>
+              {group.name}
+            </span>
             {highlighted && (
-              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-primary/15 text-primary font-semibold flex-shrink-0 animate-pulse">
+              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-primary/15 text-primary font-semibold animate-pulse flex-shrink-0 mt-0.5">
                 ← aqui
               </span>
             )}
-            {group.type === 'general' && !highlighted && (
-              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 font-medium flex-shrink-0">
-                Geral
-              </span>
+            {!highlighted && group.type === 'general' && (
+              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 font-medium flex-shrink-0 mt-0.5">Geral</span>
             )}
-            {group.category === 'faculdade' && !highlighted && (
-              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-red-500/10 text-red-600 dark:text-red-400 font-medium flex-shrink-0">
-                Faculdade
-              </span>
+            {!highlighted && group.category === 'faculdade' && (
+              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-red-500/10 text-red-600 dark:text-red-400 font-medium flex-shrink-0 mt-0.5">Faculdade</span>
             )}
           </div>
           {group.description && (
-            <p className="text-[11px] text-muted-foreground/70 truncate">{group.description}</p>
+            <p className="text-[11px] text-muted-foreground/65 leading-relaxed line-clamp-2">{group.description}</p>
           )}
-        </div>
-
-        {/* Count */}
-        <span className="text-xs text-muted-foreground/60 tabular-nums bg-muted/50 px-2 py-0.5 rounded-full">
-          {totalExamCount} {totalExamCount === 1 ? 'prova' : 'provas'}
-        </span>
-
-        {/* Group PDF download button — visible whenever this group has practice exams */}
-        {directPracticeExams.length > 0 && onGroupDownloadPDF && (
-          <div className="relative flex-shrink-0" onClick={e => e.stopPropagation()}>
-            <button
-              onClick={() => setShowGroupDownload(v => !v)}
-              className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium transition-colors text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 border border-emerald-500/20 hover:border-emerald-500/40"
-              title={`Baixar PDFs (${directPracticeExams.length} provas)`}
-            >
-              <FileDown className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">PDF</span>
-            </button>
-            {showGroupDownload && (
-              <>
-                <div className="fixed inset-0 z-40" onClick={() => setShowGroupDownload(false)} />
-                <div className="absolute right-0 top-full mt-1 z-50 w-64 rounded-xl border border-border bg-popover shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150">
-                <div className="px-3 py-2 border-b border-border/50">
-                  <p className="text-xs font-semibold text-foreground">{group.name}</p>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">{directPracticeExams.length} provas · ordem de baixo pra cima</p>
-                </div>
-                {([
-                  { type: 'exam', label: 'PDF da Prova', desc: 'Apenas as questões', icon: '📄' },
-                  { type: 'with-answers', label: 'Prova + Gabarito Comentado', desc: 'Com respostas e explicações', icon: '📚' },
-                  { type: 'gabarito', label: 'Só o Gabarito', desc: 'Gabarito de todas as provas', icon: '✅' },
-                ] as const).map(opt => (
-                  <button
-                    key={opt.type}
-                    onClick={() => {
-                      setShowGroupDownload(false)
-                      // directPracticeExams is already sorted top→bottom; reverse for bottom→top PDF order
-                      onGroupDownloadPDF([...directPracticeExams].reverse(), opt.type, group.name)
-                    }}
-                    className="w-full flex items-start gap-3 px-3 py-2.5 hover:bg-muted/60 transition-colors text-left"
-                  >
-                    <span className="text-base leading-none mt-0.5 flex-shrink-0">{opt.icon}</span>
-                    <div>
-                      <p className="text-xs font-semibold text-foreground">{opt.label}</p>
-                      <p className="text-[10px] text-muted-foreground">{opt.desc}</p>
-                    </div>
-                  </button>
-                ))}
-                </div>
-              </>
+          <div className="flex items-center gap-2 pt-0.5">
+            <span className="text-[10px] text-muted-foreground/50 tabular-nums">
+              {totalExamCount} {totalExamCount === 1 ? 'prova' : 'provas'}
+            </span>
+            {childGroups.length > 0 && (
+              <span className="text-[10px] text-muted-foreground/40">· {childGroups.length} {childGroups.length === 1 ? 'subgrupo' : 'subgrupos'}</span>
             )}
           </div>
-        )}
+        </div>
 
-        {/* Actions toggle */}
-        {canManageGroup && (
-          <div
-            className="opacity-0 group-hover/header:opacity-100 transition-opacity"
-            onClick={(e) => e.stopPropagation()}
-          >
+        {/* Right-side actions — always visible on mobile, hover on desktop */}
+        <div className="flex items-center gap-1 flex-shrink-0 mt-0.5" onClick={e => e.stopPropagation()}>
+          {/* PDF download */}
+          {directPracticeExams.length > 0 && onGroupDownloadPDF && (
+            <div className="relative">
+              <button
+                onClick={() => setShowGroupDownload(v => !v)}
+                className="flex items-center gap-1 px-2 py-1.5 rounded-xl text-xs font-medium transition-colors text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 border border-emerald-500/25 hover:border-emerald-500/50 active:scale-95"
+                title={`Baixar PDFs (${directPracticeExams.length} provas)`}
+              >
+                <FileDown className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline font-semibold">{directPracticeExams.length}</span>
+              </button>
+              {showGroupDownload && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setShowGroupDownload(false)} />
+                  <div className="absolute right-0 top-full mt-1.5 z-50 w-64 rounded-2xl border border-border bg-popover shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
+                    <div className="px-3.5 py-2.5 border-b border-border/50 bg-muted/30">
+                      <p className="text-xs font-semibold text-foreground leading-snug">{group.name}</p>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">{directPracticeExams.length} provas · ordem de baixo pra cima</p>
+                    </div>
+                    {([
+                      { type: 'exam',         label: 'PDF da Prova',              desc: 'Apenas as questões',          icon: '📄' },
+                      { type: 'with-answers', label: 'Prova + Gabarito Comentado', desc: 'Com respostas e explicações', icon: '📚' },
+                      { type: 'gabarito',     label: 'Só o Gabarito',             desc: 'Gabarito de todas as provas', icon: '✅' },
+                    ] as const).map(opt => (
+                      <button
+                        key={opt.type}
+                        onClick={() => {
+                          setShowGroupDownload(false)
+                          onGroupDownloadPDF([...directPracticeExams].reverse(), opt.type, group.name)
+                        }}
+                        className="w-full flex items-center gap-3 px-3.5 py-3 hover:bg-muted/60 active:bg-muted transition-colors text-left"
+                      >
+                        <span className="text-lg leading-none flex-shrink-0">{opt.icon}</span>
+                        <div>
+                          <p className="text-xs font-semibold text-foreground">{opt.label}</p>
+                          <p className="text-[10px] text-muted-foreground">{opt.desc}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
+          {/* Admin actions toggle — always visible */}
+          {canManageGroup && (
             <button
               onClick={() => setShowActions(!showActions)}
-              className="p-1.5 rounded-lg hover:bg-muted transition-colors"
+              className={`p-1.5 rounded-xl transition-colors ${showActions ? 'bg-muted text-foreground' : 'text-muted-foreground/50 hover:bg-muted hover:text-foreground'}`}
             >
-              <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
+              <MoreHorizontal className="h-4 w-4" />
             </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* ─── Actions Bar ─── */}
       {showActions && canManageGroup && (
-        <div className="ml-12 mb-2 flex flex-wrap items-center gap-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
+        <div className="mx-2 mb-2 mt-0.5 p-2 rounded-2xl border border-border/40 bg-muted/30 flex flex-wrap items-center gap-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
           {onCreateSubgroup && (
             <Button variant="ghost" size="sm" onClick={() => { onCreateSubgroup(group._id); setShowActions(false) }}
-              disabled={isDeleting} className="h-7 text-xs gap-1 text-muted-foreground hover:text-foreground rounded-lg">
-              <FolderPlus className="h-3 w-3" /> Subgrupo
+              disabled={isDeleting} className="h-8 text-xs gap-1.5 text-muted-foreground hover:text-foreground rounded-xl">
+              <FolderPlus className="h-3.5 w-3.5" /> Subgrupo
             </Button>
           )}
           {isAdmin && exams.length > 0 && (
             <Button variant="ghost" size="sm" onClick={handleSortAlpha}
-              disabled={isSorting} className="h-7 text-xs gap-1 text-muted-foreground hover:text-foreground rounded-lg">
-              <ArrowDownAZ className="h-3 w-3" />
+              disabled={isSorting} className="h-8 text-xs gap-1.5 text-muted-foreground hover:text-foreground rounded-xl">
+              <ArrowDownAZ className="h-3.5 w-3.5" />
               {isSorting ? 'Ordenando…' : 'A→Z reverso'}
             </Button>
           )}
           {onEditGroup && (
             <Button variant="ghost" size="sm" onClick={() => { onEditGroup(group); setShowActions(false) }}
-              disabled={isDeleting} className="h-7 text-xs gap-1 text-muted-foreground hover:text-foreground rounded-lg">
-              <Edit2 className="h-3 w-3" /> Editar
+              disabled={isDeleting} className="h-8 text-xs gap-1.5 text-muted-foreground hover:text-foreground rounded-xl">
+              <Edit2 className="h-3.5 w-3.5" /> Editar
             </Button>
           )}
           <Button variant="ghost" size="sm" onClick={() => { handleShareLink(); setShowActions(false) }}
-            className="h-7 text-xs gap-1 text-muted-foreground hover:text-foreground rounded-lg">
-            <Share2 className="h-3 w-3" /> {copiedLink ? 'Copiado!' : 'Link'}
+            className="h-8 text-xs gap-1.5 text-muted-foreground hover:text-foreground rounded-xl">
+            <Share2 className="h-3.5 w-3.5" /> {copiedLink ? 'Copiado!' : 'Link'}
           </Button>
           {onDeleteGroup && (
             <Button variant="ghost" size="sm" onClick={() => { handleDelete(); setShowActions(false) }}
-              disabled={isDeleting} className="h-7 text-xs gap-1 text-muted-foreground hover:text-destructive rounded-lg">
-              <Trash2 className="h-3 w-3" /> Deletar
+              disabled={isDeleting} className="h-8 text-xs gap-1.5 text-muted-foreground hover:text-destructive rounded-xl">
+              <Trash2 className="h-3.5 w-3.5" /> Deletar
             </Button>
           )}
         </div>
@@ -310,74 +299,68 @@ export function ExamGroup({
 
       {/* ─── Expanded Content ─── */}
       {isExpanded && (
-        <div className={`${depth === 0 ? 'ml-6 pl-5 border-l-2' : 'ml-5 pl-4 border-l'} ${highlighted ? 'border-primary/30' : 'border-border/30'} space-y-1 pb-2 mt-1`}>
-          {/* Exams */}
+        <div className={`mt-0.5 mb-1 space-y-0.5 ${depth === 0 ? 'pl-4 sm:pl-5 border-l-2' : 'pl-3 sm:pl-4 border-l'} ml-3 sm:ml-4 ${highlighted ? 'border-primary/30' : 'border-border/25'}`}>
+
+          {/* Exams list */}
           {sortedExams.map((exam, examIdx) => {
             const examId = exam._id?.toString() || ''
+            const typeColor = exam.isPracticeExam ? 'bg-emerald-500' : exam.isPersonalExam ? 'bg-violet-500' : 'bg-blue-500'
             return (
               <div
                 key={examId}
-                className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-muted/40 cursor-pointer transition-all group/exam"
+                className="group/exam relative flex items-start gap-3 py-3 px-3 rounded-xl hover:bg-muted/50 active:bg-muted/70 cursor-pointer transition-all"
+                onContextMenu={(e) => onExamContextMenu(exam, e)}
+                onClick={() => onExamClick(exam)}
               >
                 {/* Admin reorder buttons */}
                 {isAdmin && group.type === 'general' && onReorderExam && (
-                  <div className="flex flex-col gap-0.5 opacity-0 group-hover/exam:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex flex-col gap-0.5 flex-shrink-0 mt-0.5 opacity-0 group-hover/exam:opacity-100 sm:flex transition-opacity" onClick={(e) => e.stopPropagation()}>
                     <button
                       onClick={() => onReorderExam(examId, 'up')}
                       disabled={examIdx === 0}
-                      className="p-0.5 rounded hover:bg-muted disabled:opacity-20 transition-colors"
+                      className="p-1 rounded-lg hover:bg-muted disabled:opacity-20 transition-colors"
                     >
                       <ArrowUp className="h-3 w-3 text-muted-foreground" />
                     </button>
                     <button
                       onClick={() => onReorderExam(examId, 'down')}
                       disabled={examIdx === sortedExams.length - 1}
-                      className="p-0.5 rounded hover:bg-muted disabled:opacity-20 transition-colors"
+                      className="p-1 rounded-lg hover:bg-muted disabled:opacity-20 transition-colors"
                     >
                       <ArrowDown className="h-3 w-3 text-muted-foreground" />
                     </button>
                   </div>
                 )}
 
-                <div
-                  className="flex items-center gap-3 flex-1 min-w-0"
-                  onContextMenu={(e) => onExamContextMenu(exam, e)}
-                  onClick={() => onExamClick(exam)}
-                >
-                  {/* Type indicator */}
-                  <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                    exam.isPracticeExam ? 'bg-emerald-500' : exam.isPersonalExam ? 'bg-violet-500' : 'bg-blue-500'
-                  }`} />
+                {/* Type dot */}
+                <div className={`flex-shrink-0 w-2 h-2 rounded-full mt-2 ${typeColor}`} />
 
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm truncate group-hover/exam:text-primary transition-colors font-medium">
-                      {exam.title}
-                    </p>
-                    {exam.description && (
-                      <p className="text-[11px] text-muted-foreground/60 truncate">{exam.description}</p>
-                    )}
-                  </div>
-
-                  <div className="flex items-center gap-2 flex-shrink-0">
+                {/* Title + description */}
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm leading-snug font-medium text-foreground group-hover/exam:text-primary transition-colors break-words">
+                    {exam.title}
+                  </p>
+                  {exam.description && (
+                    <p className="text-[11px] text-muted-foreground/60 mt-0.5 line-clamp-2 leading-relaxed">{exam.description}</p>
+                  )}
+                  <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                     {exam.isPracticeExam && (
-                      <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium">
-                        Treino
-                      </span>
+                      <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold">Treino</span>
                     )}
-                    <span className="text-[11px] text-muted-foreground/50 tabular-nums">
-                      {exam.numberOfQuestions}q
-                    </span>
-                    {exam.isPracticeExam && onDownloadPDF && (
-                      <button
-                        onClick={(e) => { e.stopPropagation(); onDownloadPDF(exam) }}
-                        className="opacity-0 group-hover/exam:opacity-100 transition-opacity p-1 rounded-lg hover:bg-emerald-500/10 text-muted-foreground hover:text-emerald-600 dark:hover:text-emerald-400"
-                        title="Baixar PDF"
-                      >
-                        <Download className="h-3.5 w-3.5" />
-                      </button>
-                    )}
+                    <span className="text-[10px] text-muted-foreground/50 tabular-nums">{exam.numberOfQuestions} questões</span>
                   </div>
                 </div>
+
+                {/* Download icon */}
+                {exam.isPracticeExam && onDownloadPDF && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onDownloadPDF(exam) }}
+                    className="flex-shrink-0 mt-0.5 p-2 rounded-xl opacity-0 group-hover/exam:opacity-100 transition-opacity hover:bg-emerald-500/10 text-muted-foreground hover:text-emerald-600 dark:hover:text-emerald-400"
+                    title="Baixar PDF"
+                  >
+                    <Download className="h-3.5 w-3.5" />
+                  </button>
+                )}
               </div>
             )
           })}
@@ -411,7 +394,10 @@ export function ExamGroup({
 
           {/* Empty state */}
           {exams.length === 0 && childGroups.length === 0 && (
-            <p className="text-xs text-muted-foreground/40 py-3 pl-3 italic">Nenhuma prova neste grupo</p>
+            <div className="flex items-center gap-2 py-4 px-3">
+              <BookOpen className="h-4 w-4 text-muted-foreground/30" />
+              <p className="text-xs text-muted-foreground/40 italic">Nenhuma prova neste grupo</p>
+            </div>
           )}
         </div>
       )}
