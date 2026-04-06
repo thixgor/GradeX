@@ -30,7 +30,7 @@ import { useProctoring } from '@/hooks/use-proctoring'
 import { useWebSocket } from '@/hooks/use-websocket'
 import { useVisibilityDetection } from '@/hooks/use-visibility-detection'
 import { useWebRTC } from '@/hooks/use-webrtc'
-import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCircle, List, StickyNote, Copy, ClipboardCheck, Flag, ChevronRight, Bot } from 'lucide-react'
+import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCircle, List, StickyNote, Copy, ClipboardCheck, Flag, ChevronRight, Bot, Maximize2 } from 'lucide-react'
 import { ImageModal } from '@/components/image-modal'
 
 export default function ExamPage({ params }: { params: { id: string } }) {
@@ -2538,16 +2538,27 @@ ${respostaAluno}`
                     {question.imageUrl && (
                       <div className="space-y-2">
                         <div
-                          className="group relative cursor-zoom-in inline-block w-full"
+                          className="group relative cursor-pointer sm:cursor-zoom-in inline-block w-full select-none"
+                          style={{ touchAction: 'manipulation' }}
                           onClick={() => setExamImageModal({ src: question.imageUrl! })}
                         >
                           <img
                             src={question.imageUrl}
                             alt="Imagem da questão"
-                            className="max-w-full h-auto rounded-lg border transition-all group-hover:scale-[1.01] group-hover:shadow-lg"
+                            className="max-w-full h-auto rounded-lg border transition-all group-hover:brightness-95 pointer-events-none"
+                            draggable={false}
                           />
-                          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <div className="bg-black/50 text-white text-xs px-2 py-1 rounded-lg backdrop-blur-sm">Clique para ampliar</div>
+                          {/* Desktop: hover overlay */}
+                          <div className="absolute inset-0 hidden sm:flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
+                            <div className="bg-black/55 text-white text-xs px-3 py-1.5 rounded-lg backdrop-blur-sm flex items-center gap-1.5">
+                              <Maximize2 className="h-3.5 w-3.5" />
+                              Clique para ampliar
+                            </div>
+                          </div>
+                          {/* Mobile/tablet: always-visible badge */}
+                          <div className="absolute bottom-2 right-2 sm:hidden bg-black/60 text-white text-[10px] px-2 py-1 rounded-lg flex items-center gap-1 backdrop-blur-sm pointer-events-none">
+                            <Maximize2 className="h-3 w-3" />
+                            Ampliar
                           </div>
                         </div>
                         {question.imageSource && (
@@ -2921,16 +2932,27 @@ ${respostaAluno}`
             {currentQuestion.imageUrl && (
               <div className="space-y-2">
                 <div
-                  className="group relative cursor-zoom-in inline-block w-full"
+                  className="group relative cursor-pointer sm:cursor-zoom-in inline-block w-full select-none"
+                  style={{ touchAction: 'manipulation' }}
                   onClick={() => setExamImageModal({ src: currentQuestion.imageUrl! })}
                 >
                   <img
                     src={currentQuestion.imageUrl}
                     alt="Imagem da questão"
-                    className="max-w-full h-auto rounded-lg border transition-all group-hover:scale-[1.01] group-hover:shadow-lg"
+                    className="max-w-full h-auto rounded-lg border transition-all group-hover:brightness-95 pointer-events-none"
+                    draggable={false}
                   />
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="bg-black/50 text-white text-xs px-2 py-1 rounded-lg backdrop-blur-sm">Clique para ampliar</div>
+                  {/* Desktop: hover overlay */}
+                  <div className="absolute inset-0 hidden sm:flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
+                    <div className="bg-black/55 text-white text-xs px-3 py-1.5 rounded-lg backdrop-blur-sm flex items-center gap-1.5">
+                      <Maximize2 className="h-3.5 w-3.5" />
+                      Clique para ampliar
+                    </div>
+                  </div>
+                  {/* Mobile/tablet: always-visible badge */}
+                  <div className="absolute bottom-2 right-2 sm:hidden bg-black/60 text-white text-[10px] px-2 py-1 rounded-lg flex items-center gap-1 backdrop-blur-sm pointer-events-none">
+                    <Maximize2 className="h-3 w-3" />
+                    Ampliar
                   </div>
                 </div>
                 {currentQuestion.imageSource && (
@@ -3052,6 +3074,27 @@ ${respostaAluno}`
                   <span>{(currentAnswer?.discursiveText || '').length} caracteres</span>
                   <span>{(currentAnswer?.discursiveText || '').split(/\s+/).filter(w => w.length > 0).length} palavras</span>
                 </div>
+
+                {/* Instruções de correção via IA */}
+                {currentQuestion.explanation && (
+                  <div className="rounded-xl border border-blue-200/60 dark:border-blue-800/40 bg-blue-50/60 dark:bg-blue-950/20 p-3.5 space-y-2.5">
+                    <div className="flex items-center gap-2">
+                      <div className="shrink-0 p-1 rounded-lg bg-blue-100 dark:bg-blue-900/40">
+                        <Bot className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                      </div>
+                      <p className="text-xs font-semibold text-blue-700 dark:text-blue-300">Como corrigir com IA</p>
+                    </div>
+                    <ol className="text-xs text-blue-700/80 dark:text-blue-300/80 space-y-1.5 list-decimal list-inside leading-relaxed">
+                      <li>Escreva sua resposta acima e clique em <span className="font-semibold">Copiar Prompt de Correção</span></li>
+                      <li>Abra seu chatbot preferido — <span className="font-medium">ChatGPT, Gemini, Claude ou Grok</span></li>
+                      <li>Cole o prompt copiado e aguarde a correção</li>
+                      <li>Volte aqui e atribua a nota indicada pelo chatbot</li>
+                    </ol>
+                    <p className="text-[11px] text-blue-600/60 dark:text-blue-400/50 leading-relaxed border-t border-blue-200/40 dark:border-blue-700/30 pt-2">
+                      O prompt foi criado para ser humano e pedagógico — avalia o entendimento geral do conteúdo com base no contexto da questão, reconhecendo que é praticamente impossível uma resposta discursiva 100% completa.
+                    </p>
+                  </div>
+                )}
 
                 {/* Autoavaliação inline — aparece quando há texto */}
                 {currentAnswer?.discursiveText?.trim() && (
