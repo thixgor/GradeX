@@ -82,6 +82,15 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
   const multipleChoiceQuestions = exam.questions.filter(q => q.type === 'multiple-choice')
   const discursiveQuestions = exam.questions.filter(q => q.type === 'discursive')
   const totalQuestions = exam.questions.length
+  const isPracticeExam = !!exam.isPracticeExam
+
+  // Média de autoavaliação para provas práticas
+  const selfScores = discursiveQuestions
+    .map(q => submission.answers.find(a => a.questionId === q.id)?.discursiveSelfScore)
+    .filter((s): s is number => s !== undefined)
+  const avgSelfScore = selfScores.length > 0
+    ? Math.round(selfScores.reduce((a, b) => a + b, 0) / selfScores.length)
+    : null
 
   const correctAnswers = submission.answers.filter(a => {
     const question = exam.questions.find(q => q.id === a.questionId)
@@ -154,14 +163,18 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
                   <div className="bg-purple-100 dark:bg-purple-900 rounded-lg p-4 text-center">
                     <p className="text-sm text-muted-foreground mb-1">Discursivas</p>
                     <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">
-                      {submission.correctionStatus === 'corrected'
-                        ? submission.discursiveScore?.toFixed(2) || 0
-                        : 'Pendente'}
+                      {isPracticeExam
+                        ? (avgSelfScore !== null ? `${avgSelfScore}%` : '—')
+                        : submission.correctionStatus === 'corrected'
+                          ? submission.discursiveScore?.toFixed(2) || 0
+                          : 'Pendente'}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {submission.correctionStatus === 'corrected'
-                        ? `/ ${discursiveQuestions.reduce((sum, q) => sum + (q.maxScore || 10), 0)}`
-                        : 'Aguardando correção'}
+                      {isPracticeExam
+                        ? 'Autoavaliação'
+                        : submission.correctionStatus === 'corrected'
+                          ? `/ ${discursiveQuestions.reduce((sum, q) => sum + (q.maxScore || 10), 0)}`
+                          : 'Aguardando correção'}
                     </p>
                   </div>
                 )}
@@ -337,12 +350,28 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
                   } else {
                     // Questão discursiva
                     const correction = submission.corrections?.find(c => c.questionId === question.id)
+                    const selfScore = userAnswer?.discursiveSelfScore
 
                     return (
                       <div key={question.id} className="border-2 border-purple-200 dark:border-purple-800 rounded-lg p-4">
                         <div className="flex items-start justify-between mb-3">
                           <h3 className="font-semibold">Questão {question.number} (Discursiva)</h3>
-                          {correction ? (
+                          {isPracticeExam ? (
+                            selfScore !== undefined ? (
+                              <div className="flex items-center gap-1.5">
+                                <span className={`text-sm font-bold px-2 py-0.5 rounded-full ${
+                                  selfScore >= 70 ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' :
+                                  selfScore >= 40 ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300' :
+                                  'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300'
+                                }`}>
+                                  {selfScore}%
+                                </span>
+                                <span className="text-xs text-muted-foreground">Autoavaliação</span>
+                              </div>
+                            ) : (
+                              <span className="text-xs text-muted-foreground italic">Sem autoavaliação</span>
+                            )
+                          ) : correction ? (
                             <div className="flex items-center gap-1 text-purple-600 dark:text-purple-400">
                               <CheckCircle className="h-5 w-5" />
                               <span className="text-sm font-medium">Corrigida</span>
