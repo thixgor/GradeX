@@ -480,18 +480,33 @@ ${respostaAluno}`
 
             {/* Imagem da questão */}
             {questao.imagemUrl && (
-              <div
-                className="mt-4 flex justify-center group relative cursor-pointer"
-                onClick={() => {
-                  setModalImageUrl(questao.imagemUrl!)
-                  setShowImageModal(true)
-                }}
-              >
-                <img
-                  src={questao.imagemUrl}
-                  alt="Imagem da questão"
-                  className="max-w-full md:max-w-md max-h-80 w-auto h-auto rounded-lg border object-contain transition-all group-hover:scale-[1.02] group-hover:shadow-lg"
-                />
+              <div className="mt-4 flex flex-col items-center gap-1.5">
+                <div
+                  className="group relative cursor-pointer select-none"
+                  style={{ touchAction: 'manipulation' }}
+                  onClick={() => {
+                    setModalImageUrl(questao.imagemUrl!)
+                    setShowImageModal(true)
+                  }}
+                >
+                  <img
+                    src={questao.imagemUrl}
+                    alt="Imagem da questão"
+                    className="max-w-full md:max-w-md max-h-80 w-auto h-auto rounded-lg border object-contain transition-all group-hover:brightness-95 pointer-events-none"
+                    draggable={false}
+                  />
+                  {/* Desktop: hover overlay */}
+                  <div className="absolute inset-0 hidden sm:flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
+                    <div className="bg-black/55 text-white text-xs px-3 py-1.5 rounded-lg backdrop-blur-sm">
+                      Clique para ampliar
+                    </div>
+                  </div>
+                  {/* Mobile/tablet: always-visible badge */}
+                  <div className="absolute bottom-2 right-2 sm:hidden bg-black/60 text-white text-[10px] px-2 py-1 rounded-lg flex items-center gap-1 backdrop-blur-sm pointer-events-none">
+                    Ampliar
+                  </div>
+                </div>
+                <p className="text-[11px] text-muted-foreground">Toque para ampliar a imagem</p>
               </div>
             )}
 

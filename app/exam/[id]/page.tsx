@@ -3534,6 +3534,16 @@ ${respostaAluno}`
           />
         )
       })()}
+
+      {/* Modal de imagem expandida */}
+      {examImageModal && (
+        <ImageModal
+          isOpen={!!examImageModal}
+          onClose={() => setExamImageModal(null)}
+          src={examImageModal.src}
+          alt="Imagem da questão"
+        />
+      )}
     </div>
     </>
   )
