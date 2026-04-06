@@ -233,7 +233,7 @@ export default function ProfilePage() {
       const data = await res.json()
       const { generateGabaritoPDF, downloadPDF } = await import('@/lib/pdf-generator')
       const blob = await generateGabaritoPDF(data.exam)
-      downloadPDF(blob, `Gabarito-${data.exam.title}.pdf`)
+      downloadPDF(blob, `Gabarito-${data.exam.title}.pdf`, { type: 'gabarito_pdf', resourceId: examId, resourceTitle: data.exam.title })
     } catch (error: any) {
       setToastMessage('Erro ao gerar gabarito: ' + error.message)
       setToastOpen(true)
@@ -247,7 +247,7 @@ export default function ProfilePage() {
       const data = await res.json()
       const { generateExamPDF, downloadPDF } = await import('@/lib/pdf-generator')
       const blob = await generateExamPDF(data.exam, userId)
-      downloadPDF(blob, `Prova-${data.exam.title}.pdf`)
+      downloadPDF(blob, `Prova-${data.exam.title}.pdf`, { type: 'exam_pdf', resourceId: examId, resourceTitle: data.exam.title })
     } catch (error: any) {
       setToastMessage('Erro ao gerar PDF da prova: ' + error.message)
       setToastOpen(true)
@@ -265,7 +265,7 @@ export default function ProfilePage() {
       const answers = submissionData.submission?.answers || []
       const { generateStudentAnswersPDF, downloadPDF } = await import('@/lib/pdf-generator')
       const blob = await generateStudentAnswersPDF(examData.exam, answers, submission.userName || userName)
-      downloadPDF(blob, `Minhas-Respostas-${examData.exam.title}.pdf`)
+      downloadPDF(blob, `Minhas-Respostas-${examData.exam.title}.pdf`, { type: 'student_answers_pdf', resourceId: submission.examId, resourceTitle: examData.exam.title })
     } catch (error: any) {
       setToastMessage('Erro ao gerar PDF de respostas: ' + error.message)
       setToastOpen(true)

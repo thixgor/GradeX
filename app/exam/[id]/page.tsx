@@ -420,7 +420,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
         setPdfGenerating('Prova')
         const { generateExamPDF, downloadPDF } = await import('@/lib/pdf-generator')
         const blob = await generateExamPDF(exam!, userId)
-        downloadPDF(blob, `${exam!.title}.pdf`)
+        downloadPDF(blob, `${exam!.title}.pdf`, { type: 'exam_pdf', resourceId: id as string, resourceTitle: exam!.title })
       }
     } catch (error: any) {
       showToastMessage('Erro ao baixar PDF: ' + error.message)
@@ -1659,7 +1659,7 @@ ${respostaAluno}`
                     try {
                       const { generateAnnotationsPDF, downloadPDF } = await import('@/lib/pdf-generator')
                       const blob = await generateAnnotationsPDF(exam.title, annotations)
-                      downloadPDF(blob, `Anotacoes-${exam.title}.pdf`)
+                      downloadPDF(blob, `Anotacoes-${exam.title}.pdf`, { type: 'annotations_pdf', resourceId: id as string, resourceTitle: exam.title })
                     } catch (error: any) {
                       showToastMessage('Erro ao gerar PDF de anotações: ' + error.message)
                     }
@@ -2282,7 +2282,7 @@ ${respostaAluno}`
                         const data = await res.json()
                         const { generateGabaritoPDF, downloadPDF } = await import('@/lib/pdf-generator')
                         const blob = await generateGabaritoPDF(data.exam)
-                        downloadPDF(blob, `Gabarito-${data.exam.title}.pdf`)
+                        downloadPDF(blob, `Gabarito-${data.exam.title}.pdf`, { type: 'gabarito_pdf', resourceId: id as string, resourceTitle: data.exam.title })
                       } catch (error: any) {
                         showToastMessage('Erro ao gerar gabarito: ' + error.message)
                       } finally {

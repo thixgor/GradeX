@@ -1589,6 +1589,7 @@ function PatologiaContent() {
                     a.download = `${patologia.slug || 'patologia'}.pdf`
                     a.click()
                     URL.revokeObjectURL(url)
+                    fetch('/api/track/download', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'patologia_pdf', resourceId: patologia.slug, resourceTitle: patologia.nome }) }).catch(() => {})
                   } finally {
                     setPdfProgress(null)
                   }

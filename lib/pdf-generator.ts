@@ -493,7 +493,11 @@ export async function generateGabaritoPDF(exam: Exam): Promise<Blob> {
   return doc.output('blob')
 }
 
-export function downloadPDF(blob: Blob, filename: string) {
+export function downloadPDF(
+  blob: Blob,
+  filename: string,
+  trackData?: { type: string; resourceId?: string; resourceTitle?: string }
+) {
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
@@ -502,6 +506,15 @@ export function downloadPDF(blob: Blob, filename: string) {
   a.click()
   document.body.removeChild(a)
   URL.revokeObjectURL(url)
+
+  // Fire-and-forget download tracking
+  if (trackData) {
+    fetch('/api/track/download', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(trackData),
+    }).catch(() => {})
+  }
 }
 
 /**

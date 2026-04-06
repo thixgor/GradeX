@@ -362,7 +362,7 @@ function ProvasContent() {
       const blob = await generateGroupPDF(groupExams, type, (done, total) => {
         setGroupPdfProgress({ done, total, label: labels[type] })
       })
-      downloadPDF(blob, `${slug}-${suffixes[type]}.pdf`)
+      downloadPDF(blob, `${slug}-${suffixes[type]}.pdf`, { type: 'group_pdf', resourceId: groupName, resourceTitle: `${groupName} (${labels[type]})` })
     } catch (err) {
       console.error('Erro ao gerar PDF do grupo:', err)
     } finally {
@@ -378,13 +378,13 @@ function ProvasContent() {
 
       if (type === 'exam') {
         const blob = await generateExamPDF(exam)
-        downloadPDF(blob, `prova-${slug}.pdf`)
+        downloadPDF(blob, `prova-${slug}.pdf`, { type: 'exam_pdf', resourceId: (exam as any)._id, resourceTitle: exam.title })
       } else if (type === 'with-answers') {
         const blob = await generateExamWithAnswersPDF(exam)
-        downloadPDF(blob, `prova-gabarito-comentado-${slug}.pdf`)
+        downloadPDF(blob, `prova-gabarito-comentado-${slug}.pdf`, { type: 'exam_answers_pdf', resourceId: (exam as any)._id, resourceTitle: exam.title })
       } else {
         const blob = await generateGabaritoPDF(exam)
-        downloadPDF(blob, `gabarito-${slug}.pdf`)
+        downloadPDF(blob, `gabarito-${slug}.pdf`, { type: 'gabarito_pdf', resourceId: (exam as any)._id, resourceTitle: exam.title })
       }
     } catch (err) {
       console.error('Erro ao gerar PDF:', err)

@@ -12,7 +12,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import {
   ArrowLeft, Users, FileText, CheckCircle, TrendingUp, Award, Clock,
   BarChart3, Eye, Search, ChevronDown, ChevronRight, Activity,
-  UserCheck, UserX, Calendar, Zap, Target
+  UserCheck, UserX, Calendar, Zap, Target, Download, BookOpen, Stethoscope
 } from 'lucide-react'
 
 // ─── Types ─────────────────────────────────────────────────────
@@ -69,6 +69,18 @@ interface Stats {
   inactiveUsers: number
   activeLast7d: number
   activeLast30d: number
+  // Manual Clínico
+  totalPatologias: number
+  patologiasByArea: { _id: string; count: number }[]
+  patologiasBySistema: { _id: string; count: number }[]
+  // Downloads
+  totalDownloads: number
+  downloadsByType: Record<string, number>
+  topDownloadedExams: { _id: string; title: string; count: number; lastDownload: string }[]
+  topDownloadedPatologias: { _id: string; title: string; count: number; lastDownload: string }[]
+  downloadsByUser: { _id: string; userName: string; userEmail: string; count: number; lastDownload: string }[]
+  recentDownloads: { userId: string; userName: string; userEmail: string; type: string; resourceTitle: string; downloadedAt: string }[]
+  manualCompletoDownloads: number
 }
 
 // ─── Helpers ───────────────────────────────────────────────────
@@ -94,6 +106,17 @@ const METHOD_LABELS: Record<string, string> = {
   normal: 'Normal',
   tri: 'TRI',
   discursive: 'Discursiva',
+}
+
+const DOWNLOAD_TYPE_LABELS: Record<string, string> = {
+  exam_pdf: 'Prova (PDF)',
+  gabarito_pdf: 'Gabarito',
+  exam_answers_pdf: 'Prova + Gabarito',
+  group_pdf: 'Grupo (PDF)',
+  patologia_pdf: 'Patologia (PDF)',
+  manual_completo_pdf: 'Manual Completo',
+  student_answers_pdf: 'Minhas Respostas',
+  annotations_pdf: 'Anotações',
 }
 
 // ─── Bar component ─────────────────────────────────────────────
@@ -350,10 +373,12 @@ export default function AdminStatsPage() {
 
         {/* ─── TABS ─────────────────────────────────────────────── */}
         <Tabs defaultValue="overview" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto">
+          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 h-auto">
             <TabsTrigger value="overview" className="text-xs sm:text-sm py-2">Visão Geral</TabsTrigger>
             <TabsTrigger value="users" className="text-xs sm:text-sm py-2">Usuários</TabsTrigger>
             <TabsTrigger value="exams" className="text-xs sm:text-sm py-2">Provas</TabsTrigger>
+            <TabsTrigger value="manual" className="text-xs sm:text-sm py-2">Manual Clínico</TabsTrigger>
+            <TabsTrigger value="downloads" className="text-xs sm:text-sm py-2">Downloads</TabsTrigger>
             <TabsTrigger value="analytics" className="text-xs sm:text-sm py-2">Analytics</TabsTrigger>
           </TabsList>
 
@@ -751,6 +776,302 @@ export default function AdminStatsPage() {
                       <Button variant="outline" size="sm" disabled={examPage === 0} onClick={() => setExamPage(p => p - 1)}>Anterior</Button>
                       <Button variant="outline" size="sm" disabled={examPage >= totalExamPages - 1} onClick={() => setExamPage(p => p + 1)}>Próxima</Button>
                     </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* ══════════════════════════════════════════════════════
+              TAB: MANUAL CLÍNICO
+              ══════════════════════════════════════════════════════ */}
+          <TabsContent value="manual" className="space-y-6">
+            {/* Summary cards */}
+            <div className="grid gap-3 sm:gap-4 grid-cols-2 sm:grid-cols-3 mb-2">
+              <Card>
+                <CardContent className="flex items-center gap-3 p-4">
+                  <div className="p-2 rounded-lg bg-emerald-500/10"><Stethoscope className="h-4 w-4 text-emerald-600" /></div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Total Patologias</p>
+                    <p className="text-lg font-bold">{stats.totalPatologias}</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="flex items-center gap-3 p-4">
+                  <div className="p-2 rounded-lg bg-blue-500/10"><Download className="h-4 w-4 text-blue-600" /></div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">PDFs Individuais</p>
+                    <p className="text-lg font-bold">{stats.downloadsByType.patologia_pdf || 0}</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="flex items-center gap-3 p-4">
+                  <div className="p-2 rounded-lg bg-purple-500/10"><BookOpen className="h-4 w-4 text-purple-600" /></div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Manual Completo</p>
+                    <p className="text-lg font-bold">{stats.manualCompletoDownloads}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
+              {/* By area */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Patologias por Área</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {stats.patologiasByArea.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">Sem dados</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {stats.patologiasByArea.map(a => (
+                        <div key={a._id} className="flex items-center gap-3">
+                          <span className="text-sm font-medium w-32 truncate">{a._id}</span>
+                          <div className="flex-1"><Bar value={a.count} max={stats.patologiasByArea[0]?.count || 1} color="bg-emerald-500" /></div>
+                          <span className="text-xs text-muted-foreground w-8 text-right">{a.count}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* By sistema */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Patologias por Sistema</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {stats.patologiasBySistema.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">Sem dados</p>
+                  ) : (
+                    <div className="space-y-2 max-h-[400px] overflow-y-auto">
+                      {stats.patologiasBySistema.map(s => (
+                        <div key={s._id} className="flex items-center gap-3">
+                          <span className="text-xs font-medium w-40 truncate">{s._id}</span>
+                          <div className="flex-1"><Bar value={s.count} max={stats.patologiasBySistema[0]?.count || 1} color="bg-teal-500" /></div>
+                          <span className="text-xs text-muted-foreground w-8 text-right">{s.count}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Top downloaded patologias */}
+            <Card>
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <Download className="h-5 w-5 text-primary" />
+                  <CardTitle className="text-base">Patologias Mais Baixadas (PDF)</CardTitle>
+                </div>
+                <CardDescription>Ranking por número de downloads</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {stats.topDownloadedPatologias.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">Nenhum download registrado ainda. Os dados aparecerão conforme os usuários baixarem PDFs.</p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b bg-muted/50">
+                          <th className="text-left py-2 px-3 font-medium w-8">#</th>
+                          <th className="text-left py-2 px-3 font-medium">Patologia</th>
+                          <th className="text-center py-2 px-3 font-medium">Downloads</th>
+                          <th className="text-center py-2 px-3 font-medium hidden sm:table-cell">Último</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {stats.topDownloadedPatologias.map((p, i) => (
+                          <tr key={p._id} className="border-b last:border-0">
+                            <td className="py-2 px-3 text-muted-foreground">{i + 1}</td>
+                            <td className="py-2 px-3 font-medium truncate max-w-[250px]">{p.title}</td>
+                            <td className="py-2 px-3 text-center font-bold">{p.count}</td>
+                            <td className="py-2 px-3 text-center text-xs hidden sm:table-cell">{formatDate(p.lastDownload)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* ══════════════════════════════════════════════════════
+              TAB: DOWNLOADS
+              ══════════════════════════════════════════════════════ */}
+          <TabsContent value="downloads" className="space-y-6">
+            {/* Summary */}
+            <div className="grid gap-3 sm:gap-4 grid-cols-2 sm:grid-cols-4 mb-2">
+              <Card>
+                <CardContent className="flex items-center gap-3 p-4">
+                  <div className="p-2 rounded-lg bg-blue-500/10"><Download className="h-4 w-4 text-blue-600" /></div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Total Downloads</p>
+                    <p className="text-lg font-bold">{stats.totalDownloads}</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="flex items-center gap-3 p-4">
+                  <div className="p-2 rounded-lg bg-green-500/10"><FileText className="h-4 w-4 text-green-600" /></div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Provas (PDF)</p>
+                    <p className="text-lg font-bold">{(stats.downloadsByType.exam_pdf || 0) + (stats.downloadsByType.group_pdf || 0)}</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="flex items-center gap-3 p-4">
+                  <div className="p-2 rounded-lg bg-orange-500/10"><Stethoscope className="h-4 w-4 text-orange-600" /></div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Manual Clínico</p>
+                    <p className="text-lg font-bold">{(stats.downloadsByType.patologia_pdf || 0) + (stats.downloadsByType.manual_completo_pdf || 0)}</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="flex items-center gap-3 p-4">
+                  <div className="p-2 rounded-lg bg-purple-500/10"><BarChart3 className="h-4 w-4 text-purple-600" /></div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Gabaritos</p>
+                    <p className="text-lg font-bold">{(stats.downloadsByType.gabarito_pdf || 0) + (stats.downloadsByType.exam_answers_pdf || 0)}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Downloads by type */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Downloads por Tipo</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {stats.totalDownloads === 0 ? (
+                  <p className="text-sm text-muted-foreground">Nenhum download registrado ainda. Os dados aparecerão conforme os usuários baixarem PDFs.</p>
+                ) : (
+                  <div className="space-y-2">
+                    {Object.entries(stats.downloadsByType)
+                      .sort(([, a], [, b]) => b - a)
+                      .map(([type, count]) => (
+                        <div key={type} className="flex items-center gap-3">
+                          <span className="text-sm font-medium w-36 truncate">{DOWNLOAD_TYPE_LABELS[type] || type}</span>
+                          <div className="flex-1"><Bar value={count} max={Math.max(...Object.values(stats.downloadsByType), 1)} color="bg-primary" /></div>
+                          <span className="text-xs text-muted-foreground w-10 text-right">{count}</span>
+                        </div>
+                      ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
+              {/* Top downloaded exams */}
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-5 w-5 text-primary" />
+                    <CardTitle className="text-base">Provas Mais Baixadas</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {stats.topDownloadedExams.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">Sem downloads registrados</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {stats.topDownloadedExams.map((e, i) => (
+                        <div key={e._id} className="flex items-center gap-3">
+                          <div className="flex-shrink-0 w-7 h-7 rounded-full bg-blue-500/10 flex items-center justify-center">
+                            <span className="text-xs font-bold text-blue-600">{i + 1}</span>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium truncate">{e.title}</p>
+                            <p className="text-xs text-muted-foreground">{e.count} downloads</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Top downloaders */}
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center gap-2">
+                    <Users className="h-5 w-5 text-primary" />
+                    <CardTitle className="text-base">Quem Mais Baixou</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {stats.downloadsByUser.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">Sem downloads registrados</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {stats.downloadsByUser.map((u, i) => (
+                        <div key={u._id} className="flex items-center gap-3">
+                          <div className="flex-shrink-0 w-7 h-7 rounded-full bg-purple-500/10 flex items-center justify-center">
+                            <span className="text-xs font-bold text-purple-600 dark:text-purple-400">{i + 1}</span>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium truncate">{u.userName || 'Desconhecido'}</p>
+                            <p className="text-xs text-muted-foreground truncate">{u.userEmail} — {u.count} downloads</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Recent downloads */}
+            <Card>
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <Clock className="h-5 w-5 text-primary" />
+                  <CardTitle className="text-base">Downloads Recentes</CardTitle>
+                </div>
+                <CardDescription>Últimos 50 downloads na plataforma</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {stats.recentDownloads.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">Nenhum download registrado ainda.</p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b bg-muted/50">
+                          <th className="text-left py-2 px-3 font-medium">Usuário</th>
+                          <th className="text-left py-2 px-3 font-medium">Tipo</th>
+                          <th className="text-left py-2 px-3 font-medium">Recurso</th>
+                          <th className="text-center py-2 px-3 font-medium hidden sm:table-cell">Data</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {stats.recentDownloads.map((d, i) => (
+                          <tr key={i} className="border-b last:border-0">
+                            <td className="py-2 px-3">
+                              <p className="font-medium truncate max-w-[150px]">{d.userName || 'Desconhecido'}</p>
+                              <p className="text-xs text-muted-foreground truncate max-w-[150px]">{d.userEmail}</p>
+                            </td>
+                            <td className="py-2 px-3">
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+                                {DOWNLOAD_TYPE_LABELS[d.type] || d.type}
+                              </Badge>
+                            </td>
+                            <td className="py-2 px-3 truncate max-w-[200px]">{d.resourceTitle || '—'}</td>
+                            <td className="py-2 px-3 text-center text-xs hidden sm:table-cell">{formatDate(d.downloadedAt)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 )}
               </CardContent>

@@ -16,6 +16,8 @@ export async function GET() {
     const examsCol = db.collection('exams')
     const usersCol = db.collection('users')
     const subsCol = db.collection('submissions')
+    const patologiasCol = db.collection('patologias')
+    const downloadsCol = db.collection('download_logs')
 
     const now = new Date()
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
@@ -53,6 +55,18 @@ export async function GET() {
       userGrowthAgg,
       // NEW: Submissions per day-of-week
       dayOfWeekAgg,
+      // NEW: Patologia stats
+      totalPatologias,
+      patologiasByAreaAgg,
+      patologiasBySistemaAgg,
+      // NEW: Download logs
+      totalDownloads,
+      downloadsByTypeAgg,
+      topDownloadedExamsAgg,
+      topDownloadedPatologiasAgg,
+      downloadsByUserAgg,
+      recentDownloadsAgg,
+      manualCompletoDownloads,
     ] = await Promise.all([
       // --- Counts ---
       examsCol.countDocuments(),
@@ -215,6 +229,64 @@ export async function GET() {
         { $group: { _id: { $dayOfWeek: '$submittedAt' }, count: { $sum: 1 } } },
         { $sort: { _id: 1 } },
       ]).toArray(),
+
+      // --- Patologias: total ---
+      patologiasCol.countDocuments(),
+
+      // --- Patologias by area ---
+      patologiasCol.aggregate([
+        { $unwind: { path: '$areas', preserveNullAndEmptyArrays: true } },
+        { $group: { _id: { $ifNull: ['$areas', 'Não definida'] }, count: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+      ]).toArray(),
+
+      // --- Patologias by sistema ---
+      patologiasCol.aggregate([
+        { $group: { _id: { $ifNull: ['$sistema', 'Não definido'] }, count: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+      ]).toArray(),
+
+      // --- Downloads: total ---
+      downloadsCol.countDocuments(),
+
+      // --- Downloads by type ---
+      downloadsCol.aggregate([
+        { $group: { _id: '$type', count: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+      ]).toArray(),
+
+      // --- Top downloaded exams ---
+      downloadsCol.aggregate([
+        { $match: { type: { $in: ['exam_pdf', 'gabarito_pdf', 'exam_answers_pdf', 'group_pdf'] } } },
+        { $group: { _id: '$resourceId', title: { $first: '$resourceTitle' }, count: { $sum: 1 }, lastDownload: { $max: '$downloadedAt' } } },
+        { $sort: { count: -1 } },
+        { $limit: 20 },
+      ]).toArray(),
+
+      // --- Top downloaded patologias ---
+      downloadsCol.aggregate([
+        { $match: { type: 'patologia_pdf' } },
+        { $group: { _id: '$resourceId', title: { $first: '$resourceTitle' }, count: { $sum: 1 }, lastDownload: { $max: '$downloadedAt' } } },
+        { $sort: { count: -1 } },
+        { $limit: 20 },
+      ]).toArray(),
+
+      // --- Downloads by user (top 20) ---
+      downloadsCol.aggregate([
+        { $group: { _id: '$userId', userName: { $first: '$userName' }, userEmail: { $first: '$userEmail' }, count: { $sum: 1 }, lastDownload: { $max: '$downloadedAt' } } },
+        { $sort: { count: -1 } },
+        { $limit: 20 },
+      ]).toArray(),
+
+      // --- Recent downloads (last 50) ---
+      downloadsCol.aggregate([
+        { $sort: { downloadedAt: -1 } },
+        { $limit: 50 },
+        { $project: { userId: 1, userName: 1, userEmail: 1, type: 1, resourceTitle: 1, downloadedAt: 1 } },
+      ]).toArray(),
+
+      // --- Manual completo downloads count ---
+      downloadsCol.countDocuments({ type: 'manual_completo_pdf' }),
     ])
 
     // ─── POST-PROCESS (in-memory, zero DB calls) ──────────────────
@@ -312,6 +384,19 @@ export async function GET() {
     const activeLast7d = allUsersDetailed.filter(u => u.lastActivity && new Date(u.lastActivity) >= sevenDaysAgo).length
     const activeLast30d = allUsersDetailed.filter(u => u.lastActivity && new Date(u.lastActivity) >= thirtyDaysAgo).length
 
+    // Download type labels
+    const downloadTypeMap = new Map(downloadsByTypeAgg.map((d: any) => [d._id, d.count]))
+    const downloadsByType = {
+      exam_pdf: downloadTypeMap.get('exam_pdf') || 0,
+      gabarito_pdf: downloadTypeMap.get('gabarito_pdf') || 0,
+      exam_answers_pdf: downloadTypeMap.get('exam_answers_pdf') || 0,
+      group_pdf: downloadTypeMap.get('group_pdf') || 0,
+      patologia_pdf: downloadTypeMap.get('patologia_pdf') || 0,
+      manual_completo_pdf: downloadTypeMap.get('manual_completo_pdf') || 0,
+      student_answers_pdf: downloadTypeMap.get('student_answers_pdf') || 0,
+      annotations_pdf: downloadTypeMap.get('annotations_pdf') || 0,
+    }
+
     const stats = {
       // Overview
       totalExams,
@@ -342,6 +427,18 @@ export async function GET() {
       inactiveUsers,
       activeLast7d,
       activeLast30d,
+      // Manual Clínico
+      totalPatologias,
+      patologiasByArea: patologiasByAreaAgg,
+      patologiasBySistema: patologiasBySistemaAgg,
+      // Downloads
+      totalDownloads,
+      downloadsByType,
+      topDownloadedExams: topDownloadedExamsAgg,
+      topDownloadedPatologias: topDownloadedPatologiasAgg,
+      downloadsByUser: downloadsByUserAgg,
+      recentDownloads: recentDownloadsAgg,
+      manualCompletoDownloads,
     }
 
     return NextResponse.json({ stats })

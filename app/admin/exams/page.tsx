@@ -268,7 +268,7 @@ export default function AdminExamsPage() {
     try {
       const { generateExamPDF, downloadPDF } = await import('@/lib/pdf-generator')
       const blob = await generateExamPDF(exam)
-      downloadPDF(blob, `${exam.title}.pdf`)
+      downloadPDF(blob, `${exam.title}.pdf`, { type: 'exam_pdf', resourceId: (exam as any)._id, resourceTitle: exam.title })
     } catch (error: any) {
       console.error('Erro ao gerar PDF:', error)
       showToastMessage('Erro ao gerar PDF: ' + error.message)

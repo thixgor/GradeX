@@ -189,6 +189,7 @@ function ManualClinicoContent() {
       a.download = `manual-clinico-completo-${new Date().toISOString().slice(0, 10)}.pdf`
       a.click()
       URL.revokeObjectURL(url)
+      fetch('/api/track/download', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'manual_completo_pdf', resourceId: 'all', resourceTitle: 'Manual Clínico Completo' }) }).catch(() => {})
     } catch (err) {
       console.error('Erro ao gerar PDF:', err)
     } finally {
