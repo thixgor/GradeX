@@ -988,6 +988,15 @@
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.4) !important;
   transition: all 0.3s ease;
+  /* Ensure text is always visible */
+  color: hsl(var(--foreground)) !important;
+  color-scheme: light;
+}
+
+/* Light mode: options use light background */
+.auth-glass-input option {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
 }
 
 .auth-glass-input:focus {
@@ -999,12 +1008,26 @@
 .dark .auth-glass-input {
   background: rgba(255, 255, 255, 0.06) !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  /* Tell browser to render native controls (select dropdown, date picker) with dark style */
+  color-scheme: dark;
+}
+
+/* Dark mode: options use dark background so text stays readable */
+.dark .auth-glass-input option {
+  background-color: hsl(222 47% 11%);
+  color: hsl(210 40% 98%);
 }
 
 .dark .auth-glass-input:focus {
   background: rgba(255, 255, 255, 0.1) !important;
   border-color: rgba(70, 129, 82, 0.5) !important;
   box-shadow: 0 0 0 3px rgba(70, 129, 82, 0.15), 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Global fix: any native <select> using bg-background must render options correctly */
+.dark select option {
+  background-color: hsl(222 47% 11%);
+  color: hsl(210 40% 98%);
 }
 
 /* Auth background ambient blobs */
