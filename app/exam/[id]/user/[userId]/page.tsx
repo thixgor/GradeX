@@ -56,7 +56,8 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
     } catch (error: any) {
       setToastMessage(error.message)
       setToastOpen(true)
-      setTimeout(() => router.push(`/exam/${id}/results`), 2000)
+      // Só redireciona para resultados em erros de prova (não encontrada)
+      // Erros de submissão (sem permissão, não encontrada) ficam na página
     } finally {
       setLoading(false)
     }

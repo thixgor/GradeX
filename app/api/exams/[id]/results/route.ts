@@ -33,9 +33,9 @@ export async function GET(
       return NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 })
     }
 
-    // Verifica se a prova terminou
+    // Verifica se a prova terminou (provas práticas não têm restrição de tempo)
     const now = new Date()
-    if (now < exam.endTime) {
+    if (!exam.isPracticeExam && now < exam.endTime) {
       return NextResponse.json(
         { error: 'Prova ainda não terminou' },
         { status: 400 }
