@@ -145,14 +145,14 @@ export interface Exam {
 export type ExamGroupType = 'personal' | 'general' // Pessoal (criado por usuário) ou Geral (criado por admin)
 
 export type ExamGroupCategory = 'faculdade' | 'plataforma'
-export type ExamGroupCourse = 'medicina-afya' | 'psicologia-afya' | 'biomedicina-afya' | 'odontologia-afya' | string
+export type ExamGroupCourse = 'medicina' | 'psicologia' | 'biomedicina' | 'odontologia' | string
 
 export interface ExamGroup {
   _id?: string | import('mongodb').ObjectId
   name: string // Nome do grupo
   type: ExamGroupType // 'personal' ou 'general'
   category?: ExamGroupCategory // 'faculdade' (provas antigas da faculdade) ou 'plataforma'
-  course?: ExamGroupCourse // Curso vinculado (ex: 'medicina-afya')
+  course?: ExamGroupCourse // Curso vinculado (ex: 'medicina')
   description?: string // Descrição opcional
   color?: string // Cor do grupo (hex) para identificação visual
   icon?: string // Ícone opcional (emoji ou nome de ícone)
@@ -229,9 +229,9 @@ export interface User {
   // Informações pessoais obrigatórias
   cpf?: string // CPF do usuário (único, obrigatório no cadastro)
   dateOfBirth?: Date // Data de nascimento (obrigatória no cadastro)
-  // Informações sobre Afya
-  isAfyaMedicineStudent?: boolean // Se é estudante de Medicina da Afya
-  afyaUnit?: string // Unidade da Afya (se isAfyaMedicineStudent = true)
+  // Informações sobre a instituição do estudante
+  isAfyaMedicineStudent?: boolean // Se é estudante de Medicina
+  afyaUnit?: string // Unidade/campus do estudante (se isAfyaMedicineStudent = true)
   // Campos de banimento
   banned?: boolean
   banReason?: BanReason

@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import LandingPage from '@/components/landing-page'
 import { PageLoading } from '@/components/page-loading'
@@ -11,13 +11,15 @@ function HomeContent() {
   const [loading, setLoading] = useState(true)
   const [showLanding, setShowLanding] = useState(false)
   const [landingPageEnabled, setLandingPageEnabled] = useState(true)
+  const redirectingRef = useRef(false)
 
   const forceLanding = searchParams.get('landing') === 'true'
 
   useEffect(() => {
-    // Timeout de segurança - se após 3s ainda não resolveu, mostrar landing
+    // Timeout de segurança - se após 3s ainda não resolveu, mostrar landing.
+    // Não dispara se já iniciamos um redirect para o dashboard.
     const safetyTimeout = setTimeout(() => {
-      if (loading) {
+      if (loading && !redirectingRef.current) {
         setShowLanding(true)
         setLoading(false)
       }
@@ -30,13 +32,11 @@ function HomeContent() {
 
   async function checkAuth() {
     try {
-      // Fazer as duas requests em paralelo
       const [authRes, settingsRes] = await Promise.all([
         fetch('/api/auth/me').catch(() => null),
         fetch('/api/admin/settings').catch(() => null),
       ])
 
-      // Processar settings
       if (settingsRes?.ok) {
         try {
           const data = await settingsRes.json()
@@ -44,17 +44,16 @@ function HomeContent() {
         } catch { /* ignore */ }
       }
 
-      // Processar auth
       if (authRes?.ok && !forceLanding) {
+        // Sinaliza que estamos redirecionando — impede o safetyTimeout de mostrar a landing
+        redirectingRef.current = true
         router.replace('/dashboard')
         return
       }
 
-      // Não autenticado ou forçando landing
       setShowLanding(true)
       setLoading(false)
-    } catch (error) {
-      // Em caso de erro, mostrar landing
+    } catch {
       setShowLanding(true)
       setLoading(false)
     }

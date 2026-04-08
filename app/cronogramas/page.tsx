@@ -11,10 +11,10 @@ import { Plus, Calendar, Download, Edit2, Trash2, Sparkles, Clock, BookOpen, Tar
 import { CronogramaGerado, TEMPLATES, TopicItem } from '@/lib/cronograma-types'
 import { AccountType } from '@/lib/types'
 import { getCronogramasLimit } from '@/lib/tier-limits'
-import { getMedicinaAFYATopicos } from '@/lib/medicina-afya-periodos-helper'
-import { getPsicologiaAFYATopicos } from '@/lib/psicologia-afya-periodos-helper'
-import { getBiomedicinaAFYATopicos } from '@/lib/biomedicina-afya-periodos-helper'
-import { getOdontologiaAFYATopicos } from '@/lib/odontologia-afya-periodos-helper'
+import { getMedicinaTopicos } from '@/lib/medicina-periodos-helper'
+import { getPsicologiaTopicos } from '@/lib/psicologia-periodos-helper'
+import { getBiomedicinaTopicos } from '@/lib/biomedicina-periodos-helper'
+import { getOdontologiaTopicos } from '@/lib/odontologia-periodos-helper'
 
 function CronogramasContent() {
   const router = useRouter()
@@ -26,7 +26,7 @@ function CronogramasContent() {
   const userRole = isAdmin ? 'admin' : 'user'
 
   // Conteúdo Programático states
-  type ConteudoModelo = 'medicina-afya' | 'psicologia-afya' | 'biomedicina-afya' | 'odontologia-afya' | 'enem' | 'uerj'
+  type ConteudoModelo = 'medicina' | 'psicologia' | 'biomedicina' | 'odontologia' | 'enem' | 'uerj'
   const [showConteudo, setShowConteudo] = useState(false)
   const [conteudoModelo, setConteudoModelo] = useState<ConteudoModelo | null>(null)
   const [conteudoPeriodo, setConteudoPeriodo] = useState<number>(1)
@@ -232,10 +232,10 @@ function CronogramasContent() {
 
   // Conteúdo Programático helpers
   const modelosConteudo = [
-    { id: 'medicina-afya' as ConteudoModelo, nome: 'Medicina AFYA', periodos: [1, 2, 3, 4, 5], icon: '🩺' },
-    { id: 'psicologia-afya' as ConteudoModelo, nome: 'Psicologia AFYA', periodos: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], icon: '🧠' },
-    { id: 'biomedicina-afya' as ConteudoModelo, nome: 'Biomedicina AFYA', periodos: [1, 2, 3, 4, 5, 6, 7], icon: '🔬' },
-    { id: 'odontologia-afya' as ConteudoModelo, nome: 'Odontologia AFYA', periodos: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], icon: '🦷' },
+    { id: 'medicina' as ConteudoModelo, nome: 'Ciências Médicas', periodos: [1, 2, 3, 4, 5], icon: '🩺' },
+    { id: 'psicologia' as ConteudoModelo, nome: 'Ciências Psicossociais', periodos: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], icon: '🧠' },
+    { id: 'biomedicina' as ConteudoModelo, nome: 'Ciências Biomédicas', periodos: [1, 2, 3, 4, 5, 6, 7], icon: '🔬' },
+    { id: 'odontologia' as ConteudoModelo, nome: 'Ciências Odontológicas', periodos: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], icon: '🦷' },
     { id: 'enem' as ConteudoModelo, nome: 'ENEM', periodos: [], icon: '📝' },
     { id: 'uerj' as ConteudoModelo, nome: 'UERJ', periodos: [], icon: '🎓' },
   ]
@@ -243,10 +243,10 @@ function CronogramasContent() {
   function getConteudoTopicos(): TopicItem[] {
     if (!conteudoModelo) return []
     switch (conteudoModelo) {
-      case 'medicina-afya': return getMedicinaAFYATopicos(conteudoPeriodo as any) as TopicItem[]
-      case 'psicologia-afya': return getPsicologiaAFYATopicos(conteudoPeriodo as any) as TopicItem[]
-      case 'biomedicina-afya': return getBiomedicinaAFYATopicos(conteudoPeriodo as any) as TopicItem[]
-      case 'odontologia-afya': return getOdontologiaAFYATopicos(conteudoPeriodo as any) as TopicItem[]
+      case 'medicina': return getMedicinaTopicos(conteudoPeriodo as any) as TopicItem[]
+      case 'psicologia': return getPsicologiaTopicos(conteudoPeriodo as any) as TopicItem[]
+      case 'biomedicina': return getBiomedicinaTopicos(conteudoPeriodo as any) as TopicItem[]
+      case 'odontologia': return getOdontologiaTopicos(conteudoPeriodo as any) as TopicItem[]
       case 'enem': return TEMPLATES['enem'].topicos
       case 'uerj': return TEMPLATES['uerj'].topicos
       default: return []
@@ -963,7 +963,7 @@ function CronogramasContent() {
                           <div className="backdrop-blur-sm bg-white/10 dark:bg-white/5 rounded-xl p-3 border border-white/20 dark:border-white/5">
                             <p className="text-muted-foreground text-xs">Período</p>
                             <p className="font-semibold text-foreground">
-                              {cronograma.config?.modelo === 'medicina-afya'
+                              {cronograma.config?.modelo === 'medicina'
                                 ? `Período ${cronograma.config?.tempoEstudo ? Object.keys(cronograma.config).length : '?'}`
                                 : 'Geral'
                               }

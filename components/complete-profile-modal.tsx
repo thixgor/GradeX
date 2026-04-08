@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { AlertCircle } from 'lucide-react'
-import { AFYA_UNITS } from '@/lib/afya-units'
+import { INSTITUTION_UNITS } from '@/lib/institution-units'
 
 interface CompleteProfileModalProps {
   open: boolean
@@ -44,7 +44,7 @@ export function CompleteProfileModal({
     }
 
     if (isAfyaMedicineStudent && !afyaUnit) {
-      setError('Selecione uma unidade Afya')
+      setError('Selecione sua unidade')
       return
     }
 
@@ -104,13 +104,13 @@ export function CompleteProfileModal({
                   disabled={isLoading}
                   className="w-4 h-4"
                 />
-                Sou estudante de Medicina da Afya
+                Sou estudante de Ciências Médicas
               </Label>
             </div>
 
             {isAfyaMedicineStudent && (
               <div className="space-y-2">
-                <Label htmlFor="afyaUnit">Unidade Afya</Label>
+                <Label htmlFor="afyaUnit">Unidade</Label>
                 <select
                   id="afyaUnit"
                   value={afyaUnit}
@@ -119,7 +119,7 @@ export function CompleteProfileModal({
                   className="w-full px-3 py-2 border border-input rounded-md bg-background text-sm"
                 >
                   <option value="">Selecione uma unidade...</option>
-                  {AFYA_UNITS.map((unit) => (
+                  {INSTITUTION_UNITS.map((unit) => (
                     <option key={unit} value={unit}>
                       {unit}
                     </option>

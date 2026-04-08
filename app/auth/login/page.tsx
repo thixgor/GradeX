@@ -14,7 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { BanReasonLabels, BanReason } from '@/lib/types'
 import { Ban, AlertCircle } from 'lucide-react'
 import { ADMIN_EMAILS } from '@/lib/constants'
-import { AFYA_UNITS } from '@/lib/afya-units'
+import { INSTITUTION_UNITS } from '@/lib/institution-units'
 import { GoogleProfileSetupDialog } from '@/components/google-profile-setup-dialog'
 
 declare global {
@@ -168,7 +168,7 @@ export default function LoginPage() {
         }
 
         if (formData.isAfyaMedicineStudent && !formData.afyaUnit) {
-          setError('Selecione sua unidade Afya')
+          setError('Selecione sua unidade')
           setLoading(false)
           return
         }
@@ -495,7 +495,7 @@ export default function LoginPage() {
 
                     <div className="space-y-3 p-4 rounded-xl bg-[#E2A43E]/5 border border-[#E2A43E]/15">
                       <p className="text-sm font-medium">
-                        Voce e estudante de Medicina da Afya?
+                        Você é estudante de Ciências Médicas?
                       </p>
                       <div className="flex gap-2">
                         <Button
@@ -524,7 +524,7 @@ export default function LoginPage() {
                         exit={{ opacity: 0, height: 0 }}
                         className="space-y-2"
                       >
-                        <Label htmlFor="afyaUnit" className="text-xs font-medium">Sua Unidade Afya *</Label>
+                        <Label htmlFor="afyaUnit" className="text-xs font-medium">Sua Unidade *</Label>
                         <select
                           id="afyaUnit"
                           className="flex h-11 w-full rounded-xl auth-glass-input px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -533,7 +533,7 @@ export default function LoginPage() {
                           required={formData.isAfyaMedicineStudent}
                         >
                           <option value="">Selecione sua unidade...</option>
-                          {AFYA_UNITS.map((unit) => (
+                          {INSTITUTION_UNITS.map((unit) => (
                             <option key={unit} value={unit}>{unit}</option>
                           ))}
                         </select>

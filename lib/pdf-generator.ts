@@ -276,6 +276,11 @@ function addDomineAquiHeader(doc: jsPDF, pageWidth: number, margin: number, subt
   doc.setTextColor(255, 255, 255)
   doc.text('www.domineaqui.com.br', pageWidth - 62, 19, { align: 'left' })
 
+  // Reset text color to body default so callers don't inherit white text
+  doc.setTextColor(...CINZA_TEXTO)
+  doc.setFontSize(10)
+  doc.setFont(FONT, 'normal')
+
   return 40
 }
 

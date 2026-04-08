@@ -37,11 +37,11 @@ import { ToastAlert } from '@/components/ui/toast-alert'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { cn } from '@/lib/utils'
 import { AccountType, FlashcardDeck, FlashcardCard, FlashcardDifficultyFeedback } from '@/lib/types'
-import { TopicItem, MedicinaAFYAPeriodo, PsicologiaAFYAPeriodo, BiomedicinaAFYAPeriodo, OdontologiaAFYAPeriodo, TEMPLATES } from '@/lib/cronograma-types'
-import { getMedicinaAFYATopicos } from '@/lib/medicina-afya-periodos-helper'
-import { getPsicologiaAFYATopicos } from '@/lib/psicologia-afya-periodos-helper'
-import { getBiomedicinaAFYATopicos } from '@/lib/biomedicina-afya-periodos-helper'
-import { getOdontologiaAFYATopicos } from '@/lib/odontologia-afya-periodos-helper'
+import { TopicItem, MedicinaPeriodo, PsicologiaPeriodo, BiomedicinaPeriodo, OdontologiaPeriodo, TEMPLATES } from '@/lib/cronograma-types'
+import { getMedicinaTopicos } from '@/lib/medicina-periodos-helper'
+import { getPsicologiaTopicos } from '@/lib/psicologia-periodos-helper'
+import { getBiomedicinaTopicos } from '@/lib/biomedicina-periodos-helper'
+import { getOdontologiaTopicos } from '@/lib/odontologia-periodos-helper'
 import { AppShell as LayoutShell } from '@/components/app-shell'
 import { FocusSessionButton } from '@/components/focus-session-button'
 import { NotificationsBell } from '@/components/notifications-bell'
@@ -139,11 +139,11 @@ export default function FlashcardsPage() {
 
   // Cronograma states
   const [showCronogramaSelector, setShowCronogramaSelector] = useState(false)
-  const [selectedCronogramaType, setSelectedCronogramaType] = useState<'enem' | 'medicina-afya' | 'psicologia-afya' | 'biomedicina-afya' | 'odontologia-afya' | 'uerj' | null>(null)
-  const [selectedMedicinaAFYAPeriodo, setSelectedMedicinaAFYAPeriodo] = useState<MedicinaAFYAPeriodo>(1)
-  const [selectedPsicologiaAFYAPeriodo, setSelectedPsicologiaAFYAPeriodo] = useState<PsicologiaAFYAPeriodo>(1)
-  const [selectedBiomedicinaAFYAPeriodo, setSelectedBiomedicinaAFYAPeriodo] = useState<BiomedicinaAFYAPeriodo>(1)
-  const [selectedOdontologiaAFYAPeriodo, setSelectedOdontologiaAFYAPeriodo] = useState<OdontologiaAFYAPeriodo>(1)
+  const [selectedCronogramaType, setSelectedCronogramaType] = useState<'enem' | 'medicina' | 'psicologia' | 'biomedicina' | 'odontologia' | 'uerj' | null>(null)
+  const [selectedMedicinaPeriodo, setSelectedMedicinaPeriodo] = useState<MedicinaPeriodo>(1)
+  const [selectedPsicologiaPeriodo, setSelectedPsicologiaPeriodo] = useState<PsicologiaPeriodo>(1)
+  const [selectedBiomedicinaPeriodo, setSelectedBiomedicinaPeriodo] = useState<BiomedicinaPeriodo>(1)
+  const [selectedOdontologiaPeriodo, setSelectedOdontologiaPeriodo] = useState<OdontologiaPeriodo>(1)
   const [cronogramaTopicos, setCronogramaTopicos] = useState<TopicItem[]>([])
   const [selectedTopicos, setSelectedTopicos] = useState<string[]>([])
   const [selectedSubtopicos, setSelectedSubtopicos] = useState<string[]>([])
@@ -282,9 +282,9 @@ export default function FlashcardsPage() {
     }
   }
 
-  function handleCronogramaTypeSelect(type: 'enem' | 'medicina-afya' | 'psicologia-afya' | 'biomedicina-afya' | 'odontologia-afya' | 'uerj') {
+  function handleCronogramaTypeSelect(type: 'enem' | 'medicina' | 'psicologia' | 'biomedicina' | 'odontologia' | 'uerj') {
     setSelectedCronogramaType(type as any)
-    if (type === 'medicina-afya' || type === 'psicologia-afya' || type === 'biomedicina-afya' || type === 'odontologia-afya') {
+    if (type === 'medicina' || type === 'psicologia' || type === 'biomedicina' || type === 'odontologia') {
       setShowPeriodoSelector(true)
     } else if (type === 'enem' || type === 'uerj') {
       const topicos = TEMPLATES[type].topicos
@@ -292,30 +292,30 @@ export default function FlashcardsPage() {
     }
   }
 
-  function handleMedicinaAFYAPeriodoChange(periodo: MedicinaAFYAPeriodo) {
-    setSelectedMedicinaAFYAPeriodo(periodo)
-    const topicos = getMedicinaAFYATopicos(periodo)
+  function handleMedicinaPeriodoChange(periodo: MedicinaPeriodo) {
+    setSelectedMedicinaPeriodo(periodo)
+    const topicos = getMedicinaTopicos(periodo)
     setCronogramaTopicos(topicos)
     setShowPeriodoSelector(false)
   }
 
-  function handlePsicologiaAFYAPeriodoChange(periodo: PsicologiaAFYAPeriodo) {
-    setSelectedPsicologiaAFYAPeriodo(periodo)
-    const topicos = getPsicologiaAFYATopicos(periodo)
+  function handlePsicologiaPeriodoChange(periodo: PsicologiaPeriodo) {
+    setSelectedPsicologiaPeriodo(periodo)
+    const topicos = getPsicologiaTopicos(periodo)
     setCronogramaTopicos(topicos)
     setShowPeriodoSelector(false)
   }
 
-  function handleBiomedicinaAFYAPeriodoChange(periodo: BiomedicinaAFYAPeriodo) {
-    setSelectedBiomedicinaAFYAPeriodo(periodo)
-    const topicos = getBiomedicinaAFYATopicos(periodo)
+  function handleBiomedicinaPeriodoChange(periodo: BiomedicinaPeriodo) {
+    setSelectedBiomedicinaPeriodo(periodo)
+    const topicos = getBiomedicinaTopicos(periodo)
     setCronogramaTopicos(topicos)
     setShowPeriodoSelector(false)
   }
 
-  function handleOdontologiaAFYAPeriodoChange(periodo: OdontologiaAFYAPeriodo) {
-    setSelectedOdontologiaAFYAPeriodo(periodo)
-    const topicos = getOdontologiaAFYATopicos(periodo)
+  function handleOdontologiaPeriodoChange(periodo: OdontologiaPeriodo) {
+    setSelectedOdontologiaPeriodo(periodo)
+    const topicos = getOdontologiaTopicos(periodo)
     setCronogramaTopicos(topicos)
     setShowPeriodoSelector(false)
   }
@@ -977,32 +977,32 @@ export default function FlashcardsPage() {
                     <p className="text-xs text-white/70 mt-1">Preparação</p>
                   </button>
                   <button
-                    onClick={() => handleCronogramaTypeSelect('medicina-afya')}
+                    onClick={() => handleCronogramaTypeSelect('medicina')}
                     className="p-4 rounded-2xl border-2 border-white/20 bg-white/5 hover:border-blue-500 hover:bg-blue-500/10 transition-all text-center"
                   >
-                    <p className="font-semibold text-white text-sm sm:text-base">Medicina AFYA</p>
-                    <p className="text-xs text-white/70 mt-1">Medicina</p>
+                    <p className="font-semibold text-white text-sm sm:text-base">Ciências Médicas</p>
+                    <p className="text-xs text-white/70 mt-1">Ciências Médicas</p>
                   </button>
                   <button
-                    onClick={() => handleCronogramaTypeSelect('psicologia-afya')}
+                    onClick={() => handleCronogramaTypeSelect('psicologia')}
                     className="p-4 rounded-2xl border-2 border-white/20 bg-white/5 hover:border-blue-500 hover:bg-blue-500/10 transition-all text-center"
                   >
-                    <p className="font-semibold text-white text-sm sm:text-base">Psicologia AFYA</p>
-                    <p className="text-xs text-white/70 mt-1">Psicologia</p>
+                    <p className="font-semibold text-white text-sm sm:text-base">Ciências Psicossociais</p>
+                    <p className="text-xs text-white/70 mt-1">Ciências Psicossociais</p>
                   </button>
                   <button
-                    onClick={() => handleCronogramaTypeSelect('biomedicina-afya')}
+                    onClick={() => handleCronogramaTypeSelect('biomedicina')}
                     className="p-4 rounded-2xl border-2 border-white/20 bg-white/5 hover:border-blue-500 hover:bg-blue-500/10 transition-all text-center"
                   >
-                    <p className="font-semibold text-white text-sm sm:text-base">Biomedicina AFYA</p>
-                    <p className="text-xs text-white/70 mt-1">Biomedicina</p>
+                    <p className="font-semibold text-white text-sm sm:text-base">Ciências Biomédicas</p>
+                    <p className="text-xs text-white/70 mt-1">Ciências Biomédicas</p>
                   </button>
                   <button
-                    onClick={() => handleCronogramaTypeSelect('odontologia-afya')}
+                    onClick={() => handleCronogramaTypeSelect('odontologia')}
                     className="p-4 rounded-2xl border-2 border-white/20 bg-white/5 hover:border-blue-500 hover:bg-blue-500/10 transition-all text-center"
                   >
-                    <p className="font-semibold text-white text-sm sm:text-base">Odontologia AFYA</p>
-                    <p className="text-xs text-white/70 mt-1">Odontologia</p>
+                    <p className="font-semibold text-white text-sm sm:text-base">Ciências Odontológicas</p>
+                    <p className="text-xs text-white/70 mt-1">Ciências Odontológicas</p>
                   </button>
                   <button
                     onClick={() => handleCronogramaTypeSelect('uerj')}
@@ -1018,34 +1018,34 @@ export default function FlashcardsPage() {
                 <div>
                   <Label className="text-white/80 text-sm sm:text-base">Selecione o Período</Label>
                   <div className="grid grid-cols-5 gap-2 mt-3">
-                    {(selectedCronogramaType === 'psicologia-afya' || selectedCronogramaType === 'odontologia-afya'
+                    {(selectedCronogramaType === 'psicologia' || selectedCronogramaType === 'odontologia'
                       ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-                      : selectedCronogramaType === 'biomedicina-afya'
+                      : selectedCronogramaType === 'biomedicina'
                       ? [1, 2, 3, 4, 5, 6, 7]
                       : [1, 2, 3, 4, 5]
                     ).map(p => (
                       <button
                         key={p}
                         onClick={() => {
-                          if (selectedCronogramaType === 'psicologia-afya') {
-                            handlePsicologiaAFYAPeriodoChange(p as PsicologiaAFYAPeriodo)
-                          } else if (selectedCronogramaType === 'biomedicina-afya') {
-                            handleBiomedicinaAFYAPeriodoChange(p as BiomedicinaAFYAPeriodo)
-                          } else if (selectedCronogramaType === 'odontologia-afya') {
-                            handleOdontologiaAFYAPeriodoChange(p as OdontologiaAFYAPeriodo)
+                          if (selectedCronogramaType === 'psicologia') {
+                            handlePsicologiaPeriodoChange(p as PsicologiaPeriodo)
+                          } else if (selectedCronogramaType === 'biomedicina') {
+                            handleBiomedicinaPeriodoChange(p as BiomedicinaPeriodo)
+                          } else if (selectedCronogramaType === 'odontologia') {
+                            handleOdontologiaPeriodoChange(p as OdontologiaPeriodo)
                           } else {
-                            handleMedicinaAFYAPeriodoChange(p as MedicinaAFYAPeriodo)
+                            handleMedicinaPeriodoChange(p as MedicinaPeriodo)
                           }
                         }}
                         className={cn(
                           'p-3 rounded-xl border-2 transition-all font-semibold text-sm',
-                          (selectedCronogramaType === 'psicologia-afya'
-                            ? selectedPsicologiaAFYAPeriodo === p
-                            : selectedCronogramaType === 'biomedicina-afya'
-                            ? selectedBiomedicinaAFYAPeriodo === p
-                            : selectedCronogramaType === 'odontologia-afya'
-                            ? selectedOdontologiaAFYAPeriodo === p
-                            : selectedMedicinaAFYAPeriodo === p)
+                          (selectedCronogramaType === 'psicologia'
+                            ? selectedPsicologiaPeriodo === p
+                            : selectedCronogramaType === 'biomedicina'
+                            ? selectedBiomedicinaPeriodo === p
+                            : selectedCronogramaType === 'odontologia'
+                            ? selectedOdontologiaPeriodo === p
+                            : selectedMedicinaPeriodo === p)
                             ? 'border-blue-500 bg-blue-500/30 text-blue-200'
                             : 'border-white/20 bg-white/5 text-white hover:border-blue-500'
                         )}

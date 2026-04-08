@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
 
     if (isAfyaMedicineStudent && !afyaUnit) {
       return NextResponse.json(
-        { error: 'Unidade Afya é obrigatória para estudantes de Medicina da Afya' },
+        { error: 'Unidade é obrigatória para estudantes de Ciências Médicas' },
         { status: 400 }
       )
     }

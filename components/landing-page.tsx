@@ -95,7 +95,7 @@ export default function LandingPage() {
   const faqs = [
     {
       question: "Como funciona o Banco de Questões?",
-      answer: "Nosso banco é focado 100% nas questões que realmente caem nas provas da Matriz AFYA. Tudo organizado para você filtrar, montar listas personalizadas, baixar PDF e treinar. Toda semana entra conteúdo novo.\n\nEstamos catalogando 600–800 questões reais da Matriz AFYA, além de questões autorais idênticas no estilo, pegada e dificuldade, seguindo a mesma bibliografia."
+      answer: "Nosso banco é focado 100% nas questões que realmente caem nas provas do seu curso. Tudo organizado para você filtrar, montar listas personalizadas, baixar PDF e treinar. Toda semana entra conteúdo novo.\n\nEstamos catalogando centenas de questões de estilo institucional, além de questões autorais idênticas no estilo, pegada e dificuldade, seguindo a mesma bibliografia."
     },
     {
       question: "As aulas realmente aprofundam o conteúdo?",
@@ -103,11 +103,11 @@ export default function LandingPage() {
     },
     {
       question: "Como funcionam os Flashcards?",
-      answer: "Cada flashcard é criado com base na Taxonomia de Bloom — do básico (lembrar, entender) até o avançado (analisar, avaliar, criar), com dificuldade ajustável. Após cada card, rola revisão pós-card imediata para fixação.\n\nTudo atrelado às ementas AFYA de 4 cursos, com revisões espaçadas e integração com o banco de questões."
+      answer: "Cada flashcard é criado com base na Taxonomia de Bloom — do básico (lembrar, entender) até o avançado (analisar, avaliar, criar), com dificuldade ajustável. Após cada card, rola revisão pós-card imediata para fixação.\n\nTudo atrelado às ementas de 4 cursos, com revisões espaçadas e integração com o banco de questões."
     },
     {
       question: "Os cronogramas são personalizáveis?",
-      answer: "100% personalizados e atrelados às ementas AFYA. Ajuste por hora do dia, dificuldade por conteúdo, cobrindo todos os módulos, submódulos, tópicos e subtópicos.\n\nCursos: Medicina (SOI/HAM I-V), Psicologia (1°-10°), Biomedicina (1°-7°), Odontologia (1°-10°), além de ENEM e UERJ. A IA adapta ao seu ritmo automaticamente."
+      answer: "100% personalizados e atrelados às ementas do seu curso. Ajuste por hora do dia, dificuldade por conteúdo, cobrindo todos os módulos, submódulos, tópicos e subtópicos.\n\nCursos: Ciências Médicas (SOI/HAM I-V), Ciências Psicossociais (1°-10°), Ciências Biomédicas (1°-7°), Ciências Odontológicas (1°-10°), além de ENEM e UERJ. A IA adapta ao seu ritmo automaticamente."
     },
     {
       question: "Como funcionam as provas com IA?",
@@ -156,13 +156,13 @@ export default function LandingPage() {
     {
       icon: Brain,
       title: 'Flashcards Inteligentes',
-      description: 'Repetição espaçada com IA que aprende seu ritmo. Atrelados às ementas de todos os cursos AFYA.',
+      description: 'Repetição espaçada com IA que aprende seu ritmo. Atrelados às ementas de todos os cursos.',
       accent: 'primary' as const,
     },
     {
       icon: Calendar,
       title: 'Cronogramas Personalizados',
-      description: 'Ementas completas de Medicina, Psicologia, Biomedicina e Odontologia. Adaptados ao seu ritmo.',
+      description: 'Ementas completas de Ciências Médicas, Psicossociais, Biomédicas e Odontológicas. Adaptados ao seu ritmo.',
       accent: 'secondary' as const,
     },
     {
@@ -193,16 +193,16 @@ export default function LandingPage() {
 
   const stats = [
     { value: 1000, suffix: '+', label: 'Questões no banco' },
-    { value: 4, suffix: '', label: 'Cursos AFYA' },
+    { value: 4, suffix: '', label: 'Cursos disponíveis' },
     { value: 10, suffix: '+', label: 'Ferramentas de estudo' },
     { value: 20, suffix: '+', label: 'Atualizações planejadas' },
   ]
 
   const courses = [
-    { icon: Stethoscope, name: 'Medicina AFYA', detail: 'SOI e HAM — 1° ao 5° Período' },
-    { icon: Brain, name: 'Psicologia AFYA', detail: '1° ao 10° Período' },
-    { icon: FlaskConical, name: 'Biomedicina AFYA', detail: '1° ao 7° Período' },
-    { icon: GraduationCap, name: 'Odontologia AFYA', detail: '1° ao 10° Período' },
+    { icon: Stethoscope, name: 'Ciências Médicas', detail: 'SOI e HAM — 1° ao 5° Período' },
+    { icon: Brain, name: 'Ciências Psicossociais', detail: '1° ao 10° Período' },
+    { icon: FlaskConical, name: 'Ciências Biomédicas', detail: '1° ao 7° Período' },
+    { icon: GraduationCap, name: 'Ciências Odontológicas', detail: '1° ao 10° Período' },
   ]
 
   const heroSection = useInView(0.1)
@@ -295,7 +295,7 @@ export default function LandingPage() {
           </h1>
 
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-            Plataforma completa de estudo para alunos AFYA. Questões, flashcards, cronogramas, provas com IA e aulas — tudo integrado para você dominar.
+            Plataforma completa de estudo para alunos de saúde. Questões, flashcards, cronogramas, provas com IA e aulas — tudo integrado para você dominar.
           </p>
 
           {/* CTA */}
@@ -362,7 +362,7 @@ export default function LandingPage() {
               Tudo que você precisa para dominar
             </h2>
             <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-              Ferramentas integradas e inteligentes, desenhadas para a Matriz AFYA
+              Ferramentas integradas e inteligentes, desenhadas para o seu curso
             </p>
           </div>
 
@@ -466,7 +466,7 @@ export default function LandingPage() {
       )}
 
       {/* ══════════════════════════════════════════
-          SEÇÃO AFYA MATRIZ
+          SEÇÃO PROVAS
       ══════════════════════════════════════════ */}
       <section className="py-20 px-6 border-t border-border/30 relative overflow-hidden">
         {/* Background subtle */}
@@ -482,23 +482,23 @@ export default function LandingPage() {
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold mb-4 bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20">
               <GraduationCap className="w-3.5 h-3.5" />
-              Provas da Matriz AFYA
+              Provas por Curso
             </div>
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
               Treine com provas reais da sua faculdade
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Acesse e treine com simulados baseados nas provas aplicadas na Matriz AFYA — organizados por curso, período e disciplina.
+              Acesse e treine com simulados baseados nas provas do seu curso — organizados por curso, período e disciplina.
             </p>
           </div>
 
           {/* Cards de cursos */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
             {[
-              { icon: '🩺', label: 'Medicina', sub: 'SOI / HAM · 1°–5° Período', color: '#DC2626', bg: 'rgba(220,38,38,0.08)', border: 'rgba(220,38,38,0.20)' },
-              { icon: '🧠', label: 'Psicologia', sub: '1°–10° Período', color: '#7C3AED', bg: 'rgba(124,58,237,0.08)', border: 'rgba(124,58,237,0.20)' },
-              { icon: '🔬', label: 'Biomedicina', sub: '1°–7° Período', color: '#059669', bg: 'rgba(5,150,105,0.08)', border: 'rgba(5,150,105,0.20)' },
-              { icon: '🦷', label: 'Odontologia', sub: '1°–10° Período', color: '#2563EB', bg: 'rgba(37,99,235,0.08)', border: 'rgba(37,99,235,0.20)' },
+              { icon: '🩺', label: 'Ciências Médicas', sub: 'SOI / HAM · 1°–5° Período', color: '#DC2626', bg: 'rgba(220,38,38,0.08)', border: 'rgba(220,38,38,0.20)' },
+              { icon: '🧠', label: 'Ciências Psicossociais', sub: '1°–10° Período', color: '#7C3AED', bg: 'rgba(124,58,237,0.08)', border: 'rgba(124,58,237,0.20)' },
+              { icon: '🔬', label: 'Ciências Biomédicas', sub: '1°–7° Período', color: '#059669', bg: 'rgba(5,150,105,0.08)', border: 'rgba(5,150,105,0.20)' },
+              { icon: '🦷', label: 'Ciências Odontológicas', sub: '1°–10° Período', color: '#2563EB', bg: 'rgba(37,99,235,0.08)', border: 'rgba(37,99,235,0.20)' },
             ].map((c, i) => (
               <div
                 key={c.label}
@@ -541,7 +541,7 @@ export default function LandingPage() {
             <div>
               <p className="text-xs font-semibold text-amber-800 dark:text-amber-300 mb-1">Aviso Legal</p>
               <p className="text-xs text-amber-700 dark:text-amber-400 leading-relaxed">
-                Este conteúdo é disponibilizado exclusivamente para fins educacionais e de preparação acadêmica dos próprios alunos. As provas e questões presentes na plataforma são de domínio dos respectivos estudantes que as compartilharam para uso coletivo. A DomineAqui não possui vínculo, parceria ou endosso com a Afya Educacional ou qualquer instituição da Matriz AFYA. Todos os direitos dos materiais originais pertencem às respectivas instituições.
+                Este conteúdo é disponibilizado exclusivamente para fins educacionais e de preparação acadêmica. As questões de banca presentes na plataforma foram adaptadas a partir de enunciados de domínio público ou compartilhados pelos próprios estudantes, e não reproduzem integralmente obras protegidas. As questões geradas por inteligência artificial são de autoria exclusiva da plataforma: nos termos da Lei nº 9.610/1998 (art. 11), autor é a pessoa física criadora da obra — sistemas de IA não são titulares de direitos autorais, e o conteúdo por eles gerado não goza de proteção autoral independente. A DomineAqui não possui vínculo, parceria ou endosso com nenhuma instituição de ensino.
               </p>
             </div>
           </div>

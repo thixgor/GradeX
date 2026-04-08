@@ -351,26 +351,26 @@ function DashboardContent() {
                   {firstName}, seja o foco.
                 </h1>
                 <p className="text-white/60 max-w-lg text-sm sm:text-base leading-relaxed">
-                  Cronogramas, flashcards e provas com ementas completas de Medicina, Psicologia, Biomedicina e Odontologia AFYA.
+                  Cronogramas, flashcards e provas com ementas completas de Ciências Médicas, Ciências Psicossociais, Ciências Biomédicas e Ciências Odontológicas.
                 </p>
 
                 {/* Academic Focus Badges */}
                 <div className="flex flex-wrap items-center gap-2 pt-1">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-medium border border-white/10">
                     <GraduationCap className="h-3.5 w-3.5" />
-                    Medicina AFYA
+                    Ciências Médicas
                   </span>
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-medium border border-white/10">
                     <BookOpen className="h-3.5 w-3.5" />
-                    Psicologia AFYA
+                    Ciências Psicossociais
                   </span>
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-medium border border-white/10">
                     <BookOpen className="h-3.5 w-3.5" />
-                    Biomedicina AFYA
+                    Ciências Biomédicas
                   </span>
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-medium border border-white/10">
                     <BookOpen className="h-3.5 w-3.5" />
-                    Odontologia AFYA
+                    Ciências Odontológicas
                   </span>
                 </div>
               </div>

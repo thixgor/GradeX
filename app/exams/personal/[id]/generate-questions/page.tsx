@@ -33,11 +33,11 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Checkbox } from '@/components/ui/checkbox'
 import { CustomContext } from '@/lib/types'
 import { PageLoading } from '@/components/page-loading'
-import { TEMPLATES, TopicItem, MedicinaAFYAPeriodo, PsicologiaAFYAPeriodo, BiomedicinaAFYAPeriodo, OdontologiaAFYAPeriodo } from '@/lib/cronograma-types'
-import { getMedicinaAFYATopicos } from '@/lib/medicina-afya-periodos-helper'
-import { getPsicologiaAFYATopicos } from '@/lib/psicologia-afya-periodos-helper'
-import { getBiomedicinaAFYATopicos } from '@/lib/biomedicina-afya-periodos-helper'
-import { getOdontologiaAFYATopicos } from '@/lib/odontologia-afya-periodos-helper'
+import { TEMPLATES, TopicItem, MedicinaPeriodo, PsicologiaPeriodo, BiomedicinaPeriodo, OdontologiaPeriodo } from '@/lib/cronograma-types'
+import { getMedicinaTopicos } from '@/lib/medicina-periodos-helper'
+import { getPsicologiaTopicos } from '@/lib/psicologia-periodos-helper'
+import { getBiomedicinaTopicos } from '@/lib/biomedicina-periodos-helper'
+import { getOdontologiaTopicos } from '@/lib/odontologia-periodos-helper'
 
 // ─── Iridescent Glass Panel ─────────────────────────────────
 // Reusable glassmorphism container with animated chromatic border
@@ -510,7 +510,7 @@ export default function GenerateQuestionsPage() {
     'assertion-reason': 10,
   })
   const [randomDifficulty, setRandomDifficulty] = useState(false)
-  const [questionContext, setQuestionContext] = useState<'medicina-afya' | 'psicologia-afya' | 'biomedicina-afya' | 'odontologia-afya' | 'enem' | 'uerj' | 'outros'>('medicina-afya')
+  const [questionContext, setQuestionContext] = useState<'medicina' | 'psicologia' | 'biomedicina' | 'odontologia' | 'enem' | 'uerj' | 'outros'>('medicina')
 
   const [savedContexts, setSavedContexts] = useState<CustomContext[]>([])
   const [selectedSavedContext, setSelectedSavedContext] = useState<string>('')
@@ -524,11 +524,11 @@ export default function GenerateQuestionsPage() {
   const [selectedCronogramaId, setSelectedCronogramaId] = useState<string>('')
   const [cronogramaSelections, setCronogramaSelections] = useState<Set<string>>(new Set())
   const [cronogramaModalTab, setCronogramaModalTab] = useState<'meus' | 'modelos'>('modelos')
-  const [modeloTemplateId, setModeloTemplateId] = useState<string>('medicina-afya')
-  const [afyaPeriodo, setAfyaPeriodo] = useState<MedicinaAFYAPeriodo>(1)
-  const [psiAfyaPeriodo, setPsiAfyaPeriodo] = useState<PsicologiaAFYAPeriodo>(1)
-  const [bioAfyaPeriodo, setBioAfyaPeriodo] = useState<BiomedicinaAFYAPeriodo>(1)
-  const [odoAfyaPeriodo, setOdoAfyaPeriodo] = useState<OdontologiaAFYAPeriodo>(1)
+  const [modeloTemplateId, setModeloTemplateId] = useState<string>('medicina')
+  const [medicinaPeriodo, setMedicinaPeriodo] = useState<MedicinaPeriodo>(1)
+  const [psiPeriodo, setPsiPeriodo] = useState<PsicologiaPeriodo>(1)
+  const [bioPeriodo, setBioPeriodo] = useState<BiomedicinaPeriodo>(1)
+  const [odoPeriodo, setOdoPeriodo] = useState<OdontologiaPeriodo>(1)
 
   // Exam mode state
   const [examMode, setExamMode] = useState<'ai' | 'banco' | 'misto'>('ai')
@@ -819,14 +819,14 @@ export default function GenerateQuestionsPage() {
       // 2. Generate AI questions
       if (aiQuestionCount > 0) {
         let context = ''
-        if (questionContext === 'medicina-afya') {
-          context = 'Medicina AFYA - Contextualizacao clinica e raciocinio aplicado'
-        } else if (questionContext === 'psicologia-afya') {
-          context = 'Psicologia AFYA - Contextualização clínica e raciocínio psicológico aplicado'
-        } else if (questionContext === 'biomedicina-afya') {
-          context = 'Biomedicina AFYA - Contextualização laboratorial e raciocínio biomédico aplicado'
-        } else if (questionContext === 'odontologia-afya') {
-          context = 'Odontologia AFYA - Contextualização clínica e raciocínio odontológico aplicado'
+        if (questionContext === 'medicina') {
+          context = 'Ciências Médicas - Contextualização clínica e raciocínio aplicado'
+        } else if (questionContext === 'psicologia') {
+          context = 'Ciências Psicossociais - Contextualização clínica e raciocínio psicológico aplicado'
+        } else if (questionContext === 'biomedicina') {
+          context = 'Ciências Biomédicas - Contextualização laboratorial e raciocínio biomédico aplicado'
+        } else if (questionContext === 'odontologia') {
+          context = 'Ciências Odontológicas - Contextualização clínica e raciocínio odontológico aplicado'
         } else if (questionContext === 'enem') {
           context = 'ENEM - Exame Nacional do Ensino Medio'
         } else if (questionContext === 'uerj') {
@@ -912,9 +912,9 @@ export default function GenerateQuestionsPage() {
     return tree
   }
 
-  // Get available global model templates (exclude 'personalizado'; include medicina-afya and psicologia-afya even though topicos is empty since they load dynamically)
+  // Get available global model templates (exclude 'personalizado'; include medicina/psicologia/biomedicina/odontologia even though topicos is empty since they load dynamically)
   const globalModels = Object.values(TEMPLATES).filter(
-    t => t.modelo !== 'personalizado' && (t.topicos.length > 0 || t.modelo === 'medicina-afya' || t.modelo === 'psicologia-afya' || t.modelo === 'biomedicina-afya' || t.modelo === 'odontologia-afya')
+    t => t.modelo !== 'personalizado' && (t.topicos.length > 0 || t.modelo === 'medicina' || t.modelo === 'psicologia' || t.modelo === 'biomedicina' || t.modelo === 'odontologia')
   )
 
   function renderTreeView(tree: Record<string, Record<string, Set<string>>>) {
@@ -1043,14 +1043,14 @@ export default function GenerateQuestionsPage() {
 
     try {
       let context = ''
-      if (questionContext === 'medicina-afya') {
-        context = 'Medicina AFYA - Contextualização clínica e raciocínio aplicado'
-      } else if (questionContext === 'psicologia-afya') {
-        context = 'Psicologia AFYA - Contextualização clínica e raciocínio psicológico aplicado'
-      } else if (questionContext === 'biomedicina-afya') {
-        context = 'Biomedicina AFYA - Contextualização laboratorial e raciocínio biomédico aplicado'
-      } else if (questionContext === 'odontologia-afya') {
-        context = 'Odontologia AFYA - Contextualização clínica e raciocínio odontológico aplicado'
+      if (questionContext === 'medicina') {
+        context = 'Medicina - Contextualização clínica e raciocínio aplicado'
+      } else if (questionContext === 'psicologia') {
+        context = 'Psicologia - Contextualização clínica e raciocínio psicológico aplicado'
+      } else if (questionContext === 'biomedicina') {
+        context = 'Biomedicina - Contextualização laboratorial e raciocínio biomédico aplicado'
+      } else if (questionContext === 'odontologia') {
+        context = 'Odontologia - Contextualização clínica e raciocínio odontológico aplicado'
       } else if (questionContext === 'enem') {
         context = 'ENEM - Exame Nacional do Ensino Médio'
       } else if (questionContext === 'uerj') {
@@ -1362,7 +1362,7 @@ export default function GenerateQuestionsPage() {
                       className="glass-chip text-xs gap-1.5"
                     >
                       <Calendar className="h-3.5 w-3.5" />
-                      Selecionar Temas (AFYA, ENEM, UERJ...)
+                      Selecionar Temas (por curso, ENEM, UERJ...)
                     </Button>
                   </div>
                   {themes.trim() && (
@@ -1532,10 +1532,10 @@ export default function GenerateQuestionsPage() {
                   />
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     {([
-                      { value: 'medicina-afya' as const, label: 'Medicina AFYA' },
-                      { value: 'psicologia-afya' as const, label: 'Psicologia AFYA' },
-                      { value: 'biomedicina-afya' as const, label: 'Biomedicina AFYA' },
-                      { value: 'odontologia-afya' as const, label: 'Odontologia AFYA' },
+                      { value: 'medicina' as const, label: 'Ciências Médicas' },
+                      { value: 'psicologia' as const, label: 'Ciências Psicossociais' },
+                      { value: 'biomedicina' as const, label: 'Ciências Biomédicas' },
+                      { value: 'odontologia' as const, label: 'Ciências Odontológicas' },
                       { value: 'enem' as const, label: 'ENEM' },
                       { value: 'uerj' as const, label: 'UERJ' },
                       { value: 'outros' as const, label: 'Outros' },
@@ -1925,25 +1925,25 @@ export default function GenerateQuestionsPage() {
                         const template = TEMPLATES[modeloTemplateId as keyof typeof TEMPLATES]
                         if (!template) return null
 
-                        // Medicina AFYA: period selection + dynamic topics
-                        if (template.modelo === 'medicina-afya') {
-                          const afyaTopicos = getMedicinaAFYATopicos(afyaPeriodo)
-                          const tree = buildTemplateTree(afyaTopicos as TopicItem[])
+                        // Medicina: period selection + dynamic topics
+                        if (template.modelo === 'medicina') {
+                          const medTopicos = getMedicinaTopicos(medicinaPeriodo)
+                          const tree = buildTemplateTree(medTopicos as TopicItem[])
                           return (
                             <div className="space-y-4">
                               <div className="space-y-2">
                                 <Label className="text-xs text-muted-foreground">Período</Label>
                                 <div className="grid grid-cols-5 gap-2">
-                                  {([1, 2, 3, 4, 5] as MedicinaAFYAPeriodo[]).map((p) => (
+                                  {([1, 2, 3, 4, 5] as MedicinaPeriodo[]).map((p) => (
                                     <button
                                       key={p}
                                       type="button"
                                       onClick={() => {
-                                        setAfyaPeriodo(p)
+                                        setMedicinaPeriodo(p)
                                         setCronogramaSelections(new Set())
                                       }}
                                       className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
-                                        afyaPeriodo === p
+                                        medicinaPeriodo === p
                                           ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
                                           : 'glass-inset text-muted-foreground hover:text-foreground hover:bg-white/5'
                                       }`}
@@ -1958,25 +1958,25 @@ export default function GenerateQuestionsPage() {
                           )
                         }
 
-                        // Psicologia AFYA: period selection (1-10) + dynamic topics
-                        if (template.modelo === 'psicologia-afya') {
-                          const psiTopicos = getPsicologiaAFYATopicos(psiAfyaPeriodo)
+                        // Psicologia: period selection (1-10) + dynamic topics
+                        if (template.modelo === 'psicologia') {
+                          const psiTopicos = getPsicologiaTopicos(psiPeriodo)
                           const tree = buildTemplateTree(psiTopicos as TopicItem[])
                           return (
                             <div className="space-y-4">
                               <div className="space-y-2">
                                 <Label className="text-xs text-muted-foreground">Período</Label>
                                 <div className="grid grid-cols-5 gap-2">
-                                  {([1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as PsicologiaAFYAPeriodo[]).map((p) => (
+                                  {([1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as PsicologiaPeriodo[]).map((p) => (
                                     <button
                                       key={p}
                                       type="button"
                                       onClick={() => {
-                                        setPsiAfyaPeriodo(p)
+                                        setPsiPeriodo(p)
                                         setCronogramaSelections(new Set())
                                       }}
                                       className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
-                                        psiAfyaPeriodo === p
+                                        psiPeriodo === p
                                           ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
                                           : 'glass-inset text-muted-foreground hover:text-foreground hover:bg-white/5'
                                       }`}
@@ -1991,25 +1991,25 @@ export default function GenerateQuestionsPage() {
                           )
                         }
 
-                        // Biomedicina AFYA: period selection (1-7) + dynamic topics
-                        if (template.modelo === 'biomedicina-afya') {
-                          const bioTopicos = getBiomedicinaAFYATopicos(bioAfyaPeriodo)
+                        // Biomedicina: period selection (1-7) + dynamic topics
+                        if (template.modelo === 'biomedicina') {
+                          const bioTopicos = getBiomedicinaTopicos(bioPeriodo)
                           const tree = buildTemplateTree(bioTopicos as TopicItem[])
                           return (
                             <div className="space-y-4">
                               <div className="space-y-2">
                                 <Label className="text-xs text-muted-foreground">Período</Label>
                                 <div className="grid grid-cols-5 gap-2">
-                                  {([1, 2, 3, 4, 5, 6, 7] as BiomedicinaAFYAPeriodo[]).map((p) => (
+                                  {([1, 2, 3, 4, 5, 6, 7] as BiomedicinaPeriodo[]).map((p) => (
                                     <button
                                       key={p}
                                       type="button"
                                       onClick={() => {
-                                        setBioAfyaPeriodo(p)
+                                        setBioPeriodo(p)
                                         setCronogramaSelections(new Set())
                                       }}
                                       className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
-                                        bioAfyaPeriodo === p
+                                        bioPeriodo === p
                                           ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
                                           : 'glass-inset text-muted-foreground hover:text-foreground hover:bg-white/5'
                                       }`}
@@ -2024,25 +2024,25 @@ export default function GenerateQuestionsPage() {
                           )
                         }
 
-                        // Odontologia AFYA: period selection (1-10) + dynamic topics
-                        if (template.modelo === 'odontologia-afya') {
-                          const odoTopicos = getOdontologiaAFYATopicos(odoAfyaPeriodo)
+                        // Odontologia: period selection (1-10) + dynamic topics
+                        if (template.modelo === 'odontologia') {
+                          const odoTopicos = getOdontologiaTopicos(odoPeriodo)
                           const tree = buildTemplateTree(odoTopicos as TopicItem[])
                           return (
                             <div className="space-y-4">
                               <div className="space-y-2">
                                 <Label className="text-xs text-muted-foreground">Período</Label>
                                 <div className="grid grid-cols-5 gap-2">
-                                  {([1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as OdontologiaAFYAPeriodo[]).map((p) => (
+                                  {([1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as OdontologiaPeriodo[]).map((p) => (
                                     <button
                                       key={p}
                                       type="button"
                                       onClick={() => {
-                                        setOdoAfyaPeriodo(p)
+                                        setOdoPeriodo(p)
                                         setCronogramaSelections(new Set())
                                       }}
                                       className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
-                                        odoAfyaPeriodo === p
+                                        odoPeriodo === p
                                           ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
                                           : 'glass-inset text-muted-foreground hover:text-foreground hover:bg-white/5'
                                       }`}
@@ -2100,7 +2100,7 @@ export default function GenerateQuestionsPage() {
                       setShowCronogramaModal(false)
                       setCronogramaSelections(new Set())
                       setSelectedCronogramaId('')
-                      setModeloTemplateId('medicina-afya')
+                      setModeloTemplateId('medicina')
                     }}
                     className="glass-button-primary"
                   >

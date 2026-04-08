@@ -8,10 +8,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
 const COURSE_OPTIONS: { value: string; label: string; icon: string }[] = [
-  { value: 'medicina-afya', label: 'Medicina AFYA', icon: '🩺' },
-  { value: 'psicologia-afya', label: 'Psicologia AFYA', icon: '🧠' },
-  { value: 'biomedicina-afya', label: 'Biomedicina AFYA', icon: '🔬' },
-  { value: 'odontologia-afya', label: 'Odontologia AFYA', icon: '🦷' },
+  { value: 'medicina', label: 'Ciências Médicas', icon: '🩺' },
+  { value: 'psicologia', label: 'Ciências Psicossociais', icon: '🧠' },
+  { value: 'biomedicina', label: 'Ciências Biomédicas', icon: '🔬' },
+  { value: 'odontologia', label: 'Ciências Odontológicas', icon: '🦷' },
 ]
 
 interface ExamContextMenuProps {

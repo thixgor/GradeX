@@ -2914,7 +2914,7 @@ ${respostaAluno}`
             <div className="space-y-2">
               <div className="max-w-none">
                 <HighlightableText
-                  text={currentQuestion.statement}
+                  text={formatText(currentQuestion.statement)}
                   highlights={currentAnswer?.highlights || []}
                   target="statement"
                   onHighlightsChange={(highlights) => handleHighlights(currentQuestion.id, highlights)}

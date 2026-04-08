@@ -55,10 +55,16 @@ interface Group {
 }
 
 const COURSE_LABELS: Record<string, { label: string; color: string; icon: string }> = {
-  'medicina-afya': { label: 'Medicina AFYA', color: '#DC2626', icon: '🩺' },
-  'psicologia-afya': { label: 'Psicologia AFYA', color: '#7C3AED', icon: '🧠' },
-  'biomedicina-afya': { label: 'Biomedicina AFYA', color: '#059669', icon: '🔬' },
-  'odontologia-afya': { label: 'Odontologia AFYA', color: '#2563EB', icon: '🦷' },
+  'medicina': { label: 'Ciências Médicas', color: '#DC2626', icon: '🩺' },
+  'psicologia': { label: 'Ciências Psicossociais', color: '#7C3AED', icon: '🧠' },
+  'biomedicina': { label: 'Ciências Biomédicas', color: '#059669', icon: '🔬' },
+  'odontologia': { label: 'Ciências Odontológicas', color: '#2563EB', icon: '🦷' },
+}
+
+// TODO: remove legacy course-key normalization once DB migration is run
+const normalizeCourseKey = (key: string | undefined | null): string => {
+  if (!key) return ''
+  return key.replace(/-afya$/, '')
 }
 
 // ─── Skeleton Loader ──────────────────────────────────────────
@@ -641,11 +647,11 @@ function ProvasContent() {
                     {/* Cursos disponíveis */}
                     <div className="flex flex-wrap gap-2">
                       {Object.entries(COURSE_LABELS).map(([key, val]) => {
-                        const courseGroupCount = groups.filter(g => g.course === key).length
+                        const courseGroupCount = groups.filter(g => normalizeCourseKey(g.course) === key).length
                         return (
                           <span key={key} className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-lg bg-background/80 border border-border/50">
                             <span>{val.icon}</span>
-                            <span>{val.label.replace(' AFYA', '')}</span>
+                            <span>{val.label}</span>
                           </span>
                         )
                       })}
@@ -752,9 +758,10 @@ function ProvasContent() {
     const uncategorizedFacGroups: Group[] = []
 
     faculdadeGroups.forEach(g => {
-      if (g.course && COURSE_LABELS[g.course]) {
-        if (!courseMap.has(g.course)) courseMap.set(g.course, [])
-        courseMap.get(g.course)!.push(g)
+      const normalizedCourse = normalizeCourseKey(g.course)
+      if (normalizedCourse && COURSE_LABELS[normalizedCourse]) {
+        if (!courseMap.has(normalizedCourse)) courseMap.set(normalizedCourse, [])
+        courseMap.get(normalizedCourse)!.push(g)
       } else {
         uncategorizedFacGroups.push(g)
       }

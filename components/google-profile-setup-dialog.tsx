@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { X } from 'lucide-react'
-import { AFYA_UNITS } from '@/lib/afya-units'
+import { INSTITUTION_UNITS } from '@/lib/institution-units'
 
 interface GoogleProfileSetupDialogProps {
   open: boolean
@@ -59,7 +59,7 @@ export function GoogleProfileSetupDialog({
     }
 
     if (isAfyaMedicineStudent && !afyaUnit) {
-      setError('Selecione sua unidade Afya')
+      setError('Selecione sua unidade')
       return
     }
 
@@ -150,10 +150,10 @@ export function GoogleProfileSetupDialog({
                 />
               </div>
 
-              {/* Pergunta sobre Afya */}
+              {/* Pergunta sobre curso */}
               <div className="space-y-3 p-3 bg-amber-50/70 dark:bg-amber-950/40 rounded-lg border border-amber-200/70 dark:border-amber-800/60">
                 <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
-                  Você é estudante de Medicina da Afya?
+                  Você é estudante de Ciências Médicas?
                 </p>
                 <div className="flex gap-2">
                   <Button
@@ -180,10 +180,10 @@ export function GoogleProfileSetupDialog({
                 </div>
               </div>
 
-              {/* Seleção de Unidade Afya */}
+              {/* Seleção de Unidade */}
               {isAfyaMedicineStudent && (
                 <div className="space-y-2 sm:col-span-2">
-                  <Label htmlFor="afyaUnit">Sua Unidade Afya *</Label>
+                  <Label htmlFor="afyaUnit">Sua Unidade *</Label>
                   <select
                     id="afyaUnit"
                     className="flex h-10 w-full rounded-md border border-input bg-background text-foreground px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:[color-scheme:dark]"
@@ -192,7 +192,7 @@ export function GoogleProfileSetupDialog({
                     disabled={isLoading}
                   >
                     <option value="">Selecione sua unidade...</option>
-                    {AFYA_UNITS.map((unit) => (
+                    {INSTITUTION_UNITS.map((unit) => (
                       <option key={unit} value={unit}>
                         {unit}
                       </option>

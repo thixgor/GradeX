@@ -630,7 +630,7 @@ function BancoQuestoesContent() {
               <h2 className="text-2xl font-bold tracking-tight">Banco de Questoes Gratuito</h2>
               <p className="text-sm text-muted-foreground max-w-md mx-auto">
                 No plano Gratuito, voce pode ver 5 questoes por periodo.
-                Selecione o periodo do AFYA que voce esta cursando:
+                Selecione o periodo que voce esta cursando:
               </p>
             </div>
             <div className="p-8 pt-0 space-y-6">
@@ -674,7 +674,7 @@ function BancoQuestoesContent() {
                   <div>
                     <p className="text-sm font-semibold">Sabe que voce pode ter mais?</p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Faca upgrade para Premium e tenha acesso a mais de 1.000 questoes de Medicina,
+                      Faca upgrade para Premium e tenha acesso a mais de 1.000 questoes de banca,
                       com filtros avancados e criacao de listas personalizadas!
                     </p>
                   </div>
@@ -713,7 +713,7 @@ function BancoQuestoesContent() {
             <div className="p-8 pt-0 space-y-6">
               <div className="space-y-3 text-left glass-stat rounded-xl p-5">
                 {[
-                  '1.000+ questoes de Medicina',
+                  '1.000+ questoes de banca',
                   'Organizadas por periodo e modulo',
                   'Questoes objetivas e discursivas',
                   'Acompanhe seu progresso',

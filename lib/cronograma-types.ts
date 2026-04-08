@@ -1,9 +1,27 @@
 export type UserDifficulty = 'facil' | 'medio' | 'dificil'
-export type ModelType = 'enem' | 'uerj' | 'medicina-afya' | 'psicologia-afya' | 'biomedicina-afya' | 'odontologia-afya' | 'personalizado'
-export type MedicinaAFYAPeriodo = 1 | 2 | 3 | 4 | 5
-export type PsicologiaAFYAPeriodo = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
-export type BiomedicinaAFYAPeriodo = 1 | 2 | 3 | 4 | 5 | 6 | 7
-export type OdontologiaAFYAPeriodo = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
+export type ModelType = 'enem' | 'uerj' | 'medicina' | 'psicologia' | 'biomedicina' | 'odontologia' | 'personalizado'
+export type MedicinaPeriodo = 1 | 2 | 3 | 4 | 5
+export type PsicologiaPeriodo = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
+export type BiomedicinaPeriodo = 1 | 2 | 3 | 4 | 5 | 6 | 7
+export type OdontologiaPeriodo = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
+
+/**
+ * Normalize legacy course IDs (with '-afya' suffix) read from older DB records
+ * to their canonical equivalents. New code should always use the canonical form.
+ * TODO: remove legacy '*-afya' ID branches once DB migration is run
+ */
+export function normalizeModelType(modelo: string | null | undefined): ModelType | undefined {
+  if (!modelo) return undefined
+  const legacyMap: Record<string, ModelType> = {
+    'medicina-afya': 'medicina',
+    'psicologia-afya': 'psicologia',
+    'biomedicina-afya': 'biomedicina',
+    'odontologia-afya': 'odontologia',
+  }
+  if (modelo in legacyMap) return legacyMap[modelo]
+  const valid: ModelType[] = ['enem', 'uerj', 'medicina', 'psicologia', 'biomedicina', 'odontologia', 'personalizado']
+  return (valid as string[]).includes(modelo) ? (modelo as ModelType) : undefined
+}
 
 // Importar função para ENEM
 import { getENEMTopicos } from './enem-topicos-helper'
@@ -341,32 +359,32 @@ export const TEMPLATES: Record<ModelType, CronogramaTemplate> = {
       }
     ]
   },
-  'medicina-afya': {
-    id: 'medicina-afya',
-    nome: 'Medicina AFYA',
-    modelo: 'medicina-afya',
-    descricao: 'Prepare-se para medicina com cronograma AFYA (SOI I-V + HAM I-V)',
+  'medicina': {
+    id: 'medicina',
+    nome: 'Ciências Médicas',
+    modelo: 'medicina',
+    descricao: 'Prepare-se com cronograma estruturado de Ciências Médicas (SOI I-V + HAM I-V)',
     topicos: []
   },
-  'psicologia-afya': {
-    id: 'psicologia-afya',
-    nome: 'Psicologia AFYA',
-    modelo: 'psicologia-afya',
-    descricao: 'Prepare-se para psicologia com cronograma AFYA (1º ao 10º período)',
+  'psicologia': {
+    id: 'psicologia',
+    nome: 'Ciências Psicossociais',
+    modelo: 'psicologia',
+    descricao: 'Prepare-se com cronograma estruturado de Ciências Psicossociais (1º ao 10º período)',
     topicos: []
   },
-  'biomedicina-afya': {
-    id: 'biomedicina-afya',
-    nome: 'Biomedicina AFYA',
-    modelo: 'biomedicina-afya',
-    descricao: 'Prepare-se para biomedicina com cronograma AFYA (1º ao 7º período)',
+  'biomedicina': {
+    id: 'biomedicina',
+    nome: 'Ciências Biomédicas',
+    modelo: 'biomedicina',
+    descricao: 'Prepare-se com cronograma estruturado de Ciências Biomédicas (1º ao 7º período)',
     topicos: []
   },
-  'odontologia-afya': {
-    id: 'odontologia-afya',
-    nome: 'Odontologia AFYA',
-    modelo: 'odontologia-afya',
-    descricao: 'Prepare-se para odontologia com cronograma AFYA (1º ao 10º período)',
+  'odontologia': {
+    id: 'odontologia',
+    nome: 'Ciências Odontológicas',
+    modelo: 'odontologia',
+    descricao: 'Prepare-se com cronograma estruturado de Ciências Odontológicas (1º ao 10º período)',
     topicos: []
   },
   'personalizado': {

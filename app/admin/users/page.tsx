@@ -791,7 +791,7 @@ export default function AdminUsersPage() {
             </div>
 
             <div className="rounded-xl border bg-muted/40 p-4 min-w-0">
-              <p className="text-xs font-semibold text-muted-foreground">Estudante de Medicina Afya</p>
+              <p className="text-xs font-semibold text-muted-foreground">Estudante de Ciências Médicas</p>
               <p className="mt-2 text-sm">
                 {selectedUser?.isAfyaMedicineStudent ? (
                   <span className="text-green-600 dark:text-green-400 font-medium">✓ Sim</span>
@@ -802,7 +802,7 @@ export default function AdminUsersPage() {
 
               {selectedUser?.isAfyaMedicineStudent && (
                 <div className="mt-4">
-                  <p className="text-xs font-semibold text-muted-foreground">Unidade Afya</p>
+                  <p className="text-xs font-semibold text-muted-foreground">Unidade</p>
                   <p className="mt-2 text-sm break-words">
                     {selectedUser?.afyaUnit
                       ? selectedUser.afyaUnit

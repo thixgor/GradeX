@@ -49,6 +49,8 @@ import { ImageModal } from '@/components/image-modal'
 import { ReportQuestionModal } from '@/components/report-question-modal'
 import { cn } from '@/lib/utils'
 
+const formatText = (text: string) => text?.replace(/\\nl/g, '\n').replace(/\\n/g, '\n') || ''
+
 export default function QuestaoPage() {
   const { id } = useParams() // id from route /banco-questoes/[id]
   const router = useRouter()
@@ -470,7 +472,7 @@ ${respostaAluno}`
           <CardContent className="space-y-4">
             <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
               <HighlightableText
-                text={questao.enunciado}
+                text={formatText(questao.enunciado)}
                 highlights={highlights}
                 target="statement"
                 onHighlightsChange={setHighlights}
@@ -583,7 +585,7 @@ ${respostaAluno}`
                         "flex-1 pt-1 whitespace-pre-line",
                         isRiscada && "line-through text-muted-foreground"
                       )}>
-                        {alt.texto}
+                        {formatText(alt.texto)}
                       </span>
 
                       {/* Botão de riscar */}
@@ -690,7 +692,7 @@ ${respostaAluno}`
                 <div className="space-y-2">
                   <Label className="font-medium">Resposta Modelo:</Label>
                   <div className="p-4 bg-muted rounded-lg whitespace-pre-wrap">
-                    {resultado.respostaModelo}
+                    {formatText(resultado.respostaModelo)}
                   </div>
                 </div>
               )}
@@ -699,7 +701,7 @@ ${respostaAluno}`
                 <div className="space-y-2">
                   <Label className="font-medium">Explicação:</Label>
                   <div className="p-4 bg-muted rounded-lg whitespace-pre-wrap">
-                    {resultado.explicacao}
+                    {formatText(resultado.explicacao)}
                   </div>
                 </div>
               )}
@@ -708,7 +710,7 @@ ${respostaAluno}`
                 <div className="space-y-2">
                   <Label className="font-medium">Fonte:</Label>
                   <div className="p-4 bg-muted rounded-lg whitespace-pre-wrap">
-                    {questao.fonte}
+                    {formatText(questao.fonte)}
                   </div>
                 </div>
               )}

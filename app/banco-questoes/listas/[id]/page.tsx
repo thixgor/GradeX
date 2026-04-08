@@ -59,6 +59,8 @@ interface RespostaUsuario {
   respostaDiscursiva?: string
 }
 
+const formatText = (text: string) => text?.replace(/\\nl/g, '\n').replace(/\\n/g, '\n') || ''
+
 export default function ListaDetalhePage() {
   const router = useRouter()
   const params = useParams()
@@ -508,7 +510,7 @@ ${respostaAluno}`
               {/* Enunciado */}
               <div className="prose dark:prose-invert max-w-none">
                 <HighlightableText
-                  text={questao.enunciado}
+                  text={formatText(questao.enunciado)}
                   highlights={highlights[String(questao._id)] || []}
                   target="statement"
                   onHighlightsChange={(newHighlights) => {
@@ -673,21 +675,21 @@ ${respostaAluno}`
                   {questao.tipo === 'discursiva' && questao.respostaModelo && (
                     <div className="p-4 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
                       <h4 className="font-semibold mb-2 text-blue-800 dark:text-blue-300">Resposta Modelo:</h4>
-                      <p className="text-blue-900 dark:text-blue-200 whitespace-pre-wrap">{questao.respostaModelo}</p>
+                      <p className="text-blue-900 dark:text-blue-200 whitespace-pre-wrap">{formatText(questao.respostaModelo)}</p>
                     </div>
                   )}
 
                   {questao.explicacao && (
                     <div className="p-4 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
                       <h4 className="font-semibold mb-2 text-amber-800 dark:text-amber-300">Explicação:</h4>
-                      <p className="text-amber-900 dark:text-amber-200 whitespace-pre-wrap">{questao.explicacao}</p>
+                      <p className="text-amber-900 dark:text-amber-200 whitespace-pre-wrap">{formatText(questao.explicacao)}</p>
                     </div>
                   )}
 
                   {questao.fonte && (
                     <div className="p-4 bg-muted rounded-lg">
                       <h4 className="font-semibold mb-2">Fonte:</h4>
-                      <p className="whitespace-pre-wrap">{questao.fonte}</p>
+                      <p className="whitespace-pre-wrap">{formatText(questao.fonte)}</p>
                     </div>
                   )}
 
@@ -1041,7 +1043,7 @@ ${respostaAluno}`
                         </div>
 
                         <p className="text-sm line-clamp-2 whitespace-pre-line">
-                          {questao.enunciado}
+                          {formatText(questao.enunciado)}
                         </p>
 
                         {questao.jaResolvida && (
