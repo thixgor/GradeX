@@ -112,7 +112,7 @@ export interface Exam {
   createdBy: string
   isHidden: boolean
   // Para questões discursivas
-  discursiveCorrectionMethod?: 'manual' | 'ai' // Como corrigir questões discursivas
+  discursiveCorrectionMethod?: 'manual' | 'ai' | 'prompt' // manual: correção externa; ai: IA; prompt: autoavaliação pelo aluno
   aiRigor?: number // Rigor da IA (0-1) se usar correção automática
   // Modo de navegação da prova
   navigationMode?: 'paginated' | 'scroll' // paginated: navegação com botões, scroll: todas questões visíveis com scroll

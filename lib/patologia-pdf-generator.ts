@@ -1227,7 +1227,7 @@ export async function generatePatologiaPDF(
       y = drawSectionTitle(doc, 'Farmacologia \u2014 2\u00aa Linha', y, ensure)
       for (const f of farma.segunda_linha) y = drawFarmacoBlock(doc, f, y, ensure)
     }
-    if (farma.terceira_linha?.length > 0) {
+    if (farma.terceira_linha && farma.terceira_linha.length > 0) {
       await yieldToEventLoop()
       y = drawSectionTitle(doc, 'Farmacologia \u2014 3\u00aa Linha', y, ensure)
       for (const f of farma.terceira_linha) y = drawFarmacoBlock(doc, f, y, ensure)
@@ -1543,15 +1543,15 @@ async function renderPatologiaInComplete(
   // Farmacologia
   const farma = patologia.farmacologia
   if (farma) {
-    if (farma.primeira_linha?.length > 0) {
+    if (farma.primeira_linha && farma.primeira_linha.length > 0) {
       y = drawSectionTitle(doc, 'Farmacologia \u2014 1\u00aa Linha', y, ensure, 10)
       for (const f of farma.primeira_linha) y = drawFarmacoBlock(doc, f, y, ensure)
     }
-    if (farma.segunda_linha?.length > 0) {
+    if (farma.segunda_linha && farma.segunda_linha.length > 0) {
       y = drawSectionTitle(doc, 'Farmacologia \u2014 2\u00aa Linha', y, ensure, 10)
       for (const f of farma.segunda_linha) y = drawFarmacoBlock(doc, f, y, ensure)
     }
-    if (farma.terceira_linha?.length > 0) {
+    if (farma.terceira_linha && farma.terceira_linha.length > 0) {
       y = drawSectionTitle(doc, 'Farmacologia \u2014 3\u00aa Linha', y, ensure, 10)
       for (const f of farma.terceira_linha) y = drawFarmacoBlock(doc, f, y, ensure)
     }

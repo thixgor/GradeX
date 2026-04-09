@@ -134,7 +134,7 @@ function formatTime(s: number): string {
 
 export function AudioEmbed({ embed }: { embed: Embed }) {
   const ytId = extractYouTubeId(embed.url)
-  const containerRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement | null>(null)
   const playerRef = useRef<any>(null)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const progressBarRef = useRef<HTMLDivElement>(null)

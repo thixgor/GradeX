@@ -31,7 +31,7 @@ export function PatologiaForm({ initialData, editId }: Props) {
   const [error, setError] = useState('')
 
   const [nome, setNome] = useState(initialData?.nome || '')
-  const [sinonimos, setSinonimos] = useState(initialData?.sinonimos?.join('; ') || '')
+  const [sinonimos, setSinonimos] = useState<string>(initialData?.sinonimos?.join('; ') || '')
   const [areas, setAreas] = useState<AreaSaude[]>(initialData?.areas || [])
   const [sistema, setSistema] = useState<SistemaFisiologico | ''>(initialData?.sistema || '')
   const [cid10, setCid10] = useState(initialData?.cid10 || '')
@@ -44,8 +44,8 @@ export function PatologiaForm({ initialData, editId }: Props) {
   const [fluxograma, setFluxograma] = useState(initialData?.fluxograma_tratamento || '')
   const [observacoes, setObservacoes] = useState(initialData?.observacoes_clinicas || '')
   const [referencias, setReferencias] = useState(initialData?.referencias || '')
-  const [imagensUrls, setImagensUrls] = useState(initialData?.imagens_mecanismo?.join('\n') || '')
-  const [legendas, setLegendas] = useState(initialData?.legenda_imagens?.join('\n') || '')
+  const [imagensUrls, setImagensUrls] = useState<string>(initialData?.imagens_mecanismo?.join('\n') || '')
+  const [legendas, setLegendas] = useState<string>(initialData?.legenda_imagens?.join('\n') || '')
 
   // Farmacologia
   const [primeiraLinha, setPrimeiraLinha] = useState<Farmaco[]>(initialData?.farmacologia?.primeira_linha || [])

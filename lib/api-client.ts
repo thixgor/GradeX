@@ -55,8 +55,9 @@ function getDedupedRequest<T>(
   key: string,
   fetcher: () => Promise<T>
 ): Promise<T> {
-  if (pendingRequests[key]) {
-    return pendingRequests[key]
+  const existing = pendingRequests[key]
+  if (existing) {
+    return existing
   }
 
   const promise = fetcher().finally(() => {

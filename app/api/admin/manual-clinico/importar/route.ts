@@ -232,8 +232,10 @@ export async function POST(request: NextRequest) {
       const existing = await db.collection('patologias').findOne({ slug })
       if (existing) slug = `${slug}-${Date.now()}`
 
+      // Strip _id (tipo string no schema de API) para o driver do Mongo criar um ObjectId
+      const { _id: _ignored, ...rest } = resultado.data
       const patologia = {
-        ...resultado.data,
+        ...rest,
         slug,
         createdAt: new Date(),
         updatedAt: new Date(),

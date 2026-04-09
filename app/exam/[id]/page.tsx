@@ -2453,12 +2453,12 @@ ${respostaAluno}`
               <div className="hidden sm:block">
                 <ExamTimer
                   endTime={practiceTimeLimitMs && examStartTime
-                    ? new Date(examStartTime.getTime() + practiceTimeLimitMs).toISOString()
+                    ? new Date(examStartTime.getTime() + practiceTimeLimitMs)
                     : exam.endTime}
                   onTimeUp={() => {
                     if (exam.isPracticeExam) {
                       showToastMessage('Tempo esgotado! Finalizando prova...', 'info')
-                      handleSubmitExam()
+                      handleSubmit()
                     } else {
                       showToastMessage('O tempo da prova acabou!', 'info')
                       setTimeout(() => router.push('/'), 2000)
@@ -2473,12 +2473,12 @@ ${respostaAluno}`
           <div className="sm:hidden mt-2 flex justify-center">
             <ExamTimer
               endTime={practiceTimeLimitMs && examStartTime
-                ? new Date(examStartTime.getTime() + practiceTimeLimitMs).toISOString()
+                ? new Date(examStartTime.getTime() + practiceTimeLimitMs)
                 : exam.endTime}
               onTimeUp={() => {
                 if (exam.isPracticeExam) {
                   showToastMessage('Tempo esgotado! Finalizando prova...', 'info')
-                  handleSubmitExam()
+                  handleSubmit()
                 } else {
                   showToastMessage('O tempo da prova acabou!', 'info')
                   setTimeout(() => router.push('/'), 2000)
