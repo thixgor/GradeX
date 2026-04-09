@@ -12,30 +12,48 @@ function HomeContent() {
   const [showLanding, setShowLanding] = useState(false)
   const [landingPageEnabled, setLandingPageEnabled] = useState(true)
   const redirectingRef = useRef(false)
+  const unmountedRef = useRef(false)
 
   const forceLanding = searchParams.get('landing') === 'true'
 
   useEffect(() => {
-    // Timeout de segurança - se após 3s ainda não resolveu, mostrar landing.
-    // Não dispara se já iniciamos um redirect para o dashboard.
+    unmountedRef.current = false
+
+    // Timeout de segurança — só mostra landing se NÃO estamos redirecionando.
+    // 6s é suficiente para cold-start do MongoDB sem frustrar o usuário.
     const safetyTimeout = setTimeout(() => {
-      if (loading && !redirectingRef.current) {
-        setShowLanding(true)
-        setLoading(false)
-      }
-    }, 3000)
+      if (redirectingRef.current || unmountedRef.current) return
+      setShowLanding(true)
+      setLoading(false)
+    }, 6000)
 
     checkAuth()
 
-    return () => clearTimeout(safetyTimeout)
+    return () => {
+      unmountedRef.current = true
+      clearTimeout(safetyTimeout)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [forceLanding])
 
   async function checkAuth() {
     try {
-      const [authRes, settingsRes] = await Promise.all([
-        fetch('/api/auth/me').catch(() => null),
-        fetch('/api/admin/settings').catch(() => null),
-      ])
+      // ─── 1. AUTH PRIMEIRO ──────────────────────────────────────
+      // Redirect instantâneo para logados — não espera settings.
+      const authRes = await fetch('/api/auth/me', { cache: 'no-store' }).catch(() => null)
+
+      if (unmountedRef.current) return
+
+      if (authRes?.ok && !forceLanding) {
+        redirectingRef.current = true
+        router.replace('/dashboard')
+        return
+      }
+
+      // ─── 2. SETTINGS SÓ SE VAMOS MOSTRAR LANDING ──────────────
+      const settingsRes = await fetch('/api/admin/settings', { cache: 'no-store' }).catch(() => null)
+
+      if (unmountedRef.current) return
 
       if (settingsRes?.ok) {
         try {
@@ -44,16 +62,10 @@ function HomeContent() {
         } catch { /* ignore */ }
       }
 
-      if (authRes?.ok && !forceLanding) {
-        // Sinaliza que estamos redirecionando — impede o safetyTimeout de mostrar a landing
-        redirectingRef.current = true
-        router.replace('/dashboard')
-        return
-      }
-
       setShowLanding(true)
       setLoading(false)
     } catch {
+      if (unmountedRef.current) return
       setShowLanding(true)
       setLoading(false)
     }

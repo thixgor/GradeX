@@ -169,7 +169,7 @@ export function DoacaoContent({ compact = false, onDonateClick }: DoacaoContentP
           </div>
 
           {/* Chaves e código */}
-          <div className="flex-1 w-full space-y-3">
+          <div className="flex-1 min-w-0 space-y-3">
 
             {/* Chave Pix */}
             <div>
