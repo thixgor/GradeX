@@ -69,6 +69,11 @@
     @apply font-heading;
   }
 
+  /* Remove 300ms tap delay em mobile — botões respondem instantaneamente */
+  button, a, [role="button"], input[type="submit"], input[type="button"] {
+    touch-action: manipulation;
+  }
+
   /* Proteger todas as imagens contra clique direito e cópia */
   img {
     -webkit-user-select: none;
@@ -218,12 +223,13 @@
 
 /* Landing Page Animations */
 @keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slide-up {

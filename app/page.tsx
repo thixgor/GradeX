@@ -5,12 +5,19 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import LandingPage from '@/components/landing-page'
 import { PageLoading } from '@/components/page-loading'
 
+interface LandingInitialData {
+  isLoggedIn: boolean
+  videoEmbedUrl?: string
+  videoEnabled?: boolean
+}
+
 function HomeContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [loading, setLoading] = useState(true)
   const [showLanding, setShowLanding] = useState(false)
   const [landingPageEnabled, setLandingPageEnabled] = useState(true)
+  const [landingInitial, setLandingInitial] = useState<LandingInitialData>({ isLoggedIn: false })
   const redirectingRef = useRef(false)
   const unmountedRef = useRef(false)
 
@@ -44,28 +51,39 @@ function HomeContent() {
 
       if (unmountedRef.current) return
 
-      if (authRes?.ok && !forceLanding) {
+      const isLoggedIn = !!authRes?.ok
+
+      if (isLoggedIn && !forceLanding) {
         redirectingRef.current = true
         router.replace('/dashboard')
         return
       }
 
       // ─── 2. SETTINGS SÓ SE VAMOS MOSTRAR LANDING ──────────────
+      // Passamos os dados como props para a LandingPage evitar que ela
+      // faça os mesmos fetches novamente logo após montar.
       const settingsRes = await fetch('/api/admin/settings', { cache: 'no-store' }).catch(() => null)
 
       if (unmountedRef.current) return
+
+      let videoEmbedUrl: string | undefined
+      let videoEnabled: boolean | undefined
 
       if (settingsRes?.ok) {
         try {
           const data = await settingsRes.json()
           setLandingPageEnabled(data.landingPageEnabled !== false)
+          videoEmbedUrl = data.videoEmbedUrl
+          videoEnabled = data.videoEnabled
         } catch { /* ignore */ }
       }
 
+      setLandingInitial({ isLoggedIn, videoEmbedUrl, videoEnabled })
       setShowLanding(true)
       setLoading(false)
     } catch {
       if (unmountedRef.current) return
+      setLandingInitial({ isLoggedIn: false })
       setShowLanding(true)
       setLoading(false)
     }
@@ -76,7 +94,13 @@ function HomeContent() {
   }
 
   if (showLanding && landingPageEnabled) {
-    return <LandingPage />
+    return (
+      <LandingPage
+        initialIsLoggedIn={landingInitial.isLoggedIn}
+        initialVideoEmbedUrl={landingInitial.videoEmbedUrl}
+        initialVideoEnabled={landingInitial.videoEnabled}
+      />
+    )
   }
 
   if (showLanding && !landingPageEnabled) {

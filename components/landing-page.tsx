@@ -84,12 +84,26 @@ function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: str
   return <span ref={ref}>{count.toLocaleString('pt-BR')}{suffix}</span>
 }
 
-export default function LandingPage() {
+interface LandingPageProps {
+  /** Evita re-fetch de auth — passado pelo HomeContent em app/page.tsx */
+  initialIsLoggedIn?: boolean
+  /** Evita re-fetch de settings */
+  initialVideoEmbedUrl?: string
+  initialVideoEnabled?: boolean
+}
+
+export default function LandingPage({
+  initialIsLoggedIn,
+  initialVideoEmbedUrl,
+  initialVideoEnabled,
+}: LandingPageProps) {
   const router = useRouter()
   const [isScrolled, setIsScrolled] = useState(false)
-  const [videoEmbedUrl, setVideoEmbedUrl] = useState('https://www.youtube.com/embed/dQw4w9WgXcQ')
-  const [videoEnabled, setVideoEnabled] = useState(true)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [videoEmbedUrl, setVideoEmbedUrl] = useState(
+    initialVideoEmbedUrl ?? 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+  )
+  const [videoEnabled, setVideoEnabled] = useState(initialVideoEnabled ?? true)
+  const [isLoggedIn, setIsLoggedIn] = useState(initialIsLoggedIn ?? false)
   const [openFaq, setOpenFaq] = useState<number | null>(null)
 
   const faqs = [
@@ -130,27 +144,22 @@ export default function LandingPage() {
   }, [])
 
   useEffect(() => {
-    loadSettings()
-    checkAuth()
+    // Só busca se os dados NÃO foram passados pelo pai (app/page.tsx).
+    // Evita 2 roundtrips duplicados que já foram feitos antes de mostrar a landing.
+    if (initialIsLoggedIn === undefined) {
+      fetch('/api/auth/me').then(r => { if (r.ok) setIsLoggedIn(true) }).catch(() => {})
+    }
+    if (initialVideoEmbedUrl === undefined) {
+      fetch('/api/admin/settings').then(async r => {
+        if (r.ok) {
+          const data = await r.json()
+          if (data.videoEmbedUrl) setVideoEmbedUrl(data.videoEmbedUrl)
+          setVideoEnabled(data.videoEnabled !== false)
+        }
+      }).catch(() => {})
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  async function checkAuth() {
-    try {
-      const res = await fetch('/api/auth/me')
-      if (res.ok) setIsLoggedIn(true)
-    } catch {}
-  }
-
-  async function loadSettings() {
-    try {
-      const res = await fetch('/api/admin/settings')
-      if (res.ok) {
-        const data = await res.json()
-        setVideoEmbedUrl(data.videoEmbedUrl)
-        setVideoEnabled(data.videoEnabled !== false)
-      }
-    } catch {}
-  }
 
   const features = [
     {
@@ -251,8 +260,8 @@ export default function LandingPage() {
 
       {/* Hero */}
       <section className="relative min-h-[92vh] flex items-center justify-center pt-16 overflow-hidden">
-        {/* Subtle ambient background */}
-        <div className="absolute inset-0 pointer-events-none">
+        {/* Subtle ambient background — blurs só em sm+ (GPU cara no mobile) */}
+        <div className="absolute inset-0 pointer-events-none hidden sm:block">
           <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/[0.07] rounded-full blur-[120px]" />
           <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-secondary/[0.05] rounded-full blur-[120px]" />
         </div>
@@ -370,7 +379,7 @@ export default function LandingPage() {
             {features.map((feature, i) => (
               <div
                 key={feature.title}
-                className={`group relative p-6 rounded-2xl border border-border/60 bg-card/50 backdrop-blur-sm hover:bg-card hover:border-primary/30 hover:shadow-lg hover:shadow-primary/[0.06] transition-all duration-300 cursor-default ${
+                className={`group relative p-6 rounded-2xl border border-border/60 bg-card/50 sm:backdrop-blur-sm hover:bg-card hover:border-primary/30 hover:shadow-lg hover:shadow-primary/[0.06] transition-all duration-300 cursor-default ${
                   featuresSection.isVisible
                     ? 'opacity-100 translate-y-0'
                     : 'opacity-0 translate-y-6'
@@ -408,7 +417,7 @@ export default function LandingPage() {
             {courses.map((course, i) => (
               <div
                 key={course.name}
-                className={`flex items-center gap-4 p-5 rounded-2xl border border-border/60 bg-card/50 backdrop-blur-sm hover:bg-card hover:border-primary/20 transition-all duration-300 ${
+                className={`flex items-center gap-4 p-5 rounded-2xl border border-border/60 bg-card/50 sm:backdrop-blur-sm hover:bg-card hover:border-primary/20 transition-all duration-300 ${
                   coursesSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
                 }`}
                 style={{ transitionDelay: coursesSection.isVisible ? `${i * 100}ms` : '0ms' }}
@@ -552,8 +561,8 @@ export default function LandingPage() {
           SEÇÃO DOAÇÃO
       ══════════════════════════════════════════ */}
       <section className="py-20 px-6 border-t border-border/30 relative overflow-hidden">
-        {/* Fundo glassmorphism escuro */}
-        <div className="absolute inset-0 pointer-events-none">
+        {/* Fundo glassmorphism escuro — blur só em sm+ */}
+        <div className="absolute inset-0 pointer-events-none hidden sm:block">
           <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full opacity-20 blur-3xl"
             style={{ background: 'radial-gradient(ellipse, rgba(70,129,82,0.5) 0%, transparent 70%)' }} />
         </div>
@@ -603,14 +612,14 @@ export default function LandingPage() {
                   onDonateClick={() => setDoacaoFormOpen(true)}
                 />
 
-                {/* Ranking */}
+                {/* Ranking — só monta (e busca dados) quando a seção fica visível */}
                 <div>
                   <div className="flex items-center gap-2 mb-4">
                     <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, rgba(70,129,82,0.4))' }} />
                     <span className="text-xs font-semibold text-emerald-400/60">Quem já apoiou</span>
                     <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, rgba(70,129,82,0.4), transparent)' }} />
                   </div>
-                  <DoacaoRanking glass />
+                  {doacaoSection.isVisible && <DoacaoRanking glass />}
                 </div>
               </div>
             </div>
@@ -618,7 +627,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <DoacaoForm open={doacaoFormOpen} onClose={() => setDoacaoFormOpen(false)} />
+      {/* DoacaoForm montado somente quando aberto — evita JS pesado no load inicial */}
+      {doacaoFormOpen && <DoacaoForm open={doacaoFormOpen} onClose={() => setDoacaoFormOpen(false)} />}
 
       {/* FAQ */}
       <section className="py-24 px-6 border-t border-border/30">

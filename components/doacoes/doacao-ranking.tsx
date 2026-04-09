@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { Heart, Stethoscope, Activity, Clock, Trophy, Loader2, ChevronDown } from 'lucide-react'
-import { motion } from 'framer-motion'
 
 interface DoacaoPublic {
   _id: string
@@ -129,23 +128,19 @@ export function DoacaoRanking({ compact = false, defaultTab = 'top', glass = fal
           const isFirst = idx === 0 && isTop
 
           return (
-            <motion.div
+            <div
               key={donor._id}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.25, delay: idx * 0.05 }}
               className="flex items-center gap-3 rounded-xl px-3 py-2.5 transition-all"
-              style={glass ? {
-                background: isFirst
-                  ? 'rgba(250,204,21,0.06)'
-                  : 'rgba(255,255,255,0.04)',
-                border: isFirst
-                  ? '1px solid rgba(250,204,21,0.20)'
-                  : '1px solid rgba(255,255,255,0.07)',
-                boxShadow: isFirst ? '0 0 16px rgba(250,204,21,0.06)' : 'none',
-              } : {
-                background: isFirst ? 'hsl(var(--muted))' : 'hsl(var(--muted) / 0.3)',
-                border: '1px solid hsl(var(--border) / 0.5)',
+              style={{
+                animation: `fadeInUp 0.25s ease-out ${idx * 50}ms both`,
+                ...(glass ? {
+                  background: isFirst ? 'rgba(250,204,21,0.06)' : 'rgba(255,255,255,0.04)',
+                  border: isFirst ? '1px solid rgba(250,204,21,0.20)' : '1px solid rgba(255,255,255,0.07)',
+                  boxShadow: isFirst ? '0 0 16px rgba(250,204,21,0.06)' : 'none',
+                } : {
+                  background: isFirst ? 'hsl(var(--muted))' : 'hsl(var(--muted) / 0.3)',
+                  border: '1px solid hsl(var(--border) / 0.5)',
+                }),
               }}
             >
               {/* Badge / posição */}
@@ -232,7 +227,7 @@ export function DoacaoRanking({ compact = false, defaultTab = 'top', glass = fal
                   {formatBRL(donor.valor)}
                 </span>
               </div>
-            </motion.div>
+            </div>
           )
         })}
       </div>
