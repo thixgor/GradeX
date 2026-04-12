@@ -35,6 +35,13 @@ import {
   Play,
   ShieldCheck,
   Users,
+  UserPlus,
+  UserMinus,
+  Crown,
+  Zap,
+  Clock,
+  CreditCard,
+  BadgeCheck,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -196,6 +203,14 @@ function AdminMateriaisContent() {
   const [reorderSaving, setReorderSaving] = useState(false)
   const [copiedId, setCopiedId] = useState<string | null>(null)
 
+  // Access management
+  const [accessModal, setAccessModal] = useState<{ itemId: string; itemType: 'material' | 'package'; title: string } | null>(null)
+  const [accessPurchases, setAccessPurchases] = useState<any[]>([])
+  const [accessLoading, setAccessLoading] = useState(false)
+  const [grantEmail, setGrantEmail] = useState('')
+  const [grantLoading, setGrantLoading] = useState(false)
+  const [grantError, setGrantError] = useState('')
+
   const copyLink = (type: 'folder' | 'material' | 'package', id: string) => {
     const base = window.location.origin
     let url = `${base}/materiais`
@@ -205,6 +220,48 @@ function AdminMateriaisContent() {
     navigator.clipboard.writeText(url).catch(() => {})
     setCopiedId(id)
     setTimeout(() => setCopiedId(null), 2000)
+  }
+
+  // Access management functions
+  const openAccessModal = async (itemId: string, itemType: 'material' | 'package', title: string) => {
+    setAccessModal({ itemId, itemType, title })
+    setGrantEmail('')
+    setGrantError('')
+    setAccessLoading(true)
+    try {
+      const res = await fetch(`/api/materiais/admin-access?itemId=${itemId}&itemType=${itemType}`)
+      if (res.ok) setAccessPurchases((await res.json()).purchases || [])
+    } finally {
+      setAccessLoading(false)
+    }
+  }
+
+  const grantAccess = async () => {
+    if (!accessModal || !grantEmail.trim()) return
+    setGrantLoading(true)
+    setGrantError('')
+    try {
+      const res = await fetch('/api/materiais/admin-access', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ itemId: accessModal.itemId, itemType: accessModal.itemType, userEmail: grantEmail.trim() }),
+      })
+      const data = await res.json()
+      if (!res.ok) { setGrantError(data.error || 'Erro ao conceder acesso'); return }
+      setGrantEmail('')
+      // Refresh list
+      const listRes = await fetch(`/api/materiais/admin-access?itemId=${accessModal.itemId}&itemType=${accessModal.itemType}`)
+      if (listRes.ok) setAccessPurchases((await listRes.json()).purchases || [])
+    } catch { setGrantError('Erro ao conceder acesso') }
+    finally { setGrantLoading(false) }
+  }
+
+  const revokeAccess = async (purchaseId: string) => {
+    if (!confirm('Revogar acesso deste usuário?')) return
+    try {
+      await fetch(`/api/materiais/admin-access?purchaseId=${purchaseId}`, { method: 'DELETE' })
+      setAccessPurchases(prev => prev.filter(p => p._id !== purchaseId))
+    } catch { alert('Erro ao revogar acesso') }
   }
 
   // Form states
@@ -895,6 +952,9 @@ function AdminMateriaisContent() {
                   <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => toggleMaterialProp(material, 'isHidden')} title={material.isHidden ? 'Mostrar' : 'Ocultar'}>
                     {material.isHidden ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </Button>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-violet-500 hover:text-violet-600" onClick={() => openAccessModal(material._id, 'material', material.title)} title="Gerenciar acessos">
+                    <Users className="h-4 w-4" />
+                  </Button>
                   <Button
                     variant="ghost" size="icon"
                     className={`h-8 w-8 ${copiedId === material._id ? 'text-green-500' : ''}`}
@@ -1012,6 +1072,9 @@ function AdminMateriaisContent() {
                   </div>
                 </div>
                 <div className="flex items-center gap-1 flex-shrink-0">
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-violet-500 hover:text-violet-600" onClick={() => openAccessModal(pkg._id, 'package', pkg.title)} title="Gerenciar acessos">
+                    <Users className="h-4 w-4" />
+                  </Button>
                   <Button
                     variant="ghost" size="icon"
                     className={`h-8 w-8 ${copiedId === pkg._id ? 'text-green-500' : ''}`}
@@ -1329,6 +1392,104 @@ function AdminMateriaisContent() {
               </div>
 
               <ModalActions onCancel={() => setShowPackageModal(false)} onSave={savePackage} saving={saving} mode={modalMode} />
+            </ModalCard>
+          </ModalBackdrop>
+        )}
+      </AnimatePresence>
+
+      {/* ═══════════════ Access Modal ═══════════════ */}
+      <AnimatePresence>
+        {accessModal && (
+          <ModalBackdrop onClose={() => setAccessModal(null)}>
+            <ModalCard title={`Acessos — ${accessModal.title}`} onClose={() => setAccessModal(null)}>
+              {/* Grant access */}
+              <div className="rounded-xl border p-3 space-y-2 mb-4">
+                <p className="text-sm font-medium flex items-center gap-2"><UserPlus className="h-4 w-4 text-green-500" /> Conceder Acesso Manual</p>
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="E-mail do usuário"
+                    value={grantEmail}
+                    onChange={e => { setGrantEmail(e.target.value); setGrantError('') }}
+                    onKeyDown={e => e.key === 'Enter' && grantAccess()}
+                    className="flex-1 h-9"
+                  />
+                  <Button size="sm" onClick={grantAccess} disabled={grantLoading || !grantEmail.trim()} className="h-9 gap-1.5">
+                    {grantLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <UserPlus className="h-3.5 w-3.5" />}
+                    Conceder
+                  </Button>
+                </div>
+                {grantError && <p className="text-xs text-destructive">{grantError}</p>}
+              </div>
+
+              {/* Users list */}
+              <div className="space-y-1">
+                <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1.5">
+                  <Users className="h-3.5 w-3.5" />
+                  {accessLoading ? 'Carregando...' : `${accessPurchases.length} usuário${accessPurchases.length !== 1 ? 's' : ''} com acesso`}
+                </p>
+
+                {accessLoading ? (
+                  Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="h-12 rounded-lg bg-muted animate-pulse" />
+                  ))
+                ) : accessPurchases.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Users className="h-8 w-8 mx-auto mb-2 opacity-40" />
+                    <p className="text-sm">Nenhum usuário com acesso ainda</p>
+                  </div>
+                ) : (
+                  <div className="max-h-72 overflow-y-auto space-y-1 pr-1">
+                    {accessPurchases.map(p => {
+                      const sourceIcon = p.source === 'manual'
+                        ? <BadgeCheck className="h-3.5 w-3.5 text-violet-500" />
+                        : p.price === 0
+                          ? <Gift className="h-3.5 w-3.5 text-green-500" />
+                          : <CreditCard className="h-3.5 w-3.5 text-blue-500" />
+                      const sourceLabel = p.source === 'manual' ? 'Manual' : p.price === 0 ? 'Grátis' : `R$ ${p.price?.toFixed(2)}`
+                      const planBadge = p.userAccountType
+                        ? { premium: { label: 'Premium', color: '#f59e0b', icon: <Crown className="h-3 w-3" /> },
+                            essential: { label: 'Essential', color: '#8b5cf6', icon: <Zap className="h-3 w-3" /> },
+                            trial: { label: 'Trial', color: '#3b82f6', icon: <Clock className="h-3 w-3" /> },
+                            gratuito: { label: 'Gratuito', color: '#6b7280', icon: <Gift className="h-3 w-3" /> },
+                          }[p.userAccountType as string]
+                        : null
+
+                      return (
+                        <div key={p._id} className="flex items-center gap-3 p-2.5 rounded-lg border hover:bg-muted/40 transition-colors">
+                          <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 text-xs font-bold text-primary">
+                            {(p.userName || p.userEmail || '?')[0].toUpperCase()}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium truncate">{p.userName || '—'}</p>
+                            <p className="text-xs text-muted-foreground truncate">{p.userEmail}</p>
+                          </div>
+                          <div className="flex items-center gap-1.5 flex-shrink-0">
+                            {planBadge && (
+                              <span className="flex items-center gap-0.5 text-[10px] font-medium px-1.5 py-0.5 rounded-md"
+                                style={{ color: planBadge.color, background: planBadge.color + '18' }}>
+                                {planBadge.icon} {planBadge.label}
+                              </span>
+                            )}
+                            <span className="flex items-center gap-0.5 text-[10px] text-muted-foreground">
+                              {sourceIcon} {sourceLabel}
+                            </span>
+                            <span className="text-[10px] text-muted-foreground hidden sm:block">
+                              {new Date(p.purchasedAt).toLocaleDateString('pt-BR')}
+                            </span>
+                            <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive hover:text-destructive flex-shrink-0" onClick={() => revokeAccess(p._id)} title="Revogar acesso">
+                              <UserMinus className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-4 flex justify-end">
+                <Button variant="outline" onClick={() => setAccessModal(null)}>Fechar</Button>
+              </div>
             </ModalCard>
           </ModalBackdrop>
         )}
