@@ -55,6 +55,7 @@ interface Material {
   moduloId: string
   tags: string[]
   allowedGroups: string[]
+  videoDuration?: number
   pricing: 'free' | 'paid'
   price: number
   stripePriceId: string
@@ -90,6 +91,7 @@ interface MaterialPackage {
   materialIds: string[]
   materials: any[]
   tags: string[]
+  allowedGroups: string[]
   pricing: 'free' | 'paid'
   price: number
   originalPrice: number
@@ -218,6 +220,9 @@ function AdminMateriaisContent() {
     moduloId: '',
     tags: '',
     allowedGroups: [] as string[],
+    videoDurationH: 0,
+    videoDurationM: 0,
+    videoDurationS: 0,
     pricing: 'free' as 'free' | 'paid',
     price: 0,
     stripePriceId: '',
@@ -246,6 +251,7 @@ function AdminMateriaisContent() {
     coverImage: '',
     materialIds: [] as string[],
     tags: '',
+    allowedGroups: [] as string[],
     pricing: 'free' as 'free' | 'paid',
     price: 0,
     originalPrice: 0,
@@ -446,6 +452,9 @@ function AdminMateriaisContent() {
         moduloId: material.moduloId || '',
         tags: (material.tags || []).join(', '),
         allowedGroups: material.allowedGroups || [],
+        videoDurationH: material.videoDuration ? Math.floor(material.videoDuration / 3600) : 0,
+        videoDurationM: material.videoDuration ? Math.floor((material.videoDuration % 3600) / 60) : 0,
+        videoDurationS: material.videoDuration ? material.videoDuration % 60 : 0,
         pricing: material.pricing,
         price: material.price || 0,
         stripePriceId: material.stripePriceId || '',
@@ -457,8 +466,8 @@ function AdminMateriaisContent() {
       setMaterialForm({
         _id: '', title: '', description: '', coverImage: '', type: 'pdf',
         downloadUrl: '', previewUrl: '', folderId: '', moduloId: '', tags: '',
-        allowedGroups: [], pricing: 'free', price: 0, stripePriceId: '',
-        isHidden: false, isFeatured: false, order: 0,
+        allowedGroups: [], videoDurationH: 0, videoDurationM: 0, videoDurationS: 0,
+        pricing: 'free', price: 0, stripePriceId: '', isHidden: false, isFeatured: false, order: 0,
       })
     }
     setShowMaterialModal(true)
@@ -471,11 +480,16 @@ function AdminMateriaisContent() {
     }
     setSaving(true)
     try {
+      const isVideo = materialForm.type === 'video' || materialForm.type === 'video_embed'
+      const totalSeconds = isVideo
+        ? (materialForm.videoDurationH * 3600 + materialForm.videoDurationM * 60 + materialForm.videoDurationS)
+        : 0
       const body = {
         ...materialForm,
         tags: materialForm.tags.split(',').map(t => t.trim()).filter(Boolean),
         folderId: materialForm.folderId || null,
         allowedGroups: materialForm.allowedGroups,
+        videoDuration: totalSeconds || undefined,
       }
       const res = await fetch('/api/materiais', {
         method: modalMode === 'edit' ? 'PUT' : 'POST',
@@ -553,16 +567,16 @@ function AdminMateriaisContent() {
       setPackageForm({
         _id: pkg._id, title: pkg.title, description: pkg.description || '',
         coverImage: pkg.coverImage || '', materialIds: pkg.materialIds || [],
-        tags: (pkg.tags || []).join(', '), pricing: pkg.pricing,
-        price: pkg.price || 0, originalPrice: pkg.originalPrice || 0,
+        tags: (pkg.tags || []).join(', '), allowedGroups: pkg.allowedGroups || [],
+        pricing: pkg.pricing, price: pkg.price || 0, originalPrice: pkg.originalPrice || 0,
         stripePriceId: pkg.stripePriceId || '', isHidden: pkg.isHidden,
         isFeatured: pkg.isFeatured, order: pkg.order || 0,
       })
     } else {
       setPackageForm({
         _id: '', title: '', description: '', coverImage: '', materialIds: [],
-        tags: '', pricing: 'free', price: 0, originalPrice: 0, stripePriceId: '',
-        isHidden: false, isFeatured: false, order: 0,
+        tags: '', allowedGroups: [], pricing: 'free', price: 0, originalPrice: 0,
+        stripePriceId: '', isHidden: false, isFeatured: false, order: 0,
       })
     }
     setShowPackageModal(true)
@@ -980,10 +994,21 @@ function AdminMateriaisContent() {
                     <h4 className="font-medium text-sm truncate">{pkg.title}</h4>
                     {pkg.isFeatured && <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500 flex-shrink-0" />}
                   </div>
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5 flex-wrap">
                     <span>{pkg.materialIds?.length || 0} materiais</span>
                     <span>{pkg.pricing === 'free' ? 'Grátis' : `R$ ${pkg.price?.toFixed(2)}`}</span>
                     <span className="flex items-center gap-0.5"><Download className="h-3 w-3" /> {pkg.downloadCount}</span>
+                    {pkg.allowedGroups?.length > 0 && (
+                      <span className="flex items-center gap-1">
+                        <ShieldCheck className="h-3 w-3 text-violet-500" />
+                        {pkg.allowedGroups.map(g => (
+                          <span key={g} className="px-1.5 py-0.5 rounded-md text-[10px] font-medium"
+                            style={{ background: ACCESS_GROUPS.find(ag => ag.id === g)?.color + '20', color: ACCESS_GROUPS.find(ag => ag.id === g)?.color }}>
+                            {ACCESS_GROUPS.find(ag => ag.id === g)?.label || g}
+                          </span>
+                        ))}
+                      </span>
+                    )}
                   </div>
                 </div>
                 <div className="flex items-center gap-1 flex-shrink-0">
@@ -1053,6 +1078,42 @@ function AdminMateriaisContent() {
                 {materialForm.type !== 'video_embed' && (
                   <Field label="URL de Preview (opcional)">
                     <Input value={materialForm.previewUrl} onChange={e => setMaterialForm(p => ({ ...p, previewUrl: e.target.value }))} placeholder="https://..." />
+                  </Field>
+                )}
+
+                {(materialForm.type === 'video' || materialForm.type === 'video_embed') && (
+                  <Field label="Duração do Vídeo">
+                    <div className="flex items-center gap-2">
+                      <div className="flex flex-col items-center gap-1">
+                        <Input type="number" min={0} max={23} value={materialForm.videoDurationH}
+                          onChange={e => setMaterialForm(p => ({ ...p, videoDurationH: Math.max(0, parseInt(e.target.value) || 0) }))}
+                          className="w-16 h-9 text-center" />
+                        <span className="text-[10px] text-muted-foreground">horas</span>
+                      </div>
+                      <span className="text-lg font-bold text-muted-foreground mb-4">:</span>
+                      <div className="flex flex-col items-center gap-1">
+                        <Input type="number" min={0} max={59} value={materialForm.videoDurationM}
+                          onChange={e => setMaterialForm(p => ({ ...p, videoDurationM: Math.min(59, Math.max(0, parseInt(e.target.value) || 0)) }))}
+                          className="w-16 h-9 text-center" />
+                        <span className="text-[10px] text-muted-foreground">minutos</span>
+                      </div>
+                      <span className="text-lg font-bold text-muted-foreground mb-4">:</span>
+                      <div className="flex flex-col items-center gap-1">
+                        <Input type="number" min={0} max={59} value={materialForm.videoDurationS}
+                          onChange={e => setMaterialForm(p => ({ ...p, videoDurationS: Math.min(59, Math.max(0, parseInt(e.target.value) || 0)) }))}
+                          className="w-16 h-9 text-center" />
+                        <span className="text-[10px] text-muted-foreground">segundos</span>
+                      </div>
+                      {(materialForm.videoDurationH > 0 || materialForm.videoDurationM > 0 || materialForm.videoDurationS > 0) && (
+                        <span className="text-xs text-muted-foreground ml-2 self-start mt-2.5">
+                          = {[
+                            materialForm.videoDurationH > 0 && `${materialForm.videoDurationH}h`,
+                            materialForm.videoDurationM > 0 && `${materialForm.videoDurationM}min`,
+                            materialForm.videoDurationS > 0 && `${materialForm.videoDurationS}s`,
+                          ].filter(Boolean).join(' ')}
+                        </span>
+                      )}
+                    </div>
                   </Field>
                 )}
 
@@ -1213,6 +1274,40 @@ function AdminMateriaisContent() {
                     )}
                   </div>
                 </Field>
+
+                {/* Access Groups */}
+                <div className="rounded-xl border p-3 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <ShieldCheck className="h-4 w-4 text-violet-500" />
+                    <span className="text-sm font-medium">Restrição de Acesso por Grupo</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">Deixe todos desmarcados para acesso livre a todos os usuários.</p>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1">
+                    {ACCESS_GROUPS.map(group => {
+                      const checked = packageForm.allowedGroups.includes(group.id)
+                      return (
+                        <label key={group.id} className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer border transition-all ${checked ? 'border-current bg-opacity-10' : 'border-muted hover:border-muted-foreground/30'}`}
+                          style={checked ? { color: group.color, background: group.color + '15', borderColor: group.color + '50' } : {}}>
+                          <input type="checkbox" checked={checked}
+                            onChange={e => setPackageForm(p => ({
+                              ...p,
+                              allowedGroups: e.target.checked
+                                ? [...p.allowedGroups, group.id]
+                                : p.allowedGroups.filter(g => g !== group.id)
+                            }))}
+                            className="rounded" style={checked ? { accentColor: group.color } : {}} />
+                          <span className="text-sm">{group.emoji} {group.label}</span>
+                        </label>
+                      )
+                    })}
+                  </div>
+                  {packageForm.allowedGroups.length > 0 && (
+                    <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1 pt-1">
+                      <ShieldCheck className="h-3 w-3" />
+                      Apenas {packageForm.allowedGroups.map(g => ACCESS_GROUPS.find(ag => ag.id === g)?.label).join(', ')} poderão acessar
+                    </p>
+                  )}
+                </div>
 
                 <PricingSelector
                   pricing={packageForm.pricing}

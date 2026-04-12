@@ -932,6 +932,7 @@ export interface Material {
   type: MaterialType          // Tipo do arquivo
   downloadUrl: string         // Link para download
   previewUrl?: string         // URL de preview (opcional)
+  videoDuration?: number      // Duração em segundos (apenas para video e video_embed)
   folderId?: string | null    // Pasta onde o material está (null = raiz)
   moduloId?: string           // Módulo vinculado (opcional)
   tags: string[]              // Tags para busca
@@ -965,6 +966,9 @@ export interface MaterialPackage {
   coverImage?: string
   materialIds: string[]       // IDs dos materiais incluídos no pacote
   tags: string[]
+
+  // Controle de acesso por grupo (vazio = todos podem acessar)
+  allowedGroups?: MaterialAccessGroup[]
 
   // Preço
   pricing: 'free' | 'paid'

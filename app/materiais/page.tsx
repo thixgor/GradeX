@@ -46,6 +46,7 @@ interface Material {
   moduloId: string
   tags: string[]
   allowedGroups: string[]
+  videoDuration?: number
   pricing: 'free' | 'paid'
   price: number
   downloadCount: number
@@ -84,6 +85,7 @@ interface MaterialPackage {
   materialIds: string[]
   materials: { _id: string; title: string; coverImage: string; type: string }[]
   tags: string[]
+  allowedGroups: string[]
   pricing: 'free' | 'paid'
   price: number
   originalPrice: number
@@ -91,6 +93,15 @@ interface MaterialPackage {
   viewCount: number
   isFeatured: boolean
   createdAt: string
+}
+
+function formatDuration(seconds: number): string {
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  const s = seconds % 60
+  if (h > 0) return `${h}h ${m > 0 ? `${m}min` : ''}`.trim()
+  if (m > 0) return `${m}min${s > 0 ? ` ${s}s` : ''}`
+  return `${s}s`
 }
 
 const typeIcons: Record<string, React.ReactNode> = {
@@ -152,10 +163,10 @@ function MateriaisContent() {
   const highlightRef = useRef<HTMLDivElement | null>(null)
   const { copiedId, copy } = useCopyLink()
 
-  // Access check: true if user belongs to any of the material's allowed groups (or no restriction set)
-  const hasGroupAccess = useCallback((material: Material): boolean => {
-    if (!material.allowedGroups || material.allowedGroups.length === 0) return true
-    return userGroups.some(g => material.allowedGroups.includes(g))
+  // Access check: true if user belongs to any of the item's allowed groups (or no restriction set)
+  const hasGroupAccess = useCallback((item: { allowedGroups?: string[] }): boolean => {
+    if (!item.allowedGroups || item.allowedGroups.length === 0) return true
+    return userGroups.some(g => item.allowedGroups!.includes(g))
   }, [userGroups])
 
   // ─── Build folder ancestry path ─────────────────────────
@@ -203,6 +214,8 @@ function MateriaisContent() {
         const data = await packagesRes.json()
         setPackages(data.packages || [])
         setPurchasedPackageIds(data.purchasedPackageIds || [])
+        // Use packages userGroups as fallback if materials request didn't run (e.g. tab=packages)
+        if (data.userGroups?.length) setUserGroups(data.userGroups)
       }
     } catch (err) {
       console.error('Erro ao carregar materiais:', err)
@@ -441,6 +454,7 @@ function MateriaisContent() {
                     pkg={pkg}
                     index={idx}
                     isPurchased={isPurchased(pkg._id, 'package')}
+                    groupAccess={hasGroupAccess(pkg)}
                     isHighlighted={highlightedPackageId === pkg._id}
                     copiedId={copiedId}
                     onAcquire={() => handleAcquire('package', pkg._id)}
@@ -574,6 +588,7 @@ function MateriaisContent() {
                       pkg={pkg}
                       index={idx}
                       isPurchased={isPurchased(pkg._id, 'package')}
+                      groupAccess={hasGroupAccess(pkg)}
                       isHighlighted={highlightedPackageId === pkg._id}
                       copiedId={copiedId}
                       onAcquire={() => handleAcquire('package', pkg._id)}
@@ -795,6 +810,11 @@ function MaterialCard({
             <div className="flex items-center gap-3">
               <span className="flex items-center gap-1 text-xs text-white/80"><Download className="h-3 w-3" /> {material.downloadCount}</span>
               <span className="flex items-center gap-1 text-xs text-white/80"><Eye className="h-3 w-3" /> {material.viewCount}</span>
+              {(material.type === 'video' || material.type === 'video_embed') && material.videoDuration ? (
+                <span className="flex items-center gap-1 text-xs text-white/80 font-medium">
+                  <Play className="h-3 w-3 fill-white/60" /> {formatDuration(material.videoDuration)}
+                </span>
+              ) : null}
             </div>
             <CopyLinkBtn id={material._id} copiedId={copiedId} onClick={e => { e.stopPropagation(); onCopyLink() }} />
           </div>
@@ -889,6 +909,11 @@ function FeaturedCard({
             <h3 className="font-heading font-bold text-white text-lg leading-tight">{material.title}</h3>
             <div className="flex items-center gap-3 mt-1.5">
               <span className="flex items-center gap-1 text-xs text-white/70"><Download className="h-3 w-3" /> {material.downloadCount}</span>
+              {(material.type === 'video' || material.type === 'video_embed') && material.videoDuration ? (
+                <span className="flex items-center gap-1 text-xs text-white/80 font-medium">
+                  <Play className="h-3 w-3 fill-white/60" /> {formatDuration(material.videoDuration)}
+                </span>
+              ) : null}
               {material.allowedGroups?.length > 0
                 ? <span className="text-xs font-bold text-violet-300 flex items-center gap-1"><ShieldAlert className="h-3 w-3" /> Restrito</span>
                 : isFree
@@ -921,14 +946,15 @@ function FeaturedCard({
 
 // ─── Package Card Component ─────────────────────────────────
 function PackageCard({
-  pkg, index, isPurchased, isHighlighted, copiedId,
+  pkg, index, isPurchased, groupAccess, isHighlighted, copiedId,
   onAcquire, onCopyLink, loading,
 }: {
-  pkg: MaterialPackage; index: number; isPurchased: boolean
+  pkg: MaterialPackage; index: number; isPurchased: boolean; groupAccess: boolean
   isHighlighted: boolean; copiedId: string | null
   onAcquire: () => void; onCopyLink: () => void; loading: boolean
 }) {
   const isFree = pkg.pricing === 'free'
+  const canAccess = groupAccess && (isFree || isPurchased)
   const hasDiscount = pkg.originalPrice && pkg.originalPrice > (pkg.price || 0)
 
   return (
@@ -938,7 +964,10 @@ function PackageCard({
       transition={{ delay: index * 0.1 }}
       className={`group relative transition-all duration-300 ${isHighlighted ? 'ring-2 ring-primary ring-offset-2 ring-offset-background scale-[1.01] rounded-2xl' : ''}`}
     >
-      <div className="glass-card rounded-2xl overflow-hidden transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/15 h-full flex flex-col">
+      {!groupAccess && pkg.allowedGroups?.length > 0 && (
+        <LockedGroupOverlay allowedGroups={pkg.allowedGroups} />
+      )}
+      <div className={`glass-card rounded-2xl overflow-hidden transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/15 h-full flex flex-col ${!groupAccess ? 'pointer-events-none select-none' : ''}`}>
         <div className="relative h-52 overflow-hidden">
           {pkg.coverImage ? (
             <img src={pkg.coverImage} alt={pkg.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
@@ -964,7 +993,12 @@ function PackageCard({
           </div>
 
           <div className="absolute top-3 right-3 text-right">
-            {isFree ? (
+            {pkg.allowedGroups?.length > 0 ? (
+              <span className="px-2.5 py-1 rounded-lg text-xs font-bold backdrop-blur-xl bg-violet-500/30 text-violet-100 border border-violet-400/30 flex items-center gap-1">
+                <ShieldAlert className="h-3 w-3" />
+                {pkg.allowedGroups.map(g => GROUP_META[g]?.label).filter(Boolean).join(' / ')}
+              </span>
+            ) : isFree ? (
               <span className="px-3 py-1 rounded-lg text-xs font-bold backdrop-blur-xl bg-green-500/30 text-green-100 border border-green-400/30 flex items-center gap-1">
                 <Gift className="h-3 w-3" /> Grátis
               </span>
@@ -1013,7 +1047,9 @@ function PackageCard({
           )}
 
           <div className="mt-auto">
-            {isPurchased ? (
+            {!groupAccess ? (
+              <div className="text-center py-2 text-sm text-muted-foreground">Faça upgrade para acessar</div>
+            ) : canAccess ? (
               <Button size="sm" className="w-full bg-gradient-to-r from-primary to-primary/80 text-white rounded-xl h-10 font-semibold">
                 <Check className="h-4 w-4 mr-2" /> Adquirido
               </Button>

@@ -16,6 +16,19 @@ export async function GET(request: NextRequest) {
     const db = await getDb()
     const isAdmin = session.role === 'admin'
 
+    // Fetch user groups for access control
+    let userGroups: string[] = []
+    if (!isAdmin) {
+      const user = await db.collection('users').findOne(
+        { _id: new ObjectId(session.userId) },
+        { projection: { accountType: 1, secondaryRole: 1 } }
+      )
+      if (user) {
+        if (user.accountType) userGroups.push(user.accountType)
+        if (user.secondaryRole === 'monitor') userGroups.push('monitor')
+      }
+    }
+
     const filter: any = {}
     if (!isAdmin) {
       filter.isHidden = false
@@ -66,6 +79,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       packages: packagesWithMaterials,
       purchasedPackageIds,
+      userGroups,
     })
   } catch (error) {
     console.error('Error fetching packages:', error)
@@ -90,6 +104,7 @@ export async function POST(request: NextRequest) {
       coverImage: body.coverImage || '',
       materialIds: body.materialIds || [],
       tags: body.tags || [],
+      allowedGroups: body.allowedGroups || [],
       pricing: body.pricing || 'free',
       price: body.pricing === 'paid' ? (body.price || 0) : 0,
       originalPrice: body.originalPrice || 0,
