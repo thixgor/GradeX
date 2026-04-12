@@ -29,6 +29,9 @@ import {
   Zap,
   GraduationCap,
   Clock,
+  ChevronDown,
+  ChevronUp,
+  Info,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -160,6 +163,7 @@ function MateriaisContent() {
   const [highlightedMaterialId, setHighlightedMaterialId] = useState<string | null>(null)
   const [highlightedPackageId, setHighlightedPackageId] = useState<string | null>(null)
   const [videoEmbed, setVideoEmbed] = useState<{ url: string; title: string } | null>(null)
+  const [previewItem, setPreviewItem] = useState<{ type: 'material'; data: Material } | { type: 'package'; data: MaterialPackage } | null>(null)
   const highlightRef = useRef<HTMLDivElement | null>(null)
   const { copiedId, copy } = useCopyLink()
 
@@ -432,6 +436,7 @@ function MateriaisContent() {
                     onAcquire={() => handleAcquire('material', material._id)}
                     onDownload={() => handleDownload(material)}
                     onCopyLink={() => copyMaterialLink(material)}
+                    onPreview={() => setPreviewItem({ type: 'material', data: material })}
                     loading={checkoutLoading === material._id}
                   />
                 </div>
@@ -459,6 +464,7 @@ function MateriaisContent() {
                     copiedId={copiedId}
                     onAcquire={() => handleAcquire('package', pkg._id)}
                     onCopyLink={() => copyPackageLink(pkg)}
+                    onPreview={() => setPreviewItem({ type: 'package', data: pkg })}
                     loading={checkoutLoading === pkg._id}
                   />
                 </div>
@@ -550,6 +556,7 @@ function MateriaisContent() {
                       onAcquire={() => handleAcquire('material', material._id)}
                       onDownload={() => handleDownload(material)}
                       onCopyLink={() => copyMaterialLink(material)}
+                      onPreview={() => setPreviewItem({ type: 'material', data: material })}
                       loading={checkoutLoading === material._id}
                     />
                   </div>
@@ -593,6 +600,7 @@ function MateriaisContent() {
                       copiedId={copiedId}
                       onAcquire={() => handleAcquire('package', pkg._id)}
                       onCopyLink={() => copyPackageLink(pkg)}
+                      onPreview={() => setPreviewItem({ type: 'package', data: pkg })}
                       loading={checkoutLoading === pkg._id}
                     />
                   </div>
@@ -602,6 +610,21 @@ function MateriaisContent() {
           </>
         )}
       </div>
+
+      {/* ─── Preview Modal (locked content) ─── */}
+      <AnimatePresence>
+        {previewItem && (
+          <PreviewModal
+            item={previewItem}
+            onClose={() => setPreviewItem(null)}
+            onAcquire={previewItem.type === 'material'
+              ? () => { setPreviewItem(null); handleAcquire('material', previewItem.data._id) }
+              : () => { setPreviewItem(null); handleAcquire('package', previewItem.data._id) }
+            }
+            checkoutLoading={checkoutLoading}
+          />
+        )}
+      </AnimatePresence>
 
       {/* ─── Video Embed Modal ─── */}
       <AnimatePresence>
@@ -663,14 +686,17 @@ function CopyLinkBtn({ id, copiedId, onClick }: { id: string; copiedId: string |
 }
 
 // ─── Locked Group Overlay ────────────────────────────────────
-function LockedGroupOverlay({ allowedGroups }: { allowedGroups: string[] }) {
+function LockedGroupOverlay({ allowedGroups, onPreview }: { allowedGroups: string[]; onPreview?: () => void }) {
   return (
-    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-2xl bg-background/60 backdrop-blur-md p-4 text-center">
-      <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-violet-500/20 to-purple-500/20 border border-violet-500/30 flex items-center justify-center mb-3">
+    <div
+      className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-2xl bg-background/60 backdrop-blur-md p-4 text-center cursor-pointer group/locked"
+      onClick={onPreview}
+    >
+      <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-violet-500/20 to-purple-500/20 border border-violet-500/30 flex items-center justify-center mb-3 transition-transform group-hover/locked:scale-110">
         <Lock className="h-6 w-6 text-violet-500" />
       </div>
       <p className="font-heading font-bold text-sm mb-1">Acesso Restrito</p>
-      <p className="text-xs text-muted-foreground mb-3">Este material é exclusivo para:</p>
+      <p className="text-xs text-muted-foreground mb-3">Este conteúdo é exclusivo para:</p>
       <div className="flex flex-wrap gap-1.5 justify-center mb-3">
         {allowedGroups.map(g => {
           const meta = GROUP_META[g]
@@ -683,9 +709,11 @@ function LockedGroupOverlay({ allowedGroups }: { allowedGroups: string[] }) {
           )
         })}
       </div>
-      <p className="text-[11px] text-muted-foreground leading-relaxed max-w-[200px]">
-        Faça upgrade do seu plano para desbloquear este conteúdo
-      </p>
+      {onPreview && (
+        <span className="mt-1 flex items-center gap-1 text-[11px] text-primary font-medium underline-offset-2 hover:underline">
+          <Info className="h-3 w-3" /> Ver detalhes
+        </span>
+      )}
     </div>
   )
 }
@@ -738,15 +766,17 @@ function FolderCard({
 // ─── Material Card Component ────────────────────────────────
 function MaterialCard({
   material, index, isPurchased, groupAccess, isHighlighted, copiedId,
-  onAcquire, onDownload, onCopyLink, loading,
+  onAcquire, onDownload, onCopyLink, onPreview, loading,
 }: {
   material: Material; index: number; isPurchased: boolean; groupAccess: boolean
   isHighlighted: boolean; copiedId: string | null
-  onAcquire: () => void; onDownload: () => void; onCopyLink: () => void; loading: boolean
+  onAcquire: () => void; onDownload: () => void; onCopyLink: () => void; onPreview: () => void; loading: boolean
 }) {
   const isFree = material.pricing === 'free'
   const canAccess = groupAccess && (isFree || isPurchased)
   const isEmbed = material.type === 'video_embed'
+  const [descExpanded, setDescExpanded] = useState(false)
+  const descLong = material.description && material.description.length > 80
 
   return (
     <motion.div
@@ -757,7 +787,7 @@ function MaterialCard({
     >
       {/* Group-access locked overlay */}
       {!groupAccess && material.allowedGroups?.length > 0 && (
-        <LockedGroupOverlay allowedGroups={material.allowedGroups} />
+        <LockedGroupOverlay allowedGroups={material.allowedGroups} onPreview={onPreview} />
       )}
 
       <div className={`glass-card h-full flex flex-col transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/10 ${!groupAccess ? 'pointer-events-none select-none' : ''}`}>
@@ -822,7 +852,16 @@ function MaterialCard({
 
         <div className="p-4 flex-1 flex flex-col">
           <h3 className="font-heading font-bold text-sm mb-1 line-clamp-2 group-hover:text-primary transition-colors">{material.title}</h3>
-          {material.description && <p className="text-xs text-muted-foreground line-clamp-2 mb-3">{material.description}</p>}
+          {material.description && (
+            <div className="mb-3">
+              <p className={`text-xs text-muted-foreground ${descExpanded ? '' : 'line-clamp-2'}`}>{material.description}</p>
+              {descLong && (
+                <button onClick={() => setDescExpanded(e => !e)} className="mt-0.5 flex items-center gap-0.5 text-[10px] text-primary font-medium hover:underline">
+                  {descExpanded ? <><ChevronUp className="h-3 w-3" /> Ver menos</> : <><ChevronDown className="h-3 w-3" /> Ver mais</>}
+                </button>
+              )}
+            </div>
+          )}
 
           {material.tags?.length > 0 && (
             <div className="flex flex-wrap gap-1 mb-3">
@@ -835,7 +874,9 @@ function MaterialCard({
           <div className="mt-auto">
             {!groupAccess ? (
               <div className="text-center py-2">
-                <p className="text-xs text-muted-foreground">Faça upgrade para acessar</p>
+                <button onClick={onPreview} className="text-xs text-primary font-medium flex items-center gap-1 mx-auto hover:underline">
+                  <Info className="h-3 w-3" /> Ver detalhes e fazer upgrade
+                </button>
               </div>
             ) : canAccess ? (
               <Button onClick={onDownload} size="sm" className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white rounded-xl h-9 text-xs font-semibold shadow-lg shadow-primary/20">
@@ -857,15 +898,17 @@ function MaterialCard({
 // ─── Featured Card Component ────────────────────────────────
 function FeaturedCard({
   material, index, isPurchased, groupAccess, isHighlighted, copiedId,
-  onAcquire, onDownload, onCopyLink, loading,
+  onAcquire, onDownload, onCopyLink, onPreview, loading,
 }: {
   material: Material; index: number; isPurchased: boolean; groupAccess: boolean
   isHighlighted: boolean; copiedId: string | null
-  onAcquire: () => void; onDownload: () => void; onCopyLink: () => void; loading: boolean
+  onAcquire: () => void; onDownload: () => void; onCopyLink: () => void; onPreview: () => void; loading: boolean
 }) {
   const isFree = material.pricing === 'free'
   const canAccess = groupAccess && (isFree || isPurchased)
   const isEmbed = material.type === 'video_embed'
+  const [descExpanded, setDescExpanded] = useState(false)
+  const descLong = material.description && material.description.length > 100
 
   return (
     <motion.div
@@ -875,7 +918,7 @@ function FeaturedCard({
       className={`group relative rounded-2xl overflow-hidden transition-all duration-300 ${isHighlighted ? 'ring-2 ring-primary ring-offset-2 ring-offset-background scale-[1.02]' : ''}`}
     >
       {!groupAccess && material.allowedGroups?.length > 0 && (
-        <LockedGroupOverlay allowedGroups={material.allowedGroups} />
+        <LockedGroupOverlay allowedGroups={material.allowedGroups} onPreview={onPreview} />
       )}
 
       <div className={`relative glass-card border-primary/20 transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/20 group-hover:border-primary/40 ${!groupAccess ? 'pointer-events-none select-none' : ''}`}>
@@ -925,9 +968,22 @@ function FeaturedCard({
         </div>
 
         <div className="p-4">
-          {material.description && <p className="text-xs text-muted-foreground line-clamp-2 mb-3">{material.description}</p>}
+          {material.description && (
+            <div className="mb-3">
+              <p className={`text-xs text-muted-foreground ${descExpanded ? '' : 'line-clamp-2'}`}>{material.description}</p>
+              {descLong && (
+                <button onClick={() => setDescExpanded(e => !e)} className="mt-0.5 flex items-center gap-0.5 text-[10px] text-primary font-medium hover:underline">
+                  {descExpanded ? <><ChevronUp className="h-3 w-3" /> Ver menos</> : <><ChevronDown className="h-3 w-3" /> Ver mais</>}
+                </button>
+              )}
+            </div>
+          )}
           {!groupAccess ? (
-            <div className="text-center py-2 text-xs text-muted-foreground">Faça upgrade para acessar</div>
+            <div className="text-center py-2">
+              <button onClick={onPreview} className="text-xs text-primary font-medium flex items-center gap-1 mx-auto hover:underline">
+                <Info className="h-3 w-3" /> Ver detalhes e fazer upgrade
+              </button>
+            </div>
           ) : canAccess ? (
             <Button onClick={onDownload} size="sm" className="w-full bg-gradient-to-r from-primary to-primary/80 text-white rounded-xl h-10 font-semibold shadow-lg shadow-primary/25">
               {isEmbed ? <><Play className="h-4 w-4 mr-2 fill-white" /> Assistir Vídeo</> : <><Download className="h-4 w-4 mr-2" /> Baixar Material</>}
@@ -947,15 +1003,17 @@ function FeaturedCard({
 // ─── Package Card Component ─────────────────────────────────
 function PackageCard({
   pkg, index, isPurchased, groupAccess, isHighlighted, copiedId,
-  onAcquire, onCopyLink, loading,
+  onAcquire, onCopyLink, onPreview, loading,
 }: {
   pkg: MaterialPackage; index: number; isPurchased: boolean; groupAccess: boolean
   isHighlighted: boolean; copiedId: string | null
-  onAcquire: () => void; onCopyLink: () => void; loading: boolean
+  onAcquire: () => void; onCopyLink: () => void; onPreview: () => void; loading: boolean
 }) {
   const isFree = pkg.pricing === 'free'
   const canAccess = groupAccess && (isFree || isPurchased)
   const hasDiscount = pkg.originalPrice && pkg.originalPrice > (pkg.price || 0)
+  const [descExpanded, setDescExpanded] = useState(false)
+  const descLong = pkg.description && pkg.description.length > 120
 
   return (
     <motion.div
@@ -965,7 +1023,7 @@ function PackageCard({
       className={`group relative transition-all duration-300 ${isHighlighted ? 'ring-2 ring-primary ring-offset-2 ring-offset-background scale-[1.01] rounded-2xl' : ''}`}
     >
       {!groupAccess && pkg.allowedGroups?.length > 0 && (
-        <LockedGroupOverlay allowedGroups={pkg.allowedGroups} />
+        <LockedGroupOverlay allowedGroups={pkg.allowedGroups} onPreview={onPreview} />
       )}
       <div className={`glass-card rounded-2xl overflow-hidden transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/15 h-full flex flex-col ${!groupAccess ? 'pointer-events-none select-none' : ''}`}>
         <div className="relative h-52 overflow-hidden">
@@ -1019,7 +1077,16 @@ function PackageCard({
         </div>
 
         <div className="p-5 flex-1 flex flex-col">
-          {pkg.description && <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{pkg.description}</p>}
+          {pkg.description && (
+            <div className="mb-4">
+              <p className={`text-sm text-muted-foreground ${descExpanded ? '' : 'line-clamp-2'}`}>{pkg.description}</p>
+              {descLong && (
+                <button onClick={() => setDescExpanded(e => !e)} className="mt-0.5 flex items-center gap-0.5 text-[11px] text-primary font-medium hover:underline">
+                  {descExpanded ? <><ChevronUp className="h-3 w-3" /> Ver menos</> : <><ChevronDown className="h-3 w-3" /> Ver mais</>}
+                </button>
+              )}
+            </div>
+          )}
 
           {pkg.materials && pkg.materials.length > 0 && (
             <div className="mb-4">
@@ -1048,7 +1115,11 @@ function PackageCard({
 
           <div className="mt-auto">
             {!groupAccess ? (
-              <div className="text-center py-2 text-sm text-muted-foreground">Faça upgrade para acessar</div>
+              <div className="text-center py-2">
+                <button onClick={onPreview} className="text-sm text-primary font-medium flex items-center gap-1 mx-auto hover:underline">
+                  <Info className="h-3.5 w-3.5" /> Ver detalhes e fazer upgrade
+                </button>
+              </div>
             ) : canAccess ? (
               <Button size="sm" className="w-full bg-gradient-to-r from-primary to-primary/80 text-white rounded-xl h-10 font-semibold">
                 <Check className="h-4 w-4 mr-2" /> Adquirido
@@ -1068,6 +1139,173 @@ function PackageCard({
           </div>
         </div>
       </div>
+    </motion.div>
+  )
+}
+
+// ─── Preview Modal (locked content detail view) ──────────────
+function PreviewModal({
+  item, onClose, onAcquire, checkoutLoading,
+}: {
+  item: { type: 'material'; data: Material } | { type: 'package'; data: MaterialPackage }
+  onClose: () => void
+  onAcquire: () => void
+  checkoutLoading: string | null
+}) {
+  const isMaterial = item.type === 'material'
+  const data = item.data as any
+  const isFree = data.pricing === 'free'
+  const isEmbed = isMaterial && data.type === 'video_embed'
+  const isVideo = isMaterial && (data.type === 'video' || data.type === 'video_embed')
+  const loading = checkoutLoading === data._id
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.92, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.92, opacity: 0, y: 20 }}
+        transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+        className="relative w-full max-w-lg bg-background border border-border rounded-3xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Close */}
+        <button onClick={onClose} className="absolute top-4 right-4 z-20 h-8 w-8 rounded-full bg-muted hover:bg-muted/80 flex items-center justify-center transition-colors">
+          <X className="h-4 w-4" />
+        </button>
+
+        {/* Cover / Fake Embed */}
+        <div className="relative flex-shrink-0">
+          {isEmbed ? (
+            /* Fake embed placeholder — never shows real URL */
+            <div className="relative w-full bg-black" style={{ paddingBottom: '56.25%' }}>
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                {data.coverImage && (
+                  <img src={data.coverImage} alt="" className="absolute inset-0 w-full h-full object-cover opacity-30 blur-sm" />
+                )}
+                <div className="relative z-10 flex flex-col items-center gap-3">
+                  <div className="h-16 w-16 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center">
+                    <Lock className="h-7 w-7 text-white" />
+                  </div>
+                  <span className="text-white/90 text-sm font-semibold bg-black/40 backdrop-blur-sm px-4 py-1.5 rounded-full border border-white/10">
+                    Vídeo bloqueado · Faça upgrade para assistir
+                  </span>
+                </div>
+              </div>
+            </div>
+          ) : data.coverImage ? (
+            <div className="relative h-48 overflow-hidden">
+              <img src={data.coverImage} alt={data.title} className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+            </div>
+          ) : (
+            <div className="h-32 bg-gradient-to-br from-violet-500/20 via-primary/20 to-accent/20 flex items-center justify-center">
+              <Lock className="h-12 w-12 text-violet-400" />
+            </div>
+          )}
+        </div>
+
+        {/* Content */}
+        <div className="overflow-y-auto flex-1 p-6">
+          {/* Type & Duration badges */}
+          <div className="flex flex-wrap items-center gap-2 mb-3">
+            {isMaterial && (
+              <span className="px-2.5 py-1 rounded-lg text-xs font-medium bg-muted text-muted-foreground flex items-center gap-1">
+                {typeIcons[data.type] || <File className="h-3 w-3" />}
+                {typeLabels[data.type] || 'Arquivo'}
+              </span>
+            )}
+            {!isMaterial && (
+              <span className="px-2.5 py-1 rounded-lg text-xs font-medium bg-violet-500/10 text-violet-600 border border-violet-500/20 flex items-center gap-1">
+                <Package className="h-3 w-3" /> Pacote · {(data as MaterialPackage).materialIds?.length || 0} materiais
+              </span>
+            )}
+            {isVideo && data.videoDuration ? (
+              <span className="px-2.5 py-1 rounded-lg text-xs font-medium bg-primary/10 text-primary flex items-center gap-1">
+                <Clock className="h-3 w-3" /> {formatDuration(data.videoDuration)}
+              </span>
+            ) : null}
+            {isFree ? (
+              <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-green-500/10 text-green-600 border border-green-500/20 flex items-center gap-1">
+                <Gift className="h-3 w-3" /> Gratuito
+              </span>
+            ) : (
+              <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-accent/10 text-amber-700 dark:text-amber-300 border border-amber-500/20">
+                R$ {data.price?.toFixed(2)}
+              </span>
+            )}
+          </div>
+
+          <h2 className="font-heading font-bold text-xl mb-3">{data.title}</h2>
+
+          {data.description && (
+            <p className="text-sm text-muted-foreground mb-5 leading-relaxed">{data.description}</p>
+          )}
+
+          {/* Package materials list */}
+          {!isMaterial && (data as MaterialPackage).materials?.length > 0 && (
+            <div className="mb-5">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">O que está incluído</p>
+              <div className="space-y-1.5">
+                {(data as MaterialPackage).materials.map((m: any) => (
+                  <div key={m._id} className="flex items-center gap-2.5 text-sm p-2 rounded-xl bg-muted/40">
+                    <div className="h-6 w-6 rounded-lg flex items-center justify-center bg-primary/10 text-primary flex-shrink-0">
+                      {typeIcons[m.type] || <File className="h-3.5 w-3.5" />}
+                    </div>
+                    <span className="font-medium truncate">{m.title}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Access restriction */}
+          {data.allowedGroups?.length > 0 && (
+            <div className="mb-5 p-4 rounded-2xl bg-violet-500/5 border border-violet-500/20">
+              <p className="text-xs font-semibold text-violet-600 dark:text-violet-400 mb-2 flex items-center gap-1.5">
+                <ShieldAlert className="h-3.5 w-3.5" /> Disponível nos planos:
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {data.allowedGroups.map((g: string) => {
+                  const meta = GROUP_META[g]
+                  if (!meta) return null
+                  return (
+                    <span key={g} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border"
+                      style={{ color: meta.color, background: meta.color + '15', borderColor: meta.color + '40' }}>
+                      {meta.icon} {meta.label}
+                    </span>
+                  )
+                })}
+              </div>
+              <p className="mt-2.5 text-xs text-muted-foreground">
+                Faça upgrade do seu plano para desbloquear este conteúdo e ter acesso a todos os materiais exclusivos.
+              </p>
+            </div>
+          )}
+
+          {/* CTA */}
+          <Button
+            onClick={onAcquire}
+            disabled={loading}
+            className={`w-full h-11 rounded-2xl font-semibold text-white shadow-lg ${
+              isFree
+                ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 shadow-green-500/25'
+                : 'bg-gradient-to-r from-accent to-secondary hover:from-accent/90 hover:to-secondary/90 shadow-accent/25'
+            }`}
+          >
+            {loading
+              ? <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
+              : isFree ? <Gift className="h-4 w-4 mr-2" /> : <ShoppingCart className="h-4 w-4 mr-2" />}
+            {isFree ? 'Adquirir Gratuitamente' : `Comprar por R$ ${data.price?.toFixed(2)}`}
+          </Button>
+        </div>
+      </motion.div>
     </motion.div>
   )
 }

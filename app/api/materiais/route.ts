@@ -88,8 +88,23 @@ export async function GET(request: NextRequest) {
       purchasedIds = purchases.map((p: any) => p.itemId)
     }
 
+    // Security: strip downloadUrl for video_embed materials the user has no access to
+    const secureMaterials = isAdmin
+      ? materials
+      : materials.map((m: any) => {
+          if (m.type !== 'video_embed') return m
+          const hasGroupAccess =
+            !m.allowedGroups?.length ||
+            userGroups.some((g: string) => m.allowedGroups.includes(g))
+          const isPaid = m.pricing === 'paid'
+          const hasPurchased = purchasedIds.includes(m._id.toString())
+          const canAccess = hasGroupAccess && (!isPaid || hasPurchased)
+          if (canAccess) return m
+          return { ...m, downloadUrl: '' } // never send real embed URL to unauthorized client
+        })
+
     return NextResponse.json({
-      materials,
+      materials: secureMaterials,
       purchasedIds,
       userGroups, // groups the current user belongs to (for client-side access check)
     })
