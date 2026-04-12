@@ -53,6 +53,40 @@ export async function POST(request: NextRequest) {
 
       const userId = session.metadata?.userId
       const planId = session.metadata?.planId
+      const purchaseType = session.metadata?.purchaseType
+
+      // ─── Compra de Material/Pacote ───
+      if (purchaseType === 'material' && userId) {
+        const db = await getDb()
+        const itemType = session.metadata?.itemType
+        const itemId = session.metadata?.itemId
+        const itemTitle = session.metadata?.itemTitle
+        const price = parseFloat(session.metadata?.price || '0')
+
+        // Registrar compra
+        await db.collection('material_purchases').insertOne({
+          userId,
+          userName: session.metadata?.userName || '',
+          userEmail: session.customer_email || '',
+          itemType,
+          itemId,
+          itemTitle,
+          price,
+          stripeSessionId: session.id,
+          stripePaymentIntentId: session.payment_intent,
+          status: 'completed',
+          purchasedAt: new Date(),
+        })
+
+        // Incrementar contador de downloads
+        const collection = itemType === 'package' ? 'material_packages' : 'materials'
+        await db.collection(collection).updateOne(
+          { _id: new ObjectId(itemId) },
+          { $inc: { downloadCount: 1 } }
+        )
+
+        return NextResponse.json({ success: true })
+      }
 
       if (!userId || !planId) {
         console.error('Missing userId or planId in metadata')

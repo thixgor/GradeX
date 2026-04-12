@@ -25,7 +25,8 @@ import {
   ClipboardList,
   Target,
   Music,
-  HeartPulse
+  HeartPulse,
+  ShoppingCart,
 } from 'lucide-react'
 
 interface User {
@@ -173,6 +174,13 @@ export default function AdminDashboard() {
       icon: HeartPulse,
       href: '/admin/doacoes',
       color: 'from-rose-500 to-pink-500'
+    },
+    {
+      title: 'Materiais',
+      description: 'Marketplace de materiais. Criar materiais, pastas, pacotes. Definir preços ou gratuidade.',
+      icon: ShoppingCart,
+      href: '/admin/materiais',
+      color: 'from-emerald-500 to-teal-500'
     }
   ]
 

@@ -899,3 +899,105 @@ export interface Doacao {
   createdAt: Date
   updatedAt: Date
 }
+
+// ─── Sistema de Materiais (Marketplace) ──────────────────────
+
+export type MaterialType = 'pdf' | 'video' | 'video_embed' | 'link' | 'image' | 'document' | 'other'
+
+// Grupos de acesso disponíveis para restrição de materiais
+export type MaterialAccessGroup = 'gratuito' | 'trial' | 'essential' | 'premium' | 'monitor'
+
+export interface MaterialFolder {
+  _id?: string | import('mongodb').ObjectId
+  name: string
+  description?: string
+  coverImage?: string
+  color?: string              // Cor hex para identificação visual
+  icon?: string               // Emoji ou ícone
+  parentFolderId?: string | null // Para subpastas (null = pasta raiz)
+  moduloId?: string           // Módulo vinculado (opcional)
+  order: number
+  isHidden: boolean
+  createdBy: string
+  createdByName: string
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface Material {
+  _id?: string | import('mongodb').ObjectId
+  title: string
+  description?: string
+  coverImage?: string         // Capa do material
+  type: MaterialType          // Tipo do arquivo
+  downloadUrl: string         // Link para download
+  previewUrl?: string         // URL de preview (opcional)
+  folderId?: string | null    // Pasta onde o material está (null = raiz)
+  moduloId?: string           // Módulo vinculado (opcional)
+  tags: string[]              // Tags para busca
+
+  // Controle de acesso por grupo (vazio = todos podem acessar)
+  allowedGroups?: MaterialAccessGroup[] // Ex: ['premium', 'essential'] = só premium e essential
+
+  // Preço
+  pricing: 'free' | 'paid'
+  price?: number              // Preço em R$ (se paid)
+  stripePriceId?: string      // ID do preço no Stripe (se paid)
+
+  // Estatísticas
+  downloadCount: number
+  viewCount: number
+
+  // Controle
+  isHidden: boolean
+  isFeatured: boolean         // Destaque na página
+  order: number
+  createdBy: string
+  createdByName: string
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface MaterialPackage {
+  _id?: string | import('mongodb').ObjectId
+  title: string
+  description?: string
+  coverImage?: string
+  materialIds: string[]       // IDs dos materiais incluídos no pacote
+  tags: string[]
+
+  // Preço
+  pricing: 'free' | 'paid'
+  price?: number              // Preço do pacote em R$
+  originalPrice?: number      // Preço original (soma dos individuais, para mostrar desconto)
+  stripePriceId?: string      // ID do preço no Stripe
+
+  // Estatísticas
+  downloadCount: number
+  viewCount: number
+
+  // Controle
+  isHidden: boolean
+  isFeatured: boolean
+  order: number
+  createdBy: string
+  createdByName: string
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface MaterialPurchase {
+  _id?: string | import('mongodb').ObjectId
+  userId: string
+  userName: string
+  userEmail: string
+  itemType: 'material' | 'package' // O que foi comprado
+  itemId: string              // ID do material ou pacote
+  itemTitle: string
+  price: number               // Preço pago em R$
+  stripeSessionId?: string    // ID da sessão de checkout do Stripe
+  stripePaymentIntentId?: string
+  status: 'pending' | 'completed' | 'refunded'
+  purchasedAt: Date
+  refundedAt?: Date
+}
