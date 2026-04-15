@@ -210,6 +210,13 @@ function AdminMateriaisContent() {
   const [grantEmail, setGrantEmail] = useState('')
   const [grantLoading, setGrantLoading] = useState(false)
   const [grantError, setGrantError] = useState('')
+  // User picker
+  const [userSearch, setUserSearch] = useState('')
+  const [userResults, setUserResults] = useState<{ id: string; name: string; email: string; accountType: string }[]>([])
+  const [userSearchLoading, setUserSearchLoading] = useState(false)
+  const [selectedUser, setSelectedUser] = useState<{ id: string; name: string; email: string; accountType: string } | null>(null)
+  const [showDropdown, setShowDropdown] = useState(false)
+  const userSearchRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const copyLink = (type: 'folder' | 'material' | 'package', id: string) => {
     const base = window.location.origin
@@ -222,11 +229,42 @@ function AdminMateriaisContent() {
     setTimeout(() => setCopiedId(null), 2000)
   }
 
+  // User search with debounce
+  const handleUserSearch = (q: string) => {
+    setUserSearch(q)
+    setSelectedUser(null)
+    setGrantError('')
+    if (userSearchRef.current) clearTimeout(userSearchRef.current)
+    if (q.trim().length < 2) { setUserResults([]); setShowDropdown(false); return }
+    setUserSearchLoading(true)
+    userSearchRef.current = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/admin/users/search?q=${encodeURIComponent(q.trim())}`)
+        if (res.ok) {
+          const data = await res.json()
+          setUserResults(data.users || [])
+          setShowDropdown(true)
+        }
+      } finally { setUserSearchLoading(false) }
+    }, 300)
+  }
+
+  const selectUser = (u: { id: string; name: string; email: string; accountType: string }) => {
+    setSelectedUser(u)
+    setUserSearch(u.name ? `${u.name} — ${u.email}` : u.email)
+    setShowDropdown(false)
+    setGrantError('')
+  }
+
   // Access management functions
   const openAccessModal = async (itemId: string, itemType: 'material' | 'package', title: string) => {
     setAccessModal({ itemId, itemType, title })
     setGrantEmail('')
     setGrantError('')
+    setUserSearch('')
+    setUserResults([])
+    setSelectedUser(null)
+    setShowDropdown(false)
     setAccessLoading(true)
     try {
       const res = await fetch(`/api/materiais/admin-access?itemId=${itemId}&itemType=${itemType}`)
@@ -237,18 +275,25 @@ function AdminMateriaisContent() {
   }
 
   const grantAccess = async () => {
-    if (!accessModal || !grantEmail.trim()) return
+    if (!accessModal) return
+    // Resolve email: selected user takes priority, then raw email input, then typed search string
+    const email = selectedUser?.email || grantEmail.trim() || userSearch.trim()
+    if (!email) return
     setGrantLoading(true)
     setGrantError('')
     try {
       const res = await fetch('/api/materiais/admin-access', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ itemId: accessModal.itemId, itemType: accessModal.itemType, userEmail: grantEmail.trim() }),
+        body: JSON.stringify({ itemId: accessModal.itemId, itemType: accessModal.itemType, userEmail: email }),
       })
       const data = await res.json()
       if (!res.ok) { setGrantError(data.error || 'Erro ao conceder acesso'); return }
+      // Reset picker
       setGrantEmail('')
+      setUserSearch('')
+      setSelectedUser(null)
+      setUserResults([])
       // Refresh list
       const listRes = await fetch(`/api/materiais/admin-access?itemId=${accessModal.itemId}&itemType=${accessModal.itemType}`)
       if (listRes.ok) setAccessPurchases((await listRes.json()).purchases || [])
@@ -1402,23 +1447,121 @@ function AdminMateriaisContent() {
         {accessModal && (
           <ModalBackdrop onClose={() => setAccessModal(null)}>
             <ModalCard title={`Acessos — ${accessModal.title}`} onClose={() => setAccessModal(null)}>
-              {/* Grant access */}
-              <div className="rounded-xl border p-3 space-y-2 mb-4">
-                <p className="text-sm font-medium flex items-center gap-2"><UserPlus className="h-4 w-4 text-green-500" /> Conceder Acesso Manual</p>
-                <div className="flex gap-2">
+              {/* Grant access — searchable user picker */}
+              <div className="rounded-xl border p-3 space-y-2.5 mb-4">
+                <p className="text-sm font-medium flex items-center gap-2">
+                  <UserPlus className="h-4 w-4 text-green-500" /> Conceder Acesso Manual
+                </p>
+
+                {/* Search input */}
+                <div className="relative">
+                  <div className="relative flex items-center">
+                    <Search className="absolute left-2.5 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+                    <Input
+                      placeholder="Buscar por nome ou e-mail..."
+                      value={userSearch}
+                      onChange={e => handleUserSearch(e.target.value)}
+                      onFocus={() => userResults.length > 0 && setShowDropdown(true)}
+                      onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
+                      onKeyDown={e => { if (e.key === 'Enter') { setShowDropdown(false); grantAccess() } }}
+                      className="pl-8 pr-8 h-9 text-sm"
+                    />
+                    {userSearchLoading && (
+                      <Loader2 className="absolute right-2.5 h-3.5 w-3.5 animate-spin text-muted-foreground" />
+                    )}
+                    {selectedUser && !userSearchLoading && (
+                      <button
+                        className="absolute right-2.5 text-muted-foreground hover:text-foreground"
+                        onClick={() => { setSelectedUser(null); setUserSearch(''); setUserResults([]) }}
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Dropdown */}
+                  {showDropdown && userResults.length > 0 && (
+                    <div className="absolute z-50 top-full left-0 right-0 mt-1 rounded-xl border bg-popover shadow-xl overflow-hidden">
+                      <div className="max-h-52 overflow-y-auto">
+                        {userResults.map(u => {
+                          const planColors: Record<string, string> = { premium: '#f59e0b', essential: '#8b5cf6', trial: '#3b82f6', gratuito: '#6b7280' }
+                          const planColor = planColors[u.accountType] || '#6b7280'
+                          return (
+                            <button
+                              key={u.id}
+                              onMouseDown={() => selectUser(u)}
+                              className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-muted/60 transition-colors text-left"
+                            >
+                              <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 text-xs font-bold text-primary">
+                                {(u.name || u.email)[0].toUpperCase()}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium truncate">{u.name || '—'}</p>
+                                <p className="text-xs text-muted-foreground truncate">{u.email}</p>
+                              </div>
+                              {u.accountType && (
+                                <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md flex-shrink-0"
+                                  style={{ color: planColor, background: planColor + '20' }}>
+                                  {u.accountType.charAt(0).toUpperCase() + u.accountType.slice(1)}
+                                </span>
+                              )}
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {showDropdown && userResults.length === 0 && !userSearchLoading && userSearch.length >= 2 && (
+                    <div className="absolute z-50 top-full left-0 right-0 mt-1 rounded-xl border bg-popover shadow-xl px-3 py-4 text-center">
+                      <p className="text-xs text-muted-foreground">Nenhum usuário encontrado</p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">Você pode inserir o e-mail diretamente abaixo</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Selected user chip */}
+                {selectedUser && (
+                  <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20">
+                    <div className="h-5 w-5 rounded-full bg-green-500/20 flex items-center justify-center text-[10px] font-bold text-green-600">
+                      {selectedUser.name[0]?.toUpperCase() || selectedUser.email[0]?.toUpperCase()}
+                    </div>
+                    <p className="text-xs font-medium text-green-700 dark:text-green-400 truncate flex-1">
+                      {selectedUser.name} <span className="font-normal opacity-70">· {selectedUser.email}</span>
+                    </p>
+                    <CheckCheck className="h-3.5 w-3.5 text-green-500 flex-shrink-0" />
+                  </div>
+                )}
+
+                {/* Fallback: raw e-mail input (shown when no user selected from list) */}
+                {!selectedUser && (
+                  <div className="flex items-center gap-1.5">
+                    <div className="h-px flex-1 bg-border" />
+                    <span className="text-[10px] text-muted-foreground">ou insira o e-mail diretamente</span>
+                    <div className="h-px flex-1 bg-border" />
+                  </div>
+                )}
+                {!selectedUser && (
                   <Input
-                    placeholder="E-mail do usuário"
+                    placeholder="email@exemplo.com"
                     value={grantEmail}
                     onChange={e => { setGrantEmail(e.target.value); setGrantError('') }}
                     onKeyDown={e => e.key === 'Enter' && grantAccess()}
-                    className="flex-1 h-9"
+                    className="h-9 text-sm"
                   />
-                  <Button size="sm" onClick={grantAccess} disabled={grantLoading || !grantEmail.trim()} className="h-9 gap-1.5">
-                    {grantLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <UserPlus className="h-3.5 w-3.5" />}
-                    Conceder
-                  </Button>
-                </div>
-                {grantError && <p className="text-xs text-destructive">{grantError}</p>}
+                )}
+
+                <Button
+                  size="sm"
+                  onClick={grantAccess}
+                  disabled={grantLoading || (!selectedUser && !grantEmail.trim() && !userSearch.trim())}
+                  className="w-full h-9 gap-1.5"
+                >
+                  {grantLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <UserPlus className="h-3.5 w-3.5" />}
+                  Conceder Acesso
+                </Button>
+
+                {grantError && <p className="text-xs text-destructive flex items-center gap-1"><X className="h-3 w-3" />{grantError}</p>}
               </div>
 
               {/* Users list */}
