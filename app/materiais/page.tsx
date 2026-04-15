@@ -162,7 +162,6 @@ function MateriaisContent() {
   const [successMessage, setSuccessMessage] = useState('')
   const [highlightedMaterialId, setHighlightedMaterialId] = useState<string | null>(null)
   const [highlightedPackageId, setHighlightedPackageId] = useState<string | null>(null)
-  const [videoEmbed, setVideoEmbed] = useState<{ url: string; title: string } | null>(null)
   const [previewItem, setPreviewItem] = useState<{ type: 'material'; data: Material } | { type: 'package'; data: MaterialPackage } | null>(null)
   const highlightRef = useRef<HTMLDivElement | null>(null)
   const { copiedId, copy } = useCopyLink()
@@ -320,7 +319,7 @@ function MateriaisContent() {
 
   const handleDownload = (material: Material) => {
     if (material.type === 'video_embed') {
-      setVideoEmbed({ url: material.downloadUrl, title: material.title })
+      router.push(`/materiais/${material._id}`)
     } else {
       window.open(material.downloadUrl, '_blank')
     }
@@ -626,42 +625,6 @@ function MateriaisContent() {
         )}
       </AnimatePresence>
 
-      {/* ─── Video Embed Modal ─── */}
-      <AnimatePresence>
-        {videoEmbed && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
-            onClick={() => setVideoEmbed(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="relative w-full max-w-4xl bg-black rounded-2xl overflow-hidden shadow-2xl"
-              onClick={e => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between px-4 py-3 bg-background/90">
-                <h3 className="font-heading font-bold text-sm truncate">{videoEmbed.title}</h3>
-                <button onClick={() => setVideoEmbed(null)} className="h-8 w-8 rounded-lg hover:bg-muted flex items-center justify-center ml-3 flex-shrink-0">
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-              <div className="relative" style={{ paddingBottom: '56.25%' }}>
-                <iframe
-                  src={videoEmbed.url}
-                  title={videoEmbed.title}
-                  className="absolute inset-0 w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                />
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   )
 }
