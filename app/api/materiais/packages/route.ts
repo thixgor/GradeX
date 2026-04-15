@@ -57,18 +57,26 @@ export async function GET(request: NextRequest) {
     })
 
     // Verificar compras do usuário
+    // Use $or (userId OR userEmail) as a safety net in case userId was stored
+    // differently between manual grants and Stripe purchases.
     let purchasedPackageIds: string[] = []
     if (!isAdmin) {
+      const purchaseFilter: any = {
+        $or: [{ userId: session.userId }],
+        itemType: 'package',
+        status: 'completed',
+      }
+      if (session.email) {
+        purchaseFilter.$or.push({
+          userEmail: { $regex: new RegExp(`^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') },
+        })
+      }
       const purchases = await db
         .collection('material_purchases')
-        .find({
-          userId: session.userId,
-          itemType: 'package',
-          status: 'completed',
-        })
+        .find(purchaseFilter)
         .project({ itemId: 1 })
         .toArray()
-      purchasedPackageIds = purchases.map((p: any) => p.itemId)
+      purchasedPackageIds = [...new Set(purchases.map((p: any) => String(p.itemId)))]
     }
 
     const packagesWithMaterials = packages.map((pkg: any) => ({

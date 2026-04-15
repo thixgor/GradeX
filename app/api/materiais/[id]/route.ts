@@ -50,17 +50,23 @@ export async function GET(
       !material.allowedGroups?.length ||
       userGroups.some((g) => material.allowedGroups.includes(g))
 
-    // Check purchase — includes manual admin grants (source: 'manual')
-    // Must check for ALL materials, not just paid ones, because admins can grant
-    // access to free-but-group-restricted materials too.
+    // Check purchase — includes manual admin grants (source: 'manual').
+    // Use $or (userId OR userEmail) as a safety net in case userId was stored
+    // differently between manual grants and Stripe purchases.
     let isPurchased = false
     if (!isAdmin) {
-      const purchase = await db.collection('material_purchases').findOne({
-        userId: session.userId,
+      const purchaseFilter: any = {
+        $or: [{ userId: session.userId }],
         itemId: id,
         itemType: 'material',
         status: 'completed',
-      })
+      }
+      if (session.email) {
+        purchaseFilter.$or.push({
+          userEmail: { $regex: new RegExp(`^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') },
+        })
+      }
+      const purchase = await db.collection('material_purchases').findOne(purchaseFilter)
       isPurchased = !!purchase
     }
 

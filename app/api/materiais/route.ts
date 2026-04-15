@@ -73,19 +73,26 @@ export async function GET(request: NextRequest) {
       .sort({ isFeatured: -1, order: 1, createdAt: -1 })
       .toArray()
 
-    // Se não for admin, verificar quais o usuário já comprou
+    // Se não for admin, verificar quais o usuário já comprou.
+    // Query uses $or (userId OR userEmail) as a safety net in case userId
+    // was stored differently (e.g. manual admin grants vs Stripe purchases).
     let purchasedIds: string[] = []
     if (!isAdmin) {
+      const purchaseFilter: any = {
+        $or: [{ userId: session.userId }],
+        itemType: 'material',
+        status: 'completed',
+      }
+      if (session.email) {
+        purchaseFilter.$or.push({ userEmail: { $regex: new RegExp(`^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') } })
+      }
       const purchases = await db
         .collection('material_purchases')
-        .find({
-          userId: session.userId,
-          itemType: 'material',
-          status: 'completed',
-        })
+        .find(purchaseFilter)
         .project({ itemId: 1 })
         .toArray()
-      purchasedIds = purchases.map((p: any) => p.itemId)
+      // Deduplicate and normalise to plain strings
+      purchasedIds = [...new Set(purchases.map((p: any) => String(p.itemId)))]
     }
 
     // Security: strip downloadUrl for video_embed materials the user has no access to.
