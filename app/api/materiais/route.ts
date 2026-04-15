@@ -88,7 +88,8 @@ export async function GET(request: NextRequest) {
       purchasedIds = purchases.map((p: any) => p.itemId)
     }
 
-    // Security: strip downloadUrl for video_embed materials the user has no access to
+    // Security: strip downloadUrl for video_embed materials the user has no access to.
+    // A manual purchase grant (source: 'manual') overrides group restrictions.
     const secureMaterials = isAdmin
       ? materials
       : materials.map((m: any) => {
@@ -96,9 +97,9 @@ export async function GET(request: NextRequest) {
           const hasGroupAccess =
             !m.allowedGroups?.length ||
             userGroups.some((g: string) => m.allowedGroups.includes(g))
-          const isPaid = m.pricing === 'paid'
           const hasPurchased = purchasedIds.includes(m._id.toString())
-          const canAccess = hasGroupAccess && (!isPaid || hasPurchased)
+          // Access = purchased/granted OR (group member AND free)
+          const canAccess = hasPurchased || (hasGroupAccess && m.pricing !== 'paid')
           if (canAccess) return m
           return { ...m, downloadUrl: '' } // never send real embed URL to unauthorized client
         })

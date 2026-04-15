@@ -50,9 +50,11 @@ export async function GET(
       !material.allowedGroups?.length ||
       userGroups.some((g) => material.allowedGroups.includes(g))
 
-    // Check purchase
+    // Check purchase — includes manual admin grants (source: 'manual')
+    // Must check for ALL materials, not just paid ones, because admins can grant
+    // access to free-but-group-restricted materials too.
     let isPurchased = false
-    if (!isAdmin && material.pricing === 'paid') {
+    if (!isAdmin) {
       const purchase = await db.collection('material_purchases').findOne({
         userId: session.userId,
         itemId: id,
@@ -62,7 +64,8 @@ export async function GET(
       isPurchased = !!purchase
     }
 
-    const canAccess = isAdmin || (hasGroupAccess && (material.pricing === 'free' || isPurchased))
+    // Access = purchased/granted OR (group member AND free content)
+    const canAccess = isAdmin || isPurchased || (hasGroupAccess && material.pricing === 'free')
 
     // Security: strip embed URL from video_embed if no access
     const safeMaterial =

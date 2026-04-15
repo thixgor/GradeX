@@ -736,10 +736,12 @@ function MaterialCard({
   onAcquire: () => void; onDownload: () => void; onCopyLink: () => void; onPreview: () => void; loading: boolean
 }) {
   const isFree = material.pricing === 'free'
-  const canAccess = groupAccess && (isFree || isPurchased)
+  // isPurchased includes manual admin grants → always grants full access
+  const canAccess = isPurchased || (groupAccess && isFree)
   const isEmbed = material.type === 'video_embed'
   const [descExpanded, setDescExpanded] = useState(false)
   const descLong = material.description && material.description.length > 80
+  const showLocked = !groupAccess && !isPurchased && (material.allowedGroups?.length ?? 0) > 0
 
   return (
     <motion.div
@@ -748,12 +750,12 @@ function MaterialCard({
       transition={{ delay: index * 0.05, duration: 0.3 }}
       className={`group relative rounded-2xl overflow-hidden transition-all duration-300 ${isHighlighted ? 'ring-2 ring-primary ring-offset-2 ring-offset-background scale-[1.02]' : ''}`}
     >
-      {/* Group-access locked overlay */}
-      {!groupAccess && material.allowedGroups?.length > 0 && (
+      {/* Group-access locked overlay — hidden when user has a purchase/grant */}
+      {showLocked && (
         <LockedGroupOverlay allowedGroups={material.allowedGroups} onPreview={onPreview} />
       )}
 
-      <div className={`glass-card h-full flex flex-col transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/10 ${!groupAccess ? 'pointer-events-none select-none' : ''}`}>
+      <div className={`glass-card h-full flex flex-col transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/10 ${showLocked ? 'pointer-events-none select-none' : ''}`}>
         <div className="relative h-44 overflow-hidden">
           {material.coverImage ? (
             <img src={material.coverImage} alt={material.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
@@ -835,7 +837,7 @@ function MaterialCard({
           )}
 
           <div className="mt-auto">
-            {!groupAccess ? (
+            {showLocked ? (
               <div className="text-center py-2">
                 <button onClick={onPreview} className="text-xs text-primary font-medium flex items-center gap-1 mx-auto hover:underline">
                   <Info className="h-3 w-3" /> Ver detalhes e fazer upgrade
@@ -868,10 +870,11 @@ function FeaturedCard({
   onAcquire: () => void; onDownload: () => void; onCopyLink: () => void; onPreview: () => void; loading: boolean
 }) {
   const isFree = material.pricing === 'free'
-  const canAccess = groupAccess && (isFree || isPurchased)
+  const canAccess = isPurchased || (groupAccess && isFree)
   const isEmbed = material.type === 'video_embed'
   const [descExpanded, setDescExpanded] = useState(false)
   const descLong = material.description && material.description.length > 100
+  const showLocked = !groupAccess && !isPurchased && (material.allowedGroups?.length ?? 0) > 0
 
   return (
     <motion.div
@@ -880,11 +883,11 @@ function FeaturedCard({
       transition={{ delay: index * 0.1 }}
       className={`group relative rounded-2xl overflow-hidden transition-all duration-300 ${isHighlighted ? 'ring-2 ring-primary ring-offset-2 ring-offset-background scale-[1.02]' : ''}`}
     >
-      {!groupAccess && material.allowedGroups?.length > 0 && (
+      {showLocked && (
         <LockedGroupOverlay allowedGroups={material.allowedGroups} onPreview={onPreview} />
       )}
 
-      <div className={`relative glass-card border-primary/20 transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/20 group-hover:border-primary/40 ${!groupAccess ? 'pointer-events-none select-none' : ''}`}>
+      <div className={`relative glass-card border-primary/20 transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/20 group-hover:border-primary/40 ${showLocked ? 'pointer-events-none select-none' : ''}`}>
         <div className="absolute -top-1 -right-1 z-10">
           <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl rounded-tr-2xl shadow-lg">
             <Star className="h-3 w-3 inline mr-0.5 -mt-0.5" /> DESTAQUE
@@ -941,7 +944,7 @@ function FeaturedCard({
               )}
             </div>
           )}
-          {!groupAccess ? (
+          {showLocked ? (
             <div className="text-center py-2">
               <button onClick={onPreview} className="text-xs text-primary font-medium flex items-center gap-1 mx-auto hover:underline">
                 <Info className="h-3 w-3" /> Ver detalhes e fazer upgrade
@@ -973,10 +976,11 @@ function PackageCard({
   onAcquire: () => void; onCopyLink: () => void; onPreview: () => void; loading: boolean
 }) {
   const isFree = pkg.pricing === 'free'
-  const canAccess = groupAccess && (isFree || isPurchased)
+  const canAccess = isPurchased || (groupAccess && isFree)
   const hasDiscount = pkg.originalPrice && pkg.originalPrice > (pkg.price || 0)
   const [descExpanded, setDescExpanded] = useState(false)
   const descLong = pkg.description && pkg.description.length > 120
+  const showLocked = !groupAccess && !isPurchased && (pkg.allowedGroups?.length ?? 0) > 0
 
   return (
     <motion.div
@@ -985,10 +989,10 @@ function PackageCard({
       transition={{ delay: index * 0.1 }}
       className={`group relative transition-all duration-300 ${isHighlighted ? 'ring-2 ring-primary ring-offset-2 ring-offset-background scale-[1.01] rounded-2xl' : ''}`}
     >
-      {!groupAccess && pkg.allowedGroups?.length > 0 && (
+      {showLocked && (
         <LockedGroupOverlay allowedGroups={pkg.allowedGroups} onPreview={onPreview} />
       )}
-      <div className={`glass-card rounded-2xl overflow-hidden transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/15 h-full flex flex-col ${!groupAccess ? 'pointer-events-none select-none' : ''}`}>
+      <div className={`glass-card rounded-2xl overflow-hidden transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/15 h-full flex flex-col ${showLocked ? 'pointer-events-none select-none' : ''}`}>
         <div className="relative h-52 overflow-hidden">
           {pkg.coverImage ? (
             <img src={pkg.coverImage} alt={pkg.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
@@ -1077,7 +1081,7 @@ function PackageCard({
           )}
 
           <div className="mt-auto">
-            {!groupAccess ? (
+            {showLocked ? (
               <div className="text-center py-2">
                 <button onClick={onPreview} className="text-sm text-primary font-medium flex items-center gap-1 mx-auto hover:underline">
                   <Info className="h-3.5 w-3.5" /> Ver detalhes e fazer upgrade
