@@ -81,16 +81,35 @@ export async function GET(request: NextRequest) {
       purchasedPackageIds = [...new Set([...byUserId, ...byEmail].map((p: any) => String(p.itemId)))]
     }
 
-    const packagesWithMaterials = packages.map((pkg: any) => ({
-      ...pkg,
-      materials: (pkg.materialIds || []).map((id: string) => materialsMap[id]).filter(Boolean),
-    }))
+    // Server is the source of truth for access — attach flags per package
+    const purchasedSet = new Set(purchasedPackageIds)
 
-    return NextResponse.json({
+    const packagesWithMaterials = packages.map((pkg: any) => {
+      const idStr = String(pkg._id)
+      const hasGroupAccess =
+        isAdmin ||
+        !pkg.allowedGroups?.length ||
+        userGroups.some((g: string) => pkg.allowedGroups.includes(g))
+      const isPurchased = isAdmin || purchasedSet.has(idStr)
+      const hasAccess = isAdmin || isPurchased || (hasGroupAccess && pkg.pricing !== 'paid')
+
+      return {
+        ...pkg,
+        _id: idStr,
+        materials: (pkg.materialIds || []).map((id: string) => materialsMap[id]).filter(Boolean),
+        _isPurchased: isPurchased,
+        _hasGroupAccess: hasGroupAccess,
+        _hasAccess: hasAccess,
+      }
+    })
+
+    const res = NextResponse.json({
       packages: packagesWithMaterials,
       purchasedPackageIds,
       userGroups,
     })
+    res.headers.set('Cache-Control', 'no-store, max-age=0, must-revalidate')
+    return res
   } catch (error) {
     console.error('Error fetching packages:', error)
     return NextResponse.json({ error: 'Erro ao buscar pacotes' }, { status: 500 })

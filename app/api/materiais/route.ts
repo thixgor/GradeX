@@ -102,33 +102,41 @@ export async function GET(request: NextRequest) {
       purchasedIds = [...new Set([...byUserId, ...byEmail].map((p: any) => String(p.itemId)))]
     }
 
-    // Security: strip downloadUrl for video_embed materials the user has no access to.
-    // A manual purchase grant (source: 'manual') overrides group restrictions.
-    const secureMaterials = isAdmin
-      ? materials
-      : materials.map((m: any) => {
-          if (m.type !== 'video_embed') return m
-          const hasGroupAccess =
-            !m.allowedGroups?.length ||
-            userGroups.some((g: string) => m.allowedGroups.includes(g))
-          const hasPurchased = purchasedIds.includes(m._id.toString())
-          // Access = purchased/granted OR (group member AND free)
-          const canAccess = hasPurchased || (hasGroupAccess && m.pricing !== 'paid')
-          if (canAccess) return m
-          return { ...m, downloadUrl: '' } // never send real embed URL to unauthorized client
-        })
+    // Build the response: explicitly stringify _id and attach access flags
+    // per material so the client never has to guess. Server is the source of truth.
+    const purchasedSet = new Set(purchasedIds)
 
-    return NextResponse.json({
+    const secureMaterials = materials.map((m: any) => {
+      const idStr = String(m._id)
+      const hasGroupAccess =
+        isAdmin ||
+        !m.allowedGroups?.length ||
+        userGroups.some((g: string) => m.allowedGroups.includes(g))
+      const isPurchased = isAdmin || purchasedSet.has(idStr)
+      // Access = admin OR purchased/granted OR (group member AND free)
+      const hasAccess = isAdmin || isPurchased || (hasGroupAccess && m.pricing !== 'paid')
+
+      // Strip the real embed URL for video_embed when no access (security)
+      const downloadUrl = !hasAccess && m.type === 'video_embed' ? '' : m.downloadUrl
+
+      return {
+        ...m,
+        _id: idStr,
+        downloadUrl,
+        _isPurchased: isPurchased,
+        _hasGroupAccess: hasGroupAccess,
+        _hasAccess: hasAccess,
+      }
+    })
+
+    const res = NextResponse.json({
       materials: secureMaterials,
       purchasedIds,
       userGroups, // groups the current user belongs to (for client-side access check)
-      _debug: {
-        userId: session.userId,
-        email: session.email,
-        purchasedCount: purchasedIds.length,
-        purchasedIds,
-      },
     })
+    // Prevent any browser/CDN caching — access state must always be fresh
+    res.headers.set('Cache-Control', 'no-store, max-age=0, must-revalidate')
+    return res
   } catch (error) {
     console.error('Error fetching materials:', error)
     return NextResponse.json({ error: 'Erro ao buscar materiais' }, { status: 500 })

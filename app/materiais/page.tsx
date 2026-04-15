@@ -58,6 +58,10 @@ interface Material {
   isFeatured: boolean
   order: number
   createdAt: string
+  // Server-computed access flags (definitive — bypass client-side string matching)
+  _isPurchased?: boolean
+  _hasGroupAccess?: boolean
+  _hasAccess?: boolean
 }
 
 // Groups that can have restricted access to materials
@@ -96,6 +100,9 @@ interface MaterialPackage {
   viewCount: number
   isFeatured: boolean
   createdAt: string
+  _isPurchased?: boolean
+  _hasGroupAccess?: boolean
+  _hasAccess?: boolean
 }
 
 function formatDuration(seconds: number): string {
@@ -194,10 +201,10 @@ function MateriaisContent() {
       if (filter !== 'all') params.set('pricing', filter)
 
       const [materialsRes, foldersRes, allFoldersRes, packagesRes] = await Promise.all([
-        fetch(`/api/materiais?${params}`),
-        fetch(`/api/materiais/folders${folderId ? `?parentFolderId=${folderId}` : ''}`),
-        fetch('/api/materiais/folders?all=true'),
-        fetch('/api/materiais/packages'),
+        fetch(`/api/materiais?${params}`, { cache: 'no-store' }),
+        fetch(`/api/materiais/folders${folderId ? `?parentFolderId=${folderId}` : ''}`, { cache: 'no-store' }),
+        fetch('/api/materiais/folders?all=true', { cache: 'no-store' }),
+        fetch('/api/materiais/packages', { cache: 'no-store' }),
       ])
 
       if (materialsRes.ok) {
@@ -325,8 +332,18 @@ function MateriaisContent() {
     }
   }
 
-  const isPurchased = (id: string, type: 'material' | 'package') =>
-    type === 'material' ? purchasedIds.includes(id) : purchasedPackageIds.includes(id)
+  // Prefer the server-attached _isPurchased flag (definitive), fall back to legacy
+  // purchasedIds.includes() only if the server hasn't attached the flag.
+  const isPurchased = (id: string, type: 'material' | 'package') => {
+    if (type === 'material') {
+      const m = materials.find(x => x._id === id)
+      if (m && typeof m._isPurchased === 'boolean') return m._isPurchased
+      return purchasedIds.includes(id)
+    }
+    const p = packages.find(x => x._id === id)
+    if (p && typeof p._isPurchased === 'boolean') return p._isPurchased
+    return purchasedPackageIds.includes(id)
+  }
 
   const featuredMaterials = materials.filter(m => m.isFeatured)
   const featuredPackages = packages.filter(p => p.isFeatured)

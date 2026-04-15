@@ -88,8 +88,8 @@ export async function GET(
       { $inc: { viewCount: 1 } }
     ).catch(() => {})
 
-    return NextResponse.json({
-      material: safeMaterial,
+    const res = NextResponse.json({
+      material: { ...safeMaterial, _id: String(safeMaterial._id) },
       hasAccess: canAccess,
       isPurchased,
       hasGroupAccess,
@@ -99,6 +99,8 @@ export async function GET(
         cpf: userDoc?.cpf || '',
       },
     })
+    res.headers.set('Cache-Control', 'no-store, max-age=0, must-revalidate')
+    return res
   } catch (error) {
     console.error('Error fetching material:', error)
     return NextResponse.json({ error: 'Erro ao buscar material' }, { status: 500 })

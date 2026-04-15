@@ -113,7 +113,7 @@ export default function MaterialViewPage() {
   const fetchData = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await fetch(`/api/materiais/${id}`)
+      const res = await fetch(`/api/materiais/${id}`, { cache: 'no-store' })
       if (res.status === 401) { router.push('/auth/login'); return }
       if (res.status === 404) { router.push('/materiais'); return }
       if (!res.ok) { setError('Erro ao carregar material'); return }
