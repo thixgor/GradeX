@@ -51,23 +51,26 @@ export async function GET(
       userGroups.some((g) => material.allowedGroups.includes(g))
 
     // Check purchase — includes manual admin grants (source: 'manual').
-    // Use $or (userId OR userEmail) as a safety net in case userId was stored
-    // differently between manual grants and Stripe purchases.
+    // Two separate queries (userId and userEmail) to avoid any $or index quirks.
     let isPurchased = false
     if (!isAdmin) {
-      const purchaseFilter: any = {
-        $or: [{ userId: session.userId }],
-        itemId: id,
-        itemType: 'material',
-        status: 'completed',
-      }
-      if (session.email) {
-        purchaseFilter.$or.push({
-          userEmail: { $regex: new RegExp(`^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') },
+      const baseFilter = { itemId: id, itemType: 'material', status: 'completed' }
+
+      const byUserId = await db.collection('material_purchases').findOne({
+        ...baseFilter,
+        userId: session.userId,
+      })
+
+      if (byUserId) {
+        isPurchased = true
+      } else if (session.email) {
+        const emailRegex = new RegExp(`^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i')
+        const byEmail = await db.collection('material_purchases').findOne({
+          ...baseFilter,
+          userEmail: { $regex: emailRegex },
         })
+        isPurchased = !!byEmail
       }
-      const purchase = await db.collection('material_purchases').findOne(purchaseFilter)
-      isPurchased = !!purchase
     }
 
     // Access = purchased/granted OR (group member AND free content)

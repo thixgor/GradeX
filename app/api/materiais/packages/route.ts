@@ -57,26 +57,28 @@ export async function GET(request: NextRequest) {
     })
 
     // Verificar compras do usuário
-    // Use $or (userId OR userEmail) as a safety net in case userId was stored
-    // differently between manual grants and Stripe purchases.
+    // Two separate queries (userId and userEmail) to avoid any $or index quirks.
     let purchasedPackageIds: string[] = []
     if (!isAdmin) {
-      const purchaseFilter: any = {
-        $or: [{ userId: session.userId }],
-        itemType: 'package',
-        status: 'completed',
-      }
-      if (session.email) {
-        purchaseFilter.$or.push({
-          userEmail: { $regex: new RegExp(`^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') },
-        })
-      }
-      const purchases = await db
+      const baseFilter = { itemType: 'package', status: 'completed' }
+
+      const byUserId = await db
         .collection('material_purchases')
-        .find(purchaseFilter)
+        .find({ ...baseFilter, userId: session.userId })
         .project({ itemId: 1 })
         .toArray()
-      purchasedPackageIds = [...new Set(purchases.map((p: any) => String(p.itemId)))]
+
+      let byEmail: any[] = []
+      if (session.email) {
+        const emailRegex = new RegExp(`^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i')
+        byEmail = await db
+          .collection('material_purchases')
+          .find({ ...baseFilter, userEmail: { $regex: emailRegex } })
+          .project({ itemId: 1 })
+          .toArray()
+      }
+
+      purchasedPackageIds = [...new Set([...byUserId, ...byEmail].map((p: any) => String(p.itemId)))]
     }
 
     const packagesWithMaterials = packages.map((pkg: any) => ({
