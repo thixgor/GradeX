@@ -45,6 +45,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { AppShell } from '@/components/app-shell'
 
 type ModalMode = 'create' | 'edit'
@@ -576,8 +577,8 @@ function AdminMateriaisContent() {
   }
 
   const saveMaterial = async () => {
-    if (!materialForm.title || !materialForm.downloadUrl) {
-      alert('Título e URL de download são obrigatórios')
+    if (!materialForm.title || !materialForm.downloadUrl.trim()) {
+      alert('Título e URL/código embed são obrigatórios')
       return
     }
     setSaving(true)
@@ -1175,11 +1176,22 @@ function AdminMateriaisContent() {
                   </Field>
                 </div>
 
-                <Field label={materialForm.type === 'video_embed' ? 'URL do Embed (YouTube, Vimeo, etc.) *' : 'URL de Download *'}>
-                  <Input value={materialForm.downloadUrl} onChange={e => setMaterialForm(p => ({ ...p, downloadUrl: e.target.value }))}
-                    placeholder={materialForm.type === 'video_embed' ? 'https://www.youtube.com/embed/...' : 'https://...'} />
-                  {materialForm.type === 'video_embed' && (
-                    <p className="text-[11px] text-muted-foreground mt-1">Cole a URL de embed (ex: youtube.com/embed/VIDEO_ID ou use Incorporar &gt; copiar src do iframe)</p>
+                <Field label={materialForm.type === 'video_embed' ? 'Código Embed ou URL do Vídeo *' : 'URL de Download *'}>
+                  {materialForm.type === 'video_embed' ? (
+                    <>
+                      <Textarea
+                        value={materialForm.downloadUrl}
+                        onChange={e => setMaterialForm(p => ({ ...p, downloadUrl: e.target.value }))}
+                        placeholder="Cole o código embed completo do vídeo (Wistia, YouTube, Vimeo, etc.) ou uma URL de embed"
+                        rows={5}
+                      />
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        Aceita o código embed completo (HTML) ou a URL direta do embed. Igual ao campo de aulas.
+                      </p>
+                    </>
+                  ) : (
+                    <Input value={materialForm.downloadUrl} onChange={e => setMaterialForm(p => ({ ...p, downloadUrl: e.target.value }))}
+                      placeholder="https://..." />
                   )}
                 </Field>
 

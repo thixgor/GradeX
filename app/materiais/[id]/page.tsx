@@ -207,13 +207,22 @@ export default function MaterialViewPage() {
                 {isEmbed && hasAccess ? (
                   /* ── Real embed ── */
                   <VideoWatermark userName={watermark.name} userCpf={watermark.cpf}>
-                    <iframe
-                      src={material.downloadUrl}
-                      title={material.title}
-                      className="w-full h-full"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowFullScreen
-                    />
+                    {material.downloadUrl.trim().startsWith('<') ? (
+                      /* Full HTML embed code (Wistia, etc.) — same as /aulas */
+                      <div
+                        dangerouslySetInnerHTML={{ __html: material.downloadUrl }}
+                        className="w-full h-full"
+                      />
+                    ) : (
+                      /* Plain URL — render as iframe */
+                      <iframe
+                        src={material.downloadUrl}
+                        title={material.title}
+                        className="w-full h-full"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowFullScreen
+                      />
+                    )}
                   </VideoWatermark>
                 ) : isEmbed && !hasAccess ? (
                   /* ── Fake / locked embed ── */
