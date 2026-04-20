@@ -43,6 +43,7 @@ import { type Patologia, type AreaSaude } from '@/lib/types/manual-clinico'
 import { FocusSessionButton } from '@/components/focus-session-button'
 import { RichTextRenderer, extractYouTubeId, tokenizeLine, AudioEmbed } from '@/components/manual-clinico/rich-text-renderer'
 import { HighlightableRichText } from '@/components/manual-clinico/highlightable-rich-text'
+import { ShareQRButton } from '@/components/manual-clinico/share-qr-button'
 import {
   type SlugHighlights,
   type ManualHighlight,
@@ -1017,32 +1018,39 @@ function FloatingDiseaseName({ nome, heroRef, slug }: { nome: string; heroRef: R
                 {/* Divider */}
                 <div className="mt-4 mb-4 h-px bg-gradient-to-r from-transparent via-white/[0.1] to-transparent" />
 
-                {/* Share button */}
-                <button
-                  onClick={() => {
-                    const url = `${window.location.origin}/manual-clinico/${slug}`
-                    navigator.clipboard.writeText(url)
-                    setFloatingShareCopied(true)
-                    setTimeout(() => setFloatingShareCopied(false), 2000)
-                  }}
-                  className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all duration-200 active:scale-[0.98] mb-2 ${
-                    floatingShareCopied
-                      ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400'
-                      : 'border-white/[0.08] bg-white/[0.04] hover:bg-primary/10 hover:border-primary/30 text-muted-foreground hover:text-primary'
-                  }`}
-                >
-                  {floatingShareCopied ? (
-                    <>
-                      <Check className="h-4 w-4" />
-                      Link copiado!
-                    </>
-                  ) : (
-                    <>
-                      <Share2 className="h-4 w-4" />
-                      Compartilhar patologia
-                    </>
-                  )}
-                </button>
+                {/* Share button + QR */}
+                <div className="flex items-stretch gap-2 mb-2">
+                  <button
+                    onClick={() => {
+                      const url = `${window.location.origin}/manual-clinico/${slug}`
+                      navigator.clipboard.writeText(url)
+                      setFloatingShareCopied(true)
+                      setTimeout(() => setFloatingShareCopied(false), 2000)
+                    }}
+                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all duration-200 active:scale-[0.98] ${
+                      floatingShareCopied
+                        ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400'
+                        : 'border-white/[0.08] bg-white/[0.04] hover:bg-primary/10 hover:border-primary/30 text-muted-foreground hover:text-primary'
+                    }`}
+                  >
+                    {floatingShareCopied ? (
+                      <>
+                        <Check className="h-4 w-4" />
+                        Link copiado!
+                      </>
+                    ) : (
+                      <>
+                        <Share2 className="h-4 w-4" />
+                        Compartilhar patologia
+                      </>
+                    )}
+                  </button>
+                  <ShareQRButton
+                    variant="full"
+                    url={typeof window !== 'undefined' ? `${window.location.origin}/manual-clinico/${slug}` : `/manual-clinico/${slug}`}
+                    title={nome}
+                  />
+                </div>
 
                 {/* Hide button */}
                 <button
@@ -1547,30 +1555,36 @@ function PatologiaContent() {
                 </button>
               )}
 
-              {/* Share pathology link */}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  const url = `${window.location.origin}/manual-clinico/${patologia.slug}`
-                  navigator.clipboard.writeText(url)
-                  setShareCopied(true)
-                  setTimeout(() => setShareCopied(false), 2000)
-                }}
-                className="rounded-xl"
-              >
-                {shareCopied ? (
-                  <>
-                    <Check className="h-4 w-4 mr-2 text-emerald-500" />
-                    <span className="text-emerald-500">Copiado!</span>
-                  </>
-                ) : (
-                  <>
-                    <Share2 className="h-4 w-4 mr-2" />
-                    Compartilhar
-                  </>
-                )}
-              </Button>
+              {/* Share pathology link + QR */}
+              <div className="inline-flex items-center gap-1.5">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const url = `${window.location.origin}/manual-clinico/${patologia.slug}`
+                    navigator.clipboard.writeText(url)
+                    setShareCopied(true)
+                    setTimeout(() => setShareCopied(false), 2000)
+                  }}
+                  className="rounded-xl"
+                >
+                  {shareCopied ? (
+                    <>
+                      <Check className="h-4 w-4 mr-2 text-emerald-500" />
+                      <span className="text-emerald-500">Copiado!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Share2 className="h-4 w-4 mr-2" />
+                      Compartilhar
+                    </>
+                  )}
+                </Button>
+                <ShareQRButton
+                  url={typeof window !== 'undefined' ? `${window.location.origin}/manual-clinico/${patologia.slug}` : `/manual-clinico/${patologia.slug}`}
+                  title={patologia.nome}
+                />
+              </div>
 
               {/* PDF download */}
               <Button
