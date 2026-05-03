@@ -3178,14 +3178,43 @@ ${respostaAluno}`
                   </div>
                 )}
 
-                {/* Copiar Prompt de correção (apenas se tiver explanation) */}
-                {currentQuestion.explanation && currentAnswer?.discursiveText?.trim() && (
-                  <Button variant="outline" size="sm" className="w-full text-xs rounded-xl"
-                    onClick={() => handleCopyDiscursivePrompt(currentQuestion, currentAnswer)}>
-                    {copiedPromptId === currentQuestion.id
-                      ? <><ClipboardCheck className="h-3.5 w-3.5 mr-1.5 text-green-600" />Prompt Copiado!</>
-                      : <><Copy className="h-3.5 w-3.5 mr-1.5" />Copiar Prompt de Correção</>}
-                  </Button>
+                {/* Copiar Prompt de correção + Mostrar Resposta Comentada */}
+                {currentQuestion.explanation && (
+                  <div className="space-y-2">
+                    {currentAnswer?.discursiveText?.trim() && (
+                      <Button variant="outline" size="sm" className="w-full text-xs rounded-xl"
+                        onClick={() => handleCopyDiscursivePrompt(currentQuestion, currentAnswer)}>
+                        {copiedPromptId === currentQuestion.id
+                          ? <><ClipboardCheck className="h-3.5 w-3.5 mr-1.5 text-green-600" />Prompt Copiado!</>
+                          : <><Copy className="h-3.5 w-3.5 mr-1.5" />Copiar Prompt de Correção</>}
+                      </Button>
+                    )}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full text-xs rounded-xl border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/30"
+                      onClick={() => setRevealedExplanations(prev => {
+                        const next = new Set(prev)
+                        if (next.has(currentQuestion.id)) next.delete(currentQuestion.id)
+                        else next.add(currentQuestion.id)
+                        return next
+                      })}
+                    >
+                      <BookOpen className="h-3.5 w-3.5 mr-1.5" />
+                      {revealedExplanations.has(currentQuestion.id) ? 'Ocultar Resposta Comentada' : 'Mostrar Resposta Comentada (Gabarito)'}
+                    </Button>
+                    {revealedExplanations.has(currentQuestion.id) && (
+                      <div className="rounded-xl border border-amber-200/70 dark:border-amber-800/40 bg-amber-50/60 dark:bg-amber-950/20 p-3.5 space-y-1.5">
+                        <p className="text-xs font-semibold text-amber-700 dark:text-amber-300 flex items-center gap-1.5">
+                          <BookOpen className="h-3.5 w-3.5" />
+                          Resposta Comentada
+                        </p>
+                        <p className="text-xs text-amber-800/80 dark:text-amber-200/70 whitespace-pre-wrap leading-relaxed">
+                          {currentQuestion.explanation}
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
             )}
