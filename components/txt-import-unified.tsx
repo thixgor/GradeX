@@ -27,10 +27,16 @@ export function TxtImportUnified({
   const [text, setText] = useState('')
   const [error, setError] = useState('')
 
-  function extractField(line: string, field: string): string {
-    const regex = new RegExp(`${field}:"(.*)"`, 'i')
-    const match = line.match(regex)
-    return match ? match[1].trim() : ''
+  function extractField(fullText: string, field: string): string {
+    const prefix = `${field}:"`
+    for (const line of fullText.split('\n')) {
+      if (line.toLowerCase().startsWith(prefix.toLowerCase())) {
+        const rest = line.slice(prefix.length)
+        const lastQuote = rest.lastIndexOf('"')
+        return (lastQuote >= 0 ? rest.slice(0, lastQuote) : rest).trim()
+      }
+    }
+    return ''
   }
 
   function parseText() {
