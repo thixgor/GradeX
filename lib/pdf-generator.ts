@@ -732,33 +732,56 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
 
     // Resposta comentada / explanation
     if (question.explanation) {
-      const expLines = wrapText(doc, question.explanation, pageWidth - 2 * margin - 14)
-      const lineH = 5.5
-      const headerH = 14
-      const paddingBot = 6
-      const boxH = expLines.length * lineH + headerH + paddingBot
-
-      // Always move to a new page if the whole box doesn't fit
-      checkPage(boxH)
-
-      doc.setFillColor(245, 250, 246)
-      doc.setDrawColor(70, 129, 82)
-      doc.setLineWidth(0.5)
-      doc.roundedRect(margin, y, pageWidth - 2 * margin, boxH, 2, 2, 'FD')
-
-      doc.setFontSize(8.5)
-      doc.setFont(FONT, 'bold')
-      doc.setTextColor(...VERDE_ESCURO)
-      doc.text('Resposta Comentada:', margin + 4, y + 8)
-
+      // Set font matching rendering before wrapText so line widths are calculated correctly
+      doc.setFontSize(9)
       doc.setFont(FONT, 'normal')
-      doc.setTextColor(...CINZA_TEXTO)
-      let ey = y + headerH
-      expLines.forEach((line: string) => {
-        doc.text(line, margin + 4, ey)
-        ey += lineH
-      })
-      y = ey + paddingBot
+      const expLines = wrapText(doc, question.explanation, pageWidth - 2 * margin - 14)
+      if (expLines.length > 0) {
+        const lineH = 6
+        const headerH = 14
+        const paddingBot = 5
+        const boxW = pageWidth - 2 * margin
+
+        let remaining = [...expLines]
+        let isFirst = true
+
+        while (remaining.length > 0) {
+          // Ensure at least header (first chunk) or small top pad + 1 line + bottom fits
+          checkPage((isFirst ? headerH : 4) + lineH + paddingBot)
+
+          // Calculate how many lines fit in the available space
+          const avail = pageHeight - 25 - y
+          const linesHere = Math.max(1, Math.floor((avail - (isFirst ? headerH : 4) - paddingBot) / lineH))
+          const batch = remaining.splice(0, linesHere)
+          const batchH = (isFirst ? headerH : 4) + batch.length * lineH + paddingBot
+
+          doc.setFillColor(245, 250, 246)
+          doc.setDrawColor(70, 129, 82)
+          doc.setLineWidth(0.5)
+          doc.roundedRect(margin, y, boxW, batchH, 2, 2, 'FD')
+
+          if (isFirst) {
+            doc.setFontSize(8.5)
+            doc.setFont(FONT, 'bold')
+            doc.setTextColor(...VERDE_ESCURO)
+            doc.text('Resposta Comentada:', margin + 4, y + 9)
+            y += headerH
+          } else {
+            y += 4
+          }
+
+          doc.setFont(FONT, 'normal')
+          doc.setFontSize(9)
+          doc.setTextColor(...CINZA_TEXTO)
+          batch.forEach((line: string) => {
+            doc.text(line, margin + 4, y)
+            y += lineH
+          })
+          y += paddingBot
+          isFirst = false
+        }
+        y += 2
+      }
     }
 
     y += 8
