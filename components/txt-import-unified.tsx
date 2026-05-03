@@ -28,7 +28,7 @@ export function TxtImportUnified({
   const [error, setError] = useState('')
 
   function extractField(line: string, field: string): string {
-    const regex = new RegExp(`${field}:"([^"]*)"`, 'i')
+    const regex = new RegExp(`${field}:"(.*)"`, 'i')
     const match = line.match(regex)
     return match ? match[1].trim() : ''
   }
