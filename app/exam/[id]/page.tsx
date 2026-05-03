@@ -30,7 +30,7 @@ import { useProctoring } from '@/hooks/use-proctoring'
 import { useWebSocket } from '@/hooks/use-websocket'
 import { useVisibilityDetection } from '@/hooks/use-visibility-detection'
 import { useWebRTC } from '@/hooks/use-webrtc'
-import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCircle, List, StickyNote, Copy, ClipboardCheck, Flag, ChevronRight, Bot, Maximize2 } from 'lucide-react'
+import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCircle, List, StickyNote, Copy, ClipboardCheck, Flag, ChevronRight, Bot, Maximize2, BookOpen } from 'lucide-react'
 import { ImageModal } from '@/components/image-modal'
 
 export default function ExamPage({ params }: { params: { id: string } }) {
@@ -105,6 +105,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const [showFinalFeedback, setShowFinalFeedback] = useState(false) // Mostrar feedback final
   const [currentFeedbackIndex, setCurrentFeedbackIndex] = useState(0) // Índice do feedback atual
   const [copiedPromptId, setCopiedPromptId] = useState<string | null>(null) // ID da questão cujo prompt foi copiado
+  const [revealedExplanations, setRevealedExplanations] = useState<Set<string>>(new Set()) // IDs de questões com gabarito revelado
   const [reportQuestionId, setReportQuestionId] = useState<string | null>(null) // ID da questão sendo relatada
   const [showSelfScoreModal, setShowSelfScoreModal] = useState(false) // Modal de auto-avaliação discursiva
   const [selfScoreQuestionId, setSelfScoreQuestionId] = useState<string | null>(null) // Questão sendo auto-avaliada
@@ -2740,14 +2741,43 @@ ${respostaAluno}`
                           </div>
                         )}
 
-                        {/* Copiar Prompt de correção (apenas se tiver explanation) */}
-                        {question.explanation && answer?.discursiveText?.trim() && (
-                          <Button variant="outline" size="sm" className="w-full text-xs rounded-xl"
-                            onClick={() => handleCopyDiscursivePrompt(question, answer)}>
-                            {copiedPromptId === question.id
-                              ? <><ClipboardCheck className="h-3.5 w-3.5 mr-1.5 text-green-600" />Prompt Copiado!</>
-                              : <><Copy className="h-3.5 w-3.5 mr-1.5" />Copiar Prompt de Correção</>}
-                          </Button>
+                        {/* Copiar Prompt de correção + Mostrar Resposta Comentada */}
+                        {question.explanation && (
+                          <div className="space-y-2">
+                            {answer?.discursiveText?.trim() && (
+                              <Button variant="outline" size="sm" className="w-full text-xs rounded-xl"
+                                onClick={() => handleCopyDiscursivePrompt(question, answer)}>
+                                {copiedPromptId === question.id
+                                  ? <><ClipboardCheck className="h-3.5 w-3.5 mr-1.5 text-green-600" />Prompt Copiado!</>
+                                  : <><Copy className="h-3.5 w-3.5 mr-1.5" />Copiar Prompt de Correção</>}
+                              </Button>
+                            )}
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="w-full text-xs rounded-xl border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/30"
+                              onClick={() => setRevealedExplanations(prev => {
+                                const next = new Set(prev)
+                                if (next.has(question.id)) next.delete(question.id)
+                                else next.add(question.id)
+                                return next
+                              })}
+                            >
+                              <BookOpen className="h-3.5 w-3.5 mr-1.5" />
+                              {revealedExplanations.has(question.id) ? 'Ocultar Resposta Comentada' : 'Mostrar Resposta Comentada (Gabarito)'}
+                            </Button>
+                            {revealedExplanations.has(question.id) && (
+                              <div className="rounded-xl border border-amber-200/70 dark:border-amber-800/40 bg-amber-50/60 dark:bg-amber-950/20 p-3.5 space-y-1.5">
+                                <p className="text-xs font-semibold text-amber-700 dark:text-amber-300 flex items-center gap-1.5">
+                                  <BookOpen className="h-3.5 w-3.5" />
+                                  Resposta Comentada
+                                </p>
+                                <p className="text-xs text-amber-800/80 dark:text-amber-200/70 whitespace-pre-wrap leading-relaxed">
+                                  {question.explanation}
+                                </p>
+                              </div>
+                            )}
+                          </div>
                         )}
                       </div>
                     )}
