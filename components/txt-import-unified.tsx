@@ -28,12 +28,29 @@ export function TxtImportUnified({
   const [error, setError] = useState('')
 
   function extractField(fullText: string, field: string): string {
+    const lines = fullText.split('\n')
     const prefix = `${field}:"`
-    for (const line of fullText.split('\n')) {
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i]
       if (line.toLowerCase().startsWith(prefix.toLowerCase())) {
         const rest = line.slice(prefix.length)
-        const lastQuote = rest.lastIndexOf('"')
-        return (lastQuote >= 0 ? rest.slice(0, lastQuote) : rest).trim()
+        const restTrimmed = rest.trimEnd()
+        if (restTrimmed.endsWith('"')) {
+          // Valor completo na mesma linha
+          return restTrimmed.slice(0, -1).trim()
+        }
+        // Valor continua nas próximas linhas — coleta até encontrar linha que termine com "
+        const parts = [rest]
+        for (let j = i + 1; j < lines.length; j++) {
+          const next = lines[j]
+          const nextTrimmed = next.trimEnd()
+          if (nextTrimmed.endsWith('"')) {
+            parts.push(nextTrimmed.slice(0, -1))
+            break
+          }
+          parts.push(next)
+        }
+        return parts.join('\n').trim()
       }
     }
     return ''
