@@ -2668,6 +2668,41 @@ ${respostaAluno}`
                           <span>{(answer?.discursiveText || '').split(/\s+/).filter(w => w.length > 0).length} palavras</span>
                         </div>
 
+                        {/* Resposta Comentada — logo abaixo do campo */}
+                        {question.explanation && (
+                          <div className="rounded-2xl border border-amber-200/80 dark:border-amber-700/40 overflow-hidden shadow-sm">
+                            <button
+                              className="w-full flex items-center justify-between px-4 py-3 bg-amber-50/60 dark:bg-amber-950/20 hover:bg-amber-100/60 dark:hover:bg-amber-900/20 transition-colors text-left"
+                              onClick={() => setRevealedExplanations(prev => {
+                                const next = new Set(prev)
+                                if (next.has(question.id)) next.delete(question.id)
+                                else next.add(question.id)
+                                return next
+                              })}
+                            >
+                              <div className="flex items-center gap-2.5">
+                                <div className="shrink-0 p-1.5 rounded-lg bg-amber-100 dark:bg-amber-900/50">
+                                  <BookOpen className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+                                </div>
+                                <div>
+                                  <p className="text-xs font-semibold text-amber-700 dark:text-amber-300">Resposta Comentada</p>
+                                  <p className="text-[11px] text-amber-600/70 dark:text-amber-400/60 mt-0.5">
+                                    {revealedExplanations.has(question.id) ? 'Clique para ocultar o gabarito' : 'Clique para ver o gabarito comentado'}
+                                  </p>
+                                </div>
+                              </div>
+                              <ChevronRight className={`h-4 w-4 text-amber-500 dark:text-amber-400 transition-transform duration-200 ${revealedExplanations.has(question.id) ? 'rotate-90' : ''}`} />
+                            </button>
+                            {revealedExplanations.has(question.id) && (
+                              <div className="px-4 py-4 border-t border-amber-200/50 dark:border-amber-700/30 bg-amber-50/30 dark:bg-amber-950/10">
+                                <p className="text-sm text-amber-900/85 dark:text-amber-100/75 whitespace-pre-wrap leading-relaxed">
+                                  {question.explanation.replace(/\\nl/g, '\n').replace(/\\n/g, '\n')}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
                         {/* Instruções de correção via IA */}
                         {question.explanation && (
                           <div className="rounded-xl border border-blue-200/60 dark:border-blue-800/40 bg-blue-50/60 dark:bg-blue-950/20 p-3.5 space-y-2.5">
@@ -2741,43 +2776,14 @@ ${respostaAluno}`
                           </div>
                         )}
 
-                        {/* Copiar Prompt de correção + Mostrar Resposta Comentada */}
-                        {question.explanation && (
-                          <div className="space-y-2">
-                            {answer?.discursiveText?.trim() && (
-                              <Button variant="outline" size="sm" className="w-full text-xs rounded-xl"
-                                onClick={() => handleCopyDiscursivePrompt(question, answer)}>
-                                {copiedPromptId === question.id
-                                  ? <><ClipboardCheck className="h-3.5 w-3.5 mr-1.5 text-green-600" />Prompt Copiado!</>
-                                  : <><Copy className="h-3.5 w-3.5 mr-1.5" />Copiar Prompt de Correção</>}
-                              </Button>
-                            )}
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="w-full text-xs rounded-xl border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/30"
-                              onClick={() => setRevealedExplanations(prev => {
-                                const next = new Set(prev)
-                                if (next.has(question.id)) next.delete(question.id)
-                                else next.add(question.id)
-                                return next
-                              })}
-                            >
-                              <BookOpen className="h-3.5 w-3.5 mr-1.5" />
-                              {revealedExplanations.has(question.id) ? 'Ocultar Resposta Comentada' : 'Mostrar Resposta Comentada (Gabarito)'}
-                            </Button>
-                            {revealedExplanations.has(question.id) && (
-                              <div className="rounded-xl border border-amber-200/70 dark:border-amber-800/40 bg-amber-50/60 dark:bg-amber-950/20 p-3.5 space-y-1.5">
-                                <p className="text-xs font-semibold text-amber-700 dark:text-amber-300 flex items-center gap-1.5">
-                                  <BookOpen className="h-3.5 w-3.5" />
-                                  Resposta Comentada
-                                </p>
-                                <p className="text-xs text-amber-800/80 dark:text-amber-200/70 whitespace-pre-wrap leading-relaxed">
-                                  {question.explanation}
-                                </p>
-                              </div>
-                            )}
-                          </div>
+                        {/* Copiar Prompt de correção */}
+                        {question.explanation && answer?.discursiveText?.trim() && (
+                          <Button variant="outline" size="sm" className="w-full text-xs rounded-xl"
+                            onClick={() => handleCopyDiscursivePrompt(question, answer)}>
+                            {copiedPromptId === question.id
+                              ? <><ClipboardCheck className="h-3.5 w-3.5 mr-1.5 text-green-600" />Prompt Copiado!</>
+                              : <><Copy className="h-3.5 w-3.5 mr-1.5" />Copiar Prompt de Correção</>}
+                          </Button>
                         )}
                       </div>
                     )}
@@ -3105,6 +3111,41 @@ ${respostaAluno}`
                   <span>{(currentAnswer?.discursiveText || '').split(/\s+/).filter(w => w.length > 0).length} palavras</span>
                 </div>
 
+                {/* Resposta Comentada — logo abaixo do campo */}
+                {currentQuestion.explanation && (
+                  <div className="rounded-2xl border border-amber-200/80 dark:border-amber-700/40 overflow-hidden shadow-sm">
+                    <button
+                      className="w-full flex items-center justify-between px-4 py-3 bg-amber-50/60 dark:bg-amber-950/20 hover:bg-amber-100/60 dark:hover:bg-amber-900/20 transition-colors text-left"
+                      onClick={() => setRevealedExplanations(prev => {
+                        const next = new Set(prev)
+                        if (next.has(currentQuestion.id)) next.delete(currentQuestion.id)
+                        else next.add(currentQuestion.id)
+                        return next
+                      })}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div className="shrink-0 p-1.5 rounded-lg bg-amber-100 dark:bg-amber-900/50">
+                          <BookOpen className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-semibold text-amber-700 dark:text-amber-300">Resposta Comentada</p>
+                          <p className="text-[11px] text-amber-600/70 dark:text-amber-400/60 mt-0.5">
+                            {revealedExplanations.has(currentQuestion.id) ? 'Clique para ocultar o gabarito' : 'Clique para ver o gabarito comentado'}
+                          </p>
+                        </div>
+                      </div>
+                      <ChevronRight className={`h-4 w-4 text-amber-500 dark:text-amber-400 transition-transform duration-200 ${revealedExplanations.has(currentQuestion.id) ? 'rotate-90' : ''}`} />
+                    </button>
+                    {revealedExplanations.has(currentQuestion.id) && (
+                      <div className="px-4 py-4 border-t border-amber-200/50 dark:border-amber-700/30 bg-amber-50/30 dark:bg-amber-950/10">
+                        <p className="text-sm text-amber-900/85 dark:text-amber-100/75 whitespace-pre-wrap leading-relaxed">
+                          {currentQuestion.explanation.replace(/\\nl/g, '\n').replace(/\\n/g, '\n')}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {/* Instruções de correção via IA */}
                 {currentQuestion.explanation && (
                   <div className="rounded-xl border border-blue-200/60 dark:border-blue-800/40 bg-blue-50/60 dark:bg-blue-950/20 p-3.5 space-y-2.5">
@@ -3178,43 +3219,14 @@ ${respostaAluno}`
                   </div>
                 )}
 
-                {/* Copiar Prompt de correção + Mostrar Resposta Comentada */}
-                {currentQuestion.explanation && (
-                  <div className="space-y-2">
-                    {currentAnswer?.discursiveText?.trim() && (
-                      <Button variant="outline" size="sm" className="w-full text-xs rounded-xl"
-                        onClick={() => handleCopyDiscursivePrompt(currentQuestion, currentAnswer)}>
-                        {copiedPromptId === currentQuestion.id
-                          ? <><ClipboardCheck className="h-3.5 w-3.5 mr-1.5 text-green-600" />Prompt Copiado!</>
-                          : <><Copy className="h-3.5 w-3.5 mr-1.5" />Copiar Prompt de Correção</>}
-                      </Button>
-                    )}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full text-xs rounded-xl border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/30"
-                      onClick={() => setRevealedExplanations(prev => {
-                        const next = new Set(prev)
-                        if (next.has(currentQuestion.id)) next.delete(currentQuestion.id)
-                        else next.add(currentQuestion.id)
-                        return next
-                      })}
-                    >
-                      <BookOpen className="h-3.5 w-3.5 mr-1.5" />
-                      {revealedExplanations.has(currentQuestion.id) ? 'Ocultar Resposta Comentada' : 'Mostrar Resposta Comentada (Gabarito)'}
-                    </Button>
-                    {revealedExplanations.has(currentQuestion.id) && (
-                      <div className="rounded-xl border border-amber-200/70 dark:border-amber-800/40 bg-amber-50/60 dark:bg-amber-950/20 p-3.5 space-y-1.5">
-                        <p className="text-xs font-semibold text-amber-700 dark:text-amber-300 flex items-center gap-1.5">
-                          <BookOpen className="h-3.5 w-3.5" />
-                          Resposta Comentada
-                        </p>
-                        <p className="text-xs text-amber-800/80 dark:text-amber-200/70 whitespace-pre-wrap leading-relaxed">
-                          {currentQuestion.explanation}
-                        </p>
-                      </div>
-                    )}
-                  </div>
+                {/* Copiar Prompt de correção */}
+                {currentQuestion.explanation && currentAnswer?.discursiveText?.trim() && (
+                  <Button variant="outline" size="sm" className="w-full text-xs rounded-xl"
+                    onClick={() => handleCopyDiscursivePrompt(currentQuestion, currentAnswer)}>
+                    {copiedPromptId === currentQuestion.id
+                      ? <><ClipboardCheck className="h-3.5 w-3.5 mr-1.5 text-green-600" />Prompt Copiado!</>
+                      : <><Copy className="h-3.5 w-3.5 mr-1.5" />Copiar Prompt de Correção</>}
+                  </Button>
                 )}
               </div>
             )}
