@@ -29,11 +29,18 @@ export function TxtImportUnified({
 
   function extractField(fullText: string, field: string): string {
     const lines = fullText.split('\n')
-    const prefix = `${field}:"`
+    const prefixColon = `${field}:"`
+    const prefixDot = `${field}."`
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i]
-      if (line.toLowerCase().startsWith(prefix.toLowerCase())) {
-        const rest = line.slice(prefix.length)
+      const lineLower = line.toLowerCase()
+      const matchedPrefix = lineLower.startsWith(prefixColon.toLowerCase())
+        ? prefixColon
+        : lineLower.startsWith(prefixDot.toLowerCase())
+        ? prefixDot
+        : null
+      if (matchedPrefix) {
+        const rest = line.slice(matchedPrefix.length)
         const restTrimmed = rest.trimEnd()
         if (restTrimmed.endsWith('"')) {
           // Valor completo na mesma linha
