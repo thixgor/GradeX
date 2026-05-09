@@ -12,6 +12,20 @@ import { formatDate } from '@/lib/utils'
 import { ArrowLeft, User, CheckCircle, XCircle, Download, Clock } from 'lucide-react'
 // User report generator loaded dynamically to reduce initial bundle size
 
+// Render text with \n line breaks and **bold** / *italic* inline markdown
+function renderRichText(text: string | undefined | null): React.ReactNode {
+  if (!text) return null
+  const processed = text.replace(/\\nl/g, '\n').replace(/\\n/g, '\n')
+  const parts = processed.split(/(\*\*[^*\n]+\*\*|\*[^*\n]+\*)/g)
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**'))
+      return <strong key={i}>{part.slice(2, -2)}</strong>
+    if (part.startsWith('*') && part.endsWith('*'))
+      return <em key={i}>{part.slice(1, -1)}</em>
+    return part
+  })
+}
+
 export default function UserSubmissionPage({ params }: { params: { id: string; userId: string } }) {
   const { id, userId } = params
   const router = useRouter()
@@ -285,7 +299,7 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
                           )}
                         </div>
 
-                        <p className="text-sm text-muted-foreground mb-3">{question.statement}</p>
+                        <p className="text-sm text-muted-foreground mb-3 whitespace-pre-wrap">{renderRichText(question.statement)}</p>
 
                         <div className={`grid grid-cols-1 ${isExamFinished ? 'md:grid-cols-2' : ''} gap-3 bg-muted p-3 rounded`}>
                           <div>
@@ -340,9 +354,9 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
                         {/* Explicação Geral */}
                         {isExamFinished && question.explanation && (
                           <div className="mt-3 bg-muted rounded-lg p-4 space-y-2">
-                            <h4 className="font-semibold text-sm">Explicação Geral:</h4>
-                            <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                              {question.explanation}
+                            <h4 className="font-semibold text-sm">💡 Resposta Comentada:</h4>
+                            <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
+                              {renderRichText(question.explanation)}
                             </p>
                           </div>
                         )}
@@ -385,8 +399,8 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
                           )}
                         </div>
 
-                        <p className="text-sm text-muted-foreground mb-3">{question.statement}</p>
-                        <p className="text-sm font-medium mb-3">{question.command}</p>
+                        <p className="text-sm text-muted-foreground mb-3 whitespace-pre-wrap">{renderRichText(question.statement)}</p>
+                        {question.command && <p className="text-sm font-medium mb-3 whitespace-pre-wrap">{renderRichText(question.command)}</p>}
 
                         <div className="space-y-3">
                           <div>
@@ -447,6 +461,16 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
                                   </ul>
                                 </div>
                               )}
+                            </div>
+                          )}
+
+                          {/* Resposta Comentada da questão discursiva */}
+                          {question.explanation && (
+                            <div className="bg-amber-50 dark:bg-amber-950/30 rounded-lg p-4 space-y-2 border border-amber-200/50 dark:border-amber-800/30">
+                              <h4 className="font-semibold text-sm text-amber-800 dark:text-amber-200">💡 Resposta Comentada:</h4>
+                              <p className="text-sm text-amber-900 dark:text-amber-100 whitespace-pre-wrap leading-relaxed">
+                                {renderRichText(question.explanation)}
+                              </p>
                             </div>
                           )}
                         </div>
