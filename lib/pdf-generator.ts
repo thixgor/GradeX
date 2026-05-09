@@ -154,9 +154,8 @@ function wrapText(doc: jsPDF, text: string, maxWidth: number): string[] {
     for (let i = 0; i < words.length; i++) {
       const word = words[i]
       const testLine = currentLine ? currentLine + ' ' + word : word
-      const testWidth = doc.getTextWidth(testLine)
 
-      if (testWidth > maxWidth && currentLine) {
+      if (doc.getTextWidth(stripMarkdown(testLine)) > maxWidth && currentLine) {
         allLines.push(currentLine)
         currentLine = word
       } else {
@@ -170,6 +169,51 @@ function wrapText(doc: jsPDF, text: string, maxWidth: number): string[] {
   }
 
   return allLines
+}
+
+// Strip **bold** / *italic* markers for width measurement (layout only)
+function stripMarkdown(text: string): string {
+  return text.replace(/\*\*(.+?)\*\*/g, '$1').replace(/\*(.+?)\*/g, '$1')
+}
+
+// Render a line with inline **bold** and *italic* markdown support.
+// baseStyle is the fallback style for unmarked text segments.
+function drawRichLine(
+  doc: jsPDF,
+  line: string,
+  x: number,
+  y: number,
+  baseStyle: 'normal' | 'bold' | 'italic' = 'normal'
+): void {
+  // Fast path: no markers → single text call
+  if (!line.includes('*')) {
+    doc.setFont(FONT, baseStyle)
+    doc.text(line, x, y)
+    return
+  }
+  const regex = /\*\*(.+?)\*\*|\*(.+?)\*/g
+  let last = 0
+  let cx = x
+  let m: RegExpExecArray | null
+  while ((m = regex.exec(line)) !== null) {
+    if (m.index > last) {
+      const plain = line.slice(last, m.index)
+      doc.setFont(FONT, baseStyle)
+      doc.text(plain, cx, y)
+      cx += doc.getTextWidth(plain)
+    }
+    const styledText = m[1] !== undefined ? m[1] : m[2]
+    const style: 'bold' | 'italic' = m[1] !== undefined ? 'bold' : 'italic'
+    doc.setFont(FONT, style)
+    doc.text(styledText, cx, y)
+    cx += doc.getTextWidth(styledText)
+    last = regex.lastIndex
+  }
+  if (last < line.length) {
+    doc.setFont(FONT, baseStyle)
+    doc.text(line.slice(last), cx, y)
+  }
+  doc.setFont(FONT, baseStyle)
 }
 
 // Função para calcular dimensões proporcionais de imagem
@@ -607,7 +651,7 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
         doc.setFontSize(10)
         doc.setFont(FONT, 'normal')
         doc.setTextColor(...CINZA_TEXTO)
-        doc.text(line, margin, y)
+        drawRichLine(doc, line, margin, y)
         y += 6
       })
       y += 2
@@ -666,7 +710,9 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
       const commandLines = wrapText(doc, question.command, pageWidth - 2 * margin)
       commandLines.forEach((line: string) => {
         checkPage(8)
-        doc.text(line, margin, y)
+        doc.setFont(FONT, 'bold')
+        doc.setTextColor(...VERDE_ESCURO)
+        drawRichLine(doc, line, margin, y, 'bold')
         y += 6
       })
       y += 3
@@ -712,11 +758,10 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
 
         altLines.forEach((line: string, lineIdx: number) => {
           if (lineIdx > 0) {
-            doc.setFont(FONT, isCorrect ? 'bold' : 'normal')
             doc.setFontSize(10)
             doc.setTextColor(isCorrect ? 26 : CINZA_TEXTO[0], isCorrect ? 71 : CINZA_TEXTO[1], isCorrect ? 42 : CINZA_TEXTO[2])
           }
-          doc.text(line, margin + 10, y)
+          drawRichLine(doc, line, margin + 10, y, isCorrect ? 'bold' : 'normal')
           y += 6
         })
         y += 3
@@ -774,7 +819,7 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
           doc.setFontSize(9)
           doc.setTextColor(...CINZA_TEXTO)
           batch.forEach((line: string) => {
-            doc.text(line, margin + 4, y)
+            drawRichLine(doc, line, margin + 4, y)
             y += lineH
           })
           y += paddingBot
@@ -942,7 +987,10 @@ export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob
       const lines = wrapText(doc, question.statement, pageWidth - 2 * margin)
       lines.forEach((line: string) => {
         checkPage(8)
-        doc.text(line, margin, y)
+        doc.setFontSize(10)
+        doc.setFont(FONT, 'normal')
+        doc.setTextColor(...CINZA_TEXTO)
+        drawRichLine(doc, line, margin, y)
         y += 6
       })
       y += 3
@@ -1006,7 +1054,9 @@ export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob
       const commandLines = wrapText(doc, question.command, pageWidth - 2 * margin)
       commandLines.forEach((line: string) => {
         checkPage(8)
-        doc.text(line, margin, y)
+        doc.setFont(FONT, 'bold')
+        doc.setTextColor(...VERDE_ESCURO)
+        drawRichLine(doc, line, margin, y, 'bold')
         y += 6
       })
       y += 4
@@ -1036,11 +1086,10 @@ export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob
           if (lineIdx > 0) {
             checkPage(6)
             // Re-set after potential page break
-            doc.setFont(FONT, 'normal')
             doc.setFontSize(10)
             doc.setTextColor(...CINZA_TEXTO)
           }
-          doc.text(line, margin + 10, y)
+          drawRichLine(doc, line, margin + 10, y)
           y += 6
         })
         y += 3
