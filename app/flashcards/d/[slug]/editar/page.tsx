@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
@@ -13,7 +13,6 @@ import {
   Lock,
   Link as LinkIcon,
   Upload,
-  Image as ImageIcon,
   Tag,
   Crown,
   ChevronDown,
@@ -247,6 +246,18 @@ export default function EditDeckPage() {
   )
 }
 
+function buildMateriaisPaths(folders: { _id: string; name: string; parentFolderId?: string | null }[]) {
+  const map = new Map(folders.map(f => [f._id, f]))
+  function getPath(id: string): string {
+    const f = map.get(id)
+    if (!f) return ''
+    if (!f.parentFolderId) return f.name
+    const parent = getPath(f.parentFolderId)
+    return parent ? `${parent} › ${f.name}` : f.name
+  }
+  return folders.map(f => ({ _id: f._id, path: getPath(f._id) })).sort((a, b) => a.path.localeCompare(b.path))
+}
+
 function DeckMetaForm({
   deck, isAdmin, emailVerified, saving, onSave,
 }: {
@@ -258,25 +269,37 @@ function DeckMetaForm({
 }) {
   const [title, setTitle] = useState(deck.title)
   const [description, setDescription] = useState(deck.description || '')
-  const [coverImage, setCoverImage] = useState<string | undefined>(deck.coverImage)
+  const [coverImage, setCoverImage] = useState(deck.coverImage || '')
   const [tagsText, setTagsText] = useState((deck.tags || []).join(', '))
   const [visibility, setVisibility] = useState(deck.visibility)
   const [pricing, setPricing] = useState(deck.pricing)
   const [price, setPrice] = useState(String(deck.price ?? 0))
   const [allowedGroups, setAllowedGroups] = useState<string[]>(deck.allowedGroups || [])
+  const [materialsFolderId, setMaterialsFolderId] = useState(deck.materialsFolderId || '')
+  const [materiaisFolders, setMateriaisFolders] = useState<{ _id: string; name: string; parentFolderId?: string | null }[]>([])
   const [advancedOpen, setAdvancedOpen] = useState(false)
+
+  useEffect(() => {
+    if (!isAdmin) return
+    fetch('/api/materiais/folders?all=true').then(r => r.json()).then(j => {
+      setMateriaisFolders(j.folders || [])
+    }).catch(() => {})
+  }, [isAdmin])
+
+  const materiaisPaths = useMemo(() => buildMateriaisPaths(materiaisFolders), [materiaisFolders])
 
   function submit() {
     onSave({
       title,
       description,
-      coverImage,
+      coverImage: coverImage || undefined,
       tags: tagsText.split(',').map((s: string) => s.trim()).filter(Boolean),
       visibility,
       ...(isAdmin ? {
         pricing,
         price: pricing === 'paid' ? Number(price) || 0 : 0,
         allowedGroups,
+        materialsFolderId: materialsFolderId || null,
       } : {}),
     })
   }
@@ -298,7 +321,13 @@ function DeckMetaForm({
         </div>
         <div>
           <Label>Capa</Label>
-          <FlashcardImageInput value={coverImage} onChange={setCoverImage} className="mt-1" label="Adicionar capa" />
+          <Input
+            value={coverImage}
+            onChange={e => setCoverImage(e.target.value)}
+            placeholder="URL da imagem de capa"
+            className="mt-1"
+          />
+          <p className="mt-1 text-[11px] text-slate-400">Recomendado: 1280 × 720 px · proporção 16:9</p>
           <Label className="mt-4 block">Visibilidade</Label>
           <div className="mt-1 grid grid-cols-3 gap-2">
             {[
@@ -374,6 +403,19 @@ function DeckMetaForm({
                   ))}
                 </div>
                 <p className="mt-2 text-xs text-slate-500">Vazio = todos os usuários (sujeito a pricing).</p>
+              </div>
+              <div>
+                <Label>Pasta em /materiais</Label>
+                <select
+                  className="mt-1 w-full rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 px-3 py-2 text-sm"
+                  value={materialsFolderId}
+                  onChange={e => setMaterialsFolderId(e.target.value)}
+                >
+                  <option value="">— Raiz (sem pasta) —</option>
+                  {materiaisPaths.map(f => (
+                    <option key={f._id} value={f._id}>{f.path}</option>
+                  ))}
+                </select>
               </div>
               {pricing === 'paid' && (
                 <p className="rounded-2xl bg-violet-500/10 border border-violet-500/20 p-3 text-xs text-violet-700 dark:text-violet-300">

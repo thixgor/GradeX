@@ -951,6 +951,26 @@ function SharedList({ shares, onUpdate }: { shares: any[]; onUpdate: () => void 
 // Create deck dialog
 // ──────────────────────────────────────────────────────────────────────────────
 
+const ADMIN_GROUPS = [
+  { id: 'gratuito', label: 'Gratuito' },
+  { id: 'trial', label: 'Trial' },
+  { id: 'essential', label: 'Essential' },
+  { id: 'premium', label: 'Premium' },
+  { id: 'monitor', label: 'Monitor' },
+]
+
+function buildMateriaisPaths(folders: { _id: string; name: string; parentFolderId?: string | null }[]) {
+  const map = new Map(folders.map(f => [f._id, f]))
+  function getPath(id: string): string {
+    const f = map.get(id)
+    if (!f) return ''
+    if (!f.parentFolderId) return f.name
+    const parent = getPath(f.parentFolderId)
+    return parent ? `${parent} › ${f.name}` : f.name
+  }
+  return folders.map(f => ({ _id: f._id, path: getPath(f._id) })).sort((a, b) => a.path.localeCompare(b.path))
+}
+
 function CreateDeckDialog({ open, onOpenChange, isAdmin, folders, onCreated }: {
   open: boolean
   onOpenChange: (v: boolean) => void
@@ -960,12 +980,38 @@ function CreateDeckDialog({ open, onOpenChange, isAdmin, folders, onCreated }: {
 }) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
+  const [coverImage, setCoverImage] = useState('')
   const [folderId, setFolderId] = useState<string>('')
   const [asAdmin, setAsAdmin] = useState(false)
+  const [visibility, setVisibility] = useState<'private' | 'public' | 'unlisted'>('private')
   const [pricing, setPricing] = useState<'free' | 'paid'>('free')
   const [price, setPrice] = useState('')
+  const [allowedGroups, setAllowedGroups] = useState<string[]>([])
+  const [materialsFolderId, setMaterialsFolderId] = useState('')
+  const [materiaisFolders, setMateriaisFolders] = useState<{ _id: string; name: string; parentFolderId?: string | null }[]>([])
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!open) {
+      setTitle(''); setDescription(''); setCoverImage(''); setFolderId(''); setAsAdmin(false)
+      setVisibility('private'); setPricing('free'); setPrice('')
+      setAllowedGroups([]); setMaterialsFolderId(''); setError(null)
+    }
+  }, [open])
+
+  useEffect(() => {
+    if (!open || !isAdmin) return
+    fetch('/api/materiais/folders?all=true').then(r => r.json()).then(j => {
+      setMateriaisFolders(j.folders || [])
+    }).catch(() => {})
+  }, [open, isAdmin])
+
+  const materiaisPaths = useMemo(() => buildMateriaisPaths(materiaisFolders), [materiaisFolders])
+
+  function toggleGroup(g: string) {
+    setAllowedGroups(prev => prev.includes(g) ? prev.filter(x => x !== g) : [...prev, g])
+  }
 
   async function submit() {
     if (!title.trim()) { setError('Título é obrigatório'); return }
@@ -977,10 +1023,14 @@ function CreateDeckDialog({ open, onOpenChange, isAdmin, folders, onCreated }: {
         body: JSON.stringify({
           title,
           description,
+          coverImage: coverImage || undefined,
           folderId: folderId || null,
           asAdmin: isAdmin && asAdmin,
           pricing: isAdmin && asAdmin ? pricing : 'free',
           price: pricing === 'paid' ? Number(price) || 0 : 0,
+          visibility: isAdmin ? visibility : undefined,
+          allowedGroups: isAdmin && asAdmin ? allowedGroups : undefined,
+          materialsFolderId: isAdmin && asAdmin ? materialsFolderId || null : undefined,
         }),
       })
       const json = await res.json()
@@ -1008,7 +1058,7 @@ function CreateDeckDialog({ open, onOpenChange, isAdmin, folders, onCreated }: {
                   <Sparkles className="h-3 w-3" /> Novo deck
                 </div>
                 <h2 className="mt-2 text-2xl font-bold text-slate-900 dark:text-white leading-tight">Vamos criar seu deck</h2>
-                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Defina o básico — você poderá editar tudo, adicionar cartões e ajustar privacidade depois.</p>
+                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Defina o básico — você poderá editar tudo e adicionar cartões depois.</p>
               </div>
               <button onClick={() => onOpenChange(false)} className="rounded-full p-2 hover:bg-white/60 dark:hover:bg-white/10 transition">
                 <X className="h-4 w-4 text-slate-500" />
@@ -1016,7 +1066,7 @@ function CreateDeckDialog({ open, onOpenChange, isAdmin, folders, onCreated }: {
             </div>
           </div>
 
-          <div className="relative px-7 py-6 space-y-6 max-h-[60vh] overflow-y-auto">
+          <div className="relative px-7 py-6 space-y-6 max-h-[65vh] overflow-y-auto">
             {/* Identidade */}
             <div className="space-y-3">
               <FieldLabel icon={<Sparkles className="h-3.5 w-3.5" />}>Identidade</FieldLabel>
@@ -1039,9 +1089,18 @@ function CreateDeckDialog({ open, onOpenChange, isAdmin, folders, onCreated }: {
                 placeholder="Descrição (opcional) — sobre o que é este deck"
                 className="w-full rounded-2xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-white/5 backdrop-blur-md px-4 py-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 outline-none focus:border-violet-400 focus:bg-white dark:focus:bg-white/10 transition resize-none"
               />
+              <div>
+                <input
+                  value={coverImage}
+                  onChange={e => setCoverImage(e.target.value)}
+                  placeholder="URL da capa (opcional)"
+                  className="w-full rounded-2xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-white/5 backdrop-blur-md px-4 py-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 outline-none focus:border-violet-400 focus:bg-white dark:focus:bg-white/10 transition"
+                />
+                <p className="mt-1 text-[10px] text-slate-400">Recomendado: 1280 × 720 px · proporção 16:9</p>
+              </div>
             </div>
 
-            {/* Pasta */}
+            {/* Pasta do usuário */}
             {folders.length > 0 && (
               <div className="space-y-2">
                 <FieldLabel icon={<Folder className="h-3.5 w-3.5" />}>Organização — pasta</FieldLabel>
@@ -1056,63 +1115,113 @@ function CreateDeckDialog({ open, onOpenChange, isAdmin, folders, onCreated }: {
 
             {/* Admin block */}
             {isAdmin && (
-              <div className="space-y-3">
-                <FieldLabel icon={<Crown className="h-3.5 w-3.5" />} accent="amber">Tipo do deck</FieldLabel>
-                <div className="grid grid-cols-2 gap-3">
-                  <RadioCard
-                    active={!asAdmin}
-                    onClick={() => setAsAdmin(false)}
-                    title="Pessoal"
-                    description="Privado por padrão. Você decide se publica."
-                    icon={<Inbox className="h-5 w-5" />}
-                  />
-                  <RadioCard
-                    active={asAdmin}
-                    onClick={() => setAsAdmin(true)}
-                    title="Oficial DomineAqui"
-                    description="Aparece na loja. Pode ser pago via /materiais."
-                    icon={<Crown className="h-5 w-5" />}
-                    accent="amber"
-                  />
+              <div className="space-y-4">
+                <div className="space-y-3">
+                  <FieldLabel icon={<Crown className="h-3.5 w-3.5" />} accent="amber">Tipo do deck</FieldLabel>
+                  <div className="grid grid-cols-2 gap-3">
+                    <RadioCard
+                      active={!asAdmin}
+                      onClick={() => setAsAdmin(false)}
+                      title="Pessoal"
+                      description="Privado por padrão. Você decide se publica."
+                      icon={<Inbox className="h-5 w-5" />}
+                    />
+                    <RadioCard
+                      active={asAdmin}
+                      onClick={() => setAsAdmin(true)}
+                      title="Oficial DomineAqui"
+                      description="Aparece na loja. Pode ser pago via /materiais."
+                      icon={<Crown className="h-5 w-5" />}
+                      accent="amber"
+                    />
+                  </div>
                 </div>
+
+                {/* Visibilidade — para qualquer deck admin */}
+                <div className="space-y-2">
+                  <FieldLabel icon={<Eye className="h-3.5 w-3.5" />}>Visibilidade</FieldLabel>
+                  <div className="flex flex-wrap gap-1.5">
+                    <ChoicePill active={visibility === 'private'} onClick={() => setVisibility('private')} icon={<Lock className="h-3.5 w-3.5" />}>Privado</ChoicePill>
+                    <ChoicePill active={visibility === 'unlisted'} onClick={() => setVisibility('unlisted')} icon={<Eye className="h-3.5 w-3.5" />}>Não-listado</ChoicePill>
+                    <ChoicePill active={visibility === 'public'} onClick={() => setVisibility('public')} icon={<Globe className="h-3.5 w-3.5" />}>Público</ChoicePill>
+                  </div>
+                </div>
+
+                {/* Configurações de deck oficial */}
                 {asAdmin && (
-                  <div className="mt-2 space-y-3 rounded-2xl border border-amber-300/40 dark:border-amber-500/20 bg-amber-50/50 dark:bg-amber-500/5 backdrop-blur-md p-4">
-                    <FieldLabel icon={<ShoppingCart className="h-3.5 w-3.5" />} accent="amber">Monetização</FieldLabel>
-                    <div className="grid grid-cols-2 gap-3">
-                      <RadioCard
-                        active={pricing === 'free'}
-                        onClick={() => setPricing('free')}
-                        title="Gratuito"
-                        description="Acesso aberto a todos."
-                        icon={<Globe className="h-5 w-5" />}
-                        accent="emerald"
-                      />
-                      <RadioCard
-                        active={pricing === 'paid'}
-                        onClick={() => setPricing('paid')}
-                        title="Pago"
-                        description="Vendido na loja /materiais."
-                        icon={<Lock className="h-5 w-5" />}
-                        accent="rose"
-                      />
-                    </div>
-                    {pricing === 'paid' && (
-                      <div>
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300">Preço (R$)</label>
-                        <div className="mt-1 relative">
-                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">R$</span>
-                          <input
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            value={price}
-                            onChange={e => setPrice(e.target.value)}
-                            placeholder="0,00"
-                            className="w-full rounded-2xl border border-white/40 dark:border-white/10 bg-white/80 dark:bg-white/5 backdrop-blur-md pl-12 pr-4 py-3 text-base font-bold text-slate-900 dark:text-white outline-none focus:border-amber-400 transition"
-                          />
-                        </div>
+                  <div className="space-y-4 rounded-2xl border border-amber-300/40 dark:border-amber-500/20 bg-amber-50/50 dark:bg-amber-500/5 backdrop-blur-md p-4">
+                    {/* Monetização */}
+                    <div className="space-y-3">
+                      <FieldLabel icon={<ShoppingCart className="h-3.5 w-3.5" />} accent="amber">Monetização</FieldLabel>
+                      <div className="grid grid-cols-2 gap-3">
+                        <RadioCard
+                          active={pricing === 'free'}
+                          onClick={() => setPricing('free')}
+                          title="Gratuito"
+                          description="Acesso aberto a todos."
+                          icon={<Globe className="h-5 w-5" />}
+                          accent="emerald"
+                        />
+                        <RadioCard
+                          active={pricing === 'paid'}
+                          onClick={() => setPricing('paid')}
+                          title="Pago"
+                          description="Vendido na loja /materiais."
+                          icon={<Lock className="h-5 w-5" />}
+                          accent="rose"
+                        />
                       </div>
-                    )}
+                      {pricing === 'paid' && (
+                        <div>
+                          <label className="text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300">Preço (R$)</label>
+                          <div className="mt-1 relative">
+                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">R$</span>
+                            <input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              value={price}
+                              onChange={e => setPrice(e.target.value)}
+                              placeholder="0,00"
+                              className="w-full rounded-2xl border border-white/40 dark:border-white/10 bg-white/80 dark:bg-white/5 backdrop-blur-md pl-12 pr-4 py-3 text-base font-bold text-slate-900 dark:text-white outline-none focus:border-amber-400 transition"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Grupos de acesso */}
+                    <div className="space-y-2">
+                      <FieldLabel icon={<Users className="h-3.5 w-3.5" />} accent="amber">Grupos com acesso</FieldLabel>
+                      <p className="text-[10px] text-amber-700/70 dark:text-amber-300/60">Deixe vazio para acesso aberto. Selecione para restringir a grupos específicos.</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {ADMIN_GROUPS.map(g => (
+                          <ChoicePill
+                            key={g.id}
+                            active={allowedGroups.includes(g.id)}
+                            onClick={() => toggleGroup(g.id)}
+                            icon={allowedGroups.includes(g.id) ? <Check className="h-3.5 w-3.5" /> : <Users className="h-3.5 w-3.5" />}
+                          >
+                            {g.label}
+                          </ChoicePill>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Pasta em /materiais */}
+                    <div className="space-y-2">
+                      <FieldLabel icon={<Folder className="h-3.5 w-3.5" />} accent="amber">Pasta em /materiais</FieldLabel>
+                      <select
+                        value={materialsFolderId}
+                        onChange={e => setMaterialsFolderId(e.target.value)}
+                        className="w-full rounded-2xl border border-white/40 dark:border-white/10 bg-white/80 dark:bg-white/5 backdrop-blur-md px-4 py-2.5 text-sm text-slate-900 dark:text-white outline-none focus:border-amber-400 transition"
+                      >
+                        <option value="">— Raiz (sem pasta) —</option>
+                        {materiaisPaths.map(f => (
+                          <option key={f._id} value={f._id}>{f.path}</option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                 )}
               </div>

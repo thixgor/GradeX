@@ -407,6 +407,7 @@ export interface FlashcardManualDeck {
   // Vínculos
   folderId?: string | null // pasta do dono (organização pessoal)
   linkedMaterialId?: string | null // ID em /materiais quando vendido
+  materialsFolderId?: string | null // Pasta em /materiais onde o material fica
 
   // Estatísticas
   cardCount: number
