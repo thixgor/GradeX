@@ -16,6 +16,7 @@ import {
   Search,
   CheckCircle2,
   Star,
+  Folder,
 } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
@@ -96,8 +97,9 @@ export default function AdminFlashcardsManualPage() {
             <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Flashcards manuais</h1>
             <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Gestão de decks oficiais, comerciais e da comunidade. Decks pagos ficam vinculados a /materiais.</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             <Link href="/flashcards"><Button variant="outline">Ir para /flashcards</Button></Link>
+            <Link href="/admin/flashcards/manual/pastas"><Button variant="outline" className="gap-1"><Folder className="h-4 w-4" /> Pastas</Button></Link>
             <Link href="/flashcards?create=1"><Button className="bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white"><Plus className="h-4 w-4" /> Novo deck oficial</Button></Link>
           </div>
         </div>

@@ -425,6 +425,7 @@ export interface FlashcardManualDeck {
 export interface FlashcardManualFolder {
   _id?: string | import('mongodb').ObjectId
   ownerId: string
+  ownerType?: 'user' | 'admin'
   name: string
   color?: string
   icon?: string
