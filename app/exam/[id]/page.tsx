@@ -1130,6 +1130,19 @@ ${respostaAluno}`
   // Helper: replace \nl with actual newlines
   const formatText = (text: string) => text?.replace(/\\nl/g, '\n').replace(/\\n/g, '\n') || ''
 
+  // Helper: render text with **bold** and *italic* inline markdown as React nodes
+  const renderRichText = (text: string): React.ReactNode => {
+    const processed = formatText(text)
+    const parts = processed.split(/(\*\*[^*\n]+\*\*|\*[^*\n]+\*)/g)
+    return parts.map((part, i) => {
+      if (part.startsWith('**') && part.endsWith('**'))
+        return <strong key={i}>{part.slice(2, -2)}</strong>
+      if (part.startsWith('*') && part.endsWith('*'))
+        return <em key={i}>{part.slice(1, -1)}</em>
+      return part
+    })
+  }
+
   // Tela de conclusão após submissão
   if (submitted) {
     // Calcular resultados para provas práticas/pessoais
@@ -3566,7 +3579,7 @@ ${respostaAluno}`
                 <div className="bg-amber-50 dark:bg-amber-950/30 rounded-xl p-4 space-y-2 border border-amber-200/50 dark:border-amber-800/30">
                   <h4 className="font-semibold text-sm text-amber-800 dark:text-amber-200">💡 Resposta Comentada:</h4>
                   <p className="text-sm text-amber-900 dark:text-amber-100 whitespace-pre-wrap leading-relaxed">
-                    {formatText(feedbackData.explanation)}
+                    {renderRichText(feedbackData.explanation)}
                   </p>
                 </div>
               )}
