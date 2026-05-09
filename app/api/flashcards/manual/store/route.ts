@@ -1,0 +1,74 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { getSession } from '@/lib/auth'
+import { getDb } from '@/lib/mongodb'
+import { FLASHCARD_MANUAL_COLLECTIONS, normalizeDeckForResponse, getUserGroups } from '@/lib/flashcard-manual'
+import { ObjectId } from 'mongodb'
+import type { FlashcardManualDeck } from '@/lib/types'
+
+export const dynamic = 'force-dynamic'
+
+// GET — lista decks comerciais (admin) que o usuário pode comprar/acessar
+export async function GET(request: NextRequest) {
+  try {
+    const session = await getSession()
+    if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
+    const isAdmin = session.role === 'admin'
+
+    const db = await getDb()
+    const userDoc = await db.collection('users').findOne(
+      { _id: new ObjectId(session.userId) },
+      { projection: { accountType: 1, secondaryRole: 1, email: 1 } }
+    )
+    const userGroups = getUserGroups(userDoc as any)
+
+    const filter: any = {
+      ownerType: 'admin',
+      isHidden: false,
+    }
+
+    const decks = await db
+      .collection<FlashcardManualDeck>(FLASHCARD_MANUAL_COLLECTIONS.decks)
+      .find(filter)
+      .sort({ isFeatured: -1, createdAt: -1 })
+      .toArray()
+
+    // Determina compras do usuário (somente decks pagos linkados a /materiais)
+    const purchasedSet = new Set<string>()
+    if (!isAdmin) {
+      const linkedIds = decks.map(d => d.linkedMaterialId).filter(Boolean) as string[]
+      if (linkedIds.length > 0) {
+        const baseFilter: any = { itemType: 'material', status: 'completed' }
+        const purchases = await db.collection('material_purchases').find({
+          ...baseFilter,
+          itemId: { $in: linkedIds },
+          $or: [
+            { userId: session.userId },
+            ...(userDoc?.email ? [{ userEmail: { $regex: new RegExp(`^${String(userDoc.email).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') } }] : []),
+          ],
+        }).project({ itemId: 1 }).toArray()
+        purchases.forEach((p: any) => purchasedSet.add(String(p.itemId)))
+      }
+    }
+
+    const enriched = decks.map(d => {
+      const allowedGroups = (d.allowedGroups || []) as string[]
+      const hasGroupAccess = allowedGroups.length === 0 || userGroups.some(g => allowedGroups.includes(g))
+      const isPurchased = isAdmin || (!!d.linkedMaterialId && purchasedSet.has(d.linkedMaterialId))
+      const isFreeForUser = d.pricing === 'free' && hasGroupAccess
+      const hasAccess = isAdmin || isPurchased || isFreeForUser
+      return {
+        ...normalizeDeckForResponse(d),
+        _isPurchased: isPurchased,
+        _hasGroupAccess: hasGroupAccess,
+        _hasAccess: hasAccess,
+      }
+    })
+
+    const res = NextResponse.json({ decks: enriched, userGroups })
+    res.headers.set('Cache-Control', 'no-store, max-age=0, must-revalidate')
+    return res
+  } catch (error) {
+    console.error('Erro ao listar loja de flashcards:', error)
+    return NextResponse.json({ error: 'Erro ao listar loja' }, { status: 500 })
+  }
+}

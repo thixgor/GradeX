@@ -41,6 +41,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Item não encontrado' }, { status: 404 })
     }
 
+    // Se for um material vinculado a um deck de flashcard, montamos a URL de
+    // sucesso apontando para o deck — o usuário cai direto no estudo após pagar.
+    const isFlashcardDeck = item.type === 'flashcard_deck' && item.linkedDeckSlug
+    const successPath = isFlashcardDeck
+      ? `/flashcards/d/${item.linkedDeckSlug}?purchase=success`
+      : `/materiais?purchase=success&session_id={CHECKOUT_SESSION_ID}`
+    const cancelPath = isFlashcardDeck
+      ? `/flashcards/d/${item.linkedDeckSlug}?purchase=canceled`
+      : `/materiais?purchase=canceled`
+
     if (item.pricing === 'free') {
       // Para itens gratuitos, criar compra diretamente
       await db.collection('material_purchases').insertOne({
@@ -61,7 +71,11 @@ export async function POST(request: NextRequest) {
         { $inc: { downloadCount: 1 } }
       )
 
-      return NextResponse.json({ free: true, success: true })
+      return NextResponse.json({
+        free: true,
+        success: true,
+        redirectTo: isFlashcardDeck ? `/flashcards/d/${item.linkedDeckSlug}` : null,
+      })
     }
 
     // Para itens pagos, criar sessão do Stripe
@@ -86,8 +100,8 @@ export async function POST(request: NextRequest) {
             quantity: 1,
           },
         ],
-        success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/materiais?purchase=success&session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/materiais?purchase=canceled`,
+        success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}${successPath}${isFlashcardDeck ? '' : ''}`,
+        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}${cancelPath}`,
         customer_email: session.email,
         metadata: {
           userId: session.userId,
@@ -97,6 +111,7 @@ export async function POST(request: NextRequest) {
           itemTitle: item.title,
           price: String(item.price || 0),
           purchaseType: 'material',
+          ...(isFlashcardDeck ? { flashcardDeckSlug: item.linkedDeckSlug, flashcardDeckId: item.linkedDeckId || '' } : {}),
         },
       })
 
@@ -113,8 +128,8 @@ export async function POST(request: NextRequest) {
           quantity: 1,
         },
       ],
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/materiais?purchase=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/materiais?purchase=canceled`,
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}${successPath}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}${cancelPath}`,
       customer_email: session.email,
       metadata: {
         userId: session.userId,
@@ -124,6 +139,7 @@ export async function POST(request: NextRequest) {
         itemTitle: item.title,
         price: String(item.price || 0),
         purchaseType: 'material',
+        ...(isFlashcardDeck ? { flashcardDeckSlug: item.linkedDeckSlug, flashcardDeckId: item.linkedDeckId || '' } : {}),
       },
     })
 

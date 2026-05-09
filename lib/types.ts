@@ -348,6 +348,130 @@ export interface FlashcardTheme {
   updatedAt: Date
 }
 
+// ─── Sistema de Flashcards Manuais (criação manual por usuário/admin) ─────────
+
+export type FlashcardManualOwnerType = 'user' | 'admin'
+export type FlashcardManualVisibility = 'private' | 'public' | 'unlisted'
+export type FlashcardManualPricing = 'free' | 'paid'
+export type FlashcardManualCardKind = 'standard' | 'hidden_word'
+
+export interface FlashcardManualCardSide {
+  text: string
+  image?: string
+}
+
+export interface FlashcardManualHiddenWord {
+  // Frase com a palavra a ser descoberta. A palavra oculta aparece marcada
+  // entre asteriscos duplos (**palavra**) ou referenciada no campo `word`.
+  phrase: string
+  word: string
+  hint?: string
+}
+
+export interface FlashcardManualCard {
+  _id?: string | import('mongodb').ObjectId
+  deckId: string
+  index: number
+  kind: FlashcardManualCardKind
+  front: FlashcardManualCardSide
+  back: FlashcardManualCardSide
+  hiddenWord?: FlashcardManualHiddenWord
+  comment?: string // Resposta comentada
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface FlashcardManualDeck {
+  _id?: string | import('mongodb').ObjectId
+  slug: string
+  ownerId: string
+  ownerName: string
+  ownerType: FlashcardManualOwnerType
+
+  title: string
+  description?: string
+  coverImage?: string
+  tags: string[]
+  category?: string
+
+  // Visibilidade e descoberta
+  visibility: FlashcardManualVisibility
+  isFeatured: boolean // Destaque na comunidade (apenas admin)
+
+  // Monetização (apenas decks de admin podem ser pagos)
+  pricing: FlashcardManualPricing
+  price?: number
+  stripePriceId?: string
+  allowedGroups?: MaterialAccessGroup[] // restringir por plano (admin)
+
+  // Vínculos
+  folderId?: string | null // pasta do dono (organização pessoal)
+  linkedMaterialId?: string | null // ID em /materiais quando vendido
+
+  // Estatísticas
+  cardCount: number
+  viewCount: number
+  studyCount: number
+  likeCount: number
+
+  // Controle
+  isPublished: boolean // controla se aparece na comunidade quando public
+  isHidden: boolean // admin pode esconder
+
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface FlashcardManualFolder {
+  _id?: string | import('mongodb').ObjectId
+  ownerId: string
+  name: string
+  color?: string
+  icon?: string
+  parentFolderId?: string | null
+  order: number
+  createdAt: Date
+  updatedAt: Date
+}
+
+export type FlashcardManualShareStatus = 'pending' | 'accepted' | 'dismissed'
+
+export interface FlashcardManualShare {
+  _id?: string | import('mongodb').ObjectId
+  deckId: string
+  fromUserId: string
+  fromUserName: string
+  toUserId: string
+  toUserEmail?: string
+  status: FlashcardManualShareStatus
+  message?: string
+  createdAt: Date
+  respondedAt?: Date
+}
+
+export interface FlashcardManualLike {
+  _id?: string | import('mongodb').ObjectId
+  deckId: string
+  userId: string
+  createdAt: Date
+}
+
+// Sessão de estudo de deck manual (estatística leve)
+export interface FlashcardManualStudyEntry {
+  cardId: string
+  rating: 'facil' | 'equilibrado' | 'porrada'
+  completedAt: Date
+}
+
+export interface FlashcardManualSession {
+  _id?: string | import('mongodb').ObjectId
+  deckId: string
+  userId: string
+  startedAt: Date
+  finishedAt?: Date
+  entries: FlashcardManualStudyEntry[]
+}
+
 export type SerialKeyType = 'trial' | 'premium' | 'custom'
 export type SerialKeyTrialSubtype = 'teste' | '7dias'
 export type SerialKeyPremiumSubtype = 'teste' | 'mensal' | 'trimestral' | 'semestral' | 'vitalicio'

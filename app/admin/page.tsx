@@ -181,6 +181,13 @@ export default function AdminDashboard() {
       icon: ShoppingCart,
       href: '/admin/materiais',
       color: 'from-emerald-500 to-teal-500'
+    },
+    {
+      title: 'Flashcards Manuais',
+      description: 'Gestão de decks oficiais, comerciais e da comunidade. Decks pagos vinculam-se a /materiais automaticamente.',
+      icon: BookOpen,
+      href: '/admin/flashcards/manual',
+      color: 'from-violet-500 to-fuchsia-500'
     }
   ]
 
