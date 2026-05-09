@@ -92,7 +92,19 @@ export async function POST(request: NextRequest) {
     const folderId = body.folderId && isValidObjectId(body.folderId) ? body.folderId : null
 
     const ownerType: 'user' | 'admin' = isAdmin && body.asAdmin ? 'admin' : 'user'
-    const isPaidByAdmin = isAdmin && body.pricing === 'paid'
+    const isPaidByAdmin = ownerType === 'admin' && body.pricing === 'paid'
+
+    const VALID_GROUPS = ['gratuito', 'trial', 'essential', 'premium', 'monitor']
+
+    // Visibilidade: admin pode definir qualquer valor; usuários ficam em private por padrão
+    let visibility: 'private' | 'public' | 'unlisted' = 'private'
+    if (['private', 'public', 'unlisted'].includes(body.visibility)) {
+      if (isAdmin || body.visibility === 'private') {
+        visibility = body.visibility
+      }
+    }
+
+    const materialsFolderId = isAdmin && body.materialsFolderId ? String(body.materialsFolderId) : null
 
     const deck: FlashcardManualDeck = {
       slug,
@@ -101,19 +113,20 @@ export async function POST(request: NextRequest) {
       ownerType,
       title,
       description: sanitizeDescription(body.description, 600),
-      coverImage: body.coverImage ? String(body.coverImage).slice(0, 500) : undefined,
+      coverImage: body.coverImage ? String(body.coverImage).slice(0, 2000) : undefined,
       tags: sanitizeTags(body.tags),
       category: body.category ? String(body.category).slice(0, 60) : undefined,
-      visibility: 'private',
+      visibility,
       isFeatured: false,
       pricing: isPaidByAdmin ? 'paid' : 'free',
       price: isPaidByAdmin ? Math.max(0, Number(body.price) || 0) : undefined,
       stripePriceId: undefined,
       allowedGroups: ownerType === 'admin' && Array.isArray(body.allowedGroups)
-        ? body.allowedGroups.filter((g: string) => ['gratuito', 'trial', 'essential', 'premium', 'monitor'].includes(g))
+        ? body.allowedGroups.filter((g: string) => VALID_GROUPS.includes(g))
         : [],
       folderId,
       linkedMaterialId: null,
+      materialsFolderId,
       cardCount: 0,
       viewCount: 0,
       studyCount: 0,

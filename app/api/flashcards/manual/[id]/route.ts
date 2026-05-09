@@ -164,14 +164,27 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       if (body.ownerType === 'admin' || body.ownerType === 'user') {
         updates.ownerType = body.ownerType
       }
+      if (body.materialsFolderId !== undefined) {
+        updates.materialsFolderId = body.materialsFolderId || null
+      }
     }
 
     updates.updatedAt = new Date()
 
     await db.collection(FLASHCARD_MANUAL_COLLECTIONS.decks).updateOne({ _id: deck._id }, { $set: updates })
 
-    // Sync com /materiais quando admin marca pago
-    if (isAdmin && updates.pricing === 'paid') {
+    // Sync com /materiais quando admin marca pago ou atualiza pasta/preço/grupos
+    const shouldSync = isAdmin && (
+      updates.pricing === 'paid' ||
+      (deck.linkedMaterialId && (
+        updates.materialsFolderId !== undefined ||
+        updates.title !== undefined ||
+        updates.coverImage !== undefined ||
+        updates.allowedGroups !== undefined ||
+        updates.price !== undefined
+      ))
+    )
+    if (shouldSync) {
       await syncMaterialForDeck(db, { ...deck, ...updates, _id: deck._id })
     }
     if (isAdmin && updates.pricing === 'free' && deck.linkedMaterialId) {
@@ -234,7 +247,7 @@ async function syncMaterialForDeck(db: any, deck: FlashcardManualDeck & { _id: O
     coverImage: deck.coverImage || '',
     type: 'flashcard_deck',
     downloadUrl: `/flashcards/d/${deck.slug}`,
-    folderId: null,
+    folderId: deck.materialsFolderId || null,
     moduloId: '',
     tags: deck.tags || [],
     pricing: 'paid' as const,
