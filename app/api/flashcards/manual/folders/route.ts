@@ -13,10 +13,23 @@ export async function GET(request: NextRequest) {
     const session = await getSession()
     if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
 
+    const scope = request.nextUrl.searchParams.get('scope')
     const db = await getDb()
+
+    if (scope === 'admin') {
+      // Retorna todas as pastas oficiais (ownerType=admin) — visível a qualquer usuário autenticado
+      const folders = await db
+        .collection<FlashcardManualFolder>(FLASHCARD_MANUAL_COLLECTIONS.folders)
+        .find({ ownerType: 'admin' })
+        .sort({ order: 1, createdAt: 1 })
+        .toArray()
+      return NextResponse.json({ folders: folders.map(normalizeFolderForResponse) })
+    }
+
+    // Pastas pessoais do usuário
     const folders = await db
       .collection<FlashcardManualFolder>(FLASHCARD_MANUAL_COLLECTIONS.folders)
-      .find({ ownerId: session.userId })
+      .find({ ownerId: session.userId, ownerType: { $ne: 'admin' } })
       .sort({ order: 1, createdAt: 1 })
       .toArray()
     return NextResponse.json({ folders: folders.map(normalizeFolderForResponse) })
@@ -37,21 +50,48 @@ export async function POST(request: NextRequest) {
 
     const db = await getDb()
     const isAdmin = session.role === 'admin'
-    const user = await db.collection('users').findOne({ _id: new ObjectId(session.userId) })
-    const limits = getFlashcardManualLimits(user?.accountType, isAdmin)
-    const folders = db.collection<FlashcardManualFolder>(FLASHCARD_MANUAL_COLLECTIONS.folders)
-    const existing = await folders.countDocuments({ ownerId: session.userId })
-    if (existing >= limits.maxFolders) {
-      return NextResponse.json({ error: `Limite de pastas atingido (${limits.maxFolders}).`, requiresUpgrade: true }, { status: 403 })
+    const asAdminFolder = isAdmin && body.ownerType === 'admin'
+
+    if (!asAdminFolder) {
+      // Verificar limite de pastas pessoais
+      const user = await db.collection('users').findOne({ _id: new ObjectId(session.userId) })
+      const limits = getFlashcardManualLimits(user?.accountType, isAdmin)
+      const folders = db.collection<FlashcardManualFolder>(FLASHCARD_MANUAL_COLLECTIONS.folders)
+      const existing = await folders.countDocuments({ ownerId: session.userId, ownerType: { $ne: 'admin' } })
+      if (existing >= limits.maxFolders) {
+        return NextResponse.json({ error: `Limite de pastas atingido (${limits.maxFolders}).`, requiresUpgrade: true }, { status: 403 })
+      }
+    } else if (!isAdmin) {
+      return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
     }
+
+    const folders = db.collection<FlashcardManualFolder>(FLASHCARD_MANUAL_COLLECTIONS.folders)
+
+    // Validar parentFolderId — se pasta admin, parent também deve ser admin
+    let parentFolderId: string | null = null
+    if (body.parentFolderId && isValidObjectId(body.parentFolderId)) {
+      if (asAdminFolder) {
+        const parent = await folders.findOne({ _id: new ObjectId(body.parentFolderId), ownerType: 'admin' })
+        if (parent) parentFolderId = body.parentFolderId
+      } else {
+        const parent = await folders.findOne({ _id: new ObjectId(body.parentFolderId), ownerId: session.userId })
+        if (parent) parentFolderId = body.parentFolderId
+      }
+    }
+
+    const countFilter = asAdminFolder
+      ? { ownerType: 'admin', parentFolderId }
+      : { ownerId: session.userId, parentFolderId }
+    const siblingCount = await folders.countDocuments(countFilter as any)
 
     const folder: FlashcardManualFolder = {
       ownerId: session.userId,
+      ownerType: asAdminFolder ? 'admin' : 'user',
       name,
       color: body.color ? String(body.color).slice(0, 16) : undefined,
       icon: body.icon ? String(body.icon).slice(0, 32) : undefined,
-      parentFolderId: body.parentFolderId && isValidObjectId(body.parentFolderId) ? body.parentFolderId : null,
-      order: typeof body.order === 'number' ? body.order : existing,
+      parentFolderId,
+      order: typeof body.order === 'number' ? body.order : siblingCount,
       createdAt: new Date(),
       updatedAt: new Date(),
     }

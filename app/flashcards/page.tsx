@@ -18,6 +18,7 @@ import {
   Heart,
   Eye,
   ChevronRight,
+  ChevronDown,
   Trash2,
   Edit3,
   ShoppingCart,
@@ -63,6 +64,8 @@ export default function FlashcardsHubPage() {
   const [toast, setToast] = useState<{ open: boolean; message: string; type?: 'success' | 'error' | 'info' }>({ open: false, message: '' })
   const [isAdmin, setIsAdmin] = useState(false)
   const [communitySort, setCommunitySort] = useState<'trending' | 'new' | 'featured'>('trending')
+  const [adminFolders, setAdminFolders] = useState<FolderWithId[]>([])
+  const [storeFolder, setStoreFolder] = useState<string | null>(null)
 
   const loadMine = useCallback(async () => {
     try {
@@ -99,9 +102,13 @@ export default function FlashcardsHubPage() {
 
   const loadStore = useCallback(async () => {
     try {
-      const res = await fetch('/api/flashcards/manual/store')
-      const json = await res.json()
-      setStore(json.decks || [])
+      const [storeRes, foldersRes] = await Promise.all([
+        fetch('/api/flashcards/manual/store'),
+        fetch('/api/flashcards/manual/folders?scope=admin'),
+      ])
+      const [storeJson, foldersJson] = await Promise.all([storeRes.json(), foldersRes.json()])
+      setStore(storeJson.decks || [])
+      setAdminFolders(foldersJson.folders || [])
     } catch {}
   }, [])
 
@@ -152,6 +159,15 @@ export default function FlashcardsHubPage() {
     })
     return dedup.slice(0, 3)
   }, [store])
+
+  // Decks da loja filtrados pela pasta selecionada na sidebar
+  const filteredStore = useMemo(() => {
+    if (!storeFolder) return store
+    return store.filter(d => d.folderId === storeFolder)
+  }, [store, storeFolder])
+
+  // Árvore de pastas admin
+  const adminFolderTree = useMemo(() => buildFolderTree(adminFolders), [adminFolders])
 
   const counts = {
     all: mine.length + community.length + store.length + shared.length,
@@ -268,18 +284,36 @@ export default function FlashcardsHubPage() {
             )}
 
             {filter === 'store' && (
-              <Section
-                title="Loja oficial · todos os decks"
-                subtitle={`${store.length} ${store.length === 1 ? 'deck' : 'decks'} curados pela equipe`}
-                icon={<Crown className="h-5 w-5" />}
-                accent="from-amber-500 to-orange-500"
-              >
-                {store.length === 0 ? (
-                  <EmptyCallout title="Nenhum deck oficial disponível" hint="A equipe ainda não publicou decks." />
-                ) : (
-                  <DeckGrid decks={store} showStoreState />
+              <div className="grid lg:grid-cols-[240px,1fr] gap-6 items-start">
+                {/* Sidebar de pastas */}
+                {adminFolderTree.length > 0 && (
+                  <StoreFolderNav
+                    tree={adminFolderTree}
+                    selected={storeFolder}
+                    store={store}
+                    onSelect={setStoreFolder}
+                  />
                 )}
-              </Section>
+
+                {/* Grid de decks */}
+                <Section
+                  title={storeFolder ? (adminFolders.find(f => f._id === storeFolder)?.name ?? 'Loja oficial') : 'Loja oficial · todos os decks'}
+                  subtitle={`${filteredStore.length} ${filteredStore.length === 1 ? 'deck' : 'decks'}${storeFolder ? ' nesta pasta' : ' curados pela equipe'}`}
+                  icon={<Crown className="h-5 w-5" />}
+                  accent="from-amber-500 to-orange-500"
+                  action={storeFolder ? (
+                    <button onClick={() => setStoreFolder(null)} className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700 dark:hover:text-white transition">
+                      <X className="h-3.5 w-3.5" /> Ver todos
+                    </button>
+                  ) : undefined}
+                >
+                  {filteredStore.length === 0 ? (
+                    <EmptyCallout title="Nenhum deck nesta pasta" hint="O administrador ainda não adicionou decks aqui." />
+                  ) : (
+                    <DeckGrid decks={filteredStore} showStoreState />
+                  )}
+                </Section>
+              </div>
             )}
 
             {showSection('community') && (
@@ -349,6 +383,139 @@ export default function FlashcardsHubPage() {
 
       <ToastAlert open={toast.open} message={toast.message} type={toast.type} onOpenChange={(open) => setToast(t => ({ ...t, open }))} />
     </AppShell>
+  )
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Store folder nav (sidebar de pastas hierárquicas)
+// ──────────────────────────────────────────────────────────────────────────────
+
+interface FolderTreeNode {
+  _id: string
+  name: string
+  color?: string
+  parentFolderId?: string | null
+  children: FolderTreeNode[]
+}
+
+function buildFolderTree(flat: FolderWithId[]): FolderTreeNode[] {
+  const map = new Map<string, FolderTreeNode>()
+  for (const f of flat) map.set(f._id, { ...f, children: [] })
+  const roots: FolderTreeNode[] = []
+  for (const f of map.values()) {
+    if (f.parentFolderId && map.has(f.parentFolderId)) {
+      map.get(f.parentFolderId)!.children.push(f)
+    } else {
+      roots.push(f)
+    }
+  }
+  return roots
+}
+
+function StoreFolderNav({ tree, selected, store, onSelect }: {
+  tree: FolderTreeNode[]
+  selected: string | null
+  store: DeckWithId[]
+  onSelect: (id: string | null) => void
+}) {
+  return (
+    <aside className="rounded-3xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl shadow-sm sticky top-4">
+      <div className="px-4 py-3 border-b border-white/40 dark:border-white/10">
+        <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Navegar por pasta</p>
+      </div>
+      <div className="p-2 space-y-0.5">
+        <FolderNavItem
+          label="Todos os decks"
+          count={store.length}
+          active={selected === null}
+          onClick={() => onSelect(null)}
+          depth={0}
+          color={undefined}
+        />
+        {tree.map(node => (
+          <FolderNavNode
+            key={node._id}
+            node={node}
+            selected={selected}
+            store={store}
+            onSelect={onSelect}
+            depth={0}
+          />
+        ))}
+      </div>
+    </aside>
+  )
+}
+
+function FolderNavNode({ node, selected, store, onSelect, depth }: {
+  node: FolderTreeNode
+  selected: string | null
+  store: DeckWithId[]
+  onSelect: (id: string | null) => void
+  depth: number
+}) {
+  const [expanded, setExpanded] = useState(true)
+  const count = store.filter(d => d.folderId === node._id).length
+  const hasChildren = node.children.length > 0
+  return (
+    <div>
+      <FolderNavItem
+        label={node.name}
+        count={count}
+        active={selected === node._id}
+        onClick={() => onSelect(node._id)}
+        depth={depth}
+        color={node.color}
+        hasChildren={hasChildren}
+        expanded={expanded}
+        onToggle={() => setExpanded(v => !v)}
+      />
+      {expanded && hasChildren && (
+        <div>
+          {node.children.map(child => (
+            <FolderNavNode key={child._id} node={child} selected={selected} store={store} onSelect={onSelect} depth={depth + 1} />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function FolderNavItem({ label, count, active, onClick, depth, color, hasChildren, expanded, onToggle }: {
+  label: string; count: number; active: boolean; onClick: () => void; depth: number
+  color?: string; hasChildren?: boolean; expanded?: boolean; onToggle?: () => void
+}) {
+  return (
+    <div className="flex items-center" style={{ paddingLeft: `${depth * 14}px` }}>
+      {hasChildren && (
+        <button onClick={onToggle} className="shrink-0 h-5 w-5 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-white transition">
+          {expanded ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+        </button>
+      )}
+      {!hasChildren && <span className="shrink-0 w-5" />}
+      <button
+        onClick={onClick}
+        className={cn(
+          'flex-1 flex items-center justify-between gap-2 rounded-2xl px-2.5 py-2 text-sm text-left transition',
+          active
+            ? 'bg-amber-500/15 text-amber-700 dark:text-amber-200 font-semibold'
+            : 'text-slate-600 dark:text-slate-300 hover:bg-white/60 dark:hover:bg-white/10'
+        )}
+      >
+        <span className="flex items-center gap-2 min-w-0">
+          {color
+            ? <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: color }} />
+            : <Folder className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+          }
+          <span className="truncate">{label}</span>
+        </span>
+        {count > 0 && (
+          <span className={cn('text-[10px] font-bold rounded-full px-1.5 py-0.5 shrink-0', active ? 'bg-amber-500/20 text-amber-700 dark:text-amber-200' : 'bg-slate-100 dark:bg-white/10 text-slate-500')}>
+            {count}
+          </span>
+        )}
+      </button>
+    </div>
   )
 }
 
