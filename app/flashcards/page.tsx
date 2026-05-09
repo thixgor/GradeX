@@ -428,7 +428,7 @@ function StoreHero({ decks, totalStore, onSeeAll }: { decks: DeckWithId[]; total
             </div>
             <h3 className="text-xl font-bold text-slate-900 dark:text-white leading-tight">Decks dos especialistas</h3>
             <p className="mt-1.5 text-sm text-slate-600 dark:text-slate-300">
-              Material curado pela equipe GradeX. Comprou uma vez, estuda para sempre.
+              Material curado pela equipe DomineAqui. Comprou uma vez, estuda para sempre.
             </p>
             <button
               onClick={onSeeAll}
@@ -902,7 +902,7 @@ function CreateDeckDialog({ open, onOpenChange, isAdmin, folders, onCreated }: {
                   <RadioCard
                     active={asAdmin}
                     onClick={() => setAsAdmin(true)}
-                    title="Oficial GradeX"
+                    title="Oficial DomineAqui"
                     description="Aparece na loja. Pode ser pago via /materiais."
                     icon={<Crown className="h-5 w-5" />}
                     accent="amber"
