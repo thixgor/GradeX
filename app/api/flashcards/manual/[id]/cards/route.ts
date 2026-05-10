@@ -57,6 +57,53 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
+// DELETE — exclui múltiplos cards em massa (dono ou admin)
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+  try {
+    const session = await getSession()
+    if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
+
+    const db = await getDb()
+    const deck = await loadDeck(db, params.id)
+    if (!deck) return NextResponse.json({ error: 'Deck não encontrado' }, { status: 404 })
+
+    const isAdmin = session.role === 'admin'
+    if (deck.ownerId !== session.userId && !isAdmin) {
+      return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
+    }
+
+    const body = await request.json()
+    const cardIds: string[] = Array.isArray(body?.cardIds) ? body.cardIds : []
+    if (!cardIds.length) return NextResponse.json({ error: 'Nenhum card selecionado' }, { status: 400 })
+
+    const validIds = cardIds.filter(isValidObjectId).map(id => new ObjectId(id))
+    const deckId = String(deck._id)
+    const cardsCol = db.collection<FlashcardManualCard>(FLASHCARD_MANUAL_COLLECTIONS.cards)
+
+    const { deletedCount } = await cardsCol.deleteMany({
+      _id: { $in: validIds },
+      deckId,
+    })
+
+    // Rebuild sequential indexes after bulk delete
+    const remaining = await cardsCol.find({ deckId }).sort({ index: 1 }).toArray()
+    const bulkOps = remaining.map((c, i) => ({
+      updateOne: { filter: { _id: c._id }, update: { $set: { index: i } } },
+    }))
+    if (bulkOps.length) await cardsCol.bulkWrite(bulkOps)
+
+    await db.collection(FLASHCARD_MANUAL_COLLECTIONS.decks).updateOne(
+      { _id: deck._id },
+      { $set: { cardCount: remaining.length, updatedAt: new Date() } }
+    )
+
+    return NextResponse.json({ success: true, deletedCount })
+  } catch (error: any) {
+    console.error('Erro ao excluir cards em massa:', error)
+    return NextResponse.json({ error: error.message || 'Erro ao excluir cards' }, { status: 500 })
+  }
+}
+
 // POST — adiciona um card ao deck
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {

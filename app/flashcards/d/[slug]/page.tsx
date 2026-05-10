@@ -26,6 +26,12 @@ import {
   ChevronLeft,
   ChevronRight,
   Folder,
+  ChevronDown,
+  ChevronUp,
+  Trash2,
+  Square,
+  CheckSquare,
+  Loader2,
 } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
@@ -46,7 +52,7 @@ interface AccessFlags {
 interface DeckResponse {
   deck: FlashcardManualDeck & { _id: string }
   cards: (FlashcardManualCard & { _id: string })[]
-  access: AccessFlags
+  access: AccessFlags & { canManage: boolean }
   viewer: { userId: string; emailVerified: boolean }
 }
 
@@ -76,6 +82,7 @@ export default function DeckPage() {
   const [shareOpen, setShareOpen] = useState(false)
   const [purchasing, setPurchasing] = useState(false)
   const [folderPath, setFolderPath] = useState<string | null>(null)
+  const [showCards, setShowCards] = useState(false)
 
   const purchaseSuccess = search?.get('purchase') === 'success'
 
@@ -259,6 +266,7 @@ export default function DeckPage() {
 
           {card && (
             <FlashcardCardView
+              key={card._id}
               card={card}
               flipped={flipped}
               onFlip={() => setFlipped(f => !f)}
@@ -401,7 +409,36 @@ export default function DeckPage() {
         {isLocked ? (
           <LockedPreview deck={deck} access={access} />
         ) : (
-          <CardsList cards={cards} ownerCanEdit={access.isOwner} slug={deck.slug} />
+          <div>
+            <button
+              onClick={() => setShowCards(s => !s)}
+              className="w-full flex items-center justify-between gap-3 rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 px-5 py-4 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors mb-3"
+            >
+              <span className="flex items-center gap-2">
+                {showCards ? <ChevronUp className="h-4 w-4 text-slate-400" /> : <ChevronDown className="h-4 w-4 text-slate-400" />}
+                {showCards ? 'Ocultar lista de cartões' : `Ver lista de cartões (${cards.length})`}
+              </span>
+              {!showCards && <span className="text-xs text-slate-400">Evite spoiler — expanda quando quiser revisar</span>}
+            </button>
+            <AnimatePresence>
+              {showCards && (
+                <motion.div
+                  key="cards-list"
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.18 }}
+                >
+                  <CardsList
+                    cards={cards}
+                    canManage={access.canManage ?? access.isOwner}
+                    slug={deck.slug}
+                    onCardsDeleted={load}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         )}
 
         {access.isOwner && shareOpen && (
@@ -437,13 +474,57 @@ function LockedPreview({ deck, access }: { deck: any; access: AccessFlags }) {
   )
 }
 
-function CardsList({ cards, ownerCanEdit, slug }: { cards: any[]; ownerCanEdit: boolean; slug: string }) {
+function CardsList({
+  cards, canManage, slug, onCardsDeleted,
+}: { cards: any[]; canManage: boolean; slug: string; onCardsDeleted: () => void }) {
+  const [selected, setSelected] = useState<Set<string>>(new Set())
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+
+  const allSelected = cards.length > 0 && selected.size === cards.length
+  const someSelected = selected.size > 0 && !allSelected
+
+  function toggleAll() {
+    if (allSelected) {
+      setSelected(new Set())
+    } else {
+      setSelected(new Set(cards.map(c => c._id)))
+    }
+  }
+
+  function toggleCard(id: string) {
+    setSelected(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  async function deleteSelected() {
+    setDeleting(true)
+    try {
+      const res = await fetch(`/api/flashcards/manual/${encodeURIComponent(slug)}/cards`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cardIds: Array.from(selected) }),
+      })
+      if (res.ok) {
+        setSelected(new Set())
+        setConfirmDelete(false)
+        onCardsDeleted()
+      }
+    } finally {
+      setDeleting(false)
+    }
+  }
+
   if (!cards.length) {
     return (
       <div className="rounded-3xl border border-dashed border-slate-300 dark:border-white/15 p-10 text-center">
         <Sparkles className="h-8 w-8 mx-auto text-slate-400 mb-3" />
         <p className="text-slate-500 dark:text-slate-400">Esse deck ainda não tem cartões.</p>
-        {ownerCanEdit && (
+        {canManage && (
           <Link href={`/flashcards/d/${slug}/editar`} className="inline-block mt-4">
             <Button>Adicionar cartões</Button>
           </Link>
@@ -451,27 +532,161 @@ function CardsList({ cards, ownerCanEdit, slug }: { cards: any[]; ownerCanEdit: 
       </div>
     )
   }
+
   return (
-    <div className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 p-5 md:p-6">
-      <h2 className="text-sm font-semibold text-slate-800 dark:text-white mb-3">{cards.length} cartões</h2>
-      <ul className="space-y-2">
-        {cards.map((c, i) => (
-          <li key={c._id} className="flex items-start gap-3 rounded-2xl border border-slate-100 dark:border-white/10 px-4 py-3 bg-slate-50/60 dark:bg-white/5">
-            <span className="text-xs font-mono text-slate-400 mt-1 w-6">{i + 1}</span>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm text-slate-700 dark:text-slate-200 line-clamp-2">
-                {c.kind === 'hidden_word' && c.hiddenWord ? c.hiddenWord.phrase : (c.front?.text || '(sem texto)')}
-              </p>
-              <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400 line-clamp-1">
-                {c.kind === 'hidden_word' ? `Palavra: ${c.hiddenWord?.word}` : (c.back?.text || '')}
-              </p>
-            </div>
-            {c.kind === 'hidden_word' && <span className="rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 text-[10px] px-2 py-0.5 font-medium">Palavra oculta</span>}
-            {c.comment && <span className="rounded-full bg-violet-500/15 text-violet-700 dark:text-violet-300 text-[10px] px-2 py-0.5 font-medium">Comentado</span>}
-          </li>
-        ))}
-      </ul>
-    </div>
+    <>
+      <div className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center gap-3 px-5 py-4 border-b border-slate-100 dark:border-white/10">
+          {canManage && (
+            <button
+              type="button"
+              onClick={toggleAll}
+              className="shrink-0 text-slate-400 hover:text-violet-600 dark:hover:text-violet-300 transition-colors"
+              aria-label={allSelected ? 'Desselecionar todos' : 'Selecionar todos'}
+            >
+              {allSelected ? (
+                <CheckSquare className="h-4 w-4 text-violet-600 dark:text-violet-300" />
+              ) : someSelected ? (
+                <Square className="h-4 w-4 opacity-50" />
+              ) : (
+                <Square className="h-4 w-4" />
+              )}
+            </button>
+          )}
+          <h2 className="text-sm font-semibold text-slate-800 dark:text-white flex-1">{cards.length} cartões</h2>
+          {canManage && (
+            <Link href={`/flashcards/d/${slug}/editar`}>
+              <Button variant="outline" size="sm"><Edit3 className="h-3.5 w-3.5 mr-1" />Editar deck</Button>
+            </Link>
+          )}
+        </div>
+
+        {/* Bulk action bar */}
+        <AnimatePresence>
+          {selected.size > 0 && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="overflow-hidden"
+            >
+              <div className="flex items-center gap-3 px-5 py-3 bg-rose-50 dark:bg-rose-500/10 border-b border-rose-200 dark:border-rose-500/20">
+                <span className="text-sm font-medium text-rose-700 dark:text-rose-300 flex-1">
+                  {selected.size} {selected.size === 1 ? 'cartão selecionado' : 'cartões selecionados'}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setSelected(new Set())}
+                  className="text-xs text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+                >
+                  Limpar
+                </button>
+                <Button
+                  size="sm"
+                  onClick={() => setConfirmDelete(true)}
+                  className="bg-rose-600 hover:bg-rose-700 text-white gap-1.5"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  Excluir selecionados
+                </Button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Cards list */}
+        <ul className="divide-y divide-slate-100 dark:divide-white/5">
+          {cards.map((c, i) => (
+            <li
+              key={c._id}
+              className={cn(
+                'flex items-start gap-3 px-5 py-3 transition-colors',
+                selected.has(c._id)
+                  ? 'bg-violet-50 dark:bg-violet-500/10'
+                  : 'hover:bg-slate-50/60 dark:hover:bg-white/5',
+                canManage && 'cursor-pointer'
+              )}
+              onClick={() => canManage && toggleCard(c._id)}
+            >
+              {canManage && (
+                <div className="shrink-0 mt-0.5 text-slate-300 dark:text-slate-600">
+                  {selected.has(c._id) ? (
+                    <CheckSquare className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+                  ) : (
+                    <Square className="h-4 w-4" />
+                  )}
+                </div>
+              )}
+              <span className="text-xs font-mono text-slate-400 mt-1 w-6 shrink-0">{i + 1}</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-slate-700 dark:text-slate-200 line-clamp-2">
+                  {c.kind === 'hidden_word' && c.hiddenWord ? c.hiddenWord.phrase : (c.front?.text || '(sem texto)')}
+                </p>
+                <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400 line-clamp-1">
+                  {c.kind === 'hidden_word' ? `Palavra: ${c.hiddenWord?.word}` : (c.back?.text || '')}
+                </p>
+              </div>
+              <div className="flex gap-1 shrink-0" onClick={e => e.stopPropagation()}>
+                {c.kind === 'hidden_word' && (
+                  <span className="rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 text-[10px] px-2 py-0.5 font-medium">Palavra oculta</span>
+                )}
+                {c.comment && (
+                  <span className="rounded-full bg-violet-500/15 text-violet-700 dark:text-violet-300 text-[10px] px-2 py-0.5 font-medium">Comentado</span>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Confirm delete dialog */}
+      <AnimatePresence>
+        {confirmDelete && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            onClick={() => !deleting && setConfirmDelete(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-white/10 p-6 max-w-sm w-full shadow-2xl"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-10 w-10 rounded-full bg-rose-100 dark:bg-rose-500/15 flex items-center justify-center shrink-0">
+                  <Trash2 className="h-5 w-5 text-rose-600 dark:text-rose-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-slate-800 dark:text-white">Excluir cartões?</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                    {selected.size} {selected.size === 1 ? 'cartão será excluído' : 'cartões serão excluídos'} permanentemente.
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2 justify-end">
+                <Button variant="ghost" onClick={() => setConfirmDelete(false)} disabled={deleting}>
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={deleteSelected}
+                  disabled={deleting}
+                  className="bg-rose-600 hover:bg-rose-700 text-white gap-1.5"
+                >
+                  {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                  {deleting ? 'Excluindo...' : 'Excluir'}
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   )
 }
 
