@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import Link from 'next/link'
 import {
   ArrowLeft,
@@ -14,9 +14,14 @@ import {
   Trash2,
   Sparkles,
   Search,
-  CheckCircle2,
   Star,
   Folder,
+  CheckSquare,
+  Square,
+  Minus,
+  X,
+  Link2,
+  Loader2,
 } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
@@ -26,6 +31,7 @@ import { cn } from '@/lib/utils'
 import type { FlashcardManualDeck } from '@/lib/types'
 
 type DeckRow = FlashcardManualDeck & { _id: string }
+type Visibility = 'private' | 'unlisted' | 'public'
 
 export default function AdminFlashcardsManualPage() {
   const [decks, setDecks] = useState<DeckRow[]>([])
@@ -33,6 +39,8 @@ export default function AdminFlashcardsManualPage() {
   const [filter, setFilter] = useState<'all' | 'admin' | 'paid' | 'public'>('all')
   const [loading, setLoading] = useState(true)
   const [toast, setToast] = useState<{ open: boolean; message: string; type?: 'error' | 'success' | 'info' }>({ open: false, message: '' })
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [bulkLoading, setBulkLoading] = useState(false)
 
   async function load() {
     setLoading(true)
@@ -58,6 +66,62 @@ export default function AdminFlashcardsManualPage() {
       return true
     })
   }, [decks, filter])
+
+  // Clear selection whenever filter/search changes (selected items may no longer be visible)
+  useEffect(() => { setSelectedIds(new Set()) }, [filter, search])
+
+  const allVisibleSelected = filtered.length > 0 && filtered.every(d => selectedIds.has(d._id))
+  const someSelected = filtered.some(d => selectedIds.has(d._id))
+  const selectedCount = filtered.filter(d => selectedIds.has(d._id)).length
+
+  function toggleOne(id: string) {
+    setSelectedIds(prev => {
+      const next = new Set(prev)
+      next.has(id) ? next.delete(id) : next.add(id)
+      return next
+    })
+  }
+
+  function toggleAll() {
+    if (allVisibleSelected) {
+      setSelectedIds(prev => {
+        const next = new Set(prev)
+        filtered.forEach(d => next.delete(d._id))
+        return next
+      })
+    } else {
+      setSelectedIds(prev => {
+        const next = new Set(prev)
+        filtered.forEach(d => next.add(d._id))
+        return next
+      })
+    }
+  }
+
+  function clearSelection() { setSelectedIds(new Set()) }
+
+  const bulkChangeVisibility = useCallback(async (visibility: Visibility) => {
+    const ids = filtered.filter(d => selectedIds.has(d._id)).map(d => d._id)
+    if (!ids.length) return
+    setBulkLoading(true)
+    try {
+      await Promise.all(
+        ids.map(id =>
+          fetch(`/api/flashcards/manual/${id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ visibility }),
+          })
+        )
+      )
+      const label = visibility === 'public' ? 'Público' : visibility === 'unlisted' ? 'Não listado' : 'Privado'
+      setToast({ open: true, message: `${ids.length} deck${ids.length > 1 ? 's' : ''} alterado${ids.length > 1 ? 's' : ''} para "${label}"`, type: 'success' })
+      clearSelection()
+      load()
+    } catch {
+      setToast({ open: true, message: 'Erro ao alterar visibilidade', type: 'error' })
+    } finally { setBulkLoading(false) }
+  }, [filtered, selectedIds])
 
   async function toggleHidden(deck: DeckRow) {
     await fetch(`/api/flashcards/manual/${deck._id}`, {
@@ -116,6 +180,47 @@ export default function AdminFlashcardsManualPage() {
           <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar..." className="pl-9" />
         </div>
 
+        {/* ── Bulk action toolbar ── */}
+        {someSelected && (
+          <div className="mb-3 flex items-center gap-2 flex-wrap rounded-2xl border border-violet-400/40 bg-violet-500/8 dark:bg-violet-500/10 px-4 py-3">
+            <span className="text-sm font-semibold text-violet-700 dark:text-violet-300">
+              {selectedCount} selecionado{selectedCount > 1 ? 's' : ''}
+            </span>
+            <span className="text-slate-300 dark:text-white/20 select-none">|</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400 mr-1">Alterar visibilidade:</span>
+            <button
+              onClick={() => bulkChangeVisibility('private')}
+              disabled={bulkLoading}
+              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-white/15 border border-slate-200 dark:border-white/10 transition disabled:opacity-50"
+            >
+              <Lock className="h-3 w-3" /> Privado
+            </button>
+            <button
+              onClick={() => bulkChangeVisibility('unlisted')}
+              disabled={bulkLoading}
+              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold bg-sky-500/10 text-sky-700 dark:text-sky-300 hover:bg-sky-500/20 border border-sky-500/20 transition disabled:opacity-50"
+            >
+              <Link2 className="h-3 w-3" /> Não listado
+            </button>
+            <button
+              onClick={() => bulkChangeVisibility('public')}
+              disabled={bulkLoading}
+              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/20 border border-emerald-500/20 transition disabled:opacity-50"
+            >
+              <Globe className="h-3 w-3" /> Público
+            </button>
+            {bulkLoading && <Loader2 className="h-4 w-4 animate-spin text-violet-500" />}
+            <button
+              onClick={clearSelection}
+              disabled={bulkLoading}
+              className="ml-auto rounded-full p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition"
+              title="Limpar seleção"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        )}
+
         {loading ? (
           <div className="text-center py-20 text-slate-500">Carregando...</div>
         ) : filtered.length === 0 ? (
@@ -127,6 +232,20 @@ export default function AdminFlashcardsManualPage() {
             <table className="w-full text-sm">
               <thead className="bg-slate-50 dark:bg-white/5 text-slate-500 text-xs uppercase tracking-wider">
                 <tr>
+                  <th className="px-4 py-3 w-10">
+                    <button
+                      onClick={toggleAll}
+                      className="text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 transition"
+                      title={allVisibleSelected ? 'Desmarcar todos' : 'Selecionar todos'}
+                    >
+                      {allVisibleSelected
+                        ? <CheckSquare className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+                        : someSelected
+                          ? <Minus className="h-4 w-4" />
+                          : <Square className="h-4 w-4" />
+                      }
+                    </button>
+                  </th>
                   <th className="text-left px-4 py-3">Deck</th>
                   <th className="text-left px-4 py-3 hidden md:table-cell">Owner</th>
                   <th className="text-left px-4 py-3 hidden md:table-cell">Visibilidade</th>
@@ -136,51 +255,71 @@ export default function AdminFlashcardsManualPage() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map(d => (
-                  <tr key={d._id} className="border-t border-slate-100 dark:border-white/5">
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <Link href={`/flashcards/d/${d.slug}`} className="font-medium hover:text-violet-600 truncate max-w-[40ch] inline-block">{d.title}</Link>
-                        {d.ownerType === 'admin' && <Crown className="h-3.5 w-3.5 text-amber-500" />}
-                        {d.isFeatured && <Star className="h-3.5 w-3.5 text-amber-500 fill-current" />}
-                      </div>
-                      <p className="text-xs text-slate-500 truncate max-w-[60ch]">/{d.slug}</p>
-                    </td>
-                    <td className="px-4 py-3 hidden md:table-cell">
-                      <span className="text-xs">{d.ownerName}</span>
-                    </td>
-                    <td className="px-4 py-3 hidden md:table-cell">
-                      <VisibilityChip visibility={d.visibility} hidden={d.isHidden} />
-                    </td>
-                    <td className="px-4 py-3">
-                      {d.pricing === 'paid' ? (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-rose-500/10 text-rose-700 dark:text-rose-300 text-[11px] px-2 py-0.5 font-medium">
-                          <Lock className="h-3 w-3" /> R$ {(d.price || 0).toFixed(2)}
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[11px] px-2 py-0.5 font-medium">Grátis</span>
+                {filtered.map(d => {
+                  const isSelected = selectedIds.has(d._id)
+                  return (
+                    <tr
+                      key={d._id}
+                      className={cn(
+                        'border-t border-slate-100 dark:border-white/5 transition-colors',
+                        isSelected && 'bg-violet-50/60 dark:bg-violet-500/8'
                       )}
-                      {d.linkedMaterialId && <span className="ml-1 text-[10px] text-violet-500">→ /materiais</span>}
-                    </td>
-                    <td className="px-4 py-3 hidden md:table-cell text-xs text-slate-500">{d.cardCount}</td>
-                    <td className="px-4 py-3 text-right">
-                      <div className="inline-flex items-center gap-1">
-                        <button onClick={() => toggleFeatured(d)} title="Destacar" className={cn('rounded-full p-1.5 hover:bg-slate-100 dark:hover:bg-white/5', d.isFeatured && 'text-amber-500')}>
-                          <Star className={cn('h-3.5 w-3.5', d.isFeatured && 'fill-current')} />
+                    >
+                      <td className="px-4 py-3 w-10">
+                        <button
+                          onClick={() => toggleOne(d._id)}
+                          className="text-slate-300 hover:text-violet-600 dark:hover:text-violet-400 transition"
+                        >
+                          {isSelected
+                            ? <CheckSquare className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+                            : <Square className="h-4 w-4" />
+                          }
                         </button>
-                        <button onClick={() => toggleHidden(d)} title={d.isHidden ? 'Mostrar' : 'Esconder'} className="rounded-full p-1.5 hover:bg-slate-100 dark:hover:bg-white/5">
-                          {d.isHidden ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-                        </button>
-                        <Link href={`/flashcards/d/${d.slug}/editar`} className="rounded-full p-1.5 hover:bg-slate-100 dark:hover:bg-white/5">
-                          <Edit3 className="h-3.5 w-3.5" />
-                        </Link>
-                        <button onClick={() => deleteDeck(d)} className="rounded-full p-1.5 hover:bg-rose-500/10 text-rose-500">
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <Link href={`/flashcards/d/${d.slug}`} className="font-medium hover:text-violet-600 truncate max-w-[40ch] inline-block">{d.title}</Link>
+                          {d.ownerType === 'admin' && <Crown className="h-3.5 w-3.5 text-amber-500" />}
+                          {d.isFeatured && <Star className="h-3.5 w-3.5 text-amber-500 fill-current" />}
+                        </div>
+                        <p className="text-xs text-slate-500 truncate max-w-[60ch]">/{d.slug}</p>
+                      </td>
+                      <td className="px-4 py-3 hidden md:table-cell">
+                        <span className="text-xs">{d.ownerName}</span>
+                      </td>
+                      <td className="px-4 py-3 hidden md:table-cell">
+                        <VisibilityChip visibility={d.visibility} hidden={d.isHidden} />
+                      </td>
+                      <td className="px-4 py-3">
+                        {d.pricing === 'paid' ? (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-rose-500/10 text-rose-700 dark:text-rose-300 text-[11px] px-2 py-0.5 font-medium">
+                            <Lock className="h-3 w-3" /> R$ {(d.price || 0).toFixed(2)}
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[11px] px-2 py-0.5 font-medium">Grátis</span>
+                        )}
+                        {d.linkedMaterialId && <span className="ml-1 text-[10px] text-violet-500">→ /materiais</span>}
+                      </td>
+                      <td className="px-4 py-3 hidden md:table-cell text-xs text-slate-500">{d.cardCount}</td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="inline-flex items-center gap-1">
+                          <button onClick={() => toggleFeatured(d)} title="Destacar" className={cn('rounded-full p-1.5 hover:bg-slate-100 dark:hover:bg-white/5', d.isFeatured && 'text-amber-500')}>
+                            <Star className={cn('h-3.5 w-3.5', d.isFeatured && 'fill-current')} />
+                          </button>
+                          <button onClick={() => toggleHidden(d)} title={d.isHidden ? 'Mostrar' : 'Esconder'} className="rounded-full p-1.5 hover:bg-slate-100 dark:hover:bg-white/5">
+                            {d.isHidden ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                          </button>
+                          <Link href={`/flashcards/d/${d.slug}/editar`} className="rounded-full p-1.5 hover:bg-slate-100 dark:hover:bg-white/5">
+                            <Edit3 className="h-3.5 w-3.5" />
+                          </Link>
+                          <button onClick={() => deleteDeck(d)} className="rounded-full p-1.5 hover:bg-rose-500/10 text-rose-500">
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>
