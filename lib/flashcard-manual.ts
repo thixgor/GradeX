@@ -133,7 +133,8 @@ export async function resolveDeckAccess({
     isAdmin ||
     isPurchased ||
     hasShareAccess ||
-    (deck.ownerType === 'admin' && deck.pricing === 'free' && hasGroupAccess) ||
+    // Admin free decks: requires isPublished to prevent access to private/draft decks
+    (deck.ownerType === 'admin' && deck.pricing === 'free' && hasGroupAccess && !!deck.isPublished) ||
     ((deck.visibility === 'public' || deck.visibility === 'unlisted') && deck.isPublished && deck.pricing !== 'paid')
 
   return {

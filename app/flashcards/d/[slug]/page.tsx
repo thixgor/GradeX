@@ -25,6 +25,7 @@ import {
   Play,
   ChevronLeft,
   ChevronRight,
+  Folder,
 } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
@@ -74,6 +75,7 @@ export default function DeckPage() {
   const [toast, setToast] = useState<{ open: boolean; message: string; type?: 'success' | 'error' | 'info' }>({ open: false, message: '' })
   const [shareOpen, setShareOpen] = useState(false)
   const [purchasing, setPurchasing] = useState(false)
+  const [folderPath, setFolderPath] = useState<string | null>(null)
 
   const purchaseSuccess = search?.get('purchase') === 'success'
 
@@ -99,6 +101,28 @@ export default function DeckPage() {
   }, [slug])
 
   useEffect(() => { load() }, [load])
+
+  // Load folder path for deck breadcrumb
+  useEffect(() => {
+    const folderId = data?.deck?.folderId
+    if (!folderId) { setFolderPath(null); return }
+    fetch('/api/flashcards/manual/folders?scope=admin')
+      .then(r => r.json())
+      .then(j => {
+        const folders: { _id: string; name: string; parentFolderId?: string | null }[] = j.folders || []
+        const map = new Map(folders.map(f => [f._id, f]))
+        function getPath(id: string): string {
+          const f = map.get(id)
+          if (!f) return ''
+          if (!f.parentFolderId) return f.name
+          const parent = getPath(f.parentFolderId)
+          return parent ? `${parent} › ${f.name}` : f.name
+        }
+        const path = getPath(folderId as string)
+        setFolderPath(path || null)
+      })
+      .catch(() => {})
+  }, [data?.deck?.folderId])
 
   // Atalhos de teclado durante estudo
   useEffect(() => {
@@ -170,7 +194,7 @@ export default function DeckPage() {
 
   async function buy() {
     if (!data?.deck.linkedMaterialId) {
-      setToast({ open: true, message: 'Este deck ainda não tem produto vinculado', type: 'error' })
+      setToast({ open: true, message: 'Este deck ainda não tem produto vinculado. Contate o administrador.', type: 'error' })
       return
     }
     setPurchasing(true)
@@ -181,11 +205,14 @@ export default function DeckPage() {
         body: JSON.stringify({ itemType: 'material', itemId: data.deck.linkedMaterialId }),
       })
       const json = await res.json()
+      if (!res.ok) throw new Error(json.error || `Erro ${res.status} ao processar pagamento`)
       if (json.url) window.location.href = json.url
-      else if (json.free && json.redirectTo) window.location.href = json.redirectTo
-      else if (json.error) throw new Error(json.error)
+      else if (json.free) {
+        if (json.redirectTo) window.location.href = json.redirectTo
+        else load()
+      }
     } catch (err: any) {
-      setToast({ open: true, message: err.message || 'Erro ao comprar', type: 'error' })
+      setToast({ open: true, message: err.message || 'Erro ao processar pagamento', type: 'error' })
     } finally {
       setPurchasing(false)
     }
@@ -242,19 +269,16 @@ export default function DeckPage() {
             />
           )}
 
-          <div className="mt-6 flex items-center justify-between gap-3">
-            <Button variant="outline" onClick={goPrev} disabled={currentIndex === 0}>
-              <ChevronLeft className="h-4 w-4" /> Anterior
-            </Button>
-
-            <div className="flex gap-2">
+          <div className="mt-6 space-y-3">
+            {/* Rating buttons — always full width row */}
+            <div className="flex gap-2 justify-center flex-wrap">
               {RATINGS.map(r => (
                 <button
                   key={r.value}
                   onClick={() => rate(r.value)}
                   disabled={!flipped}
                   className={cn(
-                    'rounded-full px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r transition',
+                    'rounded-full px-5 py-2 text-sm font-semibold text-white bg-gradient-to-r transition flex-1 min-w-[90px] max-w-[140px]',
                     r.color,
                     !flipped && 'opacity-40 cursor-not-allowed',
                     ratings[card?._id] === r.value && 'ring-2 ring-offset-2 ring-white dark:ring-offset-slate-900'
@@ -265,16 +289,22 @@ export default function DeckPage() {
               ))}
             </div>
 
-            {currentIndex < total - 1 ? (
-              <Button onClick={goNext}>Próximo <ChevronRight className="h-4 w-4" /></Button>
-            ) : (
-              <Button onClick={finishSession} className="bg-gradient-to-r from-violet-600 to-fuchsia-600">
-                <Trophy className="h-4 w-4" /> Concluir
+            {/* Nav buttons */}
+            <div className="flex items-center justify-between gap-3">
+              <Button variant="outline" onClick={goPrev} disabled={currentIndex === 0}>
+                <ChevronLeft className="h-4 w-4" /> Anterior
               </Button>
-            )}
+              {currentIndex < total - 1 ? (
+                <Button onClick={goNext}>Próximo <ChevronRight className="h-4 w-4" /></Button>
+              ) : (
+                <Button onClick={finishSession} className="bg-gradient-to-r from-violet-600 to-fuchsia-600">
+                  <Trophy className="h-4 w-4" /> Concluir
+                </Button>
+              )}
+            </div>
           </div>
 
-          <p className="mt-4 text-center text-xs text-slate-400">
+          <p className="mt-3 text-center text-xs text-slate-400">
             Espaço: virar &nbsp;·&nbsp; ← →: navegar &nbsp;·&nbsp; 1/2/3: avaliar
           </p>
         </div>
@@ -310,6 +340,12 @@ export default function DeckPage() {
                   <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/90 px-2.5 py-0.5"><CheckCircle2 className="h-3 w-3" /> Adquirido</span>
                 )}
               </div>
+              {folderPath && (
+                <div className="mb-2 flex items-center gap-1.5 text-xs text-white/65">
+                  <Folder className="h-3 w-3 shrink-0" />
+                  <span>{folderPath}</span>
+                </div>
+              )}
               <h1 className="text-2xl md:text-4xl font-bold leading-tight drop-shadow">{deck.title}</h1>
               {deck.description && <p className="mt-2 text-sm md:text-base text-white/85 line-clamp-2 max-w-3xl">{deck.description}</p>}
               <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-white/80">

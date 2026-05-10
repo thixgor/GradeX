@@ -284,7 +284,7 @@ export default function FlashcardsHubPage() {
             )}
 
             {filter === 'store' && (
-              <div className="grid lg:grid-cols-[240px,1fr] gap-6 items-start">
+              <div className={cn(adminFolderTree.length > 0 && 'grid lg:grid-cols-[240px,1fr] gap-6 items-start')}>
                 {/* Sidebar de pastas */}
                 {adminFolderTree.length > 0 && (
                   <StoreFolderNav

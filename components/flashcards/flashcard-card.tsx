@@ -90,26 +90,30 @@ export function FlashcardCardView({
   const isHidden = card.kind === 'hidden_word'
   const [revealedHidden, setRevealedHidden] = useState(false)
 
+  function stopAndCall(e: React.MouseEvent, fn: () => void) {
+    e.stopPropagation()
+    fn()
+  }
+
   return (
     <div className={cn('w-full max-w-2xl mx-auto', className)}>
-      <div
-        className="relative w-full"
-        style={{ perspective: 1600 }}
-      >
+      <div className="relative w-full" style={{ perspective: 1600 }}>
         <motion.div
           className="relative w-full"
           animate={{ rotateY: flipped ? 180 : 0 }}
           transition={{ type: 'spring', stiffness: 220, damping: 28 }}
           style={{ transformStyle: 'preserve-3d' }}
         >
-          {/* Front */}
+          {/* Front — clicável para virar */}
           <div
+            onClick={onFlip}
             className={cn(
-              'rounded-3xl p-7 md:p-9 min-h-[320px] md:min-h-[380px] flex flex-col',
+              'rounded-3xl p-7 md:p-9 min-h-[320px] md:min-h-[380px] flex flex-col cursor-pointer select-none',
               'bg-gradient-to-br from-white via-white to-slate-50',
               'dark:from-slate-900 dark:via-slate-900 dark:to-slate-950',
               'border border-slate-200 dark:border-white/10',
               'shadow-[0_30px_120px_-40px_rgba(15,23,42,0.18)] dark:shadow-[0_30px_120px_-40px_rgba(0,0,0,0.7)]',
+              'active:scale-[0.995] transition-transform duration-100',
             )}
             style={{ backfaceVisibility: 'hidden' }}
           >
@@ -134,11 +138,11 @@ export function FlashcardCardView({
               )}
             </div>
 
-            <div className="mt-5 flex flex-wrap gap-2">
+            <div className="mt-5 flex flex-wrap gap-2" onClick={e => e.stopPropagation()}>
               {isHidden && (
                 <button
                   type="button"
-                  onClick={() => setRevealedHidden(v => !v)}
+                  onClick={e => stopAndCall(e, () => setRevealedHidden(v => !v))}
                   className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/20 ring-1 ring-emerald-500/30"
                 >
                   {revealedHidden ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
@@ -148,16 +152,22 @@ export function FlashcardCardView({
               {isHidden && card.hiddenWord?.hint && (
                 <button
                   type="button"
-                  onClick={onToggleHint}
-                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium bg-amber-500/10 text-amber-700 dark:text-amber-300 hover:bg-amber-500/20 ring-1 ring-amber-500/30"
+                  onClick={e => stopAndCall(e, onToggleHint!)}
+                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium bg-amber-500/10 text-amber-700 dark:text-amber-300 hover:bg-amber-500/20 ring-1 ring-amber-500/30 transition-colors"
                 >
-                  <Lightbulb className="h-3.5 w-3.5" />
+                  <motion.span
+                    animate={showHint ? { rotate: 20, scale: 1.15 } : { rotate: 0, scale: 1 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                    className="inline-flex"
+                  >
+                    <Lightbulb className="h-3.5 w-3.5" />
+                  </motion.span>
                   {showHint ? 'Esconder dica' : 'Ver dica'}
                 </button>
               )}
               <button
                 type="button"
-                onClick={onFlip}
+                onClick={e => stopAndCall(e, onFlip)}
                 className="ml-auto inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold bg-slate-900 text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
               >
                 <Sparkles className="h-3.5 w-3.5" />
@@ -168,10 +178,13 @@ export function FlashcardCardView({
             <AnimatePresence>
               {showHint && card.hiddenWord?.hint && (
                 <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
+                  key="hint-box"
+                  initial={{ opacity: 0, y: -6, scale: 0.97 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -6, scale: 0.97 }}
+                  transition={{ type: 'spring', stiffness: 380, damping: 28 }}
                   className="mt-4 rounded-2xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 px-4 py-3 text-sm text-amber-900 dark:text-amber-200"
+                  onClick={e => e.stopPropagation()}
                 >
                   <span className="font-semibold">Dica: </span>{card.hiddenWord.hint}
                 </motion.div>
@@ -179,13 +192,15 @@ export function FlashcardCardView({
             </AnimatePresence>
           </div>
 
-          {/* Back */}
+          {/* Back — também clicável para voltar */}
           <div
+            onClick={onFlip}
             className={cn(
-              'absolute inset-0 rounded-3xl p-7 md:p-9 min-h-[320px] md:min-h-[380px] flex flex-col',
+              'absolute inset-0 rounded-3xl p-7 md:p-9 min-h-[320px] md:min-h-[380px] flex flex-col cursor-pointer select-none',
               'bg-gradient-to-br from-violet-600 via-fuchsia-600 to-rose-500',
               'text-white border border-white/15',
               'shadow-[0_30px_120px_-40px_rgba(124,58,237,0.55)]',
+              'active:scale-[0.995] transition-transform duration-100',
             )}
             style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
           >
@@ -195,7 +210,7 @@ export function FlashcardCardView({
               </span>
               <button
                 type="button"
-                onClick={onFlip}
+                onClick={e => stopAndCall(e, onFlip)}
                 className="text-xs text-white/80 hover:text-white"
               >
                 Voltar
@@ -217,7 +232,7 @@ export function FlashcardCardView({
             {card.comment && (
               <button
                 type="button"
-                onClick={onToggleComment}
+                onClick={e => stopAndCall(e, onToggleComment)}
                 className="mt-4 inline-flex items-center gap-1.5 self-start rounded-full px-3 py-1.5 text-xs font-medium bg-white/15 hover:bg-white/25 ring-1 ring-white/30"
               >
                 <MessageSquare className="h-3.5 w-3.5" />
@@ -228,10 +243,13 @@ export function FlashcardCardView({
             <AnimatePresence>
               {showComment && card.comment && (
                 <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
+                  key="comment-box"
+                  initial={{ opacity: 0, y: -6, scale: 0.97 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -6, scale: 0.97 }}
+                  transition={{ type: 'spring', stiffness: 380, damping: 28 }}
                   className="mt-3 rounded-2xl bg-white/10 ring-1 ring-white/20 px-4 py-3 text-sm leading-relaxed text-white/95 whitespace-pre-wrap"
+                  onClick={e => e.stopPropagation()}
                 >
                   {renderInline(card.comment)}
                 </motion.div>
