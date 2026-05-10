@@ -33,6 +33,14 @@ export class MercadoPagoProvider implements PaymentProvider {
     const cfg = getPaymentConfig()
     const payment = getMpPayment()
 
+    // Em sandbox, payer.email deve ser um e-mail de usuário de teste MP.
+    // E-mails reais causam "Unauthorized use of live credentials".
+    const sandboxPayerEmail = process.env.MERCADOPAGO_SANDBOX_PAYER_EMAIL || 'test_user_buyer@testuser.com'
+    const resolvedPayerEmail =
+      cfg.mp.env === 'sandbox'
+        ? sandboxPayerEmail
+        : (input.payerEmail || `noreply+${input.externalReference}@domineaqui.com.br`)
+
     const body: Record<string, any> = {
       transaction_amount: round2(input.amount),
       description: input.description,
@@ -44,7 +52,7 @@ export class MercadoPagoProvider implements PaymentProvider {
         external_reference: input.externalReference,
       },
       payer: {
-        email: input.payerEmail || `noreply+${input.externalReference}@domineaqui.com.br`,
+        email: resolvedPayerEmail,
       },
     }
 

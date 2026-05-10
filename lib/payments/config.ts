@@ -49,6 +49,13 @@ export function getPaymentConfig(): PaymentConfig {
   if (env === 'production' && accessToken.startsWith('TEST-')) {
     throw new Error('MERCADOPAGO_ENV=production mas o ACCESS_TOKEN é de sandbox (TEST-)')
   }
+  if (env === 'sandbox' && accessToken && !accessToken.startsWith('TEST-')) {
+    throw new Error('MERCADOPAGO_ENV=sandbox mas o ACCESS_TOKEN parece ser de produção (não começa com TEST-). Isso causa "Unauthorized use of live credentials".')
+  }
+  if (env === 'sandbox' && publicKey && !publicKey.startsWith('TEST-')) {
+    // Não lança exceção mas avisa fortemente — este é o erro mais comum
+    console.error('[payments] ATENÇÃO: MERCADOPAGO_ENV=sandbox mas MERCADOPAGO_PUBLIC_KEY não começa com TEST-. Isso causa "Unauthorized use of live credentials". Troque pela Public Key de teste.')
+  }
 
   cached = {
     provider,
