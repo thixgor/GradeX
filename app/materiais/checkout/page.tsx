@@ -2,11 +2,32 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { AppShell } from '@/components/app-shell'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Loader2, ChevronLeft } from 'lucide-react'
+import { Loader2, ChevronLeft, FileText, Package } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
+
+const pageStyle: React.CSSProperties = {
+  minHeight: '100vh',
+  background: 'linear-gradient(135deg, #020d06 0%, #031a0b 40%, #041408 100%)',
+  padding: '24px 16px',
+}
+
+const glassCard: React.CSSProperties = {
+  background: 'rgba(6,20,10,0.85)',
+  backdropFilter: 'blur(20px)',
+  WebkitBackdropFilter: 'blur(20px)',
+  border: '1px solid rgba(52,211,153,0.15)',
+  borderRadius: '20px',
+}
+
+const emeraldBadge: React.CSSProperties = {
+  background: 'linear-gradient(135deg, #059669, #34d399)',
+  borderRadius: '10px',
+  padding: '6px 14px',
+  fontSize: '13px',
+  fontWeight: 700,
+  color: 'white',
+  display: 'inline-block',
+}
 
 export default function MateriaisCheckoutPage() {
   const router = useRouter()
@@ -48,41 +69,131 @@ export default function MateriaisCheckoutPage() {
 
   if (loading) {
     return (
-      <AppShell headerTitle="Checkout">
-        <div className="flex items-center justify-center min-h-[40vh]">
-          <Loader2 className="h-6 w-6 animate-spin" />
+      <div style={pageStyle}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
+          <Loader2 size={32} style={{ color: '#34d399', animation: 'spin 1s linear infinite' }} />
         </div>
-      </AppShell>
+      </div>
     )
   }
 
   if (error || !item) {
     return (
-      <AppShell headerTitle="Checkout">
-        <div className="max-w-2xl mx-auto p-6 space-y-4">
-          <Card><CardContent className="pt-6">{error || 'Item não disponível.'}</CardContent></Card>
-          <Button variant="outline" onClick={() => router.push('/materiais')}>
-            <ChevronLeft className="h-4 w-4 mr-2" /> Voltar
-          </Button>
+      <div style={pageStyle}>
+        <div style={{ maxWidth: '640px', margin: '0 auto', paddingTop: '40px' }}>
+          <div style={{ ...glassCard, padding: '28px', color: '#f87171', marginBottom: '16px' }}>
+            {error || 'Item não disponível.'}
+          </div>
+          <button
+            onClick={() => router.push('/materiais')}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: '6px',
+              background: 'transparent', border: '1px solid rgba(255,255,255,0.15)',
+              borderRadius: '10px', padding: '8px 16px', color: 'rgba(255,255,255,0.7)',
+              cursor: 'pointer', fontSize: '14px',
+            }}
+          >
+            <ChevronLeft size={16} /> Voltar
+          </button>
         </div>
-      </AppShell>
+      </div>
     )
   }
 
+  const price = Number(item.price || 0)
+  const typeLabel = itemType === 'package' ? 'Pacote' : 'Material'
+
   return (
-    <AppShell headerTitle="Checkout" headerSubtitle={item.title}>
-      <div className="max-w-2xl mx-auto p-4 sm:p-6 space-y-4">
-        <Button variant="ghost" size="sm" onClick={() => router.push('/materiais')}>
-          <ChevronLeft className="h-4 w-4 mr-1" /> Voltar
-        </Button>
-        <Card>
-          <CardHeader>
-            <CardTitle>{item.title}</CardTitle>
-          </CardHeader>
-          <CardContent>
+    <div style={pageStyle}>
+      <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+        {/* Back button */}
+        <button
+          onClick={() => router.push('/materiais')}
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: '6px',
+            background: 'transparent', border: 'none',
+            color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: '14px',
+            marginBottom: '24px', padding: '0',
+          }}
+        >
+          <ChevronLeft size={16} /> Voltar aos materiais
+        </button>
+
+        {/* Page title */}
+        <h1 style={{ fontSize: '28px', fontWeight: 800, color: 'white', marginBottom: '8px', letterSpacing: '-0.02em' }}>
+          Finalizar compra
+        </h1>
+        <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', marginBottom: '32px' }}>
+          Você está adquirindo: <strong style={{ color: '#34d399' }}>{item.title}</strong>
+        </p>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1.4fr)', gap: '24px', alignItems: 'start' }}>
+          {/* Left: Item summary */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ ...glassCard, padding: '28px' }}>
+              <div style={{ marginBottom: '20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                  <div style={{
+                    width: '40px', height: '40px', borderRadius: '10px',
+                    background: 'rgba(52,211,153,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    flexShrink: 0,
+                  }}>
+                    {itemType === 'package'
+                      ? <Package size={20} style={{ color: '#34d399' }} />
+                      : <FileText size={20} style={{ color: '#34d399' }} />
+                    }
+                  </div>
+                  <span style={emeraldBadge}>{typeLabel}</span>
+                </div>
+                <h2 style={{ fontSize: '20px', fontWeight: 800, color: 'white', letterSpacing: '-0.01em', lineHeight: '1.3' }}>
+                  {item.title}
+                </h2>
+              </div>
+
+              {/* Price */}
+              <div style={{
+                padding: '16px',
+                background: 'rgba(52,211,153,0.06)',
+                border: '1px solid rgba(52,211,153,0.12)',
+                borderRadius: '12px',
+                marginBottom: '16px',
+              }}>
+                <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', marginBottom: '2px' }}>Valor</p>
+                <p style={{ fontSize: '32px', fontWeight: 800, color: '#34d399', letterSpacing: '-0.03em' }}>
+                  R$ {price.toFixed(2).replace('.', ',')}
+                </p>
+                <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', marginTop: '2px' }}>Pagamento único · Acesso permanente</p>
+              </div>
+
+              {item.description && (
+                <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.55)', lineHeight: '1.6' }}>
+                  {item.description}
+                </p>
+              )}
+            </div>
+
+            {/* Trust badges */}
+            <div style={{ ...glassCard, padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
+                <span style={{ fontSize: '16px' }}>🔒</span>
+                <span>Ambiente 100% seguro · Mercado Pago</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
+                <span style={{ fontSize: '16px' }}>📥</span>
+                <span>Acesso imediato após confirmação do pagamento</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
+                <span style={{ fontSize: '16px' }}>🛡️</span>
+                <span>Dados criptografados · Nunca armazenamos seu cartão</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Payment */}
+          <div style={{ ...glassCard, padding: '28px' }}>
             <MercadoPagoCheckout
               publicKey={publicKey}
-              amount={Number(item.price || 0)}
+              amount={price}
               description={item.title}
               endpoint="/api/materiais/checkout"
               extraBody={{ itemType, itemId }}
@@ -92,9 +203,9 @@ export default function MateriaisCheckoutPage() {
                 }, 1200)
               }}
             />
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
-    </AppShell>
+    </div>
   )
 }

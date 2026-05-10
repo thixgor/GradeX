@@ -12,12 +12,8 @@
  * O backend valida o amount usando a fonte autoritativa (admin_settings/materials).
  */
 
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Loader2, CheckCircle2, AlertCircle, Copy, QrCode, CreditCard, Barcode, ExternalLink } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Loader2, CheckCircle2, AlertCircle, Copy, QrCode, CreditCard, Barcode, ExternalLink, Lock, ShieldCheck } from 'lucide-react'
 
 declare global {
   interface Window {
@@ -72,6 +68,82 @@ const STATUS_LABELS: Record<CheckoutOrderResponse['status'], string> = {
   refunded: 'Reembolsado',
   charged_back: 'Estornado',
   expired: 'Expirado',
+}
+
+const glassCard: React.CSSProperties = {
+  background: 'rgba(6,20,10,0.85)',
+  backdropFilter: 'blur(20px)',
+  WebkitBackdropFilter: 'blur(20px)',
+  border: '1px solid rgba(52,211,153,0.15)',
+  borderRadius: '16px',
+}
+
+const glassInput: React.CSSProperties = {
+  background: 'rgba(255,255,255,0.05)',
+  border: '1px solid rgba(52,211,153,0.2)',
+  color: 'white',
+  borderRadius: '10px',
+  padding: '10px 14px',
+  width: '100%',
+  fontSize: '14px',
+  outline: 'none',
+}
+
+const activeTab: React.CSSProperties = {
+  background: 'rgba(52,211,153,0.2)',
+  border: '1px solid rgba(52,211,153,0.5)',
+  boxShadow: '0 0 20px rgba(52,211,153,0.2)',
+  color: '#34d399',
+  borderRadius: '10px',
+  padding: '8px 18px',
+  cursor: 'pointer',
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '8px',
+  fontSize: '14px',
+  fontWeight: 600,
+  transition: 'all 0.2s',
+}
+
+const inactiveTab: React.CSSProperties = {
+  background: 'rgba(255,255,255,0.05)',
+  border: '1px solid rgba(255,255,255,0.1)',
+  color: 'rgba(255,255,255,0.6)',
+  borderRadius: '10px',
+  padding: '8px 18px',
+  cursor: 'pointer',
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '8px',
+  fontSize: '14px',
+  fontWeight: 500,
+  transition: 'all 0.2s',
+}
+
+const submitBtn: React.CSSProperties = {
+  background: 'linear-gradient(135deg, #059669, #34d399)',
+  boxShadow: '0 0 30px rgba(52,211,153,0.3)',
+  border: 'none',
+  borderRadius: '12px',
+  color: 'white',
+  fontWeight: 700,
+  fontSize: '15px',
+  padding: '12px 28px',
+  cursor: 'pointer',
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '8px',
+  transition: 'opacity 0.2s, box-shadow 0.2s',
+}
+
+const labelStyle: React.CSSProperties = {
+  display: 'block',
+  fontSize: '12px',
+  fontWeight: 600,
+  color: 'rgba(52,211,153,0.8)',
+  marginBottom: '6px',
+  textTransform: 'uppercase',
+  letterSpacing: '0.05em',
 }
 
 export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
@@ -208,59 +280,107 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap gap-2">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      {/* Method tabs */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
         {allowed.includes('card') && (
-          <MethodTab active={method === 'card'} onClick={() => setMethod('card')} icon={<CreditCard className="h-4 w-4" />} label="Cartão" />
+          <MethodTab active={method === 'card'} onClick={() => setMethod('card')} icon={<CreditCard size={16} />} label="Cartão" />
         )}
         {allowed.includes('pix') && (
-          <MethodTab active={method === 'pix'} onClick={() => setMethod('pix')} icon={<QrCode className="h-4 w-4" />} label="Pix" />
+          <MethodTab active={method === 'pix'} onClick={() => setMethod('pix')} icon={<QrCode size={16} />} label="Pix" />
         )}
         {allowed.includes('boleto') && (
-          <MethodTab active={method === 'boleto'} onClick={() => setMethod('boleto')} icon={<Barcode className="h-4 w-4" />} label="Boleto" />
+          <MethodTab active={method === 'boleto'} onClick={() => setMethod('boleto')} icon={<Barcode size={16} />} label="Boleto" />
         )}
       </div>
 
-      <form onSubmit={submit} className="space-y-4">
+      <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {method === 'card' && (
-          <div className="grid gap-4">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             <div>
-              <Label htmlFor="cardNumber">Número do cartão</Label>
-              <Input id="cardNumber" name="cardNumber" inputMode="numeric" maxLength={19} required placeholder="0000 0000 0000 0000" />
+              <label style={labelStyle}>Número do cartão</label>
+              <input
+                id="cardNumber"
+                name="cardNumber"
+                inputMode="numeric"
+                maxLength={19}
+                required
+                placeholder="0000 0000 0000 0000"
+                style={glassInput}
+              />
             </div>
             <div>
-              <Label htmlFor="cardholderName">Nome impresso no cartão</Label>
-              <Input id="cardholderName" name="cardholderName" required placeholder="Como está no cartão" />
+              <label style={labelStyle}>Nome impresso no cartão</label>
+              <input
+                id="cardholderName"
+                name="cardholderName"
+                required
+                placeholder="Como está no cartão"
+                style={glassInput}
+              />
             </div>
-            <div className="grid grid-cols-3 gap-3">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
               <div>
-                <Label htmlFor="cardExpirationMonth">Mês</Label>
-                <Input id="cardExpirationMonth" name="cardExpirationMonth" inputMode="numeric" maxLength={2} required placeholder="MM" />
+                <label style={labelStyle}>Mês</label>
+                <input
+                  id="cardExpirationMonth"
+                  name="cardExpirationMonth"
+                  inputMode="numeric"
+                  maxLength={2}
+                  required
+                  placeholder="MM"
+                  style={glassInput}
+                />
               </div>
               <div>
-                <Label htmlFor="cardExpirationYear">Ano</Label>
-                <Input id="cardExpirationYear" name="cardExpirationYear" inputMode="numeric" maxLength={4} required placeholder="AAAA" />
+                <label style={labelStyle}>Ano</label>
+                <input
+                  id="cardExpirationYear"
+                  name="cardExpirationYear"
+                  inputMode="numeric"
+                  maxLength={4}
+                  required
+                  placeholder="AAAA"
+                  style={glassInput}
+                />
               </div>
               <div>
-                <Label htmlFor="securityCode">CVV</Label>
-                <Input id="securityCode" name="securityCode" inputMode="numeric" maxLength={4} required placeholder="CVV" />
+                <label style={labelStyle}>CVV</label>
+                <input
+                  id="securityCode"
+                  name="securityCode"
+                  inputMode="numeric"
+                  maxLength={4}
+                  required
+                  placeholder="CVV"
+                  style={glassInput}
+                />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
               <div>
-                <Label htmlFor="docNumber">CPF</Label>
-                <Input id="docNumber" name="docNumber" inputMode="numeric" required placeholder="000.000.000-00" />
+                <label style={labelStyle}>CPF</label>
+                <input
+                  id="docNumber"
+                  name="docNumber"
+                  inputMode="numeric"
+                  required
+                  placeholder="000.000.000-00"
+                  style={glassInput}
+                />
               </div>
               <div>
-                <Label htmlFor="installments">Parcelas</Label>
+                <label style={labelStyle}>Parcelas</label>
                 <select
                   id="installments"
                   name="installments"
                   defaultValue={1}
-                  className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
+                  style={{ ...glassInput, cursor: 'pointer' }}
                 >
                   {[1, 2, 3, 4, 5, 6, 8, 10, 12].map(n => (
-                    <option key={n} value={n}>{n}x de R$ {(props.amount / n).toFixed(2).replace('.', ',')}</option>
+                    <option key={n} value={n} style={{ background: '#06140a' }}>
+                      {n}x de R$ {(props.amount / n).toFixed(2).replace('.', ',')}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -269,44 +389,101 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
         )}
 
         {method === 'pix' && (
-          <div className="text-sm text-muted-foreground">
-            Após confirmar, geraremos o QR Code e o código copia-e-cola para você pagar pelo app do seu banco.
+          <div style={{
+            padding: '16px',
+            background: 'rgba(52,211,153,0.05)',
+            border: '1px solid rgba(52,211,153,0.15)',
+            borderRadius: '12px',
+            color: 'rgba(255,255,255,0.7)',
+            fontSize: '14px',
+            lineHeight: '1.6',
+          }}>
+            <QrCode size={32} style={{ color: '#34d399', marginBottom: '8px' }} />
+            <p>Após confirmar, geraremos o QR Code e o código copia-e-cola para você pagar pelo app do seu banco.</p>
+            <p style={{ marginTop: '8px', fontSize: '12px', color: 'rgba(52,211,153,0.7)' }}>O pagamento é confirmado em instantes.</p>
           </div>
         )}
 
         {method === 'boleto' && (
-          <div className="grid gap-4">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             <div>
-              <Label htmlFor="payerName">Nome completo</Label>
-              <Input id="payerName" name="payerName" required defaultValue={props.payerNameHint} />
+              <label style={labelStyle}>Nome completo</label>
+              <input
+                id="payerName"
+                name="payerName"
+                required
+                defaultValue={props.payerNameHint}
+                style={glassInput}
+              />
             </div>
             <div>
-              <Label htmlFor="docNumber">CPF</Label>
-              <Input id="docNumber" name="docNumber" inputMode="numeric" required placeholder="000.000.000-00" />
+              <label style={labelStyle}>CPF</label>
+              <input
+                id="docNumber"
+                name="docNumber"
+                inputMode="numeric"
+                required
+                placeholder="000.000.000-00"
+                style={glassInput}
+              />
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', padding: '10px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px' }}>
               O boleto vence em 24h. Liberação ocorre automaticamente em até 2h após o pagamento ser compensado.
             </p>
           </div>
         )}
 
         {error && (
-          <div className="flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
-            <AlertCircle className="h-4 w-4 mt-0.5" />
+          <div style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '10px',
+            padding: '12px 16px',
+            background: 'rgba(239,68,68,0.1)',
+            border: '1px solid rgba(239,68,68,0.3)',
+            borderRadius: '10px',
+            color: '#f87171',
+            fontSize: '14px',
+          }}>
+            <AlertCircle size={16} style={{ marginTop: '2px', flexShrink: 0 }} />
             <span>{error}</span>
           </div>
         )}
 
-        <div className="flex items-center justify-between border-t pt-4">
+        {/* Footer with amount + submit */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          borderTop: '1px solid rgba(52,211,153,0.1)',
+          paddingTop: '16px',
+          gap: '16px',
+          flexWrap: 'wrap',
+        }}>
           <div>
-            <p className="text-sm text-muted-foreground">{props.description}</p>
-            <p className="text-2xl font-bold">R$ {props.amount.toFixed(2).replace('.', ',')}</p>
+            <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', marginBottom: '2px' }}>{props.description}</p>
+            <p style={{ fontSize: '26px', fontWeight: 800, color: '#34d399', letterSpacing: '-0.02em' }}>
+              R$ {props.amount.toFixed(2).replace('.', ',')}
+            </p>
           </div>
-          <Button type="submit" size="lg" disabled={submitting || (method === 'card' && !mpReady)}>
-            {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+          <button
+            type="submit"
+            disabled={submitting || (method === 'card' && !mpReady)}
+            style={{
+              ...submitBtn,
+              opacity: (submitting || (method === 'card' && !mpReady)) ? 0.6 : 1,
+              cursor: (submitting || (method === 'card' && !mpReady)) ? 'not-allowed' : 'pointer',
+            }}
+          >
+            {submitting && <Loader2 size={16} className="animate-spin" />}
             {method === 'card' ? 'Pagar com cartão' : method === 'pix' ? 'Gerar Pix' : 'Gerar boleto'}
-          </Button>
+          </button>
         </div>
+
+        {/* Trust footer */}
+        <p style={{ textAlign: 'center', fontSize: '11px', color: 'rgba(255,255,255,0.3)', marginTop: '4px' }}>
+          🔒 Pagamento seguro · Mercado Pago · Dados criptografados
+        </p>
       </form>
     </div>
   )
@@ -314,13 +491,7 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
 
 function MethodTab({ active, onClick, icon, label }: { active: boolean; onClick: () => void; icon: React.ReactNode; label: string }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`inline-flex items-center gap-2 px-4 py-2 rounded-md border text-sm transition ${
-        active ? 'border-primary bg-primary text-primary-foreground' : 'border-border hover:bg-muted'
-      }`}
-    >
+    <button type="button" onClick={onClick} style={active ? activeTab : inactiveTab}>
       {icon}
       {label}
     </button>
@@ -332,124 +503,159 @@ function ResultPanel({ order, method, onReset }: { order: CheckoutOrderResponse;
 
   if (order.status === 'approved') {
     return (
-      <Card className="border-green-500/50 bg-green-500/5">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-green-700 dark:text-green-400">
-            <CheckCircle2 className="h-5 w-5" /> Pagamento aprovado
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p>Tudo certo! Seu acesso foi liberado.</p>
-          {order.successRedirect && (
-            <Button onClick={() => (window.location.href = order.successRedirect!)}>
-              Continuar
-            </Button>
-          )}
-        </CardContent>
-      </Card>
+      <div style={{
+        ...glassCard,
+        padding: '32px',
+        textAlign: 'center',
+        border: '1px solid rgba(52,211,153,0.4)',
+        boxShadow: '0 0 40px rgba(52,211,153,0.15)',
+      }}>
+        <CheckCircle2 size={48} style={{ color: '#34d399', margin: '0 auto 16px' }} />
+        <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#34d399', marginBottom: '8px' }}>Pagamento aprovado!</h3>
+        <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', marginBottom: '20px' }}>Tudo certo! Seu acesso foi liberado.</p>
+        {order.successRedirect && (
+          <button
+            onClick={() => (window.location.href = order.successRedirect!)}
+            style={submitBtn}
+          >
+            Continuar
+          </button>
+        )}
+      </div>
     )
   }
 
   if (['rejected', 'cancelled', 'expired'].includes(order.status)) {
     return (
-      <Card className="border-destructive/50 bg-destructive/5">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-destructive">
-            <AlertCircle className="h-5 w-5" /> {STATUS_LABELS[order.status]}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {order.statusDetail && <p className="text-sm text-muted-foreground">Detalhe: {order.statusDetail}</p>}
-          <Button variant="outline" onClick={onReset}>Tentar novamente</Button>
-        </CardContent>
-      </Card>
+      <div style={{
+        ...glassCard,
+        padding: '32px',
+        textAlign: 'center',
+        border: '1px solid rgba(239,68,68,0.4)',
+        boxShadow: '0 0 40px rgba(239,68,68,0.1)',
+      }}>
+        <AlertCircle size={48} style={{ color: '#f87171', margin: '0 auto 16px' }} />
+        <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#f87171', marginBottom: '8px' }}>{STATUS_LABELS[order.status]}</h3>
+        {order.statusDetail && (
+          <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '13px', marginBottom: '20px' }}>Detalhe: {order.statusDetail}</p>
+        )}
+        <button
+          onClick={onReset}
+          style={{
+            ...inactiveTab,
+            padding: '10px 24px',
+            color: 'white',
+          }}
+        >
+          Tentar novamente
+        </button>
+      </div>
     )
   }
 
-  // Pending — Pix ou boleto
+  // Pending — Pix
   if (method === 'pix' && order.pix) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <QrCode className="h-5 w-5" /> Pague com Pix
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-sm text-muted-foreground">
-            Escaneie o QR Code abaixo com o app do seu banco ou copie o código.
-          </p>
-          {order.pix.qrCodeBase64 && (
+      <div style={{ ...glassCard, padding: '28px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <QrCode size={22} style={{ color: '#34d399' }} />
+          <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'white' }}>Pague com Pix</h3>
+        </div>
+        <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', marginTop: '-8px' }}>
+          Escaneie o QR Code abaixo com o app do seu banco ou copie o código.
+        </p>
+        {order.pix.qrCodeBase64 && (
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
             <img
               src={`data:image/png;base64,${order.pix.qrCodeBase64}`}
               alt="QR Code Pix"
-              className="mx-auto h-48 w-48 border rounded-md"
+              style={{
+                width: '200px',
+                height: '200px',
+                borderRadius: '12px',
+                border: '2px solid rgba(52,211,153,0.3)',
+                padding: '8px',
+                background: 'white',
+              }}
             />
-          )}
-          <div className="space-y-2">
-            <Label>Código Pix copia-e-cola</Label>
-            <div className="flex gap-2">
-              <Input readOnly value={order.pix.qrCode} className="font-mono text-xs" />
-              <Button
-                type="button"
-                variant="outline"
-                onClick={async () => {
-                  await navigator.clipboard.writeText(order.pix!.qrCode)
-                  setCopied(true)
-                  setTimeout(() => setCopied(false), 2000)
-                }}
-              >
-                <Copy className="h-4 w-4 mr-1" />
-                {copied ? 'Copiado!' : 'Copiar'}
-              </Button>
-            </div>
           </div>
-          <p className="text-xs text-muted-foreground flex items-center gap-2">
-            <Loader2 className="h-3 w-3 animate-spin" /> Aguardando confirmação do pagamento — sua tela atualiza automaticamente.
-          </p>
-        </CardContent>
-      </Card>
+        )}
+        <div>
+          <label style={labelStyle}>Código Pix copia-e-cola</label>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <input
+              readOnly
+              value={order.pix.qrCode}
+              style={{ ...glassInput, fontFamily: 'monospace', fontSize: '11px' }}
+            />
+            <button
+              type="button"
+              onClick={async () => {
+                await navigator.clipboard.writeText(order.pix!.qrCode)
+                setCopied(true)
+                setTimeout(() => setCopied(false), 2000)
+              }}
+              style={{
+                ...activeTab,
+                padding: '10px 16px',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+              }}
+            >
+              <Copy size={14} />
+              {copied ? 'Copiado!' : 'Copiar'}
+            </button>
+          </div>
+        </div>
+        <p style={{ fontSize: '12px', color: 'rgba(52,211,153,0.7)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Loader2 size={14} className="animate-spin" />
+          Aguardando confirmação — sua tela atualiza automaticamente.
+        </p>
+      </div>
     )
   }
 
+  // Pending — Boleto
   if (method === 'boleto' && order.boleto) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Barcode className="h-5 w-5" /> Boleto gerado
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {order.boleto.ticketUrl && (
-            <Button asChild>
-              <a href={order.boleto.ticketUrl} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="h-4 w-4 mr-2" /> Abrir boleto em nova aba
-              </a>
-            </Button>
-          )}
-          {order.boleto.barcode && (
-            <div className="space-y-2">
-              <Label>Linha digitável</Label>
-              <Input readOnly value={order.boleto.barcode} className="font-mono text-xs" />
-            </div>
-          )}
-          <p className="text-xs text-muted-foreground">
-            Liberação ocorre automaticamente após a compensação (até 2 dias úteis).
-          </p>
-        </CardContent>
-      </Card>
+      <div style={{ ...glassCard, padding: '28px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <Barcode size={22} style={{ color: '#34d399' }} />
+          <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'white' }}>Boleto gerado</h3>
+        </div>
+        {order.boleto.ticketUrl && (
+          <a
+            href={order.boleto.ticketUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={submitBtn}
+          >
+            <ExternalLink size={16} /> Abrir boleto em nova aba
+          </a>
+        )}
+        {order.boleto.barcode && (
+          <div>
+            <label style={labelStyle}>Linha digitável</label>
+            <input
+              readOnly
+              value={order.boleto.barcode}
+              style={{ ...glassInput, fontFamily: 'monospace', fontSize: '11px' }}
+            />
+          </div>
+        )}
+        <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>
+          Liberação ocorre automaticamente após a compensação (até 2 dias úteis).
+        </p>
+      </div>
     )
   }
 
+  // Generic pending
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{STATUS_LABELS[order.status]}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p className="text-sm text-muted-foreground">{order.statusDetail || 'Processando...'}</p>
-      </CardContent>
-    </Card>
+    <div style={{ ...glassCard, padding: '28px', textAlign: 'center' }}>
+      <Loader2 size={36} style={{ color: '#34d399', margin: '0 auto 12px', animation: 'spin 1s linear infinite' }} />
+      <h3 style={{ fontSize: '17px', fontWeight: 600, color: 'white', marginBottom: '6px' }}>{STATUS_LABELS[order.status]}</h3>
+      <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>{order.statusDetail || 'Processando...'}</p>
+    </div>
   )
 }

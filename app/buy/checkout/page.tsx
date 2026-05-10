@@ -2,14 +2,47 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { AppShell } from '@/components/app-shell'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Loader2, ChevronLeft } from 'lucide-react'
+import { Loader2, ChevronLeft, CreditCard, Zap, CheckCircle2, Star } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
 import type { PlanConfig } from '@/lib/types'
 
-type SubMode = { type: 'subscription'; months: 1 | 3 | 12 } | { type: 'one_time' }
+type PayMode = 'subscription' | 'one_time'
+
+const pageStyle: React.CSSProperties = {
+  minHeight: '100vh',
+  background: 'linear-gradient(135deg, #020d06 0%, #031a0b 40%, #041408 100%)',
+  padding: '24px 16px',
+}
+
+const glassCard: React.CSSProperties = {
+  background: 'rgba(6,20,10,0.85)',
+  backdropFilter: 'blur(20px)',
+  WebkitBackdropFilter: 'blur(20px)',
+  border: '1px solid rgba(52,211,153,0.15)',
+  borderRadius: '20px',
+}
+
+const emeraldBadge: React.CSSProperties = {
+  background: 'linear-gradient(135deg, #059669, #34d399)',
+  borderRadius: '10px',
+  padding: '6px 14px',
+  fontSize: '13px',
+  fontWeight: 700,
+  color: 'white',
+  display: 'inline-block',
+}
+
+const modeCard = (active: boolean): React.CSSProperties => ({
+  background: active ? 'rgba(52,211,153,0.12)' : 'rgba(255,255,255,0.03)',
+  border: active ? '1px solid rgba(52,211,153,0.5)' : '1px solid rgba(255,255,255,0.08)',
+  boxShadow: active ? '0 0 24px rgba(52,211,153,0.15)' : 'none',
+  borderRadius: '14px',
+  padding: '18px 20px',
+  cursor: 'pointer',
+  transition: 'all 0.2s',
+  textAlign: 'left' as const,
+  width: '100%',
+})
 
 export default function BuyCheckoutPage() {
   const router = useRouter()
@@ -19,7 +52,8 @@ export default function BuyCheckoutPage() {
   const [publicKey, setPublicKey] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [mode, setMode] = useState<SubMode | null>(null)
+  const [isRecurring, setIsRecurring] = useState(false)
+  const [payMode, setPayMode] = useState<PayMode>('subscription')
 
   useEffect(() => {
     if (!planId) {
@@ -41,9 +75,11 @@ export default function BuyCheckoutPage() {
         setPublicKey(pkResp.publicKey || '')
         const months = found.durationMonths || 0
         if (months === 1 || months === 3 || months === 12) {
-          setMode({ type: 'subscription', months: months as 1 | 3 | 12 })
+          setIsRecurring(true)
+          setPayMode('subscription')
         } else {
-          setMode({ type: 'one_time' })
+          setIsRecurring(false)
+          setPayMode('one_time')
         }
       })
       .catch(err => setError(String(err?.message || err)))
@@ -52,54 +88,187 @@ export default function BuyCheckoutPage() {
 
   if (loading) {
     return (
-      <AppShell headerTitle="Checkout">
-        <div className="flex items-center justify-center min-h-[40vh]">
-          <Loader2 className="h-6 w-6 animate-spin" />
+      <div style={pageStyle}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
+          <Loader2 size={32} style={{ color: '#34d399', animation: 'spin 1s linear infinite' }} />
         </div>
-      </AppShell>
+      </div>
     )
   }
 
-  if (error || !plan || !mode) {
+  if (error || !plan) {
     return (
-      <AppShell headerTitle="Checkout">
-        <div className="max-w-2xl mx-auto p-6 space-y-4">
-          <Card><CardContent className="pt-6">{error || 'Plano não disponível.'}</CardContent></Card>
-          <Button variant="outline" onClick={() => router.push('/buy')}>
-            <ChevronLeft className="h-4 w-4 mr-2" /> Voltar
-          </Button>
+      <div style={pageStyle}>
+        <div style={{ maxWidth: '640px', margin: '0 auto', paddingTop: '40px' }}>
+          <div style={{ ...glassCard, padding: '28px', color: '#f87171', marginBottom: '16px' }}>
+            {error || 'Plano não disponível.'}
+          </div>
+          <button
+            onClick={() => router.push('/buy')}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: '6px',
+              background: 'transparent', border: '1px solid rgba(255,255,255,0.15)',
+              borderRadius: '10px', padding: '8px 16px', color: 'rgba(255,255,255,0.7)',
+              cursor: 'pointer', fontSize: '14px',
+            }}
+          >
+            <ChevronLeft size={16} /> Voltar
+          </button>
         </div>
-      </AppShell>
+      </div>
     )
   }
+
+  const months = plan.durationMonths || 0
+  const periodLabel = plan.periodo || (months === 1 ? 'Mensal' : months === 3 ? 'Trimestral' : months === 12 ? 'Anual' : 'Vitalício')
 
   return (
-    <AppShell headerTitle="Checkout" headerSubtitle={plan.nome}>
-      <div className="max-w-2xl mx-auto p-4 sm:p-6 space-y-4">
-        <Button variant="ghost" size="sm" onClick={() => router.push('/buy')}>
-          <ChevronLeft className="h-4 w-4 mr-1" /> Voltar aos planos
-        </Button>
-        <Card>
-          <CardHeader>
-            <CardTitle>{plan.nome} — {plan.periodo}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {mode.type === 'subscription' ? (
-              <SubscriptionCheckout plan={plan} publicKey={publicKey} months={mode.months} />
+    <div style={pageStyle}>
+      <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+        {/* Back button */}
+        <button
+          onClick={() => router.push('/buy')}
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: '6px',
+            background: 'transparent', border: 'none',
+            color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: '14px',
+            marginBottom: '24px', padding: '0',
+          }}
+        >
+          <ChevronLeft size={16} /> Voltar aos planos
+        </button>
+
+        {/* Page title */}
+        <h1 style={{ fontSize: '28px', fontWeight: 800, color: 'white', marginBottom: '8px', letterSpacing: '-0.02em' }}>
+          Finalizar compra
+        </h1>
+        <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', marginBottom: '32px' }}>
+          Você está adquirindo o plano <strong style={{ color: '#34d399' }}>{plan.nome}</strong>
+        </p>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1.4fr)', gap: '24px', alignItems: 'start' }}>
+          {/* Left: Plan summary */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ ...glassCard, padding: '28px' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '20px' }}>
+                <div>
+                  <div style={{ ...emeraldBadge, marginBottom: '12px' }}>{periodLabel}</div>
+                  <h2 style={{ fontSize: '22px', fontWeight: 800, color: 'white', letterSpacing: '-0.01em' }}>{plan.nome}</h2>
+                </div>
+                <Star size={20} style={{ color: '#34d399', flexShrink: 0 }} />
+              </div>
+
+              <div style={{
+                padding: '16px',
+                background: 'rgba(52,211,153,0.06)',
+                border: '1px solid rgba(52,211,153,0.12)',
+                borderRadius: '12px',
+                marginBottom: '20px',
+              }}>
+                <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', marginBottom: '2px' }}>Valor</p>
+                <p style={{ fontSize: '32px', fontWeight: 800, color: '#34d399', letterSpacing: '-0.03em' }}>
+                  R$ {plan.preco.toFixed(2).replace('.', ',')}
+                </p>
+                {months > 0 && payMode === 'subscription' && (
+                  <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', marginTop: '2px' }}>
+                    cobrado a cada {months === 1 ? 'mês' : months === 3 ? '3 meses' : '12 meses'}
+                  </p>
+                )}
+              </div>
+
+              {plan.descricao && (
+                <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.55)', lineHeight: '1.6', marginBottom: '16px' }}>
+                  {plan.descricao}
+                </p>
+              )}
+
+              {/* Features */}
+              {Array.isArray((plan as any).features) && (plan as any).features.length > 0 && (
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {(plan as any).features.map((f: string, i: number) => (
+                    <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}>
+                      <CheckCircle2 size={14} style={{ color: '#34d399', flexShrink: 0 }} />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            {/* Trust badges */}
+            <div style={{ ...glassCard, padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
+                <span style={{ fontSize: '16px' }}>🔒</span>
+                <span>Ambiente 100% seguro · Mercado Pago</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
+                <span style={{ fontSize: '16px' }}>🛡️</span>
+                <span>Dados criptografados · Nunca armazenamos seu cartão</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Payment section */}
+          <div style={{ ...glassCard, padding: '28px' }}>
+            {/* Mode selector for recurring plans */}
+            {isRecurring && (
+              <div style={{ marginBottom: '24px' }}>
+                <p style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(52,211,153,0.8)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>
+                  Como deseja pagar?
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setPayMode('subscription')}
+                    style={modeCard(payMode === 'subscription')}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+                      <CreditCard size={16} style={{ color: payMode === 'subscription' ? '#34d399' : 'rgba(255,255,255,0.5)' }} />
+                      <span style={{ fontSize: '14px', fontWeight: 700, color: payMode === 'subscription' ? '#34d399' : 'rgba(255,255,255,0.8)' }}>
+                        Assinatura automática
+                      </span>
+                      <span style={{ marginLeft: 'auto', fontSize: '11px', background: 'rgba(52,211,153,0.15)', color: '#34d399', borderRadius: '6px', padding: '2px 8px' }}>Recomendado</span>
+                    </div>
+                    <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.45)', marginLeft: '26px' }}>
+                      Cartão de crédito · Renova automaticamente · Cancele quando quiser
+                    </p>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPayMode('one_time')}
+                    style={modeCard(payMode === 'one_time')}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+                      <Zap size={16} style={{ color: payMode === 'one_time' ? '#34d399' : 'rgba(255,255,255,0.5)' }} />
+                      <span style={{ fontSize: '14px', fontWeight: 700, color: payMode === 'one_time' ? '#34d399' : 'rgba(255,255,255,0.8)' }}>
+                        Pagamento único
+                      </span>
+                    </div>
+                    <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.45)', marginLeft: '26px' }}>
+                      Pix, cartão ou boleto · Sem renovação automática · Acesso pelo período escolhido
+                    </p>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Checkout form */}
+            {(payMode === 'subscription' && isRecurring) ? (
+              <SubscriptionCheckout plan={plan} publicKey={publicKey} months={months as 1 | 3 | 12} />
             ) : (
               <MercadoPagoCheckout
                 publicKey={publicKey}
                 amount={plan.preco}
-                description={`${plan.nome} — ${plan.periodo}`}
+                description={`${plan.nome} — ${periodLabel}`}
                 endpoint="/api/payments/orders"
                 extraBody={{ type: 'plan', refId: plan.tipo }}
                 onApproved={() => setTimeout(() => router.push('/profile?purchase=success'), 1500)}
               />
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
-    </AppShell>
+    </div>
   )
 }
 
@@ -112,6 +281,28 @@ function SubscriptionCheckout({ plan, publicKey, months }: { plan: PlanConfig; p
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [mpInstance, setMpInstance] = useState<any>(null)
+
+  const glassInput: React.CSSProperties = {
+    background: 'rgba(255,255,255,0.05)',
+    border: '1px solid rgba(52,211,153,0.2)',
+    color: 'white',
+    borderRadius: '10px',
+    padding: '10px 14px',
+    width: '100%',
+    fontSize: '14px',
+    outline: 'none',
+    boxSizing: 'border-box',
+  }
+
+  const labelStyle: React.CSSProperties = {
+    display: 'block',
+    fontSize: '12px',
+    fontWeight: 600,
+    color: 'rgba(52,211,153,0.8)',
+    marginBottom: '6px',
+    textTransform: 'uppercase',
+    letterSpacing: '0.05em',
+  }
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -175,39 +366,76 @@ function SubscriptionCheckout({ plan, publicKey, months }: { plan: PlanConfig; p
   }
 
   if (success) {
-    return <p className="text-green-700 dark:text-green-400 font-semibold">Assinatura ativada com sucesso!</p>
+    return (
+      <div style={{ textAlign: 'center', padding: '20px 0' }}>
+        <CheckCircle2 size={40} style={{ color: '#34d399', margin: '0 auto 12px' }} />
+        <p style={{ color: '#34d399', fontWeight: 700, fontSize: '16px' }}>Assinatura ativada com sucesso!</p>
+      </div>
+    )
   }
 
   return (
-    <form onSubmit={submit} className="space-y-4">
-      <p className="text-sm text-muted-foreground">
-        Assinatura recorrente: você será cobrado <strong>R$ {plan.preco.toFixed(2).replace('.', ',')}</strong> a cada {months === 1 ? 'mês' : months === 3 ? '3 meses' : '12 meses'}. Você pode cancelar a qualquer momento em /profile.
+    <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+      <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', lineHeight: '1.6', padding: '12px', background: 'rgba(52,211,153,0.04)', borderRadius: '10px', border: '1px solid rgba(52,211,153,0.1)' }}>
+        Assinatura recorrente: você será cobrado <strong style={{ color: '#34d399' }}>R$ {plan.preco.toFixed(2).replace('.', ',')}</strong> a cada {months === 1 ? 'mês' : months === 3 ? '3 meses' : '12 meses'}. Você pode cancelar a qualquer momento em /profile.
       </p>
-      <div className="grid gap-3">
-        <input className="hidden" name="cardholderEmail" />
+      <input className="hidden" name="cardholderEmail" />
+      <div>
+        <label style={labelStyle}>Número do cartão</label>
+        <input name="cardNumber" required style={glassInput} inputMode="numeric" maxLength={19} placeholder="0000 0000 0000 0000" />
+      </div>
+      <div>
+        <label style={labelStyle}>Nome impresso no cartão</label>
+        <input name="cardholderName" required style={glassInput} />
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
         <div>
-          <label className="text-sm font-medium">Número do cartão</label>
-          <input name="cardNumber" required className="w-full h-10 rounded-md border bg-background px-3 text-sm" inputMode="numeric" maxLength={19} placeholder="0000 0000 0000 0000" />
+          <label style={labelStyle}>Mês</label>
+          <input name="cardExpirationMonth" required maxLength={2} placeholder="MM" style={glassInput} />
         </div>
         <div>
-          <label className="text-sm font-medium">Nome impresso no cartão</label>
-          <input name="cardholderName" required className="w-full h-10 rounded-md border bg-background px-3 text-sm" />
-        </div>
-        <div className="grid grid-cols-3 gap-2">
-          <input name="cardExpirationMonth" required maxLength={2} placeholder="MM" className="h-10 rounded-md border bg-background px-3 text-sm" />
-          <input name="cardExpirationYear" required maxLength={4} placeholder="AAAA" className="h-10 rounded-md border bg-background px-3 text-sm" />
-          <input name="securityCode" required maxLength={4} placeholder="CVV" className="h-10 rounded-md border bg-background px-3 text-sm" />
+          <label style={labelStyle}>Ano</label>
+          <input name="cardExpirationYear" required maxLength={4} placeholder="AAAA" style={glassInput} />
         </div>
         <div>
-          <label className="text-sm font-medium">CPF</label>
-          <input name="docNumber" required className="w-full h-10 rounded-md border bg-background px-3 text-sm" placeholder="000.000.000-00" />
+          <label style={labelStyle}>CVV</label>
+          <input name="securityCode" required maxLength={4} placeholder="CVV" style={glassInput} />
         </div>
       </div>
-      {error && <p className="text-sm text-destructive">{error}</p>}
-      <Button type="submit" size="lg" disabled={submitting || !mpInstance}>
-        {submitting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+      <div>
+        <label style={labelStyle}>CPF</label>
+        <input name="docNumber" required style={glassInput} placeholder="000.000.000-00" />
+      </div>
+      {error && (
+        <div style={{
+          display: 'flex', alignItems: 'flex-start', gap: '10px',
+          padding: '12px 16px', background: 'rgba(239,68,68,0.1)',
+          border: '1px solid rgba(239,68,68,0.3)', borderRadius: '10px',
+          color: '#f87171', fontSize: '13px',
+        }}>
+          <span>{error}</span>
+        </div>
+      )}
+      <button
+        type="submit"
+        disabled={submitting || !mpInstance}
+        style={{
+          background: 'linear-gradient(135deg, #059669, #34d399)',
+          boxShadow: '0 0 30px rgba(52,211,153,0.3)',
+          border: 'none', borderRadius: '12px', color: 'white',
+          fontWeight: 700, fontSize: '15px', padding: '13px 20px',
+          cursor: (submitting || !mpInstance) ? 'not-allowed' : 'pointer',
+          opacity: (submitting || !mpInstance) ? 0.6 : 1,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+          width: '100%',
+        }}
+      >
+        {submitting && <Loader2 size={16} className="animate-spin" />}
         Ativar assinatura — R$ {plan.preco.toFixed(2).replace('.', ',')}/{months === 1 ? 'mês' : months === 3 ? 'trim.' : 'ano'}
-      </Button>
+      </button>
+      <p style={{ textAlign: 'center', fontSize: '11px', color: 'rgba(255,255,255,0.3)' }}>
+        🔒 Pagamento seguro · Mercado Pago · Dados criptografados
+      </p>
     </form>
   )
 }

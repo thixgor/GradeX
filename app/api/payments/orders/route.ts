@@ -100,12 +100,6 @@ export async function POST(request: NextRequest) {
     const settings = await db.collection('admin_settings').findOne({})
     const plano = (settings?.planos || []).find((p: any) => p.tipo === data.refId)
     if (!plano) return NextResponse.json({ error: 'Plano não encontrado' }, { status: 400 })
-    if (plano.durationMonths && plano.durationMonths > 0) {
-      return NextResponse.json(
-        { error: 'Este plano é recorrente — use /api/subscriptions' },
-        { status: 400 }
-      )
-    }
     amount = Number(plano.preco)
     description = `${plano.nome} — ${plano.periodo || 'Plano'}`
   } else if (data.type === 'material') {
