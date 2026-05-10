@@ -60,10 +60,16 @@ export function DoacaoInterstitial({ context, onClose }: DoacaoInterstitialProps
   // underlying name-form doesn't flash through for 1-2 seconds.
   if (!visible) {
     return (
-      <div
-        className="fixed inset-0 z-[200]"
-        style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}
-      />
+      <>
+        <div
+          className="fixed inset-0 z-[200]"
+          style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}
+        />
+        <DoacaoForm
+          open={formOpen}
+          onClose={() => { setFormOpen(false); onClose() }}
+        />
+      </>
     )
   }
 

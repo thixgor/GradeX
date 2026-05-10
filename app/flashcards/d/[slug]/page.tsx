@@ -199,30 +199,12 @@ export default function DeckPage() {
     } catch {}
   }
 
-  async function buy() {
+  function buy() {
     if (!data?.deck.linkedMaterialId) {
       setToast({ open: true, message: 'Este deck ainda não tem produto vinculado. Contate o administrador.', type: 'error' })
       return
     }
-    setPurchasing(true)
-    try {
-      const res = await fetch('/api/materiais/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ itemType: 'material', itemId: data.deck.linkedMaterialId }),
-      })
-      const json = await res.json()
-      if (!res.ok) throw new Error(json.error || `Erro ${res.status} ao processar pagamento`)
-      if (json.url) window.location.href = json.url
-      else if (json.free) {
-        if (json.redirectTo) window.location.href = json.redirectTo
-        else load()
-      }
-    } catch (err: any) {
-      setToast({ open: true, message: err.message || 'Erro ao processar pagamento', type: 'error' })
-    } finally {
-      setPurchasing(false)
-    }
+    router.push(`/materiais/checkout?type=material&id=${data.deck.linkedMaterialId}`)
   }
 
   if (loading) {
@@ -392,15 +374,40 @@ export default function DeckPage() {
 
             <div className="flex items-center gap-2">
               {isLocked && isPaid ? (
-                <Button onClick={buy} disabled={purchasing} className="bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white">
-                  <ShoppingCart className="h-4 w-4" /> {purchasing ? 'Redirecionando...' : `Comprar por R$ ${deck.price?.toFixed(2)}`}
-                </Button>
+                <button
+                  onClick={buy}
+                  disabled={purchasing}
+                  className="relative overflow-hidden inline-flex items-center gap-2.5 rounded-2xl px-7 py-3.5 text-sm font-bold tracking-wide text-white transition-all duration-200 active:scale-[0.97] hover:brightness-110 disabled:opacity-60 disabled:cursor-not-allowed"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(109,40,217,0.95) 0%, rgba(147,51,234,0.90) 50%, rgba(192,38,211,0.85) 100%)',
+                    backdropFilter: 'blur(16px)',
+                    WebkitBackdropFilter: 'blur(16px)',
+                    border: '1px solid rgba(216,180,254,0.40)',
+                    boxShadow: '0 0 28px rgba(139,92,246,0.50), 0 8px 24px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.20)',
+                  }}
+                >
+                  <span className="absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none" />
+                  <ShoppingCart className="h-4 w-4 flex-shrink-0" />
+                  {`Comprar – R$ ${deck.price?.toFixed(2).replace('.', ',')}`}
+                </button>
               ) : isLocked ? (
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 dark:bg-white/5 px-3 py-2 text-xs text-slate-500"><Lock className="h-3.5 w-3.5" /> Sem acesso</span>
               ) : (
-                <Button onClick={() => { setStudying(true); setCurrentIndex(0); setFlipped(false); }} className="bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white text-base px-6 py-3">
-                  <Play className="h-4 w-4" /> Estudar
-                </Button>
+                <button
+                  onClick={() => { setStudying(true); setCurrentIndex(0); setFlipped(false) }}
+                  className="relative overflow-hidden inline-flex items-center gap-2.5 rounded-2xl px-8 py-3.5 text-base font-bold tracking-wide text-white transition-all duration-200 active:scale-[0.97] hover:brightness-110"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(4,120,87,1) 0%, rgba(5,150,105,0.95) 50%, rgba(16,185,129,0.90) 100%)',
+                    backdropFilter: 'blur(16px)',
+                    WebkitBackdropFilter: 'blur(16px)',
+                    border: '1px solid rgba(52,211,153,0.55)',
+                    boxShadow: '0 0 30px rgba(16,185,129,0.50), 0 8px 24px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.25)',
+                  }}
+                >
+                  <span className="absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white/55 to-transparent pointer-events-none" />
+                  <Play className="h-4.5 w-4.5 fill-current flex-shrink-0" />
+                  Estudar agora
+                </button>
               )}
             </div>
           </div>
