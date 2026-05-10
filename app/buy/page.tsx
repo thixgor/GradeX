@@ -334,13 +334,14 @@ function BuyContent() {
                     )}
 
                     <div className="p-5 flex flex-col flex-1">
-                      {/* Icon + period */}
+                      {/* Icon + name + period */}
                       <div className="mb-4">
                         <div className="text-3xl mb-2">{getPlanIcon(plan)}</div>
                         <p className="text-xs uppercase tracking-widest font-bold mb-0.5"
                           style={{ color: isGold ? '#fbbf24' : '#34d399' }}>
                           {plan.period}
                         </p>
+                        <p className="text-white/80 text-sm font-semibold leading-tight">{plan.name}</p>
                         <p className="text-white/40 text-xs">{plan.description}</p>
                       </div>
 
