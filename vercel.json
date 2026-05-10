@@ -8,8 +8,11 @@
     "app/api/**/*.ts": {
       "maxDuration": 30
     },
-    "app/api/stripe/webhook/route.ts": {
+    "app/api/webhooks/mercadopago/route.ts": {
       "maxDuration": 60
+    },
+    "app/api/cron/subscriptions-sweeper/route.ts": {
+      "maxDuration": 300
     },
     "app/api/questions/generate/route.ts": {
       "maxDuration": 60
@@ -21,7 +24,12 @@
       "maxDuration": 60
     }
   },
-  "crons": [],
+  "crons": [
+    {
+      "path": "/api/cron/subscriptions-sweeper",
+      "schedule": "0 * * * *"
+    }
+  ],
   "redirects": [
     {
       "source": "/:path*",

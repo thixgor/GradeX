@@ -300,28 +300,36 @@ function MateriaisContent() {
 
   // ─── Acquire / Download ──────────────────────────────────
   const handleAcquire = async (itemType: 'material' | 'package', itemId: string) => {
-    setCheckoutLoading(itemId)
-    try {
-      const res = await fetch('/api/materiais/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ itemType, itemId }),
-      })
-      const data = await res.json()
-      if (data.free) {
-        setSuccessMessage('Material adquirido com sucesso! Faça o download agora.')
-        fetchData(currentFolderId, search, activeFilter)
-        setTimeout(() => setSuccessMessage(''), 4000)
-      } else if (data.url) {
-        window.location.href = data.url
-      } else {
-        alert(data.error || 'Erro ao processar')
+    // Verifica se é grátis (pricing free) — endpoint sem cardToken libera direto
+    const item =
+      itemType === 'package'
+        ? packages.find(p => p._id === itemId)
+        : materials.find(m => m._id === itemId)
+    if (item && (item.pricing === 'free' || !item.price)) {
+      setCheckoutLoading(itemId)
+      try {
+        const res = await fetch('/api/materiais/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ itemType, itemId, paymentMethodId: 'free' }),
+        })
+        const data = await res.json()
+        if (data.free) {
+          setSuccessMessage('Material adquirido com sucesso! Faça o download agora.')
+          fetchData(currentFolderId, search, activeFilter)
+          setTimeout(() => setSuccessMessage(''), 4000)
+        } else {
+          alert(data.error || 'Erro ao processar')
+        }
+      } catch {
+        alert('Erro ao processar aquisição')
+      } finally {
+        setCheckoutLoading(null)
       }
-    } catch {
-      alert('Erro ao processar aquisição')
-    } finally {
-      setCheckoutLoading(null)
+      return
     }
+    // Item pago: vai para o checkout MP
+    router.push(`/materiais/checkout?type=${itemType}&id=${itemId}`)
   }
 
   const handleDownload = (material: Material) => {

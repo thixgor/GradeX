@@ -179,7 +179,7 @@ export default function ProfilePage() {
   async function handleCancelSubscription() {
     setCancelling(true)
     try {
-      const res = await fetch('/api/stripe/cancel-subscription', { method: 'POST' })
+      const res = await fetch('/api/subscriptions/cancel', { method: 'POST' })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Erro ao cancelar assinatura')
       setToastMessage(data.message)
@@ -711,8 +711,8 @@ export default function ProfilePage() {
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-3 py-3">
-              <p className="text-xs text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/50 px-3 py-2 rounded-lg">
-                Ao cancelar, voce perdera acesso imediato a todos os recursos premium.
+              <p className="text-xs text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-950/50 px-3 py-2 rounded-lg">
+                Ao cancelar, sua assinatura no Mercado Pago será encerrada imediatamente, mas você mantém acesso premium até o fim do período já pago. Após isso, sua conta voltará ao plano Gratuito automaticamente.
               </p>
               <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-xl">
                 <Phone className="h-4 w-4 text-blue-600 shrink-0" />

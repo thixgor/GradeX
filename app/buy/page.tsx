@@ -146,8 +146,6 @@ export default function BuyPage() {
   const [paymentSuccess, setPaymentSuccess] = useState(false)
   const [successPlan, setSuccessPlan] = useState<string | null>(null)
   const [plans, setPlans] = useState<Plan[]>(defaultPlans)
-  const [showPaymentModal, setShowPaymentModal] = useState(false)
-  const [selectedPlanForModal, setSelectedPlanForModal] = useState<Plan | null>(null)
 
   useEffect(() => {
     checkSubscription()
@@ -226,96 +224,21 @@ export default function BuyPage() {
 
   async function checkPaymentSuccess() {
     const params = new URLSearchParams(window.location.search)
-    if (params.get('success') === 'true') {
-      const sessionId = params.get('session_id')
+    if (params.get('purchase') === 'success' || params.get('subscription') === 'success') {
       const plan = localStorage.getItem('lastPurchasedPlan')
-
-      if (sessionId) {
-        try {
-          // Chamar API para processar o sucesso do pagamento
-          const res = await fetch('/api/stripe/process-success', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ sessionId })
-          })
-
-          const data = await res.json()
-
-          if (res.ok) {
-            setPaymentSuccess(true)
-            if (plan) {
-              setSuccessPlan(plan)
-              localStorage.removeItem('lastPurchasedPlan')
-            }
-            // Recarregar dados do usuário após 2 segundos
-            setTimeout(() => {
-              checkSubscription()
-            }, 2000)
-          } else {
-            console.error('Erro ao processar pagamento:', data.error)
-          }
-        } catch (error) {
-          console.error('Erro ao chamar API de sucesso:', error)
-        }
+      setPaymentSuccess(true)
+      if (plan) {
+        setSuccessPlan(plan)
+        localStorage.removeItem('lastPurchasedPlan')
       }
+      setTimeout(() => checkSubscription(), 1500)
     }
   }
 
-  const handleSelectPlan = async (plan: Plan) => {
-    // Se o plano tem opção de Pix (one-time price) E Subscription (price regular)
-    if (plan.stripeOneTimePriceId && plan.stripePriceId) {
-      setSelectedPlanForModal(plan)
-      setShowPaymentModal(true)
-      return
-    }
-
-    // Se só tem um ou outro, decide qual usar
-    // Se é vitalício ou one-time only, ou só tem one-time ID
-    if (!plan.stripePriceId && plan.stripeOneTimePriceId) {
-      await processCheckout(plan.id, 'payment')
-      return
-    }
-
-    // Padrão (Subscription ou só tem 1 ID)
-    await processCheckout(plan.id, 'subscription')
-  }
-
-  const processCheckout = async (planId: string, mode: 'subscription' | 'payment') => {
-    setSelectedPlan(planId)
-    try {
-      const response = await fetch('/api/stripe/checkout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ planId, mode }),
-      })
-
-      if (!response.ok) {
-        const error = await response.json()
-        alert(`Erro: ${error.error}`)
-        return
-      }
-
-      const { url } = await response.json()
-      if (url) {
-        localStorage.setItem('lastPurchasedPlan', planId)
-        window.location.href = url
-      }
-    } catch (error) {
-      console.error('Erro ao processar pagamento:', error)
-      alert('Erro ao processar pagamento. Tente novamente.')
-    } finally {
-      setSelectedPlan(null)
-    }
-  }
-
-  const handleConfirmPaymentMode = async (mode: 'subscription' | 'payment') => {
-    if (selectedPlanForModal) {
-      setShowPaymentModal(false)
-      await processCheckout(selectedPlanForModal.id, mode)
-      setSelectedPlanForModal(null)
-    }
+  const handleSelectPlan = (plan: Plan) => {
+    setSelectedPlan(plan.id)
+    localStorage.setItem('lastPurchasedPlan', plan.id)
+    router.push(`/buy/checkout?plan=${encodeURIComponent(plan.id)}`)
   }
 
   return (
@@ -353,7 +276,7 @@ export default function BuyPage() {
                     Você adquiriu o plano <strong>Premium {successPlan ? successPlan.charAt(0).toUpperCase() + successPlan.slice(1) : ''}</strong> com sucesso!
                   </p>
                   <p className="text-sm text-[#468152]/80 mb-4">
-                    Agora você tem acesso a todos os recursos Premium, incluindo <strong>20 provas pessoais por dia</strong>. O comprovante foi enviado pelo Stripe.
+                    Agora você tem acesso a todos os recursos Premium, incluindo <strong>20 provas pessoais por dia</strong>. O comprovante foi enviado pelo Mercado Pago.
                   </p>
                   <div className="flex gap-3">
                     <Button
@@ -493,11 +416,7 @@ export default function BuyPage() {
                         {selectedPlan === plan.id ? 'Processando...' : 'Escolher Plano'}
                       </Button>
                       <p className="text-[10px] text-center text-muted-foreground mt-2">
-                        {plan.stripeOneTimePriceId && plan.stripePriceId
-                          ? 'Escolha entre Mensal ou Pix/Boleto'
-                          : plan.id.includes('vitalicio') || plan.stripeOneTimePriceId
-                            ? 'Pagamento único'
-                            : 'Renovação automática. Cancele quando quiser.'}
+                        Cartão, Pix ou boleto · {plan.id.includes('vitalicio') ? 'Pagamento único' : 'Cancele quando quiser'}
                       </p>
                     </div>
                   </CardContent>
@@ -528,7 +447,7 @@ export default function BuyPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  Aceitamos cartão de crédito através da Stripe, a plataforma mais segura do mercado.
+                  Aceitamos cartão de crédito, Pix e boleto via Mercado Pago — a plataforma de pagamentos mais usada no Brasil.
                 </p>
               </CardContent>
             </Card>
@@ -556,59 +475,6 @@ export default function BuyPage() {
             </Card>
           </div>
         </div>
-
-        {/* Payment Mode Selection Modal */}
-        {showPaymentModal && selectedPlanForModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
-            <div className="relative w-full max-w-lg bg-background border rounded-lg shadow-lg p-6 animate-in fade-in zoom-in-95 duration-200">
-              <div className="mb-6 text-center">
-                <h3 className="text-xl font-bold mb-2">Como você prefere pagar?</h3>
-                <p className="text-muted-foreground">
-                  Escolha a forma de pagamento para o plano <strong>{selectedPlanForModal.name}</strong> ({selectedPlanForModal.period}).
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 gap-4">
-                <button
-                  onClick={() => handleConfirmPaymentMode('subscription')}
-                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors text-left group"
-                >
-                  <div>
-                    <div className="font-semibold flex items-center gap-2">
-                      <Zap className="h-4 w-4 text-primary" />
-                      Cartão de Crédito (Assinatura)
-                    </div>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Renovação automática. Cancele quando quiser.
-                    </p>
-                  </div>
-                  <div className="h-4 w-4 rounded-full border border-primary/50 group-hover:bg-primary/20"></div>
-                </button>
-
-                <button
-                  onClick={() => handleConfirmPaymentMode('payment')}
-                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors text-left group"
-                >
-                  <div>
-                    <div className="font-semibold flex items-center gap-2">
-                      <span className="text-green-600 font-bold">Pix</span> / Boleto (Pagamento Único)
-                    </div>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Acesso pelo período contratado. Sem renovação automática.
-                    </p>
-                  </div>
-                  <div className="h-4 w-4 rounded-full border border-primary/50 group-hover:bg-primary/20"></div>
-                </button>
-              </div>
-
-              <div className="mt-6 flex justify-end">
-                <Button variant="ghost" onClick={() => setShowPaymentModal(false)}>
-                  Cancelar
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
 
       </div>
     </AppShell>

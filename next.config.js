@@ -43,7 +43,7 @@ const nextConfig = {
       'clsx',
       'tailwind-merge',
       'jose',
-      'stripe',
+      'mercadopago',
     ],
   },
 

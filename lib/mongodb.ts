@@ -44,6 +44,23 @@ if (process.env.NODE_ENV === 'development') {
       db.collection('patologias').createIndex({ nome: 'text', sinonimos: 'text', cid10: 'text', classificacao: 'text', fisiopatologia: 'text' }, { default_language: 'portuguese', name: 'patologias_text_search' }),
       db.collection('patologias').createIndex({ areas: 1 }),
       db.collection('patologias').createIndex({ sistema: 1 }),
+      // ── Pagamentos (Mercado Pago) ──
+      db.collection('payment_orders').createIndex({ providerOrderId: 1 }, { sparse: true }),
+      db.collection('payment_orders').createIndex({ userId: 1, createdAt: -1 }),
+      db.collection('payment_orders').createIndex({ status: 1, createdAt: -1 }),
+      db.collection('payment_orders').createIndex({ idempotencyKey: 1 }, { unique: true, sparse: true }),
+      db.collection('payments').createIndex({ providerPaymentId: 1 }, { unique: true, sparse: true }),
+      db.collection('payments').createIndex({ orderId: 1 }),
+      db.collection('subscriptions').createIndex({ userId: 1 }),
+      db.collection('subscriptions').createIndex({ providerSubscriptionId: 1 }, { unique: true, sparse: true }),
+      db.collection('subscriptions').createIndex({ status: 1, currentPeriodEndsAt: 1 }),
+      db.collection('donation_payments').createIndex({ providerOrderId: 1 }, { unique: true, sparse: true }),
+      db.collection('donation_payments').createIndex({ status: 1, createdAt: -1 }),
+      db.collection('webhook_events').createIndex({ provider: 1, eventId: 1 }, { unique: true }),
+      db.collection('webhook_events').createIndex({ processedAt: 1 }),
+      db.collection('audit_logs').createIndex({ ts: -1 }),
+      db.collection('audit_logs').createIndex({ action: 1, ts: -1 }),
+      db.collection('audit_logs').createIndex({ targetUserId: 1, ts: -1 }),
     ]).catch(err => console.error('Erro ao criar índices iniciais:', err))
     return client
   })

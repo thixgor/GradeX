@@ -64,6 +64,9 @@ export async function POST(req: NextRequest) {
       dataDoacao: new Date(dataDoacao),
       status: 'pending' as const,
       userId: session.userId,
+      // Distingue do fluxo online: aqui o usuário declara que pagou via app do banco
+      // e admin precisa aprovar manualmente.
+      paymentSource: 'manual' as const,
       createdAt: now,
       updatedAt: now,
     }

@@ -35,12 +35,26 @@ interface LandingSettings {
   aiKeys?: AIKeySettings
 }
 
-interface StripeSettings {
-  monthly: string
-  quarterly: string
-  'semi-annual': string
-  annual: string
-  lifetime: string
+interface MercadoPagoStatus {
+  configured: boolean
+  env?: 'sandbox' | 'production'
+  publicKey?: string
+  accessTokenMasked?: string
+  webhookUrl?: string
+  webhookSecretConfigured?: boolean
+  error?: string
+}
+
+interface MercadoPagoEvent {
+  id: string
+  eventId: string
+  topic?: string
+  resourceId?: string
+  signatureValid: boolean
+  processedAt?: string
+  processingError?: string
+  attempts: number
+  createdAt: string
 }
 
 export default function SettingsPage() {
@@ -63,17 +77,11 @@ export default function SettingsPage() {
       flashcards: ''
     }
   })
-  const [stripeSettings, setStripeSettings] = useState<StripeSettings>({
-    monthly: '',
-    quarterly: '',
-    'semi-annual': '',
-    annual: '',
-    lifetime: ''
-  })
   const [videoPreview, setVideoPreview] = useState(true)
-  const [savingStripe, setSavingStripe] = useState(false)
-  const [stripeError, setStripeError] = useState('')
-  const [stripeSuccess, setStripeSuccess] = useState('')
+  const [mpStatus, setMpStatus] = useState<MercadoPagoStatus | null>(null)
+  const [mpEvents, setMpEvents] = useState<MercadoPagoEvent[]>([])
+  const [mpTesting, setMpTesting] = useState(false)
+  const [mpTestResult, setMpTestResult] = useState<{ ok: boolean; message: string } | null>(null)
   const [planos, setPlanos] = useState<PlanConfig[]>([])
   const [savingPlanos, setSavingPlanos] = useState(false)
   const [planosError, setPlanosError] = useState('')
@@ -101,7 +109,7 @@ export default function SettingsPage() {
 
       setUser(data.user)
       loadSettings()
-      loadStripeSettings()
+      loadMercadoPago()
       loadPlanos()
     } catch (error) {
       router.push('/auth/login')
@@ -178,51 +186,37 @@ export default function SettingsPage() {
     }
   }
 
-  async function loadStripeSettings() {
+  async function loadMercadoPago() {
     try {
-      const res = await fetch('/api/admin/stripe-settings')
-      if (res.ok) {
-        const data = await res.json()
-        setStripeSettings({
-          monthly: data.monthly || '',
-          quarterly: data.quarterly || '',
-          'semi-annual': data['semi-annual'] || '',
-          annual: data.annual || '',
-          lifetime: data.lifetime || ''
-        })
-      }
+      const [statusRes, eventsRes] = await Promise.all([
+        fetch('/api/admin/mercado-pago/status'),
+        fetch('/api/admin/mercado-pago/events?limit=20'),
+      ])
+      if (statusRes.ok) setMpStatus(await statusRes.json())
+      if (eventsRes.ok) setMpEvents(await eventsRes.json())
     } catch (error) {
-      console.error('Erro ao carregar configurações de Stripe:', error)
+      console.error('Erro ao carregar Mercado Pago:', error)
     }
   }
 
-  async function handleSaveStripe() {
-    setStripeError('')
-    setStripeSuccess('')
-    setSavingStripe(true)
-
+  async function testMercadoPagoConnection() {
+    setMpTesting(true)
+    setMpTestResult(null)
     try {
-      const res = await fetch('/api/admin/stripe-settings', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(stripeSettings)
-      })
-
+      const res = await fetch('/api/admin/mercado-pago/test', { method: 'POST' })
       const data = await res.json()
-
-      if (!res.ok) {
-        setStripeError(data.error || 'Erro ao salvar configurações')
-        return
+      if (res.ok && data.ok) {
+        setMpTestResult({
+          ok: true,
+          message: `Conectado: ${data.account?.nickname || data.account?.email || data.account?.id} (${data.account?.siteId || '—'})`,
+        })
+      } else {
+        setMpTestResult({ ok: false, message: data.error || 'Falha ao conectar' })
       }
-
-      setStripeSuccess('Configurações de Stripe salvas com sucesso!')
-      setTimeout(() => {
-        loadStripeSettings()
-      }, 1000)
-    } catch (error) {
-      setStripeError('Erro ao salvar configurações de Stripe')
+    } catch (err: any) {
+      setMpTestResult({ ok: false, message: String(err?.message || err) })
     } finally {
-      setSavingStripe(false)
+      setMpTesting(false)
     }
   }
 
@@ -614,106 +608,110 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
 
-          {/* Stripe Settings */}
+          {/* Mercado Pago */}
           <Card>
             <CardHeader>
-              <CardTitle>Configurações de Stripe</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                Integração Mercado Pago
+                {mpStatus?.env && (
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${
+                    mpStatus.env === 'production'
+                      ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
+                      : 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100'
+                  }`}>
+                    {mpStatus.env === 'production' ? 'PRODUÇÃO' : 'SANDBOX'}
+                  </span>
+                )}
+              </CardTitle>
               <CardDescription>
-                Gerencie os Price IDs dos planos de pagamento
+                Credenciais carregadas via variáveis de ambiente. O painel exibe apenas o sufixo do token.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Monthly */}
-              <div className="space-y-2">
-                <Label htmlFor="stripe-monthly">Mensal (price_id)</Label>
-                <Input
-                  id="stripe-monthly"
-                  placeholder="price_1SZNGXLawSqPVy6JgWlwc7jZ"
-                  value={stripeSettings.monthly}
-                  onChange={(e) => setStripeSettings({ ...stripeSettings, monthly: e.target.value })}
-                  className="font-mono text-sm"
-                />
-              </div>
-
-              {/* Quarterly */}
-              <div className="space-y-2">
-                <Label htmlFor="stripe-quarterly">Trimestral (price_id)</Label>
-                <Input
-                  id="stripe-quarterly"
-                  placeholder="price_1SZNGwLawSqPVy6Ja5PmQ7La"
-                  value={stripeSettings.quarterly}
-                  onChange={(e) => setStripeSettings({ ...stripeSettings, quarterly: e.target.value })}
-                  className="font-mono text-sm"
-                />
-              </div>
-
-              {/* Semi-Annual */}
-              <div className="space-y-2">
-                <Label htmlFor="stripe-semi-annual">Semestral (price_id)</Label>
-                <Input
-                  id="stripe-semi-annual"
-                  placeholder="price_1SZNHALawSqPVy6J83iS9ZOE"
-                  value={stripeSettings['semi-annual']}
-                  onChange={(e) => setStripeSettings({ ...stripeSettings, 'semi-annual': e.target.value })}
-                  className="font-mono text-sm"
-                />
-              </div>
-
-              {/* Annual */}
-              <div className="space-y-2">
-                <Label htmlFor="stripe-annual">Anual (price_id)</Label>
-                <Input
-                  id="stripe-annual"
-                  placeholder="price_1SZNHcLawSqPVy6JzTZvOkDJ"
-                  value={stripeSettings.annual}
-                  onChange={(e) => setStripeSettings({ ...stripeSettings, annual: e.target.value })}
-                  className="font-mono text-sm"
-                />
-              </div>
-
-              {/* Lifetime */}
-              <div className="space-y-2">
-                <Label htmlFor="stripe-lifetime">Vitalício (price_id)</Label>
-                <Input
-                  id="stripe-lifetime"
-                  placeholder="price_1SZNI6LawSqPVy6JCtC12X3H"
-                  value={stripeSettings.lifetime}
-                  onChange={(e) => setStripeSettings({ ...stripeSettings, lifetime: e.target.value })}
-                  className="font-mono text-sm"
-                />
-              </div>
-
-              {/* Messages */}
-              {stripeError && (
+            <CardContent className="space-y-4">
+              {!mpStatus?.configured && (
                 <div className="flex gap-2 p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg">
                   <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
-                  <p className="text-sm text-red-800 dark:text-red-200">{stripeError}</p>
+                  <div className="text-sm text-red-800 dark:text-red-200">
+                    <p className="font-semibold">Mercado Pago não configurado.</p>
+                    <p>Defina <code>MERCADOPAGO_ACCESS_TOKEN</code>, <code>MERCADOPAGO_PUBLIC_KEY</code> e <code>MERCADOPAGO_WEBHOOK_SECRET</code> nas variáveis de ambiente.</p>
+                    {mpStatus?.error && <p className="mt-1 opacity-80">{mpStatus.error}</p>}
+                  </div>
                 </div>
               )}
 
-              {stripeSuccess && (
-                <div className="flex gap-2 p-3 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg">
-                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 shrink-0 mt-0.5" />
-                  <p className="text-sm text-green-800 dark:text-green-200">{stripeSuccess}</p>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <Label>Public Key</Label>
+                  <Input value={mpStatus?.publicKey || '—'} readOnly className="font-mono text-xs" />
+                </div>
+                <div>
+                  <Label>Access Token</Label>
+                  <Input value={mpStatus?.accessTokenMasked || '—'} readOnly className="font-mono text-xs" />
+                </div>
+                <div className="sm:col-span-2">
+                  <Label>URL de Webhook</Label>
+                  <Input value={mpStatus?.webhookUrl || '—'} readOnly className="font-mono text-xs" />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Configure essa URL no painel do Mercado Pago: <em>Sua aplicação → Webhooks</em>.
+                  </p>
+                </div>
+                <div className="sm:col-span-2 flex items-center gap-2 text-sm">
+                  <span className={`inline-block w-2 h-2 rounded-full ${mpStatus?.webhookSecretConfigured ? 'bg-green-500' : 'bg-red-500'}`} />
+                  Webhook secret {mpStatus?.webhookSecretConfigured ? 'configurado' : 'não configurado'}
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <Button onClick={testMercadoPagoConnection} disabled={mpTesting || !mpStatus?.configured}>
+                  {mpTesting ? 'Testando...' : 'Testar conexão'}
+                </Button>
+                <Button variant="outline" onClick={loadMercadoPago}>
+                  Recarregar
+                </Button>
+              </div>
+              {mpTestResult && (
+                <div className={`flex gap-2 p-3 rounded-lg border ${
+                  mpTestResult.ok
+                    ? 'bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800'
+                    : 'bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800'
+                }`}>
+                  {mpTestResult.ok ? (
+                    <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 shrink-0 mt-0.5" />
+                  ) : (
+                    <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
+                  )}
+                  <p className={`text-sm ${mpTestResult.ok ? 'text-green-800 dark:text-green-200' : 'text-red-800 dark:text-red-200'}`}>
+                    {mpTestResult.message}
+                  </p>
                 </div>
               )}
 
-              {/* Save Button */}
-              <div className="flex gap-3 pt-4">
-                <Button
-                  onClick={handleSaveStripe}
-                  disabled={savingStripe}
-                  className="bg-primary hover:bg-primary/90"
-                >
-                  {savingStripe ? 'Salvando...' : 'Salvar Configurações de Stripe'}
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => loadStripeSettings()}
-                  disabled={savingStripe}
-                >
-                  Cancelar
-                </Button>
+              {/* Eventos recentes */}
+              <div className="pt-4 border-t">
+                <h4 className="font-semibold mb-2">Webhooks recentes</h4>
+                {mpEvents.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">Nenhum evento recebido ainda.</p>
+                ) : (
+                  <div className="space-y-2 max-h-72 overflow-y-auto">
+                    {mpEvents.map(ev => (
+                      <div key={ev.id} className="flex items-center justify-between gap-2 text-xs p-2 rounded bg-muted/40">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className={`w-2 h-2 rounded-full shrink-0 ${
+                            ev.signatureValid && ev.processedAt && !ev.processingError
+                              ? 'bg-green-500'
+                              : ev.processingError
+                                ? 'bg-red-500'
+                                : 'bg-amber-500'
+                          }`} />
+                          <span className="font-mono truncate">{ev.topic || 'event'} · {ev.resourceId || '—'}</span>
+                        </div>
+                        <span className="text-muted-foreground shrink-0">
+                          {new Date(ev.createdAt).toLocaleString('pt-BR')}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -1068,34 +1066,10 @@ export default function SettingsPage() {
                           placeholder="Ex: 1 (Mensal), 12 (Anual)"
                         />
                       </div>
-                      <div className="md:col-span-2">
-                        <Label className="text-xs">Stripe Subscription Price ID (Recorrente/Cartão)</Label>
-                        <Input
-                          value={plano.stripePriceId || ''}
-                          onChange={(e) => {
-                            const updated = [...planos]
-                            updated[idx].stripePriceId = e.target.value
-                            setPlanos(updated)
-                          }}
-                          placeholder="price_..."
-                          className="font-mono text-xs"
-                        />
-                      </div>
-                      <div className="md:col-span-2">
-                        <Label className="text-xs">Stripe One-Time Price ID (Pix/Boleto - Pagamento Único)</Label>
-                        <Input
-                          value={plano.stripeOneTimePriceId || ''}
-                          onChange={(e) => {
-                            const updated = [...planos]
-                            updated[idx].stripeOneTimePriceId = e.target.value
-                            setPlanos(updated)
-                          }}
-                          placeholder="price_... (Opcional - Ativa Pix)"
-                          className="font-mono text-xs"
-                        />
-                        <p className="text-[10px] text-muted-foreground mt-1">
-                          Se preenchido, o checkout usará este ID. Se vazio, usará o valor antigo do stripeSettings.
-                        </p>
+                      <div className="md:col-span-2 p-3 rounded-lg bg-muted/40 text-xs text-muted-foreground">
+                        <strong>Pagamentos via Mercado Pago.</strong> Preço, duração e cargo definem
+                        a fatura. Planos com <code>durationMonths</code> em {'{1, 3, 12}'} são
+                        recorrentes (Preapproval). Demais (ex.: vitalício) são Order única.
                       </div>
                     </div>
 

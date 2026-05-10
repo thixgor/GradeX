@@ -1703,10 +1703,6 @@ function PricingSelector({
               <Input type="number" step="0.01" min="0" value={originalPrice || 0} onChange={e => onOriginalPriceChange?.(parseFloat(e.target.value) || 0)} />
             </div>
           )}
-          <div>
-            <label className="text-xs text-muted-foreground mb-1 block">Stripe Price ID</label>
-            <Input value={stripePriceId} onChange={e => onStripeIdChange(e.target.value)} placeholder="price_..." />
-          </div>
         </div>
       )}
     </div>

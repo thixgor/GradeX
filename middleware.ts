@@ -19,12 +19,17 @@ const publicRoutes = [
 const publicPrefixes = [
   '/lead/',
   '/api/auth/',
-  '/api/stripe/webhook',
+  '/api/webhooks/mercadopago',
+  '/api/payments/public-key',
+  '/api/donations/checkout',
+  '/api/cron/',
   '/api/leads/',
   '/api/study-playlists',
   '/_next/',
   '/img/',
   '/favicon',
+  '/doar',
+  '/doar/',
 ]
 
 // Rotas que exigem role admin

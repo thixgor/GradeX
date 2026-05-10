@@ -250,9 +250,14 @@ export interface User {
   premiumExpiresAt?: Date // Data de expiração do premium
   premiumActivatedAt?: Date // Data de ativação do premium
   premiumPrice?: number // Preço pago em R$
-  // Stripe
-  stripeCustomerId?: string // ID do cliente no Stripe
-  stripeSubscriptionId?: string // ID da assinatura no Stripe
+  // Provider de pagamento (Mercado Pago)
+  mercadoPagoCustomerId?: string // ID do cliente (payer) no Mercado Pago
+  mercadoPagoPreapprovalId?: string // ID da preapproval (assinatura) ativa
+  // Legado Stripe (read-only, mantido por compat com registros antigos)
+  /** @deprecated mantido apenas para leitura de registros legados */
+  stripeCustomerId?: string
+  /** @deprecated mantido apenas para leitura de registros legados */
+  stripeSubscriptionId?: string
   // Limites de criação de provas pessoais e questões IA
   dailyPersonalExamsCreated?: number // Quantidade de provas pessoais criadas hoje
   dailyPersonalExamsRemaining?: number // Quantidade de provas pessoais restantes (para admin gerenciar)
@@ -864,8 +869,10 @@ export interface PlanConfig {
   badge?: string // Texto do badge (ex: "MAIS POPULAR")
   role?: AccountType // Cargo que o usuário ganha (premium, essential, trial)
   durationMonths?: number // Duração em meses (0 ou undefined = infinito/vitalício)
-  stripePriceId?: string // ID do preço no Stripe para automação (Recorrente/Subscription)
-  stripeOneTimePriceId?: string // ID do preço no Stripe para pagamento único (Pix/Boleto one-time)
+  /** @deprecated Stripe foi removido — campo mantido só para leitura de planos antigos */
+  stripePriceId?: string
+  /** @deprecated Stripe foi removido */
+  stripeOneTimePriceId?: string
   criadoEm: Date
   atualizadoEm: Date
 }
@@ -1125,9 +1132,124 @@ export interface MaterialPurchase {
   itemId: string              // ID do material ou pacote
   itemTitle: string
   price: number               // Preço pago em R$
-  stripeSessionId?: string    // ID da sessão de checkout do Stripe
+  /** @deprecated registros novos usam payment_orders/payments */
+  stripeSessionId?: string
+  /** @deprecated registros novos usam payment_orders/payments */
   stripePaymentIntentId?: string
+  // Provider canônico (Mercado Pago)
+  provider?: 'mercado_pago'
+  providerOrderId?: string    // payment_orders._id
+  providerPaymentId?: string  // payments.providerPaymentId
   status: 'pending' | 'completed' | 'refunded'
   purchasedAt: Date
   refundedAt?: Date
+}
+
+// ───── Pagamentos (Mercado Pago) ─────
+
+import type { PaymentStatus, SubscriptionStatus, PaymentMethodKind, PaymentOrderType, PaymentProviderId } from './payments/types'
+
+export interface PaymentOrder {
+  _id?: string | import('mongodb').ObjectId
+  userId?: string                  // pode ser undefined em doação anônima
+  payerEmail?: string
+  payerName?: string
+  provider: PaymentProviderId
+  providerOrderId?: string         // id do payment no MP (após criação)
+  providerPaymentId?: string       // == providerOrderId para fluxo Payments API
+  type: PaymentOrderType
+  refId?: string                   // material id, plan id, donation id
+  refSlug?: string                 // ex.: linkedDeckSlug
+  amount: number                   // BRL
+  currency: 'BRL'
+  status: PaymentStatus
+  paymentMethod?: PaymentMethodKind
+  statusDetail?: string
+  idempotencyKey: string
+  metadata?: Record<string, any>
+  // Específicos por método
+  pix?: { qrCode: string; qrCodeBase64: string; ticketUrl?: string }
+  boleto?: { barcode?: string; ticketUrl?: string }
+  // Auditoria
+  createdAt: Date
+  updatedAt: Date
+  paidAt?: Date
+  expiresAt?: Date
+}
+
+export interface PaymentRecord {
+  _id?: string | import('mongodb').ObjectId
+  orderId: string                  // payment_orders._id
+  userId?: string
+  provider: PaymentProviderId
+  providerPaymentId: string
+  amount: number
+  currency: 'BRL'
+  status: PaymentStatus
+  paymentMethod?: PaymentMethodKind
+  statusDetail?: string
+  installments?: number
+  raw?: any
+  createdAt: Date
+  updatedAt: Date
+  paidAt?: Date
+}
+
+export interface SubscriptionRecord {
+  _id?: string | import('mongodb').ObjectId
+  userId: string
+  planId: string                   // 'monthly' | 'quarterly' | 'annual' | etc.
+  role?: string                    // accountType atribuído quando ativa
+  amount: number
+  currency: 'BRL'
+  billingIntervalMonths: 1 | 3 | 12
+  provider: PaymentProviderId
+  providerSubscriptionId: string   // preapproval id no MP
+  status: SubscriptionStatus
+  /** Quando termina o período já pago — usuário mantém acesso até essa data ao cancelar */
+  currentPeriodEndsAt?: Date
+  nextBillingAt?: Date
+  lastPaymentAt?: Date
+  cancelAtPeriodEnd?: boolean
+  canceledAt?: Date
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface DonationPayment {
+  _id?: string | import('mongodb').ObjectId
+  /** doação criada por usuário logado tem userId; anônima fica null/undefined */
+  userId?: string
+  nomeCompleto?: string
+  apelido?: string
+  email?: string
+  mensagem?: string
+  amount: number
+  currency: 'BRL'
+  provider: PaymentProviderId
+  providerOrderId: string
+  providerPaymentId?: string
+  paymentMethod?: PaymentMethodKind
+  status: PaymentStatus
+  // Vínculo com a coleção pública `doacoes` (criada após approved)
+  publicDoacaoId?: string
+  createdAt: Date
+  updatedAt: Date
+  paidAt?: Date
+}
+
+export interface WebhookEventRecord {
+  _id?: string | import('mongodb').ObjectId
+  provider: PaymentProviderId
+  /** id único derivado de x-request-id ou hash do payload — UNIQUE INDEX */
+  eventId: string
+  topic?: string
+  resourceId?: string
+  rawBody: string
+  headers?: Record<string, string>
+  signatureValid: boolean
+  processedAt?: Date
+  processingError?: string
+  attempts: number
+  createdAt: Date
 }

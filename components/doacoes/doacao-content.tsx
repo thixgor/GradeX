@@ -247,7 +247,22 @@ export function DoacaoContent({ compact = false, onDonateClick }: DoacaoContentP
               </button>
             </div>
 
-            {/* Botão já doei */}
+            {/* Botão: pagar pela plataforma (Pix/cartão/boleto via Mercado Pago) */}
+            <a
+              href="/doar"
+              className="w-full flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold transition-all duration-200 active:scale-[0.98]"
+              style={{
+                background: 'linear-gradient(135deg, rgba(16,185,129,0.55) 0%, rgba(5,150,105,0.45) 100%)',
+                border: '1px solid rgba(16,185,129,0.4)',
+                boxShadow: '0 4px 20px rgba(5,150,105,0.25), inset 0 1px 0 rgba(255,255,255,0.08)',
+                color: 'rgba(220,252,231,0.95)',
+              }}
+            >
+              <QrCode className="h-4 w-4" />
+              Doar pela plataforma
+            </a>
+
+            {/* Botão já doei (fluxo manual) */}
             {onDonateClick && (
               <button
                 onClick={onDonateClick}
@@ -260,7 +275,7 @@ export function DoacaoContent({ compact = false, onDonateClick }: DoacaoContentP
                 }}
               >
                 <Heart className="h-4 w-4 fill-current" />
-                Já fiz minha doação
+                Já paguei pelo app do banco
               </button>
             )}
           </div>
