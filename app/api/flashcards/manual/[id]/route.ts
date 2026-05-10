@@ -77,7 +77,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     const res = NextResponse.json({
       deck: normalizeDeckForResponse(deck),
       cards,
-      access,
+      access: { ...access, canManage: access.isOwner || isAdmin },
       viewer: {
         userId: session.userId,
         emailVerified: !!userDoc?.emailVerified,

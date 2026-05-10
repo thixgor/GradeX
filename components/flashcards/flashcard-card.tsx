@@ -40,15 +40,16 @@ function renderInline(text: string): React.ReactNode[] {
   return parts
 }
 
-function HiddenWordRender({ phrase, word, revealed }: { phrase: string; word: string; revealed: boolean }) {
-  // Substitui ocorrências da palavra (case-insensitive) por blanks/reveal
+function HiddenWordRender({
+  phrase, word, revealed, onDark = false,
+}: { phrase: string; word: string; revealed: boolean; onDark?: boolean }) {
   const tokens = useMemo(() => {
     if (!phrase) return [] as Array<{ text: string; isHidden: boolean }>
     const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
     if (!escaped) return [{ text: phrase, isHidden: false }]
     const re = new RegExp(`(${escaped})`, 'gi')
     const parts = phrase.split(re)
-    return parts.map(p => ({ text: p, isHidden: word && p.toLowerCase() === word.toLowerCase() }))
+    return parts.map(p => ({ text: p, isHidden: !!word && p.toLowerCase() === word.toLowerCase() }))
   }, [phrase, word])
 
   return (
@@ -62,7 +63,9 @@ function HiddenWordRender({ phrase, word, revealed }: { phrase: string; word: st
             className={cn(
               'inline-flex items-center px-2 py-0.5 mx-0.5 rounded-md font-bold tracking-wide',
               revealed
-                ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 ring-1 ring-emerald-500/40'
+                ? onDark
+                  ? 'bg-white/20 text-white ring-1 ring-white/40 shadow-[0_0_10px_rgba(255,255,255,0.18)]'
+                  : 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 ring-1 ring-emerald-500/40'
                 : 'bg-slate-900/90 text-transparent select-none ring-1 ring-slate-900/60 dark:bg-white/10 dark:ring-white/20'
             )}
             style={{ minWidth: revealed ? undefined : `${t.text.length}ch` }}
@@ -223,9 +226,16 @@ export function FlashcardCardView({
               </div>
             )}
 
-            <div className="flex-1 text-base md:text-lg leading-relaxed text-white/95 whitespace-pre-wrap">
+            <div className="flex-1 text-base md:text-lg leading-relaxed text-white/95 whitespace-pre-wrap break-words">
               {isHidden && card.hiddenWord
-                ? renderInline(card.back.text || card.hiddenWord.word)
+                ? (
+                  <>
+                    <HiddenWordRender phrase={card.hiddenWord.phrase} word={card.hiddenWord.word} revealed onDark />
+                    {card.back.text && card.back.text !== card.hiddenWord.phrase && (
+                      <span className="block mt-3 text-sm text-white/70">{renderInline(card.back.text)}</span>
+                    )}
+                  </>
+                )
                 : renderInline(card.back.text || '')}
             </div>
 
@@ -248,7 +258,7 @@ export function FlashcardCardView({
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -6, scale: 0.97 }}
                   transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-                  className="mt-3 rounded-2xl bg-white/10 ring-1 ring-white/20 px-4 py-3 text-sm leading-relaxed text-white/95 whitespace-pre-wrap"
+                  className="mt-3 rounded-2xl bg-white/10 ring-1 ring-white/20 px-4 py-3 text-sm leading-relaxed text-white/95 whitespace-pre-wrap break-words overflow-x-hidden max-h-52 overflow-y-auto"
                   onClick={e => e.stopPropagation()}
                 >
                   {renderInline(card.comment)}
