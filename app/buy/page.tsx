@@ -108,6 +108,7 @@ function BuyContent() {
   const router = useRouter()
   const [selecting, setSelecting] = useState<string | null>(null)
   const [hasActiveSub, setHasActiveSub] = useState(false)
+  const [hasRecurringSub, setHasRecurringSub] = useState(false)
   const [sub, setSub] = useState<any>(null)
   const [loadingSub, setLoadingSub] = useState(true)
   const [userName, setUserName] = useState('')
@@ -160,6 +161,7 @@ function BuyContent() {
       if (res.ok) {
         const d = await res.json()
         setHasActiveSub(d.hasActiveSubscription)
+        setHasRecurringSub(d.hasRecurringSubscription)
         if (d.subscription) setSub(d.subscription)
       }
     } catch {} finally { setLoadingSub(false) }
@@ -280,8 +282,14 @@ function BuyContent() {
             <div className="flex-1">
               <p className="font-bold text-emerald-300 text-base">Você já tem um plano ativo</p>
               <p className="text-white/60 text-sm mt-1">
-                {sub.type === 'premium' ? 'Premium' : 'Trial'} {sub.planType && `(${sub.planType})`} ativo até{' '}
-                <strong className="text-white/80">{new Date(sub.expiresAt).toLocaleDateString('pt-BR')}</strong>.
+                {sub.type === 'premium' ? 'Premium' : 'Trial'}{sub.planType ? ` (${sub.planType})` : ''}{' — '}
+                {new Date(sub.expiresAt).getFullYear() >= 9999
+                  ? <strong className="text-white/80">Acesso vitalício</strong>
+                  : <>ativo até <strong className="text-white/80">{new Date(sub.expiresAt).toLocaleDateString('pt-BR')}</strong></>
+                }
+                {hasRecurringSub && (
+                  <span className="ml-2 text-xs text-emerald-400/70">(renovação automática)</span>
+                )}
               </p>
               <div className="flex flex-wrap gap-2 mt-3">
                 <button onClick={() => router.push('/profile')}

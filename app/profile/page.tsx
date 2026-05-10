@@ -85,6 +85,7 @@ export default function ProfilePage() {
   const [activationDetails, setActivationDetails] = useState<any>(null)
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false)
   const [cancelling, setCancelling] = useState(false)
+  const [hasRecurringSubscription, setHasRecurringSubscription] = useState(false)
   const [expandedSubmission, setExpandedSubmission] = useState<string | null>(null)
   const { liteMode, toggleLiteMode } = useLiteMode()
 
@@ -92,6 +93,7 @@ export default function ProfilePage() {
     loadSubmissions()
     loadUserData()
     loadStatistics()
+    loadSubscriptionStatus()
   }, [])
 
   async function loadSubmissions() {
@@ -146,6 +148,16 @@ export default function ProfilePage() {
     } catch (error) {
       console.error('Erro ao carregar estatisticas:', error)
     }
+  }
+
+  async function loadSubscriptionStatus() {
+    try {
+      const res = await fetch('/api/user/subscription-status')
+      if (res.ok) {
+        const data = await res.json()
+        setHasRecurringSubscription(!!data.hasRecurringSubscription)
+      }
+    } catch {}
   }
 
   async function handleActivateKey() {
@@ -593,7 +605,7 @@ export default function ProfilePage() {
         <section className="mb-10">
           <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Conta</h2>
           <div className="flex flex-wrap gap-2">
-            {userRole !== 'admin' && (accountType === 'premium' || accountType === 'trial') && (
+            {userRole !== 'admin' && hasRecurringSubscription && (
               <Button variant="outline" size="sm" className="text-xs h-8 text-red-600 border-red-200 dark:border-red-800 hover:bg-red-50 dark:hover:bg-red-950"
                 onClick={() => setCancelDialogOpen(true)}>
                 <XCircle className="h-3.5 w-3.5 mr-1.5" />

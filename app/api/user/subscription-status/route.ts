@@ -3,6 +3,7 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { User } from '@/lib/types'
 import { ObjectId } from 'mongodb'
+import type { SubscriptionRecord } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
 
@@ -21,58 +22,64 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
     }
 
+    // Busca assinatura recorrente ativa (preapproval MP)
+    const activeSub = await db.collection<SubscriptionRecord>('subscriptions').findOne({
+      userId: session.userId,
+      status: { $in: ['authorized', 'pending', 'paused'] },
+    })
+    const hasRecurringSubscription = !!activeSub
+
     const now = new Date()
     let activeSubscription = null
 
-    // Verificar se tem assinatura ativa
     if (user.accountType === 'premium') {
-      // Se tem premiumExpiresAt, verificar se ainda está válido
-      if (user.premiumExpiresAt) {
-        if (new Date(user.premiumExpiresAt) > now) {
-          activeSubscription = {
-            type: 'premium',
-            planType: user.premiumPlanType,
-            expiresAt: user.premiumExpiresAt,
-            activatedAt: user.premiumActivatedAt,
-            price: user.premiumPrice
-          }
+      let expiresAt: Date | null = null
+
+      if (user.premiumExpiresAt && new Date(user.premiumExpiresAt) > now) {
+        expiresAt = new Date(user.premiumExpiresAt)
+      } else if (!user.premiumExpiresAt) {
+        // Sem data no usuário — tentar pegar do registro de assinatura recorrente
+        if (activeSub?.currentPeriodEndsAt) {
+          expiresAt = new Date(activeSub.currentPeriodEndsAt)
+        } else if (user.premiumPlanType === 'vitalicio' || !user.premiumPlanType) {
+          // Genuinamente vitalício (sem expiração) — usar sentinela apenas para planos lifetime
+          expiresAt = new Date(9999, 11, 31)
         }
-      } else {
-        // Se não tem data de expiração, considerar como ativo (vitalício ou sem data definida)
+      }
+
+      if (expiresAt) {
         activeSubscription = {
           type: 'premium',
-          planType: user.premiumPlanType || 'mensal',
-          expiresAt: new Date(9999, 11, 31), // Data muito distante para "vitalício"
+          planType: user.premiumPlanType,
+          expiresAt,
           activatedAt: user.premiumActivatedAt,
-          price: user.premiumPrice
+          price: user.premiumPrice,
         }
       }
     } else if (user.accountType === 'trial') {
-      // Se tem trialExpiresAt, verificar se ainda está válido
-      if (user.trialExpiresAt) {
-        if (new Date(user.trialExpiresAt) > now) {
-          activeSubscription = {
-            type: 'trial',
-            planType: user.trialPlanType,
-            expiresAt: user.trialExpiresAt,
-            activatedAt: user.trialActivatedAt
-          }
-        }
-      } else {
-        // Se não tem data de expiração, considerar como ativo
+      let expiresAt: Date | null = null
+
+      if (user.trialExpiresAt && new Date(user.trialExpiresAt) > now) {
+        expiresAt = new Date(user.trialExpiresAt)
+      } else if (!user.trialExpiresAt) {
+        expiresAt = new Date(9999, 11, 31)
+      }
+
+      if (expiresAt) {
         activeSubscription = {
           type: 'trial',
-          planType: user.trialPlanType || '7dias',
-          expiresAt: new Date(9999, 11, 31),
-          activatedAt: user.trialActivatedAt
+          planType: user.trialPlanType,
+          expiresAt,
+          activatedAt: user.trialActivatedAt,
         }
       }
     }
 
     return NextResponse.json({
       hasActiveSubscription: !!activeSubscription,
+      hasRecurringSubscription,
       subscription: activeSubscription,
-      accountType: user.accountType
+      accountType: user.accountType,
     })
   } catch (error) {
     console.error('Subscription status error:', error)
