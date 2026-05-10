@@ -25,6 +25,7 @@ const publicPrefixes = [
   '/api/cron/',
   '/api/leads/',
   '/api/study-playlists',
+  '/api/stripe/', // stubs 410 — detectar tráfego residual; remover após 2026-08-09
   '/_next/',
   '/img/',
   '/favicon',
