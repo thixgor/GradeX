@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { ObjectId } from 'mongodb'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
+import { checkRateLimit } from '@/lib/rate-limit'
 import { getPaymentProvider } from '@/lib/payments'
 import { applyPaymentResult } from '@/lib/payments/effects'
 import type { PaymentOrder } from '@/lib/types'
@@ -17,6 +18,11 @@ export const runtime = 'nodejs'
  * Demais: somente o dono ou admin.
  */
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+  const rl = await checkRateLimit(ip, 'payments_status_poll', 60, 60_000)
+  if (!rl.success) {
+    return NextResponse.json({ error: 'Muitas requisições. Tente novamente em instantes.' }, { status: 429 })
+  }
   const orderId = params.id
   if (!orderId || !ObjectId.isValid(orderId)) {
     return NextResponse.json({ error: 'orderId inválido' }, { status: 400 })

@@ -6,6 +6,7 @@ import { getDb } from '@/lib/mongodb'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { getPaymentProvider } from '@/lib/payments'
 import { audit } from '@/lib/payments/audit'
+import { DEFAULT_PAYMENT_METHODS } from '@/app/api/admin/settings/payment-methods/route'
 import type { SubscriptionRecord, User } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -47,6 +48,12 @@ export async function POST(request: NextRequest) {
 
   const db = await getDb()
   const settings = await db.collection('admin_settings').findOne({})
+
+  const enabledMethods = { ...DEFAULT_PAYMENT_METHODS, ...(settings?.paymentMethods || {}) }
+  if (!enabledMethods.subscriptions) {
+    return NextResponse.json({ error: 'Assinaturas não estão disponíveis no momento.' }, { status: 400 })
+  }
+
   const plano = (settings?.planos || []).find((p: any) => p.tipo === planId)
   if (!plano) return NextResponse.json({ error: 'Plano não encontrado' }, { status: 400 })
 

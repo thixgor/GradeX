@@ -82,6 +82,8 @@ export default function SettingsPage() {
   const [mpEvents, setMpEvents] = useState<MercadoPagoEvent[]>([])
   const [mpTesting, setMpTesting] = useState(false)
   const [mpTestResult, setMpTestResult] = useState<{ ok: boolean; message: string } | null>(null)
+  const [paymentMethods, setPaymentMethods] = useState({ pix: true, credit_card: true, boleto: true, subscriptions: true })
+  const [savingPaymentMethods, setSavingPaymentMethods] = useState(false)
   const [planos, setPlanos] = useState<PlanConfig[]>([])
   const [savingPlanos, setSavingPlanos] = useState(false)
   const [planosError, setPlanosError] = useState('')
@@ -111,6 +113,7 @@ export default function SettingsPage() {
       loadSettings()
       loadMercadoPago()
       loadPlanos()
+      loadPaymentMethods()
     } catch (error) {
       router.push('/auth/login')
     } finally {
@@ -183,6 +186,26 @@ export default function SettingsPage() {
       }
     } catch (error) {
       console.error('Erro ao carregar configurações:', error)
+    }
+  }
+
+  async function loadPaymentMethods() {
+    try {
+      const res = await fetch('/api/admin/settings/payment-methods')
+      if (res.ok) setPaymentMethods(await res.json())
+    } catch {}
+  }
+
+  async function savePaymentMethods() {
+    setSavingPaymentMethods(true)
+    try {
+      await fetch('/api/admin/settings/payment-methods', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(paymentMethods),
+      })
+    } finally {
+      setSavingPaymentMethods(false)
     }
   }
 
@@ -685,6 +708,42 @@ export default function SettingsPage() {
                   </p>
                 </div>
               )}
+
+              {/* Métodos de pagamento habilitados */}
+              <div className="pt-4 border-t">
+                <h4 className="font-semibold mb-3">Métodos de pagamento</h4>
+                <div className="space-y-2">
+                  {([
+                    { key: 'pix', label: 'Pix' },
+                    { key: 'credit_card', label: 'Cartão de crédito/débito' },
+                    { key: 'boleto', label: 'Boleto bancário' },
+                    { key: 'subscriptions', label: 'Assinaturas recorrentes' },
+                  ] as const).map(({ key, label }) => (
+                    <div key={key} className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors">
+                      <span className="text-sm font-medium">{label}</span>
+                      <button
+                        type="button"
+                        role="switch"
+                        aria-checked={paymentMethods[key]}
+                        onClick={() => setPaymentMethods(prev => ({ ...prev, [key]: !prev[key] }))}
+                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+                          paymentMethods[key] ? 'bg-primary' : 'bg-input'
+                        }`}
+                      >
+                        <span className={`pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform ${paymentMethods[key] ? 'translate-x-5' : 'translate-x-0'}`} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <Button
+                  size="sm"
+                  className="mt-3"
+                  onClick={savePaymentMethods}
+                  disabled={savingPaymentMethods}
+                >
+                  {savingPaymentMethods ? 'Salvando...' : 'Salvar métodos'}
+                </Button>
+              </div>
 
               {/* Eventos recentes */}
               <div className="pt-4 border-t">

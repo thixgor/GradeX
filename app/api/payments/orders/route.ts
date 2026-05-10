@@ -7,6 +7,7 @@ import { checkRateLimit } from '@/lib/rate-limit'
 import { getPaymentProvider, deriveIdempotencyKey } from '@/lib/payments'
 import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
+import { DEFAULT_PAYMENT_METHODS } from '@/app/api/admin/settings/payment-methods/route'
 import type { PaymentOrder, MaterialPurchase } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -71,6 +72,21 @@ export async function POST(request: NextRequest) {
   }
 
   const db = await getDb()
+
+  // Verificar métodos de pagamento habilitados
+  const adminSettings = await db.collection('admin_settings').findOne({})
+  const enabledMethods = { ...DEFAULT_PAYMENT_METHODS, ...(adminSettings?.paymentMethods || {}) }
+
+  const method = data.paymentMethodId
+  if (method === 'pix' && !enabledMethods.pix) {
+    return NextResponse.json({ error: 'Pagamento por Pix não está disponível no momento.' }, { status: 400 })
+  }
+  if ((method === 'credit_card' || method === 'debit_card') && !enabledMethods.credit_card) {
+    return NextResponse.json({ error: 'Pagamento por cartão não está disponível no momento.' }, { status: 400 })
+  }
+  if (method === 'boleto' && !enabledMethods.boleto) {
+    return NextResponse.json({ error: 'Pagamento por boleto não está disponível no momento.' }, { status: 400 })
+  }
 
   // Resolver amount, descrição e validações específicas server-side.
   let amount = 0

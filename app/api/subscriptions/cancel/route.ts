@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { ObjectId } from 'mongodb'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
+import { checkRateLimit } from '@/lib/rate-limit'
 import { getPaymentProvider } from '@/lib/payments'
 import { audit } from '@/lib/payments/audit'
 import { sendSubscriptionCancelledEmail } from '@/lib/mail'
@@ -17,7 +18,13 @@ export const runtime = 'nodejs'
  *
  * Idempotente: cancelar duas vezes não erra, retorna o estado atual.
  */
-export async function POST(_request: NextRequest) {
+export async function POST(request: NextRequest) {
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+  const rl = await checkRateLimit(ip, 'subscriptions_cancel', 5, 60_000)
+  if (!rl.success) {
+    return NextResponse.json({ error: 'Muitas requisições. Tente novamente em instantes.' }, { status: 429 })
+  }
+
   const session = await getSession()
   if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
 
