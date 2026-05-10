@@ -49,12 +49,14 @@ export function validateMpWebhook(input: {
     // body não-JSON; ignora
   }
 
-  // Em ambientes sem secret configurado (ex.: dev local), aceitamos sem
-  // validar a assinatura — mas registramos o aviso.
+  const isSandbox = cfg.mp.env === 'sandbox'
+
+  // Sem secret configurado: aceita em dev/sandbox, rejeita em produção.
   if (!secret) {
-    if (process.env.NODE_ENV === 'production') {
+    if (!isSandbox && process.env.NODE_ENV === 'production') {
       return { valid: false, reason: 'webhook secret não configurado' }
     }
+    console.warn('[mp-webhook] MERCADOPAGO_WEBHOOK_SECRET não configurado — webhook aceito sem validação de assinatura')
     return {
       valid: true,
       resourceId: String(dataId || ''),
@@ -63,7 +65,19 @@ export function validateMpWebhook(input: {
     }
   }
 
-  if (!sigHeader) return { valid: false, reason: 'x-signature ausente' }
+  // Em sandbox, o simulador do painel MP não envia x-signature — aceitar.
+  if (!sigHeader) {
+    if (isSandbox) {
+      console.warn('[mp-webhook] x-signature ausente em sandbox — aceito (simulador MP não assina)')
+      return {
+        valid: true,
+        resourceId: String(dataId || ''),
+        topic: String(topic || ''),
+        eventId: requestId || `${topic}:${dataId}`,
+      }
+    }
+    return { valid: false, reason: 'x-signature ausente' }
+  }
 
   // Parse "ts=...,v1=..."
   const parts = String(sigHeader)
