@@ -130,18 +130,22 @@ export default function MaterialViewPage() {
 
   const handleAcquire = async () => {
     if (!data) return
+    const mat = data.material
+    const isFreeItem = mat.pricing === 'free' || !mat.price || mat.price <= 0
+    if (!isFreeItem) {
+      router.push(`/materiais/checkout?type=material&id=${id}`)
+      return
+    }
     setCheckoutLoading(true)
     try {
       const res = await fetch('/api/materiais/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ itemType: 'material', itemId: id }),
+        body: JSON.stringify({ itemType: 'material', itemId: id, paymentMethodId: 'free' }),
       })
       const json = await res.json()
       if (json.free) {
         await fetchData()
-      } else if (json.url) {
-        window.location.href = json.url
       } else {
         alert(json.error || 'Erro ao processar')
       }

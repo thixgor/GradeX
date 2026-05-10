@@ -127,7 +127,7 @@ export default function MateriaisCheckoutPage() {
           Você está adquirindo: <strong style={{ color: '#34d399' }}>{item.title}</strong>
         </p>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1.4fr)', gap: '24px', alignItems: 'start' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-6 items-start">
           {/* Left: Item summary */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div style={{ ...glassCard, padding: '28px' }}>

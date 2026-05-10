@@ -87,6 +87,7 @@ const glassInput: React.CSSProperties = {
   width: '100%',
   fontSize: '14px',
   outline: 'none',
+  boxSizing: 'border-box',
 }
 
 const activeTab: React.CSSProperties = {
@@ -319,7 +320,7 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
                 style={glassInput}
               />
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
+            <div className="grid grid-cols-3 gap-2.5">
               <div>
                 <label style={labelStyle}>Mês</label>
                 <input
@@ -357,7 +358,7 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
                 />
               </div>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+            <div className="grid grid-cols-2 gap-2.5">
               <div>
                 <label style={labelStyle}>CPF</label>
                 <input
@@ -451,15 +452,10 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
         )}
 
         {/* Footer with amount + submit */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          borderTop: '1px solid rgba(52,211,153,0.1)',
-          paddingTop: '16px',
-          gap: '16px',
-          flexWrap: 'wrap',
-        }}>
+        <div
+          style={{ borderTop: '1px solid rgba(52,211,153,0.1)', paddingTop: '16px' }}
+          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+        >
           <div>
             <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', marginBottom: '2px' }}>{props.description}</p>
             <p style={{ fontSize: '26px', fontWeight: 800, color: '#34d399', letterSpacing: '-0.02em' }}>
@@ -469,6 +465,7 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
           <button
             type="submit"
             disabled={submitting || (method === 'card' && !mpReady)}
+            className="w-full sm:w-auto justify-center"
             style={{
               ...submitBtn,
               opacity: (submitting || (method === 'card' && !mpReady)) ? 0.6 : 1,
@@ -582,11 +579,11 @@ function ResultPanel({ order, method, onReset }: { order: CheckoutOrderResponse;
         )}
         <div>
           <label style={labelStyle}>Código Pix copia-e-cola</label>
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px', minWidth: 0 }}>
             <input
               readOnly
               value={order.pix.qrCode}
-              style={{ ...glassInput, fontFamily: 'monospace', fontSize: '11px' }}
+              style={{ ...glassInput, fontFamily: 'monospace', fontSize: '11px', flex: 1, width: 'auto', minWidth: 0 }}
             />
             <button
               type="button"
