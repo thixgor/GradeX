@@ -37,6 +37,16 @@ export async function POST(request: NextRequest) {
   const queryParams: Record<string, string> = {}
   url.searchParams.forEach((v, k) => { queryParams[k] = v })
 
+  // O simulador do painel MP envia live_mode=false com IDs fictícios e sem
+  // x-signature. Respondemos 200 sem processar para não gerar erro no painel.
+  try {
+    const parsed = JSON.parse(rawBody)
+    if (parsed.live_mode === false) {
+      console.log('[mp-webhook] notificação de teste (live_mode=false) — ignorada')
+      return NextResponse.json({ ok: true, test: true })
+    }
+  } catch {}
+
   const provider = getPaymentProvider()
   const validation = await provider.validateWebhook({ rawBody, headers, queryParams })
 
