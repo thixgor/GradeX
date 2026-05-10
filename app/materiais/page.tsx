@@ -172,6 +172,7 @@ function MateriaisContent() {
   const [highlightedMaterialId, setHighlightedMaterialId] = useState<string | null>(null)
   const [highlightedPackageId, setHighlightedPackageId] = useState<string | null>(null)
   const [previewItem, setPreviewItem] = useState<{ type: 'material'; data: Material } | { type: 'package'; data: MaterialPackage } | null>(null)
+  const [upsellState, setUpsellState] = useState<{ pkg: MaterialPackage; material: Material } | null>(null)
   const highlightRef = useRef<HTMLDivElement | null>(null)
   const { copiedId, copy } = useCopyLink()
 
@@ -334,6 +335,18 @@ function MateriaisContent() {
     router.push(`/materiais/checkout?type=${itemType}&id=${itemId}`)
   }
 
+  const handleMaterialAcquire = (material: Material) => {
+    // Check if this material is included in any package the user hasn't purchased yet
+    const pkg = packages.find(p =>
+      p.materialIds?.includes(material._id) && !isPurchased(p._id, 'package')
+    )
+    if (pkg) {
+      setUpsellState({ pkg, material })
+    } else {
+      handleAcquire('material', material._id)
+    }
+  }
+
   const handleDownload = (material: Material) => {
     if (material.type === 'video_embed') {
       router.push(`/materiais/${material._id}`)
@@ -461,7 +474,7 @@ function MateriaisContent() {
                     groupAccess={hasGroupAccess(material)}
                     isHighlighted={highlightedMaterialId === material._id}
                     copiedId={copiedId}
-                    onAcquire={() => handleAcquire('material', material._id)}
+                    onAcquire={() => handleMaterialAcquire(material)}
                     onDownload={() => handleDownload(material)}
                     onCopyLink={() => copyMaterialLink(material)}
                     onPreview={() => setPreviewItem({ type: 'material', data: material })}
@@ -581,7 +594,7 @@ function MateriaisContent() {
                       groupAccess={hasGroupAccess(material)}
                       isHighlighted={highlightedMaterialId === material._id}
                       copiedId={copiedId}
-                      onAcquire={() => handleAcquire('material', material._id)}
+                      onAcquire={() => handleMaterialAcquire(material)}
                       onDownload={() => handleDownload(material)}
                       onCopyLink={() => copyMaterialLink(material)}
                       onPreview={() => setPreviewItem({ type: 'material', data: material })}
@@ -639,6 +652,26 @@ function MateriaisContent() {
         )}
       </div>
 
+      {/* ─── Package Upsell Modal ─── */}
+      <AnimatePresence>
+        {upsellState && (
+          <PackageUpsellModal
+            pkg={upsellState.pkg}
+            material={upsellState.material}
+            checkoutLoading={checkoutLoading}
+            onBuyPackage={() => {
+              setUpsellState(null)
+              handleAcquire('package', upsellState.pkg._id)
+            }}
+            onBuyIndividual={() => {
+              setUpsellState(null)
+              handleAcquire('material', upsellState.material._id)
+            }}
+            onClose={() => setUpsellState(null)}
+          />
+        )}
+      </AnimatePresence>
+
       {/* ─── Preview Modal (locked content) ─── */}
       <AnimatePresence>
         {previewItem && (
@@ -655,6 +688,156 @@ function MateriaisContent() {
       </AnimatePresence>
 
     </div>
+  )
+}
+
+// ─── Package Upsell Modal ────────────────────────────────────
+function PackageUpsellModal({
+  pkg, material, checkoutLoading, onBuyPackage, onBuyIndividual, onClose,
+}: {
+  pkg: MaterialPackage
+  material: Material
+  checkoutLoading: string | null
+  onBuyPackage: () => void
+  onBuyIndividual: () => void
+  onClose: () => void
+}) {
+  const pkgSavings = pkg.price && material.price ? Math.max(0, material.price - pkg.price) : null
+
+  return (
+    <motion.div
+      key="upsell-overlay"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+        className="relative w-full max-w-lg rounded-3xl overflow-hidden"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Ambient orbs */}
+        <div aria-hidden className="absolute inset-0 pointer-events-none overflow-hidden rounded-3xl">
+          <div className="absolute -top-16 -left-16 h-48 w-48 rounded-full bg-emerald-400/30 blur-3xl" />
+          <div className="absolute -bottom-16 -right-16 h-56 w-56 rounded-full bg-violet-500/25 blur-3xl" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-40 w-40 rounded-full bg-teal-400/20 blur-3xl" />
+        </div>
+
+        {/* Glassmorphism card */}
+        <div className="relative bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border border-white/40 dark:border-white/10">
+          {/* Header banner */}
+          <div className="relative overflow-hidden bg-gradient-to-r from-emerald-500 via-teal-500 to-violet-600 px-6 py-5">
+            <div aria-hidden className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_30%_50%,white,transparent_60%)]" />
+            <button onClick={onClose} className="absolute right-4 top-4 text-white/70 hover:text-white transition">
+              <X className="h-5 w-5" />
+            </button>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 px-3 py-1 text-[11px] font-black tracking-[0.15em] uppercase text-white">
+                <Sparkles className="h-3 w-3" /> Oferta Especial
+              </span>
+            </div>
+            <h2 className="text-xl font-heading font-black text-white leading-tight">
+              Este flashcard faz parte de um pacote!
+            </h2>
+            <p className="mt-1 text-sm text-white/80">
+              Leve mais por menos — veja o que está incluído no pacote.
+            </p>
+          </div>
+
+          <div className="p-6">
+            {/* Package info */}
+            <div className="flex items-start gap-3 mb-5">
+              {pkg.coverImage ? (
+                <img src={pkg.coverImage} alt={pkg.title} className="h-16 w-24 rounded-xl object-cover shrink-0" />
+              ) : (
+                <div className="h-16 w-24 rounded-xl bg-gradient-to-br from-violet-500/20 to-teal-500/20 flex items-center justify-center shrink-0">
+                  <Package className="h-6 w-6 text-violet-500" />
+                </div>
+              )}
+              <div className="min-w-0">
+                <p className="text-xs font-medium text-muted-foreground mb-0.5">Pacote</p>
+                <h3 className="font-heading font-bold text-base leading-tight">{pkg.title}</h3>
+                {pkg.description && <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{pkg.description}</p>}
+              </div>
+            </div>
+
+            {/* Items list */}
+            {pkg.materials && pkg.materials.length > 0 && (
+              <div className="mb-5">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                  Inclui {pkg.materials.length} {pkg.materials.length === 1 ? 'item' : 'itens'}:
+                </p>
+                <div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
+                  {pkg.materials.map((m: any) => (
+                    <div key={m._id} className="flex items-center gap-2 text-xs p-2 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10">
+                      <div className="h-6 w-6 rounded-lg flex items-center justify-center bg-primary/10 text-primary shrink-0">
+                        {typeIcons[m.type] || <File className="h-3.5 w-3.5" />}
+                      </div>
+                      <span className="truncate flex-1 font-medium">{m.title}</span>
+                      <span className="shrink-0 rounded-full bg-slate-100 dark:bg-white/10 px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
+                        {typeLabels[m.type] || 'Arquivo'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Price comparison */}
+            <div className="rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 p-4 mb-5">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-muted-foreground">Apenas o flashcard</span>
+                <span className="text-sm font-bold">R$ {material.price?.toFixed(2)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">Pacote completo</span>
+                <span className="text-lg font-black text-emerald-700 dark:text-emerald-300">
+                  {pkg.pricing === 'free' ? 'Grátis' : `R$ ${pkg.price?.toFixed(2)}`}
+                </span>
+              </div>
+              {pkgSavings !== null && pkgSavings > 0 && (
+                <p className="mt-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400 text-center">
+                  Economia de R$ {pkgSavings.toFixed(2)} comprando o pacote!
+                </p>
+              )}
+            </div>
+
+            {/* CTA buttons */}
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={onBuyPackage}
+                disabled={!!checkoutLoading}
+                className="w-full h-12 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-violet-600 text-white font-bold text-sm shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 flex items-center justify-center gap-2"
+              >
+                {checkoutLoading === pkg._id
+                  ? <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  : <Package className="h-4 w-4" />
+                }
+                Comprar pacote completo
+                {pkg.pricing !== 'free' && ` — R$ ${pkg.price?.toFixed(2)}`}
+              </button>
+              <button
+                onClick={onBuyIndividual}
+                disabled={!!checkoutLoading}
+                className="w-full h-10 rounded-2xl border border-slate-200 dark:border-white/10 text-sm text-muted-foreground hover:bg-slate-50 dark:hover:bg-white/5 transition disabled:opacity-60 flex items-center justify-center gap-2"
+              >
+                {checkoutLoading === material._id
+                  ? <div className="h-3.5 w-3.5 border-2 border-slate-300/50 border-t-slate-500 rounded-full animate-spin" />
+                  : <ShoppingCart className="h-3.5 w-3.5" />
+                }
+                Comprar apenas este flashcard — R$ {material.price?.toFixed(2)}
+              </button>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
   )
 }
 
@@ -1093,7 +1276,10 @@ function PackageCard({
                     <div className="h-5 w-5 rounded flex items-center justify-center bg-primary/10 text-primary flex-shrink-0">
                       {typeIcons[m.type] || <File className="h-3 w-3" />}
                     </div>
-                    <span className="truncate">{m.title}</span>
+                    <span className="truncate flex-1">{m.title}</span>
+                    <span className="shrink-0 rounded-full bg-slate-100 dark:bg-white/10 px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
+                      {typeLabels[m.type] || 'Arquivo'}
+                    </span>
                   </div>
                 ))}
                 {pkg.materials.length > 4 && <p className="text-xs text-muted-foreground pl-1">+{pkg.materials.length - 4} mais</p>}

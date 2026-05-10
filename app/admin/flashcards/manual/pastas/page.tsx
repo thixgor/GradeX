@@ -9,6 +9,7 @@ import {
   FolderPlus,
   ChevronRight,
   ChevronDown,
+  ChevronUp,
   Edit3,
   Trash2,
   Plus,
@@ -119,6 +120,25 @@ export default function AdminFoldersPastaPage() {
     load()
   }
 
+  async function reorderFolder(id: string, siblings: FolderNode[], direction: 'up' | 'down') {
+    const idx = siblings.findIndex(s => s._id === id)
+    if (idx < 0) return
+    const swapIdx = direction === 'up' ? idx - 1 : idx + 1
+    if (swapIdx < 0 || swapIdx >= siblings.length) return
+    const newSiblings = [...siblings]
+    ;[newSiblings[idx], newSiblings[swapIdx]] = [newSiblings[swapIdx], newSiblings[idx]]
+    await Promise.all(
+      newSiblings.map((s, i) =>
+        fetch(`/api/flashcards/manual/folders/${s._id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ order: i }),
+        })
+      )
+    )
+    load()
+  }
+
   async function assignDeck(deckId: string, folderId: string | null) {
     await fetch(`/api/flashcards/manual/${deckId}`, {
       method: 'PATCH',
@@ -159,16 +179,20 @@ export default function AdminFoldersPastaPage() {
                 </div>
               ) : (
                 <div className="p-3">
-                  {folders.map(f => (
+                  {folders.map((f, i) => (
                     <FolderTreeRow
                       key={f._id}
                       node={f}
                       depth={0}
+                      siblings={folders}
                       allFolders={flatFolders}
                       onCreate={createFolder}
                       onRename={renameFolder}
                       onDelete={deleteFolder}
                       onMove={moveFolder}
+                      onReorder={reorderFolder}
+                      isFirst={i === 0}
+                      isLast={i === folders.length - 1}
                     />
                   ))}
                 </div>
@@ -214,14 +238,18 @@ export default function AdminFoldersPastaPage() {
 // Tree row
 // ─────────────────────────────────────────────────────────────────────────────
 
-function FolderTreeRow({ node, depth, allFolders, onCreate, onRename, onDelete, onMove }: {
+function FolderTreeRow({ node, depth, siblings, allFolders, onCreate, onRename, onDelete, onMove, onReorder, isFirst, isLast }: {
   node: FolderNode
   depth: number
+  siblings: FolderNode[]
   allFolders: FlatFolder[]
   onCreate: (name: string, color: string, parentId: string | null) => void
   onRename: (id: string, name: string, color: string) => void
   onDelete: (id: string) => void
   onMove: (id: string, parentId: string | null) => void
+  onReorder: (id: string, siblings: FolderNode[], direction: 'up' | 'down') => void
+  isFirst: boolean
+  isLast: boolean
 }) {
   const [expanded, setExpanded] = useState(true)
   const [editing, setEditing] = useState(false)
@@ -284,6 +312,23 @@ function FolderTreeRow({ node, depth, allFolders, onCreate, onRename, onDelete, 
         {/* Actions (appear on hover) */}
         {!editing && (
           <div className="shrink-0 flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition">
+            {/* Up/down reorder */}
+            <button
+              onClick={() => onReorder(node._id, siblings, 'up')}
+              disabled={isFirst}
+              title="Mover para cima"
+              className="rounded-lg p-1.5 hover:bg-slate-100 dark:hover:bg-white/10 transition disabled:opacity-20 disabled:cursor-not-allowed"
+            >
+              <ChevronUp className="h-3.5 w-3.5 text-slate-500" />
+            </button>
+            <button
+              onClick={() => onReorder(node._id, siblings, 'down')}
+              disabled={isLast}
+              title="Mover para baixo"
+              className="rounded-lg p-1.5 hover:bg-slate-100 dark:hover:bg-white/10 transition disabled:opacity-20 disabled:cursor-not-allowed"
+            >
+              <ChevronDown className="h-3.5 w-3.5 text-slate-500" />
+            </button>
             <button
               onClick={() => setAddingChild(v => !v)}
               title="Adicionar subpasta"
@@ -337,16 +382,20 @@ function FolderTreeRow({ node, depth, allFolders, onCreate, onRename, onDelete, 
       {/* Children */}
       {expanded && node.children.length > 0 && (
         <div>
-          {node.children.map(child => (
+          {node.children.map((child, i) => (
             <FolderTreeRow
               key={child._id}
               node={child}
               depth={depth + 1}
+              siblings={node.children}
               allFolders={allFolders}
               onCreate={onCreate}
               onRename={onRename}
               onDelete={onDelete}
               onMove={onMove}
+              onReorder={onReorder}
+              isFirst={i === 0}
+              isLast={i === node.children.length - 1}
             />
           ))}
         </div>

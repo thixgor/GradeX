@@ -419,7 +419,7 @@ function StoreFolderNav({ tree, selected, store, onSelect }: {
   onSelect: (id: string | null) => void
 }) {
   return (
-    <aside className="rounded-3xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl shadow-sm sticky top-4">
+    <aside className="rounded-3xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl shadow-sm sticky top-4 overflow-hidden">
       <div className="px-4 py-3 border-b border-white/40 dark:border-white/10">
         <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Navegar por pasta</p>
       </div>
@@ -486,7 +486,7 @@ function FolderNavItem({ label, count, active, onClick, depth, color, hasChildre
   color?: string; hasChildren?: boolean; expanded?: boolean; onToggle?: () => void
 }) {
   return (
-    <div className="flex items-center" style={{ paddingLeft: `${depth * 14}px` }}>
+    <div className="flex items-center min-w-0 overflow-hidden" style={{ paddingLeft: `${depth * 14}px` }}>
       {hasChildren && (
         <button onClick={onToggle} className="shrink-0 h-5 w-5 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-white transition">
           {expanded ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
@@ -496,7 +496,7 @@ function FolderNavItem({ label, count, active, onClick, depth, color, hasChildre
       <button
         onClick={onClick}
         className={cn(
-          'flex-1 flex items-center justify-between gap-2 rounded-2xl px-2.5 py-2 text-sm text-left transition',
+          'flex-1 min-w-0 flex items-center justify-between gap-2 rounded-2xl px-2.5 py-2 text-sm text-left transition overflow-hidden',
           active
             ? 'bg-amber-500/15 text-amber-700 dark:text-amber-200 font-semibold'
             : 'text-slate-600 dark:text-slate-300 hover:bg-white/60 dark:hover:bg-white/10'

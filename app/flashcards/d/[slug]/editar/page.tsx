@@ -554,7 +554,7 @@ function CardEditor({
 }
 
 function ImportDialog({ slug, onClose, onImported }: { slug: string; onClose: () => void; onImported: (count: number) => void }) {
-  const [format, setFormat] = useState<'json' | 'csv'>('json')
+  const [format, setFormat] = useState<'json' | 'csv' | 'markdown'>('markdown')
   const [payload, setPayload] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -567,6 +567,31 @@ function ImportDialog({ slug, onClose, onImported }: { slug: string; onClose: ()
   const sampleCsv = `front,back,comment
 Pergunta 1,Resposta 1,Comentário opcional
 Pergunta 2,Resposta 2,`
+
+  const sampleMarkdown = `## Frente
+O que é fotossíntese?
+
+## Verso
+Processo pelo qual plantas convertem luz solar em glicose usando CO₂ e água.
+
+## Comentário
+Ocorre nos cloroplastos, especificamente nos tilacóides.
+
+---
+
+## Frente
+Qual é a capital do Brasil?
+
+## Verso
+Brasília
+
+---
+
+## Frente
+Defina mitose.
+
+## Verso
+Divisão celular que origina duas células-filhas geneticamente idênticas à célula-mãe.`
 
   async function submit() {
     setBusy(true); setError(null)
@@ -585,30 +610,43 @@ Pergunta 2,Resposta 2,`
     } finally { setBusy(false) }
   }
 
+  const sample = format === 'json' ? sampleJson : format === 'csv' ? sampleCsv : sampleMarkdown
+
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-end md:items-center justify-center" onClick={onClose}>
       <div className="bg-white dark:bg-slate-900 w-full md:max-w-2xl md:rounded-3xl rounded-t-3xl border border-slate-200 dark:border-white/10 p-6 max-h-[90vh] overflow-auto" onClick={e => e.stopPropagation()}>
         <h3 className="text-lg font-semibold mb-1">Importar cartões</h3>
-        <p className="text-sm text-slate-500 mb-4">Cole um array JSON ou CSV.</p>
+        <p className="text-sm text-slate-500 mb-4">Cole o conteúdo no formato escolhido — vários cartões de uma vez.</p>
 
-        <div className="flex gap-2 mb-3">
+        <div className="flex gap-2 mb-3 flex-wrap">
+          <button onClick={() => setFormat('markdown')} className={cn('rounded-full px-3 py-1 text-xs font-medium border', format === 'markdown' ? 'border-violet-500 bg-violet-500/10 text-violet-700 dark:text-violet-200' : 'border-slate-200 dark:border-white/10 text-slate-500')}>Markdown (recomendado)</button>
           <button onClick={() => setFormat('json')} className={cn('rounded-full px-3 py-1 text-xs font-medium border', format === 'json' ? 'border-violet-500 bg-violet-500/10 text-violet-700 dark:text-violet-200' : 'border-slate-200 dark:border-white/10 text-slate-500')}>JSON</button>
           <button onClick={() => setFormat('csv')} className={cn('rounded-full px-3 py-1 text-xs font-medium border', format === 'csv' ? 'border-violet-500 bg-violet-500/10 text-violet-700 dark:text-violet-200' : 'border-slate-200 dark:border-white/10 text-slate-500')}>CSV</button>
         </div>
 
         <Textarea
-          rows={10}
+          rows={12}
           value={payload}
           onChange={e => setPayload(e.target.value)}
-          placeholder={format === 'json' ? sampleJson : sampleCsv}
+          placeholder={sample}
           className="font-mono text-xs"
         />
 
         {error && <p className="mt-2 text-xs text-rose-500">{error}</p>}
 
         <div className="mt-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 p-3 text-xs text-slate-500 space-y-1">
-          <p><strong>Formato JSON:</strong> array de objetos com <code>front.text</code>, <code>back.text</code>, <code>comment</code>, <code>kind</code> ('standard' ou 'hidden_word'), <code>hiddenWord</code>.</p>
-          <p><strong>Formato CSV:</strong> cabeçalhos: <code>front, back, comment, hiddenWord, hint</code> (ou <code>frente, verso, comentario, palavra_oculta, dica</code>).</p>
+          {format === 'markdown' && (
+            <>
+              <p><strong>Formato Markdown:</strong> ideal para importar a partir de LLMs (ChatGPT, Claude, etc.).</p>
+              <p>Cada cartão usa <code>## Frente</code>, <code>## Verso</code> e opcionalmente <code>## Comentário</code>. Separe os cartões com <code>---</code>.</p>
+            </>
+          )}
+          {format === 'json' && (
+            <p><strong>Formato JSON:</strong> array de objetos com <code>front.text</code>, <code>back.text</code>, <code>comment</code>, <code>kind</code> ('standard' ou 'hidden_word'), <code>hiddenWord</code>.</p>
+          )}
+          {format === 'csv' && (
+            <p><strong>Formato CSV:</strong> cabeçalhos: <code>front, back, comment, hiddenWord, hint</code> (ou <code>frente, verso, comentario, palavra_oculta, dica</code>).</p>
+          )}
         </div>
 
         <div className="mt-5 flex justify-end gap-2">

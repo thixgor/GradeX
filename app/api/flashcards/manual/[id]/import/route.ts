@@ -75,6 +75,47 @@ function splitCsvLine(line: string): string[] {
   return out.map(c => c.trim())
 }
 
+function parseMarkdown(text: string): ImportCard[] {
+  // Split blocks by horizontal rules (--- or ***)
+  const blocks = text.split(/\n[ \t]*---+[ \t]*\n|\n[ \t]*\*\*\*+[ \t]*\n/)
+  const cards: ImportCard[] = []
+
+  for (const block of blocks) {
+    const trimmed = block.trim()
+    if (!trimmed) continue
+
+    // Find all ## headings and their content
+    const sections: Record<string, string> = {}
+    const headingRegex = /^#{1,3}\s+(.+)$/gm
+    const matches: Array<{ key: string; endIndex: number; startIndex: number }> = []
+    let m: RegExpExecArray | null
+
+    while ((m = headingRegex.exec(trimmed)) !== null) {
+      matches.push({ key: m[1].trim(), startIndex: m.index, endIndex: m.index + m[0].length })
+    }
+
+    for (let i = 0; i < matches.length; i++) {
+      const { key, endIndex } = matches[i]
+      const nextStart = i + 1 < matches.length ? matches[i + 1].startIndex : trimmed.length
+      sections[key.toLowerCase()] = trimmed.slice(endIndex, nextStart).trim()
+    }
+
+    const front = sections['frente'] || sections['front'] || ''
+    const back = sections['verso'] || sections['back'] || ''
+    const comment = sections['comentário'] || sections['comentario'] || sections['comment'] || ''
+
+    if (front || back) {
+      cards.push({
+        front,
+        back,
+        comment: comment || undefined,
+      })
+    }
+  }
+
+  return cards
+}
+
 function normalizeSide(value: any): { text: string; image?: string } {
   if (typeof value === 'string') return sanitizeCardSide({ text: value })
   return sanitizeCardSide(value || {})
@@ -98,12 +139,14 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     }
 
     const body = await request.json()
-    const format = body.format === 'csv' ? 'csv' : 'json'
+    const format = body.format === 'csv' ? 'csv' : body.format === 'markdown' ? 'markdown' : 'json'
     const text = String(body.payload || '')
     let parsed: ImportCard[] = []
     try {
       if (format === 'csv') {
         parsed = parseCsv(text)
+      } else if (format === 'markdown') {
+        parsed = parseMarkdown(text)
       } else {
         const json = typeof body.payload === 'string' ? JSON.parse(body.payload) : body.payload
         parsed = Array.isArray(json) ? json : []
