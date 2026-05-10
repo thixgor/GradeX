@@ -9,7 +9,7 @@
 
 import { ObjectId } from 'mongodb'
 import { getDb } from '../mongodb'
-import { sendPlanPurchasedEmail } from '../mail'
+import { sendPlanPurchasedEmail, sendDonationThanksEmail, sendMaterialPurchasedEmail } from '../mail'
 import { getPersonalExamsQuota } from '../tier-limits'
 import type {
   PaymentOrder,
@@ -194,7 +194,8 @@ async function applyPlanPurchase(order: PaymentOrder) {
     user.email,
     user.name,
     planoConfig.nome || 'Plano Premium',
-    planoConfig.durationMonths || 0
+    planoConfig.durationMonths || 0,
+    order.amount
   ).catch(err => console.error('[effects] e-mail plano falhou:', err))
 }
 
@@ -247,6 +248,15 @@ async function applyMaterialPurchase(order: PaymentOrder) {
     resourceId: order.refId,
     metadata: { orderId: String(order._id), amount: order.amount },
   })
+
+  if (order.payerEmail) {
+    sendMaterialPurchasedEmail(
+      order.payerEmail,
+      order.payerName || '',
+      item.title || 'Material',
+      order.amount
+    ).catch(err => console.error('[effects] e-mail material falhou:', err))
+  }
 }
 
 // ── Doação ──
@@ -294,6 +304,25 @@ async function applyDonationApproved(order: PaymentOrder, _result: ProviderOrder
     resourceId: String(donation._id),
     metadata: { orderId: String(order._id), amount: donation.amount },
   })
+
+  // Envia comprovante para o e-mail do doador (se informado) ou do usuário logado
+  const donorEmail = donation.email
+  const donorName = donation.apelido || donation.nomeCompleto || 'Apoiador'
+  if (donorEmail) {
+    sendDonationThanksEmail(donorEmail, donorName, donation.amount, donation.paidAt).catch(
+      err => console.error('[effects] e-mail doação falhou:', err)
+    )
+  } else if (donation.userId) {
+    // Tenta buscar o e-mail do usuário autenticado
+    getDb().then(async db => {
+      const user = await db.collection<User>('users').findOne({ _id: new ObjectId(donation.userId!) as any })
+      if (user?.email) {
+        sendDonationThanksEmail(user.email, user.name || donorName, donation.amount, donation.paidAt).catch(
+          err => console.error('[effects] e-mail doação (user) falhou:', err)
+        )
+      }
+    }).catch(() => {})
+  }
 }
 
 // ── Pagamento recorrente (preapproval) ──

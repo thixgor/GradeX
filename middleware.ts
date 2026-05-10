@@ -22,6 +22,7 @@ const publicPrefixes = [
   '/api/webhooks/mercadopago',
   '/api/payments/public-key',
   '/api/donations/checkout',
+  '/api/payments/orders',
   '/api/cron/',
   '/api/leads/',
   '/api/study-playlists',

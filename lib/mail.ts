@@ -173,16 +173,31 @@ export async function sendAccountDeletedEmail(email: string, name: string) {
   })
 }
 
-export async function sendPlanPurchasedEmail(email: string, name: string, planName: string, durationMonths: number) {
+export async function sendPlanPurchasedEmail(
+  email: string,
+  name: string,
+  planName: string,
+  durationMonths: number,
+  amount?: number
+) {
   const firstName = name.split(' ')[0]
   const durationText = durationMonths === 0 || durationMonths > 300 ? 'Vitalício' : `${durationMonths} meses`
+  const amountLine = amount
+    ? `<p style="font-size:14px;color:#718096;">Valor cobrado: <strong style="color:#0f3d2e;">R$ ${amount.toFixed(2).replace('.', ',')}</strong></p>`
+    : ''
 
   const content = `
     <h1 class="h1">Você agora é Premium! 🎉</h1>
     <p>Olá, ${firstName}!</p>
     <p>Estamos muito felizes em ter você como aluno Premium no <strong>DomineAqui</strong>.</p>
-    <p>Seu plano <strong>${planName}</strong> (${durationText}) foi ativado com sucesso.</p>
-    
+
+    <div style="background-color: #f0faf4; border: 1px solid #c6f0d8; border-radius: 10px; padding: 18px 20px; margin: 20px 0;">
+      <p style="margin: 0 0 6px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #43a047; font-weight: 700;">Comprovante de Pagamento</p>
+      <p style="margin: 0 0 4px 0; font-size: 16px; font-weight: 700; color: #0f3d2e;">${planName} — ${durationText}</p>
+      ${amountLine}
+      <p style="margin: 4px 0 0 0; font-size: 13px; color: #718096;">Data: ${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+    </div>
+
     <div style="background-color: #e8f5e9; border-left: 4px solid #43a047; padding: 15px; margin: 20px 0; border-radius: 4px;">
       <p style="margin: 0; color: #1b5e20;"><strong>Agora você tem acesso a:</strong></p>
       <ul style="margin-top: 10px; margin-bottom: 0; padding-left: 20px;">
@@ -206,6 +221,84 @@ export async function sendPlanPurchasedEmail(email: string, name: string, planNa
     from: '"DomineAqui" <no-reply@domineaqui.com.br>',
     to: email,
     subject: 'Parabéns! Sua jornada Premium começou 🚀',
+    html,
+  })
+}
+
+export async function sendDonationThanksEmail(
+  email: string,
+  name: string,
+  amount: number,
+  paidAt?: Date
+) {
+  const firstName = name && name !== 'Anônimo' ? name.split(' ')[0] : 'Apoiador'
+  const dateStr = (paidAt || new Date()).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
+
+  const content = `
+    <h1 class="h1">Obrigado pelo seu apoio! ❤️</h1>
+    <p>Olá, ${firstName}!</p>
+    <p>Recebemos sua doação com sucesso. Muito obrigado por acreditar no projeto e ajudar a manter a plataforma acessível para milhares de estudantes!</p>
+
+    <div style="background-color: #fff5f5; border: 1px solid #fed7d7; border-radius: 10px; padding: 18px 20px; margin: 20px 0;">
+      <p style="margin: 0 0 6px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #e53e3e; font-weight: 700;">Comprovante de Doação</p>
+      <p style="margin: 0 0 4px 0; font-size: 22px; font-weight: 800; color: #c53030;">R$ ${amount.toFixed(2).replace('.', ',')}</p>
+      <p style="margin: 4px 0 0 0; font-size: 13px; color: #718096;">Data: ${dateStr}</p>
+    </div>
+
+    <p>Sua doação contribui diretamente para:</p>
+    <ul style="padding-left: 20px; color: #4a5568;">
+      <li>Manutenção dos servidores e infraestrutura</li>
+      <li>Desenvolvimento de novos conteúdos e funcionalidades</li>
+      <li>Manter o acesso gratuito para quem não pode pagar</li>
+    </ul>
+
+    <p>Você pode acompanhar seu nome no <a href="${process.env.NEXT_PUBLIC_APP_URL}/doar" style="color: #0f3d2e; font-weight: bold;">ranking de doadores</a>.</p>
+
+    <p>Com carinho,<br><strong>Equipe DomineAqui</strong></p>
+  `
+
+  const html = getEmailTemplate('Obrigado pelo seu apoio!', content)
+
+  await transporter.sendMail({
+    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+    to: email,
+    subject: `Obrigado pela sua doação de R$ ${amount.toFixed(2).replace('.', ',')} 💚`,
+    html,
+  })
+}
+
+export async function sendMaterialPurchasedEmail(
+  email: string,
+  name: string,
+  itemTitle: string,
+  amount: number
+) {
+  const firstName = name ? name.split(' ')[0] : 'Aluno'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
+
+  const content = `
+    <h1 class="h1">Material liberado! 📚</h1>
+    <p>Olá, ${firstName}!</p>
+    <p>Seu pagamento foi confirmado e o acesso ao material foi liberado. Bons estudos!</p>
+
+    <div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 18px 20px; margin: 20px 0;">
+      <p style="margin: 0 0 6px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #d97706; font-weight: 700;">Comprovante de Compra</p>
+      <p style="margin: 0 0 4px 0; font-size: 16px; font-weight: 700; color: #92400e;">${itemTitle}</p>
+      <p style="margin: 4px 0 2px 0; font-size: 15px; font-weight: 700; color: #0f3d2e;">R$ ${amount.toFixed(2).replace('.', ',')}</p>
+      <p style="margin: 4px 0 0 0; font-size: 13px; color: #718096;">Data: ${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+    </div>
+
+    <div style="text-align: center;">
+      <a href="${appUrl}/materiais" class="button" target="_blank">Acessar Meus Materiais</a>
+    </div>
+  `
+
+  const html = getEmailTemplate('Material Liberado! 📚', content)
+
+  await transporter.sendMail({
+    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+    to: email,
+    subject: `Acesso liberado: ${itemTitle}`,
     html,
   })
 }
