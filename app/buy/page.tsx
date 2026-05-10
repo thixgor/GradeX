@@ -9,6 +9,7 @@ import {
   ArrowLeft,
 } from 'lucide-react'
 import { PlanConfig } from '@/lib/types'
+import { AppShell } from '@/components/app-shell'
 
 /* ─── Paleta Irish Glassmorphism ─────────────────────────── */
 const G = {
@@ -96,6 +97,14 @@ function getPlanMonthly(plan: Plan): string | null {
 }
 
 export default function BuyPage() {
+  return (
+    <AppShell>
+      <BuyContent />
+    </AppShell>
+  )
+}
+
+function BuyContent() {
   const router = useRouter()
   const [selecting, setSelecting] = useState<string | null>(null)
   const [hasActiveSub, setHasActiveSub] = useState(false)
@@ -116,7 +125,7 @@ export default function BuyPage() {
 
   async function loadPlans() {
     try {
-      const res = await fetch('/api/admin/settings/planos')
+      const res = await fetch('/api/plans')
       if (!res.ok) return
       const data = await res.json()
       if (data.planos?.length > 0) {

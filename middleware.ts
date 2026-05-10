@@ -23,6 +23,7 @@ const publicPrefixes = [
   '/api/payments/public-key',
   '/api/donations/checkout',
   '/api/payments/orders',
+  '/api/plans',
   '/api/cron/',
   '/api/leads/',
   '/api/study-playlists',

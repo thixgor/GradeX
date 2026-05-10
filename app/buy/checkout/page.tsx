@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Loader2, ChevronLeft, CreditCard, Zap, CheckCircle2, Star } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
 import type { PlanConfig } from '@/lib/types'
+import { AppShell } from '@/components/app-shell'
 
 type PayMode = 'subscription' | 'one_time'
 
@@ -45,6 +46,14 @@ const modeCard = (active: boolean): React.CSSProperties => ({
 })
 
 export default function BuyCheckoutPage() {
+  return (
+    <AppShell>
+      <BuyCheckoutContent />
+    </AppShell>
+  )
+}
+
+function BuyCheckoutContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const planId = searchParams.get('plan') || ''
@@ -62,7 +71,7 @@ export default function BuyCheckoutPage() {
       return
     }
     Promise.all([
-      fetch('/api/admin/settings/planos').then(r => r.json()),
+      fetch('/api/plans').then(r => r.json()),
       fetch('/api/payments/public-key').then(r => r.json()),
     ])
       .then(([planosResp, pkResp]) => {
