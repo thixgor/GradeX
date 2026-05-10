@@ -1,12 +1,55 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
-import { User, AccountType, TrialPlanType, PremiumPlanType } from '@/lib/types'
+import { User, AccountType, TrialPlanType, PremiumPlanType, SubscriptionRecord } from '@/lib/types'
 import { getPersonalExamsQuota } from '@/lib/tier-limits'
 import { ObjectId } from 'mongodb'
 import { sendAccountDeletedEmail } from '@/lib/mail'
 import { secureApiEndpoint, canAdminModifyUser } from '@/lib/api-security'
+import { getPaymentProvider } from '@/lib/payments'
 
 export const dynamic = 'force-dynamic'
+
+/**
+ * Cancela o preapproval do Mercado Pago e marca o registro na coleção subscriptions
+ * como cancelled. Usado quando o admin revoga o acesso premium, bane ou deleta um usuário.
+ * Fire-and-forget — não lança exceção se o MP falhar (registra intenção mesmo assim).
+ */
+async function cancelUserMpSubscription(userId: string): Promise<void> {
+  const db = await getDb()
+  const activeSub = await db.collection<SubscriptionRecord>('subscriptions').findOne({
+    userId,
+    status: { $in: ['authorized', 'pending', 'paused'] },
+  })
+  if (!activeSub) return
+
+  try {
+    const provider = getPaymentProvider()
+    await provider.cancelPreapproval(activeSub.providerSubscriptionId)
+  } catch (err: any) {
+    console.error('[admin] cancelPreapproval no MP falhou (registrando intenção):', err?.message)
+  }
+
+  await db.collection<SubscriptionRecord>('subscriptions').updateOne(
+    { _id: activeSub._id as any },
+    {
+      $set: {
+        status: 'cancelled',
+        cancelAtPeriodEnd: false,
+        canceledAt: new Date(),
+        updatedAt: new Date(),
+      },
+    }
+  )
+}
+
+/** Meses de duração por tipo de plano premium */
+const PLAN_DURATION_MONTHS: Record<string, number | null> = {
+  mensal: 1,
+  trimestral: 3,
+  semestral: 6,
+  anual: 12,
+  vitalicio: null, // sem expiração
+}
 
 // DELETE - Deletar usuário
 export async function DELETE(
@@ -16,63 +59,45 @@ export async function DELETE(
   try {
     const { id } = await params
 
-    // Verificar rate limit e autorizacao
     const security = await secureApiEndpoint(request, {
       rateLimit: 'ADMIN',
-      auth: {
-        requireAuth: true,
-        allowedRoles: ['admin']
-      }
+      auth: { requireAuth: true, allowedRoles: ['admin'] },
     })
-
-    if (!security.success || security.errorResponse) {
-      return security.errorResponse
-    }
+    if (!security.success || security.errorResponse) return security.errorResponse
 
     const session = security.session!
-
-    // Verificar se pode modificar o usuario alvo (protege admin de deletar admin)
     const canModify = await canAdminModifyUser(session.userId, id, 'delete')
     if (!canModify.allowed) {
-      return NextResponse.json(
-        { error: canModify.reason },
-        { status: 403 }
-      )
+      return NextResponse.json({ error: canModify.reason }, { status: 403 })
     }
 
     const db = await getDb()
     const usersCollection = db.collection<User>('users')
-    const submissionsCollection = db.collection('submissions')
 
     const user = await usersCollection.findOne({ _id: new ObjectId(id) })
-    if (!user) {
-      return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
-    }
+    if (!user) return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
 
-    // Deletar todas as submissões do usuário
-    await submissionsCollection.deleteMany({ userId: id })
+    // 1. Cancela preapproval ativo no MP antes de deletar
+    await cancelUserMpSubscription(id)
 
-    // Enviar email notificando a exclusão
+    // 2. Remove registros de assinatura órfãos
+    await db.collection('subscriptions').deleteMany({ userId: id })
+
+    // 3. Deleta submissões
+    await db.collection('submissions').deleteMany({ userId: id })
+
+    // 4. Notifica por email (best-effort)
     try {
       await sendAccountDeletedEmail(user.email, user.name)
-    } catch (error) {
-      console.error('Erro ao enviar email de exclusão:', error)
-      // Não impede a deleção se o email falhar
-    }
+    } catch {}
 
-    // Deletar o usuário
+    // 5. Deleta o usuário
     await usersCollection.deleteOne({ _id: new ObjectId(id) })
 
-    return NextResponse.json({
-      success: true,
-      message: 'Usuário deletado com sucesso'
-    })
+    return NextResponse.json({ success: true, message: 'Usuário deletado com sucesso' })
   } catch (error) {
     console.error('Delete user error:', error)
-    return NextResponse.json(
-      { error: 'Erro ao deletar usuário' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Erro ao deletar usuário' }, { status: 500 })
   }
 }
 
@@ -84,39 +109,35 @@ export async function PATCH(
   try {
     const { id } = await params
 
-    // Verificar rate limit e autorizacao
     const security = await secureApiEndpoint(request, {
       rateLimit: 'ADMIN',
-      auth: {
-        requireAuth: true,
-        allowedRoles: ['admin']
-      }
+      auth: { requireAuth: true, allowedRoles: ['admin'] },
     })
-
-    if (!security.success || security.errorResponse) {
-      return security.errorResponse
-    }
+    if (!security.success || security.errorResponse) return security.errorResponse
 
     const session = security.session!
 
     const body = await request.json()
-    const { action, banReason, banDetails, accountType, trialPlanType, premiumPlanType, dailyPersonalExamsCreated, secondaryRole } = body
+    const {
+      action,
+      banReason,
+      banDetails,
+      accountType,
+      trialPlanType,
+      premiumPlanType,
+      dailyPersonalExamsCreated,
+      secondaryRole,
+    } = body
 
-    if (!action || !['ban', 'unban', 'update_tier', 'update_quota', 'toggle_monitor'].includes(action)) {
-      return NextResponse.json(
-        { error: 'Ação inválida. Use "ban", "unban", "update_tier", "update_quota" ou "toggle_monitor"' },
-        { status: 400 }
-      )
+    const VALID_ACTIONS = ['ban', 'unban', 'update_tier', 'update_quota', 'toggle_monitor']
+    if (!action || !VALID_ACTIONS.includes(action)) {
+      return NextResponse.json({ error: 'Ação inválida' }, { status: 400 })
     }
 
-    // Verificar se pode modificar o usuario alvo para acoes de ban
     if (action === 'ban') {
       const canModify = await canAdminModifyUser(session.userId, id, 'ban')
       if (!canModify.allowed) {
-        return NextResponse.json(
-          { error: canModify.reason },
-          { status: 403 }
-        )
+        return NextResponse.json({ error: canModify.reason }, { status: 403 })
       }
     }
 
@@ -124,135 +145,145 @@ export async function PATCH(
     const usersCollection = db.collection<User>('users')
 
     const user = await usersCollection.findOne({ _id: new ObjectId(id) })
-    if (!user) {
-      return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
-    }
+    if (!user) return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
 
     let updateData: Partial<User> = {}
-    let successMessage: string = ''
+    let successMessage = ''
 
     if (action === 'ban') {
       if (!banReason) {
-        return NextResponse.json(
-          { error: 'Motivo do banimento é obrigatório' },
-          { status: 400 }
-        )
+        return NextResponse.json({ error: 'Motivo do banimento é obrigatório' }, { status: 400 })
       }
-
+      // Cancela assinatura MP ao banir
+      await cancelUserMpSubscription(id)
       updateData = {
         banned: true,
         banReason,
         banDetails: banDetails || '',
         bannedBy: session.userId,
-        bannedAt: new Date()
+        bannedAt: new Date(),
+        mercadoPagoPreapprovalId: undefined,
       }
       successMessage = 'Usuário banido com sucesso'
+
     } else if (action === 'unban') {
       updateData = {
         banned: false,
         banReason: undefined,
         banDetails: undefined,
         bannedBy: undefined,
-        bannedAt: undefined
+        bannedAt: undefined,
       }
       successMessage = 'Usuário desbanido com sucesso'
+
     } else if (action === 'update_tier') {
-      // update_tier
-      if (!accountType || !['gratuito', 'trial', 'premium'].includes(accountType)) {
-        return NextResponse.json(
-          { error: 'Tipo de conta inválido' },
-          { status: 400 }
-        )
+      const VALID_TYPES = ['gratuito', 'trial', 'premium', 'essential']
+      if (!accountType || !VALID_TYPES.includes(accountType)) {
+        return NextResponse.json({ error: 'Tipo de conta inválido' }, { status: 400 })
       }
 
-      // Definir quotas baseado no tipo de conta
       const newQuota = getPersonalExamsQuota(accountType as AccountType)
 
+      // Se o usuário tem assinatura recorrente ativa e está sendo rebaixado (ou mudando de plano),
+      // cancelar o preapproval no MP para evitar cobranças futuras.
+      const isLosingPremium = accountType !== 'premium' && accountType !== 'essential'
+      const isChangingPremiumPlan =
+        (accountType === 'premium' || accountType === 'essential') &&
+        user.mercadoPagoPreapprovalId
+      if (isLosingPremium || isChangingPremiumPlan) {
+        await cancelUserMpSubscription(id)
+      }
+
       if (accountType === 'trial') {
-        // Calcular duração baseado no subtipo
-        let durationMs = 7 * 24 * 60 * 60 * 1000 // 7 dias padrão
-        if (trialPlanType === 'teste') {
-          durationMs = 2 * 60 * 1000 // 2 minutos
-        }
-
-        const expirationDate = new Date(Date.now() + durationMs)
+        let durationMs = 7 * 24 * 60 * 60 * 1000
+        if (trialPlanType === 'teste') durationMs = 2 * 60 * 1000
 
         updateData = {
-          accountType: accountType as AccountType,
+          accountType: 'trial',
           trialPlanType: (trialPlanType || '7dias') as TrialPlanType,
-          trialExpiresAt: expirationDate,
+          trialExpiresAt: new Date(Date.now() + durationMs),
           trialActivatedAt: new Date(),
+          premiumExpiresAt: undefined,
+          premiumPlanType: undefined,
+          mercadoPagoPreapprovalId: undefined,
           dailyPersonalExamsCreated: 0,
           dailyPersonalExamsRemaining: newQuota,
-          lastDailyReset: new Date()
+          lastDailyReset: new Date(),
         }
-      } else if (accountType === 'premium') {
+      } else if (accountType === 'premium' || accountType === 'essential') {
+        const planType = (premiumPlanType || 'vitalicio') as PremiumPlanType
+        const durationMonths = PLAN_DURATION_MONTHS[planType] ?? null
+
+        let premiumExpiresAt: Date | undefined = undefined
+        if (durationMonths !== null) {
+          premiumExpiresAt = new Date()
+          premiumExpiresAt.setMonth(premiumExpiresAt.getMonth() + durationMonths)
+        }
+
         updateData = {
           accountType: accountType as AccountType,
-          premiumPlanType: (premiumPlanType || 'mensal') as PremiumPlanType,
+          premiumPlanType: planType,
           premiumActivatedAt: new Date(),
-          // Para premium, se não tiver expiresAt, considerar como vitalício
-          // A verificação de expiração é feita na API de subscription-status
+          premiumExpiresAt,
+          trialExpiresAt: undefined,
+          trialPlanType: undefined,
+          mercadoPagoPreapprovalId: undefined, // admin grant não tem preapproval
           dailyPersonalExamsCreated: 0,
           dailyPersonalExamsRemaining: newQuota,
-          lastDailyReset: new Date()
+          lastDailyReset: new Date(),
         }
       } else {
         // gratuito
         updateData = {
-          accountType: accountType as AccountType,
+          accountType: 'gratuito',
           trialExpiresAt: undefined,
           trialPlanType: undefined,
           premiumExpiresAt: undefined,
           premiumPlanType: undefined,
+          mercadoPagoPreapprovalId: undefined,
           dailyPersonalExamsCreated: 0,
           dailyPersonalExamsRemaining: newQuota,
-          lastDailyReset: new Date()
+          lastDailyReset: new Date(),
         }
       }
 
       successMessage = 'Plano do usuário atualizado com sucesso'
-    } else if (action === 'update_quota') {
-      // update_quota
-      // dailyPersonalExamsCreated aqui representa o número de provas RESTANTES que o admin quer dar
-      if (typeof dailyPersonalExamsCreated !== 'number' || dailyPersonalExamsCreated < 0) {
-        return NextResponse.json(
-          { error: 'Valor de quota inválido' },
-          { status: 400 }
-        )
-      }
 
+    } else if (action === 'update_quota') {
+      if (typeof dailyPersonalExamsCreated !== 'number' || dailyPersonalExamsCreated < 0) {
+        return NextResponse.json({ error: 'Valor de quota inválido' }, { status: 400 })
+      }
       updateData = {
         dailyPersonalExamsRemaining: dailyPersonalExamsCreated,
-        lastDailyReset: new Date()
+        lastDailyReset: new Date(),
       }
-
       successMessage = 'Quotas do usuário atualizadas com sucesso'
-    } else if (action === 'toggle_monitor') {
-      // toggle_monitor
-      updateData = {
-        secondaryRole: secondaryRole || undefined
-      }
 
+    } else if (action === 'toggle_monitor') {
+      updateData = { secondaryRole: secondaryRole || undefined }
       successMessage = secondaryRole === 'monitor'
         ? 'Usuário promovido a Monitor com sucesso'
         : 'Cargo de Monitor removido com sucesso'
     }
 
+    // Remover campos undefined do $set; campos undefined viram $unset
+    const cleanSet = Object.fromEntries(
+      Object.entries(updateData).filter(([, v]) => v !== undefined)
+    )
+    const unsetKeys = Object.keys(updateData).filter(k => (updateData as any)[k] === undefined)
+    const cleanUnset = Object.fromEntries(unsetKeys.map(k => [k, 1 as const]))
+
     await usersCollection.updateOne(
       { _id: new ObjectId(id) },
-      { $set: updateData }
+      {
+        ...(Object.keys(cleanSet).length > 0 ? { $set: cleanSet as any } : {}),
+        ...(unsetKeys.length > 0 ? { $unset: cleanUnset } : {}),
+      }
     )
 
-    return NextResponse.json({
-      success: true,
-      message: successMessage
-    })
+    return NextResponse.json({ success: true, message: successMessage })
   } catch (error) {
     console.error('Update user error:', error)
-    return NextResponse.json(
-      { error: 'Erro ao atualizar usuário' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Erro ao atualizar usuário' }, { status: 500 })
   }
 }
