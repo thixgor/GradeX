@@ -125,10 +125,19 @@ export async function POST(request: NextRequest): Promise<Response> {
 
         const maxBytes = getMaxUploadBytes()
 
+        // Origens permitidas para o upload direto ao Vercel Blob.
+        // Inclui o domínio de produção configurado via env para evitar bloqueio de CORS.
+        const allowedOrigins = [
+          ...(process.env.NEXT_PUBLIC_APP_URL ? [process.env.NEXT_PUBLIC_APP_URL] : []),
+          ...(process.env.BLOB_ALLOWED_ORIGINS
+            ? process.env.BLOB_ALLOWED_ORIGINS.split(',').map((o) => o.trim()).filter(Boolean)
+            : []),
+        ]
+
         return {
           allowedContentTypes: ['application/pdf'],
           maximumSizeInBytes: maxBytes,
-          // Caminho no Vercel Blob (não-adivinháveldesde fora)
+          // Caminho no Vercel Blob (não-adivinhável desde fora)
           pathname: `material-originals/${materialId}/${Date.now()}-${crypto.randomUUID()}.pdf`,
           // Passar dados para o callback
           tokenPayload: JSON.stringify({
@@ -138,6 +147,7 @@ export async function POST(request: NextRequest): Promise<Response> {
             fileSize,
           }),
           addRandomSuffix: false,
+          ...(allowedOrigins.length > 0 && { allowedOrigins }),
         }
       },
 
