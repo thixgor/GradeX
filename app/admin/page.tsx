@@ -27,6 +27,7 @@ import {
   Music,
   HeartPulse,
   ShoppingCart,
+  BadgeDollarSign,
 } from 'lucide-react'
 
 interface User {
@@ -104,6 +105,13 @@ export default function AdminDashboard() {
       icon: BarChart3,
       href: '/admin/stats',
       color: 'from-orange-500 to-red-500'
+    },
+    {
+      title: 'Receita e Assinantes',
+      description: 'Painel administrativo com receita estimada, crescimento de assinantes e cenário manual editável.',
+      icon: BadgeDollarSign,
+      href: '/admin/receita',
+      color: 'from-emerald-500 to-teal-500'
     },
     {
       title: 'Configurações',

@@ -279,9 +279,10 @@ export function Sidebar({
 
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(_lastClickedIndex)
   const [isInNav, setIsInNav] = useState(_mouseInsideSidebar)
-  const [isTouching, setIsTouching] = useState(false)
+  const [canCollapse, setCanCollapse] = useState(false)
 
   const isAdmin = user?.role === 'admin'
+  const isCollapsed = !!collapsed && canCollapse
 
   const mainNavItems: NavItem[] = [
     { icon: <Home className="h-5 w-5" />, label: 'Início', href: '/dashboard' },
@@ -338,42 +339,6 @@ export function Sidebar({
     setHoveredIndex(null)
   }, [])
 
-  const findItemIndexAtY = useCallback((clientY: number) => {
-    if (!navRef.current) return null
-    const items = navRef.current.querySelectorAll<HTMLElement>('[data-nav-item]')
-    for (let i = 0; i < items.length; i++) {
-      const rect = items[i].getBoundingClientRect()
-      if (clientY >= rect.top && clientY <= rect.bottom) return i
-    }
-    return null
-  }, [])
-
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    e.preventDefault()
-    setIsTouching(true)
-    const touch = e.touches[0]
-    const idx = findItemIndexAtY(touch.clientY)
-    if (idx !== null) setHoveredIndex(idx)
-  }, [findItemIndexAtY])
-
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    e.preventDefault()
-    const touch = e.touches[0]
-    const idx = findItemIndexAtY(touch.clientY)
-    if (idx !== null) setHoveredIndex(idx)
-  }, [findItemIndexAtY])
-
-  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
-    e.preventDefault()
-    if (hoveredIndex !== null && navRef.current) {
-      const items = navRef.current.querySelectorAll<HTMLElement>('[data-nav-item]')
-      const item = items[hoveredIndex]
-      if (item) item.click()
-    }
-    setIsTouching(false)
-    setHoveredIndex(null)
-  }, [hoveredIndex])
-
   useEffect(() => {
     if (_lastClickedIndex !== null) {
       setIsInNav(true)
@@ -391,7 +356,16 @@ export function Sidebar({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname])
 
-  const bubbleVisible = isInNav || isTouching
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const media = window.matchMedia('(min-width: 1024px)')
+    const update = () => setCanCollapse(media.matches)
+    update()
+    media.addEventListener('change', update)
+    return () => media.removeEventListener('change', update)
+  }, [])
+
+  const bubbleVisible = isInNav
 
   return (
     <>
@@ -412,7 +386,7 @@ export function Sidebar({
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-50 h-[100dvh] max-h-[100dvh] bg-background border-r flex flex-col overflow-hidden',
+          'fixed inset-y-0 left-0 z-50 h-screen min-h-[100svh] max-h-[100dvh] bg-background border-r flex flex-col overflow-hidden',
           collapsed ? 'lg:w-[72px]' : 'lg:w-[280px]',
           'w-[280px]',
           isOpen ? 'translate-x-0' : '-translate-x-full',
@@ -426,10 +400,10 @@ export function Sidebar({
         <div
           className="border-b flex items-center shrink-0"
           style={{
-            padding: collapsed ? '12px 8px' : '16px',
-            justifyContent: collapsed ? 'center' : 'space-between',
-            flexDirection: collapsed ? 'column' : 'row',
-            gap: collapsed ? 8 : 0,
+            padding: isCollapsed ? '12px 8px' : '16px',
+            justifyContent: isCollapsed ? 'center' : 'space-between',
+            flexDirection: isCollapsed ? 'column' : 'row',
+            gap: isCollapsed ? 8 : 0,
             transition: `padding ${SB_DUR} ${SB_EASE}`,
           }}
         >
@@ -441,7 +415,7 @@ export function Sidebar({
             transition={{ type: 'spring', stiffness: 400, damping: 20 }}
           >
             <AnimatePresence mode="wait" initial={false}>
-              {collapsed ? (
+              {isCollapsed ? (
                 <motion.div
                   key="icon"
                   initial={{ opacity: 0, scale: 0.7, rotate: -10 }}
@@ -489,7 +463,7 @@ export function Sidebar({
 
         {/* User Info */}
         <AnimatePresence initial={false}>
-          {user && !collapsed && (
+          {user && !isCollapsed && (
             <motion.div
               className="p-4 border-b overflow-hidden shrink-0"
               initial={{ opacity: 0, height: 0 }}
@@ -526,10 +500,10 @@ export function Sidebar({
               disabled={tierLimitExceeded}
               className="w-full bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90 text-white font-semibold soul-light soul-light-brand overflow-hidden"
               style={{
-                justifyContent: collapsed ? 'center' : 'flex-start',
-                gap: collapsed ? 0 : 12,
-                paddingLeft: collapsed ? 0 : undefined,
-                paddingRight: collapsed ? 0 : undefined,
+                justifyContent: isCollapsed ? 'center' : 'flex-start',
+                gap: isCollapsed ? 0 : 12,
+                paddingLeft: isCollapsed ? 0 : undefined,
+                paddingRight: isCollapsed ? 0 : undefined,
                 transition: `gap ${SB_DUR} ${SB_EASE}, padding ${SB_DUR} ${SB_EASE}`,
               }}
             >
@@ -544,8 +518,8 @@ export function Sidebar({
               <span
                 className="whitespace-nowrap overflow-hidden"
                 style={{
-                  maxWidth: collapsed ? 0 : 150,
-                  opacity: collapsed ? 0 : 1,
+                  maxWidth: isCollapsed ? 0 : 150,
+                  opacity: isCollapsed ? 0 : 1,
                   transition: `opacity 200ms ${SB_EASE}, max-width ${SB_DUR} ${SB_EASE}`,
                 }}
               >
@@ -558,9 +532,9 @@ export function Sidebar({
           <div
             className="overflow-hidden"
             style={{
-              maxHeight: collapsed ? 0 : 30,
-              opacity: collapsed ? 0 : 1,
-              marginTop: collapsed ? 0 : 8,
+              maxHeight: isCollapsed ? 0 : 30,
+              opacity: isCollapsed ? 0 : 1,
+              marginTop: isCollapsed ? 0 : 8,
               transition: `max-height ${SB_DUR} ${SB_EASE}, opacity 200ms ${SB_EASE}, margin ${SB_DUR} ${SB_EASE}`,
             }}
           >
@@ -575,19 +549,16 @@ export function Sidebar({
         {/* ─── Navigation ─── */}
         <nav
           ref={navRef}
-          className="flex-1 min-h-0 px-3 py-2 overflow-y-auto overscroll-contain relative select-none"
-          style={{ touchAction: 'none' }}
+          className="flex-1 min-h-0 px-3 py-2 overflow-y-auto overscroll-contain relative select-none [-webkit-overflow-scrolling:touch]"
+          style={{ touchAction: 'pan-y' }}
           onMouseEnter={handleNavMouseEnter}
           onMouseLeave={handleNavMouseLeave}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
         >
           <FluidGlassBubble
             navRef={navRef}
             hoveredIndex={hoveredIndex}
             isVisible={bubbleVisible}
-            collapsed={!!collapsed}
+            collapsed={isCollapsed}
           />
 
           <div className="space-y-0.5">
@@ -597,7 +568,7 @@ export function Sidebar({
                 item={item}
                 index={index}
                 hoveredIndex={hoveredIndex}
-                collapsed={!!collapsed}
+                collapsed={isCollapsed}
                 isItemActive={isActive(item.href)}
                 onHover={setHoveredIndex}
                 onClick={() => handleNavClick(item, index)}
@@ -617,7 +588,7 @@ export function Sidebar({
                   item={item}
                   index={globalIndex}
                   hoveredIndex={hoveredIndex}
-                  collapsed={!!collapsed}
+                  collapsed={isCollapsed}
                   isItemActive={isActive(item.href)}
                   onHover={setHoveredIndex}
                   onClick={() => handleNavClick(item, globalIndex)}
@@ -632,7 +603,7 @@ export function Sidebar({
               item={{ icon: <LogOut className="h-5 w-5" />, label: 'Sair' }}
               index={logoutIndex}
               hoveredIndex={hoveredIndex}
-              collapsed={!!collapsed}
+              collapsed={isCollapsed}
               isItemActive={false}
               onHover={setHoveredIndex}
               onClick={onLogout}

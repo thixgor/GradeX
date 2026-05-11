@@ -56,6 +56,26 @@ type DeckWithId = FlashcardManualDeck & {
 type FolderWithId = FlashcardManualFolder & { _id: string }
 type Filter = 'all' | 'mine' | 'community' | 'store' | 'shared'
 
+const FILTERS: Filter[] = ['all', 'mine', 'community', 'store', 'shared']
+
+function parseSectionFromUrl(url: URL): Filter {
+  const hashValue = url.hash.replace(/^#/, '')
+  const value = (url.searchParams.get('section') || url.searchParams.get('tab') || url.searchParams.get('view') || hashValue || '').toLowerCase()
+  const aliases: Record<string, Filter> = {
+    tudo: 'all',
+    todos: 'all',
+    minhas: 'mine',
+    meus: 'mine',
+    loja: 'store',
+    oficial: 'store',
+    comunidade: 'community',
+    recebidos: 'shared',
+    compartilhados: 'shared',
+  }
+  const normalized = aliases[value] || value
+  return FILTERS.includes(normalized as Filter) ? normalized as Filter : 'all'
+}
+
 export default function FlashcardsHubPage() {
   const router = useRouter()
   const [filter, setFilter] = useState<Filter>('all')
@@ -76,6 +96,41 @@ export default function FlashcardsHubPage() {
   const [communitySort, setCommunitySort] = useState<'trending' | 'new' | 'featured'>('trending')
   const [adminFolders, setAdminFolders] = useState<FolderWithId[]>([])
   const [storeFolder, setStoreFolder] = useState<string | null>(null)
+
+  const syncStateFromUrl = useCallback(() => {
+    if (typeof window === 'undefined') return
+    const url = new URL(window.location.href)
+    const nextFilter = parseSectionFromUrl(url)
+    setFilter(nextFilter)
+    setStoreFolder(nextFilter === 'store' ? url.searchParams.get('folder') : null)
+  }, [])
+
+  const updateFlashcardsUrl = useCallback((nextFilter: Filter, nextStoreFolder?: string | null) => {
+    if (typeof window === 'undefined') return
+    const url = new URL(window.location.href)
+    if (nextFilter === 'all') url.searchParams.delete('section')
+    else url.searchParams.set('section', nextFilter)
+    url.searchParams.delete('tab')
+    url.searchParams.delete('view')
+
+    if (nextFilter === 'store' && nextStoreFolder) url.searchParams.set('folder', nextStoreFolder)
+    else url.searchParams.delete('folder')
+    url.hash = ''
+
+    window.history.pushState(null, '', `${url.pathname}${url.search}${url.hash}`)
+  }, [])
+
+  const selectSection = useCallback((nextFilter: Filter) => {
+    setFilter(nextFilter)
+    if (nextFilter !== 'store') setStoreFolder(null)
+    updateFlashcardsUrl(nextFilter, nextFilter === 'store' ? storeFolder : null)
+  }, [storeFolder, updateFlashcardsUrl])
+
+  const selectStoreFolder = useCallback((folderId: string | null) => {
+    setStoreFolder(folderId)
+    setFilter('store')
+    updateFlashcardsUrl('store', folderId)
+  }, [updateFlashcardsUrl])
 
   const loadMine = useCallback(async () => {
     try {
@@ -138,6 +193,12 @@ export default function FlashcardsHubPage() {
       } catch {}
     })()
   }, [])
+
+  useEffect(() => {
+    syncStateFromUrl()
+    window.addEventListener('popstate', syncStateFromUrl)
+    return () => window.removeEventListener('popstate', syncStateFromUrl)
+  }, [syncStateFromUrl])
 
   useEffect(() => {
     setLoading(true)
@@ -233,7 +294,7 @@ export default function FlashcardsHubPage() {
           <StoreHero
             decks={featuredStore}
             totalStore={store.length}
-            onSeeAll={() => setFilter('store')}
+            onSeeAll={() => selectSection('store')}
           />
         )}
 
@@ -242,7 +303,7 @@ export default function FlashcardsHubPage() {
           search={search}
           setSearch={setSearch}
           filter={filter}
-          setFilter={setFilter}
+          setFilter={selectSection}
           counts={counts}
           foldersOpen={foldersOpen}
           setFoldersOpen={setFoldersOpen}
@@ -271,7 +332,7 @@ export default function FlashcardsHubPage() {
                 subtitle={mine.length === 0 ? 'Você ainda não criou nenhum deck.' : `${mine.length} ${mine.length === 1 ? 'deck' : 'decks'}`}
                 icon={<Inbox className="h-5 w-5" />}
                 accent="from-violet-500 to-fuchsia-500"
-                action={mine.length > 6 && filter === 'all' ? <SectionLink onClick={() => setFilter('mine')}>Ver todos</SectionLink> : undefined}
+                action={mine.length > 6 && filter === 'all' ? <SectionLink onClick={() => selectSection('mine')}>Ver todos</SectionLink> : undefined}
               >
                 {mine.length === 0 ? (
                   <EmptyCallout
@@ -293,14 +354,14 @@ export default function FlashcardsHubPage() {
             )}
 
             {filter === 'store' && (
-              <div className={cn(adminFolderTree.length > 0 && 'grid lg:grid-cols-[240px,1fr] gap-6 items-start')}>
+              <div className={cn(adminFolderTree.length > 0 && 'grid lg:grid-cols-[270px,1fr] gap-5 lg:gap-6 items-start')}>
                 {/* Sidebar de pastas */}
                 {adminFolderTree.length > 0 && (
                   <StoreFolderNav
                     tree={adminFolderTree}
                     selected={storeFolder}
                     store={store}
-                    onSelect={setStoreFolder}
+                    onSelect={selectStoreFolder}
                   />
                 )}
 
@@ -311,7 +372,7 @@ export default function FlashcardsHubPage() {
                   icon={<Crown className="h-5 w-5" />}
                   accent="from-amber-500 to-orange-500"
                   action={storeFolder ? (
-                    <button onClick={() => setStoreFolder(null)} className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700 dark:hover:text-white transition">
+                    <button onClick={() => selectStoreFolder(null)} className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700 dark:hover:text-white transition">
                       <X className="h-3.5 w-3.5" /> Ver todos
                     </button>
                   ) : undefined}
@@ -349,7 +410,7 @@ export default function FlashcardsHubPage() {
                     ))}
                   </div>
                 }
-                action={community.length > 6 && filter === 'all' ? <SectionLink onClick={() => setFilter('community')}>Ver todos</SectionLink> : undefined}
+                action={community.length > 6 && filter === 'all' ? <SectionLink onClick={() => selectSection('community')}>Ver todos</SectionLink> : undefined}
               >
                 {community.length === 0 ? (
                   <EmptyCallout title="A comunidade está silenciosa" hint="Seja o primeiro a publicar um deck público." />
@@ -428,11 +489,20 @@ function StoreFolderNav({ tree, selected, store, onSelect }: {
   onSelect: (id: string | null) => void
 }) {
   return (
-    <aside className="rounded-3xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl shadow-sm sticky top-4 overflow-hidden">
-      <div className="px-4 py-3 border-b border-white/40 dark:border-white/10">
-        <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Navegar por pasta</p>
+    <aside className="relative overflow-hidden rounded-3xl border border-emerald-200/60 dark:border-emerald-400/15 bg-white/75 dark:bg-emerald-950/20 backdrop-blur-2xl shadow-xl shadow-emerald-900/5 lg:sticky lg:top-20">
+      <div aria-hidden className="absolute inset-0 bg-[linear-gradient(135deg,rgba(16,185,129,0.16),rgba(255,255,255,0.22)_42%,rgba(245,158,11,0.12))] dark:bg-[linear-gradient(135deg,rgba(16,185,129,0.16),rgba(15,23,42,0.30)_46%,rgba(245,158,11,0.10))]" />
+      <div className="relative px-4 py-3 border-b border-emerald-200/50 dark:border-emerald-400/10">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">Coleções oficiais</p>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400">{store.length} {store.length === 1 ? 'deck' : 'decks'} na loja</p>
+          </div>
+          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-200 ring-1 ring-emerald-400/20">
+            <Crown className="h-4 w-4" />
+          </div>
+        </div>
       </div>
-      <div className="p-2 space-y-0.5">
+      <div className="relative max-h-[46dvh] space-y-1 overflow-y-auto overscroll-contain p-2 sm:max-h-[340px] lg:max-h-[calc(100dvh-180px)]">
         <FolderNavItem
           label="Todos os decks"
           count={store.length}
@@ -495,31 +565,31 @@ function FolderNavItem({ label, count, active, onClick, depth, color, hasChildre
   color?: string; hasChildren?: boolean; expanded?: boolean; onToggle?: () => void
 }) {
   return (
-    <div className="flex items-center min-w-0 overflow-hidden" style={{ paddingLeft: `${depth * 14}px` }}>
+    <div className="flex items-center min-w-0 overflow-hidden" style={{ paddingLeft: `${depth * 12}px` }}>
       {hasChildren && (
-        <button onClick={onToggle} className="shrink-0 h-5 w-5 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-white transition">
+        <button onClick={onToggle} className="shrink-0 h-7 w-6 flex items-center justify-center text-emerald-600/60 hover:text-emerald-700 dark:text-emerald-300/60 dark:hover:text-emerald-100 transition">
           {expanded ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
         </button>
       )}
-      {!hasChildren && <span className="shrink-0 w-5" />}
+      {!hasChildren && <span className="shrink-0 w-6" />}
       <button
         onClick={onClick}
         className={cn(
-          'flex-1 min-w-0 flex items-center justify-between gap-2 rounded-2xl px-2.5 py-2 text-sm text-left transition overflow-hidden',
+          'flex-1 min-w-0 flex items-center justify-between gap-2 rounded-2xl px-2.5 py-2.5 text-sm text-left transition overflow-hidden ring-1',
           active
-            ? 'bg-amber-500/15 text-amber-700 dark:text-amber-200 font-semibold'
-            : 'text-slate-600 dark:text-slate-300 hover:bg-white/60 dark:hover:bg-white/10'
+            ? 'bg-emerald-500/[0.18] text-emerald-800 dark:text-emerald-100 font-semibold ring-emerald-400/35 shadow-sm'
+            : 'bg-white/40 dark:bg-white/[0.03] text-slate-600 dark:text-slate-300 ring-white/45 dark:ring-white/10 hover:bg-white/75 dark:hover:bg-white/10 hover:text-emerald-800 dark:hover:text-white'
         )}
       >
         <span className="flex items-center gap-2 min-w-0">
           {color
             ? <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: color }} />
-            : <Folder className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+            : <Folder className="h-3.5 w-3.5 shrink-0 text-emerald-600/70 dark:text-emerald-300/70" />
           }
           <span className="truncate">{label}</span>
         </span>
         {count > 0 && (
-          <span className={cn('text-[10px] font-bold rounded-full px-1.5 py-0.5 shrink-0', active ? 'bg-amber-500/20 text-amber-700 dark:text-amber-200' : 'bg-slate-100 dark:bg-white/10 text-slate-500')}>
+          <span className={cn('text-[10px] font-bold rounded-full px-1.5 py-0.5 shrink-0', active ? 'bg-emerald-500/20 text-emerald-800 dark:text-emerald-100' : 'bg-emerald-50 dark:bg-white/10 text-emerald-700 dark:text-emerald-200')}>
             {count}
           </span>
         )}
@@ -665,7 +735,12 @@ function Toolbar({ search, setSearch, filter, setFilter, counts, foldersOpen, se
   setFoldersOpen: (cb: (v: boolean) => boolean) => void
 }) {
   return (
-    <div className="rounded-3xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl p-3 shadow-sm">
+    <div className={cn(
+      'sticky top-16 z-20 rounded-3xl border backdrop-blur-2xl p-3 shadow-lg transition-colors',
+      filter === 'store'
+        ? 'border-emerald-200/60 dark:border-emerald-400/15 bg-white/[0.78] dark:bg-emerald-950/25 shadow-emerald-900/5'
+        : 'border-white/40 dark:border-white/10 bg-white/70 dark:bg-slate-900/40 shadow-slate-900/5'
+    )}>
       <div className="flex flex-col lg:flex-row gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
@@ -676,7 +751,7 @@ function Toolbar({ search, setSearch, filter, setFilter, counts, foldersOpen, se
             className="w-full rounded-2xl bg-white/80 dark:bg-white/5 border border-white/40 dark:border-white/10 pl-11 pr-4 py-2.5 text-sm placeholder:text-slate-400 outline-none focus:border-violet-400 focus:bg-white dark:focus:bg-white/10 transition"
           />
         </div>
-        <div className="flex gap-1.5 overflow-x-auto pb-0.5 -mb-0.5">
+        <div className="flex gap-1.5 overflow-x-auto pb-0.5 -mb-0.5 overscroll-x-contain">
           <ChipFilter active={filter === 'all'} onClick={() => setFilter('all')} count={counts.all} icon={<Layers className="h-3.5 w-3.5" />}>Tudo</ChipFilter>
           <ChipFilter active={filter === 'mine'} onClick={() => setFilter('mine')} count={counts.mine} icon={<Inbox className="h-3.5 w-3.5" />}>Meus</ChipFilter>
           <ChipFilter active={filter === 'store'} onClick={() => setFilter('store')} count={counts.store} icon={<Crown className="h-3.5 w-3.5" />} accent="amber">Loja</ChipFilter>
