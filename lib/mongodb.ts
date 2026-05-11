@@ -27,6 +27,11 @@ if (process.env.NODE_ENV === 'development') {
         db.collection('patologias').createIndex({ nome: 'text', sinonimos: 'text', cid10: 'text', classificacao: 'text', fisiopatologia: 'text' }, { default_language: 'portuguese', name: 'patologias_text_search' }),
         db.collection('patologias').createIndex({ areas: 1 }),
         db.collection('patologias').createIndex({ sistema: 1 }),
+        // ── Analytics de checkout ──
+        db.collection('checkout_events').createIndex({ event: 1, createdAt: -1 }),
+        db.collection('checkout_events').createIndex({ userId: 1, createdAt: -1 }),
+        db.collection('checkout_events').createIndex({ productId: 1, productType: 1, createdAt: -1 }),
+        db.collection('checkout_events').createIndex({ orderId: 1 }),
       ]).catch(err => console.error('Erro ao criar índices iniciais:', err))
       return client
     })
@@ -61,6 +66,10 @@ if (process.env.NODE_ENV === 'development') {
       db.collection('audit_logs').createIndex({ ts: -1 }),
       db.collection('audit_logs').createIndex({ action: 1, ts: -1 }),
       db.collection('audit_logs').createIndex({ targetUserId: 1, ts: -1 }),
+      db.collection('checkout_events').createIndex({ event: 1, createdAt: -1 }),
+      db.collection('checkout_events').createIndex({ userId: 1, createdAt: -1 }),
+      db.collection('checkout_events').createIndex({ productId: 1, productType: 1, createdAt: -1 }),
+      db.collection('checkout_events').createIndex({ orderId: 1 }),
     ]).catch(err => console.error('Erro ao criar índices iniciais:', err))
     return client
   })

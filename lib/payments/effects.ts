@@ -22,6 +22,7 @@ import type {
 } from '../types'
 import type { PaymentStatus, ProviderOrder } from './types'
 import { audit } from './audit'
+import { recordOrderCheckoutEvent } from '../analytics'
 
 const TERMINAL_APPROVED: PaymentStatus[] = ['approved']
 const TERMINAL_FAILED: PaymentStatus[] = ['rejected', 'cancelled', 'expired', 'refunded', 'charged_back']
@@ -56,6 +57,7 @@ export async function applyPaymentResult(
     updatedAt: new Date(),
   }
   await orders.updateOne({ _id: order._id as any }, { $set: update })
+  const updatedOrder = { ...order, ...update } as PaymentOrder
 
   // Registra/atualiza payment
   if (result.providerOrderId) {
@@ -83,12 +85,17 @@ export async function applyPaymentResult(
 
   // Idempotência: se já estava aprovado ou já é terminal igual, não reaplica.
   if (prevStatus === newStatus) {
-    return { applied: false, reason: 'status inalterado', order: { ...order, ...update } as PaymentOrder }
+    return { applied: false, reason: 'status inalterado', order: updatedOrder }
   }
 
   // Disparar efeito apenas em transição para approved (1ª vez)
   if (TERMINAL_APPROVED.includes(newStatus) && !TERMINAL_APPROVED.includes(prevStatus)) {
+    await recordOrderCheckoutEvent('payment_approved', updatedOrder)
     await runApprovedEffects(order, result)
+  }
+
+  if (TERMINAL_FAILED.includes(newStatus) && !TERMINAL_APPROVED.includes(prevStatus)) {
+    await recordOrderCheckoutEvent('payment_failed', updatedOrder)
   }
 
   // Em refund/chargeback de plano/material, revogar (best-effort)
@@ -100,7 +107,7 @@ export async function applyPaymentResult(
     await runRevocationEffects(order, newStatus)
   }
 
-  return { applied: true, order: { ...order, ...update } as PaymentOrder }
+  return { applied: true, order: updatedOrder }
 }
 
 async function runApprovedEffects(order: PaymentOrder, result: ProviderOrder) {

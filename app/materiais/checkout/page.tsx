@@ -67,6 +67,24 @@ export default function MateriaisCheckoutPage() {
       .finally(() => setLoading(false))
   }, [itemId, itemType])
 
+  useEffect(() => {
+    if (!item) return
+    fetch('/api/analytics/checkout-event', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event: 'checkout_view',
+        productId: itemId,
+        productTitle: item.title,
+        productType: itemType === 'package' ? 'package' : item.type === 'flashcard_deck' ? 'flashcard' : 'material',
+        amount: Number(item.price || 0),
+        source: itemType === 'package' ? 'Pacote' : 'Compra direta',
+        metadata: { itemType, materialType: item.type },
+      }),
+      keepalive: true,
+    }).catch(() => {})
+  }, [item, itemId, itemType])
+
   if (loading) {
     return (
       <div style={pageStyle}>
@@ -197,6 +215,12 @@ export default function MateriaisCheckoutPage() {
               description={item.title}
               endpoint="/api/materiais/checkout"
               extraBody={{ itemType, itemId }}
+              analytics={{
+                productId: itemId,
+                productTitle: item.title,
+                productType: itemType === 'package' ? 'package' : item.type === 'flashcard_deck' ? 'flashcard' : 'material',
+                source: itemType === 'package' ? 'Pacote' : 'Compra direta',
+              }}
               onApproved={(resp) => {
                 setTimeout(() => {
                   window.location.href = resp.successRedirect || '/materiais?purchase=success'

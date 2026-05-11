@@ -5,6 +5,7 @@ import { getDb } from '@/lib/mongodb'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { getPaymentProvider } from '@/lib/payments'
 import { audit } from '@/lib/payments/audit'
+import { getRequestAnalyticsMeta, recordSubscriptionCheckoutEvent } from '@/lib/analytics'
 import { sendSubscriptionCancelledEmail } from '@/lib/mail'
 import type { SubscriptionRecord, User } from '@/lib/types'
 
@@ -85,6 +86,15 @@ export async function POST(request: NextRequest) {
       console.error('[cancel-sub] e-mail falhou:', err)
     })
   }
+
+  await recordSubscriptionCheckoutEvent('subscription_cancelled', sub, {
+    name: user?.name || session.name,
+    email: user?.email || session.email,
+  }, {
+    status: 'cancel_pending',
+    metadata: { keepUntil: sub.currentPeriodEndsAt, cancellationOrigin: 'Usuário cancelou' },
+    ...getRequestAnalyticsMeta(request),
+  })
 
   return NextResponse.json({
     success: true,

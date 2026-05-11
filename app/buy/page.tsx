@@ -187,6 +187,20 @@ function BuyContent() {
   function handleSelect(plan: Plan) {
     setSelecting(plan.id)
     localStorage.setItem('lastPurchasedPlan', plan.id)
+    fetch('/api/analytics/checkout-event', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event: 'buy_click',
+        productId: plan.id,
+        productTitle: plan.name,
+        productType: 'subscription',
+        amount: plan.price,
+        source: 'Assinatura',
+        metadata: { period: plan.period, durationMonths: plan.durationMonths },
+      }),
+      keepalive: true,
+    }).catch(() => {})
     router.push(`/buy/checkout?plan=${encodeURIComponent(plan.id)}`)
   }
 

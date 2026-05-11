@@ -207,6 +207,20 @@ export default function DeckPage() {
       return
     }
     const materialId = data.deck.linkedMaterialId
+    fetch('/api/analytics/checkout-event', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event: 'buy_click',
+        productId: materialId,
+        productTitle: data.deck.title,
+        productType: 'flashcard',
+        amount: Number(data.deck.price || 0),
+        source: 'Compra direta',
+        metadata: { deckSlug: data.deck.slug },
+      }),
+      keepalive: true,
+    }).catch(() => {})
 
     if (!skipUpsell) {
       try {

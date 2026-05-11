@@ -6,6 +6,7 @@ import { getDb } from '@/lib/mongodb'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { getPaymentProvider } from '@/lib/payments'
 import { audit } from '@/lib/payments/audit'
+import { getRequestAnalyticsMeta, recordSubscriptionCheckoutEvent } from '@/lib/analytics'
 import { DEFAULT_PAYMENT_METHODS } from '@/app/api/admin/settings/payment-methods/route'
 import type { SubscriptionRecord, User } from '@/lib/types'
 
@@ -117,6 +118,13 @@ export async function POST(request: NextRequest) {
     updatedAt: now,
   }
   await db.collection<SubscriptionRecord>('subscriptions').insertOne(subDoc as any)
+  await recordSubscriptionCheckoutEvent('subscription_created', subDoc as SubscriptionRecord, {
+    name: session.name,
+    email: session.email,
+  }, {
+    status: sub.status,
+    ...getRequestAnalyticsMeta(request),
+  })
 
   // Se já autorizada (cartão aprovado), refletir no usuário imediatamente
   if (sub.status === 'authorized') {
@@ -147,6 +155,13 @@ export async function POST(request: NextRequest) {
       resourceType: 'plan',
       resourceId: planId,
       metadata: { source: 'subscription' },
+    })
+    await recordSubscriptionCheckoutEvent('payment_approved', subDoc as SubscriptionRecord, {
+      name: session.name,
+      email: session.email,
+    }, {
+      status: 'authorized',
+      ...getRequestAnalyticsMeta(request),
     })
   }
 

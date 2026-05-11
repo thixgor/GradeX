@@ -250,6 +250,20 @@ export default function MaterialViewPage() {
   const handleAcquire = async (skipUpsell = false) => {
     if (!data) return
     const mat = data.material
+    fetch('/api/analytics/checkout-event', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event: 'buy_click',
+        productId: id,
+        productTitle: mat.title,
+        productType: mat.type === 'flashcard_deck' ? 'flashcard' : 'material',
+        amount: Number(mat.price || 0),
+        source: 'Compra direta',
+        metadata: { itemType: 'material', materialType: mat.type },
+      }),
+      keepalive: true,
+    }).catch(() => {})
 
     if (!skipUpsell) {
       try {

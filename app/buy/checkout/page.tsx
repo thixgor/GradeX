@@ -95,6 +95,24 @@ function BuyCheckoutContent() {
       .finally(() => setLoading(false))
   }, [planId])
 
+  useEffect(() => {
+    if (!plan) return
+    fetch('/api/analytics/checkout-event', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event: 'checkout_view',
+        productId: plan.tipo,
+        productTitle: plan.nome,
+        productType: 'subscription',
+        amount: plan.preco,
+        source: 'Assinatura',
+        metadata: { period: plan.periodo, durationMonths: plan.durationMonths },
+      }),
+      keepalive: true,
+    }).catch(() => {})
+  }, [plan])
+
   if (loading) {
     return (
       <div style={pageStyle}>
@@ -271,6 +289,12 @@ function BuyCheckoutContent() {
                 description={`${plan.nome} — ${periodLabel}`}
                 endpoint="/api/payments/orders"
                 extraBody={{ type: 'plan', refId: plan.tipo }}
+                analytics={{
+                  productId: plan.tipo,
+                  productTitle: plan.nome,
+                  productType: 'subscription',
+                  source: 'Assinatura',
+                }}
                 onApproved={() => setTimeout(() => router.push('/profile?purchase=success'), 1500)}
               />
             )}
@@ -353,6 +377,22 @@ function SubscriptionCheckout({ plan, publicKey, months }: { plan: PlanConfig; p
         identificationType: 'CPF',
         identificationNumber: docNumber.replace(/\D/g, ''),
       })
+
+      fetch('/api/analytics/checkout-event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event: 'checkout_submit',
+          productId: plan.tipo,
+          productTitle: plan.nome,
+          productType: 'subscription',
+          amount: plan.preco,
+          paymentMethod: 'credit_card',
+          source: 'Assinatura',
+          metadata: { recurring: true },
+        }),
+        keepalive: true,
+      }).catch(() => {})
 
       const res = await fetch('/api/subscriptions', {
         method: 'POST',

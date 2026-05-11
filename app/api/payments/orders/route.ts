@@ -7,6 +7,7 @@ import { checkRateLimit } from '@/lib/rate-limit'
 import { getPaymentProvider, deriveIdempotencyKey } from '@/lib/payments'
 import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
+import { getRequestAnalyticsMeta, recordOrderCheckoutEvent } from '@/lib/analytics'
 import { DEFAULT_PAYMENT_METHODS } from '@/app/api/admin/settings/payment-methods/route'
 import type { PaymentOrder, MaterialPurchase } from '@/lib/types'
 
@@ -166,6 +167,10 @@ export async function POST(request: NextRequest) {
     { _id: inserted.insertedId },
     { $set: { idempotencyKey } }
   )
+  await recordOrderCheckoutEvent('order_created', { ...orderDoc, _id: inserted.insertedId, idempotencyKey } as PaymentOrder, {
+    paymentMethod: data.paymentMethodId,
+    ...getRequestAnalyticsMeta(request),
+  })
 
   // Para doação, criar registro espelho em donation_payments
   if (data.type === 'donation') {

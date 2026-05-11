@@ -107,10 +107,10 @@ export default function AdminDashboard() {
       color: 'from-orange-500 to-red-500'
     },
     {
-      title: 'Receita e Assinantes',
-      description: 'Painel administrativo com receita estimada, crescimento de assinantes e cenário manual editável.',
+      title: 'DomineAqui Analytics',
+      description: 'Dashboard financeiro de vendas, assinaturas, conversão, abandonos, pedidos e cancelamentos.',
       icon: BadgeDollarSign,
-      href: '/admin/receita',
+      href: '/admin/analytics',
       color: 'from-emerald-500 to-teal-500'
     },
     {

@@ -334,6 +334,22 @@ function MateriaisContent() {
       itemType === 'package'
         ? packages.find(p => p._id === itemId)
         : materials.find(m => m._id === itemId)
+    if (item) {
+      fetch('/api/analytics/checkout-event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event: 'buy_click',
+          productId: itemId,
+          productTitle: item.title,
+          productType: itemType === 'package' ? 'package' : (item as Material).type === 'flashcard_deck' ? 'flashcard' : 'material',
+          amount: Number(item.price || 0),
+          source: itemType === 'package' ? 'Pacote' : 'Compra direta',
+          metadata: { itemType, pricing: item.pricing },
+        }),
+        keepalive: true,
+      }).catch(() => {})
+    }
     if (item && (item.pricing === 'free' || !item.price)) {
       setCheckoutLoading(itemId)
       try {

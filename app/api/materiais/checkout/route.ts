@@ -7,6 +7,7 @@ import { checkRateLimit } from '@/lib/rate-limit'
 import { getPaymentProvider, deriveIdempotencyKey } from '@/lib/payments'
 import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
+import { getRequestAnalyticsMeta, recordCheckoutEvent, recordOrderCheckoutEvent } from '@/lib/analytics'
 import type { PaymentOrder, MaterialPurchase } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -80,6 +81,21 @@ export async function POST(request: NextRequest) {
       resourceId: data.itemId,
       metadata: { free: true },
     })
+    await recordCheckoutEvent({
+      event: 'payment_approved',
+      userId: session.userId,
+      userName: session.name,
+      userEmail: session.email,
+      productId: data.itemId,
+      productTitle: item.title,
+      productType: item.type === 'flashcard_deck' ? 'flashcard' : data.itemType,
+      amount: 0,
+      paymentMethod: 'free',
+      status: 'approved',
+      source: data.itemType === 'package' ? 'Pacote' : 'Compra direta',
+      metadata: { free: true, itemType: data.itemType, materialType: item.type },
+      ...getRequestAnalyticsMeta(request),
+    })
     return NextResponse.json({
       free: true,
       success: true,
@@ -117,6 +133,13 @@ export async function POST(request: NextRequest) {
     { _id: inserted.insertedId },
     { $set: { idempotencyKey } }
   )
+  await recordOrderCheckoutEvent('order_created', { ...orderDoc, _id: inserted.insertedId, idempotencyKey } as PaymentOrder, {
+    productTitle: item.title,
+    productType: item.type === 'flashcard_deck' ? 'flashcard' : data.itemType,
+    paymentMethod: data.paymentMethodId,
+    metadata: { itemType: data.itemType, itemTitle: item.title, materialType: item.type },
+    ...getRequestAnalyticsMeta(request),
+  })
 
   try {
     const provider = getPaymentProvider()

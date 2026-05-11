@@ -55,6 +55,12 @@ export interface MercadoPagoCheckoutProps {
   payerNameHint?: string
   onApproved?: (resp: CheckoutOrderResponse) => void
   onRejected?: (resp: CheckoutOrderResponse) => void
+  analytics?: {
+    productId?: string
+    productTitle?: string
+    productType?: 'material' | 'flashcard' | 'package' | 'subscription' | 'plan' | 'donation' | 'unknown'
+    source?: string
+  }
 }
 
 type Method = 'card' | 'pix' | 'boleto'
@@ -156,6 +162,24 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
   const [error, setError] = useState<string | null>(null)
   const [order, setOrder] = useState<CheckoutOrderResponse | null>(null)
 
+  function trackCheckout(event: 'checkout_submit', extra: Record<string, any> = {}) {
+    if (!props.analytics) return
+    fetch('/api/analytics/checkout-event', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event,
+        productId: props.analytics.productId,
+        productTitle: props.analytics.productTitle || props.description,
+        productType: props.analytics.productType || 'unknown',
+        amount: props.amount,
+        source: props.analytics.source,
+        ...extra,
+      }),
+      keepalive: true,
+    }).catch(() => {})
+  }
+
   // Carregar mp.js v2
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -255,6 +279,8 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
           donationName: body.donationName || payerName,
         }
       }
+
+      trackCheckout('checkout_submit', { paymentMethod: method })
 
       const res = await fetch(props.endpoint, {
         method: 'POST',
