@@ -412,7 +412,7 @@ export function Sidebar({
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed top-0 left-0 z-50 h-full bg-background border-r flex flex-col overflow-hidden',
+          'fixed inset-y-0 left-0 z-50 h-[100dvh] max-h-[100dvh] bg-background border-r flex flex-col overflow-hidden',
           collapsed ? 'lg:w-[72px]' : 'lg:w-[280px]',
           'w-[280px]',
           isOpen ? 'translate-x-0' : '-translate-x-full',
@@ -575,7 +575,7 @@ export function Sidebar({
         {/* ─── Navigation ─── */}
         <nav
           ref={navRef}
-          className="flex-1 px-3 py-2 overflow-y-auto relative select-none"
+          className="flex-1 min-h-0 px-3 py-2 overflow-y-auto overscroll-contain relative select-none"
           style={{ touchAction: 'none' }}
           onMouseEnter={handleNavMouseEnter}
           onMouseLeave={handleNavMouseLeave}
