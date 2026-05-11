@@ -603,12 +603,11 @@ function AdminMateriaisContent() {
   }
 
   const saveMaterial = async () => {
-    const needsUrl = materialForm.type !== 'pdf' || (!pdfInfo && !materialForm.downloadUrl.trim())
+    // Para tipo PDF: URL e arquivo são ambos opcionais — o admin faz upload após criar.
+    // Para outros tipos: URL é obrigatória.
+    const needsUrl = materialForm.type !== 'pdf' && !materialForm.downloadUrl.trim()
     if (!materialForm.title || needsUrl) {
-      const msg = materialForm.type === 'pdf'
-        ? 'Título obrigatório. Para PDF: forneça URL externa ou faça upload de um PDF.'
-        : 'Título e URL/código embed são obrigatórios'
-      alert(msg)
+      alert('Título e URL/código embed são obrigatórios')
       return
     }
     setSaving(true)
@@ -629,8 +628,20 @@ function AdminMateriaisContent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       })
-      if (res.ok) { setShowMaterialModal(false); fetchAll() }
-      else alert((await res.json()).error || 'Erro ao salvar')
+      if (!res.ok) { alert((await res.json()).error || 'Erro ao salvar'); return }
+
+      // Ao criar um PDF, reabre o modal em modo edição para o admin fazer o upload
+      if (modalMode === 'create' && materialForm.type === 'pdf') {
+        const created = await res.json()
+        fetchAll()
+        setMaterialForm(p => ({ ...p, _id: String(created._id) }))
+        setModalMode('edit')
+        // Mantém o modal aberto para o upload imediato
+        return
+      }
+
+      setShowMaterialModal(false)
+      fetchAll()
     } catch { alert('Erro ao salvar material') }
     finally { setSaving(false) }
   }
