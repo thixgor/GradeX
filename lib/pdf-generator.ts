@@ -1786,3 +1786,237 @@ export async function generateGroupPDF(
   const blobs = results.flatMap(([cover, content]) => [cover, content])
   return mergeBlobs(blobs)
 }
+
+// ── Purchase Receipt PDF ──────────────────────────────────────────
+
+export interface PurchaseReceiptItem {
+  _id: string
+  itemTitle: string
+  itemType: 'material' | 'package'
+  price: number
+  purchasedAt: string | Date
+  status: string
+}
+
+export interface PurchaseReceiptUser {
+  id: string
+  name: string
+  email: string
+}
+
+export async function generatePurchaseReceiptPDF(
+  purchases: PurchaseReceiptItem[],
+  user: PurchaseReceiptUser
+): Promise<Blob> {
+  await Promise.all([prewarmFontsCache(), loadLogo()])
+
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
+  await registerFonts(doc)
+
+  const W = doc.internal.pageSize.getWidth()
+  const H = doc.internal.pageSize.getHeight()
+  const mx = 18
+
+  // ── Header band ──────────────────────────────────────────────────
+  doc.setFillColor(...VERDE_ESCURO)
+  doc.rect(0, 0, W, 38, 'F')
+
+  const logo = await loadLogo()
+  if (logo) {
+    doc.addImage(logo, 'JPEG', mx, 7, 28, 24)
+  } else {
+    doc.setFont(FONT, 'bold')
+    doc.setFontSize(14)
+    doc.setTextColor(255, 255, 255)
+    doc.text('DomineAqui', mx, 22)
+  }
+
+  doc.setFont(FONT, 'bold')
+  doc.setFontSize(13)
+  doc.setTextColor(255, 255, 255)
+  doc.text('Comprovante de Compras', W - mx, 18, { align: 'right' })
+  doc.setFont(FONT, 'normal')
+  doc.setFontSize(8)
+  doc.setTextColor(180, 220, 185)
+  doc.text('domineaqui.com.br', W - mx, 26, { align: 'right' })
+
+  let y = 52
+
+  // ── Document metadata ────────────────────────────────────────────
+  const emitDate = new Date().toLocaleDateString('pt-BR', {
+    day: '2-digit', month: 'long', year: 'numeric',
+  })
+  const docId = `REC-${user.id.slice(-8).toUpperCase()}-${Date.now().toString(36).toUpperCase()}`
+
+  doc.setFillColor(245, 248, 245)
+  doc.roundedRect(mx, y, W - mx * 2, 36, 3, 3, 'F')
+  doc.setDrawColor(210, 228, 212)
+  doc.setLineWidth(0.4)
+  doc.roundedRect(mx, y, W - mx * 2, 36, 3, 3, 'S')
+
+  doc.setFont(FONT, 'bold')
+  doc.setFontSize(9)
+  doc.setTextColor(...VERDE_ESCURO)
+  doc.text('DADOS DO DOCUMENTO', mx + 10, y + 10)
+
+  doc.setFont(FONT, 'normal')
+  doc.setFontSize(8)
+  doc.setTextColor(...CINZA_TEXTO)
+  doc.text(`Emitido em:  ${emitDate}`, mx + 10, y + 20)
+  doc.text(`Código:  ${docId}`, mx + 10, y + 28)
+  doc.text(`Versão:  1.0`, W - mx - 10, y + 20, { align: 'right' })
+  doc.text(`Plataforma:  DomineAqui`, W - mx - 10, y + 28, { align: 'right' })
+
+  y += 46
+
+  // ── User info ────────────────────────────────────────────────────
+  doc.setFont(FONT, 'bold')
+  doc.setFontSize(9)
+  doc.setTextColor(...VERDE_ESCURO)
+  doc.text('DADOS DO TITULAR', mx, y)
+  y += 6
+
+  doc.setDrawColor(...VERDE_MEDIO)
+  doc.setLineWidth(0.6)
+  doc.line(mx, y, W - mx, y)
+  y += 8
+
+  doc.setFont(FONT, 'normal')
+  doc.setFontSize(9)
+  doc.setTextColor(...CINZA_TEXTO)
+  doc.text(`Nome:`, mx, y)
+  doc.setFont(FONT, 'bold')
+  doc.text(sanitizeForPdf(user.name), mx + 24, y)
+
+  doc.setFont(FONT, 'normal')
+  doc.text(`E-mail:`, mx + 100, y)
+  doc.setFont(FONT, 'bold')
+  doc.text(sanitizeForPdf(user.email), mx + 124, y)
+
+  y += 8
+  doc.setFont(FONT, 'normal')
+  doc.text(`ID da Conta:`, mx, y)
+  doc.setFont(FONT, 'bold')
+  doc.setFontSize(8)
+  doc.text(user.id, mx + 28, y)
+
+  y += 16
+
+  // ── Purchase table ───────────────────────────────────────────────
+  doc.setFont(FONT, 'bold')
+  doc.setFontSize(9)
+  doc.setTextColor(...VERDE_ESCURO)
+  doc.text('HISTÓRICO DE COMPRAS', mx, y)
+  y += 6
+
+  doc.setDrawColor(...VERDE_MEDIO)
+  doc.setLineWidth(0.6)
+  doc.line(mx, y, W - mx, y)
+  y += 2
+
+  // Table header
+  const colX = [mx, mx + 80, mx + 110, mx + 138]
+  const colW = W - mx * 2
+  doc.setFillColor(...VERDE_ESCURO)
+  doc.rect(mx, y, colW, 9, 'F')
+  doc.setFont(FONT, 'bold')
+  doc.setFontSize(8)
+  doc.setTextColor(255, 255, 255)
+  doc.text('Produto', colX[0] + 3, y + 6)
+  doc.text('Tipo', colX[1] + 3, y + 6)
+  doc.text('Data', colX[2] + 3, y + 6)
+  doc.text('Valor', colX[3] + 3, y + 6)
+  y += 9
+
+  // Table rows
+  purchases.forEach((p, i) => {
+    if (y > H - 40) {
+      doc.addPage()
+      y = 20
+    }
+    const rowH = 10
+    doc.setFillColor(i % 2 === 0 ? 250 : 255, i % 2 === 0 ? 252 : 255, i % 2 === 0 ? 250 : 255)
+    doc.rect(mx, y, colW, rowH, 'F')
+    doc.setDrawColor(225, 235, 225)
+    doc.setLineWidth(0.2)
+    doc.rect(mx, y, colW, rowH, 'S')
+
+    const title = sanitizeForPdf(p.itemTitle)
+    const titleLines = doc.splitTextToSize(title, 74)
+    const typeLabel = p.itemType === 'package' ? 'Pacote' : 'Material'
+    const dateStr = new Date(p.purchasedAt).toLocaleDateString('pt-BR', {
+      day: '2-digit', month: '2-digit', year: 'numeric',
+    })
+    const priceStr = p.price === 0 ? 'Gratuito' : `R$ ${p.price.toFixed(2)}`
+
+    doc.setFont(FONT, 'normal')
+    doc.setFontSize(8)
+    doc.setTextColor(...CINZA_TEXTO)
+    doc.text(titleLines[0] || '', colX[0] + 3, y + 6.5)
+    doc.text(typeLabel, colX[1] + 3, y + 6.5)
+    doc.text(dateStr, colX[2] + 3, y + 6.5)
+    doc.setFont(FONT, 'bold')
+    const priceColor: readonly [number, number, number] = p.price === 0 ? [70, 129, 82] : CINZA_TEXTO
+    doc.setTextColor(...priceColor)
+    doc.text(priceStr, colX[3] + 3, y + 6.5)
+    y += rowH
+  })
+
+  y += 4
+
+  // ── Totals ───────────────────────────────────────────────────────
+  const totalPaid = purchases.reduce((s, p) => s + (p.price || 0), 0)
+  const totalItems = purchases.length
+
+  doc.setFillColor(235, 245, 236)
+  doc.roundedRect(mx, y, colW, 18, 2, 2, 'F')
+  doc.setDrawColor(...VERDE_MEDIO)
+  doc.setLineWidth(0.5)
+  doc.roundedRect(mx, y, colW, 18, 2, 2, 'S')
+
+  doc.setFont(FONT, 'normal')
+  doc.setFontSize(9)
+  doc.setTextColor(...CINZA_TEXTO)
+  doc.text(`Total de itens: ${totalItems}`, mx + 8, y + 11)
+  doc.setFont(FONT, 'bold')
+  doc.setFontSize(10)
+  doc.setTextColor(...VERDE_ESCURO)
+  doc.text(`Total investido: R$ ${totalPaid.toFixed(2)}`, W - mx - 8, y + 11, { align: 'right' })
+
+  y += 28
+
+  // ── Terms declaration ────────────────────────────────────────────
+  doc.setFillColor(248, 250, 248)
+  doc.setDrawColor(210, 228, 212)
+  doc.setLineWidth(0.4)
+  const termsText = [
+    `O titular acima identificado declara ter lido, compreendido e aceito os Termos de Uso e a Política de`,
+    `Privacidade da plataforma DomineAqui (domineaqui.com.br) no momento da realização de cada compra`,
+    `listada neste documento. Os materiais adquiridos destinam-se a uso pessoal e intransferível, sendo`,
+    `vedada a reprodução, revenda ou distribuição sem autorização prévia e expressa da plataforma.`,
+  ]
+  const termsH = termsText.length * 5.5 + 16
+  doc.roundedRect(mx, y, colW, termsH, 2, 2, 'FD')
+
+  doc.setFont(FONT, 'bold')
+  doc.setFontSize(8)
+  doc.setTextColor(...VERDE_ESCURO)
+  doc.text('DECLARAÇÃO DE ACEITE DOS TERMOS', mx + 8, y + 9)
+
+  doc.setFont(FONT, 'normal')
+  doc.setFontSize(7.5)
+  doc.setTextColor(90, 90, 90)
+  termsText.forEach((line, i) => {
+    doc.text(line, mx + 8, y + 16 + i * 5.5)
+  })
+
+  // ── Footer ───────────────────────────────────────────────────────
+  doc.setFillColor(...VERDE_ESCURO)
+  doc.rect(0, H - 16, W, 16, 'F')
+  doc.setFont(FONT, 'normal')
+  doc.setFontSize(7)
+  doc.setTextColor(150, 200, 160)
+  doc.text('DomineAqui · domineaqui.com.br · Documento gerado automaticamente pela plataforma', W / 2, H - 8, { align: 'center', baseline: 'middle' })
+
+  return doc.output('blob')
+}

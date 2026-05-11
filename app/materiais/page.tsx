@@ -183,7 +183,7 @@ function MateriaisContent() {
   const [activeFilter, setActiveFilter] = useState<'all' | 'free' | 'paid'>('all')
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null)
   const [folderPath, setFolderPath] = useState<Folder[]>([])
-  const [activeTab, setActiveTab] = useState<'materials' | 'packages'>('materials')
+  const [activeTab, setActiveTab] = useState<'materials' | 'packages' | 'mine'>('materials')
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState('')
   const [highlightedMaterialId, setHighlightedMaterialId] = useState<string | null>(null)
@@ -264,6 +264,7 @@ function MateriaisContent() {
     const tabParam = searchParams.get('tab')
 
     if (tabParam === 'packages') setActiveTab('packages')
+    if (tabParam === 'mine') setActiveTab('mine')
     if (folderParam) setCurrentFolderId(folderParam)
     // Redirect old ?material= share links to the individual page
     if (materialParam) { router.replace(`/materiais/${materialParam}`); return }
@@ -515,21 +516,30 @@ function MateriaisContent() {
 
           {/* Tabs */}
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mt-4 flex gap-1 p-1 rounded-xl glass-sm w-fit">
-            {(['materials', 'packages'] as const).map(tab => (
+            {([
+              { id: 'materials', label: 'Materiais', icon: <FileText className="h-4 w-4" /> },
+              { id: 'packages', label: 'Pacotes', icon: <Package className="h-4 w-4" /> },
+              { id: 'mine', label: 'Meus Materiais', icon: <Check className="h-4 w-4" /> },
+            ] as const).map(tab => (
               <button
-                key={tab}
+                key={tab.id}
                 onClick={() => {
-                  setActiveTab(tab)
-                  const url = tab === 'packages' ? '/materiais?tab=packages' : '/materiais'
+                  setActiveTab(tab.id)
+                  const url = tab.id === 'packages' ? '/materiais?tab=packages' : tab.id === 'mine' ? '/materiais?tab=mine' : '/materiais'
                   router.push(url, { scroll: false })
                 }}
-                className={`px-5 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${activeTab === tab ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${activeTab === tab.id ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
               >
                 <span className="flex items-center gap-2">
-                  {tab === 'materials' ? <FileText className="h-4 w-4" /> : <Package className="h-4 w-4" />}
-                  {tab === 'materials' ? 'Materiais' : 'Pacotes'}
-                  {tab === 'packages' && packages.length > 0 && (
+                  {tab.icon}
+                  {tab.label}
+                  {tab.id === 'packages' && packages.length > 0 && (
                     <span className="bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full">{packages.length}</span>
+                  )}
+                  {tab.id === 'mine' && materials.filter(m => m._hasAccess).length > 0 && (
+                    <span className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs px-2 py-0.5 rounded-full">
+                      {materials.filter(m => m._hasAccess).length}
+                    </span>
                   )}
                 </span>
               </button>
@@ -732,6 +742,59 @@ function MateriaisContent() {
             )}
           </>
         )}
+
+        {/* ─── Meus Materiais Tab ─── */}
+        {activeTab === 'mine' && (() => {
+          const myMaterials = materials.filter(m => m._hasAccess)
+          return (
+            <>
+              {loading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="rounded-2xl glass-card animate-pulse">
+                      <div className="h-44 rounded-t-2xl bg-muted" />
+                      <div className="p-4 space-y-2">
+                        <div className="h-4 bg-muted rounded w-3/4" />
+                        <div className="h-3 bg-muted rounded w-1/2" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : myMaterials.length === 0 ? (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
+                  <div className="h-20 w-20 rounded-full glass-card mx-auto flex items-center justify-center mb-4">
+                    <Check className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-lg font-heading font-bold mb-2">Nenhum material ainda</h3>
+                  <p className="text-muted-foreground text-sm mb-4">Você ainda não adquiriu nenhum material.</p>
+                  <button onClick={() => { setActiveTab('materials'); router.push('/materiais', { scroll: false }) }}
+                    className="text-sm text-primary font-medium hover:underline">
+                    Ver todos os materiais
+                  </button>
+                </motion.div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {myMaterials.map((material, idx) => (
+                    <MaterialCard
+                      key={material._id}
+                      material={material}
+                      index={idx}
+                      isPurchased={isPurchased(material._id, 'material')}
+                      groupAccess={hasGroupAccess(material)}
+                      isHighlighted={false}
+                      copiedId={copiedId}
+                      onAcquire={() => handleMaterialAcquire(material)}
+                      onDownload={() => handleDownload(material)}
+                      onCopyLink={() => copyMaterialLink(material)}
+                      onPreview={() => setPreviewItem({ type: 'material', data: material })}
+                      loading={checkoutLoading === material._id || pdfDownloading === material._id}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
+          )
+        })()}
       </div>
 
       {/* ─── Package Upsell Modal ─── */}

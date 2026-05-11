@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
+import Link from 'next/link'
 import { AppShell, useAppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
 import { PlanLimitsCard } from '@/components/plan-limits-card'
@@ -25,6 +27,8 @@ import {
   BarChart3,
   Play,
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
   Flame,
   BookOpen,
   Lightbulb,
@@ -32,6 +36,8 @@ import {
   Activity,
   HeartPulse,
   Heart,
+  Download,
+  Package,
 } from 'lucide-react'
 import { DoacaoContent } from '@/components/doacoes/doacao-content'
 import { DoacaoRanking } from '@/components/doacoes/doacao-ranking'
@@ -675,11 +681,176 @@ function DashboardContent() {
         </motion.section>
 
         {/* ═══════════════════════════════════════════════════════
-            6. DOAÇÕES PIX — Apoie o DomineAqui
+            6. MEUS MATERIAIS
+           ═══════════════════════════════════════════════════════ */}
+        <MeusMaterialsWidget />
+
+        {/* ═══════════════════════════════════════════════════════
+            7. DOAÇÕES PIX — Apoie o DomineAqui
            ═══════════════════════════════════════════════════════ */}
         <DashboardDoacaoSection />
       </div>
     </div>
+  )
+}
+
+// ─── Meus Materiais Widget ──────────────────────────────────────
+interface DashMaterial {
+  _id: string
+  title: string
+  coverImage?: string
+  type: string
+  pricing: string
+  _hasAccess?: boolean
+  _isPurchased?: boolean
+  _hasGroupAccess?: boolean
+}
+
+const TYPE_ICON_MAP: Record<string, React.ReactNode> = {
+  pdf: <FileText className="h-4 w-4" />,
+  video: <Play className="h-4 w-4" />,
+  video_embed: <Play className="h-4 w-4" />,
+  flashcard_deck: <Brain className="h-4 w-4" />,
+}
+
+function MeusMaterialsWidget() {
+  const router = useRouter()
+  const [materials, setMaterials] = useState<DashMaterial[]>([])
+  const [loading, setLoading] = useState(true)
+  const [expanded, setExpanded] = useState(false)
+
+  useEffect(() => {
+    fetch('/api/materiais', { cache: 'no-store' })
+      .then(r => r.ok ? r.json() : { materials: [] })
+      .then(d => {
+        const mine = (d.materials || []).filter((m: DashMaterial) => m._hasAccess)
+        setMaterials(mine)
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
+
+  if (!loading && materials.length === 0) return null
+
+  const visible = expanded ? materials : materials.slice(0, 4)
+
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: 0.78 }}
+    >
+      {/* Header */}
+      <button
+        className="w-full flex items-center justify-between mb-3 group"
+        onClick={() => setExpanded(e => !e)}
+      >
+        <div className="flex items-center gap-2">
+          <BookMarked className="h-4 w-4 text-primary" />
+          <h2 className="text-lg font-semibold tracking-tight">Meus Materiais</h2>
+          {!loading && (
+            <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+              {materials.length}
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/materiais?tab=mine"
+            onClick={e => e.stopPropagation()}
+            className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-1 group/link"
+          >
+            Ver todos
+            <ArrowRight className="h-3 w-3 group-hover/link:translate-x-0.5 transition-transform" />
+          </Link>
+          {expanded
+            ? <ChevronUp className="h-4 w-4 text-muted-foreground" />
+            : <ChevronDown className="h-4 w-4 text-muted-foreground" />
+          }
+        </div>
+      </button>
+
+      {/* Content */}
+      <AnimatePresence initial={false}>
+        {(expanded || true) && (
+          <motion.div
+            key="meus-materiais-content"
+            initial={false}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="overflow-hidden"
+          >
+            {loading ? (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="glass-stat rounded-2xl p-3 animate-pulse">
+                    <div className="h-20 rounded-xl bg-muted mb-2" />
+                    <div className="h-3 bg-muted rounded w-3/4" />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {visible.map((m, i) => (
+                    <motion.div
+                      key={m._id}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.04, duration: 0.2 }}
+                    >
+                      <Link
+                        href={`/materiais/${m._id}`}
+                        className="group block glass-stat rounded-2xl overflow-hidden hover-lift transition-all duration-300 hover:shadow-lg hover:shadow-primary/10"
+                      >
+                        <div className="relative h-20 bg-muted/40">
+                          {m.coverImage ? (
+                            <Image
+                              src={m.coverImage}
+                              alt={m.title}
+                              fill
+                              className="object-cover transition-transform duration-500 group-hover:scale-105"
+                              sizes="(max-width: 640px) 50vw, 25vw"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-accent/10">
+                              {TYPE_ICON_MAP[m.type] ?? <Package className="h-4 w-4 text-muted-foreground" />}
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                          <div className="absolute bottom-1.5 left-2">
+                            <span className="text-[9px] font-bold text-white/80 uppercase tracking-wide">
+                              {m.type === 'flashcard_deck' ? 'Flashcard' : m.type === 'video_embed' ? 'Vídeo' : m.type?.toUpperCase()}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="p-2.5">
+                          <p className="text-xs font-semibold line-clamp-2 leading-tight group-hover:text-primary transition-colors">
+                            {m.title}
+                          </p>
+                        </div>
+                      </Link>
+                    </motion.div>
+                  ))}
+                </div>
+                {materials.length > 4 && (
+                  <button
+                    onClick={() => setExpanded(e => !e)}
+                    className="mt-3 w-full py-2 rounded-xl border border-dashed border-border/50 hover:border-primary/30 text-xs text-muted-foreground hover:text-primary transition-colors flex items-center justify-center gap-1.5"
+                  >
+                    {expanded
+                      ? <><ChevronUp className="h-3 w-3" /> Ver menos</>
+                      : <><ChevronDown className="h-3 w-3" /> Ver mais {materials.length - 4} materiais</>
+                    }
+                  </button>
+                )}
+              </>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.section>
   )
 }
 

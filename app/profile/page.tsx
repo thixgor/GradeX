@@ -8,7 +8,7 @@ import { ToastAlert } from '@/components/ui/toast-alert'
 import { BanChecker } from '@/components/ban-checker'
 import { AppShell } from '@/components/app-shell'
 import { PlanLimitsCard } from '@/components/plan-limits-card'
-import { CheckCircle, Clock, FileText, Download, Printer, ClipboardList, Trophy, BookOpen, Crown, Timer, Sparkles, Phone, Mail, XCircle, Ticket, AlertTriangle, ChevronDown, ChevronUp, Target, BarChart3, GraduationCap } from 'lucide-react'
+import { CheckCircle, Clock, FileText, Download, Printer, ClipboardList, Trophy, BookOpen, Crown, Timer, Sparkles, Phone, Mail, XCircle, Ticket, AlertTriangle, ChevronDown, ChevronUp, Target, BarChart3, GraduationCap, ShoppingBag, Receipt } from 'lucide-react'
 import { FocusSessionsProfile } from '@/components/focus-sessions-profile'
 // PDF generator loaded dynamically to reduce initial bundle size (~200KB)
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
@@ -87,6 +87,12 @@ export default function ProfilePage() {
   const [cancelling, setCancelling] = useState(false)
   const [hasRecurringSubscription, setHasRecurringSubscription] = useState(false)
   const [expandedSubmission, setExpandedSubmission] = useState<string | null>(null)
+  const [purchases, setPurchases] = useState<any[]>([])
+  const [purchasesLoading, setPurchasesLoading] = useState(true)
+  const [purchasesExpanded, setPurchasesExpanded] = useState(false)
+  const [userEmail, setUserEmail] = useState('')
+  const [userId, setUserId] = useState('')
+  const [generatingReceipt, setGeneratingReceipt] = useState(false)
   const { liteMode, toggleLiteMode } = useLiteMode()
 
   useEffect(() => {
@@ -94,6 +100,7 @@ export default function ProfilePage() {
     loadUserData()
     loadStatistics()
     loadSubscriptionStatus()
+    loadPurchases()
   }, [])
 
   async function loadSubmissions() {
@@ -118,6 +125,8 @@ export default function ProfilePage() {
         setUserName(data.user?.name || 'Usuario')
         setUserRole(data.user?.role || 'user')
         setAccountType(data.user?.accountType || 'gratuito')
+        setUserEmail(data.user?.email || '')
+        setUserId(data.user?._id || data.user?.id || '')
         if (data.user?.trialExpiresAt) {
           setTrialExpiresAt(new Date(data.user.trialExpiresAt))
         }
@@ -129,6 +138,42 @@ export default function ProfilePage() {
       }
     } catch (error) {
       console.error('Erro ao carregar dados do usuario:', error)
+    }
+  }
+
+  async function loadPurchases() {
+    try {
+      const res = await fetch('/api/materiais/purchases')
+      if (res.ok) {
+        const data = await res.json()
+        setPurchases(data.purchases || [])
+      }
+    } catch (error) {
+      console.error('Erro ao carregar compras:', error)
+    } finally {
+      setPurchasesLoading(false)
+    }
+  }
+
+  async function handleGenerateReceipt() {
+    setGeneratingReceipt(true)
+    try {
+      const { generatePurchaseReceiptPDF, downloadPDF } = await import('@/lib/pdf-generator')
+      const blob = await generatePurchaseReceiptPDF(purchases, {
+        id: userId,
+        name: userName,
+        email: userEmail,
+      })
+      downloadPDF(blob, `Comprovante-DomineAqui-${new Date().toISOString().slice(0, 10)}.pdf`, {
+        type: 'exam_pdf',
+        resourceId: userId,
+        resourceTitle: 'Comprovante de Compras',
+      })
+    } catch (error: any) {
+      setToastMessage('Erro ao gerar comprovante: ' + error.message)
+      setToastOpen(true)
+    } finally {
+      setGeneratingReceipt(false)
     }
   }
 
@@ -431,6 +476,89 @@ export default function ProfilePage() {
           <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Sessoes de Foco</h2>
           <FocusSessionsProfile />
         </section>
+
+        {/* ====== SECTION 5b: Purchase History ====== */}
+        {(purchasesLoading || purchases.length > 0) && (
+          <section className="mb-10">
+            {/* Header row — always visible, acts as toggle */}
+            <button
+              className="w-full flex items-center justify-between mb-0 group"
+              onClick={() => setPurchasesExpanded(e => !e)}
+            >
+              <div className="flex items-center gap-2">
+                <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Histórico de Compras</h2>
+                {!purchasesLoading && (
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-primary/10 text-primary">
+                    {purchases.length}
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                {!purchasesLoading && purchases.length > 0 && (
+                  <button
+                    onClick={e => { e.stopPropagation(); handleGenerateReceipt() }}
+                    disabled={generatingReceipt}
+                    className="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-primary/10 text-primary hover:bg-primary/20 transition-colors disabled:opacity-50"
+                  >
+                    <Receipt className="h-3 w-3" />
+                    {generatingReceipt ? 'Gerando...' : 'Comprovante PDF'}
+                  </button>
+                )}
+                {purchasesExpanded
+                  ? <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                  : <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                }
+              </div>
+            </button>
+
+            {purchasesExpanded && (
+              <div className="mt-4">
+                {purchasesLoading ? (
+                  <div className="text-center py-8 text-sm text-muted-foreground">Carregando...</div>
+                ) : (
+                  <div className="rounded-2xl overflow-hidden border border-border/40 bg-card/50 backdrop-blur-sm">
+                    {purchases.map((p, i) => (
+                      <div
+                        key={p._id}
+                        className={cn(
+                          'flex items-center gap-3 px-4 py-3',
+                          i !== purchases.length - 1 && 'border-b border-border/30'
+                        )}
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <ShoppingBag className="h-4 w-4 text-primary" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">{p.itemTitle}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            {new Date(p.purchasedAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })}
+                            {' · '}
+                            <span className="capitalize">{p.itemType === 'package' ? 'Pacote' : 'Material'}</span>
+                          </p>
+                        </div>
+                        <div className="text-right flex-shrink-0">
+                          {p.price === 0 ? (
+                            <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">Grátis</span>
+                          ) : (
+                            <span className="text-sm font-bold">R$ {Number(p.price).toFixed(2)}</span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                    {purchases.length > 0 && (
+                      <div className="flex items-center justify-between px-4 py-3 bg-muted/20 border-t border-border/30">
+                        <span className="text-xs text-muted-foreground">{purchases.length} {purchases.length === 1 ? 'compra' : 'compras'}</span>
+                        <span className="text-sm font-bold">
+                          Total: R$ {purchases.reduce((s: number, p: any) => s + (p.price || 0), 0).toFixed(2)}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+          </section>
+        )}
 
         {/* ====== SECTION 6: Submissions ====== */}
         <section className="mb-10">
