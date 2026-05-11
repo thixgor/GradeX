@@ -126,16 +126,34 @@ export async function POST(request: NextRequest): Promise<Response> {
         const maxBytes = getMaxUploadBytes()
 
         // Origens permitidas para o upload direto ao Vercel Blob.
-        // Lê a origem real da requisição (admin autenticado) + domínios extras via env.
-        // A segurança é garantida pelo check de admin acima — não por CORS.
+        // Combina múltiplas fontes para garantir que a origem do browser seja aceita:
+        //   1. Header Origin da requisição (browser).
+        //   2. Header Referer (fallback se Origin for stripado por proxy).
+        //   3. Host header + scheme inferido (last-resort).
+        //   4. NEXT_PUBLIC_APP_URL e BLOB_ALLOWED_ORIGINS (configuração explícita).
+        // A segurança real é garantida pelo check de admin acima — não por CORS.
         const requestOrigin = request.headers.get('origin')
+        const referer = request.headers.get('referer')
+        let refererOrigin: string | null = null
+        if (referer) {
+          try { refererOrigin = new URL(referer).origin } catch {}
+        }
+        const forwardedHost = request.headers.get('x-forwarded-host') || request.headers.get('host')
+        const forwardedProto = request.headers.get('x-forwarded-proto') || 'https'
+        const hostOrigin = forwardedHost ? `${forwardedProto}://${forwardedHost}` : null
+
         const allowedOrigins = [
-          ...(requestOrigin ? [requestOrigin] : []),
-          ...(process.env.NEXT_PUBLIC_APP_URL ? [process.env.NEXT_PUBLIC_APP_URL] : []),
+          requestOrigin,
+          refererOrigin,
+          hostOrigin,
+          process.env.NEXT_PUBLIC_APP_URL || null,
           ...(process.env.BLOB_ALLOWED_ORIGINS
             ? process.env.BLOB_ALLOWED_ORIGINS.split(',').map((o) => o.trim()).filter(Boolean)
             : []),
-        ].filter((v, i, a) => a.indexOf(v) === i) // deduplica
+        ].filter((v): v is string => !!v)
+         .filter((v, i, a) => a.indexOf(v) === i) // deduplica
+
+        console.log('[pdf-upload] allowedOrigins:', allowedOrigins, 'origin:', requestOrigin)
 
         return {
           allowedContentTypes: ['application/pdf'],
