@@ -154,9 +154,15 @@ export async function POST(request: NextRequest) {
     }
 
     // ── 7. Baixar PDF original do Vercel Blob ─────────────────────────────
-    // Nunca expor material.pdfFile.blobUrl ao cliente — apenas usar aqui no servidor
+    // Nunca expor material.pdfFile.blobUrl ao cliente — apenas usar aqui no servidor.
+    // Storage privado: inclui token de autorização no header.
     const blobResponse = await fetch(material.pdfFile.blobUrl, {
-      headers: { 'Cache-Control': 'no-store' },
+      headers: {
+        'Cache-Control': 'no-store',
+        ...(process.env.BLOB_READ_WRITE_TOKEN
+          ? { Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}` }
+          : {}),
+      },
     })
 
     if (!blobResponse.ok) {

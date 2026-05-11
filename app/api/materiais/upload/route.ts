@@ -112,7 +112,7 @@ export async function POST(request: NextRequest): Promise<Response> {
     const pathname = `material-originals/${materialId}/${Date.now()}-${crypto.randomUUID()}.pdf`
 
     const blob = await put(pathname, file, {
-      access: 'public',
+      access: 'private',
       addRandomSuffix: false,
       contentType: 'application/pdf',
     })
