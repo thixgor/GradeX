@@ -9,6 +9,7 @@ import {
   sanitizeCardSide,
   sanitizeHiddenWord,
 } from '@/lib/flashcard-manual'
+import { FLASHCARD_SPACED_PROGRESS_COLLECTION } from '@/lib/flashcard-spaced-repetition'
 import type { FlashcardManualCard, FlashcardManualDeck } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -77,6 +78,10 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     if (!card) return NextResponse.json({ error: 'Card não encontrado' }, { status: 404 })
 
     await db.collection<FlashcardManualCard>(FLASHCARD_MANUAL_COLLECTIONS.cards).deleteOne({ _id: cardId })
+    await db.collection(FLASHCARD_SPACED_PROGRESS_COLLECTION).deleteMany({
+      deckId: String(deck._id),
+      cardId: params.cardId,
+    })
     // Reordenar índices
     await db.collection<FlashcardManualCard>(FLASHCARD_MANUAL_COLLECTIONS.cards).updateMany(
       { deckId: String(deck._id), index: { $gt: card.index } },

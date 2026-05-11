@@ -32,6 +32,12 @@ import {
   Square,
   CheckSquare,
   Loader2,
+  Brain,
+  CalendarClock,
+  BarChart3,
+  Flame,
+  Leaf,
+  AlertTriangle,
 } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
@@ -52,9 +58,38 @@ interface AccessFlags {
 
 interface DeckResponse {
   deck: FlashcardManualDeck & { _id: string }
-  cards: (FlashcardManualCard & { _id: string })[]
+  cards: (FlashcardManualCard & { _id: string; spacedProgress?: SpacedProgressResponse | null })[]
+  spacedRepetition?: {
+    stats: SpacedRepetitionStats
+  }
   access: AccessFlags & { canManage: boolean }
   viewer: { userId: string; emailVerified: boolean }
+}
+
+type StudyMode = 'normal' | 'spaced'
+type SpacedRating = 'SUAVE' | 'NO_PONTO' | 'PORRETE'
+
+interface SpacedProgressResponse {
+  _id?: string
+  userId: string
+  cardId: string
+  deckId: string
+  rating: SpacedRating
+  reviewCount: number
+  correctStreak: number
+  easeFactor: number
+  intervalDays: number
+  nextReviewAt: string | null
+  lastReviewedAt: string | null
+  createdAt: string | null
+  updatedAt: string | null
+}
+
+interface SpacedRepetitionStats {
+  dueToday: number
+  newCards: number
+  mastered: number
+  difficult: number
 }
 
 const RATINGS = [
@@ -72,11 +107,15 @@ export default function DeckPage() {
   const [data, setData] = useState<DeckResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [studying, setStudying] = useState(false)
+  const [studyModeChoice, setStudyModeChoice] = useState<StudyMode>('normal')
+  const [activeStudyMode, setActiveStudyMode] = useState<StudyMode>('normal')
   const [currentIndex, setCurrentIndex] = useState(0)
   const [flipped, setFlipped] = useState(false)
   const [showComment, setShowComment] = useState(false)
   const [showHint, setShowHint] = useState(false)
   const [ratings, setRatings] = useState<Record<string, 'facil' | 'equilibrado' | 'porrada'>>({})
+  const [ratingBusyCard, setRatingBusyCard] = useState<string | null>(null)
+  const [scheduleFeedback, setScheduleFeedback] = useState<string | null>(null)
   const [liked, setLiked] = useState(false)
   const [likeCount, setLikeCount] = useState(0)
   const [toast, setToast] = useState<{ open: boolean; message: string; type?: 'success' | 'error' | 'info' }>({ open: false, message: '' })
@@ -94,16 +133,20 @@ export default function DeckPage() {
     }
   }, [purchaseSuccess])
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (mode: StudyMode = 'normal') => {
     setLoading(true)
     try {
-      const res = await fetch(`/api/flashcards/manual/${encodeURIComponent(slug)}`, { cache: 'no-store' })
+      const url = new URL(`/api/flashcards/manual/${encodeURIComponent(slug)}`, window.location.origin)
+      if (mode === 'spaced') url.searchParams.set('studyMode', 'spaced')
+      const res = await fetch(url.toString(), { cache: 'no-store' })
       const json = await res.json()
       if (!res.ok) throw new Error(json?.error || 'Erro ao carregar deck')
       setData(json)
       setLikeCount(json.deck?.likeCount || 0)
+      return true
     } catch (err: any) {
       setToast({ open: true, message: err.message || 'Erro ao carregar', type: 'error' })
+      return false
     } finally {
       setLoading(false)
     }
@@ -155,23 +198,70 @@ export default function DeckPage() {
     if (!data) return
     if (currentIndex < data.cards.length - 1) {
       setCurrentIndex(i => i + 1)
-      setFlipped(false); setShowComment(false); setShowHint(false)
+      setFlipped(false); setShowComment(false); setShowHint(false); setScheduleFeedback(null)
     }
   }
   function goPrev() {
     if (!data) return
     if (currentIndex > 0) {
       setCurrentIndex(i => i - 1)
-      setFlipped(false); setShowComment(false); setShowHint(false)
+      setFlipped(false); setShowComment(false); setShowHint(false); setScheduleFeedback(null)
     }
   }
-  function rate(value: 'facil' | 'equilibrado' | 'porrada') {
+
+  async function startStudy(mode: StudyMode) {
+    if (!data || data.cards.length === 0) return
+    setActiveStudyMode(mode)
+    setRatings({})
+    setCurrentIndex(0)
+    setFlipped(false)
+    setShowComment(false)
+    setShowHint(false)
+    setScheduleFeedback(null)
+    const loaded = await load(mode)
+    if (!loaded) return
+    setStudying(true)
+  }
+
+  function mapRatingToSpaced(value: 'facil' | 'equilibrado' | 'porrada'): SpacedRating {
+    if (value === 'facil') return 'SUAVE'
+    if (value === 'equilibrado') return 'NO_PONTO'
+    return 'PORRETE'
+  }
+
+  async function rate(value: 'facil' | 'equilibrado' | 'porrada') {
     if (!data) return
     const card = data.cards[currentIndex]
     if (!card) return
+    if (ratingBusyCard) return
     setRatings(prev => ({ ...prev, [card._id]: value }))
+    if (activeStudyMode === 'spaced') {
+      setRatingBusyCard(card._id)
+      try {
+        const res = await fetch(`/api/flashcards/manual/${encodeURIComponent(slug)}/reviews`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cardId: card._id, rating: mapRatingToSpaced(value) }),
+        })
+        const json = await res.json()
+        if (!res.ok) throw new Error(json?.error || 'Erro ao registrar revisão')
+        setScheduleFeedback(json.feedbackMessage || 'Revisão agendada.')
+        if (json.progress) {
+          setData(prev => prev ? {
+            ...prev,
+            cards: prev.cards.map(c => c._id === card._id ? { ...c, spacedProgress: json.progress } : c),
+          } : prev)
+        }
+      } catch (err: any) {
+        setToast({ open: true, message: err.message || 'Erro ao registrar revisão', type: 'error' })
+        setRatingBusyCard(null)
+        return
+      } finally {
+        setRatingBusyCard(null)
+      }
+    }
     if (currentIndex < data.cards.length - 1) {
-      setTimeout(() => goNext(), 250)
+      setTimeout(() => goNext(), activeStudyMode === 'spaced' ? 850 : 250)
     }
   }
 
@@ -278,10 +368,20 @@ export default function DeckPage() {
         <div className="max-w-3xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between mb-4">
             <Button variant="ghost" onClick={() => setStudying(false)} className="gap-1"><ArrowLeft className="h-4 w-4" />Sair</Button>
-            <span className="text-sm text-slate-500 dark:text-slate-400">{currentIndex + 1} / {total}</span>
+            <div className="flex items-center gap-2">
+              {activeStudyMode === 'spaced' && (
+                <span className="inline-flex items-center gap-1 rounded-full border border-emerald-300/40 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-200 backdrop-blur">
+                  <CalendarClock className="h-3.5 w-3.5" /> Fixação intensa
+                </span>
+              )}
+              <span className="text-sm text-slate-500 dark:text-slate-400">{currentIndex + 1} / {total}</span>
+            </div>
           </div>
           <div className="h-1.5 bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden mb-6">
-            <motion.div className="h-full bg-gradient-to-r from-violet-500 to-fuchsia-500" animate={{ width: `${progress}%` }} />
+            <motion.div
+              className={cn('h-full bg-gradient-to-r', activeStudyMode === 'spaced' ? 'from-emerald-500 via-lime-400 to-amber-400' : 'from-violet-500 to-fuchsia-500')}
+              animate={{ width: `${progress}%` }}
+            />
           </div>
 
           {card && (
@@ -304,18 +404,33 @@ export default function DeckPage() {
                 <button
                   key={r.value}
                   onClick={() => rate(r.value)}
-                  disabled={!flipped}
+                  disabled={!flipped || ratingBusyCard === card?._id}
                   className={cn(
                     'rounded-full px-5 py-2 text-sm font-semibold text-white bg-gradient-to-r transition flex-1 min-w-[90px] max-w-[140px]',
                     r.color,
-                    !flipped && 'opacity-40 cursor-not-allowed',
+                    (!flipped || ratingBusyCard === card?._id) && 'opacity-40 cursor-not-allowed',
                     ratings[card?._id] === r.value && 'ring-2 ring-offset-2 ring-white dark:ring-offset-slate-900'
                   )}
                 >
-                  {r.label}
+                  {ratingBusyCard === card?._id ? 'Salvando...' : r.label}
                 </button>
               ))}
             </div>
+
+            {activeStudyMode === 'spaced' && (
+              <AnimatePresence>
+                {scheduleFeedback && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    className="mx-auto max-w-md rounded-2xl border border-emerald-300/40 bg-emerald-500/10 px-4 py-2 text-center text-sm font-medium text-emerald-800 backdrop-blur-md dark:text-emerald-100"
+                  >
+                    {scheduleFeedback}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            )}
 
             {/* Nav buttons */}
             <div className="flex items-center justify-between gap-3">
@@ -432,8 +547,9 @@ export default function DeckPage() {
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 dark:bg-white/5 px-3 py-2 text-xs text-slate-500"><Lock className="h-3.5 w-3.5" /> Sem acesso</span>
               ) : (
                 <button
-                  onClick={() => { setStudying(true); setCurrentIndex(0); setFlipped(false) }}
-                  className="relative overflow-hidden inline-flex items-center gap-2.5 rounded-2xl px-8 py-3.5 text-base font-bold tracking-wide text-white transition-all duration-200 active:scale-[0.97] hover:brightness-110"
+                  onClick={() => startStudy(studyModeChoice)}
+                  disabled={cards.length === 0}
+                  className="relative overflow-hidden inline-flex items-center gap-2.5 rounded-2xl px-8 py-3.5 text-base font-bold tracking-wide text-white transition-all duration-200 active:scale-[0.97] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55"
                   style={{
                     background: 'linear-gradient(135deg, rgba(4,120,87,1) 0%, rgba(5,150,105,0.95) 50%, rgba(16,185,129,0.90) 100%)',
                     backdropFilter: 'blur(16px)',
@@ -444,7 +560,7 @@ export default function DeckPage() {
                 >
                   <span className="absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white/55 to-transparent pointer-events-none" />
                   <Play className="h-4.5 w-4.5 fill-current flex-shrink-0" />
-                  Estudar agora
+                  {studyModeChoice === 'spaced' ? 'Iniciar fixação intensa' : 'Estudar agora'}
                 </button>
               )}
             </div>
@@ -455,6 +571,12 @@ export default function DeckPage() {
           <LockedPreview deck={deck} access={access} />
         ) : (
           <div>
+            <StudyModePanel
+              selected={studyModeChoice}
+              onSelect={setStudyModeChoice}
+              stats={data.spacedRepetition?.stats}
+              cards={cards}
+            />
             <button
               onClick={() => setShowCards(s => !s)}
               className="w-full flex items-center justify-between gap-3 rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 px-5 py-4 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors mb-3"
@@ -513,6 +635,213 @@ export default function DeckPage() {
         />
       )}
     </AppShell>
+  )
+}
+
+function StudyModePanel({
+  selected,
+  onSelect,
+  stats,
+  cards,
+}: {
+  selected: StudyMode
+  onSelect: (mode: StudyMode) => void
+  stats?: SpacedRepetitionStats
+  cards: (FlashcardManualCard & { _id: string; spacedProgress?: SpacedProgressResponse | null })[]
+}) {
+  const [open, setOpen] = useState(false)
+  const safeStats = stats || { dueToday: 0, newCards: cards.length, mastered: 0, difficult: 0 }
+
+  return (
+    <section className="mb-4 overflow-hidden rounded-3xl border border-emerald-200/50 bg-white/70 p-4 shadow-[0_18px_70px_-35px_rgba(4,120,87,0.45)] backdrop-blur-2xl dark:border-emerald-300/15 dark:bg-slate-950/55">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-stretch">
+        <button
+          type="button"
+          onClick={() => onSelect('normal')}
+          className={cn(
+            'flex-1 rounded-2xl border p-4 text-left transition',
+            selected === 'normal'
+              ? 'border-slate-300 bg-white text-slate-900 shadow-sm dark:border-white/15 dark:bg-white/10 dark:text-white'
+              : 'border-white/50 bg-white/45 text-slate-600 hover:bg-white/75 dark:border-white/10 dark:bg-white/5 dark:text-slate-300'
+          )}
+        >
+          <div className="flex items-center gap-3">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-900 text-white dark:bg-white dark:text-slate-950">
+              <Play className="h-4 w-4 fill-current" />
+            </span>
+            <div>
+              <h2 className="text-sm font-bold">Estudo normal</h2>
+              <p className="mt-0.5 text-xs opacity-75">Segue a ordem do deck, como antes.</p>
+            </div>
+          </div>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onSelect('spaced')}
+          className={cn(
+            'relative flex-1 overflow-hidden rounded-2xl border p-4 text-left transition',
+            selected === 'spaced'
+              ? 'border-emerald-300/60 bg-emerald-500/15 text-emerald-950 shadow-lg shadow-emerald-900/10 dark:text-emerald-50'
+              : 'border-emerald-200/40 bg-emerald-50/55 text-slate-700 hover:bg-emerald-50 dark:border-emerald-300/15 dark:bg-emerald-500/10 dark:text-slate-200'
+          )}
+        >
+          <span className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/70 to-transparent" />
+          <div className="flex items-center gap-3">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600 via-lime-500 to-amber-400 text-white shadow-lg shadow-emerald-700/25">
+              <Brain className="h-5 w-5" />
+            </span>
+            <div>
+              <h2 className="text-sm font-bold">Repetição espaçada para fixação intensa</h2>
+              <p className="mt-0.5 text-xs opacity-80">Perfeito para fixação intensa antes de provas.</p>
+            </div>
+          </div>
+        </button>
+      </div>
+
+      {selected === 'spaced' && (
+        <motion.div
+          initial={{ opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-4 rounded-2xl border border-emerald-200/55 bg-white/55 p-4 backdrop-blur-xl dark:border-emerald-300/15 dark:bg-white/5"
+        >
+          <div className="grid gap-4 lg:grid-cols-[1.1fr,0.9fr]">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300/40 bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-700 dark:text-emerald-200">
+                <Leaf className="h-3.5 w-3.5" /> Quer revisar de forma mais inteligente?
+              </div>
+              <p className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+                Na repetição espaçada, os cards que você erra ou acha difíceis aparecem novamente mais cedo. Os cards fáceis aparecem com menos frequência. Isso ajuda a fixar melhor o conteúdo e evitar esquecer depois.
+              </p>
+              <div className="mt-3 grid gap-2 sm:grid-cols-3">
+                <RatingExplain label="Suave" tone="emerald" text="Você lembrou com facilidade, então o card volta depois de mais tempo." />
+                <RatingExplain label="No ponto" tone="amber" text="Você lembrou, mas ainda precisa revisar em breve." />
+                <RatingExplain label="Porrete" tone="rose" text="Você teve dificuldade ou errou, então o card volta logo." />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <StatTile icon={<CalendarClock className="h-4 w-4" />} label="Vencidos hoje" value={safeStats.dueToday} tone="emerald" />
+              <StatTile icon={<Sparkles className="h-4 w-4" />} label="Novos" value={safeStats.newCards} tone="sky" />
+              <StatTile icon={<BarChart3 className="h-4 w-4" />} label="Dominados" value={safeStats.mastered} tone="lime" />
+              <StatTile icon={<Flame className="h-4 w-4" />} label="Difíceis" value={safeStats.difficult} tone="rose" />
+            </div>
+          </div>
+
+          <div className="mt-4">
+            <button
+              type="button"
+              onClick={() => setOpen(v => !v)}
+              className="inline-flex items-center gap-2 rounded-full border border-white/50 bg-white/60 px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10"
+            >
+              {open ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+              {open ? 'Ocultar desempenho' : 'Ver desempenho por card'}
+            </button>
+
+            <AnimatePresence>
+              {open && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="overflow-hidden"
+                >
+                  <div className="mt-3 max-h-72 overflow-auto rounded-2xl border border-white/50 bg-white/45 backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
+                    {cards.length === 0 ? (
+                      <p className="p-4 text-sm text-slate-500">Esse deck ainda não tem cartões.</p>
+                    ) : (
+                      <ul className="divide-y divide-slate-200/60 dark:divide-white/10">
+                        {cards.map((card, index) => (
+                          <li key={card._id} className="grid gap-2 px-4 py-3 text-sm sm:grid-cols-[minmax(0,1fr),auto] sm:items-center">
+                            <div className="min-w-0">
+                              <p className="truncate font-medium text-slate-800 dark:text-slate-100">
+                                {index + 1}. {card.kind === 'hidden_word' && card.hiddenWord ? card.hiddenWord.phrase : (card.front?.text || '(sem texto)')}
+                              </p>
+                              <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+                                {formatProgressLine(card.spacedProgress)}
+                              </p>
+                            </div>
+                            <ProgressBadge progress={card.spacedProgress} />
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </motion.div>
+      )}
+    </section>
+  )
+}
+
+function RatingExplain({ label, text, tone }: { label: string; text: string; tone: 'emerald' | 'amber' | 'rose' }) {
+  const colors = {
+    emerald: 'border-emerald-300/40 bg-emerald-500/10 text-emerald-800 dark:text-emerald-100',
+    amber: 'border-amber-300/40 bg-amber-500/10 text-amber-800 dark:text-amber-100',
+    rose: 'border-rose-300/40 bg-rose-500/10 text-rose-800 dark:text-rose-100',
+  }
+  return (
+    <div className={cn('rounded-2xl border px-3 py-2 backdrop-blur-md', colors[tone])}>
+      <div className="text-xs font-bold">{label}</div>
+      <p className="mt-1 text-[11px] leading-snug opacity-85">{text}</p>
+    </div>
+  )
+}
+
+function StatTile({ icon, label, value, tone }: { icon: React.ReactNode; label: string; value: number; tone: 'emerald' | 'sky' | 'lime' | 'rose' }) {
+  const colors = {
+    emerald: 'from-emerald-500/20 to-emerald-500/5 text-emerald-800 dark:text-emerald-100',
+    sky: 'from-sky-500/20 to-sky-500/5 text-sky-800 dark:text-sky-100',
+    lime: 'from-lime-500/25 to-lime-500/5 text-lime-800 dark:text-lime-100',
+    rose: 'from-rose-500/20 to-rose-500/5 text-rose-800 dark:text-rose-100',
+  }
+  return (
+    <div className={cn('rounded-2xl border border-white/55 bg-gradient-to-br p-3 backdrop-blur-xl dark:border-white/10', colors[tone])}>
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-current opacity-75">{icon}</span>
+        <span className="text-xl font-black tabular-nums">{value}</span>
+      </div>
+      <p className="mt-2 text-xs font-semibold opacity-80">{label}</p>
+    </div>
+  )
+}
+
+function formatProgressLine(progress?: SpacedProgressResponse | null): string {
+  if (!progress) return 'Novo card pendente de primeira revisão.'
+  const ratingLabel = progress.rating === 'SUAVE' ? 'Suave' : progress.rating === 'NO_PONTO' ? 'No ponto' : 'Porrete'
+  const next = progress.nextReviewAt ? new Date(progress.nextReviewAt).toLocaleDateString('pt-BR') : 'em breve'
+  return `${progress.reviewCount} revisões · sequência ${progress.correctStreak} · ${ratingLabel} · volta ${next}`
+}
+
+function ProgressBadge({ progress }: { progress?: SpacedProgressResponse | null }) {
+  if (!progress) {
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-sky-500/10 px-2.5 py-1 text-xs font-semibold text-sky-700 ring-1 ring-sky-300/40 dark:text-sky-200">
+        <Sparkles className="h-3 w-3" /> Novo
+      </span>
+    )
+  }
+  if (progress.rating === 'PORRETE') {
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-rose-500/10 px-2.5 py-1 text-xs font-semibold text-rose-700 ring-1 ring-rose-300/40 dark:text-rose-200">
+        <AlertTriangle className="h-3 w-3" /> Difícil
+      </span>
+    )
+  }
+  if (progress.correctStreak >= 3 && progress.intervalDays >= 15) {
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-lime-500/15 px-2.5 py-1 text-xs font-semibold text-lime-700 ring-1 ring-lime-300/40 dark:text-lime-200">
+        <CheckCircle2 className="h-3 w-3" /> Dominado
+      </span>
+    )
+  }
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-300/40 dark:text-emerald-200">
+      <CalendarClock className="h-3 w-3" /> Revisar
+    </span>
   )
 }
 

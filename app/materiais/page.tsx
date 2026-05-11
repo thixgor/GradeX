@@ -40,6 +40,12 @@ import { Input } from '@/components/ui/input'
 import { AppShell } from '@/components/app-shell'
 import { Share2, CheckCheck } from 'lucide-react'
 import { PackageUpsellModal } from '@/components/materiais/package-upsell-modal'
+import {
+  DownloadStepId,
+  INITIAL_DOWNLOAD_STATE,
+  PdfDownloadProgress,
+  PdfDownloadState,
+} from '@/components/materiais/pdf-download-progress'
 
 interface Material {
   _id: string
@@ -193,8 +199,13 @@ function MateriaisContent() {
   const [upsellState, setUpsellState] = useState<{ pkg: MaterialPackage; material: Material } | null>(null)
   const [pdfDownloading, setPdfDownloading] = useState<string | null>(null) // materialId sendo baixado
   const [pdfDownloadError, setPdfDownloadError] = useState<string | null>(null)
+  const [pdfDownloadMaterial, setPdfDownloadMaterial] = useState<Material | null>(null)
+  const [downloadState, setDownloadState] = useState<PdfDownloadState>(INITIAL_DOWNLOAD_STATE)
+  const stepTimersRef = useRef<ReturnType<typeof setTimeout>[]>([])
   const highlightRef = useRef<HTMLDivElement | null>(null)
   const { copiedId, copy } = useCopyLink()
+
+  useEffect(() => () => { stepTimersRef.current.forEach(clearTimeout) }, [])
 
   // Access check: true if user belongs to any of the item's allowed groups (or no restriction set)
   const hasGroupAccess = useCallback((item: { allowedGroups?: string[] }): boolean => {
@@ -389,6 +400,77 @@ function MateriaisContent() {
     }
   }
 
+  const startPdfDownload = useCallback(async (materialOverride?: Material) => {
+    const material = materialOverride || pdfDownloadMaterial
+    if (!material) return
+
+    stepTimersRef.current.forEach(clearTimeout)
+    stepTimersRef.current = []
+    setPdfDownloadMaterial(material)
+    setPdfDownloadError(null)
+    setPdfDownloading(material._id)
+    setDownloadState({ step: 'auth', status: 'running' })
+
+    const t1 = setTimeout(() => {
+      setDownloadState(s => s.status === 'running' ? { ...s, step: 'fetch' } : s)
+    }, 400)
+    const t2 = setTimeout(() => {
+      setDownloadState(s => s.status === 'running' ? { ...s, step: 'watermark' } : s)
+    }, 1800)
+    stepTimersRef.current = [t1, t2]
+
+    try {
+      const res = await fetch('/api/materiais/download', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ materialId: material._id }),
+      })
+
+      stepTimersRef.current.forEach(clearTimeout)
+      stepTimersRef.current = []
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        setDownloadState({
+          step: 'auth',
+          status: 'error',
+          error: data.error || 'Erro ao gerar PDF. Tente novamente.',
+          errorStep: 'auth',
+        })
+        return
+      }
+
+      setDownloadState({ step: 'ready', status: 'running' })
+
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      const disposition = res.headers.get('Content-Disposition') || ''
+      const nameMatch = disposition.match(/filename="?([^"]+)"?/)
+      a.download = nameMatch?.[1] || `${material.title}.pdf`
+      a.href = url
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+
+      setDownloadState({ step: 'ready', status: 'success' })
+      const tClose = setTimeout(() => setDownloadState(INITIAL_DOWNLOAD_STATE), 2800)
+      stepTimersRef.current = [tClose]
+    } catch {
+      stepTimersRef.current.forEach(clearTimeout)
+      stepTimersRef.current = []
+      setDownloadState(s => ({
+        ...s,
+        status: 'error',
+        error: 'Erro de conexão. Verifique sua internet e tente novamente.',
+        errorStep: s.step as DownloadStepId,
+      }))
+    } finally {
+      setPdfDownloading(null)
+    }
+  }, [pdfDownloadMaterial])
+
   const handleDownload = async (material: Material) => {
     if (material.type === 'video_embed') {
       router.push(`/materiais/${material._id}`)
@@ -399,43 +481,11 @@ function MateriaisContent() {
       return
     }
 
-    // PDF interno: rota de download seguro com marca d'água
     if (material._hasPdf) {
-      setPdfDownloadError(null)
-      setPdfDownloading(material._id)
-      try {
-        const res = await fetch('/api/materiais/download', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ materialId: material._id }),
-        })
-
-        if (!res.ok) {
-          const data = await res.json().catch(() => ({}))
-          setPdfDownloadError(data.error || 'Erro ao gerar PDF. Tente novamente.')
-          return
-        }
-
-        // Forçar download do PDF
-        const blob = await res.blob()
-        const url = URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        // Pegar nome do arquivo do header ou usar título do material
-        const disposition = res.headers.get('Content-Disposition') || ''
-        const nameMatch = disposition.match(/filename="?([^"]+)"?/)
-        a.download = nameMatch?.[1] || `${material.title}.pdf`
-        a.href = url
-        a.click()
-        URL.revokeObjectURL(url)
-      } catch {
-        setPdfDownloadError('Erro ao baixar o PDF. Verifique sua conexão.')
-      } finally {
-        setPdfDownloading(null)
-      }
+      startPdfDownload(material)
       return
     }
 
-    // Fallback: link externo (Google Drive, etc.)
     if (material.downloadUrl) {
       window.open(material.downloadUrl, '_blank')
     }
@@ -858,6 +908,13 @@ function MateriaisContent() {
           />
         )}
       </AnimatePresence>
+
+      <PdfDownloadProgress
+        materialTitle={pdfDownloadMaterial?.title ?? ''}
+        state={downloadState}
+        onRetry={() => startPdfDownload()}
+        onClose={() => setDownloadState(INITIAL_DOWNLOAD_STATE)}
+      />
 
     </div>
   )

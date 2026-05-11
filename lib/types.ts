@@ -463,6 +463,24 @@ export interface FlashcardManualLike {
   createdAt: Date
 }
 
+export type FlashcardSpacedRating = 'SUAVE' | 'NO_PONTO' | 'PORRETE'
+
+export interface FlashcardSpacedProgress {
+  _id?: string | import('mongodb').ObjectId
+  userId: string
+  cardId: string
+  deckId: string
+  rating: FlashcardSpacedRating
+  reviewCount: number
+  correctStreak: number
+  easeFactor: number
+  intervalDays: number
+  nextReviewAt: Date
+  lastReviewedAt: Date
+  createdAt: Date
+  updatedAt: Date
+}
+
 // Sessão de estudo de deck manual (estatística leve)
 export interface FlashcardManualStudyEntry {
   cardId: string

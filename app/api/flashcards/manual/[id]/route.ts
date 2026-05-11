@@ -14,7 +14,13 @@ import {
   getUserGroups,
   FLASHCARD_MANUAL_VALID_GROUPS,
 } from '@/lib/flashcard-manual'
-import type { FlashcardManualDeck, FlashcardManualCard } from '@/lib/types'
+import {
+  FLASHCARD_SPACED_PROGRESS_COLLECTION,
+  calculateSpacedStats,
+  normalizeSpacedProgressForResponse,
+  sortCardsForSpacedRepetition,
+} from '@/lib/flashcard-spaced-repetition'
+import type { FlashcardManualDeck, FlashcardManualCard, FlashcardSpacedProgress } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
 
@@ -58,13 +64,34 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
     // Visibilidade pública/unlisted: só inclui cards se tem acesso
     let cards: FlashcardManualCard[] = []
+    let progressByCardId = new Map<string, FlashcardSpacedProgress>()
+    let spacedStats = { dueToday: 0, newCards: 0, mastered: 0, difficult: 0 }
     if (access.hasAccess) {
       const cardDocs = await db
         .collection<FlashcardManualCard>(FLASHCARD_MANUAL_COLLECTIONS.cards)
         .find({ deckId: String(deck._id) })
         .sort({ index: 1 })
         .toArray()
-      cards = cardDocs.map(normalizeCardForResponse) as any
+      const progressDocs = await db
+        .collection<FlashcardSpacedProgress>(FLASHCARD_SPACED_PROGRESS_COLLECTION)
+        .find({ deckId: String(deck._id), userId: session.userId })
+        .toArray()
+      progressByCardId = new Map(progressDocs.map(progress => [progress.cardId, progress]))
+      spacedStats = calculateSpacedStats(cardDocs as any, progressByCardId)
+
+      const studyMode = request.nextUrl.searchParams.get('studyMode')
+      const orderedCards = studyMode === 'spaced'
+        ? sortCardsForSpacedRepetition(cardDocs as any, progressByCardId)
+        : cardDocs
+
+      cards = orderedCards.map(card => {
+        const normalized = normalizeCardForResponse(card)
+        const progress = progressByCardId.get(String(card._id))
+        return {
+          ...normalized,
+          spacedProgress: progress ? normalizeSpacedProgressForResponse(progress) : null,
+        } as any
+      })
     }
 
     // Incrementar viewCount (fire-and-forget) — apenas para visitantes não-donos
@@ -77,6 +104,9 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     const res = NextResponse.json({
       deck: normalizeDeckForResponse(deck),
       cards,
+      spacedRepetition: {
+        stats: spacedStats,
+      },
       access: { ...access, canManage: access.isOwner || isAdmin },
       viewer: {
         userId: session.userId,
@@ -223,6 +253,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       db.collection(FLASHCARD_MANUAL_COLLECTIONS.shares).deleteMany({ deckId }),
       db.collection(FLASHCARD_MANUAL_COLLECTIONS.likes).deleteMany({ deckId }),
       db.collection(FLASHCARD_MANUAL_COLLECTIONS.sessions).deleteMany({ deckId }),
+      db.collection(FLASHCARD_SPACED_PROGRESS_COLLECTION).deleteMany({ deckId }),
     ])
 
     if (deck.linkedMaterialId && isValidObjectId(deck.linkedMaterialId)) {

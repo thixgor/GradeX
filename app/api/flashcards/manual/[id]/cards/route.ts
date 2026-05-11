@@ -9,6 +9,7 @@ import {
   sanitizeCardSide,
   sanitizeHiddenWord,
 } from '@/lib/flashcard-manual'
+import { FLASHCARD_SPACED_PROGRESS_COLLECTION } from '@/lib/flashcard-spaced-repetition'
 import { getFlashcardManualLimits } from '@/lib/flashcard-limits'
 import type { FlashcardManualCard, FlashcardManualDeck } from '@/lib/types'
 
@@ -83,6 +84,10 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     const { deletedCount } = await cardsCol.deleteMany({
       _id: { $in: validIds },
       deckId,
+    })
+    await db.collection(FLASHCARD_SPACED_PROGRESS_COLLECTION).deleteMany({
+      deckId,
+      cardId: { $in: cardIds },
     })
 
     // Rebuild sequential indexes after bulk delete

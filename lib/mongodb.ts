@@ -32,6 +32,9 @@ if (process.env.NODE_ENV === 'development') {
         db.collection('checkout_events').createIndex({ userId: 1, createdAt: -1 }),
         db.collection('checkout_events').createIndex({ productId: 1, productType: 1, createdAt: -1 }),
         db.collection('checkout_events').createIndex({ orderId: 1 }),
+        db.collection('flashcardSpacedProgress').createIndex({ userId: 1, cardId: 1 }, { unique: true }),
+        db.collection('flashcardSpacedProgress').createIndex({ userId: 1, deckId: 1, nextReviewAt: 1 }),
+        db.collection('flashcardSpacedProgress').createIndex({ deckId: 1, cardId: 1 }),
       ]).catch(err => console.error('Erro ao criar índices iniciais:', err))
       return client
     })
@@ -70,6 +73,9 @@ if (process.env.NODE_ENV === 'development') {
       db.collection('checkout_events').createIndex({ userId: 1, createdAt: -1 }),
       db.collection('checkout_events').createIndex({ productId: 1, productType: 1, createdAt: -1 }),
       db.collection('checkout_events').createIndex({ orderId: 1 }),
+      db.collection('flashcardSpacedProgress').createIndex({ userId: 1, cardId: 1 }, { unique: true }),
+      db.collection('flashcardSpacedProgress').createIndex({ userId: 1, deckId: 1, nextReviewAt: 1 }),
+      db.collection('flashcardSpacedProgress').createIndex({ deckId: 1, cardId: 1 }),
     ]).catch(err => console.error('Erro ao criar índices iniciais:', err))
     return client
   })
