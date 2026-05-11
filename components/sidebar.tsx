@@ -137,22 +137,29 @@ function NavItemButton({
   item,
   index,
   hoveredIndex,
+  pressedIndex,
   collapsed,
   isItemActive,
   onHover,
+  onPress,
+  onRelease,
   onClick,
   staggerDelay,
 }: {
   item: NavItem
   index: number
   hoveredIndex: number | null
+  pressedIndex: number | null
   collapsed: boolean
   isItemActive: boolean
   onHover: (index: number) => void
+  onPress: (index: number) => void
+  onRelease: () => void
   onClick: () => void
   staggerDelay: number
 }) {
   const isHovered = hoveredIndex === index
+  const isPressed = pressedIndex === index
   const isGradient = item.variant === 'gradient'
   const isLogout = item.label === 'Sair'
 
@@ -163,21 +170,27 @@ function NavItemButton({
     <motion.button
       data-nav-item
       initial={{ opacity: 0, x: -12 }}
-      animate={{ opacity: 1, x: 0 }}
+      animate={{ opacity: 1, x: 0, scale: isPressed ? 0.97 : 1 }}
       transition={{
         duration: 0.35,
         delay: staggerDelay,
         ease: [0.16, 1, 0.3, 1],
       }}
       onMouseEnter={() => onHover(index)}
+      onPointerDown={(event) => {
+        if (event.pointerType === 'touch' || event.pointerType === 'pen') onPress(index)
+      }}
+      onPointerUp={onRelease}
+      onPointerCancel={onRelease}
+      onPointerLeave={onRelease}
       className={cn(
         'sidebar-fluid-item w-full flex items-center h-11 rounded-[14px] cursor-pointer relative z-[1]',
-        'select-none overflow-hidden',
+        'select-none overflow-hidden transition-[background-color,box-shadow] duration-150',
         isLogout
-          ? cn('text-muted-foreground', isHovered && 'text-red-500 dark:text-red-400')
+          ? cn('text-muted-foreground', (isHovered || isPressed) && 'text-red-500 dark:text-red-400', isPressed && 'bg-red-500/10 shadow-inner')
           : isGradient
-            ? cn('text-amber-600 dark:text-amber-400', isHovered && 'text-amber-500 dark:text-amber-300')
-            : cn('text-muted-foreground', isHovered && 'text-foreground'),
+            ? cn('text-amber-600 dark:text-amber-400', (isHovered || isPressed) && 'text-amber-500 dark:text-amber-300', isPressed && 'bg-amber-500/[0.12] shadow-inner')
+            : cn('text-muted-foreground', (isHovered || isPressed) && 'text-foreground', isPressed && 'bg-primary/10 shadow-inner ring-1 ring-primary/15'),
         isItemActive && !isGradient && !isLogout && 'sidebar-fluid-item-active text-primary font-semibold'
       )}
       style={{
@@ -192,7 +205,7 @@ function NavItemButton({
       {/* Icon with spring bounce */}
       <motion.span
         animate={{
-          scale: isHovered ? 1.15 : 1,
+          scale: isPressed ? 0.9 : isHovered ? 1.15 : 1,
           rotate: isHovered ? [-6, 0] : 0,
         }}
         transition={{
@@ -279,6 +292,7 @@ export function Sidebar({
 
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(_lastClickedIndex)
   const [isInNav, setIsInNav] = useState(_mouseInsideSidebar)
+  const [pressedIndex, setPressedIndex] = useState<number | null>(null)
   const [canCollapse, setCanCollapse] = useState(false)
 
   const isAdmin = user?.role === 'admin'
@@ -315,6 +329,7 @@ export function Sidebar({
 
   const handleNavClick = (item: NavItem, index: number) => {
     _lastClickedIndex = index
+    setPressedIndex(null)
     setHoveredIndex(index)
 
     if (item.onClick) item.onClick()
@@ -337,6 +352,15 @@ export function Sidebar({
     _lastClickedIndex = null
     setIsInNav(false)
     setHoveredIndex(null)
+  }, [])
+
+  const handleNavPress = useCallback((index: number) => {
+    setPressedIndex(index)
+    setHoveredIndex(index)
+  }, [])
+
+  const handleNavRelease = useCallback(() => {
+    setPressedIndex(null)
   }, [])
 
   useEffect(() => {
@@ -365,7 +389,7 @@ export function Sidebar({
     return () => media.removeEventListener('change', update)
   }, [])
 
-  const bubbleVisible = isInNav
+  const bubbleVisible = isInNav || pressedIndex !== null
 
   return (
     <>
@@ -568,9 +592,12 @@ export function Sidebar({
                 item={item}
                 index={index}
                 hoveredIndex={hoveredIndex}
+                pressedIndex={pressedIndex}
                 collapsed={isCollapsed}
                 isItemActive={isActive(item.href)}
                 onHover={setHoveredIndex}
+                onPress={handleNavPress}
+                onRelease={handleNavRelease}
                 onClick={() => handleNavClick(item, index)}
                 staggerDelay={index * 0.03}
               />
@@ -588,9 +615,12 @@ export function Sidebar({
                   item={item}
                   index={globalIndex}
                   hoveredIndex={hoveredIndex}
+                  pressedIndex={pressedIndex}
                   collapsed={isCollapsed}
                   isItemActive={isActive(item.href)}
                   onHover={setHoveredIndex}
+                  onPress={handleNavPress}
+                  onRelease={handleNavRelease}
                   onClick={() => handleNavClick(item, globalIndex)}
                   staggerDelay={(mainNavItems.length + index) * 0.03}
                 />
@@ -603,10 +633,16 @@ export function Sidebar({
               item={{ icon: <LogOut className="h-5 w-5" />, label: 'Sair' }}
               index={logoutIndex}
               hoveredIndex={hoveredIndex}
+              pressedIndex={pressedIndex}
               collapsed={isCollapsed}
               isItemActive={false}
               onHover={setHoveredIndex}
-              onClick={onLogout}
+              onPress={handleNavPress}
+              onRelease={handleNavRelease}
+              onClick={() => {
+                handleNavRelease()
+                onLogout()
+              }}
               staggerDelay={(logoutIndex) * 0.03}
             />
           </div>
