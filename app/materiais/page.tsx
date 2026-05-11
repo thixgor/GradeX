@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
+import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Search,
@@ -905,7 +906,7 @@ function MaterialCard({
       )}
 
       <div className={`glass-card h-full flex flex-col transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/10 ${showLocked ? 'pointer-events-none select-none' : ''}`}>
-        <div className="relative h-44 overflow-hidden">
+        <Link href={`/materiais/${material._id}`} className="block relative h-44 overflow-hidden cursor-pointer">
           {material.coverImage ? (
             <Image src={material.coverImage} alt={material.title} fill className="object-cover transition-transform duration-500 group-hover:scale-110" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw" />
           ) : (
@@ -916,10 +917,11 @@ function MaterialCard({
             </div>
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-white/0 hover:bg-white/8 transition-colors duration-200" />
 
           {/* Play button overlay for video_embed */}
           {isEmbed && canAccess && (
-            <button onClick={onDownload} className="absolute inset-0 flex items-center justify-center group/play">
+            <button onClick={e => { e.preventDefault(); e.stopPropagation(); onDownload() }} className="absolute inset-0 flex items-center justify-center group/play">
               <div className="h-14 w-14 rounded-full bg-white/25 backdrop-blur-sm border border-white/40 flex items-center justify-center transition-all group-hover/play:scale-110 group-hover/play:bg-white/35">
                 <Play className="h-6 w-6 text-white fill-white ml-0.5" />
               </div>
@@ -967,10 +969,10 @@ function MaterialCard({
             </div>
             <CopyLinkBtn id={material._id} copiedId={copiedId} onClick={e => { e.stopPropagation(); onCopyLink() }} />
           </div>
-        </div>
+        </Link>
 
         <div className="p-4 flex-1 flex flex-col">
-          <h3 className="font-heading font-bold text-sm mb-1 line-clamp-2 group-hover:text-primary transition-colors">{material.title}</h3>
+          <Link href={`/materiais/${material._id}`} className="font-heading font-bold text-sm mb-1 line-clamp-2 group-hover:text-primary transition-colors hover:underline cursor-pointer">{material.title}</Link>
           {material.description && (
             <div className="mb-3">
               <p className={`text-xs text-muted-foreground ${descExpanded ? '' : 'line-clamp-2'}`}>{material.description}</p>
@@ -1048,7 +1050,7 @@ function FeaturedCard({
           </div>
         </div>
 
-        <div className="relative h-48 overflow-hidden">
+        <Link href={`/materiais/${material._id}`} className="block relative h-48 overflow-hidden cursor-pointer">
           {material.coverImage ? (
             <Image src={material.coverImage} alt={material.title} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" priority={index === 0} />
           ) : (
@@ -1059,9 +1061,10 @@ function FeaturedCard({
             </div>
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+          <div className="absolute inset-0 bg-white/0 hover:bg-white/8 transition-colors duration-200" />
 
           {isEmbed && canAccess && (
-            <button onClick={onDownload} className="absolute inset-0 flex items-center justify-center">
+            <button onClick={e => { e.preventDefault(); e.stopPropagation(); onDownload() }} className="absolute inset-0 flex items-center justify-center">
               <div className="h-16 w-16 rounded-full bg-white/25 backdrop-blur-sm border border-white/40 flex items-center justify-center transition-all hover:scale-110 hover:bg-white/35">
                 <Play className="h-7 w-7 text-white fill-white ml-1" />
               </div>
@@ -1069,7 +1072,7 @@ function FeaturedCard({
           )}
 
           <div className="absolute bottom-3 left-4 right-4">
-            <h3 className="font-heading font-bold text-white text-lg leading-tight">{material.title}</h3>
+            <Link href={`/materiais/${material._id}`} className="font-heading font-bold text-white text-lg leading-tight hover:underline cursor-pointer" onClick={e => e.stopPropagation()}>{material.title}</Link>
             <div className="flex items-center gap-3 mt-1.5">
               <span className="flex items-center gap-1 text-xs text-white/70"><Download className="h-3 w-3" /> {material.downloadCount}</span>
               {(material.type === 'video' || material.type === 'video_embed') && material.videoDuration ? (
@@ -1090,7 +1093,7 @@ function FeaturedCard({
               <CopyLinkBtn id={material._id} copiedId={copiedId} onClick={e => { e.stopPropagation(); onCopyLink() }} />
             </div>
           </div>
-        </div>
+        </Link>
 
         <div className="p-4">
           {material.description && (
