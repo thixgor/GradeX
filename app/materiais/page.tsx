@@ -177,6 +177,7 @@ function MateriaisContent() {
   const [purchasedIds, setPurchasedIds] = useState<string[]>([])
   const [purchasedPackageIds, setPurchasedPackageIds] = useState<string[]>([])
   const [userGroups, setUserGroups] = useState<string[]>([])   // groups the current user belongs to
+  const [ready, setReady] = useState(false)
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const debouncedSearch = useDebounce(search, 350)
@@ -274,12 +275,16 @@ function MateriaisContent() {
       setSuccessMessage('Compra realizada com sucesso! O material já está disponível para download.')
       setTimeout(() => setSuccessMessage(''), 5000)
     }
+
+    // Signal that URL params have been applied — data fetch can now run
+    setReady(true)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
+    if (!ready) return
     fetchData(currentFolderId, debouncedSearch, activeFilter)
-  }, [fetchData, currentFolderId, debouncedSearch, activeFilter])
+  }, [ready, fetchData, currentFolderId, debouncedSearch, activeFilter])
 
   // Scroll to highlighted item
   useEffect(() => {
