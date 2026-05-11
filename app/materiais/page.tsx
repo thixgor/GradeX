@@ -64,6 +64,8 @@ interface Material {
   _hasGroupAccess?: boolean
   _hasAccess?: boolean
   _cardCount?: number
+  // PDF interno
+  _hasPdf?: boolean
 }
 
 // Groups that can have restricted access to materials
@@ -175,6 +177,8 @@ function MateriaisContent() {
   const [highlightedPackageId, setHighlightedPackageId] = useState<string | null>(null)
   const [previewItem, setPreviewItem] = useState<{ type: 'material'; data: Material } | { type: 'package'; data: MaterialPackage } | null>(null)
   const [upsellState, setUpsellState] = useState<{ pkg: MaterialPackage; material: Material } | null>(null)
+  const [pdfDownloading, setPdfDownloading] = useState<string | null>(null) // materialId sendo baixado
+  const [pdfDownloadError, setPdfDownloadError] = useState<string | null>(null)
   const highlightRef = useRef<HTMLDivElement | null>(null)
   const { copiedId, copy } = useCopyLink()
 
@@ -349,12 +353,54 @@ function MateriaisContent() {
     }
   }
 
-  const handleDownload = (material: Material) => {
+  const handleDownload = async (material: Material) => {
     if (material.type === 'video_embed') {
       router.push(`/materiais/${material._id}`)
-    } else if (material.type === 'flashcard_deck' && material.downloadUrl) {
+      return
+    }
+    if (material.type === 'flashcard_deck' && material.downloadUrl) {
       router.push(material.downloadUrl)
-    } else {
+      return
+    }
+
+    // PDF interno: rota de download seguro com marca d'água
+    if (material._hasPdf) {
+      setPdfDownloadError(null)
+      setPdfDownloading(material._id)
+      try {
+        const res = await fetch('/api/materiais/download', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ materialId: material._id }),
+        })
+
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}))
+          setPdfDownloadError(data.error || 'Erro ao gerar PDF. Tente novamente.')
+          return
+        }
+
+        // Forçar download do PDF
+        const blob = await res.blob()
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        // Pegar nome do arquivo do header ou usar título do material
+        const disposition = res.headers.get('Content-Disposition') || ''
+        const nameMatch = disposition.match(/filename="?([^"]+)"?/)
+        a.download = nameMatch?.[1] || `${material.title}.pdf`
+        a.href = url
+        a.click()
+        URL.revokeObjectURL(url)
+      } catch {
+        setPdfDownloadError('Erro ao baixar o PDF. Verifique sua conexão.')
+      } finally {
+        setPdfDownloading(null)
+      }
+      return
+    }
+
+    // Fallback: link externo (Google Drive, etc.)
+    if (material.downloadUrl) {
       window.open(material.downloadUrl, '_blank')
     }
   }
@@ -413,6 +459,26 @@ function MateriaisContent() {
                   </div>
                   <p className="text-green-700 dark:text-green-300 font-medium text-sm">{successMessage}</p>
                   <button onClick={() => setSuccessMessage('')} className="ml-auto"><X className="h-4 w-4 text-muted-foreground" /></button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* PDF Download Error Banner */}
+          <AnimatePresence>
+            {pdfDownloadError && (
+              <motion.div
+                initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                className="mt-4 p-4 rounded-2xl glass-card border-red-500/30 bg-red-500/10"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="h-8 w-8 rounded-full bg-red-500/20 flex items-center justify-center">
+                    <ShieldAlert className="h-4 w-4 text-red-500" />
+                  </div>
+                  <p className="text-red-700 dark:text-red-300 font-medium text-sm">{pdfDownloadError}</p>
+                  <button onClick={() => setPdfDownloadError(null)} className="ml-auto"><X className="h-4 w-4 text-muted-foreground" /></button>
                 </div>
               </motion.div>
             )}
@@ -480,7 +546,7 @@ function MateriaisContent() {
                     onDownload={() => handleDownload(material)}
                     onCopyLink={() => copyMaterialLink(material)}
                     onPreview={() => setPreviewItem({ type: 'material', data: material })}
-                    loading={checkoutLoading === material._id}
+                    loading={checkoutLoading === material._id || pdfDownloading === material._id}
                   />
                 </div>
               ))}
@@ -600,7 +666,7 @@ function MateriaisContent() {
                       onDownload={() => handleDownload(material)}
                       onCopyLink={() => copyMaterialLink(material)}
                       onPreview={() => setPreviewItem({ type: 'material', data: material })}
-                      loading={checkoutLoading === material._id}
+                      loading={checkoutLoading === material._id || pdfDownloading === material._id}
                     />
                   </div>
                 ))}

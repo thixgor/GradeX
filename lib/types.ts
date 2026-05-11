@@ -1057,18 +1057,39 @@ export interface MaterialFolder {
   updatedAt: Date
 }
 
+/** Metadados do PDF interno armazenado no Vercel Blob */
+export interface MaterialPdfFile {
+  /** Pathname no Vercel Blob — nunca expor ao cliente */
+  blobPathname: string
+  /** URL completa no Vercel Blob — nunca expor ao cliente */
+  blobUrl: string
+  /** Nome original do arquivo (sanitizado) */
+  originalFilename: string
+  /** Tamanho em bytes */
+  sizeBytes: number
+  /** userId do admin que fez o upload */
+  uploadedBy: string
+  /** Nome do admin que fez o upload */
+  uploadedByName: string
+  /** Data do upload */
+  uploadedAt: Date
+}
+
 export interface Material {
   _id?: string | import('mongodb').ObjectId
   title: string
   description?: string
   coverImage?: string         // Capa do material
   type: MaterialType          // Tipo do arquivo
-  downloadUrl: string         // Link para download
+  downloadUrl: string         // Link externo (Google Drive, etc.) — opcional se pdfFile presente
   previewUrl?: string         // URL de preview (opcional)
   videoDuration?: number      // Duração em segundos (apenas para video e video_embed)
   folderId?: string | null    // Pasta onde o material está (null = raiz)
   moduloId?: string           // Módulo vinculado (opcional)
   tags: string[]              // Tags para busca
+
+  // PDF interno (prioridade sobre downloadUrl para type === 'pdf')
+  pdfFile?: MaterialPdfFile   // Presente quando admin fez upload direto
 
   // Controle de acesso por grupo (vazio = todos podem acessar)
   allowedGroups?: MaterialAccessGroup[] // Ex: ['premium', 'essential'] = só premium e essential

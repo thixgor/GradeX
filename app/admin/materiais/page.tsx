@@ -42,11 +42,16 @@ import {
   Clock,
   CreditCard,
   BadgeCheck,
+  Upload,
+  AlertCircle,
+  CheckCircle2,
+  Trash,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { AppShell } from '@/components/app-shell'
+import { upload } from '@vercel/blob/client'
 
 type ModalMode = 'create' | 'edit'
 type ActiveSection = 'materials' | 'folders' | 'packages'
@@ -74,6 +79,14 @@ interface Material {
   order: number
   createdByName: string
   createdAt: string
+  // PDF interno
+  _hasPdf?: boolean
+  _pdfFile?: {
+    originalFilename: string
+    sizeBytes: number
+    uploadedByName: string
+    uploadedAt: string
+  }
 }
 
 interface Folder {
@@ -218,6 +231,15 @@ function AdminMateriaisContent() {
   const [selectedUser, setSelectedUser] = useState<{ id: string; name: string; email: string; accountType: string } | null>(null)
   const [showDropdown, setShowDropdown] = useState(false)
   const userSearchRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // ─── Estado do upload de PDF ─────────────────────────────────────────
+  type PdfInfo = { originalFilename: string; sizeBytes: number; uploadedByName: string; uploadedAt: string }
+  const [pdfInfo, setPdfInfo] = useState<PdfInfo | null>(null)
+  const [pdfUploading, setPdfUploading] = useState(false)
+  const [pdfUploadProgress, setPdfUploadProgress] = useState(0)
+  const [pdfUploadError, setPdfUploadError] = useState('')
+  const [pdfRemoving, setPdfRemoving] = useState(false)
+  const pdfInputRef = useRef<HTMLInputElement>(null)
 
   const copyLink = (type: 'folder' | 'material' | 'package', id: string) => {
     const base = window.location.origin
@@ -542,6 +564,8 @@ function AdminMateriaisContent() {
   // ─── Material CRUD ────────────────────────────────────────
   const openMaterialModal = (mode: ModalMode, material?: Material) => {
     setModalMode(mode)
+    setPdfUploadError('')
+    setPdfUploadProgress(0)
     if (mode === 'edit' && material) {
       setMaterialForm({
         _id: material._id,
@@ -565,6 +589,7 @@ function AdminMateriaisContent() {
         isFeatured: material.isFeatured,
         order: material.order || 0,
       })
+      setPdfInfo(material._pdfFile || null)
     } else {
       setMaterialForm({
         _id: '', title: '', description: '', coverImage: '', type: 'pdf',
@@ -572,13 +597,18 @@ function AdminMateriaisContent() {
         allowedGroups: [], videoDurationH: 0, videoDurationM: 0, videoDurationS: 0,
         pricing: 'free', price: 0, stripePriceId: '', isHidden: false, isFeatured: false, order: 0,
       })
+      setPdfInfo(null)
     }
     setShowMaterialModal(true)
   }
 
   const saveMaterial = async () => {
-    if (!materialForm.title || !materialForm.downloadUrl.trim()) {
-      alert('Título e URL/código embed são obrigatórios')
+    const needsUrl = materialForm.type !== 'pdf' || (!pdfInfo && !materialForm.downloadUrl.trim())
+    if (!materialForm.title || needsUrl) {
+      const msg = materialForm.type === 'pdf'
+        ? 'Título obrigatório. Para PDF: forneça URL externa ou faça upload de um PDF.'
+        : 'Título e URL/código embed são obrigatórios'
+      alert(msg)
       return
     }
     setSaving(true)
@@ -603,6 +633,79 @@ function AdminMateriaisContent() {
       else alert((await res.json()).error || 'Erro ao salvar')
     } catch { alert('Erro ao salvar material') }
     finally { setSaving(false) }
+  }
+
+  // ─── PDF Upload ───────────────────────────────────────────────────────
+  const handlePdfFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validações client-side (o servidor re-valida — não confiar só nessas)
+    if (file.type !== 'application/pdf') {
+      setPdfUploadError('Apenas arquivos PDF são permitidos.')
+      return
+    }
+    const maxMb = parseInt(process.env.NEXT_PUBLIC_MATERIAL_UPLOAD_MAX_MB || '100', 10) || 100
+    if (file.size > maxMb * 1024 * 1024) {
+      setPdfUploadError(`Arquivo muito grande. Máximo: ${maxMb} MB.`)
+      return
+    }
+    if (!materialForm._id) {
+      setPdfUploadError('Salve o material primeiro antes de fazer o upload do PDF.')
+      return
+    }
+
+    setPdfUploadError('')
+    setPdfUploading(true)
+    setPdfUploadProgress(0)
+
+    try {
+      await upload(file.name, file, {
+        access: 'public',
+        handleUploadUrl: '/api/materiais/upload',
+        clientPayload: JSON.stringify({
+          materialId: materialForm._id,
+          adminName: 'Admin',
+          fileSize: file.size,
+        }),
+        onUploadProgress: ({ percentage }) => {
+          setPdfUploadProgress(Math.round(percentage))
+        },
+      })
+
+      // Buscar info atualizada do PDF
+      const res = await fetch(`/api/materiais/upload?materialId=${materialForm._id}`)
+      const data = await res.json()
+      if (data.hasPdf) {
+        setPdfInfo(data.pdfFile)
+      }
+      fetchAll()
+    } catch (err: any) {
+      setPdfUploadError(err?.message || 'Erro ao fazer upload do PDF.')
+    } finally {
+      setPdfUploading(false)
+      setPdfUploadProgress(0)
+      if (pdfInputRef.current) pdfInputRef.current.value = ''
+    }
+  }
+
+  const handlePdfRemove = async () => {
+    if (!materialForm._id || !confirm('Remover PDF deste material?')) return
+    setPdfRemoving(true)
+    try {
+      const res = await fetch(`/api/materiais/upload?materialId=${materialForm._id}`, { method: 'DELETE' })
+      if (res.ok) {
+        setPdfInfo(null)
+        fetchAll()
+      } else {
+        const d = await res.json()
+        setPdfUploadError(d.error || 'Erro ao remover PDF.')
+      }
+    } catch {
+      setPdfUploadError('Erro ao remover PDF.')
+    } finally {
+      setPdfRemoving(false)
+    }
   }
 
   const deleteMaterial = async (id: string) => {
@@ -972,6 +1075,11 @@ function AdminMateriaisContent() {
                     <span className="uppercase font-medium">{material.type === 'video_embed' ? '▶ Embed' : material.type}</span>
                     <span>{material.pricing === 'free' ? 'Grátis' : `R$ ${material.price?.toFixed(2)}`}</span>
                     <span className="flex items-center gap-0.5"><Download className="h-3 w-3" /> {material.downloadCount}</span>
+                    {material._hasPdf && (
+                      <span className="flex items-center gap-0.5 text-blue-500 font-medium">
+                        <Upload className="h-3 w-3" /> PDF
+                      </span>
+                    )}
                     {material.folderId && (
                       <span className="flex items-center gap-0.5">
                         <FolderOpen className="h-3 w-3" />
@@ -1176,7 +1284,7 @@ function AdminMateriaisContent() {
                   </Field>
                 </div>
 
-                <Field label={materialForm.type === 'video_embed' ? 'Código Embed ou URL do Vídeo *' : 'URL de Download *'}>
+                <Field label={materialForm.type === 'video_embed' ? 'Código Embed ou URL do Vídeo *' : materialForm.type === 'pdf' ? 'URL Externa de Download (opcional se PDF interno)' : 'URL de Download *'}>
                   {materialForm.type === 'video_embed' ? (
                     <>
                       <Textarea
@@ -1191,9 +1299,104 @@ function AdminMateriaisContent() {
                     </>
                   ) : (
                     <Input value={materialForm.downloadUrl} onChange={e => setMaterialForm(p => ({ ...p, downloadUrl: e.target.value }))}
-                      placeholder="https://..." />
+                      placeholder={materialForm.type === 'pdf' ? 'https://drive.google.com/... (opcional se usar upload abaixo)' : 'https://...'} />
+                  )}
+                  {materialForm.type === 'pdf' && (
+                    <p className="text-[11px] text-muted-foreground mt-1">
+                      Se enviar um PDF interno (abaixo), o upload tem prioridade sobre esta URL. Mantenha para compatibilidade com materiais antigos.
+                    </p>
                   )}
                 </Field>
+
+                {/* ── Upload de PDF Interno (apenas type=pdf) ── */}
+                {materialForm.type === 'pdf' && (
+                  <div className="rounded-xl border-2 border-dashed border-muted p-4 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <Upload className="h-4 w-4 text-blue-500" />
+                      <span className="text-sm font-medium">PDF Interno (com marca d'água)</span>
+                    </div>
+
+                    {/* Info do PDF atual */}
+                    {pdfInfo ? (
+                      <div className="rounded-lg bg-green-500/10 border border-green-500/20 p-3 flex items-start justify-between gap-3">
+                        <div className="flex items-start gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
+                          <div>
+                            <p className="text-sm font-medium text-green-700 dark:text-green-400">{pdfInfo.originalFilename}</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">
+                              {(pdfInfo.sizeBytes / 1024 / 1024).toFixed(2)} MB · Enviado por {pdfInfo.uploadedByName} · {new Date(pdfInfo.uploadedAt).toLocaleDateString('pt-BR')}
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={handlePdfRemove}
+                          disabled={pdfRemoving}
+                          className="text-red-500 hover:text-red-700 disabled:opacity-50 shrink-0"
+                          title="Remover PDF"
+                        >
+                          {pdfRemoving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash className="h-4 w-4" />}
+                        </button>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-muted-foreground">Nenhum PDF enviado ainda.</p>
+                    )}
+
+                    {/* Upload */}
+                    {!materialForm._id || modalMode === 'create' ? (
+                      <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                        <AlertCircle className="h-3 w-3" />
+                        Salve o material primeiro para habilitar o upload de PDF.
+                      </p>
+                    ) : (
+                      <div className="space-y-2">
+                        <input
+                          ref={pdfInputRef}
+                          type="file"
+                          accept="application/pdf"
+                          onChange={handlePdfFileChange}
+                          disabled={pdfUploading}
+                          className="hidden"
+                          id="pdf-upload-input"
+                        />
+                        <label
+                          htmlFor="pdf-upload-input"
+                          className={`flex items-center gap-2 justify-center w-full rounded-lg border px-3 py-2 text-sm cursor-pointer transition-colors
+                            ${pdfUploading
+                              ? 'bg-muted text-muted-foreground cursor-not-allowed'
+                              : 'hover:bg-muted/50 hover:border-blue-400 text-blue-600 dark:text-blue-400 border-blue-300 dark:border-blue-700'
+                            }`}
+                        >
+                          {pdfUploading ? (
+                            <><Loader2 className="h-4 w-4 animate-spin" /> Enviando... {pdfUploadProgress}%</>
+                          ) : (
+                            <><Upload className="h-4 w-4" /> {pdfInfo ? 'Substituir PDF' : 'Selecionar PDF'}</>
+                          )}
+                        </label>
+
+                        {/* Barra de progresso */}
+                        {pdfUploading && (
+                          <div className="w-full bg-muted rounded-full h-1.5">
+                            <div
+                              className="bg-blue-500 h-1.5 rounded-full transition-all"
+                              style={{ width: `${pdfUploadProgress}%` }}
+                            />
+                          </div>
+                        )}
+
+                        {pdfUploadError && (
+                          <p className="text-xs text-red-500 flex items-center gap-1">
+                            <AlertCircle className="h-3 w-3" />
+                            {pdfUploadError}
+                          </p>
+                        )}
+
+                        <p className="text-[11px] text-muted-foreground">
+                          Máx. {process.env.NEXT_PUBLIC_MATERIAL_UPLOAD_MAX_MB || '100'} MB · Apenas PDF · Upload direto ao storage (sem limite de serverless)
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {materialForm.type !== 'video_embed' && (
                   <Field label="URL de Preview (opcional)">

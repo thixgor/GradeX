@@ -150,13 +150,30 @@ export async function GET(request: NextRequest) {
       // Strip the real embed URL for video_embed when no access (security)
       const downloadUrl = !hasAccess && m.type === 'video_embed' ? '' : m.downloadUrl
 
+      // PDF interno: nunca expor blobUrl ao cliente
+      const hasPdf = !!m.pdfFile?.blobUrl
+      // Admin recebe metadados sem URL; usuários apenas recebem o flag booleano
+      const pdfFileMeta = isAdmin && m.pdfFile
+        ? {
+            originalFilename: m.pdfFile.originalFilename,
+            sizeBytes: m.pdfFile.sizeBytes,
+            uploadedByName: m.pdfFile.uploadedByName,
+            uploadedAt: m.pdfFile.uploadedAt,
+          }
+        : undefined
+
+      // Remover pdfFile (com blobUrl) da resposta — substituído por _hasPdf/_pdfFile
+      const { pdfFile: _removed, ...rest } = m
+
       return {
-        ...m,
+        ...rest,
         _id: idStr,
         downloadUrl,
         _isPurchased: isPurchased,
         _hasGroupAccess: hasGroupAccess,
         _hasAccess: hasAccess,
+        _hasPdf: hasPdf,
+        ...(pdfFileMeta && { _pdfFile: pdfFileMeta }),
         ...(m.type === 'flashcard_deck' && { _cardCount: cardCountByMaterialId[idStr] ?? 0 }),
       }
     })
