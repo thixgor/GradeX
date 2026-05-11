@@ -31,6 +31,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { AppShell } from '@/components/app-shell'
 import { VideoWatermark } from '@/components/video-watermark'
+import { PackageUpsellModal, UpsellPackage } from '@/components/materiais/package-upsell-modal'
 
 // ─── Types ───────────────────────────────────────────────────
 interface Material {
@@ -109,6 +110,7 @@ export default function MaterialViewPage() {
   const [error, setError] = useState('')
   const [checkoutLoading, setCheckoutLoading] = useState(false)
   const [descExpanded, setDescExpanded] = useState(false)
+  const [upsellPkg, setUpsellPkg] = useState<UpsellPackage | null>(null)
 
   const fetchData = useCallback(async () => {
     setLoading(true)
@@ -128,9 +130,30 @@ export default function MaterialViewPage() {
 
   useEffect(() => { fetchData() }, [fetchData])
 
-  const handleAcquire = async () => {
+  const handleAcquire = async (skipUpsell = false) => {
     if (!data) return
     const mat = data.material
+
+    if (!skipUpsell) {
+      try {
+        const pkgsRes = await fetch('/api/materiais/packages?includeAccess=true', { cache: 'no-store' })
+        if (pkgsRes.ok) {
+          const pkgsJson = await pkgsRes.json()
+          const pkgs: UpsellPackage[] = pkgsJson.packages || []
+          const matchingPkg = pkgs.find((pkg: any) =>
+            !pkg._isPurchased &&
+            pkg.pricing === 'paid' &&
+            (pkg.price ?? 0) > 0 &&
+            pkg.materials?.some((m: any) => m._id === id)
+          )
+          if (matchingPkg) {
+            setUpsellPkg(matchingPkg)
+            return
+          }
+        }
+      } catch {}
+    }
+
     const isFreeItem = mat.pricing === 'free' || !mat.price || mat.price <= 0
     if (!isFreeItem) {
       router.push(`/materiais/checkout?type=material&id=${id}`)
@@ -414,7 +437,7 @@ export default function MaterialViewPage() {
                     )
                   ) : (
                     <Button
-                      onClick={handleAcquire}
+                      onClick={() => handleAcquire()}
                       disabled={checkoutLoading}
                       className={`w-full h-11 rounded-2xl font-semibold text-white shadow-lg ${
                         isFree
@@ -489,6 +512,22 @@ export default function MaterialViewPage() {
           </div>
         </div>
       </div>
+
+      {upsellPkg && data && (
+        <PackageUpsellModal
+          pkg={upsellPkg}
+          item={{ id, title: data.material.title, price: data.material.price, type: data.material.type }}
+          onBuyPackage={() => {
+            setUpsellPkg(null)
+            router.push(`/materiais/checkout?type=package&id=${upsellPkg._id}`)
+          }}
+          onBuyIndividual={() => {
+            setUpsellPkg(null)
+            handleAcquire(true)
+          }}
+          onClose={() => setUpsellPkg(null)}
+        />
+      )}
     </AppShell>
   )
 }

@@ -36,6 +36,7 @@ import {
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
 import { ToastAlert } from '@/components/ui/toast-alert'
+import { PackageUpsellModal, UpsellPackage } from '@/components/materiais/package-upsell-modal'
 import { FlashcardCardView } from '@/components/flashcards/flashcard-card'
 import { cn } from '@/lib/utils'
 import type { FlashcardManualCard, FlashcardManualDeck } from '@/lib/types'
@@ -82,6 +83,7 @@ export default function DeckPage() {
   const [shareOpen, setShareOpen] = useState(false)
   const [purchasing, setPurchasing] = useState(false)
   const [folderPath, setFolderPath] = useState<string | null>(null)
+  const [upsellPkg, setUpsellPkg] = useState<UpsellPackage | null>(null)
   const [showCards, setShowCards] = useState(false)
 
   const purchaseSuccess = search?.get('purchase') === 'success'
@@ -199,12 +201,34 @@ export default function DeckPage() {
     } catch {}
   }
 
-  function buy() {
+  async function buy(skipUpsell = false) {
     if (!data?.deck.linkedMaterialId) {
       setToast({ open: true, message: 'Este deck ainda não tem produto vinculado. Contate o administrador.', type: 'error' })
       return
     }
-    router.push(`/materiais/checkout?type=material&id=${data.deck.linkedMaterialId}`)
+    const materialId = data.deck.linkedMaterialId
+
+    if (!skipUpsell) {
+      try {
+        const pkgsRes = await fetch('/api/materiais/packages?includeAccess=true', { cache: 'no-store' })
+        if (pkgsRes.ok) {
+          const pkgsJson = await pkgsRes.json()
+          const pkgs: UpsellPackage[] = pkgsJson.packages || []
+          const matchingPkg = pkgs.find((pkg: any) =>
+            !pkg._isPurchased &&
+            pkg.pricing === 'paid' &&
+            (pkg.price ?? 0) > 0 &&
+            pkg.materials?.some((m: any) => m._id === materialId)
+          )
+          if (matchingPkg) {
+            setUpsellPkg(matchingPkg)
+            return
+          }
+        }
+      } catch {}
+    }
+
+    router.push(`/materiais/checkout?type=material&id=${materialId}`)
   }
 
   if (loading) {
@@ -375,7 +399,7 @@ export default function DeckPage() {
             <div className="flex items-center gap-2">
               {isLocked && isPaid ? (
                 <button
-                  onClick={buy}
+                  onClick={() => buy()}
                   disabled={purchasing}
                   className="relative overflow-hidden inline-flex items-center gap-2.5 rounded-2xl px-7 py-3.5 text-sm font-bold tracking-wide text-white transition-all duration-200 active:scale-[0.97] hover:brightness-110 disabled:opacity-60 disabled:cursor-not-allowed"
                   style={{
@@ -453,6 +477,27 @@ export default function DeckPage() {
         )}
       </div>
       <ToastAlert open={toast.open} message={toast.message} type={toast.type} onOpenChange={(open) => setToast(t => ({ ...t, open }))} />
+
+      {upsellPkg && data && (
+        <PackageUpsellModal
+          pkg={upsellPkg}
+          item={{
+            id: data.deck.linkedMaterialId ?? '',
+            title: data.deck.title,
+            price: data.deck.price,
+            type: 'flashcard_deck',
+          }}
+          onBuyPackage={() => {
+            setUpsellPkg(null)
+            router.push(`/materiais/checkout?type=package&id=${upsellPkg._id}`)
+          }}
+          onBuyIndividual={() => {
+            setUpsellPkg(null)
+            buy(true)
+          }}
+          onClose={() => setUpsellPkg(null)}
+        />
+      )}
     </AppShell>
   )
 }
