@@ -51,7 +51,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { AppShell } from '@/components/app-shell'
-import { upload } from '@vercel/blob/client'
 
 type ModalMode = 'create' | 'edit'
 type ActiveSection = 'materials' | 'folders' | 'packages'
@@ -671,17 +670,25 @@ function AdminMateriaisContent() {
     setPdfUploadProgress(0)
 
     try {
-      await upload(file.name, file, {
-        access: 'public',
-        handleUploadUrl: '/api/materiais/upload',
-        clientPayload: JSON.stringify({
-          materialId: materialForm._id,
-          adminName: 'Admin',
-          fileSize: file.size,
-        }),
-        onUploadProgress: ({ percentage }) => {
-          setPdfUploadProgress(Math.round(percentage))
-        },
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('materialId', materialForm._id)
+
+      const xhr = new XMLHttpRequest()
+      await new Promise<void>((resolve, reject) => {
+        xhr.upload.onprogress = (e) => {
+          if (e.lengthComputable) setPdfUploadProgress(Math.round((e.loaded / e.total) * 100))
+        }
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) resolve()
+          else {
+            try { reject(new Error(JSON.parse(xhr.responseText).error || 'Erro ao fazer upload')) }
+            catch { reject(new Error('Erro ao fazer upload')) }
+          }
+        }
+        xhr.onerror = () => reject(new Error('Erro de rede ao fazer upload'))
+        xhr.open('POST', '/api/materiais/upload')
+        xhr.send(formData)
       })
 
       // Buscar info atualizada do PDF

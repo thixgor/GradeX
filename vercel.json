@@ -22,6 +22,10 @@
     },
     "app/api/admin/emails/send/route.ts": {
       "maxDuration": 60
+    },
+    "app/api/materiais/upload/route.ts": {
+      "maxDuration": 300,
+      "memory": 1024
     }
   },
   "crons": [
