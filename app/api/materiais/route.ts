@@ -106,6 +106,37 @@ export async function GET(request: NextRequest) {
     // per material so the client never has to guess. Server is the source of truth.
     const purchasedSet = new Set(purchasedIds)
 
+    // For flashcard_deck materials, fetch card counts via linked decks
+    const flashcardDeckMaterialIds = materials
+      .filter((m: any) => m.type === 'flashcard_deck')
+      .map((m: any) => String(m._id))
+
+    const cardCountByMaterialId: Record<string, number> = {}
+    if (flashcardDeckMaterialIds.length > 0) {
+      const linkedDecks = await db
+        .collection('flashcardManualDecks')
+        .find({ linkedMaterialId: { $in: flashcardDeckMaterialIds } })
+        .project({ _id: 1, linkedMaterialId: 1 })
+        .toArray()
+
+      if (linkedDecks.length > 0) {
+        const deckIds = linkedDecks.map((d: any) => d._id)
+        const counts = await db
+          .collection('flashcardManualCards')
+          .aggregate([
+            { $match: { deckId: { $in: deckIds.map((id: any) => String(id)) } } },
+            { $group: { _id: '$deckId', count: { $sum: 1 } } },
+          ])
+          .toArray()
+
+        const countByDeckId = new Map(counts.map((c: any) => [c._id, c.count]))
+        for (const deck of linkedDecks) {
+          const matId = String(deck.linkedMaterialId)
+          cardCountByMaterialId[matId] = countByDeckId.get(String(deck._id)) ?? 0
+        }
+      }
+    }
+
     const secureMaterials = materials.map((m: any) => {
       const idStr = String(m._id)
       const hasGroupAccess =
@@ -126,6 +157,7 @@ export async function GET(request: NextRequest) {
         _isPurchased: isPurchased,
         _hasGroupAccess: hasGroupAccess,
         _hasAccess: hasAccess,
+        ...(m.type === 'flashcard_deck' && { _cardCount: cardCountByMaterialId[idStr] ?? 0 }),
       }
     })
 

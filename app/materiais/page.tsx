@@ -63,6 +63,7 @@ interface Material {
   _isPurchased?: boolean
   _hasGroupAccess?: boolean
   _hasAccess?: boolean
+  _cardCount?: number
 }
 
 // Groups that can have restricted access to materials
@@ -879,6 +880,11 @@ function MaterialCard({
                   <Play className="h-3 w-3 fill-white/60" /> {formatDuration(material.videoDuration)}
                 </span>
               ) : null}
+              {material.type === 'flashcard_deck' && material._cardCount != null ? (
+                <span className="flex items-center gap-1 text-xs text-white/80 font-medium">
+                  <Sparkles className="h-3 w-3" /> {material._cardCount} cards
+                </span>
+              ) : null}
             </div>
             <CopyLinkBtn id={material._id} copiedId={copiedId} onClick={e => { e.stopPropagation(); onCopyLink() }} />
           </div>
@@ -990,6 +996,11 @@ function FeaturedCard({
               {(material.type === 'video' || material.type === 'video_embed') && material.videoDuration ? (
                 <span className="flex items-center gap-1 text-xs text-white/80 font-medium">
                   <Play className="h-3 w-3 fill-white/60" /> {formatDuration(material.videoDuration)}
+                </span>
+              ) : null}
+              {material.type === 'flashcard_deck' && material._cardCount != null ? (
+                <span className="flex items-center gap-1 text-xs text-white/80 font-medium">
+                  <Sparkles className="h-3 w-3" /> {material._cardCount} cards
                 </span>
               ) : null}
               {material.allowedGroups?.length > 0
