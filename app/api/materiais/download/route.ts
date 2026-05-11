@@ -58,6 +58,7 @@ export async function POST(request: NextRequest) {
           allowedGroups: 1,
           isHidden: 1,
           pdfFile: 1,
+          pdfDownloadEnabled: 1,
           downloadCount: 1,
         },
       }
@@ -76,6 +77,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Este material não possui PDF para download direto' },
         { status: 422 }
+      )
+    }
+
+    if (material.pdfDownloadEnabled === false && session.role !== 'admin') {
+      return NextResponse.json(
+        { error: 'O download deste PDF foi desabilitado. Use o visualizador protegido quando disponivel.' },
+        { status: 403 }
       )
     }
 

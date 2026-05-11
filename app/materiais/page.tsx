@@ -74,6 +74,8 @@ interface Material {
   _cardCount?: number
   // PDF interno
   _hasPdf?: boolean
+  pdfViewerEnabled?: boolean
+  pdfDownloadEnabled?: boolean
 }
 
 // Groups that can have restricted access to materials
@@ -482,6 +484,14 @@ function MateriaisContent() {
     }
 
     if (material._hasPdf) {
+      if (material.pdfDownloadEnabled === false) {
+        if (material.pdfViewerEnabled) {
+          router.push(`/materiais/${material._id}/viewer`)
+        } else {
+          router.push(`/materiais/${material._id}`)
+        }
+        return
+      }
       startPdfDownload(material)
       return
     }
@@ -1030,6 +1040,7 @@ function MaterialCard({
   // isPurchased includes manual admin grants → always grants full access
   const canAccess = isPurchased || (groupAccess && isFree)
   const isEmbed = material.type === 'video_embed'
+  const pdfDownloadBlocked = !!material._hasPdf && material.pdfDownloadEnabled === false
   const [descExpanded, setDescExpanded] = useState(false)
   const descLong = material.description && material.description.length > 80
   const showLocked = !groupAccess && !isPurchased && (material.allowedGroups?.length ?? 0) > 0
@@ -1142,7 +1153,15 @@ function MaterialCard({
               </div>
             ) : canAccess ? (
               <Button onClick={onDownload} size="sm" className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white rounded-xl h-9 text-xs font-semibold shadow-lg shadow-primary/20">
-                {isEmbed ? <><Play className="h-3.5 w-3.5 mr-1.5 fill-white" /> Assistir</> : material.type === 'flashcard_deck' ? <><Sparkles className="h-3.5 w-3.5 mr-1.5" /> Acessar deck</> : <><Download className="h-3.5 w-3.5 mr-1.5" /> Download</>}
+                {isEmbed
+                  ? <><Play className="h-3.5 w-3.5 mr-1.5 fill-white" /> Assistir</>
+                  : material.type === 'flashcard_deck'
+                    ? <><Sparkles className="h-3.5 w-3.5 mr-1.5" /> Acessar deck</>
+                    : pdfDownloadBlocked && material.pdfViewerEnabled
+                      ? <><Eye className="h-3.5 w-3.5 mr-1.5" /> Visualizar PDF</>
+                      : pdfDownloadBlocked
+                        ? <><Info className="h-3.5 w-3.5 mr-1.5" /> Ver detalhes</>
+                      : <><Download className="h-3.5 w-3.5 mr-1.5" /> Download</>}
               </Button>
             ) : (
               <Button onClick={onAcquire} disabled={loading} size="sm" className="w-full bg-gradient-to-r from-accent to-secondary hover:from-accent/90 hover:to-secondary/90 text-white rounded-xl h-9 text-xs font-semibold shadow-lg shadow-accent/20">
@@ -1169,6 +1188,7 @@ function FeaturedCard({
   const isFree = material.pricing === 'free'
   const canAccess = isPurchased || (groupAccess && isFree)
   const isEmbed = material.type === 'video_embed'
+  const pdfDownloadBlocked = !!material._hasPdf && material.pdfDownloadEnabled === false
   const [descExpanded, setDescExpanded] = useState(false)
   const descLong = material.description && material.description.length > 100
   const showLocked = !groupAccess && !isPurchased && (material.allowedGroups?.length ?? 0) > 0
@@ -1255,7 +1275,13 @@ function FeaturedCard({
             </div>
           ) : canAccess ? (
             <Button onClick={onDownload} size="sm" className="w-full bg-gradient-to-r from-primary to-primary/80 text-white rounded-xl h-10 font-semibold shadow-lg shadow-primary/25">
-              {isEmbed ? <><Play className="h-4 w-4 mr-2 fill-white" /> Assistir Vídeo</> : <><Download className="h-4 w-4 mr-2" /> Baixar Material</>}
+              {isEmbed
+                ? <><Play className="h-4 w-4 mr-2 fill-white" /> Assistir Vídeo</>
+                : pdfDownloadBlocked && material.pdfViewerEnabled
+                  ? <><Eye className="h-4 w-4 mr-2" /> Visualizar PDF</>
+                  : pdfDownloadBlocked
+                    ? <><Info className="h-4 w-4 mr-2" /> Ver detalhes</>
+                  : <><Download className="h-4 w-4 mr-2" /> Baixar Material</>}
             </Button>
           ) : (
             <Button onClick={onAcquire} disabled={loading} size="sm" className="w-full bg-gradient-to-r from-accent to-secondary text-white rounded-xl h-10 font-semibold shadow-lg shadow-accent/25">

@@ -173,6 +173,8 @@ export async function GET(request: NextRequest) {
         _hasGroupAccess: hasGroupAccess,
         _hasAccess: hasAccess,
         _hasPdf: hasPdf,
+        pdfViewerEnabled: m.pdfViewerEnabled === true,
+        pdfDownloadEnabled: m.pdfDownloadEnabled !== false,
         ...(pdfFileMeta && { _pdfFile: pdfFileMeta }),
         ...(m.type === 'flashcard_deck' && { _cardCount: cardCountByMaterialId[idStr] ?? 0 }),
       }
@@ -217,6 +219,8 @@ export async function POST(request: NextRequest) {
       price: body.pricing === 'paid' ? (body.price || 0) : 0,
       stripePriceId: body.stripePriceId || '',
       allowedGroups: body.allowedGroups || [],
+      pdfViewerEnabled: body.pdfViewerEnabled === true,
+      pdfDownloadEnabled: body.pdfDownloadEnabled !== false,
       downloadCount: 0,
       viewCount: 0,
       isHidden: body.isHidden || false,

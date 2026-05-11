@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
       pdfFile: {
         originalFilename: material.pdfFile.originalFilename,
         sizeBytes: material.pdfFile.sizeBytes,
-        uploadedBy: material.pdfFile.uploadedByName,
+        uploadedByName: material.pdfFile.uploadedByName,
         uploadedAt: material.pdfFile.uploadedAt,
       },
     })
@@ -156,7 +156,7 @@ export async function POST(request: NextRequest): Promise<Response> {
 
     console.log(`[pdf-upload] PDF salvo: material=${materialId} size=${file.size} pathname=${blob.pathname}`)
 
-    return NextResponse.json({ success: true, url: blob.url })
+    return NextResponse.json({ success: true })
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Erro interno no upload'
     console.error('[pdf-upload] POST error:', error)
@@ -200,7 +200,10 @@ export async function DELETE(request: NextRequest) {
 
     await db.collection('materials').updateOne(
       { _id: new ObjectId(materialId) },
-      { $unset: { pdfFile: '' }, $set: { updatedAt: new Date() } }
+      {
+        $unset: { pdfFile: '' },
+        $set: { updatedAt: new Date(), pdfViewerEnabled: false, pdfDownloadEnabled: true },
+      }
     )
 
     await db.collection('audit_logs').insertOne({

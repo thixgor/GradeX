@@ -1108,6 +1108,8 @@ export interface Material {
 
   // PDF interno (prioridade sobre downloadUrl para type === 'pdf')
   pdfFile?: MaterialPdfFile   // Presente quando admin fez upload direto
+  pdfViewerEnabled?: boolean  // Permite abrir o viewer protegido
+  pdfDownloadEnabled?: boolean // Permite baixar PDF protegido
 
   // Controle de acesso por grupo (vazio = todos podem acessar)
   allowedGroups?: MaterialAccessGroup[] // Ex: ['premium', 'essential'] = só premium e essential

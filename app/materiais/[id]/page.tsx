@@ -63,6 +63,8 @@ interface Material {
   viewCount: number
   createdAt: string
   _hasPdf?: boolean
+  pdfViewerEnabled?: boolean
+  pdfDownloadEnabled?: boolean
 }
 
 interface PageData {
@@ -246,6 +248,11 @@ export default function MaterialViewPage() {
     }
   }, [data, router, startPdfDownload])
 
+  const handleOpenPdfViewer = useCallback(() => {
+    if (!data) return
+    router.push(`/materiais/${data.material._id}/viewer`)
+  }, [data, router])
+
   // ─── Acquire ──────────────────────────────────────────────
   const handleAcquire = async (skipUpsell = false) => {
     if (!data) return
@@ -322,6 +329,8 @@ export default function MaterialViewPage() {
   const isFree = material.pricing === 'free'
   const descLong = material.description && material.description.length > 200
   const isPdf = material._hasPdf || material.type === 'pdf'
+  const canViewPdf = hasAccess && !!material._hasPdf && material.pdfViewerEnabled === true
+  const canDownload = hasAccess && (!material._hasPdf || material.pdfDownloadEnabled !== false)
   const downloadLabel =
     material.type === 'link' ? 'Acessar Link'
     : material.type === 'flashcard_deck' ? 'Acessar Deck'
@@ -624,27 +633,47 @@ export default function MaterialViewPage() {
                         </div>
                       ) : (
                         <>
-                          <Button
-                            onClick={handleDownload}
-                            disabled={downloadState.status === 'running'}
-                            className="w-full h-11 rounded-2xl font-semibold text-white bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
-                          >
-                            {downloadState.status === 'running' ? (
-                              <>
-                                <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                Processando…
-                              </>
-                            ) : (
-                              <>
-                                <Download className="h-4 w-4 mr-2" />
-                                {downloadLabel}
-                              </>
-                            )}
-                          </Button>
-                          {isPdf && (
+                          {canViewPdf && (
+                            <Button
+                              onClick={handleOpenPdfViewer}
+                              className="relative w-full h-12 overflow-hidden rounded-2xl font-bold text-white border border-emerald-200/30 bg-gradient-to-r from-emerald-700 via-emerald-600 to-amber-500 hover:from-emerald-600 hover:via-emerald-500 hover:to-amber-400 shadow-xl shadow-emerald-500/25 transition-all active:scale-[0.98]"
+                            >
+                              <span className="absolute inset-0 bg-white/15 backdrop-blur-sm opacity-40" />
+                              <span className="relative flex items-center">
+                                <Eye className="h-4 w-4 mr-2" />
+                                Visualizar PDF
+                              </span>
+                            </Button>
+                          )}
+                          {canDownload && (
+                            <Button
+                              onClick={handleDownload}
+                              disabled={downloadState.status === 'running'}
+                              className="w-full h-11 rounded-2xl font-semibold text-white bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
+                            >
+                              {downloadState.status === 'running' ? (
+                                <>
+                                  <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                  Processando…
+                                </>
+                              ) : (
+                                <>
+                                  <Download className="h-4 w-4 mr-2" />
+                                  {downloadLabel}
+                                </>
+                              )}
+                            </Button>
+                          )}
+                          {isPdf && (canViewPdf || canDownload) && (
                             <p className="text-center text-[10px] text-muted-foreground/70 leading-relaxed">
-                              PDF personalizado com marca d&apos;água exclusiva para sua conta
+                              PDF protegido com marca d&apos;água exclusiva para sua conta
                             </p>
+                          )}
+                          {isPdf && !canViewPdf && !canDownload && (
+                            <div className="flex items-start gap-2 rounded-2xl border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
+                              <ShieldAlert className="h-4 w-4 shrink-0 mt-0.5" />
+                              O viewer e o download deste PDF estao indisponiveis no momento.
+                            </div>
                           )}
                         </>
                       )

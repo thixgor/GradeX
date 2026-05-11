@@ -80,6 +80,8 @@ interface Material {
   createdAt: string
   // PDF interno
   _hasPdf?: boolean
+  pdfViewerEnabled?: boolean
+  pdfDownloadEnabled?: boolean
   _pdfFile?: {
     originalFilename: string
     sizeBytes: number
@@ -352,6 +354,8 @@ function AdminMateriaisContent() {
     stripePriceId: '',
     isHidden: false,
     isFeatured: false,
+    pdfViewerEnabled: false,
+    pdfDownloadEnabled: true,
     order: 0,
   })
 
@@ -586,6 +590,8 @@ function AdminMateriaisContent() {
         stripePriceId: material.stripePriceId || '',
         isHidden: material.isHidden,
         isFeatured: material.isFeatured,
+        pdfViewerEnabled: material.pdfViewerEnabled === true,
+        pdfDownloadEnabled: material.pdfDownloadEnabled !== false,
         order: material.order || 0,
       })
       setPdfInfo(material._pdfFile || null)
@@ -594,7 +600,8 @@ function AdminMateriaisContent() {
         _id: '', title: '', description: '', coverImage: '', type: 'pdf',
         downloadUrl: '', previewUrl: '', folderId: '', moduloId: '', tags: '',
         allowedGroups: [], videoDurationH: 0, videoDurationM: 0, videoDurationS: 0,
-        pricing: 'free', price: 0, stripePriceId: '', isHidden: false, isFeatured: false, order: 0,
+        pricing: 'free', price: 0, stripePriceId: '', isHidden: false, isFeatured: false,
+        pdfViewerEnabled: false, pdfDownloadEnabled: true, order: 0,
       })
       setPdfInfo(null)
     }
@@ -1098,6 +1105,18 @@ function AdminMateriaisContent() {
                         <Upload className="h-3 w-3" /> PDF
                       </span>
                     )}
+                    {material._hasPdf && (
+                      <>
+                        <span className={`flex items-center gap-0.5 font-medium ${material.pdfViewerEnabled ? 'text-emerald-500' : 'text-muted-foreground'}`}>
+                          {material.pdfViewerEnabled ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
+                          Viewer {material.pdfViewerEnabled ? 'ativo' : 'bloqueado'}
+                        </span>
+                        <span className={`flex items-center gap-0.5 font-medium ${material.pdfDownloadEnabled !== false ? 'text-amber-500' : 'text-muted-foreground'}`}>
+                          <Download className="h-3 w-3" />
+                          Download {material.pdfDownloadEnabled !== false ? 'permitido' : 'bloqueado'}
+                        </span>
+                      </>
+                    )}
                     {material.folderId && (
                       <span className="flex items-center gap-0.5">
                         <FolderOpen className="h-3 w-3" />
@@ -1358,6 +1377,51 @@ function AdminMateriaisContent() {
                     ) : (
                       <p className="text-xs text-muted-foreground">Nenhum PDF enviado ainda.</p>
                     )}
+
+                    <div className={`rounded-lg border p-3 space-y-3 ${pdfInfo ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-muted/30 border-muted'}`}>
+                      <div className="flex items-center gap-2">
+                        <ShieldCheck className={`h-4 w-4 ${pdfInfo ? 'text-emerald-500' : 'text-muted-foreground'}`} />
+                        <span className="text-sm font-medium">Seguranca do PDF</span>
+                      </div>
+                      <div className="grid sm:grid-cols-3 gap-2 text-[11px]">
+                        <span className={`rounded-lg px-2 py-1 border ${pdfInfo ? 'text-emerald-600 border-emerald-500/25 bg-emerald-500/10' : 'text-muted-foreground border-border bg-muted/30'}`}>
+                          PDF {pdfInfo ? 'vinculado' : 'nao vinculado'}
+                        </span>
+                        <span className={`rounded-lg px-2 py-1 border ${materialForm.pdfDownloadEnabled && pdfInfo ? 'text-amber-600 border-amber-500/25 bg-amber-500/10' : 'text-muted-foreground border-border bg-muted/30'}`}>
+                          Download {materialForm.pdfDownloadEnabled && pdfInfo ? 'permitido' : 'bloqueado'}
+                        </span>
+                        <span className={`rounded-lg px-2 py-1 border ${materialForm.pdfViewerEnabled && pdfInfo ? 'text-emerald-600 border-emerald-500/25 bg-emerald-500/10' : 'text-muted-foreground border-border bg-muted/30'}`}>
+                          Viewer {materialForm.pdfViewerEnabled && pdfInfo ? 'permitido' : 'bloqueado'}
+                        </span>
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-2">
+                        <label className={`flex items-center gap-2 rounded-lg border p-2 text-sm ${pdfInfo ? 'cursor-pointer hover:bg-muted/40' : 'opacity-50 cursor-not-allowed'}`}>
+                          <input
+                            type="checkbox"
+                            disabled={!pdfInfo}
+                            checked={pdfInfo ? materialForm.pdfViewerEnabled : false}
+                            onChange={e => setMaterialForm(p => ({ ...p, pdfViewerEnabled: e.target.checked }))}
+                            className="rounded"
+                          />
+                          Habilitar PDF Viewer
+                        </label>
+                        <label className={`flex items-center gap-2 rounded-lg border p-2 text-sm ${pdfInfo ? 'cursor-pointer hover:bg-muted/40' : 'opacity-50 cursor-not-allowed'}`}>
+                          <input
+                            type="checkbox"
+                            disabled={!pdfInfo}
+                            checked={pdfInfo ? materialForm.pdfDownloadEnabled : false}
+                            onChange={e => setMaterialForm(p => ({ ...p, pdfDownloadEnabled: e.target.checked }))}
+                            className="rounded"
+                          />
+                          Permitir download
+                        </label>
+                      </div>
+                      {!pdfInfo && (
+                        <p className="text-[11px] text-muted-foreground">
+                          Envie um PDF interno para liberar as configuracoes de viewer e download protegido.
+                        </p>
+                      )}
+                    </div>
 
                     {/* Upload */}
                     {!materialForm._id || modalMode === 'create' ? (

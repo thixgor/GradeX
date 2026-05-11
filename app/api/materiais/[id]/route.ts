@@ -106,6 +106,8 @@ export async function GET(
         ...materialWithoutPdf,
         _id: String(safeMaterial._id),
         _hasPdf,
+        pdfViewerEnabled: material.pdfViewerEnabled === true,
+        pdfDownloadEnabled: material.pdfDownloadEnabled !== false,
       },
       folderName,
       hasAccess: canAccess,
