@@ -126,13 +126,16 @@ export async function POST(request: NextRequest): Promise<Response> {
         const maxBytes = getMaxUploadBytes()
 
         // Origens permitidas para o upload direto ao Vercel Blob.
-        // Inclui o domínio de produção configurado via env para evitar bloqueio de CORS.
+        // Lê a origem real da requisição (admin autenticado) + domínios extras via env.
+        // A segurança é garantida pelo check de admin acima — não por CORS.
+        const requestOrigin = request.headers.get('origin')
         const allowedOrigins = [
+          ...(requestOrigin ? [requestOrigin] : []),
           ...(process.env.NEXT_PUBLIC_APP_URL ? [process.env.NEXT_PUBLIC_APP_URL] : []),
           ...(process.env.BLOB_ALLOWED_ORIGINS
             ? process.env.BLOB_ALLOWED_ORIGINS.split(',').map((o) => o.trim()).filter(Boolean)
             : []),
-        ]
+        ].filter((v, i, a) => a.indexOf(v) === i) // deduplica
 
         return {
           allowedContentTypes: ['application/pdf'],
@@ -147,7 +150,7 @@ export async function POST(request: NextRequest): Promise<Response> {
             fileSize,
           }),
           addRandomSuffix: false,
-          ...(allowedOrigins.length > 0 && { allowedOrigins }),
+          allowedOrigins,
         }
       },
 
