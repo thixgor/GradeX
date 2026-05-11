@@ -73,8 +73,7 @@ let pdfWorkerConfigured = false
 async function getPdfJs() {
   const pdfjsLib = await import('pdfjs-dist')
   if (!pdfWorkerConfigured) {
-    pdfjsLib.GlobalWorkerOptions.workerSrc =
-      `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`
+    pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs'
     pdfWorkerConfigured = true
   }
   return pdfjsLib
@@ -111,6 +110,11 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const maxZoom = access?.viewer.maxZoom ?? 2.6
   const pageCount = access?.material.pageCount ?? 0
   const pages = useMemo(() => buildPageArray(pageCount, currentPage, mode), [pageCount, currentPage, mode])
+
+  const handlePageVisible = useCallback((page: number) => {
+    if (mode === 'single') return
+    setCurrentPage((current) => current === page ? current : page)
+  }, [mode])
 
   const loadAnnotations = useCallback(async () => {
     const res = await fetch(`/api/materiais/${materialId}/pdf-viewer/annotations`, { cache: 'no-store' })
@@ -404,7 +408,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                   zoom={zoom}
                   annotations={annotations.filter((annotation) => annotation.pageNumber === page)}
                   tool={tool}
-                  onVisible={() => mode !== 'single' && setCurrentPage(page)}
+                  onVisible={handlePageVisible}
                   onPageSize={setPageSize}
                   onCreateAnnotation={createAnnotation}
                   onUpdateAnnotation={updateAnnotation}
@@ -471,7 +475,7 @@ function PdfCanvasPage({
   zoom: number
   annotations: PdfAnnotation[]
   tool: AnnotationTool
-  onVisible: () => void
+  onVisible: (page: number) => void
   onPageSize: (size: PageSize) => void
   onCreateAnnotation: (annotation: Partial<PdfAnnotation>) => void
   onUpdateAnnotation: (annotation: PdfAnnotation, patch: Partial<PdfAnnotation>) => void
@@ -482,9 +486,19 @@ function PdfCanvasPage({
   const [visible, setVisible] = useState(active)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [pageBytes, setPageBytes] = useState<Uint8Array | null>(null)
+  const [loadAttempt, setLoadAttempt] = useState(0)
   const [renderSize, setRenderSize] = useState<PageSize | null>(null)
+  const requestedRef = useRef(false)
   const drawingRef = useRef<{ pageNumber: number; points: { x: number; y: number }[] } | null>(null)
   const [draftPoints, setDraftPoints] = useState<{ x: number; y: number }[]>([])
+
+  useEffect(() => {
+    requestedRef.current = false
+    setPageBytes(null)
+    setError('')
+    setRenderSize(null)
+  }, [materialId, pageNumber])
 
   useEffect(() => {
     const element = wrapperRef.current
@@ -493,35 +507,64 @@ function PdfCanvasPage({
       ([entry]) => {
         if (entry.isIntersecting) {
           setVisible(true)
-          onVisible()
+          onVisible(pageNumber)
         }
       },
       { rootMargin: '700px 0px' }
     )
     observer.observe(element)
     return () => observer.disconnect()
-  }, [onVisible])
+  }, [onVisible, pageNumber])
 
   useEffect(() => {
-    if (!visible && !active) return
+    if ((!visible && !active) || requestedRef.current || pageBytes) return
     let cancelled = false
-    let renderTask: any
+    const controller = new AbortController()
 
-    async function renderPage() {
+    async function loadPageBytes() {
+      requestedRef.current = true
       setLoading(true)
       setError('')
       try {
         const response = await fetch(
           `/api/materiais/${materialId}/pdf-viewer/page?page=${pageNumber}`,
-          { cache: 'no-store' }
+          { cache: 'no-store', signal: controller.signal }
         )
         if (!response.ok) {
           const data = await response.json().catch(() => ({}))
           throw new Error(data.error || 'Falha ao carregar pagina')
         }
         const data = await response.arrayBuffer()
+        if (!cancelled) setPageBytes(new Uint8Array(data))
+      } catch (err: any) {
+        if (!cancelled && err?.name !== 'AbortError') {
+          setError(err?.message || 'Pagina indisponivel')
+        }
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+
+    loadPageBytes()
+    return () => {
+      cancelled = true
+      controller.abort()
+    }
+  }, [active, loadAttempt, materialId, pageBytes, pageNumber, visible])
+
+  useEffect(() => {
+    const bytes = pageBytes
+    if (!bytes) return
+    let cancelled = false
+    let renderTask: any
+    let doc: any
+
+    async function renderPage() {
+      setLoading(true)
+      setError('')
+      try {
         const pdfjs = await getPdfJs()
-        const doc = await pdfjs.getDocument({ data }).promise
+        doc = await pdfjs.getDocument({ data: bytes!.slice() }).promise
         const page = await doc.getPage(1)
         const baseViewport = page.getViewport({ scale: 1 })
         onPageSize({ width: baseViewport.width, height: baseViewport.height })
@@ -541,10 +584,14 @@ function PdfCanvasPage({
 
         renderTask = page.render({ canvasContext: context, viewport })
         await renderTask.promise
-        await doc.destroy()
       } catch (err: any) {
-        if (!cancelled) setError(err?.message || 'Pagina indisponivel')
+        if (!cancelled && err?.name !== 'RenderingCancelledException') {
+          setError(err?.message || 'Pagina indisponivel')
+        }
       } finally {
+        try {
+          await doc?.destroy?.()
+        } catch {}
         if (!cancelled) setLoading(false)
       }
     }
@@ -553,8 +600,22 @@ function PdfCanvasPage({
     return () => {
       cancelled = true
       renderTask?.cancel?.()
+      doc?.destroy?.()
     }
-  }, [active, materialId, onPageSize, pageNumber, visible, zoom])
+  }, [onPageSize, pageBytes, zoom])
+
+  const retryLoad = () => {
+    requestedRef.current = false
+    setPageBytes(null)
+    setRenderSize(null)
+    setError('')
+    setLoadAttempt((attempt) => attempt + 1)
+  }
+
+  const pageFrameSize = renderSize ?? {
+    width: 720 * zoom,
+    height: 1018 * zoom,
+  }
 
   const getPosition = (event: React.PointerEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect()
@@ -623,23 +684,30 @@ function PdfCanvasPage({
     <div id={`pdf-page-${pageNumber}`} ref={wrapperRef} className="w-full scroll-mt-32 flex justify-center">
       <div
         className="relative rounded-2xl border border-white/15 bg-white/8 p-2 shadow-2xl shadow-black/35 backdrop-blur-sm"
-        style={{ maxWidth: '100%', overflow: 'hidden' }}
+        style={{ width: pageFrameSize.width + 16, maxWidth: '100%', overflow: 'hidden' }}
       >
         <div className="absolute left-3 top-3 z-10 rounded-full border border-emerald-200/20 bg-emerald-950/65 px-2 py-1 text-[11px] font-semibold text-emerald-50 backdrop-blur-md">
           Pag. {pageNumber}
         </div>
-        <canvas ref={canvasRef} className="block rounded-xl bg-white" />
+        <canvas
+          ref={canvasRef}
+          className="block rounded-xl bg-white"
+          style={!renderSize ? { width: pageFrameSize.width, height: pageFrameSize.height, maxWidth: '100%' } : undefined}
+        />
         {(!renderSize || loading) && (
           <div className="absolute inset-2 rounded-xl bg-white/90 flex items-center justify-center">
             <div className="h-7 w-7 rounded-full border-2 border-emerald-700/20 border-t-emerald-700 animate-spin" />
           </div>
         )}
         {error && (
-          <div className="absolute inset-2 rounded-xl bg-rose-950/85 flex items-center justify-center p-6 text-center text-sm text-white">
-            {error}
+          <div className="absolute inset-2 z-20 rounded-xl bg-rose-950/85 flex flex-col items-center justify-center gap-3 p-6 text-center text-sm text-white">
+            <span>{error}</span>
+            <Button onClick={retryLoad} className="h-8 rounded-xl bg-white/15 px-3 text-xs text-white hover:bg-white/25">
+              Tentar novamente
+            </Button>
           </div>
         )}
-        {renderSize && (
+        {!error && renderSize && (
           <div
             className="absolute inset-2 rounded-xl"
             onClick={handleOverlayClick}
