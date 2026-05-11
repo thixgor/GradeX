@@ -1,7 +1,9 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter, useParams } from 'next/navigation'
+import Image from 'next/image'
+import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   ArrowLeft,
@@ -27,11 +29,21 @@ import {
   Package,
   ShieldAlert,
   Check,
+  FolderOpen,
+  Sparkles,
+  Share2,
+  CheckCheck,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { AppShell } from '@/components/app-shell'
 import { VideoWatermark } from '@/components/video-watermark'
 import { PackageUpsellModal, UpsellPackage } from '@/components/materiais/package-upsell-modal'
+import {
+  PdfDownloadProgress,
+  PdfDownloadState,
+  INITIAL_DOWNLOAD_STATE,
+  DownloadStepId,
+} from '@/components/materiais/pdf-download-progress'
 
 // ─── Types ───────────────────────────────────────────────────
 interface Material {
@@ -50,10 +62,12 @@ interface Material {
   downloadCount: number
   viewCount: number
   createdAt: string
+  _hasPdf?: boolean
 }
 
 interface PageData {
   material: Material
+  folderName: string | null
   hasAccess: boolean
   isPurchased: boolean
   hasGroupAccess: boolean
@@ -111,6 +125,9 @@ export default function MaterialViewPage() {
   const [checkoutLoading, setCheckoutLoading] = useState(false)
   const [descExpanded, setDescExpanded] = useState(false)
   const [upsellPkg, setUpsellPkg] = useState<UpsellPackage | null>(null)
+  const [downloadState, setDownloadState] = useState<PdfDownloadState>(INITIAL_DOWNLOAD_STATE)
+  const [copied, setCopied] = useState(false)
+  const stepTimersRef = useRef<ReturnType<typeof setTimeout>[]>([])
 
   const fetchData = useCallback(async () => {
     setLoading(true)
@@ -130,6 +147,106 @@ export default function MaterialViewPage() {
 
   useEffect(() => { fetchData() }, [fetchData])
 
+  // Cleanup timers on unmount
+  useEffect(() => () => { stepTimersRef.current.forEach(clearTimeout) }, [])
+
+  // ─── PDF download with step progress ─────────────────────
+  const startPdfDownload = useCallback(async () => {
+    if (!data) return
+    const { material } = data
+
+    // Clear any existing timers
+    stepTimersRef.current.forEach(clearTimeout)
+    stepTimersRef.current = []
+
+    setDownloadState({ step: 'auth', status: 'running' })
+
+    // Simulate step progression tied to realistic server timing
+    const t1 = setTimeout(() => {
+      setDownloadState(s => s.status === 'running' ? { ...s, step: 'fetch' } : s)
+    }, 400)
+    const t2 = setTimeout(() => {
+      setDownloadState(s => s.status === 'running' ? { ...s, step: 'watermark' } : s)
+    }, 1800)
+    stepTimersRef.current = [t1, t2]
+
+    try {
+      const res = await fetch('/api/materiais/download', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ materialId: material._id }),
+      })
+
+      // Response received — clear pending timers, move to ready
+      stepTimersRef.current.forEach(clearTimeout)
+      stepTimersRef.current = []
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}))
+        setDownloadState({
+          step: 'auth',
+          status: 'error',
+          error: errData.error || 'Erro ao gerar PDF. Tente novamente.',
+          errorStep: 'auth',
+        })
+        return
+      }
+
+      setDownloadState({ step: 'ready', status: 'running' })
+
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      const disposition = res.headers.get('Content-Disposition') || ''
+      const nameMatch = disposition.match(/filename="?([^"]+)"?/)
+      a.download = nameMatch?.[1] || `${material.title}.pdf`
+      a.href = url
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+
+      setDownloadState({ step: 'ready', status: 'success' })
+
+      // Auto-dismiss after success
+      const tClose = setTimeout(() => setDownloadState(INITIAL_DOWNLOAD_STATE), 2800)
+      stepTimersRef.current = [tClose]
+
+    } catch {
+      stepTimersRef.current.forEach(clearTimeout)
+      stepTimersRef.current = []
+      setDownloadState(s => ({
+        ...s,
+        status: 'error',
+        error: 'Erro de conexão. Verifique sua internet e tente novamente.',
+        errorStep: s.step as DownloadStepId,
+      }))
+    }
+  }, [data])
+
+  // ─── Generic download / open ─────────────────────────────
+  const handleDownload = useCallback(() => {
+    if (!data) return
+    const { material } = data
+
+    if (material.type === 'link') {
+      window.open(material.downloadUrl, '_blank', 'noopener')
+      return
+    }
+    if (material.type === 'flashcard_deck' && material.downloadUrl) {
+      router.push(material.downloadUrl)
+      return
+    }
+    if (material._hasPdf) {
+      startPdfDownload()
+      return
+    }
+    if (material.downloadUrl) {
+      window.open(material.downloadUrl, '_blank', 'noopener')
+    }
+  }, [data, router, startPdfDownload])
+
+  // ─── Acquire ──────────────────────────────────────────────
   const handleAcquire = async (skipUpsell = false) => {
     if (!data) return
     const mat = data.material
@@ -146,10 +263,7 @@ export default function MaterialViewPage() {
             (pkg.price ?? 0) > 0 &&
             pkg.materials?.some((m: any) => m._id === id)
           )
-          if (matchingPkg) {
-            setUpsellPkg(matchingPkg)
-            return
-          }
+          if (matchingPkg) { setUpsellPkg(matchingPkg); return }
         }
       } catch {}
     }
@@ -167,11 +281,8 @@ export default function MaterialViewPage() {
         body: JSON.stringify({ itemType: 'material', itemId: id, paymentMethodId: 'free' }),
       })
       const json = await res.json()
-      if (json.free) {
-        await fetchData()
-      } else {
-        alert(json.error || 'Erro ao processar')
-      }
+      if (json.free) { await fetchData() }
+      else { alert(json.error || 'Erro ao processar') }
     } catch {
       alert('Erro ao processar aquisição')
     } finally {
@@ -179,69 +290,92 @@ export default function MaterialViewPage() {
     }
   }
 
-  const handleDownload = () => {
-    if (!data) return
-    window.open(data.material.downloadUrl, '_blank')
-  }
+  // ─── Copy share link ──────────────────────────────────────
+  const copyShareLink = useCallback(() => {
+    const url = `${window.location.origin}/materiais/${id}`
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }, [id])
 
   if (loading) return <LoadingSkeleton />
   if (error || !data) return <ErrorState message={error} onBack={() => router.push('/materiais')} />
 
-  const { material, hasAccess, hasGroupAccess, watermark } = data
+  const { material, folderName, hasAccess, hasGroupAccess } = data
   const isEmbed = material.type === 'video_embed'
   const isVideo = material.type === 'video' || isEmbed
   const isFree = material.pricing === 'free'
-  const descLong = material.description && material.description.length > 180
+  const descLong = material.description && material.description.length > 200
+  const isPdf = material._hasPdf || material.type === 'pdf'
+  const downloadLabel =
+    material.type === 'link' ? 'Acessar Link'
+    : material.type === 'flashcard_deck' ? 'Acessar Deck'
+    : 'Baixar Material'
 
   return (
     <AppShell headerTitle={material.title} headerSubtitle={TYPE_LABELS[material.type] || 'Material'}>
       <div className="min-h-full relative">
 
-        {/* ── Ambient background blobs ── */}
+        {/* Ambient blobs — lighter than before */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-          <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-primary/8 blur-[120px]" />
-          <div className="absolute top-1/2 -right-48 w-[400px] h-[400px] rounded-full bg-accent/6 blur-[100px]" />
-          <div className="absolute -bottom-32 left-1/3 w-[350px] h-[350px] rounded-full bg-secondary/6 blur-[90px]" />
+          <div className="absolute -top-24 -left-24 w-[380px] h-[380px] rounded-full bg-primary/10 blur-2xl" />
+          <div className="absolute top-1/2 -right-40 w-[320px] h-[320px] rounded-full bg-accent/8 blur-2xl" />
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
-          {/* ── Back button ── */}
-          <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3 }}>
-            <button
-              onClick={() => router.back()}
-              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6 group"
+          {/* Breadcrumb nav */}
+          <motion.div
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.25 }}
+            className="flex items-center gap-2 mb-6 flex-wrap"
+          >
+            <Link
+              href="/materiais"
+              className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors group"
             >
-              <span className="h-8 w-8 rounded-xl glass-card flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                <ArrowLeft className="h-4 w-4" />
+              <span className="h-7 w-7 rounded-lg glass-card flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                <ArrowLeft className="h-3.5 w-3.5" />
               </span>
-              Voltar aos Materiais
-            </button>
+              Materiais
+            </Link>
+            {folderName && (
+              <>
+                <span className="text-muted-foreground/40 text-sm">/</span>
+                <Link
+                  href={`/materiais?folder=${material.folderId}`}
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
+                >
+                  <FolderOpen className="h-3.5 w-3.5" />
+                  {folderName}
+                </Link>
+              </>
+            )}
+            <span className="text-muted-foreground/40 text-sm">/</span>
+            <span className="text-sm font-medium text-foreground line-clamp-1 max-w-[200px]">
+              {material.title}
+            </span>
           </motion.div>
 
-          {/* ── Main layout: video + sidebar ── */}
+          {/* Main layout */}
           <div className="flex flex-col xl:flex-row gap-6">
 
-            {/* ── LEFT: Video / Cover panel ── */}
+            {/* LEFT: Media panel */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
+              transition={{ duration: 0.35 }}
               className="flex-1 min-w-0"
             >
-              {/* Video player or cover */}
-              <div className="rounded-3xl overflow-hidden glass-card shadow-2xl shadow-primary/10 border border-primary/10">
+              {/* Media area */}
+              <div className="rounded-3xl overflow-hidden glass-card shadow-2xl shadow-primary/8 border border-border/40">
                 {isEmbed && hasAccess ? (
-                  /* ── Real embed ── */
-                  <VideoWatermark userName={watermark.name} userCpf={watermark.cpf}>
+                  <VideoWatermark userName={data.watermark.name} userCpf={data.watermark.cpf}>
                     {material.downloadUrl.trim().startsWith('<') ? (
-                      /* Full HTML embed code (Wistia, etc.) — same as /aulas */
-                      <div
-                        dangerouslySetInnerHTML={{ __html: material.downloadUrl }}
-                        className="w-full h-full"
-                      />
+                      <div dangerouslySetInnerHTML={{ __html: material.downloadUrl }} className="w-full h-full" />
                     ) : (
-                      /* Plain URL — render as iframe */
                       <iframe
                         src={material.downloadUrl}
                         title={material.title}
@@ -252,16 +386,17 @@ export default function MaterialViewPage() {
                     )}
                   </VideoWatermark>
                 ) : isEmbed && !hasAccess ? (
-                  /* ── Fake / locked embed ── */
+                  /* Locked embed placeholder */
                   <div className="relative w-full bg-black/90" style={{ aspectRatio: '16/9' }}>
                     {material.coverImage && (
-                      <img
+                      <Image
                         src={material.coverImage}
                         alt=""
-                        className="absolute inset-0 w-full h-full object-cover opacity-20 blur-sm scale-105"
+                        fill
+                        className="object-cover opacity-20 blur-sm scale-105"
+                        sizes="(max-width: 1280px) 100vw, 70vw"
                       />
                     )}
-                    {/* Noise overlay */}
                     <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/40 to-black/70" />
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 z-10">
                       <motion.div
@@ -270,7 +405,6 @@ export default function MaterialViewPage() {
                         transition={{ delay: 0.2, type: 'spring' }}
                         className="relative"
                       >
-                        {/* Glow ring */}
                         <div className="absolute inset-0 rounded-full bg-primary/20 blur-xl scale-150" />
                         <div className="relative h-20 w-20 rounded-full border-2 border-white/20 bg-white/10 backdrop-blur-md flex items-center justify-center">
                           <Lock className="h-8 w-8 text-white/80" />
@@ -280,7 +414,7 @@ export default function MaterialViewPage() {
                         <p className="text-white font-heading font-bold text-lg mb-1">Vídeo bloqueado</p>
                         <p className="text-white/60 text-sm">Adquira este material para assistir</p>
                       </div>
-                      {isVideo && material.videoDuration ? (
+                      {material.videoDuration ? (
                         <div className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/15 text-white/80 text-sm font-medium">
                           <Clock className="h-4 w-4" />
                           {formatDuration(material.videoDuration)}
@@ -289,19 +423,31 @@ export default function MaterialViewPage() {
                     </div>
                   </div>
                 ) : material.coverImage ? (
-                  /* ── Cover image for non-embed ── */
-                  <div className="relative w-full" style={{ aspectRatio: '16/9' }}>
-                    <img src={material.coverImage} alt={material.title} className="w-full h-full object-cover" />
+                  /* Cover image */
+                  <div className="relative w-full overflow-hidden" style={{ aspectRatio: '16/9' }}>
+                    <Image
+                      src={material.coverImage}
+                      alt={material.title}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 1280px) 100vw, 70vw"
+                      priority
+                    />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                     <div className="absolute bottom-4 left-4 flex items-center gap-2">
                       <span className="px-3 py-1.5 rounded-xl backdrop-blur-md bg-white/15 border border-white/20 text-white text-sm font-medium flex items-center gap-1.5">
                         {TYPE_ICONS[material.type]}
                         {TYPE_LABELS[material.type]}
                       </span>
+                      {isPdf && hasAccess && (
+                        <span className="px-3 py-1.5 rounded-xl backdrop-blur-md bg-emerald-500/20 border border-emerald-400/30 text-emerald-100 text-xs font-medium flex items-center gap-1.5">
+                          <Shield className="h-3.5 w-3.5" /> Marca d'água
+                        </span>
+                      )}
                     </div>
                   </div>
                 ) : (
-                  /* ── Gradient placeholder ── */
+                  /* Gradient placeholder */
                   <div className="w-full flex items-center justify-center bg-gradient-to-br from-primary/20 via-accent/10 to-secondary/20" style={{ aspectRatio: '16/9' }}>
                     <div className="h-24 w-24 rounded-3xl glass flex items-center justify-center">
                       {TYPE_ICONS[material.type] || <File className="h-12 w-12 text-primary" />}
@@ -309,40 +455,53 @@ export default function MaterialViewPage() {
                   </div>
                 )}
 
-                {/* ── Under-player info bar ── */}
-                <div className="px-5 py-4 border-t border-border/40 flex items-center gap-4 flex-wrap">
+                {/* Info bar under media */}
+                <div className="px-5 py-3.5 border-t border-border/40 flex items-center gap-4 flex-wrap">
                   <div className="flex items-center gap-3 text-xs text-muted-foreground flex-1">
                     <span className="flex items-center gap-1.5">
-                      <Eye className="h-3.5 w-3.5" />
-                      {material.viewCount} visualizações
+                      <Eye className="h-3.5 w-3.5" /> {material.viewCount}
                     </span>
                     <span className="flex items-center gap-1.5">
-                      <Download className="h-3.5 w-3.5" />
-                      {material.downloadCount} downloads
+                      <Download className="h-3.5 w-3.5" /> {material.downloadCount}
                     </span>
                     {isVideo && material.videoDuration ? (
                       <span className="flex items-center gap-1.5 text-primary font-medium">
-                        <Clock className="h-3.5 w-3.5" />
-                        {formatDuration(material.videoDuration)}
+                        <Clock className="h-3.5 w-3.5" /> {formatDuration(material.videoDuration)}
                       </span>
                     ) : null}
                   </div>
-                  <span className="text-xs text-muted-foreground">
-                    {new Date(material.createdAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
-                  </span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(material.createdAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })}
+                    </span>
+                    {/* Share button */}
+                    <button
+                      onClick={copyShareLink}
+                      className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg transition-all font-medium border ${
+                        copied
+                          ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                          : 'text-muted-foreground hover:text-foreground glass-button border-border/40'
+                      }`}
+                    >
+                      {copied ? <CheckCheck className="h-3.5 w-3.5" /> : <Share2 className="h-3.5 w-3.5" />}
+                      {copied ? 'Copiado!' : 'Compartilhar'}
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              {/* ── Description (desktop – below player) ── */}
+              {/* Description */}
               {material.description && (
                 <motion.div
-                  initial={{ opacity: 0, y: 12 }}
+                  initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.15 }}
                   className="mt-4 glass-card rounded-2xl px-5 py-4 border border-border/40"
                 >
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Descrição</h3>
-                  <p className={`text-sm leading-relaxed text-foreground/90 ${descExpanded ? '' : 'line-clamp-4'}`}>
+                  <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2.5">
+                    Sobre este material
+                  </h3>
+                  <p className={`text-sm leading-relaxed text-foreground/85 ${descExpanded ? '' : 'line-clamp-4'}`}>
                     {material.description}
                   </p>
                   {descLong && (
@@ -350,168 +509,228 @@ export default function MaterialViewPage() {
                       onClick={() => setDescExpanded(e => !e)}
                       className="mt-2 flex items-center gap-1 text-xs text-primary font-medium hover:underline"
                     >
-                      {descExpanded ? <><ChevronUp className="h-3 w-3" /> Ver menos</> : <><ChevronDown className="h-3 w-3" /> Ver mais</>}
+                      {descExpanded
+                        ? <><ChevronUp className="h-3 w-3" /> Ver menos</>
+                        : <><ChevronDown className="h-3 w-3" /> Ver mais</>}
                     </button>
                   )}
                 </motion.div>
               )}
             </motion.div>
 
-            {/* ── RIGHT: Info sidebar ── */}
+            {/* RIGHT: Sidebar */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.4, delay: 0.1 }}
-              className="xl:w-80 flex-shrink-0 space-y-4"
+              transition={{ duration: 0.35, delay: 0.08 }}
+              className="xl:w-[300px] flex-shrink-0 space-y-3"
             >
-              {/* Title & badges */}
-              <div className="glass-card rounded-2xl p-5 border border-border/40">
-                {/* Type + price badge row */}
-                <div className="flex items-center gap-2 flex-wrap mb-3">
-                  <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-primary/10 text-primary text-xs font-medium border border-primary/20">
-                    {TYPE_ICONS[material.type]}
-                    {TYPE_LABELS[material.type]}
-                  </span>
-                  {isFree ? (
-                    <span className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-green-500/10 text-green-600 dark:text-green-400 text-xs font-bold border border-green-500/20">
-                      <Gift className="h-3 w-3" /> Gratuito
-                    </span>
-                  ) : (
-                    <span className="px-2.5 py-1 rounded-lg bg-accent/10 text-amber-700 dark:text-amber-300 text-xs font-bold border border-amber-500/20">
-                      R$ {material.price?.toFixed(2)}
-                    </span>
-                  )}
-                  {hasAccess && (
-                    <span className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold border border-emerald-500/20">
-                      <Check className="h-3 w-3" /> Acesso liberado
-                    </span>
-                  )}
-                </div>
+              {/* ── CTA Card ── */}
+              <div className="rounded-3xl overflow-hidden border border-border/40 glass-card">
 
-                <h1 className="font-heading font-bold text-lg leading-snug mb-4">{material.title}</h1>
-
-                {/* Duration */}
-                {isVideo && material.videoDuration ? (
-                  <div className="flex items-center gap-2 mb-4 p-3 rounded-xl bg-primary/5 border border-primary/10">
-                    <div className="h-8 w-8 rounded-lg bg-primary/15 flex items-center justify-center flex-shrink-0">
-                      <Clock className="h-4 w-4 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Duração</p>
-                      <p className="text-sm font-semibold">{formatDuration(material.videoDuration)}</p>
-                    </div>
-                  </div>
-                ) : null}
-
-                {/* Tags */}
-                {material.tags?.length > 0 && (
-                  <div className="mb-4">
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
-                      <Tag className="h-3 w-3" /> Tags
-                    </p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {material.tags.map(tag => (
-                        <span key={tag} className="text-[11px] px-2.5 py-1 rounded-full bg-muted text-muted-foreground font-medium">
-                          {tag}
+                {/* Card header with cover thumb */}
+                {material.coverImage && !isEmbed && (
+                  <div className="relative h-32 overflow-hidden">
+                    <Image
+                      src={material.coverImage}
+                      alt=""
+                      fill
+                      className="object-cover"
+                      sizes="300px"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+                    {/* Access state badge */}
+                    <div className="absolute top-3 right-3">
+                      {hasAccess ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl backdrop-blur-md bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-[11px] font-bold">
+                          <Check className="h-3 w-3" /> Disponível
                         </span>
-                      ))}
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl backdrop-blur-md bg-black/40 border border-white/15 text-white/80 text-[11px] font-bold">
+                          <Lock className="h-3 w-3" />
+                          {isFree ? 'Gratuito' : `R$ ${material.price?.toFixed(2)}`}
+                        </span>
+                      )}
                     </div>
                   </div>
                 )}
 
-                {/* CTA Button */}
-                <div className="space-y-2">
-                  {hasAccess ? (
-                    isEmbed ? (
-                      <p className="text-xs text-center text-muted-foreground py-2">
-                        O vídeo está disponível acima ↑
-                      </p>
+                <div className="p-4">
+                  {/* Type + price pills */}
+                  <div className="flex items-center gap-1.5 flex-wrap mb-3">
+                    <span className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-primary/10 text-primary text-[11px] font-medium border border-primary/15">
+                      {TYPE_ICONS[material.type]}
+                      {TYPE_LABELS[material.type]}
+                    </span>
+                    {isFree ? (
+                      <span className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold border border-emerald-500/15">
+                        <Gift className="h-3 w-3" /> Gratuito
+                      </span>
                     ) : (
-                      <Button
-                        onClick={handleDownload}
-                        className="w-full h-11 rounded-2xl font-semibold text-white bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/25"
-                      >
-                        <Download className="h-4 w-4 mr-2" />
-                        {material.type === 'link' ? 'Acessar Link' : 'Baixar Material'}
-                      </Button>
-                    )
-                  ) : (
-                    <Button
-                      onClick={() => handleAcquire()}
-                      disabled={checkoutLoading}
-                      className={`w-full h-11 rounded-2xl font-semibold text-white shadow-lg ${
-                        isFree
-                          ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 shadow-green-500/25'
-                          : 'bg-gradient-to-r from-accent to-secondary hover:from-accent/90 hover:to-secondary/90 shadow-accent/25'
-                      }`}
-                    >
-                      {checkoutLoading
-                        ? <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
-                        : isFree ? <Gift className="h-4 w-4 mr-2" /> : <ShoppingCart className="h-4 w-4 mr-2" />
-                      }
-                      {isFree ? 'Adquirir Gratuitamente' : `Comprar – R$ ${material.price?.toFixed(2)}`}
-                    </Button>
+                      <span className="px-2 py-0.5 rounded-lg bg-accent/10 text-amber-700 dark:text-amber-300 text-[11px] font-bold border border-amber-500/15">
+                        R$ {material.price?.toFixed(2)}
+                      </span>
+                    )}
+                  </div>
+
+                  <h1 className="font-heading font-bold text-base leading-snug mb-3">
+                    {material.title}
+                  </h1>
+
+                  {/* Video duration */}
+                  {isVideo && material.videoDuration && (
+                    <div className="flex items-center gap-2 mb-3 px-3 py-2 rounded-xl bg-muted/40 border border-border/30">
+                      <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+                      <span className="text-xs font-medium">{formatDuration(material.videoDuration)}</span>
+                    </div>
                   )}
+
+                  {/* Tags */}
+                  {material.tags?.length > 0 && (
+                    <div className="mb-3">
+                      <div className="flex flex-wrap gap-1">
+                        {material.tags.map(tag => (
+                          <span key={tag} className="text-[10px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground font-medium">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ── CTA area ── */}
+                  <div className="mt-1 space-y-2">
+                    {hasAccess ? (
+                      isEmbed ? (
+                        <div className="flex items-center gap-2 py-2 px-3 rounded-2xl bg-primary/6 border border-primary/15">
+                          <Sparkles className="h-4 w-4 text-primary flex-shrink-0" />
+                          <p className="text-xs text-muted-foreground">
+                            O vídeo está disponível acima ↑
+                          </p>
+                        </div>
+                      ) : (
+                        <>
+                          <Button
+                            onClick={handleDownload}
+                            disabled={downloadState.status === 'running'}
+                            className="w-full h-11 rounded-2xl font-semibold text-white bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
+                          >
+                            {downloadState.status === 'running' ? (
+                              <>
+                                <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                Processando…
+                              </>
+                            ) : (
+                              <>
+                                <Download className="h-4 w-4 mr-2" />
+                                {downloadLabel}
+                              </>
+                            )}
+                          </Button>
+                          {isPdf && (
+                            <p className="text-center text-[10px] text-muted-foreground/70 leading-relaxed">
+                              PDF personalizado com marca d&apos;água exclusiva para sua conta
+                            </p>
+                          )}
+                        </>
+                      )
+                    ) : (
+                      <>
+                        <Button
+                          onClick={() => handleAcquire()}
+                          disabled={checkoutLoading}
+                          className={`w-full h-11 rounded-2xl font-semibold text-white shadow-lg transition-all active:scale-[0.98] ${
+                            isFree
+                              ? 'bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 shadow-emerald-500/20'
+                              : 'bg-gradient-to-r from-accent to-secondary hover:from-accent/90 hover:to-secondary/90 shadow-accent/20'
+                          }`}
+                        >
+                          {checkoutLoading
+                            ? <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            : isFree
+                              ? <Gift className="h-4 w-4 mr-2" />
+                              : <ShoppingCart className="h-4 w-4 mr-2" />
+                          }
+                          {isFree ? 'Adquirir gratuitamente' : `Comprar — R$ ${material.price?.toFixed(2)}`}
+                        </Button>
+                        {!isFree && (
+                          <p className="text-center text-[10px] text-muted-foreground/60">
+                            Pagamento único · acesso permanente
+                          </p>
+                        )}
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
 
               {/* Group restrictions */}
-              {material.allowedGroups?.length > 0 && (
+              <AnimatePresence>
+                {material.allowedGroups?.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="glass-card rounded-2xl p-4 border border-violet-500/20"
+                  >
+                    <div className="flex items-center gap-2 mb-2.5">
+                      <div className="h-6 w-6 rounded-lg bg-violet-500/15 flex items-center justify-center">
+                        <Shield className="h-3 w-3 text-violet-500" />
+                      </div>
+                      <p className="text-[11px] font-semibold text-violet-600 dark:text-violet-400 uppercase tracking-wider">
+                        Acesso por plano
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {material.allowedGroups.map(g => {
+                        const meta = GROUP_META[g]
+                        if (!meta) return null
+                        return (
+                          <span
+                            key={g}
+                            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border"
+                            style={{ color: meta.color, background: meta.color + '15', borderColor: meta.color + '35' }}
+                          >
+                            {meta.icon} {meta.label}
+                          </span>
+                        )
+                      })}
+                    </div>
+                    {!hasGroupAccess && (
+                      <p className="mt-2.5 text-[11px] text-muted-foreground leading-relaxed">
+                        Seu plano atual não inclui este conteúdo. Faça upgrade para desbloquear.
+                      </p>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Security/watermark info */}
+              {hasAccess && isPdf && (
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.25 }}
-                  className="glass-card rounded-2xl p-5 border border-violet-500/20 bg-violet-500/3"
+                  className="flex items-start gap-2.5 px-3.5 py-3 rounded-2xl bg-muted/30 border border-border/30"
                 >
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="h-7 w-7 rounded-lg bg-violet-500/15 flex items-center justify-center">
-                      <Shield className="h-3.5 w-3.5 text-violet-500" />
-                    </div>
-                    <p className="text-xs font-semibold text-violet-600 dark:text-violet-400 uppercase tracking-wider">
-                      Acesso por plano
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {material.allowedGroups.map(g => {
-                      const meta = GROUP_META[g]
-                      if (!meta) return null
-                      return (
-                        <span
-                          key={g}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border"
-                          style={{ color: meta.color, background: meta.color + '15', borderColor: meta.color + '35' }}
-                        >
-                          {meta.icon} {meta.label}
-                        </span>
-                      )
-                    })}
-                  </div>
-                  {!hasGroupAccess && (
-                    <p className="mt-3 text-xs text-muted-foreground leading-relaxed">
-                      Seu plano atual não inclui acesso a este conteúdo. Faça upgrade para desbloquear.
-                    </p>
-                  )}
+                  <ShieldAlert className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0 mt-0.5" />
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    Este PDF é gerado com marca d&apos;água exclusiva vinculada à sua conta.
+                  </p>
                 </motion.div>
               )}
-
-              {/* Security badge */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-muted/40 border border-border/30"
-              >
-                <ShieldAlert className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  {hasAccess
-                    ? 'Este conteúdo é protegido com marca d\'água personalizada.'
-                    : 'O conteúdo é protegido e disponível somente após aquisição.'}
-                </p>
-              </motion.div>
             </motion.div>
           </div>
         </div>
       </div>
+
+      {/* PDF Download Progress modal */}
+      <PdfDownloadProgress
+        materialTitle={material?.title ?? ''}
+        state={downloadState}
+        onRetry={startPdfDownload}
+        onClose={() => setDownloadState(INITIAL_DOWNLOAD_STATE)}
+      />
 
       {upsellPkg && data && (
         <PackageUpsellModal
@@ -532,22 +751,24 @@ export default function MaterialViewPage() {
   )
 }
 
-// ─── Skeleton ───────────────────────────────────────────────
+// ─── Skeleton ─────────────────────────────────────────────────
 function LoadingSkeleton() {
   return (
     <AppShell headerTitle="Carregando...">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="h-9 w-40 rounded-xl bg-muted animate-pulse mb-6" />
+        <div className="h-7 w-48 rounded-xl bg-muted animate-pulse mb-6" />
         <div className="flex flex-col xl:flex-row gap-6">
           <div className="flex-1">
             <div className="rounded-3xl bg-muted animate-pulse" style={{ aspectRatio: '16/9' }} />
+            <div className="mt-4 rounded-2xl bg-muted animate-pulse h-28" />
           </div>
-          <div className="xl:w-80 space-y-4">
-            <div className="rounded-2xl glass-card p-5 space-y-3">
-              <div className="h-4 w-24 bg-muted rounded animate-pulse" />
-              <div className="h-6 w-full bg-muted rounded animate-pulse" />
-              <div className="h-6 w-3/4 bg-muted rounded animate-pulse" />
-              <div className="h-11 w-full bg-muted rounded-2xl animate-pulse mt-4" />
+          <div className="xl:w-[300px] space-y-3">
+            <div className="rounded-3xl glass-card p-4 space-y-3">
+              <div className="h-28 w-full rounded-xl bg-muted animate-pulse" />
+              <div className="h-4 w-20 bg-muted rounded animate-pulse" />
+              <div className="h-5 w-full bg-muted rounded animate-pulse" />
+              <div className="h-5 w-3/4 bg-muted rounded animate-pulse" />
+              <div className="h-11 w-full bg-muted rounded-2xl animate-pulse mt-2" />
             </div>
           </div>
         </div>
@@ -556,7 +777,7 @@ function LoadingSkeleton() {
   )
 }
 
-// ─── Error ───────────────────────────────────────────────────
+// ─── Error ────────────────────────────────────────────────────
 function ErrorState({ message, onBack }: { message: string; onBack: () => void }) {
   return (
     <AppShell headerTitle="Erro">
@@ -565,7 +786,9 @@ function ErrorState({ message, onBack }: { message: string; onBack: () => void }
           <Package className="h-9 w-9 text-muted-foreground" />
         </div>
         <h2 className="font-heading font-bold text-xl">Material não encontrado</h2>
-        <p className="text-muted-foreground text-sm">{message || 'Este material não existe ou foi removido.'}</p>
+        <p className="text-muted-foreground text-sm text-center max-w-xs">
+          {message || 'Este material não existe ou foi removido.'}
+        </p>
         <Button onClick={onBack} className="mt-2 rounded-xl">
           <ArrowLeft className="h-4 w-4 mr-2" /> Voltar aos Materiais
         </Button>

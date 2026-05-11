@@ -23,11 +23,21 @@ export async function GET(
     const db = await getDb()
     const isAdmin = session.role === 'admin'
 
-    // Fetch user from DB for group access and watermark data
-    const userDoc = await db.collection('users').findOne(
-      { _id: new ObjectId(session.userId) },
-      { projection: { accountType: 1, secondaryRole: 1, name: 1, cpf: 1 } }
-    )
+    // Fetch user + material + folder in parallel
+    const [userDoc, material] = await Promise.all([
+      db.collection('users').findOne(
+        { _id: new ObjectId(session.userId) },
+        { projection: { accountType: 1, secondaryRole: 1, name: 1, cpf: 1 } }
+      ),
+      db.collection('materials').findOne({
+        _id: new ObjectId(id),
+        ...(isAdmin ? {} : { isHidden: false }),
+      }),
+    ])
+
+    if (!material) {
+      return NextResponse.json({ error: 'Material não encontrado' }, { status: 404 })
+    }
 
     const userGroups: string[] = []
     if (!isAdmin && userDoc) {
@@ -35,36 +45,37 @@ export async function GET(
       if (userDoc.secondaryRole === 'monitor') userGroups.push('monitor')
     }
 
-    const material = await db.collection('materials').findOne({
-      _id: new ObjectId(id),
-      ...(isAdmin ? {} : { isHidden: false }),
-    })
-
-    if (!material) {
-      return NextResponse.json({ error: 'Material não encontrado' }, { status: 404 })
+    // Folder name (if any)
+    let folderName: string | null = null
+    if (material.folderId) {
+      const folder = await db.collection('material_folders').findOne(
+        { _id: new ObjectId(String(material.folderId)) },
+        { projection: { name: 1 } }
+      ).catch(() => null)
+      folderName = folder?.name ?? null
     }
 
     // Check group access
     const hasGroupAccess =
       isAdmin ||
       !material.allowedGroups?.length ||
-      userGroups.some((g) => material.allowedGroups.includes(g))
+      userGroups.some((g: string) => material.allowedGroups.includes(g))
 
-    // Check purchase — includes manual admin grants (source: 'manual').
-    // Two separate queries (userId and userEmail) to avoid any $or index quirks.
+    // Check purchase (two queries to avoid $or index quirks)
     let isPurchased = false
     if (!isAdmin) {
       const baseFilter = { itemId: id, itemType: 'material', status: 'completed' }
-
       const byUserId = await db.collection('material_purchases').findOne({
         ...baseFilter,
         userId: session.userId,
       })
-
       if (byUserId) {
         isPurchased = true
       } else if (session.email) {
-        const emailRegex = new RegExp(`^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i')
+        const emailRegex = new RegExp(
+          `^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`,
+          'i'
+        )
         const byEmail = await db.collection('material_purchases').findOne({
           ...baseFilter,
           userEmail: { $regex: emailRegex },
@@ -73,23 +84,30 @@ export async function GET(
       }
     }
 
-    // Access = purchased/granted OR (group member AND free content)
     const canAccess = isAdmin || isPurchased || (hasGroupAccess && material.pricing === 'free')
 
-    // Security: strip embed URL from video_embed if no access
+    // Strip video embed URL if no access
     const safeMaterial =
       !canAccess && material.type === 'video_embed'
         ? { ...material, downloadUrl: '' }
         : material
 
+    // Computed flags (never expose pdfFile.blobUrl to client)
+    const _hasPdf = !!(material.pdfFile?.blobUrl)
+    const { pdfFile: _stripped, ...materialWithoutPdf } = safeMaterial
+
     // Increment view count (fire and forget)
-    db.collection('materials').updateOne(
-      { _id: new ObjectId(id) },
-      { $inc: { viewCount: 1 } }
-    ).catch(() => {})
+    db.collection('materials')
+      .updateOne({ _id: new ObjectId(id) }, { $inc: { viewCount: 1 } })
+      .catch(() => {})
 
     const res = NextResponse.json({
-      material: { ...safeMaterial, _id: String(safeMaterial._id) },
+      material: {
+        ...materialWithoutPdf,
+        _id: String(safeMaterial._id),
+        _hasPdf,
+      },
+      folderName,
       hasAccess: canAccess,
       isPurchased,
       hasGroupAccess,

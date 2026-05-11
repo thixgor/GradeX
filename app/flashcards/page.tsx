@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, memo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -38,6 +38,15 @@ import { ToastAlert } from '@/components/ui/toast-alert'
 import { cn } from '@/lib/utils'
 import type { FlashcardManualDeck, FlashcardManualFolder } from '@/lib/types'
 
+function useDebounce<T>(value: T, delay: number): T {
+  const [debounced, setDebounced] = useState<T>(value)
+  useEffect(() => {
+    const id = setTimeout(() => setDebounced(value), delay)
+    return () => clearTimeout(id)
+  }, [value, delay])
+  return debounced
+}
+
 type DeckWithId = FlashcardManualDeck & {
   _id: string
   _isPurchased?: boolean
@@ -57,6 +66,7 @@ export default function FlashcardsHubPage() {
   const [folders, setFolders] = useState<FolderWithId[]>([])
   const [activeFolder, setActiveFolder] = useState<string | 'all' | 'root'>('all')
   const [search, setSearch] = useState('')
+  const debouncedSearch = useDebounce(search, 350)
   const [loading, setLoading] = useState(true)
   const [createOpen, setCreateOpen] = useState(false)
   const [folderOpen, setFolderOpen] = useState(false)
@@ -72,14 +82,14 @@ export default function FlashcardsHubPage() {
       const folderId = activeFolder === 'all' ? '' : activeFolder === 'root' ? 'null' : activeFolder
       const url = new URL('/api/flashcards/manual', window.location.origin)
       if (folderId) url.searchParams.set('folderId', folderId)
-      if (search) url.searchParams.set('q', search)
+      if (debouncedSearch) url.searchParams.set('q', debouncedSearch)
       const res = await fetch(url.toString())
       const json = await res.json()
       setMine(json.decks || [])
     } catch (err: any) {
       setToast({ open: true, message: err.message || 'Erro ao carregar decks', type: 'error' })
     }
-  }, [activeFolder, search])
+  }, [activeFolder, debouncedSearch])
 
   const loadFolders = useCallback(async () => {
     try {
@@ -92,13 +102,13 @@ export default function FlashcardsHubPage() {
   const loadCommunity = useCallback(async () => {
     try {
       const url = new URL('/api/flashcards/manual/community', window.location.origin)
-      if (search) url.searchParams.set('q', search)
+      if (debouncedSearch) url.searchParams.set('q', debouncedSearch)
       url.searchParams.set('sort', communitySort)
       const res = await fetch(url.toString())
       const json = await res.json()
       setCommunity(json.decks || [])
     } catch {}
-  }, [search, communitySort])
+  }, [debouncedSearch, communitySort])
 
   const loadStore = useCallback(async () => {
     try {
@@ -134,7 +144,7 @@ export default function FlashcardsHubPage() {
     Promise.all([loadMine(), loadFolders(), loadCommunity(), loadStore(), loadShared()]).finally(() => setLoading(false))
   }, [loadMine, loadFolders, loadCommunity, loadStore, loadShared])
 
-  async function deleteDeck(id: string) {
+  const deleteDeck = useCallback(async (id: string) => {
     if (!confirm('Apagar este deck e todos os cartões?')) return
     try {
       const res = await fetch(`/api/flashcards/manual/${id}`, { method: 'DELETE' })
@@ -144,7 +154,7 @@ export default function FlashcardsHubPage() {
     } catch (err: any) {
       setToast({ open: true, message: err.message || 'Erro', type: 'error' })
     }
-  }
+  }, [])
 
   // Hero featured: prioriza pago+destaque > pago > destaque > primeiros
   const featuredStore = useMemo(() => {
@@ -183,9 +193,8 @@ export default function FlashcardsHubPage() {
     <AppShell>
       {/* Ambient background */}
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute -top-40 -left-32 h-[480px] w-[480px] rounded-full bg-violet-500/25 blur-3xl" />
-        <div className="absolute top-1/3 -right-40 h-[560px] w-[560px] rounded-full bg-fuchsia-500/20 blur-3xl" />
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[400px] w-[800px] rounded-full bg-rose-500/10 blur-3xl" />
+        <div className="absolute -top-40 -left-32 h-[380px] w-[380px] rounded-full bg-violet-500/20 blur-2xl" />
+        <div className="absolute top-1/3 -right-40 h-[380px] w-[380px] rounded-full bg-fuchsia-500/15 blur-2xl" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-6 space-y-8">
@@ -529,9 +538,8 @@ function StoreHero({ decks, totalStore, onSeeAll }: { decks: DeckWithId[]; total
   return (
     <section className="relative overflow-hidden rounded-[2rem] border border-white/40 dark:border-white/10 bg-gradient-to-br from-amber-50/70 via-white/50 to-fuchsia-50/70 dark:from-amber-950/20 dark:via-slate-900/40 dark:to-fuchsia-950/20 backdrop-blur-2xl shadow-xl">
       <div aria-hidden className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-24 -right-24 h-80 w-80 rounded-full bg-amber-400/25 blur-3xl" />
-        <div className="absolute -bottom-24 -left-16 h-72 w-72 rounded-full bg-fuchsia-500/20 blur-3xl" />
-        <div className="absolute top-1/2 left-1/3 h-40 w-40 rounded-full bg-rose-400/15 blur-3xl" />
+        <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-amber-400/20 blur-2xl" />
+        <div className="absolute -bottom-16 -left-16 h-56 w-56 rounded-full bg-fuchsia-500/15 blur-2xl" />
       </div>
 
       <div className="relative grid lg:grid-cols-[1.15fr,1fr] gap-5 p-5 lg:p-7">
@@ -539,7 +547,7 @@ function StoreHero({ decks, totalStore, onSeeAll }: { decks: DeckWithId[]; total
         <Link href={`/flashcards/d/${hero.slug}`} className="group relative block overflow-hidden rounded-3xl border border-white/40 dark:border-white/10 bg-slate-900 shadow-2xl">
           <div className="relative aspect-[16/10]">
             {hero.coverImage ? (
-              <Image src={hero.coverImage} alt="" fill className="object-cover group-hover:scale-105 transition duration-700" />
+              <Image src={hero.coverImage} alt="" fill priority className="object-cover group-hover:scale-105 transition duration-700" sizes="(max-width: 1024px) 100vw, 60vw" />
             ) : (
               <div className="absolute inset-0 bg-gradient-to-br from-violet-600 via-fuchsia-600 to-rose-500" />
             )}
@@ -626,7 +634,7 @@ function CompactStoreCard({ deck }: { deck: DeckWithId }) {
     >
       <div className="relative aspect-[16/10]">
         {deck.coverImage ? (
-          <Image src={deck.coverImage} alt="" fill className="object-cover group-hover:scale-110 transition duration-500" />
+          <Image src={deck.coverImage} alt="" fill className="object-cover group-hover:scale-110 transition duration-500" sizes="(max-width: 1024px) 50vw, 20vw" />
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-violet-500 via-fuchsia-500 to-rose-500" />
         )}
@@ -825,7 +833,7 @@ function DeckGrid({ decks, owned = false, onDelete, showStoreState = false }: {
   )
 }
 
-function DeckCard({ deck, owned, onDelete, showStoreState }: {
+const DeckCard = memo(function DeckCard({ deck, owned, onDelete, showStoreState }: {
   deck: DeckWithId; owned?: boolean; onDelete?: (id: string) => void; showStoreState?: boolean
 }) {
   return (
@@ -833,7 +841,7 @@ function DeckCard({ deck, owned, onDelete, showStoreState }: {
       <Link href={`/flashcards/d/${deck.slug}`} className="block">
         <div className="relative aspect-[16/9] overflow-hidden">
           {deck.coverImage ? (
-            <Image src={deck.coverImage} alt="" fill className="object-cover group-hover:scale-110 transition duration-700" />
+            <Image src={deck.coverImage} alt="" fill className="object-cover group-hover:scale-110 transition duration-500" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" />
           ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-violet-500 via-fuchsia-500 to-rose-500" />
           )}
@@ -886,7 +894,7 @@ function DeckCard({ deck, owned, onDelete, showStoreState }: {
       )}
     </div>
   )
-}
+})
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Shared list

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Search,
@@ -140,6 +141,16 @@ const typeLabels: Record<string, string> = {
   flashcard_deck: 'Flashcard',
 }
 
+// ─── Debounce hook ─────────────────────────────────────────
+function useDebounce<T>(value: T, delay: number): T {
+  const [debounced, setDebounced] = useState<T>(value)
+  useEffect(() => {
+    const id = setTimeout(() => setDebounced(value), delay)
+    return () => clearTimeout(id)
+  }, [value, delay])
+  return debounced
+}
+
 // ─── Copy-link hook ────────────────────────────────────────
 function useCopyLink() {
   const [copiedId, setCopiedId] = useState<string | null>(null)
@@ -167,6 +178,7 @@ function MateriaisContent() {
   const [userGroups, setUserGroups] = useState<string[]>([])   // groups the current user belongs to
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const debouncedSearch = useDebounce(search, 350)
   const [activeFilter, setActiveFilter] = useState<'all' | 'free' | 'paid'>('all')
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null)
   const [folderPath, setFolderPath] = useState<Folder[]>([])
@@ -252,7 +264,8 @@ function MateriaisContent() {
 
     if (tabParam === 'packages') setActiveTab('packages')
     if (folderParam) setCurrentFolderId(folderParam)
-    if (materialParam) { setHighlightedMaterialId(materialParam); setActiveTab('materials') }
+    // Redirect old ?material= share links to the individual page
+    if (materialParam) { router.replace(`/materiais/${materialParam}`); return }
     if (packageParam) { setHighlightedPackageId(packageParam); setActiveTab('packages') }
 
     if (searchParams.get('purchase') === 'success') {
@@ -263,8 +276,8 @@ function MateriaisContent() {
   }, [])
 
   useEffect(() => {
-    fetchData(currentFolderId, search, activeFilter)
-  }, [fetchData, currentFolderId, search, activeFilter])
+    fetchData(currentFolderId, debouncedSearch, activeFilter)
+  }, [fetchData, currentFolderId, debouncedSearch, activeFilter])
 
   // Scroll to highlighted item
   useEffect(() => {
@@ -303,7 +316,7 @@ function MateriaisContent() {
   const copyFolderLink = (folder: Folder) =>
     copy(folder._id, `${origin}/materiais?folder=${folder._id}`)
   const copyMaterialLink = (material: Material) =>
-    copy(material._id, `${origin}/materiais?material=${material._id}`)
+    copy(material._id, `${origin}/materiais/${material._id}`)
   const copyPackageLink = (pkg: MaterialPackage) =>
     copy(pkg._id, `${origin}/materiais?tab=packages&package=${pkg._id}`)
 
@@ -426,8 +439,8 @@ function MateriaisContent() {
       {/* ─── Hero / Header ─── */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-accent/10 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/3" />
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/3" />
+        <div className="absolute bottom-0 left-0 w-[350px] h-[350px] bg-accent/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/3" />
 
         <div className="relative px-4 sm:px-6 lg:px-8 pt-8 pb-6">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
@@ -826,9 +839,9 @@ function FolderCard({
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
+      initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ delay: index * 0.05 }}
+      transition={{ delay: Math.min(index * 0.03, 0.15), duration: 0.2 }}
       className="group relative rounded-2xl glass-card hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer"
       onClick={onClick}
     >
@@ -837,8 +850,8 @@ function FolderCard({
       />
       <div className="relative p-4">
         {folder.coverImage ? (
-          <div className="h-16 w-full rounded-xl mb-3 overflow-hidden">
-            <img src={folder.coverImage} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          <div className="relative h-16 w-full rounded-xl mb-3 overflow-hidden">
+            <Image src={folder.coverImage} alt="" fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw" />
           </div>
         ) : (
           <div className="h-16 w-full rounded-xl mb-3 flex items-center justify-center text-3xl" style={{ backgroundColor: `${folder.color || '#468152'}15` }}>
@@ -881,9 +894,9 @@ function MaterialCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05, duration: 0.3 }}
+      transition={{ delay: Math.min(index * 0.03, 0.15), duration: 0.25 }}
       className={`group relative rounded-2xl overflow-hidden transition-all duration-300 ${isHighlighted ? 'ring-2 ring-primary ring-offset-2 ring-offset-background scale-[1.02]' : ''}`}
     >
       {/* Group-access locked overlay — hidden when user has a purchase/grant */}
@@ -894,7 +907,7 @@ function MaterialCard({
       <div className={`glass-card h-full flex flex-col transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/10 ${showLocked ? 'pointer-events-none select-none' : ''}`}>
         <div className="relative h-44 overflow-hidden">
           {material.coverImage ? (
-            <img src={material.coverImage} alt={material.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+            <Image src={material.coverImage} alt={material.title} fill className="object-cover transition-transform duration-500 group-hover:scale-110" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw" />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-primary/20 via-accent/10 to-secondary/20 flex items-center justify-center">
               <div className="h-16 w-16 rounded-2xl glass flex items-center justify-center">
@@ -1019,9 +1032,9 @@ function FeaturedCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1 }}
+      transition={{ delay: Math.min(index * 0.05, 0.15), duration: 0.25 }}
       className={`group relative rounded-2xl overflow-hidden transition-all duration-300 ${isHighlighted ? 'ring-2 ring-primary ring-offset-2 ring-offset-background scale-[1.02]' : ''}`}
     >
       {showLocked && (
@@ -1037,7 +1050,7 @@ function FeaturedCard({
 
         <div className="relative h-48 overflow-hidden">
           {material.coverImage ? (
-            <img src={material.coverImage} alt={material.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <Image src={material.coverImage} alt={material.title} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" priority={index === 0} />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-primary/30 via-accent/20 to-secondary/30 flex items-center justify-center">
               <motion.div animate={{ rotate: [0, 5, -5, 0] }} transition={{ duration: 4, repeat: Infinity }} className="h-20 w-20 rounded-3xl glass-lg flex items-center justify-center">
@@ -1130,9 +1143,9 @@ function PackageCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1 }}
+      transition={{ delay: Math.min(index * 0.05, 0.15), duration: 0.25 }}
       className={`group relative transition-all duration-300 ${isHighlighted ? 'ring-2 ring-primary ring-offset-2 ring-offset-background scale-[1.01] rounded-2xl' : ''}`}
     >
       {showLocked && (
@@ -1141,7 +1154,7 @@ function PackageCard({
       <div className={`glass-card rounded-2xl overflow-hidden transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/15 h-full flex flex-col ${showLocked ? 'pointer-events-none select-none' : ''}`}>
         <div className="relative h-52 overflow-hidden">
           {pkg.coverImage ? (
-            <img src={pkg.coverImage} alt={pkg.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <Image src={pkg.coverImage} alt={pkg.title} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 768px) 100vw, 50vw" />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-violet-500/20 via-primary/20 to-accent/20 flex items-center justify-center relative">
               <div className="relative">
@@ -1303,7 +1316,7 @@ function PreviewModal({
             <div className="relative w-full bg-black" style={{ paddingBottom: '56.25%' }}>
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
                 {data.coverImage && (
-                  <img src={data.coverImage} alt="" className="absolute inset-0 w-full h-full object-cover opacity-30 blur-sm" />
+                  <img src={data.coverImage} alt="" loading="lazy" className="absolute inset-0 w-full h-full object-cover opacity-30 blur-sm" />
                 )}
                 <div className="relative z-10 flex flex-col items-center gap-3">
                   <div className="h-16 w-16 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center">
@@ -1317,7 +1330,7 @@ function PreviewModal({
             </div>
           ) : data.coverImage ? (
             <div className="relative h-48 overflow-hidden">
-              <img src={data.coverImage} alt={data.title} className="w-full h-full object-cover" />
+              <Image src={data.coverImage} alt={data.title} fill className="object-cover" sizes="(max-width: 640px) 100vw, 512px" />
               <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
             </div>
           ) : (

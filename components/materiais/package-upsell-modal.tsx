@@ -1,5 +1,6 @@
 'use client'
 
+import NextImage from 'next/image'
 import { motion } from 'framer-motion'
 import {
   X, Sparkles, Package, ShoppingCart, Star, Zap,
@@ -189,11 +190,9 @@ export function PackageUpsellModal({
             style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}
           >
             {pkg.coverImage ? (
-              <img
-                src={pkg.coverImage}
-                alt={pkg.title}
-                className="h-14 w-20 rounded-xl object-cover flex-shrink-0"
-              />
+              <div className="relative h-14 w-20 rounded-xl overflow-hidden flex-shrink-0">
+                <NextImage src={pkg.coverImage} alt={pkg.title} fill className="object-cover" sizes="80px" />
+              </div>
             ) : (
               <div
                 className="h-14 w-20 rounded-xl flex items-center justify-center flex-shrink-0"
