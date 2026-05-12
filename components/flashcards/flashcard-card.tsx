@@ -85,6 +85,7 @@ function ImageLightbox({ src, onClose, initialClick }: { src: string; onClose: (
   const [translate, setTranslate] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
+  const imgRef = useRef<HTMLImageElement>(null)
 
   // Refs para uso em handlers não-React (wheel, keydown) sem closure stale
   const scaleRef = useRef(1)
@@ -251,8 +252,14 @@ function ImageLightbox({ src, onClose, initialClick }: { src: string; onClose: (
 
   function onContainerClick(e: React.MouseEvent) {
     e.stopPropagation()
-    // Se houve movimento, não fechar
     if (drag.current.moved) { drag.current.moved = false; return }
+    // Clique fora da imagem sempre fecha
+    if (imgRef.current) {
+      const r = imgRef.current.getBoundingClientRect()
+      if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) {
+        onClose(); return
+      }
+    }
     if (scaleRef.current === 1) onClose()
   }
 
@@ -322,6 +329,7 @@ function ImageLightbox({ src, onClose, initialClick }: { src: string; onClose: (
         onPointerCancel={onPtrUp}
       >
         <img
+          ref={imgRef}
           src={src}
           alt=""
           className="max-w-[96vw] max-h-[84vh] object-contain select-none"
