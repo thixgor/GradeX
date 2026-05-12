@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
+import { denyDisabledSectionApi } from '@/lib/sidebar-section-access'
 
 export async function GET() {
     try {
+        const disabledResponse = await denyDisabledSectionApi('games')
+        if (disabledResponse) return disabledResponse
+
         const db = await getDb()
 
         // 1. Get explicitly created topics
@@ -51,7 +55,7 @@ export async function GET() {
 
         const activeTopics = finalTopics.filter(t => t.questionCount > 0)
         const headers = new Headers({
-            'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=1200',
+            'Cache-Control': 'no-store',
             'Content-Type': 'application/json',
         })
 

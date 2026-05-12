@@ -11,6 +11,12 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { LogoLoading } from '@/components/logo-loading'
 import { ArrowLeft, Settings, AlertCircle, CheckCircle, Eye, EyeOff, Trash2, Zap, Plus, ArrowUp, ArrowDown } from 'lucide-react'
 import { PlanConfig } from '@/lib/types'
+import {
+  SIDEBAR_SECTION_DEFINITIONS,
+  normalizeSidebarSections,
+  type SidebarSectionKey,
+  type SidebarSectionSettings,
+} from '@/lib/sidebar-sections'
 
 interface User {
   id: string
@@ -33,6 +39,7 @@ interface LandingSettings {
   registrationBlocked?: boolean
   registrationBlockedMessage?: string
   aiKeys?: AIKeySettings
+  sidebarSections?: SidebarSectionSettings
 }
 
 interface MercadoPagoStatus {
@@ -75,7 +82,8 @@ export default function SettingsPage() {
       generalExams: '',
       personalExams: '',
       flashcards: ''
-    }
+    },
+    sidebarSections: normalizeSidebarSections(),
   })
   const [videoPreview, setVideoPreview] = useState(true)
   const [mpStatus, setMpStatus] = useState<MercadoPagoStatus | null>(null)
@@ -180,7 +188,8 @@ export default function SettingsPage() {
             generalExams: '',
             personalExams: '',
             flashcards: ''
-          }
+          },
+          sidebarSections: normalizeSidebarSections(data.sidebarSections),
         }
         setSettings(settings)
       }
@@ -283,6 +292,17 @@ export default function SettingsPage() {
     } finally {
       setTestingAIKey(null)
     }
+  }
+
+  function toggleSidebarSection(sectionKey: SidebarSectionKey) {
+    const currentSections = normalizeSidebarSections(settings.sidebarSections)
+    setSettings({
+      ...settings,
+      sidebarSections: {
+        ...currentSections,
+        [sectionKey]: !currentSections[sectionKey],
+      },
+    })
   }
 
   async function handleSave() {
@@ -466,6 +486,73 @@ export default function SettingsPage() {
                   className="bg-primary hover:bg-primary/90"
                 >
                   {saving ? 'Salvando...' : 'Salvar Configurações'}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => loadSettings()}
+                  disabled={saving}
+                >
+                  Cancelar
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Sidebar Sections */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Seções do Sidebar Geral</CardTitle>
+              <CardDescription>
+                Controle quais áreas aparecem para usuários comuns. Administradores continuam com acesso completo.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid gap-3">
+                {SIDEBAR_SECTION_DEFINITIONS.map((section) => {
+                  const sidebarSections = normalizeSidebarSections(settings.sidebarSections)
+                  const enabled = sidebarSections[section.key]
+
+                  return (
+                    <div key={section.key} className="flex items-center justify-between gap-4 p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                      <div className="space-y-1">
+                        <Label className="text-base font-semibold">{section.label}</Label>
+                        <p className="text-sm text-muted-foreground">{section.description}</p>
+                        <p className="text-xs text-muted-foreground font-mono">{section.href}</p>
+                      </div>
+                      <div className="flex items-center gap-3 shrink-0">
+                        <span className={`hidden sm:inline text-xs font-medium ${enabled ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                          {enabled ? 'Habilitada' : 'Desabilitada'}
+                        </span>
+                        <button
+                          type="button"
+                          role="switch"
+                          aria-checked={enabled}
+                          onClick={() => toggleSidebarSection(section.key)}
+                          className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${enabled ? 'bg-primary' : 'bg-muted'}`}
+                        >
+                          <span
+                            className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${enabled ? 'translate-x-7' : 'translate-x-1'}`}
+                          />
+                        </button>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+
+              <div className="p-4 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg">
+                <p className="text-sm text-amber-900 dark:text-amber-100">
+                  Ao desabilitar uma seção, usuários comuns deixam de vê-la no menu lateral e são redirecionados caso tentem abrir a rota diretamente.
+                </p>
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t">
+                <Button
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="bg-primary hover:bg-primary/90"
+                >
+                  {saving ? 'Salvando...' : 'Salvar Seções'}
                 </Button>
                 <Button
                   variant="outline"

@@ -17,6 +17,7 @@ import { useBootstrap, clearBootstrapCache } from '@/hooks/use-bootstrap'
 import { FocusSessionProvider } from '@/hooks/use-focus-session'
 import { FocusSessionButton } from '@/components/focus-session-button'
 import { DoacaoFloatingButton } from '@/components/doacoes/doacao-floating-button'
+import type { SidebarSectionSettings } from '@/lib/sidebar-sections'
 
 /**
  * AppShell Component - Optimized Version
@@ -58,6 +59,7 @@ interface AppShellContextType {
   secondaryRole?: string
   loading: boolean
   sidebarCollapsed: boolean
+  sidebarSections: SidebarSectionSettings | null
 }
 
 const AppShellContext = createContext<AppShellContextType | null>(null)
@@ -109,6 +111,7 @@ export function AppShell({
     error,
     isAuthenticated,
     isAdmin,
+    sidebarSections,
     refetch: refetchBootstrap,
   } = useBootstrap({
     redirectOnUnauth: true, // Auto-redirect to login if not authenticated
@@ -186,6 +189,7 @@ Contato: (21) 99777-0936`)
     secondaryRole,
     loading,
     sidebarCollapsed,
+    sidebarSections,
   }
 
   return (
@@ -206,6 +210,7 @@ Contato: (21) 99777-0936`)
           tierLimitExceeded={tierLimitExceeded}
           collapsed={sidebarCollapsed}
           onCollapse={handleSidebarCollapse}
+          sidebarSections={sidebarSections}
         />
 
         {/* Floating mobile menu button — visible when header is hidden */}

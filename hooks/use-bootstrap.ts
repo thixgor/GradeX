@@ -19,6 +19,7 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { fetchAPI, invalidateCache, CACHE_DURATIONS } from '@/lib/api-client'
+import type { SidebarSectionSettings } from '@/lib/sidebar-sections'
 
 // Types matching the bootstrap endpoint response
 export interface BootstrapUser {
@@ -85,6 +86,7 @@ export interface BootstrapResponse {
     storage: number
   }
   notificationCount: number
+  sidebarSections: SidebarSectionSettings
 }
 
 // Global state for sharing across components
@@ -299,6 +301,9 @@ export function useBootstrap(options: {
 
     // Notification count
     notificationCount: data?.notificationCount ?? 0,
+
+    // Sidebar sections
+    sidebarSections: data?.sidebarSections ?? null,
   }
 }
 

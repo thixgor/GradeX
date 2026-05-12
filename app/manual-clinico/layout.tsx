@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { requireSidebarSectionAccess } from '@/lib/sidebar-section-access'
 
 export const metadata: Metadata = {
   title: 'Manual Clínico — DomineAqui',
@@ -9,10 +10,12 @@ export const metadata: Metadata = {
   }
 }
 
-export default function ManualClinicoLayout({
+export default async function ManualClinicoLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  await requireSidebarSectionAccess('manualClinico')
+
   return children
 }

@@ -27,6 +27,7 @@ import {
   HeartPulse,
   BookOpen,
 } from 'lucide-react'
+import type { SidebarSectionKey, SidebarSectionSettings } from '@/lib/sidebar-sections'
 
 interface SidebarProps {
   user: {
@@ -45,6 +46,7 @@ interface SidebarProps {
   tierLimitExceeded?: boolean
   collapsed?: boolean
   onCollapse?: (collapsed: boolean) => void
+  sidebarSections?: SidebarSectionSettings | null
 }
 
 interface NavItem {
@@ -54,6 +56,7 @@ interface NavItem {
   onClick?: () => void
   badge?: string
   variant?: 'default' | 'primary' | 'gradient'
+  sectionKey?: SidebarSectionKey
 }
 
 // Shared easing & duration for all sidebar collapse animations
@@ -285,6 +288,7 @@ export function Sidebar({
   tierLimitExceeded,
   collapsed,
   onCollapse,
+  sidebarSections,
 }: SidebarProps) {
   const router = useRouter()
   const pathname = usePathname()
@@ -298,23 +302,31 @@ export function Sidebar({
   const isAdmin = user?.role === 'admin'
   const isCollapsed = !!collapsed && canCollapse
 
-  const mainNavItems: NavItem[] = [
+  const sectionIsVisible = (sectionKey?: SidebarSectionKey) => {
+    if (!sectionKey || isAdmin) return true
+    return sidebarSections?.[sectionKey] !== false
+  }
+
+  const configuredMainNavItems: NavItem[] = [
     { icon: <Home className="h-5 w-5" />, label: 'Início', href: '/dashboard' },
-    { icon: <FileText className="h-5 w-5" />, label: 'Provas', href: '/provas' },
+    { icon: <FileText className="h-5 w-5" />, label: 'Provas', href: '/provas', sectionKey: 'provas' },
     {
       icon: <Database className="h-5 w-5" />,
       label: 'Banco de Questões',
       href: '/banco-questoes',
       badge: user?.accountType !== 'premium' && !isAdmin ? '5 Questões' : undefined,
+      sectionKey: 'bancoQuestoes',
     },
-    { icon: <Video className="h-5 w-5" />, label: 'Aulas', href: '/aulas' },
-    { icon: <Brain className="h-5 w-5" />, label: 'Flashcards', href: '/flashcards' },
-    { icon: <BookMarked className="h-5 w-5" />, label: 'Cronogramas', href: '/cronogramas' },
-    { icon: <MessageCircle className="h-5 w-5" />, label: 'Fórum', href: '/forum' },
-    { icon: <Gamepad2 className="h-5 w-5" />, label: 'Games', href: '/games', badge: 'Novo' },
-    { icon: <HeartPulse className="h-5 w-5" />, label: 'Manual Clínico', href: '/manual-clinico' },
-    { icon: <BookOpen className="h-5 w-5" />, label: 'Materiais', href: '/materiais', badge: 'Novo' },
+    { icon: <Video className="h-5 w-5" />, label: 'Aulas', href: '/aulas', sectionKey: 'aulas' },
+    { icon: <Brain className="h-5 w-5" />, label: 'Flashcards', href: '/flashcards', sectionKey: 'flashcards' },
+    { icon: <BookMarked className="h-5 w-5" />, label: 'Cronogramas', href: '/cronogramas', sectionKey: 'cronogramas' },
+    { icon: <MessageCircle className="h-5 w-5" />, label: 'Fórum', href: '/forum', sectionKey: 'forum' },
+    { icon: <Gamepad2 className="h-5 w-5" />, label: 'Games', href: '/games', badge: 'Novo', sectionKey: 'games' },
+    { icon: <HeartPulse className="h-5 w-5" />, label: 'Manual Clínico', href: '/manual-clinico', sectionKey: 'manualClinico' },
+    { icon: <BookOpen className="h-5 w-5" />, label: 'Materiais', href: '/materiais', badge: 'Novo', sectionKey: 'materiais' },
   ]
+
+  const mainNavItems = configuredMainNavItems.filter(item => sectionIsVisible(item.sectionKey))
 
   const secondaryNavItems: NavItem[] = [
     { icon: <UserIcon className="h-5 w-5" />, label: 'Meu Perfil', href: '/profile' },

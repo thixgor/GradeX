@@ -16,6 +16,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { secureApiEndpoint } from '@/lib/api-security'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
+import { normalizeSidebarSections, type SidebarSectionSettings } from '@/lib/sidebar-sections'
 
 export const dynamic = 'force-dynamic'
 
@@ -77,6 +78,7 @@ interface BootstrapResponse {
     storage: number
   }
   notificationCount: number
+  sidebarSections: SidebarSectionSettings
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
@@ -105,12 +107,16 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const tierLimits = getTierLimits(userDoc.accountType || 'free')
 
     // Fetch usage statistics in parallel
-    const [examsUsed, questionsUsedToday, questionsUsedMonth, customExams] =
+    const [examsUsed, questionsUsedToday, questionsUsedMonth, customExams, landingSettings] =
       await Promise.all([
         countUserExamsThisMonth(db, userId),
         countUserQuestionsToday(db, userId),
         countUserQuestionsThisMonth(db, userId),
         countCustomExams(db, userId),
+        db.collection('landing_settings').findOne(
+          {},
+          { projection: { sidebarSections: 1 } }
+        ),
       ])
 
     // Get notification count
@@ -161,6 +167,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
       percentageUsed,
       notificationCount,
+      sidebarSections: normalizeSidebarSections(landingSettings?.sidebarSections),
     }
 
     // Set optimal cache headers

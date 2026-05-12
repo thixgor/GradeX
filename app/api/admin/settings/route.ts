@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { PlanConfig, AdminSettings } from '@/lib/types'
+import {
+  normalizeSidebarSections,
+  type SidebarSectionSettings,
+} from '@/lib/sidebar-sections'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,6 +23,22 @@ interface LandingSettings {
   registrationBlocked?: boolean
   registrationBlockedMessage?: string
   aiKeys?: AIKeySettings
+  sidebarSections?: SidebarSectionSettings
+}
+
+const DEFAULT_LANDING_SETTINGS: LandingSettings = {
+  videoEmbedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+  landingPageEnabled: true,
+  videoEnabled: true,
+  personalExamsEnabled: true,
+  registrationBlocked: false,
+  registrationBlockedMessage: 'Cadastro temporariamente desativado',
+  aiKeys: {
+    generalExams: '',
+    personalExams: '',
+    flashcards: ''
+  },
+  sidebarSections: normalizeSidebarSections(),
 }
 
 // GET - Obter configurações (público)
@@ -29,22 +49,14 @@ export async function GET(req: NextRequest) {
 
     if (!settings) {
       // Retornar configurações padrão
-      return NextResponse.json({
-        videoEmbedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-        landingPageEnabled: true,
-        videoEnabled: true,
-        personalExamsEnabled: true,
-        registrationBlocked: false,
-        registrationBlockedMessage: 'Cadastro temporariamente desativado',
-        aiKeys: {
-          generalExams: '',
-          personalExams: '',
-          flashcards: ''
-        }
-      })
+      return NextResponse.json(DEFAULT_LANDING_SETTINGS)
     }
 
-    return NextResponse.json(settings)
+    return NextResponse.json({
+      ...DEFAULT_LANDING_SETTINGS,
+      ...settings,
+      sidebarSections: normalizeSidebarSections(settings.sidebarSections),
+    })
   } catch (error) {
     console.error('Erro ao obter configurações:', error)
     return NextResponse.json(
@@ -72,10 +84,15 @@ export async function PUT(req: NextRequest) {
       )
     }
 
+    const sanitizedBody: Partial<LandingSettings> = {
+      ...body,
+      sidebarSections: normalizeSidebarSections(body.sidebarSections),
+    }
+
     const db = await getDb()
     const result = await db.collection('landing_settings').updateOne(
       {},
-      { $set: body },
+      { $set: sanitizedBody },
       { upsert: true }
     )
 
@@ -85,7 +102,8 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({
       success: true,
       message: 'Configurações atualizadas com sucesso',
-      ...updatedSettings
+      ...updatedSettings,
+      sidebarSections: normalizeSidebarSections(updatedSettings?.sidebarSections),
     })
   } catch (error) {
     console.error('Erro ao atualizar configurações:', error)
