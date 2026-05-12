@@ -74,7 +74,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 
     const isPublicPreviewable =
-      deck.ownerType === 'admin' ||
+      (deck.ownerType === 'admin' && deck.visibility !== 'private') ||
       ((deck.visibility === 'public' || deck.visibility === 'unlisted') && deck.isPublished)
 
     if (!isAuthenticated && !isPublicPreviewable) {
@@ -245,6 +245,14 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       )
     }
 
+    // Quando deck vira privado, ocultar material vinculado automaticamente
+    if (updates.visibility === 'private' && deck.linkedMaterialId && isValidObjectId(deck.linkedMaterialId)) {
+      await db.collection('materials').updateOne(
+        { _id: new ObjectId(deck.linkedMaterialId) },
+        { $set: { isHidden: true, updatedAt: new Date() } }
+      )
+    }
+
     const updatedDeck = await db.collection<FlashcardManualDeck>(FLASHCARD_MANUAL_COLLECTIONS.decks).findOne({ _id: deck._id })
     return NextResponse.json({ deck: updatedDeck ? normalizeDeckForResponse(updatedDeck) : null })
   } catch (error: any) {
@@ -305,7 +313,7 @@ async function syncMaterialForDeck(db: any, deck: FlashcardManualDeck & { _id: O
     price: deck.price || 0,
     stripePriceId: deck.stripePriceId || '',
     allowedGroups: deck.allowedGroups || [],
-    isHidden: !!deck.isHidden,
+    isHidden: !!deck.isHidden || deck.visibility === 'private',
     isFeatured: !!deck.isFeatured,
     order: 0,
     linkedDeckId: String(deck._id),
