@@ -8,6 +8,7 @@ import { getPaymentProvider, deriveIdempotencyKey } from '@/lib/payments'
 import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
 import { getRequestAnalyticsMeta, recordCheckoutEvent, recordOrderCheckoutEvent } from '@/lib/analytics'
+import { computeEffectivePackagePrice } from '@/lib/material-package-pricing'
 import type { PaymentOrder, MaterialPurchase } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -56,8 +57,71 @@ export async function POST(request: NextRequest) {
   })
   if (existing) return NextResponse.json({ error: 'Você já adquiriu este item' }, { status: 400 })
 
-  // Free path
-  if (item.pricing === 'free' || !item.price || item.price <= 0) {
+  // ─── Anti-burla: desconto proporcional em pacotes ─────────────
+  // Se o usuário já comprou algum material que faz parte do pacote,
+  // descontamos proporcionalmente. Calculamos no servidor — nunca confiamos
+  // em valores enviados pelo cliente.
+  let effectivePrice = Number(item.price || 0)
+  let pricingMeta: ReturnType<typeof computeEffectivePackagePrice> | null = null
+
+  if (data.itemType === 'package' && Array.isArray(item.materialIds) && item.materialIds.length > 0) {
+    const materialObjectIds = (item.materialIds as string[])
+      .map((mid) => { try { return new ObjectId(mid) } catch { return null } })
+      .filter(Boolean) as ObjectId[]
+
+    const pkgMaterials = materialObjectIds.length > 0
+      ? await db.collection('materials')
+          .find({ _id: { $in: materialObjectIds } })
+          .project({ pricing: 1, price: 1 })
+          .toArray()
+      : []
+
+    const materialIdsStr = pkgMaterials.map((m: any) => String(m._id))
+    let purchasedMaterialIds: string[] = []
+    if (materialIdsStr.length > 0) {
+      const baseFilter = {
+        itemType: 'material',
+        status: 'completed',
+        itemId: { $in: materialIdsStr },
+      }
+      const byUserId = await db.collection('material_purchases')
+        .find({ ...baseFilter, userId: session.userId })
+        .project({ itemId: 1 })
+        .toArray()
+      let byEmail: any[] = []
+      if (session.email) {
+        const emailRegex = new RegExp(
+          `^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`,
+          'i'
+        )
+        byEmail = await db.collection('material_purchases')
+          .find({ ...baseFilter, userEmail: { $regex: emailRegex } })
+          .project({ itemId: 1 })
+          .toArray()
+      }
+      purchasedMaterialIds = Array.from(new Set([...byUserId, ...byEmail].map((p: any) => String(p.itemId))))
+    }
+
+    pricingMeta = computeEffectivePackagePrice({
+      pkgPrice: Number(item.price || 0),
+      materials: pkgMaterials.map((m: any) => ({
+        _id: String(m._id),
+        pricing: m.pricing,
+        price: m.price,
+      })),
+      ownedMaterialIds: purchasedMaterialIds,
+    })
+    effectivePrice = pricingMeta.effectivePrice
+  }
+
+  // Free path — item gratuito OR pacote ficou totalmente coberto pelo desconto
+  const isFreePath =
+    item.pricing === 'free' ||
+    !item.price ||
+    item.price <= 0 ||
+    effectivePrice <= 0
+
+  if (isFreePath) {
     await db.collection<MaterialPurchase>('material_purchases').insertOne({
       userId: session.userId,
       userName: session.name,
@@ -79,7 +143,16 @@ export async function POST(request: NextRequest) {
       targetUserId: session.userId,
       resourceType: data.itemType,
       resourceId: data.itemId,
-      metadata: { free: true },
+      metadata: {
+        free: true,
+        ...(pricingMeta && pricingMeta.discountApplied > 0
+          ? {
+              packageDiscountApplied: pricingMeta.discountApplied,
+              packageOriginalPrice: pricingMeta.originalPackagePrice,
+              ownedMaterialIds: pricingMeta.ownedMaterialIds,
+            }
+          : {}),
+      },
     })
     await recordCheckoutEvent({
       event: 'payment_approved',
@@ -93,7 +166,17 @@ export async function POST(request: NextRequest) {
       paymentMethod: 'free',
       status: 'approved',
       source: data.itemType === 'package' ? 'Pacote' : 'Compra direta',
-      metadata: { free: true, itemType: data.itemType, materialType: item.type },
+      metadata: {
+        free: true,
+        itemType: data.itemType,
+        materialType: item.type,
+        ...(pricingMeta && pricingMeta.discountApplied > 0
+          ? {
+              packageDiscountApplied: pricingMeta.discountApplied,
+              packageOriginalPrice: pricingMeta.originalPackagePrice,
+            }
+          : {}),
+      },
       ...getRequestAnalyticsMeta(request),
     })
     return NextResponse.json({
@@ -105,7 +188,7 @@ export async function POST(request: NextRequest) {
     })
   }
 
-  const amount = Number(item.price)
+  const amount = Number(effectivePrice)
   const description = item.title
 
   // Cria order interna
@@ -122,7 +205,17 @@ export async function POST(request: NextRequest) {
     currency: 'BRL',
     status: 'pending',
     idempotencyKey: '',
-    metadata: { itemType: data.itemType, itemTitle: item.title },
+    metadata: {
+      itemType: data.itemType,
+      itemTitle: item.title,
+      ...(pricingMeta && pricingMeta.discountApplied > 0
+        ? {
+            packageOriginalPrice: pricingMeta.originalPackagePrice,
+            packageDiscountApplied: pricingMeta.discountApplied,
+            ownedMaterialIds: pricingMeta.ownedMaterialIds,
+          }
+        : {}),
+    },
     createdAt: now,
     updatedAt: now,
   }

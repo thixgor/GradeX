@@ -379,7 +379,8 @@ function MateriaisContent() {
     if (folderParam) setCurrentFolderId(folderParam)
     // Redirect old ?material= share links to the individual page
     if (materialParam) { router.replace(`/materiais/${materialParam}`); return }
-    if (packageParam) { setHighlightedPackageId(packageParam); setActiveTab('packages') }
+    // Redirect old ?package= share links to the new individual package page
+    if (packageParam) { router.replace(`/pacotes/${packageParam}`); return }
 
     if (searchParams.get('purchase') === 'success') {
       setSuccessMessage('Compra realizada com sucesso! O material já está disponível para download.')
@@ -453,7 +454,7 @@ function MateriaisContent() {
   const copyMaterialLink = (material: Material) =>
     copy(material._id, `${origin}/materiais/${material._id}`)
   const copyPackageLink = (pkg: MaterialPackage) =>
-    copy(pkg._id, `${origin}/materiais?tab=packages&package=${pkg._id}`)
+    copy(pkg._id, `${origin}/pacotes/${pkg._id}`)
 
   // ─── Acquire / Download ──────────────────────────────────
   const handleAcquire = async (itemType: 'material' | 'package', itemId: string) => {
@@ -1483,7 +1484,7 @@ function PackageCard({
         <LockedGroupOverlay allowedGroups={pkg.allowedGroups} onPreview={onPreview} />
       )}
       <div className={`glass-card rounded-2xl overflow-hidden transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/15 h-full flex flex-col ${showLocked ? 'pointer-events-none select-none' : ''}`}>
-        <div className="relative h-52 overflow-hidden">
+        <Link href={`/pacotes/${pkg._id}`} className="block relative h-52 overflow-hidden cursor-pointer">
           {pkg.coverImage ? (
             <Image src={pkg.coverImage} alt={pkg.title} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 768px) 100vw, 50vw" />
           ) : (
@@ -1528,10 +1529,10 @@ function PackageCard({
           </div>
 
           <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between">
-            <h3 className="font-heading font-bold text-white text-xl leading-tight">{pkg.title}</h3>
-            <CopyLinkBtn id={pkg._id} copiedId={copiedId} onClick={e => { e.stopPropagation(); onCopyLink() }} />
+            <h3 className="font-heading font-bold text-white text-xl leading-tight group-hover:underline">{pkg.title}</h3>
+            <CopyLinkBtn id={pkg._id} copiedId={copiedId} onClick={e => { e.preventDefault(); e.stopPropagation(); onCopyLink() }} />
           </div>
-        </div>
+        </Link>
 
         <div className="p-5 flex-1 flex flex-col">
           {pkg.description && (
