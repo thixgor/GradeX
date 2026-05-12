@@ -842,7 +842,7 @@ function MateriaisContent() {
               <Sparkles className="h-5 w-5 text-accent" />
               <h2 className="text-lg font-heading font-bold">Pacotes em Destaque</h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {featuredPackages.map((pkg, idx) => (
                 <div key={pkg._id} ref={highlightedPackageId === pkg._id ? highlightRef : null}>
                   <PackageCard
@@ -961,7 +961,7 @@ function MateriaisContent() {
         {activeTab === 'packages' && (
           <>
             {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {Array.from({ length: 4 }).map((_, i) => (
                   <div key={i} className="rounded-2xl glass-card p-6 animate-pulse">
                     <div className="aspect-[16/10] rounded-xl bg-muted mb-4" />
@@ -979,7 +979,7 @@ function MateriaisContent() {
                 <p className="text-muted-foreground text-sm">Novos pacotes em breve!</p>
               </motion.div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {packages.filter(p => !p.isFeatured).map((pkg, idx) => (
                   <div key={pkg._id} ref={highlightedPackageId === pkg._id ? highlightRef : null}>
                     <PackageCard
