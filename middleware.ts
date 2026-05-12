@@ -87,7 +87,7 @@ export async function middleware(request: NextRequest) {
     }
     // Pages redirecionam para login
     const loginUrl = new URL('/auth/login', request.url)
-    loginUrl.searchParams.set('redirect', pathname)
+    loginUrl.searchParams.set('redirect', pathname + request.nextUrl.search)
     return NextResponse.redirect(loginUrl)
   }
 
@@ -126,7 +126,7 @@ export async function middleware(request: NextRequest) {
     }
     // Pages: redirecionar para login preservando a URL de retorno
     const loginUrl = new URL('/auth/login', request.url)
-    loginUrl.searchParams.set('redirect', pathname)
+    loginUrl.searchParams.set('redirect', pathname + request.nextUrl.search)
     const res = NextResponse.redirect(loginUrl)
     res.cookies.delete('auth-token')
     return res
