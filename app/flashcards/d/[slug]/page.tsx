@@ -365,7 +365,7 @@ export default function DeckPage() {
     const progress = total > 0 ? ((currentIndex + 1) / total) * 100 : 0
     return (
       <AppShell>
-        <div className="max-w-3xl mx-auto px-4 py-6">
+        <div className="max-w-3xl lg:max-w-5xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between mb-4">
             <Button variant="ghost" onClick={() => setStudying(false)} className="gap-1"><ArrowLeft className="h-4 w-4" />Sair</Button>
             <div className="flex items-center gap-2">

@@ -410,7 +410,7 @@ export function FlashcardCardView({
   }
 
   return (
-    <div className={cn('w-full max-w-2xl mx-auto', className)}>
+    <div className={cn('w-full max-w-2xl lg:max-w-4xl mx-auto', className)}>
       <div className="relative w-full" style={{ perspective: 1600 }}>
         <motion.div
           className="relative w-full"
@@ -422,7 +422,7 @@ export function FlashcardCardView({
           <div
             onClick={onFlip}
             className={cn(
-              'rounded-3xl p-5 sm:p-7 md:p-9 min-h-[260px] sm:min-h-[320px] md:min-h-[380px] flex flex-col cursor-pointer select-none',
+              'rounded-3xl p-5 sm:p-7 md:p-9 lg:p-12 min-h-[260px] sm:min-h-[320px] md:min-h-[380px] lg:min-h-[500px] flex flex-col cursor-pointer select-none',
               'bg-gradient-to-br from-white via-white to-slate-50',
               'dark:from-slate-900 dark:via-slate-900 dark:to-slate-950',
               'border border-slate-200 dark:border-white/10',
@@ -442,11 +442,11 @@ export function FlashcardCardView({
               <ClickableImage
                 src={card.front.image}
                 containerClassName="rounded-2xl overflow-hidden mb-4 border border-slate-200 dark:border-white/10"
-                className="w-full h-auto object-contain max-h-64 sm:max-h-72 md:max-h-96 bg-slate-100 dark:bg-slate-950"
+                className="w-full h-auto object-contain max-h-64 sm:max-h-72 md:max-h-96 lg:max-h-[30rem] bg-slate-100 dark:bg-slate-950"
               />
             )}
 
-            <div className="flex-1 text-base sm:text-lg md:text-xl leading-relaxed text-slate-800 dark:text-slate-100 whitespace-pre-wrap break-words">
+            <div className="flex-1 text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed text-slate-800 dark:text-slate-100 whitespace-pre-wrap break-words">
               {isHidden && card.hiddenWord ? (
                 <HiddenWordRender phrase={card.hiddenWord.phrase} word={card.hiddenWord.word} revealed={revealedHidden} />
               ) : (
@@ -512,7 +512,7 @@ export function FlashcardCardView({
           <div
             onClick={onFlip}
             className={cn(
-              'absolute inset-0 rounded-3xl p-5 sm:p-7 md:p-9 min-h-[260px] sm:min-h-[320px] md:min-h-[380px] flex flex-col cursor-pointer select-none',
+              'absolute inset-0 rounded-3xl p-5 sm:p-7 md:p-9 lg:p-12 min-h-[260px] sm:min-h-[320px] md:min-h-[380px] lg:min-h-[500px] flex flex-col cursor-pointer select-none',
               'bg-gradient-to-br from-violet-600 via-fuchsia-600 to-rose-500',
               'text-white border border-white/15',
               'shadow-[0_30px_120px_-40px_rgba(124,58,237,0.55)]',
@@ -538,11 +538,11 @@ export function FlashcardCardView({
                 src={card.back.image}
                 onDark
                 containerClassName="rounded-2xl overflow-hidden mb-4 border border-white/20"
-                className="w-full h-auto object-contain max-h-56 sm:max-h-64 md:max-h-80 bg-black/20"
+                className="w-full h-auto object-contain max-h-56 sm:max-h-64 md:max-h-80 lg:max-h-[26rem] bg-black/20"
               />
             )}
 
-            <div className="flex-1 text-base md:text-lg leading-relaxed text-white/95 whitespace-pre-wrap break-words">
+            <div className="flex-1 text-base md:text-lg lg:text-xl leading-relaxed text-white/95 whitespace-pre-wrap break-words">
               {isHidden && card.hiddenWord
                 ? (
                   <>
