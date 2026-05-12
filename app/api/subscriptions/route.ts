@@ -7,7 +7,7 @@ import { checkRateLimit } from '@/lib/rate-limit'
 import { getPaymentProvider } from '@/lib/payments'
 import { audit } from '@/lib/payments/audit'
 import { getRequestAnalyticsMeta, recordSubscriptionCheckoutEvent } from '@/lib/analytics'
-import { DEFAULT_PAYMENT_METHODS } from '@/app/api/admin/settings/payment-methods/route'
+import { DEFAULT_PAYMENT_METHODS } from '@/lib/payment-methods'
 import type { SubscriptionRecord, User } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'

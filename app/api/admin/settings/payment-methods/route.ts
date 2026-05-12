@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
+import { DEFAULT_PAYMENT_METHODS, type PaymentMethodsConfig } from '@/lib/payment-methods'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -12,15 +13,6 @@ const Schema = z.object({
   boleto: z.boolean(),
   subscriptions: z.boolean(),
 })
-
-export type PaymentMethodsConfig = z.infer<typeof Schema>
-
-export const DEFAULT_PAYMENT_METHODS: PaymentMethodsConfig = {
-  pix: true,
-  credit_card: true,
-  boleto: true,
-  subscriptions: true,
-}
 
 export async function GET() {
   const db = await getDb()
