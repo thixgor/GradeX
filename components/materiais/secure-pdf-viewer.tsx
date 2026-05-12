@@ -8,6 +8,7 @@ import {
   Bold,
   Bookmark,
   Brush,
+  Check,
   ChevronLeft,
   ChevronRight,
   Circle,
@@ -24,7 +25,6 @@ import {
   PanelLeftOpen,
   PenLine,
   Plus,
-  Save,
   SearchX,
   ShieldCheck,
   StickyNote,
@@ -144,6 +144,8 @@ interface DrawingDraft {
 interface HighlightDraft {
   start: PdfPoint
   current: PdfPoint
+  points: PdfPoint[]
+  strokeWidthRatio: number
   color: string
 }
 
@@ -153,6 +155,8 @@ const COLOR_SWATCHES = ['#22c55e', '#0ea5e9', '#f59e0b', '#ef4444', '#8b5cf6', '
 const HIGHLIGHT_SWATCHES = ['#facc15', '#fb923c', '#86efac', '#93c5fd', '#f9a8d4']
 const NOTE_SWATCHES = ['#fde68a', '#bbf7d0', '#bfdbfe', '#fecdd3', '#ddd6fe']
 const FONT_OPTIONS = ['Inter', 'Arial', 'Georgia', 'Times New Roman', 'Courier New']
+const OBJECT_ID_PATTERN = /^[a-f\d]{24}$/i
+const ERASER_CURSOR = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cpath d='M9 18 17.5 9.5a3 3 0 0 1 4.24 4.24L14.5 21H8l-3-3 4-4Z' fill='%23fff' stroke='%23111827' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M13 14 17 18' stroke='%23111827' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") 7 21, cell`
 const pageBytesCache = new Map<string, { bytes: Uint8Array; pageCount?: number; expiresAt: number }>()
 const pageBytesInflight = new Map<string, Promise<{ bytes: Uint8Array; pageCount?: number }>>()
 
@@ -247,8 +251,10 @@ function createEmptyAnnotation(input: Partial<PdfAnnotation>, materialId: string
   }
 }
 
-function isTempAnnotation(annotation: PdfAnnotation) {
-  return annotation.id.startsWith('temp-')
+function getPersistedAnnotationId(annotation: PdfAnnotation) {
+  const id = String(annotation.id || annotation._id || '')
+  if (!id || id.startsWith('temp-') || id === 'draft') return ''
+  return OBJECT_ID_PATTERN.test(id) ? id : ''
 }
 
 function normalizeRect(start: PdfPoint, current: PdfPoint, minWidth = 0.012, minHeight = 0.008) {
@@ -310,6 +316,29 @@ function pointsToSvgPath(points: PdfPoint[]) {
   const last = points[points.length - 1]
   segments.push(`L ${last.x * 100} ${last.y * 100}`)
   return segments.join(' ')
+}
+
+function pointsToCanvasPath(context: CanvasRenderingContext2D, points: PdfPoint[], width: number, height: number) {
+  if (!points.length) return
+  context.beginPath()
+  context.moveTo(points[0].x * width, points[0].y * height)
+  if (points.length === 1) {
+    context.lineTo(points[0].x * width + 0.1, points[0].y * height + 0.1)
+    return
+  }
+
+  for (let index = 1; index < points.length - 1; index++) {
+    const current = points[index]
+    const next = points[index + 1]
+    context.quadraticCurveTo(
+      current.x * width,
+      current.y * height,
+      ((current.x + next.x) / 2) * width,
+      ((current.y + next.y) / 2) * height
+    )
+  }
+  const last = points[points.length - 1]
+  context.lineTo(last.x * width, last.y * height)
 }
 
 function shouldConvertToCircle(points: PdfPoint[]) {
@@ -587,13 +616,14 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     const previous = annotation
     const optimistic = { ...annotation, ...patch, data: { ...(annotation.data || {}), ...(patch.data || {}) } }
     setAnnotations((prev) => prev.map((item) => item.id === annotation.id ? optimistic : item))
-    if (isTempAnnotation(annotation)) return
+    const annotationId = getPersistedAnnotationId(annotation)
+    if (!annotationId) return
 
     try {
       const res = await fetch(`/api/materiais/${materialId}/pdf-viewer/annotations`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...optimistic, id: annotation.id }),
+        body: JSON.stringify({ ...optimistic, id: annotationId }),
       })
       if (!res.ok) throw new Error('update failed')
       const json = await res.json()
@@ -606,10 +636,11 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
 
   const deleteAnnotation = useCallback(async (annotation: PdfAnnotation) => {
     setAnnotations((prev) => prev.filter((item) => item.id !== annotation.id))
-    if (isTempAnnotation(annotation)) return
+    const annotationId = getPersistedAnnotationId(annotation)
+    if (!annotationId) return
 
     try {
-      const res = await fetch(`/api/materiais/${materialId}/pdf-viewer/annotations?id=${annotation.id}`, {
+      const res = await fetch(`/api/materiais/${materialId}/pdf-viewer/annotations?id=${encodeURIComponent(annotationId)}`, {
         method: 'DELETE',
       })
       if (!res.ok) throw new Error('delete failed')
@@ -935,6 +966,7 @@ function PdfCanvasPage({
   const wrapperRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const overlayRef = useRef<HTMLDivElement>(null)
+  const draftCanvasRef = useRef<HTMLCanvasElement>(null)
   const interactionRef = useRef<{
     kind: 'drawing'
     startedAt: number
@@ -955,8 +987,6 @@ function PdfCanvasPage({
   const [renderSize, setRenderSize] = useState<PageSize | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [editor, setEditor] = useState<EditorState | null>(null)
-  const [draftDrawing, setDraftDrawing] = useState<DrawingDraft | null>(null)
-  const [draftHighlight, setDraftHighlight] = useState<HighlightDraft | null>(null)
   const requestedRef = useRef(false)
 
   useEffect(() => {
@@ -1080,6 +1110,20 @@ function PdfCanvasPage({
     }
   }, [])
 
+  useEffect(() => {
+    setEditor((current) => current?.kind === 'text'
+      ? { ...current, textStyle: { ...textStyle } }
+      : current
+    )
+  }, [textStyle])
+
+  useEffect(() => {
+    setEditor((current) => current?.kind === 'note' && !current.annotation
+      ? { ...current, noteColor }
+      : current
+    )
+  }, [noteColor])
+
   const retryLoad = () => {
     requestedRef.current = false
     setPageBytes(null)
@@ -1102,15 +1146,97 @@ function PdfCanvasPage({
     }
   }, [])
 
+  const prepareDraftCanvas = useCallback(() => {
+    const canvas = draftCanvasRef.current
+    const rect = overlayRef.current?.getBoundingClientRect()
+    if (!canvas || !rect) return null
+    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    const width = Math.max(1, Math.floor(rect.width * dpr))
+    const height = Math.max(1, Math.floor(rect.height * dpr))
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width = width
+      canvas.height = height
+    }
+    canvas.style.width = `${rect.width}px`
+    canvas.style.height = `${rect.height}px`
+    const context = canvas.getContext('2d')
+    if (!context) return null
+    context.setTransform(dpr, 0, 0, dpr, 0, 0)
+    context.clearRect(0, 0, rect.width, rect.height)
+    return { context, width: rect.width, height: rect.height }
+  }, [])
+
+  const clearDraftCanvas = useCallback(() => {
+    const canvas = draftCanvasRef.current
+    const rect = overlayRef.current?.getBoundingClientRect()
+    const context = canvas?.getContext('2d')
+    if (!canvas || !rect || !context) return
+    context.clearRect(0, 0, rect.width, rect.height)
+  }, [])
+
+  const renderDraftOnCanvas = useCallback((interaction = interactionRef.current) => {
+    if (!interaction) return
+    const prepared = prepareDraftCanvas()
+    if (!prepared) return
+    const { context, width, height } = prepared
+
+    if (interaction.kind === 'highlight') {
+      const points = interaction.draft.points
+      context.save()
+      context.globalAlpha = 0.34
+      context.globalCompositeOperation = 'multiply'
+      context.strokeStyle = interaction.draft.color
+      context.lineWidth = Math.max(12, width * interaction.draft.strokeWidthRatio)
+      context.lineCap = 'round'
+      context.lineJoin = 'round'
+      pointsToCanvasPath(context, points, width, height)
+      context.stroke()
+      context.restore()
+      return
+    }
+
+    const draft = interaction.draft
+    const mode = draft.mode
+    context.save()
+    context.globalAlpha = mode === 'marker' ? Math.min(draft.opacity, 0.52) : draft.opacity
+    context.strokeStyle = draft.color
+    context.lineWidth = Math.max(1, width * draft.strokeWidthRatio)
+    context.lineCap = 'round'
+    context.lineJoin = 'round'
+    if (mode === 'dash') context.setLineDash([8, 8])
+
+    if (mode === 'circle') {
+      const rect = normalizeRect(draft.start, draft.current, 0.025, 0.025)
+      context.beginPath()
+      context.ellipse(
+        (rect.x + rect.width / 2) * width,
+        (rect.y + rect.height / 2) * height,
+        (rect.width / 2) * width,
+        (rect.height / 2) * height,
+        0,
+        0,
+        Math.PI * 2
+      )
+      context.stroke()
+    } else if (mode === 'line' || mode === 'dash') {
+      context.beginPath()
+      context.moveTo(draft.start.x * width, draft.start.y * height)
+      context.lineTo(draft.current.x * width, draft.current.y * height)
+      context.stroke()
+    } else {
+      pointsToCanvasPath(context, draft.points, width, height)
+      context.stroke()
+    }
+    context.restore()
+  }, [prepareDraftCanvas])
+
   const scheduleDraftUpdate = useCallback(() => {
     if (rafRef.current) return
     rafRef.current = window.requestAnimationFrame(() => {
-      const interaction = interactionRef.current
-      setDraftDrawing(interaction?.kind === 'drawing' ? interaction.draft : null)
-      setDraftHighlight(interaction?.kind === 'highlight' ? interaction.draft : null)
+      renderDraftOnCanvas()
       rafRef.current = null
     })
-  }, [])
+  }, [renderDraftOnCanvas])
 
   const addDrawingPoint = useCallback((point: PdfPoint) => {
     const interaction = interactionRef.current
@@ -1131,7 +1257,7 @@ function PdfCanvasPage({
     const resolvedMode = resolveDrawingMode(draft, durationMs)
 
     interactionRef.current = null
-    setDraftDrawing(null)
+    clearDraftCanvas()
 
     const points = draft.points
     if (resolvedMode === 'circle') {
@@ -1172,23 +1298,30 @@ function PdfCanvasPage({
       position: { points },
       data: { drawingMode: draft.mode, strokeWidthRatio: draft.strokeWidthRatio, opacity: draft.opacity },
     })
-  }, [onCreateAnnotation, pageNumber])
+  }, [clearDraftCanvas, onCreateAnnotation, pageNumber])
 
   const finishHighlight = useCallback(() => {
     const interaction = interactionRef.current
     if (!interaction || interaction.kind !== 'highlight') return
     interactionRef.current = null
-    setDraftHighlight(null)
-    const rect = normalizeRect(interaction.draft.start, interaction.draft.current, 0.18, 0.032)
+    clearDraftCanvas()
+    const points = interaction.draft.points
+    const moved = distance(interaction.draft.start, interaction.draft.current)
+    const position = points.length < 2 || moved < 0.01
+      ? normalizeRect(interaction.draft.start, {
+          x: Math.min(1, interaction.draft.start.x + 0.22),
+          y: interaction.draft.start.y,
+        }, 0.18, 0.028)
+      : { points }
     onCreateAnnotation({
       pageNumber,
       type: 'highlight',
       content: 'Marca texto',
       color: interaction.draft.color,
-      position: rect,
-      data: { opacity: 0.42 },
+      position,
+      data: { opacity: 0.34, strokeWidthRatio: interaction.draft.strokeWidthRatio },
     })
-  }, [onCreateAnnotation, pageNumber])
+  }, [clearDraftCanvas, onCreateAnnotation, pageNumber])
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (!renderSize || editor) return
@@ -1200,6 +1333,7 @@ function PdfCanvasPage({
       const point = getPosition(event.clientX, event.clientY)
       const rect = overlayRef.current?.getBoundingClientRect()
       const widthRatio = drawingStyle.width / Math.max(rect?.width || 1, 1)
+      clearDraftCanvas()
       interactionRef.current = {
         kind: 'drawing',
         startedAt: performance.now(),
@@ -1215,7 +1349,7 @@ function PdfCanvasPage({
           autoShape: drawingStyle.holdToShape,
         },
       }
-      setDraftDrawing(interactionRef.current.draft)
+      renderDraftOnCanvas(interactionRef.current)
       setSelectedId(null)
       return
     }
@@ -1224,12 +1358,20 @@ function PdfCanvasPage({
       event.preventDefault()
       event.currentTarget.setPointerCapture(event.pointerId)
       const point = getPosition(event.clientX, event.clientY)
+      const rect = overlayRef.current?.getBoundingClientRect()
+      clearDraftCanvas()
       interactionRef.current = {
         kind: 'highlight',
         pointerId: event.pointerId,
-        draft: { start: point, current: point, color: highlightColor },
+        draft: {
+          start: point,
+          current: point,
+          points: [point],
+          strokeWidthRatio: 20 / Math.max(rect?.width || 1, 1),
+          color: highlightColor,
+        },
       }
-      setDraftHighlight(interactionRef.current.draft)
+      renderDraftOnCanvas(interactionRef.current)
       setSelectedId(null)
     }
   }
@@ -1249,7 +1391,11 @@ function PdfCanvasPage({
       return
     }
 
-    interaction.draft.current = getPosition(event.clientX, event.clientY)
+    const point = getPosition(event.clientX, event.clientY)
+    interaction.draft.current = point
+    const points = interaction.draft.points
+    const last = points[points.length - 1]
+    if (!last || distance(last, point) >= 0.0015) points.push(point)
     scheduleDraftUpdate()
   }
 
@@ -1413,17 +1559,16 @@ function PdfCanvasPage({
             onPointerUp={handlePointerEnd}
             onPointerCancel={handlePointerEnd}
             style={{
-              cursor: tool === 'cursor' ? 'default' : tool === 'eraser' ? 'cell' : tool === 'drawing' ? 'crosshair' : 'copy',
+              cursor: tool === 'cursor' ? 'default' : tool === 'eraser' ? ERASER_CURSOR : tool === 'drawing' ? 'crosshair' : 'copy',
               touchAction: tool === 'drawing' || tool === 'highlight' ? 'none' : 'manipulation',
             }}
           >
+            <canvas ref={draftCanvasRef} className="absolute inset-0 h-full w-full pointer-events-none" />
             <AnnotationOverlay
               annotations={annotations}
               selectedAnnotation={selectedAnnotation}
               tool={tool}
               pointerEvents={annotationPointerEvents}
-              draftDrawing={draftDrawing}
-              draftHighlight={draftHighlight}
               onSelect={(annotation) => setSelectedId(annotation.id)}
               onEdit={(annotation) => {
                 const bounds = getAnnotationBounds(annotation)
@@ -1452,8 +1597,6 @@ function AnnotationOverlay({
   selectedAnnotation,
   tool,
   pointerEvents,
-  draftDrawing,
-  draftHighlight,
   onSelect,
   onEdit,
   onDelete,
@@ -1462,8 +1605,6 @@ function AnnotationOverlay({
   selectedAnnotation: PdfAnnotation | null
   tool: AnnotationTool
   pointerEvents: 'none' | 'auto'
-  draftDrawing: DrawingDraft | null
-  draftHighlight: HighlightDraft | null
   onSelect: (annotation: PdfAnnotation) => void
   onEdit: (annotation: PdfAnnotation) => void
   onDelete: (annotation: PdfAnnotation) => void
@@ -1482,8 +1623,6 @@ function AnnotationOverlay({
           onDelete={onDelete}
         />
       ))}
-      {draftHighlight && <DraftHighlight draft={draftHighlight} />}
-      {draftDrawing && <DrawingLayer annotation={draftToAnnotation(draftDrawing)} isDraft />}
       {selectedAnnotation && (
         <AnnotationActionBar
           annotation={selectedAnnotation}
@@ -1553,6 +1692,28 @@ function AnnotationItem({
   }
 
   if (annotation.type === 'highlight') {
+    if (position.points?.length) {
+      return (
+        <>
+          <HighlightLayer annotation={annotation} />
+          <button
+            type="button"
+            title="Marca texto"
+            className={`absolute rounded-md ${selected ? 'border border-emerald-400/80 ring-2 ring-emerald-300/50' : ''}`}
+            style={{
+              pointerEvents,
+              left: `${bounds.x * 100}%`,
+              top: `${bounds.y * 100}%`,
+              width: `${Math.max(bounds.width, 0.08) * 100}%`,
+              height: `${Math.max(bounds.height, 0.035) * 100}%`,
+              background: 'transparent',
+            }}
+            {...sharedHandlers}
+          />
+        </>
+      )
+    }
+
     return (
       <button
         type="button"
@@ -1567,7 +1728,7 @@ function AnnotationItem({
           width: `${(position.width || 0.08) * 100}%`,
           height: `${(position.height || 0.035) * 100}%`,
           backgroundColor: annotation.color || '#facc15',
-          opacity: annotation.data?.opacity || 0.42,
+          opacity: annotation.data?.opacity || 0.34,
           mixBlendMode: 'multiply',
         }}
         {...sharedHandlers}
@@ -1649,26 +1810,24 @@ function AnnotationItem({
   )
 }
 
-function draftToAnnotation(draft: DrawingDraft): PdfAnnotation {
-  const mode = draft.mode
-  const position = mode === 'circle'
-    ? normalizeRect(draft.start, draft.current, 0.025, 0.025)
-    : { points: mode === 'line' || mode === 'dash' ? [draft.start, draft.current] : draft.points }
-
-  return {
-    _id: 'draft',
-    id: 'draft',
-    userId: 'local',
-    materialId: 'local',
-    pageNumber: 1,
-    type: 'drawing',
-    content: 'Rascunho',
-    color: draft.color,
-    position,
-    data: { drawingMode: mode, strokeWidthRatio: draft.strokeWidthRatio, opacity: draft.opacity },
-    createdAt: '',
-    updatedAt: '',
-  }
+function HighlightLayer({ annotation }: { annotation: PdfAnnotation }) {
+  const points = annotation.position.points || []
+  if (points.length < 2) return null
+  const strokeWidth = `${((annotation.data?.strokeWidthRatio || 0.018) * 100).toFixed(3)}`
+  return (
+    <svg className="absolute inset-0 h-full w-full overflow-visible pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <path
+        d={pointsToSvgPath(points)}
+        fill="none"
+        stroke={annotation.color || '#facc15'}
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity={annotation.data?.opacity || 0.34}
+        style={{ mixBlendMode: 'multiply' }}
+      />
+    </svg>
+  )
 }
 
 function DrawingLayer({ annotation, isDraft }: { annotation: PdfAnnotation; isDraft?: boolean }) {
@@ -1706,25 +1865,6 @@ function DrawingLayer({ annotation, isDraft }: { annotation: PdfAnnotation; isDr
     <svg className="absolute inset-0 h-full w-full overflow-visible pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
       <path d={pointsToSvgPath(points)} strokeDasharray={dashArray} {...common} />
     </svg>
-  )
-}
-
-function DraftHighlight({ draft }: { draft: HighlightDraft }) {
-  const rect = normalizeRect(draft.start, draft.current, 0.18, 0.032)
-  return (
-    <div
-      className="absolute rounded-md border border-yellow-500/35"
-      style={{
-        left: `${rect.x * 100}%`,
-        top: `${rect.y * 100}%`,
-        width: `${rect.width * 100}%`,
-        height: `${rect.height * 100}%`,
-        backgroundColor: draft.color,
-        opacity: 0.42,
-        mixBlendMode: 'multiply',
-        pointerEvents: 'none',
-      }}
-    />
   )
 }
 
@@ -1783,68 +1923,26 @@ function InlineAnnotationEditor({
 }) {
   const isRightSide = editor.point.x > 0.62
   const isLowerSide = editor.point.y > 0.68
+  const isText = editor.kind === 'text'
 
   return (
     <div
       data-pdf-editor="true"
-      className="absolute z-40 w-[min(21rem,calc(100%-1rem))] rounded-xl border border-zinc-900/15 bg-white p-3 text-zinc-950 shadow-2xl"
+      className={`absolute z-40 text-zinc-950 shadow-xl ${
+        isText
+          ? 'w-[min(18rem,calc(100%-1rem))] rounded-md border border-emerald-500/70 bg-white/60 p-1 backdrop-blur-[1px]'
+          : 'w-[min(17rem,calc(100%-1rem))] rounded-xl border border-amber-500/35 p-2'
+      }`}
       style={{
         left: `${editor.point.x * 100}%`,
         top: `${editor.point.y * 100}%`,
         transform: `${isRightSide ? 'translateX(-100%)' : 'translateX(0)'} ${isLowerSide ? 'translateY(-100%)' : 'translateY(0)'}`,
+        backgroundColor: isText ? 'rgba(255,255,255,0.62)' : editor.noteColor,
       }}
       onClick={(event) => event.stopPropagation()}
       onPointerDown={(event) => event.stopPropagation()}
     >
-      <div className="mb-2 flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2 text-sm font-bold">
-          {editor.kind === 'text' ? <Type className="h-4 w-4" /> : <MessageSquare className="h-4 w-4" />}
-          {editor.kind === 'text' ? 'Texto no PDF' : 'Nota'}
-        </div>
-        <button type="button" onClick={onCancel} className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-zinc-100" title="Fechar">
-          <X className="h-4 w-4" />
-        </button>
-      </div>
-
-      {editor.kind === 'text' && (
-        <div className="mb-2 space-y-2">
-          <div className="flex flex-wrap items-center gap-1.5">
-            <select
-              value={editor.textStyle.fontFamily}
-              onChange={(event) => onChange({ ...editor, textStyle: { ...editor.textStyle, fontFamily: event.target.value } })}
-              className="h-8 rounded-lg border border-zinc-200 bg-white px-2 text-xs outline-none"
-            >
-              {FONT_OPTIONS.map((font) => <option key={font} value={font}>{font}</option>)}
-            </select>
-            <input
-              type="number"
-              min={10}
-              max={34}
-              value={editor.textStyle.fontSize}
-              onChange={(event) => onChange({ ...editor, textStyle: { ...editor.textStyle, fontSize: Number(event.target.value) || 16 } })}
-              className="h-8 w-16 rounded-lg border border-zinc-200 px-2 text-xs outline-none"
-            />
-            <input
-              type="color"
-              value={editor.textStyle.color}
-              onChange={(event) => onChange({ ...editor, textStyle: { ...editor.textStyle, color: event.target.value } })}
-              className="h-8 w-9 rounded-lg border border-zinc-200 bg-white p-1"
-              title="Cor do texto"
-            />
-            <EditorToggle active={editor.textStyle.bold} onClick={() => onChange({ ...editor, textStyle: { ...editor.textStyle, bold: !editor.textStyle.bold } })} title="Negrito">
-              <Bold className="h-4 w-4" />
-            </EditorToggle>
-            <EditorToggle active={editor.textStyle.italic} onClick={() => onChange({ ...editor, textStyle: { ...editor.textStyle, italic: !editor.textStyle.italic } })} title="Italico">
-              <Italic className="h-4 w-4" />
-            </EditorToggle>
-            <EditorToggle active={editor.textStyle.underline} onClick={() => onChange({ ...editor, textStyle: { ...editor.textStyle, underline: !editor.textStyle.underline } })} title="Sublinhado">
-              <Underline className="h-4 w-4" />
-            </EditorToggle>
-          </div>
-        </div>
-      )}
-
-      {editor.kind === 'note' && (
+      {!isText && (
         <div className="mb-2 flex items-center gap-1.5">
           {NOTE_SWATCHES.map((color) => (
             <button
@@ -1859,13 +1957,28 @@ function InlineAnnotationEditor({
         </div>
       )}
 
+      <div className="absolute -right-1 -top-9 flex items-center gap-1 rounded-lg border border-zinc-900/10 bg-zinc-950/90 p-1 text-white shadow-lg">
+        <button type="button" onClick={() => onSave(editor)} className="flex h-7 w-7 items-center justify-center rounded-md hover:bg-emerald-500/25" title="Salvar">
+          <Check className="h-4 w-4" />
+        </button>
+        <button type="button" onClick={onCancel} className="flex h-7 w-7 items-center justify-center rounded-md hover:bg-white/10" title="Fechar sem salvar">
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+
       <textarea
         autoFocus
         value={editor.content}
         onChange={(event) => onChange({ ...editor, content: event.target.value })}
-        placeholder={editor.kind === 'text' ? 'Digite diretamente no PDF...' : 'Escreva sua nota...'}
-        className="min-h-24 w-full resize-none rounded-lg border border-zinc-200 bg-zinc-50 p-2 text-sm outline-none focus:border-emerald-500 focus:bg-white"
-        style={editor.kind === 'text' ? {
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') onCancel()
+          if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') onSave(editor)
+        }}
+        placeholder={isText ? 'Digite aqui...' : 'Escreva sua nota...'}
+        className={`w-full resize-none border-0 bg-transparent p-1 outline-none ${
+          isText ? 'min-h-14' : 'min-h-24 rounded-lg bg-white/30'
+        }`}
+        style={isText ? {
           color: editor.textStyle.color,
           fontFamily: editor.textStyle.fontFamily,
           fontSize: editor.textStyle.fontSize,
@@ -1874,34 +1987,12 @@ function InlineAnnotationEditor({
           textDecoration: editor.textStyle.underline ? 'underline' : 'none',
           textAlign: editor.textStyle.align,
         } : {
-          backgroundColor: editor.noteColor,
+          color: '#1f2937',
+          fontSize: 14,
+          lineHeight: 1.35,
         }}
       />
-
-      <div className="mt-3 flex justify-end gap-2">
-        <button type="button" onClick={onCancel} className="h-9 rounded-lg border border-zinc-200 px-3 text-xs font-semibold hover:bg-zinc-50">
-          Cancelar
-        </button>
-        <button type="button" onClick={() => onSave(editor)} className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-emerald-600 px-3 text-xs font-bold text-white hover:bg-emerald-700">
-          <Save className="h-3.5 w-3.5" /> Salvar
-        </button>
-      </div>
     </div>
-  )
-}
-
-function EditorToggle({ active, onClick, title, children }: { active: boolean; onClick: () => void; title: string; children: React.ReactNode }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      title={title}
-      className={`flex h-8 w-8 items-center justify-center rounded-lg border ${
-        active ? 'border-emerald-500 bg-emerald-50 text-emerald-800' : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50'
-      }`}
-    >
-      {children}
-    </button>
   )
 }
 
