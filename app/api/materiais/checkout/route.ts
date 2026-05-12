@@ -48,14 +48,63 @@ export async function POST(request: NextRequest) {
   const item = await db.collection(collection).findOne({ _id: new ObjectId(data.itemId) })
   if (!item) return NextResponse.json({ error: 'Item não encontrado' }, { status: 404 })
 
+  const userPurchaseOr: any[] = [{ userId: session.userId }]
+  if (session.email) {
+    userPurchaseOr.push({
+      userEmail: {
+        $regex: new RegExp(`^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i'),
+      },
+    })
+  }
+
+  const alreadyOwnedRedirect = item.type === 'flashcard_deck' && item.linkedDeckSlug
+    ? `/flashcards/d/${item.linkedDeckSlug}`
+    : data.itemType === 'package'
+      ? `/pacotes/${data.itemId}`
+      : `/materiais/${data.itemId}`
+
   // Bloqueia recompra
   const existing = await db.collection<MaterialPurchase>('material_purchases').findOne({
-    userId: session.userId,
     itemType: data.itemType,
     itemId: data.itemId,
     status: 'completed',
+    $or: userPurchaseOr,
   })
-  if (existing) return NextResponse.json({ error: 'Você já adquiriu este item' }, { status: 400 })
+  if (existing) {
+    return NextResponse.json({
+      error: 'Você já adquiriu este item',
+      alreadyOwned: true,
+      redirectTo: alreadyOwnedRedirect,
+    }, { status: 409 })
+  }
+
+  // Material individual também é considerado adquirido quando o usuário
+  // comprou algum pacote que contém esse material. Isso fecha URL direta
+  // de checkout e mantém a regra no servidor.
+  if (data.itemType === 'material') {
+    const packages = await db.collection('material_packages')
+      .find({ materialIds: data.itemId, isHidden: { $ne: true } })
+      .project({ _id: 1 })
+      .toArray()
+    const packageIds = packages.map((pkg: any) => String(pkg._id))
+
+    if (packageIds.length > 0) {
+      const packagePurchase = await db.collection<MaterialPurchase>('material_purchases').findOne({
+        itemType: 'package',
+        itemId: { $in: packageIds },
+        status: 'completed',
+        $or: userPurchaseOr,
+      } as any)
+
+      if (packagePurchase) {
+        return NextResponse.json({
+          error: 'Você já possui este material por meio de um pacote',
+          alreadyOwned: true,
+          redirectTo: alreadyOwnedRedirect,
+        }, { status: 409 })
+      }
+    }
+  }
 
   // ─── Anti-burla: desconto proporcional em pacotes ─────────────
   // Se o usuário já comprou algum material que faz parte do pacote,

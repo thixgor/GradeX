@@ -98,6 +98,31 @@ export async function resolveDeckAccess({
       const byEmail = await db.collection('material_purchases').findOne({ ...baseFilter, userEmail: { $regex: emailRegex } })
       if (byEmail) isPurchased = true
     }
+
+    if (!isPurchased) {
+      const packages = await db.collection('material_packages')
+        .find({ materialIds: deck.linkedMaterialId, isHidden: { $ne: true } })
+        .project({ _id: 1 })
+        .toArray()
+      const packageIds = packages.map((pkg: any) => String(pkg._id))
+
+      if (packageIds.length > 0) {
+        const packageFilter = {
+          itemType: 'package',
+          itemId: { $in: packageIds },
+          status: 'completed',
+        }
+        const packageByUserId = await db.collection('material_purchases').findOne({ ...packageFilter, userId })
+        if (packageByUserId) {
+          isPurchased = true
+        } else if (userEmail) {
+          const emailRegex = new RegExp(`^${userEmail.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i')
+          const packageByEmail = await db.collection('material_purchases').findOne({ ...packageFilter, userEmail: { $regex: emailRegex } })
+          if (packageByEmail) isPurchased = true
+        }
+      }
+    }
+
     if (isPurchased) reasons.push('purchased')
   }
 

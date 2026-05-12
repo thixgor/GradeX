@@ -47,6 +47,29 @@ export async function GET(request: NextRequest) {
           ],
         }).project({ itemId: 1 }).toArray()
         purchases.forEach((p: any) => purchasedSet.add(String(p.itemId)))
+
+        const packages = await db.collection('material_packages')
+          .find({ materialIds: { $in: linkedIds }, isHidden: { $ne: true } })
+          .project({ _id: 1, materialIds: 1 })
+          .toArray()
+        const packageIds = packages.map((pkg: any) => String(pkg._id))
+
+        if (packageIds.length > 0) {
+          const packagePurchases = await db.collection('material_purchases').find({
+            itemType: 'package',
+            status: 'completed',
+            itemId: { $in: packageIds },
+            $or: [
+              { userId: session.userId },
+              ...(userDoc?.email ? [{ userEmail: { $regex: new RegExp(`^${String(userDoc.email).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') } }] : []),
+            ],
+          }).project({ itemId: 1 }).toArray()
+          const purchasedPackageIds = new Set(packagePurchases.map((purchase: any) => String(purchase.itemId)))
+          packages.forEach((pkg: any) => {
+            if (!purchasedPackageIds.has(String(pkg._id))) return
+            ;(pkg.materialIds || []).forEach((materialId: string) => purchasedSet.add(String(materialId)))
+          })
+        }
       }
     }
 

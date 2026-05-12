@@ -40,6 +40,15 @@ export default function MateriaisCheckoutPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  function getOwnedRedirect(found: any): string {
+    if (itemType === 'package') return `/pacotes/${itemId}`
+    if (found?.type === 'flashcard_deck') {
+      if (found?.downloadUrl) return found.downloadUrl
+      if (found?.linkedDeckSlug) return `/flashcards/d/${found.linkedDeckSlug}`
+    }
+    return `/materiais/${itemId}`
+  }
+
   useEffect(() => {
     if (!itemId) {
       setError('Item não informado')
@@ -77,6 +86,13 @@ export default function MateriaisCheckoutPage() {
         }
         if (!found || !found._id) {
           setError('Item não encontrado')
+          return
+        }
+        const alreadyOwned = itemType === 'package'
+          ? !!(itemResp?.access?.hasAccess || itemResp?.access?.isPurchased)
+          : !!(itemResp?.hasAccess || itemResp?.isPurchased || found?._hasAccess || found?._isPurchased)
+        if (alreadyOwned) {
+          router.replace(getOwnedRedirect(found))
           return
         }
         setItem(found)

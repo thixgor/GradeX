@@ -98,6 +98,43 @@ export async function GET(request: NextRequest) {
 
       // Merge, deduplicate and normalise to plain strings
       purchasedIds = [...new Set([...byUserId, ...byEmail].map((p: any) => String(p.itemId)))]
+
+      const packageBaseFilter = { itemType: 'package', status: 'completed' }
+      const packageByUserId = await db
+        .collection('material_purchases')
+        .find({ ...packageBaseFilter, userId: session.userId })
+        .project({ itemId: 1 })
+        .toArray()
+
+      let packageByEmail: any[] = []
+      if (session.email) {
+        const emailRegex = new RegExp(`^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i')
+        packageByEmail = await db
+          .collection('material_purchases')
+          .find({ ...packageBaseFilter, userEmail: { $regex: emailRegex } })
+          .project({ itemId: 1 })
+          .toArray()
+      }
+
+      const purchasedPackageIds = [...new Set([...packageByUserId, ...packageByEmail].map((p: any) => String(p.itemId)))]
+      if (purchasedPackageIds.length > 0) {
+        const packageObjectIds = purchasedPackageIds
+          .map((pkgId) => {
+            try { return new ObjectId(pkgId) } catch { return null }
+          })
+          .filter(Boolean) as ObjectId[]
+
+        if (packageObjectIds.length > 0) {
+          const ownedPackages = await db.collection('material_packages')
+            .find({ _id: { $in: packageObjectIds }, isHidden: { $ne: true } })
+            .project({ materialIds: 1 })
+            .toArray()
+          const packageMaterialIds = ownedPackages.flatMap((pkg: any) =>
+            Array.isArray(pkg.materialIds) ? pkg.materialIds.map(String) : []
+          )
+          purchasedIds = [...new Set([...purchasedIds, ...packageMaterialIds])]
+        }
+      }
     }
 
     // Build the response: explicitly stringify _id and attach access flags

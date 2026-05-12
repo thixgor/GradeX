@@ -332,6 +332,7 @@ export default function DeckPage() {
             !pkg._isPurchased &&
             pkg.pricing === 'paid' &&
             (pkg.price ?? 0) > 0 &&
+            !pkg._pricing?.ownedMaterialIds?.length &&
             pkg.materials?.some((m: any) => m._id === materialId)
           )
           if (matchingPkg) {

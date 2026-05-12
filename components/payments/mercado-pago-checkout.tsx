@@ -288,6 +288,10 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
         body: JSON.stringify(body),
       })
       const data = await res.json()
+      if (data?.alreadyOwned && data.redirectTo) {
+        window.location.href = data.redirectTo
+        return
+      }
       if (!res.ok) {
         throw new Error(data.error || 'Falha ao processar pagamento')
       }

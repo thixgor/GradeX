@@ -532,9 +532,12 @@ function MateriaisContent() {
   }
 
   const handleMaterialAcquire = (material: Material) => {
-    // Check if this material is included in any package the user hasn't purchased yet
+    // Upsell is only fair before the user owns any item from the package.
     const pkg = packages.find(p =>
-      p.materialIds?.includes(material._id) && !isPurchased(p._id, 'package')
+      p.materialIds?.includes(material._id) &&
+      !isPurchased(p._id, 'package') &&
+      !p._pricing?.ownedMaterialIds?.length &&
+      !p.materialIds?.some(id => purchasedIds.includes(id))
     )
     if (pkg) {
       setUpsellState({ pkg, material })

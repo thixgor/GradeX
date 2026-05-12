@@ -80,6 +80,39 @@ export async function GET(
         })
         isPurchased = !!byEmail
       }
+
+      if (!isPurchased) {
+        const packages = await db.collection('material_packages')
+          .find({ materialIds: id, isHidden: { $ne: true } })
+          .project({ _id: 1 })
+          .toArray()
+        const packageIds = packages.map((pkg: any) => String(pkg._id))
+
+        if (packageIds.length > 0) {
+          const packageFilter = {
+            itemType: 'package',
+            itemId: { $in: packageIds },
+            status: 'completed',
+          }
+          const packageByUserId = await db.collection('material_purchases').findOne({
+            ...packageFilter,
+            userId: session.userId,
+          })
+          if (packageByUserId) {
+            isPurchased = true
+          } else if (session.email) {
+            const emailRegex = new RegExp(
+              `^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`,
+              'i'
+            )
+            const packageByEmail = await db.collection('material_purchases').findOne({
+              ...packageFilter,
+              userEmail: { $regex: emailRegex },
+            })
+            isPurchased = !!packageByEmail
+          }
+        }
+      }
     }
 
     const canAccess = isAuthenticated && (isAdmin || isPurchased || (hasGroupAccess && material.pricing === 'free'))
