@@ -481,8 +481,7 @@ export default function LandingPage({
 
               {/* Subtitle */}
               <p className="text-base sm:text-lg text-slate-300 max-w-lg mb-10 leading-relaxed">
-                Plataforma completa de estudo para alunos de saúde. Questões, flashcards, cronogramas,
-                provas com IA e aulas — tudo integrado para você dominar.
+                Plataforma completa de estudo para alunos de saúde. Questões, flashcards, cronogramas, provas com IA e aulas — tudo integrado para você dominar. Resumos a venda e grátis, provas antigas da faculdade, flashcards compráveis estilo Anki, aulas ao vivo e gravadas, manual clínico com +200 patologias documentadas com classificação, fisiopatologia, diagnóstico, diferenciais, tratamento e farmacologia detalhada.
               </p>
 
               {/* CTAs */}
