@@ -5,29 +5,41 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   ArrowLeft,
+  Bold,
   Bookmark,
+  Brush,
   ChevronLeft,
   ChevronRight,
+  Circle,
   Eraser,
-  FileText,
+  HelpCircle,
   Highlighter,
+  Italic,
   Maximize2,
   MessageSquare,
   Minus,
+  MousePointer2,
+  Palette,
   PanelLeftClose,
   PanelLeftOpen,
   PenLine,
   Plus,
+  Save,
   SearchX,
   ShieldCheck,
   StickyNote,
   Trash2,
   Type,
+  Underline,
+  X,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 type ViewerMode = 'single' | 'width' | 'continuous'
-type AnnotationTool = 'cursor' | 'highlight' | 'note' | 'bookmark' | 'text' | 'drawing'
+type AnnotationType = 'highlight' | 'note' | 'bookmark' | 'text' | 'drawing'
+type AnnotationTool = 'cursor' | AnnotationType | 'eraser'
+type DrawingMode = 'free' | 'marker' | 'line' | 'dash' | 'circle'
+type TextAlign = 'left' | 'center' | 'right'
 
 interface ViewerAccess {
   material: {
@@ -53,13 +65,32 @@ interface PdfAnnotation {
   userId: string
   materialId: string
   pageNumber: number
-  type: AnnotationTool
-  position: { x?: number; y?: number; width?: number; height?: number; points?: { x: number; y: number }[] }
+  type: AnnotationType
+  position: {
+    x?: number
+    y?: number
+    width?: number
+    height?: number
+    points?: PdfPoint[]
+  }
   content: string
   color: string
-  data?: Record<string, any>
+  data?: AnnotationData
   createdAt: string
   updatedAt: string
+}
+
+interface AnnotationData {
+  drawingMode?: DrawingMode
+  strokeWidthRatio?: number
+  opacity?: number
+  fontFamily?: string
+  fontSize?: number
+  bold?: boolean
+  italic?: boolean
+  underline?: boolean
+  align?: TextAlign
+  noteColor?: string
 }
 
 interface PageSize {
@@ -67,11 +98,65 @@ interface PageSize {
   height: number
 }
 
-let pdfWorkerConfigured = false
+interface PdfPoint {
+  x: number
+  y: number
+}
+
+interface DrawingStyle {
+  mode: DrawingMode
+  color: string
+  width: number
+  opacity: number
+  holdToShape: boolean
+}
+
+interface TextStyle {
+  fontFamily: string
+  fontSize: number
+  color: string
+  bold: boolean
+  italic: boolean
+  underline: boolean
+  align: TextAlign
+}
+
+interface EditorState {
+  kind: 'text' | 'note'
+  point: PdfPoint
+  content: string
+  annotation?: PdfAnnotation
+  textStyle: TextStyle
+  noteColor: string
+}
+
+interface DrawingDraft {
+  points: PdfPoint[]
+  mode: DrawingMode
+  color: string
+  strokeWidthRatio: number
+  opacity: number
+  start: PdfPoint
+  current: PdfPoint
+  autoShape: boolean
+}
+
+interface HighlightDraft {
+  start: PdfPoint
+  current: PdfPoint
+  color: string
+}
+
 const PAGE_BYTES_CACHE_TTL_MS = 10 * 60 * 1000
 const PAGE_BYTES_CACHE_MAX_ENTRIES = 36
+const COLOR_SWATCHES = ['#22c55e', '#0ea5e9', '#f59e0b', '#ef4444', '#8b5cf6', '#111827']
+const HIGHLIGHT_SWATCHES = ['#facc15', '#fb923c', '#86efac', '#93c5fd', '#f9a8d4']
+const NOTE_SWATCHES = ['#fde68a', '#bbf7d0', '#bfdbfe', '#fecdd3', '#ddd6fe']
+const FONT_OPTIONS = ['Inter', 'Arial', 'Georgia', 'Times New Roman', 'Courier New']
 const pageBytesCache = new Map<string, { bytes: Uint8Array; pageCount?: number; expiresAt: number }>()
 const pageBytesInflight = new Map<string, Promise<{ bytes: Uint8Array; pageCount?: number }>>()
+
+let pdfWorkerConfigured = false
 
 async function getPdfJs() {
   const pdfjsLib = await import('pdfjs-dist')
@@ -134,11 +219,138 @@ function clampZoom(value: number, min = 0.55, max = 2.6) {
   return Math.min(max, Math.max(min, Number(value.toFixed(2))))
 }
 
+function clamp01(value: number) {
+  return Math.min(1, Math.max(0, value))
+}
+
 function buildPageArray(total: number, current: number, mode: ViewerMode) {
-  if (mode === 'single') {
-    return [current]
-  }
+  if (mode === 'single') return [current]
   return Array.from({ length: total }, (_, index) => index + 1)
+}
+
+function createEmptyAnnotation(input: Partial<PdfAnnotation>, materialId: string): PdfAnnotation {
+  const now = new Date().toISOString()
+  const id = `temp-${Date.now()}-${Math.random().toString(36).slice(2)}`
+  return {
+    _id: id,
+    id,
+    userId: 'local',
+    materialId,
+    pageNumber: input.pageNumber || 1,
+    type: input.type || 'note',
+    position: input.position || {},
+    content: input.content || '',
+    color: input.color || '#22c55e',
+    data: input.data || {},
+    createdAt: now,
+    updatedAt: now,
+  }
+}
+
+function isTempAnnotation(annotation: PdfAnnotation) {
+  return annotation.id.startsWith('temp-')
+}
+
+function normalizeRect(start: PdfPoint, current: PdfPoint, minWidth = 0.012, minHeight = 0.008) {
+  const x = Math.min(start.x, current.x)
+  const y = Math.min(start.y, current.y)
+  const width = Math.abs(start.x - current.x)
+  const height = Math.abs(start.y - current.y)
+  return {
+    x: clamp01(width < minWidth ? start.x - minWidth / 2 : x),
+    y: clamp01(height < minHeight ? start.y - minHeight / 2 : y),
+    width: Math.min(width < minWidth ? minWidth : width, 1 - x),
+    height: Math.min(height < minHeight ? minHeight : height, 1 - y),
+  }
+}
+
+function distance(a: PdfPoint, b: PdfPoint) {
+  const dx = a.x - b.x
+  const dy = a.y - b.y
+  return Math.sqrt(dx * dx + dy * dy)
+}
+
+function getPointBounds(points: PdfPoint[]) {
+  if (!points.length) return { x: 0, y: 0, width: 0.08, height: 0.05 }
+  const xs = points.map((point) => point.x)
+  const ys = points.map((point) => point.y)
+  const minX = Math.min(...xs)
+  const maxX = Math.max(...xs)
+  const minY = Math.min(...ys)
+  const maxY = Math.max(...ys)
+  return {
+    x: minX,
+    y: minY,
+    width: Math.max(0.01, maxX - minX),
+    height: Math.max(0.01, maxY - minY),
+  }
+}
+
+function getAnnotationBounds(annotation: PdfAnnotation) {
+  if (annotation.position.points?.length) return getPointBounds(annotation.position.points)
+  return {
+    x: annotation.position.x || 0,
+    y: annotation.position.y || 0,
+    width: annotation.position.width || 0.08,
+    height: annotation.position.height || 0.05,
+  }
+}
+
+function pointsToSvgPath(points: PdfPoint[]) {
+  if (points.length === 0) return ''
+  if (points.length === 1) return `M ${points[0].x * 100} ${points[0].y * 100}`
+  const segments = [`M ${points[0].x * 100} ${points[0].y * 100}`]
+  for (let index = 1; index < points.length - 1; index++) {
+    const current = points[index]
+    const next = points[index + 1]
+    const midX = ((current.x + next.x) / 2) * 100
+    const midY = ((current.y + next.y) / 2) * 100
+    segments.push(`Q ${current.x * 100} ${current.y * 100} ${midX} ${midY}`)
+  }
+  const last = points[points.length - 1]
+  segments.push(`L ${last.x * 100} ${last.y * 100}`)
+  return segments.join(' ')
+}
+
+function shouldConvertToCircle(points: PdfPoint[]) {
+  if (points.length < 12) return false
+  const first = points[0]
+  const last = points[points.length - 1]
+  const bounds = getPointBounds(points)
+  const closeEnough = distance(first, last) < Math.max(bounds.width, bounds.height) * 0.22
+  const roundEnough = bounds.width > 0.035 && bounds.height > 0.035 && bounds.width / bounds.height > 0.45 && bounds.width / bounds.height < 2.2
+  return closeEnough && roundEnough
+}
+
+function resolveDrawingMode(draft: DrawingDraft, durationMs: number) {
+  if (!draft.autoShape || draft.mode !== 'free' || durationMs < 620) return draft.mode
+  if (shouldConvertToCircle(draft.points)) return 'circle'
+  return distance(draft.start, draft.current) > 0.04 ? 'line' : 'free'
+}
+
+function annotationLabel(type: AnnotationType) {
+  const labels: Record<AnnotationType, string> = {
+    highlight: 'Marca texto',
+    note: 'Nota',
+    bookmark: 'Marcador',
+    text: 'Texto',
+    drawing: 'Desenho',
+  }
+  return labels[type]
+}
+
+function useResizeWidth(ref: React.RefObject<HTMLElement>, deps: React.DependencyList) {
+  const [width, setWidth] = useState(0)
+  useEffect(() => {
+    const element = ref.current
+    if (!element) return
+    const updateWidth = () => setWidth(element.clientWidth)
+    updateWidth()
+    const observer = new ResizeObserver(updateWidth)
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, deps)
+  return width
 }
 
 export function SecurePdfViewer({ materialId }: { materialId: string }) {
@@ -156,14 +368,44 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const [mode, setMode] = useState<ViewerMode>('single')
   const [tool, setTool] = useState<AnnotationTool>('cursor')
   const [pageSize, setPageSize] = useState<PageSize | null>(null)
-  const [contentWidth, setContentWidth] = useState(0)
   const [showThumbs, setShowThumbs] = useState(true)
   const [showAnnotations, setShowAnnotations] = useState(true)
+  const [showGuide, setShowGuide] = useState(true)
+  const [showDeleteAllConfirm, setShowDeleteAllConfirm] = useState(false)
+  const [notice, setNotice] = useState('')
+  const [highlightColor, setHighlightColor] = useState('#facc15')
+  const [noteColor, setNoteColor] = useState('#fde68a')
+  const [drawingStyle, setDrawingStyle] = useState<DrawingStyle>({
+    mode: 'free',
+    color: '#22c55e',
+    width: 4,
+    opacity: 0.9,
+    holdToShape: true,
+  })
+  const [textStyle, setTextStyle] = useState<TextStyle>({
+    fontFamily: 'Inter',
+    fontSize: 16,
+    color: '#111827',
+    bold: false,
+    italic: false,
+    underline: false,
+    align: 'left',
+  })
 
   const minZoom = access?.viewer.minZoom ?? 0.55
   const maxZoom = access?.viewer.maxZoom ?? 2.6
   const pageCount = access?.material.pageCount ?? 0
   const pages = useMemo(() => buildPageArray(pageCount, currentPage, mode), [pageCount, currentPage, mode])
+  const contentWidth = useResizeWidth(contentRef, [loading, showAnnotations, showThumbs])
+  const annotationsByPage = useMemo(() => {
+    const grouped = new Map<number, PdfAnnotation[]>()
+    for (const annotation of annotations) {
+      const pageAnnotations = grouped.get(annotation.pageNumber) || []
+      pageAnnotations.push(annotation)
+      grouped.set(annotation.pageNumber, pageAnnotations)
+    }
+    return grouped
+  }, [annotations])
 
   const handlePageFocused = useCallback((page: number) => {
     if (mode === 'single') return
@@ -229,23 +471,10 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   }, [currentPage])
 
   useEffect(() => {
-    const element = contentRef.current
-    if (!element) return
-
-    const updateWidth = () => setContentWidth(element.clientWidth)
-    updateWidth()
-    const observer = new ResizeObserver(updateWidth)
-    observer.observe(element)
-    return () => observer.disconnect()
-  }, [loading, showAnnotations, showThumbs])
-
-  useEffect(() => {
     if (!pageSize || !contentWidth || zoomTouchedRef.current) return
     const availableWidth = Math.max(280, contentWidth - 24)
     const fittedZoom = clampZoom(availableWidth / pageSize.width, minZoom, maxZoom)
-    if (fittedZoom < 0.98) {
-      setZoom(fittedZoom)
-    }
+    if (fittedZoom < 0.98) setZoom(fittedZoom)
   }, [contentWidth, maxZoom, minZoom, pageSize])
 
   useEffect(() => {
@@ -254,14 +483,27 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       fetchPdfPageBytes(materialId, currentPage + 1)
         .then((result) => updateKnownPageCount(result.pageCount))
         .catch(() => {})
-    }, 900)
+    }, 500)
     return () => window.clearTimeout(timer)
   }, [access, currentPage, materialId, pageCount, updateKnownPageCount])
 
   useEffect(() => {
-    const block = (event: Event) => event.preventDefault()
+    if (!notice) return
+    const timer = window.setTimeout(() => setNotice(''), 2600)
+    return () => window.clearTimeout(timer)
+  }, [notice])
+
+  useEffect(() => {
+    const block = (event: Event) => {
+      const target = event.target as HTMLElement | null
+      if (target?.closest('[data-pdf-editor="true"]')) return
+      event.preventDefault()
+    }
     const blockKeys = (event: KeyboardEvent) => {
       const key = event.key.toLowerCase()
+      const target = event.target as HTMLElement | null
+      const isEditing = target?.closest('[data-pdf-editor="true"]')
+      if (isEditing) return
       if ((event.ctrlKey || event.metaKey) && ['c', 'p', 's', 'u', 'a'].includes(key)) {
         event.preventDefault()
       }
@@ -307,7 +549,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     if (!element || !pageSize) return
     zoomTouchedRef.current = true
     const availableWidth = element.clientWidth - 24
-    const availableHeight = window.innerHeight - 132
+    const availableHeight = window.innerHeight - 148
     setZoom(clampZoom(Math.min(availableWidth / pageSize.width, availableHeight / pageSize.height), minZoom, maxZoom))
     setMode('single')
   }, [maxZoom, minZoom, pageSize])
@@ -323,42 +565,75 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   }
 
   const createAnnotation = useCallback(async (annotation: Partial<PdfAnnotation>) => {
-    const res = await fetch(`/api/materiais/${materialId}/pdf-viewer/annotations`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(annotation),
-    })
-    if (!res.ok) return
-    const json = await res.json()
-    setAnnotations((prev) => [...prev, json.annotation])
+    const local = createEmptyAnnotation(annotation, materialId)
+    setAnnotations((prev) => [...prev, local])
+
+    try {
+      const res = await fetch(`/api/materiais/${materialId}/pdf-viewer/annotations`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(annotation),
+      })
+      if (!res.ok) throw new Error('create failed')
+      const json = await res.json()
+      setAnnotations((prev) => prev.map((item) => item.id === local.id ? json.annotation : item))
+    } catch {
+      setAnnotations((prev) => prev.filter((item) => item.id !== local.id))
+      setNotice('Nao foi possivel salvar esta anotacao.')
+    }
   }, [materialId])
 
   const updateAnnotation = useCallback(async (annotation: PdfAnnotation, patch: Partial<PdfAnnotation>) => {
-    const res = await fetch(`/api/materiais/${materialId}/pdf-viewer/annotations`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...annotation, ...patch, id: annotation.id }),
-    })
-    if (!res.ok) return
-    const json = await res.json()
-    setAnnotations((prev) => prev.map((item) => item.id === annotation.id ? json.annotation : item))
+    const previous = annotation
+    const optimistic = { ...annotation, ...patch, data: { ...(annotation.data || {}), ...(patch.data || {}) } }
+    setAnnotations((prev) => prev.map((item) => item.id === annotation.id ? optimistic : item))
+    if (isTempAnnotation(annotation)) return
+
+    try {
+      const res = await fetch(`/api/materiais/${materialId}/pdf-viewer/annotations`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...optimistic, id: annotation.id }),
+      })
+      if (!res.ok) throw new Error('update failed')
+      const json = await res.json()
+      setAnnotations((prev) => prev.map((item) => item.id === annotation.id ? json.annotation : item))
+    } catch {
+      setAnnotations((prev) => prev.map((item) => item.id === annotation.id ? previous : item))
+      setNotice('Nao foi possivel atualizar a anotacao.')
+    }
   }, [materialId])
 
   const deleteAnnotation = useCallback(async (annotation: PdfAnnotation) => {
-    if (!confirm('Deletar esta anotacao?')) return
-    const res = await fetch(`/api/materiais/${materialId}/pdf-viewer/annotations?id=${annotation.id}`, {
-      method: 'DELETE',
-    })
-    if (res.ok) setAnnotations((prev) => prev.filter((item) => item.id !== annotation.id))
+    setAnnotations((prev) => prev.filter((item) => item.id !== annotation.id))
+    if (isTempAnnotation(annotation)) return
+
+    try {
+      const res = await fetch(`/api/materiais/${materialId}/pdf-viewer/annotations?id=${annotation.id}`, {
+        method: 'DELETE',
+      })
+      if (!res.ok) throw new Error('delete failed')
+    } catch {
+      setAnnotations((prev) => [...prev, annotation].sort((a, b) => a.pageNumber - b.pageNumber))
+      setNotice('Nao foi possivel apagar a anotacao.')
+    }
   }, [materialId])
 
   const deleteAllAnnotations = useCallback(async () => {
-    if (!annotations.length || !confirm('Deletar todas as suas anotacoes deste material?')) return
-    const res = await fetch(`/api/materiais/${materialId}/pdf-viewer/annotations?all=true`, {
-      method: 'DELETE',
-    })
-    if (res.ok) setAnnotations([])
-  }, [annotations.length, materialId])
+    if (!annotations.length) return
+    const previous = annotations
+    setAnnotations([])
+    setShowDeleteAllConfirm(false)
+    try {
+      const res = await fetch(`/api/materiais/${materialId}/pdf-viewer/annotations?all=true`, {
+        method: 'DELETE',
+      })
+      if (!res.ok) throw new Error('delete all failed')
+    } catch {
+      setAnnotations(previous)
+      setNotice('Nao foi possivel apagar as anotacoes.')
+    }
+  }, [annotations, materialId])
 
   if (loading) {
     return <ViewerShell><ViewerLoading /></ViewerShell>
@@ -368,11 +643,11 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     return (
       <ViewerShell>
         <div className="min-h-screen flex items-center justify-center px-4">
-          <div className="max-w-md rounded-3xl border border-white/15 bg-white/10 backdrop-blur-xl p-6 text-center text-white shadow-2xl">
+          <div className="max-w-md rounded-2xl border border-white/15 bg-white/10 p-6 text-center text-white shadow-2xl backdrop-blur-xl">
             <SearchX className="h-10 w-10 mx-auto mb-3 text-amber-200" />
             <h1 className="font-heading text-xl font-bold mb-2">PDF indisponivel</h1>
             <p className="text-sm text-white/70 mb-5">{error || 'Nao foi possivel carregar este material.'}</p>
-            <Button onClick={() => router.push(`/materiais/${materialId}`)} className="rounded-2xl bg-emerald-500 hover:bg-emerald-600">
+            <Button onClick={() => router.push(`/materiais/${materialId}`)} className="rounded-xl bg-emerald-500 hover:bg-emerald-600">
               <ArrowLeft className="h-4 w-4 mr-2" /> Voltar ao material
             </Button>
           </div>
@@ -388,121 +663,149 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         className="min-h-screen text-white select-none"
         style={{ WebkitUserSelect: 'none', userSelect: 'none', touchAction: 'pan-x pan-y pinch-zoom' }}
       >
-        <header className="sticky top-0 z-40 border-b border-white/10 bg-emerald-950/70 backdrop-blur-2xl shadow-2xl shadow-emerald-950/40">
-          <div className="px-2 sm:px-4 py-2.5 flex items-center gap-1.5 sm:gap-2 overflow-x-auto">
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={() => router.push(`/materiais/${materialId}`)}
-              className="h-9 w-9 shrink-0 rounded-2xl text-white hover:bg-white/10 hover:text-white sm:h-10 sm:w-10"
-              title="Voltar"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
+        <header className="sticky top-0 z-40 border-b border-white/10 bg-zinc-950/82 shadow-xl shadow-black/25 backdrop-blur-2xl">
+          <div className="px-2 py-2 sm:px-4">
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 sm:gap-2">
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => router.push(`/materiais/${materialId}`)}
+                className="h-10 w-10 shrink-0 rounded-xl text-white hover:bg-white/10 hover:text-white"
+                title="Voltar"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
 
-            <div className="min-w-28 flex-1">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-emerald-300 shrink-0" />
-                <h1 className="truncate text-sm sm:text-base font-semibold">{access.material.title}</h1>
+              <div className="min-w-36 flex-1">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="h-4 w-4 text-emerald-300 shrink-0" />
+                  <h1 className="truncate text-sm font-semibold sm:text-base">{access.material.title}</h1>
+                </div>
+                <p className="hidden text-[11px] text-emerald-100/60 sm:block">GradeX PDF Viewer protegido</p>
               </div>
-              <p className="hidden sm:block text-[11px] text-emerald-100/60">DomineAqui PDF Viewer protegido</p>
-            </div>
 
-            <ToolbarButton onClick={() => goToPage(currentPage - 1)} disabled={currentPage <= 1} title="Pagina anterior">
-              <ChevronLeft className="h-4 w-4" />
-            </ToolbarButton>
-            <div className="flex h-9 shrink-0 items-center gap-1 rounded-2xl border border-white/10 bg-white/10 px-1.5 sm:h-10 sm:px-2">
-              <input
-                value={pageInput}
-                onChange={(event) => setPageInput(event.target.value.replace(/\D/g, ''))}
-                onKeyDown={(event) => event.key === 'Enter' && submitPageInput()}
-                onBlur={submitPageInput}
-                className="w-8 bg-transparent text-center text-sm outline-none text-white sm:w-10"
-                inputMode="numeric"
-              />
-              <span className="text-xs text-white/55">/ {pageCount}</span>
-            </div>
-            <ToolbarButton onClick={() => goToPage(currentPage + 1)} disabled={currentPage >= pageCount} title="Proxima pagina">
-              <ChevronRight className="h-4 w-4" />
-            </ToolbarButton>
-
-            <div className="hidden md:flex items-center gap-1 rounded-2xl border border-white/10 bg-white/10 p-1">
-              <ToolbarButton compact onClick={() => { zoomTouchedRef.current = true; setZoom((z) => clampZoom(z - 0.12, minZoom, maxZoom)) }} title="Diminuir zoom">
-                <Minus className="h-4 w-4" />
+              <ToolbarButton onClick={() => goToPage(currentPage - 1)} disabled={currentPage <= 1} title="Pagina anterior">
+                <ChevronLeft className="h-4 w-4" />
               </ToolbarButton>
-              <span className="min-w-12 text-center text-xs text-white/75">{Math.round(zoom * 100)}%</span>
-              <ToolbarButton compact onClick={() => { zoomTouchedRef.current = true; setZoom((z) => clampZoom(z + 0.12, minZoom, maxZoom)) }} title="Aumentar zoom">
-                <Plus className="h-4 w-4" />
+              <div className="flex h-10 shrink-0 items-center gap-1 rounded-xl border border-white/10 bg-white/10 px-2">
+                <input
+                  value={pageInput}
+                  onChange={(event) => setPageInput(event.target.value.replace(/\D/g, ''))}
+                  onKeyDown={(event) => event.key === 'Enter' && submitPageInput()}
+                  onBlur={submitPageInput}
+                  className="w-10 bg-transparent text-center text-sm text-white outline-none"
+                  inputMode="numeric"
+                />
+                <span className="text-xs text-white/55">/ {pageCount}</span>
+              </div>
+              <ToolbarButton onClick={() => goToPage(currentPage + 1)} disabled={currentPage >= pageCount} title="Proxima pagina">
+                <ChevronRight className="h-4 w-4" />
+              </ToolbarButton>
+
+              <div className="hidden items-center gap-1 rounded-xl border border-white/10 bg-white/10 p-1 md:flex">
+                <ToolbarButton compact onClick={() => { zoomTouchedRef.current = true; setZoom((z) => clampZoom(z - 0.12, minZoom, maxZoom)) }} title="Diminuir zoom">
+                  <Minus className="h-4 w-4" />
+                </ToolbarButton>
+                <span className="min-w-12 text-center text-xs text-white/75">{Math.round(zoom * 100)}%</span>
+                <ToolbarButton compact onClick={() => { zoomTouchedRef.current = true; setZoom((z) => clampZoom(z + 0.12, minZoom, maxZoom)) }} title="Aumentar zoom">
+                  <Plus className="h-4 w-4" />
+                </ToolbarButton>
+              </div>
+
+              <div className="hidden items-center gap-1 lg:flex">
+                <ToolbarTextButton active={mode === 'single'} onClick={() => setMode('single')}>Pagina</ToolbarTextButton>
+                <ToolbarTextButton active={mode === 'width'} onClick={fitToWidth}>Largura</ToolbarTextButton>
+                <ToolbarTextButton active={mode === 'continuous'} onClick={() => setMode('continuous')}>Continuo</ToolbarTextButton>
+              </div>
+
+              <ToolbarButton onClick={toggleFullScreen} title="Tela cheia">
+                <Maximize2 className="h-4 w-4" />
               </ToolbarButton>
             </div>
 
-            <div className="hidden lg:flex items-center gap-1">
-              <ToolbarTextButton active={mode === 'single'} onClick={() => setMode('single')}>Pagina</ToolbarTextButton>
-              <ToolbarTextButton active={mode === 'width'} onClick={fitToWidth}>Largura</ToolbarTextButton>
-              <ToolbarTextButton active={mode === 'continuous'} onClick={() => setMode('continuous')}>Continuo</ToolbarTextButton>
+            <div className="flex items-center gap-1 overflow-x-auto pb-1">
+              <ToolButton active={tool === 'cursor'} onClick={() => setTool('cursor')} title="Navegar">
+                <MousePointer2 className="h-4 w-4" />
+              </ToolButton>
+              <ToolButton active={tool === 'highlight'} onClick={() => setTool('highlight')} title="Marca texto">
+                <Highlighter className="h-4 w-4" />
+              </ToolButton>
+              <ToolButton active={tool === 'note'} onClick={() => setTool('note')} title="Nota">
+                <MessageSquare className="h-4 w-4" />
+              </ToolButton>
+              <ToolButton active={tool === 'drawing'} onClick={() => setTool('drawing')} title="Caneta">
+                <PenLine className="h-4 w-4" />
+              </ToolButton>
+              <ToolButton active={tool === 'text'} onClick={() => setTool('text')} title="Texto">
+                <Type className="h-4 w-4" />
+              </ToolButton>
+              <ToolButton active={tool === 'bookmark'} onClick={() => setTool('bookmark')} title="Marcador">
+                <Bookmark className="h-4 w-4" />
+              </ToolButton>
+              <ToolButton active={tool === 'eraser'} onClick={() => setTool('eraser')} title="Apagar item">
+                <Eraser className="h-4 w-4" />
+              </ToolButton>
+
+              <div className="mx-1 h-6 w-px shrink-0 bg-white/10" />
+              <div className="flex items-center gap-1 md:hidden">
+                <ToolButton active={false} onClick={() => { zoomTouchedRef.current = true; setZoom((z) => clampZoom(z - 0.12, minZoom, maxZoom)) }} title="Diminuir zoom">
+                  <Minus className="h-4 w-4" />
+                </ToolButton>
+                <ToolButton active={false} onClick={() => { zoomTouchedRef.current = true; setZoom((z) => clampZoom(z + 0.12, minZoom, maxZoom)) }} title="Aumentar zoom">
+                  <Plus className="h-4 w-4" />
+                </ToolButton>
+              </div>
+
+              <div className="mx-1 h-6 w-px shrink-0 bg-white/10" />
+              <ToolButton active={showThumbs} onClick={() => setShowThumbs((value) => !value)} title="Miniaturas">
+                {showThumbs ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeftOpen className="h-4 w-4" />}
+              </ToolButton>
+              <ToolButton active={showAnnotations} onClick={() => setShowAnnotations((value) => !value)} title="Painel de anotacoes">
+                <StickyNote className="h-4 w-4" />
+              </ToolButton>
+              <ToolButton active={showGuide} onClick={() => setShowGuide((value) => !value)} title="Guia das ferramentas">
+                <HelpCircle className="h-4 w-4" />
+              </ToolButton>
+              <Button onClick={fitToPage} className="h-10 shrink-0 rounded-xl border border-white/10 bg-white/10 px-3 text-xs text-white hover:bg-white/15">
+                Ajustar
+              </Button>
             </div>
 
-            <ToolbarButton onClick={toggleFullScreen} title="Tela cheia">
-              <Maximize2 className="h-4 w-4" />
-            </ToolbarButton>
-          </div>
-
-          <div className="px-3 sm:px-4 pb-2 flex items-center gap-1 overflow-x-auto">
-            <ToolButton active={tool === 'cursor'} onClick={() => setTool('cursor')} title="Navegar">
-              <FileText className="h-4 w-4" />
-            </ToolButton>
-            <ToolButton active={tool === 'highlight'} onClick={() => setTool('highlight')} title="Grifo">
-              <Highlighter className="h-4 w-4" />
-            </ToolButton>
-            <ToolButton active={tool === 'note'} onClick={() => setTool('note')} title="Nota">
-              <MessageSquare className="h-4 w-4" />
-            </ToolButton>
-            <ToolButton active={tool === 'drawing'} onClick={() => setTool('drawing')} title="Desenho livre">
-              <PenLine className="h-4 w-4" />
-            </ToolButton>
-            <ToolButton active={tool === 'bookmark'} onClick={() => setTool('bookmark')} title="Marcador">
-              <Bookmark className="h-4 w-4" />
-            </ToolButton>
-            <ToolButton active={tool === 'text'} onClick={() => setTool('text')} title="Texto curto">
-              <Type className="h-4 w-4" />
-            </ToolButton>
-            <div className="h-6 w-px bg-white/10 mx-1" />
-            <div className="flex items-center gap-1 md:hidden">
-              <ToolButton active={false} onClick={() => { zoomTouchedRef.current = true; setZoom((z) => clampZoom(z - 0.12, minZoom, maxZoom)) }} title="Diminuir zoom">
-                <Minus className="h-4 w-4" />
-              </ToolButton>
-              <ToolButton active={false} onClick={() => { zoomTouchedRef.current = true; setZoom((z) => clampZoom(z + 0.12, minZoom, maxZoom)) }} title="Aumentar zoom">
-                <Plus className="h-4 w-4" />
-              </ToolButton>
-            </div>
-            <div className="h-6 w-px bg-white/10 mx-1" />
-            <ToolButton active={showThumbs} onClick={() => setShowThumbs((value) => !value)} title="Miniaturas">
-              {showThumbs ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeftOpen className="h-4 w-4" />}
-            </ToolButton>
-            <ToolButton active={showAnnotations} onClick={() => setShowAnnotations((value) => !value)} title="Anotacoes">
-              <StickyNote className="h-4 w-4" />
-            </ToolButton>
-            <Button onClick={fitToPage} className="h-9 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/10 text-xs">
-              Ajustar
-            </Button>
+            <ToolOptionsBar
+              tool={tool}
+              drawingStyle={drawingStyle}
+              onDrawingStyleChange={setDrawingStyle}
+              highlightColor={highlightColor}
+              onHighlightColorChange={setHighlightColor}
+              noteColor={noteColor}
+              onNoteColorChange={setNoteColor}
+              textStyle={textStyle}
+              onTextStyleChange={setTextStyle}
+            />
           </div>
         </header>
 
-        <main className="grid grid-cols-1 gap-0 lg:grid-cols-[7rem_minmax(0,1fr)_20rem]">
+        {notice && (
+          <div className="fixed left-1/2 top-28 z-50 -translate-x-1/2 rounded-xl border border-amber-200/40 bg-amber-400 px-4 py-2 text-sm font-semibold text-amber-950 shadow-xl">
+            {notice}
+          </div>
+        )}
+
+        <main className="grid grid-cols-1 gap-0 lg:grid-cols-[6.5rem_minmax(0,1fr)_22rem]">
           {showThumbs && (
-            <aside className="hidden lg:col-start-1 lg:block sticky top-[92px] h-[calc(100vh-92px)] overflow-y-auto border-r border-white/10 bg-black/15 backdrop-blur-xl p-3">
+            <aside className="hidden border-r border-white/10 bg-black/15 p-3 backdrop-blur-xl lg:sticky lg:top-[132px] lg:col-start-1 lg:block lg:h-[calc(100vh-132px)] lg:overflow-y-auto">
               <div className="space-y-2">
                 {Array.from({ length: pageCount }, (_, index) => index + 1).map((page) => (
                   <button
                     key={page}
                     onClick={() => goToPage(page)}
-                    className={`w-full rounded-xl border p-2 text-left transition-all ${
+                    className={`w-full rounded-xl border p-2 text-left transition-colors ${
                       page === currentPage
                         ? 'border-emerald-300/60 bg-emerald-400/20 text-white'
                         : 'border-white/10 bg-white/5 text-white/70 hover:bg-white/10'
                     }`}
                   >
-                    <div className="aspect-[3/4] rounded-lg bg-gradient-to-br from-white/80 to-emerald-50/80 mb-1 shadow-inner" />
+                    <div className="mb-1 aspect-[3/4] rounded-lg bg-white/90 shadow-inner" />
                     <span className="text-[11px] font-medium">Pag. {page}</span>
                   </button>
                 ))}
@@ -528,8 +831,12 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                   pageNumber={page}
                   active={page === currentPage}
                   zoom={zoom}
-                  annotations={annotations.filter((annotation) => annotation.pageNumber === page)}
+                  annotations={annotationsByPage.get(page) || []}
                   tool={tool}
+                  drawingStyle={drawingStyle}
+                  highlightColor={highlightColor}
+                  noteColor={noteColor}
+                  textStyle={textStyle}
                   onPageFocus={handlePageFocused}
                   onPageSize={setPageSize}
                   onPageCount={updateKnownPageCount}
@@ -545,12 +852,23 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             <AnnotationsPanel
               annotations={annotations}
               currentPage={currentPage}
+              showGuide={showGuide}
               onGoTo={goToPage}
               onDelete={deleteAnnotation}
-              onDeleteAll={deleteAllAnnotations}
+              onDeleteAll={() => setShowDeleteAllConfirm(true)}
             />
           )}
         </main>
+
+        {showDeleteAllConfirm && (
+          <ConfirmDialog
+            title="Apagar todas as anotacoes?"
+            body="Isso remove grifos, notas, textos, desenhos e marcadores deste material."
+            confirmLabel="Apagar tudo"
+            onCancel={() => setShowDeleteAllConfirm(false)}
+            onConfirm={deleteAllAnnotations}
+          />
+        )}
       </div>
     </ViewerShell>
   )
@@ -558,8 +876,8 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
 
 function ViewerShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-[#031b16]">
-      <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_20%_10%,rgba(16,185,129,0.28),transparent_34%),radial-gradient(circle_at_82%_18%,rgba(214,176,82,0.18),transparent_30%),linear-gradient(135deg,#021410_0%,#073526_48%,#041b17_100%)]" />
+    <div className="min-h-screen bg-zinc-950">
+      <div className="fixed inset-0 pointer-events-none bg-[linear-gradient(135deg,#061411_0%,#13251f_44%,#09090b_100%)]" />
       <div className="relative">{children}</div>
     </div>
   )
@@ -568,9 +886,9 @@ function ViewerShell({ children }: { children: React.ReactNode }) {
 function ViewerLoading() {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 text-white">
-      <div className="w-full max-w-sm rounded-3xl border border-white/15 bg-white/10 backdrop-blur-xl p-6 shadow-2xl">
-        <div className="mx-auto mb-4 h-12 w-12 rounded-2xl border border-emerald-300/30 bg-emerald-400/15 flex items-center justify-center">
-          <div className="h-6 w-6 rounded-full border-2 border-emerald-200/30 border-t-emerald-200 animate-spin" />
+      <div className="w-full max-w-sm rounded-2xl border border-white/15 bg-white/10 p-6 shadow-2xl backdrop-blur-xl">
+        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-emerald-300/30 bg-emerald-400/15">
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-emerald-200/30 border-t-emerald-200" />
         </div>
         <div className="h-4 w-40 mx-auto rounded bg-white/20 animate-pulse" />
         <div className="mt-3 h-3 w-56 mx-auto rounded bg-white/10 animate-pulse" />
@@ -586,6 +904,10 @@ function PdfCanvasPage({
   zoom,
   annotations,
   tool,
+  drawingStyle,
+  highlightColor,
+  noteColor,
+  textStyle,
   onPageFocus,
   onPageSize,
   onPageCount,
@@ -599,6 +921,10 @@ function PdfCanvasPage({
   zoom: number
   annotations: PdfAnnotation[]
   tool: AnnotationTool
+  drawingStyle: DrawingStyle
+  highlightColor: string
+  noteColor: string
+  textStyle: TextStyle
   onPageFocus: (page: number) => void
   onPageSize: (size: PageSize) => void
   onPageCount: (totalPages?: number) => void
@@ -608,21 +934,38 @@ function PdfCanvasPage({
 }) {
   const wrapperRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const overlayRef = useRef<HTMLDivElement>(null)
+  const interactionRef = useRef<{
+    kind: 'drawing'
+    startedAt: number
+    draft: DrawingDraft
+    pointerId: number
+  } | {
+    kind: 'highlight'
+    draft: HighlightDraft
+    pointerId: number
+  } | null>(null)
+  const rafRef = useRef<number | null>(null)
+  const ignoreNextClickRef = useRef(false)
   const [visible, setVisible] = useState(active)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [pageBytes, setPageBytes] = useState<Uint8Array | null>(null)
   const [loadAttempt, setLoadAttempt] = useState(0)
   const [renderSize, setRenderSize] = useState<PageSize | null>(null)
+  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [editor, setEditor] = useState<EditorState | null>(null)
+  const [draftDrawing, setDraftDrawing] = useState<DrawingDraft | null>(null)
+  const [draftHighlight, setDraftHighlight] = useState<HighlightDraft | null>(null)
   const requestedRef = useRef(false)
-  const drawingRef = useRef<{ pageNumber: number; points: { x: number; y: number }[] } | null>(null)
-  const [draftPoints, setDraftPoints] = useState<{ x: number; y: number }[]>([])
 
   useEffect(() => {
     requestedRef.current = false
     setPageBytes(null)
     setError('')
     setRenderSize(null)
+    setSelectedId(null)
+    setEditor(null)
   }, [materialId, pageNumber])
 
   useEffect(() => {
@@ -630,11 +973,9 @@ function PdfCanvasPage({
     if (!element) return
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true)
-        }
+        if (entry.isIntersecting) setVisible(true)
       },
-      { rootMargin: '180px 0px' }
+      { rootMargin: '220px 0px' }
     )
     observer.observe(element)
     return () => observer.disconnect()
@@ -668,18 +1009,14 @@ function PdfCanvasPage({
           setPageBytes(result.bytes)
         }
       } catch (err: any) {
-        if (!cancelled) {
-          setError(err?.message || 'Pagina indisponivel')
-        }
+        if (!cancelled) setError(err?.message || 'Pagina indisponivel')
       } finally {
         if (!cancelled) setLoading(false)
       }
     }
 
     loadPageBytes()
-    return () => {
-      cancelled = true
-    }
+    return () => { cancelled = true }
   }, [active, loadAttempt, materialId, onPageCount, pageBytes, pageNumber, visible])
 
   useEffect(() => {
@@ -737,6 +1074,12 @@ function PdfCanvasPage({
     }
   }, [active, onPageSize, pageBytes, zoom])
 
+  useEffect(() => {
+    return () => {
+      if (rafRef.current) window.cancelAnimationFrame(rafRef.current)
+    }
+  }, [])
+
   const retryLoad = () => {
     requestedRef.current = false
     setPageBytes(null)
@@ -750,92 +1093,310 @@ function PdfCanvasPage({
     height: 1018 * zoom,
   }
 
-  const getPosition = (event: React.PointerEvent<HTMLDivElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect()
+  const getPosition = useCallback((clientX: number, clientY: number) => {
+    const rect = overlayRef.current?.getBoundingClientRect()
+    if (!rect) return { x: 0, y: 0 }
     return {
-      x: Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width)),
-      y: Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height)),
+      x: clamp01((clientX - rect.left) / rect.width),
+      y: clamp01((clientY - rect.top) / rect.height),
     }
-  }
+  }, [])
 
-  const handleOverlayClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (tool === 'cursor' || tool === 'drawing') return
-    const rect = event.currentTarget.getBoundingClientRect()
-    const x = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width))
-    const y = Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height))
+  const scheduleDraftUpdate = useCallback(() => {
+    if (rafRef.current) return
+    rafRef.current = window.requestAnimationFrame(() => {
+      const interaction = interactionRef.current
+      setDraftDrawing(interaction?.kind === 'drawing' ? interaction.draft : null)
+      setDraftHighlight(interaction?.kind === 'highlight' ? interaction.draft : null)
+      rafRef.current = null
+    })
+  }, [])
 
-    if (tool === 'note') {
-      const content = prompt('Digite sua nota:')
-      if (!content) return
-      onCreateAnnotation({ pageNumber, type: 'note', content, color: '#f8c152', position: { x, y, width: 0.08, height: 0.08 } })
+  const addDrawingPoint = useCallback((point: PdfPoint) => {
+    const interaction = interactionRef.current
+    if (!interaction || interaction.kind !== 'drawing') return
+    const points = interaction.draft.points
+    const last = points[points.length - 1]
+    const minStep = interaction.draft.mode === 'marker' ? 0.0024 : 0.0014
+    if (last && distance(last, point) < minStep) return
+    points.push(point)
+    interaction.draft.current = point
+  }, [])
+
+  const finishDrawing = useCallback(() => {
+    const interaction = interactionRef.current
+    if (!interaction || interaction.kind !== 'drawing') return
+    const draft = interaction.draft
+    const durationMs = performance.now() - interaction.startedAt
+    const resolvedMode = resolveDrawingMode(draft, durationMs)
+
+    interactionRef.current = null
+    setDraftDrawing(null)
+
+    const points = draft.points
+    if (resolvedMode === 'circle') {
+      const rect = draft.mode === 'circle'
+        ? normalizeRect(draft.start, draft.current, 0.025, 0.025)
+        : getPointBounds(points)
+      if (rect.width < 0.015 || rect.height < 0.015) return
+      onCreateAnnotation({
+        pageNumber,
+        type: 'drawing',
+        content: 'Circulo',
+        color: draft.color,
+        position: rect,
+        data: { drawingMode: 'circle', strokeWidthRatio: draft.strokeWidthRatio, opacity: draft.opacity },
+      })
+      return
     }
-    if (tool === 'highlight') {
-      onCreateAnnotation({ pageNumber, type: 'highlight', content: 'Grifo', color: '#facc15', position: { x: Math.max(0, x - 0.16), y: Math.max(0, y - 0.015), width: 0.32, height: 0.035 } })
-    }
-    if (tool === 'bookmark') {
-      onCreateAnnotation({ pageNumber, type: 'bookmark', content: 'Marcador', color: '#10b981', position: { x, y, width: 0.05, height: 0.08 } })
-    }
-    if (tool === 'text') {
-      const content = prompt('Texto curto:')
-      if (!content) return
-      onCreateAnnotation({ pageNumber, type: 'text', content, color: '#10b981', position: { x, y, width: 0.2, height: 0.05 } })
-    }
-  }
 
-  const startDrawing = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (tool !== 'drawing') return
-    event.preventDefault()
-    event.currentTarget.setPointerCapture(event.pointerId)
-    const point = getPosition(event)
-    drawingRef.current = { pageNumber, points: [point] }
-    setDraftPoints([point])
-  }
+    if (resolvedMode === 'line' || resolvedMode === 'dash') {
+      if (distance(draft.start, draft.current) < 0.01) return
+      onCreateAnnotation({
+        pageNumber,
+        type: 'drawing',
+        content: resolvedMode === 'dash' ? 'Linha tracejada' : 'Linha',
+        color: draft.color,
+        position: { points: [draft.start, draft.current] },
+        data: { drawingMode: resolvedMode, strokeWidthRatio: draft.strokeWidthRatio, opacity: draft.opacity },
+      })
+      return
+    }
 
-  const moveDrawing = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (tool !== 'drawing' || !drawingRef.current) return
-    const point = getPosition(event)
-    drawingRef.current.points.push(point)
-    setDraftPoints([...drawingRef.current.points])
-  }
-
-  const finishDrawing = () => {
-    if (tool !== 'drawing' || !drawingRef.current) return
-    const points = drawingRef.current.points
-    drawingRef.current = null
-    setDraftPoints([])
     if (points.length < 3) return
     onCreateAnnotation({
       pageNumber,
       type: 'drawing',
-      content: 'Desenho livre',
-      color: '#22c55e',
+      content: draft.mode === 'marker' ? 'Pincel' : 'Caneta',
+      color: draft.color,
       position: { points },
+      data: { drawingMode: draft.mode, strokeWidthRatio: draft.strokeWidthRatio, opacity: draft.opacity },
+    })
+  }, [onCreateAnnotation, pageNumber])
+
+  const finishHighlight = useCallback(() => {
+    const interaction = interactionRef.current
+    if (!interaction || interaction.kind !== 'highlight') return
+    interactionRef.current = null
+    setDraftHighlight(null)
+    const rect = normalizeRect(interaction.draft.start, interaction.draft.current, 0.18, 0.032)
+    onCreateAnnotation({
+      pageNumber,
+      type: 'highlight',
+      content: 'Marca texto',
+      color: interaction.draft.color,
+      position: rect,
+      data: { opacity: 0.42 },
+    })
+  }, [onCreateAnnotation, pageNumber])
+
+  const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!renderSize || editor) return
+    if (event.button !== 0 && event.pointerType !== 'touch' && event.pointerType !== 'pen') return
+
+    if (tool === 'drawing') {
+      event.preventDefault()
+      event.currentTarget.setPointerCapture(event.pointerId)
+      const point = getPosition(event.clientX, event.clientY)
+      const rect = overlayRef.current?.getBoundingClientRect()
+      const widthRatio = drawingStyle.width / Math.max(rect?.width || 1, 1)
+      interactionRef.current = {
+        kind: 'drawing',
+        startedAt: performance.now(),
+        pointerId: event.pointerId,
+        draft: {
+          points: [point],
+          mode: drawingStyle.mode,
+          color: drawingStyle.color,
+          strokeWidthRatio: widthRatio,
+          opacity: drawingStyle.opacity,
+          start: point,
+          current: point,
+          autoShape: drawingStyle.holdToShape,
+        },
+      }
+      setDraftDrawing(interactionRef.current.draft)
+      setSelectedId(null)
+      return
+    }
+
+    if (tool === 'highlight') {
+      event.preventDefault()
+      event.currentTarget.setPointerCapture(event.pointerId)
+      const point = getPosition(event.clientX, event.clientY)
+      interactionRef.current = {
+        kind: 'highlight',
+        pointerId: event.pointerId,
+        draft: { start: point, current: point, color: highlightColor },
+      }
+      setDraftHighlight(interactionRef.current.draft)
+      setSelectedId(null)
+    }
+  }
+
+  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const interaction = interactionRef.current
+    if (!interaction) return
+    event.preventDefault()
+
+    if (interaction.kind === 'drawing') {
+      const native = event.nativeEvent as PointerEvent & { getCoalescedEvents?: () => PointerEvent[] }
+      const events = native.getCoalescedEvents?.() || [native]
+      for (const pointerEvent of events) {
+        addDrawingPoint(getPosition(pointerEvent.clientX, pointerEvent.clientY))
+      }
+      scheduleDraftUpdate()
+      return
+    }
+
+    interaction.draft.current = getPosition(event.clientX, event.clientY)
+    scheduleDraftUpdate()
+  }
+
+  const handlePointerEnd = (event: React.PointerEvent<HTMLDivElement>) => {
+    const interaction = interactionRef.current
+    if (!interaction) return
+    event.preventDefault()
+    ignoreNextClickRef.current = true
+    window.setTimeout(() => { ignoreNextClickRef.current = false }, 0)
+    try {
+      event.currentTarget.releasePointerCapture(interaction.pointerId)
+    } catch {}
+    if (interaction.kind === 'drawing') finishDrawing()
+    if (interaction.kind === 'highlight') finishHighlight()
+  }
+
+  const openTextEditor = (point: PdfPoint, annotation?: PdfAnnotation) => {
+    setSelectedId(annotation?.id || null)
+    setEditor({
+      kind: 'text',
+      point,
+      annotation,
+      content: annotation?.content || '',
+      textStyle: {
+        fontFamily: annotation?.data?.fontFamily || textStyle.fontFamily,
+        fontSize: annotation?.data?.fontSize || textStyle.fontSize,
+        color: annotation?.color || textStyle.color,
+        bold: annotation?.data?.bold ?? textStyle.bold,
+        italic: annotation?.data?.italic ?? textStyle.italic,
+        underline: annotation?.data?.underline ?? textStyle.underline,
+        align: annotation?.data?.align || textStyle.align,
+      },
+      noteColor,
     })
   }
 
+  const openNoteEditor = (point: PdfPoint, annotation?: PdfAnnotation) => {
+    setSelectedId(annotation?.id || null)
+    setEditor({
+      kind: 'note',
+      point,
+      annotation,
+      content: annotation?.content || '',
+      textStyle,
+      noteColor: annotation?.color || annotation?.data?.noteColor || noteColor,
+    })
+  }
+
+  const handleOverlayClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (ignoreNextClickRef.current || editor) {
+      ignoreNextClickRef.current = false
+      return
+    }
+    if (tool === 'cursor' || tool === 'drawing' || tool === 'highlight' || tool === 'eraser') {
+      setSelectedId(null)
+      return
+    }
+
+    const point = getPosition(event.clientX, event.clientY)
+    if (tool === 'note') {
+      openNoteEditor(point)
+      return
+    }
+    if (tool === 'text') {
+      openTextEditor(point)
+      return
+    }
+    if (tool === 'bookmark') {
+      onCreateAnnotation({
+        pageNumber,
+        type: 'bookmark',
+        content: 'Marcador',
+        color: '#10b981',
+        position: { x: point.x, y: point.y, width: 0.05, height: 0.08 },
+      })
+    }
+  }
+
+  const saveEditor = (next: EditorState) => {
+    const content = next.content.trim()
+    if (!content) {
+      setEditor(null)
+      return
+    }
+
+    if (next.kind === 'note') {
+      const patch = {
+        pageNumber,
+        type: 'note' as AnnotationType,
+        content,
+        color: next.noteColor,
+        position: next.annotation?.position || { x: next.point.x, y: next.point.y, width: 0.11, height: 0.08 },
+        data: { noteColor: next.noteColor },
+      }
+      if (next.annotation) onUpdateAnnotation(next.annotation, patch)
+      else onCreateAnnotation(patch)
+      setEditor(null)
+      return
+    }
+
+    const lineCount = Math.max(1, content.split('\n').length)
+    const textWidth = Math.min(0.52, Math.max(0.2, Math.min(36, content.length) * 0.009 + 0.1))
+    const textHeight = Math.min(0.24, Math.max(0.045, lineCount * (next.textStyle.fontSize / 740) + 0.025))
+    const patch = {
+      pageNumber,
+      type: 'text' as AnnotationType,
+      content,
+      color: next.textStyle.color,
+      position: next.annotation?.position || { x: next.point.x, y: next.point.y, width: textWidth, height: textHeight },
+      data: {
+        fontFamily: next.textStyle.fontFamily,
+        fontSize: next.textStyle.fontSize,
+        bold: next.textStyle.bold,
+        italic: next.textStyle.italic,
+        underline: next.textStyle.underline,
+        align: next.textStyle.align,
+      },
+    }
+    if (next.annotation) onUpdateAnnotation(next.annotation, patch)
+    else onCreateAnnotation(patch)
+    setEditor(null)
+  }
+
+  const selectedAnnotation = selectedId ? annotations.find((annotation) => annotation.id === selectedId) || null : null
+  const annotationPointerEvents = tool === 'drawing' || tool === 'highlight' ? 'none' : 'auto'
+
   return (
-    <div id={`pdf-page-${pageNumber}`} ref={wrapperRef} className="flex w-full scroll-mt-32 justify-center px-0 sm:px-2">
+    <div id={`pdf-page-${pageNumber}`} ref={wrapperRef} className="flex w-full scroll-mt-36 justify-center px-0 sm:px-2">
       <div
-        className="relative max-w-full rounded-2xl border border-white/15 bg-white/8 p-2 shadow-2xl shadow-black/35 backdrop-blur-sm"
-        style={{ width: Math.ceil(pageFrameSize.width + 16), overflow: 'hidden' }}
+        className="relative max-w-full overflow-hidden rounded-xl border border-white/15 bg-white/10 p-2 shadow-2xl shadow-black/35 backdrop-blur-sm"
+        style={{ width: Math.ceil(pageFrameSize.width + 16) }}
       >
-        <div className="absolute left-3 top-3 z-10 rounded-full border border-emerald-200/20 bg-emerald-950/65 px-2 py-1 text-[11px] font-semibold text-emerald-50 backdrop-blur-md">
+        <div className="absolute left-3 top-3 z-10 rounded-lg border border-zinc-200/30 bg-zinc-950/65 px-2 py-1 text-[11px] font-semibold text-zinc-50 backdrop-blur-md">
           Pag. {pageNumber}
         </div>
         <canvas
           ref={canvasRef}
-          className="block h-auto w-full rounded-xl bg-white"
-          style={{
-            aspectRatio: `${Math.max(1, pageFrameSize.width)} / ${Math.max(1, pageFrameSize.height)}`,
-          }}
+          className="block h-auto w-full rounded-lg bg-white"
+          style={{ aspectRatio: `${Math.max(1, pageFrameSize.width)} / ${Math.max(1, pageFrameSize.height)}` }}
         />
         {((!renderSize && (visible || active)) || loading) && (
-          <div className="absolute inset-2 rounded-xl bg-white/90 flex items-center justify-center">
+          <div className="absolute inset-2 rounded-lg bg-white/90 flex items-center justify-center">
             <div className="h-7 w-7 rounded-full border-2 border-emerald-700/20 border-t-emerald-700 animate-spin" />
           </div>
         )}
         {error && (
-          <div className="absolute inset-2 z-20 rounded-xl bg-rose-950/85 flex flex-col items-center justify-center gap-3 p-6 text-center text-sm text-white">
+          <div className="absolute inset-2 z-20 rounded-lg bg-rose-950/85 flex flex-col items-center justify-center gap-3 p-6 text-center text-sm text-white">
             <span>{error}</span>
             <Button onClick={retryLoad} className="h-8 rounded-xl bg-white/15 px-3 text-xs text-white hover:bg-white/25">
               Tentar novamente
@@ -844,20 +1405,41 @@ function PdfCanvasPage({
         )}
         {!error && renderSize && (
           <div
-            className="absolute inset-2 rounded-xl"
+            ref={overlayRef}
+            className="absolute inset-2 rounded-lg"
             onClick={handleOverlayClick}
-            onPointerDown={startDrawing}
-            onPointerMove={moveDrawing}
-            onPointerUp={finishDrawing}
-            onPointerCancel={finishDrawing}
-            style={{ cursor: tool === 'cursor' ? 'default' : tool === 'drawing' ? 'crosshair' : 'copy' }}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerEnd}
+            onPointerCancel={handlePointerEnd}
+            style={{
+              cursor: tool === 'cursor' ? 'default' : tool === 'eraser' ? 'cell' : tool === 'drawing' ? 'crosshair' : 'copy',
+              touchAction: tool === 'drawing' || tool === 'highlight' ? 'none' : 'manipulation',
+            }}
           >
             <AnnotationOverlay
               annotations={annotations}
-              draftPoints={draftPoints}
-              onUpdate={onUpdateAnnotation}
+              selectedAnnotation={selectedAnnotation}
+              tool={tool}
+              pointerEvents={annotationPointerEvents}
+              draftDrawing={draftDrawing}
+              draftHighlight={draftHighlight}
+              onSelect={(annotation) => setSelectedId(annotation.id)}
+              onEdit={(annotation) => {
+                const bounds = getAnnotationBounds(annotation)
+                if (annotation.type === 'text') openTextEditor({ x: bounds.x, y: bounds.y }, annotation)
+                if (annotation.type === 'note') openNoteEditor({ x: bounds.x, y: bounds.y }, annotation)
+              }}
               onDelete={onDeleteAnnotation}
             />
+            {editor && (
+              <InlineAnnotationEditor
+                editor={editor}
+                onChange={setEditor}
+                onCancel={() => setEditor(null)}
+                onSave={saveEditor}
+              />
+            )}
           </div>
         )}
       </div>
@@ -867,148 +1449,657 @@ function PdfCanvasPage({
 
 function AnnotationOverlay({
   annotations,
-  draftPoints,
-  onUpdate,
+  selectedAnnotation,
+  tool,
+  pointerEvents,
+  draftDrawing,
+  draftHighlight,
+  onSelect,
+  onEdit,
   onDelete,
 }: {
   annotations: PdfAnnotation[]
-  draftPoints: { x: number; y: number }[]
-  onUpdate: (annotation: PdfAnnotation, patch: Partial<PdfAnnotation>) => void
+  selectedAnnotation: PdfAnnotation | null
+  tool: AnnotationTool
+  pointerEvents: 'none' | 'auto'
+  draftDrawing: DrawingDraft | null
+  draftHighlight: HighlightDraft | null
+  onSelect: (annotation: PdfAnnotation) => void
+  onEdit: (annotation: PdfAnnotation) => void
   onDelete: (annotation: PdfAnnotation) => void
 }) {
   return (
     <>
-      {annotations.map((annotation) => {
-        const position = annotation.position || {}
-        const style = {
+      {annotations.map((annotation) => (
+        <AnnotationItem
+          key={annotation.id}
+          annotation={annotation}
+          selected={selectedAnnotation?.id === annotation.id}
+          tool={tool}
+          pointerEvents={pointerEvents}
+          onSelect={onSelect}
+          onEdit={onEdit}
+          onDelete={onDelete}
+        />
+      ))}
+      {draftHighlight && <DraftHighlight draft={draftHighlight} />}
+      {draftDrawing && <DrawingLayer annotation={draftToAnnotation(draftDrawing)} isDraft />}
+      {selectedAnnotation && (
+        <AnnotationActionBar
+          annotation={selectedAnnotation}
+          onEdit={onEdit}
+          onDelete={onDelete}
+        />
+      )}
+    </>
+  )
+}
+
+function AnnotationItem({
+  annotation,
+  selected,
+  tool,
+  pointerEvents,
+  onSelect,
+  onEdit,
+  onDelete,
+}: {
+  annotation: PdfAnnotation
+  selected: boolean
+  tool: AnnotationTool
+  pointerEvents: 'none' | 'auto'
+  onSelect: (annotation: PdfAnnotation) => void
+  onEdit: (annotation: PdfAnnotation) => void
+  onDelete: (annotation: PdfAnnotation) => void
+}) {
+  const position = annotation.position || {}
+  const bounds = getAnnotationBounds(annotation)
+  const sharedHandlers = {
+    onPointerDown: (event: React.PointerEvent) => event.stopPropagation(),
+    onClick: (event: React.MouseEvent) => {
+      event.stopPropagation()
+      if (tool === 'eraser') {
+        onDelete(annotation)
+        return
+      }
+      if ((annotation.type === 'text' || annotation.type === 'note') && event.detail >= 2) {
+        onEdit(annotation)
+        return
+      }
+      onSelect(annotation)
+    },
+  }
+
+  if (annotation.type === 'drawing') {
+    return (
+      <>
+        <DrawingLayer annotation={annotation} />
+        <button
+          type="button"
+          aria-label="Selecionar desenho"
+          className={`absolute rounded-md ${selected ? 'border border-emerald-400/80 ring-2 ring-emerald-300/50' : ''}`}
+          style={{
+            pointerEvents,
+            left: `${bounds.x * 100}%`,
+            top: `${bounds.y * 100}%`,
+            width: `${Math.max(bounds.width, 0.045) * 100}%`,
+            height: `${Math.max(bounds.height, 0.045) * 100}%`,
+            background: 'transparent',
+          }}
+          {...sharedHandlers}
+        />
+      </>
+    )
+  }
+
+  if (annotation.type === 'highlight') {
+    return (
+      <button
+        type="button"
+        title="Marca texto"
+        className={`absolute rounded-md border transition-colors ${
+          selected ? 'border-emerald-400/90 ring-2 ring-emerald-300/50' : 'border-yellow-500/20'
+        }`}
+        style={{
+          pointerEvents,
           left: `${(position.x || 0) * 100}%`,
           top: `${(position.y || 0) * 100}%`,
           width: `${(position.width || 0.08) * 100}%`,
-          height: `${(position.height || 0.05) * 100}%`,
-        }
+          height: `${(position.height || 0.035) * 100}%`,
+          backgroundColor: annotation.color || '#facc15',
+          opacity: annotation.data?.opacity || 0.42,
+          mixBlendMode: 'multiply',
+        }}
+        {...sharedHandlers}
+      />
+    )
+  }
 
-        if (annotation.type === 'drawing') {
-          const points = position.points || []
-          const line = points.map((point) => `${point.x * 100},${point.y * 100}`).join(' ')
-          return (
-            <svg key={annotation.id} className="absolute inset-0 h-full w-full overflow-visible pointer-events-none">
-              <polyline points={line} fill="none" stroke={annotation.color || '#22c55e'} strokeWidth="0.45%" strokeLinecap="round" strokeLinejoin="round" opacity="0.82" />
-            </svg>
-          )
-        }
+  if (annotation.type === 'note') {
+    return (
+      <button
+        type="button"
+        className={`absolute flex min-h-9 min-w-9 -translate-x-1/2 -translate-y-1/2 items-center gap-1 rounded-xl border px-2 py-1 text-left text-[11px] font-semibold text-zinc-900 shadow-lg transition-transform ${
+          selected ? 'scale-105 border-emerald-500 ring-2 ring-emerald-300/60' : 'border-amber-500/40'
+        }`}
+        style={{
+          pointerEvents,
+          left: `${(position.x || 0) * 100}%`,
+          top: `${(position.y || 0) * 100}%`,
+          backgroundColor: annotation.color || annotation.data?.noteColor || '#fde68a',
+          maxWidth: '13rem',
+        }}
+        title={annotation.content}
+        {...sharedHandlers}
+      >
+        <MessageSquare className="h-4 w-4 shrink-0" />
+        <span className="hidden max-w-[9rem] truncate sm:inline">{annotation.content || 'Nota'}</span>
+      </button>
+    )
+  }
 
-        if (annotation.type === 'highlight') {
-          return (
-            <button
-              key={annotation.id}
-              title="Duplo clique para remover"
-              onDoubleClick={(event) => { event.stopPropagation(); onDelete(annotation) }}
-              className="absolute rounded-md border border-yellow-400/40 bg-yellow-300/35 mix-blend-multiply"
-              style={style}
-            />
-          )
-        }
+  if (annotation.type === 'bookmark') {
+    return (
+      <button
+        type="button"
+        className={`absolute -translate-x-1/2 -translate-y-1/2 text-emerald-600 drop-shadow ${
+          selected ? 'rounded-lg ring-2 ring-emerald-300/80' : ''
+        }`}
+        style={{
+          pointerEvents,
+          left: `${(position.x || 0) * 100}%`,
+          top: `${(position.y || 0) * 100}%`,
+        }}
+        title="Marcador"
+        {...sharedHandlers}
+      >
+        <Bookmark className="h-8 w-8 fill-emerald-400" />
+      </button>
+    )
+  }
 
-        if (annotation.type === 'note') {
-          return (
-            <button
-              key={annotation.id}
-              onDoubleClick={(event) => {
-                event.stopPropagation()
-                const content = prompt('Editar nota:', annotation.content)
-                if (content !== null) onUpdate(annotation, { content })
-              }}
-              className="absolute flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-amber-300/70 bg-amber-300/90 text-amber-950 shadow-lg"
-              style={{ left: style.left, top: style.top }}
-              title={annotation.content}
-            >
-              <MessageSquare className="h-4 w-4" />
-            </button>
-          )
-        }
+  const style = annotation.data || {}
+  return (
+    <button
+      type="button"
+      className={`absolute rounded-md border bg-white/75 px-2 py-1 text-left shadow-sm backdrop-blur-[1px] ${
+        selected ? 'border-emerald-500 ring-2 ring-emerald-300/60' : 'border-zinc-900/15'
+      }`}
+      style={{
+        pointerEvents,
+        left: `${bounds.x * 100}%`,
+        top: `${bounds.y * 100}%`,
+        width: `${bounds.width * 100}%`,
+        minHeight: `${bounds.height * 100}%`,
+        color: annotation.color || '#111827',
+        fontFamily: style.fontFamily || 'Inter',
+        fontSize: `${style.fontSize || 16}px`,
+        fontWeight: style.bold ? 800 : 500,
+        fontStyle: style.italic ? 'italic' : 'normal',
+        textDecoration: style.underline ? 'underline' : 'none',
+        textAlign: style.align || 'left',
+        lineHeight: 1.22,
+        whiteSpace: 'pre-wrap',
+      }}
+      title="Duplo toque para editar"
+      {...sharedHandlers}
+    >
+      {annotation.content}
+    </button>
+  )
+}
 
-        if (annotation.type === 'bookmark') {
-          return (
-            <button
-              key={annotation.id}
-              onDoubleClick={(event) => { event.stopPropagation(); onDelete(annotation) }}
-              className="absolute -translate-x-1/2 -translate-y-1/2 text-emerald-600 drop-shadow"
-              style={{ left: style.left, top: style.top }}
-              title="Marcador"
-            >
-              <Bookmark className="h-8 w-8 fill-emerald-400" />
-            </button>
-          )
-        }
+function draftToAnnotation(draft: DrawingDraft): PdfAnnotation {
+  const mode = draft.mode
+  const position = mode === 'circle'
+    ? normalizeRect(draft.start, draft.current, 0.025, 0.025)
+    : { points: mode === 'line' || mode === 'dash' ? [draft.start, draft.current] : draft.points }
 
-        return (
-          <button
-            key={annotation.id}
-            onDoubleClick={(event) => {
-              event.stopPropagation()
-              const content = prompt('Editar texto:', annotation.content)
-              if (content !== null) onUpdate(annotation, { content })
-            }}
-            className="absolute rounded-lg border border-emerald-400/50 bg-emerald-50/85 px-2 py-1 text-left text-xs font-semibold text-emerald-950 shadow"
-            style={style}
-            title="Duplo clique para editar"
-          >
-            {annotation.content}
-          </button>
-        )
-      })}
-      {draftPoints.length > 1 && (
-        <svg className="absolute inset-0 h-full w-full overflow-visible pointer-events-none">
-          <polyline
-            points={draftPoints.map((point) => `${point.x * 100},${point.y * 100}`).join(' ')}
-            fill="none"
-            stroke="#22c55e"
-            strokeWidth="0.45%"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            opacity="0.82"
-          />
-        </svg>
+  return {
+    _id: 'draft',
+    id: 'draft',
+    userId: 'local',
+    materialId: 'local',
+    pageNumber: 1,
+    type: 'drawing',
+    content: 'Rascunho',
+    color: draft.color,
+    position,
+    data: { drawingMode: mode, strokeWidthRatio: draft.strokeWidthRatio, opacity: draft.opacity },
+    createdAt: '',
+    updatedAt: '',
+  }
+}
+
+function DrawingLayer({ annotation, isDraft }: { annotation: PdfAnnotation; isDraft?: boolean }) {
+  const points = annotation.position.points || []
+  const mode = annotation.data?.drawingMode || 'free'
+  const strokeWidth = `${((annotation.data?.strokeWidthRatio || 0.0048) * 100).toFixed(3)}`
+  const opacity = annotation.data?.opacity ?? (mode === 'marker' ? 0.45 : 0.88)
+  const dashArray = mode === 'dash' ? '3 3' : undefined
+  const common = {
+    fill: 'none',
+    stroke: annotation.color || '#22c55e',
+    strokeWidth,
+    strokeLinecap: 'round' as const,
+    strokeLinejoin: 'round' as const,
+    opacity: isDraft ? Math.min(1, opacity + 0.08) : opacity,
+  }
+
+  if (mode === 'circle') {
+    const bounds = getAnnotationBounds(annotation)
+    return (
+      <svg className="absolute inset-0 h-full w-full overflow-visible pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <ellipse
+          cx={(bounds.x + bounds.width / 2) * 100}
+          cy={(bounds.y + bounds.height / 2) * 100}
+          rx={(bounds.width / 2) * 100}
+          ry={(bounds.height / 2) * 100}
+          {...common}
+        />
+      </svg>
+    )
+  }
+
+  if (points.length < 2) return null
+  return (
+    <svg className="absolute inset-0 h-full w-full overflow-visible pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <path d={pointsToSvgPath(points)} strokeDasharray={dashArray} {...common} />
+    </svg>
+  )
+}
+
+function DraftHighlight({ draft }: { draft: HighlightDraft }) {
+  const rect = normalizeRect(draft.start, draft.current, 0.18, 0.032)
+  return (
+    <div
+      className="absolute rounded-md border border-yellow-500/35"
+      style={{
+        left: `${rect.x * 100}%`,
+        top: `${rect.y * 100}%`,
+        width: `${rect.width * 100}%`,
+        height: `${rect.height * 100}%`,
+        backgroundColor: draft.color,
+        opacity: 0.42,
+        mixBlendMode: 'multiply',
+        pointerEvents: 'none',
+      }}
+    />
+  )
+}
+
+function AnnotationActionBar({
+  annotation,
+  onEdit,
+  onDelete,
+}: {
+  annotation: PdfAnnotation
+  onEdit: (annotation: PdfAnnotation) => void
+  onDelete: (annotation: PdfAnnotation) => void
+}) {
+  const bounds = getAnnotationBounds(annotation)
+  const left = Math.min(0.86, Math.max(0.04, bounds.x + bounds.width))
+  const top = Math.max(0.02, bounds.y - 0.055)
+  const canEdit = annotation.type === 'text' || annotation.type === 'note'
+
+  return (
+    <div
+      className="absolute z-30 flex items-center gap-1 rounded-xl border border-zinc-900/15 bg-zinc-950/88 p-1 text-white shadow-xl backdrop-blur-md"
+      style={{ left: `${left * 100}%`, top: `${top * 100}%`, transform: 'translateX(-100%)' }}
+      onPointerDown={(event) => event.stopPropagation()}
+      onClick={(event) => event.stopPropagation()}
+    >
+      {canEdit && (
+        <button
+          type="button"
+          className="h-8 rounded-lg px-2 text-xs font-semibold hover:bg-white/10"
+          onClick={() => onEdit(annotation)}
+        >
+          Editar
+        </button>
       )}
-    </>
+      <button
+        type="button"
+        className="flex h-8 w-8 items-center justify-center rounded-lg text-rose-200 hover:bg-rose-500/20 hover:text-rose-100"
+        onClick={() => onDelete(annotation)}
+        title="Apagar anotacao"
+      >
+        <Trash2 className="h-4 w-4" />
+      </button>
+    </div>
+  )
+}
+
+function InlineAnnotationEditor({
+  editor,
+  onChange,
+  onCancel,
+  onSave,
+}: {
+  editor: EditorState
+  onChange: (editor: EditorState) => void
+  onCancel: () => void
+  onSave: (editor: EditorState) => void
+}) {
+  const isRightSide = editor.point.x > 0.62
+  const isLowerSide = editor.point.y > 0.68
+
+  return (
+    <div
+      data-pdf-editor="true"
+      className="absolute z-40 w-[min(21rem,calc(100%-1rem))] rounded-xl border border-zinc-900/15 bg-white p-3 text-zinc-950 shadow-2xl"
+      style={{
+        left: `${editor.point.x * 100}%`,
+        top: `${editor.point.y * 100}%`,
+        transform: `${isRightSide ? 'translateX(-100%)' : 'translateX(0)'} ${isLowerSide ? 'translateY(-100%)' : 'translateY(0)'}`,
+      }}
+      onClick={(event) => event.stopPropagation()}
+      onPointerDown={(event) => event.stopPropagation()}
+    >
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 text-sm font-bold">
+          {editor.kind === 'text' ? <Type className="h-4 w-4" /> : <MessageSquare className="h-4 w-4" />}
+          {editor.kind === 'text' ? 'Texto no PDF' : 'Nota'}
+        </div>
+        <button type="button" onClick={onCancel} className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-zinc-100" title="Fechar">
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+
+      {editor.kind === 'text' && (
+        <div className="mb-2 space-y-2">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <select
+              value={editor.textStyle.fontFamily}
+              onChange={(event) => onChange({ ...editor, textStyle: { ...editor.textStyle, fontFamily: event.target.value } })}
+              className="h-8 rounded-lg border border-zinc-200 bg-white px-2 text-xs outline-none"
+            >
+              {FONT_OPTIONS.map((font) => <option key={font} value={font}>{font}</option>)}
+            </select>
+            <input
+              type="number"
+              min={10}
+              max={34}
+              value={editor.textStyle.fontSize}
+              onChange={(event) => onChange({ ...editor, textStyle: { ...editor.textStyle, fontSize: Number(event.target.value) || 16 } })}
+              className="h-8 w-16 rounded-lg border border-zinc-200 px-2 text-xs outline-none"
+            />
+            <input
+              type="color"
+              value={editor.textStyle.color}
+              onChange={(event) => onChange({ ...editor, textStyle: { ...editor.textStyle, color: event.target.value } })}
+              className="h-8 w-9 rounded-lg border border-zinc-200 bg-white p-1"
+              title="Cor do texto"
+            />
+            <EditorToggle active={editor.textStyle.bold} onClick={() => onChange({ ...editor, textStyle: { ...editor.textStyle, bold: !editor.textStyle.bold } })} title="Negrito">
+              <Bold className="h-4 w-4" />
+            </EditorToggle>
+            <EditorToggle active={editor.textStyle.italic} onClick={() => onChange({ ...editor, textStyle: { ...editor.textStyle, italic: !editor.textStyle.italic } })} title="Italico">
+              <Italic className="h-4 w-4" />
+            </EditorToggle>
+            <EditorToggle active={editor.textStyle.underline} onClick={() => onChange({ ...editor, textStyle: { ...editor.textStyle, underline: !editor.textStyle.underline } })} title="Sublinhado">
+              <Underline className="h-4 w-4" />
+            </EditorToggle>
+          </div>
+        </div>
+      )}
+
+      {editor.kind === 'note' && (
+        <div className="mb-2 flex items-center gap-1.5">
+          {NOTE_SWATCHES.map((color) => (
+            <button
+              key={color}
+              type="button"
+              onClick={() => onChange({ ...editor, noteColor: color })}
+              className={`h-7 w-7 rounded-lg border ${editor.noteColor === color ? 'border-zinc-950 ring-2 ring-zinc-300' : 'border-zinc-200'}`}
+              style={{ backgroundColor: color }}
+              title={color}
+            />
+          ))}
+        </div>
+      )}
+
+      <textarea
+        autoFocus
+        value={editor.content}
+        onChange={(event) => onChange({ ...editor, content: event.target.value })}
+        placeholder={editor.kind === 'text' ? 'Digite diretamente no PDF...' : 'Escreva sua nota...'}
+        className="min-h-24 w-full resize-none rounded-lg border border-zinc-200 bg-zinc-50 p-2 text-sm outline-none focus:border-emerald-500 focus:bg-white"
+        style={editor.kind === 'text' ? {
+          color: editor.textStyle.color,
+          fontFamily: editor.textStyle.fontFamily,
+          fontSize: editor.textStyle.fontSize,
+          fontWeight: editor.textStyle.bold ? 800 : 500,
+          fontStyle: editor.textStyle.italic ? 'italic' : 'normal',
+          textDecoration: editor.textStyle.underline ? 'underline' : 'none',
+          textAlign: editor.textStyle.align,
+        } : {
+          backgroundColor: editor.noteColor,
+        }}
+      />
+
+      <div className="mt-3 flex justify-end gap-2">
+        <button type="button" onClick={onCancel} className="h-9 rounded-lg border border-zinc-200 px-3 text-xs font-semibold hover:bg-zinc-50">
+          Cancelar
+        </button>
+        <button type="button" onClick={() => onSave(editor)} className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-emerald-600 px-3 text-xs font-bold text-white hover:bg-emerald-700">
+          <Save className="h-3.5 w-3.5" /> Salvar
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function EditorToggle({ active, onClick, title, children }: { active: boolean; onClick: () => void; title: string; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={title}
+      className={`flex h-8 w-8 items-center justify-center rounded-lg border ${
+        active ? 'border-emerald-500 bg-emerald-50 text-emerald-800' : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50'
+      }`}
+    >
+      {children}
+    </button>
+  )
+}
+
+function ToolOptionsBar({
+  tool,
+  drawingStyle,
+  onDrawingStyleChange,
+  highlightColor,
+  onHighlightColorChange,
+  noteColor,
+  onNoteColorChange,
+  textStyle,
+  onTextStyleChange,
+}: {
+  tool: AnnotationTool
+  drawingStyle: DrawingStyle
+  onDrawingStyleChange: (style: DrawingStyle) => void
+  highlightColor: string
+  onHighlightColorChange: (color: string) => void
+  noteColor: string
+  onNoteColorChange: (color: string) => void
+  textStyle: TextStyle
+  onTextStyleChange: (style: TextStyle) => void
+}) {
+  if (!['drawing', 'highlight', 'text', 'note'].includes(tool)) return null
+
+  return (
+    <div className="mt-1 flex items-center gap-2 overflow-x-auto rounded-xl border border-white/10 bg-white/10 px-2 py-2">
+      {tool === 'drawing' && (
+        <>
+          <div className="flex shrink-0 items-center gap-1">
+            <MiniModeButton active={drawingStyle.mode === 'free'} onClick={() => onDrawingStyleChange({ ...drawingStyle, mode: 'free' })} title="Caneta livre">
+              <PenLine className="h-4 w-4" />
+            </MiniModeButton>
+            <MiniModeButton active={drawingStyle.mode === 'marker'} onClick={() => onDrawingStyleChange({ ...drawingStyle, mode: 'marker', opacity: 0.45 })} title="Pincel marcador">
+              <Brush className="h-4 w-4" />
+            </MiniModeButton>
+            <MiniModeButton active={drawingStyle.mode === 'line'} onClick={() => onDrawingStyleChange({ ...drawingStyle, mode: 'line' })} title="Linha reta">
+              <Minus className="h-4 w-4" />
+            </MiniModeButton>
+            <MiniModeButton active={drawingStyle.mode === 'dash'} onClick={() => onDrawingStyleChange({ ...drawingStyle, mode: 'dash' })} title="Linha tracejada">
+              <span className="h-px w-5 border-t-2 border-dashed border-current" />
+            </MiniModeButton>
+            <MiniModeButton active={drawingStyle.mode === 'circle'} onClick={() => onDrawingStyleChange({ ...drawingStyle, mode: 'circle' })} title="Circulo">
+              <Circle className="h-4 w-4" />
+            </MiniModeButton>
+          </div>
+          <ColorSwatches colors={COLOR_SWATCHES} value={drawingStyle.color} onChange={(color) => onDrawingStyleChange({ ...drawingStyle, color })} />
+          <LabeledRange label="Grossura" min={1} max={18} value={drawingStyle.width} onChange={(value) => onDrawingStyleChange({ ...drawingStyle, width: value })} />
+          <LabeledRange label="Opacidade" min={25} max={100} value={Math.round(drawingStyle.opacity * 100)} onChange={(value) => onDrawingStyleChange({ ...drawingStyle, opacity: value / 100 })} />
+          <label className="flex shrink-0 items-center gap-2 rounded-lg border border-white/10 bg-white/10 px-2 py-1 text-[11px] text-white/75">
+            <input
+              type="checkbox"
+              checked={drawingStyle.holdToShape}
+              onChange={(event) => onDrawingStyleChange({ ...drawingStyle, holdToShape: event.target.checked })}
+              className="accent-emerald-400"
+            />
+            Segurar ajusta forma
+          </label>
+        </>
+      )}
+
+      {tool === 'highlight' && (
+        <>
+          <span className="flex shrink-0 items-center gap-1 text-xs font-semibold text-white/75"><Highlighter className="h-4 w-4" /> Marca texto</span>
+          <ColorSwatches colors={HIGHLIGHT_SWATCHES} value={highlightColor} onChange={onHighlightColorChange} />
+        </>
+      )}
+
+      {tool === 'note' && (
+        <>
+          <span className="flex shrink-0 items-center gap-1 text-xs font-semibold text-white/75"><MessageSquare className="h-4 w-4" /> Nota</span>
+          <ColorSwatches colors={NOTE_SWATCHES} value={noteColor} onChange={onNoteColorChange} />
+        </>
+      )}
+
+      {tool === 'text' && (
+        <>
+          <select
+            value={textStyle.fontFamily}
+            onChange={(event) => onTextStyleChange({ ...textStyle, fontFamily: event.target.value })}
+            className="h-8 shrink-0 rounded-lg border border-white/10 bg-zinc-900 px-2 text-xs text-white outline-none"
+          >
+            {FONT_OPTIONS.map((font) => <option key={font} value={font}>{font}</option>)}
+          </select>
+          <LabeledRange label="Tamanho" min={10} max={34} value={textStyle.fontSize} onChange={(value) => onTextStyleChange({ ...textStyle, fontSize: value })} />
+          <ColorSwatches colors={COLOR_SWATCHES} value={textStyle.color} onChange={(color) => onTextStyleChange({ ...textStyle, color })} />
+          <MiniModeButton active={textStyle.bold} onClick={() => onTextStyleChange({ ...textStyle, bold: !textStyle.bold })} title="Negrito">
+            <Bold className="h-4 w-4" />
+          </MiniModeButton>
+          <MiniModeButton active={textStyle.italic} onClick={() => onTextStyleChange({ ...textStyle, italic: !textStyle.italic })} title="Italico">
+            <Italic className="h-4 w-4" />
+          </MiniModeButton>
+          <MiniModeButton active={textStyle.underline} onClick={() => onTextStyleChange({ ...textStyle, underline: !textStyle.underline })} title="Sublinhado">
+            <Underline className="h-4 w-4" />
+          </MiniModeButton>
+        </>
+      )}
+    </div>
+  )
+}
+
+function ColorSwatches({ colors, value, onChange }: { colors: string[]; value: string; onChange: (color: string) => void }) {
+  return (
+    <div className="flex shrink-0 items-center gap-1">
+      <Palette className="h-4 w-4 text-white/55" />
+      {colors.map((color) => (
+        <button
+          key={color}
+          type="button"
+          onClick={() => onChange(color)}
+          className={`h-7 w-7 rounded-lg border ${value === color ? 'border-white ring-2 ring-white/40' : 'border-white/20'}`}
+          style={{ backgroundColor: color }}
+          title={color}
+        />
+      ))}
+      <input
+        type="color"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="h-7 w-8 rounded-lg border border-white/20 bg-transparent p-0.5"
+        title="Cor personalizada"
+      />
+    </div>
+  )
+}
+
+function LabeledRange({ label, min, max, value, onChange }: { label: string; min: number; max: number; value: number; onChange: (value: number) => void }) {
+  return (
+    <label className="flex shrink-0 items-center gap-2 rounded-lg border border-white/10 bg-white/10 px-2 py-1 text-[11px] text-white/75">
+      <span>{label}</span>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        value={value}
+        onChange={(event) => onChange(Number(event.target.value))}
+        className="w-24 accent-emerald-400"
+      />
+      <span className="min-w-6 text-right text-white/85">{value}</span>
+    </label>
+  )
+}
+
+function MiniModeButton({ active, onClick, title, children }: { active: boolean; onClick: () => void; title: string; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={title}
+      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border text-white transition-colors ${
+        active ? 'border-emerald-300/60 bg-emerald-400/25' : 'border-white/10 bg-white/10 hover:bg-white/15'
+      }`}
+    >
+      {children}
+    </button>
   )
 }
 
 function AnnotationsPanel({
   annotations,
   currentPage,
+  showGuide,
   onGoTo,
   onDelete,
   onDeleteAll,
 }: {
   annotations: PdfAnnotation[]
   currentPage: number
+  showGuide: boolean
   onGoTo: (page: number) => void
   onDelete: (annotation: PdfAnnotation) => void
   onDeleteAll: () => void
 }) {
   return (
-    <aside className="overflow-y-auto border-t border-white/10 bg-black/20 p-3 backdrop-blur-xl lg:sticky lg:top-[92px] lg:col-start-3 lg:h-[calc(100vh-92px)] lg:border-l lg:border-t-0">
-      <div className="flex items-center justify-between gap-2 mb-3">
+    <aside className="overflow-y-auto border-t border-white/10 bg-black/20 p-3 backdrop-blur-xl lg:sticky lg:top-[132px] lg:col-start-3 lg:h-[calc(100vh-132px)] lg:border-l lg:border-t-0">
+      {showGuide && <ToolGuide />}
+
+      <div className="mb-3 mt-3 flex items-center justify-between gap-2">
         <div>
           <h2 className="text-sm font-semibold text-white">Anotacoes</h2>
           <p className="text-[11px] text-white/55">{annotations.length} privadas neste material</p>
         </div>
-        <Button onClick={onDeleteAll} disabled={!annotations.length} size="icon" variant="ghost" className="h-9 w-9 rounded-xl text-white/70 hover:text-white hover:bg-white/10" title="Deletar todas">
+        <Button onClick={onDeleteAll} disabled={!annotations.length} size="icon" variant="ghost" className="h-9 w-9 rounded-xl text-white/70 hover:bg-white/10 hover:text-white" title="Deletar todas">
           <Eraser className="h-4 w-4" />
         </Button>
       </div>
 
       <div className="space-y-2">
         {annotations.length === 0 ? (
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-white/60">
-            Use as ferramentas de grifo, nota, desenho, marcador ou texto para criar anotacoes.
+          <div className="rounded-xl border border-white/10 bg-white/5 p-4 text-sm text-white/60">
+            Use uma ferramenta e toque no PDF para criar sua primeira anotacao.
           </div>
         ) : (
           annotations.map((annotation) => (
             <div
               key={annotation.id}
-              className={`rounded-2xl border p-3 transition-colors ${
+              className={`rounded-xl border p-3 transition-colors ${
                 annotation.pageNumber === currentPage
                   ? 'border-emerald-300/50 bg-emerald-400/15'
                   : 'border-white/10 bg-white/5'
@@ -1017,13 +2108,13 @@ function AnnotationsPanel({
               <button onClick={() => onGoTo(annotation.pageNumber)} className="w-full text-left">
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-xs font-semibold text-emerald-100">Pagina {annotation.pageNumber}</span>
-                  <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] text-white/65">{annotation.type}</span>
+                  <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] text-white/65">{annotationLabel(annotation.type)}</span>
                 </div>
                 <p className="mt-1 line-clamp-2 text-xs text-white/75">{annotation.content || 'Sem texto'}</p>
               </button>
               <div className="mt-2 flex justify-end">
-                <Button onClick={() => onDelete(annotation)} variant="ghost" size="icon" className="h-7 w-7 rounded-lg text-rose-200 hover:text-rose-100 hover:bg-rose-500/20">
-                  <Trash2 className="h-3.5 w-3.5" />
+                <Button onClick={() => onDelete(annotation)} variant="ghost" className="h-8 rounded-lg px-2 text-xs text-rose-200 hover:bg-rose-500/20 hover:text-rose-100">
+                  <Trash2 className="mr-1.5 h-3.5 w-3.5" /> Apagar
                 </Button>
               </div>
             </div>
@@ -1031,6 +2122,77 @@ function AnnotationsPanel({
         )}
       </div>
     </aside>
+  )
+}
+
+function ToolGuide() {
+  const guideItems = [
+    { icon: <MousePointer2 className="h-4 w-4" />, title: 'Navegar', text: 'Move pelo PDF, seleciona anotacoes e abre editar com duplo toque em textos e notas.' },
+    { icon: <Highlighter className="h-4 w-4" />, title: 'Marca texto', text: 'Arraste para grifar uma area. Um toque cria um grifo rapido na linha.' },
+    { icon: <PenLine className="h-4 w-4" />, title: 'Caneta', text: 'Desenhe com mouse, dedo ou Apple Pencil. Escolha cor, grossura, pincel, linha, tracejado ou circulo.' },
+    { icon: <Type className="h-4 w-4" />, title: 'Texto', text: 'Toque no PDF e escreva direto na pagina com fonte, tamanho, cor, negrito, italico e sublinhado.' },
+    { icon: <MessageSquare className="h-4 w-4" />, title: 'Nota', text: 'Cria um post-it visual com cores. Toque duas vezes na nota para editar.' },
+    { icon: <Eraser className="h-4 w-4" />, title: 'Apagar', text: 'Ative e toque em qualquer anotacao para remover individualmente, ou use o botao do painel.' },
+  ]
+
+  return (
+    <section className="rounded-xl border border-white/10 bg-white/5 p-3">
+      <div className="mb-2 flex items-center gap-2">
+        <HelpCircle className="h-4 w-4 text-emerald-200" />
+        <h2 className="text-sm font-semibold text-white">Guia rapido</h2>
+      </div>
+      <div className="space-y-2">
+        {guideItems.map((item) => (
+          <div key={item.title} className="grid grid-cols-[1.75rem_minmax(0,1fr)] gap-2 rounded-lg bg-black/10 p-2">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/10 text-emerald-100">
+              {item.icon}
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-white">{item.title}</p>
+              <p className="text-[11px] leading-snug text-white/60">{item.text}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function ConfirmDialog({
+  title,
+  body,
+  confirmLabel,
+  onCancel,
+  onConfirm,
+}: {
+  title: string
+  body: string
+  confirmLabel: string
+  onCancel: () => void
+  onConfirm: () => void
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 px-4 backdrop-blur-sm">
+      <div className="w-full max-w-sm rounded-xl border border-white/15 bg-zinc-950 p-4 text-white shadow-2xl">
+        <div className="mb-3 flex items-start gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rose-500/20 text-rose-200">
+            <Trash2 className="h-5 w-5" />
+          </div>
+          <div>
+            <h2 className="text-base font-bold">{title}</h2>
+            <p className="mt-1 text-sm text-white/62">{body}</p>
+          </div>
+        </div>
+        <div className="flex justify-end gap-2">
+          <button type="button" onClick={onCancel} className="h-9 rounded-lg border border-white/10 px-3 text-xs font-semibold text-white/80 hover:bg-white/10">
+            Cancelar
+          </button>
+          <button type="button" onClick={onConfirm} className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-rose-600 px-3 text-xs font-bold text-white hover:bg-rose-700">
+            <Trash2 className="h-3.5 w-3.5" /> {confirmLabel}
+          </button>
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -1054,7 +2216,7 @@ function ToolbarButton({
       onClick={onClick}
       disabled={disabled}
       title={title}
-      className={`${compact ? 'h-8 w-8' : 'h-9 w-9 sm:h-10 sm:w-10'} shrink-0 rounded-2xl border border-white/10 bg-white/8 text-white hover:bg-white/15 hover:text-white disabled:opacity-40`}
+      className={`${compact ? 'h-8 w-8 rounded-lg' : 'h-10 w-10 rounded-xl'} shrink-0 border border-white/10 bg-white/10 text-white hover:bg-white/15 hover:text-white disabled:opacity-40`}
     >
       {children}
     </Button>
@@ -1068,8 +2230,8 @@ function ToolButton({ children, active, onClick, title }: { children: React.Reac
       variant="ghost"
       onClick={onClick}
       title={title}
-      className={`h-9 w-9 shrink-0 rounded-xl border text-white hover:text-white ${
-        active ? 'border-emerald-300/50 bg-emerald-400/25' : 'border-white/10 bg-white/8 hover:bg-white/15'
+      className={`h-10 w-10 shrink-0 rounded-xl border text-white hover:text-white ${
+        active ? 'border-emerald-300/50 bg-emerald-400/25' : 'border-white/10 bg-white/10 hover:bg-white/15'
       }`}
     >
       {children}
@@ -1082,7 +2244,7 @@ function ToolbarTextButton({ children, active, onClick }: { children: React.Reac
     <button
       onClick={onClick}
       className={`h-9 rounded-xl border px-3 text-xs font-semibold transition-colors ${
-        active ? 'border-emerald-300/50 bg-emerald-400/25 text-white' : 'border-white/10 bg-white/8 text-white/70 hover:bg-white/15'
+        active ? 'border-emerald-300/50 bg-emerald-400/25 text-white' : 'border-white/10 bg-white/10 text-white/70 hover:bg-white/15'
       }`}
     >
       {children}
