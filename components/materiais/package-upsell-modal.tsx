@@ -18,6 +18,14 @@ export interface UpsellPackage {
   originalPrice?: number
   pricing: 'free' | 'paid'
   materials: Array<{ _id: string; title: string; type: string; coverImage?: string; price?: number }>
+  _pricing?: {
+    originalPackagePrice: number
+    effectivePrice: number
+    discountApplied: number
+    ownedValue: number
+    totalPaidIndividualValue: number
+    ownedMaterialIds: string[]
+  }
 }
 
 export interface UpsellItem {
@@ -85,13 +93,25 @@ export function PackageUpsellModal({
   pkg, item, onBuyPackage, onBuyIndividual, onClose,
   loadingPackage, loadingIndividual,
 }: PackageUpsellModalProps) {
-  const pkgFree    = pkg.pricing === 'free'
-  const savings    = (!pkgFree && item.price && pkg.price != null)
-    ? Math.max(0, item.price - pkg.price)
+  const effectivePackagePrice = pkg.pricing === 'free'
+    ? 0
+    : Number(pkg._pricing?.effectivePrice ?? pkg.price ?? 0)
+  const packageBasePrice = Number(pkg._pricing?.originalPackagePrice ?? pkg.price ?? 0)
+  const staticOriginalPrice = Number(pkg.originalPrice || 0)
+  const userDiscount = Number(pkg._pricing?.discountApplied || 0)
+  const crossedPackagePrice = userDiscount > 0
+    ? packageBasePrice
+    : staticOriginalPrice > effectivePackagePrice
+      ? staticOriginalPrice
+      : null
+  const pkgFree = pkg.pricing === 'free' || effectivePackagePrice <= 0
+  const savings = (!pkgFree && item.price)
+    ? Math.max(0, item.price - effectivePackagePrice)
     : null
-  const moreToPay  = (!pkgFree && item.price && pkg.price != null && pkg.price > item.price)
-    ? pkg.price - item.price
+  const moreToPay = (!pkgFree && item.price && effectivePackagePrice > item.price)
+    ? effectivePackagePrice - item.price
     : null
+  const ownedInsideCount = pkg._pricing?.ownedMaterialIds?.length || 0
 
   // Count unique types in the package
   const typeCounts = pkg.materials.reduce<Record<string, number>>((acc, m) => {
@@ -306,9 +326,25 @@ export function PackageUpsellModal({
                   Pacote completo ({pkg.materials.length} itens)
                 </span>
                 <span className="text-lg font-black" style={{ color: pkgFree ? '#34d399' : '#34d399' }}>
-                  {pkgFree ? 'Grátis' : fmtPrice(pkg.price)}
+                  {crossedPackagePrice && crossedPackagePrice > effectivePackagePrice && (
+                    <span className="mr-2 text-xs font-bold text-white/35 line-through">
+                      {fmtPrice(crossedPackagePrice)}
+                    </span>
+                  )}
+                  {pkgFree ? 'Grátis' : fmtPrice(effectivePackagePrice)}
                 </span>
               </div>
+              {userDiscount > 0 && (
+                <div
+                  className="flex items-center justify-center gap-1.5 rounded-xl px-3 py-2 mt-1"
+                  style={{ background: 'rgba(251,191,36,0.10)', border: '1px solid rgba(251,191,36,0.22)' }}
+                >
+                  <Tag className="h-3.5 w-3.5 text-amber-300" />
+                  <span className="text-xs font-semibold text-amber-200">
+                    Desconto aplicado: você já possui {ownedInsideCount} {ownedInsideCount === 1 ? 'item' : 'itens'} deste pacote.
+                  </span>
+                </div>
+              )}
               {/* Savings row */}
               {savings !== null && savings > 0 && (
                 <div
@@ -371,8 +407,14 @@ export function PackageUpsellModal({
             }
             <span>
               Quero o pacote completo
-              {!pkgFree && pkg.price != null && (
-                <span className="ml-1 opacity-85 font-black">— {fmtPrice(pkg.price)}</span>
+              {!pkgFree && (
+                <span className="ml-1 opacity-85 font-black">
+                  —
+                  {crossedPackagePrice && crossedPackagePrice > effectivePackagePrice && (
+                    <span className="mx-1 font-semibold opacity-65 line-through">{fmtPrice(crossedPackagePrice)}</span>
+                  )}
+                  {fmtPrice(effectivePackagePrice)}
+                </span>
               )}
               {pkgFree && <span className="ml-1 opacity-85">— Grátis</span>}
             </span>

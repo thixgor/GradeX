@@ -48,6 +48,7 @@ function isPublicRoute(pathname: string): boolean {
   if (publicRoutes.includes(pathname)) return true
   if (/^\/materiais\/[a-fA-F0-9]{24}$/.test(pathname)) return true
   if (/^\/pacotes\/[a-fA-F0-9]{24}$/.test(pathname)) return true
+  if (/^\/flashcards\/d\/[^/]+$/.test(pathname)) return true
   if (
     pathname === '/api/materiais' ||
     pathname === '/api/materiais/folders' ||
@@ -58,6 +59,7 @@ function isPublicRoute(pathname: string): boolean {
   ) return true
   if (/^\/api\/materiais\/[a-fA-F0-9]{24}$/.test(pathname)) return true
   if (/^\/api\/materiais\/packages\/[a-fA-F0-9]{24}$/.test(pathname)) return true
+  if (/^\/api\/flashcards\/manual\/[^/]+$/.test(pathname)) return true
   return publicPrefixes.some(prefix => pathname.startsWith(prefix))
 }
 

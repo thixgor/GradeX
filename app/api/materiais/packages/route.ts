@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
+import { computeEffectivePackagePrice } from '@/lib/material-package-pricing'
 
 export const dynamic = 'force-dynamic'
 
@@ -57,13 +58,18 @@ export async function GET(request: NextRequest) {
     // Verificar compras do usuário
     // Two separate queries (userId and userEmail) to avoid any $or index quirks.
     let purchasedPackageIds: string[] = []
+    let purchasedMaterialIds: string[] = []
     if (session && !isAdmin) {
-      const baseFilter = { itemType: 'package', status: 'completed' }
+      const baseFilter = { status: 'completed' }
 
       const byUserId = await db
         .collection('material_purchases')
-        .find({ ...baseFilter, userId: session.userId })
-        .project({ itemId: 1 })
+        .find({
+          ...baseFilter,
+          userId: session.userId,
+          itemType: { $in: ['package', 'material'] },
+        })
+        .project({ itemId: 1, itemType: 1 })
         .toArray()
 
       let byEmail: any[] = []
@@ -71,16 +77,31 @@ export async function GET(request: NextRequest) {
         const emailRegex = new RegExp(`^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i')
         byEmail = await db
           .collection('material_purchases')
-          .find({ ...baseFilter, userEmail: { $regex: emailRegex } })
-          .project({ itemId: 1 })
+          .find({
+            ...baseFilter,
+            userEmail: { $regex: emailRegex },
+            itemType: { $in: ['package', 'material'] },
+          })
+          .project({ itemId: 1, itemType: 1 })
           .toArray()
       }
 
-      purchasedPackageIds = [...new Set([...byUserId, ...byEmail].map((p: any) => String(p.itemId)))]
+      const purchases = [...byUserId, ...byEmail]
+      purchasedPackageIds = [...new Set(
+        purchases
+          .filter((p: any) => p.itemType === 'package')
+          .map((p: any) => String(p.itemId))
+      )]
+      purchasedMaterialIds = [...new Set(
+        purchases
+          .filter((p: any) => p.itemType === 'material')
+          .map((p: any) => String(p.itemId))
+      )]
     }
 
     // Server is the source of truth for access — attach flags per package
     const purchasedSet = new Set(purchasedPackageIds)
+    const purchasedMaterialSet = new Set(purchasedMaterialIds)
 
     const packagesWithMaterials = packages.map((pkg: any) => {
       const idStr = String(pkg._id)
@@ -90,14 +111,25 @@ export async function GET(request: NextRequest) {
         userGroups.some((g: string) => pkg.allowedGroups.includes(g))
       const isPurchased = isAdmin || purchasedSet.has(idStr)
       const hasAccess = isAuthenticated && (isAdmin || isPurchased || (hasGroupAccess && pkg.pricing !== 'paid'))
+      const materials = (pkg.materialIds || []).map((id: string) => materialsMap[id]).filter(Boolean)
+      const pricing = computeEffectivePackagePrice({
+        pkgPrice: Number(pkg.price || 0),
+        materials: materials.map((m: any) => ({
+          _id: String(m._id),
+          pricing: m.pricing,
+          price: Number(m.price || 0),
+        })),
+        ownedMaterialIds: purchasedMaterialSet,
+      })
 
       return {
         ...pkg,
         _id: idStr,
-        materials: (pkg.materialIds || []).map((id: string) => materialsMap[id]).filter(Boolean),
+        materials,
         _isPurchased: isPurchased,
         _hasGroupAccess: hasGroupAccess,
         _hasAccess: hasAccess,
+        _pricing: pricing,
       }
     })
 

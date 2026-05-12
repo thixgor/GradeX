@@ -36,29 +36,48 @@ async function findDeckByIdOrSlug(db: any, idOrSlug: string): Promise<(Flashcard
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const session = await getSession()
-    if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
 
     const db = await getDb()
     const deck = await findDeckByIdOrSlug(db, params.id)
     if (!deck) return NextResponse.json({ error: 'Deck não encontrado' }, { status: 404 })
 
-    const isAdmin = session.role === 'admin'
-    const userDoc = await db.collection('users').findOne(
+    const isAuthenticated = !!session
+    const isAdmin = session?.role === 'admin'
+    const userDoc = session ? await db.collection('users').findOne(
       { _id: new ObjectId(session.userId) },
       { projection: { accountType: 1, secondaryRole: 1, email: 1, name: 1, emailVerified: 1 } }
-    )
+    ) : null
     const userGroups = getUserGroups(userDoc as any)
 
-    const access = await resolveDeckAccess({
+    const resolvedAccess = await resolveDeckAccess({
       db,
       deck,
-      userId: session.userId,
-      userEmail: userDoc?.email || session.email,
+      userId: session?.userId || null,
+      userEmail: userDoc?.email || session?.email || null,
       userGroups,
       isAdmin,
     })
+    const access = isAuthenticated
+      ? resolvedAccess
+      : {
+          ...resolvedAccess,
+          hasAccess: false,
+          isOwner: false,
+          isPurchased: false,
+          hasShareAccess: false,
+          reasons: resolvedAccess.reasons.filter(reason => reason === 'public' || reason === 'unlisted' || reason === 'free_admin_deck'),
+          reason: null,
+        }
 
     if (deck.isHidden && !isAdmin && !access.isOwner) {
+      return NextResponse.json({ error: 'Deck indisponível' }, { status: 404 })
+    }
+
+    const isPublicPreviewable =
+      deck.ownerType === 'admin' ||
+      ((deck.visibility === 'public' || deck.visibility === 'unlisted') && deck.isPublished)
+
+    if (!isAuthenticated && !isPublicPreviewable) {
       return NextResponse.json({ error: 'Deck indisponível' }, { status: 404 })
     }
 
@@ -74,7 +93,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         .toArray()
       const progressDocs = await db
         .collection<FlashcardSpacedProgress>(FLASHCARD_SPACED_PROGRESS_COLLECTION)
-        .find({ deckId: String(deck._id), userId: session.userId })
+        .find({ deckId: String(deck._id), userId: session!.userId })
         .toArray()
       progressByCardId = new Map(progressDocs.map(progress => [progress.cardId, progress]))
       spacedStats = calculateSpacedStats(cardDocs as any, progressByCardId)
@@ -109,7 +128,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       },
       access: { ...access, canManage: access.isOwner || isAdmin },
       viewer: {
-        userId: session.userId,
+        isAuthenticated,
+        userId: session?.userId || null,
         emailVerified: !!userDoc?.emailVerified,
       },
     })

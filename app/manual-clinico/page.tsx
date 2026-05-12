@@ -139,10 +139,10 @@ function DoacaoInterstitialLazy({ context, onClose }: { context: 'manual-clinico
   return <Component context={context} onClose={onClose} />
 }
 
-function FloatingFocusGlass() {
+function FloatingFocusGlass({ enabled }: { enabled: boolean }) {
   const [mounted, setMounted] = useState(false)
   useEffect(() => { setMounted(true) }, [])
-  if (!mounted) return null
+  if (!mounted || !enabled) return null
   return createPortal(
     <div className="fixed top-3 right-3 sm:top-4 sm:right-4 z-[55]">
       <div className="relative liquid-glass-bubble overflow-visible rounded-full">
@@ -172,7 +172,7 @@ function ManualClinicoContent() {
   const [pdfLoading, setPdfLoading] = useState(false)
   const [hasHighlights, setHasHighlights] = useState(false)
   const [resetConfirm, setResetConfirm] = useState(false)
-  const [isAuthenticated, setIsAuthenticated] = useState(true)
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
 
   useEffect(() => {
     setHasHighlights(hasAnyManualHighlights())
@@ -184,7 +184,7 @@ function ManualClinicoContent() {
   }, [])
 
   async function handleGeneratePDF() {
-    if (!isAuthenticated) {
+    if (isAuthenticated !== true) {
       router.push(`/auth/login?redirect=${encodeURIComponent('/manual-clinico')}`)
       return
     }
@@ -277,7 +277,7 @@ function ManualClinicoContent() {
   return (
     <div className="min-h-screen bg-background">
       {/* Floating focus session (glassmorphism + iridescent wave) */}
-      <FloatingFocusGlass />
+      <FloatingFocusGlass enabled={isAuthenticated === true} />
 
       {/* ══════════ HERO ══════════ */}
       <div className="relative overflow-hidden">
@@ -328,7 +328,7 @@ function ManualClinicoContent() {
                   {pdfLoading
                     ? <Loader2 className="h-4 w-4 animate-spin" />
                     : <FileDown className="h-4 w-4" />}
-                  {pdfLoading ? 'Gerando PDF...' : isAuthenticated ? 'Baixar Manual Completo (PDF)' : 'Entrar para baixar o manual'}
+                  {pdfLoading ? 'Gerando PDF...' : isAuthenticated === true ? 'Baixar Manual Completo (PDF)' : 'Entrar para baixar o manual'}
                 </button>
 
                 {hasHighlights && (
@@ -505,7 +505,7 @@ function ManualClinicoContent() {
                 <div
                   key={patologia._id}
                   onClick={() => {
-                    if (!isAuthenticated) {
+                    if (isAuthenticated !== true) {
                       router.push(`/auth/login?redirect=${encodeURIComponent(`/manual-clinico/${patologia.slug}`)}`)
                       return
                     }
@@ -552,13 +552,13 @@ function ManualClinicoContent() {
                         </div>
                       </div>
                       <div className="flex-shrink-0 mt-2 p-1.5 rounded-lg bg-white/[0.04] group-hover:bg-primary/10 transition-colors duration-300">
-                        {isAuthenticated
+                        {isAuthenticated === true
                           ? <ArrowRight className="h-4 w-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-300" />
                           : <LogIn className="h-4 w-4 text-muted-foreground/40 group-hover:text-primary transition-all duration-300" />
                         }
                       </div>
                     </div>
-                    {!isAuthenticated && idx === 0 && (
+                    {isAuthenticated !== true && idx === 0 && (
                       <div className="mt-3 rounded-xl border border-amber-300/30 bg-amber-500/10 px-3 py-2 text-xs font-medium text-amber-700 dark:text-amber-200">
                         Está vendo o que você está perdendo? Entre para abrir a patologia completa, baixar o manual e estudar com marcações.
                       </div>

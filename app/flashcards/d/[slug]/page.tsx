@@ -63,7 +63,7 @@ interface DeckResponse {
     stats: SpacedRepetitionStats
   }
   access: AccessFlags & { canManage: boolean }
-  viewer: { userId: string; emailVerified: boolean }
+  viewer: { isAuthenticated: boolean; userId: string | null; emailVerified: boolean }
 }
 
 type StudyMode = 'normal' | 'spaced'
@@ -280,6 +280,10 @@ export default function DeckPage() {
   }
 
   async function toggleLike() {
+    if (!data?.viewer.isAuthenticated) {
+      router.push(`/auth/login?redirect=${encodeURIComponent(`/flashcards/d/${slug}`)}`)
+      return
+    }
     try {
       const method = liked ? 'DELETE' : 'POST'
       const res = await fetch(`/api/flashcards/manual/${encodeURIComponent(slug)}/like`, { method })
@@ -312,6 +316,12 @@ export default function DeckPage() {
       keepalive: true,
     }).catch(() => {})
 
+    if (!data.viewer.isAuthenticated) {
+      const checkoutPath = `/materiais/checkout?type=material&id=${materialId}`
+      router.push(`/auth/login?redirect=${encodeURIComponent(checkoutPath)}`)
+      return
+    }
+
     if (!skipUpsell) {
       try {
         const pkgsRes = await fetch('/api/materiais/packages?includeAccess=true', { cache: 'no-store' })
@@ -337,7 +347,7 @@ export default function DeckPage() {
 
   if (loading) {
     return (
-      <AppShell>
+      <AppShell allowGuest>
         <div className="flex items-center justify-center min-h-[60vh] text-slate-500">Carregando deck...</div>
       </AppShell>
     )
@@ -345,7 +355,7 @@ export default function DeckPage() {
 
   if (!data) {
     return (
-      <AppShell>
+      <AppShell allowGuest>
         <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center px-6">
           <Lock className="h-10 w-10 text-slate-400" />
           <h1 className="text-xl font-semibold">Deck não encontrado ou indisponível</h1>
@@ -364,7 +374,7 @@ export default function DeckPage() {
     const total = cards.length
     const progress = total > 0 ? ((currentIndex + 1) / total) * 100 : 0
     return (
-      <AppShell>
+      <AppShell allowGuest>
         <div className="max-w-3xl lg:max-w-5xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between mb-4">
             <Button variant="ghost" onClick={() => setStudying(false)} className="gap-1"><ArrowLeft className="h-4 w-4" />Sair</Button>
@@ -457,7 +467,7 @@ export default function DeckPage() {
   }
 
   return (
-    <AppShell>
+    <AppShell allowGuest>
       <div className="max-w-5xl mx-auto px-4 py-6">
         <div className="flex items-center gap-2 mb-4">
           <Button variant="ghost" onClick={() => router.push('/flashcards')} className="gap-1"><ArrowLeft className="h-4 w-4" />Flashcards</Button>
@@ -544,7 +554,13 @@ export default function DeckPage() {
                   {`Comprar – R$ ${deck.price?.toFixed(2).replace('.', ',')}`}
                 </button>
               ) : isLocked ? (
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 dark:bg-white/5 px-3 py-2 text-xs text-slate-500"><Lock className="h-3.5 w-3.5" /> Sem acesso</span>
+                <button
+                  onClick={() => router.push(`/auth/login?redirect=${encodeURIComponent(`/flashcards/d/${deck.slug}`)}`)}
+                  className="inline-flex items-center gap-1.5 rounded-2xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-200"
+                >
+                  <Lock className="h-3.5 w-3.5" />
+                  Entrar para acessar
+                </button>
               ) : (
                 <button
                   onClick={() => startStudy(studyModeChoice)}
@@ -625,6 +641,10 @@ export default function DeckPage() {
           }}
           onBuyPackage={() => {
             setUpsellPkg(null)
+            if (!data.viewer.isAuthenticated) {
+              router.push(`/auth/login?redirect=${encodeURIComponent(`/materiais/checkout?type=package&id=${upsellPkg._id}`)}`)
+              return
+            }
             router.push(`/materiais/checkout?type=package&id=${upsellPkg._id}`)
           }}
           onBuyIndividual={() => {

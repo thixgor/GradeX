@@ -122,6 +122,14 @@ interface MaterialPackage {
   _isPurchased?: boolean
   _hasGroupAccess?: boolean
   _hasAccess?: boolean
+  _pricing?: {
+    originalPackagePrice: number
+    effectivePrice: number
+    discountApplied: number
+    ownedValue: number
+    totalPaidIndividualValue: number
+    ownedMaterialIds: string[]
+  }
 }
 
 interface BrowseSnapshot {
@@ -161,6 +169,10 @@ function formatDuration(seconds: number): string {
   if (h > 0) return `${h}h ${m > 0 ? `${m}min` : ''}`.trim()
   if (m > 0) return `${m}min${s > 0 ? ` ${s}s` : ''}`
   return `${s}s`
+}
+
+function formatBRL(value: number): string {
+  return `R$ ${Number(value || 0).toFixed(2).replace('.', ',')}`
 }
 
 const typeIcons: Record<string, React.ReactNode> = {
@@ -488,7 +500,11 @@ function MateriaisContent() {
       router.push(`/auth/login?redirect=${encodeURIComponent(checkoutPath)}`)
       return
     }
-    if (item && (item.pricing === 'free' || !item.price)) {
+    if (!item) return
+    const effectivePackagePrice = itemType === 'package'
+      ? Number((item as MaterialPackage)?._pricing?.effectivePrice ?? item.price ?? 0)
+      : Number(item.price ?? 0)
+    if (item.pricing === 'free' || effectivePackagePrice <= 0) {
       setCheckoutLoading(itemId)
       try {
         const res = await fetch('/api/materiais/checkout', {
@@ -1474,10 +1490,20 @@ function PackageCard({
   onAcquire: () => void; onCopyLink: () => void; onPreview: () => void; loading: boolean
 }) {
   const isFree = pkg.pricing === 'free'
+  const effectivePrice = Number(pkg._pricing?.effectivePrice ?? pkg.price ?? 0)
+  const packagePrice = Number(pkg.price || 0)
+  const staticOriginalPrice = Number(pkg.originalPrice || 0)
+  const userDiscountApplied = Number(pkg._pricing?.discountApplied || 0) > 0
+  const crossedPrice = userDiscountApplied
+    ? packagePrice
+    : staticOriginalPrice > packagePrice
+      ? staticOriginalPrice
+      : null
   const canAccess = typeof pkg._hasAccess === 'boolean'
     ? pkg._hasAccess
     : isPurchased || (groupAccess && isFree)
-  const hasDiscount = pkg.originalPrice && pkg.originalPrice > (pkg.price || 0)
+  const hasDiscount = !!crossedPrice && crossedPrice > effectivePrice
+  const showFreeAcquire = isFree || effectivePrice <= 0
   const [descExpanded, setDescExpanded] = useState(false)
   const descLong = pkg.description && pkg.description.length > 120
   const showLocked = !groupAccess && !isPurchased && (pkg.allowedGroups?.length ?? 0) > 0
@@ -1529,9 +1555,9 @@ function PackageCard({
               </span>
             ) : (
               <div className="flex flex-col items-end gap-0.5">
-                {hasDiscount && <span className="text-[10px] text-white/60 line-through">R$ {pkg.originalPrice?.toFixed(2)}</span>}
+                {hasDiscount && <span className="text-[10px] text-white/60 line-through">{formatBRL(crossedPrice || 0)}</span>}
                 <span className="px-3 py-1 rounded-lg text-xs font-bold backdrop-blur-xl bg-accent/30 text-amber-100 border border-amber-400/30">
-                  R$ {pkg.price?.toFixed(2)}
+                  {formatBRL(effectivePrice)}
                 </span>
               </div>
             )}
@@ -1599,11 +1625,21 @@ function PackageCard({
                 onClick={onAcquire}
                 disabled={loading}
                 size="sm"
-                className={`w-full rounded-xl h-10 font-semibold shadow-lg text-white ${isFree ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 shadow-green-500/20' : 'bg-gradient-to-r from-accent to-secondary hover:from-accent/90 hover:to-secondary/90 shadow-accent/20'}`}
+                className={`w-full rounded-xl min-h-11 py-2 font-semibold shadow-lg text-white ${showFreeAcquire ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 shadow-green-500/20' : 'bg-gradient-to-r from-accent to-secondary hover:from-accent/90 hover:to-secondary/90 shadow-accent/20'}`}
               >
                 {loading ? <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
-                  : isFree ? <Gift className="h-4 w-4 mr-2" /> : <ShoppingCart className="h-4 w-4 mr-2" />}
-                {isFree ? 'Adquirir Grátis' : `Comprar Pacote - R$ ${pkg.price?.toFixed(2)}`}
+                  : showFreeAcquire ? <Gift className="h-4 w-4 mr-2 shrink-0" /> : <ShoppingCart className="h-4 w-4 mr-2 shrink-0" />}
+                {showFreeAcquire ? 'Adquirir Grátis' : (
+                  <span className="flex min-w-0 flex-wrap items-center justify-center gap-x-2 gap-y-0.5 leading-tight">
+                    <span>Comprar Pacote</span>
+                    {hasDiscount && (
+                      <span className="text-[11px] font-semibold text-white/70 line-through">
+                        {formatBRL(crossedPrice || 0)}
+                      </span>
+                    )}
+                    <span className="font-black">{formatBRL(effectivePrice)}</span>
+                  </span>
+                )}
               </Button>
             )}
           </div>
