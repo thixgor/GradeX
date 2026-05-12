@@ -10,6 +10,14 @@ import { StudyMusicPlayer } from '@/components/study-music-player'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { LiteModeProvider } from '@/context/LiteModeContext'
+import {
+  DEFAULT_OG_IMAGE,
+  SITE_NAME,
+  absoluteUrl,
+  buildJsonLd,
+  getSiteUrl,
+  publicIndexingRobots,
+} from '@/lib/seo'
 
 const inter = Inter({ subsets: ['latin'] })
 const rowdies = Rowdies({
@@ -23,24 +31,40 @@ const spaceGrotesk = Space_Grotesk({
 })
 
 export const metadata: Metadata = {
-  title: 'DomineAqui - Seja o Foco. Seja a Referência.',
-  description: 'Domine Aqui. Seja o Foco. Seja a Referência. Provas, Flashcards, Cronogramas, Materiais. Plataforma completa para estudo inteligente com suporte a TRI e avaliação inteligente.',
-  keywords: 'provas, flashcards, cronogramas, materiais, estudo, educação, TRI, avaliação',
+  metadataBase: new URL(getSiteUrl()),
+  applicationName: SITE_NAME,
+  title: {
+    default: 'DomineAqui - Seja o Foco. Seja a Referência.',
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: 'Plataforma de estudo inteligente com provas, flashcards, cronogramas, materiais, TRI e avaliação com IA para estudantes que querem aprender com mais foco.',
+  keywords: ['estudo inteligente', 'plataforma de estudos', 'provas online', 'flashcards', 'cronogramas', 'TRI', 'avaliação com IA', 'materiais de estudo'],
+  authors: [{ name: SITE_NAME }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  category: 'education',
+  alternates: {
+    canonical: '/',
+  },
+  robots: publicIndexingRobots,
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
-      { url: '/favicon.jpg', type: 'image/jpeg' },
+      { url: '/favicon.png', type: 'image/png' },
     ],
     shortcut: '/favicon.ico',
-    apple: '/favicon.jpg',
+    apple: '/favicon.png',
   },
   openGraph: {
     title: 'DomineAqui - Seja o Foco. Seja a Referência.',
-    description: 'Domine Aqui. Provas, Flashcards, Cronogramas, Materiais.',
+    description: 'Provas, flashcards, cronogramas, materiais e estudo guiado por dados em uma plataforma completa.',
+    url: '/',
+    siteName: SITE_NAME,
+    locale: 'pt_BR',
     type: 'website',
     images: [
       {
-        url: 'https://i.imgur.com/zHm5aSx.jpeg',
+        url: DEFAULT_OG_IMAGE,
         width: 1200,
         height: 630,
         alt: 'DomineAqui - Plataforma de Estudo',
@@ -50,8 +74,11 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'DomineAqui - Seja o Foco. Seja a Referência.',
-    description: 'Domine Aqui. Provas, Flashcards, Cronogramas, Materiais.',
-    images: ['https://i.imgur.com/zHm5aSx.jpeg'],
+    description: 'Provas, flashcards, cronogramas, materiais e estudo guiado por dados.',
+    images: [DEFAULT_OG_IMAGE],
+  },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
   },
 }
 
@@ -60,6 +87,31 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const organizationJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: SITE_NAME,
+    url: getSiteUrl(),
+    logo: absoluteUrl('/logo.png'),
+    sameAs: ['https://instagram.com/domineaqui.br'],
+  }
+
+  const websiteJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: SITE_NAME,
+    url: getSiteUrl(),
+    inLanguage: 'pt-BR',
+    publisher: {
+      '@type': 'Organization',
+      name: SITE_NAME,
+      logo: {
+        '@type': 'ImageObject',
+        url: absoluteUrl('/logo.png'),
+      },
+    },
+  }
+
   return (
     <html lang="pt-BR" suppressHydrationWarning className={`${rowdies.variable} ${spaceGrotesk.variable}`}>
       <head>
@@ -67,6 +119,14 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `try{if(localStorage.getItem('lite-mode')==='true'){document.documentElement.classList.add('lite-mode')}}catch(e){}`,
           }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: buildJsonLd(organizationJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: buildJsonLd(websiteJsonLd) }}
         />
       </head>
       <body className={`${spaceGrotesk.className} gradient-overlay gradient-overlay-dark flex flex-col min-h-screen`}>

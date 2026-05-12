@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef, useTransition } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -124,6 +124,35 @@ interface MaterialPackage {
   _hasAccess?: boolean
 }
 
+interface BrowseSnapshot {
+  materials: Material[]
+  folders: Folder[]
+  allFolders: Folder[]
+  packages: MaterialPackage[]
+  purchasedIds: string[]
+  purchasedPackageIds: string[]
+  userGroups: string[]
+}
+
+const ROOT_FOLDER_KEY = 'root'
+
+function getBrowseKey(folderId: string | null, search: string, filter: string) {
+  return [
+    folderId || ROOT_FOLDER_KEY,
+    search.trim().toLowerCase(),
+    filter,
+  ].join('::')
+}
+
+function getFolderChildren(flat: Folder[], parentFolderId: string | null) {
+  return flat
+    .filter(folder => {
+      if (parentFolderId) return folder.parentFolderId === parentFolderId
+      return !folder.parentFolderId
+    })
+    .sort((a, b) => (a.order - b.order) || a.name.localeCompare(b.name, 'pt-BR'))
+}
+
 function formatDuration(seconds: number): string {
   const h = Math.floor(seconds / 3600)
   const m = Math.floor((seconds % 3600) / 60)
@@ -192,6 +221,7 @@ function MateriaisContent() {
   const [userGroups, setUserGroups] = useState<string[]>([])   // groups the current user belongs to
   const [ready, setReady] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
   const [search, setSearch] = useState('')
   const debouncedSearch = useDebounce(search, 350)
   const [activeFilter, setActiveFilter] = useState<'all' | 'free' | 'paid'>('all')
@@ -208,14 +238,20 @@ function MateriaisContent() {
   const [pdfDownloadError, setPdfDownloadError] = useState<string | null>(null)
   const [pdfDownloadMaterial, setPdfDownloadMaterial] = useState<Material | null>(null)
   const [downloadState, setDownloadState] = useState<PdfDownloadState>(INITIAL_DOWNLOAD_STATE)
+  const [isRoutePending, startRouteTransition] = useTransition()
   const stepTimersRef = useRef<ReturnType<typeof setTimeout>[]>([])
   const highlightRef = useRef<HTMLDivElement | null>(null)
+  const requestSeqRef = useRef(0)
+  const browseCacheRef = useRef<Map<string, BrowseSnapshot>>(new Map())
+  const allFoldersCacheRef = useRef<Folder[] | null>(null)
+  const packagesCacheRef = useRef<Pick<BrowseSnapshot, 'packages' | 'purchasedPackageIds' | 'userGroups'> | null>(null)
   const { copiedId, copy } = useCopyLink()
 
   useEffect(() => () => { stepTimersRef.current.forEach(clearTimeout) }, [])
 
   // Access check: true if user belongs to any of the item's allowed groups (or no restriction set)
-  const hasGroupAccess = useCallback((item: { allowedGroups?: string[] }): boolean => {
+  const hasGroupAccess = useCallback((item: { allowedGroups?: string[]; _hasGroupAccess?: boolean }): boolean => {
+    if (typeof item._hasGroupAccess === 'boolean') return item._hasGroupAccess
     if (!item.allowedGroups || item.allowedGroups.length === 0) return true
     return userGroups.some(g => item.allowedGroups!.includes(g))
   }, [userGroups])
@@ -232,48 +268,104 @@ function MateriaisContent() {
     return path
   }, [])
 
+  const applySnapshot = useCallback((snapshot: BrowseSnapshot, folderId: string | null) => {
+    setMaterials(snapshot.materials)
+    setFolders(snapshot.folders)
+    setAllFolders(snapshot.allFolders)
+    setPackages(snapshot.packages)
+    setPurchasedIds(snapshot.purchasedIds)
+    setPurchasedPackageIds(snapshot.purchasedPackageIds)
+    setUserGroups(snapshot.userGroups)
+    setFolderPath(folderId ? buildPath(folderId, snapshot.allFolders) : [])
+  }, [buildPath])
+
   // ─── Fetch all data ──────────────────────────────────────
-  const fetchData = useCallback(async (folderId: string | null, srch: string, filter: string) => {
-    setLoading(true)
+  const fetchData = useCallback(async (
+    folderId: string | null,
+    srch: string,
+    filter: string,
+    options?: { force?: boolean; prefetchOnly?: boolean }
+  ) => {
+    const key = getBrowseKey(folderId, srch, filter)
+    const cached = browseCacheRef.current.get(key)
+
+    if (cached && !options?.force) {
+      if (!options?.prefetchOnly) {
+        applySnapshot(cached, folderId)
+        setLoading(false)
+        setRefreshing(false)
+      }
+      return
+    }
+
+    if (!options?.prefetchOnly) {
+      const hasVisibleData = materials.length > 0 || folders.length > 0
+      setLoading(!hasVisibleData)
+      setRefreshing(hasVisibleData)
+    }
+
+    const requestId = options?.prefetchOnly ? requestSeqRef.current : ++requestSeqRef.current
+
     try {
       const params = new URLSearchParams()
       if (folderId) params.set('folderId', folderId)
       if (srch) params.set('search', srch)
       if (filter !== 'all') params.set('pricing', filter)
 
-      const [materialsRes, foldersRes, allFoldersRes, packagesRes] = await Promise.all([
-        fetch(`/api/materiais?${params}`, { cache: 'no-store' }),
-        fetch(`/api/materiais/folders${folderId ? `?parentFolderId=${folderId}` : ''}`, { cache: 'no-store' }),
-        fetch('/api/materiais/folders?all=true', { cache: 'no-store' }),
-        fetch('/api/materiais/packages', { cache: 'no-store' }),
+      const childFolderQuery = folderId ? `?parentFolderId=${folderId}` : ''
+      const allFoldersPromise = allFoldersCacheRef.current && !options?.force
+        ? Promise.resolve({ folders: allFoldersCacheRef.current })
+        : fetch('/api/materiais/folders?all=true', { cache: 'no-store' }).then(res => res.ok ? res.json() : { folders: [] })
+      const packagesPromise = packagesCacheRef.current && !options?.force
+        ? Promise.resolve(packagesCacheRef.current)
+        : fetch('/api/materiais/packages', { cache: 'no-store' }).then(res => res.ok ? res.json() : { packages: [], purchasedPackageIds: [], userGroups: [] })
+
+      const [materialsData, foldersData, allFoldersData, packagesData] = await Promise.all([
+        fetch(`/api/materiais?${params}`, { cache: 'no-store' }).then(res => res.ok ? res.json() : { materials: [], purchasedIds: [], userGroups: [] }),
+        fetch(`/api/materiais/folders${childFolderQuery}`, { cache: 'no-store' }).then(res => res.ok ? res.json() : { folders: [] }),
+        allFoldersPromise,
+        packagesPromise,
       ])
 
-      if (materialsRes.ok) {
-        const data = await materialsRes.json()
-        setMaterials(data.materials || [])
-        setPurchasedIds(data.purchasedIds || [])
-        setUserGroups(data.userGroups || [])
+      if (requestId !== requestSeqRef.current && !options?.prefetchOnly) return
+
+      const nextAllFolders: Folder[] = allFoldersData.folders || []
+      const nextPackages: MaterialPackage[] = packagesData.packages || []
+      const nextUserGroups = materialsData.userGroups?.length
+        ? materialsData.userGroups
+        : (packagesData.userGroups || [])
+
+      allFoldersCacheRef.current = nextAllFolders
+      packagesCacheRef.current = {
+        packages: nextPackages,
+        purchasedPackageIds: packagesData.purchasedPackageIds || [],
+        userGroups: packagesData.userGroups || [],
       }
-      if (foldersRes.ok) setFolders((await foldersRes.json()).folders || [])
-      if (allFoldersRes.ok) {
-        const flat: Folder[] = (await allFoldersRes.json()).folders || []
-        setAllFolders(flat)
-        // Rebuild path from flat list whenever we have a folder
-        if (folderId) setFolderPath(buildPath(folderId, flat))
+
+      const snapshot: BrowseSnapshot = {
+        materials: materialsData.materials || [],
+        folders: foldersData.folders || [],
+        allFolders: nextAllFolders,
+        packages: nextPackages,
+        purchasedIds: materialsData.purchasedIds || [],
+        purchasedPackageIds: packagesData.purchasedPackageIds || [],
+        userGroups: nextUserGroups,
       }
-      if (packagesRes.ok) {
-        const data = await packagesRes.json()
-        setPackages(data.packages || [])
-        setPurchasedPackageIds(data.purchasedPackageIds || [])
-        // Use packages userGroups as fallback if materials request didn't run (e.g. tab=packages)
-        if (data.userGroups?.length) setUserGroups(data.userGroups)
+
+      browseCacheRef.current.set(key, snapshot)
+
+      if (!options?.prefetchOnly) {
+        applySnapshot(snapshot, folderId)
       }
     } catch (err) {
       console.error('Erro ao carregar materiais:', err)
     } finally {
-      setLoading(false)
+      if (!options?.prefetchOnly && requestId === requestSeqRef.current) {
+        setLoading(false)
+        setRefreshing(false)
+      }
     }
-  }, [buildPath])
+  }, [applySnapshot, folders.length, materials.length])
 
   // ─── Init from URL params ────────────────────────────────
   useEffect(() => {
@@ -318,23 +410,41 @@ function MateriaisContent() {
 
   // ─── Navigation (syncs URL) ──────────────────────────────
   const navigateToFolder = useCallback((folder: Folder) => {
-    setCurrentFolderId(folder._id)
+    startRouteTransition(() => {
+      setCurrentFolderId(folder._id)
+      const flat = allFoldersCacheRef.current || allFolders
+      if (flat.length > 0) {
+        setFolderPath(buildPath(folder._id, flat))
+        setFolders(getFolderChildren(flat, folder._id))
+      } else {
+        setFolderPath(prev => [...prev, folder])
+      }
+    })
     router.push(`/materiais?folder=${folder._id}`, { scroll: false })
-  }, [router])
+  }, [allFolders, buildPath, router])
 
   const navigateToPathIndex = useCallback((index: number) => {
-    if (index < 0) {
-      setCurrentFolderId(null)
-      setFolderPath([])
-      router.push('/materiais', { scroll: false })
-    } else {
-      const newPath = folderPath.slice(0, index + 1)
-      const target = newPath[newPath.length - 1]
-      setCurrentFolderId(target._id)
-      setFolderPath(newPath)
-      router.push(`/materiais?folder=${target._id}`, { scroll: false })
-    }
-  }, [folderPath, router])
+    startRouteTransition(() => {
+      const flat = allFoldersCacheRef.current || allFolders
+      if (index < 0) {
+        setCurrentFolderId(null)
+        setFolderPath([])
+        if (flat.length > 0) setFolders(getFolderChildren(flat, null))
+        router.push('/materiais', { scroll: false })
+      } else {
+        const newPath = folderPath.slice(0, index + 1)
+        const target = newPath[newPath.length - 1]
+        setCurrentFolderId(target._id)
+        setFolderPath(newPath)
+        if (flat.length > 0) setFolders(getFolderChildren(flat, target._id))
+        router.push(`/materiais?folder=${target._id}`, { scroll: false })
+      }
+    })
+  }, [allFolders, folderPath, router])
+
+  const prefetchFolder = useCallback((folderId: string) => {
+    fetchData(folderId, debouncedSearch, activeFilter, { prefetchOnly: true }).catch(() => {})
+  }, [activeFilter, debouncedSearch, fetchData])
 
   // ─── Copy-link helpers ───────────────────────────────────
   const origin = typeof window !== 'undefined' ? window.location.origin : ''
@@ -379,7 +489,7 @@ function MateriaisContent() {
         const data = await res.json()
         if (data.free) {
           setSuccessMessage('Material adquirido com sucesso! Faça o download agora.')
-          fetchData(currentFolderId, search, activeFilter)
+          fetchData(currentFolderId, debouncedSearch, activeFilter, { force: true })
           setTimeout(() => setSuccessMessage(''), 4000)
         } else {
           alert(data.error || 'Erro ao processar')
@@ -521,8 +631,17 @@ function MateriaisContent() {
     return purchasedPackageIds.includes(id)
   }
 
-  const featuredMaterials = materials.filter(m => m.isFeatured)
-  const featuredPackages = packages.filter(p => p.isFeatured)
+  const featuredMaterials = useMemo(() => materials.filter(m => m.isFeatured), [materials])
+  const featuredPackages = useMemo(() => packages.filter(p => p.isFeatured), [packages])
+  const visibleMaterials = useMemo(
+    () => materials.filter(m => !m.isFeatured || currentFolderId),
+    [currentFolderId, materials]
+  )
+  const myMaterials = useMemo(() => materials.filter(m => m._hasAccess), [materials])
+  const currentFolder = currentFolderId
+    ? (allFolders.find(folder => folder._id === currentFolderId) || folderPath[folderPath.length - 1] || null)
+    : null
+  const isSoftLoading = refreshing || isRoutePending
 
   return (
     <div className="min-h-screen pb-20">
@@ -633,6 +752,27 @@ function MateriaisContent() {
               </button>
             ))}
           </motion.div>
+
+          <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border/40 bg-background/50 px-3 py-1.5 backdrop-blur">
+              <FolderOpen className="h-3.5 w-3.5 text-primary" />
+              {currentFolder ? currentFolder.name : 'Biblioteca principal'}
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border/40 bg-background/50 px-3 py-1.5 backdrop-blur">
+              <FileText className="h-3.5 w-3.5 text-primary" />
+              {visibleMaterials.length} {visibleMaterials.length === 1 ? 'material' : 'materiais'}
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border/40 bg-background/50 px-3 py-1.5 backdrop-blur">
+              <Package className="h-3.5 w-3.5 text-primary" />
+              {packages.length} {packages.length === 1 ? 'pacote' : 'pacotes'}
+            </span>
+            {isSoftLoading && (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 font-medium text-primary">
+                <span className="h-3 w-3 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+                Atualizando
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
@@ -737,6 +877,7 @@ function MateriaisContent() {
                       index={idx}
                       copiedId={copiedId}
                       onClick={() => navigateToFolder(folder)}
+                      onPrefetch={() => prefetchFolder(folder._id)}
                       onCopyLink={() => copyFolderLink(folder)}
                     />
                   ))}
@@ -755,7 +896,7 @@ function MateriaisContent() {
                   </div>
                 ))}
               </div>
-            ) : materials.length === 0 && folders.length === 0 ? (
+            ) : visibleMaterials.length === 0 && folders.length === 0 && featuredMaterials.length === 0 ? (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
                 <div className="h-20 w-20 rounded-full glass-card mx-auto flex items-center justify-center mb-4">
                   <Package className="h-8 w-8 text-muted-foreground" />
@@ -765,7 +906,7 @@ function MateriaisContent() {
               </motion.div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {materials.filter(m => !m.isFeatured || currentFolderId).map((material, idx) => (
+                {visibleMaterials.map((material, idx) => (
                   <div key={material._id} ref={highlightedMaterialId === material._id ? highlightRef : null}>
                     <MaterialCard
                       material={material}
@@ -832,9 +973,7 @@ function MateriaisContent() {
         )}
 
         {/* ─── Meus Materiais Tab ─── */}
-        {activeTab === 'mine' && (() => {
-          const myMaterials = materials.filter(m => m._hasAccess)
-          return (
+        {activeTab === 'mine' && (
             <>
               {loading ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -881,8 +1020,7 @@ function MateriaisContent() {
                 </div>
               )}
             </>
-          )
-        })()}
+        )}
       </div>
 
       {/* ─── Package Upsell Modal ─── */}
@@ -991,10 +1129,10 @@ function LockedGroupOverlay({ allowedGroups, onPreview }: { allowedGroups: strin
 
 // ─── Folder Card Component ───────────────────────────────────
 function FolderCard({
-  folder, index, copiedId, onClick, onCopyLink,
+  folder, index, copiedId, onClick, onPrefetch, onCopyLink,
 }: {
   folder: Folder; index: number; copiedId: string | null
-  onClick: () => void; onCopyLink: () => void
+  onClick: () => void; onPrefetch: () => void; onCopyLink: () => void
 }) {
   return (
     <motion.div
@@ -1003,6 +1141,16 @@ function FolderCard({
       transition={{ delay: Math.min(index * 0.03, 0.15), duration: 0.2 }}
       className="group relative rounded-2xl glass-card hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer"
       onClick={onClick}
+      onMouseEnter={onPrefetch}
+      onFocus={onPrefetch}
+      tabIndex={0}
+      role="button"
+      onKeyDown={e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClick()
+        }
+      }}
     >
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl pointer-events-none"
         style={{ background: `radial-gradient(circle at 50% 50%, ${folder.color || '#468152'}15, transparent 70%)` }}
@@ -1045,7 +1193,9 @@ function MaterialCard({
 }) {
   const isFree = material.pricing === 'free'
   // isPurchased includes manual admin grants → always grants full access
-  const canAccess = isPurchased || (groupAccess && isFree)
+  const canAccess = typeof material._hasAccess === 'boolean'
+    ? material._hasAccess
+    : isPurchased || (groupAccess && isFree)
   const isEmbed = material.type === 'video_embed'
   const pdfDownloadBlocked = !!material._hasPdf && material.pdfDownloadEnabled === false
   const [descExpanded, setDescExpanded] = useState(false)
@@ -1193,7 +1343,9 @@ function FeaturedCard({
   onAcquire: () => void; onDownload: () => void; onCopyLink: () => void; onPreview: () => void; loading: boolean
 }) {
   const isFree = material.pricing === 'free'
-  const canAccess = isPurchased || (groupAccess && isFree)
+  const canAccess = typeof material._hasAccess === 'boolean'
+    ? material._hasAccess
+    : isPurchased || (groupAccess && isFree)
   const isEmbed = material.type === 'video_embed'
   const pdfDownloadBlocked = !!material._hasPdf && material.pdfDownloadEnabled === false
   const [descExpanded, setDescExpanded] = useState(false)
@@ -1312,7 +1464,9 @@ function PackageCard({
   onAcquire: () => void; onCopyLink: () => void; onPreview: () => void; loading: boolean
 }) {
   const isFree = pkg.pricing === 'free'
-  const canAccess = isPurchased || (groupAccess && isFree)
+  const canAccess = typeof pkg._hasAccess === 'boolean'
+    ? pkg._hasAccess
+    : isPurchased || (groupAccess && isFree)
   const hasDiscount = pkg.originalPrice && pkg.originalPrice > (pkg.price || 0)
   const [descExpanded, setDescExpanded] = useState(false)
   const descLong = pkg.description && pkg.description.length > 120

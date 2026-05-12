@@ -1,19 +1,36 @@
 import type { Metadata } from 'next'
 import { ObjectId } from 'mongodb'
 import { getDb } from '@/lib/mongodb'
+import {
+  DEFAULT_OG_IMAGE,
+  absoluteUrl,
+  privateNoIndexRobots,
+  sanitizeSeoText,
+} from '@/lib/seo'
 
 const MATERIAIS_DESCRIPTION =
-  'Acesse os materiais exclusivos da DomineAqui: conteúdos cuidadosamente produzidos por especialistas, com PDFs, videoaulas e resumos de alto impacto para acelerar sua aprovação e potencializar seus estudos.'
+  'Acesse materiais de estudo da DomineAqui com conteúdos organizados, PDFs, vídeos e recursos para acelerar sua rotina de aprendizado.'
 
 export async function generateMetadata(
   { params }: { params: { id: string } }
 ): Promise<Metadata> {
   const fallback: Metadata = {
-    title: 'Materiais — DomineAqui',
+    title: 'Material de estudo',
     description: MATERIAIS_DESCRIPTION,
+    robots: privateNoIndexRobots,
+    alternates: {
+      canonical: params?.id ? `/materiais/${params.id}` : '/materiais',
+    },
     openGraph: {
-      title: 'Materiais — DomineAqui',
+      title: 'Material de estudo | DomineAqui',
       description: MATERIAIS_DESCRIPTION,
+      images: [DEFAULT_OG_IMAGE],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Material de estudo | DomineAqui',
+      description: MATERIAIS_DESCRIPTION,
+      images: [DEFAULT_OG_IMAGE],
     },
   }
 
@@ -25,18 +42,43 @@ export async function generateMetadata(
       .collection('materials')
       .findOne(
         { _id: new ObjectId(params.id) },
-        { projection: { title: 1 } }
+        { projection: { title: 1, description: 1, coverImage: 1, isHidden: 1, updatedAt: 1, createdAt: 1 } }
       )
 
     if (!material?.title) return fallback
 
-    const title = `${material.title} — DomineAqui`
+    const safeTitle = sanitizeSeoText(material.title, 'Material de estudo', 70)
+    const safeDescription = sanitizeSeoText(material.description, MATERIAIS_DESCRIPTION, 155)
+    const title = `${safeTitle || 'Material de estudo'}`
+    const image = material.coverImage ? absoluteUrl(material.coverImage) : DEFAULT_OG_IMAGE
+
     return {
       title,
-      description: MATERIAIS_DESCRIPTION,
+      description: safeDescription || MATERIAIS_DESCRIPTION,
+      robots: privateNoIndexRobots,
+      alternates: {
+        canonical: `/materiais/${params.id}`,
+      },
       openGraph: {
-        title,
-        description: MATERIAIS_DESCRIPTION,
+        title: `${title} | DomineAqui`,
+        description: safeDescription || MATERIAIS_DESCRIPTION,
+        url: `/materiais/${params.id}`,
+        siteName: 'DomineAqui',
+        type: 'article',
+        images: [
+          {
+            url: image,
+            width: 1200,
+            height: 630,
+            alt: title,
+          },
+        ],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: `${title} | DomineAqui`,
+        description: safeDescription || MATERIAIS_DESCRIPTION,
+        images: [image],
       },
     }
   } catch {

@@ -5,6 +5,9 @@ import { jwtVerify } from 'jose'
 // Rotas públicas (não precisam de autenticação)
 const publicRoutes = [
   '/',
+  '/robots.txt',
+  '/sitemap.xml',
+  '/manifest.json',
   '/auth/login',
   '/auth/register',
   '/auth/forgot-password',
@@ -47,6 +50,11 @@ function isAdminRoute(pathname: string): boolean {
   return adminPrefixes.some(prefix => pathname.startsWith(prefix))
 }
 
+function withNoIndex(response: NextResponse): NextResponse {
+  response.headers.set('X-Robots-Tag', 'noindex, nofollow')
+  return response
+}
+
 // Secret para JWT - deve ser o mesmo do auth.ts
 const secret = new TextEncoder().encode(
   process.env.JWT_SECRET || 'your-secret-key-change-this'
@@ -64,7 +72,10 @@ export async function middleware(request: NextRequest) {
     pathname.endsWith('.ico') ||
     pathname.endsWith('.png') ||
     pathname.endsWith('.jpg') ||
-    pathname.endsWith('.svg')
+    pathname.endsWith('.svg') ||
+    pathname.endsWith('.xml') ||
+    pathname.endsWith('.txt') ||
+    pathname.endsWith('.webmanifest')
   ) {
     return response
   }
@@ -80,15 +91,15 @@ export async function middleware(request: NextRequest) {
   if (!token) {
     // API routes retornam 401
     if (pathname.startsWith('/api/')) {
-      return NextResponse.json(
+      return withNoIndex(NextResponse.json(
         { error: 'Não autenticado' },
         { status: 401 }
-      )
+      ))
     }
     // Pages redirecionam para login
     const loginUrl = new URL('/auth/login', request.url)
     loginUrl.searchParams.set('redirect', pathname + request.nextUrl.search)
-    return NextResponse.redirect(loginUrl)
+    return withNoIndex(NextResponse.redirect(loginUrl))
   }
 
   // Verificar JWT na Edge (leve, sem consulta ao DB)
@@ -99,35 +110,36 @@ export async function middleware(request: NextRequest) {
     if (isAdminRoute(pathname)) {
       if (payload.role !== 'admin') {
         if (pathname.startsWith('/api/')) {
-          return NextResponse.json(
+          return withNoIndex(NextResponse.json(
             { error: 'Acesso negado' },
             { status: 403 }
-          )
+          ))
         }
-        return NextResponse.redirect(new URL('/dashboard', request.url))
+        return withNoIndex(NextResponse.redirect(new URL('/dashboard', request.url)))
       }
     }
 
     // Adicionar dados do usuário nos headers para uso nos server components
     response.headers.set('x-user-id', payload.userId as string)
     response.headers.set('x-user-role', payload.role as string)
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow')
 
     return response
   } catch {
     // Token inválido ou expirado
     if (pathname.startsWith('/api/')) {
       // API routes: retornar 401 JSON em vez de redirecionar (evita 404)
-      const res = NextResponse.json(
+      const res = withNoIndex(NextResponse.json(
         { error: 'Token expirado ou inválido' },
         { status: 401 }
-      )
+      ))
       res.cookies.delete('auth-token')
       return res
     }
     // Pages: redirecionar para login preservando a URL de retorno
     const loginUrl = new URL('/auth/login', request.url)
     loginUrl.searchParams.set('redirect', pathname + request.nextUrl.search)
-    const res = NextResponse.redirect(loginUrl)
+    const res = withNoIndex(NextResponse.redirect(loginUrl))
     res.cookies.delete('auth-token')
     return res
   }
