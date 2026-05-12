@@ -145,21 +145,14 @@ export function AppShell({
   const examsRemaining = examsLimit !== null ? Math.max(0, examsLimit - examsUsed) : null
   const tierLimitExceeded = isAdmin ? false : (examsRemaining !== null && examsRemaining <= 0)
 
-  async function handleLogout() {
-    // Clear immediately so stale in-flight bootstrap responses cannot repaint
-    // the old account while the logout request is completing.
+  function handleLogout() {
+    // Limpa cache client-side imediatamente e redireciona sem esperar resposta
+    // do servidor — o cookie será removido quando a requisição chegar, mas não
+    // há motivo para bloquear o redirect por isso (especialmente em mobile com
+    // rede lenta). A página de login rejeitaria uma sessão válida de qualquer forma.
     clearBootstrapCache()
-
-    try {
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        cache: 'no-store',
-      })
-    } finally {
-      clearBootstrapCache()
-      router.replace('/auth/login')
-      router.refresh()
-    }
+    fetch('/api/auth/logout', { method: 'POST', cache: 'no-store' }).catch(() => {})
+    router.replace('/auth/login')
   }
 
   function handleCreateExam() {
