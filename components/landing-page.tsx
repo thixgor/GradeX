@@ -781,59 +781,84 @@ export default function LandingPage({
             })}
             whileHover={shouldReduceMotion ? {} : { scale: 1.005, y: -2 }}
             className="group block rounded-3xl overflow-hidden border border-white/[0.10] transition-all duration-300 hover:border-emerald-400/25 hover:shadow-[0_0_60px_rgba(74,222,128,0.12)] cursor-pointer"
+            style={{ background: 'rgba(7,14,30,0.90)' }}
           >
-            {/* Wrapper: mobile altura fixa, desktop proporção 2073:758 */}
-            <div className="relative h-[260px] sm:h-[320px] lg:h-auto lg:[aspect-ratio:2073/758]">
+            {/* MOBILE: imagem completa + conteúdo abaixo */}
+            <div className="lg:hidden">
+              <Image
+                src="https://i.imgur.com/9h3bMzL.png"
+                alt="Resumos da Giulia Modesto"
+                width={2073}
+                height={758}
+                className="w-full h-auto block transition-transform duration-500 group-hover:scale-[1.02]"
+                sizes="100vw"
+              />
+              <div className="p-5">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-amber-400/30 bg-amber-400/[0.10] mb-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                  <span className="text-[10px] font-bold text-amber-300 uppercase tracking-wide">Parceria Exclusiva</span>
+                </div>
+                <h3 className="text-xl font-bold text-white mb-1.5 leading-tight">
+                  Resumos da Giulia Modesto
+                </h3>
+                <p className="text-sm text-slate-300 mb-4 leading-relaxed">
+                  Resumos aprofundados, exatamente como cai na prova — OSCE, N1 e Multiestação. SOI e HAM · Medicina · 1° e 2° Períodos.
+                </p>
+                <div className="flex flex-wrap gap-1.5 mb-4">
+                  {['SOI e HAM', 'Medicina', '1° e 2° Períodos', 'OSCE', 'N1', 'Multiestação'].map((tag) => (
+                    <span key={tag} className="px-2 py-0.5 rounded-md text-[11px] font-semibold text-teal-300 border border-teal-400/20 bg-teal-400/[0.07]">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <div
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-[#040816]"
+                  style={{ background: 'linear-gradient(135deg, #4ADE80 0%, #2DD4BF 100%)' }}
+                >
+                  Ver Resumos <ArrowRight className="w-4 h-4" />
+                </div>
+              </div>
+            </div>
+
+            {/* DESKTOP: imagem na proporção 2073×758, conteúdo sobreposto à direita */}
+            <div className="hidden lg:block relative" style={{ aspectRatio: '2073/758' }}>
               <Image
                 src="https://i.imgur.com/9h3bMzL.png"
                 alt="Resumos da Giulia Modesto"
                 fill
                 className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.02]"
-                sizes="(max-width: 1280px) 100vw, 1280px"
-              />
-
-              {/* Overlay — escurece baixo e direita */}
-              <div className="absolute inset-0 pointer-events-none"
-                style={{ background: 'linear-gradient(to right, transparent 30%, rgba(4,8,22,0.85) 100%)' }}
+                sizes="1280px"
               />
               <div className="absolute inset-0 pointer-events-none"
-                style={{ background: 'linear-gradient(to top, rgba(4,8,22,0.88) 0%, rgba(4,8,22,0.30) 50%, transparent 100%)' }}
+                style={{ background: 'linear-gradient(to right, transparent 35%, rgba(4,8,22,0.90) 100%)' }}
               />
-
-              {/* Conteúdo sobreposto */}
-              <div className="absolute inset-0 flex flex-col justify-end lg:justify-center lg:items-end p-5 sm:p-7 lg:p-10">
-                <div className="w-full lg:w-[44%]">
-                  {/* Badge */}
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-amber-400/30 bg-black/40 backdrop-blur-sm mb-3">
+              <div className="absolute inset-0 pointer-events-none"
+                style={{ background: 'linear-gradient(to top, rgba(4,8,22,0.60) 0%, transparent 60%)' }}
+              />
+              <div className="absolute inset-0 flex items-center justify-end p-10">
+                <div className="w-[42%]">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-amber-400/30 bg-black/40 backdrop-blur-sm mb-4">
                     <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
                     <span className="text-[10px] font-bold text-amber-300 uppercase tracking-wide">Parceria Exclusiva</span>
                   </div>
-
-                  <h3 className="text-xl sm:text-2xl lg:text-[1.75rem] font-bold text-white mb-1.5 leading-tight drop-shadow-lg">
+                  <h3 className="text-[1.75rem] font-bold text-white mb-2 leading-tight drop-shadow-lg">
                     Resumos da Giulia Modesto
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-200 mb-3 leading-relaxed drop-shadow max-w-sm">
+                  <p className="text-sm text-slate-200 mb-4 leading-relaxed drop-shadow">
                     Resumos aprofundados, exatamente como cai na prova — OSCE, N1 e Multiestação. SOI e HAM · Medicina · 1° e 2° Períodos.
                   </p>
-
-                  {/* Tags — visíveis sm+ */}
-                  <div className="hidden sm:flex flex-wrap gap-1.5 mb-4">
+                  <div className="flex flex-wrap gap-1.5 mb-5">
                     {['SOI e HAM', 'Medicina', '1° e 2° Períodos', 'OSCE', 'N1', 'Multiestação'].map((tag) => (
-                      <span key={tag}
-                        className="px-2 py-0.5 rounded-md text-[11px] font-semibold text-teal-200 border border-teal-400/25 bg-black/35 backdrop-blur-sm"
-                      >
+                      <span key={tag} className="px-2 py-0.5 rounded-md text-[11px] font-semibold text-teal-200 border border-teal-400/25 bg-black/35 backdrop-blur-sm">
                         {tag}
                       </span>
                     ))}
                   </div>
-
-                  {/* CTA */}
                   <div
                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-[#040816] shadow-lg transition-all group-hover:opacity-90"
                     style={{ background: 'linear-gradient(135deg, #4ADE80 0%, #2DD4BF 100%)' }}
                   >
-                    Ver Resumos
-                    <ArrowRight className="w-4 h-4" />
+                    Ver Resumos <ArrowRight className="w-4 h-4" />
                   </div>
                 </div>
               </div>
