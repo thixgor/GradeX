@@ -53,7 +53,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { AppShell } from '@/components/app-shell'
 
 type ModalMode = 'create' | 'edit'
-type ActiveSection = 'materials' | 'folders' | 'packages'
+type ActiveSection = 'materials' | 'folders' | 'packages' | 'tracker'
 
 interface Material {
   _id: string
@@ -127,6 +127,83 @@ interface MaterialPackage {
   createdAt: string
 }
 
+interface MaterialTraceResult {
+  parsed: {
+    uidSuffix: string
+    mailFingerprint: string
+    orderId: string
+    licensedName: string
+    materialIds: string[]
+  }
+  users: Array<{
+    id: string
+    name: string
+    email: string
+    emailFingerprint: string
+    role: string
+    accountType: string
+    secondaryRole: string
+    cpf: string
+    dateOfBirth: string | null
+    isAfyaMedicineStudent: boolean
+    afyaUnit: string
+    createdAt: string | null
+    lastLoginAt: string | null
+  }>
+  materials: Array<{ id: string; title: string; type: string; pricing: string; price: number; hasPdf: boolean }>
+  purchases: Array<{
+    id: string
+    userId: string
+    userName: string
+    userEmail: string
+    itemType: string
+    itemId: string
+    itemTitle: string
+    price: number
+    status: string
+    purchasedAt: string | null
+    provider: string
+    providerOrderId: string
+    providerPaymentId: string
+  }>
+  paymentOrders: Array<{
+    id: string
+    payerName: string
+    payerEmail: string
+    type: string
+    refId: string
+    amount: number
+    status: string
+    paymentMethod: string
+    providerOrderId: string
+    providerPaymentId: string
+    createdAt: string | null
+    paidAt: string | null
+  }>
+  payments: Array<{
+    id: string
+    orderId: string
+    amount: number
+    status: string
+    paymentMethod: string
+    installments: number | null
+    createdAt: string | null
+    paidAt: string | null
+    providerPaymentId: string
+  }>
+  downloads: Array<{
+    id: string
+    userName: string
+    userEmail: string
+    userId: string
+    materialId: string
+    materialTitle: string
+    orderId: string
+    downloadedAt: string | null
+    ip: string
+  }>
+}
+
 const typeOptions = [
   { value: 'pdf', label: 'PDF', icon: <FileText className="h-4 w-4" /> },
   { value: 'video', label: 'Vídeo (download)', icon: <Video className="h-4 w-4" /> },
@@ -144,6 +221,20 @@ const ACCESS_GROUPS = [
   { id: 'premium', label: 'Premium', color: '#f59e0b', emoji: '👑' },
   { id: 'monitor', label: 'Monitor', color: '#10b981', emoji: '🎓' },
 ] as const
+
+const formatTraceDate = (value?: string | null, withTime = true) => {
+  if (!value) return 'Nao informado'
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return 'Nao informado'
+  return date.toLocaleString('pt-BR', withTime
+    ? { dateStyle: 'short', timeStyle: 'short' }
+    : { dateStyle: 'short' })
+}
+
+const formatTraceMoney = (value?: number) =>
+  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value || 0))
+
+const traceText = (value?: string | null) => value || 'Nao informado'
 
 // ─── Tree Node Type ─────────────────────────────────────────
 interface FolderTreeNode extends Folder {
@@ -203,6 +294,10 @@ function AdminMateriaisContent() {
   const [packages, setPackages] = useState<MaterialPackage[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [traceQuery, setTraceQuery] = useState('')
+  const [traceLoading, setTraceLoading] = useState(false)
+  const [traceError, setTraceError] = useState('')
+  const [traceResult, setTraceResult] = useState<MaterialTraceResult | null>(null)
 
   // Modal states
   const [showMaterialModal, setShowMaterialModal] = useState(false)
@@ -252,6 +347,33 @@ function AdminMateriaisContent() {
     setCopiedId(id)
     setTimeout(() => setCopiedId(null), 2000)
   }
+
+  const runTraceSearch = useCallback(async () => {
+    const q = traceQuery.trim()
+    if (q.length < 3) {
+      setTraceError('Cole o watermark completo ou informe UID, mail-*, pedido, email ou ID.')
+      setTraceResult(null)
+      return
+    }
+
+    setTraceLoading(true)
+    setTraceError('')
+    try {
+      const res = await fetch(`/api/admin/materiais/trace?q=${encodeURIComponent(q)}`, { cache: 'no-store' })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setTraceError(data.error || 'Nao foi possivel rastrear esse identificador.')
+        setTraceResult(null)
+        return
+      }
+      setTraceResult(data)
+    } catch {
+      setTraceError('Erro de conexao ao rastrear o identificador.')
+      setTraceResult(null)
+    } finally {
+      setTraceLoading(false)
+    }
+  }, [traceQuery])
 
   // User search with debounce
   const handleUserSearch = (q: string) => {
@@ -1019,26 +1141,28 @@ function AdminMateriaisContent() {
 
       {/* Tabs + Search + Actions */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-6">
-        <div className="flex gap-1 p-1 rounded-xl bg-muted/50">
-          {(['materials', 'folders', 'packages'] as const).map((section) => (
+        <div className="flex gap-1 p-1 rounded-xl bg-muted/50 overflow-x-auto max-w-full">
+          {(['materials', 'folders', 'packages', 'tracker'] as const).map((section) => (
             <button
               key={section}
               onClick={() => setActiveSection(section)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
                 activeSection === section
                   ? 'bg-background shadow-sm text-foreground'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              {section === 'materials' ? 'Materiais' : section === 'folders' ? 'Pastas' : 'Pacotes'}
+              {section === 'materials' ? 'Materiais' : section === 'folders' ? 'Pastas' : section === 'packages' ? 'Pacotes' : 'Rastreamento'}
             </button>
           ))}
         </div>
 
-        <div className="relative flex-1 max-w-xs">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Buscar..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9 h-9 rounded-lg" />
-        </div>
+        {activeSection !== 'tracker' && (
+          <div className="relative flex-1 max-w-xs">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input placeholder="Buscar..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9 h-9 rounded-lg" />
+          </div>
+        )}
 
         <div className="ml-auto flex gap-2">
           {activeSection === 'materials' && (
@@ -1062,6 +1186,264 @@ function AdminMateriaisContent() {
           )}
         </div>
       </div>
+
+      {/* ═══ Material ID Tracker ═══ */}
+      {activeSection === 'tracker' && (
+        <div className="space-y-4">
+          <div className="rounded-xl border bg-background p-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div className="flex items-start gap-3">
+                <div className="h-10 w-10 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0">
+                  <ShieldCheck className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-semibold">Rastreamento de watermark</h3>
+                  <p className="text-sm text-muted-foreground mt-1 max-w-2xl">
+                    Cole o texto do rodape do PDF, UID, fingerprint mail-*, pedido, email, ID de usuario ou ID de material.
+                  </p>
+                </div>
+              </div>
+              {traceResult && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => { setTraceQuery(''); setTraceResult(null); setTraceError('') }}
+                  className="gap-1.5"
+                >
+                  <X className="h-4 w-4" /> Limpar
+                </Button>
+              )}
+            </div>
+
+            <Textarea
+              value={traceQuery}
+              onChange={e => setTraceQuery(e.target.value)}
+              onKeyDown={e => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') runTraceSearch()
+              }}
+              rows={4}
+              className="mt-4 font-mono text-xs"
+              placeholder={'Licenciado para: Thiago Rodrigues | UID 8442e007 | mail-14xckd7 | Pedido: ADMIN | Download: 11/05/2026, 23:19'}
+            />
+
+            <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-xs text-muted-foreground">
+                O mail-* nao e reversivel. O sistema tenta encontrar a conta recalculando o mesmo fingerprint para os emails atuais.
+              </p>
+              <Button onClick={runTraceSearch} disabled={traceLoading || traceQuery.trim().length < 3} className="gap-1.5 sm:w-auto">
+                {traceLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+                Rastrear
+              </Button>
+            </div>
+
+            {traceError && (
+              <div className="mt-3 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-600">
+                {traceError}
+              </div>
+            )}
+          </div>
+
+          {traceResult && (
+            <>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {[
+                  { label: 'Usuarios', value: traceResult.users.length, icon: <Users className="h-4 w-4" />, color: 'text-blue-500' },
+                  { label: 'Compras', value: traceResult.purchases.length, icon: <BadgeCheck className="h-4 w-4" />, color: 'text-emerald-500' },
+                  { label: 'Pagamentos', value: traceResult.paymentOrders.length + traceResult.payments.length, icon: <CreditCard className="h-4 w-4" />, color: 'text-orange-500' },
+                  { label: 'Downloads', value: traceResult.downloads.length, icon: <Download className="h-4 w-4" />, color: 'text-violet-500' },
+                ].map(item => (
+                  <div key={item.label} className="rounded-xl border bg-background p-3">
+                    <div className={`flex items-center gap-2 ${item.color}`}>
+                      {item.icon}
+                      <span className="text-xs font-medium text-muted-foreground">{item.label}</span>
+                    </div>
+                    <p className="text-2xl font-bold mt-1">{item.value}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="rounded-xl border bg-background p-4">
+                <h4 className="font-semibold mb-3">Dados extraidos</h4>
+                <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                  {[
+                    ['Nome', traceResult.parsed.licensedName],
+                    ['UID', traceResult.parsed.uidSuffix],
+                    ['Email fingerprint', traceResult.parsed.mailFingerprint],
+                    ['Pedido', traceResult.parsed.orderId],
+                  ].map(([label, value]) => (
+                    <div key={label} className="rounded-lg bg-muted/40 px-3 py-2 min-w-0">
+                      <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</p>
+                      <p className="text-sm font-medium truncate">{traceText(value)}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid gap-4 lg:grid-cols-2">
+                <div className="rounded-xl border bg-background p-4">
+                  <h4 className="font-semibold mb-3">Conta</h4>
+                  {traceResult.users.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">Nenhuma conta encontrada com os identificadores informados.</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {traceResult.users.map(user => (
+                        <div key={user.id} className="rounded-lg border p-3">
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0">
+                              <p className="font-medium truncate">{traceText(user.name)}</p>
+                              <p className="text-sm text-muted-foreground truncate">{traceText(user.email)}</p>
+                            </div>
+                            <span className="rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
+                              {user.accountType}
+                            </span>
+                          </div>
+                          <div className="mt-3 grid gap-2 text-xs sm:grid-cols-2">
+                            <span><b>ID:</b> {user.id}</span>
+                            <span><b>mail:</b> {user.emailFingerprint}</span>
+                            <span><b>Nascimento:</b> {formatTraceDate(user.dateOfBirth, false)}</span>
+                            <span><b>CPF:</b> {traceText(user.cpf)}</span>
+                            <span><b>Role:</b> {[user.role, user.secondaryRole].filter(Boolean).join(' / ') || 'user'}</span>
+                            <span><b>Unidade:</b> {user.isAfyaMedicineStudent ? traceText(user.afyaUnit) : 'Sem faculdade vinculada'}</span>
+                            <span><b>Criada em:</b> {formatTraceDate(user.createdAt)}</span>
+                            <span><b>Ultimo login:</b> {formatTraceDate(user.lastLoginAt)}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="rounded-xl border bg-background p-4">
+                  <h4 className="font-semibold mb-3">Materiais associados</h4>
+                  {traceResult.materials.length === 0 && traceResult.parsed.materialIds.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">Nenhum material identificado diretamente no texto.</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {traceResult.materials.map(material => (
+                        <div key={material.id} className="rounded-lg border p-3">
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="min-w-0">
+                              <p className="font-medium truncate">{traceText(material.title)}</p>
+                              <p className="text-xs text-muted-foreground truncate">{material.id}</p>
+                            </div>
+                            <span className="text-xs text-muted-foreground">{material.hasPdf ? 'PDF interno' : material.type}</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-2">{material.pricing === 'paid' ? formatTraceMoney(material.price) : 'Gratuito'}</p>
+                        </div>
+                      ))}
+                      {traceResult.materials.length === 0 && traceResult.parsed.materialIds.map(id => (
+                        <div key={id} className="rounded-lg border p-3 text-sm">{id}</div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="rounded-xl border bg-background p-4">
+                <h4 className="font-semibold mb-3">Compras e acessos</h4>
+                {traceResult.purchases.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">Nenhuma compra/acesso encontrado para esse rastreio.</p>
+                ) : (
+                  <div className="grid gap-3 lg:grid-cols-2">
+                    {traceResult.purchases.map(purchase => (
+                      <div key={purchase.id} className="rounded-lg border p-3">
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                          <div className="min-w-0">
+                            <p className="font-medium truncate">{traceText(purchase.itemTitle)}</p>
+                            <p className="text-xs text-muted-foreground truncate">{traceText(purchase.userName)} · {traceText(purchase.userEmail)}</p>
+                          </div>
+                          <span className="rounded-md bg-muted px-2 py-1 text-xs">{traceText(purchase.status)}</span>
+                        </div>
+                        <div className="mt-3 grid gap-2 text-xs sm:grid-cols-2">
+                          <span><b>Comprou em:</b> {formatTraceDate(purchase.purchasedAt)}</span>
+                          <span><b>Valor:</b> {formatTraceMoney(purchase.price)}</span>
+                          <span><b>Tipo:</b> {traceText(purchase.itemType)}</span>
+                          <span><b>Provider:</b> {traceText(purchase.provider)}</span>
+                          <span className="truncate"><b>Pedido:</b> {traceText(purchase.providerOrderId)}</span>
+                          <span className="truncate"><b>Pagamento:</b> {traceText(purchase.providerPaymentId)}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="grid gap-4 lg:grid-cols-2">
+                <div className="rounded-xl border bg-background p-4">
+                  <h4 className="font-semibold mb-3">Pedidos de pagamento</h4>
+                  {traceResult.paymentOrders.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">Nenhum pedido de pagamento encontrado.</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {traceResult.paymentOrders.map(order => (
+                        <div key={order.id} className="rounded-lg border p-3 text-sm">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="font-medium">{formatTraceMoney(order.amount)}</span>
+                            <span className="rounded-md bg-muted px-2 py-1 text-xs">{traceText(order.status)}</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-2 truncate">{traceText(order.payerName)} · {traceText(order.payerEmail)}</p>
+                          <div className="mt-2 grid gap-1 text-xs sm:grid-cols-2">
+                            <span><b>Metodo:</b> {traceText(order.paymentMethod)}</span>
+                            <span><b>Pago em:</b> {formatTraceDate(order.paidAt)}</span>
+                            <span className="truncate"><b>ID:</b> {order.id}</span>
+                            <span className="truncate"><b>Ref:</b> {traceText(order.refId)}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {traceResult.payments.length > 0 && (
+                    <div className="mt-4 border-t pt-3">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Transacoes</p>
+                      <div className="space-y-2">
+                        {traceResult.payments.map(payment => (
+                          <div key={payment.id} className="rounded-lg bg-muted/40 p-3 text-xs">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="font-medium">{formatTraceMoney(payment.amount)}</span>
+                              <span>{traceText(payment.status)}</span>
+                            </div>
+                            <div className="mt-2 grid gap-1 sm:grid-cols-2">
+                              <span><b>Metodo:</b> {traceText(payment.paymentMethod)}</span>
+                              <span><b>Pago em:</b> {formatTraceDate(payment.paidAt)}</span>
+                              <span className="truncate"><b>Pedido:</b> {traceText(payment.orderId)}</span>
+                              <span className="truncate"><b>Provider:</b> {traceText(payment.providerPaymentId)}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="rounded-xl border bg-background p-4">
+                  <h4 className="font-semibold mb-3">Downloads registrados</h4>
+                  {traceResult.downloads.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">Nenhum download encontrado nos logs.</p>
+                  ) : (
+                    <div className="space-y-2 max-h-[420px] overflow-auto pr-1">
+                      {traceResult.downloads.map(log => (
+                        <div key={log.id} className="rounded-lg border p-3 text-sm">
+                          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                            <span className="font-medium truncate">{traceText(log.materialTitle)}</span>
+                            <span className="text-xs text-muted-foreground">{formatTraceDate(log.downloadedAt)}</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-1 truncate">{traceText(log.userName)} · {traceText(log.userEmail)}</p>
+                          <div className="mt-2 grid gap-1 text-xs sm:grid-cols-2">
+                            <span className="truncate"><b>Material:</b> {traceText(log.materialId)}</span>
+                            <span className="truncate"><b>Pedido:</b> {traceText(log.orderId)}</span>
+                            <span className="truncate"><b>Usuario:</b> {traceText(log.userId)}</span>
+                            <span><b>IP:</b> {traceText(log.ip)}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      )}
 
       {/* ═══ Materials List ═══ */}
       {activeSection === 'materials' && (

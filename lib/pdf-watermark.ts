@@ -12,6 +12,7 @@
  */
 
 import { PDFDocument, rgb, degrees, StandardFonts, PDFPage } from 'pdf-lib'
+import { emailFingerprint } from './watermark-fingerprint'
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 
@@ -80,18 +81,6 @@ function trimText(value: string, maxLength: number): string {
   const normalized = (value || '').replace(/\s+/g, ' ').trim()
   if (normalized.length <= maxLength) return normalized
   return `${normalized.slice(0, Math.max(0, maxLength - 3))}...`
-}
-
-function emailFingerprint(email: string): string {
-  const normalized = (email || '').trim().toLowerCase()
-  if (!normalized) return 'mail-na'
-
-  let hash = 5381
-  for (let i = 0; i < normalized.length; i++) {
-    hash = ((hash << 5) + hash) ^ normalized.charCodeAt(i)
-  }
-
-  return `mail-${(hash >>> 0).toString(36).slice(0, 8)}`
 }
 
 function getWatermarkRenderConfig(): WatermarkRenderConfig {
