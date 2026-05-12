@@ -11,14 +11,14 @@ export const dynamic = 'force-dynamic'
 export async function GET(request: NextRequest) {
   try {
     const session = await getSession()
-    if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
-    const isAdmin = session.role === 'admin'
+    const isAuthenticated = !!session
+    const isAdmin = session?.role === 'admin'
 
     const db = await getDb()
-    const userDoc = await db.collection('users').findOne(
+    const userDoc = session ? await db.collection('users').findOne(
       { _id: new ObjectId(session.userId) },
       { projection: { accountType: 1, secondaryRole: 1, email: 1 } }
-    )
+    ) : null
     const userGroups = getUserGroups(userDoc as any)
 
     const filter: any = {
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
 
     // Determina compras do usuário (somente decks pagos linkados a /materiais)
     const purchasedSet = new Set<string>()
-    if (!isAdmin) {
+    if (session && !isAdmin) {
       const linkedIds = decks.map(d => d.linkedMaterialId).filter(Boolean) as string[]
       if (linkedIds.length > 0) {
         const baseFilter: any = { itemType: 'material', status: 'completed' }
@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
       const hasGroupAccess = allowedGroups.length === 0 || userGroups.some(g => allowedGroups.includes(g))
       const isPurchased = isAdmin || (!!d.linkedMaterialId && purchasedSet.has(d.linkedMaterialId))
       const isFreeForUser = d.pricing === 'free' && hasGroupAccess
-      const hasAccess = isAdmin || isPurchased || isFreeForUser
+      const hasAccess = isAuthenticated && (isAdmin || isPurchased || isFreeForUser)
       return {
         ...normalizeDeckForResponse(d),
         _isPurchased: isPurchased,
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    const res = NextResponse.json({ decks: enriched, userGroups })
+    const res = NextResponse.json({ decks: enriched, userGroups, isAuthenticated })
     res.headers.set('Cache-Control', 'no-store, max-age=0, must-revalidate')
     return res
   } catch (error) {

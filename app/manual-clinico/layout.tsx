@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { requireSidebarSectionAccess } from '@/lib/sidebar-section-access'
 import { privateNoIndexRobots } from '@/lib/seo'
 
 export const metadata: Metadata = {
@@ -12,12 +11,10 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function ManualClinicoLayout({
+export default function ManualClinicoLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  await requireSidebarSectionAccess('manualClinico')
-
   return children
 }

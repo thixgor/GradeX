@@ -16,6 +16,9 @@ const publicRoutes = [
   '/politica-de-privacidade',
   '/termos-de-servico',
   '/buy',
+  '/materiais',
+  '/flashcards',
+  '/manual-clinico',
 ]
 
 // Prefixos públicos
@@ -43,6 +46,18 @@ const adminPrefixes = ['/admin/', '/api/admin/']
 
 function isPublicRoute(pathname: string): boolean {
   if (publicRoutes.includes(pathname)) return true
+  if (/^\/materiais\/[a-fA-F0-9]{24}$/.test(pathname)) return true
+  if (/^\/pacotes\/[a-fA-F0-9]{24}$/.test(pathname)) return true
+  if (
+    pathname === '/api/materiais' ||
+    pathname === '/api/materiais/folders' ||
+    pathname === '/api/materiais/packages' ||
+    pathname === '/api/flashcards/manual/store' ||
+    pathname === '/api/flashcards/manual/folders' ||
+    pathname === '/api/manual-clinico'
+  ) return true
+  if (/^\/api\/materiais\/[a-fA-F0-9]{24}$/.test(pathname)) return true
+  if (/^\/api\/materiais\/packages\/[a-fA-F0-9]{24}$/.test(pathname)) return true
   return publicPrefixes.some(prefix => pathname.startsWith(prefix))
 }
 

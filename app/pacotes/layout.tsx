@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { requireSidebarSectionAccess } from '@/lib/sidebar-section-access'
 import { DEFAULT_OG_IMAGE, absoluteUrl, privateNoIndexRobots } from '@/lib/seo'
 
 const PACOTES_DESCRIPTION =
@@ -35,12 +34,10 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function PacotesLayout({
+export default function PacotesLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  await requireSidebarSectionAccess('materiais')
-
   return children
 }

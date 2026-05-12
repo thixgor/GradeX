@@ -15,9 +15,7 @@ export async function GET(
 ) {
   try {
     const session = await getSession()
-    if (!session) {
-      return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
-    }
+    const isAuthenticated = !!session
 
     const { id } = params
     if (!id || !ObjectId.isValid(id)) {
@@ -25,13 +23,13 @@ export async function GET(
     }
 
     const db = await getDb()
-    const isAdmin = session.role === 'admin'
+    const isAdmin = session?.role === 'admin'
 
     const [userDoc, pkg] = await Promise.all([
-      db.collection('users').findOne(
+      session ? db.collection('users').findOne(
         { _id: new ObjectId(session.userId) },
         { projection: { accountType: 1, secondaryRole: 1 } }
-      ),
+      ) : Promise.resolve(null),
       db.collection('material_packages').findOne({
         _id: new ObjectId(id),
         ...(isAdmin ? {} : { isHidden: false }),
@@ -43,7 +41,7 @@ export async function GET(
     }
 
     const userGroups: string[] = []
-    if (!isAdmin && userDoc) {
+    if (session && !isAdmin && userDoc) {
       if (userDoc.accountType) userGroups.push(userDoc.accountType)
       if (userDoc.secondaryRole === 'monitor') userGroups.push('monitor')
     }
@@ -88,7 +86,7 @@ export async function GET(
 
     if (isAdmin) {
       isPackagePurchased = true
-    } else {
+    } else if (session) {
       const matIdsStr = orderedMaterials.map((m: any) => String(m._id))
 
       // Single query covering both itemTypes via $or, plus a fallback
@@ -140,7 +138,7 @@ export async function GET(
       userGroups.some((g: string) => pkg.allowedGroups.includes(g))
 
     const hasAccess =
-      isAdmin || isPackagePurchased || (hasGroupAccess && pkg.pricing !== 'paid')
+      isAuthenticated && (isAdmin || isPackagePurchased || (hasGroupAccess && pkg.pricing !== 'paid'))
 
     // ─── Preço efetivo (desconto proporcional anti-burla) ─────
     const pricing = computeEffectivePackagePrice({
@@ -159,10 +157,10 @@ export async function GET(
         userGroups.some((g: string) => m.allowedGroups.includes(g))
       const matPurchased = isAdmin || purchasedSet.has(idStr)
       const matHasAccess =
-        isAdmin ||
+        isAuthenticated && (isAdmin ||
         isPackagePurchased ||
         matPurchased ||
-        (matGroupAccess && m.pricing !== 'paid')
+        (matGroupAccess && m.pricing !== 'paid'))
       return {
         _id: idStr,
         title: m.title,
@@ -204,6 +202,7 @@ export async function GET(
         hasGroupAccess,
         hasAccess,
         userGroups,
+        isAuthenticated,
       },
       pricing: {
         originalPackagePrice: pricing.originalPackagePrice,

@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { requireSidebarSectionAccess } from '@/lib/sidebar-section-access'
 import { DEFAULT_OG_IMAGE, absoluteUrl, privateNoIndexRobots } from '@/lib/seo'
 
 const FLASHCARDS_DESCRIPTION =
@@ -34,12 +33,10 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function FlashcardsLayout({
+export default function FlashcardsLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  await requireSidebarSectionAccess('flashcards')
-
   return children
 }

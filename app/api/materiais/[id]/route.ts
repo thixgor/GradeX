@@ -11,9 +11,7 @@ export async function GET(
 ) {
   try {
     const session = await getSession()
-    if (!session) {
-      return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
-    }
+    const isAuthenticated = !!session
 
     const { id } = params
     if (!id || !ObjectId.isValid(id)) {
@@ -21,14 +19,14 @@ export async function GET(
     }
 
     const db = await getDb()
-    const isAdmin = session.role === 'admin'
+    const isAdmin = session?.role === 'admin'
 
     // Fetch user + material + folder in parallel
     const [userDoc, material] = await Promise.all([
-      db.collection('users').findOne(
+      session ? db.collection('users').findOne(
         { _id: new ObjectId(session.userId) },
         { projection: { accountType: 1, secondaryRole: 1, name: 1, cpf: 1 } }
-      ),
+      ) : Promise.resolve(null),
       db.collection('materials').findOne({
         _id: new ObjectId(id),
         ...(isAdmin ? {} : { isHidden: false }),
@@ -40,7 +38,7 @@ export async function GET(
     }
 
     const userGroups: string[] = []
-    if (!isAdmin && userDoc) {
+    if (session && !isAdmin && userDoc) {
       if (userDoc.accountType) userGroups.push(userDoc.accountType)
       if (userDoc.secondaryRole === 'monitor') userGroups.push('monitor')
     }
@@ -63,7 +61,7 @@ export async function GET(
 
     // Check purchase (two queries to avoid $or index quirks)
     let isPurchased = false
-    if (!isAdmin) {
+    if (session && !isAdmin) {
       const baseFilter = { itemId: id, itemType: 'material', status: 'completed' }
       const byUserId = await db.collection('material_purchases').findOne({
         ...baseFilter,
@@ -84,11 +82,11 @@ export async function GET(
       }
     }
 
-    const canAccess = isAdmin || isPurchased || (hasGroupAccess && material.pricing === 'free')
+    const canAccess = isAuthenticated && (isAdmin || isPurchased || (hasGroupAccess && material.pricing === 'free'))
 
-    // Strip video embed URL if no access
+    // Strip real asset URL if no access
     const safeMaterial =
-      !canAccess && material.type === 'video_embed'
+      !canAccess
         ? { ...material, downloadUrl: '' }
         : material
 
@@ -114,8 +112,9 @@ export async function GET(
       isPurchased,
       hasGroupAccess,
       userGroups,
+      isAuthenticated,
       watermark: {
-        name: userDoc?.name || session.name || 'Usuário',
+        name: userDoc?.name || session?.name || 'Usuário',
         cpf: userDoc?.cpf || '',
       },
     })

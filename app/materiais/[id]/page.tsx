@@ -79,6 +79,7 @@ interface PageData {
   isPurchased: boolean
   hasGroupAccess: boolean
   userGroups: string[]
+  isAuthenticated: boolean
   watermark: { name: string; cpf: string }
 }
 
@@ -140,7 +141,6 @@ export default function MaterialViewPage() {
     setLoading(true)
     try {
       const res = await fetch(`/api/materiais/${id}`, { cache: 'no-store' })
-      if (res.status === 401) { router.push('/auth/login'); return }
       if (res.status === 404) { router.push('/materiais'); return }
       if (!res.ok) { setError('Erro ao carregar material'); return }
       const json = await res.json()
@@ -279,6 +279,12 @@ export default function MaterialViewPage() {
       keepalive: true,
     }).catch(() => {})
 
+    if (!data.isAuthenticated) {
+      const checkoutPath = `/materiais/checkout?type=material&id=${id}`
+      router.push(`/auth/login?redirect=${encodeURIComponent(checkoutPath)}`)
+      return
+    }
+
     if (!skipUpsell) {
       try {
         const pkgsRes = await fetch('/api/materiais/packages?includeAccess=true', { cache: 'no-store' })
@@ -344,7 +350,7 @@ export default function MaterialViewPage() {
     : 'Baixar Material'
 
   return (
-    <AppShell headerTitle={material.title} headerSubtitle={TYPE_LABELS[material.type] || 'Material'}>
+    <AppShell allowGuest headerTitle={material.title} headerSubtitle={TYPE_LABELS[material.type] || 'Material'}>
       <div className="min-h-full relative">
 
         {/* Ambient blobs — lighter than before */}
@@ -788,6 +794,10 @@ export default function MaterialViewPage() {
           item={{ id, title: data.material.title, price: data.material.price, type: data.material.type }}
           onBuyPackage={() => {
             setUpsellPkg(null)
+            if (!data.isAuthenticated) {
+              router.push(`/auth/login?redirect=${encodeURIComponent(`/materiais/checkout?type=package&id=${upsellPkg._id}`)}`)
+              return
+            }
             router.push(`/materiais/checkout?type=package&id=${upsellPkg._id}`)
           }}
           onBuyIndividual={() => {
@@ -804,7 +814,7 @@ export default function MaterialViewPage() {
 // ─── Skeleton ─────────────────────────────────────────────────
 function LoadingSkeleton() {
   return (
-    <AppShell headerTitle="Carregando...">
+    <AppShell allowGuest headerTitle="Carregando...">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="h-7 w-48 rounded-xl bg-muted animate-pulse mb-6" />
         <div className="flex flex-col xl:flex-row gap-6">
@@ -830,7 +840,7 @@ function LoadingSkeleton() {
 // ─── Error ────────────────────────────────────────────────────
 function ErrorState({ message, onBack }: { message: string; onBack: () => void }) {
   return (
-    <AppShell headerTitle="Erro">
+    <AppShell allowGuest headerTitle="Erro">
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4 px-4">
         <div className="h-20 w-20 rounded-3xl glass-card flex items-center justify-center mb-2">
           <Package className="h-9 w-9 text-muted-foreground" />

@@ -10,9 +10,6 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getSession()
-    if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
-
     const scope = request.nextUrl.searchParams.get('scope')
     const db = await getDb()
 
@@ -25,6 +22,9 @@ export async function GET(request: NextRequest) {
         .toArray()
       return NextResponse.json({ folders: folders.map(normalizeFolderForResponse) })
     }
+
+    const session = await getSession()
+    if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
 
     // Pastas pessoais do usuário
     const folders = await db

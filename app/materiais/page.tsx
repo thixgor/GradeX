@@ -132,6 +132,7 @@ interface BrowseSnapshot {
   purchasedIds: string[]
   purchasedPackageIds: string[]
   userGroups: string[]
+  isAuthenticated: boolean
 }
 
 const ROOT_FOLDER_KEY = 'root'
@@ -219,6 +220,7 @@ function MateriaisContent() {
   const [purchasedIds, setPurchasedIds] = useState<string[]>([])
   const [purchasedPackageIds, setPurchasedPackageIds] = useState<string[]>([])
   const [userGroups, setUserGroups] = useState<string[]>([])   // groups the current user belongs to
+  const [isAuthenticated, setIsAuthenticated] = useState(true)
   const [ready, setReady] = useState(false)
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
@@ -276,6 +278,7 @@ function MateriaisContent() {
     setPurchasedIds(snapshot.purchasedIds)
     setPurchasedPackageIds(snapshot.purchasedPackageIds)
     setUserGroups(snapshot.userGroups)
+    setIsAuthenticated(snapshot.isAuthenticated)
     setFolderPath(folderId ? buildPath(folderId, snapshot.allFolders) : [])
   }, [buildPath])
 
@@ -350,6 +353,7 @@ function MateriaisContent() {
         purchasedIds: materialsData.purchasedIds || [],
         purchasedPackageIds: packagesData.purchasedPackageIds || [],
         userGroups: nextUserGroups,
+        isAuthenticated: !!(materialsData.isAuthenticated || packagesData.isAuthenticated),
       }
 
       browseCacheRef.current.set(key, snapshot)
@@ -478,6 +482,11 @@ function MateriaisContent() {
         }),
         keepalive: true,
       }).catch(() => {})
+    }
+    if (!isAuthenticated) {
+      const checkoutPath = `/materiais/checkout?type=${itemType}&id=${itemId}`
+      router.push(`/auth/login?redirect=${encodeURIComponent(checkoutPath)}`)
+      return
     }
     if (item && (item.pricing === 'free' || !item.price)) {
       setCheckoutLoading(itemId)
@@ -1774,7 +1783,7 @@ function PreviewModal({
 // ─── Page Export with AppShell ───────────────────────────────
 export default function MateriaisPage() {
   return (
-    <AppShell headerTitle="Materiais" headerSubtitle="Marketplace de materiais de estudo">
+    <AppShell allowGuest headerTitle="Materiais" headerSubtitle="Marketplace de materiais de estudo">
       <MateriaisContent />
     </AppShell>
   )

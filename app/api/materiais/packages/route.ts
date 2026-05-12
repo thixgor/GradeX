@@ -9,16 +9,14 @@ export const dynamic = 'force-dynamic'
 export async function GET(request: NextRequest) {
   try {
     const session = await getSession()
-    if (!session) {
-      return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
-    }
+    const isAuthenticated = !!session
 
     const db = await getDb()
-    const isAdmin = session.role === 'admin'
+    const isAdmin = session?.role === 'admin'
 
     // Fetch user groups for access control
     let userGroups: string[] = []
-    if (!isAdmin) {
+    if (session && !isAdmin) {
       const user = await db.collection('users').findOne(
         { _id: new ObjectId(session.userId) },
         { projection: { accountType: 1, secondaryRole: 1 } }
@@ -59,7 +57,7 @@ export async function GET(request: NextRequest) {
     // Verificar compras do usuário
     // Two separate queries (userId and userEmail) to avoid any $or index quirks.
     let purchasedPackageIds: string[] = []
-    if (!isAdmin) {
+    if (session && !isAdmin) {
       const baseFilter = { itemType: 'package', status: 'completed' }
 
       const byUserId = await db
@@ -91,7 +89,7 @@ export async function GET(request: NextRequest) {
         !pkg.allowedGroups?.length ||
         userGroups.some((g: string) => pkg.allowedGroups.includes(g))
       const isPurchased = isAdmin || purchasedSet.has(idStr)
-      const hasAccess = isAdmin || isPurchased || (hasGroupAccess && pkg.pricing !== 'paid')
+      const hasAccess = isAuthenticated && (isAdmin || isPurchased || (hasGroupAccess && pkg.pricing !== 'paid'))
 
       return {
         ...pkg,
@@ -107,6 +105,7 @@ export async function GET(request: NextRequest) {
       packages: packagesWithMaterials,
       purchasedPackageIds,
       userGroups,
+      isAuthenticated,
     })
     res.headers.set('Cache-Control', 'no-store, max-age=0, must-revalidate')
     return res

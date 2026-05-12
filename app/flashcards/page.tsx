@@ -96,6 +96,8 @@ export default function FlashcardsHubPage() {
   const [communitySort, setCommunitySort] = useState<'trending' | 'new' | 'featured'>('trending')
   const [adminFolders, setAdminFolders] = useState<FolderWithId[]>([])
   const [storeFolder, setStoreFolder] = useState<string | null>(null)
+  const [authChecked, setAuthChecked] = useState(false)
+  const [isGuest, setIsGuest] = useState(false)
 
   const syncStateFromUrl = useCallback(() => {
     if (typeof window === 'undefined') return
@@ -121,10 +123,14 @@ export default function FlashcardsHubPage() {
   }, [])
 
   const selectSection = useCallback((nextFilter: Filter) => {
+    if (isGuest && nextFilter !== 'store') {
+      router.push(`/auth/login?redirect=${encodeURIComponent('/flashcards')}`)
+      return
+    }
     setFilter(nextFilter)
     if (nextFilter !== 'store') setStoreFolder(null)
     updateFlashcardsUrl(nextFilter, nextFilter === 'store' ? storeFolder : null)
-  }, [storeFolder, updateFlashcardsUrl])
+  }, [isGuest, router, storeFolder, updateFlashcardsUrl])
 
   const selectStoreFolder = useCallback((folderId: string | null) => {
     setStoreFolder(folderId)
@@ -188,11 +194,29 @@ export default function FlashcardsHubPage() {
   useEffect(() => {
     (async () => {
       try {
-        const me = await fetch('/api/auth/me').then(r => r.json())
+        const res = await fetch('/api/auth/me', { cache: 'no-store' })
+        if (!res.ok) {
+          setIsGuest(true)
+          setFilter('store')
+          updateFlashcardsUrl('store', null)
+          return
+        }
+        const me = await res.json()
         setIsAdmin(me.user?.role === 'admin')
-      } catch {}
+        setIsGuest(!me.user)
+        if (!me.user) {
+          setFilter('store')
+          updateFlashcardsUrl('store', null)
+        }
+      } catch {
+        setIsGuest(true)
+        setFilter('store')
+        updateFlashcardsUrl('store', null)
+      } finally {
+        setAuthChecked(true)
+      }
     })()
-  }, [])
+  }, [updateFlashcardsUrl])
 
   useEffect(() => {
     syncStateFromUrl()
@@ -201,9 +225,13 @@ export default function FlashcardsHubPage() {
   }, [syncStateFromUrl])
 
   useEffect(() => {
+    if (!authChecked) return
     setLoading(true)
-    Promise.all([loadMine(), loadFolders(), loadCommunity(), loadStore(), loadShared()]).finally(() => setLoading(false))
-  }, [loadMine, loadFolders, loadCommunity, loadStore, loadShared])
+    const loaders = isGuest
+      ? [loadStore()]
+      : [loadMine(), loadFolders(), loadCommunity(), loadStore(), loadShared()]
+    Promise.all(loaders).finally(() => setLoading(false))
+  }, [authChecked, isGuest, loadMine, loadFolders, loadCommunity, loadStore, loadShared])
 
   const deleteDeck = useCallback(async (id: string) => {
     if (!confirm('Apagar este deck e todos os cartões?')) return
@@ -251,7 +279,7 @@ export default function FlashcardsHubPage() {
   const showSection = (key: Filter) => filter === 'all' || filter === key
 
   return (
-    <AppShell>
+    <AppShell allowGuest>
       {/* Ambient background */}
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
         <div className="absolute -top-40 -left-32 h-[380px] w-[380px] rounded-full bg-violet-500/20 blur-2xl" />
@@ -273,6 +301,7 @@ export default function FlashcardsHubPage() {
               <strong className="text-amber-600 dark:text-amber-300">decks oficiais</strong> dos especialistas.
             </p>
           </div>
+          {!isGuest && (
           <div className="flex flex-wrap items-center gap-2">
             <Link href="/flashcards/ia">
               <button className="inline-flex items-center gap-2 rounded-2xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-white/5 backdrop-blur-md px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-white hover:bg-white/90 dark:hover:bg-white/10 transition shadow-sm">
@@ -287,7 +316,14 @@ export default function FlashcardsHubPage() {
               <ArrowRight className="h-4 w-4 -ml-1 opacity-0 group-hover:opacity-100 group-hover:ml-0 transition-all" />
             </button>
           </div>
+          )}
         </header>
+
+        {isGuest && (
+          <div className="rounded-3xl border border-amber-300/40 bg-amber-50/80 px-4 py-3 text-sm text-amber-900 shadow-sm backdrop-blur-xl dark:border-amber-400/20 dark:bg-amber-500/10 dark:text-amber-100">
+            Você está na loja oficial de flashcards. Meus decks, comunidade, recebidos, criação e estudo exigem login.
+          </div>
+        )}
 
         {/* Loja oficial — Hero (oculto se filter=='store' para não duplicar) */}
         {filter !== 'store' && featuredStore.length > 0 && (
@@ -307,6 +343,7 @@ export default function FlashcardsHubPage() {
           counts={counts}
           foldersOpen={foldersOpen}
           setFoldersOpen={setFoldersOpen}
+          guestMode={isGuest}
         />
 
         {(filter === 'mine' || filter === 'all') && foldersOpen && (
@@ -725,7 +762,7 @@ function CompactStoreCard({ deck }: { deck: DeckWithId }) {
 // Toolbar + Filtros
 // ──────────────────────────────────────────────────────────────────────────────
 
-function Toolbar({ search, setSearch, filter, setFilter, counts, foldersOpen, setFoldersOpen }: {
+function Toolbar({ search, setSearch, filter, setFilter, counts, foldersOpen, setFoldersOpen, guestMode = false }: {
   search: string
   setSearch: (s: string) => void
   filter: Filter
@@ -733,6 +770,7 @@ function Toolbar({ search, setSearch, filter, setFilter, counts, foldersOpen, se
   counts: { all: number; mine: number; community: number; store: number; shared: number }
   foldersOpen: boolean
   setFoldersOpen: (cb: (v: boolean) => boolean) => void
+  guestMode?: boolean
 }) {
   return (
     <div className={cn(
@@ -752,12 +790,20 @@ function Toolbar({ search, setSearch, filter, setFilter, counts, foldersOpen, se
           />
         </div>
         <div className="flex gap-1.5 overflow-x-auto pb-0.5 -mb-0.5 overscroll-x-contain">
-          <ChipFilter active={filter === 'all'} onClick={() => setFilter('all')} count={counts.all} icon={<Layers className="h-3.5 w-3.5" />}>Tudo</ChipFilter>
-          <ChipFilter active={filter === 'mine'} onClick={() => setFilter('mine')} count={counts.mine} icon={<Inbox className="h-3.5 w-3.5" />}>Meus</ChipFilter>
+          {!guestMode && (
+            <>
+              <ChipFilter active={filter === 'all'} onClick={() => setFilter('all')} count={counts.all} icon={<Layers className="h-3.5 w-3.5" />}>Tudo</ChipFilter>
+              <ChipFilter active={filter === 'mine'} onClick={() => setFilter('mine')} count={counts.mine} icon={<Inbox className="h-3.5 w-3.5" />}>Meus</ChipFilter>
+            </>
+          )}
           <ChipFilter active={filter === 'store'} onClick={() => setFilter('store')} count={counts.store} icon={<Crown className="h-3.5 w-3.5" />} accent="amber">Loja</ChipFilter>
-          <ChipFilter active={filter === 'community'} onClick={() => setFilter('community')} count={counts.community} icon={<Globe className="h-3.5 w-3.5" />}>Comunidade</ChipFilter>
-          <ChipFilter active={filter === 'shared'} onClick={() => setFilter('shared')} count={counts.shared} icon={<Users className="h-3.5 w-3.5" />}>Recebidos</ChipFilter>
-          {(filter === 'mine' || filter === 'all') && (
+          {!guestMode && (
+            <>
+              <ChipFilter active={filter === 'community'} onClick={() => setFilter('community')} count={counts.community} icon={<Globe className="h-3.5 w-3.5" />}>Comunidade</ChipFilter>
+              <ChipFilter active={filter === 'shared'} onClick={() => setFilter('shared')} count={counts.shared} icon={<Users className="h-3.5 w-3.5" />}>Recebidos</ChipFilter>
+            </>
+          )}
+          {!guestMode && (filter === 'mine' || filter === 'all') && (
             <button
               onClick={() => setFoldersOpen((v: boolean) => !v)}
               className={cn(

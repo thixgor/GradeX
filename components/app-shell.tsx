@@ -7,12 +7,12 @@ import { CreateExamModal } from '@/components/create-exam-modal'
 import { BanChecker } from '@/components/ban-checker'
 import { SupportChat } from '@/components/support-chat'
 import { PageLoading } from '@/components/page-loading'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { NotificationsBell } from '@/components/notifications-bell'
 import { Logo } from '@/components/logo'
 import { cn } from '@/lib/utils'
-import { Menu } from 'lucide-react'
+import { LogIn, Menu, ShieldAlert } from 'lucide-react'
 import { useBootstrap, clearBootstrapCache } from '@/hooks/use-bootstrap'
 import { FocusSessionProvider } from '@/hooks/use-focus-session'
 import { FocusSessionButton } from '@/components/focus-session-button'
@@ -77,13 +77,17 @@ interface AppShellProps {
   showHeader?: boolean
   headerTitle?: string
   headerSubtitle?: string
+  allowGuest?: boolean
+  guestNotice?: boolean
 }
 
 export function AppShell({
   children,
   showHeader = true,
   headerTitle,
-  headerSubtitle
+  headerSubtitle,
+  allowGuest = false,
+  guestNotice = true,
 }: AppShellProps) {
   const router = useRouter()
   const pathname = usePathname()
@@ -114,7 +118,7 @@ export function AppShell({
     sidebarSections,
     refetch: refetchBootstrap,
   } = useBootstrap({
-    redirectOnUnauth: true, // Auto-redirect to login if not authenticated
+    redirectOnUnauth: !allowGuest, // Auto-redirect to login if not authenticated
   })
 
   // Transform bootstrap user to local format
@@ -178,9 +182,17 @@ Contato: (21) 99777-0936`)
     return <PageLoading variant="fullscreen" message="Carregando..." />
   }
 
+  const isAuthError = !!error && (
+    (error as any).status === 401 ||
+    (error as any).status === 403 ||
+    error.message.includes('401') ||
+    error.message.includes('403')
+  )
+  const isGuest = allowGuest && !user && (isAuthError || !isAuthenticated)
+
   // Handle error or unauthenticated state
   // The useBootstrap hook with redirectOnUnauth will handle the redirect
-  if (error || !user) {
+  if ((error && !isGuest) || (!user && !isGuest)) {
     return <PageLoading variant="fullscreen" message="Redirecionando..." />
   }
 
@@ -200,6 +212,50 @@ Contato: (21) 99777-0936`)
     loading,
     sidebarCollapsed,
     sidebarSections,
+  }
+
+  if (isGuest) {
+    const loginHref = typeof window !== 'undefined'
+      ? `/auth/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`
+      : '/auth/login'
+
+    return (
+      <AppShellContext.Provider value={contextValue}>
+        <FocusSessionProvider>
+          <div className="min-h-screen bg-background">
+            {showHeader && (
+              <header className="sticky top-0 z-30 border-b border-white/20 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/65">
+                <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Logo variant="icon" size="sm" />
+                    <div className="min-w-0">
+                      <h1 className="truncate text-sm font-semibold sm:text-lg">
+                        {headerTitle || 'DomineAqui'}
+                      </h1>
+                      {headerSubtitle && (
+                        <p className="hidden truncate text-xs text-muted-foreground sm:block">
+                          {headerSubtitle}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <a href={loginHref} className={cn(buttonVariants({ size: 'sm' }), 'h-9 rounded-xl')}>
+                    <LogIn className="mr-2 h-4 w-4" />
+                    Entrar
+                  </a>
+                </div>
+              </header>
+            )}
+
+            <main className="min-h-screen">
+              {children}
+            </main>
+
+            {guestNotice && <GuestAccessNotice />}
+          </div>
+        </FocusSessionProvider>
+      </AppShellContext.Provider>
+    )
   }
 
   return (
@@ -312,5 +368,92 @@ Contato: (21) 99777-0936`)
       </div>
       </FocusSessionProvider>
     </AppShellContext.Provider>
+  )
+}
+
+function GuestAccessNotice() {
+  const [mounted, setMounted] = useState(false)
+  const [position, setPosition] = useState({ x: 18, y: 18 })
+  const [dragging, setDragging] = useState(false)
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
+
+  useEffect(() => {
+    setMounted(true)
+    const setInitialPosition = () => {
+      const width = Math.min(320, window.innerWidth - 32)
+      setPosition({
+        x: Math.max(12, window.innerWidth - width - 18),
+        y: Math.max(12, window.innerHeight - 174),
+      })
+    }
+    setInitialPosition()
+    window.addEventListener('resize', setInitialPosition)
+    return () => window.removeEventListener('resize', setInitialPosition)
+  }, [])
+
+  useEffect(() => {
+    if (!dragging) return
+
+    function onPointerMove(event: PointerEvent) {
+      const width = Math.min(320, window.innerWidth - 32)
+      const height = 142
+      setPosition({
+        x: Math.min(Math.max(12, event.clientX - dragOffset.x), window.innerWidth - width - 12),
+        y: Math.min(Math.max(12, event.clientY - dragOffset.y), window.innerHeight - height - 12),
+      })
+    }
+
+    function onPointerUp() {
+      setDragging(false)
+    }
+
+    window.addEventListener('pointermove', onPointerMove)
+    window.addEventListener('pointerup', onPointerUp)
+    return () => {
+      window.removeEventListener('pointermove', onPointerMove)
+      window.removeEventListener('pointerup', onPointerUp)
+    }
+  }, [dragOffset.x, dragOffset.y, dragging])
+
+  if (!mounted) return null
+
+  const loginHref = `/auth/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`
+
+  return (
+    <div
+      className="fixed z-[60] w-[min(320px,calc(100vw-32px))] touch-none select-none overflow-hidden rounded-2xl border border-white/35 bg-white/55 p-3.5 text-slate-900 shadow-2xl shadow-emerald-900/15 backdrop-blur-2xl dark:border-white/15 dark:bg-slate-950/55 dark:text-white"
+      style={{ left: position.x, top: position.y }}
+      onPointerDown={(event) => {
+        const rect = event.currentTarget.getBoundingClientRect()
+        setDragging(true)
+        setDragOffset({ x: event.clientX - rect.left, y: event.clientY - rect.top })
+      }}
+      role="status"
+      aria-live="polite"
+    >
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(22,163,74,0.22),rgba(255,255,255,0.20)_38%,rgba(245,158,11,0.18)_68%,rgba(20,184,166,0.18))] dark:bg-[linear-gradient(135deg,rgba(22,163,74,0.22),rgba(15,23,42,0.25)_40%,rgba(245,158,11,0.14)_70%,rgba(20,184,166,0.16))]" />
+      <div aria-hidden className="pointer-events-none absolute -right-10 -top-12 h-28 w-28 rounded-full bg-emerald-300/30 blur-2xl" />
+      <div className="relative flex items-start gap-3">
+        <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-emerald-300/35 bg-emerald-500/15 text-emerald-700 dark:text-emerald-200">
+          <ShieldAlert className="h-4 w-4" />
+        </div>
+        <div className="min-w-0">
+          <p className="text-sm font-bold leading-tight">Você está vendo como visitante</p>
+          <p className="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-300">
+            Catálogo liberado. Compra, download, viewer e áreas de estudo exigem login.
+          </p>
+        </div>
+      </div>
+      <div className="relative mt-3 flex justify-end">
+        <a
+          href={loginHref}
+          className="inline-flex h-8 items-center gap-1.5 rounded-xl bg-emerald-700 px-3 text-xs font-bold text-white shadow-lg shadow-emerald-700/20 transition hover:bg-emerald-600"
+          onPointerDown={(event) => event.stopPropagation()}
+        >
+          <LogIn className="h-3.5 w-3.5" />
+          Entrar para liberar
+        </a>
+      </div>
+    </div>
   )
 }

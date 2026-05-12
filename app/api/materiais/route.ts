@@ -9,9 +9,7 @@ export const dynamic = 'force-dynamic'
 export async function GET(request: NextRequest) {
   try {
     const session = await getSession()
-    if (!session) {
-      return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
-    }
+    const isAuthenticated = !!session
 
     const db = await getDb()
     const { searchParams } = new URL(request.url)
@@ -21,11 +19,11 @@ export async function GET(request: NextRequest) {
     const featured = searchParams.get('featured')
     const moduloId = searchParams.get('moduloId')
 
-    const isAdmin = session.role === 'admin'
+    const isAdmin = session?.role === 'admin'
 
     // Fetch user groups for access control
     let userGroups: string[] = []
-    if (!isAdmin) {
+    if (session && !isAdmin) {
       const user = await db.collection('users').findOne(
         { _id: new ObjectId(session.userId) },
         { projection: { accountType: 1, secondaryRole: 1 } }
@@ -77,7 +75,7 @@ export async function GET(request: NextRequest) {
     // Two separate queries (userId and userEmail) then merge, to avoid any $or
     // index quirks and ensure manual admin grants are always detected.
     let purchasedIds: string[] = []
-    if (!isAdmin) {
+    if (session && !isAdmin) {
       const baseFilter = { itemType: 'material', status: 'completed' }
 
       // Query by userId (primary — always present)
@@ -145,10 +143,10 @@ export async function GET(request: NextRequest) {
         userGroups.some((g: string) => m.allowedGroups.includes(g))
       const isPurchased = isAdmin || purchasedSet.has(idStr)
       // Access = admin OR purchased/granted OR (group member AND free)
-      const hasAccess = isAdmin || isPurchased || (hasGroupAccess && m.pricing !== 'paid')
+      const hasAccess = isAuthenticated && (isAdmin || isPurchased || (hasGroupAccess && m.pricing !== 'paid'))
 
-      // Strip the real embed URL for video_embed when no access (security)
-      const downloadUrl = !hasAccess && m.type === 'video_embed' ? '' : m.downloadUrl
+      // Strip any real asset URL when no access (security)
+      const downloadUrl = hasAccess ? m.downloadUrl : ''
 
       // PDF interno: nunca expor blobUrl ao cliente
       const hasPdf = !!m.pdfFile?.blobUrl
@@ -184,6 +182,7 @@ export async function GET(request: NextRequest) {
       materials: secureMaterials,
       purchasedIds,
       userGroups, // groups the current user belongs to (for client-side access check)
+      isAuthenticated,
     })
     // Prevent any browser/CDN caching — access state must always be fresh
     res.headers.set('Cache-Control', 'no-store, max-age=0, must-revalidate')

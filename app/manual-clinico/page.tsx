@@ -36,7 +36,8 @@ import {
   FileDown,
   Highlighter,
   Loader2,
-  RotateCcw
+  RotateCcw,
+  LogIn
 } from 'lucide-react'
 import { AREAS_SAUDE, SISTEMAS_FISIOLOGICOS, type AreaSaude, type SistemaFisiologico } from '@/lib/types/manual-clinico'
 import { clearAllManualHighlights, hasAnyManualHighlights } from '@/lib/manual-clinico-highlights'
@@ -112,7 +113,7 @@ export default function ManualClinicoPage() {
   }, [])
 
   return (
-    <AppShell showHeader={false}>
+    <AppShell allowGuest showHeader={false}>
       {interstitialChecked && showInterstitial && (
         <DoacaoInterstitialLazy
           context="manual-clinico"
@@ -171,12 +172,22 @@ function ManualClinicoContent() {
   const [pdfLoading, setPdfLoading] = useState(false)
   const [hasHighlights, setHasHighlights] = useState(false)
   const [resetConfirm, setResetConfirm] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(true)
 
   useEffect(() => {
     setHasHighlights(hasAnyManualHighlights())
+    fetch('/api/auth/me', { cache: 'no-store' })
+      .then(res => {
+        setIsAuthenticated(res.ok)
+      })
+      .catch(() => setIsAuthenticated(false))
   }, [])
 
   async function handleGeneratePDF() {
+    if (!isAuthenticated) {
+      router.push(`/auth/login?redirect=${encodeURIComponent('/manual-clinico')}`)
+      return
+    }
     setPdfLoading(true)
     try {
       const res = await fetch('/api/manual-clinico?export=true')
@@ -293,7 +304,7 @@ function ManualClinicoContent() {
                 Manual Clínico
               </h1>
               <p className="text-muted-foreground mt-3 max-w-xl text-base sm:text-lg leading-relaxed">
-                Explore patologias estruturadas para estudo de alta fixação cognitiva.
+                Explore as patologias disponíveis. Para abrir conteúdos completos, baixar o manual e salvar marcações, entre na sua conta.
               </p>
               {total > 0 && (
                 <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20">
@@ -317,7 +328,7 @@ function ManualClinicoContent() {
                   {pdfLoading
                     ? <Loader2 className="h-4 w-4 animate-spin" />
                     : <FileDown className="h-4 w-4" />}
-                  {pdfLoading ? 'Gerando PDF...' : 'Baixar Manual Completo (PDF)'}
+                  {pdfLoading ? 'Gerando PDF...' : isAuthenticated ? 'Baixar Manual Completo (PDF)' : 'Entrar para baixar o manual'}
                 </button>
 
                 {hasHighlights && (
@@ -493,7 +504,13 @@ function ManualClinicoContent() {
               {patologias.map((patologia, idx) => (
                 <div
                   key={patologia._id}
-                  onClick={() => router.push(`/manual-clinico/${patologia.slug}`)}
+                  onClick={() => {
+                    if (!isAuthenticated) {
+                      router.push(`/auth/login?redirect=${encodeURIComponent(`/manual-clinico/${patologia.slug}`)}`)
+                      return
+                    }
+                    router.push(`/manual-clinico/${patologia.slug}`)
+                  }}
                   className="group relative rounded-2xl border border-white/[0.06] bg-white/[0.02] dark:bg-white/[0.015]
                     hover:bg-white/[0.05] hover:border-white/[0.12] hover:shadow-[0_4px_24px_rgba(0,0,0,0.1)]
                     backdrop-blur-sm transition-all duration-300 cursor-pointer overflow-hidden"
@@ -535,9 +552,17 @@ function ManualClinicoContent() {
                         </div>
                       </div>
                       <div className="flex-shrink-0 mt-2 p-1.5 rounded-lg bg-white/[0.04] group-hover:bg-primary/10 transition-colors duration-300">
-                        <ArrowRight className="h-4 w-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-300" />
+                        {isAuthenticated
+                          ? <ArrowRight className="h-4 w-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-300" />
+                          : <LogIn className="h-4 w-4 text-muted-foreground/40 group-hover:text-primary transition-all duration-300" />
+                        }
                       </div>
                     </div>
+                    {!isAuthenticated && idx === 0 && (
+                      <div className="mt-3 rounded-xl border border-amber-300/30 bg-amber-500/10 px-3 py-2 text-xs font-medium text-amber-700 dark:text-amber-200">
+                        Está vendo o que você está perdendo? Entre para abrir a patologia completa, baixar o manual e estudar com marcações.
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}

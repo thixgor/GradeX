@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 
 export const dynamic = 'force-dynamic'
@@ -14,6 +15,13 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1')
     const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 50)
     const skip = (page - 1) * limit
+
+    if (exportAll) {
+      const session = await getSession()
+      if (!session) {
+        return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
+      }
+    }
 
     const db = await getDb()
     const filter: any = {}

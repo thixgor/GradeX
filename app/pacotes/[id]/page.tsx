@@ -78,6 +78,7 @@ interface AccessInfo {
   hasGroupAccess: boolean
   hasAccess: boolean
   userGroups: string[]
+  isAuthenticated: boolean
 }
 
 interface PricingInfo {
@@ -147,7 +148,6 @@ export default function PackageDetailPage() {
     setLoading(true)
     try {
       const res = await fetch(`/api/materiais/packages/${id}`, { cache: 'no-store' })
-      if (res.status === 401) { router.push('/auth/login'); return }
       if (res.status === 404) { router.push('/materiais?tab=packages'); return }
       if (!res.ok) { setError('Erro ao carregar pacote'); return }
       const json = await res.json()
@@ -185,6 +185,12 @@ export default function PackageDetailPage() {
       }),
       keepalive: true,
     }).catch(() => {})
+
+    if (!data.access.isAuthenticated) {
+      const checkoutPath = `/materiais/checkout?type=package&id=${id}`
+      router.push(`/auth/login?redirect=${encodeURIComponent(checkoutPath)}`)
+      return
+    }
 
     const isFreePath = pkg.pricing === 'free' || price <= 0
     if (!isFreePath) {
@@ -232,7 +238,7 @@ export default function PackageDetailPage() {
   const totalItems = materials.length
 
   return (
-    <AppShell headerTitle={pkg.title} headerSubtitle="Pacote">
+    <AppShell allowGuest headerTitle={pkg.title} headerSubtitle="Pacote">
       <div className="min-h-full relative">
         {/* Ambient blobs */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
@@ -669,7 +675,7 @@ export default function PackageDetailPage() {
 // ─── Skeleton ─────────────────────────────────────────────────
 function LoadingSkeleton() {
   return (
-    <AppShell headerTitle="Carregando...">
+    <AppShell allowGuest headerTitle="Carregando...">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="h-7 w-48 rounded-xl bg-muted animate-pulse mb-6" />
         <div className="flex flex-col xl:flex-row gap-6">
@@ -693,7 +699,7 @@ function LoadingSkeleton() {
 
 function ErrorState({ message, onBack }: { message: string; onBack: () => void }) {
   return (
-    <AppShell headerTitle="Erro">
+    <AppShell allowGuest headerTitle="Erro">
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4 px-4">
         <div className="h-20 w-20 rounded-3xl glass-card flex items-center justify-center mb-2">
           <Package className="h-9 w-9 text-muted-foreground" />

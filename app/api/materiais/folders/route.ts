@@ -9,16 +9,13 @@ export const dynamic = 'force-dynamic'
 export async function GET(request: NextRequest) {
   try {
     const session = await getSession()
-    if (!session) {
-      return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
-    }
 
     const db = await getDb()
     const { searchParams } = new URL(request.url)
     const parentFolderId = searchParams.get('parentFolderId')
     const all = searchParams.get('all')
 
-    const isAdmin = session.role === 'admin'
+    const isAdmin = session?.role === 'admin'
     const filter: any = {}
 
     if (!isAdmin) {
