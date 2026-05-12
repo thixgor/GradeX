@@ -964,7 +964,7 @@ function MateriaisContent() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {Array.from({ length: 4 }).map((_, i) => (
                   <div key={i} className="rounded-2xl glass-card p-6 animate-pulse">
-                    <div className="h-48 rounded-xl bg-muted mb-4" />
+                    <div className="aspect-[16/10] rounded-xl bg-muted mb-4" />
                     <div className="h-5 bg-muted rounded w-3/4 mb-3" />
                     <div className="h-3 bg-muted rounded w-1/2" />
                   </div>
@@ -1008,7 +1008,7 @@ function MateriaisContent() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {Array.from({ length: 6 }).map((_, i) => (
                     <div key={i} className="rounded-2xl glass-card animate-pulse">
-                      <div className="h-44 rounded-t-2xl bg-muted" />
+                      <div className="aspect-[16/10] rounded-t-2xl bg-muted" />
                       <div className="p-4 space-y-2">
                         <div className="h-4 bg-muted rounded w-3/4" />
                         <div className="h-3 bg-muted rounded w-1/2" />
@@ -1244,7 +1244,7 @@ function MaterialCard({
       )}
 
       <div className={`glass-card h-full flex flex-col transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/10 ${showLocked ? 'pointer-events-none select-none' : ''}`}>
-        <Link href={`/materiais/${material._id}`} className="block relative h-44 overflow-hidden cursor-pointer">
+        <Link href={`/materiais/${material._id}`} className="block relative aspect-[16/10] overflow-hidden cursor-pointer">
           {material.coverImage ? (
             <Image src={material.coverImage} alt={material.title} fill className="object-cover transition-transform duration-500 group-hover:scale-110" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw" />
           ) : (
@@ -1399,7 +1399,7 @@ function FeaturedCard({
           </div>
         </div>
 
-        <Link href={`/materiais/${material._id}`} className="block relative h-48 overflow-hidden cursor-pointer">
+        <Link href={`/materiais/${material._id}`} className="block relative aspect-[16/10] overflow-hidden cursor-pointer">
           {material.coverImage ? (
             <Image src={material.coverImage} alt={material.title} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" priority={index === 0} />
           ) : (
@@ -1522,7 +1522,7 @@ function PackageCard({
         <LockedGroupOverlay allowedGroups={pkg.allowedGroups} onPreview={onPreview} />
       )}
       <div className={`glass-card rounded-2xl overflow-hidden transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/15 h-full flex flex-col ${showLocked ? 'pointer-events-none select-none' : ''}`}>
-        <Link href={`/pacotes/${pkg._id}`} className="block relative h-52 overflow-hidden cursor-pointer">
+        <Link href={`/pacotes/${pkg._id}`} className="block relative aspect-[16/10] overflow-hidden cursor-pointer">
           {pkg.coverImage ? (
             <Image src={pkg.coverImage} alt={pkg.title} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 768px) 100vw, 50vw" />
           ) : (
@@ -1709,7 +1709,7 @@ function PreviewModal({
               </div>
             </div>
           ) : data.coverImage ? (
-            <div className="relative h-48 overflow-hidden">
+            <div className="relative aspect-[16/10] overflow-hidden">
               <Image src={data.coverImage} alt={data.title} fill className="object-cover" sizes="(max-width: 640px) 100vw, 512px" />
               <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
             </div>

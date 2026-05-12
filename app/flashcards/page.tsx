@@ -960,7 +960,7 @@ const DeckCard = memo(function DeckCard({ deck, owned, onDelete, showStoreState 
   return (
     <div className="group relative overflow-hidden rounded-3xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl shadow-sm hover:shadow-2xl hover:shadow-violet-500/10 hover:scale-[1.01] hover:border-violet-400/50 transition duration-300">
       <Link href={`/flashcards/d/${deck.slug}`} className="block">
-        <div className="relative aspect-[16/9] overflow-hidden">
+        <div className="relative aspect-[16/10] overflow-hidden">
           {deck.coverImage ? (
             <Image src={deck.coverImage} alt="" fill className="object-cover group-hover:scale-110 transition duration-500" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" />
           ) : (
