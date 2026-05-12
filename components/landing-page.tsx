@@ -454,6 +454,46 @@ export default function LandingPage({
                   })}
               className="flex flex-col justify-center py-20 lg:py-0"
             >
+              {/* 3D Logo — mobile only */}
+              <div className="flex justify-center lg:hidden mb-8">
+                <motion.div
+                  animate={shouldReduceMotion ? {} : {
+                    y: [0, -14, 0],
+                    rotateY: [0, 15, 0, -15, 0],
+                    rotateX: [0, -6, 0, 6, 0],
+                    scale: [1, 1.04, 1],
+                  }}
+                  transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                  style={{ perspective: 900, transformStyle: 'preserve-3d' }}
+                >
+                  <div className="relative flex items-center justify-center">
+                    {/* Glow pulse */}
+                    <motion.div
+                      animate={shouldReduceMotion ? {} : { opacity: [0.4, 0.85, 0.4], scale: [1, 1.25, 1] }}
+                      transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                      className="absolute rounded-full blur-3xl"
+                      style={{
+                        width: '180px', height: '180px',
+                        background: 'radial-gradient(ellipse, rgba(74,222,128,0.55) 0%, rgba(45,212,191,0.28) 55%, transparent 75%)',
+                      }}
+                    />
+                    <Image
+                      src="/logo3d.png"
+                      alt="DomineAqui Logo 3D"
+                      width={220}
+                      height={220}
+                      priority
+                      className="relative object-contain"
+                      style={{
+                        width: '180px',
+                        height: '180px',
+                        filter: 'drop-shadow(0 0 22px rgba(74,222,128,0.85)) drop-shadow(0 0 55px rgba(45,212,191,0.45))',
+                      }}
+                    />
+                  </div>
+                </motion.div>
+              </div>
+
               {/* Badge */}
               <div className="inline-flex items-center gap-2 self-start px-4 py-1.5 rounded-full border border-emerald-400/25 bg-emerald-400/[0.08] mb-8">
                 <span className="relative flex h-2 w-2">
@@ -480,11 +520,28 @@ export default function LandingPage({
               </h1>
 
               {/* Subtitle */}
-              <p className="text-base sm:text-lg text-slate-300 max-w-2xl mb-10 leading-relaxed">
-                Plataforma completa de estudo para alunos de saúde com questões, flashcards, cronogramas, provas com IA e aulas — tudo integrado para você dominar.
-                <br className="hidden sm:block" />
-                <span className="text-slate-400 text-sm sm:text-base block mt-3">Banco de questões • Resumos grátis e pagos • Provas antigas da faculdade • Flashcards Anki • Aulas ao vivo e gravadas • Manual clínico com +200 patologias (classificação, fisiopatologia, diagnóstico, diferenciais, tratamento e farmacologia).</span>
+              <p className="text-base sm:text-lg text-slate-300 max-w-lg mb-5 leading-relaxed">
+                Plataforma completa de estudo para alunos de saúde — tudo integrado para você dominar.
               </p>
+
+              {/* Feature tags */}
+              <div className="flex flex-wrap gap-2 mb-10">
+                {[
+                  'Banco de Questões',
+                  'Resumos Grátis e Pagos',
+                  'Provas Antigas',
+                  'Flashcards Anki',
+                  'Aulas ao Vivo e Gravadas',
+                  'Manual Clínico +200 Patologias',
+                ].map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex items-center px-3 py-1 rounded-lg text-xs font-medium text-teal-300 border border-teal-400/20 bg-teal-400/[0.07]"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
 
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row gap-3 mb-10">
@@ -534,18 +591,18 @@ export default function LandingPage({
                 transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
                 className="relative"
               >
-                {/* Glow ring */}
+                {/* Glow ring — reduzido */}
                 <div
-                  className="absolute -inset-4 rounded-[2.5rem] blur-2xl opacity-40"
+                  className="absolute -inset-4 rounded-[2.5rem] blur-3xl opacity-15"
                   style={{ background: 'radial-gradient(ellipse, #2DD4BF 0%, transparent 70%)' }}
                 />
                 {/* Card */}
                 <div
-                  className="relative rounded-3xl overflow-hidden border border-white/[0.12]"
+                  className="relative rounded-3xl overflow-hidden border border-white/[0.08]"
                   style={{
-                    background: 'rgba(7,18,36,0.65)',
+                    background: 'rgba(7,18,36,0.55)',
                     backdropFilter: 'blur(20px)',
-                    boxShadow: '0 0 60px rgba(45,212,191,0.18), inset 0 1px 0 rgba(255,255,255,0.08)',
+                    boxShadow: '0 0 30px rgba(45,212,191,0.08), inset 0 1px 0 rgba(255,255,255,0.05)',
                     width: 'clamp(340px, 42vw, 580px)',
                   }}
                 >
@@ -555,16 +612,54 @@ export default function LandingPage({
                     width={1536}
                     height={1024}
                     priority
-                    className="w-full h-auto rounded-3xl object-cover"
+                    className="w-full h-auto rounded-3xl object-cover opacity-60"
                     sizes="(max-width: 1280px) 42vw, 580px"
                   />
-                  {/* Bottom frosted overlay */}
+                  {/* Overlay escuro sobre imagem */}
                   <div
-                    className="absolute bottom-0 left-0 right-0 h-24 rounded-b-3xl"
-                    style={{
-                      background: 'linear-gradient(to top, rgba(7,18,36,0.9) 0%, transparent 100%)',
-                    }}
+                    className="absolute inset-0 rounded-3xl"
+                    style={{ background: 'rgba(4,8,22,0.45)' }}
                   />
+
+                  {/* 3D Logo overlay — desktop, centralizado */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <motion.div
+                      animate={shouldReduceMotion ? {} : {
+                        y: [0, -16, 0],
+                        rotateY: [0, 16, 0, -16, 0],
+                        rotateX: [0, -7, 0, 7, 0],
+                        scale: [1, 1.05, 1],
+                      }}
+                      transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                      style={{ perspective: 1000, transformStyle: 'preserve-3d', position: 'relative' }}
+                    >
+                      {/* Glow pulse */}
+                      <motion.div
+                        animate={shouldReduceMotion ? {} : { opacity: [0.4, 0.9, 0.4], scale: [1, 1.3, 1] }}
+                        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                        className="absolute rounded-full blur-3xl"
+                        style={{
+                          width: '280px', height: '280px',
+                          top: '50%', left: '50%',
+                          transform: 'translate(-50%, -50%)',
+                          background: 'radial-gradient(ellipse, rgba(74,222,128,0.55) 0%, rgba(45,212,191,0.25) 55%, transparent 75%)',
+                        }}
+                      />
+                      <Image
+                        src="/logo3d.png"
+                        alt="DomineAqui Logo 3D"
+                        width={300}
+                        height={300}
+                        priority
+                        className="relative object-contain"
+                        style={{
+                          width: '260px',
+                          height: '260px',
+                          filter: 'drop-shadow(0 0 28px rgba(74,222,128,0.9)) drop-shadow(0 0 70px rgba(45,212,191,0.5))',
+                        }}
+                      />
+                    </motion.div>
+                  </div>
                 </div>
               </motion.div>
             </motion.div>
