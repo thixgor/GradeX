@@ -357,53 +357,40 @@ function ClickableImage({
 }) {
   const [lightbox, setLightbox] = useState(false)
   const [clickPos, setClickPos] = useState<{ x: number; y: number } | undefined>()
-  const [hovered, setHovered] = useState(false)
+
+  function openLightbox(e: React.MouseEvent) {
+    e.stopPropagation()
+    setClickPos({ x: e.clientX, y: e.clientY })
+    setLightbox(true)
+  }
 
   return (
     <>
-      <div
-        className={cn('relative cursor-zoom-in', containerClassName)}
-        onClick={e => { e.stopPropagation(); setClickPos({ x: e.clientX, y: e.clientY }); setLightbox(true) }}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        style={{
-          transition: 'box-shadow 0.2s ease',
-          boxShadow: hovered
-            ? onDark
-              ? '0 0 0 2px rgba(255,255,255,0.5), 0 0 18px 4px rgba(255,255,255,0.15)'
-              : '0 0 0 2px rgba(139,92,246,0.7), 0 0 18px 4px rgba(139,92,246,0.2)'
-            : undefined,
-        }}
-      >
+      <div className={cn('relative', containerClassName)}>
         <Image
           src={src}
           alt={alt || ''}
           width={800}
           height={500}
-          className={cn(className, 'transition-transform duration-200', hovered && 'scale-[1.01]')}
+          className={cn(className)}
           unoptimized={src.startsWith('http')}
         />
-        <AnimatePresence>
-          {hovered && (
-            <motion.div
-              key="zoom-hint"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.15 }}
-              className="absolute bottom-2 right-2 pointer-events-none"
-            >
-              <span className={cn(
-                'flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium backdrop-blur-sm',
-                onDark
-                  ? 'bg-white/20 text-white ring-1 ring-white/30'
-                  : 'bg-white/90 text-slate-700 ring-1 ring-black/10 shadow-sm',
-              )}>
-                <ZoomIn className="h-3.5 w-3.5" /> Ampliar
-              </span>
-            </motion.div>
+        {/* Botão de ampliar — sempre visível, chamativo */}
+        <button
+          type="button"
+          onClick={openLightbox}
+          className={cn(
+            'absolute bottom-2 right-2 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold backdrop-blur-md transition-all duration-150',
+            'shadow-lg active:scale-95',
+            onDark
+              ? 'bg-white/20 text-white ring-1 ring-white/40 hover:bg-white/35 shadow-black/40'
+              : 'bg-black/60 text-white ring-1 ring-white/20 hover:bg-black/80 shadow-black/30',
           )}
-        </AnimatePresence>
+          aria-label="Ampliar imagem"
+        >
+          <ZoomIn className="h-3.5 w-3.5 shrink-0" />
+          Ampliar
+        </button>
       </div>
       <AnimatePresence>
         {lightbox && <ImageLightbox src={src} onClose={() => setLightbox(false)} initialClick={clickPos} />}
