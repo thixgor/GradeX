@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { ObjectId } from 'mongodb'
 import { getDb } from '@/lib/mongodb'
 import { AulaPostagem } from '@/lib/types'
+import { DEFAULT_OG_IMAGE, absoluteUrl, privateNoIndexRobots, sanitizeSeoText } from '@/lib/seo'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -33,26 +34,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       }
     }
 
-    // Limitar descrição a 160 caracteres para melhor exibição no WhatsApp
-    const descricaoLimitada = aula.descricao 
-      ? aula.descricao.substring(0, 160) + (aula.descricao.length > 160 ? '...' : '')
-      : 'Assista aulas exclusivas na plataforma DomineAqui'
-
-    // Usar imagem da capa se disponível, senão usar imagem padrão
-    const imagemOG = aula.capa?.tipo === 'imagem' && aula.capa?.imagem 
+    const descricaoLimitada = sanitizeSeoText(aula.descricao, 'Assista aulas exclusivas na plataforma DomineAqui', 160)
+    const imagemOG = aula.capa?.tipo === 'imagem' && aula.capa?.imagem
       ? aula.capa.imagem
-      : 'https://i.imgur.com/zHm5aSx.jpeg'
-
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+      : DEFAULT_OG_IMAGE
 
     return {
-      title: `${aula.titulo} - DomineAqui`,
+      title: aula.titulo,
       description: descricaoLimitada,
+      robots: privateNoIndexRobots,
       openGraph: {
         title: aula.titulo,
         description: descricaoLimitada,
         type: 'article',
-        url: `${baseUrl}/aulas/${id}`,
+        url: absoluteUrl(`/aulas/${id}`),
+        locale: 'pt_BR',
         images: [
           {
             url: imagemOG,

@@ -54,6 +54,7 @@ export async function generateMetadata(
         description,
         url: `/lead/${params.slug}`,
         siteName: 'DomineAqui',
+        locale: 'pt_BR',
         type: 'website',
         images: [
           {
@@ -69,6 +70,7 @@ export async function generateMetadata(
         title: `${title} | DomineAqui`,
         description,
         images: [image],
+        creator: '@domineaqui',
       },
     }
   } catch {

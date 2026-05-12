@@ -2,8 +2,9 @@ import { Metadata } from 'next'
 import { BackButton } from '@/components/back-button'
 
 export const metadata: Metadata = {
-  title: 'Termos de Serviço - DomineAqui',
-  description: 'Termos de Serviço da plataforma DomineAqui.',
+  title: 'Termos de Serviço',
+  description: 'Termos de Serviço da plataforma DomineAqui. Regras de uso, assinatura, cancelamento e responsabilidades.',
+  alternates: { canonical: '/termos-de-servico' },
 }
 
 export default function TermosDeServicoPage() {

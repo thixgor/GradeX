@@ -1,55 +1,61 @@
 import type { MetadataRoute } from 'next'
 import { getDb } from '@/lib/mongodb'
-import { absoluteUrl, getSiteUrl, hasSensitiveSeoTerm } from '@/lib/seo'
+import { CANONICAL_ORIGIN, hasSensitiveSeoTerm } from '@/lib/seo'
+
+function canonical(path = '/') {
+  return `${CANONICAL_ORIGIN}${path.startsWith('/') ? path : `/${path}`}`
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date()
+
   const staticRoutes: MetadataRoute.Sitemap = [
     {
-      url: getSiteUrl(),
+      url: CANONICAL_ORIGIN,
       lastModified: now,
       changeFrequency: 'daily',
-      priority: 1,
+      priority: 1.0,
     },
     {
-      url: absoluteUrl('/doar'),
+      url: canonical('/doar'),
       lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.55,
+      changeFrequency: 'monthly',
+      priority: 0.6,
     },
     {
-      url: absoluteUrl('/politica-de-privacidade'),
-      lastModified: now,
-      changeFrequency: 'yearly',
-      priority: 0.25,
-    },
-    {
-      url: absoluteUrl('/termos-de-servico'),
+      url: canonical('/politica-de-privacidade'),
       lastModified: now,
       changeFrequency: 'yearly',
-      priority: 0.25,
+      priority: 0.2,
+    },
+    {
+      url: canonical('/termos-de-servico'),
+      lastModified: now,
+      changeFrequency: 'yearly',
+      priority: 0.2,
     },
   ]
 
   try {
     const db = await getDb()
+
     const campaigns = await db
       .collection('lead_campaigns')
       .find({ isActive: true })
       .project({ slug: 1, name: 1, description: 1, updatedAt: 1, createdAt: 1 })
-      .limit(200)
+      .limit(500)
       .toArray()
 
     const leadRoutes: MetadataRoute.Sitemap = campaigns
-      .filter((campaign: any) => {
-        const searchableText = `${campaign.slug || ''} ${campaign.name || ''} ${campaign.description || ''}`
-        return campaign.slug && !hasSensitiveSeoTerm(searchableText)
+      .filter((c: any) => {
+        const text = `${c.slug || ''} ${c.name || ''} ${c.description || ''}`
+        return c.slug && !hasSensitiveSeoTerm(text)
       })
-      .map((campaign: any) => ({
-        url: absoluteUrl(`/lead/${campaign.slug}`),
-        lastModified: campaign.updatedAt || campaign.createdAt || now,
+      .map((c: any) => ({
+        url: canonical(`/lead/${c.slug}`),
+        lastModified: c.updatedAt || c.createdAt || now,
         changeFrequency: 'monthly' as const,
-        priority: 0.5,
+        priority: 0.7,
       }))
 
     return [...staticRoutes, ...leadRoutes]

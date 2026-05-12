@@ -51,13 +51,11 @@ const nextConfig = {
     ],
   },
 
-  // Headers de segurança e performance para todas as rotas
   async headers() {
     return [
       {
         source: '/(.*)',
         headers: [
-          // Segurança
           {
             key: 'X-DNS-Prefetch-Control',
             value: 'on',
@@ -81,6 +79,10 @@ const nextConfig = {
           {
             key: 'Permissions-Policy',
             value: 'camera=(self), microphone=(), geolocation=()',
+          },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload',
           },
         ],
       },

@@ -11,7 +11,10 @@ import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { LiteModeProvider } from '@/context/LiteModeContext'
 import {
+  CANONICAL_ORIGIN,
   DEFAULT_OG_IMAGE,
+  SITE_DESCRIPTION,
+  SITE_KEYWORDS,
   SITE_NAME,
   absoluteUrl,
   buildJsonLd,
@@ -34,17 +37,18 @@ export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   applicationName: SITE_NAME,
   title: {
-    default: 'DomineAqui - Seja o Foco. Seja a Referência.',
+    default: 'DomineAqui — Plataforma de Estudo Inteligente para Medicina',
     template: `%s | ${SITE_NAME}`,
   },
-  description: 'Plataforma de estudo inteligente com provas, flashcards, cronogramas, materiais, TRI e avaliação com IA para estudantes que querem aprender com mais foco.',
-  keywords: ['estudo inteligente', 'plataforma de estudos', 'provas online', 'flashcards', 'cronogramas', 'TRI', 'avaliação com IA', 'materiais de estudo'],
-  authors: [{ name: SITE_NAME }],
+  description: SITE_DESCRIPTION,
+  keywords: SITE_KEYWORDS,
+  authors: [{ name: SITE_NAME, url: CANONICAL_ORIGIN }],
   creator: SITE_NAME,
   publisher: SITE_NAME,
   category: 'education',
   alternates: {
     canonical: '/',
+    languages: { 'pt-BR': '/' },
   },
   robots: publicIndexingRobots,
   icons: {
@@ -56,8 +60,8 @@ export const metadata: Metadata = {
     apple: '/favicon.png',
   },
   openGraph: {
-    title: 'DomineAqui - Seja o Foco. Seja a Referência.',
-    description: 'Provas, flashcards, cronogramas, materiais e estudo guiado por dados em uma plataforma completa.',
+    title: 'DomineAqui — Plataforma de Estudo Inteligente para Medicina',
+    description: 'Provas, flashcards, cronogramas, materiais e estudo guiado por dados e IA. Estude para residência com inteligência.',
     url: '/',
     siteName: SITE_NAME,
     locale: 'pt_BR',
@@ -67,18 +71,22 @@ export const metadata: Metadata = {
         url: DEFAULT_OG_IMAGE,
         width: 1200,
         height: 630,
-        alt: 'DomineAqui - Plataforma de Estudo',
+        alt: 'DomineAqui — Plataforma de Estudo Inteligente para Medicina',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'DomineAqui - Seja o Foco. Seja a Referência.',
-    description: 'Provas, flashcards, cronogramas, materiais e estudo guiado por dados.',
+    title: 'DomineAqui — Plataforma de Estudo Inteligente para Medicina',
+    description: 'Provas, flashcards, cronogramas, materiais e estudo guiado por IA.',
     images: [DEFAULT_OG_IMAGE],
+    creator: '@domineaqui',
   },
   verification: {
     google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+  },
+  other: {
+    'google-site-verification': process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || '',
   },
 }
 
@@ -87,21 +95,38 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const siteUrl = getSiteUrl()
+
   const organizationJsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'Organization',
+    '@type': 'EducationalOrganization',
     name: SITE_NAME,
-    url: getSiteUrl(),
-    logo: absoluteUrl('/logo.png'),
+    url: siteUrl,
+    logo: {
+      '@type': 'ImageObject',
+      url: absoluteUrl('/logo.png'),
+      width: 512,
+      height: 512,
+    },
+    image: DEFAULT_OG_IMAGE,
+    description: SITE_DESCRIPTION,
     sameAs: ['https://instagram.com/domineaqui.br'],
+    contactPoint: {
+      '@type': 'ContactPoint',
+      email: 'contato@domineaqui.com.br',
+      contactType: 'customer service',
+      availableLanguage: 'Portuguese',
+    },
   }
 
   const websiteJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: SITE_NAME,
-    url: getSiteUrl(),
+    alternateName: 'Domine Aqui',
+    url: siteUrl,
     inLanguage: 'pt-BR',
+    description: SITE_DESCRIPTION,
     publisher: {
       '@type': 'Organization',
       name: SITE_NAME,
@@ -109,6 +134,14 @@ export default function RootLayout({
         '@type': 'ImageObject',
         url: absoluteUrl('/logo.png'),
       },
+    },
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${siteUrl}/lead/{search_term_string}`,
+      },
+      'query-input': 'required name=search_term_string',
     },
   }
 

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 
 export const SITE_NAME = 'DomineAqui'
+export const SITE_DOMAIN = 'domineaqui.com.br'
+export const CANONICAL_ORIGIN = `https://${SITE_DOMAIN}`
 export const DEFAULT_OG_IMAGE = 'https://i.imgur.com/zHm5aSx.jpeg'
 
 const SENSITIVE_SEO_TERMS = [
@@ -8,9 +10,15 @@ const SENSITIVE_SEO_TERMS = [
   'unigranrio',
   'provas afya',
   'provas unigranrio',
+  'prova afya',
+  'prova unigranrio',
+  'universidade unigranrio',
+  'faculdade afya',
 ]
 
 export function getSiteUrl() {
+  if (process.env.NODE_ENV === 'production') return CANONICAL_ORIGIN
+
   const raw =
     process.env.NEXT_PUBLIC_SITE_URL ||
     process.env.NEXT_PUBLIC_BASE_URL ||
@@ -89,3 +97,22 @@ export const privateNoIndexRobots: Metadata['robots'] = {
 export function buildJsonLd(data: Record<string, unknown>) {
   return JSON.stringify(data).replace(/</g, '\\u003c')
 }
+
+export const SITE_DESCRIPTION =
+  'Plataforma de estudo inteligente com provas, flashcards, cronogramas, materiais, TRI e avaliação com IA para estudantes de medicina e saúde.'
+
+export const SITE_KEYWORDS = [
+  'plataforma de estudos',
+  'estudo inteligente',
+  'provas online',
+  'flashcards medicina',
+  'cronograma de estudos',
+  'questões comentadas',
+  'TRI',
+  'avaliação com IA',
+  'materiais de estudo',
+  'estudo para residência',
+  'banco de questões medicina',
+  'plataforma educacional',
+  'DomineAqui',
+]

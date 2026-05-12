@@ -2,8 +2,9 @@ import { Metadata } from 'next'
 import { BackButton } from '@/components/back-button'
 
 export const metadata: Metadata = {
-  title: 'Política de Privacidade - DomineAqui',
-  description: 'Política de Privacidade da plataforma DomineAqui.',
+  title: 'Política de Privacidade',
+  description: 'Política de Privacidade da plataforma DomineAqui. Como coletamos, usamos e protegemos seus dados pessoais.',
+  alternates: { canonical: '/politica-de-privacidade' },
 }
 
 export default function PoliticaDePrivacidadePage() {
