@@ -141,20 +141,32 @@ export async function GET(request: NextRequest) {
     // per material so the client never has to guess. Server is the source of truth.
     const purchasedSet = new Set(purchasedIds)
 
-    // For flashcard_deck materials, fetch card counts via linked decks
+    // For flashcard_deck materials, fetch linked deck visibility + card counts
     const flashcardDeckMaterialIds = materials
       .filter((m: any) => m.type === 'flashcard_deck')
       .map((m: any) => String(m._id))
 
     const cardCountByMaterialId: Record<string, number> = {}
+    // Track which material IDs belong to private decks (non-admin should not see them)
+    const privateDeckMaterialIds = new Set<string>()
+
     if (flashcardDeckMaterialIds.length > 0) {
       const linkedDecks = await db
         .collection('flashcardManualDecks')
         .find({ linkedMaterialId: { $in: flashcardDeckMaterialIds } })
-        .project({ _id: 1, linkedMaterialId: 1 })
+        .project({ _id: 1, linkedMaterialId: 1, visibility: 1 })
         .toArray()
 
       if (linkedDecks.length > 0) {
+        // Mark materials linked to private decks
+        if (!isAdmin) {
+          for (const deck of linkedDecks) {
+            if (deck.visibility === 'private') {
+              privateDeckMaterialIds.add(String(deck.linkedMaterialId))
+            }
+          }
+        }
+
         const deckIds = linkedDecks.map((d: any) => d._id)
         const counts = await db
           .collection('flashcardManualCards')
@@ -172,7 +184,9 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const secureMaterials = materials.map((m: any) => {
+    const secureMaterials = materials.filter((m: any) =>
+      !privateDeckMaterialIds.has(String(m._id))
+    ).map((m: any) => {
       const idStr = String(m._id)
       const hasGroupAccess =
         isAdmin ||
