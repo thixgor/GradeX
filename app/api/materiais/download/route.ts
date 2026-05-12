@@ -8,6 +8,9 @@
  *   - Gera PDF personalizado com dados do usuário em cada download
  *   - Loga cada download para auditoria
  *
+ * GET /api/materiais/download?materialId=...
+ *   Response: PDF stream com marca d'água
+ *
  * POST /api/materiais/download
  *   Body: { materialId: string }
  *   Response: PDF stream com marca d'água
@@ -27,24 +30,36 @@ export const dynamic = 'force-dynamic'
 export const maxDuration = 60
 
 export async function POST(request: NextRequest) {
+  let body: { materialId?: unknown }
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Body inválido' }, { status: 400 })
+  }
+
+  const { materialId } = body
+  if (!materialId || typeof materialId !== 'string' || !isValidObjectId(materialId)) {
+    return NextResponse.json({ error: 'materialId inválido' }, { status: 400 })
+  }
+
+  return createMaterialPdfDownloadResponse(request, materialId)
+}
+
+export async function GET(request: NextRequest) {
+  const materialId = request.nextUrl.searchParams.get('materialId')
+  if (!materialId || !isValidObjectId(materialId)) {
+    return NextResponse.json({ error: 'materialId inválido' }, { status: 400 })
+  }
+
+  return createMaterialPdfDownloadResponse(request, materialId)
+}
+
+async function createMaterialPdfDownloadResponse(request: NextRequest, materialId: string) {
   try {
     // ── 1. Autenticação ───────────────────────────────────────────────────
     const session = await getSession()
     if (!session) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
-    }
-
-    // ── 2. Validar input — nunca confiar no cliente ───────────────────────
-    let body: { materialId?: unknown }
-    try {
-      body = await request.json()
-    } catch {
-      return NextResponse.json({ error: 'Body inválido' }, { status: 400 })
-    }
-
-    const { materialId } = body
-    if (!materialId || typeof materialId !== 'string' || !isValidObjectId(materialId)) {
-      return NextResponse.json({ error: 'materialId inválido' }, { status: 400 })
     }
 
     // ── 3. Buscar material do banco (fonte da verdade) ────────────────────
@@ -220,6 +235,8 @@ export async function POST(request: NextRequest) {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="${filename}"`,
         'Content-Length': String(watermarkedPdf.byteLength),
+        'Content-Transfer-Encoding': 'binary',
+        'Accept-Ranges': 'none',
         // Nunca armazenar em cache — cada download é personalizado
         'Cache-Control': 'no-store, no-cache, must-revalidate, private',
         'Pragma': 'no-cache',

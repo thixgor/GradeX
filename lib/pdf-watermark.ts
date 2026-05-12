@@ -82,16 +82,28 @@ function trimText(value: string, maxLength: number): string {
   return `${normalized.slice(0, Math.max(0, maxLength - 3))}...`
 }
 
+function emailFingerprint(email: string): string {
+  const normalized = (email || '').trim().toLowerCase()
+  if (!normalized) return 'mail-na'
+
+  let hash = 5381
+  for (let i = 0; i < normalized.length; i++) {
+    hash = ((hash << 5) + hash) ^ normalized.charCodeAt(i)
+  }
+
+  return `mail-${(hash >>> 0).toString(36).slice(0, 8)}`
+}
+
 function getWatermarkRenderConfig(): WatermarkRenderConfig {
   return {
     enabled: envBoolean('PDF_WATERMARK_ENABLED', true),
-    opacity: envNumber('PDF_WATERMARK_OPACITY', 0.075, 0.01, 0.25),
-    fontSize: envNumber('PDF_WATERMARK_FONT_SIZE', 9, 6, 18),
-    repeatGap: envNumber('PDF_WATERMARK_REPEAT_GAP', 170, 90, 420),
-    xGap: envNumber('PDF_WATERMARK_X_GAP', 170, 80, 420),
+    opacity: envNumber('PDF_WATERMARK_OPACITY', 0.055, 0.01, 0.25),
+    fontSize: envNumber('PDF_WATERMARK_FONT_SIZE', 8, 6, 18),
+    repeatGap: envNumber('PDF_WATERMARK_REPEAT_GAP', 260, 120, 520),
+    xGap: envNumber('PDF_WATERMARK_X_GAP', 260, 120, 520),
     angle: envNumber('PDF_WATERMARK_ANGLE', 38, 0, 70),
     lineGap: envNumber('PDF_WATERMARK_LINE_GAP', 3, 0, 12),
-    maxTextLength: envNumber('PDF_WATERMARK_MAX_TEXT_LENGTH', 72, 24, 140),
+    maxTextLength: envNumber('PDF_WATERMARK_MAX_TEXT_LENGTH', 64, 24, 120),
   }
 }
 
@@ -189,12 +201,14 @@ export async function applyWatermark(
   // ── Metadados de rastreio (embutidos no arquivo) ────────────────────────
   // Coloca dados do usuário nos metadados do PDF para rastreio forense.
   const originalTitle = pdfDoc.getTitle() || 'Material DomineAqui'
-  pdfDoc.setTitle(`${originalTitle} — ${userName} <${userEmail}>`)
+  const emailMarker = emailFingerprint(userEmail)
+  const userMarker = `UID ${userId.slice(-8)} | ${emailMarker}`
+  pdfDoc.setTitle(`${originalTitle} - ${userName}`)
   pdfDoc.setAuthor(userName)
   pdfDoc.setSubject(
-    `Licenciado para: ${userName} (${userEmail}) | Pedido: ${orderId} | Download: ${formatDate(downloadedAt)}`
+    `Licenciado para: ${userName} | ${userMarker} | Pedido: ${orderId} | Download: ${formatDate(downloadedAt)}`
   )
-  pdfDoc.setKeywords([userName, userEmail, userId, orderId, 'DomineAqui'])
+  pdfDoc.setKeywords([userName, userId, emailMarker, orderId, 'DomineAqui'])
   pdfDoc.setCreator('DomineAqui — domineaqui.com.br')
   pdfDoc.setProducer('DomineAqui PDF Service')
   pdfDoc.setModificationDate(downloadedAt)
@@ -206,8 +220,7 @@ export async function applyWatermark(
   // Linhas que aparecem na marca d'água
   const watermarkLines = [
     trimText(userName, renderConfig.maxTextLength),
-    trimText(userEmail, renderConfig.maxTextLength),
-    `ID: ${userId.slice(-8)}`,
+    userMarker,
     `Pedido: ${orderId.slice(-8)}`,
     formatDate(downloadedAt),
   ]

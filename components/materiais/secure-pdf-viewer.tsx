@@ -68,6 +68,10 @@ interface PageSize {
 }
 
 let pdfWorkerConfigured = false
+const PAGE_BYTES_CACHE_TTL_MS = 10 * 60 * 1000
+const PAGE_BYTES_CACHE_MAX_ENTRIES = 36
+const pageBytesCache = new Map<string, { bytes: Uint8Array; pageCount?: number; expiresAt: number }>()
+const pageBytesInflight = new Map<string, Promise<{ bytes: Uint8Array; pageCount?: number }>>()
 
 async function getPdfJs() {
   const pdfjsLib = await import('pdfjs-dist')
@@ -76,6 +80,54 @@ async function getPdfJs() {
     pdfWorkerConfigured = true
   }
   return pdfjsLib
+}
+
+async function fetchPdfPageBytes(materialId: string, pageNumber: number) {
+  const key = `${materialId}:${pageNumber}`
+  const now = Date.now()
+  const cached = pageBytesCache.get(key)
+  if (cached && cached.expiresAt > now) {
+    return { bytes: cached.bytes, pageCount: cached.pageCount }
+  }
+  if (cached) pageBytesCache.delete(key)
+
+  const pending = pageBytesInflight.get(key)
+  if (pending) return pending
+
+  const request = (async () => {
+    const response = await fetch(
+      `/api/materiais/${materialId}/pdf-viewer/page?page=${pageNumber}`,
+      { cache: 'no-store' }
+    )
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}))
+      throw new Error(data.error || 'Falha ao carregar pagina')
+    }
+
+    const pageCountHeader = Number(response.headers.get('X-DomineAqui-Page-Count') || 0)
+    const result = {
+      bytes: new Uint8Array(await response.arrayBuffer()),
+      pageCount: Number.isFinite(pageCountHeader) && pageCountHeader > 0 ? pageCountHeader : undefined,
+    }
+
+    while (pageBytesCache.size >= PAGE_BYTES_CACHE_MAX_ENTRIES) {
+      const oldestKey = pageBytesCache.keys().next().value
+      if (!oldestKey) break
+      pageBytesCache.delete(oldestKey)
+    }
+    pageBytesCache.set(key, {
+      ...result,
+      expiresAt: Date.now() + PAGE_BYTES_CACHE_TTL_MS,
+    })
+    return result
+  })()
+
+  pageBytesInflight.set(key, request)
+  try {
+    return await request
+  } finally {
+    pageBytesInflight.delete(key)
+  }
 }
 
 function clampZoom(value: number, min = 0.55, max = 2.6) {
@@ -101,7 +153,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const [currentPage, setCurrentPage] = useState(1)
   const [pageInput, setPageInput] = useState('1')
   const [zoom, setZoom] = useState(1)
-  const [mode, setMode] = useState<ViewerMode>('continuous')
+  const [mode, setMode] = useState<ViewerMode>('single')
   const [tool, setTool] = useState<AnnotationTool>('cursor')
   const [pageSize, setPageSize] = useState<PageSize | null>(null)
   const [contentWidth, setContentWidth] = useState(0)
@@ -113,10 +165,24 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const pageCount = access?.material.pageCount ?? 0
   const pages = useMemo(() => buildPageArray(pageCount, currentPage, mode), [pageCount, currentPage, mode])
 
-  const handlePageVisible = useCallback((page: number) => {
+  const handlePageFocused = useCallback((page: number) => {
     if (mode === 'single') return
     setCurrentPage((current) => current === page ? current : page)
   }, [mode])
+
+  const updateKnownPageCount = useCallback((totalPages?: number) => {
+    if (!totalPages || totalPages < 1) return
+    setAccess((current) => {
+      if (!current || totalPages <= current.material.pageCount) return current
+      return {
+        ...current,
+        material: {
+          ...current.material,
+          pageCount: totalPages,
+        },
+      }
+    })
+  }, [])
 
   const loadAnnotations = useCallback(async () => {
     const res = await fetch(`/api/materiais/${materialId}/pdf-viewer/annotations`, { cache: 'no-store' })
@@ -144,8 +210,10 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         }
         if (!mounted) return
         setAccess(json)
-        setMode(json.viewer?.defaultMode || 'continuous')
-        await loadAnnotations()
+        setCurrentPage(1)
+        setPageInput('1')
+        setMode(json.viewer?.defaultMode || 'single')
+        loadAnnotations().catch(() => {})
       } catch {
         if (mounted) setError('PDF nao pode ser carregado agora. Tente novamente.')
       } finally {
@@ -172,13 +240,23 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   }, [loading, showAnnotations, showThumbs])
 
   useEffect(() => {
-    if (!pageSize || !contentWidth || zoomTouchedRef.current || mode === 'single') return
+    if (!pageSize || !contentWidth || zoomTouchedRef.current) return
     const availableWidth = Math.max(280, contentWidth - 24)
     const fittedZoom = clampZoom(availableWidth / pageSize.width, minZoom, maxZoom)
     if (fittedZoom < 0.98) {
       setZoom(fittedZoom)
     }
-  }, [contentWidth, maxZoom, minZoom, mode, pageSize])
+  }, [contentWidth, maxZoom, minZoom, pageSize])
+
+  useEffect(() => {
+    if (!access || currentPage >= pageCount) return
+    const timer = window.setTimeout(() => {
+      fetchPdfPageBytes(materialId, currentPage + 1)
+        .then((result) => updateKnownPageCount(result.pageCount))
+        .catch(() => {})
+    }, 900)
+    return () => window.clearTimeout(timer)
+  }, [access, currentPage, materialId, pageCount, updateKnownPageCount])
 
   useEffect(() => {
     const block = (event: Event) => event.preventDefault()
@@ -448,12 +526,13 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                   key={`${page}-${mode}`}
                   materialId={materialId}
                   pageNumber={page}
-                  active={mode === 'single' || Math.abs(page - currentPage) <= 1}
+                  active={page === currentPage}
                   zoom={zoom}
                   annotations={annotations.filter((annotation) => annotation.pageNumber === page)}
                   tool={tool}
-                  onVisible={handlePageVisible}
+                  onPageFocus={handlePageFocused}
                   onPageSize={setPageSize}
+                  onPageCount={updateKnownPageCount}
                   onCreateAnnotation={createAnnotation}
                   onUpdateAnnotation={updateAnnotation}
                   onDeleteAnnotation={deleteAnnotation}
@@ -507,8 +586,9 @@ function PdfCanvasPage({
   zoom,
   annotations,
   tool,
-  onVisible,
+  onPageFocus,
   onPageSize,
+  onPageCount,
   onCreateAnnotation,
   onUpdateAnnotation,
   onDeleteAnnotation,
@@ -519,8 +599,9 @@ function PdfCanvasPage({
   zoom: number
   annotations: PdfAnnotation[]
   tool: AnnotationTool
-  onVisible: (page: number) => void
+  onPageFocus: (page: number) => void
   onPageSize: (size: PageSize) => void
+  onPageCount: (totalPages?: number) => void
   onCreateAnnotation: (annotation: Partial<PdfAnnotation>) => void
   onUpdateAnnotation: (annotation: PdfAnnotation, patch: Partial<PdfAnnotation>) => void
   onDeleteAnnotation: (annotation: PdfAnnotation) => void
@@ -551,37 +632,43 @@ function PdfCanvasPage({
       ([entry]) => {
         if (entry.isIntersecting) {
           setVisible(true)
-          onVisible(pageNumber)
         }
       },
-      { rootMargin: '450px 0px' }
+      { rootMargin: '180px 0px' }
     )
     observer.observe(element)
     return () => observer.disconnect()
-  }, [onVisible, pageNumber])
+  }, [pageNumber])
+
+  useEffect(() => {
+    const element = wrapperRef.current
+    if (!element) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) onPageFocus(pageNumber)
+      },
+      { rootMargin: '-18% 0px -68% 0px', threshold: 0 }
+    )
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [onPageFocus, pageNumber])
 
   useEffect(() => {
     if ((!visible && !active) || requestedRef.current || pageBytes) return
     let cancelled = false
-    const controller = new AbortController()
 
     async function loadPageBytes() {
       requestedRef.current = true
       setLoading(true)
       setError('')
       try {
-        const response = await fetch(
-          `/api/materiais/${materialId}/pdf-viewer/page?page=${pageNumber}`,
-          { cache: 'no-store', signal: controller.signal }
-        )
-        if (!response.ok) {
-          const data = await response.json().catch(() => ({}))
-          throw new Error(data.error || 'Falha ao carregar pagina')
+        const result = await fetchPdfPageBytes(materialId, pageNumber)
+        if (!cancelled) {
+          onPageCount(result.pageCount)
+          setPageBytes(result.bytes)
         }
-        const data = await response.arrayBuffer()
-        if (!cancelled) setPageBytes(new Uint8Array(data))
       } catch (err: any) {
-        if (!cancelled && err?.name !== 'AbortError') {
+        if (!cancelled) {
           setError(err?.message || 'Pagina indisponivel')
         }
       } finally {
@@ -592,9 +679,8 @@ function PdfCanvasPage({
     loadPageBytes()
     return () => {
       cancelled = true
-      controller.abort()
     }
-  }, [active, loadAttempt, materialId, pageBytes, pageNumber, visible])
+  }, [active, loadAttempt, materialId, onPageCount, pageBytes, pageNumber, visible])
 
   useEffect(() => {
     const bytes = pageBytes
@@ -613,7 +699,8 @@ function PdfCanvasPage({
         const baseViewport = page.getViewport({ scale: 1 })
         onPageSize({ width: baseViewport.width, height: baseViewport.height })
 
-        const dpr = Math.min(window.devicePixelRatio || 1, window.innerWidth < 768 ? 2 : 2.5)
+        const maxDpr = active ? (window.innerWidth < 768 ? 1.75 : 2) : (window.innerWidth < 768 ? 1.25 : 1.5)
+        const dpr = Math.min(window.devicePixelRatio || 1, maxDpr)
         const viewport = page.getViewport({ scale: zoom * dpr })
         const displayViewport = page.getViewport({ scale: zoom })
         const canvas = canvasRef.current
@@ -648,7 +735,7 @@ function PdfCanvasPage({
       renderTask?.cancel?.()
       doc?.destroy?.()
     }
-  }, [onPageSize, pageBytes, zoom])
+  }, [active, onPageSize, pageBytes, zoom])
 
   const retryLoad = () => {
     requestedRef.current = false
@@ -742,7 +829,7 @@ function PdfCanvasPage({
             aspectRatio: `${Math.max(1, pageFrameSize.width)} / ${Math.max(1, pageFrameSize.height)}`,
           }}
         />
-        {(!renderSize || loading) && (
+        {((!renderSize && (visible || active)) || loading) && (
           <div className="absolute inset-2 rounded-xl bg-white/90 flex items-center justify-center">
             <div className="h-7 w-7 rounded-full border-2 border-emerald-700/20 border-t-emerald-700 animate-spin" />
           </div>

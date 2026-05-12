@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import {
-  fetchMaterialPdfBytes,
   getClientIp,
-  getPdfPageCount,
   validateMaterialPdfAccess,
 } from '@/lib/material-pdf-viewer'
-import { ObjectId } from 'mongodb'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -31,21 +28,12 @@ export async function GET(
     }
 
     const cachedPageCount = Number(access.material.pdfFile?.pageCount || 0)
-    let totalPages = cachedPageCount > 0 ? cachedPageCount : 0
-
-    if (!totalPages) {
-      const pdfBytes = await fetchMaterialPdfBytes(access.material.pdfFile.blobUrl)
-      totalPages = await getPdfPageCount(pdfBytes)
-      await access.db.collection('materials').updateOne(
-        { _id: new ObjectId(access.materialId) },
-        { $set: { 'pdfFile.pageCount': totalPages, updatedAt: new Date() } }
-      )
-    }
+    const totalPages = cachedPageCount > 0 ? cachedPageCount : 1
 
     const now = new Date()
     const auditToken = crypto.randomUUID()
 
-    await access.db.collection('material_pdf_viewer_logs').insertOne({
+    access.db.collection('material_pdf_viewer_logs').insertOne({
       userId: session.userId,
       userName: session.name,
       userEmail: session.email,
@@ -56,7 +44,7 @@ export async function GET(
       ip: getClientIp(request),
       userAgent: request.headers.get('user-agent') || 'unknown',
       createdAt: now,
-    })
+    }).catch((error) => console.error('[pdf-viewer/access] Falha ao logar abertura:', error))
 
     return NextResponse.json(
       {
@@ -71,7 +59,7 @@ export async function GET(
           openedAt: now.toISOString(),
         },
         viewer: {
-          defaultMode: 'continuous',
+          defaultMode: 'single',
           minZoom: 0.35,
           maxZoom: 2.8,
         },

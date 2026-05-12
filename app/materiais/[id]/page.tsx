@@ -44,6 +44,11 @@ import {
   INITIAL_DOWNLOAD_STATE,
   DownloadStepId,
 } from '@/components/materiais/pdf-download-progress'
+import {
+  downloadPdfResponse,
+  shouldUseNativePdfDownload,
+  triggerNativePdfDownload,
+} from '@/lib/material-download-client'
 
 // ─── Types ───────────────────────────────────────────────────
 interface Material {
@@ -173,6 +178,18 @@ export default function MaterialViewPage() {
     stepTimersRef.current = [t1, t2]
 
     try {
+      if (shouldUseNativePdfDownload()) {
+        stepTimersRef.current.forEach(clearTimeout)
+        setDownloadState({ step: 'ready', status: 'running' })
+        triggerNativePdfDownload(material._id)
+        const tSuccess = setTimeout(() => {
+          setDownloadState({ step: 'ready', status: 'success' })
+        }, 1200)
+        const tClose = setTimeout(() => setDownloadState(INITIAL_DOWNLOAD_STATE), 5200)
+        stepTimersRef.current = [tSuccess, tClose]
+        return
+      }
+
       const res = await fetch('/api/materiais/download', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -196,17 +213,7 @@ export default function MaterialViewPage() {
 
       setDownloadState({ step: 'ready', status: 'running' })
 
-      const blob = await res.blob()
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      const disposition = res.headers.get('Content-Disposition') || ''
-      const nameMatch = disposition.match(/filename="?([^"]+)"?/)
-      a.download = nameMatch?.[1] || `${material.title}.pdf`
-      a.href = url
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      URL.revokeObjectURL(url)
+      await downloadPdfResponse(res, `${material.title}.pdf`)
 
       setDownloadState({ step: 'ready', status: 'success' })
 

@@ -71,10 +71,22 @@ function trimText(value: string | undefined, fallback: string, maxLength: number
   return `${normalized.slice(0, Math.max(0, maxLength - 3))}...`
 }
 
+function emailFingerprint(email: string | undefined): string {
+  const normalized = (email || '').trim().toLowerCase()
+  if (!normalized) return 'mail-na'
+
+  let hash = 5381
+  for (let i = 0; i < normalized.length; i++) {
+    hash = ((hash << 5) + hash) ^ normalized.charCodeAt(i)
+  }
+
+  return `mail-${(hash >>> 0).toString(36).slice(0, 8)}`
+}
+
 function getViewerWatermarkConfig(): ViewerWatermarkConfig {
   return {
     enabled: envBoolean('PDF_VIEWER_WATERMARK_ENABLED', true),
-    repeated: envBoolean('PDF_VIEWER_WATERMARK_REPEATED', true),
+    repeated: envBoolean('PDF_VIEWER_WATERMARK_REPEATED', false),
     qrEnabled: envBoolean('PDF_VIEWER_WATERMARK_QR_ENABLED', false),
     opacity: envNumber('PDF_VIEWER_WATERMARK_OPACITY', 0.055, 0.01, 0.25),
     footerOpacity: envNumber('PDF_VIEWER_WATERMARK_FOOTER_OPACITY', 0.28, 0.05, 0.8),
@@ -264,39 +276,59 @@ function drawRepeatedWatermark(
   font: any,
   options: { materialId: string; auditToken: string; config: ViewerWatermarkConfig }
 ) {
-  if (!options.config.enabled || !options.config.repeated) return
+  if (!options.config.enabled) return
 
   const { width, height } = page.getSize()
   const fontSize = Math.max(options.config.minFontSize, Math.min(options.config.maxFontSize, width / 72))
   const color = rgb(0.02, 0.24, 0.17)
   const gold = rgb(0.82, 0.66, 0.32)
   const angle = degrees(options.config.angle)
-  const maxLineWidth = Math.max(...lines.map((line) => font.widthOfTextAtSize(line, fontSize)))
-  const xGap = maxLineWidth + options.config.xGap
-  const yGap = options.config.yGap
-  const diagonal = Math.sqrt(width * width + height * height)
-  const cols = Math.ceil(diagonal / xGap) + 2
-  const rows = Math.ceil(diagonal / yGap) + 2
-  const cx = width / 2
-  const cy = height / 2
 
-  for (let row = -rows; row <= rows; row++) {
-    for (let col = -cols; col <= cols; col++) {
-      const x = cx + col * xGap - maxLineWidth / 2
-      const y = cy + row * yGap
+  if (options.config.repeated) {
+    const maxLineWidth = Math.max(...lines.map((line) => font.widthOfTextAtSize(line, fontSize)))
+    const xGap = maxLineWidth + options.config.xGap
+    const yGap = options.config.yGap
+    const diagonal = Math.sqrt(width * width + height * height)
+    const cols = Math.ceil(diagonal / xGap) + 2
+    const rows = Math.ceil(diagonal / yGap) + 2
+    const cx = width / 2
+    const cy = height / 2
 
-      lines.forEach((line, index) => {
-        page.drawText(line, {
-          x,
-          y: y - index * (fontSize + options.config.lineGap),
-          size: fontSize,
-          font,
-          color: index % 2 === 0 ? color : gold,
-          opacity: options.config.opacity,
-          rotate: angle,
+    for (let row = -rows; row <= rows; row++) {
+      for (let col = -cols; col <= cols; col++) {
+        const x = cx + col * xGap - maxLineWidth / 2
+        const y = cy + row * yGap
+
+        lines.forEach((line, index) => {
+          page.drawText(line, {
+            x,
+            y: y - index * (fontSize + options.config.lineGap),
+            size: fontSize,
+            font,
+            color: index % 2 === 0 ? color : gold,
+            opacity: options.config.opacity,
+            rotate: angle,
+          })
         })
-      })
+      }
     }
+  } else {
+    const centerFontSize = Math.max(10, Math.min(15, width / 48))
+    const centerOpacity = Math.min(0.18, options.config.opacity * 1.9)
+    const blockWidth = Math.max(...lines.map((line) => font.widthOfTextAtSize(line, centerFontSize)))
+    const startY = height / 2 + centerFontSize
+
+    lines.forEach((line, index) => {
+      page.drawText(line, {
+        x: width / 2 - blockWidth / 2,
+        y: startY - index * (centerFontSize + options.config.lineGap + 2),
+        size: centerFontSize,
+        font,
+        color: index % 2 === 0 ? color : gold,
+        opacity: centerOpacity,
+        rotate: angle,
+      })
+    })
   }
 
   page.drawText(`DomineAqui protegido | Material ${options.materialId} | Token ${options.auditToken.slice(0, 12)}`, {
@@ -334,10 +366,11 @@ export async function createWatermarkedSinglePagePdf(
   const page = outputDoc.getPages()[0]
   const config = getViewerWatermarkConfig()
   const viewedAtLabel = formatViewerDate(input.viewedAt)
+  const userMarker = `UID ${input.userId.slice(-8)} | ${emailFingerprint(input.userEmail)}`
   const watermarkLines = [
     trimText(input.userName, 'Usuario DomineAqui', config.maxTextLength),
-    trimText(input.userEmail, 'email nao informado', config.maxTextLength),
-    `ID ${input.userId.slice(-8)} | ${viewedAtLabel}`,
+    userMarker,
+    `Visualizado ${viewedAtLabel}`,
   ]
 
   const qrPayload = JSON.stringify({
