@@ -80,7 +80,7 @@ function HiddenWordRender({
   )
 }
 
-function ImageLightbox({ src, onClose }: { src: string; onClose: () => void }) {
+function ImageLightbox({ src, onClose, initialClick }: { src: string; onClose: () => void; initialClick?: { x: number; y: number } }) {
   const [scale, setScale] = useState(1)
   const [translate, setTranslate] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
@@ -127,6 +127,18 @@ function ImageLightbox({ src, onClose }: { src: string; onClose: () => void }) {
     const r = el.getBoundingClientRect()
     zoomToPoint(r.left + r.width / 2, r.top + r.height / 2, scaleRef.current + delta)
   }, [zoomToPoint])
+
+  // Zoom inicial no ponto onde o usuário clicou para abrir
+  const zoomToPointRef = useRef(zoomToPoint)
+  zoomToPointRef.current = zoomToPoint
+  useEffect(() => {
+    if (!initialClick) return
+    const id = requestAnimationFrame(() => {
+      zoomToPointRef.current(initialClick.x, initialClick.y, 2.5)
+    })
+    return () => cancelAnimationFrame(id)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     const prev = document.body.style.overflow
@@ -336,13 +348,14 @@ function ClickableImage({
   src: string; alt?: string; className?: string; containerClassName?: string; onDark?: boolean
 }) {
   const [lightbox, setLightbox] = useState(false)
+  const [clickPos, setClickPos] = useState<{ x: number; y: number } | undefined>()
   const [hovered, setHovered] = useState(false)
 
   return (
     <>
       <div
         className={cn('relative cursor-zoom-in', containerClassName)}
-        onClick={e => { e.stopPropagation(); setLightbox(true) }}
+        onClick={e => { e.stopPropagation(); setClickPos({ x: e.clientX, y: e.clientY }); setLightbox(true) }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         style={{
@@ -385,7 +398,7 @@ function ClickableImage({
         </AnimatePresence>
       </div>
       <AnimatePresence>
-        {lightbox && <ImageLightbox src={src} onClose={() => setLightbox(false)} />}
+        {lightbox && <ImageLightbox src={src} onClose={() => setLightbox(false)} initialClick={clickPos} />}
       </AnimatePresence>
     </>
   )
