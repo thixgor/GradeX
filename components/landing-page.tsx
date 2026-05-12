@@ -1,46 +1,37 @@
 'use client'
 
-import { useState, useEffect, useRef, lazy, Suspense } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { Button } from '@/components/ui/button'
-import { ThemeToggle } from '@/components/theme-toggle'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { Logo } from '@/components/logo'
 import {
   ChevronDown,
-  BookOpen,
-  Users,
-  Zap,
-  FileText,
-  MessageSquare,
   ArrowRight,
   Instagram,
   Brain,
   Calendar,
-  Lightbulb,
+  Zap,
   Database,
-  CheckCircle2,
   Video,
-  HelpCircle,
-  ChevronUp,
+  MessageSquare,
   GraduationCap,
   Stethoscope,
   FlaskConical,
-  Sparkles,
   BarChart3,
-  Shield,
-  Clock,
   Target,
-  Play,
   Heart,
-  AlertCircle,
   BookMarked,
-  Scale
+  Scale,
+  Menu,
+  X,
 } from 'lucide-react'
 import { DoacaoContent } from '@/components/doacoes/doacao-content'
 import { DoacaoRanking } from '@/components/doacoes/doacao-ranking'
 import { DoacaoForm } from '@/components/doacoes/doacao-form'
 import { DoacaoEcgAnimation } from '@/components/doacoes/doacao-ecg-animation'
+
+// ─── Hooks ────────────────────────────────────────────────────────────────────
 
 function useInView(threshold = 0.15) {
   const ref = useRef<HTMLDivElement>(null)
@@ -48,15 +39,18 @@ function useInView(threshold = 0.15) {
   useEffect(() => {
     const el = ref.current
     if (!el) return
-    // If element is already in the viewport on mount (above-fold), reveal immediately
-    // without waiting for the async IntersectionObserver callback — prevents blank flash.
     const rect = el.getBoundingClientRect()
     if (rect.top < window.innerHeight && rect.bottom > 0) {
       setIsVisible(true)
       return
     }
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setIsVisible(true); obs.disconnect() } },
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true)
+          obs.disconnect()
+        }
+      },
       { threshold }
     )
     obs.observe(el)
@@ -81,16 +75,43 @@ function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: str
     }
     requestAnimationFrame(step)
   }, [isVisible, target])
-  return <span ref={ref}>{count.toLocaleString('pt-BR')}{suffix}</span>
+  return (
+    <span ref={ref}>
+      {count.toLocaleString('pt-BR')}
+      {suffix}
+    </span>
+  )
 }
 
+// ─── Framer Motion variants ────────────────────────────────────────────────────
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 28 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+}
+
+const stagger = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08 } },
+}
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
 interface LandingPageProps {
-  /** Evita re-fetch de auth — passado pelo HomeContent em app/page.tsx */
   initialIsLoggedIn?: boolean
-  /** Evita re-fetch de settings */
   initialVideoEmbedUrl?: string
   initialVideoEnabled?: boolean
 }
+
+// ─── Shared style constants ────────────────────────────────────────────────────
+
+const GLASS_CARD =
+  'bg-white/[0.055] border border-white/[0.10] backdrop-blur-xl rounded-3xl shadow-[0_0_60px_rgba(45,212,191,0.08)]'
+
+const GLASS_CARD_SM =
+  'bg-white/[0.05] border border-white/[0.09] backdrop-blur-xl rounded-2xl'
+
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function LandingPage({
   initialIsLoggedIn,
@@ -98,113 +119,102 @@ export default function LandingPage({
   initialVideoEnabled,
 }: LandingPageProps) {
   const router = useRouter()
+  const shouldReduceMotion = useReducedMotion()
+
   const [isScrolled, setIsScrolled] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [videoEmbedUrl, setVideoEmbedUrl] = useState(
     initialVideoEmbedUrl ?? 'https://www.youtube.com/embed/dQw4w9WgXcQ'
   )
   const [videoEnabled, setVideoEnabled] = useState(initialVideoEnabled ?? true)
   const [isLoggedIn, setIsLoggedIn] = useState(initialIsLoggedIn ?? false)
   const [openFaq, setOpenFaq] = useState<number | null>(null)
+  const [doacaoFormOpen, setDoacaoFormOpen] = useState(false)
+
+  // ── Data ──────────────────────────────────────────────────────────────────
 
   const faqs = [
     {
-      question: "Como funciona o Banco de Questões?",
-      answer: "Nosso banco é focado 100% nas questões que realmente caem nas provas do seu curso. Tudo organizado para você filtrar, montar listas personalizadas, baixar PDF e treinar. Toda semana entra conteúdo novo.\n\nEstamos catalogando centenas de questões de estilo institucional, além de questões autorais idênticas no estilo, pegada e dificuldade, seguindo a mesma bibliografia."
+      question: 'Como funciona o Banco de Questões?',
+      answer:
+        'Nosso banco é focado 100% nas questões que realmente caem nas provas do seu curso. Tudo organizado para você filtrar, montar listas personalizadas, baixar PDF e treinar. Toda semana entra conteúdo novo.\n\nEstamos catalogando centenas de questões de estilo institucional, além de questões autorais idênticas no estilo, pegada e dificuldade, seguindo a mesma bibliografia.',
     },
     {
-      question: "As aulas realmente aprofundam o conteúdo?",
-      answer: "Sem enrolação. As aulas são densas e aprofundadas, do jeito que precisa para residência. Slides didáticos + material complementar para treinar na hora — questões, resumos, fluxogramas.\n\nAs aulas de HAM usam formato OSCE com dinâmica em POV (primeira pessoa), baseado em estudos que mostram melhora na performance prática e habilidades não-técnicas."
+      question: 'As aulas realmente aprofundam o conteúdo?',
+      answer:
+        'Sem enrolação. As aulas são densas e aprofundadas, do jeito que precisa para residência. Slides didáticos + material complementar para treinar na hora — questões, resumos, fluxogramas.\n\nAs aulas de HAM usam formato OSCE com dinâmica em POV (primeira pessoa), baseado em estudos que mostram melhora na performance prática e habilidades não-técnicas.',
     },
     {
-      question: "Como funcionam os Flashcards?",
-      answer: "Cada flashcard é criado com base na Taxonomia de Bloom — do básico (lembrar, entender) até o avançado (analisar, avaliar, criar), com dificuldade ajustável. Após cada card, rola revisão pós-card imediata para fixação.\n\nTudo atrelado às ementas de 4 cursos, com revisões espaçadas e integração com o banco de questões."
+      question: 'Como funcionam os Flashcards?',
+      answer:
+        'Cada flashcard é criado com base na Taxonomia de Bloom — do básico (lembrar, entender) até o avançado (analisar, avaliar, criar), com dificuldade ajustável. Após cada card, rola revisão pós-card imediata para fixação.\n\nTudo atrelado às ementas de 4 cursos, com revisões espaçadas e integração com o banco de questões.',
     },
     {
-      question: "Os cronogramas são personalizáveis?",
-      answer: "100% personalizados e atrelados às ementas do seu curso. Ajuste por hora do dia, dificuldade por conteúdo, cobrindo todos os módulos, submódulos, tópicos e subtópicos.\n\nCursos: Ciências Médicas (SOI/HAM I-V), Ciências Psicossociais (1°-10°), Ciências Biomédicas (1°-7°), Ciências Odontológicas (1°-10°), além de ENEM e UERJ. A IA adapta ao seu ritmo automaticamente."
+      question: 'Os cronogramas são personalizáveis?',
+      answer:
+        '100% personalizados e atrelados às ementas do seu curso. Ajuste por hora do dia, dificuldade por conteúdo, cobrindo todos os módulos, submódulos, tópicos e subtópicos.\n\nCursos: Ciências Médicas (SOI/HAM I-V), Ciências Psicossociais (1°-10°), Ciências Biomédicas (1°-7°), Ciências Odontológicas (1°-10°), além de ENEM e UERJ. A IA adapta ao seu ritmo automaticamente.',
     },
     {
-      question: "Como funcionam as provas com IA?",
-      answer: "Provas individuais totalmente customizáveis: escolha o curso, período, módulos, tópicos, dificuldade, número de questões e tempo limite. A IA gera questões adaptadas ao seu histórico.\n\nTambém temos provas gerais — simulados coletivos com ranking, análise completa de acertos, erros e tempo gasto."
+      question: 'Como funcionam as provas com IA?',
+      answer:
+        'Provas individuais totalmente customizáveis: escolha o curso, período, módulos, tópicos, dificuldade, número de questões e tempo limite. A IA gera questões adaptadas ao seu histórico.\n\nTambém temos provas gerais — simulados coletivos com ranking, análise completa de acertos, erros e tempo gasto.',
     },
     {
-      question: "A plataforma recebe atualizações?",
-      answer: "Constantemente. Já temos mais de 20 atualizações mapeadas no roadmap: melhorias de usabilidade, novas funcionalidades, mais questões e ferramentas de revisão inteligente. A plataforma evolui junto com você."
+      question: 'A plataforma recebe atualizações?',
+      answer:
+        'Constantemente. Já temos mais de 20 atualizações mapeadas no roadmap: melhorias de usabilidade, novas funcionalidades, mais questões e ferramentas de revisão inteligente. A plataforma evolui junto com você.',
     },
     {
-      question: "Posso sugerir melhorias?",
-      answer: "Claro! Feedback, sugestões de tema, dúvidas — tudo é bem-vindo. Entre em contato pelo email contato@domineaqui.com.br."
-    }
+      question: 'Posso sugerir melhorias?',
+      answer:
+        'Claro! Feedback, sugestões de tema, dúvidas — tudo é bem-vindo. Entre em contato pelo email contato@domineaqui.com.br.',
+    },
   ]
-
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50)
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  useEffect(() => {
-    // Só busca se os dados NÃO foram passados pelo pai (app/page.tsx).
-    // Evita 2 roundtrips duplicados que já foram feitos antes de mostrar a landing.
-    if (initialIsLoggedIn === undefined) {
-      fetch('/api/auth/me').then(r => { if (r.ok) setIsLoggedIn(true) }).catch(() => {})
-    }
-    if (initialVideoEmbedUrl === undefined) {
-      fetch('/api/admin/settings').then(async r => {
-        if (r.ok) {
-          const data = await r.json()
-          if (data.videoEmbedUrl) setVideoEmbedUrl(data.videoEmbedUrl)
-          setVideoEnabled(data.videoEnabled !== false)
-        }
-      }).catch(() => {})
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   const features = [
     {
       icon: Brain,
       title: 'Flashcards Inteligentes',
-      description: 'Repetição espaçada com IA que aprende seu ritmo. Atrelados às ementas de todos os cursos.',
-      accent: 'primary' as const,
+      description:
+        'Repetição espaçada com IA que aprende seu ritmo. Atrelados às ementas de todos os cursos.',
     },
     {
       icon: Calendar,
       title: 'Cronogramas Personalizados',
-      description: 'Ementas completas de Ciências Médicas, Psicossociais, Biomédicas e Odontológicas. Adaptados ao seu ritmo.',
-      accent: 'secondary' as const,
+      description:
+        'Ementas completas de Ciências Médicas, Psicossociais, Biomédicas e Odontológicas. Adaptados ao seu ritmo.',
     },
     {
       icon: Zap,
       title: 'Provas com IA',
-      description: 'Provas personalizadas com contextos adaptados a cada curso. Simulados coletivos com ranking.',
-      accent: 'primary' as const,
+      description:
+        'Provas personalizadas com contextos adaptados a cada curso. Simulados coletivos com ranking.',
     },
     {
       icon: Database,
       title: 'Banco de Questões',
-      description: '1.000+ questões organizadas por período, módulo e tópico. Objetivas, discursivas e TRI.',
-      accent: 'secondary' as const,
+      description:
+        '1.000+ questões organizadas por período, módulo e tópico. Objetivas, discursivas e TRI.',
     },
     {
       icon: Video,
       title: 'Aulas Aprofundadas',
-      description: 'Aulas densas focadas em residência. HAM em formato OSCE com dinâmica POV em primeira pessoa.',
-      accent: 'primary' as const,
+      description:
+        'Aulas densas focadas em residência. HAM em formato OSCE com dinâmica POV em primeira pessoa.',
     },
     {
       icon: MessageSquare,
       title: 'Comunidade & Fórum',
-      description: 'Fóruns de discussão e comunidade focada. Aprenda e evolua junto com outros estudantes.',
-      accent: 'secondary' as const,
+      description:
+        'Fóruns de discussão e comunidade focada. Aprenda e evolua junto com outros estudantes.',
     },
   ]
 
   const stats = [
-    { value: 1000, suffix: '+', label: 'Questões no banco' },
-    { value: 4, suffix: '', label: 'Cursos disponíveis' },
-    { value: 10, suffix: '+', label: 'Ferramentas de estudo' },
-    { value: 20, suffix: '+', label: 'Atualizações planejadas' },
+    { value: 1000, suffix: '+', label: 'Questões no Banco' },
+    { value: 4, suffix: '', label: 'Cursos Disponíveis' },
+    { value: 10, suffix: '+', label: 'Ferramentas de Estudo' },
+    { value: 20, suffix: '+', label: 'Áreas da Saúde' },
   ]
 
   const courses = [
@@ -214,7 +224,46 @@ export default function LandingPage({
     { icon: GraduationCap, name: 'Ciências Odontológicas', detail: '1° ao 10° Período' },
   ]
 
-  const heroSection = useInView(0.1)
+  const navLinks = [
+    { label: 'Início', href: '#hero' },
+    { label: 'Recursos', href: '#recursos' },
+    { label: 'Materiais', href: '#materiais' },
+    { label: 'Questões', href: '#questoes' },
+    { label: 'Sobre', href: '#apoie' },
+  ]
+
+  // ── Effects ───────────────────────────────────────────────────────────────
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 50)
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  useEffect(() => {
+    if (initialIsLoggedIn === undefined) {
+      fetch('/api/auth/me')
+        .then((r) => {
+          if (r.ok) setIsLoggedIn(true)
+        })
+        .catch(() => {})
+    }
+    if (initialVideoEmbedUrl === undefined) {
+      fetch('/api/admin/settings')
+        .then(async (r) => {
+          if (r.ok) {
+            const data = await r.json()
+            if (data.videoEmbedUrl) setVideoEmbedUrl(data.videoEmbedUrl)
+            setVideoEnabled(data.videoEnabled !== false)
+          }
+        })
+        .catch(() => {})
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // ── Section observers ─────────────────────────────────────────────────────
+
   const statsSection = useInView()
   const featuresSection = useInView(0.08)
   const coursesSection = useInView()
@@ -223,241 +272,493 @@ export default function LandingPage({
   const faqSection = useInView(0.08)
   const doacaoSection = useInView(0.1)
   const afyaSection = useInView(0.1)
-  const [doacaoFormOpen, setDoacaoFormOpen] = useState(false)
+
+  // ── Animation helpers ─────────────────────────────────────────────────────
+
+  const motionProps = (delay = 0) =>
+    shouldReduceMotion
+      ? {}
+      : {
+          initial: 'hidden' as const,
+          whileInView: 'show' as const,
+          viewport: { once: true, amount: 0.15 },
+          variants: {
+            hidden: { opacity: 0, y: 24 },
+            show: { opacity: 1, y: 0, transition: { duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] } },
+          },
+        }
+
+  // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      {/* Navbar — floating, glass, matching inner pages */}
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled
-          ? 'bg-background/80 backdrop-blur-2xl shadow-lg shadow-black/[0.04] dark:shadow-black/[0.2] border-b border-border/50'
-          : 'bg-transparent'
-      }`}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
+    <div
+      className="min-h-screen text-slate-50 overflow-x-hidden"
+      style={{ backgroundColor: '#040816' }}
+    >
+      {/* Global radial glows */}
+      <div className="pointer-events-none fixed inset-0 z-0 hidden sm:block" aria-hidden>
+        <div
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] rounded-full opacity-20 blur-[120px]"
+          style={{ background: 'radial-gradient(ellipse, #2DD4BF22 0%, transparent 70%)' }}
+        />
+        <div
+          className="absolute bottom-1/3 right-0 w-[600px] h-[400px] rounded-full opacity-15 blur-[100px]"
+          style={{ background: 'radial-gradient(ellipse, #4ADE8018 0%, transparent 70%)' }}
+        />
+      </div>
+
+      {/* ══════════════════════════════════════════
+          NAVBAR
+      ══════════════════════════════════════════ */}
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+          isScrolled
+            ? 'backdrop-blur-2xl shadow-lg shadow-black/30 border-b border-white/[0.06]'
+            : 'bg-transparent'
+        }`}
+        style={isScrolled ? { backgroundColor: 'rgba(4,8,22,0.85)' } : undefined}
+      >
+        <div className="max-w-[1280px] mx-auto px-5 lg:px-8 h-16 flex items-center justify-between">
+          {/* Logo */}
           <div className="flex items-center gap-3">
             <Logo variant="full" size="md" />
           </div>
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
-            <Button
+
+          {/* Nav links — desktop */}
+          <nav className="hidden lg:flex items-center gap-6">
+            {navLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="text-sm font-medium text-slate-400 hover:text-slate-100 transition-colors"
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
+
+          {/* CTA buttons */}
+          <div className="flex items-center gap-2">
+            <button
               onClick={() => router.push(isLoggedIn ? '/dashboard' : '/auth/login')}
-              variant="outline"
-              size="sm"
-              className="hidden sm:inline-flex border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50 transition-colors"
+              className="hidden sm:inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 border border-white/[0.10] bg-white/[0.04] hover:bg-white/[0.08] hover:text-slate-100 transition-all"
             >
               {isLoggedIn ? 'Dashboard' : 'Entrar'}
-            </Button>
-            <Button
+            </button>
+            <button
               onClick={() => router.push(isLoggedIn ? '/dashboard' : '/auth/register')}
-              size="sm"
-              className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-sm transition-colors"
+              className="inline-flex items-center px-4 py-2 rounded-xl text-sm font-bold text-[#040816] transition-all hover:opacity-90 hover:scale-[1.02]"
+              style={{ background: 'linear-gradient(135deg, #4ADE80 0%, #2DD4BF 100%)' }}
             >
-              {isLoggedIn ? 'Ir para Dashboard' : 'Começar Grátis'}
-            </Button>
+              {isLoggedIn ? 'Ir para Dashboard' : 'Criar conta gratuita'}
+            </button>
+
+            {/* Mobile hamburger */}
+            <button
+              onClick={() => setMobileMenuOpen((v) => !v)}
+              className="lg:hidden ml-1 p-2 rounded-xl text-slate-400 hover:text-slate-100 hover:bg-white/[0.06] transition-all"
+              aria-label="Abrir menu"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+              className="lg:hidden border-t border-white/[0.06] backdrop-blur-2xl px-5 py-4 space-y-1"
+              style={{ backgroundColor: 'rgba(4,8,22,0.95)' }}
+            >
+              {navLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-white/[0.06] hover:text-slate-100 transition-colors"
+                >
+                  {link.label}
+                </a>
+              ))}
+              <div className="pt-2 border-t border-white/[0.06]">
+                <button
+                  onClick={() => router.push(isLoggedIn ? '/dashboard' : '/auth/login')}
+                  className="w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-white/[0.06] hover:text-slate-100 transition-colors"
+                >
+                  {isLoggedIn ? 'Dashboard' : 'Entrar'}
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
-      {/* Hero */}
-      <section className="relative min-h-[92vh] flex items-center justify-center pt-16 overflow-hidden">
-        {/* Subtle ambient background — blurs só em sm+ (GPU cara no mobile) */}
-        <div className="absolute inset-0 pointer-events-none hidden sm:block">
-          <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/[0.07] rounded-full blur-[120px]" />
-          <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-secondary/[0.05] rounded-full blur-[120px]" />
+      {/* ══════════════════════════════════════════
+          HERO
+      ══════════════════════════════════════════ */}
+      <section id="hero" className="relative min-h-screen flex items-center pt-16 overflow-hidden">
+        {/* Background hero image */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="https://i.imgur.com/5BA1wF8.png"
+            alt="Fundo médico futurista DomineAqui"
+            fill
+            priority
+            className="object-cover object-center"
+            sizes="100vw"
+          />
+          {/* Dark overlay gradient */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'linear-gradient(to bottom, rgba(4,8,22,0.80) 0%, rgba(4,8,22,0.70) 50%, rgba(4,8,22,0.98) 100%)',
+            }}
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'linear-gradient(to right, rgba(4,8,22,0.60) 0%, transparent 40%, transparent 60%, rgba(4,8,22,0.60) 100%)',
+            }}
+          />
         </div>
-        {/* Grid pattern overlay */}
-        <div className="absolute inset-0 pointer-events-none opacity-[0.03] dark:opacity-[0.05]"
-          style={{ backgroundImage: 'radial-gradient(circle, currentColor 1px, transparent 1px)', backgroundSize: '32px 32px' }}
+
+        {/* Teal glow behind card */}
+        <div
+          className="absolute right-[5%] top-1/2 -translate-y-1/2 w-[480px] h-[380px] rounded-full blur-[80px] opacity-25 pointer-events-none hidden lg:block z-[1]"
+          style={{ background: 'radial-gradient(ellipse, #2DD4BF 0%, transparent 70%)' }}
         />
 
-        <div ref={heroSection.ref} className={`relative z-10 max-w-5xl mx-auto px-6 text-center transition-all duration-1000 ${heroSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/20 bg-primary/[0.06] mb-8">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
-            </span>
-            <span className="text-sm font-medium text-primary">Acesso Antecipado</span>
-          </div>
+        <div className="relative z-10 max-w-[1280px] mx-auto px-5 lg:px-8 w-full py-16 lg:py-0">
+          <div className="grid lg:grid-cols-2 gap-10 xl:gap-16 items-center min-h-[calc(100vh-64px)]">
+            {/* ── Left: text ── */}
+            <motion.div
+              {...(shouldReduceMotion
+                ? {}
+                : {
+                    initial: { opacity: 0, y: 32 },
+                    animate: { opacity: 1, y: 0 },
+                    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+                  })}
+              className="flex flex-col justify-center py-20 lg:py-0"
+            >
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 self-start px-4 py-1.5 rounded-full border border-emerald-400/25 bg-emerald-400/[0.08] mb-8">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+                </span>
+                <span className="text-sm font-semibold text-emerald-400">Acesso Amplo &amp; Gratuito</span>
+              </div>
 
-          {/* Logo */}
-          <div className="mb-10">
-            <div className="inline-flex items-center justify-center p-6 rounded-3xl bg-gradient-to-br from-primary/10 to-secondary/10 border border-primary/10">
-              <Image
-                src="/logo.png"
-                alt="DomineAqui Logo"
-                width={160}
-                height={160}
-                className="w-28 h-28 md:w-40 md:h-40 object-contain"
-                priority
-              />
+              {/* Headline */}
+              <h1 className="font-bold tracking-tight leading-[1.08] mb-6 text-4xl sm:text-5xl xl:text-6xl">
+                <span className="text-slate-50">Seja o Foco.</span>
+                <br />
+                <span
+                  style={{
+                    backgroundImage: 'linear-gradient(90deg, #4ADE80 0%, #D4A574 55%, #fb923c 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }}
+                >
+                  Seja a Referência.
+                </span>
+              </h1>
+
+              {/* Subtitle */}
+              <p className="text-base sm:text-lg text-slate-300 max-w-lg mb-10 leading-relaxed">
+                Plataforma completa de estudo para alunos de saúde. Questões, flashcards, cronogramas,
+                provas com IA e aulas — tudo integrado para você dominar.
+              </p>
+
+              {/* CTAs */}
+              <div className="flex flex-col sm:flex-row gap-3 mb-10">
+                <button
+                  onClick={() => router.push('/auth/register')}
+                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl text-base font-bold text-[#040816] transition-all hover:opacity-90 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(74,222,128,0.35)] shadow-[0_0_20px_rgba(74,222,128,0.20)]"
+                  style={{ background: 'linear-gradient(135deg, #4ADE80 0%, #2DD4BF 100%)' }}
+                >
+                  Começar Gratuitamente
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => router.push('/auth/login')}
+                  className="inline-flex items-center justify-center px-7 py-3.5 rounded-2xl text-base font-semibold text-slate-200 border border-white/[0.12] bg-white/[0.05] hover:bg-white/[0.09] hover:border-white/[0.18] transition-all"
+                >
+                  Já tenho conta
+                </button>
+              </div>
+
+              {/* Course badges */}
+              <div className="flex flex-wrap gap-2">
+                {courses.map((course) => (
+                  <div
+                    key={course.name}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium text-slate-300 border border-white/[0.09] bg-white/[0.04]"
+                  >
+                    <course.icon className="w-3 h-3 text-teal-400" />
+                    {course.name}
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* ── Right: holographic panel card ── */}
+            <motion.div
+              {...(shouldReduceMotion
+                ? {}
+                : {
+                    initial: { opacity: 0, x: 32 },
+                    animate: { opacity: 1, x: 0 },
+                    transition: { duration: 0.8, delay: 0.15, ease: [0.22, 1, 0.36, 1] },
+                  })}
+              className="hidden lg:flex items-center justify-center"
+            >
+              <motion.div
+                animate={shouldReduceMotion ? {} : { y: [0, -10, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                className="relative"
+              >
+                {/* Glow ring */}
+                <div
+                  className="absolute -inset-4 rounded-[2.5rem] blur-2xl opacity-40"
+                  style={{ background: 'radial-gradient(ellipse, #2DD4BF 0%, transparent 70%)' }}
+                />
+                {/* Card */}
+                <div
+                  className="relative rounded-3xl overflow-hidden border border-white/[0.12]"
+                  style={{
+                    background: 'rgba(7,18,36,0.65)',
+                    backdropFilter: 'blur(20px)',
+                    boxShadow: '0 0 60px rgba(45,212,191,0.18), inset 0 1px 0 rgba(255,255,255,0.08)',
+                    width: 'clamp(340px, 42vw, 580px)',
+                  }}
+                >
+                  <Image
+                    src="https://i.imgur.com/shnMPTl.jpeg"
+                    alt="Dashboard médico holográfico"
+                    width={1536}
+                    height={1024}
+                    priority
+                    className="w-full h-auto rounded-3xl object-cover"
+                    sizes="(max-width: 1280px) 42vw, 580px"
+                  />
+                  {/* Bottom frosted overlay */}
+                  <div
+                    className="absolute bottom-0 left-0 right-0 h-24 rounded-b-3xl"
+                    style={{
+                      background: 'linear-gradient(to top, rgba(7,18,36,0.9) 0%, transparent 100%)',
+                    }}
+                  />
+                </div>
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Scroll hint */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 animate-bounce">
+          <ChevronDown className="w-5 h-5 text-slate-500" />
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          STATS
+      ══════════════════════════════════════════ */}
+      <section className="py-16 px-5 relative z-10">
+        <div
+          ref={statsSection.ref}
+          className={`max-w-[1280px] mx-auto transition-all duration-700 ${
+            statsSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+          }`}
+        >
+          <div className={`${GLASS_CARD} p-6 sm:p-8`}>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+              {stats.map((stat) => (
+                <div key={stat.label} className="text-center">
+                  <div
+                    className="text-3xl md:text-4xl font-bold mb-1 tabular-nums"
+                    style={{
+                      backgroundImage: 'linear-gradient(135deg, #4ADE80 0%, #2DD4BF 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                    }}
+                  >
+                    <AnimatedCounter target={stat.value} suffix={stat.suffix} />
+                  </div>
+                  <div className="text-sm text-slate-400">{stat.label}</div>
+                </div>
+              ))}
             </div>
           </div>
-
-          {/* Headline */}
-          <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6">
-            <span className="text-foreground">Seja o Foco.</span>
-            <br />
-            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Seja a Referência.
-            </span>
-          </h1>
-
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-            Plataforma completa de estudo para alunos de saúde. Questões, flashcards, cronogramas, provas com IA e aulas — tudo integrado para você dominar.
-          </p>
-
-          {/* CTA */}
-          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-12">
-            <Button
-              onClick={() => router.push('/auth/register')}
-              size="lg"
-              className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 h-12 text-base shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/25 cursor-pointer"
-            >
-              Começar Gratuitamente
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-            <Button
-              onClick={() => router.push('/auth/login')}
-              variant="outline"
-              size="lg"
-              className="border-border hover:bg-muted/50 font-semibold px-8 h-12 text-base transition-colors cursor-pointer"
-            >
-              Já tenho conta
-            </Button>
-          </div>
-
-          {/* Course badges */}
-          <div className="flex flex-wrap justify-center gap-2">
-            {courses.map((course) => (
-              <div
-                key={course.name}
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-card/80 border border-border/60 text-sm"
-              >
-                <course.icon className="w-3.5 h-3.5 text-primary" />
-                <span className="font-medium text-foreground">{course.name}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* Scroll hint */}
-          <div className="mt-16 animate-bounce">
-            <ChevronDown className="w-5 h-5 mx-auto text-muted-foreground/50" />
-          </div>
         </div>
       </section>
 
-      {/* Social Proof — Stats */}
-      <section className="py-20 px-6 border-t border-border/30">
-        <div ref={statsSection.ref} className={`max-w-5xl mx-auto transition-all duration-700 ${statsSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat) => (
-              <div key={stat.label} className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-foreground mb-1">
-                  <AnimatedCounter target={stat.value} suffix={stat.suffix} />
-                </div>
-                <div className="text-sm text-muted-foreground">{stat.label}</div>
-              </div>
-            ))}
-          </div>
+      {/* ══════════════════════════════════════════
+          FERRAMENTAS / FEATURES
+      ══════════════════════════════════════════ */}
+      <section id="recursos" className="py-24 px-5 relative overflow-hidden">
+        {/* Decorative medical image */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <Image
+            src="https://i.imgur.com/y8KB9OS.jpeg"
+            alt=""
+            fill
+            className="object-cover object-center"
+            style={{ opacity: 0.04 }}
+            sizes="100vw"
+          />
+          <div className="absolute inset-0" style={{ background: 'rgba(4,8,22,0.92)' }} />
         </div>
-      </section>
 
-      {/* Features */}
-      <section className="py-24 px-6">
-        <div ref={featuresSection.ref} className="max-w-6xl mx-auto">
-          <div className={`text-center mb-16 transition-all duration-700 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
+        <div ref={featuresSection.ref} className="relative z-10 max-w-[1280px] mx-auto">
+          <motion.div {...motionProps()} className="text-center mb-16">
+            <p className="text-xs font-bold uppercase tracking-widest text-teal-400 mb-3">
+              Ferramentas
+            </p>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-50 mb-4">
               Tudo que você precisa para dominar
             </h2>
-            <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+            <p className="text-slate-400 max-w-xl mx-auto">
               Ferramentas integradas e inteligentes, desenhadas para o seu curso
             </p>
-          </div>
+          </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
             {features.map((feature, i) => (
-              <div
+              <motion.div
                 key={feature.title}
-                className={`group relative p-6 rounded-2xl border border-border/60 bg-card/50 sm:backdrop-blur-sm hover:bg-card hover:border-primary/30 hover:shadow-lg hover:shadow-primary/[0.06] transition-all duration-300 cursor-default ${
-                  featuresSection.isVisible
-                    ? 'opacity-100 translate-y-0'
-                    : 'opacity-0 translate-y-6'
-                }`}
-                style={{ transitionDelay: featuresSection.isVisible ? `${i * 80}ms` : '0ms' }}
+                {...(shouldReduceMotion
+                  ? {}
+                  : {
+                      initial: { opacity: 0, y: 24 },
+                      whileInView: { opacity: 1, y: 0 },
+                      viewport: { once: true, amount: 0.2 },
+                      transition: { duration: 0.5, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] },
+                    })}
+                whileHover={shouldReduceMotion ? {} : { scale: 1.02, y: -2 }}
+                className={`${GLASS_CARD_SM} p-6 cursor-default group transition-all duration-300 hover:border-teal-400/20 hover:shadow-[0_0_40px_rgba(45,212,191,0.10)]`}
               >
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${
-                  feature.accent === 'primary'
-                    ? 'bg-primary/10 text-primary'
-                    : 'bg-secondary/10 text-secondary'
-                }`}>
-                  <feature.icon className="w-5 h-5" />
+                <div
+                  className="w-11 h-11 rounded-2xl flex items-center justify-center mb-4 border border-white/[0.08]"
+                  style={{ background: 'rgba(45,212,191,0.10)' }}
+                >
+                  <feature.icon className="w-5 h-5 text-teal-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
-              </div>
+                <h3 className="text-base font-semibold text-slate-100 mb-2">{feature.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{feature.description}</p>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Courses Detail */}
-      <section className="py-24 px-6 border-t border-border/30">
-        <div ref={coursesSection.ref} className="max-w-5xl mx-auto">
-          <div className={`text-center mb-16 transition-all duration-700 ${coursesSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Cobertura completa das ementas
+      {/* ══════════════════════════════════════════
+          COBERTURA DAS CIÊNCIAS DA SAÚDE
+      ══════════════════════════════════════════ */}
+      <section id="materiais" className="py-24 px-5 relative">
+        <div
+          className="absolute inset-0 z-0 pointer-events-none"
+          style={{
+            background:
+              'radial-gradient(ellipse at 30% 50%, rgba(74,222,128,0.04) 0%, transparent 60%), radial-gradient(ellipse at 70% 50%, rgba(45,212,191,0.04) 0%, transparent 60%)',
+          }}
+        />
+
+        <div ref={coursesSection.ref} className="relative z-10 max-w-[1280px] mx-auto">
+          <motion.div {...motionProps()} className="text-center mb-16">
+            <p className="text-xs font-bold uppercase tracking-widest text-emerald-400 mb-3">
+              Cobertura
+            </p>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-50 mb-4">
+              Ciências da Saúde completas
             </h2>
-            <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+            <p className="text-slate-400 max-w-xl mx-auto">
               Cronogramas, questões e flashcards organizados por curso, período, módulo e tópico
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="grid sm:grid-cols-2 gap-4 mb-6">
             {courses.map((course, i) => (
-              <div
+              <motion.div
                 key={course.name}
-                className={`flex items-center gap-4 p-5 rounded-2xl border border-border/60 bg-card/50 sm:backdrop-blur-sm hover:bg-card hover:border-primary/20 transition-all duration-300 ${
-                  coursesSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-                }`}
-                style={{ transitionDelay: coursesSection.isVisible ? `${i * 100}ms` : '0ms' }}
+                {...(shouldReduceMotion
+                  ? {}
+                  : {
+                      initial: { opacity: 0, y: 20 },
+                      whileInView: { opacity: 1, y: 0 },
+                      viewport: { once: true },
+                      transition: { duration: 0.5, delay: i * 0.09 },
+                    })}
+                whileHover={shouldReduceMotion ? {} : { scale: 1.01 }}
+                className={`${GLASS_CARD_SM} flex items-center gap-4 p-5 transition-all duration-300 hover:border-emerald-400/20`}
               >
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <course.icon className="w-6 h-6 text-primary" />
+                <div
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 border border-white/[0.08]"
+                  style={{ background: 'rgba(74,222,128,0.09)' }}
+                >
+                  <course.icon className="w-6 h-6 text-emerald-400" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground">{course.name}</h3>
-                  <p className="text-sm text-muted-foreground">{course.detail}</p>
+                  <h3 className="font-semibold text-slate-100">{course.name}</h3>
+                  <p className="text-sm text-slate-400">{course.detail}</p>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
 
-          {/* Additional offerings */}
-          <div className={`mt-6 flex flex-wrap justify-center gap-3 transition-all duration-700 delay-500 ${coursesSection.isVisible ? 'opacity-100' : 'opacity-0'}`}>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted/50 border border-border/40 text-sm text-muted-foreground">
-              <Target className="w-3.5 h-3.5" /> ENEM
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted/50 border border-border/40 text-sm text-muted-foreground">
-              <Target className="w-3.5 h-3.5" /> UERJ
-            </span>
-          </div>
+          <motion.div
+            {...motionProps(0.3)}
+            className="flex flex-wrap justify-center gap-3"
+          >
+            {[
+              { icon: Target, label: 'ENEM' },
+              { icon: Target, label: 'UERJ' },
+            ].map(({ icon: Icon, label }) => (
+              <span
+                key={label}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-white/[0.09] bg-white/[0.04] text-sm text-slate-400"
+              >
+                <Icon className="w-3.5 h-3.5 text-teal-400" />
+                {label}
+              </span>
+            ))}
+          </motion.div>
         </div>
       </section>
 
-      {/* Video Demo */}
+      {/* ══════════════════════════════════════════
+          VIDEO DEMO
+      ══════════════════════════════════════════ */}
       {videoEnabled && (
-        <section className="py-24 px-6 border-t border-border/30">
-          <div ref={videoSection.ref} className={`max-w-4xl mx-auto transition-all duration-700 ${videoSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+        <section className="py-24 px-5 relative">
+          <div
+            ref={videoSection.ref}
+            className={`max-w-4xl mx-auto transition-all duration-700 ${
+              videoSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+            }`}
+          >
             <div className="text-center mb-10">
-              <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-50 mb-4">
                 Veja a plataforma em ação
               </h2>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-slate-400">
                 Conheça as ferramentas que vão transformar seu estudo
               </p>
             </div>
-            <div className="aspect-video rounded-2xl overflow-hidden border border-border/60 bg-card shadow-xl shadow-black/[0.06] dark:shadow-black/[0.2]">
+            <div
+              className={`${GLASS_CARD} overflow-hidden aspect-video`}
+              style={{ padding: 0 }}
+            >
               <iframe
                 width="100%"
                 height="100%"
@@ -475,82 +776,160 @@ export default function LandingPage({
       )}
 
       {/* ══════════════════════════════════════════
-          SEÇÃO PROVAS
+          TREINE COM PROVAS REAIS
       ══════════════════════════════════════════ */}
-      <section className="py-20 px-6 border-t border-border/30 relative overflow-hidden">
-        {/* Background subtle */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-red-500/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl" />
+      <section id="questoes" className="py-24 px-5 relative overflow-hidden">
+        {/* Abstract gradient background */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <Image
+            src="https://i.imgur.com/ILxwYcT.png"
+            alt=""
+            fill
+            className="object-cover object-center"
+            style={{ opacity: 0.22 }}
+            sizes="100vw"
+          />
+          <div
+            className="absolute inset-0"
+            style={{ background: 'rgba(4,8,22,0.82)' }}
+          />
         </div>
 
         <div
           ref={afyaSection.ref}
-          className={`max-w-5xl mx-auto transition-all duration-700 ${afyaSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+          className={`relative z-10 max-w-[1280px] mx-auto transition-all duration-700 ${
+            afyaSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+          }`}
         >
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold mb-4 bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20">
+          <div className="text-center mb-14">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold mb-5 border border-red-500/20 bg-red-500/[0.08] text-red-400">
               <GraduationCap className="w-3.5 h-3.5" />
               Provas por Curso
             </div>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-50 mb-4">
               Treine com provas reais da sua faculdade
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Acesse e treine com simulados baseados nas provas do seu curso — organizados por curso, período e disciplina.
+            <p className="text-slate-400 max-w-2xl mx-auto">
+              Acesse e treine com simulados baseados nas provas do seu curso — organizados por
+              curso, período e disciplina.
             </p>
           </div>
 
-          {/* Cards de cursos */}
+          {/* Course cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
             {[
-              { icon: '🩺', label: 'Ciências Médicas', sub: 'SOI / HAM · 1°–5° Período', color: '#DC2626', bg: 'rgba(220,38,38,0.08)', border: 'rgba(220,38,38,0.20)' },
-              { icon: '🧠', label: 'Ciências Psicossociais', sub: '1°–10° Período', color: '#7C3AED', bg: 'rgba(124,58,237,0.08)', border: 'rgba(124,58,237,0.20)' },
-              { icon: '🔬', label: 'Ciências Biomédicas', sub: '1°–7° Período', color: '#059669', bg: 'rgba(5,150,105,0.08)', border: 'rgba(5,150,105,0.20)' },
-              { icon: '🦷', label: 'Ciências Odontológicas', sub: '1°–10° Período', color: '#2563EB', bg: 'rgba(37,99,235,0.08)', border: 'rgba(37,99,235,0.20)' },
+              {
+                icon: '🩺',
+                label: 'Ciências Médicas',
+                sub: 'SOI / HAM · 1°–5° Período',
+                color: '#DC2626',
+                bg: 'rgba(220,38,38,0.08)',
+                border: 'rgba(220,38,38,0.20)',
+              },
+              {
+                icon: '🧠',
+                label: 'Ciências Psicossociais',
+                sub: '1°–10° Período',
+                color: '#7C3AED',
+                bg: 'rgba(124,58,237,0.08)',
+                border: 'rgba(124,58,237,0.20)',
+              },
+              {
+                icon: '🔬',
+                label: 'Ciências Biomédicas',
+                sub: '1°–7° Período',
+                color: '#059669',
+                bg: 'rgba(5,150,105,0.08)',
+                border: 'rgba(5,150,105,0.20)',
+              },
+              {
+                icon: '🦷',
+                label: 'Ciências Odontológicas',
+                sub: '1°–10° Período',
+                color: '#2563EB',
+                bg: 'rgba(37,99,235,0.08)',
+                border: 'rgba(37,99,235,0.20)',
+              },
             ].map((c, i) => (
-              <div
+              <motion.div
                 key={c.label}
-                className={`relative rounded-2xl p-4 text-center transition-all duration-500 hover:-translate-y-1 hover:shadow-lg`}
+                {...(shouldReduceMotion
+                  ? {}
+                  : {
+                      initial: { opacity: 0, y: 16 },
+                      whileInView: { opacity: 1, y: 0 },
+                      viewport: { once: true },
+                      transition: { duration: 0.45, delay: i * 0.07 },
+                    })}
+                whileHover={shouldReduceMotion ? {} : { y: -4, scale: 1.02 }}
+                className="relative rounded-2xl p-4 text-center transition-all duration-300 cursor-default backdrop-blur-sm"
                 style={{
                   background: c.bg,
                   border: `1px solid ${c.border}`,
-                  transitionDelay: afyaSection.isVisible ? `${i * 80}ms` : '0ms',
                 }}
               >
                 <div className="text-3xl mb-2">{c.icon}</div>
-                <p className="font-bold text-sm text-foreground">{c.label}</p>
-                <p className="text-[11px] text-muted-foreground mt-0.5">{c.sub}</p>
-              </div>
+                <p className="font-bold text-sm text-slate-100">{c.label}</p>
+                <p className="text-[11px] text-slate-400 mt-0.5">{c.sub}</p>
+              </motion.div>
             ))}
           </div>
 
-          {/* Destaques */}
+          {/* Feature highlights */}
           <div className="grid sm:grid-cols-3 gap-4 mb-10">
             {[
-              { icon: BookMarked, title: 'Provas organizadas', desc: 'Por disciplina, período e semestre — fácil de achar o que você precisa.' },
-              { icon: BarChart3, title: 'Gabarito comentado', desc: 'Baixe PDF com gabarito e respostas comentadas para revisão.' },
-              { icon: Zap, title: 'Modo treino', desc: 'Receba feedback imediato questão a questão enquanto pratica.' },
+              {
+                icon: BookMarked,
+                title: 'Provas organizadas',
+                desc: 'Por disciplina, período e semestre — fácil de achar o que você precisa.',
+              },
+              {
+                icon: BarChart3,
+                title: 'Gabarito comentado',
+                desc: 'Baixe PDF com gabarito e respostas comentadas para revisão.',
+              },
+              {
+                icon: Zap,
+                title: 'Modo treino',
+                desc: 'Receba feedback imediato questão a questão enquanto pratica.',
+              },
             ].map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="flex items-start gap-3 p-4 rounded-2xl bg-muted/40 border border-border/40">
-                <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <Icon className="w-4 h-4 text-primary" />
+              <div
+                key={title}
+                className={`${GLASS_CARD_SM} flex items-start gap-3 p-5`}
+              >
+                <div
+                  className="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center border border-white/[0.08]"
+                  style={{ background: 'rgba(96,165,250,0.10)' }}
+                >
+                  <Icon className="w-4 h-4 text-blue-400" />
                 </div>
                 <div>
-                  <p className="font-semibold text-sm text-foreground">{title}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{desc}</p>
+                  <p className="font-semibold text-sm text-slate-100">{title}</p>
+                  <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">{desc}</p>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Disclaimer jurídico */}
-          <div className="flex items-start gap-3 p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-800/30">
-            <Scale className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+          {/* Legal disclaimer */}
+          <div
+            className="flex items-start gap-3 p-5 rounded-2xl border border-amber-500/20"
+            style={{ background: 'rgba(120,53,15,0.15)' }}
+          >
+            <Scale className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-xs font-semibold text-amber-800 dark:text-amber-300 mb-1">Aviso Legal</p>
-              <p className="text-xs text-amber-700 dark:text-amber-400 leading-relaxed">
-                Este conteúdo é disponibilizado exclusivamente para fins educacionais e de preparação acadêmica. As questões de banca presentes na plataforma foram adaptadas a partir de enunciados de domínio público ou compartilhados pelos próprios estudantes, e não reproduzem integralmente obras protegidas. As questões geradas por inteligência artificial são de autoria exclusiva da plataforma: nos termos da Lei nº 9.610/1998 (art. 11), autor é a pessoa física criadora da obra — sistemas de IA não são titulares de direitos autorais, e o conteúdo por eles gerado não goza de proteção autoral independente. A DomineAqui não possui vínculo, parceria ou endosso com nenhuma instituição de ensino.
+              <p className="text-xs font-bold text-amber-300 mb-1">Aviso Legal</p>
+              <p className="text-xs text-amber-400/80 leading-relaxed">
+                Este conteúdo é disponibilizado exclusivamente para fins educacionais e de
+                preparação acadêmica. As questões de banca presentes na plataforma foram adaptadas
+                a partir de enunciados de domínio público ou compartilhados pelos próprios
+                estudantes, e não reproduzem integralmente obras protegidas. As questões geradas
+                por inteligência artificial são de autoria exclusiva da plataforma: nos termos da
+                Lei nº 9.610/1998 (art. 11), autor é a pessoa física criadora da obra — sistemas
+                de IA não são titulares de direitos autorais, e o conteúdo por eles gerado não
+                goza de proteção autoral independente. A DomineAqui não possui vínculo, parceria
+                ou endosso com nenhuma instituição de ensino.
               </p>
             </div>
           </div>
@@ -558,66 +937,86 @@ export default function LandingPage({
       </section>
 
       {/* ══════════════════════════════════════════
-          SEÇÃO DOAÇÃO
+          DOAÇÃO
       ══════════════════════════════════════════ */}
-      <section className="py-20 px-6 border-t border-border/30 relative overflow-hidden">
-        {/* Fundo glassmorphism escuro — blur só em sm+ */}
+      <section id="apoie" className="py-24 px-5 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none hidden sm:block">
-          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full opacity-20 blur-3xl"
-            style={{ background: 'radial-gradient(ellipse, rgba(70,129,82,0.5) 0%, transparent 70%)' }} />
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] rounded-full opacity-15 blur-3xl"
+            style={{ background: 'radial-gradient(ellipse, rgba(70,129,82,0.6) 0%, transparent 70%)' }}
+          />
         </div>
 
         <div
           ref={doacaoSection.ref}
-          className={`max-w-5xl mx-auto transition-all duration-700 ${doacaoSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+          className={`relative z-10 max-w-[1280px] mx-auto transition-all duration-700 ${
+            doacaoSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+          }`}
         >
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold mb-4 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+          <div className="text-center mb-14">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold mb-5 border border-emerald-400/20 bg-emerald-400/[0.07] text-emerald-400">
               <Heart className="w-3.5 h-3.5" />
               Apoie a plataforma
             </div>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Gratuito porque você acreditou
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-50 mb-4">
+              Apoie quem salva vidas com conhecimento
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Banco de questões, provas e simulados são gratuitos e mantidos pela comunidade. Ferramentas com IA e aulas são pagas — mas cada doação ajuda a manter o núcleo da plataforma livre e acessível para todos.
+            <p className="text-slate-400 max-w-2xl mx-auto">
+              Banco de questões, provas e simulados são gratuitos e mantidos pela comunidade.
+              Ferramentas com IA e aulas são pagas — mas cada doação ajuda a manter o núcleo da
+              plataforma livre e acessível para todos.
             </p>
           </div>
 
-          {/* Glass panel — mesmo estilo dos modais */}
+          {/* Donation panel */}
           <div
             className="relative rounded-3xl overflow-hidden"
             style={{
-              background: 'linear-gradient(145deg, rgba(12,22,14,0.96) 0%, rgba(8,18,10,0.98) 100%)',
+              background:
+                'linear-gradient(145deg, rgba(12,22,14,0.96) 0%, rgba(8,18,10,0.98) 100%)',
               border: '1px solid rgba(70,129,82,0.22)',
-              boxShadow: '0 24px 80px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05)',
+              boxShadow:
+                '0 24px 80px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05)',
             }}
           >
-            {/* ECG topo */}
+            {/* ECG top */}
             <div className="absolute top-0 left-0 right-0 h-12 opacity-15 pointer-events-none overflow-hidden">
               <DoacaoEcgAnimation color="#4ade80" opacity={1} />
             </div>
-            {/* Reflexo topo */}
+            {/* Top shine */}
             <div className="absolute top-0 left-16 right-16 h-px bg-gradient-to-r from-transparent via-emerald-400/30 to-transparent pointer-events-none" />
-            {/* Grid sutil */}
-            <div className="absolute inset-0 opacity-[0.02] pointer-events-none" style={{
-              backgroundImage: 'linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px)',
-              backgroundSize: '28px 28px',
-            }} />
+            {/* Subtle grid */}
+            <div
+              className="absolute inset-0 opacity-[0.02] pointer-events-none"
+              style={{
+                backgroundImage:
+                  'linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px)',
+                backgroundSize: '28px 28px',
+              }}
+            />
 
             <div className="relative z-10 p-6 sm:p-8">
               <div className="grid lg:grid-cols-2 gap-8 items-start">
-                {/* Conteúdo de doação */}
-                <DoacaoContent
-                  onDonateClick={() => setDoacaoFormOpen(true)}
-                />
-
-                {/* Ranking — só monta (e busca dados) quando a seção fica visível */}
+                <DoacaoContent onDonateClick={() => setDoacaoFormOpen(true)} />
                 <div>
                   <div className="flex items-center gap-2 mb-4">
-                    <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, rgba(70,129,82,0.4))' }} />
-                    <span className="text-xs font-semibold text-emerald-400/60">Quem já apoiou</span>
-                    <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, rgba(70,129,82,0.4), transparent)' }} />
+                    <div
+                      className="h-px flex-1"
+                      style={{
+                        background:
+                          'linear-gradient(90deg, transparent, rgba(70,129,82,0.4))',
+                      }}
+                    />
+                    <span className="text-xs font-semibold text-emerald-400/60">
+                      Quem já apoiou
+                    </span>
+                    <div
+                      className="h-px flex-1"
+                      style={{
+                        background:
+                          'linear-gradient(90deg, rgba(70,129,82,0.4), transparent)',
+                      }}
+                    />
                   </div>
                   {doacaoSection.isVisible && <DoacaoRanking glass />}
                 </div>
@@ -627,104 +1026,175 @@ export default function LandingPage({
         </div>
       </section>
 
-      {/* DoacaoForm montado somente quando aberto — evita JS pesado no load inicial */}
-      {doacaoFormOpen && <DoacaoForm open={doacaoFormOpen} onClose={() => setDoacaoFormOpen(false)} />}
+      {doacaoFormOpen && (
+        <DoacaoForm open={doacaoFormOpen} onClose={() => setDoacaoFormOpen(false)} />
+      )}
 
-      {/* FAQ */}
-      <section className="py-24 px-6 border-t border-border/30">
-        <div ref={faqSection.ref} className="max-w-3xl mx-auto">
-          <div className={`text-center mb-14 transition-all duration-700 ${faqSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
+      {/* ══════════════════════════════════════════
+          FAQ
+      ══════════════════════════════════════════ */}
+      <section className="py-24 px-5 relative">
+        <div
+          className="absolute inset-0 z-0 pointer-events-none"
+          style={{
+            background:
+              'radial-gradient(ellipse at 50% 0%, rgba(45,212,191,0.05) 0%, transparent 60%)',
+          }}
+        />
+        <div ref={faqSection.ref} className="relative z-10 max-w-3xl mx-auto">
+          <motion.div {...motionProps()} className="text-center mb-14">
+            <p className="text-xs font-bold uppercase tracking-widest text-teal-400 mb-3">FAQ</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-50 mb-4">
               Perguntas Frequentes
             </h2>
-            <p className="text-lg text-muted-foreground">
-              Tire suas dúvidas sobre a plataforma
-            </p>
-          </div>
+            <p className="text-slate-400">Tire suas dúvidas sobre a plataforma</p>
+          </motion.div>
 
           <div className="space-y-3">
             {faqs.map((faq, index) => (
-              <div
+              <motion.div
                 key={index}
-                className={`rounded-xl border border-border/60 bg-card/50 overflow-hidden transition-all duration-300 hover:border-primary/20 ${
-                  openFaq === index ? 'border-primary/30 bg-card shadow-sm' : ''
-                } ${faqSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-                style={{ transitionDelay: faqSection.isVisible ? `${index * 50}ms` : '0ms' }}
+                {...(shouldReduceMotion
+                  ? {}
+                  : {
+                      initial: { opacity: 0, y: 16 },
+                      whileInView: { opacity: 1, y: 0 },
+                      viewport: { once: true },
+                      transition: { duration: 0.4, delay: index * 0.04 },
+                    })}
+                className={`${GLASS_CARD_SM} overflow-hidden transition-all duration-300 ${
+                  openFaq === index
+                    ? 'border-teal-400/20 shadow-[0_0_30px_rgba(45,212,191,0.08)]'
+                    : 'hover:border-white/[0.14]'
+                }`}
               >
                 <button
                   onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                  className="w-full px-5 py-4 flex items-center justify-between text-left cursor-pointer hover:bg-muted/30 transition-colors"
+                  className="w-full px-6 py-4 flex items-center justify-between text-left cursor-pointer"
                 >
-                  <span className="font-medium text-foreground pr-4">{faq.question}</span>
-                  <ChevronDown className={`h-4 w-4 text-muted-foreground flex-shrink-0 transition-transform duration-200 ${
-                    openFaq === index ? 'rotate-180' : ''
-                  }`} />
+                  <span className="font-medium text-slate-100 pr-4 text-sm sm:text-base">
+                    {faq.question}
+                  </span>
+                  <ChevronDown
+                    className={`h-4 w-4 text-teal-400 flex-shrink-0 transition-transform duration-300 ${
+                      openFaq === index ? 'rotate-180' : ''
+                    }`}
+                  />
                 </button>
-                <div className={`overflow-hidden transition-all duration-300 ${
-                  openFaq === index ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
-                }`}>
-                  <div className="px-5 pb-4 pt-0">
-                    <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
-                      {faq.answer}
-                    </p>
-                  </div>
-                </div>
-              </div>
+                <AnimatePresence initial={false}>
+                  {openFaq === index && (
+                    <motion.div
+                      key="content"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-6 pb-5 pt-0">
+                        <div className="h-px bg-white/[0.07] mb-4" />
+                        <p className="text-sm text-slate-400 leading-relaxed whitespace-pre-line">
+                          {faq.answer}
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Final CTA */}
-      <section className="py-24 px-6 border-t border-border/30">
-        <div ref={ctaSection.ref} className={`max-w-3xl mx-auto text-center transition-all duration-700 ${ctaSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
-          <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Pronto para dominar seus estudos?
-          </h2>
-          <p className="text-lg text-muted-foreground mb-8 max-w-lg mx-auto">
-            Crie sua conta gratuita e acesse todas as ferramentas da plataforma agora mesmo.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-8">
-            <Button
-              onClick={() => router.push('/auth/register')}
-              size="lg"
-              className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 h-12 text-base shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/25 cursor-pointer"
-            >
-              Começar Gratuitamente
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-            <Button
-              onClick={() => router.push('/auth/login')}
-              variant="outline"
-              size="lg"
-              className="border-border hover:bg-muted/50 font-semibold px-8 h-12 text-base transition-colors cursor-pointer"
-            >
-              Já tenho conta
-            </Button>
-          </div>
+      {/* ══════════════════════════════════════════
+          CTA FINAL
+      ══════════════════════════════════════════ */}
+      <section className="py-24 px-5 relative overflow-hidden">
+        {/* Abstract gradient */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <Image
+            src="https://i.imgur.com/ILxwYcT.png"
+            alt=""
+            fill
+            className="object-cover object-center"
+            style={{ opacity: 0.18 }}
+            sizes="100vw"
+          />
+          <div className="absolute inset-0" style={{ background: 'rgba(4,8,22,0.80)' }} />
+        </div>
 
-          {/* Instagram subtle */}
-          <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-            <span>Siga no Instagram</span>
-            <a
-              href="https://instagram.com/domineaqui.br"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-primary hover:text-primary/80 font-medium transition-colors"
-            >
-              <Instagram className="w-4 h-4" />
-              @domineaqui.br
-            </a>
+        <div
+          ref={ctaSection.ref}
+          className={`relative z-10 max-w-3xl mx-auto text-center transition-all duration-700 ${
+            ctaSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+          }`}
+        >
+          <div
+            className={`${GLASS_CARD} p-10 sm:p-14`}
+            style={{
+              boxShadow:
+                '0 0 80px rgba(45,212,191,0.12), 0 0 40px rgba(74,222,128,0.06), inset 0 1px 0 rgba(255,255,255,0.07)',
+            }}
+          >
+            {/* Glow dot */}
+            <div className="flex justify-center mb-6">
+              <div
+                className="w-3 h-3 rounded-full animate-pulse"
+                style={{ background: 'linear-gradient(135deg, #4ADE80, #2DD4BF)' }}
+              />
+            </div>
+
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-50 mb-4">
+              Pronto para dominar seus estudos?
+            </h2>
+            <p className="text-slate-400 mb-10 max-w-lg mx-auto">
+              Crie sua conta gratuita e acesse todas as ferramentas da plataforma agora mesmo.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-10">
+              <button
+                onClick={() => router.push('/auth/register')}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl text-base font-bold text-[#040816] transition-all hover:opacity-90 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(74,222,128,0.35)] shadow-[0_0_20px_rgba(74,222,128,0.20)]"
+                style={{ background: 'linear-gradient(135deg, #4ADE80 0%, #2DD4BF 100%)' }}
+              >
+                Começar Gratuitamente
+                <ArrowRight className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => router.push('/auth/login')}
+                className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 rounded-2xl text-base font-semibold text-slate-200 border border-white/[0.12] bg-white/[0.04] hover:bg-white/[0.09] hover:border-white/[0.18] transition-all"
+              >
+                Já tenho conta
+              </button>
+            </div>
+
+            <div className="flex items-center justify-center gap-2 text-sm text-slate-500">
+              <span>Siga no Instagram</span>
+              <a
+                href="https://instagram.com/domineaqui.br"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-teal-400 hover:text-teal-300 font-medium transition-colors"
+              >
+                <Instagram className="w-4 h-4" />
+                @domineaqui.br
+              </a>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border/50 py-8 px-6">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      {/* ══════════════════════════════════════════
+          FOOTER
+      ══════════════════════════════════════════ */}
+      <footer
+        className="border-t border-white/[0.07] py-8 px-5"
+        style={{ backgroundColor: 'rgba(4,8,22,0.98)' }}
+      >
+        <div className="max-w-[1280px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Logo variant="icon" size="sm" />
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm text-slate-500">
               © {new Date().getFullYear()} DomineAqui
             </span>
           </div>
@@ -733,7 +1203,7 @@ export default function LandingPage({
               href="https://instagram.com/domineaqui.br"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="text-slate-500 hover:text-slate-200 transition-colors"
               title="Instagram"
             >
               <Instagram size={18} />
@@ -742,7 +1212,7 @@ export default function LandingPage({
               href="https://discord.gg/vdfHcvDdMw"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="text-slate-500 hover:text-slate-200 transition-colors"
               title="Discord"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
