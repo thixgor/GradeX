@@ -46,16 +46,35 @@ export default function MateriaisCheckoutPage() {
       setLoading(false)
       return
     }
+    const itemUrl = itemType === 'package'
+      ? `/api/materiais/packages/${itemId}`
+      : `/api/materiais/${itemId}`
     Promise.all([
-      fetch(`/api/materiais${itemType === 'package' ? '/packages' : ''}?id=${itemId}`).then(r => r.json()),
+      fetch(itemUrl, { cache: 'no-store' }).then(r => r.json()),
       fetch('/api/payments/public-key').then(r => r.json()),
     ])
       .then(([itemResp, pkResp]) => {
-        const found = Array.isArray(itemResp)
-          ? itemResp.find((x: any) => x._id === itemId)
-          : itemResp.materials?.find((x: any) => x._id === itemId) ||
+        // Normaliza estruturas: o endpoint de pacote retorna { package, pricing },
+        // o de material retorna { material }. Achatamos para um único objeto `found`
+        // expondo o `effectivePrice` quando aplicável.
+        let found: any = null
+        if (itemType === 'package' && itemResp?.package) {
+          found = {
+            ...itemResp.package,
+            effectivePrice: itemResp.pricing?.effectivePrice ?? itemResp.package.price,
+            originalPackagePrice: itemResp.pricing?.originalPackagePrice ?? itemResp.package.price,
+            discountApplied: itemResp.pricing?.discountApplied ?? 0,
+            ownedMaterialIds: itemResp.pricing?.ownedMaterialIds ?? [],
+          }
+        } else if (itemType === 'material' && itemResp?.material) {
+          found = itemResp.material
+        } else if (Array.isArray(itemResp)) {
+          found = itemResp.find((x: any) => x._id === itemId)
+        } else {
+          found = itemResp.materials?.find((x: any) => x._id === itemId) ||
             itemResp.packages?.find((x: any) => x._id === itemId) ||
             itemResp
+        }
         if (!found || !found._id) {
           setError('Item não encontrado')
           return
@@ -118,7 +137,10 @@ export default function MateriaisCheckoutPage() {
     )
   }
 
-  const price = Number(item.price || 0)
+  const originalPrice = Number(item.originalPackagePrice ?? item.price ?? 0)
+  const price = Number(item.effectivePrice ?? item.price ?? 0)
+  const discountApplied = Number(item.discountApplied ?? 0)
+  const hasOverlapDiscount = itemType === 'package' && discountApplied > 0
   const typeLabel = itemType === 'package' ? 'Pacote' : 'Material'
 
   return (
@@ -177,9 +199,19 @@ export default function MateriaisCheckoutPage() {
                 marginBottom: '16px',
               }}>
                 <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', marginBottom: '2px' }}>Valor</p>
+                {hasOverlapDiscount && (
+                  <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.4)', textDecoration: 'line-through', marginBottom: '2px' }}>
+                    R$ {originalPrice.toFixed(2).replace('.', ',')}
+                  </p>
+                )}
                 <p style={{ fontSize: '32px', fontWeight: 800, color: '#34d399', letterSpacing: '-0.03em' }}>
                   R$ {price.toFixed(2).replace('.', ',')}
                 </p>
+                {hasOverlapDiscount && (
+                  <p style={{ fontSize: '12px', color: '#34d399', marginTop: '4px', fontWeight: 600 }}>
+                    Desconto de R$ {discountApplied.toFixed(2).replace('.', ',')} por itens já adquiridos
+                  </p>
+                )}
                 <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', marginTop: '2px' }}>Pagamento único · Acesso permanente</p>
               </div>
 
