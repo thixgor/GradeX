@@ -83,57 +83,172 @@ function HiddenWordRender({
 function ImageLightbox({ src, onClose }: { src: string; onClose: () => void }) {
   const [scale, setScale] = useState(1)
   const [translate, setTranslate] = useState({ x: 0, y: 0 })
-  const dragging = useRef(false)
-  const lastPos = useRef({ x: 0, y: 0 })
+  const [isDragging, setIsDragging] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const resetView = useCallback(() => { setScale(1); setTranslate({ x: 0, y: 0 }) }, [])
+  // Refs para uso em handlers não-React (wheel, keydown) sem closure stale
+  const scaleRef = useRef(1)
+  const txRef = useRef({ x: 0, y: 0 })
+  scaleRef.current = scale
+  txRef.current = translate
 
-  // Bloqueia scroll da página e teclado enquanto lightbox está aberto
+  // Estado de drag/pinch via refs (sem re-render a cada pixel)
+  const drag = useRef({ active: false, sx: 0, sy: 0, lx: 0, ly: 0, moved: false })
+  const ptrs = useRef(new Map<number, { x: number; y: number }>())
+  const prevPinch = useRef<{ dist: number; midX: number; midY: number } | null>(null)
+
+  const resetView = useCallback(() => {
+    scaleRef.current = 1
+    txRef.current = { x: 0, y: 0 }
+    setScale(1)
+    setTranslate({ x: 0, y: 0 })
+  }, [])
+
+  // Zoom em direção ao ponto (clientX, clientY) na tela
+  const zoomToPoint = useCallback((clientX: number, clientY: number, newScale: number) => {
+    const el = containerRef.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    const cx = clientX - rect.left - rect.width / 2
+    const cy = clientY - rect.top - rect.height / 2
+    const s = Math.min(Math.max(newScale, 0.5), 5)
+    const ratio = s / scaleRef.current
+    const newTx = cx - ratio * (cx - txRef.current.x)
+    const newTy = cy - ratio * (cy - txRef.current.y)
+    scaleRef.current = s
+    txRef.current = { x: newTx, y: newTy }
+    setScale(s)
+    setTranslate({ x: newTx, y: newTy })
+  }, [])
+
+  const zoomCenter = useCallback((delta: number) => {
+    const el = containerRef.current
+    if (!el) return
+    const r = el.getBoundingClientRect()
+    zoomToPoint(r.left + r.width / 2, r.top + r.height / 2, scaleRef.current + delta)
+  }, [zoomToPoint])
+
   useEffect(() => {
     const prev = document.body.style.overflow
     document.body.style.overflow = 'hidden'
 
-    function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') onClose()
-      if (e.key === '+' || e.key === '=') setScale(s => Math.min(s + 0.5, 5))
-      if (e.key === '-') setScale(s => Math.max(s - 0.5, 0.5))
-      if (e.key === '0') resetView()
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { onClose(); return }
+      if (e.key === '+' || e.key === '=') zoomCenter(0.5)
+      else if (e.key === '-') zoomCenter(-0.5)
+      else if (e.key === '0') resetView()
     }
-    window.addEventListener('keydown', onKey)
 
-    // Listener não-passivo para capturar o scroll antes que o browser mova a página
-    function onWheel(e: WheelEvent) {
+    const onWheel = (e: WheelEvent) => {
       e.preventDefault()
-      e.stopPropagation()
-      const delta = e.deltaY > 0 ? -0.12 : 0.12
-      setScale(s => Math.min(Math.max(s + delta, 0.5), 5))
+      zoomToPoint(e.clientX, e.clientY, scaleRef.current + (e.deltaY < 0 ? 0.15 : -0.15))
     }
+
     const el = containerRef.current
     el?.addEventListener('wheel', onWheel, { passive: false })
-
+    window.addEventListener('keydown', onKey)
     return () => {
       document.body.style.overflow = prev
-      window.removeEventListener('keydown', onKey)
       el?.removeEventListener('wheel', onWheel)
+      window.removeEventListener('keydown', onKey)
     }
-  }, [onClose, resetView])
+  }, [onClose, resetView, zoomToPoint, zoomCenter])
 
-  function handlePointerDown(e: React.PointerEvent) {
-    dragging.current = true
-    lastPos.current = { x: e.clientX, y: e.clientY }
+  function onPtrDown(e: React.PointerEvent) {
+    e.stopPropagation()
     ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
+    ptrs.current.set(e.pointerId, { x: e.clientX, y: e.clientY })
+
+    if (ptrs.current.size === 1) {
+      drag.current = { active: true, sx: e.clientX, sy: e.clientY, lx: e.clientX, ly: e.clientY, moved: false }
+      prevPinch.current = null
+      setIsDragging(true)
+    } else if (ptrs.current.size === 2) {
+      drag.current.active = false
+      const pts = [...ptrs.current.values()]
+      prevPinch.current = {
+        dist: Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y),
+        midX: (pts[0].x + pts[1].x) / 2,
+        midY: (pts[0].y + pts[1].y) / 2,
+      }
+    }
   }
 
-  function handlePointerMove(e: React.PointerEvent) {
-    if (!dragging.current) return
-    const dx = e.clientX - lastPos.current.x
-    const dy = e.clientY - lastPos.current.y
-    lastPos.current = { x: e.clientX, y: e.clientY }
-    setTranslate(t => ({ x: t.x + dx, y: t.y + dy }))
+  function onPtrMove(e: React.PointerEvent) {
+    e.stopPropagation()
+    if (!ptrs.current.has(e.pointerId)) return
+    ptrs.current.set(e.pointerId, { x: e.clientX, y: e.clientY })
+
+    if (ptrs.current.size >= 2) {
+      // Pinch zoom: escala + pan simultâneos
+      const pts = [...ptrs.current.values()]
+      const cur = {
+        dist: Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y),
+        midX: (pts[0].x + pts[1].x) / 2,
+        midY: (pts[0].y + pts[1].y) / 2,
+      }
+      const prev = prevPinch.current
+      if (prev && cur.dist > 0) {
+        const newS = Math.min(Math.max(scaleRef.current * (cur.dist / prev.dist), 0.5), 5)
+        const el = containerRef.current
+        if (el) {
+          const rect = el.getBoundingClientRect()
+          const prevCx = prev.midX - rect.left - rect.width / 2
+          const prevCy = prev.midY - rect.top - rect.height / 2
+          const ratio = newS / scaleRef.current
+          const newTx = prevCx - ratio * (prevCx - txRef.current.x) + (cur.midX - prev.midX)
+          const newTy = prevCy - ratio * (prevCy - txRef.current.y) + (cur.midY - prev.midY)
+          scaleRef.current = newS
+          txRef.current = { x: newTx, y: newTy }
+          setScale(newS)
+          setTranslate({ x: newTx, y: newTy })
+        }
+      }
+      prevPinch.current = cur
+      drag.current.moved = true
+    } else if (ptrs.current.size === 1 && drag.current.active) {
+      const dx = e.clientX - drag.current.lx
+      const dy = e.clientY - drag.current.ly
+      drag.current.lx = e.clientX
+      drag.current.ly = e.clientY
+      if (Math.abs(e.clientX - drag.current.sx) > 4 || Math.abs(e.clientY - drag.current.sy) > 4) {
+        drag.current.moved = true
+      }
+      const newTx = txRef.current.x + dx
+      const newTy = txRef.current.y + dy
+      txRef.current = { x: newTx, y: newTy }
+      setTranslate({ x: newTx, y: newTy })
+    }
   }
 
-  function handlePointerUp() { dragging.current = false }
+  function onPtrUp(e: React.PointerEvent) {
+    e.stopPropagation()
+    ptrs.current.delete(e.pointerId)
+
+    if (ptrs.current.size === 0) {
+      drag.current.active = false
+      prevPinch.current = null
+      setIsDragging(false)
+    } else if (ptrs.current.size === 1) {
+      // Voltou a 1 dedo: retoma modo drag
+      prevPinch.current = null
+      const [, pt] = [...ptrs.current.entries()][0]
+      drag.current = { active: true, sx: pt.x, sy: pt.y, lx: pt.x, ly: pt.y, moved: false }
+    }
+  }
+
+  function onContainerClick(e: React.MouseEvent) {
+    e.stopPropagation()
+    // Se houve movimento, não fechar
+    if (drag.current.moved) { drag.current.moved = false; return }
+    if (scaleRef.current === 1) onClose()
+  }
+
+  function onDblClick(e: React.MouseEvent) {
+    e.stopPropagation()
+    if (scaleRef.current > 1) resetView()
+    else zoomToPoint(e.clientX, e.clientY, 2.5)
+  }
 
   return (
     <motion.div
@@ -151,14 +266,14 @@ function ImageLightbox({ src, onClose }: { src: string; onClose: () => void }) {
       >
         <div className="flex items-center gap-1">
           <button
-            onClick={() => setScale(s => Math.min(s + 0.5, 5))}
+            onClick={() => zoomCenter(0.5)}
             className="rounded-full p-2 text-white/70 hover:text-white hover:bg-white/10 transition"
             aria-label="Zoom in"
           >
             <ZoomIn className="h-5 w-5" />
           </button>
           <button
-            onClick={() => setScale(s => Math.max(s - 0.5, 0.5))}
+            onClick={() => zoomCenter(-0.5)}
             className="rounded-full p-2 text-white/70 hover:text-white hover:bg-white/10 transition"
             aria-label="Zoom out"
           >
@@ -185,33 +300,31 @@ function ImageLightbox({ src, onClose }: { src: string; onClose: () => void }) {
       {/* Área da imagem */}
       <div
         ref={containerRef}
-        className="flex-1 overflow-hidden flex items-center justify-center touch-none"
-        style={{ cursor: scale > 1 ? 'grab' : 'zoom-out' }}
-        onClick={e => { e.stopPropagation(); if (scale === 1) onClose() }}
-        onPointerDown={e => { e.stopPropagation(); handlePointerDown(e) }}
-        onPointerMove={e => { e.stopPropagation(); handlePointerMove(e) }}
-        onPointerUp={e => { e.stopPropagation(); handlePointerUp() }}
-        onDoubleClick={e => {
-          e.stopPropagation()
-          if (scale > 1) resetView()
-          else setScale(2.5)
-        }}
+        className="flex-1 overflow-hidden flex items-center justify-center touch-none select-none"
+        style={{ cursor: isDragging ? 'grabbing' : scale > 1 ? 'grab' : 'zoom-out' }}
+        onClick={onContainerClick}
+        onDoubleClick={onDblClick}
+        onPointerDown={onPtrDown}
+        onPointerMove={onPtrMove}
+        onPointerUp={onPtrUp}
+        onPointerCancel={onPtrUp}
       >
         <img
           src={src}
           alt=""
           className="max-w-[96vw] max-h-[84vh] object-contain select-none"
           style={{
-            transform: `scale(${scale}) translate(${translate.x / scale}px, ${translate.y / scale}px)`,
-            transition: dragging.current ? 'none' : 'transform 0.1s ease',
+            transform: `translate(${translate.x}px, ${translate.y}px) scale(${scale})`,
+            transition: isDragging ? 'none' : 'transform 0.1s ease',
             pointerEvents: 'none',
+            willChange: 'transform',
           }}
           draggable={false}
         />
       </div>
 
       <p className="text-center text-white/30 text-[11px] pb-3 hidden sm:block select-none">
-        Scroll para zoom &middot; Duplo clique para ampliar &middot; Arraste para mover &middot; Esc ou clique para fechar
+        Scroll para zoom · Duplo clique para ampliar · Arraste para mover · Esc ou clique para fechar
       </p>
     </motion.div>
   )
