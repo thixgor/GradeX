@@ -7,6 +7,27 @@ export const dynamic = 'force-dynamic'
 
 const ALLOWED_TYPES = new Set(['highlight', 'note', 'drawing', 'bookmark', 'text'])
 
+function normalizeObjectId(value: any): string {
+  if (!value) return ''
+  if (typeof value === 'string') {
+    if (value.startsWith('temp-') || value === 'draft') return ''
+    const exact = value.match(/^[a-f\d]{24}$/i)
+    if (exact) return exact[0]
+    const embedded = value.match(/[a-f\d]{24}/i)
+    return embedded?.[0] || ''
+  }
+  if (typeof value === 'object') {
+    return (
+      normalizeObjectId(value.$oid) ||
+      normalizeObjectId(value.oid) ||
+      normalizeObjectId(value.id) ||
+      normalizeObjectId(value._id) ||
+      normalizeObjectId(String(value))
+    )
+  }
+  return normalizeObjectId(String(value))
+}
+
 function normalizeAnnotationBody(body: any) {
   const type = typeof body.type === 'string' ? body.type : 'note'
   const pageNumber = Number.parseInt(String(body.pageNumber || '1'), 10)
@@ -111,7 +132,7 @@ export async function PATCH(
     if ('response' in result) return result.response
 
     const body = await request.json().catch(() => ({}))
-    const annotationId = String(body.id || body._id || '')
+    const annotationId = normalizeObjectId(body.id || body._id)
     if (!ObjectId.isValid(annotationId)) {
       return NextResponse.json({ error: 'ID da anotacao invalido' }, { status: 400 })
     }
@@ -156,7 +177,15 @@ export async function DELETE(
     const result = await getAccess(params)
     if ('response' in result) return result.response
 
-    const annotationId = request.nextUrl.searchParams.get('id')
+    const body = await request.json().catch(() => ({}))
+    const annotationId = normalizeObjectId(
+      request.nextUrl.searchParams.get('id') ||
+      request.nextUrl.searchParams.get('_id') ||
+      request.nextUrl.searchParams.get('annotationId') ||
+      body.id ||
+      body._id ||
+      body.annotationId
+    )
     const deleteAll = request.nextUrl.searchParams.get('all') === 'true'
 
     if (deleteAll) {
@@ -168,7 +197,10 @@ export async function DELETE(
     }
 
     if (!annotationId || !ObjectId.isValid(annotationId)) {
-      return NextResponse.json({ error: 'ID da anotacao invalido' }, { status: 400 })
+      return NextResponse.json({
+        error: 'ID da anotacao invalido',
+        received: request.nextUrl.searchParams.get('id') || body.id || body._id || null,
+      }, { status: 400 })
     }
 
     const deleted = await result.access.db.collection('material_pdf_annotations').deleteOne({

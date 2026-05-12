@@ -155,7 +155,6 @@ const COLOR_SWATCHES = ['#22c55e', '#0ea5e9', '#f59e0b', '#ef4444', '#8b5cf6', '
 const HIGHLIGHT_SWATCHES = ['#facc15', '#fb923c', '#86efac', '#93c5fd', '#f9a8d4']
 const NOTE_SWATCHES = ['#fde68a', '#bbf7d0', '#bfdbfe', '#fecdd3', '#ddd6fe']
 const FONT_OPTIONS = ['Inter', 'Arial', 'Georgia', 'Times New Roman', 'Courier New']
-const OBJECT_ID_PATTERN = /^[a-f\d]{24}$/i
 const ERASER_CURSOR = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cpath d='M9 18 17.5 9.5a3 3 0 0 1 4.24 4.24L14.5 21H8l-3-3 4-4Z' fill='%23fff' stroke='%23111827' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M13 14 17 18' stroke='%23111827' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") 7 21, cell`
 const pageBytesCache = new Map<string, { bytes: Uint8Array; pageCount?: number; expiresAt: number }>()
 const pageBytesInflight = new Map<string, Promise<{ bytes: Uint8Array; pageCount?: number }>>()
@@ -251,10 +250,30 @@ function createEmptyAnnotation(input: Partial<PdfAnnotation>, materialId: string
   }
 }
 
+function extractObjectId(value: unknown): string {
+  if (!value) return ''
+  if (typeof value === 'string') {
+    if (value.startsWith('temp-') || value === 'draft') return ''
+    const exact = value.match(/^[a-f\d]{24}$/i)
+    if (exact) return exact[0]
+    const embedded = value.match(/[a-f\d]{24}/i)
+    return embedded?.[0] || ''
+  }
+  if (typeof value === 'object') {
+    const objectValue = value as Record<string, unknown>
+    return (
+      extractObjectId(objectValue.$oid) ||
+      extractObjectId(objectValue.oid) ||
+      extractObjectId(objectValue.id) ||
+      extractObjectId(objectValue._id) ||
+      extractObjectId(String(value))
+    )
+  }
+  return extractObjectId(String(value))
+}
+
 function getPersistedAnnotationId(annotation: PdfAnnotation) {
-  const id = String(annotation.id || annotation._id || '')
-  if (!id || id.startsWith('temp-') || id === 'draft') return ''
-  return OBJECT_ID_PATTERN.test(id) ? id : ''
+  return extractObjectId(annotation.id) || extractObjectId(annotation._id)
 }
 
 function normalizeRect(start: PdfPoint, current: PdfPoint, minWidth = 0.012, minHeight = 0.008) {
@@ -274,6 +293,49 @@ function distance(a: PdfPoint, b: PdfPoint) {
   const dx = a.x - b.x
   const dy = a.y - b.y
   return Math.sqrt(dx * dx + dy * dy)
+}
+
+function getPathLength(points: PdfPoint[]) {
+  let total = 0
+  for (let index = 1; index < points.length; index++) {
+    total += distance(points[index - 1], points[index])
+  }
+  return total
+}
+
+function getLineDeviation(points: PdfPoint[]) {
+  if (points.length < 3) return 0
+  const start = points[0]
+  const end = points[points.length - 1]
+  const base = distance(start, end)
+  if (base < 0.001) return Number.POSITIVE_INFINITY
+
+  let maxDeviation = 0
+  for (const point of points) {
+    const deviation = Math.abs(
+      (end.y - start.y) * point.x -
+      (end.x - start.x) * point.y +
+      end.x * start.y -
+      end.y * start.x
+    ) / base
+    maxDeviation = Math.max(maxDeviation, deviation)
+  }
+  return maxDeviation
+}
+
+function shouldConvertToLine(points: PdfPoint[]) {
+  if (points.length < 2 || points.length > 14) return false
+  const start = points[0]
+  const end = points[points.length - 1]
+  const straightDistance = distance(start, end)
+  const pathLength = getPathLength(points)
+  const bounds = getPointBounds(points)
+  const maxDimension = Math.max(bounds.width, bounds.height)
+  if (straightDistance < 0.045 || pathLength <= 0) return false
+
+  const efficiency = straightDistance / pathLength
+  const deviation = getLineDeviation(points)
+  return efficiency > 0.965 && deviation < Math.max(0.006, maxDimension * 0.035)
 }
 
 function getPointBounds(points: PdfPoint[]) {
@@ -342,19 +404,27 @@ function pointsToCanvasPath(context: CanvasRenderingContext2D, points: PdfPoint[
 }
 
 function shouldConvertToCircle(points: PdfPoint[]) {
-  if (points.length < 12) return false
+  if (points.length < 10 || points.length > 80) return false
   const first = points[0]
   const last = points[points.length - 1]
   const bounds = getPointBounds(points)
-  const closeEnough = distance(first, last) < Math.max(bounds.width, bounds.height) * 0.22
-  const roundEnough = bounds.width > 0.035 && bounds.height > 0.035 && bounds.width / bounds.height > 0.45 && bounds.width / bounds.height < 2.2
-  return closeEnough && roundEnough
+  const maxDimension = Math.max(bounds.width, bounds.height)
+  const minDimension = Math.min(bounds.width, bounds.height)
+  const pathLength = getPathLength(points)
+  if (maxDimension < 0.045 || minDimension < 0.035 || pathLength <= 0) return false
+
+  const closeEnough = distance(first, last) < maxDimension * 0.16
+  const roundEnough = bounds.width / bounds.height > 0.58 && bounds.width / bounds.height < 1.72
+  const enoughPerimeter = pathLength > maxDimension * 2.45
+  const notTooMessy = pathLength < maxDimension * 5.6
+  return closeEnough && roundEnough && enoughPerimeter && notTooMessy
 }
 
 function resolveDrawingMode(draft: DrawingDraft, durationMs: number) {
   if (!draft.autoShape || draft.mode !== 'free' || durationMs < 620) return draft.mode
   if (shouldConvertToCircle(draft.points)) return 'circle'
-  return distance(draft.start, draft.current) > 0.04 ? 'line' : 'free'
+  if (shouldConvertToLine(draft.points)) return 'line'
+  return 'free'
 }
 
 function annotationLabel(type: AnnotationType) {
@@ -642,6 +712,8 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     try {
       const res = await fetch(`/api/materiais/${materialId}/pdf-viewer/annotations?id=${encodeURIComponent(annotationId)}`, {
         method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: annotationId, _id: annotationId }),
       })
       if (!res.ok) throw new Error('delete failed')
     } catch {
