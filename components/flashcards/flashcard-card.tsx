@@ -89,7 +89,11 @@ function ImageLightbox({ src, onClose }: { src: string; onClose: () => void }) {
 
   const resetView = useCallback(() => { setScale(1); setTranslate({ x: 0, y: 0 }) }, [])
 
+  // Bloqueia scroll da página e teclado enquanto lightbox está aberto
   useEffect(() => {
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
     function onKey(e: KeyboardEvent) {
       if (e.key === 'Escape') onClose()
       if (e.key === '+' || e.key === '=') setScale(s => Math.min(s + 0.5, 5))
@@ -97,17 +101,25 @@ function ImageLightbox({ src, onClose }: { src: string; onClose: () => void }) {
       if (e.key === '0') resetView()
     }
     window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+
+    // Listener não-passivo para capturar o scroll antes que o browser mova a página
+    function onWheel(e: WheelEvent) {
+      e.preventDefault()
+      e.stopPropagation()
+      const delta = e.deltaY > 0 ? -0.12 : 0.12
+      setScale(s => Math.min(Math.max(s + delta, 0.5), 5))
+    }
+    const el = containerRef.current
+    el?.addEventListener('wheel', onWheel, { passive: false })
+
+    return () => {
+      document.body.style.overflow = prev
+      window.removeEventListener('keydown', onKey)
+      el?.removeEventListener('wheel', onWheel)
+    }
   }, [onClose, resetView])
 
-  function handleWheel(e: React.WheelEvent) {
-    e.stopPropagation()
-    const delta = e.deltaY > 0 ? -0.15 : 0.15
-    setScale(s => Math.min(Math.max(s + delta, 0.5), 5))
-  }
-
   function handlePointerDown(e: React.PointerEvent) {
-    if (scale <= 1) return
     dragging.current = true
     lastPos.current = { x: e.clientX, y: e.clientY }
     ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
@@ -128,52 +140,57 @@ function ImageLightbox({ src, onClose }: { src: string; onClose: () => void }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.2 }}
-      className="fixed inset-0 z-[100] flex flex-col bg-black/90 backdrop-blur-sm"
+      transition={{ duration: 0.18 }}
+      className="fixed inset-0 z-[100] flex flex-col bg-black/92 backdrop-blur-md"
       onClick={onClose}
     >
-      <div className="flex items-center justify-between px-3 py-2 sm:px-5 sm:py-3 shrink-0">
-        <div className="flex items-center gap-1 sm:gap-2">
+      {/* Toolbar */}
+      <div
+        className="flex items-center justify-between px-3 py-2 sm:px-5 sm:py-3 shrink-0"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="flex items-center gap-1">
           <button
-            onClick={e => { e.stopPropagation(); setScale(s => Math.min(s + 0.5, 5)) }}
-            className="rounded-full p-2 text-white/80 hover:text-white hover:bg-white/10 transition"
+            onClick={() => setScale(s => Math.min(s + 0.5, 5))}
+            className="rounded-full p-2 text-white/70 hover:text-white hover:bg-white/10 transition"
             aria-label="Zoom in"
           >
             <ZoomIn className="h-5 w-5" />
           </button>
           <button
-            onClick={e => { e.stopPropagation(); setScale(s => Math.max(s - 0.5, 0.5)) }}
-            className="rounded-full p-2 text-white/80 hover:text-white hover:bg-white/10 transition"
+            onClick={() => setScale(s => Math.max(s - 0.5, 0.5))}
+            className="rounded-full p-2 text-white/70 hover:text-white hover:bg-white/10 transition"
             aria-label="Zoom out"
           >
             <ZoomOut className="h-5 w-5" />
           </button>
           <button
-            onClick={e => { e.stopPropagation(); resetView() }}
-            className="rounded-full p-2 text-white/80 hover:text-white hover:bg-white/10 transition"
+            onClick={resetView}
+            className="rounded-full p-2 text-white/70 hover:text-white hover:bg-white/10 transition"
             aria-label="Resetar zoom"
           >
             <RotateCcw className="h-5 w-5" />
           </button>
-          <span className="text-white/50 text-xs ml-1 hidden sm:inline">{Math.round(scale * 100)}%</span>
+          <span className="text-white/40 text-xs ml-1 tabular-nums">{Math.round(scale * 100)}%</span>
         </div>
         <button
-          onClick={e => { e.stopPropagation(); onClose() }}
-          className="rounded-full p-2 text-white/80 hover:text-white hover:bg-white/10 transition"
+          onClick={onClose}
+          className="rounded-full p-2 text-white/70 hover:text-white hover:bg-white/10 transition"
           aria-label="Fechar"
         >
           <X className="h-6 w-6" />
         </button>
       </div>
 
+      {/* Área da imagem */}
       <div
         ref={containerRef}
-        className="flex-1 overflow-hidden flex items-center justify-center cursor-grab active:cursor-grabbing touch-none"
-        onClick={e => e.stopPropagation()}
-        onWheel={handleWheel}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
+        className="flex-1 overflow-hidden flex items-center justify-center touch-none"
+        style={{ cursor: scale > 1 ? 'grab' : 'zoom-out' }}
+        onClick={e => { e.stopPropagation(); if (scale === 1) onClose() }}
+        onPointerDown={e => { e.stopPropagation(); handlePointerDown(e) }}
+        onPointerMove={e => { e.stopPropagation(); handlePointerMove(e) }}
+        onPointerUp={e => { e.stopPropagation(); handlePointerUp() }}
         onDoubleClick={e => {
           e.stopPropagation()
           if (scale > 1) resetView()
@@ -183,14 +200,18 @@ function ImageLightbox({ src, onClose }: { src: string; onClose: () => void }) {
         <img
           src={src}
           alt=""
-          className="max-w-[95vw] max-h-[85vh] object-contain select-none pointer-events-none"
-          style={{ transform: `scale(${scale}) translate(${translate.x / scale}px, ${translate.y / scale}px)` }}
+          className="max-w-[96vw] max-h-[84vh] object-contain select-none"
+          style={{
+            transform: `scale(${scale}) translate(${translate.x / scale}px, ${translate.y / scale}px)`,
+            transition: dragging.current ? 'none' : 'transform 0.1s ease',
+            pointerEvents: 'none',
+          }}
           draggable={false}
         />
       </div>
 
-      <p className="text-center text-white/40 text-[11px] pb-2 hidden sm:block">
-        Scroll ou +/- para zoom &middot; Duplo clique para ampliar &middot; Arraste para mover &middot; Esc para fechar
+      <p className="text-center text-white/30 text-[11px] pb-3 hidden sm:block select-none">
+        Scroll para zoom &middot; Duplo clique para ampliar &middot; Arraste para mover &middot; Esc ou clique para fechar
       </p>
     </motion.div>
   )
@@ -202,32 +223,53 @@ function ClickableImage({
   src: string; alt?: string; className?: string; containerClassName?: string; onDark?: boolean
 }) {
   const [lightbox, setLightbox] = useState(false)
+  const [hovered, setHovered] = useState(false)
 
   return (
     <>
       <div
-        className={cn('relative group/img cursor-zoom-in', containerClassName)}
+        className={cn('relative cursor-zoom-in', containerClassName)}
         onClick={e => { e.stopPropagation(); setLightbox(true) }}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        style={{
+          transition: 'box-shadow 0.2s ease',
+          boxShadow: hovered
+            ? onDark
+              ? '0 0 0 2px rgba(255,255,255,0.5), 0 0 18px 4px rgba(255,255,255,0.15)'
+              : '0 0 0 2px rgba(139,92,246,0.7), 0 0 18px 4px rgba(139,92,246,0.2)'
+            : undefined,
+        }}
       >
         <Image
           src={src}
           alt={alt || ''}
           width={800}
           height={500}
-          className={className}
+          className={cn(className, 'transition-transform duration-200', hovered && 'scale-[1.01]')}
           unoptimized={src.startsWith('http')}
         />
-        <div className={cn(
-          'absolute inset-0 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity rounded-2xl',
-          onDark ? 'bg-black/30' : 'bg-black/20',
-        )}>
-          <span className={cn(
-            'rounded-full p-2',
-            onDark ? 'bg-white/20 text-white' : 'bg-white/80 text-slate-700 shadow-sm',
-          )}>
-            <ZoomIn className="h-5 w-5" />
-          </span>
-        </div>
+        <AnimatePresence>
+          {hovered && (
+            <motion.div
+              key="zoom-hint"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.15 }}
+              className="absolute bottom-2 right-2 pointer-events-none"
+            >
+              <span className={cn(
+                'flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium backdrop-blur-sm',
+                onDark
+                  ? 'bg-white/20 text-white ring-1 ring-white/30'
+                  : 'bg-white/90 text-slate-700 ring-1 ring-black/10 shadow-sm',
+              )}>
+                <ZoomIn className="h-3.5 w-3.5" /> Ampliar
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
       <AnimatePresence>
         {lightbox && <ImageLightbox src={src} onClose={() => setLightbox(false)} />}
@@ -287,7 +329,7 @@ export function FlashcardCardView({
               <ClickableImage
                 src={card.front.image}
                 containerClassName="rounded-2xl overflow-hidden mb-4 border border-slate-200 dark:border-white/10"
-                className="w-full h-auto object-contain max-h-48 sm:max-h-56 md:max-h-64 bg-slate-100 dark:bg-slate-950"
+                className="w-full h-auto object-contain max-h-64 sm:max-h-72 md:max-h-96 bg-slate-100 dark:bg-slate-950"
               />
             )}
 
@@ -383,7 +425,7 @@ export function FlashcardCardView({
                 src={card.back.image}
                 onDark
                 containerClassName="rounded-2xl overflow-hidden mb-4 border border-white/20"
-                className="w-full h-auto object-contain max-h-44 sm:max-h-48 md:max-h-56 bg-black/20"
+                className="w-full h-auto object-contain max-h-56 sm:max-h-64 md:max-h-80 bg-black/20"
               />
             )}
 
