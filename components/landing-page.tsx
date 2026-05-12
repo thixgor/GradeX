@@ -480,8 +480,10 @@ export default function LandingPage({
               </h1>
 
               {/* Subtitle */}
-              <p className="text-base sm:text-lg text-slate-300 max-w-lg mb-10 leading-relaxed">
-                Plataforma completa de estudo para alunos de saúde. Questões, flashcards, cronogramas, provas com IA e aulas — tudo integrado para você dominar. Resumos a venda e grátis, provas antigas da faculdade, flashcards compráveis estilo Anki, aulas ao vivo e gravadas, manual clínico com +200 patologias documentadas com classificação, fisiopatologia, diagnóstico, diferenciais, tratamento e farmacologia detalhada.
+              <p className="text-base sm:text-lg text-slate-300 max-w-2xl mb-10 leading-relaxed">
+                Plataforma completa de estudo para alunos de saúde com questões, flashcards, cronogramas, provas com IA e aulas — tudo integrado para você dominar.
+                <br className="hidden sm:block" />
+                <span className="text-slate-400 text-sm sm:text-base block mt-3">Banco de questões • Resumos grátis e pagos • Provas antigas da faculdade • Flashcards Anki • Aulas ao vivo e gravadas • Manual clínico com +200 patologias (classificação, fisiopatologia, diagnóstico, diferenciais, tratamento e farmacologia).</span>
               </p>
 
               {/* CTAs */}
