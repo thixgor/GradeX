@@ -40,14 +40,16 @@ export interface WatermarkOptions {
 const DEFAULT_MODE: PdfProtectionMode =
   (process.env.PDF_PROTECTION_MODE as PdfProtectionMode) || 'WATERMARK_ONLY'
 
-// Opacidade da marca d'água (0 = invisível, 1 = opaco)
-const WATERMARK_OPACITY = 0.10
-
-// Tamanho da fonte da marca d'água
-const WATERMARK_FONT_SIZE = 11
-
-// Espaçamento vertical entre repetições da marca
-const WATERMARK_REPEAT_GAP = 120
+interface WatermarkRenderConfig {
+  enabled: boolean
+  opacity: number
+  fontSize: number
+  repeatGap: number
+  xGap: number
+  angle: number
+  lineGap: number
+  maxTextLength: number
+}
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -62,6 +64,37 @@ function formatDate(date: Date): string {
   })
 }
 
+function envNumber(name: string, fallback: number, min?: number, max?: number): number {
+  const value = Number(process.env[name])
+  if (!Number.isFinite(value)) return fallback
+  return Math.min(max ?? value, Math.max(min ?? value, value))
+}
+
+function envBoolean(name: string, fallback: boolean): boolean {
+  const value = process.env[name]
+  if (value == null) return fallback
+  return !['0', 'false', 'no', 'off'].includes(value.toLowerCase())
+}
+
+function trimText(value: string, maxLength: number): string {
+  const normalized = (value || '').replace(/\s+/g, ' ').trim()
+  if (normalized.length <= maxLength) return normalized
+  return `${normalized.slice(0, Math.max(0, maxLength - 3))}...`
+}
+
+function getWatermarkRenderConfig(): WatermarkRenderConfig {
+  return {
+    enabled: envBoolean('PDF_WATERMARK_ENABLED', true),
+    opacity: envNumber('PDF_WATERMARK_OPACITY', 0.075, 0.01, 0.25),
+    fontSize: envNumber('PDF_WATERMARK_FONT_SIZE', 9, 6, 18),
+    repeatGap: envNumber('PDF_WATERMARK_REPEAT_GAP', 170, 90, 420),
+    xGap: envNumber('PDF_WATERMARK_X_GAP', 170, 80, 420),
+    angle: envNumber('PDF_WATERMARK_ANGLE', 38, 0, 70),
+    lineGap: envNumber('PDF_WATERMARK_LINE_GAP', 3, 0, 12),
+    maxTextLength: envNumber('PDF_WATERMARK_MAX_TEXT_LENGTH', 72, 24, 140),
+  }
+}
+
 /**
  * Aplica marca d'água diagonal repetida em uma única página do PDF.
  * A marca é desenhada em múltiplas posições para cobrir toda a página
@@ -70,32 +103,35 @@ function formatDate(date: Date): string {
 function applyWatermarkToPage(
   page: PDFPage,
   lines: string[],
-  font: any
+  font: any,
+  config: WatermarkRenderConfig
 ): void {
+  if (!config.enabled) return
+
   const { width, height } = page.getSize()
 
   // Cor: cinza muito transparente — visível mas não atrapalha leitura
   const color = rgb(0.3, 0.3, 0.3)
 
   // Ângulo diagonal (45°)
-  const angle = degrees(45)
+  const angle = degrees(config.angle)
 
   // Calcular largura máxima de linha (para centralização)
   const maxLineWidth = Math.max(
-    ...lines.map(l => font.widthOfTextAtSize(l, WATERMARK_FONT_SIZE))
+    ...lines.map(l => font.widthOfTextAtSize(l, config.fontSize))
   )
 
   // Tiling: repetir a marca em grade cobrindo toda a página
   // Espaçamento horizontal entre colunas (≈ largura máxima + margem)
-  const xGap = maxLineWidth + 80
+  const xGap = maxLineWidth + config.xGap
 
   // Deslocamento vertical base de cada grupo de linhas
-  const blockHeight = lines.length * (WATERMARK_FONT_SIZE + 4)
+  const blockHeight = lines.length * (config.fontSize + config.lineGap)
 
   // Quantidade de repetições necessárias para cobrir diagonal
   const diagonal = Math.sqrt(width * width + height * height)
   const cols = Math.ceil(diagonal / xGap) + 2
-  const rows = Math.ceil(diagonal / WATERMARK_REPEAT_GAP) + 2
+  const rows = Math.ceil(diagonal / config.repeatGap) + 2
 
   // Centro da página (ponto de rotação)
   const cx = width / 2
@@ -105,16 +141,16 @@ function applyWatermarkToPage(
     for (let col = -cols; col <= cols; col++) {
       // Posição no espaço não-rotacionado
       const x = cx + col * xGap - maxLineWidth / 2
-      const y = cy + row * WATERMARK_REPEAT_GAP - blockHeight / 2
+      const y = cy + row * config.repeatGap - blockHeight / 2
 
       lines.forEach((line, i) => {
         page.drawText(line, {
           x,
-          y: y - i * (WATERMARK_FONT_SIZE + 4),
-          size: WATERMARK_FONT_SIZE,
+          y: y - i * (config.fontSize + config.lineGap),
+          size: config.fontSize,
           font,
           color,
-          opacity: WATERMARK_OPACITY,
+          opacity: config.opacity,
           rotate: angle,
         })
       })
@@ -165,11 +201,12 @@ export async function applyWatermark(
 
   // ── Fonte ───────────────────────────────────────────────────────────────
   const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
+  const renderConfig = getWatermarkRenderConfig()
 
   // Linhas que aparecem na marca d'água
   const watermarkLines = [
-    userName,
-    userEmail,
+    trimText(userName, renderConfig.maxTextLength),
+    trimText(userEmail, renderConfig.maxTextLength),
     `ID: ${userId.slice(-8)}`,
     `Pedido: ${orderId.slice(-8)}`,
     formatDate(downloadedAt),
@@ -178,7 +215,7 @@ export async function applyWatermark(
   // ── Aplicar marca em todas as páginas ───────────────────────────────────
   const pages = pdfDoc.getPages()
   for (const page of pages) {
-    applyWatermarkToPage(page, watermarkLines, font)
+    applyWatermarkToPage(page, watermarkLines, font, renderConfig)
   }
 
   // ── Modo WATERMARK_AND_FLATTEN ──────────────────────────────────────────
@@ -216,7 +253,7 @@ export async function applyWatermark(
     }
   }
 
-  return pdfDoc.save()
+  return pdfDoc.save({ useObjectStreams: true })
 }
 
 /**

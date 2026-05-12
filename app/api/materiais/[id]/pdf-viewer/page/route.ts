@@ -6,6 +6,7 @@ import {
   getClientIp,
   validateMaterialPdfAccess,
 } from '@/lib/material-pdf-viewer'
+import { ObjectId } from 'mongodb'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -35,6 +36,11 @@ export async function GET(
       return NextResponse.json({ error: 'Pagina invalida' }, { status: 400 })
     }
 
+    const cachedPageCount = Number(access.material.pdfFile?.pageCount || 0)
+    if (cachedPageCount > 0 && requestedPage > cachedPageCount) {
+      return NextResponse.json({ error: 'Pagina fora do intervalo' }, { status: 400 })
+    }
+
     const viewedAt = new Date()
     const auditToken = crypto.randomUUID()
     const pdfBytes = await fetchMaterialPdfBytes(access.material.pdfFile.blobUrl)
@@ -51,6 +57,13 @@ export async function GET(
 
     if (requestedPage > pagePdf.totalPages) {
       return NextResponse.json({ error: 'Pagina fora do intervalo' }, { status: 400 })
+    }
+
+    if (!cachedPageCount && pagePdf.totalPages > 0) {
+      access.db.collection('materials').updateOne(
+        { _id: new ObjectId(access.materialId) },
+        { $set: { 'pdfFile.pageCount': pagePdf.totalPages, updatedAt: new Date() } }
+      ).catch((error) => console.error('[pdf-viewer/page] Falha ao salvar pageCount:', error))
     }
 
     access.db.collection('material_pdf_viewer_logs').insertOne({

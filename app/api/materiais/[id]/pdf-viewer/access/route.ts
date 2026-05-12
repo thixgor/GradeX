@@ -72,8 +72,8 @@ export async function GET(
         },
         viewer: {
           defaultMode: 'continuous',
-          minZoom: 0.55,
-          maxZoom: 2.6,
+          minZoom: 0.35,
+          maxZoom: 2.8,
         },
       },
       {

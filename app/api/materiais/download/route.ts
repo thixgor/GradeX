@@ -18,7 +18,8 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { isValidObjectId } from '@/lib/api-security'
-import { applyWatermark, isPdfBuffer } from '@/lib/pdf-watermark'
+import { fetchMaterialPdfBytes } from '@/lib/material-pdf-viewer'
+import { applyWatermark } from '@/lib/pdf-watermark'
 
 export const dynamic = 'force-dynamic'
 
@@ -163,32 +164,14 @@ export async function POST(request: NextRequest) {
 
     // ── 7. Baixar PDF original do Vercel Blob ─────────────────────────────
     // Nunca expor material.pdfFile.blobUrl ao cliente — apenas usar aqui no servidor.
-    // Storage privado: inclui token de autorização no header.
-    const blobResponse = await fetch(material.pdfFile.blobUrl, {
-      headers: {
-        'Cache-Control': 'no-store',
-        ...(process.env.BLOB_READ_WRITE_TOKEN
-          ? { Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}` }
-          : {}),
-      },
-    })
-
-    if (!blobResponse.ok) {
-      console.error(`[pdf-download] Falha ao buscar blob: ${blobResponse.status}`)
+    let pdfArrayBuffer: ArrayBuffer
+    try {
+      pdfArrayBuffer = await fetchMaterialPdfBytes(material.pdfFile.blobUrl)
+    } catch (error) {
+      console.error('[pdf-download] Falha ao buscar blob:', error)
       return NextResponse.json(
         { error: 'Erro ao recuperar o arquivo. Tente novamente.' },
         { status: 502 }
-      )
-    }
-
-    const pdfArrayBuffer = await blobResponse.arrayBuffer()
-
-    // Verificar magic bytes — garante que é um PDF real
-    if (!isPdfBuffer(pdfArrayBuffer)) {
-      console.error('[pdf-download] Arquivo no storage não é um PDF válido')
-      return NextResponse.json(
-        { error: 'Arquivo corrompido. Contate o suporte.' },
-        { status: 500 }
       )
     }
 

@@ -8,7 +8,6 @@ import {
   Bookmark,
   ChevronLeft,
   ChevronRight,
-  Download,
   Eraser,
   FileText,
   Highlighter,
@@ -93,6 +92,8 @@ function buildPageArray(total: number, current: number, mode: ViewerMode) {
 export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const router = useRouter()
   const viewerRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLElement>(null)
+  const zoomTouchedRef = useRef(false)
   const [access, setAccess] = useState<ViewerAccess | null>(null)
   const [annotations, setAnnotations] = useState<PdfAnnotation[]>([])
   const [loading, setLoading] = useState(true)
@@ -103,6 +104,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const [mode, setMode] = useState<ViewerMode>('continuous')
   const [tool, setTool] = useState<AnnotationTool>('cursor')
   const [pageSize, setPageSize] = useState<PageSize | null>(null)
+  const [contentWidth, setContentWidth] = useState(0)
   const [showThumbs, setShowThumbs] = useState(true)
   const [showAnnotations, setShowAnnotations] = useState(true)
 
@@ -159,6 +161,26 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   }, [currentPage])
 
   useEffect(() => {
+    const element = contentRef.current
+    if (!element) return
+
+    const updateWidth = () => setContentWidth(element.clientWidth)
+    updateWidth()
+    const observer = new ResizeObserver(updateWidth)
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [loading, showAnnotations, showThumbs])
+
+  useEffect(() => {
+    if (!pageSize || !contentWidth || zoomTouchedRef.current || mode === 'single') return
+    const availableWidth = Math.max(280, contentWidth - 24)
+    const fittedZoom = clampZoom(availableWidth / pageSize.width, minZoom, maxZoom)
+    if (fittedZoom < 0.98) {
+      setZoom(fittedZoom)
+    }
+  }, [contentWidth, maxZoom, minZoom, mode, pageSize])
+
+  useEffect(() => {
     const block = (event: Event) => event.preventDefault()
     const blockKeys = (event: KeyboardEvent) => {
       const key = event.key.toLowerCase()
@@ -194,15 +216,19 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   }
 
   const fitToWidth = useCallback(() => {
-    if (!viewerRef.current || !pageSize) return
-    const availableWidth = viewerRef.current.clientWidth - 36
+    const element = contentRef.current || viewerRef.current
+    if (!element || !pageSize) return
+    zoomTouchedRef.current = true
+    const availableWidth = element.clientWidth - 24
     setZoom(clampZoom(availableWidth / pageSize.width, minZoom, maxZoom))
     setMode('width')
   }, [maxZoom, minZoom, pageSize])
 
   const fitToPage = useCallback(() => {
-    if (!viewerRef.current || !pageSize) return
-    const availableWidth = viewerRef.current.clientWidth - 42
+    const element = contentRef.current || viewerRef.current
+    if (!element || !pageSize) return
+    zoomTouchedRef.current = true
+    const availableWidth = element.clientWidth - 24
     const availableHeight = window.innerHeight - 132
     setZoom(clampZoom(Math.min(availableWidth / pageSize.width, availableHeight / pageSize.height), minZoom, maxZoom))
     setMode('single')
@@ -285,18 +311,18 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         style={{ WebkitUserSelect: 'none', userSelect: 'none', touchAction: 'pan-x pan-y pinch-zoom' }}
       >
         <header className="sticky top-0 z-40 border-b border-white/10 bg-emerald-950/70 backdrop-blur-2xl shadow-2xl shadow-emerald-950/40">
-          <div className="px-3 sm:px-4 py-2.5 flex items-center gap-2">
+          <div className="px-2 sm:px-4 py-2.5 flex items-center gap-1.5 sm:gap-2 overflow-x-auto">
             <Button
               size="icon"
               variant="ghost"
               onClick={() => router.push(`/materiais/${materialId}`)}
-              className="h-10 w-10 rounded-2xl text-white hover:bg-white/10 hover:text-white"
+              className="h-9 w-9 shrink-0 rounded-2xl text-white hover:bg-white/10 hover:text-white sm:h-10 sm:w-10"
               title="Voltar"
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
 
-            <div className="min-w-0 flex-1">
+            <div className="min-w-28 flex-1">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="h-4 w-4 text-emerald-300 shrink-0" />
                 <h1 className="truncate text-sm sm:text-base font-semibold">{access.material.title}</h1>
@@ -307,13 +333,13 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             <ToolbarButton onClick={() => goToPage(currentPage - 1)} disabled={currentPage <= 1} title="Pagina anterior">
               <ChevronLeft className="h-4 w-4" />
             </ToolbarButton>
-            <div className="hidden xs:flex items-center gap-1 rounded-2xl border border-white/10 bg-white/10 px-2 h-10">
+            <div className="flex h-9 shrink-0 items-center gap-1 rounded-2xl border border-white/10 bg-white/10 px-1.5 sm:h-10 sm:px-2">
               <input
                 value={pageInput}
                 onChange={(event) => setPageInput(event.target.value.replace(/\D/g, ''))}
                 onKeyDown={(event) => event.key === 'Enter' && submitPageInput()}
                 onBlur={submitPageInput}
-                className="w-10 bg-transparent text-center text-sm outline-none text-white"
+                className="w-8 bg-transparent text-center text-sm outline-none text-white sm:w-10"
                 inputMode="numeric"
               />
               <span className="text-xs text-white/55">/ {pageCount}</span>
@@ -323,11 +349,11 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             </ToolbarButton>
 
             <div className="hidden md:flex items-center gap-1 rounded-2xl border border-white/10 bg-white/10 p-1">
-              <ToolbarButton compact onClick={() => setZoom((z) => clampZoom(z - 0.12, minZoom, maxZoom))} title="Diminuir zoom">
+              <ToolbarButton compact onClick={() => { zoomTouchedRef.current = true; setZoom((z) => clampZoom(z - 0.12, minZoom, maxZoom)) }} title="Diminuir zoom">
                 <Minus className="h-4 w-4" />
               </ToolbarButton>
               <span className="min-w-12 text-center text-xs text-white/75">{Math.round(zoom * 100)}%</span>
-              <ToolbarButton compact onClick={() => setZoom((z) => clampZoom(z + 0.12, minZoom, maxZoom))} title="Aumentar zoom">
+              <ToolbarButton compact onClick={() => { zoomTouchedRef.current = true; setZoom((z) => clampZoom(z + 0.12, minZoom, maxZoom)) }} title="Aumentar zoom">
                 <Plus className="h-4 w-4" />
               </ToolbarButton>
             </div>
@@ -363,6 +389,15 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
               <Type className="h-4 w-4" />
             </ToolButton>
             <div className="h-6 w-px bg-white/10 mx-1" />
+            <div className="flex items-center gap-1 md:hidden">
+              <ToolButton active={false} onClick={() => { zoomTouchedRef.current = true; setZoom((z) => clampZoom(z - 0.12, minZoom, maxZoom)) }} title="Diminuir zoom">
+                <Minus className="h-4 w-4" />
+              </ToolButton>
+              <ToolButton active={false} onClick={() => { zoomTouchedRef.current = true; setZoom((z) => clampZoom(z + 0.12, minZoom, maxZoom)) }} title="Aumentar zoom">
+                <Plus className="h-4 w-4" />
+              </ToolButton>
+            </div>
+            <div className="h-6 w-px bg-white/10 mx-1" />
             <ToolButton active={showThumbs} onClick={() => setShowThumbs((value) => !value)} title="Miniaturas">
               {showThumbs ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeftOpen className="h-4 w-4" />}
             </ToolButton>
@@ -375,9 +410,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
           </div>
         </header>
 
-        <main className="grid grid-cols-1 lg:grid-cols-[auto_1fr_auto] gap-0">
+        <main className="grid grid-cols-1 gap-0 lg:grid-cols-[7rem_minmax(0,1fr)_20rem]">
           {showThumbs && (
-            <aside className="hidden lg:block sticky top-[92px] h-[calc(100vh-92px)] w-28 overflow-y-auto border-r border-white/10 bg-black/15 backdrop-blur-xl p-3">
+            <aside className="hidden lg:col-start-1 lg:block sticky top-[92px] h-[calc(100vh-92px)] overflow-y-auto border-r border-white/10 bg-black/15 backdrop-blur-xl p-3">
               <div className="space-y-2">
                 {Array.from({ length: pageCount }, (_, index) => index + 1).map((page) => (
                   <button
@@ -397,14 +432,23 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             </aside>
           )}
 
-          <section className="min-w-0 px-2 sm:px-4 py-5 sm:py-7">
-            <div className="mx-auto flex max-w-6xl flex-col items-center gap-5">
+          <section
+            ref={contentRef}
+            className={`min-w-0 overflow-hidden px-2 py-4 sm:px-4 sm:py-7 ${
+              showThumbs ? 'lg:col-start-2' : 'lg:col-start-1'
+            } ${
+              showAnnotations
+                ? showThumbs ? '' : 'lg:col-span-2'
+                : showThumbs ? 'lg:col-span-2' : 'lg:col-span-3'
+            }`}
+          >
+            <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-5">
               {pages.map((page) => (
                 <PdfCanvasPage
                   key={`${page}-${mode}`}
                   materialId={materialId}
                   pageNumber={page}
-                  active={mode === 'single' || Math.abs(page - currentPage) <= 2}
+                  active={mode === 'single' || Math.abs(page - currentPage) <= 1}
                   zoom={zoom}
                   annotations={annotations.filter((annotation) => annotation.pageNumber === page)}
                   tool={tool}
@@ -510,7 +554,7 @@ function PdfCanvasPage({
           onVisible(pageNumber)
         }
       },
-      { rootMargin: '700px 0px' }
+      { rootMargin: '450px 0px' }
     )
     observer.observe(element)
     return () => observer.disconnect()
@@ -569,7 +613,7 @@ function PdfCanvasPage({
         const baseViewport = page.getViewport({ scale: 1 })
         onPageSize({ width: baseViewport.width, height: baseViewport.height })
 
-        const dpr = Math.min(window.devicePixelRatio || 1, 2)
+        const dpr = Math.min(window.devicePixelRatio || 1, window.innerWidth < 768 ? 2 : 2.5)
         const viewport = page.getViewport({ scale: zoom * dpr })
         const displayViewport = page.getViewport({ scale: zoom })
         const canvas = canvasRef.current
@@ -578,8 +622,10 @@ function PdfCanvasPage({
 
         canvas.width = Math.floor(viewport.width)
         canvas.height = Math.floor(viewport.height)
-        canvas.style.width = `${displayViewport.width}px`
-        canvas.style.height = `${displayViewport.height}px`
+        canvas.style.width = '100%'
+        canvas.style.height = 'auto'
+        context.imageSmoothingEnabled = true
+        context.imageSmoothingQuality = 'high'
         setRenderSize({ width: displayViewport.width, height: displayViewport.height })
 
         renderTask = page.render({ canvasContext: context, viewport })
@@ -681,18 +727,20 @@ function PdfCanvasPage({
   }
 
   return (
-    <div id={`pdf-page-${pageNumber}`} ref={wrapperRef} className="w-full scroll-mt-32 flex justify-center">
+    <div id={`pdf-page-${pageNumber}`} ref={wrapperRef} className="flex w-full scroll-mt-32 justify-center px-0 sm:px-2">
       <div
-        className="relative rounded-2xl border border-white/15 bg-white/8 p-2 shadow-2xl shadow-black/35 backdrop-blur-sm"
-        style={{ width: pageFrameSize.width + 16, maxWidth: '100%', overflow: 'hidden' }}
+        className="relative max-w-full rounded-2xl border border-white/15 bg-white/8 p-2 shadow-2xl shadow-black/35 backdrop-blur-sm"
+        style={{ width: Math.ceil(pageFrameSize.width + 16), overflow: 'hidden' }}
       >
         <div className="absolute left-3 top-3 z-10 rounded-full border border-emerald-200/20 bg-emerald-950/65 px-2 py-1 text-[11px] font-semibold text-emerald-50 backdrop-blur-md">
           Pag. {pageNumber}
         </div>
         <canvas
           ref={canvasRef}
-          className="block rounded-xl bg-white"
-          style={!renderSize ? { width: pageFrameSize.width, height: pageFrameSize.height, maxWidth: '100%' } : undefined}
+          className="block h-auto w-full rounded-xl bg-white"
+          style={{
+            aspectRatio: `${Math.max(1, pageFrameSize.width)} / ${Math.max(1, pageFrameSize.height)}`,
+          }}
         />
         {(!renderSize || loading) && (
           <div className="absolute inset-2 rounded-xl bg-white/90 flex items-center justify-center">
@@ -853,7 +901,7 @@ function AnnotationsPanel({
   onDeleteAll: () => void
 }) {
   return (
-    <aside className="lg:sticky lg:top-[92px] lg:h-[calc(100vh-92px)] lg:w-80 overflow-y-auto border-t lg:border-l lg:border-t-0 border-white/10 bg-black/20 backdrop-blur-xl p-3">
+    <aside className="overflow-y-auto border-t border-white/10 bg-black/20 p-3 backdrop-blur-xl lg:sticky lg:top-[92px] lg:col-start-3 lg:h-[calc(100vh-92px)] lg:border-l lg:border-t-0">
       <div className="flex items-center justify-between gap-2 mb-3">
         <div>
           <h2 className="text-sm font-semibold text-white">Anotacoes</h2>
@@ -919,7 +967,7 @@ function ToolbarButton({
       onClick={onClick}
       disabled={disabled}
       title={title}
-      className={`${compact ? 'h-8 w-8' : 'h-10 w-10'} rounded-2xl border border-white/10 bg-white/8 text-white hover:bg-white/15 hover:text-white disabled:opacity-40`}
+      className={`${compact ? 'h-8 w-8' : 'h-9 w-9 sm:h-10 sm:w-10'} shrink-0 rounded-2xl border border-white/10 bg-white/8 text-white hover:bg-white/15 hover:text-white disabled:opacity-40`}
     >
       {children}
     </Button>

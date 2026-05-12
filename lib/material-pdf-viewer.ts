@@ -24,6 +24,71 @@ export type MaterialPdfAccessResult =
 
 export type PdfViewerMode = 'single' | 'width' | 'continuous'
 
+interface PdfBytesCacheEntry {
+  bytes: ArrayBuffer
+  expiresAt: number
+  sizeBytes: number
+}
+
+interface ViewerWatermarkConfig {
+  enabled: boolean
+  repeated: boolean
+  qrEnabled: boolean
+  opacity: number
+  footerOpacity: number
+  angle: number
+  minFontSize: number
+  maxFontSize: number
+  xGap: number
+  yGap: number
+  lineGap: number
+  qrSize: number
+  maxTextLength: number
+}
+
+const pdfBytesCache = new Map<string, PdfBytesCacheEntry>()
+const pdfBytesInflight = new Map<string, Promise<ArrayBuffer>>()
+
+function envNumber(name: string, fallback: number, min?: number, max?: number): number {
+  const value = Number(process.env[name])
+  if (!Number.isFinite(value)) return fallback
+  return Math.min(max ?? value, Math.max(min ?? value, value))
+}
+
+function envBoolean(name: string, fallback: boolean): boolean {
+  const value = process.env[name]
+  if (value == null) return fallback
+  return !['0', 'false', 'no', 'off'].includes(value.toLowerCase())
+}
+
+function cloneBytes(bytes: ArrayBuffer): ArrayBuffer {
+  return bytes.slice(0)
+}
+
+function trimText(value: string | undefined, fallback: string, maxLength: number): string {
+  const normalized = (value || fallback).replace(/\s+/g, ' ').trim()
+  if (normalized.length <= maxLength) return normalized
+  return `${normalized.slice(0, Math.max(0, maxLength - 3))}...`
+}
+
+function getViewerWatermarkConfig(): ViewerWatermarkConfig {
+  return {
+    enabled: envBoolean('PDF_VIEWER_WATERMARK_ENABLED', true),
+    repeated: envBoolean('PDF_VIEWER_WATERMARK_REPEATED', true),
+    qrEnabled: envBoolean('PDF_VIEWER_WATERMARK_QR_ENABLED', false),
+    opacity: envNumber('PDF_VIEWER_WATERMARK_OPACITY', 0.055, 0.01, 0.25),
+    footerOpacity: envNumber('PDF_VIEWER_WATERMARK_FOOTER_OPACITY', 0.28, 0.05, 0.8),
+    angle: envNumber('PDF_VIEWER_WATERMARK_ANGLE', 34, 0, 70),
+    minFontSize: envNumber('PDF_VIEWER_WATERMARK_MIN_FONT_SIZE', 7, 5, 18),
+    maxFontSize: envNumber('PDF_VIEWER_WATERMARK_MAX_FONT_SIZE', 9, 6, 24),
+    xGap: envNumber('PDF_VIEWER_WATERMARK_X_GAP', 220, 90, 520),
+    yGap: envNumber('PDF_VIEWER_WATERMARK_Y_GAP', 190, 80, 520),
+    lineGap: envNumber('PDF_VIEWER_WATERMARK_LINE_GAP', 3, 0, 12),
+    qrSize: envNumber('PDF_VIEWER_WATERMARK_QR_SIZE', 48, 32, 96),
+    maxTextLength: envNumber('PDF_VIEWER_WATERMARK_MAX_TEXT_LENGTH', 70, 24, 140),
+  }
+}
+
 export function getClientIp(request: NextRequest): string {
   return (
     request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
@@ -124,25 +189,68 @@ export async function validateMaterialPdfAccess(
 }
 
 export async function fetchMaterialPdfBytes(blobUrl: string): Promise<ArrayBuffer> {
-  const response = await fetch(blobUrl, {
-    headers: {
-      'Cache-Control': 'no-store',
-      ...(process.env.BLOB_READ_WRITE_TOKEN
-        ? { Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}` }
-        : {}),
-    },
-  })
+  const cacheEnabled = envBoolean('PDF_VIEWER_BLOB_CACHE_ENABLED', true)
+  const ttlMs = envNumber('PDF_VIEWER_BLOB_CACHE_TTL_MS', 10 * 60 * 1000, 0, 60 * 60 * 1000)
+  const maxEntries = Math.floor(envNumber('PDF_VIEWER_BLOB_CACHE_MAX_ENTRIES', 6, 1, 40))
+  const maxCacheBytes = envNumber('PDF_VIEWER_BLOB_CACHE_MAX_MB', 160, 1, 1024) * 1024 * 1024
+  const now = Date.now()
 
-  if (!response.ok) {
-    throw new Error(`Falha ao recuperar PDF do storage: ${response.status}`)
+  if (cacheEnabled) {
+    const cached = pdfBytesCache.get(blobUrl)
+    if (cached && cached.expiresAt > now) {
+      return cloneBytes(cached.bytes)
+    }
+    if (cached) pdfBytesCache.delete(blobUrl)
+
+    const pending = pdfBytesInflight.get(blobUrl)
+    if (pending) {
+      return cloneBytes(await pending)
+    }
   }
 
-  const bytes = await response.arrayBuffer()
-  if (!isPdfBuffer(bytes)) {
-    throw new Error('Arquivo recuperado nao e um PDF valido')
+  const download = (async () => {
+    const response = await fetch(blobUrl, {
+      headers: {
+        ...(process.env.BLOB_READ_WRITE_TOKEN
+          ? { Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}` }
+          : {}),
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error(`Falha ao recuperar PDF do storage: ${response.status}`)
+    }
+
+    const bytes = await response.arrayBuffer()
+    if (!isPdfBuffer(bytes)) {
+      throw new Error('Arquivo recuperado nao e um PDF valido')
+    }
+
+    if (cacheEnabled && ttlMs > 0 && bytes.byteLength <= maxCacheBytes) {
+      while (pdfBytesCache.size >= maxEntries) {
+        const oldestKey = pdfBytesCache.keys().next().value
+        if (!oldestKey) break
+        pdfBytesCache.delete(oldestKey)
+      }
+      pdfBytesCache.set(blobUrl, {
+        bytes,
+        expiresAt: Date.now() + ttlMs,
+        sizeBytes: bytes.byteLength,
+      })
+    }
+
+    return bytes
+  })()
+
+  if (cacheEnabled) {
+    pdfBytesInflight.set(blobUrl, download)
   }
 
-  return bytes
+  try {
+    return cloneBytes(await download)
+  } finally {
+    pdfBytesInflight.delete(blobUrl)
+  }
 }
 
 export async function getPdfPageCount(pdfBytes: ArrayBuffer): Promise<number> {
@@ -154,16 +262,18 @@ function drawRepeatedWatermark(
   page: PDFPage,
   lines: string[],
   font: any,
-  options: { materialId: string; qrPng?: Uint8Array; auditToken: string }
+  options: { materialId: string; auditToken: string; config: ViewerWatermarkConfig }
 ) {
+  if (!options.config.enabled || !options.config.repeated) return
+
   const { width, height } = page.getSize()
-  const fontSize = Math.max(8, Math.min(12, width / 65))
+  const fontSize = Math.max(options.config.minFontSize, Math.min(options.config.maxFontSize, width / 72))
   const color = rgb(0.02, 0.24, 0.17)
   const gold = rgb(0.82, 0.66, 0.32)
-  const angle = degrees(38)
+  const angle = degrees(options.config.angle)
   const maxLineWidth = Math.max(...lines.map((line) => font.widthOfTextAtSize(line, fontSize)))
-  const xGap = maxLineWidth + 110
-  const yGap = 118
+  const xGap = maxLineWidth + options.config.xGap
+  const yGap = options.config.yGap
   const diagonal = Math.sqrt(width * width + height * height)
   const cols = Math.ceil(diagonal / xGap) + 2
   const rows = Math.ceil(diagonal / yGap) + 2
@@ -178,11 +288,11 @@ function drawRepeatedWatermark(
       lines.forEach((line, index) => {
         page.drawText(line, {
           x,
-          y: y - index * (fontSize + 4),
+          y: y - index * (fontSize + options.config.lineGap),
           size: fontSize,
           font,
           color: index % 2 === 0 ? color : gold,
-          opacity: 0.095,
+          opacity: options.config.opacity,
           rotate: angle,
         })
       })
@@ -195,7 +305,7 @@ function drawRepeatedWatermark(
     size: 7,
     font,
     color,
-    opacity: 0.34,
+    opacity: options.config.footerOpacity,
   })
 }
 
@@ -222,13 +332,12 @@ export async function createWatermarkedSinglePagePdf(
 
   const font = await outputDoc.embedFont(StandardFonts.HelveticaBold)
   const page = outputDoc.getPages()[0]
+  const config = getViewerWatermarkConfig()
   const viewedAtLabel = formatViewerDate(input.viewedAt)
   const watermarkLines = [
-    input.userName || 'Usuario DomineAqui',
-    input.userEmail || 'email nao informado',
-    `User ID: ${input.userId}`,
-    `Material ID: ${input.materialId}`,
-    viewedAtLabel,
+    trimText(input.userName, 'Usuario DomineAqui', config.maxTextLength),
+    trimText(input.userEmail, 'email nao informado', config.maxTextLength),
+    `ID ${input.userId.slice(-8)} | ${viewedAtLabel}`,
   ]
 
   const qrPayload = JSON.stringify({
@@ -241,27 +350,29 @@ export async function createWatermarkedSinglePagePdf(
   })
 
   let qrImage
-  try {
-    const dataUrl = await QRCode.toDataURL(qrPayload, {
-      width: 120,
-      margin: 1,
-      errorCorrectionLevel: 'M',
-      color: { dark: '#0b3d2e', light: '#ffffff' },
-    })
-    const qrBytes = Buffer.from(dataUrl.split(',')[1], 'base64')
-    qrImage = await outputDoc.embedPng(qrBytes)
-  } catch (error) {
-    console.warn('[pdf-viewer] Falha ao gerar QR Code:', error)
+  if (config.qrEnabled) {
+    try {
+      const qrBytes = await QRCode.toBuffer(qrPayload, {
+        width: Math.max(96, config.qrSize * 2),
+        margin: 1,
+        errorCorrectionLevel: 'M',
+        color: { dark: '#0b3d2e', light: '#ffffff' },
+      })
+      qrImage = await outputDoc.embedPng(qrBytes)
+    } catch (error) {
+      console.warn('[pdf-viewer] Falha ao gerar QR Code:', error)
+    }
   }
 
   drawRepeatedWatermark(page, watermarkLines, font, {
     materialId: input.materialId,
     auditToken: input.auditToken,
+    config,
   })
 
   if (qrImage) {
     const { width, height } = page.getSize()
-    const size = Math.min(54, Math.max(42, width * 0.08))
+    const size = Math.min(config.qrSize, Math.max(38, width * 0.08))
     page.drawRectangle({
       x: width - size - 22,
       y: 20,
@@ -297,5 +408,5 @@ export async function createWatermarkedSinglePagePdf(
   outputDoc.setProducer('DomineAqui Secure Page Service')
   outputDoc.setModificationDate(input.viewedAt)
 
-  return { bytes: await outputDoc.save(), totalPages }
+  return { bytes: await outputDoc.save({ useObjectStreams: true }), totalPages }
 }
