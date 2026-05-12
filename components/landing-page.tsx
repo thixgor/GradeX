@@ -765,6 +765,106 @@ export default function LandingPage({
       </section>
 
       {/* ══════════════════════════════════════════
+          CARD PARCERIA — RESUMOS GIULIA MODESTO
+      ══════════════════════════════════════════ */}
+      <section className="py-10 px-5 relative">
+        <div className="max-w-[1280px] mx-auto">
+          <motion.a
+            href="https://domineaqui.com.br/materiais?folder=6a00eb6af5b0dd58adb5fcab"
+            target="_blank"
+            rel="noopener noreferrer"
+            {...(shouldReduceMotion ? {} : {
+              initial: { opacity: 0, y: 24 },
+              whileInView: { opacity: 1, y: 0 },
+              viewport: { once: true },
+              transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+            })}
+            whileHover={shouldReduceMotion ? {} : { scale: 1.01, y: -3 }}
+            className="group block rounded-3xl overflow-hidden border border-white/[0.10] transition-all duration-300 hover:border-emerald-400/25 hover:shadow-[0_0_50px_rgba(74,222,128,0.10)] cursor-pointer"
+            style={{ background: 'rgba(7,14,30,0.80)', backdropFilter: 'blur(16px)' }}
+          >
+            <div className="grid lg:grid-cols-2">
+              {/* Imagem */}
+              <div className="relative h-56 sm:h-72 lg:h-full min-h-[220px] overflow-hidden">
+                <Image
+                  src="https://i.imgur.com/9h3bMzL.png"
+                  alt="Resumos da Giulia Modesto"
+                  fill
+                  className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.03]"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                />
+                <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, transparent 60%, rgba(7,14,30,0.80) 100%)' }} />
+                <div className="absolute inset-0 lg:hidden" style={{ background: 'linear-gradient(to top, rgba(7,14,30,0.85) 0%, transparent 60%)' }} />
+              </div>
+
+              {/* Conteúdo */}
+              <div className="p-7 sm:p-10 flex flex-col justify-center">
+                {/* Badge parceria */}
+                <div className="inline-flex items-center gap-2 self-start px-3 py-1 rounded-full border border-amber-400/25 bg-amber-400/[0.08] mb-5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                  <span className="text-xs font-bold text-amber-400 uppercase tracking-wide">Parceria Exclusiva</span>
+                </div>
+
+                <h3 className="text-2xl sm:text-3xl font-bold text-slate-50 mb-2 leading-tight">
+                  Resumos da Giulia Modesto
+                </h3>
+                <p className="text-sm text-slate-400 mb-6 leading-relaxed">
+                  Resumos aprofundados e exatamente como cai na prova. Desenvolvidos para as avaliações do curso de Medicina com foco total em resultado.
+                </p>
+
+                {/* Tags de detalhe */}
+                <div className="flex flex-wrap gap-2 mb-7">
+                  {[
+                    { label: 'SOI e HAM', color: 'emerald' },
+                    { label: 'Medicina', color: 'teal' },
+                    { label: '1° e 2° Períodos', color: 'teal' },
+                    { label: 'OSCE', color: 'blue' },
+                    { label: 'N1', color: 'blue' },
+                    { label: 'Multiestação', color: 'blue' },
+                  ].map(({ label, color }) => (
+                    <span
+                      key={label}
+                      className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold border ${
+                        color === 'emerald'
+                          ? 'text-emerald-300 border-emerald-400/20 bg-emerald-400/[0.07]'
+                          : color === 'teal'
+                          ? 'text-teal-300 border-teal-400/20 bg-teal-400/[0.07]'
+                          : 'text-blue-300 border-blue-400/20 bg-blue-400/[0.07]'
+                      }`}
+                    >
+                      {label}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Bullets */}
+                <ul className="space-y-2 mb-8">
+                  {[
+                    'Preços acessíveis e justos',
+                    'Resumos aprofundados',
+                    'Exatamente como cai na prova',
+                  ].map((item) => (
+                    <li key={item} className="flex items-center gap-2 text-sm text-slate-300">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+
+                {/* CTA */}
+                <div className="inline-flex items-center gap-2 self-start px-5 py-2.5 rounded-xl text-sm font-bold text-[#040816] transition-all group-hover:opacity-90"
+                  style={{ background: 'linear-gradient(135deg, #4ADE80 0%, #2DD4BF 100%)' }}
+                >
+                  Ver Resumos
+                  <ArrowRight className="w-4 h-4" />
+                </div>
+              </div>
+            </div>
+          </motion.a>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
           COBERTURA DAS CIÊNCIAS DA SAÚDE
       ══════════════════════════════════════════ */}
       <section id="materiais" className="py-24 px-5 relative">
