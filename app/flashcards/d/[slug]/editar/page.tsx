@@ -524,6 +524,26 @@ function CardEditor({
                   />
                 </div>
               </div>
+              <div className="grid md:grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-xs text-slate-500">Imagem da frente (opcional)</Label>
+                  <FlashcardImageInput
+                    className="mt-1.5"
+                    label="Adicionar imagem à frente"
+                    value={card.front.image}
+                    onChange={(url) => onChange({ front: { ...card.front, image: url } })}
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs text-slate-500">Imagem do verso (opcional)</Label>
+                  <FlashcardImageInput
+                    className="mt-1.5"
+                    label="Adicionar imagem ao verso"
+                    value={card.back.image}
+                    onChange={(url) => onChange({ back: { ...card.back, image: url } })}
+                  />
+                </div>
+              </div>
             </div>
           )}
 

@@ -1,8 +1,8 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Image from 'next/image'
-import { Eye, EyeOff, Lightbulb, MessageSquare, Sparkles } from 'lucide-react'
+import { Eye, EyeOff, Lightbulb, MessageSquare, Sparkles, X, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import type { FlashcardManualCard } from '@/lib/types'
@@ -80,6 +80,162 @@ function HiddenWordRender({
   )
 }
 
+function ImageLightbox({ src, onClose }: { src: string; onClose: () => void }) {
+  const [scale, setScale] = useState(1)
+  const [translate, setTranslate] = useState({ x: 0, y: 0 })
+  const dragging = useRef(false)
+  const lastPos = useRef({ x: 0, y: 0 })
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  const resetView = useCallback(() => { setScale(1); setTranslate({ x: 0, y: 0 }) }, [])
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') onClose()
+      if (e.key === '+' || e.key === '=') setScale(s => Math.min(s + 0.5, 5))
+      if (e.key === '-') setScale(s => Math.max(s - 0.5, 0.5))
+      if (e.key === '0') resetView()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose, resetView])
+
+  function handleWheel(e: React.WheelEvent) {
+    e.stopPropagation()
+    const delta = e.deltaY > 0 ? -0.15 : 0.15
+    setScale(s => Math.min(Math.max(s + delta, 0.5), 5))
+  }
+
+  function handlePointerDown(e: React.PointerEvent) {
+    if (scale <= 1) return
+    dragging.current = true
+    lastPos.current = { x: e.clientX, y: e.clientY }
+    ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
+  }
+
+  function handlePointerMove(e: React.PointerEvent) {
+    if (!dragging.current) return
+    const dx = e.clientX - lastPos.current.x
+    const dy = e.clientY - lastPos.current.y
+    lastPos.current = { x: e.clientX, y: e.clientY }
+    setTranslate(t => ({ x: t.x + dx, y: t.y + dy }))
+  }
+
+  function handlePointerUp() { dragging.current = false }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      className="fixed inset-0 z-[100] flex flex-col bg-black/90 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div className="flex items-center justify-between px-3 py-2 sm:px-5 sm:py-3 shrink-0">
+        <div className="flex items-center gap-1 sm:gap-2">
+          <button
+            onClick={e => { e.stopPropagation(); setScale(s => Math.min(s + 0.5, 5)) }}
+            className="rounded-full p-2 text-white/80 hover:text-white hover:bg-white/10 transition"
+            aria-label="Zoom in"
+          >
+            <ZoomIn className="h-5 w-5" />
+          </button>
+          <button
+            onClick={e => { e.stopPropagation(); setScale(s => Math.max(s - 0.5, 0.5)) }}
+            className="rounded-full p-2 text-white/80 hover:text-white hover:bg-white/10 transition"
+            aria-label="Zoom out"
+          >
+            <ZoomOut className="h-5 w-5" />
+          </button>
+          <button
+            onClick={e => { e.stopPropagation(); resetView() }}
+            className="rounded-full p-2 text-white/80 hover:text-white hover:bg-white/10 transition"
+            aria-label="Resetar zoom"
+          >
+            <RotateCcw className="h-5 w-5" />
+          </button>
+          <span className="text-white/50 text-xs ml-1 hidden sm:inline">{Math.round(scale * 100)}%</span>
+        </div>
+        <button
+          onClick={e => { e.stopPropagation(); onClose() }}
+          className="rounded-full p-2 text-white/80 hover:text-white hover:bg-white/10 transition"
+          aria-label="Fechar"
+        >
+          <X className="h-6 w-6" />
+        </button>
+      </div>
+
+      <div
+        ref={containerRef}
+        className="flex-1 overflow-hidden flex items-center justify-center cursor-grab active:cursor-grabbing touch-none"
+        onClick={e => e.stopPropagation()}
+        onWheel={handleWheel}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onDoubleClick={e => {
+          e.stopPropagation()
+          if (scale > 1) resetView()
+          else setScale(2.5)
+        }}
+      >
+        <img
+          src={src}
+          alt=""
+          className="max-w-[95vw] max-h-[85vh] object-contain select-none pointer-events-none"
+          style={{ transform: `scale(${scale}) translate(${translate.x / scale}px, ${translate.y / scale}px)` }}
+          draggable={false}
+        />
+      </div>
+
+      <p className="text-center text-white/40 text-[11px] pb-2 hidden sm:block">
+        Scroll ou +/- para zoom &middot; Duplo clique para ampliar &middot; Arraste para mover &middot; Esc para fechar
+      </p>
+    </motion.div>
+  )
+}
+
+function ClickableImage({
+  src, alt, className, containerClassName, onDark = false,
+}: {
+  src: string; alt?: string; className?: string; containerClassName?: string; onDark?: boolean
+}) {
+  const [lightbox, setLightbox] = useState(false)
+
+  return (
+    <>
+      <div
+        className={cn('relative group/img cursor-zoom-in', containerClassName)}
+        onClick={e => { e.stopPropagation(); setLightbox(true) }}
+      >
+        <Image
+          src={src}
+          alt={alt || ''}
+          width={800}
+          height={500}
+          className={className}
+          unoptimized={src.startsWith('http')}
+        />
+        <div className={cn(
+          'absolute inset-0 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity rounded-2xl',
+          onDark ? 'bg-black/30' : 'bg-black/20',
+        )}>
+          <span className={cn(
+            'rounded-full p-2',
+            onDark ? 'bg-white/20 text-white' : 'bg-white/80 text-slate-700 shadow-sm',
+          )}>
+            <ZoomIn className="h-5 w-5" />
+          </span>
+        </div>
+      </div>
+      <AnimatePresence>
+        {lightbox && <ImageLightbox src={src} onClose={() => setLightbox(false)} />}
+      </AnimatePresence>
+    </>
+  )
+}
+
 export function FlashcardCardView({
   card,
   flipped,
@@ -111,7 +267,7 @@ export function FlashcardCardView({
           <div
             onClick={onFlip}
             className={cn(
-              'rounded-3xl p-7 md:p-9 min-h-[320px] md:min-h-[380px] flex flex-col cursor-pointer select-none',
+              'rounded-3xl p-5 sm:p-7 md:p-9 min-h-[260px] sm:min-h-[320px] md:min-h-[380px] flex flex-col cursor-pointer select-none',
               'bg-gradient-to-br from-white via-white to-slate-50',
               'dark:from-slate-900 dark:via-slate-900 dark:to-slate-950',
               'border border-slate-200 dark:border-white/10',
@@ -128,12 +284,14 @@ export function FlashcardCardView({
             </div>
 
             {card.front.image && (
-              <div className="rounded-2xl overflow-hidden mb-4 border border-slate-200 dark:border-white/10">
-                <Image src={card.front.image} alt="" width={800} height={500} className="w-full h-auto object-contain max-h-64 bg-slate-100 dark:bg-slate-950" />
-              </div>
+              <ClickableImage
+                src={card.front.image}
+                containerClassName="rounded-2xl overflow-hidden mb-4 border border-slate-200 dark:border-white/10"
+                className="w-full h-auto object-contain max-h-48 sm:max-h-56 md:max-h-64 bg-slate-100 dark:bg-slate-950"
+              />
             )}
 
-            <div className="flex-1 text-lg md:text-xl leading-relaxed text-slate-800 dark:text-slate-100 whitespace-pre-wrap">
+            <div className="flex-1 text-base sm:text-lg md:text-xl leading-relaxed text-slate-800 dark:text-slate-100 whitespace-pre-wrap break-words">
               {isHidden && card.hiddenWord ? (
                 <HiddenWordRender phrase={card.hiddenWord.phrase} word={card.hiddenWord.word} revealed={revealedHidden} />
               ) : (
@@ -199,7 +357,7 @@ export function FlashcardCardView({
           <div
             onClick={onFlip}
             className={cn(
-              'absolute inset-0 rounded-3xl p-7 md:p-9 min-h-[320px] md:min-h-[380px] flex flex-col cursor-pointer select-none',
+              'absolute inset-0 rounded-3xl p-5 sm:p-7 md:p-9 min-h-[260px] sm:min-h-[320px] md:min-h-[380px] flex flex-col cursor-pointer select-none',
               'bg-gradient-to-br from-violet-600 via-fuchsia-600 to-rose-500',
               'text-white border border-white/15',
               'shadow-[0_30px_120px_-40px_rgba(124,58,237,0.55)]',
@@ -221,9 +379,12 @@ export function FlashcardCardView({
             </div>
 
             {card.back.image && (
-              <div className="rounded-2xl overflow-hidden mb-4 border border-white/20">
-                <Image src={card.back.image} alt="" width={800} height={500} className="w-full h-auto object-contain max-h-56 bg-black/20" />
-              </div>
+              <ClickableImage
+                src={card.back.image}
+                onDark
+                containerClassName="rounded-2xl overflow-hidden mb-4 border border-white/20"
+                className="w-full h-auto object-contain max-h-44 sm:max-h-48 md:max-h-56 bg-black/20"
+              />
             )}
 
             <div className="flex-1 text-base md:text-lg leading-relaxed text-white/95 whitespace-pre-wrap break-words">
