@@ -11,6 +11,7 @@ import {
   Download,
   FileText,
   Filter,
+  Heart,
   LineChart,
   Loader2,
   Percent,
@@ -95,6 +96,25 @@ type CancellationRow = {
   origin: string
 }
 
+type DonationSourceFilter = 'hide' | 'all' | 'platform' | 'bank_app'
+
+type DonationRow = {
+  id: string
+  donorName: string
+  donorEmail: string
+  value: number
+  status: string
+  rawStatus: string
+  source: 'platform' | 'bank_app' | 'admin' | 'unknown'
+  sourceLabel: string
+  paymentMethod: string
+  mercadoPagoPaymentId: string
+  mercadoPagoOrderId: string
+  message: string
+  donatedAt: string | null
+  createdAt: string | null
+}
+
 type AnalyticsPayload = {
   updatedAt: string
   cards: {
@@ -110,6 +130,14 @@ type AnalyticsPayload = {
     topProduct: string
     topPlan: string
   }
+  donationSummary: {
+    totalApproved: number
+    platformTotal: number
+    bankAppTotal: number
+    adminTotal: number
+    approvedCount: number
+    pendingCount: number
+  }
   charts: {
     salesByDay: SeriesPoint[]
     salesByWeek: SeriesPoint[]
@@ -123,6 +151,8 @@ type AnalyticsPayload = {
     subscriptionCancelled: SeriesPoint[]
     planSales: SeriesPoint[]
     churn: SeriesPoint[]
+    donationsByPeriod: SeriesPoint[]
+    donationsBySource: SeriesPoint[]
   }
   subscriptionSummary: {
     active: number
@@ -137,6 +167,7 @@ type AnalyticsPayload = {
   abandoned: AbandonedRow[]
   subscriptions: SubscriptionRow[]
   cancellations: CancellationRow[]
+  donations: DonationRow[]
 }
 
 const currency = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
@@ -165,6 +196,11 @@ function getMax(data: SeriesPoint[]) {
 
 function trackColor(index: number) {
   return ['#34d399', '#fbbf24', '#22c55e', '#14b8a6', '#a3e635', '#60a5fa', '#f59e0b'][index % 7]
+}
+
+function monthLabel(key: string) {
+  const [year, month] = key.split('-').map(Number)
+  return new Date(year, month - 1, 1).toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' })
 }
 
 function StatCard({ title, value, hint, icon: Icon, tone = 'emerald' }: { title: string; value: string; hint?: string; icon: any; tone?: 'emerald' | 'gold' | 'forest' | 'blue' | 'red' }) {
@@ -416,6 +452,7 @@ export default function AdminAnalyticsPage() {
   const [dateTo, setDateTo] = useState('')
   const [minValue, setMinValue] = useState('')
   const [maxValue, setMaxValue] = useState('')
+  const [donationView, setDonationView] = useState<DonationSourceFilter>('all')
   const [exporting, setExporting] = useState(false)
 
   useEffect(() => {
@@ -465,6 +502,48 @@ export default function AdminAnalyticsPage() {
     })
   }, [data, query, type, status, method, dateFrom, dateTo, minValue, maxValue])
 
+  const visibleDonations = useMemo(() => {
+    if (!data || donationView === 'hide') return []
+    return data.donations.filter((donation) => {
+      if (donationView === 'platform') return donation.source === 'platform'
+      if (donationView === 'bank_app') return donation.source === 'bank_app'
+      return true
+    })
+  }, [data, donationView])
+
+  const visibleDonationSummary = useMemo(() => {
+    const approved = visibleDonations.filter((donation) => donation.rawStatus === 'approved' || donation.status === 'Pago')
+    return {
+      total: approved.reduce((total, donation) => total + donation.value, 0),
+      count: approved.length,
+      pending: visibleDonations.filter((donation) => ['pending', 'in_process'].includes(donation.rawStatus)).length,
+    }
+  }, [visibleDonations])
+
+  const visibleDonationCharts = useMemo(() => {
+    const approved = visibleDonations.filter((donation) => donation.rawStatus === 'approved' || donation.status === 'Pago')
+    const byMonth = new Map<string, number>()
+    const bySource = new Map<string, { label: string; value: number; count: number }>()
+
+    for (const donation of approved) {
+      const date = donation.donatedAt || donation.createdAt
+      if (date) {
+        const d = new Date(date)
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+        byMonth.set(key, (byMonth.get(key) || 0) + donation.value)
+      }
+      const source = bySource.get(donation.source) || { label: donation.sourceLabel, value: 0, count: 0 }
+      source.value += donation.value
+      source.count += 1
+      bySource.set(donation.source, source)
+    }
+
+    return {
+      byPeriod: [...byMonth.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([key, value]) => ({ key, label: monthLabel(key), value })),
+      bySource: [...bySource.values()],
+    }
+  }, [visibleDonations])
+
   async function exportPdf() {
     if (!data) return
     setExporting(true)
@@ -492,6 +571,7 @@ export default function AdminAnalyticsPage() {
         ['Cancelamentos', number.format(data.cards.cancellations)],
         ['Taxa de cancelamento', formatPercent(data.cards.cancellationRate)],
         ['Checkouts abandonados', number.format(data.cards.abandonedCheckouts)],
+        ['Doações aprovadas', formatCurrency(data.donationSummary.totalApproved)],
       ]
       let y = 46
       metrics.forEach(([label, value], index) => {
@@ -534,6 +614,8 @@ export default function AdminAnalyticsPage() {
       doc.text(`Produto mais vendido: ${data.cards.topProduct}`, 14, y)
       y += 6
       doc.text(`Plano mais comprado: ${data.cards.topPlan}`, 14, y)
+      y += 6
+      doc.text(`Doações aprovadas: ${formatCurrency(data.donationSummary.totalApproved)} (${data.donationSummary.approvedCount})`, 14, y)
       y += 10
       doc.text('Pedidos recentes:', 14, y)
       y += 7
@@ -636,12 +718,13 @@ export default function AdminAnalyticsPage() {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid h-auto grid-cols-2 rounded-2xl border border-white/10 bg-white/[0.06] p-1.5 backdrop-blur-xl md:grid-cols-5">
+          <TabsList className="grid h-auto grid-cols-2 rounded-2xl border border-white/10 bg-white/[0.06] p-1.5 backdrop-blur-xl md:grid-cols-6">
             {[
               ['overview', 'Visão geral'],
               ['sales', 'Vendas'],
               ['subscriptions', 'Assinaturas'],
               ['conversion', 'Conversão'],
+              ['donations', 'Doações'],
               ['orders', 'Histórico'],
             ].map(([value, label]) => (
               <TabsTrigger key={value} value={value} className="rounded-xl py-2 text-white/70 data-[state=active]:bg-emerald-400/20 data-[state=active]:text-white">
@@ -667,6 +750,21 @@ export default function AdminAnalyticsPage() {
                 <BarChart data={data.charts.productRevenue} formatter={formatCurrency} />
               </GlassPanel>
             </div>
+            <GlassPanel
+              title="Doações separadas da receita comercial"
+              description="Valores de apoio vindos de /doar. Use a aba Doações para alternar entre plataforma e app do banco."
+              action={<DonationModeSelector value={donationView} onChange={setDonationView} />}
+            >
+              {donationView === 'hide' ? (
+                <p className="py-6 text-sm text-white/45">Doações ocultas nesta visualização.</p>
+              ) : (
+                <div className="grid gap-3 sm:grid-cols-3">
+                  <StatCard title="Doações visíveis" value={formatCurrency(visibleDonationSummary.total)} hint={`${visibleDonationSummary.count} aprovadas`} icon={Heart} tone="red" />
+                  <StatCard title="Pendentes" value={number.format(visibleDonationSummary.pending)} hint="Aguardando confirmação/admin" icon={Receipt} tone="gold" />
+                  <StatCard title="Total separado" value={formatCurrency(data.donationSummary.totalApproved)} hint="Não soma na receita comercial" icon={BadgeDollarSign} />
+                </div>
+              )}
+            </GlassPanel>
           </TabsContent>
 
           <TabsContent value="sales" className="space-y-6">
@@ -754,6 +852,66 @@ export default function AdminAnalyticsPage() {
             </div>
           </TabsContent>
 
+          <TabsContent value="donations" className="space-y-6">
+            <GlassPanel
+              title="Doações do /doar"
+              description="Acompanhamento separado das contribuições, com origem por plataforma MercadoPago ou registro de Pix/app do banco."
+              action={<DonationModeSelector value={donationView} onChange={setDonationView} />}
+            >
+              {donationView === 'hide' ? (
+                <div className="rounded-2xl border border-white/10 bg-black/10 p-6 text-sm text-white/50">
+                  As doações estão ocultas. Altere o seletor para mostrar todas, só plataforma ou só app do banco.
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+                    <StatCard title="Doações visíveis" value={formatCurrency(visibleDonationSummary.total)} hint={`${visibleDonationSummary.count} aprovadas`} icon={Heart} tone="red" />
+                    <StatCard title="Via plataforma" value={formatCurrency(data.donationSummary.platformTotal)} hint="MercadoPago em /doar" icon={BadgeDollarSign} />
+                    <StatCard title="App do banco" value={formatCurrency(data.donationSummary.bankAppTotal)} hint="Pix registrado pelo usuário" icon={Receipt} tone="gold" />
+                    <StatCard title="Admin/manual" value={formatCurrency(data.donationSummary.adminTotal)} hint="Inseridas pelo admin" icon={Users} tone="blue" />
+                    <StatCard title="Pendentes" value={number.format(visibleDonationSummary.pending)} hint="A revisar/confirmar" icon={CalendarClock} tone="forest" />
+                  </div>
+
+                  <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+                    <GlassPanel title="Doações por período" description="Somente doações aprovadas">
+                      <LineChartBlock
+                        data={visibleDonationCharts.byPeriod}
+                        formatter={formatCurrency}
+                      />
+                    </GlassPanel>
+                    <GlassPanel title="Doações por origem">
+                      <DonutChart data={visibleDonationCharts.bySource} />
+                    </GlassPanel>
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full min-w-[1050px] text-left text-sm">
+                      <thead className="border-b border-white/10 text-xs uppercase text-white/40">
+                        <tr>{['Doador', 'Valor', 'Status', 'Origem', 'Método', 'Pagamento MP', 'Order MP', 'Data', 'Mensagem'].map((h) => <th key={h} className="px-3 py-3">{h}</th>)}</tr>
+                      </thead>
+                      <tbody>
+                        {visibleDonations.map((row) => (
+                          <tr key={row.id} className="border-b border-white/5 text-white/70">
+                            <td className="px-3 py-3"><div className="font-bold text-white">{row.donorName || 'Anônimo'}</div><div className="text-xs text-white/40">{row.donorEmail || '-'}</div></td>
+                            <td className="px-3 py-3 font-bold text-emerald-200">{formatCurrency(row.value)}</td>
+                            <td className="px-3 py-3"><StatusPill status={row.status} /></td>
+                            <td className="px-3 py-3">{row.sourceLabel}</td>
+                            <td className="px-3 py-3">{row.paymentMethod}</td>
+                            <td className="max-w-[150px] truncate px-3 py-3 font-mono text-xs">{row.mercadoPagoPaymentId || '-'}</td>
+                            <td className="max-w-[150px] truncate px-3 py-3 font-mono text-xs">{row.mercadoPagoOrderId || '-'}</td>
+                            <td className="px-3 py-3">{formatDate(row.donatedAt || row.createdAt)}</td>
+                            <td className="max-w-[260px] truncate px-3 py-3">{row.message || '-'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    {visibleDonations.length === 0 ? <p className="py-8 text-center text-sm text-white/45">Nenhuma doação encontrada para este filtro.</p> : null}
+                  </div>
+                </div>
+              )}
+            </GlassPanel>
+          </TabsContent>
+
           <TabsContent value="orders" className="space-y-6">
             <GlassPanel
               title="Histórico detalhado de pedidos"
@@ -826,6 +984,30 @@ function FilterInput({ label, type, value, onChange }: { label: string; type: st
     <div>
       <Label className="text-white/60">{label}</Label>
       <Input type={type} value={value} onChange={(e) => onChange(e.target.value)} className="mt-1 border-white/10 bg-black/20 text-white" />
+    </div>
+  )
+}
+
+function DonationModeSelector({ value, onChange }: { value: DonationSourceFilter; onChange: (value: DonationSourceFilter) => void }) {
+  const options: Array<{ value: DonationSourceFilter; label: string }> = [
+    { value: 'all', label: 'Todas' },
+    { value: 'platform', label: 'Plataforma' },
+    { value: 'bank_app', label: 'App do banco' },
+    { value: 'hide', label: 'Ocultar' },
+  ]
+
+  return (
+    <div className="flex flex-wrap gap-1 rounded-xl border border-white/10 bg-black/15 p-1">
+      {options.map((option) => (
+        <button
+          key={option.value}
+          type="button"
+          onClick={() => onChange(option.value)}
+          className={`rounded-lg px-3 py-1.5 text-xs font-bold transition ${value === option.value ? 'bg-emerald-400/20 text-white' : 'text-white/45 hover:bg-white/10 hover:text-white/75'}`}
+        >
+          {option.label}
+        </button>
+      ))}
     </div>
   )
 }

@@ -2,13 +2,14 @@ import { NextResponse } from 'next/server'
 import { ObjectId } from 'mongodb'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
-import type { AdminSettings, Material, MaterialPackage, PaymentOrder, SubscriptionRecord, User } from '@/lib/types'
+import type { AdminSettings, DonationPayment, Material, MaterialPackage, PaymentOrder, SubscriptionRecord, User } from '@/lib/types'
 import type { CheckoutEventRecord } from '@/lib/analytics'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
 type PeriodKey = 'day' | 'week' | 'month'
+type DonationSource = 'platform' | 'bank_app' | 'admin' | 'unknown'
 
 const APPROVED = new Set(['approved'])
 const FAILED = new Set(['rejected', 'cancelled', 'expired', 'refunded', 'charged_back'])
@@ -147,6 +148,25 @@ function cancellationRate(cancelled: number, total: number) {
   return total > 0 ? (cancelled / total) * 100 : 0
 }
 
+function donationSourceLabel(source: DonationSource) {
+  const labels: Record<DonationSource, string> = {
+    platform: 'Plataforma',
+    bank_app: 'App do banco',
+    admin: 'Admin/manual',
+    unknown: 'Não informado',
+  }
+  return labels[source]
+}
+
+function inferDonationSource(donation: any): DonationSource {
+  if (donation.paymentSource === 'online' || donation.provider === 'mercado_pago' || donation.providerOrderId || donation.providerPaymentId) {
+    return 'platform'
+  }
+  if (donation.paymentSource === 'manual') return donation.addedByAdmin ? 'admin' : 'bank_app'
+  if (donation.addedByAdmin) return 'admin'
+  return 'unknown'
+}
+
 export async function GET() {
   try {
     const session = await getSession()
@@ -173,6 +193,8 @@ export async function GET() {
       checkoutEvents,
       serialKeys,
       auditLogs,
+      donations,
+      donationPayments,
     ] = await Promise.all([
       db.collection<PaymentOrder>('payment_orders').find({ createdAt: { $gte: since } }).sort({ createdAt: -1 }).limit(1000).toArray(),
       db.collection<SubscriptionRecord>('subscriptions').find({ createdAt: { $gte: since } }).sort({ createdAt: -1 }).limit(1000).toArray(),
@@ -183,6 +205,8 @@ export async function GET() {
       db.collection<CheckoutEventRecord>('checkout_events').find({ createdAt: { $gte: since } }).sort({ createdAt: -1 }).limit(3000).toArray(),
       db.collection('serial_keys').find({ used: true }).project({ usedBy: 1, usedAt: 1, price: 1, premiumSubtype: 1, type: 1 }).toArray(),
       db.collection('audit_logs').find({ ts: { $gte: since }, action: { $in: ['subscription_canceled', 'subscription_expired', 'role_revoked'] } }).sort({ ts: -1 }).limit(500).toArray(),
+      db.collection('doacoes').find({ createdAt: { $gte: since } }).sort({ createdAt: -1 }).limit(1000).toArray(),
+      db.collection<DonationPayment>('donation_payments').find({ createdAt: { $gte: since } }).sort({ createdAt: -1 }).limit(1000).toArray(),
     ])
 
     const usersById = new Map(users.map((user) => [String(user._id), user]))
@@ -274,6 +298,61 @@ export async function GET() {
 
     const topProduct = [...productStats.values()].sort((a, b) => b.sales - a.sales)[0]?.label || 'Sem vendas'
     const topPlan = [...planStats.values()].sort((a, b) => b.count - a.count)[0]?.label || 'Sem assinaturas'
+
+    const publicDonationOrderIds = new Set(donations.map((donation: any) => String(donation.providerOrderId || '')).filter(Boolean))
+    const donationRows = [
+      ...donations.map((donation: any) => {
+        const source = inferDonationSource(donation)
+        const user = getUser(usersById, donation.userId)
+        return {
+          id: String(donation._id),
+          donorName: normalizeText(donation.apelido || donation.nomeCompleto || user?.name || 'Anônimo'),
+          donorEmail: normalizeText(donation.email || user?.email || ''),
+          value: Number(donation.valor || donation.amount || 0),
+          status: statusLabel(donation.status),
+          rawStatus: donation.status || 'approved',
+          source,
+          sourceLabel: donationSourceLabel(source),
+          paymentMethod: donation.paymentMethod || (source === 'bank_app' ? 'pix_banco' : source === 'platform' ? 'mercado_pago' : 'manual'),
+          mercadoPagoPaymentId: donation.providerPaymentId || '',
+          mercadoPagoOrderId: donation.providerOrderId || '',
+          message: donation.mensagem || '',
+          donatedAt: serializeDate(donation.dataDoacao || donation.paidAt || donation.createdAt),
+          createdAt: serializeDate(donation.createdAt),
+        }
+      }),
+      ...donationPayments
+        .filter((payment) => !payment.publicDoacaoId && !publicDonationOrderIds.has(payment.providerOrderId))
+        .map((payment) => {
+          const source: DonationSource = 'platform'
+          const user = getUser(usersById, payment.userId)
+          return {
+            id: String(payment._id),
+            donorName: normalizeText(payment.apelido || payment.nomeCompleto || user?.name || 'Anônimo'),
+            donorEmail: normalizeText(payment.email || user?.email || ''),
+            value: Number(payment.amount || 0),
+            status: statusLabel(payment.status),
+            rawStatus: payment.status || 'pending',
+            source,
+            sourceLabel: donationSourceLabel(source),
+            paymentMethod: payment.paymentMethod || 'mercado_pago',
+            mercadoPagoPaymentId: payment.providerPaymentId || '',
+            mercadoPagoOrderId: payment.providerOrderId || '',
+            message: payment.mensagem || '',
+            donatedAt: serializeDate(payment.paidAt || payment.createdAt),
+            createdAt: serializeDate(payment.createdAt),
+          }
+        }),
+    ].sort((a, b) => new Date(b.createdAt || b.donatedAt || 0).getTime() - new Date(a.createdAt || a.donatedAt || 0).getTime())
+
+    const approvedDonations = donationRows.filter((donation) => donation.rawStatus === 'approved' || donation.status === 'Pago')
+    const donationSourceStats = new Map<DonationSource, { label: string; value: number; count: number }>()
+    for (const donation of approvedDonations) {
+      const current = donationSourceStats.get(donation.source) || { label: donation.sourceLabel, value: 0, count: 0 }
+      current.value += donation.value
+      current.count += 1
+      donationSourceStats.set(donation.source, current)
+    }
 
     const checkoutEventRows = checkoutEvents.map((event) => ({
       id: String(event._id),
@@ -454,6 +533,14 @@ export async function GET() {
         topProduct,
         topPlan,
       },
+      donationSummary: {
+        totalApproved: approvedDonations.reduce((total, donation) => total + donation.value, 0),
+        platformTotal: approvedDonations.filter((donation) => donation.source === 'platform').reduce((total, donation) => total + donation.value, 0),
+        bankAppTotal: approvedDonations.filter((donation) => donation.source === 'bank_app').reduce((total, donation) => total + donation.value, 0),
+        adminTotal: approvedDonations.filter((donation) => donation.source === 'admin').reduce((total, donation) => total + donation.value, 0),
+        approvedCount: approvedDonations.length,
+        pendingCount: donationRows.filter((donation) => ['pending', 'in_process'].includes(donation.rawStatus)).length,
+      },
       charts: {
         salesByDay: buildSeries(revenueItems, 'day', (item) => new Date(item.createdAt), () => 1).slice(-30),
         salesByWeek: buildSeries(revenueItems, 'week', (item) => new Date(item.createdAt), () => 1).slice(-12),
@@ -472,6 +559,8 @@ export async function GET() {
         subscriptionCancelled: buildSeries(cancelledSubscriptions, 'month', (item) => item.canceledAt ? new Date(item.canceledAt) : new Date(item.updatedAt), () => 1).slice(-12),
         planSales: [...planStats.values()].sort((a, b) => b.count - a.count).slice(0, 10).map((item) => ({ label: item.label, value: item.count, revenue: item.revenue })),
         churn: buildSeries(cancelledSubscriptions, 'month', (item) => item.canceledAt ? new Date(item.canceledAt) : new Date(item.updatedAt), () => 1).slice(-12),
+        donationsByPeriod: buildSeries(approvedDonations, 'month', (item) => item.donatedAt ? new Date(item.donatedAt) : undefined, (item) => item.value).slice(-12),
+        donationsBySource: [...donationSourceStats.values()].map((item) => ({ label: item.label, value: item.value, count: item.count })),
       },
       subscriptionSummary: {
         active: activeSubscriptions.length,
@@ -486,6 +575,7 @@ export async function GET() {
       abandoned: abandonedRows.sort((a, b) => new Date(b.startedAt || 0).getTime() - new Date(a.startedAt || 0).getTime()).slice(0, 250),
       subscriptions: subscriptionRows.sort((a, b) => new Date(b.purchasedAt || 0).getTime() - new Date(a.purchasedAt || 0).getTime()).slice(0, 500),
       cancellations: cancellationRows,
+      donations: donationRows.slice(0, 500),
       checkoutEvents: checkoutEventRows.slice(0, 500),
       audit: auditLogs.map((log: any) => ({
         id: String(log._id),

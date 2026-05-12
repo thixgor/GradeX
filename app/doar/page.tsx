@@ -295,6 +295,12 @@ export default function DoarPage() {
               }}
               payerNameHint={donorName}
               payerEmailHint={donorEmail}
+              analytics={{
+                productId: 'donation',
+                productTitle: 'Doação DomineAqui',
+                productType: 'donation',
+                source: 'Doação pela plataforma',
+              }}
               onApproved={() => {
                 setTimeout(() => router.push('/doar/sucesso'), 1500)
               }}
