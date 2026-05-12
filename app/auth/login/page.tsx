@@ -3,17 +3,27 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { motion, AnimatePresence } from 'framer-motion'
+import Image from 'next/image'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { ThemeToggle } from '@/components/theme-toggle'
 import { Logo } from '@/components/logo'
-import { Eye, EyeOff, Mail, CheckCircle2, ArrowRight, Loader2 } from 'lucide-react'
+import {
+  Eye,
+  EyeOff,
+  CheckCircle2,
+  ArrowLeft,
+  Loader2,
+  Brain,
+  Database,
+  BookMarked,
+  Zap,
+  ChevronRight,
+} from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { BanReasonLabels, BanReason } from '@/lib/types'
 import { Ban, AlertCircle } from 'lucide-react'
-import { ADMIN_EMAILS } from '@/lib/constants'
 import { INSTITUTION_UNITS } from '@/lib/institution-units'
 import { GoogleProfileSetupDialog } from '@/components/google-profile-setup-dialog'
 
@@ -24,10 +34,22 @@ declare global {
   }
 }
 
+const GLASS_CARD =
+  'bg-white/[0.055] border border-white/[0.09] backdrop-blur-2xl rounded-3xl shadow-[0_0_80px_rgba(45,212,191,0.07),0_24px_80px_rgba(0,0,0,0.5)]'
+
+const highlights = [
+  { icon: Database, text: '1.000+ questões por curso e período' },
+  { icon: Brain, text: 'Flashcards Anki com repetição espaçada IA' },
+  { icon: BookMarked, text: 'Resumos grátis e premium de todas as disciplinas' },
+  { icon: Zap, text: 'Provas reais + simulados com correção automática' },
+]
+
 export default function LoginPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirectTo = searchParams.get('redirect') || '/'
+  const shouldReduceMotion = useReducedMotion()
+
   const [isLogin, setIsLogin] = useState(true)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -43,7 +65,6 @@ export default function LoginPage() {
     picture?: string
     googleId: string
   } | null>(null)
-  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
   const [banInfo, setBanInfo] = useState<{
     reason?: BanReason
     details?: string
@@ -57,8 +78,14 @@ export default function LoginPage() {
     dateOfBirth: '',
     isAfyaMedicineStudent: false,
     afyaUnit: '',
-    role: 'user'
+    role: 'user',
   })
+
+  const [isRegistered, setIsRegistered] = useState(false)
+
+  const canBeAdmin = ['throdrigf@gmail.com', 'ecocardio93@gmail.com'].includes(
+    formData.email.toLowerCase().trim()
+  )
 
   useEffect(() => {
     const loadRecaptchaScript = () => {
@@ -66,23 +93,14 @@ export default function LoginPage() {
       script.src = `https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`
       script.async = true
       script.defer = true
-
       script.onload = () => {
         if (window.grecaptcha) {
-          window.grecaptcha.ready(() => {
-            console.log('reCAPTCHA carregado com sucesso')
-          })
+          window.grecaptcha.ready(() => {})
         }
       }
-
       document.head.appendChild(script)
-
       return () => {
-        try {
-          document.head.removeChild(script)
-        } catch (e) {
-          // Script already removed
-        }
+        try { document.head.removeChild(script) } catch {}
       }
     }
 
@@ -91,14 +109,12 @@ export default function LoginPage() {
       script.src = 'https://accounts.google.com/gsi/client'
       script.async = true
       script.defer = true
-
       script.onload = () => {
         if (window.google) {
           window.google.accounts.id.initialize({
             client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
             callback: handleGoogleLogin,
           })
-
           const buttonElement = document.getElementById('google-signin-button')
           if (buttonElement && isLogin) {
             window.google.accounts.id.renderButton(buttonElement, {
@@ -110,30 +126,19 @@ export default function LoginPage() {
           }
         }
       }
-
       document.head.appendChild(script)
-
       return () => {
-        try {
-          document.head.removeChild(script)
-        } catch (e) {
-          // Script already removed
-        }
+        try { document.head.removeChild(script) } catch {}
       }
     }
 
     const cleanupRecaptcha = loadRecaptchaScript()
     const cleanupGoogle = loadGoogleScript()
-
     return () => {
       cleanupRecaptcha?.()
       cleanupGoogle?.()
     }
   }, [isLogin])
-
-  const canBeAdmin = ['throdrigf@gmail.com', 'ecocardio93@gmail.com'].includes(formData.email.toLowerCase().trim())
-
-  const [isRegistered, setIsRegistered] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -158,15 +163,12 @@ export default function LoginPage() {
         return
       }
 
-      setRecaptchaToken(token)
-
       if (!isLogin) {
         if (!formData.name || !formData.email || !formData.password || !formData.dateOfBirth) {
           setError('Nome, email, senha e data de nascimento sao obrigatorios')
           setLoading(false)
           return
         }
-
         if (formData.isAfyaMedicineStudent && !formData.afyaUnit) {
           setError('Selecione sua unidade')
           setLoading(false)
@@ -177,10 +179,7 @@ export default function LoginPage() {
       const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register'
       const body = isLogin
         ? { email: formData.email, password: formData.password, recaptchaToken: token }
-        : {
-          ...formData,
-          recaptchaToken: token,
-        }
+        : { ...formData, recaptchaToken: token }
 
       const res = await fetch(endpoint, {
         method: 'POST',
@@ -192,11 +191,7 @@ export default function LoginPage() {
 
       if (!res.ok) {
         if (data.error === 'banned') {
-          setBanInfo({
-            reason: data.banReason,
-            details: data.banDetails,
-            bannedAt: data.bannedAt
-          })
+          setBanInfo({ reason: data.banReason, details: data.banDetails, bannedAt: data.bannedAt })
           setShowBannedDialog(true)
           return
         }
@@ -231,11 +226,7 @@ export default function LoginPage() {
 
       if (!res.ok) {
         if (data.error === 'banned') {
-          setBanInfo({
-            reason: data.banReason,
-            details: data.banDetails,
-            bannedAt: data.bannedAt
-          })
+          setBanInfo({ reason: data.banReason, details: data.banDetails, bannedAt: data.bannedAt })
           setShowBannedDialog(true)
           return
         }
@@ -269,7 +260,6 @@ export default function LoginPage() {
     afyaUnit?: string
   }) {
     if (!googleData) return
-
     setGoogleLoading(true)
     try {
       const res = await fetch('/api/auth/google/setup-profile', {
@@ -285,13 +275,8 @@ export default function LoginPage() {
           googleId: googleData.googleId,
         }),
       })
-
       const data = await res.json()
-
-      if (!res.ok) {
-        throw new Error(data.error || 'Erro ao criar perfil')
-      }
-
+      if (!res.ok) throw new Error(data.error || 'Erro ao criar perfil')
       setShowProfileSetup(false)
       router.push(redirectTo)
       router.refresh()
@@ -308,389 +293,632 @@ export default function LoginPage() {
     setError('')
   }
 
+  // ─── Input style (always dark) ────────────────────────────────────────────
+  const inputCls =
+    'h-11 rounded-xl text-slate-100 placeholder:text-slate-500 bg-white/[0.06] border border-white/[0.10] focus:border-emerald-400/50 focus:ring-0 focus:bg-white/[0.10] transition-all'
+
+  const selectCls =
+    'flex h-11 w-full rounded-xl px-3 py-2 text-sm text-slate-100 bg-white/[0.06] border border-white/[0.10] focus:border-emerald-400/50 focus:outline-none focus:bg-white/[0.10] transition-all'
+
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-gradient-to-br from-background via-background to-background">
-      {/* Ambient floating blobs */}
-      <div className="auth-bg-blob w-[500px] h-[500px] bg-[#468152]/30 top-[-10%] left-[-10%]" />
-      <div className="auth-bg-blob w-[400px] h-[400px] bg-[#E2A43E]/25 bottom-[-5%] right-[-5%]" style={{ animationDelay: '-4s' }} />
-      <div className="auth-bg-blob w-[300px] h-[300px] bg-[#CE5929]/15 top-[40%] right-[20%]" style={{ animationDelay: '-8s' }} />
-
-      {/* Top bar */}
-      <div className="absolute top-4 left-4 z-20">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => router.push('/')}
-          className="soul-light rounded-xl backdrop-blur-sm bg-white/20 dark:bg-white/5 border border-white/30 dark:border-white/10 hover:bg-white/30 dark:hover:bg-white/10"
-        >
-          <ArrowRight className="h-4 w-4 mr-2 rotate-180" />
-          Voltar
-        </Button>
+    <div
+      className="min-h-screen text-slate-50 overflow-x-hidden relative"
+      style={{ backgroundColor: '#040816' }}
+    >
+      {/* ── Background image ── */}
+      <div className="fixed inset-0 z-0">
+        <Image
+          src="https://i.imgur.com/5BA1wF8.png"
+          alt=""
+          fill
+          priority
+          className="object-cover object-center"
+          sizes="100vw"
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(to bottom, rgba(4,8,22,0.88) 0%, rgba(4,8,22,0.80) 50%, rgba(4,8,22,0.97) 100%)',
+          }}
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(to right, rgba(4,8,22,0.70) 0%, transparent 35%, transparent 65%, rgba(4,8,22,0.70) 100%)',
+          }}
+        />
       </div>
-      <div className="absolute top-4 right-4 z-20">
-        <ThemeToggle />
+
+      {/* ── Radial glows ── */}
+      <div className="pointer-events-none fixed inset-0 z-0" aria-hidden>
+        <div
+          className="absolute top-0 left-1/4 w-[600px] h-[350px] rounded-full opacity-20 blur-[130px]"
+          style={{ background: 'radial-gradient(ellipse, #2DD4BF22 0%, transparent 70%)' }}
+        />
+        <div
+          className="absolute bottom-0 right-1/4 w-[500px] h-[300px] rounded-full opacity-15 blur-[100px]"
+          style={{ background: 'radial-gradient(ellipse, #4ADE8018 0%, transparent 70%)' }}
+        />
       </div>
 
-      {/* Main card */}
-      <motion.div
-        initial={{ opacity: 0, y: 20, scale: 0.97 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="w-full max-w-md auth-glass-card max-h-[90vh] flex flex-col relative z-10"
+      {/* ── Back button ── */}
+      <motion.button
+        initial={{ opacity: 0, x: -12 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        onClick={() => router.push('/')}
+        className="absolute top-5 left-5 z-20 flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-slate-300 border border-white/[0.10] bg-white/[0.05] hover:bg-white/[0.10] hover:text-slate-100 backdrop-blur-sm transition-all"
       >
-        {/* Header */}
-        <div className="p-6 pb-2 flex-shrink-0 text-center space-y-3">
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="flex justify-center mb-2"
-          >
+        <ArrowLeft className="h-4 w-4" />
+        Início
+      </motion.button>
+
+      {/* ── Main layout ── */}
+      <div className="relative z-10 min-h-screen flex">
+
+        {/* ── LEFT PANEL — desktop only ── */}
+        <motion.div
+          initial={shouldReduceMotion ? {} : { opacity: 0, x: -32 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          className="hidden lg:flex flex-col justify-center px-14 xl:px-20 w-[520px] xl:w-[580px] flex-shrink-0"
+        >
+          {/* Logo wordmark */}
+          <div className="mb-10">
             <Logo variant="full" size="lg" />
-          </motion.div>
-          <AnimatePresence mode="wait">
+          </div>
+
+          {/* 3D Logo */}
+          <div className="mb-10 flex items-start">
             <motion.div
-              key={isLogin ? 'login' : 'register'}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.3 }}
+              animate={shouldReduceMotion ? {} : {
+                y: [0, -12, 0],
+                rotateY: [0, 14, 0, -14, 0],
+                rotateX: [0, -5, 0, 5, 0],
+                scale: [1, 1.04, 1],
+              }}
+              transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+              style={{ perspective: 900, transformStyle: 'preserve-3d' }}
             >
-              <h1 className="font-heading text-2xl font-bold">
-                {isLogin ? 'Entrar' : 'Criar Conta'}
-              </h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                {isLogin
-                  ? 'Entre com suas credenciais para continuar'
-                  : 'Preencha os dados para criar sua conta'}
-              </p>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        {isRegistered ? (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="p-6 space-y-5 flex flex-col items-center"
-          >
-            <div className="h-20 w-20 rounded-full bg-[#468152]/10 flex items-center justify-center">
-              <CheckCircle2 className="h-10 w-10 text-[#468152]" />
-            </div>
-            <div className="text-center space-y-2">
-              <h3 className="text-xl font-bold font-heading">Conta criada com sucesso!</h3>
-              <p className="text-sm text-muted-foreground">
-                Enviamos um link de confirmacao para o seu e-mail: <br />
-                <span className="font-semibold text-foreground">{formData.email}</span>
-              </p>
-            </div>
-            <div className="p-3 rounded-xl bg-[#E2A43E]/10 border border-[#E2A43E]/20">
-              <p className="text-xs text-center">
-                <strong>Atencao:</strong> Voce precisa confirmar seu e-mail para ter acesso completo a todas as ferramentas da plataforma.
-              </p>
-            </div>
-            <div className="w-full space-y-2">
-              <Button onClick={() => router.push('/')} className="w-full soul-light soul-light-brand btn-brand-glow text-white rounded-xl h-11">
-                Ir para o Inicio
-              </Button>
-              <Button variant="outline" onClick={() => setIsLogin(true)} className="w-full soul-light rounded-xl h-11 backdrop-blur-sm">
-                Fazer Login Agora
-              </Button>
-            </div>
-          </motion.div>
-        ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
-            <div className="space-y-4 overflow-y-auto flex-1 px-6 py-4">
-              <AnimatePresence mode="wait">
-                {!isLogin && (
-                  <motion.div
-                    key="name-field"
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="space-y-2"
-                  >
-                    <Label htmlFor="name" className="text-xs font-medium">Nome Completo</Label>
-                    <Input
-                      id="name"
-                      type="text"
-                      placeholder="Joao Silva"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      required={!isLogin}
-                      className="auth-glass-input rounded-xl h-11"
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-xs font-medium">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="seu@email.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  required
-                  className="auth-glass-input rounded-xl h-11"
+              <div className="relative flex items-center justify-center">
+                <motion.div
+                  animate={shouldReduceMotion ? {} : { opacity: [0.35, 0.75, 0.35], scale: [1, 1.2, 1] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                  className="absolute rounded-full blur-3xl"
+                  style={{
+                    width: 160, height: 160,
+                    background: 'radial-gradient(ellipse, rgba(74,222,128,0.50) 0%, rgba(45,212,191,0.25) 55%, transparent 75%)',
+                  }}
+                />
+                <Image
+                  src="/logo3d.png"
+                  alt="DomineAqui"
+                  width={200}
+                  height={200}
+                  priority
+                  sizes="160px"
+                  className="relative object-contain"
+                  style={{
+                    width: 160, height: 160,
+                    filter: 'drop-shadow(0 0 20px rgba(74,222,128,0.80)) drop-shadow(0 0 50px rgba(45,212,191,0.40))',
+                  }}
                 />
               </div>
+            </motion.div>
+          </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password" className="text-xs font-medium">Senha</Label>
-                  {isLogin && (
-                    <Link
-                      href="/auth/forgot-password"
-                      className="text-xs text-muted-foreground hover:text-[#468152] transition-colors"
-                      tabIndex={-1}
-                    >
-                      Esqueceu a senha?
-                    </Link>
-                  )}
-                </div>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    required
-                    className="auth-glass-input rounded-xl h-11 pr-10"
+          {/* Headline */}
+          <h2 className="text-3xl xl:text-4xl font-bold leading-tight mb-4 tracking-tight">
+            <span className="text-slate-50">Estude mais</span>
+            <br />
+            <span
+              className="bg-clip-text text-transparent"
+              style={{ backgroundImage: 'linear-gradient(135deg, #4ADE80 0%, #2DD4BF 100%)' }}
+            >
+              inteligente.
+            </span>
+          </h2>
+
+          <p className="text-slate-400 text-base mb-10 leading-relaxed max-w-sm">
+            Plataforma completa de estudo para alunos de saúde — questões, flashcards, resumos e muito mais.
+          </p>
+
+          {/* Feature bullets */}
+          <ul className="space-y-3 mb-12">
+            {highlights.map(({ icon: Icon, text }) => (
+              <li key={text} className="flex items-center gap-3 text-sm text-slate-300">
+                <span
+                  className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center"
+                  style={{ background: 'rgba(74,222,128,0.12)', border: '1px solid rgba(74,222,128,0.20)' }}
+                >
+                  <Icon className="w-3.5 h-3.5 text-emerald-400" />
+                </span>
+                {text}
+              </li>
+            ))}
+          </ul>
+
+          {/* Social proof pill */}
+          <div className="flex items-center gap-3">
+            <div
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold text-emerald-400"
+              style={{ background: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.20)' }}
+            >
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
+              </span>
+              Acesso gratuito para começar
+            </div>
+          </div>
+        </motion.div>
+
+        {/* ── RIGHT PANEL — form ── */}
+        <div className="flex-1 flex items-center justify-center p-4 lg:p-8 min-h-screen">
+          <motion.div
+            initial={shouldReduceMotion ? {} : { opacity: 0, y: 24, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+            className={`w-full max-w-md ${GLASS_CARD} flex flex-col`}
+            style={{ maxHeight: 'calc(100vh - 40px)' }}
+          >
+
+            {/* ── Mobile: logo block ── */}
+            <div className="lg:hidden pt-8 pb-2 flex flex-col items-center gap-5">
+              <Logo variant="full" size="md" />
+              <motion.div
+                animate={shouldReduceMotion ? {} : {
+                  y: [0, -10, 0],
+                  rotateY: [0, 12, 0, -12, 0],
+                  scale: [1, 1.05, 1],
+                }}
+                transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
+                style={{ perspective: 800, transformStyle: 'preserve-3d' }}
+              >
+                <div className="relative flex items-center justify-center">
+                  <motion.div
+                    animate={shouldReduceMotion ? {} : { opacity: [0.3, 0.7, 0.3], scale: [1, 1.2, 1] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                    className="absolute rounded-full blur-2xl"
+                    style={{
+                      width: 120, height: 120,
+                      background: 'radial-gradient(ellipse, rgba(74,222,128,0.55) 0%, rgba(45,212,191,0.28) 55%, transparent 75%)',
+                    }}
                   />
+                  <Image
+                    src="/logo3d.png"
+                    alt="DomineAqui"
+                    width={160}
+                    height={160}
+                    priority
+                    sizes="120px"
+                    className="relative object-contain"
+                    style={{
+                      width: 120, height: 120,
+                      filter: 'drop-shadow(0 0 18px rgba(74,222,128,0.80)) drop-shadow(0 0 40px rgba(45,212,191,0.40))',
+                    }}
+                  />
+                </div>
+              </motion.div>
+            </div>
+
+            {/* ── Header ── */}
+            <div className="px-7 pt-6 pb-2 flex-shrink-0 text-center">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={isLogin ? 'login' : 'register'}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <h1 className="text-2xl font-bold text-slate-50 tracking-tight">
+                    {isLogin ? 'Entrar na plataforma' : 'Criar sua conta'}
+                  </h1>
+                  <p className="text-sm text-slate-400 mt-1">
+                    {isLogin
+                      ? 'Bem-vindo de volta — continue de onde parou'
+                      : 'Grátis para começar, sem cartão de crédito'}
+                  </p>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* ── Content ── */}
+            {isRegistered ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.97 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="p-7 space-y-5 flex flex-col items-center"
+              >
+                <div
+                  className="h-20 w-20 rounded-full flex items-center justify-center"
+                  style={{ background: 'rgba(74,222,128,0.12)', border: '1px solid rgba(74,222,128,0.25)' }}
+                >
+                  <CheckCircle2 className="h-10 w-10 text-emerald-400" />
+                </div>
+                <div className="text-center space-y-2">
+                  <h3 className="text-xl font-bold text-slate-50">Conta criada com sucesso!</h3>
+                  <p className="text-sm text-slate-400">
+                    Enviamos um link de confirmação para:<br />
+                    <span className="font-semibold text-slate-200">{formData.email}</span>
+                  </p>
+                </div>
+                <div
+                  className="p-3 rounded-xl w-full"
+                  style={{ background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.18)' }}
+                >
+                  <p className="text-xs text-center text-amber-300">
+                    <strong>Atenção:</strong> Confirme seu e-mail para ter acesso completo à plataforma.
+                  </p>
+                </div>
+                <div className="w-full space-y-2">
                   <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    onClick={() => router.push('/')}
+                    className="w-full h-11 rounded-xl font-semibold text-sm text-[#040816] flex items-center justify-center gap-2 transition-all hover:opacity-90 hover:scale-[1.01]"
+                    style={{ background: 'linear-gradient(135deg, #4ADE80 0%, #2DD4BF 100%)' }}
                   >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    Ir para o Início
+                  </button>
+                  <button
+                    onClick={() => setIsLogin(true)}
+                    className="w-full h-11 rounded-xl text-sm font-medium text-slate-300 border border-white/[0.10] bg-white/[0.05] hover:bg-white/[0.09] transition-all"
+                  >
+                    Fazer Login Agora
                   </button>
                 </div>
-              </div>
+              </motion.div>
+            ) : (
+              <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+                <div className="space-y-4 overflow-y-auto flex-1 px-7 py-5">
 
-              <AnimatePresence mode="wait">
-                {!isLogin && (
-                  <motion.div
-                    key="register-fields"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="space-y-4"
-                  >
-                    <div className="space-y-2">
-                      <Label htmlFor="dateOfBirth" className="text-xs font-medium">Data de Nascimento *</Label>
-                      <Input
-                        id="dateOfBirth"
-                        type="date"
-                        value={formData.dateOfBirth}
-                        onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
-                        required
-                        className="auth-glass-input rounded-xl h-11"
-                      />
-                    </div>
-
-                    <div className="space-y-3 p-4 rounded-xl bg-[#E2A43E]/5 border border-[#E2A43E]/15">
-                      <p className="text-sm font-medium">
-                        Você é estudante de Ciências Médicas?
-                      </p>
-                      <div className="flex gap-2">
-                        <Button
-                          type="button"
-                          variant={formData.isAfyaMedicineStudent ? 'default' : 'outline'}
-                          className={`flex-1 h-9 rounded-xl soul-light ${formData.isAfyaMedicineStudent ? 'bg-[#468152] hover:bg-[#468152]/90' : ''}`}
-                          onClick={() => setFormData({ ...formData, isAfyaMedicineStudent: true })}
-                        >
-                          Sim
-                        </Button>
-                        <Button
-                          type="button"
-                          variant={!formData.isAfyaMedicineStudent ? 'default' : 'outline'}
-                          className={`flex-1 h-9 rounded-xl soul-light ${!formData.isAfyaMedicineStudent ? 'bg-muted-foreground/80 hover:bg-muted-foreground/70' : ''}`}
-                          onClick={() => setFormData({ ...formData, isAfyaMedicineStudent: false, afyaUnit: '' })}
-                        >
-                          Nao
-                        </Button>
-                      </div>
-                    </div>
-
-                    {formData.isAfyaMedicineStudent && (
+                  {/* Name — register only */}
+                  <AnimatePresence mode="wait">
+                    {!isLogin && (
                       <motion.div
+                        key="name-field"
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
                         className="space-y-2"
                       >
-                        <Label htmlFor="afyaUnit" className="text-xs font-medium">Sua Unidade *</Label>
-                        <select
-                          id="afyaUnit"
-                          className="flex h-11 w-full rounded-xl auth-glass-input px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                          value={formData.afyaUnit}
-                          onChange={(e) => setFormData({ ...formData, afyaUnit: e.target.value })}
-                          required={formData.isAfyaMedicineStudent}
-                        >
-                          <option value="">Selecione sua unidade...</option>
-                          {INSTITUTION_UNITS.map((unit) => (
-                            <option key={unit} value={unit}>{unit}</option>
-                          ))}
-                        </select>
+                        <Label htmlFor="name" className="text-xs font-medium text-slate-400">Nome Completo</Label>
+                        <Input
+                          id="name"
+                          type="text"
+                          placeholder="João Silva"
+                          value={formData.name}
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          required={!isLogin}
+                          className={inputCls}
+                        />
                       </motion.div>
                     )}
+                  </AnimatePresence>
 
-                    {canBeAdmin && (
-                      <div className="space-y-2">
-                        <Label htmlFor="role" className="text-xs font-medium">Tipo de Conta</Label>
-                        <select
-                          id="role"
-                          className="flex h-11 w-full rounded-xl auth-glass-input px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                          value={formData.role}
-                          onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                  {/* Email */}
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-xs font-medium text-slate-400">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="seu@email.com"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      required
+                      className={inputCls}
+                    />
+                  </div>
+
+                  {/* Password */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="password" className="text-xs font-medium text-slate-400">Senha</Label>
+                      {isLogin && (
+                        <Link
+                          href="/auth/forgot-password"
+                          className="text-xs text-slate-500 hover:text-emerald-400 transition-colors"
+                          tabIndex={-1}
                         >
-                          <option value="user">Usuario</option>
-                          <option value="admin">Administrador</option>
-                        </select>
-                      </div>
-                    )}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-sm text-destructive text-center p-3 rounded-xl bg-destructive/10 border border-destructive/20"
-                >
-                  {error}
-                </motion.div>
-              )}
-            </div>
-
-            <div className="px-6 pb-6 pt-2 flex-shrink-0 space-y-4">
-              <Button
-                type="submit"
-                className="w-full h-11 rounded-xl soul-light soul-light-brand btn-brand-glow text-white font-semibold"
-                disabled={loading}
-              >
-                {loading ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                ) : null}
-                {loading ? 'Carregando...' : isLogin ? 'Entrar' : 'Criar Conta'}
-              </Button>
-
-              {isLogin && (
-                <>
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t border-border/40"></span>
+                          Esqueceu a senha?
+                        </Link>
+                      )}
                     </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-transparent px-2 text-muted-foreground backdrop-blur-sm">Ou continue com</span>
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="••••••••"
+                        value={formData.password}
+                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                        required
+                        className={`${inputCls} pr-10`}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
                     </div>
                   </div>
 
-                  <div
-                    id="google-signin-button"
-                    className="flex justify-center"
-                  />
-                </>
-              )}
+                  {/* Register extra fields */}
+                  <AnimatePresence mode="wait">
+                    {!isLogin && (
+                      <motion.div
+                        key="register-fields"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="space-y-4"
+                      >
+                        <div className="space-y-2">
+                          <Label htmlFor="dateOfBirth" className="text-xs font-medium text-slate-400">Data de Nascimento *</Label>
+                          <Input
+                            id="dateOfBirth"
+                            type="date"
+                            value={formData.dateOfBirth}
+                            onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                            required
+                            className={inputCls}
+                          />
+                        </div>
 
-              <button
-                type="button"
-                className="w-full text-sm text-muted-foreground hover:text-[#468152] transition-colors py-1"
-                onClick={() => {
-                  setIsLogin(!isLogin)
-                  setError('')
-                }}
-              >
-                {isLogin
-                  ? 'Nao tem uma conta? Criar conta'
-                  : 'Ja tem uma conta? Entrar'}
-              </button>
-            </div>
-          </form>
-        )}
-      </motion.div>
+                        <div
+                          className="space-y-3 p-4 rounded-xl"
+                          style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
+                        >
+                          <p className="text-sm font-medium text-slate-300">
+                            Você é estudante de Ciências Médicas?
+                          </p>
+                          <div className="flex gap-2">
+                            <button
+                              type="button"
+                              className={`flex-1 h-9 rounded-xl text-sm font-semibold transition-all ${
+                                formData.isAfyaMedicineStudent
+                                  ? 'text-[#040816]'
+                                  : 'text-slate-400 border border-white/[0.10] bg-white/[0.04] hover:bg-white/[0.08]'
+                              }`}
+                              style={
+                                formData.isAfyaMedicineStudent
+                                  ? { background: 'linear-gradient(135deg, #4ADE80 0%, #2DD4BF 100%)' }
+                                  : {}
+                              }
+                              onClick={() => setFormData({ ...formData, isAfyaMedicineStudent: true })}
+                            >
+                              Sim
+                            </button>
+                            <button
+                              type="button"
+                              className={`flex-1 h-9 rounded-xl text-sm font-semibold transition-all ${
+                                !formData.isAfyaMedicineStudent
+                                  ? 'text-[#040816] bg-slate-400'
+                                  : 'text-slate-400 border border-white/[0.10] bg-white/[0.04] hover:bg-white/[0.08]'
+                              }`}
+                              onClick={() =>
+                                setFormData({ ...formData, isAfyaMedicineStudent: false, afyaUnit: '' })
+                              }
+                            >
+                              Não
+                            </button>
+                          </div>
+                        </div>
 
-      {/* Modal de Cadastro Bloqueado */}
+                        {formData.isAfyaMedicineStudent && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="space-y-2"
+                          >
+                            <Label htmlFor="afyaUnit" className="text-xs font-medium text-slate-400">Sua Unidade *</Label>
+                            <select
+                              id="afyaUnit"
+                              className={selectCls}
+                              value={formData.afyaUnit}
+                              onChange={(e) => setFormData({ ...formData, afyaUnit: e.target.value })}
+                              required={formData.isAfyaMedicineStudent}
+                              style={{ colorScheme: 'dark' }}
+                            >
+                              <option value="">Selecione sua unidade...</option>
+                              {INSTITUTION_UNITS.map((unit) => (
+                                <option key={unit} value={unit}>{unit}</option>
+                              ))}
+                            </select>
+                          </motion.div>
+                        )}
+
+                        {canBeAdmin && (
+                          <div className="space-y-2">
+                            <Label htmlFor="role" className="text-xs font-medium text-slate-400">Tipo de Conta</Label>
+                            <select
+                              id="role"
+                              className={selectCls}
+                              value={formData.role}
+                              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                              style={{ colorScheme: 'dark' }}
+                            >
+                              <option value="user">Usuário</option>
+                              <option value="admin">Administrador</option>
+                            </select>
+                          </div>
+                        )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Error */}
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-sm text-red-400 text-center p-3 rounded-xl"
+                      style={{ background: 'rgba(239,68,68,0.10)', border: '1px solid rgba(239,68,68,0.20)' }}
+                    >
+                      {error}
+                    </motion.div>
+                  )}
+                </div>
+
+                {/* ── Footer actions ── */}
+                <div className="px-7 pb-7 pt-2 flex-shrink-0 space-y-3">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full h-11 rounded-xl font-semibold text-sm text-[#040816] flex items-center justify-center gap-2 transition-all hover:opacity-90 hover:scale-[1.01] disabled:opacity-60 disabled:cursor-not-allowed disabled:scale-100"
+                    style={{ background: 'linear-gradient(135deg, #4ADE80 0%, #2DD4BF 100%)' }}
+                  >
+                    {loading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4" />
+                    )}
+                    {loading ? 'Carregando...' : isLogin ? 'Entrar' : 'Criar Conta'}
+                  </button>
+
+                  {isLogin && (
+                    <>
+                      <div className="relative">
+                        <div className="absolute inset-0 flex items-center">
+                          <span className="w-full border-t border-white/[0.08]" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                          <span className="px-3 text-slate-600" style={{ backgroundColor: 'transparent' }}>
+                            ou continue com
+                          </span>
+                        </div>
+                      </div>
+                      <div id="google-signin-button" className="flex justify-center" />
+                    </>
+                  )}
+
+                  <button
+                    type="button"
+                    className="w-full text-sm text-slate-500 hover:text-emerald-400 transition-colors py-1"
+                    onClick={() => { setIsLogin(!isLogin); setError('') }}
+                  >
+                    {isLogin
+                      ? 'Não tem uma conta? Criar conta grátis'
+                      : 'Já tem uma conta? Entrar'}
+                  </button>
+                </div>
+              </form>
+            )}
+          </motion.div>
+        </div>
+      </div>
+
+      {/* ── Modal: Cadastro Bloqueado ── */}
       <Dialog open={showBlockedModal} onOpenChange={setShowBlockedModal}>
-        <DialogContent className="max-w-md auth-glass-card border-none">
+        <DialogContent
+          className="max-w-md border-none"
+          style={{
+            background: 'rgba(4,8,22,0.95)',
+            backdropFilter: 'blur(40px)',
+            border: '1px solid rgba(255,255,255,0.09)',
+            borderRadius: 24,
+            color: '#f1f5f9',
+          }}
+        >
           <DialogHeader>
-            <div className="mx-auto w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
-              <AlertCircle className="h-8 w-8 text-red-500" />
+            <div
+              className="mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4"
+              style={{ background: 'rgba(239,68,68,0.10)', border: '1px solid rgba(239,68,68,0.20)' }}
+            >
+              <AlertCircle className="h-8 w-8 text-red-400" />
             </div>
-            <DialogTitle className="text-center text-xl text-red-500">
-              Cadastro Bloqueado
-            </DialogTitle>
-            <DialogDescription className="text-center">
+            <DialogTitle className="text-center text-xl text-red-400">Cadastro Bloqueado</DialogTitle>
+            <DialogDescription asChild>
               <div className="space-y-4 mt-4">
-                <div className="p-4 rounded-xl bg-red-500/5 border border-red-500/10">
-                  <p className="text-sm">{blockedMessage}</p>
+                <div
+                  className="p-4 rounded-xl"
+                  style={{ background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.10)' }}
+                >
+                  <p className="text-sm text-slate-300">{blockedMessage}</p>
                 </div>
               </div>
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-center pt-4">
-            <Button variant="outline" onClick={() => setShowBlockedModal(false)} className="w-full rounded-xl soul-light">
+            <button
+              onClick={() => setShowBlockedModal(false)}
+              className="w-full h-10 rounded-xl text-sm text-slate-300 border border-white/[0.10] bg-white/[0.05] hover:bg-white/[0.10] transition-all"
+            >
               Fechar
-            </Button>
+            </button>
           </div>
         </DialogContent>
       </Dialog>
 
-      {/* Modal de Usuario Banido */}
+      {/* ── Modal: Usuário Banido ── */}
       <Dialog open={showBannedDialog} onOpenChange={setShowBannedDialog}>
-        <DialogContent className="max-w-md auth-glass-card border-none">
+        <DialogContent
+          className="max-w-md border-none"
+          style={{
+            background: 'rgba(4,8,22,0.95)',
+            backdropFilter: 'blur(40px)',
+            border: '1px solid rgba(255,255,255,0.09)',
+            borderRadius: 24,
+            color: '#f1f5f9',
+          }}
+        >
           <DialogHeader>
-            <div className="mx-auto w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
-              <Ban className="h-8 w-8 text-red-500" />
+            <div
+              className="mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4"
+              style={{ background: 'rgba(239,68,68,0.10)', border: '1px solid rgba(239,68,68,0.20)' }}
+            >
+              <Ban className="h-8 w-8 text-red-400" />
             </div>
-            <DialogTitle className="text-center text-xl text-red-500">
-              Acesso Negado
-            </DialogTitle>
-            <DialogDescription className="text-center">
+            <DialogTitle className="text-center text-xl text-red-400">Acesso Negado</DialogTitle>
+            <DialogDescription asChild>
               <div className="space-y-4 mt-4">
-                <div className="p-4 rounded-xl bg-red-500/5 border border-red-500/10">
-                  <p className="text-sm font-medium mb-2">
-                    Sua conta foi banida da plataforma.
-                  </p>
+                <div
+                  className="p-4 rounded-xl"
+                  style={{ background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.10)' }}
+                >
+                  <p className="text-sm font-medium mb-2 text-slate-200">Sua conta foi banida da plataforma.</p>
                   {banInfo.reason && (
-                    <div className="space-y-1">
-                      <p className="text-xs font-semibold">Motivo:</p>
-                      <p className="text-sm">{BanReasonLabels[banInfo.reason]}</p>
+                    <div className="space-y-1 mt-2">
+                      <p className="text-xs font-semibold text-slate-400">Motivo:</p>
+                      <p className="text-sm text-slate-300">{BanReasonLabels[banInfo.reason]}</p>
                     </div>
                   )}
                   {banInfo.details && (
                     <div className="space-y-1 mt-3">
-                      <p className="text-xs font-semibold">Detalhes:</p>
-                      <p className="text-sm">{banInfo.details}</p>
+                      <p className="text-xs font-semibold text-slate-400">Detalhes:</p>
+                      <p className="text-sm text-slate-300">{banInfo.details}</p>
                     </div>
                   )}
                   {banInfo.bannedAt && (
-                    <p className="text-xs mt-3 opacity-70">
-                      Data do banimento: {new Date(banInfo.bannedAt).toLocaleDateString('pt-BR')}
+                    <p className="text-xs mt-3 text-slate-500">
+                      Data: {new Date(banInfo.bannedAt).toLocaleDateString('pt-BR')}
                     </p>
                   )}
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  Se voce acredita que isso e um erro, entre em contato com o administrador da plataforma.
+                <p className="text-sm text-slate-500 text-center">
+                  Se acredita que é um erro, entre em contato com o administrador.
                 </p>
               </div>
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-center pt-4">
-            <Button variant="outline" onClick={() => setShowBannedDialog(false)} className="w-full rounded-xl soul-light">
+            <button
+              onClick={() => setShowBannedDialog(false)}
+              className="w-full h-10 rounded-xl text-sm text-slate-300 border border-white/[0.10] bg-white/[0.05] hover:bg-white/[0.10] transition-all"
+            >
               Fechar
-            </Button>
+            </button>
           </div>
         </DialogContent>
       </Dialog>
 
-      {/* Google Profile Setup Dialog */}
+      {/* ── Google Profile Setup ── */}
       {googleData && (
         <GoogleProfileSetupDialog
           open={showProfileSetup}

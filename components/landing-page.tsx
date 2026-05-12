@@ -483,6 +483,7 @@ export default function LandingPage({
                       width={220}
                       height={220}
                       priority
+                      sizes="180px"
                       className="relative object-contain"
                       style={{
                         width: '180px',
@@ -651,6 +652,7 @@ export default function LandingPage({
                         width={300}
                         height={300}
                         priority
+                        sizes="260px"
                         className="relative object-contain"
                         style={{
                           width: '260px',
