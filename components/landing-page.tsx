@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion, type Variants } from 'framer-motion'
 import { Logo } from '@/components/logo'
 import {
   ChevronDown,
@@ -85,12 +85,14 @@ function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: str
 
 // ─── Framer Motion variants ────────────────────────────────────────────────────
 
-const fadeUp = {
+const easeOutExpo = [0.22, 1, 0.36, 1] as const
+
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 28 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: easeOutExpo } },
 }
 
-const stagger = {
+const stagger: Variants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.08 } },
 }
@@ -290,8 +292,8 @@ export default function LandingPage({
           viewport: { once: true, amount: 0.15 },
           variants: {
             hidden: { opacity: 0, y: 24 },
-            show: { opacity: 1, y: 0, transition: { duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] } },
-          },
+            show: { opacity: 1, y: 0, transition: { duration: 0.55, delay, ease: easeOutExpo } },
+          } satisfies Variants,
         }
 
   // ── Render ────────────────────────────────────────────────────────────────

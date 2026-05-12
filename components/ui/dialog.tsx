@@ -28,69 +28,67 @@ export function Dialog({ open, onOpenChange, children }: DialogProps) {
   )
 }
 
-interface DialogContentProps {
-  children: React.ReactNode
-  className?: string
-}
+type DialogContentProps = React.HTMLAttributes<HTMLDivElement>
 
-export function DialogContent({ children, className }: DialogContentProps) {
+export function DialogContent({ children, className, ...props }: DialogContentProps) {
   return (
-    <div className={cn(
-      "relative bg-background rounded-lg shadow-2xl border max-w-md w-full mx-4",
-      className
-    )}>
+    <div
+      className={cn(
+        "relative bg-background rounded-lg shadow-2xl border max-w-md w-full mx-4",
+        className
+      )}
+      {...props}
+    >
       {children}
     </div>
   )
 }
 
-interface DialogHeaderProps {
-  children: React.ReactNode
-  className?: string
-}
+type DialogHeaderProps = React.HTMLAttributes<HTMLDivElement>
 
-export function DialogHeader({ children, className }: DialogHeaderProps) {
+export function DialogHeader({ children, className, ...props }: DialogHeaderProps) {
   return (
-    <div className={cn("p-6 pb-4", className)}>
+    <div className={cn("p-6 pb-4", className)} {...props}>
       {children}
     </div>
   )
 }
 
-interface DialogTitleProps {
-  children: React.ReactNode
-  className?: string
-}
+type DialogTitleProps = React.HTMLAttributes<HTMLHeadingElement>
 
-export function DialogTitle({ children, className }: DialogTitleProps) {
+export function DialogTitle({ children, className, ...props }: DialogTitleProps) {
   return (
-    <h2 className={cn("text-lg font-semibold", className)}>
+    <h2 className={cn("text-lg font-semibold", className)} {...props}>
       {children}
     </h2>
   )
 }
 
-interface DialogDescriptionProps {
-  children: React.ReactNode
-  className?: string
+interface DialogDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {
+  asChild?: boolean
 }
 
-export function DialogDescription({ children, className }: DialogDescriptionProps) {
+export function DialogDescription({ children, className, asChild, ...props }: DialogDescriptionProps) {
+  const classes = cn("text-sm text-muted-foreground mt-2", className)
+
+  if (asChild && React.isValidElement<{ className?: string }>(children)) {
+    return React.cloneElement(children, {
+      className: cn(classes, children.props.className),
+    })
+  }
+
   return (
-    <p className={cn("text-sm text-muted-foreground mt-2", className)}>
+    <p className={classes} {...props}>
       {children}
     </p>
   )
 }
 
-interface DialogFooterProps {
-  children: React.ReactNode
-  className?: string
-}
+type DialogFooterProps = React.HTMLAttributes<HTMLDivElement>
 
-export function DialogFooter({ children, className }: DialogFooterProps) {
+export function DialogFooter({ children, className, ...props }: DialogFooterProps) {
   return (
-    <div className={cn("p-6 pt-4 flex justify-end gap-2", className)}>
+    <div className={cn("p-6 pt-4 flex justify-end gap-2", className)} {...props}>
       {children}
     </div>
   )
