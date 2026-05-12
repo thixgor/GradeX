@@ -779,72 +779,65 @@ export default function LandingPage({
               viewport: { once: true },
               transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
             })}
-            whileHover={shouldReduceMotion ? {} : { scale: 1.01, y: -3 }}
-            className="group block rounded-3xl overflow-hidden border border-white/[0.10] transition-all duration-300 hover:border-emerald-400/25 hover:shadow-[0_0_50px_rgba(74,222,128,0.10)] cursor-pointer"
-            style={{ background: 'rgba(7,14,30,0.80)', backdropFilter: 'blur(16px)' }}
+            whileHover={shouldReduceMotion ? {} : { scale: 1.005, y: -2 }}
+            className="group block rounded-3xl overflow-hidden border border-white/[0.10] transition-all duration-300 hover:border-emerald-400/25 hover:shadow-[0_0_60px_rgba(74,222,128,0.12)] cursor-pointer"
+            style={{ aspectRatio: '2073/758', position: 'relative' }}
           >
-            <div className="grid lg:grid-cols-2">
-              {/* Imagem */}
-              <div className="relative h-56 sm:h-72 lg:h-full min-h-[220px] overflow-hidden">
-                <Image
-                  src="https://i.imgur.com/9h3bMzL.png"
-                  alt="Resumos da Giulia Modesto"
-                  fill
-                  className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.03]"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                />
-                <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, transparent 60%, rgba(7,14,30,0.80) 100%)' }} />
-                <div className="absolute inset-0 lg:hidden" style={{ background: 'linear-gradient(to top, rgba(7,14,30,0.85) 0%, transparent 60%)' }} />
-              </div>
+            {/* Imagem preenchendo o card exatamente na proporção 2073:758 */}
+            <Image
+              src="https://i.imgur.com/9h3bMzL.png"
+              alt="Resumos da Giulia Modesto"
+              fill
+              className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.02]"
+              sizes="(max-width: 1280px) 100vw, 1280px"
+            />
 
-              {/* Conteúdo */}
-              <div className="p-7 sm:p-10 flex flex-col justify-center">
-                {/* Badge parceria */}
-                <div className="inline-flex items-center gap-2 self-start px-3 py-1 rounded-full border border-amber-400/25 bg-amber-400/[0.08] mb-5">
+            {/* Gradiente sobre imagem — escurece da esquerda e de baixo */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background: 'linear-gradient(to right, rgba(4,8,22,0.15) 0%, transparent 35%, transparent 55%, rgba(4,8,22,0.88) 100%)',
+              }}
+            />
+            <div
+              className="absolute inset-0"
+              style={{
+                background: 'linear-gradient(to top, rgba(4,8,22,0.80) 0%, transparent 50%)',
+              }}
+            />
+
+            {/* Conteúdo sobreposto — canto inferior direito no desktop, baixo no mobile */}
+            <div className="absolute inset-0 flex flex-col justify-end lg:justify-center lg:items-end p-6 sm:p-8 lg:pr-10">
+              <div className="lg:max-w-[42%]">
+                {/* Badge */}
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-400/30 bg-amber-400/[0.12] mb-4">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                  <span className="text-xs font-bold text-amber-400 uppercase tracking-wide">Parceria Exclusiva</span>
+                  <span className="text-xs font-bold text-amber-300 uppercase tracking-wide">Parceria Exclusiva</span>
                 </div>
 
-                <h3 className="text-2xl sm:text-3xl font-bold text-slate-50 mb-2 leading-tight">
+                <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-50 mb-2 leading-tight">
                   Resumos da Giulia Modesto
                 </h3>
-                <p className="text-sm text-slate-400 mb-6 leading-relaxed">
-                  Resumos aprofundados e exatamente como cai na prova. Desenvolvidos para as avaliações do curso de Medicina com foco total em resultado.
+                <p className="text-xs sm:text-sm text-slate-300 mb-4 leading-relaxed">
+                  Resumos aprofundados, exatamente como cai na prova — OSCE, N1 e Multiestação.
                 </p>
 
-                {/* Tags de detalhe */}
-                <div className="flex flex-wrap gap-2 mb-7">
-                  {[
-                    { label: 'SOI e HAM', color: 'emerald' },
-                    { label: 'Medicina', color: 'teal' },
-                    { label: '1° e 2° Períodos', color: 'teal' },
-                    { label: 'OSCE', color: 'blue' },
-                    { label: 'N1', color: 'blue' },
-                    { label: 'Multiestação', color: 'blue' },
-                  ].map(({ label, color }) => (
+                {/* Tags */}
+                <div className="flex flex-wrap gap-1.5 mb-4">
+                  {['SOI e HAM', 'Medicina', '1° e 2° Períodos', 'OSCE', 'N1', 'Multiestação'].map((tag) => (
                     <span
-                      key={label}
-                      className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold border ${
-                        color === 'emerald'
-                          ? 'text-emerald-300 border-emerald-400/20 bg-emerald-400/[0.07]'
-                          : color === 'teal'
-                          ? 'text-teal-300 border-teal-400/20 bg-teal-400/[0.07]'
-                          : 'text-blue-300 border-blue-400/20 bg-blue-400/[0.07]'
-                      }`}
+                      key={tag}
+                      className="px-2 py-0.5 rounded-md text-[11px] font-semibold text-teal-300 border border-teal-400/20 bg-teal-400/[0.08]"
                     >
-                      {label}
+                      {tag}
                     </span>
                   ))}
                 </div>
 
                 {/* Bullets */}
-                <ul className="space-y-2 mb-8">
-                  {[
-                    'Preços acessíveis e justos',
-                    'Resumos aprofundados',
-                    'Exatamente como cai na prova',
-                  ].map((item) => (
-                    <li key={item} className="flex items-center gap-2 text-sm text-slate-300">
+                <ul className="space-y-1 mb-5">
+                  {['Preços acessíveis e justos', 'Aprofundados e exatos'].map((item) => (
+                    <li key={item} className="flex items-center gap-2 text-xs sm:text-sm text-slate-300">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
                       {item}
                     </li>
@@ -852,7 +845,8 @@ export default function LandingPage({
                 </ul>
 
                 {/* CTA */}
-                <div className="inline-flex items-center gap-2 self-start px-5 py-2.5 rounded-xl text-sm font-bold text-[#040816] transition-all group-hover:opacity-90"
+                <div
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-[#040816] transition-all group-hover:opacity-90 group-hover:scale-[1.02]"
                   style={{ background: 'linear-gradient(135deg, #4ADE80 0%, #2DD4BF 100%)' }}
                 >
                   Ver Resumos
