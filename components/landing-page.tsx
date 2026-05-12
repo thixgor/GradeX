@@ -173,10 +173,22 @@ export default function LandingPage({
 
   const features = [
     {
+      icon: Database,
+      title: 'Banco de Questões',
+      description:
+        '1.000+ questões organizadas por período, módulo e tópico. Objetivas, discursivas e TRI.',
+    },
+    {
       icon: Brain,
       title: 'Flashcards Inteligentes',
       description:
-        'Repetição espaçada com IA que aprende seu ritmo. Atrelados às ementas de todos os cursos.',
+        'Repetição espaçada com IA que aprende seu ritmo. Compráveis estilo Anki, atrelados às ementas de todos os cursos.',
+    },
+    {
+      icon: BookMarked,
+      title: 'Resumos Grátis e Pagos',
+      description:
+        'Resumos completos de todas as disciplinas. Versões gratuitas e premium disponíveis para download.',
     },
     {
       icon: Calendar,
@@ -186,27 +198,21 @@ export default function LandingPage({
     },
     {
       icon: Zap,
-      title: 'Provas com IA',
+      title: 'Provas Reais + IA',
       description:
-        'Provas personalizadas com contextos adaptados a cada curso. Simulados coletivos com ranking.',
-    },
-    {
-      icon: Database,
-      title: 'Banco de Questões',
-      description:
-        '1.000+ questões organizadas por período, módulo e tópico. Objetivas, discursivas e TRI.',
+        'Provas antigas da faculdade, provas personalizadas com IA e simulados coletivos com ranking.',
     },
     {
       icon: Video,
-      title: 'Aulas Aprofundadas',
+      title: 'Aulas ao Vivo e Gravadas',
       description:
         'Aulas densas focadas em residência. HAM em formato OSCE com dinâmica POV em primeira pessoa.',
     },
     {
-      icon: MessageSquare,
-      title: 'Comunidade & Fórum',
+      icon: Target,
+      title: 'Manual Clínico +200 Patologias',
       description:
-        'Fóruns de discussão e comunidade focada. Aprenda e evolua junto com outros estudantes.',
+        'Classificação, Fisiopatologia, Diagnóstico, Diferenciais, Tratamento e Farmacologia detalhada em cada patologia.',
     },
   ]
 
