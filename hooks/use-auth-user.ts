@@ -6,7 +6,8 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { useApi } from './use-api'
-import { fetchAPI, invalidateCache, CACHE_DURATIONS } from '@/lib/api-client'
+import { fetchAPI, CACHE_DURATIONS } from '@/lib/api-client'
+import { clearBootstrapCache } from './use-bootstrap'
 
 export interface AuthUser {
   _id: string
@@ -212,9 +213,6 @@ export async function logout() {
   } finally {
     // Clear auth cache
     notifyAuthUserChange(null)
-    invalidateCache('/api/bootstrap')
-    invalidateCache('/api/auth/me')
-    invalidateCache('/api/user/tier-limits')
-    invalidateCache('/api/notifications')
+    clearBootstrapCache()
   }
 }

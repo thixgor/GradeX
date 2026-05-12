@@ -16,9 +16,9 @@
  * - Centralized state management
  */
 
-import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { fetchAPI, invalidateCache, CACHE_DURATIONS } from '@/lib/api-client'
+import { invalidateCache, clearCache } from '@/lib/api-client'
 import type { SidebarSectionSettings } from '@/lib/sidebar-sections'
 
 // Types matching the bootstrap endpoint response
@@ -95,6 +95,7 @@ let globalBootstrapPromise: Promise<BootstrapResponse> | null = null
 let globalBootstrapError: Error | null = null
 let globalListeners: Set<() => void> = new Set()
 let lastFetchTime = 0
+let bootstrapGeneration = 0
 
 const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
 
@@ -110,6 +111,7 @@ function notifyListeners() {
  */
 async function fetchBootstrap(force = false): Promise<BootstrapResponse> {
   const now = Date.now()
+  const requestGeneration = bootstrapGeneration
 
   // Return cached data if still valid (and not forcing refresh)
   if (!force && globalBootstrapData && (now - lastFetchTime) < CACHE_DURATION) {
@@ -122,9 +124,10 @@ async function fetchBootstrap(force = false): Promise<BootstrapResponse> {
   }
 
   // Start new fetch
-  globalBootstrapPromise = fetch('/api/bootstrap', {
+  const promise = fetch('/api/bootstrap', {
     method: 'GET',
     credentials: 'include',
+    cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -139,6 +142,9 @@ async function fetchBootstrap(force = false): Promise<BootstrapResponse> {
       return response.json()
     })
     .then(data => {
+      if (requestGeneration !== bootstrapGeneration) {
+        throw new Error('Bootstrap request ignored after cache clear')
+      }
       globalBootstrapData = data
       globalBootstrapError = null
       lastFetchTime = Date.now()
@@ -146,14 +152,20 @@ async function fetchBootstrap(force = false): Promise<BootstrapResponse> {
       return data
     })
     .catch(error => {
+      if (requestGeneration !== bootstrapGeneration) {
+        return Promise.reject(error)
+      }
       globalBootstrapError = error instanceof Error ? error : new Error(String(error))
       notifyListeners()
       throw error
     })
     .finally(() => {
-      globalBootstrapPromise = null
+      if (globalBootstrapPromise === promise) {
+        globalBootstrapPromise = null
+      }
     })
 
+  globalBootstrapPromise = promise
   return globalBootstrapPromise
 }
 
@@ -365,11 +377,16 @@ export function useBootstrapTier() {
  * Clear all bootstrap cache (call on logout)
  */
 export function clearBootstrapCache() {
+  bootstrapGeneration += 1
   globalBootstrapData = null
   globalBootstrapPromise = null
   globalBootstrapError = null
   lastFetchTime = 0
+  clearCache()
   invalidateCache('/api/bootstrap')
+  invalidateCache('/api/auth/me')
+  invalidateCache('/api/user/tier-limits')
+  invalidateCache('/api/notifications')
   notifyListeners()
 }
 

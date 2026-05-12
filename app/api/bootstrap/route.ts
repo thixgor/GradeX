@@ -170,9 +170,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       sidebarSections: normalizeSidebarSections(landingSettings?.sidebarSections),
     }
 
-    // Set optimal cache headers
+    // User/session-specific data must never survive logout/account switches.
     const headers = new Headers({
-      'Cache-Control': 'private, max-age=300, stale-while-revalidate=600',
+      'Cache-Control': 'no-store, no-cache, must-revalidate, private',
+      'Pragma': 'no-cache',
+      'Expires': '0',
       'Content-Type': 'application/json',
     })
 

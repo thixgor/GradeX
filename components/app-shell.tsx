@@ -142,10 +142,20 @@ export function AppShell({
   const tierLimitExceeded = isAdmin ? false : (examsRemaining !== null && examsRemaining <= 0)
 
   async function handleLogout() {
-    await fetch('/api/auth/logout', { method: 'POST' })
-    // Clear all cached data
+    // Clear immediately so stale in-flight bootstrap responses cannot repaint
+    // the old account while the logout request is completing.
     clearBootstrapCache()
-    router.push('/auth/login')
+
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        cache: 'no-store',
+      })
+    } finally {
+      clearBootstrapCache()
+      router.replace('/auth/login')
+      router.refresh()
+    }
   }
 
   function handleCreateExam() {
