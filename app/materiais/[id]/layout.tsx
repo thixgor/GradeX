@@ -4,6 +4,9 @@ import { getDb } from '@/lib/mongodb'
 import {
   DEFAULT_OG_IMAGE,
   absoluteUrl,
+  formatBRL,
+  getActivePaymentMethodsLabel,
+  joinSeoParts,
   privateNoIndexRobots,
   sanitizeSeoText,
 } from '@/lib/seo'
@@ -42,29 +45,41 @@ export async function generateMetadata(
       .collection('materials')
       .findOne(
         { _id: new ObjectId(params.id) },
-        { projection: { title: 1, description: 1, coverImage: 1, isHidden: 1, updatedAt: 1, createdAt: 1 } }
+        { projection: { title: 1, description: 1, coverImage: 1, isHidden: 1, updatedAt: 1, createdAt: 1, pricing: 1, price: 1 } }
       )
 
     if (!material?.title) return fallback
 
     const safeTitle = sanitizeSeoText(material.title, 'Material de estudo', 70)
-    const safeDescription = sanitizeSeoText(material.description, MATERIAIS_DESCRIPTION, 155)
+    const safeDescription = sanitizeSeoText(material.description, MATERIAIS_DESCRIPTION, 120)
     const title = `${safeTitle || 'Material de estudo'}`
     const image = material.coverImage ? absoluteUrl(material.coverImage) : DEFAULT_OG_IMAGE
 
+    const isPaid = material.pricing === 'paid' && Number(material.price) > 0
+    const priceLabel = isPaid ? formatBRL(material.price) : 'Gratuito'
+    const paymentMethods = isPaid ? await getActivePaymentMethodsLabel() : ''
+    const paymentLine = isPaid && paymentMethods ? `Pague com ${paymentMethods}` : ''
+
+    const description = joinSeoParts([
+      safeDescription || MATERIAIS_DESCRIPTION,
+      priceLabel,
+      paymentLine,
+    ]).slice(0, 200)
+
     return {
       title,
-      description: safeDescription || MATERIAIS_DESCRIPTION,
+      description,
       robots: privateNoIndexRobots,
       alternates: {
         canonical: `/materiais/${params.id}`,
       },
       openGraph: {
         title: `${title} | DomineAqui`,
-        description: safeDescription || MATERIAIS_DESCRIPTION,
+        description,
         url: `/materiais/${params.id}`,
         siteName: 'DomineAqui',
         type: 'article',
+        locale: 'pt_BR',
         images: [
           {
             url: image,
@@ -77,8 +92,12 @@ export async function generateMetadata(
       twitter: {
         card: 'summary_large_image',
         title: `${title} | DomineAqui`,
-        description: safeDescription || MATERIAIS_DESCRIPTION,
+        description,
         images: [image],
+      },
+      other: {
+        ...(isPaid ? { 'product:price:amount': String(Number(material.price).toFixed(2)) } : {}),
+        ...(isPaid ? { 'product:price:currency': 'BRL' } : {}),
       },
     }
   } catch {

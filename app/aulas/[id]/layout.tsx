@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { ObjectId } from 'mongodb'
 import { getDb } from '@/lib/mongodb'
 import { AulaPostagem } from '@/lib/types'
-import { DEFAULT_OG_IMAGE, absoluteUrl, privateNoIndexRobots, sanitizeSeoText } from '@/lib/seo'
+import { DEFAULT_OG_IMAGE, absoluteUrl, joinSeoParts, privateNoIndexRobots, sanitizeSeoText } from '@/lib/seo'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -34,18 +34,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       }
     }
 
-    const descricaoLimitada = sanitizeSeoText(aula.descricao, 'Assista aulas exclusivas na plataforma DomineAqui', 160)
+    const descricaoBase = sanitizeSeoText(aula.descricao, 'Assista aulas exclusivas na plataforma DomineAqui', 130)
     const imagemOG = aula.capa?.tipo === 'imagem' && aula.capa?.imagem
       ? aula.capa.imagem
       : DEFAULT_OG_IMAGE
 
+    const isPremium = aula.visibilidade === 'premium'
+    const accessLabel = isPremium ? 'Aula Premium' : 'Aula Gratuita'
+    const tipoLabel = aula.tipo === 'ao-vivo' ? 'Ao vivo' : aula.tipo === 'gravada' ? 'Gravada' : ''
+
+    const description = joinSeoParts([descricaoBase, accessLabel, tipoLabel]).slice(0, 200)
+
     return {
       title: aula.titulo,
-      description: descricaoLimitada,
+      description,
       robots: privateNoIndexRobots,
+      alternates: { canonical: `/aulas/${id}` },
       openGraph: {
         title: aula.titulo,
-        description: descricaoLimitada,
+        description,
+        siteName: 'DomineAqui',
         type: 'article',
         url: absoluteUrl(`/aulas/${id}`),
         locale: 'pt_BR',
@@ -61,7 +69,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       twitter: {
         card: 'summary_large_image',
         title: aula.titulo,
-        description: descricaoLimitada,
+        description,
         images: [imagemOG],
       },
     }

@@ -98,6 +98,52 @@ export function buildJsonLd(data: Record<string, unknown>) {
   return JSON.stringify(data).replace(/</g, '\\u003c')
 }
 
+export function formatBRL(amount: number | null | undefined) {
+  const value = Number(amount)
+  if (!Number.isFinite(value) || value <= 0) return ''
+  try {
+    return value.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })
+  } catch {
+    return `R$ ${value.toFixed(2).replace('.', ',')}`
+  }
+}
+
+const PAYMENT_METHOD_LABELS: Record<string, string> = {
+  pix: 'Pix',
+  credit_card: 'Cartão',
+  boleto: 'Boleto',
+  subscriptions: 'Assinatura',
+}
+
+export async function getActivePaymentMethodsLabel(): Promise<string> {
+  try {
+    const { getDb } = await import('@/lib/mongodb')
+    const { DEFAULT_PAYMENT_METHODS } = await import('@/lib/payment-methods')
+    const db = await getDb()
+    const settings = await db.collection('admin_settings').findOne({})
+    const methods = { ...DEFAULT_PAYMENT_METHODS, ...(settings?.paymentMethods || {}) }
+    const labels: string[] = []
+    if (methods.pix) labels.push(PAYMENT_METHOD_LABELS.pix)
+    if (methods.credit_card) labels.push(PAYMENT_METHOD_LABELS.credit_card)
+    if (methods.boleto) labels.push(PAYMENT_METHOD_LABELS.boleto)
+    if (labels.length === 0) return ''
+    if (labels.length === 1) return labels[0]
+    if (labels.length === 2) return labels.join(' ou ')
+    return `${labels.slice(0, -1).join(', ')} ou ${labels[labels.length - 1]}`
+  } catch {
+    return 'Pix, Cartão ou Boleto'
+  }
+}
+
+export function joinSeoParts(parts: Array<string | null | undefined>, separator = ' • ') {
+  return parts.map(p => (p || '').trim()).filter(Boolean).join(separator)
+}
+
 export const SITE_DESCRIPTION =
   'Plataforma de estudo inteligente com provas, flashcards, cronogramas, materiais, TRI e avaliação com IA para estudantes de medicina e saúde.'
 
