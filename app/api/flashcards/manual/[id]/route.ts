@@ -129,6 +129,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       access: { ...access, canManage: access.isOwner || isAdmin },
       viewer: {
         isAuthenticated,
+        isAdmin,
         userId: session?.userId || null,
         emailVerified: !!userDoc?.emailVerified,
       },
@@ -208,6 +209,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       }
       if (typeof body.isFeatured === 'boolean') updates.isFeatured = body.isFeatured
       if (typeof body.isHidden === 'boolean') updates.isHidden = body.isHidden
+      if (typeof body.pdfDownloadEnabled === 'boolean') updates.pdfDownloadEnabled = body.pdfDownloadEnabled
       if (typeof body.linkedMaterialId === 'string' || body.linkedMaterialId === null) {
         updates.linkedMaterialId = body.linkedMaterialId || null
       }

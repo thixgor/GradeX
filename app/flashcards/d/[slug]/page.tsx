@@ -38,6 +38,7 @@ import {
   Flame,
   Leaf,
   AlertTriangle,
+  Download,
 } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
@@ -63,7 +64,7 @@ interface DeckResponse {
     stats: SpacedRepetitionStats
   }
   access: AccessFlags & { canManage: boolean }
-  viewer: { isAuthenticated: boolean; userId: string | null; emailVerified: boolean }
+  viewer: { isAuthenticated: boolean; isAdmin: boolean; userId: string | null; emailVerified: boolean }
 }
 
 type StudyMode = 'normal' | 'spaced'
@@ -121,6 +122,7 @@ export default function DeckPage() {
   const [toast, setToast] = useState<{ open: boolean; message: string; type?: 'success' | 'error' | 'info' }>({ open: false, message: '' })
   const [shareOpen, setShareOpen] = useState(false)
   const [purchasing, setPurchasing] = useState(false)
+  const [downloadingPdf, setDownloadingPdf] = useState(false)
   const [folderPath, setFolderPath] = useState<string | null>(null)
   const [upsellPkg, setUpsellPkg] = useState<UpsellPackage | null>(null)
   const [showCards, setShowCards] = useState(false)
@@ -346,6 +348,42 @@ export default function DeckPage() {
     router.push(`/materiais/checkout?type=material&id=${materialId}`)
   }
 
+  async function downloadDeckPdf() {
+    if (!data) return
+    if (!data.viewer.isAuthenticated) {
+      router.push(`/auth/login?redirect=${encodeURIComponent(`/flashcards/d/${deck.slug}`)}`)
+      return
+    }
+    setDownloadingPdf(true)
+    try {
+      const res = await fetch(`/api/flashcards/manual/${encodeURIComponent(deck.slug)}/pdf`, { cache: 'no-store' })
+      if (!res.ok) {
+        const json = await res.json().catch(() => null)
+        throw new Error(json?.error || 'Não foi possível baixar o PDF')
+      }
+      const blob = await res.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      const safeTitle = deck.title
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-zA-Z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .slice(0, 80) || 'flashcards'
+      a.href = url
+      a.download = `${safeTitle}-DomineAqui.pdf`
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      window.URL.revokeObjectURL(url)
+      setToast({ open: true, message: "PDF baixado com marca d'água.", type: 'success' })
+    } catch (err: any) {
+      setToast({ open: true, message: err.message || 'Erro ao baixar PDF', type: 'error' })
+    } finally {
+      setDownloadingPdf(false)
+    }
+  }
+
   if (loading) {
     return (
       <AppShell allowGuest>
@@ -369,6 +407,7 @@ export default function DeckPage() {
   const { deck, cards, access } = data
   const isLocked = !access.hasAccess
   const isPaid = deck.pricing === 'paid'
+  const canDownloadPdf = !isLocked && (deck.pdfDownloadEnabled === true || data.viewer.isAdmin)
 
   if (studying) {
     const card = cards[currentIndex]
@@ -409,7 +448,7 @@ export default function DeckPage() {
           )}
 
           <div className="mt-6 space-y-3">
-            {/* Rating buttons — always full width row */}
+            {/* Rating buttons in a full width row */}
             <div className="flex gap-2 justify-center flex-wrap">
               {RATINGS.map(r => (
                 <button
@@ -529,10 +568,16 @@ export default function DeckPage() {
               {access.isOwner && (
                 <Button variant="outline" onClick={() => setShareOpen(true)}><Share2 className="h-4 w-4" /> Compartilhar</Button>
               )}
-              {access.isOwner && (
+              {access.canManage && (
                 <Link href={`/flashcards/d/${deck.slug}/editar`}>
                   <Button variant="outline"><Edit3 className="h-4 w-4" /> Editar</Button>
                 </Link>
+              )}
+              {canDownloadPdf && (
+                <Button variant="outline" onClick={downloadDeckPdf} disabled={downloadingPdf}>
+                  {downloadingPdf ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+                  PDF
+                </Button>
               )}
             </div>
 
@@ -552,7 +597,7 @@ export default function DeckPage() {
                 >
                   <span className="absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none" />
                   <ShoppingCart className="h-4 w-4 flex-shrink-0" />
-                  {`Comprar – R$ ${deck.price?.toFixed(2).replace('.', ',')}`}
+                  {`Comprar R$ ${deck.price?.toFixed(2).replace('.', ',')}`}
                 </button>
               ) : isLocked ? (
                 <button
@@ -602,7 +647,7 @@ export default function DeckPage() {
                 {showCards ? <ChevronUp className="h-4 w-4 text-slate-400" /> : <ChevronDown className="h-4 w-4 text-slate-400" />}
                 {showCards ? 'Ocultar lista de cartões' : `Ver lista de cartões (${cards.length})`}
               </span>
-              {!showCards && <span className="text-xs text-slate-400">Evite spoiler — expanda quando quiser revisar</span>}
+              {!showCards && <span className="text-xs text-slate-400">Evite spoiler, expanda quando quiser revisar</span>}
             </button>
             <AnimatePresence>
               {showCards && (

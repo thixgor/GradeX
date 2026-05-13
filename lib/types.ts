@@ -423,6 +423,7 @@ export interface FlashcardManualDeck {
   // Controle
   isPublished: boolean // controla se aparece na comunidade quando public
   isHidden: boolean // admin pode esconder
+  pdfDownloadEnabled?: boolean // admin libera download de PDF protegido
 
   createdAt: Date
   updatedAt: Date

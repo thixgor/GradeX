@@ -21,6 +21,7 @@ import {
   AlertTriangle,
   Settings,
   MessageSquare,
+  Download,
 } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
@@ -276,6 +277,7 @@ function DeckMetaForm({
   const [price, setPrice] = useState(String(deck.price ?? 0))
   const [allowedGroups, setAllowedGroups] = useState<string[]>(deck.allowedGroups || [])
   const [materialsFolderId, setMaterialsFolderId] = useState(deck.materialsFolderId || '')
+  const [pdfDownloadEnabled, setPdfDownloadEnabled] = useState(deck.pdfDownloadEnabled === true)
   const [materiaisFolders, setMateriaisFolders] = useState<{ _id: string; name: string; parentFolderId?: string | null }[]>([])
   const [advancedOpen, setAdvancedOpen] = useState(false)
 
@@ -300,6 +302,7 @@ function DeckMetaForm({
         price: pricing === 'paid' ? Number(price) || 0 : 0,
         allowedGroups,
         materialsFolderId: materialsFolderId || null,
+        pdfDownloadEnabled,
       } : {}),
     })
   }
@@ -411,12 +414,28 @@ function DeckMetaForm({
                   value={materialsFolderId}
                   onChange={e => setMaterialsFolderId(e.target.value)}
                 >
-                  <option value="">— Raiz (sem pasta) —</option>
+                  <option value="">Raiz (sem pasta)</option>
                   {materiaisPaths.map(f => (
                     <option key={f._id} value={f._id}>{f.path}</option>
                   ))}
                 </select>
               </div>
+              <label className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-3 text-sm dark:border-white/10 dark:bg-slate-900">
+                <input
+                  type="checkbox"
+                  checked={pdfDownloadEnabled}
+                  onChange={e => setPdfDownloadEnabled(e.target.checked)}
+                  className="mt-1 h-4 w-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500"
+                />
+                <span>
+                  <span className="flex items-center gap-1.5 font-medium text-slate-800 dark:text-slate-100">
+                    <Download className="h-4 w-4" /> Liberar PDF
+                  </span>
+                  <span className="mt-1 block text-xs text-slate-500 dark:text-slate-400">
+                    Permite que usuários com acesso baixem o deck em PDF com marca d'água individual.
+                  </span>
+                </span>
+              </label>
               {pricing === 'paid' && (
                 <p className="rounded-2xl bg-violet-500/10 border border-violet-500/20 p-3 text-xs text-violet-700 dark:text-violet-300">
                   Ao salvar, o deck será automaticamente publicado em <strong>/materiais</strong> como produto. Após a compra, o usuário cai direto neste deck.
@@ -455,7 +474,7 @@ function CardEditor({
           <span className="rounded-full bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 text-xs font-mono w-7 h-7 flex items-center justify-center">{idx + 1}</span>
           <div className="min-w-0">
             <p className="text-sm font-medium truncate">
-              {isHidden ? (card.hiddenWord?.phrase || 'Palavra oculta — preencher') : (card.front.text || 'Cartão sem título')}
+              {isHidden ? (card.hiddenWord?.phrase || 'Palavra oculta, preencher') : (card.front.text || 'Cartão sem título')}
             </p>
             <p className="text-xs text-slate-500 truncate">
               {isHidden ? `Palavra: ${card.hiddenWord?.word || '(definir)'}` : (card.back.text || '(sem resposta)')}
@@ -636,7 +655,7 @@ Divisão celular que origina duas células-filhas geneticamente idênticas à c�
     <div className="fixed inset-0 bg-black/50 z-50 flex items-end md:items-center justify-center" onClick={onClose}>
       <div className="bg-white dark:bg-slate-900 w-full md:max-w-2xl md:rounded-3xl rounded-t-3xl border border-slate-200 dark:border-white/10 p-6 max-h-[90vh] overflow-auto" onClick={e => e.stopPropagation()}>
         <h3 className="text-lg font-semibold mb-1">Importar cartões</h3>
-        <p className="text-sm text-slate-500 mb-4">Cole o conteúdo no formato escolhido — vários cartões de uma vez.</p>
+        <p className="text-sm text-slate-500 mb-4">Cole o conteúdo no formato escolhido, vários cartões de uma vez.</p>
 
         <div className="flex gap-2 mb-3 flex-wrap">
           <button onClick={() => setFormat('markdown')} className={cn('rounded-full px-3 py-1 text-xs font-medium border', format === 'markdown' ? 'border-violet-500 bg-violet-500/10 text-violet-700 dark:text-violet-200' : 'border-slate-200 dark:border-white/10 text-slate-500')}>Markdown (recomendado)</button>

@@ -133,6 +133,7 @@ export async function POST(request: NextRequest) {
       likeCount: 0,
       isPublished: false,
       isHidden: false,
+      pdfDownloadEnabled: false,
       createdAt: new Date(),
       updatedAt: new Date(),
     }
