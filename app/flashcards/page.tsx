@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, memo, useState } from 'react'
+import { useCallback, useEffect, useMemo, memo, useRef, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -98,6 +98,10 @@ export default function FlashcardsHubPage() {
   const [storeFolder, setStoreFolder] = useState<string | null>(null)
   const [authChecked, setAuthChecked] = useState(false)
   const [isGuest, setIsGuest] = useState(false)
+  const [isFolderPending, startFolderTransition] = useTransition()
+  const initialLoadDoneRef = useRef(false)
+  const mineCacheRef = useRef<Map<string, DeckWithId[]>>(new Map())
+  const communityCacheRef = useRef<Map<string, DeckWithId[]>>(new Map())
 
   const syncStateFromUrl = useCallback(() => {
     if (typeof window === 'undefined') return
@@ -133,20 +137,31 @@ export default function FlashcardsHubPage() {
   }, [isGuest, router, storeFolder, updateFlashcardsUrl])
 
   const selectStoreFolder = useCallback((folderId: string | null) => {
-    setStoreFolder(folderId)
-    setFilter('store')
+    startFolderTransition(() => {
+      setStoreFolder(folderId)
+      setFilter('store')
+    })
     updateFlashcardsUrl('store', folderId)
   }, [updateFlashcardsUrl])
 
   const loadMine = useCallback(async () => {
     try {
       const folderId = activeFolder === 'all' ? '' : activeFolder === 'root' ? 'null' : activeFolder
+      const cacheKey = `${folderId || 'all'}::${debouncedSearch.trim().toLowerCase()}`
+      const cached = mineCacheRef.current.get(cacheKey)
+      if (cached) {
+        setMine(cached)
+        return
+      }
+
       const url = new URL('/api/flashcards/manual', window.location.origin)
       if (folderId) url.searchParams.set('folderId', folderId)
       if (debouncedSearch) url.searchParams.set('q', debouncedSearch)
       const res = await fetch(url.toString())
       const json = await res.json()
-      setMine(json.decks || [])
+      const decks = json.decks || []
+      mineCacheRef.current.set(cacheKey, decks)
+      setMine(decks)
     } catch (err: any) {
       setToast({ open: true, message: err.message || 'Erro ao carregar decks', type: 'error' })
     }
@@ -162,12 +177,21 @@ export default function FlashcardsHubPage() {
 
   const loadCommunity = useCallback(async () => {
     try {
+      const cacheKey = `${communitySort}::${debouncedSearch.trim().toLowerCase()}`
+      const cached = communityCacheRef.current.get(cacheKey)
+      if (cached) {
+        setCommunity(cached)
+        return
+      }
+
       const url = new URL('/api/flashcards/manual/community', window.location.origin)
       if (debouncedSearch) url.searchParams.set('q', debouncedSearch)
       url.searchParams.set('sort', communitySort)
       const res = await fetch(url.toString())
       const json = await res.json()
-      setCommunity(json.decks || [])
+      const decks = json.decks || []
+      communityCacheRef.current.set(cacheKey, decks)
+      setCommunity(decks)
     } catch {}
   }, [debouncedSearch, communitySort])
 
@@ -226,18 +250,42 @@ export default function FlashcardsHubPage() {
 
   useEffect(() => {
     if (!authChecked) return
+
+    let cancelled = false
     setLoading(true)
     const loaders = isGuest
       ? [loadStore()]
       : [loadMine(), loadFolders(), loadCommunity(), loadStore(), loadShared()]
-    Promise.all(loaders).finally(() => setLoading(false))
-  }, [authChecked, isGuest, loadMine, loadFolders, loadCommunity, loadStore, loadShared])
+
+    Promise.all(loaders).finally(() => {
+      if (cancelled) return
+      initialLoadDoneRef.current = true
+      setLoading(false)
+    })
+
+    return () => {
+      cancelled = true
+    }
+  // Initial hydration only. Follow-up effects below update individual sections without blanking the page.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authChecked, isGuest])
+
+  useEffect(() => {
+    if (!authChecked || isGuest || !initialLoadDoneRef.current) return
+    loadMine()
+  }, [activeFolder, authChecked, debouncedSearch, isGuest, loadMine])
+
+  useEffect(() => {
+    if (!authChecked || isGuest || !initialLoadDoneRef.current) return
+    loadCommunity()
+  }, [authChecked, communitySort, debouncedSearch, isGuest, loadCommunity])
 
   const deleteDeck = useCallback(async (id: string) => {
     if (!confirm('Apagar este deck e todos os cartões?')) return
     try {
       const res = await fetch(`/api/flashcards/manual/${id}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('Erro ao apagar')
+      mineCacheRef.current.clear()
       setMine(m => m.filter(d => d._id !== id))
       setToast({ open: true, message: 'Deck apagado', type: 'success' })
     } catch (err: any) {
@@ -267,6 +315,14 @@ export default function FlashcardsHubPage() {
 
   // Árvore de pastas admin
   const adminFolderTree = useMemo(() => buildFolderTree(adminFolders), [adminFolders])
+  const storeFolderCounts = useMemo(() => {
+    const counts = new Map<string, number>()
+    for (const deck of store) {
+      if (!deck.folderId) continue
+      counts.set(deck.folderId, (counts.get(deck.folderId) || 0) + 1)
+    }
+    return counts
+  }, [store])
 
   const counts = {
     all: mine.length + community.length + store.length + shared.length,
@@ -398,6 +454,8 @@ export default function FlashcardsHubPage() {
                     tree={adminFolderTree}
                     selected={storeFolder}
                     store={store}
+                    folderCounts={storeFolderCounts}
+                    pending={isFolderPending}
                     onSelect={selectStoreFolder}
                   />
                 )}
@@ -519,10 +577,12 @@ function buildFolderTree(flat: FolderWithId[]): FolderTreeNode[] {
   return roots
 }
 
-function StoreFolderNav({ tree, selected, store, onSelect }: {
+function StoreFolderNav({ tree, selected, store, folderCounts, pending, onSelect }: {
   tree: FolderTreeNode[]
   selected: string | null
   store: DeckWithId[]
+  folderCounts: Map<string, number>
+  pending: boolean
   onSelect: (id: string | null) => void
 }) {
   return (
@@ -535,7 +595,7 @@ function StoreFolderNav({ tree, selected, store, onSelect }: {
             <p className="text-[11px] text-slate-500 dark:text-slate-400">{store.length} {store.length === 1 ? 'deck' : 'decks'} na loja</p>
           </div>
           <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-200 ring-1 ring-emerald-400/20">
-            <Crown className="h-4 w-4" />
+            {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Crown className="h-4 w-4" />}
           </div>
         </div>
       </div>
@@ -553,7 +613,7 @@ function StoreFolderNav({ tree, selected, store, onSelect }: {
             key={node._id}
             node={node}
             selected={selected}
-            store={store}
+            folderCounts={folderCounts}
             onSelect={onSelect}
             depth={0}
           />
@@ -563,15 +623,15 @@ function StoreFolderNav({ tree, selected, store, onSelect }: {
   )
 }
 
-function FolderNavNode({ node, selected, store, onSelect, depth }: {
+function FolderNavNode({ node, selected, folderCounts, onSelect, depth }: {
   node: FolderTreeNode
   selected: string | null
-  store: DeckWithId[]
+  folderCounts: Map<string, number>
   onSelect: (id: string | null) => void
   depth: number
 }) {
   const [expanded, setExpanded] = useState(true)
-  const count = store.filter(d => d.folderId === node._id).length
+  const count = folderCounts.get(node._id) || 0
   const hasChildren = node.children.length > 0
   return (
     <div>
@@ -589,7 +649,7 @@ function FolderNavNode({ node, selected, store, onSelect, depth }: {
       {expanded && hasChildren && (
         <div>
           {node.children.map(child => (
-            <FolderNavNode key={child._id} node={child} selected={selected} store={store} onSelect={onSelect} depth={depth + 1} />
+            <FolderNavNode key={child._id} node={child} selected={selected} folderCounts={folderCounts} onSelect={onSelect} depth={depth + 1} />
           ))}
         </div>
       )}
@@ -617,6 +677,7 @@ function FolderNavItem({ label, count, active, onClick, depth, color, hasChildre
             ? 'bg-emerald-500/[0.18] text-emerald-800 dark:text-emerald-100 font-semibold ring-emerald-400/35 shadow-sm'
             : 'bg-white/40 dark:bg-white/[0.03] text-slate-600 dark:text-slate-300 ring-white/45 dark:ring-white/10 hover:bg-white/75 dark:hover:bg-white/10 hover:text-emerald-800 dark:hover:text-white'
         )}
+        style={{ touchAction: 'manipulation' }}
       >
         <span className="flex items-center gap-2 min-w-0">
           {color
@@ -881,6 +942,7 @@ function FolderPill({ active, onClick, icon, children }: { active: boolean; onCl
           ? 'bg-violet-500/15 border-violet-400/40 text-violet-700 dark:text-violet-200 shadow-sm'
           : 'bg-white/70 dark:bg-white/5 border-white/30 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-white/90 dark:hover:bg-white/10'
       )}
+      style={{ touchAction: 'manipulation' }}
     >
       {icon} {children}
     </button>

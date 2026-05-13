@@ -257,6 +257,7 @@ function MateriaisContent() {
   const highlightRef = useRef<HTMLDivElement | null>(null)
   const requestSeqRef = useRef(0)
   const browseCacheRef = useRef<Map<string, BrowseSnapshot>>(new Map())
+  const inflightBrowseRef = useRef<Map<string, Promise<BrowseSnapshot>>>(new Map())
   const allFoldersCacheRef = useRef<Folder[] | null>(null)
   const packagesCacheRef = useRef<Pick<BrowseSnapshot, 'packages' | 'purchasedPackageIds' | 'userGroups'> | null>(null)
   const { copiedId, copy } = useCopyLink()
@@ -322,51 +323,66 @@ function MateriaisContent() {
     const requestId = options?.prefetchOnly ? requestSeqRef.current : ++requestSeqRef.current
 
     try {
-      const params = new URLSearchParams()
-      if (folderId) params.set('folderId', folderId)
-      if (srch) params.set('search', srch)
-      if (filter !== 'all') params.set('pricing', filter)
+      let snapshotPromise = !options?.force ? inflightBrowseRef.current.get(key) : undefined
 
-      const childFolderQuery = folderId ? `?parentFolderId=${folderId}` : ''
-      const allFoldersPromise = allFoldersCacheRef.current && !options?.force
-        ? Promise.resolve({ folders: allFoldersCacheRef.current })
-        : fetch('/api/materiais/folders?all=true', { cache: 'no-store' }).then(res => res.ok ? res.json() : { folders: [] })
-      const packagesPromise = packagesCacheRef.current && !options?.force
-        ? Promise.resolve(packagesCacheRef.current)
-        : fetch('/api/materiais/packages', { cache: 'no-store' }).then(res => res.ok ? res.json() : { packages: [], purchasedPackageIds: [], userGroups: [] })
+      if (!snapshotPromise) {
+        snapshotPromise = (async () => {
+          const params = new URLSearchParams()
+          if (folderId) params.set('folderId', folderId)
+          if (srch) params.set('search', srch)
+          if (filter !== 'all') params.set('pricing', filter)
 
-      const [materialsData, foldersData, allFoldersData, packagesData] = await Promise.all([
-        fetch(`/api/materiais?${params}`, { cache: 'no-store' }).then(res => res.ok ? res.json() : { materials: [], purchasedIds: [], userGroups: [] }),
-        fetch(`/api/materiais/folders${childFolderQuery}`, { cache: 'no-store' }).then(res => res.ok ? res.json() : { folders: [] }),
-        allFoldersPromise,
-        packagesPromise,
-      ])
+          const childFolderQuery = folderId ? `?parentFolderId=${folderId}` : ''
+          const allFoldersPromise = allFoldersCacheRef.current && !options?.force
+            ? Promise.resolve({ folders: allFoldersCacheRef.current })
+            : fetch('/api/materiais/folders?all=true', { cache: 'no-store' }).then(res => res.ok ? res.json() : { folders: [] })
+          const packagesPromise = packagesCacheRef.current && !options?.force
+            ? Promise.resolve(packagesCacheRef.current)
+            : fetch('/api/materiais/packages', { cache: 'no-store' }).then(res => res.ok ? res.json() : { packages: [], purchasedPackageIds: [], userGroups: [] })
+
+          const [materialsData, foldersData, allFoldersData, packagesData] = await Promise.all([
+            fetch(`/api/materiais?${params}`, { cache: 'no-store' }).then(res => res.ok ? res.json() : { materials: [], purchasedIds: [], userGroups: [] }),
+            fetch(`/api/materiais/folders${childFolderQuery}`, { cache: 'no-store' }).then(res => res.ok ? res.json() : { folders: [] }),
+            allFoldersPromise,
+            packagesPromise,
+          ])
+
+          const nextAllFolders: Folder[] = allFoldersData.folders || []
+          const nextPackages: MaterialPackage[] = packagesData.packages || []
+          const nextUserGroups = materialsData.userGroups?.length
+            ? materialsData.userGroups
+            : (packagesData.userGroups || [])
+
+          allFoldersCacheRef.current = nextAllFolders
+          packagesCacheRef.current = {
+            packages: nextPackages,
+            purchasedPackageIds: packagesData.purchasedPackageIds || [],
+            userGroups: packagesData.userGroups || [],
+          }
+
+          return {
+            materials: materialsData.materials || [],
+            folders: foldersData.folders || [],
+            allFolders: nextAllFolders,
+            packages: nextPackages,
+            purchasedIds: materialsData.purchasedIds || [],
+            purchasedPackageIds: packagesData.purchasedPackageIds || [],
+            userGroups: nextUserGroups,
+            isAuthenticated: !!(materialsData.isAuthenticated || packagesData.isAuthenticated),
+          }
+        })()
+
+        inflightBrowseRef.current.set(key, snapshotPromise)
+        snapshotPromise.finally(() => {
+          if (inflightBrowseRef.current.get(key) === snapshotPromise) {
+            inflightBrowseRef.current.delete(key)
+          }
+        }).catch(() => {})
+      }
+
+      const snapshot = await snapshotPromise
 
       if (requestId !== requestSeqRef.current && !options?.prefetchOnly) return
-
-      const nextAllFolders: Folder[] = allFoldersData.folders || []
-      const nextPackages: MaterialPackage[] = packagesData.packages || []
-      const nextUserGroups = materialsData.userGroups?.length
-        ? materialsData.userGroups
-        : (packagesData.userGroups || [])
-
-      allFoldersCacheRef.current = nextAllFolders
-      packagesCacheRef.current = {
-        packages: nextPackages,
-        purchasedPackageIds: packagesData.purchasedPackageIds || [],
-        userGroups: packagesData.userGroups || [],
-      }
-
-      const snapshot: BrowseSnapshot = {
-        materials: materialsData.materials || [],
-        folders: foldersData.folders || [],
-        allFolders: nextAllFolders,
-        packages: nextPackages,
-        purchasedIds: materialsData.purchasedIds || [],
-        purchasedPackageIds: packagesData.purchasedPackageIds || [],
-        userGroups: nextUserGroups,
-        isAuthenticated: !!(materialsData.isAuthenticated || packagesData.isAuthenticated),
-      }
 
       browseCacheRef.current.set(key, snapshot)
 
@@ -409,6 +425,41 @@ function MateriaisContent() {
   }, [])
 
   useEffect(() => {
+    const syncFromHistory = () => {
+      const params = new URLSearchParams(window.location.search)
+      const folderId = params.get('folder')
+      const tabParam = params.get('tab')
+      const nextTab = tabParam === 'packages' || tabParam === 'mine' ? tabParam : 'materials'
+      const nextFolderId = nextTab === 'materials' ? folderId : null
+      const cached = browseCacheRef.current.get(getBrowseKey(nextFolderId, debouncedSearch, activeFilter))
+
+      startRouteTransition(() => {
+        setActiveTab(nextTab)
+        setCurrentFolderId(nextFolderId)
+        if (cached) {
+          applySnapshot(cached, nextFolderId)
+          return
+        }
+
+        const flat = allFoldersCacheRef.current || allFolders
+        if (!nextFolderId) {
+          setFolderPath([])
+          if (flat.length > 0) setFolders(getFolderChildren(flat, null))
+          return
+        }
+
+        if (flat.length > 0) {
+          setFolderPath(buildPath(nextFolderId, flat))
+          setFolders(getFolderChildren(flat, nextFolderId))
+        }
+      })
+    }
+
+    window.addEventListener('popstate', syncFromHistory)
+    return () => window.removeEventListener('popstate', syncFromHistory)
+  }, [activeFilter, allFolders, applySnapshot, buildPath, debouncedSearch])
+
+  useEffect(() => {
     if (!ready) return
     fetchData(currentFolderId, debouncedSearch, activeFilter)
   }, [ready, fetchData, currentFolderId, debouncedSearch, activeFilter])
@@ -425,39 +476,65 @@ function MateriaisContent() {
     }
   }, [highlightedMaterialId, highlightedPackageId, loading])
 
+  const updateBrowserUrl = useCallback((folderId: string | null, tab: 'materials' | 'packages' | 'mine' = activeTab) => {
+    if (typeof window === 'undefined') return
+
+    const params = new URLSearchParams()
+    if (tab === 'packages') params.set('tab', 'packages')
+    if (tab === 'mine') params.set('tab', 'mine')
+    if (tab === 'materials' && folderId) params.set('folder', folderId)
+
+    const nextUrl = params.toString() ? `/materiais?${params}` : '/materiais'
+    window.history.pushState(null, '', nextUrl)
+  }, [activeTab])
+
   // ─── Navigation (syncs URL) ──────────────────────────────
   const navigateToFolder = useCallback((folder: Folder) => {
+    const cached = browseCacheRef.current.get(getBrowseKey(folder._id, debouncedSearch, activeFilter))
+
     startRouteTransition(() => {
       setCurrentFolderId(folder._id)
-      const flat = allFoldersCacheRef.current || allFolders
-      if (flat.length > 0) {
-        setFolderPath(buildPath(folder._id, flat))
-        setFolders(getFolderChildren(flat, folder._id))
+      if (cached) {
+        applySnapshot(cached, folder._id)
       } else {
-        setFolderPath(prev => [...prev, folder])
+        const flat = allFoldersCacheRef.current || allFolders
+        if (flat.length > 0) {
+          setFolderPath(buildPath(folder._id, flat))
+          setFolders(getFolderChildren(flat, folder._id))
+        } else {
+          setFolderPath(prev => [...prev, folder])
+        }
       }
     })
-    router.push(`/materiais?folder=${folder._id}`, { scroll: false })
-  }, [allFolders, buildPath, router])
+    updateBrowserUrl(folder._id, 'materials')
+  }, [activeFilter, allFolders, applySnapshot, buildPath, debouncedSearch, updateBrowserUrl])
 
   const navigateToPathIndex = useCallback((index: number) => {
+    const flat = allFoldersCacheRef.current || allFolders
+    const targetFolderId = index < 0 ? null : folderPath.slice(0, index + 1).at(-1)?._id || null
+    const cached = browseCacheRef.current.get(getBrowseKey(targetFolderId, debouncedSearch, activeFilter))
+
     startRouteTransition(() => {
-      const flat = allFoldersCacheRef.current || allFolders
+      if (cached) {
+        setCurrentFolderId(targetFolderId)
+        applySnapshot(cached, targetFolderId)
+        return
+      }
+
       if (index < 0) {
         setCurrentFolderId(null)
         setFolderPath([])
         if (flat.length > 0) setFolders(getFolderChildren(flat, null))
-        router.push('/materiais', { scroll: false })
       } else {
         const newPath = folderPath.slice(0, index + 1)
         const target = newPath[newPath.length - 1]
         setCurrentFolderId(target._id)
         setFolderPath(newPath)
         if (flat.length > 0) setFolders(getFolderChildren(flat, target._id))
-        router.push(`/materiais?folder=${target._id}`, { scroll: false })
       }
     })
-  }, [allFolders, folderPath, router])
+    updateBrowserUrl(targetFolderId, 'materials')
+  }, [activeFilter, allFolders, applySnapshot, debouncedSearch, folderPath, updateBrowserUrl])
 
   const prefetchFolder = useCallback((folderId: string) => {
     fetchData(folderId, debouncedSearch, activeFilter, { prefetchOnly: true }).catch(() => {})
@@ -761,8 +838,7 @@ function MateriaisContent() {
                 key={tab.id}
                 onClick={() => {
                   setActiveTab(tab.id)
-                  const url = tab.id === 'packages' ? '/materiais?tab=packages' : tab.id === 'mine' ? '/materiais?tab=mine' : '/materiais'
-                  router.push(url, { scroll: false })
+                  updateBrowserUrl(tab.id === 'materials' ? currentFolderId : null, tab.id)
                 }}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${activeTab === tab.id ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
               >
@@ -1171,9 +1247,12 @@ function FolderCard({
       className="group relative rounded-2xl glass-card hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer"
       onClick={onClick}
       onMouseEnter={onPrefetch}
+      onPointerEnter={onPrefetch}
+      onPointerDown={onPrefetch}
       onFocus={onPrefetch}
       tabIndex={0}
       role="button"
+      style={{ touchAction: 'manipulation' }}
       onKeyDown={e => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault()
