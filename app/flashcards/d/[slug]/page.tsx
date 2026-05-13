@@ -210,6 +210,12 @@ export default function DeckPage() {
       setFlipped(false); setShowComment(false); setShowHint(false); setScheduleFeedback(null)
     }
   }
+  function goToIndex(index: number) {
+    if (!data) return
+    const nextIndex = Math.max(0, Math.min(index, data.cards.length - 1))
+    setCurrentIndex(nextIndex)
+    setFlipped(false); setShowComment(false); setShowHint(false); setScheduleFeedback(null)
+  }
 
   async function startStudy(mode: StudyMode) {
     if (!data || data.cards.length === 0) return
@@ -415,23 +421,81 @@ export default function DeckPage() {
     const progress = total > 0 ? ((currentIndex + 1) / total) * 100 : 0
     return (
       <AppShell allowGuest>
-        <div className="max-w-3xl lg:max-w-5xl mx-auto px-4 py-6">
-          <div className="flex items-center justify-between mb-4">
-            <Button variant="ghost" onClick={() => setStudying(false)} className="gap-1"><ArrowLeft className="h-4 w-4" />Sair</Button>
-            <div className="flex items-center gap-2">
-              {activeStudyMode === 'spaced' && (
-                <span className="inline-flex items-center gap-1 rounded-full border border-emerald-300/40 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-200 backdrop-blur">
-                  <CalendarClock className="h-3.5 w-3.5" /> Fixação intensa
+        <div className="max-w-3xl lg:max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
+          <div className="mb-4 rounded-2xl border border-slate-200 bg-white/90 p-3 shadow-sm backdrop-blur dark:border-white/10 dark:bg-slate-900/90">
+            <div className="flex items-center justify-between gap-3">
+              <Button variant="ghost" onClick={() => setStudying(false)} className="h-10 gap-1 px-2 sm:px-3">
+                <ArrowLeft className="h-4 w-4" />Sair
+              </Button>
+              <div className="flex min-w-0 items-center gap-2">
+                {activeStudyMode === 'spaced' && (
+                  <span className="hidden items-center gap-1 rounded-full border border-emerald-300/40 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-200 backdrop-blur sm:inline-flex">
+                    <CalendarClock className="h-3.5 w-3.5" /> Fixação intensa
+                  </span>
+                )}
+                <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold tabular-nums text-slate-700 dark:bg-white/10 dark:text-slate-100">
+                  {currentIndex + 1} / {total}
                 </span>
-              )}
-              <span className="text-sm text-slate-500 dark:text-slate-400">{currentIndex + 1} / {total}</span>
+              </div>
+            </div>
+            <div className="mt-3 grid grid-cols-[48px,minmax(0,1fr),48px] items-center gap-2 sm:hidden">
+              <button
+                type="button"
+                onClick={goPrev}
+                disabled={currentIndex === 0}
+                className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm disabled:opacity-35 dark:border-white/10 dark:bg-slate-800 dark:text-slate-100"
+                aria-label="Card anterior"
+              >
+                <ChevronLeft className="h-6 w-6" />
+              </button>
+              <div className="min-w-0 text-center">
+                <p className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">
+                  Card {currentIndex + 1}
+                </p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">toque nos números para pular</p>
+              </div>
+              <button
+                type="button"
+                onClick={goNext}
+                disabled={currentIndex >= total - 1}
+                className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm disabled:opacity-35 dark:border-white/10 dark:bg-slate-800 dark:text-slate-100"
+                aria-label="Próximo card"
+              >
+                <ChevronRight className="h-6 w-6" />
+              </button>
             </div>
           </div>
-          <div className="h-1.5 bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden mb-6">
+          <div className="h-1.5 bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden mb-3">
             <motion.div
               className={cn('h-full bg-gradient-to-r', activeStudyMode === 'spaced' ? 'from-emerald-500 via-lime-400 to-amber-400' : 'from-violet-500 to-fuchsia-500')}
               animate={{ width: `${progress}%` }}
             />
+          </div>
+          <div className="-mx-3 mb-4 overflow-x-auto px-3 pb-2 sm:-mx-4 sm:px-4">
+            <div className="flex w-max gap-2">
+              {cards.map((item, index) => {
+                const selected = index === currentIndex
+                const rated = ratings[item._id] != null
+                return (
+                  <button
+                    key={item._id}
+                    type="button"
+                    onClick={() => goToIndex(index)}
+                    className={cn(
+                      'flex h-10 min-w-10 items-center justify-center rounded-xl border px-3 text-sm font-bold tabular-nums transition sm:h-9 sm:min-w-9 sm:text-xs',
+                      selected
+                        ? 'border-violet-500 bg-violet-600 text-white shadow-md shadow-violet-500/25'
+                        : rated
+                          ? 'border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200'
+                          : 'border-slate-200 bg-white text-slate-700 hover:border-violet-300 dark:border-white/10 dark:bg-slate-900 dark:text-slate-200'
+                    )}
+                    aria-label={`Ir para card ${index + 1}`}
+                  >
+                    {index + 1}
+                  </button>
+                )
+              })}
+            </div>
           </div>
 
           {/* Card navigator */}
@@ -513,15 +577,15 @@ export default function DeckPage() {
             )}
 
             {/* Nav buttons */}
-            <div className="flex items-center justify-between gap-3">
-              <Button variant="outline" onClick={goPrev} disabled={currentIndex === 0}>
-                <ChevronLeft className="h-4 w-4" /> Anterior
+            <div className="grid grid-cols-2 gap-3 sm:flex sm:items-center sm:justify-between">
+              <Button variant="outline" onClick={goPrev} disabled={currentIndex === 0} className="h-12 sm:h-10">
+                <ChevronLeft className="h-5 w-5 sm:h-4 sm:w-4" /> Anterior
               </Button>
               {currentIndex < total - 1 ? (
-                <Button onClick={goNext}>Próximo <ChevronRight className="h-4 w-4" /></Button>
+                <Button onClick={goNext} className="h-12 sm:h-10">Próximo <ChevronRight className="h-5 w-5 sm:h-4 sm:w-4" /></Button>
               ) : (
-                <Button onClick={finishSession} className="bg-gradient-to-r from-violet-600 to-fuchsia-600">
-                  <Trophy className="h-4 w-4" /> Concluir
+                <Button onClick={finishSession} className="h-12 bg-gradient-to-r from-violet-600 to-fuchsia-600 sm:h-10">
+                  <Trophy className="h-5 w-5 sm:h-4 sm:w-4" /> Concluir
                 </Button>
               )}
             </div>

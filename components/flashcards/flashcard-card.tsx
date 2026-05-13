@@ -411,11 +411,39 @@ export function FlashcardCardView({
 }: Props) {
   const isHidden = card.kind === 'hidden_word'
   const [revealedHidden, setRevealedHidden] = useState(false)
+  const [cardHeight, setCardHeight] = useState<number | null>(null)
+  const frontRef = useRef<HTMLDivElement>(null)
+  const backRef = useRef<HTMLDivElement>(null)
 
   function stopAndCall(e: React.MouseEvent, fn: () => void) {
     e.stopPropagation()
     fn()
   }
+
+  useEffect(() => {
+    function measure() {
+      const frontHeight = frontRef.current?.scrollHeight ?? 0
+      const backHeight = backRef.current?.scrollHeight ?? 0
+      const nextHeight = Math.max(frontHeight, backHeight)
+      if (nextHeight > 0) setCardHeight(nextHeight)
+    }
+
+    measure()
+    const resizeObserver = typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(measure)
+      : null
+
+    if (resizeObserver) {
+      if (frontRef.current) resizeObserver.observe(frontRef.current)
+      if (backRef.current) resizeObserver.observe(backRef.current)
+    }
+
+    window.addEventListener('resize', measure)
+    return () => {
+      resizeObserver?.disconnect()
+      window.removeEventListener('resize', measure)
+    }
+  }, [card, flipped, showComment, showHint, revealedHidden])
 
   return (
     <div className={cn('w-full max-w-2xl lg:max-w-4xl mx-auto', className)}>
@@ -424,13 +452,14 @@ export function FlashcardCardView({
           className="relative w-full"
           animate={{ rotateY: flipped ? 180 : 0 }}
           transition={{ type: 'spring', stiffness: 220, damping: 28 }}
-          style={{ transformStyle: 'preserve-3d' }}
+          style={{ transformStyle: 'preserve-3d', height: cardHeight ? `${cardHeight}px` : undefined }}
         >
           {/* Front — clicável para virar */}
           <div
+            ref={frontRef}
             onClick={onFlip}
             className={cn(
-              'rounded-3xl p-5 sm:p-7 md:p-9 lg:p-12 min-h-[260px] sm:min-h-[320px] md:min-h-[380px] lg:min-h-[500px] flex flex-col cursor-pointer select-none',
+              'rounded-3xl p-4 sm:p-7 md:p-9 lg:p-12 min-h-[300px] sm:min-h-[320px] md:min-h-[380px] lg:min-h-[500px] flex flex-col cursor-pointer select-none',
               'bg-gradient-to-br from-white via-white to-slate-50',
               'dark:from-slate-900 dark:via-slate-900 dark:to-slate-950',
               'border border-slate-200 dark:border-white/10',
@@ -518,9 +547,10 @@ export function FlashcardCardView({
 
           {/* Back — também clicável para voltar */}
           <div
+            ref={backRef}
             onClick={onFlip}
             className={cn(
-              'absolute inset-0 rounded-3xl p-5 sm:p-7 md:p-9 lg:p-12 min-h-[260px] sm:min-h-[320px] md:min-h-[380px] lg:min-h-[500px] flex flex-col cursor-pointer select-none',
+              'absolute inset-x-0 top-0 rounded-3xl p-4 sm:p-7 md:p-9 lg:p-12 min-h-[300px] sm:min-h-[320px] md:min-h-[380px] lg:min-h-[500px] flex flex-col cursor-pointer select-none overflow-hidden',
               'bg-gradient-to-br from-violet-600 via-fuchsia-600 to-rose-500',
               'text-white border border-white/15',
               'shadow-[0_30px_120px_-40px_rgba(124,58,237,0.55)]',
@@ -578,11 +608,11 @@ export function FlashcardCardView({
               {showComment && card.comment && (
                 <motion.div
                   key="comment-box"
-                  initial={{ opacity: 0, y: -6, scale: 0.97 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -6, scale: 0.97 }}
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
                   transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-                  className="mt-3 rounded-2xl bg-white/10 ring-1 ring-white/20 px-4 py-3 text-sm leading-relaxed text-white/95 whitespace-pre-wrap break-words overflow-x-hidden max-h-52 overflow-y-auto"
+                  className="mt-3 w-full min-w-0 min-h-24 rounded-2xl bg-white/10 ring-1 ring-white/20 px-3.5 py-3 sm:px-4 text-sm leading-relaxed text-white/95 whitespace-pre-wrap break-words overflow-x-hidden max-h-[42vh] sm:max-h-56 overflow-y-auto overscroll-contain"
                   onClick={e => e.stopPropagation()}
                 >
                   {renderInline(card.comment)}
