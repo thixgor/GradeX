@@ -434,6 +434,36 @@ export default function DeckPage() {
             />
           </div>
 
+          {/* Card navigator */}
+          <div className="mb-4 overflow-x-auto scrollbar-hide">
+            <div className="flex gap-1.5 min-w-max px-1 py-1">
+              {cards.map((c, i) => {
+                const r = ratings[c._id]
+                const isCurrent = i === currentIndex
+                const dotColor = r === 'facil'
+                  ? 'bg-emerald-500'
+                  : r === 'equilibrado'
+                  ? 'bg-amber-500'
+                  : r === 'porrada'
+                  ? 'bg-rose-500'
+                  : 'bg-slate-300 dark:bg-white/20'
+                return (
+                  <button
+                    key={c._id}
+                    onClick={() => { setCurrentIndex(i); setFlipped(false); setShowComment(false); setShowHint(false); setScheduleFeedback(null) }}
+                    title={`Card ${i + 1}`}
+                    className={cn(
+                      'flex-shrink-0 rounded-full transition-all duration-150',
+                      isCurrent
+                        ? 'w-6 h-3 ring-2 ring-violet-500 ring-offset-1 dark:ring-offset-slate-900 ' + dotColor
+                        : 'w-3 h-3 hover:scale-125 ' + dotColor
+                    )}
+                  />
+                )
+              })}
+            </div>
+          </div>
+
           {card && (
             <FlashcardCardView
               key={card._id}
