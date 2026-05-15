@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
-import { AppShell } from '@/components/app-shell'
+import { AppShell, useAppShell } from '@/components/app-shell'
 import { FocusSessionButton } from '@/components/focus-session-button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -172,15 +172,11 @@ function ManualClinicoContent() {
   const [pdfLoading, setPdfLoading] = useState(false)
   const [hasHighlights, setHasHighlights] = useState(false)
   const [resetConfirm, setResetConfirm] = useState(false)
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
+  const { user } = useAppShell()
+  const isAuthenticated = !!user
 
   useEffect(() => {
     setHasHighlights(hasAnyManualHighlights())
-    fetch('/api/auth/me', { cache: 'no-store' })
-      .then(res => {
-        setIsAuthenticated(res.ok)
-      })
-      .catch(() => setIsAuthenticated(false))
   }, [])
 
   async function handleGeneratePDF() {

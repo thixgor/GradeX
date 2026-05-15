@@ -26,6 +26,7 @@ import { BanReasonLabels, BanReason } from '@/lib/types'
 import { Ban, AlertCircle } from 'lucide-react'
 import { INSTITUTION_UNITS } from '@/lib/institution-units'
 import { GoogleProfileSetupDialog } from '@/components/google-profile-setup-dialog'
+import { clearBootstrapCache } from '@/hooks/use-bootstrap'
 
 declare global {
   interface Window {
@@ -201,6 +202,7 @@ export default function LoginPage() {
       if (!isLogin) {
         setIsRegistered(true)
       } else {
+        clearBootstrapCache()
         router.push(redirectTo)
         router.refresh()
       }
@@ -244,6 +246,7 @@ export default function LoginPage() {
         return
       }
 
+      clearBootstrapCache()
       router.push(redirectTo)
       router.refresh()
     } catch (err: any) {
@@ -278,6 +281,7 @@ export default function LoginPage() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Erro ao criar perfil')
       setShowProfileSetup(false)
+      clearBootstrapCache()
       router.push(redirectTo)
       router.refresh()
     } catch (err: any) {

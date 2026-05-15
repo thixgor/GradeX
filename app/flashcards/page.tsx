@@ -36,6 +36,7 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { cn } from '@/lib/utils'
+import { useBootstrap } from '@/hooks/use-bootstrap'
 import type { FlashcardManualDeck, FlashcardManualFolder } from '@/lib/types'
 
 function useDebounce<T>(value: T, delay: number): T {
@@ -102,6 +103,12 @@ export default function FlashcardsHubPage() {
   const initialLoadDoneRef = useRef(false)
   const mineCacheRef = useRef<Map<string, DeckWithId[]>>(new Map())
   const communityCacheRef = useRef<Map<string, DeckWithId[]>>(new Map())
+  const {
+    user: bootstrapUser,
+    loading: bootstrapLoading,
+    error: bootstrapError,
+    isAdmin: bootstrapIsAdmin,
+  } = useBootstrap()
 
   const syncStateFromUrl = useCallback(() => {
     if (typeof window === 'undefined') return
@@ -216,31 +223,22 @@ export default function FlashcardsHubPage() {
   }, [])
 
   useEffect(() => {
-    (async () => {
-      try {
-        const res = await fetch('/api/auth/me', { cache: 'no-store' })
-        if (!res.ok) {
-          setIsGuest(true)
-          setFilter('store')
-          updateFlashcardsUrl('store', null)
-          return
-        }
-        const me = await res.json()
-        setIsAdmin(me.user?.role === 'admin')
-        setIsGuest(!me.user)
-        if (!me.user) {
-          setFilter('store')
-          updateFlashcardsUrl('store', null)
-        }
-      } catch {
-        setIsGuest(true)
-        setFilter('store')
-        updateFlashcardsUrl('store', null)
-      } finally {
-        setAuthChecked(true)
-      }
-    })()
-  }, [updateFlashcardsUrl])
+    if (bootstrapLoading) return
+
+    const status = (bootstrapError as any)?.status
+    const isAuthError = status === 401 || status === 403 ||
+      bootstrapError?.message.includes('401') ||
+      bootstrapError?.message.includes('403')
+    const nextIsGuest = !bootstrapUser || !!isAuthError
+
+    setIsAdmin(!!bootstrapUser && bootstrapIsAdmin)
+    setIsGuest(nextIsGuest)
+    if (nextIsGuest) {
+      setFilter('store')
+      updateFlashcardsUrl('store', null)
+    }
+    setAuthChecked(true)
+  }, [bootstrapError, bootstrapIsAdmin, bootstrapLoading, bootstrapUser, updateFlashcardsUrl])
 
   useEffect(() => {
     syncStateFromUrl()

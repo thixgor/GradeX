@@ -96,6 +96,7 @@ let globalBootstrapError: Error | null = null
 let globalListeners: Set<() => void> = new Set()
 let lastFetchTime = 0
 let bootstrapGeneration = 0
+let latestBootstrapRequestId = 0
 
 const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
 
@@ -119,8 +120,14 @@ async function fetchBootstrap(force = false): Promise<BootstrapResponse> {
   }
 
   // Return pending promise if fetch is in progress
-  if (globalBootstrapPromise) {
+  if (globalBootstrapPromise && !force) {
     return globalBootstrapPromise
+  }
+
+  const requestId = ++latestBootstrapRequestId
+  if (globalBootstrapError) {
+    globalBootstrapError = null
+    notifyListeners()
   }
 
   // Start new fetch
@@ -142,7 +149,7 @@ async function fetchBootstrap(force = false): Promise<BootstrapResponse> {
       return response.json()
     })
     .then(data => {
-      if (requestGeneration !== bootstrapGeneration) {
+      if (requestGeneration !== bootstrapGeneration || requestId !== latestBootstrapRequestId) {
         throw new Error('Bootstrap request ignored after cache clear')
       }
       globalBootstrapData = data
@@ -152,7 +159,7 @@ async function fetchBootstrap(force = false): Promise<BootstrapResponse> {
       return data
     })
     .catch(error => {
-      if (requestGeneration !== bootstrapGeneration) {
+      if (requestGeneration !== bootstrapGeneration || requestId !== latestBootstrapRequestId) {
         return Promise.reject(error)
       }
       globalBootstrapError = error instanceof Error ? error : new Error(String(error))
@@ -378,6 +385,7 @@ export function useBootstrapTier() {
  */
 export function clearBootstrapCache() {
   bootstrapGeneration += 1
+  latestBootstrapRequestId += 1
   globalBootstrapData = null
   globalBootstrapPromise = null
   globalBootstrapError = null
