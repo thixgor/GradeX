@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -8,16 +8,68 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { User, BanReason, BanReasonLabels, AccountType, TrialPlanType, PremiumPlanType } from '@/lib/types'
-import { ArrowLeft, Trash2, Ban, CheckCircle, AlertTriangle, Shield, Crown, Timer, Settings, Info, Zap } from 'lucide-react'
+import { ArrowLeft, Trash2, Ban, CheckCircle, AlertTriangle, Shield, Crown, Timer, Settings, Info, Zap, Activity, Users, UserCheck, Clock, Search, RefreshCw, Mail, CalendarDays } from 'lucide-react'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 type OnlineUser = {
   id?: string
   name: string
   email: string
   lastLoginAt?: string
+}
+
+type UserSortMode = 'lastLogin' | 'createdAt' | 'name'
+type UserActivityFilter = 'all' | 'online' | 'active7d' | 'never'
+type UserPlanFilter = 'all' | AccountType | 'admin' | 'banned'
+
+const ONLINE_THRESHOLD_MS = 10 * 60 * 1000
+const ACTIVE_7D_THRESHOLD_MS = 7 * 24 * 60 * 60 * 1000
+
+function getUserDateValue(value?: Date | string | null) {
+  if (!value) return 0
+  const time = new Date(value).getTime()
+  return Number.isNaN(time) ? 0 : time
+}
+
+function formatDateTime(value?: Date | string | null) {
+  const time = getUserDateValue(value)
+  if (!time) return 'Nunca'
+
+  return new Date(time).toLocaleString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
+function formatRelativeActivity(value?: Date | string | null) {
+  const time = getUserDateValue(value)
+  if (!time) return 'Nunca acessou'
+
+  const diffMs = Date.now() - time
+  if (diffMs < 60 * 1000) return 'Agora'
+
+  const diffMinutes = Math.floor(diffMs / (60 * 1000))
+  if (diffMinutes < 60) return `${diffMinutes} min atrás`
+
+  const diffHours = Math.floor(diffMinutes / 60)
+  if (diffHours < 24) return `${diffHours} h atrás`
+
+  const diffDays = Math.floor(diffHours / 24)
+  if (diffDays === 1) return 'Ontem'
+  if (diffDays < 30) return `${diffDays} dias atrás`
+
+  return formatDateTime(value)
+}
+
+function isRecentlyOnline(user: User) {
+  const time = getUserDateValue(user.lastLoginAt)
+  return !!time && Date.now() - time <= ONLINE_THRESHOLD_MS && !user.banned
 }
 
 export default function AdminUsersPage() {
@@ -44,6 +96,10 @@ export default function AdminUsersPage() {
   const [toastOpen, setToastOpen] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
   const [toastType, setToastType] = useState<'error' | 'success' | 'info'>('error')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [sortMode, setSortMode] = useState<UserSortMode>('lastLogin')
+  const [activityFilter, setActivityFilter] = useState<UserActivityFilter>('all')
+  const [planFilter, setPlanFilter] = useState<UserPlanFilter>('all')
 
   useEffect(() => {
     loadUsers()
@@ -61,6 +117,64 @@ export default function AdminUsersPage() {
     setToastType(type)
     setToastOpen(true)
   }
+
+  const dashboardStats = useMemo(() => {
+    const now = Date.now()
+    const onlineUsersCount = users.filter(isRecentlyOnline).length
+    const activeLast7Days = users.filter((user) => {
+      const lastLogin = getUserDateValue(user.lastLoginAt)
+      return lastLogin && now - lastLogin <= ACTIVE_7D_THRESHOLD_MS && !user.banned
+    }).length
+    const neverLoggedIn = users.filter((user) => !getUserDateValue(user.lastLoginAt)).length
+    const admins = users.filter((user) => user.role === 'admin').length
+    const banned = users.filter((user) => user.banned).length
+
+    return {
+      total: users.length,
+      onlineUsersCount,
+      activeLast7Days,
+      neverLoggedIn,
+      admins,
+      banned,
+    }
+  }, [users])
+
+  const recentUsers = useMemo(() => {
+    return [...users]
+      .filter((user) => getUserDateValue(user.lastLoginAt))
+      .sort((a, b) => getUserDateValue(b.lastLoginAt) - getUserDateValue(a.lastLoginAt))
+      .slice(0, 6)
+  }, [users])
+
+  const filteredUsers = useMemo(() => {
+    const normalizedSearch = searchTerm.trim().toLowerCase()
+    const now = Date.now()
+
+    return users
+      .filter((user) => {
+        if (!normalizedSearch) return true
+        return `${user.name} ${user.email}`.toLowerCase().includes(normalizedSearch)
+      })
+      .filter((user) => {
+        if (planFilter === 'all') return true
+        if (planFilter === 'admin') return user.role === 'admin'
+        if (planFilter === 'banned') return !!user.banned
+        return (user.accountType || 'gratuito') === planFilter && user.role !== 'admin'
+      })
+      .filter((user) => {
+        const lastLogin = getUserDateValue(user.lastLoginAt)
+        if (activityFilter === 'all') return true
+        if (activityFilter === 'online') return isRecentlyOnline(user)
+        if (activityFilter === 'active7d') return !!lastLogin && now - lastLogin <= ACTIVE_7D_THRESHOLD_MS
+        if (activityFilter === 'never') return !lastLogin
+        return true
+      })
+      .sort((a, b) => {
+        if (sortMode === 'name') return a.name.localeCompare(b.name, 'pt-BR')
+        if (sortMode === 'createdAt') return getUserDateValue(b.createdAt) - getUserDateValue(a.createdAt)
+        return getUserDateValue(b.lastLoginAt) - getUserDateValue(a.lastLoginAt)
+      })
+  }, [activityFilter, planFilter, searchTerm, sortMode, users])
 
   async function loadUsers() {
     try {
@@ -302,27 +416,238 @@ export default function AdminUsersPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-4">
-            <div className="mb-4">
-              <p className="text-sm text-muted-foreground">{users.length} usuário(s) no sistema</p>
-              <button
-                type="button"
-                onClick={openOnlineUsersDialog}
-                className="mt-1 text-sm text-muted-foreground hover:text-foreground underline-offset-4 hover:underline"
-              >
-                Usuários online:{' '}
-                <span className="text-foreground font-medium">
-                  {onlineCount === null ? '--' : onlineCount}
-                </span>
-              </button>
-            </div>
-            {users.map((user) => (
+          <div className="space-y-6">
+            <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardDescription className="flex items-center gap-2">
+                    <Users className="h-4 w-4" />
+                    Total
+                  </CardDescription>
+                  <CardTitle className="text-2xl">{dashboardStats.total}</CardTitle>
+                </CardHeader>
+                <CardContent className="text-xs text-muted-foreground">
+                  {dashboardStats.admins} admin(s)
+                </CardContent>
+              </Card>
+
+              <Card className="cursor-pointer transition-colors hover:bg-muted/40" onClick={openOnlineUsersDialog}>
+                <CardHeader className="pb-2">
+                  <CardDescription className="flex items-center gap-2">
+                    <Activity className="h-4 w-4 text-emerald-500" />
+                    Online agora
+                  </CardDescription>
+                  <CardTitle className="text-2xl">
+                    {onlineCount === null ? dashboardStats.onlineUsersCount : onlineCount}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="text-xs text-muted-foreground">
+                  Ativos nos últimos 10 min
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardDescription className="flex items-center gap-2">
+                    <UserCheck className="h-4 w-4 text-blue-500" />
+                    Ativos 7 dias
+                  </CardDescription>
+                  <CardTitle className="text-2xl">{dashboardStats.activeLast7Days}</CardTitle>
+                </CardHeader>
+                <CardContent className="text-xs text-muted-foreground">
+                  Com atividade recente
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardDescription className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-amber-500" />
+                    Nunca acessaram
+                  </CardDescription>
+                  <CardTitle className="text-2xl">{dashboardStats.neverLoggedIn}</CardTitle>
+                </CardHeader>
+                <CardContent className="text-xs text-muted-foreground">
+                  Sem atividade registrada
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardDescription className="flex items-center gap-2">
+                    <Ban className="h-4 w-4 text-red-500" />
+                    Banidos
+                  </CardDescription>
+                  <CardTitle className="text-2xl">{dashboardStats.banned}</CardTitle>
+                </CardHeader>
+                <CardContent className="text-xs text-muted-foreground">
+                  Acesso bloqueado
+                </CardContent>
+              </Card>
+            </section>
+
+            <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_340px]">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Activity className="h-5 w-5" />
+                    Usuários mais recentes
+                  </CardTitle>
+                  <CardDescription>
+                    Últimos acessos registrados na plataforma.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {recentUsers.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">Ainda não há acessos registrados.</p>
+                  ) : (
+                    <div className="grid gap-3 md:grid-cols-2">
+                      {recentUsers.map((user) => (
+                        <button
+                          key={`recent-${user._id?.toString()}`}
+                          type="button"
+                          onClick={() => {
+                            setSearchTerm(user.email)
+                            setSortMode('lastLogin')
+                            setActivityFilter('all')
+                            setPlanFilter('all')
+                          }}
+                          className="min-w-0 rounded-lg border bg-muted/20 p-3 text-left transition-colors hover:bg-muted/50"
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0">
+                              <p className="truncate text-sm font-medium">{user.name}</p>
+                              <p className="mt-1 truncate text-xs text-muted-foreground">{user.email}</p>
+                            </div>
+                            {isRecentlyOnline(user) && (
+                              <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
+                                Online
+                              </span>
+                            )}
+                          </div>
+                          <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                            <Clock className="h-3.5 w-3.5" />
+                            {formatRelativeActivity(user.lastLoginAt)}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <RefreshCw className="h-5 w-5" />
+                    Monitoramento
+                  </CardTitle>
+                  <CardDescription>
+                    A contagem online atualiza automaticamente.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <Button type="button" variant="outline" className="w-full justify-start" onClick={openOnlineUsersDialog}>
+                    <Activity className="mr-2 h-4 w-4" />
+                    Ver usuários online
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full justify-start"
+                    onClick={() => {
+                      loadUsers()
+                      loadOnlineCount()
+                    }}
+                  >
+                    <RefreshCw className="mr-2 h-4 w-4" />
+                    Atualizar lista
+                  </Button>
+                  <p className="text-xs text-muted-foreground">
+                    O campo de atividade vem do último login ou da checagem autenticada mais recente.
+                  </p>
+                </CardContent>
+              </Card>
+            </section>
+
+            <Card>
+              <CardHeader>
+                <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                  <div>
+                    <CardTitle>Todos os usuários</CardTitle>
+                    <CardDescription>
+                      {filteredUsers.length} de {users.length} usuário(s) exibidos
+                    </CardDescription>
+                  </div>
+                  <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-[240px_180px_180px_180px]">
+                    <div className="relative">
+                      <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="Buscar nome ou email"
+                        className="pl-9"
+                      />
+                    </div>
+                    <Select value={sortMode} onValueChange={(value) => setSortMode(value as UserSortMode)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Ordenar" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="lastLogin">Mais recentes</SelectItem>
+                        <SelectItem value="createdAt">Cadastro recente</SelectItem>
+                        <SelectItem value="name">Nome</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select value={activityFilter} onValueChange={(value) => setActivityFilter(value as UserActivityFilter)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Atividade" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Toda atividade</SelectItem>
+                        <SelectItem value="online">Online agora</SelectItem>
+                        <SelectItem value="active7d">Ativos 7 dias</SelectItem>
+                        <SelectItem value="never">Nunca acessaram</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select value={planFilter} onValueChange={(value) => setPlanFilter(value as UserPlanFilter)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Plano" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Todos os planos</SelectItem>
+                        <SelectItem value="admin">Admins</SelectItem>
+                        <SelectItem value="gratuito">Gratuito</SelectItem>
+                        <SelectItem value="trial">Trial</SelectItem>
+                        <SelectItem value="essential">Essential</SelectItem>
+                        <SelectItem value="premium">Premium</SelectItem>
+                        <SelectItem value="banned">Banidos</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </CardHeader>
+            </Card>
+
+            {filteredUsers.length === 0 ? (
+              <Card>
+                <CardContent className="py-12 text-center">
+                  <p className="text-muted-foreground">Nenhum usuário encontrado com os filtros atuais.</p>
+                </CardContent>
+              </Card>
+            ) : filteredUsers.map((user) => (
               <Card key={user._id?.toString()}>
                 <CardHeader>
-                  <div className="flex items-start justify-between">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <CardTitle>{user.name}</CardTitle>
+                        {isRecentlyOnline(user) && (
+                          <span className="text-xs bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 px-2 py-1 rounded flex items-center gap-1">
+                            <Activity className="h-3 w-3" />
+                            Online
+                          </span>
+                        )}
                         {user.role === 'admin' && (
                           <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded">
                             <Shield className="h-3 w-3 inline mr-1" />
@@ -337,7 +662,14 @@ export default function AdminUsersPage() {
                           </span>
                         )}
                       </div>
-                      <CardDescription>{user.email}</CardDescription>
+                      <CardDescription className="flex min-w-0 items-center gap-1.5 break-words">
+                        <Mail className="h-3.5 w-3.5 shrink-0" />
+                        {user.email}
+                      </CardDescription>
+                    </div>
+                    <div className="text-left text-xs text-muted-foreground sm:text-right">
+                      <div className="font-medium text-foreground">{formatRelativeActivity(user.lastLoginAt)}</div>
+                      <div>Última atividade</div>
                     </div>
                   </div>
                 </CardHeader>
@@ -356,13 +688,30 @@ export default function AdminUsersPage() {
                     </div>
                   )}
 
-                  <div className="mb-4 text-xs text-muted-foreground">
-                    Último login:{' '}
-                    <span className="text-foreground">
-                      {user.lastLoginAt
-                        ? new Date(user.lastLoginAt).toLocaleString('pt-BR')
-                        : 'Nunca'}
-                    </span>
+                  <div className="mb-4 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="rounded-lg border bg-muted/20 p-3">
+                      <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                        <Clock className="h-3.5 w-3.5" />
+                        Última atividade
+                      </div>
+                      <div className="mt-1 text-foreground">{formatDateTime(user.lastLoginAt)}</div>
+                    </div>
+                    <div className="rounded-lg border bg-muted/20 p-3">
+                      <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                        <CalendarDays className="h-3.5 w-3.5" />
+                        Cadastro
+                      </div>
+                      <div className="mt-1 text-foreground">{formatDateTime(user.createdAt)}</div>
+                    </div>
+                    <div className="rounded-lg border bg-muted/20 p-3 sm:col-span-2 lg:col-span-1">
+                      <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                        <Settings className="h-3.5 w-3.5" />
+                        Plano atual
+                      </div>
+                      <div className="mt-1 capitalize text-foreground">
+                        {user.role === 'admin' ? 'Admin' : user.accountType || 'gratuito'}
+                      </div>
+                    </div>
                   </div>
 
                   <div className="flex flex-wrap gap-2">
@@ -878,8 +1227,19 @@ export default function AdminUsersPage() {
               <div className="space-y-3">
                 {onlineUsers.map((u) => (
                   <div key={u.id || u.email} className="rounded-lg border bg-muted/30 p-3">
-                    <div className="text-sm font-medium break-words">{u.name}</div>
-                    <div className="text-xs text-muted-foreground break-words mt-1">{u.email}</div>
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="text-sm font-medium break-words">{u.name}</div>
+                        <div className="text-xs text-muted-foreground break-words mt-1">{u.email}</div>
+                      </div>
+                      <span className="shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
+                        Online
+                      </span>
+                    </div>
+                    <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                      <Clock className="h-3.5 w-3.5" />
+                      {formatRelativeActivity(u.lastLoginAt)}
+                    </div>
                   </div>
                 ))}
               </div>
