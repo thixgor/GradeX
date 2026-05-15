@@ -482,19 +482,17 @@ export function DoacaoInterstitial({ context, onClose }: DoacaoInterstitialProps
             <div className="grid gap-0 sm:grid-cols-[0.9fr_1.2fr]">
               <div className="relative hidden min-h-[260px] overflow-hidden sm:block" style={{ background: variant.palette.dark }}>
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_35%_28%,rgba(252,211,77,0.22),transparent_34%),linear-gradient(150deg,rgba(16,185,129,0.28),rgba(15,47,36,0)_58%)]" />
+                <div className="absolute left-6 top-6 flex h-16 w-16 items-center justify-center rounded-3xl bg-white/12 shadow-2xl ring-1 ring-white/15 backdrop-blur">
+                  <img
+                    src="/logo3d.png"
+                    alt="DomineAqui"
+                    className="h-14 w-14 object-contain"
+                    loading="lazy"
+                  />
+                </div>
                 <div className="absolute inset-x-6 bottom-7 rounded-2xl border border-white/10 bg-white/10 p-4 text-white shadow-2xl backdrop-blur">
-                  <div className="mb-4 flex items-center gap-3">
-                    <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-white/12">
-                      <img
-                        src="/logo3d.png"
-                        alt="DomineAqui"
-                        className="h-12 w-12 object-contain"
-                        loading="lazy"
-                      />
-                    </div>
-                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10">
-                      <Heart className="h-5 w-5 fill-rose-300 text-rose-300" />
-                    </div>
+                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10">
+                    <Heart className="h-5 w-5 fill-rose-300 text-rose-300" />
                   </div>
                   <p className="text-sm font-semibold leading-snug text-white/95">
                     {variant.visualTitle}
@@ -539,7 +537,29 @@ export function DoacaoInterstitial({ context, onClose }: DoacaoInterstitialProps
                   {variant.detail}
                 </p>
 
-                <div className="mt-5 flex flex-col gap-2 sm:flex-row">
+                <div className="mt-5 flex items-center gap-3 rounded-2xl bg-white/75 px-3 py-2.5 ring-1 ring-slate-900/5">
+                  <div
+                    className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl"
+                    style={{ background: variant.palette.soft }}
+                  >
+                    <img
+                      src="/logo3d.png"
+                      alt="DomineAqui"
+                      className="h-9 w-9 object-contain"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold uppercase tracking-[0.08em]" style={{ color: variant.palette.icon }}>
+                      DomineAqui
+                    </p>
+                    <p className="truncate text-sm font-semibold text-slate-800">
+                      Apoie para manter aberto
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-3 flex flex-col gap-2 sm:flex-row">
                   <a
                     href="/doar"
                     className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-2xl px-4 py-2 text-sm font-bold text-white shadow-lg shadow-slate-900/10 transition active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-slate-500/20"
@@ -547,13 +567,6 @@ export function DoacaoInterstitial({ context, onClose }: DoacaoInterstitialProps
                     onMouseEnter={event => { event.currentTarget.style.background = variant.palette.accentHover }}
                     onMouseLeave={event => { event.currentTarget.style.background = variant.palette.accent }}
                   >
-                    <img
-                      src="/logo3d.png"
-                      alt=""
-                      aria-hidden="true"
-                      className="h-8 w-8 flex-shrink-0 object-contain drop-shadow-sm"
-                      loading="lazy"
-                    />
                     <span>{variant.primary}</span>
                     <ArrowRight className="h-4 w-4" />
                   </a>
