@@ -217,13 +217,13 @@ export default function AdminDoacoesPage() {
                 key: 'doacaoInterstitialManualClinico' as const,
                 icon: BookOpen,
                 label: 'Antes do Manual Clínico',
-                desc: 'Mostra a tela de doação ao acessar /manual-clinico (1x por 24h)',
+                desc: 'Mostra o convite sempre ao acessar /manual-clinico, alternando textos e visual',
               },
               {
                 key: 'doacaoInterstitialExams' as const,
                 icon: FileText,
                 label: 'Antes das Provas',
-                desc: 'Mostra a tela de doação ao entrar em uma prova (1x por 24h)',
+                desc: 'Mostra o convite sempre antes de iniciar uma prova, alternando abordagens',
               },
             ]).map(({ key, icon: Icon, label, desc }) => {
               const active = settings[key]
