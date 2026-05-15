@@ -39,9 +39,9 @@ const INTERSTITIAL_VARIANTS: Record<InterstitialContext, InterstitialVariant[]> 
       title: 'Esse manual só continua leve porque alguém segura a base.',
       body: 'Se uma revisão rápida já te salvou tempo, uma doação pequena ajuda a manter esse conteúdo gratuito para todo mundo.',
       detail: 'Pedido direto, saída fácil. Você continua estudando quando quiser.',
-      primary: 'Apoiar o manual',
+      primary: 'Quero doar',
       visualTitle: 'O manual fica gratuito quando o apoio é coletivo.',
-      visualBody: 'Cada Pix pequeno ajuda a manter consulta, revisão e estudo sem paywall.',
+      visualBody: 'Cada Pix pequeno ajuda a manter consulta, revisão e estudo gratuitos.',
       palette: {
         accent: '#047857',
         accentHover: '#065f46',
@@ -61,7 +61,7 @@ const INTERSTITIAL_VARIANTS: Record<InterstitialContext, InterstitialVariant[]> 
       title: 'Se isso te ajuda de verdade, ajuda a manter vivo também.',
       body: 'A plataforma não quer te parar. Quer lembrar que conteúdo gratuito também tem custo para existir bem feito.',
       detail: 'Hoje pode ser só um lembrete. Quando der, você apoia.',
-      primary: 'Contribuir agora',
+      primary: 'Quero doar',
       visualTitle: 'Um gesto pequeno mantém muita gente estudando.',
       visualBody: 'Apoio recorrente não precisa ser grande. Precisa existir.',
       palette: {
@@ -83,7 +83,7 @@ const INTERSTITIAL_VARIANTS: Record<InterstitialContext, InterstitialVariant[]> 
       title: 'Gratuito não precisa parecer abandonado.',
       body: 'Doações ajudam a manter o manual bonito, útil e disponível, sem empurrar o aluno para assinatura no meio do estudo.',
       detail: 'Se não for agora, tudo bem. O convite volta com outra cara.',
-      primary: 'Fazer uma doação',
+      primary: 'Quero doar',
       visualTitle: 'A qualidade que você usa depende de manutenção.',
       visualBody: 'Servidor, tempo, curadoria e melhoria contínua aparecem no resultado final.',
       palette: {
@@ -105,7 +105,7 @@ const INTERSTITIAL_VARIANTS: Record<InterstitialContext, InterstitialVariant[]> 
       title: 'Não precisa ser muito. Precisa ser possível continuar.',
       body: 'Um valor pequeno de quem usa o manual já ajuda a bancar a estrutura que deixa tudo aberto para consulta.',
       detail: 'O convite é insistente porque o acesso gratuito também precisa insistir para sobreviver.',
-      primary: 'Doar um valor pequeno',
+      primary: 'Quero doar',
       visualTitle: 'Pequenas doações seguram grandes bibliotecas.',
       visualBody: 'A soma de apoios discretos mantém o manual disponível para quem ainda não pode pagar.',
       palette: {
@@ -127,7 +127,7 @@ const INTERSTITIAL_VARIANTS: Record<InterstitialContext, InterstitialVariant[]> 
       title: 'O melhor conteúdo é o que aparece quando o aluno precisa.',
       body: 'Sua doação ajuda a evitar que uma dúvida importante esbarre em pagamento, cadastro extra ou limite artificial.',
       detail: 'Se hoje não der, pode continuar. Se der, esse clique ajuda bastante.',
-      primary: 'Manter sem paywall',
+      primary: 'Quero doar',
       visualTitle: 'Menos barreira, mais aprendizado.',
       visualBody: 'Apoiar é escolher que o conteúdo clínico continue aparecendo na hora certa.',
       palette: {
@@ -149,7 +149,7 @@ const INTERSTITIAL_VARIANTS: Record<InterstitialContext, InterstitialVariant[]> 
       title: 'Manual bom não nasce pronto. Ele é cuidado toda semana.',
       body: 'Revisar, organizar e melhorar conteúdo toma tempo. A doação ajuda esse cuidado a continuar sem pesar para o aluno.',
       detail: 'É um lembrete rápido, com saída simples, mas com impacto real.',
-      primary: 'Apoiar o cuidado',
+      primary: 'Quero doar',
       visualTitle: 'Conteúdo útil precisa de manutenção.',
       visualBody: 'Quando alguém apoia, fica mais viável melhorar sem fechar acesso.',
       palette: {
@@ -171,7 +171,7 @@ const INTERSTITIAL_VARIANTS: Record<InterstitialContext, InterstitialVariant[]> 
       title: 'Talvez hoje você use. Amanhã alguém depende disso.',
       body: 'Doar é ajudar o próximo estudante a encontrar uma resposta sem bater em cobrança no meio da dúvida.',
       detail: 'A plataforma pede sempre porque a comunidade cresce quando o apoio também cresce.',
-      primary: 'Ajudar o próximo aluno',
+      primary: 'Quero doar',
       visualTitle: 'Você apoia uma fila invisível de estudantes.',
       visualBody: 'Quem chega depois encontra o caminho mais aberto porque alguém ajudou antes.',
       palette: {
@@ -193,7 +193,7 @@ const INTERSTITIAL_VARIANTS: Record<InterstitialContext, InterstitialVariant[]> 
       title: 'Se o manual tem valor para você, ele pode receber valor de você.',
       body: 'A ideia é simples: quem pode contribuir ajuda a manter gratuito para quem ainda não pode.',
       detail: 'Você segue com um clique. Mas se puder doar, faz diferença.',
-      primary: 'Reconhecer com doação',
+      primary: 'Quero doar',
       visualTitle: 'Valor percebido pode virar acesso mantido.',
       visualBody: 'O apoio voluntário equilibra a conta sem transformar estudo em cobrança obrigatória.',
       palette: {
@@ -217,7 +217,7 @@ const INTERSTITIAL_VARIANTS: Record<InterstitialContext, InterstitialVariant[]> 
       title: 'Boa prova. Antes de começar: ajuda a manter isso aberto?',
       body: 'As provas gratuitas continuam existindo porque alguns alunos apoiam quando podem. Qualquer valor já conta.',
       detail: 'Sem pressão: pule e siga para a prova quando quiser.',
-      primary: 'Apoiar as provas',
+      primary: 'Quero doar',
       visualTitle: 'Uma prova gratuita também tem bastidor.',
       visualBody: 'Questões, correções, estrutura e servidor precisam continuar de pé.',
       palette: {
@@ -230,7 +230,7 @@ const INTERSTITIAL_VARIANTS: Record<InterstitialContext, InterstitialVariant[]> 
       },
       points: [
         { icon: BookOpen, text: 'Mais simulados gratuitos' },
-        { icon: ShieldCheck, text: 'Menos paywall no caminho' },
+        { icon: ShieldCheck, text: 'Menos bloqueios no caminho' },
         { icon: Coffee, text: 'Apoio pequeno já sustenta' },
       ],
     },
@@ -239,7 +239,7 @@ const INTERSTITIAL_VARIANTS: Record<InterstitialContext, InterstitialVariant[]> 
       title: 'Você vai fazer a prova. A plataforma só pede um empurrão.',
       body: 'Se esse treino faz diferença na sua rotina, uma doação ajuda a deixar a experiência disponível para mais estudantes.',
       detail: 'Clique em continuar e a prova começa normalmente.',
-      primary: 'Ajudar antes de começar',
+      primary: 'Quero doar',
       visualTitle: 'Treino bom precisa continuar acessível.',
       visualBody: 'O pedido aparece sempre, mas muda para não virar ruído automático.',
       palette: {
@@ -261,7 +261,7 @@ const INTERSTITIAL_VARIANTS: Record<InterstitialContext, InterstitialVariant[]> 
       title: 'Se a prova te prepara, sua doação prepara a plataforma.',
       body: 'Não é obrigação. É um convite insistente porque acesso gratuito precisa de gente junto para sobreviver.',
       detail: 'Você decide em segundos. O estudo continua logo depois.',
-      primary: 'Contribuir com a plataforma',
+      primary: 'Quero doar',
       visualTitle: 'Acesso aberto é uma escolha que precisa de apoio.',
       visualBody: 'A cada tentativa, um lembrete diferente para não virar paisagem.',
       palette: {
@@ -283,7 +283,7 @@ const INTERSTITIAL_VARIANTS: Record<InterstitialContext, InterstitialVariant[]> 
       title: 'Cada prova gratuita precisa de apoio para continuar existindo.',
       body: 'Se esse simulado te ajuda a ganhar segurança, uma contribuição ajuda a manter o treino aberto para mais alunos.',
       detail: 'Você pode pular agora. O pedido muda, mas a missão é a mesma.',
-      primary: 'Manter treinos abertos',
+      primary: 'Quero doar',
       visualTitle: 'Simulado bom não deveria depender de assinatura.',
       visualBody: 'Doações ajudam a sustentar a parte invisível da experiência de prova.',
       palette: {
@@ -305,7 +305,7 @@ const INTERSTITIAL_VARIANTS: Record<InterstitialContext, InterstitialVariant[]> 
       title: 'Um clique pode ajudar a próxima prova a existir.',
       body: 'Você está a segundos de começar. Se puder, deixa uma contribuição para que esse tipo de treino continue gratuito.',
       detail: 'Depois de apoiar ou pular, a prova segue normalmente.',
-      primary: 'Apoiar antes do início',
+      primary: 'Quero doar',
       visualTitle: 'O cronômetro começa. O apoio fica.',
       visualBody: 'Uma contribuição rápida ajuda a plataforma a continuar entregando prática de qualidade.',
       palette: {
@@ -327,7 +327,7 @@ const INTERSTITIAL_VARIANTS: Record<InterstitialContext, InterstitialVariant[]> 
       title: 'Treinar de graça é melhor quando a turma ajuda a bancar.',
       body: 'A plataforma insiste porque depende de pequenas contribuições para não transformar tudo em produto fechado.',
       detail: 'Não precisa ser muito. Precisa ser possível.',
-      primary: 'Entrar no apoio coletivo',
+      primary: 'Quero doar',
       visualTitle: 'Quando muitos ajudam pouco, muita coisa fica aberta.',
       visualBody: 'O modelo só funciona se o convite aparecer e algumas pessoas responderem.',
       palette: {
@@ -349,7 +349,7 @@ const INTERSTITIAL_VARIANTS: Record<InterstitialContext, InterstitialVariant[]> 
       title: 'A prova começa já. O pedido é rápido: fortalece a plataforma?',
       body: 'Doar ajuda a manter o ambiente de estudo com menos limitações, mais recursos e mais liberdade para treinar.',
       detail: 'O botão de continuar fica sempre ali. O convite também, de um jeito diferente.',
-      primary: 'Fortalecer agora',
+      primary: 'Quero doar',
       visualTitle: 'Insistir sem cansar é pedir com respeito.',
       visualBody: 'A cada abertura, um ângulo diferente para lembrar do valor real da plataforma.',
       palette: {
@@ -371,7 +371,7 @@ const INTERSTITIAL_VARIANTS: Record<InterstitialContext, InterstitialVariant[]> 
       title: 'Se esta prova te ajuda, transforma isso em apoio.',
       body: 'Você não perde acesso ao pular. Mas quando alguém doa, a plataforma ganha fôlego para continuar oferecendo acesso gratuito.',
       detail: 'Escolha rápida: apoiar, registrar Pix ou começar a prova.',
-      primary: 'Transformar em apoio',
+      primary: 'Quero doar',
       visualTitle: 'Acesso gratuito precisa de fôlego.',
       visualBody: 'Cada doação deixa mais provável que o próximo aluno encontre a prova aberta.',
       palette: {
