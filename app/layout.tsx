@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
-import { Rowdies, Space_Grotesk } from 'next/font/google'
+import { Inter, Rowdies, Space_Grotesk } from 'next/font/google'
 import './globals.css'
 import { ThemeProvider } from '@/components/theme-provider'
+import { TrialExpirationChecker } from '@/components/trial-expiration-checker'
 import { Footer } from '@/components/footer'
 import { ImageProtectionProvider } from '@/components/image-protection-provider'
-import { RootClientFeatures } from '@/components/root-client-features'
+import { VerifyEmailBanner } from '@/components/verify-email-banner'
+import { StudyMusicPlayer } from '@/components/study-music-player'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { LiteModeProvider } from '@/context/LiteModeContext'
@@ -20,6 +22,7 @@ import {
   publicIndexingRobots,
 } from '@/lib/seo'
 
+const inter = Inter({ subsets: ['latin'] })
 const rowdies = Rowdies({
   weight: ['400', '700'],
   subsets: ['latin'],
@@ -167,12 +170,14 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <RootClientFeatures />
+          <VerifyEmailBanner />
           <ImageProtectionProvider>
+            <TrialExpirationChecker />
             <div className="flex-1 flex flex-col">
               {children}
             </div>
             <Footer />
+            <StudyMusicPlayer />
           </ImageProtectionProvider>
           <Analytics />
           <SpeedInsights />

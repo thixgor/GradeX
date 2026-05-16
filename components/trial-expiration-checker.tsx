@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { AlertTriangle, Mail, Phone, Ticket } from 'lucide-react'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useBootstrapTrialStatus } from '@/hooks/use-bootstrap'
 
 /**
@@ -23,21 +23,21 @@ import { useBootstrapTrialStatus } from '@/hooks/use-bootstrap'
  */
 export function TrialExpirationChecker() {
   const router = useRouter()
-  const pathname = usePathname()
   const [showExpiredDialog, setShowExpiredDialog] = useState(false)
   const hasExpiredUser = useRef(false)
-  const shouldSkip = pathname?.startsWith('/auth') || pathname === '/'
 
   // Use the optimized bootstrap hook for trial status
   const {
+    accountType,
     isTrialUser,
     isTrialExpired,
+    trialExpiresAt,
     loading,
-  } = useBootstrapTrialStatus({ skip: shouldSkip })
+  } = useBootstrapTrialStatus()
 
   // Check trial expiration
   useEffect(() => {
-    if (shouldSkip || loading || hasExpiredUser.current) return
+    if (loading || hasExpiredUser.current) return
 
     // Check if trial user has expired
     if (isTrialUser && isTrialExpired) {
@@ -47,7 +47,7 @@ export function TrialExpirationChecker() {
       expireUser()
       setShowExpiredDialog(true)
     }
-  }, [isTrialUser, isTrialExpired, loading, shouldSkip])
+  }, [isTrialUser, isTrialExpired, loading])
 
   async function expireUser() {
     try {

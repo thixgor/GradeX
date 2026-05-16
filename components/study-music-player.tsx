@@ -17,7 +17,7 @@ import {
     SkipForward,
     SkipBack
 } from 'lucide-react'
-import { useBootstrapUser } from '@/hooks/use-bootstrap'
+import { useAuthUser } from '@/hooks/use-auth-user'
 
 interface StudyPlaylist {
     _id: string
@@ -90,7 +90,7 @@ declare global {
 }
 
 export function StudyMusicPlayer() {
-    const { isAuthenticated, loading: authLoading } = useBootstrapUser()
+    const { isAuthenticated, loading: authLoading } = useAuthUser()
     const [playlists, setPlaylists] = useState<StudyPlaylist[]>([])
     const [loading, setLoading] = useState(true)
     const [playerReady, setPlayerReady] = useState(false)
@@ -149,13 +149,6 @@ export function StudyMusicPlayer() {
 
     // Load playlists from API
     useEffect(() => {
-        if (authLoading) return
-
-        if (!isAuthenticated) {
-            setLoading(false)
-            return
-        }
-
         async function fetchPlaylists() {
             try {
                 const res = await fetch('/api/study-playlists')
@@ -202,7 +195,7 @@ export function StudyMusicPlayer() {
         }
 
         fetchPlaylists()
-    }, [authLoading, isAuthenticated])
+    }, [])
 
     function selectRandomPlaylist(playlistList: StudyPlaylist[]) {
         const randomIndex = Math.floor(Math.random() * playlistList.length)

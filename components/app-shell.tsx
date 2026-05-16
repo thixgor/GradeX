@@ -1,10 +1,11 @@
 'use client'
 
 import { useState, useEffect, createContext, useContext, useMemo } from 'react'
-import dynamic from 'next/dynamic'
 import { useRouter, usePathname } from 'next/navigation'
 import { Sidebar } from '@/components/sidebar'
+import { CreateExamModal } from '@/components/create-exam-modal'
 import { BanChecker } from '@/components/ban-checker'
+import { SupportChat } from '@/components/support-chat'
 import { PageLoading } from '@/components/page-loading'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
@@ -15,22 +16,8 @@ import { LogIn, Menu, ShieldAlert } from 'lucide-react'
 import { useBootstrap, clearBootstrapCache } from '@/hooks/use-bootstrap'
 import { FocusSessionProvider } from '@/hooks/use-focus-session'
 import { FocusSessionButton } from '@/components/focus-session-button'
+import { DoacaoFloatingButton } from '@/components/doacoes/doacao-floating-button'
 import type { SidebarSectionSettings } from '@/lib/sidebar-sections'
-
-const CreateExamModal = dynamic(
-  () => import('@/components/create-exam-modal').then((mod) => mod.CreateExamModal),
-  { loading: () => null, ssr: false }
-)
-
-const SupportChat = dynamic(
-  () => import('@/components/support-chat').then((mod) => mod.SupportChat),
-  { loading: () => null, ssr: false }
-)
-
-const DoacaoFloatingButton = dynamic(
-  () => import('@/components/doacoes/doacao-floating-button').then((mod) => mod.DoacaoFloatingButton),
-  { loading: () => null, ssr: false }
-)
 
 /**
  * AppShell Component - Optimized Version
@@ -390,14 +377,12 @@ Contato: (21) 99777-0936`)
         </div>
 
         {/* Create Exam Modal */}
-        {showCreateExamModal && (
-          <CreateExamModal
-            open={showCreateExamModal}
-            onClose={() => setShowCreateExamModal(false)}
-            isAdmin={isAdmin}
-            tierLimitExceeded={tierLimitExceeded}
-          />
-        )}
+        <CreateExamModal
+          open={showCreateExamModal}
+          onClose={() => setShowCreateExamModal(false)}
+          isAdmin={isAdmin}
+          tierLimitExceeded={tierLimitExceeded}
+        />
 
         {/* Support Chat */}
         <SupportChat />

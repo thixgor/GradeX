@@ -232,15 +232,6 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes loading-bar {
-  0% {
-    transform: translateX(-120%);
-  }
-  100% {
-    transform: translateX(220%);
-  }
-}
-
 @keyframes slide-up {
   from {
     opacity: 0;
@@ -264,10 +255,6 @@
 @layer utilities {
   .animate-fade-in {
     animation: fade-in 0.6s ease-out;
-  }
-
-  .animate-loading-bar {
-    animation: loading-bar 1.15s ease-in-out infinite;
   }
 
   .animate-slide-up {
@@ -297,13 +284,6 @@
 
   .animate-bounce-custom {
     animation: bounce-custom 2s infinite;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-loading-bar {
-    animation: none;
-    transform: translateX(60%);
   }
 }
 

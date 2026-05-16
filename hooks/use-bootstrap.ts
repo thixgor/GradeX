@@ -329,8 +329,8 @@ export function useBootstrap(options: {
 /**
  * Simplified hook for just user data
  */
-export function useBootstrapUser(options: Parameters<typeof useBootstrap>[0] = {}) {
-  const { user, loading, error, refetch, isAuthenticated, isAdmin } = useBootstrap(options)
+export function useBootstrapUser() {
+  const { user, loading, error, refetch, isAuthenticated, isAdmin } = useBootstrap()
   return { user, loading, error, refetch, isAuthenticated, isAdmin }
 }
 
@@ -345,8 +345,8 @@ export function useBootstrapBanStatus(options?: { refetchInterval?: number }) {
 /**
  * Simplified hook for just trial status
  */
-export function useBootstrapTrialStatus(options: Parameters<typeof useBootstrap>[0] = {}) {
-  const { trialStatus, loading, error, refetch } = useBootstrap(options)
+export function useBootstrapTrialStatus() {
+  const { trialStatus, loading, error, refetch } = useBootstrap()
   return { ...trialStatus, loading, error, refetch }
 }
 
