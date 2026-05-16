@@ -784,7 +784,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                   <ShieldCheck className="h-4 w-4 text-emerald-300 shrink-0" />
                   <h1 className="truncate text-sm font-semibold sm:text-base">{access.material.title}</h1>
                 </div>
-                <p className="hidden text-[11px] text-emerald-100/60 sm:block">GradeX PDF Viewer protegido</p>
+                <p className="hidden text-[11px] text-emerald-100/60 sm:block">DomineAqui PDF Viewer protegido</p>
               </div>
 
               <ToolbarButton onClick={() => goToPage(currentPage - 1)} disabled={currentPage <= 1} title="Pagina anterior">
@@ -1138,8 +1138,11 @@ function PdfCanvasPage({
         const baseViewport = page.getViewport({ scale: 1 })
         onPageSize({ width: baseViewport.width, height: baseViewport.height })
 
-        const maxDpr = active ? (window.innerWidth < 768 ? 1.75 : 2) : (window.innerWidth < 768 ? 1.25 : 1.5)
-        const dpr = Math.min(window.devicePixelRatio || 1, maxDpr)
+        const isMobile = window.innerWidth < 768
+        const maxDpr = active ? (isMobile ? 3 : 3.5) : (isMobile ? 2 : 2.5)
+        const minDpr = active ? (isMobile ? 2 : 2.5) : (isMobile ? 1.5 : 2)
+        const deviceDpr = window.devicePixelRatio || 1
+        const dpr = Math.min(Math.max(deviceDpr, minDpr), maxDpr)
         const viewport = page.getViewport({ scale: zoom * dpr })
         const displayViewport = page.getViewport({ scale: zoom })
         const canvas = canvasRef.current
