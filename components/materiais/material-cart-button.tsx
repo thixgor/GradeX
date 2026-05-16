@@ -55,15 +55,17 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute inset-0 bg-black/75 backdrop-blur-md" onClick={() => setOpen(false)} />
+            <div className="absolute inset-0 bg-slate-950/45 backdrop-blur-sm" onClick={() => setOpen(false)} />
+            <div className="pointer-events-none absolute right-3 top-16 h-64 w-[min(92vw,34rem)] rounded-[2rem] bg-emerald-400/25 blur-3xl dark:bg-emerald-500/20 sm:right-8 lg:right-12" />
             <motion.aside
-              initial={{ x: 420 }}
-              animate={{ x: 0 }}
-              exit={{ x: 420 }}
-              transition={{ type: 'spring', stiffness: 360, damping: 36 }}
-              className="absolute inset-y-0 right-0 flex h-full w-full flex-col border-l border-emerald-900/15 bg-white text-slate-950 shadow-2xl shadow-black/40 dark:bg-zinc-950 dark:text-white sm:max-w-md"
+              initial={{ opacity: 0, y: -10, scaleY: 0.86 }}
+              animate={{ opacity: 1, y: 0, scaleY: 1 }}
+              exit={{ opacity: 0, y: -10, scaleY: 0.92 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 34 }}
+              style={{ transformOrigin: 'top right' }}
+              className="absolute inset-x-3 top-16 mx-auto flex max-h-[calc(100dvh-5rem)] w-auto max-w-[30rem] flex-col overflow-hidden rounded-xl border border-slate-200 bg-white text-slate-950 shadow-2xl shadow-black/25 dark:border-white/10 dark:bg-zinc-950 dark:text-white sm:inset-x-auto sm:right-8 sm:mx-0 sm:w-[28rem] lg:right-12"
             >
-              <div className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 dark:border-white/10 dark:bg-zinc-950">
+              <div className="flex h-14 shrink-0 items-center justify-between border-b border-slate-200 bg-white px-4 dark:border-white/10 dark:bg-zinc-950">
                 <div className="flex items-center gap-2">
                   <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-lg shadow-emerald-700/25">
                     <ShoppingCart className="h-4 w-4" />
@@ -81,7 +83,7 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
               </div>
 
               {itemCount === 0 ? (
-                <div className="flex flex-1 flex-col items-center justify-center bg-slate-50 px-6 text-center dark:bg-zinc-950">
+                <div className="flex min-h-72 flex-1 flex-col items-center justify-center bg-slate-50 px-6 text-center dark:bg-zinc-950">
                   <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
                     <ShoppingCart className="h-7 w-7" />
                   </div>
@@ -95,13 +97,13 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
                 </div>
               ) : (
                 <>
-                  <div className="flex-1 overflow-y-auto bg-slate-50 p-4 dark:bg-zinc-950">
+                  <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-3 dark:bg-zinc-950 sm:p-4">
                     <div className="space-y-3">
                       {sortedItems.map(item => {
                         const price = item.effectivePrice ?? item.price
                         return (
-                          <div key={`${item.itemType}:${item.itemId}`} className="flex gap-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm dark:border-white/10 dark:bg-zinc-900">
-                            <div className="relative h-16 w-20 shrink-0 overflow-hidden rounded-xl bg-muted">
+                          <div key={`${item.itemType}:${item.itemId}`} className="flex gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-sm dark:border-white/10 dark:bg-zinc-900">
+                            <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded-lg bg-muted sm:h-16">
                               {item.coverImage ? (
                                 <Image src={item.coverImage} alt="" fill className="object-cover" sizes="80px" />
                               ) : (
@@ -142,7 +144,7 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
                     </div>
                   </div>
 
-                  <div className="border-t border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-zinc-950">
+                  <div className="shrink-0 border-t border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-zinc-950">
                     <div className="mb-4 flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">Subtotal estimado</span>
                       <span className="text-xl font-black text-emerald-700 dark:text-emerald-300">{formatBRL(subtotal)}</span>
