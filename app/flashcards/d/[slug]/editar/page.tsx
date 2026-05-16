@@ -5,6 +5,8 @@ import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
   ArrowLeft,
+  ArrowDown,
+  ArrowUp,
   Plus,
   Trash2,
   Save,
@@ -22,6 +24,7 @@ import {
   Settings,
   MessageSquare,
   Download,
+  Shuffle,
 } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
@@ -36,6 +39,7 @@ import type { FlashcardManualCard, FlashcardManualDeck } from '@/lib/types'
 const VALID_GROUPS = ['gratuito', 'trial', 'essential', 'premium', 'monitor'] as const
 
 interface CardDraft {
+  clientId: string
   _id?: string
   kind: 'standard' | 'hidden_word'
   front: { text: string; image?: string }
@@ -43,6 +47,10 @@ interface CardDraft {
   hiddenWord?: { phrase: string; word: string; hint?: string }
   comment?: string
   expanded?: boolean
+}
+
+function createCardClientId() {
+  return `card-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`
 }
 
 export default function EditDeckPage() {
@@ -57,6 +65,7 @@ export default function EditDeckPage() {
   const [loading, setLoading] = useState(true)
   const [savingMeta, setSavingMeta] = useState(false)
   const [savingCardIdx, setSavingCardIdx] = useState<number | null>(null)
+  const [savingOrder, setSavingOrder] = useState(false)
   const [importOpen, setImportOpen] = useState(false)
   const [toast, setToast] = useState<{ open: boolean; message: string; type?: 'success' | 'error' | 'info' }>({ open: false, message: '' })
 
@@ -74,6 +83,7 @@ export default function EditDeckPage() {
       const me = await meRes.json()
       setIsAdmin(me.user?.role === 'admin')
       setCards((deckJson.cards || []).map((c: FlashcardManualCard) => ({
+        clientId: createCardClientId(),
         _id: String((c as any)._id),
         kind: c.kind,
         front: { text: c.front?.text || '', image: c.front?.image },
@@ -113,6 +123,7 @@ export default function EditDeckPage() {
 
   function addCard(kind: 'standard' | 'hidden_word' = 'standard') {
     setCards(prev => [...prev, {
+      clientId: createCardClientId(),
       kind,
       front: { text: '' },
       back: { text: '' },
@@ -149,7 +160,9 @@ export default function EditDeckPage() {
       const json = await res.json()
       if (!res.ok) throw new Error(json.error || 'Erro ao salvar cartão')
       const saved = json.card
-      setCards(prev => prev.map((c, i) => i === idx ? { ...c, _id: saved._id, expanded: false } : c))
+      const nextCards = cards.map((c, i) => i === idx ? { ...c, _id: saved._id, expanded: false } : c)
+      setCards(nextCards)
+      if (!isUpdate) persistCardOrder(nextCards, { silent: true })
       setToast({ open: true, message: 'Cartão salvo', type: 'success' })
     } catch (err: any) {
       setToast({ open: true, message: err.message || 'Erro', type: 'error' })
@@ -168,6 +181,46 @@ export default function EditDeckPage() {
       } catch {}
     }
     setCards(prev => prev.filter((_, i) => i !== idx))
+  }
+
+  async function persistCardOrder(nextCards: CardDraft[], options: { silent?: boolean } = {}) {
+    const orderedIds = nextCards.map(card => card._id).filter(Boolean) as string[]
+    if (!deck || orderedIds.length < 2) return
+    setSavingOrder(true)
+    try {
+      const res = await fetch(`/api/flashcards/manual/${encodeURIComponent(slug)}/cards/reorder`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderedIds }),
+      })
+      const json = await res.json().catch(() => null)
+      if (!res.ok) throw new Error(json?.error || 'Erro ao salvar ordem')
+      if (!options.silent) setToast({ open: true, message: 'Ordem salva', type: 'success' })
+    } catch (err: any) {
+      setToast({ open: true, message: err.message || 'Erro ao salvar ordem', type: 'error' })
+    } finally {
+      setSavingOrder(false)
+    }
+  }
+
+  function reorderCards(from: number, to: number) {
+    if (to < 0 || to >= cards.length || from === to) return
+    const nextCards = [...cards]
+    const [moved] = nextCards.splice(from, 1)
+    nextCards.splice(to, 0, moved)
+    setCards(nextCards)
+    persistCardOrder(nextCards, { silent: true })
+  }
+
+  function shuffleCards() {
+    if (cards.length < 2) return
+    const nextCards = [...cards]
+    for (let i = nextCards.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[nextCards[i], nextCards[j]] = [nextCards[j], nextCards[i]]
+    }
+    setCards(nextCards)
+    persistCardOrder(nextCards)
   }
 
   if (loading) {
@@ -202,9 +255,17 @@ export default function EditDeckPage() {
         />
 
         <div className="mt-8">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-semibold text-slate-800 dark:text-white">Cartões ({cards.length})</h2>
-            <div className="flex gap-2">
+          <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-slate-800 dark:text-white">Cartões ({cards.length})</h2>
+              {savingOrder && <p className="mt-0.5 text-xs text-slate-500">Salvando ordem...</p>}
+            </div>
+            <div className="flex flex-wrap justify-end gap-2">
+              {cards.length > 1 && (
+                <Button onClick={shuffleCards} size="sm" variant="outline" disabled={savingOrder}>
+                  {savingOrder ? <Loader2 className="h-4 w-4 animate-spin" /> : <Shuffle className="h-4 w-4" />} Embaralhar
+                </Button>
+              )}
               <Button onClick={() => addCard('standard')} size="sm"><Plus className="h-4 w-4" /> Cartão</Button>
               <Button onClick={() => addCard('hidden_word')} size="sm" variant="outline"><Plus className="h-4 w-4" /> Palavra oculta</Button>
             </div>
@@ -213,14 +274,18 @@ export default function EditDeckPage() {
           <div className="space-y-3">
             {cards.map((card, i) => (
               <CardEditor
-                key={card._id || `new-${i}`}
+                key={card._id || card.clientId}
                 idx={i}
                 card={card}
                 saving={savingCardIdx === i}
+                canMoveUp={i > 0}
+                canMoveDown={i < cards.length - 1}
                 onChange={(patch) => updateCard(i, patch)}
                 onSave={() => persistCard(i)}
                 onDelete={() => deleteCard(i)}
                 onToggle={() => updateCard(i, { expanded: !card.expanded })}
+                onMoveUp={() => reorderCards(i, i - 1)}
+                onMoveDown={() => reorderCards(i, i + 1)}
               />
             ))}
           </div>
@@ -456,36 +521,50 @@ function DeckMetaForm({
 }
 
 function CardEditor({
-  idx, card, saving, onChange, onSave, onDelete, onToggle,
+  idx, card, saving, canMoveUp, canMoveDown, onChange, onSave, onDelete, onToggle, onMoveUp, onMoveDown,
 }: {
   idx: number
   card: CardDraft
   saving: boolean
+  canMoveUp: boolean
+  canMoveDown: boolean
   onChange: (patch: Partial<CardDraft>) => void
   onSave: () => void
   onDelete: () => void
   onToggle: () => void
+  onMoveUp: () => void
+  onMoveDown: () => void
 }) {
   const isHidden = card.kind === 'hidden_word'
   return (
     <div className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900">
-      <button type="button" onClick={onToggle} className="w-full flex items-center justify-between gap-3 p-4 text-left">
-        <div className="flex items-center gap-3 min-w-0">
-          <span className="rounded-full bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 text-xs font-mono w-7 h-7 flex items-center justify-center">{idx + 1}</span>
-          <div className="min-w-0">
-            <p className="text-sm font-medium truncate">
-              {isHidden ? (card.hiddenWord?.phrase || 'Palavra oculta, preencher') : (card.front.text || 'Cartão sem título')}
-            </p>
-            <p className="text-xs text-slate-500 truncate">
+      <div className="flex items-center justify-between gap-3 p-3 md:p-4">
+        <button type="button" onClick={onToggle} className="flex min-w-0 flex-1 items-center gap-3 text-left">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 font-mono text-xs text-slate-600 dark:bg-white/10 dark:text-slate-300">{idx + 1}</span>
+          <div className="min-w-0 flex-1">
+            <div className="flex min-w-0 items-center gap-2">
+              <p className="truncate text-sm font-medium">
+                {isHidden ? (card.hiddenWord?.phrase || 'Palavra oculta, preencher') : (card.front.text || 'Cartão sem título')}
+              </p>
+              {isHidden && <span className="hidden shrink-0 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-300 sm:inline">Palavra oculta</span>}
+            </div>
+            <p className="truncate text-xs text-slate-500">
               {isHidden ? `Palavra: ${card.hiddenWord?.word || '(definir)'}` : (card.back.text || '(sem resposta)')}
             </p>
           </div>
+        </button>
+        <div className="flex shrink-0 items-center gap-1">
+          <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={onMoveUp} disabled={!canMoveUp} title="Mover para cima">
+            <ArrowUp className="h-4 w-4" />
+          </Button>
+          <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={onMoveDown} disabled={!canMoveDown} title="Mover para baixo">
+            <ArrowDown className="h-4 w-4" />
+          </Button>
+          <button type="button" onClick={onToggle} className="rounded-full p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-white/10 dark:hover:text-slate-200" title={card.expanded ? 'Recolher' : 'Expandir'}>
+            {card.expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          </button>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
-          {isHidden && <span className="rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 text-[10px] px-2 py-0.5 font-semibold">Palavra oculta</span>}
-          {card.expanded ? <ChevronUp className="h-4 w-4 text-slate-400" /> : <ChevronDown className="h-4 w-4 text-slate-400" />}
-        </div>
-      </button>
+      </div>
 
       {card.expanded && (
         <div className="border-t border-slate-100 dark:border-white/10 p-4 md:p-5 space-y-4">

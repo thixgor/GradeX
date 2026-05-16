@@ -23,6 +23,7 @@ const LARANJA_CLARO = [245, 216, 154] as const
 const CINZA_TEXTO = [51, 51, 51] as const
 const CINZA_CLARO = [245, 245, 245] as const
 const CINZA_BORDA = [215, 224, 216] as const
+const imageCache = new Map<string, Promise<ImageData | null>>()
 
 function cleanText(value: unknown): string {
   return String(value || '')
@@ -100,6 +101,20 @@ function splitSegmentsIntoChunks(segments: TextSegment[]): TextSegment[] {
 }
 
 async function fetchImageAsDataUrl(url: string, origin: string): Promise<ImageData | null> {
+  const cacheKey = `${origin}|${url}`
+  const cached = imageCache.get(cacheKey)
+  if (cached) return cached
+
+  const task = fetchImageAsDataUrlUncached(url, origin)
+  imageCache.set(cacheKey, task)
+  if (imageCache.size > 120) {
+    const firstKey = imageCache.keys().next().value
+    if (firstKey) imageCache.delete(firstKey)
+  }
+  return task
+}
+
+async function fetchImageAsDataUrlUncached(url: string, origin: string): Promise<ImageData | null> {
   try {
     if (!url) return null
     if (url.startsWith('data:image/')) {
@@ -113,15 +128,14 @@ async function fetchImageAsDataUrl(url: string, origin: string): Promise<ImageDa
       : new URL(url, origin).toString()
 
     const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 12000)
+    const timeout = setTimeout(() => controller.abort(), 6000)
     const response = await fetch(absoluteUrl, {
       signal: controller.signal,
       headers: {
         Accept: 'image/*,*/*',
         'User-Agent': 'GradeX-Flashcard-PDF/1.0',
       },
-    })
-    clearTimeout(timeout)
+    }).finally(() => clearTimeout(timeout))
 
     if (!response.ok) return null
     const contentType = response.headers.get('content-type') || 'image/jpeg'
@@ -374,11 +388,16 @@ export async function generateFlashcardManualPdf(
   )
   y += 7
 
+  function startCardPage(title: string, tone: 'green' | 'orange' = 'green') {
+    addPage()
+    renderSectionTitle(title, tone)
+  }
+
   for (let index = 0; index < cards.length; index += 1) {
     const card = cards[index]
-    ensureSpace(50)
-    renderSectionTitle(`Card ${index + 1}`, card.kind === 'hidden_word' ? 'orange' : 'green')
+    const tone = card.kind === 'hidden_word' ? 'orange' : 'green'
 
+    startCardPage(`Card ${index + 1} - Frente`, tone)
     renderRatingBoxes()
 
     setFont('bold', 10)
@@ -403,11 +422,13 @@ export async function generateFlashcardManualPdf(
       y += 2
     }
 
-    ensureSpace(12)
-    doc.setDrawColor(...CINZA_BORDA)
-    doc.line(margin, y, pageWidth - margin, y)
-    y += 8
+    y += 4
+    setFont('italic', 8.5)
+    doc.setTextColor(95, 110, 100)
+    ensureSpace(7)
+    doc.text('Vire a página para conferir o verso.', margin, y)
 
+    startCardPage(`Card ${index + 1} - Verso`, tone)
     setFont('bold', 10)
     doc.setTextColor(...VERDE_ESCURO)
     doc.text('Verso', margin, y)

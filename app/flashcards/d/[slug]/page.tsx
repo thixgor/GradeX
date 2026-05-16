@@ -356,13 +356,18 @@ export default function DeckPage() {
 
   async function downloadDeckPdf() {
     if (!data) return
+    if (data.deck.pdfDownloadEnabled !== true) {
+      setToast({ open: true, message: 'PDF não está liberado para este deck.', type: 'info' })
+      return
+    }
     if (!data.viewer.isAuthenticated) {
-      router.push(`/auth/login?redirect=${encodeURIComponent(`/flashcards/d/${deck.slug}`)}`)
+      router.push(`/auth/login?redirect=${encodeURIComponent(`/flashcards/d/${data.deck.slug}`)}`)
       return
     }
     setDownloadingPdf(true)
+    setToast({ open: true, message: 'Gerando PDF. Isso pode levar alguns segundos...', type: 'info' })
     try {
-      const res = await fetch(`/api/flashcards/manual/${encodeURIComponent(deck.slug)}/pdf`, { cache: 'no-store' })
+      const res = await fetch(`/api/flashcards/manual/${encodeURIComponent(data.deck.slug)}/pdf`, { cache: 'no-store' })
       if (!res.ok) {
         const json = await res.json().catch(() => null)
         throw new Error(json?.error || 'Não foi possível baixar o PDF')
@@ -370,7 +375,7 @@ export default function DeckPage() {
       const blob = await res.blob()
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
-      const safeTitle = deck.title
+      const safeTitle = data.deck.title
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
         .replace(/[^a-zA-Z0-9]+/g, '-')
@@ -413,7 +418,7 @@ export default function DeckPage() {
   const { deck, cards, access } = data
   const isLocked = !access.hasAccess
   const isPaid = deck.pricing === 'paid'
-  const canDownloadPdf = !isLocked && (deck.pdfDownloadEnabled === true || data.viewer.isAdmin)
+  const canDownloadPdf = !isLocked && deck.pdfDownloadEnabled === true
 
   if (studying) {
     const card = cards[currentIndex]
@@ -670,7 +675,7 @@ export default function DeckPage() {
               {canDownloadPdf && (
                 <Button variant="outline" onClick={downloadDeckPdf} disabled={downloadingPdf}>
                   {downloadingPdf ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-                  PDF
+                  {downloadingPdf ? 'Gerando...' : 'PDF'}
                 </Button>
               )}
             </div>
