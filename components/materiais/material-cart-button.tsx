@@ -34,15 +34,14 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
   return (
     <>
       <Button
-        variant="ghost"
-        size="icon"
         onClick={() => setOpen(true)}
-        className="relative h-9 w-9"
+        className="relative h-10 rounded-xl border border-emerald-300/50 bg-gradient-to-r from-emerald-700 via-emerald-600 to-amber-500 px-3 text-white shadow-lg shadow-emerald-700/25 transition hover:from-emerald-600 hover:via-emerald-500 hover:to-amber-400"
         aria-label="Abrir carrinho"
       >
         <ShoppingCart className="h-5 w-5" />
+        <span className="ml-2 hidden text-sm font-bold sm:inline">Carrinho</span>
         {itemCount > 0 && (
-          <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-emerald-600 px-1.5 text-[10px] font-bold text-white ring-2 ring-background">
+          <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-black text-white ring-2 ring-background">
             {itemCount > 99 ? '99+' : itemCount}
           </span>
         )}
@@ -56,17 +55,17 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute inset-0 bg-black/55 backdrop-blur-sm" onClick={() => setOpen(false)} />
+            <div className="absolute inset-0 bg-black/75 backdrop-blur-md" onClick={() => setOpen(false)} />
             <motion.aside
               initial={{ x: 420 }}
               animate={{ x: 0 }}
               exit={{ x: 420 }}
               transition={{ type: 'spring', stiffness: 360, damping: 36 }}
-              className="absolute right-0 top-0 flex h-full w-full max-w-md flex-col border-l border-border bg-background shadow-2xl"
+              className="absolute inset-y-0 right-0 flex h-full w-full flex-col border-l border-emerald-900/15 bg-white text-slate-950 shadow-2xl shadow-black/40 dark:bg-zinc-950 dark:text-white sm:max-w-md"
             >
-              <div className="flex h-16 items-center justify-between border-b px-4">
+              <div className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 dark:border-white/10 dark:bg-zinc-950">
                 <div className="flex items-center gap-2">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600/10 text-emerald-600">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-lg shadow-emerald-700/25">
                     <ShoppingCart className="h-4 w-4" />
                   </div>
                   <div>
@@ -82,7 +81,7 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
               </div>
 
               {itemCount === 0 ? (
-                <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
+                <div className="flex flex-1 flex-col items-center justify-center bg-slate-50 px-6 text-center dark:bg-zinc-950">
                   <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
                     <ShoppingCart className="h-7 w-7" />
                   </div>
@@ -96,12 +95,12 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
                 </div>
               ) : (
                 <>
-                  <div className="flex-1 overflow-y-auto p-4">
+                  <div className="flex-1 overflow-y-auto bg-slate-50 p-4 dark:bg-zinc-950">
                     <div className="space-y-3">
                       {sortedItems.map(item => {
                         const price = item.effectivePrice ?? item.price
                         return (
-                          <div key={`${item.itemType}:${item.itemId}`} className="flex gap-3 rounded-2xl border border-border/60 bg-muted/25 p-3">
+                          <div key={`${item.itemType}:${item.itemId}`} className="flex gap-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm dark:border-white/10 dark:bg-zinc-900">
                             <div className="relative h-16 w-20 shrink-0 overflow-hidden rounded-xl bg-muted">
                               {item.coverImage ? (
                                 <Image src={item.coverImage} alt="" fill className="object-cover" sizes="80px" />
@@ -143,7 +142,7 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
                     </div>
                   </div>
 
-                  <div className="border-t p-4">
+                  <div className="border-t border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-zinc-950">
                     <div className="mb-4 flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">Subtotal estimado</span>
                       <span className="text-xl font-black text-emerald-700 dark:text-emerald-300">{formatBRL(subtotal)}</span>

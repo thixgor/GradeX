@@ -552,7 +552,7 @@ function MateriaisContent() {
     copy(pkg._id, `${origin}/pacotes/${pkg._id}`)
 
   // ─── Acquire / Download ──────────────────────────────────
-  const handleAcquire = async (itemType: 'material' | 'package', itemId: string) => {
+  const handleAcquire = async (itemType: 'material' | 'package', itemId: string, mode: 'cart' | 'buy' = 'cart') => {
     // Verifica se é grátis (pricing free) — endpoint sem cardToken libera direto
     const item =
       itemType === 'package'
@@ -607,6 +607,16 @@ function MateriaisContent() {
       return
     }
 
+    if (mode === 'buy') {
+      const checkoutPath = `/materiais/checkout?type=${itemType}&id=${itemId}`
+      if (!isAuthenticated) {
+        router.push(`/auth/login?redirect=${encodeURIComponent(checkoutPath)}`)
+        return
+      }
+      router.push(checkoutPath)
+      return
+    }
+
     const addResult = addItem({
       itemType,
       itemId,
@@ -628,7 +638,7 @@ function MateriaisContent() {
     setTimeout(() => setSuccessMessage(''), 3500)
   }
 
-  const handleMaterialAcquire = (material: Material) => {
+  const handleMaterialAcquire = (material: Material, mode: 'cart' | 'buy' = 'cart') => {
     // Upsell is only fair before the user owns any item from the package.
     const pkg = packages.find(p =>
       p.materialIds?.includes(material._id) &&
@@ -636,10 +646,10 @@ function MateriaisContent() {
       !p._pricing?.ownedMaterialIds?.length &&
       !p.materialIds?.some(id => purchasedIds.includes(id))
     )
-    if (pkg) {
+    if (mode === 'cart' && pkg) {
       setUpsellState({ pkg, material })
     } else {
-      handleAcquire('material', material._id)
+      handleAcquire('material', material._id, mode)
     }
   }
 
@@ -919,7 +929,8 @@ function MateriaisContent() {
                     groupAccess={hasGroupAccess(material)}
                     isHighlighted={highlightedMaterialId === material._id}
                     copiedId={copiedId}
-                    onAcquire={() => handleMaterialAcquire(material)}
+                    onAddToCart={() => handleMaterialAcquire(material, 'cart')}
+                    onBuyNow={() => handleMaterialAcquire(material, 'buy')}
                     onDownload={() => handleDownload(material)}
                     onCopyLink={() => copyMaterialLink(material)}
                     onPreview={() => setPreviewItem({ type: 'material', data: material })}
@@ -948,7 +959,8 @@ function MateriaisContent() {
                     groupAccess={hasGroupAccess(pkg)}
                     isHighlighted={highlightedPackageId === pkg._id}
                     copiedId={copiedId}
-                    onAcquire={() => handleAcquire('package', pkg._id)}
+                    onAddToCart={() => handleAcquire('package', pkg._id, 'cart')}
+                    onBuyNow={() => handleAcquire('package', pkg._id, 'buy')}
                     onCopyLink={() => copyPackageLink(pkg)}
                     onPreview={() => setPreviewItem({ type: 'package', data: pkg })}
                     loading={checkoutLoading === pkg._id}
@@ -1040,7 +1052,8 @@ function MateriaisContent() {
                       groupAccess={hasGroupAccess(material)}
                       isHighlighted={highlightedMaterialId === material._id}
                       copiedId={copiedId}
-                      onAcquire={() => handleMaterialAcquire(material)}
+                      onAddToCart={() => handleMaterialAcquire(material, 'cart')}
+                      onBuyNow={() => handleMaterialAcquire(material, 'buy')}
                       onDownload={() => handleDownload(material)}
                       onCopyLink={() => copyMaterialLink(material)}
                       onPreview={() => setPreviewItem({ type: 'material', data: material })}
@@ -1085,7 +1098,8 @@ function MateriaisContent() {
                       groupAccess={hasGroupAccess(pkg)}
                       isHighlighted={highlightedPackageId === pkg._id}
                       copiedId={copiedId}
-                      onAcquire={() => handleAcquire('package', pkg._id)}
+                      onAddToCart={() => handleAcquire('package', pkg._id, 'cart')}
+                      onBuyNow={() => handleAcquire('package', pkg._id, 'buy')}
                       onCopyLink={() => copyPackageLink(pkg)}
                       onPreview={() => setPreviewItem({ type: 'package', data: pkg })}
                       loading={checkoutLoading === pkg._id}
@@ -1135,7 +1149,8 @@ function MateriaisContent() {
                       groupAccess={hasGroupAccess(material)}
                       isHighlighted={false}
                       copiedId={copiedId}
-                      onAcquire={() => handleMaterialAcquire(material)}
+                      onAddToCart={() => handleMaterialAcquire(material, 'cart')}
+                      onBuyNow={() => handleMaterialAcquire(material, 'buy')}
                       onDownload={() => handleDownload(material)}
                       onCopyLink={() => copyMaterialLink(material)}
                       onPreview={() => setPreviewItem({ type: 'material', data: material })}
@@ -1163,11 +1178,11 @@ function MateriaisContent() {
             loadingIndividual={checkoutLoading === upsellState.material._id}
             onBuyPackage={() => {
               setUpsellState(null)
-              handleAcquire('package', upsellState.pkg._id)
+              handleAcquire('package', upsellState.pkg._id, 'buy')
             }}
             onBuyIndividual={() => {
               setUpsellState(null)
-              handleAcquire('material', upsellState.material._id)
+              handleAcquire('material', upsellState.material._id, 'buy')
             }}
             onClose={() => setUpsellState(null)}
           />
@@ -1180,9 +1195,13 @@ function MateriaisContent() {
           <PreviewModal
             item={previewItem}
             onClose={() => setPreviewItem(null)}
-            onAcquire={previewItem.type === 'material'
-              ? () => { setPreviewItem(null); handleAcquire('material', previewItem.data._id) }
-              : () => { setPreviewItem(null); handleAcquire('package', previewItem.data._id) }
+            onAddToCart={previewItem.type === 'material'
+              ? () => { setPreviewItem(null); handleAcquire('material', previewItem.data._id, 'cart') }
+              : () => { setPreviewItem(null); handleAcquire('package', previewItem.data._id, 'cart') }
+            }
+            onBuyNow={previewItem.type === 'material'
+              ? () => { setPreviewItem(null); handleAcquire('material', previewItem.data._id, 'buy') }
+              : () => { setPreviewItem(null); handleAcquire('package', previewItem.data._id, 'buy') }
             }
             checkoutLoading={checkoutLoading}
           />
@@ -1313,11 +1332,11 @@ function FolderCard({
 // ─── Material Card Component ────────────────────────────────
 function MaterialCard({
   material, index, isPurchased, groupAccess, isHighlighted, copiedId,
-  onAcquire, onDownload, onCopyLink, onPreview, loading,
+  onAddToCart, onBuyNow, onDownload, onCopyLink, onPreview, loading,
 }: {
   material: Material; index: number; isPurchased: boolean; groupAccess: boolean
   isHighlighted: boolean; copiedId: string | null
-  onAcquire: () => void; onDownload: () => void; onCopyLink: () => void; onPreview: () => void; loading: boolean
+  onAddToCart: () => void; onBuyNow: () => void; onDownload: () => void; onCopyLink: () => void; onPreview: () => void; loading: boolean
 }) {
   const isFree = material.pricing === 'free'
   // isPurchased includes manual admin grants → always grants full access
@@ -1448,11 +1467,21 @@ function MaterialCard({
                         ? <><Info className="h-3.5 w-3.5 mr-1.5" /> Ver detalhes</>
                       : <><Download className="h-3.5 w-3.5 mr-1.5" /> Download</>}
               </Button>
-            ) : (
-              <Button onClick={onAcquire} disabled={loading} size="sm" className="w-full bg-gradient-to-r from-accent to-secondary hover:from-accent/90 hover:to-secondary/90 text-white rounded-xl h-9 text-xs font-semibold shadow-lg shadow-accent/20">
-                {loading ? <div className="h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-1.5" /> : <ShoppingCart className="h-3.5 w-3.5 mr-1.5" />}
-                Adicionar - R$ {material.price?.toFixed(2)}
+            ) : isFree ? (
+              <Button onClick={onAddToCart} disabled={loading} size="sm" className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl h-9 text-xs font-semibold shadow-lg shadow-green-500/20">
+                {loading ? <div className="h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-1.5" /> : <Gift className="h-3.5 w-3.5 mr-1.5" />}
+                Adquirir Grátis
               </Button>
+            ) : (
+              <div className="grid grid-cols-2 gap-2">
+                <Button onClick={onAddToCart} disabled={loading} size="sm" className="rounded-xl border border-emerald-500/25 bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500/15 dark:text-emerald-300 h-9 px-2 text-xs font-semibold">
+                  <ShoppingCart className="h-3.5 w-3.5 mr-1" />
+                  Carrinho
+                </Button>
+                <Button onClick={onBuyNow} disabled={loading} size="sm" className="rounded-xl bg-gradient-to-r from-accent to-secondary hover:from-accent/90 hover:to-secondary/90 text-white h-9 px-2 text-xs font-semibold shadow-lg shadow-accent/20">
+                  Comprar
+                </Button>
+              </div>
             )}
           </div>
         </div>
@@ -1464,11 +1493,11 @@ function MaterialCard({
 // ─── Featured Card Component ────────────────────────────────
 function FeaturedCard({
   material, index, isPurchased, groupAccess, isHighlighted, copiedId,
-  onAcquire, onDownload, onCopyLink, onPreview, loading,
+  onAddToCart, onBuyNow, onDownload, onCopyLink, onPreview, loading,
 }: {
   material: Material; index: number; isPurchased: boolean; groupAccess: boolean
   isHighlighted: boolean; copiedId: string | null
-  onAcquire: () => void; onDownload: () => void; onCopyLink: () => void; onPreview: () => void; loading: boolean
+  onAddToCart: () => void; onBuyNow: () => void; onDownload: () => void; onCopyLink: () => void; onPreview: () => void; loading: boolean
 }) {
   const isFree = material.pricing === 'free'
   const canAccess = typeof material._hasAccess === 'boolean'
@@ -1570,11 +1599,21 @@ function FeaturedCard({
                     ? <><Info className="h-4 w-4 mr-2" /> Ver detalhes</>
                   : <><Download className="h-4 w-4 mr-2" /> Baixar Material</>}
             </Button>
-          ) : (
-            <Button onClick={onAcquire} disabled={loading} size="sm" className="w-full bg-gradient-to-r from-accent to-secondary text-white rounded-xl h-10 font-semibold shadow-lg shadow-accent/25">
-              {loading ? <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" /> : <ShoppingCart className="h-4 w-4 mr-2" />}
-              {isFree ? 'Adquirir Grátis' : `Adicionar - R$ ${material.price?.toFixed(2)}`}
+          ) : isFree ? (
+            <Button onClick={onAddToCart} disabled={loading} size="sm" className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl h-10 font-semibold shadow-lg shadow-green-500/20">
+              {loading ? <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" /> : <Gift className="h-4 w-4 mr-2" />}
+              Adquirir Grátis
             </Button>
+          ) : (
+            <div className="grid grid-cols-2 gap-2">
+              <Button onClick={onAddToCart} disabled={loading} size="sm" className="rounded-xl border border-emerald-500/25 bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500/15 dark:text-emerald-300 h-10 px-2 text-xs font-semibold">
+                <ShoppingCart className="h-4 w-4 mr-1" />
+                Carrinho
+              </Button>
+              <Button onClick={onBuyNow} disabled={loading} size="sm" className="rounded-xl bg-gradient-to-r from-accent to-secondary text-white h-10 px-2 text-xs font-semibold shadow-lg shadow-accent/25">
+                Comprar
+              </Button>
+            </div>
           )}
         </div>
       </div>
@@ -1585,11 +1624,11 @@ function FeaturedCard({
 // ─── Package Card Component ─────────────────────────────────
 function PackageCard({
   pkg, index, isPurchased, groupAccess, isHighlighted, copiedId,
-  onAcquire, onCopyLink, onPreview, loading,
+  onAddToCart, onBuyNow, onCopyLink, onPreview, loading,
 }: {
   pkg: MaterialPackage; index: number; isPurchased: boolean; groupAccess: boolean
   isHighlighted: boolean; copiedId: string | null
-  onAcquire: () => void; onCopyLink: () => void; onPreview: () => void; loading: boolean
+  onAddToCart: () => void; onBuyNow: () => void; onCopyLink: () => void; onPreview: () => void; loading: boolean
 }) {
   const isFree = pkg.pricing === 'free'
   const effectivePrice = Number(pkg._pricing?.effectivePrice ?? pkg.price ?? 0)
@@ -1722,27 +1761,36 @@ function PackageCard({
               <Button size="sm" className="w-full bg-gradient-to-r from-primary to-primary/80 text-white rounded-xl h-10 font-semibold">
                 <Check className="h-4 w-4 mr-2" /> Adquirido
               </Button>
-            ) : (
+            ) : showFreeAcquire ? (
               <Button
-                onClick={onAcquire}
+                onClick={onAddToCart}
                 disabled={loading}
                 size="sm"
-                className={`w-full rounded-xl min-h-11 py-2 font-semibold shadow-lg text-white ${showFreeAcquire ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 shadow-green-500/20' : 'bg-gradient-to-r from-accent to-secondary hover:from-accent/90 hover:to-secondary/90 shadow-accent/20'}`}
+                className="w-full rounded-xl min-h-11 bg-gradient-to-r from-green-500 to-green-600 py-2 font-semibold text-white shadow-lg shadow-green-500/20 hover:from-green-600 hover:to-green-700"
               >
-                {loading ? <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
-                  : showFreeAcquire ? <Gift className="h-4 w-4 mr-2 shrink-0" /> : <ShoppingCart className="h-4 w-4 mr-2 shrink-0" />}
-                {showFreeAcquire ? 'Adquirir Grátis' : (
-                  <span className="flex min-w-0 flex-wrap items-center justify-center gap-x-2 gap-y-0.5 leading-tight">
-                    <span>Adicionar Pacote</span>
-                    {hasDiscount && (
-                      <span className="text-[11px] font-semibold text-white/70 line-through">
-                        {formatBRL(crossedPrice || 0)}
-                      </span>
-                    )}
-                    <span className="font-black">{formatBRL(effectivePrice)}</span>
-                  </span>
-                )}
+                {loading ? <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" /> : <Gift className="h-4 w-4 mr-2 shrink-0" />}
+                Adquirir Grátis
               </Button>
+            ) : (
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  onClick={onAddToCart}
+                  disabled={loading}
+                  size="sm"
+                  className="min-h-11 rounded-xl border border-emerald-500/25 bg-emerald-500/10 px-2 py-2 text-xs font-semibold text-emerald-700 hover:bg-emerald-500/15 dark:text-emerald-300"
+                >
+                  <ShoppingCart className="h-4 w-4 mr-1 shrink-0" />
+                  Carrinho
+                </Button>
+                <Button
+                  onClick={onBuyNow}
+                  disabled={loading}
+                  size="sm"
+                  className="min-h-11 rounded-xl bg-gradient-to-r from-accent to-secondary px-2 py-2 text-xs font-semibold text-white shadow-lg shadow-accent/20 hover:from-accent/90 hover:to-secondary/90"
+                >
+                  Comprar
+                </Button>
+              </div>
             )}
           </div>
         </div>
@@ -1753,11 +1801,12 @@ function PackageCard({
 
 // ─── Preview Modal (locked content detail view) ──────────────
 function PreviewModal({
-  item, onClose, onAcquire, checkoutLoading,
+  item, onClose, onAddToCart, onBuyNow, checkoutLoading,
 }: {
   item: { type: 'material'; data: Material } | { type: 'package'; data: MaterialPackage }
   onClose: () => void
-  onAcquire: () => void
+  onAddToCart: () => void
+  onBuyNow: () => void
   checkoutLoading: string | null
 }) {
   const isMaterial = item.type === 'material'
@@ -1898,20 +1947,34 @@ function PreviewModal({
           )}
 
           {/* CTA */}
-          <Button
-            onClick={onAcquire}
-            disabled={loading}
-            className={`w-full h-11 rounded-2xl font-semibold text-white shadow-lg ${
-              isFree
-                ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 shadow-green-500/25'
-                : 'bg-gradient-to-r from-accent to-secondary hover:from-accent/90 hover:to-secondary/90 shadow-accent/25'
-            }`}
-          >
-            {loading
-              ? <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
-              : isFree ? <Gift className="h-4 w-4 mr-2" /> : <ShoppingCart className="h-4 w-4 mr-2" />}
-            {isFree ? 'Adquirir Gratuitamente' : `Adicionar por R$ ${data.price?.toFixed(2)}`}
-          </Button>
+          {isFree ? (
+            <Button
+              onClick={onAddToCart}
+              disabled={loading}
+              className="h-11 w-full rounded-2xl bg-gradient-to-r from-green-500 to-green-600 font-semibold text-white shadow-lg shadow-green-500/25 hover:from-green-600 hover:to-green-700"
+            >
+              {loading ? <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" /> : <Gift className="h-4 w-4 mr-2" />}
+              Adquirir Gratuitamente
+            </Button>
+          ) : (
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <Button
+                onClick={onAddToCart}
+                disabled={loading}
+                className="h-11 rounded-2xl border border-emerald-500/25 bg-emerald-500/10 font-semibold text-emerald-700 hover:bg-emerald-500/15 dark:text-emerald-300"
+              >
+                <ShoppingCart className="h-4 w-4 mr-2" />
+                Adicionar
+              </Button>
+              <Button
+                onClick={onBuyNow}
+                disabled={loading}
+                className="h-11 rounded-2xl bg-gradient-to-r from-accent to-secondary font-semibold text-white shadow-lg shadow-accent/25 hover:from-accent/90 hover:to-secondary/90"
+              >
+                Comprar agora
+              </Button>
+            </div>
+          )}
         </div>
       </motion.div>
     </motion.div>

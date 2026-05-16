@@ -284,23 +284,6 @@ export default function MaterialViewPage() {
     showCartMessage(result === 'added' ? 'Material adicionado ao carrinho.' : 'Este material já está no carrinho.')
   }, [addItem, showCartMessage])
 
-  const addPackageToCart = useCallback((pkg: UpsellPackage) => {
-    const effectivePrice = Number(pkg._pricing?.effectivePrice ?? pkg.price ?? 0)
-    const result = addItem({
-      itemType: 'package',
-      itemId: pkg._id,
-      title: pkg.title,
-      pricing: pkg.pricing,
-      price: effectivePrice,
-      coverImage: pkg.coverImage,
-      materialCount: pkg.materials?.length || 0,
-      effectivePrice,
-      originalPrice: Number(pkg.price || effectivePrice),
-      discountApplied: Number(pkg._pricing?.discountApplied || 0),
-    })
-    showCartMessage(result === 'added' ? 'Pacote adicionado ao carrinho.' : 'Este pacote já está no carrinho.')
-  }, [addItem, showCartMessage])
-
   // ─── Acquire ──────────────────────────────────────────────
   const handleAcquire = async (skipUpsell = false) => {
     if (!data) return
@@ -364,6 +347,16 @@ export default function MaterialViewPage() {
     } finally {
       setCheckoutLoading(false)
     }
+  }
+
+  const handleBuyNow = () => {
+    if (!data) return
+    const checkoutPath = `/materiais/checkout?type=material&id=${id}`
+    if (!data.isAuthenticated) {
+      router.push(`/auth/login?redirect=${encodeURIComponent(checkoutPath)}`)
+      return
+    }
+    router.push(checkoutPath)
   }
 
   // ─── Copy share link ──────────────────────────────────────
@@ -734,23 +727,37 @@ export default function MaterialViewPage() {
                       )
                     ) : (
                       <>
-                        <Button
-                          onClick={() => handleAcquire()}
-                          disabled={checkoutLoading}
-                          className={`w-full h-11 rounded-2xl font-semibold text-white shadow-lg transition-all active:scale-[0.98] ${
-                            isFree
-                              ? 'bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 shadow-emerald-500/20'
-                              : 'bg-gradient-to-r from-accent to-secondary hover:from-accent/90 hover:to-secondary/90 shadow-accent/20'
-                          }`}
-                        >
-                          {checkoutLoading
-                            ? <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                            : isFree
-                              ? <Gift className="h-4 w-4 mr-2" />
-                              : <ShoppingCart className="h-4 w-4 mr-2" />
-                          }
-                          {isFree ? 'Adquirir gratuitamente' : `Adicionar ao carrinho — R$ ${material.price?.toFixed(2)}`}
-                        </Button>
+                        {isFree ? (
+                          <Button
+                            onClick={() => handleAcquire()}
+                            disabled={checkoutLoading}
+                            className="h-11 w-full rounded-2xl bg-gradient-to-r from-emerald-500 to-green-600 font-semibold text-white shadow-lg shadow-emerald-500/20 transition-all hover:from-emerald-600 hover:to-green-700 active:scale-[0.98]"
+                          >
+                            {checkoutLoading
+                              ? <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                              : <Gift className="h-4 w-4 mr-2" />
+                            }
+                            Adquirir gratuitamente
+                          </Button>
+                        ) : (
+                          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-1">
+                            <Button
+                              onClick={() => handleAcquire()}
+                              disabled={checkoutLoading}
+                              className="h-11 rounded-2xl border border-emerald-500/25 bg-emerald-500/10 font-semibold text-emerald-700 shadow-sm transition-all hover:bg-emerald-500/15 active:scale-[0.98] dark:text-emerald-300"
+                            >
+                              <ShoppingCart className="h-4 w-4 mr-2" />
+                              Adicionar ao carrinho
+                            </Button>
+                            <Button
+                              onClick={handleBuyNow}
+                              disabled={checkoutLoading}
+                              className="h-11 rounded-2xl bg-gradient-to-r from-accent to-secondary font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:from-accent/90 hover:to-secondary/90 active:scale-[0.98]"
+                            >
+                              Comprar agora
+                            </Button>
+                          </div>
+                        )}
                         {!isFree && (
                           <p className="text-center text-[10px] text-muted-foreground/60">
                             Pagamento único · acesso permanente
@@ -844,7 +851,12 @@ export default function MaterialViewPage() {
             const effectivePrice = Number(upsellPkg._pricing?.effectivePrice ?? upsellPkg.price ?? 0)
             const isFreePackage = upsellPkg.pricing === 'free' || effectivePrice <= 0
             if (!isFreePackage) {
-              addPackageToCart(upsellPkg)
+              const checkoutPath = `/materiais/checkout?type=package&id=${upsellPkg._id}`
+              if (!data.isAuthenticated) {
+                router.push(`/auth/login?redirect=${encodeURIComponent(checkoutPath)}`)
+                return
+              }
+              router.push(checkoutPath)
               return
             }
             if (!data.isAuthenticated) {
@@ -859,7 +871,7 @@ export default function MaterialViewPage() {
           }}
           onBuyIndividual={() => {
             setUpsellPkg(null)
-            handleAcquire(true)
+            handleBuyNow()
           }}
           onClose={() => setUpsellPkg(null)}
         />

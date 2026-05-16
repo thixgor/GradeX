@@ -234,6 +234,16 @@ export default function PackageDetailPage() {
     }
   }
 
+  const handleBuyNow = () => {
+    if (!data) return
+    const checkoutPath = `/materiais/checkout?type=package&id=${id}`
+    if (!data.access.isAuthenticated) {
+      router.push(`/auth/login?redirect=${encodeURIComponent(checkoutPath)}`)
+      return
+    }
+    router.push(checkoutPath)
+  }
+
   // ─── Copy share link ──────────────────────────────────────
   const copyShareLink = useCallback(() => {
     const url = `${window.location.origin}/pacotes/${id}`
@@ -594,25 +604,37 @@ export default function PackageDetailPage() {
                       </>
                     ) : (
                       <>
-                        <Button
-                          onClick={handleAcquire}
-                          disabled={checkoutLoading}
-                          className={`w-full h-11 rounded-2xl font-semibold text-white shadow-lg transition-all active:scale-[0.98] ${
-                            isFree || pricing.effectivePrice <= 0
-                              ? 'bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 shadow-emerald-500/20'
-                              : 'bg-gradient-to-r from-accent to-secondary hover:from-accent/90 hover:to-secondary/90 shadow-accent/20'
-                          }`}
-                        >
-                          {checkoutLoading
-                            ? <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                            : isFree || pricing.effectivePrice <= 0
-                              ? <Gift className="h-4 w-4 mr-2" />
-                              : <ShoppingCart className="h-4 w-4 mr-2" />
-                          }
-                          {isFree || pricing.effectivePrice <= 0
-                            ? 'Adquirir gratuitamente'
-                            : `Adicionar ao carrinho — ${fmtBRL(pricing.effectivePrice)}`}
-                        </Button>
+                        {isFree || pricing.effectivePrice <= 0 ? (
+                          <Button
+                            onClick={handleAcquire}
+                            disabled={checkoutLoading}
+                            className="h-11 w-full rounded-2xl bg-gradient-to-r from-emerald-500 to-green-600 font-semibold text-white shadow-lg shadow-emerald-500/20 transition-all hover:from-emerald-600 hover:to-green-700 active:scale-[0.98]"
+                          >
+                            {checkoutLoading
+                              ? <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                              : <Gift className="h-4 w-4 mr-2" />
+                            }
+                            Adquirir gratuitamente
+                          </Button>
+                        ) : (
+                          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-1">
+                            <Button
+                              onClick={handleAcquire}
+                              disabled={checkoutLoading}
+                              className="h-11 rounded-2xl border border-emerald-500/25 bg-emerald-500/10 font-semibold text-emerald-700 shadow-sm transition-all hover:bg-emerald-500/15 active:scale-[0.98] dark:text-emerald-300"
+                            >
+                              <ShoppingCart className="h-4 w-4 mr-2" />
+                              Adicionar ao carrinho
+                            </Button>
+                            <Button
+                              onClick={handleBuyNow}
+                              disabled={checkoutLoading}
+                              className="h-11 rounded-2xl bg-gradient-to-r from-accent to-secondary font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:from-accent/90 hover:to-secondary/90 active:scale-[0.98]"
+                            >
+                              Comprar agora
+                            </Button>
+                          </div>
+                        )}
                         {!isFree && (
                           <p className="text-center text-[10px] text-muted-foreground/60">
                             Pagamento único · acesso permanente
