@@ -49,6 +49,7 @@ import {
   shouldUseNativePdfDownload,
   triggerNativePdfDownload,
 } from '@/lib/material-download-client'
+import { useMaterialCart } from '@/context/MaterialCartContext'
 
 // ─── Types ───────────────────────────────────────────────────
 interface Material {
@@ -131,11 +132,13 @@ export default function MaterialViewPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [checkoutLoading, setCheckoutLoading] = useState(false)
+  const [cartMessage, setCartMessage] = useState('')
   const [descExpanded, setDescExpanded] = useState(false)
   const [upsellPkg, setUpsellPkg] = useState<UpsellPackage | null>(null)
   const [downloadState, setDownloadState] = useState<PdfDownloadState>(INITIAL_DOWNLOAD_STATE)
   const [copied, setCopied] = useState(false)
   const stepTimersRef = useRef<ReturnType<typeof setTimeout>[]>([])
+  const { addItem } = useMaterialCart()
 
   const fetchData = useCallback(async () => {
     setLoading(true)
@@ -260,6 +263,44 @@ export default function MaterialViewPage() {
     router.push(`/materiais/${data.material._id}/viewer`)
   }, [data, router])
 
+  const showCartMessage = useCallback((message: string) => {
+    setCartMessage(message)
+    setTimeout(() => setCartMessage(''), 3500)
+  }, [])
+
+  const addMaterialToCart = useCallback((mat: Material) => {
+    const result = addItem({
+      itemType: 'material',
+      itemId: mat._id,
+      title: mat.title,
+      pricing: mat.pricing,
+      price: Number(mat.price || 0),
+      coverImage: mat.coverImage,
+      materialType: mat.type,
+      effectivePrice: Number(mat.price || 0),
+      originalPrice: Number(mat.price || 0),
+      discountApplied: 0,
+    })
+    showCartMessage(result === 'added' ? 'Material adicionado ao carrinho.' : 'Este material já está no carrinho.')
+  }, [addItem, showCartMessage])
+
+  const addPackageToCart = useCallback((pkg: UpsellPackage) => {
+    const effectivePrice = Number(pkg._pricing?.effectivePrice ?? pkg.price ?? 0)
+    const result = addItem({
+      itemType: 'package',
+      itemId: pkg._id,
+      title: pkg.title,
+      pricing: pkg.pricing,
+      price: effectivePrice,
+      coverImage: pkg.coverImage,
+      materialCount: pkg.materials?.length || 0,
+      effectivePrice,
+      originalPrice: Number(pkg.price || effectivePrice),
+      discountApplied: Number(pkg._pricing?.discountApplied || 0),
+    })
+    showCartMessage(result === 'added' ? 'Pacote adicionado ao carrinho.' : 'Este pacote já está no carrinho.')
+  }, [addItem, showCartMessage])
+
   // ─── Acquire ──────────────────────────────────────────────
   const handleAcquire = async (skipUpsell = false) => {
     if (!data) return
@@ -278,12 +319,6 @@ export default function MaterialViewPage() {
       }),
       keepalive: true,
     }).catch(() => {})
-
-    if (!data.isAuthenticated) {
-      const checkoutPath = `/materiais/checkout?type=material&id=${id}`
-      router.push(`/auth/login?redirect=${encodeURIComponent(checkoutPath)}`)
-      return
-    }
 
     if (!skipUpsell) {
       try {
@@ -305,7 +340,13 @@ export default function MaterialViewPage() {
 
     const isFreeItem = mat.pricing === 'free' || !mat.price || mat.price <= 0
     if (!isFreeItem) {
-      router.push(`/materiais/checkout?type=material&id=${id}`)
+      addMaterialToCart(mat)
+      return
+    }
+
+    if (!data.isAuthenticated) {
+      const checkoutPath = `/materiais/checkout?type=material&id=${id}`
+      router.push(`/auth/login?redirect=${encodeURIComponent(checkoutPath)}`)
       return
     }
     setCheckoutLoading(true)
@@ -708,11 +749,16 @@ export default function MaterialViewPage() {
                               ? <Gift className="h-4 w-4 mr-2" />
                               : <ShoppingCart className="h-4 w-4 mr-2" />
                           }
-                          {isFree ? 'Adquirir gratuitamente' : `Comprar — R$ ${material.price?.toFixed(2)}`}
+                          {isFree ? 'Adquirir gratuitamente' : `Adicionar ao carrinho — R$ ${material.price?.toFixed(2)}`}
                         </Button>
                         {!isFree && (
                           <p className="text-center text-[10px] text-muted-foreground/60">
                             Pagamento único · acesso permanente
+                          </p>
+                        )}
+                        {cartMessage && (
+                          <p className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-center text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
+                            {cartMessage}
                           </p>
                         )}
                       </>
@@ -795,11 +841,21 @@ export default function MaterialViewPage() {
           item={{ id, title: data.material.title, price: data.material.price, type: data.material.type }}
           onBuyPackage={() => {
             setUpsellPkg(null)
+            const effectivePrice = Number(upsellPkg._pricing?.effectivePrice ?? upsellPkg.price ?? 0)
+            const isFreePackage = upsellPkg.pricing === 'free' || effectivePrice <= 0
+            if (!isFreePackage) {
+              addPackageToCart(upsellPkg)
+              return
+            }
             if (!data.isAuthenticated) {
               router.push(`/auth/login?redirect=${encodeURIComponent(`/materiais/checkout?type=package&id=${upsellPkg._id}`)}`)
               return
             }
-            router.push(`/materiais/checkout?type=package&id=${upsellPkg._id}`)
+            fetch('/api/materiais/checkout', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ itemType: 'package', itemId: upsellPkg._id, paymentMethodId: 'free' }),
+            }).then(() => fetchData()).catch(() => {})
           }}
           onBuyIndividual={() => {
             setUpsellPkg(null)

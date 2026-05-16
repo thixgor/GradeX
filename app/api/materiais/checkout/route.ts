@@ -9,6 +9,12 @@ import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
 import { getRequestAnalyticsMeta, recordCheckoutEvent, recordOrderCheckoutEvent } from '@/lib/analytics'
 import { computeEffectivePackagePrice } from '@/lib/material-package-pricing'
+import {
+  MAX_MATERIAL_CART_ITEMS,
+  grantMaterialCartItems,
+  resolveMaterialCart,
+  serializeMaterialCartItem,
+} from '@/lib/material-cart'
 import type { PaymentOrder, MaterialPurchase } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -18,15 +24,27 @@ export const runtime = 'nodejs'
  * Cria pagamento para material/pacote via Mercado Pago.
  * Para itens gratuitos, libera diretamente.
  */
-const Schema = z.object({
-  itemType: z.enum(['material', 'package']),
-  itemId: z.string().min(1),
+const paymentFields = {
   paymentMethodId: z.string().min(1),
   cardToken: z.string().optional(),
   installments: z.number().int().min(1).max(12).optional(),
   issuer: z.string().optional(),
   payerDocumentType: z.enum(['CPF', 'CNPJ']).optional(),
   payerDocumentNumber: z.string().optional(),
+}
+
+const Schema = z.object({
+  itemType: z.enum(['material', 'package']),
+  itemId: z.string().min(1),
+  ...paymentFields,
+})
+
+const CartSchema = z.object({
+  items: z.array(z.object({
+    itemType: z.enum(['material', 'package']),
+    itemId: z.string().min(1),
+  })).min(1).max(MAX_MATERIAL_CART_ITEMS),
+  ...paymentFields,
 })
 
 export async function POST(request: NextRequest) {
@@ -39,11 +57,20 @@ export async function POST(request: NextRequest) {
 
   let body: any
   try { body = await request.json() } catch { return NextResponse.json({ error: 'Body inválido' }, { status: 400 }) }
+
+  const parsedCart = CartSchema.safeParse(body)
+  if (parsedCart.success) {
+    return handleCartCheckout(request, ip, session, parsedCart.data)
+  }
+
   const parsed = Schema.safeParse(body)
   if (!parsed.success) return NextResponse.json({ error: 'Dados inválidos' }, { status: 400 })
   const data = parsed.data
 
   const db = await getDb()
+  if (!ObjectId.isValid(data.itemId)) {
+    return NextResponse.json({ error: 'itemId inválido' }, { status: 400 })
+  }
   const collection = data.itemType === 'package' ? 'material_packages' : 'materials'
   const item = await db.collection(collection).findOne({ _id: new ObjectId(data.itemId) })
   if (!item) return NextResponse.json({ error: 'Item não encontrado' }, { status: 404 })
@@ -333,6 +360,180 @@ export async function POST(request: NextRequest) {
     })
   } catch (err: any) {
     console.error('[materiais/checkout] erro:', err)
+    await db.collection<PaymentOrder>('payment_orders').updateOne(
+      { _id: inserted.insertedId },
+      { $set: { status: 'rejected', statusDetail: 'provider_error', updatedAt: new Date() } }
+    )
+    return NextResponse.json(
+      { error: err?.message || 'Falha ao criar pagamento' },
+      { status: 502 }
+    )
+  }
+}
+
+async function handleCartCheckout(
+  request: NextRequest,
+  ip: string,
+  session: NonNullable<Awaited<ReturnType<typeof getSession>>>,
+  data: z.infer<typeof CartSchema>
+) {
+  const db = await getDb()
+  const resolution = await resolveMaterialCart(db, session, data.items)
+  const serializedItems = resolution.items.map(serializeMaterialCartItem)
+  const serializedFreeItems = resolution.freeItems.map(serializeMaterialCartItem)
+  const serializedPayableItems = resolution.payableItems.map(serializeMaterialCartItem)
+
+  if (resolution.items.length === 0) {
+    return NextResponse.json({
+      error: 'Nenhum item disponível para compra no carrinho',
+      alreadyOwned: resolution.skippedItems.some(item => item.reason === 'already_owned'),
+      redirectTo: '/materiais?tab=mine',
+      skippedItems: resolution.skippedItems,
+    }, { status: 409 })
+  }
+
+  if (resolution.freeItems.length > 0) {
+    await grantMaterialCartItems(db, session, resolution.freeItems, {
+      auditMetadata: { free: true, source: 'cart' },
+    })
+  }
+
+  if (resolution.amount <= 0) {
+    await recordCheckoutEvent({
+      event: 'payment_approved',
+      userId: session.userId,
+      userName: session.name,
+      userEmail: session.email,
+      productId: 'cart',
+      productTitle: `Carrinho (${resolution.items.length} itens)`,
+      productType: 'material',
+      amount: 0,
+      paymentMethod: 'free',
+      status: 'approved',
+      source: 'Carrinho',
+      metadata: {
+        free: true,
+        itemType: 'cart',
+        items: serializedItems,
+        skippedItems: resolution.skippedItems,
+      },
+      ...getRequestAnalyticsMeta(request),
+    })
+
+    return NextResponse.json({
+      free: true,
+      success: true,
+      amount: 0,
+      unlockedItems: serializedItems,
+      skippedItems: resolution.skippedItems,
+      redirectTo: '/materiais?tab=mine&purchase=success',
+    })
+  }
+
+  if (data.paymentMethodId === 'free') {
+    return NextResponse.json({ error: 'Carrinho pago requer uma forma de pagamento válida.' }, { status: 400 })
+  }
+
+  const amount = Number(resolution.amount)
+  const itemCount = resolution.payableItems.length
+  const description = `Carrinho DomineAqui - ${itemCount} ${itemCount === 1 ? 'item' : 'itens'}`
+  const now = new Date()
+  const orderDoc: Omit<PaymentOrder, '_id'> = {
+    userId: session.userId,
+    payerEmail: session.email,
+    payerName: session.name,
+    provider: 'mercado_pago',
+    type: 'material',
+    refId: resolution.payableItems[0]?.itemId,
+    amount,
+    currency: 'BRL',
+    status: 'pending',
+    idempotencyKey: '',
+    metadata: {
+      itemType: 'cart',
+      itemTitle: description,
+      cartItems: serializedPayableItems,
+      freeItems: serializedFreeItems,
+      skippedItems: resolution.skippedItems,
+    },
+    createdAt: now,
+    updatedAt: now,
+  }
+
+  const inserted = await db.collection<PaymentOrder>('payment_orders').insertOne(orderDoc as any)
+  const orderId = inserted.insertedId.toString()
+  const idempotencyKey = deriveIdempotencyKey(orderId)
+  await db.collection<PaymentOrder>('payment_orders').updateOne(
+    { _id: inserted.insertedId },
+    { $set: { idempotencyKey } }
+  )
+
+  await recordOrderCheckoutEvent('order_created', { ...orderDoc, _id: inserted.insertedId, idempotencyKey } as PaymentOrder, {
+    productId: 'cart',
+    productTitle: description,
+    productType: 'material',
+    paymentMethod: data.paymentMethodId,
+    source: 'Carrinho',
+    metadata: {
+      itemType: 'cart',
+      cartSize: resolution.items.length,
+      payableSize: resolution.payableItems.length,
+      freeSize: resolution.freeItems.length,
+      skippedItems: resolution.skippedItems,
+    },
+    ...getRequestAnalyticsMeta(request),
+  })
+
+  try {
+    const provider = getPaymentProvider()
+    const result = await provider.createPayment({
+      externalReference: orderId,
+      amount,
+      currency: 'BRL',
+      description,
+      payerEmail: session.email,
+      payerName: session.name,
+      idempotencyKey,
+      paymentMethodId: data.paymentMethodId,
+      cardToken: data.cardToken,
+      installments: data.installments,
+      issuer: data.issuer,
+      payerDocumentType: data.payerDocumentType,
+      payerDocumentNumber: data.payerDocumentNumber,
+      metadata: {
+        orderId,
+        type: 'material',
+        itemType: 'cart',
+        cartSize: String(resolution.payableItems.length),
+      },
+    })
+
+    await applyPaymentResult(orderId, result)
+    await audit({
+      action: 'order_created',
+      actorUserId: session.userId,
+      targetUserId: session.userId,
+      resourceType: 'material_cart',
+      resourceId: orderId,
+      metadata: { amount, paymentMethod: data.paymentMethodId, providerPaymentId: result.providerOrderId },
+      ip,
+    })
+
+    return NextResponse.json({
+      orderId,
+      providerPaymentId: result.providerOrderId,
+      status: result.status,
+      paymentMethod: result.paymentMethod,
+      pix: result.pix || null,
+      boleto: result.boleto || null,
+      statusDetail: result.statusDetail,
+      amount,
+      freeItems: serializedFreeItems,
+      skippedItems: resolution.skippedItems,
+      successRedirect: '/materiais?tab=mine&purchase=success',
+    })
+  } catch (err: any) {
+    console.error('[materiais/checkout/cart] erro:', err)
     await db.collection<PaymentOrder>('payment_orders').updateOne(
       { _id: inserted.insertedId },
       { $set: { status: 'rejected', statusDetail: 'provider_error', updatedAt: new Date() } }

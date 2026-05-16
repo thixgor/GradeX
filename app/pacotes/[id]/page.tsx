@@ -37,6 +37,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { AppShell } from '@/components/app-shell'
+import { useMaterialCart } from '@/context/MaterialCartContext'
 
 // ─── Types ───────────────────────────────────────────────────
 interface PackageMaterial {
@@ -141,8 +142,10 @@ export default function PackageDetailPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [checkoutLoading, setCheckoutLoading] = useState(false)
+  const [cartMessage, setCartMessage] = useState('')
   const [descExpanded, setDescExpanded] = useState(false)
   const [copied, setCopied] = useState(false)
+  const { addItem } = useMaterialCart()
 
   const fetchData = useCallback(async () => {
     setLoading(true)
@@ -186,15 +189,28 @@ export default function PackageDetailPage() {
       keepalive: true,
     }).catch(() => {})
 
-    if (!data.access.isAuthenticated) {
-      const checkoutPath = `/materiais/checkout?type=package&id=${id}`
-      router.push(`/auth/login?redirect=${encodeURIComponent(checkoutPath)}`)
+    const isFreePath = pkg.pricing === 'free' || price <= 0
+    if (!isFreePath) {
+      const result = addItem({
+        itemType: 'package',
+        itemId: id,
+        title: pkg.title,
+        pricing: pkg.pricing,
+        price,
+        coverImage: pkg.coverImage,
+        materialCount: data.materials.length,
+        effectivePrice: price,
+        originalPrice: Number(pkg.price || price),
+        discountApplied: Number(pricing.discountApplied || 0),
+      })
+      setCartMessage(result === 'added' ? 'Pacote adicionado ao carrinho.' : 'Este pacote já está no carrinho.')
+      setTimeout(() => setCartMessage(''), 3500)
       return
     }
 
-    const isFreePath = pkg.pricing === 'free' || price <= 0
-    if (!isFreePath) {
-      router.push(`/materiais/checkout?type=package&id=${id}`)
+    if (!data.access.isAuthenticated) {
+      const checkoutPath = `/materiais/checkout?type=package&id=${id}`
+      router.push(`/auth/login?redirect=${encodeURIComponent(checkoutPath)}`)
       return
     }
 
@@ -595,11 +611,16 @@ export default function PackageDetailPage() {
                           }
                           {isFree || pricing.effectivePrice <= 0
                             ? 'Adquirir gratuitamente'
-                            : `Comprar pacote — ${fmtBRL(pricing.effectivePrice)}`}
+                            : `Adicionar ao carrinho — ${fmtBRL(pricing.effectivePrice)}`}
                         </Button>
                         {!isFree && (
                           <p className="text-center text-[10px] text-muted-foreground/60">
                             Pagamento único · acesso permanente
+                          </p>
+                        )}
+                        {cartMessage && (
+                          <p className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-center text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
+                            {cartMessage}
                           </p>
                         )}
                       </>

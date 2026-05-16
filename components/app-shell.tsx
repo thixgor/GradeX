@@ -11,6 +11,7 @@ import { Button, buttonVariants } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { NotificationsBell } from '@/components/notifications-bell'
 import { Logo } from '@/components/logo'
+import { MaterialCartButton } from '@/components/materiais/material-cart-button'
 import { cn } from '@/lib/utils'
 import { LogIn, Menu, ShieldAlert } from 'lucide-react'
 import { useBootstrap, clearBootstrapCache } from '@/hooks/use-bootstrap'
@@ -267,6 +268,7 @@ Contato: (21) 99777-0936`)
                     <LogIn className="mr-2 h-4 w-4" />
                     Entrar
                   </a>
+                  <MaterialCartButton isAuthenticated={false} />
                 </div>
               </header>
             )}
@@ -362,6 +364,7 @@ Contato: (21) 99777-0936`)
 
                 {/* Right side */}
                 <div className="flex items-center gap-2">
+                  <MaterialCartButton isAuthenticated={!!user} />
                   <FocusSessionButton />
                   <NotificationsBell />
                   <ThemeToggle />

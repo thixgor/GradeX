@@ -51,6 +51,7 @@ import {
   shouldUseNativePdfDownload,
   triggerNativePdfDownload,
 } from '@/lib/material-download-client'
+import { useMaterialCart } from '@/context/MaterialCartContext'
 
 interface Material {
   _id: string
@@ -261,6 +262,7 @@ function MateriaisContent() {
   const allFoldersCacheRef = useRef<Folder[] | null>(null)
   const packagesCacheRef = useRef<Pick<BrowseSnapshot, 'packages' | 'purchasedPackageIds' | 'userGroups'> | null>(null)
   const { copiedId, copy } = useCopyLink()
+  const { addItem } = useMaterialCart()
 
   useEffect(() => () => { stepTimersRef.current.forEach(clearTimeout) }, [])
 
@@ -572,16 +574,16 @@ function MateriaisContent() {
         keepalive: true,
       }).catch(() => {})
     }
-    if (!isAuthenticated) {
-      const checkoutPath = `/materiais/checkout?type=${itemType}&id=${itemId}`
-      router.push(`/auth/login?redirect=${encodeURIComponent(checkoutPath)}`)
-      return
-    }
     if (!item) return
     const effectivePackagePrice = itemType === 'package'
       ? Number((item as MaterialPackage)?._pricing?.effectivePrice ?? item.price ?? 0)
       : Number(item.price ?? 0)
     if (item.pricing === 'free' || effectivePackagePrice <= 0) {
+      if (!isAuthenticated) {
+        const checkoutPath = `/materiais/checkout?type=${itemType}&id=${itemId}`
+        router.push(`/auth/login?redirect=${encodeURIComponent(checkoutPath)}`)
+        return
+      }
       setCheckoutLoading(itemId)
       try {
         const res = await fetch('/api/materiais/checkout', {
@@ -604,8 +606,26 @@ function MateriaisContent() {
       }
       return
     }
-    // Item pago: vai para o checkout MP
-    router.push(`/materiais/checkout?type=${itemType}&id=${itemId}`)
+
+    const addResult = addItem({
+      itemType,
+      itemId,
+      title: item.title,
+      pricing: item.pricing,
+      price: effectivePackagePrice,
+      coverImage: (item as any).coverImage,
+      materialType: itemType === 'material' ? (item as Material).type : undefined,
+      materialCount: itemType === 'package' ? (item as MaterialPackage).materialIds?.length || 0 : undefined,
+      effectivePrice: effectivePackagePrice,
+      originalPrice: itemType === 'package'
+        ? Number((item as MaterialPackage).price || effectivePackagePrice)
+        : Number((item as Material).price || effectivePackagePrice),
+      discountApplied: itemType === 'package'
+        ? Number((item as MaterialPackage)._pricing?.discountApplied || 0)
+        : 0,
+    })
+    setSuccessMessage(addResult === 'added' ? 'Item adicionado ao carrinho.' : 'Esse item já está no carrinho.')
+    setTimeout(() => setSuccessMessage(''), 3500)
   }
 
   const handleMaterialAcquire = (material: Material) => {
@@ -1431,7 +1451,7 @@ function MaterialCard({
             ) : (
               <Button onClick={onAcquire} disabled={loading} size="sm" className="w-full bg-gradient-to-r from-accent to-secondary hover:from-accent/90 hover:to-secondary/90 text-white rounded-xl h-9 text-xs font-semibold shadow-lg shadow-accent/20">
                 {loading ? <div className="h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-1.5" /> : <ShoppingCart className="h-3.5 w-3.5 mr-1.5" />}
-                Comprar - R$ {material.price?.toFixed(2)}
+                Adicionar - R$ {material.price?.toFixed(2)}
               </Button>
             )}
           </div>
@@ -1553,7 +1573,7 @@ function FeaturedCard({
           ) : (
             <Button onClick={onAcquire} disabled={loading} size="sm" className="w-full bg-gradient-to-r from-accent to-secondary text-white rounded-xl h-10 font-semibold shadow-lg shadow-accent/25">
               {loading ? <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" /> : <ShoppingCart className="h-4 w-4 mr-2" />}
-              {isFree ? 'Adquirir Grátis' : `Comprar - R$ ${material.price?.toFixed(2)}`}
+              {isFree ? 'Adquirir Grátis' : `Adicionar - R$ ${material.price?.toFixed(2)}`}
             </Button>
           )}
         </div>
@@ -1713,7 +1733,7 @@ function PackageCard({
                   : showFreeAcquire ? <Gift className="h-4 w-4 mr-2 shrink-0" /> : <ShoppingCart className="h-4 w-4 mr-2 shrink-0" />}
                 {showFreeAcquire ? 'Adquirir Grátis' : (
                   <span className="flex min-w-0 flex-wrap items-center justify-center gap-x-2 gap-y-0.5 leading-tight">
-                    <span>Comprar Pacote</span>
+                    <span>Adicionar Pacote</span>
                     {hasDiscount && (
                       <span className="text-[11px] font-semibold text-white/70 line-through">
                         {formatBRL(crossedPrice || 0)}
@@ -1890,7 +1910,7 @@ function PreviewModal({
             {loading
               ? <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
               : isFree ? <Gift className="h-4 w-4 mr-2" /> : <ShoppingCart className="h-4 w-4 mr-2" />}
-            {isFree ? 'Adquirir Gratuitamente' : `Comprar por R$ ${data.price?.toFixed(2)}`}
+            {isFree ? 'Adquirir Gratuitamente' : `Adicionar por R$ ${data.price?.toFixed(2)}`}
           </Button>
         </div>
       </motion.div>

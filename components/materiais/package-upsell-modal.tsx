@@ -435,7 +435,7 @@ export function PackageUpsellModal({
               ? <span className="h-3.5 w-3.5 rounded-full border-2 border-white/20 border-t-white/60 animate-spin" />
               : <ShoppingCart className="h-3.5 w-3.5" />
             }
-            Comprar apenas este item
+            Adicionar apenas este item
             {item.price != null && (
               <span className="font-semibold ml-0.5" style={{ color: 'rgba(255,255,255,0.55)' }}>
                 — {fmtPrice(item.price)}

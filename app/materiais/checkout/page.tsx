@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Loader2, ChevronLeft, FileText, Package } from 'lucide-react'
+import { AlertCircle, Check, ChevronLeft, FileText, Loader2, Package, ShoppingCart, Trash2 } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
+import { useMaterialCart } from '@/context/MaterialCartContext'
 
 const pageStyle: React.CSSProperties = {
   minHeight: '100vh',
@@ -29,16 +30,45 @@ const emeraldBadge: React.CSSProperties = {
   display: 'inline-block',
 }
 
+interface CartPreviewItem {
+  itemType: 'material' | 'package'
+  itemId: string
+  itemTitle: string
+  materialType?: string
+  price: number
+  originalPrice: number
+  discountApplied: number
+}
+
+interface CartPreview {
+  items: CartPreviewItem[]
+  payableItems: CartPreviewItem[]
+  freeItems: CartPreviewItem[]
+  skippedItems: Array<{ itemType: 'material' | 'package'; itemId: string; reason: string }>
+  amount: number
+}
+
+function formatBRL(value: number): string {
+  return `R$ ${Number(value || 0).toFixed(2).replace('.', ',')}`
+}
+
 export default function MateriaisCheckoutPage() {
   const router = useRouter()
   const params = useSearchParams()
+  const isCartMode = params.get('cart') === '1'
   const itemType = (params.get('type') as 'material' | 'package') || 'material'
   const itemId = params.get('id') || ''
+  const { items: cartItems, clearCart, removeItem } = useMaterialCart()
 
   const [item, setItem] = useState<any>(null)
+  const [cartPreview, setCartPreview] = useState<CartPreview | null>(null)
   const [publicKey, setPublicKey] = useState('')
   const [loading, setLoading] = useState(true)
+  const [freeCheckoutLoading, setFreeCheckoutLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const cartPayload = cartItems.map(item => ({ itemType: item.itemType, itemId: item.itemId }))
+  const cartPayloadKey = cartPayload.map(item => `${item.itemType}:${item.itemId}`).join('|')
 
   function getOwnedRedirect(found: any): string {
     if (itemType === 'package') return `/pacotes/${itemId}`
@@ -50,6 +80,42 @@ export default function MateriaisCheckoutPage() {
   }
 
   useEffect(() => {
+    if (isCartMode) {
+      if (cartPayload.length === 0) {
+        setError('Seu carrinho está vazio')
+        setLoading(false)
+        return
+      }
+
+      setLoading(true)
+      setError(null)
+      Promise.all([
+        fetch('/api/materiais/cart/preview', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items: cartPayload }),
+          cache: 'no-store',
+        }).then(async r => {
+          const data = await r.json()
+          if (!r.ok) throw new Error(data.error || 'Erro ao calcular carrinho')
+          return data
+        }),
+        fetch('/api/payments/public-key').then(r => r.json()),
+      ])
+        .then(([previewResp, pkResp]) => {
+          if (!previewResp?.items?.length) {
+            setError('Nenhum item do carrinho está disponível para compra')
+            setCartPreview(previewResp)
+            return
+          }
+          setCartPreview(previewResp)
+          setPublicKey(pkResp.publicKey || '')
+        })
+        .catch(err => setError(String(err?.message || err)))
+        .finally(() => setLoading(false))
+      return
+    }
+
     if (!itemId) {
       setError('Item não informado')
       setLoading(false)
@@ -100,9 +166,32 @@ export default function MateriaisCheckoutPage() {
       })
       .catch(err => setError(String(err?.message || err)))
       .finally(() => setLoading(false))
-  }, [itemId, itemType])
+  }, [cartPayloadKey, isCartMode, itemId, itemType])
 
   useEffect(() => {
+    if (isCartMode) {
+      if (!cartPreview) return
+      fetch('/api/analytics/checkout-event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event: 'checkout_view',
+          productId: 'cart',
+          productTitle: `Carrinho (${cartPreview.items.length} itens)`,
+          productType: 'material',
+          amount: Number(cartPreview.amount || 0),
+          source: 'Carrinho',
+          metadata: {
+            itemType: 'cart',
+            items: cartPreview.items.map(item => ({ itemType: item.itemType, itemId: item.itemId })),
+            skippedItems: cartPreview.skippedItems,
+          },
+        }),
+        keepalive: true,
+      }).catch(() => {})
+      return
+    }
+
     if (!item) return
     fetch('/api/analytics/checkout-event', {
       method: 'POST',
@@ -118,7 +207,7 @@ export default function MateriaisCheckoutPage() {
       }),
       keepalive: true,
     }).catch(() => {})
-  }, [item, itemId, itemType])
+  }, [cartPreview, isCartMode, item, itemId, itemType])
 
   if (loading) {
     return (
@@ -130,7 +219,7 @@ export default function MateriaisCheckoutPage() {
     )
   }
 
-  if (error || !item) {
+  if (error || (!isCartMode && !item) || (isCartMode && !cartPreview)) {
     return (
       <div style={pageStyle}>
         <div style={{ maxWidth: '640px', margin: '0 auto', paddingTop: '40px' }}>
@@ -148,6 +237,246 @@ export default function MateriaisCheckoutPage() {
           >
             <ChevronLeft size={16} /> Voltar
           </button>
+        </div>
+      </div>
+    )
+  }
+
+  if (isCartMode && cartPreview) {
+    const amount = Number(cartPreview.amount || 0)
+    const acceptedIds = new Set(cartPreview.items.map(item => `${item.itemType}:${item.itemId}`))
+    const acceptedLocalItems = cartItems.filter(item => acceptedIds.has(`${item.itemType}:${item.itemId}`))
+
+    const unlockFreeCart = async () => {
+      setFreeCheckoutLoading(true)
+      setError(null)
+      try {
+        const res = await fetch('/api/materiais/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items: cartPayload, paymentMethodId: 'free' }),
+        })
+        const data = await res.json()
+        if (!res.ok) throw new Error(data.error || 'Erro ao liberar carrinho')
+        clearCart()
+        window.location.href = data.redirectTo || '/materiais?tab=mine&purchase=success'
+      } catch (err: any) {
+        setError(err?.message || 'Erro ao liberar carrinho')
+      } finally {
+        setFreeCheckoutLoading(false)
+      }
+    }
+
+    return (
+      <div style={pageStyle}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          <button
+            onClick={() => router.push('/materiais')}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: '6px',
+              background: 'transparent', border: 'none',
+              color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: '14px',
+              marginBottom: '24px', padding: '0',
+            }}
+          >
+            <ChevronLeft size={16} /> Voltar aos materiais
+          </button>
+
+          <h1 style={{ fontSize: '28px', fontWeight: 800, color: 'white', marginBottom: '8px', letterSpacing: '-0.02em' }}>
+            Finalizar carrinho
+          </h1>
+          <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', marginBottom: '32px' }}>
+            {cartPreview.items.length} {cartPreview.items.length === 1 ? 'item selecionado' : 'itens selecionados'}
+          </p>
+
+          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] gap-6 items-start">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ ...glassCard, padding: '24px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
+                  <div style={{
+                    width: '40px', height: '40px', borderRadius: '10px',
+                    background: 'rgba(52,211,153,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    flexShrink: 0,
+                  }}>
+                    <ShoppingCart size={20} style={{ color: '#34d399' }} />
+                  </div>
+                  <span style={emeraldBadge}>Carrinho</span>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {cartPreview.items.map(previewItem => {
+                    const local = acceptedLocalItems.find(item => item.itemType === previewItem.itemType && item.itemId === previewItem.itemId)
+                    const price = Number(previewItem.price || 0)
+                    return (
+                      <div
+                        key={`${previewItem.itemType}:${previewItem.itemId}`}
+                        style={{
+                          display: 'flex',
+                          gap: '12px',
+                          padding: '12px',
+                          borderRadius: '14px',
+                          background: 'rgba(255,255,255,0.04)',
+                          border: '1px solid rgba(255,255,255,0.08)',
+                        }}
+                      >
+                        <div style={{
+                          width: '44px',
+                          height: '44px',
+                          borderRadius: '10px',
+                          background: 'rgba(52,211,153,0.1)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                          color: '#34d399',
+                        }}>
+                          {previewItem.itemType === 'package' ? <Package size={18} /> : <FileText size={18} />}
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.45)', marginBottom: '2px' }}>
+                            {previewItem.itemType === 'package' ? 'Pacote' : 'Material'}
+                          </p>
+                          <p style={{ fontSize: '14px', fontWeight: 700, color: 'white', lineHeight: 1.35 }}>
+                            {previewItem.itemTitle}
+                          </p>
+                          {previewItem.discountApplied > 0 && (
+                            <p style={{ fontSize: '12px', color: '#34d399', marginTop: '3px' }}>
+                              Desconto aplicado: {formatBRL(previewItem.discountApplied)}
+                            </p>
+                          )}
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+                          <span style={{ fontSize: '14px', fontWeight: 800, color: '#34d399' }}>
+                            {price <= 0 ? 'Grátis' : formatBRL(price)}
+                          </span>
+                          {local && (
+                            <button
+                              type="button"
+                              onClick={() => removeItem(local.itemType, local.itemId)}
+                              style={{
+                                width: '32px',
+                                height: '32px',
+                                borderRadius: '9px',
+                                border: '1px solid rgba(255,255,255,0.1)',
+                                background: 'rgba(255,255,255,0.04)',
+                                color: 'rgba(255,255,255,0.55)',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                              }}
+                              aria-label={`Remover ${local.title}`}
+                            >
+                              <Trash2 size={15} />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+
+                {cartPreview.skippedItems.length > 0 && (
+                  <div style={{
+                    marginTop: '16px',
+                    display: 'flex',
+                    gap: '10px',
+                    padding: '12px',
+                    borderRadius: '12px',
+                    background: 'rgba(245,158,11,0.08)',
+                    border: '1px solid rgba(245,158,11,0.18)',
+                    color: 'rgba(253,230,138,0.95)',
+                    fontSize: '12px',
+                    lineHeight: 1.5,
+                  }}>
+                    <AlertCircle size={16} style={{ flexShrink: 0, marginTop: '2px' }} />
+                    <span>
+                      Alguns itens foram ignorados por já estarem adquiridos, duplicados ou indisponíveis.
+                    </span>
+                  </div>
+                )}
+
+                <div style={{
+                  marginTop: '18px',
+                  padding: '16px',
+                  background: 'rgba(52,211,153,0.06)',
+                  border: '1px solid rgba(52,211,153,0.12)',
+                  borderRadius: '12px',
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>
+                    <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.55)' }}>Total recalculado</span>
+                    <span style={{ fontSize: '28px', fontWeight: 900, color: '#34d399', letterSpacing: '-0.03em' }}>
+                      {amount <= 0 ? 'Grátis' : formatBRL(amount)}
+                    </span>
+                  </div>
+                  <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', marginTop: '4px' }}>
+                    Pagamento único · Acesso permanente
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ ...glassCard, padding: '28px' }}>
+              {amount <= 0 ? (
+                <div style={{ textAlign: 'center', color: 'white' }}>
+                  <div style={{
+                    width: '56px',
+                    height: '56px',
+                    borderRadius: '16px',
+                    background: 'rgba(52,211,153,0.12)',
+                    border: '1px solid rgba(52,211,153,0.22)',
+                    margin: '0 auto 16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#34d399',
+                  }}>
+                    <Check size={24} />
+                  </div>
+                  <h2 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '8px' }}>Carrinho gratuito</h2>
+                  <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.55)', marginBottom: '20px' }}>
+                    Confirme para liberar os itens disponíveis na sua conta.
+                  </p>
+                  <button
+                    onClick={unlockFreeCart}
+                    disabled={freeCheckoutLoading}
+                    style={{
+                      width: '100%',
+                      height: '48px',
+                      borderRadius: '14px',
+                      border: 'none',
+                      background: 'linear-gradient(135deg, #059669, #34d399)',
+                      color: 'white',
+                      fontWeight: 800,
+                      cursor: freeCheckoutLoading ? 'not-allowed' : 'pointer',
+                    }}
+                  >
+                    {freeCheckoutLoading ? 'Liberando...' : 'Liberar itens'}
+                  </button>
+                </div>
+              ) : (
+                <MercadoPagoCheckout
+                  publicKey={publicKey}
+                  amount={amount}
+                  description={`Carrinho DomineAqui - ${cartPreview.payableItems.length} itens`}
+                  endpoint="/api/materiais/checkout"
+                  extraBody={{ items: cartPayload }}
+                  analytics={{
+                    productId: 'cart',
+                    productTitle: `Carrinho (${cartPreview.items.length} itens)`,
+                    productType: 'material',
+                    source: 'Carrinho',
+                  }}
+                  onApproved={(resp) => {
+                    clearCart()
+                    setTimeout(() => {
+                      window.location.href = resp.successRedirect || '/materiais?tab=mine&purchase=success'
+                    }, 1200)
+                  }}
+                />
+              )}
+            </div>
+          </div>
         </div>
       </div>
     )

@@ -10,6 +10,7 @@ import { StudyMusicPlayer } from '@/components/study-music-player'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { LiteModeProvider } from '@/context/LiteModeContext'
+import { MaterialCartProvider } from '@/context/MaterialCartContext'
 import {
   CANONICAL_ORIGIN,
   DEFAULT_OG_IMAGE,
@@ -170,15 +171,17 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <VerifyEmailBanner />
-          <ImageProtectionProvider>
-            <TrialExpirationChecker />
-            <div className="flex-1 flex flex-col">
-              {children}
-            </div>
-            <Footer />
-            <StudyMusicPlayer />
-          </ImageProtectionProvider>
+          <MaterialCartProvider>
+            <VerifyEmailBanner />
+            <ImageProtectionProvider>
+              <TrialExpirationChecker />
+              <div className="flex-1 flex flex-col">
+                {children}
+              </div>
+              <Footer />
+              <StudyMusicPlayer />
+            </ImageProtectionProvider>
+          </MaterialCartProvider>
           <Analytics />
           <SpeedInsights />
         </ThemeProvider>

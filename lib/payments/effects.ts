@@ -23,6 +23,7 @@ import type {
 import type { PaymentStatus, ProviderOrder } from './types'
 import { audit } from './audit'
 import { recordOrderCheckoutEvent } from '../analytics'
+import { grantMaterialCartItems, type MaterialCartResolvedItem } from '../material-cart'
 
 const TERMINAL_APPROVED: PaymentStatus[] = ['approved']
 const TERMINAL_FAILED: PaymentStatus[] = ['rejected', 'cancelled', 'expired', 'refunded', 'charged_back']
@@ -116,7 +117,7 @@ async function runApprovedEffects(order: PaymentOrder, result: ProviderOrder) {
       await applyPlanPurchase(order)
       break
     case 'material':
-      await applyMaterialPurchase(order)
+      await applyMaterialPurchase(order, result)
       break
     case 'donation':
       await applyDonationApproved(order, result)
@@ -141,6 +142,14 @@ async function runRevocationEffects(order: PaymentOrder, newStatus: PaymentStatu
   }
   if (order.type === 'material' && order.userId && order.refId) {
     const db = await getDb()
+    if (Array.isArray(order.metadata?.cartItems) && order.metadata.cartItems.length > 0) {
+      await db.collection<MaterialPurchase>('material_purchases').updateMany(
+        { userId: order.userId, providerOrderId: String(order._id) },
+        { $set: { status: 'refunded', refundedAt: new Date() } }
+      )
+      return
+    }
+
     await db.collection<MaterialPurchase>('material_purchases').updateOne(
       { userId: order.userId, itemId: order.refId, providerOrderId: String(order._id) },
       { $set: { status: 'refunded', refundedAt: new Date() } }
@@ -208,9 +217,67 @@ async function applyPlanPurchase(order: PaymentOrder) {
 
 // ── Material/Pacote ──
 
-async function applyMaterialPurchase(order: PaymentOrder) {
+async function applyMaterialPurchase(order: PaymentOrder, result?: ProviderOrder) {
   if (!order.userId || !order.refId) return
   const db = await getDb()
+
+  if (Array.isArray(order.metadata?.cartItems) && order.metadata.cartItems.length > 0) {
+    const cartItems = order.metadata.cartItems
+      .map((item: any): MaterialCartResolvedItem | null => {
+        if (
+          !item ||
+          (item.itemType !== 'material' && item.itemType !== 'package') ||
+          !item.itemId
+        ) {
+          return null
+        }
+
+        return {
+          itemType: item.itemType,
+          itemId: String(item.itemId),
+          itemTitle: String(item.itemTitle || 'Item'),
+          materialType: item.materialType,
+          linkedDeckSlug: item.linkedDeckSlug,
+          materialIds: Array.isArray(item.materialIds) ? item.materialIds.map(String) : undefined,
+          price: Number(item.price || 0),
+          originalPrice: Number(item.originalPrice || item.price || 0),
+          discountApplied: Number(item.discountApplied || 0),
+          ownedMaterialIds: Array.isArray(item.ownedMaterialIds) ? item.ownedMaterialIds.map(String) : [],
+        }
+      })
+      .filter(Boolean) as MaterialCartResolvedItem[]
+
+    if (cartItems.length === 0) return
+
+    await grantMaterialCartItems(
+      db,
+      {
+        userId: order.userId,
+        name: order.payerName || '',
+        email: order.payerEmail || '',
+      },
+      cartItems,
+      {
+        providerOrderId: String(order._id),
+        providerPaymentId: result?.providerOrderId || order.providerPaymentId,
+        auditMetadata: { orderId: String(order._id), cart: true },
+      }
+    )
+
+    if (order.payerEmail) {
+      const title = cartItems.length === 1
+        ? cartItems[0].itemTitle
+        : `Carrinho com ${cartItems.length} itens`
+      sendMaterialPurchasedEmail(
+        order.payerEmail,
+        order.payerName || '',
+        title,
+        order.amount
+      ).catch(err => console.error('[effects] e-mail carrinho falhou:', err))
+    }
+    return
+  }
+
   const itemType = (order.metadata?.itemType as 'material' | 'package') || 'material'
   const collection = itemType === 'package' ? 'material_packages' : 'materials'
 
@@ -235,7 +302,7 @@ async function applyMaterialPurchase(order: PaymentOrder) {
         price: order.amount,
         provider: 'mercado_pago',
         providerOrderId: String(order._id),
-        providerPaymentId: order.providerPaymentId,
+        providerPaymentId: result?.providerOrderId || order.providerPaymentId,
         status: 'completed',
         purchasedAt: new Date(),
       },
