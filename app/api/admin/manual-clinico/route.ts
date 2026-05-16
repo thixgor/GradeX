@@ -3,6 +3,7 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { generateSlug } from '@/lib/utils/slug'
 import { Patologia } from '@/lib/types/manual-clinico'
+import { buildManualClinicoSearchFilter, rankManualClinicoResults } from '@/lib/manual-clinico-search'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,25 +26,39 @@ export async function GET(request: NextRequest) {
     const db = await getDb()
     const filter: any = {}
 
-    if (busca) {
-      filter.$or = [
-        { nome: { $regex: busca, $options: 'i' } },
-        { sinonimos: { $regex: busca, $options: 'i' } },
-        { cid10: { $regex: busca, $options: 'i' } },
-      ]
-    }
     if (area) filter.areas = area
     if (sistema) filter.sistema = sistema
 
-    const [patologias, total] = await Promise.all([
-      db.collection('patologias')
-        .find(filter)
-        .sort({ nome: 1 })
-        .skip(skip)
-        .limit(limit)
-        .toArray(),
-      db.collection('patologias').countDocuments(filter)
-    ])
+    const searchTerm = busca?.trim() || ''
+    let patologias: any[] = []
+    let total = 0
+
+    if (searchTerm) {
+      const searchFilter = {
+        ...filter,
+        ...buildManualClinicoSearchFilter(searchTerm),
+      }
+      const results = await db.collection<any>('patologias')
+        .find(searchFilter)
+        .toArray()
+      const rankedResults = rankManualClinicoResults(results, searchTerm)
+
+      total = rankedResults.length
+      patologias = rankedResults.slice(skip, skip + limit)
+    } else {
+      const [results, count] = await Promise.all([
+        db.collection('patologias')
+          .find(filter)
+          .sort({ nome: 1 })
+          .skip(skip)
+          .limit(limit)
+          .toArray(),
+        db.collection('patologias').countDocuments(filter)
+      ])
+
+      patologias = results
+      total = count
+    }
 
     return NextResponse.json({
       patologias,

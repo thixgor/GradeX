@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
+import { buildManualClinicoSearchFilter, rankManualClinicoResults } from '@/lib/manual-clinico-search'
 
 export const dynamic = 'force-dynamic'
 
@@ -57,50 +58,17 @@ export async function GET(request: NextRequest) {
     let total = 0
 
     if (searchTerm) {
-      // 1) Try MongoDB full-text search first
-      try {
-        const textFilter = { ...filter, $text: { $search: searchTerm } }
-        const textProjection = { ...projection, score: { $meta: 'textScore' } }
-        const [textResults, textCount] = await Promise.all([
-          db.collection('patologias')
-            .find(textFilter, { projection: textProjection })
-            .sort({ score: { $meta: 'textScore' } })
-            .skip(skip).limit(limit).toArray(),
-          db.collection('patologias').countDocuments(textFilter)
-        ])
-        patologias = textResults
-        total = textCount
-      } catch {
-        // $text index may not exist — fall through to regex
+      const searchFilter = {
+        ...filter,
+        ...buildManualClinicoSearchFilter(searchTerm),
       }
+      const results = await db.collection<any>('patologias')
+        .find(searchFilter, { projection })
+        .toArray()
+      const rankedResults = rankManualClinicoResults(results, searchTerm)
 
-      // 2) If $text returned nothing, fallback to regex across nome, sinonimos, cid10
-      if (patologias.length === 0) {
-        const escaped = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-        const regex = { $regex: escaped, $options: 'i' }
-        const regexFilter = {
-          ...filter,
-          $or: [
-            { nome: regex },
-            { sinonimos: regex },
-            { cid10: regex },
-            { classificacao: regex },
-            { fisiopatologia: regex },
-            { diagnostico_semiologico: regex },
-            { tratamento: regex },
-            { observacoes_clinicas: regex },
-          ]
-        }
-        const [regexResults, regexCount] = await Promise.all([
-          db.collection('patologias')
-            .find(regexFilter, { projection })
-            .sort({ nome: 1 })
-            .skip(skip).limit(limit).toArray(),
-          db.collection('patologias').countDocuments(regexFilter)
-        ])
-        patologias = regexResults
-        total = regexCount
-      }
+      total = rankedResults.length
+      patologias = rankedResults.slice(skip, skip + limit)
     } else {
       // No search term — just list with filters
       const [results, count] = await Promise.all([
