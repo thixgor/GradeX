@@ -1,14 +1,13 @@
 
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { AlertCircle, Send, Loader2, CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { usePathname } from 'next/navigation'
+import { useBootstrap } from '@/hooks/use-bootstrap'
 
 export function VerifyEmailBanner() {
-    const [session, setSession] = useState<any>(null)
-    const [loading, setLoading] = useState(false)
     const [resending, setResending] = useState(false)
     const [sent, setSent] = useState(false)
     const [error, setError] = useState('')
@@ -18,26 +17,9 @@ export function VerifyEmailBanner() {
     const isAuthPage = pathname?.startsWith('/auth')
     const isLandingPage = pathname === '/'
 
-    useEffect(() => {
-        const checkSession = async () => {
-            setLoading(true)
-            try {
-                const res = await fetch('/api/auth/me')
-                if (res.ok) {
-                    const data = await res.json()
-                    setSession(data.user)
-                }
-            } catch {
-                // Silently ignore — network may be unavailable
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        if (!isAuthPage) {
-            checkSession()
-        }
-    }, [pathname, isAuthPage])
+    const { user, loading } = useBootstrap({
+        skip: isAuthPage || isLandingPage,
+    })
 
     const handleResend = async () => {
         setResending(true)
@@ -58,7 +40,7 @@ export function VerifyEmailBanner() {
         }
     }
 
-    if (isAuthPage || isLandingPage || !session || session.emailVerified) {
+    if (isAuthPage || isLandingPage || loading || !user || user.emailVerified) {
         return null
     }
 
@@ -74,7 +56,7 @@ export function VerifyEmailBanner() {
                             Seu e-mail ainda não foi verificado!
                         </p>
                         <p className="text-xs text-amber-700 dark:text-amber-300">
-                            Para liberar o acesso completo à plataforma, confirme o link que enviamos para <span className="font-semibold">{session.email}</span>.
+                            Para liberar o acesso completo à plataforma, confirme o link que enviamos para <span className="font-semibold">{user.email}</span>.
                         </p>
                     </div>
                 </div>
