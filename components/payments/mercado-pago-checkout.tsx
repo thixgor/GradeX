@@ -12,7 +12,7 @@
  * O backend valida o amount usando a fonte autoritativa (admin_settings/materials).
  */
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Loader2, CheckCircle2, AlertCircle, Copy, QrCode, CreditCard, Barcode, ExternalLink, Lock, ShieldCheck } from 'lucide-react'
 
 declare global {
@@ -20,6 +20,8 @@ declare global {
     MercadoPago?: any
   }
 }
+
+type Method = 'card' | 'pix' | 'boleto'
 
 export interface CheckoutOrderResponse {
   orderId: string
@@ -50,7 +52,7 @@ export interface MercadoPagoCheckoutProps {
   /** Body extra a ser enviado ao endpoint (type, refId, etc.) */
   extraBody: Record<string, any>
   /** Métodos permitidos (default: todos) */
-  allowedMethods?: Array<'card' | 'pix' | 'boleto'>
+  allowedMethods?: Method[]
   payerEmailHint?: string
   payerNameHint?: string
   onApproved?: (resp: CheckoutOrderResponse) => void
@@ -63,7 +65,34 @@ export interface MercadoPagoCheckoutProps {
   }
 }
 
-type Method = 'card' | 'pix' | 'boleto'
+const METHOD_PRIORITY: Record<Method, number> = {
+  pix: 0,
+  card: 1,
+  boleto: 2,
+}
+
+const DEFAULT_ALLOWED_METHODS: Method[] = ['pix', 'card', 'boleto']
+
+function getOrderedMethods(methods?: Method[]): Method[] {
+  const allowed = methods?.length ? methods : DEFAULT_ALLOWED_METHODS
+  return [...allowed].sort((a, b) => METHOD_PRIORITY[a] - METHOD_PRIORITY[b])
+}
+
+function getInitialMethod(methods?: Method[]): Method {
+  return getOrderedMethods(methods)[0] || 'pix'
+}
+
+function getMethodIcon(method: Method) {
+  if (method === 'pix') return <QrCode size={16} />
+  if (method === 'card') return <CreditCard size={16} />
+  return <Barcode size={16} />
+}
+
+function getMethodLabel(method: Method) {
+  if (method === 'pix') return 'Pix'
+  if (method === 'card') return 'Cartão'
+  return 'Boleto'
+}
 
 const STATUS_LABELS: Record<CheckoutOrderResponse['status'], string> = {
   pending: 'Aguardando pagamento',
@@ -154,13 +183,19 @@ const labelStyle: React.CSSProperties = {
 }
 
 export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
-  const allowed: Method[] = props.allowedMethods || ['card', 'pix', 'boleto']
-  const [method, setMethod] = useState<Method>(allowed[0])
+  const allowed = useMemo(() => getOrderedMethods(props.allowedMethods), [props.allowedMethods])
+  const [method, setMethod] = useState<Method>(() => getInitialMethod(props.allowedMethods))
   const [mpReady, setMpReady] = useState(false)
   const [mpInstance, setMpInstance] = useState<any>(null)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [order, setOrder] = useState<CheckoutOrderResponse | null>(null)
+
+  useEffect(() => {
+    if (!allowed.includes(method)) {
+      setMethod(getInitialMethod(props.allowedMethods))
+    }
+  }, [allowed, method, props.allowedMethods])
 
   function trackCheckout(event: 'checkout_submit', extra: Record<string, any> = {}) {
     if (!props.analytics) return
@@ -314,15 +349,15 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Method tabs */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-        {allowed.includes('card') && (
-          <MethodTab active={method === 'card'} onClick={() => setMethod('card')} icon={<CreditCard size={16} />} label="Cartão" />
-        )}
-        {allowed.includes('pix') && (
-          <MethodTab active={method === 'pix'} onClick={() => setMethod('pix')} icon={<QrCode size={16} />} label="Pix" />
-        )}
-        {allowed.includes('boleto') && (
-          <MethodTab active={method === 'boleto'} onClick={() => setMethod('boleto')} icon={<Barcode size={16} />} label="Boleto" />
-        )}
+        {allowed.map(allowedMethod => (
+          <MethodTab
+            key={allowedMethod}
+            active={method === allowedMethod}
+            onClick={() => setMethod(allowedMethod)}
+            icon={getMethodIcon(allowedMethod)}
+            label={getMethodLabel(allowedMethod)}
+          />
+        ))}
       </div>
 
       <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
