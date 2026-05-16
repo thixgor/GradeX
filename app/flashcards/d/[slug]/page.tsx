@@ -47,6 +47,9 @@ import { PackageUpsellModal, UpsellPackage } from '@/components/materiais/packag
 import { FlashcardCardView } from '@/components/flashcards/flashcard-card'
 import { cn } from '@/lib/utils'
 import type { FlashcardManualCard, FlashcardManualDeck } from '@/lib/types'
+import { ReviewsSection } from '@/components/reviews/reviews-section'
+import { ReviewSummaryBlock } from '@/components/reviews/review-summary'
+import type { ReviewSummary } from '@/lib/reviews'
 
 interface AccessFlags {
   hasAccess: boolean
@@ -126,6 +129,7 @@ export default function DeckPage() {
   const [folderPath, setFolderPath] = useState<string | null>(null)
   const [upsellPkg, setUpsellPkg] = useState<UpsellPackage | null>(null)
   const [showCards, setShowCards] = useState(false)
+  const [reviewSummary, setReviewSummary] = useState<ReviewSummary | null>(null)
 
   const purchaseSuccess = search?.get('purchase') === 'success'
 
@@ -650,6 +654,17 @@ export default function DeckPage() {
                   <span key={t} className="rounded-full bg-white/15 px-2 py-0.5 ring-1 ring-white/20">#{t}</span>
                 ))}
               </div>
+              {(reviewSummary?.count ?? 0) > 0 && (
+                <div className="mt-3">
+                  <ReviewSummaryBlock
+                    summary={reviewSummary}
+                    variant="compact"
+                    onJumpToList={() =>
+                      document.getElementById('reviews-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                    }
+                  />
+                </div>
+              )}
             </div>
           </div>
 
@@ -772,6 +787,17 @@ export default function DeckPage() {
         {access.isOwner && shareOpen && (
           <ShareDialog deckSlug={deck.slug} onClose={() => setShareOpen(false)} onSuccess={() => setToast({ open: true, message: 'Compartilhado com sucesso', type: 'success' })} />
         )}
+
+        <ReviewsSection
+          id="reviews-section"
+          targetType="flashcard_deck"
+          targetId={String(deck._id)}
+          onSummaryChange={setReviewSummary}
+          purchaseCtaLabel={isPaid ? 'Comprar para avaliar' : 'Acessar para avaliar'}
+          onPurchaseClick={() => {
+            if (isPaid && isLocked) buy()
+          }}
+        />
       </div>
       <ToastAlert open={toast.open} message={toast.message} type={toast.type} onOpenChange={(open) => setToast(t => ({ ...t, open }))} />
 

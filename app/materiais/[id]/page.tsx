@@ -50,6 +50,9 @@ import {
   triggerNativePdfDownload,
 } from '@/lib/material-download-client'
 import { useMaterialCart } from '@/context/MaterialCartContext'
+import { ReviewsSection } from '@/components/reviews/reviews-section'
+import { ReviewSummaryBlock } from '@/components/reviews/review-summary'
+import type { ReviewSummary } from '@/lib/reviews'
 
 // ─── Types ───────────────────────────────────────────────────
 interface Material {
@@ -137,6 +140,7 @@ export default function MaterialViewPage() {
   const [upsellPkg, setUpsellPkg] = useState<UpsellPackage | null>(null)
   const [downloadState, setDownloadState] = useState<PdfDownloadState>(INITIAL_DOWNLOAD_STATE)
   const [copied, setCopied] = useState(false)
+  const [reviewSummary, setReviewSummary] = useState<ReviewSummary | null>(null)
   const stepTimersRef = useRef<ReturnType<typeof setTimeout>[]>([])
   const { addItem } = useMaterialCart()
 
@@ -587,6 +591,16 @@ export default function MaterialViewPage() {
                   )}
                 </motion.div>
               )}
+
+              {/* Reviews section (full) */}
+              <ReviewsSection
+                id="reviews-section"
+                targetType="material"
+                targetId={id}
+                onSummaryChange={setReviewSummary}
+                purchaseCtaLabel={isFree ? 'Adquirir gratuitamente' : 'Comprar para avaliar'}
+                onPurchaseClick={() => handleAcquire()}
+              />
             </motion.div>
 
             {/* RIGHT: Sidebar */}
@@ -647,6 +661,19 @@ export default function MaterialViewPage() {
                   <h1 className="font-heading font-bold text-base leading-snug mb-3">
                     {material.title}
                   </h1>
+
+                  {/* Reviews summary (compact) — link para a seção completa abaixo */}
+                  {(reviewSummary?.count ?? 0) > 0 && (
+                    <div className="mb-3">
+                      <ReviewSummaryBlock
+                        summary={reviewSummary}
+                        variant="compact"
+                        onJumpToList={() =>
+                          document.getElementById('reviews-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                        }
+                      />
+                    </div>
+                  )}
 
                   {/* Video duration */}
                   {isVideo && material.videoDuration && (

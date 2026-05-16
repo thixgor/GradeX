@@ -28,6 +28,7 @@ import {
   HeartPulse,
   ShoppingCart,
   BadgeDollarSign,
+  Star,
 } from 'lucide-react'
 
 interface User {
@@ -196,6 +197,13 @@ export default function AdminDashboard() {
       icon: BookOpen,
       href: '/admin/flashcards/manual',
       color: 'from-violet-500 to-fuchsia-500'
+    },
+    {
+      title: 'Avaliações',
+      description: 'Moderar avaliações de materiais e decks. Criar avaliações manuais com nome, foto e data. Travar avaliações por item.',
+      icon: Star,
+      href: '/admin/avaliacoes',
+      color: 'from-yellow-500 to-amber-600'
     }
   ]
 

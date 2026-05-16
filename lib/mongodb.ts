@@ -38,6 +38,14 @@ if (process.env.NODE_ENV === 'development') {
         db.collection('material_pdf_annotations').createIndex({ userId: 1, materialId: 1, pageNumber: 1 }),
         db.collection('material_pdf_viewer_logs').createIndex({ userId: 1, materialId: 1, createdAt: -1 }),
         db.collection('material_pdf_viewer_logs').createIndex({ materialId: 1, action: 1, createdAt: -1 }),
+        // ── Avaliações (reviews) ──
+        db.collection('reviews').createIndex({ targetType: 1, targetId: 1, createdAt: -1 }),
+        db.collection('reviews').createIndex({ targetType: 1, targetId: 1, isFeatured: -1, createdAt: -1 }),
+        db.collection('reviews').createIndex({ userId: 1, createdAt: -1 }),
+        db.collection('reviews').createIndex(
+          { targetType: 1, targetId: 1, userId: 1 },
+          { unique: true, partialFilterExpression: { isAdminCreated: false, userId: { $type: 'string' } } },
+        ),
       ]).catch(err => console.error('Erro ao criar índices iniciais:', err))
       return client
     })
@@ -82,6 +90,14 @@ if (process.env.NODE_ENV === 'development') {
       db.collection('material_pdf_annotations').createIndex({ userId: 1, materialId: 1, pageNumber: 1 }),
       db.collection('material_pdf_viewer_logs').createIndex({ userId: 1, materialId: 1, createdAt: -1 }),
       db.collection('material_pdf_viewer_logs').createIndex({ materialId: 1, action: 1, createdAt: -1 }),
+      // ── Avaliações (reviews) ──
+      db.collection('reviews').createIndex({ targetType: 1, targetId: 1, createdAt: -1 }),
+      db.collection('reviews').createIndex({ targetType: 1, targetId: 1, isFeatured: -1, createdAt: -1 }),
+      db.collection('reviews').createIndex({ userId: 1, createdAt: -1 }),
+      db.collection('reviews').createIndex(
+        { targetType: 1, targetId: 1, userId: 1 },
+        { unique: true, partialFilterExpression: { isAdminCreated: false, userId: { $type: 'string' } } },
+      ),
     ]).catch(err => console.error('Erro ao criar índices iniciais:', err))
     return client
   })

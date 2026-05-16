@@ -71,6 +71,11 @@ const config: Config = {
           dark: '#2d5a3a',
           glow: 'rgba(70, 129, 82, 0.3)',
         },
+        // Glassmorphism Irish palette (avaliações)
+        'irish-emerald': '#0F8B5F',
+        'irish-forest': '#0B5236',
+        'irish-gold': '#F0C563',
+        'irish-gold-soft': '#F7DE9C',
       },
       borderRadius: {
         lg: 'var(--radius)',
