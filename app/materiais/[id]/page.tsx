@@ -44,6 +44,7 @@ import {
   INITIAL_DOWNLOAD_STATE,
   DownloadStepId,
 } from '@/components/materiais/pdf-download-progress'
+import { PdfDownloadTermsModal } from '@/components/materiais/pdf-download-terms-modal'
 import {
   downloadPdfResponse,
   shouldUseNativePdfDownload,
@@ -139,6 +140,7 @@ export default function MaterialViewPage() {
   const [descExpanded, setDescExpanded] = useState(false)
   const [upsellPkg, setUpsellPkg] = useState<UpsellPackage | null>(null)
   const [downloadState, setDownloadState] = useState<PdfDownloadState>(INITIAL_DOWNLOAD_STATE)
+  const [downloadTermsOpen, setDownloadTermsOpen] = useState(false)
   const [copied, setCopied] = useState(false)
   const [reviewSummary, setReviewSummary] = useState<ReviewSummary | null>(null)
   const stepTimersRef = useRef<ReturnType<typeof setTimeout>[]>([])
@@ -254,7 +256,7 @@ export default function MaterialViewPage() {
       return
     }
     if (material._hasPdf) {
-      startPdfDownload()
+      setDownloadTermsOpen(true)
       return
     }
     if (material.downloadUrl) {
@@ -862,6 +864,17 @@ export default function MaterialViewPage() {
       </div>
 
       {/* PDF Download Progress modal */}
+      <PdfDownloadTermsModal
+        open={downloadTermsOpen}
+        materialTitle={material?.title ?? ''}
+        loading={downloadState.status === 'running'}
+        onClose={() => setDownloadTermsOpen(false)}
+        onAccept={() => {
+          setDownloadTermsOpen(false)
+          startPdfDownload()
+        }}
+      />
+
       <PdfDownloadProgress
         materialTitle={material?.title ?? ''}
         state={downloadState}

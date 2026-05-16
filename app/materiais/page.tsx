@@ -46,6 +46,7 @@ import {
   PdfDownloadProgress,
   PdfDownloadState,
 } from '@/components/materiais/pdf-download-progress'
+import { PdfDownloadTermsModal } from '@/components/materiais/pdf-download-terms-modal'
 import {
   downloadPdfResponse,
   shouldUseNativePdfDownload,
@@ -252,6 +253,7 @@ function MateriaisContent() {
   const [pdfDownloading, setPdfDownloading] = useState<string | null>(null) // materialId sendo baixado
   const [pdfDownloadError, setPdfDownloadError] = useState<string | null>(null)
   const [pdfDownloadMaterial, setPdfDownloadMaterial] = useState<Material | null>(null)
+  const [downloadTermsMaterial, setDownloadTermsMaterial] = useState<Material | null>(null)
   const [downloadState, setDownloadState] = useState<PdfDownloadState>(INITIAL_DOWNLOAD_STATE)
   const [isRoutePending, startRouteTransition] = useTransition()
   const stepTimersRef = useRef<ReturnType<typeof setTimeout>[]>([])
@@ -726,6 +728,10 @@ function MateriaisContent() {
     }
   }, [pdfDownloadMaterial])
 
+  const handleOpenPdfViewer = useCallback((material: Material) => {
+    router.push(`/materiais/${material._id}/viewer`)
+  }, [router])
+
   const handleDownload = async (material: Material) => {
     if (material.type === 'video_embed') {
       router.push(`/materiais/${material._id}`)
@@ -745,13 +751,20 @@ function MateriaisContent() {
         }
         return
       }
-      startPdfDownload(material)
+      setPdfDownloadMaterial(material)
+      setDownloadTermsMaterial(material)
       return
     }
 
     if (material.downloadUrl) {
       window.open(material.downloadUrl, '_blank')
     }
+  }
+
+  const handleAcceptDownloadTerms = () => {
+    const material = downloadTermsMaterial
+    setDownloadTermsMaterial(null)
+    if (material) startPdfDownload(material)
   }
 
   // Prefer the server-attached _isPurchased flag (definitive), fall back to legacy
@@ -932,6 +945,7 @@ function MateriaisContent() {
                     onAddToCart={() => handleMaterialAcquire(material, 'cart')}
                     onBuyNow={() => handleMaterialAcquire(material, 'buy')}
                     onDownload={() => handleDownload(material)}
+                    onViewPdf={() => handleOpenPdfViewer(material)}
                     onCopyLink={() => copyMaterialLink(material)}
                     onPreview={() => setPreviewItem({ type: 'material', data: material })}
                     loading={checkoutLoading === material._id || pdfDownloading === material._id}
@@ -1055,6 +1069,7 @@ function MateriaisContent() {
                       onAddToCart={() => handleMaterialAcquire(material, 'cart')}
                       onBuyNow={() => handleMaterialAcquire(material, 'buy')}
                       onDownload={() => handleDownload(material)}
+                      onViewPdf={() => handleOpenPdfViewer(material)}
                       onCopyLink={() => copyMaterialLink(material)}
                       onPreview={() => setPreviewItem({ type: 'material', data: material })}
                       loading={checkoutLoading === material._id || pdfDownloading === material._id}
@@ -1152,6 +1167,7 @@ function MateriaisContent() {
                       onAddToCart={() => handleMaterialAcquire(material, 'cart')}
                       onBuyNow={() => handleMaterialAcquire(material, 'buy')}
                       onDownload={() => handleDownload(material)}
+                      onViewPdf={() => handleOpenPdfViewer(material)}
                       onCopyLink={() => copyMaterialLink(material)}
                       onPreview={() => setPreviewItem({ type: 'material', data: material })}
                       loading={checkoutLoading === material._id || pdfDownloading === material._id}
@@ -1207,6 +1223,14 @@ function MateriaisContent() {
           />
         )}
       </AnimatePresence>
+
+      <PdfDownloadTermsModal
+        open={!!downloadTermsMaterial}
+        materialTitle={downloadTermsMaterial?.title ?? ''}
+        loading={pdfDownloading === downloadTermsMaterial?._id}
+        onClose={() => setDownloadTermsMaterial(null)}
+        onAccept={handleAcceptDownloadTerms}
+      />
 
       <PdfDownloadProgress
         materialTitle={pdfDownloadMaterial?.title ?? ''}
@@ -1332,11 +1356,11 @@ function FolderCard({
 // ─── Material Card Component ────────────────────────────────
 function MaterialCard({
   material, index, isPurchased, groupAccess, isHighlighted, copiedId,
-  onAddToCart, onBuyNow, onDownload, onCopyLink, onPreview, loading,
+  onAddToCart, onBuyNow, onDownload, onViewPdf, onCopyLink, onPreview, loading,
 }: {
   material: Material; index: number; isPurchased: boolean; groupAccess: boolean
   isHighlighted: boolean; copiedId: string | null
-  onAddToCart: () => void; onBuyNow: () => void; onDownload: () => void; onCopyLink: () => void; onPreview: () => void; loading: boolean
+  onAddToCart: () => void; onBuyNow: () => void; onDownload: () => void; onViewPdf: () => void; onCopyLink: () => void; onPreview: () => void; loading: boolean
 }) {
   const isFree = material.pricing === 'free'
   // isPurchased includes manual admin grants → always grants full access
@@ -1344,6 +1368,7 @@ function MaterialCard({
     ? material._hasAccess
     : isPurchased || (groupAccess && isFree)
   const isEmbed = material.type === 'video_embed'
+  const canViewPdf = !!material._hasPdf && material.pdfViewerEnabled === true
   const pdfDownloadBlocked = !!material._hasPdf && material.pdfDownloadEnabled === false
   const [descExpanded, setDescExpanded] = useState(false)
   const descLong = material.description && material.description.length > 80
@@ -1456,17 +1481,25 @@ function MaterialCard({
                 </button>
               </div>
             ) : canAccess ? (
-              <Button onClick={onDownload} size="sm" className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white rounded-xl h-9 text-xs font-semibold shadow-lg shadow-primary/20">
-                {isEmbed
-                  ? <><Play className="h-3.5 w-3.5 mr-1.5 fill-white" /> Assistir</>
-                  : material.type === 'flashcard_deck'
-                    ? <><Sparkles className="h-3.5 w-3.5 mr-1.5" /> Acessar deck</>
-                    : pdfDownloadBlocked && material.pdfViewerEnabled
-                      ? <><Eye className="h-3.5 w-3.5 mr-1.5" /> Visualizar PDF</>
-                      : pdfDownloadBlocked
-                        ? <><Info className="h-3.5 w-3.5 mr-1.5" /> Ver detalhes</>
-                      : <><Download className="h-3.5 w-3.5 mr-1.5" /> Download</>}
-              </Button>
+              <div className="grid gap-2">
+                {canViewPdf && (
+                  <Button onClick={onViewPdf} size="sm" className="w-full rounded-xl border border-emerald-500/25 bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500/15 dark:text-emerald-300 h-9 text-xs font-semibold">
+                    <Eye className="h-3.5 w-3.5 mr-1.5" />
+                    Visualizar PDF
+                  </Button>
+                )}
+                {(!canViewPdf || !pdfDownloadBlocked) && (
+                  <Button onClick={onDownload} size="sm" className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white rounded-xl h-9 text-xs font-semibold shadow-lg shadow-primary/20">
+                    {isEmbed
+                      ? <><Play className="h-3.5 w-3.5 mr-1.5 fill-white" /> Assistir</>
+                      : material.type === 'flashcard_deck'
+                        ? <><Sparkles className="h-3.5 w-3.5 mr-1.5" /> Acessar deck</>
+                        : pdfDownloadBlocked
+                          ? <><Info className="h-3.5 w-3.5 mr-1.5" /> Ver detalhes</>
+                          : <><Download className="h-3.5 w-3.5 mr-1.5" /> Download</>}
+                  </Button>
+                )}
+              </div>
             ) : isFree ? (
               <Button onClick={onAddToCart} disabled={loading} size="sm" className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl h-9 text-xs font-semibold shadow-lg shadow-green-500/20">
                 {loading ? <div className="h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-1.5" /> : <Gift className="h-3.5 w-3.5 mr-1.5" />}
@@ -1493,17 +1526,18 @@ function MaterialCard({
 // ─── Featured Card Component ────────────────────────────────
 function FeaturedCard({
   material, index, isPurchased, groupAccess, isHighlighted, copiedId,
-  onAddToCart, onBuyNow, onDownload, onCopyLink, onPreview, loading,
+  onAddToCart, onBuyNow, onDownload, onViewPdf, onCopyLink, onPreview, loading,
 }: {
   material: Material; index: number; isPurchased: boolean; groupAccess: boolean
   isHighlighted: boolean; copiedId: string | null
-  onAddToCart: () => void; onBuyNow: () => void; onDownload: () => void; onCopyLink: () => void; onPreview: () => void; loading: boolean
+  onAddToCart: () => void; onBuyNow: () => void; onDownload: () => void; onViewPdf: () => void; onCopyLink: () => void; onPreview: () => void; loading: boolean
 }) {
   const isFree = material.pricing === 'free'
   const canAccess = typeof material._hasAccess === 'boolean'
     ? material._hasAccess
     : isPurchased || (groupAccess && isFree)
   const isEmbed = material.type === 'video_embed'
+  const canViewPdf = !!material._hasPdf && material.pdfViewerEnabled === true
   const pdfDownloadBlocked = !!material._hasPdf && material.pdfDownloadEnabled === false
   const [descExpanded, setDescExpanded] = useState(false)
   const descLong = material.description && material.description.length > 100
@@ -1590,15 +1624,23 @@ function FeaturedCard({
               </button>
             </div>
           ) : canAccess ? (
-            <Button onClick={onDownload} size="sm" className="w-full bg-gradient-to-r from-primary to-primary/80 text-white rounded-xl h-10 font-semibold shadow-lg shadow-primary/25">
-              {isEmbed
-                ? <><Play className="h-4 w-4 mr-2 fill-white" /> Assistir Vídeo</>
-                : pdfDownloadBlocked && material.pdfViewerEnabled
-                  ? <><Eye className="h-4 w-4 mr-2" /> Visualizar PDF</>
-                  : pdfDownloadBlocked
-                    ? <><Info className="h-4 w-4 mr-2" /> Ver detalhes</>
-                  : <><Download className="h-4 w-4 mr-2" /> Baixar Material</>}
-            </Button>
+            <div className="grid gap-2">
+              {canViewPdf && (
+                <Button onClick={onViewPdf} size="sm" className="w-full rounded-xl border border-emerald-500/25 bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500/15 dark:text-emerald-300 h-10 font-semibold">
+                  <Eye className="h-4 w-4 mr-2" />
+                  Visualizar PDF
+                </Button>
+              )}
+              {(!canViewPdf || !pdfDownloadBlocked) && (
+                <Button onClick={onDownload} size="sm" className="w-full bg-gradient-to-r from-primary to-primary/80 text-white rounded-xl h-10 font-semibold shadow-lg shadow-primary/25">
+                  {isEmbed
+                    ? <><Play className="h-4 w-4 mr-2 fill-white" /> Assistir Vídeo</>
+                    : pdfDownloadBlocked
+                      ? <><Info className="h-4 w-4 mr-2" /> Ver detalhes</>
+                      : <><Download className="h-4 w-4 mr-2" /> Baixar Material</>}
+                </Button>
+              )}
+            </div>
           ) : isFree ? (
             <Button onClick={onAddToCart} disabled={loading} size="sm" className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl h-10 font-semibold shadow-lg shadow-green-500/20">
               {loading ? <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" /> : <Gift className="h-4 w-4 mr-2" />}
