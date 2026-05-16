@@ -1,15 +1,16 @@
 import { Db, ObjectId } from 'mongodb'
-import { sanitizeHtml } from './api-security'
+export type { ReviewTargetType, PublicReview, ReviewSummary } from './reviews-shared'
+export { REVIEW_TARGET_TYPES, REVIEW_COMMENT_MAX, REVIEW_DISPLAY_NAME_MAX, REVIEW_AVATAR_URL_MAX } from './reviews-shared'
+import type { ReviewTargetType, PublicReview, ReviewSummary } from './reviews-shared'
+import { REVIEW_COMMENT_MAX, REVIEW_DISPLAY_NAME_MAX, REVIEW_AVATAR_URL_MAX } from './reviews-shared'
+
+const HTML_ENTITIES: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;', '`': '&#x60;', '=': '&#x3D;', '/': '&#x2F;' }
+function sanitizeHtml(input: string): string {
+  if (!input || typeof input !== 'string') return ''
+  return input.replace(/[&<>"'`=/]/g, char => HTML_ENTITIES[char] || char)
+}
 
 export const REVIEWS_COLLECTION = 'reviews'
-
-export type ReviewTargetType = 'material' | 'flashcard_deck'
-
-export const REVIEW_TARGET_TYPES: ReviewTargetType[] = ['material', 'flashcard_deck']
-
-export const REVIEW_COMMENT_MAX = 1500
-export const REVIEW_DISPLAY_NAME_MAX = 80
-export const REVIEW_AVATAR_URL_MAX = 500
 
 export interface ReviewDoc {
   _id: ObjectId
@@ -29,28 +30,6 @@ export interface ReviewDoc {
   createdAt: Date
   updatedAt: Date
   createdByAdminId?: string | null
-}
-
-export interface PublicReview {
-  _id: string
-  targetType: ReviewTargetType
-  targetId: string
-  rating: 1 | 2 | 3 | 4 | 5
-  comment: string
-  userId: string | null
-  displayName: string
-  avatarUrl: string | null
-  isAdminCreated: boolean
-  isFeatured: boolean
-  isVerified: boolean
-  createdAt: string
-  updatedAt: string
-}
-
-export interface ReviewSummary {
-  count: number
-  avg: number
-  distribution: { 1: number; 2: number; 3: number; 4: number; 5: number }
 }
 
 const EMPTY_DISTRIBUTION = (): ReviewSummary['distribution'] => ({ 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 })

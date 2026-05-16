@@ -7,7 +7,7 @@ import { ReviewForm } from './review-form'
 import { ReviewSummaryBlock } from './review-summary'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
-import type { PublicReview, ReviewSummary, ReviewTargetType } from '@/lib/reviews'
+import type { PublicReview, ReviewSummary, ReviewTargetType } from '@/lib/reviews-shared'
 
 interface ReviewsApiResponse {
   reviews: PublicReview[]

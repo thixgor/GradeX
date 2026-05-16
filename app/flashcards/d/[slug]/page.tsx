@@ -49,7 +49,7 @@ import { cn } from '@/lib/utils'
 import type { FlashcardManualCard, FlashcardManualDeck } from '@/lib/types'
 import { ReviewsSection } from '@/components/reviews/reviews-section'
 import { ReviewSummaryBlock } from '@/components/reviews/review-summary'
-import type { ReviewSummary } from '@/lib/reviews'
+import type { ReviewSummary } from '@/lib/reviews-shared'
 
 interface AccessFlags {
   hasAccess: boolean

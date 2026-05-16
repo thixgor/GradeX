@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { Loader2, Send, X } from 'lucide-react'
 import { StarRatingInput } from './star-rating'
 import { Button } from '@/components/ui/button'
-import { REVIEW_COMMENT_MAX } from '@/lib/reviews'
+import { REVIEW_COMMENT_MAX } from '@/lib/reviews-shared'
 
 interface ReviewFormProps {
   initialRating?: number

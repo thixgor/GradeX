@@ -1,7 +1,7 @@
 'use client'
 
 import { StarRatingDisplay } from './star-rating'
-import type { ReviewSummary } from '@/lib/reviews'
+import type { ReviewSummary } from '@/lib/reviews-shared'
 
 interface ReviewSummaryProps {
   summary: ReviewSummary | null

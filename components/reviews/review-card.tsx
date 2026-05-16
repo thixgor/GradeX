@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { Pencil, Trash2, ShieldCheck, Sparkles } from 'lucide-react'
 import { StarRatingDisplay } from './star-rating'
-import type { PublicReview } from '@/lib/reviews'
+import type { PublicReview } from '@/lib/reviews-shared'
 
 interface ReviewCardProps {
   review: PublicReview

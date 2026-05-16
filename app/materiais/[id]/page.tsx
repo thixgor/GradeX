@@ -52,7 +52,7 @@ import {
 import { useMaterialCart } from '@/context/MaterialCartContext'
 import { ReviewsSection } from '@/components/reviews/reviews-section'
 import { ReviewSummaryBlock } from '@/components/reviews/review-summary'
-import type { ReviewSummary } from '@/lib/reviews'
+import type { ReviewSummary } from '@/lib/reviews-shared'
 
 // ─── Types ───────────────────────────────────────────────────
 interface Material {
