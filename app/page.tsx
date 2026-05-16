@@ -1,13 +1,9 @@
 'use client'
 
 import { Suspense, useEffect, useRef, useState } from 'react'
-import dynamic from 'next/dynamic'
 import { useRouter, useSearchParams } from 'next/navigation'
+import LandingPage from '@/components/landing-page'
 import { PageLoading } from '@/components/page-loading'
-
-const LandingPage = dynamic(() => import('@/components/landing-page'), {
-  loading: () => <PageLoading variant="fullscreen" />,
-})
 
 interface LandingInitialData {
   isLoggedIn: boolean
