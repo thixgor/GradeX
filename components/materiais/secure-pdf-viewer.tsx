@@ -472,6 +472,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const [showGuide, setShowGuide] = useState(true)
   const [showDeleteAllConfirm, setShowDeleteAllConfirm] = useState(false)
   const [notice, setNotice] = useState('')
+  const [isPrinting, setIsPrinting] = useState(false)
   const [highlightColor, setHighlightColor] = useState('#facc15')
   const [noteColor, setNoteColor] = useState('#fde68a')
   const [drawingStyle, setDrawingStyle] = useState<DrawingStyle>({
@@ -607,15 +608,35 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         event.preventDefault()
       }
     }
+    const handleBeforePrint = () => setIsPrinting(true)
+    const handleAfterPrint = () => setIsPrinting(false)
+    const printQuery = typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+      ? window.matchMedia('print')
+      : null
+    const handlePrintChange = (event: MediaQueryListEvent) => setIsPrinting(event.matches)
     document.addEventListener('contextmenu', block)
     document.addEventListener('copy', block)
     document.addEventListener('cut', block)
     document.addEventListener('keydown', blockKeys)
+    window.addEventListener('beforeprint', handleBeforePrint)
+    window.addEventListener('afterprint', handleAfterPrint)
+    if (printQuery?.addEventListener) {
+      printQuery.addEventListener('change', handlePrintChange)
+    } else if (printQuery?.addListener) {
+      printQuery.addListener(handlePrintChange)
+    }
     return () => {
       document.removeEventListener('contextmenu', block)
       document.removeEventListener('copy', block)
       document.removeEventListener('cut', block)
       document.removeEventListener('keydown', blockKeys)
+      window.removeEventListener('beforeprint', handleBeforePrint)
+      window.removeEventListener('afterprint', handleAfterPrint)
+      if (printQuery?.removeEventListener) {
+        printQuery.removeEventListener('change', handlePrintChange)
+      } else if (printQuery?.removeListener) {
+        printQuery.removeListener(handlePrintChange)
+      }
     }
   }, [])
 
@@ -761,6 +782,45 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
 
   return (
     <ViewerShell>
+      <style jsx global>{`
+        @media print {
+          html, body {
+            background: #000 !important;
+          }
+          body * {
+            visibility: hidden !important;
+          }
+          body::after {
+            content: "Impressao nao autorizada - Material protegido por DomineAqui";
+            visibility: visible !important;
+            position: fixed;
+            inset: 0;
+            background: #000;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: sans-serif;
+            font-size: 18px;
+            text-align: center;
+            padding: 24px;
+            z-index: 2147483647;
+          }
+        }
+      `}</style>
+      {isPrinting ? (
+        <div
+          aria-hidden
+          className="fixed inset-0 z-[2147483647] flex items-center justify-center bg-black text-center text-white"
+          style={{ fontFamily: 'sans-serif' }}
+        >
+          <div className="px-6">
+            <ShieldCheck className="mx-auto mb-3 h-10 w-10 text-emerald-400" />
+            <p className="text-lg font-semibold">Impressao nao autorizada</p>
+            <p className="mt-1 text-sm text-white/70">Este material e protegido. Tentativas de impressao ou captura sao registradas.</p>
+          </div>
+        </div>
+      ) : null}
       <div
         ref={viewerRef}
         className="min-h-screen text-white select-none"
