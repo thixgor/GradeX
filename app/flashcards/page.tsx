@@ -55,9 +55,9 @@ type DeckWithId = FlashcardManualDeck & {
   _hasGroupAccess?: boolean
 }
 type FolderWithId = FlashcardManualFolder & { _id: string }
-type Filter = 'all' | 'mine' | 'community' | 'store' | 'shared'
+type Filter = 'all' | 'mine' | 'purchased' | 'community' | 'store' | 'shared'
 
-const FILTERS: Filter[] = ['all', 'mine', 'community', 'store', 'shared']
+const FILTERS: Filter[] = ['all', 'mine', 'purchased', 'community', 'store', 'shared']
 
 function parseSectionFromUrl(url: URL): Filter {
   const hashValue = url.hash.replace(/^#/, '')
@@ -67,6 +67,10 @@ function parseSectionFromUrl(url: URL): Filter {
     todos: 'all',
     minhas: 'mine',
     meus: 'mine',
+    adquiridos: 'purchased',
+    comprados: 'purchased',
+    oficiais: 'purchased',
+    'meus-oficiais': 'purchased',
     loja: 'store',
     oficial: 'store',
     comunidade: 'community',
@@ -311,6 +315,10 @@ export default function FlashcardsHubPage() {
     return store.filter(d => d.folderId === storeFolder)
   }, [store, storeFolder])
 
+  const purchasedStore = useMemo(() => {
+    return store.filter(d => d.ownerType === 'admin' && d._hasAccess)
+  }, [store])
+
   // Árvore de pastas admin
   const adminFolderTree = useMemo(() => buildFolderTree(adminFolders), [adminFolders])
   const storeFolderCounts = useMemo(() => {
@@ -325,6 +333,7 @@ export default function FlashcardsHubPage() {
   const counts = {
     all: mine.length + community.length + store.length + shared.length,
     mine: mine.length,
+    purchased: purchasedStore.length,
     community: community.length,
     store: store.length,
     shared: shared.length,
@@ -440,6 +449,33 @@ export default function FlashcardsHubPage() {
                   />
                 ) : (
                   <DeckGrid decks={filter === 'mine' ? mine : mine.slice(0, 6)} owned onDelete={deleteDeck} />
+                )}
+              </Section>
+            )}
+
+            {!isGuest && (filter === 'purchased' || (filter === 'all' && purchasedStore.length > 0)) && (
+              <Section
+                title="Decks adquiridos"
+                subtitle={purchasedStore.length === 0 ? 'Seus decks oficiais comprados ou liberados aparecem aqui.' : `${purchasedStore.length} ${purchasedStore.length === 1 ? 'deck oficial disponível' : 'decks oficiais disponíveis'}`}
+                icon={<ShoppingBag className="h-5 w-5" />}
+                accent="from-emerald-500 to-teal-500"
+                action={purchasedStore.length > 6 && filter === 'all' ? <SectionLink onClick={() => selectSection('purchased')}>Ver todos</SectionLink> : undefined}
+              >
+                {purchasedStore.length === 0 ? (
+                  <EmptyCallout
+                    title="Nenhum deck oficial adquirido"
+                    hint="Quando você comprar ou liberar um deck da Loja oficial, ele aparece nesta aba."
+                    cta={
+                      <button
+                        onClick={() => selectSection('store')}
+                        className="inline-flex items-center gap-1.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-amber-500/25 hover:shadow-orange-500/30 transition"
+                      >
+                        <Crown className="h-4 w-4" /> Ir para a loja
+                      </button>
+                    }
+                  />
+                ) : (
+                  <DeckGrid decks={filter === 'purchased' ? purchasedStore : purchasedStore.slice(0, 6)} showStoreState />
                 )}
               </Section>
             )}
@@ -826,7 +862,7 @@ function Toolbar({ search, setSearch, filter, setFilter, counts, foldersOpen, se
   setSearch: (s: string) => void
   filter: Filter
   setFilter: (f: Filter) => void
-  counts: { all: number; mine: number; community: number; store: number; shared: number }
+  counts: { all: number; mine: number; purchased: number; community: number; store: number; shared: number }
   foldersOpen: boolean
   setFoldersOpen: (cb: (v: boolean) => boolean) => void
   guestMode?: boolean
@@ -835,6 +871,8 @@ function Toolbar({ search, setSearch, filter, setFilter, counts, foldersOpen, se
     <div className={cn(
       'sticky top-16 z-20 rounded-3xl border backdrop-blur-2xl p-3 shadow-lg transition-colors',
       filter === 'store'
+        ? 'border-emerald-200/60 dark:border-emerald-400/15 bg-white/[0.78] dark:bg-emerald-950/25 shadow-emerald-900/5'
+        : filter === 'purchased'
         ? 'border-emerald-200/60 dark:border-emerald-400/15 bg-white/[0.78] dark:bg-emerald-950/25 shadow-emerald-900/5'
         : 'border-white/40 dark:border-white/10 bg-white/70 dark:bg-slate-900/40 shadow-slate-900/5'
     )}>
@@ -853,6 +891,7 @@ function Toolbar({ search, setSearch, filter, setFilter, counts, foldersOpen, se
             <>
               <ChipFilter active={filter === 'all'} onClick={() => setFilter('all')} count={counts.all} icon={<Layers className="h-3.5 w-3.5" />}>Tudo</ChipFilter>
               <ChipFilter active={filter === 'mine'} onClick={() => setFilter('mine')} count={counts.mine} icon={<Inbox className="h-3.5 w-3.5" />}>Meus</ChipFilter>
+              <ChipFilter active={filter === 'purchased'} onClick={() => setFilter('purchased')} count={counts.purchased} icon={<ShoppingBag className="h-3.5 w-3.5" />} accent="emerald">Adquiridos</ChipFilter>
             </>
           )}
           <ChipFilter active={filter === 'store'} onClick={() => setFilter('store')} count={counts.store} icon={<Crown className="h-3.5 w-3.5" />} accent="amber">Loja</ChipFilter>
@@ -882,11 +921,13 @@ function Toolbar({ search, setSearch, filter, setFilter, counts, foldersOpen, se
 }
 
 function ChipFilter({ active, onClick, count, icon, accent = 'violet', children }: {
-  active: boolean; onClick: () => void; count: number; icon: React.ReactNode; accent?: 'violet' | 'amber'; children: React.ReactNode
+  active: boolean; onClick: () => void; count: number; icon: React.ReactNode; accent?: 'violet' | 'amber' | 'emerald'; children: React.ReactNode
 }) {
-  const activeClasses = accent === 'amber'
-    ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white border-transparent shadow-lg shadow-amber-500/30'
-    : 'bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white border-transparent shadow-lg shadow-violet-500/30'
+  const activeClasses = {
+    amber: 'bg-gradient-to-r from-amber-500 to-orange-500 text-white border-transparent shadow-lg shadow-amber-500/30',
+    emerald: 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-transparent shadow-lg shadow-emerald-500/30',
+    violet: 'bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white border-transparent shadow-lg shadow-violet-500/30',
+  }[accent]
   return (
     <button
       onClick={onClick}
