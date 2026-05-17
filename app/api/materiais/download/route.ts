@@ -106,10 +106,17 @@ async function createMaterialPdfDownloadResponse(request: NextRequest, materialI
     // ── 5. Verificar autorização de acesso ────────────────────────────────
     const isAdmin = session.role === 'admin'
     let hasAccess = isAdmin
+    let purchaseForAudit: any = null
 
     if (!hasAccess) {
       if (material.pricing === 'paid') {
         // Exige compra aprovada
+        const emailRegex = session.email
+          ? new RegExp(
+              `^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`,
+              'i'
+            )
+          : null
         const purchase = await db.collection('material_purchases').findOne({
           userId: session.userId,
           itemId: materialId,
@@ -117,13 +124,12 @@ async function createMaterialPdfDownloadResponse(request: NextRequest, materialI
           status: 'completed',
         })
 
-        if (!purchase) {
+        if (purchase) {
+          hasAccess = true
+          purchaseForAudit = purchase
+        } else {
           // Tentar via email como fallback (grants manuais antigos)
-          if (session.email) {
-            const emailRegex = new RegExp(
-              `^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`,
-              'i'
-            )
+          if (emailRegex) {
             const byEmail = await db.collection('material_purchases').findOne({
               userEmail: { $regex: emailRegex },
               itemId: materialId,
@@ -131,9 +137,40 @@ async function createMaterialPdfDownloadResponse(request: NextRequest, materialI
               status: 'completed',
             })
             hasAccess = !!byEmail
+            purchaseForAudit = byEmail
           }
-        } else {
-          hasAccess = true
+
+          if (!hasAccess) {
+            const packages = await db.collection('material_packages')
+              .find({ materialIds: materialId, isHidden: { $ne: true } })
+              .project({ _id: 1 })
+              .toArray()
+            const packageIds = packages.map((pkg: any) => String(pkg._id))
+
+            if (packageIds.length > 0) {
+              const packageFilter = {
+                itemType: 'package',
+                itemId: { $in: packageIds },
+                status: 'completed',
+              }
+              const packageByUserId = await db.collection('material_purchases').findOne({
+                ...packageFilter,
+                userId: session.userId,
+              })
+
+              if (packageByUserId) {
+                hasAccess = true
+                purchaseForAudit = packageByUserId
+              } else if (emailRegex) {
+                const packageByEmail = await db.collection('material_purchases').findOne({
+                  ...packageFilter,
+                  userEmail: { $regex: emailRegex },
+                })
+                hasAccess = !!packageByEmail
+                purchaseForAudit = packageByEmail
+              }
+            }
+          }
         }
       } else {
         // Material gratuito: verificar grupo do usuário
@@ -163,7 +200,7 @@ async function createMaterialPdfDownloadResponse(request: NextRequest, materialI
     // ── 6. Buscar orderId para metadados da marca d'água ──────────────────
     let orderId = 'ADMIN'
     if (!isAdmin) {
-      const purchase = await db.collection('material_purchases').findOne(
+      const purchase = purchaseForAudit || await db.collection('material_purchases').findOne(
         {
           userId: session.userId,
           itemId: materialId,

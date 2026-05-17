@@ -157,6 +157,12 @@ export async function validateMaterialPdfAccess(
 
     if (material.pricing === 'paid') {
       const baseFilter = { itemId: materialId, itemType: 'material', status: 'completed' }
+      const emailRegex = session.email
+        ? new RegExp(
+            `^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`,
+            'i'
+          )
+        : null
       const byUserId = await db.collection('material_purchases').findOne({
         ...baseFilter,
         userId: session.userId,
@@ -164,16 +170,42 @@ export async function validateMaterialPdfAccess(
 
       if (byUserId) {
         hasAccess = true
-      } else if (session.email) {
-        const emailRegex = new RegExp(
-          `^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`,
-          'i'
-        )
+      } else if (emailRegex) {
         const byEmail = await db.collection('material_purchases').findOne({
           ...baseFilter,
           userEmail: { $regex: emailRegex },
         })
         hasAccess = !!byEmail
+      }
+
+      if (!hasAccess) {
+        const packages = await db.collection('material_packages')
+          .find({ materialIds: materialId, isHidden: { $ne: true } })
+          .project({ _id: 1 })
+          .toArray()
+        const packageIds = packages.map((pkg: any) => String(pkg._id))
+
+        if (packageIds.length > 0) {
+          const packageFilter = {
+            itemType: 'package',
+            itemId: { $in: packageIds },
+            status: 'completed',
+          }
+          const packageByUserId = await db.collection('material_purchases').findOne({
+            ...packageFilter,
+            userId: session.userId,
+          })
+
+          if (packageByUserId) {
+            hasAccess = true
+          } else if (emailRegex) {
+            const packageByEmail = await db.collection('material_purchases').findOne({
+              ...packageFilter,
+              userEmail: { $regex: emailRegex },
+            })
+            hasAccess = !!packageByEmail
+          }
+        }
       }
     } else {
       hasAccess =
