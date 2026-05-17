@@ -8,20 +8,20 @@ import {
     BarChart3,
     BookOpen,
     Check,
+    ChevronDown,
+    ChevronUp,
     Copy,
     Eye,
     FileText,
     GraduationCap,
     ImageIcon,
-    Italic,
-    Layers,
     Link2,
     List,
     Loader2,
     Mail,
+    MessageSquareQuote,
     Paperclip,
     Plus,
-    Quote,
     Search,
     Send,
     Sparkles,
@@ -124,10 +124,71 @@ interface SendResult {
 }
 
 type AttachmentType = 'none' | 'material' | 'flashcard' | 'link'
+type EmailBlockType = 'hero' | 'text' | 'highlight' | 'list' | 'button' | 'image' | 'quote'
+
+interface EmailBlock {
+    id: string
+    type: EmailBlockType
+    title?: string
+    text?: string
+    url?: string
+    buttonText?: string
+    imageUrl?: string
+    alt?: string
+    items?: string[]
+}
+
+interface VisualPreset {
+    subject: string
+    previewText: string
+    blocks: EmailBlock[]
+}
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://domineaqui.com.br'
 
-function escapeHtml(value: string) {
+const blockOptions: Array<{ type: EmailBlockType; label: string; icon: typeof Type }> = [
+    { type: 'hero', label: 'Titulo', icon: Type },
+    { type: 'text', label: 'Texto', icon: FileText },
+    { type: 'highlight', label: 'Destaque', icon: Sparkles },
+    { type: 'list', label: 'Lista', icon: List },
+    { type: 'button', label: 'Botao', icon: Link2 },
+    { type: 'image', label: 'Imagem', icon: ImageIcon },
+    { type: 'quote', label: 'Citacao', icon: MessageSquareQuote },
+]
+
+const blockLabels: Record<EmailBlockType, string> = {
+    hero: 'Titulo principal',
+    text: 'Texto',
+    highlight: 'Destaque',
+    list: 'Lista',
+    button: 'Botao',
+    image: 'Imagem',
+    quote: 'Citacao',
+}
+
+function newId() {
+    return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+}
+
+function makeBlock(type: EmailBlockType, data: Partial<EmailBlock> = {}): EmailBlock {
+    const defaults: Record<EmailBlockType, EmailBlock> = {
+        hero: { id: newId(), type: 'hero', title: 'Titulo do e-mail', text: 'Uma frase curta para explicar o principal beneficio.' },
+        text: { id: newId(), type: 'text', text: 'Escreva um paragrafo curto, claro e orientado para acao.' },
+        highlight: { id: newId(), type: 'highlight', title: 'Destaque', text: 'O principal motivo para o usuario clicar.' },
+        list: { id: newId(), type: 'list', title: 'O que voce recebe', items: ['Beneficio 1', 'Beneficio 2', 'Proximo passo'] },
+        button: { id: newId(), type: 'button', buttonText: 'Acessar agora', url: appUrl },
+        image: { id: newId(), type: 'image', imageUrl: '', alt: 'Imagem do e-mail' },
+        quote: { id: newId(), type: 'quote', text: 'Insira uma prova social, depoimento ou frase curta.' },
+    }
+
+    return { ...defaults[type], id: newId(), ...data }
+}
+
+function cloneBlocks(blocks: EmailBlock[]) {
+    return blocks.map(block => ({ ...block, id: newId(), items: block.items ? [...block.items] : undefined }))
+}
+
+function escapeHtml(value = '') {
     return value
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
@@ -136,10 +197,100 @@ function escapeHtml(value: string) {
         .replace(/'/g, '&#039;')
 }
 
-function normalizeHref(value: string) {
+function textToHtml(value = '') {
+    return escapeHtml(value)
+        .split(/\n{2,}/)
+        .map(paragraph => paragraph.trim())
+        .filter(Boolean)
+        .map(paragraph => `<p>${paragraph.replace(/\n/g, '<br>')}</p>`)
+        .join('')
+}
+
+function normalizeHref(value = '') {
     const trimmed = value.trim()
     if (!trimmed) return ''
     return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`
+}
+
+function plainTextFromHtml(html: string) {
+    return html
+        .replace(/<style[\s\S]*?<\/style>/gi, '')
+        .replace(/<script[\s\S]*?<\/script>/gi, '')
+        .replace(/<[^>]+>/g, '\n')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim()
+}
+
+function blocksFromTemplate(template: EmailTemplate): EmailBlock[] {
+    const preset = visualTemplatePresets[template.id]
+    if (preset) return cloneBlocks(preset.blocks)
+
+    const text = plainTextFromHtml(template.content)
+    const lines = text.split('\n').map(line => line.trim()).filter(Boolean)
+    const title = lines[0] || template.name.replace(/^[^\wÀ-ÿ]+/u, '').trim() || 'Titulo do e-mail'
+    const body = lines.slice(1).join('\n\n') || 'Escreva o conteúdo principal do e-mail.'
+
+    return [
+        makeBlock('hero', { title, text: template.previewText || template.description }),
+        makeBlock('text', { text: body }),
+        makeBlock('button', { buttonText: 'Acessar plataforma', url: appUrl }),
+    ]
+}
+
+function renderBlocksHtml(blocks: EmailBlock[]) {
+    return blocks.map(block => {
+        switch (block.type) {
+            case 'hero':
+                return `
+                  <div class="hero-block">
+                    <h1>${escapeHtml(block.title || '')}</h1>
+                    ${block.text ? `<p>${escapeHtml(block.text)}</p>` : ''}
+                  </div>
+                `
+            case 'text':
+                return `<div class="text-block">${textToHtml(block.text || '')}</div>`
+            case 'highlight':
+                return `
+                  <div class="highlight-box">
+                    ${block.title ? `<p><strong>${escapeHtml(block.title)}</strong></p>` : ''}
+                    ${textToHtml(block.text || '')}
+                  </div>
+                `
+            case 'list':
+                return `
+                  <div class="list-block">
+                    ${block.title ? `<h2>${escapeHtml(block.title)}</h2>` : ''}
+                    <ul>
+                      ${(block.items || []).filter(Boolean).map(item => `<li>${escapeHtml(item)}</li>`).join('')}
+                    </ul>
+                  </div>
+                `
+            case 'button': {
+                const href = normalizeHref(block.url)
+                if (!href) return ''
+                return `
+                  <div class="button-block">
+                    <a href="${escapeHtml(href)}" class="cta-button" target="_blank">${escapeHtml(block.buttonText || 'Acessar agora')}</a>
+                  </div>
+                `
+            }
+            case 'image':
+                if (!block.imageUrl) return ''
+                return `
+                  <div class="image-block">
+                    <img src="${escapeHtml(block.imageUrl)}" alt="${escapeHtml(block.alt || '')}">
+                  </div>
+                `
+            case 'quote':
+                return `<blockquote>${escapeHtml(block.text || '')}</blockquote>`
+            default:
+                return ''
+        }
+    }).join('')
 }
 
 function renderAttachmentHtml(attachment: AttachmentBlock | null) {
@@ -151,28 +302,215 @@ function renderAttachmentHtml(attachment: AttachmentBlock | null) {
 
     return `
       <div class="divider"></div>
-      <div style="border: 1px solid #d9e8df; background: linear-gradient(135deg, #f6fbf8 0%, #ffffff 100%); border-radius: 16px; padding: 24px; margin: 28px 0;">
+      <div class="resource-card">
         ${image}
-        <p style="display: inline-block; margin: 0 0 12px 0; padding: 5px 10px; border-radius: 999px; background: #e9f8ef; color: #0f3d2e; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;">${escapeHtml(attachment.badge)}</p>
-        <h2 style="margin: 0 0 10px 0; color: #0f3d2e;">${escapeHtml(attachment.title)}</h2>
-        <p style="margin: 0 0 18px 0; color: #4a5568;">${escapeHtml(attachment.description)}</p>
-        <div style="text-align: center;">
+        <p class="resource-badge">${escapeHtml(attachment.badge)}</p>
+        <h2>${escapeHtml(attachment.title)}</h2>
+        <p>${escapeHtml(attachment.description)}</p>
+        <div class="button-block">
           <a href="${escapeHtml(attachment.url)}" class="cta-button" target="_blank">${escapeHtml(attachment.ctaText)}</a>
         </div>
       </div>
     `
 }
 
-const quickBlocks = [
-    { id: 'h1', label: 'Titulo', icon: Type },
-    { id: 'paragraph', label: 'Texto', icon: FileText },
-    { id: 'button', label: 'CTA', icon: Link2 },
-    { id: 'highlight', label: 'Destaque', icon: Sparkles },
-    { id: 'image', label: 'Imagem', icon: ImageIcon },
-    { id: 'list', label: 'Lista', icon: List },
-    { id: 'quote', label: 'Citação', icon: Quote },
-    { id: 'divider', label: 'Divisor', icon: Layers },
-]
+const visualTemplatePresets: Record<string, VisualPreset> = {
+    'welcome-back': {
+        subject: 'Sentimos sua falta no DomineAqui',
+        previewText: 'Volte agora e veja as novidades que preparamos para voce.',
+        blocks: [
+            makeBlock('hero', { title: 'Ei, sentimos sua falta!', text: 'Tem conteudo novo esperando por voce na plataforma.' }),
+            makeBlock('text', { text: 'Faz um tempo que voce nao aparece por aqui. Enquanto isso, liberamos novos materiais, provas, games educativos e flashcards para deixar sua rotina mais leve.' }),
+            makeBlock('highlight', { title: 'Comece por pouco', text: 'Abra a plataforma, escolha um tema e faca uma sessao curta hoje.' }),
+            makeBlock('button', { buttonText: 'Voltar a estudar', url: appUrl }),
+        ],
+    },
+    'new-content': {
+        subject: 'Tem conteudo novo no DomineAqui',
+        previewText: 'Acabamos de liberar uma novidade para acelerar sua revisao.',
+        blocks: [
+            makeBlock('hero', { title: 'Conteudo novo no ar', text: 'Uma novidade pratica para voce estudar com mais direcao.' }),
+            makeBlock('text', { text: 'Acabamos de adicionar um novo conteudo na plataforma. Use esse material para revisar os pontos principais e depois praticar com questoes.' }),
+            makeBlock('highlight', { title: 'O que ha de novo', text: 'Descreva aqui o conteudo liberado e por que ele vale o clique.' }),
+            makeBlock('button', { buttonText: 'Ver novidade', url: `${appUrl}/dashboard` }),
+        ],
+    },
+    'exam-reminder': {
+        subject: 'Lembrete: prova chegando',
+        previewText: 'Revise os pontos principais e entre preparado.',
+        blocks: [
+            makeBlock('hero', { title: 'Prova a vista', text: 'Separe alguns minutos para revisar antes da data.' }),
+            makeBlock('highlight', { title: 'Dados da prova', text: 'Nome da prova: [preencher]\nData e horario: [preencher]' }),
+            makeBlock('list', { title: 'Antes de comecar', items: ['Revise os pontos principais', 'Faca exercicios praticos', 'Durma bem na vespera'] }),
+            makeBlock('button', { buttonText: 'Ir para provas', url: `${appUrl}/provas` }),
+        ],
+    },
+    'premium-promo': {
+        subject: 'Condicao especial para virar Premium',
+        previewText: 'Aproveite a oferta antes que ela termine.',
+        blocks: [
+            makeBlock('hero', { title: 'Oferta especial liberada', text: 'Um empurrao para estudar com mais recursos e menos limite.' }),
+            makeBlock('highlight', { title: '[X]% de desconto', text: 'Oferta valida ate [DATA]. Ajuste o desconto e a data antes de enviar.' }),
+            makeBlock('list', { title: 'Com Premium voce tem', items: ['Questoes ilimitadas', 'Flashcards e materiais exclusivos', 'Estatisticas avancadas', 'Suporte prioritario'] }),
+            makeBlock('button', { buttonText: 'Quero ser Premium', url: `${appUrl}/buy` }),
+        ],
+    },
+    'feedback-request': {
+        subject: 'Sua opiniao ajuda a melhorar o DomineAqui',
+        previewText: 'Responda em poucos minutos e ajude a construir a plataforma.',
+        blocks: [
+            makeBlock('hero', { title: 'Queremos ouvir voce', text: 'Sua opiniao ajuda a decidir as proximas melhorias.' }),
+            makeBlock('text', { text: 'Conte o que voce mais gosta, o que podemos melhorar e quais recursos fariam diferenca na sua rotina.' }),
+            makeBlock('button', { buttonText: 'Dar feedback', url: '[LINK_DO_FORMULARIO]' }),
+        ],
+    },
+    'study-tips': {
+        subject: 'Dicas simples para estudar melhor',
+        previewText: 'Estrategias curtas para lembrar mais e revisar melhor.',
+        blocks: [
+            makeBlock('hero', { title: 'Estude com mais qualidade', text: 'Pequenas mudancas deixam sua revisao mais eficiente.' }),
+            makeBlock('list', { title: 'Experimente hoje', items: ['Estude 25 minutos com foco', 'Revise erros no dia seguinte', 'Faca questoes antes de reler teoria'] }),
+            makeBlock('highlight', { title: 'Pratica ativa', text: 'Responder antes de conferir a resposta fixa melhor do que apenas reler.' }),
+            makeBlock('button', { buttonText: 'Comecar a praticar', url: appUrl }),
+        ],
+    },
+    achievement: {
+        subject: 'Parabens pela sua conquista',
+        previewText: 'Sua dedicacao esta aparecendo. Veja o proximo passo.',
+        blocks: [
+            makeBlock('hero', { title: 'Parabens pela conquista!', text: 'Seu esforco esta dando resultado.' }),
+            makeBlock('highlight', { title: '[Descricao da conquista]', text: 'Edite este bloco com a conquista do aluno ou do grupo.' }),
+            makeBlock('text', { text: 'Cada pequeno passo conta. Continue usando esse ritmo para chegar ainda mais longe.' }),
+            makeBlock('button', { buttonText: 'Continuar evoluindo', url: appUrl }),
+        ],
+    },
+    'material-drop': {
+        subject: 'Separei um material para seus estudos',
+        previewText: 'Abra para acessar o material e saber como usar.',
+        blocks: [
+            makeBlock('hero', { title: 'Material novo para estudar melhor', text: 'Um recurso selecionado para facilitar sua revisao.' }),
+            makeBlock('text', { text: 'Use o material para revisar os pontos principais e depois volte para praticar com questoes.' }),
+            makeBlock('list', { title: 'Como aproveitar', items: ['Leia os topicos principais', 'Marque os pontos dificeis', 'Faca questoes sobre o tema'] }),
+        ],
+    },
+    'flashcard-push': {
+        subject: 'Revise em poucos minutos com estes flashcards',
+        previewText: 'Um deck pronto para praticar revisao ativa sem perder tempo.',
+        blocks: [
+            makeBlock('hero', { title: 'Treino rapido para fixar de verdade', text: 'Use flashcards para testar memoria ativa.' }),
+            makeBlock('highlight', { title: 'Use assim', text: 'Responda antes de virar o card, marque os dificeis e repita amanha.' }),
+            makeBlock('text', { text: 'O deck pode ser anexado no bloco de recurso abaixo.' }),
+        ],
+    },
+    'limited-offer': {
+        subject: 'Condicao especial liberada por pouco tempo',
+        previewText: 'Aproveite antes que a janela feche.',
+        blocks: [
+            makeBlock('hero', { title: 'Condicao especial para acelerar seus estudos', text: 'Uma oportunidade com tempo limitado para organizar sua rotina.' }),
+            makeBlock('highlight', { title: '[Descreva a oferta]', text: 'Valida ate [data/horario].' }),
+            makeBlock('button', { buttonText: 'Ver condicao especial', url: `${appUrl}/buy` }),
+        ],
+    },
+    'challenge-7-days': {
+        subject: 'Topa um desafio de 7 dias?',
+        previewText: 'Um plano simples para voltar ao ritmo.',
+        blocks: [
+            makeBlock('hero', { title: 'Desafio de 7 dias', text: 'Um comeco pequeno, claro e repetivel.' }),
+            makeBlock('list', { title: 'Plano da semana', items: ['Dia 1: 10 questoes', 'Dia 2: revisar erros', 'Dia 3: flashcards rapidos', 'Dias 4 a 7: repetir o ciclo'] }),
+            makeBlock('button', { buttonText: 'Comecar desafio', url: `${appUrl}/dashboard` }),
+        ],
+    },
+    'cart-recovery': {
+        subject: 'Seu material ainda esta te esperando',
+        previewText: 'Volte para finalizar e liberar acesso ao conteudo.',
+        blocks: [
+            makeBlock('hero', { title: 'Ainda da tempo de continuar', text: 'O material que voce viu pode ajudar na sua rotina.' }),
+            makeBlock('text', { text: 'Esse recurso foi criado para encurtar caminho, organizar o conteudo e colocar voce em pratica mais rapido.' }),
+            makeBlock('button', { buttonText: 'Ver materiais', url: `${appUrl}/materiais` }),
+        ],
+    },
+    'class-live': {
+        subject: 'Aula especial chegando',
+        previewText: 'Veja tema, horario e link para participar.',
+        blocks: [
+            makeBlock('hero', { title: 'Aula especial marcada', text: 'Reserve esse horario para trabalhar um tema importante.' }),
+            makeBlock('highlight', { title: '[Tema da aula]', text: 'Data: [data]\nHorario: [horario]' }),
+            makeBlock('button', { buttonText: 'Entrar na aula', url: '[LINK_DA_AULA]' }),
+        ],
+    },
+    'weekly-digest': {
+        subject: 'Seu resumo da semana no DomineAqui',
+        previewText: 'Novidades, atalhos de estudo e o melhor proximo passo.',
+        blocks: [
+            makeBlock('hero', { title: 'O que vale sua atencao esta semana', text: 'Um resumo direto para voce nao perder o que importa.' }),
+            makeBlock('list', { title: 'Novidades', items: ['[Novidade 1]', '[Novidade 2]', '[Novidade 3]'] }),
+            makeBlock('highlight', { title: 'Proximo passo recomendado', text: 'Escolha um tema dificil e faca uma sessao curta de questoes hoje.' }),
+            makeBlock('button', { buttonText: 'Abrir meu painel', url: `${appUrl}/dashboard` }),
+        ],
+    },
+    'social-proof': {
+        subject: 'Olha como outros alunos estudam melhor',
+        previewText: 'Uma forma simples de criar consistencia.',
+        blocks: [
+            makeBlock('hero', { title: 'Um jeito mais inteligente de evoluir', text: 'Acompanhar erros e revisar ativamente muda o jogo.' }),
+            makeBlock('quote', { text: '[Insira aqui um depoimento curto ou resultado real]' }),
+            makeBlock('button', { buttonText: 'Continuar estudando', url: appUrl }),
+        ],
+    },
+    'new-feature': {
+        subject: 'Tem uma novidade no DomineAqui',
+        previewText: 'Veja como usar o novo recurso nos seus estudos.',
+        blocks: [
+            makeBlock('hero', { title: 'Novo recurso liberado', text: 'Uma melhoria para deixar seus estudos mais simples.' }),
+            makeBlock('highlight', { title: 'O que muda', text: '[Explique o recurso em uma frase clara]' }),
+            makeBlock('button', { buttonText: 'Testar agora', url: appUrl }),
+        ],
+    },
+    'exam-results': {
+        subject: 'Seu resultado merece alguns minutos',
+        previewText: 'Veja erros, revise pontos fracos e planeje o proximo treino.',
+        blocks: [
+            makeBlock('hero', { title: 'Use seu resultado como mapa', text: 'Ele mostra onde vale colocar energia agora.' }),
+            makeBlock('list', { title: 'Depois de abrir', items: ['Veja as questoes erradas', 'Anote o padrao dos erros', 'Revise o tema com flashcards ou material'] }),
+            makeBlock('button', { buttonText: 'Ver minhas provas', url: `${appUrl}/provas` }),
+        ],
+    },
+    renewal: {
+        subject: 'Seu acesso Premium esta perto de expirar',
+        previewText: 'Renove para nao interromper sua rotina de estudos.',
+        blocks: [
+            makeBlock('hero', { title: 'Nao deixe seu ritmo quebrar', text: 'Continue com acesso aos recursos Premium.' }),
+            makeBlock('list', { title: 'Voce mantem', items: ['Conteudos Premium', 'Questoes e revisoes', 'Ferramentas de evolucao'] }),
+            makeBlock('button', { buttonText: 'Renovar acesso', url: `${appUrl}/buy` }),
+        ],
+    },
+    maintenance: {
+        subject: 'Aviso importante sobre a plataforma',
+        previewText: 'Leia para saber o que muda e quando.',
+        blocks: [
+            makeBlock('hero', { title: 'Aviso importante', text: 'Uma atualizacao programada esta chegando.' }),
+            makeBlock('highlight', { title: 'Quando?', text: '[data e horario]' }),
+            makeBlock('text', { text: 'Nosso objetivo e melhorar sua experiencia e manter tudo funcionando com estabilidade.' }),
+        ],
+    },
+    empty: {
+        subject: '',
+        previewText: '',
+        blocks: [
+            makeBlock('hero', { title: 'Titulo do e-mail', text: 'Resumo curto do principal beneficio.' }),
+            makeBlock('text', { text: 'Escreva sua mensagem aqui.' }),
+            makeBlock('button', { buttonText: 'Acessar plataforma', url: appUrl }),
+        ],
+    },
+}
+
+function templateSubject(template: EmailTemplate) {
+    return visualTemplatePresets[template.id]?.subject ?? template.subject
+}
+
+function templatePreview(template: EmailTemplate) {
+    return visualTemplatePresets[template.id]?.previewText ?? template.previewText
+}
 
 export default function AdminEmailsPage() {
     const router = useRouter()
@@ -196,7 +534,7 @@ export default function AdminEmailsPage() {
 
     const [subject, setSubject] = useState('')
     const [previewText, setPreviewText] = useState('')
-    const [content, setContent] = useState('')
+    const [blocks, setBlocks] = useState<EmailBlock[]>(() => cloneBlocks(visualTemplatePresets.empty.blocks))
 
     const [attachmentType, setAttachmentType] = useState<AttachmentType>('none')
     const [selectedMaterialId, setSelectedMaterialId] = useState('')
@@ -285,7 +623,7 @@ export default function AdminEmailsPage() {
                 !query ||
                 template.name.toLowerCase().includes(query) ||
                 template.description.toLowerCase().includes(query) ||
-                template.subject.toLowerCase().includes(query)
+                templateSubject(template).toLowerCase().includes(query)
             return matchesCategory && matchesSearch
         })
     }, [templateCategory, templateSearch, templates])
@@ -310,7 +648,7 @@ export default function AdminEmailsPage() {
             return {
                 type: 'flashcard',
                 title: selectedFlashcard.title,
-                description: selectedFlashcard.description || 'Deck de flashcards para revisar com prática ativa.',
+                description: selectedFlashcard.description || 'Deck de flashcards para revisar com pratica ativa.',
                 url: `${appUrl}/flashcards/d/${selectedFlashcard.slug || selectedFlashcard._id}`,
                 ctaText: attachmentCtaText || 'Estudar flashcards',
                 badge: `${selectedFlashcard.cardCount || 0} flashcards`,
@@ -341,26 +679,77 @@ export default function AdminEmailsPage() {
         selectedMaterial,
     ])
 
-    const finalContent = useMemo(() => {
-        return `${content}${renderAttachmentHtml(currentAttachment)}`
-    }, [content, currentAttachment])
+    const contentHtml = useMemo(() => renderBlocksHtml(blocks), [blocks])
+    const finalContent = useMemo(() => `${contentHtml}${renderAttachmentHtml(currentAttachment)}`, [contentHtml, currentAttachment])
 
     const recipientCount = selectAll
         ? users.length + additionalEmails.length
         : selectedUserIds.size + additionalEmails.length
 
+    const plainContent = useMemo(() => blocks.map(block => [
+        block.title,
+        block.text,
+        block.buttonText,
+        ...(block.items || []),
+    ].filter(Boolean).join(' ')).join(' '), [blocks])
+
     const readinessChecks = useMemo(() => {
         return [
             { label: 'Assunto com gancho', done: subject.trim().length >= 20 },
             { label: 'Preview preenchido', done: previewText.trim().length >= 25 },
-            { label: 'CTA ou anexo clicavel', done: content.includes('cta-button') || !!currentAttachment },
-            { label: 'Conteudo suficiente', done: content.replace(/<[^>]*>/g, '').trim().length >= 80 },
+            { label: 'Botao ou recurso clicavel', done: blocks.some(block => block.type === 'button' && normalizeHref(block.url)) || !!currentAttachment },
+            { label: 'Conteudo suficiente', done: plainContent.trim().length >= 80 },
             { label: 'Destinatarios definidos', done: recipientCount > 0 },
         ]
-    }, [content, currentAttachment, previewText, recipientCount, subject])
+    }, [blocks, currentAttachment, plainContent, previewText, recipientCount, subject])
 
     const readinessScore = readinessChecks.filter(item => item.done).length
     const selectedTemplate = templates.find(template => template.id === selectedTemplateId)
+
+    const updateBlock = (blockId: string, updates: Partial<EmailBlock>) => {
+        setBlocks(prev => prev.map(block => block.id === blockId ? { ...block, ...updates } : block))
+    }
+
+    const updateBlockItem = (blockId: string, index: number, value: string) => {
+        setBlocks(prev => prev.map(block => {
+            if (block.id !== blockId) return block
+            const items = [...(block.items || [])]
+            items[index] = value
+            return { ...block, items }
+        }))
+    }
+
+    const addBlockItem = (blockId: string) => {
+        setBlocks(prev => prev.map(block => block.id === blockId ? { ...block, items: [...(block.items || []), 'Novo item'] } : block))
+    }
+
+    const removeBlockItem = (blockId: string, index: number) => {
+        setBlocks(prev => prev.map(block => {
+            if (block.id !== blockId) return block
+            return { ...block, items: (block.items || []).filter((_, itemIndex) => itemIndex !== index) }
+        }))
+    }
+
+    const addBlock = (type: EmailBlockType) => {
+        setBlocks(prev => [...prev, makeBlock(type)])
+        showToast('Bloco adicionado', 'success')
+    }
+
+    const removeBlock = (blockId: string) => {
+        setBlocks(prev => prev.filter(block => block.id !== blockId))
+    }
+
+    const moveBlock = (blockId: string, direction: -1 | 1) => {
+        setBlocks(prev => {
+            const index = prev.findIndex(block => block.id === blockId)
+            const nextIndex = index + direction
+            if (index < 0 || nextIndex < 0 || nextIndex >= prev.length) return prev
+            const next = [...prev]
+            const [block] = next.splice(index, 1)
+            next.splice(nextIndex, 0, block)
+            return next
+        })
+    }
 
     const toggleUserSelection = (userId: string) => {
         setSelectedUserIds(prev => {
@@ -388,7 +777,7 @@ export default function AdminEmailsPage() {
     const addEmail = () => {
         const email = newEmail.trim().toLowerCase()
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            showToast('E-mail inválido', 'error')
+            showToast('E-mail invalido', 'error')
             return
         }
 
@@ -400,50 +789,10 @@ export default function AdminEmailsPage() {
 
     const loadTemplate = (template: EmailTemplate) => {
         setSelectedTemplateId(template.id)
-        setSubject(template.subject)
-        setPreviewText(template.previewText)
-        setContent(template.content)
+        setSubject(templateSubject(template))
+        setPreviewText(templatePreview(template))
+        setBlocks(blocksFromTemplate(template))
         showToast(`Template "${template.name}" carregado`, 'success')
-    }
-
-    const insertElement = (elementType: string) => {
-        let element = ''
-
-        switch (elementType) {
-            case 'button':
-                element = '\n<div style="text-align: center;">\n  <a href="[LINK_AQUI]" class="cta-button">Texto do botão</a>\n</div>\n'
-                break
-            case 'image':
-                element = '\n<div style="text-align: center;">\n  <img src="[URL_DA_IMAGEM]" alt="Descrição da imagem" style="max-width: 100%; border-radius: 12px;">\n</div>\n'
-                break
-            case 'highlight':
-                element = '\n<div class="highlight-box">\n  <p><strong>Destaque:</strong> escreva aqui o principal motivo para clicar.</p>\n</div>\n'
-                break
-            case 'divider':
-                element = '\n<div class="divider"></div>\n'
-                break
-            case 'h1':
-                element = '\n<h1 style="text-align: center;">Título principal</h1>\n'
-                break
-            case 'paragraph':
-                element = '\n<p>Escreva um parágrafo curto, claro e orientado para ação.</p>\n'
-                break
-            case 'list':
-                element = '\n<ul>\n  <li>Benefício 1</li>\n  <li>Benefício 2</li>\n  <li>Próximo passo</li>\n</ul>\n'
-                break
-            case 'quote':
-                element = '\n<blockquote style="border-left: 4px solid #0f3d2e; padding-left: 18px; margin: 24px 0; color: #4a5568; font-style: italic;">\n  Insira uma prova social, depoimento ou frase curta.\n</blockquote>\n'
-                break
-            case 'bold':
-                element = '<strong>texto em destaque</strong>'
-                break
-            case 'italic':
-                element = '<em>texto em itálico</em>'
-                break
-        }
-
-        setContent(prev => `${prev}${element}`)
-        showToast('Bloco inserido no e-mail', 'success')
     }
 
     const getPreviewHtml = useCallback(() => {
@@ -461,20 +810,36 @@ export default function AdminEmailsPage() {
           .header { background: linear-gradient(135deg, #0f3d2e 0%, #1a5c45 100%); padding: 30px 20px; text-align: center; }
           .header img { max-height: 60px; }
           .content { padding: 40px 30px; line-height: 1.6; color: #333; }
-          .content h1, .content h2 { color: #0f3d2e; margin-top: 0; }
-          .content h1 { font-size: 28px; line-height: 1.18; }
-          .content h2 { font-size: 22px; line-height: 1.25; }
+          .hero-block { text-align: center; margin-bottom: 28px; }
+          .hero-block h1 { color: #0f3d2e; font-size: 30px; line-height: 1.16; margin: 0 0 12px; }
+          .hero-block p { color: #4a5568; font-size: 17px; margin: 0; }
+          .content h2 { color: #0f3d2e; font-size: 22px; line-height: 1.25; margin: 0 0 12px; }
           .content p, .content li { color: #4a5568; font-size: 16px; }
           .content p { margin: 0 0 16px; }
-          .content img { max-width: 100%; border-radius: 12px; margin: 20px 0; }
-          .cta-button { display: inline-block; background: linear-gradient(135deg, #f57c00 0%, #ff9800 100%); color: #fff !important; text-decoration: none; padding: 16px 34px; border-radius: 999px; font-weight: 800; margin: 22px 0; box-shadow: 0 6px 18px rgba(245, 124, 0, 0.28); }
-          .secondary-button { display: inline-block; color: #0f3d2e !important; text-decoration: none; padding: 13px 28px; border-radius: 999px; font-weight: 700; border: 2px solid #0f3d2e; margin: 10px 5px; }
+          .text-block { margin: 18px 0; }
+          .list-block { margin: 24px 0; }
+          .list-block ul { padding-left: 22px; margin: 0; }
+          .list-block li { margin: 8px 0; }
+          .image-block { text-align: center; margin: 24px 0; }
+          .image-block img { max-width: 100%; border-radius: 14px; }
+          .button-block { text-align: center; margin: 24px 0; }
+          .cta-button { display: inline-block; background: linear-gradient(135deg, #f57c00 0%, #ff9800 100%); color: #fff !important; text-decoration: none; padding: 16px 34px; border-radius: 999px; font-weight: 800; box-shadow: 0 6px 18px rgba(245, 124, 0, 0.28); }
           .highlight-box { background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); border-left: 4px solid #f57c00; padding: 20px; margin: 25px 0; border-radius: 0 10px 10px 0; }
           .highlight-box p { margin: 0 0 8px; color: #5d4037; }
+          blockquote { border-left: 4px solid #0f3d2e; margin: 24px 0; padding-left: 18px; color: #4a5568; font-style: italic; }
+          .resource-card { border: 1px solid #d9e8df; background: linear-gradient(135deg, #f6fbf8 0%, #ffffff 100%); border-radius: 16px; padding: 24px; margin: 28px 0; }
+          .resource-card h2 { margin-top: 0; }
+          .resource-badge { display: inline-block; margin: 0 0 12px 0; padding: 5px 10px; border-radius: 999px; background: #e9f8ef; color: #0f3d2e !important; font-size: 12px !important; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
           .divider { height: 1px; background: linear-gradient(90deg, transparent, #d7dee6, transparent); margin: 30px 0; }
           .footer { background: #fafbfc; padding: 30px; text-align: center; border-top: 1px solid #edf2f7; }
           .footer p { margin: 5px 0; font-size: 13px; color: #718096; }
           .social-link { color: #f57c00; font-weight: bold; text-decoration: none; }
+          @media only screen and (max-width: 600px) {
+            body { padding: 0; }
+            .content { padding: 28px 22px; }
+            .hero-block h1 { font-size: 25px; }
+            .cta-button { display: block; padding: 15px 22px; }
+          }
         </style>
       </head>
       <body>
@@ -483,7 +848,7 @@ export default function AdminEmailsPage() {
             <img src="${logoUrl}" alt="DomineAqui">
           </div>
           <div class="content">
-            ${finalContent || '<p style="color: #999; text-align: center;">Seu conteúdo aparecerá aqui...</p>'}
+            ${finalContent || '<p style="color: #999; text-align: center;">Seu conteudo aparecera aqui...</p>'}
           </div>
           <div class="footer">
             <p>Siga-nos no Instagram: <a href="https://instagram.com/domineaqui.br" class="social-link">@domineaqui.br</a></p>
@@ -500,12 +865,12 @@ export default function AdminEmailsPage() {
             showToast('Informe o assunto do e-mail', 'error')
             return
         }
-        if (!content.trim()) {
-            showToast('Informe o conteúdo do e-mail', 'error')
+        if (!plainContent.trim()) {
+            showToast('Escreva o conteudo do e-mail', 'error')
             return
         }
         if (recipientCount === 0) {
-            showToast('Selecione pelo menos um destinatário', 'error')
+            showToast('Selecione pelo menos um destinatario', 'error')
             return
         }
 
@@ -549,7 +914,7 @@ export default function AdminEmailsPage() {
     }
 
     return (
-        <AppShell headerTitle="Central de E-mails" headerSubtitle="Campanhas administrativas com templates, anexos e preview">
+        <AppShell headerTitle="Central de E-mails" headerSubtitle="Campanhas administrativas com editor visual">
             <BanChecker />
             <div className="container mx-auto max-w-[1500px] px-4 py-7">
                 <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -559,14 +924,14 @@ export default function AdminEmailsPage() {
                         </Button>
                         <div>
                             <div className="flex flex-wrap items-center gap-2">
-                                <h1 className="text-2xl font-bold text-slate-950 dark:text-white">Criar e-mail administrativo</h1>
+                                <h1 className="text-2xl font-bold text-slate-950 dark:text-white">Criar e-mail</h1>
                                 <Badge variant="outline" className="gap-1">
                                     <Sparkles className="h-3.5 w-3.5 text-amber-500" />
                                     {templates.length} templates
                                 </Badge>
                             </div>
                             <p className="mt-1 text-sm text-muted-foreground">
-                                Monte uma campanha com assunto forte, preview, bloco clicável e destinatários segmentados.
+                                Escolha um template, edite os blocos e envie com preview.
                             </p>
                         </div>
                     </div>
@@ -595,7 +960,7 @@ export default function AdminEmailsPage() {
                                     <Wand2 className="h-5 w-5 text-amber-500" />
                                     Templates
                                 </CardTitle>
-                                <CardDescription>Escolha um ponto de partida para aumentar a chance de clique.</CardDescription>
+                                <CardDescription>Modelos prontos para editar em blocos.</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="relative">
@@ -640,7 +1005,7 @@ export default function AdminEmailsPage() {
                                                     {template.category || 'Geral'}
                                                 </Badge>
                                             </div>
-                                            <p className="mt-3 line-clamp-2 text-xs text-slate-600 dark:text-slate-300">{template.subject || 'Sem assunto predefinido'}</p>
+                                            <p className="mt-3 line-clamp-2 text-xs text-slate-600 dark:text-slate-300">{templateSubject(template) || 'Sem assunto predefinido'}</p>
                                         </button>
                                     ))}
                                     {visibleTemplates.length === 0 && (
@@ -658,9 +1023,9 @@ export default function AdminEmailsPage() {
                             <CardHeader className="pb-4">
                                 <CardTitle className="flex items-center gap-2 text-lg">
                                     <Mail className="h-5 w-5 text-emerald-600" />
-                                    Experiência da caixa de entrada
+                                    Caixa de entrada
                                 </CardTitle>
-                                <CardDescription>Assunto e preview aparecem antes do usuário abrir o e-mail.</CardDescription>
+                                <CardDescription>O que aparece antes do e-mail ser aberto.</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
@@ -672,16 +1037,14 @@ export default function AdminEmailsPage() {
                                             placeholder="Ex: Seu próximo passo de estudo está aqui"
                                             className="text-base"
                                         />
-                                        <p className="mt-1 text-xs text-muted-foreground">{subject.length} caracteres</p>
                                     </div>
                                     <div>
                                         <label className="mb-2 block text-sm font-medium">Preview *</label>
                                         <Input
                                             value={previewText}
                                             onChange={(event) => setPreviewText(event.target.value)}
-                                            placeholder="A frase que convence o usuário a abrir"
+                                            placeholder="A frase que aparece na caixa de entrada"
                                         />
-                                        <p className="mt-1 text-xs text-muted-foreground">{previewText.length} caracteres</p>
                                     </div>
                                 </div>
 
@@ -709,60 +1072,113 @@ export default function AdminEmailsPage() {
                                     <FileText className="h-5 w-5 text-blue-600" />
                                     Conteúdo
                                 </CardTitle>
-                                <CardDescription>Escreva em HTML ou insira blocos prontos. O anexo aparece no fim do e-mail.</CardDescription>
+                                <CardDescription>Edite cada bloco sem escrever código.</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <div className="flex flex-wrap gap-2 rounded-lg border bg-muted/40 p-2">
-                                    {quickBlocks.map(block => {
-                                        const Icon = block.icon
+                                <div className="grid gap-2 sm:grid-cols-4 lg:grid-cols-7">
+                                    {blockOptions.map(option => {
+                                        const Icon = option.icon
                                         return (
                                             <Button
-                                                key={block.id}
+                                                key={option.type}
                                                 type="button"
-                                                variant="ghost"
+                                                variant="outline"
                                                 size="sm"
-                                                onClick={() => insertElement(block.id)}
-                                                title={block.label}
+                                                onClick={() => addBlock(option.type)}
                                                 className="gap-1"
                                             >
                                                 <Icon className="h-4 w-4" />
-                                                <span className="hidden sm:inline">{block.label}</span>
+                                                {option.label}
                                             </Button>
                                         )
                                     })}
-                                    <Button type="button" variant="ghost" size="sm" onClick={() => insertElement('bold')} title="Negrito">
-                                        <strong>B</strong>
-                                    </Button>
-                                    <Button type="button" variant="ghost" size="sm" onClick={() => insertElement('italic')} title="Itálico">
-                                        <Italic className="h-4 w-4" />
-                                    </Button>
                                 </div>
 
-                                <Textarea
-                                    value={content}
-                                    onChange={(event) => setContent(event.target.value)}
-                                    placeholder="Escolha um template ou escreva o conteúdo do e-mail..."
-                                    className="min-h-[350px] font-mono text-sm"
-                                />
+                                <div className="space-y-3">
+                                    {blocks.map((block, index) => (
+                                        <Card key={block.id} className="border-slate-200 shadow-none dark:border-slate-800">
+                                            <CardHeader className="flex-row items-center justify-between space-y-0 p-4 pb-3">
+                                                <div className="min-w-0">
+                                                    <CardTitle className="text-sm">{blockLabels[block.type]}</CardTitle>
+                                                    <CardDescription>Bloco {index + 1}</CardDescription>
+                                                </div>
+                                                <div className="flex shrink-0 gap-1">
+                                                    <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => moveBlock(block.id, -1)} disabled={index === 0}>
+                                                        <ChevronUp className="h-4 w-4" />
+                                                    </Button>
+                                                    <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => moveBlock(block.id, 1)} disabled={index === blocks.length - 1}>
+                                                        <ChevronDown className="h-4 w-4" />
+                                                    </Button>
+                                                    <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => removeBlock(block.id)} disabled={blocks.length === 1}>
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                            </CardHeader>
+                                            <CardContent className="space-y-3 p-4 pt-0">
+                                                {block.type === 'hero' && (
+                                                    <>
+                                                        <Input value={block.title || ''} onChange={(event) => updateBlock(block.id, { title: event.target.value })} placeholder="Titulo principal" />
+                                                        <Textarea value={block.text || ''} onChange={(event) => updateBlock(block.id, { text: event.target.value })} placeholder="Subtitulo curto" className="min-h-[86px]" />
+                                                    </>
+                                                )}
 
-                                <div className="flex flex-col gap-2 sm:flex-row">
-                                    <Button type="button" variant="outline" className="flex-1" onClick={() => setShowPreview(true)}>
-                                        <Eye className="mr-2 h-4 w-4" />
-                                        Visualizar e-mail
-                                    </Button>
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        className="flex-1"
-                                        onClick={() => {
-                                            navigator.clipboard.writeText(getPreviewHtml())
-                                            showToast('HTML completo copiado', 'success')
-                                        }}
-                                    >
-                                        <Copy className="mr-2 h-4 w-4" />
-                                        Copiar HTML
-                                    </Button>
+                                                {block.type === 'text' && (
+                                                    <Textarea value={block.text || ''} onChange={(event) => updateBlock(block.id, { text: event.target.value })} placeholder="Texto do e-mail" className="min-h-[130px]" />
+                                                )}
+
+                                                {block.type === 'highlight' && (
+                                                    <>
+                                                        <Input value={block.title || ''} onChange={(event) => updateBlock(block.id, { title: event.target.value })} placeholder="Titulo do destaque" />
+                                                        <Textarea value={block.text || ''} onChange={(event) => updateBlock(block.id, { text: event.target.value })} placeholder="Texto do destaque" className="min-h-[100px]" />
+                                                    </>
+                                                )}
+
+                                                {block.type === 'list' && (
+                                                    <>
+                                                        <Input value={block.title || ''} onChange={(event) => updateBlock(block.id, { title: event.target.value })} placeholder="Titulo da lista" />
+                                                        <div className="space-y-2">
+                                                            {(block.items || []).map((item, itemIndex) => (
+                                                                <div key={`${block.id}-${itemIndex}`} className="flex gap-2">
+                                                                    <Input value={item} onChange={(event) => updateBlockItem(block.id, itemIndex, event.target.value)} placeholder={`Item ${itemIndex + 1}`} />
+                                                                    <Button type="button" variant="ghost" size="icon" className="shrink-0 text-destructive" onClick={() => removeBlockItem(block.id, itemIndex)} disabled={(block.items || []).length <= 1}>
+                                                                        <X className="h-4 w-4" />
+                                                                    </Button>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                        <Button type="button" variant="outline" size="sm" onClick={() => addBlockItem(block.id)}>
+                                                            <Plus className="mr-2 h-4 w-4" />
+                                                            Adicionar item
+                                                        </Button>
+                                                    </>
+                                                )}
+
+                                                {block.type === 'button' && (
+                                                    <div className="grid gap-3 md:grid-cols-[220px_minmax(0,1fr)]">
+                                                        <Input value={block.buttonText || ''} onChange={(event) => updateBlock(block.id, { buttonText: event.target.value })} placeholder="Texto do botao" />
+                                                        <Input value={block.url || ''} onChange={(event) => updateBlock(block.id, { url: event.target.value })} placeholder="https://..." />
+                                                    </div>
+                                                )}
+
+                                                {block.type === 'image' && (
+                                                    <div className="grid gap-3">
+                                                        <Input value={block.imageUrl || ''} onChange={(event) => updateBlock(block.id, { imageUrl: event.target.value })} placeholder="URL da imagem" />
+                                                        <Input value={block.alt || ''} onChange={(event) => updateBlock(block.id, { alt: event.target.value })} placeholder="Descricao da imagem" />
+                                                    </div>
+                                                )}
+
+                                                {block.type === 'quote' && (
+                                                    <Textarea value={block.text || ''} onChange={(event) => updateBlock(block.id, { text: event.target.value })} placeholder="Citacao ou prova social" className="min-h-[100px]" />
+                                                )}
+                                            </CardContent>
+                                        </Card>
+                                    ))}
                                 </div>
+
+                                <Button type="button" variant="outline" className="w-full" onClick={() => setShowPreview(true)}>
+                                    <Eye className="mr-2 h-4 w-4" />
+                                    Visualizar e-mail
+                                </Button>
                             </CardContent>
                         </Card>
 
@@ -772,7 +1188,7 @@ export default function AdminEmailsPage() {
                                     <Paperclip className="h-5 w-5 text-violet-600" />
                                     Anexar recurso clicável
                                 </CardTitle>
-                                <CardDescription>Adicione material, deck de flashcards ou link como bloco visual no e-mail.</CardDescription>
+                                <CardDescription>Material, flashcard ou link como card dentro do e-mail.</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="grid gap-2 sm:grid-cols-4">
@@ -812,7 +1228,7 @@ export default function AdminEmailsPage() {
                                                 ))}
                                             </SelectContent>
                                         </Select>
-                                        <Input value={attachmentCtaText} onChange={(event) => setAttachmentCtaText(event.target.value)} placeholder="Texto do botão" />
+                                        <Input value={attachmentCtaText} onChange={(event) => setAttachmentCtaText(event.target.value)} placeholder="Texto do botao" />
                                     </div>
                                 )}
 
@@ -830,7 +1246,7 @@ export default function AdminEmailsPage() {
                                                 ))}
                                             </SelectContent>
                                         </Select>
-                                        <Input value={attachmentCtaText} onChange={(event) => setAttachmentCtaText(event.target.value)} placeholder="Texto do botão" />
+                                        <Input value={attachmentCtaText} onChange={(event) => setAttachmentCtaText(event.target.value)} placeholder="Texto do botao" />
                                     </div>
                                 )}
 
@@ -838,13 +1254,13 @@ export default function AdminEmailsPage() {
                                     <div className="grid gap-3">
                                         <Input value={customLinkUrl} onChange={(event) => setCustomLinkUrl(event.target.value)} placeholder="https://..." />
                                         <div className="grid gap-3 md:grid-cols-2">
-                                            <Input value={customLinkTitle} onChange={(event) => setCustomLinkTitle(event.target.value)} placeholder="Título do link" />
-                                            <Input value={attachmentCtaText} onChange={(event) => setAttachmentCtaText(event.target.value)} placeholder="Texto do botão" />
+                                            <Input value={customLinkTitle} onChange={(event) => setCustomLinkTitle(event.target.value)} placeholder="Titulo do link" />
+                                            <Input value={attachmentCtaText} onChange={(event) => setAttachmentCtaText(event.target.value)} placeholder="Texto do botao" />
                                         </div>
                                         <Textarea
                                             value={customLinkDescription}
                                             onChange={(event) => setCustomLinkDescription(event.target.value)}
-                                            placeholder="Descrição curta do motivo para clicar"
+                                            placeholder="Descricao curta"
                                             className="min-h-[88px]"
                                         />
                                     </div>
@@ -875,7 +1291,7 @@ export default function AdminEmailsPage() {
                             <CardHeader className="pb-4">
                                 <CardTitle className="flex items-center gap-2 text-lg">
                                     <Target className="h-5 w-5 text-rose-600" />
-                                    Checklist de clique
+                                    Checklist
                                 </CardTitle>
                                 <CardDescription>{readinessScore} de {readinessChecks.length} pontos prontos.</CardDescription>
                             </CardHeader>
@@ -1084,6 +1500,10 @@ export default function AdminEmailsPage() {
                                         <span className="font-medium">{recipientCount}</span>
                                     </div>
                                     <div className="mt-2 flex justify-between gap-4">
+                                        <span className="text-muted-foreground">Blocos</span>
+                                        <span className="font-medium">{blocks.length}</span>
+                                    </div>
+                                    <div className="mt-2 flex justify-between gap-4">
                                         <span className="text-muted-foreground">Recurso</span>
                                         <span className="max-w-[220px] truncate font-medium">{currentAttachment?.title || 'Sem anexo'}</span>
                                     </div>
@@ -1125,7 +1545,7 @@ export default function AdminEmailsPage() {
                                     <Button
                                         type="button"
                                         onClick={sendEmail}
-                                        disabled={sending || recipientCount === 0 || !subject.trim() || !content.trim()}
+                                        disabled={sending || recipientCount === 0 || !subject.trim() || !plainContent.trim()}
                                         className="h-12 text-base"
                                     >
                                         {sending ? (
@@ -1176,6 +1596,10 @@ export default function AdminEmailsPage() {
                                 <div>
                                     <p className="text-xs text-muted-foreground">Template</p>
                                     <p className="font-semibold">{selectedTemplate?.name || 'Composição livre'}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-muted-foreground">Blocos</p>
+                                    <p className="font-semibold">{blocks.length}</p>
                                 </div>
                                 <div>
                                     <p className="text-xs text-muted-foreground">Anexo</p>
