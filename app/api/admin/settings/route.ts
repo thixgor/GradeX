@@ -8,6 +8,14 @@ import {
 } from '@/lib/sidebar-sections'
 
 export const dynamic = 'force-dynamic'
+export const revalidate = 0
+export const fetchCache = 'force-no-store'
+
+const NO_STORE_HEADERS = {
+  'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+  Pragma: 'no-cache',
+  Expires: '0',
+} as const
 
 interface AIKeySettings {
   generalExams?: string
@@ -49,19 +57,22 @@ export async function GET(req: NextRequest) {
 
     if (!settings) {
       // Retornar configurações padrão
-      return NextResponse.json(DEFAULT_LANDING_SETTINGS)
+      return NextResponse.json(DEFAULT_LANDING_SETTINGS, { headers: NO_STORE_HEADERS })
     }
 
-    return NextResponse.json({
-      ...DEFAULT_LANDING_SETTINGS,
-      ...settings,
-      sidebarSections: normalizeSidebarSections(settings.sidebarSections),
-    })
+    return NextResponse.json(
+      {
+        ...DEFAULT_LANDING_SETTINGS,
+        ...settings,
+        sidebarSections: normalizeSidebarSections(settings.sidebarSections),
+      },
+      { headers: NO_STORE_HEADERS }
+    )
   } catch (error) {
     console.error('Erro ao obter configurações:', error)
     return NextResponse.json(
       { error: 'Erro ao obter configurações' },
-      { status: 500 }
+      { status: 500, headers: NO_STORE_HEADERS }
     )
   }
 }
@@ -80,7 +91,7 @@ export async function PUT(req: NextRequest) {
     if (body.videoEmbedUrl && !isValidEmbedUrl(body.videoEmbedUrl)) {
       return NextResponse.json(
         { error: 'URL de embed inválida' },
-        { status: 400 }
+        { status: 400, headers: NO_STORE_HEADERS }
       )
     }
 
@@ -90,26 +101,36 @@ export async function PUT(req: NextRequest) {
     }
 
     const db = await getDb()
-    const result = await db.collection('landing_settings').updateOne(
-      {},
-      { $set: sanitizedBody },
-      { upsert: true }
-    )
+    const collection = db.collection('landing_settings')
+
+    // Se existirem múltiplos documentos (legado), consolidar em um só para
+    // evitar que GET retorne valores diferentes de PUT.
+    const existingDocs = await collection.find({}).limit(2).toArray()
+    if (existingDocs.length > 1) {
+      const [keep, ...extras] = existingDocs
+      await collection.deleteMany({ _id: { $in: extras.map((d) => d._id) } })
+      await collection.updateOne({ _id: keep._id }, { $set: sanitizedBody })
+    } else {
+      await collection.updateOne({}, { $set: sanitizedBody }, { upsert: true })
+    }
 
     // Buscar as configurações atualizadas para retornar
-    const updatedSettings = await db.collection('landing_settings').findOne({})
+    const updatedSettings = await collection.findOne({})
 
-    return NextResponse.json({
-      success: true,
-      message: 'Configurações atualizadas com sucesso',
-      ...updatedSettings,
-      sidebarSections: normalizeSidebarSections(updatedSettings?.sidebarSections),
-    })
+    return NextResponse.json(
+      {
+        success: true,
+        message: 'Configurações atualizadas com sucesso',
+        ...updatedSettings,
+        sidebarSections: normalizeSidebarSections(updatedSettings?.sidebarSections),
+      },
+      { headers: NO_STORE_HEADERS }
+    )
   } catch (error) {
     console.error('Erro ao atualizar configurações:', error)
     return NextResponse.json(
       { error: 'Erro ao atualizar configurações' },
-      { status: 500 }
+      { status: 500, headers: NO_STORE_HEADERS }
     )
   }
 }

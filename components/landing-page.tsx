@@ -257,7 +257,7 @@ export default function LandingPage({
         .catch(() => {})
     }
     if (initialVideoEmbedUrl === undefined) {
-      fetch('/api/admin/settings')
+      fetch('/api/admin/settings', { cache: 'no-store' })
         .then(async (r) => {
           if (r.ok) {
             const data = await r.json()

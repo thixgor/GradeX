@@ -173,7 +173,7 @@ export default function SettingsPage() {
 
   async function loadSettings() {
     try {
-      const res = await fetch('/api/admin/settings')
+      const res = await fetch('/api/admin/settings', { cache: 'no-store' })
       if (res.ok) {
         const data = await res.json()
         // Garantir que personalExamsEnabled é um booleano
