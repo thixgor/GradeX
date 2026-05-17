@@ -16,7 +16,12 @@ const SIZE_PX: Record<NonNullable<StarRatingDisplayProps['size']>, number> = {
   xl: 32,
 }
 
-function StarShape({ size, fillId }: { size: number; fillId: string }) {
+function normalizeRating(value: unknown) {
+  const numeric = typeof value === 'number' ? value : Number(value)
+  return Math.max(0, Math.min(5, Number.isFinite(numeric) ? numeric : 0))
+}
+
+function StarShape({ size }: { size: number }) {
   return (
     <svg
       width={size}
@@ -25,16 +30,9 @@ function StarShape({ size, fillId }: { size: number; fillId: string }) {
       aria-hidden="true"
       className="block irish-star"
     >
-      <defs>
-        <linearGradient id={fillId} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#F7DE9C" />
-          <stop offset="55%" stopColor="#F0C563" />
-          <stop offset="100%" stopColor="#C99837" />
-        </linearGradient>
-      </defs>
       <path
         d="M12 2.4l2.94 6.06 6.66.97-4.82 4.72 1.14 6.66L12 17.74l-5.92 3.07 1.14-6.66L2.4 9.43l6.66-.97L12 2.4z"
-        fill={`url(#${fillId})`}
+        fill="#F0C563"
         stroke="#B98726"
         strokeWidth="0.65"
         strokeLinejoin="round"
@@ -69,7 +67,7 @@ function EmptyStarShape({ size }: { size: number }) {
  */
 export function StarRatingDisplay({ value, size = 'md', className = '' }: StarRatingDisplayProps) {
   const px = SIZE_PX[size]
-  const safe = Math.max(0, Math.min(5, Number.isFinite(value) ? value : 0))
+  const safe = normalizeRating(value)
 
   return (
     <div
@@ -79,9 +77,8 @@ export function StarRatingDisplay({ value, size = 'md', className = '' }: StarRa
     >
       {[0, 1, 2, 3, 4].map(i => {
         const fillAmount = Math.max(0, Math.min(1, safe - i))
-        const id = `irishstar-${i}-${px}-${Math.round(fillAmount * 100)}`
         if (fillAmount <= 0) return <EmptyStarShape key={i} size={px} />
-        if (fillAmount >= 1) return <StarShape key={i} size={px} fillId={id} />
+        if (fillAmount >= 1) return <StarShape key={i} size={px} />
         // estrela parcial: empilha vazia + recorte da cheia
         return (
           <span key={i} className="relative inline-block" style={{ width: px, height: px }}>
@@ -92,7 +89,7 @@ export function StarRatingDisplay({ value, size = 'md', className = '' }: StarRa
               className="absolute inset-0 overflow-hidden"
               style={{ width: `${fillAmount * 100}%` }}
             >
-              <StarShape size={px} fillId={id} />
+              <StarShape size={px} />
             </span>
           </span>
         )
@@ -125,7 +122,6 @@ export function StarRatingInput({ value, onChange, size = 'lg', disabled }: Star
     >
       {[1, 2, 3, 4, 5].map(i => {
         const filled = i <= active
-        const id = `irishstar-input-${i}-${px}-${filled ? 1 : 0}`
         return (
           <button
             key={i}
@@ -141,7 +137,7 @@ export function StarRatingInput({ value, onChange, size = 'lg', disabled }: Star
               disabled ? 'cursor-not-allowed opacity-60' : 'hover:scale-110 active:scale-95'
             }`}
           >
-            {filled ? <StarShape size={px} fillId={id} /> : <EmptyStarShape size={px} />}
+            {filled ? <StarShape size={px} /> : <EmptyStarShape size={px} />}
           </button>
         )
       })}
