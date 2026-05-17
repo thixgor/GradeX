@@ -100,6 +100,16 @@ export async function POST(request: NextRequest) {
       ? `/pacotes/${data.itemId}`
       : `/materiais/${data.itemId}`
 
+  if (session.role === 'admin') {
+    return NextResponse.json({
+      error: data.itemType === 'package'
+        ? 'Você já possui acesso a este pacote.'
+        : 'Você já possui acesso a este material.',
+      alreadyOwned: true,
+      redirectTo: alreadyOwnedRedirect,
+    }, { status: 409 })
+  }
+
   // Bloqueia recompra
   const existing = await db.collection<MaterialPurchase>('material_purchases').findOne({
     itemType: data.itemType,

@@ -14,6 +14,7 @@ export interface MaterialCartSession {
   userId: string
   name?: string
   email?: string
+  role?: string
 }
 
 export interface MaterialCartResolvedItem {
@@ -110,6 +111,18 @@ function normalizeInputItems(items: MaterialCartItemInput[]) {
   return { normalized, skippedItems }
 }
 
+function buildUserGroups(userDoc: any) {
+  const userGroups: string[] = []
+  if (userDoc?.accountType) userGroups.push(userDoc.accountType)
+  if (userDoc?.secondaryRole === 'monitor') userGroups.push('monitor')
+  return userGroups
+}
+
+function matchesAllowedGroups(allowedGroups: unknown, userGroups: string[]) {
+  const groups = Array.isArray(allowedGroups) ? allowedGroups.map(String) : []
+  return groups.length === 0 || userGroups.some((group) => groups.includes(group))
+}
+
 async function getCompletedPurchases(
   db: Db,
   session: MaterialCartSession
@@ -144,25 +157,33 @@ export async function resolveMaterialCart(
   inputItems: MaterialCartItemInput[]
 ): Promise<MaterialCartResolution> {
   const { normalized, skippedItems } = normalizeInputItems(inputItems)
+  const isAdmin = session.role === 'admin'
 
   const materialIds = normalized.filter(item => item.itemType === 'material').map(item => item.itemId)
   const packageIds = normalized.filter(item => item.itemType === 'package').map(item => item.itemId)
 
-  const [materials, packages, purchases] = await Promise.all([
+  const [materials, packages, purchases, userDoc] = await Promise.all([
     materialIds.length
       ? db.collection('materials')
           .find({ _id: { $in: materialIds.map(id => new ObjectId(id)) } })
-          .project({ title: 1, pricing: 1, price: 1, type: 1, linkedDeckSlug: 1 })
+          .project({ title: 1, pricing: 1, price: 1, type: 1, linkedDeckSlug: 1, allowedGroups: 1 })
           .toArray()
       : Promise.resolve([]),
     packageIds.length
       ? db.collection('material_packages')
           .find({ _id: { $in: packageIds.map(id => new ObjectId(id)) } })
-          .project({ title: 1, pricing: 1, price: 1, materialIds: 1 })
+          .project({ title: 1, pricing: 1, price: 1, materialIds: 1, allowedGroups: 1 })
           .toArray()
       : Promise.resolve([]),
     getCompletedPurchases(db, session),
+    !isAdmin && ObjectId.isValid(session.userId)
+      ? db.collection('users').findOne(
+          { _id: new ObjectId(session.userId) },
+          { projection: { accountType: 1, secondaryRole: 1 } }
+        )
+      : Promise.resolve(null),
   ])
+  const userGroups = buildUserGroups(userDoc)
 
   const materialsById = new Map(materials.map((material: any) => [String(material._id), material]))
   const packagesById = new Map(packages.map((pkg: any) => [String(pkg._id), pkg]))
@@ -224,7 +245,11 @@ export async function resolveMaterialCart(
       skippedItems.push({ ...requested, reason: 'not_found' })
       continue
     }
-    if (ownedPackageIds.has(requested.itemId)) {
+    const hasPackageAccess =
+      isAdmin ||
+      ownedPackageIds.has(requested.itemId) ||
+      (pkg.pricing !== 'paid' && matchesAllowedGroups(pkg.allowedGroups, userGroups))
+    if (hasPackageAccess) {
       skippedItems.push({
         ...requested,
         reason: 'already_owned',
@@ -263,6 +288,15 @@ export async function resolveMaterialCart(
       ? 0
       : pricingMeta.effectivePrice
 
+    if (pkg.pricing === 'paid' && price <= 0 && pricingMeta.totalPaidIndividualValue > 0 && pricingMeta.ownedValue >= pricingMeta.totalPaidIndividualValue) {
+      skippedItems.push({
+        ...requested,
+        reason: 'already_owned',
+        itemTitle: pkg.title || 'Pacote',
+      })
+      continue
+    }
+
     acceptedItems.push({
       itemType: 'package',
       itemId: requested.itemId,
@@ -292,7 +326,11 @@ export async function resolveMaterialCart(
       skippedItems.push({ ...requested, reason: 'not_found' })
       continue
     }
-    if (ownedMaterialIds.has(requested.itemId)) {
+    const hasMaterialAccess =
+      isAdmin ||
+      ownedMaterialIds.has(requested.itemId) ||
+      (material.pricing === 'free' && matchesAllowedGroups(material.allowedGroups, userGroups))
+    if (hasMaterialAccess) {
       skippedItems.push({
         ...requested,
         reason: 'already_owned',
