@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { DEFAULT_OG_IMAGE, absoluteUrl, privateNoIndexRobots } from '@/lib/seo'
+import { DEFAULT_OG_IMAGE, absoluteUrl, publicIndexingRobots } from '@/lib/seo'
 
 const FLASHCARDS_DESCRIPTION =
   'Flashcards inteligentes da DomineAqui — estude com repetição espaçada, decks da comunidade e criação manual ou por IA.'
@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: 'Flashcards',
   description: FLASHCARDS_DESCRIPTION,
   alternates: { canonical: '/flashcards' },
-  robots: privateNoIndexRobots,
+  robots: publicIndexingRobots,
   openGraph: {
     title: 'Flashcards | DomineAqui',
     description: FLASHCARDS_DESCRIPTION,

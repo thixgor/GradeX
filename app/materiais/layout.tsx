@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { DEFAULT_OG_IMAGE, absoluteUrl, privateNoIndexRobots } from '@/lib/seo'
+import { DEFAULT_OG_IMAGE, absoluteUrl, publicIndexingRobots } from '@/lib/seo'
 
 const MATERIAIS_DESCRIPTION =
   'Biblioteca de materiais de estudo da DomineAqui com PDFs, vídeos, links e pacotes organizados por pastas.'
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/materiais',
   },
-  robots: privateNoIndexRobots,
+  robots: publicIndexingRobots,
   openGraph: {
     title: 'Materiais | DomineAqui',
     description: MATERIAIS_DESCRIPTION,
