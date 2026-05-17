@@ -43,6 +43,11 @@ export interface PackageUpsellModalProps {
   onClose: () => void
   loadingPackage?: boolean
   loadingIndividual?: boolean
+  /**
+   * 'cart' → labels do tipo "Adicionar ao carrinho" (quando o modal abriu a partir de um add-to-cart).
+   * 'buy'  → labels do tipo "Comprar agora" (default, mantém compat com chamadas antigas).
+   */
+  mode?: 'cart' | 'buy'
 }
 
 // ─── Type metadata ───────────────────────────────────────────
@@ -91,8 +96,9 @@ function fmtPrice(val?: number) {
 // ─── Component ───────────────────────────────────────────────
 export function PackageUpsellModal({
   pkg, item, onBuyPackage, onBuyIndividual, onClose,
-  loadingPackage, loadingIndividual,
+  loadingPackage, loadingIndividual, mode = 'buy',
 }: PackageUpsellModalProps) {
+  const isCartMode = mode === 'cart'
   const effectivePackagePrice = pkg.pricing === 'free'
     ? 0
     : Number(pkg._pricing?.effectivePrice ?? pkg.price ?? 0)
@@ -406,7 +412,7 @@ export function PackageUpsellModal({
               : <Package className="h-4 w-4 flex-shrink-0" />
             }
             <span>
-              Quero o pacote completo
+              {isCartMode ? 'Adicionar pacote ao carrinho' : 'Quero o pacote completo'}
               {!pkgFree && (
                 <span className="ml-1 opacity-85 font-black">
                   —
@@ -435,7 +441,7 @@ export function PackageUpsellModal({
               ? <span className="h-3.5 w-3.5 rounded-full border-2 border-white/20 border-t-white/60 animate-spin" />
               : <ShoppingCart className="h-3.5 w-3.5" />
             }
-            Comprar apenas este item
+            {isCartMode ? 'Adicionar apenas este item ao carrinho' : 'Comprar apenas este item'}
             {item.price != null && (
               <span className="font-semibold ml-0.5" style={{ color: 'rgba(255,255,255,0.55)' }}>
                 — {fmtPrice(item.price)}

@@ -1214,13 +1214,14 @@ function MateriaisContent() {
             }}
             loadingPackage={checkoutLoading === upsellState.pkg._id}
             loadingIndividual={checkoutLoading === upsellState.material._id}
+            mode="cart"
             onBuyPackage={() => {
               setUpsellState(null)
-              handleAcquire('package', upsellState.pkg._id, 'buy')
+              handleAcquire('package', upsellState.pkg._id, 'cart')
             }}
             onBuyIndividual={() => {
               setUpsellState(null)
-              handleAcquire('material', upsellState.material._id, 'buy')
+              handleAcquire('material', upsellState.material._id, 'cart')
             }}
             onClose={() => setUpsellState(null)}
           />
