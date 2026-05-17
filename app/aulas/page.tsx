@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Plus, Lock, Globe, Video, Zap, Search, ChevronRight, Info, BookOpen, AlertCircle, Pencil, Clock, History, X, Bell, Trash2 } from 'lucide-react'
-import { RotatingAds } from '@/components/rotating-ads'
 import { AppShell, useAppShell } from '@/components/app-shell'
 import { LogoLoading } from '@/components/logo-loading'
 import { useState as useStateDialog } from 'react'
@@ -1931,10 +1930,6 @@ function AulasPageContent() {
             </div>
           )}
 
-          {/* Anúncios Rotativos (parte inferior) */}
-          <div className="mt-8 px-3 sm:px-4 pb-6">
-            <RotatingAds maxHeight="180px" className="rounded-2xl overflow-hidden" />
-          </div>
         </main>
       </div>
     </>

@@ -22,6 +22,36 @@ interface Anuncio {
   criadoPor: ObjectId
 }
 
+function getString(value: unknown) {
+  return typeof value === 'string' ? value.trim() : ''
+}
+
+function isValidImageUrl(value: string) {
+  const trimmed = value.trim()
+  if (!trimmed) return false
+  if (trimmed.startsWith('/')) return true
+
+  try {
+    const url = new URL(trimmed)
+    return url.protocol === 'http:' || url.protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
+function isValidNavigationUrl(value: string) {
+  const trimmed = value.trim()
+  if (!trimmed) return false
+  if (trimmed.startsWith('/')) return true
+
+  try {
+    const url = new URL(trimmed)
+    return ['http:', 'https:', 'mailto:', 'tel:'].includes(url.protocol)
+  } catch {
+    return false
+  }
+}
+
 // GET - Retornar todos os anuncios (admin ve todos, usuario ve apenas ativos)
 export async function GET(request: NextRequest) {
   try {
@@ -29,9 +59,12 @@ export async function GET(request: NextRequest) {
     const db = await getDb()
     const anunciosCollection = db.collection<Anuncio>('anuncios')
 
-    // Admin ve todos os anuncios, usuarios veem apenas os ativos
+    const status = request.nextUrl.searchParams.get('status')
+    const activeOnly = status === 'active' || request.nextUrl.searchParams.get('activeOnly') === 'true'
+
+    // Admin ve todos os anuncios, exceto quando a exibicao publica pede apenas ativos.
     const isAdmin = session?.role === 'admin'
-    const filter = isAdmin ? {} : { ativo: true }
+    const filter = isAdmin && !activeOnly ? {} : { ativo: true }
 
     const anuncios = await anunciosCollection
       .find(filter)
@@ -59,9 +92,23 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
 
     // Validacoes
-    if (!body.imagemUrl || body.imagemUrl.trim() === '') {
+    const imagemUrl = getString(body.imagemUrl)
+    const linkUrl = getString(body.linkUrl)
+    const modalTitulo = getString(body.modalTitulo)
+    const modalConteudo = typeof body.modalConteudo === 'string' ? body.modalConteudo : ''
+    const modalBotaoTexto = getString(body.modalBotaoTexto)
+    const modalBotaoLink = getString(body.modalBotaoLink)
+
+    if (!imagemUrl) {
       return NextResponse.json(
         { error: 'URL da imagem e obrigatoria' },
+        { status: 400 }
+      )
+    }
+
+    if (!isValidImageUrl(imagemUrl)) {
+      return NextResponse.json(
+        { error: 'Use uma URL de imagem http(s) ou caminho interno iniciado por /' },
         { status: 400 }
       )
     }
@@ -73,23 +120,36 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (body.tipoAcao === 'link' && (!body.linkUrl || body.linkUrl.trim() === '')) {
+    if (body.tipoAcao === 'link' && !linkUrl) {
       return NextResponse.json(
         { error: 'URL do link e obrigatoria quando tipo de acao e "link"' },
         { status: 400 }
       )
     }
 
+    if (body.tipoAcao === 'link' && !isValidNavigationUrl(linkUrl)) {
+      return NextResponse.json(
+        { error: 'URL do link invalida' },
+        { status: 400 }
+      )
+    }
+
     if (body.tipoAcao === 'modal') {
-      if (!body.modalTitulo || body.modalTitulo.trim() === '') {
+      if (!modalTitulo) {
         return NextResponse.json(
           { error: 'Titulo do modal e obrigatorio quando tipo de acao e "modal"' },
           { status: 400 }
         )
       }
-      if (!body.modalConteudo || body.modalConteudo.trim() === '') {
+      if (!modalConteudo.trim()) {
         return NextResponse.json(
           { error: 'Conteudo do modal e obrigatorio quando tipo de acao e "modal"' },
+          { status: 400 }
+        )
+      }
+      if (modalBotaoLink && !isValidNavigationUrl(modalBotaoLink)) {
+        return NextResponse.json(
+          { error: 'URL do botao do modal invalida' },
           { status: 400 }
         )
       }
@@ -107,16 +167,16 @@ export async function POST(request: NextRequest) {
     const novaOrdem = body.ordem ?? (ultimoAnuncio.length > 0 ? ultimoAnuncio[0].ordem + 1 : 0)
 
     const novoAnuncio: Omit<Anuncio, '_id'> = {
-      imagemUrl: body.imagemUrl.trim(),
+      imagemUrl,
       ativo: body.ativo ?? true,
       ordem: novaOrdem,
       tipoAcao: body.tipoAcao,
-      linkUrl: body.tipoAcao === 'link' ? body.linkUrl?.trim() : undefined,
+      linkUrl: body.tipoAcao === 'link' ? linkUrl : undefined,
       linkNovaAba: body.tipoAcao === 'link' ? (body.linkNovaAba ?? true) : undefined,
-      modalTitulo: body.tipoAcao === 'modal' ? body.modalTitulo?.trim() : undefined,
-      modalConteudo: body.tipoAcao === 'modal' ? body.modalConteudo : undefined,
-      modalBotaoTexto: body.tipoAcao === 'modal' ? body.modalBotaoTexto?.trim() : undefined,
-      modalBotaoLink: body.tipoAcao === 'modal' ? body.modalBotaoLink?.trim() : undefined,
+      modalTitulo: body.tipoAcao === 'modal' ? modalTitulo : undefined,
+      modalConteudo: body.tipoAcao === 'modal' ? modalConteudo : undefined,
+      modalBotaoTexto: body.tipoAcao === 'modal' ? modalBotaoTexto || undefined : undefined,
+      modalBotaoLink: body.tipoAcao === 'modal' ? modalBotaoLink || undefined : undefined,
       criadoEm: new Date(),
       atualizadoEm: new Date(),
       criadoPor: new ObjectId(session.userId)
@@ -176,15 +236,23 @@ export async function PUT(request: NextRequest) {
     const updateData: Partial<Anuncio> = {
       atualizadoEm: new Date()
     }
+    const unsetData: Partial<Record<keyof Anuncio, ''>> = {}
 
     if (body.imagemUrl !== undefined) {
-      if (body.imagemUrl.trim() === '') {
+      const imagemUrl = getString(body.imagemUrl)
+      if (!imagemUrl) {
         return NextResponse.json(
           { error: 'URL da imagem nao pode ser vazia' },
           { status: 400 }
         )
       }
-      updateData.imagemUrl = body.imagemUrl.trim()
+      if (!isValidImageUrl(imagemUrl)) {
+        return NextResponse.json(
+          { error: 'Use uma URL de imagem http(s) ou caminho interno iniciado por /' },
+          { status: 400 }
+        )
+      }
+      updateData.imagemUrl = imagemUrl
     }
 
     if (body.ativo !== undefined) {
@@ -192,7 +260,11 @@ export async function PUT(request: NextRequest) {
     }
 
     if (body.ordem !== undefined) {
-      updateData.ordem = Number(body.ordem)
+      const ordem = Number(body.ordem)
+      if (!Number.isFinite(ordem)) {
+        return NextResponse.json({ error: 'Ordem invalida' }, { status: 400 })
+      }
+      updateData.ordem = ordem
     }
 
     if (body.tipoAcao !== undefined) {
@@ -210,7 +282,7 @@ export async function PUT(request: NextRequest) {
 
     // Campos de link
     if (body.linkUrl !== undefined) {
-      updateData.linkUrl = body.linkUrl?.trim() || undefined
+      updateData.linkUrl = getString(body.linkUrl) || undefined
     }
     if (body.linkNovaAba !== undefined) {
       updateData.linkNovaAba = Boolean(body.linkNovaAba)
@@ -218,16 +290,16 @@ export async function PUT(request: NextRequest) {
 
     // Campos de modal
     if (body.modalTitulo !== undefined) {
-      updateData.modalTitulo = body.modalTitulo?.trim() || undefined
+      updateData.modalTitulo = getString(body.modalTitulo) || undefined
     }
     if (body.modalConteudo !== undefined) {
-      updateData.modalConteudo = body.modalConteudo || undefined
+      updateData.modalConteudo = typeof body.modalConteudo === 'string' ? body.modalConteudo || undefined : undefined
     }
     if (body.modalBotaoTexto !== undefined) {
-      updateData.modalBotaoTexto = body.modalBotaoTexto?.trim() || undefined
+      updateData.modalBotaoTexto = getString(body.modalBotaoTexto) || undefined
     }
     if (body.modalBotaoLink !== undefined) {
-      updateData.modalBotaoLink = body.modalBotaoLink?.trim() || undefined
+      updateData.modalBotaoLink = getString(body.modalBotaoLink) || undefined
     }
 
     // Validacoes baseadas no tipoAcao final
@@ -239,11 +311,23 @@ export async function PUT(request: NextRequest) {
           { status: 400 }
         )
       }
+      if (!isValidNavigationUrl(linkUrlFinal)) {
+        return NextResponse.json(
+          { error: 'URL do link invalida' },
+          { status: 400 }
+        )
+      }
+
+      unsetData.modalTitulo = ''
+      unsetData.modalConteudo = ''
+      unsetData.modalBotaoTexto = ''
+      unsetData.modalBotaoLink = ''
     }
 
     if (tipoAcaoFinal === 'modal') {
       const modalTituloFinal = updateData.modalTitulo ?? anuncioExistente.modalTitulo
       const modalConteudoFinal = updateData.modalConteudo ?? anuncioExistente.modalConteudo
+      const modalBotaoLinkFinal = updateData.modalBotaoLink ?? anuncioExistente.modalBotaoLink
 
       if (!modalTituloFinal || modalTituloFinal.trim() === '') {
         return NextResponse.json(
@@ -257,11 +341,28 @@ export async function PUT(request: NextRequest) {
           { status: 400 }
         )
       }
+      if (modalBotaoLinkFinal && !isValidNavigationUrl(modalBotaoLinkFinal)) {
+        return NextResponse.json(
+          { error: 'URL do botao do modal invalida' },
+          { status: 400 }
+        )
+      }
+
+      unsetData.linkUrl = ''
+      unsetData.linkNovaAba = ''
+    }
+
+    const updateOperation: { $set: Partial<Anuncio>; $unset?: Partial<Record<keyof Anuncio, ''>> } = {
+      $set: updateData
+    }
+
+    if (Object.keys(unsetData).length > 0) {
+      updateOperation.$unset = unsetData
     }
 
     await anunciosCollection.updateOne(
       { _id: new ObjectId(id) },
-      { $set: updateData }
+      updateOperation
     )
 
     // Buscar anuncio atualizado

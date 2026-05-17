@@ -7,6 +7,7 @@ import { Footer } from '@/components/footer'
 import { ImageProtectionProvider } from '@/components/image-protection-provider'
 import { VerifyEmailBanner } from '@/components/verify-email-banner'
 import { StudyMusicPlayer } from '@/components/study-music-player'
+import { PlatformAds } from '@/components/platform-ads'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { LiteModeProvider } from '@/context/LiteModeContext'
@@ -180,6 +181,7 @@ export default function RootLayout({
               </div>
               <Footer />
               <StudyMusicPlayer />
+              <PlatformAds />
             </ImageProtectionProvider>
           </MaterialCartProvider>
           <Analytics />

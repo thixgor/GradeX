@@ -1,39 +1,76 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowUp,
+  BarChart3,
+  CheckCircle2,
+  Copy,
+  ExternalLink,
+  Eye,
+  EyeOff,
+  Image,
+  Link2,
+  Loader2,
+  Megaphone,
+  MonitorUp,
+  PanelTop,
+  Pencil,
+  Plus,
+  RefreshCw,
+  Search,
+  Sparkles,
+  Trash2,
+  XCircle,
+  type LucideIcon,
+} from 'lucide-react'
+import { AppShell, useAppShell } from '@/components/app-shell'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { LogoLoading } from '@/components/logo-loading'
+import { Checkbox } from '@/components/ui/checkbox'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Switch } from '@/components/ui/switch'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
-import { ToastAlert } from '@/components/ui/toast-alert'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, Eye, EyeOff, ExternalLink, Image, Megaphone, ArrowLeft, Loader2 } from 'lucide-react'
+import { Switch } from '@/components/ui/switch'
+import { Textarea } from '@/components/ui/textarea'
+import { ToastAlert } from '@/components/ui/toast-alert'
+import { LogoLoading } from '@/components/logo-loading'
+import { cn } from '@/lib/utils'
+
+type TipoAcao = 'link' | 'modal'
+type StatusFilter = 'all' | 'active' | 'inactive'
+type TypeFilter = 'all' | TipoAcao
 
 interface Anuncio {
   _id: string
   imagemUrl: string
   ativo: boolean
   ordem: number
-  tipoAcao: 'link' | 'modal'
+  tipoAcao: TipoAcao
   linkUrl?: string
   linkNovaAba?: boolean
   modalTitulo?: string
   modalConteudo?: string
   modalBotaoTexto?: string
   modalBotaoLink?: string
-  criadoEm: string
-  atualizadoEm: string
+  criadoEm?: string
+  atualizadoEm?: string
 }
 
 interface FormData {
   imagemUrl: string
-  tipoAcao: 'link' | 'modal'
+  tipoAcao: TipoAcao
   linkUrl: string
   linkNovaAba: boolean
   modalTitulo: string
@@ -52,87 +89,195 @@ const initialFormData: FormData = {
   modalConteudo: '',
   modalBotaoTexto: '',
   modalBotaoLink: '',
-  ativo: true
+  ativo: true,
+}
+
+const statusFilters: Array<{ value: StatusFilter; label: string }> = [
+  { value: 'all', label: 'Todos' },
+  { value: 'active', label: 'Ativos' },
+  { value: 'inactive', label: 'Inativos' },
+]
+
+const typeFilters: Array<{ value: TypeFilter; label: string }> = [
+  { value: 'all', label: 'Todos os tipos' },
+  { value: 'link', label: 'Link' },
+  { value: 'modal', label: 'Modal' },
+]
+
+function normalizeSearch(value: string) {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+}
+
+function isValidImageUrl(value: string) {
+  const trimmed = value.trim()
+  if (!trimmed) return false
+  if (trimmed.startsWith('/')) return true
+
+  try {
+    const url = new URL(trimmed)
+    return url.protocol === 'http:' || url.protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
+function isValidNavigationUrl(value: string) {
+  const trimmed = value.trim()
+  if (!trimmed) return false
+  if (trimmed.startsWith('/')) return true
+
+  try {
+    const url = new URL(trimmed)
+    return ['http:', 'https:', 'mailto:', 'tel:'].includes(url.protocol)
+  } catch {
+    return false
+  }
+}
+
+function formatDate(value?: string) {
+  if (!value) return 'Sem data'
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return 'Sem data'
+
+  return new Intl.DateTimeFormat('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(date)
+}
+
+function getAdTitle(ad: Anuncio) {
+  if (ad.modalTitulo?.trim()) return ad.modalTitulo.trim()
+  if (ad.tipoAcao === 'link' && ad.linkUrl?.trim()) return getDestinationLabel(ad.linkUrl)
+  return `Anuncio #${ad.ordem + 1}`
+}
+
+function getDestinationLabel(value: string) {
+  const trimmed = value.trim()
+  if (!trimmed) return 'Sem destino'
+  if (trimmed.startsWith('/')) return trimmed
+
+  try {
+    const url = new URL(trimmed)
+    return `${url.hostname.replace(/^www\./, '')}${url.pathname === '/' ? '' : url.pathname}`
+  } catch {
+    return trimmed
+  }
 }
 
 export default function AdminAnunciosPage() {
-  const router = useRouter()
-  const [user, setUser] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  const [anuncios, setAnuncios] = useState<Anuncio[]>([])
-  const [loadingAnuncios, setLoadingAnuncios] = useState(false)
+  return (
+    <AppShell headerTitle="Anuncios" headerSubtitle="Banners globais da plataforma">
+      <AdminAnunciosContent />
+    </AppShell>
+  )
+}
 
-  // Dialog state
+function AdminAnunciosContent() {
+  const router = useRouter()
+  const { isAdmin } = useAppShell()
+  const [anuncios, setAnuncios] = useState<Anuncio[]>([])
+  const [loadingAnuncios, setLoadingAnuncios] = useState(true)
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>('all')
+  const [search, setSearch] = useState('')
+
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingAnuncio, setEditingAnuncio] = useState<Anuncio | null>(null)
   const [formData, setFormData] = useState<FormData>(initialFormData)
   const [submitting, setSubmitting] = useState(false)
 
-  // Delete confirmation
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [anuncioToDelete, setAnuncioToDelete] = useState<Anuncio | null>(null)
   const [deleting, setDeleting] = useState(false)
+  const [actionLoading, setActionLoading] = useState<string | null>(null)
 
-  // Toast state
   const [toast, setToast] = useState<{
     open: boolean
     message: string
     type: 'success' | 'error' | 'info'
   }>({ open: false, message: '', type: 'info' })
 
-  useEffect(() => {
-    checkAuth()
+  const showToast = useCallback((message: string, type: 'success' | 'error' | 'info') => {
+    setToast({ open: true, message, type })
   }, [])
 
-  useEffect(() => {
-    if (user) {
-      loadAnuncios()
-    }
-  }, [user])
-
-  async function checkAuth() {
-    try {
-      const res = await fetch('/api/auth/me')
-      if (!res.ok) {
-        router.push('/auth/login')
-        return
-      }
-      const data = await res.json()
-      if (data.user.role !== 'admin') {
-        router.push('/')
-        return
-      }
-      setUser(data.user)
-    } catch (error) {
-      router.push('/auth/login')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  async function loadAnuncios() {
+  const loadAnuncios = useCallback(async () => {
     setLoadingAnuncios(true)
     try {
-      const res = await fetch('/api/admin/anuncios')
-      if (res.ok) {
-        const data = await res.json()
-        setAnuncios(data.anuncios || [])
-      }
+      const res = await fetch('/api/admin/anuncios', { cache: 'no-store' })
+      if (!res.ok) throw new Error('Erro ao carregar anuncios')
+
+      const data = await res.json()
+      setAnuncios(Array.isArray(data.anuncios) ? data.anuncios : [])
     } catch (error) {
       console.error('Erro ao carregar anuncios:', error)
       showToast('Erro ao carregar anuncios', 'error')
     } finally {
       setLoadingAnuncios(false)
     }
-  }
+  }, [showToast])
 
-  function showToast(message: string, type: 'success' | 'error' | 'info') {
-    setToast({ open: true, message, type })
-  }
+  useEffect(() => {
+    if (!isAdmin) {
+      router.replace('/')
+      return
+    }
+
+    loadAnuncios()
+  }, [isAdmin, loadAnuncios, router])
+
+  const sortedAnuncios = useMemo(
+    () => [...anuncios].sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0)),
+    [anuncios],
+  )
+
+  const stats = useMemo(() => {
+    const active = anuncios.filter((ad) => ad.ativo).length
+    const link = anuncios.filter((ad) => ad.tipoAcao === 'link').length
+    const modal = anuncios.filter((ad) => ad.tipoAcao === 'modal').length
+
+    return {
+      total: anuncios.length,
+      active,
+      inactive: anuncios.length - active,
+      link,
+      modal,
+    }
+  }, [anuncios])
+
+  const filteredAnuncios = useMemo(() => {
+    const query = normalizeSearch(search.trim())
+
+    return sortedAnuncios.filter((ad) => {
+      if (statusFilter === 'active' && !ad.ativo) return false
+      if (statusFilter === 'inactive' && ad.ativo) return false
+      if (typeFilter !== 'all' && ad.tipoAcao !== typeFilter) return false
+      if (!query) return true
+
+      return normalizeSearch(
+        [
+          ad.imagemUrl,
+          ad.linkUrl,
+          ad.modalTitulo,
+          ad.modalConteudo,
+          ad.modalBotaoTexto,
+          ad.modalBotaoLink,
+        ]
+          .filter(Boolean)
+          .join(' '),
+      ).includes(query)
+    })
+  }, [search, sortedAnuncios, statusFilter, typeFilter])
 
   function openCreateDialog() {
     setEditingAnuncio(null)
-    setFormData(initialFormData)
+    setFormData({ ...initialFormData })
     setDialogOpen(true)
   }
 
@@ -147,21 +292,26 @@ export default function AdminAnunciosPage() {
       modalConteudo: anuncio.modalConteudo || '',
       modalBotaoTexto: anuncio.modalBotaoTexto || '',
       modalBotaoLink: anuncio.modalBotaoLink || '',
-      ativo: anuncio.ativo
+      ativo: anuncio.ativo,
     })
     setDialogOpen(true)
   }
 
   async function handleSubmit() {
-    // Validations
-    if (!formData.imagemUrl.trim()) {
-      showToast('URL da imagem e obrigatoria', 'error')
+    const imageUrl = formData.imagemUrl.trim()
+    const linkUrl = formData.linkUrl.trim()
+    const modalButtonLink = formData.modalBotaoLink.trim()
+
+    if (!isValidImageUrl(imageUrl)) {
+      showToast('Informe uma URL de imagem http(s) ou um caminho interno iniciado por /', 'error')
       return
     }
 
-    if (formData.tipoAcao === 'link' && !formData.linkUrl.trim()) {
-      showToast('URL do link e obrigatoria', 'error')
-      return
+    if (formData.tipoAcao === 'link') {
+      if (!isValidNavigationUrl(linkUrl)) {
+        showToast('Informe uma URL de destino valida para o link', 'error')
+        return
+      }
     }
 
     if (formData.tipoAcao === 'modal') {
@@ -173,57 +323,121 @@ export default function AdminAnunciosPage() {
         showToast('Conteudo do modal e obrigatorio', 'error')
         return
       }
+      if (modalButtonLink && !isValidNavigationUrl(modalButtonLink)) {
+        showToast('Informe uma URL valida para o botao do modal', 'error')
+        return
+      }
     }
 
     setSubmitting(true)
     try {
-      const payload = {
-        imagemUrl: formData.imagemUrl,
-        tipoAcao: formData.tipoAcao,
-        ativo: formData.ativo,
-        ...(formData.tipoAcao === 'link'
+      const payload =
+        formData.tipoAcao === 'link'
           ? {
-              linkUrl: formData.linkUrl,
-              linkNovaAba: formData.linkNovaAba
+              imagemUrl: imageUrl,
+              tipoAcao: formData.tipoAcao,
+              ativo: formData.ativo,
+              linkUrl,
+              linkNovaAba: formData.linkNovaAba,
             }
           : {
-              modalTitulo: formData.modalTitulo,
+              imagemUrl: imageUrl,
+              tipoAcao: formData.tipoAcao,
+              ativo: formData.ativo,
+              modalTitulo: formData.modalTitulo.trim(),
               modalConteudo: formData.modalConteudo,
-              modalBotaoTexto: formData.modalBotaoTexto || undefined,
-              modalBotaoLink: formData.modalBotaoLink || undefined
-            })
+              modalBotaoTexto: formData.modalBotaoTexto.trim() || undefined,
+              modalBotaoLink: modalButtonLink || undefined,
+            }
+
+      const res = await fetch(
+        editingAnuncio ? `/api/admin/anuncios?id=${editingAnuncio._id}` : '/api/admin/anuncios',
+        {
+          method: editingAnuncio ? 'PUT' : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        },
+      )
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || 'Erro ao salvar anuncio')
       }
 
-      let res
-      if (editingAnuncio) {
-        res = await fetch(`/api/admin/anuncios?id=${editingAnuncio._id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        })
-      } else {
-        res = await fetch('/api/admin/anuncios', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        })
-      }
-
-      if (res.ok) {
-        showToast(
-          editingAnuncio ? 'Anuncio atualizado com sucesso!' : 'Anuncio criado com sucesso!',
-          'success'
-        )
-        setDialogOpen(false)
-        loadAnuncios()
-      } else {
-        const data = await res.json()
-        showToast(data.error || 'Erro ao salvar anuncio', 'error')
-      }
+      showToast(editingAnuncio ? 'Anuncio atualizado com sucesso' : 'Anuncio criado com sucesso', 'success')
+      setDialogOpen(false)
+      await loadAnuncios()
     } catch (error) {
-      showToast('Erro ao salvar anuncio', 'error')
+      showToast(error instanceof Error ? error.message : 'Erro ao salvar anuncio', 'error')
     } finally {
       setSubmitting(false)
+    }
+  }
+
+  async function toggleAtivo(anuncio: Anuncio) {
+    setActionLoading(`${anuncio._id}-status`)
+    try {
+      const res = await fetch(`/api/admin/anuncios?id=${anuncio._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ativo: !anuncio.ativo }),
+      })
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || 'Erro ao atualizar anuncio')
+      }
+
+      setAnuncios((previous) =>
+        previous.map((item) => (item._id === anuncio._id ? { ...item, ativo: !anuncio.ativo } : item)),
+      )
+      showToast(anuncio.ativo ? 'Anuncio desativado' : 'Anuncio ativado', 'success')
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Erro ao atualizar anuncio', 'error')
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  async function moveAnuncio(anuncio: Anuncio, direction: 'up' | 'down') {
+    const currentIndex = sortedAnuncios.findIndex((item) => item._id === anuncio._id)
+    const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1
+
+    if (currentIndex < 0 || targetIndex < 0 || targetIndex >= sortedAnuncios.length) return
+
+    const targetAnuncio = sortedAnuncios[targetIndex]
+    setActionLoading(`${anuncio._id}-move`)
+
+    try {
+      const responses = await Promise.all([
+        fetch(`/api/admin/anuncios?id=${anuncio._id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ordem: targetAnuncio.ordem }),
+        }),
+        fetch(`/api/admin/anuncios?id=${targetAnuncio._id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ordem: anuncio.ordem }),
+        }),
+      ])
+
+      if (responses.some((response) => !response.ok)) {
+        throw new Error('Erro ao reordenar anuncios')
+      }
+
+      setAnuncios((previous) =>
+        previous.map((item) => {
+          if (item._id === anuncio._id) return { ...item, ordem: targetAnuncio.ordem }
+          if (item._id === targetAnuncio._id) return { ...item, ordem: anuncio.ordem }
+          return item
+        }),
+      )
+      showToast('Ordem atualizada', 'success')
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Erro ao reordenar anuncios', 'error')
+    } finally {
+      setActionLoading(null)
     }
   }
 
@@ -238,571 +452,682 @@ export default function AdminAnunciosPage() {
     setDeleting(true)
     try {
       const res = await fetch(`/api/admin/anuncios?id=${anuncioToDelete._id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       })
 
-      if (res.ok) {
-        showToast('Anuncio excluido com sucesso!', 'success')
-        setDeleteDialogOpen(false)
-        setAnuncioToDelete(null)
-        loadAnuncios()
-      } else {
-        const data = await res.json()
-        showToast(data.error || 'Erro ao excluir anuncio', 'error')
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || 'Erro ao excluir anuncio')
       }
+
+      setAnuncios((previous) => previous.filter((item) => item._id !== anuncioToDelete._id))
+      showToast('Anuncio excluido com sucesso', 'success')
+      setDeleteDialogOpen(false)
+      setAnuncioToDelete(null)
     } catch (error) {
-      showToast('Erro ao excluir anuncio', 'error')
+      showToast(error instanceof Error ? error.message : 'Erro ao excluir anuncio', 'error')
     } finally {
       setDeleting(false)
     }
   }
 
-  async function toggleAtivo(anuncio: Anuncio) {
+  async function copyText(text: string, label: string) {
     try {
-      const res = await fetch(`/api/admin/anuncios?id=${anuncio._id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ativo: !anuncio.ativo })
-      })
-
-      if (res.ok) {
-        showToast(
-          anuncio.ativo ? 'Anuncio desativado!' : 'Anuncio ativado!',
-          'success'
-        )
-        loadAnuncios()
-      } else {
-        const data = await res.json()
-        showToast(data.error || 'Erro ao atualizar anuncio', 'error')
-      }
-    } catch (error) {
-      showToast('Erro ao atualizar anuncio', 'error')
+      await navigator.clipboard.writeText(text)
+      showToast(`${label} copiado`, 'success')
+    } catch {
+      showToast('Nao foi possivel copiar', 'error')
     }
   }
 
-  async function moveAnuncio(anuncio: Anuncio, direction: 'up' | 'down') {
-    const currentIndex = anuncios.findIndex((a) => a._id === anuncio._id)
-    const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1
-
-    if (targetIndex < 0 || targetIndex >= anuncios.length) return
-
-    const targetAnuncio = anuncios[targetIndex]
-
-    try {
-      // Swap orders
-      await Promise.all([
-        fetch(`/api/admin/anuncios?id=${anuncio._id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ordem: targetAnuncio.ordem })
-        }),
-        fetch(`/api/admin/anuncios?id=${targetAnuncio._id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ordem: anuncio.ordem })
-        })
-      ])
-
-      loadAnuncios()
-    } catch (error) {
-      showToast('Erro ao reordenar anuncios', 'error')
-    }
-  }
-
-  if (loading) {
-    return <LogoLoading message="Carregando..." size="lg" fullscreen />
-  }
-
-  if (!user) {
-    return null
+  if (!isAdmin) {
+    return <LogoLoading message="Verificando permissoes..." size="lg" fullscreen />
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted p-4">
-      <div className="container mx-auto max-w-6xl">
-        {/* Header */}
-        <div className="flex items-center justify-between gap-4 mb-6">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" onClick={() => router.push('/admin')}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Voltar
-            </Button>
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
-                <Megaphone className="h-6 w-6 sm:h-8 sm:w-8" style={{ color: '#E2A43E' }} />
-                Gerenciar Anuncios
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                Crie e gerencie os banners e anuncios da plataforma
-              </p>
-            </div>
-          </div>
-          <Button
-            onClick={openCreateDialog}
-            className="gap-2"
-            style={{ backgroundColor: '#468152' }}
-          >
-            <Plus className="h-4 w-4" />
-            <span className="hidden sm:inline">Novo Anuncio</span>
+    <div className="container mx-auto max-w-7xl px-4 py-6">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <Button variant="ghost" onClick={() => router.push('/admin')} className="-ml-2">
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Voltar ao painel
+        </Button>
+
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={loadAnuncios} disabled={loadingAnuncios}>
+            {loadingAnuncios ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw className="mr-2 h-4 w-4" />}
+            Atualizar
+          </Button>
+          <Button onClick={openCreateDialog} className="bg-[#468152] text-white hover:bg-[#3b7045]">
+            <Plus className="mr-2 h-4 w-4" />
+            Novo anuncio
           </Button>
         </div>
+      </div>
 
-        {/* Info box */}
-        <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'rgba(70, 129, 82, 0.1)', borderColor: '#468152' }}>
-          <p className="text-sm">
-            <strong>Dica:</strong> Os anuncios sao exibidos na ordem definida. Use as setas para reordenar.
-            Anuncios inativos nao sao exibidos para os usuarios.
-          </p>
-        </div>
-
-        {/* Image Size Info */}
-        <div className="mb-6 p-4 rounded-lg border bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800">
-          <div className="flex items-start gap-3">
-            <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/50">
-              <Image className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-            </div>
-            <div>
-              <h4 className="font-medium text-blue-800 dark:text-blue-300 text-sm">Tamanho Recomendado de Imagem</h4>
-              <ul className="text-sm text-blue-700 dark:text-blue-400 mt-1 space-y-1">
-                <li>• <strong>Dimensões:</strong> 1200 x 400 pixels (proporção 3:1) ou 1920 x 640 pixels</li>
-                <li>• <strong>Altura máxima do banner:</strong> 250px (imagens maiores serão ajustadas)</li>
-                <li>• <strong>Formato:</strong> PNG ou JPG (PNG para melhor qualidade)</li>
-                <li>• <strong>No Modal:</strong> A imagem aparece com altura máxima de 192px (tamanho menor)</li>
-              </ul>
-              <p className="text-xs text-blue-600 dark:text-blue-500 mt-2">
-                💡 Use imagens panorâmicas horizontais para melhor visualização no banner rotativo.
-              </p>
-            </div>
+      <div className="mb-6 overflow-hidden rounded-lg border border-[#468152]/20 bg-white/55 p-4 shadow-sm backdrop-blur-xl dark:border-emerald-400/20 dark:bg-white/[0.04]">
+        <div className="flex items-start gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#468152]/20 bg-[#468152]/10 text-[#468152]">
+            <Sparkles className="h-5 w-5" />
+          </div>
+          <div>
+            <h2 className="text-sm font-bold">Exibicao global ativada</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Anuncios ativos desta lista aparecem como uma peca flutuante, sucinta e com glassmorphism em toda a plataforma. Rotas com <span className="font-semibold text-foreground">/viewer</span> ficam sem exibicao.
+            </p>
           </div>
         </div>
+      </div>
 
-        {/* Anuncios List */}
-        {loadingAnuncios ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-          </div>
-        ) : anuncios.length === 0 ? (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <Image className="h-12 w-12 text-muted-foreground mb-4" />
-              <p className="text-muted-foreground mb-4">Nenhum anuncio cadastrado</p>
-              <Button onClick={openCreateDialog} style={{ backgroundColor: '#468152' }}>
-                <Plus className="h-4 w-4 mr-2" />
-                Criar Primeiro Anuncio
-              </Button>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid gap-4">
-            {anuncios.map((anuncio, index) => (
-              <Card
-                key={anuncio._id}
-                className={`relative overflow-hidden transition-all ${
-                  !anuncio.ativo ? 'opacity-60' : ''
-                }`}
-              >
-                {/* Active/Inactive indicator bar */}
-                <div
-                  className="absolute top-0 left-0 right-0 h-1"
-                  style={{ backgroundColor: anuncio.ativo ? '#468152' : '#9ca3af' }}
-                />
+      <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <MetricCard icon={BarChart3} label="Total" value={stats.total} helper="Cadastrados" />
+        <MetricCard icon={CheckCircle2} label="Ativos" value={stats.active} helper="Rodando agora" tone="emerald" />
+        <MetricCard icon={XCircle} label="Inativos" value={stats.inactive} helper="Fora da rotacao" tone="slate" />
+        <MetricCard icon={Link2} label="Links" value={stats.link} helper="Destino direto" tone="amber" />
+        <MetricCard icon={PanelTop} label="Modais" value={stats.modal} helper="Abrem popup" tone="violet" />
+      </div>
 
-                <CardContent className="p-4 sm:p-6">
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    {/* Image Preview */}
-                    <div className="w-full sm:w-48 flex-shrink-0">
-                      <div className="relative aspect-[16/9] rounded-lg overflow-hidden bg-muted border">
-                        {anuncio.imagemUrl ? (
-                          <img
-                            src={anuncio.imagemUrl}
-                            alt="Preview do anuncio"
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement
-                              target.style.display = 'none'
-                            }}
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <Image className="h-8 w-8 text-muted-foreground" />
-                          </div>
-                        )}
-                        {/* Status badge */}
-                        <div
-                          className={`absolute top-2 right-2 px-2 py-1 rounded text-xs font-medium ${
-                            anuncio.ativo
-                              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                              : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
-                          }`}
-                        >
-                          {anuncio.ativo ? 'Ativo' : 'Inativo'}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Info */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2 mb-2">
-                        <div>
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span
-                              className="px-2 py-0.5 rounded text-xs font-medium"
-                              style={{
-                                backgroundColor:
-                                  anuncio.tipoAcao === 'link'
-                                    ? 'rgba(226, 164, 62, 0.2)'
-                                    : 'rgba(70, 129, 82, 0.2)',
-                                color: anuncio.tipoAcao === 'link' ? '#E2A43E' : '#468152'
-                              }}
-                            >
-                              {anuncio.tipoAcao === 'link' ? 'Link Externo' : 'Modal'}
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                              Ordem: {anuncio.ordem}
-                            </span>
-                          </div>
-
-                          {anuncio.tipoAcao === 'link' && anuncio.linkUrl && (
-                            <p className="text-sm text-muted-foreground mt-1 truncate max-w-md flex items-center gap-1">
-                              <ExternalLink className="h-3 w-3 flex-shrink-0" />
-                              {anuncio.linkUrl}
-                              {anuncio.linkNovaAba && (
-                                <span className="text-xs">(nova aba)</span>
-                              )}
-                            </p>
-                          )}
-
-                          {anuncio.tipoAcao === 'modal' && anuncio.modalTitulo && (
-                            <p className="text-sm font-medium mt-1">
-                              Modal: {anuncio.modalTitulo}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-
-                      <p className="text-xs text-muted-foreground truncate">
-                        URL: {anuncio.imagemUrl}
-                      </p>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="flex sm:flex-col gap-2 flex-shrink-0">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => moveAnuncio(anuncio, 'up')}
-                        disabled={index === 0}
-                        title="Mover para cima"
-                      >
-                        <ArrowUp className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => moveAnuncio(anuncio, 'down')}
-                        disabled={index === anuncios.length - 1}
-                        title="Mover para baixo"
-                      >
-                        <ArrowDown className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => toggleAtivo(anuncio)}
-                        title={anuncio.ativo ? 'Desativar' : 'Ativar'}
-                      >
-                        {anuncio.ativo ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => openEditDialog(anuncio)}
-                        title="Editar"
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => confirmDelete(anuncio)}
-                        className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
-                        title="Excluir"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-
-        {/* Create/Edit Dialog */}
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>
-                {editingAnuncio ? 'Editar Anuncio' : 'Novo Anuncio'}
-              </DialogTitle>
-              <DialogDescription>
-                {editingAnuncio
-                  ? 'Altere as informacoes do anuncio'
-                  : 'Preencha as informacoes para criar um novo anuncio'}
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="space-y-6 py-4 max-h-[60vh] overflow-y-auto px-1">
-              {/* Image URL */}
-              <div className="space-y-2">
-                <Label htmlFor="imagemUrl">URL da Imagem *</Label>
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px]">
+        <section className="space-y-4">
+          <div className="rounded-lg border border-border/70 bg-card/70 p-3 shadow-sm backdrop-blur-xl">
+            <div className="flex flex-col gap-3 xl:flex-row xl:items-center">
+              <div className="flex flex-1 items-center gap-2 rounded-lg border bg-background/70 px-3">
+                <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
                 <Input
-                  id="imagemUrl"
-                  placeholder="https://exemplo.com/imagem.jpg"
-                  value={formData.imagemUrl}
-                  onChange={(e) =>
-                    setFormData({ ...formData, imagemUrl: e.target.value })
-                  }
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  placeholder="Buscar por URL, titulo, conteudo ou destino"
+                  className="border-0 bg-transparent px-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                 />
-                <p className="text-xs text-muted-foreground flex items-center gap-1">
-                  <Image className="h-3 w-3" />
-                  Tamanho recomendado: <strong>1200x400px</strong> (proporção 3:1). Altura máx. no banner: 250px | Modal: 192px
-                </p>
-                {formData.imagemUrl && (
-                  <div className="mt-2 rounded-lg overflow-hidden border bg-muted">
-                    <img
-                      src={formData.imagemUrl}
-                      alt="Preview"
-                      className="w-full max-h-40 object-contain"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement
-                        target.style.display = 'none'
-                      }}
-                    />
-                  </div>
-                )}
               </div>
 
-              {/* Tipo de Acao */}
+              <SegmentedFilter
+                label="Status"
+                value={statusFilter}
+                items={statusFilters}
+                onChange={(value) => setStatusFilter(value as StatusFilter)}
+              />
+
+              <SegmentedFilter
+                label="Tipo"
+                value={typeFilter}
+                items={typeFilters}
+                onChange={(value) => setTypeFilter(value as TypeFilter)}
+              />
+            </div>
+          </div>
+
+          {loadingAnuncios ? (
+            <div className="space-y-3">
+              {[0, 1, 2].map((item) => (
+                <div key={item} className="h-32 animate-pulse rounded-lg border bg-muted/40" />
+              ))}
+            </div>
+          ) : filteredAnuncios.length === 0 ? (
+            <EmptyState onCreate={openCreateDialog} hasAds={anuncios.length > 0} />
+          ) : (
+            <div className="space-y-3">
+              {filteredAnuncios.map((anuncio) => {
+                const absoluteIndex = sortedAnuncios.findIndex((item) => item._id === anuncio._id)
+                return (
+                  <AdListItem
+                    key={anuncio._id}
+                    anuncio={anuncio}
+                    isFirst={absoluteIndex === 0}
+                    isLast={absoluteIndex === sortedAnuncios.length - 1}
+                    loadingKey={actionLoading}
+                    onMove={moveAnuncio}
+                    onToggle={toggleAtivo}
+                    onEdit={openEditDialog}
+                    onDelete={confirmDelete}
+                    onCopy={copyText}
+                  />
+                )
+              })}
+            </div>
+          )}
+        </section>
+
+        <aside className="space-y-4">
+          <GlobalPreview anuncios={sortedAnuncios} />
+
+          <div className="rounded-lg border border-border/70 bg-card/70 p-4 shadow-sm backdrop-blur-xl">
+            <div className="mb-3 flex items-center gap-2">
+              <Image className="h-4 w-4 text-[#E2A43E]" />
+              <h3 className="text-sm font-bold">Padrao recomendado</h3>
+            </div>
+            <div className="space-y-3 text-sm text-muted-foreground">
+              <GuidelineItem label="Imagem" value="1200 x 400 px ou proporcao 3:1" />
+              <GuidelineItem label="Peso" value="Use JPG/WEBP leve para nao atrasar paginas" />
+              <GuidelineItem label="Texto" value="Deixe a mensagem principal dentro da imagem" />
+              <GuidelineItem label="Modal" value="Conteudo curto, com CTA opcional" />
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>{editingAnuncio ? 'Editar anuncio' : 'Novo anuncio'}</DialogTitle>
+            <DialogDescription>
+              Configure a imagem, o destino e o status do banner global.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid max-h-[68vh] gap-5 overflow-y-auto pr-1 lg:grid-cols-[minmax(0,1fr)_280px]">
+            <div className="space-y-5">
+              <div className="space-y-2">
+                <Label htmlFor="imagemUrl">URL da imagem *</Label>
+                <Input
+                  id="imagemUrl"
+                  placeholder="https://exemplo.com/banner.jpg ou /uploads/banner.jpg"
+                  value={formData.imagemUrl}
+                  onChange={(event) => setFormData({ ...formData, imagemUrl: event.target.value })}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Aceita http(s) ou caminhos internos iniciados por /.
+                </p>
+              </div>
+
               <div className="space-y-3">
-                <Label>Tipo de Acao *</Label>
+                <Label>Tipo de acao *</Label>
                 <RadioGroup
                   value={formData.tipoAcao}
-                  onValueChange={(value: 'link' | 'modal') =>
-                    setFormData({ ...formData, tipoAcao: value })
-                  }
-                  className="flex gap-4"
+                  onValueChange={(value) => setFormData({ ...formData, tipoAcao: value as TipoAcao })}
+                  className="grid gap-3 sm:grid-cols-2"
                 >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="link" id="tipo-link" />
-                    <Label htmlFor="tipo-link" className="cursor-pointer">
-                      Link Externo
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="modal" id="tipo-modal" />
-                    <Label htmlFor="tipo-modal" className="cursor-pointer">
-                      Abrir Modal
-                    </Label>
-                  </div>
+                  <ActionChoice
+                    id="tipo-link"
+                    value="link"
+                    title="Abrir link"
+                    description="Envia o usuario para uma pagina interna ou externa."
+                    icon={ExternalLink}
+                  />
+                  <ActionChoice
+                    id="tipo-modal"
+                    value="modal"
+                    title="Abrir modal"
+                    description="Mostra uma janela curta dentro da plataforma."
+                    icon={PanelTop}
+                  />
                 </RadioGroup>
               </div>
 
-              {/* Link fields */}
-              {formData.tipoAcao === 'link' && (
-                <div className="space-y-4 p-4 rounded-lg border" style={{ borderColor: '#E2A43E' }}>
+              {formData.tipoAcao === 'link' ? (
+                <div className="space-y-4 rounded-lg border border-[#E2A43E]/30 bg-[#E2A43E]/5 p-4">
                   <div className="space-y-2">
-                    <Label htmlFor="linkUrl">URL do Link *</Label>
+                    <Label htmlFor="linkUrl">URL de destino *</Label>
                     <Input
                       id="linkUrl"
-                      placeholder="https://exemplo.com/pagina"
+                      placeholder="https://exemplo.com ou /materiais"
                       value={formData.linkUrl}
-                      onChange={(e) =>
-                        setFormData({ ...formData, linkUrl: e.target.value })
-                      }
+                      onChange={(event) => setFormData({ ...formData, linkUrl: event.target.value })}
                     />
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center gap-2">
                     <Checkbox
                       id="linkNovaAba"
                       checked={formData.linkNovaAba}
-                      onCheckedChange={(checked) =>
-                        setFormData({ ...formData, linkNovaAba: !!checked })
-                      }
+                      onCheckedChange={(checked) => setFormData({ ...formData, linkNovaAba: !!checked })}
                     />
-                    <Label htmlFor="linkNovaAba" className="cursor-pointer">
+                    <Label htmlFor="linkNovaAba" className="cursor-pointer text-sm">
                       Abrir em nova aba
                     </Label>
                   </div>
                 </div>
-              )}
-
-              {/* Modal fields */}
-              {formData.tipoAcao === 'modal' && (
-                <div className="space-y-4 p-4 rounded-lg border" style={{ borderColor: '#468152' }}>
+              ) : (
+                <div className="space-y-4 rounded-lg border border-[#468152]/30 bg-[#468152]/5 p-4">
                   <div className="space-y-2">
-                    <Label htmlFor="modalTitulo">Titulo do Modal *</Label>
+                    <Label htmlFor="modalTitulo">Titulo do modal *</Label>
                     <Input
                       id="modalTitulo"
-                      placeholder="Titulo do popup"
+                      placeholder="Titulo curto do popup"
                       value={formData.modalTitulo}
-                      onChange={(e) =>
-                        setFormData({ ...formData, modalTitulo: e.target.value })
-                      }
+                      onChange={(event) => setFormData({ ...formData, modalTitulo: event.target.value })}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="modalConteudo">Conteudo do Modal (HTML) *</Label>
+                    <Label htmlFor="modalConteudo">Conteudo do modal *</Label>
                     <Textarea
                       id="modalConteudo"
-                      placeholder="<p>Conteudo em HTML...</p>"
+                      placeholder="<p>Mensagem curta do anuncio...</p>"
                       value={formData.modalConteudo}
-                      onChange={(e) =>
-                        setFormData({ ...formData, modalConteudo: e.target.value })
-                      }
-                      rows={5}
+                      onChange={(event) => setFormData({ ...formData, modalConteudo: event.target.value })}
+                      rows={6}
                     />
                     <p className="text-xs text-muted-foreground">
-                      Voce pode usar tags HTML como &lt;p&gt;, &lt;strong&gt;, &lt;a&gt;, etc.
+                      Tags simples como p, strong, em, ul, li e a sao aceitas na exibicao publica.
                     </p>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="modalBotaoTexto">Texto do Botao (opcional)</Label>
-                    <Input
-                      id="modalBotaoTexto"
-                      placeholder="Ex: Saiba mais"
-                      value={formData.modalBotaoTexto}
-                      onChange={(e) =>
-                        setFormData({ ...formData, modalBotaoTexto: e.target.value })
-                      }
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="modalBotaoLink">Link do Botao (opcional)</Label>
-                    <Input
-                      id="modalBotaoLink"
-                      placeholder="https://exemplo.com"
-                      value={formData.modalBotaoLink}
-                      onChange={(e) =>
-                        setFormData({ ...formData, modalBotaoLink: e.target.value })
-                      }
-                    />
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="modalBotaoTexto">Texto do botao</Label>
+                      <Input
+                        id="modalBotaoTexto"
+                        placeholder="Saiba mais"
+                        value={formData.modalBotaoTexto}
+                        onChange={(event) => setFormData({ ...formData, modalBotaoTexto: event.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="modalBotaoLink">Link do botao</Label>
+                      <Input
+                        id="modalBotaoLink"
+                        placeholder="https://exemplo.com"
+                        value={formData.modalBotaoLink}
+                        onChange={(event) => setFormData({ ...formData, modalBotaoLink: event.target.value })}
+                      />
+                    </div>
                   </div>
                 </div>
               )}
 
-              {/* Ativo switch */}
-              <div className="flex items-center justify-between p-4 rounded-lg border">
+              <div className="flex items-center justify-between gap-4 rounded-lg border bg-muted/25 p-4">
                 <div>
-                  <Label>Status do Anuncio</Label>
+                  <Label>Status do anuncio</Label>
                   <p className="text-sm text-muted-foreground">
-                    {formData.ativo
-                      ? 'Anuncio sera exibido aos usuarios'
-                      : 'Anuncio nao sera exibido'}
+                    {formData.ativo ? 'Vai entrar na rotacao global' : 'Fica salvo, mas fora da rotacao'}
                   </p>
                 </div>
                 <Switch
                   checked={formData.ativo}
-                  onCheckedChange={(checked) =>
-                    setFormData({ ...formData, ativo: checked })
-                  }
+                  onCheckedChange={(checked) => setFormData({ ...formData, ativo: checked })}
                 />
               </div>
             </div>
 
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setDialogOpen(false)}
-                disabled={submitting}
-              >
-                Cancelar
-              </Button>
-              <Button
-                onClick={handleSubmit}
-                disabled={submitting}
-                style={{ backgroundColor: '#468152' }}
-              >
-                {submitting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Salvando...
-                  </>
-                ) : editingAnuncio ? (
-                  'Salvar Alteracoes'
-                ) : (
-                  'Criar Anuncio'
-                )}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* Delete Confirmation Dialog */}
-        <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Confirmar Exclusao</DialogTitle>
-              <DialogDescription>
-                Tem certeza que deseja excluir este anuncio? Esta acao nao pode ser
-                desfeita.
-              </DialogDescription>
-            </DialogHeader>
-            {anuncioToDelete && (
-              <div className="py-4">
-                <div className="rounded-lg overflow-hidden border bg-muted mb-2">
-                  <img
-                    src={anuncioToDelete.imagemUrl}
-                    alt="Anuncio a ser excluido"
-                    className="w-full max-h-32 object-contain"
-                  />
+            <div className="space-y-3">
+              <div className="rounded-lg border border-border/70 bg-muted/20 p-3">
+                <div className="mb-2 flex items-center gap-2 text-sm font-bold">
+                  <MonitorUp className="h-4 w-4 text-[#468152]" />
+                  Preview compacto
                 </div>
-                <p className="text-sm text-muted-foreground truncate">
-                  {anuncioToDelete.imagemUrl}
-                </p>
+                <MiniAdPreview formData={formData} />
               </div>
-            )}
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setDeleteDialogOpen(false)}
-                disabled={deleting}
-              >
-                Cancelar
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={handleDelete}
-                disabled={deleting}
-              >
-                {deleting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Excluindo...
-                  </>
-                ) : (
-                  <>
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Excluir
-                  </>
-                )}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+              <div className="rounded-lg border border-border/70 bg-muted/20 p-3 text-xs text-muted-foreground">
+                A peca publica aparece fixa na parte inferior, com botao para ocultar por 30 minutos e rotacao automatica entre anuncios ativos.
+              </div>
+            </div>
+          </div>
 
-        {/* Toast */}
-        <ToastAlert
-          open={toast.open}
-          onOpenChange={(open) => setToast({ ...toast, open })}
-          message={toast.message}
-          type={toast.type}
-        />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDialogOpen(false)} disabled={submitting}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSubmit} disabled={submitting} className="bg-[#468152] text-white hover:bg-[#3b7045]">
+              {submitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              {editingAnuncio ? 'Salvar alteracoes' : 'Criar anuncio'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Excluir anuncio</DialogTitle>
+            <DialogDescription>
+              Esta acao remove o anuncio da rotacao e da lista administrativa.
+            </DialogDescription>
+          </DialogHeader>
+
+          {anuncioToDelete && (
+            <div className="space-y-3">
+              <div className="overflow-hidden rounded-lg border bg-muted/30">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={anuncioToDelete.imagemUrl}
+                  alt={getAdTitle(anuncioToDelete)}
+                  className="max-h-36 w-full object-contain"
+                />
+              </div>
+              <p className="truncate text-sm text-muted-foreground">{anuncioToDelete.imagemUrl}</p>
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)} disabled={deleting}>
+              Cancelar
+            </Button>
+            <Button variant="destructive" onClick={handleDelete} disabled={deleting}>
+              {deleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="mr-2 h-4 w-4" />}
+              Excluir
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <ToastAlert
+        open={toast.open}
+        onOpenChange={(open) => setToast({ ...toast, open })}
+        message={toast.message}
+        type={toast.type}
+      />
+    </div>
+  )
+}
+
+function MetricCard({
+  icon: Icon,
+  label,
+  value,
+  helper,
+  tone = 'emerald',
+}: {
+  icon: LucideIcon
+  label: string
+  value: number
+  helper: string
+  tone?: 'emerald' | 'amber' | 'slate' | 'violet'
+}) {
+  const toneClass = {
+    emerald: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-300',
+    amber: 'bg-amber-500/10 text-amber-600 dark:text-amber-300',
+    slate: 'bg-slate-500/10 text-slate-600 dark:text-slate-300',
+    violet: 'bg-violet-500/10 text-violet-600 dark:text-violet-300',
+  }[tone]
+
+  return (
+    <div className="rounded-lg border border-border/70 bg-card/70 p-4 shadow-sm backdrop-blur-xl">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</p>
+          <p className="mt-1 text-2xl font-bold">{value}</p>
+          <p className="text-xs text-muted-foreground">{helper}</p>
+        </div>
+        <div className={cn('flex h-10 w-10 items-center justify-center rounded-lg', toneClass)}>
+          <Icon className="h-5 w-5" />
+        </div>
       </div>
+    </div>
+  )
+}
+
+function SegmentedFilter({
+  label,
+  value,
+  items,
+  onChange,
+}: {
+  label: string
+  value: string
+  items: Array<{ value: string; label: string }>
+  onChange: (value: string) => void
+}) {
+  return (
+    <div className="flex flex-wrap items-center gap-1">
+      <span className="mr-1 text-xs font-semibold text-muted-foreground">{label}</span>
+      {items.map((item) => (
+        <button
+          key={item.value}
+          type="button"
+          onClick={() => onChange(item.value)}
+          className={cn(
+            'rounded-lg px-3 py-2 text-xs font-bold transition',
+            value === item.value
+              ? 'bg-[#468152] text-white shadow-sm'
+              : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground',
+          )}
+        >
+          {item.label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+function AdListItem({
+  anuncio,
+  isFirst,
+  isLast,
+  loadingKey,
+  onMove,
+  onToggle,
+  onEdit,
+  onDelete,
+  onCopy,
+}: {
+  anuncio: Anuncio
+  isFirst: boolean
+  isLast: boolean
+  loadingKey: string | null
+  onMove: (anuncio: Anuncio, direction: 'up' | 'down') => void
+  onToggle: (anuncio: Anuncio) => void
+  onEdit: (anuncio: Anuncio) => void
+  onDelete: (anuncio: Anuncio) => void
+  onCopy: (text: string, label: string) => void
+}) {
+  const isBusy = loadingKey?.startsWith(anuncio._id)
+
+  return (
+    <article
+      className={cn(
+        'overflow-hidden rounded-lg border border-border/70 bg-card/75 shadow-sm backdrop-blur-xl transition',
+        !anuncio.ativo && 'opacity-70',
+      )}
+    >
+      <div className={cn('h-1', anuncio.ativo ? 'bg-[#468152]' : 'bg-muted-foreground/35')} />
+      <div className="grid gap-4 p-4 md:grid-cols-[180px_minmax(0,1fr)_auto]">
+        <div className="overflow-hidden rounded-lg border bg-muted/25">
+          <div className="relative aspect-[3/1] md:aspect-[16/9]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={anuncio.imagemUrl}
+              alt={getAdTitle(anuncio)}
+              className="h-full w-full object-cover"
+              onError={(event) => {
+                event.currentTarget.style.opacity = '0'
+              }}
+            />
+            <div className="absolute left-2 top-2 flex items-center gap-1">
+              <Badge className={cn('border px-2 py-0.5 text-[11px]', anuncio.ativo ? 'border-emerald-500/25 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300' : 'border-slate-500/25 bg-slate-500/15 text-slate-600 dark:text-slate-300')}>
+                {anuncio.ativo ? 'Ativo' : 'Inativo'}
+              </Badge>
+            </div>
+          </div>
+        </div>
+
+        <div className="min-w-0">
+          <div className="mb-2 flex flex-wrap items-center gap-2">
+            <Badge className={cn('border text-xs', anuncio.tipoAcao === 'link' ? 'border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-300' : 'border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300')}>
+              {anuncio.tipoAcao === 'link' ? 'Link' : 'Modal'}
+            </Badge>
+            <span className="rounded-lg bg-muted px-2 py-1 text-xs font-semibold text-muted-foreground">
+              Ordem {anuncio.ordem}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              Atualizado em {formatDate(anuncio.atualizadoEm || anuncio.criadoEm)}
+            </span>
+          </div>
+
+          <h3 className="truncate text-base font-bold">{getAdTitle(anuncio)}</h3>
+          <p className="mt-1 truncate text-sm text-muted-foreground">
+            {anuncio.tipoAcao === 'link' && anuncio.linkUrl
+              ? getDestinationLabel(anuncio.linkUrl)
+              : anuncio.modalConteudo || 'Modal sem resumo'}
+          </p>
+          <p className="mt-2 truncate text-xs text-muted-foreground">Imagem: {anuncio.imagemUrl}</p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 md:w-[112px] md:justify-end">
+          <IconButton label="Mover para cima" onClick={() => onMove(anuncio, 'up')} disabled={isFirst || isBusy}>
+            {isBusy && loadingKey?.endsWith('-move') ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" />}
+          </IconButton>
+          <IconButton label="Mover para baixo" onClick={() => onMove(anuncio, 'down')} disabled={isLast || isBusy}>
+            <ArrowDown className="h-4 w-4" />
+          </IconButton>
+          <IconButton label={anuncio.ativo ? 'Desativar' : 'Ativar'} onClick={() => onToggle(anuncio)} disabled={isBusy}>
+            {isBusy && loadingKey?.endsWith('-status') ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : anuncio.ativo ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
+          </IconButton>
+          <IconButton label="Copiar URL da imagem" onClick={() => onCopy(anuncio.imagemUrl, 'URL da imagem')}>
+            <Copy className="h-4 w-4" />
+          </IconButton>
+          <IconButton label="Editar" onClick={() => onEdit(anuncio)}>
+            <Pencil className="h-4 w-4" />
+          </IconButton>
+          <IconButton label="Excluir" onClick={() => onDelete(anuncio)} destructive>
+            <Trash2 className="h-4 w-4" />
+          </IconButton>
+        </div>
+      </div>
+    </article>
+  )
+}
+
+function IconButton({
+  label,
+  onClick,
+  disabled,
+  destructive,
+  children,
+}: {
+  label: string
+  onClick: () => void
+  disabled?: boolean
+  destructive?: boolean
+  children: ReactNode
+}) {
+  return (
+    <Button
+      type="button"
+      variant="outline"
+      size="icon"
+      onClick={onClick}
+      disabled={disabled}
+      title={label}
+      aria-label={label}
+      className={cn(
+        'h-9 w-9',
+        destructive && 'text-red-500 hover:bg-red-500/10 hover:text-red-600',
+      )}
+    >
+      {children}
+    </Button>
+  )
+}
+
+function EmptyState({ onCreate, hasAds }: { onCreate: () => void; hasAds: boolean }) {
+  return (
+    <div className="rounded-lg border border-dashed bg-muted/25 p-8 text-center">
+      <Image className="mx-auto h-10 w-10 text-muted-foreground" />
+      <h3 className="mt-3 text-base font-bold">{hasAds ? 'Nenhum anuncio encontrado' : 'Nenhum anuncio cadastrado'}</h3>
+      <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
+        {hasAds
+          ? 'Ajuste os filtros ou a busca para ver outros itens.'
+          : 'Crie o primeiro anuncio para iniciar a rotacao global da plataforma.'}
+      </p>
+      {!hasAds && (
+        <Button onClick={onCreate} className="mt-4 bg-[#468152] text-white hover:bg-[#3b7045]">
+          <Plus className="mr-2 h-4 w-4" />
+          Criar anuncio
+        </Button>
+      )}
+    </div>
+  )
+}
+
+function GlobalPreview({ anuncios }: { anuncios: Anuncio[] }) {
+  const activeAd = anuncios.find((ad) => ad.ativo)
+
+  return (
+    <div className="sticky top-20 rounded-lg border border-border/70 bg-card/70 p-4 shadow-sm backdrop-blur-xl">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <MonitorUp className="h-4 w-4 text-[#468152]" />
+          <h3 className="text-sm font-bold">Preview global</h3>
+        </div>
+        <Badge className="border border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300">
+          Live
+        </Badge>
+      </div>
+
+      {activeAd ? (
+        <MiniAdPreview anuncio={activeAd} />
+      ) : (
+        <div className="rounded-lg border border-dashed bg-muted/25 p-5 text-center text-sm text-muted-foreground">
+          Nenhum anuncio ativo para exibir.
+        </div>
+      )}
+
+      <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+        Este formato roda no layout principal da aplicacao e respeita a regra de exclusao de /viewer.
+      </p>
+    </div>
+  )
+}
+
+function MiniAdPreview({ anuncio, formData }: { anuncio?: Anuncio; formData?: FormData }) {
+  const imageUrl = anuncio?.imagemUrl || formData?.imagemUrl || ''
+  const title = anuncio ? getAdTitle(anuncio) : formData?.modalTitulo || getDestinationLabel(formData?.linkUrl || '') || 'Titulo do anuncio'
+  const type = anuncio?.tipoAcao || formData?.tipoAcao || 'link'
+
+  return (
+    <div className="overflow-hidden rounded-lg border border-white/45 bg-white/70 p-2 shadow-lg backdrop-blur-2xl dark:border-white/15 dark:bg-slate-950/60">
+      <div className="flex items-center gap-2">
+        <div className="flex h-12 w-20 shrink-0 items-center justify-center overflow-hidden rounded-lg border bg-muted">
+          {imageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={imageUrl} alt={title} className="h-full w-full object-cover" />
+          ) : (
+            <Image className="h-5 w-5 text-muted-foreground" />
+          )}
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-[#468152]">
+            <Megaphone className="h-3 w-3" />
+            Publicidade
+          </div>
+          <p className="truncate text-xs font-bold">{title}</p>
+        </div>
+        {type === 'link' ? <ExternalLink className="h-4 w-4 text-muted-foreground" /> : <PanelTop className="h-4 w-4 text-muted-foreground" />}
+      </div>
+    </div>
+  )
+}
+
+function GuidelineItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-start justify-between gap-3 border-b border-border/60 pb-2 last:border-0 last:pb-0">
+      <span className="font-semibold text-foreground">{label}</span>
+      <span className="text-right">{value}</span>
+    </div>
+  )
+}
+
+function ActionChoice({
+  id,
+  value,
+  title,
+  description,
+  icon: Icon,
+}: {
+  id: string
+  value: TipoAcao
+  title: string
+  description: string
+  icon: LucideIcon
+}) {
+  return (
+    <div className="relative">
+      <RadioGroupItem value={value} id={id} className="peer sr-only" />
+      <Label
+        htmlFor={id}
+        className="flex h-full cursor-pointer gap-3 rounded-lg border bg-background/70 p-4 transition hover:bg-muted/60 peer-data-[state=checked]:border-[#468152] peer-data-[state=checked]:bg-[#468152]/10"
+      >
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground peer-data-[state=checked]:text-[#468152]">
+          <Icon className="h-4 w-4" />
+        </span>
+        <span>
+          <span className="block text-sm font-bold">{title}</span>
+          <span className="mt-1 block text-xs leading-relaxed text-muted-foreground">{description}</span>
+        </span>
+      </Label>
     </div>
   )
 }
