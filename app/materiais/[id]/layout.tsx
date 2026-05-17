@@ -54,6 +54,13 @@ export async function generateMetadata(
     const safeDescription = sanitizeSeoText(material.description, MATERIAIS_DESCRIPTION, 120)
     const title = `${safeTitle || 'Material de estudo'}`
     const image = material.coverImage ? absoluteUrl(material.coverImage) : DEFAULT_OG_IMAGE
+    const imageType = /\.png(\?|$)/i.test(image)
+      ? 'image/png'
+      : /\.webp(\?|$)/i.test(image)
+        ? 'image/webp'
+        : /\.gif(\?|$)/i.test(image)
+          ? 'image/gif'
+          : 'image/jpeg'
 
     const isPaid = material.pricing === 'paid' && Number(material.price) > 0
     const priceLabel = isPaid ? formatBRL(material.price) : 'Gratuito'
@@ -83,6 +90,8 @@ export async function generateMetadata(
         images: [
           {
             url: image,
+            secureUrl: image,
+            type: imageType,
             width: 1200,
             height: 630,
             alt: title,

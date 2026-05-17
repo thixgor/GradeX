@@ -33,6 +33,7 @@ import {
   Sparkles,
   Share2,
   CheckCheck,
+  Layers,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { AppShell } from '@/components/app-shell'
@@ -78,6 +79,7 @@ interface Material {
   createdAt: string
   _hasPdf?: boolean
   _pageCount?: number
+  _cardCount?: number
   pdfViewerEnabled?: boolean
   pdfDownloadEnabled?: boolean
 }
@@ -110,6 +112,7 @@ const TYPE_ICONS: Record<string, React.ReactNode> = {
   image:       <ImageIcon className="h-4 w-4" />,
   document:    <File className="h-4 w-4" />,
   other:       <File className="h-4 w-4" />,
+  flashcard_deck: <Layers className="h-4 w-4" />,
 }
 
 const TYPE_LABELS: Record<string, string> = {
@@ -120,6 +123,7 @@ const TYPE_LABELS: Record<string, string> = {
   image:       'Imagem',
   document:    'Documento',
   other:       'Arquivo',
+  flashcard_deck: 'Flashcards',
 }
 
 function formatDuration(seconds: number): string {
@@ -641,6 +645,13 @@ export default function MaterialViewPage() {
                         {material._pageCount} {material._pageCount === 1 ? 'página' : 'páginas'}
                       </p>
                     ) : null}
+
+                    {material.type === 'flashcard_deck' ? (
+                      <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <Layers className="h-3.5 w-3.5" />
+                        {material._cardCount ?? 0} {material._cardCount === 1 ? 'card' : 'cards'}
+                      </p>
+                    ) : null}
                   </div>
 
                   <button
@@ -895,6 +906,16 @@ export default function MaterialViewPage() {
                       <FileText className="h-3.5 w-3.5 text-muted-foreground" />
                       <span className="text-xs font-medium">
                         {material._pageCount} {material._pageCount === 1 ? 'página' : 'páginas'}
+                      </span>
+                    </div>
+                  ) : null}
+
+                  {/* Flashcard deck card count */}
+                  {material.type === 'flashcard_deck' ? (
+                    <div className="flex items-center gap-2 mb-3 px-3 py-2 rounded-xl bg-muted/40 border border-border/30">
+                      <Layers className="h-3.5 w-3.5 text-muted-foreground" />
+                      <span className="text-xs font-medium">
+                        {material._cardCount ?? 0} {material._cardCount === 1 ? 'card' : 'cards'}
                       </span>
                     </div>
                   ) : null}

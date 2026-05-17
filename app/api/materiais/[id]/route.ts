@@ -127,6 +127,26 @@ export async function GET(
     const _hasPdf = !!(material.pdfFile?.blobUrl)
     const { pdfFile: _stripped, ...materialWithoutPdf } = safeMaterial
 
+    // For flashcard_deck materials, fetch linked deck card count
+    let _cardCount: number | undefined
+    if (material.type === 'flashcard_deck') {
+      const linkedDeck = await db
+        .collection('flashcardManualDecks')
+        .findOne(
+          { linkedMaterialId: String(material._id) },
+          { projection: { _id: 1 } }
+        )
+        .catch(() => null)
+      if (linkedDeck) {
+        _cardCount = await db
+          .collection('flashcardManualCards')
+          .countDocuments({ deckId: String(linkedDeck._id) })
+          .catch(() => 0)
+      } else {
+        _cardCount = 0
+      }
+    }
+
     // Increment view count (fire and forget)
     db.collection('materials')
       .updateOne({ _id: new ObjectId(id) }, { $inc: { viewCount: 1 } })
@@ -140,6 +160,7 @@ export async function GET(
         pdfViewerEnabled: material.pdfViewerEnabled === true,
         pdfDownloadEnabled: material.pdfDownloadEnabled !== false,
         ...(_hasPdf && material.pdfFile?.pageCount ? { _pageCount: material.pdfFile.pageCount } : {}),
+        ...(material.type === 'flashcard_deck' ? { _cardCount: _cardCount ?? 0 } : {}),
       },
       folderName,
       hasAccess: canAccess,
