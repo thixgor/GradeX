@@ -352,7 +352,7 @@ export default function LandingPage({
               {isLoggedIn ? 'Dashboard' : 'Entrar'}
             </button>
             <button
-              onClick={() => router.push(isLoggedIn ? '/dashboard' : '/auth/register')}
+              onClick={() => router.push(isLoggedIn ? '/dashboard' : '/auth/login?mode=register')}
               className="inline-flex items-center px-4 py-2 rounded-xl text-sm font-bold text-[#040816] transition-all hover:opacity-90 hover:scale-[1.02]"
               style={{ background: 'linear-gradient(135deg, #4ADE80 0%, #2DD4BF 100%)' }}
             >
@@ -547,7 +547,7 @@ export default function LandingPage({
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row gap-3 mb-10">
                 <button
-                  onClick={() => router.push('/auth/register')}
+                  onClick={() => router.push('/auth/login?mode=register')}
                   className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl text-base font-bold text-[#040816] transition-all hover:opacity-90 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(74,222,128,0.35)] shadow-[0_0_20px_rgba(74,222,128,0.20)]"
                   style={{ background: 'linear-gradient(135deg, #4ADE80 0%, #2DD4BF 100%)' }}
                 >
@@ -1360,7 +1360,7 @@ export default function LandingPage({
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-10">
               <button
-                onClick={() => router.push('/auth/register')}
+                onClick={() => router.push('/auth/login?mode=register')}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl text-base font-bold text-[#040816] transition-all hover:opacity-90 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(74,222,128,0.35)] shadow-[0_0_20px_rgba(74,222,128,0.20)]"
                 style={{ background: 'linear-gradient(135deg, #4ADE80 0%, #2DD4BF 100%)' }}
               >
