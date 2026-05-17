@@ -6,7 +6,15 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: 'Googlebot',
-        allow: ['/', '/lead/', '/doar', '/politica-de-privacidade', '/termos-de-servico'],
+        allow: [
+          '/',
+          '/lead/',
+          '/doar',
+          '/politica-de-privacidade',
+          '/termos-de-servico',
+          '/_next/static/',
+          '/_next/image',
+        ],
         disallow: [
           '/api/',
           '/admin/',
@@ -27,18 +35,25 @@ export default function robots(): MetadataRoute.Robots {
           '/doar/pendente',
           '/doar/falha',
           '/games/',
-          '/_next/',
           '/*.json$',
         ],
       },
       {
         userAgent: 'Googlebot-Image',
-        allow: ['/img/', '/favicon.png', '/logo.png', '/logo3d.png'],
+        allow: ['/img/', '/favicon.png', '/logo.png', '/logo3d.png', '/_next/image'],
         disallow: ['/api/'],
       },
       {
         userAgent: 'Bingbot',
-        allow: ['/', '/lead/', '/doar', '/politica-de-privacidade', '/termos-de-servico'],
+        allow: [
+          '/',
+          '/lead/',
+          '/doar',
+          '/politica-de-privacidade',
+          '/termos-de-servico',
+          '/_next/static/',
+          '/_next/image',
+        ],
         disallow: [
           '/api/',
           '/admin/',
@@ -59,12 +74,19 @@ export default function robots(): MetadataRoute.Robots {
           '/doar/pendente',
           '/doar/falha',
           '/games/',
-          '/_next/',
         ],
       },
       {
         userAgent: '*',
-        allow: ['/', '/lead/', '/doar', '/politica-de-privacidade', '/termos-de-servico'],
+        allow: [
+          '/',
+          '/lead/',
+          '/doar',
+          '/politica-de-privacidade',
+          '/termos-de-servico',
+          '/_next/static/',
+          '/_next/image',
+        ],
         disallow: [
           '/api/',
           '/admin/',
@@ -85,7 +107,6 @@ export default function robots(): MetadataRoute.Robots {
           '/doar/pendente',
           '/doar/falha',
           '/games/',
-          '/_next/',
         ],
       },
     ],
