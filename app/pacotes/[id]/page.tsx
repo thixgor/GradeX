@@ -281,10 +281,11 @@ export default function PackageDetailPage() {
   const showMaterialViews = metricSettings.materials.showViews
   const showMaterialDownloads = metricSettings.materials.showDownloads
   const hasInfoMetrics = showMaterialViews || showMaterialDownloads
+  const showMobilePurchaseBar = !access.hasAccess && access.isAuthenticated
 
   return (
     <AppShell allowGuest headerTitle={pkg.title} headerSubtitle="Pacote">
-      <div className="min-h-full relative">
+      <div className={`min-h-full relative ${showMobilePurchaseBar ? 'pb-28 xl:pb-0' : ''}`}>
         {/* Ambient blobs */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
           <div className="absolute -top-24 -left-24 w-[380px] h-[380px] rounded-full bg-primary/10 blur-2xl" />
@@ -393,6 +394,146 @@ export default function PackageDetailPage() {
                   </button>
                 </div>
               </div>
+
+              {/* Mobile purchase summary */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="rounded-2xl border border-border/40 glass-card p-4 xl:hidden"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-2 flex flex-wrap items-center gap-1.5">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-violet-500/10 text-violet-600 dark:text-violet-400 text-[11px] font-medium border border-violet-500/15">
+                        <Package className="h-3 w-3" /> Pacote
+                      </span>
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-primary/10 text-primary text-[11px] font-medium border border-primary/15">
+                        {totalItems} {totalItems === 1 ? 'item' : 'itens'}
+                      </span>
+                      {isFree ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold border border-emerald-500/15">
+                          <Gift className="h-3 w-3" /> Gratuito
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 rounded-lg bg-accent/10 text-amber-700 dark:text-amber-300 text-[11px] font-bold border border-amber-500/15">
+                          {fmtBRL(pricing.effectivePrice)}
+                        </span>
+                      )}
+                    </div>
+
+                    <h1 className="font-heading text-lg font-bold leading-snug">
+                      {pkg.title}
+                    </h1>
+
+                    {hasDiscount && !access.hasAccess && (
+                      <p className="mt-1 flex items-center gap-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-300">
+                        <TrendingDown className="h-3.5 w-3.5" />
+                        {fmtBRL(pricing.discountApplied)} descontados por itens já adquiridos
+                      </p>
+                    )}
+                  </div>
+
+                  <button
+                    onClick={copyShareLink}
+                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border transition-all ${
+                      copied
+                        ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                        : 'text-muted-foreground hover:text-foreground glass-button border-border/40'
+                    }`}
+                    aria-label={copied ? 'Link copiado' : 'Compartilhar pacote'}
+                  >
+                    {copied ? <CheckCheck className="h-4 w-4" /> : <Share2 className="h-4 w-4" />}
+                  </button>
+                </div>
+
+                {!isFree && (
+                  <div className="mt-3 rounded-2xl border border-border/40 bg-muted/20 px-3 py-2.5">
+                    {hasStaticDiscount && !hasDiscount && (
+                      <div className="mb-1 flex items-center justify-between text-xs">
+                        <span className="text-muted-foreground">De</span>
+                        <span className="text-muted-foreground line-through">
+                          {fmtBRL(pkg.originalPrice)}
+                        </span>
+                      </div>
+                    )}
+                    {hasDiscount && (
+                      <div className="mb-1 flex items-center justify-between gap-3 text-xs">
+                        <span className="text-muted-foreground">Valor original</span>
+                        <span className="text-muted-foreground line-through">
+                          {fmtBRL(pricing.originalPackagePrice)}
+                        </span>
+                      </div>
+                    )}
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-sm font-semibold">Total</span>
+                      <span className="text-xl font-black text-emerald-600 dark:text-emerald-400">
+                        {pricing.effectivePrice <= 0 ? 'Grátis' : fmtBRL(pricing.effectivePrice)}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                <div className="mt-4 space-y-2">
+                  {access.hasAccess ? (
+                    <>
+                      <Button
+                        disabled
+                        className="w-full h-11 rounded-2xl font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-500 cursor-default"
+                      >
+                        <Check className="h-4 w-4 mr-2" /> Pacote adquirido
+                      </Button>
+                      <p className="text-center text-[10px] text-muted-foreground/70">
+                        Acesse cada material pela lista abaixo.
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      {isFree || pricing.effectivePrice <= 0 ? (
+                        <Button
+                          onClick={handleAcquire}
+                          disabled={checkoutLoading}
+                          className="h-11 w-full rounded-2xl bg-gradient-to-r from-emerald-500 to-green-600 font-semibold text-white shadow-lg shadow-emerald-500/20 transition-all hover:from-emerald-600 hover:to-green-700 active:scale-[0.98]"
+                        >
+                          {checkoutLoading
+                            ? <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            : <Gift className="h-4 w-4 mr-2" />
+                          }
+                          Adquirir gratuitamente
+                        </Button>
+                      ) : (
+                        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                          <Button
+                            onClick={handleBuyNow}
+                            disabled={checkoutLoading}
+                            className="h-11 rounded-2xl bg-gradient-to-r from-accent to-secondary font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:from-accent/90 hover:to-secondary/90 active:scale-[0.98]"
+                          >
+                            Comprar agora
+                          </Button>
+                          <Button
+                            onClick={handleAcquire}
+                            disabled={checkoutLoading}
+                            className="h-11 rounded-2xl border border-emerald-500/25 bg-emerald-500/10 font-semibold text-emerald-700 shadow-sm transition-all hover:bg-emerald-500/15 active:scale-[0.98] dark:text-emerald-300"
+                          >
+                            <ShoppingCart className="h-4 w-4 mr-2" />
+                            Adicionar
+                          </Button>
+                        </div>
+                      )}
+                      {!isFree && (
+                        <p className="text-center text-[10px] text-muted-foreground/60">
+                          Pagamento único · acesso permanente
+                        </p>
+                      )}
+                      {cartMessage && (
+                        <p className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-center text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
+                          {cartMessage}
+                        </p>
+                      )}
+                    </>
+                  )}
+                </div>
+              </motion.div>
 
               {/* Description */}
               {pkg.description && (
@@ -514,7 +655,7 @@ export default function PackageDetailPage() {
               className="xl:w-[340px] flex-shrink-0 space-y-3"
             >
               {/* CTA Card */}
-              <div className="rounded-3xl overflow-hidden border border-border/40 glass-card">
+              <div className="hidden xl:block rounded-3xl overflow-hidden border border-border/40 glass-card">
                 {pkg.coverImage && (
                   <div className="relative h-32 overflow-hidden">
                     <Image src={pkg.coverImage} alt="" fill className="object-cover" sizes="340px" />
@@ -741,6 +882,31 @@ export default function PackageDetailPage() {
           </div>
         </div>
       </div>
+
+      {showMobilePurchaseBar && (
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-background/95 px-3 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-2xl shadow-black/15 backdrop-blur-xl xl:hidden">
+          <div className="mx-auto flex max-w-7xl items-center gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-xs font-semibold text-foreground">{pkg.title}</p>
+              <p className="text-sm font-black text-emerald-700 dark:text-emerald-300">
+                {isFree || pricing.effectivePrice <= 0 ? 'Gratuito' : fmtBRL(pricing.effectivePrice)}
+              </p>
+            </div>
+            <Button
+              onClick={isFree || pricing.effectivePrice <= 0 ? handleAcquire : handleBuyNow}
+              disabled={checkoutLoading}
+              className="h-11 min-w-[9rem] rounded-2xl bg-gradient-to-r from-accent to-secondary px-4 font-bold text-white shadow-lg shadow-accent/20 transition-all active:scale-[0.98]"
+            >
+              {checkoutLoading ? (
+                <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : isFree || pricing.effectivePrice <= 0 ? (
+                <Gift className="h-4 w-4 mr-2" />
+              ) : null}
+              {isFree || pricing.effectivePrice <= 0 ? 'Adquirir' : 'Comprar agora'}
+            </Button>
+          </div>
+        </div>
+      )}
     </AppShell>
   )
 }

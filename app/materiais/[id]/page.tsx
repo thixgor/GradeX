@@ -408,10 +408,11 @@ export default function MaterialViewPage() {
     material.type === 'link' ? 'Acessar Link'
     : material.type === 'flashcard_deck' ? 'Acessar Deck'
     : 'Baixar Material'
+  const showMobilePurchaseBar = !hasAccess && data.isAuthenticated
 
   return (
     <AppShell allowGuest headerTitle={material.title} headerSubtitle={TYPE_LABELS[material.type] || 'Material'}>
-      <div className="min-h-full relative">
+      <div className={`min-h-full relative ${showMobilePurchaseBar ? 'pb-28 xl:pb-0' : ''}`}>
 
         {/* Ambient blobs — lighter than before */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
@@ -592,6 +593,178 @@ export default function MaterialViewPage() {
                 </div>
               </div>
 
+              {/* Mobile purchase summary */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="mt-4 rounded-2xl border border-border/40 glass-card p-4 xl:hidden"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-2 flex flex-wrap items-center gap-1.5">
+                      <span className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-primary/10 text-primary text-[11px] font-medium border border-primary/15">
+                        {TYPE_ICONS[material.type]}
+                        {TYPE_LABELS[material.type]}
+                      </span>
+                      {isFree ? (
+                        <span className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold border border-emerald-500/15">
+                          <Gift className="h-3 w-3" /> Gratuito
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 rounded-lg bg-accent/10 text-amber-700 dark:text-amber-300 text-[11px] font-bold border border-amber-500/15">
+                          R$ {material.price?.toFixed(2)}
+                        </span>
+                      )}
+                    </div>
+
+                    <h1 className="font-heading text-lg font-bold leading-snug">
+                      {material.title}
+                    </h1>
+
+                    {isVideo && material.videoDuration && (
+                      <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <Clock className="h-3.5 w-3.5" />
+                        {formatDuration(material.videoDuration)}
+                      </p>
+                    )}
+
+                    {material.type === 'pdf' && material._hasPdf && material._pageCount ? (
+                      <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <FileText className="h-3.5 w-3.5" />
+                        {material._pageCount} {material._pageCount === 1 ? 'página' : 'páginas'}
+                      </p>
+                    ) : null}
+                  </div>
+
+                  <button
+                    onClick={copyShareLink}
+                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border transition-all ${
+                      copied
+                        ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                        : 'text-muted-foreground hover:text-foreground glass-button border-border/40'
+                    }`}
+                    aria-label={copied ? 'Link copiado' : 'Compartilhar material'}
+                  >
+                    {copied ? <CheckCheck className="h-4 w-4" /> : <Share2 className="h-4 w-4" />}
+                  </button>
+                </div>
+
+                {(reviewSummary?.count ?? 0) > 0 && (
+                  <div className="mt-3">
+                    <ReviewSummaryBlock
+                      summary={reviewSummary}
+                      variant="compact"
+                      onJumpToList={() =>
+                        document.getElementById('reviews-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                      }
+                    />
+                  </div>
+                )}
+
+                <div className="mt-4 space-y-2">
+                  {hasAccess ? (
+                    isEmbed ? (
+                      <div className="flex items-center gap-2 py-2 px-3 rounded-2xl bg-primary/6 border border-primary/15">
+                        <Sparkles className="h-4 w-4 text-primary flex-shrink-0" />
+                        <p className="text-xs text-muted-foreground">
+                          O vídeo está disponível acima.
+                        </p>
+                      </div>
+                    ) : (
+                      <>
+                        {canViewPdf && (
+                          <Button
+                            onClick={handleOpenPdfViewer}
+                            className="relative w-full h-12 overflow-hidden rounded-2xl font-bold text-white border border-emerald-200/30 bg-gradient-to-r from-emerald-700 via-emerald-600 to-amber-500 hover:from-emerald-600 hover:via-emerald-500 hover:to-amber-400 shadow-xl shadow-emerald-500/25 transition-all active:scale-[0.98]"
+                          >
+                            <span className="absolute inset-0 bg-white/15 backdrop-blur-sm opacity-40" />
+                            <span className="relative flex items-center">
+                              <Eye className="h-4 w-4 mr-2" />
+                              Visualizar PDF
+                            </span>
+                          </Button>
+                        )}
+                        {canDownload && (
+                          <Button
+                            onClick={handleDownload}
+                            disabled={downloadState.status === 'running'}
+                            className="w-full h-11 rounded-2xl font-semibold text-white bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
+                          >
+                            {downloadState.status === 'running' ? (
+                              <>
+                                <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                Processando…
+                              </>
+                            ) : (
+                              <>
+                                <Download className="h-4 w-4 mr-2" />
+                                {downloadLabel}
+                              </>
+                            )}
+                          </Button>
+                        )}
+                        {isPdf && (canViewPdf || canDownload) && (
+                          <p className="text-center text-[10px] text-muted-foreground/70 leading-relaxed">
+                            PDF protegido com marca d&apos;água exclusiva para sua conta
+                          </p>
+                        )}
+                        {isPdf && !canViewPdf && !canDownload && (
+                          <div className="flex items-start gap-2 rounded-2xl border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
+                            <ShieldAlert className="h-4 w-4 shrink-0 mt-0.5" />
+                            O viewer e o download deste PDF estão indisponíveis no momento.
+                          </div>
+                        )}
+                      </>
+                    )
+                  ) : (
+                    <>
+                      {isFree ? (
+                        <Button
+                          onClick={() => handleAcquire()}
+                          disabled={checkoutLoading}
+                          className="h-11 w-full rounded-2xl bg-gradient-to-r from-emerald-500 to-green-600 font-semibold text-white shadow-lg shadow-emerald-500/20 transition-all hover:from-emerald-600 hover:to-green-700 active:scale-[0.98]"
+                        >
+                          {checkoutLoading
+                            ? <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            : <Gift className="h-4 w-4 mr-2" />
+                          }
+                          Adquirir gratuitamente
+                        </Button>
+                      ) : (
+                        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                          <Button
+                            onClick={handleBuyNow}
+                            disabled={checkoutLoading}
+                            className="h-11 rounded-2xl bg-gradient-to-r from-accent to-secondary font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:from-accent/90 hover:to-secondary/90 active:scale-[0.98]"
+                          >
+                            Comprar agora
+                          </Button>
+                          <Button
+                            onClick={() => handleAcquire()}
+                            disabled={checkoutLoading}
+                            className="h-11 rounded-2xl border border-emerald-500/25 bg-emerald-500/10 font-semibold text-emerald-700 shadow-sm transition-all hover:bg-emerald-500/15 active:scale-[0.98] dark:text-emerald-300"
+                          >
+                            <ShoppingCart className="h-4 w-4 mr-2" />
+                            Adicionar
+                          </Button>
+                        </div>
+                      )}
+                      {!isFree && (
+                        <p className="text-center text-[10px] text-muted-foreground/60">
+                          Pagamento único · acesso permanente
+                        </p>
+                      )}
+                      {cartMessage && (
+                        <p className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-center text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
+                          {cartMessage}
+                        </p>
+                      )}
+                    </>
+                  )}
+                </div>
+              </motion.div>
+
               {/* Description */}
               {material.description && (
                 <motion.div
@@ -638,7 +811,7 @@ export default function MaterialViewPage() {
               className="xl:w-[300px] flex-shrink-0 space-y-3"
             >
               {/* ── CTA Card ── */}
-              <div className="rounded-3xl overflow-hidden border border-border/40 glass-card">
+              <div className="hidden xl:block rounded-3xl overflow-hidden border border-border/40 glass-card">
 
                 {/* Card header with cover thumb */}
                 {material.coverImage && !isEmbed && (
@@ -897,6 +1070,31 @@ export default function MaterialViewPage() {
           </div>
         </div>
       </div>
+
+      {showMobilePurchaseBar && (
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-background/95 px-3 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-2xl shadow-black/15 backdrop-blur-xl xl:hidden">
+          <div className="mx-auto flex max-w-7xl items-center gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-xs font-semibold text-foreground">{material.title}</p>
+              <p className="text-sm font-black text-emerald-700 dark:text-emerald-300">
+                {isFree ? 'Gratuito' : `R$ ${material.price?.toFixed(2)}`}
+              </p>
+            </div>
+            <Button
+              onClick={isFree ? () => handleAcquire() : handleBuyNow}
+              disabled={checkoutLoading}
+              className="h-11 min-w-[9rem] rounded-2xl bg-gradient-to-r from-accent to-secondary px-4 font-bold text-white shadow-lg shadow-accent/20 transition-all active:scale-[0.98]"
+            >
+              {checkoutLoading ? (
+                <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : isFree ? (
+                <Gift className="h-4 w-4 mr-2" />
+              ) : null}
+              {isFree ? 'Adquirir' : 'Comprar agora'}
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* PDF Download Progress modal */}
       <PdfDownloadTermsModal
