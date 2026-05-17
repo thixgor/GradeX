@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowRight, FileText, Package, ShoppingCart, Trash2, X } from 'lucide-react'
+import { AlertCircle, ArrowRight, FileText, Loader2, Package, ShoppingCart, Trash2, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useMaterialCart } from '@/context/MaterialCartContext'
 
@@ -16,25 +16,61 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
   const router = useRouter()
   const { items, itemCount, subtotal, removeItem, clearCart } = useMaterialCart()
   const [open, setOpen] = useState(false)
+  const [checkoutChecking, setCheckoutChecking] = useState(false)
+  const [notice, setNotice] = useState('')
 
   const sortedItems = useMemo(() => {
     return [...items].sort((a, b) => Number(new Date(a.addedAt)) - Number(new Date(b.addedAt)))
   }, [items])
 
-  const goToCheckout = () => {
+  const goToCheckout = async () => {
     const checkoutPath = '/materiais/checkout?cart=1'
-    setOpen(false)
     if (!isAuthenticated) {
+      setOpen(false)
       router.push(`/auth/login?redirect=${encodeURIComponent(checkoutPath)}`)
       return
     }
-    router.push(checkoutPath)
+    setCheckoutChecking(true)
+    setNotice('')
+    try {
+      const res = await fetch('/api/materiais/cart/preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: items.map(item => ({ itemType: item.itemType, itemId: item.itemId })),
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erro ao revisar carrinho')
+
+      const alreadyOwnedItems = Array.isArray(data.skippedItems)
+        ? data.skippedItems.filter((item: any) => item.reason === 'already_owned')
+        : []
+
+      if (alreadyOwnedItems.length > 0) {
+        alreadyOwnedItems.forEach((item: any) => removeItem(item.itemType, item.itemId))
+        const names = alreadyOwnedItems
+          .map((item: any) => item.itemTitle || (item.itemType === 'package' ? 'Pacote' : 'Material'))
+          .slice(0, 3)
+        const extra = alreadyOwnedItems.length > names.length ? ` e mais ${alreadyOwnedItems.length - names.length}` : ''
+        const hasRemainingItems = Array.isArray(data.items) && data.items.length > 0
+        setNotice(`${alreadyOwnedItems.length === 1 ? 'Removemos 1 item que você já possui' : `Removemos ${alreadyOwnedItems.length} itens que você já possui`}: ${names.join(', ')}${extra}. ${hasRemainingItems ? 'Confira o carrinho atualizado antes de finalizar.' : 'Seu carrinho ficou vazio.'}`)
+        return
+      }
+
+      setOpen(false)
+      router.push(checkoutPath)
+    } catch (err: any) {
+      setNotice(err?.message || 'Não foi possível revisar o carrinho agora.')
+    } finally {
+      setCheckoutChecking(false)
+    }
   }
 
   return (
     <>
       <Button
-        onClick={() => setOpen(true)}
+        onClick={() => { setNotice(''); setOpen(true) }}
         className="relative h-10 rounded-xl border border-emerald-300/50 bg-gradient-to-r from-emerald-700 via-emerald-600 to-amber-500 px-3 text-white shadow-lg shadow-emerald-700/25 transition hover:from-emerald-600 hover:via-emerald-500 hover:to-amber-400"
         aria-label="Abrir carrinho"
       >
@@ -84,6 +120,12 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
 
               {itemCount === 0 ? (
                 <div className="flex min-h-72 flex-1 flex-col items-center justify-center bg-slate-50 px-6 text-center dark:bg-zinc-950">
+                  {notice ? (
+                    <div className="mb-5 flex max-w-sm gap-2 rounded-xl border border-amber-300/40 bg-amber-50 p-3 text-left text-sm text-amber-900 shadow-sm dark:border-amber-400/25 dark:bg-amber-500/10 dark:text-amber-100">
+                      <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                      <p className="leading-relaxed">{notice}</p>
+                    </div>
+                  ) : null}
                   <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
                     <ShoppingCart className="h-7 w-7" />
                   </div>
@@ -98,6 +140,12 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
               ) : (
                 <>
                   <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-3 dark:bg-zinc-950 sm:p-4">
+                    {notice ? (
+                      <div className="mb-3 flex gap-2 rounded-xl border border-amber-300/40 bg-amber-50 p-3 text-sm text-amber-900 shadow-sm dark:border-amber-400/25 dark:bg-amber-500/10 dark:text-amber-100">
+                        <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                        <p className="leading-relaxed">{notice}</p>
+                      </div>
+                    ) : null}
                     <div className="space-y-3">
                       {sortedItems.map(item => {
                         const price = item.effectivePrice ?? item.price
@@ -153,9 +201,12 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
                       <Button variant="outline" onClick={clearCart} className="h-11 rounded-xl">
                         Limpar
                       </Button>
-                      <Button onClick={goToCheckout} className="h-11 flex-1 rounded-xl bg-emerald-700 text-white hover:bg-emerald-600">
-                        Finalizar compra
-                        <ArrowRight className="ml-2 h-4 w-4" />
+                      <Button onClick={goToCheckout} disabled={checkoutChecking} className="h-11 flex-1 rounded-xl bg-emerald-700 text-white hover:bg-emerald-600">
+                        {checkoutChecking ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : null}
+                        {checkoutChecking ? 'Revisando...' : 'Finalizar compra'}
+                        {!checkoutChecking ? <ArrowRight className="ml-2 h-4 w-4" /> : null}
                       </Button>
                     </div>
                     <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">

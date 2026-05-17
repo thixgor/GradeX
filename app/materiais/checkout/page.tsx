@@ -245,6 +245,7 @@ export default function MateriaisCheckoutPage() {
   const [freeCheckoutLoading, setFreeCheckoutLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null)
+  const [removedAccessibleItems, setRemovedAccessibleItems] = useState<CartSkippedItem[]>([])
 
   const cartPayload = cartItems.map(item => ({ itemType: item.itemType, itemId: item.itemId }))
   const cartPayloadKey = cartPayload.map(item => `${item.itemType}:${item.itemId}`).join('|')
@@ -262,10 +263,21 @@ export default function MateriaisCheckoutPage() {
     return `/materiais/${itemId}`
   }
 
+  function buildRemovedItemsMessage(items: CartSkippedItem[]) {
+    const names = items
+      .map((item) => item.itemTitle || (item.itemType === 'package' ? 'Pacote' : 'Material'))
+      .slice(0, 4)
+    const extra = items.length > names.length ? ` e mais ${items.length - names.length}` : ''
+    return `${items.length === 1 ? 'Removemos 1 item que você já possui' : `Removemos ${items.length} itens que você já possui`}: ${names.join(', ')}${extra}.`
+  }
+
   useEffect(() => {
     if (isCartMode) {
       if (cartPayload.length === 0) {
-        setError('Seu carrinho está vazio')
+        setError(removedAccessibleItems.length > 0
+          ? `${buildRemovedItemsMessage(removedAccessibleItems)} Seu carrinho ficou vazio.`
+          : 'Seu carrinho está vazio'
+        )
         setLoading(false)
         return
       }
@@ -286,8 +298,24 @@ export default function MateriaisCheckoutPage() {
         fetch('/api/payments/public-key').then(r => r.json()),
       ])
         .then(([previewResp, pkResp]) => {
+          const skippedItems = Array.isArray(previewResp?.skippedItems) ? previewResp.skippedItems : []
+          const alreadyOwnedItems = skippedItems.filter((item: CartSkippedItem) => item.reason === 'already_owned')
+          if (alreadyOwnedItems.length > 0) {
+            setRemovedAccessibleItems(alreadyOwnedItems)
+            alreadyOwnedItems.forEach((item: CartSkippedItem) => removeItem(item.itemType, item.itemId))
+            if (!previewResp?.items?.length) {
+              setError(`${buildRemovedItemsMessage(alreadyOwnedItems)} Seu carrinho ficou vazio.`)
+              setCartPreview(previewResp)
+              return
+            }
+            setCartPreview({
+              ...previewResp,
+              skippedItems: skippedItems.filter((item: CartSkippedItem) => item.reason !== 'already_owned'),
+            })
+            setPublicKey(pkResp.publicKey || '')
+            return
+          }
           if (!previewResp?.items?.length) {
-            const skippedItems = Array.isArray(previewResp?.skippedItems) ? previewResp.skippedItems : []
             const allAlreadyOwned = skippedItems.length > 0 && skippedItems.every((item: CartSkippedItem) => item.reason === 'already_owned')
             setError(allAlreadyOwned
               ? 'Você já possui todos os itens deste carrinho.'
@@ -506,6 +534,29 @@ export default function MateriaisCheckoutPage() {
           <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', marginBottom: suggestions.length > 0 ? '20px' : '32px' }}>
             {cartPreview.items.length} {cartPreview.items.length === 1 ? 'item selecionado' : 'itens selecionados'}
           </p>
+
+          {removedAccessibleItems.length > 0 && (
+            <div style={{
+              display: 'flex',
+              gap: '10px',
+              padding: '14px 16px',
+              borderRadius: '14px',
+              background: 'rgba(245,158,11,0.10)',
+              border: '1px solid rgba(245,158,11,0.24)',
+              color: 'rgba(253,230,138,0.98)',
+              fontSize: '13px',
+              lineHeight: 1.5,
+              marginBottom: '20px',
+            }}>
+              <AlertCircle size={17} style={{ flexShrink: 0, marginTop: '2px' }} />
+              <div style={{ minWidth: 0 }}>
+                <p style={{ margin: 0, fontWeight: 800 }}>Carrinho atualizado automaticamente</p>
+                <p style={{ margin: '3px 0 0 0' }}>
+                  {buildRemovedItemsMessage(removedAccessibleItems)} Eles foram retirados para evitar uma nova cobrança.
+                </p>
+              </div>
+            </div>
+          )}
 
           {suggestions.length > 0 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
