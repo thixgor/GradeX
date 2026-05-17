@@ -3,11 +3,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import {
+  ArrowRight,
   ChevronLeft,
   ChevronRight,
   ExternalLink,
   Megaphone,
   MousePointerClick,
+  Sparkles,
   X,
 } from 'lucide-react'
 import {
@@ -73,6 +75,18 @@ function getAdTitle(ad: PlatformAd) {
   }
 
   return 'Anuncio'
+}
+
+function getAdDestination(ad: PlatformAd) {
+  if (!ad.linkUrl) return ''
+
+  try {
+    const url = new URL(ad.linkUrl, window.location.origin)
+    if (url.origin === window.location.origin) return url.pathname
+    return url.hostname.replace(/^www\./, '')
+  } catch {
+    return ad.linkUrl
+  }
 }
 
 function sanitizeModalHtml(html: string) {
@@ -206,6 +220,9 @@ export function PlatformAds() {
   }, [ads.length, currentIndex])
 
   const currentAd = ads[currentIndex]
+  const isLinkAd = currentAd?.tipoAcao === 'link'
+  const adTitle = currentAd ? getAdTitle(currentAd) : ''
+  const adDestination = currentAd ? getAdDestination(currentAd) : ''
   const sanitizedModalContent = useMemo(
     () => sanitizeModalHtml(selectedAd?.modalConteudo || ''),
     [selectedAd?.modalConteudo],
@@ -262,14 +279,32 @@ export function PlatformAds() {
   return (
     <>
       <aside
-        className="fixed bottom-3 left-1/2 z-[35] w-[min(430px,calc(100vw-104px))] -translate-x-1/2 print:hidden sm:bottom-4 sm:w-[min(460px,calc(100vw-2rem))]"
+        className="fixed bottom-20 left-1/2 z-[45] w-[min(720px,calc(100vw-24px))] -translate-x-1/2 print:hidden sm:bottom-5"
         aria-label="Anuncio da plataforma"
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
       >
-        <div className="relative overflow-hidden rounded-xl border border-white/45 bg-white/68 text-slate-900 shadow-[0_18px_60px_-28px_rgba(15,23,42,0.65)] backdrop-blur-2xl dark:border-white/15 dark:bg-slate-950/68 dark:text-white">
+        <div
+          className={cn(
+            'group relative overflow-hidden rounded-xl border text-slate-950 shadow-[0_24px_80px_-24px_rgba(15,23,42,0.72)] backdrop-blur-2xl transition duration-300 dark:text-white',
+            'border-white/60 bg-white/82 dark:border-white/18 dark:bg-slate-950/82',
+            isLinkAd && 'shadow-[#468152]/25 ring-1 ring-[#E2A43E]/35',
+          )}
+        >
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(70,129,82,0.16),rgba(255,255,255,0.18)_42%,rgba(226,164,62,0.24))] dark:bg-[linear-gradient(135deg,rgba(70,129,82,0.20),rgba(15,23,42,0.22)_44%,rgba(226,164,62,0.16))]"
+          />
+          {isLinkAd && (
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -inset-px rounded-xl border border-[#E2A43E]/45 opacity-80"
+              style={{ animation: 'platform-ad-attention 2400ms ease-in-out infinite' }}
+            />
+          )}
+
           {ads.length > 1 && !paused && (
-            <div className="absolute inset-x-0 top-0 h-0.5 bg-black/10 dark:bg-white/10">
+            <div className="absolute inset-x-0 top-0 z-10 h-1 bg-black/10 dark:bg-white/10">
               <div
                 key={currentAd._id}
                 className="h-full bg-gradient-to-r from-[#468152] via-[#E2A43E] to-[#CE5929]"
@@ -278,44 +313,64 @@ export function PlatformAds() {
             </div>
           )}
 
-          <div className="flex min-h-[58px] items-center gap-2 p-2">
+          <div className="relative flex min-h-[104px] items-stretch gap-2 p-2.5 sm:min-h-[116px] sm:gap-3 sm:p-3">
             <button
               type="button"
               onClick={() => handleAdClick(currentAd)}
-              className="group/ad flex min-w-0 flex-1 items-center gap-2 rounded-lg text-left outline-none transition hover:bg-black/[0.03] focus-visible:ring-2 focus-visible:ring-[#468152] dark:hover:bg-white/[0.06]"
+              className="group/ad grid min-w-0 flex-1 grid-cols-[112px_minmax(0,1fr)] items-center gap-3 rounded-lg text-left outline-none transition hover:bg-black/[0.035] focus-visible:ring-2 focus-visible:ring-[#468152] dark:hover:bg-white/[0.06] sm:grid-cols-[190px_minmax(0,1fr)_auto]"
             >
-              <span className="relative flex h-11 w-16 shrink-0 overflow-hidden rounded-lg border border-white/40 bg-slate-100 dark:border-white/10 dark:bg-slate-900">
+              <span className="relative flex h-full min-h-[84px] shrink-0 items-center justify-center overflow-hidden rounded-lg border border-white/55 bg-white/80 p-1.5 shadow-inner dark:border-white/10 dark:bg-slate-900/80 sm:min-h-[92px]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={currentAd.imagemUrl}
-                  alt={getAdTitle(currentAd)}
-                  className="h-full w-full object-cover transition duration-300 group-hover/ad:scale-105"
+                  alt={adTitle}
+                  className="max-h-full max-w-full object-contain transition duration-300 group-hover/ad:scale-[1.025]"
                   loading="lazy"
                 />
               </span>
 
-              <span className="min-w-0 flex-1 py-0.5">
-                <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#468152] dark:text-emerald-300">
-                  <Megaphone className="h-3 w-3" />
-                  Publicidade
+              <span className="flex min-w-0 flex-col justify-center py-1">
+                <span className="mb-1.5 flex flex-wrap items-center gap-1.5">
+                  <span className="inline-flex items-center gap-1 rounded-full border border-[#468152]/25 bg-[#468152]/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.12em] text-[#468152] dark:text-emerald-200">
+                    {isLinkAd ? <Sparkles className="h-3 w-3" /> : <Megaphone className="h-3 w-3" />}
+                    {isLinkAd ? 'Destaque' : 'Publicidade'}
+                  </span>
+                  {isLinkAd && (
+                    <span className="hidden rounded-full bg-[#E2A43E]/18 px-2 py-0.5 text-[10px] font-bold text-[#9A6817] dark:text-amber-200 sm:inline-flex">
+                      Clique para abrir
+                    </span>
+                  )}
                 </span>
-                <span className="mt-0.5 block truncate text-xs font-semibold leading-snug sm:text-sm">
-                  {getAdTitle(currentAd)}
+                <span className="line-clamp-2 text-sm font-black leading-tight sm:text-base">
+                  {adTitle}
                 </span>
+                {adDestination && (
+                  <span className="mt-1 hidden truncate text-xs font-semibold text-slate-600 dark:text-slate-300 sm:block">
+                    {adDestination}
+                  </span>
+                )}
               </span>
 
-              <span className="hidden shrink-0 items-center gap-1 rounded-lg border border-[#468152]/20 bg-[#468152]/10 px-2 py-1 text-[11px] font-bold text-[#468152] dark:text-emerald-200 sm:inline-flex">
-                {currentAd.tipoAcao === 'link' ? (
-                  <ExternalLink className="h-3 w-3" />
-                ) : (
-                  <MousePointerClick className="h-3 w-3" />
+              <span
+                className={cn(
+                  'hidden shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-black text-white shadow-lg transition group-hover/ad:translate-x-0.5 sm:inline-flex',
+                  isLinkAd
+                    ? 'bg-gradient-to-r from-[#CE5929] via-[#E2A43E] to-[#468152] shadow-[#CE5929]/25'
+                    : 'bg-[#468152] shadow-[#468152]/20',
                 )}
-                Abrir
+              >
+                {currentAd.tipoAcao === 'link' ? (
+                  <ExternalLink className="h-3.5 w-3.5" />
+                ) : (
+                  <MousePointerClick className="h-3.5 w-3.5" />
+                )}
+                {isLinkAd ? 'Ver agora' : 'Abrir'}
+                <ArrowRight className="h-3.5 w-3.5" />
               </span>
             </button>
 
             {ads.length > 1 && (
-              <div className="hidden items-center gap-1 sm:flex">
+              <div className="hidden items-center gap-1 lg:flex">
                 <button
                   type="button"
                   onClick={() => goTo('previous')}
@@ -338,7 +393,7 @@ export function PlatformAds() {
             <button
               type="button"
               onClick={handleDismiss}
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-slate-500 transition hover:bg-black/[0.05] hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#468152] dark:text-slate-400 dark:hover:bg-white/[0.08] dark:hover:text-white"
+              className="absolute right-1.5 top-1.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/65 text-slate-500 transition hover:bg-white hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#468152] dark:bg-slate-950/55 dark:text-slate-400 dark:hover:bg-slate-900 dark:hover:text-white sm:static sm:h-8 sm:w-8 sm:bg-transparent"
               aria-label="Ocultar anuncios por 30 minutos"
             >
               <X className="h-4 w-4" />
@@ -348,41 +403,57 @@ export function PlatformAds() {
       </aside>
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent className="max-w-lg overflow-hidden border-white/35 bg-white/85 p-0 shadow-2xl backdrop-blur-2xl dark:border-white/15 dark:bg-slate-950/88">
-          <div className="border-b border-border/50 p-5">
-            <DialogHeader>
-              <DialogTitle className="text-lg">{selectedAd?.modalTitulo || 'Anuncio'}</DialogTitle>
-              <DialogDescription>Conteudo patrocinado da plataforma</DialogDescription>
+        <DialogContent className="max-w-2xl overflow-hidden border-white/40 bg-white/90 p-0 shadow-[0_30px_100px_-32px_rgba(15,23,42,0.75)] backdrop-blur-2xl dark:border-white/15 dark:bg-slate-950/92">
+          <div className="relative overflow-hidden border-b border-white/35 bg-[linear-gradient(135deg,rgba(70,129,82,0.18),rgba(255,255,255,0.34)_46%,rgba(226,164,62,0.22))] p-5 dark:border-white/10 dark:bg-[linear-gradient(135deg,rgba(70,129,82,0.22),rgba(15,23,42,0.35)_48%,rgba(226,164,62,0.16))]">
+            <div aria-hidden className="pointer-events-none absolute -right-14 -top-16 h-36 w-36 rounded-full bg-[#E2A43E]/25 blur-3xl" />
+            <div aria-hidden className="pointer-events-none absolute -bottom-20 -left-16 h-44 w-44 rounded-full bg-[#468152]/20 blur-3xl" />
+            <DialogHeader className="relative pr-7">
+              <div className="mb-2 inline-flex w-fit items-center gap-1 rounded-full border border-[#468152]/25 bg-white/55 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-[#468152] backdrop-blur-xl dark:border-white/15 dark:bg-white/10 dark:text-emerald-200">
+                <Megaphone className="h-3 w-3" />
+                Anuncio da plataforma
+              </div>
+              <DialogTitle className="text-xl font-black leading-tight sm:text-2xl">
+                {selectedAd?.modalTitulo || 'Anuncio'}
+              </DialogTitle>
+              <DialogDescription className="text-sm font-medium text-slate-600 dark:text-slate-300">
+                Uma oportunidade selecionada para estudantes da DomineAqui.
+              </DialogDescription>
             </DialogHeader>
           </div>
 
-          <div className="space-y-4 p-5">
+          <div className="max-h-[70vh] overflow-y-auto p-5 sm:p-6">
             {selectedAd?.imagemUrl && (
-              <div className="overflow-hidden rounded-xl border border-border/60 bg-muted/30">
+              <div className="mb-5 overflow-hidden rounded-xl border border-white/50 bg-white/70 p-2 shadow-inner dark:border-white/10 dark:bg-slate-900/60">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={selectedAd.imagemUrl}
                   alt={selectedAd.modalTitulo || 'Anuncio'}
-                  className="max-h-52 w-full object-contain"
+                  className="max-h-[320px] w-full object-contain"
                 />
               </div>
             )}
             <div
               className={cn(
-                'prose prose-sm max-w-none text-foreground dark:prose-invert',
-                '[&_a]:font-semibold [&_a]:text-[#468152] dark:[&_a]:text-emerald-300',
+                'prose prose-sm max-w-none text-foreground dark:prose-invert sm:prose-base',
+                '[&_a]:font-bold [&_a]:text-[#468152] dark:[&_a]:text-emerald-300',
+                '[&_p]:leading-relaxed [&_strong]:text-[#468152] dark:[&_strong]:text-emerald-200',
+                '[&_ul]:rounded-lg [&_ul]:bg-muted/35 [&_ul]:py-3 [&_li]:my-1',
               )}
               dangerouslySetInnerHTML={{ __html: sanitizedModalContent }}
             />
           </div>
 
-          <DialogFooter className="border-t border-border/50 p-4">
-            <Button variant="outline" onClick={() => setModalOpen(false)}>
+          <DialogFooter className="border-t border-white/35 bg-white/70 p-4 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/70">
+            <Button variant="outline" onClick={() => setModalOpen(false)} className="rounded-lg">
               Fechar
             </Button>
             {selectedAd?.modalBotaoTexto && (
-              <Button onClick={handleModalButtonClick} className="bg-[#468152] text-white hover:bg-[#3b7045]">
+              <Button
+                onClick={handleModalButtonClick}
+                className="rounded-lg bg-gradient-to-r from-[#468152] to-[#E2A43E] font-black text-white shadow-lg shadow-[#468152]/20 hover:brightness-105"
+              >
                 {selectedAd.modalBotaoTexto}
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             )}
           </DialogFooter>
@@ -396,6 +467,17 @@ export function PlatformAds() {
           }
           to {
             width: 100%;
+          }
+        }
+        @keyframes platform-ad-attention {
+          0%,
+          100% {
+            box-shadow: 0 0 0 0 rgba(226, 164, 62, 0.28);
+            opacity: 0.72;
+          }
+          50% {
+            box-shadow: 0 0 0 7px rgba(226, 164, 62, 0);
+            opacity: 1;
           }
         }
       `}</style>

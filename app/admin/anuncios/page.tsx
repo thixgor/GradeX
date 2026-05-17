@@ -1068,22 +1068,25 @@ function MiniAdPreview({ anuncio, formData }: { anuncio?: Anuncio; formData?: Fo
   const type = anuncio?.tipoAcao || formData?.tipoAcao || 'link'
 
   return (
-    <div className="overflow-hidden rounded-lg border border-white/45 bg-white/70 p-2 shadow-lg backdrop-blur-2xl dark:border-white/15 dark:bg-slate-950/60">
-      <div className="flex items-center gap-2">
-        <div className="flex h-12 w-20 shrink-0 items-center justify-center overflow-hidden rounded-lg border bg-muted">
+    <div className="overflow-hidden rounded-lg border border-white/50 bg-white/80 p-2 shadow-lg backdrop-blur-2xl dark:border-white/15 dark:bg-slate-950/70">
+      <div className="flex min-h-[76px] items-center gap-2">
+        <div className="flex h-16 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg border bg-white/70 p-1 dark:bg-slate-900/70">
           {imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={imageUrl} alt={title} className="h-full w-full object-cover" />
+            <img src={imageUrl} alt={title} className="max-h-full max-w-full object-contain" />
           ) : (
             <Image className="h-5 w-5 text-muted-foreground" />
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-[#468152]">
+          <div className="mb-1 flex items-center gap-1 text-[10px] font-black uppercase tracking-wide text-[#468152]">
             <Megaphone className="h-3 w-3" />
-            Publicidade
+            {type === 'link' ? 'Destaque' : 'Publicidade'}
           </div>
-          <p className="truncate text-xs font-bold">{title}</p>
+          <p className="line-clamp-2 text-xs font-black leading-tight">{title}</p>
+          <div className="mt-1 inline-flex items-center gap-1 rounded-md bg-[#468152]/10 px-2 py-0.5 text-[10px] font-bold text-[#468152]">
+            {type === 'link' ? 'Ver agora' : 'Abrir modal'}
+          </div>
         </div>
         {type === 'link' ? <ExternalLink className="h-4 w-4 text-muted-foreground" /> : <PanelTop className="h-4 w-4 text-muted-foreground" />}
       </div>
