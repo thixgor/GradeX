@@ -251,6 +251,283 @@ const emailTemplates = [
     `,
     },
     {
+        id: 'material-drop',
+        name: '📎 Material Liberado',
+        description: 'Enviar um material com promessa clara de valor',
+        category: 'Conteúdo',
+        subject: 'Separei um material que pode destravar seus estudos hoje',
+        previewText: 'Abra para acessar o material e saber exatamente como usar.',
+        content: `
+      <h1 style="text-align: center;">Material novo para estudar melhor</h1>
+
+      <p>Olá! Passando para te entregar um material selecionado para facilitar sua revisão e te ajudar a ganhar ritmo.</p>
+
+      <div class="highlight-box">
+        <p><strong>Como aproveitar melhor:</strong></p>
+        <p>1. Leia primeiro os tópicos principais</p>
+        <p>2. Marque os pontos que você ainda erra</p>
+        <p>3. Volte para fazer questões sobre o tema</p>
+      </div>
+
+      <p>O recurso está logo abaixo. Abra, salve e use ainda hoje enquanto o assunto está fresco.</p>
+    `,
+    },
+    {
+        id: 'flashcard-push',
+        name: '🧠 Deck de Flashcards',
+        description: 'Promover um deck pronto para revisão ativa',
+        category: 'Flashcards',
+        subject: 'Revise em poucos minutos com estes flashcards',
+        previewText: 'Um deck pronto para praticar revisão ativa sem perder tempo.',
+        content: `
+      <h1 style="text-align: center;">Treino rápido para fixar de verdade</h1>
+
+      <p>Se você quer revisar sem ficar só relendo conteúdo, este deck foi feito para prática ativa.</p>
+
+      <div class="highlight-box">
+        <p><strong>Use assim:</strong> responda antes de virar o card, marque os difíceis e repita amanhã.</p>
+      </div>
+
+      <p>O deck está anexado abaixo. São poucos cliques para começar.</p>
+    `,
+    },
+    {
+        id: 'limited-offer',
+        name: '⚡ Oferta Relâmpago',
+        description: 'Campanha com urgência e CTA forte',
+        category: 'Vendas',
+        subject: 'Condição especial liberada por pouco tempo',
+        previewText: 'Aproveite antes que a janela feche.',
+        content: `
+      <h1 style="text-align: center;">Uma condição especial para acelerar seus estudos</h1>
+
+      <p>Hoje liberamos uma oportunidade com tempo limitado para quem quer estudar com mais consistência e menos improviso.</p>
+
+      <div style="background: linear-gradient(135deg, #0f3d2e 0%, #1a5c45 100%); color: white; padding: 28px; border-radius: 16px; text-align: center; margin: 25px 0;">
+        <p style="font-size: 13px; margin: 0; opacity: .88;">JANELA ESPECIAL</p>
+        <p style="font-size: 28px; font-weight: bold; margin: 8px 0;">[Descreva a oferta]</p>
+        <p style="font-size: 15px; margin: 0;">válida até [data/horário]</p>
+      </div>
+
+      <p>Se você estava esperando um empurrão para organizar seus estudos, esse é um bom momento.</p>
+
+      <div style="text-align: center;">
+        <a href="{{APP_URL}}/buy" class="cta-button">Ver condição especial</a>
+      </div>
+    `,
+    },
+    {
+        id: 'challenge-7-days',
+        name: '🎯 Desafio 7 Dias',
+        description: 'Criar hábito e retorno diário',
+        category: 'Engajamento',
+        subject: 'Topa um desafio de 7 dias para voltar ao ritmo?',
+        previewText: 'Um plano simples para estudar um pouco por dia e sentir progresso.',
+        content: `
+      <h1 style="text-align: center;">Desafio de 7 dias: estudo sem travar</h1>
+
+      <p>Você não precisa esperar a motivação perfeita. Precisa de um começo pequeno, claro e repetível.</p>
+
+      <div class="highlight-box">
+        <p><strong>Seu desafio:</strong></p>
+        <p>Dia 1: 10 questões</p>
+        <p>Dia 2: revisar erros</p>
+        <p>Dia 3: flashcards rápidos</p>
+        <p>Dia 4 a 7: repetir o ciclo com foco nos temas difíceis</p>
+      </div>
+
+      <div style="text-align: center;">
+        <a href="{{APP_URL}}/dashboard" class="cta-button">Começar o desafio</a>
+      </div>
+    `,
+    },
+    {
+        id: 'cart-recovery',
+        name: '🛒 Carrinho/Interesse',
+        description: 'Recuperar compra ou interesse em material',
+        category: 'Vendas',
+        subject: 'Seu material ainda está te esperando',
+        previewText: 'Volte para finalizar e liberar acesso ao conteúdo.',
+        content: `
+      <h1 style="text-align: center;">Ainda dá tempo de continuar</h1>
+
+      <p>Você demonstrou interesse em um material que pode ajudar bastante na sua rotina de estudos.</p>
+
+      <p>Se ficou alguma dúvida, pense no principal: esse recurso foi criado para encurtar caminho, organizar o conteúdo e te colocar em prática mais rápido.</p>
+
+      <div style="text-align: center;">
+        <a href="{{APP_URL}}/materiais" class="cta-button">Ver materiais</a>
+      </div>
+
+      <p style="text-align: center; color: #718096; font-size: 14px;">O acesso fica disponível na plataforma após a confirmação.</p>
+    `,
+    },
+    {
+        id: 'class-live',
+        name: '🎥 Aula/Aviso Ao Vivo',
+        description: 'Convite para aula, live ou encontro',
+        category: 'Eventos',
+        subject: 'Aula especial chegando: reserve esse horário',
+        previewText: 'Veja tema, horário e link para participar.',
+        content: `
+      <h1 style="text-align: center;">Aula especial marcada</h1>
+
+      <p>Vamos ter uma aula para trabalhar um tema que costuma gerar dúvidas e erros em prova.</p>
+
+      <div style="background-color: #eef6ff; border: 1px solid #bfdbfe; border-radius: 14px; padding: 22px; margin: 25px 0;">
+        <p style="margin: 0 0 8px; font-weight: 700; color: #1e3a8a;">[Tema da aula]</p>
+        <p style="margin: 0; color: #334155;">Data: [data] · Horário: [horário]</p>
+      </div>
+
+      <p>Entre alguns minutos antes e já deixe suas perguntas separadas.</p>
+
+      <div style="text-align: center;">
+        <a href="[LINK_DA_AULA]" class="cta-button">Entrar na aula</a>
+      </div>
+    `,
+    },
+    {
+        id: 'weekly-digest',
+        name: '🗓️ Resumo Semanal',
+        description: 'Newsletter curta com novidades e próximos passos',
+        category: 'Newsletter',
+        subject: 'Seu resumo da semana no DomineAqui',
+        previewText: 'Novidades, atalhos de estudo e o melhor próximo passo.',
+        content: `
+      <h1 style="text-align: center;">O que vale sua atenção esta semana</h1>
+
+      <p>Separei um resumo direto para você não perder o que importa.</p>
+
+      <div class="highlight-box">
+        <p><strong>Novidades:</strong></p>
+        <p>• [Novidade 1]</p>
+        <p>• [Novidade 2]</p>
+        <p>• [Novidade 3]</p>
+      </div>
+
+      <p><strong>Próximo passo recomendado:</strong> escolha um tema difícil e faça uma sessão curta de questões hoje.</p>
+
+      <div style="text-align: center;">
+        <a href="{{APP_URL}}/dashboard" class="cta-button">Abrir meu painel</a>
+      </div>
+    `,
+    },
+    {
+        id: 'social-proof',
+        name: '💬 Prova Social',
+        description: 'Mostrar resultado, depoimento ou caso de uso',
+        category: 'Confiança',
+        subject: 'Olha como outros alunos estão usando o DomineAqui',
+        previewText: 'Uma forma simples de estudar com mais consistência.',
+        content: `
+      <h1 style="text-align: center;">Um jeito mais inteligente de evoluir</h1>
+
+      <p>Muitos alunos melhoram quando param de estudar no escuro e começam a acompanhar erros, revisar por flashcards e praticar com frequência.</p>
+
+      <blockquote style="border-left: 4px solid #0f3d2e; padding-left: 18px; margin: 24px 0; color: #4a5568; font-style: italic;">
+        "[Insira aqui um depoimento curto ou resultado real]"
+      </blockquote>
+
+      <p>Use isso como sinal: você também pode transformar estudo em rotina prática.</p>
+
+      <div style="text-align: center;">
+        <a href="{{APP_URL}}" class="cta-button">Continuar estudando</a>
+      </div>
+    `,
+    },
+    {
+        id: 'new-feature',
+        name: '✨ Nova Funcionalidade',
+        description: 'Apresentar recurso novo com benefício claro',
+        category: 'Produto',
+        subject: 'Tem uma novidade no DomineAqui para você testar',
+        previewText: 'Veja como usar o novo recurso nos seus estudos.',
+        content: `
+      <h1 style="text-align: center;">Novo recurso liberado</h1>
+
+      <p>Acabamos de liberar uma melhoria pensada para deixar seus estudos mais simples e eficientes.</p>
+
+      <div class="highlight-box">
+        <p><strong>O que muda:</strong></p>
+        <p>[Explique o recurso em uma frase clara]</p>
+      </div>
+
+      <p>Teste hoje e veja se esse fluxo encaixa na sua rotina.</p>
+
+      <div style="text-align: center;">
+        <a href="{{APP_URL}}" class="cta-button">Testar agora</a>
+      </div>
+    `,
+    },
+    {
+        id: 'exam-results',
+        name: '📊 Resultado/Correção',
+        description: 'Chamar usuário para ver desempenho',
+        category: 'Provas',
+        subject: 'Seu resultado merece alguns minutos de atenção',
+        previewText: 'Veja seus erros, revise os pontos fracos e planeje o próximo treino.',
+        content: `
+      <h1 style="text-align: center;">Use seu resultado como mapa</h1>
+
+      <p>Resultado bom ou ruim, ele mostra exatamente onde vale colocar energia agora.</p>
+
+      <div class="highlight-box">
+        <p><strong>Depois de abrir:</strong></p>
+        <p>• Veja as questões erradas</p>
+        <p>• Anote o padrão dos erros</p>
+        <p>• Revise o tema com flashcards ou material de apoio</p>
+      </div>
+
+      <div style="text-align: center;">
+        <a href="{{APP_URL}}/provas" class="cta-button">Ver minhas provas</a>
+      </div>
+    `,
+    },
+    {
+        id: 'renewal',
+        name: '🔁 Renovação Premium',
+        description: 'Renovar acesso antes de expirar',
+        category: 'Retenção',
+        subject: 'Seu acesso Premium está perto de expirar',
+        previewText: 'Renove para não interromper sua rotina de estudos.',
+        content: `
+      <h1 style="text-align: center;">Não deixe seu ritmo quebrar</h1>
+
+      <p>Seu acesso Premium está chegando ao fim. Para continuar com questões, flashcards, aulas e recursos avançados, você pode renovar agora.</p>
+
+      <div class="highlight-box">
+        <p><strong>Você mantém:</strong></p>
+        <p>• Acesso aos conteúdos Premium</p>
+        <p>• Rotina de questões e revisões</p>
+        <p>• Ferramentas para acompanhar evolução</p>
+      </div>
+
+      <div style="text-align: center;">
+        <a href="{{APP_URL}}/buy" class="cta-button">Renovar acesso</a>
+      </div>
+    `,
+    },
+    {
+        id: 'maintenance',
+        name: '🛠️ Aviso Importante',
+        description: 'Comunicado operacional sem perder clareza',
+        category: 'Avisos',
+        subject: 'Aviso importante sobre a plataforma',
+        previewText: 'Leia para saber o que muda e quando.',
+        content: `
+      <h1 style="text-align: center;">Aviso importante</h1>
+
+      <p>Queremos te avisar com antecedência sobre uma atualização programada na plataforma.</p>
+
+      <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 22px; margin: 25px 0;">
+        <p style="margin: 0 0 8px; font-weight: 700; color: #0f172a;">Quando?</p>
+        <p style="margin: 0; color: #475569;">[data e horário]</p>
+      </div>
+
+      <p>Nosso objetivo é melhorar sua experiência e manter tudo funcionando com estabilidade.</p>
+    `,
+    },
+    {
         id: 'empty',
         name: '✏️ E-mail em Branco',
         description: 'Começar do zero',
