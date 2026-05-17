@@ -85,6 +85,7 @@ interface Material {
   _cardCount?: number
   // PDF interno
   _hasPdf?: boolean
+  _pageCount?: number
   pdfViewerEnabled?: boolean
   pdfDownloadEnabled?: boolean
 }
@@ -1473,6 +1474,11 @@ function MaterialCard({
                   <Sparkles className="h-3 w-3" /> {material._cardCount} cards
                 </span>
               ) : null}
+              {material.type === 'pdf' && material._hasPdf && material._pageCount ? (
+                <span className="flex items-center gap-1 text-xs text-white/80 font-medium">
+                  <FileText className="h-3 w-3" /> {material._pageCount} {material._pageCount === 1 ? 'página' : 'páginas'}
+                </span>
+              ) : null}
             </div>
             <CopyLinkBtn id={material._id} copiedId={copiedId} onClick={e => { e.stopPropagation(); onCopyLink() }} />
           </div>
@@ -1623,6 +1629,11 @@ function FeaturedCard({
               {material.type === 'flashcard_deck' && material._cardCount != null ? (
                 <span className="flex items-center gap-1 text-xs text-white/80 font-medium">
                   <Sparkles className="h-3 w-3" /> {material._cardCount} cards
+                </span>
+              ) : null}
+              {material.type === 'pdf' && material._hasPdf && material._pageCount ? (
+                <span className="flex items-center gap-1 text-xs text-white/80 font-medium">
+                  <FileText className="h-3 w-3" /> {material._pageCount} {material._pageCount === 1 ? 'página' : 'páginas'}
                 </span>
               ) : null}
               {material.allowedGroups?.length > 0

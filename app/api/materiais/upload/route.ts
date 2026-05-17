@@ -14,10 +14,22 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { put, del } from '@vercel/blob'
+import { PDFDocument } from 'pdf-lib'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { isValidObjectId } from '@/lib/api-security'
+
+async function countPdfPages(file: File): Promise<number | undefined> {
+  try {
+    const buffer = await file.arrayBuffer()
+    const pdfDoc = await PDFDocument.load(buffer, { updateMetadata: false })
+    return pdfDoc.getPageCount()
+  } catch (error) {
+    console.warn('[pdf-upload] Falha ao contar paginas do PDF:', error)
+    return undefined
+  }
+}
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 300
@@ -111,11 +123,14 @@ export async function POST(request: NextRequest): Promise<Response> {
 
     const pathname = `material-originals/${materialId}/${Date.now()}-${crypto.randomUUID()}.pdf`
 
-    const blob = await put(pathname, file, {
-      access: 'private',
-      addRandomSuffix: false,
-      contentType: 'application/pdf',
-    })
+    const [blob, pageCount] = await Promise.all([
+      put(pathname, file, {
+        access: 'private',
+        addRandomSuffix: false,
+        contentType: 'application/pdf',
+      }),
+      countPdfPages(file),
+    ])
 
     // Remove blob anterior se existia
     if (exists.pdfFile?.blobUrl) {
@@ -138,6 +153,7 @@ export async function POST(request: NextRequest): Promise<Response> {
             uploadedBy: session.userId,
             uploadedByName: session.name,
             uploadedAt: new Date(),
+            ...(pageCount ? { pageCount } : {}),
           },
           updatedAt: new Date(),
         },

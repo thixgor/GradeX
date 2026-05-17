@@ -139,6 +139,7 @@ export async function GET(
         _hasPdf,
         pdfViewerEnabled: material.pdfViewerEnabled === true,
         pdfDownloadEnabled: material.pdfDownloadEnabled !== false,
+        ...(_hasPdf && material.pdfFile?.pageCount ? { _pageCount: material.pdfFile.pageCount } : {}),
       },
       folderName,
       hasAccess: canAccess,

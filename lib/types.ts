@@ -1092,6 +1092,8 @@ export interface MaterialPdfFile {
   uploadedByName: string
   /** Data do upload */
   uploadedAt: Date
+  /** Quantidade de páginas do PDF (calculado no upload via pdf-lib) */
+  pageCount?: number
 }
 
 export interface Material {

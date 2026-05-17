@@ -58,6 +58,7 @@ interface PackageMaterial {
   _isPurchased: boolean
   _hasGroupAccess: boolean
   _hasAccess: boolean
+  _pageCount?: number
 }
 
 interface PackageDoc {
@@ -484,6 +485,11 @@ export default function PackageDetailPage() {
                                     <Check className="h-2.5 w-2.5" /> Já adquirido
                                   </span>
                                 )}
+                                {m.type === 'pdf' && m._pageCount ? (
+                                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-muted/60 text-muted-foreground text-[10px] font-medium border border-border/40">
+                                    <FileText className="h-2.5 w-2.5" /> {m._pageCount} {m._pageCount === 1 ? 'página' : 'páginas'}
+                                  </span>
+                                ) : null}
                               </div>
                               <p className="text-sm font-medium leading-snug line-clamp-1 group-hover:text-primary transition-colors">
                                 {m.title}

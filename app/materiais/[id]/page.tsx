@@ -77,6 +77,7 @@ interface Material {
   viewCount: number
   createdAt: string
   _hasPdf?: boolean
+  _pageCount?: number
   pdfViewerEnabled?: boolean
   pdfDownloadEnabled?: boolean
 }
@@ -708,6 +709,16 @@ export default function MaterialViewPage() {
                       <span className="text-xs font-medium">{formatDuration(material.videoDuration)}</span>
                     </div>
                   )}
+
+                  {/* PDF page count */}
+                  {material.type === 'pdf' && material._hasPdf && material._pageCount ? (
+                    <div className="flex items-center gap-2 mb-3 px-3 py-2 rounded-xl bg-muted/40 border border-border/30">
+                      <FileText className="h-3.5 w-3.5 text-muted-foreground" />
+                      <span className="text-xs font-medium">
+                        {material._pageCount} {material._pageCount === 1 ? 'página' : 'páginas'}
+                      </span>
+                    </div>
+                  ) : null}
 
                   {/* Tags */}
                   {material.tags?.length > 0 && (

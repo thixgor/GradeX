@@ -224,6 +224,7 @@ export async function GET(request: NextRequest) {
         _hasPdf: hasPdf,
         pdfViewerEnabled: m.pdfViewerEnabled === true,
         pdfDownloadEnabled: m.pdfDownloadEnabled !== false,
+        ...(hasPdf && m.pdfFile?.pageCount ? { _pageCount: m.pdfFile.pageCount } : {}),
         ...(pdfFileMeta && { _pdfFile: pdfFileMeta }),
         ...(m.type === 'flashcard_deck' && { _cardCount: cardCountByMaterialId[idStr] ?? 0 }),
       }

@@ -60,7 +60,7 @@ export async function GET(
           .project({
             title: 1, coverImage: 1, type: 1, pricing: 1, price: 1,
             description: 1, isHidden: 1, allowedGroups: 1,
-            videoDuration: 1, tags: 1,
+            videoDuration: 1, tags: 1, pdfFile: 1,
           })
           .toArray()
       : []
@@ -161,6 +161,8 @@ export async function GET(
         isPackagePurchased ||
         matPurchased ||
         (matGroupAccess && m.pricing !== 'paid'))
+      const matHasPdf = !!m.pdfFile?.blobUrl
+      const matPageCount = matHasPdf && m.pdfFile?.pageCount ? Number(m.pdfFile.pageCount) : undefined
       return {
         _id: idStr,
         title: m.title,
@@ -175,6 +177,7 @@ export async function GET(
         _isPurchased: matPurchased,
         _hasGroupAccess: matGroupAccess,
         _hasAccess: matHasAccess,
+        ...(matPageCount ? { _pageCount: matPageCount } : {}),
       }
     })
 
