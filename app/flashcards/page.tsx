@@ -869,7 +869,7 @@ function Toolbar({ search, setSearch, filter, setFilter, counts, foldersOpen, se
 }) {
   return (
     <div className={cn(
-      'sticky top-16 z-20 rounded-3xl border backdrop-blur-2xl p-3 shadow-lg transition-colors',
+      'sticky top-16 z-20 rounded-3xl border backdrop-blur-2xl p-3 shadow-lg transition-[background-color,border-color,box-shadow] duration-300 ease-out',
       filter === 'store'
         ? 'border-emerald-200/60 dark:border-emerald-400/15 bg-white/[0.78] dark:bg-emerald-950/25 shadow-emerald-900/5'
         : filter === 'purchased'
@@ -901,11 +901,14 @@ function Toolbar({ search, setSearch, filter, setFilter, counts, foldersOpen, se
               <ChipFilter active={filter === 'shared'} onClick={() => setFilter('shared')} count={counts.shared} icon={<Users className="h-3.5 w-3.5" />}>Recebidos</ChipFilter>
             </>
           )}
-          {!guestMode && (filter === 'mine' || filter === 'all') && (
+          {!guestMode && (
             <button
               onClick={() => setFoldersOpen((v: boolean) => !v)}
+              aria-hidden={!(filter === 'mine' || filter === 'all')}
+              tabIndex={filter === 'mine' || filter === 'all' ? 0 : -1}
               className={cn(
-                'inline-flex items-center gap-1.5 rounded-2xl px-3 py-2 text-xs font-semibold transition border whitespace-nowrap',
+                'inline-flex h-9 items-center gap-1.5 rounded-2xl px-3 text-xs font-semibold border whitespace-nowrap transition-[background-color,border-color,color,opacity] duration-200 ease-out',
+                filter === 'mine' || filter === 'all' ? 'opacity-100' : 'pointer-events-none opacity-0',
                 foldersOpen
                   ? 'bg-violet-500/15 border-violet-400/40 text-violet-700 dark:text-violet-200 shadow-sm'
                   : 'bg-white/70 dark:bg-white/5 border-white/40 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-white/90 dark:hover:bg-white/10'
@@ -923,23 +926,38 @@ function Toolbar({ search, setSearch, filter, setFilter, counts, foldersOpen, se
 function ChipFilter({ active, onClick, count, icon, accent = 'violet', children }: {
   active: boolean; onClick: () => void; count: number; icon: React.ReactNode; accent?: 'violet' | 'amber' | 'emerald'; children: React.ReactNode
 }) {
-  const activeClasses = {
-    amber: 'bg-gradient-to-r from-amber-500 to-orange-500 text-white border-transparent shadow-lg shadow-amber-500/30',
-    emerald: 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-transparent shadow-lg shadow-emerald-500/30',
-    violet: 'bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white border-transparent shadow-lg shadow-violet-500/30',
+  const gradientClasses = {
+    amber: 'from-amber-500 to-orange-500',
+    emerald: 'from-emerald-500 to-teal-500',
+    violet: 'from-violet-600 to-fuchsia-600',
+  }[accent]
+  const shadowClasses = {
+    amber: 'shadow-amber-500/30',
+    emerald: 'shadow-emerald-500/30',
+    violet: 'shadow-violet-500/30',
   }[accent]
   return (
     <button
       onClick={onClick}
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-2xl px-3 py-2 text-xs font-semibold transition border whitespace-nowrap',
+        'relative inline-flex h-9 items-center gap-1.5 overflow-hidden rounded-2xl border px-3 text-xs font-semibold whitespace-nowrap transition-[border-color,color,box-shadow] duration-200 ease-out',
         active
-          ? activeClasses
+          ? cn('border-transparent text-white shadow-lg', shadowClasses)
           : 'bg-white/70 dark:bg-white/5 border-white/40 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-white/90 dark:hover:bg-white/10'
       )}
     >
-      {icon} {children}
-      <span className={cn('text-[10px] font-bold px-1.5 py-0.5 rounded-full', active ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-white/10 text-slate-500')}>{count}</span>
+      <span
+        aria-hidden
+        className={cn(
+          'absolute inset-0 bg-gradient-to-r transition-opacity duration-200 ease-out',
+          gradientClasses,
+          active ? 'opacity-100' : 'opacity-0'
+        )}
+      />
+      <span className="relative inline-flex items-center gap-1.5">
+        {icon} {children}
+      </span>
+      <span className={cn('relative min-w-[1.5rem] text-center text-[10px] font-bold px-1.5 py-0.5 rounded-full transition-colors duration-200 ease-out', active ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-white/10 text-slate-500')}>{count}</span>
     </button>
   )
 }
