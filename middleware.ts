@@ -19,6 +19,9 @@ const publicRoutes = [
   '/materiais',
   '/flashcards',
   '/manual-clinico',
+  // Landing page lê settings publicamente (videoEmbedUrl, landingPageEnabled,
+  // etc). A própria rota faz checagem de admin internamente para PUT.
+  '/api/admin/settings',
 ]
 
 // Prefixos públicos
