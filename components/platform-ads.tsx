@@ -403,65 +403,66 @@ export function PlatformAds() {
       </aside>
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent className="flex max-h-[88vh] max-w-2xl flex-col overflow-hidden border-slate-200/80 bg-white p-0 text-slate-950 shadow-[0_30px_100px_-32px_rgba(15,23,42,0.75)] dark:border-emerald-300/15 dark:bg-[#07110d] dark:text-slate-50">
-          <div className="relative shrink-0 overflow-hidden border-b border-slate-200 bg-[linear-gradient(135deg,rgba(70,129,82,0.12),rgba(255,255,255,0.88)_48%,rgba(226,164,62,0.18))] p-5 dark:border-emerald-300/12 dark:bg-[linear-gradient(135deg,rgba(70,129,82,0.30),rgba(7,17,13,0.98)_52%,rgba(226,164,62,0.16))]">
+        <DialogContent className="mx-0 flex max-h-[88vh] w-[calc(100vw-24px)] max-w-2xl flex-col overflow-hidden overflow-x-hidden rounded-xl border-slate-200/80 bg-white p-0 text-slate-950 shadow-[0_30px_100px_-32px_rgba(15,23,42,0.75)] dark:border-emerald-300/15 dark:bg-[#07110d] dark:text-slate-50 sm:mx-4 sm:w-full">
+          <div className="relative min-w-0 shrink-0 overflow-hidden border-b border-slate-200 bg-[linear-gradient(135deg,rgba(70,129,82,0.12),rgba(255,255,255,0.88)_48%,rgba(226,164,62,0.18))] p-4 dark:border-emerald-300/12 dark:bg-[linear-gradient(135deg,rgba(70,129,82,0.30),rgba(7,17,13,0.98)_52%,rgba(226,164,62,0.16))] sm:p-5">
             <div aria-hidden className="pointer-events-none absolute -right-14 -top-16 h-36 w-36 rounded-full bg-[#E2A43E]/18 blur-3xl dark:bg-[#E2A43E]/12" />
             <div aria-hidden className="pointer-events-none absolute -bottom-20 -left-16 h-44 w-44 rounded-full bg-[#468152]/16 blur-3xl dark:bg-[#468152]/24" />
-            <DialogHeader className="relative p-0 pr-7">
-              <div className="mb-2 inline-flex w-fit items-center gap-1 rounded-full border border-[#468152]/25 bg-white/70 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-[#468152] backdrop-blur-xl dark:border-emerald-300/20 dark:bg-emerald-300/10 dark:text-emerald-100">
+            <DialogHeader className="relative min-w-0 p-0 pr-7">
+              <div className="mb-2 inline-flex max-w-full items-center gap-1 rounded-full border border-[#468152]/25 bg-white/70 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-[#468152] backdrop-blur-xl dark:border-emerald-300/20 dark:bg-emerald-300/10 dark:text-emerald-100">
                 <Megaphone className="h-3 w-3" />
                 Anuncio da plataforma
               </div>
-              <DialogTitle className="text-xl font-black leading-tight text-slate-950 dark:text-white sm:text-2xl">
+              <DialogTitle className="break-words text-xl font-black leading-tight text-slate-950 dark:text-white sm:text-2xl">
                 {selectedAd?.modalTitulo || 'Anuncio'}
               </DialogTitle>
-              <DialogDescription className="text-sm font-medium text-slate-600 dark:text-slate-300">
+              <DialogDescription className="break-words text-sm font-medium text-slate-600 dark:text-slate-300">
                 Uma oportunidade selecionada para estudantes da DomineAqui.
               </DialogDescription>
             </DialogHeader>
           </div>
 
-          <div className="min-h-0 flex-1 overflow-y-auto bg-white p-5 dark:bg-[#07110d] sm:p-6">
+          <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden bg-white p-4 dark:bg-[#07110d] sm:p-6">
             {selectedAd?.imagemUrl && (
-              <div className="mb-5 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-2 shadow-inner dark:border-emerald-300/12 dark:bg-[#0d1b15]">
+              <div className="mb-5 max-w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-2 shadow-inner dark:border-emerald-300/12 dark:bg-[#0d1b15]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={selectedAd.imagemUrl}
                   alt={selectedAd.modalTitulo || 'Anuncio'}
-                  className="max-h-[320px] w-full object-contain"
+                  className="max-h-[240px] w-full max-w-full object-contain sm:max-h-[320px]"
                 />
               </div>
             )}
             <div
               className={cn(
-                'max-w-none text-sm leading-relaxed text-slate-700 dark:text-slate-100 sm:text-base',
-                '[&_a]:font-bold [&_a]:text-[#2f6f3f] [&_a]:underline [&_a]:underline-offset-2 dark:[&_a]:text-emerald-300',
-                '[&_p]:mb-3 [&_p]:leading-relaxed [&_p]:text-slate-700 dark:[&_p]:text-slate-100',
+                'min-w-0 max-w-none overflow-x-hidden break-words text-sm leading-relaxed text-slate-700 [overflow-wrap:anywhere] dark:text-slate-100 sm:text-base',
+                '[&_*]:max-w-full',
+                '[&_a]:break-words [&_a]:font-bold [&_a]:text-[#2f6f3f] [&_a]:underline [&_a]:underline-offset-2 [&_a]:[overflow-wrap:anywhere] dark:[&_a]:text-emerald-300',
+                '[&_p]:mb-3 [&_p]:break-words [&_p]:leading-relaxed [&_p]:text-slate-700 [&_p]:[overflow-wrap:anywhere] dark:[&_p]:text-slate-100',
                 '[&_strong]:font-black [&_strong]:text-[#2f6f3f] dark:[&_strong]:text-emerald-200',
                 '[&_em]:text-slate-700 dark:[&_em]:text-slate-200',
-                '[&_ul]:my-4 [&_ul]:rounded-lg [&_ul]:border [&_ul]:border-slate-200 [&_ul]:bg-slate-50 [&_ul]:px-5 [&_ul]:py-3 dark:[&_ul]:border-emerald-300/12 dark:[&_ul]:bg-white/[0.04]',
-                '[&_ol]:my-4 [&_ol]:rounded-lg [&_ol]:border [&_ol]:border-slate-200 [&_ol]:bg-slate-50 [&_ol]:px-5 [&_ol]:py-3 dark:[&_ol]:border-emerald-300/12 dark:[&_ol]:bg-white/[0.04]',
+                '[&_ul]:my-4 [&_ul]:rounded-lg [&_ul]:border [&_ul]:border-slate-200 [&_ul]:bg-slate-50 [&_ul]:py-3 [&_ul]:pl-6 [&_ul]:pr-4 dark:[&_ul]:border-emerald-300/12 dark:[&_ul]:bg-white/[0.04] sm:[&_ul]:px-5',
+                '[&_ol]:my-4 [&_ol]:rounded-lg [&_ol]:border [&_ol]:border-slate-200 [&_ol]:bg-slate-50 [&_ol]:py-3 [&_ol]:pl-6 [&_ol]:pr-4 dark:[&_ol]:border-emerald-300/12 dark:[&_ol]:bg-white/[0.04] sm:[&_ol]:px-5',
                 '[&_li]:my-1 [&_li]:text-slate-700 dark:[&_li]:text-slate-100',
               )}
               dangerouslySetInnerHTML={{ __html: sanitizedModalContent }}
             />
           </div>
 
-          <DialogFooter className="shrink-0 border-t border-slate-200 bg-slate-50 p-4 dark:border-emerald-300/12 dark:bg-[#09150f]">
+          <DialogFooter className="flex-col gap-2 shrink-0 border-t border-slate-200 bg-slate-50 p-4 dark:border-emerald-300/12 dark:bg-[#09150f] sm:flex-row sm:justify-end">
             <Button
               variant="outline"
               onClick={() => setModalOpen(false)}
-              className="rounded-lg border-slate-300 bg-white text-slate-700 hover:bg-slate-100 dark:border-white/15 dark:bg-white/[0.04] dark:text-slate-100 dark:hover:bg-white/[0.08]"
+              className="w-full rounded-lg border-slate-300 bg-white text-slate-700 hover:bg-slate-100 dark:border-white/15 dark:bg-white/[0.04] dark:text-slate-100 dark:hover:bg-white/[0.08] sm:w-auto"
             >
               Fechar
             </Button>
             {selectedAd?.modalBotaoTexto && (
               <Button
                 onClick={handleModalButtonClick}
-                className="rounded-lg bg-gradient-to-r from-[#468152] to-[#E2A43E] font-black text-white shadow-lg shadow-[#468152]/20 hover:brightness-105 dark:from-emerald-600 dark:to-amber-500"
+                className="w-full min-w-0 rounded-lg bg-gradient-to-r from-[#468152] to-[#E2A43E] font-black text-white shadow-lg shadow-[#468152]/20 hover:brightness-105 dark:from-emerald-600 dark:to-amber-500 sm:w-auto"
               >
-                {selectedAd.modalBotaoTexto}
-                <ArrowRight className="ml-2 h-4 w-4" />
+                <span className="min-w-0 truncate">{selectedAd.modalBotaoTexto}</span>
+                <ArrowRight className="ml-2 h-4 w-4 shrink-0" />
               </Button>
             )}
           </DialogFooter>
