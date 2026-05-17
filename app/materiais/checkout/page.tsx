@@ -102,6 +102,7 @@ function CouponBox({
   const [code, setCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [notice, setNotice] = useState('')
 
   const applyCoupon = async () => {
     const normalized = code.trim()
@@ -118,6 +119,7 @@ function CouponBox({
       if (!res.ok) throw new Error(data.error || 'Cupom inválido')
       onApplied(data)
       setCode(data.code || normalized.toUpperCase())
+      setNotice('')
     } catch (err: any) {
       setError(err?.message || 'Erro ao aplicar cupom')
     } finally {
@@ -138,38 +140,55 @@ function CouponBox({
       </div>
 
       {appliedCoupon ? (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
-          <div style={{ minWidth: 0 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '12px' }}>
+            <div style={{ minWidth: 0 }}>
             <p style={{ margin: 0, color: '#34d399', fontSize: '14px', fontWeight: 800 }}>
               {appliedCoupon.code} aplicado
             </p>
             <p style={{ margin: '2px 0 0 0', color: 'rgba(255,255,255,0.45)', fontSize: '12px' }}>
               {formatBRL(appliedCoupon.discountAmount)} de desconto · total {formatBRL(appliedCoupon.amountAfterCoupon)}
             </p>
+            </div>
+            <span style={{
+              flexShrink: 0,
+              borderRadius: '999px',
+              background: 'rgba(52,211,153,0.12)',
+              color: '#34d399',
+              padding: '5px 9px',
+              fontSize: '11px',
+              fontWeight: 900,
+            }}>
+              {appliedCoupon.label}
+            </span>
           </div>
           <button
             type="button"
             onClick={() => {
               setCode('')
               setError('')
+              setNotice('Cupom removido. O total foi recalculado sem desconto.')
               onRemoved()
             }}
             style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '9px',
-              border: '1px solid rgba(255,255,255,0.1)',
-              background: 'rgba(255,255,255,0.04)',
-              color: 'rgba(255,255,255,0.65)',
+              width: '100%',
+              minHeight: '38px',
+              borderRadius: '10px',
+              border: '1px solid rgba(248,113,113,0.26)',
+              background: 'rgba(248,113,113,0.08)',
+              color: '#fca5a5',
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
+              gap: '8px',
               cursor: 'pointer',
-              flexShrink: 0,
+              fontSize: '12px',
+              fontWeight: 900,
             }}
             aria-label="Remover cupom"
           >
             <X size={15} />
+            Remover cupom
           </button>
         </div>
       ) : (
@@ -224,6 +243,7 @@ function CouponBox({
             </button>
           </div>
           {error ? <p style={{ color: '#f87171', fontSize: '12px', marginTop: '8px' }}>{error}</p> : null}
+          {notice ? <p style={{ color: '#34d399', fontSize: '12px', marginTop: '8px', fontWeight: 700 }}>{notice}</p> : null}
         </>
       )}
     </div>
@@ -891,6 +911,7 @@ export default function MateriaisCheckoutPage() {
                 </div>
               ) : (
                 <MercadoPagoCheckout
+                  key={`cart-${payableAmount}-${appliedCoupon?.code || 'sem-cupom'}`}
                   publicKey={publicKey}
                   amount={payableAmount}
                   description={`Carrinho DomineAqui - ${cartPreview.payableItems.length} itens`}
@@ -1093,6 +1114,7 @@ export default function MateriaisCheckoutPage() {
               </div>
             ) : (
               <MercadoPagoCheckout
+                key={`single-${payablePrice}-${appliedCoupon?.code || 'sem-cupom'}`}
                 publicKey={publicKey}
                 amount={payablePrice}
                 description={item.title}

@@ -8,11 +8,13 @@ import {
   Building2,
   CalendarClock,
   Check,
+  Copy,
   Loader2,
   Package,
   Percent,
   Plus,
   Search,
+  SlidersHorizontal,
   ShoppingCart,
   Tag,
   Trash2,
@@ -137,6 +139,10 @@ export default function AdminCouponsPage() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [form, setForm] = useState(emptyForm)
   const [productQuery, setProductQuery] = useState('')
+  const [couponQuery, setCouponQuery] = useState('')
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all')
+  const [scopeFilter, setScopeFilter] = useState<'all' | CouponScope>('all')
+  const [unitQuery, setUnitQuery] = useState('')
   const [productResults, setProductResults] = useState<ProductSearchResult[]>([])
   const [productLoading, setProductLoading] = useState(false)
 
@@ -305,6 +311,10 @@ export default function AdminCouponsPage() {
     }))
   }
 
+  async function copyCode(code: string) {
+    await navigator.clipboard?.writeText(code).catch(() => {})
+  }
+
   const totals = useMemo(() => coupons.reduce(
     (acc, coupon) => ({
       coupons: acc.coupons + 1,
@@ -314,6 +324,28 @@ export default function AdminCouponsPage() {
     }),
     { coupons: 0, active: 0, uses: 0, revenue: 0 }
   ), [coupons])
+
+  const filteredCoupons = useMemo(() => {
+    const query = couponQuery.trim().toLowerCase()
+    return coupons.filter((coupon) => {
+      const matchesQuery = !query ||
+        coupon.code.toLowerCase().includes(query) ||
+        coupon.description.toLowerCase().includes(query) ||
+        coupon.productRefs.some((product) => product.title.toLowerCase().includes(query))
+      const matchesStatus =
+        statusFilter === 'all' ||
+        (statusFilter === 'active' && coupon.isActive) ||
+        (statusFilter === 'inactive' && !coupon.isActive)
+      const matchesScope = scopeFilter === 'all' || coupon.scope === scopeFilter
+      return matchesQuery && matchesStatus && matchesScope
+    })
+  }, [couponQuery, coupons, scopeFilter, statusFilter])
+
+  const visibleInstitutionUnits = useMemo(() => {
+    const query = unitQuery.trim().toLowerCase()
+    if (!query) return INSTITUTION_UNITS
+    return INSTITUTION_UNITS.filter((unit) => unit.toLowerCase().includes(query))
+  }, [unitQuery])
 
   if (loading) {
     return <AppShell headerTitle="Cupons" headerSubtitle="Carregando"><div className="flex min-h-[50vh] items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div></AppShell>
@@ -326,7 +358,7 @@ export default function AdminCouponsPage() {
           <Button variant="ghost" className="w-fit gap-2" onClick={() => router.push('/admin')}>
             <ArrowLeft className="h-4 w-4" /> Voltar
           </Button>
-          <Button variant="outline" className="w-fit gap-2" onClick={resetForm}>
+          <Button className="w-fit gap-2" onClick={resetForm}>
             <Plus className="h-4 w-4" /> Novo cupom
           </Button>
         </div>
@@ -344,15 +376,21 @@ export default function AdminCouponsPage() {
           <SummaryCard icon={Tag} label="Receita atribuída" value={currency.format(totals.revenue)} />
         </div>
 
-        <div className="grid gap-6 xl:grid-cols-[420px_minmax(0,1fr)]">
-          <Card className="rounded-lg">
+        <div className="grid gap-6 xl:grid-cols-[440px_minmax(0,1fr)]">
+          <Card className="rounded-lg xl:sticky xl:top-4 xl:max-h-[calc(100vh-2rem)] xl:overflow-y-auto">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <BadgePercent className="h-5 w-5 text-primary" />
-                {editingId ? 'Editar cupom' : 'Criar cupom'}
+              <CardTitle className="flex items-center justify-between gap-3 text-lg">
+                <span className="flex items-center gap-2">
+                  <BadgePercent className="h-5 w-5 text-primary" />
+                  {editingId ? 'Editar cupom' : 'Criar cupom'}
+                </span>
+                <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${form.isActive ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300' : 'bg-muted text-muted-foreground'}`}>
+                  {form.isActive ? 'Ativo' : 'Inativo'}
+                </span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              <SectionTitle title="Identificação" />
               <div className="grid gap-3 sm:grid-cols-[1fr_120px]">
                 <Field label="Código">
                   <Input value={form.code} onChange={(e) => setForm((f) => ({ ...f, code: e.target.value.toUpperCase() }))} placeholder="EX: MED10" />
@@ -369,6 +407,7 @@ export default function AdminCouponsPage() {
                 <Textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} placeholder="Campanha, turma, origem..." />
               </Field>
 
+              <SectionTitle title="Desconto" />
               <div className="grid gap-3 sm:grid-cols-2">
                 <Field label="Tipo de desconto">
                   <select className="h-10 w-full rounded-md border bg-background px-3 text-sm" value={form.discountType} onChange={(e) => setForm((f) => ({ ...f, discountType: e.target.value as DiscountType }))}>
@@ -381,6 +420,7 @@ export default function AdminCouponsPage() {
                 </Field>
               </div>
 
+              <SectionTitle title="Regras" />
               <div className="grid gap-3 sm:grid-cols-2">
                 <Field label="Limite total de uso">
                   <Input type="number" min="1" value={form.usageLimit} onChange={(e) => setForm((f) => ({ ...f, usageLimit: e.target.value }))} placeholder="Sem limite" />
@@ -425,13 +465,20 @@ export default function AdminCouponsPage() {
                     </Button>
                   </div>
                 </div>
+                <div className="relative">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input value={unitQuery} onChange={(e) => setUnitQuery(e.target.value)} className="h-9 pl-9" placeholder="Pesquisar unidade..." />
+                </div>
                 <div className="max-h-48 space-y-1 overflow-y-auto rounded-md border bg-background p-1">
-                  {INSTITUTION_UNITS.map((unit) => (
+                  {visibleInstitutionUnits.map((unit) => (
                     <label key={unit} className="flex cursor-pointer items-start gap-2 rounded-md px-2 py-2 text-xs hover:bg-muted">
                       <input type="checkbox" className="mt-0.5" checked={form.allowedAfyaUnits.includes(unit)} onChange={() => toggleAfyaUnit(unit)} />
                       <span>{unit}</span>
                     </label>
                   ))}
+                  {visibleInstitutionUnits.length === 0 ? (
+                    <p className="px-2 py-3 text-center text-xs text-muted-foreground">Nenhuma unidade encontrada.</p>
+                  ) : null}
                 </div>
               </div>
 
@@ -454,6 +501,7 @@ export default function AdminCouponsPage() {
                 </div>
               ) : null}
 
+              <SectionTitle title="Aplicação" />
               <Field label="Onde o cupom vale">
                 <select className="h-10 w-full rounded-md border bg-background px-3 text-sm" value={form.scope} onChange={(e) => setForm((f) => ({ ...f, scope: e.target.value as CouponScope }))}>
                   {Object.entries(scopeLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
@@ -508,13 +556,42 @@ export default function AdminCouponsPage() {
           </Card>
 
           <div className="space-y-3">
+            <Card className="rounded-lg">
+              <CardContent className="grid gap-3 p-4 lg:grid-cols-[1fr_160px_220px]">
+                <div className="relative">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input value={couponQuery} onChange={(e) => setCouponQuery(e.target.value)} className="pl-9" placeholder="Buscar por código, descrição ou item..." />
+                </div>
+                <select className="h-10 rounded-md border bg-background px-3 text-sm" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}>
+                  <option value="all">Todos status</option>
+                  <option value="active">Ativos</option>
+                  <option value="inactive">Inativos</option>
+                </select>
+                <select className="h-10 rounded-md border bg-background px-3 text-sm" value={scopeFilter} onChange={(e) => setScopeFilter(e.target.value as typeof scopeFilter)}>
+                  <option value="all">Todos os escopos</option>
+                  {Object.entries(scopeLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                </select>
+              </CardContent>
+            </Card>
+
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase text-muted-foreground">
+              <SlidersHorizontal className="h-3.5 w-3.5" />
+              {filteredCoupons.length} {filteredCoupons.length === 1 ? 'cupom encontrado' : 'cupons encontrados'}
+            </div>
+
             {coupons.length === 0 ? (
               <Card className="rounded-lg">
                 <CardContent className="py-10 text-center text-sm text-muted-foreground">
                   Nenhum cupom criado ainda.
                 </CardContent>
               </Card>
-            ) : coupons.map((coupon) => (
+            ) : filteredCoupons.length === 0 ? (
+              <Card className="rounded-lg">
+                <CardContent className="py-10 text-center text-sm text-muted-foreground">
+                  Nenhum cupom combina com os filtros atuais.
+                </CardContent>
+              </Card>
+            ) : filteredCoupons.map((coupon) => (
               <Card key={coupon.id} className="rounded-lg">
                 <CardContent className="p-4">
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
@@ -523,6 +600,9 @@ export default function AdminCouponsPage() {
                         <span className="inline-flex items-center gap-1 rounded-md border border-primary/20 bg-primary/10 px-2.5 py-1 font-mono text-sm font-black text-primary">
                           <BadgePercent className="h-3.5 w-3.5" /> {coupon.code}
                         </span>
+                        <button type="button" onClick={() => copyCode(coupon.code)} className="inline-flex h-7 w-7 items-center justify-center rounded-md border text-muted-foreground transition hover:bg-muted hover:text-foreground" title="Copiar código">
+                          <Copy className="h-3.5 w-3.5" />
+                        </button>
                         <span className="rounded-md border px-2 py-1 text-xs font-semibold">{couponLabel(coupon)} OFF</span>
                         <span className={`rounded-md border px-2 py-1 text-xs font-semibold ${coupon.isActive ? 'border-emerald-300/25 bg-emerald-400/10 text-emerald-700 dark:text-emerald-200' : 'border-muted bg-muted text-muted-foreground'}`}>
                           {coupon.isActive ? 'Ativo' : 'Inativo'}
@@ -532,14 +612,14 @@ export default function AdminCouponsPage() {
 
                       {coupon.description ? <p className="mt-2 text-sm text-muted-foreground">{coupon.description}</p> : null}
 
-                      <div className="mt-3 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2 xl:grid-cols-4">
+                      <div className="mt-3 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2 2xl:grid-cols-4">
                         <Metric icon={CalendarClock} label="Término" value={formatDate(coupon.expiresAt)} />
                         <Metric icon={Tag} label="Uso" value={`${coupon.usageCount}${coupon.usageLimit ? `/${coupon.usageLimit}` : ''}`} />
                         <Metric icon={Percent} label="Pessoas" value={String(coupon.stats.uniqueUsers)} />
                         <Metric icon={Package} label="Receita" value={currency.format(coupon.stats.revenueAttributed)} />
                       </div>
 
-                      <div className="mt-2 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2 xl:grid-cols-4">
+                      <div className="mt-2 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2 2xl:grid-cols-4">
                         <Metric icon={UserCheck} label="Por usuário" value={coupon.perUserLimit ? String(coupon.perUserLimit) : 'Sem limite'} />
                         <Metric icon={ShoppingCart} label="Mínimo" value={coupon.minimumCartAmount ? currency.format(coupon.minimumCartAmount) : 'Sem mínimo'} />
                         <Metric icon={Check} label="Primeira compra" value={coupon.firstPurchaseOnly ? 'Sim' : 'Não'} />
@@ -580,6 +660,16 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     <div>
       <Label className="mb-1 block">{label}</Label>
       {children}
+    </div>
+  )
+}
+
+function SectionTitle({ title }: { title: string }) {
+  return (
+    <div className="flex items-center gap-2 pt-1">
+      <div className="h-px flex-1 bg-border" />
+      <span className="text-[11px] font-black uppercase text-muted-foreground">{title}</span>
+      <div className="h-px flex-1 bg-border" />
     </div>
   )
 }
