@@ -51,6 +51,13 @@ export async function POST(request: NextRequest) {
     const db = await getDb()
     const resolution = await resolveMaterialCart(db, session, items)
     const payableItems = resolution.payableItems
+    if (resolution.skippedItems.some(item => item.reason === 'already_owned')) {
+      return NextResponse.json({
+        error: resolution.items.length === 0
+          ? 'Você já possui todos os itens deste carrinho.'
+          : 'Você já possui alguns itens deste carrinho. Remova-os antes de aplicar cupom.',
+      }, { status: 409 })
+    }
 
     if (payableItems.length === 0 || resolution.amount <= 0) {
       return NextResponse.json({ error: 'Cupom só pode ser aplicado a compras pagas.' }, { status: 400 })

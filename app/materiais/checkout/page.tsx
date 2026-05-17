@@ -287,7 +287,12 @@ export default function MateriaisCheckoutPage() {
       ])
         .then(([previewResp, pkResp]) => {
           if (!previewResp?.items?.length) {
-            setError('Nenhum item do carrinho está disponível para compra')
+            const skippedItems = Array.isArray(previewResp?.skippedItems) ? previewResp.skippedItems : []
+            const allAlreadyOwned = skippedItems.length > 0 && skippedItems.every((item: CartSkippedItem) => item.reason === 'already_owned')
+            setError(allAlreadyOwned
+              ? 'Você já possui todos os itens deste carrinho.'
+              : 'Nenhum item do carrinho está disponível para compra'
+            )
             setCartPreview(previewResp)
             return
           }
@@ -431,6 +436,8 @@ export default function MateriaisCheckoutPage() {
     const acceptedIds = new Set(cartPreview.items.map(item => `${item.itemType}:${item.itemId}`))
     const acceptedLocalItems = cartItems.filter(item => acceptedIds.has(`${item.itemType}:${item.itemId}`))
     const suggestions = cartPreview.suggestions || []
+    const alreadyOwnedItems = cartPreview.skippedItems.filter(item => item.reason === 'already_owned')
+    const hasAlreadyOwnedItems = alreadyOwnedItems.length > 0
 
     const applySuggestion = (suggestion: CartUpgradeSuggestion) => {
       // Remove os materiais cobertos e adiciona o pacote em uma transação client-side.
@@ -450,6 +457,12 @@ export default function MateriaisCheckoutPage() {
         originalPrice: suggestion.packageOriginalPrice,
         discountApplied: Math.max(0, suggestion.packageOriginalPrice - suggestion.packageEffectivePrice),
       })
+    }
+
+    const removeAlreadyOwnedItems = () => {
+      for (const skipped of alreadyOwnedItems) {
+        removeItem(skipped.itemType, skipped.itemId)
+      }
     }
 
     const unlockFreeCart = async () => {
@@ -668,7 +681,7 @@ export default function MateriaisCheckoutPage() {
                     <AlertCircle size={16} style={{ flexShrink: 0, marginTop: '2px' }} />
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <p style={{ margin: '0 0 6px 0', fontWeight: 700 }}>
-                        Alguns itens foram ajustados automaticamente:
+                        {hasAlreadyOwnedItems ? 'Seu carrinho precisa de revisão:' : 'Alguns itens foram ajustados automaticamente:'}
                       </p>
                       <ul style={{ margin: 0, paddingLeft: '18px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                         {cartPreview.skippedItems.map((skipped, idx) => {
@@ -692,6 +705,26 @@ export default function MateriaisCheckoutPage() {
                           )
                         })}
                       </ul>
+                      {hasAlreadyOwnedItems && (
+                        <button
+                          type="button"
+                          onClick={removeAlreadyOwnedItems}
+                          style={{
+                            marginTop: '10px',
+                            height: '34px',
+                            borderRadius: '10px',
+                            border: '1px solid rgba(253,230,138,0.28)',
+                            background: 'rgba(245,158,11,0.12)',
+                            color: 'rgba(253,230,138,0.98)',
+                            fontSize: '12px',
+                            fontWeight: 800,
+                            padding: '0 12px',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          Remover itens já adquiridos
+                        </button>
+                      )}
                     </div>
                   </div>
                 )}
@@ -731,7 +764,44 @@ export default function MateriaisCheckoutPage() {
             </div>
 
             <div style={{ ...glassCard, padding: '28px' }}>
-              {payableAmount <= 0 ? (
+              {hasAlreadyOwnedItems ? (
+                <div style={{ textAlign: 'center', color: 'white' }}>
+                  <div style={{
+                    width: '56px',
+                    height: '56px',
+                    borderRadius: '16px',
+                    background: 'rgba(245,158,11,0.12)',
+                    border: '1px solid rgba(245,158,11,0.22)',
+                    margin: '0 auto 16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#fbbf24',
+                  }}>
+                    <AlertCircle size={24} />
+                  </div>
+                  <h2 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '8px' }}>Revise o carrinho</h2>
+                  <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.55)', marginBottom: '20px' }}>
+                    Você já possui {alreadyOwnedItems.length === 1 ? 'um item deste carrinho' : 'alguns itens deste carrinho'}. Remova antes de finalizar a compra.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={removeAlreadyOwnedItems}
+                    style={{
+                      width: '100%',
+                      height: '48px',
+                      borderRadius: '14px',
+                      border: 'none',
+                      background: 'linear-gradient(135deg, #d97706, #fbbf24)',
+                      color: '#04130a',
+                      fontWeight: 900,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Remover itens já adquiridos
+                  </button>
+                </div>
+              ) : payableAmount <= 0 ? (
                 <div style={{ textAlign: 'center', color: 'white' }}>
                   <div style={{
                     width: '56px',

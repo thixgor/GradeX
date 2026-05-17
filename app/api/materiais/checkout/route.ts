@@ -464,10 +464,23 @@ async function handleCartCheckout(
   const serializedPayableItems = resolution.payableItems.map(serializeMaterialCartItem)
 
   if (resolution.items.length === 0) {
+    const allAlreadyOwned = resolution.skippedItems.length > 0 &&
+      resolution.skippedItems.every(item => item.reason === 'already_owned')
     return NextResponse.json({
-      error: 'Nenhum item disponível para compra no carrinho',
-      alreadyOwned: resolution.skippedItems.some(item => item.reason === 'already_owned'),
+      error: allAlreadyOwned
+        ? 'Você já possui todos os itens deste carrinho.'
+        : 'Nenhum item disponível para compra no carrinho',
+      alreadyOwned: allAlreadyOwned || resolution.skippedItems.some(item => item.reason === 'already_owned'),
       redirectTo: '/materiais?tab=mine',
+      skippedItems: resolution.skippedItems,
+    }, { status: 409 })
+  }
+
+  const alreadyOwnedItems = resolution.skippedItems.filter(item => item.reason === 'already_owned')
+  if (alreadyOwnedItems.length > 0) {
+    return NextResponse.json({
+      error: 'Você já possui alguns itens deste carrinho. Remova-os antes de finalizar a compra.',
+      alreadyOwned: true,
       skippedItems: resolution.skippedItems,
     }, { status: 409 })
   }
