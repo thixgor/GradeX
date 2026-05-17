@@ -233,11 +233,9 @@ export default function LandingPage({
   ]
 
   const navLinks = [
-    { label: 'Início', href: '#hero' },
-    { label: 'Recursos', href: '#recursos' },
-    { label: 'Materiais', href: '#materiais' },
-    { label: 'Questões', href: '#questoes' },
-    { label: 'Sobre', href: '#apoie' },
+    { label: 'Materiais', href: '/materiais' },
+    { label: 'Flashcards', href: '/flashcards' },
+    { label: 'Doação', href: '#apoie' },
   ]
 
   // ── Effects ───────────────────────────────────────────────────────────────
@@ -326,14 +324,14 @@ export default function LandingPage({
         }`}
         style={isScrolled ? { backgroundColor: 'rgba(4,8,22,0.85)' } : undefined}
       >
-        <div className="max-w-[1280px] mx-auto px-5 lg:px-8 h-16 flex items-center justify-between">
+        <div className="relative max-w-[1280px] mx-auto px-5 lg:px-8 h-16 flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-3">
             <Logo variant="full" size="md" />
           </div>
 
           {/* Nav links — desktop */}
-          <nav className="hidden lg:flex items-center gap-6">
+          <nav className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center gap-6">
             {navLinks.map((link) => (
               <a
                 key={link.href}
