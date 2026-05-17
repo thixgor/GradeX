@@ -42,6 +42,7 @@ import {
 import { DoacaoContent } from '@/components/doacoes/doacao-content'
 import { DoacaoRanking } from '@/components/doacoes/doacao-ranking'
 import { DoacaoForm } from '@/components/doacoes/doacao-form'
+import { PendingReviewReminder } from '@/components/reviews/pending-review-reminder'
 
 // ─── Circular Progress Ring ─────────────────────────────────────
 function ProgressRing({
@@ -474,6 +475,14 @@ function DashboardContent() {
             />
           </motion.div>
         )}
+
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0.55 }}
+        >
+          <PendingReviewReminder />
+        </motion.div>
 
         {/* ═══════════════════════════════════════════════════════
             3. QUICK ACTION HUB
