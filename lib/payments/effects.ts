@@ -9,7 +9,7 @@
 
 import { ObjectId } from 'mongodb'
 import { getDb } from '../mongodb'
-import { sendPlanPurchasedEmail, sendDonationThanksEmail, sendMaterialPurchasedEmail } from '../mail'
+import { sendPlanPurchasedEmail, sendDonationThanksEmail, sendMaterialPurchasedEmail, sendCartPurchasedEmail } from '../mail'
 import { getPersonalExamsQuota } from '../tier-limits'
 import type {
   PaymentOrder,
@@ -265,14 +265,25 @@ async function applyMaterialPurchase(order: PaymentOrder, result?: ProviderOrder
     )
 
     if (order.payerEmail) {
-      const title = cartItems.length === 1
-        ? cartItems[0].itemTitle
-        : `Carrinho com ${cartItems.length} itens`
-      sendMaterialPurchasedEmail(
+      const skippedItems = Array.isArray(order.metadata?.skippedItems)
+        ? order.metadata.skippedItems.map((s: any) => ({
+            itemType: s?.itemType === 'package' ? 'package' as const : 'material' as const,
+            itemTitle: s?.itemTitle ? String(s.itemTitle) : undefined,
+            reason: s?.reason,
+            includedInPackageTitle: s?.includedInPackageTitle ? String(s.includedInPackageTitle) : undefined,
+          }))
+        : []
+
+      sendCartPurchasedEmail(
         order.payerEmail,
         order.payerName || '',
-        title,
-        order.amount
+        cartItems.map(item => ({
+          itemType: item.itemType,
+          itemTitle: item.itemTitle,
+          price: item.price,
+        })),
+        order.amount,
+        skippedItems
       ).catch(err => console.error('[effects] e-mail carrinho falhou:', err))
     }
     return

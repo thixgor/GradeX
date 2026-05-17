@@ -8,7 +8,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { User, BanReason, BanReasonLabels, AccountType, TrialPlanType, PremiumPlanType } from '@/lib/types'
-import { ArrowLeft, Trash2, Ban, CheckCircle, AlertTriangle, Shield, Crown, Timer, Settings, Info, Zap, Activity, Users, UserCheck, Clock, Search, RefreshCw, Mail, CalendarDays } from 'lucide-react'
+import { ArrowLeft, Trash2, Ban, CheckCircle, AlertTriangle, Shield, Crown, Timer, Settings, Info, Zap, Activity, Users, UserCheck, Clock, Search, RefreshCw, Mail, CalendarDays, ShoppingBag, FileDown, Package as PackageIcon, FileText as FileTextIcon, Receipt } from 'lucide-react'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
@@ -86,6 +86,22 @@ export default function AdminUsersPage() {
   const [showQuotaDialog, setShowQuotaDialog] = useState(false)
   const [showInfoDialog, setShowInfoDialog] = useState(false)
   const [showMonitorDialog, setShowMonitorDialog] = useState(false)
+  const [showPurchasesDialog, setShowPurchasesDialog] = useState(false)
+  const [purchasesLoading, setPurchasesLoading] = useState(false)
+  const [purchasesData, setPurchasesData] = useState<{
+    user: { id: string; name: string; email: string }
+    purchases: Array<{
+      _id: string
+      itemTitle: string
+      itemType: 'material' | 'package'
+      price: number
+      purchasedAt: string
+      providerPaymentId?: string
+    }>
+    totalAmount: number
+    count: number
+  } | null>(null)
+  const [generatingPurchasesPdf, setGeneratingPurchasesPdf] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [banReason, setBanReason] = useState<BanReason>('other')
   const [banDetails, setBanDetails] = useState('')
@@ -355,6 +371,63 @@ export default function AdminUsersPage() {
       loadUsers()
     } catch (error: any) {
       showToastMessage(error.message)
+    }
+  }
+
+  async function openPurchasesDialog(user: User) {
+    setSelectedUser(user)
+    setShowPurchasesDialog(true)
+    setPurchasesData(null)
+    setPurchasesLoading(true)
+    try {
+      const res = await fetch(`/api/admin/users/${user._id}/purchases`)
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data?.error || 'Erro ao buscar compras')
+      }
+      const data = await res.json()
+      setPurchasesData(data)
+    } catch (error: any) {
+      showToastMessage(error?.message || 'Erro ao buscar compras')
+      setShowPurchasesDialog(false)
+    } finally {
+      setPurchasesLoading(false)
+    }
+  }
+
+  async function handleGeneratePurchasesPdf() {
+    if (!purchasesData) return
+    setGeneratingPurchasesPdf(true)
+    try {
+      const { generatePurchaseReceiptPDF, downloadPDF } = await import('@/lib/pdf-generator')
+      const blob = await generatePurchaseReceiptPDF(
+        purchasesData.purchases.map(p => ({
+          _id: p._id,
+          itemTitle: p.itemTitle,
+          itemType: p.itemType,
+          price: Number(p.price || 0),
+          purchasedAt: p.purchasedAt,
+          status: 'completed',
+        })),
+        {
+          id: purchasesData.user.id,
+          name: purchasesData.user.name,
+          email: purchasesData.user.email,
+        }
+      )
+      const slug = (purchasesData.user.name || purchasesData.user.email || 'usuario')
+        .normalize('NFD').replace(/[̀-ͯ]/g, '')
+        .replace(/[^a-zA-Z0-9]+/g, '-').replace(/(^-|-$)/g, '').toLowerCase() || 'usuario'
+      const filename = `Compras-${slug}-${new Date().toISOString().slice(0, 10)}.pdf`
+      downloadPDF(blob, filename, {
+        type: 'exam_pdf',
+        resourceId: purchasesData.user.id,
+        resourceTitle: `Compras de ${purchasesData.user.name}`,
+      })
+    } catch (error: any) {
+      showToastMessage('Erro ao gerar PDF: ' + (error?.message || 'desconhecido'))
+    } finally {
+      setGeneratingPurchasesPdf(false)
     }
   }
 
@@ -725,6 +798,16 @@ export default function AdminUsersPage() {
                       title="Ver informações pessoais"
                     >
                       <Info className="h-4 w-4" />
+                    </Button>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => openPurchasesDialog(user)}
+                      title="Histórico de compras"
+                    >
+                      <ShoppingBag className="h-4 w-4 mr-2" />
+                      Compras
                     </Button>
 
                     {user.role !== 'admin' && (
@@ -1254,6 +1337,102 @@ export default function AdminUsersPage() {
               }}
             >
               Fechar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog de Histórico de Compras */}
+      <Dialog
+        open={showPurchasesDialog}
+        onOpenChange={(open) => {
+          setShowPurchasesDialog(open)
+          if (!open) {
+            setPurchasesData(null)
+            setPurchasesLoading(false)
+          }
+        }}
+      >
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Receipt className="h-5 w-5" />
+              Histórico de Compras
+            </DialogTitle>
+            <DialogDescription className="break-words">
+              Compras concluídas de <strong>{selectedUser?.name}</strong>
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="py-4">
+            {purchasesLoading ? (
+              <div className="text-sm text-muted-foreground py-8 text-center">Carregando compras...</div>
+            ) : !purchasesData ? (
+              <div className="text-sm text-muted-foreground py-8 text-center">Não foi possível carregar os dados.</div>
+            ) : purchasesData.count === 0 ? (
+              <div className="text-sm text-muted-foreground py-8 text-center">
+                Este usuário ainda não realizou nenhuma compra.
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-lg border bg-muted/30 p-3">
+                    <p className="text-xs text-muted-foreground">Total de itens</p>
+                    <p className="text-2xl font-bold">{purchasesData.count}</p>
+                  </div>
+                  <div className="rounded-lg border bg-emerald-50 dark:bg-emerald-950/30 p-3">
+                    <p className="text-xs text-muted-foreground">Total investido</p>
+                    <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">
+                      R$ {purchasesData.totalAmount.toFixed(2).replace('.', ',')}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-2 max-h-[40vh] overflow-y-auto">
+                  {purchasesData.purchases.map((p) => (
+                    <div
+                      key={p._id}
+                      className="flex items-start gap-3 rounded-lg border bg-muted/20 p-3"
+                    >
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
+                        {p.itemType === 'package'
+                          ? <PackageIcon className="h-5 w-5" />
+                          : <FileTextIcon className="h-5 w-5" />}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-muted-foreground">
+                          {p.itemType === 'package' ? 'Pacote' : 'Material'}
+                        </p>
+                        <p className="text-sm font-semibold break-words">{p.itemTitle}</p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {new Date(p.purchasedAt).toLocaleDateString('pt-BR', {
+                            day: '2-digit', month: '2-digit', year: 'numeric',
+                            hour: '2-digit', minute: '2-digit',
+                          })}
+                        </p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-sm font-bold text-emerald-700 dark:text-emerald-300">
+                          {p.price <= 0 ? 'Grátis' : `R$ ${Number(p.price).toFixed(2).replace('.', ',')}`}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowPurchasesDialog(false)}>
+              Fechar
+            </Button>
+            <Button
+              onClick={handleGeneratePurchasesPdf}
+              disabled={generatingPurchasesPdf || !purchasesData || purchasesData.count === 0}
+            >
+              <FileDown className="h-4 w-4 mr-2" />
+              {generatingPurchasesPdf ? 'Gerando PDF...' : 'Baixar PDF'}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -33,6 +33,10 @@ export interface MaterialCartSkippedItem {
   itemType: MaterialCartItemType
   itemId: string
   reason: 'invalid' | 'duplicate' | 'not_found' | 'already_owned' | 'included_in_cart_package'
+  itemTitle?: string
+  /** Quando reason === 'included_in_cart_package', título do pacote do carrinho que contém este material. */
+  includedInPackageTitle?: string
+  includedInPackageId?: string
 }
 
 export interface MaterialCartResolution {
@@ -186,6 +190,8 @@ export async function resolveMaterialCart(
 
   const acceptedItems: MaterialCartResolvedItem[] = []
   const cartPackageMaterialIds = new Set<string>()
+  /** materialId -> { packageId, packageTitle } do pacote do carrinho que contém o material. */
+  const cartPackageMaterialOwner = new Map<string, { packageId: string; packageTitle: string }>()
   const currentOwnedMaterialIds = new Set(ownedMaterialIds)
 
   for (const requested of requestedPackages) {
@@ -195,7 +201,11 @@ export async function resolveMaterialCart(
       continue
     }
     if (ownedPackageIds.has(requested.itemId)) {
-      skippedItems.push({ ...requested, reason: 'already_owned' })
+      skippedItems.push({
+        ...requested,
+        reason: 'already_owned',
+        itemTitle: pkg.title || 'Pacote',
+      })
       continue
     }
 
@@ -243,6 +253,12 @@ export async function resolveMaterialCart(
     for (const materialId of materialIdsInPackage) {
       cartPackageMaterialIds.add(materialId)
       currentOwnedMaterialIds.add(materialId)
+      if (!cartPackageMaterialOwner.has(materialId)) {
+        cartPackageMaterialOwner.set(materialId, {
+          packageId: requested.itemId,
+          packageTitle: pkg.title || 'Pacote',
+        })
+      }
     }
   }
 
@@ -253,11 +269,22 @@ export async function resolveMaterialCart(
       continue
     }
     if (ownedMaterialIds.has(requested.itemId)) {
-      skippedItems.push({ ...requested, reason: 'already_owned' })
+      skippedItems.push({
+        ...requested,
+        reason: 'already_owned',
+        itemTitle: material.title || 'Material',
+      })
       continue
     }
     if (cartPackageMaterialIds.has(requested.itemId)) {
-      skippedItems.push({ ...requested, reason: 'included_in_cart_package' })
+      const owner = cartPackageMaterialOwner.get(requested.itemId)
+      skippedItems.push({
+        ...requested,
+        reason: 'included_in_cart_package',
+        itemTitle: material.title || 'Material',
+        includedInPackageId: owner?.packageId,
+        includedInPackageTitle: owner?.packageTitle,
+      })
       continue
     }
 

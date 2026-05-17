@@ -40,11 +40,20 @@ interface CartPreviewItem {
   discountApplied: number
 }
 
+interface CartSkippedItem {
+  itemType: 'material' | 'package'
+  itemId: string
+  reason: string
+  itemTitle?: string
+  includedInPackageTitle?: string
+  includedInPackageId?: string
+}
+
 interface CartPreview {
   items: CartPreviewItem[]
   payableItems: CartPreviewItem[]
   freeItems: CartPreviewItem[]
-  skippedItems: Array<{ itemType: 'material' | 'package'; itemId: string; reason: string }>
+  skippedItems: CartSkippedItem[]
   amount: number
 }
 
@@ -390,9 +399,33 @@ export default function MateriaisCheckoutPage() {
                     lineHeight: 1.5,
                   }}>
                     <AlertCircle size={16} style={{ flexShrink: 0, marginTop: '2px' }} />
-                    <span>
-                      Alguns itens foram ignorados por já estarem adquiridos, duplicados ou indisponíveis.
-                    </span>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ margin: '0 0 6px 0', fontWeight: 700 }}>
+                        Alguns itens foram ajustados automaticamente:
+                      </p>
+                      <ul style={{ margin: 0, paddingLeft: '18px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        {cartPreview.skippedItems.map((skipped, idx) => {
+                          const label = skipped.itemTitle || (skipped.itemType === 'package' ? 'Pacote' : 'Material')
+                          let detail = ''
+                          if (skipped.reason === 'included_in_cart_package') {
+                            detail = ` foi removido porque já está incluso no pacote "${skipped.includedInPackageTitle || 'do carrinho'}".`
+                          } else if (skipped.reason === 'already_owned') {
+                            detail = ' já estava na sua conta.'
+                          } else if (skipped.reason === 'duplicate') {
+                            detail = ' foi enviado duplicado e considerado apenas uma vez.'
+                          } else if (skipped.reason === 'not_found') {
+                            detail = ' não está mais disponível.'
+                          } else {
+                            detail = ' foi ignorado (item inválido).'
+                          }
+                          return (
+                            <li key={`${skipped.itemType}:${skipped.itemId}:${idx}`}>
+                              <strong>{label}</strong>{detail}
+                            </li>
+                          )
+                        })}
+                      </ul>
+                    </div>
                   </div>
                 )}
 

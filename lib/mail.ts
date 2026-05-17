@@ -303,6 +303,119 @@ export async function sendMaterialPurchasedEmail(
   })
 }
 
+export interface CartPurchasedEmailItem {
+  itemType: 'material' | 'package'
+  itemTitle: string
+  price: number
+}
+
+export interface CartPurchasedEmailSkippedItem {
+  itemType: 'material' | 'package'
+  itemTitle?: string
+  reason: 'invalid' | 'duplicate' | 'not_found' | 'already_owned' | 'included_in_cart_package'
+  includedInPackageTitle?: string
+}
+
+function escapeHtml(value: string) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+function formatBRLEmail(value: number) {
+  return `R$ ${Number(value || 0).toFixed(2).replace('.', ',')}`
+}
+
+export async function sendCartPurchasedEmail(
+  email: string,
+  name: string,
+  items: CartPurchasedEmailItem[],
+  totalAmount: number,
+  skippedItems: CartPurchasedEmailSkippedItem[] = []
+) {
+  const firstName = name ? name.split(' ')[0] : 'Aluno'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
+  const dateLabel = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
+
+  const rows = items.map((item, index) => {
+    const bg = index % 2 === 0 ? '#fffdf5' : '#ffffff'
+    const typeLabel = item.itemType === 'package' ? 'Pacote' : 'Material'
+    const priceLabel = item.price <= 0 ? 'Grátis' : formatBRLEmail(item.price)
+    return `
+      <tr style="background-color: ${bg};">
+        <td style="padding: 10px 12px; font-size: 13px; color: #92400e; font-weight: 600; border-bottom: 1px solid #fde68a;">${escapeHtml(item.itemTitle)}</td>
+        <td style="padding: 10px 12px; font-size: 12px; color: #b45309; border-bottom: 1px solid #fde68a;">${typeLabel}</td>
+        <td style="padding: 10px 12px; font-size: 13px; color: #0f3d2e; font-weight: 700; text-align: right; border-bottom: 1px solid #fde68a;">${priceLabel}</td>
+      </tr>
+    `
+  }).join('')
+
+  const relevantSkipped = skippedItems.filter(item =>
+    item.reason === 'already_owned' || item.reason === 'included_in_cart_package'
+  )
+
+  const skippedHtml = relevantSkipped.length === 0 ? '' : `
+    <div style="background-color: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px; padding: 16px 18px; margin: 20px 0;">
+      <p style="margin: 0 0 10px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #c2410c; font-weight: 700;">Itens ajustados automaticamente</p>
+      <ul style="margin: 0; padding-left: 18px; font-size: 13px; color: #7c2d12; line-height: 1.6;">
+        ${relevantSkipped.map(item => {
+          const title = escapeHtml(item.itemTitle || 'Item')
+          if (item.reason === 'included_in_cart_package') {
+            const pkg = escapeHtml(item.includedInPackageTitle || 'um pacote do carrinho')
+            return `<li><strong>${title}</strong> — já estava incluso no pacote <em>${pkg}</em>, não foi cobrado em duplicidade.</li>`
+          }
+          return `<li><strong>${title}</strong> — você já possuía este item, não foi cobrado novamente.</li>`
+        }).join('')}
+      </ul>
+    </div>
+  `
+
+  const content = `
+    <h1 class="h1">Carrinho liberado! 🛒</h1>
+    <p>Olá, ${escapeHtml(firstName)}!</p>
+    <p>Seu pagamento foi confirmado e o acesso a <strong>${items.length} ${items.length === 1 ? 'item' : 'itens'}</strong> foi liberado. Bons estudos!</p>
+
+    <div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 18px 20px; margin: 20px 0;">
+      <p style="margin: 0 0 12px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #d97706; font-weight: 700;">Comprovante de Compra</p>
+      <table role="presentation" cellpadding="0" cellspacing="0" style="width: 100%; border-collapse: collapse; margin-bottom: 12px;">
+        <thead>
+          <tr style="background-color: #fef3c7;">
+            <th align="left" style="padding: 8px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #92400e;">Item</th>
+            <th align="left" style="padding: 8px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #92400e;">Tipo</th>
+            <th align="right" style="padding: 8px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #92400e;">Valor</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows}
+        </tbody>
+      </table>
+      <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 2px solid #fde68a;">
+        <p style="margin: 0; font-size: 13px; color: #92400e; font-weight: 600;">Total pago</p>
+        <p style="margin: 0; font-size: 18px; font-weight: 800; color: #0f3d2e;">${formatBRLEmail(totalAmount)}</p>
+      </div>
+      <p style="margin: 8px 0 0 0; font-size: 12px; color: #718096;">Data: ${dateLabel}</p>
+    </div>
+
+    ${skippedHtml}
+
+    <div style="text-align: center;">
+      <a href="${appUrl}/materiais?tab=mine" class="button" target="_blank">Acessar Meus Materiais</a>
+    </div>
+  `
+
+  const html = getEmailTemplate('Carrinho Liberado! 🛒', content)
+
+  await transporter.sendMail({
+    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+    to: email,
+    subject: `Acesso liberado: ${items.length} ${items.length === 1 ? 'item' : 'itens'} do carrinho`,
+    html,
+  })
+}
+
 export async function sendSubscriptionCancelledEmail(email: string, name: string) {
   const firstName = name.split(' ')[0]
 
