@@ -28,6 +28,7 @@ import {
   HeartPulse,
   ShoppingCart,
   BadgeDollarSign,
+  BadgePercent,
   Star,
 } from 'lucide-react'
 
@@ -113,6 +114,13 @@ export default function AdminDashboard() {
       icon: BadgeDollarSign,
       href: '/admin/analytics',
       color: 'from-emerald-500 to-teal-500'
+    },
+    {
+      title: 'Cupons',
+      description: 'Criar e gerenciar cupons para checkouts de materiais, flashcards e pacotes.',
+      icon: BadgePercent,
+      href: '/admin/coupons',
+      color: 'from-lime-500 to-emerald-500'
     },
     {
       title: 'Configurações',

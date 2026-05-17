@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { AlertCircle, Check, ChevronLeft, FileText, Loader2, Package, ShoppingCart, Sparkles, Trash2 } from 'lucide-react'
+import { AlertCircle, Check, ChevronLeft, FileText, Loader2, Package, Percent, ShoppingCart, Sparkles, Trash2, X } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
 import { useMaterialCart } from '@/context/MaterialCartContext'
 
@@ -72,8 +72,162 @@ interface CartPreview {
   suggestions?: CartUpgradeSuggestion[]
 }
 
+interface AppliedCoupon {
+  couponId: string
+  code: string
+  label: string
+  amountBeforeCoupon: number
+  eligibleAmount: number
+  discountAmount: number
+  amountAfterCoupon: number
+}
+
 function formatBRL(value: number): string {
   return `R$ ${Number(value || 0).toFixed(2).replace('.', ',')}`
+}
+
+function CouponBox({
+  amount,
+  payload,
+  appliedCoupon,
+  onApplied,
+  onRemoved,
+}: {
+  amount: number
+  payload: Record<string, any>
+  appliedCoupon: AppliedCoupon | null
+  onApplied: (coupon: AppliedCoupon) => void
+  onRemoved: () => void
+}) {
+  const [code, setCode] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  const applyCoupon = async () => {
+    const normalized = code.trim()
+    if (!normalized) return
+    setLoading(true)
+    setError('')
+    try {
+      const res = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: normalized, ...payload }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Cupom inválido')
+      onApplied(data)
+      setCode(data.code || normalized.toUpperCase())
+    } catch (err: any) {
+      setError(err?.message || 'Erro ao aplicar cupom')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div style={{
+      padding: '14px',
+      borderRadius: '12px',
+      border: '1px solid rgba(52,211,153,0.16)',
+      background: 'rgba(255,255,255,0.035)',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', color: 'rgba(255,255,255,0.72)', fontSize: '13px', fontWeight: 700 }}>
+        <Percent size={15} style={{ color: '#34d399' }} />
+        Cupom de desconto
+      </div>
+
+      {appliedCoupon ? (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+          <div style={{ minWidth: 0 }}>
+            <p style={{ margin: 0, color: '#34d399', fontSize: '14px', fontWeight: 800 }}>
+              {appliedCoupon.code} aplicado
+            </p>
+            <p style={{ margin: '2px 0 0 0', color: 'rgba(255,255,255,0.45)', fontSize: '12px' }}>
+              {formatBRL(appliedCoupon.discountAmount)} de desconto · total {formatBRL(appliedCoupon.amountAfterCoupon)}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setCode('')
+              setError('')
+              onRemoved()
+            }}
+            style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: '9px',
+              border: '1px solid rgba(255,255,255,0.1)',
+              background: 'rgba(255,255,255,0.04)',
+              color: 'rgba(255,255,255,0.65)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              flexShrink: 0,
+            }}
+            aria-label="Remover cupom"
+          >
+            <X size={15} />
+          </button>
+        </div>
+      ) : (
+        <>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <input
+              value={code}
+              onChange={(e) => {
+                setCode(e.target.value.toUpperCase())
+                setError('')
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') applyCoupon()
+              }}
+              disabled={loading || amount <= 0}
+              placeholder="Digite seu cupom"
+              style={{
+                flex: 1,
+                minWidth: 0,
+                height: '38px',
+                borderRadius: '10px',
+                border: '1px solid rgba(52,211,153,0.16)',
+                background: 'rgba(0,0,0,0.22)',
+                color: 'white',
+                padding: '0 12px',
+                outline: 'none',
+                textTransform: 'uppercase',
+              }}
+            />
+            <button
+              type="button"
+              onClick={applyCoupon}
+              disabled={loading || amount <= 0 || !code.trim()}
+              style={{
+                height: '38px',
+                borderRadius: '10px',
+                border: 'none',
+                background: '#34d399',
+                color: '#04130a',
+                fontSize: '12px',
+                fontWeight: 900,
+                padding: '0 14px',
+                cursor: loading || amount <= 0 || !code.trim() ? 'not-allowed' : 'pointer',
+                opacity: loading || amount <= 0 || !code.trim() ? 0.55 : 1,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+              }}
+            >
+              {loading && <Loader2 size={13} className="animate-spin" />}
+              Aplicar
+            </button>
+          </div>
+          {error ? <p style={{ color: '#f87171', fontSize: '12px', marginTop: '8px' }}>{error}</p> : null}
+        </>
+      )}
+    </div>
+  )
 }
 
 export default function MateriaisCheckoutPage() {
@@ -90,9 +244,14 @@ export default function MateriaisCheckoutPage() {
   const [loading, setLoading] = useState(true)
   const [freeCheckoutLoading, setFreeCheckoutLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null)
 
   const cartPayload = cartItems.map(item => ({ itemType: item.itemType, itemId: item.itemId }))
   const cartPayloadKey = cartPayload.map(item => `${item.itemType}:${item.itemId}`).join('|')
+
+  useEffect(() => {
+    setAppliedCoupon(null)
+  }, [cartPayloadKey, isCartMode, itemId, itemType])
 
   function getOwnedRedirect(found: any): string {
     if (itemType === 'package') return `/pacotes/${itemId}`
@@ -268,6 +427,7 @@ export default function MateriaisCheckoutPage() {
 
   if (isCartMode && cartPreview) {
     const amount = Number(cartPreview.amount || 0)
+    const payableAmount = appliedCoupon ? Number(appliedCoupon.amountAfterCoupon || 0) : amount
     const acceptedIds = new Set(cartPreview.items.map(item => `${item.itemType}:${item.itemId}`))
     const acceptedLocalItems = cartItems.filter(item => acceptedIds.has(`${item.itemType}:${item.itemId}`))
     const suggestions = cartPreview.suggestions || []
@@ -299,7 +459,7 @@ export default function MateriaisCheckoutPage() {
         const res = await fetch('/api/materiais/checkout', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ items: cartPayload, paymentMethodId: 'free' }),
+          body: JSON.stringify({ items: cartPayload, paymentMethodId: 'free', couponCode: appliedCoupon?.code }),
         })
         const data = await res.json()
         if (!res.ok) throw new Error(data.error || 'Erro ao liberar carrinho')
@@ -546,18 +706,32 @@ export default function MateriaisCheckoutPage() {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>
                     <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.55)' }}>Total recalculado</span>
                     <span style={{ fontSize: '28px', fontWeight: 900, color: '#34d399', letterSpacing: '-0.03em' }}>
-                      {amount <= 0 ? 'Grátis' : formatBRL(amount)}
+                      {payableAmount <= 0 ? 'Grátis' : formatBRL(payableAmount)}
                     </span>
                   </div>
+                  {appliedCoupon && (
+                    <p style={{ fontSize: '12px', color: '#34d399', marginTop: '5px', fontWeight: 700 }}>
+                      Cupom {appliedCoupon.code}: − {formatBRL(appliedCoupon.discountAmount)}
+                    </p>
+                  )}
                   <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', marginTop: '4px' }}>
                     Pagamento único · Acesso permanente
                   </p>
+                </div>
+                <div style={{ marginTop: '14px' }}>
+                  <CouponBox
+                    amount={amount}
+                    payload={{ items: cartPayload }}
+                    appliedCoupon={appliedCoupon}
+                    onApplied={setAppliedCoupon}
+                    onRemoved={() => setAppliedCoupon(null)}
+                  />
                 </div>
               </div>
             </div>
 
             <div style={{ ...glassCard, padding: '28px' }}>
-              {amount <= 0 ? (
+              {payableAmount <= 0 ? (
                 <div style={{ textAlign: 'center', color: 'white' }}>
                   <div style={{
                     width: '56px',
@@ -597,10 +771,10 @@ export default function MateriaisCheckoutPage() {
               ) : (
                 <MercadoPagoCheckout
                   publicKey={publicKey}
-                  amount={amount}
+                  amount={payableAmount}
                   description={`Carrinho DomineAqui - ${cartPreview.payableItems.length} itens`}
                   endpoint="/api/materiais/checkout"
-                  extraBody={{ items: cartPayload }}
+                  extraBody={{ items: cartPayload, couponCode: appliedCoupon?.code }}
                   analytics={{
                     productId: 'cart',
                     productTitle: `Carrinho (${cartPreview.items.length} itens)`,
@@ -626,7 +800,27 @@ export default function MateriaisCheckoutPage() {
   const price = Number(item.effectivePrice ?? item.price ?? 0)
   const discountApplied = Number(item.discountApplied ?? 0)
   const hasOverlapDiscount = itemType === 'package' && discountApplied > 0
+  const payablePrice = appliedCoupon ? Number(appliedCoupon.amountAfterCoupon || 0) : price
   const typeLabel = itemType === 'package' ? 'Pacote' : 'Material'
+
+  const unlockFreeSingle = async () => {
+    setFreeCheckoutLoading(true)
+    setError(null)
+    try {
+      const res = await fetch('/api/materiais/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ itemType, itemId, paymentMethodId: 'free', couponCode: appliedCoupon?.code }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erro ao liberar item')
+      window.location.href = data.redirectTo || '/materiais?purchase=success'
+    } catch (err: any) {
+      setError(err?.message || 'Erro ao liberar item')
+    } finally {
+      setFreeCheckoutLoading(false)
+    }
+  }
 
   return (
     <div style={pageStyle}>
@@ -684,21 +878,34 @@ export default function MateriaisCheckoutPage() {
                 marginBottom: '16px',
               }}>
                 <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', marginBottom: '2px' }}>Valor</p>
-                {hasOverlapDiscount && (
+                {(hasOverlapDiscount || appliedCoupon) && (
                   <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.4)', textDecoration: 'line-through', marginBottom: '2px' }}>
-                    R$ {originalPrice.toFixed(2).replace('.', ',')}
+                    {formatBRL(appliedCoupon ? price : originalPrice)}
                   </p>
                 )}
                 <p style={{ fontSize: '32px', fontWeight: 800, color: '#34d399', letterSpacing: '-0.03em' }}>
-                  R$ {price.toFixed(2).replace('.', ',')}
+                  {payablePrice <= 0 ? 'Grátis' : formatBRL(payablePrice)}
                 </p>
                 {hasOverlapDiscount && (
                   <p style={{ fontSize: '12px', color: '#34d399', marginTop: '4px', fontWeight: 600 }}>
                     Desconto de R$ {discountApplied.toFixed(2).replace('.', ',')} por itens já adquiridos
                   </p>
                 )}
+                {appliedCoupon && (
+                  <p style={{ fontSize: '12px', color: '#34d399', marginTop: '4px', fontWeight: 600 }}>
+                    Cupom {appliedCoupon.code}: − {formatBRL(appliedCoupon.discountAmount)}
+                  </p>
+                )}
                 <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', marginTop: '2px' }}>Pagamento único · Acesso permanente</p>
               </div>
+
+              <CouponBox
+                amount={price}
+                payload={{ itemType, itemId }}
+                appliedCoupon={appliedCoupon}
+                onApplied={setAppliedCoupon}
+                onRemoved={() => setAppliedCoupon(null)}
+              />
 
               {item.description && (
                 <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.55)', lineHeight: '1.6' }}>
@@ -726,24 +933,63 @@ export default function MateriaisCheckoutPage() {
 
           {/* Right: Payment */}
           <div style={{ ...glassCard, padding: '28px' }}>
-            <MercadoPagoCheckout
-              publicKey={publicKey}
-              amount={price}
-              description={item.title}
-              endpoint="/api/materiais/checkout"
-              extraBody={{ itemType, itemId }}
-              analytics={{
-                productId: itemId,
-                productTitle: item.title,
-                productType: itemType === 'package' ? 'package' : item.type === 'flashcard_deck' ? 'flashcard' : 'material',
-                source: itemType === 'package' ? 'Pacote' : 'Compra direta',
-              }}
-              onApproved={(resp) => {
-                setTimeout(() => {
-                  window.location.href = resp.successRedirect || '/materiais?purchase=success'
-                }, 1200)
-              }}
-            />
+            {payablePrice <= 0 ? (
+              <div style={{ textAlign: 'center', color: 'white' }}>
+                <div style={{
+                  width: '56px',
+                  height: '56px',
+                  borderRadius: '16px',
+                  background: 'rgba(52,211,153,0.12)',
+                  border: '1px solid rgba(52,211,153,0.22)',
+                  margin: '0 auto 16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#34d399',
+                }}>
+                  <Check size={24} />
+                </div>
+                <h2 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '8px' }}>Compra gratuita</h2>
+                <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.55)', marginBottom: '20px' }}>
+                  Confirme para liberar o acesso na sua conta.
+                </p>
+                <button
+                  onClick={unlockFreeSingle}
+                  disabled={freeCheckoutLoading}
+                  style={{
+                    width: '100%',
+                    height: '48px',
+                    borderRadius: '14px',
+                    border: 'none',
+                    background: 'linear-gradient(135deg, #059669, #34d399)',
+                    color: 'white',
+                    fontWeight: 800,
+                    cursor: freeCheckoutLoading ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  {freeCheckoutLoading ? 'Liberando...' : 'Liberar acesso'}
+                </button>
+              </div>
+            ) : (
+              <MercadoPagoCheckout
+                publicKey={publicKey}
+                amount={payablePrice}
+                description={item.title}
+                endpoint="/api/materiais/checkout"
+                extraBody={{ itemType, itemId, couponCode: appliedCoupon?.code }}
+                analytics={{
+                  productId: itemId,
+                  productTitle: item.title,
+                  productType: itemType === 'package' ? 'package' : item.type === 'flashcard_deck' ? 'flashcard' : 'material',
+                  source: itemType === 'package' ? 'Pacote' : 'Compra direta',
+                }}
+                onApproved={(resp) => {
+                  setTimeout(() => {
+                    window.location.href = resp.successRedirect || '/materiais?purchase=success'
+                  }, 1200)
+                }}
+              />
+            )}
           </div>
         </div>
       </div>

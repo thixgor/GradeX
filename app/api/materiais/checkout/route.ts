@@ -10,6 +10,15 @@ import { audit } from '@/lib/payments/audit'
 import { getRequestAnalyticsMeta, recordCheckoutEvent, recordOrderCheckoutEvent } from '@/lib/analytics'
 import { computeEffectivePackagePrice } from '@/lib/material-package-pricing'
 import {
+  applyCouponDiscountsToItems,
+  couponAnalyticsMetadata,
+  CouponError,
+  reserveCouponRedemption,
+  releaseCouponRedemption,
+  validateCouponForCheckout,
+  type CouponValidationResult,
+} from '@/lib/coupons'
+import {
   MAX_MATERIAL_CART_ITEMS,
   grantMaterialCartItems,
   resolveMaterialCart,
@@ -31,6 +40,7 @@ const paymentFields = {
   issuer: z.string().optional(),
   payerDocumentType: z.enum(['CPF', 'CNPJ']).optional(),
   payerDocumentNumber: z.string().optional(),
+  couponCode: z.string().max(80).optional(),
 }
 
 const Schema = z.object({
@@ -190,14 +200,58 @@ export async function POST(request: NextRequest) {
     effectivePrice = pricingMeta.effectivePrice
   }
 
-  // Free path — item gratuito OR pacote ficou totalmente coberto pelo desconto
+  let amount = Number(effectivePrice)
+  let couponValidation: CouponValidationResult | null = null
+  if (data.couponCode && amount > 0) {
+    try {
+      couponValidation = await validateCouponForCheckout(db, {
+        code: data.couponCode,
+        amountBeforeCoupon: amount,
+        userId: session.userId,
+        userEmail: session.email,
+        items: [{
+          itemType: data.itemType,
+          itemId: data.itemId,
+          itemTitle: item.title || 'Item',
+          materialType: item.type,
+          price: amount,
+        }],
+      })
+      amount = couponValidation.amountAfterCoupon
+    } catch (error: any) {
+      if (error instanceof CouponError) {
+        return NextResponse.json({ error: error.message }, { status: error.status })
+      }
+      throw error
+    }
+  }
+
+  // Free path — item gratuito OR descontos/cupom cobriram todo o valor
   const isFreePath =
     item.pricing === 'free' ||
     !item.price ||
     item.price <= 0 ||
-    effectivePrice <= 0
+    effectivePrice <= 0 ||
+    amount <= 0
 
   if (isFreePath) {
+    if (couponValidation) {
+      try {
+        await reserveCouponRedemption(db, {
+          validation: couponValidation,
+          userId: session.userId,
+          userName: session.name,
+          userEmail: session.email,
+          status: 'approved',
+        })
+      } catch (error: any) {
+        if (error instanceof CouponError) {
+          return NextResponse.json({ error: error.message }, { status: error.status })
+        }
+        throw error
+      }
+    }
+
     await db.collection<MaterialPurchase>('material_purchases').insertOne({
       userId: session.userId,
       userName: session.name,
@@ -221,6 +275,7 @@ export async function POST(request: NextRequest) {
       resourceId: data.itemId,
       metadata: {
         free: true,
+        ...couponAnalyticsMetadata(couponValidation),
         ...(pricingMeta && pricingMeta.discountApplied > 0
           ? {
               packageDiscountApplied: pricingMeta.discountApplied,
@@ -246,6 +301,7 @@ export async function POST(request: NextRequest) {
         free: true,
         itemType: data.itemType,
         materialType: item.type,
+        ...couponAnalyticsMetadata(couponValidation),
         ...(pricingMeta && pricingMeta.discountApplied > 0
           ? {
               packageDiscountApplied: pricingMeta.discountApplied,
@@ -264,7 +320,6 @@ export async function POST(request: NextRequest) {
     })
   }
 
-  const amount = Number(effectivePrice)
   const description = item.title
 
   // Cria order interna
@@ -291,6 +346,7 @@ export async function POST(request: NextRequest) {
             ownedMaterialIds: pricingMeta.ownedMaterialIds,
           }
         : {}),
+      ...couponAnalyticsMetadata(couponValidation),
     },
     createdAt: now,
     updatedAt: now,
@@ -302,6 +358,26 @@ export async function POST(request: NextRequest) {
     { _id: inserted.insertedId },
     { $set: { idempotencyKey } }
   )
+  if (couponValidation) {
+    try {
+      await reserveCouponRedemption(db, {
+        validation: couponValidation,
+        userId: session.userId,
+        userName: session.name,
+        userEmail: session.email,
+        orderId,
+      })
+    } catch (error: any) {
+      await db.collection<PaymentOrder>('payment_orders').updateOne(
+        { _id: inserted.insertedId },
+        { $set: { status: 'rejected', statusDetail: 'coupon_unavailable', updatedAt: new Date() } }
+      )
+      if (error instanceof CouponError) {
+        return NextResponse.json({ error: error.message }, { status: error.status })
+      }
+      throw error
+    }
+  }
   await recordOrderCheckoutEvent('order_created', { ...orderDoc, _id: inserted.insertedId, idempotencyKey } as PaymentOrder, {
     productTitle: item.title,
     productType: item.type === 'flashcard_deck' ? 'flashcard' : data.itemType,
@@ -331,6 +407,7 @@ export async function POST(request: NextRequest) {
         type: 'material',
         itemType: data.itemType,
         itemId: data.itemId,
+        ...(couponValidation ? { couponCode: couponValidation.code } : {}),
       },
     })
 
@@ -341,7 +418,7 @@ export async function POST(request: NextRequest) {
       targetUserId: session.userId,
       resourceType: data.itemType,
       resourceId: data.itemId,
-      metadata: { amount, paymentMethod: data.paymentMethodId, providerPaymentId: result.providerOrderId },
+      metadata: { amount, paymentMethod: data.paymentMethodId, providerPaymentId: result.providerOrderId, ...couponAnalyticsMetadata(couponValidation) },
       ip,
     })
 
@@ -360,6 +437,9 @@ export async function POST(request: NextRequest) {
     })
   } catch (err: any) {
     console.error('[materiais/checkout] erro:', err)
+    if (couponValidation) {
+      await releaseCouponRedemption(db, orderId, 'provider_error')
+    }
     await db.collection<PaymentOrder>('payment_orders').updateOne(
       { _id: inserted.insertedId },
       { $set: { status: 'rejected', statusDetail: 'provider_error', updatedAt: new Date() } }
@@ -392,13 +472,68 @@ async function handleCartCheckout(
     }, { status: 409 })
   }
 
+  let amount = Number(resolution.amount)
+  let couponValidation: CouponValidationResult | null = null
+  let payableItemsForOrder = resolution.payableItems
+  let serializedPayableItemsForOrder = serializedPayableItems
+
+  if (data.couponCode && amount > 0) {
+    try {
+      couponValidation = await validateCouponForCheckout(db, {
+        code: data.couponCode,
+        amountBeforeCoupon: amount,
+        userId: session.userId,
+        userEmail: session.email,
+        items: resolution.payableItems.map((item) => ({
+          itemType: item.itemType,
+          itemId: item.itemId,
+          itemTitle: item.itemTitle,
+          materialType: item.materialType,
+          price: item.price,
+        })),
+      })
+      amount = couponValidation.amountAfterCoupon
+      payableItemsForOrder = applyCouponDiscountsToItems(resolution.payableItems, couponValidation.items)
+      serializedPayableItemsForOrder = payableItemsForOrder.map(serializeMaterialCartItem)
+    } catch (error: any) {
+      if (error instanceof CouponError) {
+        return NextResponse.json({ error: error.message }, { status: error.status })
+      }
+      throw error
+    }
+  }
+
   if (resolution.freeItems.length > 0) {
     await grantMaterialCartItems(db, session, resolution.freeItems, {
       auditMetadata: { free: true, source: 'cart' },
     })
   }
 
-  if (resolution.amount <= 0) {
+  if (amount <= 0) {
+    if (couponValidation) {
+      try {
+        await reserveCouponRedemption(db, {
+          validation: couponValidation,
+          userId: session.userId,
+          userName: session.name,
+          userEmail: session.email,
+          status: 'approved',
+        })
+      } catch (error: any) {
+        if (error instanceof CouponError) {
+          return NextResponse.json({ error: error.message }, { status: error.status })
+        }
+        throw error
+      }
+    }
+
+    if (payableItemsForOrder.length > 0) {
+      await grantMaterialCartItems(db, session, payableItemsForOrder, {
+        auditMetadata: { free: true, source: 'cart', ...couponAnalyticsMetadata(couponValidation) },
+      })
+    }
+
+    const unlockedItems = [...resolution.freeItems, ...payableItemsForOrder]
     await recordCheckoutEvent({
       event: 'payment_approved',
       userId: session.userId,
@@ -414,8 +549,9 @@ async function handleCartCheckout(
       metadata: {
         free: true,
         itemType: 'cart',
-        items: serializedItems,
+        items: unlockedItems.map(serializeMaterialCartItem),
         skippedItems: resolution.skippedItems,
+        ...couponAnalyticsMetadata(couponValidation),
       },
       ...getRequestAnalyticsMeta(request),
     })
@@ -424,7 +560,7 @@ async function handleCartCheckout(
       free: true,
       success: true,
       amount: 0,
-      unlockedItems: serializedItems,
+      unlockedItems: unlockedItems.map(serializeMaterialCartItem),
       skippedItems: resolution.skippedItems,
       redirectTo: '/materiais?tab=mine&purchase=success',
     })
@@ -434,8 +570,7 @@ async function handleCartCheckout(
     return NextResponse.json({ error: 'Carrinho pago requer uma forma de pagamento válida.' }, { status: 400 })
   }
 
-  const amount = Number(resolution.amount)
-  const itemCount = resolution.payableItems.length
+  const itemCount = payableItemsForOrder.length
   const description = `Carrinho DomineAqui - ${itemCount} ${itemCount === 1 ? 'item' : 'itens'}`
   const now = new Date()
   const orderDoc: Omit<PaymentOrder, '_id'> = {
@@ -444,7 +579,7 @@ async function handleCartCheckout(
     payerName: session.name,
     provider: 'mercado_pago',
     type: 'material',
-    refId: resolution.payableItems[0]?.itemId,
+    refId: payableItemsForOrder[0]?.itemId,
     amount,
     currency: 'BRL',
     status: 'pending',
@@ -452,9 +587,10 @@ async function handleCartCheckout(
     metadata: {
       itemType: 'cart',
       itemTitle: description,
-      cartItems: serializedPayableItems,
+      cartItems: serializedPayableItemsForOrder,
       freeItems: serializedFreeItems,
       skippedItems: resolution.skippedItems,
+      ...couponAnalyticsMetadata(couponValidation),
     },
     createdAt: now,
     updatedAt: now,
@@ -467,6 +603,27 @@ async function handleCartCheckout(
     { _id: inserted.insertedId },
     { $set: { idempotencyKey } }
   )
+
+  if (couponValidation) {
+    try {
+      await reserveCouponRedemption(db, {
+        validation: couponValidation,
+        userId: session.userId,
+        userName: session.name,
+        userEmail: session.email,
+        orderId,
+      })
+    } catch (error: any) {
+      await db.collection<PaymentOrder>('payment_orders').updateOne(
+        { _id: inserted.insertedId },
+        { $set: { status: 'rejected', statusDetail: 'coupon_unavailable', updatedAt: new Date() } }
+      )
+      if (error instanceof CouponError) {
+        return NextResponse.json({ error: error.message }, { status: error.status })
+      }
+      throw error
+    }
+  }
 
   await recordOrderCheckoutEvent('order_created', { ...orderDoc, _id: inserted.insertedId, idempotencyKey } as PaymentOrder, {
     productId: 'cart',
@@ -504,7 +661,8 @@ async function handleCartCheckout(
         orderId,
         type: 'material',
         itemType: 'cart',
-        cartSize: String(resolution.payableItems.length),
+        cartSize: String(payableItemsForOrder.length),
+        ...(couponValidation ? { couponCode: couponValidation.code } : {}),
       },
     })
 
@@ -515,7 +673,7 @@ async function handleCartCheckout(
       targetUserId: session.userId,
       resourceType: 'material_cart',
       resourceId: orderId,
-      metadata: { amount, paymentMethod: data.paymentMethodId, providerPaymentId: result.providerOrderId },
+      metadata: { amount, paymentMethod: data.paymentMethodId, providerPaymentId: result.providerOrderId, ...couponAnalyticsMetadata(couponValidation) },
       ip,
     })
 
@@ -534,6 +692,9 @@ async function handleCartCheckout(
     })
   } catch (err: any) {
     console.error('[materiais/checkout/cart] erro:', err)
+    if (couponValidation) {
+      await releaseCouponRedemption(db, orderId, 'provider_error')
+    }
     await db.collection<PaymentOrder>('payment_orders').updateOne(
       { _id: inserted.insertedId },
       { $set: { status: 'rejected', statusDetail: 'provider_error', updatedAt: new Date() } }

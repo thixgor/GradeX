@@ -23,6 +23,7 @@ import type {
 import type { PaymentStatus, ProviderOrder } from './types'
 import { audit } from './audit'
 import { recordOrderCheckoutEvent } from '../analytics'
+import { approveCouponRedemption, releaseCouponRedemption } from '../coupons'
 import { grantMaterialCartItems, type MaterialCartResolvedItem } from '../material-cart'
 
 const TERMINAL_APPROVED: PaymentStatus[] = ['approved']
@@ -91,11 +92,13 @@ export async function applyPaymentResult(
 
   // Disparar efeito apenas em transição para approved (1ª vez)
   if (TERMINAL_APPROVED.includes(newStatus) && !TERMINAL_APPROVED.includes(prevStatus)) {
+    await approveCouponRedemption(db, String(order._id))
     await recordOrderCheckoutEvent('payment_approved', updatedOrder)
     await runApprovedEffects(order, result)
   }
 
   if (TERMINAL_FAILED.includes(newStatus) && !TERMINAL_APPROVED.includes(prevStatus)) {
+    await releaseCouponRedemption(db, String(order._id), newStatus)
     await recordOrderCheckoutEvent('payment_failed', updatedOrder)
   }
 
@@ -105,6 +108,7 @@ export async function applyPaymentResult(
     TERMINAL_APPROVED.includes(prevStatus) &&
     (newStatus === 'refunded' || newStatus === 'charged_back')
   ) {
+    await releaseCouponRedemption(db, String(order._id), newStatus)
     await runRevocationEffects(order, newStatus)
   }
 

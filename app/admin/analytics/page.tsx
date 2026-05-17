@@ -50,6 +50,9 @@ type OrderRow = {
   paidAt: string | null
   endedAt: string | null
   origin: string
+  couponCode: string
+  couponDiscountAmount: number
+  couponAmountBefore: number
 }
 
 type SubscriptionRow = {
@@ -115,6 +118,20 @@ type DonationRow = {
   createdAt: string | null
 }
 
+type CouponStatRow = {
+  couponId: string
+  code: string
+  description: string
+  uses: number
+  uniqueUsers: number
+  revenueAttributed: number
+  discountGiven: number
+  lastUsedAt: string | null
+  usageLimit: number | null
+  usageCount: number
+  isActive: boolean
+}
+
 type AnalyticsPayload = {
   updatedAt: string
   cards: {
@@ -168,6 +185,7 @@ type AnalyticsPayload = {
   subscriptions: SubscriptionRow[]
   cancellations: CancellationRow[]
   donations: DonationRow[]
+  couponStats: CouponStatRow[]
 }
 
 const currency = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
@@ -395,10 +413,10 @@ function Funnel({ steps }: { steps: FunnelStep[] }) {
 function OrdersTable({ rows }: { rows: OrderRow[] }) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[1180px] text-left text-sm">
+      <table className="w-full min-w-[1260px] text-left text-sm">
         <thead className="text-xs uppercase text-white/40">
           <tr className="border-b border-white/10">
-            {['Usuário', 'Produto', 'Tipo', 'Valor', 'Status', 'Método', 'Pagamento MP', 'Preferência MP', 'Criação', 'Pagamento', 'Origem'].map((head) => (
+            {['Usuário', 'Produto', 'Tipo', 'Valor', 'Cupom', 'Status', 'Método', 'Pagamento MP', 'Preferência MP', 'Criação', 'Pagamento', 'Origem'].map((head) => (
               <th key={head} className="px-3 py-3 font-bold">{head}</th>
             ))}
           </tr>
@@ -413,6 +431,14 @@ function OrdersTable({ rows }: { rows: OrderRow[] }) {
               <td className="max-w-[220px] truncate px-3 py-3">{row.product}</td>
               <td className="px-3 py-3">{row.productType}</td>
               <td className="px-3 py-3 font-bold text-emerald-200">{formatCurrency(row.value)}</td>
+              <td className="px-3 py-3">
+                {row.couponCode ? (
+                  <div>
+                    <span className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-2 py-1 text-xs font-bold text-emerald-200">{row.couponCode}</span>
+                    <div className="mt-1 text-xs text-white/40">− {formatCurrency(row.couponDiscountAmount)}</div>
+                  </div>
+                ) : '-'}
+              </td>
               <td className="px-3 py-3"><StatusPill status={row.status} /></td>
               <td className="px-3 py-3">{row.paymentMethod}</td>
               <td className="max-w-[150px] truncate px-3 py-3 font-mono text-xs">{row.mercadoPagoPaymentId || '-'}</td>
@@ -448,6 +474,7 @@ export default function AdminAnalyticsPage() {
   const [type, setType] = useState('')
   const [status, setStatus] = useState('')
   const [method, setMethod] = useState('')
+  const [couponFilter, setCouponFilter] = useState('')
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
   const [minValue, setMinValue] = useState('')
@@ -494,13 +521,14 @@ export default function AdminAnalyticsPage() {
       if (type && row.productType !== type) return false
       if (status && row.status !== status) return false
       if (method && row.paymentMethod !== method) return false
+      if (couponFilter && row.couponCode !== couponFilter) return false
       if (dateFrom && created && created < new Date(`${dateFrom}T00:00:00`)) return false
       if (dateTo && created && created > new Date(`${dateTo}T23:59:59`)) return false
       if (minValue && row.value < Number(minValue)) return false
       if (maxValue && row.value > Number(maxValue)) return false
       return true
     })
-  }, [data, query, type, status, method, dateFrom, dateTo, minValue, maxValue])
+  }, [data, query, type, status, method, couponFilter, dateFrom, dateTo, minValue, maxValue])
 
   const visibleDonations = useMemo(() => {
     if (!data || donationView === 'hide') return []
@@ -648,6 +676,10 @@ export default function AdminAnalyticsPage() {
   const productTypes = Array.from(new Set(data.orders.map((row) => row.productType))).filter(Boolean)
   const statuses = Array.from(new Set(data.orders.map((row) => row.status))).filter(Boolean)
   const methods = Array.from(new Set(data.orders.map((row) => row.paymentMethod))).filter(Boolean)
+  const couponCodes = Array.from(new Set([
+    ...data.orders.map((row) => row.couponCode),
+    ...(data.couponStats || []).map((row) => row.code),
+  ])).filter(Boolean)
 
   return (
     <div className="min-h-screen bg-[linear-gradient(145deg,#021006_0%,#062017_45%,#03120b_100%)] text-white">
@@ -750,6 +782,32 @@ export default function AdminAnalyticsPage() {
                 <BarChart data={data.charts.productRevenue} formatter={formatCurrency} />
               </GlassPanel>
             </div>
+            <GlassPanel title="Cupons" description="Usos aprovados, pessoas únicas e receita adquirida com cada cupom">
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[780px] text-left text-sm">
+                  <thead className="border-b border-white/10 text-xs uppercase text-white/40">
+                    <tr>{['Cupom', 'Pessoas', 'Usos', 'Receita atribuída', 'Desconto concedido', 'Limite', 'Último uso'].map((h) => <th key={h} className="px-3 py-3">{h}</th>)}</tr>
+                  </thead>
+                  <tbody>
+                    {(data.couponStats || []).slice(0, 12).map((row) => (
+                      <tr key={row.couponId || row.code} className="border-b border-white/5 text-white/70">
+                        <td className="px-3 py-3">
+                          <div className="font-mono font-black text-emerald-200">{row.code}</div>
+                          <div className="max-w-[240px] truncate text-xs text-white/40">{row.description || (row.isActive ? 'Ativo' : 'Inativo')}</div>
+                        </td>
+                        <td className="px-3 py-3 font-bold text-white">{number.format(row.uniqueUsers)}</td>
+                        <td className="px-3 py-3">{number.format(row.uses)}</td>
+                        <td className="px-3 py-3 font-bold text-emerald-200">{formatCurrency(row.revenueAttributed)}</td>
+                        <td className="px-3 py-3 text-amber-100">{formatCurrency(row.discountGiven)}</td>
+                        <td className="px-3 py-3">{row.usageLimit ? `${row.usageCount}/${row.usageLimit}` : row.usageCount ? String(row.usageCount) : 'Sem limite'}</td>
+                        <td className="px-3 py-3">{formatDate(row.lastUsedAt)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                {(data.couponStats || []).length === 0 ? <p className="py-8 text-center text-sm text-white/45">Nenhum cupom usado no período.</p> : null}
+              </div>
+            </GlassPanel>
             <GlassPanel
               title="Doações separadas da receita comercial"
               description="Valores de apoio vindos de /doar. Use a aba Doações para alternar entre plataforma e app do banco."
@@ -929,6 +987,7 @@ export default function AdminAnalyticsPage() {
                 <FilterSelect label="Tipo" value={type} onChange={setType} options={productTypes} />
                 <FilterSelect label="Status" value={status} onChange={setStatus} options={statuses} />
                 <FilterSelect label="Método" value={method} onChange={setMethod} options={methods} />
+                <FilterSelect label="Cupom" value={couponFilter} onChange={setCouponFilter} options={couponCodes} />
                 <FilterInput label="De" type="date" value={dateFrom} onChange={setDateFrom} />
                 <FilterInput label="Até" type="date" value={dateTo} onChange={setDateTo} />
                 <FilterInput label="Valor mínimo" type="number" value={minValue} onChange={setMinValue} />

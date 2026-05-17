@@ -4,6 +4,7 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import type { AdminSettings, DonationPayment, Material, MaterialPackage, PaymentOrder, SubscriptionRecord, User } from '@/lib/types'
 import type { CheckoutEventRecord } from '@/lib/analytics'
+import type { Coupon, CouponRedemption } from '@/lib/coupons'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -195,6 +196,8 @@ export async function GET() {
       auditLogs,
       donations,
       donationPayments,
+      coupons,
+      couponRedemptions,
     ] = await Promise.all([
       db.collection<PaymentOrder>('payment_orders').find({ createdAt: { $gte: since } }).sort({ createdAt: -1 }).limit(1000).toArray(),
       db.collection<SubscriptionRecord>('subscriptions').find({ createdAt: { $gte: since } }).sort({ createdAt: -1 }).limit(1000).toArray(),
@@ -207,6 +210,14 @@ export async function GET() {
       db.collection('audit_logs').find({ ts: { $gte: since }, action: { $in: ['subscription_canceled', 'subscription_expired', 'role_revoked'] } }).sort({ ts: -1 }).limit(500).toArray(),
       db.collection('doacoes').find({ createdAt: { $gte: since } }).sort({ createdAt: -1 }).limit(1000).toArray(),
       db.collection<DonationPayment>('donation_payments').find({ createdAt: { $gte: since } }).sort({ createdAt: -1 }).limit(1000).toArray(),
+      db.collection<Coupon>('coupons').find({}).project({ code: 1, codeNormalized: 1, description: 1, usageLimit: 1, usageCount: 1, isActive: 1 }).toArray(),
+      db.collection<CouponRedemption>('coupon_redemptions').find({
+        status: 'approved',
+        $or: [
+          { approvedAt: { $gte: since } },
+          { approvedAt: { $exists: false }, createdAt: { $gte: since } },
+        ],
+      } as any).sort({ approvedAt: -1, createdAt: -1 }).limit(5000).toArray(),
     ])
 
     const usersById = new Map(users.map((user) => [String(user._id), user]))
@@ -214,6 +225,7 @@ export async function GET() {
     const packagesById = new Map(packages.map((item: any) => [String(item._id), item as MaterialPackage]))
     const serialByUser = new Map(serialKeys.map((key: any) => [String(key.usedBy), key]))
     const plansById = new Map((settings?.planos || []).map((plan) => [plan.tipo, plan]))
+    const couponsById = new Map(coupons.map((coupon: any) => [String(coupon._id), coupon as Coupon]))
 
     const approvedOrders = orders.filter((order) => APPROVED.has(order.status) && order.type !== 'donation')
     const paidSubscriptionRecords = subscriptions.filter((sub) => sub.status === 'authorized')
@@ -299,6 +311,80 @@ export async function GET() {
     const topProduct = [...productStats.values()].sort((a, b) => b.sales - a.sales)[0]?.label || 'Sem vendas'
     const topPlan = [...planStats.values()].sort((a, b) => b.count - a.count)[0]?.label || 'Sem assinaturas'
 
+    const couponStatsMap = new Map<string, {
+      couponId: string
+      code: string
+      description: string
+      uses: number
+      users: Set<string>
+      revenueAttributed: number
+      discountGiven: number
+      lastUsedAt: Date | null
+      usageLimit?: number | null
+      usageCount?: number
+      isActive?: boolean
+    }>()
+
+    for (const coupon of coupons as Coupon[]) {
+      const couponId = String(coupon._id)
+      couponStatsMap.set(couponId, {
+        couponId,
+        code: coupon.codeNormalized || coupon.code,
+        description: coupon.description || '',
+        uses: 0,
+        users: new Set<string>(),
+        revenueAttributed: 0,
+        discountGiven: 0,
+        lastUsedAt: null,
+        usageLimit: coupon.usageLimit ?? null,
+        usageCount: Number(coupon.usageCount || 0),
+        isActive: coupon.isActive !== false,
+      })
+    }
+
+    for (const redemption of couponRedemptions as CouponRedemption[]) {
+      const coupon = couponsById.get(String(redemption.couponId))
+      const key = String(redemption.couponId || redemption.code)
+      const current = couponStatsMap.get(key) || {
+        couponId: String(redemption.couponId || ''),
+        code: redemption.code || coupon?.codeNormalized || coupon?.code || 'Cupom',
+        description: coupon?.description || '',
+        uses: 0,
+        users: new Set<string>(),
+        revenueAttributed: 0,
+        discountGiven: 0,
+        lastUsedAt: null,
+        usageLimit: coupon?.usageLimit ?? null,
+        usageCount: Number(coupon?.usageCount || 0),
+        isActive: coupon?.isActive !== false,
+      }
+      current.uses += 1
+      current.users.add(redemption.userId || redemption.userEmail || String(redemption._id))
+      current.revenueAttributed += Number(redemption.amountAfterCoupon || 0)
+      current.discountGiven += Number(redemption.discountAmount || 0)
+      const usedAt = redemption.approvedAt || redemption.createdAt
+      if (usedAt && (!current.lastUsedAt || new Date(usedAt) > current.lastUsedAt)) {
+        current.lastUsedAt = new Date(usedAt)
+      }
+      couponStatsMap.set(key, current)
+    }
+
+    const couponStats = [...couponStatsMap.values()]
+      .map((stat) => ({
+        couponId: stat.couponId,
+        code: stat.code,
+        description: stat.description,
+        uses: stat.uses,
+        uniqueUsers: stat.users.size,
+        revenueAttributed: stat.revenueAttributed,
+        discountGiven: stat.discountGiven,
+        lastUsedAt: serializeDate(stat.lastUsedAt),
+        usageLimit: stat.usageLimit ?? null,
+        usageCount: stat.usageCount || 0,
+        isActive: stat.isActive !== false,
+      }))
+      .sort((a, b) => b.revenueAttributed - a.revenueAttributed || b.uses - a.uses)
+
     const publicDonationOrderIds = new Set(donations.map((donation: any) => String(donation.providerOrderId || '')).filter(Boolean))
     const donationRows = [
       ...donations.map((donation: any) => {
@@ -367,6 +453,8 @@ export async function GET() {
       orderId: event.orderId || '',
       status: event.status || '',
       source: event.source || '',
+      couponCode: normalizeText(event.metadata?.couponCode),
+      couponDiscountAmount: Number(event.metadata?.couponDiscountAmount || 0),
       createdAt: serializeDate(event.createdAt),
     }))
 
@@ -389,6 +477,9 @@ export async function GET() {
         paidAt: serializeDate(order.paidAt),
         endedAt: serializeDate(FAILED.has(order.status) ? order.updatedAt : null),
         origin: product.origin,
+        couponCode: normalizeText(order.metadata?.couponCode),
+        couponDiscountAmount: Number(order.metadata?.couponDiscountAmount || 0),
+        couponAmountBefore: Number(order.metadata?.couponAmountBefore || 0),
       }
     })
 
@@ -570,6 +661,7 @@ export async function GET() {
         cancellationRate: cancellationRate(cancelledSubscriptions.length, Math.max(subscriptions.length, 1)),
         estimatedRecurringRevenue: renewEstimate,
       },
+      couponStats,
       funnel,
       orders: orderRows,
       abandoned: abandonedRows.sort((a, b) => new Date(b.startedAt || 0).getTime() - new Date(a.startedAt || 0).getTime()).slice(0, 250),
