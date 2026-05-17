@@ -13,6 +13,7 @@ import {
     Copy,
     Eye,
     FileText,
+    FolderOpen,
     GraduationCap,
     ImageIcon,
     Link2,
@@ -22,6 +23,7 @@ import {
     MessageSquareQuote,
     Paperclip,
     Plus,
+    Save,
     Search,
     Send,
     Sparkles,
@@ -136,6 +138,24 @@ interface EmailBlock {
     imageUrl?: string
     alt?: string
     items?: string[]
+}
+
+interface EmailDraft {
+    _id: string
+    name: string
+    subject: string
+    previewText: string
+    blocks: EmailBlock[]
+    attachmentType?: AttachmentType
+    selectedMaterialId?: string
+    selectedFlashcardId?: string
+    customLinkUrl?: string
+    customLinkTitle?: string
+    customLinkDescription?: string
+    attachmentCtaText?: string
+    selectedTemplateId?: string
+    updatedAt?: string
+    createdAt?: string
 }
 
 interface VisualPreset {
@@ -545,6 +565,10 @@ export default function AdminEmailsPage() {
     const [attachmentCtaText, setAttachmentCtaText] = useState('Acessar agora')
 
     const [showPreview, setShowPreview] = useState(false)
+    const [drafts, setDrafts] = useState<EmailDraft[]>([])
+    const [currentDraftId, setCurrentDraftId] = useState<string | null>(null)
+    const [showDrafts, setShowDrafts] = useState(false)
+    const [savingDraft, setSavingDraft] = useState(false)
     const [sendResult, setSendResult] = useState<SendResult | null>(null)
     const [toast, setToast] = useState<{ open: boolean; message: string; type?: 'success' | 'error' | 'info' }>({ open: false, message: '' })
 
@@ -558,11 +582,12 @@ export default function AdminEmailsPage() {
 
     async function loadData() {
         try {
-            const [usersRes, templatesRes, materialsRes, flashcardsRes] = await Promise.all([
+            const [usersRes, templatesRes, materialsRes, flashcardsRes, draftsRes] = await Promise.all([
                 fetch('/api/users', { cache: 'no-store' }),
                 fetch('/api/admin/emails/templates', { cache: 'no-store' }),
                 fetch('/api/materiais', { cache: 'no-store' }),
                 fetch('/api/flashcards/manual?scope=all-admin', { cache: 'no-store' }),
+                fetch('/api/admin/emails/drafts', { cache: 'no-store' }),
             ])
 
             if (usersRes.ok) {
@@ -583,6 +608,11 @@ export default function AdminEmailsPage() {
             if (flashcardsRes.ok) {
                 const flashcardsData = await flashcardsRes.json()
                 setFlashcards(flashcardsData.decks || [])
+            }
+
+            if (draftsRes.ok) {
+                const draftsData = await draftsRes.json()
+                setDrafts(draftsData.drafts || [])
             }
         } catch (error) {
             console.error('Load email composer data error:', error)
@@ -906,6 +936,102 @@ export default function AdminEmailsPage() {
             showToast(err.message, 'error')
         } finally {
             setSending(false)
+        }
+    }
+
+    const reloadDrafts = async () => {
+        try {
+            const res = await fetch('/api/admin/emails/drafts', { cache: 'no-store' })
+            if (res.ok) {
+                const data = await res.json()
+                setDrafts(data.drafts || [])
+            }
+        } catch (error) {
+            console.error('Reload drafts error:', error)
+        }
+    }
+
+    const saveDraft = async (asNew = false) => {
+        if (!subject.trim() && !plainContent.trim()) {
+            showToast('Adicione um assunto ou conteúdo antes de salvar', 'error')
+            return
+        }
+
+        setSavingDraft(true)
+        try {
+            const payload = {
+                id: asNew ? undefined : currentDraftId || undefined,
+                name: subject.trim() || 'Rascunho sem título',
+                subject,
+                previewText,
+                blocks,
+                attachmentType,
+                selectedMaterialId,
+                selectedFlashcardId,
+                customLinkUrl,
+                customLinkTitle,
+                customLinkDescription,
+                attachmentCtaText,
+                selectedTemplateId,
+            }
+
+            const res = await fetch('/api/admin/emails/drafts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            })
+
+            const data = await res.json()
+            if (!res.ok) {
+                throw new Error(data.error || 'Erro ao salvar rascunho')
+            }
+
+            if (data.draft?._id) {
+                setCurrentDraftId(data.draft._id)
+            }
+            await reloadDrafts()
+            showToast(asNew || !payload.id ? 'Rascunho salvo' : 'Rascunho atualizado', 'success')
+        } catch (error) {
+            const err = error as Error
+            showToast(err.message, 'error')
+        } finally {
+            setSavingDraft(false)
+        }
+    }
+
+    const loadDraft = (draft: EmailDraft) => {
+        setCurrentDraftId(draft._id)
+        setSubject(draft.subject || '')
+        setPreviewText(draft.previewText || '')
+        setBlocks(Array.isArray(draft.blocks) && draft.blocks.length > 0
+            ? draft.blocks.map(block => ({ ...block, id: newId(), items: block.items ? [...block.items] : undefined }))
+            : cloneBlocks(visualTemplatePresets.empty.blocks))
+        setAttachmentType((draft.attachmentType as AttachmentType) || 'none')
+        setSelectedMaterialId(draft.selectedMaterialId || '')
+        setSelectedFlashcardId(draft.selectedFlashcardId || '')
+        setCustomLinkUrl(draft.customLinkUrl || '')
+        setCustomLinkTitle(draft.customLinkTitle || '')
+        setCustomLinkDescription(draft.customLinkDescription || '')
+        setAttachmentCtaText(draft.attachmentCtaText || 'Acessar agora')
+        setSelectedTemplateId(draft.selectedTemplateId || '')
+        setShowDrafts(false)
+        showToast(`Rascunho "${draft.name}" carregado`, 'success')
+    }
+
+    const deleteDraft = async (draftId: string) => {
+        if (!confirm('Excluir este rascunho?')) return
+        try {
+            const res = await fetch(`/api/admin/emails/drafts/${draftId}`, { method: 'DELETE' })
+            const data = await res.json().catch(() => ({}))
+            if (!res.ok) {
+                throw new Error(data.error || 'Erro ao excluir rascunho')
+            }
+            if (currentDraftId === draftId) setCurrentDraftId(null)
+            await reloadDrafts()
+            showToast('Rascunho excluído', 'success')
+        } catch (error) {
+            const err = error as Error
+            showToast(err.message, 'error')
         }
     }
 
@@ -1542,6 +1668,41 @@ export default function AdminEmailsPage() {
                                         <Eye className="mr-2 h-4 w-4" />
                                         Revisar preview
                                     </Button>
+                                    <div className="grid gap-2 sm:grid-cols-2">
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            onClick={() => saveDraft(false)}
+                                            disabled={savingDraft}
+                                        >
+                                            {savingDraft ? (
+                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                            ) : (
+                                                <Save className="mr-2 h-4 w-4" />
+                                            )}
+                                            {currentDraftId ? 'Atualizar rascunho' : 'Salvar rascunho'}
+                                        </Button>
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            onClick={() => setShowDrafts(true)}
+                                        >
+                                            <FolderOpen className="mr-2 h-4 w-4" />
+                                            Rascunhos {drafts.length > 0 ? `(${drafts.length})` : ''}
+                                        </Button>
+                                    </div>
+                                    {currentDraftId && (
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => saveDraft(true)}
+                                            disabled={savingDraft}
+                                        >
+                                            <Plus className="mr-2 h-4 w-4" />
+                                            Salvar como novo rascunho
+                                        </Button>
+                                    )}
                                     <Button
                                         type="button"
                                         onClick={sendEmail}
@@ -1615,6 +1776,60 @@ export default function AdminEmailsPage() {
                             <iframe srcDoc={getPreviewHtml()} className="h-[680px] w-full" title="Email Preview" />
                         </div>
                     </div>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={showDrafts} onOpenChange={setShowDrafts}>
+                <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <FolderOpen className="h-5 w-5" />
+                            Rascunhos salvos
+                        </DialogTitle>
+                        <DialogDescription>
+                            Continue de onde parou ou exclua rascunhos antigos.
+                        </DialogDescription>
+                    </DialogHeader>
+                    {drafts.length === 0 ? (
+                        <div className="rounded-lg border border-dashed p-10 text-center text-sm text-muted-foreground">
+                            Nenhum rascunho salvo ainda.
+                        </div>
+                    ) : (
+                        <div className="space-y-2">
+                            {drafts.map(draft => (
+                                <div
+                                    key={draft._id}
+                                    className={`flex items-start justify-between gap-3 rounded-lg border p-3 ${currentDraftId === draft._id ? 'border-primary bg-primary/5' : ''}`}
+                                >
+                                    <div className="min-w-0 flex-1">
+                                        <p className="truncate text-sm font-semibold">{draft.name || 'Rascunho sem título'}</p>
+                                        <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+                                            {draft.subject || 'Sem assunto'}
+                                        </p>
+                                        {draft.updatedAt && (
+                                            <p className="mt-1 text-[11px] text-muted-foreground">
+                                                Atualizado em {new Date(draft.updatedAt).toLocaleString('pt-BR')}
+                                            </p>
+                                        )}
+                                    </div>
+                                    <div className="flex shrink-0 gap-1">
+                                        <Button type="button" size="sm" onClick={() => loadDraft(draft)}>
+                                            Abrir
+                                        </Button>
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-8 w-8 text-destructive"
+                                            onClick={() => deleteDraft(draft._id)}
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </DialogContent>
             </Dialog>
 
