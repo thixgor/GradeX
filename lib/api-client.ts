@@ -13,6 +13,55 @@ interface RequestCache {
   [key: string]: Promise<any>
 }
 
+export const DEFAULT_API_TIMEOUT_MS = 12000
+
+interface FetchWithTimeoutInit extends RequestInit {
+  timeoutMs?: number
+}
+
+export function fetchWithTimeout(
+  input: RequestInfo | URL,
+  init: FetchWithTimeoutInit = {}
+): Promise<Response> {
+  const { timeoutMs = DEFAULT_API_TIMEOUT_MS, signal, ...fetchInit } = init
+
+  if (!timeoutMs || timeoutMs <= 0) {
+    return fetch(input, { ...fetchInit, signal })
+  }
+
+  const controller = new AbortController()
+  const timeout = setTimeout(() => {
+    controller.abort()
+  }, timeoutMs)
+
+  const abortFromCaller = () => {
+    controller.abort()
+  }
+
+  if (signal) {
+    if (signal.aborted) {
+      abortFromCaller()
+    } else {
+      signal.addEventListener('abort', abortFromCaller, { once: true })
+    }
+  }
+
+  return fetch(input, {
+    ...fetchInit,
+    signal: controller.signal,
+  }).catch((error) => {
+    if (controller.signal.aborted && !signal?.aborted) {
+      const timeoutError = new Error(`API Timeout: ${timeoutMs}ms`)
+      ;(timeoutError as any).code = 'TIMEOUT'
+      throw timeoutError
+    }
+    throw error
+  }).finally(() => {
+    clearTimeout(timeout)
+    signal?.removeEventListener('abort', abortFromCaller)
+  })
+}
+
 // In-memory cache for API responses
 const responseCache = new Map<string, CacheEntry<any>>()
 
@@ -106,6 +155,7 @@ export async function fetchAPI<T = any>(
     skipCache?: boolean
     cacheDuration?: number
     headers?: Record<string, string>
+    timeoutMs?: number
   } = {}
 ): Promise<T> {
   const {
@@ -114,6 +164,7 @@ export async function fetchAPI<T = any>(
     skipCache = false,
     cacheDuration = CACHE_DURATIONS.USER,
     headers = {},
+    timeoutMs = DEFAULT_API_TIMEOUT_MS,
   } = options
 
   // Cache only GET requests
@@ -130,13 +181,14 @@ export async function fetchAPI<T = any>(
 
   // Deduplicate concurrent requests
   const fetcher = async () => {
-    const response = await fetch(endpoint, {
+    const response = await fetchWithTimeout(endpoint, {
       method,
       headers: {
         'Content-Type': 'application/json',
         ...headers,
       },
       ...(body && { body: JSON.stringify(body) }),
+      timeoutMs,
     })
 
     if (!response.ok) {

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter, Rowdies, Space_Grotesk } from 'next/font/google'
 import './globals.css'
+import './globals-button-feedback.css'
 import { ThemeProvider } from '@/components/theme-provider'
 import { TrialExpirationChecker } from '@/components/trial-expiration-checker'
 import { Footer } from '@/components/footer'

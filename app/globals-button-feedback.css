@@ -1,3 +1,46 @@
+/* Mobile tap feedback: makes real taps feel immediate on touch screens. */
+:where(button, [role="button"], [role="tab"], input[type="submit"], input[type="button"]) {
+  -webkit-tap-highlight-color: rgba(70, 129, 82, 0.18);
+  touch-action: manipulation;
+  user-select: none;
+}
+
+:where(a[href][class*="rounded"], a[href][class*="inline-flex"], a[href][role="button"]) {
+  -webkit-tap-highlight-color: rgba(70, 129, 82, 0.18);
+  touch-action: manipulation;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  :where(
+    button:not(:disabled),
+    [role="button"]:not([aria-disabled="true"]),
+    [role="tab"]:not([aria-disabled="true"]),
+    input[type="submit"]:not(:disabled),
+    input[type="button"]:not(:disabled),
+    a[href][class*="rounded"],
+    a[href][class*="inline-flex"],
+    a[href][role="button"]
+  ) {
+    transition-duration: 120ms;
+    transition-property: background-color, border-color, box-shadow, color, opacity, transform;
+    will-change: transform;
+  }
+
+  :where(
+    button:not(:disabled):active,
+    [role="button"]:not([aria-disabled="true"]):active,
+    [role="tab"]:not([aria-disabled="true"]):active,
+    input[type="submit"]:not(:disabled):active,
+    input[type="button"]:not(:disabled):active,
+    a[href][class*="rounded"]:active,
+    a[href][class*="inline-flex"]:active,
+    a[href][role="button"]:active
+  ) {
+    filter: brightness(0.96);
+    transform: translateY(1px) scale(0.98);
+  }
+}
+
 /* Loading button feedback animations */
 @keyframes button-press {
   0% { transform: scale(1); }

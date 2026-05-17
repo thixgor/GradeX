@@ -18,7 +18,7 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { invalidateCache, clearCache } from '@/lib/api-client'
+import { fetchWithTimeout, invalidateCache, clearCache } from '@/lib/api-client'
 import type { SidebarSectionSettings } from '@/lib/sidebar-sections'
 
 // Types matching the bootstrap endpoint response
@@ -99,6 +99,7 @@ let bootstrapGeneration = 0
 let latestBootstrapRequestId = 0
 
 const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
+const BOOTSTRAP_TIMEOUT_MS = 9000
 
 /**
  * Notify all listeners of data changes
@@ -131,10 +132,11 @@ async function fetchBootstrap(force = false): Promise<BootstrapResponse> {
   }
 
   // Start new fetch
-  const promise = fetch('/api/bootstrap', {
+  const promise = fetchWithTimeout('/api/bootstrap', {
     method: 'GET',
     credentials: 'include',
     cache: 'no-store',
+    timeoutMs: BOOTSTRAP_TIMEOUT_MS,
     headers: {
       'Content-Type': 'application/json',
     },

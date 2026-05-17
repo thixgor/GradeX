@@ -13,7 +13,7 @@ import { NotificationsBell } from '@/components/notifications-bell'
 import { Logo } from '@/components/logo'
 import { MaterialCartButton } from '@/components/materiais/material-cart-button'
 import { cn } from '@/lib/utils'
-import { LogIn, Menu, ShieldAlert } from 'lucide-react'
+import { LogIn, Menu, RefreshCw, ShieldAlert, WifiOff } from 'lucide-react'
 import { useBootstrap, clearBootstrapCache } from '@/hooks/use-bootstrap'
 import { FocusSessionProvider } from '@/hooks/use-focus-session'
 import { FocusSessionButton } from '@/components/focus-session-button'
@@ -100,6 +100,7 @@ export function AppShell({
     return false
   })
   const [showCreateExamModal, setShowCreateExamModal] = useState(false)
+  const [retryingBootstrap, setRetryingBootstrap] = useState(false)
 
   // Persist collapsed state to localStorage
   const handleSidebarCollapse = (collapsed: boolean) => {
@@ -171,6 +172,17 @@ Contato: (21) 99777-0936`)
     }
   }
 
+  async function handleRetryBootstrap() {
+    setRetryingBootstrap(true)
+    try {
+      await refetchBootstrap()
+    } catch {
+      // The hook stores the visible error state; keep this click handler quiet.
+    } finally {
+      setRetryingBootstrap(false)
+    }
+  }
+
   useEffect(() => {
     if (!sidebarOpen || typeof window === 'undefined') return
 
@@ -202,21 +214,33 @@ Contato: (21) 99777-0936`)
     }
   }, [sidebarOpen])
 
-  // Handle loading state
-  if (loading) {
-    return <PageLoading variant="fullscreen" message="Carregando..." />
-  }
-
   const isAuthError = !!error && (
     (error as any).status === 401 ||
     (error as any).status === 403 ||
     error.message.includes('401') ||
     error.message.includes('403')
   )
-  const isGuest = allowGuest && !user && (isAuthError || !isAuthenticated)
+  const isGuest = allowGuest && !user && (loading || isAuthError || !isAuthenticated || !!error)
+  const isRecoverableBootstrapError = !!error && !isAuthError && !isGuest
+
+  // Protected pages should wait for session data. Guest-enabled pages can render
+  // immediately and upgrade themselves when bootstrap eventually finishes.
+  if (loading && !isGuest) {
+    return <PageLoading variant="fullscreen" message="Carregando..." />
+  }
 
   // Handle error or unauthenticated state
   // The useBootstrap hook with redirectOnUnauth will handle the redirect
+  if (isRecoverableBootstrapError) {
+    return (
+      <BootstrapErrorState
+        retrying={retryingBootstrap}
+        onRetry={handleRetryBootstrap}
+        onLogin={() => router.replace('/auth/login')}
+      />
+    )
+  }
+
   if ((error && !isGuest) || (!user && !isGuest)) {
     return <PageLoading variant="fullscreen" message="Redirecionando..." />
   }
@@ -395,6 +419,44 @@ Contato: (21) 99777-0936`)
       </div>
       </FocusSessionProvider>
     </AppShellContext.Provider>
+  )
+}
+
+function BootstrapErrorState({
+  retrying,
+  onRetry,
+  onLogin,
+}: {
+  retrying: boolean
+  onRetry: () => void
+  onLogin: () => void
+}) {
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-5 text-center shadow-xl">
+        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+          <WifiOff className="h-5 w-5" />
+        </div>
+        <h1 className="text-base font-semibold">Nao consegui confirmar sua sessao</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          A conexao demorou demais. Tente novamente ou entre de novo para continuar.
+        </p>
+        <div className="mt-5 grid gap-2">
+          <Button onClick={onRetry} disabled={retrying} className="rounded-xl">
+            {retrying ? (
+              <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <RefreshCw className="mr-2 h-4 w-4" />
+            )}
+            Tentar novamente
+          </Button>
+          <Button variant="outline" onClick={onLogin} className="rounded-xl">
+            <LogIn className="mr-2 h-4 w-4" />
+            Ir para login
+          </Button>
+        </div>
+      </div>
+    </div>
   )
 }
 

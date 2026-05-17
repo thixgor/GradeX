@@ -68,7 +68,6 @@ export function LogoLoading({
               width={sizes[size].logo}
               height={sizes[size].logo}
               className="object-contain"
-              priority
             />
           </div>
         </div>
