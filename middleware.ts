@@ -33,6 +33,7 @@ const publicPrefixes = [
   '/api/donations/checkout',
   '/api/payments/orders',
   '/api/plans',
+  '/api/anuncios',
   '/api/cron/',
   '/api/leads/',
   '/api/study-playlists',

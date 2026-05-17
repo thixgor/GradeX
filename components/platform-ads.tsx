@@ -186,7 +186,7 @@ export function PlatformAds() {
 
     async function fetchAds() {
       try {
-        const response = await fetch('/api/admin/anuncios?status=active', {
+        const response = await fetch('/api/anuncios', {
           cache: 'no-store',
         })
         if (!response.ok) return
