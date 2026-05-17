@@ -456,7 +456,7 @@ export function DoacaoInterstitial({ context, onClose }: DoacaoInterstitialProps
     <>
       {visible && (
         <div
-          className="fixed inset-0 z-[200] flex items-end justify-center bg-slate-950/40 px-3 pb-3 pt-10 backdrop-blur-[2px] sm:items-center sm:p-6"
+          className="fixed inset-0 z-[200] flex items-end justify-center bg-slate-950/40 px-0 pt-10 backdrop-blur-[2px] sm:items-center sm:p-6"
           style={{ animation: 'doacaoSoftFade 180ms ease-out' }}
           onClick={handleClose}
         >
@@ -464,16 +464,17 @@ export function DoacaoInterstitial({ context, onClose }: DoacaoInterstitialProps
             role="dialog"
             aria-modal="true"
             aria-labelledby="doacao-interstitial-title"
-            className="doacao-interstitial-panel relative w-full max-w-[560px] overflow-hidden rounded-[22px] border border-slate-900/10 bg-[#fffaf2] text-slate-900 shadow-[0_18px_60px_rgba(15,23,42,0.22)] sm:rounded-[28px]"
+            className="doacao-interstitial-panel relative max-h-[calc(100dvh-12px)] w-full max-w-[560px] overflow-y-auto rounded-t-[24px] border border-slate-900/10 bg-[#fffaf2] text-slate-900 shadow-[0_18px_60px_rgba(15,23,42,0.22)] sm:max-h-[calc(100dvh-48px)] sm:overflow-hidden sm:rounded-[28px]"
             style={{ animation: 'doacaoSoftEnter 240ms cubic-bezier(0.22, 1, 0.36, 1)' }}
             onClick={event => event.stopPropagation()}
           >
             <div className="absolute inset-x-0 top-0 h-1" style={{ background: variant.palette.stripe }} />
+            <div className="mx-auto mt-3 h-1.5 w-11 rounded-full bg-slate-900/[0.12] sm:hidden" />
 
             <button
               type="button"
               onClick={handleClose}
-              className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full text-slate-500 transition hover:bg-slate-900/5 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+              className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/60 text-slate-500 shadow-sm ring-1 ring-slate-900/5 transition hover:bg-slate-900/5 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 sm:h-10 sm:w-10 sm:bg-transparent sm:shadow-none sm:ring-0"
               aria-label="Fechar lembrete de doação"
             >
               <X className="h-4 w-4" />
@@ -503,27 +504,27 @@ export function DoacaoInterstitial({ context, onClose }: DoacaoInterstitialProps
                 </div>
               </div>
 
-              <div className="px-5 pb-5 pt-6 sm:px-6 sm:py-6">
+              <div className="px-5 pb-0 pt-4 sm:px-6 sm:py-6">
                 <div
-                  className="mb-4 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-slate-900/10"
+                  className="mb-3 inline-flex max-w-[calc(100%-3rem)] items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-slate-900/10 sm:mb-4 sm:max-w-none"
                   style={{ background: variant.palette.soft, color: variant.palette.icon }}
                 >
                   <Heart className="h-3.5 w-3.5 fill-rose-400 text-rose-400" />
-                  {variant.eyebrow}
+                  <span className="truncate">{variant.eyebrow}</span>
                 </div>
 
-                <h2 id="doacao-interstitial-title" className="max-w-[22rem] text-xl font-bold leading-tight tracking-normal text-slate-950 sm:text-2xl">
+                <h2 id="doacao-interstitial-title" className="max-w-[22rem] text-lg font-bold leading-tight tracking-normal text-slate-950 sm:text-2xl">
                   {variant.title}
                 </h2>
-                <p className="mt-3 text-sm leading-relaxed text-slate-600">
+                <p className="mt-2 text-sm leading-relaxed text-slate-600 sm:mt-3">
                   {variant.body}
                 </p>
 
-                <div className="mt-5 grid gap-2">
+                <div className="mt-4 grid gap-2 sm:mt-5">
                   {variant.points.map(({ icon: Icon, text }) => (
-                    <div key={text} className="flex items-center gap-3 rounded-2xl bg-white/70 px-3 py-2.5 ring-1 ring-slate-900/5">
+                    <div key={text} className="flex items-center gap-2.5 rounded-2xl bg-white/70 px-3 py-2 ring-1 ring-slate-900/5 sm:gap-3 sm:py-2.5">
                       <span
-                        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl"
+                        className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-xl sm:h-8 sm:w-8"
                         style={{ background: variant.palette.soft, color: variant.palette.icon }}
                       >
                         <Icon className="h-4 w-4" />
@@ -533,19 +534,19 @@ export function DoacaoInterstitial({ context, onClose }: DoacaoInterstitialProps
                   ))}
                 </div>
 
-                <p className="mt-4 text-xs leading-relaxed text-slate-500">
+                <p className="mt-3 text-xs leading-relaxed text-slate-500 sm:mt-4">
                   {variant.detail}
                 </p>
 
-                <div className="mt-5 flex items-center gap-3 rounded-2xl bg-white/75 px-3 py-2.5 ring-1 ring-slate-900/5">
+                <div className="mt-4 flex items-center gap-3 rounded-2xl bg-white/75 px-3 py-2.5 ring-1 ring-slate-900/5 sm:mt-5">
                   <div
-                    className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl"
+                    className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl sm:h-11 sm:w-11"
                     style={{ background: variant.palette.soft }}
                   >
                     <img
                       src="/logo3d.png"
                       alt="DomineAqui"
-                      className="h-9 w-9 object-contain"
+                      className="h-8 w-8 object-contain sm:h-9 sm:w-9"
                       loading="lazy"
                     />
                   </div>
@@ -559,10 +560,10 @@ export function DoacaoInterstitial({ context, onClose }: DoacaoInterstitialProps
                   </div>
                 </div>
 
-                <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                <div className="sticky bottom-0 -mx-5 mt-4 bg-[#fffaf2]/95 px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 shadow-[0_-14px_34px_rgba(15,23,42,0.08)] backdrop-blur sm:static sm:mx-0 sm:bg-transparent sm:p-0 sm:shadow-none sm:backdrop-blur-none">
                   <a
                     href="/doar"
-                    className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-2xl px-4 py-2 text-sm font-bold text-white shadow-lg shadow-slate-900/10 transition active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-slate-500/20"
+                    className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl px-4 py-2 text-sm font-bold text-white shadow-lg shadow-slate-900/10 transition active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-slate-500/20 sm:min-h-12"
                     style={{ background: variant.palette.accent }}
                     onMouseEnter={event => { event.currentTarget.style.background = variant.palette.accentHover }}
                     onMouseLeave={event => { event.currentTarget.style.background = variant.palette.accent }}
@@ -570,22 +571,23 @@ export function DoacaoInterstitial({ context, onClose }: DoacaoInterstitialProps
                     <span>{variant.primary}</span>
                     <ArrowRight className="h-4 w-4" />
                   </a>
-                  <button
-                    type="button"
-                    onClick={openDonationFlow}
-                    className="inline-flex h-12 flex-1 items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:border-emerald-200 hover:bg-emerald-50/60 active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
-                  >
-                    Já fiz Pix
-                  </button>
+                  <div className="mt-2 grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={openDonationFlow}
+                      className="inline-flex h-11 min-w-0 items-center justify-center rounded-2xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 transition hover:border-emerald-200 hover:bg-emerald-50/60 active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                    >
+                      Já fiz Pix
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleClose}
+                      className="h-11 min-w-0 rounded-2xl px-3 text-sm font-medium text-slate-500 transition hover:bg-slate-900/5 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-400/20"
+                    >
+                      Continuar
+                    </button>
+                  </div>
                 </div>
-
-                <button
-                  type="button"
-                  onClick={handleClose}
-                  className="mt-3 h-11 w-full rounded-2xl text-sm font-medium text-slate-500 transition hover:bg-slate-900/5 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-400/20"
-                >
-                  Agora não, continuar
-                </button>
               </div>
             </div>
           </section>

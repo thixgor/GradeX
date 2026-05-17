@@ -23,6 +23,7 @@ const publicRoutes = [
   // etc). A própria rota faz checagem de admin internamente para PUT.
   '/api/admin/settings',
   '/api/display-settings',
+  '/api/doacoes/settings',
 ]
 
 // Prefixos públicos
