@@ -68,6 +68,19 @@ export function sanitizeAvatarUrl(input: unknown): string | null {
   return null
 }
 
+/**
+ * Para LGPD: nunca expor sobrenome publicamente. "Thiago Ferreira Rodrigues" -> "Thiago".
+ * Mantém a primeira palavra "real" do nome; ignora preposições isoladas (de, da, do, dos, das).
+ */
+export function publicFirstName(displayName: string): string {
+  if (!displayName) return 'Usuário'
+  const parts = displayName.trim().split(/\s+/).filter(Boolean)
+  if (parts.length === 0) return 'Usuário'
+  const skip = new Set(['de', 'da', 'do', 'dos', 'das'])
+  const first = parts.find(p => !skip.has(p.toLowerCase())) || parts[0]
+  return first
+}
+
 export function toPublicReview(doc: ReviewDoc): PublicReview {
   return {
     _id: String(doc._id),
@@ -76,7 +89,7 @@ export function toPublicReview(doc: ReviewDoc): PublicReview {
     rating: doc.rating,
     comment: doc.comment || '',
     userId: doc.userId,
-    displayName: doc.displayName,
+    displayName: publicFirstName(doc.displayName),
     avatarUrl: doc.avatarUrl ?? null,
     isAdminCreated: !!doc.isAdminCreated,
     isFeatured: !!doc.isFeatured,

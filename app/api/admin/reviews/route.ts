@@ -118,6 +118,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       reviews: pageItems.map(r => ({
         ...toPublicReview(r),
+        // Admin precisa ver o nome completo para moderar (publicFirstName é só pra exibição pública)
+        displayName: r.displayName,
         targetTitle: titlesByKey.get(`${r.targetType}:${r.targetId}`) || '(item removido)',
       })),
       nextCursor,
@@ -192,9 +194,10 @@ export async function POST(request: NextRequest) {
     const collection = db.collection<ReviewDoc>(REVIEWS_COLLECTION)
     const inserted = await collection.insertOne(doc as any)
 
+    const created = { ...doc, _id: inserted.insertedId } as ReviewDoc
     return NextResponse.json({
       success: true,
-      review: toPublicReview({ ...doc, _id: inserted.insertedId } as ReviewDoc),
+      review: { ...toPublicReview(created), displayName: created.displayName },
     }, { status: 201 })
   } catch (error) {
     console.error('POST /api/admin/reviews error:', error)

@@ -103,7 +103,10 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 
     await collection.updateOne({ _id: existing._id }, { $set: update })
     const merged = { ...existing, ...update } as ReviewDoc
-    return NextResponse.json({ success: true, review: toPublicReview(merged) })
+    return NextResponse.json({
+      success: true,
+      review: { ...toPublicReview(merged), displayName: merged.displayName },
+    })
   } catch (error) {
     console.error('PATCH /api/admin/reviews/[id] error:', error)
     return NextResponse.json({ error: 'Erro ao atualizar avaliação' }, { status: 500 })
