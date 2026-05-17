@@ -47,6 +47,30 @@ export interface MaterialCartResolution {
   amount: number
 }
 
+/**
+ * Sugestão de "trocar N materiais soltos do carrinho por 1 pacote".
+ * Calculada sempre no servidor — preços nunca vêm do cliente.
+ */
+export interface CartUpgradeSuggestion {
+  packageId: string
+  packageTitle: string
+  packageCoverImage?: string
+  /** Quanto o usuário pagaria pelo pacote (já com desconto por materiais que ele JÁ possui — não conta itens só no carrinho). */
+  packageEffectivePrice: number
+  packageOriginalPrice: number
+  /** Materiais do carrinho que estão dentro deste pacote (serão substituídos pelo pacote). */
+  cartMaterialIds: string[]
+  cartMaterialTitles: string[]
+  /** Soma do que seria pago pelos materiais soltos no carrinho que o pacote substitui. */
+  currentCost: number
+  /** currentCost − packageEffectivePrice. Positivo = economia, negativo = "pague R$X a mais por mais conteúdo". */
+  savings: number
+  /** Total de materiais dentro do pacote. */
+  totalMaterialsInPackage: number
+  /** Itens extras que o usuário ganharia (totalMaterialsInPackage − cartMaterialIds.length − materiais já possuídos). */
+  extraMaterialsCount: number
+}
+
 export const MAX_MATERIAL_CART_ITEMS = 30
 
 function escapeRegex(value: string) {
@@ -397,4 +421,164 @@ export async function grantMaterialCartItems(
       },
     })
   }
+}
+
+/** Máximo de sugestões devolvidas por preview. */
+const MAX_SUGGESTIONS = 2
+
+/** Trade-off mínimo (cartMaterialsCobertos × extrasNoPacote) para sugerir um pacote sem economia direta. */
+const COVERAGE_THRESHOLD = 2
+
+/**
+ * Encontra oportunidades de "trocar N materiais soltos do carrinho por 1 pacote".
+ *
+ * Critérios para sugerir:
+ *  - Pacote contém ≥1 material atualmente no carrinho;
+ *  - Pacote NÃO está no carrinho;
+ *  - Usuário NÃO é dono do pacote (nem por compra direta, nem incluído em outro);
+ *  - Há ganho real: economia em R$ OU cobertura ≥ {@link COVERAGE_THRESHOLD} materiais.
+ *
+ * Preço do pacote é recalculado com `computeEffectivePackagePrice` contra os materiais
+ * que o usuário JÁ POSSUI (não os que estão no carrinho — esses ainda não foram pagos).
+ * Sempre roda no servidor, nunca confia em valores do cliente.
+ */
+export async function computeCartUpgradeSuggestions(
+  db: Db,
+  session: MaterialCartSession,
+  resolution: MaterialCartResolution
+): Promise<CartUpgradeSuggestion[]> {
+  const cartMaterials = resolution.items.filter(item => item.itemType === 'material')
+  if (cartMaterials.length === 0) return []
+
+  const cartMaterialIds = cartMaterials.map(m => m.itemId)
+  const cartMaterialIdSet = new Set(cartMaterialIds)
+  const cartPackageIds = new Set(
+    resolution.items.filter(item => item.itemType === 'package').map(item => item.itemId)
+  )
+
+  const validCartMaterialObjectIds = cartMaterialIds
+    .filter(ObjectId.isValid)
+    .map(id => new ObjectId(id))
+  if (validCartMaterialObjectIds.length === 0) return []
+
+  const purchases = await getCompletedPurchases(db, session)
+  const ownedPackageIds = new Set(
+    purchases
+      .filter((p: any) => p.itemType === 'package')
+      .map((p: any) => String(p.itemId))
+  )
+  const ownedMaterialIds = new Set(
+    purchases
+      .filter((p: any) => p.itemType === 'material')
+      .map((p: any) => String(p.itemId))
+  )
+
+  // Pacotes em aberto que contêm pelo menos um dos materiais do carrinho.
+  const candidatePackages = await db.collection('material_packages')
+    .find({
+      materialIds: { $in: cartMaterialIds },
+      isHidden: { $ne: true },
+      pricing: 'paid',
+      price: { $gt: 0 },
+    })
+    .project({ title: 1, price: 1, pricing: 1, materialIds: 1, coverImage: 1 })
+    .toArray() as any[]
+
+  // Filtra os que o usuário já tem ou já estão no carrinho.
+  const eligiblePackages = candidatePackages.filter(pkg => {
+    const pkgId = String(pkg._id)
+    return !cartPackageIds.has(pkgId) && !ownedPackageIds.has(pkgId)
+  })
+  if (eligiblePackages.length === 0) return []
+
+  // Carrega TODOS os materiais únicos referenciados pelos pacotes (para pricing) e
+  // todos os materiais do carrinho (para mapear título/preço).
+  const allMaterialIdsSet = new Set<string>()
+  for (const pkg of eligiblePackages) {
+    for (const id of pkg.materialIds || []) allMaterialIdsSet.add(String(id))
+  }
+  for (const id of cartMaterialIds) allMaterialIdsSet.add(id)
+
+  const allMaterialObjectIds = Array.from(allMaterialIdsSet)
+    .filter(ObjectId.isValid)
+    .map(id => new ObjectId(id))
+
+  const allMaterials = allMaterialObjectIds.length > 0
+    ? await db.collection('materials')
+        .find({ _id: { $in: allMaterialObjectIds } })
+        .project({ title: 1, price: 1, pricing: 1 })
+        .toArray() as any[]
+    : []
+  const materialsById = new Map(allMaterials.map(m => [String(m._id), m]))
+
+  const cartMaterialPriceById = new Map<string, number>()
+  for (const cartMat of cartMaterials) {
+    cartMaterialPriceById.set(cartMat.itemId, Math.max(0, Number(cartMat.price || 0)))
+  }
+
+  const suggestions: CartUpgradeSuggestion[] = []
+
+  for (const pkg of eligiblePackages) {
+    const pkgMaterialIds = (pkg.materialIds || []).map((id: any) => String(id))
+    const covered = pkgMaterialIds.filter((mid: string) => cartMaterialIdSet.has(mid))
+    if (covered.length === 0) continue
+
+    const materialsInPackage = pkgMaterialIds
+      .map((mid: string) => materialsById.get(mid))
+      .filter(Boolean)
+
+    // Preço efetivo: desconta APENAS pelo que o usuário já é dono — itens no
+    // carrinho ainda não foram pagos, então não viram crédito.
+    const pricingMeta = computeEffectivePackagePrice({
+      pkgPrice: Number(pkg.price || 0),
+      materials: materialsInPackage.map((m: any) => ({
+        _id: String(m._id),
+        pricing: m.pricing,
+        price: m.price,
+      })),
+      ownedMaterialIds,
+    })
+
+    const currentCost = covered.reduce(
+      (sum: number, mid: string) => sum + (cartMaterialPriceById.get(mid) || 0),
+      0
+    )
+    const savings = roundMoney(currentCost - pricingMeta.effectivePrice)
+    const ownedInsidePackage = pricingMeta.ownedMaterialIds.length
+    const extraMaterialsCount = Math.max(
+      0,
+      pkgMaterialIds.length - covered.length - ownedInsidePackage
+    )
+
+    // Worth-it heuristic: economia direta OU cobertura significativa.
+    const isWorthSuggesting =
+      savings > 0 ||
+      (covered.length >= COVERAGE_THRESHOLD && extraMaterialsCount >= COVERAGE_THRESHOLD)
+    if (!isWorthSuggesting) continue
+
+    suggestions.push({
+      packageId: String(pkg._id),
+      packageTitle: pkg.title || 'Pacote',
+      packageCoverImage: pkg.coverImage,
+      packageEffectivePrice: pricingMeta.effectivePrice,
+      packageOriginalPrice: pricingMeta.originalPackagePrice,
+      cartMaterialIds: covered,
+      cartMaterialTitles: covered.map((mid: string) => {
+        const m = materialsById.get(mid)
+        return m?.title || 'Material'
+      }),
+      currentCost: roundMoney(currentCost),
+      savings,
+      totalMaterialsInPackage: pkgMaterialIds.length,
+      extraMaterialsCount,
+    })
+  }
+
+  // Melhor sugestão primeiro: maior economia, depois maior cobertura.
+  suggestions.sort((a, b) => {
+    if (b.savings !== a.savings) return b.savings - a.savings
+    return b.cartMaterialIds.length - a.cartMaterialIds.length
+  })
+
+  return suggestions.slice(0, MAX_SUGGESTIONS)
 }

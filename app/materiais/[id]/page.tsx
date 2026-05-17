@@ -306,25 +306,10 @@ export default function MaterialViewPage() {
     showCartMessage(result === 'added' ? 'Material adicionado ao carrinho.' : 'Este material já está no carrinho.')
   }, [addItem, showCartMessage])
 
-  const addPackageToCart = useCallback((pkg: UpsellPackage) => {
-    const effectivePrice = Number(pkg._pricing?.effectivePrice ?? pkg.price ?? 0)
-    const result = addItem({
-      itemType: 'package',
-      itemId: pkg._id,
-      title: pkg.title,
-      pricing: pkg.pricing,
-      price: effectivePrice,
-      coverImage: pkg.coverImage,
-      materialCount: pkg.materials?.length || 0,
-      effectivePrice,
-      originalPrice: Number(pkg._pricing?.originalPackagePrice ?? pkg.price ?? effectivePrice),
-      discountApplied: Number(pkg._pricing?.discountApplied || 0),
-    })
-    showCartMessage(result === 'added' ? 'Pacote adicionado ao carrinho.' : 'Este pacote já está no carrinho.')
-  }, [addItem, showCartMessage])
-
   // ─── Acquire ──────────────────────────────────────────────
-  const handleAcquire = async (skipUpsell = false) => {
+  // Add-to-cart é fluxo leve: sem upsell (sugestões aparecem como banner no checkout).
+  // Free vira unlock imediato. Pago vira adição no carrinho.
+  const handleAcquire = async () => {
     if (!data) return
     const mat = data.material
     fetch('/api/analytics/checkout-event', {
@@ -341,24 +326,6 @@ export default function MaterialViewPage() {
       }),
       keepalive: true,
     }).catch(() => {})
-
-    if (!skipUpsell) {
-      try {
-        const pkgsRes = await fetch('/api/materiais/packages?includeAccess=true', { cache: 'no-store' })
-        if (pkgsRes.ok) {
-          const pkgsJson = await pkgsRes.json()
-          const pkgs: UpsellPackage[] = pkgsJson.packages || []
-          const matchingPkg = pkgs.find((pkg: any) =>
-            !pkg._isPurchased &&
-            pkg.pricing === 'paid' &&
-            (pkg.price ?? 0) > 0 &&
-            !pkg._pricing?.ownedMaterialIds?.length &&
-            pkg.materials?.some((m: any) => m._id === id)
-          )
-          if (matchingPkg) { setUpsellPkg(matchingPkg); return }
-        }
-      } catch {}
-    }
 
     const isFreeItem = mat.pricing === 'free' || !mat.price || mat.price <= 0
     if (!isFreeItem) {
@@ -388,14 +355,36 @@ export default function MaterialViewPage() {
     }
   }
 
-  const handleBuyNow = () => {
+  // Buy-now é alta intenção: aqui sim vale interromper com upsell se houver pacote.
+  const handleBuyNow = async (skipUpsell = false) => {
     if (!data) return
     const checkoutPath = `/materiais/checkout?type=material&id=${id}`
-    if (!data.isAuthenticated) {
-      router.push(`/auth/login?redirect=${encodeURIComponent(checkoutPath)}`)
-      return
+    const goCheckout = () => {
+      if (!data.isAuthenticated) {
+        router.push(`/auth/login?redirect=${encodeURIComponent(checkoutPath)}`)
+        return
+      }
+      router.push(checkoutPath)
     }
-    router.push(checkoutPath)
+
+    if (skipUpsell) { goCheckout(); return }
+
+    try {
+      const pkgsRes = await fetch('/api/materiais/packages?includeAccess=true', { cache: 'no-store' })
+      if (pkgsRes.ok) {
+        const pkgsJson = await pkgsRes.json()
+        const pkgs: UpsellPackage[] = pkgsJson.packages || []
+        const matchingPkg = pkgs.find((pkg: any) =>
+          !pkg._isPurchased &&
+          pkg.pricing === 'paid' &&
+          (pkg.price ?? 0) > 0 &&
+          !pkg._pricing?.ownedMaterialIds?.length &&
+          pkg.materials?.some((m: any) => m._id === id)
+        )
+        if (matchingPkg) { setUpsellPkg(matchingPkg); return }
+      }
+    } catch {}
+    goCheckout()
   }
 
   // ─── Copy share link ──────────────────────────────────────
@@ -751,7 +740,7 @@ export default function MaterialViewPage() {
                       ) : (
                         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                           <Button
-                            onClick={handleBuyNow}
+                            onClick={() => handleBuyNow()}
                             disabled={checkoutLoading}
                             className="h-11 rounded-2xl bg-gradient-to-r from-accent to-secondary font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:from-accent/90 hover:to-secondary/90 active:scale-[0.98]"
                           >
@@ -1004,7 +993,7 @@ export default function MaterialViewPage() {
                               Adicionar ao carrinho
                             </Button>
                             <Button
-                              onClick={handleBuyNow}
+                              onClick={() => handleBuyNow()}
                               disabled={checkoutLoading}
                               className="h-11 rounded-2xl bg-gradient-to-r from-accent to-secondary font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:from-accent/90 hover:to-secondary/90 active:scale-[0.98]"
                             >
@@ -1098,7 +1087,7 @@ export default function MaterialViewPage() {
               </p>
             </div>
             <Button
-              onClick={isFree ? () => handleAcquire() : handleBuyNow}
+              onClick={isFree ? () => handleAcquire() : () => handleBuyNow()}
               disabled={checkoutLoading}
               className="h-11 min-w-[9rem] rounded-2xl bg-gradient-to-r from-accent to-secondary px-4 font-bold text-white shadow-lg shadow-accent/20 transition-all active:scale-[0.98]"
             >
@@ -1136,30 +1125,33 @@ export default function MaterialViewPage() {
         <PackageUpsellModal
           pkg={upsellPkg}
           item={{ id, title: data.material.title, price: data.material.price, type: data.material.type }}
-          mode="cart"
           onBuyPackage={() => {
             const pkg = upsellPkg
             setUpsellPkg(null)
             const effectivePrice = Number(pkg._pricing?.effectivePrice ?? pkg.price ?? 0)
             const isFreePackage = pkg.pricing === 'free' || effectivePrice <= 0
-            // Pacote gratuito: libera direto (não faz sentido "adicionar gratuito ao carrinho").
-            if (isFreePackage) {
+            if (!isFreePackage) {
+              const checkoutPath = `/materiais/checkout?type=package&id=${pkg._id}`
               if (!data.isAuthenticated) {
-                router.push(`/auth/login?redirect=${encodeURIComponent(`/materiais/checkout?type=package&id=${pkg._id}`)}`)
+                router.push(`/auth/login?redirect=${encodeURIComponent(checkoutPath)}`)
                 return
               }
-              fetch('/api/materiais/checkout', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ itemType: 'package', itemId: pkg._id, paymentMethodId: 'free' }),
-              }).then(() => fetchData()).catch(() => {})
+              router.push(checkoutPath)
               return
             }
-            addPackageToCart(pkg)
+            if (!data.isAuthenticated) {
+              router.push(`/auth/login?redirect=${encodeURIComponent(`/materiais/checkout?type=package&id=${pkg._id}`)}`)
+              return
+            }
+            fetch('/api/materiais/checkout', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ itemType: 'package', itemId: pkg._id, paymentMethodId: 'free' }),
+            }).then(() => fetchData()).catch(() => {})
           }}
           onBuyIndividual={() => {
             setUpsellPkg(null)
-            addMaterialToCart(data.material)
+            handleBuyNow(true)
           }}
           onClose={() => setUpsellPkg(null)}
         />

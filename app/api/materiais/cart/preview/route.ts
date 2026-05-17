@@ -5,6 +5,7 @@ import { getDb } from '@/lib/mongodb'
 import { checkRateLimit } from '@/lib/rate-limit'
 import {
   MAX_MATERIAL_CART_ITEMS,
+  computeCartUpgradeSuggestions,
   resolveMaterialCart,
   serializeMaterialCartItem,
 } from '@/lib/material-cart'
@@ -41,6 +42,7 @@ export async function POST(request: NextRequest) {
 
   const db = await getDb()
   const resolution = await resolveMaterialCart(db, session, parsed.data.items)
+  const suggestions = await computeCartUpgradeSuggestions(db, session, resolution)
 
   return NextResponse.json({
     items: resolution.items.map(serializeMaterialCartItem),
@@ -48,5 +50,6 @@ export async function POST(request: NextRequest) {
     freeItems: resolution.freeItems.map(serializeMaterialCartItem),
     skippedItems: resolution.skippedItems,
     amount: resolution.amount,
+    suggestions,
   })
 }

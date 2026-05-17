@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { AlertCircle, Check, ChevronLeft, FileText, Loader2, Package, ShoppingCart, Trash2 } from 'lucide-react'
+import { AlertCircle, Check, ChevronLeft, FileText, Loader2, Package, ShoppingCart, Sparkles, Trash2 } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
 import { useMaterialCart } from '@/context/MaterialCartContext'
 
@@ -49,12 +49,27 @@ interface CartSkippedItem {
   includedInPackageId?: string
 }
 
+interface CartUpgradeSuggestion {
+  packageId: string
+  packageTitle: string
+  packageCoverImage?: string
+  packageEffectivePrice: number
+  packageOriginalPrice: number
+  cartMaterialIds: string[]
+  cartMaterialTitles: string[]
+  currentCost: number
+  savings: number
+  totalMaterialsInPackage: number
+  extraMaterialsCount: number
+}
+
 interface CartPreview {
   items: CartPreviewItem[]
   payableItems: CartPreviewItem[]
   freeItems: CartPreviewItem[]
   skippedItems: CartSkippedItem[]
   amount: number
+  suggestions?: CartUpgradeSuggestion[]
 }
 
 function formatBRL(value: number): string {
@@ -67,7 +82,7 @@ export default function MateriaisCheckoutPage() {
   const isCartMode = params.get('cart') === '1'
   const itemType = (params.get('type') as 'material' | 'package') || 'material'
   const itemId = params.get('id') || ''
-  const { items: cartItems, clearCart, removeItem } = useMaterialCart()
+  const { items: cartItems, clearCart, removeItem, addItem } = useMaterialCart()
 
   const [item, setItem] = useState<any>(null)
   const [cartPreview, setCartPreview] = useState<CartPreview | null>(null)
@@ -255,6 +270,27 @@ export default function MateriaisCheckoutPage() {
     const amount = Number(cartPreview.amount || 0)
     const acceptedIds = new Set(cartPreview.items.map(item => `${item.itemType}:${item.itemId}`))
     const acceptedLocalItems = cartItems.filter(item => acceptedIds.has(`${item.itemType}:${item.itemId}`))
+    const suggestions = cartPreview.suggestions || []
+
+    const applySuggestion = (suggestion: CartUpgradeSuggestion) => {
+      // Remove os materiais cobertos e adiciona o pacote em uma transação client-side.
+      // A próxima ronda de preview vai re-validar tudo no servidor.
+      for (const materialId of suggestion.cartMaterialIds) {
+        removeItem('material', materialId)
+      }
+      addItem({
+        itemType: 'package',
+        itemId: suggestion.packageId,
+        title: suggestion.packageTitle,
+        pricing: 'paid',
+        price: suggestion.packageEffectivePrice,
+        coverImage: suggestion.packageCoverImage,
+        materialCount: suggestion.totalMaterialsInPackage,
+        effectivePrice: suggestion.packageEffectivePrice,
+        originalPrice: suggestion.packageOriginalPrice,
+        discountApplied: Math.max(0, suggestion.packageOriginalPrice - suggestion.packageEffectivePrice),
+      })
+    }
 
     const unlockFreeCart = async () => {
       setFreeCheckoutLoading(true)
@@ -294,9 +330,80 @@ export default function MateriaisCheckoutPage() {
           <h1 style={{ fontSize: '28px', fontWeight: 800, color: 'white', marginBottom: '8px', letterSpacing: '-0.02em' }}>
             Finalizar carrinho
           </h1>
-          <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', marginBottom: '32px' }}>
+          <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', marginBottom: suggestions.length > 0 ? '20px' : '32px' }}>
             {cartPreview.items.length} {cartPreview.items.length === 1 ? 'item selecionado' : 'itens selecionados'}
           </p>
+
+          {suggestions.length > 0 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
+              {suggestions.map(suggestion => {
+                const isSavings = suggestion.savings > 0
+                const accent = isSavings ? '#34d399' : '#c4b5fd'
+                const accentBg = isSavings ? 'rgba(52,211,153,0.10)' : 'rgba(139,92,246,0.10)'
+                const accentBorder = isSavings ? 'rgba(52,211,153,0.28)' : 'rgba(139,92,246,0.28)'
+                return (
+                  <div
+                    key={suggestion.packageId}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '10px',
+                      padding: '14px 16px',
+                      borderRadius: '14px',
+                      background: accentBg,
+                      border: `1px solid ${accentBorder}`,
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                      <Sparkles size={16} style={{ color: accent, flexShrink: 0, marginTop: '2px' }} />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ margin: 0, fontSize: '13px', color: 'rgba(255,255,255,0.85)', lineHeight: 1.45 }}>
+                          {suggestion.cartMaterialIds.length}{' '}
+                          {suggestion.cartMaterialIds.length === 1 ? 'item do seu carrinho faz' : 'itens do seu carrinho fazem'}{' '}
+                          parte do pacote{' '}
+                          <strong style={{ color: accent }}>{suggestion.packageTitle}</strong>.
+                          {isSavings ? (
+                            <> Troque e economize <strong style={{ color: accent }}>{formatBRL(suggestion.savings)}</strong>
+                              {suggestion.extraMaterialsCount > 0 && (
+                                <> levando {suggestion.extraMaterialsCount}{' '}
+                                {suggestion.extraMaterialsCount === 1 ? 'item extra' : 'itens extras'}</>
+                              )}.
+                            </>
+                          ) : (
+                            <> Por {formatBRL(Math.abs(suggestion.savings))} a mais você leva{' '}
+                              {suggestion.extraMaterialsCount}{' '}
+                              {suggestion.extraMaterialsCount === 1 ? 'item extra' : 'itens extras'}.
+                            </>
+                          )}
+                        </p>
+                        <p style={{ margin: '4px 0 0 0', fontSize: '11px', color: 'rgba(255,255,255,0.45)' }}>
+                          {formatBRL(suggestion.currentCost)} em itens soltos → {formatBRL(suggestion.packageEffectivePrice)} no pacote ({suggestion.totalMaterialsInPackage} itens no total)
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => applySuggestion(suggestion)}
+                        style={{
+                          flexShrink: 0,
+                          padding: '7px 14px',
+                          borderRadius: '10px',
+                          border: 'none',
+                          background: accent,
+                          color: '#04130a',
+                          fontSize: '12px',
+                          fontWeight: 800,
+                          cursor: 'pointer',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        Trocar agora
+                      </button>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
 
           <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] gap-6 items-start">
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>

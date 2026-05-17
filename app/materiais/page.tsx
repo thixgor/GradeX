@@ -660,14 +660,15 @@ function MateriaisContent() {
   }
 
   const handleMaterialAcquire = (material: Material, mode: 'cart' | 'buy' = 'cart') => {
-    // Upsell is only fair before the user owns any item from the package.
+    // Upsell roda só em buy-now: add-to-cart é fluxo leve de browse, modal cheio quebra o ritmo.
+    // No carrinho mostramos sugestões discretas (banner) — não modal full-screen.
     const pkg = packages.find(p =>
       p.materialIds?.includes(material._id) &&
       !isPurchased(p._id, 'package') &&
       !p._pricing?.ownedMaterialIds?.length &&
       !p.materialIds?.some(id => purchasedIds.includes(id))
     )
-    if (mode === 'cart' && pkg) {
+    if (mode === 'buy' && pkg) {
       setUpsellState({ pkg, material })
     } else {
       handleAcquire('material', material._id, mode)
@@ -1214,14 +1215,13 @@ function MateriaisContent() {
             }}
             loadingPackage={checkoutLoading === upsellState.pkg._id}
             loadingIndividual={checkoutLoading === upsellState.material._id}
-            mode="cart"
             onBuyPackage={() => {
               setUpsellState(null)
-              handleAcquire('package', upsellState.pkg._id, 'cart')
+              handleAcquire('package', upsellState.pkg._id, 'buy')
             }}
             onBuyIndividual={() => {
               setUpsellState(null)
-              handleAcquire('material', upsellState.material._id, 'cart')
+              handleAcquire('material', upsellState.material._id, 'buy')
             }}
             onClose={() => setUpsellState(null)}
           />
