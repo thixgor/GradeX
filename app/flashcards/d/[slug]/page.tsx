@@ -39,6 +39,8 @@ import {
   Leaf,
   AlertTriangle,
   Download,
+  X,
+  Bookmark,
 } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
@@ -54,6 +56,12 @@ import {
 import { ReviewsSection } from '@/components/reviews/reviews-section'
 import { ReviewSummaryBlock } from '@/components/reviews/review-summary'
 import type { ReviewSummary } from '@/lib/reviews-shared'
+import {
+  loadProgress,
+  saveProgress,
+  clearProgress,
+  type FlashcardProgress,
+} from '@/lib/flashcard-progress'
 
 interface AccessFlags {
   hasAccess: boolean
@@ -135,8 +143,10 @@ export default function DeckPage() {
   const [showCards, setShowCards] = useState(false)
   const [reviewSummary, setReviewSummary] = useState<ReviewSummary | null>(null)
   const [metricSettings, setMetricSettings] = useState<PublicMetricSettings>(DEFAULT_PUBLIC_METRIC_SETTINGS)
+  const [savedProgress, setSavedProgress] = useState<FlashcardProgress | null>(null)
 
   const purchaseSuccess = search?.get('purchase') === 'success'
+  const userKey = data?.viewer.userId || 'guest'
 
   useEffect(() => {
     if (purchaseSuccess) {
@@ -175,6 +185,35 @@ export default function DeckPage() {
   }, [slug])
 
   useEffect(() => { load() }, [load])
+
+  // Detect resumable progress whenever deck data refreshes.
+  useEffect(() => {
+    if (!data || studying) return
+    const stored = loadProgress(slug, userKey)
+    if (!stored || data.cards.length === 0) {
+      setSavedProgress(null)
+      return
+    }
+    // Clamp to current deck size in case cards were added/removed.
+    const safeIndex = Math.min(Math.max(stored.index, 0), data.cards.length - 1)
+    // Resumable only if user actually advanced or rated something.
+    if (safeIndex === 0 && Object.keys(stored.ratings || {}).length === 0) {
+      setSavedProgress(null)
+      return
+    }
+    setSavedProgress({ ...stored, index: safeIndex, total: data.cards.length })
+  }, [data, slug, userKey, studying])
+
+  // Persist progress while the user is studying.
+  useEffect(() => {
+    if (!studying || !data) return
+    saveProgress(slug, userKey, {
+      mode: activeStudyMode,
+      index: currentIndex,
+      total: data.cards.length,
+      ratings,
+    })
+  }, [studying, currentIndex, ratings, activeStudyMode, data, slug, userKey])
 
   // Load folder path for deck breadcrumb
   useEffect(() => {
@@ -237,18 +276,24 @@ export default function DeckPage() {
     setFlipped(false); setShowComment(false); setShowHint(false); setScheduleFeedback(null)
   }
 
-  async function startStudy(mode: StudyMode) {
+  async function startStudy(mode: StudyMode, resumeFrom?: FlashcardProgress | null) {
     if (!data || data.cards.length === 0) return
-    setActiveStudyMode(mode)
-    setRatings({})
-    setCurrentIndex(0)
+    const effectiveMode: StudyMode = resumeFrom?.mode ?? mode
+    setActiveStudyMode(effectiveMode)
+    setRatings(resumeFrom?.ratings ?? {})
+    setCurrentIndex(resumeFrom?.index ?? 0)
     setFlipped(false)
     setShowComment(false)
     setShowHint(false)
     setScheduleFeedback(null)
-    const loaded = await load(mode)
+    const loaded = await load(effectiveMode)
     if (!loaded) return
     setStudying(true)
+  }
+
+  function discardSavedProgress() {
+    clearProgress(slug, userKey)
+    setSavedProgress(null)
   }
 
   function mapRatingToSpaced(value: 'facil' | 'equilibrado' | 'porrada'): SpacedRating {
@@ -303,6 +348,8 @@ export default function DeckPage() {
         body: JSON.stringify({ entries, startedAt: new Date() }),
       })
     } catch {}
+    clearProgress(slug, userKey)
+    setSavedProgress(null)
     setStudying(false)
     setToast({ open: true, message: 'Sessão concluída!', type: 'success' })
   }
@@ -745,20 +792,34 @@ export default function DeckPage() {
                 </button>
               ) : (
                 <button
-                  onClick={() => startStudy(studyModeChoice)}
+                  onClick={() => startStudy(studyModeChoice, savedProgress)}
                   disabled={cards.length === 0}
                   className="relative overflow-hidden inline-flex items-center gap-2.5 rounded-2xl px-8 py-3.5 text-base font-bold tracking-wide text-white transition-all duration-200 active:scale-[0.97] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55"
                   style={{
-                    background: 'linear-gradient(135deg, rgba(4,120,87,1) 0%, rgba(5,150,105,0.95) 50%, rgba(16,185,129,0.90) 100%)',
+                    background: savedProgress
+                      ? 'linear-gradient(135deg, rgba(67,56,202,1) 0%, rgba(109,40,217,0.95) 50%, rgba(168,85,247,0.90) 100%)'
+                      : 'linear-gradient(135deg, rgba(4,120,87,1) 0%, rgba(5,150,105,0.95) 50%, rgba(16,185,129,0.90) 100%)',
                     backdropFilter: 'blur(16px)',
                     WebkitBackdropFilter: 'blur(16px)',
-                    border: '1px solid rgba(52,211,153,0.55)',
-                    boxShadow: '0 0 30px rgba(16,185,129,0.50), 0 8px 24px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.25)',
+                    border: savedProgress
+                      ? '1px solid rgba(196,181,253,0.55)'
+                      : '1px solid rgba(52,211,153,0.55)',
+                    boxShadow: savedProgress
+                      ? '0 0 30px rgba(139,92,246,0.50), 0 8px 24px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.25)'
+                      : '0 0 30px rgba(16,185,129,0.50), 0 8px 24px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.25)',
                   }}
                 >
                   <span className="absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white/55 to-transparent pointer-events-none" />
-                  <Play className="h-4.5 w-4.5 fill-current flex-shrink-0" />
-                  {studyModeChoice === 'spaced' ? 'Iniciar fixação intensa' : 'Estudar agora'}
+                  {savedProgress ? (
+                    <RotateCcw className="h-4.5 w-4.5 flex-shrink-0" />
+                  ) : (
+                    <Play className="h-4.5 w-4.5 fill-current flex-shrink-0" />
+                  )}
+                  {savedProgress
+                    ? `Continuar (${savedProgress.index + 1}/${savedProgress.total})`
+                    : studyModeChoice === 'spaced'
+                    ? 'Iniciar fixação intensa'
+                    : 'Estudar agora'}
                 </button>
               )}
             </div>
@@ -769,6 +830,19 @@ export default function DeckPage() {
           <LockedPreview deck={deck} access={access} />
         ) : (
           <div>
+            <AnimatePresence>
+              {savedProgress && (
+                <ResumeBanner
+                  progress={savedProgress}
+                  onContinue={() => startStudy(savedProgress.mode, savedProgress)}
+                  onRestart={() => {
+                    discardSavedProgress()
+                    startStudy(savedProgress.mode)
+                  }}
+                  onDismiss={discardSavedProgress}
+                />
+              )}
+            </AnimatePresence>
             <StudyModePanel
               selected={studyModeChoice}
               onSelect={setStudyModeChoice}
@@ -1056,6 +1130,174 @@ function ProgressBadge({ progress }: { progress?: SpacedProgressResponse | null 
       <CalendarClock className="h-3 w-3" /> Revisar
     </span>
   )
+}
+
+function ResumeBanner({
+  progress,
+  onContinue,
+  onRestart,
+  onDismiss,
+}: {
+  progress: FlashcardProgress
+  onContinue: () => void
+  onRestart: () => void
+  onDismiss: () => void
+}) {
+  const safeTotal = Math.max(progress.total, 1)
+  const safeIndex = Math.min(progress.index, safeTotal - 1)
+  const percent = Math.round(((safeIndex + 1) / safeTotal) * 100)
+  const ratedCount = Object.keys(progress.ratings || {}).length
+  const remaining = Math.max(safeTotal - (safeIndex + 1), 0)
+  const savedAgo = formatRelativeTime(progress.savedAt)
+  const isSpaced = progress.mode === 'spaced'
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -12, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -8, scale: 0.98 }}
+      transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+      className="relative mb-4 overflow-hidden rounded-3xl"
+      style={{
+        background:
+          'linear-gradient(135deg, rgba(76,29,149,0.55) 0%, rgba(109,40,217,0.45) 40%, rgba(192,38,211,0.40) 100%)',
+        backdropFilter: 'blur(22px) saturate(160%)',
+        WebkitBackdropFilter: 'blur(22px) saturate(160%)',
+        border: '1px solid rgba(196,181,253,0.30)',
+        boxShadow:
+          '0 0 35px rgba(139,92,246,0.30), 0 18px 50px -20px rgba(76,29,149,0.55), inset 0 1px 0 rgba(255,255,255,0.18)',
+      }}
+    >
+      {/* Decorative glow blobs */}
+      <div className="pointer-events-none absolute -top-16 -left-12 h-56 w-56 rounded-full bg-fuchsia-500/35 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 -right-10 h-60 w-60 rounded-full bg-violet-500/30 blur-3xl" />
+      <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
+
+      <button
+        type="button"
+        onClick={onDismiss}
+        aria-label="Descartar progresso salvo"
+        className="absolute right-3 top-3 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white/70 ring-1 ring-white/20 transition hover:bg-white/20 hover:text-white"
+      >
+        <X className="h-4 w-4" />
+      </button>
+
+      <div className="relative grid gap-5 p-5 sm:p-6 md:grid-cols-[1.2fr,1fr] md:items-center">
+        <div>
+          <div className="flex items-center gap-2">
+            <span
+              className="inline-flex h-9 w-9 items-center justify-center rounded-2xl text-white shadow-lg"
+              style={{
+                background: 'linear-gradient(135deg, rgba(167,139,250,0.95), rgba(217,70,239,0.95))',
+                boxShadow: '0 6px 18px rgba(139,92,246,0.45), inset 0 1px 0 rgba(255,255,255,0.30)',
+              }}
+            >
+              <Bookmark className="h-4 w-4 fill-current" />
+            </span>
+            <div className="min-w-0">
+              <p className="text-xs font-semibold uppercase tracking-wider text-violet-100/85">
+                Sessão pendente
+              </p>
+              <h3 className="text-lg font-bold leading-tight text-white">
+                Você parou no card {safeIndex + 1} de {safeTotal}
+              </h3>
+            </div>
+          </div>
+
+          <div className="mt-4">
+            <div className="flex items-center justify-between text-[11px] font-semibold text-violet-100/80">
+              <span>Progresso</span>
+              <span className="tabular-nums">{percent}%</span>
+            </div>
+            <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-white/10 ring-1 ring-white/15">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${percent}%` }}
+                transition={{ duration: 0.6, ease: 'easeOut' }}
+                className="h-full rounded-full"
+                style={{
+                  background:
+                    'linear-gradient(90deg, rgba(167,139,250,1) 0%, rgba(232,121,249,1) 60%, rgba(244,114,182,1) 100%)',
+                  boxShadow: '0 0 16px rgba(217,70,239,0.55)',
+                }}
+              />
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-medium text-white/85">
+              <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 ring-1 ring-white/15 backdrop-blur">
+                {isSpaced ? (
+                  <>
+                    <Brain className="h-3 w-3" /> Fixação intensa
+                  </>
+                ) : (
+                  <>
+                    <Play className="h-3 w-3 fill-current" /> Estudo normal
+                  </>
+                )}
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 ring-1 ring-white/15 backdrop-blur">
+                <CheckCircle2 className="h-3 w-3" /> {ratedCount} avaliados
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 ring-1 ring-white/15 backdrop-blur">
+                <ChevronRight className="h-3 w-3" /> {remaining} restantes
+              </span>
+              {savedAgo && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 ring-1 ring-white/15 backdrop-blur">
+                  <CalendarClock className="h-3 w-3" /> {savedAgo}
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2.5 sm:flex-row md:flex-col md:items-stretch">
+          <button
+            type="button"
+            onClick={onContinue}
+            className="group relative inline-flex flex-1 items-center justify-center gap-2 overflow-hidden rounded-2xl px-5 py-3 text-sm font-bold text-white transition-all duration-200 active:scale-[0.97] hover:brightness-110"
+            style={{
+              background:
+                'linear-gradient(135deg, rgba(124,58,237,1) 0%, rgba(168,85,247,0.95) 50%, rgba(217,70,239,0.90) 100%)',
+              border: '1px solid rgba(232,121,249,0.55)',
+              boxShadow:
+                '0 0 24px rgba(168,85,247,0.55), 0 8px 22px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.25)',
+            }}
+          >
+            <span className="absolute inset-x-3 top-0 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent" />
+            <RotateCcw className="h-4 w-4" />
+            Continuar de onde parei
+          </button>
+          <button
+            type="button"
+            onClick={onRestart}
+            className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold text-white transition-all duration-200 active:scale-[0.97]"
+            style={{
+              background: 'rgba(255,255,255,0.10)',
+              border: '1px solid rgba(255,255,255,0.22)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+            }}
+          >
+            <Play className="h-4 w-4 fill-current" />
+            Recomeçar do zero
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  )
+}
+
+function formatRelativeTime(timestamp: number): string {
+  const diff = Date.now() - timestamp
+  if (diff < 0) return ''
+  const minutes = Math.floor(diff / 60000)
+  if (minutes < 1) return 'agora mesmo'
+  if (minutes < 60) return `há ${minutes} min`
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return `há ${hours}h`
+  const days = Math.floor(hours / 24)
+  if (days < 7) return `há ${days}d`
+  const weeks = Math.floor(days / 7)
+  return `há ${weeks}sem`
 }
 
 function VisibilityBadge({ visibility }: { visibility: string }) {
