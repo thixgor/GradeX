@@ -52,6 +52,10 @@ import {
   shouldUseNativePdfDownload,
   triggerNativePdfDownload,
 } from '@/lib/material-download-client'
+import {
+  DEFAULT_PUBLIC_METRIC_SETTINGS,
+  type PublicMetricSettings,
+} from '@/lib/display-settings'
 import { useMaterialCart } from '@/context/MaterialCartContext'
 
 interface Material {
@@ -133,6 +137,8 @@ interface MaterialPackage {
     ownedMaterialIds: string[]
   }
 }
+
+type MaterialMetricSettings = PublicMetricSettings['materials']
 
 interface BrowseSnapshot {
   materials: Material[]
@@ -235,6 +241,7 @@ function MateriaisContent() {
   const [purchasedPackageIds, setPurchasedPackageIds] = useState<string[]>([])
   const [userGroups, setUserGroups] = useState<string[]>([])   // groups the current user belongs to
   const [isAuthenticated, setIsAuthenticated] = useState(true)
+  const [metricSettings, setMetricSettings] = useState<PublicMetricSettings>(DEFAULT_PUBLIC_METRIC_SETTINGS)
   const [ready, setReady] = useState(false)
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
@@ -298,6 +305,17 @@ function MateriaisContent() {
     setIsAuthenticated(snapshot.isAuthenticated)
     setFolderPath(folderId ? buildPath(folderId, snapshot.allFolders) : [])
   }, [buildPath])
+
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/display-settings', { cache: 'no-store' })
+      .then(res => res.ok ? res.json() : null)
+      .then(json => {
+        if (!cancelled && json?.settings) setMetricSettings(json.settings)
+      })
+      .catch(() => {})
+    return () => { cancelled = true }
+  }, [])
 
   // ─── Fetch all data ──────────────────────────────────────
   const fetchData = useCallback(async (
@@ -949,6 +967,7 @@ function MateriaisContent() {
                     onCopyLink={() => copyMaterialLink(material)}
                     onPreview={() => setPreviewItem({ type: 'material', data: material })}
                     loading={checkoutLoading === material._id || pdfDownloading === material._id}
+                    metricSettings={metricSettings.materials}
                   />
                 </div>
               ))}
@@ -1073,6 +1092,7 @@ function MateriaisContent() {
                       onCopyLink={() => copyMaterialLink(material)}
                       onPreview={() => setPreviewItem({ type: 'material', data: material })}
                       loading={checkoutLoading === material._id || pdfDownloading === material._id}
+                      metricSettings={metricSettings.materials}
                     />
                   </div>
                 ))}
@@ -1171,6 +1191,7 @@ function MateriaisContent() {
                       onCopyLink={() => copyMaterialLink(material)}
                       onPreview={() => setPreviewItem({ type: 'material', data: material })}
                       loading={checkoutLoading === material._id || pdfDownloading === material._id}
+                      metricSettings={metricSettings.materials}
                     />
                   ))}
                 </div>
@@ -1356,11 +1377,12 @@ function FolderCard({
 // ─── Material Card Component ────────────────────────────────
 function MaterialCard({
   material, index, isPurchased, groupAccess, isHighlighted, copiedId,
-  onAddToCart, onBuyNow, onDownload, onViewPdf, onCopyLink, onPreview, loading,
+  onAddToCart, onBuyNow, onDownload, onViewPdf, onCopyLink, onPreview, loading, metricSettings,
 }: {
   material: Material; index: number; isPurchased: boolean; groupAccess: boolean
   isHighlighted: boolean; copiedId: string | null
   onAddToCart: () => void; onBuyNow: () => void; onDownload: () => void; onViewPdf: () => void; onCopyLink: () => void; onPreview: () => void; loading: boolean
+  metricSettings: MaterialMetricSettings
 }) {
   const isFree = material.pricing === 'free'
   // isPurchased includes manual admin grants → always grants full access
@@ -1435,8 +1457,12 @@ function MaterialCard({
 
           <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="flex items-center gap-1 text-xs text-white/80"><Download className="h-3 w-3" /> {material.downloadCount}</span>
-              <span className="flex items-center gap-1 text-xs text-white/80"><Eye className="h-3 w-3" /> {material.viewCount}</span>
+              {metricSettings.showDownloads && (
+                <span className="flex items-center gap-1 text-xs text-white/80"><Download className="h-3 w-3" /> {material.downloadCount}</span>
+              )}
+              {metricSettings.showViews && (
+                <span className="flex items-center gap-1 text-xs text-white/80"><Eye className="h-3 w-3" /> {material.viewCount}</span>
+              )}
               {(material.type === 'video' || material.type === 'video_embed') && material.videoDuration ? (
                 <span className="flex items-center gap-1 text-xs text-white/80 font-medium">
                   <Play className="h-3 w-3 fill-white/60" /> {formatDuration(material.videoDuration)}
@@ -1526,11 +1552,12 @@ function MaterialCard({
 // ─── Featured Card Component ────────────────────────────────
 function FeaturedCard({
   material, index, isPurchased, groupAccess, isHighlighted, copiedId,
-  onAddToCart, onBuyNow, onDownload, onViewPdf, onCopyLink, onPreview, loading,
+  onAddToCart, onBuyNow, onDownload, onViewPdf, onCopyLink, onPreview, loading, metricSettings,
 }: {
   material: Material; index: number; isPurchased: boolean; groupAccess: boolean
   isHighlighted: boolean; copiedId: string | null
   onAddToCart: () => void; onBuyNow: () => void; onDownload: () => void; onViewPdf: () => void; onCopyLink: () => void; onPreview: () => void; loading: boolean
+  metricSettings: MaterialMetricSettings
 }) {
   const isFree = material.pricing === 'free'
   const canAccess = typeof material._hasAccess === 'boolean'
@@ -1585,7 +1612,9 @@ function FeaturedCard({
           <div className="absolute bottom-3 left-4 right-4">
             <Link href={`/materiais/${material._id}`} className="font-heading font-bold text-white text-lg leading-tight hover:underline cursor-pointer" onClick={e => e.stopPropagation()}>{material.title}</Link>
             <div className="flex items-center gap-3 mt-1.5">
-              <span className="flex items-center gap-1 text-xs text-white/70"><Download className="h-3 w-3" /> {material.downloadCount}</span>
+              {metricSettings.showDownloads && (
+                <span className="flex items-center gap-1 text-xs text-white/70"><Download className="h-3 w-3" /> {material.downloadCount}</span>
+              )}
               {(material.type === 'video' || material.type === 'video_embed') && material.videoDuration ? (
                 <span className="flex items-center gap-1 text-xs text-white/80 font-medium">
                   <Play className="h-3 w-3 fill-white/60" /> {formatDuration(material.videoDuration)}

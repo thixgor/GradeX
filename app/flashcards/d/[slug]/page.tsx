@@ -47,6 +47,10 @@ import { PackageUpsellModal, UpsellPackage } from '@/components/materiais/packag
 import { FlashcardCardView } from '@/components/flashcards/flashcard-card'
 import { cn } from '@/lib/utils'
 import type { FlashcardManualCard, FlashcardManualDeck } from '@/lib/types'
+import {
+  DEFAULT_PUBLIC_METRIC_SETTINGS,
+  type PublicMetricSettings,
+} from '@/lib/display-settings'
 import { ReviewsSection } from '@/components/reviews/reviews-section'
 import { ReviewSummaryBlock } from '@/components/reviews/review-summary'
 import type { ReviewSummary } from '@/lib/reviews-shared'
@@ -130,6 +134,7 @@ export default function DeckPage() {
   const [upsellPkg, setUpsellPkg] = useState<UpsellPackage | null>(null)
   const [showCards, setShowCards] = useState(false)
   const [reviewSummary, setReviewSummary] = useState<ReviewSummary | null>(null)
+  const [metricSettings, setMetricSettings] = useState<PublicMetricSettings>(DEFAULT_PUBLIC_METRIC_SETTINGS)
 
   const purchaseSuccess = search?.get('purchase') === 'success'
 
@@ -138,6 +143,17 @@ export default function DeckPage() {
       setToast({ open: true, message: 'Compra confirmada! O deck está liberado.', type: 'success' })
     }
   }, [purchaseSuccess])
+
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/display-settings', { cache: 'no-store' })
+      .then(res => res.ok ? res.json() : null)
+      .then(json => {
+        if (!cancelled && json?.settings) setMetricSettings(json.settings)
+      })
+      .catch(() => {})
+    return () => { cancelled = true }
+  }, [])
 
   const load = useCallback(async (mode: StudyMode = 'normal') => {
     setLoading(true)
@@ -648,8 +664,12 @@ export default function DeckPage() {
                 <span>por <strong className="font-semibold">{deck.ownerName}</strong></span>
                 <span>·</span>
                 <span>{deck.cardCount} cartões</span>
-                <span>·</span>
-                <span>{deck.viewCount} visualizações</span>
+                {metricSettings.flashcards.showViews && (
+                  <>
+                    <span>·</span>
+                    <span>{deck.viewCount} visualizações</span>
+                  </>
+                )}
                 {(deck.tags || []).slice(0, 4).map(t => (
                   <span key={t} className="rounded-full bg-white/15 px-2 py-0.5 ring-1 ring-white/20">#{t}</span>
                 ))}
@@ -670,15 +690,17 @@ export default function DeckPage() {
 
           <div className="p-5 md:p-6 flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
             <div className="flex items-center gap-2">
-              <button
-                onClick={toggleLike}
-                className={cn('inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium ring-1',
-                  liked
-                    ? 'bg-rose-500/15 text-rose-600 dark:text-rose-300 ring-rose-500/30'
-                    : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 ring-slate-200 dark:ring-white/10 hover:bg-slate-200/70')}
-              >
-                <Heart className={cn('h-4 w-4', liked && 'fill-current')} /> {likeCount}
-              </button>
+              {metricSettings.flashcards.showLikes && (
+                <button
+                  onClick={toggleLike}
+                  className={cn('inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium ring-1',
+                    liked
+                      ? 'bg-rose-500/15 text-rose-600 dark:text-rose-300 ring-rose-500/30'
+                      : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 ring-slate-200 dark:ring-white/10 hover:bg-slate-200/70')}
+                >
+                  <Heart className={cn('h-4 w-4', liked && 'fill-current')} /> {likeCount}
+                </button>
+              )}
               {access.isOwner && (
                 <Button variant="outline" onClick={() => setShareOpen(true)}><Share2 className="h-4 w-4" /> Compartilhar</Button>
               )}

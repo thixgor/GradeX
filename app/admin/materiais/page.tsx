@@ -46,11 +46,16 @@ import {
   AlertCircle,
   CheckCircle2,
   Trash,
+  Settings2,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { AppShell } from '@/components/app-shell'
+import {
+  DEFAULT_PUBLIC_METRIC_SETTINGS,
+  type PublicMetricSettings,
+} from '@/lib/display-settings'
 
 type ModalMode = 'create' | 'edit'
 type ActiveSection = 'materials' | 'folders' | 'packages' | 'tracker'
@@ -298,6 +303,10 @@ function AdminMateriaisContent() {
   const [traceLoading, setTraceLoading] = useState(false)
   const [traceError, setTraceError] = useState('')
   const [traceResult, setTraceResult] = useState<MaterialTraceResult | null>(null)
+  const [metricSettings, setMetricSettings] = useState<PublicMetricSettings>(DEFAULT_PUBLIC_METRIC_SETTINGS)
+  const [metricSettingsLoading, setMetricSettingsLoading] = useState(true)
+  const [metricSettingsSaving, setMetricSettingsSaving] = useState(false)
+  const [metricSettingsMessage, setMetricSettingsMessage] = useState('')
 
   // Modal states
   const [showMaterialModal, setShowMaterialModal] = useState(false)
@@ -346,6 +355,56 @@ function AdminMateriaisContent() {
     navigator.clipboard.writeText(url).catch(() => {})
     setCopiedId(id)
     setTimeout(() => setCopiedId(null), 2000)
+  }
+
+  const fetchMetricSettings = useCallback(async () => {
+    setMetricSettingsLoading(true)
+    try {
+      const res = await fetch('/api/display-settings', { cache: 'no-store' })
+      const data = await res.json().catch(() => ({}))
+      if (res.ok && data.settings) {
+        setMetricSettings(data.settings)
+      }
+    } catch {
+      // Mantem o padrao seguro: metricas publicas ocultas.
+    } finally {
+      setMetricSettingsLoading(false)
+    }
+  }, [])
+
+  const updateMetricSetting = async <S extends keyof PublicMetricSettings>(
+    section: S,
+    key: keyof PublicMetricSettings[S],
+    checked: boolean
+  ) => {
+    const next = {
+      ...metricSettings,
+      [section]: {
+        ...metricSettings[section],
+        [key]: checked,
+      },
+    } as PublicMetricSettings
+
+    setMetricSettings(next)
+    setMetricSettingsSaving(true)
+    setMetricSettingsMessage('')
+    try {
+      const res = await fetch('/api/display-settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ settings: next }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data.error || 'Erro ao salvar configurações')
+      if (data.settings) setMetricSettings(data.settings)
+      setMetricSettingsMessage('Configuração salva.')
+      setTimeout(() => setMetricSettingsMessage(''), 2200)
+    } catch (err: any) {
+      setMetricSettingsMessage(err?.message || 'Erro ao salvar configurações.')
+      fetchMetricSettings()
+    } finally {
+      setMetricSettingsSaving(false)
+    }
   }
 
   const runTraceSearch = useCallback(async () => {
@@ -530,6 +589,7 @@ function AdminMateriaisContent() {
   }, [])
 
   useEffect(() => { fetchAll() }, [fetchAll])
+  useEffect(() => { fetchMetricSettings() }, [fetchMetricSettings])
 
   // ─── Tree data ─────────────────────────────────────────────
   const folderTree = useMemo(() => buildTree(allFolders), [allFolders])
@@ -988,6 +1048,37 @@ function AdminMateriaisContent() {
     paidMaterials: materials.filter(m => m.pricing === 'paid').length,
   }
 
+  const metricToggleItems = [
+    {
+      label: 'Likes dos flashcards',
+      description: 'Botão de curtida e contagem pública nos decks.',
+      icon: <CheckCircle2 className="h-4 w-4" />,
+      checked: metricSettings.flashcards.showLikes,
+      onChange: (checked: boolean) => updateMetricSetting('flashcards', 'showLikes', checked),
+    },
+    {
+      label: 'Views dos flashcards',
+      description: 'Contagem pública de visualizações dos decks.',
+      icon: <Eye className="h-4 w-4" />,
+      checked: metricSettings.flashcards.showViews,
+      onChange: (checked: boolean) => updateMetricSetting('flashcards', 'showViews', checked),
+    },
+    {
+      label: 'Downloads dos materiais',
+      description: 'Contagem pública de downloads em materiais e pacotes.',
+      icon: <Download className="h-4 w-4" />,
+      checked: metricSettings.materials.showDownloads,
+      onChange: (checked: boolean) => updateMetricSetting('materials', 'showDownloads', checked),
+    },
+    {
+      label: 'Views dos materiais',
+      description: 'Contagem pública de visualizações em materiais e pacotes.',
+      icon: <Eye className="h-4 w-4" />,
+      checked: metricSettings.materials.showViews,
+      onChange: (checked: boolean) => updateMetricSetting('materials', 'showViews', checked),
+    },
+  ]
+
   // ─── Render Tree Node ─────────────────────────────────────
   const renderFolderNode = (node: FolderTreeNode) => {
     const isExpanded = expandedFolders.has(node._id)
@@ -1137,6 +1228,51 @@ function AdminMateriaisContent() {
             <p className="text-xl font-bold">{stat.value}</p>
           </div>
         ))}
+      </div>
+
+      <div className="rounded-xl border bg-background p-4 mb-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex items-start gap-3">
+            <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+              <Settings2 className="h-5 w-5" />
+            </div>
+            <div>
+              <h3 className="font-semibold">Métricas públicas</h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                Controle global do que aparece para alunos em flashcards, materiais e pacotes.
+              </p>
+            </div>
+          </div>
+          <div className="min-h-5 text-xs text-muted-foreground sm:text-right">
+            {metricSettingsLoading ? 'Carregando...' : metricSettingsSaving ? 'Salvando...' : metricSettingsMessage}
+          </div>
+        </div>
+
+        <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          {metricToggleItems.map(item => (
+            <label
+              key={item.label}
+              className="flex items-start justify-between gap-3 rounded-xl border bg-muted/25 p-3 transition-colors hover:bg-muted/40"
+            >
+              <span className="flex min-w-0 items-start gap-2">
+                <span className={`mt-0.5 ${item.checked ? 'text-primary' : 'text-muted-foreground'}`}>
+                  {item.icon}
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-sm font-medium">{item.label}</span>
+                  <span className="mt-0.5 block text-xs leading-snug text-muted-foreground">{item.description}</span>
+                </span>
+              </span>
+              <input
+                type="checkbox"
+                checked={item.checked}
+                disabled={metricSettingsLoading || metricSettingsSaving}
+                onChange={e => item.onChange(e.target.checked)}
+                className="mt-1 h-4 w-4 shrink-0 accent-primary"
+              />
+            </label>
+          ))}
+        </div>
       </div>
 
       {/* Tabs + Search + Actions */}

@@ -22,6 +22,7 @@ const publicRoutes = [
   // Landing page lê settings publicamente (videoEmbedUrl, landingPageEnabled,
   // etc). A própria rota faz checagem de admin internamente para PUT.
   '/api/admin/settings',
+  '/api/display-settings',
 ]
 
 // Prefixos públicos

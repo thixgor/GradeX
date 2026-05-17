@@ -50,6 +50,10 @@ import {
   shouldUseNativePdfDownload,
   triggerNativePdfDownload,
 } from '@/lib/material-download-client'
+import {
+  DEFAULT_PUBLIC_METRIC_SETTINGS,
+  type PublicMetricSettings,
+} from '@/lib/display-settings'
 import { useMaterialCart } from '@/context/MaterialCartContext'
 import { ReviewsSection } from '@/components/reviews/reviews-section'
 import { ReviewSummaryBlock } from '@/components/reviews/review-summary'
@@ -143,6 +147,7 @@ export default function MaterialViewPage() {
   const [downloadTermsOpen, setDownloadTermsOpen] = useState(false)
   const [copied, setCopied] = useState(false)
   const [reviewSummary, setReviewSummary] = useState<ReviewSummary | null>(null)
+  const [metricSettings, setMetricSettings] = useState<PublicMetricSettings>(DEFAULT_PUBLIC_METRIC_SETTINGS)
   const stepTimersRef = useRef<ReturnType<typeof setTimeout>[]>([])
   const { addItem } = useMaterialCart()
 
@@ -162,6 +167,16 @@ export default function MaterialViewPage() {
   }, [id, router])
 
   useEffect(() => { fetchData() }, [fetchData])
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/display-settings', { cache: 'no-store' })
+      .then(res => res.ok ? res.json() : null)
+      .then(json => {
+        if (!cancelled && json?.settings) setMetricSettings(json.settings)
+      })
+      .catch(() => {})
+    return () => { cancelled = true }
+  }, [])
 
   // Cleanup timers on unmount
   useEffect(() => () => { stepTimersRef.current.forEach(clearTimeout) }, [])
@@ -385,6 +400,9 @@ export default function MaterialViewPage() {
   const isPdf = material._hasPdf || material.type === 'pdf'
   const canViewPdf = hasAccess && !!material._hasPdf && material.pdfViewerEnabled === true
   const canDownload = hasAccess && (!material._hasPdf || material.pdfDownloadEnabled !== false)
+  const showMaterialViews = metricSettings.materials.showViews
+  const showMaterialDownloads = metricSettings.materials.showDownloads
+  const hasInfoMetrics = showMaterialViews || showMaterialDownloads || (isVideo && !!material.videoDuration)
   const downloadLabel =
     material.type === 'link' ? 'Acessar Link'
     : material.type === 'flashcard_deck' ? 'Acessar Deck'
@@ -534,20 +552,26 @@ export default function MaterialViewPage() {
 
                 {/* Info bar under media */}
                 <div className="px-5 py-3.5 border-t border-border/40 flex items-center gap-4 flex-wrap">
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground flex-1">
-                    <span className="flex items-center gap-1.5">
-                      <Eye className="h-3.5 w-3.5" /> {material.viewCount}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <Download className="h-3.5 w-3.5" /> {material.downloadCount}
-                    </span>
-                    {isVideo && material.videoDuration ? (
-                      <span className="flex items-center gap-1.5 text-primary font-medium">
-                        <Clock className="h-3.5 w-3.5" /> {formatDuration(material.videoDuration)}
-                      </span>
-                    ) : null}
-                  </div>
-                  <div className="flex items-center gap-3">
+                  {hasInfoMetrics && (
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground flex-1">
+                      {showMaterialViews && (
+                        <span className="flex items-center gap-1.5">
+                          <Eye className="h-3.5 w-3.5" /> {material.viewCount}
+                        </span>
+                      )}
+                      {showMaterialDownloads && (
+                        <span className="flex items-center gap-1.5">
+                          <Download className="h-3.5 w-3.5" /> {material.downloadCount}
+                        </span>
+                      )}
+                      {isVideo && material.videoDuration ? (
+                        <span className="flex items-center gap-1.5 text-primary font-medium">
+                          <Clock className="h-3.5 w-3.5" /> {formatDuration(material.videoDuration)}
+                        </span>
+                      ) : null}
+                    </div>
+                  )}
+                  <div className="flex items-center gap-3 ml-auto">
                     <span className="text-xs text-muted-foreground">
                       {new Date(material.createdAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })}
                     </span>

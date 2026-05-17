@@ -37,6 +37,10 @@ import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { cn } from '@/lib/utils'
 import { useBootstrap } from '@/hooks/use-bootstrap'
+import {
+  DEFAULT_PUBLIC_METRIC_SETTINGS,
+  type PublicMetricSettings,
+} from '@/lib/display-settings'
 import type { FlashcardManualDeck, FlashcardManualFolder } from '@/lib/types'
 
 function useDebounce<T>(value: T, delay: number): T {
@@ -56,6 +60,7 @@ type DeckWithId = FlashcardManualDeck & {
 }
 type FolderWithId = FlashcardManualFolder & { _id: string }
 type Filter = 'all' | 'mine' | 'purchased' | 'community' | 'store' | 'shared'
+type FlashcardMetricSettings = PublicMetricSettings['flashcards']
 
 const FILTERS: Filter[] = ['all', 'mine', 'purchased', 'community', 'store', 'shared']
 
@@ -103,6 +108,7 @@ export default function FlashcardsHubPage() {
   const [storeFolder, setStoreFolder] = useState<string | null>(null)
   const [authChecked, setAuthChecked] = useState(false)
   const [isGuest, setIsGuest] = useState(false)
+  const [metricSettings, setMetricSettings] = useState<PublicMetricSettings>(DEFAULT_PUBLIC_METRIC_SETTINGS)
   const [isFolderPending, startFolderTransition] = useTransition()
   const initialLoadDoneRef = useRef(false)
   const mineCacheRef = useRef<Map<string, DeckWithId[]>>(new Map())
@@ -224,6 +230,17 @@ export default function FlashcardsHubPage() {
       const json = await res.json()
       setShared(json.shares || [])
     } catch {}
+  }, [])
+
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/display-settings', { cache: 'no-store' })
+      .then(res => res.ok ? res.json() : null)
+      .then(json => {
+        if (!cancelled && json?.settings) setMetricSettings(json.settings)
+      })
+      .catch(() => {})
+    return () => { cancelled = true }
   }, [])
 
   useEffect(() => {
@@ -394,6 +411,7 @@ export default function FlashcardsHubPage() {
             decks={featuredStore}
             totalStore={store.length}
             onSeeAll={() => selectSection('store')}
+            metricSettings={metricSettings.flashcards}
           />
         )}
 
@@ -448,7 +466,7 @@ export default function FlashcardsHubPage() {
                     }
                   />
                 ) : (
-                  <DeckGrid decks={filter === 'mine' ? mine : mine.slice(0, 6)} owned onDelete={deleteDeck} />
+                  <DeckGrid decks={filter === 'mine' ? mine : mine.slice(0, 6)} owned onDelete={deleteDeck} metricSettings={metricSettings.flashcards} />
                 )}
               </Section>
             )}
@@ -475,7 +493,7 @@ export default function FlashcardsHubPage() {
                     }
                   />
                 ) : (
-                  <DeckGrid decks={filter === 'purchased' ? purchasedStore : purchasedStore.slice(0, 6)} showStoreState />
+                  <DeckGrid decks={filter === 'purchased' ? purchasedStore : purchasedStore.slice(0, 6)} showStoreState metricSettings={metricSettings.flashcards} />
                 )}
               </Section>
             )}
@@ -509,7 +527,7 @@ export default function FlashcardsHubPage() {
                   {filteredStore.length === 0 ? (
                     <EmptyCallout title="Nenhum deck nesta pasta" hint="O administrador ainda não adicionou decks aqui." />
                   ) : (
-                    <DeckGrid decks={filteredStore} showStoreState />
+                    <DeckGrid decks={filteredStore} showStoreState metricSettings={metricSettings.flashcards} />
                   )}
                 </Section>
               </div>
@@ -544,7 +562,7 @@ export default function FlashcardsHubPage() {
                 {community.length === 0 ? (
                   <EmptyCallout title="A comunidade está silenciosa" hint="Seja o primeiro a publicar um deck público." />
                 ) : (
-                  <DeckGrid decks={filter === 'community' ? community : community.slice(0, 6)} />
+                  <DeckGrid decks={filter === 'community' ? community : community.slice(0, 6)} metricSettings={metricSettings.flashcards} />
                 )}
               </Section>
             )}
@@ -734,7 +752,12 @@ function FolderNavItem({ label, count, active, onClick, depth, color, hasChildre
 // Hero — Loja Oficial
 // ──────────────────────────────────────────────────────────────────────────────
 
-function StoreHero({ decks, totalStore, onSeeAll }: { decks: DeckWithId[]; totalStore: number; onSeeAll: () => void }) {
+function StoreHero({ decks, totalStore, onSeeAll, metricSettings }: {
+  decks: DeckWithId[]
+  totalStore: number
+  onSeeAll: () => void
+  metricSettings: FlashcardMetricSettings
+}) {
   const [hero, ...rest] = decks
   if (!hero) return null
   return (
@@ -767,10 +790,10 @@ function StoreHero({ decks, totalStore, onSeeAll }: { decks: DeckWithId[]; total
             <div className="absolute bottom-0 left-0 right-0 p-5 lg:p-7">
               <div className="flex items-center gap-3 mb-2 text-[11px] font-medium text-white/75">
                 <span className="inline-flex items-center gap-1"><Sparkles className="h-3 w-3" /> {hero.cardCount} cartões</span>
-                {hero.likeCount && hero.likeCount > 0 ? (
+                {metricSettings.showLikes && hero.likeCount && hero.likeCount > 0 ? (
                   <span className="inline-flex items-center gap-1"><Heart className="h-3 w-3" /> {hero.likeCount}</span>
                 ) : null}
-                {hero.viewCount ? (
+                {metricSettings.showViews && hero.viewCount ? (
                   <span className="inline-flex items-center gap-1"><Eye className="h-3 w-3" /> {hero.viewCount}</span>
                 ) : null}
               </div>
@@ -1063,19 +1086,29 @@ function EmptyCallout({ title, hint, cta }: { title: string; hint: string; cta?:
   )
 }
 
-function DeckGrid({ decks, owned = false, onDelete, showStoreState = false }: {
-  decks: DeckWithId[]; owned?: boolean; onDelete?: (id: string) => void; showStoreState?: boolean
+function DeckGrid({ decks, owned = false, onDelete, showStoreState = false, metricSettings }: {
+  decks: DeckWithId[]
+  owned?: boolean
+  onDelete?: (id: string) => void
+  showStoreState?: boolean
+  metricSettings: FlashcardMetricSettings
 }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {decks.map(d => <DeckCard key={d._id} deck={d} owned={owned} onDelete={onDelete} showStoreState={showStoreState} />)}
+      {decks.map(d => <DeckCard key={d._id} deck={d} owned={owned} onDelete={onDelete} showStoreState={showStoreState} metricSettings={metricSettings} />)}
     </div>
   )
 }
 
-const DeckCard = memo(function DeckCard({ deck, owned, onDelete, showStoreState }: {
-  deck: DeckWithId; owned?: boolean; onDelete?: (id: string) => void; showStoreState?: boolean
+const DeckCard = memo(function DeckCard({ deck, owned, onDelete, showStoreState, metricSettings }: {
+  deck: DeckWithId
+  owned?: boolean
+  onDelete?: (id: string) => void
+  showStoreState?: boolean
+  metricSettings: FlashcardMetricSettings
 }) {
+  const hasPublicMetrics = metricSettings.showLikes || metricSettings.showViews
+
   return (
     <div className="group relative overflow-hidden rounded-3xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl shadow-sm hover:shadow-2xl hover:shadow-violet-500/10 hover:scale-[1.01] hover:border-violet-400/50 transition duration-300">
       <Link href={`/flashcards/d/${deck.slug}`} className="block">
@@ -1114,9 +1147,13 @@ const DeckCard = memo(function DeckCard({ deck, owned, onDelete, showStoreState 
           <h3 className="font-semibold text-slate-800 dark:text-white line-clamp-2 group-hover:text-violet-600 dark:group-hover:text-violet-300 transition">{deck.title}</h3>
           {deck.description && <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 line-clamp-2">{deck.description}</p>}
           <div className="mt-3 flex items-center gap-3 text-xs text-slate-500">
-            <span className="inline-flex items-center gap-1"><Heart className="h-3 w-3" /> {deck.likeCount || 0}</span>
-            <span className="inline-flex items-center gap-1"><Eye className="h-3 w-3" /> {deck.viewCount || 0}</span>
-            <span className="ml-auto text-slate-400 truncate max-w-[60%]">por {deck.ownerName}</span>
+            {metricSettings.showLikes && (
+              <span className="inline-flex items-center gap-1"><Heart className="h-3 w-3" /> {deck.likeCount || 0}</span>
+            )}
+            {metricSettings.showViews && (
+              <span className="inline-flex items-center gap-1"><Eye className="h-3 w-3" /> {deck.viewCount || 0}</span>
+            )}
+            <span className={cn('text-slate-400 truncate', hasPublicMetrics ? 'ml-auto max-w-[60%]' : 'max-w-full')}>por {deck.ownerName}</span>
           </div>
         </div>
       </Link>

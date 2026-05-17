@@ -38,6 +38,10 @@ import {
 import { Button } from '@/components/ui/button'
 import { AppShell } from '@/components/app-shell'
 import { useMaterialCart } from '@/context/MaterialCartContext'
+import {
+  DEFAULT_PUBLIC_METRIC_SETTINGS,
+  type PublicMetricSettings,
+} from '@/lib/display-settings'
 
 // ─── Types ───────────────────────────────────────────────────
 interface PackageMaterial {
@@ -145,6 +149,7 @@ export default function PackageDetailPage() {
   const [cartMessage, setCartMessage] = useState('')
   const [descExpanded, setDescExpanded] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [metricSettings, setMetricSettings] = useState<PublicMetricSettings>(DEFAULT_PUBLIC_METRIC_SETTINGS)
   const { addItem } = useMaterialCart()
 
   const fetchData = useCallback(async () => {
@@ -163,6 +168,16 @@ export default function PackageDetailPage() {
   }, [id, router])
 
   useEffect(() => { fetchData() }, [fetchData])
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/display-settings', { cache: 'no-store' })
+      .then(res => res.ok ? res.json() : null)
+      .then(json => {
+        if (!cancelled && json?.settings) setMetricSettings(json.settings)
+      })
+      .catch(() => {})
+    return () => { cancelled = true }
+  }, [])
 
   // ─── Acquire ──────────────────────────────────────────────
   const handleAcquire = async () => {
@@ -262,6 +277,9 @@ export default function PackageDetailPage() {
   const hasDiscount = pricing.discountApplied > 0
   const hasStaticDiscount = !isFree && pkg.originalPrice > pkg.price && pkg.originalPrice > 0
   const totalItems = materials.length
+  const showMaterialViews = metricSettings.materials.showViews
+  const showMaterialDownloads = metricSettings.materials.showDownloads
+  const hasInfoMetrics = showMaterialViews || showMaterialDownloads
 
   return (
     <AppShell allowGuest headerTitle={pkg.title} headerSubtitle="Pacote">
@@ -347,17 +365,23 @@ export default function PackageDetailPage() {
 
                 {/* Info bar */}
                 <div className="px-5 py-3.5 border-t border-border/40 flex items-center gap-4 flex-wrap">
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground flex-1">
-                    <span className="flex items-center gap-1.5">
-                      <Eye className="h-3.5 w-3.5" /> {pkg.viewCount}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <Download className="h-3.5 w-3.5" /> {pkg.downloadCount}
-                    </span>
-                  </div>
+                  {hasInfoMetrics && (
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground flex-1">
+                      {showMaterialViews && (
+                        <span className="flex items-center gap-1.5">
+                          <Eye className="h-3.5 w-3.5" /> {pkg.viewCount}
+                        </span>
+                      )}
+                      {showMaterialDownloads && (
+                        <span className="flex items-center gap-1.5">
+                          <Download className="h-3.5 w-3.5" /> {pkg.downloadCount}
+                        </span>
+                      )}
+                    </div>
+                  )}
                   <button
                     onClick={copyShareLink}
-                    className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg transition-all font-medium border ${
+                    className={`ml-auto flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg transition-all font-medium border ${
                       copied
                         ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
                         : 'text-muted-foreground hover:text-foreground glass-button border-border/40'
