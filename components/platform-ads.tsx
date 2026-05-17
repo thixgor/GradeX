@@ -41,6 +41,48 @@ const ROTATION_MS = 8000
 const DISMISS_STORAGE_KEY = 'domineaqui-platform-ads-dismissed-until'
 const DISMISS_MS = 30 * 60 * 1000
 
+const AD_HIDDEN_EXACT_PATHS = new Set([
+  '/buy',
+  '/buy/checkout',
+  '/doar',
+  '/doar/falha',
+  '/doar/pendente',
+  '/doar/sucesso',
+  '/materiais/checkout',
+])
+
+const AD_HIDDEN_PREFIXES = [
+  '/admin',
+  '/auth',
+  '/exam',
+  '/exams',
+  '/forms',
+  '/lead',
+]
+
+function isSingleNestedRoute(pathname: string, basePath: string) {
+  if (!pathname.startsWith(`${basePath}/`)) return false
+
+  const rest = pathname.slice(basePath.length + 1)
+  return rest.length > 0 && !rest.includes('/')
+}
+
+function shouldHideAdsOnRoute(pathname?: string | null) {
+  if (!pathname) return false
+
+  const normalizedPath = pathname === '/' ? pathname : pathname.replace(/\/+$/, '')
+
+  return (
+    normalizedPath.includes('/viewer') ||
+    AD_HIDDEN_EXACT_PATHS.has(normalizedPath) ||
+    AD_HIDDEN_PREFIXES.some(
+      (prefix) => normalizedPath === prefix || normalizedPath.startsWith(`${prefix}/`),
+    ) ||
+    isSingleNestedRoute(normalizedPath, '/materiais') ||
+    isSingleNestedRoute(normalizedPath, '/pacotes')
+  )
+}
+
 function normalizeAds(payload: unknown): PlatformAd[] {
   const raw = Array.isArray(payload)
     ? payload
@@ -166,7 +208,7 @@ export function PlatformAds() {
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedAd, setSelectedAd] = useState<PlatformAd | null>(null)
 
-  const hiddenOnRoute = pathname?.includes('/viewer')
+  const hiddenOnRoute = shouldHideAdsOnRoute(pathname)
 
   useEffect(() => {
     if (hiddenOnRoute) return
