@@ -75,15 +75,15 @@ function trimText(value: string | undefined, fallback: string, maxLength: number
 function getViewerWatermarkConfig(): ViewerWatermarkConfig {
   return {
     enabled: envBoolean('PDF_VIEWER_WATERMARK_ENABLED', true),
-    repeated: envBoolean('PDF_VIEWER_WATERMARK_REPEATED', false),
+    repeated: envBoolean('PDF_VIEWER_WATERMARK_REPEATED', true),
     qrEnabled: envBoolean('PDF_VIEWER_WATERMARK_QR_ENABLED', false),
-    opacity: envNumber('PDF_VIEWER_WATERMARK_OPACITY', 0.055, 0.01, 0.25),
-    footerOpacity: envNumber('PDF_VIEWER_WATERMARK_FOOTER_OPACITY', 0.28, 0.05, 0.8),
+    opacity: envNumber('PDF_VIEWER_WATERMARK_OPACITY', 0.085, 0.01, 0.25),
+    footerOpacity: envNumber('PDF_VIEWER_WATERMARK_FOOTER_OPACITY', 0.36, 0.05, 0.8),
     angle: envNumber('PDF_VIEWER_WATERMARK_ANGLE', 34, 0, 70),
-    minFontSize: envNumber('PDF_VIEWER_WATERMARK_MIN_FONT_SIZE', 7, 5, 18),
-    maxFontSize: envNumber('PDF_VIEWER_WATERMARK_MAX_FONT_SIZE', 9, 6, 24),
-    xGap: envNumber('PDF_VIEWER_WATERMARK_X_GAP', 220, 90, 520),
-    yGap: envNumber('PDF_VIEWER_WATERMARK_Y_GAP', 190, 80, 520),
+    minFontSize: envNumber('PDF_VIEWER_WATERMARK_MIN_FONT_SIZE', 8, 5, 18),
+    maxFontSize: envNumber('PDF_VIEWER_WATERMARK_MAX_FONT_SIZE', 10, 6, 24),
+    xGap: envNumber('PDF_VIEWER_WATERMARK_X_GAP', 150, 90, 520),
+    yGap: envNumber('PDF_VIEWER_WATERMARK_Y_GAP', 130, 80, 520),
     lineGap: envNumber('PDF_VIEWER_WATERMARK_LINE_GAP', 3, 0, 12),
     qrSize: envNumber('PDF_VIEWER_WATERMARK_QR_SIZE', 48, 32, 96),
     maxTextLength: envNumber('PDF_VIEWER_WATERMARK_MAX_TEXT_LENGTH', 70, 24, 140),
@@ -295,7 +295,12 @@ function drawRepeatedWatermark(
   page: PDFPage,
   lines: string[],
   font: any,
-  options: { materialId: string; auditToken: string; config: ViewerWatermarkConfig }
+  options: {
+    materialId: string
+    auditToken: string
+    config: ViewerWatermarkConfig
+    footerLabel: string
+  }
 ) {
   if (!options.config.enabled) return
 
@@ -352,13 +357,27 @@ function drawRepeatedWatermark(
     })
   }
 
-  page.drawText(`DomineAqui protegido | Material ${options.materialId} | Token ${options.auditToken.slice(0, 12)}`, {
+  const { width: pageWidth } = page.getSize()
+  const footerFontSize = 7.5
+  const footerText = options.footerLabel
+  const footerWidth = font.widthOfTextAtSize(footerText, footerFontSize)
+  page.drawText(footerText, {
     x: 22,
-    y: 18,
-    size: 7,
+    y: 20,
+    size: footerFontSize,
     font,
     color,
     opacity: options.config.footerOpacity,
+  })
+  const auditText = `Material ${options.materialId} | Token ${options.auditToken.slice(0, 10)}`
+  const auditWidth = font.widthOfTextAtSize(auditText, 6.5)
+  page.drawText(auditText, {
+    x: Math.max(22 + footerWidth + 18, pageWidth - auditWidth - 22),
+    y: 20,
+    size: 6.5,
+    font,
+    color,
+    opacity: Math.max(0.18, options.config.footerOpacity - 0.12),
   })
 }
 
@@ -418,10 +437,15 @@ export async function createWatermarkedSinglePagePdf(
     }
   }
 
+  const safeUserName = trimText(input.userName, 'Usuario DomineAqui', 50)
+  const safeUserEmail = trimText(input.userEmail, 'email nao informado', 60)
+  const footerLabel = `${safeUserName} - ${safeUserEmail} - UID ${input.userId.slice(-8)} - ${viewedAtLabel}`
+
   drawRepeatedWatermark(page, watermarkLines, font, {
     materialId: input.materialId,
     auditToken: input.auditToken,
     config,
+    footerLabel,
   })
 
   if (qrImage) {

@@ -942,6 +942,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                   textStyle={textStyle}
                   onPageFocus={handlePageFocused}
                   onPageSize={setPageSize}
+                  fallbackSize={pageSize}
                   onPageCount={updateKnownPageCount}
                   onCreateAnnotation={createAnnotation}
                   onUpdateAnnotation={updateAnnotation}
@@ -1013,6 +1014,7 @@ function PdfCanvasPage({
   textStyle,
   onPageFocus,
   onPageSize,
+  fallbackSize,
   onPageCount,
   onCreateAnnotation,
   onUpdateAnnotation,
@@ -1030,6 +1032,7 @@ function PdfCanvasPage({
   textStyle: TextStyle
   onPageFocus: (page: number) => void
   onPageSize: (size: PageSize) => void
+  fallbackSize: PageSize | null
   onPageCount: (totalPages?: number) => void
   onCreateAnnotation: (annotation: Partial<PdfAnnotation>) => void
   onUpdateAnnotation: (annotation: PdfAnnotation, patch: Partial<PdfAnnotation>) => void
@@ -1207,10 +1210,9 @@ function PdfCanvasPage({
     setLoadAttempt((attempt) => attempt + 1)
   }
 
-  const pageFrameSize = renderSize ?? {
-    width: 720 * zoom,
-    height: 1018 * zoom,
-  }
+  const pageFrameSize = renderSize ?? (fallbackSize
+    ? { width: fallbackSize.width * zoom, height: fallbackSize.height * zoom }
+    : { width: 595 * zoom, height: 842 * zoom })
 
   const getPosition = useCallback((clientX: number, clientY: number) => {
     const rect = overlayRef.current?.getBoundingClientRect()
