@@ -45,15 +45,46 @@ export async function generateMetadata(
       .collection('materials')
       .findOne(
         { _id: new ObjectId(params.id) },
-        { projection: { title: 1, description: 1, coverImage: 1, isHidden: 1, updatedAt: 1, createdAt: 1, pricing: 1, price: 1 } }
+        {
+          projection: {
+            title: 1,
+            description: 1,
+            coverImage: 1,
+            type: 1,
+            linkedDeckId: 1,
+            linkedDeckSlug: 1,
+            isHidden: 1,
+            updatedAt: 1,
+            createdAt: 1,
+            pricing: 1,
+            price: 1,
+          },
+        }
       )
 
     if (!material?.title) return fallback
 
+    let flashcardCoverImage = ''
+    if (material.type === 'flashcard_deck') {
+      const deckQuery = material.linkedDeckId && ObjectId.isValid(String(material.linkedDeckId))
+        ? { _id: new ObjectId(String(material.linkedDeckId)) }
+        : material.linkedDeckSlug
+          ? { slug: material.linkedDeckSlug }
+          : null
+
+      if (deckQuery) {
+        const linkedDeck = await db
+          .collection('flashcardManualDecks')
+          .findOne(deckQuery, { projection: { coverImage: 1 } })
+        flashcardCoverImage = linkedDeck?.coverImage || ''
+      }
+    }
+
     const safeTitle = sanitizeSeoText(material.title, 'Material de estudo', 70)
     const safeDescription = sanitizeSeoText(material.description, MATERIAIS_DESCRIPTION, 120)
     const title = `${safeTitle || 'Material de estudo'}`
-    const image = material.coverImage ? absoluteUrl(material.coverImage) : DEFAULT_OG_IMAGE
+    const coverImage = flashcardCoverImage || material.coverImage
+    const image = coverImage ? absoluteUrl(coverImage) : DEFAULT_OG_IMAGE
     const imageType = /\.png(\?|$)/i.test(image)
       ? 'image/png'
       : /\.webp(\?|$)/i.test(image)
