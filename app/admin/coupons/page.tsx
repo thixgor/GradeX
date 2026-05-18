@@ -33,10 +33,10 @@ type CouponScope = 'all' | 'materials' | 'flashcards' | 'specific'
 type DiscountType = 'percentage' | 'fixed'
 type ExpirationMode = 'none' | 'date' | 'duration'
 type DurationUnit = 'hours' | 'days' | 'weeks' | 'months'
-type ProductKind = 'material' | 'flashcard' | 'package'
+type ProductKind = 'material' | 'flashcard' | 'package' | 'product'
 
 type ProductRef = {
-  itemType: 'material' | 'package'
+  itemType: 'material' | 'package' | 'manual_clinico'
   itemId: string
   title: string
   kind: ProductKind
@@ -80,7 +80,7 @@ type ProductSearchResult = ProductRef & {
 const currency = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
 
 const scopeLabels: Record<CouponScope, string> = {
-  all: 'Todos os Materiais e Flashcards',
+  all: 'Todos os Materiais, Flashcards e Produtos',
   materials: 'Todos os Materiais',
   flashcards: 'Todos os Flashcards',
   specific: 'Itens específicos',
@@ -125,6 +125,7 @@ function couponLabel(coupon: Pick<Coupon, 'discountType' | 'discountValue'>) {
 }
 
 function productTone(kind: ProductKind) {
+  if (kind === 'product') return 'border-cyan-300/25 bg-cyan-400/10 text-cyan-700 dark:text-cyan-200'
   if (kind === 'flashcard') return 'border-violet-300/25 bg-violet-400/10 text-violet-700 dark:text-violet-200'
   if (kind === 'package') return 'border-amber-300/25 bg-amber-400/10 text-amber-700 dark:text-amber-200'
   return 'border-emerald-300/25 bg-emerald-400/10 text-emerald-700 dark:text-emerald-200'
@@ -352,7 +353,7 @@ export default function AdminCouponsPage() {
   }
 
   return (
-    <AppShell headerTitle="Cupons" headerSubtitle="Descontos para materiais, flashcards e pacotes">
+    <AppShell headerTitle="Cupons" headerSubtitle="Descontos para materiais, flashcards, pacotes e produtos">
       <div className="container mx-auto max-w-7xl px-4 py-8">
         <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <Button variant="ghost" className="w-fit gap-2" onClick={() => router.push('/admin')}>
@@ -511,7 +512,7 @@ export default function AdminCouponsPage() {
               {form.scope === 'specific' ? (
                 <div className="space-y-3 rounded-lg border bg-muted/30 p-3">
                   <div>
-                    <Label>Pesquisar materiais, flashcards ou pacotes</Label>
+                    <Label>Pesquisar materiais, flashcards, pacotes ou produtos</Label>
                     <div className="relative mt-1">
                       <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                       <Input value={productQuery} onChange={(e) => setProductQuery(e.target.value)} className="pl-9" placeholder="Digite pelo menos 2 letras..." />

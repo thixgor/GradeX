@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
+import {
+  getManualClinicoConfig,
+  getManualClinicoCurrentPrice,
+  MANUAL_CLINICO_PRODUCT_ID,
+} from '@/lib/manual-clinico-product'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -23,7 +28,7 @@ export async function GET(request: NextRequest) {
     const regex = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i')
     const db = await getDb()
 
-    const [materials, packages] = await Promise.all([
+    const [materials, packages, manualConfig] = await Promise.all([
       db.collection('materials')
         .find({
           $or: [
@@ -48,9 +53,30 @@ export async function GET(request: NextRequest) {
         .sort({ isHidden: 1, title: 1 })
         .limit(10)
         .toArray(),
+      getManualClinicoConfig(db),
     ])
 
+    const manualMatches = [
+      manualConfig.label,
+      manualConfig.shortDescription,
+      'Manual Clinico',
+      'Manual Clínico',
+      'Patologias',
+    ].some((value) => regex.test(String(value || '')))
+
     const products = [
+      ...(manualMatches
+        ? [{
+            itemType: 'manual_clinico',
+            itemId: MANUAL_CLINICO_PRODUCT_ID,
+            title: manualConfig.label,
+            kind: 'product',
+            typeLabel: 'Produto',
+            price: getManualClinicoCurrentPrice(manualConfig),
+            pricing: getManualClinicoCurrentPrice(manualConfig) > 0 ? 'paid' : 'free',
+            isHidden: manualConfig.isActive === false,
+          }]
+        : []),
       ...materials.map((material: any) => ({
         itemType: 'material',
         itemId: String(material._id),

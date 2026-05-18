@@ -1189,6 +1189,58 @@ export interface MaterialPurchase {
   refundedAt?: Date
 }
 
+// ─── Produto avulso: Manual Clínico Premium ──────────────────────
+
+export type ManualClinicoAccessType = 'lifetime' | 'temporary'
+
+export interface ManualClinicoProductConfig {
+  _id?: string | import('mongodb').ObjectId
+  productId: 'manual-clinico-premium'
+  label: string
+  benefitText: string
+  shortDescription: string
+  ctaText: string
+  coverImageUrl?: string
+  isActive: boolean
+  price: number
+  promotionalPrice?: number | null
+  promotionEndsAt?: Date | null
+  allowCoupons: boolean
+  lifetimeAccess: boolean
+  freeAccessMode: 'quantity' | 'list'
+  freeQuantity: number
+  freePathologySlugs: string[]
+  createdAt: Date
+  updatedAt: Date
+  updatedBy?: string
+}
+
+export interface ManualClinicoPurchase {
+  _id?: string | import('mongodb').ObjectId
+  userId: string
+  userName: string
+  userEmail: string
+  productId: 'manual-clinico-premium'
+  productTitle: string
+  productType: 'manual_clinico'
+  price: number
+  originalPrice?: number | null
+  couponId?: string
+  couponCode?: string
+  couponDiscountAmount?: number
+  provider: 'mercado_pago' | 'manual_admin' | 'free'
+  providerOrderId?: string
+  providerPaymentId?: string
+  paymentMethod?: string
+  status: 'pending' | 'completed' | 'refunded'
+  accessType: ManualClinicoAccessType
+  purchasedAt: Date
+  expiresAt?: Date | null
+  refundedAt?: Date
+  grantedBy?: string
+  grantedByName?: string
+}
+
 // ───── Pagamentos (Mercado Pago) ─────
 
 import type { PaymentStatus, SubscriptionStatus, PaymentMethodKind, PaymentOrderType, PaymentProviderId } from './payments/types'

@@ -37,7 +37,9 @@ import {
   Highlighter,
   Loader2,
   RotateCcw,
-  LogIn
+  LogIn,
+  Lock,
+  Crown
 } from 'lucide-react'
 import { AREAS_SAUDE, SISTEMAS_FISIOLOGICOS, type AreaSaude, type SistemaFisiologico } from '@/lib/types/manual-clinico'
 import { clearAllManualHighlights, hasAnyManualHighlights } from '@/lib/manual-clinico-highlights'
@@ -101,6 +103,31 @@ interface PatologiaResumo {
   cid10: string
   slug: string
   gravidade: string
+  isFree?: boolean
+  isPremiumLocked?: boolean
+  accessStatus?: 'free' | 'premium_unlocked' | 'locked'
+}
+
+interface ManualProduct {
+  label: string
+  benefitText: string
+  shortDescription: string
+  ctaText: string
+  coverImageUrl?: string
+  isActive: boolean
+  price: number
+  currentPrice: number
+  promotionalPrice: number | null
+  hasActivePromotion: boolean
+}
+
+interface ManualAccess {
+  hasFullAccess: boolean
+  reason: string
+}
+
+function formatBRL(value: number) {
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value || 0))
 }
 
 export default function ManualClinicoPage() {
@@ -172,6 +199,8 @@ function ManualClinicoContent() {
   const [pdfLoading, setPdfLoading] = useState(false)
   const [hasHighlights, setHasHighlights] = useState(false)
   const [resetConfirm, setResetConfirm] = useState(false)
+  const [product, setProduct] = useState<ManualProduct | null>(null)
+  const [manualAccess, setManualAccess] = useState<ManualAccess>({ hasFullAccess: false, reason: 'guest' })
   const { user } = useAppShell()
   const isAuthenticated = !!user
 
@@ -184,13 +213,27 @@ function ManualClinicoContent() {
       router.push(`/auth/login?redirect=${encodeURIComponent('/manual-clinico')}`)
       return
     }
+    if (!manualAccess.hasFullAccess) {
+      router.push('/manual-clinico/checkout')
+      return
+    }
     setPdfLoading(true)
     try {
       const res = await fetch('/api/manual-clinico?export=true')
+      if (!res.ok) {
+        router.push('/manual-clinico/checkout')
+        return
+      }
       const data = await res.json()
       const { generateManualCompletoPDF } = await import('@/lib/patologia-pdf-generator')
       const blob = await generateManualCompletoPDF(data.patologias || [])
-      const url = URL.createObjectURL(blob)
+      const watermarkedRes = await fetch('/api/manual-clinico/pdf-watermark?mode=full', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/pdf' },
+        body: blob,
+      })
+      const finalBlob = watermarkedRes.ok ? await watermarkedRes.blob() : blob
+      const url = URL.createObjectURL(finalBlob)
       const a = document.createElement('a')
       a.href = url
       a.download = `manual-clinico-completo-${new Date().toISOString().slice(0, 10)}.pdf`
@@ -231,6 +274,8 @@ function ManualClinicoContent() {
       setPatologias(data.patologias || [])
       setTotal(data.total || 0)
       setTotalPages(data.totalPages || 0)
+      if (data.product) setProduct(data.product)
+      if (data.access) setManualAccess(data.access)
       setSearched(true)
     } catch (error) {
       console.error('Erro ao buscar patologias:', error)
@@ -300,7 +345,7 @@ function ManualClinicoContent() {
                 Manual Clínico
               </h1>
               <p className="text-muted-foreground mt-3 max-w-xl text-base sm:text-lg leading-relaxed">
-                Explore as patologias disponíveis. Para abrir conteúdos completos, baixar o manual e salvar marcações, entre na sua conta.
+                Diagnóstico, tratamento, diferenciais, farmacologia e fluxogramas em um só lugar. Algumas patologias são gratuitas; o acervo completo fica no Premium.
               </p>
               {total > 0 && (
                 <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20">
@@ -313,6 +358,22 @@ function ManualClinicoContent() {
 
               {/* ── Action buttons ── */}
               <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+                {!manualAccess.hasFullAccess && product?.isActive && (
+                  <button
+                    onClick={() => isAuthenticated ? router.push('/manual-clinico/checkout') : router.push(`/auth/login?redirect=${encodeURIComponent('/manual-clinico/checkout')}`)}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
+                      bg-gradient-to-r from-amber-400 to-emerald-300 text-emerald-950 shadow-lg shadow-emerald-500/20
+                      hover:brightness-105 active:scale-[0.97] transition-all duration-200"
+                  >
+                    <Crown className="h-4 w-4" />
+                    {product.ctaText || 'Desbloquear Manual Clínico Premium'}
+                    {product.currentPrice > 0 && (
+                      <span className="ml-1 rounded-lg bg-emerald-950/10 px-2 py-0.5 text-xs">
+                        {formatBRL(product.currentPrice)}
+                      </span>
+                    )}
+                  </button>
+                )}
                 <button
                   onClick={handleGeneratePDF}
                   disabled={pdfLoading}
@@ -324,7 +385,7 @@ function ManualClinicoContent() {
                   {pdfLoading
                     ? <Loader2 className="h-4 w-4 animate-spin" />
                     : <FileDown className="h-4 w-4" />}
-                  {pdfLoading ? 'Gerando PDF...' : isAuthenticated === true ? 'Baixar Manual Completo (PDF)' : 'Entrar para baixar o manual'}
+                  {pdfLoading ? 'Gerando PDF...' : manualAccess.hasFullAccess ? 'Baixar Manual Completo (PDF)' : isAuthenticated === true ? 'Comprar para baixar o manual' : 'Entrar para baixar o manual'}
                 </button>
 
                 {hasHighlights && (
@@ -406,8 +467,31 @@ function ManualClinicoContent() {
         </div>
       </div>
 
-      {/* ══════════ MAIN CONTENT ══════════ */}
+        {/* ══════════ MAIN CONTENT ══════════ */}
       <div className="container mx-auto px-4 py-8 max-w-6xl">
+        {!manualAccess.hasFullAccess && product?.isActive && (
+          <div className="mb-7 overflow-hidden rounded-2xl border border-amber-300/20 bg-gradient-to-r from-amber-400/10 via-white/[0.04] to-emerald-400/10 p-4 backdrop-blur-xl">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-3">
+                <div className="rounded-xl bg-amber-300/15 p-2 text-amber-300">
+                  <Crown className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold">{product.label}</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">{product.benefitText}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => isAuthenticated ? router.push('/manual-clinico/checkout') : router.push(`/auth/login?redirect=${encodeURIComponent('/manual-clinico/checkout')}`)}
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
+              >
+                {product.hasActivePromotion && <span className="text-primary-foreground/65 line-through">{formatBRL(product.price)}</span>}
+                {product.currentPrice <= 0 ? 'Liberar acesso' : `Desbloquear por ${formatBRL(product.currentPrice)}`}
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* ══════════ SISTEMAS GRID ══════════ */}
         {!busca && areasAtivas.length === 0 && !sistemaAtivo && (
@@ -501,15 +585,13 @@ function ManualClinicoContent() {
                 <div
                   key={patologia._id}
                   onClick={() => {
-                    if (isAuthenticated !== true) {
-                      router.push(`/auth/login?redirect=${encodeURIComponent(`/manual-clinico/${patologia.slug}`)}`)
-                      return
-                    }
                     router.push(`/manual-clinico/${patologia.slug}`)
                   }}
-                  className="group relative rounded-2xl border border-white/[0.06] bg-white/[0.02] dark:bg-white/[0.015]
+                  className={`group relative rounded-2xl border border-white/[0.06] bg-white/[0.02] dark:bg-white/[0.015]
                     hover:bg-white/[0.05] hover:border-white/[0.12] hover:shadow-[0_4px_24px_rgba(0,0,0,0.1)]
-                    backdrop-blur-sm transition-all duration-300 cursor-pointer overflow-hidden"
+                    backdrop-blur-sm transition-all duration-300 cursor-pointer overflow-hidden ${
+                      patologia.isPremiumLocked ? 'border-amber-300/15 bg-amber-400/[0.025]' : ''
+                    }`}
                   style={{ animationDelay: `${idx * 30}ms` }}
                 >
                   {/* Hover gradient accent */}
@@ -527,9 +609,23 @@ function ManualClinicoContent() {
                               {patologia.cid10}
                             </span>
                           )}
+                          {patologia.isFree ? (
+                            <span className="inline-flex items-center gap-1 rounded-md border border-emerald-300/25 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-emerald-600 dark:text-emerald-300">
+                              Gratuita
+                            </span>
+                          ) : patologia.isPremiumLocked ? (
+                            <span className="inline-flex items-center gap-1 rounded-md border border-amber-300/25 bg-amber-400/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-amber-700 dark:text-amber-200">
+                              <Lock className="h-3 w-3" />
+                              Premium
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 rounded-md border border-primary/25 bg-primary/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-primary">
+                              Premium liberado
+                            </span>
+                          )}
                         </div>
                         {patologia.sinonimos.length > 0 && (
-                          <p className="text-sm text-muted-foreground/60 mt-1 truncate">
+                          <p className={`text-sm text-muted-foreground/60 mt-1 truncate ${patologia.isPremiumLocked ? 'blur-[1px]' : ''}`}>
                             {patologia.sinonimos.join(' · ')}
                           </p>
                         )}
@@ -548,15 +644,17 @@ function ManualClinicoContent() {
                         </div>
                       </div>
                       <div className="flex-shrink-0 mt-2 p-1.5 rounded-lg bg-white/[0.04] group-hover:bg-primary/10 transition-colors duration-300">
-                        {isAuthenticated === true
+                        {patologia.isPremiumLocked
+                          ? <Lock className="h-4 w-4 text-amber-500/70 group-hover:text-amber-400 transition-all duration-300" />
+                          : isAuthenticated === true || patologia.isFree
                           ? <ArrowRight className="h-4 w-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-300" />
                           : <LogIn className="h-4 w-4 text-muted-foreground/40 group-hover:text-primary transition-all duration-300" />
                         }
                       </div>
                     </div>
-                    {isAuthenticated !== true && idx === 0 && (
-                      <div className="mt-3 rounded-xl border border-amber-300/30 bg-amber-500/10 px-3 py-2 text-xs font-medium text-amber-700 dark:text-amber-200">
-                        Está vendo o que você está perdendo? Entre para abrir a patologia completa, baixar o manual e estudar com marcações.
+                    {patologia.isPremiumLocked && (
+                      <div className="mt-3 rounded-xl border border-amber-300/25 bg-amber-500/10 px-3 py-2 text-xs font-medium text-amber-700 dark:text-amber-200">
+                        Preview disponível. Desbloqueie o Manual Clínico Premium para abrir a conduta completa.
                       </div>
                     )}
                   </div>

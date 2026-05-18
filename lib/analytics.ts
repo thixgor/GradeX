@@ -20,6 +20,7 @@ export type AnalyticsProductType =
   | 'subscription'
   | 'plan'
   | 'donation'
+  | 'product'
   | 'unknown'
 
 export interface CheckoutEventRecord {
@@ -126,6 +127,7 @@ export function inferOrderProductType(order: PaymentOrder): AnalyticsProductType
   if (order.type === 'donation') return 'donation'
   if (order.type === 'subscription') return 'subscription'
   if (order.type === 'plan') return 'plan'
+  if (order.type === 'product') return 'product'
   if (order.type === 'material') {
     if (order.metadata?.itemType === 'package') return 'package'
     if (order.metadata?.materialType === 'flashcard_deck' || order.refSlug || order.metadata?.linkedDeckSlug) {

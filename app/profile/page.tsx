@@ -526,16 +526,32 @@ export default function ProfilePage() {
                         )}
                       >
                         <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <ShoppingBag className="h-4 w-4 text-primary" />
+                          {p.itemType === 'manual_clinico'
+                            ? <BookOpen className="h-4 w-4 text-primary" />
+                            : <ShoppingBag className="h-4 w-4 text-primary" />
+                          }
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium truncate">{p.itemTitle}</p>
                           <p className="text-xs text-muted-foreground mt-0.5">
                             {new Date(p.purchasedAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })}
                             {' · '}
-                            <span className="capitalize">{p.itemType === 'package' ? 'Pacote' : 'Material'}</span>
+                            <span className="capitalize">
+                              {p.itemType === 'manual_clinico' ? 'Produto' : p.itemType === 'package' ? 'Pacote' : 'Material'}
+                            </span>
+                            {p.couponCode ? (
+                              <>
+                                {' · '}
+                                <span>Cupom {p.couponCode}</span>
+                              </>
+                            ) : null}
                           </p>
                         </div>
+                        {p.itemType === 'manual_clinico' && (
+                          <Button size="sm" variant="outline" className="hidden sm:inline-flex h-8 text-xs" onClick={() => router.push('/manual-clinico')}>
+                            Acessar Manual
+                          </Button>
+                        )}
                         <div className="text-right flex-shrink-0">
                           {p.price === 0 ? (
                             <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">Grátis</span>

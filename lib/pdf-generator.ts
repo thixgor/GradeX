@@ -1792,7 +1792,7 @@ export async function generateGroupPDF(
 export interface PurchaseReceiptItem {
   _id: string
   itemTitle: string
-  itemType: 'material' | 'package'
+  itemType: 'material' | 'package' | 'manual_clinico'
   price: number
   purchasedAt: string | Date
   status: string
@@ -1943,7 +1943,7 @@ export async function generatePurchaseReceiptPDF(
 
     const title = sanitizeForPdf(p.itemTitle)
     const titleLines = doc.splitTextToSize(title, 74)
-    const typeLabel = p.itemType === 'package' ? 'Pacote' : 'Material'
+    const typeLabel = p.itemType === 'manual_clinico' ? 'Produto' : p.itemType === 'package' ? 'Pacote' : 'Material'
     const dateStr = new Date(p.purchasedAt).toLocaleDateString('pt-BR', {
       day: '2-digit', month: '2-digit', year: 'numeric',
     })

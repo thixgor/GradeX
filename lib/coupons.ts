@@ -1,17 +1,18 @@
 import { Db, ObjectId } from 'mongodb'
-import type { MaterialPurchase, User } from '@/lib/types'
+import type { ManualClinicoPurchase, MaterialPurchase, User } from '@/lib/types'
+import { MANUAL_CLINICO_PURCHASES_COLLECTION } from '@/lib/manual-clinico-product'
 
 export type CouponDiscountType = 'percentage' | 'fixed'
 export type CouponScope = 'all' | 'materials' | 'flashcards' | 'specific'
 export type CouponDurationUnit = 'hours' | 'days' | 'weeks' | 'months'
-export type CouponProductType = 'material' | 'package'
+export type CouponProductType = 'material' | 'package' | 'manual_clinico'
 export type CouponRedemptionStatus = 'reserved' | 'approved' | 'released'
 
 export interface CouponProductRef {
   itemType: CouponProductType
   itemId: string
   title?: string
-  kind?: 'material' | 'flashcard' | 'package'
+  kind?: 'material' | 'flashcard' | 'package' | 'product'
 }
 
 export interface Coupon {
@@ -68,7 +69,7 @@ export interface CouponCheckoutItem {
 }
 
 export interface CouponRedemptionItem extends CouponCheckoutItem {
-  kind: 'material' | 'flashcard' | 'package'
+  kind: 'material' | 'flashcard' | 'package' | 'product'
   discountAmount: number
   amountAfterDiscount: number
 }
@@ -115,7 +116,8 @@ export function addCouponDuration(createdAt: Date, value: number, unit: CouponDu
   return expiresAt
 }
 
-export function getCouponItemKind(item: Pick<CouponCheckoutItem, 'itemType' | 'materialType'>): 'material' | 'flashcard' | 'package' {
+export function getCouponItemKind(item: Pick<CouponCheckoutItem, 'itemType' | 'materialType'>): 'material' | 'flashcard' | 'package' | 'product' {
+  if (item.itemType === 'manual_clinico') return 'product'
   if (item.itemType === 'package') return 'package'
   return item.materialType === 'flashcard_deck' ? 'flashcard' : 'material'
 }
@@ -336,12 +338,18 @@ async function validateUserCouponRules(
   if (coupon.firstPurchaseOnly) {
     const identityOr = buildUserIdentityOr(identity.userId, userEmail)
     if (identityOr.length === 0) throw new CouponError('Não foi possível validar a primeira compra deste usuário.')
-    const existingPurchase = await db.collection<MaterialPurchase>('material_purchases').findOne({
-      status: 'completed',
-      itemType: { $in: ['material', 'package'] },
-      $or: identityOr,
-    } as any)
-    if (existingPurchase) throw new CouponError('Este cupom é válido apenas para a primeira compra.')
+    const [existingMaterialPurchase, existingManualPurchase] = await Promise.all([
+      db.collection<MaterialPurchase>('material_purchases').findOne({
+        status: 'completed',
+        itemType: { $in: ['material', 'package'] },
+        $or: identityOr,
+      } as any),
+      db.collection<ManualClinicoPurchase>(MANUAL_CLINICO_PURCHASES_COLLECTION).findOne({
+        status: 'completed',
+        $or: identityOr,
+      } as any),
+    ])
+    if (existingMaterialPurchase || existingManualPurchase) throw new CouponError('Este cupom é válido apenas para a primeira compra.')
   }
 
   if (isCouponPerUserLimitEnabled(coupon)) {

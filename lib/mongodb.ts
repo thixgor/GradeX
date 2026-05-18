@@ -27,6 +27,10 @@ if (process.env.NODE_ENV === 'development') {
         db.collection('patologias').createIndex({ nome: 'text', sinonimos: 'text', cid10: 'text', classificacao: 'text', fisiopatologia: 'text' }, { default_language: 'portuguese', name: 'patologias_text_search' }),
         db.collection('patologias').createIndex({ areas: 1 }),
         db.collection('patologias').createIndex({ sistema: 1 }),
+        db.collection('manual_clinico_product_settings').createIndex({ productId: 1 }, { unique: true }),
+        db.collection('manual_clinico_purchases').createIndex({ userId: 1, productId: 1, status: 1 }),
+        db.collection('manual_clinico_purchases').createIndex({ userEmail: 1, productId: 1, status: 1 }),
+        db.collection('manual_clinico_purchases').createIndex({ providerOrderId: 1 }, { sparse: true }),
         // ── Analytics de checkout ──
         db.collection('checkout_events').createIndex({ event: 1, createdAt: -1 }),
         db.collection('checkout_events').createIndex({ userId: 1, createdAt: -1 }),
@@ -71,6 +75,10 @@ if (process.env.NODE_ENV === 'development') {
       db.collection('patologias').createIndex({ nome: 'text', sinonimos: 'text', cid10: 'text', classificacao: 'text', fisiopatologia: 'text' }, { default_language: 'portuguese', name: 'patologias_text_search' }),
       db.collection('patologias').createIndex({ areas: 1 }),
       db.collection('patologias').createIndex({ sistema: 1 }),
+      db.collection('manual_clinico_product_settings').createIndex({ productId: 1 }, { unique: true }),
+      db.collection('manual_clinico_purchases').createIndex({ userId: 1, productId: 1, status: 1 }),
+      db.collection('manual_clinico_purchases').createIndex({ userEmail: 1, productId: 1, status: 1 }),
+      db.collection('manual_clinico_purchases').createIndex({ providerOrderId: 1 }, { sparse: true }),
       // ── Pagamentos (Mercado Pago) ──
       db.collection('payment_orders').createIndex({ providerOrderId: 1 }, { sparse: true }),
       db.collection('payment_orders').createIndex({ userId: 1, createdAt: -1 }),

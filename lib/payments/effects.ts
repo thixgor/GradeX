@@ -25,6 +25,12 @@ import { audit } from './audit'
 import { recordOrderCheckoutEvent } from '../analytics'
 import { approveCouponRedemption, releaseCouponRedemption } from '../coupons'
 import { grantMaterialCartItems, type MaterialCartResolvedItem } from '../material-cart'
+import {
+  getManualClinicoConfig,
+  grantManualClinicoAccess,
+  MANUAL_CLINICO_PRODUCT_TYPE,
+  revokeManualClinicoAccessForOrder,
+} from '../manual-clinico-product'
 
 const TERMINAL_APPROVED: PaymentStatus[] = ['approved']
 const TERMINAL_FAILED: PaymentStatus[] = ['rejected', 'cancelled', 'expired', 'refunded', 'charged_back']
@@ -130,6 +136,9 @@ async function runApprovedEffects(order: PaymentOrder, result: ProviderOrder) {
       // Cobrança recorrente da preapproval — atualiza próxima cobrança
       await applySubscriptionPayment(order)
       break
+    case 'product':
+      await applyProductPurchase(order, result)
+      break
   }
 }
 
@@ -158,6 +167,10 @@ async function runRevocationEffects(order: PaymentOrder, newStatus: PaymentStatu
       { userId: order.userId, itemId: order.refId, providerOrderId: String(order._id) },
       { $set: { status: 'refunded', refundedAt: new Date() } }
     )
+  }
+  if (order.type === 'product' && order.metadata?.productType === MANUAL_CLINICO_PRODUCT_TYPE) {
+    const db = await getDb()
+    await revokeManualClinicoAccessForOrder(db, order)
   }
 }
 
@@ -412,6 +425,44 @@ async function applyDonationApproved(order: PaymentOrder, _result: ProviderOrder
       }
     }).catch(() => {})
   }
+}
+
+// ── Produto avulso: Manual Clínico ──
+
+async function applyProductPurchase(order: PaymentOrder, result?: ProviderOrder) {
+  if (!order.userId || order.metadata?.productType !== MANUAL_CLINICO_PRODUCT_TYPE) return
+
+  const db = await getDb()
+  const config = await getManualClinicoConfig(db)
+  const couponValidation = order.metadata?.couponId
+    ? {
+        couponId: String(order.metadata.couponId),
+        code: String(order.metadata.couponCode || ''),
+        discountAmount: Number(order.metadata.couponDiscountAmount || 0),
+      } as any
+    : null
+
+  await grantManualClinicoAccess(db, {
+    userId: order.userId,
+    userName: order.payerName || '',
+    userEmail: order.payerEmail || '',
+    config,
+    price: order.amount,
+    provider: 'mercado_pago',
+    providerOrderId: String(order._id),
+    providerPaymentId: result?.providerOrderId || order.providerPaymentId,
+    paymentMethod: result?.paymentMethod || order.paymentMethod,
+    couponValidation,
+    order,
+  })
+
+  await audit({
+    action: 'manual_clinico_unlocked',
+    targetUserId: order.userId,
+    resourceType: 'product',
+    resourceId: MANUAL_CLINICO_PRODUCT_TYPE,
+    metadata: { orderId: String(order._id), amount: order.amount },
+  })
 }
 
 // ── Pagamento recorrente (preapproval) ──

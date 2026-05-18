@@ -38,6 +38,9 @@ import {
   Share2,
   Check,
   Link2,
+  Lock,
+  Crown,
+  ArrowRight,
 } from 'lucide-react'
 import { type Patologia, type AreaSaude } from '@/lib/types/manual-clinico'
 import { FocusSessionButton } from '@/components/focus-session-button'
@@ -50,6 +53,35 @@ import {
   loadHighlights,
   saveHighlights,
 } from '@/lib/manual-clinico-highlights'
+
+interface ManualProduct {
+  label: string
+  benefitText: string
+  shortDescription: string
+  ctaText: string
+  coverImageUrl?: string
+  isActive: boolean
+  price: number
+  currentPrice: number
+  promotionalPrice: number | null
+  hasActivePromotion: boolean
+}
+
+interface ManualPatologiaResponse extends Patologia {
+  preview?: string
+  isFree?: boolean
+  isPremiumLocked?: boolean
+  accessStatus?: 'free' | 'premium_unlocked' | 'locked'
+  product?: ManualProduct
+  access?: {
+    hasFullAccess: boolean
+    reason: string
+  }
+}
+
+function formatBRL(value: number) {
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value || 0))
+}
 
 const AREA_BADGE: Record<AreaSaude, string> = {
   'Medicina': 'bg-blue-500/20 text-blue-300 border-blue-400/30',
@@ -102,6 +134,60 @@ function Section({ title, icon: Icon, children, defaultOpen = true, variant = 'd
           </div>
         </div>
       )}
+    </div>
+  )
+}
+
+function PremiumPreviewCard({ patologia, onCheckout }: { patologia: ManualPatologiaResponse; onCheckout: () => void }) {
+  const product = patologia.product
+
+  return (
+    <div className="relative overflow-hidden rounded-3xl border border-amber-300/20 bg-gradient-to-br from-amber-400/10 via-card/70 to-emerald-400/10 p-5 shadow-2xl shadow-black/10 backdrop-blur-xl sm:p-7">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_90%_10%,rgba(52,211,153,0.16),transparent_30%)]" />
+      <div className="relative">
+        <div className="mb-4 flex items-start gap-3">
+          <div className="rounded-2xl bg-amber-300/15 p-3 text-amber-300">
+            <Lock className="h-6 w-6" />
+          </div>
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.16em] text-amber-500">Conteúdo Premium</p>
+            <h2 className="mt-1 text-2xl font-black tracking-tight">Desbloqueie o Manual Clínico Premium</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+              {product?.shortDescription || 'Acesso completo a 220+ patologias aprofundadas com diagnóstico, tratamento, diferenciais, farmacologia e fluxogramas.'}
+            </p>
+          </div>
+        </div>
+
+        {patologia.preview ? (
+          <div className="mb-5 rounded-2xl border border-white/10 bg-background/45 p-4">
+            <p className="mb-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">Preview</p>
+            <RichTextRenderer text={patologia.preview} className="text-sm leading-relaxed text-foreground/80" />
+            <div className="mt-4 h-16 rounded-xl bg-gradient-to-b from-transparent to-background/80 blur-[0.2px]" />
+          </div>
+        ) : null}
+
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-bold">{product?.benefitText || 'Acesso completo a patologias aprofundadas'}</p>
+            {product?.isActive && (
+              <p className="mt-1 text-sm text-muted-foreground">
+                {product.hasActivePromotion && <span className="mr-2 line-through">{formatBRL(product.price)}</span>}
+                <span className="font-black text-primary">{product.currentPrice <= 0 ? 'Grátis' : formatBRL(product.currentPrice)}</span>
+              </p>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={onCheckout}
+            disabled={!product?.isActive}
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-black text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <Crown className="h-4 w-4" />
+            {product?.isActive ? (product.ctaText || 'Desbloquear Manual Clínico Premium') : 'Produto indisponível'}
+            <ArrowRight className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
     </div>
   )
 }
@@ -1382,7 +1468,7 @@ function SectionNav({ sections, media = [], slug }: { sections: SectionEntry[]; 
    ═══════════════════════════════════════════ */
 export default function PatologiaPage() {
   return (
-    <AppShell showHeader={false}>
+    <AppShell allowGuest showHeader={false}>
       <PatologiaContent />
     </AppShell>
   )
@@ -1396,7 +1482,7 @@ function PatologiaContent() {
   const router = useRouter()
   const slug = params.slug as string
 
-  const [patologia, setPatologia] = useState<Patologia | null>(null)
+  const [patologia, setPatologia] = useState<ManualPatologiaResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [farmaTab, setFarmaTab] = useState<'primeira' | 'segunda' | 'terceira'>('primeira')
   const [lightbox, setLightbox] = useState<{ src: string; alt: string; caption?: string } | null>(null)
@@ -1587,41 +1673,54 @@ function PatologiaContent() {
               </div>
 
               {/* PDF download */}
-              <Button
-                size="sm"
-                disabled={!!pdfProgress}
-                onClick={async () => {
-                  try {
-                    setPdfProgress({ label: 'Iniciando…', pct: 0 })
-                    const { generatePatologiaPDF } = await import('@/lib/patologia-pdf-generator')
-                    const blob = await generatePatologiaPDF(patologia, (label, pct) => {
-                      setPdfProgress({ label, pct })
-                    })
-                    const url = URL.createObjectURL(blob)
-                    const a = document.createElement('a')
-                    a.href = url
-                    a.download = `${patologia.slug || 'patologia'}.pdf`
-                    a.click()
-                    URL.revokeObjectURL(url)
-                    fetch('/api/track/download', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'patologia_pdf', resourceId: patologia.slug, resourceTitle: patologia.nome }) }).catch(() => {})
-                  } finally {
-                    setPdfProgress(null)
-                  }
-                }}
-                className="rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
-              >
-                {pdfProgress ? (
-                  <>
-                    <Activity className="h-4 w-4 mr-2 animate-pulse" />
-                    {pdfProgress.pct}%
-                  </>
-                ) : (
-                  <>
-                    <Download className="h-4 w-4 mr-2" />
-                    Baixar PDF
-                  </>
-                )}
-              </Button>
+              {!patologia.isPremiumLocked && (
+                <Button
+                  size="sm"
+                  disabled={!!pdfProgress}
+                  onClick={async () => {
+                    try {
+                      setPdfProgress({ label: 'Iniciando...', pct: 0 })
+                      const { generatePatologiaPDF } = await import('@/lib/patologia-pdf-generator')
+                      const blob = await generatePatologiaPDF(patologia, (label, pct) => {
+                        setPdfProgress({ label, pct })
+                      })
+                      setPdfProgress({ label: 'Aplicando marca d agua...', pct: 98 })
+                      const watermarkedRes = await fetch(`/api/manual-clinico/pdf-watermark?mode=single&slug=${encodeURIComponent(patologia.slug)}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/pdf' },
+                        body: blob,
+                      })
+                      if (watermarkedRes.status === 401) {
+                        router.push(`/auth/login?redirect=${encodeURIComponent(`/manual-clinico/${patologia.slug}`)}`)
+                        return
+                      }
+                      const finalBlob = watermarkedRes.ok ? await watermarkedRes.blob() : blob
+                      const url = URL.createObjectURL(finalBlob)
+                      const a = document.createElement('a')
+                      a.href = url
+                      a.download = `${patologia.slug || 'patologia'}.pdf`
+                      a.click()
+                      URL.revokeObjectURL(url)
+                      fetch('/api/track/download', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'patologia_pdf', resourceId: patologia.slug, resourceTitle: patologia.nome }) }).catch(() => {})
+                    } finally {
+                      setPdfProgress(null)
+                    }
+                  }}
+                  className="rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
+                >
+                  {pdfProgress ? (
+                    <>
+                      <Activity className="h-4 w-4 mr-2 animate-pulse" />
+                      {pdfProgress.pct}%
+                    </>
+                  ) : (
+                    <>
+                      <Download className="h-4 w-4 mr-2" />
+                      Baixar PDF
+                    </>
+                  )}
+                </Button>
+              )}
             </div>
           </div>
 
@@ -1663,6 +1762,19 @@ function PatologiaContent() {
            SECTIONS
          ══════════════════════════════════════ */}
       <div className="container mx-auto px-4 sm:px-6 py-6 max-w-4xl">
+        {patologia.isPremiumLocked && (
+          <PremiumPreviewCard
+            patologia={patologia}
+            onCheckout={() => {
+              if (patologia.access?.reason === 'guest') {
+                router.push(`/auth/login?redirect=${encodeURIComponent('/manual-clinico/checkout')}`)
+                return
+              }
+              router.push('/manual-clinico/checkout')
+            }}
+          />
+        )}
+
         <div className="flex flex-col gap-3">
 
           {patologia.classificacao && (

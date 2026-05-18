@@ -14,6 +14,7 @@ export type AuditAction =
   | 'subscription_renewed'
   | 'subscription_expired'
   | 'material_unlocked'
+  | 'manual_clinico_unlocked'
   | 'donation_approved'
 
 export interface AuditLogEntry {

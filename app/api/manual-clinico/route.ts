@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { buildManualClinicoSearchFilter, rankManualClinicoResults } from '@/lib/manual-clinico-search'
+import {
+  getManualClinicoAccess,
+  getManualClinicoConfig,
+  getManualClinicoFreeSlugSet,
+  isManualClinicoPathologyFree,
+  serializeManualClinicoProduct,
+} from '@/lib/manual-clinico-product'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,18 +24,24 @@ export async function GET(request: NextRequest) {
     const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 50)
     const skip = (page - 1) * limit
 
-    if (exportAll) {
-      const session = await getSession()
-      if (!session) {
-        return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
-      }
-    }
+    const session = await getSession()
 
     const db = await getDb()
+    const [config, access] = await Promise.all([
+      getManualClinicoConfig(db),
+      getManualClinicoAccess(db, session),
+    ])
+    const freeSlugs = await getManualClinicoFreeSlugSet(db, config)
     const filter: any = {}
 
     // Export mode: return all pathologies with full data (for PDF generation)
     if (exportAll) {
+      if (!session) {
+        return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
+      }
+      if (!access.hasFullAccess) {
+        return NextResponse.json({ error: 'Acesso premium necessario para exportar o Manual Clinico completo.' }, { status: 403 })
+      }
       const patologias = await db
         .collection('patologias')
         .find(filter)
@@ -82,11 +95,27 @@ export async function GET(request: NextRequest) {
       total = count
     }
 
+    const serialized = patologias.map((patologia) => {
+      const isFree = isManualClinicoPathologyFree(patologia, freeSlugs)
+      const unlocked = access.hasFullAccess || isFree
+      return {
+        ...patologia,
+        isFree,
+        isPremiumLocked: !unlocked,
+        accessStatus: unlocked ? (isFree ? 'free' : 'premium_unlocked') : 'locked',
+      }
+    })
+
     return NextResponse.json({
-      patologias,
+      patologias: serialized,
       total,
       page,
-      totalPages: Math.ceil(total / limit)
+      totalPages: Math.ceil(total / limit),
+      product: serializeManualClinicoProduct(config),
+      access: {
+        hasFullAccess: access.hasFullAccess,
+        reason: access.reason,
+      },
     })
   } catch (error) {
     console.error('Erro ao buscar patologias:', error)

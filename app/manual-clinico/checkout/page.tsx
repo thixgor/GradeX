@@ -1,0 +1,364 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { ArrowLeft, BookOpen, Check, Lock, Loader2, Percent, Sparkles, X } from 'lucide-react'
+import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
+
+const MANUAL_CLINICO_PRODUCT_ID = 'manual-clinico-premium'
+
+interface ProductInfo {
+  productId: string
+  label: string
+  benefitText: string
+  shortDescription: string
+  ctaText: string
+  coverImageUrl?: string
+  isActive: boolean
+  price: number
+  currentPrice: number
+  promotionalPrice: number | null
+  promotionEndsAt: string | null
+  hasActivePromotion: boolean
+  allowCoupons: boolean
+  lifetimeAccess: boolean
+}
+
+interface AppliedCoupon {
+  couponId: string
+  code: string
+  label: string
+  amountBeforeCoupon: number
+  eligibleAmount: number
+  discountAmount: number
+  amountAfterCoupon: number
+}
+
+const currency = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
+
+function formatBRL(value: number) {
+  return currency.format(Number(value || 0))
+}
+
+function CouponBox({
+  product,
+  appliedCoupon,
+  onApplied,
+  onRemoved,
+}: {
+  product: ProductInfo
+  appliedCoupon: AppliedCoupon | null
+  onApplied: (coupon: AppliedCoupon) => void
+  onRemoved: () => void
+}) {
+  const [code, setCode] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  async function applyCoupon() {
+    const normalized = code.trim()
+    if (!normalized) return
+    setLoading(true)
+    setError('')
+    try {
+      const res = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: normalized,
+          itemType: 'manual_clinico',
+          itemId: MANUAL_CLINICO_PRODUCT_ID,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Cupom invalido')
+      setCode(data.code || normalized.toUpperCase())
+      onApplied(data)
+    } catch (err: any) {
+      setError(err?.message || 'Erro ao aplicar cupom')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (!product.allowCoupons) {
+    return (
+      <div className="rounded-xl border border-white/10 bg-white/[0.04] p-4 text-sm text-white/55">
+        Cupons nao estao habilitados para este produto.
+      </div>
+    )
+  }
+
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/[0.055] p-4 backdrop-blur-xl">
+      <div className="mb-3 flex items-center gap-2 text-sm font-bold text-white/75">
+        <Percent className="h-4 w-4 text-emerald-300" />
+        Cupom de desconto
+      </div>
+
+      {appliedCoupon ? (
+        <div className="space-y-3">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="font-black text-emerald-300">{appliedCoupon.code} aplicado</p>
+              <p className="text-xs text-white/50">
+                {formatBRL(appliedCoupon.discountAmount)} de desconto
+              </p>
+            </div>
+            <span className="rounded-full bg-emerald-300/15 px-3 py-1 text-xs font-black text-emerald-200">
+              {appliedCoupon.label}
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setCode('')
+              setError('')
+              onRemoved()
+            }}
+            className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-red-300/20 bg-red-400/10 text-sm font-bold text-red-200 transition hover:bg-red-400/15"
+          >
+            <X className="h-4 w-4" />
+            Remover cupom
+          </button>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          <div className="flex gap-2">
+            <input
+              value={code}
+              onChange={(event) => {
+                setCode(event.target.value.toUpperCase())
+                setError('')
+              }}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') applyCoupon()
+              }}
+              disabled={loading || product.currentPrice <= 0}
+              className="h-10 min-w-0 flex-1 rounded-xl border border-white/10 bg-black/25 px-3 text-sm font-bold uppercase text-white outline-none transition focus:border-emerald-300/50"
+              placeholder="Digite seu cupom"
+            />
+            <button
+              type="button"
+              onClick={applyCoupon}
+              disabled={loading || !code.trim() || product.currentPrice <= 0}
+              className="inline-flex h-10 items-center gap-2 rounded-xl bg-emerald-300 px-4 text-sm font-black text-emerald-950 transition hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+              Aplicar
+            </button>
+          </div>
+          {error ? <p className="text-xs font-semibold text-red-300">{error}</p> : null}
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default function ManualClinicoCheckoutPage() {
+  const router = useRouter()
+  const [product, setProduct] = useState<ProductInfo | null>(null)
+  const [publicKey, setPublicKey] = useState('')
+  const [hasFullAccess, setHasFullAccess] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null)
+  const [freeLoading, setFreeLoading] = useState(false)
+
+  useEffect(() => {
+    Promise.all([
+      fetch('/api/manual-clinico/product', { cache: 'no-store' }).then((res) => res.json()),
+      fetch('/api/payments/public-key').then((res) => res.json()),
+    ])
+      .then(([productResp, keyResp]) => {
+        if (productResp?.error) throw new Error(productResp.error)
+        setProduct(productResp.product)
+        setHasFullAccess(!!productResp.access?.hasFullAccess)
+        setPublicKey(keyResp.publicKey || '')
+      })
+      .catch((err: any) => setError(err?.message || 'Erro ao carregar checkout'))
+      .finally(() => setLoading(false))
+  }, [])
+
+  async function unlockFree() {
+    setFreeLoading(true)
+    setError('')
+    try {
+      const res = await fetch('/api/manual-clinico/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paymentMethodId: 'free', couponCode: appliedCoupon?.code }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erro ao liberar acesso')
+      window.location.href = data.successRedirect || '/manual-clinico?purchase=success'
+    } catch (err: any) {
+      setError(err?.message || 'Erro ao liberar acesso')
+    } finally {
+      setFreeLoading(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#04130b] text-emerald-200">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    )
+  }
+
+  if (error || !product) {
+    return (
+      <div className="min-h-screen bg-[#04130b] px-4 py-8 text-white">
+        <div className="mx-auto max-w-xl rounded-2xl border border-red-300/20 bg-red-400/10 p-6 text-red-100">
+          {error || 'Produto indisponivel.'}
+        </div>
+      </div>
+    )
+  }
+
+  if (hasFullAccess) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#04130b] px-4 text-white">
+        <div className="max-w-md rounded-3xl border border-emerald-300/20 bg-white/[0.07] p-8 text-center backdrop-blur-2xl">
+          <Check className="mx-auto mb-4 h-10 w-10 text-emerald-300" />
+          <h1 className="text-2xl font-black">Manual ja desbloqueado</h1>
+          <p className="mt-2 text-sm text-white/55">Sua conta ja possui acesso completo.</p>
+          <button
+            onClick={() => router.push('/manual-clinico')}
+            className="mt-6 h-11 rounded-xl bg-emerald-300 px-5 text-sm font-black text-emerald-950"
+          >
+            Acessar Manual Clinico
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  const payableAmount = appliedCoupon ? appliedCoupon.amountAfterCoupon : product.currentPrice
+
+  return (
+    <div className="min-h-screen overflow-hidden bg-[#031109] px-4 py-6 text-white">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(52,211,153,0.16),transparent_32%),radial-gradient(circle_at_84%_16%,rgba(226,164,62,0.13),transparent_28%)]" />
+      <div className="relative mx-auto max-w-6xl">
+        <button
+          onClick={() => router.push('/manual-clinico')}
+          className="mb-6 inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-semibold text-white/65 backdrop-blur-xl transition hover:bg-white/[0.08] hover:text-white"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Voltar ao Manual
+        </button>
+
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+          <div className="rounded-3xl border border-white/10 bg-white/[0.07] p-5 shadow-2xl shadow-black/20 backdrop-blur-2xl sm:p-7">
+            <div className="relative mb-5 overflow-hidden rounded-2xl border border-white/10">
+              {product.coverImageUrl ? (
+                <img src={product.coverImageUrl} alt="" className="h-48 w-full object-cover opacity-80" />
+              ) : (
+                <div className="h-48 bg-emerald-400/10" />
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#031109] via-[#031109]/15 to-transparent" />
+              <div className="absolute bottom-4 left-4 flex items-center gap-2 rounded-full border border-white/10 bg-black/35 px-3 py-1.5 text-xs font-black uppercase tracking-wide backdrop-blur-xl">
+                <Sparkles className="h-3.5 w-3.5 text-amber-200" />
+                Produto avulso
+              </div>
+            </div>
+
+            <div className="mb-5 flex items-start gap-3">
+              <div className="rounded-2xl bg-emerald-300/15 p-3 text-emerald-200">
+                <BookOpen className="h-6 w-6" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-black tracking-tight sm:text-3xl">{product.label}</h1>
+                <p className="mt-2 text-sm leading-relaxed text-white/58">{product.shortDescription}</p>
+              </div>
+            </div>
+
+            <div className="grid gap-2 text-sm text-white/70">
+              {[
+                product.benefitText,
+                'Diagnostico, tratamento, diferenciais, farmacologia e fluxogramas',
+                product.lifetimeAccess ? 'Acesso vitalicio liberado apos pagamento aprovado' : 'Acesso temporario conforme configuracao',
+              ].map((item) => (
+                <div key={item} className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5">
+                  <Check className="h-4 w-4 text-emerald-300" />
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-5 rounded-2xl border border-emerald-300/15 bg-emerald-300/10 p-4">
+              <p className="text-xs font-bold uppercase tracking-wide text-white/45">Total</p>
+              {product.hasActivePromotion && (
+                <p className="mt-1 text-sm font-bold text-white/40 line-through">{formatBRL(product.price)}</p>
+              )}
+              <p className="text-4xl font-black text-emerald-200">
+                {payableAmount <= 0 ? 'Gratis' : formatBRL(payableAmount)}
+              </p>
+              {appliedCoupon ? (
+                <p className="mt-1 text-xs font-bold text-emerald-200">
+                  Cupom {appliedCoupon.code}: - {formatBRL(appliedCoupon.discountAmount)}
+                </p>
+              ) : null}
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-white/10 bg-white/[0.07] p-5 shadow-2xl shadow-black/20 backdrop-blur-2xl sm:p-7">
+            {!product.isActive ? (
+              <div className="flex flex-col items-center justify-center py-16 text-center">
+                <Lock className="mb-4 h-10 w-10 text-white/35" />
+                <h2 className="text-xl font-black">Produto indisponivel</h2>
+                <p className="mt-2 text-sm text-white/55">A compra do Manual Clinico Premium esta pausada no momento.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <CouponBox
+                  product={product}
+                  appliedCoupon={appliedCoupon}
+                  onApplied={setAppliedCoupon}
+                  onRemoved={() => setAppliedCoupon(null)}
+                />
+
+                {payableAmount <= 0 ? (
+                  <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-6 text-center">
+                    <Check className="mx-auto mb-3 h-9 w-9 text-emerald-300" />
+                    <h2 className="text-xl font-black">Acesso gratuito</h2>
+                    <p className="mt-2 text-sm text-white/55">Confirme para liberar o Manual Clinico Premium na sua conta.</p>
+                    <button
+                      onClick={unlockFree}
+                      disabled={freeLoading}
+                      className="mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald-300 text-sm font-black text-emerald-950 transition hover:bg-emerald-200 disabled:opacity-60"
+                    >
+                      {freeLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                      Liberar acesso
+                    </button>
+                  </div>
+                ) : (
+                  <MercadoPagoCheckout
+                    key={`manual-${payableAmount}-${appliedCoupon?.code || 'sem-cupom'}`}
+                    publicKey={publicKey}
+                    amount={payableAmount}
+                    description={product.label}
+                    endpoint="/api/manual-clinico/checkout"
+                    extraBody={{ couponCode: appliedCoupon?.code }}
+                    analytics={{
+                      productId: MANUAL_CLINICO_PRODUCT_ID,
+                      productTitle: product.label,
+                      productType: 'product',
+                      source: 'Manual Clinico',
+                    }}
+                    onApproved={(resp) => {
+                      setTimeout(() => {
+                        window.location.href = resp.successRedirect || '/manual-clinico?purchase=success'
+                      }, 1200)
+                    }}
+                  />
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

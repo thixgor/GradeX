@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { getDb } from '@/lib/mongodb'
-import { DEFAULT_OG_IMAGE, joinSeoParts, privateNoIndexRobots, sanitizeSeoText } from '@/lib/seo'
+import { DEFAULT_OG_IMAGE, joinSeoParts, publicIndexingRobots, sanitizeSeoText } from '@/lib/seo'
 
 const MANUAIS_DESCRIPTION =
   'Manual Clínico da DomineAqui: fisiopatologia, diagnóstico, tratamento e farmacologia organizados para fixação cognitiva.'
@@ -11,7 +11,7 @@ export async function generateMetadata(
   const fallback: Metadata = {
     title: 'Manual Clínico',
     description: MANUAIS_DESCRIPTION,
-    robots: privateNoIndexRobots,
+    robots: publicIndexingRobots,
     alternates: {
       canonical: params?.slug ? `/manual-clinico/${params.slug}` : '/manual-clinico',
     },
@@ -62,7 +62,7 @@ export async function generateMetadata(
     return {
       title,
       description,
-      robots: privateNoIndexRobots,
+      robots: publicIndexingRobots,
       alternates: { canonical: `/manual-clinico/${params.slug}` },
       openGraph: {
         title: `${title} — Manual Clínico | DomineAqui`,

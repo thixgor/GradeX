@@ -16,10 +16,10 @@ export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
 const ProductRefSchema = z.object({
-  itemType: z.enum(['material', 'package']),
+  itemType: z.enum(['material', 'package', 'manual_clinico']),
   itemId: z.string().min(1),
   title: z.string().optional(),
-  kind: z.enum(['material', 'flashcard', 'package']).optional(),
+  kind: z.enum(['material', 'flashcard', 'package', 'product']).optional(),
 })
 
 const AllowedAfyaUnitsSchema = z.array(z.string())

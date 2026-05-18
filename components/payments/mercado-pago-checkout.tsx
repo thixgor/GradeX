@@ -60,7 +60,7 @@ export interface MercadoPagoCheckoutProps {
   analytics?: {
     productId?: string
     productTitle?: string
-    productType?: 'material' | 'flashcard' | 'package' | 'subscription' | 'plan' | 'donation' | 'unknown'
+    productType?: 'material' | 'flashcard' | 'package' | 'subscription' | 'plan' | 'donation' | 'product' | 'unknown'
     source?: string
   }
 }

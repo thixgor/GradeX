@@ -18,7 +18,11 @@ import {
   ChevronRight,
   AlertCircle,
   BookOpen,
-  X
+  X,
+  Save,
+  Crown,
+  Users,
+  Loader2
 } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 import { AREAS_SAUDE, SISTEMAS_FISIOLOGICOS, type AreaSaude } from '@/lib/types/manual-clinico'
@@ -28,6 +32,49 @@ const AREA_COLORS: Record<AreaSaude, string> = {
   'Psicologia': 'bg-purple-500 text-white',
   'Odontologia': 'bg-emerald-500 text-white',
   'Biomedicina': 'bg-orange-500 text-white',
+}
+
+type ManualProductConfigForm = {
+  label: string
+  benefitText: string
+  shortDescription: string
+  ctaText: string
+  coverImageUrl: string
+  isActive: boolean
+  price: number
+  promotionalPrice: number | null
+  promotionEndsAt: string
+  allowCoupons: boolean
+  lifetimeAccess: boolean
+  freeAccessMode: 'quantity' | 'list'
+  freeQuantity: number
+  freePathologySlugs: string[]
+}
+
+function emptyProductConfig(): ManualProductConfigForm {
+  return {
+    label: 'Manual Clinico Premium',
+    benefitText: 'Desbloqueie 220+ patologias aprofundadas',
+    shortDescription: 'Diagnostico, tratamento, diferenciais, farmacologia e fluxogramas em um so lugar.',
+    ctaText: 'Desbloquear Manual Clinico Premium',
+    coverImageUrl: '',
+    isActive: true,
+    price: 49.9,
+    promotionalPrice: 29.9,
+    promotionEndsAt: '',
+    allowCoupons: true,
+    lifetimeAccess: true,
+    freeAccessMode: 'quantity',
+    freeQuantity: 5,
+    freePathologySlugs: [],
+  }
+}
+
+function toDatetimeLocal(value?: string | null) {
+  if (!value) return ''
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return ''
+  return date.toISOString().slice(0, 16)
 }
 
 export default function AdminManualClinico() {
@@ -42,6 +89,13 @@ export default function AdminManualClinico() {
   const [loading, setLoading] = useState(true)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
+  const [productConfig, setProductConfig] = useState<ManualProductConfigForm>(emptyProductConfig)
+  const [productStats, setProductStats] = useState({ pathologyCount: 0, freeCount: 0, lockedCount: 0, buyerCount: 0, currentPrice: 0 })
+  const [productLoading, setProductLoading] = useState(true)
+  const [productSaving, setProductSaving] = useState(false)
+  const [productMessage, setProductMessage] = useState('')
+  const [grantEmail, setGrantEmail] = useState('')
+  const [grantLoading, setGrantLoading] = useState(false)
 
   const fetchPatologias = useCallback(async () => {
     setLoading(true)
@@ -64,6 +118,41 @@ export default function AdminManualClinico() {
       setLoading(false)
     }
   }, [busca, areaFiltro, sistemaFiltro, page])
+
+  const fetchProductConfig = useCallback(async () => {
+    setProductLoading(true)
+    try {
+      const res = await fetch('/api/admin/manual-clinico/product', { cache: 'no-store' })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erro ao carregar produto')
+      const cfg = data.config
+      setProductConfig({
+        label: cfg.label || '',
+        benefitText: cfg.benefitText || '',
+        shortDescription: cfg.shortDescription || '',
+        ctaText: cfg.ctaText || '',
+        coverImageUrl: cfg.coverImageUrl || '',
+        isActive: cfg.isActive !== false,
+        price: Number(cfg.price || 0),
+        promotionalPrice: cfg.promotionalPrice == null ? null : Number(cfg.promotionalPrice),
+        promotionEndsAt: toDatetimeLocal(cfg.promotionEndsAt),
+        allowCoupons: cfg.allowCoupons !== false,
+        lifetimeAccess: cfg.lifetimeAccess !== false,
+        freeAccessMode: cfg.freeAccessMode === 'list' ? 'list' : 'quantity',
+        freeQuantity: Number(cfg.freeQuantity || 0),
+        freePathologySlugs: Array.isArray(cfg.freePathologySlugs) ? cfg.freePathologySlugs : [],
+      })
+      setProductStats(data.stats || { pathologyCount: 0, freeCount: 0, lockedCount: 0, buyerCount: 0, currentPrice: 0 })
+    } catch (error: any) {
+      setProductMessage(error?.message || 'Erro ao carregar configuracao do produto')
+    } finally {
+      setProductLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchProductConfig()
+  }, [fetchProductConfig])
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -91,6 +180,65 @@ export default function AdminManualClinico() {
       setDeleting(false)
       setDeleteId(null)
     }
+  }
+
+  async function handleSaveProduct() {
+    setProductSaving(true)
+    setProductMessage('')
+    try {
+      const payload = {
+        ...productConfig,
+        promotionalPrice: productConfig.promotionalPrice === null || Number.isNaN(Number(productConfig.promotionalPrice))
+          ? null
+          : Number(productConfig.promotionalPrice),
+        promotionEndsAt: productConfig.promotionEndsAt || null,
+      }
+      const res = await fetch('/api/admin/manual-clinico/product', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erro ao salvar produto')
+      setProductMessage('Configuracao salva.')
+      await fetchProductConfig()
+      await fetchPatologias()
+    } catch (error: any) {
+      setProductMessage(error?.message || 'Erro ao salvar produto')
+    } finally {
+      setProductSaving(false)
+    }
+  }
+
+  async function handleGrantAccess() {
+    if (!grantEmail.trim()) return
+    setGrantLoading(true)
+    setProductMessage('')
+    try {
+      const res = await fetch('/api/admin/manual-clinico/access', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: grantEmail.trim() }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erro ao liberar acesso')
+      setGrantEmail('')
+      setProductMessage('Acesso liberado para o usuario.')
+      await fetchProductConfig()
+    } catch (error: any) {
+      setProductMessage(error?.message || 'Erro ao liberar acesso')
+    } finally {
+      setGrantLoading(false)
+    }
+  }
+
+  function toggleFreePathology(slug: string) {
+    setProductConfig((current) => {
+      const selected = new Set(current.freePathologySlugs)
+      if (selected.has(slug)) selected.delete(slug)
+      else selected.add(slug)
+      return { ...current, freePathologySlugs: Array.from(selected) }
+    })
   }
 
   async function handleExport() {
@@ -154,6 +302,163 @@ export default function AdminManualClinico() {
   return (
     <AppShell headerTitle="Manual Clínico" headerSubtitle="Gerenciar patologias">
       <div className="container mx-auto px-4 py-8 max-w-6xl">
+        <Card className="mb-6 overflow-hidden border-primary/15 bg-card/80 backdrop-blur">
+          <CardContent className="p-5 sm:p-6">
+            <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <h2 className="flex items-center gap-2 text-2xl font-bold">
+                  <Crown className="h-6 w-6 text-primary" />
+                  Produto Freemium
+                </h2>
+                <p className="text-sm text-muted-foreground">Configure preco, promocao, paywall e patologias gratuitas.</p>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-center sm:grid-cols-4">
+                <div className="rounded-xl border bg-muted/30 px-3 py-2">
+                  <p className="text-lg font-black">{productStats.pathologyCount}</p>
+                  <p className="text-[10px] uppercase text-muted-foreground">Patologias</p>
+                </div>
+                <div className="rounded-xl border bg-emerald-500/10 px-3 py-2 text-emerald-700 dark:text-emerald-300">
+                  <p className="text-lg font-black">{productStats.freeCount}</p>
+                  <p className="text-[10px] uppercase">Gratuitas</p>
+                </div>
+                <div className="rounded-xl border bg-amber-500/10 px-3 py-2 text-amber-700 dark:text-amber-300">
+                  <p className="text-lg font-black">{productStats.lockedCount}</p>
+                  <p className="text-[10px] uppercase">Premium</p>
+                </div>
+                <div className="rounded-xl border bg-primary/10 px-3 py-2 text-primary">
+                  <p className="text-lg font-black">{productStats.buyerCount}</p>
+                  <p className="text-[10px] uppercase">Compradores</p>
+                </div>
+              </div>
+            </div>
+
+            {productMessage && (
+              <div className="mb-4 rounded-xl border border-primary/20 bg-primary/10 px-3 py-2 text-sm font-medium text-primary">
+                {productMessage}
+              </div>
+            )}
+
+            {productLoading ? (
+              <div className="flex items-center justify-center py-10 text-sm text-muted-foreground">
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Carregando configuracao...
+              </div>
+            ) : (
+              <div className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
+                <div className="space-y-4">
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <label className="text-sm font-medium">
+                      Label comercial
+                      <Input className="mt-1" value={productConfig.label} onChange={e => setProductConfig(c => ({ ...c, label: e.target.value }))} />
+                    </label>
+                    <label className="text-sm font-medium">
+                      CTA
+                      <Input className="mt-1" value={productConfig.ctaText} onChange={e => setProductConfig(c => ({ ...c, ctaText: e.target.value }))} />
+                    </label>
+                  </div>
+
+                  <label className="block text-sm font-medium">
+                    Texto de beneficio
+                    <Input className="mt-1" value={productConfig.benefitText} onChange={e => setProductConfig(c => ({ ...c, benefitText: e.target.value }))} />
+                  </label>
+
+                  <label className="block text-sm font-medium">
+                    Descricao curta
+                    <Input className="mt-1" value={productConfig.shortDescription} onChange={e => setProductConfig(c => ({ ...c, shortDescription: e.target.value }))} />
+                  </label>
+
+                  <label className="block text-sm font-medium">
+                    URL da capa
+                    <Input className="mt-1" value={productConfig.coverImageUrl} onChange={e => setProductConfig(c => ({ ...c, coverImageUrl: e.target.value }))} placeholder="https://..." />
+                  </label>
+
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    <label className="text-sm font-medium">
+                      Preco base
+                      <Input type="number" min="0" step="0.01" className="mt-1" value={productConfig.price} onChange={e => setProductConfig(c => ({ ...c, price: Number(e.target.value) }))} />
+                    </label>
+                    <label className="text-sm font-medium">
+                      Preco promocional
+                      <Input type="number" min="0" step="0.01" className="mt-1" value={productConfig.promotionalPrice ?? ''} onChange={e => setProductConfig(c => ({ ...c, promotionalPrice: e.target.value === '' ? null : Number(e.target.value) }))} placeholder="Opcional" />
+                    </label>
+                    <label className="text-sm font-medium">
+                      Fim da promocao
+                      <Input type="datetime-local" className="mt-1" value={productConfig.promotionEndsAt} onChange={e => setProductConfig(c => ({ ...c, promotionEndsAt: e.target.value }))} />
+                    </label>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="rounded-2xl border bg-muted/25 p-4">
+                    <p className="mb-3 text-sm font-bold">Regras do produto</p>
+                    <div className="space-y-2 text-sm">
+                      {[
+                        ['Produto ativo', 'isActive'],
+                        ['Permitir cupom', 'allowCoupons'],
+                        ['Acesso vitalicio', 'lifetimeAccess'],
+                      ].map(([label, key]) => (
+                        <label key={key} className="flex items-center justify-between gap-3 rounded-xl border bg-background px-3 py-2">
+                          <span>{label}</span>
+                          <input
+                            type="checkbox"
+                            checked={(productConfig as any)[key]}
+                            onChange={e => setProductConfig(c => ({ ...c, [key]: e.target.checked } as ManualProductConfigForm))}
+                          />
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl border bg-muted/25 p-4">
+                    <p className="mb-3 text-sm font-bold">Freemium</p>
+                    <select
+                      className="mb-3 h-10 w-full rounded-md border bg-background px-3 text-sm"
+                      value={productConfig.freeAccessMode}
+                      onChange={e => setProductConfig(c => ({ ...c, freeAccessMode: e.target.value as 'quantity' | 'list' }))}
+                    >
+                      <option value="quantity">Liberar primeiras N patologias</option>
+                      <option value="list">Liberar lista selecionada</option>
+                    </select>
+                    {productConfig.freeAccessMode === 'quantity' ? (
+                      <label className="text-sm font-medium">
+                        Quantidade gratuita
+                        <Input type="number" min="0" className="mt-1" value={productConfig.freeQuantity} onChange={e => setProductConfig(c => ({ ...c, freeQuantity: Number(e.target.value) }))} />
+                      </label>
+                    ) : (
+                      <p className="text-xs text-muted-foreground">
+                        Selecione as patologias gratuitas diretamente na lista abaixo.
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="rounded-2xl border bg-muted/25 p-4">
+                    <p className="mb-3 flex items-center gap-2 text-sm font-bold">
+                      <Users className="h-4 w-4" />
+                      Liberar usuario manualmente
+                    </p>
+                    <div className="flex gap-2">
+                      <Input value={grantEmail} onChange={e => setGrantEmail(e.target.value)} placeholder="email@dominio.com" />
+                      <Button onClick={handleGrantAccess} disabled={grantLoading || !grantEmail.trim()}>
+                        {grantLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Liberar'}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="text-sm text-muted-foreground">
+                    Preco atual: <strong className="text-foreground">R$ {Number(productStats.currentPrice || 0).toFixed(2).replace('.', ',')}</strong>
+                  </div>
+                  <Button onClick={handleSaveProduct} disabled={productSaving} className="gap-2">
+                    {productSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                    Salvar configuracao
+                  </Button>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Ações */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
           <div>
@@ -235,6 +540,9 @@ export default function AdminManualClinico() {
                             <AlertCircle className="h-3 w-3" /> Incompleta
                           </span>
                         )}
+                        {productConfig.freeAccessMode === 'list' && productConfig.freePathologySlugs.includes(p.slug) && (
+                          <span className="text-xs text-emerald-600 dark:text-emerald-400 font-bold">Gratuita</span>
+                        )}
                       </div>
                       <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                         {p.areas?.map((a: AreaSaude) => (
@@ -246,6 +554,16 @@ export default function AdminManualClinico() {
                       </div>
                     </div>
                     <div className="flex items-center gap-1">
+                      {productConfig.freeAccessMode === 'list' && (
+                        <label className="mr-2 flex items-center gap-1.5 rounded-lg border px-2 py-1 text-xs">
+                          <input
+                            type="checkbox"
+                            checked={productConfig.freePathologySlugs.includes(p.slug)}
+                            onChange={() => toggleFreePathology(p.slug)}
+                          />
+                          Free
+                        </label>
+                      )}
                       <Button
                         variant="ghost"
                         size="sm"
