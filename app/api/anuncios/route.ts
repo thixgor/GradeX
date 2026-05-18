@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 
+// Mantém force-dynamic para evitar tentativa de pré-renderização em
+// build time (a rota lê do Mongo). A Edge cache da Vercel respeita
+// o Cache-Control que devolvemos abaixo independentemente disso.
 export const dynamic = 'force-dynamic'
 
 interface PublicAnuncio {
@@ -41,7 +44,14 @@ export async function GET() {
       .sort({ ordem: 1, criadoEm: -1 })
       .toArray()
 
-    return NextResponse.json({ anuncios })
+    // Anúncios são públicos e idênticos para todos os visitantes.
+    // 5 min na Edge + SWR de 30 min: invocations cai drasticamente sem
+    // afetar perceptivelmente o tempo de propagação de novos banners.
+    return NextResponse.json({ anuncios }, {
+      headers: {
+        'Cache-Control': 'public, max-age=300, s-maxage=300, stale-while-revalidate=1800',
+      },
+    })
   } catch (error) {
     console.error('Erro ao buscar anuncios publicos:', error)
     return NextResponse.json({ error: 'Erro ao buscar anuncios' }, { status: 500 })

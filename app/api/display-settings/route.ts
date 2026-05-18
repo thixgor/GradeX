@@ -6,21 +6,26 @@ import {
   savePublicMetricSettings,
 } from '@/lib/display-settings-server'
 
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
-export const fetchCache = 'force-no-store'
-
+// GET é público e idêntico para todos os visitantes — vale CDN cache.
+// PUT (admin only) usa NO_STORE_HEADERS abaixo.
 const NO_STORE_HEADERS = {
   'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
   Pragma: 'no-cache',
   Expires: '0',
 } as const
 
+// Configurações de exibição mudam raramente (admin altera flags como
+// "exibir downloads"). Cache shared 5min na Edge + SWR 30min reduz
+// drasticamente invocations sem prejudicar consistência.
+const PUBLIC_CACHE_HEADERS = {
+  'Cache-Control': 'public, max-age=300, s-maxage=300, stale-while-revalidate=1800',
+} as const
+
 export async function GET() {
   try {
     const db = await getDb()
     const settings = await getPublicMetricSettings(db)
-    return NextResponse.json({ settings }, { headers: NO_STORE_HEADERS })
+    return NextResponse.json({ settings }, { headers: PUBLIC_CACHE_HEADERS })
   } catch (error) {
     console.error('GET /api/display-settings error:', error)
     return NextResponse.json(

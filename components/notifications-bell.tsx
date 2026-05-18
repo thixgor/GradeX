@@ -46,7 +46,7 @@ export function NotificationsBell() {
     {
       skip: !isAuthenticated || authLoading,
       cacheDuration: CACHE_DURATIONS.NOTIFICATIONS,
-      refetchInterval: 60 * 1000, // 60 seconds - reduced from 30s
+      refetchInterval: 180 * 1000, // 3 min — alinhado com cache do servidor (max-age=120, swr=300)
     }
   )
 

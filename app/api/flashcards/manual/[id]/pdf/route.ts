@@ -10,9 +10,16 @@ import {
 } from '@/lib/flashcard-manual'
 import { applyWatermark } from '@/lib/pdf-watermark'
 import { flashcardPdfFileName, generateFlashcardManualPdf } from '@/lib/flashcard-manual-pdf'
+import { checkRateLimitSync } from '@/lib/api-security'
 import type { FlashcardManualCard, FlashcardManualDeck, User } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
+
+// Rate limit por usuário para esta rota: a geração do PDF é a operação
+// mais cara em CPU do app (jsPDF + pdf-lib + watermark por página).
+// Sem limite, um único usuário com re-clique pode consumir minutos de
+// Fluid Active CPU em rajada. 5 downloads/hora cobre uso real.
+const PDF_RATE_LIMIT = { limit: 5, windowMs: 60 * 60 * 1000 }
 
 async function findDeckByIdOrSlug(db: any, idOrSlug: string): Promise<(FlashcardManualDeck & { _id: ObjectId }) | null> {
   if (isValidObjectId(idOrSlug)) {
@@ -31,6 +38,23 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   try {
     const session = await getSession()
     if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
+
+    // Rate-limit por usuário — protege contra burst de re-cliques.
+    const rl = checkRateLimitSync(session.userId, '/api/flashcards/manual/pdf', PDF_RATE_LIMIT)
+    if (!rl.success) {
+      return NextResponse.json(
+        {
+          error: 'Muitos downloads em pouco tempo. Tente novamente em alguns minutos.',
+          retryAfterSeconds: Math.ceil((rl.retryAfterMs || 0) / 1000),
+        },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(Math.ceil((rl.retryAfterMs || 0) / 1000)),
+          },
+        }
+      )
+    }
 
     const db = await getDb()
     const deck = await findDeckByIdOrSlug(db, params.id)
@@ -77,11 +101,14 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       email: user.email || session.email || '',
     }, origin)
 
+    // orderId determinístico (não inclui Date.now()) — permite que o
+    // browser reuse o mesmo PDF se o usuário clicar download novamente
+    // em poucos minutos. O watermark continua único por usuário/deck.
     const stamped = await applyWatermark(pdf, {
       userName: user.name || session.name || 'Usuário',
       userEmail: user.email || session.email || '',
       userId: session.userId,
-      orderId: `flashcard-${String(deck._id)}-${Date.now().toString(36)}`,
+      orderId: `flashcard-${String(deck._id)}-${session.userId}`,
       downloadedAt: new Date(),
     })
 
@@ -94,7 +121,11 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': encodeContentDisposition(filename),
-        'Cache-Control': 'no-store, max-age=0, must-revalidate',
+        // Cache privado curto: re-cliques dentro de 5 min reaproveitam
+        // o PDF do browser sem invocar esta função. SWR mantém UX boa
+        // após expiração sem gerar nova função enquanto valida.
+        'Cache-Control': 'private, max-age=300, stale-while-revalidate=600',
+        'X-Robots-Tag': 'noindex, nofollow',
       },
     })
   } catch (error) {

@@ -42,7 +42,13 @@ export async function GET(
     }
 
     const viewedAt = new Date()
-    const auditToken = crypto.randomUUID()
+    // Token determinístico por (user, material, page, janela de 5min).
+    // Antes era randomUUID() em cada call — isso impedia qualquer cache,
+    // mesmo quando o mesmo usuário virava página pra trás e voltava.
+    // Agora a resposta é estável dentro da janela e o browser/CDN
+    // consegue reutilizar via Cache-Control abaixo (private, max-age=300).
+    const cacheWindow = Math.floor(viewedAt.getTime() / (5 * 60 * 1000))
+    const auditToken = `${session.userId.slice(-8)}-${access.materialId.slice(-8)}-${requestedPage}-${cacheWindow}`
     const pdfBytes = await fetchMaterialPdfBytes(access.material.pdfFile.blobUrl)
     const pagePdf = await createWatermarkedSinglePagePdf(pdfBytes, {
       pageNumber: requestedPage,
@@ -86,8 +92,12 @@ export async function GET(
         'Content-Type': 'application/pdf',
         'Content-Disposition': `inline; filename="domineaqui-page-${requestedPage}.pdf"`,
         'Content-Length': String(pagePdf.bytes.byteLength),
-        'Cache-Control': 'no-store, no-cache, must-revalidate, private',
-        'Pragma': 'no-cache',
+        // Cache privado de 5min — uma sessão de leitura de PDF acessa
+        // a mesma página várias vezes (zoom/scroll/page-flip). Antes:
+        // cada interação chamava a função. Agora: 1 render por janela.
+        // O auditToken acima é alinhado à mesma janela, então o conteúdo
+        // permanece consistente dentro do TTL.
+        'Cache-Control': 'private, max-age=300, stale-while-revalidate=60',
         'X-Frame-Options': 'SAMEORIGIN',
         'X-Content-Type-Options': 'nosniff',
         'X-DomineAqui-Page-Count': String(pagePdf.totalPages),
