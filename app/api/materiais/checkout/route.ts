@@ -24,6 +24,12 @@ import {
   resolveMaterialCart,
   serializeMaterialCartItem,
 } from '@/lib/material-cart'
+import {
+  computeCartTierDiscounts,
+  combineTierAndCouponDiscount,
+  getPricingEventStateById,
+  serializePricingEventState,
+} from '@/lib/pricing-events'
 import type { PaymentOrder, MaterialPurchase } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -212,6 +218,20 @@ export async function POST(request: NextRequest) {
 
   let amount = Number(effectivePrice)
   let couponValidation: CouponValidationResult | null = null
+
+  // Lote dinâmico por evento — aplica desconto progressivo se houver evento ativo.
+  const pricingEventState = item.pricingEventId
+    ? await getPricingEventStateById(db, String(item.pricingEventId))
+    : null
+  let tierDiscountAmount = 0
+  if (pricingEventState?.activeTier && amount > 0) {
+    tierDiscountAmount = Math.max(
+      0,
+      Math.round(amount * (pricingEventState.activeTier.discountPercent / 100) * 100) / 100
+    )
+  }
+
+  let couponDiscountAmount = 0
   if (data.couponCode && amount > 0) {
     try {
       couponValidation = await validateCouponForCheckout(db, {
@@ -227,13 +247,26 @@ export async function POST(request: NextRequest) {
           price: amount,
         }],
       })
-      amount = couponValidation.amountAfterCoupon
+      couponDiscountAmount = couponValidation.discountAmount
     } catch (error: any) {
       if (error instanceof CouponError) {
         return NextResponse.json({ error: error.message }, { status: error.status })
       }
       throw error
     }
+  }
+
+  // "Maior dos dois": lote OU cupom, o que der mais desconto vence.
+  const combined = combineTierAndCouponDiscount({
+    basePrice: amount,
+    tierDiscountAmount,
+    couponDiscountAmount,
+  })
+  amount = combined.finalPrice
+
+  // Se o lote venceu, não reserva o cupom (mantém disponível para o usuário).
+  if (combined.appliedSource !== 'coupon') {
+    couponValidation = null
   }
 
   // Free path — item gratuito OR descontos/cupom cobriram todo o valor
@@ -354,6 +387,15 @@ export async function POST(request: NextRequest) {
             packageOriginalPrice: pricingMeta.originalPackagePrice,
             packageDiscountApplied: pricingMeta.discountApplied,
             ownedMaterialIds: pricingMeta.ownedMaterialIds,
+          }
+        : {}),
+      ...(combined.appliedSource === 'tier' && pricingEventState?.activeTier
+        ? {
+            pricingEventId: pricingEventState.eventId,
+            pricingEventName: pricingEventState.name,
+            pricingEventTierIndex: pricingEventState.activeTier.index,
+            pricingEventTierDiscountPercent: pricingEventState.activeTier.discountPercent,
+            pricingEventTierDiscountAmount: combined.appliedDiscountAmount,
           }
         : {}),
       ...couponAnalyticsMetadata(couponValidation),
@@ -500,6 +542,17 @@ async function handleCartCheckout(
   let payableItemsForOrder = resolution.payableItems
   let serializedPayableItemsForOrder = serializedPayableItems
 
+  // Lote dinâmico — soma de descontos por item (cada item pode ter evento diferente).
+  const tierCalc = await computeCartTierDiscounts(
+    db,
+    resolution.payableItems.map((item) => ({
+      itemType: item.itemType,
+      itemId: item.itemId,
+      price: item.price,
+      pricingEventId: item.pricingEventId,
+    }))
+  )
+  let couponDiscountAmount = 0
   if (data.couponCode && amount > 0) {
     try {
       couponValidation = await validateCouponForCheckout(db, {
@@ -515,15 +568,43 @@ async function handleCartCheckout(
           price: item.price,
         })),
       })
-      amount = couponValidation.amountAfterCoupon
-      payableItemsForOrder = applyCouponDiscountsToItems(resolution.payableItems, couponValidation.items)
-      serializedPayableItemsForOrder = payableItemsForOrder.map(serializeMaterialCartItem)
+      couponDiscountAmount = couponValidation.discountAmount
     } catch (error: any) {
       if (error instanceof CouponError) {
         return NextResponse.json({ error: error.message }, { status: error.status })
       }
       throw error
     }
+  }
+
+  const combined = combineTierAndCouponDiscount({
+    basePrice: amount,
+    tierDiscountAmount: tierCalc.totalTierDiscount,
+    couponDiscountAmount,
+  })
+
+  if (combined.appliedSource === 'coupon' && couponValidation) {
+    amount = couponValidation.amountAfterCoupon
+    payableItemsForOrder = applyCouponDiscountsToItems(resolution.payableItems, couponValidation.items)
+    serializedPayableItemsForOrder = payableItemsForOrder.map(serializeMaterialCartItem)
+  } else if (combined.appliedSource === 'tier') {
+    amount = combined.finalPrice
+    couponValidation = null
+    // Atualiza preço por item refletindo o desconto do lote, para registro do pedido.
+    const tierDiscountById = new Map(
+      tierCalc.perItem.map((entry) => [`${entry.itemType}:${entry.itemId}`, entry.tierDiscountAmount])
+    )
+    payableItemsForOrder = resolution.payableItems.map((item) => {
+      const discount = tierDiscountById.get(`${item.itemType}:${item.itemId}`) || 0
+      return {
+        ...item,
+        price: Math.max(0, Math.round((item.price - discount) * 100) / 100),
+        discountApplied: Math.round((item.discountApplied + discount) * 100) / 100,
+      }
+    })
+    serializedPayableItemsForOrder = payableItemsForOrder.map(serializeMaterialCartItem)
+  } else {
+    couponValidation = null
   }
 
   if (resolution.freeItems.length > 0) {
@@ -613,6 +694,22 @@ async function handleCartCheckout(
       cartItems: serializedPayableItemsForOrder,
       freeItems: serializedFreeItems,
       skippedItems: resolution.skippedItems,
+      ...(combined.appliedSource === 'tier' && combined.appliedDiscountAmount > 0
+        ? {
+            pricingEventDiscountAmount: combined.appliedDiscountAmount,
+            pricingEventPerItem: tierCalc.perItem
+              .filter((entry) => entry.tierDiscountAmount > 0 && entry.state)
+              .map((entry) => ({
+                itemType: entry.itemType,
+                itemId: entry.itemId,
+                eventId: entry.state?.eventId,
+                eventName: entry.state?.name,
+                tierIndex: entry.state?.activeTier?.index,
+                discountPercent: entry.state?.activeTier?.discountPercent,
+                discountAmount: entry.tierDiscountAmount,
+              })),
+          }
+        : {}),
       ...couponAnalyticsMetadata(couponValidation),
     },
     createdAt: now,

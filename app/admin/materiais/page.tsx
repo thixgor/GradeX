@@ -52,6 +52,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { AppShell } from '@/components/app-shell'
+import { PricingEventSelector } from '@/components/pricing-events/PricingEventSelector'
 import {
   DEFAULT_PUBLIC_METRIC_SETTINGS,
   type PublicMetricSettings,
@@ -532,6 +533,7 @@ function AdminMateriaisContent() {
     videoDurationS: 0,
     pricing: 'free' as 'free' | 'paid',
     price: 0,
+    pricingEventId: null as string | null,
     stripePriceId: '',
     isHidden: false,
     isFeatured: false,
@@ -564,6 +566,7 @@ function AdminMateriaisContent() {
     pricing: 'free' as 'free' | 'paid',
     price: 0,
     originalPrice: 0,
+    pricingEventId: null as string | null,
     stripePriceId: '',
     isHidden: false,
     isFeatured: false,
@@ -769,6 +772,7 @@ function AdminMateriaisContent() {
         videoDurationS: material.videoDuration ? material.videoDuration % 60 : 0,
         pricing: material.pricing,
         price: material.price || 0,
+        pricingEventId: (material as any).pricingEventId || null,
         stripePriceId: material.stripePriceId || '',
         isHidden: material.isHidden,
         isFeatured: material.isFeatured,
@@ -782,7 +786,7 @@ function AdminMateriaisContent() {
         _id: '', title: '', description: '', coverImage: '', type: 'pdf',
         downloadUrl: '', previewUrl: '', folderId: '', moduloId: '', tags: '',
         allowedGroups: [], videoDurationH: 0, videoDurationM: 0, videoDurationS: 0,
-        pricing: 'free', price: 0, stripePriceId: '', isHidden: false, isFeatured: false,
+        pricing: 'free', price: 0, pricingEventId: null, stripePriceId: '', isHidden: false, isFeatured: false,
         pdfViewerEnabled: false, pdfDownloadEnabled: true, order: 0,
       })
       setPdfInfo(null)
@@ -982,6 +986,7 @@ function AdminMateriaisContent() {
         coverImage: pkg.coverImage || '', materialIds: pkg.materialIds || [],
         tags: (pkg.tags || []).join(', '), allowedGroups: pkg.allowedGroups || [],
         pricing: pkg.pricing, price: pkg.price || 0, originalPrice: pkg.originalPrice || 0,
+        pricingEventId: (pkg as any).pricingEventId || null,
         stripePriceId: pkg.stripePriceId || '', isHidden: pkg.isHidden,
         isFeatured: pkg.isFeatured, order: pkg.order || 0,
       })
@@ -989,6 +994,7 @@ function AdminMateriaisContent() {
       setPackageForm({
         _id: '', title: '', description: '', coverImage: '', materialIds: [],
         tags: '', allowedGroups: [], pricing: 'free', price: 0, originalPrice: 0,
+        pricingEventId: null,
         stripePriceId: '', isHidden: false, isFeatured: false, order: 0,
       })
     }
@@ -2091,6 +2097,13 @@ function AdminMateriaisContent() {
                   onStripeIdChange={stripePriceId => setMaterialForm(p => ({ ...p, stripePriceId }))}
                 />
 
+                {materialForm.pricing === 'paid' && (
+                  <PricingEventSelector
+                    value={materialForm.pricingEventId}
+                    onChange={(id) => setMaterialForm(p => ({ ...p, pricingEventId: id }))}
+                  />
+                )}
+
                 <div className="flex items-center gap-4">
                   <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={materialForm.isFeatured} onChange={e => setMaterialForm(p => ({ ...p, isFeatured: e.target.checked }))} className="rounded" /><span className="text-sm">Destaque</span></label>
                   <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={materialForm.isHidden} onChange={e => setMaterialForm(p => ({ ...p, isHidden: e.target.checked }))} className="rounded" /><span className="text-sm">Oculto</span></label>
@@ -2243,6 +2256,13 @@ function AdminMateriaisContent() {
                   originalPrice={packageForm.originalPrice}
                   onOriginalPriceChange={originalPrice => setPackageForm(p => ({ ...p, originalPrice }))}
                 />
+
+                {packageForm.pricing === 'paid' && (
+                  <PricingEventSelector
+                    value={packageForm.pricingEventId}
+                    onChange={(id) => setPackageForm(p => ({ ...p, pricingEventId: id }))}
+                  />
+                )}
 
                 <div className="flex items-center gap-4">
                   <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={packageForm.isFeatured} onChange={e => setPackageForm(p => ({ ...p, isFeatured: e.target.checked }))} className="rounded" /><span className="text-sm">Destaque</span></label>

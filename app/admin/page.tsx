@@ -123,6 +123,13 @@ export default function AdminDashboard() {
       color: 'from-lime-500 to-emerald-500'
     },
     {
+      title: 'Lotes por Evento',
+      description: 'Configurar descontos progressivos vinculados a uma prova ou evento. Quanto antes comprar, maior o desconto.',
+      icon: Calendar,
+      href: '/admin/pricing-events',
+      color: 'from-emerald-500 to-cyan-500'
+    },
+    {
       title: 'Configurações',
       description: 'Gerenciar configurações da landing page, vídeos e outras preferências.',
       icon: Sliders,

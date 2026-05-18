@@ -26,6 +26,7 @@ import {
 } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 import { AREAS_SAUDE, SISTEMAS_FISIOLOGICOS, type AreaSaude } from '@/lib/types/manual-clinico'
+import { PricingEventSelector } from '@/components/pricing-events/PricingEventSelector'
 
 const AREA_COLORS: Record<AreaSaude, string> = {
   'Medicina': 'bg-blue-500 text-white',
@@ -51,6 +52,7 @@ type ManualProductConfigForm = {
   freeAccessMode: 'quantity' | 'list'
   freeQuantity: number
   freePathologySlugs: string[]
+  pricingEventId: string | null
 }
 
 type ManualAccessPurchase = {
@@ -98,6 +100,7 @@ function emptyProductConfig(): ManualProductConfigForm {
     freeAccessMode: 'quantity',
     freeQuantity: 5,
     freePathologySlugs: [],
+    pricingEventId: null,
   }
 }
 
@@ -193,6 +196,7 @@ export default function AdminManualClinico() {
         freeAccessMode: cfg.freeAccessMode === 'list' ? 'list' : 'quantity',
         freeQuantity: Number(cfg.freeQuantity || 0),
         freePathologySlugs: Array.isArray(cfg.freePathologySlugs) ? cfg.freePathologySlugs : [],
+        pricingEventId: cfg.pricingEventId || null,
       })
       setProductStats(data.stats || { pathologyCount: 0, freeCount: 0, lockedCount: 0, buyerCount: 0, currentPrice: 0, freeQuotaPerUser: 0 })
     } catch (error: any) {
@@ -512,6 +516,13 @@ export default function AdminManualClinico() {
                       Fim da promocao
                       <Input type="datetime-local" className="mt-1" value={productConfig.promotionEndsAt} onChange={e => setProductConfig(c => ({ ...c, promotionEndsAt: e.target.value }))} />
                     </label>
+                  </div>
+
+                  <div className="mt-4">
+                    <PricingEventSelector
+                      value={productConfig.pricingEventId}
+                      onChange={(id) => setProductConfig(c => ({ ...c, pricingEventId: id }))}
+                    />
                   </div>
                 </div>
 

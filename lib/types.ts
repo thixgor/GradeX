@@ -1122,6 +1122,9 @@ export interface Material {
   price?: number              // Preço em R$ (se paid)
   stripePriceId?: string      // ID do preço no Stripe (se paid)
 
+  /** Lote dinâmico por evento (pricingEvent._id). Quando setado, aplica desconto progressivo. */
+  pricingEventId?: string | null
+
   // Estatísticas
   downloadCount: number
   viewCount: number
@@ -1152,6 +1155,9 @@ export interface MaterialPackage {
   price?: number              // Preço do pacote em R$
   originalPrice?: number      // Preço original (soma dos individuais, para mostrar desconto)
   stripePriceId?: string      // ID do preço no Stripe
+
+  /** Lote dinâmico por evento (pricingEvent._id). */
+  pricingEventId?: string | null
 
   // Estatísticas
   downloadCount: number
@@ -1212,6 +1218,8 @@ export interface ManualClinicoProductConfig {
   freeAccessMode: 'quantity' | 'list'
   freeQuantity: number
   freePathologySlugs: string[]
+  /** Lote dinâmico por evento (pricingEvent._id). */
+  pricingEventId?: string | null
   createdAt: Date
   updatedAt: Date
   updatedBy?: string

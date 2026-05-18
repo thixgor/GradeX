@@ -168,6 +168,7 @@ export async function POST(request: NextRequest) {
       pricing: body.pricing || 'free',
       price: body.pricing === 'paid' ? (body.price || 0) : 0,
       originalPrice: body.originalPrice || 0,
+      pricingEventId: body.pricingEventId ? String(body.pricingEventId) : null,
       stripePriceId: body.stripePriceId || '',
       downloadCount: 0,
       viewCount: 0,
@@ -208,6 +209,9 @@ export async function PUT(request: NextRequest) {
     updates.updatedAt = new Date()
     if (updates.pricing === 'free') {
       updates.price = 0
+    }
+    if ('pricingEventId' in updates) {
+      updates.pricingEventId = updates.pricingEventId ? String(updates.pricingEventId) : null
     }
 
     await db.collection('material_packages').updateOne(

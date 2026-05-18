@@ -54,6 +54,7 @@ export interface ManualClinicoPublicProduct {
   lifetimeAccess: boolean
   freeAccessMode: ManualClinicoProductConfig['freeAccessMode']
   freeQuantity: number
+  pricingEventId?: string | null
 }
 
 export interface ManualClinicoAccessState {
@@ -131,6 +132,7 @@ export function serializeManualClinicoProduct(config: ManualClinicoProductConfig
     lifetimeAccess: config.lifetimeAccess !== false,
     freeAccessMode: config.freeAccessMode === 'list' ? 'list' : 'quantity',
     freeQuantity: Math.max(0, Math.floor(Number(config.freeQuantity || 0))),
+    pricingEventId: config.pricingEventId ? String(config.pricingEventId) : null,
   }
 }
 
@@ -183,6 +185,7 @@ export async function upsertManualClinicoConfig(
     freeAccessMode: input.freeAccessMode === 'list' ? 'list' : 'quantity',
     freeQuantity: Math.max(0, Math.floor(Number(input.freeQuantity || 0))),
     freePathologySlugs: uniqueSlugs(input.freePathologySlugs || []),
+    pricingEventId: input.pricingEventId ? String(input.pricingEventId) : null,
     updatedAt: now,
     updatedBy: actor?.userId,
   }

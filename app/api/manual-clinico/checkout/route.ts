@@ -23,6 +23,10 @@ import {
   validateCouponForCheckout,
   type CouponValidationResult,
 } from '@/lib/coupons'
+import {
+  combineTierAndCouponDiscount,
+  getPricingEventStateById,
+} from '@/lib/pricing-events'
 import { getRequestAnalyticsMeta, recordCheckoutEvent, recordOrderCheckoutEvent } from '@/lib/analytics'
 import type { PaymentOrder } from '@/lib/types'
 
@@ -78,6 +82,18 @@ export async function POST(request: NextRequest) {
   let amount = getManualClinicoCurrentPrice(config)
   let couponValidation: CouponValidationResult | null = null
 
+  const pricingEventState = config.pricingEventId
+    ? await getPricingEventStateById(db, String(config.pricingEventId))
+    : null
+  let tierDiscountAmount = 0
+  if (pricingEventState?.activeTier && amount > 0) {
+    tierDiscountAmount = Math.max(
+      0,
+      Math.round(amount * (pricingEventState.activeTier.discountPercent / 100) * 100) / 100
+    )
+  }
+
+  let couponDiscountAmount = 0
   if (data.couponCode && amount > 0) {
     if (!config.allowCoupons) {
       return NextResponse.json({ error: 'Cupons nao estao habilitados para este produto.' }, { status: 400 })
@@ -90,13 +106,23 @@ export async function POST(request: NextRequest) {
         userEmail: session.email,
         items: [buildManualClinicoCouponItem(config, amount)],
       })
-      amount = couponValidation.amountAfterCoupon
+      couponDiscountAmount = couponValidation.discountAmount
     } catch (error: any) {
       if (error instanceof CouponError) {
         return NextResponse.json({ error: error.message }, { status: error.status })
       }
       throw error
     }
+  }
+
+  const combined = combineTierAndCouponDiscount({
+    basePrice: amount,
+    tierDiscountAmount,
+    couponDiscountAmount,
+  })
+  amount = combined.finalPrice
+  if (combined.appliedSource !== 'coupon') {
+    couponValidation = null
   }
 
   if (amount <= 0 || data.paymentMethodId === 'free') {
@@ -177,6 +203,15 @@ export async function POST(request: NextRequest) {
       originalPrice: config.price,
       currentPrice: getManualClinicoCurrentPrice(config),
       accessType: config.lifetimeAccess ? 'lifetime' : 'temporary',
+      ...(combined.appliedSource === 'tier' && pricingEventState?.activeTier
+        ? {
+            pricingEventId: pricingEventState.eventId,
+            pricingEventName: pricingEventState.name,
+            pricingEventTierIndex: pricingEventState.activeTier.index,
+            pricingEventTierDiscountPercent: pricingEventState.activeTier.discountPercent,
+            pricingEventTierDiscountAmount: combined.appliedDiscountAmount,
+          }
+        : {}),
       ...couponAnalyticsMetadata(couponValidation),
     },
     createdAt: now,

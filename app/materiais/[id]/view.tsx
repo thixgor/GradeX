@@ -59,6 +59,9 @@ import { useMaterialCart } from '@/context/MaterialCartContext'
 import { ReviewsSection } from '@/components/reviews/reviews-section'
 import { ReviewSummaryBlock } from '@/components/reviews/review-summary'
 import type { ReviewSummary } from '@/lib/reviews-shared'
+import { PricingEventCountdown } from '@/components/pricing-events/PricingEventCountdown'
+import { PricingEventPriceBlock } from '@/components/pricing-events/PricingEventPriceBlock'
+import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
 
 // ─── Types ───────────────────────────────────────────────────
 interface Material {
@@ -74,6 +77,7 @@ interface Material {
   videoDuration?: number
   pricing: 'free' | 'paid'
   price: number
+  pricingEventId?: string | null
   downloadCount: number
   viewCount: number
   createdAt: string
@@ -399,6 +403,9 @@ export default function MaterialViewPage() {
       setTimeout(() => setCopied(false), 2000)
     })
   }, [id])
+
+  const pricingEventStateData = usePricingEventState(data?.material?.pricingEventId || null)
+  const pricingEventState = pricingEventStateData.state
 
   if (loading) return <LoadingSkeleton />
   if (error || !data) return <ErrorState message={error} onBack={() => router.push('/materiais')} />
@@ -736,6 +743,15 @@ export default function MaterialViewPage() {
                     )
                   ) : (
                     <>
+                      {pricingEventState?.activeTier && !isFree ? (
+                        <div className="mb-3 space-y-2">
+                          <PricingEventCountdown state={pricingEventState} compact />
+                          <PricingEventPriceBlock
+                            originalPrice={Number(material.price || 0)}
+                            state={pricingEventState}
+                          />
+                        </div>
+                      ) : null}
                       {isFree ? (
                         <Button
                           onClick={() => handleAcquire()}

@@ -43,6 +43,9 @@ import {
 } from 'lucide-react'
 import { AREAS_SAUDE, SISTEMAS_FISIOLOGICOS, type AreaSaude, type SistemaFisiologico } from '@/lib/types/manual-clinico'
 import { clearAllManualHighlights, hasAnyManualHighlights } from '@/lib/manual-clinico-highlights'
+import { PricingEventCountdown } from '@/components/pricing-events/PricingEventCountdown'
+import { PricingEventPriceBlock } from '@/components/pricing-events/PricingEventPriceBlock'
+import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
 
 const SISTEMA_ICONS: Record<string, any> = {
   'Sistema Cardiovascular': Heart,
@@ -125,6 +128,7 @@ interface ManualProduct {
   hasActivePromotion: boolean
   freeAccessMode?: 'quantity' | 'list'
   freeQuantity?: number
+  pricingEventId?: string | null
 }
 
 interface ManualAccess {
@@ -217,6 +221,8 @@ function ManualClinicoContent() {
   const { user } = useAppShell()
   const isAuthenticated = !!user
   const freeQuota = manualAccess.freeQuota
+  const pricingEventStateData = usePricingEventState(product?.pricingEventId || null)
+  const pricingEventState = pricingEventStateData.state
 
   useEffect(() => {
     setHasHighlights(hasAnyManualHighlights())
@@ -381,6 +387,17 @@ function ManualClinicoContent() {
                     : `Entre para escolher ${freeQuota.limit} patologias gratuitas`}
                 </div>
               )}
+
+              {/* ── Pricing event countdown ── */}
+              {!manualAccess.hasFullAccess && product?.isActive && pricingEventState?.activeTier ? (
+                <div className="mt-5 mx-auto max-w-md space-y-2">
+                  <PricingEventCountdown state={pricingEventState} compact />
+                  <PricingEventPriceBlock
+                    originalPrice={Number(product.currentPrice || 0)}
+                    state={pricingEventState}
+                  />
+                </div>
+              ) : null}
 
               {/* ── Action buttons ── */}
               <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
