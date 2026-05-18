@@ -90,7 +90,7 @@ export default function AdminManualClinico() {
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
   const [productConfig, setProductConfig] = useState<ManualProductConfigForm>(emptyProductConfig)
-  const [productStats, setProductStats] = useState({ pathologyCount: 0, freeCount: 0, lockedCount: 0, buyerCount: 0, currentPrice: 0 })
+  const [productStats, setProductStats] = useState({ pathologyCount: 0, freeCount: 0, lockedCount: 0, buyerCount: 0, currentPrice: 0, freeQuotaPerUser: 0 })
   const [productLoading, setProductLoading] = useState(true)
   const [productSaving, setProductSaving] = useState(false)
   const [productMessage, setProductMessage] = useState('')
@@ -142,7 +142,7 @@ export default function AdminManualClinico() {
         freeQuantity: Number(cfg.freeQuantity || 0),
         freePathologySlugs: Array.isArray(cfg.freePathologySlugs) ? cfg.freePathologySlugs : [],
       })
-      setProductStats(data.stats || { pathologyCount: 0, freeCount: 0, lockedCount: 0, buyerCount: 0, currentPrice: 0 })
+      setProductStats(data.stats || { pathologyCount: 0, freeCount: 0, lockedCount: 0, buyerCount: 0, currentPrice: 0, freeQuotaPerUser: 0 })
     } catch (error: any) {
       setProductMessage(error?.message || 'Erro ao carregar configuracao do produto')
     } finally {
@@ -310,7 +310,7 @@ export default function AdminManualClinico() {
                   <Crown className="h-6 w-6 text-primary" />
                   Produto Freemium
                 </h2>
-                <p className="text-sm text-muted-foreground">Configure preco, promocao, paywall e patologias gratuitas.</p>
+                <p className="text-sm text-muted-foreground">Configure preco, promocao, paywall e cota gratuita por usuario.</p>
               </div>
               <div className="grid grid-cols-2 gap-2 text-center sm:grid-cols-4">
                 <div className="rounded-xl border bg-muted/30 px-3 py-2">
@@ -318,8 +318,8 @@ export default function AdminManualClinico() {
                   <p className="text-[10px] uppercase text-muted-foreground">Patologias</p>
                 </div>
                 <div className="rounded-xl border bg-emerald-500/10 px-3 py-2 text-emerald-700 dark:text-emerald-300">
-                  <p className="text-lg font-black">{productStats.freeCount}</p>
-                  <p className="text-[10px] uppercase">Gratuitas</p>
+                  <p className="text-lg font-black">{productConfig.freeAccessMode === 'quantity' ? productStats.freeQuotaPerUser : productStats.freeCount}</p>
+                  <p className="text-[10px] uppercase">{productConfig.freeAccessMode === 'quantity' ? 'Cota grátis' : 'Gratuitas'}</p>
                 </div>
                 <div className="rounded-xl border bg-amber-500/10 px-3 py-2 text-amber-700 dark:text-amber-300">
                   <p className="text-lg font-black">{productStats.lockedCount}</p>
@@ -416,12 +416,12 @@ export default function AdminManualClinico() {
                       value={productConfig.freeAccessMode}
                       onChange={e => setProductConfig(c => ({ ...c, freeAccessMode: e.target.value as 'quantity' | 'list' }))}
                     >
-                      <option value="quantity">Liberar primeiras N patologias</option>
+                      <option value="quantity">Cada usuario escolhe N patologias gratis</option>
                       <option value="list">Liberar lista selecionada</option>
                     </select>
                     {productConfig.freeAccessMode === 'quantity' ? (
                       <label className="text-sm font-medium">
-                        Quantidade gratuita
+                        Escolhas gratuitas por usuario
                         <Input type="number" min="0" className="mt-1" value={productConfig.freeQuantity} onChange={e => setProductConfig(c => ({ ...c, freeQuantity: Number(e.target.value) }))} />
                       </label>
                     ) : (

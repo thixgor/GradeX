@@ -55,7 +55,7 @@ export async function GET() {
 
     const freeCount = config.freeAccessMode === 'list'
       ? config.freePathologySlugs.length
-      : Math.min(config.freeQuantity, pathologyCount)
+      : 0
 
     return NextResponse.json({
       config: {
@@ -72,6 +72,7 @@ export async function GET() {
         lockedCount: Math.max(0, pathologyCount - freeCount),
         buyerCount,
         currentPrice: getManualClinicoCurrentPrice(config),
+        freeQuotaPerUser: config.freeAccessMode === 'quantity' ? config.freeQuantity : 0,
       },
     })
   } catch (error) {

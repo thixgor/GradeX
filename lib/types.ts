@@ -1241,6 +1241,18 @@ export interface ManualClinicoPurchase {
   grantedByName?: string
 }
 
+export interface ManualClinicoFreeQuota {
+  _id?: string | import('mongodb').ObjectId
+  userId: string
+  userName?: string
+  userEmail?: string
+  productId: 'manual-clinico-premium'
+  claimedSlugs: string[]
+  createdAt: Date
+  updatedAt: Date
+  lastClaimedAt?: Date
+}
+
 // ───── Pagamentos (Mercado Pago) ─────
 
 import type { PaymentStatus, SubscriptionStatus, PaymentMethodKind, PaymentOrderType, PaymentProviderId } from './payments/types'

@@ -31,6 +31,8 @@ if (process.env.NODE_ENV === 'development') {
         db.collection('manual_clinico_purchases').createIndex({ userId: 1, productId: 1, status: 1 }),
         db.collection('manual_clinico_purchases').createIndex({ userEmail: 1, productId: 1, status: 1 }),
         db.collection('manual_clinico_purchases').createIndex({ providerOrderId: 1 }, { sparse: true }),
+        db.collection('manual_clinico_free_quotas').createIndex({ productId: 1, userId: 1 }, { unique: true }),
+        db.collection('manual_clinico_free_quotas').createIndex({ userEmail: 1, productId: 1 }),
         // ── Analytics de checkout ──
         db.collection('checkout_events').createIndex({ event: 1, createdAt: -1 }),
         db.collection('checkout_events').createIndex({ userId: 1, createdAt: -1 }),
@@ -79,6 +81,8 @@ if (process.env.NODE_ENV === 'development') {
       db.collection('manual_clinico_purchases').createIndex({ userId: 1, productId: 1, status: 1 }),
       db.collection('manual_clinico_purchases').createIndex({ userEmail: 1, productId: 1, status: 1 }),
       db.collection('manual_clinico_purchases').createIndex({ providerOrderId: 1 }, { sparse: true }),
+      db.collection('manual_clinico_free_quotas').createIndex({ productId: 1, userId: 1 }, { unique: true }),
+      db.collection('manual_clinico_free_quotas').createIndex({ userEmail: 1, productId: 1 }),
       // ── Pagamentos (Mercado Pago) ──
       db.collection('payment_orders').createIndex({ providerOrderId: 1 }, { sparse: true }),
       db.collection('payment_orders').createIndex({ userId: 1, createdAt: -1 }),

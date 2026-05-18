@@ -6,7 +6,9 @@ import {
   getManualClinicoAccess,
   getManualClinicoConfig,
   getManualClinicoFreeSlugSet,
+  getManualClinicoFreeQuotaState,
   isManualClinicoPathologyFree,
+  serializeManualClinicoFreeQuota,
   serializeManualClinicoProduct,
 } from '@/lib/manual-clinico-product'
 
@@ -31,7 +33,11 @@ export async function GET(request: NextRequest) {
       getManualClinicoConfig(db),
       getManualClinicoAccess(db, session),
     ])
-    const freeSlugs = await getManualClinicoFreeSlugSet(db, config)
+    const [freeSlugs, freeQuota] = await Promise.all([
+      getManualClinicoFreeSlugSet(db, config),
+      getManualClinicoFreeQuotaState(db, session, config),
+    ])
+    const claimedSlugSet = new Set(freeQuota.claimedSlugs)
     const filter: any = {}
 
     // Export mode: return all pathologies with full data (for PDF generation)
@@ -96,13 +102,32 @@ export async function GET(request: NextRequest) {
     }
 
     const serialized = patologias.map((patologia) => {
-      const isFree = isManualClinicoPathologyFree(patologia, freeSlugs)
-      const unlocked = access.hasFullAccess || isFree
+      const isGlobalFree = isManualClinicoPathologyFree(patologia, freeSlugs)
+      const isFreeClaimed = !!patologia.slug && claimedSlugSet.has(String(patologia.slug))
+      const canClaimFree = config.freeAccessMode === 'quantity' &&
+        !access.hasFullAccess &&
+        !!session?.userId &&
+        !isFreeClaimed &&
+        freeQuota.remaining > 0
+      const unlocked = access.hasFullAccess || isGlobalFree || isFreeClaimed
+      const accessStatus = access.hasFullAccess
+        ? 'premium_unlocked'
+        : isGlobalFree
+          ? 'free'
+          : isFreeClaimed
+            ? 'free_claimed'
+            : canClaimFree
+              ? 'free_available'
+              : !session?.userId && config.freeAccessMode === 'quantity'
+                ? 'login_required'
+                : 'locked'
       return {
         ...patologia,
-        isFree,
-        isPremiumLocked: !unlocked,
-        accessStatus: unlocked ? (isFree ? 'free' : 'premium_unlocked') : 'locked',
+        isFree: isGlobalFree || isFreeClaimed,
+        isFreeClaimed,
+        canClaimFree,
+        isPremiumLocked: !unlocked && !canClaimFree,
+        accessStatus,
       }
     })
 
@@ -115,6 +140,7 @@ export async function GET(request: NextRequest) {
       access: {
         hasFullAccess: access.hasFullAccess,
         reason: access.reason,
+        freeQuota: serializeManualClinicoFreeQuota(freeQuota),
       },
     })
   } catch (error) {

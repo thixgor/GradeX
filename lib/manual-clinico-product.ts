@@ -1,6 +1,7 @@
 import { Db, ObjectId } from 'mongodb'
 import type { TokenPayload } from './auth'
 import type {
+  ManualClinicoFreeQuota,
   ManualClinicoProductConfig,
   ManualClinicoPurchase,
   PaymentOrder,
@@ -12,6 +13,7 @@ export const MANUAL_CLINICO_PRODUCT_TYPE = 'manual_clinico' as const
 
 export const MANUAL_CLINICO_CONFIG_COLLECTION = 'manual_clinico_product_settings'
 export const MANUAL_CLINICO_PURCHASES_COLLECTION = 'manual_clinico_purchases'
+export const MANUAL_CLINICO_FREE_QUOTA_COLLECTION = 'manual_clinico_free_quotas'
 
 export const DEFAULT_MANUAL_CLINICO_CONFIG: Omit<ManualClinicoProductConfig, '_id' | 'createdAt' | 'updatedAt' | 'updatedBy'> = {
   productId: MANUAL_CLINICO_PRODUCT_ID,
@@ -46,6 +48,8 @@ export interface ManualClinicoPublicProduct {
   hasActivePromotion: boolean
   allowCoupons: boolean
   lifetimeAccess: boolean
+  freeAccessMode: ManualClinicoProductConfig['freeAccessMode']
+  freeQuantity: number
 }
 
 export interface ManualClinicoAccessState {
@@ -54,12 +58,31 @@ export interface ManualClinicoAccessState {
   purchase?: ManualClinicoPurchase | null
 }
 
+export interface ManualClinicoFreeQuotaState {
+  mode: ManualClinicoProductConfig['freeAccessMode']
+  limit: number
+  used: number
+  remaining: number
+  claimedSlugs: string[]
+  isAuthenticated: boolean
+}
+
+export interface ManualClinicoFreeClaimResult {
+  allowed: boolean
+  reason: 'claimed' | 'already_claimed' | 'quota_exhausted' | 'guest' | 'not_quantity_mode' | 'invalid_pathology'
+  quota: ManualClinicoFreeQuotaState
+}
+
 function roundMoney(value: number) {
   return Math.max(0, Math.round(Number(value || 0) * 100) / 100)
 }
 
 function escapeRegex(value: string) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+function uniqueSlugs(slugs: unknown[]) {
+  return Array.from(new Set((slugs || []).map(String).filter(Boolean)))
 }
 
 function isPromotionActive(config: ManualClinicoProductConfig, now = new Date()) {
@@ -100,6 +123,8 @@ export function serializeManualClinicoProduct(config: ManualClinicoProductConfig
     hasActivePromotion,
     allowCoupons: config.allowCoupons !== false,
     lifetimeAccess: config.lifetimeAccess !== false,
+    freeAccessMode: config.freeAccessMode === 'list' ? 'list' : 'quantity',
+    freeQuantity: Math.max(0, Math.floor(Number(config.freeQuantity || 0))),
   }
 }
 
@@ -119,9 +144,10 @@ export async function getManualClinicoConfig(db: Db): Promise<ManualClinicoProdu
     promotionalPrice: existing?.promotionalPrice == null
       ? DEFAULT_MANUAL_CLINICO_CONFIG.promotionalPrice
       : roundMoney(Number(existing.promotionalPrice)),
+    freeAccessMode: existing?.freeAccessMode === 'list' ? 'list' : 'quantity',
     freeQuantity: Math.max(0, Math.floor(Number(existing?.freeQuantity ?? DEFAULT_MANUAL_CLINICO_CONFIG.freeQuantity))),
     freePathologySlugs: Array.isArray(existing?.freePathologySlugs)
-      ? existing!.freePathologySlugs.map(String)
+      ? uniqueSlugs(existing!.freePathologySlugs)
       : [],
   }
 }
@@ -148,7 +174,7 @@ export async function upsertManualClinicoConfig(
     lifetimeAccess: input.lifetimeAccess !== false,
     freeAccessMode: input.freeAccessMode === 'list' ? 'list' : 'quantity',
     freeQuantity: Math.max(0, Math.floor(Number(input.freeQuantity || 0))),
-    freePathologySlugs: Array.from(new Set((input.freePathologySlugs || []).map(String).filter(Boolean))),
+    freePathologySlugs: uniqueSlugs(input.freePathologySlugs || []),
     updatedAt: now,
     updatedBy: actor?.userId,
   }
@@ -173,21 +199,8 @@ export async function getManualClinicoFreeSlugSet(
   config?: ManualClinicoProductConfig
 ): Promise<Set<string>> {
   const resolved = config || await getManualClinicoConfig(db)
-  if (resolved.freeAccessMode === 'list') {
-    return new Set((resolved.freePathologySlugs || []).map(String))
-  }
-
-  const freeQuantity = Math.max(0, Math.floor(Number(resolved.freeQuantity || 0)))
-  if (freeQuantity <= 0) return new Set()
-
-  const rows = await db.collection('patologias')
-    .find({})
-    .project({ slug: 1 })
-    .sort({ nome: 1 })
-    .limit(freeQuantity)
-    .toArray()
-
-  return new Set(rows.map((row: any) => String(row.slug)).filter(Boolean))
+  if (resolved.freeAccessMode !== 'list') return new Set()
+  return new Set((resolved.freePathologySlugs || []).map(String))
 }
 
 export function isManualClinicoPathologyFree(
@@ -195,6 +208,146 @@ export function isManualClinicoPathologyFree(
   freeSlugs: Set<string>
 ) {
   return !!patologia.slug && freeSlugs.has(String(patologia.slug))
+}
+
+export function getManualClinicoFreeViewLimit(config: ManualClinicoProductConfig) {
+  return config.freeAccessMode === 'quantity'
+    ? Math.max(0, Math.floor(Number(config.freeQuantity || 0)))
+    : 0
+}
+
+export async function getManualClinicoFreeQuotaState(
+  db: Db,
+  session: TokenPayload | null | undefined,
+  config?: ManualClinicoProductConfig
+): Promise<ManualClinicoFreeQuotaState> {
+  const resolved = config || await getManualClinicoConfig(db)
+  const limit = getManualClinicoFreeViewLimit(resolved)
+  const base = {
+    mode: resolved.freeAccessMode === 'list' ? 'list' as const : 'quantity' as const,
+    limit,
+    used: 0,
+    remaining: limit,
+    claimedSlugs: [] as string[],
+    isAuthenticated: !!session?.userId,
+  }
+
+  if (resolved.freeAccessMode !== 'quantity' || !session?.userId || limit <= 0) {
+    return {
+      ...base,
+      remaining: resolved.freeAccessMode === 'quantity' && session?.userId ? limit : 0,
+    }
+  }
+
+  const quota = await db.collection<ManualClinicoFreeQuota>(MANUAL_CLINICO_FREE_QUOTA_COLLECTION).findOne({
+    productId: MANUAL_CLINICO_PRODUCT_ID,
+    userId: session.userId,
+  })
+  const claimedSlugs = uniqueSlugs(quota?.claimedSlugs || [])
+  const used = claimedSlugs.length
+
+  return {
+    ...base,
+    used,
+    remaining: Math.max(0, limit - used),
+    claimedSlugs,
+  }
+}
+
+export async function claimManualClinicoFreePathology(
+  db: Db,
+  input: {
+    session: TokenPayload | null | undefined
+    config: ManualClinicoProductConfig
+    patologia: { slug?: string; nome?: string }
+  }
+): Promise<ManualClinicoFreeClaimResult> {
+  const slug = String(input.patologia.slug || '')
+  const currentQuota = await getManualClinicoFreeQuotaState(db, input.session, input.config)
+
+  if (!slug) return { allowed: false, reason: 'invalid_pathology', quota: currentQuota }
+  if (input.config.freeAccessMode !== 'quantity') return { allowed: false, reason: 'not_quantity_mode', quota: currentQuota }
+  if (!input.session?.userId) return { allowed: false, reason: 'guest', quota: currentQuota }
+  if (currentQuota.claimedSlugs.includes(slug)) {
+    return { allowed: true, reason: 'already_claimed', quota: currentQuota }
+  }
+  if (currentQuota.remaining <= 0) {
+    return { allowed: false, reason: 'quota_exhausted', quota: currentQuota }
+  }
+
+  const now = new Date()
+  const collection = db.collection<ManualClinicoFreeQuota>(MANUAL_CLINICO_FREE_QUOTA_COLLECTION)
+  await collection.updateOne(
+    {
+      productId: MANUAL_CLINICO_PRODUCT_ID,
+      userId: input.session.userId,
+    },
+    {
+      $setOnInsert: {
+        productId: MANUAL_CLINICO_PRODUCT_ID,
+        userId: input.session.userId,
+        userName: input.session.name || '',
+        userEmail: input.session.email || '',
+        claimedSlugs: [],
+        createdAt: now,
+      },
+      $set: {
+        userName: input.session.name || '',
+        userEmail: input.session.email || '',
+        updatedAt: now,
+      },
+    },
+    { upsert: true }
+  )
+
+  const updated = await collection.findOneAndUpdate(
+    {
+      productId: MANUAL_CLINICO_PRODUCT_ID,
+      userId: input.session.userId,
+      claimedSlugs: { $ne: slug },
+      $expr: {
+        $lt: [
+          { $size: { $ifNull: ['$claimedSlugs', []] } },
+          getManualClinicoFreeViewLimit(input.config),
+        ],
+      },
+    } as any,
+    {
+      $addToSet: { claimedSlugs: slug },
+      $set: {
+        userName: input.session.name || '',
+        userEmail: input.session.email || '',
+        updatedAt: now,
+        lastClaimedAt: now,
+      },
+    },
+    { returnDocument: 'after' }
+  )
+
+  const refreshed = updated
+    ? {
+        ...currentQuota,
+        claimedSlugs: uniqueSlugs(updated.claimedSlugs || []),
+      }
+    : await getManualClinicoFreeQuotaState(db, input.session, input.config)
+  refreshed.used = refreshed.claimedSlugs.length
+  refreshed.remaining = Math.max(0, refreshed.limit - refreshed.used)
+
+  if (refreshed.claimedSlugs.includes(slug)) {
+    return { allowed: true, reason: 'claimed', quota: refreshed }
+  }
+
+  return { allowed: false, reason: 'quota_exhausted', quota: refreshed }
+}
+
+export function serializeManualClinicoFreeQuota(quota: ManualClinicoFreeQuotaState) {
+  return {
+    mode: quota.mode,
+    limit: quota.limit,
+    used: quota.used,
+    remaining: quota.remaining,
+    isAuthenticated: quota.isAuthenticated,
+  }
 }
 
 export async function getManualClinicoAccess(

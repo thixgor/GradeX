@@ -65,17 +65,28 @@ interface ManualProduct {
   currentPrice: number
   promotionalPrice: number | null
   hasActivePromotion: boolean
+  freeAccessMode?: 'quantity' | 'list'
+  freeQuantity?: number
 }
 
 interface ManualPatologiaResponse extends Patologia {
   preview?: string
   isFree?: boolean
+  isFreeClaimed?: boolean
+  canClaimFree?: boolean
   isPremiumLocked?: boolean
-  accessStatus?: 'free' | 'premium_unlocked' | 'locked'
+  accessStatus?: 'free' | 'free_claimed' | 'free_claimed_now' | 'free_available' | 'login_required' | 'premium_unlocked' | 'locked'
   product?: ManualProduct
   access?: {
     hasFullAccess: boolean
     reason: string
+    freeQuota?: {
+      mode: 'quantity' | 'list'
+      limit: number
+      used: number
+      remaining: number
+      isAuthenticated: boolean
+    }
   }
 }
 
@@ -140,6 +151,9 @@ function Section({ title, icon: Icon, children, defaultOpen = true, variant = 'd
 
 function PremiumPreviewCard({ patologia, onCheckout }: { patologia: ManualPatologiaResponse; onCheckout: () => void }) {
   const product = patologia.product
+  const freeQuota = patologia.access?.freeQuota
+  const needsLoginForFreeChoice = patologia.accessStatus === 'login_required' && !!freeQuota?.limit
+  const hasExhaustedFreeChoices = patologia.accessStatus === 'locked' && freeQuota?.mode === 'quantity' && freeQuota.limit > 0
 
   return (
     <div className="relative overflow-hidden rounded-3xl border border-amber-300/20 bg-gradient-to-br from-amber-400/10 via-card/70 to-emerald-400/10 p-5 shadow-2xl shadow-black/10 backdrop-blur-xl sm:p-7">
@@ -153,7 +167,11 @@ function PremiumPreviewCard({ patologia, onCheckout }: { patologia: ManualPatolo
             <p className="text-xs font-black uppercase tracking-[0.16em] text-amber-500">Conteúdo Premium</p>
             <h2 className="mt-1 text-2xl font-black tracking-tight">Desbloqueie o Manual Clínico Premium</h2>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-              {product?.shortDescription || 'Acesso completo a 220+ patologias aprofundadas com diagnóstico, tratamento, diferenciais, farmacologia e fluxogramas.'}
+              {needsLoginForFreeChoice
+                ? `Entre para escolher esta patologia como uma das suas ${freeQuota?.limit} visualizações gratuitas.`
+                : hasExhaustedFreeChoices
+                  ? `Voce ja usou suas ${freeQuota?.limit} visualizações gratuitas. O Premium libera o acervo completo.`
+                  : product?.shortDescription || 'Acesso completo a 220+ patologias aprofundadas com diagnóstico, tratamento, diferenciais, farmacologia e fluxogramas.'}
             </p>
           </div>
         </div>
@@ -171,8 +189,14 @@ function PremiumPreviewCard({ patologia, onCheckout }: { patologia: ManualPatolo
             <p className="text-sm font-bold">{product?.benefitText || 'Acesso completo a patologias aprofundadas'}</p>
             {product?.isActive && (
               <p className="mt-1 text-sm text-muted-foreground">
-                {product.hasActivePromotion && <span className="mr-2 line-through">{formatBRL(product.price)}</span>}
-                <span className="font-black text-primary">{product.currentPrice <= 0 ? 'Grátis' : formatBRL(product.currentPrice)}</span>
+                {needsLoginForFreeChoice ? (
+                  <span className="font-black text-primary">Escolha gratuita disponível após login</span>
+                ) : (
+                  <>
+                    {product.hasActivePromotion && <span className="mr-2 line-through">{formatBRL(product.price)}</span>}
+                    <span className="font-black text-primary">{product.currentPrice <= 0 ? 'Grátis' : formatBRL(product.currentPrice)}</span>
+                  </>
+                )}
               </p>
             )}
           </div>
@@ -183,7 +207,9 @@ function PremiumPreviewCard({ patologia, onCheckout }: { patologia: ManualPatolo
             className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-black text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <Crown className="h-4 w-4" />
-            {product?.isActive ? (product.ctaText || 'Desbloquear Manual Clínico Premium') : 'Produto indisponível'}
+            {needsLoginForFreeChoice
+              ? 'Entrar e abrir grátis'
+              : product?.isActive ? (product.ctaText || 'Desbloquear Manual Clínico Premium') : 'Produto indisponível'}
             <ArrowRight className="h-4 w-4" />
           </button>
         </div>
@@ -1766,8 +1792,8 @@ function PatologiaContent() {
           <PremiumPreviewCard
             patologia={patologia}
             onCheckout={() => {
-              if (patologia.access?.reason === 'guest') {
-                router.push(`/auth/login?redirect=${encodeURIComponent('/manual-clinico/checkout')}`)
+              if (patologia.accessStatus === 'login_required') {
+                router.push(`/auth/login?redirect=${encodeURIComponent(`/manual-clinico/${patologia.slug}`)}`)
                 return
               }
               router.push('/manual-clinico/checkout')

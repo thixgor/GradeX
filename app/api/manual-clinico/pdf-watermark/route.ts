@@ -6,6 +6,7 @@ import {
   getManualClinicoAccess,
   getManualClinicoConfig,
   getManualClinicoFreeSlugSet,
+  getManualClinicoFreeQuotaState,
   isManualClinicoPathologyFree,
 } from '@/lib/manual-clinico-product'
 
@@ -34,7 +35,12 @@ export async function POST(request: NextRequest) {
         db.collection('patologias').findOne({ slug }, { projection: { slug: 1 } }),
         getManualClinicoFreeSlugSet(db, config),
       ])
-      if (!patologia || !isManualClinicoPathologyFree(patologia as any, freeSlugs)) {
+      const freeQuota = await getManualClinicoFreeQuotaState(db, session, config)
+      const isAllowedFree = !!patologia && (
+        isManualClinicoPathologyFree(patologia as any, freeSlugs) ||
+        freeQuota.claimedSlugs.includes(String(patologia.slug || ''))
+      )
+      if (!isAllowedFree) {
         return NextResponse.json({ error: 'Acesso premium necessario para baixar este PDF.' }, { status: 403 })
       }
     }

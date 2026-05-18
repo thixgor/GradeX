@@ -4,6 +4,8 @@ import { getDb } from '@/lib/mongodb'
 import {
   getManualClinicoAccess,
   getManualClinicoConfig,
+  getManualClinicoFreeQuotaState,
+  serializeManualClinicoFreeQuota,
   serializeManualClinicoProduct,
 } from '@/lib/manual-clinico-product'
 
@@ -17,12 +19,14 @@ export async function GET() {
       getManualClinicoConfig(db),
       getManualClinicoAccess(db, session),
     ])
+    const freeQuota = await getManualClinicoFreeQuotaState(db, session, config)
 
     return NextResponse.json({
       product: serializeManualClinicoProduct(config),
       access: {
         hasFullAccess: access.hasFullAccess,
         reason: access.reason,
+        freeQuota: serializeManualClinicoFreeQuota(freeQuota),
       },
     })
   } catch (error) {

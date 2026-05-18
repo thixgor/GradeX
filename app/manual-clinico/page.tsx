@@ -104,8 +104,10 @@ interface PatologiaResumo {
   slug: string
   gravidade: string
   isFree?: boolean
+  isFreeClaimed?: boolean
+  canClaimFree?: boolean
   isPremiumLocked?: boolean
-  accessStatus?: 'free' | 'premium_unlocked' | 'locked'
+  accessStatus?: 'free' | 'free_claimed' | 'free_available' | 'login_required' | 'premium_unlocked' | 'locked'
 }
 
 interface ManualProduct {
@@ -119,11 +121,20 @@ interface ManualProduct {
   currentPrice: number
   promotionalPrice: number | null
   hasActivePromotion: boolean
+  freeAccessMode?: 'quantity' | 'list'
+  freeQuantity?: number
 }
 
 interface ManualAccess {
   hasFullAccess: boolean
   reason: string
+  freeQuota?: {
+    mode: 'quantity' | 'list'
+    limit: number
+    used: number
+    remaining: number
+    isAuthenticated: boolean
+  }
 }
 
 function formatBRL(value: number) {
@@ -203,6 +214,7 @@ function ManualClinicoContent() {
   const [manualAccess, setManualAccess] = useState<ManualAccess>({ hasFullAccess: false, reason: 'guest' })
   const { user } = useAppShell()
   const isAuthenticated = !!user
+  const freeQuota = manualAccess.freeQuota
 
   useEffect(() => {
     setHasHighlights(hasAnyManualHighlights())
@@ -345,7 +357,7 @@ function ManualClinicoContent() {
                 Manual Clínico
               </h1>
               <p className="text-muted-foreground mt-3 max-w-xl text-base sm:text-lg leading-relaxed">
-                Diagnóstico, tratamento, diferenciais, farmacologia e fluxogramas em um só lugar. Algumas patologias são gratuitas; o acervo completo fica no Premium.
+                Diagnóstico, tratamento, diferenciais, farmacologia e fluxogramas em um só lugar. Escolha algumas patologias para abrir gratuitamente; o acervo completo fica no Premium.
               </p>
               {total > 0 && (
                 <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20">
@@ -353,6 +365,13 @@ function ManualClinicoContent() {
                   <span className="text-xs font-medium text-primary">
                     {total} patologias disponíveis
                   </span>
+                </div>
+              )}
+              {!manualAccess.hasFullAccess && freeQuota?.mode === 'quantity' && freeQuota.limit > 0 && (
+                <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-emerald-300/25 bg-emerald-400/10 px-3 py-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-300">
+                  {isAuthenticated
+                    ? `${freeQuota.remaining} de ${freeQuota.limit} escolhas gratuitas restantes`
+                    : `Entre para escolher ${freeQuota.limit} patologias gratuitas`}
                 </div>
               )}
 
@@ -478,7 +497,13 @@ function ManualClinicoContent() {
                 </div>
                 <div>
                   <p className="text-sm font-bold">{product.label}</p>
-                  <p className="mt-0.5 text-xs text-muted-foreground">{product.benefitText}</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    {freeQuota?.mode === 'quantity' && freeQuota.limit > 0
+                      ? isAuthenticated
+                        ? `Voce ja usou ${freeQuota.used} de ${freeQuota.limit} escolhas gratuitas.`
+                        : `Crie sua sessao para usar ${freeQuota.limit} escolhas gratuitas.`
+                      : product.benefitText}
+                  </p>
                 </div>
               </div>
               <button
@@ -609,9 +634,18 @@ function ManualClinicoContent() {
                               {patologia.cid10}
                             </span>
                           )}
-                          {patologia.isFree ? (
+                          {patologia.accessStatus === 'free_available' ? (
                             <span className="inline-flex items-center gap-1 rounded-md border border-emerald-300/25 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-emerald-600 dark:text-emerald-300">
-                              Gratuita
+                              Escolha grátis
+                            </span>
+                          ) : patologia.accessStatus === 'login_required' ? (
+                            <span className="inline-flex items-center gap-1 rounded-md border border-emerald-300/25 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-emerald-600 dark:text-emerald-300">
+                              <LogIn className="h-3 w-3" />
+                              Grátis com login
+                            </span>
+                          ) : patologia.isFree ? (
+                            <span className="inline-flex items-center gap-1 rounded-md border border-emerald-300/25 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-emerald-600 dark:text-emerald-300">
+                              Grátis liberada
                             </span>
                           ) : patologia.isPremiumLocked ? (
                             <span className="inline-flex items-center gap-1 rounded-md border border-amber-300/25 bg-amber-400/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-amber-700 dark:text-amber-200">
@@ -644,7 +678,9 @@ function ManualClinicoContent() {
                         </div>
                       </div>
                       <div className="flex-shrink-0 mt-2 p-1.5 rounded-lg bg-white/[0.04] group-hover:bg-primary/10 transition-colors duration-300">
-                        {patologia.isPremiumLocked
+                        {patologia.accessStatus === 'login_required'
+                          ? <LogIn className="h-4 w-4 text-emerald-500/70 group-hover:text-emerald-400 transition-all duration-300" />
+                          : patologia.isPremiumLocked
                           ? <Lock className="h-4 w-4 text-amber-500/70 group-hover:text-amber-400 transition-all duration-300" />
                           : isAuthenticated === true || patologia.isFree
                           ? <ArrowRight className="h-4 w-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-300" />
@@ -652,9 +688,19 @@ function ManualClinicoContent() {
                         }
                       </div>
                     </div>
-                    {patologia.isPremiumLocked && (
+                    {patologia.accessStatus === 'free_available' && (
+                      <div className="mt-3 rounded-xl border border-emerald-300/25 bg-emerald-500/10 px-3 py-2 text-xs font-medium text-emerald-700 dark:text-emerald-200">
+                        Abrir esta patologia usa 1 das suas escolhas gratuitas.
+                      </div>
+                    )}
+                    {patologia.accessStatus === 'login_required' && freeQuota?.limit ? (
+                      <div className="mt-3 rounded-xl border border-emerald-300/25 bg-emerald-500/10 px-3 py-2 text-xs font-medium text-emerald-700 dark:text-emerald-200">
+                        Entre para usar suas {freeQuota.limit} escolhas gratuitas.
+                      </div>
+                    ) : null}
+                    {patologia.isPremiumLocked && patologia.accessStatus !== 'login_required' && (
                       <div className="mt-3 rounded-xl border border-amber-300/25 bg-amber-500/10 px-3 py-2 text-xs font-medium text-amber-700 dark:text-amber-200">
-                        Preview disponível. Desbloqueie o Manual Clínico Premium para abrir a conduta completa.
+                        Limite gratuito atingido. Desbloqueie o Manual Clínico Premium para abrir a conduta completa.
                       </div>
                     )}
                   </div>
