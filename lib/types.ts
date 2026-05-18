@@ -1234,11 +1234,14 @@ export interface ManualClinicoPurchase {
   providerOrderId?: string
   providerPaymentId?: string
   paymentMethod?: string
-  status: 'pending' | 'completed' | 'refunded'
+  status: 'pending' | 'completed' | 'refunded' | 'revoked'
   accessType: ManualClinicoAccessType
   purchasedAt: Date
   expiresAt?: Date | null
   refundedAt?: Date
+  revokedAt?: Date
+  revokedBy?: string
+  revokedByName?: string
   grantedBy?: string
   grantedByName?: string
 }

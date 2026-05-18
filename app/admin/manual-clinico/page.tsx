@@ -53,6 +53,33 @@ type ManualProductConfigForm = {
   freePathologySlugs: string[]
 }
 
+type ManualAccessPurchase = {
+  _id: string
+  userId: string
+  userName?: string
+  userEmail?: string
+  price?: number
+  provider?: string
+  paymentMethod?: string
+  couponCode?: string
+  accessType?: string
+  purchasedAt?: string
+  expiresAt?: string | null
+  grantedByName?: string
+}
+
+type ManualQuotaUser = {
+  _id: string
+  userId: string
+  userName?: string
+  userEmail?: string
+  claimedCount: number
+  claimedSlugsPreview?: string[]
+  createdAt?: string
+  updatedAt?: string
+  lastClaimedAt?: string
+}
+
 function emptyProductConfig(): ManualProductConfigForm {
   return {
     label: 'Manual Clinico Premium',
@@ -81,6 +108,19 @@ function toDatetimeLocal(value?: string | null) {
   return date.toISOString().slice(0, 16)
 }
 
+function formatDateTime(value?: string | Date | null) {
+  if (!value) return 'Nunca'
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return 'Nunca'
+  return date.toLocaleString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
 export default function AdminManualClinico() {
   const router = useRouter()
   const [patologias, setPatologias] = useState<any[]>([])
@@ -100,6 +140,12 @@ export default function AdminManualClinico() {
   const [productMessage, setProductMessage] = useState('')
   const [grantEmail, setGrantEmail] = useState('')
   const [grantLoading, setGrantLoading] = useState(false)
+  const [accessQuery, setAccessQuery] = useState('')
+  const [accessLoading, setAccessLoading] = useState(false)
+  const [accessPurchases, setAccessPurchases] = useState<ManualAccessPurchase[]>([])
+  const [quotaUsers, setQuotaUsers] = useState<ManualQuotaUser[]>([])
+  const [accessStats, setAccessStats] = useState({ premiumAccessCount: 0, quotaUserCount: 0 })
+  const [revokingId, setRevokingId] = useState<string | null>(null)
 
   const fetchPatologias = useCallback(async () => {
     setLoading(true)
@@ -156,9 +202,35 @@ export default function AdminManualClinico() {
     }
   }, [])
 
+  const fetchAccessOverview = useCallback(async () => {
+    setAccessLoading(true)
+    try {
+      const params = new URLSearchParams()
+      params.set('limit', '50')
+      if (accessQuery.trim()) params.set('q', accessQuery.trim())
+      const res = await fetch(`/api/admin/manual-clinico/access?${params}`, { cache: 'no-store' })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erro ao carregar acessos')
+      setAccessPurchases(data.purchases || [])
+      setQuotaUsers(data.quotaUsers || [])
+      setAccessStats(data.stats || { premiumAccessCount: 0, quotaUserCount: 0 })
+    } catch (error: any) {
+      setProductMessage(error?.message || 'Erro ao carregar acessos do Manual')
+    } finally {
+      setAccessLoading(false)
+    }
+  }, [accessQuery])
+
   useEffect(() => {
     fetchProductConfig()
   }, [fetchProductConfig])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchAccessOverview()
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [fetchAccessOverview])
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -231,10 +303,33 @@ export default function AdminManualClinico() {
       setGrantEmail('')
       setProductMessage('Acesso liberado para o usuario.')
       await fetchProductConfig()
+      await fetchAccessOverview()
     } catch (error: any) {
       setProductMessage(error?.message || 'Erro ao liberar acesso')
     } finally {
       setGrantLoading(false)
+    }
+  }
+
+  async function handleRevokeAccess(purchase: ManualAccessPurchase) {
+    if (!confirm(`Tirar o Manual Clinico Premium de ${purchase.userEmail || purchase.userName || 'este usuario'}?`)) return
+    setRevokingId(purchase._id)
+    setProductMessage('')
+    try {
+      const res = await fetch('/api/admin/manual-clinico/access', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ purchaseId: purchase._id }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erro ao revogar acesso')
+      setProductMessage(data.revokedCount > 0 ? 'Acesso revogado.' : 'Nenhum acesso ativo encontrado.')
+      await fetchProductConfig()
+      await fetchAccessOverview()
+    } catch (error: any) {
+      setProductMessage(error?.message || 'Erro ao revogar acesso')
+    } finally {
+      setRevokingId(null)
     }
   }
 
@@ -488,6 +583,133 @@ export default function AdminManualClinico() {
                 </div>
               </div>
             )}
+          </CardContent>
+        </Card>
+
+        <Card className="mb-6 overflow-hidden">
+          <CardContent className="p-5 sm:p-6">
+            <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <h2 className="flex items-center gap-2 text-xl font-bold">
+                  <Users className="h-5 w-5 text-primary" />
+                  Acessos e cotas
+                </h2>
+                <p className="text-sm text-muted-foreground">Veja quem tem Premium, consumo das escolhas gratuitas e ultima atividade.</p>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-center">
+                <div className="rounded-xl border bg-primary/10 px-3 py-2 text-primary">
+                  <p className="text-lg font-black">{accessStats.premiumAccessCount}</p>
+                  <p className="text-[10px] uppercase">Premium ativo</p>
+                </div>
+                <div className="rounded-xl border bg-emerald-500/10 px-3 py-2 text-emerald-700 dark:text-emerald-300">
+                  <p className="text-lg font-black">{accessStats.quotaUserCount}</p>
+                  <p className="text-[10px] uppercase">Usaram cota</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  className="pl-10"
+                  value={accessQuery}
+                  onChange={e => setAccessQuery(e.target.value)}
+                  placeholder="Buscar por nome, e-mail ou ID..."
+                />
+              </div>
+              <Button variant="outline" onClick={fetchAccessOverview} disabled={accessLoading}>
+                {accessLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                Atualizar
+              </Button>
+            </div>
+
+            <div className="grid gap-5 lg:grid-cols-2">
+              <div>
+                <div className="mb-2 flex items-center justify-between">
+                  <h3 className="text-sm font-bold">Usuários com Manual Premium</h3>
+                  <span className="text-xs text-muted-foreground">Últimos 50</span>
+                </div>
+                <div className="space-y-2">
+                  {accessLoading && accessPurchases.length === 0 ? (
+                    <div className="rounded-xl border p-6 text-center text-sm text-muted-foreground">
+                      <Loader2 className="mx-auto mb-2 h-5 w-5 animate-spin" />
+                      Carregando acessos...
+                    </div>
+                  ) : accessPurchases.length === 0 ? (
+                    <div className="rounded-xl border p-6 text-center text-sm text-muted-foreground">Nenhum acesso Premium encontrado.</div>
+                  ) : accessPurchases.map((purchase) => (
+                    <div key={purchase._id} className="flex items-center gap-3 rounded-xl border bg-background p-3">
+                      <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+                        {(purchase.userName || purchase.userEmail || '?')[0].toUpperCase()}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold">{purchase.userName || 'Sem nome'}</p>
+                        <p className="truncate text-xs text-muted-foreground">{purchase.userEmail || purchase.userId}</p>
+                        <div className="mt-1 flex flex-wrap items-center gap-1.5 text-[10px] text-muted-foreground">
+                          <span className="rounded-md border px-1.5 py-0.5">{purchase.provider === 'manual_admin' ? 'Admin' : purchase.provider === 'free' ? 'Grátis' : 'Pagamento'}</span>
+                          <span>{formatDateTime(purchase.purchasedAt)}</span>
+                          {purchase.couponCode ? <span>Cupom {purchase.couponCode}</span> : null}
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 text-destructive hover:text-destructive"
+                        onClick={() => handleRevokeAccess(purchase)}
+                        disabled={revokingId === purchase._id}
+                        title="Tirar Manual deste usuário"
+                      >
+                        {revokingId === purchase._id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <div className="mb-2 flex items-center justify-between">
+                  <h3 className="text-sm font-bold">Uso das cotas gratuitas</h3>
+                  <span className="text-xs text-muted-foreground">Ordenado por último uso</span>
+                </div>
+                <div className="space-y-2">
+                  {accessLoading && quotaUsers.length === 0 ? (
+                    <div className="rounded-xl border p-6 text-center text-sm text-muted-foreground">
+                      <Loader2 className="mx-auto mb-2 h-5 w-5 animate-spin" />
+                      Carregando cotas...
+                    </div>
+                  ) : quotaUsers.length === 0 ? (
+                    <div className="rounded-xl border p-6 text-center text-sm text-muted-foreground">Nenhum uso de cota encontrado.</div>
+                  ) : quotaUsers.map((quota) => (
+                    <div key={quota._id} className="rounded-xl border bg-background p-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-semibold">{quota.userName || 'Sem nome'}</p>
+                          <p className="truncate text-xs text-muted-foreground">{quota.userEmail || quota.userId}</p>
+                        </div>
+                        <span className="rounded-lg border bg-emerald-500/10 px-2 py-1 text-xs font-bold text-emerald-700 dark:text-emerald-300">
+                          {quota.claimedCount} usadas
+                        </span>
+                      </div>
+                      <div className="mt-2 grid gap-1 text-xs text-muted-foreground sm:grid-cols-2">
+                        <span>Último uso: {formatDateTime(quota.lastClaimedAt)}</span>
+                        <span>Atualizado: {formatDateTime(quota.updatedAt)}</span>
+                      </div>
+                      {quota.claimedSlugsPreview?.length ? (
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          {quota.claimedSlugsPreview.map((slug) => (
+                            <span key={slug} className="rounded-md border px-1.5 py-0.5 text-[10px] text-muted-foreground">{slug}</span>
+                          ))}
+                          {quota.claimedCount > quota.claimedSlugsPreview.length ? (
+                            <span className="rounded-md border px-1.5 py-0.5 text-[10px] text-muted-foreground">+{quota.claimedCount - quota.claimedSlugsPreview.length}</span>
+                          ) : null}
+                        </div>
+                      ) : null}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
