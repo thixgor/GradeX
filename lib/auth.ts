@@ -79,6 +79,49 @@ export async function verifyToken(token: string): Promise<TokenPayload | null> {
   }
 }
 
+// ============================================================
+// Session cache — evita um findOne no Mongo a CADA request.
+// Antes desta cache, getSession() era chamado em quase todas
+// as rotas (auth/me, bootstrap, notifications, materiais,
+// exams, etc.) e cada chamada custava ~10-20ms de CPU ativa
+// somente para checar `banned`. Em ~3.000 invocations/dia isso
+// representava a fatia mais cara do Fluid Active CPU.
+//
+// TTL curto (60s) garante que ban/email-verify se propagam em
+// até 1min — aceitável vs. o custo. Logout/ban explícito chama
+// invalidateSessionCache(userId) para efeito imediato.
+// ============================================================
+
+type CachedSessionEntry = {
+  payload: TokenPayload | null   // null = usuário inexistente/banido (negative cache)
+  expiresAt: number
+}
+
+const SESSION_CACHE_TTL_MS = 60 * 1000  // 60 segundos
+const sessionCache = new Map<string, CachedSessionEntry>()
+
+// Limpeza periódica para não vazar memória em runtime longo
+let lastSweep = 0
+function sweepSessionCache() {
+  const now = Date.now()
+  if (now - lastSweep < 60_000) return
+  lastSweep = now
+  for (const [key, entry] of sessionCache) {
+    if (entry.expiresAt < now) sessionCache.delete(key)
+  }
+}
+
+export function invalidateSessionCache(userId?: string): void {
+  if (userId) {
+    // Invalida todas as entradas desse usuário (uma por token)
+    for (const key of sessionCache.keys()) {
+      if (key.startsWith(userId + ':')) sessionCache.delete(key)
+    }
+  } else {
+    sessionCache.clear()
+  }
+}
+
 export async function getSession(): Promise<TokenPayload | null> {
   const cookieStore = await cookies()
   const token = cookieStore.get('auth-token')
@@ -88,26 +131,48 @@ export async function getSession(): Promise<TokenPayload | null> {
   const payload = await verifyToken(token.value)
   if (!payload) return null
 
-  // Verificar se o usuário está banido no banco de dados
+  // Cache key vincula payload+token para evitar reuso após troca de conta
+  // no mesmo browser, e usa só os últimos chars do token para limitar
+  // tamanho do Map.
+  const cacheKey = `${payload.userId}:${token.value.slice(-24)}`
+  const now = Date.now()
+  sweepSessionCache()
+
+  const cached = sessionCache.get(cacheKey)
+  if (cached && cached.expiresAt > now) {
+    if (!cached.payload) {
+      // Negative cache: usuário foi banido/deletado recentemente
+      await removeAuthCookie()
+      return null
+    }
+    return cached.payload
+  }
+
+  // Verificar se o usuário está banido no banco de dados (cache miss)
   try {
     const db = await getDb()
     const usersCollection = db.collection<User>('users')
-    const user = await usersCollection.findOne({ _id: new ObjectId(payload.userId) })
+    const user = await usersCollection.findOne(
+      { _id: new ObjectId(payload.userId) },
+      { projection: { banned: 1, emailVerified: 1 } } // projection reduz I/O
+    )
 
-    // Se usuário não existe ou está banido, invalida a sessão
     if (!user || user.banned) {
-      // Remove o cookie para forçar logout
+      sessionCache.set(cacheKey, { payload: null, expiresAt: now + SESSION_CACHE_TTL_MS })
       await removeAuthCookie()
       return null
     }
 
-    return {
+    const fresh: TokenPayload = {
       ...payload,
-      emailVerified: !!user.emailVerified
+      emailVerified: !!user.emailVerified,
     }
+    sessionCache.set(cacheKey, { payload: fresh, expiresAt: now + SESSION_CACHE_TTL_MS })
+    return fresh
   } catch (error) {
     console.error('Error checking user ban status:', error)
-    // Em caso de erro, permite a sessão continuar (fail-safe)
+    // Em caso de erro de DB, devolve payload do JWT sem cachear
+    // (fail-safe: usuário não fica deslogado por intermitência)
     return payload
   }
 }

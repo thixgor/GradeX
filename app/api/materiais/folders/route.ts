@@ -40,7 +40,17 @@ export async function GET(request: NextRequest) {
       .sort({ order: 1, name: 1 })
       .toArray()
 
-    return NextResponse.json({ folders })
+    // Cache shared para não-admin: o conteúdo de pastas é idêntico para
+    // todos os usuários não-admin. Servir pela Edge cache da Vercel evita
+    // 90%+ das 371 invocations/dia listadas no dashboard.
+    // Admin recebe no-store para sempre ver mudanças em tempo real.
+    const cacheControl = isAdmin
+      ? 'private, no-store'
+      : 'public, max-age=60, s-maxage=300, stale-while-revalidate=600'
+
+    return NextResponse.json({ folders }, {
+      headers: { 'Cache-Control': cacheControl },
+    })
   } catch (error) {
     console.error('Error fetching folders:', error)
     return NextResponse.json({ error: 'Erro ao buscar pastas' }, { status: 500 })

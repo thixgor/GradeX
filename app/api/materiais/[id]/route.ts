@@ -59,58 +59,51 @@ export async function GET(
       !material.allowedGroups?.length ||
       userGroups.some((g: string) => material.allowedGroups.includes(g))
 
-    // Check purchase (two queries to avoid $or index quirks)
+    // Check purchase — antes eram até 5 queries sequenciais (material por
+    // userId, por email; depois pacotes; pacote por userId, por email).
+    // Consolida em paralelo: 1 query material-purchases via $or
+    // (userId OR userEmail) + 1 query packages. Quando há pacotes que
+    // contêm o material, busca compras de pacote em uma segunda rodada.
     let isPurchased = false
     if (session && !isAdmin) {
-      const baseFilter = { itemId: id, itemType: 'material', status: 'completed' }
-      const byUserId = await db.collection('material_purchases').findOne({
-        ...baseFilter,
-        userId: session.userId,
-      })
-      if (byUserId) {
-        isPurchased = true
-      } else if (session.email) {
-        const emailRegex = new RegExp(
-          `^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`,
-          'i'
-        )
-        const byEmail = await db.collection('material_purchases').findOne({
-          ...baseFilter,
-          userEmail: { $regex: emailRegex },
-        })
-        isPurchased = !!byEmail
-      }
+      const emailFilter = session.email
+        ? { userEmail: new RegExp(`^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') }
+        : null
 
-      if (!isPurchased) {
-        const packages = await db.collection('material_packages')
-          .find({ materialIds: id, isHidden: { $ne: true } })
-          .project({ _id: 1 })
-          .toArray()
-        const packageIds = packages.map((pkg: any) => String(pkg._id))
-
-        if (packageIds.length > 0) {
-          const packageFilter = {
-            itemType: 'package',
-            itemId: { $in: packageIds },
+      const [directPurchase, candidatePackages] = await Promise.all([
+        db.collection('material_purchases').findOne(
+          {
+            itemId: id,
+            itemType: 'material',
             status: 'completed',
-          }
-          const packageByUserId = await db.collection('material_purchases').findOne({
-            ...packageFilter,
-            userId: session.userId,
-          })
-          if (packageByUserId) {
-            isPurchased = true
-          } else if (session.email) {
-            const emailRegex = new RegExp(
-              `^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`,
-              'i'
-            )
-            const packageByEmail = await db.collection('material_purchases').findOne({
-              ...packageFilter,
-              userEmail: { $regex: emailRegex },
-            })
-            isPurchased = !!packageByEmail
-          }
+            ...(emailFilter
+              ? { $or: [{ userId: session.userId }, emailFilter] }
+              : { userId: session.userId }),
+          },
+          { projection: { _id: 1 } }
+        ),
+        db.collection('material_packages')
+          .find({ materialIds: id, isHidden: { $ne: true } }, { projection: { _id: 1 } })
+          .toArray(),
+      ])
+
+      if (directPurchase) {
+        isPurchased = true
+      } else {
+        const packageIds = candidatePackages.map((pkg: any) => String(pkg._id))
+        if (packageIds.length > 0) {
+          const pkgPurchase = await db.collection('material_purchases').findOne(
+            {
+              itemType: 'package',
+              itemId: { $in: packageIds },
+              status: 'completed',
+              ...(emailFilter
+                ? { $or: [{ userId: session.userId }, emailFilter] }
+                : { userId: session.userId }),
+            },
+            { projection: { _id: 1 } }
+          )
+          isPurchased = !!pkgPurchase
         }
       }
     }
@@ -147,10 +140,16 @@ export async function GET(
       }
     }
 
-    // Increment view count (fire and forget)
-    db.collection('materials')
-      .updateOne({ _id: new ObjectId(id) }, { $inc: { viewCount: 1 } })
-      .catch(() => {})
+    // Increment view count (fire-and-forget).
+    // Apenas para usuários autenticados que NÃO são o admin e que
+    // tenham acesso ao material — evita inflar viewCount com bots,
+    // crawlers anônimos ou cliques internos do admin. Reduz writes
+    // ao Mongo significativamente (era 1 write em CADA call, ~726/dia).
+    if (isAuthenticated && !isAdmin && canAccess) {
+      db.collection('materials')
+        .updateOne({ _id: new ObjectId(id) }, { $inc: { viewCount: 1 } })
+        .catch(() => {})
+    }
 
     const res = NextResponse.json({
       material: {
@@ -173,7 +172,11 @@ export async function GET(
         cpf: userDoc?.cpf || '',
       },
     })
-    res.headers.set('Cache-Control', 'no-store, max-age=0, must-revalidate')
+    // Cache curto privado: muitas visitas vêm de cliques rápidos (volta,
+    // refresh, navegação entre material e viewer). 30s evita re-fetch
+    // imediato sem comprometer atualização de hasAccess após compra
+    // (o checkout invalida cache do client via clearBootstrapCache).
+    res.headers.set('Cache-Control', 'private, max-age=30, stale-while-revalidate=60')
     return res
   } catch (error) {
     console.error('Error fetching material:', error)

@@ -31,9 +31,9 @@ export interface Notification {
  */
 export function useNotifications(options: {
   skip?: boolean
-  refetchInterval?: number // Default: 30 seconds (from original polling pattern)
+  refetchInterval?: number // Default: 120s — antes era 30s; reduzido para baixar CPU/Vercel.
 } = {}) {
-  const { skip = false, refetchInterval = 30 * 1000 } = options
+  const { skip = false, refetchInterval = 120 * 1000 } = options
 
   const { data, loading, error, refetch } = useApi<Notification[]>(
     '/api/notifications',
@@ -140,7 +140,7 @@ export function useUnreadNotificationCount(options: {
   skip?: boolean
   refetchInterval?: number
 } = {}) {
-  const { skip = false, refetchInterval = 30 * 1000 } = options
+  const { skip = false, refetchInterval = 120 * 1000 } = options
 
   const { data, loading, error, refetch } = useApi<{ count: number }>(
     '/api/notifications/count',

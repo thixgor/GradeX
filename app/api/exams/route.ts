@@ -43,15 +43,26 @@ export async function GET(request: NextRequest) {
       ],
     }
 
+    // Projection — campos suficientes para a lista; questões em si
+    // têm rota dedicada por exame. Antes trazia o documento completo
+    // com todos os enunciados (custoso em decks grandes).
     const exams = await examsCollection
-      .find(query)
+      .find(query, {
+        projection: {
+          title: 1, description: 1, coverImage: 1, isHidden: 1,
+          isFeatured: 1, isPersonalExam: 1, allowedGroups: 1,
+          questionCount: 1, totalQuestions: 1, durationMinutes: 1,
+          createdAt: 1, updatedAt: 1, createdBy: 1, createdByName: 1,
+          accessType: 1, year: 1, examType: 1, banca: 1, modulo: 1,
+        },
+      })
       .sort({ createdAt: -1 })
       .toArray()
 
-    // Add cache headers to reduce serverless invocations
-    // Use low cache for list to ensure UI updates after deletions
+    // Cache privado curto: lista pessoal de provas raramente muda em
+    // alguns segundos. SWR mantém UI responsiva sem regerar imediato.
     const headers = new Headers({
-      'Cache-Control': 'no-store, max-age=0',
+      'Cache-Control': 'private, max-age=30, stale-while-revalidate=120',
       'Content-Type': 'application/json',
     })
 
