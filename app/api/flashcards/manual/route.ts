@@ -13,6 +13,7 @@ import {
   getUserGroups,
 } from '@/lib/flashcard-manual'
 import { getFlashcardManualLimits } from '@/lib/flashcard-limits'
+import { syncMaterialForFlashcardDeck } from '@/lib/flashcard-material-sync'
 import type { FlashcardManualDeck } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -139,8 +140,15 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await decks.insertOne(deck)
+    const deckWithId: FlashcardManualDeck & { _id: ObjectId } = { ...deck, _id: result.insertedId as ObjectId }
+
+    if (ownerType === 'admin') {
+      const linkedMaterialId = await syncMaterialForFlashcardDeck(db, deckWithId)
+      deckWithId.linkedMaterialId = linkedMaterialId
+    }
+
     return NextResponse.json({
-      deck: normalizeDeckForResponse({ ...deck, _id: result.insertedId }),
+      deck: normalizeDeckForResponse(deckWithId),
     }, { status: 201 })
   } catch (error: any) {
     console.error('Erro ao criar deck manual:', error)

@@ -20,6 +20,7 @@ import {
   normalizeSpacedProgressForResponse,
   sortCardsForSpacedRepetition,
 } from '@/lib/flashcard-spaced-repetition'
+import { syncMaterialForFlashcardDeck } from '@/lib/flashcard-material-sync'
 import type { FlashcardManualDeck, FlashcardManualCard, FlashcardSpacedProgress } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -199,7 +200,6 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
         updates.pricing = body.pricing
         if (body.pricing === 'free') {
           updates.price = 0
-          updates.linkedMaterialId = null
         }
       }
       if (typeof body.price === 'number') updates.price = Math.max(0, body.price)
@@ -225,26 +225,23 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 
     await db.collection(FLASHCARD_MANUAL_COLLECTIONS.decks).updateOne({ _id: deck._id }, { $set: updates })
 
-    // Sync com /materiais quando admin marca pago ou atualiza pasta/preço/grupos
+    // Sync com /materiais quando admin publica/atualiza um deck da loja.
     const shouldSync = isAdmin && (
       updates.pricing === 'paid' ||
+      updates.pricing === 'free' ||
       (deck.linkedMaterialId && (
         updates.materialsFolderId !== undefined ||
         updates.title !== undefined ||
         updates.coverImage !== undefined ||
         updates.allowedGroups !== undefined ||
-        updates.price !== undefined
+        updates.price !== undefined ||
+        updates.visibility !== undefined ||
+        updates.isHidden !== undefined ||
+        updates.isFeatured !== undefined
       ))
     )
     if (shouldSync) {
-      await syncMaterialForDeck(db, { ...deck, ...updates, _id: deck._id })
-    }
-    if (isAdmin && updates.pricing === 'free' && deck.linkedMaterialId) {
-      // Esconder material associado quando volta para gratuito
-      await db.collection('materials').updateOne(
-        { _id: new ObjectId(deck.linkedMaterialId) },
-        { $set: { isHidden: true, updatedAt: new Date() } }
-      )
+      await syncMaterialForFlashcardDeck(db, { ...deck, ...updates, _id: deck._id })
     }
 
     // Quando deck vira privado, ocultar material vinculado automaticamente
@@ -301,48 +298,3 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
   }
 }
 
-async function syncMaterialForDeck(db: any, deck: FlashcardManualDeck & { _id: ObjectId }) {
-  const materialPayload = {
-    title: deck.title,
-    description: deck.description || '',
-    coverImage: deck.coverImage || '',
-    type: 'flashcard_deck',
-    downloadUrl: `/flashcards/d/${deck.slug}`,
-    folderId: deck.materialsFolderId || null,
-    moduloId: '',
-    tags: deck.tags || [],
-    pricing: 'paid' as const,
-    price: deck.price || 0,
-    stripePriceId: deck.stripePriceId || '',
-    allowedGroups: deck.allowedGroups || [],
-    isHidden: !!deck.isHidden || deck.visibility === 'private',
-    isFeatured: !!deck.isFeatured,
-    order: 0,
-    linkedDeckId: String(deck._id),
-    linkedDeckSlug: deck.slug,
-    updatedAt: new Date(),
-  }
-
-  if (deck.linkedMaterialId && isValidObjectId(deck.linkedMaterialId)) {
-    await db.collection('materials').updateOne(
-      { _id: new ObjectId(deck.linkedMaterialId) },
-      { $set: materialPayload }
-    )
-    return deck.linkedMaterialId
-  }
-
-  const created = await db.collection('materials').insertOne({
-    ...materialPayload,
-    downloadCount: 0,
-    viewCount: 0,
-    createdBy: deck.ownerId,
-    createdByName: deck.ownerName,
-    createdAt: new Date(),
-  })
-
-  await db.collection(FLASHCARD_MANUAL_COLLECTIONS.decks).updateOne(
-    { _id: deck._id },
-    { $set: { linkedMaterialId: String(created.insertedId), updatedAt: new Date() } }
-  )
-  return String(created.insertedId)
-}
