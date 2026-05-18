@@ -33,6 +33,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { FlashcardImageInput } from '@/components/flashcards/flashcard-image-input'
+import { PricingEventSelector } from '@/components/pricing-events/PricingEventSelector'
 import { cn } from '@/lib/utils'
 import type { FlashcardManualCard, FlashcardManualDeck } from '@/lib/types'
 
@@ -340,6 +341,7 @@ function DeckMetaForm({
   const [visibility, setVisibility] = useState(deck.visibility)
   const [pricing, setPricing] = useState(deck.pricing)
   const [price, setPrice] = useState(String(deck.price ?? 0))
+  const [pricingEventId, setPricingEventId] = useState<string | null>(deck.pricingEventId || null)
   const [allowedGroups, setAllowedGroups] = useState<string[]>(deck.allowedGroups || [])
   const [materialsFolderId, setMaterialsFolderId] = useState(deck.materialsFolderId || '')
   const [pdfDownloadEnabled, setPdfDownloadEnabled] = useState(deck.pdfDownloadEnabled === true)
@@ -365,6 +367,7 @@ function DeckMetaForm({
       ...(isAdmin ? {
         pricing,
         price: pricing === 'paid' ? Number(price) || 0 : 0,
+        pricingEventId: pricing === 'paid' ? pricingEventId : null,
         allowedGroups,
         materialsFolderId: materialsFolderId || null,
         pdfDownloadEnabled,
@@ -451,6 +454,16 @@ function DeckMetaForm({
                   </div>
                 )}
               </div>
+              {pricing === 'paid' && (
+                <div>
+                  <PricingEventSelector
+                    value={pricingEventId}
+                    onChange={setPricingEventId}
+                    label="Lote dinâmico por evento"
+                    hint='Aplica desconto progressivo conforme a data se aproxima. Regra "Maior dos dois" — vence o melhor entre lote e cupom.'
+                  />
+                </div>
+              )}
               <div>
                 <Label>Restringir a grupos (opcional)</Label>
                 <div className="mt-2 flex flex-wrap gap-2">

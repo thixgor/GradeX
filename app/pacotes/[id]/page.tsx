@@ -42,6 +42,11 @@ import {
   DEFAULT_PUBLIC_METRIC_SETTINGS,
   type PublicMetricSettings,
 } from '@/lib/display-settings'
+import {
+  PricingEventCountdown,
+  type PricingEventStatePayload,
+} from '@/components/pricing-events/PricingEventCountdown'
+import { PricingEventBadge } from '@/components/pricing-events/PricingEventBadge'
 
 // ─── Types ───────────────────────────────────────────────────
 interface PackageMaterial {
@@ -76,6 +81,7 @@ interface PackageDoc {
   viewCount: number
   isFeatured: boolean
   createdAt: string
+  pricingEventId?: string | null
 }
 
 interface AccessInfo {
@@ -101,6 +107,7 @@ interface PageData {
   materials: PackageMaterial[]
   access: AccessInfo
   pricing: PricingInfo
+  pricingEventState?: PricingEventStatePayload | null
 }
 
 const GROUP_META: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
@@ -283,6 +290,15 @@ export default function PackageDetailPage() {
   const hasInfoMetrics = showMaterialViews || showMaterialDownloads
   const showMobilePurchaseBar = !access.hasAccess && access.isAuthenticated
 
+  // Lote dinâmico por evento
+  const eventState = data.pricingEventState || null
+  const tierPct = eventState?.activeTier?.discountPercent || 0
+  const hasTier = !isFree && !!eventState?.activeTier && eventState.isActive !== false && tierPct > 0
+  const tierFinalPrice = hasTier
+    ? Math.max(0, Math.round(pricing.effectivePrice * (1 - tierPct / 100) * 100) / 100)
+    : pricing.effectivePrice
+  const tierSavings = hasTier ? Math.max(0, pricing.effectivePrice - tierFinalPrice) : 0
+
   return (
     <AppShell allowGuest headerTitle={pkg.title} headerSubtitle="Pacote">
       <div className={`min-h-full relative ${showMobilePurchaseBar ? 'pb-28 xl:pb-0' : ''}`}>
@@ -395,6 +411,17 @@ export default function PackageDetailPage() {
                 </div>
               </div>
 
+              {/* Lote dinâmico por evento */}
+              {hasTier && eventState && !access.hasAccess && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.05 }}
+                >
+                  <PricingEventCountdown state={eventState} />
+                </motion.div>
+              )}
+
               {/* Mobile purchase summary */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
@@ -415,11 +442,17 @@ export default function PackageDetailPage() {
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold border border-emerald-500/15">
                           <Gift className="h-3 w-3" /> Gratuito
                         </span>
+                      ) : hasTier ? (
+                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold border border-emerald-500/30">
+                          <span className="line-through opacity-60">{fmtBRL(pricing.effectivePrice)}</span>
+                          <span>{fmtBRL(tierFinalPrice)}</span>
+                        </span>
                       ) : (
                         <span className="px-2 py-0.5 rounded-lg bg-accent/10 text-amber-700 dark:text-amber-300 text-[11px] font-bold border border-amber-500/15">
                           {fmtBRL(pricing.effectivePrice)}
                         </span>
                       )}
+                      {hasTier && <PricingEventBadge state={eventState} size="xs" />}
                     </div>
 
                     <h1 className="font-heading text-lg font-bold leading-snug">
@@ -465,12 +498,35 @@ export default function PackageDetailPage() {
                         </span>
                       </div>
                     )}
+                    {hasTier && (
+                      <>
+                        <div className="mb-1 flex items-center justify-between gap-3 text-xs">
+                          <span className="text-muted-foreground">Valor sem lote</span>
+                          <span className="text-muted-foreground line-through">
+                            {fmtBRL(pricing.effectivePrice)}
+                          </span>
+                        </div>
+                        <div className="mb-1 flex items-center justify-between gap-3 text-xs">
+                          <span className="flex items-center gap-1 font-semibold text-emerald-600 dark:text-emerald-400">
+                            <TrendingDown className="h-3 w-3" /> Lote{eventState ? ` · ${eventState.activeTier?.label || ''}` : ''} (−{tierPct}%)
+                          </span>
+                          <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                            − {fmtBRL(tierSavings)}
+                          </span>
+                        </div>
+                      </>
+                    )}
                     <div className="flex items-center justify-between gap-3">
                       <span className="text-sm font-semibold">Total</span>
                       <span className="text-xl font-black text-emerald-600 dark:text-emerald-400">
-                        {pricing.effectivePrice <= 0 ? 'Grátis' : fmtBRL(pricing.effectivePrice)}
+                        {tierFinalPrice <= 0 ? 'Grátis' : fmtBRL(tierFinalPrice)}
                       </span>
                     </div>
+                    {hasTier && eventState?.activeTier && (
+                      <p className="mt-1 text-[10px] text-emerald-700/80 dark:text-emerald-300/80 leading-snug">
+                        ⚡ Lote ativo: quanto antes comprar, maior o desconto.
+                      </p>
+                    )}
                   </div>
                 )}
 
@@ -668,7 +724,7 @@ export default function PackageDetailPage() {
                       ) : (
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl backdrop-blur-md bg-black/40 border border-white/15 text-white/80 text-[11px] font-bold">
                           <Lock className="h-3 w-3" />
-                          {isFree ? 'Gratuito' : fmtBRL(pricing.effectivePrice)}
+                          {isFree ? 'Gratuito' : fmtBRL(tierFinalPrice)}
                         </span>
                       )}
                     </div>
@@ -684,11 +740,17 @@ export default function PackageDetailPage() {
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold border border-emerald-500/15">
                         <Gift className="h-3 w-3" /> Gratuito
                       </span>
+                    ) : hasTier ? (
+                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold border border-emerald-500/30">
+                        <span className="line-through opacity-60">{fmtBRL(pricing.effectivePrice)}</span>
+                        <span>{fmtBRL(tierFinalPrice)}</span>
+                      </span>
                     ) : (
                       <span className="px-2 py-0.5 rounded-lg bg-accent/10 text-amber-700 dark:text-amber-300 text-[11px] font-bold border border-amber-500/15">
                         {fmtBRL(pricing.effectivePrice)}
                       </span>
                     )}
+                    {hasTier && <PricingEventBadge state={eventState} size="xs" />}
                   </div>
 
                   <h1 className="font-heading font-bold text-base leading-snug mb-3">
@@ -743,16 +805,39 @@ export default function PackageDetailPage() {
                             </div>
                           </>
                         )}
+                        {hasTier && (
+                          <>
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-muted-foreground">Valor sem lote</span>
+                              <span className="text-muted-foreground line-through">
+                                {fmtBRL(pricing.effectivePrice)}
+                              </span>
+                            </div>
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                                <TrendingDown className="h-3 w-3" /> Lote ativo (−{tierPct}%)
+                              </span>
+                              <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                                − {fmtBRL(tierSavings)}
+                              </span>
+                            </div>
+                          </>
+                        )}
                         <div className="flex items-center justify-between pt-1">
                           <span className="text-sm font-semibold">Total</span>
                           <span className="text-xl font-black text-emerald-600 dark:text-emerald-400">
-                            {pricing.effectivePrice <= 0 ? 'Grátis' : fmtBRL(pricing.effectivePrice)}
+                            {tierFinalPrice <= 0 ? 'Grátis' : fmtBRL(tierFinalPrice)}
                           </span>
                         </div>
                         {hasDiscount && (
                           <p className="text-[10px] text-muted-foreground/80 leading-snug pt-1 border-t border-border/30 mt-1">
                             Desconto calculado proporcionalmente sobre os materiais
                             do pacote que você já adquiriu.
+                          </p>
+                        )}
+                        {hasTier && eventState?.activeTier && (
+                          <p className="text-[10px] text-emerald-700/85 dark:text-emerald-300/85 leading-snug pt-1 border-t border-border/30 mt-1">
+                            ⚡ Lote {eventState.activeTier.label}. Quanto antes comprar, maior o desconto.
                           </p>
                         )}
                       </div>
@@ -889,7 +974,17 @@ export default function PackageDetailPage() {
             <div className="min-w-0 flex-1">
               <p className="truncate text-xs font-semibold text-foreground">{pkg.title}</p>
               <p className="text-sm font-black text-emerald-700 dark:text-emerald-300">
-                {isFree || pricing.effectivePrice <= 0 ? 'Gratuito' : fmtBRL(pricing.effectivePrice)}
+                {isFree || tierFinalPrice <= 0 ? 'Gratuito' : (
+                  <>
+                    {hasTier && (
+                      <span className="mr-1.5 text-[10px] font-medium text-muted-foreground line-through">
+                        {fmtBRL(pricing.effectivePrice)}
+                      </span>
+                    )}
+                    {fmtBRL(tierFinalPrice)}
+                    {hasTier && <span className="ml-1.5 text-[10px] font-bold text-emerald-500">−{tierPct}%</span>}
+                  </>
+                )}
               </p>
             </div>
             <Button

@@ -20,6 +20,7 @@ export async function syncMaterialForFlashcardDeck(db: any, deck: FlashcardManua
     pricing: isPaid ? 'paid' : 'free',
     price: isPaid ? deck.price || 0 : 0,
     stripePriceId: isPaid ? deck.stripePriceId || '' : '',
+    pricingEventId: isPaid && deck.pricingEventId ? String(deck.pricingEventId) : null,
     allowedGroups: deck.allowedGroups || [],
     isHidden: !!deck.isHidden || deck.visibility === 'private',
     isFeatured: !!deck.isFeatured,

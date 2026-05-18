@@ -408,6 +408,7 @@ export interface FlashcardManualDeck {
   price?: number
   stripePriceId?: string
   allowedGroups?: MaterialAccessGroup[] // restringir por plano (admin)
+  pricingEventId?: string | null // lote dinâmico por evento (admin)
 
   // Vínculos
   folderId?: string | null // pasta do dono (organização pessoal)

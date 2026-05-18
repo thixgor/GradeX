@@ -3,6 +3,7 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { computeEffectivePackagePrice } from '@/lib/material-package-pricing'
+import { getPricingEventStateById, serializePricingEventState } from '@/lib/pricing-events'
 
 export const dynamic = 'force-dynamic'
 
@@ -147,6 +148,11 @@ export async function GET(
       ownedMaterialIds: purchasedMaterialIds,
     })
 
+    // ─── Lote dinâmico por evento (se vinculado) ─────────────
+    const pricingEventState = pkg.pricingEventId
+      ? await getPricingEventStateById(db, String(pkg.pricingEventId))
+      : null
+
     // Marcar cada material como já adquirido (para a UI)
     const purchasedSet = new Set(purchasedMaterialIds)
     const materialsForClient = orderedMaterials.map((m: any) => {
@@ -197,7 +203,9 @@ export async function GET(
         viewCount: pkg.viewCount || 0,
         isFeatured: !!pkg.isFeatured,
         createdAt: pkg.createdAt,
+        pricingEventId: pkg.pricingEventId ? String(pkg.pricingEventId) : null,
       },
+      pricingEventState: serializePricingEventState(pricingEventState),
       materials: materialsForClient,
       access: {
         isAdmin,

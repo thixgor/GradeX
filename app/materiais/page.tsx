@@ -57,6 +57,8 @@ import {
   type PublicMetricSettings,
 } from '@/lib/display-settings'
 import { useMaterialCart } from '@/context/MaterialCartContext'
+import type { PricingEventStatePayload } from '@/components/pricing-events/PricingEventCountdown'
+import { PricingEventBadge, PricingEventCardPrice } from '@/components/pricing-events/PricingEventBadge'
 
 interface Material {
   _id: string
@@ -88,6 +90,8 @@ interface Material {
   _pageCount?: number
   pdfViewerEnabled?: boolean
   pdfDownloadEnabled?: boolean
+  pricingEventId?: string | null
+  _pricingEventState?: PricingEventStatePayload | null
 }
 
 // Groups that can have restricted access to materials
@@ -137,6 +141,8 @@ interface MaterialPackage {
     totalPaidIndividualValue: number
     ownedMaterialIds: string[]
   }
+  pricingEventId?: string | null
+  _pricingEventState?: PricingEventStatePayload | null
 }
 
 type MaterialMetricSettings = PublicMetricSettings['materials']
@@ -1440,7 +1446,7 @@ function MaterialCard({
             </span>
           </div>
 
-          <div className="absolute top-3 right-3">
+          <div className="absolute top-3 right-3 flex flex-col items-end gap-1">
             {material.allowedGroups?.length > 0 ? (
               <span className="px-2.5 py-1 rounded-lg text-xs font-bold backdrop-blur-xl bg-violet-500/30 text-violet-100 border border-violet-400/30 flex items-center gap-1">
                 <ShieldAlert className="h-3 w-3" />
@@ -1450,11 +1456,18 @@ function MaterialCard({
               <span className="px-3 py-1 rounded-lg text-xs font-bold backdrop-blur-xl bg-green-500/30 text-green-100 border border-green-400/30 flex items-center gap-1">
                 <Gift className="h-3 w-3" /> Grátis
               </span>
+            ) : material._pricingEventState?.activeTier && material._pricingEventState.isActive ? (
+              <div className="px-2.5 py-1.5 rounded-lg backdrop-blur-xl bg-black/45 border border-emerald-300/40 shadow-lg shadow-emerald-500/20">
+                <PricingEventCardPrice originalPrice={Number(material.price || 0)} state={material._pricingEventState} />
+              </div>
             ) : (
               <span className="px-3 py-1 rounded-lg text-xs font-bold backdrop-blur-xl bg-accent/30 text-amber-100 border border-amber-400/30">
                 R$ {material.price?.toFixed(2)}
               </span>
             )}
+            {material._pricingEventState?.activeTier && material._pricingEventState.isActive && !isFree ? (
+              <PricingEventBadge state={material._pricingEventState} size="xs" />
+            ) : null}
           </div>
 
           <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
@@ -1641,7 +1654,17 @@ function FeaturedCard({
                 ? <span className="text-xs font-bold text-violet-300 flex items-center gap-1"><ShieldAlert className="h-3 w-3" /> Restrito</span>
                 : isFree
                   ? <span className="text-xs font-bold text-green-300 flex items-center gap-1"><Gift className="h-3 w-3" /> Grátis</span>
-                  : <span className="text-xs font-bold text-amber-300">R$ {material.price?.toFixed(2)}</span>}
+                  : material._pricingEventState?.activeTier && material._pricingEventState.isActive
+                    ? (
+                      <span className="inline-flex items-center gap-1.5">
+                        <span className="text-[10px] line-through text-white/50">R$ {material.price?.toFixed(2)}</span>
+                        <span className="text-xs font-bold text-emerald-300">
+                          R$ {(Number(material.price || 0) * (1 - material._pricingEventState.activeTier.discountPercent / 100)).toFixed(2).replace('.', ',')}
+                        </span>
+                        <PricingEventBadge state={material._pricingEventState} size="xs" />
+                      </span>
+                    )
+                    : <span className="text-xs font-bold text-amber-300">R$ {material.price?.toFixed(2)}</span>}
               <CopyLinkBtn id={material._id} copiedId={copiedId} onClick={e => { e.stopPropagation(); onCopyLink() }} />
             </div>
           </div>
@@ -1767,7 +1790,7 @@ function PackageCard({
             </span>
           </div>
 
-          <div className="absolute top-3 right-3 text-right">
+          <div className="absolute top-3 right-3 text-right flex flex-col items-end gap-1">
             {pkg.allowedGroups?.length > 0 ? (
               <span className="px-2.5 py-1 rounded-lg text-xs font-bold backdrop-blur-xl bg-violet-500/30 text-violet-100 border border-violet-400/30 flex items-center gap-1">
                 <ShieldAlert className="h-3 w-3" />
@@ -1777,6 +1800,10 @@ function PackageCard({
               <span className="px-3 py-1 rounded-lg text-xs font-bold backdrop-blur-xl bg-green-500/30 text-green-100 border border-green-400/30 flex items-center gap-1">
                 <Gift className="h-3 w-3" /> Grátis
               </span>
+            ) : pkg._pricingEventState?.activeTier && pkg._pricingEventState.isActive ? (
+              <div className="px-2.5 py-1.5 rounded-lg backdrop-blur-xl bg-black/45 border border-emerald-300/40 shadow-lg shadow-emerald-500/20">
+                <PricingEventCardPrice originalPrice={effectivePrice} state={pkg._pricingEventState} />
+              </div>
             ) : (
               <div className="flex flex-col items-end gap-0.5">
                 {hasDiscount && <span className="text-[10px] text-white/60 line-through">{formatBRL(crossedPrice || 0)}</span>}
@@ -1785,6 +1812,9 @@ function PackageCard({
                 </span>
               </div>
             )}
+            {pkg._pricingEventState?.activeTier && pkg._pricingEventState.isActive && !isFree ? (
+              <PricingEventBadge state={pkg._pricingEventState} size="xs" />
+            ) : null}
           </div>
 
           <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between">

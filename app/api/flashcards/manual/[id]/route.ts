@@ -22,6 +22,7 @@ import {
 } from '@/lib/flashcard-spaced-repetition'
 import { syncMaterialForFlashcardDeck } from '@/lib/flashcard-material-sync'
 import type { FlashcardManualDeck, FlashcardManualCard, FlashcardSpacedProgress } from '@/lib/types'
+import { getPricingEventStateById, serializePricingEventState } from '@/lib/pricing-events'
 
 export const dynamic = 'force-dynamic'
 
@@ -121,6 +122,11 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         .catch(() => {})
     }
 
+    // Lote dinâmico por evento
+    const pricingEventState = deck.pricingEventId
+      ? await getPricingEventStateById(db, String(deck.pricingEventId))
+      : null
+
     const res = NextResponse.json({
       deck: normalizeDeckForResponse(deck),
       cards,
@@ -134,6 +140,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         userId: session?.userId || null,
         emailVerified: !!userDoc?.emailVerified,
       },
+      pricingEventState: serializePricingEventState(pricingEventState),
     })
     res.headers.set('Cache-Control', 'no-store, max-age=0, must-revalidate')
     return res
@@ -204,6 +211,9 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       }
       if (typeof body.price === 'number') updates.price = Math.max(0, body.price)
       if (typeof body.stripePriceId === 'string') updates.stripePriceId = body.stripePriceId
+      if (body.pricingEventId !== undefined) {
+        updates.pricingEventId = body.pricingEventId ? String(body.pricingEventId) : null
+      }
       if (Array.isArray(body.allowedGroups)) {
         updates.allowedGroups = body.allowedGroups.filter((g: string) => FLASHCARD_MANUAL_VALID_GROUPS.includes(g as any))
       }
@@ -237,7 +247,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
         updates.price !== undefined ||
         updates.visibility !== undefined ||
         updates.isHidden !== undefined ||
-        updates.isFeatured !== undefined
+        updates.isFeatured !== undefined ||
+        updates.pricingEventId !== undefined
       ))
     )
     if (shouldSync) {

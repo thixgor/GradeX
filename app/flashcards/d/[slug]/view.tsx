@@ -62,6 +62,11 @@ import {
   clearProgress,
   type FlashcardProgress,
 } from '@/lib/flashcard-progress'
+import {
+  PricingEventCountdown,
+  type PricingEventStatePayload,
+} from '@/components/pricing-events/PricingEventCountdown'
+import { PricingEventBadge } from '@/components/pricing-events/PricingEventBadge'
 
 interface AccessFlags {
   hasAccess: boolean
@@ -80,6 +85,7 @@ interface DeckResponse {
   }
   access: AccessFlags & { canManage: boolean }
   viewer: { isAuthenticated: boolean; isAdmin: boolean; userId: string | null; emailVerified: boolean }
+  pricingEventState?: PricingEventStatePayload | null
 }
 
 type StudyMode = 'normal' | 'spaced'
@@ -487,6 +493,15 @@ export default function DeckPage() {
   const isPaid = deck.pricing === 'paid'
   const canDownloadPdf = !isLocked && deck.pdfDownloadEnabled === true
 
+  // Lote dinâmico por evento
+  const eventState = data.pricingEventState || null
+  const tierPct = eventState?.activeTier?.discountPercent || 0
+  const hasTier = isPaid && !!eventState?.activeTier && eventState.isActive !== false && tierPct > 0
+  const originalDeckPrice = Number(deck.price || 0)
+  const tierDeckPrice = hasTier
+    ? Math.max(0, Math.round(originalDeckPrice * (1 - tierPct / 100) * 100) / 100)
+    : originalDeckPrice
+
   if (studying) {
     const card = cards[currentIndex]
     const total = cards.length
@@ -693,7 +708,18 @@ export default function DeckPage() {
                   <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/90 px-2.5 py-0.5"><Crown className="h-3 w-3" /> Oficial</span>
                 )}
                 {isPaid && !access.isPurchased && !access.isOwner && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-rose-500/90 px-2.5 py-0.5"><Lock className="h-3 w-3" /> R$ {deck.price?.toFixed(2)}</span>
+                  hasTier ? (
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/90 px-2.5 py-0.5">
+                      <Lock className="h-3 w-3" />
+                      <span className="line-through opacity-70">R$ {originalDeckPrice.toFixed(2)}</span>
+                      <span>R$ {tierDeckPrice.toFixed(2)}</span>
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-rose-500/90 px-2.5 py-0.5"><Lock className="h-3 w-3" /> R$ {deck.price?.toFixed(2)}</span>
+                  )
+                )}
+                {hasTier && !access.isPurchased && !access.isOwner && (
+                  <PricingEventBadge state={eventState} size="xs" />
                 )}
                 {access.isPurchased && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/90 px-2.5 py-0.5"><CheckCircle2 className="h-3 w-3" /> Adquirido</span>
@@ -780,7 +806,15 @@ export default function DeckPage() {
                 >
                   <span className="absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none" />
                   <ShoppingCart className="h-4 w-4 flex-shrink-0" />
-                  {`Comprar R$ ${deck.price?.toFixed(2).replace('.', ',')}`}
+                  {hasTier ? (
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className="text-[11px] font-medium opacity-70 line-through">R$ {originalDeckPrice.toFixed(2).replace('.', ',')}</span>
+                      <span>Comprar R$ {tierDeckPrice.toFixed(2).replace('.', ',')}</span>
+                      <span className="rounded-full bg-white/20 px-1.5 py-0.5 text-[10px] font-bold">−{tierPct}%</span>
+                    </span>
+                  ) : (
+                    `Comprar R$ ${deck.price?.toFixed(2).replace('.', ',')}`
+                  )}
                 </button>
               ) : isLocked ? (
                 <button
@@ -825,6 +859,12 @@ export default function DeckPage() {
             </div>
           </div>
         </div>
+
+        {hasTier && isLocked && eventState && (
+          <div className="mb-4">
+            <PricingEventCountdown state={eventState} />
+          </div>
+        )}
 
         {isLocked ? (
           <LockedPreview deck={deck} access={access} />

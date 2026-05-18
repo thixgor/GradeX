@@ -3,6 +3,7 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { computeEffectivePackagePrice } from '@/lib/material-package-pricing'
+import { getPricingEventStatesByIds, serializePricingEventState } from '@/lib/pricing-events'
 
 export const dynamic = 'force-dynamic'
 
@@ -103,6 +104,14 @@ export async function GET(request: NextRequest) {
     const purchasedSet = new Set(purchasedPackageIds)
     const purchasedMaterialSet = new Set(purchasedMaterialIds)
 
+    // Resolve pricing event states (batch) for packages that have a pricingEventId
+    const pkgEventIds = packages
+      .map((p: any) => p.pricingEventId)
+      .filter((id: any): id is string => !!id)
+    const pkgEventStates = pkgEventIds.length > 0
+      ? await getPricingEventStatesByIds(db, pkgEventIds)
+      : new Map()
+
     const packagesWithMaterials = packages.map((pkg: any) => {
       const idStr = String(pkg._id)
       const hasGroupAccess =
@@ -122,6 +131,10 @@ export async function GET(request: NextRequest) {
         ownedMaterialIds: purchasedMaterialSet,
       })
 
+      const pricingEventState = pkg.pricingEventId
+        ? pkgEventStates.get(String(pkg.pricingEventId)) || null
+        : null
+
       return {
         ...pkg,
         _id: idStr,
@@ -130,6 +143,7 @@ export async function GET(request: NextRequest) {
         _hasGroupAccess: hasGroupAccess,
         _hasAccess: hasAccess,
         _pricing: pricing,
+        _pricingEventState: serializePricingEventState(pricingEventState),
       }
     })
 

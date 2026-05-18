@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
+import { getPricingEventStatesByIds, serializePricingEventState } from '@/lib/pricing-events'
 
 export const dynamic = 'force-dynamic'
 
@@ -184,6 +185,14 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // Resolve pricing event states (batch) for materials that have a pricingEventId
+    const eventIds = materials
+      .map((m: any) => m.pricingEventId)
+      .filter((id: any): id is string => !!id)
+    const eventStates = eventIds.length > 0
+      ? await getPricingEventStatesByIds(db, eventIds)
+      : new Map()
+
     const secureMaterials = materials.filter((m: any) =>
       !privateDeckMaterialIds.has(String(m._id))
     ).map((m: any) => {
@@ -214,6 +223,11 @@ export async function GET(request: NextRequest) {
       // Remover pdfFile (com blobUrl) da resposta — substituído por _hasPdf/_pdfFile
       const { pdfFile: _removed, ...rest } = m
 
+      // Resolve pricing event state if this material has one
+      const pricingEventState = m.pricingEventId
+        ? eventStates.get(String(m.pricingEventId)) || null
+        : null
+
       return {
         ...rest,
         _id: idStr,
@@ -227,6 +241,7 @@ export async function GET(request: NextRequest) {
         ...(hasPdf && m.pdfFile?.pageCount ? { _pageCount: m.pdfFile.pageCount } : {}),
         ...(pdfFileMeta && { _pdfFile: pdfFileMeta }),
         ...(m.type === 'flashcard_deck' && { _cardCount: cardCountByMaterialId[idStr] ?? 0 }),
+        _pricingEventState: serializePricingEventState(pricingEventState),
       }
     })
 
