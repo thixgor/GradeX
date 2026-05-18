@@ -116,6 +116,8 @@ interface ManualProduct {
   shortDescription: string
   ctaText: string
   coverImageUrl?: string
+  fullPdfButtonEnabled?: boolean
+  fullPdfExternalUrl?: string
   isActive: boolean
   price: number
   currentPrice: number
@@ -221,12 +223,17 @@ function ManualClinicoContent() {
   }, [])
 
   async function handleGeneratePDF() {
+    if (product?.fullPdfButtonEnabled === false) return
     if (isAuthenticated !== true) {
       router.push(`/auth/login?redirect=${encodeURIComponent('/manual-clinico')}`)
       return
     }
     if (!manualAccess.hasFullAccess) {
       router.push('/manual-clinico/checkout')
+      return
+    }
+    if (product?.fullPdfExternalUrl) {
+      window.open(product.fullPdfExternalUrl, '_blank', 'noopener,noreferrer')
       return
     }
     setPdfLoading(true)
@@ -393,19 +400,27 @@ function ManualClinicoContent() {
                     )}
                   </button>
                 )}
-                <button
-                  onClick={handleGeneratePDF}
-                  disabled={pdfLoading}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
-                    bg-primary text-primary-foreground shadow-lg shadow-primary/25
-                    hover:bg-primary/90 active:scale-[0.97] transition-all duration-200
-                    disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                  {pdfLoading
-                    ? <Loader2 className="h-4 w-4 animate-spin" />
-                    : <FileDown className="h-4 w-4" />}
-                  {pdfLoading ? 'Gerando PDF...' : manualAccess.hasFullAccess ? 'Baixar Manual Completo (PDF)' : isAuthenticated === true ? 'Comprar para baixar o manual' : 'Entrar para baixar o manual'}
-                </button>
+                {product?.fullPdfButtonEnabled !== false && (
+                  <button
+                    onClick={handleGeneratePDF}
+                    disabled={pdfLoading}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
+                      bg-primary text-primary-foreground shadow-lg shadow-primary/25
+                      hover:bg-primary/90 active:scale-[0.97] transition-all duration-200
+                      disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    {pdfLoading
+                      ? <Loader2 className="h-4 w-4 animate-spin" />
+                      : <FileDown className="h-4 w-4" />}
+                    {pdfLoading
+                      ? 'Gerando PDF...'
+                      : manualAccess.hasFullAccess && product?.fullPdfExternalUrl
+                        ? 'Abrir Manual Completo (PDF)'
+                        : manualAccess.hasFullAccess
+                          ? 'Baixar Manual Completo (PDF)'
+                          : isAuthenticated === true ? 'Comprar para baixar o manual' : 'Entrar para baixar o manual'}
+                  </button>
+                )}
 
                 {hasHighlights && (
                   <button

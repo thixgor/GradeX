@@ -1201,6 +1201,8 @@ export interface ManualClinicoProductConfig {
   shortDescription: string
   ctaText: string
   coverImageUrl?: string
+  fullPdfButtonEnabled?: boolean
+  fullPdfExternalUrl?: string
   isActive: boolean
   price: number
   promotionalPrice?: number | null

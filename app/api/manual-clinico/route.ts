@@ -48,6 +48,9 @@ export async function GET(request: NextRequest) {
       if (!access.hasFullAccess) {
         return NextResponse.json({ error: 'Acesso premium necessario para exportar o Manual Clinico completo.' }, { status: 403 })
       }
+      if (config.fullPdfButtonEnabled === false || config.fullPdfExternalUrl) {
+        return NextResponse.json({ error: 'Geracao do PDF completo indisponivel.' }, { status: 403 })
+      }
       const patologias = await db
         .collection('patologias')
         .find(filter)

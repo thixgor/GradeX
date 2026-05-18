@@ -22,6 +22,8 @@ export const DEFAULT_MANUAL_CLINICO_CONFIG: Omit<ManualClinicoProductConfig, '_i
   shortDescription: 'Diagnostico, tratamento, diferenciais, farmacologia e fluxogramas em um so lugar.',
   ctaText: 'Desbloquear Manual Clinico Premium',
   coverImageUrl: 'https://i.imgur.com/0JXm4Au.png',
+  fullPdfButtonEnabled: true,
+  fullPdfExternalUrl: '',
   isActive: true,
   price: 49.9,
   promotionalPrice: 29.9,
@@ -40,6 +42,8 @@ export interface ManualClinicoPublicProduct {
   shortDescription: string
   ctaText: string
   coverImageUrl?: string
+  fullPdfButtonEnabled: boolean
+  fullPdfExternalUrl?: string
   isActive: boolean
   price: number
   currentPrice: number
@@ -115,6 +119,8 @@ export function serializeManualClinicoProduct(config: ManualClinicoProductConfig
     shortDescription: config.shortDescription,
     ctaText: config.ctaText,
     coverImageUrl: config.coverImageUrl,
+    fullPdfButtonEnabled: config.fullPdfButtonEnabled !== false,
+    fullPdfExternalUrl: config.fullPdfExternalUrl,
     isActive: config.isActive !== false,
     price: roundMoney(config.price),
     currentPrice,
@@ -164,6 +170,8 @@ export async function upsertManualClinicoConfig(
     shortDescription: String(input.shortDescription || DEFAULT_MANUAL_CLINICO_CONFIG.shortDescription).trim(),
     ctaText: String(input.ctaText || DEFAULT_MANUAL_CLINICO_CONFIG.ctaText).trim(),
     coverImageUrl: String(input.coverImageUrl || '').trim(),
+    fullPdfButtonEnabled: input.fullPdfButtonEnabled !== false,
+    fullPdfExternalUrl: String(input.fullPdfExternalUrl || '').trim(),
     isActive: input.isActive !== false,
     price: roundMoney(Number(input.price ?? DEFAULT_MANUAL_CLINICO_CONFIG.price)),
     promotionalPrice: input.promotionalPrice == null || input.promotionalPrice === ('' as any)

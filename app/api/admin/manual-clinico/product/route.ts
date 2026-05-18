@@ -20,6 +20,8 @@ const Schema = z.object({
   shortDescription: z.string().min(3).max(260),
   ctaText: z.string().min(3).max(80),
   coverImageUrl: z.string().max(500).optional().nullable(),
+  fullPdfButtonEnabled: z.boolean().optional(),
+  fullPdfExternalUrl: z.string().max(1000).optional().nullable(),
   isActive: z.boolean(),
   price: z.number().min(0),
   promotionalPrice: z.number().min(0).nullable().optional(),

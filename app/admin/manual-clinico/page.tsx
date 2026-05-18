@@ -40,6 +40,8 @@ type ManualProductConfigForm = {
   shortDescription: string
   ctaText: string
   coverImageUrl: string
+  fullPdfButtonEnabled: boolean
+  fullPdfExternalUrl: string
   isActive: boolean
   price: number
   promotionalPrice: number | null
@@ -58,6 +60,8 @@ function emptyProductConfig(): ManualProductConfigForm {
     shortDescription: 'Diagnostico, tratamento, diferenciais, farmacologia e fluxogramas em um so lugar.',
     ctaText: 'Desbloquear Manual Clinico Premium',
     coverImageUrl: '',
+    fullPdfButtonEnabled: true,
+    fullPdfExternalUrl: '',
     isActive: true,
     price: 49.9,
     promotionalPrice: 29.9,
@@ -132,6 +136,8 @@ export default function AdminManualClinico() {
         shortDescription: cfg.shortDescription || '',
         ctaText: cfg.ctaText || '',
         coverImageUrl: cfg.coverImageUrl || '',
+        fullPdfButtonEnabled: cfg.fullPdfButtonEnabled !== false,
+        fullPdfExternalUrl: cfg.fullPdfExternalUrl || '',
         isActive: cfg.isActive !== false,
         price: Number(cfg.price || 0),
         promotionalPrice: cfg.promotionalPrice == null ? null : Number(cfg.promotionalPrice),
@@ -371,6 +377,32 @@ export default function AdminManualClinico() {
                     URL da capa
                     <Input className="mt-1" value={productConfig.coverImageUrl} onChange={e => setProductConfig(c => ({ ...c, coverImageUrl: e.target.value }))} placeholder="https://..." />
                   </label>
+
+                  <div className="rounded-2xl border bg-muted/25 p-4">
+                    <p className="mb-3 text-sm font-bold">Manual completo em PDF</p>
+                    <div className="space-y-3">
+                      <label className="flex items-center justify-between gap-3 rounded-xl border bg-background px-3 py-2 text-sm">
+                        <span>Mostrar botão de baixar manual completo</span>
+                        <input
+                          type="checkbox"
+                          checked={productConfig.fullPdfButtonEnabled}
+                          onChange={e => setProductConfig(c => ({ ...c, fullPdfButtonEnabled: e.target.checked }))}
+                        />
+                      </label>
+                      <label className="block text-sm font-medium">
+                        Link do botão
+                        <Input
+                          className="mt-1"
+                          value={productConfig.fullPdfExternalUrl}
+                          onChange={e => setProductConfig(c => ({ ...c, fullPdfExternalUrl: e.target.value }))}
+                          placeholder="https://..."
+                        />
+                      </label>
+                      <p className="text-xs text-muted-foreground">
+                        Se houver link, o botão abre esse endereço e não gera PDF no servidor.
+                      </p>
+                    </div>
+                  </div>
 
                   <div className="grid gap-3 sm:grid-cols-3">
                     <label className="text-sm font-medium">
