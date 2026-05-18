@@ -277,41 +277,37 @@ export async function claimManualClinicoFreePathology(
 
   const now = new Date()
   const collection = db.collection<ManualClinicoFreeQuota>(MANUAL_CLINICO_FREE_QUOTA_COLLECTION)
+  try {
+    await collection.updateOne(
+      {
+        productId: MANUAL_CLINICO_PRODUCT_ID,
+        userId: input.session.userId,
+      },
+      {
+        $setOnInsert: {
+          productId: MANUAL_CLINICO_PRODUCT_ID,
+          userId: input.session.userId,
+          claimedSlugs: [],
+          createdAt: now,
+        },
+        $set: {
+          userName: input.session.name || '',
+          userEmail: input.session.email || '',
+          updatedAt: now,
+        },
+      },
+      { upsert: true }
+    )
+  } catch (error: any) {
+    if (error?.code !== 11000) throw error
+  }
+
   await collection.updateOne(
     {
       productId: MANUAL_CLINICO_PRODUCT_ID,
       userId: input.session.userId,
-    },
-    {
-      $setOnInsert: {
-        productId: MANUAL_CLINICO_PRODUCT_ID,
-        userId: input.session.userId,
-        userName: input.session.name || '',
-        userEmail: input.session.email || '',
-        claimedSlugs: [],
-        createdAt: now,
-      },
-      $set: {
-        userName: input.session.name || '',
-        userEmail: input.session.email || '',
-        updatedAt: now,
-      },
-    },
-    { upsert: true }
-  )
-
-  const updated = await collection.findOneAndUpdate(
-    {
-      productId: MANUAL_CLINICO_PRODUCT_ID,
-      userId: input.session.userId,
       claimedSlugs: { $ne: slug },
-      $expr: {
-        $lt: [
-          { $size: { $ifNull: ['$claimedSlugs', []] } },
-          getManualClinicoFreeViewLimit(input.config),
-        ],
-      },
-    } as any,
+    },
     {
       $addToSet: { claimedSlugs: slug },
       $set: {
@@ -320,18 +316,10 @@ export async function claimManualClinicoFreePathology(
         updatedAt: now,
         lastClaimedAt: now,
       },
-    },
-    { returnDocument: 'after' }
+    }
   )
 
-  const refreshed = updated
-    ? {
-        ...currentQuota,
-        claimedSlugs: uniqueSlugs(updated.claimedSlugs || []),
-      }
-    : await getManualClinicoFreeQuotaState(db, input.session, input.config)
-  refreshed.used = refreshed.claimedSlugs.length
-  refreshed.remaining = Math.max(0, refreshed.limit - refreshed.used)
+  const refreshed = await getManualClinicoFreeQuotaState(db, input.session, input.config)
 
   if (refreshed.claimedSlugs.includes(slug)) {
     return { allowed: true, reason: 'claimed', quota: refreshed }
@@ -467,10 +455,6 @@ export async function grantManualClinicoAccess(
     } as any,
     {
       $setOnInsert: purchase as any,
-      $set: {
-        productTitle: purchase.productTitle,
-        expiresAt: purchase.expiresAt,
-      },
     },
     { upsert: true }
   )
