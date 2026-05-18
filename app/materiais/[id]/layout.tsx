@@ -10,6 +10,7 @@ import {
   privateNoIndexRobots,
   sanitizeSeoText,
 } from '@/lib/seo'
+import { resolveFlashcardMaterialCoverImage } from '@/lib/material-flashcard-cover'
 
 const MATERIAIS_DESCRIPTION =
   'Acesse materiais de estudo da DomineAqui com conteúdos organizados, PDFs, vídeos e recursos para acelerar sua rotina de aprendizado.'
@@ -53,6 +54,7 @@ export async function generateMetadata(
             type: 1,
             linkedDeckId: 1,
             linkedDeckSlug: 1,
+            downloadUrl: 1,
             isHidden: 1,
             updatedAt: 1,
             createdAt: 1,
@@ -64,32 +66,21 @@ export async function generateMetadata(
 
     if (!material?.title) return fallback
 
-    let flashcardCoverImage = ''
-    if (material.type === 'flashcard_deck') {
-      const deckQuery = material.linkedDeckId && ObjectId.isValid(String(material.linkedDeckId))
-        ? { _id: new ObjectId(String(material.linkedDeckId)) }
-        : material.linkedDeckSlug
-          ? { slug: material.linkedDeckSlug }
-          : null
-
-      if (deckQuery) {
-        const linkedDeck = await db
-          .collection('flashcardManualDecks')
-          .findOne(deckQuery, { projection: { coverImage: 1 } })
-        flashcardCoverImage = linkedDeck?.coverImage || ''
-      }
-    }
+    const flashcardCoverImage = await resolveFlashcardMaterialCoverImage(db, material)
 
     const safeTitle = sanitizeSeoText(material.title, 'Material de estudo', 70)
     const safeDescription = sanitizeSeoText(material.description, MATERIAIS_DESCRIPTION, 120)
     const title = `${safeTitle || 'Material de estudo'}`
     const coverImage = flashcardCoverImage || material.coverImage
-    const image = coverImage ? absoluteUrl(coverImage) : DEFAULT_OG_IMAGE
-    const imageType = /\.png(\?|$)/i.test(image)
+    const image = material.type === 'flashcard_deck' && coverImage
+      ? absoluteUrl(`/api/og/material/${params.id}`)
+      : coverImage ? absoluteUrl(coverImage) : DEFAULT_OG_IMAGE
+    const imageTypeSource = coverImage || image
+    const imageType = /\.png(\?|$)/i.test(imageTypeSource)
       ? 'image/png'
-      : /\.webp(\?|$)/i.test(image)
+      : /\.webp(\?|$)/i.test(imageTypeSource)
         ? 'image/webp'
-        : /\.gif(\?|$)/i.test(image)
+        : /\.gif(\?|$)/i.test(imageTypeSource)
           ? 'image/gif'
           : 'image/jpeg'
 
