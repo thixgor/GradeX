@@ -99,7 +99,67 @@ let bootstrapGeneration = 0
 let latestBootstrapRequestId = 0
 
 const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
-const BOOTSTRAP_TIMEOUT_MS = 9000
+const BOOTSTRAP_TIMEOUT_MS = 15000 // 15s — mobile (3G/4G ruim) precisa de margem maior
+const STORAGE_KEY = 'da_bootstrap_v1'
+// localStorage TTL maior que CACHE_DURATION: usamos os dados para hidratar
+// a UI instantaneamente (stale-while-revalidate) mesmo que vão ser revalidados.
+const STORAGE_TTL_MS = 24 * 60 * 60 * 1000 // 24h
+
+// ── Hidratação síncrona do localStorage ────────────────────────────
+// Crítica para mobile: sem isso, a primeira renderização de qualquer
+// página protegida bloqueia esperando o fetch do /api/bootstrap (no
+// celular = tela "Carregando..." por 2-5s). Com hidratação, o usuário
+// vê o app montado na hora; o fetch real roda em background e atualiza
+// quando termina.
+// ───────────────────────────────────────────────────────────────────
+function loadBootstrapFromStorage(): BootstrapResponse | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as { data: BootstrapResponse; savedAt: number }
+    if (!parsed?.data || typeof parsed.savedAt !== 'number') return null
+    if (Date.now() - parsed.savedAt > STORAGE_TTL_MS) {
+      window.localStorage.removeItem(STORAGE_KEY)
+      return null
+    }
+    return parsed.data
+  } catch {
+    return null
+  }
+}
+
+function saveBootstrapToStorage(data: BootstrapResponse): void {
+  if (typeof window === 'undefined') return
+  try {
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ data, savedAt: Date.now() }),
+    )
+  } catch {
+    // quota excedida ou modo privado — ignora; cache em memória continua funcionando
+  }
+}
+
+function removeBootstrapFromStorage(): void {
+  if (typeof window === 'undefined') return
+  try {
+    window.localStorage.removeItem(STORAGE_KEY)
+  } catch {
+    // ignora
+  }
+}
+
+// Hidrata imediatamente ao carregar o módulo no cliente.
+// lastFetchTime = 0 garante que a próxima chamada de fetchBootstrap()
+// revalide em background — o usuário vê dados na hora e a UI atualiza
+// quando a resposta fresca chegar.
+if (typeof window !== 'undefined') {
+  const cached = loadBootstrapFromStorage()
+  if (cached) {
+    globalBootstrapData = cached
+  }
+}
 
 /**
  * Notify all listeners of data changes
@@ -157,6 +217,8 @@ async function fetchBootstrap(force = false): Promise<BootstrapResponse> {
       globalBootstrapData = data
       globalBootstrapError = null
       lastFetchTime = Date.now()
+      // Persiste para que a próxima visita/reload hidrate sem rede.
+      saveBootstrapToStorage(data)
       notifyListeners()
       return data
     })
@@ -392,6 +454,9 @@ export function clearBootstrapCache() {
   globalBootstrapPromise = null
   globalBootstrapError = null
   lastFetchTime = 0
+  // Importante limpar localStorage também — senão depois de logout
+  // o próximo mount hidrataria com dados do usuário anterior.
+  removeBootstrapFromStorage()
   clearCache()
   invalidateCache('/api/bootstrap')
   invalidateCache('/api/auth/me')
