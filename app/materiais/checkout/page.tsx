@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { AlertCircle, Check, ChevronLeft, FileText, Loader2, Package, Percent, ShoppingCart, Sparkles, Trash2, X } from 'lucide-react'
+import { AlertCircle, Check, ChevronLeft, FileText, Flame, Loader2, Package, Percent, ShoppingCart, Sparkles, Trash2, X } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
 import { useMaterialCart } from '@/context/MaterialCartContext'
+import { PricingEventCountdown, type PricingEventStatePayload } from '@/components/pricing-events/PricingEventCountdown'
 
 const pageStyle: React.CSSProperties = {
   minHeight: '100vh',
@@ -63,12 +64,20 @@ interface CartUpgradeSuggestion {
   extraMaterialsCount: number
 }
 
+interface CartPreviewItemWithEvent extends CartPreviewItem {
+  tierDiscount?: number
+  priceAfterTier?: number
+  pricingEventState?: PricingEventStatePayload | null
+}
+
 interface CartPreview {
-  items: CartPreviewItem[]
-  payableItems: CartPreviewItem[]
-  freeItems: CartPreviewItem[]
+  items: CartPreviewItemWithEvent[]
+  payableItems: CartPreviewItemWithEvent[]
+  freeItems: CartPreviewItemWithEvent[]
   skippedItems: CartSkippedItem[]
   amount: number
+  tierDiscountTotal?: number
+  amountAfterTier?: number
   suggestions?: CartUpgradeSuggestion[]
 }
 
@@ -376,9 +385,13 @@ export default function MateriaisCheckoutPage() {
             originalPackagePrice: itemResp.pricing?.originalPackagePrice ?? itemResp.package.price,
             discountApplied: itemResp.pricing?.discountApplied ?? 0,
             ownedMaterialIds: itemResp.pricing?.ownedMaterialIds ?? [],
+            pricingEventState: itemResp.pricingEventState ?? null,
           }
         } else if (itemType === 'material' && itemResp?.material) {
-          found = itemResp.material
+          found = {
+            ...itemResp.material,
+            pricingEventState: itemResp.pricingEventState ?? null,
+          }
         } else if (Array.isArray(itemResp)) {
           found = itemResp.find((x: any) => x._id === itemId)
         } else {
@@ -480,7 +493,16 @@ export default function MateriaisCheckoutPage() {
 
   if (isCartMode && cartPreview) {
     const amount = Number(cartPreview.amount || 0)
-    const payableAmount = appliedCoupon ? Number(appliedCoupon.amountAfterCoupon || 0) : amount
+    const tierTotal = Number(cartPreview.tierDiscountTotal || 0)
+    const amountAfterTier = Number(cartPreview.amountAfterTier ?? (amount - tierTotal))
+    const hasTier = tierTotal > 0
+    const couponDiscount = appliedCoupon ? Number(appliedCoupon.discountAmount || 0) : 0
+    const couponWinsOverTier = couponDiscount > tierTotal
+    const payableAmount = appliedCoupon
+      ? (couponWinsOverTier ? Number(appliedCoupon.amountAfterCoupon || 0) : amountAfterTier)
+      : amountAfterTier
+    const firstLoteName = cartPreview.items.find(it => (it as any).pricingEventState?.activeTier)?.pricingEventState?.name || null
+    const firstLoteState = cartPreview.items.find(it => (it as any).pricingEventState?.activeTier)?.pricingEventState || null
     const acceptedIds = new Set(cartPreview.items.map(item => `${item.itemType}:${item.itemId}`))
     const acceptedLocalItems = cartItems.filter(item => acceptedIds.has(`${item.itemType}:${item.itemId}`))
     const suggestions = cartPreview.suggestions || []
@@ -554,6 +576,12 @@ export default function MateriaisCheckoutPage() {
           <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', marginBottom: suggestions.length > 0 ? '20px' : '32px' }}>
             {cartPreview.items.length} {cartPreview.items.length === 1 ? 'item selecionado' : 'itens selecionados'}
           </p>
+
+          {hasTier && firstLoteState && (
+            <div style={{ marginBottom: '20px' }}>
+              <PricingEventCountdown state={firstLoteState as PricingEventStatePayload} compact />
+            </div>
+          )}
 
           {removedAccessibleItems.length > 0 && (
             <div style={{
@@ -667,6 +695,10 @@ export default function MateriaisCheckoutPage() {
                   {cartPreview.items.map(previewItem => {
                     const local = acceptedLocalItems.find(item => item.itemType === previewItem.itemType && item.itemId === previewItem.itemId)
                     const price = Number(previewItem.price || 0)
+                    const itemTierDiscount = Number(previewItem.tierDiscount || 0)
+                    const itemTierFinal = Number(previewItem.priceAfterTier ?? price)
+                    const itemHasTier = itemTierDiscount > 0 && previewItem.pricingEventState?.activeTier
+                    const itemTierPct = previewItem.pricingEventState?.activeTier?.discountPercent || 0
                     return (
                       <div
                         key={`${previewItem.itemType}:${previewItem.itemId}`}
@@ -704,11 +736,32 @@ export default function MateriaisCheckoutPage() {
                               Desconto aplicado: {formatBRL(previewItem.discountApplied)}
                             </p>
                           )}
+                          {itemHasTier && (
+                            <p style={{
+                              fontSize: '11px',
+                              marginTop: '4px',
+                              color: '#34d399',
+                              fontWeight: 700,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '5px',
+                            }}>
+                              <Flame size={11} />
+                              Lote "{previewItem.pricingEventState?.name}" · −{itemTierPct}% (−{formatBRL(itemTierDiscount)})
+                            </p>
+                          )}
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-                          <span style={{ fontSize: '14px', fontWeight: 800, color: '#34d399' }}>
-                            {price <= 0 ? 'Grátis' : formatBRL(price)}
-                          </span>
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                            {itemHasTier && (
+                              <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', textDecoration: 'line-through' }}>
+                                {formatBRL(price)}
+                              </span>
+                            )}
+                            <span style={{ fontSize: '14px', fontWeight: 800, color: '#34d399' }}>
+                              {itemTierFinal <= 0 ? 'Grátis' : formatBRL(itemTierFinal)}
+                            </span>
+                          </div>
                           {local && (
                             <button
                               type="button"
@@ -807,13 +860,61 @@ export default function MateriaisCheckoutPage() {
                   border: '1px solid rgba(52,211,153,0.12)',
                   borderRadius: '12px',
                 }}>
+                  {hasTier && (
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      gap: '12px',
+                      marginBottom: '6px',
+                    }}>
+                      <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.45)' }}>Sem o lote</span>
+                      <span style={{ fontSize: '14px', color: 'rgba(255,255,255,0.4)', textDecoration: 'line-through' }}>
+                        {formatBRL(amount)}
+                      </span>
+                    </div>
+                  )}
+                  {hasTier && (
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      gap: '12px',
+                      marginBottom: '8px',
+                    }}>
+                      <span style={{
+                        fontSize: '12px',
+                        color: '#34d399',
+                        fontWeight: 700,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                      }}>
+                        <Flame size={12} />
+                        Lote {firstLoteName ? `"${firstLoteName}"` : 'ativo'}
+                      </span>
+                      <span style={{ fontSize: '13px', color: '#34d399', fontWeight: 800 }}>
+                        − {formatBRL(tierTotal)}
+                      </span>
+                    </div>
+                  )}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>
                     <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.55)' }}>Total recalculado</span>
                     <span style={{ fontSize: '28px', fontWeight: 900, color: '#34d399', letterSpacing: '-0.03em' }}>
                       {payableAmount <= 0 ? 'Grátis' : formatBRL(payableAmount)}
                     </span>
                   </div>
-                  {appliedCoupon && (
+                  {appliedCoupon && couponWinsOverTier && (
+                    <p style={{ fontSize: '12px', color: '#34d399', marginTop: '5px', fontWeight: 700 }}>
+                      Cupom {appliedCoupon.code}: − {formatBRL(appliedCoupon.discountAmount)} (vence o lote)
+                    </p>
+                  )}
+                  {appliedCoupon && !couponWinsOverTier && hasTier && (
+                    <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.55)', marginTop: '5px' }}>
+                      Cupom {appliedCoupon.code} desativado: o desconto do lote é maior.
+                    </p>
+                  )}
+                  {appliedCoupon && !hasTier && (
                     <p style={{ fontSize: '12px', color: '#34d399', marginTop: '5px', fontWeight: 700 }}>
                       Cupom {appliedCoupon.code}: − {formatBRL(appliedCoupon.discountAmount)}
                     </p>
@@ -939,10 +1040,29 @@ export default function MateriaisCheckoutPage() {
   }
 
   const originalPrice = Number(item.originalPackagePrice ?? item.price ?? 0)
-  const price = Number(item.effectivePrice ?? item.price ?? 0)
+  const priceBeforeTier = Number(item.effectivePrice ?? item.price ?? 0)
   const discountApplied = Number(item.discountApplied ?? 0)
   const hasOverlapDiscount = itemType === 'package' && discountApplied > 0
-  const payablePrice = appliedCoupon ? Number(appliedCoupon.amountAfterCoupon || 0) : price
+
+  // Lote dinâmico por evento — aplica desconto progressivo (regra "maior dos dois" vs cupom no servidor).
+  const eventState: PricingEventStatePayload | null = item.pricingEventState || null
+  const tierPct = eventState?.activeTier?.discountPercent || 0
+  const hasTier =
+    !!eventState?.activeTier && eventState.isActive !== false && tierPct > 0 && priceBeforeTier > 0
+  const tierFinalPrice = hasTier
+    ? Math.max(0, Math.round(priceBeforeTier * (1 - tierPct / 100) * 100) / 100)
+    : priceBeforeTier
+  const tierDiscountAmount = hasTier ? Math.max(0, priceBeforeTier - tierFinalPrice) : 0
+
+  // O cupom é avaliado separadamente; o servidor escolhe o maior desconto.
+  // Aqui, no UI, mostramos o que aparece quando o usuário aplica um cupom
+  // (caso vença o lote) ou o tier (caso contrário).
+  const couponWinsOverTier = appliedCoupon
+    ? Number(appliedCoupon.discountAmount || 0) > tierDiscountAmount
+    : false
+  const baseForCoupon = appliedCoupon ? Number(appliedCoupon.amountAfterCoupon || 0) : priceBeforeTier
+  const price = couponWinsOverTier ? baseForCoupon : tierFinalPrice
+  const payablePrice = appliedCoupon ? (couponWinsOverTier ? baseForCoupon : tierFinalPrice) : tierFinalPrice
   const typeLabel = itemType === 'package' ? 'Pacote' : 'Material'
 
   const unlockFreeSingle = async () => {
@@ -1011,6 +1131,12 @@ export default function MateriaisCheckoutPage() {
                 </h2>
               </div>
 
+              {hasTier && eventState && (
+                <div style={{ marginBottom: '16px' }}>
+                  <PricingEventCountdown state={eventState} compact />
+                </div>
+              )}
+
               {/* Price */}
               <div style={{
                 padding: '16px',
@@ -1020,9 +1146,9 @@ export default function MateriaisCheckoutPage() {
                 marginBottom: '16px',
               }}>
                 <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', marginBottom: '2px' }}>Valor</p>
-                {(hasOverlapDiscount || appliedCoupon) && (
+                {(hasOverlapDiscount || appliedCoupon || hasTier) && (
                   <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.4)', textDecoration: 'line-through', marginBottom: '2px' }}>
-                    {formatBRL(appliedCoupon ? price : originalPrice)}
+                    {formatBRL(hasTier ? priceBeforeTier : appliedCoupon ? priceBeforeTier : originalPrice)}
                   </p>
                 )}
                 <p style={{ fontSize: '32px', fontWeight: 800, color: '#34d399', letterSpacing: '-0.03em' }}>
@@ -1033,12 +1159,36 @@ export default function MateriaisCheckoutPage() {
                     Desconto de R$ {discountApplied.toFixed(2).replace('.', ',')} por itens já adquiridos
                   </p>
                 )}
-                {appliedCoupon && (
+                {hasTier && !couponWinsOverTier && (
+                  <p style={{
+                    fontSize: '12px',
+                    color: '#34d399',
+                    marginTop: '6px',
+                    fontWeight: 700,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                  }}>
+                    <Flame size={13} />
+                    Lote "{eventState?.name}" · −{tierPct}% ({formatBRL(tierDiscountAmount)})
+                  </p>
+                )}
+                {appliedCoupon && couponWinsOverTier && (
+                  <p style={{ fontSize: '12px', color: '#34d399', marginTop: '4px', fontWeight: 600 }}>
+                    Cupom {appliedCoupon.code}: − {formatBRL(appliedCoupon.discountAmount)} (vence o lote)
+                  </p>
+                )}
+                {appliedCoupon && !couponWinsOverTier && hasTier && (
+                  <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.55)', marginTop: '4px' }}>
+                    Cupom {appliedCoupon.code} desativado: o desconto do lote é maior.
+                  </p>
+                )}
+                {appliedCoupon && !hasTier && (
                   <p style={{ fontSize: '12px', color: '#34d399', marginTop: '4px', fontWeight: 600 }}>
                     Cupom {appliedCoupon.code}: − {formatBRL(appliedCoupon.discountAmount)}
                   </p>
                 )}
-                <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', marginTop: '2px' }}>Pagamento único · Acesso permanente</p>
+                <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', marginTop: '6px' }}>Pagamento único · Acesso permanente</p>
               </div>
 
               <CouponBox

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
+import { getPricingEventStateById, serializePricingEventState } from '@/lib/pricing-events'
 
 export const dynamic = 'force-dynamic'
 
@@ -151,6 +152,10 @@ export async function GET(
         .catch(() => {})
     }
 
+    const pricingEventState = material.pricingEventId
+      ? await getPricingEventStateById(db, String(material.pricingEventId))
+      : null
+
     const res = NextResponse.json({
       material: {
         ...materialWithoutPdf,
@@ -158,6 +163,7 @@ export async function GET(
         _hasPdf,
         pdfViewerEnabled: material.pdfViewerEnabled === true,
         pdfDownloadEnabled: material.pdfDownloadEnabled !== false,
+        pricingEventId: material.pricingEventId ? String(material.pricingEventId) : null,
         ...(_hasPdf && material.pdfFile?.pageCount ? { _pageCount: material.pdfFile.pageCount } : {}),
         ...(material.type === 'flashcard_deck' ? { _cardCount: _cardCount ?? 0 } : {}),
       },
@@ -167,6 +173,7 @@ export async function GET(
       hasGroupAccess,
       userGroups,
       isAuthenticated,
+      pricingEventState: serializePricingEventState(pricingEventState),
       watermark: {
         name: userDoc?.name || session?.name || 'Usuário',
         cpf: userDoc?.cpf || '',

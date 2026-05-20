@@ -1,15 +1,40 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
-import { AlertCircle, ArrowRight, FileText, Loader2, Package, ShoppingCart, Trash2, X } from 'lucide-react'
+import { AlertCircle, ArrowRight, FileText, Flame, Loader2, Package, ShoppingCart, Trash2, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useMaterialCart } from '@/context/MaterialCartContext'
 
 function formatBRL(value: number): string {
   return `R$ ${Number(value || 0).toFixed(2).replace('.', ',')}`
+}
+
+interface PreviewItem {
+  itemType: 'material' | 'package'
+  itemId: string
+  itemTitle: string
+  price: number
+  originalPrice: number
+  discountApplied: number
+  tierDiscount?: number
+  priceAfterTier?: number
+  pricingEventState?: {
+    eventId: string
+    name: string
+    activeTier?: { discountPercent: number; label: string; endsAt: string } | null
+  } | null
+}
+
+interface PreviewResp {
+  items: PreviewItem[]
+  payableItems: PreviewItem[]
+  amount: number
+  tierDiscountTotal?: number
+  amountAfterTier?: number
+  skippedItems: any[]
 }
 
 export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boolean }) {
@@ -18,6 +43,47 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
   const [open, setOpen] = useState(false)
   const [checkoutChecking, setCheckoutChecking] = useState(false)
   const [notice, setNotice] = useState('')
+  const [preview, setPreview] = useState<PreviewResp | null>(null)
+  const [previewLoading, setPreviewLoading] = useState(false)
+
+  const cartKey = items.map(i => `${i.itemType}:${i.itemId}`).join('|')
+
+  // Busca preview com desconto de lote quando o carrinho abre (autenticado).
+  useEffect(() => {
+    if (!open || !isAuthenticated || items.length === 0) {
+      setPreview(null)
+      return
+    }
+    let cancelled = false
+    setPreviewLoading(true)
+    fetch('/api/materiais/cart/preview', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: items.map(i => ({ itemType: i.itemType, itemId: i.itemId })) }),
+      cache: 'no-store',
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (cancelled) return
+        if (data && Array.isArray(data.items)) setPreview(data)
+      })
+      .catch(() => {})
+      .finally(() => { if (!cancelled) setPreviewLoading(false) })
+    return () => { cancelled = true }
+  }, [open, isAuthenticated, cartKey, items])
+
+  const previewByKey = useMemo(() => {
+    const map = new Map<string, PreviewItem>()
+    preview?.items?.forEach(it => map.set(`${it.itemType}:${it.itemId}`, it))
+    return map
+  }, [preview])
+
+  const tierTotal = preview?.tierDiscountTotal || 0
+  const finalSubtotal = preview?.amountAfterTier ?? subtotal
+  const activeLoteName = useMemo(() => {
+    const first = preview?.items?.find(it => it.pricingEventState?.activeTier)
+    return first?.pricingEventState?.name || null
+  }, [preview])
 
   const sortedItems = useMemo(() => {
     return [...items].sort((a, b) => Number(new Date(a.addedAt)) - Number(new Date(b.addedAt)))
@@ -148,7 +214,16 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
                     ) : null}
                     <div className="space-y-3">
                       {sortedItems.map(item => {
-                        const price = item.effectivePrice ?? item.price
+                        const localPrice = item.effectivePrice ?? item.price
+                        const previewMatch = previewByKey.get(`${item.itemType}:${item.itemId}`)
+                        const tierPct = previewMatch?.pricingEventState?.activeTier?.discountPercent || 0
+                        const hasTier = !!previewMatch && tierPct > 0 && (previewMatch.tierDiscount || 0) > 0
+                        const displayPrice = hasTier
+                          ? Number(previewMatch?.priceAfterTier ?? localPrice)
+                          : Number(previewMatch?.price ?? localPrice)
+                        const displayOriginal = hasTier
+                          ? Number(previewMatch?.price ?? localPrice)
+                          : localPrice
                         return (
                           <div key={`${item.itemType}:${item.itemId}`} className="flex gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-sm dark:border-white/10 dark:bg-zinc-900">
                             <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded-lg bg-muted sm:h-16">
@@ -161,7 +236,7 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
                               )}
                             </div>
                             <div className="min-w-0 flex-1">
-                              <div className="mb-1 flex items-center gap-1.5">
+                              <div className="mb-1 flex flex-wrap items-center gap-1.5">
                                 <span className="rounded-md bg-emerald-600/10 px-1.5 py-0.5 text-[10px] font-bold text-emerald-700 dark:text-emerald-300">
                                   {item.itemType === 'package' ? 'Pacote' : 'Material'}
                                 </span>
@@ -170,12 +245,25 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
                                     desconto
                                   </span>
                                 ) : null}
+                                {hasTier && (
+                                  <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/15 px-1.5 py-0.5 text-[10px] font-black text-emerald-700 dark:text-emerald-200">
+                                    <Flame className="h-3 w-3" />
+                                    −{tierPct}% lote
+                                  </span>
+                                )}
                               </div>
                               <p className="line-clamp-2 text-sm font-semibold leading-snug">{item.title}</p>
                               <div className="mt-1 flex items-center justify-between gap-2">
-                                <p className="text-sm font-black text-emerald-700 dark:text-emerald-300">
-                                  {price <= 0 ? 'Grátis' : formatBRL(price)}
-                                </p>
+                                <div className="flex flex-col">
+                                  {hasTier && (
+                                    <span className="text-[11px] text-muted-foreground line-through">
+                                      {formatBRL(displayOriginal)}
+                                    </span>
+                                  )}
+                                  <p className="text-sm font-black text-emerald-700 dark:text-emerald-300">
+                                    {displayPrice <= 0 ? 'Grátis' : formatBRL(displayPrice)}
+                                  </p>
+                                </div>
                                 <button
                                   type="button"
                                   onClick={() => removeItem(item.itemType, item.itemId)}
@@ -193,10 +281,37 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
                   </div>
 
                   <div className="shrink-0 border-t border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-zinc-950">
+                    {tierTotal > 0 && (
+                      <div className="mb-3 flex items-start gap-2 rounded-xl border border-emerald-300/40 bg-emerald-50 p-3 text-xs leading-snug text-emerald-900 dark:border-emerald-400/25 dark:bg-emerald-500/10 dark:text-emerald-100">
+                        <Flame className="mt-0.5 h-4 w-4 shrink-0" />
+                        <div className="min-w-0 flex-1">
+                          <p className="font-bold">
+                            Lote {activeLoteName ? `"${activeLoteName}"` : 'ativo'}: você economiza {formatBRL(tierTotal)}
+                          </p>
+                          <p className="mt-0.5 text-[11px] opacity-80">
+                            Desconto aplicado automaticamente nos itens elegíveis.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                    {tierTotal > 0 && (
+                      <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                        <span>Sem o lote</span>
+                        <span className="line-through">{formatBRL(subtotal)}</span>
+                      </div>
+                    )}
                     <div className="mb-4 flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">Subtotal estimado</span>
-                      <span className="text-xl font-black text-emerald-700 dark:text-emerald-300">{formatBRL(subtotal)}</span>
+                      <span className="text-sm text-muted-foreground">
+                        {tierTotal > 0 ? 'Total com lote' : 'Subtotal estimado'}
+                      </span>
+                      <span className="text-xl font-black text-emerald-700 dark:text-emerald-300">{formatBRL(finalSubtotal)}</span>
                     </div>
+                    {previewLoading && !preview && (
+                      <p className="mb-3 inline-flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                        Calculando descontos...
+                      </p>
+                    )}
                     <div className="flex gap-2">
                       <Button variant="outline" onClick={clearCart} className="h-11 rounded-xl">
                         Limpar

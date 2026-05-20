@@ -9,6 +9,7 @@ import {
   resolveMaterialCart,
   serializeMaterialCartItem,
 } from '@/lib/material-cart'
+import { computeCartTierDiscounts, serializePricingEventState } from '@/lib/pricing-events'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -44,12 +45,48 @@ export async function POST(request: NextRequest) {
   const resolution = await resolveMaterialCart(db, session, parsed.data.items)
   const suggestions = await computeCartUpgradeSuggestions(db, session, resolution)
 
+  // Lote dinâmico — calcula desconto por item para exibição no preview.
+  const tierCalc = await computeCartTierDiscounts(
+    db,
+    resolution.payableItems.map((item) => ({
+      itemType: item.itemType,
+      itemId: item.itemId,
+      price: item.price,
+      pricingEventId: item.pricingEventId,
+    }))
+  )
+  const tierByKey = new Map(
+    tierCalc.perItem.map((entry) => [`${entry.itemType}:${entry.itemId}`, entry])
+  )
+
+  const decorateItem = (item: ReturnType<typeof serializeMaterialCartItem>) => {
+    const tier = tierByKey.get(`${item.itemType}:${item.itemId}`)
+    const tierDiscount = tier?.tierDiscountAmount || 0
+    const priceAfterTier = Math.max(0, Math.round((item.price - tierDiscount) * 100) / 100)
+    return {
+      ...item,
+      tierDiscount,
+      priceAfterTier,
+      pricingEventState: tier?.state ? serializePricingEventState(tier.state) : null,
+    }
+  }
+
+  const items = resolution.items.map(serializeMaterialCartItem).map(decorateItem)
+  const payableItems = resolution.payableItems.map(serializeMaterialCartItem).map(decorateItem)
+  const freeItems = resolution.freeItems.map(serializeMaterialCartItem).map(decorateItem)
+  const amountAfterTier = Math.max(
+    0,
+    Math.round((resolution.amount - tierCalc.totalTierDiscount) * 100) / 100
+  )
+
   return NextResponse.json({
-    items: resolution.items.map(serializeMaterialCartItem),
-    payableItems: resolution.payableItems.map(serializeMaterialCartItem),
-    freeItems: resolution.freeItems.map(serializeMaterialCartItem),
+    items,
+    payableItems,
+    freeItems,
     skippedItems: resolution.skippedItems,
     amount: resolution.amount,
+    tierDiscountTotal: tierCalc.totalTierDiscount,
+    amountAfterTier,
     suggestions,
   })
 }
