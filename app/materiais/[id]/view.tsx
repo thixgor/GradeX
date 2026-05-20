@@ -34,6 +34,7 @@ import {
   Share2,
   CheckCheck,
   Layers,
+  TrendingDown,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { AppShell } from '@/components/app-shell'
@@ -60,7 +61,6 @@ import { ReviewsSection } from '@/components/reviews/reviews-section'
 import { ReviewSummaryBlock } from '@/components/reviews/review-summary'
 import type { ReviewSummary } from '@/lib/reviews-shared'
 import { PricingEventCountdown } from '@/components/pricing-events/PricingEventCountdown'
-import { PricingEventPriceBlock } from '@/components/pricing-events/PricingEventPriceBlock'
 import { PricingEventBadge } from '@/components/pricing-events/PricingEventBadge'
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
 
@@ -421,6 +421,7 @@ export default function MaterialViewPage() {
   const tierFinalPrice = hasActiveTier
     ? Math.max(0, Math.round(originalPrice * (1 - tierPct / 100) * 100) / 100)
     : originalPrice
+  const tierSavings = hasActiveTier ? Math.max(0, originalPrice - tierFinalPrice) : 0
   const descLong = material.description && material.description.length > 200
   const isPdf = material._hasPdf || material.type === 'pdf'
   const canViewPdf = hasAccess && !!material._hasPdf && material.pdfViewerEnabled === true
@@ -617,6 +618,18 @@ export default function MaterialViewPage() {
                 </div>
               </div>
 
+              {/* Lote dinâmico por evento — banner full */}
+              {hasActiveTier && pricingEventState && !hasAccess && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.05 }}
+                  className="mt-4"
+                >
+                  <PricingEventCountdown state={pricingEventState} />
+                </motion.div>
+              )}
+
               {/* Mobile purchase summary */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
@@ -756,15 +769,33 @@ export default function MaterialViewPage() {
                     )
                   ) : (
                     <>
-                      {pricingEventState?.activeTier && !isFree ? (
-                        <div className="mb-3 space-y-2">
-                          <PricingEventCountdown state={pricingEventState} compact />
-                          <PricingEventPriceBlock
-                            originalPrice={Number(material.price || 0)}
-                            state={pricingEventState}
-                          />
+                      {hasActiveTier && pricingEventState && (
+                        <div className="mb-3 rounded-2xl border border-border/40 bg-muted/20 px-3 py-2.5">
+                          <div className="mb-1 flex items-center justify-between gap-3 text-xs">
+                            <span className="text-muted-foreground">Valor sem lote</span>
+                            <span className="text-muted-foreground line-through">
+                              R$ {originalPrice.toFixed(2)}
+                            </span>
+                          </div>
+                          <div className="mb-1 flex items-center justify-between gap-3 text-xs">
+                            <span className="flex items-center gap-1 font-semibold text-emerald-600 dark:text-emerald-400">
+                              <TrendingDown className="h-3 w-3" /> Lote{pricingEventState.activeTier ? ` · ${pricingEventState.activeTier.label || ''}` : ''} (−{tierPct}%)
+                            </span>
+                            <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                              − R$ {tierSavings.toFixed(2)}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between gap-3">
+                            <span className="text-sm font-semibold">Total</span>
+                            <span className="text-xl font-black text-emerald-600 dark:text-emerald-400">
+                              {tierFinalPrice <= 0 ? 'Grátis' : `R$ ${tierFinalPrice.toFixed(2)}`}
+                            </span>
+                          </div>
+                          <p className="mt-1 text-[10px] text-emerald-700/80 dark:text-emerald-300/80 leading-snug">
+                            ⚡ Lote ativo: quanto antes comprar, maior o desconto.
+                          </p>
                         </div>
-                      ) : null}
+                      )}
                       {isFree ? (
                         <Button
                           onClick={() => handleAcquire()}
@@ -968,14 +999,41 @@ export default function MaterialViewPage() {
                     </div>
                   )}
 
-                  {/* Lote dinâmico por evento — desktop */}
+                  {/* Lote dinâmico por evento — desktop sidebar breakdown */}
                   {hasActiveTier && !hasAccess && pricingEventState && (
-                    <div className="mb-3 space-y-2">
-                      <PricingEventCountdown state={pricingEventState} compact />
-                      <PricingEventPriceBlock
-                        originalPrice={originalPrice}
-                        state={pricingEventState}
-                      />
+                    <div className="mb-3 rounded-2xl border border-border/40 overflow-hidden">
+                      <div className="px-3 py-2 border-b border-border/30 bg-muted/20">
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                          Seu preço com desconto
+                        </p>
+                      </div>
+                      <div className="px-3 py-2.5 space-y-1.5">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="text-muted-foreground">Valor sem lote</span>
+                          <span className="text-muted-foreground line-through">
+                            R$ {originalPrice.toFixed(2)}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                            <TrendingDown className="h-3 w-3" /> Lote ativo (−{tierPct}%)
+                          </span>
+                          <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                            − R$ {tierSavings.toFixed(2)}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between pt-1">
+                          <span className="text-sm font-semibold">Total</span>
+                          <span className="text-xl font-black text-emerald-600 dark:text-emerald-400">
+                            {tierFinalPrice <= 0 ? 'Grátis' : `R$ ${tierFinalPrice.toFixed(2)}`}
+                          </span>
+                        </div>
+                        {pricingEventState.activeTier && (
+                          <p className="text-[10px] text-emerald-700/85 dark:text-emerald-300/85 leading-snug pt-1 border-t border-border/30 mt-1">
+                            ⚡ Lote {pricingEventState.activeTier.label}. Quanto antes comprar, maior o desconto.
+                          </p>
+                        )}
+                      </div>
                     </div>
                   )}
 
