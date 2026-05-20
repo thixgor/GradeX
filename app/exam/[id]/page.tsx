@@ -26,6 +26,7 @@ import { ProctoringMonitor } from '@/components/proctoring-monitor'
 import { QuestionNotesCanvas } from '@/components/question-notes-canvas'
 import { ReportQuestionModal } from '@/components/report-question-modal'
 import { PracticeExamConfig, PracticeExamSettings } from '@/components/practice-exam-config'
+import { ExamQuestionPalette, PaletteQuestion } from '@/components/exam-question-palette'
 import { useProctoring } from '@/hooks/use-proctoring'
 import { useWebSocket } from '@/hooks/use-websocket'
 import { useVisibilityDetection } from '@/hooks/use-visibility-detection'
@@ -569,6 +570,53 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       setUserName(loggedUserName)
     }
   }, [exam, loggedUserName, userName])
+
+  // Atalhos de teclado durante a prova (1-5 selecionar, ←/→ navegar)
+  useEffect(() => {
+    if (!started || submitted || alreadySubmitted) return
+    if (!exam) return
+
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null
+      if (!target) return
+      // Ignorar quando usuário digita em inputs/textareas/contenteditable
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) return
+      if (editingNotesFor || showFeedbackModal || showUnansweredModal || reportQuestionId) return
+
+      // Modo paginado apenas (em scroll mode, atalhos atrapalhariam)
+      if (exam.navigationMode === 'scroll') return
+
+      const q = exam.questions[currentQuestionIndex]
+      if (!q) return
+
+      // 1-9 para selecionar alternativas em multiple-choice
+      if (q.type === 'multiple-choice' && /^[1-9]$/.test(e.key)) {
+        const idx = parseInt(e.key, 10) - 1
+        const alt = q.alternatives[idx]
+        if (alt && !(exam.feedbackMode === 'immediate' && lockedQuestions.has(q.id))) {
+          e.preventDefault()
+          handleSelectAlternative(q.id, alt.id)
+        }
+        return
+      }
+
+      // Setas para navegar
+      const hasTimed = exam.questions.some(qq => qq.timePerQuestionSeconds && qq.timePerQuestionSeconds > 0)
+      const localCanGoBack = !hasTimed || currentQuestionIndex === 0
+      if (e.key === 'ArrowRight' && currentQuestionIndex < exam.questions.length - 1) {
+        if (exam.feedbackMode === 'immediate' && q.type === 'multiple-choice' && !lockedQuestions.has(q.id)) return
+        e.preventDefault()
+        setCurrentQuestionIndex(i => Math.min(exam.questions.length - 1, i + 1))
+      } else if (e.key === 'ArrowLeft' && currentQuestionIndex > 0 && localCanGoBack) {
+        e.preventDefault()
+        setCurrentQuestionIndex(i => Math.max(0, i - 1))
+      }
+    }
+
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [started, submitted, alreadySubmitted, exam, currentQuestionIndex, editingNotesFor, showFeedbackModal, showUnansweredModal, reportQuestionId, lockedQuestions])
 
   // Mostrar tela de configuração para provas práticas ao invés de auto-iniciar
   useEffect(() => {
@@ -2004,115 +2052,132 @@ ${respostaAluno}`
             fn?.()
           }} />
         )}
-        <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4">
-          <Card className="max-w-2xl w-full">
-          <CardHeader>
-            <CardTitle className="text-3xl">{exam.title}</CardTitle>
-            {exam.description && (
-              <CardDescription className="text-base">{exam.description}</CardDescription>
-            )}
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {exam.coverImage && (
-              <img
-                src={exam.coverImage}
-                alt={exam.title}
-                className="w-full h-64 object-cover rounded-lg"
-              />
-            )}
-
-            <div className="space-y-2 text-sm">
-              <p>
-                <strong>Número de questões:</strong> {exam.numberOfQuestions}
-              </p>
-              <p>
-                <strong>Pontuação:</strong>{' '}
-                {exam.scoringMethod === 'tri' ? 'TRI (1000 pontos)' : `${exam.totalPoints} pontos`}
-              </p>
-              <p>
-                <strong>Início:</strong> {formatDate(exam.startTime)}
-              </p>
-              <p>
-                <strong>Término:</strong> {formatDate(exam.endTime)}
-              </p>
-            </div>
-
-            <div className="space-y-4 pt-4 border-t">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="userName">Nome Completo *</Label>
-                  {exam.allowCustomName && loggedUserName && !userName && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setUserName(loggedUserName)}
-                      className="h-auto py-1"
-                    >
-                      <User className="h-3 w-3 mr-1" />
-                      Usar meu nome
-                    </Button>
-                  )}
-                </div>
-                <Input
-                  id="userName"
-                  value={userName}
-                  onChange={(e) => setUserName(e.target.value)}
-                  placeholder={exam.allowCustomName ? "Digite seu nome completo" : "Usando nome do usuário"}
-                  disabled={!exam.allowCustomName}
-                  className={!exam.allowCustomName ? "bg-muted" : ""}
-                />
-                {!exam.allowCustomName && (
-                  <p className="text-xs text-muted-foreground">
-                    O nome será preenchido automaticamente com seu nome de usuário
-                  </p>
-                )}
-              </div>
-
-              {exam.themePhrase && (
-                <div className="space-y-2">
-                  <Label htmlFor="theme">Transcreva a frase-tema abaixo *</Label>
-                  <div className="p-4 bg-muted rounded-lg mb-2">
-                    <p className="text-sm font-medium italic">"{exam.themePhrase}"</p>
-                  </div>
-                  <Textarea
-                    id="theme"
-                    value={themeTranscription}
-                    onChange={(e) => setThemeTranscription(e.target.value)}
-                    placeholder="Transcreva a frase-tema aqui..."
-                    rows={3}
-                    className="font-serif text-base"
-                  />
-                </div>
-              )}
-            </div>
-
-            <Button
-              className="w-full"
-              size="lg"
-              onClick={() => {
-                if (canStart) {
-                  triggerInterstitialThenStart(handleStartExam)
-                } else {
-                  setInWaitingRoom(true)
-                }
-              }}
-              disabled={!userName.trim() || (exam.themePhrase ? !themeTranscription.trim() : false)}
-            >
-              {canStart ? 'Iniciar Prova' : 'Entrar na Sala'}
-            </Button>
-
+        <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/40 flex items-center justify-center p-4 sm:p-6">
+          <div className="max-w-3xl w-full">
             <Button
               variant="ghost"
-              className="w-full"
+              size="sm"
+              className="mb-3 rounded-xl text-muted-foreground hover:text-foreground -ml-2"
               onClick={() => router.push('/')}
             >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Voltar
+              <ArrowLeft className="h-4 w-4 mr-1.5" /> Voltar
             </Button>
-          </CardContent>
-        </Card>
-      </div>
+
+            <div className="relative overflow-hidden rounded-3xl border border-border/50 bg-background/60 backdrop-blur-xl shadow-2xl">
+              {/* Top accent */}
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#468152] via-emerald-400 to-[#E2A43E]" />
+
+              {/* Cover */}
+              {exam.coverImage ? (
+                <div className="relative h-48 sm:h-56 overflow-hidden">
+                  <img src={exam.coverImage} alt={exam.title} className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+                </div>
+              ) : (
+                <div className="relative h-20 sm:h-24 bg-gradient-to-br from-emerald-500/10 via-background to-amber-500/10" />
+              )}
+
+              <div className="p-6 sm:p-8 -mt-10 sm:-mt-14 relative space-y-6">
+                {/* Title */}
+                <div className="space-y-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    {(exam as any).isPersonalExam && (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-violet-500/10 text-violet-600 dark:text-violet-400">Pessoal</span>
+                    )}
+                    {exam.isPracticeExam && (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">Treino</span>
+                    )}
+                    {exam.proctoring?.enabled && (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400">Proctoring</span>
+                    )}
+                  </div>
+                  <h1 className="text-2xl sm:text-3xl font-bold tracking-tight leading-tight">{exam.title}</h1>
+                  {exam.description && (
+                    <p className="text-sm text-muted-foreground leading-relaxed">{exam.description}</p>
+                  )}
+                </div>
+
+                {/* Stats */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {[
+                    { label: 'Questões', value: exam.numberOfQuestions, color: 'from-emerald-500/15 to-emerald-500/5 text-emerald-700 dark:text-emerald-400 border-emerald-500/20' },
+                    { label: 'Pontuação', value: exam.scoringMethod === 'tri' ? 'TRI · 1000' : `${exam.totalPoints} pts`, color: 'from-amber-500/15 to-amber-500/5 text-amber-700 dark:text-amber-400 border-amber-500/20' },
+                    { label: 'Início', value: new Date(exam.startTime).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }), color: 'from-blue-500/15 to-blue-500/5 text-blue-700 dark:text-blue-400 border-blue-500/20' },
+                    { label: 'Término', value: new Date(exam.endTime).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }), color: 'from-rose-500/15 to-rose-500/5 text-rose-700 dark:text-rose-400 border-rose-500/20' },
+                  ].map((stat, i) => (
+                    <div key={i} className={`rounded-xl border bg-gradient-to-br p-3 ${stat.color}`}>
+                      <p className="text-[10px] uppercase tracking-wider opacity-80 font-semibold">{stat.label}</p>
+                      <p className="text-sm font-bold mt-0.5 tabular-nums">{stat.value}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Form */}
+                <div className="space-y-4 pt-2 border-t border-border/40">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="userName" className="text-sm font-medium">Nome completo *</Label>
+                      {exam.allowCustomName && loggedUserName && !userName && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setUserName(loggedUserName)}
+                          className="h-7 text-xs rounded-lg"
+                        >
+                          <User className="h-3 w-3 mr-1" /> Usar meu nome
+                        </Button>
+                      )}
+                    </div>
+                    <Input
+                      id="userName"
+                      value={userName}
+                      onChange={(e) => setUserName(e.target.value)}
+                      placeholder={exam.allowCustomName ? 'Digite seu nome completo' : 'Usando nome do usuário'}
+                      disabled={!exam.allowCustomName}
+                      className={`rounded-xl ${!exam.allowCustomName ? 'bg-muted' : ''}`}
+                    />
+                    {!exam.allowCustomName && (
+                      <p className="text-[11px] text-muted-foreground">O nome será preenchido automaticamente.</p>
+                    )}
+                  </div>
+
+                  {exam.themePhrase && (
+                    <div className="space-y-2">
+                      <Label htmlFor="theme" className="text-sm font-medium">Transcreva a frase-tema *</Label>
+                      <div className="p-3.5 bg-muted/60 rounded-xl border border-border/30">
+                        <p className="text-sm font-medium italic text-foreground">&ldquo;{exam.themePhrase}&rdquo;</p>
+                      </div>
+                      <Textarea
+                        id="theme"
+                        value={themeTranscription}
+                        onChange={(e) => setThemeTranscription(e.target.value)}
+                        placeholder="Transcreva a frase-tema aqui..."
+                        rows={3}
+                        className="font-serif text-base rounded-xl"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <Button
+                  className="w-full rounded-xl h-12 font-semibold bg-gradient-to-r from-[#468152] to-[#3a6d44] hover:from-[#3a6d44] hover:to-[#2f5a38] text-white shadow-md shadow-emerald-500/20"
+                  size="lg"
+                  onClick={() => {
+                    if (canStart) {
+                      triggerInterstitialThenStart(handleStartExam)
+                    } else {
+                      setInWaitingRoom(true)
+                    }
+                  }}
+                  disabled={!userName.trim() || (exam.themePhrase ? !themeTranscription.trim() : false)}
+                >
+                  {canStart ? 'Iniciar Prova' : 'Entrar na Sala'}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
       </>
     )
   }
@@ -2122,99 +2187,105 @@ ${respostaAluno}`
     return (
       <>
         {proctoringModal}
-        <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4">
-          <Card className="max-w-3xl w-full">
-          <CardHeader className="text-center">
-            <CardTitle className="text-3xl mb-2">{exam.title}</CardTitle>
-            <CardDescription className="text-lg">
-              Sala de Espera
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex items-center justify-center py-4">
-              <Clock className="h-16 w-16 text-primary animate-pulse" />
-            </div>
+        <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/40 flex items-center justify-center p-4 sm:p-6">
+          <div className="max-w-3xl w-full">
+            <div className="relative overflow-hidden rounded-3xl border border-border/50 bg-background/60 backdrop-blur-xl shadow-2xl">
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-500 via-violet-400 to-fuchsia-500" />
 
-            <div className="text-center space-y-2">
-              <h3 className="text-xl font-semibold">Bem-vindo(a), {userName}!</h3>
-              <p className="text-muted-foreground">
-                Você está na sala de espera. A prova iniciará em:
-              </p>
-            </div>
+              <div className="p-6 sm:p-8 space-y-6">
+                <div className="text-center space-y-2.5">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500/20 to-violet-500/20 mb-1">
+                    <div className="relative">
+                      <Clock className="h-8 w-8 text-primary" />
+                      <div className="absolute inset-0 rounded-full bg-primary/20 blur-lg animate-pulse" />
+                    </div>
+                  </div>
+                  <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{exam.title}</h1>
+                  <p className="text-sm text-muted-foreground">Sala de Espera · Bem-vindo(a), <span className="font-semibold text-foreground">{userName}</span></p>
+                </div>
 
-            <div className="py-6">
-              <Countdown
-                targetDate={new Date(exam.startTime)}
-                onComplete={() => {
-                  setCanStart(true)
-                  setTimeout(() => {
-                    setShowToast(true)
-                  }, 100)
-                }}
-              />
-            </div>
+                <div className="rounded-2xl border border-border/50 bg-gradient-to-br from-muted/40 to-background p-6">
+                  <Countdown
+                    targetDate={new Date(exam.startTime)}
+                    onComplete={() => {
+                      setCanStart(true)
+                      setTimeout(() => setShowToast(true), 100)
+                    }}
+                  />
+                </div>
 
-            <div className="bg-muted rounded-lg p-4 space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Horário de início:</span>
-                <span className="font-semibold">{formatDate(exam.startTime)}</span>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { label: 'Início', value: formatDate(exam.startTime) },
+                    { label: 'Término', value: formatDate(exam.endTime) },
+                  ].map((s, i) => (
+                    <div key={i} className="rounded-xl border border-border/40 bg-muted/30 p-3">
+                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">{s.label}</p>
+                      <p className="text-sm font-semibold mt-0.5">{s.value}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Campo de Assinatura - Opcional se requireSignature for false */}
+                {exam.requireSignature !== false && (
+                  <SignaturePad
+                    onSignatureChange={setSignature}
+                    label={`Assinatura Digital ${exam.requireSignature ? '*' : '(opcional)'}`}
+                  />
+                )}
+
+                {/* PDF só aparece quando a prova começar */}
+                {exam.pdfUrl && canStart && (
+                  <Button
+                    variant="outline"
+                    className="w-full rounded-xl"
+                    onClick={() => window.open(exam.pdfUrl, '_blank')}
+                  >
+                    <FileDown className="h-4 w-4 mr-2" />
+                    Baixar PDF da Prova
+                  </Button>
+                )}
+
+                <div className="flex gap-2">
+                  <Button
+                    className={`flex-1 rounded-xl h-12 font-semibold transition-all ${
+                      canStart && (!exam.requireSignature || signature)
+                        ? 'bg-gradient-to-r from-[#468152] to-[#3a6d44] hover:from-[#3a6d44] hover:to-[#2f5a38] text-white shadow-md shadow-emerald-500/20'
+                        : ''
+                    }`}
+                    size="lg"
+                    onClick={handleStartExam}
+                    disabled={!canStart || (exam.requireSignature && !signature)}
+                  >
+                    {(exam.requireSignature && !signature)
+                      ? 'Assine antes de iniciar'
+                      : canStart
+                      ? 'Iniciar Prova Agora'
+                      : 'Aguardando Início...'}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="rounded-xl"
+                    onClick={() => {
+                      setInWaitingRoom(false)
+                      router.push('/')
+                    }}
+                  >
+                    Sair
+                  </Button>
+                </div>
               </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Horário de término:</span>
-                <span className="font-semibold">{formatDate(exam.endTime)}</span>
-              </div>
             </div>
+          </div>
 
-            {/* Campo de Assinatura - Opcional se requireSignature for false */}
-            {exam.requireSignature !== false && (
-              <SignaturePad
-                onSignatureChange={setSignature}
-                label={`Assinatura Digital ${exam.requireSignature ? '*' : '(opcional)'}`}
-              />
-            )}
-
-            {/* PDF só aparece quando a prova começar */}
-            {exam.pdfUrl && canStart && (
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => window.open(exam.pdfUrl, '_blank')}
-              >
-                <FileDown className="h-4 w-4 mr-2" />
-                Baixar PDF da Prova
-              </Button>
-            )}
-
-            <div className="flex gap-2">
-              <Button
-                className="flex-1"
-                size="lg"
-                onClick={handleStartExam}
-                disabled={!canStart || (exam.requireSignature && !signature)}
-              >
-                {(exam.requireSignature && !signature) ? 'Assine antes de iniciar' : canStart ? 'Iniciar Prova Agora' : 'Aguardando Início...'}
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setInWaitingRoom(false)
-                  router.push('/')
-                }}
-              >
-                Sair
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Toast de notificação quando a prova começar */}
-        {showToast && (
-          <Toast
-            message="Você já pode iniciar a prova clicando no botão abaixo."
-            onClose={() => setShowToast(false)}
-          />
-        )}
-      </div>
+          {/* Toast de notificação quando a prova começar */}
+          {showToast && (
+            <Toast
+              message="Você já pode iniciar a prova clicando no botão abaixo."
+              onClose={() => setShowToast(false)}
+            />
+          )}
+        </div>
       </>
     )
   }
@@ -2227,6 +2298,35 @@ ${respostaAluno}`
   const hasTimedQuestions = exam.questions.some(q => q.timePerQuestionSeconds && q.timePerQuestionSeconds > 0)
   // Em provas com tempo, não permitir voltar para questões anteriores
   const canGoBack = !hasTimedQuestions || currentQuestionIndex === 0
+
+  // ─── Question palette derived state ───
+  const paletteQuestions: PaletteQuestion[] = exam.questions.map((q) => {
+    const ans = answers.find(a => a.questionId === q.id)
+    let answered = false
+    if (q.type === 'multiple-choice') answered = !!ans?.selectedAlternative
+    else if (q.type === 'discursive') answered = !!(ans?.discursiveText && ans.discursiveText.trim())
+    else if (q.type === 'essay') answered = !!(ans?.essayText && ans.essayText.trim())
+    return {
+      id: q.id,
+      number: q.number,
+      type: q.type,
+      answered,
+      hasAnnotation: !!annotations.find(a => a.questionId === q.id),
+      locked: lockedQuestions.has(q.id),
+    }
+  })
+
+  function handlePaletteJump(idx: number) {
+    if (isScrollMode) {
+      const q = exam!.questions[idx]
+      const el = document.getElementById(`question-${q.id}`)
+      el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    } else {
+      // Respect hasTimedQuestions backward restriction
+      if (hasTimedQuestions && idx < currentQuestionIndex) return
+      setCurrentQuestionIndex(idx)
+    }
+  }
 
   return (
     <>
@@ -2596,15 +2696,20 @@ ${respostaAluno}`
 
                     {/* Botão de Anotações */}
                     <div className="flex justify-start">
-                      <Button
-                        variant="ghost"
-                        size="sm"
+                      <button
                         onClick={() => setEditingNotesFor(question.id)}
-                        className="bg-primary/10 hover:bg-primary/20 backdrop-blur-sm text-primary border border-primary/20"
+                        className={`group flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all border ${
+                          getAnnotationForQuestion(question.id)
+                            ? 'bg-gradient-to-br from-violet-500/15 to-fuchsia-500/10 border-violet-500/30 text-violet-700 dark:text-violet-300 hover:from-violet-500/20 hover:to-fuchsia-500/15 hover:border-violet-500/50'
+                            : 'bg-muted/50 hover:bg-primary/10 border-border/50 hover:border-primary/30 text-muted-foreground hover:text-primary'
+                        }`}
                       >
-                        <StickyNote className="h-4 w-4 mr-2" />
-                        {getAnnotationForQuestion(question.id) ? 'Editar Anotações' : 'Adicionar Anotações'}
-                      </Button>
+                        <StickyNote className="h-3.5 w-3.5 transition-transform group-hover:rotate-[-6deg]" />
+                        {getAnnotationForQuestion(question.id) ? 'Editar anotações' : 'Anotar questão'}
+                        {getAnnotationForQuestion(question.id) && (
+                          <span className="h-1.5 w-1.5 rounded-full bg-violet-500 animate-pulse" />
+                        )}
+                      </button>
                     </div>
 
                     {/* Alternativas (Múltipla Escolha) */}
@@ -3025,15 +3130,20 @@ ${respostaAluno}`
 
             {/* Botão de Anotações */}
             <div className="flex justify-start">
-              <Button
-                variant="ghost"
-                size="sm"
+              <button
                 onClick={() => setEditingNotesFor(currentQuestion.id)}
-                className="bg-primary/10 hover:bg-primary/20 backdrop-blur-sm text-primary border border-primary/20"
+                className={`group flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all border ${
+                  getAnnotationForQuestion(currentQuestion.id)
+                    ? 'bg-gradient-to-br from-violet-500/15 to-fuchsia-500/10 border-violet-500/30 text-violet-700 dark:text-violet-300 hover:from-violet-500/20 hover:to-fuchsia-500/15 hover:border-violet-500/50'
+                    : 'bg-muted/50 hover:bg-primary/10 border-border/50 hover:border-primary/30 text-muted-foreground hover:text-primary'
+                }`}
               >
-                <StickyNote className="h-4 w-4 mr-2" />
-                {getAnnotationForQuestion(currentQuestion.id) ? 'Editar Anotações' : 'Adicionar Anotações'}
-              </Button>
+                <StickyNote className="h-3.5 w-3.5 transition-transform group-hover:rotate-[-6deg]" />
+                {getAnnotationForQuestion(currentQuestion.id) ? 'Editar anotações' : 'Anotar questão'}
+                {getAnnotationForQuestion(currentQuestion.id) && (
+                  <span className="h-1.5 w-1.5 rounded-full bg-violet-500 animate-pulse" />
+                )}
+              </button>
             </div>
 
             {/* Indicador de Questão Bloqueada */}
@@ -3049,7 +3159,7 @@ ${respostaAluno}`
             {/* Alternativas (Múltipla Escolha) */}
             {currentQuestion.type === 'multiple-choice' && (
               <div className="space-y-3">
-                {currentQuestion.alternatives.map((alt) => {
+                {currentQuestion.alternatives.map((alt, altIdx) => {
                   const isSelected = currentAnswer?.selectedAlternative === alt.id
                   const isCrossed = currentAnswer?.crossedAlternatives?.includes(alt.id) || false
                   const isCorrect = alt.isCorrect
@@ -3078,10 +3188,17 @@ ${respostaAluno}`
                           className="mt-1 h-4 w-4 pointer-events-none"
                         />
                         <div className="flex-1">
-                          <div className="flex items-center justify-between">
-                            <span className={`font-bold ${isCrossed ? 'line-through' : ''}`}>
-                              {alt.letter})
-                            </span>
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                              <span className={`font-bold ${isCrossed ? 'line-through' : ''}`}>
+                                {alt.letter})
+                              </span>
+                              {altIdx < 9 && !isLocked && (
+                                <kbd className="hidden sm:inline-flex items-center justify-center h-5 min-w-[20px] px-1 text-[10px] font-semibold rounded-md bg-muted/70 text-muted-foreground border border-border/50">
+                                  {altIdx + 1}
+                                </kbd>
+                              )}
+                            </div>
                             <Button
                               variant="ghost"
                               size="sm"
@@ -3391,6 +3508,15 @@ ${respostaAluno}`
         </Card>
         )}
       </main>
+
+      {/* Mapa de Questões — paleta flutuante */}
+      {started && !alreadySubmitted && (
+        <ExamQuestionPalette
+          questions={paletteQuestions}
+          currentIndex={currentQuestionIndex}
+          onJump={handlePaletteJump}
+        />
+      )}
 
       <ToastAlert
         open={toastOpen}

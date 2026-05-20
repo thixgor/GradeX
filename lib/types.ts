@@ -703,10 +703,14 @@ export interface Point {
   y: number
 }
 
+export type StrokeShape = 'line' | 'rectangle' | 'ellipse' | 'arrow'
+
 export interface DrawingStroke {
   id: string
   tool: 'pen' | 'highlighter' // Caneta ou marca-texto
-  points: Point[] // Pontos do traço
+  shape?: StrokeShape // Forma geométrica (opcional — sem shape = traço livre)
+  filled?: boolean // Se a forma deve ser preenchida
+  points: Point[] // Pontos do traço (para shapes, geralmente [início, fim])
   color: string // Cor em formato hex
   thickness: number // Grossura/tamanho
   opacity?: number // Opacidade (para marca-texto)

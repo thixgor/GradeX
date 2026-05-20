@@ -37,6 +37,9 @@ import {
   FileDown,
   BookOpenCheck,
   ListChecks,
+  Search,
+  X,
+  SlidersHorizontal,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -109,6 +112,8 @@ function ProvasContent() {
   const [pdfModalExam, setPdfModalExam] = useState<Exam | null>(null)
   const [pdfLoading, setPdfLoading] = useState<string | null>(null)
   const [groupPdfProgress, setGroupPdfProgress] = useState<{ done: number; total: number; label: string } | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [statusFilter, setStatusFilter] = useState<'all' | 'available' | 'finished' | 'personal' | 'general'>('all')
 
   // Handle ?grupo=xxx shareable links
   useEffect(() => {
@@ -450,6 +455,24 @@ function ProvasContent() {
   const personalExams = ungroupedExams.filter(e => e.isPersonalExam)
   const generalUngroupedExams = ungroupedExams.filter(e => !e.isPersonalExam)
 
+  // ─── Search & Filter ─────────────────────────────────────────
+  const normalizedQuery = searchQuery.trim().toLowerCase()
+  function matchesSearch(exam: Exam): boolean {
+    if (!normalizedQuery) return true
+    const haystack = `${exam.title || ''} ${exam.description || ''}`.toLowerCase()
+    return haystack.includes(normalizedQuery)
+  }
+  function matchesStatus(exam: Exam): boolean {
+    if (statusFilter === 'all') return true
+    const s = getExamStatus(exam)
+    if (statusFilter === 'available') return s.canTake
+    if (statusFilter === 'finished') return !exam.isPracticeExam && new Date() > new Date(exam.endTime)
+    if (statusFilter === 'personal') return !!exam.isPersonalExam
+    if (statusFilter === 'general') return !exam.isPersonalExam
+    return true
+  }
+  const filteredUngrouped = ungroupedExams.filter(e => matchesSearch(e) && matchesStatus(e))
+
   // Contadores
   const faculdadeExamCount = faculdadeGroups.reduce((sum, g) => {
     function countRec(gid: string): number {
@@ -612,6 +635,16 @@ function ProvasContent() {
           >
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Provas</h1>
             <p className="text-muted-foreground">O que voce quer treinar hoje?</p>
+            <div className="flex items-center justify-center gap-2 flex-wrap pt-1">
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                {exams.filter(e => getExamStatus(e).canTake).length} disponíveis agora
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-full bg-muted text-muted-foreground">
+                <Layers className="h-3 w-3" />
+                {exams.length} totais
+              </span>
+            </div>
           </motion.div>
 
           {/* Dois cards principais */}
@@ -757,7 +790,22 @@ function ProvasContent() {
     const courseMap = new Map<string, Group[]>()
     const uncategorizedFacGroups: Group[] = []
 
-    faculdadeGroups.forEach(g => {
+    // Filter helper for faculdade
+    const facQuery = searchQuery.trim().toLowerCase()
+    const matchesFacGroup = (g: Group): boolean => {
+      if (!facQuery) return true
+      // Match group name
+      if ((g.name || '').toLowerCase().includes(facQuery)) return true
+      if ((g.description || '').toLowerCase().includes(facQuery)) return true
+      // Match any exam title within the group's subtree
+      function anyExamMatch(gid: string): boolean {
+        if (exams.some(e => e.groupId === gid && ((e.title || '').toLowerCase().includes(facQuery) || (e.description || '').toLowerCase().includes(facQuery)))) return true
+        return groups.filter(c => c.parentGroupId === gid).some(c => anyExamMatch(c._id))
+      }
+      return anyExamMatch(g._id)
+    }
+
+    faculdadeGroups.filter(matchesFacGroup).forEach(g => {
       const normalizedCourse = normalizeCourseKey(g.course)
       if (normalizedCourse && COURSE_LABELS[normalizedCourse]) {
         if (!courseMap.has(normalizedCourse)) courseMap.set(normalizedCourse, [])
@@ -797,6 +845,32 @@ function ProvasContent() {
                 </div>
               </div>
             </div>
+          </motion.div>
+
+          {/* Search */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.05 }}
+            className="relative"
+          >
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Buscar curso, grupo ou prova…"
+              className="w-full pl-9 pr-9 py-2.5 rounded-xl border border-border/50 bg-background/60 backdrop-blur-md text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500/30 transition-all"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                aria-label="Limpar busca"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
           </motion.div>
 
           {/* Grupos por curso */}
@@ -975,54 +1049,125 @@ function ProvasContent() {
           </Button>
         </motion.div>
 
-        {/* Stats */}
+        {/* Stats — clickable filters */}
         <section className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {[
-            { label: 'Disponiveis', value: exams.filter(e => getExamStatus(e).canTake).length, icon: Play, color: '#468152', iconBg: 'bg-emerald-500/10 dark:bg-emerald-500/20' },
-            { label: 'Finalizadas', value: exams.filter(e => !e.isPracticeExam && new Date() > new Date(e.endTime)).length, icon: CheckCircle2, color: '#E2A43E', iconBg: 'bg-amber-500/10 dark:bg-amber-500/20' },
-            { label: 'Pessoais', value: personalExams.length, icon: Sparkles, color: '#8b5cf6', iconBg: 'bg-violet-500/10 dark:bg-violet-500/20' },
-            { label: 'Gerais', value: generalUngroupedExams.length + plataformaGroups.length, icon: Users, color: '#3b82f6', iconBg: 'bg-blue-500/10 dark:bg-blue-500/20' },
-          ].map((stat, index) => {
+          {([
+            { key: 'all' as const, label: 'Total', value: exams.length, icon: Layers, color: '#64748b', iconBg: 'bg-slate-500/10 dark:bg-slate-500/20' },
+            { key: 'available' as const, label: 'Disponíveis', value: exams.filter(e => getExamStatus(e).canTake).length, icon: Play, color: '#468152', iconBg: 'bg-emerald-500/10 dark:bg-emerald-500/20' },
+            { key: 'personal' as const, label: 'Pessoais', value: personalExams.length, icon: Sparkles, color: '#8b5cf6', iconBg: 'bg-violet-500/10 dark:bg-violet-500/20' },
+            { key: 'general' as const, label: 'Gerais', value: generalUngroupedExams.length + plataformaGroups.length, icon: Users, color: '#3b82f6', iconBg: 'bg-blue-500/10 dark:bg-blue-500/20' },
+          ]).map((stat, index) => {
             const Icon = stat.icon
+            const active = statusFilter === stat.key
             return (
-              <motion.div
-                key={index}
+              <motion.button
+                key={stat.key}
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, delay: 0.05 + index * 0.06 }}
-                className="glass-stat rounded-2xl p-4 hover-glow-brand hover-lift transition-all duration-300 group cursor-default"
+                onClick={() => setStatusFilter(prev => prev === stat.key ? 'all' : stat.key)}
+                className={cn(
+                  "glass-stat rounded-2xl p-4 hover-glow-brand hover-lift transition-all duration-300 group text-left cursor-pointer",
+                  active && "ring-2 ring-primary/40 shadow-lg shadow-primary/10"
+                )}
               >
                 <div className="flex items-center gap-3">
                   <div className={cn("p-2 rounded-xl group-hover:scale-110 transition-transform duration-300", stat.iconBg)}>
                     <Icon className="h-4 w-4" style={{ color: stat.color }} />
                   </div>
-                  <div>
-                    <p className="text-xl sm:text-2xl font-bold tracking-tight">{stat.value}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xl sm:text-2xl font-bold tracking-tight tabular-nums">{stat.value}</p>
                     <p className="text-[11px] text-muted-foreground">{stat.label}</p>
                   </div>
+                  {active && <div className="h-2 w-2 rounded-full bg-primary animate-pulse flex-shrink-0" />}
                 </div>
-              </motion.div>
+              </motion.button>
             )
           })}
         </section>
 
+        {/* Search bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.25 }}
+          className="flex items-center gap-2"
+        >
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Buscar provas por nome ou descrição…"
+              className="w-full pl-9 pr-9 py-2.5 rounded-xl border border-border/50 bg-background/60 backdrop-blur-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                aria-label="Limpar busca"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+          {(searchQuery || statusFilter !== 'all') && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => { setSearchQuery(''); setStatusFilter('all') }}
+              className="rounded-xl text-xs text-muted-foreground"
+            >
+              Limpar filtros
+            </Button>
+          )}
+        </motion.div>
+
         {/* Ungrouped exams */}
-        {ungroupedExams.length > 0 && (
+        {filteredUngrouped.length > 0 && (
           <motion.section
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.3 }}
           >
-            <div className="flex items-center gap-2 mb-4">
-              <FileText className="h-4 w-4 text-muted-foreground" />
-              <h2 className="text-lg font-semibold tracking-tight">Suas Provas</h2>
+            <div className="flex items-center justify-between gap-2 mb-4">
+              <div className="flex items-center gap-2">
+                <FileText className="h-4 w-4 text-muted-foreground" />
+                <h2 className="text-lg font-semibold tracking-tight">Suas Provas</h2>
+              </div>
+              {(searchQuery || statusFilter !== 'all') && (
+                <span className="text-xs text-muted-foreground tabular-nums">
+                  {filteredUngrouped.length} de {ungroupedExams.length}
+                </span>
+              )}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              {ungroupedExams.map((exam, index) => (
+              {filteredUngrouped.map((exam, index) => (
                 <ExamCard key={exam._id?.toString()} exam={exam} index={index} />
               ))}
             </div>
           </motion.section>
+        )}
+
+        {/* No results from filter */}
+        {ungroupedExams.length > 0 && filteredUngrouped.length === 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-10 rounded-2xl border border-dashed border-border/50"
+          >
+            <Search className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2" />
+            <p className="text-sm text-muted-foreground">Nenhuma prova corresponde aos filtros.</p>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => { setSearchQuery(''); setStatusFilter('all') }}
+              className="rounded-xl text-xs mt-2"
+            >
+              Limpar filtros
+            </Button>
+          </motion.div>
         )}
 
         {/* Plataforma groups + Personal groups */}
