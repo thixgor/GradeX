@@ -73,7 +73,7 @@ const normalizeCourseKey = (key: string | undefined | null): string => {
 // ─── Skeleton Loader ──────────────────────────────────────────
 function ExamSkeleton() {
   return (
-    <div className="exam-tech-card p-5 space-y-4 animate-pulse">
+    <div className="glass-page-card rounded-2xl p-5 space-y-4 animate-pulse">
       <div className="flex items-center gap-3">
         <div className="h-5 w-16 rounded-full skeleton-pulse" />
         <div className="h-4 w-20 rounded-full skeleton-pulse" />
@@ -457,10 +457,35 @@ function ProvasContent() {
 
   // ─── Search & Filter ─────────────────────────────────────────
   const normalizedQuery = searchQuery.trim().toLowerCase()
-  function matchesSearch(exam: Exam): boolean {
-    if (!normalizedQuery) return true
+  function examMatchesQuery(exam: Exam, query = normalizedQuery): boolean {
+    if (!query) return true
     const haystack = `${exam.title || ''} ${exam.description || ''}`.toLowerCase()
-    return haystack.includes(normalizedQuery)
+    return haystack.includes(query)
+  }
+  function matchesSearch(exam: Exam): boolean {
+    return examMatchesQuery(exam)
+  }
+  function groupSelfMatchesSearch(group: Group, query = normalizedQuery): boolean {
+    if (!query) return true
+    const normalizedCourse = normalizeCourseKey(group.course)
+    const courseInfo = normalizedCourse ? COURSE_LABELS[normalizedCourse] : null
+    const groupHaystack = [
+      group.name,
+      group.description,
+      group.course,
+      courseInfo?.label,
+    ].filter(Boolean).join(' ').toLowerCase()
+
+    return groupHaystack.includes(query)
+  }
+  function groupMatchesSearchTree(group: Group, query = normalizedQuery): boolean {
+    if (!query) return true
+    if (groupSelfMatchesSearch(group, query)) return true
+    if (exams.some(e => e.groupId === group._id && examMatchesQuery(e, query))) return true
+
+    return groups
+      .filter(child => child.parentGroupId === group._id)
+      .some(child => groupMatchesSearchTree(child, query))
   }
   function matchesStatus(exam: Exam): boolean {
     if (statusFilter === 'all') return true
@@ -473,22 +498,40 @@ function ProvasContent() {
   }
   const filteredUngrouped = ungroupedExams.filter(e => matchesSearch(e) && matchesStatus(e))
 
-  // Contadores
-  const faculdadeExamCount = faculdadeGroups.reduce((sum, g) => {
+  function countGroupExams(groupId: string): number {
     function countRec(gid: string): number {
       const direct = exams.filter(e => e.groupId === gid).length
       const children = groups.filter(c => c.parentGroupId === gid)
       return direct + children.reduce((s, c) => s + countRec(c._id), 0)
     }
-    return sum + countRec(g._id)
-  }, 0)
+    return countRec(groupId)
+  }
+
+  function countGroupExamsForSearch(groupId: string, query = normalizedQuery, ancestorMatched = false): number {
+    if (!query) return countGroupExams(groupId)
+
+    const currentGroup = groups.find(g => g._id === groupId)
+    const currentMatched = ancestorMatched || (currentGroup ? groupSelfMatchesSearch(currentGroup, query) : false)
+    const direct = exams.filter(e =>
+      e.groupId === groupId && (currentMatched || examMatchesQuery(e, query))
+    ).length
+    const children = groups.filter(c => c.parentGroupId === groupId)
+
+    return direct + children.reduce((sum, child) => {
+      if (!currentMatched && !groupMatchesSearchTree(child, query)) return sum
+      return sum + countGroupExamsForSearch(child._id, query, currentMatched)
+    }, 0)
+  }
+
+  // Contadores
+  const faculdadeExamCount = faculdadeGroups.reduce((sum, g) => sum + countGroupExams(g._id), 0)
 
   const plataformaExamCount = exams.length - faculdadeExamCount
 
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen exam-tech-shell">
+      <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
         <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
           <div className="h-20 rounded-2xl skeleton-pulse" />
           <div className="grid grid-cols-2 gap-4">
@@ -510,13 +553,11 @@ function ProvasContent() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, delay: 0.1 + index * 0.04 }}
         className={cn(
-          "exam-tech-card group cursor-pointer",
-          "hover-glow-green hover-lift soul-light soul-light-brand transition-all duration-300",
+          "glass-page-card rounded-2xl overflow-hidden group cursor-pointer",
+          "hover-glow-green hover-lift transition-all duration-300",
+          "border-l-[3px]",
+          exam.isPersonalExam ? 'border-l-violet-500' : 'border-l-[#468152]'
         )}
-        style={{
-          borderLeftWidth: 3,
-          borderLeftColor: exam.isPersonalExam ? '#8b5cf6' : '#468152',
-        }}
         onContextMenu={(e) => handleExamContextMenu(exam, e)}
         onClick={() => {
           if (status.canTake) {
@@ -626,14 +667,14 @@ function ProvasContent() {
   // ═══════════════════════════════════════════════════
   if (viewMode === 'home') {
     return (
-      <div className="min-h-screen exam-tech-shell">
+      <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
         <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="exam-hero-panel text-center space-y-3 px-5 py-6 sm:px-8 sm:py-7"
+            className="text-center space-y-2 pt-4"
           >
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Provas</h1>
             <p className="text-muted-foreground">O que voce quer treinar hoje?</p>
@@ -661,9 +702,9 @@ function ProvasContent() {
                 onClick={() => setViewMode('faculdade')}
                 className="w-full text-left group"
               >
-                <div className="exam-hub-card exam-hub-card-red p-6 sm:p-8">
+                <div className="relative overflow-hidden rounded-2xl border-2 border-transparent hover:border-[#DC2626]/30 bg-gradient-to-br from-red-50/80 via-background to-orange-50/50 dark:from-red-950/20 dark:via-background dark:to-orange-950/10 p-6 sm:p-8 transition-all duration-300 hover:shadow-xl hover:shadow-red-500/10 hover:scale-[1.01]">
                   {/* Glow */}
-                  <div className="absolute top-0 right-0 h-px w-full bg-gradient-to-r from-transparent via-red-500/30 to-transparent" />
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-red-500/10 to-transparent rounded-bl-full" />
 
                   <div className="relative space-y-4">
                     <div className="flex items-center gap-3">
@@ -711,9 +752,9 @@ function ProvasContent() {
                 onClick={() => setViewMode('plataforma')}
                 className="w-full text-left group"
               >
-                <div className="exam-hub-card p-6 sm:p-8">
+                <div className="relative overflow-hidden rounded-2xl border-2 border-transparent hover:border-[#468152]/30 bg-gradient-to-br from-emerald-50/80 via-background to-amber-50/50 dark:from-emerald-950/20 dark:via-background dark:to-amber-950/10 p-6 sm:p-8 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/10 hover:scale-[1.01]">
                   {/* Glow */}
-                  <div className="absolute top-0 right-0 h-px w-full bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent" />
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-emerald-500/10 to-transparent rounded-bl-full" />
 
                   <div className="relative space-y-4">
                     <div className="flex items-center gap-3">
@@ -753,7 +794,7 @@ function ProvasContent() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.35 }}
-            className="exam-glass-panel mx-auto flex w-fit justify-center gap-3 p-2"
+            className="flex justify-center gap-3"
           >
             <Button
               variant="outline"
@@ -792,22 +833,7 @@ function ProvasContent() {
     const courseMap = new Map<string, Group[]>()
     const uncategorizedFacGroups: Group[] = []
 
-    // Filter helper for faculdade
-    const facQuery = searchQuery.trim().toLowerCase()
-    const matchesFacGroup = (g: Group): boolean => {
-      if (!facQuery) return true
-      // Match group name
-      if ((g.name || '').toLowerCase().includes(facQuery)) return true
-      if ((g.description || '').toLowerCase().includes(facQuery)) return true
-      // Match any exam title within the group's subtree
-      function anyExamMatch(gid: string): boolean {
-        if (exams.some(e => e.groupId === gid && ((e.title || '').toLowerCase().includes(facQuery) || (e.description || '').toLowerCase().includes(facQuery)))) return true
-        return groups.filter(c => c.parentGroupId === gid).some(c => anyExamMatch(c._id))
-      }
-      return anyExamMatch(g._id)
-    }
-
-    faculdadeGroups.filter(matchesFacGroup).forEach(g => {
+    faculdadeGroups.filter(g => groupMatchesSearchTree(g)).forEach(g => {
       const normalizedCourse = normalizeCourseKey(g.course)
       if (normalizedCourse && COURSE_LABELS[normalizedCourse]) {
         if (!courseMap.has(normalizedCourse)) courseMap.set(normalizedCourse, [])
@@ -816,16 +842,25 @@ function ProvasContent() {
         uncategorizedFacGroups.push(g)
       }
     })
+    const hasFaculdadeResults = courseMap.size > 0 || uncategorizedFacGroups.length > 0
+    const visibleFaculdadeGroupCount = Array.from(courseMap.values()).reduce((sum, list) => sum + list.length, 0) + uncategorizedFacGroups.length
+    const visibleFaculdadeExamCount = [
+      ...Array.from(courseMap.values()).flat(),
+      ...uncategorizedFacGroups,
+    ].reduce((sum, group) => sum + countGroupExamsForSearch(group._id), 0)
+    const orderedCourseEntries = Object.keys(COURSE_LABELS)
+      .filter(key => courseMap.has(key))
+      .map(key => [key, courseMap.get(key)!] as [string, Group[]])
 
     return (
-      <div className="min-h-screen exam-tech-shell">
+      <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
         <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="exam-hero-panel flex items-center gap-4 p-4 sm:p-5"
+            className="flex items-center gap-4"
           >
             <Button
               variant="ghost"
@@ -850,48 +885,67 @@ function ProvasContent() {
           </motion.div>
 
           {/* Search */}
-          <motion.div
+          <motion.section
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.05 }}
-            className="relative"
+            className="rounded-2xl border border-border/50 bg-background/70 p-3 shadow-sm backdrop-blur-md"
           >
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Buscar curso, grupo ou prova…"
-              className="exam-glass-input w-full pl-9 pr-9 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500/30 transition-all"
-            />
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Buscar por curso, período, grupo ou nome da prova…"
+                className="w-full pl-9 pr-9 py-2.5 rounded-xl border border-border/50 bg-background/80 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500/30 transition-all"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="Limpar busca"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
             {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-                aria-label="Limpar busca"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
+              <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                <span className="rounded-full bg-red-500/10 px-2.5 py-1 font-medium text-red-600 dark:text-red-400">
+                  {visibleFaculdadeExamCount} provas em {visibleFaculdadeGroupCount} grupos
+                </span>
+                <span>Resultados para “{searchQuery}”</span>
+              </div>
             )}
-          </motion.div>
+          </motion.section>
 
           {/* Grupos por curso */}
-          {Array.from(courseMap.entries()).map(([courseKey, courseGroups], idx) => {
+          {orderedCourseEntries.map(([courseKey, courseGroups], idx) => {
             const courseInfo = COURSE_LABELS[courseKey]
+            const courseExamCount = courseGroups.reduce((sum, group) => sum + countGroupExamsForSearch(group._id), 0)
             return (
               <motion.section
                 key={courseKey}
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.1 + idx * 0.08 }}
-                className="exam-glass-panel p-4 sm:p-5"
+                className="rounded-2xl border border-border/40 bg-background/45 p-3 sm:p-4"
               >
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="text-lg">{courseInfo.icon}</span>
-                  <h2 className="text-lg font-semibold" style={{ color: courseInfo.color }}>
-                    {courseInfo.label}
-                  </h2>
-                  <div className="flex-1 h-px bg-border/50" />
+                <div className="flex items-center gap-3 mb-3 flex-wrap">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-lg">{courseInfo.icon}</span>
+                    <h2 className="text-lg font-semibold" style={{ color: courseInfo.color }}>
+                      {courseInfo.label}
+                    </h2>
+                  </div>
+                  <span className="text-[11px] rounded-full bg-muted px-2 py-0.5 text-muted-foreground">
+                    {courseExamCount} provas
+                  </span>
+                  <span className="text-[11px] rounded-full bg-muted px-2 py-0.5 text-muted-foreground">
+                    {courseGroups.length} grupos
+                  </span>
+                  <div className="flex-1 h-px bg-border/50 min-w-8" />
                 </div>
 
                 <div className="space-y-1">
@@ -919,6 +973,7 @@ function ProvasContent() {
                         onSortGroup={handleSortGroup}
                         onDownloadPDF={setPdfModalExam}
                         onGroupDownloadPDF={handleGroupDownloadPDF}
+                        filterQuery={groupSelfMatchesSearch(group) ? '' : searchQuery}
                         onCreateSubgroup={(parentGroupId) => {
                           const name = prompt('Nome do subgrupo:')
                           if (name) handleCreateGroup(name, 'general', parentGroupId)
@@ -937,7 +992,7 @@ function ProvasContent() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.3 }}
-              className="exam-glass-panel p-4 sm:p-5"
+              className="rounded-2xl border border-border/40 bg-background/45 p-3 sm:p-4"
             >
               <div className="flex items-center gap-3 mb-3">
                 <Layers className="h-4 w-4 text-muted-foreground" />
@@ -969,6 +1024,7 @@ function ProvasContent() {
                       onReorderExam={handleReorderExam}
                       onDownloadPDF={setPdfModalExam}
                       onGroupDownloadPDF={handleGroupDownloadPDF}
+                      filterQuery={groupSelfMatchesSearch(group) ? '' : searchQuery}
                       onCreateSubgroup={(parentGroupId) => {
                         const name = prompt('Nome do subgrupo:')
                         if (name) handleCreateGroup(name, 'general', parentGroupId)
@@ -981,7 +1037,7 @@ function ProvasContent() {
           )}
 
           {/* Empty */}
-          {faculdadeGroups.length === 0 && (
+          {!hasFaculdadeResults && (
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -992,7 +1048,9 @@ function ProvasContent() {
               </div>
               <h3 className="text-lg font-semibold mb-2">Nenhuma prova da faculdade</h3>
               <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                Provas antigas da faculdade serao adicionadas aqui pelo administrador.
+                {searchQuery
+                  ? 'Nenhum curso, grupo ou prova corresponde a sua busca.'
+                  : 'Provas antigas da faculdade serao adicionadas aqui pelo administrador.'}
               </p>
             </motion.div>
           )}
@@ -1010,15 +1068,18 @@ function ProvasContent() {
   // ═══════════════════════════════════════════════════
   // PLATAFORMA VIEW
   // ═══════════════════════════════════════════════════
+  const filteredPlatformGroups = [...plataformaGroups, ...personalGroups].filter(group => groupMatchesSearchTree(group))
+  const hasPlatformResults = filteredUngrouped.length > 0 || filteredPlatformGroups.length > 0
+
   return (
-    <div className="min-h-screen exam-tech-shell">
+    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
       <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="exam-hero-panel flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 sm:p-5"
+          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
         >
           <div className="flex items-center gap-4">
             <Button
@@ -1072,7 +1133,6 @@ function ProvasContent() {
                 onClick={() => setStatusFilter(prev => prev === stat.key ? 'all' : stat.key)}
                 className={cn(
                   "glass-stat rounded-2xl p-4 hover-glow-brand hover-lift transition-all duration-300 group text-left cursor-pointer",
-                  "exam-glass-panel",
                   active && "ring-2 ring-primary/40 shadow-lg shadow-primary/10"
                 )}
               >
@@ -1105,7 +1165,7 @@ function ProvasContent() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Buscar provas por nome ou descrição…"
-              className="exam-glass-input w-full pl-9 pr-9 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all"
+              className="w-full pl-9 pr-9 py-2.5 rounded-xl border border-border/50 bg-background/60 backdrop-blur-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all"
             />
             {searchQuery && (
               <button
@@ -1156,7 +1216,7 @@ function ProvasContent() {
         )}
 
         {/* No results from filter */}
-        {ungroupedExams.length > 0 && filteredUngrouped.length === 0 && (
+        {(searchQuery || statusFilter !== 'all') && !hasPlatformResults && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -1176,39 +1236,62 @@ function ProvasContent() {
         )}
 
         {/* Plataforma groups + Personal groups */}
-        {[...plataformaGroups, ...personalGroups].map((group) => {
-          const groupExams = exams.filter(e => e.groupId === group._id)
-          return (
-            <ExamGroup
-              key={group._id}
-              group={group}
-              exams={groupExams}
-              allGroups={groups}
-              allExams={exams}
-              currentUserId={user?.id || ''}
-              userRole={user?.role || 'user'}
-              highlightGroupId={highlightGroupId}
-              onExamClick={(exam) => {
-                const status = getExamStatus(exam)
-                if (status.canTake) router.push(`/exam/${exam._id}`)
-                else if (new Date() > new Date(exam.endTime)) router.push(`/exam/${exam._id}/results`)
-              }}
-              onExamContextMenu={handleExamContextMenu}
-              onDeleteGroup={handleDeleteGroup}
-              onEditGroup={handleEditGroup}
-              onReorderExam={handleReorderExam}
-              onDownloadPDF={setPdfModalExam}
-              onGroupDownloadPDF={handleGroupDownloadPDF}
-              onCreateSubgroup={(parentGroupId) => {
-                const name = prompt('Nome do subgrupo:')
-                if (name) {
-                  const parentGroup = groups.find(g => g._id === parentGroupId)
-                  handleCreateGroup(name, parentGroup?.type || 'personal', parentGroupId)
-                }
-              }}
-            />
-          )
-        })}
+        {filteredPlatformGroups.length > 0 && (
+          <motion.section
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.35 }}
+            className="space-y-2"
+          >
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Layers className="h-4 w-4 text-muted-foreground" />
+                <h2 className="text-lg font-semibold tracking-tight">Grupos</h2>
+              </div>
+              {(searchQuery || statusFilter !== 'all') && (
+                <span className="text-xs text-muted-foreground tabular-nums">
+                  {filteredPlatformGroups.length} grupo{filteredPlatformGroups.length === 1 ? '' : 's'}
+                </span>
+              )}
+            </div>
+            <div className="space-y-1">
+              {filteredPlatformGroups.map((group) => {
+                const groupExams = exams.filter(e => e.groupId === group._id)
+                return (
+                  <ExamGroup
+                    key={group._id}
+                    group={group}
+                    exams={groupExams}
+                    allGroups={groups}
+                    allExams={exams}
+                    currentUserId={user?.id || ''}
+                    userRole={user?.role || 'user'}
+                    highlightGroupId={highlightGroupId}
+                    onExamClick={(exam) => {
+                      const status = getExamStatus(exam)
+                      if (status.canTake) router.push(`/exam/${exam._id}`)
+                      else if (new Date() > new Date(exam.endTime)) router.push(`/exam/${exam._id}/results`)
+                    }}
+                    onExamContextMenu={handleExamContextMenu}
+                    onDeleteGroup={handleDeleteGroup}
+                    onEditGroup={handleEditGroup}
+                    onReorderExam={handleReorderExam}
+                    onDownloadPDF={setPdfModalExam}
+                    onGroupDownloadPDF={handleGroupDownloadPDF}
+                    filterQuery={groupSelfMatchesSearch(group) ? '' : searchQuery}
+                    onCreateSubgroup={(parentGroupId) => {
+                      const name = prompt('Nome do subgrupo:')
+                      if (name) {
+                        const parentGroup = groups.find(g => g._id === parentGroupId)
+                        handleCreateGroup(name, parentGroup?.type || 'personal', parentGroupId)
+                      }
+                    }}
+                  />
+                )
+              })}
+            </div>
+          </motion.section>
+        )}
 
         {/* Empty state */}
         {ungroupedExams.length === 0 && plataformaGroups.length === 0 && personalGroups.length === 0 && (

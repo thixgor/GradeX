@@ -37,6 +37,7 @@ interface ExamGroupProps {
   onGroupDownloadPDF?: (exams: Exam[], type: 'exam' | 'with-answers' | 'gabarito', groupName: string) => void
   depth?: number
   highlightGroupId?: string | null
+  filterQuery?: string
 }
 
 function isInSubtree(groupId: string, targetId: string, allGroups: GroupData[]): boolean {
@@ -63,11 +64,12 @@ export function ExamGroup({
   onGroupDownloadPDF,
   depth = 0,
   highlightGroupId,
+  filterQuery = '',
 }: ExamGroupProps) {
   const isTarget = highlightGroupId === group._id
   const isAncestorOfTarget = !!highlightGroupId && !isTarget && isInSubtree(group._id, highlightGroupId, allGroups)
 
-  const [isExpanded, setIsExpanded] = useState(depth === 0 || isTarget || isAncestorOfTarget)
+  const [isExpanded, setIsExpanded] = useState(depth === 0 || isTarget || isAncestorOfTarget || !!filterQuery.trim())
   const [isDeleting, setIsDeleting] = useState(false)
   const [showActions, setShowActions] = useState(false)
   const [copiedLink, setCopiedLink] = useState(false)
@@ -78,23 +80,57 @@ export function ExamGroup({
   useEffect(() => {
     const target = !!highlightGroupId && highlightGroupId === group._id
     const ancestor = !!highlightGroupId && !target && isInSubtree(group._id, highlightGroupId, allGroups)
-    if (target || ancestor) setIsExpanded(true)
+    if (target || ancestor || filterQuery.trim()) setIsExpanded(true)
     setHighlighted(target)
     if (target) {
       const timer = setTimeout(() => setHighlighted(false), 3000)
       return () => clearTimeout(timer)
     }
-  }, [highlightGroupId, group._id, allGroups])
+  }, [highlightGroupId, group._id, allGroups, filterQuery])
 
   const isCreator = group.createdBy === currentUserId
   const isAdmin = userRole === 'admin'
   const canManageGroup = isAdmin || (isCreator && group.type === 'personal')
-  const childGroups = allGroups.filter(g => g.parentGroupId === group._id)
+  const normalizedFilter = filterQuery.trim().toLowerCase()
 
-  function countExamsRecursive(groupId: string): number {
-    const directExams = allExams.filter(e => e.groupId === groupId).length
+  function examMatchesFilter(exam: Exam): boolean {
+    if (!normalizedFilter) return true
+    const haystack = `${exam.title || ''} ${exam.description || ''}`.toLowerCase()
+    return haystack.includes(normalizedFilter)
+  }
+
+  function groupMatchesSelf(g: GroupData): boolean {
+    if (!normalizedFilter) return true
+    const haystack = `${g.name || ''} ${g.description || ''} ${g.course || ''}`.toLowerCase()
+    return haystack.includes(normalizedFilter)
+  }
+
+  function groupHasMatch(groupId: string): boolean {
+    const current = allGroups.find(g => g._id === groupId)
+    if (current && groupMatchesSelf(current)) return true
+    if (allExams.some(e => e.groupId === groupId && examMatchesFilter(e))) return true
+    return allGroups
+      .filter(g => g.parentGroupId === groupId)
+      .some(child => groupHasMatch(child._id))
+  }
+
+  const groupSelfMatches = !normalizedFilter || groupMatchesSelf(group)
+  const directChildGroups = allGroups.filter(g => g.parentGroupId === group._id)
+  const childGroups = groupSelfMatches
+    ? directChildGroups
+    : directChildGroups.filter(child => groupHasMatch(child._id))
+
+  function countExamsRecursive(groupId: string, ancestorMatched = false): number {
+    const current = allGroups.find(g => g._id === groupId)
+    const currentMatched = ancestorMatched || !normalizedFilter || (current ? groupMatchesSelf(current) : false)
+    const directExams = allExams.filter(e =>
+      e.groupId === groupId && (currentMatched || examMatchesFilter(e))
+    ).length
     const childGroupsOfThis = allGroups.filter(g => g.parentGroupId === groupId)
-    const childExams = childGroupsOfThis.reduce((sum, cg) => sum + countExamsRecursive(cg._id), 0)
+    const childExams = childGroupsOfThis.reduce((sum, cg) => {
+      if (!currentMatched && !groupHasMatch(cg._id)) return sum
+      return sum + countExamsRecursive(cg._id, currentMatched)
+    }, 0)
     return directExams + childExams
   }
 
@@ -129,11 +165,13 @@ export function ExamGroup({
 
   const accentColor = group.color || '#3B82F6'
 
-  const sortedExams = [...exams].sort((a, b) => {
-    const oa = (a as any).orderInGroup ?? 999
-    const ob = (b as any).orderInGroup ?? 999
-    return oa !== ob ? oa - ob : 0
-  })
+  const sortedExams = [...exams]
+    .filter(exam => groupSelfMatches || examMatchesFilter(exam))
+    .sort((a, b) => {
+      const oa = (a as any).orderInGroup ?? 999
+      const ob = (b as any).orderInGroup ?? 999
+      return oa !== ob ? oa - ob : 0
+    })
 
   const directPracticeExams = sortedExams.filter(e => e.isPracticeExam)
 
@@ -145,11 +183,11 @@ export function ExamGroup({
     <div className={indentClass}>
       {/* ─── Group Header ─── */}
       <div
-        className={`exam-group-card group/header relative flex items-start gap-2.5 cursor-pointer select-none transition-all duration-200
+        className={`group/header relative flex items-start gap-2.5 rounded-2xl cursor-pointer select-none transition-all duration-200
           ${depth === 0 ? 'px-3 py-3.5' : 'px-2.5 py-3'}
           ${highlighted
             ? 'bg-primary/10 ring-2 ring-primary/25 shadow-sm'
-            : 'hover:border-primary/25 active:bg-muted/80'
+            : 'hover:bg-muted/60 active:bg-muted/80'
           }`}
         onClick={() => setIsExpanded(!isExpanded)}
       >
@@ -219,7 +257,7 @@ export function ExamGroup({
               {showGroupDownload && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setShowGroupDownload(false)} />
-                  <div className="exam-palette-panel absolute right-0 top-full mt-1.5 z-50 w-64 rounded-2xl border border-border shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
+                  <div className="absolute right-0 top-full mt-1.5 z-50 w-64 rounded-2xl border border-border bg-popover shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
                     <div className="px-3.5 py-2.5 border-b border-border/50 bg-muted/30">
                       <p className="text-xs font-semibold text-foreground leading-snug">{group.name}</p>
                       <p className="text-[10px] text-muted-foreground mt-0.5">{directPracticeExams.length} provas · ordem de baixo pra cima</p>
@@ -264,7 +302,7 @@ export function ExamGroup({
 
       {/* ─── Actions Bar ─── */}
       {showActions && canManageGroup && (
-        <div className="exam-glass-panel mx-2 mb-2 mt-0.5 p-2 flex flex-wrap items-center gap-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
+        <div className="mx-2 mb-2 mt-0.5 p-2 rounded-2xl border border-border/40 bg-muted/30 flex flex-wrap items-center gap-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
           {onCreateSubgroup && (
             <Button variant="ghost" size="sm" onClick={() => { onCreateSubgroup(group._id); setShowActions(false) }}
               disabled={isDeleting} className="h-8 text-xs gap-1.5 text-muted-foreground hover:text-foreground rounded-xl">
@@ -308,7 +346,7 @@ export function ExamGroup({
             return (
               <div
                 key={examId}
-                className="group/exam relative flex items-start gap-3 py-3 px-3 rounded-xl border border-transparent hover:border-white/25 hover:bg-white/45 dark:hover:bg-white/[0.04] active:bg-muted/70 cursor-pointer transition-all"
+                className="group/exam relative flex items-start gap-3 py-3 px-3 rounded-xl hover:bg-muted/50 active:bg-muted/70 cursor-pointer transition-all"
                 onContextMenu={(e) => onExamContextMenu(exam, e)}
                 onClick={() => onExamClick(exam)}
               >
@@ -388,12 +426,13 @@ export function ExamGroup({
                 onGroupDownloadPDF={onGroupDownloadPDF}
                 depth={depth + 1}
                 highlightGroupId={highlightGroupId}
+                filterQuery={filterQuery}
               />
             )
           })}
 
           {/* Empty state */}
-          {exams.length === 0 && childGroups.length === 0 && (
+          {sortedExams.length === 0 && childGroups.length === 0 && (
             <div className="flex items-center gap-2 py-4 px-3">
               <BookOpen className="h-4 w-4 text-muted-foreground/30" />
               <p className="text-xs text-muted-foreground/40 italic">Nenhuma prova neste grupo</p>

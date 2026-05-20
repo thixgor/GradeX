@@ -19,7 +19,7 @@ import { Barcode } from '@/components/barcode'
 import { Logo } from '@/components/logo'
 import { Exam, UserAnswer, TextHighlight, QuestionAnnotation } from '@/lib/types'
 import { HighlightableText } from '@/components/highlightable-text'
-import { cn, formatDate } from '@/lib/utils'
+import { formatDate } from '@/lib/utils'
 import { downloadUserReportPDF } from '@/lib/user-report-generator'
 import { ProctoringConsent } from '@/components/proctoring-consent'
 import { ProctoringMonitor } from '@/components/proctoring-monitor'
@@ -1237,7 +1237,7 @@ ${respostaAluno}`
     return (
       <>
         {proctoringModal}
-        <div className="min-h-screen exam-tech-shell">
+        <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
           <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
 
             {/* ═══ HEADER ═══ */}
@@ -1268,7 +1268,7 @@ ${respostaAluno}`
             {isPracticeOrPersonal && (
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {mcTotal > 0 && (
-                  <div className="exam-tech-card p-6 text-center">
+                  <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-background/60 backdrop-blur-md p-6 text-center shadow-lg">
                     <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-cyan-400" />
                     <div className="absolute -top-12 -right-12 w-32 h-32 bg-blue-500/5 rounded-full" />
                     <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">Objetivas</p>
@@ -1279,7 +1279,7 @@ ${respostaAluno}`
                   </div>
                 )}
                 {discursiveQuestions.length > 0 && (
-                  <div className="exam-tech-card p-6 text-center">
+                  <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-background/60 backdrop-blur-md p-6 text-center shadow-lg">
                     <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-500 to-purple-400" />
                     <div className="absolute -top-12 -right-12 w-32 h-32 bg-violet-500/5 rounded-full" />
                     <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">Discursivas</p>
@@ -1292,7 +1292,7 @@ ${respostaAluno}`
                     )}
                   </div>
                 )}
-                <div className="exam-tech-card p-6 text-center">
+                <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-background/60 backdrop-blur-md p-6 text-center shadow-lg">
                   <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#468152] to-[#E2A43E]" />
                   <div className="absolute -top-12 -right-12 w-32 h-32 bg-[#468152]/5 rounded-full" />
                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">Nota Geral</p>
@@ -1306,7 +1306,7 @@ ${respostaAluno}`
 
             {/* ═══ NON-PRACTICE CONGRATS ═══ */}
             {!isPracticeOrPersonal && (
-              <div className="exam-tech-card p-8 text-center">
+              <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-background/60 backdrop-blur-md p-8 text-center shadow-lg">
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#468152] to-[#E2A43E]" />
                 <h3 className="text-xl font-bold mb-2">Parabéns, {userName}!</h3>
                 <p className="text-muted-foreground">Sua prova foi submetida com sucesso.</p>
@@ -1659,7 +1659,7 @@ ${respostaAluno}`
             )}
 
             {/* ═══ AÇÕES / DOWNLOADS ═══ */}
-            <div className="exam-tech-card p-6 space-y-3">
+            <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-background/60 backdrop-blur-md p-6 shadow-lg space-y-3">
               <h3 className="font-bold text-sm text-muted-foreground uppercase tracking-wider mb-4">Downloads e Ações</h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -2052,7 +2052,7 @@ ${respostaAluno}`
             fn?.()
           }} />
         )}
-        <div className="min-h-screen exam-tech-shell flex items-center justify-center p-4 sm:p-6">
+        <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/40 flex items-center justify-center p-4 sm:p-6">
           <div className="max-w-3xl w-full">
             <Button
               variant="ghost"
@@ -2063,7 +2063,7 @@ ${respostaAluno}`
               <ArrowLeft className="h-4 w-4 mr-1.5" /> Voltar
             </Button>
 
-            <div className="exam-hero-panel shadow-2xl">
+            <div className="relative overflow-hidden rounded-3xl border border-border/50 bg-background/60 backdrop-blur-xl shadow-2xl">
               {/* Top accent */}
               <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#468152] via-emerald-400 to-[#E2A43E]" />
 
@@ -2154,7 +2154,7 @@ ${respostaAluno}`
                         onChange={(e) => setThemeTranscription(e.target.value)}
                         placeholder="Transcreva a frase-tema aqui..."
                         rows={3}
-                        className="exam-answer-textarea font-serif text-base"
+                        className="font-serif text-base rounded-xl"
                       />
                     </div>
                   )}
@@ -2187,9 +2187,9 @@ ${respostaAluno}`
     return (
       <>
         {proctoringModal}
-        <div className="min-h-screen exam-tech-shell flex items-center justify-center p-4 sm:p-6">
+        <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/40 flex items-center justify-center p-4 sm:p-6">
           <div className="max-w-3xl w-full">
-            <div className="exam-hero-panel shadow-2xl">
+            <div className="relative overflow-hidden rounded-3xl border border-border/50 bg-background/60 backdrop-blur-xl shadow-2xl">
               <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-500 via-violet-400 to-fuchsia-500" />
 
               <div className="p-6 sm:p-8 space-y-6">
@@ -2331,7 +2331,7 @@ ${respostaAluno}`
   return (
     <>
       {proctoringModal}
-      <div className="min-h-screen exam-tech-shell">
+      <div className="min-h-screen bg-gradient-to-br from-background to-muted">
         {/* Verificador de Banimento */}
         <BanChecker />
 
@@ -2468,7 +2468,7 @@ ${respostaAluno}`
         </div>
       )}
 
-      <header className="exam-resolver-header sticky top-0 z-50">
+      <header className="sticky top-0 z-50 border-b border-border/60 bg-background/85 shadow-sm backdrop-blur-md">
         <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3 md:py-4">
           <div className="flex items-center justify-between gap-2 sm:gap-4 flex-wrap">
             <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-shrink">
@@ -2603,7 +2603,7 @@ ${respostaAluno}`
         </div>
       </header>
 
-      <main className="container mx-auto px-3 sm:px-4 py-5 sm:py-8 max-w-5xl">
+      <main className="container mx-auto px-4 py-6 sm:py-8 max-w-4xl">
         {/* Modo Scroll - Todas as questões visíveis */}
         {isScrollMode ? (
           <div className="space-y-6">
@@ -2611,13 +2611,10 @@ ${respostaAluno}`
               const answer = answers.find(a => a.questionId === question.id)
 
               return (
-                <Card key={question.id} id={`question-${question.id}`} className="exam-tech-card scroll-mt-28">
-                  <CardHeader className="border-b border-white/10 p-4 sm:p-6">
+                <Card key={question.id} id={`question-${question.id}`} className="rounded-2xl border-border/60 bg-card/95 shadow-sm scroll-mt-28">
+                  <CardHeader className="rounded-t-2xl border-b border-border/50 bg-muted/20 pb-4">
                     <div className="flex items-center justify-between">
-                      <CardTitle className="flex items-center gap-3 text-base sm:text-lg">
-                        <span className="exam-question-chip">{question.number}</span>
-                        <span>Questão</span>
-                      </CardTitle>
+                      <CardTitle className="text-xl">Questão {question.number}</CardTitle>
                       {!exam?.isPersonalExam && (
                         <Button
                           variant="ghost"
@@ -2632,9 +2629,9 @@ ${respostaAluno}`
                       )}
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-6 p-4 sm:p-6">
+                  <CardContent className="space-y-6">
                     {/* Enunciado */}
-                    <div className="exam-statement-panel space-y-2">
+                    <div className="space-y-2">
                       <div className="prose dark:prose-invert max-w-none">
                         <HighlightableText
                           text={formatText(question.statement)}
@@ -2687,7 +2684,7 @@ ${respostaAluno}`
                     )}
 
                     {/* Comando */}
-                    <div className="exam-command-panel">
+                    <div className="rounded-xl border border-primary/15 border-l-4 border-l-primary/40 bg-primary/5 p-4">
                       <HighlightableText
                         text={formatText(question.command)}
                         highlights={answer?.highlights || []}
@@ -2726,35 +2723,30 @@ ${respostaAluno}`
                             <div
                               key={alt.id}
                               onClick={() => handleSelectAlternative(question.id, alt.id)}
-                              className={cn(
-                                'exam-choice cursor-pointer',
-                                isSelected && 'exam-choice-selected',
-                                isCrossed && 'exam-choice-crossed'
-                              )}
+                              className={`border rounded-xl p-4 transition-all cursor-pointer ${
+                                isSelected
+                                  ? 'border-primary bg-primary/10 shadow-sm'
+                                  : isCrossed
+                                  ? 'border-destructive bg-destructive/5 opacity-50'
+                                  : 'border-border/70 hover:border-primary/50 hover:bg-muted/30'
+                              }`}
                             >
-                              <div className="flex items-start gap-3">
+                              <div className="flex items-start space-x-3">
                                 <input
                                   type="radio"
                                   name={`question-${question.id}`}
                                   checked={isSelected}
                                   onChange={() => handleSelectAlternative(question.id, alt.id)}
-                                  className="exam-choice-radio mt-1 h-4 w-4 pointer-events-none"
+                                  className="mt-1 h-4 w-4 pointer-events-none"
                                 />
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-start justify-between gap-3">
-                                    <div className="flex items-start gap-3 min-w-0">
-                                      <span className="exam-choice-letter">
-                                        {alt.letter}
-                                      </span>
-                                      <p className={cn('whitespace-pre-wrap leading-relaxed pt-1', isCrossed && 'line-through')}>
-                                        {formatText(alt.text)}
-                                      </p>
-                                    </div>
+                                <div className="flex-1">
+                                  <div className="flex items-center justify-between">
+                                    <span className={`font-bold ${isCrossed ? 'line-through' : ''}`}>
+                                      {alt.letter})
+                                    </span>
                                     <Button
                                       variant="ghost"
                                       size="sm"
-                                      className="exam-choice-action"
-                                      title={isCrossed ? 'Restaurar alternativa' : 'Riscar alternativa'}
                                       onClick={(e) => {
                                         e.stopPropagation()
                                         handleToggleCross(question.id, alt.id)
@@ -2767,6 +2759,9 @@ ${respostaAluno}`
                                       )}
                                     </Button>
                                   </div>
+                                  <p className={`mt-1 whitespace-pre-wrap ${isCrossed ? 'line-through' : ''}`}>
+                                    {formatText(alt.text)}
+                                  </p>
                                 </div>
                               </div>
                             </div>
@@ -2783,7 +2778,7 @@ ${respostaAluno}`
                           onChange={(e) => handleDiscursiveText(question.id, e.target.value)}
                           placeholder="Digite sua resposta aqui..."
                           rows={10}
-                          className="exam-answer-textarea font-serif text-base"
+                          className="font-serif text-base"
                           disabled={lockedQuestions.has(question.id)}
                         />
                         <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
@@ -2933,7 +2928,7 @@ ${respostaAluno}`
                           <div className="space-y-3">
                             <h4 className="font-semibold text-sm">Textos Motivadores:</h4>
                             {question.essaySupportTexts.map((text, idx) => (
-                              <div key={idx} className="exam-command-panel border-l-4 border-primary">
+                              <div key={idx} className="bg-muted p-4 rounded-lg border-l-4 border-primary">
                                 <p className="text-xs font-semibold text-muted-foreground mb-2">Texto {idx + 1}</p>
                                 <p className="text-sm whitespace-pre-wrap">{text}</p>
                               </div>
@@ -2953,7 +2948,7 @@ ${respostaAluno}`
                               onChange={(e) => handleEssayText(question.id, e.target.value)}
                               placeholder="Escreva sua redação aqui seguindo as orientações do tema proposto..."
                               rows={25}
-                              className="exam-answer-textarea font-serif text-base leading-relaxed resize-none border-0 focus-visible:ring-0"
+                              className="font-serif text-base leading-relaxed resize-none border-0 focus-visible:ring-0"
                             />
                           </div>
                           <div className="flex items-center justify-between text-sm text-muted-foreground bg-muted p-3 rounded-lg">
@@ -3002,9 +2997,9 @@ ${respostaAluno}`
                         }).length}/{exam.questions.length} respondidas
                       </span>
                     </div>
-                    <div className="exam-progress-track">
+                    <div className="w-full bg-muted rounded-full h-2">
                       <div
-                        className="exam-progress-fill"
+                        className="bg-primary h-2 rounded-full transition-all"
                         style={{
                           width: `${(answers.filter((a, index) => {
                             const question = exam.questions[index]
@@ -3038,13 +3033,10 @@ ${respostaAluno}`
           </div>
         ) : (
           /* Modo Paginado - Uma questão por vez */
-          <Card className="exam-tech-card">
-          <CardHeader className="border-b border-white/10 p-4 sm:p-6">
+          <Card className="rounded-2xl border-border/60 bg-card/95 shadow-sm">
+          <CardHeader className="rounded-t-2xl border-b border-border/50 bg-muted/20 pb-4">
             <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-3 text-base sm:text-lg">
-                <span className="exam-question-chip">{currentQuestion.number}</span>
-                <span>Questão</span>
-              </CardTitle>
+              <CardTitle className="text-xl">Questão {currentQuestion.number}</CardTitle>
               {!exam?.isPersonalExam && (
                 <Button
                   variant="ghost"
@@ -3059,9 +3051,9 @@ ${respostaAluno}`
               )}
             </div>
           </CardHeader>
-          <CardContent className="space-y-6 p-4 sm:p-6">
+          <CardContent className="space-y-6">
             {/* Barcode do Usuário */}
-            <div className="exam-meta-strip p-4">
+            <div className="border-b pb-4">
               <Barcode
                 value={`${id}-${userName.replace(/[^a-zA-Z0-9]/g, '').toUpperCase()}`}
                 height={50}
@@ -3073,7 +3065,7 @@ ${respostaAluno}`
             </div>
 
             {/* Enunciado */}
-            <div className="exam-statement-panel space-y-2">
+            <div className="space-y-2">
               <div className="max-w-none">
                 <HighlightableText
                   text={formatText(currentQuestion.statement)}
@@ -3126,7 +3118,7 @@ ${respostaAluno}`
             )}
 
             {/* Comando */}
-            <div className="exam-command-panel">
+            <div className="rounded-xl border border-primary/15 border-l-4 border-l-primary/40 bg-primary/5 p-4">
               <HighlightableText
                 text={currentQuestion.command}
                 highlights={currentAnswer?.highlights || []}
@@ -3170,42 +3162,41 @@ ${respostaAluno}`
                 {currentQuestion.alternatives.map((alt) => {
                   const isSelected = currentAnswer?.selectedAlternative === alt.id
                   const isCrossed = currentAnswer?.crossedAlternatives?.includes(alt.id) || false
+                  const isCorrect = alt.isCorrect
                   const isLocked = exam?.feedbackMode === 'immediate' && lockedQuestions.has(currentQuestion.id)
 
                   return (
                     <div
                       key={alt.id}
                       onClick={() => handleSelectAlternative(currentQuestion.id, alt.id)}
-                      className={cn(
-                        'exam-choice',
-                        isLocked ? 'exam-choice-locked' : 'cursor-pointer',
-                        isSelected && 'exam-choice-selected',
-                        isCrossed && 'exam-choice-crossed'
-                      )}
+                      className={`border rounded-xl p-4 transition-all ${
+                        isLocked ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'
+                      } ${
+                        isSelected
+                          ? 'border-primary bg-primary/10 shadow-sm'
+                        : isCrossed
+                        ? 'border-destructive bg-destructive/5 opacity-50'
+                        : 'border-border/70 hover:border-primary/50 hover:bg-muted/30'
+                      }`}
                     >
-                      <div className="flex items-start gap-3">
+                      <div className="flex items-start space-x-3">
                         <input
                           type="radio"
                           name={`question-${currentQuestion.id}`}
                           checked={isSelected}
                           onChange={() => handleSelectAlternative(currentQuestion.id, alt.id)}
-                          className="exam-choice-radio mt-1 h-4 w-4 pointer-events-none"
+                          className="mt-1 h-4 w-4 pointer-events-none"
                         />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="flex items-start gap-3 min-w-0">
-                              <span className="exam-choice-letter">
-                                {alt.letter}
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                              <span className={`font-bold ${isCrossed ? 'line-through' : ''}`}>
+                                {alt.letter})
                               </span>
-                              <p className={cn('leading-relaxed pt-1 whitespace-pre-wrap', isCrossed && 'line-through')}>
-                                {formatText(alt.text)}
-                              </p>
                             </div>
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="exam-choice-action"
-                              title={isCrossed ? 'Restaurar alternativa' : 'Riscar alternativa'}
                               onClick={(e) => {
                                 e.stopPropagation()
                                 handleToggleCross(currentQuestion.id, alt.id)
@@ -3218,6 +3209,9 @@ ${respostaAluno}`
                               )}
                             </Button>
                           </div>
+                          <p className={`mt-1 ${isCrossed ? 'line-through' : ''}`}>
+                            {alt.text}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -3234,7 +3228,7 @@ ${respostaAluno}`
                   onChange={(e) => handleDiscursiveText(currentQuestion.id, e.target.value)}
                   placeholder="Digite sua resposta aqui..."
                   rows={12}
-                  className="exam-answer-textarea font-serif text-base"
+                  className="font-serif text-base"
                   disabled={lockedQuestions.has(currentQuestion.id)}
                 />
                 <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
@@ -3384,7 +3378,7 @@ ${respostaAluno}`
                   <div className="space-y-3">
                     <h4 className="font-semibold text-sm">Textos Motivadores:</h4>
                     {currentQuestion.essaySupportTexts.map((text, idx) => (
-                      <div key={idx} className="exam-command-panel border-l-4 border-primary">
+                      <div key={idx} className="bg-muted p-4 rounded-lg border-l-4 border-primary">
                         <p className="text-xs font-semibold text-muted-foreground mb-2">Texto {idx + 1}</p>
                         <p className="text-sm whitespace-pre-wrap">{text}</p>
                       </div>
@@ -3404,7 +3398,7 @@ ${respostaAluno}`
                       onChange={(e) => handleEssayText(currentQuestion.id, e.target.value)}
                       placeholder="Escreva sua redação aqui seguindo as orientações do tema proposto..."
                       rows={25}
-                      className="exam-answer-textarea font-serif text-base leading-relaxed resize-none border-0 focus-visible:ring-0"
+                      className="font-serif text-base leading-relaxed resize-none border-0 focus-visible:ring-0"
                     />
                   </div>
                   <div className="flex items-center justify-between text-sm text-muted-foreground bg-muted p-3 rounded-lg">
@@ -3428,7 +3422,7 @@ ${respostaAluno}`
             )}
 
             {/* Navegação */}
-            <div className="flex justify-between pt-6 border-t border-white/10 gap-2">
+            <div className="flex justify-between pt-6 border-t gap-2">
               <Button
                 variant="outline"
                 onClick={() => setCurrentQuestionIndex(Math.max(0, currentQuestionIndex - 1))}
@@ -3468,7 +3462,7 @@ ${respostaAluno}`
             </div>
 
             {/* Indicador de progresso */}
-            <div className="pt-4 border-t border-white/10">
+            <div className="pt-4 border-t">
               <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
                 <span>Progresso</span>
                 <span>
@@ -3486,9 +3480,9 @@ ${respostaAluno}`
                   respondidas
                 </span>
               </div>
-              <div className="exam-progress-track">
+              <div className="w-full bg-muted rounded-full h-2">
                 <div
-                  className="exam-progress-fill"
+                  className="bg-primary h-2 rounded-full transition-all"
                   style={{
                     width: `${(answers.filter((a, index) => {
                       const question = exam.questions[index]

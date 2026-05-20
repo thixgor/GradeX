@@ -44,7 +44,7 @@ export function ExamQuestionPalette({ questions, currentIndex, onJump }: ExamQue
       <button
         onClick={() => setOpen(true)}
         aria-label="Mapa de questões"
-        className="exam-glass-panel fixed right-3 sm:right-5 bottom-20 sm:bottom-24 z-40 group flex items-center gap-2 pl-3 pr-3.5 py-2.5 shadow-lg shadow-black/5 hover:shadow-xl hover:scale-[1.03] transition-all"
+        className="fixed right-3 sm:right-5 bottom-20 sm:bottom-24 z-40 group flex items-center gap-2 pl-3 pr-3.5 py-2.5 rounded-2xl bg-background/95 backdrop-blur-md border border-border/60 shadow-lg shadow-black/5 hover:shadow-xl hover:scale-[1.03] transition-all"
       >
         <div className="relative">
           <LayoutGrid className="h-4 w-4 text-primary" />
@@ -64,9 +64,9 @@ export function ExamQuestionPalette({ questions, currentIndex, onJump }: ExamQue
             className="fixed inset-0 z-[80] bg-black/40 backdrop-blur-[2px] animate-in fade-in duration-150"
             onClick={() => setOpen(false)}
           />
-          <aside className="exam-palette-panel fixed right-0 top-0 bottom-0 z-[81] w-full sm:w-[380px] border-l border-border/60 shadow-2xl flex flex-col animate-in slide-in-from-right duration-200">
+          <aside className="fixed right-0 top-0 bottom-0 z-[81] w-full sm:w-[380px] bg-background border-l border-border/60 shadow-2xl flex flex-col animate-in slide-in-from-right duration-200">
             {/* Header */}
-            <header className="flex items-center justify-between px-5 py-4 border-b border-border/60 bg-gradient-to-r from-primary/10 via-transparent to-transparent">
+            <header className="flex items-center justify-between px-5 py-4 border-b border-border/60 bg-gradient-to-r from-primary/5 via-background to-background">
               <div>
                 <h2 className="text-base font-bold">Mapa de Questões</h2>
                 <p className="text-[11px] text-muted-foreground">Clique para navegar</p>
@@ -86,9 +86,9 @@ export function ExamQuestionPalette({ questions, currentIndex, onJump }: ExamQue
                 <span className="text-[11px] font-medium text-muted-foreground">Progresso</span>
                 <span className="text-[11px] font-bold tabular-nums">{answered}/{total} · {pct}%</span>
               </div>
-              <div className="exam-progress-track">
+              <div className="h-1.5 bg-muted rounded-full overflow-hidden">
                 <div
-                  className="exam-progress-fill"
+                  className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 transition-all duration-500 rounded-full"
                   style={{ width: `${pct}%` }}
                 />
               </div>
@@ -117,7 +117,7 @@ export function ExamQuestionPalette({ questions, currentIndex, onJump }: ExamQue
                         isCurrent && 'ring-2 ring-primary/40 scale-105 z-10',
                         q.answered
                           ? 'bg-gradient-to-br from-emerald-500/15 to-emerald-500/5 border-emerald-500/40 text-emerald-700 dark:text-emerald-300 hover:border-emerald-500'
-                          : 'bg-white/45 dark:bg-white/[0.035] border-border/60 text-muted-foreground hover:border-primary/40 hover:text-foreground',
+                          : 'bg-background border-border/60 text-muted-foreground hover:border-primary/40 hover:text-foreground',
                         isCurrent && (q.answered ? 'border-emerald-500' : 'border-primary'),
                         q.locked && 'opacity-75'
                       )}
