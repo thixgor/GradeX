@@ -145,11 +145,11 @@ export function ExamGroup({
     <div className={indentClass}>
       {/* ─── Group Header ─── */}
       <div
-        className={`group/header relative flex items-start gap-2.5 rounded-2xl cursor-pointer select-none transition-all duration-200
+        className={`exam-group-card group/header relative flex items-start gap-2.5 cursor-pointer select-none transition-all duration-200
           ${depth === 0 ? 'px-3 py-3.5' : 'px-2.5 py-3'}
           ${highlighted
             ? 'bg-primary/10 ring-2 ring-primary/25 shadow-sm'
-            : 'hover:bg-muted/60 active:bg-muted/80'
+            : 'hover:border-primary/25 active:bg-muted/80'
           }`}
         onClick={() => setIsExpanded(!isExpanded)}
       >
@@ -219,7 +219,7 @@ export function ExamGroup({
               {showGroupDownload && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setShowGroupDownload(false)} />
-                  <div className="absolute right-0 top-full mt-1.5 z-50 w-64 rounded-2xl border border-border bg-popover shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
+                  <div className="exam-palette-panel absolute right-0 top-full mt-1.5 z-50 w-64 rounded-2xl border border-border shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
                     <div className="px-3.5 py-2.5 border-b border-border/50 bg-muted/30">
                       <p className="text-xs font-semibold text-foreground leading-snug">{group.name}</p>
                       <p className="text-[10px] text-muted-foreground mt-0.5">{directPracticeExams.length} provas · ordem de baixo pra cima</p>
@@ -264,7 +264,7 @@ export function ExamGroup({
 
       {/* ─── Actions Bar ─── */}
       {showActions && canManageGroup && (
-        <div className="mx-2 mb-2 mt-0.5 p-2 rounded-2xl border border-border/40 bg-muted/30 flex flex-wrap items-center gap-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
+        <div className="exam-glass-panel mx-2 mb-2 mt-0.5 p-2 flex flex-wrap items-center gap-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
           {onCreateSubgroup && (
             <Button variant="ghost" size="sm" onClick={() => { onCreateSubgroup(group._id); setShowActions(false) }}
               disabled={isDeleting} className="h-8 text-xs gap-1.5 text-muted-foreground hover:text-foreground rounded-xl">
@@ -308,7 +308,7 @@ export function ExamGroup({
             return (
               <div
                 key={examId}
-                className="group/exam relative flex items-start gap-3 py-3 px-3 rounded-xl hover:bg-muted/50 active:bg-muted/70 cursor-pointer transition-all"
+                className="group/exam relative flex items-start gap-3 py-3 px-3 rounded-xl border border-transparent hover:border-white/25 hover:bg-white/45 dark:hover:bg-white/[0.04] active:bg-muted/70 cursor-pointer transition-all"
                 onContextMenu={(e) => onExamContextMenu(exam, e)}
                 onClick={() => onExamClick(exam)}
               >

@@ -73,7 +73,7 @@ const normalizeCourseKey = (key: string | undefined | null): string => {
 // ─── Skeleton Loader ──────────────────────────────────────────
 function ExamSkeleton() {
   return (
-    <div className="glass-page-card rounded-2xl p-5 space-y-4 animate-pulse">
+    <div className="exam-tech-card p-5 space-y-4 animate-pulse">
       <div className="flex items-center gap-3">
         <div className="h-5 w-16 rounded-full skeleton-pulse" />
         <div className="h-4 w-20 rounded-full skeleton-pulse" />
@@ -488,7 +488,7 @@ function ProvasContent() {
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+      <div className="min-h-screen exam-tech-shell">
         <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
           <div className="h-20 rounded-2xl skeleton-pulse" />
           <div className="grid grid-cols-2 gap-4">
@@ -510,11 +510,13 @@ function ProvasContent() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, delay: 0.1 + index * 0.04 }}
         className={cn(
-          "glass-page-card rounded-2xl overflow-hidden group cursor-pointer",
-          "hover-glow-green hover-lift transition-all duration-300",
-          "border-l-[3px]",
-          exam.isPersonalExam ? 'border-l-violet-500' : 'border-l-[#468152]'
+          "exam-tech-card group cursor-pointer",
+          "hover-glow-green hover-lift soul-light soul-light-brand transition-all duration-300",
         )}
+        style={{
+          borderLeftWidth: 3,
+          borderLeftColor: exam.isPersonalExam ? '#8b5cf6' : '#468152',
+        }}
         onContextMenu={(e) => handleExamContextMenu(exam, e)}
         onClick={() => {
           if (status.canTake) {
@@ -624,14 +626,14 @@ function ProvasContent() {
   // ═══════════════════════════════════════════════════
   if (viewMode === 'home') {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+      <div className="min-h-screen exam-tech-shell">
         <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="text-center space-y-2 pt-4"
+            className="exam-hero-panel text-center space-y-3 px-5 py-6 sm:px-8 sm:py-7"
           >
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Provas</h1>
             <p className="text-muted-foreground">O que voce quer treinar hoje?</p>
@@ -659,9 +661,9 @@ function ProvasContent() {
                 onClick={() => setViewMode('faculdade')}
                 className="w-full text-left group"
               >
-                <div className="relative overflow-hidden rounded-2xl border-2 border-transparent hover:border-[#DC2626]/30 bg-gradient-to-br from-red-50/80 via-background to-orange-50/50 dark:from-red-950/20 dark:via-background dark:to-orange-950/10 p-6 sm:p-8 transition-all duration-300 hover:shadow-xl hover:shadow-red-500/10 hover:scale-[1.01]">
+                <div className="exam-hub-card exam-hub-card-red p-6 sm:p-8">
                   {/* Glow */}
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-red-500/10 to-transparent rounded-bl-full" />
+                  <div className="absolute top-0 right-0 h-px w-full bg-gradient-to-r from-transparent via-red-500/30 to-transparent" />
 
                   <div className="relative space-y-4">
                     <div className="flex items-center gap-3">
@@ -709,9 +711,9 @@ function ProvasContent() {
                 onClick={() => setViewMode('plataforma')}
                 className="w-full text-left group"
               >
-                <div className="relative overflow-hidden rounded-2xl border-2 border-transparent hover:border-[#468152]/30 bg-gradient-to-br from-emerald-50/80 via-background to-amber-50/50 dark:from-emerald-950/20 dark:via-background dark:to-amber-950/10 p-6 sm:p-8 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/10 hover:scale-[1.01]">
+                <div className="exam-hub-card p-6 sm:p-8">
                   {/* Glow */}
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-emerald-500/10 to-transparent rounded-bl-full" />
+                  <div className="absolute top-0 right-0 h-px w-full bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent" />
 
                   <div className="relative space-y-4">
                     <div className="flex items-center gap-3">
@@ -751,7 +753,7 @@ function ProvasContent() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.35 }}
-            className="flex justify-center gap-3"
+            className="exam-glass-panel mx-auto flex w-fit justify-center gap-3 p-2"
           >
             <Button
               variant="outline"
@@ -816,14 +818,14 @@ function ProvasContent() {
     })
 
     return (
-      <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+      <div className="min-h-screen exam-tech-shell">
         <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="flex items-center gap-4"
+            className="exam-hero-panel flex items-center gap-4 p-4 sm:p-5"
           >
             <Button
               variant="ghost"
@@ -860,7 +862,7 @@ function ProvasContent() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Buscar curso, grupo ou prova…"
-              className="w-full pl-9 pr-9 py-2.5 rounded-xl border border-border/50 bg-background/60 backdrop-blur-md text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500/30 transition-all"
+              className="exam-glass-input w-full pl-9 pr-9 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500/30 transition-all"
             />
             {searchQuery && (
               <button
@@ -882,6 +884,7 @@ function ProvasContent() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.1 + idx * 0.08 }}
+                className="exam-glass-panel p-4 sm:p-5"
               >
                 <div className="flex items-center gap-3 mb-3">
                   <span className="text-lg">{courseInfo.icon}</span>
@@ -934,6 +937,7 @@ function ProvasContent() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.3 }}
+              className="exam-glass-panel p-4 sm:p-5"
             >
               <div className="flex items-center gap-3 mb-3">
                 <Layers className="h-4 w-4 text-muted-foreground" />
@@ -1007,14 +1011,14 @@ function ProvasContent() {
   // PLATAFORMA VIEW
   // ═══════════════════════════════════════════════════
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+    <div className="min-h-screen exam-tech-shell">
       <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+          className="exam-hero-panel flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 sm:p-5"
         >
           <div className="flex items-center gap-4">
             <Button
@@ -1068,6 +1072,7 @@ function ProvasContent() {
                 onClick={() => setStatusFilter(prev => prev === stat.key ? 'all' : stat.key)}
                 className={cn(
                   "glass-stat rounded-2xl p-4 hover-glow-brand hover-lift transition-all duration-300 group text-left cursor-pointer",
+                  "exam-glass-panel",
                   active && "ring-2 ring-primary/40 shadow-lg shadow-primary/10"
                 )}
               >
@@ -1100,7 +1105,7 @@ function ProvasContent() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Buscar provas por nome ou descrição…"
-              className="w-full pl-9 pr-9 py-2.5 rounded-xl border border-border/50 bg-background/60 backdrop-blur-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all"
+              className="exam-glass-input w-full pl-9 pr-9 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all"
             />
             {searchQuery && (
               <button
