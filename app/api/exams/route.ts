@@ -43,19 +43,15 @@ export async function GET(request: NextRequest) {
       ],
     }
 
-    // Projection — campos suficientes para a lista; questões em si
-    // têm rota dedicada por exame. Antes trazia o documento completo
-    // com todos os enunciados (custoso em decks grandes).
+    // Sem projeção: o frontend (app/provas, app/admin/exams) lê campos
+    // como groupId, totalPoints, scoringMethod, startTime/endTime,
+    // gatesOpen/Close, isPracticeExam e questions diretamente do objeto.
+    // Restringir projection quebra agrupamento por grupo e exibição
+    // de pontos (mostrava "undefined pts"). Mantemos o documento
+    // completo aqui; a otimização de CPU vem do cache abaixo + do
+    // session cache em lib/auth.ts.
     const exams = await examsCollection
-      .find(query, {
-        projection: {
-          title: 1, description: 1, coverImage: 1, isHidden: 1,
-          isFeatured: 1, isPersonalExam: 1, allowedGroups: 1,
-          questionCount: 1, totalQuestions: 1, durationMinutes: 1,
-          createdAt: 1, updatedAt: 1, createdBy: 1, createdByName: 1,
-          accessType: 1, year: 1, examType: 1, banca: 1, modulo: 1,
-        },
-      })
+      .find(query)
       .sort({ createdAt: -1 })
       .toArray()
 
