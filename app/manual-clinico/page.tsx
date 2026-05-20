@@ -224,6 +224,11 @@ function ManualClinicoContent() {
   const freeQuota = manualAccess.freeQuota
   const pricingEventStateData = usePricingEventState(product?.pricingEventId || null)
   const pricingEventState = pricingEventStateData.state
+  const tierPct = pricingEventState?.activeTier?.discountPercent || 0
+  const hasActiveTier = !!pricingEventState?.activeTier && pricingEventState?.isActive !== false && tierPct > 0
+  const buttonPrice = hasActiveTier && product?.currentPrice
+    ? Math.max(0, Math.round(Number(product.currentPrice) * (1 - tierPct / 100) * 100) / 100)
+    : Number(product?.currentPrice || 0)
   // Wait until BOTH the auth bootstrap and the first /api/manual-clinico response land
   // before rendering CTAs. Otherwise users see "Entre para..." flash to "Comprar..." flash
   // to "Baixar..." in under a second, which makes the page feel broken.
@@ -434,9 +439,16 @@ function ManualClinicoContent() {
                         <Crown className="relative h-4 w-4" />
                         <span className="relative">{product.ctaText || 'Quero o Manual Clínico completo'}</span>
                         {product.currentPrice > 0 && (
-                          <span className="relative ml-1 rounded-lg bg-emerald-950/15 px-2 py-0.5 text-xs font-black tracking-tight">
-                            {formatBRL(product.currentPrice)}
-                          </span>
+                          hasActiveTier ? (
+                            <span className="relative ml-1 inline-flex items-center gap-1.5 rounded-lg bg-emerald-950/15 px-2 py-0.5 text-xs font-black tracking-tight">
+                              <span className="line-through opacity-60">{formatBRL(product.currentPrice)}</span>
+                              <span>{formatBRL(buttonPrice)}</span>
+                            </span>
+                          ) : (
+                            <span className="relative ml-1 rounded-lg bg-emerald-950/15 px-2 py-0.5 text-xs font-black tracking-tight">
+                              {formatBRL(product.currentPrice)}
+                            </span>
+                          )
                         )}
                         <ArrowRight className="relative h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                       </button>

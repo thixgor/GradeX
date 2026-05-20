@@ -61,6 +61,7 @@ import { ReviewSummaryBlock } from '@/components/reviews/review-summary'
 import type { ReviewSummary } from '@/lib/reviews-shared'
 import { PricingEventCountdown } from '@/components/pricing-events/PricingEventCountdown'
 import { PricingEventPriceBlock } from '@/components/pricing-events/PricingEventPriceBlock'
+import { PricingEventBadge } from '@/components/pricing-events/PricingEventBadge'
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
 
 // ─── Types ───────────────────────────────────────────────────
@@ -414,6 +415,12 @@ export default function MaterialViewPage() {
   const isEmbed = material.type === 'video_embed'
   const isVideo = material.type === 'video' || isEmbed
   const isFree = material.pricing === 'free'
+  const tierPct = pricingEventState?.activeTier?.discountPercent || 0
+  const hasActiveTier = !isFree && !!pricingEventState?.activeTier && pricingEventState.isActive !== false && tierPct > 0
+  const originalPrice = Number(material.price || 0)
+  const tierFinalPrice = hasActiveTier
+    ? Math.max(0, Math.round(originalPrice * (1 - tierPct / 100) * 100) / 100)
+    : originalPrice
   const descLong = material.description && material.description.length > 200
   const isPdf = material._hasPdf || material.type === 'pdf'
   const canViewPdf = hasAccess && !!material._hasPdf && material.pdfViewerEnabled === true
@@ -628,11 +635,17 @@ export default function MaterialViewPage() {
                         <span className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold border border-emerald-500/15">
                           <Gift className="h-3 w-3" /> Gratuito
                         </span>
+                      ) : hasActiveTier ? (
+                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold border border-emerald-500/30">
+                          <span className="line-through opacity-60">R$ {originalPrice.toFixed(2)}</span>
+                          <span>R$ {tierFinalPrice.toFixed(2)}</span>
+                        </span>
                       ) : (
                         <span className="px-2 py-0.5 rounded-lg bg-accent/10 text-amber-700 dark:text-amber-300 text-[11px] font-bold border border-amber-500/15">
                           R$ {material.price?.toFixed(2)}
                         </span>
                       )}
+                      {hasActiveTier && <PricingEventBadge state={pricingEventState} size="xs" />}
                     </div>
 
                     <h1 className="font-heading text-lg font-bold leading-snug">
@@ -866,7 +879,7 @@ export default function MaterialViewPage() {
                       ) : (
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl backdrop-blur-md bg-black/40 border border-white/15 text-white/80 text-[11px] font-bold">
                           <Lock className="h-3 w-3" />
-                          {isFree ? 'Gratuito' : `R$ ${material.price?.toFixed(2)}`}
+                          {isFree ? 'Gratuito' : `R$ ${tierFinalPrice.toFixed(2)}`}
                         </span>
                       )}
                     </div>
@@ -884,11 +897,17 @@ export default function MaterialViewPage() {
                       <span className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold border border-emerald-500/15">
                         <Gift className="h-3 w-3" /> Gratuito
                       </span>
+                    ) : hasActiveTier ? (
+                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold border border-emerald-500/30">
+                        <span className="line-through opacity-60">R$ {originalPrice.toFixed(2)}</span>
+                        <span>R$ {tierFinalPrice.toFixed(2)}</span>
+                      </span>
                     ) : (
                       <span className="px-2 py-0.5 rounded-lg bg-accent/10 text-amber-700 dark:text-amber-300 text-[11px] font-bold border border-amber-500/15">
                         R$ {material.price?.toFixed(2)}
                       </span>
                     )}
+                    {hasActiveTier && <PricingEventBadge state={pricingEventState} size="xs" />}
                   </div>
 
                   <h1 className="font-heading font-bold text-base leading-snug mb-3">
@@ -946,6 +965,17 @@ export default function MaterialViewPage() {
                           </span>
                         ))}
                       </div>
+                    </div>
+                  )}
+
+                  {/* Lote dinâmico por evento — desktop */}
+                  {hasActiveTier && !hasAccess && pricingEventState && (
+                    <div className="mb-3 space-y-2">
+                      <PricingEventCountdown state={pricingEventState} compact />
+                      <PricingEventPriceBlock
+                        originalPrice={originalPrice}
+                        state={pricingEventState}
+                      />
                     </div>
                   )}
 
@@ -1120,7 +1150,15 @@ export default function MaterialViewPage() {
             <div className="min-w-0 flex-1">
               <p className="truncate text-xs font-semibold text-foreground">{material.title}</p>
               <p className="text-sm font-black text-emerald-700 dark:text-emerald-300">
-                {isFree ? 'Gratuito' : `R$ ${material.price?.toFixed(2)}`}
+                {isFree ? 'Gratuito' : hasActiveTier ? (
+                  <>
+                    <span className="mr-1.5 text-[10px] font-medium text-muted-foreground line-through">
+                      R$ {originalPrice.toFixed(2)}
+                    </span>
+                    R$ {tierFinalPrice.toFixed(2)}
+                    <span className="ml-1.5 text-[10px] font-bold text-emerald-500">−{tierPct}%</span>
+                  </>
+                ) : `R$ ${material.price?.toFixed(2)}`}
               </p>
             </div>
             <Button

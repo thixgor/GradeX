@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, BookOpen, Check, Lock, Loader2, Percent, Sparkles, X } from 'lucide-react'
+import { ArrowLeft, BookOpen, Check, Flame, Lock, Loader2, Percent, Sparkles, TrendingDown, X } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
+import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
 
 const MANUAL_CLINICO_PRODUCT_ID = 'manual-clinico-premium'
 
@@ -22,6 +23,7 @@ interface ProductInfo {
   hasActivePromotion: boolean
   allowCoupons: boolean
   lifetimeAccess: boolean
+  pricingEventId?: string | null
 }
 
 interface AppliedCoupon {
@@ -164,6 +166,8 @@ export default function ManualClinicoCheckoutPage() {
   const [error, setError] = useState('')
   const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null)
   const [freeLoading, setFreeLoading] = useState(false)
+  const pricingEventStateData = usePricingEventState(product?.pricingEventId || null)
+  const pricingEventState = pricingEventStateData.state
 
   useEffect(() => {
     Promise.all([
@@ -235,7 +239,16 @@ export default function ManualClinicoCheckoutPage() {
     )
   }
 
-  const payableAmount = appliedCoupon ? appliedCoupon.amountAfterCoupon : product.currentPrice
+  const baseAmount = Number(product.currentPrice || 0)
+  const tierPct = pricingEventState?.activeTier?.discountPercent || 0
+  const hasActiveTier = !!pricingEventState?.activeTier && pricingEventState?.isActive !== false && tierPct > 0 && baseAmount > 0
+  const tierDiscountAmount = hasActiveTier
+    ? Math.max(0, Math.round(baseAmount * (tierPct / 100) * 100) / 100)
+    : 0
+  const couponDiscountAmount = appliedCoupon ? appliedCoupon.discountAmount : 0
+  const effectiveDiscount = Math.max(tierDiscountAmount, couponDiscountAmount)
+  const tierBeatsCoupon = hasActiveTier && tierDiscountAmount >= couponDiscountAmount
+  const payableAmount = Math.max(0, Math.round((baseAmount - effectiveDiscount) * 100) / 100)
 
   return (
     <div className="min-h-screen overflow-hidden bg-[#031109] px-4 py-6 text-white">
@@ -292,12 +305,26 @@ export default function ManualClinicoCheckoutPage() {
               {product.hasActivePromotion && (
                 <p className="mt-1 text-sm font-bold text-white/40 line-through">{formatBRL(product.price)}</p>
               )}
+              {hasActiveTier && baseAmount > payableAmount && (
+                <p className="mt-1 text-sm font-bold text-white/40 line-through">{formatBRL(baseAmount)}</p>
+              )}
               <p className="text-4xl font-black text-emerald-200">
                 {payableAmount <= 0 ? 'Gratis' : formatBRL(payableAmount)}
               </p>
-              {appliedCoupon ? (
+              {hasActiveTier && tierBeatsCoupon && tierDiscountAmount > 0 ? (
+                <p className="mt-1 inline-flex items-center gap-1 text-xs font-bold text-emerald-200">
+                  <Flame className="h-3 w-3" />
+                  Lote {pricingEventState?.activeTier?.label || ''}: − {formatBRL(tierDiscountAmount)} ({tierPct}% OFF)
+                </p>
+              ) : null}
+              {appliedCoupon && !tierBeatsCoupon ? (
                 <p className="mt-1 text-xs font-bold text-emerald-200">
                   Cupom {appliedCoupon.code}: - {formatBRL(appliedCoupon.discountAmount)}
+                </p>
+              ) : null}
+              {appliedCoupon && tierBeatsCoupon && tierDiscountAmount > 0 ? (
+                <p className="mt-1 text-[10px] font-medium text-emerald-200/70">
+                  Cupom {appliedCoupon.code} mantido — o desconto do lote já é maior.
                 </p>
               ) : null}
             </div>
