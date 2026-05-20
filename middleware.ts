@@ -18,6 +18,7 @@ const publicRoutes = [
   '/buy',
   '/materiais',
   '/flashcards',
+  '/ldpg-mnclinico',
   '/manual-clinico',
   // Landing page lê settings publicamente (videoEmbedUrl, landingPageEnabled,
   // etc). A própria rota faz checagem de admin internamente para PUT.
@@ -177,7 +178,8 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico, favicon.jpg
      * - public folder files (img/)
+     * - landing pages served directly from public/
      */
-    '/((?!_next/static|_next/image|favicon\\.ico|favicon\\.jpg|img/).*)',
+    '/((?!_next/static|_next/image|favicon\\.ico|favicon\\.jpg|img/|ldpg-mnclinico).*)',
   ],
 }

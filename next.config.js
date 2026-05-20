@@ -118,6 +118,15 @@ const nextConfig = {
     ]
   },
 
+  async rewrites() {
+    return [
+      {
+        source: '/ldpg-mnclinico',
+        destination: '/ldpg-mnclinico.html',
+      },
+    ]
+  },
+
   // Ignorar erros TypeScript durante build
   typescript: {
     ignoreBuildErrors: true,
