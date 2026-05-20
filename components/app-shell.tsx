@@ -158,18 +158,7 @@ export function AppShell({
   }
 
   function handleCreateExam() {
-    if (isAdmin) {
-      setShowCreateExamModal(true)
-    } else {
-      if (tierLimitExceeded) {
-        alert(`Voce atingiu seu limite de criacao de provas.
-Faca upgrade para Premium para 10 provas por dia com ate 20 questoes por prova.
-
-Contato: (21) 99777-0936`)
-      } else {
-        router.push('/exams/create-personal')
-      }
-    }
+    setShowCreateExamModal(true)
   }
 
   async function handleRetryBootstrap() {

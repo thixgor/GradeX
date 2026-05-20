@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
-import { FileText, Users, Sparkles } from 'lucide-react'
+import { GraduationCap, Users, Sparkles } from 'lucide-react'
 
 interface CreateExamModalProps {
   open: boolean
@@ -37,63 +37,115 @@ Contato: (21) 99777-0936`)
     onClose()
   }
 
-  // If not admin, don't show modal - just redirect
-  if (!isAdmin) {
-    return null
+  const handleGoToFaculdade = () => {
+    router.push('/provas?view=faculdade')
+    onClose()
   }
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-center text-xl">Criar Nova Prova</DialogTitle>
+          <DialogTitle className="text-center text-xl">
+            {isAdmin ? 'Criar Nova Prova' : 'Nova Prova'}
+          </DialogTitle>
           <DialogDescription className="text-center">
-            Escolha o tipo de prova que deseja criar
+            {isAdmin
+              ? 'Escolha o tipo de prova que deseja criar'
+              : 'Você quer fazer uma prova da faculdade ou criar uma prova com IA?'}
           </DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
-          {/* Prova Geral */}
-          <button
-            onClick={handleCreateGeneral}
-            className="group relative flex items-start gap-4 p-4 rounded-xl border-2 border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-950/30 hover:border-blue-400 dark:hover:border-blue-600 hover:bg-blue-100/50 dark:hover:bg-blue-900/30 transition-all duration-200"
-          >
-            <div className="flex-shrink-0 h-12 w-12 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
-              <Users className="h-6 w-6" />
-            </div>
-            <div className="flex-1 text-left">
-              <h3 className="font-semibold text-lg text-blue-700 dark:text-blue-300 group-hover:text-blue-800 dark:group-hover:text-blue-200">
-                Prova Geral
-              </h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                Crie uma prova visível para todos os usuários. Ideal para simulados e avaliações em grupo.
-              </p>
-            </div>
-          </button>
+          {isAdmin ? (
+            <>
+              {/* Prova Geral (admin) */}
+              <button
+                onClick={handleCreateGeneral}
+                className="group relative flex items-start gap-4 p-4 rounded-xl border-2 border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-950/30 hover:border-blue-400 dark:hover:border-blue-600 hover:bg-blue-100/50 dark:hover:bg-blue-900/30 transition-all duration-200"
+              >
+                <div className="flex-shrink-0 h-12 w-12 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+                  <Users className="h-6 w-6" />
+                </div>
+                <div className="flex-1 text-left">
+                  <h3 className="font-semibold text-lg text-blue-700 dark:text-blue-300 group-hover:text-blue-800 dark:group-hover:text-blue-200">
+                    Prova Geral
+                  </h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Crie uma prova visível para todos os usuários. Ideal para simulados e avaliações em grupo.
+                  </p>
+                </div>
+              </button>
 
-          {/* Prova Pessoal */}
-          <button
-            onClick={handleCreatePersonal}
-            disabled={tierLimitExceeded}
-            className="group relative flex items-start gap-4 p-4 rounded-xl border-2 border-purple-200 dark:border-purple-800 bg-purple-50/50 dark:bg-purple-950/30 hover:border-purple-400 dark:hover:border-purple-600 hover:bg-purple-100/50 dark:hover:bg-purple-900/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <div className="flex-shrink-0 h-12 w-12 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-purple-500/30">
-              <Sparkles className="h-6 w-6" />
-            </div>
-            <div className="flex-1 text-left">
-              <h3 className="font-semibold text-lg text-purple-700 dark:text-purple-300 group-hover:text-purple-800 dark:group-hover:text-purple-200">
-                Prova Pessoal
-              </h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                Crie uma prova personalizada com questões geradas por IA. Visível apenas para você.
-              </p>
-              {tierLimitExceeded && (
-                <p className="text-xs text-red-500 mt-2">
-                  Limite diário atingido. Faça upgrade para continuar.
-                </p>
-              )}
-            </div>
-          </button>
+              {/* Prova Pessoal IA (admin) */}
+              <button
+                onClick={handleCreatePersonal}
+                disabled={tierLimitExceeded}
+                className="group relative flex items-start gap-4 p-4 rounded-xl border-2 border-purple-200 dark:border-purple-800 bg-purple-50/50 dark:bg-purple-950/30 hover:border-purple-400 dark:hover:border-purple-600 hover:bg-purple-100/50 dark:hover:bg-purple-900/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <div className="flex-shrink-0 h-12 w-12 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-purple-500/30">
+                  <Sparkles className="h-6 w-6" />
+                </div>
+                <div className="flex-1 text-left">
+                  <h3 className="font-semibold text-lg text-purple-700 dark:text-purple-300 group-hover:text-purple-800 dark:group-hover:text-purple-200">
+                    Prova Pessoal IA
+                  </h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Crie uma prova personalizada com questões geradas por IA. Visível apenas para você.
+                  </p>
+                  {tierLimitExceeded && (
+                    <p className="text-xs text-red-500 mt-2">
+                      Limite diário atingido. Faça upgrade para continuar.
+                    </p>
+                  )}
+                </div>
+              </button>
+            </>
+          ) : (
+            <>
+              {/* Prova da Faculdade (user) */}
+              <button
+                onClick={handleGoToFaculdade}
+                className="group relative flex items-start gap-4 p-4 rounded-xl border-2 border-red-200 dark:border-red-800 bg-red-50/50 dark:bg-red-950/30 hover:border-red-400 dark:hover:border-red-600 hover:bg-red-100/50 dark:hover:bg-red-900/30 transition-all duration-200"
+              >
+                <div className="flex-shrink-0 h-12 w-12 rounded-lg bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-white shadow-lg shadow-red-500/30">
+                  <GraduationCap className="h-6 w-6" />
+                </div>
+                <div className="flex-1 text-left">
+                  <h3 className="font-semibold text-lg text-red-700 dark:text-red-300 group-hover:text-red-800 dark:group-hover:text-red-200">
+                    Prova da Faculdade
+                  </h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Treine com provas reais da faculdade já cadastradas na plataforma.
+                  </p>
+                </div>
+              </button>
+
+              {/* Prova Pessoal IA (user) */}
+              <button
+                onClick={handleCreatePersonal}
+                disabled={tierLimitExceeded}
+                className="group relative flex items-start gap-4 p-4 rounded-xl border-2 border-purple-200 dark:border-purple-800 bg-purple-50/50 dark:bg-purple-950/30 hover:border-purple-400 dark:hover:border-purple-600 hover:bg-purple-100/50 dark:hover:bg-purple-900/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <div className="flex-shrink-0 h-12 w-12 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-purple-500/30">
+                  <Sparkles className="h-6 w-6" />
+                </div>
+                <div className="flex-1 text-left">
+                  <h3 className="font-semibold text-lg text-purple-700 dark:text-purple-300 group-hover:text-purple-800 dark:group-hover:text-purple-200">
+                    Prova Pessoal IA
+                  </h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Crie uma prova personalizada com questões geradas por IA. Visível apenas para você.
+                  </p>
+                  {tierLimitExceeded && (
+                    <p className="text-xs text-red-500 mt-2">
+                      Limite diário atingido. Faça upgrade para continuar.
+                    </p>
+                  )}
+                </div>
+              </button>
+            </>
+          )}
         </div>
 
         <div className="flex justify-center">

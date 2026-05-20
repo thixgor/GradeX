@@ -228,10 +228,10 @@ function DashboardContent() {
       hoverGradient: 'hover:from-emerald-500/20 hover:to-emerald-600/10',
     },
     {
-      title: 'Flashcards',
-      description: 'Repeticao espacada',
+      title: 'Flashcards IA',
+      description: 'Gerados por IA, repeticao espacada',
       icon: Brain,
-      href: '/flashcards',
+      href: '/flashcards/ia',
       color: '#8b5cf6',
       gradient: 'from-violet-500/10 to-violet-600/5',
       hoverGradient: 'hover:from-violet-500/20 hover:to-violet-600/10',
@@ -590,8 +590,9 @@ function DashboardContent() {
                       </p>
                     </div>
                     {exam.isPersonalExam ? (
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-violet-500/10 text-violet-600 dark:text-violet-400 font-medium flex-shrink-0 ml-2">
-                        Pessoal
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-violet-500/10 text-violet-600 dark:text-violet-400 font-medium flex-shrink-0 ml-2 inline-flex items-center gap-1">
+                        <Sparkles className="h-2.5 w-2.5" />
+                        Pessoal IA
                       </span>
                     ) : (
                       <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 font-medium flex-shrink-0 ml-2">

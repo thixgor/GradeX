@@ -115,6 +115,14 @@ function ProvasContent() {
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'available' | 'finished' | 'personal' | 'general'>('all')
 
+  // Handle ?view=faculdade|plataforma direct entry
+  useEffect(() => {
+    const viewParam = searchParams.get('view')
+    if (viewParam === 'faculdade' || viewParam === 'plataforma') {
+      setViewMode(viewParam)
+    }
+  }, [searchParams])
+
   // Handle ?grupo=xxx shareable links
   useEffect(() => {
     const grupoParam = searchParams.get('grupo')
