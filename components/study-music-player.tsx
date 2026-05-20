@@ -17,6 +17,7 @@ import {
     SkipForward,
     SkipBack
 } from 'lucide-react'
+import { usePathname } from 'next/navigation'
 import { useAuthUser } from '@/hooks/use-auth-user'
 
 interface StudyPlaylist {
@@ -90,6 +91,7 @@ declare global {
 }
 
 export function StudyMusicPlayer() {
+    const pathname = usePathname()
     const { isAuthenticated, loading: authLoading } = useAuthUser()
     const [playlists, setPlaylists] = useState<StudyPlaylist[]>([])
     const [loading, setLoading] = useState(true)
@@ -357,6 +359,7 @@ export function StudyMusicPlayer() {
     }
 
     const [showSpeedPicker, setShowSpeedPicker] = useState(false)
+    const isExamResolver = /^\/exams?\/[^/]+$/.test(pathname || '')
 
     const handlePlaybackRateChange = (rate: PlaybackRate) => {
         setState(prev => ({ ...prev, playbackRate: rate }))
@@ -417,8 +420,9 @@ export function StudyMusicPlayer() {
                 ref={containerRef}
                 className="fixed z-40"
                 style={{
-                    right: 24,
-                    bottom: 96, // Above the support chat button
+                    right: isExamResolver ? 'auto' : 24,
+                    left: isExamResolver ? 16 : 'auto',
+                    bottom: isExamResolver ? 20 : 96, // Above the support chat button outside the exam resolver
                     x: springX,
                     y: springY
                 }}

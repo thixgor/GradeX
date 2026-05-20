@@ -218,11 +218,16 @@ function ManualClinicoContent() {
   const [resetConfirm, setResetConfirm] = useState(false)
   const [product, setProduct] = useState<ManualProduct | null>(null)
   const [manualAccess, setManualAccess] = useState<ManualAccess>({ hasFullAccess: false, reason: 'guest' })
-  const { user } = useAppShell()
+  const [accessLoaded, setAccessLoaded] = useState(false)
+  const { user, loading: appShellLoading } = useAppShell()
   const isAuthenticated = !!user
   const freeQuota = manualAccess.freeQuota
   const pricingEventStateData = usePricingEventState(product?.pricingEventId || null)
   const pricingEventState = pricingEventStateData.state
+  // Wait until BOTH the auth bootstrap and the first /api/manual-clinico response land
+  // before rendering CTAs. Otherwise users see "Entre para..." flash to "Comprar..." flash
+  // to "Baixar..." in under a second, which makes the page feel broken.
+  const ctasReady = accessLoaded && !appShellLoading
 
   useEffect(() => {
     setHasHighlights(hasAnyManualHighlights())
@@ -306,6 +311,7 @@ function ManualClinicoContent() {
       console.error('Erro ao buscar patologias:', error)
     } finally {
       setLoading(false)
+      setAccessLoaded(true)
     }
   }, [busca, areasAtivas, sistemaAtivo, page])
 
@@ -364,32 +370,40 @@ function ManualClinicoContent() {
             <div className="inline-flex flex-col items-center">
               <div className="inline-flex items-center gap-3 mb-3 px-5 py-2 rounded-full bg-white/[0.08] dark:bg-white/[0.06] backdrop-blur-xl border border-white/[0.12] shadow-[0_8px_32px_rgba(0,0,0,0.12)]">
                 <Sparkles className="h-4 w-4 text-primary" />
-                <span className="text-xs font-medium tracking-wider uppercase text-muted-foreground">Repositório Acadêmico</span>
+                <span className="text-xs font-medium tracking-wider uppercase text-muted-foreground">A conduta inteira na palma da mão</span>
               </div>
               <h1 className="text-4xl sm:text-5xl font-bold font-heading bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent">
                 Manual Clínico
               </h1>
               <p className="text-muted-foreground mt-3 max-w-xl text-base sm:text-lg leading-relaxed">
-                Diagnóstico, tratamento, diferenciais, farmacologia e fluxogramas em um só lugar. Escolha algumas patologias para abrir gratuitamente; o acervo completo fica no Premium.
+                Pare de abrir 5 abas pra resolver 1 patologia. Diagnóstico, diferenciais, conduta e farmacologia em segundos — pesquisáveis por nome, sinônimo ou CID-10.
               </p>
               {total > 0 && (
                 <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20">
                   <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
                   <span className="text-xs font-medium text-primary">
-                    {total} patologias disponíveis
+                    {total} patologias prontas para consulta
                   </span>
                 </div>
               )}
-              {!manualAccess.hasFullAccess && freeQuota?.mode === 'quantity' && freeQuota.limit > 0 && (
+              {ctasReady && !manualAccess.hasFullAccess && freeQuota?.mode === 'quantity' && freeQuota.limit > 0 && (
                 <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-emerald-300/25 bg-emerald-400/10 px-3 py-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-300">
                   {isAuthenticated
-                    ? `${freeQuota.remaining} de ${freeQuota.limit} escolhas gratuitas restantes`
-                    : `Entre para escolher ${freeQuota.limit} patologias gratuitas`}
+                    ? freeQuota.remaining > 0
+                      ? `Você ainda tem ${freeQuota.remaining} de ${freeQuota.limit} aberturas grátis`
+                      : `Você já usou suas ${freeQuota.limit} aberturas grátis`
+                    : `Entre e escolha ${freeQuota.limit} patologias grátis agora`}
+                </div>
+              )}
+              {ctasReady && manualAccess.hasFullAccess && (
+                <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-emerald-300/30 bg-emerald-400/10 px-3 py-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-300">
+                  <Crown className="h-3.5 w-3.5" />
+                  Manual Clínico desbloqueado · acesso vitalício
                 </div>
               )}
 
               {/* ── Pricing event countdown ── */}
-              {!manualAccess.hasFullAccess && product?.isActive && pricingEventState?.activeTier ? (
+              {ctasReady && !manualAccess.hasFullAccess && product?.isActive && pricingEventState?.activeTier ? (
                 <div className="mt-5 mx-auto max-w-md space-y-2">
                   <PricingEventCountdown state={pricingEventState} compact />
                   <PricingEventPriceBlock
@@ -400,61 +414,94 @@ function ManualClinicoContent() {
               ) : null}
 
               {/* ── Action buttons ── */}
-              <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
-                {!manualAccess.hasFullAccess && product?.isActive && (
-                  <button
-                    onClick={() => isAuthenticated ? router.push('/manual-clinico/checkout') : router.push(`/auth/login?redirect=${encodeURIComponent('/manual-clinico/checkout')}`)}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
-                      bg-gradient-to-r from-amber-400 to-emerald-300 text-emerald-950 shadow-lg shadow-emerald-500/20
-                      hover:brightness-105 active:scale-[0.97] transition-all duration-200"
-                  >
-                    <Crown className="h-4 w-4" />
-                    {product.ctaText || 'Desbloquear Manual Clínico Premium'}
-                    {product.currentPrice > 0 && (
-                      <span className="ml-1 rounded-lg bg-emerald-950/10 px-2 py-0.5 text-xs">
-                        {formatBRL(product.currentPrice)}
-                      </span>
+              {!ctasReady ? (
+                <div className="mt-5 flex flex-wrap items-center justify-center gap-3" aria-hidden="true">
+                  <div className="h-12 w-64 rounded-xl bg-white/[0.05] border border-white/[0.08] animate-pulse" />
+                  <div className="h-12 w-52 rounded-xl bg-white/[0.04] border border-white/[0.06] animate-pulse" />
+                </div>
+              ) : (
+                <>
+                  <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+                    {!manualAccess.hasFullAccess && product?.isActive && (
+                      <button
+                        onClick={() => isAuthenticated ? router.push('/manual-clinico/checkout') : router.push(`/auth/login?redirect=${encodeURIComponent('/manual-clinico/checkout')}`)}
+                        className="group relative inline-flex items-center gap-2.5 px-6 py-3 rounded-xl text-sm font-bold
+                          bg-gradient-to-r from-amber-300 via-amber-200 to-emerald-300 text-emerald-950 shadow-xl shadow-amber-500/30
+                          hover:brightness-105 hover:shadow-amber-500/40 active:scale-[0.97] transition-all duration-200
+                          ring-1 ring-amber-200/40 hover:ring-amber-200/60"
+                      >
+                        <span className="absolute -inset-px rounded-xl bg-gradient-to-r from-amber-300/0 via-white/50 to-amber-300/0 opacity-0 group-hover:opacity-100 blur-sm transition-opacity" aria-hidden="true" />
+                        <Crown className="relative h-4 w-4" />
+                        <span className="relative">{product.ctaText || 'Quero o Manual Clínico completo'}</span>
+                        {product.currentPrice > 0 && (
+                          <span className="relative ml-1 rounded-lg bg-emerald-950/15 px-2 py-0.5 text-xs font-black tracking-tight">
+                            {formatBRL(product.currentPrice)}
+                          </span>
+                        )}
+                        <ArrowRight className="relative h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                      </button>
                     )}
-                  </button>
-                )}
-                {product?.fullPdfButtonEnabled !== false && (
-                  <button
-                    onClick={handleGeneratePDF}
-                    disabled={pdfLoading}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
-                      bg-primary text-primary-foreground shadow-lg shadow-primary/25
-                      hover:bg-primary/90 active:scale-[0.97] transition-all duration-200
-                      disabled:opacity-60 disabled:cursor-not-allowed"
-                  >
-                    {pdfLoading
-                      ? <Loader2 className="h-4 w-4 animate-spin" />
-                      : <FileDown className="h-4 w-4" />}
-                    {pdfLoading
-                      ? 'Gerando PDF...'
-                      : manualAccess.hasFullAccess && product?.fullPdfExternalUrl
-                        ? 'Abrir Manual Completo (PDF)'
-                        : manualAccess.hasFullAccess
-                          ? 'Baixar Manual Completo (PDF)'
-                          : isAuthenticated === true ? 'Comprar para baixar o manual' : 'Entrar para baixar o manual'}
-                  </button>
-                )}
+                    {product?.fullPdfButtonEnabled !== false && (
+                      <button
+                        onClick={handleGeneratePDF}
+                        disabled={pdfLoading}
+                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
+                          bg-primary text-primary-foreground shadow-lg shadow-primary/25
+                          hover:bg-primary/90 active:scale-[0.97] transition-all duration-200
+                          disabled:opacity-60 disabled:cursor-not-allowed"
+                      >
+                        {pdfLoading
+                          ? <Loader2 className="h-4 w-4 animate-spin" />
+                          : <FileDown className="h-4 w-4" />}
+                        {pdfLoading
+                          ? 'Gerando PDF...'
+                          : manualAccess.hasFullAccess && product?.fullPdfExternalUrl
+                            ? 'Abrir Manual Completo (PDF)'
+                            : manualAccess.hasFullAccess
+                              ? 'Baixar Manual Completo (PDF)'
+                              : isAuthenticated === true ? 'Levar o Manual no PDF' : 'Entrar para baixar o PDF'}
+                      </button>
+                    )}
 
-                {hasHighlights && (
-                  <button
-                    onClick={handleResetHighlights}
-                    className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold border transition-all duration-200 active:scale-[0.97]
-                      ${resetConfirm
-                        ? 'bg-red-500/10 text-red-400 border-red-500/30 hover:bg-red-500/20'
-                        : 'bg-white/[0.05] text-muted-foreground border-white/[0.12] hover:bg-white/[0.1] hover:text-foreground'
-                      }`}
-                  >
-                    {resetConfirm
-                      ? <><RotateCcw className="h-4 w-4" /> Confirmar reset de marcações</>
-                      : <><Highlighter className="h-4 w-4" /> Resetar Marcações</>
-                    }
-                  </button>
-                )}
-              </div>
+                    {hasHighlights && (
+                      <button
+                        onClick={handleResetHighlights}
+                        className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold border transition-all duration-200 active:scale-[0.97]
+                          ${resetConfirm
+                            ? 'bg-red-500/10 text-red-400 border-red-500/30 hover:bg-red-500/20'
+                            : 'bg-white/[0.05] text-muted-foreground border-white/[0.12] hover:bg-white/[0.1] hover:text-foreground'
+                          }`}
+                      >
+                        {resetConfirm
+                          ? <><RotateCcw className="h-4 w-4" /> Confirmar reset de marcações</>
+                          : <><Highlighter className="h-4 w-4" /> Resetar Marcações</>
+                        }
+                      </button>
+                    )}
+                  </div>
+
+                  {!manualAccess.hasFullAccess && product?.isActive && (
+                    <div className="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] font-medium text-muted-foreground/70">
+                      <span className="inline-flex items-center gap-1">
+                        <span className="h-1 w-1 rounded-full bg-emerald-400" />
+                        Pagamento único
+                      </span>
+                      <span className="inline-flex items-center gap-1">
+                        <span className="h-1 w-1 rounded-full bg-emerald-400" />
+                        Acesso vitalício
+                      </span>
+                      <span className="inline-flex items-center gap-1">
+                        <span className="h-1 w-1 rounded-full bg-emerald-400" />
+                        Atualizações inclusas
+                      </span>
+                      <span className="inline-flex items-center gap-1">
+                        <span className="h-1 w-1 rounded-full bg-emerald-400" />
+                        Pix, cartão ou boleto
+                      </span>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           </div>
 
@@ -520,31 +567,35 @@ function ManualClinicoContent() {
 
         {/* ══════════ MAIN CONTENT ══════════ */}
       <div className="container mx-auto px-4 py-8 max-w-6xl">
-        {!manualAccess.hasFullAccess && product?.isActive && (
-          <div className="mb-7 overflow-hidden rounded-2xl border border-amber-300/20 bg-gradient-to-r from-amber-400/10 via-white/[0.04] to-emerald-400/10 p-4 backdrop-blur-xl">
+        {ctasReady && !manualAccess.hasFullAccess && product?.isActive && (
+          <div className="mb-7 overflow-hidden rounded-2xl border border-amber-300/25 bg-gradient-to-r from-amber-400/15 via-white/[0.04] to-emerald-400/15 p-4 backdrop-blur-xl shadow-lg shadow-amber-500/5">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-3">
                 <div className="rounded-xl bg-amber-300/15 p-2 text-amber-300">
                   <Crown className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold">{product.label}</p>
+                  <p className="text-sm font-bold leading-snug">
+                    {freeQuota?.mode === 'quantity' && freeQuota.limit > 0 && isAuthenticated && freeQuota.remaining <= 0
+                      ? 'Você abriu suas patologias grátis. Libere o Manual inteiro de uma vez.'
+                      : 'Tenha o Manual Clínico inteiro num clique — para sempre.'}
+                  </p>
                   <p className="mt-0.5 text-xs text-muted-foreground">
                     {freeQuota?.mode === 'quantity' && freeQuota.limit > 0
                       ? isAuthenticated
-                        ? `Voce ja usou ${freeQuota.used} de ${freeQuota.limit} escolhas gratuitas.`
-                        : `Crie sua sessao para usar ${freeQuota.limit} escolhas gratuitas.`
+                        ? `Você usou ${freeQuota.used} de ${freeQuota.limit} aberturas grátis. Pagamento único · acesso vitalício.`
+                        : `Crie sua conta e ganhe ${freeQuota.limit} aberturas grátis — ou libere tudo já.`
                       : product.benefitText}
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => isAuthenticated ? router.push('/manual-clinico/checkout') : router.push(`/auth/login?redirect=${encodeURIComponent('/manual-clinico/checkout')}`)}
-                className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
+                className="group inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-300 to-emerald-300 px-5 text-sm font-black text-emerald-950 shadow-lg shadow-amber-500/25 transition hover:brightness-105 hover:shadow-amber-500/35 active:scale-[0.97] ring-1 ring-amber-200/40"
               >
-                {product.hasActivePromotion && <span className="text-primary-foreground/65 line-through">{formatBRL(product.price)}</span>}
-                {product.currentPrice <= 0 ? 'Liberar acesso' : `Desbloquear por ${formatBRL(product.currentPrice)}`}
-                <ArrowRight className="h-4 w-4" />
+                {product.hasActivePromotion && <span className="text-emerald-950/55 line-through font-bold">{formatBRL(product.price)}</span>}
+                {product.currentPrice <= 0 ? 'Liberar acesso' : `Quero tudo por ${formatBRL(product.currentPrice)}`}
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </button>
             </div>
           </div>
@@ -731,8 +782,11 @@ function ManualClinicoContent() {
                       </div>
                     ) : null}
                     {patologia.isPremiumLocked && patologia.accessStatus !== 'login_required' && (
-                      <div className="mt-3 rounded-xl border border-amber-300/25 bg-amber-500/10 px-3 py-2 text-xs font-medium text-amber-700 dark:text-amber-200">
-                        Limite gratuito atingido. Desbloqueie o Manual Clínico Premium para abrir a conduta completa.
+                      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-amber-300/25 bg-amber-500/10 px-3 py-2 text-xs font-medium text-amber-700 dark:text-amber-200">
+                        <span>Você atingiu o limite grátis. Libere o Manual inteiro — pagamento único.</span>
+                        <span className="inline-flex items-center gap-1 rounded-lg bg-amber-300/20 px-2 py-0.5 font-black text-amber-800 dark:text-amber-100">
+                          Quero tudo <ArrowRight className="h-3 w-3" />
+                        </span>
                       </div>
                     )}
                   </div>

@@ -44,7 +44,7 @@ export function ExamQuestionPalette({ questions, currentIndex, onJump }: ExamQue
       <button
         onClick={() => setOpen(true)}
         aria-label="Mapa de questões"
-        className="fixed right-3 sm:right-5 bottom-20 sm:bottom-24 z-40 group flex items-center gap-2 pl-3 pr-3.5 py-2.5 rounded-2xl bg-background/95 backdrop-blur-md border border-border/60 shadow-lg shadow-black/5 hover:shadow-xl hover:scale-[1.03] transition-all"
+        className="fixed right-3 sm:right-5 bottom-20 sm:bottom-24 z-50 group flex items-center gap-2 pl-3 pr-3.5 py-2.5 rounded-2xl bg-background/95 backdrop-blur-md border border-border/60 shadow-lg shadow-black/5 hover:shadow-xl hover:scale-[1.03] transition-all"
       >
         <div className="relative">
           <LayoutGrid className="h-4 w-4 text-primary" />

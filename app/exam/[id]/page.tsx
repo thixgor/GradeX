@@ -3597,56 +3597,86 @@ ${respostaAluno}`
 
       {/* Modal de Feedback para Provas Pessoais */}
       {showFeedbackModal && feedbackData && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <Card className="max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-            <CardHeader className="text-center space-y-4">
-              <div className="flex justify-center mb-4">
-                {feedbackData.isCorrect ? (
-                  <div className="bg-green-100 dark:bg-green-900 rounded-full p-4">
-                    <CheckCircle2 className="h-12 w-12 text-green-600 dark:text-green-400" />
-                  </div>
-                ) : (
-                  <div className="bg-red-100 dark:bg-red-900 rounded-full p-4">
-                    <AlertCircle className="h-12 w-12 text-red-600 dark:text-red-400" />
-                  </div>
-                )}
-              </div>
-              <div>
-                <CardTitle className={`text-2xl ${feedbackData.isCorrect ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                  {feedbackData.isCorrect ? 'Resposta Correta!' : 'Resposta Incorreta'}
-                </CardTitle>
-                <CardDescription className="mt-2">
-                  {feedbackData.isCorrect 
-                    ? 'Você selecionou a alternativa correta.'
-                    : 'Você selecionou a alternativa incorreta. Tente novamente.'}
-                </CardDescription>
+        <div className="fixed inset-0 bg-black/55 backdrop-blur-sm z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-200">
+          <Card className="flex w-full max-h-[calc(100dvh-1rem)] sm:max-h-[calc(100dvh-2rem)] sm:max-w-3xl flex-col overflow-hidden rounded-t-3xl rounded-b-none sm:rounded-2xl border-border/60 bg-background/95 shadow-2xl backdrop-blur-xl">
+            <CardHeader className={`relative overflow-hidden border-b p-4 sm:p-6 ${
+              feedbackData.isCorrect
+                ? 'border-emerald-500/20 bg-gradient-to-br from-emerald-500/12 via-background to-background'
+                : 'border-red-500/20 bg-gradient-to-br from-red-500/12 via-background to-background'
+            }`}>
+              <div className={`absolute -right-10 -top-10 h-32 w-32 rounded-full blur-3xl ${
+                feedbackData.isCorrect ? 'bg-emerald-500/20' : 'bg-red-500/20'
+              }`} />
+              <div className="relative flex items-start gap-3 sm:gap-4 pr-10">
+                <div className={`flex h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0 items-center justify-center rounded-2xl border shadow-sm ${
+                  feedbackData.isCorrect
+                    ? 'border-emerald-500/25 bg-emerald-500/12 text-emerald-600 dark:text-emerald-300'
+                    : 'border-red-500/25 bg-red-500/12 text-red-600 dark:text-red-300'
+                }`}>
+                  {feedbackData.isCorrect ? (
+                    <CheckCircle2 className="h-7 w-7 sm:h-8 sm:w-8" />
+                  ) : (
+                    <AlertCircle className="h-7 w-7 sm:h-8 sm:w-8" />
+                  )}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+                    feedbackData.isCorrect
+                      ? 'bg-emerald-500/12 text-emerald-700 dark:text-emerald-300'
+                      : 'bg-red-500/12 text-red-700 dark:text-red-300'
+                  }`}>
+                    {feedbackData.isCorrect ? 'Correta' : 'Incorreta'}
+                  </span>
+                  <CardTitle className={`mt-2 text-xl sm:text-2xl ${
+                    feedbackData.isCorrect ? 'text-emerald-700 dark:text-emerald-300' : 'text-red-700 dark:text-red-300'
+                  }`}>
+                    {feedbackData.isCorrect ? 'Resposta correta' : 'Resposta incorreta'}
+                  </CardTitle>
+                  <CardDescription className="mt-1 text-sm">
+                    {feedbackData.isCorrect
+                      ? 'Boa. Compare seu raciocínio com o comentário antes de seguir.'
+                      : 'Revise o comentário e veja onde o raciocínio desviou.'}
+                  </CardDescription>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setShowFeedbackModal(false)
+                    setFeedbackData(null)
+                  }}
+                  className="absolute right-0 top-0 h-8 w-8 rounded-full p-0"
+                  aria-label="Fechar feedback"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
               </div>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="flex-1 space-y-4 overflow-y-auto p-4 sm:space-y-5 sm:p-6">
               {/* Enunciado */}
               {feedbackData.statement && (
-                <div className="bg-muted rounded-lg p-4 space-y-2">
-                  <h4 className="font-semibold text-sm">Enunciado da Questão:</h4>
-                  <p className="text-sm whitespace-pre-wrap">
+                <section className="rounded-2xl border border-border/60 bg-muted/30 p-3.5 sm:p-4">
+                  <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Enunciado</h4>
+                  <p className="whitespace-pre-wrap text-sm leading-relaxed">
                     {formatText(feedbackData.statement)}
                   </p>
-                </div>
+                </section>
               )}
 
               {/* Comando */}
               {feedbackData.command && (
-                <div className="bg-blue-50 dark:bg-blue-950 rounded-lg p-4 space-y-2 border border-blue-200 dark:border-blue-800">
-                  <h4 className="font-semibold text-sm text-blue-900 dark:text-blue-100">Comando da Questão:</h4>
-                  <p className="text-sm whitespace-pre-wrap text-blue-800 dark:text-blue-200">
+                <section className="rounded-2xl border border-primary/15 border-l-4 border-l-primary/45 bg-primary/5 p-3.5 sm:p-4">
+                  <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-primary">Comando</h4>
+                  <p className="whitespace-pre-wrap text-sm leading-relaxed">
                     {formatText(feedbackData.command)}
                   </p>
-                </div>
+                </section>
               )}
 
               {/* Alternativas */}
               {feedbackData.alternatives && feedbackData.alternatives.length > 0 && (
                 <div className="space-y-2">
-                  <h4 className="font-semibold text-sm">Alternativas:</h4>
+                  <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Alternativas</h4>
                   {feedbackData.alternatives.map(alt => {
                     const isSelected = alt.letter === feedbackData.selectedAlternative
                     const isCorrect = alt.isCorrect
@@ -3654,26 +3684,26 @@ ${respostaAluno}`
                     return (
                       <div
                         key={alt.id}
-                        className={`p-3 rounded-xl border-l-4 text-sm ${
+                        className={`rounded-2xl border p-3 text-sm transition-colors sm:p-4 ${
                           isCorrect
-                            ? 'border-l-green-500 bg-green-50 dark:bg-green-950/40'
+                            ? 'border-emerald-500/40 bg-emerald-500/10'
                             : isSelected
-                            ? 'border-l-red-500 bg-red-50 dark:bg-red-950/40'
-                            : 'border-l-border bg-muted/40'
+                            ? 'border-red-500/40 bg-red-500/10'
+                            : 'border-border/60 bg-muted/20'
                         }`}
                       >
-                        <div className="flex items-start gap-2">
-                          <span className={`font-bold flex-shrink-0 ${
-                            isCorrect ? 'text-green-700 dark:text-green-300'
-                            : isSelected ? 'text-red-700 dark:text-red-300'
+                        <div className="flex items-start gap-3">
+                          <span className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                            isCorrect ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
+                            : isSelected ? 'bg-red-500/15 text-red-700 dark:text-red-300'
                             : 'text-muted-foreground'
                           }`}>
-                            {alt.letter})
+                            {alt.letter}
                           </span>
-                          <div className="flex-1">
+                          <div className="min-w-0 flex-1">
                             <p className={`whitespace-pre-wrap leading-relaxed ${
-                              isCorrect ? 'text-green-900 dark:text-green-100 font-medium'
-                              : isSelected ? 'text-red-900 dark:text-red-100'
+                              isCorrect ? 'font-medium text-emerald-950 dark:text-emerald-50'
+                              : isSelected ? 'text-red-950 dark:text-red-50'
                               : 'text-foreground'
                             }`}>
                               {formatText(alt.text)}
@@ -3685,9 +3715,8 @@ ${respostaAluno}`
                               </p>
                             )}
                           </div>
-                          <span className="flex-shrink-0 text-xs font-bold">
-                            {isCorrect ? '✓' : isSelected ? '✗' : ''}
-                          </span>
+                          {isCorrect && <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-600 dark:text-emerald-300" />}
+                          {!isCorrect && isSelected && <X className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-600 dark:text-red-300" />}
                         </div>
                       </div>
                     )
@@ -3697,14 +3726,15 @@ ${respostaAluno}`
 
               {/* Explicação Geral / Resposta Comentada */}
               {feedbackData.explanation && (
-                <div className="bg-amber-50 dark:bg-amber-950/30 rounded-xl p-4 space-y-2 border border-amber-200/50 dark:border-amber-800/30">
-                  <h4 className="font-semibold text-sm text-amber-800 dark:text-amber-200">💡 Resposta Comentada:</h4>
-                  <p className="text-sm text-amber-900 dark:text-amber-100 whitespace-pre-wrap leading-relaxed">
+                <section className="rounded-2xl border border-amber-500/25 bg-amber-500/10 p-3.5 sm:p-4">
+                  <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-300">Resposta comentada</h4>
+                  <div className="whitespace-pre-wrap text-sm leading-relaxed text-amber-950 dark:text-amber-50">
                     {renderRichText(feedbackData.explanation)}
-                  </p>
-                </div>
+                  </div>
+                </section>
               )}
-
+            </CardContent>
+            <div className="flex-shrink-0 border-t border-border/60 bg-background/95 p-3 sm:p-4">
               <Button
                 onClick={() => {
                   setShowFeedbackModal(false)
@@ -3714,12 +3744,12 @@ ${respostaAluno}`
                     setCurrentQuestionIndex(currentQuestionIndex + 1)
                   }
                 }}
-                className="w-full"
+                className="h-11 w-full rounded-xl font-semibold"
                 size="lg"
               >
-                Próxima Questão
+                {currentQuestionIndex < exam!.questions.length - 1 ? 'Próxima questão' : 'Fechar feedback'}
               </Button>
-            </CardContent>
+            </div>
           </Card>
         </div>
       )}
