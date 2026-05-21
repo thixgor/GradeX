@@ -63,7 +63,8 @@ function isPublicRoute(pathname: string): boolean {
     pathname === '/api/materiais/packages' ||
     pathname === '/api/flashcards/manual/store' ||
     pathname === '/api/flashcards/manual/folders' ||
-    pathname === '/api/manual-clinico'
+    pathname === '/api/manual-clinico' ||
+    pathname === '/api/manual-clinico/product'
   ) return true
   if (/^\/api\/materiais\/[a-fA-F0-9]{24}$/.test(pathname)) return true
   if (/^\/api\/materiais\/packages\/[a-fA-F0-9]{24}$/.test(pathname)) return true
