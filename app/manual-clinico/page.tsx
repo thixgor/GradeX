@@ -605,8 +605,13 @@ function ManualClinicoContent() {
                 onClick={() => isAuthenticated ? router.push('/manual-clinico/checkout') : router.push(`/auth/login?redirect=${encodeURIComponent('/manual-clinico/checkout')}`)}
                 className="group inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-300 to-emerald-300 px-5 text-sm font-black text-emerald-950 shadow-lg shadow-amber-500/25 transition hover:brightness-105 hover:shadow-amber-500/35 active:scale-[0.97] ring-1 ring-amber-200/40"
               >
-                {product.hasActivePromotion && <span className="text-emerald-950/55 line-through font-bold">{formatBRL(product.price)}</span>}
-                {product.currentPrice <= 0 ? 'Liberar acesso' : `Quero tudo por ${formatBRL(product.currentPrice)}`}
+                {hasActiveTier
+                  ? <span className="text-emerald-950/55 line-through font-bold">{formatBRL(product.currentPrice)}</span>
+                  : product.hasActivePromotion
+                  ? <span className="text-emerald-950/55 line-through font-bold">{formatBRL(product.price)}</span>
+                  : null
+                }
+                {buttonPrice <= 0 ? 'Liberar acesso' : `Quero tudo por ${formatBRL(buttonPrice)}`}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </button>
             </div>
