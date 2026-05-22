@@ -173,6 +173,8 @@ export async function GET() {
       renderFinalPrice(cheapest.final, cheapest.original, hasDiscount))
     html = replaceBetweenMarkers(html, '<!--LDPG_GUARANTEE_PRICE_START-->', '<!--LDPG_GUARANTEE_PRICE_END-->',
       renderGuaranteePrice(cheapest.final, hasDiscount, cheapest.discountPct))
+    html = replaceBetweenMarkers(html, '<!--LDPG_PROMO_OFF_START-->', '<!--LDPG_PROMO_OFF_END-->',
+      hasDiscount ? `−${Math.round(cheapest.discountPct)}%` : '')
   } catch (error) {
     console.error('[ldpg-mnclinico] render error:', error)
     return fallbackResponse()
