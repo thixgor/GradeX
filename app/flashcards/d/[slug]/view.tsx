@@ -810,7 +810,7 @@ export default function DeckPage() {
                     <span className="inline-flex items-center gap-1.5">
                       <span className="text-[11px] font-medium opacity-70 line-through">R$ {originalDeckPrice.toFixed(2).replace('.', ',')}</span>
                       <span>Comprar R$ {tierDeckPrice.toFixed(2).replace('.', ',')}</span>
-                      <span className="rounded-full bg-white/20 px-1.5 py-0.5 text-[10px] font-bold">−{tierPct}%</span>
+                      <span className="rounded-full bg-white/20 px-1.5 py-0.5 text-[10px] font-bold">−{Math.round(tierPct)}%</span>
                     </span>
                   ) : (
                     `Comprar R$ ${deck.price?.toFixed(2).replace('.', ',')}`

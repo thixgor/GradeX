@@ -767,11 +767,26 @@
     text-transform: uppercase;
     color: #8aa498;
   }
+  .promo-price .from-row {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 9px;
+  }
   .promo-price .from-val {
-    font-family: var(--serif);
-    font-size: 22px;
-    font-style: italic;
-    font-weight: 500;
+    font-family: var(--sans);
+    font-size: 30px;
+    font-weight: 900;
+    color: #ffd17a;
+    letter-spacing: -0.01em;
+    text-shadow:
+      0 0 26px rgba(244, 160, 43, .55),
+      0 2px 0 rgba(0, 0, 0, .30);
+    white-space: nowrap;
+  }
+  .promo-price .from-old {
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
     color: #b88350;
     text-decoration: line-through;
     text-decoration-thickness: 2px;
@@ -893,7 +908,8 @@
     .promo-row1 { gap: 14px; justify-content: center; }
     .promo-tag { font-size: 10px; letter-spacing: .18em; padding: 6px 12px; }
     .promo-price { gap: 10px; }
-    .promo-price .from-val { font-size: 18px; }
+    .promo-price .from-val { font-size: 26px; }
+    .promo-price .from-old { font-size: 13px; }
     .promo-price .to-val { font-size: 36px; }
     .promo-price .to-val .curr { font-size: 18px; vertical-align: 8px; }
     .promo-price .from-lbl,
@@ -2718,7 +2734,7 @@
       <span class="promo-price"><!--LDPG_PROMO_PRICE_START-->
         <span class="from">
           <span class="from-lbl">Por apenas</span>
-          <span class="from-val">R$ 29,90</span>
+          <span class="from-row"><span class="from-val">R$ 29,90</span></span>
         </span>
       <!--LDPG_PROMO_PRICE_END--></span>
 

@@ -508,7 +508,7 @@ export default function PackageDetailPage() {
                         </div>
                         <div className="mb-1 flex items-center justify-between gap-3 text-xs">
                           <span className="flex items-center gap-1 font-semibold text-emerald-600 dark:text-emerald-400">
-                            <TrendingDown className="h-3 w-3" /> Lote{eventState ? ` · ${eventState.activeTier?.label || ''}` : ''} (−{tierPct}%)
+                            <TrendingDown className="h-3 w-3" /> Lote{eventState ? ` · ${eventState.activeTier?.label || ''}` : ''} (−{Math.round(tierPct)}%)
                           </span>
                           <span className="font-bold text-emerald-600 dark:text-emerald-400">
                             − {fmtBRL(tierSavings)}
@@ -815,7 +815,7 @@ export default function PackageDetailPage() {
                             </div>
                             <div className="flex items-center justify-between text-xs">
                               <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                                <TrendingDown className="h-3 w-3" /> Lote ativo (−{tierPct}%)
+                                <TrendingDown className="h-3 w-3" /> Lote ativo (−{Math.round(tierPct)}%)
                               </span>
                               <span className="font-bold text-emerald-600 dark:text-emerald-400">
                                 − {fmtBRL(tierSavings)}
@@ -982,7 +982,7 @@ export default function PackageDetailPage() {
                       </span>
                     )}
                     {fmtBRL(tierFinalPrice)}
-                    {hasTier && <span className="ml-1.5 text-[10px] font-bold text-emerald-500">−{tierPct}%</span>}
+                    {hasTier && <span className="ml-1.5 text-[10px] font-bold text-emerald-500">−{Math.round(tierPct)}%</span>}
                   </>
                 )}
               </p>

@@ -629,7 +629,7 @@ function ManualClinicoContent() {
                 <div className="mt-5 mx-auto max-w-md space-y-2">
                   <PricingEventCountdown state={pricingEventState} compact />
                   <div className="rounded-xl border border-emerald-300/25 bg-emerald-400/10 px-3 py-2 text-center text-[11px] font-bold text-emerald-700 dark:text-emerald-200">
-                    Lote {pricingEventState.activeTier?.label || 'ativo'} — {tierPct}% OFF
+                    Lote {pricingEventState.activeTier?.label || 'ativo'} — {Math.round(tierPct)}% OFF
                   </div>
                 </div>
               ) : null}
@@ -798,9 +798,9 @@ function ManualClinicoContent() {
                   <p className="mt-0.5 text-xs text-muted-foreground">
                     {freeQuota?.mode === 'quantity' && freeQuota.limit > 0
                       ? isAuthenticated
-                        ? `Você usou ${freeQuota.used} de ${freeQuota.limit} aberturas grátis. Desbloqueie por ${formatBRL(cheapestAfterTier)}${hasActiveTier ? ` · ${tierPct}% OFF` : ''}.`
+                        ? `Você usou ${freeQuota.used} de ${freeQuota.limit} aberturas grátis. Desbloqueie por ${formatBRL(cheapestAfterTier)}${hasActiveTier ? ` · ${Math.round(tierPct)}% OFF` : ''}.`
                         : `Crie sua conta e ganhe ${freeQuota.limit} aberturas grátis — ou desbloqueie o Manual completo.`
-                      : `${product.benefitText} · por apenas ${formatBRL(cheapestAfterTier)}${hasActiveTier ? ` (lote ${tierPct}% OFF)` : ''}.`}
+                      : `${product.benefitText} · por apenas ${formatBRL(cheapestAfterTier)}${hasActiveTier ? ` (lote ${Math.round(tierPct)}% OFF)` : ''}.`}
                   </p>
                 </div>
               </div>

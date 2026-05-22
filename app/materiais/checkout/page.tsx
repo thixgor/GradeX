@@ -747,7 +747,7 @@ export default function MateriaisCheckoutPage() {
                               gap: '5px',
                             }}>
                               <Flame size={11} />
-                              Lote "{previewItem.pricingEventState?.name}" · −{itemTierPct}% (−{formatBRL(itemTierDiscount)})
+                              Lote "{previewItem.pricingEventState?.name}" · −{Math.round(itemTierPct)}% (−{formatBRL(itemTierDiscount)})
                             </p>
                           )}
                         </div>
@@ -1170,7 +1170,7 @@ export default function MateriaisCheckoutPage() {
                     gap: '6px',
                   }}>
                     <Flame size={13} />
-                    Lote "{eventState?.name}" · −{tierPct}% ({formatBRL(tierDiscountAmount)})
+                    Lote "{eventState?.name}" · −{Math.round(tierPct)}% ({formatBRL(tierDiscountAmount)})
                   </p>
                 )}
                 {appliedCoupon && couponWinsOverTier && (

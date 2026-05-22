@@ -51,7 +51,7 @@ export function PricingEventSelector({
           <option key={opt.id} value={opt.id}>
             {opt.name}
             {opt.isActive ? '' : ' (inativo)'}
-            {opt.activeDiscountPercent > 0 ? ` · −${opt.activeDiscountPercent}% agora` : ''}
+            {opt.activeDiscountPercent > 0 ? ` · −${Math.round(opt.activeDiscountPercent)}% agora` : ''}
             {opt.daysUntilEvent >= 0 ? ` · ${opt.daysUntilEvent}d` : ' · passado'}
           </option>
         ))}

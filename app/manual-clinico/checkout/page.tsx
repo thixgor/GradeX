@@ -286,6 +286,16 @@ export default function ManualClinicoCheckoutPage() {
   const tierBeatsCoupon = hasActiveTier && tierDiscountAmount >= couponDiscountAmount
   const payableAmount = Math.max(0, Math.round((baseAmount - effectiveDiscount) * 100) / 100)
 
+  const lifetimePlan = enabledPlans.find((p) => p.key === 'vitalicio') || null
+  const longestTemporary = enabledPlans
+    .filter((p) => p.durationMonths && p.durationMonths > 0)
+    .sort((a, b) => (b.durationMonths || 0) - (a.durationMonths || 0))[0] || null
+  // Quantas renovações do maior plano temporário equivalem ao vitalício (gancho de persuasão).
+  const lifetimeBreakEven = lifetimePlan && longestTemporary && longestTemporary.price > 0
+    ? Math.max(2, Math.ceil(lifetimePlan.price / longestTemporary.price))
+    : null
+  const selectedIsLifetime = selectedPlan?.key === 'vitalicio'
+
   return (
     <div className="min-h-screen overflow-hidden bg-[#031109] px-4 py-6 text-white">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(52,211,153,0.16),transparent_32%),radial-gradient(circle_at_84%_16%,rgba(226,164,62,0.13),transparent_28%)]" />
@@ -323,41 +333,83 @@ export default function ManualClinicoCheckoutPage() {
               </div>
             </div>
 
+            {enabledPlans.length > 1 && (
+              <div className="mb-5 flex items-start gap-2.5 rounded-2xl border border-amber-300/25 bg-gradient-to-r from-amber-300/12 to-emerald-300/[0.06] p-3.5">
+                <Crown className="mt-0.5 h-4 w-4 flex-none text-amber-300" />
+                <p className="text-xs font-semibold leading-snug text-amber-100/90">
+                  Boas notícias: dá pra ter o Manual <span className="font-black text-amber-200">para sempre</span> por um valor único.
+                  Compare as opções abaixo — o melhor custo costuma ser o que você nunca precisa renovar.
+                </p>
+              </div>
+            )}
+
             {enabledPlans.length > 0 && (
               <div className="mb-5">
-                <p className="mb-2 text-xs font-bold uppercase tracking-wide text-white/55">Escolha seu plano</p>
-                <div className="grid gap-2 sm:grid-cols-3">
+                <div className="mb-3">
+                  <p className="text-base font-black text-white">Escolha como quer seu acesso</p>
+                  <p className="mt-0.5 text-xs text-white/55">
+                    Todos liberam o Manual completo — a diferença é só por quanto tempo.
+                  </p>
+                </div>
+                <div className="grid gap-2.5">
                   {enabledPlans.map((plan) => {
                     const isActive = plan.key === selectedPlanKey
                     const isLifetime = plan.key === 'vitalicio'
+                    const perMonth = plan.durationMonths && plan.durationMonths > 0
+                      ? plan.price / plan.durationMonths
+                      : null
                     return (
                       <button
                         key={plan.key}
                         type="button"
                         onClick={() => setSelectedPlanKey(plan.key)}
-                        className={`relative rounded-xl border p-3 text-left transition ${
+                        className={`relative flex items-center justify-between gap-3 rounded-2xl border p-4 text-left transition ${
                           isActive
-                            ? 'border-emerald-300/50 bg-emerald-300/10 shadow-lg shadow-emerald-300/10'
-                            : 'border-white/10 bg-white/[0.04] hover:bg-white/[0.07]'
+                            ? isLifetime
+                              ? 'border-amber-300/60 bg-gradient-to-r from-amber-300/15 to-emerald-300/[0.07] shadow-lg shadow-amber-300/15'
+                              : 'border-emerald-300/50 bg-emerald-300/10 shadow-lg shadow-emerald-300/10'
+                            : isLifetime
+                              ? 'border-amber-300/30 bg-amber-300/[0.05] hover:bg-amber-300/[0.09]'
+                              : 'border-white/10 bg-white/[0.04] hover:bg-white/[0.07]'
                         }`}
                       >
                         {isLifetime && (
-                          <span className="absolute -top-2 right-2 rounded-full bg-amber-300 px-2 py-0.5 text-[9px] font-black uppercase text-amber-950">
-                            Top
+                          <span className="absolute -top-2.5 left-4 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-300 to-amber-200 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wide text-amber-950 shadow-md shadow-amber-400/30">
+                            <Crown className="h-3 w-3" /> Melhor escolha · pra sempre
                           </span>
                         )}
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-black">{plan.label}</span>
-                          {isLifetime ? <Crown className="h-3.5 w-3.5 text-amber-300" /> : <Clock className="h-3.5 w-3.5 text-white/50" />}
+                        <div className="flex min-w-0 items-center gap-3">
+                          <span className={`flex h-5 w-5 flex-none items-center justify-center rounded-full border-2 transition ${isActive ? 'border-emerald-300 bg-emerald-300' : 'border-white/25'}`}>
+                            {isActive && <Check className="h-3 w-3 text-emerald-950" />}
+                          </span>
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-base font-black">{plan.label}</span>
+                              {isLifetime ? <Crown className="h-4 w-4 text-amber-300" /> : <Clock className="h-3.5 w-3.5 text-white/45" />}
+                            </div>
+                            <p className="mt-0.5 text-xs text-white/55">
+                              {isLifetime
+                                ? 'Pague uma vez e use para sempre — sem renovação'
+                                : `${plan.durationMonths} ${plan.durationMonths === 1 ? 'mês' : 'meses'} de acesso completo`}
+                            </p>
+                          </div>
                         </div>
-                        <p className="text-[10px] text-white/50 mt-0.5">
-                          {isLifetime ? 'Para sempre' : `${plan.durationMonths} ${plan.durationMonths === 1 ? 'mês' : 'meses'}`}
-                        </p>
-                        <p className="text-xl font-black text-emerald-200 mt-1">{formatBRL(plan.price)}</p>
+                        <div className="flex-none text-right">
+                          <p className={`text-xl font-black ${isLifetime ? 'text-amber-200' : 'text-emerald-200'}`}>{formatBRL(plan.price)}</p>
+                          {perMonth
+                            ? <p className="text-[10px] text-white/45">≈ {formatBRL(perMonth)}/mês</p>
+                            : <p className="text-[10px] font-bold text-amber-300/80">pagamento único</p>}
+                        </div>
                       </button>
                     )
                   })}
                 </div>
+                {lifetimeBreakEven && (
+                  <p className="mt-2.5 flex items-start gap-1.5 text-[11px] font-semibold leading-snug text-amber-200/90">
+                    <Sparkles className="mt-px h-3.5 w-3.5 flex-none" />
+                    Com o Vitalício você nunca mais paga: em cerca de {lifetimeBreakEven} renovações do {longestTemporary?.label} ele já se paga — e segue seu para sempre.
+                  </p>
+                )}
               </div>
             )}
 
@@ -384,13 +436,20 @@ export default function ManualClinicoCheckoutPage() {
               {hasActiveTier && baseAmount > payableAmount && (
                 <p className="mt-1 text-sm font-bold text-white/40 line-through">{formatBRL(baseAmount)}</p>
               )}
-              <p className="text-4xl font-black text-emerald-200">
+              <p className={`text-4xl font-black ${selectedIsLifetime ? 'text-amber-200' : 'text-emerald-200'}`}>
                 {payableAmount <= 0 ? 'Gratis' : formatBRL(payableAmount)}
+              </p>
+              <p className="mt-1 text-xs font-bold text-white/60">
+                {selectedIsLifetime
+                  ? 'Pagamento único · acesso para sempre, sem mensalidade'
+                  : selectedPlan?.durationMonths
+                    ? `${selectedPlan.label} · ${selectedPlan.durationMonths} ${selectedPlan.durationMonths === 1 ? 'mês' : 'meses'} de acesso`
+                    : 'Acesso completo liberado na hora'}
               </p>
               {hasActiveTier && tierBeatsCoupon && tierDiscountAmount > 0 ? (
                 <p className="mt-1 inline-flex items-center gap-1 text-xs font-bold text-emerald-200">
                   <Flame className="h-3 w-3" />
-                  Lote {pricingEventState?.activeTier?.label || ''}: − {formatBRL(tierDiscountAmount)} ({tierPct}% OFF)
+                  Lote {pricingEventState?.activeTier?.label || ''}: − {formatBRL(tierDiscountAmount)} ({Math.round(tierPct)}% OFF)
                 </p>
               ) : null}
               {appliedCoupon && !tierBeatsCoupon ? (

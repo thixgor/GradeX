@@ -34,10 +34,10 @@ export function PricingEventBadge({
   return (
     <span
       className={`inline-flex items-center rounded-full font-bold backdrop-blur-xl border ${sizes[size]} bg-gradient-to-r from-emerald-500/40 to-cyan-500/40 text-emerald-50 border-emerald-300/40 shadow-lg shadow-emerald-500/20`}
-      title={`${state.name} · −${pct}% agora`}
+      title={`${state.name} · −${Math.round(pct)}% agora`}
     >
       <Flame className={`${icon[size]} fill-emerald-200/60`} />
-      −{pct}% Lote
+      −{Math.round(pct)}% Lote
     </span>
   )
 }
@@ -87,7 +87,7 @@ export function PricingEventCardPrice({
       </span>
       <span className="inline-flex items-center gap-0.5 text-[9px] font-semibold text-emerald-300/90">
         <Tag className="h-2.5 w-2.5" />
-        −{pct}% no lote
+        −{Math.round(pct)}% no lote
       </span>
     </div>
   )

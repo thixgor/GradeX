@@ -59,13 +59,13 @@ function replaceBetweenMarkers(html: string, startMarker: string, endMarker: str
 }
 
 function renderPromoPrice(cheapestFinal: number, cheapestOriginal: number, hasDiscount: boolean): string {
-  const fromVal = hasDiscount
-    ? `${formatBRL(cheapestFinal)} <small style="opacity:.55;text-decoration:line-through;font-size:.7em;margin-left:4px;">${formatBRL(cheapestOriginal)}</small>`
-    : formatBRL(cheapestFinal)
+  const oldPart = hasDiscount
+    ? `<span class="from-old">${formatBRL(cheapestOriginal)}</span>`
+    : ''
   return `
         <span class="from">
           <span class="from-lbl">Por apenas</span>
-          <span class="from-val">${fromVal}</span>
+          <span class="from-row">${oldPart}<span class="from-val">${formatBRL(cheapestFinal)}</span></span>
         </span>
       `
 }
@@ -100,7 +100,7 @@ function renderFinalPrice(cheapestFinal: number, cheapestOriginal: number, hasDi
 
 function renderGuaranteePrice(cheapestFinal: number, hasDiscount: boolean, discountPct: number): string {
   const sub = hasDiscount
-    ? `${discountPct}% OFF aplicado · Pix, cartão ou boleto`
+    ? `${Math.round(discountPct)}% OFF aplicado · Pix, cartão ou boleto`
     : 'Pix, cartão ou boleto · à vista'
   return `
         <div class="gtitle">Por apenas ${formatBRL(cheapestFinal)}</div>
@@ -111,7 +111,7 @@ function renderGuaranteePrice(cheapestFinal: number, hasDiscount: boolean, disco
 function renderPlanGrid(plan: ManualClinicoPublicPlan, eventMap: Map<string, PricingEventState>): string {
   const { final, original, discountPct, eventLabel } = planFinalPrice(plan, eventMap)
   const tierBadge = discountPct > 0
-    ? `<span style="position:absolute;top:-12px;left:14px;background:#30e093;color:#04150c;font-size:10px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;padding:3px 10px;border-radius:999px;">Lote ${escapeHtml(eventLabel || 'ativo')} · ${discountPct}% OFF</span>`
+    ? `<span style="position:absolute;top:-12px;left:14px;background:#30e093;color:#04150c;font-size:10px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;padding:3px 10px;border-radius:999px;">Lote ${escapeHtml(eventLabel || 'ativo')} · ${Math.round(discountPct)}% OFF</span>`
     : ''
   const oldPriceLine = discountPct > 0
     ? `<span style="font-size:13px;opacity:.55;text-decoration:line-through;">De ${formatBRL(original)}</span>`

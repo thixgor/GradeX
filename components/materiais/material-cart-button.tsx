@@ -248,7 +248,7 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
                                 {hasTier && (
                                   <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/15 px-1.5 py-0.5 text-[10px] font-black text-emerald-700 dark:text-emerald-200">
                                     <Flame className="h-3 w-3" />
-                                    −{tierPct}% lote
+                                    −{Math.round(tierPct)}% lote
                                   </span>
                                 )}
                               </div>

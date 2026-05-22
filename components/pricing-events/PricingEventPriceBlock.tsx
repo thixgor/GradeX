@@ -46,7 +46,7 @@ export function PricingEventPriceBlock({
             <span className="text-3xl font-bold text-white sm:text-4xl">{fmt(computed.final)}</span>
             <span className="text-base text-slate-400 line-through">{fmt(originalPrice)}</span>
             <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-xs font-semibold text-emerald-300">
-              −{computed.pct}%
+              −{Math.round(computed.pct)}%
             </span>
           </>
         ) : (
@@ -70,7 +70,7 @@ export function PricingEventPriceBlock({
         <div className="mt-2 flex items-center gap-1 text-[11px] text-amber-200/80">
           <TrendingDown className="h-3 w-3 rotate-180" />
           <span>
-            O valor aumenta na próxima virada (lote sobe para {state.nextTier.discountPercent}% OFF).
+            O valor aumenta na próxima virada (lote sobe para {Math.round(state.nextTier.discountPercent)}% OFF).
           </span>
         </div>
       ) : null}

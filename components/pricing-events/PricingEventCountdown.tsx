@@ -114,7 +114,7 @@ export function PricingEventCountdown({ state, compact = false }: { state: Prici
         {state.activeTier ? (
           <div className="flex items-center gap-1 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-300">
             <Sparkles className="h-3 w-3" />
-            {state.activeTier.discountPercent}% OFF — {state.activeTier.label}
+            {Math.round(state.activeTier.discountPercent)}% OFF — {state.activeTier.label}
           </div>
         ) : null}
       </div>
@@ -153,8 +153,8 @@ export function PricingEventCountdown({ state, compact = false }: { state: Prici
         <div className="mt-2 flex items-center gap-2 text-[11px] text-emerald-200/70">
           <TrendingDown className="h-3.5 w-3.5 flex-none rotate-180" />
           <span>
-            Próximo lote sobe para {100 - state.nextTier.discountPercent}% do preço (
-            {state.nextTier.discountPercent}% OFF). Quanto antes comprar, maior o desconto.
+            Próximo lote sobe para {Math.round(100 - state.nextTier.discountPercent)}% do preço (
+            {Math.round(state.nextTier.discountPercent)}% OFF). Quanto antes comprar, maior o desconto.
           </span>
         </div>
       ) : null}

@@ -779,7 +779,7 @@ export default function MaterialViewPage() {
                           </div>
                           <div className="mb-1 flex items-center justify-between gap-3 text-xs">
                             <span className="flex items-center gap-1 font-semibold text-emerald-600 dark:text-emerald-400">
-                              <TrendingDown className="h-3 w-3" /> Lote{pricingEventState.activeTier ? ` · ${pricingEventState.activeTier.label || ''}` : ''} (−{tierPct}%)
+                              <TrendingDown className="h-3 w-3" /> Lote{pricingEventState.activeTier ? ` · ${pricingEventState.activeTier.label || ''}` : ''} (−{Math.round(tierPct)}%)
                             </span>
                             <span className="font-bold text-emerald-600 dark:text-emerald-400">
                               − R$ {tierSavings.toFixed(2)}
@@ -1016,7 +1016,7 @@ export default function MaterialViewPage() {
                         </div>
                         <div className="flex items-center justify-between text-xs">
                           <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                            <TrendingDown className="h-3 w-3" /> Lote ativo (−{tierPct}%)
+                            <TrendingDown className="h-3 w-3" /> Lote ativo (−{Math.round(tierPct)}%)
                           </span>
                           <span className="font-bold text-emerald-600 dark:text-emerald-400">
                             − R$ {tierSavings.toFixed(2)}
@@ -1214,7 +1214,7 @@ export default function MaterialViewPage() {
                       R$ {originalPrice.toFixed(2)}
                     </span>
                     R$ {tierFinalPrice.toFixed(2)}
-                    <span className="ml-1.5 text-[10px] font-bold text-emerald-500">−{tierPct}%</span>
+                    <span className="ml-1.5 text-[10px] font-bold text-emerald-500">−{Math.round(tierPct)}%</span>
                   </>
                 ) : `R$ ${material.price?.toFixed(2)}`}
               </p>
