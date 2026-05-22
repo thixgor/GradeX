@@ -115,6 +115,26 @@ const nextConfig = {
           },
         ],
       },
+      // Cache longo para assets da landing /ldpg-mnclinico (UUIDs imutáveis)
+      {
+        source: '/ldpg-mnclinico-assets/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      // HTML da landing: permitir CDN cachear, revalidar rápido
+      {
+        source: '/ldpg-mnclinico',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400',
+          },
+        ],
+      },
     ]
   },
 
