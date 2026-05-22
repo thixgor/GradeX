@@ -125,25 +125,6 @@ const nextConfig = {
           },
         ],
       },
-      // HTML da landing: permitir CDN cachear, revalidar rápido
-      {
-        source: '/ldpg-mnclinico',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400',
-          },
-        ],
-      },
-    ]
-  },
-
-  async rewrites() {
-    return [
-      {
-        source: '/ldpg-mnclinico',
-        destination: '/ldpg-mnclinico.html',
-      },
     ]
   },
 

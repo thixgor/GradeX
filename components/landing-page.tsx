@@ -233,6 +233,7 @@ export default function LandingPage({
   ]
 
   const navLinks = [
+    { label: 'Manual Clínico', href: '/manual-clinico' },
     { label: 'Materiais', href: '/materiais' },
     { label: 'Flashcards', href: '/flashcards' },
     { label: 'Doação', href: '#apoie' },
@@ -763,6 +764,78 @@ export default function LandingPage({
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          DESTAQUE — MANUAL CLÍNICO
+      ══════════════════════════════════════════ */}
+      <section id="manual-clinico" className="py-10 px-5 relative">
+        <div className="max-w-[1280px] mx-auto">
+          <motion.div
+            {...(shouldReduceMotion ? {} : {
+              initial: { opacity: 0, y: 24 },
+              whileInView: { opacity: 1, y: 0 },
+              viewport: { once: true },
+              transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+            })}
+            className="group relative rounded-3xl overflow-hidden border border-amber-400/20 hover:border-amber-300/40 transition-all duration-300 hover:shadow-[0_0_80px_rgba(243,217,153,0.15)]"
+            style={{ background: 'linear-gradient(135deg, rgba(243,217,153,0.06) 0%, rgba(7,14,30,0.92) 50%, rgba(48,224,147,0.08) 100%)' }}
+          >
+            <div className="grid lg:grid-cols-[1.2fr_1fr] gap-0 items-stretch">
+              <div className="p-6 sm:p-10 flex flex-col justify-center">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-amber-400/30 bg-amber-400/[0.10] mb-4 self-start">
+                  <Stethoscope className="w-3 h-3 text-amber-300" />
+                  <span className="text-[10px] font-bold text-amber-300 uppercase tracking-wide">Produto carro-chefe</span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-3 leading-tight">
+                  Manual Clínico<br />
+                  <span style={{ background: 'linear-gradient(135deg, #f3d999 0%, #30e093 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>+200 patologias</span> na palma da mão
+                </h2>
+                <p className="text-sm sm:text-base text-slate-300 mb-5 leading-relaxed">
+                  CIDs, fisiopatologia, diagnósticos diferenciais, farmacologia e fluxogramas — pesquisáveis em segundos. Pare de abrir 5 abas pra resolver 1 patologia.
+                </p>
+                <div className="flex flex-wrap gap-1.5 mb-6">
+                  {['Semestral', 'Anual', 'Vitalício', 'Pix · cartão · boleto', 'Acesso imediato'].map((tag) => (
+                    <span key={tag} className="px-2.5 py-1 rounded-md text-[11px] font-semibold text-emerald-300 border border-emerald-400/20 bg-emerald-400/[0.07]">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  <a
+                    href="/manual-clinico"
+                    className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold text-[#1a3326] shadow-lg transition-all hover:scale-[1.02] hover:opacity-95"
+                    style={{ background: 'linear-gradient(135deg, #f3d999 0%, #30e093 100%)' }}
+                  >
+                    Abrir o Manual Clínico
+                    <ArrowRight className="w-4 h-4" />
+                  </a>
+                  <a
+                    href="/ldpg-mnclinico"
+                    className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold text-slate-200 border border-white/[0.12] bg-white/[0.04] hover:bg-white/[0.08] hover:text-white transition-all"
+                  >
+                    Ver os planos
+                  </a>
+                </div>
+              </div>
+              <div className="relative hidden lg:flex items-center justify-center p-8 border-l border-white/[0.06]" style={{ background: 'radial-gradient(circle at 50% 50%, rgba(48,224,147,0.10) 0%, transparent 70%)' }}>
+                <div className="grid grid-cols-2 gap-3 w-full max-w-xs">
+                  {[
+                    { icon: Heart, label: 'Cardio' },
+                    { icon: Brain, label: 'Neuro' },
+                    { icon: BookMarked, label: 'Farmaco' },
+                    { icon: Stethoscope, label: 'Conduta' },
+                  ].map(({ icon: Icon, label }) => (
+                    <div key={label} className="flex flex-col items-center gap-2 p-4 rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm">
+                      <Icon className="w-7 h-7 text-emerald-300" />
+                      <span className="text-xs font-bold text-slate-300">{label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
