@@ -34,10 +34,10 @@ export function VerifyEmailBanner() {
             }
         }
 
-        if (!isAuthPage) {
+        if (!isAuthPage && !isLandingPage) {
             checkSession()
         }
-    }, [pathname, isAuthPage])
+    }, [pathname, isAuthPage, isLandingPage])
 
     const handleResend = async () => {
         setResending(true)

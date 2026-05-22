@@ -3,12 +3,10 @@ import { Inter, Rowdies, Space_Grotesk } from 'next/font/google'
 import './globals.css'
 import './globals-button-feedback.css'
 import { ThemeProvider } from '@/components/theme-provider'
-import { TrialExpirationChecker } from '@/components/trial-expiration-checker'
 import { Footer } from '@/components/footer'
 import { ImageProtectionProvider } from '@/components/image-protection-provider'
 import { VerifyEmailBanner } from '@/components/verify-email-banner'
-import { StudyMusicPlayer } from '@/components/study-music-player'
-import { PlatformAds } from '@/components/platform-ads'
+import { AppChrome } from '@/components/app-chrome'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { LiteModeProvider } from '@/context/LiteModeContext'
@@ -176,13 +174,11 @@ export default function RootLayout({
           <MaterialCartProvider>
             <VerifyEmailBanner />
             <ImageProtectionProvider>
-              <TrialExpirationChecker />
               <div className="flex-1 flex flex-col">
                 {children}
               </div>
               <Footer />
-              <StudyMusicPlayer />
-              <PlatformAds />
+              <AppChrome />
             </ImageProtectionProvider>
           </MaterialCartProvider>
           <Analytics />

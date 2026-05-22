@@ -1351,3 +1351,48 @@
 .copy-success-anim {
   animation: copy-success 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+
+/* ==========================================
+   PERFORMANCE MOBILE (automático)
+   ========================================== */
+
+/* backdrop-filter: blur() é um dos efeitos mais caros no Safari/Chrome mobile,
+   especialmente com vários cartões "vidro" na tela e durante o scroll — é a
+   causa principal do travamento e do toque que "demora a responder".
+   Reduzir o raio mantém o visual de vidro fosco e corta drasticamente o custo
+   de GPU. Aplica-se só em telas pequenas. */
+@media (max-width: 768px) {
+  .backdrop-blur-sm {
+    -webkit-backdrop-filter: blur(4px) !important;
+    backdrop-filter: blur(4px) !important;
+  }
+  .backdrop-blur,
+  .backdrop-blur-md {
+    -webkit-backdrop-filter: blur(5px) !important;
+    backdrop-filter: blur(5px) !important;
+  }
+  .backdrop-blur-lg,
+  .backdrop-blur-xl {
+    -webkit-backdrop-filter: blur(6px) !important;
+    backdrop-filter: blur(6px) !important;
+  }
+  .backdrop-blur-2xl,
+  .backdrop-blur-3xl {
+    -webkit-backdrop-filter: blur(8px) !important;
+    backdrop-filter: blur(8px) !important;
+  }
+}
+
+/* Respeita a preferência de "reduzir movimento" do sistema (acessibilidade +
+   performance). Para animações CSS infinitas; o framer-motion já trata isso
+   via useReducedMotion nos componentes. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

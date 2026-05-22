@@ -38,6 +38,12 @@ declare global {
 const GLASS_CARD =
   'bg-white/[0.055] border border-white/[0.09] backdrop-blur-2xl rounded-3xl shadow-[0_0_80px_rgba(45,212,191,0.07),0_24px_80px_rgba(0,0,0,0.5)]'
 
+// Só permite redirecionamentos internos (evita open-redirect via ?redirect=).
+function safeInternalPath(target: string | null | undefined): string {
+  if (!target || !target.startsWith('/') || target.startsWith('//')) return '/'
+  return target
+}
+
 const highlights = [
   { icon: Database, text: '1.000+ questões por curso e período' },
   { icon: Brain, text: 'Flashcards Anki com repetição espaçada IA' },
@@ -48,7 +54,7 @@ const highlights = [
 export default function LoginPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const redirectTo = searchParams.get('redirect') || '/'
+  const redirectTo = safeInternalPath(searchParams.get('redirect'))
   const initialMode = searchParams.get('mode')
   const shouldReduceMotion = useReducedMotion()
 
@@ -61,6 +67,7 @@ export default function LoginPage() {
   const [showBlockedModal, setShowBlockedModal] = useState(false)
   const [blockedMessage, setBlockedMessage] = useState('')
   const [googleLoading, setGoogleLoading] = useState(false)
+  const [googleStatus, setGoogleStatus] = useState<'loading' | 'ready' | 'error'>('loading')
   const [googleData, setGoogleData] = useState<{
     email: string
     name?: string
@@ -107,27 +114,44 @@ export default function LoginPage() {
     }
 
     const loadGoogleScript = () => {
+      const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
+      // Sem client id configurado, o GIS não renderiza nada (área branca).
+      // Sinaliza erro para exibir fallback em vez de espaço vazio.
+      if (!clientId) {
+        setGoogleStatus('error')
+        return () => {}
+      }
+
+      setGoogleStatus('loading')
       const script = document.createElement('script')
       script.src = 'https://accounts.google.com/gsi/client'
       script.async = true
       script.defer = true
       script.onload = () => {
-        if (window.google) {
-          window.google.accounts.id.initialize({
-            client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-            callback: handleGoogleLogin,
-          })
-          const buttonElement = document.getElementById('google-signin-button')
-          if (buttonElement && isLogin) {
-            window.google.accounts.id.renderButton(buttonElement, {
-              type: 'standard',
-              size: 'large',
-              text: 'signin_with',
-              locale: 'pt-BR',
+        try {
+          if (window.google) {
+            window.google.accounts.id.initialize({
+              client_id: clientId,
+              callback: handleGoogleLogin,
             })
+            const buttonElement = document.getElementById('google-signin-button')
+            if (buttonElement && isLogin) {
+              window.google.accounts.id.renderButton(buttonElement, {
+                type: 'standard',
+                size: 'large',
+                text: 'signin_with',
+                locale: 'pt-BR',
+              })
+            }
+            setGoogleStatus('ready')
+          } else {
+            setGoogleStatus('error')
           }
+        } catch {
+          setGoogleStatus('error')
         }
       }
+      script.onerror = () => setGoogleStatus('error')
       document.head.appendChild(script)
       return () => {
         try { document.head.removeChild(script) } catch {}
@@ -204,8 +228,10 @@ export default function LoginPage() {
         setIsRegistered(true)
       } else {
         clearBootstrapCache()
-        router.push(redirectTo)
-        router.refresh()
+        // Navegação completa (não router.push + refresh): o cookie de auth já
+        // foi setado, então o destino renderiza do zero no servidor. Evita a
+        // tela branca que o push+refresh causava no mobile.
+        window.location.assign(redirectTo)
       }
     } catch (err: any) {
       setError(err.message)
@@ -216,6 +242,12 @@ export default function LoginPage() {
 
   async function handleGoogleLogin(response: any) {
     setError('')
+
+    if (!response?.credential) {
+      setError('Não foi possível obter as credenciais do Google. Tente novamente.')
+      return
+    }
+
     setGoogleLoading(true)
 
     try {
@@ -248,8 +280,7 @@ export default function LoginPage() {
       }
 
       clearBootstrapCache()
-      router.push(redirectTo)
-      router.refresh()
+      window.location.assign(redirectTo)
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -283,8 +314,7 @@ export default function LoginPage() {
       if (!res.ok) throw new Error(data.error || 'Erro ao criar perfil')
       setShowProfileSetup(false)
       clearBootstrapCache()
-      router.push(redirectTo)
-      router.refresh()
+      window.location.assign(redirectTo)
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -799,7 +829,19 @@ export default function LoginPage() {
                           </span>
                         </div>
                       </div>
-                      <div id="google-signin-button" className="flex justify-center" />
+                      <div className="min-h-[44px] flex flex-col justify-center items-center gap-2">
+                        {/* GIS injeta o botão aqui — div sem filhos do React
+                            para o Google ter controle total do DOM. */}
+                        <div id="google-signin-button" className="flex justify-center" />
+                        {googleStatus === 'loading' && (
+                          <Loader2 className="h-4 w-4 animate-spin text-slate-500" />
+                        )}
+                        {googleStatus === 'error' && (
+                          <p className="text-xs text-center text-slate-500">
+                            Login com Google indisponível no momento. Use seu e-mail e senha acima.
+                          </p>
+                        )}
+                      </div>
                     </>
                   )}
 
