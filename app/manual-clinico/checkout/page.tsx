@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowLeft, BookOpen, Check, Flame, Lock, Loader2, Percent, Sparkles, TrendingDown, X, Clock, Crown } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
-import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
+import { usePricingEventState, usePricingEventStates } from '@/components/pricing-events/usePricingEventState'
 
 const MANUAL_CLINICO_PRODUCT_ID = 'manual-clinico-premium'
 
@@ -203,6 +203,23 @@ export default function ManualClinicoCheckoutPage() {
   const pricingEventStateData = usePricingEventState(selectedPlan?.pricingEventId || product?.pricingEventId || null)
   const pricingEventState = pricingEventStateData.state
 
+  const planEventIds = useMemo(
+    () => enabledPlans.map((p) => p.pricingEventId || product?.pricingEventId || null),
+    [enabledPlans, product]
+  )
+  const planEventStates = usePricingEventStates(planEventIds)
+
+  function getPlanPricing(plan: ProductPlan) {
+    const evId = plan.pricingEventId || product?.pricingEventId || null
+    const st = evId ? planEventStates.get(evId) : null
+    const pct = st?.activeTier && st.isActive !== false ? (st.activeTier.discountPercent || 0) : 0
+    const hasDiscount = pct > 0 && plan.price > 0
+    const final = hasDiscount
+      ? Math.max(0, Math.round(plan.price * (1 - pct / 100) * 100) / 100)
+      : plan.price
+    return { pct, hasDiscount, final, original: plan.price }
+  }
+
   useEffect(() => {
     Promise.all([
       fetch('/api/manual-clinico/product', { cache: 'no-store' }).then((res) => res.json()),
@@ -355,8 +372,9 @@ export default function ManualClinicoCheckoutPage() {
                   {enabledPlans.map((plan) => {
                     const isActive = plan.key === selectedPlanKey
                     const isLifetime = plan.key === 'vitalicio'
+                    const pricing = getPlanPricing(plan)
                     const perMonth = plan.durationMonths && plan.durationMonths > 0
-                      ? plan.price / plan.durationMonths
+                      ? pricing.final / plan.durationMonths
                       : null
                     return (
                       <button
@@ -395,7 +413,15 @@ export default function ManualClinicoCheckoutPage() {
                           </div>
                         </div>
                         <div className="flex-none text-right">
-                          <p className={`text-xl font-black ${isLifetime ? 'text-amber-200' : 'text-emerald-200'}`}>{formatBRL(plan.price)}</p>
+                          {pricing.hasDiscount && (
+                            <p className="text-[11px] font-semibold text-white/40 line-through">{formatBRL(pricing.original)}</p>
+                          )}
+                          <p className={`text-xl font-black ${isLifetime ? 'text-amber-200' : 'text-emerald-200'}`}>{formatBRL(pricing.final)}</p>
+                          {pricing.hasDiscount && (
+                            <p className="inline-flex items-center gap-0.5 text-[10px] font-bold text-emerald-300">
+                              <Flame className="h-2.5 w-2.5" /> −{Math.round(pricing.pct)}% no lote
+                            </p>
+                          )}
                           {perMonth
                             ? <p className="text-[10px] text-white/45">≈ {formatBRL(perMonth)}/mês</p>
                             : <p className="text-[10px] font-bold text-amber-300/80">pagamento único</p>}

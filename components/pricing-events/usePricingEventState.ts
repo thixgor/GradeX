@@ -55,3 +55,55 @@ export function usePricingEventState(eventId: string | null | undefined) {
 
   return { state, loading }
 }
+
+/**
+ * Busca o estado de vários eventos de uma vez (ex.: um por plano).
+ * Retorna um Map id -> state. Reaproveita o mesmo cache do hook singular.
+ */
+export function usePricingEventStates(eventIds: (string | null | undefined)[]) {
+  const key = Array.from(new Set(eventIds.filter((x): x is string => !!x))).sort().join(',')
+  const [states, setStates] = useState<Map<string, PricingEventStatePayload | null>>(new Map())
+  const mountedRef = useRef(true)
+
+  useEffect(() => {
+    mountedRef.current = true
+    return () => {
+      mountedRef.current = false
+    }
+  }, [])
+
+  useEffect(() => {
+    const ids = key ? key.split(',') : []
+    if (ids.length === 0) {
+      setStates(new Map())
+      return
+    }
+
+    let canceled = false
+    Promise.all(
+      ids.map(async (id) => {
+        const cached = cache.get(id)
+        if (cached && Date.now() - cached.ts < CACHE_TTL_MS) {
+          return [id, cached.state] as const
+        }
+        try {
+          const res = await fetch(`/api/pricing-events/${id}`, { cache: 'no-store' })
+          const data = res.ok ? await res.json() : { state: null }
+          cache.set(id, { ts: Date.now(), state: data.state })
+          return [id, data.state] as const
+        } catch {
+          return [id, null] as const
+        }
+      })
+    ).then((entries) => {
+      if (canceled || !mountedRef.current) return
+      setStates(new Map(entries))
+    })
+
+    return () => {
+      canceled = true
+    }
+  }, [key])
+
+  return states
+}
