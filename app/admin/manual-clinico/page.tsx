@@ -35,6 +35,18 @@ const AREA_COLORS: Record<AreaSaude, string> = {
   'Biomedicina': 'bg-orange-500 text-white',
 }
 
+type PlanKey = 'semestral' | 'anual' | 'vitalicio'
+
+type PlanForm = {
+  key: PlanKey
+  label: string
+  durationMonths: number | null
+  price: number
+  enabled: boolean
+  pricingEventId: string | null
+  defaultCouponCode: string | null
+}
+
 type ManualProductConfigForm = {
   label: string
   benefitText: string
@@ -49,6 +61,7 @@ type ManualProductConfigForm = {
   promotionEndsAt: string
   allowCoupons: boolean
   lifetimeAccess: boolean
+  plans: PlanForm[]
   freeAccessMode: 'quantity' | 'list'
   freeQuantity: number
   freePathologySlugs: string[]
@@ -65,10 +78,20 @@ type ManualAccessPurchase = {
   paymentMethod?: string
   couponCode?: string
   accessType?: string
+  planKey?: PlanKey | null
+  planLabel?: string | null
+  planDurationMonths?: number | null
+  renewalDeclined?: boolean
   purchasedAt?: string
   expiresAt?: string | null
   grantedByName?: string
 }
+
+const DEFAULT_PLAN_FORMS: PlanForm[] = [
+  { key: 'semestral', label: 'Semestral', durationMonths: 6, price: 29.9, enabled: true, pricingEventId: null, defaultCouponCode: null },
+  { key: 'anual', label: 'Anual', durationMonths: 12, price: 49.9, enabled: true, pricingEventId: null, defaultCouponCode: null },
+  { key: 'vitalicio', label: 'Vitalício', durationMonths: null, price: 97.0, enabled: true, pricingEventId: null, defaultCouponCode: null },
+]
 
 type ManualQuotaUser = {
   _id: string
@@ -97,11 +120,30 @@ function emptyProductConfig(): ManualProductConfigForm {
     promotionEndsAt: '',
     allowCoupons: true,
     lifetimeAccess: true,
+    plans: DEFAULT_PLAN_FORMS.map(p => ({ ...p })),
     freeAccessMode: 'quantity',
     freeQuantity: 5,
     freePathologySlugs: [],
     pricingEventId: null,
   }
+}
+
+function formatDuration(planKey: PlanKey, durationMonths: number | null) {
+  if (planKey === 'vitalicio' || !durationMonths) return 'Para sempre'
+  return `${durationMonths} ${durationMonths === 1 ? 'mês' : 'meses'}`
+}
+
+function formatTimeRemaining(expiresAt?: string | null, accessType?: string) {
+  if (!expiresAt || accessType === 'lifetime') return 'Vitalício'
+  const end = new Date(expiresAt).getTime()
+  if (Number.isNaN(end)) return '—'
+  const ms = end - Date.now()
+  if (ms <= 0) return 'Expirado'
+  const days = Math.ceil(ms / 86_400_000)
+  if (days < 30) return `${days} ${days === 1 ? 'dia' : 'dias'}`
+  const months = Math.floor(days / 30)
+  const extraDays = days % 30
+  return extraDays > 0 ? `${months}m ${extraDays}d` : `${months} ${months === 1 ? 'mês' : 'meses'}`
 }
 
 function toDatetimeLocal(value?: string | null) {
@@ -142,6 +184,7 @@ export default function AdminManualClinico() {
   const [productSaving, setProductSaving] = useState(false)
   const [productMessage, setProductMessage] = useState('')
   const [grantEmail, setGrantEmail] = useState('')
+  const [grantPlan, setGrantPlan] = useState<PlanKey>('vitalicio')
   const [grantLoading, setGrantLoading] = useState(false)
   const [accessQuery, setAccessQuery] = useState('')
   const [accessLoading, setAccessLoading] = useState(false)
@@ -179,6 +222,21 @@ export default function AdminManualClinico() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Erro ao carregar produto')
       const cfg = data.config
+      const cfgPlans: PlanForm[] = Array.isArray(cfg.plans) && cfg.plans.length > 0
+        ? DEFAULT_PLAN_FORMS.map((def) => {
+            const found = cfg.plans.find((p: any) => p?.key === def.key)
+            if (!found) return { ...def }
+            return {
+              key: def.key,
+              label: String(found.label || def.label),
+              durationMonths: def.key === 'vitalicio' ? null : Number(found.durationMonths || def.durationMonths || 0) || null,
+              price: Number(found.price ?? def.price),
+              enabled: found.enabled !== false,
+              pricingEventId: found.pricingEventId || null,
+              defaultCouponCode: found.defaultCouponCode || null,
+            }
+          })
+        : DEFAULT_PLAN_FORMS.map(p => ({ ...p }))
       setProductConfig({
         label: cfg.label || '',
         benefitText: cfg.benefitText || '',
@@ -193,6 +251,7 @@ export default function AdminManualClinico() {
         promotionEndsAt: toDatetimeLocal(cfg.promotionEndsAt),
         allowCoupons: cfg.allowCoupons !== false,
         lifetimeAccess: cfg.lifetimeAccess !== false,
+        plans: cfgPlans,
         freeAccessMode: cfg.freeAccessMode === 'list' ? 'list' : 'quantity',
         freeQuantity: Number(cfg.freeQuantity || 0),
         freePathologySlugs: Array.isArray(cfg.freePathologySlugs) ? cfg.freePathologySlugs : [],
@@ -300,7 +359,7 @@ export default function AdminManualClinico() {
       const res = await fetch('/api/admin/manual-clinico/access', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: grantEmail.trim() }),
+        body: JSON.stringify({ email: grantEmail.trim(), planKey: grantPlan }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Erro ao liberar acesso')
@@ -503,27 +562,118 @@ export default function AdminManualClinico() {
                     </div>
                   </div>
 
-                  <div className="grid gap-3 sm:grid-cols-3">
-                    <label className="text-sm font-medium">
-                      Preco base
-                      <Input type="number" min="0" step="0.01" className="mt-1" value={productConfig.price} onChange={e => setProductConfig(c => ({ ...c, price: Number(e.target.value) }))} />
-                    </label>
-                    <label className="text-sm font-medium">
-                      Preco promocional
-                      <Input type="number" min="0" step="0.01" className="mt-1" value={productConfig.promotionalPrice ?? ''} onChange={e => setProductConfig(c => ({ ...c, promotionalPrice: e.target.value === '' ? null : Number(e.target.value) }))} placeholder="Opcional" />
-                    </label>
-                    <label className="text-sm font-medium">
-                      Fim da promocao
-                      <Input type="datetime-local" className="mt-1" value={productConfig.promotionEndsAt} onChange={e => setProductConfig(c => ({ ...c, promotionEndsAt: e.target.value }))} />
-                    </label>
+                  <div className="rounded-2xl border bg-muted/25 p-4">
+                    <p className="mb-3 text-sm font-bold">Planos de assinatura</p>
+                    <p className="mb-3 text-xs text-muted-foreground">Cada plano pode ter preço, lote dinâmico e cupom próprios.</p>
+                    <div className="space-y-4">
+                      {productConfig.plans.map((plan, idx) => (
+                        <div key={plan.key} className="rounded-xl border bg-background p-3 space-y-3">
+                          <div className="flex items-center justify-between gap-3">
+                            <div>
+                              <p className="text-sm font-bold">{plan.label}</p>
+                              <p className="text-xs text-muted-foreground">
+                                {plan.key === 'vitalicio' ? 'Sem expiração' : `Duração: ${plan.durationMonths || 0} ${plan.durationMonths === 1 ? 'mês' : 'meses'}`}
+                              </p>
+                            </div>
+                            <label className="flex items-center gap-2 text-xs">
+                              <input
+                                type="checkbox"
+                                checked={plan.enabled}
+                                onChange={(e) => setProductConfig(c => {
+                                  const plans = [...c.plans]
+                                  plans[idx] = { ...plans[idx], enabled: e.target.checked }
+                                  return { ...c, plans }
+                                })}
+                              />
+                              Ativo
+                            </label>
+                          </div>
+                          <div className="grid gap-2 sm:grid-cols-2">
+                            <label className="text-xs font-medium">
+                              Preço (R$)
+                              <Input
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                className="mt-1"
+                                value={plan.price}
+                                onChange={(e) => setProductConfig(c => {
+                                  const plans = [...c.plans]
+                                  plans[idx] = { ...plans[idx], price: Number(e.target.value) }
+                                  return { ...c, plans }
+                                })}
+                              />
+                            </label>
+                            {plan.key !== 'vitalicio' && (
+                              <label className="text-xs font-medium">
+                                Duração (meses)
+                                <Input
+                                  type="number"
+                                  min="1"
+                                  className="mt-1"
+                                  value={plan.durationMonths || 0}
+                                  onChange={(e) => setProductConfig(c => {
+                                    const plans = [...c.plans]
+                                    plans[idx] = { ...plans[idx], durationMonths: Number(e.target.value) }
+                                    return { ...c, plans }
+                                  })}
+                                />
+                              </label>
+                            )}
+                            <label className="text-xs font-medium sm:col-span-2">
+                              Cupom padrão (opcional)
+                              <Input
+                                placeholder="CODIGO"
+                                className="mt-1 uppercase"
+                                value={plan.defaultCouponCode || ''}
+                                onChange={(e) => setProductConfig(c => {
+                                  const plans = [...c.plans]
+                                  plans[idx] = { ...plans[idx], defaultCouponCode: e.target.value.toUpperCase() || null }
+                                  return { ...c, plans }
+                                })}
+                              />
+                            </label>
+                          </div>
+                          <div>
+                            <p className="text-xs font-medium mb-1">Lote dinâmico (pricing event)</p>
+                            <PricingEventSelector
+                              value={plan.pricingEventId}
+                              onChange={(id) => setProductConfig(c => {
+                                const plans = [...c.plans]
+                                plans[idx] = { ...plans[idx], pricingEventId: id }
+                                return { ...c, plans }
+                              })}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
-                  <div className="mt-4">
-                    <PricingEventSelector
-                      value={productConfig.pricingEventId}
-                      onChange={(id) => setProductConfig(c => ({ ...c, pricingEventId: id }))}
-                    />
-                  </div>
+                  <details className="rounded-2xl border bg-muted/15 p-4">
+                    <summary className="cursor-pointer text-sm font-bold">Preço/promoção legado (compatibilidade)</summary>
+                    <div className="grid gap-3 sm:grid-cols-3 mt-3">
+                      <label className="text-sm font-medium">
+                        Preço base
+                        <Input type="number" min="0" step="0.01" className="mt-1" value={productConfig.price} onChange={e => setProductConfig(c => ({ ...c, price: Number(e.target.value) }))} />
+                      </label>
+                      <label className="text-sm font-medium">
+                        Preço promocional
+                        <Input type="number" min="0" step="0.01" className="mt-1" value={productConfig.promotionalPrice ?? ''} onChange={e => setProductConfig(c => ({ ...c, promotionalPrice: e.target.value === '' ? null : Number(e.target.value) }))} placeholder="Opcional" />
+                      </label>
+                      <label className="text-sm font-medium">
+                        Fim da promoção
+                        <Input type="datetime-local" className="mt-1" value={productConfig.promotionEndsAt} onChange={e => setProductConfig(c => ({ ...c, promotionEndsAt: e.target.value }))} />
+                      </label>
+                    </div>
+                    <div className="mt-4">
+                      <p className="text-xs font-medium mb-1">Lote dinâmico (global — fallback)</p>
+                      <PricingEventSelector
+                        value={productConfig.pricingEventId}
+                        onChange={(id) => setProductConfig(c => ({ ...c, pricingEventId: id }))}
+                      />
+                    </div>
+                  </details>
                 </div>
 
                 <div className="space-y-4">
@@ -572,13 +722,27 @@ export default function AdminManualClinico() {
                   <div className="rounded-2xl border bg-muted/25 p-4">
                     <p className="mb-3 flex items-center gap-2 text-sm font-bold">
                       <Users className="h-4 w-4" />
-                      Liberar usuario manualmente
+                      Liberar usuário manualmente
                     </p>
-                    <div className="flex gap-2">
+                    <div className="space-y-2">
                       <Input value={grantEmail} onChange={e => setGrantEmail(e.target.value)} placeholder="email@dominio.com" />
-                      <Button onClick={handleGrantAccess} disabled={grantLoading || !grantEmail.trim()}>
-                        {grantLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Liberar'}
+                      <select
+                        className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+                        value={grantPlan}
+                        onChange={(e) => setGrantPlan(e.target.value as PlanKey)}
+                      >
+                        {productConfig.plans.map((plan) => (
+                          <option key={plan.key} value={plan.key}>
+                            {plan.label} — {formatDuration(plan.key, plan.durationMonths)}
+                          </option>
+                        ))}
+                      </select>
+                      <Button onClick={handleGrantAccess} disabled={grantLoading || !grantEmail.trim()} className="w-full">
+                        {grantLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Liberar acesso'}
                       </Button>
+                      <p className="text-[11px] text-muted-foreground">
+                        Será registrado no perfil do usuário como compra (R$ 0, admin) com plano selecionado.
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -649,32 +813,49 @@ export default function AdminManualClinico() {
                     </div>
                   ) : accessPurchases.length === 0 ? (
                     <div className="rounded-xl border p-6 text-center text-sm text-muted-foreground">Nenhum acesso Premium encontrado.</div>
-                  ) : accessPurchases.map((purchase) => (
-                    <div key={purchase._id} className="flex items-center gap-3 rounded-xl border bg-background p-3">
-                      <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
-                        {(purchase.userName || purchase.userEmail || '?')[0].toUpperCase()}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-semibold">{purchase.userName || 'Sem nome'}</p>
-                        <p className="truncate text-xs text-muted-foreground">{purchase.userEmail || purchase.userId}</p>
-                        <div className="mt-1 flex flex-wrap items-center gap-1.5 text-[10px] text-muted-foreground">
-                          <span className="rounded-md border px-1.5 py-0.5">{purchase.provider === 'manual_admin' ? 'Admin' : purchase.provider === 'free' ? 'Grátis' : 'Pagamento'}</span>
-                          <span>{formatDateTime(purchase.purchasedAt)}</span>
-                          {purchase.couponCode ? <span>Cupom {purchase.couponCode}</span> : null}
+                  ) : accessPurchases.map((purchase) => {
+                    const planLabel = purchase.planLabel
+                      || (purchase.planKey ? (purchase.planKey[0].toUpperCase() + purchase.planKey.slice(1)) : null)
+                      || (purchase.accessType === 'lifetime' ? 'Vitalício' : '—')
+                    const remaining = formatTimeRemaining(purchase.expiresAt, purchase.accessType)
+                    return (
+                      <div key={purchase._id} className="rounded-xl border bg-background p-3">
+                        <div className="flex items-start gap-3">
+                          <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+                            {(purchase.userName || purchase.userEmail || '?')[0].toUpperCase()}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-sm font-semibold">{purchase.userName || 'Sem nome'}</p>
+                            <p className="truncate text-xs text-muted-foreground">{purchase.userEmail || purchase.userId}</p>
+                            <div className="mt-1 flex flex-wrap items-center gap-1.5 text-[10px]">
+                              <span className="rounded-md border bg-amber-500/10 text-amber-700 dark:text-amber-300 px-1.5 py-0.5 font-bold">{planLabel}</span>
+                              <span className={`rounded-md border px-1.5 py-0.5 font-bold ${remaining === 'Expirado' ? 'bg-red-500/10 text-red-700 dark:text-red-300' : remaining === 'Vitalício' ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300' : 'bg-primary/10 text-primary'}`}>
+                                {remaining === 'Vitalício' || remaining === 'Expirado' ? remaining : `Restam ${remaining}`}
+                              </span>
+                              <span className="rounded-md border px-1.5 py-0.5 text-muted-foreground">{purchase.provider === 'manual_admin' ? 'Admin' : purchase.provider === 'free' ? 'Grátis' : 'Pagamento'}</span>
+                              {purchase.couponCode ? <span className="rounded-md border px-1.5 py-0.5 text-muted-foreground">Cupom {purchase.couponCode}</span> : null}
+                              {purchase.renewalDeclined ? <span className="rounded-md border bg-red-500/10 text-red-700 px-1.5 py-0.5 font-bold">Recusou renovação</span> : null}
+                            </div>
+                            <div className="mt-1 grid gap-0.5 text-[10px] text-muted-foreground">
+                              <span>Assinou: <strong className="text-foreground/80">{formatDateTime(purchase.purchasedAt)}</strong></span>
+                              <span>Expira: <strong className="text-foreground/80">{purchase.accessType === 'lifetime' || !purchase.expiresAt ? 'Nunca' : formatDateTime(purchase.expiresAt)}</strong></span>
+                              {purchase.price != null ? <span>Valor pago: <strong className="text-foreground/80">R$ {Number(purchase.price).toFixed(2).replace('.', ',')}</strong></span> : null}
+                            </div>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 text-destructive hover:text-destructive"
+                            onClick={() => handleRevokeAccess(purchase)}
+                            disabled={revokingId === purchase._id}
+                            title="Tirar Manual deste usuário"
+                          >
+                            {revokingId === purchase._id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                          </Button>
                         </div>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 text-destructive hover:text-destructive"
-                        onClick={() => handleRevokeAccess(purchase)}
-                        disabled={revokingId === purchase._id}
-                        title="Tirar Manual deste usuário"
-                      >
-                        {revokingId === purchase._id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
-                      </Button>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               </div>
 

@@ -1,12 +1,24 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { ArrowLeft, BookOpen, Check, Flame, Lock, Loader2, Percent, Sparkles, TrendingDown, X } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { ArrowLeft, BookOpen, Check, Flame, Lock, Loader2, Percent, Sparkles, TrendingDown, X, Clock, Crown } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
 
 const MANUAL_CLINICO_PRODUCT_ID = 'manual-clinico-premium'
+
+type PlanKey = 'semestral' | 'anual' | 'vitalicio'
+
+interface ProductPlan {
+  key: PlanKey
+  label: string
+  durationMonths: number | null
+  price: number
+  enabled: boolean
+  pricingEventId: string | null
+  defaultCouponCode: string | null
+}
 
 interface ProductInfo {
   productId: string
@@ -23,6 +35,7 @@ interface ProductInfo {
   hasActivePromotion: boolean
   allowCoupons: boolean
   lifetimeAccess: boolean
+  plans?: ProductPlan[]
   pricingEventId?: string | null
 }
 
@@ -159,14 +172,35 @@ function CouponBox({
 
 export default function ManualClinicoCheckoutPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const planQuery = (searchParams.get('plan') as PlanKey | null) || null
   const [product, setProduct] = useState<ProductInfo | null>(null)
   const [publicKey, setPublicKey] = useState('')
   const [hasFullAccess, setHasFullAccess] = useState(false)
+  const [hasLifetimeAccess, setHasLifetimeAccess] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null)
   const [freeLoading, setFreeLoading] = useState(false)
-  const pricingEventStateData = usePricingEventState(product?.pricingEventId || null)
+  const [selectedPlanKey, setSelectedPlanKey] = useState<PlanKey>(planQuery || 'vitalicio')
+
+  const enabledPlans = useMemo<ProductPlan[]>(
+    () => (product?.plans || []).filter(p => p.enabled),
+    [product]
+  )
+  const selectedPlan = useMemo<ProductPlan | null>(
+    () => enabledPlans.find(p => p.key === selectedPlanKey) || enabledPlans[0] || null,
+    [enabledPlans, selectedPlanKey]
+  )
+
+  useEffect(() => {
+    if (enabledPlans.length === 0) return
+    if (!enabledPlans.some(p => p.key === selectedPlanKey)) {
+      setSelectedPlanKey(enabledPlans[0].key)
+    }
+  }, [enabledPlans, selectedPlanKey])
+
+  const pricingEventStateData = usePricingEventState(selectedPlan?.pricingEventId || product?.pricingEventId || null)
   const pricingEventState = pricingEventStateData.state
 
   useEffect(() => {
@@ -178,6 +212,7 @@ export default function ManualClinicoCheckoutPage() {
         if (productResp?.error) throw new Error(productResp.error)
         setProduct(productResp.product)
         setHasFullAccess(!!productResp.access?.hasFullAccess)
+        setHasLifetimeAccess(!!productResp.access?.subscription?.isLifetime)
         setPublicKey(keyResp.publicKey || '')
       })
       .catch((err: any) => setError(err?.message || 'Erro ao carregar checkout'))
@@ -191,7 +226,7 @@ export default function ManualClinicoCheckoutPage() {
       const res = await fetch('/api/manual-clinico/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ paymentMethodId: 'free', couponCode: appliedCoupon?.code }),
+        body: JSON.stringify({ paymentMethodId: 'free', couponCode: appliedCoupon?.code, planKey: selectedPlan?.key }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Erro ao liberar acesso')
@@ -221,7 +256,8 @@ export default function ManualClinicoCheckoutPage() {
     )
   }
 
-  if (hasFullAccess) {
+  // Renovação só é bloqueada se já tem vitalício; temporários podem renovar/upgrade.
+  if (hasFullAccess && hasLifetimeAccess) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#04130b] px-4 text-white">
         <div className="max-w-md rounded-3xl border border-emerald-300/20 bg-white/[0.07] p-8 text-center backdrop-blur-2xl">
@@ -239,7 +275,7 @@ export default function ManualClinicoCheckoutPage() {
     )
   }
 
-  const baseAmount = Number(product.currentPrice || 0)
+  const baseAmount = Number(selectedPlan?.price ?? product.currentPrice ?? 0)
   const tierPct = pricingEventState?.activeTier?.discountPercent || 0
   const hasActiveTier = !!pricingEventState?.activeTier && pricingEventState?.isActive !== false && tierPct > 0 && baseAmount > 0
   const tierDiscountAmount = hasActiveTier
@@ -287,11 +323,51 @@ export default function ManualClinicoCheckoutPage() {
               </div>
             </div>
 
+            {enabledPlans.length > 0 && (
+              <div className="mb-5">
+                <p className="mb-2 text-xs font-bold uppercase tracking-wide text-white/55">Escolha seu plano</p>
+                <div className="grid gap-2 sm:grid-cols-3">
+                  {enabledPlans.map((plan) => {
+                    const isActive = plan.key === selectedPlanKey
+                    const isLifetime = plan.key === 'vitalicio'
+                    return (
+                      <button
+                        key={plan.key}
+                        type="button"
+                        onClick={() => setSelectedPlanKey(plan.key)}
+                        className={`relative rounded-xl border p-3 text-left transition ${
+                          isActive
+                            ? 'border-emerald-300/50 bg-emerald-300/10 shadow-lg shadow-emerald-300/10'
+                            : 'border-white/10 bg-white/[0.04] hover:bg-white/[0.07]'
+                        }`}
+                      >
+                        {isLifetime && (
+                          <span className="absolute -top-2 right-2 rounded-full bg-amber-300 px-2 py-0.5 text-[9px] font-black uppercase text-amber-950">
+                            Top
+                          </span>
+                        )}
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-black">{plan.label}</span>
+                          {isLifetime ? <Crown className="h-3.5 w-3.5 text-amber-300" /> : <Clock className="h-3.5 w-3.5 text-white/50" />}
+                        </div>
+                        <p className="text-[10px] text-white/50 mt-0.5">
+                          {isLifetime ? 'Para sempre' : `${plan.durationMonths} ${plan.durationMonths === 1 ? 'mês' : 'meses'}`}
+                        </p>
+                        <p className="text-xl font-black text-emerald-200 mt-1">{formatBRL(plan.price)}</p>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+
             <div className="grid gap-2 text-sm text-white/70">
               {[
                 product.benefitText,
                 'Diagnostico, tratamento, diferenciais, farmacologia e fluxogramas',
-                product.lifetimeAccess ? 'Acesso vitalicio liberado apos pagamento aprovado' : 'Acesso temporario conforme configuracao',
+                selectedPlan?.durationMonths
+                  ? `Acesso por ${selectedPlan.durationMonths} ${selectedPlan.durationMonths === 1 ? 'mês' : 'meses'} apos pagamento aprovado`
+                  : 'Acesso vitalicio liberado apos pagamento aprovado',
               ].map((item) => (
                 <div key={item} className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5">
                   <Check className="h-4 w-4 text-emerald-300" />
@@ -362,12 +438,12 @@ export default function ManualClinicoCheckoutPage() {
                   </div>
                 ) : (
                   <MercadoPagoCheckout
-                    key={`manual-${payableAmount}-${appliedCoupon?.code || 'sem-cupom'}`}
+                    key={`manual-${selectedPlanKey}-${payableAmount}-${appliedCoupon?.code || 'sem-cupom'}`}
                     publicKey={publicKey}
                     amount={payableAmount}
-                    description={product.label}
+                    description={`${product.label} — ${selectedPlan?.label || 'Plano'}`}
                     endpoint="/api/manual-clinico/checkout"
-                    extraBody={{ couponCode: appliedCoupon?.code }}
+                    extraBody={{ couponCode: appliedCoupon?.code, planKey: selectedPlanKey }}
                     analytics={{
                       productId: MANUAL_CLINICO_PRODUCT_ID,
                       productTitle: product.label,

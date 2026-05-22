@@ -14,6 +14,16 @@ import type { ManualClinicoPurchase } from '@/lib/types'
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
+const PlanSchema = z.object({
+  key: z.enum(['semestral', 'anual', 'vitalicio']),
+  label: z.string().min(1).max(40),
+  durationMonths: z.number().int().positive().nullable().optional(),
+  price: z.number().min(0),
+  enabled: z.boolean(),
+  pricingEventId: z.string().nullable().optional(),
+  defaultCouponCode: z.string().max(80).nullable().optional(),
+})
+
 const Schema = z.object({
   label: z.string().min(3).max(80),
   benefitText: z.string().min(3).max(140),
@@ -28,6 +38,7 @@ const Schema = z.object({
   promotionEndsAt: z.string().nullable().optional(),
   allowCoupons: z.boolean(),
   lifetimeAccess: z.boolean(),
+  plans: z.array(PlanSchema).max(3).optional(),
   freeAccessMode: z.enum(['quantity', 'list']),
   freeQuantity: z.number().int().min(0).max(1000),
   freePathologySlugs: z.array(z.string().min(1)).max(1000),

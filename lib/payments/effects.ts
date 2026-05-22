@@ -9,7 +9,7 @@
 
 import { ObjectId } from 'mongodb'
 import { getDb } from '../mongodb'
-import { sendPlanPurchasedEmail, sendDonationThanksEmail, sendMaterialPurchasedEmail, sendCartPurchasedEmail } from '../mail'
+import { sendPlanPurchasedEmail, sendDonationThanksEmail, sendMaterialPurchasedEmail, sendCartPurchasedEmail, sendManualClinicoPurchasedEmail } from '../mail'
 import { getPersonalExamsQuota } from '../tier-limits'
 import type {
   PaymentOrder,
@@ -27,10 +27,12 @@ import { approveCouponRedemption, releaseCouponRedemption } from '../coupons'
 import { grantMaterialCartItems, type MaterialCartResolvedItem } from '../material-cart'
 import {
   getManualClinicoConfig,
+  getManualClinicoPlan,
   grantManualClinicoAccess,
   MANUAL_CLINICO_PRODUCT_TYPE,
   revokeManualClinicoAccessForOrder,
 } from '../manual-clinico-product'
+import type { ManualClinicoPlanKey } from '../types'
 
 const TERMINAL_APPROVED: PaymentStatus[] = ['approved']
 const TERMINAL_FAILED: PaymentStatus[] = ['rejected', 'cancelled', 'expired', 'refunded', 'charged_back']
@@ -442,11 +444,15 @@ async function applyProductPurchase(order: PaymentOrder, result?: ProviderOrder)
       } as any
     : null
 
-  await grantManualClinicoAccess(db, {
+  const planKey = (order.metadata?.planKey as ManualClinicoPlanKey) || 'vitalicio'
+  const plan = getManualClinicoPlan(config, planKey)
+
+  const purchase = await grantManualClinicoAccess(db, {
     userId: order.userId,
     userName: order.payerName || '',
     userEmail: order.payerEmail || '',
     config,
+    plan,
     price: order.amount,
     provider: 'mercado_pago',
     providerOrderId: String(order._id),
@@ -461,8 +467,21 @@ async function applyProductPurchase(order: PaymentOrder, result?: ProviderOrder)
     targetUserId: order.userId,
     resourceType: 'product',
     resourceId: MANUAL_CLINICO_PRODUCT_TYPE,
-    metadata: { orderId: String(order._id), amount: order.amount },
+    metadata: { orderId: String(order._id), amount: order.amount, planKey: plan.key },
   })
+
+  if (order.payerEmail) {
+    sendManualClinicoPurchasedEmail({
+      email: order.payerEmail,
+      name: order.payerName || '',
+      planLabel: plan.label,
+      planKey: plan.key,
+      durationMonths: plan.durationMonths,
+      amount: order.amount,
+      expiresAt: purchase.expiresAt || null,
+      paymentMethod: result?.paymentMethod || order.paymentMethod,
+    }).catch(err => console.error('[effects] e-mail manual clinico falhou:', err))
+  }
 }
 
 // ── Pagamento recorrente (preapproval) ──

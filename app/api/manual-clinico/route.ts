@@ -3,6 +3,9 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { buildManualClinicoSearchFilter, rankManualClinicoResults } from '@/lib/manual-clinico-search'
 import {
+  buildManualClinicoSubscriptionInfo,
+  getActiveManualClinicoPurchase,
+  getLatestManualClinicoPurchase,
   getManualClinicoAccess,
   getManualClinicoConfig,
   getManualClinicoFreeSlugSet,
@@ -134,6 +137,10 @@ export async function GET(request: NextRequest) {
       }
     })
 
+    const activePurchase = session ? await getActiveManualClinicoPurchase(db, session) : null
+    const latestPurchase = !activePurchase && session ? await getLatestManualClinicoPurchase(db, session) : null
+    const subscription = buildManualClinicoSubscriptionInfo(activePurchase || latestPurchase)
+
     return NextResponse.json({
       patologias: serialized,
       total,
@@ -144,6 +151,7 @@ export async function GET(request: NextRequest) {
         hasFullAccess: access.hasFullAccess,
         reason: access.reason,
         freeQuota: serializeManualClinicoFreeQuota(freeQuota),
+        subscription,
       },
     })
   } catch (error) {

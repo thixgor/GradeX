@@ -303,6 +303,112 @@ export async function sendMaterialPurchasedEmail(
   })
 }
 
+export async function sendManualClinicoPurchasedEmail(input: {
+  email: string
+  name: string
+  planLabel: string
+  planKey: 'semestral' | 'anual' | 'vitalicio'
+  durationMonths: number | null
+  amount: number
+  expiresAt: Date | string | null
+  paymentMethod?: string | null
+}) {
+  const firstName = input.name ? input.name.split(' ')[0] : 'Aluno'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
+  const expiresDate = input.expiresAt ? new Date(input.expiresAt) : null
+  const expiresStr = expiresDate
+    ? expiresDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
+    : 'Acesso vitalício (não expira)'
+  const durationStr = input.durationMonths
+    ? `${input.durationMonths} ${input.durationMonths === 1 ? 'mês' : 'meses'}`
+    : 'Para sempre'
+
+  const content = `
+    <h1 class="h1">Manual Clínico liberado! 🩺</h1>
+    <p>Olá, ${firstName}!</p>
+    <p>Seu pagamento foi confirmado e o Manual Clínico Premium foi liberado na sua conta.</p>
+
+    <div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 18px 20px; margin: 20px 0;">
+      <p style="margin: 0 0 6px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #d97706; font-weight: 700;">Comprovante de Compra</p>
+      <p style="margin: 0 0 4px 0; font-size: 16px; font-weight: 700; color: #92400e;">Manual Clínico Premium — Plano ${input.planLabel}</p>
+      <p style="margin: 4px 0 2px 0; font-size: 15px; font-weight: 700; color: #0f3d2e;">R$ ${input.amount.toFixed(2).replace('.', ',')}</p>
+      <p style="margin: 4px 0 0 0; font-size: 13px; color: #718096;">Duração: <strong>${durationStr}</strong></p>
+      <p style="margin: 4px 0 0 0; font-size: 13px; color: #718096;">Expira em: <strong>${expiresStr}</strong></p>
+      <p style="margin: 4px 0 0 0; font-size: 13px; color: #718096;">Data da compra: ${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+      ${input.paymentMethod ? `<p style="margin: 4px 0 0 0; font-size: 13px; color: #718096;">Pagamento: ${input.paymentMethod}</p>` : ''}
+    </div>
+
+    ${input.durationMonths ? `
+    <p style="font-size: 13px; color: #555;">
+      <strong>Renovação:</strong> ${input.paymentMethod === 'credit_card' || input.paymentMethod === 'card'
+        ? 'No dia da expiração, enviaremos um e-mail com um link rápido para renovar com o seu cartão.'
+        : 'Você poderá renovar a qualquer momento na página do Manual Clínico.'}
+    </p>
+    ` : ''}
+
+    <div style="text-align: center;">
+      <a href="${appUrl}/manual-clinico" class="button" target="_blank">Acessar Manual Clínico</a>
+    </div>
+  `
+
+  const html = getEmailTemplate('Manual Clínico liberado!', content)
+
+  await transporter.sendMail({
+    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+    to: input.email,
+    subject: `Acesso liberado: Manual Clínico ${input.planLabel}`,
+    html,
+  })
+}
+
+export async function sendManualClinicoExpirationReminderEmail(input: {
+  email: string
+  name: string
+  planLabel: string
+  expiresAt: Date | string
+  paymentMethod?: string | null
+  daysRemaining: number
+}) {
+  const firstName = input.name ? input.name.split(' ')[0] : 'Aluno'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
+  const expiresDate = new Date(input.expiresAt)
+  const expiresStr = expiresDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
+  const isCard = input.paymentMethod === 'credit_card' || input.paymentMethod === 'card'
+
+  const content = `
+    <h1 class="h1">Seu Manual Clínico ${input.daysRemaining <= 0 ? 'expirou' : 'está expirando'} ⏰</h1>
+    <p>Olá, ${firstName}!</p>
+    <p>O seu plano <strong>${input.planLabel}</strong> do Manual Clínico Premium ${input.daysRemaining <= 0 ? 'expirou em' : 'expira em'} <strong>${expiresStr}</strong>.</p>
+
+    <div style="background-color: #fee2e2; border: 1px solid #fecaca; border-radius: 10px; padding: 18px 20px; margin: 20px 0;">
+      <p style="margin: 0; font-size: 14px; color: #991b1b; font-weight: 600;">
+        ${isCard
+          ? 'Clique no botão abaixo para renovar com 1 clique usando seu cartão.'
+          : 'Renove agora para não perder o acesso completo às patologias premium.'}
+      </p>
+    </div>
+
+    <div style="text-align: center;">
+      <a href="${appUrl}/manual-clinico?renew=1" class="button" target="_blank">${isCard ? 'Renovar com cartão' : 'Renovar agora'}</a>
+    </div>
+
+    <p style="font-size: 12px; color: #777; margin-top: 24px;">
+      Se preferir, você pode desativar a renovação acessando <a href="${appUrl}/manual-clinico">/manual-clinico</a> e clicando em "Não quero renovar".
+    </p>
+  `
+
+  const html = getEmailTemplate('Renove seu Manual Clínico', content)
+
+  await transporter.sendMail({
+    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+    to: input.email,
+    subject: input.daysRemaining <= 0
+      ? `Manual Clínico expirou — renove em 1 clique`
+      : `Seu Manual Clínico expira em ${expiresStr}`,
+    html,
+  })
+}
+
 export interface CartPurchasedEmailItem {
   itemType: 'material' | 'package'
   itemTitle: string

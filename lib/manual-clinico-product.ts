@@ -2,6 +2,8 @@ import { Db, ObjectId } from 'mongodb'
 import type { TokenPayload } from './auth'
 import type {
   ManualClinicoFreeQuota,
+  ManualClinicoPlan,
+  ManualClinicoPlanKey,
   ManualClinicoProductConfig,
   ManualClinicoPurchase,
   PaymentOrder,
@@ -14,6 +16,14 @@ export const MANUAL_CLINICO_PRODUCT_TYPE = 'manual_clinico' as const
 export const MANUAL_CLINICO_CONFIG_COLLECTION = 'manual_clinico_product_settings'
 export const MANUAL_CLINICO_PURCHASES_COLLECTION = 'manual_clinico_purchases'
 export const MANUAL_CLINICO_FREE_QUOTA_COLLECTION = 'manual_clinico_free_quotas'
+
+export const MANUAL_CLINICO_PLAN_KEYS: ManualClinicoPlanKey[] = ['semestral', 'anual', 'vitalicio']
+
+export const DEFAULT_MANUAL_CLINICO_PLANS: ManualClinicoPlan[] = [
+  { key: 'semestral', label: 'Semestral', durationMonths: 6, price: 29.9, enabled: true, pricingEventId: null, defaultCouponCode: null },
+  { key: 'anual', label: 'Anual', durationMonths: 12, price: 49.9, enabled: true, pricingEventId: null, defaultCouponCode: null },
+  { key: 'vitalicio', label: 'Vitalício', durationMonths: null, price: 97.0, enabled: true, pricingEventId: null, defaultCouponCode: null },
+]
 
 export const DEFAULT_MANUAL_CLINICO_CONFIG: Omit<ManualClinicoProductConfig, '_id' | 'createdAt' | 'updatedAt' | 'updatedBy'> = {
   productId: MANUAL_CLINICO_PRODUCT_ID,
@@ -30,9 +40,66 @@ export const DEFAULT_MANUAL_CLINICO_CONFIG: Omit<ManualClinicoProductConfig, '_i
   promotionEndsAt: null,
   allowCoupons: true,
   lifetimeAccess: true,
+  plans: DEFAULT_MANUAL_CLINICO_PLANS,
   freeAccessMode: 'quantity',
   freeQuantity: 5,
   freePathologySlugs: [],
+}
+
+function planFromInput(input: any, fallback: ManualClinicoPlan): ManualClinicoPlan {
+  return {
+    key: fallback.key,
+    label: String(input?.label ?? fallback.label).trim() || fallback.label,
+    durationMonths: fallback.key === 'vitalicio'
+      ? null
+      : (typeof input?.durationMonths === 'number' && input.durationMonths > 0
+          ? Math.floor(input.durationMonths)
+          : fallback.durationMonths),
+    price: roundMoney(Number(input?.price ?? fallback.price)),
+    enabled: input?.enabled !== false,
+    pricingEventId: input?.pricingEventId ? String(input.pricingEventId) : null,
+    defaultCouponCode: input?.defaultCouponCode
+      ? String(input.defaultCouponCode).trim().toUpperCase().slice(0, 80) || null
+      : null,
+  }
+}
+
+export function normalizeManualClinicoPlans(plans: any): ManualClinicoPlan[] {
+  const byKey = new Map<ManualClinicoPlanKey, ManualClinicoPlan>()
+  for (const def of DEFAULT_MANUAL_CLINICO_PLANS) byKey.set(def.key, { ...def })
+  if (Array.isArray(plans)) {
+    for (const incoming of plans) {
+      const k = incoming?.key as ManualClinicoPlanKey
+      if (!k || !MANUAL_CLINICO_PLAN_KEYS.includes(k)) continue
+      byKey.set(k, planFromInput(incoming, byKey.get(k)!))
+    }
+  }
+  return MANUAL_CLINICO_PLAN_KEYS.map((k) => byKey.get(k)!)
+}
+
+export function getManualClinicoPlan(
+  config: ManualClinicoProductConfig,
+  planKey: ManualClinicoPlanKey
+): ManualClinicoPlan {
+  const plans = normalizeManualClinicoPlans(config.plans)
+  return plans.find((p) => p.key === planKey) || plans[plans.length - 1]
+}
+
+export function computePlanExpiresAt(plan: ManualClinicoPlan, from: Date = new Date()): Date | null {
+  if (!plan.durationMonths || plan.durationMonths <= 0) return null
+  const out = new Date(from)
+  out.setMonth(out.getMonth() + plan.durationMonths)
+  return out
+}
+
+export interface ManualClinicoPublicPlan {
+  key: ManualClinicoPlanKey
+  label: string
+  durationMonths: number | null
+  price: number
+  enabled: boolean
+  pricingEventId: string | null
+  defaultCouponCode: string | null
 }
 
 export interface ManualClinicoPublicProduct {
@@ -52,6 +119,7 @@ export interface ManualClinicoPublicProduct {
   hasActivePromotion: boolean
   allowCoupons: boolean
   lifetimeAccess: boolean
+  plans: ManualClinicoPublicPlan[]
   freeAccessMode: ManualClinicoProductConfig['freeAccessMode']
   freeQuantity: number
   pricingEventId?: string | null
@@ -113,6 +181,16 @@ export function serializeManualClinicoProduct(config: ManualClinicoProductConfig
     ? new Date(config.promotionEndsAt).toISOString()
     : null
 
+  const plans = normalizeManualClinicoPlans(config.plans).map((plan): ManualClinicoPublicPlan => ({
+    key: plan.key,
+    label: plan.label,
+    durationMonths: plan.durationMonths,
+    price: roundMoney(plan.price),
+    enabled: plan.enabled,
+    pricingEventId: plan.pricingEventId ? String(plan.pricingEventId) : null,
+    defaultCouponCode: plan.defaultCouponCode || null,
+  }))
+
   return {
     productId: MANUAL_CLINICO_PRODUCT_ID,
     label: config.label,
@@ -130,6 +208,7 @@ export function serializeManualClinicoProduct(config: ManualClinicoProductConfig
     hasActivePromotion,
     allowCoupons: config.allowCoupons !== false,
     lifetimeAccess: config.lifetimeAccess !== false,
+    plans,
     freeAccessMode: config.freeAccessMode === 'list' ? 'list' : 'quantity',
     freeQuantity: Math.max(0, Math.floor(Number(config.freeQuantity || 0))),
     pricingEventId: config.pricingEventId ? String(config.pricingEventId) : null,
@@ -157,6 +236,7 @@ export async function getManualClinicoConfig(db: Db): Promise<ManualClinicoProdu
     freePathologySlugs: Array.isArray(existing?.freePathologySlugs)
       ? uniqueSlugs(existing!.freePathologySlugs)
       : [],
+    plans: normalizeManualClinicoPlans(existing?.plans),
   }
 }
 
@@ -186,6 +266,7 @@ export async function upsertManualClinicoConfig(
     freeQuantity: Math.max(0, Math.floor(Number(input.freeQuantity || 0))),
     freePathologySlugs: uniqueSlugs(input.freePathologySlugs || []),
     pricingEventId: input.pricingEventId ? String(input.pricingEventId) : null,
+    plans: normalizeManualClinicoPlans((input as any).plans),
     updatedAt: now,
     updatedBy: actor?.userId,
   }
@@ -356,6 +437,22 @@ export async function getManualClinicoAccess(
   if (session?.role === 'admin') return { hasFullAccess: true, reason: 'admin' }
   if (!session?.userId) return { hasFullAccess: false, reason: 'guest' }
 
+  const purchase = await getActiveManualClinicoPurchase(db, session)
+
+  return purchase
+    ? { hasFullAccess: true, reason: 'purchased', purchase }
+    : { hasFullAccess: false, reason: 'locked' }
+}
+
+/**
+ * Retorna a compra ativa mais recente (não expirada, completed) ou null.
+ * Considera tanto userId quanto userEmail (case-insensitive).
+ */
+export async function getActiveManualClinicoPurchase(
+  db: Db,
+  session: Pick<TokenPayload, 'userId' | 'email'> | null | undefined
+): Promise<ManualClinicoPurchase | null> {
+  if (!session?.userId) return null
   const now = new Date()
   const identityOr: any[] = [{ userId: session.userId }]
   if (session.email) {
@@ -363,8 +460,7 @@ export async function getManualClinicoAccess(
       userEmail: { $regex: new RegExp(`^${escapeRegex(session.email)}$`, 'i') },
     })
   }
-
-  const purchase = await db.collection<ManualClinicoPurchase>(MANUAL_CLINICO_PURCHASES_COLLECTION).findOne({
+  return db.collection<ManualClinicoPurchase>(MANUAL_CLINICO_PURCHASES_COLLECTION).findOne({
     productId: MANUAL_CLINICO_PRODUCT_ID,
     status: 'completed',
     $or: identityOr,
@@ -377,11 +473,70 @@ export async function getManualClinicoAccess(
         ],
       },
     ],
-  } as any)
+  } as any, { sort: { purchasedAt: -1 } as any })
+}
 
-  return purchase
-    ? { hasFullAccess: true, reason: 'purchased', purchase }
-    : { hasFullAccess: false, reason: 'locked' }
+/**
+ * Retorna a compra mais recente (mesmo expirada) — para mostrar "expirou em X" / lembrar renovação.
+ */
+export async function getLatestManualClinicoPurchase(
+  db: Db,
+  session: Pick<TokenPayload, 'userId' | 'email'> | null | undefined
+): Promise<ManualClinicoPurchase | null> {
+  if (!session?.userId) return null
+  const identityOr: any[] = [{ userId: session.userId }]
+  if (session.email) {
+    identityOr.push({
+      userEmail: { $regex: new RegExp(`^${escapeRegex(session.email)}$`, 'i') },
+    })
+  }
+  return db.collection<ManualClinicoPurchase>(MANUAL_CLINICO_PURCHASES_COLLECTION).findOne({
+    productId: MANUAL_CLINICO_PRODUCT_ID,
+    status: 'completed',
+    $or: identityOr,
+  } as any, { sort: { purchasedAt: -1 } as any })
+}
+
+export interface ManualClinicoSubscriptionInfo {
+  planKey: ManualClinicoPlanKey | null
+  planLabel: string | null
+  isLifetime: boolean
+  isActive: boolean
+  isExpired: boolean
+  renewalDeclined: boolean
+  price: number
+  purchasedAt: string | null
+  expiresAt: string | null
+  daysRemaining: number | null
+  paymentMethod: string | null
+  provider: string | null
+}
+
+export function buildManualClinicoSubscriptionInfo(
+  purchase: ManualClinicoPurchase | null,
+  now: Date = new Date()
+): ManualClinicoSubscriptionInfo | null {
+  if (!purchase) return null
+  const expiresAt = purchase.expiresAt ? new Date(purchase.expiresAt) : null
+  const isLifetime = purchase.accessType === 'lifetime' || !expiresAt
+  const isExpired = !!expiresAt && expiresAt.getTime() <= now.getTime()
+  const daysRemaining = isLifetime
+    ? null
+    : (expiresAt ? Math.max(0, Math.ceil((expiresAt.getTime() - now.getTime()) / 86_400_000)) : 0)
+  return {
+    planKey: (purchase.planKey as ManualClinicoPlanKey) || (isLifetime ? 'vitalicio' : null),
+    planLabel: purchase.planLabel || (isLifetime ? 'Vitalício' : null),
+    isLifetime,
+    isActive: isLifetime || !isExpired,
+    isExpired,
+    renewalDeclined: !!purchase.renewalDeclined,
+    price: Number(purchase.price || 0),
+    purchasedAt: purchase.purchasedAt ? new Date(purchase.purchasedAt).toISOString() : null,
+    expiresAt: expiresAt ? expiresAt.toISOString() : null,
+    daysRemaining,
+    paymentMethod: purchase.paymentMethod || null,
+    provider: purchase.provider || null,
+  }
 }
 
 export async function hasManualClinicoFullAccess(
@@ -410,6 +565,8 @@ export async function grantManualClinicoAccess(
     userName?: string
     userEmail?: string
     config: ManualClinicoProductConfig
+    plan?: ManualClinicoPlan | null
+    planKey?: ManualClinicoPlanKey
     price: number
     provider: ManualClinicoPurchase['provider']
     providerOrderId?: string
@@ -422,10 +579,12 @@ export async function grantManualClinicoAccess(
   }
 ) {
   const now = new Date()
-  const accessType = input.config.lifetimeAccess === false ? 'temporary' : 'lifetime'
-  const expiresAt = accessType === 'temporary'
-    ? input.order?.expiresAt || null
-    : null
+
+  const plan: ManualClinicoPlan = input.plan
+    || (input.planKey ? getManualClinicoPlan(input.config, input.planKey) : getManualClinicoPlan(input.config, 'vitalicio'))
+
+  const accessType: ManualClinicoPurchase['accessType'] = plan.durationMonths && plan.durationMonths > 0 ? 'temporary' : 'lifetime'
+  const expiresAt = computePlanExpiresAt(plan, now)
 
   const purchase: ManualClinicoPurchase = {
     userId: input.userId,
@@ -435,7 +594,7 @@ export async function grantManualClinicoAccess(
     productTitle: input.config.label,
     productType: MANUAL_CLINICO_PRODUCT_TYPE,
     price: roundMoney(input.price),
-    originalPrice: roundMoney(Number(input.config.price || 0)),
+    originalPrice: roundMoney(Number(plan.price || input.config.price || 0)),
     couponId: input.couponValidation?.couponId,
     couponCode: input.couponValidation?.code,
     couponDiscountAmount: input.couponValidation?.discountAmount,
@@ -445,30 +604,19 @@ export async function grantManualClinicoAccess(
     paymentMethod: input.paymentMethod,
     status: 'completed',
     accessType,
+    planKey: plan.key,
+    planLabel: plan.label,
+    planDurationMonths: plan.durationMonths,
     purchasedAt: now,
     expiresAt,
+    renewalDeclined: false,
     grantedBy: input.grantedBy,
     grantedByName: input.grantedByName,
   }
 
-  const identityOr: any[] = [{ userId: input.userId }]
-  if (input.userEmail) {
-    identityOr.push({
-      userEmail: { $regex: new RegExp(`^${escapeRegex(input.userEmail)}$`, 'i') },
-    })
-  }
-
-  await db.collection<ManualClinicoPurchase>(MANUAL_CLINICO_PURCHASES_COLLECTION).updateOne(
-    {
-      productId: MANUAL_CLINICO_PRODUCT_ID,
-      status: 'completed',
-      $or: identityOr,
-    } as any,
-    {
-      $setOnInsert: purchase as any,
-    },
-    { upsert: true }
-  )
+  // Cada compra é registrada como documento independente (histórico completo).
+  // A verificação de acesso considera "qualquer compra ativa não expirada".
+  await db.collection<ManualClinicoPurchase>(MANUAL_CLINICO_PURCHASES_COLLECTION).insertOne(purchase as any)
 
   return purchase
 }

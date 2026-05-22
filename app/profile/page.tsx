@@ -546,6 +546,22 @@ export default function ProfilePage() {
                               </>
                             ) : null}
                           </p>
+                          {p.itemType === 'manual_clinico' && (p.planLabel || p.expiresAt || p.accessType) && (
+                            <p className="text-[11px] text-muted-foreground/80 mt-0.5">
+                              {p.planLabel ? <span className="font-bold text-emerald-700 dark:text-emerald-300">{p.planLabel}</span> : null}
+                              {p.accessType === 'lifetime' || !p.expiresAt
+                                ? ' · Vitalício (não expira)'
+                                : (() => {
+                                    const end = new Date(p.expiresAt).getTime()
+                                    const ms = end - Date.now()
+                                    const days = Math.ceil(ms / 86_400_000)
+                                    const expStr = new Date(p.expiresAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })
+                                    return days <= 0
+                                      ? ` · Expirou em ${expStr}`
+                                      : ` · ${days} ${days === 1 ? 'dia' : 'dias'} restantes · Expira ${expStr}`
+                                  })()}
+                            </p>
+                          )}
                         </div>
                         {p.itemType === 'manual_clinico' && (
                           <Button size="sm" variant="outline" className="hidden sm:inline-flex h-8 text-xs" onClick={() => router.push('/manual-clinico')}>

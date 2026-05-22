@@ -46,10 +46,17 @@ export async function GET() {
         purchaseType: 'product',
         itemType: 'manual_clinico',
         itemId: purchase.productId,
-        itemTitle: purchase.productTitle,
+        itemTitle: purchase.planLabel
+          ? `${purchase.productTitle} — ${purchase.planLabel}`
+          : purchase.productTitle,
         price: purchase.price,
         purchasedAt: purchase.purchasedAt,
         status: purchase.status,
+        planKey: purchase.planKey || null,
+        planLabel: purchase.planLabel || null,
+        planDurationMonths: purchase.planDurationMonths ?? null,
+        accessType: purchase.accessType || null,
+        expiresAt: purchase.expiresAt || null,
       })),
     ].sort((a: any, b: any) => new Date(b.purchasedAt).getTime() - new Date(a.purchasedAt).getTime())
 

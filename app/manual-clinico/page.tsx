@@ -39,7 +39,13 @@ import {
   RotateCcw,
   LogIn,
   Lock,
-  Crown
+  Crown,
+  Info,
+  CalendarClock,
+  Clock,
+  CheckCircle2,
+  XCircle,
+  CreditCard
 } from 'lucide-react'
 import { AREAS_SAUDE, SISTEMAS_FISIOLOGICOS, type AreaSaude, type SistemaFisiologico } from '@/lib/types/manual-clinico'
 import { clearAllManualHighlights, hasAnyManualHighlights } from '@/lib/manual-clinico-highlights'
@@ -113,6 +119,16 @@ interface PatologiaResumo {
   accessStatus?: 'free' | 'free_claimed' | 'free_available' | 'login_required' | 'premium_unlocked' | 'locked'
 }
 
+interface ManualPlan {
+  key: 'semestral' | 'anual' | 'vitalicio'
+  label: string
+  durationMonths: number | null
+  price: number
+  enabled: boolean
+  pricingEventId: string | null
+  defaultCouponCode: string | null
+}
+
 interface ManualProduct {
   label: string
   benefitText: string
@@ -126,9 +142,25 @@ interface ManualProduct {
   currentPrice: number
   promotionalPrice: number | null
   hasActivePromotion: boolean
+  plans?: ManualPlan[]
   freeAccessMode?: 'quantity' | 'list'
   freeQuantity?: number
   pricingEventId?: string | null
+}
+
+interface ManualSubscriptionInfo {
+  planKey: 'semestral' | 'anual' | 'vitalicio' | null
+  planLabel: string | null
+  isLifetime: boolean
+  isActive: boolean
+  isExpired: boolean
+  renewalDeclined: boolean
+  price: number
+  purchasedAt: string | null
+  expiresAt: string | null
+  daysRemaining: number | null
+  paymentMethod: string | null
+  provider: string | null
 }
 
 interface ManualAccess {
@@ -141,10 +173,180 @@ interface ManualAccess {
     remaining: number
     isAuthenticated: boolean
   }
+  subscription?: ManualSubscriptionInfo | null
 }
 
 function formatBRL(value: number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value || 0))
+}
+
+function formatDateBR(value?: string | null) {
+  if (!value) return '—'
+  const d = new Date(value)
+  if (Number.isNaN(d.getTime())) return '—'
+  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
+}
+
+function formatRemainingHuman(days: number | null, isLifetime: boolean) {
+  if (isLifetime) return 'Para sempre'
+  if (days == null) return '—'
+  if (days <= 0) return 'Expirado'
+  if (days < 30) return `${days} ${days === 1 ? 'dia' : 'dias'}`
+  const months = Math.floor(days / 30)
+  const extra = days % 30
+  return extra > 0 ? `${months} ${months === 1 ? 'mês' : 'meses'} e ${extra}d` : `${months} ${months === 1 ? 'mês' : 'meses'}`
+}
+
+function PlanCards({
+  plans,
+  onChoose,
+  isAuthenticated,
+}: {
+  plans: ManualPlan[]
+  onChoose: (planKey: ManualPlan['key']) => void
+  isAuthenticated: boolean
+}) {
+  const enabled = plans.filter(p => p.enabled)
+  if (enabled.length === 0) return null
+  return (
+    <div className="grid gap-3 sm:grid-cols-3 mt-6 max-w-3xl mx-auto">
+      {enabled.map((plan) => {
+        const isLifetime = plan.key === 'vitalicio'
+        const durationText = isLifetime ? 'Para sempre' : `${plan.durationMonths} ${plan.durationMonths === 1 ? 'mês' : 'meses'}`
+        return (
+          <button
+            key={plan.key}
+            onClick={() => onChoose(plan.key)}
+            className={`group relative flex flex-col items-stretch gap-2 rounded-2xl border p-4 text-left transition-all active:scale-[0.98] ${
+              isLifetime
+                ? 'border-amber-300/40 bg-gradient-to-br from-amber-300/15 via-white/[0.04] to-emerald-300/15 hover:border-amber-300/60'
+                : 'border-white/[0.12] bg-white/[0.04] hover:bg-white/[0.08]'
+            }`}
+          >
+            {isLifetime && (
+              <span className="absolute -top-2.5 left-3 rounded-full bg-amber-300 px-2 py-0.5 text-[10px] font-black uppercase text-amber-950 shadow">
+                Recomendado
+              </span>
+            )}
+            <div className="flex items-center justify-between">
+              <span className="text-base font-black">{plan.label}</span>
+              {isLifetime ? <Crown className="h-4 w-4 text-amber-400" /> : <Clock className="h-4 w-4 text-muted-foreground" />}
+            </div>
+            <span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">{durationText}</span>
+            <span className="text-2xl font-black mt-1">{formatBRL(plan.price)}</span>
+            <span className="mt-auto inline-flex items-center gap-1 text-xs font-bold text-primary group-hover:underline">
+              {isAuthenticated ? 'Assinar este plano' : 'Entrar e assinar'} <ArrowRight className="h-3 w-3" />
+            </span>
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+function SubscriptionInfoBanner({ subscription }: { subscription: ManualSubscriptionInfo | null }) {
+  const [showInfo, setShowInfo] = useState(false)
+  if (!subscription) return null
+
+  return (
+    <div className="mt-5 mx-auto max-w-2xl rounded-2xl border border-emerald-300/30 bg-emerald-400/10 p-4 backdrop-blur-xl">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          <Crown className="h-5 w-5 text-emerald-400 flex-shrink-0" />
+          <div>
+            <p className="text-sm font-black">
+              Manual Clínico {subscription.planLabel || 'ativo'} {subscription.isLifetime ? '— vitalício' : ''}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {subscription.isLifetime
+                ? 'Acesso para sempre, nunca expira.'
+                : subscription.isExpired
+                  ? `Expirou em ${formatDateBR(subscription.expiresAt)}`
+                  : `${formatRemainingHuman(subscription.daysRemaining, false)} restantes — expira em ${formatDateBR(subscription.expiresAt)}`}
+            </p>
+          </div>
+        </div>
+        <button
+          onClick={() => setShowInfo(v => !v)}
+          className="p-1.5 rounded-lg bg-white/10 hover:bg-white/15 transition-colors"
+          aria-label="Informações da assinatura"
+          title="Informações"
+        >
+          <Info className="h-4 w-4" />
+        </button>
+      </div>
+
+      {showInfo && (
+        <div className="mt-3 rounded-xl bg-black/15 p-3 text-xs space-y-1.5">
+          <div className="flex justify-between"><span className="text-muted-foreground">Plano:</span><strong>{subscription.planLabel || '—'}</strong></div>
+          <div className="flex justify-between"><span className="text-muted-foreground">Assinado em:</span><strong>{formatDateBR(subscription.purchasedAt)}</strong></div>
+          <div className="flex justify-between"><span className="text-muted-foreground">Expira em:</span><strong>{subscription.isLifetime ? 'Nunca' : formatDateBR(subscription.expiresAt)}</strong></div>
+          <div className="flex justify-between"><span className="text-muted-foreground">Tempo restante:</span><strong>{formatRemainingHuman(subscription.daysRemaining, subscription.isLifetime)}</strong></div>
+          <div className="flex justify-between"><span className="text-muted-foreground">Valor pago:</span><strong>{formatBRL(subscription.price)}</strong></div>
+          {subscription.paymentMethod && (
+            <div className="flex justify-between"><span className="text-muted-foreground">Pagamento:</span><strong>{subscription.paymentMethod}</strong></div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function RenewalBanner({
+  subscription,
+  onRenew,
+  onDecline,
+  declining,
+  declineConfirm,
+}: {
+  subscription: ManualSubscriptionInfo
+  onRenew: () => void
+  onDecline: () => void
+  declining: boolean
+  declineConfirm: boolean
+}) {
+  const isCard = subscription.paymentMethod === 'credit_card' || subscription.paymentMethod === 'card'
+  return (
+    <div className="mt-4 mx-auto max-w-2xl rounded-2xl border border-amber-300/40 bg-gradient-to-r from-amber-400/15 to-orange-400/15 p-4 backdrop-blur-xl">
+      <div className="flex items-start gap-3">
+        <CalendarClock className="h-5 w-5 text-amber-400 flex-shrink-0" />
+        <div className="flex-1">
+          <p className="text-sm font-black">
+            {subscription.isExpired
+              ? 'Seu Manual Clínico expirou'
+              : `Seu Manual Clínico expira em ${formatRemainingHuman(subscription.daysRemaining, false)}`}
+          </p>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {isCard
+              ? 'No vencimento, enviaremos um e-mail com link de 1 clique para renovar com seu cartão.'
+              : 'Renove agora para não perder o acesso premium.'}
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button
+              onClick={onRenew}
+              className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-amber-300 px-3 text-xs font-black text-amber-950 hover:bg-amber-200 transition"
+            >
+              <CreditCard className="h-3.5 w-3.5" /> Renovar agora
+            </button>
+            {!isCard && (
+              <button
+                onClick={onDecline}
+                disabled={declining}
+                className={`inline-flex h-9 items-center gap-1.5 rounded-lg border px-3 text-xs font-bold transition disabled:opacity-60 ${
+                  declineConfirm
+                    ? 'border-red-400/40 bg-red-500/15 text-red-300'
+                    : 'border-white/15 bg-white/[0.05] text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {declining ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <XCircle className="h-3.5 w-3.5" />}
+                {declineConfirm ? 'Confirmar e remover acesso' : 'Não quero mais, obrigado'}
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default function ManualClinicoPage() {
@@ -219,6 +421,8 @@ function ManualClinicoContent() {
   const [product, setProduct] = useState<ManualProduct | null>(null)
   const [manualAccess, setManualAccess] = useState<ManualAccess>({ hasFullAccess: false, reason: 'guest' })
   const [accessLoaded, setAccessLoaded] = useState(false)
+  const [renewalDeclining, setRenewalDeclining] = useState(false)
+  const [renewalDeclineConfirm, setRenewalDeclineConfirm] = useState(false)
   const { user, loading: appShellLoading } = useAppShell()
   const isAuthenticated = !!user
   const freeQuota = manualAccess.freeQuota
@@ -245,7 +449,7 @@ function ManualClinicoContent() {
       return
     }
     if (!manualAccess.hasFullAccess) {
-      router.push('/manual-clinico/checkout')
+      goToCheckout()
       return
     }
     if (product?.fullPdfExternalUrl) {
@@ -256,7 +460,7 @@ function ManualClinicoContent() {
     try {
       const res = await fetch('/api/manual-clinico?export=true')
       if (!res.ok) {
-        router.push('/manual-clinico/checkout')
+        goToCheckout()
         return
       }
       const data = await res.json()
@@ -349,6 +553,39 @@ function ManualClinicoContent() {
     setPage(1)
   }
 
+  function goToCheckout(planKey?: 'semestral' | 'anual' | 'vitalicio') {
+    const target = `/manual-clinico/checkout${planKey ? `?plan=${planKey}` : ''}`
+    if (!isAuthenticated) {
+      router.push(`/auth/login?redirect=${encodeURIComponent(target)}`)
+      return
+    }
+    router.push(target)
+  }
+
+  async function handleDeclineRenewal() {
+    if (!renewalDeclineConfirm) {
+      setRenewalDeclineConfirm(true)
+      setTimeout(() => setRenewalDeclineConfirm(false), 4000)
+      return
+    }
+    setRenewalDeclining(true)
+    try {
+      const res = await fetch('/api/manual-clinico/subscription', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'decline_renewal' }),
+      })
+      if (res.ok) {
+        await fetchPatologias()
+      }
+    } catch (err) {
+      console.error('Erro ao recusar renovação:', err)
+    } finally {
+      setRenewalDeclining(false)
+      setRenewalDeclineConfirm(false)
+    }
+  }
+
   const hasFilters = busca || areasAtivas.length > 0 || sistemaAtivo
 
   return (
@@ -400,11 +637,31 @@ function ManualClinicoContent() {
                     : `Entre e escolha ${freeQuota.limit} patologias grátis agora`}
                 </div>
               )}
-              {ctasReady && manualAccess.hasFullAccess && (
-                <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-emerald-300/30 bg-emerald-400/10 px-3 py-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-300">
-                  <Crown className="h-3.5 w-3.5" />
-                  Manual Clínico desbloqueado · acesso vitalício
-                </div>
+              {ctasReady && manualAccess.hasFullAccess && manualAccess.subscription && (
+                <SubscriptionInfoBanner subscription={manualAccess.subscription} />
+              )}
+
+              {ctasReady && manualAccess.hasFullAccess && manualAccess.subscription
+                && !manualAccess.subscription.isLifetime
+                && !manualAccess.subscription.renewalDeclined
+                && (manualAccess.subscription.daysRemaining != null && manualAccess.subscription.daysRemaining <= 7)
+                && (
+                  <RenewalBanner
+                    subscription={manualAccess.subscription}
+                    onRenew={() => goToCheckout(manualAccess.subscription?.planKey || 'semestral')}
+                    onDecline={handleDeclineRenewal}
+                    declining={renewalDeclining}
+                    declineConfirm={renewalDeclineConfirm}
+                  />
+                )}
+              {ctasReady && !manualAccess.hasFullAccess && manualAccess.subscription?.isExpired && !manualAccess.subscription.renewalDeclined && (
+                <RenewalBanner
+                  subscription={manualAccess.subscription}
+                  onRenew={() => goToCheckout(manualAccess.subscription?.planKey || 'semestral')}
+                  onDecline={handleDeclineRenewal}
+                  declining={renewalDeclining}
+                  declineConfirm={renewalDeclineConfirm}
+                />
               )}
 
               {/* ── Pricing event countdown ── */}
@@ -426,33 +683,14 @@ function ManualClinicoContent() {
                 </div>
               ) : (
                 <>
+                  {!manualAccess.hasFullAccess && product?.isActive && product.plans && product.plans.length > 0 && (
+                    <PlanCards
+                      plans={product.plans}
+                      isAuthenticated={isAuthenticated}
+                      onChoose={(planKey) => goToCheckout(planKey)}
+                    />
+                  )}
                   <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
-                    {!manualAccess.hasFullAccess && product?.isActive && (
-                      <button
-                        onClick={() => isAuthenticated ? router.push('/manual-clinico/checkout') : router.push(`/auth/login?redirect=${encodeURIComponent('/manual-clinico/checkout')}`)}
-                        className="group relative inline-flex items-center gap-2.5 px-6 py-3 rounded-xl text-sm font-bold
-                          bg-gradient-to-r from-amber-300 via-amber-200 to-emerald-300 text-emerald-950 shadow-xl shadow-amber-500/30
-                          hover:brightness-105 hover:shadow-amber-500/40 active:scale-[0.97] transition-all duration-200
-                          ring-1 ring-amber-200/40 hover:ring-amber-200/60"
-                      >
-                        <span className="absolute -inset-px rounded-xl bg-gradient-to-r from-amber-300/0 via-white/50 to-amber-300/0 opacity-0 group-hover:opacity-100 blur-sm transition-opacity" aria-hidden="true" />
-                        <Crown className="relative h-4 w-4" />
-                        <span className="relative">{product.ctaText || 'Quero o Manual Clínico completo'}</span>
-                        {product.currentPrice > 0 && (
-                          hasActiveTier ? (
-                            <span className="relative ml-1 inline-flex items-center gap-1.5 rounded-lg bg-emerald-950/15 px-2 py-0.5 text-xs font-black tracking-tight">
-                              <span className="line-through opacity-60">{formatBRL(product.currentPrice)}</span>
-                              <span>{formatBRL(buttonPrice)}</span>
-                            </span>
-                          ) : (
-                            <span className="relative ml-1 rounded-lg bg-emerald-950/15 px-2 py-0.5 text-xs font-black tracking-tight">
-                              {formatBRL(product.currentPrice)}
-                            </span>
-                          )
-                        )}
-                        <ArrowRight className="relative h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                      </button>
-                    )}
                     {product?.fullPdfButtonEnabled !== false && (
                       <button
                         onClick={handleGeneratePDF}
@@ -602,16 +840,10 @@ function ManualClinicoContent() {
                 </div>
               </div>
               <button
-                onClick={() => isAuthenticated ? router.push('/manual-clinico/checkout') : router.push(`/auth/login?redirect=${encodeURIComponent('/manual-clinico/checkout')}`)}
+                onClick={() => goToCheckout()}
                 className="group inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-300 to-emerald-300 px-5 text-sm font-black text-emerald-950 shadow-lg shadow-amber-500/25 transition hover:brightness-105 hover:shadow-amber-500/35 active:scale-[0.97] ring-1 ring-amber-200/40"
               >
-                {hasActiveTier
-                  ? <span className="text-emerald-950/55 line-through font-bold">{formatBRL(product.currentPrice)}</span>
-                  : product.hasActivePromotion
-                  ? <span className="text-emerald-950/55 line-through font-bold">{formatBRL(product.price)}</span>
-                  : null
-                }
-                {buttonPrice <= 0 ? 'Liberar acesso' : `Quero tudo por ${formatBRL(buttonPrice)}`}
+                Escolher plano
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </button>
             </div>

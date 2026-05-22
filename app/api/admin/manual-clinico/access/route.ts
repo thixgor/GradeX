@@ -5,12 +5,14 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import {
   getManualClinicoConfig,
+  getManualClinicoPlan,
   grantManualClinicoAccess,
   MANUAL_CLINICO_FREE_QUOTA_COLLECTION,
   MANUAL_CLINICO_PRODUCT_ID,
   MANUAL_CLINICO_PURCHASES_COLLECTION,
 } from '@/lib/manual-clinico-product'
 import { audit } from '@/lib/payments/audit'
+import { sendManualClinicoPurchasedEmail } from '@/lib/mail'
 import type { ManualClinicoFreeQuota, ManualClinicoPurchase } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -19,6 +21,7 @@ export const runtime = 'nodejs'
 const GrantSchema = z.object({
   userId: z.string().optional(),
   email: z.string().email().optional(),
+  planKey: z.enum(['semestral', 'anual', 'vitalicio']).default('vitalicio'),
 }).refine((value) => value.userId || value.email, {
   message: 'Informe o usuario ou e-mail.',
 })
@@ -86,6 +89,10 @@ export async function GET(request: NextRequest) {
             paymentMethod: 1,
             couponCode: 1,
             accessType: 1,
+            planKey: 1,
+            planLabel: 1,
+            planDurationMonths: 1,
+            renewalDeclined: 1,
             purchasedAt: 1,
             expiresAt: 1,
             grantedByName: 1,
@@ -163,16 +170,31 @@ export async function POST(request: NextRequest) {
     }
 
     const config = await getManualClinicoConfig(db)
+    const plan = getManualClinicoPlan(config, parsed.data.planKey)
     const purchase = await grantManualClinicoAccess(db, {
       userId: String(user._id),
       userName: user.name || '',
       userEmail: user.email || '',
       config,
+      plan,
       price: 0,
       provider: 'manual_admin',
       grantedBy: session.userId,
       grantedByName: session.name,
     })
+
+    if (user.email) {
+      sendManualClinicoPurchasedEmail({
+        email: user.email,
+        name: user.name || '',
+        planLabel: plan.label,
+        planKey: plan.key,
+        durationMonths: plan.durationMonths,
+        amount: 0,
+        expiresAt: purchase.expiresAt || null,
+        paymentMethod: 'admin',
+      }).catch(err => console.error('[admin/manual-clinico/access] e-mail falhou:', err))
+    }
 
     return NextResponse.json({ success: true, purchase: serializePurchase(purchase) })
   } catch (error) {

@@ -1204,6 +1204,21 @@ export interface MaterialPurchase {
 
 export type ManualClinicoAccessType = 'lifetime' | 'temporary'
 
+export type ManualClinicoPlanKey = 'semestral' | 'anual' | 'vitalicio'
+
+export interface ManualClinicoPlan {
+  key: ManualClinicoPlanKey
+  label: string
+  /** Meses de acesso. null = vitalício */
+  durationMonths: number | null
+  price: number
+  enabled: boolean
+  /** Lote dinâmico por evento (pricingEvent._id). */
+  pricingEventId?: string | null
+  /** Cupom pré-aplicado para este plano (opcional). */
+  defaultCouponCode?: string | null
+}
+
 export interface ManualClinicoProductConfig {
   _id?: string | import('mongodb').ObjectId
   productId: 'manual-clinico-premium'
@@ -1215,15 +1230,19 @@ export interface ManualClinicoProductConfig {
   fullPdfButtonEnabled?: boolean
   fullPdfExternalUrl?: string
   isActive: boolean
+  /** Preço legado (mantido para compatibilidade — funciona como fallback do plano Vitalício). */
   price: number
   promotionalPrice?: number | null
   promotionEndsAt?: Date | null
   allowCoupons: boolean
+  /** Legado — mantido por compatibilidade. */
   lifetimeAccess: boolean
+  /** Planos configurados (Semestral/Anual/Vitalício). */
+  plans?: ManualClinicoPlan[]
   freeAccessMode: 'quantity' | 'list'
   freeQuantity: number
   freePathologySlugs: string[]
-  /** Lote dinâmico por evento (pricingEvent._id). */
+  /** Lote dinâmico por evento (pricingEvent._id) — legado/global. */
   pricingEventId?: string | null
   createdAt: Date
   updatedAt: Date
@@ -1249,8 +1268,17 @@ export interface ManualClinicoPurchase {
   paymentMethod?: string
   status: 'pending' | 'completed' | 'refunded' | 'revoked'
   accessType: ManualClinicoAccessType
+  /** Plano contratado pelo usuário. */
+  planKey?: ManualClinicoPlanKey
+  planLabel?: string
+  /** Duração do plano em meses (null se vitalício). */
+  planDurationMonths?: number | null
   purchasedAt: Date
   expiresAt?: Date | null
+  /** Usuário optou por NÃO renovar mais (pix). Quando true, ocultar lembretes. */
+  renewalDeclined?: boolean
+  /** Último envio de e-mail de aviso de expiração (para evitar repetição). */
+  renewalReminderSentAt?: Date | null
   refundedAt?: Date
   revokedAt?: Date
   revokedBy?: string

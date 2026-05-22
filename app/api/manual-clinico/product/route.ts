@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import {
+  buildManualClinicoSubscriptionInfo,
+  getActiveManualClinicoPurchase,
+  getLatestManualClinicoPurchase,
   getManualClinicoAccess,
   getManualClinicoConfig,
   getManualClinicoFreeQuotaState,
@@ -20,6 +23,9 @@ export async function GET() {
       getManualClinicoAccess(db, session),
     ])
     const freeQuota = await getManualClinicoFreeQuotaState(db, session, config)
+    const activePurchase = session ? await getActiveManualClinicoPurchase(db, session) : null
+    const latestPurchase = !activePurchase && session ? await getLatestManualClinicoPurchase(db, session) : null
+    const subscription = buildManualClinicoSubscriptionInfo(activePurchase || latestPurchase)
 
     return NextResponse.json({
       product: serializeManualClinicoProduct(config),
@@ -27,6 +33,7 @@ export async function GET() {
         hasFullAccess: access.hasFullAccess,
         reason: access.reason,
         freeQuota: serializeManualClinicoFreeQuota(freeQuota),
+        subscription,
       },
     })
   } catch (error) {

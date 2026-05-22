@@ -8,9 +8,10 @@ import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
 import {
   buildManualClinicoCouponItem,
-  getManualClinicoAccess,
+  computePlanExpiresAt,
+  getActiveManualClinicoPurchase,
   getManualClinicoConfig,
-  getManualClinicoCurrentPrice,
+  getManualClinicoPlan,
   grantManualClinicoAccess,
   MANUAL_CLINICO_PRODUCT_ID,
   MANUAL_CLINICO_PRODUCT_TYPE,
@@ -28,6 +29,7 @@ import {
   getPricingEventStateById,
 } from '@/lib/pricing-events'
 import { getRequestAnalyticsMeta, recordCheckoutEvent, recordOrderCheckoutEvent } from '@/lib/analytics'
+import { sendManualClinicoPurchasedEmail } from '@/lib/mail'
 import type { PaymentOrder } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -41,6 +43,7 @@ const Schema = z.object({
   payerDocumentType: z.enum(['CPF', 'CNPJ']).optional(),
   payerDocumentNumber: z.string().optional(),
   couponCode: z.string().max(80).optional(),
+  planKey: z.enum(['semestral', 'anual', 'vitalicio']).optional(),
 })
 
 export async function POST(request: NextRequest) {
@@ -63,27 +66,37 @@ export async function POST(request: NextRequest) {
   const data = parsed.data
 
   const db = await getDb()
-  const [config, access] = await Promise.all([
+  const [config, activePurchase] = await Promise.all([
     getManualClinicoConfig(db),
-    getManualClinicoAccess(db, session),
+    getActiveManualClinicoPurchase(db, session),
   ])
 
   if (!config.isActive) {
     return NextResponse.json({ error: 'O Manual Clinico Premium esta indisponivel no momento.' }, { status: 400 })
   }
-  if (access.hasFullAccess) {
+
+  const planKey = data.planKey || 'vitalicio'
+  const plan = getManualClinicoPlan(config, planKey)
+  if (!plan.enabled) {
+    return NextResponse.json({ error: 'Este plano nao esta disponivel.' }, { status: 400 })
+  }
+
+  // Bloqueia apenas se o usuário já tem vitalício ativo (não pode comprar mais).
+  // Permite renovação se o plano atual é temporário (prolonga acesso pelo novo plano).
+  if (activePurchase && activePurchase.accessType === 'lifetime') {
     return NextResponse.json({
-      error: 'Voce ja possui o Manual Clinico Premium.',
+      error: 'Voce ja possui o Manual Clinico Premium vitalicio.',
       alreadyOwned: true,
       redirectTo: '/manual-clinico',
     }, { status: 409 })
   }
 
-  let amount = getManualClinicoCurrentPrice(config)
+  let amount = Number(plan.price || 0)
   let couponValidation: CouponValidationResult | null = null
 
-  const pricingEventState = config.pricingEventId
-    ? await getPricingEventStateById(db, String(config.pricingEventId))
+  const pricingEventId = plan.pricingEventId || config.pricingEventId
+  const pricingEventState = pricingEventId
+    ? await getPricingEventStateById(db, String(pricingEventId))
     : null
   let tierDiscountAmount = 0
   if (pricingEventState?.activeTier && amount > 0) {
@@ -93,14 +106,16 @@ export async function POST(request: NextRequest) {
     )
   }
 
+  // Cupom: usa o explícito do usuário se informado, senão o defaultCouponCode do plano.
+  const couponCodeFinal = (data.couponCode || plan.defaultCouponCode || '').trim() || undefined
   let couponDiscountAmount = 0
-  if (data.couponCode && amount > 0) {
+  if (couponCodeFinal && amount > 0) {
     if (!config.allowCoupons) {
       return NextResponse.json({ error: 'Cupons nao estao habilitados para este produto.' }, { status: 400 })
     }
     try {
       couponValidation = await validateCouponForCheckout(db, {
-        code: data.couponCode,
+        code: couponCodeFinal,
         amountBeforeCoupon: amount,
         userId: session.userId,
         userEmail: session.email,
@@ -109,9 +124,16 @@ export async function POST(request: NextRequest) {
       couponDiscountAmount = couponValidation.discountAmount
     } catch (error: any) {
       if (error instanceof CouponError) {
-        return NextResponse.json({ error: error.message }, { status: error.status })
+        // Se foi o cupom padrão do plano que falhou, ignora silenciosamente.
+        if (!data.couponCode) {
+          couponValidation = null
+          couponDiscountAmount = 0
+        } else {
+          return NextResponse.json({ error: error.message }, { status: error.status })
+        }
+      } else {
+        throw error
       }
-      throw error
     }
   }
 
@@ -146,16 +168,30 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    await grantManualClinicoAccess(db, {
+    const freePurchase = await grantManualClinicoAccess(db, {
       userId: session.userId,
       userName: session.name,
       userEmail: session.email,
       config,
+      plan,
       price: 0,
       provider: 'free',
       paymentMethod: 'free',
       couponValidation,
     })
+
+    if (session.email) {
+      sendManualClinicoPurchasedEmail({
+        email: session.email,
+        name: session.name || '',
+        planLabel: plan.label,
+        planKey: plan.key,
+        durationMonths: plan.durationMonths,
+        amount: 0,
+        expiresAt: freePurchase.expiresAt || null,
+        paymentMethod: 'free',
+      }).catch(err => console.error('[manual-clinico/checkout] e-mail falhou:', err))
+    }
 
     await recordCheckoutEvent({
       event: 'payment_approved',
@@ -163,7 +199,7 @@ export async function POST(request: NextRequest) {
       userName: session.name,
       userEmail: session.email,
       productId: MANUAL_CLINICO_PRODUCT_ID,
-      productTitle: config.label,
+      productTitle: `${config.label} - ${plan.label}`,
       productType: 'product',
       amount: 0,
       paymentMethod: 'free',
@@ -171,7 +207,10 @@ export async function POST(request: NextRequest) {
       source: 'Manual Clinico',
       metadata: {
         productType: MANUAL_CLINICO_PRODUCT_TYPE,
-        accessType: config.lifetimeAccess ? 'lifetime' : 'temporary',
+        planKey: plan.key,
+        planLabel: plan.label,
+        planDurationMonths: plan.durationMonths,
+        accessType: plan.durationMonths ? 'temporary' : 'lifetime',
         ...couponAnalyticsMetadata(couponValidation),
       },
       ...getRequestAnalyticsMeta(request),
@@ -186,6 +225,7 @@ export async function POST(request: NextRequest) {
   }
 
   const now = new Date()
+  const plannedExpiresAt = computePlanExpiresAt(plan, now)
   const orderDoc: Omit<PaymentOrder, '_id'> = {
     userId: session.userId,
     payerEmail: session.email,
@@ -199,10 +239,14 @@ export async function POST(request: NextRequest) {
     idempotencyKey: '',
     metadata: {
       productType: MANUAL_CLINICO_PRODUCT_TYPE,
-      itemTitle: config.label,
-      originalPrice: config.price,
-      currentPrice: getManualClinicoCurrentPrice(config),
-      accessType: config.lifetimeAccess ? 'lifetime' : 'temporary',
+      itemTitle: `${config.label} - ${plan.label}`,
+      originalPrice: plan.price,
+      currentPrice: plan.price,
+      accessType: plan.durationMonths ? 'temporary' : 'lifetime',
+      planKey: plan.key,
+      planLabel: plan.label,
+      planDurationMonths: plan.durationMonths,
+      plannedExpiresAt: plannedExpiresAt ? plannedExpiresAt.toISOString() : null,
       ...(combined.appliedSource === 'tier' && pricingEventState?.activeTier
         ? {
             pricingEventId: pricingEventState.eventId,
@@ -263,7 +307,7 @@ export async function POST(request: NextRequest) {
       externalReference: orderId,
       amount,
       currency: 'BRL',
-      description: config.label,
+      description: `${config.label} - ${plan.label}`,
       payerEmail: session.email,
       payerName: session.name,
       idempotencyKey,
@@ -278,6 +322,7 @@ export async function POST(request: NextRequest) {
         type: 'product',
         productType: MANUAL_CLINICO_PRODUCT_TYPE,
         productId: MANUAL_CLINICO_PRODUCT_ID,
+        planKey: plan.key,
         ...(couponValidation ? { couponCode: couponValidation.code } : {}),
       },
     })
