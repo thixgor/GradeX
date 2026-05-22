@@ -27,6 +27,8 @@ interface WeeklyTier {
   weeksBefore: number
   discountPercent: number
   label?: string
+  // Apenas no formulário (modo "valor"): valor final digitado pelo admin. Não é persistido.
+  targetValue?: string
 }
 
 interface ManualTier {
@@ -34,6 +36,26 @@ interface ManualTier {
   endAt: string
   discountPercent: number
   label?: string
+  targetValue?: string
+}
+
+type DiscountMode = 'percent' | 'value'
+
+function clampPct(n: number) {
+  if (!Number.isFinite(n)) return 0
+  return Math.min(100, Math.max(0, Math.round(n * 100) / 100))
+}
+
+// % de desconto necessário para que `base` chegue em `finalValue`.
+function valueToPct(finalValue: number, base: number) {
+  if (!base || base <= 0 || !Number.isFinite(finalValue)) return 0
+  return clampPct((1 - finalValue / base) * 100)
+}
+
+// Valor final resultante de aplicar `pct` sobre `base`.
+function pctToValue(pct: number, base: number) {
+  if (!base || base <= 0) return 0
+  return Math.max(0, Math.round(base * (1 - pct / 100) * 100) / 100)
 }
 
 interface PricingEvent {
@@ -102,8 +124,29 @@ export default function PricingEventsAdminPage() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [form, setForm] = useState(emptyForm())
   const [previewPrice, setPreviewPrice] = useState<number>(100)
+  const [discountMode, setDiscountMode] = useState<DiscountMode>('percent')
   const [saving, setSaving] = useState(false)
   const [showForm, setShowForm] = useState(false)
+
+  // Quando se define o desconto por valor, o % depende do preço de referência.
+  // Ao mudar a referência, recalcula o % dos lotes que têm valor digitado.
+  function changeReferencePrice(next: number) {
+    setPreviewPrice(next)
+    if (discountMode !== 'value') return
+    setForm((f) => ({
+      ...f,
+      weeklyTiers: f.weeklyTiers.map((t) =>
+        t.targetValue != null && t.targetValue !== ''
+          ? { ...t, discountPercent: valueToPct(parseFloat(t.targetValue), next) }
+          : t
+      ),
+      manualTiers: f.manualTiers.map((t) =>
+        t.targetValue != null && t.targetValue !== ''
+          ? { ...t, discountPercent: valueToPct(parseFloat(t.targetValue), next) }
+          : t
+      ),
+    }))
+  }
 
   useEffect(() => {
     refresh()
@@ -201,10 +244,16 @@ export default function PricingEventsAdminPage() {
         bannerUrl: form.bannerUrl.trim() || undefined,
         eventDate: fromLocalInput(form.eventDate),
         mode: form.mode,
-        weeklyTiers: form.mode === 'weekly' ? form.weeklyTiers : [],
-        manualTiers: form.mode === 'manual'
-          ? form.manualTiers.map((t) => ({
+        weeklyTiers: form.mode === 'weekly'
+          ? form.weeklyTiers.map(({ targetValue, ...t }) => ({
               ...t,
+              discountPercent: clampPct(t.discountPercent),
+            }))
+          : [],
+        manualTiers: form.mode === 'manual'
+          ? form.manualTiers.map(({ targetValue, ...t }) => ({
+              ...t,
+              discountPercent: clampPct(t.discountPercent),
               startAt: fromLocalInput(t.startAt),
               endAt: fromLocalInput(t.endAt),
             }))
@@ -479,6 +528,55 @@ export default function PricingEventsAdminPage() {
                   </div>
                 </div>
 
+                <div className="space-y-2">
+                  <Label className="text-xs uppercase tracking-wider text-emerald-300">Como definir o desconto</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setDiscountMode('percent')}
+                      className={`rounded-lg border px-3 py-2 text-left text-xs transition ${
+                        discountMode === 'percent'
+                          ? 'border-emerald-400/60 bg-emerald-500/10 text-emerald-200'
+                          : 'border-slate-600/40 bg-slate-800/30 text-slate-400'
+                      }`}
+                    >
+                      <div className="font-semibold">Porcentagem (%)</div>
+                      <div className="opacity-70">Digite o % de desconto de cada lote.</div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDiscountMode('value')}
+                      className={`rounded-lg border px-3 py-2 text-left text-xs transition ${
+                        discountMode === 'value'
+                          ? 'border-emerald-400/60 bg-emerald-500/10 text-emerald-200'
+                          : 'border-slate-600/40 bg-slate-800/30 text-slate-400'
+                      }`}
+                    >
+                      <div className="font-semibold">Valor final (R$)</div>
+                      <div className="opacity-70">Digite o preço de cada lote — o % é calculado.</div>
+                    </button>
+                  </div>
+                  {discountMode === 'value' && (
+                    <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3">
+                      <Label className="text-[11px] text-slate-300">Preço de referência (base para calcular o %)</Label>
+                      <div className="relative mt-1">
+                        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">R$</span>
+                        <Input
+                          type="number"
+                          min={0}
+                          value={previewPrice}
+                          onChange={(e) => changeReferencePrice(Number(e.target.value || 0))}
+                          className="pl-9"
+                        />
+                      </div>
+                      <p className="mt-1.5 text-[10px] leading-snug text-slate-400">
+                        O % é calculado sobre este preço e aplicado proporcionalmente a todos os produtos do evento.
+                        Produtos com outro preço terão o mesmo % (não exatamente o valor digitado).
+                      </p>
+                    </div>
+                  )}
+                </div>
+
                 {form.mode === 'weekly' ? (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
@@ -496,17 +594,35 @@ export default function PricingEventsAdminPage() {
                           onChange={(e) => updateWeeklyTier(idx, { weeksBefore: Number(e.target.value) })}
                           placeholder="Semanas antes"
                         />
-                        <div className="relative">
-                          <Input
-                            type="number"
-                            min={0}
-                            max={100}
-                            value={tier.discountPercent}
-                            onChange={(e) => updateWeeklyTier(idx, { discountPercent: Number(e.target.value) })}
-                            placeholder="% OFF"
-                          />
-                          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">%</span>
-                        </div>
+                        {discountMode === 'value' ? (
+                          <div className="relative">
+                            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">R$</span>
+                            <Input
+                              type="number"
+                              min={0}
+                              value={tier.targetValue ?? String(pctToValue(tier.discountPercent, previewPrice))}
+                              onChange={(e) => updateWeeklyTier(idx, {
+                                targetValue: e.target.value,
+                                discountPercent: valueToPct(parseFloat(e.target.value || '0'), previewPrice),
+                              })}
+                              placeholder="Valor final"
+                              className="pl-9"
+                            />
+                            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-emerald-300/80">−{Math.round(tier.discountPercent)}%</span>
+                          </div>
+                        ) : (
+                          <div className="relative">
+                            <Input
+                              type="number"
+                              min={0}
+                              max={100}
+                              value={tier.discountPercent}
+                              onChange={(e) => updateWeeklyTier(idx, { discountPercent: Number(e.target.value), targetValue: undefined })}
+                              placeholder="% OFF"
+                            />
+                            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">%</span>
+                          </div>
+                        )}
                         <Button variant="ghost" size="sm" onClick={() => removeWeeklyTier(idx)}>
                           <Trash2 className="h-4 w-4 text-red-300" />
                         </Button>
@@ -547,17 +663,35 @@ export default function PricingEventsAdminPage() {
                             onChange={(e) => updateManualTier(idx, { label: e.target.value })}
                             placeholder="Rótulo (opcional)"
                           />
-                          <div className="relative">
-                            <Input
-                              type="number"
-                              min={0}
-                              max={100}
-                              value={tier.discountPercent}
-                              onChange={(e) => updateManualTier(idx, { discountPercent: Number(e.target.value) })}
-                              placeholder="% OFF"
-                            />
-                            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">%</span>
-                          </div>
+                          {discountMode === 'value' ? (
+                            <div className="relative">
+                              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">R$</span>
+                              <Input
+                                type="number"
+                                min={0}
+                                value={tier.targetValue ?? String(pctToValue(tier.discountPercent, previewPrice))}
+                                onChange={(e) => updateManualTier(idx, {
+                                  targetValue: e.target.value,
+                                  discountPercent: valueToPct(parseFloat(e.target.value || '0'), previewPrice),
+                                })}
+                                placeholder="Valor final"
+                                className="pl-9"
+                              />
+                              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-emerald-300/80">−{Math.round(tier.discountPercent)}%</span>
+                            </div>
+                          ) : (
+                            <div className="relative">
+                              <Input
+                                type="number"
+                                min={0}
+                                max={100}
+                                value={tier.discountPercent}
+                                onChange={(e) => updateManualTier(idx, { discountPercent: Number(e.target.value), targetValue: undefined })}
+                                placeholder="% OFF"
+                              />
+                              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">%</span>
+                            </div>
+                          )}
                           <Button variant="ghost" size="sm" onClick={() => removeManualTier(idx)}>
                             <Trash2 className="h-4 w-4 text-red-300" />
                           </Button>
@@ -599,7 +733,7 @@ export default function PricingEventsAdminPage() {
                       type="number"
                       min={0}
                       value={previewPrice}
-                      onChange={(e) => setPreviewPrice(Number(e.target.value || 0))}
+                      onChange={(e) => changeReferencePrice(Number(e.target.value || 0))}
                     />
                     <div className="mt-3 text-sm text-slate-200">
                       Lote atual: <span className="text-emerald-300">{previewState?.activeTier?.label || '—'}</span>
@@ -655,7 +789,7 @@ export default function PricingEventsAdminPage() {
                     {event.state?.activeTier ? (
                       <div className="inline-flex items-center gap-1 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-2 py-0.5 text-xs text-emerald-300">
                         <Sparkles className="h-3 w-3" />
-                        Lote ativo: {event.state.activeTier.label} · −{event.state.activeTier.discountPercent}%
+                        Lote ativo: {event.state.activeTier.label} · −{Math.round(event.state.activeTier.discountPercent)}%
                       </div>
                     ) : event.state ? (
                       <div className="inline-flex items-center gap-1 rounded-full border border-slate-600/40 bg-slate-700/30 px-2 py-0.5 text-xs text-slate-300">
@@ -669,8 +803,8 @@ export default function PricingEventsAdminPage() {
                           className="rounded-md border border-slate-700/40 bg-slate-800/40 px-2 py-0.5 text-[11px] text-slate-300"
                         >
                           {event.mode === 'weekly'
-                            ? `${(t as WeeklyTier).weeksBefore}sem → −${t.discountPercent}%`
-                            : `${new Date((t as ManualTier).startAt).toLocaleDateString('pt-BR')}–${new Date((t as ManualTier).endAt).toLocaleDateString('pt-BR')} → −${t.discountPercent}%`}
+                            ? `${(t as WeeklyTier).weeksBefore}sem → −${Math.round(t.discountPercent)}%`
+                            : `${new Date((t as ManualTier).startAt).toLocaleDateString('pt-BR')}–${new Date((t as ManualTier).endAt).toLocaleDateString('pt-BR')} → −${Math.round(t.discountPercent)}%`}
                         </span>
                       ))}
                     </div>
