@@ -43,12 +43,6 @@ function planFinalPrice(plan: ManualClinicoPublicPlan, eventMap: Map<string, Pri
   }
 }
 
-function planDurationText(plan: ManualClinicoPublicPlan): string {
-  if (plan.key === 'vitalicio' || plan.durationMonths == null) return 'Para sempre — nunca expira'
-  const m = plan.durationMonths
-  return `${m} ${m === 1 ? 'mês' : 'meses'} de acesso`
-}
-
 function escapeHtml(value: string): string {
   return value
     .replace(/&/g, '&amp;')
@@ -70,12 +64,8 @@ function renderPromoPrice(cheapestFinal: number, cheapestOriginal: number, hasDi
     : formatBRL(cheapestFinal)
   return `
         <span class="from">
-          <span class="from-lbl">A partir de</span>
+          <span class="from-lbl">Por apenas</span>
           <span class="from-val">${fromVal}</span>
-        </span>
-        <span class="to">
-          <span class="to-lbl">3 planos disponíveis</span>
-          <span class="to-val"><span class="curr">Sem · An · Vit</span></span>
         </span>
       `
 }
@@ -86,11 +76,11 @@ function renderHeroPrice(cheapestFinal: number, cheapestOriginal: number, hasDis
   const valor = cents === 0 ? String(inteiro) : `${inteiro},${String(cents).padStart(2, '0')}`
   const old = hasDiscount
     ? `<span class="cta-old">De ${formatBRL(cheapestOriginal)} por</span>`
-    : `<span class="cta-old">3 planos a partir de</span>`
+    : `<span class="cta-old">Por apenas</span>`
   return `
             ${old}
             <span class="cta-new"><span class="cta-curr">R$</span>${valor}</span>
-            <span class="cta-tag">Semestral · Anual · Vitalício</span>
+            <span class="cta-tag">Acesso completo e imediato</span>
           `
 }
 
@@ -100,11 +90,11 @@ function renderFinalPrice(cheapestFinal: number, cheapestOriginal: number, hasDi
   const valor = cents === 0 ? String(inteiro) : `${inteiro},${String(cents).padStart(2, '0')}`
   const oldLine = hasDiscount
     ? `<span class="fp-old">De <s>${formatBRL(cheapestOriginal)}</s> por</span>`
-    : `<span class="fp-old">A partir de</span>`
+    : `<span class="fp-old">Por apenas</span>`
   return `
       ${oldLine}
       <span class="fp-new"><span class="fp-curr">R$</span>${valor}</span>
-      <span class="fp-tag">3 planos disponíveis</span>
+      <span class="fp-tag">Acesso completo e imediato</span>
     `
 }
 
@@ -113,41 +103,29 @@ function renderGuaranteePrice(cheapestFinal: number, hasDiscount: boolean, disco
     ? `${discountPct}% OFF aplicado · Pix, cartão ou boleto`
     : 'Pix, cartão ou boleto · à vista'
   return `
-        <div class="gtitle">A partir de ${formatBRL(cheapestFinal)}</div>
+        <div class="gtitle">Por apenas ${formatBRL(cheapestFinal)}</div>
         <div class="gsub">${sub}</div>
       `
 }
 
-function renderPlanCard(plan: ManualClinicoPublicPlan, eventMap: Map<string, PricingEventState>): string {
+function renderPlanGrid(plan: ManualClinicoPublicPlan, eventMap: Map<string, PricingEventState>): string {
   const { final, original, discountPct, eventLabel } = planFinalPrice(plan, eventMap)
-  const isLifetime = plan.key === 'vitalicio'
-  const url = `https://domineaqui.com.br/manual-clinico?plan=${plan.key}`
-  const cardStyle = isLifetime
-    ? 'text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:8px;padding:20px;border-radius:18px;border:2px solid rgba(243,217,153,.6);background:linear-gradient(135deg,rgba(243,217,153,.14),rgba(48,224,147,.06));position:relative;'
-    : 'text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:8px;padding:20px;border-radius:18px;border:1px solid rgba(48,224,147,.30);background:rgba(48,224,147,.06);position:relative;'
-  const recommendedBadge = isLifetime
-    ? '<span style="position:absolute;top:-12px;right:14px;background:#f3d999;color:#1a3326;font-size:10px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;padding:3px 10px;border-radius:999px;">Recomendado</span>'
-    : ''
   const tierBadge = discountPct > 0
     ? `<span style="position:absolute;top:-12px;left:14px;background:#30e093;color:#04150c;font-size:10px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;padding:3px 10px;border-radius:999px;">Lote ${escapeHtml(eventLabel || 'ativo')} · ${discountPct}% OFF</span>`
     : ''
   const oldPriceLine = discountPct > 0
     ? `<span style="font-size:13px;opacity:.55;text-decoration:line-through;">De ${formatBRL(original)}</span>`
     : ''
-  const priceColor = isLifetime ? '#f3d999' : '#f3d999'
-  const ctaColor = isLifetime ? '#f3d999' : '#30e093'
-  return `      <a href="${url}" target="_blank" rel="noopener" style="${cardStyle}">
-        ${recommendedBadge}${tierBadge}
-        <span style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;opacity:.85;">${escapeHtml(plan.label)}</span>
-        <span style="font-size:13px;opacity:.7;">${escapeHtml(planDurationText(plan))}</span>
+  return `
+      <a href="https://domineaqui.com.br/manual-clinico" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:8px;padding:20px;border-radius:18px;border:1px solid rgba(48,224,147,.30);background:rgba(48,224,147,.06);position:relative;">
+        ${tierBadge}
+        <span style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;opacity:.85;">Manual Clínico</span>
+        <span style="font-size:13px;opacity:.7;">Acesso completo — 220+ patologias</span>
         ${oldPriceLine}
-        <span style="font-size:32px;font-weight:900;color:${priceColor};">${formatBRL(final)}</span>
-        <span style="margin-top:auto;font-size:13px;font-weight:700;color:${ctaColor};">Assinar ${escapeHtml(plan.label)} →</span>
-      </a>`
-}
-
-function renderPlanGrid(plans: ManualClinicoPublicPlan[], eventMap: Map<string, PricingEventState>): string {
-  return '\n' + plans.map(p => renderPlanCard(p, eventMap)).join('\n') + '\n    '
+        <span style="font-size:32px;font-weight:900;color:#f3d999;">${formatBRL(final)}</span>
+        <span style="margin-top:auto;font-size:13px;font-weight:700;color:#30e093;">Desbloquear agora →</span>
+      </a>
+    `
 }
 
 function fallbackResponse() {
@@ -177,7 +155,12 @@ export async function GET() {
     const eventMap = eventIds.length > 0 ? await getPricingEventStatesByIds(db, eventIds) : new Map<string, PricingEventState>()
 
     const planPrices = enabledPlans.map(p => planFinalPrice(p, eventMap))
-    const cheapest = planPrices.reduce((min, p) => (p.final < min.final ? p : min), planPrices[0])
+    let cheapestIdx = 0
+    for (let i = 1; i < planPrices.length; i++) {
+      if (planPrices[i].final < planPrices[cheapestIdx].final) cheapestIdx = i
+    }
+    const cheapest = planPrices[cheapestIdx]
+    const cheapestPlan = enabledPlans[cheapestIdx]
     const hasDiscount = cheapest.discountPct > 0 && cheapest.original > cheapest.final
 
     html = replaceBetweenMarkers(html, '<!--LDPG_PROMO_PRICE_START-->', '<!--LDPG_PROMO_PRICE_END-->',
@@ -185,7 +168,7 @@ export async function GET() {
     html = replaceBetweenMarkers(html, '<!--LDPG_HERO_PRICE_START-->', '<!--LDPG_HERO_PRICE_END-->',
       renderHeroPrice(cheapest.final, cheapest.original, hasDiscount))
     html = replaceBetweenMarkers(html, '<!--LDPG_PLAN_GRID_START-->', '<!--LDPG_PLAN_GRID_END-->',
-      renderPlanGrid(enabledPlans, eventMap))
+      renderPlanGrid(cheapestPlan, eventMap))
     html = replaceBetweenMarkers(html, '<!--LDPG_FINAL_PRICE_START-->', '<!--LDPG_FINAL_PRICE_END-->',
       renderFinalPrice(cheapest.final, cheapest.original, hasDiscount))
     html = replaceBetweenMarkers(html, '<!--LDPG_GUARANTEE_PRICE_START-->', '<!--LDPG_GUARANTEE_PRICE_END-->',

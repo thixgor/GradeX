@@ -386,7 +386,7 @@ function ManualClinicoContent() {
   const pricingEventState = pricingEventStateData.state
   const tierPct = pricingEventState?.activeTier?.discountPercent || 0
   const hasActiveTier = !!pricingEventState?.activeTier && pricingEventState?.isActive !== false && tierPct > 0
-  // "A partir de" — menor preço entre planos habilitados, aplicando lote quando vale
+  // Preço exibido publicamente: apenas o menor plano (demais só aparecem no checkout), aplicando lote quando vale
   const cheapestPlanPrice = enabledPlans.length > 0
     ? Math.min(...enabledPlans.map(p => p.price))
     : Number(product?.currentPrice || 0)
@@ -629,7 +629,7 @@ function ManualClinicoContent() {
                 <div className="mt-5 mx-auto max-w-md space-y-2">
                   <PricingEventCountdown state={pricingEventState} compact />
                   <div className="rounded-xl border border-emerald-300/25 bg-emerald-400/10 px-3 py-2 text-center text-[11px] font-bold text-emerald-700 dark:text-emerald-200">
-                    Lote {pricingEventState.activeTier?.label || 'ativo'} — {tierPct}% OFF em todos os planos (Semestral · Anual · Vitalício)
+                    Lote {pricingEventState.activeTier?.label || 'ativo'} — {tierPct}% OFF
                   </div>
                 </div>
               ) : null}
@@ -654,8 +654,8 @@ function ManualClinicoContent() {
                       </button>
                       <p className="text-xs font-bold text-emerald-700 dark:text-emerald-300">
                         {hasActiveTier
-                          ? <>3 planos · A partir de <span className="font-black">{formatBRL(cheapestAfterTier)}</span> <span className="line-through text-muted-foreground/60 ml-1 font-bold">{formatBRL(cheapestPlanPrice)}</span></>
-                          : <>3 planos · A partir de <span className="font-black">{formatBRL(cheapestPlanPrice)}</span> · Escolha no próximo passo</>}
+                          ? <>Por apenas <span className="font-black">{formatBRL(cheapestAfterTier)}</span> <span className="line-through text-muted-foreground/60 ml-1 font-bold">{formatBRL(cheapestPlanPrice)}</span></>
+                          : <>Por apenas <span className="font-black">{formatBRL(cheapestPlanPrice)}</span></>}
                       </p>
                     </div>
                   )}
@@ -701,10 +701,6 @@ function ManualClinicoContent() {
 
                   {!manualAccess.hasFullAccess && product?.isActive && (
                     <div className="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] font-medium text-muted-foreground/70">
-                      <span className="inline-flex items-center gap-1">
-                        <span className="h-1 w-1 rounded-full bg-emerald-400" />
-                        Semestral · Anual · Vitalício
-                      </span>
                       <span className="inline-flex items-center gap-1">
                         <span className="h-1 w-1 rounded-full bg-emerald-400" />
                         Acesso imediato
@@ -797,14 +793,14 @@ function ManualClinicoContent() {
                   <p className="text-sm font-bold leading-snug">
                     {freeQuota?.mode === 'quantity' && freeQuota.limit > 0 && isAuthenticated && freeQuota.remaining <= 0
                       ? 'Você abriu suas patologias grátis. Libere o Manual inteiro agora.'
-                      : 'Tenha o Manual Clínico inteiro — escolha seu plano.'}
+                      : 'Tenha o Manual Clínico inteiro.'}
                   </p>
                   <p className="mt-0.5 text-xs text-muted-foreground">
                     {freeQuota?.mode === 'quantity' && freeQuota.limit > 0
                       ? isAuthenticated
-                        ? `Você usou ${freeQuota.used} de ${freeQuota.limit} aberturas grátis. 3 planos: Semestral, Anual ou Vitalício${hasActiveTier ? ` · ${tierPct}% OFF` : ''}.`
-                        : `Crie sua conta e ganhe ${freeQuota.limit} aberturas grátis — ou escolha um plano.`
-                      : `${product.benefitText} · 3 planos a partir de ${formatBRL(cheapestAfterTier)}${hasActiveTier ? ` (lote ${tierPct}% OFF)` : ''}.`}
+                        ? `Você usou ${freeQuota.used} de ${freeQuota.limit} aberturas grátis. Desbloqueie por ${formatBRL(cheapestAfterTier)}${hasActiveTier ? ` · ${tierPct}% OFF` : ''}.`
+                        : `Crie sua conta e ganhe ${freeQuota.limit} aberturas grátis — ou desbloqueie o Manual completo.`
+                      : `${product.benefitText} · por apenas ${formatBRL(cheapestAfterTier)}${hasActiveTier ? ` (lote ${tierPct}% OFF)` : ''}.`}
                   </p>
                 </div>
               </div>
@@ -812,7 +808,7 @@ function ManualClinicoContent() {
                 onClick={() => goToCheckout()}
                 className="group inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-300 to-emerald-300 px-5 text-sm font-black text-emerald-950 shadow-lg shadow-amber-500/25 transition hover:brightness-105 hover:shadow-amber-500/35 active:scale-[0.97] ring-1 ring-amber-200/40"
               >
-                Escolher plano
+                Desbloquear agora
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </button>
             </div>
