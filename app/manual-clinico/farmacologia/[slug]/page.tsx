@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef, type PointerEvent as RPointerEvent } from 'react'
+import { motion, useSpring, useMotionValue, AnimatePresence } from 'framer-motion'
 import { useParams, useRouter } from 'next/navigation'
 import { AppShell } from '@/components/app-shell'
 import {
@@ -26,6 +27,7 @@ import {
   ArrowRight,
   Info,
   CircleDot,
+  X,
 } from 'lucide-react'
 import { RichTextRenderer } from '@/components/manual-clinico/rich-text-renderer'
 import {
@@ -59,7 +61,8 @@ function formatBRL(value: number) {
 }
 
 /* ═══════════ COLLAPSIBLE SECTION ═══════════ */
-function Section({ title, icon: Icon, children, defaultOpen = true, variant = 'default' }: {
+function Section({ id, title, icon: Icon, children, defaultOpen = true, variant = 'default' }: {
+  id?: string
   title: string
   icon: any
   children: React.ReactNode
@@ -72,7 +75,7 @@ function Section({ title, icon: Icon, children, defaultOpen = true, variant = 'd
   const border = variant === 'danger' ? 'border-red-500/20' : variant === 'warning' ? 'border-amber-500/20' : 'border-border/60'
 
   return (
-    <div className={`rounded-2xl border ${border} bg-card/50 backdrop-blur-sm transition-all`}>
+    <div id={id} className={`scroll-mt-20 rounded-2xl border ${border} bg-card/50 backdrop-blur-sm transition-all`}>
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between gap-3 p-5 hover:bg-accent/30 transition-colors text-left"
@@ -362,6 +365,316 @@ function PremiumCard({ data, onCheckout }: { data: MedicamentoResponse; onChecko
   )
 }
 
+/* ═══════════════════════════════════════════
+   SECTION NAV (floating glassmorphism TOC)
+   ═══════════════════════════════════════════ */
+interface SectionEntry {
+  id: string
+  label: string
+  icon: any
+}
+
+/** Liquid-glass bubble that follows the hovered / active item */
+function NavGlassBubble({
+  navRef,
+  hoveredIndex,
+  visible,
+}: {
+  navRef: React.RefObject<HTMLElement | null>
+  hoveredIndex: number | null
+  visible: boolean
+}) {
+  const springY = { stiffness: 500, damping: 38, mass: 0.6 }
+  const springH = { stiffness: 400, damping: 32, mass: 0.4 }
+  const squeeze = useSpring(useMotionValue(1), { stiffness: 600, damping: 28 })
+  const bubbleY = useSpring(useMotionValue(0), springY)
+  const bubbleH = useSpring(useMotionValue(36), springH)
+
+  useEffect(() => {
+    if (hoveredIndex === null || !navRef.current) return
+    const items = navRef.current.querySelectorAll<HTMLElement>('[data-nav-item]')
+    const item = items[hoveredIndex]
+    if (!item) return
+    const navRect = navRef.current.getBoundingClientRect()
+    const itemRect = item.getBoundingClientRect()
+    bubbleY.set(itemRect.top - navRect.top + navRef.current.scrollTop)
+    bubbleH.set(itemRect.height)
+    squeeze.set(0.97)
+    const t = setTimeout(() => squeeze.set(1), 60)
+    return () => clearTimeout(t)
+  }, [hoveredIndex, navRef, bubbleY, bubbleH, squeeze])
+
+  return (
+    <AnimatePresence>
+      {visible && hoveredIndex !== null && (
+        <motion.div
+          className="liquid-glass-bubble"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.92 }}
+          transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 4,
+            right: 4,
+            y: bubbleY,
+            height: bubbleH,
+            scaleX: squeeze,
+            borderRadius: 14,
+            zIndex: 0,
+            pointerEvents: 'none',
+            willChange: 'transform',
+          }}
+        >
+          <div className="liquid-glass-surface" />
+          <div className="liquid-glass-refraction-top" />
+          <div className="liquid-glass-refraction-bottom" />
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
+}
+
+function SectionNav({ sections }: { sections: SectionEntry[] }) {
+  const [activeId, setActiveId] = useState<string | null>(null)
+  const [expanded, setExpanded] = useState(() =>
+    typeof window !== 'undefined' && window.innerWidth >= 1024
+  )
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  const [isTouching, setIsTouching] = useState(false)
+  const navRef = useRef<HTMLElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  // ── Draggable position ──────────────────────────────────────────
+  const [pos, setPos] = useState<{ x: number; y: number } | null>(null)
+  const dragRef = useRef<{ startX: number; startY: number; origX: number; origY: number; moved: boolean } | null>(null)
+
+  useEffect(() => {
+    const isDesktop = window.innerWidth >= 1024
+    const rightOffset = isDesktop ? 210 : 60
+    setPos({ x: window.innerWidth - rightOffset, y: isDesktop ? 120 : 72 })
+    const onResize = () => {
+      setPos(prev => {
+        if (!prev) return { x: window.innerWidth - 210, y: 120 }
+        return {
+          x: Math.min(prev.x, window.innerWidth - 44),
+          y: Math.max(12, Math.min(prev.y, window.innerHeight - 44)),
+        }
+      })
+    }
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
+  // ── Intersection Observer ───────────────────────────────────────
+  useEffect(() => {
+    const ids = sections.map(s => s.id)
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter(e => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
+        if (visible.length > 0) setActiveId(visible[0].target.id)
+      },
+      { rootMargin: '-80px 0px -60% 0px', threshold: 0 }
+    )
+    ids.forEach(id => {
+      const el = document.getElementById(id)
+      if (el) observer.observe(el)
+    })
+    return () => observer.disconnect()
+  }, [sections])
+
+  // ── Close when clicking outside (mobile only) ───────────────────
+  useEffect(() => {
+    if (!expanded) return
+    const onClick = (e: MouseEvent) => {
+      if (window.innerWidth >= 1024) return
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setExpanded(false)
+        setHoveredIndex(null)
+      }
+    }
+    document.addEventListener('pointerdown', onClick)
+    return () => document.removeEventListener('pointerdown', onClick)
+  }, [expanded])
+
+  // ── Drag handlers (pointer events, works for mouse + touch) ─────
+  const onDragStart = useCallback((e: RPointerEvent<HTMLButtonElement>) => {
+    if (!pos) return
+    dragRef.current = { startX: e.clientX, startY: e.clientY, origX: pos.x, origY: pos.y, moved: false }
+    ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
+  }, [pos])
+
+  const onDragMove = useCallback((e: RPointerEvent<HTMLButtonElement>) => {
+    if (!dragRef.current) return
+    const dx = e.clientX - dragRef.current.startX
+    const dy = e.clientY - dragRef.current.startY
+    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) dragRef.current.moved = true
+    if (!dragRef.current.moved) return
+    setPos({
+      x: Math.max(12, Math.min(window.innerWidth - 44, dragRef.current.origX + dx)),
+      y: Math.max(12, Math.min(window.innerHeight - 44, dragRef.current.origY + dy)),
+    })
+  }, [])
+
+  const onDragEnd = useCallback(() => {
+    const wasDrag = dragRef.current?.moved
+    dragRef.current = null
+    if (!wasDrag) setExpanded(prev => !prev)
+  }, [])
+
+  // ── Touch nav: drag finger across items to select ───────────────
+  const findItemIndexAtY = useCallback((clientY: number) => {
+    if (!navRef.current) return null
+    const items = navRef.current.querySelectorAll<HTMLElement>('[data-nav-item]')
+    for (let i = 0; i < items.length; i++) {
+      const rect = items[i].getBoundingClientRect()
+      if (clientY >= rect.top && clientY <= rect.bottom) return i
+    }
+    return null
+  }, [])
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    e.preventDefault()
+    setIsTouching(true)
+    const idx = findItemIndexAtY(e.touches[0].clientY)
+    if (idx !== null) setHoveredIndex(idx)
+  }, [findItemIndexAtY])
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    e.preventDefault()
+    const idx = findItemIndexAtY(e.touches[0].clientY)
+    if (idx !== null) setHoveredIndex(idx)
+  }, [findItemIndexAtY])
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    e.preventDefault()
+    if (hoveredIndex !== null && navRef.current) {
+      const items = navRef.current.querySelectorAll<HTMLElement>('[data-nav-item]')
+      const item = items[hoveredIndex]
+      if (item) item.click()
+    }
+    setIsTouching(false)
+    setHoveredIndex(null)
+  }, [hoveredIndex])
+
+  const scrollTo = useCallback((id: string) => {
+    const el = document.getElementById(id)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      if (window.innerWidth < 1024) setExpanded(false)
+    }
+  }, [])
+
+  if (sections.length === 0 || !pos) return null
+
+  const opensLeft = pos.x > window.innerWidth / 2
+
+  return (
+    <div
+      ref={containerRef}
+      className="fixed z-50"
+      style={{ left: pos.x, top: pos.y }}
+    >
+      {/* ── FAB (draggable floating button) ── */}
+      <button
+        onPointerDown={onDragStart}
+        onPointerMove={onDragMove}
+        onPointerUp={onDragEnd}
+        className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center transition-all duration-300 touch-none select-none ${
+          expanded
+            ? 'opacity-0 pointer-events-none scale-75'
+            : 'opacity-70 hover:opacity-100 active:scale-95'
+        }`}
+        aria-label="Navegação de seções"
+      >
+        <div className="liquid-glass-surface !rounded-2xl" />
+        <div className="liquid-glass-refraction-top" style={{ borderRadius: '16px' }} />
+        <div className="liquid-glass-refraction-bottom" style={{ borderRadius: '16px' }} />
+        <div className="relative z-10 flex flex-col items-center gap-1">
+          <span className="block w-4 sm:w-5 h-[2.5px] rounded-full bg-foreground/60" />
+          <span className="block w-3 sm:w-3.5 h-[2.5px] rounded-full bg-foreground/40" />
+          <span className="block w-4 sm:w-5 h-[2.5px] rounded-full bg-foreground/60" />
+        </div>
+        {activeId && (
+          <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-primary shadow-sm shadow-primary/50 border border-background" />
+        )}
+      </button>
+
+      {/* ── Expanded panel ── */}
+      <AnimatePresence>
+        {expanded && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.85, y: -8 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.85, y: -8 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute top-0"
+            style={{ [opensLeft ? 'right' : 'left']: 0 }}
+          >
+            <div className="relative min-w-[180px]">
+              <div className="liquid-glass-surface !rounded-2xl" />
+              <div className="liquid-glass-refraction-top !left-[8%] !right-[8%]" style={{ borderRadius: '16px' }} />
+              <div className="liquid-glass-refraction-bottom !left-[12%] !right-[12%]" style={{ borderRadius: '16px' }} />
+
+              <div className="relative z-10 flex items-center justify-between px-3 pt-2.5 pb-1">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">Seções</span>
+                <button
+                  onClick={() => { setExpanded(false); setHoveredIndex(null) }}
+                  className="p-1 rounded-lg hover:bg-white/[0.1] text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+
+              <nav
+                ref={navRef}
+                className="relative z-10 px-1.5 pb-2.5 select-none max-h-[60vh] overflow-y-auto"
+                style={{ touchAction: 'none' }}
+                onMouseEnter={() => setHoveredIndex(sections.findIndex(s => s.id === activeId))}
+                onMouseLeave={() => { if (!isTouching) setHoveredIndex(null) }}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+              >
+                <NavGlassBubble
+                  navRef={navRef}
+                  hoveredIndex={hoveredIndex}
+                  visible={hoveredIndex !== null}
+                />
+
+                {sections.map((section, i) => {
+                  const Icon = section.icon
+                  const isActive = activeId === section.id
+                  return (
+                    <button
+                      key={section.id}
+                      data-nav-item
+                      onClick={() => scrollTo(section.id)}
+                      onMouseEnter={() => setHoveredIndex(i)}
+                      className={`relative z-10 w-full flex items-center gap-2.5 rounded-xl py-2 px-3 transition-colors duration-150 text-left ${
+                        isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      <Icon className={`h-3.5 w-3.5 shrink-0 transition-colors ${isActive ? 'text-primary' : ''}`} />
+                      <span className="text-[12px] font-medium whitespace-nowrap">{section.label}</span>
+                      {isActive && (
+                        <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary shadow-sm shadow-primary/50 shrink-0" />
+                      )}
+                    </button>
+                  )
+                })}
+              </nav>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
 /* ═══════════ PAGE ═══════════ */
 export default function FarmacoDetailPage() {
   return (
@@ -399,6 +712,28 @@ function FarmacoDetailContent() {
     router.push('/manual-clinico/checkout')
   }
 
+  // ── Build sections list for floating nav (before early returns) ──
+  const navSections = useMemo<SectionEntry[]>(() => {
+    if (!data || data.isPremiumLocked) return []
+    const s: SectionEntry[] = []
+    if (data.classificacao) s.push({ id: 'sec-classificacao', label: 'Classificação', icon: Layers })
+    if (data.principais_funcoes) s.push({ id: 'sec-funcoes', label: 'Principais Funções', icon: Activity })
+    if (data.mecanismo_acao_compacto) s.push({ id: 'sec-mec-compacto', label: 'Mecanismo (Compacto)', icon: Zap })
+    if (data.mecanismo_acao_detalhado) s.push({ id: 'sec-mec-detalhado', label: 'Mecanismo (Detalhado)', icon: FlaskConical })
+    if (data.metabolismo) s.push({ id: 'sec-metabolismo', label: 'Metabolismo', icon: Beaker })
+    if (data.excrecao) s.push({ id: 'sec-excrecao', label: 'Excreção', icon: Droplets })
+    if ((data.efeitos_colaterais && data.efeitos_colaterais.length > 0) || (data.efeitos_adversos && data.efeitos_adversos.length > 0)) {
+      s.push({ id: 'sec-efeitos', label: 'Efeitos', icon: AlertTriangle })
+    }
+    if (data.contraindicacoes && data.contraindicacoes.length > 0) s.push({ id: 'sec-contraindicacoes', label: 'Contraindicações', icon: Ban })
+    if (data.posologia) s.push({ id: 'sec-posologia', label: 'Posologia', icon: ClipboardList })
+    if (data.calculo_dose && data.calculo_dose.enabled) s.push({ id: 'sec-calculadora', label: 'Calculadora de Dose', icon: Calculator })
+    if (data.fluxograma_uso) s.push({ id: 'sec-fluxograma', label: 'Fluxograma', icon: GitBranch })
+    if (data.observacoes_clinicas) s.push({ id: 'sec-observacoes', label: 'Observações', icon: ShieldAlert })
+    if (data.referencias) s.push({ id: 'sec-referencias', label: 'Referências', icon: BookMarked })
+    return s
+  }, [data])
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -425,6 +760,9 @@ function FarmacoDetailContent() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Floating glassmorphism section nav */}
+      {!locked && <SectionNav sections={navSections} />}
+
       <div className="container mx-auto px-4 py-6 max-w-3xl">
         <button
           onClick={() => router.push('/manual-clinico/farmacologia')}
@@ -463,19 +801,19 @@ function FarmacoDetailContent() {
         ) : (
           <div className="space-y-3">
             {data.classificacao && (
-              <Section title="Classificação" icon={Layers}>
+              <Section id="sec-classificacao" title="Classificação" icon={Layers}>
                 <RichTextRenderer text={data.classificacao} className="text-sm leading-relaxed text-foreground/85" />
               </Section>
             )}
 
             {data.principais_funcoes && (
-              <Section title="Principais Funções" icon={Activity}>
+              <Section id="sec-funcoes" title="Principais Funções" icon={Activity}>
                 <RichTextRenderer text={data.principais_funcoes} className="text-sm leading-relaxed text-foreground/85" />
               </Section>
             )}
 
             {data.mecanismo_acao_compacto && (
-              <Section title="Mecanismo de Ação — Compacto" icon={Zap}>
+              <Section id="sec-mec-compacto" title="Mecanismo de Ação — Compacto" icon={Zap}>
                 <div className="rounded-lg bg-primary/[0.05] border border-primary/10 p-3">
                   <RichTextRenderer text={data.mecanismo_acao_compacto} className="text-sm leading-relaxed text-foreground/90" />
                 </div>
@@ -483,19 +821,19 @@ function FarmacoDetailContent() {
             )}
 
             {data.mecanismo_acao_detalhado && (
-              <Section title="Mecanismo de Ação — Detalhado" icon={FlaskConical} defaultOpen={false}>
+              <Section id="sec-mec-detalhado" title="Mecanismo de Ação — Detalhado" icon={FlaskConical} defaultOpen={false}>
                 <RichTextRenderer text={data.mecanismo_acao_detalhado} className="text-sm leading-relaxed text-foreground/85" />
               </Section>
             )}
 
             {data.metabolismo && (
-              <Section title="Metabolismo" icon={Beaker}>
+              <Section id="sec-metabolismo" title="Metabolismo" icon={Beaker}>
                 <RichTextRenderer text={data.metabolismo} className="text-sm leading-relaxed text-foreground/85" />
               </Section>
             )}
 
             {data.excrecao && (
-              <Section title="Excreção" icon={Droplets}>
+              <Section id="sec-excrecao" title="Excreção" icon={Droplets}>
                 <RichTextRenderer text={data.excrecao} className="text-sm leading-relaxed text-foreground/85" />
               </Section>
             )}
@@ -503,7 +841,7 @@ function FarmacoDetailContent() {
             {/* Efeitos: explicação hardcoded + colaterais + adversos */}
             {((data.efeitos_colaterais && data.efeitos_colaterais.length > 0) ||
               (data.efeitos_adversos && data.efeitos_adversos.length > 0)) && (
-              <Section title="Efeitos Colaterais × Efeitos Adversos" icon={AlertTriangle} variant="warning">
+              <Section id="sec-efeitos" title="Efeitos Colaterais × Efeitos Adversos" icon={AlertTriangle} variant="warning">
                 {/* Explicação fixa */}
                 <div className="grid gap-3 sm:grid-cols-2 mb-4">
                   <div className="rounded-xl border border-amber-500/20 bg-amber-500/[0.06] p-3">
@@ -541,7 +879,7 @@ function FarmacoDetailContent() {
             )}
 
             {ci.length > 0 && (
-              <Section title="Contraindicações" icon={Ban} variant="danger">
+              <Section id="sec-contraindicacoes" title="Contraindicações" icon={Ban} variant="danger">
                 <div className="space-y-2.5">
                   {ci.map((c, i) => (
                     <div key={i} className="rounded-xl border border-red-500/20 bg-red-500/[0.05] p-3">
@@ -557,31 +895,31 @@ function FarmacoDetailContent() {
             )}
 
             {data.posologia && (
-              <Section title="Posologia" icon={ClipboardList}>
+              <Section id="sec-posologia" title="Posologia" icon={ClipboardList}>
                 <RichTextRenderer text={data.posologia} className="text-sm leading-relaxed text-foreground/85" />
               </Section>
             )}
 
             {dose && dose.enabled && (
-              <Section title="Calculadora de Dose" icon={Calculator}>
+              <Section id="sec-calculadora" title="Calculadora de Dose" icon={Calculator}>
                 <DoseCalculator dose={dose} contraindicacoes={ci} />
               </Section>
             )}
 
             {data.fluxograma_uso && (
-              <Section title="Fluxograma de Uso Medicamentoso" icon={GitBranch}>
+              <Section id="sec-fluxograma" title="Fluxograma de Uso Medicamentoso" icon={GitBranch}>
                 <FluxogramaRenderer text={data.fluxograma_uso} />
               </Section>
             )}
 
             {data.observacoes_clinicas && (
-              <Section title="Observações Clínicas" icon={ShieldAlert} variant="warning">
+              <Section id="sec-observacoes" title="Observações Clínicas" icon={ShieldAlert} variant="warning">
                 <RichTextRenderer text={data.observacoes_clinicas} className="text-sm leading-relaxed text-foreground/85" />
               </Section>
             )}
 
             {data.referencias && (
-              <Section title="Referências Bibliográficas" icon={BookMarked} defaultOpen={false}>
+              <Section id="sec-referencias" title="Referências Bibliográficas" icon={BookMarked} defaultOpen={false}>
                 <RichTextRenderer text={data.referencias} className="text-sm leading-relaxed text-muted-foreground" />
               </Section>
             )}
