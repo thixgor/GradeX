@@ -22,7 +22,9 @@ import {
   Save,
   Crown,
   Users,
-  Loader2
+  Loader2,
+  Pill,
+  ArrowRight
 } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 import { AREAS_SAUDE, SISTEMAS_FISIOLOGICOS, type AreaSaude } from '@/lib/types/manual-clinico'
@@ -900,6 +902,36 @@ export default function AdminManualClinico() {
                     </div>
                   ))}
                 </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Farmacologia — seção separada das patologias */}
+        <Card className="mb-6 overflow-hidden border-primary/15 bg-gradient-to-br from-primary/[0.06] to-transparent">
+          <CardContent className="p-5 sm:p-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-3">
+                <div className="rounded-xl bg-primary/10 p-2.5">
+                  <Pill className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold">Farmacologia</h2>
+                  <p className="text-sm text-muted-foreground max-w-xl">
+                    Importe e gerencie fármacos organizados por classes e subclasses. Cada ficha traz mecanismo de ação,
+                    metabolismo, excreção, efeitos, contraindicações, posologia e calculadora de dose.
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Button onClick={() => router.push('/admin/farmacologia/importar')}>
+                  <FileUp className="h-4 w-4 mr-2" />
+                  Importar Fármacos
+                </Button>
+                <Button variant="outline" onClick={() => router.push('/admin/farmacologia')}>
+                  Gerenciar
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
               </div>
             </div>
           </CardContent>

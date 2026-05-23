@@ -20,6 +20,7 @@ const publicRoutes = [
   '/flashcards',
   '/ldpg-mnclinico',
   '/manual-clinico',
+  '/manual-clinico/farmacologia',
   // Landing page lê settings publicamente (videoEmbedUrl, landingPageEnabled,
   // etc). A própria rota faz checagem de admin internamente para PUT.
   '/api/admin/settings',
@@ -64,7 +65,8 @@ function isPublicRoute(pathname: string): boolean {
     pathname === '/api/flashcards/manual/store' ||
     pathname === '/api/flashcards/manual/folders' ||
     pathname === '/api/manual-clinico' ||
-    pathname === '/api/manual-clinico/product'
+    pathname === '/api/manual-clinico/product' ||
+    pathname === '/api/farmacologia'
   ) return true
   if (/^\/api\/materiais\/[a-fA-F0-9]{24}$/.test(pathname)) return true
   if (/^\/api\/materiais\/packages\/[a-fA-F0-9]{24}$/.test(pathname)) return true
