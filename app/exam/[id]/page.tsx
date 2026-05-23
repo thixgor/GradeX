@@ -33,6 +33,8 @@ import { useVisibilityDetection } from '@/hooks/use-visibility-detection'
 import { useWebRTC } from '@/hooks/use-webrtc'
 import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCircle, List, StickyNote, Copy, ClipboardCheck, Flag, ChevronRight, Bot, Maximize2, BookOpen } from 'lucide-react'
 import { ImageModal } from '@/components/image-modal'
+import { PremiumPdfCtaModal } from '@/components/premium-pdf-cta-modal'
+import { canDownloadExamPdf } from '@/lib/tier-limits'
 
 export default function ExamPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -48,6 +50,9 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const pendingStartRef = useRef<(() => void) | null>(null)
   const [examImageModal, setExamImageModal] = useState<{ src: string } | null>(null)
   const [pdfGenerating, setPdfGenerating] = useState<string | null>(null)
+  const [accountType, setAccountType] = useState<string | undefined>(undefined)
+  const [userRole, setUserRole] = useState<string | undefined>(undefined)
+  const [showPdfCta, setShowPdfCta] = useState(false)
 
   const [userName, setUserName] = useState('')
   const [loggedUserName, setLoggedUserName] = useState('')
@@ -415,6 +420,10 @@ export default function ExamPage({ params }: { params: { id: string } }) {
 
   // Função para baixar PDF da prova
   const handleDownloadExamPDF = async () => {
+    if (!canDownloadExamPdf(accountType, userRole === 'admin')) {
+      setShowPdfCta(true)
+      return
+    }
     try {
       if (exam?.pdfUrl) {
         window.open(exam.pdfUrl, '_blank')
@@ -556,6 +565,8 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       if (res.ok) {
         const data = await res.json()
         setLoggedUserName(data.user.name)
+        setAccountType(data.user.accountType)
+        setUserRole(data.user.role)
         // Se allowCustomName for false, usar nome do usuário automaticamente
         // será feito no useEffect abaixo quando exam estiver carregado
       }
@@ -3779,6 +3790,7 @@ ${respostaAluno}`
           alt="Imagem da questão"
         />
       )}
+      <PremiumPdfCtaModal open={showPdfCta} onClose={() => setShowPdfCta(false)} />
     </div>
     </>
   )

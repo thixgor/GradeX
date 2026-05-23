@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ExamContextMenu } from '@/components/exam-context-menu'
 import { ExamGroup } from '@/components/exam-group'
+import { PremiumPdfCtaModal } from '@/components/premium-pdf-cta-modal'
+import { canDownloadExamPdf } from '@/lib/tier-limits'
 import { Exam } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -94,7 +96,8 @@ type ViewMode = 'home' | 'faculdade' | 'plataforma'
 function ProvasContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { user, handleCreateExam, tierLimitExceeded } = useAppShell()
+  const { user, handleCreateExam, tierLimitExceeded, accountType } = useAppShell()
+  const canDownloadPdf = canDownloadExamPdf(accountType, user?.role === 'admin')
 
   const [exams, setExams] = useState<Exam[]>([])
   const [groups, setGroups] = useState<Group[]>([])
@@ -112,6 +115,7 @@ function ProvasContent() {
   const [pdfModalExam, setPdfModalExam] = useState<Exam | null>(null)
   const [pdfLoading, setPdfLoading] = useState<string | null>(null)
   const [groupPdfProgress, setGroupPdfProgress] = useState<{ done: number; total: number; label: string } | null>(null)
+  const [showPdfCta, setShowPdfCta] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'available' | 'finished' | 'personal' | 'general'>('all')
 
@@ -372,6 +376,10 @@ function ProvasContent() {
     type: 'exam' | 'with-answers' | 'gabarito',
     groupName: string
   ) {
+    if (!canDownloadPdf) {
+      setShowPdfCta(true)
+      return
+    }
     const labels = { exam: 'Provas', 'with-answers': 'Provas + Gabarito Comentado', gabarito: 'Gabaritos' }
     setGroupPdfProgress({ done: 0, total: groupExams.length, label: labels[type] })
     try {
@@ -390,6 +398,11 @@ function ProvasContent() {
   }
 
   async function handleDownloadPDF(exam: Exam, type: 'exam' | 'with-answers' | 'gabarito') {
+    if (!canDownloadPdf) {
+      setPdfModalExam(null)
+      setShowPdfCta(true)
+      return
+    }
     setPdfLoading(type)
     try {
       const { generateExamPDF, generateExamWithAnswersPDF, generateGabaritoPDF, downloadPDF } = await import('@/lib/pdf-generator')
@@ -829,6 +842,7 @@ function ProvasContent() {
         {renderInfoDialog()}
         {renderEditGroupModal()}
         {renderPdfModal()}
+        <PremiumPdfCtaModal open={showPdfCta} onClose={() => setShowPdfCta(false)} />
       </div>
     )
   }
@@ -1069,6 +1083,7 @@ function ProvasContent() {
         {renderDeleteModal()}
         {renderEditGroupModal()}
         {renderPdfModal()}
+        <PremiumPdfCtaModal open={showPdfCta} onClose={() => setShowPdfCta(false)} />
       </div>
     )
   }
@@ -1333,6 +1348,7 @@ function ProvasContent() {
       {renderInfoDialog()}
       {renderEditGroupModal()}
       {renderPdfModal()}
+      <PremiumPdfCtaModal open={showPdfCta} onClose={() => setShowPdfCta(false)} />
 
       {/* Single PDF generation toast */}
       {pdfLoading && (

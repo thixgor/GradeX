@@ -70,6 +70,17 @@ export function getTierLimits(accountType?: AccountType, isAdmin?: boolean): Tie
   return TIER_LIMITS[accountType]
 }
 
+/**
+ * Whether the user is allowed to download exam PDFs (prova, gabarito,
+ * pacote de provas, resposta comentada). Restricted to paid plans
+ * (PREMIUM / ESSENTIAL) and admins. Accepts a plain string so callers
+ * can pass values whose static type may not yet include 'essential'.
+ */
+export function canDownloadExamPdf(accountType?: string | null, isAdmin?: boolean): boolean {
+  if (isAdmin) return true
+  return accountType === 'premium' || accountType === 'essential'
+}
+
 export function getPersonalExamsQuota(accountType?: AccountType): number {
   const limits = getTierLimits(accountType)
   return limits.personalExamsPerDay || 3
