@@ -815,6 +815,27 @@ function ManualClinicoContent() {
           </div>
         )}
 
+        {/* ══════════ FARMACOLOGIA ENTRY ══════════ */}
+        <button
+          onClick={() => router.push('/manual-clinico/farmacologia')}
+          className="group mb-7 w-full overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-r from-primary/[0.08] via-white/[0.03] to-emerald-400/[0.08] p-4 text-left backdrop-blur-xl transition-all hover:border-primary/35 hover:shadow-lg hover:shadow-primary/10"
+        >
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="rounded-xl bg-primary/10 p-2.5">
+                <Pill className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-bold leading-snug">Farmacologia por classes</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  Fármacos organizados por classe e subclasse — mecanismo, metabolismo, excreção, efeitos, posologia e calculadora de dose.
+                </p>
+              </div>
+            </div>
+            <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+          </div>
+        </button>
+
         {/* ══════════ SISTEMAS GRID ══════════ */}
         {!busca && areasAtivas.length === 0 && !sistemaAtivo && (
           <div className="mb-10">
