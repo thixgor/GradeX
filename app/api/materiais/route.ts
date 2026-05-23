@@ -3,6 +3,7 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { getPricingEventStatesByIds, serializePricingEventState } from '@/lib/pricing-events'
+import { FLASHCARD_MANUAL_COLLECTIONS } from '@/lib/flashcard-manual'
 
 export const dynamic = 'force-dynamic'
 
@@ -336,6 +337,28 @@ export async function PUT(request: NextRequest) {
       { _id: new ObjectId(_id) },
       { $set: updates }
     )
+
+    // Se o material for um deck de flashcard vinculado, propagar os campos de
+    // preço de volta ao deck — caso contrário /flashcards/d/<slug> continua
+    // lendo o pricingEventId/preço antigo direto do deck.
+    const material = await db.collection('materials').findOne(
+      { _id: new ObjectId(_id) },
+      { projection: { linkedDeckId: 1 } }
+    )
+    if (material?.linkedDeckId && ObjectId.isValid(String(material.linkedDeckId))) {
+      const deckUpdates: Record<string, any> = {}
+      if ('pricingEventId' in updates) deckUpdates.pricingEventId = updates.pricingEventId
+      if ('pricing' in updates) deckUpdates.pricing = updates.pricing
+      if ('price' in updates) deckUpdates.price = updates.price
+      if ('stripePriceId' in updates) deckUpdates.stripePriceId = updates.stripePriceId
+      if (Object.keys(deckUpdates).length > 0) {
+        deckUpdates.updatedAt = new Date()
+        await db.collection(FLASHCARD_MANUAL_COLLECTIONS.decks).updateOne(
+          { _id: new ObjectId(String(material.linkedDeckId)) },
+          { $set: deckUpdates }
+        )
+      }
+    }
 
     return NextResponse.json({ success: true })
   } catch (error) {
