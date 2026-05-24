@@ -141,6 +141,7 @@ interface EmailBlock {
     imageUrl?: string
     alt?: string
     items?: string[]
+    author?: string
 }
 
 interface EmailDraft {
@@ -201,7 +202,7 @@ function makeBlock(type: EmailBlockType, data: Partial<EmailBlock> = {}): EmailB
         list: { id: newId(), type: 'list', title: 'O que voce recebe', items: ['Beneficio 1', 'Beneficio 2', 'Proximo passo'] },
         button: { id: newId(), type: 'button', buttonText: 'Acessar agora', url: appUrl },
         image: { id: newId(), type: 'image', imageUrl: '', alt: 'Imagem do e-mail' },
-        quote: { id: newId(), type: 'quote', text: 'Insira uma prova social, depoimento ou frase curta.' },
+        quote: { id: newId(), type: 'quote', text: 'Insira uma prova social, depoimento ou frase curta.', author: 'Nome do autor' },
     }
 
     return { ...defaults[type], id: newId(), ...data }
@@ -309,7 +310,13 @@ function renderBlocksHtml(blocks: EmailBlock[]) {
                   </div>
                 `
             case 'quote':
-                return `<blockquote>${escapeHtml(block.text || '')}</blockquote>`
+                return `
+                  <blockquote class="quote-block">
+                    <span class="quote-mark">&ldquo;</span>
+                    <p class="quote-text">${escapeHtml(block.text || '')}</p>
+                    ${block.author ? `<p class="quote-author">${escapeHtml(block.author)}</p>` : ''}
+                  </blockquote>
+                `
             default:
                 return ''
         }
@@ -872,7 +879,11 @@ export default function AdminEmailsPage() {
           .highlight-box p { margin: 0 0 8px; color: #4a2f10; font-size: 16px; font-weight: 500; }
           .highlight-box p:last-child { margin-bottom: 0; }
           .highlight-box strong { color: #3a2408; font-weight: 800; }
-          blockquote { border-left: 4px solid #1a6b4d; margin: 26px 0; padding: 4px 0 4px 20px; color: #43505c; font-style: italic; font-size: 17px; }
+          .quote-block { position: relative; background: #f4fbf7; border-left: 5px solid #1a6b4d; border-radius: 14px; margin: 28px 0; padding: 26px 28px 24px; }
+          .quote-block .quote-mark { display: block; font-family: Georgia, 'Times New Roman', serif; font-size: 52px; line-height: 0.4; color: #1a6b4d; opacity: .35; margin-bottom: 8px; }
+          .quote-block .quote-text { margin: 0; color: #2d3b34; font-style: italic; font-size: 18px; line-height: 1.55; }
+          .quote-block .quote-author { margin: 16px 0 0; color: #0f3d2e; font-style: normal; font-weight: 700; font-size: 15px; }
+          .quote-block .quote-author:before { content: "— "; color: #1a6b4d; }
           .resource-card { border: 1px solid #d4e7dc; background: linear-gradient(135deg, #f4fbf7 0%, #ffffff 100%); border-radius: 18px; padding: 26px; margin: 30px 0; }
           .resource-card h2 { margin-top: 0; }
           .resource-badge { display: inline-block; margin: 0 0 12px 0; padding: 6px 12px; border-radius: 999px; background: #e4f6ec; color: #0f3d2e !important; font-size: 12px !important; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
@@ -895,7 +906,11 @@ export default function AdminEmailsPage() {
             .highlight-box { background: #3d2f10 !important; border-left-color: #ffb74d !important; box-shadow: none !important; }
             .highlight-box p { color: #ffe9c2 !important; }
             .highlight-box strong { color: #ffd98a !important; }
-            blockquote { color: #cdd9d3 !important; border-left-color: #58d6a0 !important; }
+            .quote-block { background: #1b2a23 !important; border-left-color: #58d6a0 !important; }
+            .quote-block .quote-mark { color: #58d6a0 !important; }
+            .quote-block .quote-text { color: #e2ebe6 !important; }
+            .quote-block .quote-author { color: #58d6a0 !important; }
+            .quote-block .quote-author:before { color: #58d6a0 !important; }
             .resource-card { background: #1b2a23 !important; border-color: #2c3f36 !important; }
             .resource-badge { background: #173329 !important; color: #58d6a0 !important; }
             .divider { background: linear-gradient(90deg, transparent, #2a3a33, transparent) !important; }
@@ -1337,7 +1352,10 @@ export default function AdminEmailsPage() {
                                                 )}
 
                                                 {block.type === 'quote' && (
-                                                    <Textarea value={block.text || ''} onChange={(event) => updateBlock(block.id, { text: event.target.value })} placeholder="Citacao ou prova social" className="min-h-[100px]" />
+                                                    <div className="space-y-2">
+                                                        <Textarea value={block.text || ''} onChange={(event) => updateBlock(block.id, { text: event.target.value })} placeholder="Citacao ou prova social" className="min-h-[100px]" />
+                                                        <Input value={block.author || ''} onChange={(event) => updateBlock(block.id, { author: event.target.value })} placeholder="Autor da citacao (ex: Maria, aluna aprovada)" />
+                                                    </div>
                                                 )}
                                             </CardContent>
                                         </Card>

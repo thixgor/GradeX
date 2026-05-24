@@ -155,14 +155,38 @@ const getMarketingEmailTemplate = (content: string, previewText?: string) => {
         .highlight-box p:last-child { margin-bottom: 0; }
         .highlight-box strong { color: #3a2408; font-weight: 800; }
 
-        blockquote {
-          border-left: 4px solid #1a6b4d;
-          margin: 26px 0;
-          padding: 4px 0 4px 20px;
-          color: #43505c;
-          font-style: italic;
-          font-size: 17px;
+        .quote-block {
+          background: #f4fbf7;
+          background-color: #f4fbf7;
+          border-left: 5px solid #1a6b4d;
+          border-radius: 14px;
+          margin: 28px 0;
+          padding: 26px 28px 24px;
         }
+        .quote-block .quote-mark {
+          display: block;
+          font-family: Georgia, 'Times New Roman', serif;
+          font-size: 52px;
+          line-height: 0.4;
+          color: #1a6b4d;
+          opacity: 0.35;
+          margin-bottom: 8px;
+        }
+        .quote-block .quote-text {
+          margin: 0;
+          color: #2d3b34;
+          font-style: italic;
+          font-size: 18px;
+          line-height: 1.55;
+        }
+        .quote-block .quote-author {
+          margin: 16px 0 0;
+          color: #0f3d2e;
+          font-style: normal;
+          font-weight: 700;
+          font-size: 15px;
+        }
+        .quote-block .quote-author:before { content: "— "; color: #1a6b4d; }
 
         .resource-card {
           border: 1px solid #d4e7dc;
@@ -216,7 +240,11 @@ const getMarketingEmailTemplate = (content: string, previewText?: string) => {
           }
           .highlight-box p { color: #ffe9c2 !important; }
           .highlight-box strong { color: #ffd98a !important; }
-          blockquote { color: #cdd9d3 !important; border-left-color: #58d6a0 !important; }
+          .quote-block { background: #1b2a23 !important; background-color: #1b2a23 !important; border-left-color: #58d6a0 !important; }
+          .quote-block .quote-mark { color: #58d6a0 !important; }
+          .quote-block .quote-text { color: #e2ebe6 !important; }
+          .quote-block .quote-author { color: #58d6a0 !important; }
+          .quote-block .quote-author:before { color: #58d6a0 !important; }
           .resource-card { background: #1b2a23 !important; background-color: #1b2a23 !important; border-color: #2c3f36 !important; }
           .resource-badge { background-color: #173329 !important; color: #58d6a0 !important; }
           .divider { background: linear-gradient(90deg, transparent, #2a3a33, transparent) !important; }
