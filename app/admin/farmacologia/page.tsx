@@ -15,6 +15,7 @@ import {
   ArrowLeft,
   Pill,
   ExternalLink,
+  Pencil,
 } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 import { CLASSES_MEDICAMENTOS_NAMES } from '@/lib/types/farmacologia'
@@ -221,6 +222,14 @@ export default function AdminFarmacologia() {
                           )}
                         </div>
                         <div className="flex items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => router.push(`/admin/farmacologia/${m._id}/editar`)}
+                            title="Editar"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
                           <Button
                             variant="ghost"
                             size="sm"
