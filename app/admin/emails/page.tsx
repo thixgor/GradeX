@@ -844,41 +844,63 @@ export default function AdminEmailsPage() {
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="color-scheme" content="light dark">
+        <meta name="supported-color-schemes" content="light dark">
         <style>
-          body { margin: 0; padding: 20px; background: #eef3f7; font-family: 'Segoe UI', Tahoma, sans-serif; }
-          .email-container { max-width: 600px; margin: 0 auto; background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 12px 36px rgba(15, 61, 46, .12); }
-          .header { background: linear-gradient(135deg, #0f3d2e 0%, #1a5c45 100%); padding: 30px 20px; text-align: center; }
-          .header img { max-height: 60px; }
-          .content { padding: 40px 30px; line-height: 1.6; color: #333; }
-          .hero-block { text-align: center; margin-bottom: 28px; }
-          .hero-block h1 { color: #0f3d2e; font-size: 30px; line-height: 1.16; margin: 0 0 12px; }
-          .hero-block p { color: #4a5568; font-size: 17px; margin: 0; }
-          .content h2 { color: #0f3d2e; font-size: 22px; line-height: 1.25; margin: 0 0 12px; }
-          .content p, .content li { color: #4a5568; font-size: 16px; }
+          :root { color-scheme: light dark; supported-color-schemes: light dark; }
+          body { margin: 0; padding: 28px 14px; background: #eef3f0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+          .email-container { max-width: 600px; margin: 0 auto; background: #fff; border-radius: 18px; overflow: hidden; box-shadow: 0 18px 48px rgba(15, 61, 46, .14); }
+          .header { background: linear-gradient(135deg, #0b3326 0%, #14533d 55%, #1a6b4d 100%); padding: 34px 20px; text-align: center; }
+          .header img { max-height: 58px; }
+          .header-accent { height: 4px; background: linear-gradient(90deg, #f57c00 0%, #ffb74d 50%, #f57c00 100%); }
+          .content { padding: 42px 34px; line-height: 1.6; color: #1f2933; }
+          .hero-block { text-align: center; margin-bottom: 30px; }
+          .hero-block h1 { color: #0f3d2e; font-size: 29px; font-weight: 800; line-height: 1.18; letter-spacing: -0.4px; margin: 0 0 14px; }
+          .hero-block p { color: #43505c; font-size: 17px; margin: 0; }
+          .content h2 { color: #0f3d2e; font-size: 22px; font-weight: 700; line-height: 1.28; margin: 0 0 14px; }
+          .content p, .content li { color: #43505c; font-size: 16px; }
           .content p { margin: 0 0 16px; }
           .text-block { margin: 18px 0; }
-          .list-block { margin: 24px 0; }
+          .list-block { margin: 26px 0; }
           .list-block ul { padding-left: 22px; margin: 0; }
-          .list-block li { margin: 8px 0; }
-          .image-block { text-align: center; margin: 24px 0; }
+          .list-block li { margin: 9px 0; }
+          .image-block { text-align: center; margin: 26px 0; }
           .image-block img { max-width: 100%; border-radius: 14px; }
-          .button-block { text-align: center; margin: 24px 0; }
-          .cta-button { display: inline-block; background: linear-gradient(135deg, #f57c00 0%, #ff9800 100%); color: #fff !important; text-decoration: none; padding: 16px 34px; border-radius: 999px; font-weight: 800; box-shadow: 0 6px 18px rgba(245, 124, 0, 0.28); }
-          .highlight-box { background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); border-left: 4px solid #f57c00; padding: 20px; margin: 25px 0; border-radius: 0 10px 10px 0; }
-          .highlight-box p { margin: 0 0 8px; color: #5d4037; }
-          blockquote { border-left: 4px solid #0f3d2e; margin: 24px 0; padding-left: 18px; color: #4a5568; font-style: italic; }
-          .resource-card { border: 1px solid #d9e8df; background: linear-gradient(135deg, #f6fbf8 0%, #ffffff 100%); border-radius: 16px; padding: 24px; margin: 28px 0; }
+          .button-block { text-align: center; margin: 28px 0; }
+          .cta-button { display: inline-block; background: linear-gradient(135deg, #f57c00 0%, #ff9b21 100%); color: #fff !important; text-decoration: none; padding: 16px 38px; border-radius: 999px; font-weight: 800; letter-spacing: 0.2px; box-shadow: 0 8px 20px rgba(245, 124, 0, 0.32); }
+          .highlight-box { background: linear-gradient(135deg, #fff4d6 0%, #ffe6a8 100%); border-left: 5px solid #f57c00; padding: 22px 24px; margin: 28px 0; border-radius: 14px; box-shadow: 0 6px 18px rgba(245, 124, 0, 0.12); }
+          .highlight-box p { margin: 0 0 8px; color: #4a2f10; font-size: 16px; font-weight: 500; }
+          .highlight-box p:last-child { margin-bottom: 0; }
+          .highlight-box strong { color: #3a2408; font-weight: 800; }
+          blockquote { border-left: 4px solid #1a6b4d; margin: 26px 0; padding: 4px 0 4px 20px; color: #43505c; font-style: italic; font-size: 17px; }
+          .resource-card { border: 1px solid #d4e7dc; background: linear-gradient(135deg, #f4fbf7 0%, #ffffff 100%); border-radius: 18px; padding: 26px; margin: 30px 0; }
           .resource-card h2 { margin-top: 0; }
-          .resource-badge { display: inline-block; margin: 0 0 12px 0; padding: 5px 10px; border-radius: 999px; background: #e9f8ef; color: #0f3d2e !important; font-size: 12px !important; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
-          .divider { height: 1px; background: linear-gradient(90deg, transparent, #d7dee6, transparent); margin: 30px 0; }
-          .footer { background: #fafbfc; padding: 30px; text-align: center; border-top: 1px solid #edf2f7; }
-          .footer p { margin: 5px 0; font-size: 13px; color: #718096; }
+          .resource-badge { display: inline-block; margin: 0 0 12px 0; padding: 6px 12px; border-radius: 999px; background: #e4f6ec; color: #0f3d2e !important; font-size: 12px !important; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
+          .divider { height: 1px; background: linear-gradient(90deg, transparent, #d9e3dd, transparent); margin: 32px 0; }
+          .footer { background: #f6f9f7; padding: 30px; text-align: center; border-top: 1px solid #e4ece8; }
+          .footer p { margin: 5px 0; font-size: 13px; color: #6a7b73; }
           .social-link { color: #f57c00; font-weight: bold; text-decoration: none; }
           @media only screen and (max-width: 600px) {
-            body { padding: 0; }
+            body { padding: 14px 8px; }
             .content { padding: 28px 22px; }
             .hero-block h1 { font-size: 25px; }
-            .cta-button { display: block; padding: 15px 22px; }
+            .cta-button { display: block; padding: 15px 24px; }
+          }
+          @media (prefers-color-scheme: dark) {
+            body { background: #0c1411 !important; }
+            .email-container { background: #15211c !important; box-shadow: none !important; }
+            .content { background: #15211c !important; }
+            .hero-block h1, .content h2 { color: #58d6a0 !important; }
+            .content p, .content li, .hero-block p, .text-block, .list-block li { color: #cdd9d3 !important; }
+            .highlight-box { background: #3d2f10 !important; border-left-color: #ffb74d !important; box-shadow: none !important; }
+            .highlight-box p { color: #ffe9c2 !important; }
+            .highlight-box strong { color: #ffd98a !important; }
+            blockquote { color: #cdd9d3 !important; border-left-color: #58d6a0 !important; }
+            .resource-card { background: #1b2a23 !important; border-color: #2c3f36 !important; }
+            .resource-badge { background: #173329 !important; color: #58d6a0 !important; }
+            .divider { background: linear-gradient(90deg, transparent, #2a3a33, transparent) !important; }
+            .footer { background: #101a16 !important; border-top-color: #1f2d27 !important; }
+            .footer p { color: #849991 !important; }
           }
         </style>
       </head>
@@ -887,6 +909,7 @@ export default function AdminEmailsPage() {
           <div class="header">
             <img src="${logoUrl}" alt="DomineAqui">
           </div>
+          <div class="header-accent"></div>
           <div class="content">
             ${finalContent || '<p style="color: #999; text-align: center;">Seu conteudo aparecera aqui...</p>'}
           </div>
