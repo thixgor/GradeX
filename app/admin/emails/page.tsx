@@ -1207,6 +1207,16 @@ export default function AdminEmailsPage() {
                                     </div>
                                 </div>
 
+                                <div className="flex flex-wrap items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-300">
+                                    <span className="font-semibold">Variáveis de personalização:</span>
+                                    <code className="rounded bg-amber-100 px-1.5 py-0.5 font-mono dark:bg-amber-900/60">%nome%</code>
+                                    <span className="text-amber-600 dark:text-amber-400">— primeiro nome</span>
+                                    <span className="mx-1 text-amber-300 dark:text-amber-700">|</span>
+                                    <code className="rounded bg-amber-100 px-1.5 py-0.5 font-mono dark:bg-amber-900/60">%nome completo%</code>
+                                    <span className="text-amber-600 dark:text-amber-400">— nome completo</span>
+                                    <span className="ml-auto text-amber-500 dark:text-amber-500">Funciona no assunto, preview e conteúdo</span>
+                                </div>
+
                                 <div className="rounded-lg border bg-slate-50 p-4 dark:bg-slate-900">
                                     <div className="flex items-start gap-3">
                                         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-700 text-sm font-bold text-white">

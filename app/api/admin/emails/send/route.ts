@@ -18,13 +18,26 @@ const transporter = nodemailer.createTransport({
 
 interface EmailPayload {
     recipients: {
-        userIds?: string[]        // IDs dos usuários selecionados
-        additionalEmails?: string[] // E-mails adicionais (não cadastrados)
-        selectAll?: boolean       // Selecionar todos os usuários
+        userIds?: string[]
+        additionalEmails?: string[]
+        selectAll?: boolean
     }
     subject: string
-    content: string // HTML do e-mail
-    previewText?: string // Texto de preview
+    content: string
+    previewText?: string
+}
+
+interface Recipient {
+    email: string
+    name: string
+}
+
+function personalize(text: string, name: string): string {
+    const fullName = name || 'você'
+    const firstName = fullName.split(' ')[0]
+    return text
+        .replace(/%nome completo%/gi, fullName)
+        .replace(/%nome%/gi, firstName)
 }
 
 // Template base para e-mails em massa
@@ -258,41 +271,45 @@ export async function POST(request: NextRequest) {
         const db = await getDb()
         const usersCollection = db.collection<User>('users')
 
-        let emailList: string[] = []
+        let recipientList: Recipient[] = []
 
-        // Coletar e-mails dos usuários selecionados
         if (recipients.selectAll) {
-            const allUsers = await usersCollection.find({}).project({ email: 1 }).toArray()
-            emailList = allUsers.map(u => u.email)
+            const allUsers = await usersCollection.find({}).project({ email: 1, name: 1 }).toArray()
+            recipientList = allUsers.map(u => ({ email: u.email, name: u.name || '' }))
         } else if (recipients.userIds && recipients.userIds.length > 0) {
             const { ObjectId } = await import('mongodb')
             const selectedUsers = await usersCollection
                 .find({ _id: { $in: recipients.userIds.map(id => new ObjectId(id)) } })
-                .project({ email: 1 })
+                .project({ email: 1, name: 1 })
                 .toArray()
-            emailList = selectedUsers.map(u => u.email)
+            recipientList = selectedUsers.map(u => ({ email: u.email, name: u.name || '' }))
         }
 
-        // Adicionar e-mails extras
+        // Adicionar e-mails extras (sem nome cadastrado)
         if (recipients.additionalEmails && recipients.additionalEmails.length > 0) {
-            const validEmails = recipients.additionalEmails.filter(email =>
-                /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-            )
-            emailList = [...emailList, ...validEmails]
+            const validExtras = recipients.additionalEmails
+                .filter(email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+                .map(email => ({ email, name: '' }))
+            recipientList = [...recipientList, ...validExtras]
         }
 
-        // Remover duplicatas
-        emailList = [...new Set(emailList)]
+        // Remover duplicatas por e-mail
+        const seen = new Set<string>()
+        recipientList = recipientList.filter(r => {
+            if (seen.has(r.email)) return false
+            seen.add(r.email)
+            return true
+        })
 
-        if (emailList.length === 0) {
+        if (recipientList.length === 0) {
             return NextResponse.json(
                 { error: 'Nenhum destinatário válido encontrado' },
                 { status: 400 }
             )
         }
 
-        // Gerar HTML final
-        const html = getMarketingEmailTemplate(content, previewText)
+        // Template base (sem personalização ainda)
+        const templateHtml = getMarketingEmailTemplate(content, previewText)
 
         // Enviar e-mails em lotes para evitar timeout
         const BATCH_SIZE = 50
@@ -300,21 +317,23 @@ export async function POST(request: NextRequest) {
         let failed = 0
         const errors: string[] = []
 
-        for (let i = 0; i < emailList.length; i += BATCH_SIZE) {
-            const batch = emailList.slice(i, i + BATCH_SIZE)
+        for (let i = 0; i < recipientList.length; i += BATCH_SIZE) {
+            const batch = recipientList.slice(i, i + BATCH_SIZE)
 
-            const promises = batch.map(async (email) => {
+            const promises = batch.map(async (recipient) => {
                 try {
+                    const personalizedHtml = personalize(templateHtml, recipient.name)
+                    const personalizedSubject = personalize(subject, recipient.name)
                     await transporter.sendMail({
                         from: '"DomineAqui" <no-reply@domineaqui.com.br>',
-                        to: email,
-                        subject: subject,
-                        html: html,
+                        to: recipient.email,
+                        subject: personalizedSubject,
+                        html: personalizedHtml,
                     })
-                    return { success: true, email }
+                    return { success: true, email: recipient.email }
                 } catch (err) {
                     const error = err as Error
-                    return { success: false, email, error: error.message }
+                    return { success: false, email: recipient.email, error: error.message }
                 }
             })
 
@@ -330,16 +349,16 @@ export async function POST(request: NextRequest) {
             })
 
             // Pequena pausa entre lotes para não sobrecarregar o servidor SMTP
-            if (i + BATCH_SIZE < emailList.length) {
+            if (i + BATCH_SIZE < recipientList.length) {
                 await new Promise(resolve => setTimeout(resolve, 1000))
             }
         }
 
         return NextResponse.json({
             success: true,
-            message: `E-mails enviados: ${sent} de ${emailList.length}`,
+            message: `E-mails enviados: ${sent} de ${recipientList.length}`,
             stats: {
-                total: emailList.length,
+                total: recipientList.length,
                 sent,
                 failed,
             },
