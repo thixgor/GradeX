@@ -59,6 +59,9 @@ export interface Medicamento {
   subclasse: string                // subclasse dentro da classe
   slug: string
 
+  // ── Seção inicial independente (não entra no navegador de seções) ──
+  nomes_comerciais: string         // principais marcas/apresentações comerciais
+
   // ── Seções da ficha ──
   classificacao: string            // inclui se é pró-fármaco, fármaco ativo, etc.
   tipo_farmaco: TipoFarmaco | ''   // classificação rápida (badge)
@@ -70,6 +73,7 @@ export interface Medicamento {
   efeitos_colaterais: string[]
   efeitos_adversos: string[]
   contraindicacoes: Contraindicacao[]
+  interacoes_medicamentosas: string  // principais fármacos/situações de interação e o que causam
   posologia: string
   calculo_dose: DoseCalculo
   fluxograma_uso: string

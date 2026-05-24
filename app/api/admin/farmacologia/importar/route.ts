@@ -160,6 +160,9 @@ function parseMedicamentoText(text: string): ParsedMedicamento {
     'NOME': 'nome',
     'SINONIMOS': 'sinonimos',
     'SINÔNIMOS': 'sinonimos',
+    'NOMES_COMERCIAIS': 'nomes_comerciais',
+    'NOMES COMERCIAIS': 'nomes_comerciais',
+    'NOME_COMERCIAL': 'nomes_comerciais',
     'CLASSE': 'classe_principal',
     'CLASSE_PRINCIPAL': 'classe_principal',
     'SUBCLASSE': 'subclasse',
@@ -183,6 +186,10 @@ function parseMedicamentoText(text: string): ParsedMedicamento {
     'EFEITOS ADVERSOS': 'efeitos_adversos',
     'CONTRAINDICACOES': 'contraindicacoes',
     'CONTRAINDICAÇÕES': 'contraindicacoes',
+    'INTERACOES': 'interacoes_medicamentosas',
+    'INTERACOES_MEDICAMENTOSAS': 'interacoes_medicamentosas',
+    'INTERAÇÕES MEDICAMENTOSAS': 'interacoes_medicamentosas',
+    'INTERAÇÕES': 'interacoes_medicamentosas',
     'POSOLOGIA': 'posologia',
     'CALCULO_DOSE': 'calculo_dose',
     'CÁLCULO DE DOSE': 'calculo_dose',
@@ -218,6 +225,7 @@ function parseMedicamentoText(text: string): ParsedMedicamento {
   data.sinonimos = rawData.sinonimos
     ? rawData.sinonimos.split(/[;,]/).map(s => s.trim()).filter(Boolean)
     : []
+  data.nomes_comerciais = rawData.nomes_comerciais || ''
 
   // Classe (validação flexível: casa com a taxonomia ignorando acentos)
   data.classe_principal = ''
@@ -247,6 +255,7 @@ function parseMedicamentoText(text: string): ParsedMedicamento {
   data.efeitos_colaterais = splitList(rawData.efeitos_colaterais || '')
   data.efeitos_adversos = splitList(rawData.efeitos_adversos || '')
   data.contraindicacoes = parseContraindicacoes(rawData.contraindicacoes || '')
+  data.interacoes_medicamentosas = rawData.interacoes_medicamentosas || ''
   data.posologia = rawData.posologia || ''
   data.calculo_dose = parseDoseCalculo(rawData.calculo_dose || '')
   data.fluxograma_uso = rawData.fluxograma_uso || ''

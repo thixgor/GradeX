@@ -76,6 +76,7 @@ export default function AdminFarmacologia() {
         let t = ''
         t += `##NOME: ${m.nome}\n`
         t += `##SINONIMOS: ${(m.sinonimos || []).join('; ')}\n`
+        if (m.nomes_comerciais) t += `##NOMES_COMERCIAIS: ${m.nomes_comerciais}\n`
         t += `##CLASSE: ${m.classe_principal}\n`
         t += `##SUBCLASSE: ${m.subclasse || ''}\n`
         if (m.tipo_farmaco) t += `##TIPO: ${m.tipo_farmaco}\n`
@@ -91,6 +92,7 @@ export default function AdminFarmacologia() {
           .map((c: any) => `Condição: ${c.condicao}\nMotivo: ${c.motivo || ''}`)
           .join('\n---\n')
         t += `##CONTRAINDICACOES: ${ci}\n`
+        if (m.interacoes_medicamentosas) t += `##INTERACOES_MEDICAMENTOSAS: ${m.interacoes_medicamentosas}\n`
         t += `##POSOLOGIA: ${m.posologia || ''}\n`
         const d = m.calculo_dose
         if (d && (d.mg_por_kg != null || d.dose_fixa != null)) {

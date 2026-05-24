@@ -36,7 +36,8 @@ Cada campo começa com `##CAMPO:` seguido do conteúdo, que pode ocupar várias 
 
 | Campo | Descrição |
 |---|---|
-| `##SINONIMOS:` | Nomes alternativos/comerciais, separados por `;` |
+| `##SINONIMOS:` | Nomes alternativos/genéricos, separados por `;` |
+| `##NOMES_COMERCIAIS:` | **Seção inicial independente.** Principais marcas/apresentações comerciais (ex.: Tylenol®, Dôrico®). Exibida no topo da ficha, separada das demais seções e fora do navegador de seções. |
 | `##SUBCLASSE:` | Subclasse dentro da classe (ver lista) |
 | `##TIPO:` | Tipo do fármaco: `Fármaco ativo`, `Pró-fármaco`, `Metabólito ativo`, `Fármaco ativo com metabólito ativo` ou `Outro` |
 | `##CLASSIFICACAO:` | Classificação detalhada. **Diga se é pró-fármaco, fármaco ativo etc.** |
@@ -48,6 +49,7 @@ Cada campo começa com `##CAMPO:` seguido do conteúdo, que pode ocupar várias 
 | `##EFEITOS_COLATERAIS:` | Lista separada por `;` ou uma por linha |
 | `##EFEITOS_ADVERSOS:` | Lista separada por `;` ou uma por linha |
 | `##CONTRAINDICACOES:` | Condição + motivo (ver formato abaixo) |
+| `##INTERACOES_MEDICAMENTOSAS:` | Principais fármacos/situações que geram interação **e o que cada interação causa**. Uma interação por linha (ver formato abaixo). |
 | `##POSOLOGIA:` | Dose, frequência, duração de uso, ajustes |
 | `##CALCULO_DOSE:` | Configuração da calculadora de dose (ver abaixo) |
 | `##FLUXOGRAMA_USO:` | Fluxo decisório de uso (uma etapa por linha) |
@@ -55,6 +57,8 @@ Cada campo começa com `##CAMPO:` seguido do conteúdo, que pode ocupar várias 
 | `##REFERENCIAS:` | Referências bibliográficas |
 
 > A diferença entre **Efeitos Colaterais** e **Efeitos Adversos** já é exibida automaticamente (texto fixo) na ficha, antes das duas listas. Você só precisa fornecer as listas.
+
+> **Nomes comerciais** é uma seção **independente** que abre no topo da ficha (não faz parte do navegador de seções). Já **Interações Medicamentosas** é uma seção normal, listada no navegador junto com Mecanismo, Contraindicações, Posologia etc.
 
 ---
 
@@ -91,6 +95,22 @@ Motivo: Reações de hipersensibilidade / anafilaxia
 ```
 
 Também é aceito o formato compacto, uma por linha: `Condição | Motivo` (ou `Condição - Motivo`).
+
+---
+
+## Formato das Interações Medicamentosas
+
+No campo `##INTERACOES_MEDICAMENTOSAS:`, descreva os **principais fármacos ou situações** que interagem com o medicamento e, sempre, **o que a interação causa** (o desfecho clínico). Use uma interação por linha. O conteúdo é texto livre (Markdown simples), então prefira o padrão **`Fármaco/Situação`** seguido do efeito:
+
+```
+##INTERACOES_MEDICAMENTOSAS:
+- Varfarina: potencializa o efeito anticoagulante → maior risco de sangramento.
+- Álcool / etilismo crônico: induz CYP2E1 e depleta glutationa → maior hepatotoxicidade.
+- Indutores enzimáticos (carbamazepina, fenitoína, rifampicina): aumentam a formação de NAPQI → risco hepático.
+- Isoniazida: eleva a toxicidade hepática.
+```
+
+Não há campo de "motivo" estruturado aqui (diferente das contraindicações): escreva o porquê/efeito na mesma linha, após `→`, `:` ou `-`.
 
 ---
 
@@ -139,7 +159,8 @@ A calculadora só aparece na ficha quando há `Dose por kg` ou `Dose fixa`.
 
 ```
 ##NOME: Paracetamol
-##SINONIMOS: Acetaminofeno; Tylenol
+##SINONIMOS: Acetaminofeno
+##NOMES_COMERCIAIS: Tylenol®; Dôrico®; Parador®; Tylflex® (associações). Apresentações: comprimidos 500/750 mg, gotas 200 mg/mL, solução oral.
 ##CLASSE: Analgésicos, Anti-inflamatórios e Antitérmicos
 ##SUBCLASSE: Analgésicos não-opioides
 ##TIPO: Fármaco ativo
@@ -157,6 +178,12 @@ Motivo: Redução da glutationa e da capacidade de conjugação aumenta o acúmu
 ---
 Condição: Hipersensibilidade ao paracetamol
 Motivo: Risco de reações alérgicas / anafilaxia
+##INTERACOES_MEDICAMENTOSAS:
+- Varfarina: uso regular potencializa o efeito anticoagulante → maior risco de sangramento (monitorar INR).
+- Álcool / etilismo crônico: induz CYP2E1 e depleta glutationa → maior formação de NAPQI e hepatotoxicidade.
+- Indutores enzimáticos (carbamazepina, fenitoína, fenobarbital, rifampicina): aumentam o metabolismo via CYP → mais NAPQI e risco hepático.
+- Isoniazida: eleva a toxicidade hepática.
+- Metoclopramida/domperidona: aceleram a absorção do paracetamol (pico mais rápido).
 ##POSOLOGIA: Adultos: 500–1000 mg por dose, a cada 6 h, máximo 4 g/dia (3 g/dia em hepatopatas ou idosos frágeis). Crianças: 10–15 mg/kg/dose a cada 4–6 h.
 ##CALCULO_DOSE:
 Unidade: mg

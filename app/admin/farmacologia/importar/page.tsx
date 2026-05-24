@@ -188,7 +188,7 @@ export default function ImportarFarmacologiaPage() {
                     value={texto}
                     onChange={e => { setTexto(e.target.value); setPreview(null); setResult(null) }}
                     className="w-full min-h-[300px] px-3 py-2 rounded-md border bg-background text-sm resize-y font-mono"
-                    placeholder={`Cole aqui o conteúdo formatado. Exemplo:\n\n##NOME: Paracetamol\n##SINONIMOS: Acetaminofeno; Tylenol\n##CLASSE: Analgésicos, Anti-inflamatórios e Antitérmicos\n##SUBCLASSE: Analgésicos não-opioides\n##TIPO: Fármaco ativo\n##CLASSIFICACAO: ...\n##PRINCIPAIS_FUNCOES: ...\n##MECANISMO_COMPACTO: ...\n\nPara múltiplos fármacos, use ---NOVO_FARMACO--- como separador.`}
+                    placeholder={`Cole aqui o conteúdo formatado. Exemplo:\n\n##NOME: Paracetamol\n##SINONIMOS: Acetaminofeno\n##NOMES_COMERCIAIS: Tylenol®; Dôrico®\n##CLASSE: Analgésicos, Anti-inflamatórios e Antitérmicos\n##SUBCLASSE: Analgésicos não-opioides\n##TIPO: Fármaco ativo\n##CLASSIFICACAO: ...\n##PRINCIPAIS_FUNCOES: ...\n##MECANISMO_COMPACTO: ...\n##INTERACOES_MEDICAMENTOSAS: ...\n\nPara múltiplos fármacos, use ---NOVO_FARMACO--- como separador.`}
                   />
                 )}
               </CardContent>
@@ -258,11 +258,17 @@ export default function ImportarFarmacologiaPage() {
                       )}
                       <div className="text-xs text-muted-foreground space-y-1">
                         {item.data?.tipo_farmaco && <p>Tipo: {item.data.tipo_farmaco}</p>}
+                        {item.data?.nomes_comerciais && (
+                          <p>Nomes comerciais: {item.data.nomes_comerciais.substring(0, 80)}{item.data.nomes_comerciais.length > 80 ? '...' : ''}</p>
+                        )}
                         {item.data?.mecanismo_acao_compacto && (
                           <p>Mecanismo: {item.data.mecanismo_acao_compacto.substring(0, 100)}...</p>
                         )}
                         {item.data?.contraindicacoes?.length > 0 && (
                           <p>Contraindicações: {item.data.contraindicacoes.map((c: any) => c.condicao).join(', ')}</p>
+                        )}
+                        {item.data?.interacoes_medicamentosas && (
+                          <p>Interações: {item.data.interacoes_medicamentosas.substring(0, 80)}{item.data.interacoes_medicamentosas.length > 80 ? '...' : ''}</p>
                         )}
                         {item.data?.calculo_dose?.enabled && (
                           <p className="text-emerald-600">Calculadora de dose configurada ✓</p>
