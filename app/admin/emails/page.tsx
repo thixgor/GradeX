@@ -221,12 +221,16 @@ function escapeHtml(value = '') {
         .replace(/'/g, '&#039;')
 }
 
+function applyInline(escaped = '') {
+    return escaped.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+}
+
 function textToHtml(value = '') {
     return escapeHtml(value)
         .split(/\n{2,}/)
         .map(paragraph => paragraph.trim())
         .filter(Boolean)
-        .map(paragraph => `<p>${paragraph.replace(/\n/g, '<br>')}</p>`)
+        .map(paragraph => `<p>${applyInline(paragraph.replace(/\n/g, '<br>'))}</p>`)
         .join('')
 }
 
@@ -289,7 +293,7 @@ function renderBlocksHtml(blocks: EmailBlock[]) {
                   <div class="list-block">
                     ${block.title ? `<h2>${escapeHtml(block.title)}</h2>` : ''}
                     <ul>
-                      ${(block.items || []).filter(Boolean).map(item => `<li>${escapeHtml(item)}</li>`).join('')}
+                      ${(block.items || []).filter(Boolean).map(item => `<li>${applyInline(escapeHtml(item))}</li>`).join('')}
                     </ul>
                   </div>
                 `
@@ -313,7 +317,7 @@ function renderBlocksHtml(blocks: EmailBlock[]) {
                 return `
                   <blockquote class="quote-block">
                     <span class="quote-mark">&ldquo;</span>
-                    <p class="quote-text">${escapeHtml(block.text || '')}</p>
+                    <p class="quote-text">${applyInline(escapeHtml(block.text || ''))}</p>
                     ${block.author ? `<p class="quote-author">${escapeHtml(block.author)}</p>` : ''}
                   </blockquote>
                 `
