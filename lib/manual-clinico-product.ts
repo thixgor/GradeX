@@ -44,6 +44,8 @@ export const DEFAULT_MANUAL_CLINICO_CONFIG: Omit<ManualClinicoProductConfig, '_i
   freeAccessMode: 'quantity',
   freeQuantity: 5,
   freePathologySlugs: [],
+  includedInPremium: false,
+  includedInEssential: false,
 }
 
 function planFromInput(input: any, fallback: ManualClinicoPlan): ManualClinicoPlan {
@@ -127,8 +129,10 @@ export interface ManualClinicoPublicProduct {
 
 export interface ManualClinicoAccessState {
   hasFullAccess: boolean
-  reason: 'admin' | 'purchased' | 'free_pathology' | 'locked' | 'guest'
+  reason: 'admin' | 'purchased' | 'included_plan' | 'free_pathology' | 'locked' | 'guest'
   purchase?: ManualClinicoPurchase | null
+  /** Quando o acesso vem incluso no plano (premium/essential), indica qual. */
+  includedPlan?: 'premium' | 'essential' | null
 }
 
 export interface ManualClinicoFreeQuotaState {
@@ -236,6 +240,8 @@ export async function getManualClinicoConfig(db: Db): Promise<ManualClinicoProdu
     freePathologySlugs: Array.isArray(existing?.freePathologySlugs)
       ? uniqueSlugs(existing!.freePathologySlugs)
       : [],
+    includedInPremium: existing?.includedInPremium === true,
+    includedInEssential: existing?.includedInEssential === true,
     plans: normalizeManualClinicoPlans(existing?.plans),
   }
 }
@@ -265,6 +271,8 @@ export async function upsertManualClinicoConfig(
     freeAccessMode: input.freeAccessMode === 'list' ? 'list' : 'quantity',
     freeQuantity: Math.max(0, Math.floor(Number(input.freeQuantity || 0))),
     freePathologySlugs: uniqueSlugs(input.freePathologySlugs || []),
+    includedInPremium: input.includedInPremium === true,
+    includedInEssential: input.includedInEssential === true,
     pricingEventId: input.pricingEventId ? String(input.pricingEventId) : null,
     plans: normalizeManualClinicoPlans((input as any).plans),
     updatedAt: now,
@@ -432,16 +440,51 @@ export function serializeManualClinicoFreeQuota(quota: ManualClinicoFreeQuotaSta
 
 export async function getManualClinicoAccess(
   db: Db,
-  session: TokenPayload | null | undefined
+  session: TokenPayload | null | undefined,
+  config?: ManualClinicoProductConfig
 ): Promise<ManualClinicoAccessState> {
   if (session?.role === 'admin') return { hasFullAccess: true, reason: 'admin' }
   if (!session?.userId) return { hasFullAccess: false, reason: 'guest' }
+
+  // Acesso incluso no plano (Premium/Essential): dispensa compra avulsa.
+  const resolvedConfig = config || await getManualClinicoConfig(db)
+  if (resolvedConfig.includedInPremium || resolvedConfig.includedInEssential) {
+    const includedPlan = await getManualClinicoIncludedPlanFor(db, session, resolvedConfig)
+    if (includedPlan) {
+      return { hasFullAccess: true, reason: 'included_plan', includedPlan }
+    }
+  }
 
   const purchase = await getActiveManualClinicoPurchase(db, session)
 
   return purchase
     ? { hasFullAccess: true, reason: 'purchased', purchase }
     : { hasFullAccess: false, reason: 'locked' }
+}
+
+/**
+ * Retorna 'premium'/'essential' se a conta do usuário tem o Manual incluso no
+ * plano (conforme configuração), ou null caso contrário.
+ */
+async function getManualClinicoIncludedPlanFor(
+  db: Db,
+  session: Pick<TokenPayload, 'userId'>,
+  config: ManualClinicoProductConfig
+): Promise<'premium' | 'essential' | null> {
+  if (!config.includedInPremium && !config.includedInEssential) return null
+  let accountType: string | null | undefined
+  try {
+    const user = await db.collection('users').findOne(
+      { _id: new ObjectId(session.userId) },
+      { projection: { accountType: 1 } }
+    )
+    accountType = (user as any)?.accountType
+  } catch {
+    return null
+  }
+  if (config.includedInPremium && accountType === 'premium') return 'premium'
+  if (config.includedInEssential && accountType === 'essential') return 'essential'
+  return null
 }
 
 /**

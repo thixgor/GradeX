@@ -163,6 +163,7 @@ interface ManualSubscriptionInfo {
 interface ManualAccess {
   hasFullAccess: boolean
   reason: string
+  includedPlan?: 'premium' | 'essential' | null
   freeQuota?: {
     mode: 'quantity' | 'list'
     limit: number
@@ -595,6 +596,12 @@ function ManualClinicoContent() {
                       ? `Você ainda tem ${freeQuota.remaining} de ${freeQuota.limit} aberturas grátis`
                       : `Você já usou suas ${freeQuota.limit} aberturas grátis`
                     : `Entre e escolha ${freeQuota.limit} patologias grátis agora`}
+                </div>
+              )}
+              {ctasReady && manualAccess.hasFullAccess && manualAccess.reason === 'included_plan' && (
+                <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-amber-300/30 bg-amber-400/10 px-3 py-1.5 text-xs font-bold text-amber-700 dark:text-amber-300">
+                  <Crown className="h-4 w-4" />
+                  Incluso no seu plano {manualAccess.includedPlan === 'essential' ? 'Essential' : 'Premium'}
                 </div>
               )}
               {ctasReady && manualAccess.hasFullAccess && manualAccess.subscription && (

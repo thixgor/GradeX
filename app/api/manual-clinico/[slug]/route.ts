@@ -30,10 +30,8 @@ export async function GET(
       return NextResponse.json({ error: 'Patologia não encontrada' }, { status: 404 })
     }
 
-    const [config, access] = await Promise.all([
-      getManualClinicoConfig(db),
-      getManualClinicoAccess(db, session),
-    ])
+    const config = await getManualClinicoConfig(db)
+    const access = await getManualClinicoAccess(db, session, config)
     const freeSlugs = await getManualClinicoFreeSlugSet(db, config)
     const isGlobalFree = isManualClinicoPathologyFree(patologia as any, freeSlugs)
     let freeQuota = await getManualClinicoFreeQuotaState(db, session, config)

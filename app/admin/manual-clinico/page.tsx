@@ -67,6 +67,8 @@ type ManualProductConfigForm = {
   freeAccessMode: 'quantity' | 'list'
   freeQuantity: number
   freePathologySlugs: string[]
+  includedInPremium: boolean
+  includedInEssential: boolean
   pricingEventId: string | null
 }
 
@@ -126,6 +128,8 @@ function emptyProductConfig(): ManualProductConfigForm {
     freeAccessMode: 'quantity',
     freeQuantity: 5,
     freePathologySlugs: [],
+    includedInPremium: false,
+    includedInEssential: false,
     pricingEventId: null,
   }
 }
@@ -257,6 +261,8 @@ export default function AdminManualClinico() {
         freeAccessMode: cfg.freeAccessMode === 'list' ? 'list' : 'quantity',
         freeQuantity: Number(cfg.freeQuantity || 0),
         freePathologySlugs: Array.isArray(cfg.freePathologySlugs) ? cfg.freePathologySlugs : [],
+        includedInPremium: cfg.includedInPremium === true,
+        includedInEssential: cfg.includedInEssential === true,
         pricingEventId: cfg.pricingEventId || null,
       })
       setProductStats(data.stats || { pathologyCount: 0, freeCount: 0, lockedCount: 0, buyerCount: 0, currentPrice: 0, freeQuotaPerUser: 0 })
@@ -687,6 +693,31 @@ export default function AdminManualClinico() {
                         ['Permitir cupom', 'allowCoupons'],
                         ['Acesso vitalicio', 'lifetimeAccess'],
                       ].map(([label, key]) => (
+                        <label key={key} className="flex items-center justify-between gap-3 rounded-xl border bg-background px-3 py-2">
+                          <span>{label}</span>
+                          <input
+                            type="checkbox"
+                            checked={(productConfig as any)[key]}
+                            onChange={e => setProductConfig(c => ({ ...c, [key]: e.target.checked } as ManualProductConfigForm))}
+                          />
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl border bg-primary/5 p-4">
+                    <p className="mb-1 flex items-center gap-2 text-sm font-bold">
+                      <Crown className="h-4 w-4 text-primary" />
+                      Incluso nos planos
+                    </p>
+                    <p className="mb-3 text-xs text-muted-foreground">
+                      Libera o Manual Clínico completo para esses cargos, sem precisar comprar avulso.
+                    </p>
+                    <div className="space-y-2 text-sm">
+                      {([
+                        ['Incluído no Premium', 'includedInPremium'],
+                        ['Incluído no Essential', 'includedInEssential'],
+                      ] as const).map(([label, key]) => (
                         <label key={key} className="flex items-center justify-between gap-3 rounded-xl border bg-background px-3 py-2">
                           <span>{label}</span>
                           <input

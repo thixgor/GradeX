@@ -18,10 +18,8 @@ export const runtime = 'nodejs'
 export async function GET() {
   try {
     const [session, db] = await Promise.all([getSession(), getDb()])
-    const [config, access] = await Promise.all([
-      getManualClinicoConfig(db),
-      getManualClinicoAccess(db, session),
-    ])
+    const config = await getManualClinicoConfig(db)
+    const access = await getManualClinicoAccess(db, session, config)
     const freeQuota = await getManualClinicoFreeQuotaState(db, session, config)
     const activePurchase = session ? await getActiveManualClinicoPurchase(db, session) : null
     const latestPurchase = !activePurchase && session ? await getLatestManualClinicoPurchase(db, session) : null
@@ -32,6 +30,7 @@ export async function GET() {
       access: {
         hasFullAccess: access.hasFullAccess,
         reason: access.reason,
+        includedPlan: access.includedPlan || null,
         freeQuota: serializeManualClinicoFreeQuota(freeQuota),
         subscription,
       },

@@ -32,10 +32,8 @@ export async function GET(request: NextRequest) {
     const session = await getSession()
 
     const db = await getDb()
-    const [config, access] = await Promise.all([
-      getManualClinicoConfig(db),
-      getManualClinicoAccess(db, session),
-    ])
+    const config = await getManualClinicoConfig(db)
+    const access = await getManualClinicoAccess(db, session, config)
     const [freeSlugs, freeQuota] = await Promise.all([
       getManualClinicoFreeSlugSet(db, config),
       getManualClinicoFreeQuotaState(db, session, config),

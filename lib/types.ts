@@ -1248,6 +1248,10 @@ export interface ManualClinicoProductConfig {
   freeAccessMode: 'quantity' | 'list'
   freeQuantity: number
   freePathologySlugs: string[]
+  /** Inclui o Manual Clínico completo para contas Premium (sem compra avulsa). */
+  includedInPremium?: boolean
+  /** Inclui o Manual Clínico completo para contas Essential (sem compra avulsa). */
+  includedInEssential?: boolean
   /** Lote dinâmico por evento (pricingEvent._id) — legado/global. */
   pricingEventId?: string | null
   createdAt: Date

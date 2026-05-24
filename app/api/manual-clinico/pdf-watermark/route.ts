@@ -22,10 +22,8 @@ export async function POST(request: NextRequest) {
     const slug = request.nextUrl.searchParams.get('slug') || ''
     const mode = request.nextUrl.searchParams.get('mode') || 'single'
     const db = await getDb()
-    const [config, access] = await Promise.all([
-      getManualClinicoConfig(db),
-      getManualClinicoAccess(db, session),
-    ])
+    const config = await getManualClinicoConfig(db)
+    const access = await getManualClinicoAccess(db, session, config)
 
     if (!access.hasFullAccess) {
       if (mode !== 'single' || !slug) {
