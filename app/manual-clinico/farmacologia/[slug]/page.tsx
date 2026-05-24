@@ -28,6 +28,8 @@ import {
   Info,
   CircleDot,
   X,
+  Tags,
+  Shuffle,
 } from 'lucide-react'
 import { RichTextRenderer } from '@/components/manual-clinico/rich-text-renderer'
 import {
@@ -726,6 +728,7 @@ function FarmacoDetailContent() {
       s.push({ id: 'sec-efeitos', label: 'Efeitos', icon: AlertTriangle })
     }
     if (data.contraindicacoes && data.contraindicacoes.length > 0) s.push({ id: 'sec-contraindicacoes', label: 'Contraindicações', icon: Ban })
+    if (data.interacoes_medicamentosas) s.push({ id: 'sec-interacoes', label: 'Interações', icon: Shuffle })
     if (data.posologia) s.push({ id: 'sec-posologia', label: 'Posologia', icon: ClipboardList })
     if (data.calculo_dose && data.calculo_dose.enabled) s.push({ id: 'sec-calculadora', label: 'Calculadora de Dose', icon: Calculator })
     if (data.fluxograma_uso) s.push({ id: 'sec-fluxograma', label: 'Fluxograma', icon: GitBranch })
@@ -800,6 +803,17 @@ function FarmacoDetailContent() {
           <PremiumCard data={data} onCheckout={goToCheckout} />
         ) : (
           <div className="space-y-3">
+            {/* Seção inicial independente: Nomes comerciais (não entra no navegador) */}
+            {data.nomes_comerciais && (
+              <div className="rounded-2xl border border-primary/15 bg-primary/[0.04] p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Tags className="h-4 w-4 text-primary" />
+                  <h2 className="text-sm font-black uppercase tracking-wide text-primary">Nomes comerciais</h2>
+                </div>
+                <RichTextRenderer text={data.nomes_comerciais} className="text-sm leading-relaxed text-foreground/85" />
+              </div>
+            )}
+
             {data.classificacao && (
               <Section id="sec-classificacao" title="Classificação" icon={Layers}>
                 <RichTextRenderer text={data.classificacao} className="text-sm leading-relaxed text-foreground/85" />
@@ -891,6 +905,12 @@ function FarmacoDetailContent() {
                     </div>
                   ))}
                 </div>
+              </Section>
+            )}
+
+            {data.interacoes_medicamentosas && (
+              <Section id="sec-interacoes" title="Interações Medicamentosas" icon={Shuffle} variant="warning">
+                <RichTextRenderer text={data.interacoes_medicamentosas} className="text-sm leading-relaxed text-foreground/85" />
               </Section>
             )}
 

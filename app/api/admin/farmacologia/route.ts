@@ -86,6 +86,7 @@ export async function POST(request: NextRequest) {
       classe_principal: body.classe_principal,
       subclasse: body.subclasse || '',
       slug,
+      nomes_comerciais: body.nomes_comerciais || '',
       classificacao: body.classificacao || '',
       tipo_farmaco: body.tipo_farmaco || '',
       principais_funcoes: body.principais_funcoes || '',
@@ -96,6 +97,7 @@ export async function POST(request: NextRequest) {
       efeitos_colaterais: body.efeitos_colaterais || [],
       efeitos_adversos: body.efeitos_adversos || [],
       contraindicacoes: body.contraindicacoes || [],
+      interacoes_medicamentosas: body.interacoes_medicamentosas || '',
       posologia: body.posologia || '',
       calculo_dose: body.calculo_dose || {
         enabled: false, unidade: 'mg', via: '', mg_por_kg: null, dose_fixa: null,
