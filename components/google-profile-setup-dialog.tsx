@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { X } from 'lucide-react'
 import { INSTITUTION_UNITS } from '@/lib/institution-units'
+import { PERIODO_OPTIONS, formatPeriodoLabel } from '@/lib/user-periodo'
 
 interface GoogleProfileSetupDialogProps {
   open: boolean
@@ -21,6 +22,7 @@ interface GoogleProfileSetupDialogProps {
     dateOfBirth: string
     isAfyaMedicineStudent: boolean
     afyaUnit?: string
+    periodo?: string
   }) => void
   onCancel?: () => void
   isLoading?: boolean
@@ -38,6 +40,7 @@ export function GoogleProfileSetupDialog({
   const [dateOfBirth, setDateOfBirth] = useState('')
   const [isAfyaMedicineStudent, setIsAfyaMedicineStudent] = useState(false)
   const [afyaUnit, setAfyaUnit] = useState('')
+  const [periodo, setPeriodo] = useState('')
   const [error, setError] = useState('')
 
 
@@ -68,6 +71,7 @@ export function GoogleProfileSetupDialog({
       dateOfBirth,
       isAfyaMedicineStudent,
       afyaUnit: isAfyaMedicineStudent ? afyaUnit : undefined,
+      periodo: periodo || undefined,
     })
   }
 
@@ -148,6 +152,23 @@ export function GoogleProfileSetupDialog({
                   onChange={(e) => setDateOfBirth(e.target.value)}
                   disabled={isLoading}
                 />
+              </div>
+
+              {/* Campo de Período (opcional) */}
+              <div className="space-y-2">
+                <Label htmlFor="periodo">Período (opcional)</Label>
+                <select
+                  id="periodo"
+                  className="flex h-10 w-full rounded-md border border-input bg-background text-foreground px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:[color-scheme:dark]"
+                  value={periodo}
+                  onChange={(e) => setPeriodo(e.target.value)}
+                  disabled={isLoading}
+                >
+                  <option value="">Selecione seu período...</option>
+                  {PERIODO_OPTIONS.map((p) => (
+                    <option key={p} value={p}>{formatPeriodoLabel(p)}</option>
+                  ))}
+                </select>
               </div>
 
               {/* Pergunta sobre curso */}

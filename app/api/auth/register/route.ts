@@ -8,6 +8,7 @@ import { ADMIN_EMAILS } from '@/lib/constants'
 import { sendWelcomeEmail, sendVerificationEmail } from '@/lib/mail'
 import crypto from 'crypto'
 import { secureApiEndpoint } from '@/lib/api-security'
+import { normalizePeriodo, getCurrentSemesterRef } from '@/lib/user-periodo'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,7 +25,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { email, password, name, dateOfBirth, isAfyaMedicineStudent, afyaUnit, role = 'user', recaptchaToken } = body
+    const { email, password, name, dateOfBirth, isAfyaMedicineStudent, afyaUnit, periodo, role = 'user', recaptchaToken } = body
 
     if (!email || !password || !name || !dateOfBirth) {
       return NextResponse.json(
@@ -86,6 +87,10 @@ export async function POST(request: NextRequest) {
     // Gerar token de verificação
     const verificationToken = crypto.randomBytes(32).toString('hex')
 
+    // Período é opcional no cadastro. Quando informado, guardamos o período-base
+    // e o semestre-âncora atual para permitir o avanço automático por semestre.
+    const periodoBase = normalizePeriodo(periodo)
+
     // Cria o usuário
     const hashedPassword = await hashPassword(password)
     const newUser: User = {
@@ -99,7 +104,10 @@ export async function POST(request: NextRequest) {
       createdAt: new Date(),
       lastLoginAt: new Date(),
       emailVerified: false,
-      verificationToken
+      verificationToken,
+      ...(periodoBase !== null
+        ? { periodoBase, periodoBaseRef: getCurrentSemesterRef() }
+        : {}),
     }
 
     const result = await usersCollection.insertOne(newUser)

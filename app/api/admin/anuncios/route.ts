@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
+import { normalizePeriodo } from '@/lib/user-periodo'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,6 +18,8 @@ interface Anuncio {
   modalConteudo?: string
   modalBotaoTexto?: string
   modalBotaoLink?: string
+  // Segmentação por período: vazio/ausente = exibe para todos os períodos.
+  periodos?: number[]
   criadoEm: Date
   atualizadoEm: Date
   criadoPor: ObjectId
@@ -24,6 +27,17 @@ interface Anuncio {
 
 function getString(value: unknown) {
   return typeof value === 'string' ? value.trim() : ''
+}
+
+/** Sanitiza uma lista de períodos: inteiros válidos (1-12), sem duplicatas, ordenados. */
+function sanitizePeriodos(value: unknown): number[] {
+  if (!Array.isArray(value)) return []
+  const set = new Set<number>()
+  for (const item of value) {
+    const p = normalizePeriodo(item)
+    if (p !== null) set.add(p)
+  }
+  return Array.from(set).sort((a, b) => a - b)
 }
 
 function isValidImageUrl(value: string) {
@@ -177,6 +191,7 @@ export async function POST(request: NextRequest) {
       modalConteudo: body.tipoAcao === 'modal' ? modalConteudo : undefined,
       modalBotaoTexto: body.tipoAcao === 'modal' ? modalBotaoTexto || undefined : undefined,
       modalBotaoLink: body.tipoAcao === 'modal' ? modalBotaoLink || undefined : undefined,
+      periodos: sanitizePeriodos(body.periodos),
       criadoEm: new Date(),
       atualizadoEm: new Date(),
       criadoPor: new ObjectId(session.userId)
@@ -265,6 +280,10 @@ export async function PUT(request: NextRequest) {
         return NextResponse.json({ error: 'Ordem invalida' }, { status: 400 })
       }
       updateData.ordem = ordem
+    }
+
+    if (body.periodos !== undefined) {
+      updateData.periodos = sanitizePeriodos(body.periodos)
     }
 
     if (body.tipoAcao !== undefined) {

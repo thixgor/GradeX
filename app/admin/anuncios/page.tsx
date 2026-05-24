@@ -47,6 +47,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { LogoLoading } from '@/components/logo-loading'
 import { cn } from '@/lib/utils'
+import { PERIODO_OPTIONS, formatPeriodoLabel } from '@/lib/user-periodo'
 
 type TipoAcao = 'link' | 'modal'
 type StatusFilter = 'all' | 'active' | 'inactive'
@@ -64,6 +65,7 @@ interface Anuncio {
   modalConteudo?: string
   modalBotaoTexto?: string
   modalBotaoLink?: string
+  periodos?: number[]
   criadoEm?: string
   atualizadoEm?: string
 }
@@ -77,6 +79,7 @@ interface FormData {
   modalConteudo: string
   modalBotaoTexto: string
   modalBotaoLink: string
+  periodos: number[]
   ativo: boolean
 }
 
@@ -89,6 +92,7 @@ const initialFormData: FormData = {
   modalConteudo: '',
   modalBotaoTexto: '',
   modalBotaoLink: '',
+  periodos: [],
   ativo: true,
 }
 
@@ -292,6 +296,7 @@ function AdminAnunciosContent() {
       modalConteudo: anuncio.modalConteudo || '',
       modalBotaoTexto: anuncio.modalBotaoTexto || '',
       modalBotaoLink: anuncio.modalBotaoLink || '',
+      periodos: Array.isArray(anuncio.periodos) ? anuncio.periodos : [],
       ativo: anuncio.ativo,
     })
     setDialogOpen(true)
@@ -337,6 +342,7 @@ function AdminAnunciosContent() {
               imagemUrl: imageUrl,
               tipoAcao: formData.tipoAcao,
               ativo: formData.ativo,
+              periodos: formData.periodos,
               linkUrl,
               linkNovaAba: formData.linkNovaAba,
             }
@@ -344,6 +350,7 @@ function AdminAnunciosContent() {
               imagemUrl: imageUrl,
               tipoAcao: formData.tipoAcao,
               ativo: formData.ativo,
+              periodos: formData.periodos,
               modalTitulo: formData.modalTitulo.trim(),
               modalConteudo: formData.modalConteudo,
               modalBotaoTexto: formData.modalBotaoTexto.trim() || undefined,
@@ -722,6 +729,56 @@ function AdminAnunciosContent() {
                 </div>
               )}
 
+              <div className="space-y-3 rounded-lg border bg-muted/25 p-4">
+                <div>
+                  <Label>Segmentacao por periodo</Label>
+                  <p className="text-sm text-muted-foreground">
+                    {formData.periodos.length === 0
+                      ? 'Sem periodos selecionados: aparece para todos os usuarios.'
+                      : `Aparece apenas para usuarios nos periodos: ${formData.periodos
+                          .map((p) => `${p}o`)
+                          .join(', ')}.`}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {PERIODO_OPTIONS.map((periodo) => {
+                    const selected = formData.periodos.includes(periodo)
+                    return (
+                      <button
+                        key={periodo}
+                        type="button"
+                        onClick={() =>
+                          setFormData({
+                            ...formData,
+                            periodos: selected
+                              ? formData.periodos.filter((p) => p !== periodo)
+                              : [...formData.periodos, periodo].sort((a, b) => a - b),
+                          })
+                        }
+                        className={cn(
+                          'rounded-lg px-3 py-1.5 text-xs font-bold transition',
+                          selected
+                            ? 'bg-[#468152] text-white shadow-sm'
+                            : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground',
+                        )}
+                        title={formatPeriodoLabel(periodo)}
+                      >
+                        {periodo}º
+                      </button>
+                    )
+                  })}
+                </div>
+                {formData.periodos.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, periodos: [] })}
+                    className="text-xs font-semibold text-muted-foreground underline-offset-2 hover:underline"
+                  >
+                    Limpar (exibir para todos)
+                  </button>
+                )}
+              </div>
+
               <div className="flex items-center justify-between gap-4 rounded-lg border bg-muted/25 p-4">
                 <div>
                   <Label>Status do anuncio</Label>
@@ -935,6 +992,11 @@ function AdListItem({
             <span className="rounded-lg bg-muted px-2 py-1 text-xs font-semibold text-muted-foreground">
               Ordem {anuncio.ordem}
             </span>
+            {anuncio.periodos && anuncio.periodos.length > 0 && (
+              <Badge className="border border-violet-500/25 bg-violet-500/10 text-xs text-violet-700 dark:text-violet-300">
+                {anuncio.periodos.map((p) => `${p}º`).join(', ')}
+              </Badge>
+            )}
             <span className="text-xs text-muted-foreground">
               Atualizado em {formatDate(anuncio.atualizadoEm || anuncio.criadoEm)}
             </span>

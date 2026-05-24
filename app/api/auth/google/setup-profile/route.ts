@@ -2,13 +2,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { createToken, setAuthCookie } from '@/lib/auth'
 import { User } from '@/lib/types'
+import { normalizePeriodo, getCurrentSemesterRef } from '@/lib/user-periodo'
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { email, profileName, dateOfBirth, isAfyaMedicineStudent, afyaUnit, picture, googleId } = body
+    const { email, profileName, dateOfBirth, isAfyaMedicineStudent, afyaUnit, periodo, picture, googleId } = body
 
     if (!email || !profileName || !dateOfBirth) {
       return NextResponse.json(
@@ -38,6 +39,9 @@ export async function POST(request: NextRequest) {
 
 
 
+    // Período é opcional. Quando informado, guardamos a âncora do semestre atual.
+    const periodoBase = normalizePeriodo(periodo)
+
     // Cria o novo usuário
     const newUser: User = {
       email,
@@ -51,6 +55,9 @@ export async function POST(request: NextRequest) {
       afyaUnit: isAfyaMedicineStudent ? afyaUnit : undefined,
       googleId,
       profilePicture: picture,
+      ...(periodoBase !== null
+        ? { periodoBase, periodoBaseRef: getCurrentSemesterRef() }
+        : {}),
     }
 
     const result = await usersCollection.insertOne(newUser)

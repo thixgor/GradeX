@@ -8,11 +8,12 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { User, BanReason, BanReasonLabels, AccountType, TrialPlanType, PremiumPlanType } from '@/lib/types'
-import { ArrowLeft, Trash2, Ban, CheckCircle, AlertTriangle, Shield, Crown, Timer, Settings, Info, Zap, Activity, Users, UserCheck, Clock, Search, RefreshCw, Mail, CalendarDays, ShoppingBag, FileDown, Package as PackageIcon, FileText as FileTextIcon, Receipt } from 'lucide-react'
+import { ArrowLeft, Trash2, Ban, CheckCircle, AlertTriangle, Shield, Crown, Timer, Settings, Info, Zap, Activity, Users, UserCheck, Clock, Search, RefreshCw, Mail, CalendarDays, ShoppingBag, FileDown, Package as PackageIcon, FileText as FileTextIcon, Receipt, GraduationCap } from 'lucide-react'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { PERIODO_OPTIONS, computeCurrentPeriodo, formatPeriodoLabel } from '@/lib/user-periodo'
 
 type OnlineUser = {
   id?: string
@@ -86,6 +87,8 @@ export default function AdminUsersPage() {
   const [showQuotaDialog, setShowQuotaDialog] = useState(false)
   const [showInfoDialog, setShowInfoDialog] = useState(false)
   const [showMonitorDialog, setShowMonitorDialog] = useState(false)
+  const [showPeriodoDialog, setShowPeriodoDialog] = useState(false)
+  const [selectedPeriodo, setSelectedPeriodo] = useState<string>('')
   const [showPurchasesDialog, setShowPurchasesDialog] = useState(false)
   const [purchasesLoading, setPurchasesLoading] = useState(false)
   const [purchasesData, setPurchasesData] = useState<{
@@ -368,6 +371,31 @@ export default function AdminUsersPage() {
       const data = await res.json()
       showToastMessage(data.message, 'success')
       setShowMonitorDialog(false)
+      loadUsers()
+    } catch (error: any) {
+      showToastMessage(error.message)
+    }
+  }
+
+  async function handleUpdatePeriodo() {
+    if (!selectedUser) return
+
+    try {
+      const res = await fetch(`/api/users/${selectedUser._id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'update_periodo',
+          // string vazia => remove o período; número => define (ancora no semestre atual)
+          periodo: selectedPeriodo === '' ? null : Number(selectedPeriodo),
+        })
+      })
+
+      if (!res.ok) throw new Error('Erro ao atualizar período do usuário')
+
+      const data = await res.json()
+      showToastMessage(data.message, 'success')
+      setShowPeriodoDialog(false)
       loadUsers()
     } catch (error: any) {
       showToastMessage(error.message)
@@ -761,7 +789,7 @@ export default function AdminUsersPage() {
                     </div>
                   )}
 
-                  <div className="mb-4 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-3">
+                  <div className="mb-4 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
                     <div className="rounded-lg border bg-muted/20 p-3">
                       <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
                         <Clock className="h-3.5 w-3.5" />
@@ -776,13 +804,22 @@ export default function AdminUsersPage() {
                       </div>
                       <div className="mt-1 text-foreground">{formatDateTime(user.createdAt)}</div>
                     </div>
-                    <div className="rounded-lg border bg-muted/20 p-3 sm:col-span-2 lg:col-span-1">
+                    <div className="rounded-lg border bg-muted/20 p-3">
                       <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
                         <Settings className="h-3.5 w-3.5" />
                         Plano atual
                       </div>
                       <div className="mt-1 capitalize text-foreground">
                         {user.role === 'admin' ? 'Admin' : user.accountType || 'gratuito'}
+                      </div>
+                    </div>
+                    <div className="rounded-lg border bg-muted/20 p-3">
+                      <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                        <GraduationCap className="h-3.5 w-3.5" />
+                        Período
+                      </div>
+                      <div className="mt-1 text-foreground">
+                        {formatPeriodoLabel(computeCurrentPeriodo(user.periodoBase, user.periodoBaseRef))}
                       </div>
                     </div>
                   </div>
@@ -837,6 +874,18 @@ export default function AdminUsersPage() {
                         >
                           <Settings className="h-4 w-4 mr-2" />
                           Gerenciar Plano
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedUser(user)
+                            setSelectedPeriodo(user.periodoBase ? String(user.periodoBase) : '')
+                            setShowPeriodoDialog(true)
+                          }}
+                        >
+                          <GraduationCap className="h-4 w-4 mr-2" />
+                          Período
                         </Button>
                         <Button
                           variant="outline"
@@ -1220,6 +1269,15 @@ export default function AdminUsersPage() {
                     : <span className="text-muted-foreground italic">Não informado</span>}
                 </p>
               </div>
+
+              <div className="rounded-xl border bg-muted/40 p-4 min-w-0">
+                <p className="text-xs font-semibold text-muted-foreground">Período</p>
+                <p className="mt-2 text-sm break-words">
+                  {selectedUser?.periodoBase
+                    ? formatPeriodoLabel(computeCurrentPeriodo(selectedUser.periodoBase, selectedUser.periodoBaseRef))
+                    : <span className="text-muted-foreground italic">Não informado</span>}
+                </p>
+              </div>
             </div>
 
             <div className="rounded-xl border bg-muted/40 p-4 min-w-0">
@@ -1247,6 +1305,50 @@ export default function AdminUsersPage() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowInfoDialog(false)}>
               Fechar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog de Período */}
+      <Dialog open={showPeriodoDialog} onOpenChange={setShowPeriodoDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Gerenciar Período do Usuário</DialogTitle>
+            <DialogDescription>
+              Defina o período acadêmico de <strong>{selectedUser?.name}</strong>. Ele avança
+              automaticamente a cada virada de semestre (janeiro e julho) a partir do período definido.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Período</Label>
+              <Select value={selectedPeriodo || 'none'} onValueChange={(v) => setSelectedPeriodo(v === 'none' ? '' : v)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o período" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Sem período</SelectItem>
+                  {PERIODO_OPTIONS.map((p) => (
+                    <SelectItem key={p} value={String(p)}>{formatPeriodoLabel(p)}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            {selectedUser?.periodoBase ? (
+              <p className="text-xs text-muted-foreground">
+                Período atual (com avanço automático):{' '}
+                <strong>{formatPeriodoLabel(computeCurrentPeriodo(selectedUser.periodoBase, selectedUser.periodoBaseRef))}</strong>
+              </p>
+            ) : null}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowPeriodoDialog(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleUpdatePeriodo}>
+              <GraduationCap className="h-4 w-4 mr-2" />
+              Salvar Período
             </Button>
           </DialogFooter>
         </DialogContent>

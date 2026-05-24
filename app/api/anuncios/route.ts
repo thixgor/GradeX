@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
+import { getSession } from '@/lib/auth'
+import { ObjectId } from 'mongodb'
+import { getUserCurrentPeriodo } from '@/lib/user-periodo'
 
-// Mantém force-dynamic para evitar tentativa de pré-renderização em
-// build time (a rota lê do Mongo). A Edge cache da Vercel respeita
-// o Cache-Control que devolvemos abaixo independentemente disso.
 export const dynamic = 'force-dynamic'
 
 interface PublicAnuncio {
@@ -17,11 +17,29 @@ interface PublicAnuncio {
   modalConteudo?: string
   modalBotaoTexto?: string
   modalBotaoLink?: string
+  periodos?: number[]
 }
 
 export async function GET() {
   try {
     const db = await getDb()
+
+    // Período do usuário logado (quando houver) para segmentar os anúncios.
+    // Visitante anônimo ou sem período só vê anúncios sem restrição de período.
+    let userPeriodo: number | null = null
+    const session = await getSession()
+    if (session?.userId) {
+      try {
+        const userDoc = await db.collection('users').findOne(
+          { _id: new ObjectId(session.userId) },
+          { projection: { periodoBase: 1, periodoBaseRef: 1 } },
+        )
+        userPeriodo = getUserCurrentPeriodo(userDoc as any)
+      } catch {
+        userPeriodo = null
+      }
+    }
+
     const anuncios = await db
       .collection<PublicAnuncio>('anuncios')
       .find(
@@ -38,18 +56,27 @@ export async function GET() {
             modalConteudo: 1,
             modalBotaoTexto: 1,
             modalBotaoLink: 1,
+            periodos: 1,
           },
         },
       )
       .sort({ ordem: 1, criadoEm: -1 })
       .toArray()
 
-    // Anúncios são públicos e idênticos para todos os visitantes.
-    // 5 min na Edge + SWR de 30 min: invocations cai drasticamente sem
-    // afetar perceptivelmente o tempo de propagação de novos banners.
-    return NextResponse.json({ anuncios }, {
+    // Filtra por período: anúncio sem `periodos` (vazio/ausente) vai para todos;
+    // com `periodos`, só aparece se o período atual do usuário estiver na lista.
+    const filtered = anuncios.filter((anuncio) => {
+      const periodos = Array.isArray(anuncio.periodos) ? anuncio.periodos : []
+      if (periodos.length === 0) return true
+      return userPeriodo !== null && periodos.includes(userPeriodo)
+    })
+
+    // A resposta agora depende do usuário (período), então não pode ser
+    // compartilhada entre usuários por CDN. Cache privado curto deduplica
+    // rajadas do mesmo usuário sem vazar segmentação entre contas.
+    return NextResponse.json({ anuncios: filtered }, {
       headers: {
-        'Cache-Control': 'public, max-age=300, s-maxage=300, stale-while-revalidate=1800',
+        'Cache-Control': 'private, max-age=60, stale-while-revalidate=300',
       },
     })
   } catch (error) {

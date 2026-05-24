@@ -25,6 +25,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { BanReasonLabels, BanReason } from '@/lib/types'
 import { Ban, AlertCircle } from 'lucide-react'
 import { INSTITUTION_UNITS } from '@/lib/institution-units'
+import { PERIODO_OPTIONS, formatPeriodoLabel } from '@/lib/user-periodo'
 import { GoogleProfileSetupDialog } from '@/components/google-profile-setup-dialog'
 import { clearBootstrapCache } from '@/hooks/use-bootstrap'
 
@@ -87,6 +88,7 @@ export default function LoginPage() {
     dateOfBirth: '',
     isAfyaMedicineStudent: false,
     afyaUnit: '',
+    periodo: '',
     role: 'user',
   })
 
@@ -293,6 +295,7 @@ export default function LoginPage() {
     dateOfBirth: string
     isAfyaMedicineStudent: boolean
     afyaUnit?: string
+    periodo?: string
   }) {
     if (!googleData) return
     setGoogleLoading(true)
@@ -306,6 +309,7 @@ export default function LoginPage() {
           dateOfBirth: setupData.dateOfBirth,
           isAfyaMedicineStudent: setupData.isAfyaMedicineStudent,
           afyaUnit: setupData.afyaUnit,
+          periodo: setupData.periodo,
           picture: googleData.picture,
           googleId: googleData.googleId,
         }),
@@ -768,6 +772,22 @@ export default function LoginPage() {
                             </select>
                           </motion.div>
                         )}
+
+                        <div className="space-y-2">
+                          <Label htmlFor="periodo" className="text-xs font-medium text-slate-400">Período (opcional)</Label>
+                          <select
+                            id="periodo"
+                            className={selectCls}
+                            value={formData.periodo}
+                            onChange={(e) => setFormData({ ...formData, periodo: e.target.value })}
+                            style={{ colorScheme: 'dark' }}
+                          >
+                            <option value="">Selecione seu período...</option>
+                            {PERIODO_OPTIONS.map((periodo) => (
+                              <option key={periodo} value={periodo}>{formatPeriodoLabel(periodo)}</option>
+                            ))}
+                          </select>
+                        </div>
 
                         {canBeAdmin && (
                           <div className="space-y-2">

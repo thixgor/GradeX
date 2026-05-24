@@ -59,6 +59,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 import { ToastAlert } from '@/components/ui/toast-alert'
+import { PERIODO_OPTIONS, computeCurrentPeriodo, formatPeriodoLabel } from '@/lib/user-periodo'
 
 interface User {
     _id: string
@@ -67,6 +68,8 @@ interface User {
     role: 'admin' | 'user'
     accountType?: string
     emailVerified?: boolean
+    periodoBase?: number
+    periodoBaseRef?: string
 }
 
 interface EmailTemplate {
@@ -549,6 +552,7 @@ export default function AdminEmailsPage() {
     const [selectAll, setSelectAll] = useState(false)
     const [searchQuery, setSearchQuery] = useState('')
     const [filterAccountType, setFilterAccountType] = useState('all')
+    const [filterPeriodo, setFilterPeriodo] = useState('all')
     const [additionalEmails, setAdditionalEmails] = useState<string[]>([])
     const [newEmail, setNewEmail] = useState('')
 
@@ -635,9 +639,15 @@ export default function AdminEmailsPage() {
                 user.accountType === filterAccountType ||
                 (filterAccountType === 'admin' && user.role === 'admin')
 
-            return matchesSearch && matchesAccountType
+            const periodoAtual = computeCurrentPeriodo(user.periodoBase, user.periodoBaseRef)
+            const matchesPeriodo =
+                filterPeriodo === 'all' ||
+                (filterPeriodo === 'none' && periodoAtual === null) ||
+                String(periodoAtual) === filterPeriodo
+
+            return matchesSearch && matchesAccountType && matchesPeriodo
         })
-    }, [filterAccountType, searchQuery, users])
+    }, [filterAccountType, filterPeriodo, searchQuery, users])
 
     const categories = useMemo(() => {
         const unique = new Set(templates.map(template => template.category || 'Geral'))
@@ -1484,7 +1494,7 @@ export default function AdminEmailsPage() {
                                             </Button>
                                         </div>
 
-                                        <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_145px]">
+                                        <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_135px_135px]">
                                             <div className="relative">
                                                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                                                 <Input
@@ -1506,7 +1516,24 @@ export default function AdminEmailsPage() {
                                                     <SelectItem value="gratuito">Gratuito</SelectItem>
                                                 </SelectContent>
                                             </Select>
+                                            <Select value={filterPeriodo} onValueChange={setFilterPeriodo}>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Período" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="all">Todos períodos</SelectItem>
+                                                    <SelectItem value="none">Sem período</SelectItem>
+                                                    {PERIODO_OPTIONS.map((p) => (
+                                                        <SelectItem key={p} value={String(p)}>{formatPeriodoLabel(p)}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
                                         </div>
+                                        {filterPeriodo !== 'all' && (
+                                            <p className="text-xs text-muted-foreground">
+                                                Dica: use o botão <strong>Filtrados</strong> para selecionar apenas estes usuários e enviar só para o período escolhido.
+                                            </p>
+                                        )}
 
                                         <div className="max-h-[360px] overflow-y-auto rounded-lg border">
                                             {filteredUsers.length === 0 ? (
@@ -1531,6 +1558,10 @@ export default function AdminEmailsPage() {
                                                         <div className="flex shrink-0 flex-col items-end gap-1">
                                                             {user.role === 'admin' && <Badge variant="secondary" className="text-[10px]">Admin</Badge>}
                                                             {user.accountType && user.role !== 'admin' && <Badge variant="outline" className="text-[10px]">{user.accountType}</Badge>}
+                                                            {(() => {
+                                                                const p = computeCurrentPeriodo(user.periodoBase, user.periodoBaseRef)
+                                                                return p !== null ? <Badge variant="outline" className="text-[10px]">{p}º período</Badge> : null
+                                                            })()}
                                                         </div>
                                                     </button>
                                                 ))

@@ -6,6 +6,7 @@ import { ObjectId } from 'mongodb'
 import { sendAccountDeletedEmail } from '@/lib/mail'
 import { secureApiEndpoint, canAdminModifyUser } from '@/lib/api-security'
 import { getPaymentProvider } from '@/lib/payments'
+import { normalizePeriodo, getCurrentSemesterRef } from '@/lib/user-periodo'
 
 export const dynamic = 'force-dynamic'
 
@@ -127,9 +128,10 @@ export async function PATCH(
       premiumPlanType,
       dailyPersonalExamsCreated,
       secondaryRole,
+      periodo,
     } = body
 
-    const VALID_ACTIONS = ['ban', 'unban', 'update_tier', 'update_quota', 'toggle_monitor']
+    const VALID_ACTIONS = ['ban', 'unban', 'update_tier', 'update_quota', 'toggle_monitor', 'update_periodo']
     if (!action || !VALID_ACTIONS.includes(action)) {
       return NextResponse.json({ error: 'Ação inválida' }, { status: 400 })
     }
@@ -264,6 +266,18 @@ export async function PATCH(
       successMessage = secondaryRole === 'monitor'
         ? 'Usuário promovido a Monitor com sucesso'
         : 'Cargo de Monitor removido com sucesso'
+
+    } else if (action === 'update_periodo') {
+      // periodo nulo/0 limpa o período; valor válido (1-12) define e ancora no
+      // semestre atual para que o avanço automático conte a partir de agora.
+      const periodoBase = normalizePeriodo(periodo)
+      updateData = {
+        periodoBase: periodoBase ?? undefined,
+        periodoBaseRef: periodoBase !== null ? getCurrentSemesterRef() : undefined,
+      }
+      successMessage = periodoBase !== null
+        ? 'Período do usuário atualizado com sucesso'
+        : 'Período do usuário removido com sucesso'
     }
 
     // Remover campos undefined do $set; campos undefined viram $unset

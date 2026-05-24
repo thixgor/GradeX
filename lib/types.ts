@@ -232,6 +232,12 @@ export interface User {
   // Informações sobre a instituição do estudante
   isAfyaMedicineStudent?: boolean // Se é estudante de Medicina
   afyaUnit?: string // Unidade/campus do estudante (se isAfyaMedicineStudent = true)
+  // Período acadêmico (semestre). Definido no cadastro ou pelo admin.
+  // O período exibido avança automaticamente a cada virada de semestre a
+  // partir de periodoBaseRef (ver lib/user-periodo.ts). Cadastros antigos que
+  // não preencheram nada ficam sem período (campos ausentes).
+  periodoBase?: number // Período definido (1-12)
+  periodoBaseRef?: string // Semestre-âncora "AAAA.S" de quando periodoBase foi definido
   // Campos de banimento
   banned?: boolean
   banReason?: BanReason
