@@ -267,7 +267,11 @@ export async function applyWatermark(
     }
   }
 
-  return outputDoc.save({ useObjectStreams: true })
+  // useObjectStreams: false — formato PDF mais conservador (sem PDF 1.5
+  // compressed object streams). Em PDFs com imagens em estruturas indiretas,
+  // a compressão de objetos do pdf-lib pode quebrar refs de XObject; o
+  // formato tradicional preserva melhor o conteúdo original.
+  return outputDoc.save({ useObjectStreams: false })
 }
 
 /**

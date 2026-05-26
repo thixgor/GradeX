@@ -35,6 +35,10 @@
       "maxDuration": 300,
       "memory": 1024
     },
+    "app/api/materiais/download/route.ts": {
+      "maxDuration": 60,
+      "memory": 1024
+    },
     "app/api/flashcards/manual/[id]/pdf/route.ts": {
       "maxDuration": 60,
       "memory": 1024
