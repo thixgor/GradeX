@@ -182,28 +182,40 @@ export async function applyWatermark(
     mode = DEFAULT_MODE,
   } = options
 
-  const pdfDoc = await PDFDocument.load(originalPdfBytes, {
-    // Ignora erros de XRef para compatibilidade com PDFs mal-formados
+  // Carrega o PDF de origem. Em vez de modificar `sourceDoc` direto e
+  // re-serializar (padrão que faz pdf-lib descartar XObjects de imagem em
+  // PDFs gerados por PowerPoint/Canva/outros com estruturas indiretas),
+  // copiamos todas as páginas para um novo documento — mesma abordagem
+  // usada pelo viewer protegido (createWatermarkedSinglePagePdf), que
+  // preserva imagens corretamente.
+  const sourceDoc = await PDFDocument.load(originalPdfBytes, {
     ignoreEncryption: true,
   })
 
+  const outputDoc = await PDFDocument.create()
+  const pageIndices = sourceDoc.getPageIndices()
+  const copiedPages = await outputDoc.copyPages(sourceDoc, pageIndices)
+  for (const page of copiedPages) {
+    outputDoc.addPage(page)
+  }
+
   // ── Metadados de rastreio (embutidos no arquivo) ────────────────────────
   // Coloca dados do usuário nos metadados do PDF para rastreio forense.
-  const originalTitle = pdfDoc.getTitle() || 'Material DomineAqui'
+  const originalTitle = sourceDoc.getTitle() || 'Material DomineAqui'
   const emailMarker = emailFingerprint(userEmail)
   const userMarker = `UID ${userId.slice(-8)} | ${emailMarker}`
-  pdfDoc.setTitle(`${originalTitle} - ${userName}`)
-  pdfDoc.setAuthor(userName)
-  pdfDoc.setSubject(
+  outputDoc.setTitle(`${originalTitle} - ${userName}`)
+  outputDoc.setAuthor(userName)
+  outputDoc.setSubject(
     `Licenciado para: ${userName} | ${userMarker} | Pedido: ${orderId} | Download: ${formatDate(downloadedAt)}`
   )
-  pdfDoc.setKeywords([userName, userId, emailMarker, orderId, 'DomineAqui'])
-  pdfDoc.setCreator('DomineAqui — domineaqui.com.br')
-  pdfDoc.setProducer('DomineAqui PDF Service')
-  pdfDoc.setModificationDate(downloadedAt)
+  outputDoc.setKeywords([userName, userId, emailMarker, orderId, 'DomineAqui'])
+  outputDoc.setCreator('DomineAqui — domineaqui.com.br')
+  outputDoc.setProducer('DomineAqui PDF Service')
+  outputDoc.setModificationDate(downloadedAt)
 
   // ── Fonte ───────────────────────────────────────────────────────────────
-  const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
+  const font = await outputDoc.embedFont(StandardFonts.HelveticaBold)
   const renderConfig = getWatermarkRenderConfig()
 
   // Linhas que aparecem na marca d'água
@@ -215,7 +227,7 @@ export async function applyWatermark(
   ]
 
   // ── Aplicar marca em todas as páginas ───────────────────────────────────
-  const pages = pdfDoc.getPages()
+  const pages = outputDoc.getPages()
   for (const page of pages) {
     applyWatermarkToPage(page, watermarkLines, font, renderConfig)
   }
@@ -225,7 +237,7 @@ export async function applyWatermark(
   // impedindo que scripts/formulários sejam manipulados.
   if (mode === 'WATERMARK_AND_FLATTEN' || mode === 'WATERMARK_AND_RESTRICT') {
     try {
-      const form = pdfDoc.getForm()
+      const form = outputDoc.getForm()
       form.flatten()
     } catch {
       // PDF sem formulários — ignorar
@@ -243,7 +255,7 @@ export async function applyWatermark(
   if (mode === 'WATERMARK_AND_RESTRICT') {
     try {
       // Definir preferências de visualização que sugerem restrições
-      const catalog = pdfDoc.catalog
+      const catalog = outputDoc.catalog
       // Instrução ao viewer: não mostrar barra de ferramentas, não abrir em tela cheia
       // A restrição de cópia real requer encryption — apenas setamos a flag de hint
       catalog.set(
@@ -255,7 +267,7 @@ export async function applyWatermark(
     }
   }
 
-  return pdfDoc.save({ useObjectStreams: true })
+  return outputDoc.save({ useObjectStreams: true })
 }
 
 /**
