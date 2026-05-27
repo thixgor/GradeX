@@ -50,9 +50,18 @@ export interface TokenPayload {
   [key: string]: any
 }
 
+// Fator de custo do bcrypt. 10 é o padrão recomendado e ainda seguro,
+// custando ~4x menos CPU que 12 por hash/compare — relevante porque login,
+// registro e reset de senha rodam em funções serverless (Fluid Active CPU).
+// Ajustável por env sem novo deploy.
+const BCRYPT_ROUNDS = (() => {
+  const value = Number(process.env.BCRYPT_ROUNDS)
+  if (!Number.isInteger(value) || value < 8 || value > 14) return 10
+  return value
+})()
+
 export async function hashPassword(password: string): Promise<string> {
-  // Usar fator de custo maior para maior segurança
-  return bcrypt.hash(password, 12)
+  return bcrypt.hash(password, BCRYPT_ROUNDS)
 }
 
 export async function verifyPassword(password: string, hashedPassword: string): Promise<boolean> {

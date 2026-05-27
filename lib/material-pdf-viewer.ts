@@ -50,6 +50,22 @@ interface ViewerWatermarkConfig {
 const pdfBytesCache = new Map<string, PdfBytesCacheEntry>()
 const pdfBytesInflight = new Map<string, Promise<ArrayBuffer>>()
 
+interface RenderedPageCacheEntry {
+  bytes: Uint8Array
+  totalPages: number
+  expiresAt: number
+}
+
+// Cache do PDF de página JÁ renderizado (com marca d'água), evitando rodar
+// PDFDocument.load + copyPages + o loop de watermark a cada request. A chave é
+// o auditToken, que já codifica (usuário + material + página + janela de 5min),
+// então o conteúdo é estável dentro do TTL. Esse é o maior ofensor de Active CPU
+// do viewer porque a leitura de um PDF dispara muitos renders da mesma página
+// (scroll/zoom/virar página) e o Cache-Control privado não cobre cache-misses
+// entre instâncias serverless.
+const renderedPageCache = new Map<string, RenderedPageCacheEntry>()
+const renderedPageInflight = new Map<string, Promise<{ bytes: Uint8Array; totalPages: number }>>()
+
 function envNumber(name: string, fallback: number, min?: number, max?: number): number {
   const value = Number(process.env[name])
   if (!Number.isFinite(value)) return fallback
@@ -381,18 +397,67 @@ function drawRepeatedWatermark(
   })
 }
 
+type WatermarkPageInput = {
+  pageNumber: number
+  userName: string
+  userEmail: string
+  userId: string
+  materialId: string
+  materialTitle: string
+  viewedAt: Date
+  auditToken: string
+}
+
 export async function createWatermarkedSinglePagePdf(
   originalPdfBytes: ArrayBuffer,
-  input: {
-    pageNumber: number
-    userName: string
-    userEmail: string
-    userId: string
-    materialId: string
-    materialTitle: string
-    viewedAt: Date
-    auditToken: string
+  input: WatermarkPageInput
+): Promise<{ bytes: Uint8Array; totalPages: number }> {
+  const cacheEnabled = envBoolean('PDF_VIEWER_PAGE_CACHE_ENABLED', true)
+
+  if (cacheEnabled && input.auditToken) {
+    const now = Date.now()
+    const cached = renderedPageCache.get(input.auditToken)
+    if (cached && cached.expiresAt > now) {
+      return { bytes: cached.bytes, totalPages: cached.totalPages }
+    }
+    if (cached) renderedPageCache.delete(input.auditToken)
+
+    const pending = renderedPageInflight.get(input.auditToken)
+    if (pending) return pending
   }
+
+  const render = renderWatermarkedSinglePagePdf(originalPdfBytes, input)
+
+  if (!cacheEnabled || !input.auditToken) {
+    return render
+  }
+
+  renderedPageInflight.set(input.auditToken, render)
+  try {
+    const result = await render
+    const ttlMs = envNumber('PDF_VIEWER_PAGE_CACHE_TTL_MS', 5 * 60 * 1000, 0, 30 * 60 * 1000)
+    const maxEntries = Math.floor(envNumber('PDF_VIEWER_PAGE_CACHE_MAX_ENTRIES', 80, 1, 500))
+    if (ttlMs > 0) {
+      while (renderedPageCache.size >= maxEntries) {
+        const oldestKey = renderedPageCache.keys().next().value
+        if (!oldestKey) break
+        renderedPageCache.delete(oldestKey)
+      }
+      renderedPageCache.set(input.auditToken, {
+        bytes: result.bytes,
+        totalPages: result.totalPages,
+        expiresAt: Date.now() + ttlMs,
+      })
+    }
+    return result
+  } finally {
+    renderedPageInflight.delete(input.auditToken)
+  }
+}
+
+async function renderWatermarkedSinglePagePdf(
+  originalPdfBytes: ArrayBuffer,
+  input: WatermarkPageInput
 ): Promise<{ bytes: Uint8Array; totalPages: number }> {
   const sourceDoc = await PDFDocument.load(originalPdfBytes, { ignoreEncryption: true })
   const totalPages = sourceDoc.getPageCount()
