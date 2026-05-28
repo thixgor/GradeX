@@ -564,6 +564,14 @@ export default function AdminEmailsPage() {
     const [searchQuery, setSearchQuery] = useState('')
     const [filterAccountType, setFilterAccountType] = useState('all')
     const [filterPeriodo, setFilterPeriodo] = useState('all')
+    const [filterMaterialMode, setFilterMaterialMode] = useState<'all' | 'bought' | 'not_bought'>('all')
+    const [filterMaterialIds, setFilterMaterialIds] = useState<Set<string>>(new Set())
+    const [materialFilterSearch, setMaterialFilterSearch] = useState('')
+    const [showMaterialFilter, setShowMaterialFilter] = useState(false)
+    const [materialOwnership, setMaterialOwnership] = useState<{
+        byUserId: Record<string, string[]>
+        byEmail: Record<string, string[]>
+    }>({ byUserId: {}, byEmail: {} })
     const [additionalEmails, setAdditionalEmails] = useState<string[]>([])
     const [newEmail, setNewEmail] = useState('')
 
@@ -597,12 +605,13 @@ export default function AdminEmailsPage() {
 
     async function loadData() {
         try {
-            const [usersRes, templatesRes, materialsRes, flashcardsRes, draftsRes] = await Promise.all([
+            const [usersRes, templatesRes, materialsRes, flashcardsRes, draftsRes, ownershipRes] = await Promise.all([
                 fetch('/api/users', { cache: 'no-store' }),
                 fetch('/api/admin/emails/templates', { cache: 'no-store' }),
                 fetch('/api/materiais', { cache: 'no-store' }),
                 fetch('/api/flashcards/manual?scope=all-admin', { cache: 'no-store' }),
                 fetch('/api/admin/emails/drafts', { cache: 'no-store' }),
+                fetch('/api/admin/material-purchases', { cache: 'no-store' }),
             ])
 
             if (usersRes.ok) {
@@ -629,6 +638,14 @@ export default function AdminEmailsPage() {
                 const draftsData = await draftsRes.json()
                 setDrafts(draftsData.drafts || [])
             }
+
+            if (ownershipRes.ok) {
+                const ownershipData = await ownershipRes.json()
+                setMaterialOwnership({
+                    byUserId: ownershipData.ownership?.byUserId || {},
+                    byEmail: ownershipData.ownership?.byEmail || {},
+                })
+            }
         } catch (error) {
             console.error('Load email composer data error:', error)
             showToast('Erro ao carregar dados da central de e-mails', 'error')
@@ -637,8 +654,20 @@ export default function AdminEmailsPage() {
         }
     }
 
+    const ownedMaterialsForUser = useCallback((user: User): Set<string> => {
+        const owned = new Set<string>()
+        const byId = materialOwnership.byUserId[user._id]
+        if (byId) byId.forEach(id => owned.add(id))
+        if (user.email) {
+            const byEmail = materialOwnership.byEmail[user.email.toLowerCase().trim()]
+            if (byEmail) byEmail.forEach(id => owned.add(id))
+        }
+        return owned
+    }, [materialOwnership])
+
     const filteredUsers = useMemo(() => {
         const query = searchQuery.toLowerCase().trim()
+        const materialFilterActive = filterMaterialMode !== 'all' && filterMaterialIds.size > 0
         return users.filter(user => {
             const matchesSearch =
                 !query ||
@@ -656,9 +685,16 @@ export default function AdminEmailsPage() {
                 (filterPeriodo === 'none' && periodoAtual === null) ||
                 String(periodoAtual) === filterPeriodo
 
-            return matchesSearch && matchesAccountType && matchesPeriodo
+            let matchesMaterial = true
+            if (materialFilterActive) {
+                const owned = ownedMaterialsForUser(user)
+                const boughtAny = Array.from(filterMaterialIds).some(id => owned.has(id))
+                matchesMaterial = filterMaterialMode === 'bought' ? boughtAny : !boughtAny
+            }
+
+            return matchesSearch && matchesAccountType && matchesPeriodo && matchesMaterial
         })
-    }, [filterAccountType, filterPeriodo, searchQuery, users])
+    }, [filterAccountType, filterPeriodo, searchQuery, users, filterMaterialMode, filterMaterialIds, ownedMaterialsForUser])
 
     const categories = useMemo(() => {
         const unique = new Set(templates.map(template => template.category || 'Geral'))
@@ -1589,6 +1625,121 @@ export default function AdminEmailsPage() {
                                                 Dica: use o botão <strong>Filtrados</strong> para selecionar apenas estes usuários e enviar só para o período escolhido.
                                             </p>
                                         )}
+
+                                        <div className="rounded-lg border bg-muted/30 p-3 space-y-3">
+                                            <div className="flex items-center gap-2">
+                                                <FolderOpen className="h-4 w-4 text-muted-foreground" />
+                                                <span className="text-sm font-medium">Filtrar por materiais comprados</span>
+                                            </div>
+                                            <div className="grid gap-2 sm:grid-cols-[200px_minmax(0,1fr)]">
+                                                <Select
+                                                    value={filterMaterialMode}
+                                                    onValueChange={(value) => {
+                                                        const mode = value as 'all' | 'bought' | 'not_bought'
+                                                        setFilterMaterialMode(mode)
+                                                        setShowMaterialFilter(mode !== 'all')
+                                                    }}
+                                                >
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Materiais" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="all">Sem filtro de material</SelectItem>
+                                                        <SelectItem value="bought">Compraram (algum selecionado)</SelectItem>
+                                                        <SelectItem value="not_bought">NÃO compraram (nenhum selecionado)</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                                {filterMaterialMode !== 'all' && (
+                                                    <Button
+                                                        type="button"
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="justify-between"
+                                                        onClick={() => setShowMaterialFilter(prev => !prev)}
+                                                    >
+                                                        <span className="truncate">
+                                                            {filterMaterialIds.size === 0
+                                                                ? 'Selecionar materiais...'
+                                                                : `${filterMaterialIds.size} material(is) selecionado(s)`}
+                                                        </span>
+                                                        {showMaterialFilter ? <ChevronUp className="h-4 w-4 shrink-0" /> : <ChevronDown className="h-4 w-4 shrink-0" />}
+                                                    </Button>
+                                                )}
+                                            </div>
+
+                                            {filterMaterialMode !== 'all' && showMaterialFilter && (
+                                                <div className="space-y-2">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="relative flex-1">
+                                                            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                                                            <Input
+                                                                value={materialFilterSearch}
+                                                                onChange={(event) => setMaterialFilterSearch(event.target.value)}
+                                                                placeholder="Buscar material..."
+                                                                className="pl-9 h-9"
+                                                            />
+                                                        </div>
+                                                        {filterMaterialIds.size > 0 && (
+                                                            <Button
+                                                                type="button"
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                onClick={() => setFilterMaterialIds(new Set())}
+                                                            >
+                                                                Limpar
+                                                            </Button>
+                                                        )}
+                                                    </div>
+                                                    <div className="max-h-52 overflow-y-auto rounded-lg border bg-background">
+                                                        {(() => {
+                                                            const q = materialFilterSearch.toLowerCase().trim()
+                                                            const list = materials.filter(m => !q || m.title.toLowerCase().includes(q))
+                                                            if (list.length === 0) {
+                                                                return <div className="p-4 text-center text-xs text-muted-foreground">Nenhum material encontrado</div>
+                                                            }
+                                                            return list.map(material => (
+                                                                <button
+                                                                    key={material._id}
+                                                                    type="button"
+                                                                    onClick={() => {
+                                                                        setFilterMaterialIds(prev => {
+                                                                            const next = new Set(prev)
+                                                                            if (next.has(material._id)) next.delete(material._id)
+                                                                            else next.add(material._id)
+                                                                            return next
+                                                                        })
+                                                                    }}
+                                                                    className={`flex w-full items-center gap-3 border-b p-2.5 text-left last:border-b-0 hover:bg-muted/50 ${filterMaterialIds.has(material._id) ? 'bg-primary/10' : ''}`}
+                                                                >
+                                                                    <Checkbox
+                                                                        checked={filterMaterialIds.has(material._id)}
+                                                                        onCheckedChange={() => {
+                                                                            setFilterMaterialIds(prev => {
+                                                                                const next = new Set(prev)
+                                                                                if (next.has(material._id)) next.delete(material._id)
+                                                                                else next.add(material._id)
+                                                                                return next
+                                                                            })
+                                                                        }}
+                                                                        onClick={(event) => event.stopPropagation()}
+                                                                    />
+                                                                    <span className="truncate text-sm">{material.title}</span>
+                                                                </button>
+                                                            ))
+                                                        })()}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {filterMaterialMode !== 'all' && filterMaterialIds.size > 0 && (
+                                                <p className="text-xs text-muted-foreground">
+                                                    {filterMaterialMode === 'bought'
+                                                        ? 'Mostrando usuários que compraram pelo menos um dos materiais selecionados (inclui pacotes que contêm esses materiais).'
+                                                        : 'Mostrando usuários que NÃO compraram nenhum dos materiais selecionados.'}
+                                                    {' '}Use o botão <strong>Filtrados</strong> para selecioná-los.
+                                                </p>
+                                            )}
+                                        </div>
 
                                         <div className="max-h-[360px] overflow-y-auto rounded-lg border">
                                             {filteredUsers.length === 0 ? (
