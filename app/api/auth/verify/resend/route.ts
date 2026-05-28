@@ -50,7 +50,15 @@ export async function POST(request: NextRequest) {
             { $set: { verificationToken } }
         )
 
-        await sendVerificationEmail(user.email, verificationToken, user.name)
+        try {
+            await sendVerificationEmail(user.email, verificationToken, user.name)
+        } catch (emailError) {
+            console.error('Falha ao enviar e-mail de verificação (resend):', emailError)
+            return NextResponse.json(
+                { error: 'Não foi possível enviar o e-mail agora. Tente novamente em instantes.' },
+                { status: 502 }
+            )
+        }
 
         return NextResponse.json({ success: true, message: 'Link reenviado com sucesso' })
     } catch (error) {

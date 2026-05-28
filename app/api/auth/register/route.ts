@@ -124,16 +124,19 @@ export async function POST(request: NextRequest) {
     // Define o cookie
     await setAuthCookie(token)
 
-    // Enviar emails em paralelo para não travar
-    Promise.allSettled([
+    // Enviar emails em paralelo. IMPORTANTE: aguardar o envio — em runtime
+    // serverless (Vercel) uma Promise não-aguardada é congelada assim que a
+    // resposta é retornada, então o fire-and-forget fazia o e-mail de
+    // verificação muitas vezes nunca sair. Falha no envio não bloqueia o
+    // cadastro (apenas registramos o erro).
+    const emailResults = await Promise.allSettled([
       sendWelcomeEmail(email, name),
       sendVerificationEmail(email, verificationToken, name)
-    ]).then((results) => {
-      results.forEach((result, index) => {
-        if (result.status === 'rejected') {
-          console.error(`Erro ao enviar email ${index === 0 ? 'boas-vindas' : 'verificação'}:`, result.reason)
-        }
-      })
+    ])
+    emailResults.forEach((result, index) => {
+      if (result.status === 'rejected') {
+        console.error(`Erro ao enviar email ${index === 0 ? 'boas-vindas' : 'verificação'}:`, result.reason)
+      }
     })
 
     return NextResponse.json({

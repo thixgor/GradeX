@@ -9,6 +9,12 @@ const transporter = nodemailer.createTransport({
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
+  // Timeouts curtos para caber no maxDuration (30s) das funções serverless.
+  // Sem eles, um handshake SMTP lento mata a função antes do envio rejeitar,
+  // resultando em "e-mail não chega" sem nenhum erro nos logs.
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 20000,
 })
 
 // Estilos e Layout Base (Verde: #0f3d2e, Laranja: #f57c00)
@@ -91,7 +97,7 @@ export async function sendPasswordResetEmail(email: string, token: string) {
 
 export async function sendWelcomeEmail(email: string, name: string) {
   const loginUrl = `${process.env.NEXT_PUBLIC_APP_URL}/auth/login`
-  const firstName = name.split(' ')[0]
+  const firstName = (name || '').split(' ')[0] || 'aluno(a)'
 
   const content = `
     <h1 class="h1">Bem-vindo(a) ao DomineAqui, ${firstName}! 🚀</h1>
@@ -122,7 +128,7 @@ export async function sendWelcomeEmail(email: string, name: string) {
 
 export async function sendVerificationEmail(email: string, token: string, name: string) {
   const verifyUrl = `${process.env.NEXT_PUBLIC_APP_URL}/auth/verify?token=${token}`
-  const firstName = name.split(' ')[0]
+  const firstName = (name || '').split(' ')[0] || 'aluno(a)'
 
   const content = `
     <h1 class="h1">Confirme seu E-mail</h1>
@@ -150,7 +156,7 @@ export async function sendVerificationEmail(email: string, token: string, name: 
 }
 
 export async function sendAccountDeletedEmail(email: string, name: string) {
-  const firstName = name.split(' ')[0]
+  const firstName = (name || '').split(' ')[0] || 'aluno(a)'
 
   const content = `
     <h1 class="h1" style="color: #c53030;">Atualização sobre sua conta</h1>
@@ -180,7 +186,7 @@ export async function sendPlanPurchasedEmail(
   durationMonths: number,
   amount?: number
 ) {
-  const firstName = name.split(' ')[0]
+  const firstName = (name || '').split(' ')[0] || 'aluno(a)'
   const durationText = durationMonths === 0 || durationMonths > 300 ? 'Vitalício' : `${durationMonths} meses`
   const amountLine = amount
     ? `<p style="font-size:14px;color:#718096;">Valor cobrado: <strong style="color:#0f3d2e;">R$ ${amount.toFixed(2).replace('.', ',')}</strong></p>`
@@ -523,7 +529,7 @@ export async function sendCartPurchasedEmail(
 }
 
 export async function sendSubscriptionCancelledEmail(email: string, name: string) {
-  const firstName = name.split(' ')[0]
+  const firstName = (name || '').split(' ')[0] || 'aluno(a)'
 
   const content = `
     <h1 class="h1">Sentiremos sua falta 😢</h1>
@@ -547,7 +553,7 @@ export async function sendSubscriptionCancelledEmail(email: string, name: string
 }
 
 export async function sendOneTimePaymentEndedEmail(email: string, name: string) {
-  const firstName = name.split(' ')[0]
+  const firstName = (name || '').split(' ')[0] || 'aluno(a)'
 
   const content = `
     <h1 class="h1">Seu acesso expirou ⌛</h1>
@@ -675,7 +681,7 @@ export async function sendLeadMaterialEmail(
   subject: string,
   blocks: LeadBlockForEmail[]
 ) {
-  const firstName = name.split(' ')[0]
+  const firstName = (name || '').split(' ')[0] || 'aluno(a)'
   const blocksHtml = renderLeadBlocksToHtml(blocks)
 
   const content = `
