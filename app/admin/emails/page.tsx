@@ -1079,9 +1079,26 @@ export default function AdminEmailsPage() {
             .footer { background: #101a16 !important; border-top-color: #1f2d27 !important; }
             .footer p { color: #849991 !important; }
           }
+          /* Clients that ignore prefers-color-scheme and recolor automatically
+             (Gmail, Outlook.com) inject [data-ogsc]/[data-ogsb]; override their
+             partial inversion so the highlight text isn't left dark-on-dark. */
+          u + .body .highlight-box,
+          [data-ogsc] .highlight-box,
+          [data-ogsb] .highlight-box { background: #3d2f10 !important; border-left-color: #ffb74d !important; box-shadow: none !important; }
+          u + .body .highlight-box p,
+          [data-ogsc] .highlight-box p { color: #ffe9c2 !important; }
+          u + .body .highlight-box strong,
+          [data-ogsc] .highlight-box strong { color: #ffd98a !important; }
+          u + .body .quote-block,
+          [data-ogsc] .quote-block,
+          [data-ogsb] .quote-block { background: #1b2a23 !important; border-left-color: #58d6a0 !important; }
+          [data-ogsc] .quote-block .quote-mark { color: #58d6a0 !important; }
+          [data-ogsc] .quote-block .quote-text { color: #e2ebe6 !important; }
+          [data-ogsc] .quote-block .quote-author,
+          [data-ogsc] .quote-block .quote-author:before { color: #58d6a0 !important; }
         </style>
       </head>
-      <body>
+      <body class="body">
         <div class="email-container">
           <div class="header">
             <img src="${logoUrl}" alt="DomineAqui">

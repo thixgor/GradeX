@@ -249,9 +249,49 @@ export const getMarketingEmailTemplate = (content: string, previewText?: string)
           .footer { background-color: #101a16 !important; border-top-color: #1f2d27 !important; }
           .footer p, .unsubscribe { color: #849991 !important; }
         }
+
+        /* Dark mode for clients that ignore prefers-color-scheme and recolor
+           automatically (Gmail app/web, Outlook.com). They inject [data-ogsc]/
+           [data-ogsb] on recolored elements; we override their partial inversion
+           — which otherwise leaves the highlight text dark-on-dark (faded). */
+        u + .body .highlight-box,
+        [data-ogsc] .highlight-box,
+        [data-ogsb] .highlight-box {
+          background: #3d2f10 !important;
+          background-color: #3d2f10 !important;
+          border-left-color: #ffb74d !important;
+          box-shadow: none !important;
+        }
+        u + .body .highlight-box p,
+        [data-ogsc] .highlight-box p {
+          color: #ffe9c2 !important;
+        }
+        u + .body .highlight-box strong,
+        [data-ogsc] .highlight-box strong {
+          color: #ffd98a !important;
+        }
+        u + .body .quote-block,
+        [data-ogsc] .quote-block,
+        [data-ogsb] .quote-block {
+          background: #1b2a23 !important;
+          background-color: #1b2a23 !important;
+          border-left-color: #58d6a0 !important;
+        }
+        [data-ogsc] .quote-block .quote-mark { color: #58d6a0 !important; }
+        [data-ogsc] .quote-block .quote-text { color: #e2ebe6 !important; }
+        [data-ogsc] .quote-block .quote-author,
+        [data-ogsc] .quote-block .quote-author:before { color: #58d6a0 !important; }
+        u + .body .resource-card,
+        [data-ogsc] .resource-card,
+        [data-ogsb] .resource-card {
+          background: #1b2a23 !important;
+          background-color: #1b2a23 !important;
+          border-color: #2c3f36 !important;
+        }
+        [data-ogsc] .resource-badge { background-color: #173329 !important; color: #58d6a0 !important; }
       </style>
     </head>
-    <body>
+    <body class="body">
       ${previewText ? `<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">${previewText}&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;</div>` : ''}
       <div class="email-bg">
         <div class="email-container">
