@@ -7,13 +7,10 @@ import {
     ArrowLeft,
     BarChart3,
     BookOpen,
-    CalendarClock,
     Check,
     ChevronDown,
     ChevronUp,
-    Clock,
     Copy,
-    Pencil,
     Eye,
     FileText,
     FolderOpen,
@@ -165,35 +162,6 @@ interface EmailDraft {
     createdAt?: string
 }
 
-interface ScheduledEmail {
-    _id: string
-    subject: string
-    content: string
-    previewText?: string
-    recipients: {
-        userIds?: string[]
-        additionalEmails?: string[]
-        selectAll?: boolean
-    }
-    recipientCount?: number
-    scheduledAt: string
-    status: 'scheduled' | 'processing' | 'sent' | 'failed'
-    stats?: { total: number; sent: number; failed: number }
-    errors?: string[]
-    blocks?: EmailBlock[]
-    attachmentType?: AttachmentType
-    selectedMaterialId?: string
-    selectedFlashcardId?: string
-    customLinkUrl?: string
-    customLinkTitle?: string
-    customLinkDescription?: string
-    attachmentCtaText?: string
-    selectedTemplateId?: string
-    sentAt?: string
-    createdAt?: string
-    createdByName?: string
-}
-
 interface VisualPreset {
     subject: string
     previewText: string
@@ -224,77 +192,6 @@ const blockLabels: Record<EmailBlockType, string> = {
 
 function newId() {
     return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
-}
-
-const BRASILIA_TZ = 'America/Sao_Paulo'
-
-// Minutos que o fuso está adiantado em relação ao UTC (Brasília = -180).
-function getTzOffsetMinutes(timeZone: string, date: Date): number {
-    const dtf = new Intl.DateTimeFormat('en-US', {
-        timeZone,
-        hour12: false,
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-    })
-    const parts = dtf.formatToParts(date)
-    const map: Record<string, string> = {}
-    for (const p of parts) map[p.type] = p.value
-    const asUTC = Date.UTC(
-        Number(map.year),
-        Number(map.month) - 1,
-        Number(map.day),
-        Number(map.hour === '24' ? '00' : map.hour),
-        Number(map.minute),
-        Number(map.second)
-    )
-    return (asUTC - date.getTime()) / 60000
-}
-
-// Converte data (YYYY-MM-DD) + hora (HH:mm) entendidas como horário de
-// Brasília para um instante UTC (Date).
-function brasiliaToUtc(dateStr: string, timeStr: string): Date | null {
-    const [y, m, d] = dateStr.split('-').map(Number)
-    const [h, min] = timeStr.split(':').map(Number)
-    if (!y || !m || !d || Number.isNaN(h) || Number.isNaN(min)) return null
-    const utcGuess = new Date(Date.UTC(y, m - 1, d, h, min, 0))
-    const offset = getTzOffsetMinutes(BRASILIA_TZ, utcGuess)
-    return new Date(utcGuess.getTime() - offset * 60000)
-}
-
-// Extrai os campos {date, time} em horário de Brasília a partir de um Date/ISO.
-function utcToBrasiliaFields(value: string | Date): { date: string; time: string } {
-    const date = typeof value === 'string' ? new Date(value) : value
-    const dtf = new Intl.DateTimeFormat('en-CA', {
-        timeZone: BRASILIA_TZ,
-        hour12: false,
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-    })
-    const parts = dtf.formatToParts(date)
-    const map: Record<string, string> = {}
-    for (const p of parts) map[p.type] = p.value
-    const hour = map.hour === '24' ? '00' : map.hour
-    return { date: `${map.year}-${map.month}-${map.day}`, time: `${hour}:${map.minute}` }
-}
-
-function formatBrasilia(value: string | Date): string {
-    const date = typeof value === 'string' ? new Date(value) : value
-    if (Number.isNaN(date.getTime())) return '—'
-    return date.toLocaleString('pt-BR', {
-        timeZone: BRASILIA_TZ,
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    })
 }
 
 function makeBlock(type: EmailBlockType, data: Partial<EmailBlock> = {}): EmailBlock {
@@ -696,14 +593,6 @@ export default function AdminEmailsPage() {
     const [showDrafts, setShowDrafts] = useState(false)
     const [savingDraft, setSavingDraft] = useState(false)
     const [sendResult, setSendResult] = useState<SendResult | null>(null)
-
-    // Agendamento de e-mails (horário de Brasília)
-    const [scheduledDate, setScheduledDate] = useState('')
-    const [scheduledTime, setScheduledTime] = useState('')
-    const [scheduling, setScheduling] = useState(false)
-    const [scheduledEmails, setScheduledEmails] = useState<ScheduledEmail[]>([])
-    const [showScheduled, setShowScheduled] = useState(false)
-    const [editingScheduledId, setEditingScheduledId] = useState<string | null>(null)
     const [toast, setToast] = useState<{ open: boolean; message: string; type?: 'success' | 'error' | 'info' }>({ open: false, message: '' })
 
     const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
@@ -716,14 +605,13 @@ export default function AdminEmailsPage() {
 
     async function loadData() {
         try {
-            const [usersRes, templatesRes, materialsRes, flashcardsRes, draftsRes, ownershipRes, scheduledRes] = await Promise.all([
+            const [usersRes, templatesRes, materialsRes, flashcardsRes, draftsRes, ownershipRes] = await Promise.all([
                 fetch('/api/users', { cache: 'no-store' }),
                 fetch('/api/admin/emails/templates', { cache: 'no-store' }),
                 fetch('/api/materiais', { cache: 'no-store' }),
                 fetch('/api/flashcards/manual?scope=all-admin', { cache: 'no-store' }),
                 fetch('/api/admin/emails/drafts', { cache: 'no-store' }),
                 fetch('/api/admin/material-purchases', { cache: 'no-store' }),
-                fetch('/api/admin/emails/scheduled', { cache: 'no-store' }),
             ])
 
             if (usersRes.ok) {
@@ -757,11 +645,6 @@ export default function AdminEmailsPage() {
                     byUserId: ownershipData.ownership?.byUserId || {},
                     byEmail: ownershipData.ownership?.byEmail || {},
                 })
-            }
-
-            if (scheduledRes.ok) {
-                const scheduledData = await scheduledRes.json()
-                setScheduledEmails(scheduledData.scheduled || [])
             }
         } catch (error) {
             console.error('Load email composer data error:', error)
@@ -889,11 +772,6 @@ export default function AdminEmailsPage() {
     const recipientCount = selectAll
         ? users.length + additionalEmails.length
         : selectedUserIds.size + additionalEmails.length
-
-    const upcomingScheduledCount = useMemo(
-        () => scheduledEmails.filter(s => s.status === 'scheduled' || s.status === 'processing').length,
-        [scheduledEmails]
-    )
 
     const plainContent = useMemo(() => blocks.map(block => [
         block.title,
@@ -1163,153 +1041,6 @@ export default function AdminEmailsPage() {
             showToast(err.message, 'error')
         } finally {
             setSending(false)
-        }
-    }
-
-    const reloadScheduled = async () => {
-        try {
-            const res = await fetch('/api/admin/emails/scheduled', { cache: 'no-store' })
-            if (res.ok) {
-                const data = await res.json()
-                setScheduledEmails(data.scheduled || [])
-            }
-        } catch (error) {
-            console.error('Reload scheduled error:', error)
-        }
-    }
-
-    const cancelEditingSchedule = () => {
-        setEditingScheduledId(null)
-        setScheduledDate('')
-        setScheduledTime('')
-    }
-
-    const scheduleEmail = async () => {
-        if (!subject.trim()) {
-            showToast('Informe o assunto do e-mail', 'error')
-            return
-        }
-        if (!plainContent.trim()) {
-            showToast('Escreva o conteudo do e-mail', 'error')
-            return
-        }
-        if (recipientCount === 0) {
-            showToast('Selecione pelo menos um destinatario', 'error')
-            return
-        }
-        if (!scheduledDate || !scheduledTime) {
-            showToast('Defina a data e o horário do agendamento', 'error')
-            return
-        }
-
-        const scheduledAt = brasiliaToUtc(scheduledDate, scheduledTime)
-        if (!scheduledAt) {
-            showToast('Data ou horário inválido', 'error')
-            return
-        }
-        if (scheduledAt.getTime() < Date.now() + 30_000) {
-            showToast('Escolha um horário no futuro', 'error')
-            return
-        }
-
-        setScheduling(true)
-        try {
-            const payload = {
-                recipients: {
-                    userIds: selectAll ? [] : Array.from(selectedUserIds),
-                    additionalEmails,
-                    selectAll,
-                },
-                recipientCount,
-                subject,
-                content: finalContent,
-                previewText,
-                scheduledAt: scheduledAt.toISOString(),
-                blocks,
-                attachmentType,
-                selectedMaterialId,
-                selectedFlashcardId,
-                customLinkUrl,
-                customLinkTitle,
-                customLinkDescription,
-                attachmentCtaText,
-                selectedTemplateId,
-            }
-
-            const url = editingScheduledId
-                ? `/api/admin/emails/scheduled/${editingScheduledId}`
-                : '/api/admin/emails/scheduled'
-            const res = await fetch(url, {
-                method: editingScheduledId ? 'PUT' : 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-            })
-            const data = await res.json()
-            if (!res.ok) {
-                throw new Error(data.error || 'Erro ao agendar e-mail')
-            }
-
-            showToast(
-                editingScheduledId
-                    ? 'Agendamento atualizado'
-                    : `E-mail agendado para ${formatBrasilia(scheduledAt)} (Brasília)`,
-                'success'
-            )
-            cancelEditingSchedule()
-            await reloadScheduled()
-        } catch (error) {
-            const err = error as Error
-            showToast(err.message, 'error')
-        } finally {
-            setScheduling(false)
-        }
-    }
-
-    const editScheduled = (item: ScheduledEmail) => {
-        setEditingScheduledId(item._id)
-        setSubject(item.subject || '')
-        setPreviewText(item.previewText || '')
-        setBlocks(Array.isArray(item.blocks) && item.blocks.length > 0
-            ? item.blocks.map(block => ({ ...block, id: newId(), items: block.items ? [...block.items] : undefined }))
-            : cloneBlocks(visualTemplatePresets.empty.blocks))
-        setAttachmentType((item.attachmentType as AttachmentType) || 'none')
-        setSelectedMaterialId(item.selectedMaterialId || '')
-        setSelectedFlashcardId(item.selectedFlashcardId || '')
-        setCustomLinkUrl(item.customLinkUrl || '')
-        setCustomLinkTitle(item.customLinkTitle || '')
-        setCustomLinkDescription(item.customLinkDescription || '')
-        setAttachmentCtaText(item.attachmentCtaText || 'Acessar agora')
-        setSelectedTemplateId(item.selectedTemplateId || '')
-
-        // Restaurar destinatários
-        setSelectAll(!!item.recipients?.selectAll)
-        setSelectedUserIds(new Set(item.recipients?.userIds || []))
-        setAdditionalEmails(item.recipients?.additionalEmails || [])
-
-        // Restaurar data/hora (em Brasília)
-        const fields = utcToBrasiliaFields(item.scheduledAt)
-        setScheduledDate(fields.date)
-        setScheduledTime(fields.time)
-
-        setShowScheduled(false)
-        showToast('Agendamento carregado para edição', 'success')
-        if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-
-    const cancelScheduled = async (id: string, label: string) => {
-        if (!confirm(`${label} este agendamento?`)) return
-        try {
-            const res = await fetch(`/api/admin/emails/scheduled/${id}`, { method: 'DELETE' })
-            const data = await res.json().catch(() => ({}))
-            if (!res.ok) {
-                throw new Error(data.error || 'Erro ao cancelar agendamento')
-            }
-            if (editingScheduledId === id) cancelEditingSchedule()
-            await reloadScheduled()
-            showToast('Agendamento removido', 'success')
-        } catch (error) {
-            const err = error as Error
-            showToast(err.message, 'error')
         }
     }
 
@@ -2251,78 +1982,6 @@ export default function AdminEmailsPage() {
                                         Envios em massa são processados em lotes e podem levar alguns minutos.
                                     </p>
                                 )}
-
-                                <div className="rounded-lg border bg-muted/30 p-4 space-y-3">
-                                    <div className="flex items-center justify-between gap-2">
-                                        <div className="flex items-center gap-2">
-                                            <CalendarClock className="h-4 w-4 text-emerald-600" />
-                                            <span className="text-sm font-medium">
-                                                {editingScheduledId ? 'Editar agendamento' : 'Agendar envio'}
-                                            </span>
-                                        </div>
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => setShowScheduled(true)}
-                                        >
-                                            <Clock className="mr-2 h-4 w-4" />
-                                            Agendados {upcomingScheduledCount > 0 ? `(${upcomingScheduledCount})` : ''}
-                                        </Button>
-                                    </div>
-                                    <div className="grid gap-2 sm:grid-cols-2">
-                                        <div className="space-y-1">
-                                            <label className="text-xs text-muted-foreground">Data</label>
-                                            <Input
-                                                type="date"
-                                                value={scheduledDate}
-                                                onChange={(event) => setScheduledDate(event.target.value)}
-                                            />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <label className="text-xs text-muted-foreground">Horário (Brasília)</label>
-                                            <Input
-                                                type="time"
-                                                value={scheduledTime}
-                                                onChange={(event) => setScheduledTime(event.target.value)}
-                                            />
-                                        </div>
-                                    </div>
-                                    {scheduledDate && scheduledTime && (() => {
-                                        const preview = brasiliaToUtc(scheduledDate, scheduledTime)
-                                        return preview ? (
-                                            <p className="text-xs text-muted-foreground">
-                                                Será enviado em <strong>{formatBrasilia(preview)}</strong> (horário de Brasília).
-                                            </p>
-                                        ) : null
-                                    })()}
-                                    <Button
-                                        type="button"
-                                        variant={editingScheduledId ? 'default' : 'outline'}
-                                        onClick={scheduleEmail}
-                                        disabled={scheduling || recipientCount === 0 || !subject.trim() || !plainContent.trim() || !scheduledDate || !scheduledTime}
-                                        className="w-full"
-                                    >
-                                        {scheduling ? (
-                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        ) : (
-                                            <CalendarClock className="mr-2 h-4 w-4" />
-                                        )}
-                                        {editingScheduledId ? 'Atualizar agendamento' : 'Agendar envio'}
-                                    </Button>
-                                    {editingScheduledId && (
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="sm"
-                                            className="w-full"
-                                            onClick={cancelEditingSchedule}
-                                        >
-                                            <X className="mr-2 h-4 w-4" />
-                                            Cancelar edição
-                                        </Button>
-                                    )}
-                                </div>
                             </CardContent>
                         </Card>
                     </div>
@@ -2423,84 +2082,6 @@ export default function AdminEmailsPage() {
                                     </div>
                                 </div>
                             ))}
-                        </div>
-                    )}
-                </DialogContent>
-            </Dialog>
-
-            <Dialog open={showScheduled} onOpenChange={setShowScheduled}>
-                <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
-                    <DialogHeader>
-                        <DialogTitle className="flex items-center gap-2">
-                            <CalendarClock className="h-5 w-5" />
-                            E-mails agendados
-                        </DialogTitle>
-                        <DialogDescription>
-                            Edite, reagende ou cancele os envios programados. Horários em Brasília.
-                        </DialogDescription>
-                    </DialogHeader>
-                    {scheduledEmails.length === 0 ? (
-                        <div className="rounded-lg border border-dashed p-10 text-center text-sm text-muted-foreground">
-                            Nenhum e-mail agendado ainda.
-                        </div>
-                    ) : (
-                        <div className="space-y-2">
-                            {scheduledEmails.map(item => {
-                                const statusMap: Record<string, { label: string; cls: string }> = {
-                                    scheduled: { label: 'Agendado', cls: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400' },
-                                    processing: { label: 'Enviando', cls: 'bg-blue-100 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400' },
-                                    sent: { label: 'Enviado', cls: 'bg-muted text-muted-foreground' },
-                                    failed: { label: 'Falhou', cls: 'bg-red-100 text-red-700 dark:bg-red-950/40 dark:text-red-400' },
-                                }
-                                const status = statusMap[item.status] || statusMap.scheduled
-                                const canEdit = item.status === 'scheduled'
-                                return (
-                                    <div
-                                        key={item._id}
-                                        className={`flex items-start justify-between gap-3 rounded-lg border p-3 ${editingScheduledId === item._id ? 'border-primary bg-primary/5' : ''}`}
-                                    >
-                                        <div className="min-w-0 flex-1">
-                                            <div className="flex items-center gap-2">
-                                                <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${status.cls}`}>{status.label}</span>
-                                                <p className="truncate text-sm font-semibold">{item.subject || 'Sem assunto'}</p>
-                                            </div>
-                                            <p className="mt-1 text-xs text-muted-foreground">
-                                                <CalendarClock className="mr-1 inline h-3 w-3" />
-                                                {formatBrasilia(item.scheduledAt)}
-                                                {typeof item.recipientCount === 'number' && (
-                                                    <span> · {item.recipientCount} destinatário{item.recipientCount !== 1 ? 's' : ''}</span>
-                                                )}
-                                            </p>
-                                            {item.status === 'sent' && item.stats && (
-                                                <p className="mt-1 text-[11px] text-muted-foreground">
-                                                    Enviados: {item.stats.sent} / {item.stats.total} · Falhas: {item.stats.failed}
-                                                </p>
-                                            )}
-                                            {item.status === 'failed' && item.errors && item.errors.length > 0 && (
-                                                <p className="mt-1 line-clamp-2 text-[11px] text-destructive">{item.errors[0]}</p>
-                                            )}
-                                        </div>
-                                        <div className="flex shrink-0 gap-1">
-                                            {canEdit && (
-                                                <Button type="button" size="sm" variant="outline" onClick={() => editScheduled(item)}>
-                                                    <Pencil className="mr-1 h-3.5 w-3.5" />
-                                                    Editar
-                                                </Button>
-                                            )}
-                                            <Button
-                                                type="button"
-                                                variant="ghost"
-                                                size="icon"
-                                                className="h-8 w-8 text-destructive"
-                                                disabled={item.status === 'processing'}
-                                                onClick={() => cancelScheduled(item._id, canEdit ? 'Cancelar' : 'Remover')}
-                                            >
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                    </div>
-                                )
-                            })}
                         </div>
                     )}
                 </DialogContent>

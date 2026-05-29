@@ -22,9 +22,6 @@
     "app/api/cron/subscriptions-sweeper/route.ts": {
       "maxDuration": 300
     },
-    "app/api/cron/scheduled-emails-sender/route.ts": {
-      "maxDuration": 300
-    },
     "app/api/questions/generate/route.ts": {
       "maxDuration": 60
     },
@@ -55,10 +52,6 @@
     {
       "path": "/api/cron/manual-clinico-expirations",
       "schedule": "0 12 * * *"
-    },
-    {
-      "path": "/api/cron/scheduled-emails-sender",
-      "schedule": "0 6 * * *"
     }
   ],
   "redirects": [

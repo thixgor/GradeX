@@ -65,9 +65,6 @@ if (process.env.NODE_ENV === 'development') {
           { targetType: 1, targetId: 1, userId: 1 },
           { unique: true, partialFilterExpression: { isAdminCreated: false, userId: { $type: 'string' } } },
         ),
-        // ── E-mails agendados ──
-        db.collection('scheduledEmails').createIndex({ status: 1, scheduledAt: 1 }),
-        db.collection('scheduledEmails').createIndex({ scheduledAt: -1 }),
       ]).catch(err => console.error('Erro ao criar índices iniciais:', err))
       return client
     })
@@ -136,9 +133,6 @@ if (process.env.NODE_ENV === 'development') {
         { targetType: 1, targetId: 1, userId: 1 },
         { unique: true, partialFilterExpression: { isAdminCreated: false, userId: { $type: 'string' } } },
       ),
-      // ── E-mails agendados ──
-      db.collection('scheduledEmails').createIndex({ status: 1, scheduledAt: 1 }),
-      db.collection('scheduledEmails').createIndex({ scheduledAt: -1 }),
     ]).catch(err => console.error('Erro ao criar índices iniciais:', err))
     return client
   })
