@@ -474,6 +474,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const [notice, setNotice] = useState('')
   const [isPrinting, setIsPrinting] = useState(false)
   const [highlightColor, setHighlightColor] = useState('#facc15')
+  const [highlightWidth, setHighlightWidth] = useState(20)
   const [noteColor, setNoteColor] = useState('#fde68a')
   const [drawingStyle, setDrawingStyle] = useState<DrawingStyle>({
     mode: 'free',
@@ -940,6 +941,8 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
               onDrawingStyleChange={setDrawingStyle}
               highlightColor={highlightColor}
               onHighlightColorChange={setHighlightColor}
+              highlightWidth={highlightWidth}
+              onHighlightWidthChange={setHighlightWidth}
               noteColor={noteColor}
               onNoteColorChange={setNoteColor}
               textStyle={textStyle}
@@ -1323,7 +1326,7 @@ function PdfCanvasPage({
       context.globalAlpha = 0.34
       context.globalCompositeOperation = 'multiply'
       context.strokeStyle = interaction.draft.color
-      context.lineWidth = Math.max(12, width * interaction.draft.strokeWidthRatio)
+      context.lineWidth = Math.max(4, width * interaction.draft.strokeWidthRatio)
       context.lineCap = 'round'
       context.lineJoin = 'round'
       pointsToCanvasPath(context, points, width, height)
@@ -1504,7 +1507,7 @@ function PdfCanvasPage({
           start: point,
           current: point,
           points: [point],
-          strokeWidthRatio: 20 / Math.max(rect?.width || 1, 1),
+          strokeWidthRatio: highlightWidth / Math.max(rect?.width || 1, 1),
           color: highlightColor,
         },
       }
@@ -2139,6 +2142,8 @@ function ToolOptionsBar({
   onDrawingStyleChange,
   highlightColor,
   onHighlightColorChange,
+  highlightWidth,
+  onHighlightWidthChange,
   noteColor,
   onNoteColorChange,
   textStyle,
@@ -2149,6 +2154,8 @@ function ToolOptionsBar({
   onDrawingStyleChange: (style: DrawingStyle) => void
   highlightColor: string
   onHighlightColorChange: (color: string) => void
+  highlightWidth: number
+  onHighlightWidthChange: (width: number) => void
   noteColor: string
   onNoteColorChange: (color: string) => void
   textStyle: TextStyle
@@ -2196,6 +2203,7 @@ function ToolOptionsBar({
         <>
           <span className="flex shrink-0 items-center gap-1 text-xs font-semibold text-white/75"><Highlighter className="h-4 w-4" /> Marca texto</span>
           <ColorSwatches colors={HIGHLIGHT_SWATCHES} value={highlightColor} onChange={onHighlightColorChange} />
+          <LabeledRange label="Espessura" min={8} max={48} value={highlightWidth} onChange={onHighlightWidthChange} />
         </>
       )}
 
