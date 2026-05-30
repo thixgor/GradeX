@@ -1001,6 +1001,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                   tool={tool}
                   drawingStyle={drawingStyle}
                   highlightColor={highlightColor}
+                  highlightWidth={highlightWidth}
                   noteColor={noteColor}
                   textStyle={textStyle}
                   onPageFocus={handlePageFocused}
@@ -1073,6 +1074,7 @@ function PdfCanvasPage({
   tool,
   drawingStyle,
   highlightColor,
+  highlightWidth,
   noteColor,
   textStyle,
   onPageFocus,
@@ -1091,6 +1093,7 @@ function PdfCanvasPage({
   tool: AnnotationTool
   drawingStyle: DrawingStyle
   highlightColor: string
+  highlightWidth: number
   noteColor: string
   textStyle: TextStyle
   onPageFocus: (page: number) => void
