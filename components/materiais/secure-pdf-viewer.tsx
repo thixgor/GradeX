@@ -170,6 +170,64 @@ async function getPdfJs() {
   return pdfjsLib
 }
 
+// Cada página é um PDF marcado individualmente no servidor (operação pesada
+// de CPU/memória). Ao abrir o documento, uma requisição por página visível era
+// disparada ao mesmo tempo, sem limite de concorrência, sem timeout e sem
+// retry. A rajada sobrecarregava o endpoint de marca d'água e algumas
+// requisições travavam ou falhavam, deixando a página presa no spinner até um
+// F5 reativá-la. As constantes/fila abaixo resolvem isso na origem.
+const PAGE_FETCH_MAX_CONCURRENCY = 3
+const PAGE_FETCH_TIMEOUT_MS = 25000
+const PAGE_FETCH_MAX_ATTEMPTS = 4
+
+let pageFetchActive = 0
+const pageFetchQueue: Array<() => void> = []
+
+function acquirePageFetchSlot(): Promise<() => void> {
+  return new Promise((resolve) => {
+    const grant = () => {
+      pageFetchActive += 1
+      let released = false
+      resolve(() => {
+        if (released) return
+        released = true
+        pageFetchActive -= 1
+        const next = pageFetchQueue.shift()
+        if (next) next()
+      })
+    }
+    if (pageFetchActive < PAGE_FETCH_MAX_CONCURRENCY) grant()
+    else pageFetchQueue.push(grant)
+  })
+}
+
+const pageFetchSleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+async function fetchPdfPageBytesOnce(materialId: string, pageNumber: number) {
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), PAGE_FETCH_TIMEOUT_MS)
+  try {
+    const response = await fetch(
+      `/api/materiais/${materialId}/pdf-viewer/page?page=${pageNumber}`,
+      { cache: 'no-store', signal: controller.signal }
+    )
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}))
+      const err = new Error(data.error || 'Falha ao carregar pagina') as Error & { status?: number }
+      err.status = response.status
+      throw err
+    }
+
+    const pageCountHeader = Number(response.headers.get('X-DomineAqui-Page-Count') || 0)
+    return {
+      bytes: new Uint8Array(await response.arrayBuffer()),
+      pageCount: Number.isFinite(pageCountHeader) && pageCountHeader > 0 ? pageCountHeader : undefined,
+    }
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
 async function fetchPdfPageBytes(materialId: string, pageNumber: number) {
   const key = `${materialId}:${pageNumber}`
   const now = Date.now()
@@ -183,31 +241,38 @@ async function fetchPdfPageBytes(materialId: string, pageNumber: number) {
   if (pending) return pending
 
   const request = (async () => {
-    const response = await fetch(
-      `/api/materiais/${materialId}/pdf-viewer/page?page=${pageNumber}`,
-      { cache: 'no-store' }
-    )
-    if (!response.ok) {
-      const data = await response.json().catch(() => ({}))
-      throw new Error(data.error || 'Falha ao carregar pagina')
-    }
+    const release = await acquirePageFetchSlot()
+    try {
+      let lastError: unknown
+      for (let attempt = 1; attempt <= PAGE_FETCH_MAX_ATTEMPTS; attempt += 1) {
+        try {
+          const result = await fetchPdfPageBytesOnce(materialId, pageNumber)
 
-    const pageCountHeader = Number(response.headers.get('X-DomineAqui-Page-Count') || 0)
-    const result = {
-      bytes: new Uint8Array(await response.arrayBuffer()),
-      pageCount: Number.isFinite(pageCountHeader) && pageCountHeader > 0 ? pageCountHeader : undefined,
+          while (pageBytesCache.size >= PAGE_BYTES_CACHE_MAX_ENTRIES) {
+            const oldestKey = pageBytesCache.keys().next().value
+            if (!oldestKey) break
+            pageBytesCache.delete(oldestKey)
+          }
+          pageBytesCache.set(key, {
+            ...result,
+            expiresAt: Date.now() + PAGE_BYTES_CACHE_TTL_MS,
+          })
+          return result
+        } catch (err) {
+          lastError = err
+          // Só re-tenta falhas transitórias (rede/abort, 5xx, 408, 429);
+          // erros de cliente reais (ex.: 403) falham rápido.
+          const status = (err as { status?: number })?.status
+          const retriable =
+            status === undefined || status >= 500 || status === 408 || status === 429
+          if (!retriable || attempt >= PAGE_FETCH_MAX_ATTEMPTS) break
+          await pageFetchSleep(Math.min(8000, 500 * 2 ** (attempt - 1)))
+        }
+      }
+      throw lastError
+    } finally {
+      release()
     }
-
-    while (pageBytesCache.size >= PAGE_BYTES_CACHE_MAX_ENTRIES) {
-      const oldestKey = pageBytesCache.keys().next().value
-      if (!oldestKey) break
-      pageBytesCache.delete(oldestKey)
-    }
-    pageBytesCache.set(key, {
-      ...result,
-      expiresAt: Date.now() + PAGE_BYTES_CACHE_TTL_MS,
-    })
-    return result
   })()
 
   pageBytesInflight.set(key, request)
@@ -1129,9 +1194,11 @@ function PdfCanvasPage({
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [editor, setEditor] = useState<EditorState | null>(null)
   const requestedRef = useRef(false)
+  const autoRetryRef = useRef(0)
 
   useEffect(() => {
     requestedRef.current = false
+    autoRetryRef.current = 0
     setPageBytes(null)
     setError('')
     setRenderSize(null)
@@ -1275,6 +1342,27 @@ function PdfCanvasPage({
     setError('')
     setLoadAttempt((attempt) => attempt + 1)
   }
+
+  // Auto-recuperação: se uma página falhar mesmo após os retries da requisição,
+  // ela tenta sozinha mais 2 vezes antes de exibir o botão manual — assim o
+  // usuário nunca precisa dar F5 para a página aparecer.
+  useEffect(() => {
+    if (!error || autoRetryRef.current >= 2) return
+    const delay = 1000 * (autoRetryRef.current + 1)
+    const timer = window.setTimeout(() => {
+      autoRetryRef.current += 1
+      requestedRef.current = false
+      setPageBytes(null)
+      setRenderSize(null)
+      setError('')
+      setLoadAttempt((attempt) => attempt + 1)
+    }, delay)
+    return () => window.clearTimeout(timer)
+  }, [error])
+
+  useEffect(() => {
+    if (pageBytes) autoRetryRef.current = 0
+  }, [pageBytes])
 
   const pageFrameSize = renderSize ?? (fallbackSize
     ? { width: fallbackSize.width * zoom, height: fallbackSize.height * zoom }
