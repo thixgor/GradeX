@@ -526,7 +526,9 @@ export default function ProfilePage() {
                         )}
                       >
                         <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          {p.itemType === 'manual_clinico'
+                          {p.itemType === 'subscription'
+                            ? <Crown className="h-4 w-4 text-primary" />
+                            : p.itemType === 'manual_clinico'
                             ? <BookOpen className="h-4 w-4 text-primary" />
                             : <ShoppingBag className="h-4 w-4 text-primary" />
                           }
@@ -537,7 +539,7 @@ export default function ProfilePage() {
                             {new Date(p.purchasedAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })}
                             {' · '}
                             <span className="capitalize">
-                              {p.itemType === 'manual_clinico' ? 'Produto' : p.itemType === 'package' ? 'Pacote' : 'Material'}
+                              {p.itemType === 'subscription' ? 'Assinatura' : p.itemType === 'manual_clinico' ? 'Produto' : p.itemType === 'package' ? 'Pacote' : 'Material'}
                             </span>
                             {p.couponCode ? (
                               <>
@@ -560,6 +562,26 @@ export default function ProfilePage() {
                                       ? ` · Expirou em ${expStr}`
                                       : ` · ${days} ${days === 1 ? 'dia' : 'dias'} restantes · Expira ${expStr}`
                                   })()}
+                            </p>
+                          )}
+                          {p.itemType === 'subscription' && (
+                            <p className="text-[11px] text-muted-foreground/80 mt-0.5">
+                              {p.planLabel ? <span className="font-bold text-yellow-700 dark:text-yellow-300">{p.planLabel}</span> : null}
+                              {p.accessType === 'lifetime' || !p.expiresAt
+                                ? ' · Vitalício (não expira)'
+                                : (() => {
+                                    const end = new Date(p.expiresAt).getTime()
+                                    const ms = end - Date.now()
+                                    const days = Math.ceil(ms / 86_400_000)
+                                    const dateStr = new Date(p.expiresAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })
+                                    const verb = p.recurring && p.subscriptionStatus === 'authorized' ? 'Renova' : 'Válido até'
+                                    return days <= 0
+                                      ? ` · Expirou em ${dateStr}`
+                                      : ` · ${days} ${days === 1 ? 'dia' : 'dias'} restantes · ${verb} ${dateStr}`
+                                  })()}
+                              {p.recurring && p.subscriptionStatus && p.subscriptionStatus !== 'authorized'
+                                ? ` · ${p.subscriptionStatus === 'cancelled' ? 'Cancelada' : p.subscriptionStatus === 'paused' ? 'Pausada' : p.subscriptionStatus === 'past_due' ? 'Pagamento pendente' : 'Expirada'}`
+                                : null}
                             </p>
                           )}
                         </div>

@@ -96,10 +96,15 @@ export default function AdminUsersPage() {
     purchases: Array<{
       _id: string
       itemTitle: string
-      itemType: 'material' | 'package'
+      itemType: 'material' | 'package' | 'subscription'
       price: number
       purchasedAt: string
       providerPaymentId?: string
+      planLabel?: string
+      recurring?: boolean
+      subscriptionStatus?: string
+      accessType?: 'recurring' | 'lifetime' | 'fixed'
+      expiresAt?: string | null
     }>
     totalAmount: number
     count: number
@@ -1497,15 +1502,33 @@ export default function AdminUsersPage() {
                       className="flex items-start gap-3 rounded-lg border bg-muted/20 p-3"
                     >
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
-                        {p.itemType === 'package'
+                        {p.itemType === 'subscription'
+                          ? <Crown className="h-5 w-5" />
+                          : p.itemType === 'package'
                           ? <PackageIcon className="h-5 w-5" />
                           : <FileTextIcon className="h-5 w-5" />}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs text-muted-foreground">
-                          {p.itemType === 'package' ? 'Pacote' : 'Material'}
+                          {p.itemType === 'subscription' ? 'Assinatura' : p.itemType === 'package' ? 'Pacote' : 'Material'}
                         </p>
                         <p className="text-sm font-semibold break-words">{p.itemTitle}</p>
+                        {p.itemType === 'subscription' && (
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            {p.planLabel ? <span className="font-semibold text-yellow-700 dark:text-yellow-300">{p.planLabel}</span> : null}
+                            {p.accessType === 'lifetime' || !p.expiresAt
+                              ? ' · Vitalício (não expira)'
+                              : (() => {
+                                  const expStr = new Date(p.expiresAt).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })
+                                  const expired = new Date(p.expiresAt).getTime() <= Date.now()
+                                  const verb = p.recurring && p.subscriptionStatus === 'authorized' ? 'Renova em' : 'Válido até'
+                                  return expired ? ` · Expirou em ${expStr}` : ` · ${verb} ${expStr}`
+                                })()}
+                            {p.recurring && p.subscriptionStatus && p.subscriptionStatus !== 'authorized'
+                              ? ` · ${p.subscriptionStatus === 'cancelled' ? 'Cancelada' : p.subscriptionStatus === 'paused' ? 'Pausada' : p.subscriptionStatus === 'past_due' ? 'Pagamento pendente' : 'Expirada'}`
+                              : null}
+                          </p>
+                        )}
                         <p className="text-xs text-muted-foreground mt-1">
                           {new Date(p.purchasedAt).toLocaleDateString('pt-BR', {
                             day: '2-digit', month: '2-digit', year: 'numeric',

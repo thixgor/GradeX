@@ -2,13 +2,16 @@ import { NextRequest, NextResponse } from 'next/server'
 import { ObjectId } from 'mongodb'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
+import { getSubscriptionPurchases } from '@/lib/subscription-purchases'
 
 export const dynamic = 'force-dynamic'
 
 /**
  * GET /api/admin/users/[userId]/purchases
  *
- * Lista as compras concluídas (material_purchases) de um usuário específico.
+ * Lista as compras concluídas de um usuário específico: materiais/pacotes
+ * (material_purchases) e assinaturas de plano Premium/Essential (subscriptions
+ * recorrentes + payment_orders de plano único, com a validade de cada uma).
  * Restrito a administradores. Combina a busca por userId e por userEmail
  * para cobrir registros antigos onde o vínculo era apenas pelo email.
  */
@@ -50,14 +53,25 @@ export async function GET(
       })
     }
 
-    const purchases = await db
-      .collection('material_purchases')
-      .find({
-        status: 'completed',
-        $or: orConditions,
-      })
-      .sort({ purchasedAt: -1 })
-      .toArray()
+    const [materialPurchases, subscriptionPurchases] = await Promise.all([
+      db
+        .collection('material_purchases')
+        .find({
+          status: 'completed',
+          $or: orConditions,
+        })
+        .sort({ purchasedAt: -1 })
+        .toArray(),
+      getSubscriptionPurchases(db, { userId: String(targetUser._id), email: targetUser.email }),
+    ])
+
+    const purchases = [
+      ...materialPurchases.map((p: any) => ({ ...p, _id: String(p._id) })),
+      ...subscriptionPurchases,
+    ].sort(
+      (a: any, b: any) =>
+        new Date(b.purchasedAt).getTime() - new Date(a.purchasedAt).getTime()
+    )
 
     const totalAmount = purchases.reduce((sum, p: any) => sum + Number(p.price || 0), 0)
 

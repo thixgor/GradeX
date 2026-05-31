@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { MANUAL_CLINICO_PURCHASES_COLLECTION } from '@/lib/manual-clinico-product'
+import { getSubscriptionPurchases } from '@/lib/subscription-purchases'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,7 +16,7 @@ export async function GET() {
 
     const db = await getDb()
 
-    const [materialPurchases, manualPurchases] = await Promise.all([
+    const [materialPurchases, manualPurchases, subscriptionPurchases] = await Promise.all([
       db
       .collection('material_purchases')
       .find({
@@ -32,6 +33,7 @@ export async function GET() {
         })
         .sort({ purchasedAt: -1 })
         .toArray(),
+      getSubscriptionPurchases(db, { userId: session.userId, email: session.email }),
     ])
 
     const purchases = [
@@ -58,6 +60,7 @@ export async function GET() {
         accessType: purchase.accessType || null,
         expiresAt: purchase.expiresAt || null,
       })),
+      ...subscriptionPurchases,
     ].sort((a: any, b: any) => new Date(b.purchasedAt).getTime() - new Date(a.purchasedAt).getTime())
 
     return NextResponse.json({ purchases })
