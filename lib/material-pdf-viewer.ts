@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server'
 import { Db, ObjectId } from 'mongodb'
-import { PDFDocument, PDFPage, StandardFonts, degrees, rgb } from 'pdf-lib'
+import { PDFDocument, PDFPage, PDFName, StandardFonts, degrees, rgb } from 'pdf-lib'
 import QRCode from 'qrcode'
 import { TokenPayload } from './auth'
 import { getDb } from './mongodb'
@@ -469,6 +469,16 @@ async function renderWatermarkedSinglePagePdf(
 
   const font = await outputDoc.embedFont(StandardFonts.HelveticaBold)
   const page = outputDoc.getPages()[0]
+
+  // Declara grupo de transparência DeviceRGB para compositing correto de
+  // imagens com soft-mask + marca d'água translúcida no renderizador nativo
+  // do iOS/Safari (PDFKit). Sem isso, imagens podem aparecer pretas/brancas.
+  if (!page.node.has(PDFName.of('Group'))) {
+    page.node.set(
+      PDFName.of('Group'),
+      outputDoc.context.obj({ Type: 'Group', S: 'Transparency', CS: 'DeviceRGB' })
+    )
+  }
   const config = getViewerWatermarkConfig()
   const viewedAtLabel = formatViewerDate(input.viewedAt)
   const userMarker = `UID ${input.userId.slice(-8)} | ${emailFingerprint(input.userEmail)}`

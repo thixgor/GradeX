@@ -11,7 +11,7 @@
  *   WATERMARK_AND_RESTRICT  – Acima + permissões de leitura (sem cópia/impressão via viewer)
  */
 
-import { PDFDocument, rgb, degrees, StandardFonts, PDFPage } from 'pdf-lib'
+import { PDFDocument, rgb, degrees, StandardFonts, PDFPage, PDFName } from 'pdf-lib'
 import { emailFingerprint } from './watermark-fingerprint'
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
@@ -94,6 +94,35 @@ function getWatermarkRenderConfig(): WatermarkRenderConfig {
     lineGap: envNumber('PDF_WATERMARK_LINE_GAP', 3, 0, 12),
     maxTextLength: envNumber('PDF_WATERMARK_MAX_TEXT_LENGTH', 64, 24, 120),
   }
+}
+
+/**
+ * Declara um grupo de transparência (DeviceRGB) na página.
+ *
+ * Por que isso é necessário:
+ *   PDFs exportados de PowerPoint/Canva/etc. frequentemente contêm imagens
+ *   com soft mask (SMask, transparência). Ao reescrever as páginas e desenhar
+ *   a marca d'água com `opacity` (alpha), introduzimos estados de transparência
+ *   na página. Renderizadores de desktop (Adobe, Chrome/pdfium) e o pdf.js do
+ *   viewer toleram a ausência de um grupo de transparência declarado, mas o
+ *   renderizador NATIVO do iOS/Safari (PDFKit/QuickLook) é estrito: sem o
+ *   `/Group` de transparência, ele compõe as imagens com soft-mask de forma
+ *   incorreta, exibindo-as PRETAS ou BRANCAS no download.
+ *
+ *   Declarar `<< /Type /Group /S /Transparency /CS /DeviceRGB >>` na página
+ *   faz o iOS compor corretamente tanto a marca d'água translúcida quanto as
+ *   imagens da fonte. Sem efeito colateral nos demais leitores.
+ */
+function ensurePageTransparencyGroup(page: PDFPage, doc: PDFDocument): void {
+  // Não sobrescreve um grupo já existente no PDF de origem.
+  if (page.node.has(PDFName.of('Group'))) return
+
+  const group = doc.context.obj({
+    Type: 'Group',
+    S: 'Transparency',
+    CS: 'DeviceRGB',
+  })
+  page.node.set(PDFName.of('Group'), group)
 }
 
 /**
@@ -229,6 +258,8 @@ export async function applyWatermark(
   // ── Aplicar marca em todas as páginas ───────────────────────────────────
   const pages = outputDoc.getPages()
   for (const page of pages) {
+    // Garante compositing correto de transparência no iOS/Safari (ver helper).
+    ensurePageTransparencyGroup(page, outputDoc)
     applyWatermarkToPage(page, watermarkLines, font, renderConfig)
   }
 
