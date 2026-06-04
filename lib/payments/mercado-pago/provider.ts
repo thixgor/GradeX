@@ -83,6 +83,17 @@ export class MercadoPagoProvider implements PaymentProvider {
       body.date_of_expiration = expires.toISOString()
     }
 
+    // Split de pagamentos (marketplace): cobra a comissão do sócio como
+    // `application_fee`. O valor total é debitado do comprador; a comissão é
+    // creditada na conta dona da aplicação MP e o restante na conta que
+    // processa este pagamento (a do ACCESS_TOKEN). Ver docs/mercado-pago-split.md.
+    if (cfg.mp.split.enabled && cfg.mp.split.partnerPercent > 0) {
+      const fee = round2((round2(input.amount) * cfg.mp.split.partnerPercent) / 100)
+      if (fee > 0 && fee < round2(input.amount)) {
+        body.application_fee = fee
+      }
+    }
+
     const response = await payment.create({
       body,
       requestOptions: { idempotencyKey: input.idempotencyKey },
