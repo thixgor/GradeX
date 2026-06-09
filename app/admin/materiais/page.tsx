@@ -47,6 +47,11 @@ import {
   CheckCircle2,
   Trash,
   Settings2,
+  List,
+  BookOpen,
+  Navigation,
+  ArrowUp,
+  ArrowDown,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -86,8 +91,10 @@ interface Material {
   createdAt: string
   // PDF interno
   _hasPdf?: boolean
+  _pageCount?: number
   pdfViewerEnabled?: boolean
   pdfDownloadEnabled?: boolean
+  pdfViewerConfig?: PdfViewerConfig
   _pdfFile?: {
     originalFilename: string
     sizeBytes: number
@@ -95,6 +102,27 @@ interface Material {
     uploadedAt: string
   }
 }
+
+interface PdfSummaryEntry {
+  id: string
+  title: string
+  page: number
+  level?: number
+}
+
+interface PdfNavEntry {
+  id: string
+  label: string
+  page: number
+}
+
+interface PdfViewerConfig {
+  coverPage?: number
+  summary?: PdfSummaryEntry[]
+  navigation?: PdfNavEntry[]
+}
+
+const EMPTY_PDF_VIEWER_CONFIG: PdfViewerConfig = { coverPage: undefined, summary: [], navigation: [] }
 
 interface Folder {
   _id: string
@@ -341,6 +369,7 @@ function AdminMateriaisContent() {
   // ─── Estado do upload de PDF ─────────────────────────────────────────
   type PdfInfo = { originalFilename: string; sizeBytes: number; uploadedByName: string; uploadedAt: string }
   const [pdfInfo, setPdfInfo] = useState<PdfInfo | null>(null)
+  const [pdfPageCount, setPdfPageCount] = useState(0)
   const [pdfUploading, setPdfUploading] = useState(false)
   const [pdfUploadProgress, setPdfUploadProgress] = useState(0)
   const [pdfUploadError, setPdfUploadError] = useState('')
@@ -539,6 +568,7 @@ function AdminMateriaisContent() {
     isFeatured: false,
     pdfViewerEnabled: false,
     pdfDownloadEnabled: true,
+    pdfViewerConfig: EMPTY_PDF_VIEWER_CONFIG as PdfViewerConfig,
     order: 0,
   })
 
@@ -778,18 +808,27 @@ function AdminMateriaisContent() {
         isFeatured: material.isFeatured,
         pdfViewerEnabled: material.pdfViewerEnabled === true,
         pdfDownloadEnabled: material.pdfDownloadEnabled !== false,
+        pdfViewerConfig: {
+          coverPage: material.pdfViewerConfig?.coverPage,
+          summary: material.pdfViewerConfig?.summary || [],
+          navigation: material.pdfViewerConfig?.navigation || [],
+        },
         order: material.order || 0,
       })
       setPdfInfo(material._pdfFile || null)
+      setPdfPageCount(material._pageCount || 0)
     } else {
       setMaterialForm({
         _id: '', title: '', description: '', coverImage: '', type: 'pdf',
         downloadUrl: '', previewUrl: '', folderId: '', moduloId: '', tags: '',
         allowedGroups: [], videoDurationH: 0, videoDurationM: 0, videoDurationS: 0,
         pricing: 'free', price: 0, pricingEventId: null, stripePriceId: '', isHidden: false, isFeatured: false,
-        pdfViewerEnabled: false, pdfDownloadEnabled: true, order: 0,
+        pdfViewerEnabled: false, pdfDownloadEnabled: true,
+        pdfViewerConfig: { coverPage: undefined, summary: [], navigation: [] },
+        order: 0,
       })
       setPdfInfo(null)
+      setPdfPageCount(0)
     }
     setShowMaterialModal(true)
   }
@@ -814,6 +853,8 @@ function AdminMateriaisContent() {
         folderId: materialForm.folderId || null,
         allowedGroups: materialForm.allowedGroups,
         videoDuration: totalSeconds || undefined,
+        // Capa/sumário/navegação só fazem sentido para PDF interno com viewer
+        pdfViewerConfig: materialForm.type === 'pdf' ? materialForm.pdfViewerConfig : undefined,
       }
       const res = await fetch('/api/materiais', {
         method: modalMode === 'edit' ? 'PUT' : 'POST',
@@ -889,6 +930,7 @@ function AdminMateriaisContent() {
       const data = await res.json()
       if (data.hasPdf) {
         setPdfInfo(data.pdfFile)
+        setPdfPageCount(Number(data.pageCount) || 0)
       }
       fetchAll()
     } catch (err: any) {
@@ -1947,6 +1989,15 @@ function AdminMateriaisContent() {
                       )}
                     </div>
 
+                    {/* Capa, Sumário e Navegação (somente com PDF + viewer ativo) */}
+                    {pdfInfo && materialForm.pdfViewerEnabled && (
+                      <PdfViewerStructureEditor
+                        config={materialForm.pdfViewerConfig}
+                        pageCount={pdfPageCount}
+                        onChange={(next) => setMaterialForm(p => ({ ...p, pdfViewerConfig: next }))}
+                      />
+                    )}
+
                     {/* Upload */}
                     {!materialForm._id || modalMode === 'create' ? (
                       <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
@@ -2483,6 +2534,196 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     <div>
       <label className="text-sm font-medium mb-1 block">{label}</label>
       {children}
+    </div>
+  )
+}
+
+// ─── Editor de Capa, Sumário e Navegação do PDF Viewer ───────────────────────
+function PdfViewerStructureEditor({
+  config,
+  pageCount,
+  onChange,
+}: {
+  config: PdfViewerConfig
+  pageCount: number
+  onChange: (next: PdfViewerConfig) => void
+}) {
+  const summary = config.summary || []
+  const navigation = config.navigation || []
+  const maxPage = pageCount > 0 ? pageCount : 99999
+  const pageHint = pageCount > 0 ? `1–${pageCount}` : 'nº da página'
+  const genId = (prefix: string) => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
+  const clampPage = (value: number) => Math.min(maxPage, Math.max(1, Math.floor(value) || 1))
+
+  const setCover = (value: string) => {
+    const n = parseInt(value, 10)
+    onChange({ ...config, coverPage: Number.isFinite(n) && n >= 1 ? clampPage(n) : undefined })
+  }
+
+  // Sumário
+  const addSummary = () =>
+    onChange({ ...config, summary: [...summary, { id: genId('toc'), title: '', page: 1, level: 0 }] })
+  const updateSummary = (id: string, patch: Partial<PdfSummaryEntry>) =>
+    onChange({ ...config, summary: summary.map(s => s.id === id ? { ...s, ...patch } : s) })
+  const removeSummary = (id: string) =>
+    onChange({ ...config, summary: summary.filter(s => s.id !== id) })
+  const moveSummary = (index: number, dir: -1 | 1) => {
+    const next = [...summary]
+    const target = index + dir
+    if (target < 0 || target >= next.length) return
+    ;[next[index], next[target]] = [next[target], next[index]]
+    onChange({ ...config, summary: next })
+  }
+
+  // Navegação
+  const addNav = () =>
+    onChange({ ...config, navigation: [...navigation, { id: genId('nav'), label: '', page: 1 }] })
+  const updateNav = (id: string, patch: Partial<PdfNavEntry>) =>
+    onChange({ ...config, navigation: navigation.map(n => n.id === id ? { ...n, ...patch } : n) })
+  const removeNav = (id: string) =>
+    onChange({ ...config, navigation: navigation.filter(n => n.id !== id) })
+
+  return (
+    <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3 space-y-4">
+      <div className="flex items-center gap-2">
+        <BookOpen className="h-4 w-4 text-emerald-500" />
+        <span className="text-sm font-medium">Estrutura do Viewer</span>
+        <span className="text-[11px] text-muted-foreground">
+          {pageCount > 0 ? `${pageCount} páginas` : 'páginas detectadas ao abrir o viewer'}
+        </span>
+      </div>
+
+      {/* Capa */}
+      <div className="space-y-1.5">
+        <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
+          <ImageIcon className="h-3.5 w-3.5" /> Capa
+        </div>
+        <div className="flex items-center gap-2">
+          <Input
+            type="number"
+            min={1}
+            max={pageCount > 0 ? pageCount : undefined}
+            value={config.coverPage ?? ''}
+            onChange={e => setCover(e.target.value)}
+            placeholder={`Página da capa (${pageHint})`}
+            className="h-9 w-44"
+          />
+          {config.coverPage && (
+            <button
+              type="button"
+              onClick={() => onChange({ ...config, coverPage: undefined })}
+              className="text-xs text-muted-foreground hover:text-red-500"
+            >
+              Limpar
+            </button>
+          )}
+        </div>
+        <p className="text-[11px] text-muted-foreground">
+          O viewer abre nesta página e a destaca nas miniaturas. Deixe vazio para abrir na página 1.
+        </p>
+      </div>
+
+      {/* Sumário */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
+            <List className="h-3.5 w-3.5" /> Sumário interativo
+          </div>
+          <Button type="button" size="sm" variant="outline" onClick={addSummary} className="h-7 gap-1 text-xs">
+            <Plus className="h-3.5 w-3.5" /> Entrada
+          </Button>
+        </div>
+        {summary.length === 0 ? (
+          <p className="text-[11px] text-muted-foreground">Nenhuma entrada. Adicione títulos para criar o sumário clicável.</p>
+        ) : (
+          <div className="space-y-1.5">
+            {summary.map((entry, index) => (
+              <div key={entry.id} className="flex items-center gap-1.5">
+                <div className="flex flex-col">
+                  <button type="button" onClick={() => moveSummary(index, -1)} disabled={index === 0}
+                    className="text-muted-foreground hover:text-foreground disabled:opacity-30" title="Mover para cima">
+                    <ArrowUp className="h-3 w-3" />
+                  </button>
+                  <button type="button" onClick={() => moveSummary(index, 1)} disabled={index === summary.length - 1}
+                    className="text-muted-foreground hover:text-foreground disabled:opacity-30" title="Mover para baixo">
+                    <ArrowDown className="h-3 w-3" />
+                  </button>
+                </div>
+                <select
+                  value={entry.level ?? 0}
+                  onChange={e => updateSummary(entry.id, { level: parseInt(e.target.value, 10) })}
+                  className="h-9 rounded-md border border-input bg-background px-1 text-xs"
+                  title="Nível de indentação"
+                >
+                  <option value={0}>H1</option>
+                  <option value={1}>H2</option>
+                  <option value={2}>H3</option>
+                </select>
+                <Input
+                  value={entry.title}
+                  onChange={e => updateSummary(entry.id, { title: e.target.value })}
+                  placeholder="Título (ex.: Capítulo 1 — Introdução)"
+                  className="h-9 flex-1"
+                />
+                <Input
+                  type="number"
+                  min={1}
+                  max={pageCount > 0 ? pageCount : undefined}
+                  value={entry.page}
+                  onChange={e => updateSummary(entry.id, { page: clampPage(parseInt(e.target.value, 10)) })}
+                  className="h-9 w-20"
+                  title="Página"
+                />
+                <button type="button" onClick={() => removeSummary(entry.id)}
+                  className="text-red-500 hover:text-red-700 shrink-0" title="Remover">
+                  <Trash className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Navegação rápida */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
+            <Navigation className="h-3.5 w-3.5" /> Páginas para navegação
+          </div>
+          <Button type="button" size="sm" variant="outline" onClick={addNav} className="h-7 gap-1 text-xs">
+            <Plus className="h-3.5 w-3.5" /> Atalho
+          </Button>
+        </div>
+        {navigation.length === 0 ? (
+          <p className="text-[11px] text-muted-foreground">Atalhos rápidos (chips) exibidos no topo do viewer. Ex.: “Gabarito”, “Anexos”.</p>
+        ) : (
+          <div className="space-y-1.5">
+            {navigation.map((entry) => (
+              <div key={entry.id} className="flex items-center gap-1.5">
+                <Input
+                  value={entry.label}
+                  onChange={e => updateNav(entry.id, { label: e.target.value })}
+                  placeholder="Rótulo (ex.: Gabarito)"
+                  className="h-9 flex-1"
+                />
+                <Input
+                  type="number"
+                  min={1}
+                  max={pageCount > 0 ? pageCount : undefined}
+                  value={entry.page}
+                  onChange={e => updateNav(entry.id, { page: clampPage(parseInt(e.target.value, 10)) })}
+                  className="h-9 w-20"
+                  title="Página"
+                />
+                <button type="button" onClick={() => removeNav(entry.id)}
+                  className="text-red-500 hover:text-red-700 shrink-0" title="Remover">
+                  <Trash className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

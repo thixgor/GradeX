@@ -76,6 +76,7 @@ export async function GET(request: NextRequest) {
         uploadedByName: material.pdfFile.uploadedByName,
         uploadedAt: material.pdfFile.uploadedAt,
       },
+      pageCount: Number(material.pdfFile.pageCount) || 0,
     })
   } catch (error) {
     console.error('[pdf-upload] GET error:', error)
