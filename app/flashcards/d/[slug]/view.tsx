@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -41,6 +41,8 @@ import {
   Download,
   X,
   Bookmark,
+  Maximize2,
+  Minimize2,
 } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
@@ -129,6 +131,8 @@ export default function DeckPage() {
   const [data, setData] = useState<DeckResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [studying, setStudying] = useState(false)
+  const [fullscreen, setFullscreen] = useState(false)
+  const studyRef = useRef<HTMLDivElement>(null)
   const [studyModeChoice, setStudyModeChoice] = useState<StudyMode>('normal')
   const [activeStudyMode, setActiveStudyMode] = useState<StudyMode>('normal')
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -243,6 +247,41 @@ export default function DeckPage() {
       .catch(() => {})
   }, [data?.deck?.folderId])
 
+  // Alterna o modo de expansão (tela cheia) do flashcard na resolução.
+  // Tenta usar a Fullscreen API nativa; se indisponível, mantém um overlay
+  // em CSS (fixed inset-0) como fallback.
+  const toggleFullscreen = useCallback(() => {
+    const el = studyRef.current
+    const isNativeFs = typeof document !== 'undefined' && !!document.fullscreenElement
+    if (!fullscreen) {
+      setFullscreen(true)
+      el?.requestFullscreen?.().catch(() => {})
+    } else {
+      setFullscreen(false)
+      if (isNativeFs) document.exitFullscreen?.().catch(() => {})
+    }
+  }, [fullscreen])
+
+  // Sincroniza o estado quando o usuário sai da tela cheia nativa (ex.: Esc).
+  useEffect(() => {
+    function onFsChange() {
+      if (typeof document !== 'undefined' && !document.fullscreenElement) {
+        setFullscreen(false)
+      }
+    }
+    document.addEventListener('fullscreenchange', onFsChange)
+    return () => document.removeEventListener('fullscreenchange', onFsChange)
+  }, [])
+
+  // Garante saída da tela cheia ao encerrar o estudo.
+  useEffect(() => {
+    if (studying) return
+    setFullscreen(false)
+    if (typeof document !== 'undefined' && document.fullscreenElement) {
+      document.exitFullscreen?.().catch(() => {})
+    }
+  }, [studying])
+
   // Atalhos de teclado durante estudo
   useEffect(() => {
     if (!studying) return
@@ -250,6 +289,8 @@ export default function DeckPage() {
       if (e.key === ' ') { e.preventDefault(); setFlipped(f => !f) }
       else if (e.key === 'ArrowRight') goNext()
       else if (e.key === 'ArrowLeft') goPrev()
+      else if (e.key === 'f' || e.key === 'F') { e.preventDefault(); toggleFullscreen() }
+      else if (e.key === 'Escape' && fullscreen) { e.preventDefault(); toggleFullscreen() }
       else if (flipped) {
         if (e.key === '1') rate('facil')
         else if (e.key === '2') rate('equilibrado')
@@ -259,7 +300,7 @@ export default function DeckPage() {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [studying, currentIndex, flipped, data])
+  }, [studying, currentIndex, flipped, data, fullscreen, toggleFullscreen])
 
   function goNext() {
     if (!data) return
@@ -508,14 +549,33 @@ export default function DeckPage() {
     const progress = total > 0 ? ((currentIndex + 1) / total) * 100 : 0
     return (
       <AppShell allowGuest>
-        <div className="max-w-3xl lg:max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
-          <div className="mb-4 rounded-2xl border border-slate-200 bg-white/90 p-3 shadow-sm backdrop-blur dark:border-white/10 dark:bg-slate-900/90">
-            <div className="flex items-center justify-between gap-3">
+        <div
+          ref={studyRef}
+          className={cn(
+            fullscreen &&
+              'fixed inset-0 z-[60] overflow-y-auto overscroll-contain bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900',
+          )}
+          style={fullscreen ? {
+            paddingTop: 'env(safe-area-inset-top)',
+            paddingBottom: 'env(safe-area-inset-bottom)',
+            paddingLeft: 'env(safe-area-inset-left)',
+            paddingRight: 'env(safe-area-inset-right)',
+          } : undefined}
+        >
+        <div className={cn(
+          'mx-auto px-3 sm:px-4 py-4 sm:py-6',
+          fullscreen ? 'max-w-5xl lg:max-w-6xl' : 'max-w-3xl lg:max-w-5xl',
+        )}>
+          <div className={cn(
+            'mb-4 rounded-2xl border border-slate-200 bg-white/90 p-3 shadow-sm backdrop-blur dark:border-white/10 dark:bg-slate-900/90',
+            fullscreen && 'mb-3 border-transparent bg-transparent p-0 shadow-none backdrop-blur-none dark:border-transparent dark:bg-transparent',
+          )}>
+            <div className="flex items-center justify-between gap-2">
               <Button variant="ghost" onClick={() => setStudying(false)} className="h-10 gap-1 px-2 sm:px-3">
                 <ArrowLeft className="h-4 w-4" />Sair
               </Button>
               <div className="flex min-w-0 items-center gap-2">
-                {activeStudyMode === 'spaced' && (
+                {activeStudyMode === 'spaced' && !fullscreen && (
                   <span className="hidden items-center gap-1 rounded-full border border-emerald-300/40 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-200 backdrop-blur sm:inline-flex">
                     <CalendarClock className="h-3.5 w-3.5" /> Fixação intensa
                   </span>
@@ -523,9 +583,26 @@ export default function DeckPage() {
                 <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold tabular-nums text-slate-700 dark:bg-white/10 dark:text-slate-100">
                   {currentIndex + 1} / {total}
                 </span>
+                {/* Botão de tela cheia / foco — sempre visível (mobile, iPad, PC) */}
+                <button
+                  type="button"
+                  onClick={toggleFullscreen}
+                  className={cn(
+                    'inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold shadow-sm transition active:scale-95',
+                    fullscreen
+                      ? 'bg-slate-900 text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900'
+                      : 'bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white shadow-violet-500/30 hover:brightness-110',
+                  )}
+                  aria-label={fullscreen ? 'Sair da tela cheia' : 'Expandir para tela cheia'}
+                  title={fullscreen ? 'Sair da tela cheia (F)' : 'Expandir para tela cheia (F)'}
+                >
+                  {fullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                  <span>{fullscreen ? 'Sair' : 'Tela cheia'}</span>
+                </button>
               </div>
             </div>
-            <div className="mt-3 grid grid-cols-[48px,minmax(0,1fr),48px] items-center gap-2 sm:hidden">
+            {!fullscreen && (
+              <div className="mt-3 grid grid-cols-[48px,minmax(0,1fr),48px] items-center gap-2 sm:hidden">
               <button
                 type="button"
                 onClick={goPrev}
@@ -551,6 +628,7 @@ export default function DeckPage() {
                 <ChevronRight className="h-6 w-6" />
               </button>
             </div>
+            )}
           </div>
           <div className="h-1.5 bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden mb-3">
             <motion.div
@@ -558,6 +636,7 @@ export default function DeckPage() {
               animate={{ width: `${progress}%` }}
             />
           </div>
+          {!fullscreen && (
           <div className="-mx-3 mb-4 overflow-x-auto px-3 pb-2 sm:-mx-4 sm:px-4">
             <div className="flex w-max gap-2">
               {cards.map((item, index) => {
@@ -584,8 +663,10 @@ export default function DeckPage() {
               })}
             </div>
           </div>
+          )}
 
           {/* Card navigator */}
+          {!fullscreen && (
           <div className="mb-4 overflow-x-auto scrollbar-hide">
             <div className="flex gap-1.5 min-w-max px-1 py-1">
               {cards.map((c, i) => {
@@ -614,11 +695,13 @@ export default function DeckPage() {
               })}
             </div>
           </div>
+          )}
 
           {card && (
             <FlashcardCardView
               key={card._id}
               card={card}
+              className={fullscreen ? 'max-w-3xl lg:max-w-5xl' : undefined}
               flipped={flipped}
               onFlip={() => setFlipped(f => !f)}
               showComment={showComment}
@@ -678,9 +761,15 @@ export default function DeckPage() {
             </div>
           </div>
 
-          <p className="mt-3 text-center text-xs text-slate-400">
-            Espaço: virar &nbsp;·&nbsp; ← →: navegar &nbsp;·&nbsp; 1/2/3: avaliar
+          <p className={cn(
+            'mt-3 text-center text-xs text-slate-400',
+            fullscreen ? 'hidden sm:block' : '',
+          )}>
+            {fullscreen
+              ? 'Espaço: virar · ← →: navegar · 1/2/3: avaliar · Esc ou F: sair da tela cheia'
+              : 'Espaço: virar · ← →: navegar · 1/2/3: avaliar · F: tela cheia'}
           </p>
+        </div>
         </div>
         <ToastAlert open={toast.open} message={toast.message} type={toast.type} onOpenChange={(open) => setToast(t => ({ ...t, open }))} />
       </AppShell>
