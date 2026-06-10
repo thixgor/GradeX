@@ -28,6 +28,17 @@ export interface PaymentConfig {
        */
       partnerPercent: number
     }
+    /**
+     * Credenciais OAuth da APLICAÇÃO de marketplace do sócio. Usadas para
+     * conectar (via OAuth) a conta que processa os pagamentos à aplicação do
+     * sócio, gerando o access token vinculado ao marketplace.
+     */
+    oauth: {
+      clientId: string
+      clientSecret: string
+      /** URL de callback registrada na aplicação MP do sócio. */
+      redirectUri: string
+    }
   }
 }
 
@@ -85,6 +96,15 @@ export function getPaymentConfig(): PaymentConfig {
     }
   }
 
+  // Credenciais OAuth da aplicação de marketplace (do sócio). Opcionais —
+  // só necessárias para usar o botão "Conectar marketplace" no admin.
+  const clientId = process.env.MERCADOPAGO_CLIENT_ID || ''
+  const clientSecret = process.env.MERCADOPAGO_CLIENT_SECRET || ''
+  const appBaseUrl = (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000').replace(/\/+$/, '')
+  const redirectUri =
+    process.env.MERCADOPAGO_OAUTH_REDIRECT_URI ||
+    `${appBaseUrl}/api/admin/mercado-pago/oauth/callback`
+
   cached = {
     provider,
     mp: {
@@ -94,6 +114,7 @@ export function getPaymentConfig(): PaymentConfig {
       webhookSecret,
       notificationUrl,
       split: { enabled: splitEnabled, partnerPercent },
+      oauth: { clientId, clientSecret, redirectUri },
     },
   }
   return cached

@@ -50,6 +50,20 @@ interface MercadoPagoStatus {
   webhookUrl?: string
   webhookSecretConfigured?: boolean
   error?: string
+  split?: {
+    enabled: boolean
+    partnerPercent: number
+    mainPercent: number
+  }
+  marketplace?: {
+    oauthConfigured: boolean
+    redirectUri: string
+    connected: boolean
+    collectorId: number | null
+    connectedAt: string | null
+    effectiveTokenMasked: string
+    effectiveSource: 'marketplace' | 'env'
+  }
 }
 
 interface MercadoPagoEvent {
@@ -90,6 +104,8 @@ export default function SettingsPage() {
   const [mpEvents, setMpEvents] = useState<MercadoPagoEvent[]>([])
   const [mpTesting, setMpTesting] = useState(false)
   const [mpTestResult, setMpTestResult] = useState<{ ok: boolean; message: string } | null>(null)
+  const [mpDisconnecting, setMpDisconnecting] = useState(false)
+  const [mpOauthBanner, setMpOauthBanner] = useState<{ ok: boolean; message: string } | null>(null)
   const [paymentMethods, setPaymentMethods] = useState({ pix: true, credit_card: true, boleto: true, subscriptions: true })
   const [savingPaymentMethods, setSavingPaymentMethods] = useState(false)
   const [planos, setPlanos] = useState<PlanConfig[]>([])
@@ -101,6 +117,25 @@ export default function SettingsPage() {
 
   useEffect(() => {
     checkAuth()
+  }, [])
+
+  // Mostra o resultado do fluxo OAuth de marketplace (retorno do Mercado Pago)
+  // e limpa os parâmetros da URL.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const result = params.get('mp_oauth')
+    if (!result) return
+    if (result === 'connected') {
+      setMpOauthBanner({ ok: true, message: 'Marketplace conectado! O split de pagamentos já está ativo.' })
+    } else {
+      const reason = params.get('reason') || 'erro desconhecido'
+      setMpOauthBanner({ ok: false, message: `Falha ao conectar o marketplace: ${reason}` })
+    }
+    params.delete('mp_oauth')
+    params.delete('reason')
+    params.delete('tab')
+    const qs = params.toString()
+    window.history.replaceState({}, '', window.location.pathname + (qs ? `?${qs}` : ''))
   }, [])
 
   async function checkAuth() {
@@ -249,6 +284,30 @@ export default function SettingsPage() {
       setMpTestResult({ ok: false, message: String(err?.message || err) })
     } finally {
       setMpTesting(false)
+    }
+  }
+
+  function connectMarketplace() {
+    // Navegação (não fetch) — a rota redireciona para o Mercado Pago.
+    window.location.href = '/api/admin/mercado-pago/oauth/start'
+  }
+
+  async function disconnectMarketplace() {
+    if (!confirm('Desconectar o marketplace? Os pagamentos voltam a cair 100% na conta principal.')) return
+    setMpDisconnecting(true)
+    try {
+      const res = await fetch('/api/admin/mercado-pago/oauth/disconnect', { method: 'POST' })
+      if (res.ok) {
+        setMpOauthBanner({ ok: true, message: 'Marketplace desconectado. Split desativado.' })
+        await loadMercadoPago()
+      } else {
+        const data = await res.json().catch(() => ({}))
+        setMpOauthBanner({ ok: false, message: data.error || 'Falha ao desconectar.' })
+      }
+    } catch (err: any) {
+      setMpOauthBanner({ ok: false, message: String(err?.message || err) })
+    } finally {
+      setMpDisconnecting(false)
     }
   }
 
@@ -768,6 +827,80 @@ export default function SettingsPage() {
                 <div className="sm:col-span-2 flex items-center gap-2 text-sm">
                   <span className={`inline-block w-2 h-2 rounded-full ${mpStatus?.webhookSecretConfigured ? 'bg-green-500' : 'bg-red-500'}`} />
                   Webhook secret {mpStatus?.webhookSecretConfigured ? 'configurado' : 'não configurado'}
+                </div>
+              </div>
+
+              {/* Split de pagamentos / Marketplace */}
+              <div className="pt-4 border-t">
+                <h4 className="font-semibold mb-1">Divisão de pagamentos (marketplace)</h4>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Conecte a conta que processa os pagamentos à aplicação do sócio para dividir cada venda automaticamente.
+                </p>
+
+                {mpOauthBanner && (
+                  <div className={`flex gap-2 p-3 mb-3 rounded-lg border ${
+                    mpOauthBanner.ok
+                      ? 'bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800'
+                      : 'bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800'
+                  }`}>
+                    {mpOauthBanner.ok ? (
+                      <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 shrink-0 mt-0.5" />
+                    ) : (
+                      <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
+                    )}
+                    <p className={`text-sm ${mpOauthBanner.ok ? 'text-green-800 dark:text-green-200' : 'text-red-800 dark:text-red-200'}`}>
+                      {mpOauthBanner.message}
+                    </p>
+                  </div>
+                )}
+
+                {/* Estado da conexão */}
+                <div className="flex items-center gap-2 text-sm mb-3">
+                  <span className={`inline-block w-2 h-2 rounded-full ${mpStatus?.marketplace?.connected ? 'bg-green-500' : 'bg-gray-400'}`} />
+                  {mpStatus?.marketplace?.connected ? (
+                    <span>
+                      Conectado · conta <span className="font-mono">{mpStatus.marketplace.collectorId}</span> · token{' '}
+                      <span className="font-mono">{mpStatus.marketplace.effectiveTokenMasked}</span>
+                    </span>
+                  ) : (
+                    <span>Não conectado — pagamentos caem 100% na conta principal.</span>
+                  )}
+                </div>
+
+                {/* Resumo da divisão */}
+                {mpStatus?.split?.enabled ? (
+                  <div className="text-sm p-3 mb-3 rounded-lg bg-muted/40">
+                    Cada venda: <strong>{mpStatus.split.mainPercent}%</strong> para a conta principal ·{' '}
+                    <strong>{mpStatus.split.partnerPercent}%</strong> para o sócio.
+                  </div>
+                ) : (
+                  <div className="text-sm p-3 mb-3 rounded-lg bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200">
+                    Split desligado. Defina <code>MERCADOPAGO_SPLIT_ENABLED=true</code> e{' '}
+                    <code>MERCADOPAGO_SPLIT_PARTNER_PERCENT</code> nas variáveis de ambiente.
+                  </div>
+                )}
+
+                {!mpStatus?.marketplace?.oauthConfigured && (
+                  <div className="flex gap-2 p-3 mb-3 rounded-lg bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800">
+                    <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                    <div className="text-sm text-amber-800 dark:text-amber-200">
+                      <p>Para conectar, configure <code>MERCADOPAGO_CLIENT_ID</code> e <code>MERCADOPAGO_CLIENT_SECRET</code> (da aplicação de marketplace do sócio) nas variáveis de ambiente.</p>
+                      <p className="mt-1">Registre esta URL de callback na aplicação do MP:</p>
+                      <code className="break-all">{mpStatus?.marketplace?.redirectUri}</code>
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex gap-2 flex-wrap">
+                  {mpStatus?.marketplace?.connected ? (
+                    <Button variant="outline" onClick={disconnectMarketplace} disabled={mpDisconnecting}>
+                      {mpDisconnecting ? 'Desconectando...' : 'Desconectar marketplace'}
+                    </Button>
+                  ) : (
+                    <Button onClick={connectMarketplace} disabled={!mpStatus?.marketplace?.oauthConfigured}>
+                      Conectar marketplace
+                    </Button>
+                  )}
                 </div>
               </div>
 
