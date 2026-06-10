@@ -13,6 +13,21 @@ export interface PaymentConfig {
     accessToken: string
     webhookSecret: string
     notificationUrl: string
+    /**
+     * Split de pagamentos (marketplace). Quando habilitado, cada pagamento é
+     * dividido entre a conta que processa (dona do ACCESS_TOKEN) e a conta do
+     * sócio (dona da aplicação MP), via campo `application_fee`.
+     */
+    split: {
+      enabled: boolean
+      /**
+       * Percentual (0–100) do valor total que vai para o SÓCIO (conta dona da
+       * aplicação MP), cobrado como `application_fee`. O restante fica com a
+       * conta que processa o pagamento (a do ACCESS_TOKEN configurado).
+       * Ex.: 30 = 30% para o sócio, 70% para a conta principal.
+       */
+      partnerPercent: number
+    }
   }
 }
 
@@ -57,9 +72,29 @@ export function getPaymentConfig(): PaymentConfig {
     console.error('[payments] ATENÇÃO: MERCADOPAGO_ENV=sandbox mas MERCADOPAGO_PUBLIC_KEY não começa com TEST-. Isso causa "Unauthorized use of live credentials". Troque pela Public Key de teste.')
   }
 
+  // Split de pagamentos (marketplace) — opcional, desligado por padrão.
+  const splitEnabled = /^(1|true|yes|on)$/i.test(process.env.MERCADOPAGO_SPLIT_ENABLED || '')
+  const partnerPercentRaw = Number(process.env.MERCADOPAGO_SPLIT_PARTNER_PERCENT)
+  const partnerPercent = Number.isFinite(partnerPercentRaw) ? partnerPercentRaw : 0
+  if (splitEnabled) {
+    if (!(partnerPercent > 0 && partnerPercent < 100)) {
+      throw new Error(
+        `MERCADOPAGO_SPLIT_PARTNER_PERCENT inválido: "${process.env.MERCADOPAGO_SPLIT_PARTNER_PERCENT}". ` +
+          'Use um número entre 0 e 100 (ex.: 30 para enviar 30% ao sócio).'
+      )
+    }
+  }
+
   cached = {
     provider,
-    mp: { env, publicKey, accessToken, webhookSecret, notificationUrl },
+    mp: {
+      env,
+      publicKey,
+      accessToken,
+      webhookSecret,
+      notificationUrl,
+      split: { enabled: splitEnabled, partnerPercent },
+    },
   }
   return cached
 }

@@ -34,5 +34,13 @@ export async function GET() {
     accessTokenMasked: maskToken(cfg.mp.accessToken),
     webhookUrl,
     webhookSecretConfigured: !!cfg.mp.webhookSecret,
+    split: {
+      enabled: cfg.mp.split.enabled,
+      // % que vai para o sócio (application_fee); o restante fica na conta principal.
+      partnerPercent: cfg.mp.split.partnerPercent,
+      mainPercent: cfg.mp.split.enabled
+        ? Math.round((100 - cfg.mp.split.partnerPercent) * 100) / 100
+        : 100,
+    },
   })
 }
