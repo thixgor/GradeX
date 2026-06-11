@@ -1087,6 +1087,39 @@ export interface MaterialFolder {
   updatedAt: Date
 }
 
+/** Entrada do sumário interativo do PDF Viewer (título → página) */
+export interface MaterialPdfSummaryEntry {
+  /** id estável para React keys / edição */
+  id: string
+  /** Título exibido no sumário */
+  title: string
+  /** Número da página de destino (1-based) */
+  page: number
+  /** Nível de indentação (0 = capítulo, 1 = seção, 2 = subseção) */
+  level?: number
+}
+
+/** Atalho de navegação rápida do PDF Viewer (rótulo → página) */
+export interface MaterialPdfNavEntry {
+  id: string
+  label: string
+  page: number
+}
+
+/**
+ * Configuração do PDF Viewer definida pelo admin para um material com PDF
+ * interno (Vercel Blob) e viewer habilitado: capa, sumário interativo e
+ * páginas de navegação rápida.
+ */
+export interface MaterialPdfViewerConfig {
+  /** Página designada como capa (1-based). O viewer abre nela. */
+  coverPage?: number
+  /** Sumário interativo (lista ordenada de títulos → páginas). */
+  summary?: MaterialPdfSummaryEntry[]
+  /** Atalhos de navegação rápida (chips). */
+  navigation?: MaterialPdfNavEntry[]
+}
+
 /** Metadados do PDF interno armazenado no Vercel Blob */
 export interface MaterialPdfFile {
   /** Pathname no Vercel Blob — nunca expor ao cliente */
@@ -1124,6 +1157,7 @@ export interface Material {
   pdfFile?: MaterialPdfFile   // Presente quando admin fez upload direto
   pdfViewerEnabled?: boolean  // Permite abrir o viewer protegido
   pdfDownloadEnabled?: boolean // Permite baixar PDF protegido
+  pdfViewerConfig?: MaterialPdfViewerConfig // Capa, sumário e navegação (admin)
 
   // Controle de acesso por grupo (vazio = todos podem acessar)
   allowedGroups?: MaterialAccessGroup[] // Ex: ['premium', 'essential'] = só premium e essential

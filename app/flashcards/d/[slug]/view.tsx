@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -41,6 +41,8 @@ import {
   Download,
   X,
   Bookmark,
+  Maximize2,
+  Minimize2,
 } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
@@ -129,6 +131,8 @@ export default function DeckPage() {
   const [data, setData] = useState<DeckResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [studying, setStudying] = useState(false)
+  const [fullscreen, setFullscreen] = useState(false)
+  const studyRef = useRef<HTMLDivElement>(null)
   const [studyModeChoice, setStudyModeChoice] = useState<StudyMode>('normal')
   const [activeStudyMode, setActiveStudyMode] = useState<StudyMode>('normal')
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -243,6 +247,41 @@ export default function DeckPage() {
       .catch(() => {})
   }, [data?.deck?.folderId])
 
+  // Alterna o modo de expansão (tela cheia) do flashcard na resolução.
+  // Tenta usar a Fullscreen API nativa; se indisponível, mantém um overlay
+  // em CSS (fixed inset-0) como fallback.
+  const toggleFullscreen = useCallback(() => {
+    const el = studyRef.current
+    const isNativeFs = typeof document !== 'undefined' && !!document.fullscreenElement
+    if (!fullscreen) {
+      setFullscreen(true)
+      el?.requestFullscreen?.().catch(() => {})
+    } else {
+      setFullscreen(false)
+      if (isNativeFs) document.exitFullscreen?.().catch(() => {})
+    }
+  }, [fullscreen])
+
+  // Sincroniza o estado quando o usuário sai da tela cheia nativa (ex.: Esc).
+  useEffect(() => {
+    function onFsChange() {
+      if (typeof document !== 'undefined' && !document.fullscreenElement) {
+        setFullscreen(false)
+      }
+    }
+    document.addEventListener('fullscreenchange', onFsChange)
+    return () => document.removeEventListener('fullscreenchange', onFsChange)
+  }, [])
+
+  // Garante saída da tela cheia ao encerrar o estudo.
+  useEffect(() => {
+    if (studying) return
+    setFullscreen(false)
+    if (typeof document !== 'undefined' && document.fullscreenElement) {
+      document.exitFullscreen?.().catch(() => {})
+    }
+  }, [studying])
+
   // Atalhos de teclado durante estudo
   useEffect(() => {
     if (!studying) return
@@ -250,6 +289,8 @@ export default function DeckPage() {
       if (e.key === ' ') { e.preventDefault(); setFlipped(f => !f) }
       else if (e.key === 'ArrowRight') goNext()
       else if (e.key === 'ArrowLeft') goPrev()
+      else if (e.key === 'f' || e.key === 'F') { e.preventDefault(); toggleFullscreen() }
+      else if (e.key === 'Escape' && fullscreen) { e.preventDefault(); toggleFullscreen() }
       else if (flipped) {
         if (e.key === '1') rate('facil')
         else if (e.key === '2') rate('equilibrado')
@@ -259,7 +300,7 @@ export default function DeckPage() {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [studying, currentIndex, flipped, data])
+  }, [studying, currentIndex, flipped, data, fullscreen, toggleFullscreen])
 
   function goNext() {
     if (!data) return
@@ -508,14 +549,33 @@ export default function DeckPage() {
     const progress = total > 0 ? ((currentIndex + 1) / total) * 100 : 0
     return (
       <AppShell allowGuest>
-        <div className="max-w-3xl lg:max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
-          <div className="mb-4 rounded-2xl border border-slate-200 bg-white/90 p-3 shadow-sm backdrop-blur dark:border-white/10 dark:bg-slate-900/90">
-            <div className="flex items-center justify-between gap-3">
+        <div
+          ref={studyRef}
+          className={cn(
+            fullscreen &&
+              'fixed inset-0 z-[60] overflow-y-auto overscroll-contain bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900',
+          )}
+          style={fullscreen ? {
+            paddingTop: 'env(safe-area-inset-top)',
+            paddingBottom: 'env(safe-area-inset-bottom)',
+            paddingLeft: 'env(safe-area-inset-left)',
+            paddingRight: 'env(safe-area-inset-right)',
+          } : undefined}
+        >
+        <div className={cn(
+          'mx-auto px-3 sm:px-4 py-4 sm:py-6',
+          fullscreen ? 'max-w-5xl lg:max-w-6xl' : 'max-w-3xl lg:max-w-5xl',
+        )}>
+          <div className={cn(
+            'mb-4 rounded-2xl border border-slate-200 bg-white/90 p-3 shadow-sm backdrop-blur dark:border-white/10 dark:bg-slate-900/90',
+            fullscreen && 'mb-3 border-transparent bg-transparent p-0 shadow-none backdrop-blur-none dark:border-transparent dark:bg-transparent',
+          )}>
+            <div className="flex items-center justify-between gap-2">
               <Button variant="ghost" onClick={() => setStudying(false)} className="h-10 gap-1 px-2 sm:px-3">
                 <ArrowLeft className="h-4 w-4" />Sair
               </Button>
               <div className="flex min-w-0 items-center gap-2">
-                {activeStudyMode === 'spaced' && (
+                {activeStudyMode === 'spaced' && !fullscreen && (
                   <span className="hidden items-center gap-1 rounded-full border border-emerald-300/40 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-200 backdrop-blur sm:inline-flex">
                     <CalendarClock className="h-3.5 w-3.5" /> Fixação intensa
                   </span>
@@ -523,33 +583,23 @@ export default function DeckPage() {
                 <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold tabular-nums text-slate-700 dark:bg-white/10 dark:text-slate-100">
                   {currentIndex + 1} / {total}
                 </span>
+                {/* Botão de tela cheia / foco — sempre visível (mobile, iPad, PC) */}
+                <button
+                  type="button"
+                  onClick={toggleFullscreen}
+                  className={cn(
+                    'inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold shadow-sm transition active:scale-95',
+                    fullscreen
+                      ? 'bg-slate-900 text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900'
+                      : 'bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white shadow-violet-500/30 hover:brightness-110',
+                  )}
+                  aria-label={fullscreen ? 'Sair da tela cheia' : 'Expandir para tela cheia'}
+                  title={fullscreen ? 'Sair da tela cheia (F)' : 'Expandir para tela cheia (F)'}
+                >
+                  {fullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                  <span>{fullscreen ? 'Sair' : 'Tela cheia'}</span>
+                </button>
               </div>
-            </div>
-            <div className="mt-3 grid grid-cols-[48px,minmax(0,1fr),48px] items-center gap-2 sm:hidden">
-              <button
-                type="button"
-                onClick={goPrev}
-                disabled={currentIndex === 0}
-                className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm disabled:opacity-35 dark:border-white/10 dark:bg-slate-800 dark:text-slate-100"
-                aria-label="Card anterior"
-              >
-                <ChevronLeft className="h-6 w-6" />
-              </button>
-              <div className="min-w-0 text-center">
-                <p className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">
-                  Card {currentIndex + 1}
-                </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">toque nos números para pular</p>
-              </div>
-              <button
-                type="button"
-                onClick={goNext}
-                disabled={currentIndex >= total - 1}
-                className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm disabled:opacity-35 dark:border-white/10 dark:bg-slate-800 dark:text-slate-100"
-                aria-label="Próximo card"
-              >
-                <ChevronRight className="h-6 w-6" />
-              </button>
             </div>
           </div>
           <div className="h-1.5 bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden mb-3">
@@ -558,6 +608,7 @@ export default function DeckPage() {
               animate={{ width: `${progress}%` }}
             />
           </div>
+          {!fullscreen && (
           <div className="-mx-3 mb-4 overflow-x-auto px-3 pb-2 sm:-mx-4 sm:px-4">
             <div className="flex w-max gap-2">
               {cards.map((item, index) => {
@@ -584,41 +635,13 @@ export default function DeckPage() {
               })}
             </div>
           </div>
-
-          {/* Card navigator */}
-          <div className="mb-4 overflow-x-auto scrollbar-hide">
-            <div className="flex gap-1.5 min-w-max px-1 py-1">
-              {cards.map((c, i) => {
-                const r = ratings[c._id]
-                const isCurrent = i === currentIndex
-                const dotColor = r === 'facil'
-                  ? 'bg-emerald-500'
-                  : r === 'equilibrado'
-                  ? 'bg-amber-500'
-                  : r === 'porrada'
-                  ? 'bg-rose-500'
-                  : 'bg-slate-300 dark:bg-white/20'
-                return (
-                  <button
-                    key={c._id}
-                    onClick={() => { setCurrentIndex(i); setFlipped(false); setShowComment(false); setShowHint(false); setScheduleFeedback(null) }}
-                    title={`Card ${i + 1}`}
-                    className={cn(
-                      'flex-shrink-0 rounded-full transition-all duration-150',
-                      isCurrent
-                        ? 'w-6 h-3 ring-2 ring-violet-500 ring-offset-1 dark:ring-offset-slate-900 ' + dotColor
-                        : 'w-3 h-3 hover:scale-125 ' + dotColor
-                    )}
-                  />
-                )
-              })}
-            </div>
-          </div>
+          )}
 
           {card && (
             <FlashcardCardView
               key={card._id}
               card={card}
+              className={fullscreen ? 'max-w-3xl lg:max-w-5xl' : undefined}
               flipped={flipped}
               onFlip={() => setFlipped(f => !f)}
               showComment={showComment}
@@ -628,33 +651,25 @@ export default function DeckPage() {
             />
           )}
 
-          <div className="mt-6 space-y-3">
-            {/* Rating buttons in a full width row */}
-            <div className="flex gap-2 justify-center flex-wrap">
-              {RATINGS.map(r => (
-                <button
-                  key={r.value}
-                  onClick={() => rate(r.value)}
-                  disabled={!flipped || ratingBusyCard === card?._id}
-                  className={cn(
-                    'rounded-full px-5 py-2 text-sm font-semibold text-white bg-gradient-to-r transition flex-1 min-w-[90px] max-w-[140px]',
-                    r.color,
-                    (!flipped || ratingBusyCard === card?._id) && 'opacity-40 cursor-not-allowed',
-                    ratings[card?._id] === r.value && 'ring-2 ring-offset-2 ring-white dark:ring-offset-slate-900'
-                  )}
-                >
-                  {ratingBusyCard === card?._id ? 'Salvando...' : r.label}
-                </button>
-              ))}
-            </div>
-
+          {/* Barra de ações fixa — sempre acessível sem rolar a página.
+              Quando o card está na frente, mostra "Mostrar resposta"; ao virar,
+              as avaliações (Suave / No ponto / Porrete) aparecem no MESMO lugar,
+              fixadas na base da tela. Sem precisar descer o scroll.
+              Funciona em PC, tablet e celular (com área segura de notch). */}
+          <div
+            className={cn(
+              'sticky bottom-0 z-30 mt-5 -mx-3 space-y-2.5 border-t border-slate-200/70 bg-white/85 px-3 pt-3 backdrop-blur-xl sm:-mx-4 sm:px-4 dark:border-white/10 dark:bg-slate-950/80',
+              'shadow-[0_-16px_40px_-28px_rgba(15,23,42,0.55)]',
+            )}
+            style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
+          >
             {activeStudyMode === 'spaced' && (
               <AnimatePresence>
                 {scheduleFeedback && (
                   <motion.div
-                    initial={{ opacity: 0, y: -6 }}
+                    initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
+                    exit={{ opacity: 0, y: 6 }}
                     className="mx-auto max-w-md rounded-2xl border border-emerald-300/40 bg-emerald-500/10 px-4 py-2 text-center text-sm font-medium text-emerald-800 backdrop-blur-md dark:text-emerald-100"
                   >
                     {scheduleFeedback}
@@ -663,24 +678,97 @@ export default function DeckPage() {
               </AnimatePresence>
             )}
 
-            {/* Nav buttons */}
-            <div className="grid grid-cols-2 gap-3 sm:flex sm:items-center sm:justify-between">
-              <Button variant="outline" onClick={goPrev} disabled={currentIndex === 0} className="h-12 sm:h-10">
-                <ChevronLeft className="h-5 w-5 sm:h-4 sm:w-4" /> Anterior
-              </Button>
-              {currentIndex < total - 1 ? (
-                <Button onClick={goNext} className="h-12 sm:h-10">Próximo <ChevronRight className="h-5 w-5 sm:h-4 sm:w-4" /></Button>
+            {/* Ação principal: virar o card OU avaliar — troca suavemente */}
+            <AnimatePresence mode="wait" initial={false}>
+              {!flipped ? (
+                <motion.button
+                  key="reveal"
+                  type="button"
+                  onClick={() => setFlipped(true)}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.16 }}
+                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-5 py-3.5 text-base font-bold text-white shadow-lg shadow-violet-500/25 transition active:scale-[0.98]"
+                >
+                  <Sparkles className="h-5 w-5" /> Mostrar resposta
+                </motion.button>
               ) : (
-                <Button onClick={finishSession} className="h-12 bg-gradient-to-r from-violet-600 to-fuchsia-600 sm:h-10">
-                  <Trophy className="h-5 w-5 sm:h-4 sm:w-4" /> Concluir
-                </Button>
+                <motion.div
+                  key="rate"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.16 }}
+                >
+                  <p className="mb-1.5 text-center text-xs font-medium text-slate-500 dark:text-slate-400">
+                    Como foi lembrar dessa resposta?
+                  </p>
+                  <div className="grid grid-cols-3 gap-2">
+                    {RATINGS.map(r => (
+                      <button
+                        key={r.value}
+                        onClick={() => rate(r.value)}
+                        disabled={ratingBusyCard === card?._id}
+                        className={cn(
+                          'flex min-h-[52px] flex-col items-center justify-center gap-0.5 rounded-2xl bg-gradient-to-r px-2 py-2.5 text-sm font-bold leading-tight text-white shadow-md transition active:scale-95',
+                          r.color,
+                          ratingBusyCard === card?._id && 'cursor-wait opacity-60',
+                          ratings[card?._id] === r.value && 'ring-2 ring-white ring-offset-2 ring-offset-white dark:ring-offset-slate-950',
+                        )}
+                      >
+                        {ratingBusyCard === card?._id ? (
+                          <Loader2 className="h-5 w-5 animate-spin" />
+                        ) : (
+                          <>
+                            <span>{r.label}</span>
+                            <span className="hidden text-[10px] font-medium opacity-70 sm:block">tecla {r.shortcut}</span>
+                          </>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Navegação compacta — anterior / posição / próximo ou concluir */}
+            <div className="flex items-center justify-between gap-2">
+              <button
+                type="button"
+                onClick={goPrev}
+                disabled={currentIndex === 0}
+                className="inline-flex h-10 items-center gap-1 rounded-xl px-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 disabled:opacity-35 dark:text-slate-300 dark:hover:bg-white/5"
+              >
+                <ChevronLeft className="h-4 w-4" /> Anterior
+              </button>
+              <span className="text-xs font-semibold tabular-nums text-slate-400">{currentIndex + 1} / {total}</span>
+              {currentIndex < total - 1 ? (
+                <button
+                  type="button"
+                  onClick={goNext}
+                  className="inline-flex h-10 items-center gap-1 rounded-xl px-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"
+                >
+                  {flipped ? 'Pular' : 'Próximo'} <ChevronRight className="h-4 w-4" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={finishSession}
+                  className="inline-flex h-10 items-center gap-1.5 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 text-sm font-bold text-white shadow-md transition active:scale-95"
+                >
+                  <Trophy className="h-4 w-4" /> Concluir
+                </button>
               )}
             </div>
-          </div>
 
-          <p className="mt-3 text-center text-xs text-slate-400">
-            Espaço: virar &nbsp;·&nbsp; ← →: navegar &nbsp;·&nbsp; 1/2/3: avaliar
-          </p>
+            <p className="hidden text-center text-[11px] text-slate-400 sm:block">
+              {fullscreen
+                ? 'Espaço: virar · ← →: navegar · 1/2/3: avaliar · Esc ou F: sair da tela cheia'
+                : 'Espaço: virar · ← →: navegar · 1/2/3: avaliar · F: tela cheia'}
+            </p>
+          </div>
+        </div>
         </div>
         <ToastAlert open={toast.open} message={toast.message} type={toast.type} onOpenChange={(open) => setToast(t => ({ ...t, open }))} />
       </AppShell>

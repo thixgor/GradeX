@@ -16,6 +16,7 @@ import {
   HelpCircle,
   Highlighter,
   Italic,
+  List,
   Maximize2,
   MessageSquare,
   Minus,
@@ -41,6 +42,19 @@ type AnnotationTool = 'cursor' | AnnotationType | 'eraser'
 type DrawingMode = 'free' | 'marker' | 'line' | 'dash' | 'circle'
 type TextAlign = 'left' | 'center' | 'right'
 
+interface SummaryEntry {
+  id: string
+  title: string
+  page: number
+  level?: number
+}
+
+interface NavEntry {
+  id: string
+  label: string
+  page: number
+}
+
 interface ViewerAccess {
   material: {
     id: string
@@ -56,6 +70,9 @@ interface ViewerAccess {
     defaultMode: ViewerMode
     minZoom: number
     maxZoom: number
+    coverPage?: number
+    summary?: SummaryEntry[]
+    navigation?: NavEntry[]
   }
 }
 
@@ -533,6 +550,8 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const [tool, setTool] = useState<AnnotationTool>('cursor')
   const [pageSize, setPageSize] = useState<PageSize | null>(null)
   const [showThumbs, setShowThumbs] = useState(true)
+  const [sidePanelTab, setSidePanelTab] = useState<'pages' | 'summary'>('pages')
+  const [mobilePanelOpen, setMobilePanelOpen] = useState(false)
   const [showAnnotations, setShowAnnotations] = useState(true)
   const [showGuide, setShowGuide] = useState(true)
   const [showDeleteAllConfirm, setShowDeleteAllConfirm] = useState(false)
@@ -561,6 +580,10 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const minZoom = access?.viewer.minZoom ?? 0.55
   const maxZoom = access?.viewer.maxZoom ?? 2.6
   const pageCount = access?.material.pageCount ?? 0
+  const summary = useMemo(() => access?.viewer.summary ?? [], [access])
+  const navigation = useMemo(() => access?.viewer.navigation ?? [], [access])
+  const coverPage = access?.viewer.coverPage
+  const hasSummary = summary.length > 0
   const pages = useMemo(() => buildPageArray(pageCount, currentPage, mode), [pageCount, currentPage, mode])
   const contentWidth = useResizeWidth(contentRef, [loading, showAnnotations, showThumbs])
   const annotationsByPage = useMemo(() => {
@@ -618,8 +641,10 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         }
         if (!mounted) return
         setAccess(json)
-        setCurrentPage(1)
-        setPageInput('1')
+        // Abre na capa designada pelo admin (se houver), senão na página 1.
+        const startPage = Number(json.viewer?.coverPage) > 0 ? Number(json.viewer.coverPage) : 1
+        setCurrentPage(startPage)
+        setPageInput(String(startPage))
         setMode(json.viewer?.defaultMode || 'single')
         loadAnnotations().catch(() => {})
       } catch {
@@ -708,10 +733,16 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
 
   const goToPage = useCallback((page: number) => {
     const next = Math.min(Math.max(page, 1), pageCount || 1)
-    setCurrentPage(next)
+    setCurrentPage((current) => (current === next ? current : next))
     if (mode !== 'single') {
       requestAnimationFrame(() => {
         document.getElementById(`pdf-page-${next}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      })
+    } else {
+      // Em modo página única, sobe suavemente para o topo da nova página.
+      requestAnimationFrame(() => {
+        const top = contentRef.current?.getBoundingClientRect().top ?? 0
+        if (top < 0) window.scrollTo({ top: window.scrollY + top - 12, behavior: 'smooth' })
       })
     }
   }, [mode, pageCount])
@@ -720,6 +751,50 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     const next = Number.parseInt(pageInput, 10)
     if (Number.isFinite(next)) goToPage(next)
   }
+
+  // Navegação por teclado: setas, PageUp/Down, Home/End. Ignora quando o foco
+  // está em um campo de edição (anotações, input de página, etc).
+  useEffect(() => {
+    if (!access) return
+    const onKey = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null
+      if (target && (
+        target.closest('[data-pdf-editor="true"]') ||
+        ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)
+      )) return
+      if (event.ctrlKey || event.metaKey || event.altKey) return
+      switch (event.key) {
+        case 'ArrowRight':
+        case 'PageDown':
+          event.preventDefault(); goToPage(currentPage + 1); break
+        case 'ArrowLeft':
+        case 'PageUp':
+          event.preventDefault(); goToPage(currentPage - 1); break
+        case 'Home':
+          event.preventDefault(); goToPage(1); break
+        case 'End':
+          event.preventDefault(); goToPage(pageCount); break
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [access, currentPage, pageCount, goToPage])
+
+  // Atalho unificado para abrir o painel lateral (miniaturas ou sumário):
+  // em telas grandes garante a coluna visível; em telas menores abre o drawer.
+  const openSidePanel = useCallback((tab: 'pages' | 'summary') => {
+    setSidePanelTab(tab)
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      setMobilePanelOpen(true)
+    } else {
+      setShowThumbs(true)
+    }
+  }, [])
+
+  const navigateTo = useCallback((page: number) => {
+    goToPage(page)
+    setMobilePanelOpen(false)
+  }, [goToPage])
 
   const fitToWidth = useCallback(() => {
     const element = contentRef.current || viewerRef.current
@@ -849,6 +924,16 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   return (
     <ViewerShell>
       <style jsx global>{`
+        @keyframes pdfPageFade {
+          from { opacity: 0; transform: translateY(6px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .pdf-page-fade {
+          animation: pdfPageFade 0.22s ease-out;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .pdf-page-fade { animation: none; }
+        }
         @media print {
           html, body {
             background: #000 !important;
@@ -986,7 +1071,31 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
               </div>
 
               <div className="mx-1 h-6 w-px shrink-0 bg-white/10" />
-              <ToolButton active={showThumbs} onClick={() => setShowThumbs((value) => !value)} title="Miniaturas">
+              {hasSummary && (
+                <ToolButton
+                  active={mobilePanelOpen ? sidePanelTab === 'summary' : showThumbs && sidePanelTab === 'summary'}
+                  onClick={() => openSidePanel('summary')}
+                  title="Sumario"
+                >
+                  <List className="h-4 w-4" />
+                </ToolButton>
+              )}
+              <ToolButton
+                active={showThumbs || mobilePanelOpen}
+                onClick={() => {
+                  if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+                    setSidePanelTab('pages')
+                    setMobilePanelOpen((value) => !value)
+                  } else if (showThumbs && sidePanelTab === 'summary') {
+                    // Painel já aberto noutra aba: troca para miniaturas em vez de fechar.
+                    setSidePanelTab('pages')
+                  } else {
+                    setSidePanelTab('pages')
+                    setShowThumbs((value) => !value)
+                  }
+                }}
+                title="Miniaturas"
+              >
                 {showThumbs ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeftOpen className="h-4 w-4" />}
               </ToolButton>
               <ToolButton active={showAnnotations} onClick={() => setShowAnnotations((value) => !value)} title="Painel de anotacoes">
@@ -1013,6 +1122,41 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
               textStyle={textStyle}
               onTextStyleChange={setTextStyle}
             />
+
+            {(navigation.length > 0 || coverPage) && (
+              <div className="mt-1 flex items-center gap-1.5 overflow-x-auto pb-0.5">
+                {coverPage ? (
+                  <button
+                    type="button"
+                    onClick={() => navigateTo(coverPage)}
+                    className={`flex h-8 shrink-0 items-center gap-1 rounded-full border px-3 text-xs font-semibold transition-colors ${
+                      currentPage === coverPage
+                        ? 'border-emerald-300/60 bg-emerald-400/25 text-white'
+                        : 'border-white/10 bg-white/10 text-white/75 hover:bg-white/15'
+                    }`}
+                    title={`Capa (pag. ${coverPage})`}
+                  >
+                    <Bookmark className="h-3.5 w-3.5" /> Capa
+                  </button>
+                ) : null}
+                {navigation.map((entry) => (
+                  <button
+                    key={entry.id}
+                    type="button"
+                    onClick={() => navigateTo(entry.page)}
+                    className={`flex h-8 shrink-0 items-center gap-1 rounded-full border px-3 text-xs font-medium transition-colors ${
+                      currentPage === entry.page
+                        ? 'border-emerald-300/60 bg-emerald-400/25 text-white'
+                        : 'border-white/10 bg-white/10 text-white/75 hover:bg-white/15'
+                    }`}
+                    title={`${entry.label} — pag. ${entry.page}`}
+                  >
+                    {entry.label}
+                    <span className="text-white/45">{entry.page}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </header>
 
@@ -1022,25 +1166,20 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
           </div>
         )}
 
-        <main className="grid grid-cols-1 gap-0 lg:grid-cols-[6.5rem_minmax(0,1fr)_22rem]">
+        <main className="grid grid-cols-1 gap-0 lg:grid-cols-[11.5rem_minmax(0,1fr)_22rem]">
           {showThumbs && (
-            <aside className="hidden border-r border-white/10 bg-black/15 p-3 backdrop-blur-xl lg:sticky lg:top-[132px] lg:col-start-1 lg:block lg:h-[calc(100vh-132px)] lg:overflow-y-auto">
-              <div className="space-y-2">
-                {Array.from({ length: pageCount }, (_, index) => index + 1).map((page) => (
-                  <button
-                    key={page}
-                    onClick={() => goToPage(page)}
-                    className={`w-full rounded-xl border p-2 text-left transition-colors ${
-                      page === currentPage
-                        ? 'border-emerald-300/60 bg-emerald-400/20 text-white'
-                        : 'border-white/10 bg-white/5 text-white/70 hover:bg-white/10'
-                    }`}
-                  >
-                    <div className="mb-1 aspect-[3/4] rounded-lg bg-white/90 shadow-inner" />
-                    <span className="text-[11px] font-medium">Pag. {page}</span>
-                  </button>
-                ))}
-              </div>
+            <aside className="hidden border-r border-white/10 bg-black/15 p-3 backdrop-blur-xl lg:sticky lg:top-[132px] lg:col-start-1 lg:block lg:h-[calc(100vh-132px)] lg:overflow-hidden">
+              <SidePanel
+                tab={sidePanelTab}
+                onTabChange={setSidePanelTab}
+                hasSummary={hasSummary}
+                summary={summary}
+                materialId={materialId}
+                pageCount={pageCount}
+                currentPage={currentPage}
+                coverPage={coverPage}
+                onGoTo={navigateTo}
+              />
             </aside>
           )}
 
@@ -1093,6 +1232,42 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
           )}
         </main>
 
+        {/* Drawer lateral (miniaturas/sumário) para celulares e tablets */}
+        {mobilePanelOpen && (
+          <div className="fixed inset-0 z-[60] lg:hidden" role="dialog" aria-modal="true">
+            <div
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              onClick={() => setMobilePanelOpen(false)}
+            />
+            <div className="absolute inset-y-0 left-0 flex w-[82%] max-w-xs flex-col border-r border-white/10 bg-zinc-950/95 p-3 shadow-2xl">
+              <div className="mb-2 flex items-center justify-between">
+                <span className="text-sm font-semibold text-white">Navegação</span>
+                <button
+                  type="button"
+                  onClick={() => setMobilePanelOpen(false)}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-white/70 hover:bg-white/10"
+                  title="Fechar"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+              <div className="min-h-0 flex-1 overflow-hidden">
+                <SidePanel
+                  tab={sidePanelTab}
+                  onTabChange={setSidePanelTab}
+                  hasSummary={hasSummary}
+                  summary={summary}
+                  materialId={materialId}
+                  pageCount={pageCount}
+                  currentPage={currentPage}
+                  coverPage={coverPage}
+                  onGoTo={navigateTo}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
         {showDeleteAllConfirm && (
           <ConfirmDialog
             title="Apagar todas as anotacoes?"
@@ -1104,6 +1279,246 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         )}
       </div>
     </ViewerShell>
+  )
+}
+
+// ─── Painel lateral: miniaturas reais + sumário interativo ───────────────────
+function SidePanel({
+  tab,
+  onTabChange,
+  hasSummary,
+  summary,
+  materialId,
+  pageCount,
+  currentPage,
+  coverPage,
+  onGoTo,
+}: {
+  tab: 'pages' | 'summary'
+  onTabChange: (tab: 'pages' | 'summary') => void
+  hasSummary: boolean
+  summary: SummaryEntry[]
+  materialId: string
+  pageCount: number
+  currentPage: number
+  coverPage?: number
+  onGoTo: (page: number) => void
+}) {
+  const activeTab = !hasSummary ? 'pages' : tab
+
+  return (
+    <div className="flex h-full min-h-0 flex-col">
+      {hasSummary && (
+        <div className="mb-3 grid shrink-0 grid-cols-2 gap-1 rounded-xl border border-white/10 bg-white/5 p-1">
+          <button
+            type="button"
+            onClick={() => onTabChange('pages')}
+            className={`h-8 rounded-lg text-xs font-semibold transition-colors ${
+              activeTab === 'pages' ? 'bg-emerald-400/25 text-white' : 'text-white/65 hover:bg-white/10'
+            }`}
+          >
+            Páginas
+          </button>
+          <button
+            type="button"
+            onClick={() => onTabChange('summary')}
+            className={`h-8 rounded-lg text-xs font-semibold transition-colors ${
+              activeTab === 'summary' ? 'bg-emerald-400/25 text-white' : 'text-white/65 hover:bg-white/10'
+            }`}
+          >
+            Sumário
+          </button>
+        </div>
+      )}
+
+      <div className="min-h-0 flex-1 overflow-y-auto pr-0.5">
+        {activeTab === 'summary' && hasSummary ? (
+          <SummaryList summary={summary} currentPage={currentPage} onGoTo={onGoTo} />
+        ) : (
+          <div className="space-y-2">
+            {Array.from({ length: pageCount }, (_, index) => index + 1).map((page) => (
+              <PdfThumbnail
+                key={page}
+                materialId={materialId}
+                pageNumber={page}
+                active={page === currentPage}
+                isCover={page === coverPage}
+                onClick={() => onGoTo(page)}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function SummaryList({
+  summary,
+  currentPage,
+  onGoTo,
+}: {
+  summary: SummaryEntry[]
+  currentPage: number
+  onGoTo: (page: number) => void
+}) {
+  // Entrada "ativa": a de maior página que ainda é <= página atual.
+  let activeId = ''
+  let bestPage = -1
+  for (const entry of summary) {
+    if (entry.page <= currentPage && entry.page > bestPage) {
+      bestPage = entry.page
+      activeId = entry.id
+    }
+  }
+
+  return (
+    <div className="space-y-1">
+      {summary.map((entry) => {
+        const level = Math.min(2, Math.max(0, entry.level || 0))
+        const isActive = entry.id === activeId
+        return (
+          <button
+            key={entry.id}
+            type="button"
+            onClick={() => onGoTo(entry.page)}
+            style={{ paddingLeft: `${0.5 + level * 0.85}rem` }}
+            className={`flex w-full items-center gap-2 rounded-lg border py-2 pr-2 text-left transition-colors ${
+              isActive
+                ? 'border-emerald-300/50 bg-emerald-400/15 text-white'
+                : 'border-transparent text-white/72 hover:border-white/10 hover:bg-white/5'
+            }`}
+          >
+            <span className={`flex-1 truncate ${level === 0 ? 'text-[13px] font-semibold' : level === 1 ? 'text-xs' : 'text-[11px] text-white/60'}`}>
+              {entry.title}
+            </span>
+            <span className="shrink-0 rounded-md bg-white/10 px-1.5 py-0.5 text-[10px] font-medium text-white/65">
+              {entry.page}
+            </span>
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+// Miniatura real: renderiza a página (lazy, via IntersectionObserver) no menor
+// tamanho possível reaproveitando o cache de bytes do viewer principal.
+function PdfThumbnail({
+  materialId,
+  pageNumber,
+  active,
+  isCover,
+  onClick,
+}: {
+  materialId: string
+  pageNumber: number
+  active: boolean
+  isCover?: boolean
+  onClick: () => void
+}) {
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const renderedRef = useRef(false)
+  const [shouldRender, setShouldRender] = useState(false)
+  const [status, setStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle')
+
+  useEffect(() => {
+    if (active) buttonRef.current?.scrollIntoView({ block: 'nearest' })
+  }, [active])
+
+  useEffect(() => {
+    const element = buttonRef.current
+    if (!element) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldRender(true)
+          observer.disconnect()
+        }
+      },
+      { rootMargin: '400px 0px' }
+    )
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (!shouldRender || renderedRef.current) return
+    let cancelled = false
+    let doc: any
+    let renderTask: any
+
+    async function renderThumb() {
+      setStatus('loading')
+      try {
+        const { bytes } = await fetchPdfPageBytes(materialId, pageNumber)
+        if (cancelled) return
+        const pdfjs = await getPdfJs()
+        doc = await pdfjs.getDocument({ data: bytes.slice() }).promise
+        const page = await doc.getPage(1)
+        const base = page.getViewport({ scale: 1 })
+        const targetWidth = 150
+        const dpr = Math.min(window.devicePixelRatio || 1, 2)
+        const scale = (targetWidth / base.width) * dpr
+        const viewport = page.getViewport({ scale })
+        const canvas = canvasRef.current
+        const context = canvas?.getContext('2d', { alpha: false })
+        if (!canvas || !context || cancelled) return
+        canvas.width = Math.floor(viewport.width)
+        canvas.height = Math.floor(viewport.height)
+        canvas.style.width = '100%'
+        canvas.style.height = 'auto'
+        renderTask = page.render({ canvasContext: context, viewport })
+        await renderTask.promise
+        if (!cancelled) {
+          renderedRef.current = true
+          setStatus('ready')
+        }
+      } catch (err: any) {
+        if (!cancelled && err?.name !== 'RenderingCancelledException') setStatus('error')
+      } finally {
+        try { await doc?.destroy?.() } catch {}
+      }
+    }
+
+    renderThumb()
+    return () => {
+      cancelled = true
+      renderTask?.cancel?.()
+      doc?.destroy?.()
+    }
+  }, [shouldRender, materialId, pageNumber])
+
+  return (
+    <button
+      ref={buttonRef}
+      onClick={onClick}
+      className={`w-full rounded-xl border p-1.5 text-left transition-colors ${
+        active
+          ? 'border-emerald-300/60 bg-emerald-400/20 text-white'
+          : 'border-white/10 bg-white/5 text-white/70 hover:bg-white/10'
+      }`}
+    >
+      <div className="relative mb-1 aspect-[3/4] overflow-hidden rounded-lg bg-white/90 shadow-inner">
+        <canvas ref={canvasRef} className={`h-full w-full object-contain ${status === 'ready' ? 'opacity-100' : 'opacity-0'} transition-opacity`} />
+        {status !== 'ready' && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            {status === 'error' ? (
+              <span className="text-[10px] font-medium text-rose-500">erro</span>
+            ) : (
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-emerald-700/20 border-t-emerald-700" />
+            )}
+          </div>
+        )}
+        {isCover && (
+          <span className="absolute left-1 top-1 rounded-md bg-emerald-500/90 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-white shadow">
+            Capa
+          </span>
+        )}
+      </div>
+      <span className="text-[11px] font-medium">Pag. {pageNumber}</span>
+    </button>
   )
 }
 
@@ -1754,7 +2169,7 @@ function PdfCanvasPage({
   const annotationPointerEvents = tool === 'drawing' || tool === 'highlight' ? 'none' : 'auto'
 
   return (
-    <div id={`pdf-page-${pageNumber}`} ref={wrapperRef} className="flex w-full scroll-mt-36 justify-center px-0 sm:px-2">
+    <div id={`pdf-page-${pageNumber}`} ref={wrapperRef} className="pdf-page-fade flex w-full scroll-mt-36 justify-center px-0 sm:px-2">
       <div
         className="relative max-w-full overflow-hidden rounded-xl border border-white/15 bg-white/10 p-2 shadow-2xl shadow-black/35 backdrop-blur-sm"
         style={{ width: Math.ceil(pageFrameSize.width + 16) }}

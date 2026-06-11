@@ -7,6 +7,59 @@ import { FLASHCARD_MANUAL_COLLECTIONS } from '@/lib/flashcard-manual'
 
 export const dynamic = 'force-dynamic'
 
+// Normaliza a configuração do PDF Viewer (capa, sumário, navegação) vinda do
+// admin antes de persistir. Garante tipos, limites e ids estáveis para evitar
+// dados malformados na coleção.
+function sanitizePdfViewerConfig(raw: any): {
+  coverPage?: number
+  summary: Array<{ id: string; title: string; page: number; level: number }>
+  navigation: Array<{ id: string; label: string; page: number }>
+} | null {
+  if (!raw || typeof raw !== 'object') return null
+
+  const toPage = (value: any): number | null => {
+    const n = Math.floor(Number(value))
+    return Number.isFinite(n) && n >= 1 ? Math.min(n, 100000) : null
+  }
+  const makeId = (fallback: string) =>
+    `${fallback}-${Math.random().toString(36).slice(2, 9)}`
+  const clean = (s: any, max: number) =>
+    String(s ?? '').replace(/\s+/g, ' ').trim().slice(0, max)
+
+  const summary = Array.isArray(raw.summary)
+    ? raw.summary
+        .map((item: any) => {
+          const page = toPage(item?.page)
+          const title = clean(item?.title, 200)
+          if (!page || !title) return null
+          const level = Math.min(2, Math.max(0, Math.floor(Number(item?.level) || 0)))
+          return { id: clean(item?.id, 40) || makeId('toc'), title, page, level }
+        })
+        .filter(Boolean)
+        .slice(0, 500)
+    : []
+
+  const navigation = Array.isArray(raw.navigation)
+    ? raw.navigation
+        .map((item: any) => {
+          const page = toPage(item?.page)
+          const label = clean(item?.label, 60)
+          if (!page || !label) return null
+          return { id: clean(item?.id, 40) || makeId('nav'), label, page }
+        })
+        .filter(Boolean)
+        .slice(0, 100)
+    : []
+
+  const coverPage = toPage(raw.coverPage)
+
+  return {
+    ...(coverPage ? { coverPage } : {}),
+    summary: summary as any,
+    navigation: navigation as any,
+  }
+}
+
 // GET - Listar materiais (público para usuários logados)
 export async function GET(request: NextRequest) {
   try {
@@ -289,6 +342,7 @@ export async function POST(request: NextRequest) {
       allowedGroups: body.allowedGroups || [],
       pdfViewerEnabled: body.pdfViewerEnabled === true,
       pdfDownloadEnabled: body.pdfDownloadEnabled !== false,
+      pdfViewerConfig: sanitizePdfViewerConfig(body.pdfViewerConfig) || { summary: [], navigation: [] },
       downloadCount: 0,
       viewCount: 0,
       isHidden: body.isHidden || false,
@@ -331,6 +385,9 @@ export async function PUT(request: NextRequest) {
     }
     if ('pricingEventId' in updates) {
       updates.pricingEventId = updates.pricingEventId ? String(updates.pricingEventId) : null
+    }
+    if ('pdfViewerConfig' in updates) {
+      updates.pdfViewerConfig = sanitizePdfViewerConfig(updates.pdfViewerConfig) || { summary: [], navigation: [] }
     }
 
     await db.collection('materials').updateOne(

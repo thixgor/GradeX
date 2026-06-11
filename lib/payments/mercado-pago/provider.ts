@@ -6,10 +6,11 @@ import type {
   ProviderOrder,
   ProviderSubscription,
 } from '../types'
-import { getMpClient, getMpPayment, getMpPreApproval } from './client'
+import { getMpPaymentWithToken, getMpPreApprovalWithToken } from './client'
 import { mapMpPaymentStatus, mapMpPreapprovalStatus, mapMpPaymentMethod } from './status-mapper'
 import { validateMpWebhook } from './webhook'
 import { getPaymentConfig } from '../config'
+import { getEffectiveMpAuth } from './marketplace-store'
 
 /**
  * Adapter Mercado Pago para a interface PaymentProvider.
@@ -31,7 +32,8 @@ export class MercadoPagoProvider implements PaymentProvider {
     }
   ): Promise<ProviderOrder> {
     const cfg = getPaymentConfig()
-    const payment = getMpPayment()
+    const auth = await getEffectiveMpAuth()
+    const payment = getMpPaymentWithToken(auth.accessToken)
 
     // Em sandbox, payer.email deve ser um e-mail de usuário de teste MP.
     // E-mails reais causam "Unauthorized use of live credentials".
@@ -83,6 +85,19 @@ export class MercadoPagoProvider implements PaymentProvider {
       body.date_of_expiration = expires.toISOString()
     }
 
+    // Split de pagamentos (marketplace): cobra a comissão do sócio como
+    // `application_fee`. O valor total é debitado do comprador; a comissão é
+    // creditada na conta dona da aplicação MP e o restante na conta que
+    // processa este pagamento. Ver docs/mercado-pago-split.md.
+    // Só aplica quando a conta está conectada via OAuth (token de marketplace);
+    // com o token do ambiente o MP rejeitaria o application_fee.
+    if (auth.source === 'marketplace' && cfg.mp.split.enabled && cfg.mp.split.partnerPercent > 0) {
+      const fee = round2((round2(input.amount) * cfg.mp.split.partnerPercent) / 100)
+      if (fee > 0 && fee < round2(input.amount)) {
+        body.application_fee = fee
+      }
+    }
+
     const response = await payment.create({
       body,
       requestOptions: { idempotencyKey: input.idempotencyKey },
@@ -92,21 +107,21 @@ export class MercadoPagoProvider implements PaymentProvider {
   }
 
   async getPayment(providerPaymentId: string): Promise<ProviderOrder> {
-    const payment = getMpPayment()
+    const auth = await getEffectiveMpAuth()
+    const payment = getMpPaymentWithToken(auth.accessToken)
     const response = await payment.get({ id: providerPaymentId })
     return mpPaymentToProviderOrder(response)
   }
 
   async refundPayment(providerPaymentId: string): Promise<void> {
-    const client = getMpClient()
     // SDK v2 ainda não expõe Refund de forma limpa em todos os builds — usar fetch direto
-    const cfg = getPaymentConfig()
+    const auth = await getEffectiveMpAuth()
     const res = await fetch(
       `https://api.mercadopago.com/v1/payments/${providerPaymentId}/refunds`,
       {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${cfg.mp.accessToken}`,
+          'Authorization': `Bearer ${auth.accessToken}`,
           'Content-Type': 'application/json',
           'X-Idempotency-Key': randomUUID(),
         },
@@ -121,7 +136,8 @@ export class MercadoPagoProvider implements PaymentProvider {
 
   async createPreapproval(input: CreatePreapprovalInput): Promise<ProviderSubscription> {
     const cfg = getPaymentConfig()
-    const pre = getMpPreApproval()
+    const auth = await getEffectiveMpAuth()
+    const pre = getMpPreApprovalWithToken(auth.accessToken)
 
     const body: Record<string, any> = {
       reason: input.reason,
@@ -147,13 +163,15 @@ export class MercadoPagoProvider implements PaymentProvider {
   }
 
   async getPreapproval(providerSubscriptionId: string): Promise<ProviderSubscription> {
-    const pre = getMpPreApproval()
+    const auth = await getEffectiveMpAuth()
+    const pre = getMpPreApprovalWithToken(auth.accessToken)
     const response = await pre.get({ id: providerSubscriptionId })
     return mpPreapprovalToProviderSub(response)
   }
 
   async cancelPreapproval(providerSubscriptionId: string): Promise<ProviderSubscription> {
-    const pre = getMpPreApproval()
+    const auth = await getEffectiveMpAuth()
+    const pre = getMpPreApprovalWithToken(auth.accessToken)
     const response = await pre.update({
       id: providerSubscriptionId,
       body: { status: 'cancelled' },

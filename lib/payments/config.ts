@@ -13,6 +13,32 @@ export interface PaymentConfig {
     accessToken: string
     webhookSecret: string
     notificationUrl: string
+    /**
+     * Split de pagamentos (marketplace). Quando habilitado, cada pagamento é
+     * dividido entre a conta que processa (dona do ACCESS_TOKEN) e a conta do
+     * sócio (dona da aplicação MP), via campo `application_fee`.
+     */
+    split: {
+      enabled: boolean
+      /**
+       * Percentual (0–100) do valor total que vai para o SÓCIO (conta dona da
+       * aplicação MP), cobrado como `application_fee`. O restante fica com a
+       * conta que processa o pagamento (a do ACCESS_TOKEN configurado).
+       * Ex.: 30 = 30% para o sócio, 70% para a conta principal.
+       */
+      partnerPercent: number
+    }
+    /**
+     * Credenciais OAuth da APLICAÇÃO de marketplace do sócio. Usadas para
+     * conectar (via OAuth) a conta que processa os pagamentos à aplicação do
+     * sócio, gerando o access token vinculado ao marketplace.
+     */
+    oauth: {
+      clientId: string
+      clientSecret: string
+      /** URL de callback registrada na aplicação MP do sócio. */
+      redirectUri: string
+    }
   }
 }
 
@@ -57,9 +83,39 @@ export function getPaymentConfig(): PaymentConfig {
     console.error('[payments] ATENÇÃO: MERCADOPAGO_ENV=sandbox mas MERCADOPAGO_PUBLIC_KEY não começa com TEST-. Isso causa "Unauthorized use of live credentials". Troque pela Public Key de teste.')
   }
 
+  // Split de pagamentos (marketplace) — opcional, desligado por padrão.
+  const splitEnabled = /^(1|true|yes|on)$/i.test(process.env.MERCADOPAGO_SPLIT_ENABLED || '')
+  const partnerPercentRaw = Number(process.env.MERCADOPAGO_SPLIT_PARTNER_PERCENT)
+  const partnerPercent = Number.isFinite(partnerPercentRaw) ? partnerPercentRaw : 0
+  if (splitEnabled) {
+    if (!(partnerPercent > 0 && partnerPercent < 100)) {
+      throw new Error(
+        `MERCADOPAGO_SPLIT_PARTNER_PERCENT inválido: "${process.env.MERCADOPAGO_SPLIT_PARTNER_PERCENT}". ` +
+          'Use um número entre 0 e 100 (ex.: 30 para enviar 30% ao sócio).'
+      )
+    }
+  }
+
+  // Credenciais OAuth da aplicação de marketplace (do sócio). Opcionais —
+  // só necessárias para usar o botão "Conectar marketplace" no admin.
+  const clientId = process.env.MERCADOPAGO_CLIENT_ID || ''
+  const clientSecret = process.env.MERCADOPAGO_CLIENT_SECRET || ''
+  const appBaseUrl = (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000').replace(/\/+$/, '')
+  const redirectUri =
+    process.env.MERCADOPAGO_OAUTH_REDIRECT_URI ||
+    `${appBaseUrl}/api/admin/mercado-pago/oauth/callback`
+
   cached = {
     provider,
-    mp: { env, publicKey, accessToken, webhookSecret, notificationUrl },
+    mp: {
+      env,
+      publicKey,
+      accessToken,
+      webhookSecret,
+      notificationUrl,
+      split: { enabled: splitEnabled, partnerPercent },
+      oauth: { clientId, clientSecret, redirectUri },
+    },
   }
   return cached
 }
