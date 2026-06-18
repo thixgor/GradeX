@@ -2120,6 +2120,11 @@ export async function generateBancoListaPDF(
 
   // === QUESTÕES ===
   questoes.forEach((questao, idx) => {
+    // Garantir estado limpo no início de cada questão (evita vazamento de cor verde das alternativas)
+    doc.setTextColor(...CINZA_TEXTO)
+    doc.setFontSize(10)
+    doc.setFont(FONT, 'normal')
+
     checkPage(45)
 
     // Header da questão
@@ -2241,6 +2246,9 @@ export async function generateBancoListaPDF(
           drawRichLine(doc, line, margin + 10, y, isCorrect ? 'bold' : 'normal')
           y += 6
         })
+        // Reset após alternativa verde para não vazar para o bloco seguinte
+        doc.setTextColor(...CINZA_TEXTO)
+        doc.setFont(FONT, 'normal')
         y += 3
       })
     } else if (questao.tipo === 'discursiva' && !incluirRespostas) {
