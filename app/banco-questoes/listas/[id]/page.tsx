@@ -48,6 +48,7 @@ import { QuestionNotesCanvas } from '@/components/question-notes-canvas'
 import { HighlightableText } from '@/components/highlightable-text'
 import { ImageModal } from '@/components/image-modal'
 import { ReportQuestionModal } from '@/components/report-question-modal'
+import { generateBancoListaPDF, downloadPDF, prewarmPDFAssets } from '@/lib/pdf-generator'
 
 type ModoVisualizacao = 'lista' | 'simulado'
 type ModoCorrecao = 'imediato' | 'final'
@@ -124,6 +125,7 @@ export default function ListaDetalhePage() {
 
   useEffect(() => {
     loadLista()
+    prewarmPDFAssets()
   }, [id])
 
   async function loadLista() {
@@ -166,26 +168,33 @@ export default function ListaDetalhePage() {
   }
 
   async function handleDownloadPdf(incluirRespostas: boolean = false) {
+    if (!lista || questoes.length === 0) return
     setDownloadingPdf(true)
     try {
-      const url = `/api/banco/listas/${id}/pdf${incluirRespostas ? '?respostas=true' : ''}`
-      const res = await fetch(url)
-
-      if (!res.ok) {
-        const data = await res.json()
-        alert(data.error || 'Erro ao gerar PDF')
-        return
-      }
-
-      const blob = await res.blob()
-      const downloadUrl = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = downloadUrl
-      a.download = `${lista?.nome || 'lista'}_DomineAqui.pdf`
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      window.URL.revokeObjectURL(downloadUrl)
+      const blob = await generateBancoListaPDF(
+        lista.nome,
+        questoes.map(q => ({
+          tipo: q.tipo,
+          enunciado: q.enunciado,
+          alternativas: q.alternativas,
+          imagemUrl: q.imagemUrl,
+          explicacao: q.explicacao,
+          respostaModelo: q.respostaModelo,
+          dificuldade: q.dificuldade,
+          ano: q.ano,
+          fonte: q.fonte,
+          periodoNome: q.periodoNome,
+          moduloNome: q.moduloNome,
+          topicoNome: q.topicoNome,
+        })),
+        incluirRespostas
+      )
+      const safeName = (lista.nome || 'lista').replace(/[^a-zA-Z0-9]/g, '_')
+      downloadPDF(blob, `${safeName}_DomineAqui.pdf`, {
+        type: 'banco-lista',
+        resourceId: id,
+        resourceTitle: lista.nome,
+      })
     } catch (err) {
       console.error('Erro ao baixar PDF:', err)
       alert('Erro ao gerar PDF')

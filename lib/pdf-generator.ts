@@ -2020,3 +2020,355 @@ export async function generatePurchaseReceiptPDF(
 
   return doc.output('blob')
 }
+
+// ─────────────────────────────────────────────────────────────────
+// BANCO DE QUESTÕES — Lista (mesma engine das Provas: Roboto + wrapText)
+// ─────────────────────────────────────────────────────────────────
+
+interface BancoAlternativaPDF {
+  letra: string
+  texto: string
+  correta?: boolean
+}
+
+interface BancoQuestaoPDF {
+  tipo: 'objetiva' | 'discursiva'
+  enunciado: string
+  alternativas?: BancoAlternativaPDF[]
+  imagemUrl?: string
+  explicacao?: string
+  respostaModelo?: string
+  dificuldade?: string
+  ano?: number
+  fonte?: string
+  periodoNome?: string
+  moduloNome?: string
+  topicoNome?: string
+}
+
+/**
+ * Gera o PDF de uma lista do Banco de Questões usando exatamente a mesma
+ * engine das Provas (fontes Roboto com Unicode completo, wrapText próprio e
+ * markdown inline). Isso elimina o truncamento de letras/acentos do gerador
+ * server-side antigo baseado em Helvetica.
+ *
+ * @param incluirRespostas  quando true, destaca a alternativa correta em verde,
+ *                          mostra resposta modelo/explicação e adiciona o gabarito.
+ */
+export async function generateBancoListaPDF(
+  listaNome: string,
+  questoes: BancoQuestaoPDF[],
+  incluirRespostas: boolean = false
+): Promise<Blob> {
+  const doc = new jsPDF()
+  await registerFonts(doc)
+  const logo = await loadLogo()
+
+  // Pré-carregar imagens das questões (mesma cache de sessão das provas)
+  const imageMap = new Map<string, ImgData>()
+  await Promise.all(
+    questoes
+      .filter(q => q.imagemUrl)
+      .map(async (q) => {
+        const result = await fetchImageAsBase64(q.imagemUrl!)
+        if (result) imageMap.set(q.imagemUrl!, result)
+      })
+  )
+
+  const pageWidth = doc.internal.pageSize.getWidth()
+  const pageHeight = doc.internal.pageSize.getHeight()
+  const margin = 20
+  let y = margin
+
+  const subtitle = incluirRespostas ? 'Banco de Questões · Gabarito' : 'Banco de Questões'
+
+  const checkPage = (needed: number) => {
+    if (y + needed > pageHeight - 25) {
+      doc.addPage()
+      y = addDomineAquiHeader(doc, pageWidth, margin, subtitle, logo)
+      return true
+    }
+    return false
+  }
+
+  y = addDomineAquiHeader(doc, pageWidth, margin, subtitle, logo)
+
+  // === TÍTULO DA LISTA ===
+  doc.setFillColor(...LARANJA_CLARO)
+  doc.setDrawColor(...VERDE_MEDIO)
+  doc.roundedRect(margin, y, pageWidth - 2 * margin, 22, 3, 3, 'FD')
+  doc.setTextColor(...VERDE_ESCURO)
+  doc.setFontSize(16)
+  doc.setFont(FONT, 'bold')
+  const tituloLines = wrapText(doc, listaNome, pageWidth - 2 * margin - 10)
+  doc.text(tituloLines[0] || listaNome, pageWidth / 2, y + 10, { align: 'center' })
+  doc.setFontSize(9)
+  doc.setFont(FONT, 'normal')
+  doc.setTextColor(100, 100, 100)
+  doc.text(`${questoes.length} ${questoes.length === 1 ? 'questão' : 'questões'}`, pageWidth / 2, y + 17, { align: 'center' })
+  y += 30
+
+  if (incluirRespostas) {
+    doc.setFillColor(...VERDE_ESCURO)
+    doc.roundedRect(margin, y, pageWidth - 2 * margin, 9, 2, 2, 'F')
+    doc.setTextColor(255, 255, 255)
+    doc.setFontSize(9)
+    doc.setFont(FONT, 'bold')
+    doc.text('GABARITO COMENTADO  —  Alternativas corretas destacadas em verde', pageWidth / 2, y + 6, { align: 'center' })
+    y += 16
+  }
+
+  // === QUESTÕES ===
+  questoes.forEach((questao, idx) => {
+    checkPage(45)
+
+    // Header da questão
+    doc.setFillColor(...VERDE_MEDIO)
+    doc.roundedRect(margin, y, pageWidth - 2 * margin, 10, 2, 2, 'F')
+    doc.setTextColor(255, 255, 255)
+    doc.setFontSize(11)
+    doc.setFont(FONT, 'bold')
+    doc.text(`Questão ${idx + 1}`, margin + 5, y + 7)
+
+    // Metadados à direita (tipo · dificuldade · ano)
+    const tipoLabel = questao.tipo === 'objetiva' ? 'Objetiva' : 'Discursiva'
+    const meta: string[] = [tipoLabel]
+    if (questao.dificuldade) {
+      meta.push(questao.dificuldade === 'facil' ? 'Fácil' : questao.dificuldade === 'medio' ? 'Médio' : 'Difícil')
+    }
+    if (questao.ano) meta.push(String(questao.ano))
+    doc.setFontSize(8)
+    doc.setFont(FONT, 'normal')
+    doc.text(meta.join('  ·  '), pageWidth - margin - 2, y + 7, { align: 'right' })
+    y += 14
+
+    // Reset cor após header
+    doc.setTextColor(...CINZA_TEXTO)
+    doc.setFont(FONT, 'normal')
+
+    // Hierarquia (período > módulo > tópico)
+    const hierarquia = [questao.periodoNome, questao.moduloNome, questao.topicoNome].filter(Boolean).join(' > ')
+    if (hierarquia) {
+      checkPage(7)
+      doc.setFontSize(8)
+      doc.setFont(FONT, 'italic')
+      doc.setTextColor(120, 120, 120)
+      doc.text(sanitizeForPdf(hierarquia), margin, y)
+      y += 6
+    }
+
+    // Enunciado
+    if (questao.enunciado) {
+      checkPage(12)
+      doc.setFontSize(10)
+      doc.setFont(FONT, 'normal')
+      doc.setTextColor(...CINZA_TEXTO)
+      const lines = wrapText(doc, questao.enunciado, pageWidth - 2 * margin)
+      lines.forEach((line: string) => {
+        checkPage(8)
+        doc.setFontSize(10)
+        doc.setFont(FONT, 'normal')
+        doc.setTextColor(...CINZA_TEXTO)
+        drawRichLine(doc, line, margin, y)
+        y += 6
+      })
+      y += 2
+    }
+
+    // Imagem
+    if (questao.imagemUrl) {
+      const imgData = imageMap.get(questao.imagemUrl)
+      if (imgData) {
+        const maxImgWidth = pageWidth - 2 * margin - 10
+        const maxImgHeight = 80
+        const ratio = Math.min(maxImgWidth / imgData.width, maxImgHeight / imgData.height, 1)
+        const imgW = imgData.width * ratio
+        const imgH = imgData.height * ratio
+        checkPage(imgH + 8)
+        try {
+          doc.addImage(imgData.dataUrl, 'PNG', margin + 5, y, imgW, imgH)
+          y += imgH + 5
+        } catch {
+          doc.setFontSize(8)
+          doc.setTextColor(150, 150, 150)
+          doc.text('[Imagem não disponível]', margin, y)
+          y += 6
+        }
+      }
+    }
+
+    // Alternativas (objetiva)
+    if (questao.tipo === 'objetiva' && questao.alternativas) {
+      y += 2
+      questao.alternativas.forEach((alt) => {
+        const isCorrect = incluirRespostas && !!alt.correta
+        const altText = `${alt.letra}) ${alt.texto}`
+        const altLines = wrapText(doc, altText, pageWidth - 2 * margin - 12)
+        const rectH = altLines.length * 6 + 3
+        checkPage(rectH + 3)
+
+        if (isCorrect) {
+          doc.setFillColor(220, 245, 225)
+          doc.setDrawColor(70, 129, 82)
+          doc.setLineWidth(0.5)
+          doc.roundedRect(margin + 1, y - 3, pageWidth - 2 * margin - 2, rectH, 1.5, 1.5, 'FD')
+        }
+
+        doc.setFont(FONT, isCorrect ? 'bold' : 'normal')
+        doc.setFontSize(10)
+        doc.setTextColor(isCorrect ? 26 : CINZA_TEXTO[0], isCorrect ? 71 : CINZA_TEXTO[1], isCorrect ? 42 : CINZA_TEXTO[2])
+
+        // Ícone: check verde (correta) ou checkbox vazio
+        if (isCorrect) {
+          doc.setFillColor(70, 129, 82)
+          doc.setDrawColor(70, 129, 82)
+          doc.circle(margin + 4.5, y - 1.5, 3, 'F')
+          doc.setDrawColor(255, 255, 255)
+          doc.setLineWidth(0.7)
+          doc.line(margin + 3.2, y - 1.5, margin + 4.3, y - 0.3)
+          doc.line(margin + 4.3, y - 0.3, margin + 6, y - 3)
+        } else {
+          doc.setDrawColor(...VERDE_MEDIO)
+          doc.setLineWidth(0.4)
+          doc.roundedRect(margin + 2, y - 3.5, 5, 5, 1, 1)
+        }
+
+        altLines.forEach((line: string, lineIdx: number) => {
+          if (lineIdx > 0) {
+            doc.setFontSize(10)
+            doc.setTextColor(isCorrect ? 26 : CINZA_TEXTO[0], isCorrect ? 71 : CINZA_TEXTO[1], isCorrect ? 42 : CINZA_TEXTO[2])
+          }
+          drawRichLine(doc, line, margin + 10, y, isCorrect ? 'bold' : 'normal')
+          y += 6
+        })
+        y += 3
+      })
+    } else if (questao.tipo === 'discursiva' && !incluirRespostas) {
+      // Espaço para resposta
+      checkPage(20)
+      doc.setFontSize(9)
+      doc.setFont(FONT, 'bold')
+      doc.setTextColor(...LARANJA)
+      doc.text('Espaço para resposta:', margin, y)
+      y += 6
+      doc.setDrawColor(200, 200, 200)
+      doc.setLineWidth(0.3)
+      for (let i = 0; i < 6; i++) {
+        checkPage(8)
+        doc.line(margin, y, pageWidth - margin, y)
+        y += 7
+      }
+    }
+
+    // Resposta modelo (discursiva, com respostas)
+    if (incluirRespostas && questao.tipo === 'discursiva' && questao.respostaModelo) {
+      checkPage(14)
+      doc.setFontSize(8.5)
+      doc.setFont(FONT, 'bold')
+      doc.setTextColor(...VERDE_ESCURO)
+      doc.text('Resposta Modelo:', margin, y)
+      y += 6
+      doc.setFontSize(9)
+      doc.setFont(FONT, 'normal')
+      doc.setTextColor(...CINZA_TEXTO)
+      wrapText(doc, questao.respostaModelo, pageWidth - 2 * margin - 4).forEach((line: string) => {
+        checkPage(8)
+        doc.setFontSize(9)
+        doc.setFont(FONT, 'normal')
+        doc.setTextColor(...CINZA_TEXTO)
+        drawRichLine(doc, line, margin + 4, y)
+        y += 6
+      })
+      y += 3
+    }
+
+    // Explicação / comentário (com respostas)
+    if (incluirRespostas && questao.explicacao) {
+      checkPage(14)
+      doc.setFontSize(8.5)
+      doc.setFont(FONT, 'bold')
+      doc.setTextColor(...LARANJA)
+      doc.text('Resposta Comentada:', margin, y)
+      y += 6
+      doc.setFontSize(9)
+      doc.setFont(FONT, 'normal')
+      doc.setTextColor(...CINZA_TEXTO)
+      wrapText(doc, questao.explicacao, pageWidth - 2 * margin - 4).forEach((line: string) => {
+        checkPage(8)
+        doc.setFontSize(9)
+        doc.setFont(FONT, 'normal')
+        doc.setTextColor(...CINZA_TEXTO)
+        drawRichLine(doc, line, margin + 4, y)
+        y += 6
+      })
+      y += 3
+    }
+
+    // Fonte
+    if (questao.fonte) {
+      checkPage(8)
+      doc.setFontSize(7.5)
+      doc.setFont(FONT, 'italic')
+      doc.setTextColor(120, 120, 120)
+      const fonteLines = wrapText(doc, `Fonte: ${questao.fonte}`, pageWidth - 2 * margin)
+      fonteLines.forEach((line: string) => {
+        doc.text(line, margin, y)
+        y += 4.5
+      })
+    }
+
+    // Separador entre questões
+    y += 6
+    checkPage(4)
+    doc.setDrawColor(...LARANJA)
+    doc.setLineWidth(0.4)
+    doc.line(margin + 15, y, pageWidth - margin - 15, y)
+    y += 8
+  })
+
+  // === GABARITO RÁPIDO (objetivas) ===
+  if (incluirRespostas) {
+    const objetivas = questoes.filter(q => q.tipo === 'objetiva')
+    if (objetivas.length > 0) {
+      checkPage(40)
+      doc.setFillColor(...VERDE_ESCURO)
+      doc.roundedRect(margin, y, pageWidth - 2 * margin, 10, 2, 2, 'F')
+      doc.setTextColor(255, 255, 255)
+      doc.setFontSize(11)
+      doc.setFont(FONT, 'bold')
+      doc.text('GABARITO RÁPIDO', pageWidth / 2, y + 7, { align: 'center' })
+      y += 16
+
+      const columns = 5
+      const columnWidth = (pageWidth - 2 * margin) / columns
+      const rowHeight = 11
+      let col = 0
+      questoes.forEach((q, i) => {
+        if (q.tipo !== 'objetiva') return
+        const correta = q.alternativas?.find(a => a.correta)?.letra || '-'
+        const x = margin + col * columnWidth
+        doc.setFillColor(...LARANJA_CLARO)
+        doc.roundedRect(x, y - 6, columnWidth - 3, rowHeight, 2, 2, 'F')
+        doc.setTextColor(...VERDE_ESCURO)
+        doc.setFontSize(9)
+        doc.setFont(FONT, 'bold')
+        doc.text(`Q${i + 1}: ${correta}`, x + 4, y + 1)
+        col++
+        if (col >= columns) {
+          col = 0
+          y += rowHeight + 2
+          checkPage(rowHeight + 4)
+        }
+      })
+    }
+  }
+
+  // === RODAPÉ EM TODAS AS PÁGINAS ===
+  const totalPages = doc.getNumberOfPages()
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i)
+    addDomineAquiFooter(doc, i, totalPages, pageWidth, pageHeight, margin, listaNome)
+  }
+
+  return doc.output('blob')
+}
