@@ -66,6 +66,67 @@ interface RenderedPageCacheEntry {
 const renderedPageCache = new Map<string, RenderedPageCacheEntry>()
 const renderedPageInflight = new Map<string, Promise<{ bytes: Uint8Array; totalPages: number }>>()
 
+interface SourceDocCacheEntry {
+  doc: PDFDocument
+  totalPages: number
+  expiresAt: number
+}
+
+// Cache do PDFDocument JÁ PARSEADO (documento-fonte), chaveado pelo blobUrl.
+// Sem isso, renderizar cada página nova refaz PDFDocument.load() do PDF
+// inteiro — para um PDF de 1000 páginas/20MB, virar páginas dispara 1 parse
+// completo POR página, o que domina o tempo/CPU do render. Aqui o parse roda
+// 1x por instância dentro do TTL e cada página vira só um copyPages.
+// O documento-fonte é apenas lido (copyPages/getPageCount), nunca mutado,
+// então o reuso entre requests é seguro. A chave é o blobUrl, que muda a cada
+// novo upload — invalidando o cache automaticamente, sem servir versão velha.
+const sourceDocCache = new Map<string, SourceDocCacheEntry>()
+const sourceDocInflight = new Map<string, Promise<{ doc: PDFDocument; totalPages: number }>>()
+
+async function loadSourceDoc(
+  originalPdfBytes: ArrayBuffer,
+  cacheKey?: string
+): Promise<{ doc: PDFDocument; totalPages: number }> {
+  const cacheEnabled = envBoolean('PDF_VIEWER_SOURCEDOC_CACHE_ENABLED', true)
+  if (!cacheEnabled || !cacheKey) {
+    const doc = await PDFDocument.load(originalPdfBytes, { ignoreEncryption: true })
+    return { doc, totalPages: doc.getPageCount() }
+  }
+
+  const now = Date.now()
+  const cached = sourceDocCache.get(cacheKey)
+  if (cached && cached.expiresAt > now) {
+    return { doc: cached.doc, totalPages: cached.totalPages }
+  }
+  if (cached) sourceDocCache.delete(cacheKey)
+
+  const pending = sourceDocInflight.get(cacheKey)
+  if (pending) return pending
+
+  const load = (async () => {
+    const doc = await PDFDocument.load(originalPdfBytes, { ignoreEncryption: true })
+    const totalPages = doc.getPageCount()
+    const ttlMs = envNumber('PDF_VIEWER_SOURCEDOC_CACHE_TTL_MS', 10 * 60 * 1000, 0, 60 * 60 * 1000)
+    const maxEntries = Math.floor(envNumber('PDF_VIEWER_SOURCEDOC_CACHE_MAX_ENTRIES', 4, 1, 20))
+    if (ttlMs > 0) {
+      while (sourceDocCache.size >= maxEntries) {
+        const oldestKey = sourceDocCache.keys().next().value
+        if (!oldestKey) break
+        sourceDocCache.delete(oldestKey)
+      }
+      sourceDocCache.set(cacheKey, { doc, totalPages, expiresAt: Date.now() + ttlMs })
+    }
+    return { doc, totalPages }
+  })()
+
+  sourceDocInflight.set(cacheKey, load)
+  try {
+    return await load
+  } finally {
+    sourceDocInflight.delete(cacheKey)
+  }
+}
+
 function envNumber(name: string, fallback: number, min?: number, max?: number): number {
   const value = Number(process.env[name])
   if (!Number.isFinite(value)) return fallback
@@ -406,6 +467,9 @@ type WatermarkPageInput = {
   materialTitle: string
   viewedAt: Date
   auditToken: string
+  // Chave de cache do documento-fonte parseado (use o blobUrl). Opcional:
+  // sem ela, o PDF é parseado a cada render (comportamento antigo).
+  sourceCacheKey?: string
 }
 
 export async function createWatermarkedSinglePagePdf(
@@ -459,8 +523,7 @@ async function renderWatermarkedSinglePagePdf(
   originalPdfBytes: ArrayBuffer,
   input: WatermarkPageInput
 ): Promise<{ bytes: Uint8Array; totalPages: number }> {
-  const sourceDoc = await PDFDocument.load(originalPdfBytes, { ignoreEncryption: true })
-  const totalPages = sourceDoc.getPageCount()
+  const { doc: sourceDoc, totalPages } = await loadSourceDoc(originalPdfBytes, input.sourceCacheKey)
   const safePageNumber = Math.min(Math.max(input.pageNumber, 1), totalPages)
 
   const outputDoc = await PDFDocument.create()

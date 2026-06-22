@@ -59,6 +59,7 @@ export async function GET(
       materialTitle: access.material.title || 'Material DomineAqui',
       viewedAt,
       auditToken,
+      sourceCacheKey: access.material.pdfFile.blobUrl,
     })
 
     if (requestedPage > pagePdf.totalPages) {

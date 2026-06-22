@@ -53,6 +53,7 @@ import {
   ArrowUp,
   ArrowDown,
 } from 'lucide-react'
+import { upload } from '@vercel/blob/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -904,26 +905,35 @@ function AdminMateriaisContent() {
     setPdfUploadProgress(0)
 
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('materialId', materialForm._id)
-
-      const xhr = new XMLHttpRequest()
-      await new Promise<void>((resolve, reject) => {
-        xhr.upload.onprogress = (e) => {
-          if (e.lengthComputable) setPdfUploadProgress(Math.round((e.loaded / e.total) * 100))
-        }
-        xhr.onload = () => {
-          if (xhr.status >= 200 && xhr.status < 300) resolve()
-          else {
-            try { reject(new Error(JSON.parse(xhr.responseText).error || 'Erro ao fazer upload')) }
-            catch { reject(new Error('Erro ao fazer upload')) }
-          }
-        }
-        xhr.onerror = () => reject(new Error('Erro de rede ao fazer upload'))
-        xhr.open('POST', '/api/materiais/upload')
-        xhr.send(formData)
+      // Upload direto do browser para o Vercel Blob (sem passar pela função),
+      // o que elimina o limite de 4.5 MB e suporta arquivos grandes sem perda
+      // de qualidade. A função /api/materiais/upload só assina o token (POST).
+      const pathname = `material-originals/${materialForm._id}/${Date.now()}-${crypto.randomUUID()}.pdf`
+      const blob = await upload(pathname, file, {
+        access: 'private',
+        contentType: 'application/pdf',
+        multipart: true,
+        handleUploadUrl: '/api/materiais/upload',
+        clientPayload: JSON.stringify({ materialId: materialForm._id }),
+        onUploadProgress: (e) => setPdfUploadProgress(Math.round(e.percentage)),
       })
+
+      // Confirma o upload: grava os metadados no Mongo (mesmo schema de antes).
+      const confirmRes = await fetch('/api/materiais/upload', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          materialId: materialForm._id,
+          blobUrl: blob.url,
+          blobPathname: blob.pathname,
+          originalFilename: file.name,
+          sizeBytes: file.size,
+        }),
+      })
+      if (!confirmRes.ok) {
+        const d = await confirmRes.json().catch(() => ({}))
+        throw new Error(d.error || 'Erro ao confirmar upload')
+      }
 
       // Buscar info atualizada do PDF
       const res = await fetch(`/api/materiais/upload?materialId=${materialForm._id}`)
