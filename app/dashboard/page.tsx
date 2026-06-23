@@ -469,19 +469,23 @@ function DashboardContent() {
                   </span>
                 </div>
                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
-                  {firstName}, seja o foco.
+                  {firstName ? `${firstName}, ` : ''}
+                  <span className="bg-gradient-to-r from-emerald-300 via-emerald-200 to-amber-200 bg-clip-text text-transparent">
+                    seja o foco.
+                  </span>
                 </h1>
 
                 {/* Rotating Motivational Phrase */}
-                <div className="h-6 overflow-hidden">
+                <div className="relative pl-4 min-h-[2.75rem] flex items-center max-w-lg">
+                  <span className="absolute left-0 top-1 bottom-1 w-1 rounded-full bg-gradient-to-b from-emerald-400 to-amber-400" />
                   <AnimatePresence mode="wait">
                     <motion.p
                       key={phraseIndex}
-                      initial={{ opacity: 0, y: 10 }}
+                      initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
+                      exit={{ opacity: 0, y: -8 }}
                       transition={{ duration: 0.45, ease: 'easeInOut' }}
-                      className="text-emerald-300/90 text-sm font-medium leading-6"
+                      className="text-emerald-50/90 text-sm sm:text-[15px] font-medium italic leading-relaxed"
                     >
                       {MOTIVATIONAL_PHRASES[phraseIndex]}
                     </motion.p>
@@ -535,6 +539,15 @@ function DashboardContent() {
             </div>
           </div>
 
+          {/* Subtle dot-grid texture */}
+          <div
+            className="absolute inset-0 opacity-[0.05] pointer-events-none"
+            style={{
+              backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
+              backgroundSize: '22px 22px',
+            }}
+          />
+
           {/* Decorative Orbs */}
           <div className="absolute -top-20 -right-20 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-violet-500/8 rounded-full blur-3xl pointer-events-none" />
@@ -559,6 +572,11 @@ function DashboardContent() {
                   transition-all duration-300 cursor-default group
                 `}
               >
+                {/* Top accent line */}
+                <div
+                  className="absolute top-0 left-0 right-0 h-[3px] opacity-70 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{ background: `linear-gradient(90deg, transparent, ${stat.color}, transparent)` }}
+                />
                 <div className="flex items-start justify-between mb-3">
                   <div
                     className={`
@@ -620,7 +638,10 @@ function DashboardContent() {
            ═══════════════════════════════════════════════════════ */}
         <section>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold tracking-tight">Acesso Rapido</h2>
+            <div className="flex items-center gap-2">
+              <Zap className="h-4 w-4 text-primary" />
+              <h2 className="text-lg font-semibold tracking-tight">Acesso Rápido</h2>
+            </div>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
             {quickActions.map((action, index) => {
@@ -660,9 +681,10 @@ function DashboardContent() {
                   </p>
 
                   {/* Arrow indicator */}
-                  <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-0 group-hover:translate-x-0">
+                  <div className="absolute bottom-4 right-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
                     <ChevronRight
-                      className="h-4 w-4 text-muted-foreground"
+                      className="h-4 w-4"
+                      style={{ color: action.color }}
                     />
                   </div>
                 </motion.button>
