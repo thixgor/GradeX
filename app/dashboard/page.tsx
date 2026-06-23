@@ -113,6 +113,110 @@ function AnimatedNumber({ value, delay = 0 }: { value: number; delay?: number })
   return <span>{display.toLocaleString('pt-BR')}</span>
 }
 
+// ─── Motivational Phrases ───────────────────────────────────────
+const MOTIVATIONAL_PHRASES = [
+  "Enquanto você hesita, alguém está revisando o que você ainda não estudou.",
+  "Residência não cai do céu. Ela cai para quem fez o processo todo.",
+  "A dúvida que você ignorou hoje vai ser a questão que você erra amanhã.",
+  "Medicina não perdoa lacunas. Preencha as suas.",
+  "O cansaço é real. A desistência é uma escolha.",
+  "A consistência bate o talento quando o talento não é consistente.",
+  "Não existe revisar depois. Existe revisar agora ou errar na hora H.",
+  "Cada flashcard revisado é um passo que a maioria não deu.",
+  "Você não está estudando para uma prova. Está estudando para ser bom.",
+  "A prova vai chegar do mesmo jeito. A questão é: você vai estar pronto?",
+  "Aprovação não é sorte. É o resultado de repetição honesta.",
+  "Você não precisa de motivação. Você precisa de disciplina.",
+  "Não compare sua jornada com a de ninguém. Compare com quem você era ontem.",
+  "Cada vez que você abre esse app em vez de rolar o feed, você ganha.",
+  "O candidato que passou não era mais inteligente. Era mais consistente.",
+  "Estudar quando não tem vontade é o que separa aprovados dos que tentam de novo.",
+  "A prova é justa. Ela mede exatamente o que você preparou.",
+  "Nenhum aprovado ficou de fora do conteúdo que achou chato.",
+  "Medicina não é só ciência. É comprometimento com o ser humano.",
+  "O residente que você quer ser já está sendo construído agora.",
+  "Não espere disposição para começar. Comece e a disposição aparece.",
+  "Estudar com método é trabalhar com inteligência, não só com esforço.",
+  "O seu eu de daqui a dois anos vai agradecer ou cobrar esse momento.",
+  "Quando você domina o básico, o avançado vira consequência.",
+  "A sua dedicação não precisa de público. Ela precisa de resultado.",
+  "Medicina é para quem não desiste de entender.",
+  "A questão que você acha impossível tem uma resposta. Encontre ela.",
+  "Nenhum médico brilhante chegou lá sem noites assim.",
+  "Você não sabe tudo ainda. Mas sabe mais do que ontem.",
+  "A excelência é a soma de dias ordinários bem aproveitados.",
+  "O que você aprende quando está com preguiça é o que te diferencia.",
+  "Cada revisão fortalece o que já estava e ancora o que é novo.",
+  "A pressão da prova é menor do que a pressão de não estar preparado.",
+  "Estude como se o paciente do futuro dependesse disso. Porque depende.",
+  "A motivação vai e vem. A rotina fica.",
+  "Hoje é um dia que nunca vai voltar. Use-o.",
+  "Cada área que você domina é uma frente de batalha que você fecha.",
+  "Confiança vem de preparação, não de esperança.",
+  "Você está construindo algo que ninguém pode tirar de você.",
+  "A residência que você quer tem uma lista de aprovados. Esteja nela.",
+  "Você decidiu ser médico. Decida ser preparado também.",
+  "O candidato que passa estuda o que é difícil, não só o que gosta.",
+  "Erro corrigido é progresso. Erro ignorado é armadilha.",
+  "Quanto mais você entende, menos você precisa memorizar.",
+  "O dia que você não tem vontade é o dia mais importante para estudar.",
+  "Resultado é a soma do que você fez quando não estava afim.",
+  "Não existe fase fácil no caminho certo. Só fases necessárias.",
+  "A sua presença aqui já é um ato de disciplina. Continue.",
+  "Você passou por dias piores do que esse. E chegou até aqui.",
+  "Você não precisa de um dia perfeito. Precisa de um dia feito.",
+  "Cansado é normal. Derrotado é uma narrativa que você pode reescrever.",
+  "Cada sessão de estudo é um tijolo. A casa é o que você está construindo.",
+  "A nota que você quer exige o esforço que você ainda não deu.",
+  "Não existe 'não sou bom em fisiologia'. Existe 'ainda não estudei o suficiente'.",
+  "Você não é a sua nota. Você é o que você faz depois dela.",
+  "O estudante que você era no início do ano não conseguia o que você consegue agora.",
+  "Conhecimento acumulado não desaparece. Continue acumulando.",
+  "Abriu o material. Está presente. Já venceu o dia.",
+  "Não subestime a revisão. É ela que transforma leitura em memória.",
+  "Uma questão por vez. Um dia por vez. Uma semana por vez.",
+  "A diferença entre você e quem passou antes: eles não pararam.",
+  "Medicina é longa. Mas o caminho certo nunca é o mais curto.",
+  "O seu futuro paciente merece que você estude esse conteúdo agora.",
+  "Foco não é ausência de distração. É voltar quando você se distraiu.",
+  "Cada erro no simulado é uma questão a menos para errar na real.",
+  "Você tem o recurso. Você tem o tempo. Agora depende só de você.",
+  "Não subestime uma hora de estudo focado. Ela faz diferença real.",
+  "A anatomia que te travou agora vai estar na prova. Resolva isso hoje.",
+  "A consistência de 30 dias supera a intensidade de 3 dias de surto.",
+  "Todo mundo acha que vai estudar amanhã. Você estuda hoje.",
+  "A prova não sabe que você estava cansado. Ela só vê o que você marcou.",
+  "Você não precisa ser o mais inteligente da sala. Precisa ser o mais preparado.",
+  "Revisar é entediante. Reprovar é pior.",
+  "Sua próxima sessão pode ser a que clica tudo que estava travado.",
+  "A medicina exige tudo de você. Dê tudo.",
+  "Cada vez que você estuda o difícil, você fecha uma lacuna que pode custar caro.",
+  "Não mude o objetivo. Mude a estratégia quando necessário.",
+  "Você está no processo. O processo está funcionando.",
+  "Não existe conhecimento pequeno em medicina. Tudo conecta.",
+  "Cada página virada é território conquistado.",
+  "A sequência importa. Não pule etapas.",
+  "Você escolheu um caminho difícil. Isso prova que você aguenta um caminho difícil.",
+  "Tudo que você aprende hoje reduz o que você precisa decorar amanhã.",
+  "Estude uma coisa bem feita. Não mil coisas por cima.",
+  "Passou uma hora estudando? Você venceu 60 minutos que não voltam.",
+  "Não existe atalho para competência. Existe o caminho, e você nele.",
+  "Cada questão respondida te coloca mais perto do estado de dominância.",
+  "Você tem o mapa. Agora ande.",
+  "Medicina é vocação e é técnica. Desenvolva os dois.",
+  "O que você não revisou hoje vai estar na prova. Revise.",
+  "Abrir o material foi a parte mais difícil. Você já fez isso.",
+  "Biomédica, Médica, Psicossocial — domine as três ou pague o preço.",
+  "A régua certa não é o quanto você estudou. É o quanto você reteve.",
+  "Você está aqui. Isso já é mais do que a maioria faz.",
+  "O seu esforço de hoje é o seu resultado de amanhã.",
+  "Cinco anos de graduação passam. A residência que você escolher, fica.",
+  "Decida o nível de excelência que você aceita e defenda ele todo dia.",
+  "Questão difícil não é inimigo. É onde você cresce onde era fraco.",
+  "Você tem tudo que precisa. Falta só usar.",
+  "Seja o foco. Seja a referência. Seja o médico que o mundo precisa.",
+]
+
 // ─── Dashboard Content ──────────────────────────────────────────
 function DashboardContent() {
   const router = useRouter()
@@ -126,6 +230,16 @@ function DashboardContent() {
   })
   const [recentExams, setRecentExams] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [phraseIndex, setPhraseIndex] = useState(() =>
+    Math.floor(Math.random() * MOTIVATIONAL_PHRASES.length)
+  )
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPhraseIndex(i => (i + 1) % MOTIVATIONAL_PHRASES.length)
+    }, 7000)
+    return () => clearInterval(interval)
+  }, [])
   const [userStats, setUserStats] = useState({
     cronogramasCreated: 0,
     flashcardsCreated: 0,
@@ -357,6 +471,23 @@ function DashboardContent() {
                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
                   {firstName}, seja o foco.
                 </h1>
+
+                {/* Rotating Motivational Phrase */}
+                <div className="h-6 overflow-hidden">
+                  <AnimatePresence mode="wait">
+                    <motion.p
+                      key={phraseIndex}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.45, ease: 'easeInOut' }}
+                      className="text-emerald-300/90 text-sm font-medium leading-6"
+                    >
+                      {MOTIVATIONAL_PHRASES[phraseIndex]}
+                    </motion.p>
+                  </AnimatePresence>
+                </div>
+
                 <p className="text-white/60 max-w-lg text-sm sm:text-base leading-relaxed">
                   Cronogramas, flashcards e provas com ementas completas de Ciências Médicas, Ciências Psicossociais, Ciências Biomédicas e Ciências Odontológicas.
                 </p>
