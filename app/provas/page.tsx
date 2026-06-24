@@ -116,6 +116,7 @@ function ProvasContent() {
   const [pdfLoading, setPdfLoading] = useState<string | null>(null)
   const [groupPdfProgress, setGroupPdfProgress] = useState<{ done: number; total: number; label: string } | null>(null)
   const [showPdfCta, setShowPdfCta] = useState(false)
+  const [pdfCtaExam, setPdfCtaExam] = useState<Exam | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'available' | 'finished' | 'personal' | 'general'>('all')
 
@@ -400,6 +401,7 @@ function ProvasContent() {
   async function handleDownloadPDF(exam: Exam, type: 'exam' | 'with-answers' | 'gabarito') {
     if (!canDownloadPdf) {
       setPdfModalExam(null)
+      setPdfCtaExam(exam)
       setShowPdfCta(true)
       return
     }
@@ -842,7 +844,11 @@ function ProvasContent() {
         {renderInfoDialog()}
         {renderEditGroupModal()}
         {renderPdfModal()}
-        <PremiumPdfCtaModal open={showPdfCta} onClose={() => setShowPdfCta(false)} />
+        <PremiumPdfCtaModal
+          open={showPdfCta}
+          onClose={() => { setShowPdfCta(false); setPdfCtaExam(null) }}
+          onTakeExam={pdfCtaExam ? () => { router.push(`/exam/${(pdfCtaExam as any)._id}`) } : undefined}
+        />
       </div>
     )
   }
@@ -1083,7 +1089,11 @@ function ProvasContent() {
         {renderDeleteModal()}
         {renderEditGroupModal()}
         {renderPdfModal()}
-        <PremiumPdfCtaModal open={showPdfCta} onClose={() => setShowPdfCta(false)} />
+        <PremiumPdfCtaModal
+          open={showPdfCta}
+          onClose={() => { setShowPdfCta(false); setPdfCtaExam(null) }}
+          onTakeExam={pdfCtaExam ? () => { router.push(`/exam/${(pdfCtaExam as any)._id}`) } : undefined}
+        />
       </div>
     )
   }
