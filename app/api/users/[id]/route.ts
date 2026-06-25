@@ -129,9 +129,10 @@ export async function PATCH(
       dailyPersonalExamsCreated,
       secondaryRole,
       periodo,
+      role,
     } = body
 
-    const VALID_ACTIONS = ['ban', 'unban', 'update_tier', 'update_quota', 'toggle_monitor', 'update_periodo']
+    const VALID_ACTIONS = ['ban', 'unban', 'update_tier', 'update_quota', 'toggle_monitor', 'update_periodo', 'toggle_admin']
     if (!action || !VALID_ACTIONS.includes(action)) {
       return NextResponse.json({ error: 'Ação inválida' }, { status: 400 })
     }
@@ -266,6 +267,22 @@ export async function PATCH(
       successMessage = secondaryRole === 'monitor'
         ? 'Usuário promovido a Monitor com sucesso'
         : 'Cargo de Monitor removido com sucesso'
+
+    } else if (action === 'toggle_admin') {
+      const makeAdmin = role === 'admin'
+
+      // Impede que o admin remova o próprio acesso (evita auto-lockout)
+      if (!makeAdmin && session.userId === id) {
+        return NextResponse.json(
+          { error: 'Você não pode remover seu próprio acesso de administrador' },
+          { status: 403 }
+        )
+      }
+
+      updateData = { role: makeAdmin ? 'admin' : 'user' }
+      successMessage = makeAdmin
+        ? 'Usuário promovido a administrador com sucesso. Ele precisa deslogar e logar novamente.'
+        : 'Acesso de administrador removido com sucesso.'
 
     } else if (action === 'update_periodo') {
       // periodo nulo/0 limpa o período; valor válido (1-12) define e ancora no

@@ -87,6 +87,7 @@ export default function AdminUsersPage() {
   const [showQuotaDialog, setShowQuotaDialog] = useState(false)
   const [showInfoDialog, setShowInfoDialog] = useState(false)
   const [showMonitorDialog, setShowMonitorDialog] = useState(false)
+  const [showAdminDialog, setShowAdminDialog] = useState(false)
   const [showPeriodoDialog, setShowPeriodoDialog] = useState(false)
   const [selectedPeriodo, setSelectedPeriodo] = useState<string>('')
   const [showPurchasesDialog, setShowPurchasesDialog] = useState(false)
@@ -388,6 +389,31 @@ export default function AdminUsersPage() {
       const data = await res.json()
       showToastMessage(data.message, 'success')
       setShowMonitorDialog(false)
+      loadUsers()
+    } catch (error: any) {
+      showToastMessage(error.message)
+    }
+  }
+
+  async function handleToggleAdmin() {
+    if (!selectedUser) return
+
+    try {
+      const isAdmin = selectedUser.role === 'admin'
+      const res = await fetch(`/api/users/${selectedUser._id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'toggle_admin',
+          role: isAdmin ? 'user' : 'admin'
+        })
+      })
+
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Erro ao atualizar cargo de administrador')
+
+      showToastMessage(data.message, 'success')
+      setShowAdminDialog(false)
       loadUsers()
     } catch (error: any) {
       showToastMessage(error.message)
@@ -948,6 +974,20 @@ export default function AdminUsersPage() {
                       Dispositivos
                     </Button>
 
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedUser(user)
+                        setShowAdminDialog(true)
+                      }}
+                      className={user.role === 'admin' ? 'border-blue-500 text-blue-600 dark:text-blue-400' : ''}
+                      title={user.role === 'admin' ? 'Remover acesso de administrador' : 'Promover a administrador'}
+                    >
+                      <Shield className="h-4 w-4 mr-2" />
+                      {user.role === 'admin' ? 'Remover Admin' : 'Tornar Admin'}
+                    </Button>
+
                     {user.role !== 'admin' && (
                       <>
                         <Button
@@ -1480,6 +1520,49 @@ export default function AdminUsersPage() {
               className={selectedUser?.secondaryRole === 'monitor' ? 'bg-red-600 hover:bg-red-700' : 'bg-yellow-600 hover:bg-yellow-700'}
             >
               {selectedUser?.secondaryRole === 'monitor' ? 'Remover Monitor' : 'Tornar Monitor'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog de Administrador */}
+      <Dialog open={showAdminDialog} onOpenChange={setShowAdminDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <div className="mx-auto w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mb-4">
+              <Shield className="h-6 w-6 text-blue-600 dark:text-blue-300" />
+            </div>
+            <DialogTitle className="text-center">
+              {selectedUser?.role === 'admin' ? 'Remover Administrador' : 'Tornar Administrador'}
+            </DialogTitle>
+            <DialogDescription className="text-center">
+              {selectedUser?.role === 'admin' ? (
+                <>
+                  Tem certeza que deseja remover o acesso de administrador de <strong>{selectedUser?.name}</strong>?
+                  <br /><br />
+                  Ele perderá acesso ao painel admin. O efeito ocorre quando ele deslogar e logar novamente.
+                </>
+              ) : (
+                <>
+                  Tem certeza que deseja tornar <strong>{selectedUser?.name}</strong> um administrador?
+                  <br /><br />
+                  Ele terá acesso <strong>total</strong> ao painel admin (usuários, planos, conteúdo, pagamentos, etc.).
+                  <br /><br />
+                  Importante: ele precisa <strong>deslogar e logar novamente</strong> para o acesso de admin valer.
+                </>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAdminDialog(false)}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleToggleAdmin}
+              className={selectedUser?.role === 'admin' ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'}
+            >
+              <Shield className="h-4 w-4 mr-2" />
+              {selectedUser?.role === 'admin' ? 'Remover Admin' : 'Tornar Admin'}
             </Button>
           </DialogFooter>
         </DialogContent>
