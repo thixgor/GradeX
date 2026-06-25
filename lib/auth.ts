@@ -68,9 +68,13 @@ export async function verifyPassword(password: string, hashedPassword: string): 
   return bcrypt.compare(password, hashedPassword)
 }
 
+export function generateSessionId(): string {
+  return crypto.randomUUID()
+}
+
 export async function createToken(payload: TokenPayload): Promise<string> {
-  // Gerar ID unico para o token (permite invalidacao futura)
-  const tokenId = crypto.randomUUID()
+  // Usa o jti fornecido (para vincular a uma sessão de dispositivo) ou gera um.
+  const tokenId = payload.jti || crypto.randomUUID()
 
   return new SignJWT({ ...payload, jti: tokenId })
     .setProtectedHeader({ alg: 'HS256' })
@@ -170,6 +174,24 @@ export async function getSession(): Promise<TokenPayload | null> {
       sessionCache.set(cacheKey, { payload: null, expiresAt: now + SESSION_CACHE_TTL_MS })
       await removeAuthCookie()
       return null
+    }
+
+    // Validação de sessão de dispositivo: se este token (jti) corresponde a uma
+    // sessão revogada (pelo admin ou pelo limite de dispositivos), desloga.
+    // Import dinâmico evita dependência circular com lib/sessions.
+    if (payload.jti) {
+      const { getSessionState, touchSession } = await import('./sessions')
+      const state = await getSessionState(payload.jti)
+      if (state === 'revoked') {
+        sessionCache.set(cacheKey, { payload: null, expiresAt: now + SESSION_CACHE_TTL_MS })
+        await removeAuthCookie()
+        return null
+      }
+      if (state === 'active') {
+        // Atualiza atividade. Graças à cache de 60s, roda no máx. 1x/min por token.
+        touchSession(payload.jti).catch(() => {})
+      }
+      // 'untracked' = login legado (anterior à feature): segue válido sem enforce.
     }
 
     const fresh: TokenPayload = {

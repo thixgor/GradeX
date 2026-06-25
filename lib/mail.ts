@@ -149,6 +149,40 @@ export async function sendVerificationEmail(email: string, token: string, name: 
   })
 }
 
+export async function sendLoginCodeEmail(email: string, name: string, code: string) {
+  const firstName = name ? name.split(' ')[0] : ''
+
+  const content = `
+    <h1 class="h1">Código de acesso de administrador 🔐</h1>
+    <p>Olá${firstName ? `, ${firstName}` : ''}!</p>
+    <p>Detectamos uma tentativa de login na conta de <strong>administrador</strong> do <strong>DomineAqui</strong>. Para concluir o acesso, digite o código de verificação abaixo:</p>
+
+    <div style="text-align: center; margin: 30px 0;">
+      <div style="display: inline-block; background-color: #0f3d2e; color: #ffffff; font-size: 34px; font-weight: 800; letter-spacing: 10px; padding: 18px 30px; border-radius: 12px; font-family: 'Courier New', Courier, monospace;">
+        ${code}
+      </div>
+    </div>
+
+    <p style="text-align: center; color: #718096; font-size: 14px;">Este código expira em <strong>10 minutos</strong>.</p>
+
+    <div style="background-color: #fff5f5; border-left: 4px solid #e53e3e; padding: 15px; margin: 25px 0; border-radius: 4px;">
+      <p style="margin: 0; color: #9b2c2c; font-size: 14px;">
+        <strong>Não foi você?</strong> Se você não tentou fazer login, alguém pode estar com sua senha.
+        Recomendamos trocá-la imediatamente. <strong>Nunca compartilhe este código.</strong>
+      </p>
+    </div>
+  `
+
+  const html = getEmailTemplate('Código de acesso', content)
+
+  await transporter.sendMail({
+    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+    to: email,
+    subject: `${code} é o seu código de acesso de administrador`,
+    html,
+  })
+}
+
 export async function sendAccountDeletedEmail(email: string, name: string) {
   const firstName = name.split(' ')[0]
 

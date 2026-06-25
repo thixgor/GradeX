@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
-import { verifyPassword, createToken, setAuthCookie } from '@/lib/auth'
+import { verifyPassword, createToken, setAuthCookie, generateSessionId } from '@/lib/auth'
 import { verifyRecaptcha } from '@/lib/recaptcha'
 import { User } from '@/lib/types'
 import { secureApiEndpoint } from '@/lib/api-security'
+import { recordLoginSession } from '@/lib/sessions'
+import {
+  requiresEmailLoginCode,
+  generateLoginCode,
+  hashLoginCode,
+  LOGIN_CODE_TTL_MS,
+} from '@/lib/login-code'
+import { sendLoginCodeEmail } from '@/lib/mail'
 
 export const dynamic = 'force-dynamic'
 
@@ -72,23 +80,67 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // 2FA por email para administradores: NÃO emite o token ainda. Gera um
+    // código de 6 dígitos, envia ao email do admin e exige a verificação em
+    // /api/auth/login/verify-code. Bloqueia acesso por força-bruta de senha.
+    if (requiresEmailLoginCode(user)) {
+      const code = generateLoginCode()
+      await usersCollection.updateOne(
+        { _id: user._id },
+        {
+          $set: {
+            loginCodeHash: hashLoginCode(code),
+            loginCodeExpires: new Date(Date.now() + LOGIN_CODE_TTL_MS),
+            loginCodeAttempts: 0,
+            loginCodeLastSentAt: new Date(),
+          },
+        }
+      )
+
+      // Envio best-effort: não vaza se o email existe ou não (o usuário já foi
+      // autenticado por senha aqui), mas registra falha de SMTP no log.
+      try {
+        await sendLoginCodeEmail(user.email, user.name, code)
+      } catch (mailErr) {
+        console.error('Falha ao enviar código de login admin:', mailErr)
+        return NextResponse.json(
+          { error: 'Não foi possível enviar o código de verificação. Tente novamente.' },
+          { status: 500 }
+        )
+      }
+
+      return NextResponse.json({
+        requiresEmailCode: true,
+        email: user.email,
+      })
+    }
+
     // Atualiza último login
     await usersCollection.updateOne(
       { _id: user._id },
       { $set: { lastLoginAt: new Date() } }
     )
 
-    // Cria o token
+    // Cria o token vinculado a uma sessão de dispositivo (jti)
+    const jti = generateSessionId()
     const token = await createToken({
       userId: user._id!.toString(),
       email: user.email,
       name: user.name,
       role: user.role,
       emailVerified: !!user.emailVerified,
+      jti,
     })
 
     // Define o cookie
     await setAuthCookie(token)
+
+    // Registra a sessão (dispositivo/IP) e aplica o limite de aparelhos
+    try {
+      await recordLoginSession({ request, userId: user._id!.toString(), jti })
+    } catch (sessErr) {
+      console.error('Falha ao registrar sessão de login:', sessErr)
+    }
 
     return NextResponse.json({
       success: true,

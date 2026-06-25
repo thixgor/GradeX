@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
-import { createToken, setAuthCookie } from '@/lib/auth'
+import { createToken, setAuthCookie, generateSessionId } from '@/lib/auth'
+import { recordLoginSession } from '@/lib/sessions'
 import { User } from '@/lib/types'
 import { normalizePeriodo, getCurrentSemesterRef } from '@/lib/user-periodo'
 
@@ -62,17 +63,25 @@ export async function POST(request: NextRequest) {
 
     const result = await usersCollection.insertOne(newUser)
 
-    // Cria o token
+    // Cria o token vinculado a uma sessão de dispositivo (jti)
+    const jti = generateSessionId()
     const token = await createToken({
       userId: result.insertedId.toString(),
       email,
       name: profileName,
       role: 'user',
       emailVerified: true, // Google accounts are auto-verified
+      jti,
     })
 
     // Define o cookie
     await setAuthCookie(token)
+
+    try {
+      await recordLoginSession({ request, userId: result.insertedId.toString(), jti })
+    } catch (sessErr) {
+      console.error('Falha ao registrar sessão (Google setup):', sessErr)
+    }
 
     return NextResponse.json({
       success: true,

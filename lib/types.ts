@@ -289,6 +289,32 @@ export interface User {
   // Verificação de Email
   emailVerified?: boolean
   verificationToken?: string
+  // Código de login por email (2FA para administradores)
+  loginCodeHash?: string // Hash do código de 6 dígitos enviado por email
+  loginCodeExpires?: Date // Expiração do código (10 min)
+  loginCodeAttempts?: number // Tentativas de digitar o código (bloqueia após 5)
+  loginCodeLastSentAt?: Date // Último envio (para throttle de reenvio)
+}
+
+/**
+ * Sessão ativa de um dispositivo. Cada login cria um registro vinculado ao
+ * `jti` do JWT. Permite ao admin ver em quantos aparelhos a conta está logada
+ * (IP, nome do aparelho) e revogar dispositivos — barrando compartilhamento de
+ * conta. Sessões legadas (logins anteriores a esta feature) não têm registro e
+ * continuam válidas até o token expirar; apenas sessões com registro são
+ * passíveis de revogação/limite.
+ */
+export interface UserSession {
+  _id?: string | import('mongodb').ObjectId
+  userId: string
+  jti: string // ID único do token JWT (claim jti)
+  ip?: string
+  userAgent?: string
+  deviceName?: string // Nome amigável derivado do user-agent (ex: "Chrome no Windows")
+  createdAt: Date
+  lastActiveAt: Date
+  revokedAt?: Date // Quando definido, a sessão é inválida (logout no próximo request)
+  revokedBy?: 'admin' | 'limit' | 'user' // Origem da revogação
 }
 
 export type FlashcardDifficultyFeedback = 'facil' | 'equilibrado' | 'porrada'

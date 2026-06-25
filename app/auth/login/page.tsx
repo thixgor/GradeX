@@ -20,6 +20,7 @@ import {
   BookMarked,
   Zap,
   ChevronRight,
+  Mail,
 } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { BanReasonLabels, BanReason } from '@/lib/types'
@@ -93,6 +94,13 @@ export default function LoginPage() {
   })
 
   const [isRegistered, setIsRegistered] = useState(false)
+
+  // Verificação de código por email (2FA de administrador)
+  const [emailCodeRequired, setEmailCodeRequired] = useState(false)
+  const [pendingEmail, setPendingEmail] = useState('')
+  const [loginCode, setLoginCode] = useState('')
+  const [codeLoading, setCodeLoading] = useState(false)
+  const [resendCooldown, setResendCooldown] = useState(0)
 
   const canBeAdmin = ['throdrigf@gmail.com', 'ecocardio93@gmail.com'].includes(
     formData.email.toLowerCase().trim()
@@ -228,6 +236,12 @@ export default function LoginPage() {
 
       if (!isLogin) {
         setIsRegistered(true)
+      } else if (data.requiresEmailCode) {
+        // Conta de administrador: exige código enviado por email antes de entrar.
+        setPendingEmail(data.email || formData.email)
+        setEmailCodeRequired(true)
+        setLoginCode('')
+        setResendCooldown(60)
       } else {
         clearBootstrapCache()
         // Navegação completa (não router.push + refresh): o cookie de auth já
@@ -240,6 +254,69 @@ export default function LoginPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  // Cooldown do botão de reenvio
+  useEffect(() => {
+    if (resendCooldown <= 0) return
+    const t = setInterval(() => setResendCooldown((s) => (s > 0 ? s - 1 : 0)), 1000)
+    return () => clearInterval(t)
+  }, [resendCooldown])
+
+  async function handleVerifyCode(e: React.FormEvent) {
+    e.preventDefault()
+    setError('')
+    if (loginCode.trim().length < 6) {
+      setError('Digite o código de 6 dígitos enviado ao seu email.')
+      return
+    }
+    setCodeLoading(true)
+    try {
+      const res = await fetch('/api/auth/login/verify-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: pendingEmail, code: loginCode.trim() }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        if (data.error === 'banned') {
+          setBanInfo({ reason: data.banReason, details: data.banDetails, bannedAt: data.bannedAt })
+          setShowBannedDialog(true)
+          return
+        }
+        throw new Error(data.error || 'Código inválido')
+      }
+      clearBootstrapCache()
+      window.location.assign(redirectTo)
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setCodeLoading(false)
+    }
+  }
+
+  async function handleResendCode() {
+    if (resendCooldown > 0) return
+    setError('')
+    try {
+      const res = await fetch('/api/auth/login/resend-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: pendingEmail }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data.error || 'Não foi possível reenviar o código')
+      setResendCooldown(60)
+    } catch (err: any) {
+      setError(err.message)
+    }
+  }
+
+  function cancelEmailCode() {
+    setEmailCodeRequired(false)
+    setLoginCode('')
+    setPendingEmail('')
+    setError('')
   }
 
   async function handleGoogleLogin(response: any) {
@@ -566,7 +643,82 @@ export default function LoginPage() {
             </div>
 
             {/* ── Content ── */}
-            {isRegistered ? (
+            {emailCodeRequired ? (
+              <form onSubmit={handleVerifyCode} className="p-7 space-y-5">
+                <div className="flex flex-col items-center text-center space-y-3">
+                  <div
+                    className="h-16 w-16 rounded-full flex items-center justify-center"
+                    style={{ background: 'rgba(45,212,191,0.12)', border: '1px solid rgba(45,212,191,0.25)' }}
+                  >
+                    <Mail className="h-8 w-8 text-teal-300" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="text-lg font-bold text-slate-50">Verificação de administrador</h3>
+                    <p className="text-sm text-slate-400">
+                      Enviamos um código de 6 dígitos para<br />
+                      <span className="font-semibold text-slate-200">{pendingEmail}</span>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="loginCode" className="text-xs font-medium text-slate-400">
+                    Código de verificação
+                  </Label>
+                  <Input
+                    id="loginCode"
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
+                    maxLength={6}
+                    placeholder="000000"
+                    value={loginCode}
+                    onChange={(e) => setLoginCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    autoFocus
+                    className={`${inputCls} text-center text-2xl tracking-[0.5em] font-mono`}
+                  />
+                </div>
+
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-sm text-red-400 text-center p-3 rounded-xl"
+                    style={{ background: 'rgba(239,68,68,0.10)', border: '1px solid rgba(239,68,68,0.20)' }}
+                  >
+                    {error}
+                  </motion.div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={codeLoading}
+                  className="w-full h-11 rounded-xl font-semibold text-sm text-[#040816] flex items-center justify-center gap-2 transition-all hover:opacity-90 hover:scale-[1.01] disabled:opacity-60 disabled:cursor-not-allowed disabled:scale-100"
+                  style={{ background: 'linear-gradient(135deg, #4ADE80 0%, #2DD4BF 100%)' }}
+                >
+                  {codeLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ChevronRight className="h-4 w-4" />}
+                  {codeLoading ? 'Verificando...' : 'Confirmar e entrar'}
+                </button>
+
+                <div className="flex items-center justify-between text-xs">
+                  <button
+                    type="button"
+                    onClick={cancelEmailCode}
+                    className="text-slate-500 hover:text-slate-300 transition-colors flex items-center gap-1"
+                  >
+                    <ArrowLeft className="h-3.5 w-3.5" /> Voltar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleResendCode}
+                    disabled={resendCooldown > 0}
+                    className="text-slate-500 hover:text-emerald-400 transition-colors disabled:opacity-50 disabled:hover:text-slate-500"
+                  >
+                    {resendCooldown > 0 ? `Reenviar em ${resendCooldown}s` : 'Reenviar código'}
+                  </button>
+                </div>
+              </form>
+            ) : isRegistered ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.97 }}
                 animate={{ opacity: 1, scale: 1 }}

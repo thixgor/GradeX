@@ -1,7 +1,8 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
-import { hashPassword, createToken, setAuthCookie } from '@/lib/auth'
+import { hashPassword, createToken, setAuthCookie, generateSessionId } from '@/lib/auth'
+import { recordLoginSession } from '@/lib/sessions'
 import { verifyRecaptcha } from '@/lib/recaptcha'
 import { User } from '@/lib/types'
 import { ADMIN_EMAILS } from '@/lib/constants'
@@ -113,16 +114,24 @@ export async function POST(request: NextRequest) {
     const result = await usersCollection.insertOne(newUser)
 
     // Cria o token de sessão (ainda permite login, mas verificação pode ser checada no frontend)
+    const jti = generateSessionId()
     const token = await createToken({
       userId: result.insertedId.toString(),
       email,
       name,
       role: newUser.role,
-      emailVerified: false // Adicionado ao payload
+      emailVerified: false, // Adicionado ao payload
+      jti,
     })
 
     // Define o cookie
     await setAuthCookie(token)
+
+    try {
+      await recordLoginSession({ request, userId: result.insertedId.toString(), jti })
+    } catch (sessErr) {
+      console.error('Falha ao registrar sessão (registro):', sessErr)
+    }
 
     // Enviar emails em paralelo para não travar
     Promise.allSettled([

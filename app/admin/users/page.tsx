@@ -8,7 +8,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { User, BanReason, BanReasonLabels, AccountType, TrialPlanType, PremiumPlanType } from '@/lib/types'
-import { ArrowLeft, Trash2, Ban, CheckCircle, AlertTriangle, Shield, Crown, Timer, Settings, Info, Zap, Activity, Users, UserCheck, Clock, Search, RefreshCw, Mail, CalendarDays, ShoppingBag, FileDown, Package as PackageIcon, FileText as FileTextIcon, Receipt, GraduationCap } from 'lucide-react'
+import { ArrowLeft, Trash2, Ban, CheckCircle, AlertTriangle, Shield, Crown, Timer, Settings, Info, Zap, Activity, Users, UserCheck, Clock, Search, RefreshCw, Mail, CalendarDays, ShoppingBag, FileDown, Package as PackageIcon, FileText as FileTextIcon, Receipt, GraduationCap, MonitorSmartphone, Wifi, LogOut } from 'lucide-react'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
@@ -105,6 +105,23 @@ export default function AdminUsersPage() {
     count: number
   } | null>(null)
   const [generatingPurchasesPdf, setGeneratingPurchasesPdf] = useState(false)
+  const [showSessionsDialog, setShowSessionsDialog] = useState(false)
+  const [sessionsLoading, setSessionsLoading] = useState(false)
+  const [sessionsData, setSessionsData] = useState<{
+    activeCount: number
+    sessions: Array<{
+      id: string
+      ip: string
+      deviceName: string
+      userAgent: string
+      createdAt?: string
+      lastActiveAt?: string
+      revoked: boolean
+      revokedBy?: string
+      online: boolean
+    }>
+  } | null>(null)
+  const [revokingSessionId, setRevokingSessionId] = useState<string | null>(null)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [banReason, setBanReason] = useState<BanReason>('other')
   const [banDetails, setBanDetails] = useState('')
@@ -456,6 +473,80 @@ export default function AdminUsersPage() {
       showToastMessage('Erro ao gerar PDF: ' + (error?.message || 'desconhecido'))
     } finally {
       setGeneratingPurchasesPdf(false)
+    }
+  }
+
+  async function openSessionsDialog(user: User) {
+    setSelectedUser(user)
+    setShowSessionsDialog(true)
+    setSessionsData(null)
+    setSessionsLoading(true)
+    try {
+      const res = await fetch(`/api/admin/users/${user._id}/sessions`)
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data?.error || 'Erro ao buscar dispositivos')
+      }
+      const data = await res.json()
+      setSessionsData(data)
+    } catch (error: any) {
+      showToastMessage(error?.message || 'Erro ao buscar dispositivos')
+      setShowSessionsDialog(false)
+    } finally {
+      setSessionsLoading(false)
+    }
+  }
+
+  async function refreshSessions() {
+    if (!selectedUser) return
+    try {
+      const res = await fetch(`/api/admin/users/${selectedUser._id}/sessions`)
+      if (res.ok) setSessionsData(await res.json())
+    } catch {
+      // silencioso
+    }
+  }
+
+  async function handleRevokeSession(sessionId: string) {
+    if (!selectedUser) return
+    setRevokingSessionId(sessionId)
+    try {
+      const res = await fetch(
+        `/api/admin/users/${selectedUser._id}/sessions?sessionId=${sessionId}`,
+        { method: 'DELETE' }
+      )
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data?.error || 'Erro ao revogar dispositivo')
+      }
+      showToastMessage('Dispositivo desconectado.', 'success')
+      await refreshSessions()
+    } catch (error: any) {
+      showToastMessage(error?.message || 'Erro ao revogar dispositivo')
+    } finally {
+      setRevokingSessionId(null)
+    }
+  }
+
+  async function handleRevokeAllSessions() {
+    if (!selectedUser) return
+    setRevokingSessionId('__all__')
+    try {
+      const res = await fetch(
+        `/api/admin/users/${selectedUser._id}/sessions?all=true`,
+        { method: 'DELETE' }
+      )
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data?.error || 'Erro ao desconectar dispositivos')
+      }
+      const data = await res.json()
+      showToastMessage(`${data.revoked || 0} dispositivo(s) desconectado(s).`, 'success')
+      await refreshSessions()
+    } catch (error: any) {
+      showToastMessage(error?.message || 'Erro ao desconectar dispositivos')
+    } finally {
+      setRevokingSessionId(null)
     }
   }
 
@@ -845,6 +936,16 @@ export default function AdminUsersPage() {
                     >
                       <ShoppingBag className="h-4 w-4 mr-2" />
                       Compras
+                    </Button>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => openSessionsDialog(user)}
+                      title="Dispositivos e sessões ativas"
+                    >
+                      <MonitorSmartphone className="h-4 w-4 mr-2" />
+                      Dispositivos
                     </Button>
 
                     {user.role !== 'admin' && (
@@ -1535,6 +1636,138 @@ export default function AdminUsersPage() {
             >
               <FileDown className="h-4 w-4 mr-2" />
               {generatingPurchasesPdf ? 'Gerando PDF...' : 'Baixar PDF'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog de Dispositivos / Sessões ativas */}
+      <Dialog
+        open={showSessionsDialog}
+        onOpenChange={(open) => {
+          setShowSessionsDialog(open)
+          if (!open) {
+            setSessionsData(null)
+            setSessionsLoading(false)
+          }
+        }}
+      >
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <MonitorSmartphone className="h-5 w-5" />
+              Dispositivos conectados
+            </DialogTitle>
+            <DialogDescription className="break-words">
+              Sessões da conta de <strong>{selectedUser?.name}</strong>. Use para
+              detectar compartilhamento de conta e desconectar aparelhos.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="py-4">
+            {sessionsLoading ? (
+              <div className="text-sm text-muted-foreground py-8 text-center">Carregando dispositivos...</div>
+            ) : !sessionsData ? (
+              <div className="text-sm text-muted-foreground py-8 text-center">Não foi possível carregar os dados.</div>
+            ) : sessionsData.sessions.length === 0 ? (
+              <div className="text-sm text-muted-foreground py-8 text-center">
+                Nenhuma sessão registrada para esta conta.
+                <br />
+                <span className="text-xs">
+                  (Logins anteriores a esta funcionalidade não aparecem aqui.)
+                </span>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                  <div className="rounded-lg border bg-muted/30 px-3 py-2">
+                    <span className="text-xs text-muted-foreground">Dispositivos ativos: </span>
+                    <span className={`text-sm font-bold ${sessionsData.activeCount > 2 ? 'text-amber-600 dark:text-amber-400' : ''}`}>
+                      {sessionsData.activeCount}
+                    </span>
+                  </div>
+                  {sessionsData.activeCount > 0 && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-red-600 border-red-300 hover:bg-red-50 dark:hover:bg-red-950/30"
+                      onClick={handleRevokeAllSessions}
+                      disabled={revokingSessionId === '__all__'}
+                    >
+                      <LogOut className="h-4 w-4 mr-2" />
+                      {revokingSessionId === '__all__' ? 'Desconectando...' : 'Desconectar todos'}
+                    </Button>
+                  )}
+                </div>
+
+                <div className="space-y-2 max-h-[50vh] overflow-y-auto">
+                  {sessionsData.sessions.map((s) => (
+                    <div
+                      key={s.id}
+                      className={`flex items-start gap-3 rounded-lg border p-3 ${s.revoked ? 'bg-muted/10 opacity-60' : 'bg-muted/20'}`}
+                    >
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300">
+                        <MonitorSmartphone className="h-5 w-5" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="text-sm font-semibold break-words">{s.deviceName}</p>
+                          {s.online && !s.revoked && (
+                            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+                              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Online
+                            </span>
+                          )}
+                          {s.revoked && (
+                            <span className="text-[10px] font-semibold text-red-500">
+                              Desconectado{s.revokedBy === 'limit' ? ' (limite)' : s.revokedBy === 'user' ? ' (logout)' : ''}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                          <Wifi className="h-3 w-3" /> IP: {s.ip}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          Última atividade:{' '}
+                          {s.lastActiveAt
+                            ? new Date(s.lastActiveAt).toLocaleString('pt-BR', {
+                                day: '2-digit', month: '2-digit', year: 'numeric',
+                                hour: '2-digit', minute: '2-digit',
+                              })
+                            : '—'}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          Conectado em:{' '}
+                          {s.createdAt
+                            ? new Date(s.createdAt).toLocaleString('pt-BR', {
+                                day: '2-digit', month: '2-digit', year: 'numeric',
+                                hour: '2-digit', minute: '2-digit',
+                              })
+                            : '—'}
+                        </p>
+                      </div>
+                      {!s.revoked && (
+                        <div className="shrink-0">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-red-600 border-red-300 hover:bg-red-50 dark:hover:bg-red-950/30"
+                            onClick={() => handleRevokeSession(s.id)}
+                            disabled={revokingSessionId === s.id}
+                          >
+                            <LogOut className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowSessionsDialog(false)}>
+              Fechar
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
-import { createToken, setAuthCookie } from '@/lib/auth'
+import { createToken, setAuthCookie, generateSessionId } from '@/lib/auth'
+import { recordLoginSession } from '@/lib/sessions'
 import { User } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -99,17 +100,25 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Cria o token
+    // Cria o token vinculado a uma sessão de dispositivo (jti)
+    const jti = generateSessionId()
     const token = await createToken({
       userId: user._id!.toString(),
       email: user.email,
       name: user.name,
       role: user.role,
       emailVerified: !!user.emailVerified,
+      jti,
     })
 
     // Define o cookie
     await setAuthCookie(token)
+
+    try {
+      await recordLoginSession({ request, userId: user._id!.toString(), jti })
+    } catch (sessErr) {
+      console.error('Falha ao registrar sessão (Google):', sessErr)
+    }
 
     return NextResponse.json({
       success: true,
