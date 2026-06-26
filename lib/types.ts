@@ -1484,6 +1484,19 @@ export interface WebhookEventRecord {
 
 export type MindMapVisibility = 'private' | 'public' | 'unlisted' | 'password'
 
+/** Estilo de conexão entre os nós. */
+export type MindMapEdgeStyle = 'curved' | 'straight' | 'stepped'
+
+/** Aparência geral do mapa (tema, conexões e forma padrão dos nós). */
+export interface MindMapStyle {
+  /** Chave do tema (paleta + fundo). Ver lib/mindmap-themes. */
+  theme: string
+  /** Estilo das linhas que ligam os nós. */
+  edgeStyle: MindMapEdgeStyle
+  /** Forma padrão dos nós que não têm forma própria. */
+  nodeShape: 'rounded' | 'pill' | 'rect' | 'ellipse'
+}
+
 /** Um nó do mapa mental. Posição livre no canvas + vínculo de árvore via parentId. */
 export interface MindMapNode {
   id: string
@@ -1518,6 +1531,8 @@ export interface MindMap {
   tags: string[]
   category?: string
   nodes: MindMapNode[]
+  /** Estilo/aparência do mapa. Opcional — usa padrão quando ausente. */
+  style?: MindMapStyle
   visibility: MindMapVisibility
   /** Hash bcrypt da senha quando visibility === 'password'. Nunca enviado ao cliente. */
   passwordHash?: string | null

@@ -1,5 +1,6 @@
 import { Db, ObjectId } from 'mongodb'
-import type { MindMap, MindMapNode, MindMapVisibility } from './types'
+import type { MindMap, MindMapNode, MindMapVisibility, MindMapStyle } from './types'
+import { MINDMAP_THEME_KEYS, DEFAULT_MINDMAP_STYLE } from './mindmap-themes'
 
 export const MINDMAP_COLLECTIONS = {
   maps: 'mindMaps',
@@ -111,6 +112,18 @@ export function sanitizeNodes(input: any): MindMapNode[] {
 
 export function isValidVisibility(v: any): v is MindMapVisibility {
   return v === 'private' || v === 'public' || v === 'unlisted' || v === 'password'
+}
+
+const VALID_EDGE_STYLES = ['curved', 'straight', 'stepped']
+
+/** Saneia o objeto de estilo do mapa, aplicando padrões para valores inválidos. */
+export function sanitizeStyle(input: any): MindMapStyle {
+  const s = input && typeof input === 'object' ? input : {}
+  return {
+    theme: MINDMAP_THEME_KEYS.includes(s.theme) ? s.theme : DEFAULT_MINDMAP_STYLE.theme,
+    edgeStyle: VALID_EDGE_STYLES.includes(s.edgeStyle) ? s.edgeStyle : DEFAULT_MINDMAP_STYLE.edgeStyle,
+    nodeShape: VALID_SHAPES.includes(s.nodeShape) ? s.nodeShape : DEFAULT_MINDMAP_STYLE.nodeShape,
+  }
 }
 
 /**

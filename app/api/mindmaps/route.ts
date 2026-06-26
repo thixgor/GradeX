@@ -10,6 +10,7 @@ import {
   sanitizeDescription,
   sanitizeTags,
   sanitizeNodes,
+  sanitizeStyle,
 } from '@/lib/mindmap'
 import type { MindMap, MindMapNode } from '@/lib/types'
 
@@ -109,6 +110,7 @@ export async function POST(request: NextRequest) {
       tags: sanitizeTags(body.tags),
       category: body.category ? String(body.category).slice(0, 60) : undefined,
       nodes,
+      style: sanitizeStyle(body.style),
       visibility: 'private',
       passwordHash: null,
       isPublished: false,

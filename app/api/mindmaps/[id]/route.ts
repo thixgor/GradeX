@@ -11,6 +11,7 @@ import {
   sanitizeDescription,
   sanitizeTags,
   sanitizeNodes,
+  sanitizeStyle,
   isValidObjectId,
   isValidVisibility,
 } from '@/lib/mindmap'
@@ -113,6 +114,10 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       const nodes = sanitizeNodes(body.nodes)
       updates.nodes = nodes
       updates.nodeCount = nodes.length
+    }
+
+    if (body.style !== undefined) {
+      updates.style = sanitizeStyle(body.style)
     }
 
     if (body.visibility !== undefined) {

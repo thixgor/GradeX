@@ -5,12 +5,14 @@ import { useRouter } from 'next/navigation'
 import {
   Plus, Search, Globe, EyeOff, Link2, Lock, Heart, Eye, Trash2, Loader2,
   GitBranch, ShieldCheck, Users, Sparkles, ArrowRight, X, Network,
+  LayoutTemplate, ChevronRight,
 } from 'lucide-react'
 import { AppShell, useAppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { cn } from '@/lib/utils'
 import type { MindMapVisibility } from '@/lib/types'
+import { MINDMAP_TEMPLATES, buildNodes, type MindMapTemplate } from '@/lib/mindmap-templates'
 
 type Tab = 'mine' | 'community' | 'all-admin'
 
@@ -55,6 +57,7 @@ function MindMapHome() {
   const [toast, setToast] = useState<{ msg: string; type: 'error' | 'success' | 'info' } | null>(null)
   const [confirmDelete, setConfirmDelete] = useState<MapItem | null>(null)
   const [deleting, setDeleting] = useState(false)
+  const [showTemplates, setShowTemplates] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -76,13 +79,17 @@ function MindMapHome() {
   // Guarda: não-admin não pode ficar na aba de administração.
   useEffect(() => { if (tab === 'all-admin' && !isAdmin) setTab('mine') }, [tab, isAdmin])
 
-  const createMap = useCallback(async () => {
+  const createFromTemplate = useCallback(async (template?: MindMapTemplate) => {
     setCreating(true)
+    setShowTemplates(false)
     try {
+      const body: any = template && template.id !== 'blank'
+        ? { title: template.name, nodes: buildNodes(template.spec), style: template.style }
+        : { title: 'Novo mapa mental', style: template?.style }
       const res = await fetch('/api/mindmaps', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: 'Novo mapa mental' }),
+        body: JSON.stringify(body),
       })
       const data = await res.json()
       if (!res.ok) { setToast({ msg: data.error || 'Erro ao criar', type: 'error' }); return }
@@ -93,6 +100,8 @@ function MindMapHome() {
       setCreating(false)
     }
   }, [router])
+
+  const openTemplates = useCallback(() => setShowTemplates(true), [])
 
   const doDelete = useCallback(async () => {
     if (!confirmDelete) return
@@ -134,7 +143,7 @@ function MindMapHome() {
               Organize ideias com um editor visual rápido. Crie, conecte e compartilhe seus mapas — públicos, com link ou protegidos por senha.
             </p>
           </div>
-          <Button onClick={createMap} disabled={creating} className="h-11 shrink-0 gap-2 bg-emerald-500 text-emerald-950 hover:bg-emerald-400">
+          <Button onClick={openTemplates} disabled={creating} className="h-11 shrink-0 gap-2 bg-emerald-500 text-emerald-950 hover:bg-emerald-400">
             {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-5 w-5" />}
             Novo mapa
           </Button>
@@ -173,11 +182,16 @@ function MindMapHome() {
         </div>
       )}
 
+      {/* Modelos prontos */}
+      {tab === 'mine' && (
+        <TemplatesStrip onPick={createFromTemplate} onSeeAll={openTemplates} disabled={creating} />
+      )}
+
       {/* Grid */}
       {loading ? (
         <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-emerald-500" /></div>
       ) : maps.length === 0 ? (
-        <EmptyState tab={tab} onCreate={createMap} />
+        <EmptyState tab={tab} onCreate={openTemplates} />
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {maps.map(m => (
@@ -213,6 +227,11 @@ function MindMapHome() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Galeria de templates */}
+      {showTemplates && (
+        <TemplatesModal onClose={() => setShowTemplates(false)} onPick={createFromTemplate} creating={creating} />
       )}
 
       <ToastAlert open={!!toast} onOpenChange={(o) => !o && setToast(null)} message={toast?.msg || ''} type={toast?.type || 'info'} />
@@ -262,6 +281,79 @@ function MapCard({ map, showOwner, isAdmin, tab, onOpen, onDelete }: {
             <Trash2 className="h-4 w-4" />
           </button>
         )}
+      </div>
+    </div>
+  )
+}
+
+function TemplatesStrip({ onPick, onSeeAll, disabled }: { onPick: (t: MindMapTemplate) => void; onSeeAll: () => void; disabled?: boolean }) {
+  const featured = MINDMAP_TEMPLATES.slice(0, 6)
+  return (
+    <div className="mb-6">
+      <div className="mb-2.5 flex items-center justify-between">
+        <h2 className="flex items-center gap-2 text-sm font-bold">
+          <LayoutTemplate className="h-4 w-4 text-emerald-500" /> Modelos prontos
+        </h2>
+        <button onClick={onSeeAll} className="inline-flex items-center gap-0.5 text-xs font-medium text-emerald-600 hover:underline dark:text-emerald-400">
+          Ver todos <ChevronRight className="h-3.5 w-3.5" />
+        </button>
+      </div>
+      <div className="flex gap-3 overflow-x-auto pb-2 [scrollbar-width:thin]">
+        {featured.map(t => (
+          <button
+            key={t.id}
+            onClick={() => onPick(t)}
+            disabled={disabled}
+            className="group flex w-40 shrink-0 flex-col rounded-2xl border border-border bg-card p-3 text-left transition-all hover:border-emerald-500/40 hover:shadow-md disabled:opacity-50"
+          >
+            <span className="mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-xl">{t.emoji}</span>
+            <span className="line-clamp-1 text-sm font-semibold">{t.name}</span>
+            <span className="mt-0.5 line-clamp-2 text-[11px] text-muted-foreground">{t.description}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function TemplatesModal({ onClose, onPick, creating }: { onClose: () => void; onPick: (t: MindMapTemplate) => void; creating: boolean }) {
+  const categories = Array.from(new Set(MINDMAP_TEMPLATES.map(t => t.category)))
+  return (
+    <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/60 p-4" onClick={() => !creating && onClose()}>
+      <div className="flex max-h-[88vh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between border-b border-border px-5 py-4">
+          <div>
+            <h2 className="flex items-center gap-2 text-lg font-bold"><LayoutTemplate className="h-5 w-5 text-emerald-500" /> Escolha um modelo</h2>
+            <p className="text-xs text-muted-foreground">Comece com uma estrutura pronta ou do zero. Você pode personalizar tudo depois.</p>
+          </div>
+          <button onClick={onClose} disabled={creating} className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted disabled:opacity-50"><X className="h-5 w-5" /></button>
+        </div>
+        <div className="relative flex-1 overflow-y-auto px-5 py-5">
+          {creating && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-card/70 backdrop-blur-sm">
+              <Loader2 className="h-7 w-7 animate-spin text-emerald-500" />
+            </div>
+          )}
+          {categories.map(cat => (
+            <div key={cat} className="mb-6 last:mb-0">
+              <h3 className="mb-2.5 text-xs font-bold uppercase tracking-wide text-muted-foreground">{cat}</h3>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {MINDMAP_TEMPLATES.filter(t => t.category === cat).map(t => (
+                  <button
+                    key={t.id}
+                    onClick={() => onPick(t)}
+                    disabled={creating}
+                    className="group flex flex-col rounded-2xl border border-border bg-background p-4 text-left transition-all hover:border-emerald-500/50 hover:shadow-md disabled:opacity-50"
+                  >
+                    <span className="mb-2.5 flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-500/10 text-2xl">{t.emoji}</span>
+                    <span className="font-semibold">{t.name}</span>
+                    <span className="mt-1 line-clamp-2 text-xs text-muted-foreground">{t.description}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )
