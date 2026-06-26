@@ -52,6 +52,26 @@ export async function generateUniqueSlug(db: Db, base: string): Promise<string> 
   return slug
 }
 
+function randomSlug(): string {
+  return (
+    Math.random().toString(36).slice(2, 10) +
+    Math.random().toString(36).slice(2, 6)
+  )
+}
+
+/**
+ * Gera um slug aleatório e único (não derivado do título). Mantém as URLs
+ * curtas e opacas — sem expor o nome do mapa.
+ */
+export async function generateRandomSlug(db: Db): Promise<string> {
+  const maps = db.collection(MINDMAP_COLLECTIONS.maps)
+  for (let i = 0; i < 10; i++) {
+    const slug = randomSlug()
+    if (!(await maps.findOne({ slug }))) return slug
+  }
+  return `${randomSlug()}${Date.now().toString(36)}`
+}
+
 export function isValidObjectId(id: string | undefined | null): boolean {
   return !!id && ObjectId.isValid(id)
 }
@@ -133,19 +153,22 @@ export function sanitizeStyle(input: any): MindMapStyle {
  */
 export function normalizeMapForResponse(
   map: MindMap & { _id?: any },
-  opts: { includeNodes?: boolean } = {}
+  opts: { includeNodes?: boolean; includeCollaborators?: boolean } = {}
 ) {
-  const { includeNodes = true } = opts
-  const { passwordHash, nodes, ...rest } = map as any
+  const { includeNodes = true, includeCollaborators = false } = opts
+  const { passwordHash, nodes, collaborators, ...rest } = map as any
   return {
     ...rest,
     _id: map._id ? String(map._id) : undefined,
     hasPassword: !!passwordHash || map.visibility === 'password',
+    collaboratorCount: Array.isArray(collaborators) ? collaborators.length : 0,
+    // Emails dos colaboradores só vão para dono/admin (privacidade).
+    collaborators: includeCollaborators ? (collaborators || []) : undefined,
     nodes: includeNodes ? (nodes || []) : [],
   }
 }
 
-export type MindMapAccessReason = 'owner' | 'admin' | 'public' | 'unlisted' | 'password' | 'unlocked'
+export type MindMapAccessReason = 'owner' | 'admin' | 'collaborator' | 'public' | 'unlisted' | 'password' | 'unlocked'
 
 export interface MindMapAccessResult {
   /** Pode ver os metadados do mapa (existência, título). */
@@ -158,6 +181,8 @@ export interface MindMapAccessResult {
   canDelete: boolean
   isOwner: boolean
   isAdmin: boolean
+  /** É colaborador convidado (pode editar, mas não deletar). */
+  isCollaborator: boolean
   /** True quando o mapa exige senha e o solicitante ainda não a forneceu. */
   locked: boolean
   reasons: MindMapAccessReason[]
@@ -166,6 +191,7 @@ export interface MindMapAccessResult {
 interface ResolveParams {
   map: MindMap & { _id?: any }
   userId: string | null
+  userEmail?: string | null
   isAdmin: boolean
   /** true quando o cliente comprovou a senha (via unlock). */
   passwordOk?: boolean
@@ -176,11 +202,16 @@ interface ResolveParams {
  * a mapas protegidos por senha (requisito: "administrar todos, ver até os que
  * têm senha") — e pode deletar qualquer mapa.
  */
-export function resolveMindMapAccess({ map, userId, isAdmin, passwordOk }: ResolveParams): MindMapAccessResult {
+export function resolveMindMapAccess({ map, userId, userEmail, isAdmin, passwordOk }: ResolveParams): MindMapAccessResult {
   const isOwner = !!userId && map.ownerId === userId
+  const email = (userEmail || '').toLowerCase()
+  const isCollaborator = !!userId && (map.collaborators || []).some(
+    c => c.userId === userId || (!!email && (c.email || '').toLowerCase() === email)
+  )
   const reasons: MindMapAccessReason[] = []
   if (isOwner) reasons.push('owner')
   if (isAdmin) reasons.push('admin')
+  if (isCollaborator) reasons.push('collaborator')
 
   const published = !!map.isPublished
   const isPublic = map.visibility === 'public' && published
@@ -191,9 +222,10 @@ export function resolveMindMapAccess({ map, userId, isAdmin, passwordOk }: Resol
   if (isUnlisted) reasons.push('unlisted')
 
   // Quem pode ao menos enxergar que o mapa existe / metadados.
-  const canView = isOwner || isAdmin || isPublic || isUnlisted || needsPassword
+  const canView = isOwner || isAdmin || isCollaborator || isPublic || isUnlisted || needsPassword
 
-  let canViewContent = isOwner || isAdmin || isPublic || isUnlisted
+  // Colaboradores (como dono/admin) ignoram a senha.
+  let canViewContent = isOwner || isAdmin || isCollaborator || isPublic || isUnlisted
   let locked = false
   if (!canViewContent && needsPassword) {
     if (passwordOk) {
@@ -208,10 +240,11 @@ export function resolveMindMapAccess({ map, userId, isAdmin, passwordOk }: Resol
   return {
     canView,
     canViewContent,
-    canEdit: isOwner || isAdmin,
+    canEdit: isOwner || isAdmin || isCollaborator,
     canDelete: isOwner || isAdmin,
     isOwner,
     isAdmin,
+    isCollaborator,
     locked,
     reasons,
   }

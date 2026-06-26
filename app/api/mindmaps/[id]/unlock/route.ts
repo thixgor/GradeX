@@ -30,7 +30,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     if (!map) return NextResponse.json({ error: 'Mapa não encontrado' }, { status: 404 })
 
     const isAdmin = session?.role === 'admin'
-    const baseAccess = resolveMindMapAccess({ map, userId: session?.userId || null, isAdmin })
+    const baseAccess = resolveMindMapAccess({ map, userId: session?.userId || null, userEmail: session?.email || null, isAdmin })
 
     // Dono/admin: acesso direto, sem senha.
     if (baseAccess.canViewContent) {

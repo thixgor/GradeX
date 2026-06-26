@@ -36,7 +36,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     if (!map) return NextResponse.json({ error: 'Mapa não encontrado' }, { status: 404 })
 
     const isAdmin = session?.role === 'admin'
-    const access = resolveMindMapAccess({ map, userId: session?.userId || null, isAdmin })
+    const access = resolveMindMapAccess({ map, userId: session?.userId || null, userEmail: session?.email || null, isAdmin })
 
     if (!access.canView) {
       return NextResponse.json({ error: 'Mapa indisponível' }, { status: 404 })
@@ -46,7 +46,9 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 
     // Incrementa visualizações (fire-and-forget) para quem não é o dono.
-    if (!access.isOwner && access.canViewContent) {
+    // O polling de tempo real envia ?poll=1 para não inflar as views.
+    const isPoll = new URL(request.url).searchParams.get('poll') === '1'
+    if (!isPoll && !access.isOwner && access.canViewContent) {
       db.collection(MINDMAP_COLLECTIONS.maps)
         .updateOne({ _id: map._id }, { $inc: { viewCount: 1 } })
         .catch(() => {})
@@ -60,7 +62,10 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 
     const res = NextResponse.json({
-      map: normalizeMapForResponse(map, { includeNodes: access.canViewContent }),
+      map: normalizeMapForResponse(map, {
+        includeNodes: access.canViewContent,
+        includeCollaborators: access.isOwner || access.isAdmin,
+      }),
       access: {
         canView: access.canView,
         canViewContent: access.canViewContent,
@@ -68,6 +73,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         canDelete: access.canDelete,
         isOwner: access.isOwner,
         isAdmin: access.isAdmin,
+        isCollaborator: access.isCollaborator,
         locked: access.locked,
       },
       liked,
@@ -95,7 +101,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     if (!map) return NextResponse.json({ error: 'Mapa não encontrado' }, { status: 404 })
 
     const isAdmin = session.role === 'admin'
-    const access = resolveMindMapAccess({ map, userId: session.userId, isAdmin })
+    const access = resolveMindMapAccess({ map, userId: session.userId, userEmail: session.email, isAdmin })
     if (!access.canEdit) return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
 
     const body = await request.json().catch(() => ({}))
@@ -120,7 +126,9 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       updates.style = sanitizeStyle(body.style)
     }
 
-    if (body.visibility !== undefined) {
+    // Apenas dono/admin alteram visibilidade e senha (colaboradores não).
+    const canManage = access.isOwner || isAdmin
+    if (body.visibility !== undefined && canManage) {
       if (!isValidVisibility(body.visibility)) {
         return NextResponse.json({ error: 'Visibilidade inválida' }, { status: 400 })
       }
@@ -151,7 +159,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
         // Saindo do modo senha: limpa o hash.
         updates.passwordHash = null
       }
-    } else if (typeof body.password === 'string' && body.password.length >= 3 && map.visibility === 'password') {
+    } else if (canManage && typeof body.password === 'string' && body.password.length >= 3 && map.visibility === 'password') {
       // Troca de senha sem mudar a visibilidade.
       updates.passwordHash = await hashPassword(body.password)
     }
@@ -183,7 +191,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     if (!map) return NextResponse.json({ error: 'Mapa não encontrado' }, { status: 404 })
 
     const isAdmin = session.role === 'admin'
-    const access = resolveMindMapAccess({ map, userId: session.userId, isAdmin })
+    const access = resolveMindMapAccess({ map, userId: session.userId, userEmail: session.email, isAdmin })
     if (!access.canDelete) return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
 
     const mapId = String(map._id)

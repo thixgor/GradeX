@@ -3,14 +3,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   Plus, Trash2, Undo2, Redo2, ZoomIn, ZoomOut, Save, Download,
-  Play, Settings2, X, Palette, Crosshair, LayoutGrid, ChevronLeft, Check,
+  Play, Settings2, X, Palette, Crosshair, LayoutGrid, ChevronLeft, ChevronRight, Check,
   Loader2, ShieldCheck, Lock, Globe, EyeOff, Link2, GitBranch,
   Pencil, Copy, ClipboardPaste, CornerDownRight, Shapes, Smile, Spline,
-  Minus, Wand2, Sparkles,
+  Minus, Wand2, Sparkles, Highlighter, UserPlus, Users, Mail,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import type { MindMapNode, MindMapVisibility, MindMapStyle, MindMapEdgeStyle } from '@/lib/types'
+import type { MindMapNode, MindMapVisibility, MindMapStyle, MindMapEdgeStyle, MindMapCollaborator } from '@/lib/types'
 import { getTheme, resolveStyle, idealTextColor, MINDMAP_THEMES } from '@/lib/mindmap-themes'
 
 export interface EditorMap {
@@ -27,6 +27,8 @@ export interface EditorMap {
   likeCount?: number
   viewCount?: number
   ownerName?: string
+  updatedAt?: string
+  collaborators?: MindMapCollaborator[]
 }
 
 interface EditorAccess {
@@ -34,6 +36,7 @@ interface EditorAccess {
   canDelete: boolean
   isOwner: boolean
   isAdmin: boolean
+  isCollaborator?: boolean
 }
 
 const EMOJIS = ['💡', '⭐', '✅', '❗', '📌', '🔥', '🎯', '📚', '🧠', '❤️', '⚠️', '🚀', '💰', '📈', '🔑', '❓', '✏️', '📝', '⏰', '🏆']
@@ -59,6 +62,37 @@ function edgePath(fx: number, fy: number, tx: number, ty: number, style: MindMap
   if (style === 'straight') return `M ${fx} ${fy} L ${tx} ${ty}`
   if (style === 'stepped') return `M ${fx} ${fy} L ${midX} ${fy} L ${midX} ${ty} L ${tx} ${ty}`
   return `M ${fx} ${fy} C ${midX} ${fy}, ${midX} ${ty}, ${tx} ${ty}`
+}
+
+/** Profundidade (distância até a raiz) de cada nó. */
+function computeDepthMap(nodes: MindMapNode[]): Map<string, number> {
+  const map = new Map(nodes.map(n => [n.id, n]))
+  const d = new Map<string, number>()
+  const calc = (id: string): number => {
+    if (d.has(id)) return d.get(id)!
+    const n = map.get(id)
+    if (!n || n.parentId === null || !map.has(n.parentId)) { d.set(id, 0); return 0 }
+    const v = calc(n.parentId) + 1
+    d.set(id, v); return v
+  }
+  nodes.forEach(n => calc(n.id))
+  return d
+}
+
+/** Conjunto de nós escondidos por colapso de ancestrais. */
+function computeHidden(nodes: MindMapNode[]): Set<string> {
+  const hidden = new Set<string>()
+  for (const n of nodes) {
+    if (n.collapsed) {
+      const stack = nodes.filter(c => c.parentId === n.id)
+      while (stack.length) {
+        const c = stack.pop()!
+        hidden.add(c.id)
+        stack.push(...nodes.filter(x => x.parentId === c.id))
+      }
+    }
+  }
+  return hidden
 }
 
 /** Layout em árvore horizontal (tidy tree). Reposiciona todos os nós. */
@@ -133,7 +167,18 @@ export function MindMapEditor({
   const [showSettings, setShowSettings] = useState(false)
   const [showStyle, setShowStyle] = useState(false)
   const [presenting, setPresenting] = useState(false)
+  const [presentStep, setPresentStep] = useState(0)
   const [editingTitle, setEditingTitle] = useState(false)
+
+  // Caneta laser (some sozinha).
+  const [laserOn, setLaserOn] = useState(false)
+  const [laserPoints, setLaserPoints] = useState<{ id: number; x: number; y: number }[]>([])
+  const laserSeq = useRef(0)
+
+  // Tempo real / colaboração.
+  const [collaborators, setCollaborators] = useState<MindMapCollaborator[]>(initialMap.collaborators || [])
+  const [liveMsg, setLiveMsg] = useState('')
+  const serverUpdatedAt = useRef<number>(initialMap.updatedAt ? new Date(initialMap.updatedAt).getTime() : 0)
   const [meta, setMeta] = useState({
     title: initialMap.title,
     description: initialMap.description || '',
@@ -160,6 +205,12 @@ export function MindMapEditor({
   nodesRef.current = nodes
   const styleRef = useRef(style)
   styleRef.current = style
+  const editingIdRef = useRef(editingId)
+  editingIdRef.current = editingId
+  const dirtyRef = useRef(dirty)
+  dirtyRef.current = dirty
+  const presentingRef = useRef(presenting)
+  presentingRef.current = presenting
 
   // ---- mutações com histórico ----
   const commit = useCallback((updater: (prev: MindMapNode[]) => MindMapNode[]) => {
@@ -322,6 +373,18 @@ export function MindMapEditor({
     pasteSubtree({ clip, parentId: node.parentId, x: node.x + 40, y: node.y + 40 })
   }, [collectSubtree, pasteSubtree])
 
+  // ---- caneta laser ----
+  const addLaserPoint = useCallback((clientX: number, clientY: number) => {
+    const el = containerRef.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    const id = ++laserSeq.current
+    const x = clientX - rect.left
+    const y = clientY - rect.top
+    setLaserPoints(p => [...p.slice(-40), { id, x, y }])
+    setTimeout(() => setLaserPoints(p => p.filter(pt => pt.id !== id)), 850)
+  }, [])
+
   const beginEdit = useCallback((nodeId: string) => {
     if (!canEdit) return
     const node = nodesRef.current.find(n => n.id === nodeId)
@@ -354,21 +417,71 @@ export function MindMapEditor({
     commit(prev => prev.map(n => ({ ...n, color: undefined, textColor: undefined, borderColor: undefined })))
   }, [commit])
 
+  // ---- colaboradores ----
+  const addCollaborator = useCallback(async (email: string): Promise<string | null> => {
+    try {
+      const res = await fetch(`/api/mindmaps/${initialMap._id}/collaborators`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      const data = await res.json()
+      if (!res.ok) return data.error || 'Erro ao adicionar'
+      setCollaborators(data.collaborators || [])
+      return null
+    } catch {
+      return 'Erro de rede ao adicionar'
+    }
+  }, [initialMap._id])
+
+  const removeCollaborator = useCallback(async (userId: string) => {
+    try {
+      const res = await fetch(`/api/mindmaps/${initialMap._id}/collaborators?userId=${encodeURIComponent(userId)}`, { method: 'DELETE' })
+      const data = await res.json()
+      if (res.ok) setCollaborators(data.collaborators || [])
+    } catch { /* ignora */ }
+  }, [initialMap._id])
+
   // ---- viewport ----
-  const fitToScreen = useCallback(() => {
+  const fitToNodes = useCallback((subset?: MindMapNode[]) => {
     const el = containerRef.current
-    if (!el || nodesRef.current.length === 0) return
+    const list = (subset && subset.length ? subset : nodesRef.current)
+    if (!el || list.length === 0) return
     const rect = el.getBoundingClientRect()
-    const xs = nodesRef.current.map(n => n.x)
-    const ys = nodesRef.current.map(n => n.y)
+    const xs = list.map(n => n.x)
+    const ys = list.map(n => n.y)
     const minX = Math.min(...xs) - 140, maxX = Math.max(...xs) + 140
     const minY = Math.min(...ys) - 80, maxY = Math.max(...ys) + 80
     const w = maxX - minX, h = maxY - minY
-    const s = clamp(Math.min(rect.width / w, rect.height / h), 0.2, 1.5)
+    const s = clamp(Math.min(rect.width / w, rect.height / h), 0.2, 1.6)
     setScale(s)
     setTx(rect.width / 2 - ((minX + maxX) / 2) * s)
     setTy(rect.height / 2 - ((minY + maxY) / 2) * s)
   }, [])
+
+  const fitToScreen = useCallback(() => { fitToNodes() }, [fitToNodes])
+
+  // ---- apresentação progressiva ----
+  const startPresent = useCallback(() => {
+    setPresenting(true)
+    setPresentStep(0)
+    setSelectedId(null)
+    setTimeout(() => fitToNodes(nodesRef.current.filter(n => n.parentId === null)), 30)
+  }, [fitToNodes])
+
+  const presentGo = useCallback((dir: 1 | -1) => {
+    const dmap = computeDepthMap(nodesRef.current)
+    const hidden = computeHidden(nodesRef.current)
+    const maxD = Math.max(0, ...Array.from(dmap.values()))
+    setPresentStep(prev => {
+      const next = clamp(prev + dir, 0, maxD)
+      if (next !== prev) {
+        const visible = nodesRef.current.filter(n => (dmap.get(n.id) ?? 0) <= next && !hidden.has(n.id))
+        setTimeout(() => fitToNodes(visible), 20)
+      }
+      return next
+    })
+  }, [fitToNodes])
 
   useEffect(() => {
     // centraliza ao montar
@@ -494,6 +607,11 @@ export function MindMapEditor({
       if (dragNode.current.moved) setDirty(true)
       dragNode.current = null
     }
+    // Apresentação: toque/clique curto no fundo avança um passo.
+    if (presenting && !laserOn && panStart.current) {
+      const dist = Math.hypot(e.clientX - panStart.current.x, e.clientY - panStart.current.y)
+      if (dist < 8) presentGo(1)
+    }
     panStart.current = null
   }
 
@@ -507,6 +625,12 @@ export function MindMapEditor({
     const onKey = (e: KeyboardEvent) => {
       const tag = (e.target as HTMLElement)?.tagName
       if (tag === 'INPUT' || tag === 'TEXTAREA') return
+      if (presenting) {
+        if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); presentGo(1); return }
+        if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); presentGo(-1); return }
+        if (e.key === 'Escape') { e.preventDefault(); setPresenting(false); return }
+        return
+      }
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); save(); return }
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); return }
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') { e.preventDefault(); redo(); return }
@@ -522,7 +646,7 @@ export function MindMapEditor({
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canEdit, selectedId, addChild, addSibling, deleteNode, beginEdit, undo, redo, copyNode, pasteSubtree, duplicateNode])
+  }, [canEdit, selectedId, addChild, addSibling, deleteNode, beginEdit, undo, redo, copyNode, pasteSubtree, duplicateNode, presenting, presentGo])
 
   // ---- salvar ----
   const save = useCallback(async () => {
@@ -535,6 +659,8 @@ export function MindMapEditor({
         body: JSON.stringify({ nodes: nodesRef.current, style: styleRef.current }),
       })
       if (!res.ok) throw new Error('save failed')
+      const data = await res.json().catch(() => null)
+      if (data?.map?.updatedAt) serverUpdatedAt.current = new Date(data.map.updatedAt).getTime()
       setSaveState('saved')
       setDirty(false)
       setTimeout(() => setSaveState('idle'), 1500)
@@ -550,6 +676,35 @@ export function MindMapEditor({
     const t = setTimeout(() => { save() }, 1800)
     return () => clearTimeout(t)
   }, [nodes, style, dirty, canEdit, save])
+
+  // ---- tempo real: busca mudanças de outros colaboradores periodicamente ----
+  useEffect(() => {
+    let cancelled = false
+    const poll = async () => {
+      // Não sincroniza enquanto o usuário mexe ou apresenta (evita sobrescrever
+      // o trabalho local e não interrompe uma apresentação em andamento).
+      if (dirtyRef.current || editingIdRef.current || dragNode.current || presentingRef.current) return
+      try {
+        const res = await fetch(`/api/mindmaps/${initialMap._id}?poll=1`, { cache: 'no-store' })
+        if (!res.ok || cancelled) return
+        const data = await res.json()
+        const ts = data?.map?.updatedAt ? new Date(data.map.updatedAt).getTime() : 0
+        if (ts > serverUpdatedAt.current && Array.isArray(data.map?.nodes)) {
+          serverUpdatedAt.current = ts
+          // Reaplica só se ainda não houver edição local pendente.
+          if (!dirtyRef.current && !editingIdRef.current && !dragNode.current) {
+            setNodes(data.map.nodes)
+            if (data.map.style) setStyle(resolveStyle(data.map.style))
+            if (Array.isArray(data.map.collaborators)) setCollaborators(data.map.collaborators)
+            setLiveMsg('Atualizado por um colaborador')
+            setTimeout(() => setLiveMsg(''), 2500)
+          }
+        }
+      } catch { /* silencioso */ }
+    }
+    const interval = setInterval(poll, 3000)
+    return () => { cancelled = true; clearInterval(interval) }
+  }, [initialMap._id])
 
   // ---- salvar título inline ----
   const saveTitle = useCallback(async () => {
@@ -607,18 +762,32 @@ export function MindMapEditor({
     triggerDownload(new Blob([svg], { type: 'image/svg+xml' }), `${initialMap.slug || 'mapa'}.svg`)
   }
   const exportPNG = async () => {
+    // iOS Safari não expõe img.width/height de SVGs e falha com blob: URLs.
+    // Calculamos as dimensões nós mesmos, usamos data URL e desenhamos com
+    // tamanho explícito — funciona tanto no desktop quanto no iPhone.
+    const { width, height } = svgSize(nodes)
     const svg = buildSVG(nodes, meta.title, theme, style)
+    const factor = clamp(Math.floor(3200 / Math.max(width, height)) || 1, 1, 3)
+    const dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg)
     const img = new window.Image()
-    const url = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }))
+    img.decoding = 'sync'
     img.onload = () => {
       const canvas = document.createElement('canvas')
-      canvas.width = img.width * 2; canvas.height = img.height * 2
+      canvas.width = Math.max(1, Math.round(width * factor))
+      canvas.height = Math.max(1, Math.round(height * factor))
       const ctx = canvas.getContext('2d')!
-      ctx.scale(2, 2)
-      ctx.drawImage(img, 0, 0)
-      canvas.toBlob(b => { if (b) triggerDownload(b, `${initialMap.slug || 'mapa'}.png`); URL.revokeObjectURL(url) })
+      ctx.fillStyle = theme.canvasBg
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+      const name = `${initialMap.slug || 'mapa'}.png`
+      if (canvas.toBlob) {
+        canvas.toBlob(b => { if (b) triggerDownload(b, name); else triggerDownloadUrl(canvas.toDataURL('image/png'), name) }, 'image/png')
+      } else {
+        triggerDownloadUrl(canvas.toDataURL('image/png'), name)
+      }
     }
-    img.src = url
+    img.onerror = () => { exportSVG() } // fallback: ao menos baixa o SVG
+    img.src = dataUrl
   }
 
   // ---- edges ----
@@ -645,7 +814,19 @@ export function MindMapEditor({
     return { list, hidden }
   }, [nodes])
 
-  const visibleNodes = nodes.filter(n => !edges.hidden.has(n.id))
+  // Profundidade de cada nó (para a apresentação progressiva).
+  const depth = useMemo(() => computeDepthMap(nodes), [nodes])
+  const maxDepth = useMemo(() => Math.max(0, ...Array.from(depth.values())), [depth])
+
+  // Na apresentação, revela só até o passo atual.
+  const revealed = useMemo(() => {
+    if (!presenting) return null
+    const set = new Set<string>()
+    nodes.forEach(n => { if ((depth.get(n.id) ?? 0) <= presentStep) set.add(n.id) })
+    return set
+  }, [presenting, presentStep, nodes, depth])
+
+  const visibleNodes = nodes.filter(n => !edges.hidden.has(n.id) && (!revealed || revealed.has(n.id)))
   const selectedNode = nodes.find(n => n.id === selectedId) || null
   const menuNode = menu?.nodeId ? nodes.find(n => n.id === menu.nodeId) || null : null
   const menuChildCount = menuNode ? nodes.filter(n => n.parentId === menuNode.id).length : 0
@@ -694,6 +875,16 @@ export function MindMapEditor({
                   <ShieldCheck className="h-3 w-3" /> ADMIN
                 </span>
               )}
+              {access.isCollaborator && !access.isOwner && !access.isAdmin && (
+                <span className="hidden items-center gap-1 rounded-full bg-[#2ECC71]/15 px-2 py-0.5 text-[10px] font-bold text-[#2ECC71] sm:inline-flex">
+                  <Users className="h-3 w-3" /> COLABORADOR
+                </span>
+              )}
+              {(access.isOwner || access.isAdmin) && collaborators.length > 0 && (
+                <span className="hidden items-center gap-1 rounded-full bg-[#163126] px-2 py-0.5 text-[10px] font-semibold text-[#C7D5CE] sm:inline-flex" title="Colaboradores">
+                  <Users className="h-3 w-3" /> {collaborators.length}
+                </span>
+              )}
             </div>
             {!canEdit && <p className="text-[11px] text-[#C7D5CE]">Somente leitura</p>}
           </div>
@@ -715,7 +906,8 @@ export function MindMapEditor({
             <ToolBtn onClick={() => zoomBy(0.89)} title="Diminuir zoom"><ZoomOut className="h-4 w-4" /></ToolBtn>
             <ToolBtn onClick={fitToScreen} title="Centralizar"><Crosshair className="h-4 w-4" /></ToolBtn>
             <ToolBtn onClick={() => zoomBy(1.12)} title="Aumentar zoom"><ZoomIn className="h-4 w-4" /></ToolBtn>
-            <ToolBtn onClick={() => setPresenting(true)} title="Apresentar"><Play className="h-4 w-4" /></ToolBtn>
+            <ToolBtn onClick={() => setLaserOn(v => !v)} title="Caneta laser" className={laserOn ? 'bg-red-500/20 text-red-400' : ''}><Highlighter className="h-4 w-4" /></ToolBtn>
+            <ToolBtn onClick={startPresent} title="Apresentar"><Play className="h-4 w-4" /></ToolBtn>
             <ExportMenu onJSON={exportJSON} onSVG={exportSVG} onPNG={exportPNG} />
             {canEdit && <ToolBtn onClick={() => setShowStyle(true)} title="Estilo do mapa" className="md:hidden"><Palette className="h-4 w-4" /></ToolBtn>}
             {canEdit && <ToolBtn onClick={() => setShowSettings(true)} title="Configurações"><Settings2 className="h-4 w-4" /></ToolBtn>}
@@ -730,9 +922,23 @@ export function MindMapEditor({
       )}
 
       {presenting && (
-        <button onClick={() => setPresenting(false)} className="absolute right-4 top-4 z-30 flex h-10 w-10 items-center justify-center rounded-full bg-[#163126] text-white shadow-lg hover:bg-[#204233]">
-          <X className="h-5 w-5" />
-        </button>
+        <>
+          <button onClick={() => setPresenting(false)} className="absolute right-4 top-4 z-[85] flex h-10 w-10 items-center justify-center rounded-full bg-[#163126] text-white shadow-lg hover:bg-[#204233]" title="Sair (Esc)">
+            <X className="h-5 w-5" />
+          </button>
+          <button onClick={() => setLaserOn(v => !v)} className={cn('absolute right-16 top-4 z-[85] flex h-10 w-10 items-center justify-center rounded-full shadow-lg', laserOn ? 'bg-red-500 text-white' : 'bg-[#163126] text-white hover:bg-[#204233]')} title="Caneta laser">
+            <Highlighter className="h-5 w-5" />
+          </button>
+          <div className="absolute bottom-5 left-1/2 z-[85] flex -translate-x-1/2 items-center gap-2 rounded-full border border-[#2D5A46]/70 bg-[#10261D]/95 px-2 py-1.5 shadow-2xl backdrop-blur">
+            <button onClick={() => presentGo(-1)} disabled={presentStep === 0} className="flex h-9 w-9 items-center justify-center rounded-full text-white hover:bg-[#204233] disabled:opacity-30" title="Anterior (←)">
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <span className="min-w-[64px] text-center text-xs font-semibold text-[#C7D5CE]">{presentStep + 1} / {maxDepth + 1}</span>
+            <button onClick={() => presentGo(1)} disabled={presentStep >= maxDepth} className="flex h-9 w-9 items-center justify-center rounded-full bg-[#2ECC71] text-[#0B1F17] hover:bg-[#27AE60] disabled:opacity-30" title="Próximo (→ / toque)">
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </div>
+        </>
       )}
 
       {/* Canvas */}
@@ -750,7 +956,7 @@ export function MindMapEditor({
         {/* edges */}
         <svg className="pointer-events-none absolute inset-0 h-full w-full" style={{ overflow: 'visible' }}>
           <g transform={`translate(${tx},${ty}) scale(${scale})`}>
-            {edges.list.map(({ from, to }) => (
+            {edges.list.filter(({ from, to }) => !revealed || (revealed.has(from.id) && revealed.has(to.id))).map(({ from, to }) => (
               <path
                 key={`${from.id}-${to.id}`}
                 d={edgePath(from.x, from.y, to.x, to.y, style.edgeStyle)}
@@ -940,6 +1146,33 @@ export function MindMapEditor({
           </>
         )}
 
+        {/* Camada de captura da caneta laser */}
+        {laserOn && (
+          <div
+            className="absolute inset-0 z-[70]"
+            style={{ cursor: 'crosshair' }}
+            onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); addLaserPoint(e.clientX, e.clientY) }}
+            onPointerMove={(e) => { addLaserPoint(e.clientX, e.clientY) }}
+            onContextMenu={(e) => e.preventDefault()}
+          />
+        )}
+
+        {/* Pontos da caneta laser (somem sozinhos) */}
+        {laserPoints.length > 0 && (
+          <div className="pointer-events-none absolute inset-0 z-[76]">
+            {laserPoints.map(p => (
+              <span key={p.id} className="laser-dot" style={{ left: p.x, top: p.y }} />
+            ))}
+          </div>
+        )}
+
+        {/* Indicador de tempo real */}
+        {liveMsg && (
+          <div className="pointer-events-none absolute left-1/2 top-3 z-[80] -translate-x-1/2 rounded-full bg-[#2ECC71] px-3 py-1 text-[11px] font-semibold text-[#0B1F17] shadow-lg">
+            {liveMsg}
+          </div>
+        )}
+
         {/* Hint mobile */}
         {canEdit && !presenting && (
           <div className="pointer-events-none absolute right-3 top-3 z-10 rounded-lg bg-[#10261D]/80 px-2.5 py-1 text-[10px] text-[#C7D5CE] md:hidden">
@@ -959,6 +1192,10 @@ export function MindMapEditor({
           error={metaError}
           slug={initialMap.slug}
           isAdmin={access.isAdmin}
+          canManageCollaborators={access.isOwner || access.isAdmin}
+          collaborators={collaborators}
+          onAddCollaborator={addCollaborator}
+          onRemoveCollaborator={removeCollaborator}
         />
       )}
 
@@ -971,6 +1208,23 @@ export function MindMapEditor({
           onClose={() => setShowStyle(false)}
         />
       )}
+
+      <style jsx global>{`
+        .laser-dot {
+          position: absolute;
+          width: 16px;
+          height: 16px;
+          margin: -8px 0 0 -8px;
+          border-radius: 9999px;
+          background: radial-gradient(circle, rgba(255,80,80,0.95) 0%, rgba(255,0,0,0.7) 40%, rgba(255,0,0,0) 70%);
+          box-shadow: 0 0 10px 4px rgba(255,40,40,0.6);
+          animation: laserFade 0.85s ease-out forwards;
+        }
+        @keyframes laserFade {
+          0% { opacity: 1; transform: scale(1); }
+          100% { opacity: 0; transform: scale(0.4); }
+        }
+      `}</style>
     </div>
   )
 }
@@ -1125,7 +1379,7 @@ function StyleDrawer({ style, onChange, onClearColors, onClose }: {
   )
 }
 
-function SettingsDrawer({ meta, setMeta, onClose, onSave, saving, error, slug, isAdmin }: any) {
+function SettingsDrawer({ meta, setMeta, onClose, onSave, saving, error, slug, isAdmin, canManageCollaborators, collaborators, onAddCollaborator, onRemoveCollaborator }: any) {
   const [copied, setCopied] = useState(false)
   const shareUrl = typeof window !== 'undefined' ? `${window.location.origin}/mapa-mental/${slug || ''}` : ''
   return (
@@ -1188,6 +1442,14 @@ function SettingsDrawer({ meta, setMeta, onClose, onSave, saving, error, slug, i
             </Field>
           )}
 
+          {canManageCollaborators && (
+            <CollaboratorsSection
+              collaborators={collaborators || []}
+              onAdd={onAddCollaborator}
+              onRemove={onRemoveCollaborator}
+            />
+          )}
+
           {error && <p className="rounded-lg bg-red-500/15 px-3 py-2 text-sm text-red-300">{error}</p>}
         </div>
         <div className="border-t border-[#2D5A46]/60 px-5 py-4">
@@ -1214,6 +1476,71 @@ function SettingsDrawer({ meta, setMeta, onClose, onSave, saving, error, slug, i
   )
 }
 
+function CollaboratorsSection({ collaborators, onAdd, onRemove }: {
+  collaborators: MindMapCollaborator[]
+  onAdd: (email: string) => Promise<string | null>
+  onRemove: (userId: string) => void
+}) {
+  const [email, setEmail] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState('')
+  const [ok, setOk] = useState('')
+
+  const submit = async () => {
+    const e = email.trim()
+    if (!e) return
+    setBusy(true); setErr(''); setOk('')
+    const error = await onAdd(e)
+    setBusy(false)
+    if (error) { setErr(error) } else { setEmail(''); setOk('Colaborador adicionado!'); setTimeout(() => setOk(''), 2000) }
+  }
+
+  return (
+    <div className="rounded-xl border border-[#2D5A46]/70 bg-[#0B1F17]/60 p-4">
+      <p className="flex items-center gap-2 text-sm font-semibold"><Users className="h-4 w-4 text-[#2ECC71]" /> Colaboradores</p>
+      <p className="mt-1 text-xs text-[#C7D5CE]">Convide pessoas pelo e-mail para editarem este mapa em tempo real. Elas precisam ter conta na plataforma.</p>
+      <div className="mt-3 flex gap-2">
+        <div className="relative flex-1">
+          <Mail className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6F857B]" />
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); submit() } }}
+            placeholder="email@exemplo.com"
+            className="w-full rounded-lg border border-[#2D5A46] bg-[#0B1F17] py-2 pl-8 pr-2 text-sm text-white outline-none focus:border-[#2ECC71]"
+          />
+        </div>
+        <button onClick={submit} disabled={busy || !email.trim()} className="flex items-center gap-1.5 rounded-lg bg-[#2ECC71] px-3 text-sm font-semibold text-[#0B1F17] disabled:opacity-50">
+          {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <UserPlus className="h-4 w-4" />}
+          Convidar
+        </button>
+      </div>
+      {err && <p className="mt-2 text-xs text-red-300">{err}</p>}
+      {ok && <p className="mt-2 text-xs text-[#2ECC71]">{ok}</p>}
+
+      {collaborators.length > 0 && (
+        <ul className="mt-3 space-y-1.5">
+          {collaborators.map(c => (
+            <li key={c.userId} className="flex items-center gap-2 rounded-lg bg-[#10261D] px-3 py-2">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#2ECC71]/15 text-xs font-bold text-[#2ECC71]">
+                {(c.name || c.email || '?').slice(0, 1).toUpperCase()}
+              </span>
+              <span className="min-w-0 flex-1">
+                {c.name && <span className="block truncate text-sm font-medium text-white">{c.name}</span>}
+                <span className="block truncate text-xs text-[#C7D5CE]">{c.email}</span>
+              </span>
+              <button onClick={() => onRemove(c.userId)} className="rounded-md p-1.5 text-[#6F857B] hover:bg-red-500/10 hover:text-red-400" title="Remover">
+                <X className="h-4 w-4" />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
+
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
@@ -1225,10 +1552,26 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 function triggerDownload(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url; a.download = filename
-  document.body.appendChild(a); a.click(); a.remove()
+  triggerDownloadUrl(url, filename)
   setTimeout(() => URL.revokeObjectURL(url), 1000)
+}
+
+function triggerDownloadUrl(url: string, filename: string) {
+  const a = document.createElement('a')
+  a.href = url; a.download = filename; a.rel = 'noopener'
+  a.target = '_blank' // iOS: abre a imagem caso o download direto não seja permitido
+  document.body.appendChild(a); a.click(); a.remove()
+}
+
+/** Dimensões do SVG exportado (mesma margem usada em buildSVG). */
+function svgSize(nodes: MindMapNode[]): { width: number; height: number } {
+  if (nodes.length === 0) return { width: 100, height: 100 }
+  const pad = 80
+  const xs = nodes.map(n => n.x), ys = nodes.map(n => n.y)
+  return {
+    width: (Math.max(...xs) + pad) - (Math.min(...xs) - pad),
+    height: (Math.max(...ys) + pad) - (Math.min(...ys) - pad),
+  }
 }
 
 function escapeXml(s: string) {

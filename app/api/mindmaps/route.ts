@@ -4,7 +4,7 @@ import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import {
   MINDMAP_COLLECTIONS,
-  generateUniqueSlug,
+  generateRandomSlug,
   normalizeMapForResponse,
   sanitizeTitle,
   sanitizeDescription,
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
 
     const user = await usersCollection.findOne({ _id: new ObjectId(session.userId) }, { projection: { name: 1 } })
 
-    const slug = await generateUniqueSlug(db, title)
+    const slug = await generateRandomSlug(db)
 
     // Nó central inicial.
     const rootNode: MindMapNode = {
@@ -111,6 +111,7 @@ export async function POST(request: NextRequest) {
       category: body.category ? String(body.category).slice(0, 60) : undefined,
       nodes,
       style: sanitizeStyle(body.style),
+      collaborators: [],
       visibility: 'private',
       passwordHash: null,
       isPublished: false,

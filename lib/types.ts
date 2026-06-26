@@ -1521,6 +1521,14 @@ export interface MindMapNode {
   collapsed?: boolean
 }
 
+/** Colaborador convidado pelo dono — pode editar o mapa. */
+export interface MindMapCollaborator {
+  userId: string
+  email: string
+  name?: string
+  addedAt: Date
+}
+
 export interface MindMap {
   _id?: string | import('mongodb').ObjectId
   slug: string
@@ -1531,6 +1539,8 @@ export interface MindMap {
   tags: string[]
   category?: string
   nodes: MindMapNode[]
+  /** Colaboradores com permissão de edição (escolhidos pelo dono via e-mail). */
+  collaborators?: MindMapCollaborator[]
   /** Estilo/aparência do mapa. Opcional — usa padrão quando ausente. */
   style?: MindMapStyle
   visibility: MindMapVisibility

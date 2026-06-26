@@ -12,6 +12,7 @@ interface Access {
   canDelete: boolean
   isOwner: boolean
   isAdmin: boolean
+  isCollaborator?: boolean
   locked: boolean
 }
 
@@ -48,6 +49,18 @@ export default function MindMapEditorPage() {
   }, [id])
 
   useEffect(() => { load() }, [load])
+
+  // Editor é tela cheia: trava o scroll do body (evita "rolar até o rodapé").
+  useEffect(() => {
+    const prevBody = document.body.style.overflow
+    const prevHtml = document.documentElement.style.overflow
+    document.body.style.overflow = 'hidden'
+    document.documentElement.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = prevBody
+      document.documentElement.style.overflow = prevHtml
+    }
+  }, [])
 
   const unlock = useCallback(async () => {
     setUnlocking(true); setUnlockError('')
@@ -125,7 +138,7 @@ export default function MindMapEditorPage() {
   return (
     <MindMapEditor
       initialMap={map}
-      access={{ canEdit: access.canEdit, canDelete: access.canDelete, isOwner: access.isOwner, isAdmin: access.isAdmin }}
+      access={{ canEdit: access.canEdit, canDelete: access.canDelete, isOwner: access.isOwner, isAdmin: access.isAdmin, isCollaborator: !!access.isCollaborator }}
       onBack={() => router.push('/mapa-mental')}
     />
   )
