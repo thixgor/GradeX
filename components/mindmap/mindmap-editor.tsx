@@ -1241,6 +1241,13 @@ export function MindMapEditor({
           </div>
         )}
 
+        {/* Logo DomineAqui (marca d'água uniforme do Mapa Mental) */}
+        <img
+          src="/img/logo_darkmode.svg"
+          alt="DomineAqui"
+          className="pointer-events-none absolute bottom-3 right-3 z-[5] h-7 w-auto opacity-25 sm:h-8"
+        />
+
         {/* Hint mobile */}
         {canEdit && !presenting && (
           <div className="pointer-events-none absolute right-3 top-3 z-10 rounded-lg bg-[#10261D]/80 px-2.5 py-1 text-[10px] text-[#C7D5CE] md:hidden">
