@@ -31,6 +31,7 @@ import {
   BadgePercent,
   Star,
   Network,
+  Ticket,
 } from 'lucide-react'
 
 interface User {
@@ -199,6 +200,13 @@ export default function AdminDashboard() {
       icon: HeartPulse,
       href: '/admin/doacoes',
       color: 'from-rose-500 to-pink-500'
+    },
+    {
+      title: 'Rifas & Sorteios',
+      description: 'Criar rifas, vender números via Mercado Pago, gerenciar participantes e realizar sorteios ao vivo.',
+      icon: Ticket,
+      href: '/admin/rifas',
+      color: 'from-amber-500 to-yellow-500'
     },
     {
       title: 'Materiais',

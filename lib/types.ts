@@ -1562,3 +1562,161 @@ export interface MindMapLike {
   userId: string
   createdAt: Date
 }
+
+// ============================================================
+// RIFAS / SORTEIOS
+// ============================================================
+
+export type RaffleStatus =
+  | 'draft'       // rascunho — não aparece publicamente
+  | 'scheduled'   // agendada — aparece com contagem regressiva para início
+  | 'open'        // aberta — permite compra
+  | 'closed'      // encerrada — não permite mais compra
+  | 'drawing'     // sorteando — mostra animação ao vivo
+  | 'finished'    // finalizada — mostra resultado
+  | 'cancelled'   // cancelada — aviso, sem compra
+
+export type RaffleVisibility = 'public' | 'unlisted' | 'private'
+
+export type RaffleNumberStatus = 'available' | 'reserved' | 'sold' | 'drawn'
+
+export type RaffleDrawMethod = 'automatic' | 'manual'
+
+/** Identificadores dos templates visuais disponíveis para a rifa. */
+export type RaffleTemplate =
+  | 'premium-dark'
+  | 'golden'
+  | 'neon'
+  | 'minimal'
+  | 'community'
+  | 'luxury'
+  | 'event'
+
+/** Personalização visual opcional, sobrepõe valores do template. */
+export interface RaffleCustomDesign {
+  primaryColor?: string
+  secondaryColor?: string
+  /** Estilo do card na listagem. */
+  cardStyle?: 'glass' | 'solid' | 'outline'
+  /** Estilo do grid de números. */
+  gridStyle?: 'rounded' | 'square' | 'pill'
+  /** CSS background (cor ou gradiente). */
+  background?: string
+  /** Texto de destaque exibido no topo. */
+  highlightText?: string
+}
+
+export interface RaffleWinnerEmbedded {
+  number: number
+  participantId?: string
+  purchaseId?: string
+  /** Nome do ganhador (parcialmente mascarado para exibição pública). */
+  participantName?: string
+  prizeName?: string
+  drawnAt: Date
+  drawMethod: RaffleDrawMethod
+  notifiedAt?: Date
+}
+
+export interface Raffle {
+  _id?: string | import('mongodb').ObjectId
+  name: string
+  slug: string
+  description?: string
+  pricePerNumber: number
+  totalNumbers: number
+  winnersCount: number
+  coverImageUrl?: string
+  prizeName: string
+  prizeDescription?: string
+  prizeCategory?: string
+  prizeImageUrl?: string
+  template: RaffleTemplate
+  customDesign?: RaffleCustomDesign
+  visibility: RaffleVisibility
+  status: RaffleStatus
+  /** Observações/regras adicionais exibidas ao participante. */
+  rules?: string
+  /** Permite ao admin sortear manualmente mesmo com a rifa aberta. */
+  allowManualDrawWhileOpen?: boolean
+  /** Permite sortear números não vendidos (sorteio "vazio"). */
+  allowDrawUnsoldNumbers?: boolean
+  startsAt?: Date
+  endsAt?: Date
+  createdBy?: string
+  createdByName?: string
+  createdAt: Date
+  updatedAt: Date
+  drawAt?: Date
+  drawnBy?: string
+  winners?: RaffleWinnerEmbedded[]
+  /** Cache do total de números vendidos (atualizado nas transições). */
+  soldCount?: number
+}
+
+export interface RaffleNumber {
+  _id?: string | import('mongodb').ObjectId
+  raffleId: string
+  number: number
+  status: RaffleNumberStatus
+  reservedBySessionId?: string
+  reservedUntil?: Date
+  participantId?: string
+  purchaseId?: string
+  /** id do payment_orders */
+  orderId?: string
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface RaffleParticipant {
+  _id?: string | import('mongodb').ObjectId
+  raffleId: string
+  userId?: string
+  name: string
+  email: string
+  phone: string
+  createdAt: Date
+}
+
+export type RafflePurchaseStatus = 'pending' | 'paid' | 'expired' | 'cancelled' | 'refunded'
+
+export interface RafflePurchase {
+  _id?: string | import('mongodb').ObjectId
+  raffleId: string
+  participantId?: string
+  participantName: string
+  participantEmail: string
+  participantPhone: string
+  userId?: string
+  numbers: number[]
+  amount: number
+  pricePerNumber: number
+  status: RafflePurchaseStatus
+  /** id do payment_orders interno (external_reference no MP). */
+  orderId?: string
+  mercadoPagoPaymentId?: string
+  mercadoPagoPreferenceId?: string
+  checkoutUrl?: string
+  /** sessão anônima que reservou os números. */
+  reservedBySessionId?: string
+  reservedUntil?: Date
+  createdAt: Date
+  updatedAt: Date
+  paidAt?: Date
+}
+
+export interface RaffleWinner {
+  _id?: string | import('mongodb').ObjectId
+  raffleId: string
+  number: number
+  participantId?: string
+  purchaseId?: string
+  participantName?: string
+  participantEmail?: string
+  prizeName: string
+  drawnAt: Date
+  drawMethod: RaffleDrawMethod
+  drawnBy?: string
+  notifiedAt?: Date
+}

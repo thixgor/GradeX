@@ -38,8 +38,11 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   const isOwner = !!(session?.userId && order.userId && session.userId === order.userId)
   const isAdmin = session?.role === 'admin'
   const isAnonymousDonation = order.type === 'donation' && !order.userId
+  // Rifas permitem comprador anônimo (sem login) — o polling só expõe o status
+  // do pagamento (sem dados sensíveis), igual às doações anônimas.
+  const isAnonymousRaffle = order.type === 'raffle' && !order.userId
 
-  if (!isOwner && !isAdmin && !isAnonymousDonation) {
+  if (!isOwner && !isAdmin && !isAnonymousDonation && !isAnonymousRaffle) {
     return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
   }
 

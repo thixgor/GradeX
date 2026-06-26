@@ -9,7 +9,9 @@
 
 import { ObjectId } from 'mongodb'
 import { getDb } from '../mongodb'
-import { sendPlanPurchasedEmail, sendDonationThanksEmail, sendMaterialPurchasedEmail, sendCartPurchasedEmail, sendManualClinicoPurchasedEmail } from '../mail'
+import { sendPlanPurchasedEmail, sendDonationThanksEmail, sendMaterialPurchasedEmail, sendCartPurchasedEmail, sendManualClinicoPurchasedEmail, sendRafflePurchaseEmail } from '../mail'
+import { markNumbersSold, releaseReservation } from '../raffles'
+import type { Raffle, RafflePurchase } from '../types'
 import { getPersonalExamsQuota } from '../tier-limits'
 import type {
   PaymentOrder,
@@ -108,6 +110,9 @@ export async function applyPaymentResult(
   if (TERMINAL_FAILED.includes(newStatus) && !TERMINAL_APPROVED.includes(prevStatus)) {
     await releaseCouponRedemption(db, String(order._id), newStatus)
     await recordOrderCheckoutEvent('payment_failed', updatedOrder)
+    if (order.type === 'raffle') {
+      await releaseRafflePurchase(order, newStatus)
+    }
   }
 
   // Em refund/chargeback de plano/material, revogar (best-effort)
@@ -141,6 +146,9 @@ async function runApprovedEffects(order: PaymentOrder, result: ProviderOrder) {
     case 'product':
       await applyProductPurchase(order, result)
       break
+    case 'raffle':
+      await applyRafflePurchase(order, result)
+      break
   }
 }
 
@@ -173,6 +181,29 @@ async function runRevocationEffects(order: PaymentOrder, newStatus: PaymentStatu
   if (order.type === 'product' && order.metadata?.productType === MANUAL_CLINICO_PRODUCT_TYPE) {
     const db = await getDb()
     await revokeManualClinicoAccessForOrder(db, order)
+  }
+  if (order.type === 'raffle') {
+    const raffleId = order.metadata?.raffleId as string | undefined
+    if (!raffleId) return
+    const db = await getDb()
+    // Libera os números vendidos desta order e marca a compra como reembolsada.
+    await db.collection('raffle_numbers').deleteMany({
+      raffleId,
+      orderId: String(order._id),
+      status: { $in: ['sold', 'reserved'] },
+    })
+    await db.collection<RafflePurchase>('raffle_purchases').updateOne(
+      { orderId: String(order._id) },
+      { $set: { status: 'refunded', updatedAt: new Date() } },
+    )
+    const soldCount = await db.collection('raffle_numbers').countDocuments({
+      raffleId,
+      status: { $in: ['sold', 'drawn'] },
+    })
+    await db.collection<Raffle>('raffles').updateOne(
+      { _id: new ObjectId(raffleId) as any },
+      { $set: { soldCount, updatedAt: new Date() } },
+    )
   }
 }
 
@@ -482,6 +513,99 @@ async function applyProductPurchase(order: PaymentOrder, result?: ProviderOrder)
       paymentMethod: result?.paymentMethod || order.paymentMethod,
     }).catch(err => console.error('[effects] e-mail manual clinico falhou:', err))
   }
+}
+
+// ── Rifa ──
+
+async function applyRafflePurchase(order: PaymentOrder, result?: ProviderOrder) {
+  const raffleId = order.metadata?.raffleId as string | undefined
+  if (!raffleId) return
+  const db = await getDb()
+
+  const purchase = await db.collection<RafflePurchase>('raffle_purchases').findOne({
+    orderId: String(order._id),
+  })
+  if (!purchase) {
+    console.warn('[effects] raffle purchase não encontrada para order', String(order._id))
+    return
+  }
+  if (purchase.status === 'paid') return // idempotente
+
+  const raffle = await db.collection<Raffle>('raffles').findOne({ _id: new ObjectId(raffleId) as any })
+  if (!raffle) return
+
+  // Marca números como vendidos (reserved → sold), atômico por updateMany.
+  await markNumbersSold(db, raffleId, purchase.numbers, {
+    participantId: purchase.participantId,
+    purchaseId: String(purchase._id),
+    orderId: String(order._id),
+  })
+
+  await db.collection<RafflePurchase>('raffle_purchases').updateOne(
+    { _id: purchase._id as any },
+    {
+      $set: {
+        status: 'paid',
+        mercadoPagoPaymentId: result?.providerOrderId || order.providerPaymentId,
+        paidAt: result?.paidAt || new Date(),
+        updatedAt: new Date(),
+      },
+    },
+  )
+
+  // Atualiza cache de vendidos
+  const soldCount = await db.collection('raffle_numbers').countDocuments({
+    raffleId,
+    status: { $in: ['sold', 'drawn'] },
+  })
+  await db.collection<Raffle>('raffles').updateOne(
+    { _id: raffle._id as any },
+    { $set: { soldCount, updatedAt: new Date() } },
+  )
+
+  await audit({
+    action: 'raffle_numbers_sold',
+    targetUserId: order.userId,
+    resourceType: 'raffle',
+    resourceId: raffleId,
+    metadata: { orderId: String(order._id), numbers: purchase.numbers, amount: order.amount },
+  })
+
+  if (purchase.participantEmail) {
+    sendRafflePurchaseEmail({
+      email: purchase.participantEmail,
+      name: purchase.participantName || '',
+      raffleName: raffle.name,
+      raffleSlug: raffle.slug,
+      prizeName: raffle.prizeName,
+      numbers: purchase.numbers,
+      totalNumbers: raffle.totalNumbers,
+      amount: order.amount,
+    }).catch(err => console.error('[effects] e-mail rifa falhou:', err))
+  }
+}
+
+async function releaseRafflePurchase(order: PaymentOrder, newStatus: PaymentStatus) {
+  const raffleId = order.metadata?.raffleId as string | undefined
+  if (!raffleId) return
+  const db = await getDb()
+
+  // Libera as reservas (números voltam a ficar disponíveis).
+  await releaseReservation(db, raffleId, String(order._id))
+
+  const mappedStatus = newStatus === 'cancelled' ? 'cancelled' : newStatus === 'refunded' ? 'refunded' : 'expired'
+  await db.collection<RafflePurchase>('raffle_purchases').updateOne(
+    { orderId: String(order._id), status: { $ne: 'paid' } },
+    { $set: { status: mappedStatus as any, updatedAt: new Date() } },
+  )
+
+  await audit({
+    action: 'raffle_numbers_released',
+    targetUserId: order.userId,
+    resourceType: 'raffle',
+    resourceId: raffleId,
+    metadata: { orderId: String(order._id), reason: newStatus },
+  })
 }
 
 // ── Pagamento recorrente (preapproval) ──

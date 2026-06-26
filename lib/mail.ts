@@ -739,3 +739,147 @@ export async function sendLeadMaterialEmail(
   })
 }
 
+
+// ============================================================
+// RIFAS / SORTEIOS
+// ============================================================
+
+function formatRaffleNumbers(numbers: number[], total: number): string {
+  const width = String(total).length
+  return numbers
+    .slice()
+    .sort((a, b) => a - b)
+    .map(n => String(n).padStart(width, '0'))
+    .join(', ')
+}
+
+/** Confirmação de compra de números da rifa (pagamento aprovado). */
+export async function sendRafflePurchaseEmail(input: {
+  email: string
+  name: string
+  raffleName: string
+  raffleSlug: string
+  prizeName: string
+  numbers: number[]
+  totalNumbers: number
+  amount: number
+}) {
+  const firstName = input.name ? input.name.split(' ')[0] : 'Participante'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
+  const numbersStr = formatRaffleNumbers(input.numbers, input.totalNumbers)
+
+  const content = `
+    <h1 class="h1">Compra confirmada! 🎟️</h1>
+    <p>Olá, ${firstName}!</p>
+    <p>Seu pagamento foi aprovado e seus números na rifa <strong>${input.raffleName}</strong> estão garantidos. Boa sorte!</p>
+
+    <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 18px 20px; margin: 20px 0;">
+      <p style="margin: 0 0 6px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #059669; font-weight: 700;">Seus números</p>
+      <p style="margin: 0 0 10px 0; font-size: 18px; font-weight: 800; color: #047857; word-break: break-word;">${numbersStr}</p>
+      <p style="margin: 0; font-size: 13px; color: #718096;">Prêmio: <strong>${input.prizeName}</strong></p>
+      <p style="margin: 4px 0 0 0; font-size: 13px; color: #718096;">Total pago: <strong>R$ ${input.amount.toFixed(2).replace('.', ',')}</strong></p>
+    </div>
+
+    <p>Acompanhe o andamento e o sorteio ao vivo na página da rifa.</p>
+    <p style="text-align:center;"><a href="${appUrl}/rifas/${input.raffleSlug}" class="button">Acompanhar a rifa</a></p>
+
+    <p>Boa sorte!<br><strong>Equipe DomineAqui</strong></p>
+  `
+
+  const html = getEmailTemplate('Compra confirmada', content)
+
+  await transporter.sendMail({
+    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+    to: input.email,
+    subject: `🎟️ Seus números na rifa "${input.raffleName}" estão garantidos!`,
+    html,
+  })
+}
+
+/** Aviso ao ganhador da rifa. */
+export async function sendRaffleWinnerEmail(input: {
+  email: string
+  name: string
+  raffleName: string
+  raffleSlug: string
+  prizeName: string
+  number: number
+  totalNumbers: number
+}) {
+  const firstName = input.name ? input.name.split(' ')[0] : 'Ganhador(a)'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
+  const numberStr = String(input.number).padStart(String(input.totalNumbers).length, '0')
+
+  const content = `
+    <h1 class="h1">Parabéns, você ganhou! 🎉</h1>
+    <p>Olá, ${firstName}!</p>
+    <p>Temos uma ótima notícia: o número <strong>${numberStr}</strong> foi sorteado na rifa <strong>${input.raffleName}</strong> — e ele é seu!</p>
+
+    <div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 18px 20px; margin: 20px 0; text-align:center;">
+      <p style="margin: 0 0 6px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #b45309; font-weight: 700;">Número vencedor</p>
+      <p style="margin: 0 0 10px 0; font-size: 34px; font-weight: 900; color: #92400e;">${numberStr}</p>
+      <p style="margin: 0; font-size: 15px; color: #78350f;">Prêmio: <strong>${input.prizeName}</strong></p>
+    </div>
+
+    <p>Em breve nossa equipe entrará em contato para combinar a entrega do prêmio. Caso prefira, responda este e-mail ou fale conosco pelo Instagram.</p>
+    <p style="text-align:center;"><a href="${appUrl}/rifas/${input.raffleSlug}" class="button">Ver resultado da rifa</a></p>
+
+    <p>Mais uma vez, parabéns!<br><strong>Equipe DomineAqui</strong></p>
+  `
+
+  const html = getEmailTemplate('Você ganhou!', content)
+
+  await transporter.sendMail({
+    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+    to: input.email,
+    subject: `🎉 Parabéns! Você ganhou a rifa "${input.raffleName}"`,
+    html,
+  })
+}
+
+/** Notifica o administrador sobre o resultado do sorteio. */
+export async function sendRaffleAdminResultEmail(input: {
+  raffleName: string
+  prizeName: string
+  winners: { number: number; name?: string; email?: string }[]
+  totalNumbers: number
+}) {
+  const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || process.env.SMTP_USER
+  if (!adminEmail) return
+
+  const rows = input.winners
+    .map(w => {
+      const numStr = String(w.number).padStart(String(input.totalNumbers).length, '0')
+      return `<tr>
+        <td style="padding:8px 12px;border-bottom:1px solid #edf2f7;font-weight:700;color:#0f3d2e;">${numStr}</td>
+        <td style="padding:8px 12px;border-bottom:1px solid #edf2f7;color:#4a5568;">${w.name || '—'}</td>
+        <td style="padding:8px 12px;border-bottom:1px solid #edf2f7;color:#4a5568;">${w.email || '—'}</td>
+      </tr>`
+    })
+    .join('')
+
+  const content = `
+    <h1 class="h1">Sorteio realizado 🎯</h1>
+    <p>A rifa <strong>${input.raffleName}</strong> (prêmio: ${input.prizeName}) foi sorteada.</p>
+    <table style="width:100%;border-collapse:collapse;margin:18px 0;font-size:14px;">
+      <thead>
+        <tr style="text-align:left;">
+          <th style="padding:8px 12px;border-bottom:2px solid #0f3d2e;color:#0f3d2e;">Número</th>
+          <th style="padding:8px 12px;border-bottom:2px solid #0f3d2e;color:#0f3d2e;">Ganhador</th>
+          <th style="padding:8px 12px;border-bottom:2px solid #0f3d2e;color:#0f3d2e;">E-mail</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <p>Lembre-se de entrar em contato com os ganhadores para a entrega.</p>
+  `
+
+  const html = getEmailTemplate('Sorteio realizado', content)
+
+  await transporter.sendMail({
+    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+    to: adminEmail,
+    subject: `🎯 Sorteio realizado: ${input.raffleName}`,
+    html,
+  })
+}

@@ -69,6 +69,19 @@ if (process.env.NODE_ENV === 'development') {
           { targetType: 1, targetId: 1, userId: 1 },
           { unique: true, partialFilterExpression: { isAdminCreated: false, userId: { $type: 'string' } } },
         ),
+        // ── Rifas / Sorteios ──
+        db.collection('raffles').createIndex({ slug: 1 }, { unique: true }),
+        db.collection('raffles').createIndex({ visibility: 1, status: 1, createdAt: -1 }),
+        db.collection('raffles').createIndex({ status: 1, endsAt: 1 }),
+        db.collection('raffle_numbers').createIndex({ raffleId: 1, number: 1 }, { unique: true }),
+        db.collection('raffle_numbers').createIndex({ raffleId: 1, status: 1 }),
+        db.collection('raffle_numbers').createIndex({ status: 1, reservedUntil: 1 }),
+        db.collection('raffle_numbers').createIndex({ orderId: 1 }),
+        db.collection('raffle_participants').createIndex({ raffleId: 1, email: 1 }),
+        db.collection('raffle_purchases').createIndex({ raffleId: 1, status: 1, createdAt: -1 }),
+        db.collection('raffle_purchases').createIndex({ orderId: 1 }, { sparse: true }),
+        db.collection('raffle_purchases').createIndex({ mercadoPagoPaymentId: 1 }, { unique: true, sparse: true }),
+        db.collection('raffle_winners').createIndex({ raffleId: 1, number: 1 }, { unique: true }),
       ]).catch(err => console.error('Erro ao criar índices iniciais:', err))
       return client
     })
@@ -141,6 +154,19 @@ if (process.env.NODE_ENV === 'development') {
         { targetType: 1, targetId: 1, userId: 1 },
         { unique: true, partialFilterExpression: { isAdminCreated: false, userId: { $type: 'string' } } },
       ),
+      // ── Rifas / Sorteios ──
+      db.collection('raffles').createIndex({ slug: 1 }, { unique: true }),
+      db.collection('raffles').createIndex({ visibility: 1, status: 1, createdAt: -1 }),
+      db.collection('raffles').createIndex({ status: 1, endsAt: 1 }),
+      db.collection('raffle_numbers').createIndex({ raffleId: 1, number: 1 }, { unique: true }),
+      db.collection('raffle_numbers').createIndex({ raffleId: 1, status: 1 }),
+      db.collection('raffle_numbers').createIndex({ status: 1, reservedUntil: 1 }),
+      db.collection('raffle_numbers').createIndex({ orderId: 1 }),
+      db.collection('raffle_participants').createIndex({ raffleId: 1, email: 1 }),
+      db.collection('raffle_purchases').createIndex({ raffleId: 1, status: 1, createdAt: -1 }),
+      db.collection('raffle_purchases').createIndex({ orderId: 1 }, { sparse: true }),
+      db.collection('raffle_purchases').createIndex({ mercadoPagoPaymentId: 1 }, { unique: true, sparse: true }),
+      db.collection('raffle_winners').createIndex({ raffleId: 1, number: 1 }, { unique: true }),
     ]).catch(err => console.error('Erro ao criar índices iniciais:', err))
     return client
   })

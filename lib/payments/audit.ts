@@ -17,6 +17,12 @@ export type AuditAction =
   | 'manual_clinico_unlocked'
   | 'manual_clinico_revoked'
   | 'donation_approved'
+  | 'raffle_created'
+  | 'raffle_updated'
+  | 'raffle_deleted'
+  | 'raffle_numbers_sold'
+  | 'raffle_numbers_released'
+  | 'raffle_drawn'
 
 export interface AuditLogEntry {
   action: AuditAction

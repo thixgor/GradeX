@@ -43,6 +43,10 @@ const publicPrefixes = [
   '/api/study-playlists',
   '/api/stripe/', // stubs 410 — detectar tráfego residual; remover após 2026-08-09
   '/api/pricing-events/', // estado público do lote dinâmico
+  '/rifas',
+  '/rifas/',
+  '/api/raffles', // listagem e checkout públicos (rotas validam visibilidade internamente)
+  '/api/raffles/',
   '/_next/',
   '/img/',
   '/favicon',
