@@ -13,6 +13,31 @@ import type {
 
 export const RAFFLE_RESERVATION_MINUTES = 15
 
+/**
+ * Categorias de prêmio sugeridas no formulário do admin. O admin pode escolher
+ * uma destas ou digitar uma personalizada (opção "Outro").
+ */
+export const RAFFLE_PRIZE_CATEGORIES: string[] = [
+  'Eletrônicos',
+  'Smartphones',
+  'Informática',
+  'Games & Consoles',
+  'Casa & Decoração',
+  'Eletrodomésticos',
+  'Moda & Acessórios',
+  'Beleza & Cosméticos',
+  'Viagens & Experiências',
+  'Veículos',
+  'Dinheiro / Pix',
+  'Vale-compras',
+  'Esportes & Fitness',
+  'Livros & Cursos',
+  'Brinquedos',
+  'Pet',
+  'Alimentos & Bebidas',
+  'Solidário / Beneficente',
+]
+
 export const RAFFLE_TEMPLATES: {
   id: RaffleTemplate
   label: string

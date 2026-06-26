@@ -1,13 +1,17 @@
 'use client'
 
 import { useState } from 'react'
-import { Loader2, Save, Eye } from 'lucide-react'
+import {
+  Loader2, Save, Eye, Info, Gift, CalendarClock,
+  Palette, Hash, X, Sparkles,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { FileUpload } from '@/components/file-upload'
-import { RAFFLE_TEMPLATES, resolveTheme, slugify } from '@/lib/raffle-shared'
+import { RAFFLE_TEMPLATES, RAFFLE_PRIZE_CATEGORIES, resolveTheme, slugify } from '@/lib/raffle-shared'
+import { RafflePreview } from './raffle-preview'
 
 export interface RaffleFormValues {
   name: string
@@ -73,6 +77,7 @@ export function AdminRaffleForm({ initial, submitLabel, onSubmit }: Props) {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [slugTouched, setSlugTouched] = useState(!!initial.slug)
+  const [mobilePreview, setMobilePreview] = useState(false)
 
   const theme = resolveTheme(v.template as any, v.customDesign as any)
 
@@ -101,180 +106,259 @@ export function AdminRaffleForm({ initial, submitLabel, onSubmit }: Props) {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Informações básicas */}
-      <Section title="Informações da rifa">
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div className="sm:col-span-2">
-            <Label>Nome da rifa *</Label>
-            <Input
-              value={v.name}
-              onChange={e => {
-                set('name', e.target.value)
-                if (!slugTouched) set('slug', slugify(e.target.value))
-              }}
-              placeholder="Ex.: Rifa do iPhone 15"
-            />
+    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(360px,400px)]">
+      {/* Coluna do formulário */}
+      <div className="min-w-0 space-y-5">
+        {/* Informações básicas */}
+        <Section icon={<Info className="h-4 w-4" />} title="Informações da rifa" description="Nome, link e descrição que aparecem para o participante.">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="sm:col-span-2">
+              <Label>Nome da rifa *</Label>
+              <Input
+                value={v.name}
+                onChange={e => {
+                  set('name', e.target.value)
+                  if (!slugTouched) set('slug', slugify(e.target.value))
+                }}
+                placeholder="Ex.: Rifa do iPhone 15"
+              />
+            </div>
+            <div>
+              <Label>Slug (URL)</Label>
+              <Input value={v.slug} onChange={e => { setSlugTouched(true); set('slug', slugify(e.target.value)) }} placeholder="rifa-do-iphone-15" />
+              <p className="mt-1 text-[11px] text-muted-foreground truncate">/rifas/{v.slug || 'sua-rifa'}</p>
+            </div>
+            <CategorySelect value={v.prizeCategory} onChange={val => set('prizeCategory', val)} />
+            <div className="sm:col-span-2">
+              <Label>Descrição</Label>
+              <Textarea value={v.description} onChange={e => set('description', e.target.value)} rows={3} placeholder="Descreva a rifa, a causa ou o motivo..." />
+            </div>
           </div>
-          <div>
-            <Label>Slug (URL)</Label>
-            <Input value={v.slug} onChange={e => { setSlugTouched(true); set('slug', slugify(e.target.value)) }} placeholder="rifa-do-iphone-15" />
-          </div>
-          <div>
-            <Label>Categoria do prêmio</Label>
-            <Input value={v.prizeCategory} onChange={e => set('prizeCategory', e.target.value)} placeholder="Eletrônicos, Viagem..." />
-          </div>
-          <div className="sm:col-span-2">
-            <Label>Descrição</Label>
-            <Textarea value={v.description} onChange={e => set('description', e.target.value)} rows={3} placeholder="Descreva a rifa..." />
-          </div>
-        </div>
-      </Section>
+        </Section>
 
-      {/* Configuração de números */}
-      <Section title="Números e valores">
-        <div className="grid sm:grid-cols-3 gap-4">
-          <div>
-            <Label>Valor por número (R$) *</Label>
-            <Input type="number" min={0.5} step={0.5} value={v.pricePerNumber} onChange={e => set('pricePerNumber', Number(e.target.value))} />
+        {/* Configuração de números */}
+        <Section icon={<Hash className="h-4 w-4" />} title="Números e valores" description="Quanto custa cada número, quantos existem e quantos ganhadores.">
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div>
+              <Label>Valor por número (R$) *</Label>
+              <Input type="number" min={0.5} step={0.5} value={v.pricePerNumber} onChange={e => set('pricePerNumber', Number(e.target.value))} />
+            </div>
+            <div>
+              <Label>Total de números *</Label>
+              <Input type="number" min={2} step={1} value={v.totalNumbers} onChange={e => set('totalNumbers', Math.floor(Number(e.target.value)))} />
+            </div>
+            <div>
+              <Label>Qtd. de ganhadores *</Label>
+              <Input type="number" min={1} step={1} value={v.winnersCount} onChange={e => set('winnersCount', Math.floor(Number(e.target.value)))} />
+            </div>
           </div>
-          <div>
-            <Label>Total de números *</Label>
-            <Input type="number" min={2} step={1} value={v.totalNumbers} onChange={e => set('totalNumbers', Math.floor(Number(e.target.value)))} />
+          <div className="mt-3 rounded-lg bg-muted/60 px-3 py-2 text-xs text-muted-foreground">
+            Arrecadação máxima estimada: <span className="font-semibold text-foreground">{`R$ ${(v.pricePerNumber * v.totalNumbers || 0).toFixed(2).replace('.', ',')}`}</span> se todos os números forem vendidos.
           </div>
-          <div>
-            <Label>Qtd. de ganhadores *</Label>
-            <Input type="number" min={1} step={1} value={v.winnersCount} onChange={e => set('winnersCount', Math.floor(Number(e.target.value)))} />
-          </div>
-        </div>
-      </Section>
+        </Section>
 
-      {/* Prêmio */}
-      <Section title="Prêmio">
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div>
-            <Label>Nome do prêmio *</Label>
-            <Input value={v.prizeName} onChange={e => set('prizeName', e.target.value)} placeholder="iPhone 15 Pro 256GB" />
+        {/* Prêmio */}
+        <Section icon={<Gift className="h-4 w-4" />} title="Prêmio" description="O que o ganhador leva. Imagens deixam a rifa muito mais atraente.">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="sm:col-span-2">
+              <Label>Nome do prêmio *</Label>
+              <Input value={v.prizeName} onChange={e => set('prizeName', e.target.value)} placeholder="iPhone 15 Pro 256GB" />
+            </div>
+            <div className="sm:col-span-2">
+              <Label>Descrição do prêmio</Label>
+              <Textarea value={v.prizeDescription} onChange={e => set('prizeDescription', e.target.value)} rows={2} placeholder="Cor, modelo, garantia, forma de entrega..." />
+            </div>
+            <FileUpload label="Capa da rifa (opcional)" value={v.coverImageUrl} onChange={url => set('coverImageUrl', url)} supportPaste />
+            <FileUpload label="Imagem do prêmio (opcional)" value={v.prizeImageUrl} onChange={url => set('prizeImageUrl', url)} supportPaste />
           </div>
-          <div className="sm:col-span-2">
-            <Label>Descrição do prêmio</Label>
-            <Textarea value={v.prizeDescription} onChange={e => set('prizeDescription', e.target.value)} rows={2} />
-          </div>
-          <FileUpload label="Capa da rifa (opcional)" value={v.coverImageUrl} onChange={url => set('coverImageUrl', url)} supportPaste />
-          <FileUpload label="Imagem do prêmio (opcional)" value={v.prizeImageUrl} onChange={url => set('prizeImageUrl', url)} supportPaste />
-        </div>
-      </Section>
+        </Section>
 
-      {/* Agendamento e visibilidade */}
-      <Section title="Agendamento, visibilidade e status">
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div>
-            <Label>Início (opcional)</Label>
-            <Input type="datetime-local" value={v.startsAt} onChange={e => set('startsAt', e.target.value)} />
+        {/* Agendamento e visibilidade */}
+        <Section icon={<CalendarClock className="h-4 w-4" />} title="Agendamento, visibilidade e status" description="Quando abre/fecha, quem vê e em que estado a rifa fica.">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <Label>Início (opcional)</Label>
+              <Input type="datetime-local" value={v.startsAt} onChange={e => set('startsAt', e.target.value)} />
+            </div>
+            <div>
+              <Label>Encerramento (opcional)</Label>
+              <Input type="datetime-local" value={v.endsAt} onChange={e => set('endsAt', e.target.value)} />
+            </div>
+            <div>
+              <Label>Visibilidade</Label>
+              <Select value={v.visibility} onChange={val => set('visibility', val)} options={[
+                { value: 'public', label: 'Pública (aparece na listagem)' },
+                { value: 'unlisted', label: 'Não listada (apenas por link)' },
+                { value: 'private', label: 'Privada (somente admin)' },
+              ]} />
+            </div>
+            <div>
+              <Label>Status</Label>
+              <Select value={v.status} onChange={val => set('status', val)} options={[
+                { value: 'draft', label: 'Rascunho' },
+                { value: 'scheduled', label: 'Agendada' },
+                { value: 'open', label: 'Aberta' },
+                { value: 'closed', label: 'Encerrada' },
+                { value: 'drawing', label: 'Sorteando' },
+                { value: 'finished', label: 'Finalizada' },
+                { value: 'cancelled', label: 'Cancelada' },
+              ]} />
+            </div>
           </div>
-          <div>
-            <Label>Encerramento (opcional)</Label>
-            <Input type="datetime-local" value={v.endsAt} onChange={e => set('endsAt', e.target.value)} />
+          <div className="mt-4 flex flex-col gap-2">
+            <Checkbox checked={v.allowManualDrawWhileOpen} onChange={c => set('allowManualDrawWhileOpen', c)} label="Permitir sorteio manual com a rifa ainda aberta" />
+            <Checkbox checked={v.allowDrawUnsoldNumbers} onChange={c => set('allowDrawUnsoldNumbers', c)} label="Permitir sortear números não vendidos" />
           </div>
-          <div>
-            <Label>Visibilidade</Label>
-            <Select value={v.visibility} onChange={val => set('visibility', val)} options={[
-              { value: 'public', label: 'Pública (aparece na listagem)' },
-              { value: 'unlisted', label: 'Não listada (apenas por link)' },
-              { value: 'private', label: 'Privada (somente admin)' },
-            ]} />
+          <div className="mt-4">
+            <Label>Regras / observações</Label>
+            <Textarea value={v.rules} onChange={e => set('rules', e.target.value)} rows={3} placeholder="Regras adicionais exibidas ao participante..." />
           </div>
-          <div>
-            <Label>Status</Label>
-            <Select value={v.status} onChange={val => set('status', val)} options={[
-              { value: 'draft', label: 'Rascunho' },
-              { value: 'scheduled', label: 'Agendada' },
-              { value: 'open', label: 'Aberta' },
-              { value: 'closed', label: 'Encerrada' },
-              { value: 'drawing', label: 'Sorteando' },
-              { value: 'finished', label: 'Finalizada' },
-              { value: 'cancelled', label: 'Cancelada' },
-            ]} />
-          </div>
-        </div>
-        <div className="flex flex-col gap-2 mt-4">
-          <Checkbox checked={v.allowManualDrawWhileOpen} onChange={c => set('allowManualDrawWhileOpen', c)} label="Permitir sorteio manual com a rifa ainda aberta" />
-          <Checkbox checked={v.allowDrawUnsoldNumbers} onChange={c => set('allowDrawUnsoldNumbers', c)} label="Permitir sortear números não vendidos" />
-        </div>
-        <div className="mt-4">
-          <Label>Regras / observações</Label>
-          <Textarea value={v.rules} onChange={e => set('rules', e.target.value)} rows={3} placeholder="Regras adicionais exibidas ao participante..." />
-        </div>
-      </Section>
+        </Section>
 
-      {/* Template e personalização */}
-      <Section title="Design e template">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {RAFFLE_TEMPLATES.map(t => (
-            <button
-              key={t.id}
-              type="button"
-              onClick={() => set('template', t.id)}
-              className="rounded-xl p-1 transition"
-              style={{ border: v.template === t.id ? `2px solid ${t.primaryColor}` : '2px solid transparent', boxShadow: v.template === t.id ? `0 0 16px ${t.primaryColor}55` : 'none' }}
-            >
-              <div className="h-16 rounded-lg mb-1.5 flex items-center justify-center" style={{ background: t.background }}>
-                <span className="w-6 h-6 rounded-full" style={{ background: t.primaryColor }} />
-              </div>
-              <div className="text-xs font-semibold text-center">{t.label}</div>
-            </button>
-          ))}
+        {/* Template e personalização */}
+        <Section icon={<Palette className="h-4 w-4" />} title="Design e template" description="Escolha um tema pronto e ajuste cores e estilos do grid.">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {RAFFLE_TEMPLATES.map(t => (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => set('template', t.id)}
+                className="group rounded-xl p-1 text-left transition"
+                style={{ border: v.template === t.id ? `2px solid ${t.primaryColor}` : '2px solid transparent', boxShadow: v.template === t.id ? `0 0 16px ${t.primaryColor}55` : 'none' }}
+              >
+                <div className="mb-1.5 flex h-16 items-center justify-center rounded-lg" style={{ background: t.background }}>
+                  <span className="h-6 w-6 rounded-full" style={{ background: t.primaryColor }} />
+                </div>
+                <div className="text-center text-xs font-semibold">{t.label}</div>
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-5 grid gap-4 sm:grid-cols-3">
+            <ColorField label="Cor principal" value={v.customDesign.primaryColor || ''} onChange={val => setDesign('primaryColor', val)} placeholder={theme.primaryColor} />
+            <ColorField label="Cor secundária" value={v.customDesign.secondaryColor || ''} onChange={val => setDesign('secondaryColor', val)} placeholder={theme.secondaryColor} />
+            <div>
+              <Label>Texto de destaque</Label>
+              <Input value={v.customDesign.highlightText || ''} onChange={e => setDesign('highlightText', e.target.value)} placeholder="Últimos números!" />
+            </div>
+            <div>
+              <Label>Estilo do card</Label>
+              <Select value={v.customDesign.cardStyle || 'glass'} onChange={val => setDesign('cardStyle', val)} options={[
+                { value: 'glass', label: 'Vidro' }, { value: 'solid', label: 'Sólido' }, { value: 'outline', label: 'Contorno' },
+              ]} />
+            </div>
+            <div>
+              <Label>Estilo do grid</Label>
+              <Select value={v.customDesign.gridStyle || 'rounded'} onChange={val => setDesign('gridStyle', val)} options={[
+                { value: 'rounded', label: 'Arredondado' }, { value: 'square', label: 'Quadrado' }, { value: 'pill', label: 'Pílula' },
+              ]} />
+            </div>
+            <div>
+              <Label>Background custom (CSS)</Label>
+              <Input value={v.customDesign.background || ''} onChange={e => setDesign('background', e.target.value)} placeholder="linear-gradient(...)" />
+            </div>
+          </div>
+        </Section>
+
+        {error && (
+          <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-500">{error}</p>
+        )}
+
+        <div className="sticky bottom-0 flex justify-end gap-3 bg-background/80 py-3 backdrop-blur">
+          <Button type="button" variant="outline" size="lg" className="xl:hidden" onClick={() => setMobilePreview(true)}>
+            <Eye className="mr-2 h-4 w-4" /> Pré-visualizar
+          </Button>
+          <Button onClick={handleSubmit} disabled={saving} size="lg">
+            {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+            {submitLabel}
+          </Button>
         </div>
-
-        <div className="grid sm:grid-cols-3 gap-4 mt-5">
-          <ColorField label="Cor principal" value={v.customDesign.primaryColor || ''} onChange={val => setDesign('primaryColor', val)} placeholder={theme.primaryColor} />
-          <ColorField label="Cor secundária" value={v.customDesign.secondaryColor || ''} onChange={val => setDesign('secondaryColor', val)} placeholder={theme.secondaryColor} />
-          <div>
-            <Label>Texto de destaque</Label>
-            <Input value={v.customDesign.highlightText || ''} onChange={e => setDesign('highlightText', e.target.value)} placeholder="Últimos números!" />
-          </div>
-          <div>
-            <Label>Estilo do card</Label>
-            <Select value={v.customDesign.cardStyle || 'glass'} onChange={val => setDesign('cardStyle', val)} options={[
-              { value: 'glass', label: 'Vidro' }, { value: 'solid', label: 'Sólido' }, { value: 'outline', label: 'Contorno' },
-            ]} />
-          </div>
-          <div>
-            <Label>Estilo do grid</Label>
-            <Select value={v.customDesign.gridStyle || 'rounded'} onChange={val => setDesign('gridStyle', val)} options={[
-              { value: 'rounded', label: 'Arredondado' }, { value: 'square', label: 'Quadrado' }, { value: 'pill', label: 'Pílula' },
-            ]} />
-          </div>
-          <div>
-            <Label>Background custom (CSS)</Label>
-            <Input value={v.customDesign.background || ''} onChange={e => setDesign('background', e.target.value)} placeholder="linear-gradient(...)" />
-          </div>
-        </div>
-
-        {/* Preview */}
-        <div className="mt-5 rounded-xl p-4 flex items-center gap-2 text-sm" style={{ background: theme.background, color: theme.light ? '#111' : '#fff', border: `1px solid ${theme.primaryColor}44` }}>
-          <Eye size={16} style={{ color: theme.primaryColor }} />
-          Pré-visualização do tema — <span className="font-bold" style={{ color: theme.primaryColor }}>{v.name || 'Sua rifa'}</span>
-        </div>
-      </Section>
-
-      {error && <p className="text-sm text-red-500">{error}</p>}
-
-      <div className="flex justify-end gap-3 sticky bottom-0 py-3 bg-background/80 backdrop-blur">
-        <Button onClick={handleSubmit} disabled={saving} size="lg">
-          {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
-          {submitLabel}
-        </Button>
       </div>
+
+      {/* Coluna do preview (desktop) */}
+      <div className="hidden xl:block">
+        <div className="sticky top-4 space-y-3">
+          <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
+            <Sparkles className="h-4 w-4 text-primary" /> Pré-visualização ao vivo
+          </div>
+          <RafflePreview values={v} />
+          <p className="text-[11px] leading-relaxed text-muted-foreground">
+            Grid e progresso são ilustrativos. A página real carrega os números vendidos em tempo real.
+          </p>
+        </div>
+      </div>
+
+      {/* Preview mobile (modal) */}
+      {mobilePreview && (
+        <div className="fixed inset-0 z-50 flex flex-col bg-black/70 p-3 backdrop-blur-sm xl:hidden" onClick={() => setMobilePreview(false)}>
+          <div className="mx-auto flex w-full max-w-md flex-1 flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="mb-2 flex items-center justify-between">
+              <span className="flex items-center gap-2 text-sm font-semibold text-white"><Eye className="h-4 w-4" /> Pré-visualização</span>
+              <button onClick={() => setMobilePreview(false)} className="rounded-full bg-white/10 p-1.5 text-white"><X className="h-4 w-4" /></button>
+            </div>
+            <div className="flex-1 overflow-y-auto rounded-2xl">
+              <RafflePreview values={v} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ icon, title, description, children }: { icon?: React.ReactNode; title: string; description?: string; children: React.ReactNode }) {
   return (
     <div className="rounded-xl border border-border bg-card p-5">
-      <h3 className="text-base font-bold mb-4">{title}</h3>
+      <div className="mb-4 flex items-start gap-3">
+        {icon && <div className="mt-0.5 rounded-lg bg-primary/10 p-2 text-primary">{icon}</div>}
+        <div>
+          <h3 className="text-base font-bold leading-tight">{title}</h3>
+          {description && <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>}
+        </div>
+      </div>
       {children}
+    </div>
+  )
+}
+
+const CATEGORY_OTHER = '__other__'
+
+function CategorySelect({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const isPreset = !value || RAFFLE_PRIZE_CATEGORIES.includes(value)
+  const [custom, setCustom] = useState(!isPreset)
+
+  const selectValue = custom ? CATEGORY_OTHER : value
+
+  return (
+    <div>
+      <Label>Categoria do prêmio</Label>
+      <Select
+        value={selectValue}
+        onChange={val => {
+          if (val === CATEGORY_OTHER) {
+            setCustom(true)
+            onChange('')
+          } else {
+            setCustom(false)
+            onChange(val)
+          }
+        }}
+        options={[
+          { value: '', label: 'Sem categoria' },
+          ...RAFFLE_PRIZE_CATEGORIES.map(c => ({ value: c, label: c })),
+          { value: CATEGORY_OTHER, label: 'Outro (personalizar)…' },
+        ]}
+      />
+      {custom && (
+        <Input
+          autoFocus
+          className="mt-2"
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          placeholder="Digite a categoria personalizada"
+          maxLength={80}
+        />
+      )}
     </div>
   )
 }
