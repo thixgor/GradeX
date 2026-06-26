@@ -11,7 +11,10 @@ import type {
   RaffleCustomDesign,
 } from './types'
 
-export const RAFFLE_RESERVATION_MINUTES = 15
+// Janela de reserva dos números enquanto o pagamento (ex.: Pix) não confirma.
+// Curta de propósito: se o comprador não pagar, os números voltam a ficar
+// disponíveis rapidamente, evitando que alguém "trave" a rifa sem pagar.
+export const RAFFLE_RESERVATION_MINUTES = 2
 
 /**
  * Categorias de prêmio sugeridas no formulário do admin. O admin pode escolher

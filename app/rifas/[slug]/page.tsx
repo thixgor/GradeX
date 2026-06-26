@@ -11,7 +11,7 @@ import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout
 import { NumberGrid } from '@/components/rifas/number-grid'
 import { DrawOverlay } from '@/components/rifas/draw-overlay'
 import { CompactCountdown } from '@/components/rifas/compact-countdown'
-import { resolveTheme, resolveVideo, RAFFLE_STATUS_LABELS, RAFFLE_STATUS_COLORS, formatBRL } from '@/lib/raffle-shared'
+import { resolveTheme, resolveVideo, RAFFLE_STATUS_LABELS, RAFFLE_STATUS_COLORS, formatBRL, RAFFLE_RESERVATION_MINUTES } from '@/lib/raffle-shared'
 import type { RaffleStatus } from '@/lib/types'
 
 interface RaffleDetail {
@@ -287,6 +287,13 @@ export default function RaffleDetailPage() {
                 <div className="text-xs opacity-60" style={{ color: theme.light ? '#333' : '#fff' }}>{selected.length} × {formatBRL(raffle.pricePerNumber)}</div>
                 <div className="text-2xl font-extrabold" style={{ color: theme.primaryColor }}>{formatBRL(amount)}</div>
               </div>
+            </div>
+
+            <div className="mb-4 flex items-start gap-2 rounded-xl px-3 py-2.5 text-xs sm:text-sm" style={{ background: `${theme.primaryColor}12`, border: `1px solid ${theme.primaryColor}33`, color: theme.light ? '#333' : '#fff' }}>
+              <Clock size={15} style={{ color: theme.primaryColor }} className="mt-0.5 shrink-0" />
+              <span>
+                Atenção: ao gerar o pagamento, seus números ficam reservados por apenas <strong>{RAFFLE_RESERVATION_MINUTES} minutos</strong>. Pague o Pix dentro desse prazo, senão eles voltam a ficar disponíveis para outras pessoas.
+              </span>
             </div>
 
             {!showCheckout ? (

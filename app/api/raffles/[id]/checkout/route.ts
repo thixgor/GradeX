@@ -8,7 +8,7 @@ import { getPaymentProvider, deriveIdempotencyKey } from '@/lib/payments'
 import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
 import { DEFAULT_PAYMENT_METHODS } from '@/lib/payment-methods'
-import { findRaffleByIdOrSlug, canPurchase, reserveNumbers, releaseReservation } from '@/lib/raffles'
+import { findRaffleByIdOrSlug, canPurchase, reserveNumbers, releaseReservation, RAFFLE_RESERVATION_MINUTES } from '@/lib/raffles'
 import { sanitizeHtml } from '@/lib/api-security'
 import type { PaymentOrder, RaffleParticipant, RafflePurchase } from '@/lib/types'
 
@@ -165,7 +165,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
   }
 
   // 4) Registro de compra (pendente).
-  const reservedUntil = new Date(now.getTime() + 15 * 60 * 1000)
+  const reservedUntil = new Date(now.getTime() + RAFFLE_RESERVATION_MINUTES * 60 * 1000)
   const purchaseDoc: Omit<RafflePurchase, '_id'> = {
     raffleId: String(raffle._id),
     participantId,

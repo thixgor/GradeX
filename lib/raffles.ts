@@ -179,8 +179,24 @@ export async function releaseReservation(db: Db, raffleId: string, orderId: stri
   })
 }
 
+export interface MarkSoldResult {
+  sold: number[]
+  /** Números que não puderam ser confirmados porque já pertencem a outra compra. */
+  conflicting: number[]
+}
+
 /**
  * Marca os números de uma compra como vendidos (transição reserved → sold).
+ *
+ * Robusto para reservas CURTAS: como a reserva expira em poucos minutos e a
+ * limpeza preguiçosa pode ter DELETADO o doc reservado antes de o pagamento
+ * confirmar (ex.: Pix pago em cima da hora), aqui:
+ *   1. Tenta confirmar o doc que ainda pertence a esta order (reserved → sold);
+ *   2. Se o doc não existe mais (foi liberado), recria como 'sold' (re-claim)
+ *      via insert atômico no índice único;
+ *   3. Se o número já foi tomado por OUTRA compra, não rouba — apenas reporta
+ *      como conflito (caso raríssimo: comprador pagou após expirar e outra
+ *      pessoa pegou o mesmo número nesse meio-tempo).
  * Idempotente.
  */
 export async function markNumbersSold(
@@ -188,22 +204,56 @@ export async function markNumbersSold(
   raffleId: string,
   numbers: number[],
   ctx: { participantId?: string; purchaseId?: string; orderId?: string },
-): Promise<void> {
+): Promise<MarkSoldResult> {
   const col = db.collection<RaffleNumber>('raffle_numbers')
   const now = new Date()
-  await col.updateMany(
-    { raffleId, number: { $in: numbers } },
-    {
-      $set: {
+  const sold: number[] = []
+  const conflicting: number[] = []
+
+  for (const number of numbers) {
+    // 1) Confirma o doc que ainda é desta order (ou já estava vendido por ela).
+    const res = await col.updateOne(
+      { raffleId, number, orderId: ctx.orderId },
+      {
+        $set: {
+          status: 'sold',
+          participantId: ctx.participantId,
+          purchaseId: ctx.purchaseId,
+          orderId: ctx.orderId,
+          reservedUntil: undefined,
+          updatedAt: now,
+        },
+      },
+    )
+    if (res.matchedCount > 0) {
+      sold.push(number)
+      continue
+    }
+
+    // 2) Doc sumiu (reserva expirada e limpa) — tenta re-clamar atomicamente.
+    try {
+      await col.insertOne({
+        raffleId,
+        number,
         status: 'sold',
         participantId: ctx.participantId,
         purchaseId: ctx.purchaseId,
         orderId: ctx.orderId,
-        reservedUntil: undefined,
+        createdAt: now,
         updatedAt: now,
-      },
-    },
-  )
+      } as RaffleNumber)
+      sold.push(number)
+    } catch (err: any) {
+      if (err?.code === 11000) {
+        // 3) Já tomado por outra compra — não sobrescreve.
+        conflicting.push(number)
+      } else {
+        throw err
+      }
+    }
+  }
+
+  return { sold, conflicting }
 }
 
 export interface ManualSellResult {

@@ -534,12 +534,20 @@ async function applyRafflePurchase(order: PaymentOrder, result?: ProviderOrder) 
   const raffle = await db.collection<Raffle>('raffles').findOne({ _id: new ObjectId(raffleId) as any })
   if (!raffle) return
 
-  // Marca números como vendidos (reserved → sold), atômico por updateMany.
-  await markNumbersSold(db, raffleId, purchase.numbers, {
+  // Marca números como vendidos (reserved → sold; re-clama os que expiraram).
+  const markResult = await markNumbersSold(db, raffleId, purchase.numbers, {
     participantId: purchase.participantId,
     purchaseId: String(purchase._id),
     orderId: String(order._id),
   })
+  if (markResult.conflicting.length > 0) {
+    // Caso raro: comprador pagou após a reserva expirar e outra pessoa já havia
+    // pego o(s) mesmo(s) número(s). Registra para tratamento manual/estorno.
+    console.error(
+      `[effects] rifa ${raffleId}: números pagos mas já tomados por outra compra (order ${String(order._id)}):`,
+      markResult.conflicting,
+    )
+  }
 
   await db.collection<RafflePurchase>('raffle_purchases').updateOne(
     { _id: purchase._id as any },
