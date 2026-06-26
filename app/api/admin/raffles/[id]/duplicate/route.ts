@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { isValidObjectId } from '@/lib/api-security'
-import { ensureUniqueSlug } from '@/lib/raffles'
+import { ensureUniqueSlug, decodeHtmlEntities } from '@/lib/raffles'
 import { audit } from '@/lib/payments/audit'
 import type { Raffle } from '@/lib/types'
 
@@ -23,13 +23,15 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
   if (!source) return NextResponse.json({ error: 'Rifa não encontrada' }, { status: 404 })
 
   const now = new Date()
-  const name = `${source.name} (cópia)`
+  const name = `${decodeHtmlEntities(source.name)} (cópia)`
   const slug = await ensureUniqueSlug(db, name)
 
   const { _id, ...rest } = source
   const doc: Omit<Raffle, '_id'> = {
     ...rest,
     name,
+    prizeName: decodeHtmlEntities(source.prizeName),
+    prizeCategory: source.prizeCategory ? decodeHtmlEntities(source.prizeCategory) : undefined,
     slug,
     status: 'draft',
     visibility: source.visibility,

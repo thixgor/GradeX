@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
-import { ensureUniqueSlug, getEffectiveStatus, RAFFLE_TEMPLATES } from '@/lib/raffles'
-import { sanitizeHtml } from '@/lib/api-security'
+import { ensureUniqueSlug, getEffectiveStatus, RAFFLE_TEMPLATES, sanitizeRaffleText, decodeHtmlEntities } from '@/lib/raffles'
 import type { Raffle } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -75,10 +74,10 @@ export async function GET(request: NextRequest) {
 
   const data = raffles.map(r => ({
     id: String(r._id),
-    name: r.name,
+    name: decodeHtmlEntities(r.name),
     slug: r.slug,
-    prizeName: r.prizeName,
-    prizeCategory: r.prizeCategory || '',
+    prizeName: decodeHtmlEntities(r.prizeName),
+    prizeCategory: decodeHtmlEntities(r.prizeCategory || ''),
     coverImageUrl: r.coverImageUrl || '',
     pricePerNumber: r.pricePerNumber,
     totalNumbers: r.totalNumbers,
@@ -125,20 +124,20 @@ export async function POST(request: NextRequest) {
 
   const now = new Date()
   const doc: Omit<Raffle, '_id'> = {
-    name: sanitizeHtml(d.name),
+    name: sanitizeRaffleText(d.name, 140),
     slug,
     description: d.description,
     pricePerNumber: d.pricePerNumber,
     totalNumbers: d.totalNumbers,
     winnersCount: d.winnersCount,
     coverImageUrl: d.coverImageUrl,
-    prizeName: sanitizeHtml(d.prizeName),
+    prizeName: sanitizeRaffleText(d.prizeName, 200),
     prizeDescription: d.prizeDescription,
-    prizeCategory: d.prizeCategory ? sanitizeHtml(d.prizeCategory) : undefined,
+    prizeCategory: d.prizeCategory ? sanitizeRaffleText(d.prizeCategory, 80) : undefined,
     prizeImageUrl: d.prizeImageUrl,
     videos: (d.videos || [])
       .filter(vd => vd.url && vd.url.trim())
-      .map(vd => ({ url: vd.url.trim(), caption: vd.caption ? sanitizeHtml(vd.caption) : undefined })),
+      .map(vd => ({ url: vd.url.trim(), caption: vd.caption ? sanitizeRaffleText(vd.caption, 160) : undefined })),
     template: d.template as any,
     customDesign: d.customDesign,
     visibility: d.visibility,

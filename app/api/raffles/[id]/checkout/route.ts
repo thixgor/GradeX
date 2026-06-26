@@ -8,8 +8,7 @@ import { getPaymentProvider, deriveIdempotencyKey } from '@/lib/payments'
 import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
 import { DEFAULT_PAYMENT_METHODS } from '@/lib/payment-methods'
-import { findRaffleByIdOrSlug, canPurchase, reserveNumbers, releaseReservation, RAFFLE_RESERVATION_MINUTES } from '@/lib/raffles'
-import { sanitizeHtml } from '@/lib/api-security'
+import { findRaffleByIdOrSlug, canPurchase, reserveNumbers, releaseReservation, RAFFLE_RESERVATION_MINUTES, sanitizeRaffleText } from '@/lib/raffles'
 import type { PaymentOrder, RaffleParticipant, RafflePurchase } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -97,9 +96,9 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
   }
 
   const now = new Date()
-  const name = sanitizeHtml(data.name).slice(0, 120)
+  const name = sanitizeRaffleText(data.name, 120)
   const email = data.email.toLowerCase().trim()
-  const phone = sanitizeHtml(data.phone).slice(0, 30)
+  const phone = sanitizeRaffleText(data.phone, 30)
 
   // 1) Participante
   const participantDoc: Omit<RaffleParticipant, '_id'> = {

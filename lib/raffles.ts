@@ -22,13 +22,26 @@ import type {
   RaffleDrawMethod,
 } from './types'
 import { sendRaffleWinnerEmail, sendRaffleAdminResultEmail } from './mail'
+import { stripHtml } from './api-security'
 import {
   RAFFLE_RESERVATION_MINUTES,
   getEffectiveStatus,
   maskName,
   pad,
   slugify,
+  decodeHtmlEntities,
 } from './raffle-shared'
+
+/**
+ * Sanitiza texto curto que é exibido como TEXTO (o React escapa na
+ * renderização). Decodifica entidades já existentes (corrige "&amp;amp;") e
+ * remove qualquer tag HTML. NÃO reescapa `&`, evitando o bug de codificação
+ * múltipla a cada save.
+ */
+export function sanitizeRaffleText(input?: string | null, maxLen = 4000): string {
+  if (!input) return ''
+  return stripHtml(decodeHtmlEntities(input)).slice(0, maxLen)
+}
 
 // Re-exporta os helpers puros para que rotas de servidor possam importar tudo
 // de '@/lib/raffles'.
@@ -45,6 +58,7 @@ export {
   maskEmail,
   pad,
   resolveTheme,
+  decodeHtmlEntities,
 } from './raffle-shared'
 
 /** Garante slug único na coleção, adicionando sufixo numérico quando necessário. */
@@ -380,18 +394,18 @@ export function serializeRaffle(r: Raffle, taken?: TakenNumbers) {
   const soldCount = taken ? taken.sold.length : r.soldCount || 0
   return {
     id: String(r._id),
-    name: r.name,
+    name: decodeHtmlEntities(r.name),
     slug: r.slug,
-    description: r.description || '',
+    description: decodeHtmlEntities(r.description || ''),
     pricePerNumber: r.pricePerNumber,
     totalNumbers: r.totalNumbers,
     winnersCount: r.winnersCount,
     coverImageUrl: r.coverImageUrl || '',
-    prizeName: r.prizeName,
-    prizeDescription: r.prizeDescription || '',
-    prizeCategory: r.prizeCategory || '',
+    prizeName: decodeHtmlEntities(r.prizeName),
+    prizeDescription: decodeHtmlEntities(r.prizeDescription || ''),
+    prizeCategory: decodeHtmlEntities(r.prizeCategory || ''),
     prizeImageUrl: r.prizeImageUrl || '',
-    videos: (r.videos || []).filter(v => v && v.url).map(v => ({ url: v.url, caption: v.caption || '' })),
+    videos: (r.videos || []).filter(v => v && v.url).map(v => ({ url: v.url, caption: decodeHtmlEntities(v.caption || '') })),
     template: r.template,
     customDesign: r.customDesign || null,
     visibility: r.visibility,
@@ -405,8 +419,8 @@ export function serializeRaffle(r: Raffle, taken?: TakenNumbers) {
     availableCount: Math.max(0, r.totalNumbers - soldCount),
     winners: (r.winners || []).map(w => ({
       number: w.number,
-      participantName: w.participantName || 'Participante',
-      prizeName: w.prizeName || r.prizeName,
+      participantName: decodeHtmlEntities(w.participantName || '') || 'Participante',
+      prizeName: decodeHtmlEntities(w.prizeName || '') || decodeHtmlEntities(r.prizeName),
       drawnAt: w.drawnAt,
       drawMethod: w.drawMethod,
     })),

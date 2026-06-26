@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { checkRateLimit } from '@/lib/rate-limit'
-import { serializeRaffle, getEffectiveStatus } from '@/lib/raffles'
+import { serializeRaffle, getEffectiveStatus, decodeHtmlEntities } from '@/lib/raffles'
 import type { Raffle } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
 
   // Categorias distintas para filtros
   const categories = Array.from(
-    new Set(raffles.map(r => r.prizeCategory).filter(Boolean) as string[]),
+    new Set(raffles.map(r => decodeHtmlEntities(r.prizeCategory || '')).filter(Boolean)),
   )
 
   return NextResponse.json({ raffles: data, categories })

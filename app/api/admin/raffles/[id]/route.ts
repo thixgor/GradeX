@@ -3,8 +3,8 @@ import { ObjectId } from 'mongodb'
 import { z } from 'zod'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
-import { isValidObjectId, sanitizeHtml } from '@/lib/api-security'
-import { ensureUniqueSlug, getEffectiveStatus, getTakenNumbers, RAFFLE_TEMPLATES } from '@/lib/raffles'
+import { isValidObjectId } from '@/lib/api-security'
+import { ensureUniqueSlug, getEffectiveStatus, getTakenNumbers, RAFFLE_TEMPLATES, sanitizeRaffleText, decodeHtmlEntities } from '@/lib/raffles'
 import { audit } from '@/lib/payments/audit'
 import type { Raffle } from '@/lib/types'
 
@@ -57,6 +57,12 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   return NextResponse.json({
     raffle: {
       ...raffle,
+      name: decodeHtmlEntities(raffle.name),
+      prizeName: decodeHtmlEntities(raffle.prizeName),
+      prizeCategory: decodeHtmlEntities(raffle.prizeCategory || ''),
+      description: decodeHtmlEntities(raffle.description || ''),
+      prizeDescription: decodeHtmlEntities(raffle.prizeDescription || ''),
+      videos: (raffle.videos || []).map(v => ({ url: v.url, caption: decodeHtmlEntities(v.caption || '') })),
       id: String(raffle._id),
       _id: undefined,
       effectiveStatus: getEffectiveStatus(raffle),
@@ -107,13 +113,13 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
   for (const f of stringFields) {
     if (f in d) update[f] = (d as any)[f] ?? undefined
   }
-  if (d.name !== undefined) update.name = sanitizeHtml(d.name)
-  if (d.prizeName !== undefined) update.prizeName = sanitizeHtml(d.prizeName)
-  if (d.prizeCategory !== undefined) update.prizeCategory = d.prizeCategory ? sanitizeHtml(d.prizeCategory) : undefined
+  if (d.name !== undefined) update.name = sanitizeRaffleText(d.name, 140)
+  if (d.prizeName !== undefined) update.prizeName = sanitizeRaffleText(d.prizeName, 200)
+  if (d.prizeCategory !== undefined) update.prizeCategory = d.prizeCategory ? sanitizeRaffleText(d.prizeCategory, 80) : undefined
   if ('videos' in d) {
     update.videos = (d.videos || [])
       .filter(vd => vd.url && vd.url.trim())
-      .map(vd => ({ url: vd.url.trim(), caption: vd.caption ? sanitizeHtml(vd.caption) : undefined }))
+      .map(vd => ({ url: vd.url.trim(), caption: vd.caption ? sanitizeRaffleText(vd.caption, 160) : undefined }))
   }
   if (d.pricePerNumber !== undefined) update.pricePerNumber = d.pricePerNumber
   if (d.totalNumbers !== undefined) update.totalNumbers = d.totalNumbers

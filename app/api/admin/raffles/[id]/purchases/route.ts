@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { isValidObjectId } from '@/lib/api-security'
+import { decodeHtmlEntities } from '@/lib/raffles'
 import type { RafflePurchase } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -31,9 +32,9 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
   const data = purchases.map(p => ({
     id: String(p._id),
-    name: p.participantName,
+    name: decodeHtmlEntities(p.participantName),
     email: p.participantEmail,
-    phone: p.participantPhone,
+    phone: decodeHtmlEntities(p.participantPhone),
     numbers: p.numbers,
     amount: p.amount,
     status: p.status,

@@ -14,7 +14,33 @@ import type {
 // Janela de reserva dos números enquanto o pagamento (ex.: Pix) não confirma.
 // Curta de propósito: se o comprador não pagar, os números voltam a ficar
 // disponíveis rapidamente, evitando que alguém "trave" a rifa sem pagar.
-export const RAFFLE_RESERVATION_MINUTES = 2
+export const RAFFLE_RESERVATION_MINUTES = 5
+
+/**
+ * Decodifica entidades HTML, inclusive casos de codificação múltipla
+ * (ex.: "&amp;amp;amp;" → "&"). Usado para corrigir textos que foram
+ * escapados repetidamente em saves anteriores e para normalizar antes de
+ * exibir (o React já escapa o texto na renderização).
+ */
+export function decodeHtmlEntities(input?: string | null): string {
+  if (!input) return ''
+  let prev = String(input)
+  for (let i = 0; i < 8; i++) {
+    const next = prev
+      .replace(/&amp;/gi, '&')
+      .replace(/&lt;/gi, '<')
+      .replace(/&gt;/gi, '>')
+      .replace(/&quot;/gi, '"')
+      .replace(/&#x27;/gi, "'")
+      .replace(/&#39;/gi, "'")
+      .replace(/&#x2F;/gi, '/')
+      .replace(/&#x60;/gi, '`')
+      .replace(/&#x3D;/gi, '=')
+    if (next === prev) break
+    prev = next
+  }
+  return prev
+}
 
 /**
  * Categorias de prêmio sugeridas no formulário do admin. O admin pode escolher

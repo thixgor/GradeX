@@ -3,8 +3,8 @@ import { ObjectId } from 'mongodb'
 import { z } from 'zod'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
-import { isValidObjectId, sanitizeHtml } from '@/lib/api-security'
-import { manualSellNumbers } from '@/lib/raffles'
+import { isValidObjectId } from '@/lib/api-security'
+import { manualSellNumbers, sanitizeRaffleText } from '@/lib/raffles'
 import { audit } from '@/lib/payments/audit'
 import type { Raffle } from '@/lib/types'
 
@@ -45,9 +45,9 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
   if (!raffle) return NextResponse.json({ error: 'Rifa não encontrada' }, { status: 404 })
 
   const result = await manualSellNumbers(db, raffle, {
-    name: sanitizeHtml(d.name.trim()),
+    name: sanitizeRaffleText(d.name.trim(), 140),
     email: d.email.trim().toLowerCase(),
-    phone: sanitizeHtml(d.phone.trim()),
+    phone: sanitizeRaffleText(d.phone.trim(), 40),
     numbers: d.numbers,
     soldBy: session.name,
   })

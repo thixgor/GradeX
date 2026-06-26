@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { isValidObjectId } from '@/lib/api-security'
-import type { RaffleParticipant, RafflePurchase } from '@/lib/types'
+import { decodeHtmlEntities } from '@/lib/raffles'
+import type { RafflePurchase } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -41,6 +42,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
   const participants = Array.from(map.values()).map(e => ({
     ...e,
+    name: decodeHtmlEntities(e.name),
+    phone: decodeHtmlEntities(e.phone),
     numbers: e.numbers.sort((a, b) => a - b),
     count: e.numbers.length,
   }))
