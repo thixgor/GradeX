@@ -12,6 +12,7 @@ import {
   sanitizeNodes,
   sanitizeStyle,
 } from '@/lib/mindmap'
+import { canCreateUnlimitedMindMaps, MINDMAP_FREE_LIMIT } from '@/lib/tier-limits'
 import type { MindMap, MindMapNode } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -84,7 +85,27 @@ export async function POST(request: NextRequest) {
     const usersCollection = db.collection('users')
     const maps = db.collection<MindMap>(MINDMAP_COLLECTIONS.maps)
 
-    const user = await usersCollection.findOne({ _id: new ObjectId(session.userId) }, { projection: { name: 1 } })
+    const user = await usersCollection.findOne(
+      { _id: new ObjectId(session.userId) },
+      { projection: { name: 1, accountType: 1 } }
+    )
+
+    // Limite de plano: gratuito/trial podem manter apenas 1 mapa; Premium,
+    // Essential (e admin) criam mapas ilimitados.
+    const isAdmin = session.role === 'admin'
+    if (!canCreateUnlimitedMindMaps(user?.accountType, isAdmin)) {
+      const count = await maps.countDocuments({ ownerId: session.userId })
+      if (count >= MINDMAP_FREE_LIMIT) {
+        return NextResponse.json(
+          {
+            error: `No plano gratuito você pode ter apenas ${MINDMAP_FREE_LIMIT} mapa mental. Assine o Premium ou Essential para criar mapas ilimitados.`,
+            requiresUpgrade: true,
+            limit: MINDMAP_FREE_LIMIT,
+          },
+          { status: 403 }
+        )
+      }
+    }
 
     const slug = await generateRandomSlug(db)
 

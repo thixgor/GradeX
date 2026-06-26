@@ -41,7 +41,8 @@ function useDebounce<T>(value: T, delay: number): T {
 
 function MindMapHome() {
   const router = useRouter()
-  const { isAdmin } = useAppShell()
+  const { isAdmin, accountType } = useAppShell()
+  const canUnlimited = isAdmin || accountType === 'premium' || (accountType as string) === 'essential'
   const [tab, setTab] = useState<Tab>(() => {
     if (typeof window !== 'undefined') {
       const scope = new URLSearchParams(window.location.search).get('scope')
@@ -131,6 +132,12 @@ function MindMapHome() {
       {/* Hero */}
       <div className="relative mb-6 overflow-hidden rounded-3xl border border-emerald-500/20 bg-gradient-to-br from-emerald-950 via-emerald-900/40 to-emerald-950 p-6 sm:p-8">
         <div className="pointer-events-none absolute -right-12 -top-12 h-44 w-44 rounded-full bg-emerald-500/20 blur-3xl" />
+        {/* Logo DomineAqui (marca d'água da área de Mapas Mentais) */}
+        <img
+          src="/img/logo_darkmode.svg"
+          alt="DomineAqui"
+          className="pointer-events-none absolute bottom-3 right-4 h-12 w-auto opacity-20 sm:h-16"
+        />
         <div className="relative flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-bold text-emerald-300">
@@ -179,6 +186,22 @@ function MindMapHome() {
         <div className="mb-4 flex items-start gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-700 dark:text-amber-300">
           <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" />
           <span>Modo administrador: você vê e gerencia <strong>todos</strong> os mapas, inclusive privados e protegidos por senha. Ao abrir um mapa com senha, o acesso é liberado automaticamente.</span>
+        </div>
+      )}
+
+      {/* Aviso de limite do plano gratuito */}
+      {tab === 'mine' && !canUnlimited && (
+        <div className="mb-5 flex flex-col gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-2.5">
+            <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-emerald-500" />
+            <div className="text-sm">
+              <p className="font-semibold">Crie mapas mentais ilimitados</p>
+              <p className="text-muted-foreground">No plano gratuito você pode ter <strong>1 mapa mental</strong>. Assine o <strong>Premium</strong> ou <strong>Essential</strong> para criar quantos quiser.</p>
+            </div>
+          </div>
+          <Button onClick={() => router.push('/buy')} className="shrink-0 gap-2 bg-emerald-500 text-emerald-950 hover:bg-emerald-400">
+            <Sparkles className="h-4 w-4" /> Assinar agora
+          </Button>
         </div>
       )}
 

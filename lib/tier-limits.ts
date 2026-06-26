@@ -101,6 +101,16 @@ export function getPersonalExamsLifetimeLimit(accountType?: AccountType): number
   return limits.personalExamsTotal
 }
 
+// ─── Mapas Mentais ───────────────────────────────────────────
+// Premium e Essential criam mapas ilimitados. Demais contas (gratuito/trial)
+// podem manter apenas 1 mapa mental.
+export const MINDMAP_FREE_LIMIT = 1
+
+export function canCreateUnlimitedMindMaps(accountType?: string | null, isAdmin?: boolean): boolean {
+  if (isAdmin) return true
+  return accountType === 'premium' || accountType === 'essential'
+}
+
 export function getUpgradeMessage(currentTier: AccountType | undefined): string {
   const currentLimits = getTierLimits(currentTier)
   const premiumLimits = TIER_LIMITS.premium
