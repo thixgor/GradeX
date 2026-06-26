@@ -170,10 +170,12 @@ export function MindMapEditor({
   const [presentStep, setPresentStep] = useState(0)
   const [editingTitle, setEditingTitle] = useState(false)
 
-  // Caneta laser (some sozinha).
+  // Caneta laser estilo GoodNotes: só desenha enquanto segura; o rastro some.
   const [laserOn, setLaserOn] = useState(false)
   const [laserPoints, setLaserPoints] = useState<{ id: number; x: number; y: number }[]>([])
+  const [laserHead, setLaserHead] = useState<{ x: number; y: number } | null>(null)
   const laserSeq = useRef(0)
+  const laserDown = useRef(false)
 
   // Tempo real / colaboração.
   const [collaborators, setCollaborators] = useState<MindMapCollaborator[]>(initialMap.collaborators || [])
@@ -381,8 +383,21 @@ export function MindMapEditor({
     const id = ++laserSeq.current
     const x = clientX - rect.left
     const y = clientY - rect.top
-    setLaserPoints(p => [...p.slice(-40), { id, x, y }])
-    setTimeout(() => setLaserPoints(p => p.filter(pt => pt.id !== id)), 850)
+    setLaserHead({ x, y })
+    setLaserPoints(p => [...p.slice(-60), { id, x, y }])
+    // Cada ponto do rastro some após ~550ms (efeito cometa).
+    setTimeout(() => setLaserPoints(p => p.filter(pt => pt.id !== id)), 550)
+  }, [])
+
+  const laserStart = useCallback((clientX: number, clientY: number) => {
+    laserDown.current = true
+    setLaserPoints([])
+    addLaserPoint(clientX, clientY)
+  }, [addLaserPoint])
+
+  const laserEnd = useCallback(() => {
+    laserDown.current = false
+    setLaserHead(null)
   }, [])
 
   const beginEdit = useCallback((nodeId: string) => {
@@ -677,34 +692,58 @@ export function MindMapEditor({
     return () => clearTimeout(t)
   }, [nodes, style, dirty, canEdit, save])
 
-  // ---- tempo real: busca mudanças de outros colaboradores periodicamente ----
+  // ---- tempo real (leve) ----
+  // Só ativa quando há colaboração de fato: para o dono de um mapa solo não
+  // há ninguém pra sincronizar, então nem faz requisições (economia no Vercel).
+  const liveEnabled = !access.isOwner || collaborators.length > 0
   useEffect(() => {
+    if (!liveEnabled) return
     let cancelled = false
-    const poll = async () => {
-      // Não sincroniza enquanto o usuário mexe ou apresenta (evita sobrescrever
-      // o trabalho local e não interrompe uma apresentação em andamento).
-      if (dirtyRef.current || editingIdRef.current || dragNode.current || presentingRef.current) return
+
+    // Busca o mapa completo só quando o timestamp mudou de verdade.
+    const applyRemote = async () => {
       try {
         const res = await fetch(`/api/mindmaps/${initialMap._id}?poll=1`, { cache: 'no-store' })
         if (!res.ok || cancelled) return
         const data = await res.json()
         const ts = data?.map?.updatedAt ? new Date(data.map.updatedAt).getTime() : 0
-        if (ts > serverUpdatedAt.current && Array.isArray(data.map?.nodes)) {
-          serverUpdatedAt.current = ts
-          // Reaplica só se ainda não houver edição local pendente.
-          if (!dirtyRef.current && !editingIdRef.current && !dragNode.current) {
-            setNodes(data.map.nodes)
-            if (data.map.style) setStyle(resolveStyle(data.map.style))
-            if (Array.isArray(data.map.collaborators)) setCollaborators(data.map.collaborators)
-            setLiveMsg('Atualizado por um colaborador')
-            setTimeout(() => setLiveMsg(''), 2500)
-          }
+        serverUpdatedAt.current = Math.max(serverUpdatedAt.current, ts)
+        const remoteNodes = data?.map?.nodes
+        // Nunca aplica conteúdo vazio (evita "piscar"/zoom estranho).
+        if (!Array.isArray(remoteNodes) || remoteNodes.length === 0) return
+        if (dirtyRef.current || editingIdRef.current || dragNode.current || presentingRef.current) return
+
+        let changed = false
+        if (JSON.stringify(remoteNodes) !== JSON.stringify(nodesRef.current)) {
+          setNodes(remoteNodes); changed = true
+        }
+        if (data.map.style && JSON.stringify(data.map.style) !== JSON.stringify(styleRef.current)) {
+          setStyle(resolveStyle(data.map.style)); changed = true
+        }
+        if (Array.isArray(data.map.collaborators)) setCollaborators(data.map.collaborators)
+        if (changed) {
+          setLiveMsg('Atualizado por um colaborador')
+          setTimeout(() => setLiveMsg(''), 2200)
         }
       } catch { /* silencioso */ }
     }
-    const interval = setInterval(poll, 3000)
+
+    // Checagem barata (só updatedAt). Pausa com aba oculta ou edição em curso.
+    const check = async () => {
+      if (document.hidden) return
+      if (dirtyRef.current || editingIdRef.current || dragNode.current || presentingRef.current) return
+      try {
+        const res = await fetch(`/api/mindmaps/${initialMap._id}/version`, { cache: 'no-store' })
+        if (!res.ok || cancelled) return
+        const data = await res.json()
+        const ts = data?.updatedAt ? new Date(data.updatedAt).getTime() : 0
+        if (ts > serverUpdatedAt.current) await applyRemote()
+      } catch { /* silencioso */ }
+    }
+
+    const interval = setInterval(check, 3000)
     return () => { cancelled = true; clearInterval(interval) }
-  }, [initialMap._id])
+  }, [initialMap._id, liveEnabled])
 
   // ---- salvar título inline ----
   const saveTitle = useCallback(async () => {
@@ -714,11 +753,13 @@ export function MindMapEditor({
     if (t === titleBeforeEdit.current) return
     setMeta(m => ({ ...m, title: t }))
     try {
-      await fetch(`/api/mindmaps/${initialMap._id}`, {
+      const res = await fetch(`/api/mindmaps/${initialMap._id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title: t }),
       })
+      const data = await res.json().catch(() => null)
+      if (data?.map?.updatedAt) serverUpdatedAt.current = new Date(data.map.updatedAt).getTime()
     } catch { /* silencioso — autosave de conteúdo cobre o resto */ }
   }, [meta.title, initialMap._id])
 
@@ -743,6 +784,7 @@ export function MindMapEditor({
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Erro ao salvar')
+      if (data?.map?.updatedAt) serverUpdatedAt.current = new Date(data.map.updatedAt).getTime()
       setMeta(m => ({ ...m, password: '', hasPassword: data.map?.hasPassword ?? m.hasPassword }))
       setShowSettings(false)
     } catch (err: any) {
@@ -1146,24 +1188,50 @@ export function MindMapEditor({
           </>
         )}
 
-        {/* Camada de captura da caneta laser */}
+        {/* Camada de captura da caneta laser — só desenha enquanto segura */}
         {laserOn && (
           <div
             className="absolute inset-0 z-[70]"
-            style={{ cursor: 'crosshair' }}
-            onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); addLaserPoint(e.clientX, e.clientY) }}
-            onPointerMove={(e) => { addLaserPoint(e.clientX, e.clientY) }}
+            style={{ cursor: 'crosshair', touchAction: 'none' }}
+            onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); (e.target as HTMLElement).setPointerCapture?.(e.pointerId); laserStart(e.clientX, e.clientY) }}
+            onPointerMove={(e) => { if (laserDown.current) addLaserPoint(e.clientX, e.clientY) }}
+            onPointerUp={laserEnd}
+            onPointerCancel={laserEnd}
+            onPointerLeave={() => { if (laserDown.current) laserEnd() }}
             onContextMenu={(e) => e.preventDefault()}
           />
         )}
 
-        {/* Pontos da caneta laser (somem sozinhos) */}
-        {laserPoints.length > 0 && (
-          <div className="pointer-events-none absolute inset-0 z-[76]">
-            {laserPoints.map(p => (
-              <span key={p.id} className="laser-dot" style={{ left: p.x, top: p.y }} />
-            ))}
-          </div>
+        {/* Rastro da caneta laser (efeito GoodNotes: rastro neon que some) */}
+        {laserOn && (laserPoints.length > 0 || laserHead) && (
+          <svg className="pointer-events-none absolute inset-0 z-[76] h-full w-full">
+            <defs>
+              <filter id="laserGlow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="4" />
+              </filter>
+            </defs>
+            {laserPoints.length > 1 && (
+              <>
+                <path
+                  d={`M ${laserPoints.map(p => `${p.x} ${p.y}`).join(' L ')}`}
+                  fill="none" stroke="#ff3b30" strokeWidth={11} strokeLinecap="round" strokeLinejoin="round"
+                  opacity={0.5} filter="url(#laserGlow)"
+                />
+                <path
+                  d={`M ${laserPoints.map(p => `${p.x} ${p.y}`).join(' L ')}`}
+                  fill="none" stroke="#ff6b60" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round"
+                  opacity={0.9}
+                />
+              </>
+            )}
+            {laserHead && (
+              <>
+                <circle cx={laserHead.x} cy={laserHead.y} r={10} fill="#ff3b30" opacity={0.6} filter="url(#laserGlow)" />
+                <circle cx={laserHead.x} cy={laserHead.y} r={5} fill="#fff" />
+                <circle cx={laserHead.x} cy={laserHead.y} r={5} fill="none" stroke="#ff3b30" strokeWidth={2} />
+              </>
+            )}
+          </svg>
         )}
 
         {/* Indicador de tempo real */}
@@ -1209,22 +1277,6 @@ export function MindMapEditor({
         />
       )}
 
-      <style jsx global>{`
-        .laser-dot {
-          position: absolute;
-          width: 16px;
-          height: 16px;
-          margin: -8px 0 0 -8px;
-          border-radius: 9999px;
-          background: radial-gradient(circle, rgba(255,80,80,0.95) 0%, rgba(255,0,0,0.7) 40%, rgba(255,0,0,0) 70%);
-          box-shadow: 0 0 10px 4px rgba(255,40,40,0.6);
-          animation: laserFade 0.85s ease-out forwards;
-        }
-        @keyframes laserFade {
-          0% { opacity: 1; transform: scale(1); }
-          100% { opacity: 0; transform: scale(0.4); }
-        }
-      `}</style>
     </div>
   )
 }

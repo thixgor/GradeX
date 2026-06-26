@@ -63,6 +63,7 @@ function isPublicRoute(pathname: string): boolean {
   if (/^\/mapa-mental\/[^/]+$/.test(pathname)) return true
   if (/^\/api\/mindmaps\/[^/]+$/.test(pathname)) return true
   if (/^\/api\/mindmaps\/[^/]+\/unlock$/.test(pathname)) return true
+  if (/^\/api\/mindmaps\/[^/]+\/version$/.test(pathname)) return true
   if (
     pathname === '/api/mindmaps' ||
     pathname === '/api/materiais' ||
