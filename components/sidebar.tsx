@@ -27,6 +27,7 @@ import {
   HeartPulse,
   BookOpen,
   Network,
+  Ticket,
 } from 'lucide-react'
 import type { SidebarSectionKey, SidebarSectionSettings } from '@/lib/sidebar-sections'
 
@@ -326,6 +327,7 @@ export function Sidebar({
     { icon: <Gamepad2 className="h-5 w-5" />, label: 'Games', href: '/games', badge: 'Novo', sectionKey: 'games' },
     { icon: <HeartPulse className="h-5 w-5" />, label: 'Manual Clínico', href: '/manual-clinico', sectionKey: 'manualClinico' },
     { icon: <BookOpen className="h-5 w-5" />, label: 'Materiais', href: '/materiais', badge: 'Novo', sectionKey: 'materiais' },
+    { icon: <Ticket className="h-5 w-5" />, label: 'Rifas & Sorteios', href: '/rifas', badge: 'Novo', sectionKey: 'rifas' },
   ]
 
   const mainNavItems = configuredMainNavItems.filter(item => sectionIsVisible(item.sectionKey))

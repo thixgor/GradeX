@@ -9,6 +9,7 @@ export type SidebarSectionKey =
   | 'games'
   | 'manualClinico'
   | 'materiais'
+  | 'rifas'
 
 export type SidebarSectionSettings = Record<SidebarSectionKey, boolean>
 
@@ -89,6 +90,13 @@ export const SIDEBAR_SECTION_DEFINITIONS: SidebarSectionDefinition[] = [
     label: 'Materiais',
     href: '/materiais',
     description: 'Biblioteca e marketplace de materiais.',
+    defaultEnabled: true,
+  },
+  {
+    key: 'rifas',
+    label: 'Rifas & Sorteios',
+    href: '/rifas',
+    description: 'Rifas, venda de números e sorteios ao vivo.',
     defaultEnabled: true,
   },
 ]
