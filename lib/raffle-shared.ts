@@ -223,3 +223,43 @@ export function pad(n: number, total: number): string {
 export function formatBRL(value: number): string {
   return `R$ ${Number(value || 0).toFixed(2).replace('.', ',')}`
 }
+
+export interface ResolvedVideo {
+  kind: 'youtube' | 'vimeo' | 'file'
+  /** URL para <iframe> (youtube/vimeo) ou arquivo direto (file). */
+  src: string
+}
+
+/**
+ * Resolve uma URL de vídeo para a forma usada na renderização. Suporta
+ * YouTube (vários formatos), Vimeo e arquivos diretos (mp4/webm — ex.: upload
+ * no Vercel Blob). Retorna null se a URL for inválida.
+ */
+export function resolveVideo(url?: string): ResolvedVideo | null {
+  if (!url) return null
+  const u = url.trim()
+  if (!u) return null
+
+  // YouTube: youtu.be/ID, watch?v=ID, embed/ID, shorts/ID
+  const yt = u.match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/)
+  if (yt) {
+    return { kind: 'youtube', src: `https://www.youtube.com/embed/${yt[1]}` }
+  }
+
+  // Vimeo: vimeo.com/ID
+  const vimeo = u.match(/vimeo\.com\/(?:video\/)?(\d+)/)
+  if (vimeo) {
+    return { kind: 'vimeo', src: `https://player.vimeo.com/video/${vimeo[1]}` }
+  }
+
+  // Arquivo direto de vídeo.
+  if (/\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(u) || u.includes('blob.vercel-storage.com')) {
+    return { kind: 'file', src: u }
+  }
+
+  // Fallback: tenta como iframe genérico (ex.: outro player). Só http(s).
+  if (/^https?:\/\//i.test(u)) {
+    return { kind: 'file', src: u }
+  }
+  return null
+}

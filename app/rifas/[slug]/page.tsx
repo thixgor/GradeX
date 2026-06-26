@@ -5,13 +5,13 @@ import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import {
   Ticket, Gift, Trophy, Clock, ArrowLeft, ShieldCheck, AlertCircle,
-  CheckCircle2, Loader2, Tag, User, Mail, Phone, Info,
+  CheckCircle2, Loader2, Tag, User, Mail, Phone, Info, Video as VideoIcon,
 } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
 import { NumberGrid } from '@/components/rifas/number-grid'
 import { DrawOverlay } from '@/components/rifas/draw-overlay'
 import { CompactCountdown } from '@/components/rifas/compact-countdown'
-import { resolveTheme, RAFFLE_STATUS_LABELS, RAFFLE_STATUS_COLORS, formatBRL } from '@/lib/raffle-shared'
+import { resolveTheme, resolveVideo, RAFFLE_STATUS_LABELS, RAFFLE_STATUS_COLORS, formatBRL } from '@/lib/raffle-shared'
 import type { RaffleStatus } from '@/lib/types'
 
 interface RaffleDetail {
@@ -27,6 +27,7 @@ interface RaffleDetail {
   prizeDescription: string
   prizeCategory: string
   prizeImageUrl: string
+  videos: { url: string; caption: string }[]
   template: any
   customDesign: any
   visibility: string
@@ -224,6 +225,42 @@ export default function RaffleDetailPage() {
             </div>
           </div>
         </div>
+
+        {/* Vídeos de demonstração */}
+        {raffle.videos && raffle.videos.length > 0 && (
+          <div className="rounded-2xl p-5 sm:p-6 mb-6" style={{ background: 'rgba(0,0,0,0.3)', border: `1px solid ${theme.primaryColor}22` }}>
+            <h2 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: theme.primaryColor }}><VideoIcon size={18} /> Vídeos do prêmio</h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {raffle.videos.map((vid, i) => {
+                const resolved = resolveVideo(vid.url)
+                if (!resolved) return null
+                return (
+                  <figure key={i} className="overflow-hidden rounded-xl" style={{ border: `1px solid ${theme.primaryColor}22`, background: 'rgba(0,0,0,0.25)' }}>
+                    <div className="relative w-full" style={{ aspectRatio: '16 / 9' }}>
+                      {resolved.kind === 'file' ? (
+                        <video src={resolved.src} controls playsInline className="absolute inset-0 h-full w-full bg-black" />
+                      ) : (
+                        <iframe
+                          src={resolved.src}
+                          title={vid.caption || `Vídeo ${i + 1}`}
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                          loading="lazy"
+                          className="absolute inset-0 h-full w-full"
+                        />
+                      )}
+                    </div>
+                    {vid.caption && (
+                      <figcaption className="px-3 py-2 text-xs sm:text-sm opacity-80" style={{ color: theme.light ? '#333' : '#fff' }}>
+                        {vid.caption}
+                      </figcaption>
+                    )}
+                  </figure>
+                )
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Seleção de números (apenas se aberta) */}
         {isOpen && (

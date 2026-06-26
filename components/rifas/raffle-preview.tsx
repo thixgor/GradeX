@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import { Ticket, Gift, Trophy, CheckCircle2, Tag, Clock, ShieldCheck } from 'lucide-react'
+import { Ticket, Gift, Trophy, CheckCircle2, Tag, Clock, ShieldCheck, Video } from 'lucide-react'
 import { resolveTheme, getEffectiveStatus, RAFFLE_STATUS_LABELS, RAFFLE_STATUS_COLORS, formatBRL } from '@/lib/raffle-shared'
 import type { RaffleStatus } from '@/lib/types'
 import type { RaffleFormValues } from './admin-raffle-form'
@@ -121,6 +121,23 @@ export function RafflePreview({ values }: { values: RaffleFormValues }) {
             </div>
           </div>
         </div>
+
+        {/* Vídeos */}
+        {values.videos && values.videos.filter(v => v.url).length > 0 && (
+          <div className="mt-3 rounded-2xl p-3" style={{ background: 'rgba(0,0,0,0.3)', border: `1px solid ${theme.primaryColor}22` }}>
+            <h2 className="mb-2 flex items-center gap-1.5 text-xs font-bold" style={{ color: theme.primaryColor }}><Video size={13} /> Vídeos do prêmio</h2>
+            <div className="grid grid-cols-2 gap-2">
+              {values.videos.filter(v => v.url).slice(0, 4).map((vid, i) => (
+                <div key={i} className="overflow-hidden rounded-lg" style={{ border: `1px solid ${theme.primaryColor}22` }}>
+                  <div className="flex items-center justify-center" style={{ aspectRatio: '16/9', background: 'rgba(0,0,0,0.4)' }}>
+                    <Video size={16} style={{ color: theme.primaryColor, opacity: 0.6 }} />
+                  </div>
+                  {vid.caption && <div className="truncate px-1.5 py-1 text-[9px]" style={{ color: subText }}>{vid.caption}</div>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Grid de números (amostra) */}
         <div className="mt-3 rounded-2xl p-3" style={{ background: 'rgba(0,0,0,0.3)', border: `1px solid ${theme.primaryColor}22` }}>

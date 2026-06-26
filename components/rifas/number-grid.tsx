@@ -47,7 +47,7 @@ export function NumberGrid({
     return arr
   }, [start, end])
 
-  const radius = theme.gridStyle === 'square' ? '6px' : theme.gridStyle === 'pill' ? '999px' : '10px'
+  const radius = theme.gridStyle === 'square' ? '4px' : theme.gridStyle === 'pill' ? '999px' : '8px'
 
   function toggle(n: number) {
     if (disabled) return
@@ -117,17 +117,17 @@ export function NumberGrid({
       </div>
 
       {/* Legenda */}
-      <div className="flex flex-wrap items-center gap-4 text-xs" style={{ color: theme.light ? '#444' : 'rgba(255,255,255,0.7)' }}>
-        <Legend color={theme.light ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.08)'} label="Disponível" border={`${theme.primaryColor}33`} />
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] sm:text-xs" style={{ color: theme.light ? '#444' : 'rgba(255,255,255,0.65)' }}>
+        <Legend color={theme.light ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.05)'} label="Disponível" border={theme.light ? 'rgba(0,0,0,0.12)' : 'rgba(255,255,255,0.14)'} />
         <Legend color={theme.primaryColor} label="Selecionado" />
-        <Legend color="#f59e0b55" label="Reservado" border="#f59e0b" />
-        <Legend color="#ef444455" label="Vendido" border="#ef4444" />
+        <Legend color={theme.light ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.16)'} label="Reservado" border={theme.light ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.24)'} />
+        <Legend color={theme.light ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.04)'} label="Vendido" border="transparent" />
       </div>
 
       {/* Grid */}
       <div
-        className="grid gap-1.5"
-        style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(48px, 1fr))' }}
+        className="grid gap-1 sm:gap-1.5"
+        style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(2.5rem, 1fr))' }}
       >
         {cells.map(n => {
           const isSold = soldSet.has(n)
@@ -135,21 +135,25 @@ export function NumberGrid({
           const isSelected = selectedSet.has(n)
           const taken = isSold || isReserved
 
-          let bg = theme.light ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.06)'
-          let color = theme.light ? '#374151' : 'rgba(255,255,255,0.85)'
-          let border = `1px solid ${theme.primaryColor}22`
+          // Paleta sóbria e uniforme: disponíveis discretos, selecionado em
+          // destaque limpo (sem brilho/glow), tomados apenas esmaecidos.
+          let bg = theme.light ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.05)'
+          let color = theme.light ? '#374151' : 'rgba(255,255,255,0.8)'
+          let border = theme.light ? '1px solid rgba(0,0,0,0.1)' : '1px solid rgba(255,255,255,0.1)'
+          let strike = false
           if (isSelected) {
             bg = theme.primaryColor
-            color = '#08130d'
+            color = theme.light ? '#ffffff' : '#08130d'
             border = `1px solid ${theme.primaryColor}`
           } else if (isSold) {
-            bg = 'rgba(239,68,68,0.18)'
-            color = '#fca5a5'
-            border = '1px solid rgba(239,68,68,0.4)'
+            bg = theme.light ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.035)'
+            color = theme.light ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.28)'
+            border = '1px solid transparent'
+            strike = true
           } else if (isReserved) {
-            bg = 'rgba(245,158,11,0.18)'
-            color = '#fcd34d'
-            border = '1px solid rgba(245,158,11,0.4)'
+            bg = theme.light ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.1)'
+            color = theme.light ? 'rgba(0,0,0,0.45)' : 'rgba(255,255,255,0.55)'
+            border = theme.light ? '1px dashed rgba(0,0,0,0.25)' : '1px dashed rgba(255,255,255,0.3)'
           }
 
           return (
@@ -159,14 +163,15 @@ export function NumberGrid({
               onClick={() => toggle(n)}
               disabled={disabled || taken}
               title={taken ? (isSold ? 'Vendido' : 'Reservado') : `Número ${pad(n, totalNumbers)}`}
-              className="aspect-square flex items-center justify-center text-[11px] sm:text-xs font-bold transition-transform active:scale-95 disabled:cursor-not-allowed"
+              className="flex aspect-square items-center justify-center text-[10px] font-semibold tabular-nums transition-colors duration-100 hover:brightness-110 active:scale-95 disabled:cursor-not-allowed sm:text-[11px]"
               style={{
                 background: bg,
                 color,
                 border,
                 borderRadius: radius,
-                boxShadow: isSelected ? `0 0 12px ${theme.primaryColor}88` : 'none',
-                opacity: taken ? 0.65 : 1,
+                textDecoration: strike ? 'line-through' : 'none',
+                outline: isSelected ? `2px solid ${theme.primaryColor}55` : 'none',
+                outlineOffset: isSelected ? '1px' : '0',
               }}
             >
               {pad(n, totalNumbers)}
@@ -220,7 +225,7 @@ export function NumberGrid({
                 type="button"
                 onClick={() => toggle(n)}
                 className="rounded-md px-2 py-0.5 text-xs font-bold"
-                style={{ background: theme.primaryColor, color: '#08130d' }}
+                style={{ background: theme.primaryColor, color: theme.light ? '#fff' : '#08130d' }}
               >
                 {pad(n, totalNumbers)} ✕
               </button>

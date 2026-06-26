@@ -27,14 +27,22 @@ function isAuthlessRoute(pathname: string | null): boolean {
   return pathname === '/' || pathname.startsWith('/auth')
 }
 
+// Páginas onde o player de música ambiente não deve aparecer (foco total no
+// conteúdo, ex.: páginas públicas de rifa).
+function hideMusicPlayer(pathname: string | null): boolean {
+  if (!pathname) return false
+  return pathname.startsWith('/rifas')
+}
+
 export function AppChrome() {
   const pathname = usePathname()
   const authless = isAuthlessRoute(pathname)
+  const noMusic = hideMusicPlayer(pathname)
 
   return (
     <>
       {!authless && <TrialExpirationChecker />}
-      {!authless && <StudyMusicPlayer />}
+      {!authless && !noMusic && <StudyMusicPlayer />}
       <PlatformAds />
     </>
   )

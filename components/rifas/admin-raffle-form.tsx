@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import {
   Loader2, Save, Eye, Info, Gift, CalendarClock,
-  Palette, Hash, X, Sparkles,
+  Palette, Hash, X, Sparkles, Video, Plus, Trash2,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -25,6 +25,7 @@ export interface RaffleFormValues {
   prizeDescription: string
   prizeCategory: string
   prizeImageUrl: string
+  videos: { url: string; caption: string }[]
   template: string
   customDesign: {
     primaryColor?: string
@@ -55,6 +56,7 @@ export const emptyRaffleForm: RaffleFormValues = {
   prizeDescription: '',
   prizeCategory: '',
   prizeImageUrl: '',
+  videos: [],
   template: 'premium-dark',
   customDesign: {},
   visibility: 'public',
@@ -171,6 +173,14 @@ export function AdminRaffleForm({ initial, submitLabel, onSubmit }: Props) {
             <FileUpload label="Capa da rifa (opcional)" value={v.coverImageUrl} onChange={url => set('coverImageUrl', url)} supportPaste />
             <FileUpload label="Imagem do prêmio (opcional)" value={v.prizeImageUrl} onChange={url => set('prizeImageUrl', url)} supportPaste />
           </div>
+          <p className="mt-3 text-[11px] text-muted-foreground">
+            Tamanho ideal — Capa: <span className="font-medium text-foreground">1280×720px (16:9)</span>. Prêmio: <span className="font-medium text-foreground">800×800px (1:1)</span>. Use JPG/WebP até ~2MB.
+          </p>
+        </Section>
+
+        {/* Vídeos de demonstração */}
+        <Section icon={<Video className="h-4 w-4" />} title="Vídeos de demonstração" description="Mostre o prêmio em ação. Cole links do YouTube/Vimeo ou envie um arquivo. Cada vídeo pode ter uma legenda.">
+          <VideosEditor videos={v.videos} onChange={vids => set('videos', vids)} />
         </Section>
 
         {/* Agendamento e visibilidade */}
@@ -359,6 +369,60 @@ function CategorySelect({ value, onChange }: { value: string; onChange: (v: stri
           maxLength={80}
         />
       )}
+    </div>
+  )
+}
+
+function VideosEditor({ videos, onChange }: { videos: { url: string; caption: string }[]; onChange: (v: { url: string; caption: string }[]) => void }) {
+  function update(i: number, patch: Partial<{ url: string; caption: string }>) {
+    onChange(videos.map((vid, idx) => (idx === i ? { ...vid, ...patch } : vid)))
+  }
+  function remove(i: number) {
+    onChange(videos.filter((_, idx) => idx !== i))
+  }
+  function add() {
+    if (videos.length >= 8) return
+    onChange([...videos, { url: '', caption: '' }])
+  }
+
+  return (
+    <div className="space-y-3">
+      {videos.length === 0 && (
+        <p className="rounded-lg border border-dashed border-border px-3 py-4 text-center text-xs text-muted-foreground">
+          Nenhum vídeo adicionado. Clique em “Adicionar vídeo” para incluir uma demonstração.
+        </p>
+      )}
+      {videos.map((vid, i) => (
+        <div key={i} className="rounded-xl border border-border bg-muted/40 p-3">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold text-muted-foreground">Vídeo {i + 1}</span>
+            <button type="button" onClick={() => remove(i)} className="inline-flex items-center gap-1 text-xs text-red-500 hover:text-red-600">
+              <Trash2 className="h-3.5 w-3.5" /> Remover
+            </button>
+          </div>
+          <div className="space-y-2">
+            <Input
+              value={vid.url}
+              onChange={e => update(i, { url: e.target.value })}
+              placeholder="Link do YouTube, Vimeo ou .mp4 direto"
+            />
+            <Input
+              value={vid.caption}
+              onChange={e => update(i, { caption: e.target.value })}
+              placeholder="Legenda (opcional) — ex.: Unboxing do prêmio"
+              maxLength={160}
+            />
+          </div>
+        </div>
+      ))}
+      {videos.length < 8 && (
+        <Button type="button" variant="outline" size="sm" onClick={add}>
+          <Plus className="mr-1.5 h-4 w-4" /> Adicionar vídeo
+        </Button>
+      )}
+      <p className="text-[11px] text-muted-foreground">
+        Recomendado: links do <span className="font-medium text-foreground">YouTube</span> ou <span className="font-medium text-foreground">Vimeo</span> (mais leve e rápido). Também aceita URL direta de arquivo <span className="font-medium text-foreground">.mp4</span>.
+      </p>
     </div>
   )
 }

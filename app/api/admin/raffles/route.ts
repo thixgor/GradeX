@@ -20,6 +20,11 @@ const CustomDesignSchema = z.object({
   highlightText: z.string().max(120).optional(),
 }).optional()
 
+const VideoSchema = z.object({
+  url: z.string().max(1000),
+  caption: z.string().max(160).optional(),
+})
+
 const RaffleInputSchema = z.object({
   name: z.string().min(2).max(140),
   slug: z.string().max(80).optional(),
@@ -32,6 +37,7 @@ const RaffleInputSchema = z.object({
   prizeDescription: z.string().max(4000).optional(),
   prizeCategory: z.string().max(80).optional(),
   prizeImageUrl: z.string().max(1000).optional(),
+  videos: z.array(VideoSchema).max(8).optional(),
   template: z.enum(TEMPLATE_IDS).default('premium-dark'),
   customDesign: CustomDesignSchema,
   visibility: z.enum(['public', 'unlisted', 'private']).default('public'),
@@ -130,6 +136,9 @@ export async function POST(request: NextRequest) {
     prizeDescription: d.prizeDescription,
     prizeCategory: d.prizeCategory ? sanitizeHtml(d.prizeCategory) : undefined,
     prizeImageUrl: d.prizeImageUrl,
+    videos: (d.videos || [])
+      .filter(vd => vd.url && vd.url.trim())
+      .map(vd => ({ url: vd.url.trim(), caption: vd.caption ? sanitizeHtml(vd.caption) : undefined })),
     template: d.template as any,
     customDesign: d.customDesign,
     visibility: d.visibility,

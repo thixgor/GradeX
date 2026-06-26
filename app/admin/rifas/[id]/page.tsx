@@ -5,14 +5,17 @@ import { useParams, useRouter } from 'next/navigation'
 import {
   ArrowLeft, Loader2, Users, Receipt, Trophy, Pencil, Copy, Check,
   ExternalLink, Dices, AlertCircle, Play, Pause, XCircle, RotateCcw,
+  Coins, User, Mail, Phone,
 } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { AdminRaffleForm, emptyRaffleForm, type RaffleFormValues } from '@/components/rifas/admin-raffle-form'
 import { formToPayload, isoToLocalInput } from '@/components/rifas/raffle-form-utils'
-import { RAFFLE_STATUS_LABELS, formatBRL, pad } from '@/lib/raffle-shared'
+import { NumberGrid } from '@/components/rifas/number-grid'
+import { resolveTheme, RAFFLE_STATUS_LABELS, formatBRL, pad } from '@/lib/raffle-shared'
 
-type Tab = 'edit' | 'participants' | 'purchases' | 'draw'
+type Tab = 'edit' | 'participants' | 'purchases' | 'draw' | 'manual'
 
 export default function ManageRafflePage() {
   const params = useParams()
@@ -21,6 +24,8 @@ export default function ManageRafflePage() {
 
   const [raffle, setRaffle] = useState<any>(null)
   const [formValues, setFormValues] = useState<RaffleFormValues | null>(null)
+  const [soldNumbers, setSoldNumbers] = useState<number[]>([])
+  const [reservedNumbers, setReservedNumbers] = useState<number[]>([])
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState<Tab>('edit')
   const [copied, setCopied] = useState('')
@@ -32,6 +37,8 @@ export default function ManageRafflePage() {
       const data = await res.json()
       const r = data.raffle
       setRaffle(r)
+      setSoldNumbers(data.soldNumbers || [])
+      setReservedNumbers(data.reservedNumbers || [])
       setFormValues({
         ...emptyRaffleForm,
         name: r.name || '',
@@ -45,6 +52,7 @@ export default function ManageRafflePage() {
         prizeDescription: r.prizeDescription || '',
         prizeCategory: r.prizeCategory || '',
         prizeImageUrl: r.prizeImageUrl || '',
+        videos: (r.videos || []).map((vd: any) => ({ url: vd.url || '', caption: vd.caption || '' })),
         template: r.template || 'premium-dark',
         customDesign: r.customDesign || {},
         visibility: r.visibility || 'public',
@@ -97,7 +105,7 @@ export default function ManageRafflePage() {
 
   return (
     <AppShell headerTitle={raffle.name} headerSubtitle={`${RAFFLE_STATUS_LABELS[raffle.status as keyof typeof RAFFLE_STATUS_LABELS]} · ${raffle.soldCount || 0}/${raffle.totalNumbers} vendidos`}>
-      <div className="max-w-4xl mx-auto px-4 py-6">
+      <div className={`${tab === 'edit' ? 'max-w-6xl' : 'max-w-4xl'} mx-auto px-4 py-6 transition-[max-width]`}>
         <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
           <Button variant="ghost" onClick={() => router.push('/admin/rifas')}><ArrowLeft className="h-4 w-4 mr-2" /> Rifas</Button>
           <div className="flex items-center gap-2">
@@ -123,12 +131,14 @@ export default function ManageRafflePage() {
         {/* Tabs */}
         <div className="flex gap-1 border-b border-border mb-6 overflow-x-auto">
           <TabBtn active={tab === 'edit'} onClick={() => setTab('edit')} icon={<Pencil className="h-4 w-4" />} label="Editar" />
+          <TabBtn active={tab === 'manual'} onClick={() => setTab('manual')} icon={<Coins className="h-4 w-4" />} label="Venda manual" />
           <TabBtn active={tab === 'draw'} onClick={() => setTab('draw')} icon={<Trophy className="h-4 w-4" />} label="Sorteio" />
           <TabBtn active={tab === 'participants'} onClick={() => setTab('participants')} icon={<Users className="h-4 w-4" />} label="Participantes" />
           <TabBtn active={tab === 'purchases'} onClick={() => setTab('purchases')} icon={<Receipt className="h-4 w-4" />} label="Compras" />
         </div>
 
         {tab === 'edit' && <AdminRaffleForm initial={formValues} submitLabel="Salvar alterações" onSubmit={handleSave} />}
+        {tab === 'manual' && <ManualSalePanel raffle={raffle} soldNumbers={soldNumbers} reservedNumbers={reservedNumbers} onSold={load} />}
         {tab === 'draw' && <DrawPanel raffle={raffle} onDrawn={load} />}
         {tab === 'participants' && <ParticipantsPanel id={id} totalNumbers={raffle.totalNumbers} />}
         {tab === 'purchases' && <PurchasesPanel id={id} totalNumbers={raffle.totalNumbers} />}
@@ -234,6 +244,98 @@ function DrawPanel({ raffle, onDrawn }: { raffle: any; onDrawn: () => void }) {
           Todos os ganhadores já foram sorteados.
         </div>
       )}
+    </div>
+  )
+}
+
+function ManualSalePanel({ raffle, soldNumbers, reservedNumbers, onSold }: { raffle: any; soldNumbers: number[]; reservedNumbers: number[]; onSold: () => void }) {
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
+  const [selected, setSelected] = useState<number[]>([])
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
+
+  const theme = resolveTheme(raffle.template, raffle.customDesign)
+  const amount = Math.round((raffle.pricePerNumber || 0) * selected.length * 100) / 100
+
+  async function handleSubmit() {
+    setError(''); setSuccess('')
+    if (name.trim().length < 2) return setError('Informe o nome do participante.')
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return setError('Informe um e-mail válido.')
+    if (phone.replace(/\D/g, '').length < 8) return setError('Informe um telefone/WhatsApp válido.')
+    if (selected.length === 0) return setError('Selecione ao menos um número.')
+    setSaving(true)
+    try {
+      const res = await fetch(`/api/admin/raffles/${raffle.id}/manual-sale`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name.trim(), email: email.trim(), phone: phone.trim(), numbers: selected }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        const conf = (data.conflicting || []).map((n: number) => pad(n, raffle.totalNumbers)).join(', ')
+        throw new Error(data.error + (conf ? ` Números em conflito: ${conf}` : ''))
+      }
+      const conf = (data.conflicting || []).length
+      setSuccess(`Venda registrada com sucesso!${conf ? ` (${conf} número(s) já estavam tomados e foram ignorados.)` : ''}`)
+      setName(''); setEmail(''); setPhone(''); setSelected([])
+      onSold()
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div className="space-y-5">
+      <div className="rounded-xl border border-border bg-card p-5">
+        <h3 className="mb-1 flex items-center gap-2 font-bold"><Coins className="h-4 w-4 text-emerald-500" /> Venda manual</h3>
+        <p className="mb-4 text-sm text-muted-foreground">
+          Registre uma venda paga fora do Mercado Pago (dinheiro, Pix manual, cortesia). Os números ficam marcados como vendidos imediatamente.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-3">
+          <div className="relative">
+            <User className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input value={name} onChange={e => setName(e.target.value)} placeholder="Nome completo" className="pl-9" />
+          </div>
+          <div className="relative">
+            <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input value={email} onChange={e => setEmail(e.target.value)} placeholder="E-mail" type="email" className="pl-9" />
+          </div>
+          <div className="relative">
+            <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input value={phone} onChange={e => setPhone(e.target.value)} placeholder="Celular / WhatsApp" className="pl-9" />
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-border bg-card p-5">
+        <h4 className="mb-3 text-sm font-semibold">Selecione os números</h4>
+        <NumberGrid
+          totalNumbers={raffle.totalNumbers}
+          soldNumbers={soldNumbers}
+          reservedNumbers={reservedNumbers}
+          selected={selected}
+          onChange={setSelected}
+          theme={theme}
+        />
+      </div>
+
+      {error && <p className="flex items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-500"><AlertCircle className="h-4 w-4" /> {error}</p>}
+      {success && <p className="flex items-center gap-1.5 rounded-lg border border-green-500/30 bg-green-500/10 px-3 py-2 text-sm text-green-600"><Check className="h-4 w-4" /> {success}</p>}
+
+      <div className="sticky bottom-0 flex flex-col gap-3 bg-background/80 py-3 backdrop-blur sm:flex-row sm:items-center sm:justify-between">
+        <div className="text-sm text-muted-foreground">
+          {selected.length} número(s) · <span className="font-bold text-foreground">{formatBRL(amount)}</span>
+        </div>
+        <Button onClick={handleSubmit} disabled={saving} size="lg">
+          {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Coins className="mr-2 h-4 w-4" />}
+          Registrar venda
+        </Button>
+      </div>
     </div>
   )
 }

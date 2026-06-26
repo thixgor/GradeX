@@ -34,6 +34,9 @@ export function formToPayload(v: RaffleFormValues): Record<string, any> {
     prizeDescription: v.prizeDescription.trim() || undefined,
     prizeCategory: v.prizeCategory.trim() || undefined,
     prizeImageUrl: v.prizeImageUrl || undefined,
+    videos: (v.videos || [])
+      .map(vid => ({ url: (vid.url || '').trim(), caption: (vid.caption || '').trim() || undefined }))
+      .filter(vid => vid.url),
     template: v.template,
     customDesign: Object.keys(customDesign).length ? customDesign : undefined,
     visibility: v.visibility,

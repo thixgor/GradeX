@@ -1618,6 +1618,12 @@ export interface RaffleWinnerEmbedded {
   notifiedAt?: Date
 }
 
+/** Vídeo de demonstração do prêmio (YouTube, Vimeo ou arquivo direto). */
+export interface RaffleVideo {
+  url: string
+  caption?: string
+}
+
 export interface Raffle {
   _id?: string | import('mongodb').ObjectId
   name: string
@@ -1631,6 +1637,8 @@ export interface Raffle {
   prizeDescription?: string
   prizeCategory?: string
   prizeImageUrl?: string
+  /** Vídeos de demonstração do prêmio, com legenda. */
+  videos?: RaffleVideo[]
   template: RaffleTemplate
   customDesign?: RaffleCustomDesign
   visibility: RaffleVisibility

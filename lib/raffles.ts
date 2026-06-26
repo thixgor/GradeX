@@ -206,6 +206,115 @@ export async function markNumbersSold(
   )
 }
 
+export interface ManualSellResult {
+  ok: boolean
+  error?: string
+  /** Números que já estavam tomados (não vendidos). */
+  conflicting?: number[]
+  soldCount?: number
+}
+
+/**
+ * Venda manual feita pelo admin: registra participante + compra paga e marca os
+ * números como vendidos atomicamente (índice único { raffleId, number }).
+ * Não passa pelo Mercado Pago — usado para vendas em dinheiro/Pix manual/cortesia.
+ */
+export async function manualSellNumbers(
+  db: Db,
+  raffle: Raffle,
+  input: { name: string; email: string; phone: string; numbers: number[]; soldBy?: string },
+): Promise<ManualSellResult> {
+  const raffleId = String(raffle._id)
+  const now = new Date()
+
+  // Normaliza/valida números dentro do intervalo.
+  const unique = Array.from(new Set(input.numbers.filter(n => Number.isInteger(n) && n >= 1 && n <= raffle.totalNumbers)))
+  if (unique.length === 0) {
+    return { ok: false, error: 'Selecione ao menos um número válido.' }
+  }
+
+  const col = db.collection<RaffleNumber>('raffle_numbers')
+
+  // Limpa reservas expiradas desses números (lazy cleanup) antes de tentar vender.
+  await col.deleteMany({ raffleId, number: { $in: unique }, status: 'reserved', reservedUntil: { $lt: now } })
+
+  // Cria/atualiza o participante.
+  const participantsCol = db.collection<RaffleParticipant>('raffle_participants')
+  const participantRes = await participantsCol.insertOne({
+    raffleId,
+    name: input.name,
+    email: input.email,
+    phone: input.phone,
+    createdAt: now,
+  } as RaffleParticipant)
+  const participantId = String(participantRes.insertedId)
+
+  // Cria a compra já paga.
+  const purchasesCol = db.collection<RafflePurchase>('raffle_purchases')
+  const amount = Math.round(raffle.pricePerNumber * unique.length * 100) / 100
+  const purchaseRes = await purchasesCol.insertOne({
+    raffleId,
+    participantId,
+    participantName: input.name,
+    participantEmail: input.email,
+    participantPhone: input.phone,
+    numbers: unique,
+    amount,
+    pricePerNumber: raffle.pricePerNumber,
+    status: 'paid',
+    createdAt: now,
+    updatedAt: now,
+    paidAt: now,
+  } as any)
+  const purchaseId = String(purchaseRes.insertedId)
+
+  // Insere cada número como 'sold' de forma atômica. Conflito (11000) = já tomado.
+  const sold: number[] = []
+  const conflicting: number[] = []
+  for (const number of unique) {
+    try {
+      await col.insertOne({
+        raffleId,
+        number,
+        status: 'sold',
+        participantId,
+        purchaseId,
+        createdAt: now,
+        updatedAt: now,
+      } as RaffleNumber)
+      sold.push(number)
+    } catch (err: any) {
+      if (err?.code === 11000) conflicting.push(number)
+      else throw err
+    }
+  }
+
+  if (sold.length === 0) {
+    // Tudo já estava tomado — desfaz participante e compra.
+    await purchasesCol.deleteOne({ _id: purchaseRes.insertedId as any })
+    await participantsCol.deleteOne({ _id: participantRes.insertedId as any })
+    return { ok: false, error: 'Todos os números escolhidos já estavam vendidos/reservados.', conflicting }
+  }
+
+  if (conflicting.length > 0) {
+    // Ajusta a compra para refletir apenas os números efetivamente vendidos.
+    const adjustedAmount = Math.round(raffle.pricePerNumber * sold.length * 100) / 100
+    await purchasesCol.updateOne(
+      { _id: purchaseRes.insertedId as any },
+      { $set: { numbers: sold, amount: adjustedAmount, updatedAt: new Date() } },
+    )
+  }
+
+  // Atualiza cache de vendidos.
+  const soldCount = await col.countDocuments({ raffleId, status: { $in: ['sold', 'drawn'] } })
+  await db.collection<Raffle>('raffles').updateOne(
+    { _id: raffle._id as any },
+    { $set: { soldCount, updatedAt: new Date() } },
+  )
+
+  return { ok: true, conflicting: conflicting.length ? conflicting : undefined, soldCount }
+}
+
 /** Sorteio Fisher-Yates seguro o suficiente para esta finalidade. */
 export function pickRandom<T>(arr: T[], count: number): T[] {
   const copy = [...arr]
@@ -232,6 +341,7 @@ export function serializeRaffle(r: Raffle, taken?: TakenNumbers) {
     prizeDescription: r.prizeDescription || '',
     prizeCategory: r.prizeCategory || '',
     prizeImageUrl: r.prizeImageUrl || '',
+    videos: (r.videos || []).filter(v => v && v.url).map(v => ({ url: v.url, caption: v.caption || '' })),
     template: r.template,
     customDesign: r.customDesign || null,
     visibility: r.visibility,

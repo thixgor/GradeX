@@ -25,6 +25,7 @@ const UpdateSchema = z.object({
   prizeDescription: z.string().max(4000).nullable().optional(),
   prizeCategory: z.string().max(80).nullable().optional(),
   prizeImageUrl: z.string().max(1000).nullable().optional(),
+  videos: z.array(z.object({ url: z.string().max(1000), caption: z.string().max(160).optional() })).max(8).nullable().optional(),
   template: z.enum(TEMPLATE_IDS).optional(),
   customDesign: z.record(z.any()).nullable().optional(),
   visibility: z.enum(['public', 'unlisted', 'private']).optional(),
@@ -109,6 +110,11 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
   if (d.name !== undefined) update.name = sanitizeHtml(d.name)
   if (d.prizeName !== undefined) update.prizeName = sanitizeHtml(d.prizeName)
   if (d.prizeCategory !== undefined) update.prizeCategory = d.prizeCategory ? sanitizeHtml(d.prizeCategory) : undefined
+  if ('videos' in d) {
+    update.videos = (d.videos || [])
+      .filter(vd => vd.url && vd.url.trim())
+      .map(vd => ({ url: vd.url.trim(), caption: vd.caption ? sanitizeHtml(vd.caption) : undefined }))
+  }
   if (d.pricePerNumber !== undefined) update.pricePerNumber = d.pricePerNumber
   if (d.totalNumbers !== undefined) update.totalNumbers = d.totalNumbers
   if (d.winnersCount !== undefined) update.winnersCount = d.winnersCount
