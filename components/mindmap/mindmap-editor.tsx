@@ -1,0 +1,887 @@
+'use client'
+
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  Plus, Trash2, Undo2, Redo2, ZoomIn, ZoomOut, Maximize2, Save, Download,
+  Play, Settings2, X, Palette, Crosshair, LayoutGrid, ChevronLeft, Check,
+  Loader2, ShieldCheck, Lock, Globe, EyeOff, Link2, GitBranch,
+} from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+import type { MindMapNode, MindMapVisibility } from '@/lib/types'
+
+export interface EditorMap {
+  _id: string
+  slug?: string
+  title: string
+  description?: string
+  tags?: string[]
+  nodes: MindMapNode[]
+  visibility: MindMapVisibility
+  hasPassword?: boolean
+  isPublished?: boolean
+  likeCount?: number
+  viewCount?: number
+  ownerName?: string
+}
+
+interface EditorAccess {
+  canEdit: boolean
+  canDelete: boolean
+  isOwner: boolean
+  isAdmin: boolean
+}
+
+const NODE_COLORS = [
+  '#2ECC71', '#27AE60', '#3498DB', '#9B59B6', '#E67E22',
+  '#E74C3C', '#F1C40F', '#1ABC9C', '#34495E', '#EC4899',
+]
+
+const uid = () => Math.random().toString(36).slice(2, 9)
+const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v))
+
+// Largura estimada de um nó (para o auto-layout) — o render real é auto.
+function estimateWidth(text: string) {
+  return clamp(60 + (text?.length || 0) * 8, 90, 260)
+}
+
+/** Layout em árvore horizontal (tidy tree). Reposiciona todos os nós. */
+function autoLayout(nodes: MindMapNode[]): MindMapNode[] {
+  const byParent = new Map<string | null, MindMapNode[]>()
+  for (const n of nodes) {
+    const key = n.parentId
+    if (!byParent.has(key)) byParent.set(key, [])
+    byParent.get(key)!.push(n)
+  }
+  const positions = new Map<string, { x: number; y: number }>()
+  const X_GAP = 220
+  const Y_GAP = 70
+  let cursorY = 0
+
+  function place(node: MindMapNode, depth: number): number {
+    const children = byParent.get(node.id) || []
+    if (children.length === 0) {
+      const y = cursorY
+      cursorY += Y_GAP
+      positions.set(node.id, { x: depth * X_GAP, y })
+      return y
+    }
+    const childYs = children.map(c => place(c, depth + 1))
+    const y = (childYs[0] + childYs[childYs.length - 1]) / 2
+    positions.set(node.id, { x: depth * X_GAP, y })
+    return y
+  }
+
+  const roots = byParent.get(null) || []
+  for (const root of roots) {
+    place(root, 0)
+    cursorY += Y_GAP // separa árvores distintas
+  }
+
+  return nodes.map(n => {
+    const p = positions.get(n.id)
+    return p ? { ...n, x: p.x, y: p.y } : n
+  })
+}
+
+export function MindMapEditor({
+  initialMap,
+  access,
+  onBack,
+}: {
+  initialMap: EditorMap
+  access: EditorAccess
+  onBack?: () => void
+}) {
+  const canEdit = access.canEdit
+  const [nodes, setNodes] = useState<MindMapNode[]>(initialMap.nodes.length ? initialMap.nodes : [{ id: 'root', parentId: null, text: initialMap.title, x: 0, y: 0 }])
+  const [selectedId, setSelectedId] = useState<string | null>(nodes[0]?.id || null)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editingText, setEditingText] = useState('')
+
+  // Histórico (undo/redo)
+  const [history, setHistory] = useState<MindMapNode[][]>([])
+  const [future, setFuture] = useState<MindMapNode[][]>([])
+
+  // Transform do canvas
+  const [tx, setTx] = useState(0)
+  const [ty, setTy] = useState(0)
+  const [scale, setScale] = useState(1)
+
+  const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
+  const [dirty, setDirty] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
+  const [presenting, setPresenting] = useState(false)
+  const [meta, setMeta] = useState({
+    title: initialMap.title,
+    description: initialMap.description || '',
+    tags: (initialMap.tags || []).join(', '),
+    visibility: initialMap.visibility as MindMapVisibility,
+    password: '',
+    hasPassword: !!initialMap.hasPassword,
+  })
+
+  const containerRef = useRef<HTMLDivElement>(null)
+  const pointers = useRef<Map<number, { x: number; y: number }>>(new Map())
+  const panStart = useRef<{ x: number; y: number; tx: number; ty: number } | null>(null)
+  const dragNode = useRef<{ id: string; startX: number; startY: number; origX: number; origY: number; moved: boolean } | null>(null)
+  const pinchStart = useRef<{ dist: number; scale: number; cx: number; cy: number } | null>(null)
+  const nodesRef = useRef(nodes)
+  nodesRef.current = nodes
+
+  // ---- mutações com histórico ----
+  const commit = useCallback((updater: (prev: MindMapNode[]) => MindMapNode[]) => {
+    if (!canEdit) return
+    setNodes(prev => {
+      setHistory(h => [...h.slice(-49), prev])
+      setFuture([])
+      setDirty(true)
+      return updater(prev)
+    })
+  }, [canEdit])
+
+  const undo = useCallback(() => {
+    setHistory(h => {
+      if (h.length === 0) return h
+      const prev = h[h.length - 1]
+      setFuture(f => [nodesRef.current, ...f].slice(0, 50))
+      setNodes(prev)
+      setDirty(true)
+      return h.slice(0, -1)
+    })
+  }, [])
+
+  const redo = useCallback(() => {
+    setFuture(f => {
+      if (f.length === 0) return f
+      const next = f[0]
+      setHistory(h => [...h, nodesRef.current].slice(-50))
+      setNodes(next)
+      setDirty(true)
+      return f.slice(1)
+    })
+  }, [])
+
+  // ---- operações de nó ----
+  const addChild = useCallback((parentId: string) => {
+    const parent = nodesRef.current.find(n => n.id === parentId)
+    if (!parent) return
+    const siblings = nodesRef.current.filter(n => n.parentId === parentId)
+    const id = uid()
+    const newNode: MindMapNode = {
+      id,
+      parentId,
+      text: 'Novo nó',
+      x: parent.x + 200,
+      y: parent.y + siblings.length * 70,
+      color: parent.color,
+    }
+    commit(prev => [...prev, newNode])
+    setSelectedId(id)
+    setTimeout(() => beginEdit(id), 0)
+  }, [commit])
+
+  const addSibling = useCallback((nodeId: string) => {
+    const node = nodesRef.current.find(n => n.id === nodeId)
+    if (!node) return
+    if (node.parentId === null) { addChild(nodeId); return }
+    const id = uid()
+    const newNode: MindMapNode = {
+      id,
+      parentId: node.parentId,
+      text: 'Novo nó',
+      x: node.x,
+      y: node.y + 70,
+      color: node.color,
+    }
+    commit(prev => [...prev, newNode])
+    setSelectedId(id)
+    setTimeout(() => beginEdit(id), 0)
+  }, [commit, addChild])
+
+  const deleteNode = useCallback((nodeId: string) => {
+    const node = nodesRef.current.find(n => n.id === nodeId)
+    if (!node) return
+    // não deixa apagar a única raiz
+    const rootCount = nodesRef.current.filter(n => n.parentId === null).length
+    if (node.parentId === null && rootCount <= 1) return
+    // remove o nó e toda a subárvore
+    const toRemove = new Set<string>([nodeId])
+    let changed = true
+    while (changed) {
+      changed = false
+      for (const n of nodesRef.current) {
+        if (n.parentId && toRemove.has(n.parentId) && !toRemove.has(n.id)) {
+          toRemove.add(n.id); changed = true
+        }
+      }
+    }
+    commit(prev => prev.filter(n => !toRemove.has(n.id)))
+    setSelectedId(null)
+  }, [commit])
+
+  const updateNode = useCallback((nodeId: string, patch: Partial<MindMapNode>) => {
+    commit(prev => prev.map(n => (n.id === nodeId ? { ...n, ...patch } : n)))
+  }, [commit])
+
+  const beginEdit = useCallback((nodeId: string) => {
+    if (!canEdit) return
+    const node = nodesRef.current.find(n => n.id === nodeId)
+    if (!node) return
+    setEditingId(nodeId)
+    setEditingText(node.text)
+  }, [canEdit])
+
+  const commitEdit = useCallback(() => {
+    if (editingId) {
+      const text = editingText.trim() || 'Sem título'
+      updateNode(editingId, { text })
+    }
+    setEditingId(null)
+  }, [editingId, editingText, updateNode])
+
+  const doAutoLayout = useCallback(() => {
+    commit(prev => autoLayout(prev))
+    setTimeout(fitToScreen, 30)
+  }, [commit])
+
+  // ---- viewport ----
+  const fitToScreen = useCallback(() => {
+    const el = containerRef.current
+    if (!el || nodesRef.current.length === 0) return
+    const rect = el.getBoundingClientRect()
+    const xs = nodesRef.current.map(n => n.x)
+    const ys = nodesRef.current.map(n => n.y)
+    const minX = Math.min(...xs) - 140, maxX = Math.max(...xs) + 140
+    const minY = Math.min(...ys) - 80, maxY = Math.max(...ys) + 80
+    const w = maxX - minX, h = maxY - minY
+    const s = clamp(Math.min(rect.width / w, rect.height / h), 0.2, 1.5)
+    setScale(s)
+    setTx(rect.width / 2 - ((minX + maxX) / 2) * s)
+    setTy(rect.height / 2 - ((minY + maxY) / 2) * s)
+  }, [])
+
+  useEffect(() => {
+    // centraliza ao montar
+    const t = setTimeout(fitToScreen, 50)
+    return () => clearTimeout(t)
+  }, [fitToScreen])
+
+  const zoomBy = useCallback((factor: number, cx?: number, cy?: number) => {
+    const el = containerRef.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    const px = cx ?? rect.width / 2
+    const py = cy ?? rect.height / 2
+    setScale(prevS => {
+      const ns = clamp(prevS * factor, 0.2, 3)
+      setTx(prevTx => px - ((px - prevTx) / prevS) * ns)
+      setTy(prevTy => py - ((py - prevTy) / prevS) * ns)
+      return ns
+    })
+  }, [])
+
+  // ---- pointer / pan / drag / pinch ----
+  const onPointerDownBg = (e: React.PointerEvent) => {
+    if (editingId) commitEdit()
+    pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY })
+    if (pointers.current.size === 2) {
+      const pts = [...pointers.current.values()]
+      const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y)
+      pinchStart.current = { dist, scale, cx: (pts[0].x + pts[1].x) / 2, cy: (pts[0].y + pts[1].y) / 2 }
+      panStart.current = null
+      return
+    }
+    panStart.current = { x: e.clientX, y: e.clientY, tx, ty }
+    setSelectedId(null)
+    ;(e.target as HTMLElement).setPointerCapture?.(e.pointerId)
+  }
+
+  const onPointerDownNode = (e: React.PointerEvent, nodeId: string) => {
+    e.stopPropagation()
+    if (editingId && editingId !== nodeId) commitEdit()
+    setSelectedId(nodeId)
+    pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY })
+    const node = nodesRef.current.find(n => n.id === nodeId)
+    if (!node || !canEdit) return
+    dragNode.current = { id: nodeId, startX: e.clientX, startY: e.clientY, origX: node.x, origY: node.y, moved: false }
+    ;(e.target as HTMLElement).setPointerCapture?.(e.pointerId)
+  }
+
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (pointers.current.has(e.pointerId)) {
+      pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY })
+    }
+    // pinch
+    if (pinchStart.current && pointers.current.size >= 2) {
+      const pts = [...pointers.current.values()]
+      const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y)
+      const factor = dist / pinchStart.current.dist
+      const rect = containerRef.current!.getBoundingClientRect()
+      const ns = clamp(pinchStart.current.scale * factor, 0.2, 3)
+      const cx = pinchStart.current.cx - rect.left
+      const cy = pinchStart.current.cy - rect.top
+      setScale(prevS => {
+        setTx(prevTx => cx - ((cx - prevTx) / prevS) * ns)
+        setTy(prevTy => cy - ((cy - prevTy) / prevS) * ns)
+        return ns
+      })
+      return
+    }
+    // drag node
+    if (dragNode.current) {
+      const d = dragNode.current
+      const dx = (e.clientX - d.startX) / scale
+      const dy = (e.clientY - d.startY) / scale
+      if (Math.abs(dx) > 1 || Math.abs(dy) > 1) d.moved = true
+      setNodes(prev => prev.map(n => (n.id === d.id ? { ...n, x: Math.round(d.origX + dx), y: Math.round(d.origY + dy) } : n)))
+      return
+    }
+    // pan
+    if (panStart.current) {
+      setTx(panStart.current.tx + (e.clientX - panStart.current.x))
+      setTy(panStart.current.ty + (e.clientY - panStart.current.y))
+    }
+  }
+
+  const onPointerUp = (e: React.PointerEvent) => {
+    pointers.current.delete(e.pointerId)
+    if (pointers.current.size < 2) pinchStart.current = null
+    if (dragNode.current) {
+      if (dragNode.current.moved) setDirty(true)
+      dragNode.current = null
+    }
+    panStart.current = null
+  }
+
+  const onWheel = (e: React.WheelEvent) => {
+    const rect = containerRef.current!.getBoundingClientRect()
+    zoomBy(e.deltaY < 0 ? 1.12 : 0.89, e.clientX - rect.left, e.clientY - rect.top)
+  }
+
+  // ---- keyboard ----
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); save(); return }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); return }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') { e.preventDefault(); redo(); return }
+      if (!canEdit || !selectedId) return
+      if (e.key === 'Tab') { e.preventDefault(); addChild(selectedId) }
+      else if (e.key === 'Enter') { e.preventDefault(); addSibling(selectedId) }
+      else if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); deleteNode(selectedId) }
+      else if (e.key === 'F2') { e.preventDefault(); beginEdit(selectedId) }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canEdit, selectedId, addChild, addSibling, deleteNode, beginEdit, undo, redo])
+
+  // ---- salvar ----
+  const save = useCallback(async () => {
+    if (!canEdit) return
+    setSaveState('saving')
+    try {
+      const res = await fetch(`/api/mindmaps/${initialMap._id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nodes: nodesRef.current }),
+      })
+      if (!res.ok) throw new Error('save failed')
+      setSaveState('saved')
+      setDirty(false)
+      setTimeout(() => setSaveState('idle'), 1500)
+    } catch {
+      setSaveState('error')
+      setTimeout(() => setSaveState('idle'), 2500)
+    }
+  }, [canEdit, initialMap._id])
+
+  // autosave (debounce 1.8s)
+  useEffect(() => {
+    if (!canEdit || !dirty) return
+    const t = setTimeout(() => { save() }, 1800)
+    return () => clearTimeout(t)
+  }, [nodes, dirty, canEdit, save])
+
+  // ---- salvar metadados ----
+  const [savingMeta, setSavingMeta] = useState(false)
+  const [metaError, setMetaError] = useState('')
+  const saveMeta = useCallback(async () => {
+    setSavingMeta(true); setMetaError('')
+    try {
+      const payload: any = {
+        title: meta.title,
+        description: meta.description,
+        tags: meta.tags.split(',').map(t => t.trim()).filter(Boolean),
+        visibility: meta.visibility,
+      }
+      if (meta.visibility === 'password' && meta.password) payload.password = meta.password
+      if (meta.visibility === 'password' && !meta.password && meta.hasPassword) payload.keepPassword = true
+      const res = await fetch(`/api/mindmaps/${initialMap._id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erro ao salvar')
+      setMeta(m => ({ ...m, password: '', hasPassword: data.map?.hasPassword ?? m.hasPassword }))
+      setShowSettings(false)
+    } catch (err: any) {
+      setMetaError(err.message || 'Erro ao salvar')
+    } finally {
+      setSavingMeta(false)
+    }
+  }, [meta, initialMap._id])
+
+  // ---- exportar ----
+  const exportJSON = () => {
+    const blob = new Blob([JSON.stringify({ title: meta.title, nodes }, null, 2)], { type: 'application/json' })
+    triggerDownload(blob, `${initialMap.slug || 'mapa'}.json`)
+  }
+  const exportSVG = () => {
+    const svg = buildSVG(nodes, meta.title)
+    triggerDownload(new Blob([svg], { type: 'image/svg+xml' }), `${initialMap.slug || 'mapa'}.svg`)
+  }
+  const exportPNG = async () => {
+    const svg = buildSVG(nodes, meta.title)
+    const img = new window.Image()
+    const url = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }))
+    img.onload = () => {
+      const canvas = document.createElement('canvas')
+      canvas.width = img.width * 2; canvas.height = img.height * 2
+      const ctx = canvas.getContext('2d')!
+      ctx.scale(2, 2)
+      ctx.drawImage(img, 0, 0)
+      canvas.toBlob(b => { if (b) triggerDownload(b, `${initialMap.slug || 'mapa'}.png`); URL.revokeObjectURL(url) })
+    }
+    img.src = url
+  }
+
+  // ---- edges ----
+  const edges = useMemo(() => {
+    const map = new Map(nodes.map(n => [n.id, n]))
+    const hidden = new Set<string>()
+    // nós escondidos por colapso
+    for (const n of nodes) {
+      if (n.collapsed) {
+        const stack = nodes.filter(c => c.parentId === n.id)
+        while (stack.length) {
+          const c = stack.pop()!
+          hidden.add(c.id)
+          stack.push(...nodes.filter(x => x.parentId === c.id))
+        }
+      }
+    }
+    const list: { from: MindMapNode; to: MindMapNode }[] = []
+    for (const n of nodes) {
+      if (n.parentId && map.has(n.parentId) && !hidden.has(n.id) && !hidden.has(n.parentId)) {
+        list.push({ from: map.get(n.parentId)!, to: n })
+      }
+    }
+    return { list, hidden }
+  }, [nodes])
+
+  const visibleNodes = nodes.filter(n => !edges.hidden.has(n.id))
+  const selectedNode = nodes.find(n => n.id === selectedId) || null
+
+  return (
+    <div className={cn('relative flex h-[100dvh] w-full flex-col overflow-hidden bg-[#0B1F17] text-white', presenting && 'fixed inset-0 z-[100]')}>
+      {/* Top bar */}
+      {!presenting && (
+        <div className="z-20 flex items-center gap-2 border-b border-[#2D5A46]/60 bg-[#10261D]/90 px-3 py-2 backdrop-blur">
+          <Button variant="ghost" size="sm" onClick={onBack} className="h-9 px-2 text-[#C7D5CE] hover:bg-[#204233] hover:text-white">
+            <ChevronLeft className="h-4 w-4" />
+            <span className="hidden sm:inline">Voltar</span>
+          </Button>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2">
+              <GitBranch className="h-4 w-4 shrink-0 text-[#2ECC71]" />
+              <span className="truncate text-sm font-semibold">{meta.title}</span>
+              <VisibilityBadge visibility={meta.visibility} />
+              {access.isAdmin && !access.isOwner && (
+                <span className="hidden items-center gap-1 rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-bold text-amber-300 sm:inline-flex">
+                  <ShieldCheck className="h-3 w-3" /> ADMIN
+                </span>
+              )}
+            </div>
+            {!canEdit && <p className="text-[11px] text-[#C7D5CE]">Somente leitura</p>}
+          </div>
+
+          {canEdit && (
+            <div className="hidden items-center gap-1 md:flex">
+              <ToolBtn onClick={() => selectedId && addChild(selectedId)} disabled={!selectedId} title="Adicionar filho (Tab)"><Plus className="h-4 w-4" /></ToolBtn>
+              <ToolBtn onClick={() => selectedId && deleteNode(selectedId)} disabled={!selectedId} title="Excluir (Del)"><Trash2 className="h-4 w-4" /></ToolBtn>
+              <span className="mx-1 h-5 w-px bg-[#2D5A46]" />
+              <ToolBtn onClick={undo} disabled={history.length === 0} title="Desfazer (Ctrl+Z)"><Undo2 className="h-4 w-4" /></ToolBtn>
+              <ToolBtn onClick={redo} disabled={future.length === 0} title="Refazer (Ctrl+Y)"><Redo2 className="h-4 w-4" /></ToolBtn>
+              <ToolBtn onClick={doAutoLayout} title="Auto-organizar"><LayoutGrid className="h-4 w-4" /></ToolBtn>
+              <span className="mx-1 h-5 w-px bg-[#2D5A46]" />
+            </div>
+          )}
+
+          <div className="flex items-center gap-1">
+            <ToolBtn onClick={() => zoomBy(0.89)} title="Diminuir zoom"><ZoomOut className="h-4 w-4" /></ToolBtn>
+            <ToolBtn onClick={fitToScreen} title="Centralizar"><Crosshair className="h-4 w-4" /></ToolBtn>
+            <ToolBtn onClick={() => zoomBy(1.12)} title="Aumentar zoom"><ZoomIn className="h-4 w-4" /></ToolBtn>
+            <ToolBtn onClick={() => setPresenting(true)} title="Apresentar"><Play className="h-4 w-4" /></ToolBtn>
+            <ExportMenu onJSON={exportJSON} onSVG={exportSVG} onPNG={exportPNG} />
+            {canEdit && <ToolBtn onClick={() => setShowSettings(true)} title="Configurações"><Settings2 className="h-4 w-4" /></ToolBtn>}
+            {canEdit && (
+              <Button size="sm" onClick={save} className="ml-1 h-9 gap-1.5 bg-[#2ECC71] text-[#0B1F17] hover:bg-[#27AE60]">
+                {saveState === 'saving' ? <Loader2 className="h-4 w-4 animate-spin" /> : saveState === 'saved' ? <Check className="h-4 w-4" /> : <Save className="h-4 w-4" />}
+                <span className="hidden sm:inline">{saveState === 'saving' ? 'Salvando' : saveState === 'saved' ? 'Salvo' : 'Salvar'}</span>
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {presenting && (
+        <button onClick={() => setPresenting(false)} className="absolute right-4 top-4 z-30 flex h-10 w-10 items-center justify-center rounded-full bg-[#163126] text-white shadow-lg hover:bg-[#204233]">
+          <X className="h-5 w-5" />
+        </button>
+      )}
+
+      {/* Canvas */}
+      <div
+        ref={containerRef}
+        className="relative flex-1 touch-none overflow-hidden"
+        style={{ cursor: panStart.current ? 'grabbing' : 'grab', backgroundImage: 'radial-gradient(circle, rgba(45,90,70,0.35) 1px, transparent 1px)', backgroundSize: `${24 * scale}px ${24 * scale}px`, backgroundPosition: `${tx}px ${ty}px` }}
+        onPointerDown={onPointerDownBg}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        onWheel={onWheel}
+      >
+        {/* edges */}
+        <svg className="pointer-events-none absolute inset-0 h-full w-full" style={{ overflow: 'visible' }}>
+          <g transform={`translate(${tx},${ty}) scale(${scale})`}>
+            {edges.list.map(({ from, to }) => {
+              const midX = (from.x + to.x) / 2
+              return (
+                <path
+                  key={`${from.id}-${to.id}`}
+                  d={`M ${from.x} ${from.y} C ${midX} ${from.y}, ${midX} ${to.y}, ${to.x} ${to.y}`}
+                  fill="none"
+                  stroke={to.color || '#2D5A46'}
+                  strokeWidth={2}
+                  strokeOpacity={0.7}
+                />
+              )
+            })}
+          </g>
+        </svg>
+
+        {/* nodes */}
+        <div className="absolute left-0 top-0" style={{ transform: `translate(${tx}px,${ty}px) scale(${scale})`, transformOrigin: '0 0' }}>
+          {visibleNodes.map(node => {
+            const isRoot = node.parentId === null
+            const childCount = nodes.filter(n => n.parentId === node.id).length
+            const selected = node.id === selectedId
+            return (
+              <div
+                key={node.id}
+                className="absolute -translate-x-1/2 -translate-y-1/2 select-none"
+                style={{ left: node.x, top: node.y }}
+              >
+                <div
+                  onPointerDown={(e) => onPointerDownNode(e, node.id)}
+                  onDoubleClick={() => beginEdit(node.id)}
+                  className={cn(
+                    'group relative flex max-w-[260px] items-center gap-1.5 px-3 py-2 text-sm font-medium shadow-lg transition-shadow',
+                    node.shape === 'pill' ? 'rounded-full' : node.shape === 'rect' ? 'rounded-md' : node.shape === 'ellipse' ? 'rounded-[50%] px-5' : 'rounded-xl',
+                    isRoot ? 'font-bold' : '',
+                    selected ? 'ring-2 ring-offset-2 ring-offset-[#0B1F17]' : '',
+                    canEdit ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer',
+                  )}
+                  style={{
+                    background: node.color || (isRoot ? '#2ECC71' : '#163126'),
+                    color: node.textColor || (node.color || isRoot ? '#0B1F17' : '#FFFFFF'),
+                    border: `1.5px solid ${node.borderColor || (node.color ? 'rgba(255,255,255,0.25)' : '#2D5A46')}`,
+                    ...(selected ? { boxShadow: '0 0 0 2px #2ECC71' } : {}),
+                  }}
+                >
+                  {node.icon && <span className="text-base leading-none">{node.icon}</span>}
+                  {editingId === node.id ? (
+                    <textarea
+                      autoFocus
+                      value={editingText}
+                      onChange={(e) => setEditingText(e.target.value)}
+                      onBlur={commitEdit}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); commitEdit() }
+                        if (e.key === 'Escape') { setEditingId(null) }
+                      }}
+                      onPointerDown={(e) => e.stopPropagation()}
+                      rows={1}
+                      className="w-32 resize-none bg-transparent text-current outline-none placeholder:text-current/50"
+                      style={{ minWidth: 80 }}
+                    />
+                  ) : (
+                    <span className="whitespace-pre-wrap break-words leading-snug">{node.text || 'Sem título'}</span>
+                  )}
+
+                  {/* botão colapsar */}
+                  {childCount > 0 && (
+                    <button
+                      onPointerDown={(e) => { e.stopPropagation(); updateNode(node.id, { collapsed: !node.collapsed }) }}
+                      className="absolute -right-2.5 top-1/2 flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded-full border border-[#2D5A46] bg-[#0B1F17] text-[10px] font-bold text-[#2ECC71]"
+                      title={node.collapsed ? 'Expandir' : 'Recolher'}
+                    >
+                      {node.collapsed ? childCount : '–'}
+                    </button>
+                  )}
+
+                  {/* quick add (hover) */}
+                  {canEdit && !editingId && (
+                    <button
+                      onPointerDown={(e) => { e.stopPropagation(); addChild(node.id) }}
+                      className="absolute -bottom-2.5 left-1/2 hidden h-5 w-5 -translate-x-1/2 items-center justify-center rounded-full bg-[#2ECC71] text-[#0B1F17] shadow group-hover:flex"
+                      title="Adicionar filho"
+                    >
+                      <Plus className="h-3 w-3" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Inspector flutuante do nó selecionado */}
+        {canEdit && selectedNode && !presenting && (
+          <div className="absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1.5 rounded-2xl border border-[#2D5A46]/70 bg-[#10261D]/95 px-2.5 py-2 shadow-2xl backdrop-blur">
+            <Palette className="ml-0.5 mr-0.5 h-4 w-4 text-[#C7D5CE]" />
+            {NODE_COLORS.map(c => (
+              <button
+                key={c}
+                onClick={() => updateNode(selectedNode.id, { color: c })}
+                className={cn('h-6 w-6 rounded-full border-2 transition-transform hover:scale-110', selectedNode.color === c ? 'border-white' : 'border-transparent')}
+                style={{ background: c }}
+                title={c}
+              />
+            ))}
+            <button
+              onClick={() => updateNode(selectedNode.id, { color: undefined })}
+              className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-transparent bg-[#163126] text-[10px] text-[#C7D5CE] hover:scale-110"
+              title="Cor padrão"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          </div>
+        )}
+
+        {/* Hint mobile */}
+        {canEdit && !presenting && (
+          <div className="pointer-events-none absolute right-3 top-3 z-10 rounded-lg bg-[#10261D]/80 px-2.5 py-1 text-[10px] text-[#C7D5CE] md:hidden">
+            Toque 2x para editar · pinça p/ zoom
+          </div>
+        )}
+      </div>
+
+      {/* Settings drawer */}
+      {showSettings && canEdit && (
+        <SettingsDrawer
+          meta={meta}
+          setMeta={setMeta}
+          onClose={() => setShowSettings(false)}
+          onSave={saveMeta}
+          saving={savingMeta}
+          error={metaError}
+          slug={initialMap.slug}
+          isAdmin={access.isAdmin}
+        />
+      )}
+    </div>
+  )
+}
+
+function ToolBtn({ children, onClick, disabled, title }: { children: React.ReactNode; onClick: () => void; disabled?: boolean; title: string }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      title={title}
+      className="flex h-9 w-9 items-center justify-center rounded-lg text-[#C7D5CE] transition-colors hover:bg-[#204233] hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+    >
+      {children}
+    </button>
+  )
+}
+
+function VisibilityBadge({ visibility }: { visibility: MindMapVisibility }) {
+  const map = {
+    private: { icon: <EyeOff className="h-3 w-3" />, label: 'Privado', cls: 'bg-[#163126] text-[#C7D5CE]' },
+    public: { icon: <Globe className="h-3 w-3" />, label: 'Público', cls: 'bg-[#2ECC71]/15 text-[#2ECC71]' },
+    unlisted: { icon: <Link2 className="h-3 w-3" />, label: 'Não listado', cls: 'bg-blue-500/15 text-blue-300' },
+    password: { icon: <Lock className="h-3 w-3" />, label: 'Com senha', cls: 'bg-amber-500/15 text-amber-300' },
+  }[visibility]
+  return (
+    <span className={cn('hidden items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold sm:inline-flex', map.cls)}>
+      {map.icon} {map.label}
+    </span>
+  )
+}
+
+function ExportMenu({ onJSON, onSVG, onPNG }: { onJSON: () => void; onSVG: () => void; onPNG: () => void }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="relative">
+      <ToolBtn onClick={() => setOpen(o => !o)} title="Exportar"><Download className="h-4 w-4" /></ToolBtn>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
+          <div className="absolute right-0 top-11 z-40 w-40 overflow-hidden rounded-xl border border-[#2D5A46] bg-[#10261D] py-1 shadow-2xl">
+            {[['PNG', onPNG], ['SVG', onSVG], ['JSON', onJSON]].map(([label, fn]) => (
+              <button key={label as string} onClick={() => { (fn as () => void)(); setOpen(false) }} className="block w-full px-3 py-2 text-left text-sm text-[#C7D5CE] hover:bg-[#204233] hover:text-white">
+                Exportar {label as string}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
+function SettingsDrawer({ meta, setMeta, onClose, onSave, saving, error, slug, isAdmin }: any) {
+  const [copied, setCopied] = useState(false)
+  const shareUrl = typeof window !== 'undefined' ? `${window.location.origin}/mapa-mental/${slug || ''}` : ''
+  return (
+    <div className="fixed inset-0 z-[110] flex justify-end bg-black/50" onClick={onClose}>
+      <div className="flex h-full w-full max-w-md flex-col overflow-y-auto bg-[#10261D] text-white shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between border-b border-[#2D5A46]/60 px-5 py-4">
+          <h2 className="flex items-center gap-2 text-lg font-bold"><Settings2 className="h-5 w-5 text-[#2ECC71]" /> Configurações</h2>
+          <button onClick={onClose} className="rounded-lg p-1.5 text-[#C7D5CE] hover:bg-[#204233]"><X className="h-5 w-5" /></button>
+        </div>
+        <div className="flex-1 space-y-5 px-5 py-5">
+          <Field label="Título">
+            <input value={meta.title} onChange={(e) => setMeta((m: any) => ({ ...m, title: e.target.value }))} className="inp" maxLength={120} />
+          </Field>
+          <Field label="Descrição">
+            <textarea value={meta.description} onChange={(e) => setMeta((m: any) => ({ ...m, description: e.target.value }))} rows={3} className="inp resize-none" maxLength={600} />
+          </Field>
+          <Field label="Tags (separadas por vírgula)">
+            <input value={meta.tags} onChange={(e) => setMeta((m: any) => ({ ...m, tags: e.target.value }))} className="inp" placeholder="ex: medicina, fisiologia" />
+          </Field>
+
+          <Field label="Visibilidade">
+            <div className="grid gap-2">
+              {[
+                { v: 'private', icon: <EyeOff className="h-4 w-4" />, label: 'Privado', desc: 'Só você vê' },
+                { v: 'public', icon: <Globe className="h-4 w-4" />, label: 'Público', desc: 'Aparece na comunidade' },
+                { v: 'unlisted', icon: <Link2 className="h-4 w-4" />, label: 'Não listado', desc: 'Acesso só por link' },
+                { v: 'password', icon: <Lock className="h-4 w-4" />, label: 'Com senha', desc: 'Exige senha para abrir' },
+              ].map(opt => (
+                <button
+                  key={opt.v}
+                  onClick={() => setMeta((m: any) => ({ ...m, visibility: opt.v }))}
+                  className={cn('flex items-center gap-3 rounded-xl border px-3 py-2.5 text-left transition-colors',
+                    meta.visibility === opt.v ? 'border-[#2ECC71] bg-[#2ECC71]/10' : 'border-[#2D5A46] hover:bg-[#163126]')}
+                >
+                  <span className={cn('text-[#2ECC71]')}>{opt.icon}</span>
+                  <span className="flex-1">
+                    <span className="block text-sm font-semibold">{opt.label}</span>
+                    <span className="block text-xs text-[#C7D5CE]">{opt.desc}</span>
+                  </span>
+                  {meta.visibility === opt.v && <Check className="h-4 w-4 text-[#2ECC71]" />}
+                </button>
+              ))}
+            </div>
+          </Field>
+
+          {meta.visibility === 'password' && (
+            <Field label={meta.hasPassword ? 'Nova senha (deixe em branco para manter)' : 'Senha de acesso'}>
+              <input type="text" value={meta.password} onChange={(e) => setMeta((m: any) => ({ ...m, password: e.target.value }))} className="inp" placeholder="mín. 3 caracteres" />
+            </Field>
+          )}
+
+          {(meta.visibility === 'public' || meta.visibility === 'unlisted' || meta.visibility === 'password') && slug && (
+            <Field label="Link de compartilhamento">
+              <div className="flex gap-2">
+                <input readOnly value={shareUrl} className="inp flex-1 text-xs" />
+                <button onClick={() => { navigator.clipboard?.writeText(shareUrl); setCopied(true); setTimeout(() => setCopied(false), 1500) }} className="rounded-lg bg-[#2ECC71] px-3 text-sm font-semibold text-[#0B1F17]">
+                  {copied ? 'Copiado' : 'Copiar'}
+                </button>
+              </div>
+            </Field>
+          )}
+
+          {error && <p className="rounded-lg bg-red-500/15 px-3 py-2 text-sm text-red-300">{error}</p>}
+        </div>
+        <div className="border-t border-[#2D5A46]/60 px-5 py-4">
+          <Button onClick={onSave} disabled={saving} className="w-full gap-2 bg-[#2ECC71] text-[#0B1F17] hover:bg-[#27AE60]">
+            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
+            Salvar configurações
+          </Button>
+        </div>
+      </div>
+      <style jsx>{`
+        :global(.inp) {
+          width: 100%;
+          border-radius: 0.6rem;
+          border: 1px solid #2D5A46;
+          background: #0B1F17;
+          padding: 0.55rem 0.75rem;
+          font-size: 0.875rem;
+          color: #fff;
+          outline: none;
+        }
+        :global(.inp:focus) { border-color: #2ECC71; }
+      `}</style>
+    </div>
+  )
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label className="block">
+      <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[#C7D5CE]">{label}</span>
+      {children}
+    </label>
+  )
+}
+
+function triggerDownload(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url; a.download = filename
+  document.body.appendChild(a); a.click(); a.remove()
+  setTimeout(() => URL.revokeObjectURL(url), 1000)
+}
+
+function escapeXml(s: string) {
+  return (s || '').replace(/[<>&'"]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;' }[c]!))
+}
+
+function buildSVG(nodes: MindMapNode[], title: string): string {
+  if (nodes.length === 0) return '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"></svg>'
+  const pad = 80
+  const xs = nodes.map(n => n.x), ys = nodes.map(n => n.y)
+  const minX = Math.min(...xs) - pad, maxX = Math.max(...xs) + pad
+  const minY = Math.min(...ys) - pad, maxY = Math.max(...ys) + pad
+  const w = maxX - minX, h = maxY - minY
+  const map = new Map(nodes.map(n => [n.id, n]))
+  const edges = nodes.filter(n => n.parentId && map.has(n.parentId)).map(n => {
+    const p = map.get(n.parentId!)!
+    const midX = (p.x + n.x) / 2
+    return `<path d="M ${p.x} ${p.y} C ${midX} ${p.y}, ${midX} ${n.y}, ${n.x} ${n.y}" fill="none" stroke="${n.color || '#2D5A46'}" stroke-width="2" stroke-opacity="0.7"/>`
+  }).join('')
+  const rects = nodes.map(n => {
+    const isRoot = n.parentId === null
+    const tw = estimateWidth(n.text)
+    const fill = n.color || (isRoot ? '#2ECC71' : '#163126')
+    const tc = n.textColor || (n.color || isRoot ? '#0B1F17' : '#FFFFFF')
+    return `<g transform="translate(${n.x - tw / 2}, ${n.y - 18})">
+      <rect width="${tw}" height="36" rx="12" fill="${fill}" stroke="${n.borderColor || '#2D5A46'}"/>
+      <text x="${tw / 2}" y="23" font-family="system-ui, sans-serif" font-size="14" font-weight="${isRoot ? 700 : 500}" fill="${tc}" text-anchor="middle">${escapeXml(n.text.slice(0, 30))}</text>
+    </g>`
+  }).join('')
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="${minX} ${minY} ${w} ${h}">
+    <rect x="${minX}" y="${minY}" width="${w}" height="${h}" fill="#0B1F17"/>
+    ${edges}${rects}
+    <text x="${minX + 16}" y="${maxY - 16}" font-family="system-ui" font-size="13" fill="#C7D5CE">${escapeXml(title)} · domineaqui.com.br</text>
+  </svg>`
+}

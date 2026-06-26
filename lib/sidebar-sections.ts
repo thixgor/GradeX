@@ -3,6 +3,7 @@ export type SidebarSectionKey =
   | 'bancoQuestoes'
   | 'aulas'
   | 'flashcards'
+  | 'mapaMental'
   | 'cronogramas'
   | 'forum'
   | 'games'
@@ -46,6 +47,13 @@ export const SIDEBAR_SECTION_DEFINITIONS: SidebarSectionDefinition[] = [
     label: 'Flashcards',
     href: '/flashcards',
     description: 'Flashcards automáticos, manuais e compartilhados.',
+    defaultEnabled: true,
+  },
+  {
+    key: 'mapaMental',
+    label: 'Mapas Mentais',
+    href: '/mapa-mental',
+    description: 'Editor de mapas mentais e comunidade.',
     defaultEnabled: true,
   },
   {

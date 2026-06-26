@@ -58,7 +58,13 @@ function isPublicRoute(pathname: string): boolean {
   if (/^\/materiais\/[a-fA-F0-9]{24}$/.test(pathname)) return true
   if (/^\/pacotes\/[a-fA-F0-9]{24}$/.test(pathname)) return true
   if (/^\/flashcards\/d\/[^/]+$/.test(pathname)) return true
+  // Mapas mentais compartilhados (público/não listado/com senha) podem ser
+  // abertos por visitantes via link. As rotas validam o acesso internamente.
+  if (/^\/mapa-mental\/[^/]+$/.test(pathname)) return true
+  if (/^\/api\/mindmaps\/[^/]+$/.test(pathname)) return true
+  if (/^\/api\/mindmaps\/[^/]+\/unlock$/.test(pathname)) return true
   if (
+    pathname === '/api/mindmaps' ||
     pathname === '/api/materiais' ||
     pathname === '/api/materiais/folders' ||
     pathname === '/api/materiais/packages' ||

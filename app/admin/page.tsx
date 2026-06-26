@@ -30,6 +30,7 @@ import {
   BadgeDollarSign,
   BadgePercent,
   Star,
+  Network,
 } from 'lucide-react'
 
 interface User {
@@ -219,6 +220,13 @@ export default function AdminDashboard() {
       icon: Star,
       href: '/admin/avaliacoes',
       color: 'from-yellow-500 to-amber-600'
+    },
+    {
+      title: 'Mapas Mentais',
+      description: 'Gerenciar todos os mapas mentais da plataforma. Ver e abrir mapas privados e protegidos por senha, e excluir qualquer mapa.',
+      icon: Network,
+      href: '/mapa-mental?scope=all-admin',
+      color: 'from-emerald-500 to-green-600'
     }
   ]
 

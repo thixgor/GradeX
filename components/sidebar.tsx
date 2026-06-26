@@ -26,6 +26,7 @@ import {
   Gamepad2,
   HeartPulse,
   BookOpen,
+  Network,
 } from 'lucide-react'
 import type { SidebarSectionKey, SidebarSectionSettings } from '@/lib/sidebar-sections'
 
@@ -319,6 +320,7 @@ export function Sidebar({
     },
     { icon: <Video className="h-5 w-5" />, label: 'Aulas', href: '/aulas', sectionKey: 'aulas' },
     { icon: <Brain className="h-5 w-5" />, label: 'Flashcards', href: '/flashcards', sectionKey: 'flashcards' },
+    { icon: <Network className="h-5 w-5" />, label: 'Mapas Mentais', href: '/mapa-mental', badge: 'Novo', sectionKey: 'mapaMental' },
     { icon: <BookMarked className="h-5 w-5" />, label: 'Cronogramas', href: '/cronogramas', sectionKey: 'cronogramas' },
     { icon: <MessageCircle className="h-5 w-5" />, label: 'Fórum', href: '/forum', sectionKey: 'forum' },
     { icon: <Gamepad2 className="h-5 w-5" />, label: 'Games', href: '/games', badge: 'Novo', sectionKey: 'games' },

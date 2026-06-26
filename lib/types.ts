@@ -1477,3 +1477,63 @@ export interface WebhookEventRecord {
   attempts: number
   createdAt: Date
 }
+
+// ============================================================
+// Mapas Mentais (MindMap Community Platform)
+// ============================================================
+
+export type MindMapVisibility = 'private' | 'public' | 'unlisted' | 'password'
+
+/** Um nó do mapa mental. Posição livre no canvas + vínculo de árvore via parentId. */
+export interface MindMapNode {
+  id: string
+  parentId: string | null
+  text: string
+  /** Posição absoluta no canvas (coordenadas do mundo, pré-zoom). */
+  x: number
+  y: number
+  /** Cor de preenchimento (hex). Opcional — usa tema por padrão. */
+  color?: string
+  /** Cor do texto (hex). */
+  textColor?: string
+  /** Cor da borda (hex). */
+  borderColor?: string
+  /** Forma do nó. */
+  shape?: 'rounded' | 'pill' | 'rect' | 'ellipse'
+  /** Emoji/ícone decorativo opcional. */
+  icon?: string
+  /** Nota/descrição longa (markdown simples). */
+  note?: string
+  /** Nó colapsado (esconde descendentes). */
+  collapsed?: boolean
+}
+
+export interface MindMap {
+  _id?: string | import('mongodb').ObjectId
+  slug: string
+  ownerId: string
+  ownerName: string
+  title: string
+  description?: string
+  tags: string[]
+  category?: string
+  nodes: MindMapNode[]
+  visibility: MindMapVisibility
+  /** Hash bcrypt da senha quando visibility === 'password'. Nunca enviado ao cliente. */
+  passwordHash?: string | null
+  isPublished: boolean
+  /** Oculto pela moderação/admin (não some, mas não aparece na comunidade). */
+  isHidden?: boolean
+  likeCount: number
+  viewCount: number
+  nodeCount: number
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface MindMapLike {
+  _id?: string | import('mongodb').ObjectId
+  mapId: string
+  userId: string
+  createdAt: Date
+}
