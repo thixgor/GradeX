@@ -45,6 +45,7 @@ import { DoacaoContent } from '@/components/doacoes/doacao-content'
 import { DoacaoRanking } from '@/components/doacoes/doacao-ranking'
 import { DoacaoForm } from '@/components/doacoes/doacao-form'
 import { PendingReviewReminder } from '@/components/reviews/pending-review-reminder'
+import { Logo } from '@/components/logo'
 
 // ─── Circular Progress Ring ─────────────────────────────────────
 function ProgressRing({
@@ -538,10 +539,23 @@ function DashboardContent() {
             className="fixed inset-0 z-[200] bg-black/95 backdrop-blur-2xl flex flex-col"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-5 border-b border-white/8">
-              <div className="flex items-center gap-2.5">
-                <Quote className="h-4 w-4 text-emerald-400" />
-                <span className="text-xs font-semibold text-white/50 tracking-[0.15em] uppercase">Frases</span>
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
+              <div className="flex flex-col gap-0.5">
+                <Logo variant="dark" size="sm" />
+                <div className="flex items-center gap-2 pl-0.5">
+                  <span className="text-[11px] text-white/30 font-light tracking-wide">
+                    Domine o conteúdo. Domine a prova.
+                  </span>
+                  <span className="text-[10px] text-white/20">·</span>
+                  <a
+                    href="https://www.domineaqui.com.br"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[11px] text-emerald-400/60 hover:text-emerald-400 transition-colors duration-200 font-light"
+                  >
+                    domineaqui.com.br
+                  </a>
+                </div>
               </div>
               <button
                 onClick={() => setShowLyrics(false)}
