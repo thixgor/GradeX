@@ -303,11 +303,22 @@ function DashboardContent() {
     return () => clearInterval(interval)
   }, [])
 
+  // On open: position instantly (no visible scroll animation)
   useEffect(() => {
-    if (showLyrics && activePhraseRef.current && lyricsScrollRef.current) {
-      activePhraseRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    if (showLyrics) {
+      const t = setTimeout(() => {
+        activePhraseRef.current?.scrollIntoView({ behavior: 'instant', block: 'center' })
+      }, 50)
+      return () => clearTimeout(t)
     }
-  }, [phraseIndex, showLyrics])
+  }, [showLyrics])
+
+  // On phrase change while already open: smooth scroll
+  useEffect(() => {
+    if (showLyrics) {
+      activePhraseRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }, [phraseIndex]) // eslint-disable-line react-hooks/exhaustive-deps
   const [userStats, setUserStats] = useState({
     cronogramasCreated: 0,
     flashcardsCreated: 0,
