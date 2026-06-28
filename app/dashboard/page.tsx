@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -38,6 +38,8 @@ import {
   Heart,
   Download,
   Package,
+  Quote,
+  X,
 } from 'lucide-react'
 import { DoacaoContent } from '@/components/doacoes/doacao-content'
 import { DoacaoRanking } from '@/components/doacoes/doacao-ranking'
@@ -290,13 +292,22 @@ function DashboardContent() {
   const [phraseIndex, setPhraseIndex] = useState(() =>
     Math.floor(Math.random() * MOTIVATIONAL_PHRASES.length)
   )
+  const [showLyrics, setShowLyrics] = useState(false)
+  const lyricsScrollRef = useRef<HTMLDivElement>(null)
+  const activePhraseRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const interval = setInterval(() => {
       setPhraseIndex(i => (i + 1) % MOTIVATIONAL_PHRASES.length)
-    }, 7000)
+    }, 12000)
     return () => clearInterval(interval)
   }, [])
+
+  useEffect(() => {
+    if (showLyrics && activePhraseRef.current && lyricsScrollRef.current) {
+      activePhraseRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }, [phraseIndex, showLyrics])
   const [userStats, setUserStats] = useState({
     cronogramasCreated: 0,
     flashcardsCreated: 0,
@@ -504,6 +515,89 @@ function DashboardContent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+
+      {/* ═══ SPOTIFY LYRICS OVERLAY ═══════════════════════════════ */}
+      <AnimatePresence>
+        {showLyrics && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-[200] bg-black/95 backdrop-blur-2xl flex flex-col"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-5 border-b border-white/8">
+              <div className="flex items-center gap-2.5">
+                <Quote className="h-4 w-4 text-emerald-400" />
+                <span className="text-xs font-semibold text-white/50 tracking-[0.15em] uppercase">Frases</span>
+              </div>
+              <button
+                onClick={() => setShowLyrics(false)}
+                className="p-2 rounded-full hover:bg-white/10 text-white/40 hover:text-white transition-all duration-200"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Scrollable phrases list */}
+            <div
+              ref={lyricsScrollRef}
+              className="flex-1 overflow-y-auto py-16 px-6 sm:px-16 md:px-28 lg:px-48"
+            >
+              <div className="space-y-12 max-w-2xl mx-auto">
+                {MOTIVATIONAL_PHRASES.map((phrase, i) => {
+                  const distance = Math.abs(i - phraseIndex)
+                  const isCurrent = i === phraseIndex
+                  return (
+                    <motion.div
+                      key={i}
+                      ref={isCurrent ? activePhraseRef : undefined}
+                      animate={{
+                        opacity: isCurrent ? 1 : distance === 1 ? 0.28 : distance === 2 ? 0.15 : 0.07,
+                      }}
+                      transition={{ duration: 0.5, ease: 'easeInOut' }}
+                      className="cursor-pointer group"
+                      onClick={() => setPhraseIndex(i)}
+                    >
+                      <p
+                        className={
+                          isCurrent
+                            ? 'text-white text-xl sm:text-2xl font-semibold leading-relaxed'
+                            : 'text-white text-lg sm:text-xl font-medium leading-relaxed group-hover:opacity-60 transition-opacity'
+                        }
+                      >
+                        {phrase}
+                      </p>
+                      {isCurrent && (
+                        <motion.div
+                          layoutId="active-indicator"
+                          className="mt-3 h-0.5 w-8 rounded-full bg-emerald-400"
+                        />
+                      )}
+                    </motion.div>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Footer progress */}
+            <div className="px-6 py-4 border-t border-white/8 flex items-center gap-4">
+              <span className="text-xs font-mono text-white/25 tabular-nums w-16">
+                {phraseIndex + 1} / {MOTIVATIONAL_PHRASES.length}
+              </span>
+              <div className="flex-1 h-px bg-white/8 rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full bg-emerald-400/50 rounded-full"
+                  animate={{ width: `${((phraseIndex + 1) / MOTIVATIONAL_PHRASES.length) * 100}%` }}
+                  transition={{ duration: 0.5, ease: 'easeInOut' }}
+                />
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
 
         {/* ═══════════════════════════════════════════════════════
@@ -533,20 +627,29 @@ function DashboardContent() {
                 </h1>
 
                 {/* Rotating Motivational Phrase */}
-                <div className="relative pl-4 min-h-[2.75rem] flex items-center max-w-lg">
-                  <span className="absolute left-0 top-1 bottom-1 w-1 rounded-full bg-gradient-to-b from-emerald-400 to-amber-400" />
-                  <AnimatePresence mode="wait">
-                    <motion.p
-                      key={phraseIndex}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -8 }}
-                      transition={{ duration: 0.45, ease: 'easeInOut' }}
-                      className="text-emerald-50/90 text-sm sm:text-[15px] font-medium italic leading-relaxed"
-                    >
-                      {MOTIVATIONAL_PHRASES[phraseIndex]}
-                    </motion.p>
-                  </AnimatePresence>
+                <div className="flex items-start gap-3 max-w-lg">
+                  <motion.div layout transition={{ layout: { duration: 0.55, ease: [0.4, 0, 0.2, 1] } }} className="relative pl-4 flex-1">
+                    <span className="absolute left-0 top-0 bottom-0 w-0.5 rounded-full bg-gradient-to-b from-emerald-400/80 to-amber-400/50" />
+                    <AnimatePresence mode="wait" initial={false}>
+                      <motion.p
+                        key={phraseIndex}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.55, ease: 'easeInOut' }}
+                        className="text-emerald-50/90 text-sm sm:text-[15px] font-medium italic leading-relaxed"
+                      >
+                        {MOTIVATIONAL_PHRASES[phraseIndex]}
+                      </motion.p>
+                    </AnimatePresence>
+                  </motion.div>
+                  <button
+                    onClick={() => setShowLyrics(true)}
+                    className="mt-0.5 flex-shrink-0 p-1.5 rounded-lg bg-white/5 hover:bg-white/15 border border-white/10 hover:border-white/20 text-white/40 hover:text-emerald-300 transition-all duration-200"
+                    title="Ver todas as frases"
+                  >
+                    <Quote className="h-3.5 w-3.5" />
+                  </button>
                 </div>
 
                 <p className="text-white/60 max-w-lg text-sm sm:text-base leading-relaxed">
