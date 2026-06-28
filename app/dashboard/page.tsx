@@ -314,12 +314,7 @@ function DashboardContent() {
     }
   }, [showLyrics])
 
-  // On phrase change while already open: smooth scroll
-  useEffect(() => {
-    if (showLyrics) {
-      activePhraseRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }
-  }, [phraseIndex]) // eslint-disable-line react-hooks/exhaustive-deps
+
   const [userStats, setUserStats] = useState({
     cronogramasCreated: 0,
     flashcardsCreated: 0,
