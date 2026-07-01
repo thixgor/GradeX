@@ -517,7 +517,8 @@ function ManualClinicoContent() {
   function goToCheckout(planKey?: 'semestral' | 'anual' | 'vitalicio') {
     const target = `/manual-clinico/checkout${planKey ? `?plan=${planKey}` : ''}`
     if (!isAuthenticated) {
-      router.push(`/auth/login?redirect=${encodeURIComponent(target)}`)
+      // Compra sem login via Serial Key (nome/e-mail/telefone no checkout).
+      router.push(`/comprar?productType=manual_clinico${planKey ? `&planKey=${planKey}` : ''}`)
       return
     }
     router.push(target)

@@ -439,8 +439,8 @@ export default function DeckPage() {
     }).catch(() => {})
 
     if (!data.viewer.isAuthenticated) {
-      const checkoutPath = `/materiais/checkout?type=material&id=${materialId}`
-      router.push(`/auth/login?redirect=${encodeURIComponent(checkoutPath)}`)
+      // Compra sem login via Serial Key (nome/e-mail/telefone no checkout).
+      router.push(`/comprar?productType=flashcard&productId=${materialId}&itemType=material`)
       return
     }
 
@@ -1037,7 +1037,7 @@ export default function DeckPage() {
           onBuyPackage={() => {
             setUpsellPkg(null)
             if (!data.viewer.isAuthenticated) {
-              router.push(`/auth/login?redirect=${encodeURIComponent(`/materiais/checkout?type=package&id=${upsellPkg._id}`)}`)
+              router.push(`/comprar?productType=package&productId=${upsellPkg._id}&itemType=package`)
               return
             }
             router.push(`/materiais/checkout?type=package&id=${upsellPkg._id}`)

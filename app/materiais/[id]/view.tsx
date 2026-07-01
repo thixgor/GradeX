@@ -370,7 +370,9 @@ export default function MaterialViewPage() {
     const checkoutPath = `/materiais/checkout?type=material&id=${id}`
     const goCheckout = () => {
       if (!data.isAuthenticated) {
-        router.push(`/auth/login?redirect=${encodeURIComponent(checkoutPath)}`)
+        // Compra sem login via Serial Key (nome/e-mail/telefone no checkout).
+        const pt = data.material.type === 'flashcard_deck' ? 'flashcard' : 'material'
+        router.push(`/comprar?productType=${pt}&productId=${id}&itemType=material`)
         return
       }
       router.push(checkoutPath)
@@ -1266,7 +1268,7 @@ export default function MaterialViewPage() {
             if (!isFreePackage) {
               const checkoutPath = `/materiais/checkout?type=package&id=${pkg._id}`
               if (!data.isAuthenticated) {
-                router.push(`/auth/login?redirect=${encodeURIComponent(checkoutPath)}`)
+                router.push(`/comprar?productType=package&productId=${pkg._id}&itemType=package`)
                 return
               }
               router.push(checkoutPath)

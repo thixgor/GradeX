@@ -98,7 +98,7 @@ function getPlanMonthly(plan: Plan): string | null {
 
 export default function BuyPage() {
   return (
-    <AppShell>
+    <AppShell allowGuest>
       <BuyContent />
     </AppShell>
   )
@@ -112,6 +112,7 @@ function BuyContent() {
   const [sub, setSub] = useState<any>(null)
   const [loadingSub, setLoadingSub] = useState(true)
   const [userName, setUserName] = useState('')
+  const [isGuest, setIsGuest] = useState(false)
   const [plans, setPlans] = useState<Plan[]>(defaultPlans)
   const [paymentSuccess, setPaymentSuccess] = useState(false)
   const [successPlan, setSuccessPlan] = useState<string | null>(null)
@@ -170,8 +171,9 @@ function BuyContent() {
   async function loadUser() {
     try {
       const res = await fetch('/api/auth/me')
-      if (res.ok) { const d = await res.json(); setUserName(d.user.name) }
-    } catch {}
+      if (res.ok) { const d = await res.json(); setUserName(d.user.name); setIsGuest(false) }
+      else { setIsGuest(true) }
+    } catch { setIsGuest(true) }
   }
 
   function checkSuccess() {
@@ -201,6 +203,11 @@ function BuyContent() {
       }),
       keepalive: true,
     }).catch(() => {})
+    if (isGuest) {
+      // Compra sem login via Serial Key (nome/e-mail/telefone no checkout).
+      router.push(`/comprar?productType=premium&productId=${encodeURIComponent(plan.id)}`)
+      return
+    }
     router.push(`/buy/checkout?plan=${encodeURIComponent(plan.id)}`)
   }
 

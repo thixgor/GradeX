@@ -1793,7 +1793,8 @@ function PatologiaContent() {
             patologia={patologia}
             onCheckout={() => {
               if (patologia.accessStatus === 'login_required') {
-                router.push(`/auth/login?redirect=${encodeURIComponent(`/manual-clinico/${patologia.slug}`)}`)
+                // Compra sem login via Serial Key (nome/e-mail/telefone no checkout).
+                router.push('/comprar?productType=manual_clinico')
                 return
               }
               router.push('/manual-clinico/checkout')

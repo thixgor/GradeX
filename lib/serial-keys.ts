@@ -249,7 +249,12 @@ export async function resolveSerialKeyProduct(
     const config = await getManualClinicoConfig(db)
     if (!config.isActive) throw new Error('O Manual Clínico Premium está indisponível no momento.')
     const planKey = (input.planKey as ManualClinicoPlanKey) || 'vitalicio'
-    const plan = getManualClinicoPlan(config, planKey)
+    let plan = getManualClinicoPlan(config, planKey)
+    // Se o plano pedido/padrão estiver desabilitado, cai para o primeiro habilitado.
+    if (!plan?.enabled) {
+      const enabled = (config.plans || []).find((p) => p.enabled && Number(p.price || 0) > 0)
+      if (enabled) plan = enabled
+    }
     if (!plan?.enabled) throw new Error('Este plano do Manual Clínico não está disponível.')
     const amount = Number(plan.price || 0)
     if (!Number.isFinite(amount) || amount <= 0) throw new Error('Plano sem preço válido.')
