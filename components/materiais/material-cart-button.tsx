@@ -91,9 +91,11 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
 
   const goToCheckout = async () => {
     const checkoutPath = '/materiais/checkout?cart=1'
+    // Visitante finaliza sem login: o checkout do carrinho coleta os dados do
+    // comprador e gera uma Serial Key por item (ver /materiais/checkout?cart=1).
     if (!isAuthenticated) {
       setOpen(false)
-      router.push(`/auth/login?redirect=${encodeURIComponent(checkoutPath)}`)
+      router.push(checkoutPath)
       return
     }
     setCheckoutChecking(true)

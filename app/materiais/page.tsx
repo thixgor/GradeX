@@ -637,7 +637,9 @@ function MateriaisContent() {
     if (mode === 'buy') {
       const checkoutPath = `/materiais/checkout?type=${itemType}&id=${itemId}`
       if (!isAuthenticated) {
-        router.push(`/auth/login?redirect=${encodeURIComponent(checkoutPath)}`)
+        // Compra sem login via Serial Key (nome/e-mail/telefone no checkout).
+        const pt = itemType === 'package' ? 'package' : (item as Material).type === 'flashcard_deck' ? 'flashcard' : 'material'
+        router.push(`/comprar?productType=${pt}&productId=${itemId}&itemType=${itemType}`)
         return
       }
       router.push(checkoutPath)

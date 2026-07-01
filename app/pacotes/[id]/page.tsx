@@ -261,7 +261,8 @@ export default function PackageDetailPage() {
     if (!data) return
     const checkoutPath = `/materiais/checkout?type=package&id=${id}`
     if (!data.access.isAuthenticated) {
-      router.push(`/auth/login?redirect=${encodeURIComponent(checkoutPath)}`)
+      // Compra sem login via Serial Key (nome/e-mail/telefone no checkout).
+      router.push(`/comprar?productType=package&productId=${id}&itemType=package`)
       return
     }
     router.push(checkoutPath)
