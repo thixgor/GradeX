@@ -7,6 +7,8 @@ import { getDb } from './mongodb'
 import { isPdfBuffer } from './pdf-watermark'
 import { emailFingerprint } from './watermark-fingerprint'
 
+export type MaterialPdfAccessLevel = 'full' | 'preview'
+
 export type MaterialPdfAccessResult =
   | {
       ok: true
@@ -16,6 +18,10 @@ export type MaterialPdfAccessResult =
       materialId: string
       isAdmin: boolean
       hasAccess: boolean
+      // 'full' = admin/comprador/acesso por grupo. 'preview' = usuário SEM
+      // acesso vendo apenas as páginas de prévia liberadas pelo admin.
+      accessLevel: MaterialPdfAccessLevel
+      previewRanges: PreviewRange[]
     }
   | {
       ok: false
@@ -24,6 +30,72 @@ export type MaterialPdfAccessResult =
     }
 
 export type PdfViewerMode = 'single' | 'width' | 'continuous'
+
+export interface PreviewRange {
+  start: number
+  end: number
+}
+
+// Normaliza uma lista de intervalos de prévia (X–Y): garante inteiros >= 1,
+// start <= end, ordena e funde intervalos sobrepostos/adjacentes. É a fonte
+// única de verdade usada tanto na validação de acesso quanto na sanitização
+// vinda do admin, para o cliente e o servidor concordarem sobre o que é prévia.
+export function normalizePreviewRanges(raw: any): PreviewRange[] {
+  if (!Array.isArray(raw)) return []
+  const cleaned: PreviewRange[] = []
+  for (const item of raw) {
+    const startNum = Math.floor(Number(item?.start))
+    const endNum = Math.floor(Number(item?.end))
+    if (!Number.isFinite(startNum) || !Number.isFinite(endNum)) continue
+    const start = Math.max(1, Math.min(startNum, endNum))
+    const end = Math.max(start, Math.min(Math.max(startNum, endNum), 100000))
+    cleaned.push({ start, end })
+  }
+  cleaned.sort((a, b) => a.start - b.start)
+  const merged: PreviewRange[] = []
+  for (const range of cleaned) {
+    const last = merged[merged.length - 1]
+    if (last && range.start <= last.end + 1) {
+      last.end = Math.max(last.end, range.end)
+    } else {
+      merged.push({ ...range })
+    }
+  }
+  return merged.slice(0, 50)
+}
+
+// Lê a config de prévia do material já normalizada. `enabled` só é verdadeiro
+// quando há de fato ao menos um intervalo válido — evita "prévia ativa" vazia.
+export function getMaterialPreviewConfig(material: any): { enabled: boolean; ranges: PreviewRange[] } {
+  const preview = material?.pdfViewerConfig?.preview
+  if (!preview || typeof preview !== 'object') return { enabled: false, ranges: [] }
+  if (preview.enabled === false) return { enabled: false, ranges: [] }
+  const ranges = normalizePreviewRanges(preview.ranges)
+  return { enabled: ranges.length > 0, ranges }
+}
+
+export function isPreviewPageAllowed(page: number, ranges: PreviewRange[]): boolean {
+  return ranges.some((range) => page >= range.start && page <= range.end)
+}
+
+// Recorta intervalos ao total real de páginas do documento e expande para a
+// lista achatada de páginas permitidas (ordenada, sem duplicatas).
+export function expandPreviewPages(ranges: PreviewRange[], totalPages: number): number[] {
+  const pages = new Set<number>()
+  // Quando o total de páginas ainda não é conhecido (0), não recorta pelo total
+  // — apenas aplica um teto de segurança para não expandir uma lista gigante.
+  const cap = totalPages > 0 ? totalPages : 100000
+  const MAX_PREVIEW_PAGES = 5000
+  for (const range of ranges) {
+    const end = Math.min(range.end, cap)
+    for (let page = range.start; page <= end; page += 1) {
+      if (page >= 1) pages.add(page)
+      if (pages.size >= MAX_PREVIEW_PAGES) break
+    }
+    if (pages.size >= MAX_PREVIEW_PAGES) break
+  }
+  return Array.from(pages).sort((a, b) => a - b)
+}
 
 interface PdfBytesCacheEntry {
   bytes: ArrayBuffer
@@ -189,10 +261,11 @@ export function formatViewerDate(date: Date): string {
 export async function validateMaterialPdfAccess(
   materialId: string,
   session: TokenPayload,
-  options: { requireViewerEnabled?: boolean; requirePdf?: boolean } = {}
+  options: { requireViewerEnabled?: boolean; requirePdf?: boolean; allowPreview?: boolean } = {}
 ): Promise<MaterialPdfAccessResult> {
   const requireViewerEnabled = options.requireViewerEnabled ?? true
   const requirePdf = options.requirePdf ?? true
+  const allowPreview = options.allowPreview ?? false
 
   if (!materialId || !ObjectId.isValid(materialId)) {
     return { ok: false, status: 400, error: 'ID do material invalido' }
@@ -291,11 +364,39 @@ export async function validateMaterialPdfAccess(
     }
   }
 
+  const preview = getMaterialPreviewConfig(material)
+
   if (!hasAccess) {
+    // Sem acesso pleno: se o admin liberou uma prévia (X–Y) e o chamador
+    // aceita prévia, entrega acesso RESTRITO. A limitação real das páginas é
+    // reforçada no servidor (route /page), não apenas no cliente.
+    if (allowPreview && preview.enabled) {
+      return {
+        ok: true,
+        db,
+        material,
+        user,
+        materialId,
+        isAdmin,
+        hasAccess: false,
+        accessLevel: 'preview',
+        previewRanges: preview.ranges,
+      }
+    }
     return { ok: false, status: 403, error: 'Voce nao tem acesso a este material' }
   }
 
-  return { ok: true, db, material, user, materialId, isAdmin, hasAccess }
+  return {
+    ok: true,
+    db,
+    material,
+    user,
+    materialId,
+    isAdmin,
+    hasAccess: true,
+    accessLevel: 'full',
+    previewRanges: preview.ranges,
+  }
 }
 
 export async function fetchMaterialPdfBytes(blobUrl: string): Promise<ArrayBuffer> {

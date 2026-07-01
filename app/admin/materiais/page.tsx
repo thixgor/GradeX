@@ -117,13 +117,29 @@ interface PdfNavEntry {
   page: number
 }
 
+interface PdfPreviewRange {
+  start: number
+  end: number
+}
+
+interface PdfPreviewConfig {
+  enabled: boolean
+  ranges: PdfPreviewRange[]
+}
+
 interface PdfViewerConfig {
   coverPage?: number
   summary?: PdfSummaryEntry[]
   navigation?: PdfNavEntry[]
+  preview?: PdfPreviewConfig
 }
 
-const EMPTY_PDF_VIEWER_CONFIG: PdfViewerConfig = { coverPage: undefined, summary: [], navigation: [] }
+const EMPTY_PDF_VIEWER_CONFIG: PdfViewerConfig = {
+  coverPage: undefined,
+  summary: [],
+  navigation: [],
+  preview: { enabled: false, ranges: [] },
+}
 
 interface Folder {
   _id: string
@@ -813,6 +829,10 @@ function AdminMateriaisContent() {
           coverPage: material.pdfViewerConfig?.coverPage,
           summary: material.pdfViewerConfig?.summary || [],
           navigation: material.pdfViewerConfig?.navigation || [],
+          preview: {
+            enabled: material.pdfViewerConfig?.preview?.enabled === true,
+            ranges: material.pdfViewerConfig?.preview?.ranges || [],
+          },
         },
         order: material.order || 0,
       })
@@ -825,7 +845,7 @@ function AdminMateriaisContent() {
         allowedGroups: [], videoDurationH: 0, videoDurationM: 0, videoDurationS: 0,
         pricing: 'free', price: 0, pricingEventId: null, stripePriceId: '', isHidden: false, isFeatured: false,
         pdfViewerEnabled: false, pdfDownloadEnabled: true,
-        pdfViewerConfig: { coverPage: undefined, summary: [], navigation: [] },
+        pdfViewerConfig: { coverPage: undefined, summary: [], navigation: [], preview: { enabled: false, ranges: [] } },
         order: 0,
       })
       setPdfInfo(null)
@@ -2560,10 +2580,37 @@ function PdfViewerStructureEditor({
 }) {
   const summary = config.summary || []
   const navigation = config.navigation || []
+  const preview = config.preview || { enabled: false, ranges: [] }
+  const previewRanges = preview.ranges || []
   const maxPage = pageCount > 0 ? pageCount : 99999
   const pageHint = pageCount > 0 ? `1–${pageCount}` : 'nº da página'
   const genId = (prefix: string) => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
   const clampPage = (value: number) => Math.min(maxPage, Math.max(1, Math.floor(value) || 1))
+
+  // Prévia (X–Y): páginas liberadas para quem ainda NÃO comprou.
+  const setPreview = (patch: Partial<PdfPreviewConfig>) =>
+    onChange({ ...config, preview: { enabled: preview.enabled, ranges: previewRanges, ...patch } })
+  const addPreviewRange = () =>
+    setPreview({
+      enabled: true,
+      ranges: [...previewRanges, { start: 1, end: Math.min(maxPage, 1) }],
+    })
+  const updatePreviewRange = (index: number, patch: Partial<PdfPreviewRange>) =>
+    setPreview({
+      ranges: previewRanges.map((r, i) => {
+        if (i !== index) return r
+        const next = { ...r, ...patch }
+        // Mantém start <= end para nunca gerar intervalo invertido.
+        if (patch.start !== undefined && next.end < next.start) next.end = next.start
+        if (patch.end !== undefined && next.end < next.start) next.start = next.end
+        return next
+      }),
+    })
+  const removePreviewRange = (index: number) => {
+    const ranges = previewRanges.filter((_, i) => i !== index)
+    setPreview({ ranges, enabled: ranges.length > 0 ? preview.enabled : false })
+  }
+  const previewPageTotal = previewRanges.reduce((sum, r) => sum + Math.max(0, clampPage(r.end) - clampPage(r.start) + 1), 0)
 
   const setCover = (value: string) => {
     const n = parseInt(value, 10)
@@ -2601,6 +2648,95 @@ function PdfViewerStructureEditor({
         <span className="text-[11px] text-muted-foreground">
           {pageCount > 0 ? `${pageCount} páginas` : 'páginas detectadas ao abrir o viewer'}
         </span>
+      </div>
+
+      {/* Prévia (páginas liberadas para quem não comprou) */}
+      <div className="space-y-2 rounded-lg border border-amber-500/25 bg-amber-500/5 p-3">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-amber-700 dark:text-amber-300">
+            <Eye className="h-3.5 w-3.5" /> Prévia antes de comprar
+          </div>
+          <label className="flex items-center gap-1.5 text-xs font-medium cursor-pointer">
+            <input
+              type="checkbox"
+              checked={preview.enabled}
+              onChange={(e) =>
+                setPreview({
+                  enabled: e.target.checked,
+                  ranges: e.target.checked && previewRanges.length === 0
+                    ? [{ start: 1, end: Math.min(maxPage, 1) }]
+                    : previewRanges,
+                })
+              }
+              className="h-4 w-4 rounded border-input accent-amber-500"
+            />
+            {preview.enabled ? 'Ativa' : 'Desativada'}
+          </label>
+        </div>
+
+        <div className="flex items-start gap-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-2.5 py-2 text-[11px] leading-snug text-amber-800 dark:text-amber-200">
+          <ShieldCheck className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+          <span>
+            Quem <strong>ainda não comprou</strong> poderá abrir o viewer e ver <strong>apenas</strong> as
+            páginas dos intervalos abaixo. Todas as demais ficam <strong>bloqueadas no servidor</strong> — não há
+            como burlar e ver o resto do PDF. Deixe desativada para bloquear o material por completo.
+          </span>
+        </div>
+
+        {preview.enabled && (
+          <>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-muted-foreground">
+                Intervalos de páginas liberados
+                {previewPageTotal > 0 ? ` · ${previewPageTotal} pág. na prévia` : ''}
+              </span>
+              <Button type="button" size="sm" variant="outline" onClick={addPreviewRange} className="h-7 gap-1 text-xs">
+                <Plus className="h-3.5 w-3.5" /> Intervalo
+              </Button>
+            </div>
+            {previewRanges.length === 0 ? (
+              <p className="text-[11px] text-muted-foreground">
+                Nenhum intervalo. Adicione ao menos um (ex.: 1–5) para liberar a prévia.
+              </p>
+            ) : (
+              <div className="space-y-1.5">
+                {previewRanges.map((range, index) => (
+                  <div key={index} className="flex items-center gap-1.5">
+                    <span className="text-[11px] text-muted-foreground w-14 shrink-0">Páginas</span>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={pageCount > 0 ? pageCount : undefined}
+                      value={range.start}
+                      onChange={(e) => updatePreviewRange(index, { start: clampPage(parseInt(e.target.value, 10)) })}
+                      className="h-9 w-20"
+                      title="Página inicial"
+                      placeholder="X"
+                    />
+                    <span className="text-muted-foreground">–</span>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={pageCount > 0 ? pageCount : undefined}
+                      value={range.end}
+                      onChange={(e) => updatePreviewRange(index, { end: clampPage(parseInt(e.target.value, 10)) })}
+                      className="h-9 w-20"
+                      title="Página final"
+                      placeholder="Y"
+                    />
+                    <span className="text-[11px] text-muted-foreground flex-1 truncate">
+                      ({pageHint})
+                    </span>
+                    <button type="button" onClick={() => removePreviewRange(index)}
+                      className="text-red-500 hover:text-red-700 shrink-0" title="Remover intervalo">
+                      <Trash className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
       </div>
 
       {/* Capa */}

@@ -4,6 +4,7 @@ import {
   createWatermarkedSinglePagePdf,
   fetchMaterialPdfBytes,
   getClientIp,
+  isPreviewPageAllowed,
   validateMaterialPdfAccess,
 } from '@/lib/material-pdf-viewer'
 import { ObjectId } from 'mongodb'
@@ -24,6 +25,7 @@ export async function GET(
     const access = await validateMaterialPdfAccess(params.id, session, {
       requireViewerEnabled: true,
       requirePdf: true,
+      allowPreview: true,
     })
 
     if (!access.ok) {
@@ -34,6 +36,17 @@ export async function GET(
     const requestedPage = Number.parseInt(pageParam, 10)
     if (!Number.isFinite(requestedPage) || requestedPage < 1) {
       return NextResponse.json({ error: 'Pagina invalida' }, { status: 400 })
+    }
+
+    // SEGURANÇA: quem está no modo prévia (não comprou) só pode buscar os bytes
+    // das páginas liberadas pelo admin. Qualquer outra página é bloqueada AQUI,
+    // no servidor — não há como burlar pelo cliente/viewer, pois o PDF nunca é
+    // enviado por inteiro; cada página é uma requisição separada.
+    if (access.accessLevel === 'preview' && !isPreviewPageAllowed(requestedPage, access.previewRanges)) {
+      return NextResponse.json(
+        { error: 'Esta pagina nao esta disponivel na previa. Adquira o material para acessar o conteudo completo.' },
+        { status: 403 }
+      )
     }
 
     const cachedPageCount = Number(access.material.pdfFile?.pageCount || 0)

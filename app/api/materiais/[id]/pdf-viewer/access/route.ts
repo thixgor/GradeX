@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import {
+  expandPreviewPages,
   getClientIp,
   validateMaterialPdfAccess,
 } from '@/lib/material-pdf-viewer'
@@ -21,6 +22,7 @@ export async function GET(
     const access = await validateMaterialPdfAccess(params.id, session, {
       requireViewerEnabled: true,
       requirePdf: true,
+      allowPreview: true,
     })
 
     if (!access.ok) {
@@ -63,7 +65,37 @@ export async function GET(
           })
           .filter(Boolean)
       : []
-    const coverPage = clampPage(viewerConfig.coverPage) || undefined
+    let coverPage = clampPage(viewerConfig.coverPage) || undefined
+
+    // Modo prévia: usuário sem acesso pleno vê apenas as páginas liberadas.
+    // Recortamos os intervalos ao total real e enviamos a lista achatada para o
+    // cliente restringir navegação/miniaturas. O bloqueio de verdade continua no
+    // route /page (servidor); isto aqui é só para a UX não oferecer o proibido.
+    const isPreview = access.accessLevel === 'preview'
+    // Usa a contagem real (cachedPageCount); quando ainda desconhecida (0), não
+    // recorta — o cliente ajusta ao descobrir o total ao renderizar as páginas.
+    const previewPages = isPreview ? expandPreviewPages(access.previewRanges, cachedPageCount) : []
+    const previewRanges = isPreview
+      ? access.previewRanges
+          .map((range) => ({
+            start: cachedPageCount > 0 ? Math.min(range.start, cachedPageCount) : range.start,
+            end: cachedPageCount > 0 ? Math.min(range.end, cachedPageCount) : range.end,
+          }))
+          .filter((range) => range.start <= range.end)
+      : []
+
+    // Na prévia, a capa/sumário/navegação só podem apontar para páginas liberadas.
+    if (isPreview) {
+      if (coverPage && !previewPages.includes(coverPage)) {
+        coverPage = previewPages[0]
+      }
+    }
+    const previewSummary = isPreview
+      ? summary.filter((item: any) => previewPages.includes(item.page))
+      : summary
+    const previewNavigation = isPreview
+      ? navigation.filter((item: any) => previewPages.includes(item.page))
+      : navigation
 
     const now = new Date()
     const auditToken = crypto.randomUUID()
@@ -88,7 +120,8 @@ export async function GET(
           title: access.material.title,
           pageCount: totalPages,
           viewerEnabled: access.material.pdfViewerEnabled === true,
-          downloadEnabled: access.material.pdfDownloadEnabled !== false,
+          // Prévia nunca permite download do arquivo completo.
+          downloadEnabled: isPreview ? false : access.material.pdfDownloadEnabled !== false,
         },
         audit: {
           openedAt: now.toISOString(),
@@ -98,9 +131,18 @@ export async function GET(
           minZoom: 0.35,
           maxZoom: 2.8,
           coverPage,
-          summary,
-          navigation,
+          summary: previewSummary,
+          navigation: previewNavigation,
         },
+        // Presente apenas quando o usuário está em modo prévia (não comprou).
+        preview: isPreview
+          ? {
+              active: true,
+              pages: previewPages,
+              ranges: previewRanges,
+              totalPages,
+            }
+          : null,
       },
       {
         headers: {

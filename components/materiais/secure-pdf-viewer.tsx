@@ -13,6 +13,7 @@ import {
   ChevronRight,
   Circle,
   Eraser,
+  Eye,
   HelpCircle,
   Highlighter,
   Italic,
@@ -56,6 +57,13 @@ interface NavEntry {
   page: number
 }
 
+interface PreviewInfo {
+  active: boolean
+  pages: number[]
+  ranges: Array<{ start: number; end: number }>
+  totalPages: number
+}
+
 interface ViewerAccess {
   material: {
     id: string
@@ -75,6 +83,7 @@ interface ViewerAccess {
     summary?: SummaryEntry[]
     navigation?: NavEntry[]
   }
+  preview?: PreviewInfo | null
 }
 
 interface PdfAnnotation {
@@ -619,7 +628,33 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const navigation = useMemo(() => access?.viewer.navigation ?? [], [access])
   const coverPage = access?.viewer.coverPage
   const hasSummary = summary.length > 0
-  const pages = useMemo(() => buildPageArray(pageCount, currentPage, mode), [pageCount, currentPage, mode])
+
+  // Modo prévia: usuário sem acesso pleno. `allowedPages` é a lista (ordenada)
+  // de páginas que ele pode ver; toda a navegação é presa a esse conjunto. O
+  // bloqueio real é no servidor — isto é só para não oferecer o proibido.
+  const previewActive = access?.preview?.active === true
+  const allowedPages = useMemo(() => {
+    if (!previewActive) return [] as number[]
+    const list = (access?.preview?.pages ?? []).filter((p) => Number.isFinite(p) && p >= 1)
+    return Array.from(new Set(list)).sort((a, b) => a - b)
+  }, [previewActive, access])
+  const isPageAllowed = useCallback(
+    (page: number) => !previewActive || allowedPages.includes(page),
+    [previewActive, allowedPages]
+  )
+  // Painel de anotações nunca aparece na prévia (leitura apenas / não salva).
+  const annotationsVisible = showAnnotations && !previewActive
+
+  const pages = useMemo(() => {
+    if (previewActive) {
+      // Em prévia mostramos só páginas liberadas (single: a atual; demais: todas
+      // as permitidas em sequência).
+      return mode === 'single'
+        ? [currentPage]
+        : allowedPages.length ? allowedPages : [currentPage]
+    }
+    return buildPageArray(pageCount, currentPage, mode)
+  }, [previewActive, allowedPages, pageCount, currentPage, mode])
   const contentWidth = useResizeWidth(contentRef, [loading, showAnnotations, showThumbs])
   const annotationsByPage = useMemo(() => {
     const grouped = new Map<number, PdfAnnotation[]>()
@@ -682,14 +717,25 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         const coverStart = Number(json.viewer?.coverPage) > 0 ? Number(json.viewer.coverPage) : 1
         const saved = readSavedPosition(materialId)
         const savedPage = saved?.page && (total < 1 || saved.page <= total) ? saved.page : undefined
-        const startPage = savedPage ?? coverStart
+        let startPage = savedPage ?? coverStart
+        // Em prévia, a abertura precisa cair numa página liberada.
+        const previewPages: number[] = Array.isArray(json.preview?.pages) ? json.preview.pages : []
+        if (json.preview?.active && previewPages.length && !previewPages.includes(startPage)) {
+          startPage = previewPages.reduce(
+            (best, candidate) => (Math.abs(candidate - startPage) < Math.abs(best - startPage) ? candidate : best),
+            previewPages[0]
+          )
+        }
         setCurrentPage(startPage)
         setPageInput(String(startPage))
         setMode(saved?.mode || json.viewer?.defaultMode || 'single')
-        if (savedPage && savedPage > 1) {
+        if (!json.preview?.active && savedPage && savedPage > 1 && startPage === savedPage) {
           setNotice(`Retomando da pagina ${savedPage}`)
         }
-        loadAnnotations().catch(() => {})
+        // Prévia não deve puxar anotações (endpoint exige acesso pleno).
+        if (!json.preview?.active) {
+          loadAnnotations().catch(() => {})
+        }
       } catch {
         if (mounted) setError('PDF nao pode ser carregado agora. Tente novamente.')
       } finally {
@@ -718,14 +764,24 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   }, [contentWidth, maxZoom, minZoom, pageSize])
 
   useEffect(() => {
-    if (!access || currentPage >= pageCount) return
+    if (!access) return
+    // Pré-carrega a próxima página. Em prévia, a "próxima" é a próxima página
+    // liberada — nunca uma bloqueada (evita 403 inútil).
+    let nextPage = currentPage + 1
+    if (previewActive) {
+      const index = allowedPages.indexOf(currentPage)
+      if (index === -1 || index >= allowedPages.length - 1) return
+      nextPage = allowedPages[index + 1]
+    } else if (currentPage >= pageCount) {
+      return
+    }
     const timer = window.setTimeout(() => {
-      fetchPdfPageBytes(materialId, currentPage + 1)
+      fetchPdfPageBytes(materialId, nextPage)
         .then((result) => updateKnownPageCount(result.pageCount))
         .catch(() => {})
     }, 500)
     return () => window.clearTimeout(timer)
-  }, [access, currentPage, materialId, pageCount, updateKnownPageCount])
+  }, [access, currentPage, materialId, pageCount, updateKnownPageCount, previewActive, allowedPages])
 
   useEffect(() => {
     if (!notice) return
@@ -781,7 +837,20 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   }, [])
 
   const goToPage = useCallback((page: number) => {
-    const next = Math.min(Math.max(page, 1), pageCount || 1)
+    // Em prévia o teto é a maior página liberada (não o pageCount, que pode
+    // ainda estar desconhecido/1 na primeira abertura).
+    const upperBound = previewActive && allowedPages.length
+      ? allowedPages[allowedPages.length - 1]
+      : (pageCount || 1)
+    let next = Math.min(Math.max(page, 1), upperBound)
+    // Em prévia, qualquer destino cai na página liberada mais próxima — nunca
+    // deixa o usuário parar numa página bloqueada.
+    if (previewActive && allowedPages.length && !allowedPages.includes(next)) {
+      next = allowedPages.reduce(
+        (best, candidate) => (Math.abs(candidate - next) < Math.abs(best - next) ? candidate : best),
+        allowedPages[0]
+      )
+    }
     setCurrentPage((current) => (current === next ? current : next))
     if (mode !== 'single') {
       requestAnimationFrame(() => {
@@ -794,7 +863,30 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         if (top < 0) window.scrollTo({ top: window.scrollY + top - 12, behavior: 'smooth' })
       })
     }
-  }, [mode, pageCount])
+  }, [mode, pageCount, previewActive, allowedPages])
+
+  // Passo de página que respeita o conjunto de páginas da prévia: avança/volta
+  // pela lista liberada em vez de +1/-1 (que travaria num "buraco" de páginas).
+  const stepPage = useCallback((dir: -1 | 1) => {
+    if (previewActive && allowedPages.length) {
+      const index = allowedPages.indexOf(currentPage)
+      if (index === -1) {
+        goToPage(allowedPages[0])
+        return
+      }
+      const target = index + dir
+      if (target < 0 || target >= allowedPages.length) return
+      goToPage(allowedPages[target])
+      return
+    }
+    goToPage(currentPage + dir)
+  }, [previewActive, allowedPages, currentPage, goToPage])
+
+  const previewIndex = previewActive ? allowedPages.indexOf(currentPage) : -1
+  const canStepPrev = previewActive ? previewIndex > 0 : currentPage > 1
+  const canStepNext = previewActive
+    ? previewIndex >= 0 && previewIndex < allowedPages.length - 1
+    : currentPage < pageCount
 
   const submitPageInput = () => {
     const next = Number.parseInt(pageInput, 10)
@@ -815,19 +907,19 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       switch (event.key) {
         case 'ArrowRight':
         case 'PageDown':
-          event.preventDefault(); goToPage(currentPage + 1); break
+          event.preventDefault(); stepPage(1); break
         case 'ArrowLeft':
         case 'PageUp':
-          event.preventDefault(); goToPage(currentPage - 1); break
+          event.preventDefault(); stepPage(-1); break
         case 'Home':
-          event.preventDefault(); goToPage(1); break
+          event.preventDefault(); goToPage(previewActive && allowedPages.length ? allowedPages[0] : 1); break
         case 'End':
-          event.preventDefault(); goToPage(pageCount); break
+          event.preventDefault(); goToPage(previewActive && allowedPages.length ? allowedPages[allowedPages.length - 1] : pageCount); break
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [access, currentPage, pageCount, goToPage])
+  }, [access, currentPage, pageCount, goToPage, stepPage, previewActive, allowedPages])
 
   // Atalho unificado para abrir o painel lateral (miniaturas ou sumário):
   // em telas grandes garante a coluna visível; em telas menores abre o drawer.
@@ -1060,7 +1152,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                 <p className="hidden text-[11px] text-emerald-100/60 sm:block">DomineAqui PDF Viewer protegido</p>
               </div>
 
-              <ToolbarButton onClick={() => goToPage(currentPage - 1)} disabled={currentPage <= 1} title="Pagina anterior">
+              <ToolbarButton onClick={() => stepPage(-1)} disabled={!canStepPrev} title="Pagina anterior">
                 <ChevronLeft className="h-4 w-4" />
               </ToolbarButton>
               <div className="flex h-10 shrink-0 items-center gap-1 rounded-xl border border-white/10 bg-white/10 px-2">
@@ -1074,7 +1166,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                 />
                 <span className="text-xs text-white/55">/ {pageCount}</span>
               </div>
-              <ToolbarButton onClick={() => goToPage(currentPage + 1)} disabled={currentPage >= pageCount} title="Proxima pagina">
+              <ToolbarButton onClick={() => stepPage(1)} disabled={!canStepNext} title="Proxima pagina">
                 <ChevronRight className="h-4 w-4" />
               </ToolbarButton>
 
@@ -1100,32 +1192,37 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             </div>
 
             <div className="flex items-center gap-1 overflow-x-auto pb-1">
-              <ToolButton active={tool === 'cursor'} onClick={() => setTool('cursor')} title="Navegar">
-                <MousePointer2 className="h-4 w-4" />
-              </ToolButton>
-              <ToolButton active={tool === 'highlight'} onClick={() => setTool('highlight')} title="Marca texto">
-                <Highlighter className="h-4 w-4" />
-              </ToolButton>
-              <ToolButton active={tool === 'note'} onClick={() => setTool('note')} title="Nota">
-                <MessageSquare className="h-4 w-4" />
-              </ToolButton>
-              <ToolButton active={tool === 'drawing'} onClick={() => setTool('drawing')} title="Caneta">
-                <PenLine className="h-4 w-4" />
-              </ToolButton>
-              <ToolButton active={tool === 'laser'} onClick={() => setTool('laser')} title="Caneta laser">
-                <Zap className="h-4 w-4" />
-              </ToolButton>
-              <ToolButton active={tool === 'text'} onClick={() => setTool('text')} title="Texto">
-                <Type className="h-4 w-4" />
-              </ToolButton>
-              <ToolButton active={tool === 'bookmark'} onClick={() => setTool('bookmark')} title="Marcador">
-                <Bookmark className="h-4 w-4" />
-              </ToolButton>
-              <ToolButton active={tool === 'eraser'} onClick={() => setTool('eraser')} title="Apagar item">
-                <Eraser className="h-4 w-4" />
-              </ToolButton>
+              {/* Ferramentas de anotação ficam ocultas na prévia (leitura apenas). */}
+              {!previewActive && (
+                <>
+                  <ToolButton active={tool === 'cursor'} onClick={() => setTool('cursor')} title="Navegar">
+                    <MousePointer2 className="h-4 w-4" />
+                  </ToolButton>
+                  <ToolButton active={tool === 'highlight'} onClick={() => setTool('highlight')} title="Marca texto">
+                    <Highlighter className="h-4 w-4" />
+                  </ToolButton>
+                  <ToolButton active={tool === 'note'} onClick={() => setTool('note')} title="Nota">
+                    <MessageSquare className="h-4 w-4" />
+                  </ToolButton>
+                  <ToolButton active={tool === 'drawing'} onClick={() => setTool('drawing')} title="Caneta">
+                    <PenLine className="h-4 w-4" />
+                  </ToolButton>
+                  <ToolButton active={tool === 'laser'} onClick={() => setTool('laser')} title="Caneta laser">
+                    <Zap className="h-4 w-4" />
+                  </ToolButton>
+                  <ToolButton active={tool === 'text'} onClick={() => setTool('text')} title="Texto">
+                    <Type className="h-4 w-4" />
+                  </ToolButton>
+                  <ToolButton active={tool === 'bookmark'} onClick={() => setTool('bookmark')} title="Marcador">
+                    <Bookmark className="h-4 w-4" />
+                  </ToolButton>
+                  <ToolButton active={tool === 'eraser'} onClick={() => setTool('eraser')} title="Apagar item">
+                    <Eraser className="h-4 w-4" />
+                  </ToolButton>
 
-              <div className="mx-1 h-6 w-px shrink-0 bg-white/10" />
+                  <div className="mx-1 h-6 w-px shrink-0 bg-white/10" />
+                </>
+              )}
               <div className="flex items-center gap-1 md:hidden">
                 <ToolButton active={false} onClick={() => { zoomTouchedRef.current = true; setZoom((z) => clampZoom(z - 0.12, minZoom, maxZoom)) }} title="Diminuir zoom">
                   <Minus className="h-4 w-4" />
@@ -1163,32 +1260,38 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
               >
                 {showThumbs ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeftOpen className="h-4 w-4" />}
               </ToolButton>
-              <ToolButton active={showAnnotations} onClick={() => setShowAnnotations((value) => !value)} title="Painel de anotacoes">
-                <StickyNote className="h-4 w-4" />
-              </ToolButton>
-              <ToolButton active={showGuide} onClick={() => setShowGuide((value) => !value)} title="Guia das ferramentas">
-                <HelpCircle className="h-4 w-4" />
-              </ToolButton>
+              {!previewActive && (
+                <>
+                  <ToolButton active={showAnnotations} onClick={() => setShowAnnotations((value) => !value)} title="Painel de anotacoes">
+                    <StickyNote className="h-4 w-4" />
+                  </ToolButton>
+                  <ToolButton active={showGuide} onClick={() => setShowGuide((value) => !value)} title="Guia das ferramentas">
+                    <HelpCircle className="h-4 w-4" />
+                  </ToolButton>
+                </>
+              )}
               <Button onClick={fitToPage} className="h-10 shrink-0 rounded-xl border border-white/10 bg-white/10 px-3 text-xs text-white hover:bg-white/15">
                 Ajustar
               </Button>
             </div>
 
-            <ToolOptionsBar
-              tool={tool}
-              drawingStyle={drawingStyle}
-              onDrawingStyleChange={setDrawingStyle}
-              highlightColor={highlightColor}
-              onHighlightColorChange={setHighlightColor}
-              highlightWidth={highlightWidth}
-              onHighlightWidthChange={setHighlightWidth}
-              noteColor={noteColor}
-              onNoteColorChange={setNoteColor}
-              laserColor={laserColor}
-              onLaserColorChange={setLaserColor}
-              textStyle={textStyle}
-              onTextStyleChange={setTextStyle}
-            />
+            {!previewActive && (
+              <ToolOptionsBar
+                tool={tool}
+                drawingStyle={drawingStyle}
+                onDrawingStyleChange={setDrawingStyle}
+                highlightColor={highlightColor}
+                onHighlightColorChange={setHighlightColor}
+                highlightWidth={highlightWidth}
+                onHighlightWidthChange={setHighlightWidth}
+                noteColor={noteColor}
+                onNoteColorChange={setNoteColor}
+                laserColor={laserColor}
+                onLaserColorChange={setLaserColor}
+                textStyle={textStyle}
+                onTextStyleChange={setTextStyle}
+              />
+            )}
 
             {(navigation.length > 0 || coverPage) && (
               <div className="mt-1 flex items-center gap-1.5 overflow-x-auto pb-0.5">
@@ -1227,6 +1330,27 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
           </div>
         </header>
 
+        {previewActive && (
+          <div className="border-b border-amber-300/30 bg-gradient-to-r from-amber-500/95 via-amber-400/95 to-amber-500/95 px-3 py-2 text-amber-950 shadow-lg">
+            <div className="mx-auto flex max-w-6xl flex-col items-center gap-2 sm:flex-row sm:justify-between">
+              <div className="flex items-center gap-2 text-center sm:text-left">
+                <Eye className="h-4 w-4 shrink-0" />
+                <p className="text-xs font-semibold leading-snug sm:text-sm">
+                  Você está vendo uma <strong>prévia gratuita</strong>
+                  {allowedPages.length ? ` (${allowedPages.length} de ${pageCount} páginas)` : ''}.
+                  Adquira o material para desbloquear o conteúdo completo.
+                </p>
+              </div>
+              <Button
+                onClick={() => router.push(`/materiais/${materialId}`)}
+                className="h-9 shrink-0 rounded-xl bg-emerald-700 px-4 text-xs font-bold text-white shadow-md hover:bg-emerald-800"
+              >
+                Comprar agora
+              </Button>
+            </div>
+          </div>
+        )}
+
         {notice && (
           <div className="fixed left-1/2 top-28 z-50 -translate-x-1/2 rounded-xl border border-amber-200/40 bg-amber-400 px-4 py-2 text-sm font-semibold text-amber-950 shadow-xl">
             {notice}
@@ -1243,6 +1367,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                 summary={summary}
                 materialId={materialId}
                 pageCount={pageCount}
+                pageList={previewActive ? allowedPages : undefined}
                 currentPage={currentPage}
                 coverPage={coverPage}
                 onGoTo={navigateTo}
@@ -1255,7 +1380,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             className={`min-w-0 overflow-hidden px-2 py-4 sm:px-4 sm:py-7 ${
               showThumbs ? 'lg:col-start-2' : 'lg:col-start-1'
             } ${
-              showAnnotations
+              annotationsVisible
                 ? showThumbs ? '' : 'lg:col-span-2'
                 : showThumbs ? 'lg:col-span-2' : 'lg:col-span-3'
             }`}
@@ -1268,8 +1393,8 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                   pageNumber={page}
                   active={page === currentPage}
                   zoom={zoom}
-                  annotations={annotationsByPage.get(page) || []}
-                  tool={tool}
+                  annotations={previewActive ? [] : annotationsByPage.get(page) || []}
+                  tool={previewActive ? 'cursor' : tool}
                   drawingStyle={drawingStyle}
                   highlightColor={highlightColor}
                   highlightWidth={highlightWidth}
@@ -1288,7 +1413,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             </div>
           </section>
 
-          {showAnnotations && (
+          {annotationsVisible && (
             <AnnotationsPanel
               annotations={annotations}
               currentPage={currentPage}
@@ -1358,6 +1483,7 @@ function SidePanel({
   summary,
   materialId,
   pageCount,
+  pageList,
   currentPage,
   coverPage,
   onGoTo,
@@ -1368,11 +1494,16 @@ function SidePanel({
   summary: SummaryEntry[]
   materialId: string
   pageCount: number
+  // Quando definido (prévia), lista as miniaturas SÓ dessas páginas.
+  pageList?: number[]
   currentPage: number
   coverPage?: number
   onGoTo: (page: number) => void
 }) {
   const activeTab = !hasSummary ? 'pages' : tab
+  const thumbPages = pageList && pageList.length
+    ? pageList
+    : Array.from({ length: pageCount }, (_, index) => index + 1)
 
   return (
     <div className="flex h-full min-h-0 flex-col">
@@ -1404,7 +1535,7 @@ function SidePanel({
           <SummaryList summary={summary} currentPage={currentPage} onGoTo={onGoTo} />
         ) : (
           <div className="space-y-2">
-            {Array.from({ length: pageCount }, (_, index) => index + 1).map((page) => (
+            {thumbPages.map((page) => (
               <PdfThumbnail
                 key={page}
                 materialId={materialId}

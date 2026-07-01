@@ -4,6 +4,7 @@ import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { getPricingEventStatesByIds, serializePricingEventState } from '@/lib/pricing-events'
 import { FLASHCARD_MANUAL_COLLECTIONS } from '@/lib/flashcard-manual'
+import { normalizePreviewRanges } from '@/lib/material-pdf-viewer'
 
 export const dynamic = 'force-dynamic'
 
@@ -14,6 +15,7 @@ function sanitizePdfViewerConfig(raw: any): {
   coverPage?: number
   summary: Array<{ id: string; title: string; page: number; level: number }>
   navigation: Array<{ id: string; label: string; page: number }>
+  preview: { enabled: boolean; ranges: Array<{ start: number; end: number }> }
 } | null {
   if (!raw || typeof raw !== 'object') return null
 
@@ -53,10 +55,18 @@ function sanitizePdfViewerConfig(raw: any): {
 
   const coverPage = toPage(raw.coverPage)
 
+  // Prévia (X–Y): páginas que um usuário SEM acesso pode ver antes de comprar.
+  const previewRanges = normalizePreviewRanges(raw?.preview?.ranges)
+  const preview = {
+    enabled: raw?.preview?.enabled === true && previewRanges.length > 0,
+    ranges: previewRanges,
+  }
+
   return {
     ...(coverPage ? { coverPage } : {}),
     summary: summary as any,
     navigation: navigation as any,
+    preview,
   }
 }
 
@@ -342,7 +352,7 @@ export async function POST(request: NextRequest) {
       allowedGroups: body.allowedGroups || [],
       pdfViewerEnabled: body.pdfViewerEnabled === true,
       pdfDownloadEnabled: body.pdfDownloadEnabled !== false,
-      pdfViewerConfig: sanitizePdfViewerConfig(body.pdfViewerConfig) || { summary: [], navigation: [] },
+      pdfViewerConfig: sanitizePdfViewerConfig(body.pdfViewerConfig) || { summary: [], navigation: [], preview: { enabled: false, ranges: [] } },
       downloadCount: 0,
       viewCount: 0,
       isHidden: body.isHidden || false,
@@ -387,7 +397,7 @@ export async function PUT(request: NextRequest) {
       updates.pricingEventId = updates.pricingEventId ? String(updates.pricingEventId) : null
     }
     if ('pdfViewerConfig' in updates) {
-      updates.pdfViewerConfig = sanitizePdfViewerConfig(updates.pdfViewerConfig) || { summary: [], navigation: [] }
+      updates.pdfViewerConfig = sanitizePdfViewerConfig(updates.pdfViewerConfig) || { summary: [], navigation: [], preview: { enabled: false, ranges: [] } }
     }
 
     await db.collection('materials').updateOne(

@@ -87,6 +87,12 @@ interface Material {
   _cardCount?: number
   pdfViewerEnabled?: boolean
   pdfDownloadEnabled?: boolean
+  pdfViewerConfig?: {
+    preview?: {
+      enabled?: boolean
+      ranges?: Array<{ start: number; end: number }>
+    }
+  }
 }
 
 interface PageData {
@@ -428,6 +434,22 @@ export default function MaterialViewPage() {
   const isPdf = material._hasPdf || material.type === 'pdf'
   const canViewPdf = hasAccess && !!material._hasPdf && material.pdfViewerEnabled === true
   const canDownload = hasAccess && (!material._hasPdf || material.pdfDownloadEnabled !== false)
+
+  // Prévia: quem NÃO tem acesso pode abrir o viewer e ver só as páginas
+  // liberadas pelo admin. Segurança real é no servidor; aqui é só o convite.
+  const previewCfg = material.pdfViewerConfig?.preview
+  const previewRanges = (previewCfg?.ranges || []).filter(
+    (r) => Number.isFinite(r?.start) && Number.isFinite(r?.end) && r.end >= r.start && r.start >= 1
+  )
+  const canPreview =
+    !hasAccess &&
+    !!material._hasPdf &&
+    material.pdfViewerEnabled === true &&
+    previewCfg?.enabled === true &&
+    previewRanges.length > 0
+  const previewLabel = previewRanges
+    .map((r) => (r.start === r.end ? `${r.start}` : `${r.start}–${r.end}`))
+    .join(', ')
   const showMaterialViews = metricSettings.materials.showViews
   const showMaterialDownloads = metricSettings.materials.showDownloads
   const hasInfoMetrics = showMaterialViews || showMaterialDownloads || (isVideo && !!material.videoDuration)
@@ -771,6 +793,16 @@ export default function MaterialViewPage() {
                     )
                   ) : (
                     <>
+                      {canPreview && (
+                        <Button
+                          onClick={handleOpenPdfViewer}
+                          variant="outline"
+                          className="mb-1 h-11 w-full rounded-2xl border-amber-500/40 bg-amber-500/10 font-semibold text-amber-700 hover:bg-amber-500/15 dark:text-amber-300"
+                        >
+                          <Eye className="h-4 w-4 mr-2" />
+                          Ver prévia grátis (págs. {previewLabel})
+                        </Button>
+                      )}
                       {hasActiveTier && pricingEventState && (
                         <div className="mb-3 rounded-2xl border border-border/40 bg-muted/20 px-3 py-2.5">
                           <div className="mb-1 flex items-center justify-between gap-3 text-xs">
@@ -1097,6 +1129,16 @@ export default function MaterialViewPage() {
                       )
                     ) : (
                       <>
+                        {canPreview && (
+                          <Button
+                            onClick={handleOpenPdfViewer}
+                            variant="outline"
+                            className="mb-1 h-11 w-full rounded-2xl border-amber-500/40 bg-amber-500/10 font-semibold text-amber-700 hover:bg-amber-500/15 dark:text-amber-300"
+                          >
+                            <Eye className="h-4 w-4 mr-2" />
+                            Ver prévia grátis (págs. {previewLabel})
+                          </Button>
+                        )}
                         {isFree ? (
                           <Button
                             onClick={() => handleAcquire()}
