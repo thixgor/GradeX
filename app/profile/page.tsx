@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { AnimatePresence, motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ToastAlert } from '@/components/ui/toast-alert'
@@ -828,36 +829,97 @@ export default function ProfilePage() {
         </Dialog>
 
         {/* Activate Serial Key Dialog */}
-        <Dialog open={activateDialogOpen} onOpenChange={setActivateDialogOpen}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <div className="mx-auto w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center mb-3">
-                <KeyRound className="h-7 w-7 text-white" />
-              </div>
-              <DialogTitle className="text-center text-xl">Ativar Serial Key</DialogTitle>
-              <DialogDescription className="text-center text-sm">
-                Insira sua serial key para liberar seu produto ou plano
-              </DialogDescription>
-            </DialogHeader>
-            <div className="py-3">
-              <label className="text-xs font-medium text-muted-foreground">Serial Key</label>
-              <input
-                type="text"
-                placeholder="Cole sua serial key aqui"
-                value={serialKey}
-                onChange={(e) => setSerialKey(e.target.value)}
-                disabled={activating}
-                className="w-full mt-1.5 px-3 py-2 border border-border rounded-lg bg-background text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+        <AnimatePresence>
+          {activateDialogOpen && (
+            <motion.div
+              className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <motion.div
+                className="absolute inset-0 bg-black/70 backdrop-blur-md"
+                onClick={() => !activating && setActivateDialogOpen(false)}
               />
-            </div>
-            <DialogFooter className="flex-col gap-2">
-              <Button onClick={handleActivateKey} disabled={activating || !serialKey.trim()} className="w-full">
-                {activating ? 'Ativando...' : 'Ativar'}
-              </Button>
-              <Button onClick={() => setActivateDialogOpen(false)} variant="outline" className="w-full">Cancelar</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+              <motion.div
+                role="dialog"
+                aria-modal="true"
+                className="relative z-10 w-full max-w-[400px] box-border overflow-hidden rounded-[26px] border p-6 sm:p-8"
+                style={{
+                  background: 'linear-gradient(160deg, rgba(9,20,14,0.97) 0%, rgba(6,15,10,0.98) 100%)',
+                  borderColor: 'rgba(52,211,153,0.18)',
+                  boxShadow: '0 30px 90px -20px rgba(16,185,129,0.35), 0 0 0 1px rgba(255,255,255,0.04)',
+                }}
+                initial={{ opacity: 0, y: 30, scale: 0.94 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 20, scale: 0.96 }}
+                transition={{ type: 'spring', stiffness: 280, damping: 26 }}
+              >
+                {/* Botão fechar */}
+                <button
+                  type="button"
+                  onClick={() => !activating && setActivateDialogOpen(false)}
+                  aria-label="Fechar"
+                  className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full text-white/40 transition-colors hover:bg-white/10 hover:text-white/80"
+                >
+                  <XCircle className="h-5 w-5" />
+                </button>
+
+                {/* Cabeçalho */}
+                <div className="flex flex-col items-center text-center">
+                  <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 shadow-lg shadow-emerald-500/30">
+                    <KeyRound className="h-8 w-8 text-white" strokeWidth={2} />
+                  </div>
+                  <h2 className="text-xl font-black text-white sm:text-2xl">Ativar Serial Key</h2>
+                  <p className="mt-2 max-w-[280px] text-sm leading-relaxed text-white/55">
+                    Insira sua serial key para liberar seu produto ou plano na conta.
+                  </p>
+                </div>
+
+                {/* Campo */}
+                <div className="mt-6">
+                  <label className="mb-2 block text-[11px] font-bold uppercase tracking-wide text-emerald-300/80">
+                    Serial Key
+                  </label>
+                  <input
+                    type="text"
+                    inputMode="text"
+                    autoComplete="off"
+                    autoCapitalize="characters"
+                    placeholder="XXXXX-XXXXX-XXXXX-XXXXX-XXXXX"
+                    value={serialKey}
+                    onChange={(e) => setSerialKey(e.target.value.toUpperCase())}
+                    onKeyDown={(e) => { if (e.key === 'Enter' && serialKey.trim() && !activating) handleActivateKey() }}
+                    disabled={activating}
+                    className="w-full box-border rounded-xl border border-emerald-400/20 bg-black/30 px-4 py-3 text-center font-mono text-sm tracking-[0.15em] text-white placeholder:text-white/25 placeholder:tracking-normal outline-none transition-colors focus:border-emerald-400/60 focus:ring-2 focus:ring-emerald-400/20 disabled:opacity-60"
+                  />
+                </div>
+
+                {/* Ações */}
+                <div className="mt-6 flex flex-col gap-2.5">
+                  <button
+                    onClick={handleActivateKey}
+                    disabled={activating || !serialKey.trim()}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-3 text-[15px] font-extrabold text-[#04120a] shadow-lg shadow-emerald-500/25 transition-all hover:opacity-95 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {activating ? (
+                      <><span className="h-4 w-4 animate-spin rounded-full border-2 border-[#04120a]/30 border-t-[#04120a]" /> Ativando...</>
+                    ) : (
+                      <>Ativar produto <KeyRound className="h-4 w-4" strokeWidth={2.5} /></>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => setActivateDialogOpen(false)}
+                    disabled={activating}
+                    className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-6 py-2.5 text-sm font-semibold text-white/60 transition-colors hover:bg-white/[0.07] hover:text-white/80 disabled:opacity-50"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Activation Success */}
         {activationDetails && (
