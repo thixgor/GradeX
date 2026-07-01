@@ -135,7 +135,13 @@ export async function middleware(request: NextRequest) {
     pathname.endsWith('.svg') ||
     pathname.endsWith('.xml') ||
     pathname.endsWith('.txt') ||
-    pathname.endsWith('.webmanifest')
+    pathname.endsWith('.webmanifest') ||
+    // Worker do pdf.js (public/pdf.worker.min.mjs). Sem isso, o middleware
+    // tratava o worker como rota protegida e redirecionava visitante (sem
+    // cookie) para /auth/login — o browser recebia HTML no lugar do módulo
+    // JS e o viewer quebrava com erro de MIME type para quem não tem login.
+    pathname.endsWith('.mjs') ||
+    pathname.endsWith('.wasm')
   ) {
     return response
   }
