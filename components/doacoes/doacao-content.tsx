@@ -61,8 +61,8 @@ export function DoacaoContent({ compact = false, onDonateClick }: DoacaoContentP
         className="absolute inset-0"
         style={{
           background: 'linear-gradient(145deg, rgba(12,28,16,0.85) 0%, rgba(8,22,12,0.92) 100%)',
-          backdropFilter: 'blur(32px)',
-          WebkitBackdropFilter: 'blur(32px)',
+          backdropFilter: 'blur(18px)',
+          WebkitBackdropFilter: 'blur(18px)',
         }}
       />
       {/* Gradiente colorido sutil */}

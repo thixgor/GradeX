@@ -109,8 +109,8 @@ export function DoacaoForm({ open, onClose }: DoacaoFormProps) {
         style={{
           animation: 'doacaoSlideUp 0.30s cubic-bezier(0.34,1.15,0.64,1)',
           background: 'linear-gradient(145deg, rgba(12,22,14,0.95) 0%, rgba(8,16,10,0.98) 100%)',
-          backdropFilter: 'blur(40px)',
-          WebkitBackdropFilter: 'blur(40px)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
           border: '1px solid rgba(70,129,82,0.22)',
           boxShadow: '0 24px 80px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.06)',
         }}

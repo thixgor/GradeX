@@ -3,7 +3,14 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { motion, AnimatePresence, useReducedMotion, type Variants } from 'framer-motion'
+import {
+  motion,
+  AnimatePresence,
+  useReducedMotion,
+  useMotionValue,
+  useSpring,
+  type Variants,
+} from 'framer-motion'
 import { Logo } from '@/components/logo'
 import {
   ChevronDown,
@@ -25,6 +32,9 @@ import {
   Scale,
   Menu,
   X,
+  UserPlus,
+  Compass,
+  ShieldCheck,
 } from 'lucide-react'
 import { DoacaoContent } from '@/components/doacoes/doacao-content'
 import { DoacaoRanking } from '@/components/doacoes/doacao-ranking'
@@ -59,6 +69,54 @@ function useInView(threshold = 0.15) {
   return { ref, isVisible }
 }
 
+// Versão "contínua" do useInView — alterna true/false conforme a seção entra e
+// sai da tela. Usado para pausar animações 3D em loop quando fora do viewport,
+// já que rodá-las o tempo todo é o principal ofensor de jank/travamento em
+// celulares mais fracos.
+function useInViewToggle(threshold = 0.1) {
+  const ref = useRef<HTMLElement>(null)
+  const [isVisible, setIsVisible] = useState(true)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(([entry]) => setIsVisible(entry.isIntersecting), {
+      threshold,
+    })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [threshold])
+  return { ref, isVisible }
+}
+
+// Tilt 3D reativo ao mouse (desktop). Em toque não há mousemove contínuo,
+// então o custo em mobile é zero — o efeito "aparece" só para quem tem mouse.
+function useTilt3D(strength = 12) {
+  const rotateX = useMotionValue(0)
+  const rotateY = useMotionValue(0)
+  const springConfig = { stiffness: 260, damping: 20, mass: 0.4 }
+  const springRotateX = useSpring(rotateX, springConfig)
+  const springRotateY = useSpring(rotateY, springConfig)
+
+  const onMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const px = (e.clientX - rect.left) / rect.width - 0.5
+    const py = (e.clientY - rect.top) / rect.height - 0.5
+    rotateY.set(px * strength)
+    rotateX.set(py * -strength)
+  }
+  const onMouseLeave = () => {
+    rotateX.set(0)
+    rotateY.set(0)
+  }
+
+  return {
+    rotateX: springRotateX,
+    rotateY: springRotateY,
+    onMouseMove,
+    onMouseLeave,
+  }
+}
+
 function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: string }) {
   const [count, setCount] = useState(0)
   const { ref, isVisible } = useInView()
@@ -80,6 +138,55 @@ function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: str
       {count.toLocaleString('pt-BR')}
       {suffix}
     </span>
+  )
+}
+
+// Card de ferramenta com leve tilt 3D ao passar o mouse (desktop).
+function FeatureCard({
+  feature,
+  index,
+  shouldReduceMotion,
+}: {
+  feature: { icon: any; title: string; description: string }
+  index: number
+  shouldReduceMotion: boolean | null
+}) {
+  const tilt = useTilt3D(10)
+  const Icon = feature.icon
+
+  return (
+    <motion.div
+      {...(shouldReduceMotion
+        ? {}
+        : {
+            initial: { opacity: 0, y: 24 },
+            whileInView: { opacity: 1, y: 0 },
+            viewport: { once: true, amount: 0.2 },
+            transition: { duration: 0.5, delay: index * 0.07, ease: easeOutExpo },
+          })}
+      onMouseMove={shouldReduceMotion ? undefined : tilt.onMouseMove}
+      onMouseLeave={shouldReduceMotion ? undefined : tilt.onMouseLeave}
+      whileHover={shouldReduceMotion ? {} : { scale: 1.02, y: -2 }}
+      style={
+        shouldReduceMotion
+          ? undefined
+          : {
+              rotateX: tilt.rotateX,
+              rotateY: tilt.rotateY,
+              transformPerspective: 900,
+            }
+      }
+      className={`${GLASS_CARD_SM} p-6 cursor-default group transition-all duration-300 hover:border-teal-400/20 hover:shadow-[0_0_40px_rgba(45,212,191,0.10)]`}
+    >
+      <div
+        className="w-11 h-11 rounded-2xl flex items-center justify-center mb-4 border border-white/[0.08]"
+        style={{ background: 'rgba(45,212,191,0.10)' }}
+      >
+        <Icon className="w-5 h-5 text-teal-400" />
+      </div>
+      <h3 className="text-base font-semibold text-slate-100 mb-2">{feature.title}</h3>
+      <p className="text-sm text-slate-400 leading-relaxed">{feature.description}</p>
+    </motion.div>
   )
 }
 
@@ -107,11 +214,15 @@ interface LandingPageProps {
 
 // ─── Shared style constants ────────────────────────────────────────────────────
 
+// Blur menor por padrão (mobile) e mais forte a partir de `sm:` — backdrop-blur
+// é uma das operações mais caras para o compositor em celulares de entrada, e
+// usar blur-xl/2xl em todo canto era a maior causa do travamento ao interagir
+// com a página no mobile.
 const GLASS_CARD =
-  'bg-white/[0.055] border border-white/[0.10] backdrop-blur-xl rounded-3xl shadow-[0_0_60px_rgba(45,212,191,0.08)]'
+  'bg-white/[0.055] border border-white/[0.10] backdrop-blur-md sm:backdrop-blur-xl rounded-3xl shadow-[0_0_60px_rgba(45,212,191,0.08)]'
 
 const GLASS_CARD_SM =
-  'bg-white/[0.05] border border-white/[0.09] backdrop-blur-xl rounded-2xl'
+  'bg-white/[0.05] border border-white/[0.09] backdrop-blur-md sm:backdrop-blur-xl rounded-2xl'
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -239,6 +350,40 @@ export default function LandingPage({
     { label: 'Doação', href: '#apoie' },
   ]
 
+  const howItWorks = [
+    {
+      icon: UserPlus,
+      step: '01',
+      title: 'Crie sua conta gratuita',
+      description: 'Cadastro rápido, sem cartão de crédito. Acesso imediato às ferramentas gratuitas da plataforma.',
+    },
+    {
+      icon: Compass,
+      step: '02',
+      title: 'Escolha curso e período',
+      description: 'Medicina (SOI/HAM), Psicossociais, Biomédicas, Odontológicas, ENEM ou UERJ — tudo já vem organizado por módulo e tópico.',
+    },
+    {
+      icon: Brain,
+      step: '03',
+      title: 'Estude com o método certo',
+      description: 'Banco de questões, flashcards com repetição espaçada, cronogramas personalizados e provas com IA, no seu ritmo.',
+    },
+    {
+      icon: BarChart3,
+      step: '04',
+      title: 'Acompanhe sua evolução',
+      description: 'Estatísticas de acerto, ranking dos simulados e revisões automáticas mostram exatamente onde focar.',
+    },
+  ]
+
+  const trustBadges = [
+    { icon: MessageSquare, label: 'Comunidade ativa no Discord' },
+    { icon: Zap, label: 'Atualizações constantes' },
+    { icon: ShieldCheck, label: 'Seus dados protegidos' },
+    { icon: Heart, label: 'Suporte direto pelo Instagram' },
+  ]
+
   // ── Effects ───────────────────────────────────────────────────────────────
 
   useEffect(() => {
@@ -246,6 +391,18 @@ export default function LandingPage({
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  // Trava o scroll do body com o menu mobile aberto — sem isso, o dropdown
+  // (fixed) e a página por trás rolam de forma independente e "brigam",
+  // dando a sensação de a página ter travado ao tocar em um link.
+  useEffect(() => {
+    if (!mobileMenuOpen) return
+    const original = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = original
+    }
+  }, [mobileMenuOpen])
 
   useEffect(() => {
     if (initialIsLoggedIn === undefined) {
@@ -279,6 +436,11 @@ export default function LandingPage({
   const faqSection = useInView(0.08)
   const doacaoSection = useInView(0.1)
   const afyaSection = useInView(0.1)
+  const comoFuncionaSection = useInView(0.1)
+
+  // Gate das animações 3D em loop infinito da hero — evita rodá-las (e gastar
+  // CPU/GPU) enquanto o usuário já rolou a página para outra seção.
+  const heroVisible = useInViewToggle(0.05)
 
   // ── Animation helpers ─────────────────────────────────────────────────────
 
@@ -320,7 +482,7 @@ export default function LandingPage({
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           isScrolled
-            ? 'backdrop-blur-2xl shadow-lg shadow-black/30 border-b border-white/[0.06]'
+            ? 'backdrop-blur-md sm:backdrop-blur-2xl shadow-lg shadow-black/30 border-b border-white/[0.06]'
             : 'bg-transparent'
         }`}
         style={isScrolled ? { backgroundColor: 'rgba(4,8,22,0.85)' } : undefined}
@@ -379,7 +541,7 @@ export default function LandingPage({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.2 }}
-              className="lg:hidden border-t border-white/[0.06] backdrop-blur-2xl px-5 py-4 space-y-1"
+              className="lg:hidden border-t border-white/[0.06] backdrop-blur-md px-5 py-4 space-y-1"
               style={{ backgroundColor: 'rgba(4,8,22,0.95)' }}
             >
               {navLinks.map((link) => (
@@ -408,7 +570,11 @@ export default function LandingPage({
       {/* ══════════════════════════════════════════
           HERO
       ══════════════════════════════════════════ */}
-      <section id="hero" className="relative min-h-screen flex items-center pt-16 overflow-hidden">
+      <section
+        id="hero"
+        ref={heroVisible.ref as React.RefObject<HTMLElement>}
+        className="relative min-h-screen flex items-center pt-16 overflow-hidden"
+      >
         {/* Background hero image */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -458,19 +624,27 @@ export default function LandingPage({
               {/* 3D Logo — mobile only */}
               <div className="flex justify-center lg:hidden mb-8">
                 <motion.div
-                  animate={shouldReduceMotion ? {} : {
-                    y: [0, -14, 0],
-                    rotateY: [0, 15, 0, -15, 0],
-                    rotateX: [0, -6, 0, 6, 0],
-                    scale: [1, 1.04, 1],
-                  }}
+                  animate={
+                    shouldReduceMotion || !heroVisible.isVisible
+                      ? { y: 0, rotateY: 0, rotateX: 0, scale: 1 }
+                      : {
+                          y: [0, -14, 0],
+                          rotateY: [0, 15, 0, -15, 0],
+                          rotateX: [0, -6, 0, 6, 0],
+                          scale: [1, 1.04, 1],
+                        }
+                  }
                   transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
                   style={{ perspective: 900, transformStyle: 'preserve-3d' }}
                 >
                   <div className="relative flex items-center justify-center">
                     {/* Glow pulse */}
                     <motion.div
-                      animate={shouldReduceMotion ? {} : { opacity: [0.4, 0.85, 0.4], scale: [1, 1.25, 1] }}
+                      animate={
+                        shouldReduceMotion || !heroVisible.isVisible
+                          ? { opacity: 0.5, scale: 1 }
+                          : { opacity: [0.4, 0.85, 0.4], scale: [1, 1.25, 1] }
+                      }
                       transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
                       className="absolute rounded-full blur-3xl"
                       style={{
@@ -589,7 +763,9 @@ export default function LandingPage({
               className="hidden lg:flex items-center justify-center"
             >
               <motion.div
-                animate={shouldReduceMotion ? {} : { y: [0, -10, 0] }}
+                animate={
+                  shouldReduceMotion || !heroVisible.isVisible ? { y: 0 } : { y: [0, -10, 0] }
+                }
                 transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
                 className="relative"
               >
@@ -626,18 +802,26 @@ export default function LandingPage({
                   {/* 3D Logo overlay — desktop, centralizado */}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <motion.div
-                      animate={shouldReduceMotion ? {} : {
-                        y: [0, -16, 0],
-                        rotateY: [0, 16, 0, -16, 0],
-                        rotateX: [0, -7, 0, 7, 0],
-                        scale: [1, 1.05, 1],
-                      }}
+                      animate={
+                        shouldReduceMotion || !heroVisible.isVisible
+                          ? { y: 0, rotateY: 0, rotateX: 0, scale: 1 }
+                          : {
+                              y: [0, -16, 0],
+                              rotateY: [0, 16, 0, -16, 0],
+                              rotateX: [0, -7, 0, 7, 0],
+                              scale: [1, 1.05, 1],
+                            }
+                      }
                       transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
                       style={{ perspective: 1000, transformStyle: 'preserve-3d', position: 'relative' }}
                     >
                       {/* Glow pulse */}
                       <motion.div
-                        animate={shouldReduceMotion ? {} : { opacity: [0.4, 0.9, 0.4], scale: [1, 1.3, 1] }}
+                        animate={
+                          shouldReduceMotion || !heroVisible.isVisible
+                            ? { opacity: 0.55, scale: 1 }
+                            : { opacity: [0.4, 0.9, 0.4], scale: [1, 1.3, 1] }
+                        }
                         transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
                         className="absolute rounded-full blur-3xl"
                         style={{
@@ -705,6 +889,79 @@ export default function LandingPage({
               ))}
             </div>
           </div>
+
+          {/* Trust badges */}
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 mt-8">
+            {trustBadges.map(({ icon: Icon, label }) => (
+              <div key={label} className="inline-flex items-center gap-2 text-sm text-slate-400">
+                <Icon className="w-4 h-4 text-emerald-400/80 flex-shrink-0" />
+                {label}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          COMO FUNCIONA
+      ══════════════════════════════════════════ */}
+      <section className="py-20 px-5 relative overflow-hidden">
+        <div
+          className="absolute inset-0 z-0 pointer-events-none"
+          style={{
+            background:
+              'radial-gradient(ellipse at 50% 30%, rgba(74,222,128,0.05) 0%, transparent 65%)',
+          }}
+        />
+        <div ref={comoFuncionaSection.ref} className="relative z-10 max-w-[1280px] mx-auto">
+          <motion.div {...motionProps()} className="text-center mb-14">
+            <p className="text-xs font-bold uppercase tracking-widest text-emerald-400 mb-3">
+              Como funciona
+            </p>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-50 mb-4">
+              Do cadastro ao domínio do conteúdo
+            </h2>
+            <p className="text-slate-400 max-w-xl mx-auto">
+              Quatro passos simples para transformar sua rotina de estudos
+            </p>
+          </motion.div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {howItWorks.map((item, i) => (
+              <motion.div
+                key={item.title}
+                {...(shouldReduceMotion
+                  ? {}
+                  : {
+                      initial: { opacity: 0, y: 28, rotateX: -12 },
+                      whileInView: { opacity: 1, y: 0, rotateX: 0 },
+                      viewport: { once: true, amount: 0.3 },
+                      transition: { duration: 0.55, delay: i * 0.09, ease: easeOutExpo },
+                    })}
+                style={shouldReduceMotion ? undefined : { transformPerspective: 800 }}
+                className={`${GLASS_CARD_SM} relative p-6 overflow-hidden`}
+              >
+                <span
+                  className="absolute -top-2 -right-1 text-6xl font-bold select-none pointer-events-none"
+                  style={{ color: 'rgba(255,255,255,0.04)', lineHeight: 1 }}
+                >
+                  {item.step}
+                </span>
+                <div
+                  className="relative w-11 h-11 rounded-2xl flex items-center justify-center mb-4 border border-white/[0.08]"
+                  style={{ background: 'rgba(74,222,128,0.10)' }}
+                >
+                  <item.icon className="w-5 h-5 text-emerald-400" />
+                </div>
+                <h3 className="relative text-base font-semibold text-slate-100 mb-2">
+                  {item.title}
+                </h3>
+                <p className="relative text-sm text-slate-400 leading-relaxed">
+                  {item.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -740,28 +997,12 @@ export default function LandingPage({
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
             {features.map((feature, i) => (
-              <motion.div
+              <FeatureCard
                 key={feature.title}
-                {...(shouldReduceMotion
-                  ? {}
-                  : {
-                      initial: { opacity: 0, y: 24 },
-                      whileInView: { opacity: 1, y: 0 },
-                      viewport: { once: true, amount: 0.2 },
-                      transition: { duration: 0.5, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] },
-                    })}
-                whileHover={shouldReduceMotion ? {} : { scale: 1.02, y: -2 }}
-                className={`${GLASS_CARD_SM} p-6 cursor-default group transition-all duration-300 hover:border-teal-400/20 hover:shadow-[0_0_40px_rgba(45,212,191,0.10)]`}
-              >
-                <div
-                  className="w-11 h-11 rounded-2xl flex items-center justify-center mb-4 border border-white/[0.08]"
-                  style={{ background: 'rgba(45,212,191,0.10)' }}
-                >
-                  <feature.icon className="w-5 h-5 text-teal-400" />
-                </div>
-                <h3 className="text-base font-semibold text-slate-100 mb-2">{feature.title}</h3>
-                <p className="text-sm text-slate-400 leading-relaxed">{feature.description}</p>
-              </motion.div>
+                feature={feature}
+                index={i}
+                shouldReduceMotion={shouldReduceMotion}
+              />
             ))}
           </div>
         </div>
@@ -1361,25 +1602,25 @@ export default function LandingPage({
                     }`}
                   />
                 </button>
-                <AnimatePresence initial={false}>
-                  {openFaq === index && (
-                    <motion.div
-                      key="content"
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                      className="overflow-hidden"
+                {/* Grid-rows em vez de animar "height: auto" via JS — evita forçar
+                    reflow a cada frame dentro de um cartão com backdrop-blur,
+                    que era a maior causa de travamento ao abrir o FAQ no mobile. */}
+                <div
+                  className="grid transition-[grid-template-rows] duration-300 ease-out"
+                  style={{ gridTemplateRows: openFaq === index ? '1fr' : '0fr' }}
+                >
+                  <div className="overflow-hidden min-h-0">
+                    <div
+                      className="px-6 pb-5 pt-0 transition-opacity duration-300"
+                      style={{ opacity: openFaq === index ? 1 : 0 }}
                     >
-                      <div className="px-6 pb-5 pt-0">
-                        <div className="h-px bg-white/[0.07] mb-4" />
-                        <p className="text-sm text-slate-400 leading-relaxed whitespace-pre-line">
-                          {faq.answer}
-                        </p>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                      <div className="h-px bg-white/[0.07] mb-4" />
+                      <p className="text-sm text-slate-400 leading-relaxed whitespace-pre-line">
+                        {faq.answer}
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </motion.div>
             ))}
           </div>
