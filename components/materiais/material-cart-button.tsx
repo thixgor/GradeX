@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
-import { AlertCircle, ArrowRight, FileText, Flame, Loader2, Package, ShoppingCart, Trash2, X } from 'lucide-react'
+import { AlertCircle, ArrowRight, FileText, Flame, Loader2, Package, Percent, ShoppingCart, Trash2, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useMaterialCart } from '@/context/MaterialCartContext'
 
@@ -37,6 +37,16 @@ interface PreviewResp {
   skippedItems: any[]
 }
 
+interface AppliedCoupon {
+  couponId: string
+  code: string
+  label: string
+  amountBeforeCoupon: number
+  eligibleAmount: number
+  discountAmount: number
+  amountAfterCoupon: number
+}
+
 export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boolean }) {
   const router = useRouter()
   const { items, itemCount, subtotal, removeItem, clearCart } = useMaterialCart()
@@ -45,8 +55,19 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
   const [notice, setNotice] = useState('')
   const [preview, setPreview] = useState<PreviewResp | null>(null)
   const [previewLoading, setPreviewLoading] = useState(false)
+  const [couponCode, setCouponCode] = useState('')
+  const [couponLoading, setCouponLoading] = useState(false)
+  const [couponError, setCouponError] = useState('')
+  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null)
 
   const cartKey = items.map(i => `${i.itemType}:${i.itemId}`).join('|')
+
+  // Cupom é validado para o conjunto de itens atual — muda o carrinho, invalida o cupom.
+  useEffect(() => {
+    setAppliedCoupon(null)
+    setCouponCode('')
+    setCouponError('')
+  }, [cartKey])
 
   // Busca preview com desconto de lote quando o carrinho abre (autenticado).
   useEffect(() => {
@@ -79,7 +100,13 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
   }, [preview])
 
   const tierTotal = preview?.tierDiscountTotal || 0
-  const finalSubtotal = preview?.amountAfterTier ?? subtotal
+  const amountAfterTier = preview?.amountAfterTier ?? subtotal
+  const couponEligibleAmount = preview?.amount ?? subtotal
+  const couponDiscount = appliedCoupon?.discountAmount || 0
+  const couponWinsOverTier = couponDiscount > tierTotal
+  const finalSubtotal = appliedCoupon
+    ? (couponWinsOverTier ? appliedCoupon.amountAfterCoupon : amountAfterTier)
+    : amountAfterTier
   const activeLoteName = useMemo(() => {
     const first = preview?.items?.find(it => it.pricingEventState?.activeTier)
     return first?.pricingEventState?.name || null
@@ -89,8 +116,38 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
     return [...items].sort((a, b) => Number(new Date(a.addedAt)) - Number(new Date(b.addedAt)))
   }, [items])
 
+  const applyCoupon = async () => {
+    const normalized = couponCode.trim()
+    if (!normalized) return
+    setCouponLoading(true)
+    setCouponError('')
+    try {
+      const res = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: normalized, items: items.map(i => ({ itemType: i.itemType, itemId: i.itemId })) }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Cupom inválido')
+      setAppliedCoupon(data)
+      setCouponCode(data.code || normalized.toUpperCase())
+    } catch (err: any) {
+      setCouponError(err?.message || 'Erro ao aplicar cupom')
+    } finally {
+      setCouponLoading(false)
+    }
+  }
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null)
+    setCouponCode('')
+    setCouponError('')
+  }
+
   const goToCheckout = async () => {
-    const checkoutPath = '/materiais/checkout?cart=1'
+    const checkoutPath = appliedCoupon
+      ? `/materiais/checkout?cart=1&coupon=${encodeURIComponent(appliedCoupon.code)}`
+      : '/materiais/checkout?cart=1'
     // Visitante finaliza sem login: o checkout do carrinho coleta os dados do
     // comprador e gera uma Serial Key por item (ver /materiais/checkout?cart=1).
     if (!isAuthenticated) {
@@ -296,17 +353,76 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
                         </div>
                       </div>
                     )}
+                    {isAuthenticated && couponEligibleAmount > 0 && (
+                      <div className="mb-3 rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-white/10 dark:bg-zinc-900">
+                        <div className="mb-2 flex items-center gap-1.5 text-xs font-bold text-muted-foreground">
+                          <Percent className="h-3.5 w-3.5 text-emerald-600" />
+                          Cupom de desconto
+                        </div>
+                        {appliedCoupon ? (
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="min-w-0">
+                              <p className="truncate text-sm font-black text-emerald-700 dark:text-emerald-300">
+                                {appliedCoupon.code} aplicado
+                              </p>
+                              <p className="text-[11px] text-muted-foreground">
+                                -{formatBRL(appliedCoupon.discountAmount)} de desconto
+                              </p>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={removeCoupon}
+                              className="shrink-0 rounded-lg border border-red-300/50 bg-red-500/10 px-2.5 py-1.5 text-[11px] font-bold text-red-600 transition-colors hover:bg-red-500/15 dark:text-red-300"
+                            >
+                              Remover
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="flex gap-2">
+                            <input
+                              value={couponCode}
+                              onChange={(e) => { setCouponCode(e.target.value.toUpperCase()); setCouponError('') }}
+                              onKeyDown={(e) => { if (e.key === 'Enter') applyCoupon() }}
+                              disabled={couponLoading}
+                              placeholder="Digite seu cupom"
+                              className="h-9 min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-3 text-sm uppercase text-slate-950 outline-none dark:border-white/10 dark:bg-zinc-950 dark:text-white"
+                            />
+                            <Button
+                              type="button"
+                              onClick={applyCoupon}
+                              disabled={couponLoading || !couponCode.trim()}
+                              className="h-9 rounded-lg bg-emerald-700 px-3 text-xs text-white hover:bg-emerald-600"
+                            >
+                              {couponLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : 'Aplicar'}
+                            </Button>
+                          </div>
+                        )}
+                        {couponError ? <p className="mt-1.5 text-[11px] text-red-500">{couponError}</p> : null}
+                      </div>
+                    )}
                     {tierTotal > 0 && (
                       <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
                         <span>Sem o lote</span>
                         <span className="line-through">{formatBRL(subtotal)}</span>
                       </div>
                     )}
-                    <div className="mb-4 flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">
-                        {tierTotal > 0 ? 'Total com lote' : 'Subtotal estimado'}
-                      </span>
-                      <span className="text-xl font-black text-emerald-700 dark:text-emerald-300">{formatBRL(finalSubtotal)}</span>
+                    <div className="mb-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">
+                          {tierTotal > 0 || appliedCoupon ? 'Total com desconto' : 'Subtotal estimado'}
+                        </span>
+                        <span className="text-xl font-black text-emerald-700 dark:text-emerald-300">{formatBRL(finalSubtotal)}</span>
+                      </div>
+                      {appliedCoupon && couponWinsOverTier && (
+                        <p className="mt-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-300">
+                          Cupom {appliedCoupon.code}: -{formatBRL(appliedCoupon.discountAmount)} (vence o lote)
+                        </p>
+                      )}
+                      {appliedCoupon && !couponWinsOverTier && tierTotal > 0 && (
+                        <p className="mt-1 text-[11px] text-muted-foreground">
+                          Cupom {appliedCoupon.code} desativado: o desconto do lote é maior.
+                        </p>
+                      )}
                     </div>
                     {previewLoading && !preview && (
                       <p className="mb-3 inline-flex items-center gap-1.5 text-[11px] text-muted-foreground">

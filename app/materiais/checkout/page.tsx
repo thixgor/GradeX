@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { AlertCircle, Check, ChevronLeft, FileText, Flame, Loader2, Package, Percent, ShoppingCart, Sparkles, Trash2, X } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
@@ -101,20 +101,22 @@ function CouponBox({
   appliedCoupon,
   onApplied,
   onRemoved,
+  initialCode,
 }: {
   amount: number
   payload: Record<string, any>
   appliedCoupon: AppliedCoupon | null
   onApplied: (coupon: AppliedCoupon) => void
   onRemoved: () => void
+  initialCode?: string
 }) {
   const [code, setCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
 
-  const applyCoupon = async () => {
-    const normalized = code.trim()
+  const applyCoupon = async (overrideCode?: string) => {
+    const normalized = (overrideCode ?? code).trim()
     if (!normalized) return
     setLoading(true)
     setError('')
@@ -135,6 +137,15 @@ function CouponBox({
       setLoading(false)
     }
   }
+
+  // Cupom vindo do mini-carrinho (aplicado antes de entrar no checkout): aplica uma única vez.
+  const autoAppliedRef = useRef(false)
+  useEffect(() => {
+    if (!initialCode || autoAppliedRef.current || appliedCoupon || amount <= 0) return
+    autoAppliedRef.current = true
+    setCode(initialCode.toUpperCase())
+    applyCoupon(initialCode)
+  }, [initialCode, amount, appliedCoupon])
 
   return (
     <div style={{
@@ -229,7 +240,7 @@ function CouponBox({
             />
             <button
               type="button"
-              onClick={applyCoupon}
+              onClick={() => applyCoupon()}
               disabled={loading || amount <= 0 || !code.trim()}
               style={{
                 height: '38px',
@@ -265,6 +276,7 @@ export default function MateriaisCheckoutPage() {
   const isCartMode = params.get('cart') === '1'
   const itemType = (params.get('type') as 'material' | 'package') || 'material'
   const itemId = params.get('id') || ''
+  const couponFromQuery = params.get('coupon') || ''
   const { items: cartItems, clearCart, removeItem, addItem } = useMaterialCart()
 
   const [item, setItem] = useState<any>(null)
@@ -953,6 +965,7 @@ export default function MateriaisCheckoutPage() {
                       appliedCoupon={appliedCoupon}
                       onApplied={setAppliedCoupon}
                       onRemoved={() => setAppliedCoupon(null)}
+                      initialCode={couponFromQuery}
                     />
                   </div>
                 )}
