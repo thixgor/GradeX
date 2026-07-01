@@ -573,11 +573,19 @@ export async function grantSerialKeyProduct(
           auditMetadata: { via: 'serial_key', serialKeyId: String(serial._id) },
         }
       )
-      const redirectTo = itemType === 'package'
-        ? '/pacotes'
-        : grant.linkedDeckSlug
-          ? '/flashcards'
-          : `/materiais/${grant.itemId}`
+      // Se a compra teve vários itens (carrinho), leva para "Meus materiais".
+      // Se foi um único item, leva direto para o produto comprado.
+      let siblingCount = 1
+      if (serial.orderId) {
+        siblingCount = await db.collection(SERIAL_KEYS_COLLECTION).countDocuments({ orderId: serial.orderId })
+      }
+      const redirectTo = siblingCount > 1
+        ? '/materiais?tab=mine'
+        : itemType === 'package'
+          ? `/pacotes/${grant.itemId}`
+          : grant.linkedDeckSlug
+            ? `/flashcards/d/${grant.linkedDeckSlug}`
+            : `/materiais/${grant.itemId}`
       return { productLabel: grant.itemTitle || serial.productTitle || 'Material', redirectTo }
     }
 
