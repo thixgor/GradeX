@@ -247,6 +247,18 @@ export function getClientIp(request: NextRequest): string {
   )
 }
 
+// Identidade estável para visitante (sem login) usada no lugar de userId no
+// watermark/auditToken/cache de página — derivada de IP+User-Agent, não é PII
+// e é determinística dentro da janela de cache (permite reuso de render).
+export function guestFingerprint(ip: string, userAgent: string): string {
+  const normalized = `${ip}|${userAgent}`.toLowerCase()
+  let hash = 5381
+  for (let i = 0; i < normalized.length; i++) {
+    hash = ((hash << 5) + hash) ^ normalized.charCodeAt(i)
+  }
+  return `guest-${(hash >>> 0).toString(36).slice(0, 8)}`
+}
+
 export function formatViewerDate(date: Date): string {
   return date.toLocaleString('pt-BR', {
     timeZone: 'America/Sao_Paulo',
@@ -260,7 +272,9 @@ export function formatViewerDate(date: Date): string {
 
 export async function validateMaterialPdfAccess(
   materialId: string,
-  session: TokenPayload,
+  // Visitante (sem login) é aceito como `null` — só pode receber accessLevel
+  // 'preview' quando o admin liberou uma prévia; nunca acesso pleno.
+  session: TokenPayload | null,
   options: { requireViewerEnabled?: boolean; requirePdf?: boolean; allowPreview?: boolean } = {}
 ): Promise<MaterialPdfAccessResult> {
   const requireViewerEnabled = options.requireViewerEnabled ?? true
@@ -272,14 +286,16 @@ export async function validateMaterialPdfAccess(
   }
 
   const db = await getDb()
-  const isAdmin = session.role === 'admin'
+  const isAdmin = session?.role === 'admin'
   const objectId = new ObjectId(materialId)
 
   const [user, material] = await Promise.all([
-    db.collection('users').findOne(
-      { _id: new ObjectId(session.userId) },
-      { projection: { name: 1, email: 1, accountType: 1, secondaryRole: 1, cpf: 1 } }
-    ),
+    session
+      ? db.collection('users').findOne(
+          { _id: new ObjectId(session.userId) },
+          { projection: { name: 1, email: 1, accountType: 1, secondaryRole: 1, cpf: 1 } }
+        )
+      : Promise.resolve(null),
     db.collection('materials').findOne({
       _id: objectId,
       ...(isAdmin ? {} : { isHidden: false }),
@@ -301,7 +317,9 @@ export async function validateMaterialPdfAccess(
   let hasAccess = isAdmin
   const userGroups: string[] = []
 
-  if (!isAdmin) {
+  // Sem sessão (visitante): nunca há acesso pleno — pula toda a checagem de
+  // compra/grupo e cai direto na avaliação de prévia mais abaixo.
+  if (!isAdmin && session) {
     if (user?.accountType) userGroups.push(user.accountType)
     if (user?.secondaryRole === 'monitor') userGroups.push('monitor')
 

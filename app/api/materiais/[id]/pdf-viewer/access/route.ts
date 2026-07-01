@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
+import { checkRateLimitSync } from '@/lib/api-security'
 import {
   expandPreviewPages,
   getClientIp,
@@ -9,14 +10,40 @@ import {
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
 
+// Abrir o viewer é barato (sem render de PDF), mas agora aceita visitante
+// (sem login) para a prévia — então precisa de um piso de rate limit por IP
+// para não virar vetor de flood/DoS sem a fricção de uma conta.
+const ACCESS_RATE_LIMIT_IP = { limit: 60, windowMs: 60_000 }
+// Visitante (sem sessão) é o público novo e sem fricção nenhuma: limite mais
+// apertado, só nesse caso.
+const ACCESS_RATE_LIMIT_GUEST = { limit: 20, windowMs: 60_000 }
+
+function rateLimitedResponse(retryAfterMs: number) {
+  const retryAfterSeconds = Math.max(1, Math.ceil(retryAfterMs / 1000))
+  return NextResponse.json(
+    { error: 'Muitas tentativas. Tente novamente em instantes.' },
+    { status: 429, headers: { 'Retry-After': String(retryAfterSeconds) } }
+  )
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
+    const ip = getClientIp(request)
+    const generalLimit = checkRateLimitSync(ip, 'pdf-viewer-access', ACCESS_RATE_LIMIT_IP)
+    if (!generalLimit.success) {
+      return rateLimitedResponse(generalLimit.retryAfterMs || 60_000)
+    }
+
     const session = await getSession()
+
     if (!session) {
-      return NextResponse.json({ error: 'Nao autenticado' }, { status: 401 })
+      const guestLimit = checkRateLimitSync(ip, 'pdf-viewer-access-guest', ACCESS_RATE_LIMIT_GUEST)
+      if (!guestLimit.success) {
+        return rateLimitedResponse(guestLimit.retryAfterMs || 60_000)
+      }
     }
 
     const access = await validateMaterialPdfAccess(params.id, session, {
@@ -101,14 +128,15 @@ export async function GET(
     const auditToken = crypto.randomUUID()
 
     access.db.collection('material_pdf_viewer_logs').insertOne({
-      userId: session.userId,
-      userName: session.name,
-      userEmail: session.email,
+      userId: session?.userId || null,
+      userName: session?.name || 'Visitante (sem login)',
+      userEmail: session?.email || null,
+      isGuest: !session,
       materialId: access.materialId,
       materialTitle: access.material.title,
       action: 'viewer_open',
       auditToken,
-      ip: getClientIp(request),
+      ip,
       userAgent: request.headers.get('user-agent') || 'unknown',
       createdAt: now,
     }).catch((error) => console.error('[pdf-viewer/access] Falha ao logar abertura:', error))

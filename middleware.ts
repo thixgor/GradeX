@@ -74,6 +74,13 @@ const adminPrefixes = ['/admin/', '/api/admin/']
 function isPublicRoute(pathname: string): boolean {
   if (publicRoutes.includes(pathname)) return true
   if (/^\/materiais\/[a-fA-F0-9]{24}$/.test(pathname)) return true
+  // Viewer do PDF e suas rotas de acesso/página ficam públicos para permitir
+  // prévia a visitante (sem login). As próprias rotas internamente exigem que
+  // o admin tenha liberado uma prévia — sem isso, seguem retornando 403 — e
+  // aplicam rate limit agressivo por IP para essa nova superfície sem conta.
+  if (/^\/materiais\/[a-fA-F0-9]{24}\/viewer$/.test(pathname)) return true
+  if (/^\/api\/materiais\/[a-fA-F0-9]{24}\/pdf-viewer\/access$/.test(pathname)) return true
+  if (/^\/api\/materiais\/[a-fA-F0-9]{24}\/pdf-viewer\/page$/.test(pathname)) return true
   if (/^\/pacotes\/[a-fA-F0-9]{24}$/.test(pathname)) return true
   if (/^\/flashcards\/d\/[^/]+$/.test(pathname)) return true
   // Mapas mentais compartilhados (público/não listado/com senha) podem ser
