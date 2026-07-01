@@ -21,6 +21,9 @@ const publicRoutes = [
   '/materiais',
   '/materiais/checkout',
   '/api/materiais/cart/preview',
+  // Validação de cupom no checkout de visitante (Serial Key). A rota trata
+  // convidado internamente e revalida no checkout autoritativo.
+  '/api/coupons/validate',
   '/flashcards',
   '/ldpg-mnclinico',
   '/manual-clinico',
