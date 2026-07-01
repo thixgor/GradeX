@@ -1,9 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { ChevronDown, ChevronRight, Trash2, Edit2, FolderPlus, MoreHorizontal, ArrowUp, ArrowDown, Share2, Download, FileDown, ArrowDownAZ, BookOpen } from 'lucide-react'
+import { TiltCard } from '@/components/tilt-card'
+import { ChevronDown, Trash2, Edit2, FolderPlus, MoreHorizontal, ArrowUp, ArrowDown, Share2, Download, FileDown, ArrowDownAZ, BookOpen, ChevronRight } from 'lucide-react'
 import { Exam } from '@/lib/types'
+import { cn } from '@/lib/utils'
 
 interface GroupData {
   _id: string
@@ -44,6 +47,31 @@ function isInSubtree(groupId: string, targetId: string, allGroups: GroupData[]):
   if (groupId === targetId) return true
   const children = allGroups.filter(g => g.parentGroupId === groupId)
   return children.some(c => isInSubtree(c._id, targetId, allGroups))
+}
+
+function ancestorChain(group: GroupData, allGroups: GroupData[]): GroupData[] {
+  const chain: GroupData[] = []
+  let current: GroupData | undefined = group
+  let safety = 0
+  while (current?.parentGroupId && safety < 20) {
+    const parent = allGroups.find(g => g._id === current!.parentGroupId)
+    if (!parent) break
+    chain.unshift(parent)
+    current = parent
+    safety++
+  }
+  return chain
+}
+
+/** Tree "elbow" connector — the small L-shaped line linking a row to the parent's vertical guide. */
+function TreeElbow({ isLast }: { isLast: boolean }) {
+  return (
+    <span
+      aria-hidden
+      className="absolute -left-3 sm:-left-4 top-0 w-3 sm:w-4 h-5 border-l border-b border-border/30 rounded-bl-md"
+      style={isLast ? { borderLeftColor: 'transparent' } : undefined}
+    />
+  )
 }
 
 export function ExamGroup({
@@ -164,6 +192,7 @@ export function ExamGroup({
   }
 
   const accentColor = group.color || '#3B82F6'
+  const ancestors = highlighted ? ancestorChain(group, allGroups) : []
 
   const sortedExams = [...exams]
     .filter(exam => groupSelfMatches || examMatchesFilter(exam))
@@ -174,131 +203,170 @@ export function ExamGroup({
     })
 
   const directPracticeExams = sortedExams.filter(e => e.isPracticeExam)
+  const totalRows = sortedExams.length + childGroups.length
 
   // Visual depth: cap indent so deep nesting doesn't destroy mobile space
-  const indentClass = depth === 0 ? '' : depth === 1 ? 'ml-3 sm:ml-4' : 'ml-2 sm:ml-3'
-  const borderAccent = highlighted ? 'border-l-primary' : 'border-l-border/40'
+  const indentClass = depth === 0 ? '' : depth === 1 ? 'ml-3.5 sm:ml-5' : 'ml-3 sm:ml-4'
 
-  return (
-    <div className={indentClass}>
-      {/* ─── Group Header ─── */}
-      <div
-        className={`group/header relative flex items-start gap-2.5 rounded-2xl cursor-pointer select-none transition-all duration-200
-          ${depth === 0 ? 'px-3 py-3.5' : 'px-2.5 py-3'}
-          ${highlighted
-            ? 'bg-primary/10 ring-2 ring-primary/25 shadow-sm'
-            : 'hover:bg-muted/60 active:bg-muted/80'
-          }`}
-        onClick={() => setIsExpanded(!isExpanded)}
+  const header = (
+    <div
+      className={cn(
+        'group/header relative flex items-start gap-2.5 rounded-2xl cursor-pointer select-none transition-colors duration-200',
+        depth === 0 ? 'px-3 py-3.5' : 'px-2.5 py-3',
+        highlighted
+          ? 'bg-primary/10 ring-2 ring-primary/25 shadow-sm'
+          : depth === 0
+            ? 'hover:bg-muted/60 active:bg-muted/80 border border-border/30 hover:border-border/60'
+            : 'hover:bg-muted/50 active:bg-muted/70'
+      )}
+      onClick={() => setIsExpanded(!isExpanded)}
+    >
+      {/* Expand chevron */}
+      <motion.div
+        animate={{ rotate: isExpanded ? 0 : -90 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+        className="flex-shrink-0 mt-0.5 text-muted-foreground/60"
       >
-        {/* Expand chevron */}
-        <div className={`flex-shrink-0 mt-0.5 transition-transform duration-200 ${isExpanded ? 'rotate-0' : '-rotate-90'} text-muted-foreground/60`}>
-          <ChevronDown className={depth === 0 ? 'h-4 w-4' : 'h-3.5 w-3.5'} />
-        </div>
+        <ChevronDown className={depth === 0 ? 'h-4 w-4' : 'h-3.5 w-3.5'} />
+      </motion.div>
 
-        {/* Group avatar */}
-        {group.imageUrl ? (
-          <div className={`flex-shrink-0 rounded-xl overflow-hidden border border-border/40 ${depth === 0 ? 'w-10 h-10' : 'w-8 h-8'}`}>
-            <img src={group.imageUrl} alt="" className="w-full h-full object-cover" />
-          </div>
-        ) : (
-          <div
-            className={`flex-shrink-0 rounded-xl flex items-center justify-center text-white font-bold shadow-sm ${depth === 0 ? 'w-10 h-10 text-sm' : 'w-8 h-8 text-xs'}`}
-            style={{ backgroundColor: accentColor }}
-          >
-            {group.icon && group.icon !== '📁' ? group.icon : group.name.charAt(0).toUpperCase()}
+      {/* Group avatar */}
+      {group.imageUrl ? (
+        <div className={cn(
+          'flex-shrink-0 rounded-xl overflow-hidden border border-border/40 transition-transform duration-300 group-hover/header:scale-105',
+          depth === 0 ? 'w-10 h-10' : 'w-8 h-8'
+        )}>
+          <img src={group.imageUrl} alt="" className="w-full h-full object-cover" />
+        </div>
+      ) : (
+        <div
+          className={cn(
+            'flex-shrink-0 rounded-xl flex items-center justify-center text-white font-bold shadow-sm transition-transform duration-300 group-hover/header:scale-105 group-hover/header:-rotate-2',
+            depth === 0 ? 'w-10 h-10 text-sm' : 'w-8 h-8 text-xs'
+          )}
+          style={{ background: `linear-gradient(140deg, ${accentColor} 0%, ${accentColor}cc 100%)` }}
+        >
+          {group.icon && group.icon !== '📁' ? group.icon : group.name.charAt(0).toUpperCase()}
+        </div>
+      )}
+
+      {/* Name + meta */}
+      <div className="flex-1 min-w-0 space-y-0.5">
+        {ancestors.length > 0 && (
+          <div className="flex items-center gap-1 flex-wrap text-[10px] text-primary/70 font-medium pb-0.5">
+            {ancestors.map((a, i) => (
+              <span key={a._id} className="flex items-center gap-1">
+                {i > 0 && <ChevronRight className="h-2.5 w-2.5 opacity-50" />}
+                {a.name}
+              </span>
+            ))}
+            <ChevronRight className="h-2.5 w-2.5 opacity-50" />
           </div>
         )}
-
-        {/* Name + meta */}
-        <div className="flex-1 min-w-0 space-y-0.5">
-          <div className="flex items-start gap-2 flex-wrap">
-            <span className={`font-semibold leading-snug break-words ${depth === 0 ? 'text-sm sm:text-base' : 'text-sm'} ${highlighted ? 'text-primary' : 'text-foreground'}`}>
-              {group.name}
+        <div className="flex items-start gap-2 flex-wrap">
+          <span className={cn(
+            'font-semibold leading-snug break-words',
+            depth === 0 ? 'text-sm sm:text-base' : 'text-sm',
+            highlighted ? 'text-primary' : 'text-foreground'
+          )}>
+            {group.name}
+          </span>
+          {highlighted && (
+            <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-primary/15 text-primary font-semibold animate-pulse flex-shrink-0 mt-0.5">
+              ← aqui
             </span>
-            {highlighted && (
-              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-primary/15 text-primary font-semibold animate-pulse flex-shrink-0 mt-0.5">
-                ← aqui
-              </span>
-            )}
-            {!highlighted && group.type === 'general' && (
-              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 font-medium flex-shrink-0 mt-0.5">Geral</span>
-            )}
-            {!highlighted && group.category === 'faculdade' && (
-              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-red-500/10 text-red-600 dark:text-red-400 font-medium flex-shrink-0 mt-0.5">Faculdade</span>
-            )}
-          </div>
-          {group.description && (
-            <p className="text-[11px] text-muted-foreground/65 leading-relaxed line-clamp-2">{group.description}</p>
           )}
-          <div className="flex items-center gap-2 pt-0.5">
-            <span className="text-[10px] text-muted-foreground/50 tabular-nums">
-              {totalExamCount} {totalExamCount === 1 ? 'prova' : 'provas'}
-            </span>
-            {childGroups.length > 0 && (
-              <span className="text-[10px] text-muted-foreground/40">· {childGroups.length} {childGroups.length === 1 ? 'subgrupo' : 'subgrupos'}</span>
-            )}
-          </div>
+          {!highlighted && group.type === 'general' && (
+            <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 font-medium flex-shrink-0 mt-0.5">Geral</span>
+          )}
+          {!highlighted && group.category === 'faculdade' && (
+            <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-red-500/10 text-red-600 dark:text-red-400 font-medium flex-shrink-0 mt-0.5">Faculdade</span>
+          )}
         </div>
-
-        {/* Right-side actions — always visible on mobile, hover on desktop */}
-        <div className="flex items-center gap-1 flex-shrink-0 mt-0.5" onClick={e => e.stopPropagation()}>
-          {/* PDF download */}
-          {directPracticeExams.length > 0 && onGroupDownloadPDF && (
-            <div className="relative">
-              <button
-                onClick={() => setShowGroupDownload(v => !v)}
-                className="flex items-center gap-1 px-2 py-1.5 rounded-xl text-xs font-medium transition-colors text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 border border-emerald-500/25 hover:border-emerald-500/50 active:scale-95"
-                title={`Baixar PDFs (${directPracticeExams.length} provas)`}
-              >
-                <FileDown className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline font-semibold">{directPracticeExams.length}</span>
-              </button>
-              {showGroupDownload && (
-                <>
-                  <div className="fixed inset-0 z-40" onClick={() => setShowGroupDownload(false)} />
-                  <div className="absolute right-0 top-full mt-1.5 z-50 w-64 rounded-2xl border border-border bg-popover shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
-                    <div className="px-3.5 py-2.5 border-b border-border/50 bg-muted/30">
-                      <p className="text-xs font-semibold text-foreground leading-snug">{group.name}</p>
-                      <p className="text-[10px] text-muted-foreground mt-0.5">{directPracticeExams.length} provas · ordem de baixo pra cima</p>
-                    </div>
-                    {([
-                      { type: 'exam',         label: 'PDF da Prova',              desc: 'Apenas as questões',          icon: '📄' },
-                      { type: 'with-answers', label: 'Prova + Gabarito Comentado', desc: 'Com respostas e explicações', icon: '📚' },
-                      { type: 'gabarito',     label: 'Só o Gabarito',             desc: 'Gabarito de todas as provas', icon: '✅' },
-                    ] as const).map(opt => (
-                      <button
-                        key={opt.type}
-                        onClick={() => {
-                          setShowGroupDownload(false)
-                          onGroupDownloadPDF([...directPracticeExams].reverse(), opt.type, group.name)
-                        }}
-                        className="w-full flex items-center gap-3 px-3.5 py-3 hover:bg-muted/60 active:bg-muted transition-colors text-left"
-                      >
-                        <span className="text-lg leading-none flex-shrink-0">{opt.icon}</span>
-                        <div>
-                          <p className="text-xs font-semibold text-foreground">{opt.label}</p>
-                          <p className="text-[10px] text-muted-foreground">{opt.desc}</p>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
-          )}
-
-          {/* Admin actions toggle — always visible */}
-          {canManageGroup && (
-            <button
-              onClick={() => setShowActions(!showActions)}
-              className={`p-1.5 rounded-xl transition-colors ${showActions ? 'bg-muted text-foreground' : 'text-muted-foreground/50 hover:bg-muted hover:text-foreground'}`}
-            >
-              <MoreHorizontal className="h-4 w-4" />
-            </button>
+        {group.description && (
+          <p className="text-[11px] text-muted-foreground/65 leading-relaxed line-clamp-2">{group.description}</p>
+        )}
+        <div className="flex items-center gap-2 pt-0.5">
+          <span className="text-[10px] text-muted-foreground/50 tabular-nums">
+            {totalExamCount} {totalExamCount === 1 ? 'prova' : 'provas'}
+          </span>
+          {childGroups.length > 0 && (
+            <span className="text-[10px] text-muted-foreground/40">· {childGroups.length} {childGroups.length === 1 ? 'subgrupo' : 'subgrupos'}</span>
           )}
         </div>
       </div>
+
+      {/* Right-side actions — always visible on mobile, hover on desktop */}
+      <div className="flex items-center gap-1 flex-shrink-0 mt-0.5" onClick={e => e.stopPropagation()}>
+        {/* PDF download */}
+        {directPracticeExams.length > 0 && onGroupDownloadPDF && (
+          <div className="relative">
+            <button
+              onClick={() => setShowGroupDownload(v => !v)}
+              className="flex items-center gap-1 px-2 py-1.5 rounded-xl text-xs font-medium transition-colors text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 border border-emerald-500/25 hover:border-emerald-500/50 active:scale-95"
+              title={`Baixar PDFs (${directPracticeExams.length} provas)`}
+            >
+              <FileDown className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline font-semibold">{directPracticeExams.length}</span>
+            </button>
+            {showGroupDownload && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setShowGroupDownload(false)} />
+                <div className="absolute right-0 top-full mt-1.5 z-50 w-64 rounded-2xl border border-border bg-popover shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
+                  <div className="px-3.5 py-2.5 border-b border-border/50 bg-muted/30">
+                    <p className="text-xs font-semibold text-foreground leading-snug">{group.name}</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">{directPracticeExams.length} provas · ordem de baixo pra cima</p>
+                  </div>
+                  {([
+                    { type: 'exam',         label: 'PDF da Prova',              desc: 'Apenas as questões',          icon: '📄' },
+                    { type: 'with-answers', label: 'Prova + Gabarito Comentado', desc: 'Com respostas e explicações', icon: '📚' },
+                    { type: 'gabarito',     label: 'Só o Gabarito',             desc: 'Gabarito de todas as provas', icon: '✅' },
+                  ] as const).map(opt => (
+                    <button
+                      key={opt.type}
+                      onClick={() => {
+                        setShowGroupDownload(false)
+                        onGroupDownloadPDF([...directPracticeExams].reverse(), opt.type, group.name)
+                      }}
+                      className="w-full flex items-center gap-3 px-3.5 py-3 hover:bg-muted/60 active:bg-muted transition-colors text-left"
+                    >
+                      <span className="text-lg leading-none flex-shrink-0">{opt.icon}</span>
+                      <div>
+                        <p className="text-xs font-semibold text-foreground">{opt.label}</p>
+                        <p className="text-[10px] text-muted-foreground">{opt.desc}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
+        {/* Admin actions toggle — always visible */}
+        {canManageGroup && (
+          <button
+            onClick={() => setShowActions(!showActions)}
+            className={cn(
+              'p-1.5 rounded-xl transition-colors',
+              showActions ? 'bg-muted text-foreground' : 'text-muted-foreground/50 hover:bg-muted hover:text-foreground'
+            )}
+          >
+            <MoreHorizontal className="h-4 w-4" />
+          </button>
+        )}
+      </div>
+    </div>
+  )
+
+  return (
+    <div className={indentClass}>
+      {/* ─── Group Header — subtle 3D tilt only on top-level folders ─── */}
+      {depth === 0 ? (
+        <TiltCard maxTilt={2.5} scale={1.006} className="rounded-2xl">
+          {header}
+        </TiltCard>
+      ) : header}
 
       {/* ─── Actions Bar ─── */}
       {showActions && canManageGroup && (
@@ -335,111 +403,125 @@ export function ExamGroup({
         </div>
       )}
 
-      {/* ─── Expanded Content ─── */}
-      {isExpanded && (
-        <div className={`mt-0.5 mb-1 space-y-0.5 ${depth === 0 ? 'pl-4 sm:pl-5 border-l-2' : 'pl-3 sm:pl-4 border-l'} ml-3 sm:ml-4 ${highlighted ? 'border-primary/30' : 'border-border/25'}`}>
-
-          {/* Exams list */}
-          {sortedExams.map((exam, examIdx) => {
-            const examId = exam._id?.toString() || ''
-            const typeColor = exam.isPracticeExam ? 'bg-emerald-500' : exam.isPersonalExam ? 'bg-violet-500' : 'bg-blue-500'
-            return (
-              <div
-                key={examId}
-                className="group/exam relative flex items-start gap-3 py-3 px-3 rounded-xl hover:bg-muted/50 active:bg-muted/70 cursor-pointer transition-all"
-                onContextMenu={(e) => onExamContextMenu(exam, e)}
-                onClick={() => onExamClick(exam)}
-              >
-                {/* Admin reorder buttons */}
-                {isAdmin && group.type === 'general' && onReorderExam && (
-                  <div className="flex flex-col gap-0.5 flex-shrink-0 mt-0.5 opacity-0 group-hover/exam:opacity-100 sm:flex transition-opacity" onClick={(e) => e.stopPropagation()}>
-                    <button
-                      onClick={() => onReorderExam(examId, 'up')}
-                      disabled={examIdx === 0}
-                      className="p-1 rounded-lg hover:bg-muted disabled:opacity-20 transition-colors"
-                    >
-                      <ArrowUp className="h-3 w-3 text-muted-foreground" />
-                    </button>
-                    <button
-                      onClick={() => onReorderExam(examId, 'down')}
-                      disabled={examIdx === sortedExams.length - 1}
-                      className="p-1 rounded-lg hover:bg-muted disabled:opacity-20 transition-colors"
-                    >
-                      <ArrowDown className="h-3 w-3 text-muted-foreground" />
-                    </button>
-                  </div>
-                )}
-
-                {/* Type dot */}
-                <div className={`flex-shrink-0 w-2 h-2 rounded-full mt-2 ${typeColor}`} />
-
-                {/* Title + description */}
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm leading-snug font-medium text-foreground group-hover/exam:text-primary transition-colors break-words">
-                    {exam.title}
-                  </p>
-                  {exam.description && (
-                    <p className="text-[11px] text-muted-foreground/60 mt-0.5 line-clamp-2 leading-relaxed">{exam.description}</p>
+      {/* ─── Expanded Content — animated via grid-template-rows (no JS height measuring) ─── */}
+      <div
+        className="grid transition-[grid-template-rows] duration-300 ease-out"
+        style={{ gridTemplateRows: isExpanded ? '1fr' : '0fr' }}
+      >
+        <div className="overflow-hidden">
+          <div className={cn(
+            'mt-1 mb-1 space-y-0.5 relative',
+            depth === 0 ? 'pl-4 sm:pl-5' : 'pl-3.5 sm:pl-4',
+            'ml-3.5 sm:ml-5 border-l',
+            highlighted ? 'border-primary/30' : 'border-border/25'
+          )}>
+            {/* Exams list */}
+            {sortedExams.map((exam, examIdx) => {
+              const examId = exam._id?.toString() || ''
+              const typeColor = exam.isPracticeExam ? 'bg-emerald-500' : exam.isPersonalExam ? 'bg-violet-500' : 'bg-blue-500'
+              const isLastRow = examIdx === sortedExams.length - 1 && childGroups.length === 0
+              return (
+                <div
+                  key={examId}
+                  className="group/exam relative flex items-start gap-3 py-3 px-3 rounded-xl hover:bg-muted/50 hover:translate-x-0.5 active:bg-muted/70 cursor-pointer transition-all duration-200"
+                  onContextMenu={(e) => onExamContextMenu(exam, e)}
+                  onClick={() => onExamClick(exam)}
+                >
+                  <TreeElbow isLast={isLastRow} />
+                  {/* Admin reorder buttons */}
+                  {isAdmin && group.type === 'general' && onReorderExam && (
+                    <div className="flex flex-col gap-0.5 flex-shrink-0 mt-0.5 opacity-0 group-hover/exam:opacity-100 sm:flex transition-opacity" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        onClick={() => onReorderExam(examId, 'up')}
+                        disabled={examIdx === 0}
+                        className="p-1 rounded-lg hover:bg-muted disabled:opacity-20 transition-colors"
+                      >
+                        <ArrowUp className="h-3 w-3 text-muted-foreground" />
+                      </button>
+                      <button
+                        onClick={() => onReorderExam(examId, 'down')}
+                        disabled={examIdx === sortedExams.length - 1}
+                        className="p-1 rounded-lg hover:bg-muted disabled:opacity-20 transition-colors"
+                      >
+                        <ArrowDown className="h-3 w-3 text-muted-foreground" />
+                      </button>
+                    </div>
                   )}
-                  <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                    {exam.isPracticeExam && (
-                      <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold">Treino</span>
+
+                  {/* Type dot */}
+                  <div className={cn('flex-shrink-0 w-2 h-2 rounded-full mt-2', typeColor)} />
+
+                  {/* Title + description */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm leading-snug font-medium text-foreground group-hover/exam:text-primary transition-colors break-words">
+                      {exam.title}
+                    </p>
+                    {exam.description && (
+                      <p className="text-[11px] text-muted-foreground/60 mt-0.5 line-clamp-2 leading-relaxed">{exam.description}</p>
                     )}
-                    <span className="text-[10px] text-muted-foreground/50 tabular-nums">{exam.numberOfQuestions} questões</span>
+                    <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                      {exam.isPracticeExam && (
+                        <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold">Treino</span>
+                      )}
+                      <span className="text-[10px] text-muted-foreground/50 tabular-nums">{exam.numberOfQuestions} questões</span>
+                    </div>
                   </div>
+
+                  {/* Download icon */}
+                  {exam.isPracticeExam && onDownloadPDF && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); onDownloadPDF(exam) }}
+                      className="flex-shrink-0 mt-0.5 p-2 rounded-xl opacity-0 group-hover/exam:opacity-100 transition-opacity hover:bg-emerald-500/10 text-muted-foreground hover:text-emerald-600 dark:hover:text-emerald-400"
+                      title="Baixar PDF"
+                    >
+                      <Download className="h-3.5 w-3.5" />
+                    </button>
+                  )}
                 </div>
+              )
+            })}
 
-                {/* Download icon */}
-                {exam.isPracticeExam && onDownloadPDF && (
-                  <button
-                    onClick={(e) => { e.stopPropagation(); onDownloadPDF(exam) }}
-                    className="flex-shrink-0 mt-0.5 p-2 rounded-xl opacity-0 group-hover/exam:opacity-100 transition-opacity hover:bg-emerald-500/10 text-muted-foreground hover:text-emerald-600 dark:hover:text-emerald-400"
-                    title="Baixar PDF"
-                  >
-                    <Download className="h-3.5 w-3.5" />
-                  </button>
-                )}
+            {/* Child Groups */}
+            {childGroups.map((childGroup, childIdx) => {
+              const childExams = allExams.filter(e => e.groupId === childGroup._id)
+              const isLastRow = childIdx === childGroups.length - 1
+              return (
+                <div key={childGroup._id} className="relative">
+                  <TreeElbow isLast={isLastRow} />
+                  <ExamGroup
+                    group={childGroup}
+                    exams={childExams}
+                    allGroups={allGroups}
+                    allExams={allExams}
+                    currentUserId={currentUserId}
+                    userRole={userRole}
+                    onExamClick={onExamClick}
+                    onExamContextMenu={onExamContextMenu}
+                    onDeleteGroup={onDeleteGroup}
+                    onEditGroup={onEditGroup}
+                    onCreateSubgroup={onCreateSubgroup}
+                    onReorderExam={onReorderExam}
+                    onSortGroup={onSortGroup}
+                    onDownloadPDF={onDownloadPDF}
+                    onGroupDownloadPDF={onGroupDownloadPDF}
+                    depth={depth + 1}
+                    highlightGroupId={highlightGroupId}
+                    filterQuery={filterQuery}
+                  />
+                </div>
+              )
+            })}
+
+            {/* Empty state */}
+            {totalRows === 0 && (
+              <div className="flex items-center gap-2 py-4 px-3">
+                <BookOpen className="h-4 w-4 text-muted-foreground/30" />
+                <p className="text-xs text-muted-foreground/40 italic">Nenhuma prova neste grupo</p>
               </div>
-            )
-          })}
-
-          {/* Child Groups */}
-          {childGroups.map((childGroup) => {
-            const childExams = allExams.filter(e => e.groupId === childGroup._id)
-            return (
-              <ExamGroup
-                key={childGroup._id}
-                group={childGroup}
-                exams={childExams}
-                allGroups={allGroups}
-                allExams={allExams}
-                currentUserId={currentUserId}
-                userRole={userRole}
-                onExamClick={onExamClick}
-                onExamContextMenu={onExamContextMenu}
-                onDeleteGroup={onDeleteGroup}
-                onEditGroup={onEditGroup}
-                onCreateSubgroup={onCreateSubgroup}
-                onReorderExam={onReorderExam}
-                onSortGroup={onSortGroup}
-                onDownloadPDF={onDownloadPDF}
-                onGroupDownloadPDF={onGroupDownloadPDF}
-                depth={depth + 1}
-                highlightGroupId={highlightGroupId}
-                filterQuery={filterQuery}
-              />
-            )
-          })}
-
-          {/* Empty state */}
-          {sortedExams.length === 0 && childGroups.length === 0 && (
-            <div className="flex items-center gap-2 py-4 px-3">
-              <BookOpen className="h-4 w-4 text-muted-foreground/30" />
-              <p className="text-xs text-muted-foreground/40 italic">Nenhuma prova neste grupo</p>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      )}
+      </div>
     </div>
   )
 }
