@@ -33,12 +33,13 @@ import {
   Type,
   Underline,
   X,
+  Zap,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 type ViewerMode = 'single' | 'width' | 'continuous'
 type AnnotationType = 'highlight' | 'note' | 'bookmark' | 'text' | 'drawing'
-type AnnotationTool = 'cursor' | AnnotationType | 'eraser'
+type AnnotationTool = 'cursor' | AnnotationType | 'eraser' | 'laser'
 type DrawingMode = 'free' | 'marker' | 'line' | 'dash' | 'circle'
 type TextAlign = 'left' | 'center' | 'right'
 
@@ -171,6 +172,10 @@ const PAGE_BYTES_CACHE_MAX_ENTRIES = 36
 const COLOR_SWATCHES = ['#22c55e', '#0ea5e9', '#f59e0b', '#ef4444', '#8b5cf6', '#111827']
 const HIGHLIGHT_SWATCHES = ['#facc15', '#fb923c', '#86efac', '#93c5fd', '#f9a8d4']
 const NOTE_SWATCHES = ['#fde68a', '#bbf7d0', '#bfdbfe', '#fecdd3', '#ddd6fe']
+const LASER_SWATCHES = ['#ef4444', '#ec4899', '#f97316', '#22c55e', '#3b82f6']
+// Tempo (ms) que cada traço da caneta laser leva para desaparecer sozinho,
+// no estilo GoodNotes: escreve/aponta e a tinta some pouco depois.
+const LASER_FADE_MS = 900
 const FONT_OPTIONS = ['Inter', 'Arial', 'Georgia', 'Times New Roman', 'Courier New']
 const ERASER_CURSOR = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cpath d='M9 18 17.5 9.5a3 3 0 0 1 4.24 4.24L14.5 21H8l-3-3 4-4Z' fill='%23fff' stroke='%23111827' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M13 14 17 18' stroke='%23111827' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") 7 21, cell`
 const pageBytesCache = new Map<string, { bytes: Uint8Array; pageCount?: number; expiresAt: number }>()
@@ -298,6 +303,35 @@ async function fetchPdfPageBytes(materialId: string, pageNumber: number) {
   } finally {
     pageBytesInflight.delete(key)
   }
+}
+
+// Retomada de leitura: guarda a última página/modo por material no
+// localStorage, para reabrir exatamente de onde o usuário parou.
+const POSITION_STORAGE_PREFIX = 'domineaqui:pdf-viewer:last-position:'
+
+function readSavedPosition(materialId: string): { page?: number; mode?: ViewerMode } | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const raw = window.localStorage.getItem(POSITION_STORAGE_PREFIX + materialId)
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as { page?: unknown; mode?: unknown }
+    if (!parsed || typeof parsed !== 'object') return null
+    const page = Number(parsed.page)
+    const mode = parsed.mode
+    return {
+      page: Number.isFinite(page) && page > 0 ? Math.floor(page) : undefined,
+      mode: mode === 'single' || mode === 'width' || mode === 'continuous' ? mode : undefined,
+    }
+  } catch {
+    return null
+  }
+}
+
+function writeSavedPosition(materialId: string, position: { page: number; mode: ViewerMode }) {
+  if (typeof window === 'undefined') return
+  try {
+    window.localStorage.setItem(POSITION_STORAGE_PREFIX + materialId, JSON.stringify(position))
+  } catch {}
 }
 
 function clampZoom(value: number, min = 0.55, max = 2.6) {
@@ -560,6 +594,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const [highlightColor, setHighlightColor] = useState('#facc15')
   const [highlightWidth, setHighlightWidth] = useState(20)
   const [noteColor, setNoteColor] = useState('#fde68a')
+  const [laserColor, setLaserColor] = useState('#ef4444')
   const [drawingStyle, setDrawingStyle] = useState<DrawingStyle>({
     mode: 'free',
     color: '#22c55e',
@@ -641,11 +676,19 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         }
         if (!mounted) return
         setAccess(json)
-        // Abre na capa designada pelo admin (se houver), senão na página 1.
-        const startPage = Number(json.viewer?.coverPage) > 0 ? Number(json.viewer.coverPage) : 1
+        // Retoma de onde o usuário parou (última página/modo salvos). Se não
+        // houver posição salva, abre na capa designada pelo admin ou na pág. 1.
+        const total = Number(json.material?.pageCount) || 0
+        const coverStart = Number(json.viewer?.coverPage) > 0 ? Number(json.viewer.coverPage) : 1
+        const saved = readSavedPosition(materialId)
+        const savedPage = saved?.page && (total < 1 || saved.page <= total) ? saved.page : undefined
+        const startPage = savedPage ?? coverStart
         setCurrentPage(startPage)
         setPageInput(String(startPage))
-        setMode(json.viewer?.defaultMode || 'single')
+        setMode(saved?.mode || json.viewer?.defaultMode || 'single')
+        if (savedPage && savedPage > 1) {
+          setNotice(`Retomando da pagina ${savedPage}`)
+        }
         loadAnnotations().catch(() => {})
       } catch {
         if (mounted) setError('PDF nao pode ser carregado agora. Tente novamente.')
@@ -660,6 +703,12 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   useEffect(() => {
     setPageInput(String(currentPage))
   }, [currentPage])
+
+  // Salva continuamente a posição de leitura para retomar na próxima abertura.
+  useEffect(() => {
+    if (!access) return
+    writeSavedPosition(materialId, { page: currentPage, mode })
+  }, [access, currentPage, mode, materialId])
 
   useEffect(() => {
     if (!pageSize || !contentWidth || zoomTouchedRef.current) return
@@ -934,6 +983,19 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         @media (prefers-reduced-motion: reduce) {
           .pdf-page-fade { animation: none; }
         }
+        /* Em tela cheia o elemento raiz vira o próprio viewport: sem rolagem
+           própria o modo contínuo (e o "largura") não conseguiam passar da
+           primeira dobra. Damos altura de tela + overflow para rolar tudo. */
+        .pdf-viewer-shell:fullscreen {
+          height: 100vh;
+          overflow-y: auto;
+          background: #09090b;
+        }
+        .pdf-viewer-shell:-webkit-full-screen {
+          height: 100vh;
+          overflow-y: auto;
+          background: #09090b;
+        }
         @media print {
           html, body {
             background: #000 !important;
@@ -974,7 +1036,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       ) : null}
       <div
         ref={viewerRef}
-        className="min-h-screen text-white select-none"
+        className="pdf-viewer-shell min-h-screen text-white select-none"
         style={{ WebkitUserSelect: 'none', userSelect: 'none', touchAction: 'pan-x pan-y pinch-zoom' }}
       >
         <header className="sticky top-0 z-40 border-b border-white/10 bg-zinc-950/82 shadow-xl shadow-black/25 backdrop-blur-2xl">
@@ -1050,6 +1112,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
               <ToolButton active={tool === 'drawing'} onClick={() => setTool('drawing')} title="Caneta">
                 <PenLine className="h-4 w-4" />
               </ToolButton>
+              <ToolButton active={tool === 'laser'} onClick={() => setTool('laser')} title="Caneta laser">
+                <Zap className="h-4 w-4" />
+              </ToolButton>
               <ToolButton active={tool === 'text'} onClick={() => setTool('text')} title="Texto">
                 <Type className="h-4 w-4" />
               </ToolButton>
@@ -1119,6 +1184,8 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
               onHighlightWidthChange={setHighlightWidth}
               noteColor={noteColor}
               onNoteColorChange={setNoteColor}
+              laserColor={laserColor}
+              onLaserColorChange={setLaserColor}
               textStyle={textStyle}
               onTextStyleChange={setTextStyle}
             />
@@ -1207,6 +1274,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                   highlightColor={highlightColor}
                   highlightWidth={highlightWidth}
                   noteColor={noteColor}
+                  laserColor={laserColor}
                   textStyle={textStyle}
                   onPageFocus={handlePageFocused}
                   onPageSize={setPageSize}
@@ -1556,6 +1624,7 @@ function PdfCanvasPage({
   highlightColor,
   highlightWidth,
   noteColor,
+  laserColor,
   textStyle,
   onPageFocus,
   onPageSize,
@@ -1575,6 +1644,7 @@ function PdfCanvasPage({
   highlightColor: string
   highlightWidth: number
   noteColor: string
+  laserColor: string
   textStyle: TextStyle
   onPageFocus: (page: number) => void
   onPageSize: (size: PageSize) => void
@@ -1599,6 +1669,11 @@ function PdfCanvasPage({
     pointerId: number
   } | null>(null)
   const rafRef = useRef<number | null>(null)
+  const laserCanvasRef = useRef<HTMLCanvasElement>(null)
+  const laserStrokesRef = useRef<Array<{ points: Array<{ x: number; y: number; t: number }> }>>([])
+  const laserDrawingRef = useRef(false)
+  const laserPointerIdRef = useRef<number | null>(null)
+  const laserRafRef = useRef<number | null>(null)
   const ignoreNextClickRef = useRef(false)
   const [visible, setVisible] = useState(active)
   const [loading, setLoading] = useState(false)
@@ -1619,6 +1694,12 @@ function PdfCanvasPage({
     setRenderSize(null)
     setSelectedId(null)
     setEditor(null)
+    laserStrokesRef.current = []
+    laserDrawingRef.current = false
+    if (laserRafRef.current) {
+      window.cancelAnimationFrame(laserRafRef.current)
+      laserRafRef.current = null
+    }
   }, [materialId, pageNumber])
 
   useEffect(() => {
@@ -1733,6 +1814,7 @@ function PdfCanvasPage({
   useEffect(() => {
     return () => {
       if (rafRef.current) window.cancelAnimationFrame(rafRef.current)
+      if (laserRafRef.current) window.cancelAnimationFrame(laserRafRef.current)
     }
   }, [])
 
@@ -1884,6 +1966,100 @@ function PdfCanvasPage({
     })
   }, [renderDraftOnCanvas])
 
+  // Caneta laser (estilo GoodNotes): desenha um traço luminoso que some sozinho
+  // pouco depois. Nada é salvo — é só para apontar durante a leitura. Um loop de
+  // animação próprio mantém o efeito de rastro/desvanecimento após soltar.
+  const renderLaser = useCallback(() => {
+    const canvas = laserCanvasRef.current
+    const rect = overlayRef.current?.getBoundingClientRect()
+    if (!canvas || !rect) {
+      laserRafRef.current = null
+      return
+    }
+    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    const pixelWidth = Math.max(1, Math.floor(rect.width * dpr))
+    const pixelHeight = Math.max(1, Math.floor(rect.height * dpr))
+    if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+      canvas.width = pixelWidth
+      canvas.height = pixelHeight
+    }
+    canvas.style.width = `${rect.width}px`
+    canvas.style.height = `${rect.height}px`
+    const context = canvas.getContext('2d')
+    if (!context) {
+      laserRafRef.current = null
+      return
+    }
+    context.setTransform(dpr, 0, 0, dpr, 0, 0)
+    context.clearRect(0, 0, rect.width, rect.height)
+
+    const now = performance.now()
+    const width = rect.width
+    const height = rect.height
+    const strokes = laserStrokesRef.current
+    let alive = false
+
+    context.lineCap = 'round'
+    context.lineJoin = 'round'
+
+    for (const stroke of strokes) {
+      const points = stroke.points
+      // Descarta a "cauda" já expirada, criando o rastro que segue o cursor.
+      while (points.length && now - points[0].t > LASER_FADE_MS) points.shift()
+      if (points.length) alive = true
+
+      // Brilho externo.
+      context.shadowColor = laserColor
+      context.shadowBlur = 16
+      for (let index = 1; index < points.length; index++) {
+        const previous = points[index - 1]
+        const current = points[index]
+        const alpha = Math.max(0, 1 - (now - current.t) / LASER_FADE_MS)
+        if (alpha <= 0) continue
+        context.globalAlpha = alpha * 0.55
+        context.strokeStyle = laserColor
+        context.lineWidth = 9
+        context.beginPath()
+        context.moveTo(previous.x * width, previous.y * height)
+        context.lineTo(current.x * width, current.y * height)
+        context.stroke()
+      }
+
+      // Núcleo branco brilhante.
+      context.shadowBlur = 0
+      for (let index = 1; index < points.length; index++) {
+        const previous = points[index - 1]
+        const current = points[index]
+        const alpha = Math.max(0, 1 - (now - current.t) / LASER_FADE_MS)
+        if (alpha <= 0) continue
+        context.globalAlpha = alpha
+        context.strokeStyle = '#ffffff'
+        context.lineWidth = 2.5
+        context.beginPath()
+        context.moveTo(previous.x * width, previous.y * height)
+        context.lineTo(current.x * width, current.y * height)
+        context.stroke()
+      }
+    }
+
+    context.globalAlpha = 1
+    context.shadowBlur = 0
+    laserStrokesRef.current = strokes.filter((stroke) => stroke.points.length > 0)
+
+    if (alive || laserDrawingRef.current) {
+      laserRafRef.current = window.requestAnimationFrame(renderLaser)
+    } else {
+      context.clearRect(0, 0, rect.width, rect.height)
+      laserRafRef.current = null
+    }
+  }, [laserColor])
+
+  const ensureLaserLoop = useCallback(() => {
+    if (laserRafRef.current == null) {
+      laserRafRef.current = window.requestAnimationFrame(renderLaser)
+    }
+  }, [renderLaser])
+
   const addDrawingPoint = useCallback((point: PdfPoint) => {
     const interaction = interactionRef.current
     if (!interaction || interaction.kind !== 'drawing') return
@@ -1973,6 +2149,18 @@ function PdfCanvasPage({
     if (!renderSize || editor) return
     if (event.button !== 0 && event.pointerType !== 'touch' && event.pointerType !== 'pen') return
 
+    if (tool === 'laser') {
+      event.preventDefault()
+      event.currentTarget.setPointerCapture(event.pointerId)
+      const point = getPosition(event.clientX, event.clientY)
+      laserDrawingRef.current = true
+      laserPointerIdRef.current = event.pointerId
+      laserStrokesRef.current.push({ points: [{ x: point.x, y: point.y, t: performance.now() }] })
+      ensureLaserLoop()
+      setSelectedId(null)
+      return
+    }
+
     if (tool === 'drawing') {
       event.preventDefault()
       event.currentTarget.setPointerCapture(event.pointerId)
@@ -2023,6 +2211,24 @@ function PdfCanvasPage({
   }
 
   const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (tool === 'laser' && laserDrawingRef.current) {
+      event.preventDefault()
+      const stroke = laserStrokesRef.current[laserStrokesRef.current.length - 1]
+      if (stroke) {
+        const native = event.nativeEvent as PointerEvent & { getCoalescedEvents?: () => PointerEvent[] }
+        const events = native.getCoalescedEvents?.() || [native]
+        const now = performance.now()
+        for (const pointerEvent of events) {
+          const point = getPosition(pointerEvent.clientX, pointerEvent.clientY)
+          const last = stroke.points[stroke.points.length - 1]
+          if (last && distance(last, point) < 0.0012) continue
+          stroke.points.push({ x: point.x, y: point.y, t: now })
+        }
+      }
+      ensureLaserLoop()
+      return
+    }
+
     const interaction = interactionRef.current
     if (!interaction) return
     event.preventDefault()
@@ -2046,6 +2252,17 @@ function PdfCanvasPage({
   }
 
   const handlePointerEnd = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (laserDrawingRef.current && (laserPointerIdRef.current === null || laserPointerIdRef.current === event.pointerId)) {
+      event.preventDefault()
+      laserDrawingRef.current = false
+      laserPointerIdRef.current = null
+      try { event.currentTarget.releasePointerCapture(event.pointerId) } catch {}
+      ignoreNextClickRef.current = true
+      window.setTimeout(() => { ignoreNextClickRef.current = false }, 0)
+      ensureLaserLoop()
+      return
+    }
+
     const interaction = interactionRef.current
     if (!interaction) return
     event.preventDefault()
@@ -2095,7 +2312,7 @@ function PdfCanvasPage({
       ignoreNextClickRef.current = false
       return
     }
-    if (tool === 'cursor' || tool === 'drawing' || tool === 'highlight' || tool === 'eraser') {
+    if (tool === 'cursor' || tool === 'drawing' || tool === 'highlight' || tool === 'eraser' || tool === 'laser') {
       setSelectedId(null)
       return
     }
@@ -2166,7 +2383,7 @@ function PdfCanvasPage({
   }
 
   const selectedAnnotation = selectedId ? annotations.find((annotation) => annotation.id === selectedId) || null : null
-  const annotationPointerEvents = tool === 'drawing' || tool === 'highlight' ? 'none' : 'auto'
+  const annotationPointerEvents = tool === 'drawing' || tool === 'highlight' || tool === 'laser' ? 'none' : 'auto'
 
   return (
     <div id={`pdf-page-${pageNumber}`} ref={wrapperRef} className="pdf-page-fade flex w-full scroll-mt-36 justify-center px-0 sm:px-2">
@@ -2205,8 +2422,8 @@ function PdfCanvasPage({
             onPointerUp={handlePointerEnd}
             onPointerCancel={handlePointerEnd}
             style={{
-              cursor: tool === 'cursor' ? 'default' : tool === 'eraser' ? ERASER_CURSOR : tool === 'drawing' ? 'crosshair' : 'copy',
-              touchAction: tool === 'drawing' || tool === 'highlight' ? 'none' : 'manipulation',
+              cursor: tool === 'cursor' ? 'default' : tool === 'eraser' ? ERASER_CURSOR : (tool === 'drawing' || tool === 'laser') ? 'crosshair' : 'copy',
+              touchAction: tool === 'drawing' || tool === 'highlight' || tool === 'laser' ? 'none' : 'manipulation',
             }}
           >
             <canvas ref={draftCanvasRef} className="absolute inset-0 h-full w-full pointer-events-none" />
@@ -2231,6 +2448,7 @@ function PdfCanvasPage({
                 onSave={saveEditor}
               />
             )}
+            <canvas ref={laserCanvasRef} className="absolute inset-0 z-40 h-full w-full pointer-events-none" />
           </div>
         )}
       </div>
@@ -2652,6 +2870,8 @@ function ToolOptionsBar({
   onHighlightWidthChange,
   noteColor,
   onNoteColorChange,
+  laserColor,
+  onLaserColorChange,
   textStyle,
   onTextStyleChange,
 }: {
@@ -2664,10 +2884,12 @@ function ToolOptionsBar({
   onHighlightWidthChange: (width: number) => void
   noteColor: string
   onNoteColorChange: (color: string) => void
+  laserColor: string
+  onLaserColorChange: (color: string) => void
   textStyle: TextStyle
   onTextStyleChange: (style: TextStyle) => void
 }) {
-  if (!['drawing', 'highlight', 'text', 'note'].includes(tool)) return null
+  if (!['drawing', 'highlight', 'text', 'note', 'laser'].includes(tool)) return null
 
   return (
     <div className="mt-1 flex items-center gap-2 overflow-x-auto rounded-xl border border-white/10 bg-white/10 px-2 py-2">
@@ -2717,6 +2939,14 @@ function ToolOptionsBar({
         <>
           <span className="flex shrink-0 items-center gap-1 text-xs font-semibold text-white/75"><MessageSquare className="h-4 w-4" /> Nota</span>
           <ColorSwatches colors={NOTE_SWATCHES} value={noteColor} onChange={onNoteColorChange} />
+        </>
+      )}
+
+      {tool === 'laser' && (
+        <>
+          <span className="flex shrink-0 items-center gap-1 text-xs font-semibold text-white/75"><Zap className="h-4 w-4" /> Laser</span>
+          <ColorSwatches colors={LASER_SWATCHES} value={laserColor} onChange={onLaserColorChange} />
+          <span className="shrink-0 text-[11px] text-white/55">O traco brilha e some sozinho apos desenhar</span>
         </>
       )}
 
@@ -2872,6 +3102,7 @@ function ToolGuide() {
     { icon: <MousePointer2 className="h-4 w-4" />, title: 'Navegar', text: 'Move pelo PDF, seleciona anotacoes e abre editar com duplo toque em textos e notas.' },
     { icon: <Highlighter className="h-4 w-4" />, title: 'Marca texto', text: 'Arraste para grifar uma area. Um toque cria um grifo rapido na linha.' },
     { icon: <PenLine className="h-4 w-4" />, title: 'Caneta', text: 'Desenhe com mouse, dedo ou Apple Pencil. Escolha cor, grossura, pincel, linha, tracejado ou circulo.' },
+    { icon: <Zap className="h-4 w-4" />, title: 'Caneta laser', text: 'Aponte durante a leitura: o traco brilha e some sozinho, como um laser. Nao fica salvo.' },
     { icon: <Type className="h-4 w-4" />, title: 'Texto', text: 'Toque no PDF e escreva direto na pagina com fonte, tamanho, cor, negrito, italico e sublinhado.' },
     { icon: <MessageSquare className="h-4 w-4" />, title: 'Nota', text: 'Cria um post-it visual com cores. Toque duas vezes na nota para editar.' },
     { icon: <Eraser className="h-4 w-4" />, title: 'Apagar', text: 'Ative e toque em qualquer anotacao para remover individualmente, ou use o botao do painel.' },
