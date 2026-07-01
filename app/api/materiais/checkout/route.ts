@@ -179,8 +179,10 @@ export async function POST(request: NextRequest) {
       : []
 
     const materialIdsStr = pkgMaterials.map((m: any) => String(m._id))
-    let purchasedMaterialIds: string[] = []
+    const materialIdsSet = new Set(materialIdsStr)
+    const ownedSet = new Set<string>()
     if (materialIdsStr.length > 0) {
+      // 1) Materiais do pacote comprados individualmente.
       const baseFilter = {
         itemType: 'material',
         status: 'completed',
@@ -201,8 +203,31 @@ export async function POST(request: NextRequest) {
           .project({ itemId: 1 })
           .toArray()
       }
-      purchasedMaterialIds = Array.from(new Set([...byUserId, ...byEmail].map((p: any) => String(p.itemId))))
+      for (const p of [...byUserId, ...byEmail]) ownedSet.add(String(p.itemId))
+
+      // 2) Materiais do pacote que o usuário já possui por meio de OUTROS pacotes.
+      const ownedPackages = await db.collection('material_purchases')
+        .find({ itemType: 'package', status: 'completed', $or: userPurchaseOr } as any)
+        .project({ itemId: 1 })
+        .toArray()
+      const ownedPkgObjectIds = ownedPackages
+        .map((p: any) => String(p.itemId))
+        .filter((id: string) => id !== data.itemId && ObjectId.isValid(id))
+        .map((id: string) => new ObjectId(id))
+      if (ownedPkgObjectIds.length > 0) {
+        const otherPkgs = await db.collection('material_packages')
+          .find({ _id: { $in: ownedPkgObjectIds } })
+          .project({ materialIds: 1 })
+          .toArray()
+        for (const pkg of otherPkgs as any[]) {
+          for (const mid of pkg.materialIds || []) {
+            const midStr = String(mid)
+            if (materialIdsSet.has(midStr)) ownedSet.add(midStr)
+          }
+        }
+      }
     }
+    const purchasedMaterialIds = Array.from(ownedSet)
 
     pricingMeta = computeEffectivePackagePrice({
       pkgPrice: Number(item.price || 0),
@@ -214,6 +239,20 @@ export async function POST(request: NextRequest) {
       ownedMaterialIds: purchasedMaterialIds,
     })
     effectivePrice = pricingMeta.effectivePrice
+
+    // Já possui TODOS os materiais pagos do pacote → bloqueia (mesma regra do carrinho).
+    // Evita "comprar"/adquirir um pacote cujo conteúdo o usuário já tem por inteiro.
+    if (
+      item.pricing !== 'free' &&
+      pricingMeta.totalPaidIndividualValue > 0 &&
+      pricingMeta.ownedValue >= pricingMeta.totalPaidIndividualValue
+    ) {
+      return NextResponse.json({
+        error: 'Você já possui todos os materiais deste pacote.',
+        alreadyOwned: true,
+        redirectTo: '/materiais?tab=mine',
+      }, { status: 409 })
+    }
   }
 
   let amount = Number(effectivePrice)
