@@ -883,3 +883,116 @@ export async function sendRaffleAdminResultEmail(input: {
     html,
   })
 }
+
+/**
+ * E-mail premium pós-compra de Serial Key (compra avulsa, com ou sem login).
+ * Contém: agradecimento personalizado, dados do comprador, produto, data/hora,
+ * status do pagamento, Serial Key em destaque, botão + link + QR de ativação,
+ * comprovante em texto e comprovante em PDF anexado.
+ *
+ * Layout responsivo compatível com Gmail/Outlook/celular. O QR é anexado como
+ * imagem inline (CID) para renderizar sem depender de host externo.
+ */
+export async function sendSerialKeyPurchaseEmail(input: {
+  email: string
+  buyerName: string
+  buyerPhone: string
+  productTitle: string
+  productTypeLabel: string
+  amount: number
+  paymentStatusLabel: string
+  paymentMethodLabel?: string
+  transactionId?: string
+  purchasedAt: Date
+  serialKey: string
+  activationUrl: string
+  receiptText: string
+  pdfBuffer?: Buffer
+  qrBuffer?: Buffer
+  kind?: 'purchase' | 'resend'
+}) {
+  const firstName = input.buyerName ? input.buyerName.split(' ')[0] : 'Comprador'
+  const dateStr = new Intl.DateTimeFormat('pt-BR', {
+    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',
+    timeZone: 'America/Sao_Paulo',
+  }).format(input.purchasedAt)
+
+  const content = `
+    <h1 class="h1">Compra aprovada, ${firstName}! 🎉</h1>
+    <p>Seu acesso foi aprovado com sucesso. Enviamos todas as informações da compra e de ativação para o e-mail <strong>${input.email}</strong>.</p>
+    <p>Guarde sua Serial Key com segurança e use o botão abaixo para ativar seu produto.</p>
+
+    <!-- Serial Key em destaque -->
+    <div style="background: linear-gradient(135deg, #0f3d2e, #1a5c45); border-radius: 12px; padding: 22px 20px; margin: 24px 0; text-align: center;">
+      <p style="margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: #a7f3d0; font-weight: 700;">Sua Serial Key</p>
+      <p style="margin: 0; font-family: 'Courier New', Courier, monospace; font-size: 24px; font-weight: 800; color: #ffffff; letter-spacing: 2px; word-break: break-all;">${input.serialKey}</p>
+    </div>
+
+    <div style="text-align: center;">
+      <a href="${input.activationUrl}" class="button" target="_blank">Ativar meu produto</a>
+    </div>
+
+    <p style="margin-top: 20px; font-size: 13px; color: #718096; text-align: center;">
+      Ou copie e cole este link de ativação no seu navegador:<br>
+      <a href="${input.activationUrl}" style="color: #0f3d2e; word-break: break-all;">${input.activationUrl}</a>
+    </p>
+
+    <!-- QR Code -->
+    <div style="text-align: center; margin: 20px 0;">
+      <p style="font-size: 13px; color: #718096; margin-bottom: 8px;">Ou escaneie o QR Code de ativação:</p>
+      <img src="cid:serialkey-qr" alt="QR Code de ativação" width="180" height="180" style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 8px; background: #ffffff;">
+    </div>
+
+    <hr>
+
+    <!-- Resumo / comprovante -->
+    <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px 20px; margin: 20px 0;">
+      <p style="margin: 0 0 10px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #0f3d2e; font-weight: 700;">Comprovante da compra</p>
+      <table role="presentation" width="100%" style="font-size: 14px; color: #4a5568; border-collapse: collapse;">
+        <tr><td style="padding: 3px 0; color: #718096;">Comprador</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${input.buyerName}</td></tr>
+        <tr><td style="padding: 3px 0; color: #718096;">E-mail</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${input.email}</td></tr>
+        <tr><td style="padding: 3px 0; color: #718096;">Telefone</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${input.buyerPhone}</td></tr>
+        <tr><td style="padding: 3px 0; color: #718096;">Produto</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${input.productTitle}</td></tr>
+        <tr><td style="padding: 3px 0; color: #718096;">Tipo</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${input.productTypeLabel}</td></tr>
+        <tr><td style="padding: 3px 0; color: #718096;">Valor pago</td><td style="padding: 3px 0; text-align: right; font-weight: 700; color: #0f3d2e;">R$ ${input.amount.toFixed(2).replace('.', ',')}</td></tr>
+        <tr><td style="padding: 3px 0; color: #718096;">Status</td><td style="padding: 3px 0; text-align: right; font-weight: 600; color: #059669;">${input.paymentStatusLabel}</td></tr>
+        ${input.transactionId ? `<tr><td style="padding: 3px 0; color: #718096;">ID da transação</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${input.transactionId}</td></tr>` : ''}
+        <tr><td style="padding: 3px 0; color: #718096;">Data e hora</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${dateStr}</td></tr>
+      </table>
+    </div>
+
+    <div style="background-color: #fff8e1; border-left: 4px solid #f57c00; padding: 15px; margin: 20px 0; border-radius: 4px;">
+      <p style="margin: 0; color: #795548; font-size: 13px;"><strong>Como ativar:</strong> clique em "Ativar meu produto", faça login ou crie sua conta (é rápido) e o produto aparecerá liberado automaticamente. O comprovante completo está anexado em PDF.</p>
+    </div>
+
+    <p style="font-size: 12px; color: #a0aec0;">Teve algum problema? Responda com sua Serial Key que nós ajudamos.</p>
+  `
+
+  const html = getEmailTemplate('Compra aprovada', content)
+
+  const attachments: any[] = []
+  if (input.qrBuffer) {
+    attachments.push({
+      filename: 'ativacao-qr.png',
+      content: input.qrBuffer,
+      contentType: 'image/png',
+      cid: 'serialkey-qr',
+    })
+  }
+  if (input.pdfBuffer) {
+    attachments.push({
+      filename: 'comprovante-domineaqui.pdf',
+      content: input.pdfBuffer,
+      contentType: 'application/pdf',
+    })
+  }
+
+  await transporter.sendMail({
+    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+    to: input.email,
+    subject: `✅ Compra aprovada — sua Serial Key do ${input.productTypeLabel}`,
+    html,
+    text: input.receiptText,
+    attachments,
+  })
+}

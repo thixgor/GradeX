@@ -30,6 +30,7 @@ import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { LogoLoading } from '@/components/logo-loading'
+import { SerialKeysPanel } from '@/components/admin/serial-keys-panel'
 
 type SeriesPoint = { key?: string; label: string; value: number; count?: number; type?: string; revenue?: number }
 type FunnelStep = { key: string; label: string; count: number; conversionFromPrevious: number; conversionFromStart: number }
@@ -750,7 +751,7 @@ export default function AdminAnalyticsPage() {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid h-auto grid-cols-2 rounded-2xl border border-white/10 bg-white/[0.06] p-1.5 backdrop-blur-xl md:grid-cols-6">
+          <TabsList className="grid h-auto grid-cols-2 rounded-2xl border border-white/10 bg-white/[0.06] p-1.5 backdrop-blur-xl md:grid-cols-7">
             {[
               ['overview', 'Visão geral'],
               ['sales', 'Vendas'],
@@ -758,6 +759,7 @@ export default function AdminAnalyticsPage() {
               ['conversion', 'Conversão'],
               ['donations', 'Doações'],
               ['orders', 'Histórico'],
+              ['serialkeys', 'Serial Keys'],
             ].map(([value, label]) => (
               <TabsTrigger key={value} value={value} className="rounded-xl py-2 text-white/70 data-[state=active]:bg-emerald-400/20 data-[state=active]:text-white">
                 {label}
@@ -1019,6 +1021,10 @@ export default function AdminAnalyticsPage() {
                 </table>
               </div>
             </GlassPanel>
+          </TabsContent>
+
+          <TabsContent value="serialkeys" className="space-y-6">
+            <SerialKeysPanel />
           </TabsContent>
         </Tabs>
       </main>

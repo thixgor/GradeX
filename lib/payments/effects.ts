@@ -129,6 +129,16 @@ export async function applyPaymentResult(
 }
 
 async function runApprovedEffects(order: PaymentOrder, result: ProviderOrder) {
+  // Compra de Serial Key (com ou sem login): a liberação do produto acontece
+  // somente na ATIVAÇÃO da key. Aqui apenas geramos a key vinculada à compra e
+  // disparamos o e-mail. Não executamos os efeitos de auto-grant abaixo para
+  // evitar liberar o produto sem passar pela ativação.
+  if (order.metadata?.serialKeyPurchase) {
+    const { fulfillSerialKeyOrder } = await import('../serial-key-fulfillment')
+    await fulfillSerialKeyOrder(order, result)
+    return
+  }
+
   switch (order.type) {
     case 'plan':
       await applyPlanPurchase(order)

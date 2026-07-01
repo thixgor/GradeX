@@ -16,6 +16,8 @@ const publicRoutes = [
   '/politica-de-privacidade',
   '/termos-de-servico',
   '/buy',
+  '/comprar',
+  '/ativar',
   '/materiais',
   '/flashcards',
   '/ldpg-mnclinico',
@@ -36,6 +38,13 @@ const publicPrefixes = [
   '/api/payments/public-key',
   '/api/donations/checkout',
   '/api/payments/orders',
+  // Compra avulsa com Serial Key (funciona sem login). As rotas validam
+  // internamente (rate limit, token, sessão para ativar).
+  '/api/serial-keys/checkout',
+  '/api/serial-keys/purchase',
+  '/api/serial-keys/activate',
+  '/compra/aprovada',
+  '/compra',
   '/api/plans',
   '/api/anuncios',
   '/api/cron/',

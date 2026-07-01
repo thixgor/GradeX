@@ -41,8 +41,11 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   // Rifas permitem comprador anônimo (sem login) — o polling só expõe o status
   // do pagamento (sem dados sensíveis), igual às doações anônimas.
   const isAnonymousRaffle = order.type === 'raffle' && !order.userId
+  // Compra avulsa com Serial Key sem login: o polling só expõe o status do
+  // pagamento (sem key nem dados sensíveis), como doações/rifas anônimas.
+  const isSerialKeyGuest = !!order.metadata?.serialKeyPurchase && !order.userId
 
-  if (!isOwner && !isAdmin && !isAnonymousDonation && !isAnonymousRaffle) {
+  if (!isOwner && !isAdmin && !isAnonymousDonation && !isAnonymousRaffle && !isSerialKeyGuest) {
     return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
   }
 

@@ -535,6 +535,56 @@ export type SerialKeyType = 'trial' | 'premium' | 'custom'
 export type SerialKeyTrialSubtype = 'teste' | '7dias'
 export type SerialKeyPremiumSubtype = 'teste' | 'mensal' | 'trimestral' | 'semestral' | 'vitalicio'
 
+/**
+ * Origem da serial key:
+ *  - 'admin'    → gerada manualmente por um administrador (fluxo legado).
+ *  - 'purchase' → gerada automaticamente após uma compra aprovada (compra avulsa,
+ *                 com ou sem login). É o fluxo de Serial Keys de compra.
+ */
+export type SerialKeyOrigin = 'admin' | 'purchase'
+
+/** Tipo de produto que uma serial key de compra libera na ativação. */
+export type SerialKeyProductType =
+  | 'manual_clinico'
+  | 'material'
+  | 'flashcard'
+  | 'package'
+  | 'premium'
+  | 'essential'
+
+/** Estado do ciclo de vida de uma serial key de compra. */
+export type SerialKeyStatus = 'unactivated' | 'activated' | 'expired' | 'cancelled'
+
+/**
+ * Descreve exatamente o que a serial key concede ao ser ativada. Guardado no
+ * momento da geração (após pagamento aprovado) para que a ativação nunca
+ * dependa de dados voláteis nem libere algo diferente do que foi comprado.
+ */
+export interface SerialKeyGrant {
+  productType: SerialKeyProductType
+  // Para material/pacote/flashcard
+  itemType?: 'material' | 'package'
+  itemId?: string
+  itemTitle?: string
+  linkedDeckSlug?: string
+  // Para manual clínico
+  manualClinicoPlanKey?: ManualClinicoPlanKey
+  // Para assinaturas (premium/essential): cargo + duração em meses (0 = vitalício)
+  role?: AccountType
+  planId?: string
+  durationMonths?: number
+}
+
+/** Registro de um envio de e-mail relacionado à serial key. */
+export interface SerialKeyEmailLog {
+  to: string
+  status: 'sent' | 'failed'
+  kind: 'purchase' | 'resend'
+  sentAt: Date
+  error?: string
+  sentBy?: string // admin que reenviou, se aplicável
+}
+
 export interface SerialKey {
   _id?: string | import('mongodb').ObjectId
   key: string // A serial key em si (ex: XXXX-XXXX-XXXX-XXXX)
@@ -556,6 +606,42 @@ export interface SerialKey {
   usedBy?: string // ID do usuário que usou
   usedByName?: string // Nome do usuário que usou
   usedAt?: Date // Quando foi usada
+
+  // ── Serial Keys de compra (origin === 'purchase') ──────────────────────────
+  origin?: SerialKeyOrigin
+  status?: SerialKeyStatus
+  /** O que a key concede ao ser ativada. */
+  grant?: SerialKeyGrant
+  productType?: SerialKeyProductType
+  productId?: string
+  productTitle?: string
+  /** Token seguro (URL-safe) usado no link/QR de ativação. */
+  activationToken?: string
+  // Vínculo com a compra/pagamento
+  orderId?: string
+  providerPaymentId?: string
+  paymentStatus?: PaymentStatus
+  amount?: number
+  // Dados do comprador (pode não ter conta)
+  buyerName?: string
+  buyerFirstName?: string
+  buyerEmail?: string
+  buyerPhone?: string
+  // Ativação
+  activatedByUserId?: string
+  activatedByEmail?: string
+  activatedAt?: Date
+  expiresAt?: Date
+  // Auditoria / anti-fraude
+  ip?: string
+  userAgent?: string
+  source?: string
+  // Cancelamento administrativo
+  cancelledAt?: Date
+  cancelledBy?: string
+  cancelReason?: string
+  // Histórico de e-mails enviados
+  emailHistory?: SerialKeyEmailLog[]
 }
 
 export type ForumType = 'discussion' | 'materials' // Discussão ou Materiais
