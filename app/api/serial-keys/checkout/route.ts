@@ -22,7 +22,16 @@ import {
   resolveMaterialCart,
   type MaterialCartSession,
 } from '@/lib/material-cart'
-import { computeCartTierDiscounts } from '@/lib/pricing-events'
+import { computeCartTierDiscounts, combineTierAndCouponDiscount } from '@/lib/pricing-events'
+import {
+  applyCouponDiscountsToItems,
+  couponAnalyticsMetadata,
+  CouponError,
+  reserveCouponRedemption,
+  releaseCouponRedemption,
+  validateCouponForCheckout,
+  type CouponValidationResult,
+} from '@/lib/coupons'
 import type { PaymentOrder, SerialKeyProductType, SerialKeyGrant } from '@/lib/types'
 import type { PaymentOrderType } from '@/lib/payments/types'
 import type { AnalyticsProductType } from '@/lib/analytics'
@@ -58,6 +67,7 @@ const Schema = z.object({
   issuer: z.string().optional(),
   payerDocumentType: z.enum(['CPF', 'CNPJ']).optional(),
   payerDocumentNumber: z.string().max(20).optional(),
+  couponCode: z.string().max(80).optional(),
 })
 
 const buyerFields = {
@@ -72,6 +82,7 @@ const paymentFields = {
   issuer: z.string().optional(),
   payerDocumentType: z.enum(['CPF', 'CNPJ']).optional(),
   payerDocumentNumber: z.string().max(20).optional(),
+  couponCode: z.string().max(80).optional(),
 }
 
 const CartSchema = z.object({
@@ -198,9 +209,45 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: err?.message || 'Produto indisponível' }, { status: 400 })
   }
 
-  const amount = resolved.amount
+  let amount = resolved.amount
   if (!Number.isFinite(amount) || amount <= 0) {
     return NextResponse.json({ error: 'Valor inválido' }, { status: 400 })
+  }
+
+  // Cupom de desconto (compra sem login). Só se aplica a material/pacote/flashcard;
+  // o preço é sempre validado aqui na fonte, nunca vem do client.
+  let couponValidation: CouponValidationResult | null = null
+  const couponEligibleType =
+    resolved.productType === 'material' ||
+    resolved.productType === 'flashcard' ||
+    resolved.productType === 'package'
+  if (data.couponCode && couponEligibleType && amount > 0) {
+    const couponItemType: 'material' | 'package' = resolved.grant.itemType === 'package' ? 'package' : 'material'
+    try {
+      couponValidation = await validateCouponForCheckout(db, {
+        code: data.couponCode,
+        amountBeforeCoupon: amount,
+        userId: session?.userId,
+        userEmail: buyer.email,
+        items: [{
+          itemType: couponItemType,
+          itemId: resolved.productId,
+          itemTitle: resolved.productTitle,
+          materialType: resolved.productType === 'flashcard' ? 'flashcard_deck' : undefined,
+          price: amount,
+        }],
+      })
+      amount = couponValidation.amountAfterCoupon
+    } catch (err: any) {
+      if (err instanceof CouponError) {
+        return NextResponse.json({ error: err.message }, { status: err.status })
+      }
+      throw err
+    }
+  }
+
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return NextResponse.json({ error: 'Valor inválido após o cupom.' }, { status: 400 })
   }
 
   const receiptToken = generateReceiptToken()
@@ -231,6 +278,7 @@ export async function POST(request: NextRequest) {
       ip,
       userAgent,
       source: 'Serial Key',
+      ...couponAnalyticsMetadata(couponValidation),
     },
     createdAt: now,
     updatedAt: now,
@@ -243,6 +291,29 @@ export async function POST(request: NextRequest) {
     { _id: inserted.insertedId },
     { $set: { idempotencyKey } }
   )
+
+  // Reserva o cupom vinculado à order. Aprovação/liberação ocorrem em
+  // applyPaymentResult conforme o status do pagamento (por orderId).
+  if (couponValidation) {
+    try {
+      await reserveCouponRedemption(db, {
+        validation: couponValidation,
+        userId: session?.userId || '',
+        userName: buyer.name,
+        userEmail: buyer.email,
+        orderId,
+      })
+    } catch (error: any) {
+      await db.collection<PaymentOrder>('payment_orders').updateOne(
+        { _id: inserted.insertedId },
+        { $set: { status: 'rejected', statusDetail: 'coupon_unavailable', updatedAt: new Date() } }
+      )
+      if (error instanceof CouponError) {
+        return NextResponse.json({ error: error.message }, { status: error.status })
+      }
+      throw error
+    }
+  }
 
   await recordOrderCheckoutEvent('order_created', { ...orderDoc, _id: inserted.insertedId, idempotencyKey } as PaymentOrder, {
     productType: analyticsTypeFor(resolved.productType),
@@ -303,6 +374,9 @@ export async function POST(request: NextRequest) {
     })
   } catch (err: any) {
     console.error('[serial-keys/checkout] erro ao criar payment:', err)
+    if (couponValidation) {
+      await releaseCouponRedemption(db, orderId, 'provider_error')
+    }
     await db.collection<PaymentOrder>('payment_orders').updateOne(
       { _id: inserted.insertedId },
       { $set: { status: 'rejected', statusDetail: 'provider_error', updatedAt: new Date() } }
@@ -368,10 +442,55 @@ async function handleCartCheckout(
     tierCalc.perItem.map((entry) => [`${entry.itemType}:${entry.itemId}`, entry.tierDiscountAmount])
   )
 
+  // Cupom (compra sem login). Validamos sobre os itens a preço cheio; depois
+  // escolhemos o MAIOR desconto entre lote e cupom ("maior dos dois").
+  let couponValidation: CouponValidationResult | null = null
+  let couponDiscountAmount = 0
+  if (data.couponCode && resolution.amount > 0) {
+    try {
+      couponValidation = await validateCouponForCheckout(db, {
+        code: data.couponCode,
+        amountBeforeCoupon: resolution.amount,
+        userId: session?.userId,
+        userEmail: buyer.email,
+        items: resolution.payableItems.map((item) => ({
+          itemType: item.itemType,
+          itemId: item.itemId,
+          itemTitle: item.itemTitle,
+          materialType: item.materialType,
+          price: item.price,
+        })),
+      })
+      couponDiscountAmount = couponValidation.discountAmount
+    } catch (err: any) {
+      if (err instanceof CouponError) {
+        return NextResponse.json({ error: err.message }, { status: err.status })
+      }
+      throw err
+    }
+  }
+
+  const combined = combineTierAndCouponDiscount({
+    basePrice: resolution.amount,
+    tierDiscountAmount: tierCalc.totalTierDiscount,
+    couponDiscountAmount,
+  })
+
+  // Preço final por item conforme a fonte de desconto vencedora.
+  let pricedItems = resolution.payableItems.map((item) => ({ ...item }))
+  if (combined.appliedSource === 'coupon' && couponValidation) {
+    pricedItems = applyCouponDiscountsToItems(resolution.payableItems, couponValidation.items)
+  } else {
+    // Lote (ou nenhum): aplica o desconto de lote por item.
+    couponValidation = null
+    pricedItems = resolution.payableItems.map((item) => {
+      const discount = tierDiscountById.get(`${item.itemType}:${item.itemId}`) || 0
+      return { ...item, price: Math.max(0, Math.round((item.price - discount) * 100) / 100) }
+    })
+  }
+
   // Monta as entradas de Serial Key (uma por item pago) com o preço final.
-  const serialKeyCart = resolution.payableItems.map((item) => {
-    const discount = tierDiscountById.get(`${item.itemType}:${item.itemId}`) || 0
-    const finalPrice = Math.max(0, Math.round((item.price - discount) * 100) / 100)
+  const serialKeyCart = pricedItems.map((item) => {
     const isFlashcard = item.materialType === 'flashcard_deck' || Boolean(item.linkedDeckSlug)
     const productType: SerialKeyProductType = item.itemType === 'package' ? 'package' : (isFlashcard ? 'flashcard' : 'material')
     const grant: SerialKeyGrant = {
@@ -381,7 +500,7 @@ async function handleCartCheckout(
       itemTitle: item.itemTitle,
       linkedDeckSlug: item.linkedDeckSlug,
     }
-    return { grant, productTitle: item.itemTitle, amount: finalPrice }
+    return { grant, productTitle: item.itemTitle, amount: Math.max(0, Math.round(item.price * 100) / 100) }
   })
 
   const amount = Math.round(serialKeyCart.reduce((s, i) => s + i.amount, 0) * 100) / 100
@@ -419,6 +538,7 @@ async function handleCartCheckout(
       ip,
       userAgent,
       source: 'Serial Key (carrinho)',
+      ...couponAnalyticsMetadata(couponValidation),
     },
     createdAt: now,
     updatedAt: now,
@@ -431,6 +551,27 @@ async function handleCartCheckout(
     { _id: inserted.insertedId },
     { $set: { idempotencyKey } }
   )
+
+  if (couponValidation) {
+    try {
+      await reserveCouponRedemption(db, {
+        validation: couponValidation,
+        userId: session?.userId || '',
+        userName: buyer.name,
+        userEmail: buyer.email,
+        orderId,
+      })
+    } catch (error: any) {
+      await db.collection<PaymentOrder>('payment_orders').updateOne(
+        { _id: inserted.insertedId },
+        { $set: { status: 'rejected', statusDetail: 'coupon_unavailable', updatedAt: new Date() } }
+      )
+      if (error instanceof CouponError) {
+        return NextResponse.json({ error: error.message }, { status: error.status })
+      }
+      throw error
+    }
+  }
 
   await recordOrderCheckoutEvent('order_created', { ...orderDoc, _id: inserted.insertedId, idempotencyKey } as PaymentOrder, {
     productId: 'cart',
@@ -486,6 +627,9 @@ async function handleCartCheckout(
     })
   } catch (err: any) {
     console.error('[serial-keys/checkout/cart] erro ao criar payment:', err)
+    if (couponValidation) {
+      await releaseCouponRedemption(db, orderId, 'provider_error')
+    }
     await db.collection<PaymentOrder>('payment_orders').updateOne(
       { _id: inserted.insertedId },
       { $set: { status: 'rejected', statusDetail: 'provider_error', updatedAt: new Date() } }

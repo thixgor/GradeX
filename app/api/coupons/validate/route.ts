@@ -24,6 +24,10 @@ const Schema = z.object({
     itemType: z.enum(['material', 'package']),
     itemId: z.string().min(1),
   })).min(1).max(MAX_MATERIAL_CART_ITEMS).optional(),
+  // Compra sem login (visitante): usamos o e-mail informado no checkout para
+  // validar regras por-usuário (primeira compra / limite). É apenas preview:
+  // o preço final é sempre revalidado no checkout de Serial Key.
+  buyerEmail: z.string().email().max(180).optional(),
 })
 
 export async function POST(request: NextRequest) {
@@ -31,8 +35,10 @@ export async function POST(request: NextRequest) {
   const rl = await checkRateLimit(ip, 'coupon_validate', 40, 60_000)
   if (!rl.success) return NextResponse.json({ error: 'Muitas requisições.' }, { status: 429 })
 
+  // Visitantes (sem login) também podem validar cupom para a compra via Serial
+  // Key. Sem sessão, tratamos como convidado (não possui nada) e usamos o
+  // e-mail informado para as regras por-usuário.
   const session = await getSession()
-  if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
 
   let body: unknown
   try {
@@ -61,12 +67,13 @@ export async function POST(request: NextRequest) {
       parsed.data.itemId === MANUAL_CLINICO_PRODUCT_ID
 
     if (isManualCheckout) {
-      const [config, access] = await Promise.all([
-        getManualClinicoConfig(db),
-        getManualClinicoAccess(db, session),
-      ])
-      if (access.hasFullAccess) {
-        return NextResponse.json({ error: 'Voce ja possui o Manual Clinico Premium.' }, { status: 409 })
+      const config = await getManualClinicoConfig(db)
+      // Visitante não tem conta, logo não pode "já possuir" o produto.
+      if (session) {
+        const access = await getManualClinicoAccess(db, session)
+        if (access.hasFullAccess) {
+          return NextResponse.json({ error: 'Voce ja possui o Manual Clinico Premium.' }, { status: 409 })
+        }
       }
       if (!config.isActive) {
         return NextResponse.json({ error: 'Produto indisponivel no momento.' }, { status: 400 })
@@ -83,8 +90,8 @@ export async function POST(request: NextRequest) {
       const validation = await validateCouponForCheckout(db, {
         code: parsed.data.code,
         amountBeforeCoupon: amount,
-        userId: session.userId,
-        userEmail: session.email,
+        userId: session?.userId,
+        userEmail: session?.email || parsed.data.buyerEmail,
         items: [buildManualClinicoCouponItem(config, amount)],
       })
 
@@ -107,8 +114,10 @@ export async function POST(request: NextRequest) {
       })
     }
 
+    // Sem sessão → convidado (não possui nada), preços permanecem intactos.
+    const cartSession = session || { userId: '', role: 'user' as const }
     const materialItems = items.filter((item) => item.itemType === 'material' || item.itemType === 'package') as Array<{ itemType: 'material' | 'package'; itemId: string }>
-    const resolution = await resolveMaterialCart(db, session, materialItems)
+    const resolution = await resolveMaterialCart(db, cartSession, materialItems)
     const payableItems = resolution.payableItems
     if (resolution.skippedItems.some(item => item.reason === 'already_owned')) {
       return NextResponse.json({
@@ -125,8 +134,8 @@ export async function POST(request: NextRequest) {
     const validation = await validateCouponForCheckout(db, {
       code: parsed.data.code,
       amountBeforeCoupon: resolution.amount,
-      userId: session.userId,
-      userEmail: session.email,
+      userId: session?.userId,
+      userEmail: session?.email || parsed.data.buyerEmail,
       items: payableItems.map((item) => ({
         itemType: item.itemType,
         itemId: item.itemId,

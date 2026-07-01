@@ -957,18 +957,16 @@ export default function MateriaisCheckoutPage() {
                     Pagamento único · Acesso permanente
                   </p>
                 </div>
-                {!isGuest && (
-                  <div style={{ marginTop: '14px' }}>
-                    <CouponBox
-                      amount={amount}
-                      payload={{ items: cartPayload }}
-                      appliedCoupon={appliedCoupon}
-                      onApplied={setAppliedCoupon}
-                      onRemoved={() => setAppliedCoupon(null)}
-                      initialCode={couponFromQuery}
-                    />
-                  </div>
-                )}
+                <div style={{ marginTop: '14px' }}>
+                  <CouponBox
+                    amount={amount}
+                    payload={{ items: cartPayload, ...(isGuest && buyer.email ? { buyerEmail: buyer.email } : {}) }}
+                    appliedCoupon={appliedCoupon}
+                    onApplied={setAppliedCoupon}
+                    onRemoved={() => setAppliedCoupon(null)}
+                    initialCode={couponFromQuery}
+                  />
+                </div>
               </div>
             </div>
 
@@ -1061,12 +1059,12 @@ export default function MateriaisCheckoutPage() {
                       <button onClick={() => setBuyerConfirmed(false)} style={{ marginLeft: '8px', background: 'transparent', border: 'none', color: '#34d399', cursor: 'pointer', fontSize: '12px', textDecoration: 'underline' }}>editar</button>
                     </div>
                     <MercadoPagoCheckout
-                      key={`cart-guest-${payableAmount}`}
+                      key={`cart-guest-${payableAmount}-${appliedCoupon?.code || 'sem-cupom'}`}
                       publicKey={publicKey}
                       amount={payableAmount}
                       description={`Carrinho DomineAqui - ${cartPreview.payableItems.length} itens`}
                       endpoint="/api/serial-keys/checkout"
-                      extraBody={{ cart: cartPayload, buyerName: buyer.name, buyerEmail: buyer.email, buyerPhone: buyer.phone }}
+                      extraBody={{ cart: cartPayload, buyerName: buyer.name, buyerEmail: buyer.email, buyerPhone: buyer.phone, couponCode: appliedCoupon?.code }}
                       payerEmailHint={buyer.email}
                       payerNameHint={buyer.name}
                       analytics={{ productId: 'cart', productTitle: `Carrinho (${cartPreview.items.length} itens)`, productType: 'material', source: 'Serial Key' }}

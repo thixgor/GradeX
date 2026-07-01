@@ -2,8 +2,22 @@
 
 import { Suspense, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { Loader2, ShieldCheck, User, Mail, Phone, ArrowRight, ChevronLeft } from 'lucide-react'
+import { Loader2, ShieldCheck, User, Mail, Phone, ArrowRight, ChevronLeft, Percent, X } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
+
+interface AppliedCoupon {
+  couponId: string
+  code: string
+  label: string
+  amountBeforeCoupon: number
+  eligibleAmount: number
+  discountAmount: number
+  amountAfterCoupon: number
+}
+
+function formatBRL(value: number): string {
+  return `R$ ${Number(value || 0).toFixed(2).replace('.', ',')}`
+}
 
 const pageStyle: React.CSSProperties = {
   minHeight: '100vh',
@@ -57,6 +71,14 @@ function ComprarContent() {
   const [step, setStep] = useState<'buyer' | 'payment'>('buyer')
   const [touched, setTouched] = useState(false)
 
+  // Cupom (compra sem login). Só é elegível para material/pacote/flashcard.
+  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null)
+  const [couponCode, setCouponCode] = useState('')
+  const [couponLoading, setCouponLoading] = useState(false)
+  const [couponError, setCouponError] = useState('')
+  const couponEligible = productType === 'material' || productType === 'package' || productType === 'flashcard'
+  const couponItemType = productType === 'package' ? 'package' : 'material'
+
   useEffect(() => {
     if (!productType) { setError('Produto não informado.'); setLoading(false); return }
     const qs = new URLSearchParams({ productType })
@@ -81,11 +103,47 @@ function ComprarContent() {
   const phoneValid = digits(phone).length >= 10 && digits(phone).length <= 15
   const buyerValid = nameValid && emailValid && phoneValid
 
+  const payableAmount = appliedCoupon ? appliedCoupon.amountAfterCoupon : (product?.amount ?? 0)
+
   const extraBody = useMemo(() => ({
     productType, productId: productId || undefined, planKey: planKey || undefined,
     itemType: itemType || undefined,
     buyerName: name.trim(), buyerEmail: email.trim().toLowerCase(), buyerPhone: phone.trim(),
-  }), [productType, productId, planKey, itemType, name, email, phone])
+    couponCode: appliedCoupon?.code,
+  }), [productType, productId, planKey, itemType, name, email, phone, appliedCoupon])
+
+  const applyCoupon = async () => {
+    const normalized = couponCode.trim()
+    if (!normalized || !product) return
+    setCouponLoading(true)
+    setCouponError('')
+    try {
+      const res = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: normalized,
+          itemType: couponItemType,
+          itemId: product.productId,
+          buyerEmail: email.trim().toLowerCase() || undefined,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Cupom inválido')
+      setAppliedCoupon(data)
+      setCouponCode(data.code || normalized.toUpperCase())
+    } catch (err: any) {
+      setCouponError(err?.message || 'Erro ao aplicar cupom')
+    } finally {
+      setCouponLoading(false)
+    }
+  }
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null)
+    setCouponCode('')
+    setCouponError('')
+  }
 
   if (loading) {
     return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}><Loader2 size={32} style={{ color: '#34d399', animation: 'spin 1s linear infinite' }} /></div>
@@ -111,8 +169,56 @@ function ComprarContent() {
             <h2 style={{ fontSize: '20px', fontWeight: 800, color: 'white', marginBottom: '16px' }}>{product.productTitle}</h2>
             <div style={{ padding: '16px', background: 'rgba(52,211,153,0.06)', border: '1px solid rgba(52,211,153,0.12)', borderRadius: '12px' }}>
               <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', marginBottom: '2px' }}>Valor</p>
-              <p style={{ fontSize: '30px', fontWeight: 800, color: '#34d399', letterSpacing: '-0.03em' }}>R$ {product.amount.toFixed(2).replace('.', ',')}</p>
+              {appliedCoupon && (
+                <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.4)', textDecoration: 'line-through', marginBottom: '2px' }}>
+                  {formatBRL(product.amount)}
+                </p>
+              )}
+              <p style={{ fontSize: '30px', fontWeight: 800, color: '#34d399', letterSpacing: '-0.03em' }}>{formatBRL(payableAmount)}</p>
+              {appliedCoupon && (
+                <p style={{ fontSize: '12px', color: '#34d399', marginTop: '4px', fontWeight: 700 }}>
+                  Cupom {appliedCoupon.code}: − {formatBRL(appliedCoupon.discountAmount)}
+                </p>
+              )}
             </div>
+
+            {couponEligible && (
+              <div style={{ marginTop: '14px', padding: '14px', borderRadius: '12px', border: '1px solid rgba(52,211,153,0.16)', background: 'rgba(255,255,255,0.035)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', color: 'rgba(255,255,255,0.72)', fontSize: '13px', fontWeight: 700 }}>
+                  <Percent size={15} style={{ color: '#34d399' }} /> Cupom de desconto
+                </div>
+                {appliedCoupon ? (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+                    <div style={{ minWidth: 0 }}>
+                      <p style={{ margin: 0, color: '#34d399', fontSize: '14px', fontWeight: 800 }}>{appliedCoupon.code} aplicado</p>
+                      <p style={{ margin: '2px 0 0 0', color: 'rgba(255,255,255,0.45)', fontSize: '12px' }}>
+                        {formatBRL(appliedCoupon.discountAmount)} de desconto
+                      </p>
+                    </div>
+                    <button type="button" onClick={removeCoupon} style={{ flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: '6px', borderRadius: '10px', border: '1px solid rgba(248,113,113,0.26)', background: 'rgba(248,113,113,0.08)', color: '#fca5a5', padding: '7px 10px', cursor: 'pointer', fontSize: '12px', fontWeight: 800 }}>
+                      <X size={14} /> Remover
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <input
+                        value={couponCode}
+                        onChange={(e) => { setCouponCode(e.target.value.toUpperCase()); setCouponError('') }}
+                        onKeyDown={(e) => { if (e.key === 'Enter') applyCoupon() }}
+                        disabled={couponLoading}
+                        placeholder="Digite seu cupom"
+                        style={{ flex: 1, minWidth: 0, height: '38px', borderRadius: '10px', border: '1px solid rgba(52,211,153,0.16)', background: 'rgba(0,0,0,0.22)', color: 'white', padding: '0 12px', outline: 'none', textTransform: 'uppercase' }}
+                      />
+                      <button type="button" onClick={applyCoupon} disabled={couponLoading || !couponCode.trim()} style={{ height: '38px', borderRadius: '10px', border: 'none', background: '#34d399', color: '#04130a', fontSize: '12px', fontWeight: 900, padding: '0 14px', cursor: couponLoading || !couponCode.trim() ? 'not-allowed' : 'pointer', opacity: couponLoading || !couponCode.trim() ? 0.55 : 1, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                        {couponLoading && <Loader2 size={13} style={{ animation: 'spin 1s linear infinite' }} />} Aplicar
+                      </button>
+                    </div>
+                    {couponError ? <p style={{ color: '#f87171', fontSize: '12px', marginTop: '8px' }}>{couponError}</p> : null}
+                  </>
+                )}
+              </div>
+            )}
           </div>
           <div style={{ ...glassCard, padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
@@ -168,8 +274,9 @@ function ComprarContent() {
                 Comprando como <strong style={{ color: 'white' }}>{name}</strong> · {email} · {phone}
               </div>
               <MercadoPagoCheckout
+                key={`comprar-${payableAmount}-${appliedCoupon?.code || 'sem-cupom'}`}
                 publicKey={publicKey}
-                amount={product.amount}
+                amount={payableAmount}
                 description={product.productTitle}
                 endpoint="/api/serial-keys/checkout"
                 extraBody={extraBody}
