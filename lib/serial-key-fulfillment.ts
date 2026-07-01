@@ -7,7 +7,7 @@
 import { ObjectId, type Db } from 'mongodb'
 import { getDb } from './mongodb'
 import {
-  createSerialKeyForOrder,
+  createSerialKeysForOrder,
   getActivationUrl,
   productTypeLabel,
   paymentStatusLabel,
@@ -19,7 +19,7 @@ import {
   buildReceiptText,
   type SerialKeyReceiptData,
 } from './serial-key-receipt'
-import { sendSerialKeyPurchaseEmail } from './mail'
+import { sendSerialKeyPurchaseEmail, sendSerialKeyCartPurchaseEmail } from './mail'
 import type { PaymentOrder, SerialKey, SerialKeyEmailLog } from './types'
 import type { ProviderOrder } from './payments/types'
 
@@ -110,16 +110,98 @@ export async function sendSerialKeyEmail(
 }
 
 /**
- * Ponto de entrada chamado pelos efeitos de pagamento aprovado. Cria a serial
- * key da compra e dispara o e-mail apenas uma vez (idempotente).
+ * Envia (ou reenvia) um único e-mail consolidado com TODAS as serial keys de
+ * uma compra (carrinho), cada uma com seu link/QR de ativação. Registra o
+ * histórico de e-mail em todas as keys da compra.
+ */
+export async function sendSerialKeyCartEmail(
+  db: Db,
+  keys: SerialKey[],
+  opts: { paymentMethod?: string; kind?: 'purchase' | 'resend'; sentBy?: string } = {}
+): Promise<boolean> {
+  const first = keys[0]
+  if (!first?.buyerEmail) return false
+  const kind = opts.kind || 'purchase'
+
+  let ok = false
+  let error: string | undefined
+  try {
+    const items = await Promise.all(keys.map(async (k) => {
+      const activationUrl = k.activationToken ? getActivationUrl(k.activationToken) : ''
+      const qrBuffer = activationUrl
+        ? await generateActivationQrBuffer(activationUrl).catch(() => undefined)
+        : undefined
+      return {
+        productTitle: k.productTitle || 'Produto',
+        productTypeLabel: productTypeLabel(k.productType),
+        serialKey: k.key,
+        activationUrl,
+        amount: k.amount || 0,
+        qrBuffer,
+      }
+    }))
+
+    const receipt: SerialKeyReceiptData = {
+      buyerName: first.buyerName || '',
+      buyerEmail: first.buyerEmail,
+      buyerPhone: first.buyerPhone || '',
+      productTitle: `Carrinho (${keys.length} itens)`,
+      productTypeLabel: 'Compra de vários produtos',
+      amount: keys.reduce((s, k) => s + (k.amount || 0), 0),
+      paymentStatusLabel: paymentStatusLabel(first.paymentStatus),
+      paymentMethodLabel: opts.paymentMethod ? (PAYMENT_METHOD_LABELS[opts.paymentMethod] || opts.paymentMethod) : undefined,
+      transactionId: first.providerPaymentId,
+      purchasedAt: first.generatedAt ? new Date(first.generatedAt) : new Date(),
+      serialKey: keys.map(k => k.key).join('  •  '),
+      activationUrl: items[0]?.activationUrl || '',
+    }
+    const pdfBuffer = await generateReceiptPdf(receipt).catch(() => undefined)
+
+    await sendSerialKeyCartPurchaseEmail({
+      email: first.buyerEmail,
+      buyerName: first.buyerName || '',
+      buyerPhone: first.buyerPhone || '',
+      totalAmount: receipt.amount,
+      paymentStatusLabel: receipt.paymentStatusLabel,
+      purchasedAt: receipt.purchasedAt,
+      items,
+      receiptText: buildReceiptText(receipt),
+      pdfBuffer,
+      kind,
+    })
+    ok = true
+  } catch (err: any) {
+    console.error('[serial-key] falha ao enviar e-mail do carrinho:', err)
+    error = String(err?.message || err)
+  }
+
+  const log: SerialKeyEmailLog = {
+    to: first.buyerEmail, status: ok ? 'sent' : 'failed', kind, sentAt: new Date(), error, sentBy: opts.sentBy,
+  }
+  await db.collection<SerialKey>(SERIAL_KEYS_COLLECTION).updateMany(
+    { _id: { $in: keys.filter(k => k._id).map(k => new ObjectId(String(k._id))) } as any },
+    { $push: { emailHistory: log } }
+  )
+  return ok
+}
+
+/**
+ * Ponto de entrada chamado pelos efeitos de pagamento aprovado. Cria a(s)
+ * serial key(s) da compra e dispara o e-mail apenas uma vez (idempotente).
+ * Carrinho com múltiplos itens → um e-mail consolidado com várias keys.
  */
 export async function fulfillSerialKeyOrder(order: PaymentOrder, result?: ProviderOrder): Promise<void> {
   const db = await getDb()
-  const serial = await createSerialKeyForOrder(db, order)
-  if (!serial) return
+  const keys = await createSerialKeysForOrder(db, order)
+  if (keys.length === 0) return
 
-  const alreadySent = (serial.emailHistory || []).some(e => e.kind === 'purchase' && e.status === 'sent')
-  if (!alreadySent) {
-    await sendSerialKeyEmail(db, serial, { paymentMethod: result?.paymentMethod || order.paymentMethod, kind: 'purchase' })
+  const alreadySent = keys.some(k => (k.emailHistory || []).some(e => e.kind === 'purchase' && e.status === 'sent'))
+  if (alreadySent) return
+
+  const paymentMethod = result?.paymentMethod || order.paymentMethod
+  if (keys.length === 1) {
+    await sendSerialKeyEmail(db, keys[0], { paymentMethod, kind: 'purchase' })
+  } else {
+    await sendSerialKeyCartEmail(db, keys, { paymentMethod, kind: 'purchase' })
   }
 }

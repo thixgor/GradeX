@@ -619,6 +619,8 @@ export interface SerialKey {
   activationToken?: string
   // Vínculo com a compra/pagamento
   orderId?: string
+  /** Posição do item dentro da compra (0 para item único; 0..N-1 para carrinho). */
+  cartIndex?: number
   providerPaymentId?: string
   paymentStatus?: PaymentStatus
   amount?: number

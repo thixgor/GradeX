@@ -307,10 +307,12 @@ let indexesEnsured = false
 async function ensureSerialKeyIndexes(db: Db) {
   if (indexesEnsured) return
   try {
-    // Uma compra (orderId) gera no máximo UMA serial key.
+    // Índice antigo (uma key por order) — removido: o carrinho gera N keys.
+    await db.collection(SERIAL_KEYS_COLLECTION).dropIndex('uniq_orderId').catch(() => {})
+    // Uma compra (orderId) gera no máximo UMA serial key POR item (cartIndex).
     await db.collection(SERIAL_KEYS_COLLECTION).createIndex(
-      { orderId: 1 },
-      { unique: true, sparse: true, name: 'uniq_orderId' }
+      { orderId: 1, cartIndex: 1 },
+      { unique: true, sparse: true, name: 'uniq_order_item' }
     )
     await db.collection(SERIAL_KEYS_COLLECTION).createIndex(
       { activationToken: 1 },
@@ -322,37 +324,33 @@ async function ensureSerialKeyIndexes(db: Db) {
   }
 }
 
-// ── Geração da serial key após pagamento aprovado ────────────────────────────
+/** Entrada de item para geração de keys (single ou carrinho). */
+interface SerialKeyItem {
+  grant: SerialKeyGrant
+  productTitle: string
+  amount: number
+}
 
-/**
- * Cria (ou retorna a existente) a serial key para uma order aprovada de compra.
- * IDEMPOTENTE: uma order gera exatamente uma serial key, garantido por índice
- * único em `orderId`. Só deve ser chamado quando o pagamento está aprovado.
- */
-export async function createSerialKeyForOrder(
+/** Insere uma serial key idempotente por (orderId, cartIndex), regenerando em colisão de key. */
+async function insertSerialKeyForItem(
   db: Db,
-  order: PaymentOrder
+  order: PaymentOrder,
+  item: SerialKeyItem,
+  cartIndex: number
 ): Promise<SerialKey | null> {
   const orderId = String(order._id)
-  const grant = order.metadata?.serialKeyGrant as SerialKeyGrant | undefined
-  if (!grant || !isSerialKeyProductType(grant.productType)) {
-    console.warn('[serial-keys] order sem grant válido:', orderId)
-    return null
-  }
-
-  await ensureSerialKeyIndexes(db)
   const col = db.collection<SerialKey>(SERIAL_KEYS_COLLECTION)
 
-  // Já existe? (idempotência rápida)
-  const existing = await col.findOne({ orderId })
+  // Já existe esta posição? (idempotência)
+  const existing = await col.findOne({ orderId, cartIndex })
   if (existing) return existing
 
   const buyerName = order.metadata?.buyerName || order.payerName || ''
   const buyerEmail = order.metadata?.buyerEmail || order.payerEmail || ''
   const buyerPhone = order.metadata?.buyerPhone || ''
   const now = new Date()
+  const grant = item.grant
 
-  // Gera key única (regenera em colisão de key, improvável).
   for (let attempt = 0; attempt < 6; attempt++) {
     const key = generateSecureSerialKey()
     const activationToken = generateActivationToken()
@@ -367,14 +365,15 @@ export async function createSerialKeyForOrder(
       status: 'unactivated',
       grant,
       productType: grant.productType,
-      productId: order.refId || grant.itemId || grant.planId,
-      productTitle: order.metadata?.itemTitle || grant.itemTitle || grant.planId,
+      productId: grant.itemId || grant.planId || order.refId,
+      productTitle: item.productTitle || grant.itemTitle || grant.planId,
       activationToken,
       orderId,
+      cartIndex,
       providerPaymentId: order.providerPaymentId || order.providerOrderId,
       paymentStatus: 'approved',
-      amount: order.amount,
-      price: order.amount,
+      amount: item.amount,
+      price: item.amount,
       buyerName: sanitizeName(buyerName),
       buyerFirstName: firstNameOf(buyerName),
       buyerEmail: String(buyerEmail).toLowerCase(),
@@ -382,7 +381,6 @@ export async function createSerialKeyForOrder(
       ip: order.metadata?.ip,
       userAgent: order.metadata?.userAgent,
       source: order.metadata?.source || 'checkout',
-      // Se o comprador já estava logado, pré-vincula (mas ainda exige ativação).
       usedBy: undefined,
       emailHistory: [],
     }
@@ -395,30 +393,71 @@ export async function createSerialKeyForOrder(
         actorUserId: order.userId,
         resourceType: 'serial_key',
         resourceId: orderId,
-        metadata: {
-          serialKeyId: String(res.insertedId),
-          productType: grant.productType,
-          amount: order.amount,
-          origin: 'purchase',
-        },
+        metadata: { serialKeyId: String(res.insertedId), productType: grant.productType, amount: item.amount, cartIndex, origin: 'purchase' },
       })
       return doc
     } catch (err: any) {
       if (err?.code === 11000) {
-        // Duplicado por orderId → outra execução criou primeiro. Retorna a dela.
-        if (String(err?.keyPattern ? Object.keys(err.keyPattern)[0] : '').includes('orderId')
-          || String(err?.message || '').includes('orderId')) {
-          const created = await col.findOne({ orderId })
+        const dupKey = String(err?.keyPattern ? Object.keys(err.keyPattern).join(',') : err?.message || '')
+        if (dupKey.includes('orderId') || dupKey.includes('cartIndex')) {
+          // Outra execução criou esta posição primeiro.
+          const created = await col.findOne({ orderId, cartIndex })
           if (created) return created
         }
-        // Duplicado por key → tenta outra key.
-        continue
+        continue // colisão de key → tenta outra
       }
       throw err
     }
   }
-  console.error('[serial-keys] não foi possível gerar key única para order', orderId)
+  console.error('[serial-keys] não foi possível gerar key única para order', orderId, 'item', cartIndex)
   return null
+}
+
+// ── Geração da(s) serial key(s) após pagamento aprovado ──────────────────────
+
+/**
+ * Cria (ou retorna as existentes) as serial keys de uma order aprovada.
+ * IDEMPOTENTE por (orderId, cartIndex). Gera UMA key por item comprado:
+ *  - compra única  → 1 key (metadata.serialKeyGrant).
+ *  - carrinho      → N keys (metadata.serialKeyCart), uma por produto.
+ * Só deve ser chamado quando o pagamento está aprovado.
+ */
+export async function createSerialKeysForOrder(
+  db: Db,
+  order: PaymentOrder
+): Promise<SerialKey[]> {
+  const orderId = String(order._id)
+  await ensureSerialKeyIndexes(db)
+
+  // Monta a lista de itens (single ou carrinho).
+  let items: SerialKeyItem[] = []
+  const cart = order.metadata?.serialKeyCart
+  if (Array.isArray(cart) && cart.length > 0) {
+    items = cart
+      .filter((c: any) => c?.grant && isSerialKeyProductType(c.grant.productType))
+      .map((c: any) => ({
+        grant: c.grant as SerialKeyGrant,
+        productTitle: String(c.productTitle || c.grant.itemTitle || 'Produto'),
+        amount: Number(c.amount || 0),
+      }))
+  } else {
+    const grant = order.metadata?.serialKeyGrant as SerialKeyGrant | undefined
+    if (grant && isSerialKeyProductType(grant.productType)) {
+      items = [{ grant, productTitle: String(order.metadata?.itemTitle || grant.itemTitle || grant.planId || 'Produto'), amount: Number(order.amount) }]
+    }
+  }
+
+  if (items.length === 0) {
+    console.warn('[serial-keys] order sem itens válidos para gerar key:', orderId)
+    return []
+  }
+
+  const keys: SerialKey[] = []
+  for (let i = 0; i < items.length; i++) {
+    const created = await insertSerialKeyForItem(db, order, items[i], i)
+    if (created) keys.push(created)
+  }
+  return keys
 }
 
 // ── Concessão do produto na ativação ─────────────────────────────────────────

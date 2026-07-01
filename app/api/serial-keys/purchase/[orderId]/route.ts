@@ -94,28 +94,53 @@ export async function GET(request: NextRequest, { params }: { params: { orderId:
     return NextResponse.json({ ...base, approved: false, serialKey: null })
   }
 
-  // Aprovado → busca a serial key gerada para esta compra.
-  const serial = await db.collection<SerialKey>(SERIAL_KEYS_COLLECTION).findOne({ orderId })
-  if (!serial) {
-    // Pode não ter sido gerada ainda (corrida rara). O client tenta de novo.
-    return NextResponse.json({ ...base, approved: true, serialKey: null, generating: true })
+  // Aprovado → busca a(s) serial key(s) geradas para esta compra.
+  const serials = await db.collection<SerialKey>(SERIAL_KEYS_COLLECTION)
+    .find({ orderId })
+    .sort({ cartIndex: 1 })
+    .toArray()
+
+  // Total esperado de keys (1 para compra única; N para carrinho).
+  const expected = Array.isArray(current.metadata?.serialKeyCart) && current.metadata.serialKeyCart.length > 0
+    ? current.metadata.serialKeyCart.length
+    : 1
+
+  if (serials.length === 0 || serials.length < expected) {
+    // Ainda gerando (corrida rara / carrinho parcial). O client tenta de novo.
+    return NextResponse.json({ ...base, approved: true, serialKey: null, serialKeys: [], generating: true })
   }
 
-  const activationUrl = serial.activationToken ? getActivationUrl(serial.activationToken) : ''
-  let qrDataUrl: string | undefined
-  try {
-    if (activationUrl) qrDataUrl = await generateActivationQrDataUrl(activationUrl)
-  } catch (err) {
-    console.error('[serial-keys/purchase] falha ao gerar QR:', err)
-  }
+  const serialKeys = await Promise.all(serials.map(async (serial) => {
+    const activationUrl = serial.activationToken ? getActivationUrl(serial.activationToken) : ''
+    let qrDataUrl: string | undefined
+    try {
+      if (activationUrl) qrDataUrl = await generateActivationQrDataUrl(activationUrl)
+    } catch (err) {
+      console.error('[serial-keys/purchase] falha ao gerar QR:', err)
+    }
+    return {
+      key: serial.key,
+      productTitle: serial.productTitle,
+      productType: serial.productType,
+      productTypeLabel: productTypeLabel(serial.productType),
+      amount: serial.amount,
+      status: serial.status,
+      activationUrl,
+      qrDataUrl,
+    }
+  }))
 
+  const primary = serials[0]
   return NextResponse.json({
     ...base,
     approved: true,
-    serialKey: serial.key,
-    serialKeyStatus: serial.status,
-    activationUrl,
-    qrDataUrl,
-    public: serializeSerialKeyPublic(serial),
+    // Compat: campos únicos apontam para a primeira key.
+    serialKey: primary.key,
+    serialKeyStatus: primary.status,
+    activationUrl: serialKeys[0]?.activationUrl,
+    qrDataUrl: serialKeys[0]?.qrDataUrl,
+    serialKeys,
+    isCart: serialKeys.length > 1,
+    public: serializeSerialKeyPublic(primary),
   })
 }

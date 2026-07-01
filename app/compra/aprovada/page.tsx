@@ -36,6 +36,15 @@ interface Purchase {
   serialKey?: string | null
   activationUrl?: string
   qrDataUrl?: string
+  isCart?: boolean
+  serialKeys?: Array<{
+    key: string
+    productTitle?: string
+    productTypeLabel?: string
+    amount?: number
+    activationUrl?: string
+    qrDataUrl?: string
+  }>
   transactionId?: string
   createdAt?: string
   paidAt?: string
@@ -102,52 +111,90 @@ function ApprovedView({ data }: { data: Purchase }) {
         </p>
       </motion.div>
 
-      {/* Serial Key em destaque */}
-      <div style={{ ...glassCard, padding: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-          <KeyRound size={18} style={{ color: '#34d399' }} />
-          <span style={{ fontSize: '12px', fontWeight: 700, color: 'rgba(52,211,153,0.85)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Sua Serial Key</span>
-        </div>
-        <div style={{ background: 'linear-gradient(135deg, rgba(5,150,105,0.18), rgba(52,211,153,0.08))', border: '1px solid rgba(52,211,153,0.3)', borderRadius: '14px', padding: '20px', textAlign: 'center', marginBottom: '14px' }}>
-          <span style={{ fontFamily: 'monospace', fontSize: '26px', fontWeight: 800, color: '#34d399', letterSpacing: '3px', wordBreak: 'break-all' }}>
-            {data.serialKey}
-          </span>
-        </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center' }}>
-          <CopyButton text={data.serialKey || ''} label="Copiar Serial Key" />
-          {data.activationUrl && <CopyButton text={data.activationUrl} label="Copiar link de ativação" />}
-        </div>
-      </div>
-
-      {/* QR + ativar */}
-      <div style={{ ...glassCard, padding: '24px', display: 'flex', flexWrap: 'wrap', gap: '24px', alignItems: 'center', justifyContent: 'center' }}>
-        {data.qrDataUrl && (
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', marginBottom: '10px', fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
-              <QrCode size={14} /> QR Code de ativação
-            </div>
-            <img src={data.qrDataUrl} alt="QR Code de ativação" style={{ width: '180px', height: '180px', borderRadius: '12px', background: 'white', padding: '8px' }} />
+      {/* Serial Key(s) */}
+      {data.isCart && data.serialKeys && data.serialKeys.length > 1 ? (
+        <div style={{ ...glassCard, padding: '24px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+            <KeyRound size={18} style={{ color: '#34d399' }} />
+            <span style={{ fontSize: '12px', fontWeight: 700, color: 'rgba(52,211,153,0.85)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              Suas {data.serialKeys.length} Serial Keys — uma por produto
+            </span>
           </div>
-        )}
-        <div style={{ flex: 1, minWidth: '240px' }}>
-          <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.7)', lineHeight: '1.6', marginBottom: '16px' }}>
-            Ative seu produto agora. Se ainda não tiver conta, você poderá criar uma em segundos — o produto aparecerá liberado automaticamente.
-          </p>
-          {data.activationUrl && (
-            <a
-              href={data.activationUrl}
-              style={{
-                display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                background: 'linear-gradient(135deg, #059669, #34d399)', boxShadow: '0 0 30px rgba(52,211,153,0.3)',
-                border: 'none', borderRadius: '12px', color: 'white', fontWeight: 700, fontSize: '15px',
-                padding: '14px 24px', cursor: 'pointer', width: '100%', textDecoration: 'none',
-              }}
-            >
-              Ativar meu produto <ArrowRight size={16} />
-            </a>
-          )}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {data.serialKeys.map((sk, i) => (
+              <div key={i} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px' }}>
+                <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.45)', marginBottom: '2px' }}>{sk.productTypeLabel}</p>
+                <p style={{ fontSize: '15px', fontWeight: 700, color: 'white', marginBottom: '12px' }}>{sk.productTitle}</p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'center' }}>
+                  {sk.qrDataUrl && <img src={sk.qrDataUrl} alt="QR" style={{ width: '110px', height: '110px', borderRadius: '10px', background: 'white', padding: '6px' }} />}
+                  <div style={{ flex: 1, minWidth: '220px' }}>
+                    <div style={{ background: 'linear-gradient(135deg, rgba(5,150,105,0.18), rgba(52,211,153,0.08))', border: '1px solid rgba(52,211,153,0.3)', borderRadius: '10px', padding: '12px', textAlign: 'center', marginBottom: '10px' }}>
+                      <span style={{ fontFamily: 'monospace', fontSize: '18px', fontWeight: 800, color: '#34d399', letterSpacing: '2px', wordBreak: 'break-all' }}>{sk.key}</span>
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                      <CopyButton text={sk.key} label="Copiar key" />
+                      {sk.activationUrl && <CopyButton text={sk.activationUrl} label="Copiar link" />}
+                      {sk.activationUrl && (
+                        <a href={sk.activationUrl} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'linear-gradient(135deg, #059669, #34d399)', border: 'none', borderRadius: '10px', color: 'white', fontWeight: 700, fontSize: '13px', padding: '10px 16px', textDecoration: 'none' }}>
+                          Ativar <ArrowRight size={14} />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      ) : (
+        <>
+          <div style={{ ...glassCard, padding: '24px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+              <KeyRound size={18} style={{ color: '#34d399' }} />
+              <span style={{ fontSize: '12px', fontWeight: 700, color: 'rgba(52,211,153,0.85)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Sua Serial Key</span>
+            </div>
+            <div style={{ background: 'linear-gradient(135deg, rgba(5,150,105,0.18), rgba(52,211,153,0.08))', border: '1px solid rgba(52,211,153,0.3)', borderRadius: '14px', padding: '20px', textAlign: 'center', marginBottom: '14px' }}>
+              <span style={{ fontFamily: 'monospace', fontSize: '26px', fontWeight: 800, color: '#34d399', letterSpacing: '3px', wordBreak: 'break-all' }}>
+                {data.serialKey}
+              </span>
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center' }}>
+              <CopyButton text={data.serialKey || ''} label="Copiar Serial Key" />
+              {data.activationUrl && <CopyButton text={data.activationUrl} label="Copiar link de ativação" />}
+            </div>
+          </div>
+
+          {/* QR + ativar */}
+          <div style={{ ...glassCard, padding: '24px', display: 'flex', flexWrap: 'wrap', gap: '24px', alignItems: 'center', justifyContent: 'center' }}>
+            {data.qrDataUrl && (
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', marginBottom: '10px', fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
+                  <QrCode size={14} /> QR Code de ativação
+                </div>
+                <img src={data.qrDataUrl} alt="QR Code de ativação" style={{ width: '180px', height: '180px', borderRadius: '12px', background: 'white', padding: '8px' }} />
+              </div>
+            )}
+            <div style={{ flex: 1, minWidth: '240px' }}>
+              <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.7)', lineHeight: '1.6', marginBottom: '16px' }}>
+                Ative seu produto agora. Se ainda não tiver conta, você poderá criar uma em segundos — o produto aparecerá liberado automaticamente.
+              </p>
+              {data.activationUrl && (
+                <a
+                  href={data.activationUrl}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                    background: 'linear-gradient(135deg, #059669, #34d399)', boxShadow: '0 0 30px rgba(52,211,153,0.3)',
+                    border: 'none', borderRadius: '12px', color: 'white', fontWeight: 700, fontSize: '15px',
+                    padding: '14px 24px', cursor: 'pointer', width: '100%', textDecoration: 'none',
+                  }}
+                >
+                  Ativar meu produto <ArrowRight size={16} />
+                </a>
+              )}
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Resumo da compra */}
       <div style={{ ...glassCard, padding: '24px' }}>

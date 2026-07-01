@@ -518,7 +518,7 @@ function GuestAccessNotice() {
         <div className="min-w-0">
           <p className="text-sm font-bold leading-tight">Você está vendo como visitante</p>
           <p className="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-300">
-            Catálogo liberado. Compra, download, viewer e áreas de estudo exigem login.
+            Catálogo e compra liberados — você recebe sua Serial Key por e-mail. Download, viewer e áreas de estudo exigem login.
           </p>
         </div>
       </div>

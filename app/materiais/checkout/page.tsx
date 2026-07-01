@@ -276,8 +276,30 @@ export default function MateriaisCheckoutPage() {
   const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null)
   const [removedAccessibleItems, setRemovedAccessibleItems] = useState<CartSkippedItem[]>([])
 
+  // Compra sem login (Serial Key): detectamos visitante e coletamos os dados.
+  const [isGuest, setIsGuest] = useState<boolean | null>(null)
+  const [buyer, setBuyer] = useState({ name: '', email: '', phone: '' })
+  const [buyerConfirmed, setBuyerConfirmed] = useState(false)
+
+  useEffect(() => {
+    let active = true
+    fetch('/api/auth/me', { cache: 'no-store' })
+      .then(r => { if (active) setIsGuest(!r.ok) })
+      .catch(() => { if (active) setIsGuest(true) })
+    return () => { active = false }
+  }, [])
+
   const cartPayload = cartItems.map(item => ({ itemType: item.itemType, itemId: item.itemId }))
   const cartPayloadKey = cartPayload.map(item => `${item.itemType}:${item.itemId}`).join('|')
+
+  // Visitante em compra de item único → usa o checkout de Serial Key (/comprar),
+  // que mantém preço e fluxo consistentes. O carrinho é tratado nesta página.
+  useEffect(() => {
+    if (isGuest && !isCartMode && item?._id) {
+      const pt = itemType === 'package' ? 'package' : (item.type === 'flashcard_deck' ? 'flashcard' : 'material')
+      router.replace(`/comprar?productType=${pt}&productId=${item._id}&itemType=${itemType}`)
+    }
+  }, [isGuest, isCartMode, item, itemType, router])
 
   useEffect(() => {
     setAppliedCoupon(null)
@@ -923,15 +945,17 @@ export default function MateriaisCheckoutPage() {
                     Pagamento único · Acesso permanente
                   </p>
                 </div>
-                <div style={{ marginTop: '14px' }}>
-                  <CouponBox
-                    amount={amount}
-                    payload={{ items: cartPayload }}
-                    appliedCoupon={appliedCoupon}
-                    onApplied={setAppliedCoupon}
-                    onRemoved={() => setAppliedCoupon(null)}
-                  />
-                </div>
+                {!isGuest && (
+                  <div style={{ marginTop: '14px' }}>
+                    <CouponBox
+                      amount={amount}
+                      payload={{ items: cartPayload }}
+                      appliedCoupon={appliedCoupon}
+                      onApplied={setAppliedCoupon}
+                      onRemoved={() => setAppliedCoupon(null)}
+                    />
+                  </div>
+                )}
               </div>
             </div>
 
@@ -1010,6 +1034,36 @@ export default function MateriaisCheckoutPage() {
                     {freeCheckoutLoading ? 'Liberando...' : 'Liberar itens'}
                   </button>
                 </div>
+              ) : isGuest === null ? (
+                <div style={{ display: 'flex', justifyContent: 'center', padding: '24px' }}>
+                  <Loader2 size={28} style={{ color: '#34d399', animation: 'spin 1s linear infinite' }} />
+                </div>
+              ) : isGuest ? (
+                !buyerConfirmed ? (
+                  <GuestBuyerForm buyer={buyer} setBuyer={setBuyer} onConfirm={() => setBuyerConfirmed(true)} />
+                ) : (
+                  <>
+                    <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '10px', padding: '10px 12px', marginBottom: '16px', fontSize: '12px', color: 'rgba(255,255,255,0.55)' }}>
+                      Comprando como <strong style={{ color: 'white' }}>{buyer.name}</strong> · {buyer.email}
+                      <button onClick={() => setBuyerConfirmed(false)} style={{ marginLeft: '8px', background: 'transparent', border: 'none', color: '#34d399', cursor: 'pointer', fontSize: '12px', textDecoration: 'underline' }}>editar</button>
+                    </div>
+                    <MercadoPagoCheckout
+                      key={`cart-guest-${payableAmount}`}
+                      publicKey={publicKey}
+                      amount={payableAmount}
+                      description={`Carrinho DomineAqui - ${cartPreview.payableItems.length} itens`}
+                      endpoint="/api/serial-keys/checkout"
+                      extraBody={{ cart: cartPayload, buyerName: buyer.name, buyerEmail: buyer.email, buyerPhone: buyer.phone }}
+                      payerEmailHint={buyer.email}
+                      payerNameHint={buyer.name}
+                      analytics={{ productId: 'cart', productTitle: `Carrinho (${cartPreview.items.length} itens)`, productType: 'material', source: 'Serial Key' }}
+                      onApproved={(resp) => {
+                        clearCart()
+                        window.location.href = (resp as any).successRedirect || '/compra/aprovada'
+                      }}
+                    />
+                  </>
+                )
               ) : (
                 <MercadoPagoCheckout
                   key={`cart-${payableAmount}-${appliedCoupon?.code || 'sem-cupom'}`}
@@ -1286,6 +1340,60 @@ export default function MateriaisCheckoutPage() {
           </div>
         </div>
       </div>
+    </div>
+  )
+}
+
+/** Formulário de dados do comprador (visitante) para compra via Serial Key. */
+function GuestBuyerForm({
+  buyer,
+  setBuyer,
+  onConfirm,
+}: {
+  buyer: { name: string; email: string; phone: string }
+  setBuyer: (b: { name: string; email: string; phone: string }) => void
+  onConfirm: () => void
+}) {
+  const [touched, setTouched] = useState(false)
+  const digits = (v: string) => v.replace(/\D/g, '')
+  const nameValid = buyer.name.trim().includes(' ') && buyer.name.trim().length >= 3
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(buyer.email.trim())
+  const phoneValid = digits(buyer.phone).length >= 10 && digits(buyer.phone).length <= 15
+  const valid = nameValid && emailValid && phoneValid
+
+  const label: React.CSSProperties = { display: 'block', fontSize: '12px', fontWeight: 600, color: 'rgba(52,211,153,0.8)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }
+  const input: React.CSSProperties = { width: '100%', boxSizing: 'border-box', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(52,211,153,0.2)', color: 'white', borderRadius: '10px', padding: '12px 14px', fontSize: '14px', outline: 'none' }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+      <div>
+        <h2 style={{ fontSize: '18px', fontWeight: 800, color: 'white', marginBottom: '4px' }}>Seus dados</h2>
+        <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>
+          Você comprará sem login. Enviaremos sua(s) Serial Key(s) por e-mail — uma para cada produto.
+        </p>
+      </div>
+      <div>
+        <label style={label}>Nome completo</label>
+        <input value={buyer.name} onChange={(e) => setBuyer({ ...buyer, name: e.target.value })} onBlur={() => setTouched(true)} placeholder="Seu nome completo" style={input} />
+        {touched && !nameValid && <span style={{ fontSize: '11px', color: '#f87171' }}>Informe nome e sobrenome.</span>}
+      </div>
+      <div>
+        <label style={label}>E-mail</label>
+        <input value={buyer.email} onChange={(e) => setBuyer({ ...buyer, email: e.target.value })} onBlur={() => setTouched(true)} type="email" placeholder="seu@email.com" style={input} />
+        {touched && !emailValid && <span style={{ fontSize: '11px', color: '#f87171' }}>E-mail inválido.</span>}
+      </div>
+      <div>
+        <label style={label}>Telefone (com DDD)</label>
+        <input value={buyer.phone} onChange={(e) => setBuyer({ ...buyer, phone: e.target.value })} onBlur={() => setTouched(true)} placeholder="(00) 00000-0000" style={input} />
+        {touched && !phoneValid && <span style={{ fontSize: '11px', color: '#f87171' }}>Telefone inválido.</span>}
+      </div>
+      <button
+        onClick={() => { setTouched(true); if (valid) onConfirm() }}
+        disabled={!valid}
+        style={{ background: 'linear-gradient(135deg, #059669, #34d399)', boxShadow: '0 0 30px rgba(52,211,153,0.3)', border: 'none', borderRadius: '12px', color: 'white', fontWeight: 700, fontSize: '15px', padding: '14px 24px', width: '100%', cursor: valid ? 'pointer' : 'not-allowed', opacity: valid ? 1 : 0.6 }}
+      >
+        Ir para pagamento
+      </button>
     </div>
   )
 }

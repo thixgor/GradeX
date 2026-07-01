@@ -996,3 +996,101 @@ export async function sendSerialKeyPurchaseEmail(input: {
     attachments,
   })
 }
+
+/**
+ * E-mail premium pós-compra de VÁRIAS Serial Keys (carrinho com mais de um
+ * produto). Lista cada produto com sua Serial Key, link e QR de ativação, e
+ * anexa um comprovante em PDF consolidado. Responsivo (Gmail/Outlook/mobile).
+ */
+export async function sendSerialKeyCartPurchaseEmail(input: {
+  email: string
+  buyerName: string
+  buyerPhone: string
+  totalAmount: number
+  paymentStatusLabel: string
+  purchasedAt: Date
+  items: Array<{
+    productTitle: string
+    productTypeLabel: string
+    serialKey: string
+    activationUrl: string
+    amount: number
+    qrBuffer?: Buffer
+  }>
+  receiptText: string
+  pdfBuffer?: Buffer
+  kind?: 'purchase' | 'resend'
+}) {
+  const firstName = input.buyerName ? input.buyerName.split(' ')[0] : 'Comprador'
+  const dateStr = new Intl.DateTimeFormat('pt-BR', {
+    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',
+    timeZone: 'America/Sao_Paulo',
+  }).format(input.purchasedAt)
+
+  const attachments: any[] = []
+  const itemsHtml = input.items.map((item, i) => {
+    const cid = `serialkey-qr-${i}`
+    if (item.qrBuffer) {
+      attachments.push({ filename: `ativacao-${i + 1}.png`, content: item.qrBuffer, contentType: 'image/png', cid })
+    }
+    return `
+      <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px 20px; margin: 0 0 16px 0; background: #f8fafc;">
+        <p style="margin: 0 0 4px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #d97706; font-weight: 700;">${item.productTypeLabel}</p>
+        <p style="margin: 0 0 10px 0; font-size: 16px; font-weight: 700; color: #0f3d2e;">${item.productTitle}</p>
+        <div style="background: linear-gradient(135deg, #0f3d2e, #1a5c45); border-radius: 10px; padding: 14px; text-align: center; margin-bottom: 12px;">
+          <p style="margin: 0 0 4px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: #a7f3d0; font-weight: 700;">Serial Key</p>
+          <p style="margin: 0; font-family: 'Courier New', Courier, monospace; font-size: 18px; font-weight: 800; color: #ffffff; letter-spacing: 1px; word-break: break-all;">${item.serialKey}</p>
+        </div>
+        <div style="text-align: center;">
+          ${item.qrBuffer ? `<img src="cid:${cid}" alt="QR de ativação" width="130" height="130" style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px; background: #ffffff; margin-bottom: 8px;"><br>` : ''}
+          <a href="${item.activationUrl}" style="display: inline-block; background-color: #f57c00; color: #ffffff !important; text-decoration: none; padding: 10px 22px; border-radius: 8px; font-weight: 600; font-size: 14px;" target="_blank">Ativar este produto</a>
+          <p style="margin: 8px 0 0 0; font-size: 11px;"><a href="${item.activationUrl}" style="color: #0f3d2e; word-break: break-all;">${item.activationUrl}</a></p>
+        </div>
+      </div>
+    `
+  }).join('')
+
+  const content = `
+    <h1 class="h1">Compra aprovada, ${firstName}! 🎉</h1>
+    <p>Seu acesso foi aprovado com sucesso. Você comprou <strong>${input.items.length} produtos</strong> e recebeu uma Serial Key para cada um.</p>
+    <p>Enviamos todas as informações para <strong>${input.email}</strong>. Guarde suas Serial Keys com segurança e ative cada produto pelos botões abaixo.</p>
+
+    <div style="margin: 24px 0;">
+      ${itemsHtml}
+    </div>
+
+    <hr>
+
+    <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px 20px; margin: 20px 0;">
+      <p style="margin: 0 0 10px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #0f3d2e; font-weight: 700;">Comprovante da compra</p>
+      <table role="presentation" width="100%" style="font-size: 14px; color: #4a5568; border-collapse: collapse;">
+        <tr><td style="padding: 3px 0; color: #718096;">Comprador</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${input.buyerName}</td></tr>
+        <tr><td style="padding: 3px 0; color: #718096;">E-mail</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${input.email}</td></tr>
+        <tr><td style="padding: 3px 0; color: #718096;">Telefone</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${input.buyerPhone}</td></tr>
+        <tr><td style="padding: 3px 0; color: #718096;">Itens</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${input.items.length}</td></tr>
+        <tr><td style="padding: 3px 0; color: #718096;">Total pago</td><td style="padding: 3px 0; text-align: right; font-weight: 700; color: #0f3d2e;">R$ ${input.totalAmount.toFixed(2).replace('.', ',')}</td></tr>
+        <tr><td style="padding: 3px 0; color: #718096;">Status</td><td style="padding: 3px 0; text-align: right; font-weight: 600; color: #059669;">${input.paymentStatusLabel}</td></tr>
+        <tr><td style="padding: 3px 0; color: #718096;">Data e hora</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${dateStr}</td></tr>
+      </table>
+    </div>
+
+    <div style="background-color: #fff8e1; border-left: 4px solid #f57c00; padding: 15px; margin: 20px 0; border-radius: 4px;">
+      <p style="margin: 0; color: #795548; font-size: 13px;"><strong>Como ativar:</strong> ative cada produto clicando no botão correspondente. Faça login ou crie sua conta (rápido) e os produtos aparecerão liberados. O comprovante completo está anexado em PDF.</p>
+    </div>
+  `
+
+  const html = getEmailTemplate('Compra aprovada', content)
+
+  if (input.pdfBuffer) {
+    attachments.push({ filename: 'comprovante-domineaqui.pdf', content: input.pdfBuffer, contentType: 'application/pdf' })
+  }
+
+  await transporter.sendMail({
+    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+    to: input.email,
+    subject: `✅ Compra aprovada — suas ${input.items.length} Serial Keys DomineAqui`,
+    html,
+    text: input.receiptText,
+    attachments,
+  })
+}

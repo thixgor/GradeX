@@ -26,8 +26,11 @@ export async function POST(request: NextRequest) {
   const rl = await checkRateLimit(ip, 'materiais_cart_preview', 60, 60_000)
   if (!rl.success) return NextResponse.json({ error: 'Muitas requisições.' }, { status: 429 })
 
+  // Visitantes (sem login) podem pré-visualizar o carrinho para comprar via
+  // Serial Key. Sem sessão, usamos uma sessão sintética de convidado (não possui
+  // nada), então nenhum item é marcado como "já adquirido".
   const session = await getSession()
-  if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
+  const cartSession = session || { userId: '', role: 'user' as const }
 
   let body: any
   try {
@@ -42,8 +45,8 @@ export async function POST(request: NextRequest) {
   }
 
   const db = await getDb()
-  const resolution = await resolveMaterialCart(db, session, parsed.data.items)
-  const suggestions = await computeCartUpgradeSuggestions(db, session, resolution)
+  const resolution = await resolveMaterialCart(db, cartSession, parsed.data.items)
+  const suggestions = await computeCartUpgradeSuggestions(db, cartSession, resolution)
 
   // Lote dinâmico — calcula desconto por item para exibição no preview.
   const tierCalc = await computeCartTierDiscounts(

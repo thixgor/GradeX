@@ -17,7 +17,13 @@ import {
   logSerialKeySecurity,
   productTypeLabel,
 } from '@/lib/serial-keys'
-import type { PaymentOrder, SerialKeyProductType } from '@/lib/types'
+import {
+  MAX_MATERIAL_CART_ITEMS,
+  resolveMaterialCart,
+  type MaterialCartSession,
+} from '@/lib/material-cart'
+import { computeCartTierDiscounts } from '@/lib/pricing-events'
+import type { PaymentOrder, SerialKeyProductType, SerialKeyGrant } from '@/lib/types'
 import type { PaymentOrderType } from '@/lib/payments/types'
 import type { AnalyticsProductType } from '@/lib/analytics'
 
@@ -52,6 +58,29 @@ const Schema = z.object({
   issuer: z.string().optional(),
   payerDocumentType: z.enum(['CPF', 'CNPJ']).optional(),
   payerDocumentNumber: z.string().max(20).optional(),
+})
+
+const buyerFields = {
+  buyerName: z.string().max(140),
+  buyerEmail: z.string().max(180),
+  buyerPhone: z.string().max(40),
+}
+const paymentFields = {
+  paymentMethodId: z.string().min(1),
+  cardToken: z.string().optional(),
+  installments: z.number().int().min(1).max(12).optional(),
+  issuer: z.string().optional(),
+  payerDocumentType: z.enum(['CPF', 'CNPJ']).optional(),
+  payerDocumentNumber: z.string().max(20).optional(),
+}
+
+const CartSchema = z.object({
+  cart: z.array(z.object({
+    itemType: z.enum(['material', 'package']),
+    itemId: z.string().min(1),
+  })).min(1).max(MAX_MATERIAL_CART_ITEMS),
+  ...buyerFields,
+  ...paymentFields,
 })
 
 /** Mapeia o tipo de produto da serial key para o tipo de order de pagamento. */
@@ -109,11 +138,22 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Muitas tentativas. Tente novamente em instantes.' }, { status: 429 })
   }
 
-  let body: unknown
+  let body: any
   try {
     body = await request.json()
   } catch {
     return NextResponse.json({ error: 'Body inválido' }, { status: 400 })
+  }
+
+  const session = await getSession()
+
+  // Carrinho (vários produtos) → gera uma Serial Key por item.
+  if (Array.isArray(body?.cart)) {
+    const parsedCart = CartSchema.safeParse(body)
+    if (!parsedCart.success) {
+      return NextResponse.json({ error: 'Dados inválidos', details: parsedCart.error.format() }, { status: 400 })
+    }
+    return handleCartCheckout(request, ip, userAgent, session, parsedCart.data)
   }
 
   const parsed = Schema.safeParse(body)
@@ -129,7 +169,6 @@ export async function POST(request: NextRequest) {
   }
   const buyer = buyerParsed.buyer
 
-  const session = await getSession()
   const db = await getDb()
 
   // Métodos de pagamento habilitados.
@@ -272,5 +311,185 @@ export async function POST(request: NextRequest) {
       { error: err?.message || 'Falha ao criar pagamento' },
       { status: 502 }
     )
+  }
+}
+
+/**
+ * Checkout de CARRINHO com Serial Keys: uma Serial Key por produto.
+ * Resolve os itens na fonte autoritativa (preços + lote dinâmico), soma o
+ * total e cria uma única order que, ao ser aprovada, gera N keys.
+ */
+async function handleCartCheckout(
+  request: NextRequest,
+  ip: string,
+  userAgent: string | undefined,
+  session: Awaited<ReturnType<typeof getSession>>,
+  data: z.infer<typeof CartSchema>
+) {
+  const buyerParsed = parseBuyerInfo({ name: data.buyerName, email: data.buyerEmail, phone: data.buyerPhone })
+  if (!buyerParsed.ok) return NextResponse.json({ error: buyerParsed.error }, { status: 400 })
+  const buyer = buyerParsed.buyer
+
+  const db = await getDb()
+
+  // Métodos de pagamento habilitados.
+  const adminSettings = await db.collection('admin_settings').findOne({})
+  const enabledMethods = { ...DEFAULT_PAYMENT_METHODS, ...(adminSettings?.paymentMethods || {}) }
+  const method = data.paymentMethodId
+  if (method === 'pix' && !enabledMethods.pix) return NextResponse.json({ error: 'Pagamento por Pix não está disponível no momento.' }, { status: 400 })
+  if ((method === 'credit_card' || method === 'debit_card') && !enabledMethods.credit_card) return NextResponse.json({ error: 'Pagamento por cartão não está disponível no momento.' }, { status: 400 })
+  if (method === 'boleto' && !enabledMethods.boleto) return NextResponse.json({ error: 'Pagamento por boleto não está disponível no momento.' }, { status: 400 })
+
+  // Resolve o carrinho na fonte autoritativa (guest não possui nada).
+  // Para visitante (sem sessão) não checamos posse por e-mail — mantém o preço
+  // idêntico ao preview público. Logado usa a própria sessão.
+  const cartSession: MaterialCartSession = {
+    userId: session?.userId || '',
+    name: session ? undefined : buyer.name,
+    email: session?.email,
+    role: session?.role,
+  }
+  const resolution = await resolveMaterialCart(db, cartSession, data.cart)
+  if (resolution.payableItems.length === 0) {
+    return NextResponse.json({ error: 'Nenhum item pago disponível no carrinho.' }, { status: 400 })
+  }
+
+  // Lote dinâmico — desconto por item.
+  const tierCalc = await computeCartTierDiscounts(
+    db,
+    resolution.payableItems.map((item) => ({
+      itemType: item.itemType,
+      itemId: item.itemId,
+      price: item.price,
+      pricingEventId: item.pricingEventId,
+    }))
+  )
+  const tierDiscountById = new Map(
+    tierCalc.perItem.map((entry) => [`${entry.itemType}:${entry.itemId}`, entry.tierDiscountAmount])
+  )
+
+  // Monta as entradas de Serial Key (uma por item pago) com o preço final.
+  const serialKeyCart = resolution.payableItems.map((item) => {
+    const discount = tierDiscountById.get(`${item.itemType}:${item.itemId}`) || 0
+    const finalPrice = Math.max(0, Math.round((item.price - discount) * 100) / 100)
+    const isFlashcard = item.materialType === 'flashcard_deck' || Boolean(item.linkedDeckSlug)
+    const productType: SerialKeyProductType = item.itemType === 'package' ? 'package' : (isFlashcard ? 'flashcard' : 'material')
+    const grant: SerialKeyGrant = {
+      productType,
+      itemType: item.itemType,
+      itemId: item.itemId,
+      itemTitle: item.itemTitle,
+      linkedDeckSlug: item.linkedDeckSlug,
+    }
+    return { grant, productTitle: item.itemTitle, amount: finalPrice }
+  })
+
+  const amount = Math.round(serialKeyCart.reduce((s, i) => s + i.amount, 0) * 100) / 100
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return NextResponse.json({ error: 'Valor inválido' }, { status: 400 })
+  }
+
+  const receiptToken = generateReceiptToken()
+  const now = new Date()
+  const itemCount = serialKeyCart.length
+  const description = `Carrinho DomineAqui - ${itemCount} ${itemCount === 1 ? 'item' : 'itens'}`
+
+  const orderDoc: Omit<PaymentOrder, '_id'> = {
+    userId: session?.userId,
+    payerEmail: buyer.email,
+    payerName: buyer.name,
+    provider: 'mercado_pago',
+    type: 'material',
+    refId: serialKeyCart[0]?.grant.itemId,
+    amount,
+    currency: 'BRL',
+    status: 'pending',
+    idempotencyKey: '',
+    metadata: {
+      serialKeyPurchase: true,
+      serialKeyCart,
+      productType: 'material',
+      itemType: 'cart',
+      itemTitle: description,
+      buyerName: buyer.name,
+      buyerEmail: buyer.email,
+      buyerPhone: buyer.phone,
+      receiptToken,
+      guest: !session,
+      ip,
+      userAgent,
+      source: 'Serial Key (carrinho)',
+    },
+    createdAt: now,
+    updatedAt: now,
+  }
+
+  const inserted = await db.collection<PaymentOrder>('payment_orders').insertOne(orderDoc as any)
+  const orderId = inserted.insertedId.toString()
+  const idempotencyKey = deriveIdempotencyKey(orderId)
+  await db.collection<PaymentOrder>('payment_orders').updateOne(
+    { _id: inserted.insertedId },
+    { $set: { idempotencyKey } }
+  )
+
+  await recordOrderCheckoutEvent('order_created', { ...orderDoc, _id: inserted.insertedId, idempotencyKey } as PaymentOrder, {
+    productId: 'cart',
+    productTitle: description,
+    productType: 'material',
+    paymentMethod: data.paymentMethodId,
+    source: 'Serial Key',
+    metadata: { itemType: 'cart', cartSize: itemCount },
+    ...getRequestAnalyticsMeta(request),
+  })
+
+  try {
+    const provider = getPaymentProvider()
+    const result = await provider.createPayment({
+      externalReference: orderId,
+      amount,
+      currency: 'BRL',
+      description,
+      payerEmail: buyer.email,
+      payerName: buyer.name,
+      idempotencyKey,
+      paymentMethodId: data.paymentMethodId,
+      cardToken: data.cardToken,
+      installments: data.installments,
+      issuer: data.issuer,
+      payerDocumentType: data.payerDocumentType,
+      payerDocumentNumber: data.payerDocumentNumber,
+      metadata: { orderId, type: 'serial_key_cart', cartSize: String(itemCount) },
+    })
+
+    await applyPaymentResult(orderId, result)
+    await audit({
+      action: 'order_created',
+      actorUserId: session?.userId,
+      resourceType: 'serial_key',
+      resourceId: orderId,
+      metadata: { amount, cartSize: itemCount, paymentMethod: data.paymentMethodId, guest: !session },
+      ip,
+      userAgent,
+    })
+
+    return NextResponse.json({
+      orderId,
+      receiptToken,
+      providerPaymentId: result.providerOrderId,
+      status: result.status,
+      paymentMethod: result.paymentMethod,
+      pix: result.pix || null,
+      boleto: result.boleto || null,
+      statusDetail: result.statusDetail,
+      amount,
+      successRedirect: getSuccessUrl(orderId, receiptToken),
+    })
+  } catch (err: any) {
+    console.error('[serial-keys/checkout/cart] erro ao criar payment:', err)
+    await db.collection<PaymentOrder>('payment_orders').updateOne(
+      { _id: inserted.insertedId },
+      { $set: { status: 'rejected', statusDetail: 'provider_error', updatedAt: new Date() } }
+    )
+    return NextResponse.json({ error: err?.message || 'Falha ao criar pagamento' }, { status: 502 })
   }
 }

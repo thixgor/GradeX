@@ -19,6 +19,8 @@ const publicRoutes = [
   '/comprar',
   '/ativar',
   '/materiais',
+  '/materiais/checkout',
+  '/api/materiais/cart/preview',
   '/flashcards',
   '/ldpg-mnclinico',
   '/manual-clinico',
