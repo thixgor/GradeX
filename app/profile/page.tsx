@@ -8,7 +8,7 @@ import { ToastAlert } from '@/components/ui/toast-alert'
 import { BanChecker } from '@/components/ban-checker'
 import { AppShell } from '@/components/app-shell'
 import { PlanLimitsCard } from '@/components/plan-limits-card'
-import { CheckCircle, Clock, FileText, Download, Printer, ClipboardList, Trophy, BookOpen, Crown, Timer, Sparkles, Phone, Mail, XCircle, Ticket, AlertTriangle, ChevronDown, ChevronUp, Target, BarChart3, GraduationCap, ShoppingBag, Receipt } from 'lucide-react'
+import { CheckCircle, Clock, FileText, Download, Printer, ClipboardList, Trophy, BookOpen, Crown, Timer, Sparkles, Phone, Mail, XCircle, Ticket, AlertTriangle, ChevronDown, ChevronUp, Target, BarChart3, GraduationCap, ShoppingBag, Receipt, KeyRound } from 'lucide-react'
 import { FocusSessionsProfile } from '@/components/focus-sessions-profile'
 // PDF generator loaded dynamically to reduce initial bundle size (~200KB)
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
@@ -831,12 +831,12 @@ export default function ProfilePage() {
         <Dialog open={activateDialogOpen} onOpenChange={setActivateDialogOpen}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <div className="mx-auto w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-400 to-cyan-500 flex items-center justify-center mb-3">
-                <Crown className="h-7 w-7 text-white" />
+              <div className="mx-auto w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center mb-3">
+                <KeyRound className="h-7 w-7 text-white" />
               </div>
-              <DialogTitle className="text-center text-xl">Ativar Premium</DialogTitle>
+              <DialogTitle className="text-center text-xl">Ativar Serial Key</DialogTitle>
               <DialogDescription className="text-center text-sm">
-                Insira sua serial key para ativar o acesso premium
+                Insira sua serial key para liberar seu produto ou plano
               </DialogDescription>
             </DialogHeader>
             <div className="py-3">
@@ -864,9 +864,7 @@ export default function ProfilePage() {
           <ActivationSuccessDialog
             open={activationSuccessOpen}
             onOpenChange={setActivationSuccessOpen}
-            keyType={activationDetails.keyType}
-            trialExpiresAt={activationDetails.trialExpiresAt}
-            customDuration={activationDetails.customDuration}
+            details={activationDetails}
           />
         )}
 
