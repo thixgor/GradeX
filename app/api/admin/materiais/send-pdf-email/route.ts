@@ -21,7 +21,7 @@ import { applyWatermark } from '@/lib/pdf-watermark'
 import { sendMaterialPdfDeliveryEmail } from '@/lib/mail'
 
 export const dynamic = 'force-dynamic'
-export const maxDuration = 60
+export const maxDuration = 90
 
 function safeFilename(title: string): string {
   return (title || 'material')
@@ -110,41 +110,47 @@ export async function POST(request: NextRequest) {
     const orderId = purchase.providerPaymentId || purchase.providerOrderId || String(purchase._id)
     const now = new Date()
 
-    const items: { title: string; filename: string; buffer: Buffer }[] = []
-    for (const material of materialsWithPdf) {
-      let original: ArrayBuffer
-      try {
-        original = await fetchMaterialPdfBytes(material.pdfFile.blobUrl)
-      } catch (err) {
-        console.error(`[admin-send-pdf-email] Falha ao baixar PDF do material ${material._id}:`, err)
-        return NextResponse.json(
-          { error: `Falha ao baixar o arquivo original de "${material.title || 'material'}". Tente novamente.` },
-          { status: 502 }
-        )
-      }
-
-      let watermarked: Uint8Array
-      try {
-        watermarked = await applyWatermark(original, {
+    // Baixa + aplica marca d'água em paralelo (importante quando o item é um
+    // pacote com vários materiais — processar em série somaria os tempos e
+    // aumentaria o risco de estourar o limite de execução da função).
+    const results = await Promise.allSettled(
+      materialsWithPdf.map(async (material) => {
+        const original = await fetchMaterialPdfBytes(material.pdfFile.blobUrl)
+        const watermarked = await applyWatermark(original, {
           userName,
           userEmail,
           userId: userId || String(purchase._id),
           orderId,
           downloadedAt: now,
         })
-      } catch (err) {
-        console.error(`[admin-send-pdf-email] Falha ao aplicar marca d'água no material ${material._id}:`, err)
-        return NextResponse.json(
-          { error: `Falha ao gerar o PDF com marca d'água de "${material.title || 'material'}".` },
-          { status: 500 }
+        return {
+          title: material.title || 'Material',
+          filename: safeFilename(material.title),
+          buffer: Buffer.from(watermarked),
+        }
+      })
+    )
+
+    const items: { title: string; filename: string; buffer: Buffer }[] = []
+    const sentMaterialIds: string[] = []
+    for (let i = 0; i < results.length; i++) {
+      const result = results[i]
+      if (result.status === 'fulfilled') {
+        items.push(result.value)
+        sentMaterialIds.push(String(materialsWithPdf[i]._id))
+      } else {
+        console.error(
+          `[admin-send-pdf-email] Falha ao preparar PDF do material ${materialsWithPdf[i]._id}:`,
+          result.reason
         )
       }
+    }
 
-      items.push({
-        title: material.title || 'Material',
-        filename: safeFilename(material.title),
-        buffer: Buffer.from(watermarked),
-      })
+    if (items.length === 0) {
+      return NextResponse.json(
+        { error: 'Falha ao preparar o(s) PDF(s) para envio. Tente novamente.' },
+        { status: 502 }
+      )
     }
 
     const totalBytes = items.reduce((sum, item) => sum + item.buffer.byteLength, 0)
@@ -179,7 +185,7 @@ export async function POST(request: NextRequest) {
       purchaseId,
       itemType: purchase.itemType,
       itemId: purchase.itemId,
-      materialIds: materialsWithPdf.map((m) => String(m._id)),
+      materialIds: sentMaterialIds,
       orderId,
       sentAt: now,
     })
