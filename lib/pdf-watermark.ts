@@ -11,7 +11,7 @@
  *   WATERMARK_AND_RESTRICT  – Acima + permissões de leitura (sem cópia/impressão via viewer)
  */
 
-import { PDFDocument, rgb, degrees, StandardFonts, PDFPage, PDFName } from 'pdf-lib'
+import { PDFDocument, rgb, degrees, StandardFonts, PDFPage, PDFName, PDFEmbeddedPage } from 'pdf-lib'
 import { emailFingerprint } from './watermark-fingerprint'
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
@@ -188,6 +188,34 @@ function applyWatermarkToPage(
   }
 }
 
+/**
+ * Constrói UMA VEZ um PDF de uma página só (do tamanho pedido) contendo a
+ * grade de marca d'água. Esse overlay é depois embutido no documento final e
+ * "carimbado" em cada página com uma única operação (drawPage), em vez de
+ * repetir centenas de chamadas drawText por página.
+ *
+ * Por que isso importa:
+ *   O tiling gera (colunas × linhas × textos) chamadas de desenho por página.
+ *   Feito diretamente em cada página, um PDF com muitas páginas acumula
+ *   dezenas/centenas de milhares de operações no content stream — o que
+ *   estoura o tempo de execução (504 no download) e a memória (OOM/500 no
+ *   envio por e-mail). Desenhando o padrão uma vez por tamanho de página e
+ *   reutilizando como XObject, o custo passa a ser praticamente O(nº de
+ *   tamanhos distintos), não O(nº de páginas).
+ */
+async function buildWatermarkOverlayPdf(
+  width: number,
+  height: number,
+  lines: string[],
+  config: WatermarkRenderConfig
+): Promise<Uint8Array> {
+  const doc = await PDFDocument.create()
+  const font = await doc.embedFont(StandardFonts.HelveticaBold)
+  const page = doc.addPage([width, height])
+  applyWatermarkToPage(page, lines, font, config)
+  return doc.save()
+}
+
 // ─── Exportação principal ────────────────────────────────────────────────────
 
 /**
@@ -243,8 +271,6 @@ export async function applyWatermark(
   outputDoc.setProducer('DomineAqui PDF Service')
   outputDoc.setModificationDate(downloadedAt)
 
-  // ── Fonte ───────────────────────────────────────────────────────────────
-  const font = await outputDoc.embedFont(StandardFonts.HelveticaBold)
   const renderConfig = getWatermarkRenderConfig()
 
   // Linhas que aparecem na marca d'água
@@ -256,11 +282,30 @@ export async function applyWatermark(
   ]
 
   // ── Aplicar marca em todas as páginas ───────────────────────────────────
+  // Estratégia por overlay: a grade de marca d'água é construída uma única
+  // vez por tamanho de página e reutilizada como XObject em todas as páginas
+  // daquele tamanho. Isso mantém o custo baixo mesmo em PDFs com centenas de
+  // páginas (ver buildWatermarkOverlayPdf).
   const pages = outputDoc.getPages()
-  for (const page of pages) {
-    // Garante compositing correto de transparência no iOS/Safari (ver helper).
-    ensurePageTransparencyGroup(page, outputDoc)
-    applyWatermarkToPage(page, watermarkLines, font, renderConfig)
+  if (renderConfig.enabled) {
+    const overlayCache = new Map<string, PDFEmbeddedPage>()
+    for (const page of pages) {
+      const { width, height } = page.getSize()
+      const key = `${Math.round(width)}x${Math.round(height)}`
+
+      let overlay = overlayCache.get(key)
+      if (!overlay) {
+        const overlayBytes = await buildWatermarkOverlayPdf(width, height, watermarkLines, renderConfig)
+        const [embedded] = await outputDoc.embedPdf(overlayBytes)
+        overlayCache.set(key, embedded)
+        overlay = embedded
+      }
+
+      // Garante compositing correto de transparência no iOS/Safari (ver helper).
+      ensurePageTransparencyGroup(page, outputDoc)
+      // Carimba o overlay cobrindo a página inteira (uma operação por página).
+      page.drawPage(overlay, { x: 0, y: 0, width, height })
+    }
   }
 
   // ── Modo WATERMARK_AND_FLATTEN ──────────────────────────────────────────
