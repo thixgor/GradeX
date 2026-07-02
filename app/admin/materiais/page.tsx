@@ -2620,6 +2620,25 @@ function PdfViewerStructureEditor({
   // Sumário
   const addSummary = () =>
     onChange({ ...config, summary: [...summary, { id: genId('toc'), title: '', page: 1, level: 0 }] })
+  // Insere o subtópico logo após o último descendente da entrada `parentId`,
+  // em vez de jogar a nova linha para o fim da lista.
+  const addSubtopic = (parentId: string) => {
+    const parentIndex = summary.findIndex(s => s.id === parentId)
+    if (parentIndex === -1) return
+    const parentLevel = summary[parentIndex].level ?? 0
+    let insertAt = parentIndex + 1
+    while (insertAt < summary.length && (summary[insertAt].level ?? 0) > parentLevel) {
+      insertAt++
+    }
+    const next = [...summary]
+    next.splice(insertAt, 0, {
+      id: genId('toc'),
+      title: '',
+      page: summary[parentIndex].page,
+      level: Math.min(2, parentLevel + 1),
+    })
+    onChange({ ...config, summary: next })
+  }
   const updateSummary = (id: string, patch: Partial<PdfSummaryEntry>) =>
     onChange({ ...config, summary: summary.map(s => s.id === id ? { ...s, ...patch } : s) })
   const removeSummary = (id: string) =>
@@ -2820,6 +2839,12 @@ function PdfViewerStructureEditor({
                   className="h-9 w-20"
                   title="Página"
                 />
+                <button type="button" onClick={() => addSubtopic(entry.id)}
+                  disabled={(entry.level ?? 0) >= 2}
+                  className="text-emerald-600 hover:text-emerald-700 disabled:opacity-30 shrink-0"
+                  title="Adicionar subtópico logo abaixo desta entrada">
+                  <CornerDownRight className="h-4 w-4" />
+                </button>
                 <button type="button" onClick={() => removeSummary(entry.id)}
                   className="text-red-500 hover:text-red-700 shrink-0" title="Remover">
                   <Trash className="h-4 w-4" />
