@@ -118,12 +118,23 @@ function useTilt3D(strength = 12) {
 }
 
 function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: string }) {
-  const [count, setCount] = useState(0)
+  // Inicia no valor final: assim o HTML do servidor (e quem chega com JS lento
+  // ou desligado) já lê o número real, nunca "0". A contagem animada é só
+  // enfeite quando a seção entra na tela, e roda uma única vez.
+  const [count, setCount] = useState(target)
   const { ref, isVisible } = useInView()
+  const prefersReduced = useReducedMotion()
+  const animated = useRef(false)
   useEffect(() => {
-    if (!isVisible) return
+    if (!isVisible || animated.current) return
+    animated.current = true
+    if (prefersReduced) {
+      setCount(target)
+      return
+    }
     let start = 0
     const duration = 1800
+    setCount(0)
     const step = (ts: number) => {
       if (!start) start = ts
       const progress = Math.min((ts - start) / duration, 1)
@@ -132,7 +143,7 @@ function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: str
       if (progress < 1) requestAnimationFrame(step)
     }
     requestAnimationFrame(step)
-  }, [isVisible, target])
+  }, [isVisible, target, prefersReduced])
   return (
     <span ref={ref}>
       {count.toLocaleString('pt-BR')}
@@ -255,12 +266,12 @@ export default function LandingPage({
     {
       question: 'As aulas realmente aprofundam o conteúdo?',
       answer:
-        'Sem enrolação. As aulas são densas e aprofundadas, do jeito que precisa para residência. Slides didáticos + material complementar para treinar na hora — questões, resumos, fluxogramas.\n\nAs aulas de HAM usam formato OSCE com dinâmica em POV (primeira pessoa), baseado em estudos que mostram melhora na performance prática e habilidades não-técnicas.',
+        'Sem enrolação. As aulas são densas e aprofundadas, do jeito que precisa para residência. Slides didáticos + material complementar para treinar na hora: questões, resumos, fluxogramas.\n\nAs aulas de HAM usam formato OSCE com dinâmica em POV (primeira pessoa), baseado em estudos que mostram melhora na performance prática e habilidades não-técnicas.',
     },
     {
       question: 'Como funcionam os Flashcards?',
       answer:
-        'Cada flashcard é criado com base na Taxonomia de Bloom — do básico (lembrar, entender) até o avançado (analisar, avaliar, criar), com dificuldade ajustável. Após cada card, rola revisão pós-card imediata para fixação.\n\nTudo atrelado às ementas de 4 cursos, com revisões espaçadas e integração com o banco de questões.',
+        'Cada flashcard é criado com base na Taxonomia de Bloom, do básico (lembrar, entender) até o avançado (analisar, avaliar, criar), com dificuldade ajustável. Após cada card, rola revisão pós-card imediata para fixação.\n\nTudo atrelado às ementas de 4 cursos, com revisões espaçadas e integração com o banco de questões.',
     },
     {
       question: 'Os cronogramas são personalizáveis?',
@@ -270,7 +281,7 @@ export default function LandingPage({
     {
       question: 'Como funcionam as provas com IA?',
       answer:
-        'Provas individuais totalmente customizáveis: escolha o curso, período, módulos, tópicos, dificuldade, número de questões e tempo limite. A IA gera questões adaptadas ao seu histórico.\n\nTambém temos provas gerais — simulados coletivos com ranking, análise completa de acertos, erros e tempo gasto.',
+        'Provas individuais totalmente customizáveis: escolha o curso, período, módulos, tópicos, dificuldade, número de questões e tempo limite. A IA gera questões adaptadas ao seu histórico.\n\nTambém temos provas gerais: simulados coletivos com ranking, análise completa de acertos, erros e tempo gasto.',
     },
     {
       question: 'A plataforma recebe atualizações?',
@@ -280,7 +291,7 @@ export default function LandingPage({
     {
       question: 'Posso sugerir melhorias?',
       answer:
-        'Claro! Feedback, sugestões de tema, dúvidas — tudo é bem-vindo. Entre em contato pelo email contato@domineaqui.com.br.',
+        'Claro! Feedback, sugestões de tema, dúvidas, tudo é bem-vindo. Entre em contato pelo email contato@domineaqui.com.br.',
     },
   ]
 
@@ -337,7 +348,7 @@ export default function LandingPage({
   ]
 
   const courses = [
-    { icon: Stethoscope, name: 'Ciências Médicas', detail: 'SOI e HAM — 1° ao 5° Período' },
+    { icon: Stethoscope, name: 'Ciências Médicas', detail: 'SOI e HAM · 1° ao 5° Período' },
     { icon: Brain, name: 'Ciências Psicossociais', detail: '1° ao 10° Período' },
     { icon: FlaskConical, name: 'Ciências Biomédicas', detail: '1° ao 7° Período' },
     { icon: GraduationCap, name: 'Ciências Odontológicas', detail: '1° ao 10° Período' },
@@ -361,7 +372,7 @@ export default function LandingPage({
       icon: Compass,
       step: '02',
       title: 'Escolha curso e período',
-      description: 'Medicina (SOI/HAM), Psicossociais, Biomédicas, Odontológicas, ENEM ou UERJ — tudo já vem organizado por módulo e tópico.',
+      description: 'Medicina (SOI/HAM), Psicossociais, Biomédicas, Odontológicas, ENEM ou UERJ. Tudo já vem organizado por módulo e tópico.',
     },
     {
       icon: Brain,
@@ -697,7 +708,7 @@ export default function LandingPage({
 
               {/* Subtitle */}
               <p className="text-base sm:text-lg text-slate-300 max-w-lg mb-5 leading-relaxed">
-                Plataforma completa de estudo para alunos de saúde — tudo integrado para você dominar.
+                Plataforma completa de estudo para alunos de saúde. Tudo integrado para você dominar.
               </p>
 
               {/* Feature tags */}
@@ -1034,7 +1045,7 @@ export default function LandingPage({
                   <span style={{ background: 'linear-gradient(135deg, #f3d999 0%, #30e093 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>+200 patologias</span> na palma da mão
                 </h2>
                 <p className="text-sm sm:text-base text-slate-300 mb-5 leading-relaxed">
-                  CIDs, fisiopatologia, diagnósticos diferenciais, farmacologia e fluxogramas — pesquisáveis em segundos. Pare de abrir 5 abas pra resolver 1 patologia.
+                  CIDs, fisiopatologia, diagnósticos diferenciais, farmacologia e fluxogramas, pesquisáveis em segundos. Pare de abrir 5 abas pra resolver 1 patologia.
                 </p>
                 <div className="flex flex-wrap gap-1.5 mb-6">
                   {['Semestral', 'Anual', 'Vitalício', 'Pix · cartão · boleto', 'Acesso imediato'].map((tag) => (
@@ -1118,7 +1129,7 @@ export default function LandingPage({
                   Resumos da Giulia Modesto
                 </h3>
                 <p className="text-sm text-slate-300 mb-4 leading-relaxed">
-                  Resumos aprofundados, exatamente como cai na prova — OSCE, N1 e Multiestação. SOI e HAM · Medicina · 1° e 2° Períodos.
+                  Resumos aprofundados, exatamente como cai na prova: OSCE, N1 e Multiestação. SOI e HAM · Medicina · 1° e 2° Períodos.
                 </p>
                 <div className="flex flex-wrap gap-1.5 mb-4">
                   {['SOI e HAM', 'Medicina', '1° e 2° Períodos', 'OSCE', 'N1', 'Multiestação'].map((tag) => (
@@ -1161,7 +1172,7 @@ export default function LandingPage({
                     Resumos da Giulia Modesto
                   </h3>
                   <p className="text-sm text-slate-200 mb-4 leading-relaxed drop-shadow">
-                    Resumos aprofundados, exatamente como cai na prova — OSCE, N1 e Multiestação. SOI e HAM · Medicina · 1° e 2° Períodos.
+                    Resumos aprofundados, exatamente como cai na prova: OSCE, N1 e Multiestação. SOI e HAM · Medicina · 1° e 2° Períodos.
                   </p>
                   <div className="flex flex-wrap gap-1.5 mb-5">
                     {['SOI e HAM', 'Medicina', '1° e 2° Períodos', 'OSCE', 'N1', 'Multiestação'].map((tag) => (
@@ -1331,7 +1342,7 @@ export default function LandingPage({
               Treine com provas reais da sua faculdade
             </h2>
             <p className="text-slate-400 max-w-2xl mx-auto">
-              Acesse e treine com simulados baseados nas provas do seu curso — organizados por
+              Acesse e treine com simulados baseados nas provas do seu curso, organizados por
               curso, período e disciplina.
             </p>
           </div>
@@ -1402,7 +1413,7 @@ export default function LandingPage({
               {
                 icon: BookMarked,
                 title: 'Provas organizadas',
-                desc: 'Por disciplina, período e semestre — fácil de achar o que você precisa.',
+                desc: 'Por disciplina, período e semestre. Fácil de achar o que você precisa.',
               },
               {
                 icon: BarChart3,
@@ -1447,7 +1458,7 @@ export default function LandingPage({
                 a partir de enunciados de domínio público ou compartilhados pelos próprios
                 estudantes, e não reproduzem integralmente obras protegidas. As questões geradas
                 por inteligência artificial são de autoria exclusiva da plataforma: nos termos da
-                Lei nº 9.610/1998 (art. 11), autor é a pessoa física criadora da obra — sistemas
+                Lei nº 9.610/1998 (art. 11), autor é a pessoa física criadora da obra; sistemas
                 de IA não são titulares de direitos autorais, e o conteúdo por eles gerado não
                 goza de proteção autoral independente. A DomineAqui não possui vínculo, parceria
                 ou endosso com nenhuma instituição de ensino.
@@ -1484,7 +1495,7 @@ export default function LandingPage({
             </h2>
             <p className="text-slate-400 max-w-2xl mx-auto">
               Banco de questões, provas e simulados são gratuitos e mantidos pela comunidade.
-              Ferramentas com IA e aulas são pagas — mas cada doação ajuda a manter o núcleo da
+              Ferramentas com IA e aulas são pagas, mas cada doação ajuda a manter o núcleo da
               plataforma livre e acessível para todos.
             </p>
           </div>

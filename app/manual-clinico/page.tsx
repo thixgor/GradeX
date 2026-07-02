@@ -179,15 +179,15 @@ function formatBRL(value: number) {
 }
 
 function formatDateBR(value?: string | null) {
-  if (!value) return '—'
+  if (!value) return 'N/D'
   const d = new Date(value)
-  if (Number.isNaN(d.getTime())) return '—'
+  if (Number.isNaN(d.getTime())) return 'N/D'
   return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
 }
 
 function formatRemainingHuman(days: number | null, isLifetime: boolean) {
   if (isLifetime) return 'Para sempre'
-  if (days == null) return '—'
+  if (days == null) return 'N/D'
   if (days <= 0) return 'Expirado'
   if (days < 30) return `${days} ${days === 1 ? 'dia' : 'dias'}`
   const months = Math.floor(days / 30)
@@ -206,14 +206,14 @@ function SubscriptionInfoBanner({ subscription }: { subscription: ManualSubscrip
           <Crown className="h-5 w-5 text-emerald-400 flex-shrink-0" />
           <div>
             <p className="text-sm font-black">
-              Manual Clínico {subscription.planLabel || 'ativo'} {subscription.isLifetime ? '— vitalício' : ''}
+              Manual Clínico {subscription.planLabel || 'ativo'} {subscription.isLifetime ? '(vitalício)' : ''}
             </p>
             <p className="text-xs text-muted-foreground">
               {subscription.isLifetime
                 ? 'Acesso para sempre, nunca expira.'
                 : subscription.isExpired
                   ? `Expirou em ${formatDateBR(subscription.expiresAt)}`
-                  : `${formatRemainingHuman(subscription.daysRemaining, false)} restantes — expira em ${formatDateBR(subscription.expiresAt)}`}
+                  : `${formatRemainingHuman(subscription.daysRemaining, false)} restantes, expira em ${formatDateBR(subscription.expiresAt)}`}
             </p>
           </div>
         </div>
@@ -229,7 +229,7 @@ function SubscriptionInfoBanner({ subscription }: { subscription: ManualSubscrip
 
       {showInfo && (
         <div className="mt-3 rounded-xl bg-black/15 p-3 text-xs space-y-1.5">
-          <div className="flex justify-between"><span className="text-muted-foreground">Plano:</span><strong>{subscription.planLabel || '—'}</strong></div>
+          <div className="flex justify-between"><span className="text-muted-foreground">Plano:</span><strong>{subscription.planLabel || 'N/D'}</strong></div>
           <div className="flex justify-between"><span className="text-muted-foreground">Assinado em:</span><strong>{formatDateBR(subscription.purchasedAt)}</strong></div>
           <div className="flex justify-between"><span className="text-muted-foreground">Expira em:</span><strong>{subscription.isLifetime ? 'Nunca' : formatDateBR(subscription.expiresAt)}</strong></div>
           <div className="flex justify-between"><span className="text-muted-foreground">Tempo restante:</span><strong>{formatRemainingHuman(subscription.daysRemaining, subscription.isLifetime)}</strong></div>
@@ -580,7 +580,7 @@ function ManualClinicoContent() {
                 Manual Clínico
               </h1>
               <p className="text-muted-foreground mt-3 max-w-xl text-base sm:text-lg leading-relaxed">
-                Pare de abrir 5 abas pra resolver 1 patologia. Diagnóstico, diferenciais, conduta e farmacologia em segundos — pesquisáveis por nome, sinônimo ou CID-10.
+                Pare de abrir 5 abas pra resolver 1 patologia. Diagnóstico, diferenciais, conduta e farmacologia em segundos, pesquisáveis por nome, sinônimo ou CID-10.
               </p>
               {total > 0 && (
                 <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20">
@@ -637,7 +637,7 @@ function ManualClinicoContent() {
                 <div className="mt-5 mx-auto max-w-md space-y-2">
                   <PricingEventCountdown state={pricingEventState} compact />
                   <div className="rounded-xl border border-emerald-300/25 bg-emerald-400/10 px-3 py-2 text-center text-[11px] font-bold text-emerald-700 dark:text-emerald-200">
-                    Lote {pricingEventState.activeTier?.label || 'ativo'} — {Math.round(tierPct)}% OFF
+                    Lote {pricingEventState.activeTier?.label || 'ativo'} · {Math.round(tierPct)}% OFF
                   </div>
                 </div>
               ) : null}
@@ -807,7 +807,7 @@ function ManualClinicoContent() {
                     {freeQuota?.mode === 'quantity' && freeQuota.limit > 0
                       ? isAuthenticated
                         ? `Você usou ${freeQuota.used} de ${freeQuota.limit} aberturas grátis. Desbloqueie por ${formatBRL(cheapestAfterTier)}${hasActiveTier ? ` · ${Math.round(tierPct)}% OFF` : ''}.`
-                        : `Crie sua conta e ganhe ${freeQuota.limit} aberturas grátis — ou desbloqueie o Manual completo.`
+                        : `Crie sua conta e ganhe ${freeQuota.limit} aberturas grátis, ou desbloqueie o Manual completo.`
                       : `${product.benefitText} · por apenas ${formatBRL(cheapestAfterTier)}${hasActiveTier ? ` (lote ${Math.round(tierPct)}% OFF)` : ''}.`}
                   </p>
                 </div>
@@ -836,7 +836,7 @@ function ManualClinicoContent() {
               <div>
                 <p className="text-sm font-bold leading-snug">Farmacologia por classes</p>
                 <p className="mt-0.5 text-xs text-muted-foreground">
-                  Fármacos organizados por classe e subclasse — mecanismo, metabolismo, excreção, efeitos, posologia e calculadora de dose.
+                  Fármacos organizados por classe e subclasse: mecanismo, metabolismo, excreção, efeitos, posologia e calculadora de dose.
                 </p>
               </div>
             </div>
@@ -1026,7 +1026,7 @@ function ManualClinicoContent() {
                     ) : null}
                     {patologia.isPremiumLocked && patologia.accessStatus !== 'login_required' && (
                       <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-amber-300/25 bg-amber-500/10 px-3 py-2 text-xs font-medium text-amber-700 dark:text-amber-200">
-                        <span>Você atingiu o limite grátis. Libere o Manual inteiro — pagamento único.</span>
+                        <span>Você atingiu o limite grátis. Libere o Manual inteiro. Pagamento único.</span>
                         <span className="inline-flex items-center gap-1 rounded-lg bg-amber-300/20 px-2 py-0.5 font-black text-amber-800 dark:text-amber-100">
                           Quero tudo <ArrowRight className="h-3 w-3" />
                         </span>

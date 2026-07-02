@@ -538,7 +538,7 @@ export default function LoginPage() {
           </h2>
 
           <p className="text-slate-400 text-base mb-10 leading-relaxed max-w-sm">
-            Plataforma completa de estudo para alunos de saúde — questões, flashcards, resumos e muito mais.
+            Plataforma completa de estudo para alunos de saúde: questões, flashcards, resumos e muito mais.
           </p>
 
           {/* Feature bullets */}
@@ -635,7 +635,7 @@ export default function LoginPage() {
                   </h1>
                   <p className="text-sm text-slate-400 mt-1">
                     {isLogin
-                      ? 'Bem-vindo de volta — continue de onde parou'
+                      ? 'Bem-vindo de volta, continue de onde parou'
                       : 'Grátis para começar, sem cartão de crédito'}
                   </p>
                 </motion.div>

@@ -39,6 +39,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.5,
     },
+    {
+      url: canonical('/termos-de-servico'),
+      lastModified: now,
+      changeFrequency: 'yearly',
+      priority: 0.3,
+    },
+    {
+      url: canonical('/politica-de-privacidade'),
+      lastModified: now,
+      changeFrequency: 'yearly',
+      priority: 0.3,
+    },
   ]
 
   return staticRoutes

@@ -59,7 +59,7 @@ const defaultPlans: Plan[] = [
   {
     id: 'anual', name: 'DomineAqui PREMIUM', period: 'Plano Anual',
     originalPrice: 358.80, price: 159.90, discount: 55,
-    discountLabel: 'Só R$ 13,33/mês — melhor valor',
+    discountLabel: 'Só R$ 13,33/mês, melhor valor',
     description: 'Melhor valor do ano',
     features: ['400 Questões Pessoais/dia', '500 Flashcards/dia', 'Cronogramas ilimitados', 'Fórum premium', 'Aulas ao vivo', 'WhatsApp do grupo'],
     highlighted: true, badge: 'MAIS POPULAR',
@@ -68,7 +68,7 @@ const defaultPlans: Plan[] = [
   {
     id: 'vitalicio', name: 'DomineAqui PREMIUM', period: 'Plano Vitalício',
     originalPrice: 1497.00, price: 529.00, discount: 65,
-    discountLabel: 'OFERTA LIMITADA — só até fim de 2026',
+    discountLabel: 'OFERTA LIMITADA: só até fim de 2026',
     description: 'Acesso para sempre',
     features: ['400 Questões Pessoais/dia', '500 Flashcards/dia', 'Cronogramas ilimitados', 'Fórum premium', 'Aulas ao vivo', 'WhatsApp do grupo'],
     highlighted: true, badge: 'OFERTA LIMITADA',
@@ -78,8 +78,8 @@ const defaultPlans: Plan[] = [
 
 const FAQ_ITEMS = [
   { q: 'Posso cancelar a qualquer momento?', a: 'Sim, sem multa ou burocracia. Você mantém o acesso até o fim do período já pago.' },
-  { q: 'Quais formas de pagamento?', a: 'Cartão de crédito, Pix e boleto bancário — tudo via Mercado Pago, a plataforma mais segura do Brasil.' },
-  { q: 'O plano vitalício é realmente vitalício?', a: 'Sim, pagamento único e acesso permanente. A oferta é limitada até o 2º semestre de 2026 — depois é retirada definitivamente.' },
+  { q: 'Quais formas de pagamento?', a: 'Cartão de crédito, Pix e boleto bancário, tudo via Mercado Pago, a plataforma mais segura do Brasil.' },
+  { q: 'O plano vitalício é realmente vitalício?', a: 'Sim, pagamento único e acesso permanente. A oferta é limitada até o 2º semestre de 2026, depois é retirada definitivamente.' },
   { q: 'Há período de teste?', a: 'Oferecemos 7 dias gratuitos para novos usuários conhecerem a plataforma.' },
   { q: 'Posso pagar com Pix em planos recorrentes?', a: 'Sim! Você pode pagar com Pix, cartão ou boleto em qualquer plano como pagamento único para o período. Para assinatura automática (renovação automática), é necessário cartão de crédito.' },
 ]
@@ -250,7 +250,7 @@ function BuyContent() {
               </span>
             </h1>
             <p className="text-lg text-white/50 max-w-xl mx-auto leading-relaxed">
-              O Premium é pra quem não quer só estudar — quer <strong className="text-white/80">dominar</strong>. Escolha seu plano e comece hoje.
+              O Premium é pra quem não quer só estudar, quer <strong className="text-white/80">dominar</strong>. Escolha seu plano e comece hoje.
             </p>
 
             {/* Trust badges */}
@@ -303,7 +303,7 @@ function BuyContent() {
             <div className="flex-1">
               <p className="font-bold text-emerald-300 text-base">Você já tem um plano ativo</p>
               <p className="text-white/60 text-sm mt-1">
-                {sub.type === 'premium' ? 'Premium' : 'Trial'}{sub.planType ? ` (${sub.planType})` : ''}{' — '}
+                {sub.type === 'premium' ? 'Premium' : 'Trial'}{sub.planType ? ` (${sub.planType})` : ''}{" · "}
                 {new Date(sub.expiresAt).getFullYear() >= 9999
                   ? <strong className="text-white/80">Acesso vitalício</strong>
                   : <>ativo até <strong className="text-white/80">{new Date(sub.expiresAt).toLocaleDateString('pt-BR')}</strong></>

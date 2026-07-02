@@ -1343,7 +1343,7 @@ function CreateDeckDialog({ open, onOpenChange, isAdmin, folders, onCreated }: {
                   <Sparkles className="h-3 w-3" /> Novo deck
                 </div>
                 <h2 className="mt-2 text-2xl font-bold text-slate-900 dark:text-white leading-tight">Vamos criar seu deck</h2>
-                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Defina o básico — você poderá editar tudo e adicionar cartões depois.</p>
+                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Defina o básico. Você poderá editar tudo e adicionar cartões depois.</p>
               </div>
               <button onClick={() => onOpenChange(false)} className="rounded-full p-2 hover:bg-white/60 dark:hover:bg-white/10 transition">
                 <X className="h-4 w-4 text-slate-500" />
@@ -1361,7 +1361,7 @@ function CreateDeckDialog({ open, onOpenChange, isAdmin, folders, onCreated }: {
                   onChange={e => setTitle(e.target.value)}
                   maxLength={120}
                   autoFocus
-                  placeholder="Título do deck — ex: Anatomia Cardiovascular"
+                  placeholder="Título do deck, ex: Anatomia Cardiovascular"
                   className="w-full rounded-2xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-white/5 backdrop-blur-md px-4 py-3 text-base font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 placeholder:font-normal outline-none focus:border-violet-400 focus:bg-white dark:focus:bg-white/10 transition"
                 />
                 <div className="mt-1 text-[10px] text-slate-400 text-right">{title.length}/120</div>
@@ -1371,7 +1371,7 @@ function CreateDeckDialog({ open, onOpenChange, isAdmin, folders, onCreated }: {
                 onChange={e => setDescription(e.target.value)}
                 rows={2}
                 maxLength={400}
-                placeholder="Descrição (opcional) — sobre o que é este deck"
+                placeholder="Descrição (opcional): sobre o que é este deck"
                 className="w-full rounded-2xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-white/5 backdrop-blur-md px-4 py-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 outline-none focus:border-violet-400 focus:bg-white dark:focus:bg-white/10 transition resize-none"
               />
               <div>
@@ -1388,7 +1388,7 @@ function CreateDeckDialog({ open, onOpenChange, isAdmin, folders, onCreated }: {
             {/* Pasta do usuário */}
             {folders.length > 0 && (
               <div className="space-y-2">
-                <FieldLabel icon={<Folder className="h-3.5 w-3.5" />}>Organização — pasta</FieldLabel>
+                <FieldLabel icon={<Folder className="h-3.5 w-3.5" />}>Organização: pasta</FieldLabel>
                 <div className="flex flex-wrap gap-1.5">
                   <ChoicePill active={folderId === ''} onClick={() => setFolderId('')} icon={<Inbox className="h-3.5 w-3.5" />}>Sem pasta</ChoicePill>
                   {folders.map(f => (
@@ -1501,7 +1501,7 @@ function CreateDeckDialog({ open, onOpenChange, isAdmin, folders, onCreated }: {
                         onChange={e => setMaterialsFolderId(e.target.value)}
                         className="w-full rounded-2xl border border-white/40 dark:border-white/10 bg-white/80 dark:bg-white/5 backdrop-blur-md px-4 py-2.5 text-sm text-slate-900 dark:text-white outline-none focus:border-amber-400 transition"
                       >
-                        <option value="">— Raiz (sem pasta) —</option>
+                        <option value="">Raiz (sem pasta)</option>
                         {materiaisPaths.map(f => (
                           <option key={f._id} value={f._id}>{f.path}</option>
                         ))}

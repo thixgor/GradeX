@@ -4,6 +4,7 @@ import { getDb } from '@/lib/mongodb'
 import {
   getManualClinicoConfig,
   serializeManualClinicoProduct,
+  DEFAULT_MANUAL_CLINICO_PLANS,
   type ManualClinicoPublicPlan,
 } from '@/lib/manual-clinico-product'
 import {
@@ -128,8 +129,21 @@ function renderPlanGrid(plan: ManualClinicoPublicPlan, eventMap: Map<string, Pri
     `
 }
 
+// Substitui o preço da meta-description (SEO/preview). Fica fora dos markers de
+// HTML porque é um atributo, então usa um token dedicado. Nunca pode vazar o
+// token literal para o Google, por isso é aplicado em todos os caminhos.
+function setMetaPrice(html: string, price: number): string {
+  return html.split('{{LDPG_META_PRICE}}').join(formatBRL(price))
+}
+
+function cheapestDefaultPrice(): number {
+  const enabled = DEFAULT_MANUAL_CLINICO_PLANS.filter(p => p.enabled)
+  const prices = (enabled.length ? enabled : DEFAULT_MANUAL_CLINICO_PLANS).map(p => p.price)
+  return Math.min(...prices)
+}
+
 function fallbackResponse() {
-  const html = loadTemplate()
+  const html = setMetaPrice(loadTemplate(), cheapestDefaultPrice())
   return new Response(html, {
     headers: {
       'content-type': 'text/html; charset=utf-8',
@@ -175,6 +189,7 @@ export async function GET() {
       renderGuaranteePrice(cheapest.final, hasDiscount, cheapest.discountPct))
     html = replaceBetweenMarkers(html, '<!--LDPG_PROMO_OFF_START-->', '<!--LDPG_PROMO_OFF_END-->',
       hasDiscount ? `−${Math.round(cheapest.discountPct)}%` : '')
+    html = setMetaPrice(html, cheapest.final)
   } catch (error) {
     console.error('[ldpg-mnclinico] render error:', error)
     return fallbackResponse()
