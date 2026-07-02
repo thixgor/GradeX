@@ -410,7 +410,12 @@ export function InlineAnnotationCanvas({
     textsRef.current.forEach(t => drawTextPx(ctx, t, selectedTextIds.includes(t.id)))
 
     if (shapePreviewStart && shapePreviewEnd && isShapeTool(tool)) {
-      drawShapePx(ctx, shapePreviewStart, shapePreviewEnd, tool as StrokeShape, shapeColor, shapeThickness * sizeRef.current.w, shapeFilled)
+      // shapeThickness is already a raw CSS-pixel value (same convention as
+      // penThickness/highlighterSize) — it must NOT be multiplied by the
+      // canvas width here. Doing so previously turned a thickness of ~2.5
+      // into a line width of thousands of pixels (canvas is now viewport-wide),
+      // which blew out into a solid-color blob covering the whole screen.
+      drawShapePx(ctx, shapePreviewStart, shapePreviewEnd, tool as StrokeShape, shapeColor, shapeThickness, shapeFilled)
     }
 
     if (isSelecting && selectionPath.length > 0) {
