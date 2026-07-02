@@ -21,7 +21,7 @@ import { applyWatermark } from '@/lib/pdf-watermark'
 import { sendMaterialPdfDeliveryEmail } from '@/lib/mail'
 
 export const dynamic = 'force-dynamic'
-export const maxDuration = 300
+export const maxDuration = 60
 
 function safeFilename(title: string): string {
   return (title || 'material')

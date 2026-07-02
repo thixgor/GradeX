@@ -40,8 +40,8 @@
       "memory": 1024
     },
     "app/api/admin/materiais/send-pdf-email/route.ts": {
-      "maxDuration": 300,
-      "memory": 3009
+      "maxDuration": 60,
+      "memory": 2048
     },
     "app/api/flashcards/manual/[id]/pdf/route.ts": {
       "maxDuration": 60,
