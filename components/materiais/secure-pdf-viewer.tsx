@@ -1545,9 +1545,15 @@ const SidePanel = memo(function SidePanel({
   onGoTo: (page: number) => void
 }) {
   const activeTab = !hasSummary ? 'pages' : tab
-  const thumbPages = pageList && pageList.length
-    ? pageList
-    : Array.from({ length: pageCount }, (_, index) => index + 1)
+  // Memoizado: mantém a MESMA referência de array enquanto a contagem/prévia
+  // não muda, para que a lista de miniaturas não seja reconstruída a cada
+  // re-render do painel disparado pelo scroll (mudança de página atual).
+  const thumbPages = useMemo(
+    () => (pageList && pageList.length
+      ? pageList
+      : Array.from({ length: pageCount }, (_, index) => index + 1)),
+    [pageList, pageCount]
+  )
 
   return (
     <div className="flex h-full min-h-0 flex-col">
@@ -1574,7 +1580,7 @@ const SidePanel = memo(function SidePanel({
         </div>
       )}
 
-      <div className="min-h-0 flex-1 overflow-y-auto pr-0.5">
+      <div className="clean-scrollbar min-h-0 flex-1 overflow-y-auto pr-1">
         {activeTab === 'summary' && hasSummary ? (
           <SummaryList summary={summary} currentPage={currentPage} onGoTo={onGoTo} />
         ) : (
@@ -1586,7 +1592,7 @@ const SidePanel = memo(function SidePanel({
                 pageNumber={page}
                 active={page === currentPage}
                 isCover={page === coverPage}
-                onClick={() => onGoTo(page)}
+                onSelect={onGoTo}
               />
             ))}
           </div>
@@ -1683,13 +1689,15 @@ const PdfThumbnail = memo(function PdfThumbnail({
   pageNumber,
   active,
   isCover,
-  onClick,
+  onSelect,
 }: {
   materialId: string
   pageNumber: number
   active: boolean
   isCover?: boolean
-  onClick: () => void
+  // Recebe o handler estável e passa a própria página — evita recriar uma
+  // closure por miniatura a cada render (o que quebrava a memoização).
+  onSelect: (page: number) => void
 }) {
   const buttonRef = useRef<HTMLButtonElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -1767,7 +1775,10 @@ const PdfThumbnail = memo(function PdfThumbnail({
   return (
     <button
       ref={buttonRef}
-      onClick={onClick}
+      onClick={() => onSelect(pageNumber)}
+      // content-visibility: miniaturas fora da tela pulam layout/paint,
+      // deixando o scroll do painel leve mesmo com muitas páginas.
+      style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 224px' }}
       className={`w-full rounded-xl border p-1.5 text-left transition-colors ${
         active
           ? 'border-emerald-300/60 bg-emerald-400/20 text-white'

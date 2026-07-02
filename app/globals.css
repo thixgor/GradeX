@@ -99,6 +99,33 @@
     scrollbar-width: none;
   }
 
+  /* Barra de rolagem fina e discreta (some quando não há hover) — evita a
+     barra padrão grossa do Windows nos painéis escuros do PDF Viewer. */
+  .clean-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+    scrollbar-gutter: stable;
+  }
+  .clean-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .clean-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .clean-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.16);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  .clean-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.32);
+  }
+  .clean-scrollbar::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
   /* Liquid Glass Effects */
   .glass {
     @apply backdrop-blur-xl bg-white/30 dark:bg-white/10 border border-white/40 dark:border-white/20;
