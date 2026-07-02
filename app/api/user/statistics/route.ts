@@ -3,6 +3,7 @@ import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { ExamSubmission } from '@/lib/types'
 import { ObjectId } from 'mongodb'
+import { computeStreak } from '@/lib/streak'
 
 export const dynamic = 'force-dynamic'
 
@@ -31,6 +32,11 @@ export async function GET(request: NextRequest) {
       questionsAnsweredExams += submission.answers.length
     }
 
+    // Datas de atividade para o cálculo do streak (dias de estudo).
+    const activityDates: Array<Date | null | undefined> = submissions.map(
+      (s) => (s.submittedAt ? new Date(s.submittedAt) : null),
+    )
+
     // Contar questões do Banco de Questões
     let questionsAnsweredBank = 0
     let questionsCorrectBank = 0
@@ -50,11 +56,15 @@ export async function GET(request: NextRequest) {
         } else if (resolucao.correta === false) {
           questionsWrongBank++
         }
+        if (resolucao.createdAt) activityDates.push(new Date(resolucao.createdAt))
       }
     } catch (err) {
       // Se a coleção não existir, ignora
       console.log('Coleção banco_resolucoes não encontrada ou vazia')
     }
+
+    // Streak real a partir das datas de atividade (provas + banco).
+    const streak = computeStreak(activityDates)
 
     // Total de questões (provas + banco)
     const questionsAnswered = questionsAnsweredExams + questionsAnsweredBank
@@ -62,6 +72,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       examsCompleted,
       questionsAnswered,
+      // Streak de dias de estudo (alimenta o card e os insights do dashboard)
+      streakDays: streak.current,
+      longestStreak: streak.longest,
+      studiedToday: streak.activeToday,
       // Detalhamento
       questionsAnsweredExams,
       questionsAnsweredBank,

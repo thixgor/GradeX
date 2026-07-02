@@ -45,6 +45,9 @@
     },
     "app/api/cron/raffles-sweeper/route.ts": {
       "maxDuration": 120
+    },
+    "app/api/cron/revisao-espacada/route.ts": {
+      "maxDuration": 300
     }
   },
   "crons": [
@@ -59,6 +62,10 @@
     {
       "path": "/api/cron/raffles-sweeper",
       "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/revisao-espacada",
+      "schedule": "0 21 * * *"
     }
   ],
   "redirects": [

@@ -45,6 +45,7 @@ import { DoacaoContent } from '@/components/doacoes/doacao-content'
 import { DoacaoRanking } from '@/components/doacoes/doacao-ranking'
 import { DoacaoForm } from '@/components/doacoes/doacao-form'
 import { PendingReviewReminder } from '@/components/reviews/pending-review-reminder'
+import { QuestaoDoDiaCard } from '@/components/retencao/questao-do-dia-card'
 import { Logo } from '@/components/logo'
 
 // ─── Circular Progress Ring ─────────────────────────────────────
@@ -733,6 +734,11 @@ function DashboardContent() {
           <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-violet-500/8 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
         </motion.section>
+
+        {/* ═══════════════════════════════════════════════════════
+            1.5 QUESTÃO DO DIA (gatilho de retorno diário)
+           ═══════════════════════════════════════════════════════ */}
+        <QuestaoDoDiaCard />
 
         {/* ═══════════════════════════════════════════════════════
             2. PERFORMANCE OVERVIEW CARDS

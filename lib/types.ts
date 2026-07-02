@@ -283,6 +283,8 @@ export interface User {
   profilePicture?: string // URL da foto de perfil
   // Banco de questões gratuito - questões fixas por período
   freeQuestionsByPeriod?: { [periodoId: string]: string[] } // Mapa: periodoId -> array de IDs de questões (5 questões por período)
+  // Retenção: último envio do e-mail de revisão espaçada (evita reenvio na janela mínima)
+  lastSpacedReviewEmailAt?: Date
   // Recuperação de senha
   resetPasswordToken?: string
   resetPasswordExpires?: Date

@@ -120,6 +120,44 @@ export async function sendWelcomeEmail(email: string, name: string) {
   })
 }
 
+// E-mail de revisão espaçada / retenção: reengaja quem parou de estudar há
+// alguns dias, apoiado no streak (aversão à perda) e na questão do dia.
+export async function sendSpacedReviewEmail(input: {
+  email: string
+  name: string
+  streakDays: number
+  diasParado: number
+}) {
+  const firstName = (input.name || '').split(' ')[0] || 'estudante'
+  const studyUrl = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`
+
+  const streakLine =
+    input.streakDays > 0
+      ? `<p>Você tem uma sequência de <strong>${input.streakDays} dia${input.streakDays > 1 ? 's' : ''}</strong> de estudo. Não deixe ela zerar.</p>`
+      : `<p>Bora recomeçar sua sequência de estudos hoje? O primeiro dia é o mais importante.</p>`
+
+  const content = `
+    <h1 class="h1">Faz ${input.diasParado} dias, ${firstName}. Bora voltar?</h1>
+    <p>A revisão espaçada só funciona se você mantém o ritmo. Um pouco todo dia vale mais que maratona véspera de prova.</p>
+    ${streakLine}
+    <div style="background-color: #fff8e1; border-left: 4px solid #f57c00; padding: 15px; margin: 20px 0; border-radius: 4px;">
+      <p style="margin: 0; color: #795548;"><strong>Sua questão do dia já está no painel.</strong> Responde uma agora, leva menos de um minuto.</p>
+    </div>
+    <div style="text-align: center;">
+      <a href="${studyUrl}" class="button" target="_blank">Estudar agora</a>
+    </div>
+  `
+
+  const html = getEmailTemplate('Bora voltar a estudar?', content)
+
+  await transporter.sendMail({
+    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+    to: input.email,
+    subject: `${firstName}, sua questão do dia está te esperando`,
+    html,
+  })
+}
+
 export async function sendVerificationEmail(email: string, token: string, name: string) {
   const verifyUrl = `${process.env.NEXT_PUBLIC_APP_URL}/auth/verify?token=${token}`
   const firstName = name.split(' ')[0]
