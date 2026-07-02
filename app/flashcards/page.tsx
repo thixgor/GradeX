@@ -31,10 +31,13 @@ import {
   X,
   Check,
 } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { ToastAlert } from '@/components/ui/toast-alert'
+import { TiltCard } from '@/components/tilt-card'
+import { GlassHeroSurface } from '@/components/glass-hero-surface'
 import { cn } from '@/lib/utils'
 import { useBootstrap } from '@/hooks/use-bootstrap'
 import {
@@ -97,7 +100,14 @@ export default function FlashcardsHubPage() {
   const [activeFolder, setActiveFolder] = useState<string | 'all' | 'root'>('all')
   const [search, setSearch] = useState('')
   const debouncedSearch = useDebounce(search, 350)
-  const [loading, setLoading] = useState(true)
+  // Loading granular por seção — cada bloco (meus decks, comunidade, loja,
+  // recebidos) renderiza seu próprio skeleton assim que os dados chegam, em
+  // vez de travar a página inteira atrás de um spinner até a requisição mais
+  // lenta terminar.
+  const [loadingMine, setLoadingMine] = useState(true)
+  const [loadingCommunity, setLoadingCommunity] = useState(true)
+  const [loadingStore, setLoadingStore] = useState(true)
+  const [loadingShared, setLoadingShared] = useState(true)
   const [createOpen, setCreateOpen] = useState(false)
   const [folderOpen, setFolderOpen] = useState(false)
   const [foldersOpen, setFoldersOpen] = useState(false)
@@ -181,6 +191,8 @@ export default function FlashcardsHubPage() {
       setMine(decks)
     } catch (err: any) {
       setToast({ open: true, message: err.message || 'Erro ao carregar decks', type: 'error' })
+    } finally {
+      setLoadingMine(false)
     }
   }, [activeFolder, debouncedSearch])
 
@@ -209,7 +221,10 @@ export default function FlashcardsHubPage() {
       const decks = json.decks || []
       communityCacheRef.current.set(cacheKey, decks)
       setCommunity(decks)
-    } catch {}
+    } catch {
+    } finally {
+      setLoadingCommunity(false)
+    }
   }, [debouncedSearch, communitySort])
 
   const loadStore = useCallback(async () => {
@@ -221,7 +236,10 @@ export default function FlashcardsHubPage() {
       const [storeJson, foldersJson] = await Promise.all([storeRes.json(), foldersRes.json()])
       setStore(storeJson.decks || [])
       setAdminFolders(foldersJson.folders || [])
-    } catch {}
+    } catch {
+    } finally {
+      setLoadingStore(false)
+    }
   }, [])
 
   const loadShared = useCallback(async () => {
@@ -229,7 +247,10 @@ export default function FlashcardsHubPage() {
       const res = await fetch('/api/flashcards/manual/shares?direction=incoming')
       const json = await res.json()
       setShared(json.shares || [])
-    } catch {}
+    } catch {
+    } finally {
+      setLoadingShared(false)
+    }
   }, [])
 
   useEffect(() => {
@@ -271,7 +292,13 @@ export default function FlashcardsHubPage() {
     if (!authChecked) return
 
     let cancelled = false
-    setLoading(true)
+    if (isGuest) {
+      // Guests never see "meus decks"/comunidade/recebidos — não trava esses
+      // skeletons para sempre esperando um fetch que nunca vai acontecer.
+      setLoadingMine(false)
+      setLoadingCommunity(false)
+      setLoadingShared(false)
+    }
     const loaders = isGuest
       ? [loadStore()]
       : [loadMine(), loadFolders(), loadCommunity(), loadStore(), loadShared()]
@@ -279,7 +306,6 @@ export default function FlashcardsHubPage() {
     Promise.all(loaders).finally(() => {
       if (cancelled) return
       initialLoadDoneRef.current = true
-      setLoading(false)
     })
 
     return () => {
@@ -291,11 +317,13 @@ export default function FlashcardsHubPage() {
 
   useEffect(() => {
     if (!authChecked || isGuest || !initialLoadDoneRef.current) return
+    setLoadingMine(true)
     loadMine()
   }, [activeFolder, authChecked, debouncedSearch, isGuest, loadMine])
 
   useEffect(() => {
     if (!authChecked || isGuest || !initialLoadDoneRef.current) return
+    setLoadingCommunity(true)
     loadCommunity()
   }, [authChecked, communitySort, debouncedSearch, isGuest, loadCommunity])
 
@@ -437,22 +465,21 @@ export default function FlashcardsHubPage() {
           />
         )}
 
-        {/* Content */}
-        {loading ? (
-          <div className="flex items-center justify-center py-32">
-            <Loader2 className="h-8 w-8 animate-spin text-violet-500" />
-          </div>
-        ) : (
-          <div className="space-y-12">
+        {/* Content — cada seção renderiza seu próprio skeleton assim que a
+            página monta; não há mais um spinner de página inteira travando
+            tudo atrás da requisição mais lenta. */}
+        <div className="space-y-12">
             {showSection('mine') && (
               <Section
                 title="Meus decks"
-                subtitle={mine.length === 0 ? 'Você ainda não criou nenhum deck.' : `${mine.length} ${mine.length === 1 ? 'deck' : 'decks'}`}
+                subtitle={loadingMine ? 'Carregando...' : mine.length === 0 ? 'Você ainda não criou nenhum deck.' : `${mine.length} ${mine.length === 1 ? 'deck' : 'decks'}`}
                 icon={<Inbox className="h-5 w-5" />}
                 accent="from-violet-500 to-fuchsia-500"
                 action={mine.length > 6 && filter === 'all' ? <SectionLink onClick={() => selectSection('mine')}>Ver todos</SectionLink> : undefined}
               >
-                {mine.length === 0 ? (
+                {loadingMine ? (
+                  <DeckGridSkeleton />
+                ) : mine.length === 0 ? (
                   <EmptyCallout
                     title="Comece criando seu primeiro deck"
                     hint="Você pode escrever cartões do zero, importar JSON/CSV ou colocar imagens nas duas faces."
@@ -471,15 +498,17 @@ export default function FlashcardsHubPage() {
               </Section>
             )}
 
-            {!isGuest && (filter === 'purchased' || (filter === 'all' && purchasedStore.length > 0)) && (
+            {!isGuest && (filter === 'purchased' || (filter === 'all' && (loadingStore || purchasedStore.length > 0))) && (
               <Section
                 title="Decks adquiridos"
-                subtitle={purchasedStore.length === 0 ? 'Seus decks oficiais comprados ou liberados aparecem aqui.' : `${purchasedStore.length} ${purchasedStore.length === 1 ? 'deck oficial disponível' : 'decks oficiais disponíveis'}`}
+                subtitle={loadingStore ? 'Carregando...' : purchasedStore.length === 0 ? 'Seus decks oficiais comprados ou liberados aparecem aqui.' : `${purchasedStore.length} ${purchasedStore.length === 1 ? 'deck oficial disponível' : 'decks oficiais disponíveis'}`}
                 icon={<ShoppingBag className="h-5 w-5" />}
                 accent="from-emerald-500 to-teal-500"
                 action={purchasedStore.length > 6 && filter === 'all' ? <SectionLink onClick={() => selectSection('purchased')}>Ver todos</SectionLink> : undefined}
               >
-                {purchasedStore.length === 0 ? (
+                {loadingStore ? (
+                  <DeckGridSkeleton />
+                ) : purchasedStore.length === 0 ? (
                   <EmptyCallout
                     title="Nenhum deck oficial adquirido"
                     hint="Quando você comprar ou liberar um deck da Loja oficial, ele aparece nesta aba."
@@ -515,7 +544,7 @@ export default function FlashcardsHubPage() {
                 {/* Grid de decks */}
                 <Section
                   title={storeFolder ? (adminFolders.find(f => f._id === storeFolder)?.name ?? 'Loja oficial') : 'Loja oficial · todos os decks'}
-                  subtitle={`${filteredStore.length} ${filteredStore.length === 1 ? 'deck' : 'decks'}${storeFolder ? ' nesta pasta' : ' curados pela equipe'}`}
+                  subtitle={loadingStore ? 'Carregando...' : `${filteredStore.length} ${filteredStore.length === 1 ? 'deck' : 'decks'}${storeFolder ? ' nesta pasta' : ' curados pela equipe'}`}
                   icon={<Crown className="h-5 w-5" />}
                   accent="from-amber-500 to-orange-500"
                   action={storeFolder ? (
@@ -524,7 +553,9 @@ export default function FlashcardsHubPage() {
                     </button>
                   ) : undefined}
                 >
-                  {filteredStore.length === 0 ? (
+                  {loadingStore ? (
+                    <DeckGridSkeleton />
+                  ) : filteredStore.length === 0 ? (
                     <EmptyCallout title="Nenhum deck nesta pasta" hint="O administrador ainda não adicionou decks aqui." />
                   ) : (
                     <DeckGrid decks={filteredStore} showStoreState metricSettings={metricSettings.flashcards} />
@@ -559,7 +590,9 @@ export default function FlashcardsHubPage() {
                 }
                 action={community.length > 6 && filter === 'all' ? <SectionLink onClick={() => selectSection('community')}>Ver todos</SectionLink> : undefined}
               >
-                {community.length === 0 ? (
+                {loadingCommunity ? (
+                  <DeckGridSkeleton />
+                ) : community.length === 0 ? (
                   <EmptyCallout title="A comunidade está silenciosa" hint="Seja o primeiro a publicar um deck público." />
                 ) : (
                   <DeckGrid decks={filter === 'community' ? community : community.slice(0, 6)} metricSettings={metricSettings.flashcards} />
@@ -570,15 +603,14 @@ export default function FlashcardsHubPage() {
             {showSection('shared') && (
               <Section
                 title="Compartilhados com você"
-                subtitle={shared.length === 0 ? 'Quando alguém te enviar um deck, ele aparece aqui.' : `${shared.length} ${shared.length === 1 ? 'compartilhamento' : 'compartilhamentos'}`}
+                subtitle={loadingShared ? 'Carregando...' : shared.length === 0 ? 'Quando alguém te enviar um deck, ele aparece aqui.' : `${shared.length} ${shared.length === 1 ? 'compartilhamento' : 'compartilhamentos'}`}
                 icon={<Users className="h-5 w-5" />}
                 accent="from-sky-500 to-cyan-500"
               >
-                <SharedList shares={shared} onUpdate={() => loadShared()} />
+                {loadingShared ? <DeckGridSkeleton count={2} /> : <SharedList shares={shared} onUpdate={() => loadShared()} />}
               </Section>
             )}
-          </div>
-        )}
+        </div>
       </div>
 
       {createOpen && (
@@ -761,14 +793,16 @@ function StoreHero({ decks, totalStore, onSeeAll, metricSettings }: {
   const [hero, ...rest] = decks
   if (!hero) return null
   return (
-    <section className="relative overflow-hidden rounded-[2rem] border border-white/40 dark:border-white/10 bg-gradient-to-br from-amber-50/70 via-white/50 to-fuchsia-50/70 dark:from-amber-950/20 dark:via-slate-900/40 dark:to-fuchsia-950/20 backdrop-blur-2xl shadow-xl">
+    <section className="relative isolate overflow-hidden rounded-[2rem] border border-white/40 dark:border-white/10 bg-gradient-to-br from-amber-50/70 via-white/50 to-fuchsia-50/70 dark:from-amber-950/20 dark:via-slate-900/40 dark:to-fuchsia-950/20 backdrop-blur-2xl shadow-xl">
       <div aria-hidden className="absolute inset-0 pointer-events-none">
         <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-amber-400/20 blur-2xl" />
         <div className="absolute -bottom-16 -left-16 h-56 w-56 rounded-full bg-fuchsia-500/15 blur-2xl" />
       </div>
+      <GlassHeroSurface className="opacity-60" />
 
       <div className="relative grid lg:grid-cols-[1.15fr,1fr] gap-5 p-5 lg:p-7">
         {/* Featured deck */}
+        <TiltCard maxTilt={4} scale={1.012} className="rounded-3xl">
         <Link href={`/flashcards/d/${hero.slug}`} className="group relative block overflow-hidden rounded-3xl border border-white/40 dark:border-white/10 bg-slate-900 shadow-2xl">
           <div className="relative aspect-[16/10]">
             {hero.coverImage ? (
@@ -818,6 +852,7 @@ function StoreHero({ decks, totalStore, onSeeAll, metricSettings }: {
             </div>
           </div>
         </Link>
+        </TiltCard>
 
         {/* Sidebar */}
         <div className="flex flex-col gap-3.5">
@@ -853,9 +888,10 @@ function StoreHero({ decks, totalStore, onSeeAll, metricSettings }: {
 function CompactStoreCard({ deck }: { deck: DeckWithId }) {
   const priceLabel = deck._isPurchased ? '✓ Adquirido' : deck.pricing === 'paid' ? `R$ ${deck.price?.toFixed(2)}` : 'Grátis'
   return (
+    <TiltCard maxTilt={6} scale={1.03} className="rounded-2xl">
     <Link
       href={`/flashcards/d/${deck.slug}`}
-      className="group relative overflow-hidden rounded-2xl border border-white/40 dark:border-white/10 bg-white/75 dark:bg-white/5 backdrop-blur-xl shadow hover:shadow-xl hover:scale-[1.02] hover:border-amber-300/50 transition"
+      className="group relative overflow-hidden rounded-2xl glass-rim border border-white/40 dark:border-white/10 bg-white/75 dark:bg-white/5 backdrop-blur-xl shadow hover:shadow-xl hover:border-amber-300/50 transition-shadow block"
     >
       <div className="relative aspect-[16/10]">
         {deck.coverImage ? (
@@ -873,6 +909,7 @@ function CompactStoreCard({ deck }: { deck: DeckWithId }) {
         </div>
       </div>
     </Link>
+    </TiltCard>
   )
 }
 
@@ -1073,6 +1110,23 @@ function SectionLink({ children, onClick }: { children: React.ReactNode; onClick
   )
 }
 
+function DeckGridSkeleton({ count = 3 }: { count?: number }) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" aria-hidden>
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} className="overflow-hidden rounded-3xl border border-white/40 dark:border-white/10 bg-white/60 dark:bg-slate-900/40 backdrop-blur-xl shadow-sm animate-pulse">
+          <div className="aspect-[16/10] skeleton-pulse" />
+          <div className="p-4 space-y-2.5">
+            <div className="h-4 w-4/5 rounded skeleton-pulse" />
+            <div className="h-3 w-3/5 rounded skeleton-pulse" />
+            <div className="h-3 w-2/5 rounded skeleton-pulse" />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 function EmptyCallout({ title, hint, cta }: { title: string; hint: string; cta?: React.ReactNode }) {
   return (
     <div className="rounded-3xl border border-dashed border-white/40 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-md p-10 text-center">
@@ -1095,7 +1149,16 @@ function DeckGrid({ decks, owned = false, onDelete, showStoreState = false, metr
 }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {decks.map(d => <DeckCard key={d._id} deck={d} owned={owned} onDelete={onDelete} showStoreState={showStoreState} metricSettings={metricSettings} />)}
+      {decks.map((d, i) => (
+        <motion.div
+          key={d._id}
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: Math.min(i, 8) * 0.045 }}
+        >
+          <DeckCard deck={d} owned={owned} onDelete={onDelete} showStoreState={showStoreState} metricSettings={metricSettings} />
+        </motion.div>
+      ))}
     </div>
   )
 }
@@ -1110,7 +1173,8 @@ const DeckCard = memo(function DeckCard({ deck, owned, onDelete, showStoreState,
   const hasPublicMetrics = metricSettings.showLikes || metricSettings.showViews
 
   return (
-    <div className="group relative overflow-hidden rounded-3xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl shadow-sm hover:shadow-2xl hover:shadow-violet-500/10 hover:scale-[1.01] hover:border-violet-400/50 transition duration-300">
+    <TiltCard maxTilt={6} scale={1.02} className="rounded-3xl h-full">
+    <div className="group relative isolate overflow-hidden rounded-3xl glass-rim border border-white/40 dark:border-white/10 bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl shadow-sm hover:shadow-2xl hover:shadow-violet-500/10 hover:border-violet-400/50 transition-shadow duration-300 h-full">
       <Link href={`/flashcards/d/${deck.slug}`} className="block">
         <div className="relative aspect-[16/10] overflow-hidden">
           {deck.coverImage ? (
@@ -1170,6 +1234,7 @@ const DeckCard = memo(function DeckCard({ deck, owned, onDelete, showStoreState,
         </div>
       )}
     </div>
+    </TiltCard>
   )
 })
 

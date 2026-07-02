@@ -49,6 +49,8 @@ import { Button } from '@/components/ui/button'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { PackageUpsellModal, UpsellPackage } from '@/components/materiais/package-upsell-modal'
 import { FlashcardCardView } from '@/components/flashcards/flashcard-card'
+import { TiltCard } from '@/components/tilt-card'
+import { GlassHeroSurface } from '@/components/glass-hero-surface'
 import { cn } from '@/lib/utils'
 import type { FlashcardManualCard, FlashcardManualDeck } from '@/lib/types'
 import {
@@ -121,6 +123,33 @@ const RATINGS = [
   { value: 'equilibrado' as const, label: 'No ponto', color: 'from-amber-500 to-amber-600', shortcut: '2' },
   { value: 'porrada' as const, label: 'Porrete', color: 'from-rose-500 to-orange-600', shortcut: '3' },
 ]
+
+// Skeleton de carregamento — reserva o mesmo espaço do hero + conteúdo real
+// para eliminar o "salto" de layout e reduzir a percepção de espera.
+function DeckPageSkeleton() {
+  return (
+    <div className="max-w-5xl mx-auto px-4 py-6 animate-pulse">
+      <div className="h-9 w-36 rounded-xl skeleton-pulse mb-4" />
+      <div className="rounded-[2rem] overflow-hidden border border-white/40 dark:border-white/10 mb-6">
+        <div className="min-h-[220px] sm:min-h-[240px] md:min-h-[260px] skeleton-pulse" />
+        <div className="p-5 md:p-6 flex flex-col md:flex-row gap-3 md:items-center md:justify-between bg-white/60 dark:bg-slate-900/60">
+          <div className="flex gap-2">
+            <div className="h-9 w-24 rounded-full skeleton-pulse" />
+            <div className="h-9 w-24 rounded-full skeleton-pulse" />
+          </div>
+          <div className="h-12 w-44 rounded-2xl skeleton-pulse" />
+        </div>
+      </div>
+      <div className="h-28 rounded-3xl skeleton-pulse mb-4" />
+      <div className="h-14 rounded-2xl skeleton-pulse mb-3" />
+      <div className="space-y-2">
+        {[0, 1, 2, 3].map(i => (
+          <div key={i} className="h-14 rounded-2xl skeleton-pulse" />
+        ))}
+      </div>
+    </div>
+  )
+}
 
 export default function DeckPage() {
   const router = useRouter()
@@ -512,7 +541,7 @@ export default function DeckPage() {
   if (loading) {
     return (
       <AppShell allowGuest>
-        <div className="flex items-center justify-center min-h-[60vh] text-slate-500">Carregando deck...</div>
+        <DeckPageSkeleton />
       </AppShell>
     )
   }
@@ -782,15 +811,18 @@ export default function DeckPage() {
           <Button variant="ghost" onClick={() => router.push('/flashcards')} className="gap-1"><ArrowLeft className="h-4 w-4" />Flashcards</Button>
         </div>
 
-        {/* Hero */}
-        <div className="rounded-3xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 mb-6">
-          <div className="relative aspect-[4/1] min-h-[140px] bg-gradient-to-br from-violet-500 via-fuchsia-500 to-rose-500">
+        {/* Hero — altura flexível (nunca corta título/tags longos), com acabamento
+            glass iridescente (GlassHeroSurface) sobre a capa. */}
+        <TiltCard maxTilt={3} scale={1.004} className="rounded-[2rem] mb-6">
+        <div className="relative isolate overflow-hidden rounded-[2rem] border border-white/40 dark:border-white/10 bg-white dark:bg-slate-900 shadow-xl shadow-slate-900/10 dark:shadow-black/40">
+          <div className="relative bg-gradient-to-br from-violet-500 via-fuchsia-500 to-rose-500">
             {deck.coverImage && (
-              <Image src={deck.coverImage} alt="" fill className="object-cover opacity-90" />
+              <Image src={deck.coverImage} alt="" fill priority className="object-cover opacity-90" sizes="(max-width: 1024px) 100vw, 1024px" />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-5 md:p-7 text-white">
-              <div className="flex items-center gap-2 mb-2 text-xs font-medium">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-black/5" />
+            <GlassHeroSurface className="opacity-70" />
+            <div className="relative z-10 flex min-h-[220px] sm:min-h-[240px] md:min-h-[260px] flex-col justify-end p-5 md:p-7 text-white">
+              <div className="flex items-center gap-2 mb-2 text-xs font-medium flex-wrap">
                 <VisibilityBadge visibility={deck.visibility} />
                 {deck.ownerType === 'admin' && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/90 px-2.5 py-0.5"><Crown className="h-3 w-3" /> Oficial</span>
@@ -819,7 +851,7 @@ export default function DeckPage() {
                   <span>{folderPath}</span>
                 </div>
               )}
-              <h1 className="text-2xl md:text-4xl font-bold leading-tight drop-shadow">{deck.title}</h1>
+              <h1 className="text-2xl md:text-4xl font-bold leading-tight drop-shadow line-clamp-3">{deck.title}</h1>
               {deck.description && <p className="mt-2 text-sm md:text-base text-white/85 line-clamp-2 max-w-3xl">{deck.description}</p>}
               <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-white/80">
                 <span>por <strong className="font-semibold">{deck.ownerName}</strong></span>
@@ -947,6 +979,7 @@ export default function DeckPage() {
             </div>
           </div>
         </div>
+        </TiltCard>
 
         {hasTier && isLocked && eventState && (
           <div className="mb-4">
@@ -1440,15 +1473,22 @@ function VisibilityBadge({ visibility }: { visibility: string }) {
 
 function LockedPreview({ deck, access }: { deck: any; access: AccessFlags }) {
   return (
-    <div className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 p-8 text-center">
-      <Lock className="h-10 w-10 mx-auto text-slate-400 mb-3" />
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35 }}
+      className="rounded-3xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl shadow-sm p-8 text-center"
+    >
+      <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500/15 to-fuchsia-500/15">
+        <Lock className="h-6 w-6 text-violet-500" />
+      </div>
       <h2 className="text-xl font-semibold text-slate-800 dark:text-white">Conteúdo restrito</h2>
       <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">
         {deck.pricing === 'paid'
           ? 'Adquira este deck para acessar todos os cartões.'
           : (deck.allowedGroups?.length ? 'Este deck é restrito a grupos específicos.' : 'Você ainda não tem acesso a este deck.')}
       </p>
-    </div>
+    </motion.div>
   )
 }
 
@@ -1499,7 +1539,7 @@ function CardsList({
 
   if (!cards.length) {
     return (
-      <div className="rounded-3xl border border-dashed border-slate-300 dark:border-white/15 p-10 text-center">
+      <div className="rounded-3xl border border-dashed border-violet-300/50 dark:border-white/15 bg-white/40 dark:bg-white/5 backdrop-blur-md p-10 text-center">
         <Sparkles className="h-8 w-8 mx-auto text-slate-400 mb-3" />
         <p className="text-slate-500 dark:text-slate-400">Esse deck ainda não tem cartões.</p>
         {canManage && (
@@ -1513,7 +1553,7 @@ function CardsList({
 
   return (
     <>
-      <div className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 overflow-hidden">
+      <div className="rounded-3xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl shadow-sm overflow-hidden">
         {/* Header */}
         <div className="flex items-center gap-3 px-5 py-4 border-b border-slate-100 dark:border-white/10">
           {canManage && (

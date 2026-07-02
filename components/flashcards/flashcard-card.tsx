@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Image from 'next/image'
 import { Eye, EyeOff, Lightbulb, MessageSquare, Sparkles, X, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useAnimationControls } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import type { FlashcardManualCard } from '@/lib/types'
 
@@ -414,11 +414,33 @@ export function FlashcardCardView({
   const [cardHeight, setCardHeight] = useState<number | null>(null)
   const frontRef = useRef<HTMLDivElement>(null)
   const backRef = useRef<HTMLDivElement>(null)
+  const flipControls = useAnimationControls()
+  const flipMountedRef = useRef(false)
 
   function stopAndCall(e: React.MouseEvent, fn: () => void) {
     e.stopPropagation()
     fn()
   }
+
+  // Gira o card e — a cada virada — dá um leve "pop" de escala, reforçando a
+  // sensação de profundidade 3D. Disparo imperativo (não via prop `animate`)
+  // para garantir que o pop sempre toque de novo, mesmo que o alvo de escala
+  // (1 → 0.965 → 1) seja idêntico entre uma virada e outra.
+  useEffect(() => {
+    if (!flipMountedRef.current) {
+      flipMountedRef.current = true
+      flipControls.set({ rotateY: flipped ? 180 : 0, scale: 1 })
+      return
+    }
+    flipControls.start({
+      rotateY: flipped ? 180 : 0,
+      scale: [1, 0.965, 1],
+      transition: {
+        rotateY: { type: 'spring', stiffness: 220, damping: 28 },
+        scale: { duration: 0.45, times: [0, 0.5, 1], ease: 'easeInOut' },
+      },
+    })
+  }, [flipped, flipControls])
 
   useEffect(() => {
     function measure() {
@@ -447,11 +469,18 @@ export function FlashcardCardView({
 
   return (
     <div className={cn('w-full max-w-2xl lg:max-w-4xl mx-auto', className)}>
-      <div className="relative w-full" style={{ perspective: 1600 }}>
+      {/* Sombra ambiente — dá a sensação de o card flutuar sobre a mesa;
+          respira em conjunto com o giro para reforçar a profundidade 3D. */}
+      <motion.div
+        aria-hidden
+        className="mx-auto -mb-6 h-8 max-w-[85%] rounded-full bg-slate-900/25 blur-2xl dark:bg-black/50"
+        animate={{ scaleX: flipped ? 0.92 : 1, opacity: flipped ? 0.55 : 0.4 }}
+        transition={{ duration: 0.5, ease: 'easeInOut' }}
+      />
+      <div className="relative w-full [perspective:1100px] sm:[perspective:1500px] lg:[perspective:2200px]">
         <motion.div
           className="relative w-full"
-          animate={{ rotateY: flipped ? 180 : 0 }}
-          transition={{ type: 'spring', stiffness: 220, damping: 28 }}
+          animate={flipControls}
           style={{ transformStyle: 'preserve-3d', height: cardHeight ? `${cardHeight}px` : undefined }}
         >
           {/* Front — clicável para virar */}
@@ -459,7 +488,7 @@ export function FlashcardCardView({
             ref={frontRef}
             onClick={onFlip}
             className={cn(
-              'rounded-3xl p-4 sm:p-7 md:p-9 lg:p-12 min-h-[300px] sm:min-h-[320px] md:min-h-[380px] lg:min-h-[500px] flex flex-col cursor-pointer select-none',
+              'relative overflow-hidden rounded-3xl p-4 sm:p-7 md:p-9 lg:p-12 min-h-[300px] sm:min-h-[320px] md:min-h-[380px] lg:min-h-[500px] flex flex-col cursor-pointer select-none',
               'bg-gradient-to-br from-white via-white to-slate-50',
               'dark:from-slate-900 dark:via-slate-900 dark:to-slate-950',
               'border border-slate-200 dark:border-white/10',
@@ -468,6 +497,11 @@ export function FlashcardCardView({
             )}
             style={{ backfaceVisibility: 'hidden' }}
           >
+            {/* Sheen de vidro — realce diagonal fixo, efeito "glassmorphism" sutil.
+                z-index negativo garante que fique atrás do conteúdo (texto/botões),
+                que é fluxo normal e não precisa de z-index próprio. */}
+            <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-white/70 via-white/0 to-transparent opacity-60 dark:from-white/10 dark:via-transparent" />
+            <div aria-hidden className="pointer-events-none absolute inset-x-6 top-0 -z-10 h-px bg-gradient-to-r from-transparent via-violet-400/40 to-transparent" />
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-medium uppercase tracking-[0.2em] text-violet-600 dark:text-violet-300">
                 {isHidden ? 'Palavra oculta' : 'Frente'}
@@ -558,6 +592,8 @@ export function FlashcardCardView({
             )}
             style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
           >
+            <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-white/25 via-white/0 to-black/10" />
+            <div aria-hidden className="pointer-events-none absolute inset-x-6 top-0 -z-10 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent" />
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-medium uppercase tracking-[0.2em] text-white/80">
                 Resposta
