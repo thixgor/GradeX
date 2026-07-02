@@ -1,7 +1,7 @@
 'use client'
 
 import type * as React from 'react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   ArrowLeft,
@@ -107,6 +107,10 @@ interface PdfAnnotation {
   createdAt: string
   updatedAt: string
 }
+
+// Referência estável para páginas sem anotações — evita recriar `[]` a cada
+// render, o que quebraria a memoização de PdfCanvasPage durante o scroll.
+const EMPTY_ANNOTATIONS: PdfAnnotation[] = []
 
 interface AnnotationData {
   drawingMode?: DrawingMode
@@ -350,11 +354,6 @@ function clampZoom(value: number, min = 0.55, max = 2.6) {
 
 function clamp01(value: number) {
   return Math.min(1, Math.max(0, value))
-}
-
-function buildPageArray(total: number, current: number, mode: ViewerMode) {
-  if (mode === 'single') return [current]
-  return Array.from({ length: total }, (_, index) => index + 1)
 }
 
 function createEmptyAnnotation(input: Partial<PdfAnnotation>, materialId: string): PdfAnnotation {
@@ -657,16 +656,19 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // Painel de anotações nunca aparece na prévia (leitura apenas / não salva).
   const annotationsVisible = showAnnotations && !previewActive
 
+  // Lista de páginas para os modos contínuos: só muda quando a contagem de
+  // páginas ou a liberação de prévia mudam — mantém a MESMA referência de
+  // array durante o scroll (currentPage não entra aqui), evitando trabalho
+  // de reconciliação desnecessário a cada mudança de página focada.
+  const continuousPages = useMemo(() => {
+    if (previewActive) return allowedPages
+    return Array.from({ length: pageCount }, (_, index) => index + 1)
+  }, [previewActive, allowedPages, pageCount])
   const pages = useMemo(() => {
-    if (previewActive) {
-      // Em prévia mostramos só páginas liberadas (single: a atual; demais: todas
-      // as permitidas em sequência).
-      return mode === 'single'
-        ? [currentPage]
-        : allowedPages.length ? allowedPages : [currentPage]
-    }
-    return buildPageArray(pageCount, currentPage, mode)
-  }, [previewActive, allowedPages, pageCount, currentPage, mode])
+    if (mode === 'single') return [currentPage]
+    if (previewActive && continuousPages.length === 0) return [currentPage]
+    return continuousPages
+  }, [mode, currentPage, previewActive, continuousPages])
   const contentWidth = useResizeWidth(contentRef, [loading, showAnnotations, showThumbs])
   const annotationsByPage = useMemo(() => {
     const grouped = new Map<number, PdfAnnotation[]>()
@@ -1435,7 +1437,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                   pageNumber={page}
                   active={page === currentPage}
                   zoom={zoom}
-                  annotations={previewActive ? [] : annotationsByPage.get(page) || []}
+                  annotations={previewActive ? EMPTY_ANNOTATIONS : annotationsByPage.get(page) ?? EMPTY_ANNOTATIONS}
                   tool={previewActive ? 'cursor' : tool}
                   drawingStyle={drawingStyle}
                   highlightColor={highlightColor}
@@ -1518,7 +1520,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
 }
 
 // ─── Painel lateral: miniaturas reais + sumário interativo ───────────────────
-function SidePanel({
+const SidePanel = memo(function SidePanel({
   tab,
   onTabChange,
   hasSummary,
@@ -1592,9 +1594,9 @@ function SidePanel({
       </div>
     </div>
   )
-}
+})
 
-function SummaryList({
+const SummaryList = memo(function SummaryList({
   summary,
   currentPage,
   onGoTo,
@@ -1607,14 +1609,17 @@ function SummaryList({
   const didAutoScroll = useRef(false)
 
   // Entrada "ativa": a de maior página que ainda é <= página atual.
-  let activeId = ''
-  let bestPage = -1
-  for (const entry of summary) {
-    if (entry.page <= currentPage && entry.page > bestPage) {
-      bestPage = entry.page
-      activeId = entry.id
+  const activeId = useMemo(() => {
+    let id = ''
+    let bestPage = -1
+    for (const entry of summary) {
+      if (entry.page <= currentPage && entry.page > bestPage) {
+        bestPage = entry.page
+        id = entry.id
+      }
     }
-  }
+    return id
+  }, [summary, currentPage])
 
   useEffect(() => {
     if (didAutoScroll.current) return
@@ -1669,11 +1674,11 @@ function SummaryList({
       </div>
     </div>
   )
-}
+})
 
 // Miniatura real: renderiza a página (lazy, via IntersectionObserver) no menor
 // tamanho possível reaproveitando o cache de bytes do viewer principal.
-function PdfThumbnail({
+const PdfThumbnail = memo(function PdfThumbnail({
   materialId,
   pageNumber,
   active,
@@ -1789,7 +1794,7 @@ function PdfThumbnail({
       <span className="text-[11px] font-medium">Pag. {pageNumber}</span>
     </button>
   )
-}
+})
 
 function ViewerShell({ children }: { children: React.ReactNode }) {
   return (
@@ -1814,7 +1819,7 @@ function ViewerLoading() {
   )
 }
 
-function PdfCanvasPage({
+const PdfCanvasPage = memo(function PdfCanvasPage({
   materialId,
   pageNumber,
   active,
@@ -1971,9 +1976,12 @@ function PdfCanvasPage({
         const baseViewport = page.getViewport({ scale: 1 })
         onPageSize({ width: baseViewport.width, height: baseViewport.height })
 
+        // DPR fixo (não depende de `active`): manter a qualidade estável evita
+        // reparsear e re-renderizar o PDF inteiro toda vez que o foco muda de
+        // página durante o scroll (era a principal causa de travamento).
         const isMobile = window.innerWidth < 768
-        const maxDpr = active ? (isMobile ? 3 : 3.5) : (isMobile ? 2 : 2.5)
-        const minDpr = active ? (isMobile ? 2 : 2.5) : (isMobile ? 1.5 : 2)
+        const maxDpr = isMobile ? 3 : 3.5
+        const minDpr = isMobile ? 2 : 2.5
         const deviceDpr = window.devicePixelRatio || 1
         const dpr = Math.min(Math.max(deviceDpr, minDpr), maxDpr)
         const viewport = page.getViewport({ scale: zoom * dpr })
@@ -2010,7 +2018,7 @@ function PdfCanvasPage({
       renderTask?.cancel?.()
       doc?.destroy?.()
     }
-  }, [active, onPageSize, pageBytes, zoom])
+  }, [onPageSize, pageBytes, zoom])
 
   useEffect(() => {
     return () => {
@@ -2590,7 +2598,14 @@ function PdfCanvasPage({
     <div id={`pdf-page-${pageNumber}`} ref={wrapperRef} className="pdf-page-fade flex w-full scroll-mt-36 justify-center px-0 sm:px-2">
       <div
         className="relative max-w-full overflow-hidden rounded-xl border border-white/15 bg-white/10 p-2 shadow-2xl shadow-black/35 backdrop-blur-sm"
-        style={{ width: Math.ceil(pageFrameSize.width + 16) }}
+        style={{
+          width: Math.ceil(pageFrameSize.width + 16),
+          // Páginas fora da tela pulam layout/paint (custo de blur+sombra em
+          // dezenas de páginas simultâneas era a principal causa do lag no
+          // scroll). O tamanho intrínseco evita saltos de altura ao rolar.
+          contentVisibility: 'auto',
+          containIntrinsicSize: `${Math.ceil(pageFrameSize.width + 16)}px ${Math.ceil(pageFrameSize.height + 16)}px`,
+        }}
       >
         <div className="absolute left-3 top-3 z-10 rounded-lg border border-zinc-200/30 bg-zinc-950/65 px-2 py-1 text-[11px] font-semibold text-zinc-50 backdrop-blur-md">
           Pag. {pageNumber}
@@ -2655,7 +2670,7 @@ function PdfCanvasPage({
       </div>
     </div>
   )
-}
+})
 
 function AnnotationOverlay({
   annotations,
@@ -3234,7 +3249,7 @@ function MiniModeButton({ active, onClick, title, children }: { active: boolean;
   )
 }
 
-function AnnotationsPanel({
+const AnnotationsPanel = memo(function AnnotationsPanel({
   annotations,
   currentPage,
   showGuide,
@@ -3296,7 +3311,7 @@ function AnnotationsPanel({
       </div>
     </aside>
   )
-}
+})
 
 function ToolGuide() {
   const guideItems = [
