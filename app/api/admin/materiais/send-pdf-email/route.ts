@@ -21,7 +21,7 @@ import { applyWatermark } from '@/lib/pdf-watermark'
 import { sendMaterialPdfDeliveryEmail } from '@/lib/mail'
 
 export const dynamic = 'force-dynamic'
-export const maxDuration = 90
+export const maxDuration = 300
 
 function safeFilename(title: string): string {
   return (title || 'material')
@@ -110,13 +110,11 @@ export async function POST(request: NextRequest) {
     const orderId = purchase.providerPaymentId || purchase.providerOrderId || String(purchase._id)
     const now = new Date()
 
-    // Teto do PDF de origem. É o principal guarda-chuva contra o 500 por OOM:
-    // o pdf-lib carrega o arquivo inteiro e o duplica ao aplicar a marca
-    // d'água, podendo usar 10–20x o tamanho do arquivo em memória. Um PDF
-    // grande demais derruba a função (crash duro = página 500 do Next, que
-    // nenhum try/catch consegue interceptar). Também respeita o limite de
-    // anexo do SMTP. Ajustável via env.
-    const MAX_ORIGINAL_MB = Number(process.env.PDF_EMAIL_MAX_ORIGINAL_MB) || 15
+    // Teto do PDF de origem, alinhado ao limite de upload de materiais (100MB).
+    // Serve como salvaguarda: o pdf-lib carrega e duplica o arquivo ao aplicar
+    // a marca d'água, então arquivos acima disso tendem a estourar a memória
+    // da função. Ajustável via env.
+    const MAX_ORIGINAL_MB = Number(process.env.PDF_EMAIL_MAX_ORIGINAL_MB) || 100
     const MAX_ORIGINAL_BYTES = MAX_ORIGINAL_MB * 1024 * 1024
 
     // Processa um PDF de cada vez (em série). Isso mantém o pico de memória
@@ -180,11 +178,12 @@ export async function POST(request: NextRequest) {
     }
 
     const totalBytes = items.reduce((sum, item) => sum + item.buffer.byteLength, 0)
-    const MAX_TOTAL_BYTES = 18 * 1024 * 1024 // margem de segurança abaixo dos limites usuais de SMTP (~20-25MB)
+    const MAX_TOTAL_MB = Number(process.env.PDF_EMAIL_MAX_TOTAL_MB) || 100
+    const MAX_TOTAL_BYTES = MAX_TOTAL_MB * 1024 * 1024
     if (totalBytes > MAX_TOTAL_BYTES) {
       return NextResponse.json(
         {
-          error: `O(s) arquivo(s) somam ${(totalBytes / 1024 / 1024).toFixed(1)}MB, acima do limite para envio por e-mail (18MB). Reduza o tamanho do PDF ou envie por outro meio.`,
+          error: `O(s) arquivo(s) somam ${(totalBytes / 1024 / 1024).toFixed(1)}MB, acima do limite para envio por e-mail (${MAX_TOTAL_MB}MB). Reduza o tamanho do PDF ou envie por outro meio.`,
         },
         { status: 413 }
       )
