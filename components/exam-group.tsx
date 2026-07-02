@@ -216,7 +216,7 @@ export function ExamGroup({
         highlighted
           ? 'bg-primary/10 ring-2 ring-primary/25 shadow-sm'
           : depth === 0
-            ? 'hover:bg-muted/60 active:bg-muted/80 border border-border/30 hover:border-border/60'
+            ? 'glass-page-card glass-rim hover:shadow-md active:scale-[0.995]'
             : 'hover:bg-muted/50 active:bg-muted/70'
       )}
       onClick={() => setIsExpanded(!isExpanded)}

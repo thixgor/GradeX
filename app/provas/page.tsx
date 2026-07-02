@@ -15,7 +15,7 @@ import { formatDate } from '@/lib/utils'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { motion } from 'framer-motion'
 import { TiltCard } from '@/components/tilt-card'
-import { GlassGlow } from '@/components/glass-glow'
+import { GlassHeroSurface } from '@/components/glass-hero-surface'
 import { useCountUp } from '@/hooks/use-count-up'
 import {
   Clock,
@@ -584,7 +584,7 @@ function ProvasContent() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, delay: 0.1 + index * 0.04 }}
         className={cn(
-          "glass-page-card rounded-2xl overflow-hidden group cursor-pointer",
+          "glass-page-card glass-rim rounded-2xl overflow-hidden group cursor-pointer",
           "hover-glow-green hover-lift transition-all duration-300",
           "border-l-[3px]",
           exam.isPersonalExam ? 'border-l-violet-500' : 'border-l-[#468152]'
@@ -699,11 +699,11 @@ function ProvasContent() {
   if (viewMode === 'home') {
     return (
       <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-background via-background to-muted/30">
-        {/* Ambient depth — soft brand-colored blobs, decorative only */}
+        {/* Ambient depth — soft brand-colored blobs the glass cards below refract */}
         <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -top-24 -left-20 w-72 h-72 rounded-full bg-red-500/10 dark:bg-red-500/[0.07] blur-3xl animate-float" />
-          <div className="absolute top-1/3 -right-24 w-80 h-80 rounded-full bg-[#468152]/10 dark:bg-[#468152]/[0.08] blur-3xl animate-float" style={{ animationDelay: '1.2s' }} />
-          <div className="absolute bottom-0 left-1/4 w-64 h-64 rounded-full bg-[#E2A43E]/10 dark:bg-[#E2A43E]/[0.06] blur-3xl animate-float" style={{ animationDelay: '2.1s' }} />
+          <div className="absolute -top-24 -left-20 w-80 h-80 rounded-full bg-red-500/20 dark:bg-red-500/[0.14] blur-3xl animate-float" />
+          <div className="absolute top-1/3 -right-24 w-96 h-96 rounded-full bg-[#468152]/20 dark:bg-[#468152]/[0.16] blur-3xl animate-float" style={{ animationDelay: '1.2s' }} />
+          <div className="absolute bottom-0 left-1/4 w-72 h-72 rounded-full bg-[#E2A43E]/20 dark:bg-[#E2A43E]/[0.12] blur-3xl animate-float" style={{ animationDelay: '2.1s' }} />
         </div>
 
         <div className="relative max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
@@ -736,48 +736,41 @@ function ProvasContent() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              <TiltCard maxTilt={5} scale={1.015} className="rounded-2xl h-full">
+              <TiltCard maxTilt={6} scale={1.02} className="rounded-[28px] h-full">
                 <button
                   onClick={() => setViewMode('faculdade')}
-                  className="w-full h-full text-left group"
+                  className="relative isolate w-full h-full text-left group overflow-hidden rounded-[28px] shadow-lg shadow-black/5 dark:shadow-black/20 transition-shadow duration-300 hover:shadow-2xl hover:shadow-red-500/10"
                 >
-                  <GlassGlow glowColor="rgba(220, 38, 38, 0.28)" className="relative overflow-hidden rounded-2xl border-2 border-transparent hover:border-[#DC2626]/30 bg-gradient-to-br from-red-50/80 via-background to-orange-50/50 dark:from-red-950/20 dark:via-background dark:to-orange-950/10 p-6 sm:p-8 transition-all duration-300 hover:shadow-xl hover:shadow-red-500/10 h-full">
-                    {/* Glow */}
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-red-500/10 to-transparent rounded-bl-full" />
-
-                    <div className="relative space-y-4">
-                      <div className="flex items-center gap-3">
-                        <div className="p-3 rounded-xl bg-red-500/10 group-hover:bg-red-500/20 transition-colors">
-                          <GraduationCap className="h-7 w-7 text-red-600 dark:text-red-400" />
-                        </div>
-                        <div className="flex-1">
-                          <h2 className="text-lg sm:text-xl font-bold">Provas da Faculdade</h2>
-                          <p className="text-xs text-muted-foreground">
-                            Provas antigas para treinar e melhorar
-                          </p>
-                        </div>
-                        <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-red-500 group-hover:translate-x-1 transition-all" />
+                  <GlassHeroSurface />
+                  <div className="relative h-full p-6 sm:p-8 lg:p-9 space-y-5">
+                    <div className="flex items-center gap-3">
+                      <div className="p-3 rounded-2xl bg-red-500/10 group-hover:bg-red-500/20 transition-colors duration-300">
+                        <GraduationCap className="h-7 w-7 text-red-600 dark:text-red-400" />
                       </div>
-
-                      {/* Cursos disponíveis */}
-                      <div className="flex flex-wrap gap-2">
-                        {Object.entries(COURSE_LABELS).map(([key, val]) => {
-                          const courseGroupCount = groups.filter(g => normalizeCourseKey(g.course) === key).length
-                          return (
-                            <span key={key} className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-lg bg-background/80 border border-border/50">
-                              <span>{val.icon}</span>
-                              <span>{val.label}</span>
-                            </span>
-                          )
-                        })}
+                      <div className="flex-1">
+                        <h2 className="text-lg sm:text-xl font-bold">Provas da Faculdade</h2>
+                        <p className="text-xs text-muted-foreground">
+                          Provas antigas para treinar e melhorar
+                        </p>
                       </div>
-
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        <span className="font-semibold text-foreground">{faculdadeExamCount} provas</span>
-                        <span>{faculdadeGroups.length} grupos</span>
-                      </div>
+                      <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-red-500 group-hover:translate-x-1 transition-all duration-300" />
                     </div>
-                  </GlassGlow>
+
+                    {/* Cursos disponíveis */}
+                    <div className="flex flex-wrap gap-2">
+                      {Object.entries(COURSE_LABELS).map(([key, val]) => (
+                        <span key={key} className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-lg bg-background/50 border border-border/40">
+                          <span>{val.icon}</span>
+                          <span>{val.label}</span>
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <span className="font-semibold text-foreground">{faculdadeExamCount} provas</span>
+                      <span>{faculdadeGroups.length} grupos</span>
+                    </div>
+                  </div>
                 </button>
               </TiltCard>
             </motion.div>
@@ -788,44 +781,40 @@ function ProvasContent() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <TiltCard maxTilt={5} scale={1.015} className="rounded-2xl h-full">
+              <TiltCard maxTilt={6} scale={1.02} className="rounded-[28px] h-full">
                 <button
                   onClick={() => setViewMode('plataforma')}
-                  className="w-full h-full text-left group"
+                  className="relative isolate w-full h-full text-left group overflow-hidden rounded-[28px] shadow-lg shadow-black/5 dark:shadow-black/20 transition-shadow duration-300 hover:shadow-2xl hover:shadow-emerald-500/10"
                 >
-                  <GlassGlow glowColor="rgba(70, 129, 82, 0.3)" className="relative overflow-hidden rounded-2xl border-2 border-transparent hover:border-[#468152]/30 bg-gradient-to-br from-emerald-50/80 via-background to-amber-50/50 dark:from-emerald-950/20 dark:via-background dark:to-amber-950/10 p-6 sm:p-8 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/10 h-full">
-                    {/* Glow */}
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-emerald-500/10 to-transparent rounded-bl-full" />
-
-                    <div className="relative space-y-4">
-                      <div className="flex items-center gap-3">
-                        <div className="p-3 rounded-xl bg-[#468152]/10 group-hover:bg-[#468152]/20 transition-colors">
-                          <BookOpen className="h-7 w-7 text-[#468152]" />
-                        </div>
-                        <div className="flex-1">
-                          <h2 className="text-lg sm:text-xl font-bold">Provas da Plataforma</h2>
-                          <p className="text-xs text-muted-foreground">
-                            Provas gerais, pessoais e simulados
-                          </p>
-                        </div>
-                        <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-[#468152] group-hover:translate-x-1 transition-all" />
+                  <GlassHeroSurface />
+                  <div className="relative h-full p-6 sm:p-8 lg:p-9 space-y-5">
+                    <div className="flex items-center gap-3">
+                      <div className="p-3 rounded-2xl bg-[#468152]/10 group-hover:bg-[#468152]/20 transition-colors duration-300">
+                        <BookOpen className="h-7 w-7 text-[#468152]" />
                       </div>
-
-                      <div className="flex flex-wrap gap-2">
-                        <span className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-lg bg-[#468152]/10 text-[#468152]">
-                          <Users className="h-3 w-3" /> Gerais
-                        </span>
-                        <span className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-lg bg-violet-500/10 text-violet-600 dark:text-violet-400">
-                          <Sparkles className="h-3 w-3" /> Pessoais
-                        </span>
+                      <div className="flex-1">
+                        <h2 className="text-lg sm:text-xl font-bold">Provas da Plataforma</h2>
+                        <p className="text-xs text-muted-foreground">
+                          Provas gerais, pessoais e simulados
+                        </p>
                       </div>
-
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        <span className="font-semibold text-foreground">{plataformaExamCount} provas</span>
-                        <span>{personalExams.length} pessoais</span>
-                      </div>
+                      <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-[#468152] group-hover:translate-x-1 transition-all duration-300" />
                     </div>
-                  </GlassGlow>
+
+                    <div className="flex flex-wrap gap-2">
+                      <span className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-lg bg-[#468152]/10 text-[#468152]">
+                        <Users className="h-3 w-3" /> Gerais
+                      </span>
+                      <span className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-lg bg-violet-500/10 text-violet-600 dark:text-violet-400">
+                        <Sparkles className="h-3 w-3" /> Pessoais
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <span className="font-semibold text-foreground">{plataformaExamCount} provas</span>
+                      <span>{personalExams.length} pessoais</span>
+                    </div>
+                  </div>
                 </button>
               </TiltCard>
             </motion.div>
@@ -936,7 +925,7 @@ function ProvasContent() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.05 }}
-            className="rounded-2xl border border-border/50 bg-background/70 p-3 shadow-sm backdrop-blur-md"
+            className="rounded-2xl glass-rim border border-border/40 bg-background/70 p-3 shadow-sm backdrop-blur-md"
           >
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -977,7 +966,7 @@ function ProvasContent() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.1 + idx * 0.08 }}
-                className="rounded-2xl border border-border/40 bg-background/45 p-3 sm:p-4"
+                className="rounded-2xl glass-rim border border-border/30 bg-background/40 p-3 sm:p-4"
               >
                 <div className="flex items-center gap-3 mb-3 flex-wrap">
                   <div className="flex items-center gap-2 min-w-0">
@@ -1039,7 +1028,7 @@ function ProvasContent() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.3 }}
-              className="rounded-2xl border border-border/40 bg-background/45 p-3 sm:p-4"
+              className="rounded-2xl glass-rim border border-border/30 bg-background/40 p-3 sm:p-4"
             >
               <div className="flex items-center gap-3 mb-3">
                 <Layers className="h-4 w-4 text-muted-foreground" />
@@ -1187,7 +1176,7 @@ function ProvasContent() {
                   <button
                     onClick={() => setStatusFilter(prev => prev === stat.key ? 'all' : stat.key)}
                     className={cn(
-                      "w-full h-full glass-stat rounded-2xl p-4 hover-glow-brand hover-lift transition-all duration-300 group text-left cursor-pointer",
+                      "w-full h-full glass-stat glass-rim rounded-2xl p-4 hover-glow-brand hover-lift transition-all duration-300 group text-left cursor-pointer",
                       active && "ring-2 ring-primary/40 shadow-lg shadow-primary/10"
                     )}
                   >

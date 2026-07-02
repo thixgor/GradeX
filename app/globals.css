@@ -980,6 +980,172 @@
 }
 
 /* ============================================
+   Glass Hero Card — big-surface version of the
+   iridescent liquid glass, for the one or two
+   signature moments per page (not for lists).
+   ============================================ */
+
+.glass-hero-surface {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.16) 0%,
+    rgba(255, 255, 255, 0.05) 40%,
+    rgba(255, 255, 255, 0.09) 100%
+  );
+  backdrop-filter: blur(26px) saturate(1.5) brightness(1.04);
+  -webkit-backdrop-filter: blur(26px) saturate(1.5) brightness(1.04);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -0.5px 0 rgba(255, 255, 255, 0.08),
+    inset 1px 0 0 rgba(255, 255, 255, 0.14),
+    inset -1px 0 0 rgba(255, 255, 255, 0.14);
+}
+
+.glass-hero-surface::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  z-index: -1;
+  background: conic-gradient(
+    from var(--iridescent-angle, 0deg),
+    rgba(255, 120, 200, 0.28),
+    rgba(120, 160, 255, 0.32),
+    rgba(100, 255, 220, 0.28),
+    rgba(255, 220, 100, 0.24),
+    rgba(255, 130, 120, 0.28),
+    rgba(200, 120, 255, 0.32),
+    rgba(120, 220, 255, 0.28),
+    rgba(255, 120, 200, 0.28)
+  );
+  animation: iridescent-rotate 7s linear infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  padding: 1.5px;
+  filter: blur(2px);
+  opacity: 0.45;
+  transition: opacity 0.4s ease, filter 0.4s ease;
+}
+
+.group:hover > .glass-hero-surface::before,
+.glass-hero-surface:hover::before {
+  opacity: 0.8;
+  filter: blur(1.2px);
+}
+
+.glass-hero-refraction-top {
+  position: absolute;
+  top: 0;
+  left: 6%;
+  right: 6%;
+  height: 1px;
+  z-index: 1;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 180, 220, 0.35) 12%,
+    rgba(180, 200, 255, 0.5) 30%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(180, 255, 220, 0.5) 70%,
+    rgba(255, 200, 160, 0.35) 88%,
+    transparent 100%
+  );
+  filter: blur(0.4px);
+}
+
+.dark .glass-hero-surface {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.02) 40%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  backdrop-filter: blur(26px) saturate(1.35) brightness(1.08);
+  -webkit-backdrop-filter: blur(26px) saturate(1.35) brightness(1.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 -0.5px 0 rgba(255, 255, 255, 0.03),
+    inset 1px 0 0 rgba(255, 255, 255, 0.06),
+    inset -1px 0 0 rgba(255, 255, 255, 0.06);
+}
+
+.dark .glass-hero-surface::before {
+  background: conic-gradient(
+    from var(--iridescent-angle, 0deg),
+    rgba(255, 100, 180, 0.38),
+    rgba(100, 140, 255, 0.42),
+    rgba(80, 255, 200, 0.38),
+    rgba(255, 200, 80, 0.32),
+    rgba(255, 110, 100, 0.38),
+    rgba(180, 100, 255, 0.42),
+    rgba(100, 200, 255, 0.38),
+    rgba(255, 100, 180, 0.38)
+  );
+  opacity: 0.55;
+}
+
+.dark .glass-hero-refraction-top {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 150, 200, 0.2) 12%,
+    rgba(150, 180, 255, 0.35) 30%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(150, 255, 200, 0.35) 70%,
+    rgba(255, 180, 140, 0.2) 88%,
+    transparent 100%
+  );
+}
+
+/* Cheap static rim — same iridescent palette, no blur/animation, safe for lists */
+.glass-rim {
+  position: relative;
+  isolation: isolate;
+}
+
+.glass-rim::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: -1;
+  padding: 1px;
+  background: linear-gradient(
+    120deg,
+    rgba(70, 129, 82, 0.35),
+    rgba(226, 164, 62, 0.3),
+    rgba(70, 129, 82, 0.35)
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+}
+
+.glass-rim:hover::before {
+  opacity: 1;
+}
+
+/* Cut backdrop-blur cost on small screens — several hero cards + panels
+   stacked in a scrollable column is the exact case that tanks mobile Safari. */
+@media (max-width: 768px) {
+  .glass-hero-surface {
+    backdrop-filter: blur(14px) saturate(1.3) brightness(1.03) !important;
+    -webkit-backdrop-filter: blur(14px) saturate(1.3) brightness(1.03) !important;
+  }
+  .glass-hero-surface::before {
+    animation-duration: 11s;
+  }
+}
+
+/* ============================================
    Soul-Light Hover Effect
    A subtle, clean luminous sweep on hover
    ============================================ */
