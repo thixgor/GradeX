@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   Pencil,
   Eraser,
@@ -18,6 +19,7 @@ import {
   Check,
   Palette,
   Shapes,
+  Flashlight,
 } from 'lucide-react'
 import {
   DrawingTool,
@@ -31,9 +33,19 @@ import {
 } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
-type ExtendedTool = DrawingTool | 'line' | 'rectangle' | 'ellipse' | 'arrow'
+type ExtendedTool = DrawingTool | 'line' | 'rectangle' | 'ellipse' | 'arrow' | 'laser'
 
-const PEN_PRESETS = ['#0f172a', '#dc2626', '#2563eb', '#16a34a', '#7c3aed', '#ea580c']
+const DEFAULT_DARK_INK = '#f8fafc'
+const DEFAULT_LIGHT_INK = '#0f172a'
+const LASER_COLOR = '#ff3b30'
+const LASER_FADE_MS = 1000
+
+// How far past the wrapped content's own box the canvas extends, so a
+// stroke isn't cut off right at the edge of the enunciado/alternativas.
+const CANVAS_BLEED_X = 40
+const CANVAS_BLEED_Y = 20
+
+const PEN_PRESETS = ['#0f172a', '#ffffff', '#dc2626', '#2563eb', '#16a34a', '#7c3aed', '#ea580c']
 const HIGHLIGHTER_PRESETS = ['#fde047', '#fbbf24', '#86efac', '#7dd3fc', '#fca5a5', '#c4b5fd']
 
 function isShapeTool(t: ExtendedTool): t is 'line' | 'rectangle' | 'ellipse' | 'arrow' {
@@ -110,18 +122,30 @@ export function InlineAnnotationCanvas({
   textsRef.current = texts
 
   const [tool, setTool] = useState<ExtendedTool>('pen')
-  const [penColor, setPenColor] = useState('#0f172a')
+  const [penColor, setPenColor] = useState(DEFAULT_LIGHT_INK)
   const [penThickness, setPenThickness] = useState(2.5)
   const [highlighterColor, setHighlighterColor] = useState('#fde047')
   const [highlighterSize, setHighlighterSize] = useState(18)
   const [eraserSize, setEraserSize] = useState(22)
   const [eraserType, setEraserType] = useState<EraserType>('standard')
-  const [textColor, setTextColor] = useState('#0f172a')
+  const [textColor, setTextColor] = useState(DEFAULT_LIGHT_INK)
   const [textSize, setTextSize] = useState(18)
-  const [shapeColor, setShapeColor] = useState('#0f172a')
+  const [shapeColor, setShapeColor] = useState(DEFAULT_LIGHT_INK)
   const [shapeThickness, setShapeThickness] = useState(2.5)
   const [shapeFilled, setShapeFilled] = useState(false)
   const [selectionMode, setSelectionMode] = useState<SelectionMode>('rectangle')
+
+  // Match the pen/shape/text default ink to the current theme (white on
+  // dark, near-black on light) — only while the user hasn't picked their
+  // own color yet, so this never overrides an explicit choice.
+  useEffect(() => {
+    const isDark = document.documentElement.classList.contains('dark')
+    const defaultInk = isDark ? DEFAULT_DARK_INK : DEFAULT_LIGHT_INK
+    if (defaultInk === DEFAULT_LIGHT_INK) return
+    setPenColor(prev => prev === DEFAULT_LIGHT_INK ? defaultInk : prev)
+    setShapeColor(prev => prev === DEFAULT_LIGHT_INK ? defaultInk : prev)
+    setTextColor(prev => prev === DEFAULT_LIGHT_INK ? defaultInk : prev)
+  }, [])
 
   const [showShapePicker, setShowShapePicker] = useState(false)
   const [showCustomize, setShowCustomize] = useState(false)
@@ -130,6 +154,8 @@ export function InlineAnnotationCanvas({
   const [isAddingText, setIsAddingText] = useState(false)
   const [textDraft, setTextDraft] = useState('')
   const [textPosition, setTextPosition] = useState<Point | null>(null)
+  const [showClearConfirm, setShowClearConfirm] = useState(false)
+  const [isClearingAnim, setIsClearingAnim] = useState(false)
 
   // In-progress interaction refs (kept out of React state for perf)
   const isPointerDownRef = useRef(false)
@@ -141,6 +167,11 @@ export function InlineAnnotationCanvas({
   const dragStartRef = useRef<Point | null>(null)
   const [isSelecting, setIsSelecting] = useState(false)
   const [selectionPath, setSelectionPath] = useState<Point[]>([])
+
+  // Laser pointer — pure visual trail, never enters strokes/history/onChange.
+  const laserPointsRef = useRef<Point[]>([])
+  const laserFadeStartRef = useRef<number | null>(null)
+  const laserRafRef = useRef<number | null>(null)
 
   type HistorySnapshot = { strokes: DrawingStroke[]; texts: TextAnnotation[] }
   const historyRef = useRef<HistorySnapshot[]>([{ strokes: annotation?.strokes || [], texts: annotation?.texts || [] }])
@@ -206,19 +237,22 @@ export function InlineAnnotationCanvas({
   const canUndo = historyIndexRef.current > 0
   const canRedo = historyIndexRef.current < historyRef.current.length - 1
 
-  // ───── Canvas sizing — tracks the wrapped content's box exactly ─────
+  // ───── Canvas sizing — the wrapped content's box, plus a bleed margin on
+  // every side so a stroke isn't cut off right at the edge of the question ─────
   const resizeCanvas = useCallback(() => {
     const canvas = canvasRef.current
     const wrapper = wrapperRef.current
     if (!canvas || !wrapper) return
-    const w = Math.max(1, Math.round(wrapper.offsetWidth))
-    const h = Math.max(1, Math.round(wrapper.offsetHeight))
+    const w = Math.max(1, Math.round(wrapper.offsetWidth)) + CANVAS_BLEED_X * 2
+    const h = Math.max(1, Math.round(wrapper.offsetHeight)) + CANVAS_BLEED_Y * 2
     if (sizeRef.current.w === w && sizeRef.current.h === h) return
     sizeRef.current = { w, h }
     const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1))
     dprRef.current = dpr
     canvas.style.width = `${w}px`
     canvas.style.height = `${h}px`
+    canvas.style.left = `${-CANVAS_BLEED_X}px`
+    canvas.style.top = `${-CANVAS_BLEED_Y}px`
     canvas.width = Math.floor(w * dpr)
     canvas.height = Math.floor(h * dpr)
     const ctx = canvas.getContext('2d')
@@ -381,6 +415,60 @@ export function InlineAnnotationCanvas({
 
   useEffect(() => { fullRedraw() }, [fullRedraw, strokes, texts])
 
+  // ───── Laser pointer — draws while held, fades out over ~1s once released ─────
+  const drawLaserOverlay = useCallback((opacity: number) => {
+    const ctx = ctxRef.current
+    const pts = laserPointsRef.current
+    if (!ctx || pts.length === 0 || opacity <= 0) return
+    ctx.save()
+    ctx.globalAlpha = opacity
+    ctx.strokeStyle = LASER_COLOR
+    ctx.shadowColor = LASER_COLOR
+    ctx.shadowBlur = 14
+    ctx.lineWidth = 3.5
+    ctx.lineCap = 'round'
+    ctx.lineJoin = 'round'
+    if (pts.length === 1) {
+      ctx.fillStyle = LASER_COLOR
+      ctx.beginPath()
+      ctx.arc(pts[0].x, pts[0].y, 3, 0, Math.PI * 2)
+      ctx.fill()
+    } else {
+      ctx.beginPath()
+      ctx.moveTo(pts[0].x, pts[0].y)
+      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y)
+      ctx.stroke()
+    }
+    ctx.restore()
+  }, [])
+
+  const laserLoopRunningRef = useRef(false)
+  const runLaserLoop = useCallback(() => {
+    const step = () => {
+      const fadeStart = laserFadeStartRef.current
+      let opacity = 1
+      if (fadeStart !== null) {
+        opacity = Math.max(0, 1 - (performance.now() - fadeStart) / LASER_FADE_MS)
+      }
+      fullRedraw()
+      drawLaserOverlay(opacity)
+      if (opacity <= 0 && fadeStart !== null) {
+        laserPointsRef.current = []
+        laserFadeStartRef.current = null
+        laserLoopRunningRef.current = false
+        fullRedraw()
+        return
+      }
+      laserRafRef.current = requestAnimationFrame(step)
+    }
+    if (!laserLoopRunningRef.current) {
+      laserLoopRunningRef.current = true
+      laserRafRef.current = requestAnimationFrame(step)
+    }
+  }, [fullRedraw, drawLaserOverlay])
+
+  useEffect(() => () => { if (laserRafRef.current) cancelAnimationFrame(laserRafRef.current) }, [])
+
   function snapshot(withStrokes: DrawingStroke[], withTexts: TextAnnotation[]): string | undefined {
     const { w, h } = sizeRef.current
     if (!w || !h) return undefined
@@ -423,6 +511,13 @@ export function InlineAnnotationCanvas({
       lastDrawnPointRef.current = point
       const ctx = ctxRef.current
       if (ctx) drawFreehandPx(ctx, [point], tool === 'pen' ? penColor : highlighterColor, (tool === 'pen' ? penThickness : highlighterSize), tool === 'highlighter' ? 0.32 : 1)
+      return
+    }
+    if (tool === 'laser') {
+      isPointerDownRef.current = true
+      laserFadeStartRef.current = null
+      laserPointsRef.current = [point]
+      runLaserLoop()
       return
     }
     if (isShapeTool(tool)) {
@@ -477,6 +572,11 @@ export function InlineAnnotationCanvas({
       return
     }
 
+    if (tool === 'laser' && isPointerDownRef.current) {
+      laserPointsRef.current.push(point)
+      return
+    }
+
     if (isShapeTool(tool) && isPointerDownRef.current && shapeStartRef.current) {
       setShapePreviewEnd(point)
       return
@@ -506,6 +606,11 @@ export function InlineAnnotationCanvas({
 
     if (!isPointerDownRef.current) return
     isPointerDownRef.current = false
+
+    if (tool === 'laser') {
+      laserFadeStartRef.current = performance.now()
+      return
+    }
 
     if (tool === 'pen' || tool === 'highlighter') {
       const pts = freehandPointsRef.current
@@ -649,12 +754,20 @@ export function InlineAnnotationCanvas({
     setTextDraft(''); setIsAddingText(false); setTextPosition(null)
   }
 
-  function handleClearAll() {
+  function requestClearAll() {
     if (!strokesRef.current.length && !textsRef.current.length) return
-    if (!confirm('Limpar todas as anotações desta questão?')) return
-    setStrokes([]); setTexts([])
-    setSelectedStrokeIds([]); setSelectedTextIds([])
-    pushHistory([], [])
+    setShowClearConfirm(true)
+  }
+
+  function confirmClearAll() {
+    setShowClearConfirm(false)
+    setIsClearingAnim(true)
+    setTimeout(() => {
+      setStrokes([]); setTexts([])
+      setSelectedStrokeIds([]); setSelectedTextIds([])
+      pushHistory([], [])
+      setIsClearingAnim(false)
+    }, 260)
   }
 
   // ───── Keyboard shortcuts (desktop/tablet w/ keyboard, only while active) ─────
@@ -689,11 +802,13 @@ export function InlineAnnotationCanvas({
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
-        className="absolute inset-0 z-20"
+        className="absolute z-20"
         style={{
           touchAction: isActive ? 'none' : 'auto',
           pointerEvents: isActive ? 'auto' : 'none',
           cursor: !isActive ? 'default' : tool === 'text' ? 'text' : tool === 'select' ? 'crosshair' : tool === 'eraser' ? 'cell' : 'crosshair',
+          opacity: isClearingAnim ? 0 : 1,
+          transition: 'opacity 280ms ease',
         }}
       />
 
@@ -725,9 +840,21 @@ export function InlineAnnotationCanvas({
           showShapePicker={showShapePicker} setShowShapePicker={setShowShapePicker}
           showCustomize={showCustomize} setShowCustomize={setShowCustomize}
           canUndo={canUndo} canRedo={canRedo} onUndo={undo} onRedo={redo}
-          onClear={handleClearAll} hasInk={hasInk}
+          onClear={requestClearAll} hasInk={hasInk}
           selectionCount={selectionCount} onDeleteSelection={deleteSelection}
           onDone={deactivate}
+        />,
+        document.body
+      )}
+
+      {/* Clear-all confirmation — replaces the native confirm() popup */}
+      {typeof document !== 'undefined' && createPortal(
+        <ClearConfirmModal
+          open={showClearConfirm}
+          strokeCount={strokes.length}
+          textCount={texts.length}
+          onCancel={() => setShowClearConfirm(false)}
+          onConfirm={confirmClearAll}
         />,
         document.body
       )}
@@ -765,20 +892,108 @@ export function InlineAnnotationCanvas({
 // ───────────────────────────────────────────────────────────
 function AnnotateFab({ hasInk, onClick }: { hasInk: boolean; onClick: () => void }) {
   return (
-    <button
+    <motion.button
       onClick={onClick}
       title="Anotar questão"
       aria-label="Anotar questão"
+      initial={{ scale: 0, opacity: 0, y: 8 }}
+      animate={{ scale: 1, opacity: 1, y: 0 }}
+      transition={{ type: 'spring', stiffness: 420, damping: 22 }}
+      whileHover={{ scale: 1.06 }}
+      whileTap={{ scale: 0.92 }}
       className={cn(
-        'pointer-events-auto relative h-11 w-11 rounded-full flex items-center justify-center',
-        'glass-page-card glass-rim shadow-lg backdrop-blur-md',
-        'transition-transform duration-200 hover:scale-105 active:scale-95',
-        hasInk ? 'text-violet-600 dark:text-violet-400' : 'text-muted-foreground'
+        'pointer-events-auto relative flex items-center gap-2 h-11 pl-3.5 pr-4 rounded-full',
+        'glass-page-card glass-rim shadow-lg backdrop-blur-md font-semibold text-xs',
+        hasInk ? 'text-violet-600 dark:text-violet-300' : 'text-primary'
       )}
     >
-      <Pencil className="h-5 w-5" />
-      {hasInk && <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-violet-500" />}
-    </button>
+      {!hasInk && (
+        <motion.span
+          aria-hidden
+          className="absolute inset-0 rounded-full pointer-events-none"
+          animate={{ boxShadow: ['0 0 0 0 rgba(70,129,82,0.38)', '0 0 0 9px rgba(70,129,82,0)'] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
+        />
+      )}
+      <motion.span
+        animate={hasInk ? {} : { rotate: [0, -10, 10, -6, 0] }}
+        transition={{ duration: 1.6, repeat: Infinity, repeatDelay: 1.4, ease: 'easeInOut' }}
+        className="flex-shrink-0"
+      >
+        <Pencil className="h-4 w-4" />
+      </motion.span>
+      <span className="whitespace-nowrap">{hasInk ? 'Suas notas' : 'Anotar'}</span>
+      {hasInk && <span className="h-1.5 w-1.5 rounded-full bg-violet-500 animate-pulse flex-shrink-0" />}
+    </motion.button>
+  )
+}
+
+// ───────────────────────────────────────────────────────────
+// Clear-all confirmation modal — replaces the native confirm() popup
+// ───────────────────────────────────────────────────────────
+function ClearConfirmModal({
+  open,
+  strokeCount,
+  textCount,
+  onCancel,
+  onConfirm,
+}: {
+  open: boolean
+  strokeCount: number
+  textCount: number
+  onCancel: () => void
+  onConfirm: () => void
+}) {
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          className="fixed inset-0 z-[320] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onCancel}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 6 }}
+            transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+            className="w-full max-w-xs rounded-2xl glass-page-card glass-rim shadow-2xl p-5 text-center space-y-4"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="mx-auto h-14 w-14 rounded-2xl bg-rose-500/10 flex items-center justify-center">
+              <motion.div
+                animate={{ rotate: [0, -22, 20, -14, 8, 0], x: [0, -3, 3, -2, 1, 0] }}
+                transition={{ duration: 1.3, repeat: Infinity, repeatDelay: 0.4, ease: 'easeInOut' }}
+              >
+                <Eraser className="h-7 w-7 text-rose-600 dark:text-rose-400" />
+              </motion.div>
+            </div>
+            <div className="space-y-1">
+              <h3 className="font-semibold text-sm">Limpar todas as anotações?</h3>
+              <p className="text-xs text-muted-foreground">
+                {strokeCount + textCount} {strokeCount + textCount === 1 ? 'item' : 'itens'} desta questão {strokeCount + textCount === 1 ? 'será apagado' : 'serão apagados'}. Não dá pra desfazer.
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={onCancel}
+                className="flex-1 h-9 rounded-xl text-xs font-medium border border-border/60 hover:bg-muted transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={onConfirm}
+                className="flex-1 h-9 rounded-xl text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white transition-colors flex items-center justify-center gap-1.5"
+              >
+                <Trash2 className="h-3.5 w-3.5" /> Limpar tudo
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   )
 }
 
@@ -838,6 +1053,7 @@ function Toolbar(props: ToolbarProps) {
         <div className="flex items-center gap-0.5 p-1.5 rounded-2xl glass-page-card glass-rim shadow-2xl max-w-[94vw] overflow-x-auto scrollbar-hide">
           <ToolBtn active={tool === 'pen'} onClick={() => setTool('pen')} icon={Pencil} label="Caneta" />
           <ToolBtn active={tool === 'highlighter'} onClick={() => setTool('highlighter')} icon={Highlighter} label="Marca-texto" />
+          <ToolBtn active={tool === 'laser'} onClick={() => { setTool('laser'); setShowCustomize(false) }} icon={Flashlight} label="Caneta laser" />
           <ToolBtn active={tool === 'eraser'} onClick={() => setTool('eraser')} icon={Eraser} label="Borracha" />
           <ToolBtn active={isShapeTool(tool)} onClick={() => setShowShapePicker(!showShapePicker)} icon={ShapeIcon} label="Formas" />
           <ToolBtn active={tool === 'text'} onClick={() => setTool('text')} icon={Type} label="Texto" />
@@ -845,7 +1061,9 @@ function Toolbar(props: ToolbarProps) {
 
           <div className="w-px h-6 bg-border/60 mx-0.5 flex-shrink-0" />
 
-          <ToolBtn active={showCustomize} onClick={() => setShowCustomize(!showCustomize)} icon={Palette} label="Cor e espessura" />
+          {tool !== 'laser' && (
+            <ToolBtn active={showCustomize} onClick={() => setShowCustomize(!showCustomize)} icon={Palette} label="Cor e espessura" />
+          )}
           <ToolBtn active={false} disabled={!props.canUndo} onClick={props.onUndo} icon={Undo2} label="Desfazer" />
           <ToolBtn active={false} disabled={!props.canRedo} onClick={props.onRedo} icon={Redo2} label="Refazer" />
 
