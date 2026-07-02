@@ -168,6 +168,10 @@ export interface ResolvedSerialKeyProduct {
   amount: number
   description: string
   grant: SerialKeyGrant
+  /** Lote dinâmico aplicável (apenas manual_clinico, por enquanto). */
+  pricingEventId?: string | null
+  /** Se cupons são permitidos para este produto (apenas manual_clinico, por enquanto). */
+  allowCoupons?: boolean
 }
 
 export function isSerialKeyProductType(v: unknown): v is SerialKeyProductType {
@@ -265,6 +269,8 @@ export async function resolveSerialKeyProduct(
       amount,
       description: `${config.label} — ${plan.label}`,
       grant: { productType, manualClinicoPlanKey: plan.key },
+      pricingEventId: plan.pricingEventId || config.pricingEventId || null,
+      allowCoupons: config.allowCoupons !== false,
     }
   }
 

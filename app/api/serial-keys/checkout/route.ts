@@ -22,7 +22,7 @@ import {
   resolveMaterialCart,
   type MaterialCartSession,
 } from '@/lib/material-cart'
-import { computeCartTierDiscounts, combineTierAndCouponDiscount } from '@/lib/pricing-events'
+import { computeCartTierDiscounts, combineTierAndCouponDiscount, getPricingEventStateById } from '@/lib/pricing-events'
 import {
   applyCouponDiscountsToItems,
   couponAnalyticsMetadata,
@@ -214,15 +214,37 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Valor inválido' }, { status: 400 })
   }
 
-  // Cupom de desconto (compra sem login). Só se aplica a material/pacote/flashcard;
-  // o preço é sempre validado aqui na fonte, nunca vem do client.
+  // Lote dinâmico (pricing event) — hoje só o manual clínico usa isso na
+  // compra avulsa. Mesma regra do checkout autenticado: o maior desconto
+  // entre lote e cupom vence (ver combineTierAndCouponDiscount abaixo).
+  let tierDiscountAmount = 0
+  if (resolved.productType === 'manual_clinico' && resolved.pricingEventId) {
+    const pricingEventState = await getPricingEventStateById(db, resolved.pricingEventId)
+    if (pricingEventState?.activeTier && pricingEventState.isActive !== false && amount > 0) {
+      tierDiscountAmount = Math.max(
+        0,
+        Math.round(amount * (pricingEventState.activeTier.discountPercent / 100) * 100) / 100
+      )
+    }
+  }
+
+  // Cupom de desconto (compra sem login). O preço é sempre validado aqui na
+  // fonte, nunca vem do client.
   let couponValidation: CouponValidationResult | null = null
   const couponEligibleType =
     resolved.productType === 'material' ||
     resolved.productType === 'flashcard' ||
-    resolved.productType === 'package'
+    resolved.productType === 'package' ||
+    resolved.productType === 'manual_clinico'
+  let couponDiscountAmount = 0
   if (data.couponCode && couponEligibleType && amount > 0) {
-    const couponItemType: 'material' | 'package' = resolved.grant.itemType === 'package' ? 'package' : 'material'
+    if (resolved.productType === 'manual_clinico' && resolved.allowCoupons === false) {
+      return NextResponse.json({ error: 'Cupons não estão habilitados para este produto.' }, { status: 400 })
+    }
+    const couponItemType: 'material' | 'package' | 'manual_clinico' =
+      resolved.productType === 'manual_clinico'
+        ? 'manual_clinico'
+        : (resolved.grant.itemType === 'package' ? 'package' : 'material')
     try {
       couponValidation = await validateCouponForCheckout(db, {
         code: data.couponCode,
@@ -237,7 +259,7 @@ export async function POST(request: NextRequest) {
           price: amount,
         }],
       })
-      amount = couponValidation.amountAfterCoupon
+      couponDiscountAmount = couponValidation.discountAmount
     } catch (err: any) {
       if (err instanceof CouponError) {
         return NextResponse.json({ error: err.message }, { status: err.status })
@@ -246,8 +268,20 @@ export async function POST(request: NextRequest) {
     }
   }
 
+  if (tierDiscountAmount > 0 || couponDiscountAmount > 0) {
+    const combined = combineTierAndCouponDiscount({
+      basePrice: amount,
+      tierDiscountAmount,
+      couponDiscountAmount,
+    })
+    amount = combined.finalPrice
+    if (combined.appliedSource !== 'coupon') {
+      couponValidation = null
+    }
+  }
+
   if (!Number.isFinite(amount) || amount <= 0) {
-    return NextResponse.json({ error: 'Valor inválido após o cupom.' }, { status: 400 })
+    return NextResponse.json({ error: 'Valor inválido após o desconto.' }, { status: 400 })
   }
 
   const receiptToken = generateReceiptToken()
