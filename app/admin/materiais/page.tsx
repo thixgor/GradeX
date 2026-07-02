@@ -585,6 +585,9 @@ function AdminMateriaisContent() {
         alert(`Erro ao enviar o PDF por e-mail (${res.status}): ${detail}`)
         return
       }
+      if (Array.isArray(data?.skipped) && data.skipped.length > 0) {
+        alert(`E-mail enviado, mas alguns arquivos foram ignorados:\n\n${data.skipped.join('\n')}`)
+      }
       setPdfEmailSentId(purchaseId)
       setTimeout(() => setPdfEmailSentId(prev => (prev === purchaseId ? null : prev)), 2500)
     } catch (err: any) {

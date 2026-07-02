@@ -110,16 +110,34 @@ export async function POST(request: NextRequest) {
     const orderId = purchase.providerPaymentId || purchase.providerOrderId || String(purchase._id)
     const now = new Date()
 
+    // Teto do PDF de origem. É o principal guarda-chuva contra o 500 por OOM:
+    // o pdf-lib carrega o arquivo inteiro e o duplica ao aplicar a marca
+    // d'água, podendo usar 10–20x o tamanho do arquivo em memória. Um PDF
+    // grande demais derruba a função (crash duro = página 500 do Next, que
+    // nenhum try/catch consegue interceptar). Também respeita o limite de
+    // anexo do SMTP. Ajustável via env.
+    const MAX_ORIGINAL_MB = Number(process.env.PDF_EMAIL_MAX_ORIGINAL_MB) || 15
+    const MAX_ORIGINAL_BYTES = MAX_ORIGINAL_MB * 1024 * 1024
+
     // Processa um PDF de cada vez (em série). Isso mantém o pico de memória
-    // baixo — o pdf-lib carrega e duplica cada arquivo ao aplicar a marca
-    // d'água, então processar vários grandes ao mesmo tempo pode estourar a
-    // memória da função (OOM = 500 no navegador). Com o tempo de execução
-    // ampliado, a série cobre bem o caso comum (1 material ou pacote pequeno).
+    // baixo — processar vários grandes ao mesmo tempo multiplicaria o uso.
+    // Com o tempo de execução ampliado, a série cobre bem o caso comum.
     const items: { title: string; filename: string; buffer: Buffer }[] = []
     const sentMaterialIds: string[] = []
+    const skipped: { title: string; reason: string }[] = []
     for (const material of materialsWithPdf) {
+      const title = material.title || 'Material'
       try {
         const original = await fetchMaterialPdfBytes(material.pdfFile.blobUrl)
+        const originalBytes = original.byteLength
+        if (originalBytes > MAX_ORIGINAL_BYTES) {
+          const sizeMb = (originalBytes / 1024 / 1024).toFixed(1)
+          console.warn(
+            `[admin-send-pdf-email] PDF "${title}" (${material._id}) tem ${sizeMb}MB, acima do limite de ${MAX_ORIGINAL_MB}MB — pulado.`
+          )
+          skipped.push({ title, reason: `${sizeMb}MB (máx. ${MAX_ORIGINAL_MB}MB)` })
+          continue
+        }
         const watermarked = await applyWatermark(original, {
           userName,
           userEmail,
@@ -128,7 +146,7 @@ export async function POST(request: NextRequest) {
           downloadedAt: now,
         })
         items.push({
-          title: material.title || 'Material',
+          title,
           filename: safeFilename(material.title),
           buffer: Buffer.from(watermarked),
         })
@@ -138,10 +156,23 @@ export async function POST(request: NextRequest) {
           `[admin-send-pdf-email] Falha ao preparar PDF do material ${material._id}:`,
           err
         )
+        skipped.push({ title, reason: 'falha ao processar' })
       }
     }
 
     if (items.length === 0) {
+      // Se tudo foi pulado por tamanho, deixa isso explícito para o admin.
+      const tooBig = skipped.filter((s) => s.reason.includes('máx.'))
+      if (tooBig.length > 0) {
+        return NextResponse.json(
+          {
+            error:
+              `O PDF é grande demais para envio por e-mail: ${tooBig.map((s) => `${s.title} — ${s.reason}`).join('; ')}. ` +
+              `Reduza/comprima o arquivo ou disponibilize o download pelo painel.`,
+          },
+          { status: 413 }
+        )
+      }
       return NextResponse.json(
         { error: 'Falha ao preparar o(s) PDF(s) para envio. Tente novamente.' },
         { status: 502 }
@@ -187,7 +218,12 @@ export async function POST(request: NextRequest) {
       sentAt: now,
     }).catch((e) => console.error('[admin-send-pdf-email] Falha ao gravar auditoria:', e))
 
-    return NextResponse.json({ success: true, sentTo: userEmail, materialsCount: items.length })
+    return NextResponse.json({
+      success: true,
+      sentTo: userEmail,
+      materialsCount: items.length,
+      skipped: skipped.map((s) => `${s.title} (${s.reason})`),
+    })
   } catch (error: any) {
     console.error('[admin-send-pdf-email] Erro ao enviar PDF por e-mail:', error)
     const detail = error?.message || String(error)
