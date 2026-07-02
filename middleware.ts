@@ -26,6 +26,10 @@ const publicRoutes = [
   '/api/coupons/validate',
   '/flashcards',
   '/ldpg-mnclinico',
+  // Amostra pública: 10 questões comentadas + 1 patologia, sem login. A rota da
+  // API valida rate limit por IP internamente.
+  '/amostra',
+  '/api/amostra',
   '/manual-clinico',
   '/manual-clinico/farmacologia',
   // Landing page lê settings publicamente (videoEmbedUrl, landingPageEnabled,

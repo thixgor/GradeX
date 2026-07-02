@@ -764,9 +764,18 @@ export default function LandingPage({
               </div>
 
               {/* Microcopy: reduz atrito antes do cadastro */}
-              <p className="text-xs text-slate-400 mb-10">
+              <p className="text-xs text-slate-400 mb-4">
                 Grátis no essencial. Sem cartão. Acesso na hora.
               </p>
+
+              {/* Amostra sem login: mostra valor antes do cadastro */}
+              <button
+                onClick={() => router.push('/amostra')}
+                className="inline-flex items-center gap-1.5 mb-10 text-sm font-semibold text-emerald-300 hover:text-emerald-200 transition-colors"
+              >
+                Ver 10 questões comentadas sem cadastro
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
 
               {/* Course badges */}
               <div className="flex flex-wrap gap-2">

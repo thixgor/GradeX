@@ -8,6 +8,7 @@ import { CANONICAL_ORIGIN } from '@/lib/seo'
 const ALLOW = [
   '/',
   '/doar',
+  '/amostra',
   '/flashcards/',
   '/materiais/',
   '/manual-clinico/',
