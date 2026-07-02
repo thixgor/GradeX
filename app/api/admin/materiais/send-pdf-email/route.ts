@@ -175,7 +175,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    await db.collection('audit_logs').insertOne({
+    // Auditoria não deve bloquear a resposta: o e-mail já foi enviado com
+    // sucesso neste ponto. Se o log falhar, apenas registramos no console.
+    db.collection('audit_logs').insertOne({
       action: 'material_pdf_email_delivery',
       adminId: session.userId,
       adminName: session.name,
@@ -188,11 +190,15 @@ export async function POST(request: NextRequest) {
       materialIds: sentMaterialIds,
       orderId,
       sentAt: now,
-    })
+    }).catch((e) => console.error('[admin-send-pdf-email] Falha ao gravar auditoria:', e))
 
     return NextResponse.json({ success: true, sentTo: userEmail, materialsCount: items.length })
-  } catch (error) {
+  } catch (error: any) {
     console.error('[admin-send-pdf-email] Erro ao enviar PDF por e-mail:', error)
-    return NextResponse.json({ error: 'Erro ao enviar o PDF por e-mail.' }, { status: 500 })
+    const detail = error?.message || String(error)
+    return NextResponse.json(
+      { error: `Erro ao enviar o PDF por e-mail: ${detail}` },
+      { status: 500 }
+    )
   }
 }
