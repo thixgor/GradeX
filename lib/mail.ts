@@ -673,6 +673,65 @@ export async function sendFormSubmissionEmail(email: string, formTitle: string, 
   })
 }
 
+/**
+ * E-mail de entrega manual de PDF disparado por um administrador — usado
+ * quando o comprador não consegue baixar pelo visualizador protegido (ex.:
+ * pedido de reembolso por não conseguir acessar o arquivo). O PDF anexado já
+ * contém a marca d'água do usuário, aplicada antes do envio.
+ */
+export async function sendMaterialPdfDeliveryEmail(input: {
+  email: string
+  name: string
+  items: { title: string; filename: string; buffer: Buffer }[]
+}) {
+  const firstName = input.name ? input.name.split(' ')[0] : 'Aluno'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
+  const multiple = input.items.length > 1
+
+  const itemsList = input.items
+    .map(item => `<li style="margin-bottom: 4px;">${escapeHtml(item.title)}</li>`)
+    .join('')
+
+  const content = `
+    <h1 class="h1">Seu material em anexo 📎</h1>
+    <p>Olá, ${firstName}!</p>
+    <p>Conforme solicitado, nossa equipe está enviando o material abaixo diretamente para o seu e-mail, em formato PDF.</p>
+
+    <div style="background-color: #f0faf4; border: 1px solid #c6f0d8; border-radius: 10px; padding: 18px 20px; margin: 20px 0;">
+      <p style="margin: 0 0 10px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #43a047; font-weight: 700;">
+        Material${multiple ? 's' : ''} enviado${multiple ? 's' : ''} em anexo
+      </p>
+      <ul style="margin: 0; padding-left: 18px; color: #0f3d2e; font-weight: 600; font-size: 14px;">
+        ${itemsList}
+      </ul>
+    </div>
+
+    <p style="font-size: 13px; color: #718096;">
+      Este arquivo contém uma marca d'água exclusiva vinculada à sua conta, para uso pessoal e intransferível — assim como o restante do conteúdo da plataforma.
+    </p>
+
+    <div style="text-align: center;">
+      <a href="${appUrl}/materiais" class="button" target="_blank">Ver meus materiais</a>
+    </div>
+  `
+
+  const html = getEmailTemplate('Seu material em anexo', content)
+
+  await transporter.sendMail({
+    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+    to: input.email,
+    subject: multiple
+      ? `Seus materiais em anexo (${input.items.length} arquivos)`
+      : `Seu material em anexo: ${input.items[0]?.title || ''}`,
+    html,
+    attachments: input.items.map(item => ({
+      filename: item.filename,
+      content: item.buffer,
+      contentType: 'application/pdf',
+    })),
+  })
+}
+
 // Interface para blocos de lead
 interface LeadBlockForEmail {
   id: string

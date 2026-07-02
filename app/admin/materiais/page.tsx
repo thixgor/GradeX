@@ -52,6 +52,7 @@ import {
   Navigation,
   ArrowUp,
   ArrowDown,
+  Mail,
 } from 'lucide-react'
 import { upload } from '@vercel/blob/client'
 import { Button } from '@/components/ui/button'
@@ -375,6 +376,8 @@ function AdminMateriaisContent() {
   const [grantEmail, setGrantEmail] = useState('')
   const [grantLoading, setGrantLoading] = useState(false)
   const [grantError, setGrantError] = useState('')
+  const [sendingPdfEmailId, setSendingPdfEmailId] = useState<string | null>(null)
+  const [pdfEmailSentId, setPdfEmailSentId] = useState<string | null>(null)
   // User picker
   const [userSearch, setUserSearch] = useState('')
   const [userResults, setUserResults] = useState<{ id: string; name: string; email: string; accountType: string }[]>([])
@@ -559,6 +562,26 @@ function AdminMateriaisContent() {
       await fetch(`/api/materiais/admin-access?purchaseId=${purchaseId}`, { method: 'DELETE' })
       setAccessPurchases(prev => prev.filter(p => p._id !== purchaseId))
     } catch { alert('Erro ao revogar acesso') }
+  }
+
+  const sendPdfByEmail = async (purchaseId: string, userEmail: string) => {
+    if (!confirm(`Enviar o PDF (com marca d'água) para ${userEmail || 'este usuário'}?`)) return
+    setSendingPdfEmailId(purchaseId)
+    try {
+      const res = await fetch('/api/admin/materiais/send-pdf-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ purchaseId }),
+      })
+      const data = await res.json()
+      if (!res.ok) { alert(data.error || 'Erro ao enviar o PDF por e-mail'); return }
+      setPdfEmailSentId(purchaseId)
+      setTimeout(() => setPdfEmailSentId(prev => (prev === purchaseId ? null : prev)), 2500)
+    } catch {
+      alert('Erro ao enviar o PDF por e-mail')
+    } finally {
+      setSendingPdfEmailId(null)
+    }
   }
 
   // Form states
@@ -2535,6 +2558,20 @@ function AdminMateriaisContent() {
                             <span className="text-[10px] text-muted-foreground hidden sm:block">
                               {new Date(p.purchasedAt).toLocaleDateString('pt-BR')}
                             </span>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-6 w-6 text-blue-500 hover:text-blue-600 flex-shrink-0"
+                              onClick={() => sendPdfByEmail(p._id, p.userEmail)}
+                              disabled={sendingPdfEmailId === p._id}
+                              title="Enviar PDF com marca d'água por e-mail"
+                            >
+                              {sendingPdfEmailId === p._id
+                                ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                : pdfEmailSentId === p._id
+                                  ? <CheckCheck className="h-3.5 w-3.5 text-green-500" />
+                                  : <Mail className="h-3.5 w-3.5" />}
+                            </Button>
                             <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive hover:text-destructive flex-shrink-0" onClick={() => revokeAccess(p._id)} title="Revogar acesso">
                               <UserMinus className="h-3.5 w-3.5" />
                             </Button>
