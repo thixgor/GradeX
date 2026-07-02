@@ -40,9 +40,10 @@ const DEFAULT_LIGHT_INK = '#0f172a'
 const LASER_COLOR = '#ff3b30'
 const LASER_FADE_MS = 1000
 
-// How far past the wrapped content's own box the canvas extends, so a
-// stroke isn't cut off right at the edge of the enunciado/alternativas.
-const CANVAS_BLEED_X = 40
+// Vertical bleed past the wrapped content's own box, so a stroke isn't cut
+// off right at the top/bottom edge (kept modest so stacked questions in
+// scroll mode don't visually overlap). Horizontal bleed spans the full
+// viewport instead — see resizeCanvas.
 const CANVAS_BLEED_Y = 20
 
 const PEN_PRESETS = ['#0f172a', '#ffffff', '#dc2626', '#2563eb', '#16a34a', '#7c3aed', '#ea580c']
@@ -113,6 +114,7 @@ export function InlineAnnotationCanvas({
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null)
   const dprRef = useRef(1)
   const sizeRef = useRef({ w: 0, h: 0 })
+  const leftOffsetRef = useRef(0)
 
   const [strokes, setStrokes] = useState<DrawingStroke[]>(annotation?.strokes || [])
   const [texts, setTexts] = useState<TextAnnotation[]>(annotation?.texts || [])
@@ -237,21 +239,31 @@ export function InlineAnnotationCanvas({
   const canUndo = historyIndexRef.current > 0
   const canRedo = historyIndexRef.current < historyRef.current.length - 1
 
-  // ───── Canvas sizing — the wrapped content's box, plus a bleed margin on
-  // every side so a stroke isn't cut off right at the edge of the question ─────
+  // ───── Canvas sizing ─────
+  // Horizontally the canvas spans the FULL viewport width, not just the
+  // question card's own box — on a wide desktop/tablet screen the card sits
+  // in a centered max-width column with a lot of empty page margin on each
+  // side, and that margin is exactly where "draw outside the question" is
+  // supposed to work. A small fixed bleed (the previous approach) barely
+  // reached past the card's own border, which is why it looked like nothing
+  // changed on anything wider than a phone. Vertically we keep a modest
+  // bleed only, so stacked questions (scroll mode) don't overlap.
   const resizeCanvas = useCallback(() => {
     const canvas = canvasRef.current
     const wrapper = wrapperRef.current
     if (!canvas || !wrapper) return
-    const w = Math.max(1, Math.round(wrapper.offsetWidth)) + CANVAS_BLEED_X * 2
+    const wrapperRect = wrapper.getBoundingClientRect()
+    const leftOffset = Math.round(wrapperRect.left)
+    const w = Math.max(1, Math.round(window.innerWidth))
     const h = Math.max(1, Math.round(wrapper.offsetHeight)) + CANVAS_BLEED_Y * 2
-    if (sizeRef.current.w === w && sizeRef.current.h === h) return
+    if (sizeRef.current.w === w && sizeRef.current.h === h && leftOffsetRef.current === leftOffset) return
     sizeRef.current = { w, h }
-    const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1))
+    leftOffsetRef.current = leftOffset
+    const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1))
     dprRef.current = dpr
     canvas.style.width = `${w}px`
     canvas.style.height = `${h}px`
-    canvas.style.left = `${-CANVAS_BLEED_X}px`
+    canvas.style.left = `${-leftOffset}px`
     canvas.style.top = `${-CANVAS_BLEED_Y}px`
     canvas.width = Math.floor(w * dpr)
     canvas.height = Math.floor(h * dpr)
@@ -266,12 +278,20 @@ export function InlineAnnotationCanvas({
   useEffect(() => {
     resizeCanvas()
     const wrapper = wrapperRef.current
-    if (!wrapper || typeof ResizeObserver === 'undefined') return
+    window.addEventListener('resize', resizeCanvas)
+    if (!wrapper || typeof ResizeObserver === 'undefined') {
+      return () => window.removeEventListener('resize', resizeCanvas)
+    }
     const ro = new ResizeObserver(() => resizeCanvas())
     ro.observe(wrapper)
-    return () => ro.disconnect()
+    return () => { ro.disconnect(); window.removeEventListener('resize', resizeCanvas) }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resizeCanvas])
+
+  // The wrapper's horizontal offset from the viewport can shift without the
+  // wrapper's own box size changing (e.g. a sidebar collapsing elsewhere) —
+  // re-measure right as the user enters draw mode, when it matters most.
+  useEffect(() => { if (isActive) resizeCanvas() }, [isActive, resizeCanvas])
 
   // ───── Drawing primitives (all operate in pixel space) ─────
   const drawFreehandPx = useCallback((ctx: CanvasRenderingContext2D, pts: Point[], color: string, thicknessPx: number, opacity = 1) => {
@@ -473,7 +493,9 @@ export function InlineAnnotationCanvas({
     const { w, h } = sizeRef.current
     if (!w || !h) return undefined
     const exportCanvas = document.createElement('canvas')
-    const scale = 2
+    // The live canvas can now be viewport-wide (full-width drawing area);
+    // cap the export so a wide desktop screen doesn't produce a multi-MB PNG.
+    const scale = Math.min(2, 1600 / w)
     exportCanvas.width = w * scale
     exportCanvas.height = h * scale
     const ctx = exportCanvas.getContext('2d')
