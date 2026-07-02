@@ -86,10 +86,14 @@ function trimText(value: string, maxLength: number): string {
 function getWatermarkRenderConfig(): WatermarkRenderConfig {
   return {
     enabled: envBoolean('PDF_WATERMARK_ENABLED', true),
-    opacity: envNumber('PDF_WATERMARK_OPACITY', 0.055, 0.01, 0.25),
-    fontSize: envNumber('PDF_WATERMARK_FONT_SIZE', 8, 6, 18),
-    repeatGap: envNumber('PDF_WATERMARK_REPEAT_GAP', 260, 120, 520),
-    xGap: envNumber('PDF_WATERMARK_X_GAP', 260, 120, 520),
+    // Padrões calibrados para a marca ser legível (nome/UID/pedido/data
+    // identificáveis num vazamento) sem atrapalhar a leitura. O valor antigo
+    // (opacity 0.055) deixava a marca praticamente invisível. Tudo continua
+    // ajustável por env.
+    opacity: envNumber('PDF_WATERMARK_OPACITY', 0.10, 0.01, 0.25),
+    fontSize: envNumber('PDF_WATERMARK_FONT_SIZE', 9, 6, 18),
+    repeatGap: envNumber('PDF_WATERMARK_REPEAT_GAP', 210, 120, 520),
+    xGap: envNumber('PDF_WATERMARK_X_GAP', 180, 120, 520),
     angle: envNumber('PDF_WATERMARK_ANGLE', 38, 0, 70),
     lineGap: envNumber('PDF_WATERMARK_LINE_GAP', 3, 0, 12),
     maxTextLength: envNumber('PDF_WATERMARK_MAX_TEXT_LENGTH', 64, 24, 120),
