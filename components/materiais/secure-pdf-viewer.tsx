@@ -582,6 +582,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const viewerRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLElement>(null)
   const zoomTouchedRef = useRef(false)
+  // Espelha a página atual para leitura síncrona dentro de callbacks estáveis
+  // (goToPage) sem recriá-los a cada mudança de página.
+  const currentPageRef = useRef(1)
   const [access, setAccess] = useState<ViewerAccess | null>(null)
   const [annotations, setAnnotations] = useState<PdfAnnotation[]>([])
   const [loading, setLoading] = useState(true)
@@ -761,6 +764,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   }, [loadAnnotations, materialId, router])
 
   useEffect(() => {
+    currentPageRef.current = currentPage
     setPageInput(String(currentPage))
   }, [currentPage])
 
@@ -867,8 +871,13 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     }
     setCurrentPage((current) => (current === next ? current : next))
     if (mode !== 'single') {
+      // Saltos longos (ex.: clicar numa seção distante do sumário) rolam de
+      // forma INSTANTÂNEA — o scroll suave atravessaria todas as páginas do
+      // caminho, disparando o carregamento de cada uma. Passos curtos
+      // (próxima/anterior) mantêm o scroll suave, que é agradável e barato.
+      const behavior: ScrollBehavior = Math.abs(next - currentPageRef.current) <= 2 ? 'smooth' : 'auto'
       requestAnimationFrame(() => {
-        document.getElementById(`pdf-page-${next}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        document.getElementById(`pdf-page-${next}`)?.scrollIntoView({ behavior, block: 'start' })
       })
     } else {
       // Em modo página única, sobe suavemente para o topo da nova página.
@@ -1142,7 +1151,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       ) : null}
       <div
         ref={viewerRef}
-        className="pdf-viewer-shell min-h-screen text-white select-none"
+        className="pdf-viewer-shell min-h-screen overflow-x-clip text-white select-none"
         style={{ WebkitUserSelect: 'none', userSelect: 'none', touchAction: 'pan-x pan-y pinch-zoom' }}
       >
         <header className="sticky top-0 z-40 border-b border-white/10 bg-zinc-950/82 shadow-xl shadow-black/25 backdrop-blur-2xl">
@@ -1348,21 +1357,29 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
               </div>
             )}
 
-            {hasSummary && activeSummaryEntry && (
+            {hasSummary && (
               <button
                 type="button"
                 onClick={() => openSidePanel('summary')}
-                title="Ver sumário completo"
-                className="mt-1 flex w-full items-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-1.5 text-left text-white/70 transition-colors hover:border-emerald-300/30 hover:bg-white/[0.08] hover:text-white"
+                title="Abrir sumário — pular para seções"
+                className="mt-1 flex w-full items-center gap-2 rounded-lg border border-emerald-300/25 bg-emerald-400/[0.07] px-2.5 py-1.5 text-left text-white/75 transition-colors hover:border-emerald-300/40 hover:bg-emerald-400/15 hover:text-white"
               >
-                <List className="h-3.5 w-3.5 shrink-0 text-emerald-300/80" />
-                <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wide text-white/40">
-                  Você está em
-                </span>
-                <span className="min-w-0 flex-1 truncate text-xs font-semibold">
-                  {activeSummaryEntry.title}
-                </span>
-                <span className="shrink-0 text-[10px] text-white/40">Ver sumário →</span>
+                <List className="h-4 w-4 shrink-0 text-emerald-300" />
+                {activeSummaryEntry ? (
+                  <>
+                    <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wide text-white/40">
+                      Você está em
+                    </span>
+                    <span className="min-w-0 flex-1 truncate text-xs font-semibold">
+                      {activeSummaryEntry.title}
+                    </span>
+                  </>
+                ) : (
+                  <span className="min-w-0 flex-1 truncate text-xs font-semibold text-emerald-100">
+                    Sumário — pular para seções
+                  </span>
+                )}
+                <span className="shrink-0 text-[10px] font-semibold text-emerald-300/90">Abrir →</span>
               </button>
             )}
           </div>
