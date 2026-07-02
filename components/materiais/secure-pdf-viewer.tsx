@@ -16,6 +16,7 @@ import {
   Eye,
   HelpCircle,
   Highlighter,
+  Image as ImageIcon,
   Italic,
   List,
   Maximize2,
@@ -629,6 +630,17 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const coverPage = access?.viewer.coverPage
   const hasSummary = summary.length > 0
 
+  // Seção do sumário em que o leitor está agora, para o indicador "você está em".
+  const activeSummaryEntry = useMemo(() => {
+    let active: SummaryEntry | null = null
+    for (const entry of summary) {
+      if (entry.page <= currentPage && (!active || entry.page > active.page)) {
+        active = entry
+      }
+    }
+    return active
+  }, [summary, currentPage])
+
   // Modo prévia: usuário sem acesso pleno. `allowedPages` é a lista (ordenada)
   // de páginas que ele pode ver; toda a navegação é presa a esse conjunto. O
   // bloqueio real é no servidor — isto é só para não oferecer o proibido.
@@ -1234,13 +1246,19 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
 
               <div className="mx-1 h-6 w-px shrink-0 bg-white/10" />
               {hasSummary && (
-                <ToolButton
-                  active={mobilePanelOpen ? sidePanelTab === 'summary' : showThumbs && sidePanelTab === 'summary'}
+                <button
+                  type="button"
                   onClick={() => openSidePanel('summary')}
-                  title="Sumario"
+                  title="Abrir sumário"
+                  className={`flex h-10 shrink-0 items-center gap-1.5 rounded-xl border px-2.5 text-xs font-bold transition-colors sm:px-3 ${
+                    (mobilePanelOpen ? sidePanelTab === 'summary' : showThumbs && sidePanelTab === 'summary')
+                      ? 'border-emerald-300/60 bg-emerald-400/25 text-white'
+                      : 'border-emerald-300/30 bg-emerald-400/10 text-emerald-200 hover:border-emerald-300/50 hover:bg-emerald-400/20 hover:text-white'
+                  }`}
                 >
-                  <List className="h-4 w-4" />
-                </ToolButton>
+                  <List className="h-4 w-4 shrink-0" />
+                  <span className="hidden sm:inline">Sumário</span>
+                </button>
               )}
               <ToolButton
                 active={showThumbs || mobilePanelOpen}
@@ -1327,6 +1345,24 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                 ))}
               </div>
             )}
+
+            {hasSummary && activeSummaryEntry && (
+              <button
+                type="button"
+                onClick={() => openSidePanel('summary')}
+                title="Ver sumário completo"
+                className="mt-1 flex w-full items-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-1.5 text-left text-white/70 transition-colors hover:border-emerald-300/30 hover:bg-white/[0.08] hover:text-white"
+              >
+                <List className="h-3.5 w-3.5 shrink-0 text-emerald-300/80" />
+                <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wide text-white/40">
+                  Você está em
+                </span>
+                <span className="min-w-0 flex-1 truncate text-xs font-semibold">
+                  {activeSummaryEntry.title}
+                </span>
+                <span className="shrink-0 text-[10px] text-white/40">Ver sumário →</span>
+              </button>
+            )}
           </div>
         </header>
 
@@ -1357,7 +1393,13 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
           </div>
         )}
 
-        <main className="grid grid-cols-1 gap-0 lg:grid-cols-[11.5rem_minmax(0,1fr)_22rem]">
+        <main
+          className={`grid grid-cols-1 gap-0 ${
+            showThumbs && sidePanelTab === 'summary'
+              ? 'lg:grid-cols-[19rem_minmax(0,1fr)_22rem] xl:grid-cols-[21rem_minmax(0,1fr)_22rem]'
+              : 'lg:grid-cols-[11.5rem_minmax(0,1fr)_22rem]'
+          }`}
+        >
           {showThumbs && (
             <aside className="hidden border-r border-white/10 bg-black/15 p-3 backdrop-blur-xl lg:sticky lg:top-[132px] lg:col-start-1 lg:block lg:h-[calc(100vh-132px)] lg:overflow-hidden">
               <SidePanel
@@ -1512,20 +1554,20 @@ function SidePanel({
           <button
             type="button"
             onClick={() => onTabChange('pages')}
-            className={`h-8 rounded-lg text-xs font-semibold transition-colors ${
+            className={`flex h-8 items-center justify-center gap-1.5 rounded-lg text-xs font-semibold transition-colors ${
               activeTab === 'pages' ? 'bg-emerald-400/25 text-white' : 'text-white/65 hover:bg-white/10'
             }`}
           >
-            Páginas
+            <ImageIcon className="h-3.5 w-3.5" /> Páginas
           </button>
           <button
             type="button"
             onClick={() => onTabChange('summary')}
-            className={`h-8 rounded-lg text-xs font-semibold transition-colors ${
+            className={`flex h-8 items-center justify-center gap-1.5 rounded-lg text-xs font-semibold transition-colors ${
               activeTab === 'summary' ? 'bg-emerald-400/25 text-white' : 'text-white/65 hover:bg-white/10'
             }`}
           >
-            Sumário
+            <List className="h-3.5 w-3.5" /> Sumário
           </button>
         </div>
       )}
@@ -1561,6 +1603,9 @@ function SummaryList({
   currentPage: number
   onGoTo: (page: number) => void
 }) {
+  const activeItemRef = useRef<HTMLButtonElement | null>(null)
+  const didAutoScroll = useRef(false)
+
   // Entrada "ativa": a de maior página que ainda é <= página atual.
   let activeId = ''
   let bestPage = -1
@@ -1571,32 +1616,57 @@ function SummaryList({
     }
   }
 
+  useEffect(() => {
+    if (didAutoScroll.current) return
+    didAutoScroll.current = true
+    activeItemRef.current?.scrollIntoView({ block: 'center' })
+  }, [])
+
   return (
-    <div className="space-y-1">
-      {summary.map((entry) => {
-        const level = Math.min(2, Math.max(0, entry.level || 0))
-        const isActive = entry.id === activeId
-        return (
-          <button
-            key={entry.id}
-            type="button"
-            onClick={() => onGoTo(entry.page)}
-            style={{ paddingLeft: `${0.5 + level * 0.85}rem` }}
-            className={`flex w-full items-center gap-2 rounded-lg border py-2 pr-2 text-left transition-colors ${
-              isActive
-                ? 'border-emerald-300/50 bg-emerald-400/15 text-white'
-                : 'border-transparent text-white/72 hover:border-white/10 hover:bg-white/5'
-            }`}
-          >
-            <span className={`flex-1 truncate ${level === 0 ? 'text-[13px] font-semibold' : level === 1 ? 'text-xs' : 'text-[11px] text-white/60'}`}>
-              {entry.title}
-            </span>
-            <span className="shrink-0 rounded-md bg-white/10 px-1.5 py-0.5 text-[10px] font-medium text-white/65">
-              {entry.page}
-            </span>
-          </button>
-        )
-      })}
+    <div>
+      <div className="mb-2 flex items-center justify-between px-1">
+        <span className="text-[11px] font-semibold uppercase tracking-wide text-white/40">Sumário</span>
+        <span className="text-[11px] text-white/40">{summary.length} {summary.length === 1 ? 'seção' : 'seções'}</span>
+      </div>
+      <div className="space-y-0.5">
+        {summary.map((entry) => {
+          const level = Math.min(2, Math.max(0, entry.level || 0))
+          const isActive = entry.id === activeId
+          return (
+            <button
+              key={entry.id}
+              ref={isActive ? activeItemRef : undefined}
+              type="button"
+              onClick={() => onGoTo(entry.page)}
+              title={entry.title}
+              style={{ paddingLeft: `${0.75 + level * 0.9}rem` }}
+              className={`group relative flex w-full items-start gap-2 rounded-lg border py-2 pr-2 text-left transition-all ${
+                isActive
+                  ? 'border-emerald-300/50 bg-emerald-400/15 text-white'
+                  : 'border-transparent text-white/72 hover:border-white/10 hover:bg-white/5'
+              }`}
+            >
+              {isActive && (
+                <span className="absolute inset-y-1.5 left-0 w-[3px] rounded-full bg-emerald-300" aria-hidden />
+              )}
+              <span
+                className={`min-w-0 flex-1 whitespace-normal break-words leading-snug ${
+                  level === 0 ? 'text-[13px] font-semibold' : level === 1 ? 'text-xs' : 'text-[11px] text-white/60'
+                }`}
+              >
+                {entry.title}
+              </span>
+              <span
+                className={`shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-medium transition-colors ${
+                  isActive ? 'bg-emerald-300/25 text-white' : 'bg-white/10 text-white/65'
+                }`}
+              >
+                {entry.page}
+              </span>
+            </button>
+          )
+        })}
+      </div>
     </div>
   )
 }
