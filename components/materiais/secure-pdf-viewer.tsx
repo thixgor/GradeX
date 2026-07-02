@@ -112,6 +112,19 @@ interface PdfAnnotation {
 // render, o que quebraria a memoização de PdfCanvasPage durante o scroll.
 const EMPTY_ANNOTATIONS: PdfAnnotation[] = []
 
+// Virtualização (windowing) dos modos contínuo/largura: só as páginas dentro
+// de um raio da página atual são montadas como PdfCanvasPage "pesado" (canvas,
+// observers, handlers de ponteiro, overlay de anotações). O resto vira um
+// espaçador leve que apenas reserva a altura e reporta o foco ao rolar. Sem
+// isso, um material de 3000 páginas montava 3000 componentes pesados de uma vez
+// e travava o navegador. O raio dá folga suficiente para leitura fluida e
+// pré-carrega algumas páginas à frente/atrás.
+const LIVE_PAGE_RADIUS = 3
+// Dimensões-padrão de página (A4 em pt) usadas como fallback do espaçador antes
+// de a primeira página real reportar o tamanho verdadeiro.
+const DEFAULT_PAGE_WIDTH = 595
+const DEFAULT_PAGE_HEIGHT = 842
+
 interface AnnotationData {
   drawingMode?: DrawingMode
   strokeWidthRatio?: number
@@ -688,6 +701,30 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     setCurrentPage((current) => current === page ? current : page)
   }, [mode])
 
+  // Só atualiza o tamanho compartilhado quando ele realmente muda. Antes, cada
+  // página renderizada chamava setPageSize com um objeto NOVO (mesmo valor),
+  // disparando re-render de todas as páginas vivas a cada scroll — uma
+  // tempestade de re-renders que contribuía para os travamentos.
+  const handlePageSize = useCallback((size: PageSize) => {
+    setPageSize((current) => {
+      if (current && Math.abs(current.width - size.width) < 0.5 && Math.abs(current.height - size.height) < 0.5) {
+        return current
+      }
+      return size
+    })
+  }, [])
+
+  // Tamanho de reserva do espaçador de virtualização — deve casar com a altura
+  // que a página real reserva (dimensões da página * zoom + moldura), para o
+  // scroll não pular quando um espaçador vira página real e vice-versa.
+  // Memoizado para manter a MESMA referência enquanto tamanho/zoom não mudam,
+  // evitando re-render de todos os espaçadores a cada rolagem (mudança de
+  // página atual).
+  const spacerSize = useMemo<PageSize>(() => ({
+    width: (pageSize?.width ?? DEFAULT_PAGE_WIDTH) * zoom,
+    height: (pageSize?.height ?? DEFAULT_PAGE_HEIGHT) * zoom,
+  }), [pageSize, zoom])
+
   const updateKnownPageCount = useCallback((totalPages?: number) => {
     if (!totalPages || totalPages < 1) return
     setAccess((current) => {
@@ -1085,6 +1122,13 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     )
   }
 
+  // Janela de páginas "vivas" (virtualização). Em página única tudo é a página
+  // atual. Nos modos contínuo/largura, só o raio ao redor da página atual é
+  // montado como componente pesado; as demais ficam como espaçadores leves.
+  const centerIndex = mode === 'single' ? 0 : Math.max(0, pages.indexOf(currentPage))
+  const liveStart = centerIndex - LIVE_PAGE_RADIUS
+  const liveEnd = centerIndex + LIVE_PAGE_RADIUS
+
   return (
     <ViewerShell>
       <style jsx global>{`
@@ -1447,30 +1491,43 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             }`}
           >
             <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-5">
-              {pages.map((page) => (
-                <PdfCanvasPage
-                  key={`${page}-${mode}`}
-                  materialId={materialId}
-                  pageNumber={page}
-                  active={page === currentPage}
-                  zoom={zoom}
-                  annotations={previewActive ? EMPTY_ANNOTATIONS : annotationsByPage.get(page) ?? EMPTY_ANNOTATIONS}
-                  tool={previewActive ? 'cursor' : tool}
-                  drawingStyle={drawingStyle}
-                  highlightColor={highlightColor}
-                  highlightWidth={highlightWidth}
-                  noteColor={noteColor}
-                  laserColor={laserColor}
-                  textStyle={textStyle}
-                  onPageFocus={handlePageFocused}
-                  onPageSize={setPageSize}
-                  fallbackSize={pageSize}
-                  onPageCount={updateKnownPageCount}
-                  onCreateAnnotation={createAnnotation}
-                  onUpdateAnnotation={updateAnnotation}
-                  onDeleteAnnotation={deleteAnnotation}
-                />
-              ))}
+              {pages.map((page, index) => {
+                const isLive = mode === 'single' || (index >= liveStart && index <= liveEnd)
+                if (!isLive) {
+                  return (
+                    <PdfPageSpacer
+                      key={`spacer-${page}`}
+                      pageNumber={page}
+                      size={spacerSize}
+                      onPageFocus={handlePageFocused}
+                    />
+                  )
+                }
+                return (
+                  <PdfCanvasPage
+                    key={`${page}-${mode}`}
+                    materialId={materialId}
+                    pageNumber={page}
+                    active={page === currentPage}
+                    zoom={zoom}
+                    annotations={previewActive ? EMPTY_ANNOTATIONS : annotationsByPage.get(page) ?? EMPTY_ANNOTATIONS}
+                    tool={previewActive ? 'cursor' : tool}
+                    drawingStyle={drawingStyle}
+                    highlightColor={highlightColor}
+                    highlightWidth={highlightWidth}
+                    noteColor={noteColor}
+                    laserColor={laserColor}
+                    textStyle={textStyle}
+                    onPageFocus={handlePageFocused}
+                    onPageSize={handlePageSize}
+                    fallbackSize={pageSize}
+                    onPageCount={updateKnownPageCount}
+                    onCreateAnnotation={createAnnotation}
+                    onUpdateAnnotation={updateAnnotation}
+                    onDeleteAnnotation={deleteAnnotation}
+                  />
+                )
+              })}
             </div>
           </section>
 
@@ -1572,6 +1629,47 @@ const SidePanel = memo(function SidePanel({
     [pageList, pageCount]
   )
 
+  // UM ÚNICO IntersectionObserver compartilhado por TODAS as miniaturas. Antes,
+  // cada miniatura criava o seu próprio observer — num material de 3000 páginas
+  // isso instanciava 3000 observers de uma vez ao abrir o painel, um custo alto
+  // de montagem. Agora, cada miniatura só se registra neste observer, que
+  // dispara o render (lazy) da miniatura quando ela entra na área visível.
+  const thumbObserverRef = useRef<IntersectionObserver | null>(null)
+  const thumbHandlersRef = useRef<Map<Element, () => void>>(new Map())
+
+  const registerThumb = useCallback((element: Element, onEnter: () => void) => {
+    if (!thumbObserverRef.current) {
+      thumbObserverRef.current = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue
+            const handler = thumbHandlersRef.current.get(entry.target)
+            if (handler) {
+              thumbObserverRef.current?.unobserve(entry.target)
+              thumbHandlersRef.current.delete(entry.target)
+              handler()
+            }
+          }
+        },
+        { rootMargin: '400px 0px' }
+      )
+    }
+    thumbHandlersRef.current.set(element, onEnter)
+    thumbObserverRef.current.observe(element)
+    return () => {
+      thumbHandlersRef.current.delete(element)
+      thumbObserverRef.current?.unobserve(element)
+    }
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      thumbObserverRef.current?.disconnect()
+      thumbObserverRef.current = null
+      thumbHandlersRef.current.clear()
+    }
+  }, [])
+
   return (
     <div className="flex h-full min-h-0 flex-col">
       {hasSummary && (
@@ -1610,6 +1708,7 @@ const SidePanel = memo(function SidePanel({
                 active={page === currentPage}
                 isCover={page === coverPage}
                 onSelect={onGoTo}
+                registerObserver={registerThumb}
               />
             ))}
           </div>
@@ -1707,6 +1806,7 @@ const PdfThumbnail = memo(function PdfThumbnail({
   active,
   isCover,
   onSelect,
+  registerObserver,
 }: {
   materialId: string
   pageNumber: number
@@ -1715,6 +1815,9 @@ const PdfThumbnail = memo(function PdfThumbnail({
   // Recebe o handler estável e passa a própria página — evita recriar uma
   // closure por miniatura a cada render (o que quebrava a memoização).
   onSelect: (page: number) => void
+  // Registra a miniatura no observer compartilhado do painel; dispara o render
+  // (lazy) quando ela entra na área visível. Retorna a função de desregistro.
+  registerObserver: (element: Element, onEnter: () => void) => () => void
 }) {
   const buttonRef = useRef<HTMLButtonElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -1729,18 +1832,8 @@ const PdfThumbnail = memo(function PdfThumbnail({
   useEffect(() => {
     const element = buttonRef.current
     if (!element) return
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setShouldRender(true)
-          observer.disconnect()
-        }
-      },
-      { rootMargin: '400px 0px' }
-    )
-    observer.observe(element)
-    return () => observer.disconnect()
-  }, [])
+    return registerObserver(element, () => setShouldRender(true))
+  }, [registerObserver])
 
   useEffect(() => {
     if (!shouldRender || renderedRef.current) return
@@ -1846,6 +1939,59 @@ function ViewerLoading() {
     </div>
   )
 }
+
+// Espaçador leve para páginas fora da janela de virtualização. Reserva a
+// altura estimada (para o scroll/scrollbar ficarem consistentes) e observa o
+// foco: quando o leitor rola até ele, avisa o pai, que então o promove a
+// PdfCanvasPage real. Custa uma fração do componente pesado — é o que permite
+// abrir materiais de milhares de páginas sem travar.
+const PdfPageSpacer = memo(function PdfPageSpacer({
+  pageNumber,
+  size,
+  onPageFocus,
+}: {
+  pageNumber: number
+  size: PageSize
+  onPageFocus: (page: number) => void
+}) {
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const element = ref.current
+    if (!element) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) onPageFocus(pageNumber)
+      },
+      { rootMargin: '-18% 0px -68% 0px', threshold: 0 }
+    )
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [onPageFocus, pageNumber])
+
+  const frameWidth = Math.ceil(size.width + 16)
+  const frameHeight = Math.ceil(size.height + 16)
+
+  return (
+    <div
+      id={`pdf-page-${pageNumber}`}
+      ref={ref}
+      className="flex w-full scroll-mt-36 justify-center px-0 sm:px-2"
+    >
+      <div
+        className="relative flex max-w-full items-center justify-center rounded-xl border border-white/10 bg-white/[0.04]"
+        style={{
+          width: frameWidth,
+          height: frameHeight,
+          contentVisibility: 'auto',
+          containIntrinsicSize: `${frameWidth}px ${frameHeight}px`,
+        }}
+      >
+        <span className="text-xs font-medium text-white/25">Pag. {pageNumber}</span>
+      </div>
+    </div>
+  )
+})
 
 const PdfCanvasPage = memo(function PdfCanvasPage({
   materialId,
