@@ -254,7 +254,11 @@ export function InlineAnnotationCanvas({
     if (!canvas || !wrapper) return
     const wrapperRect = wrapper.getBoundingClientRect()
     const leftOffset = Math.round(wrapperRect.left)
-    const w = Math.max(1, Math.round(window.innerWidth))
+    // documentElement.clientWidth excludes the vertical scrollbar; window.innerWidth
+    // does not. getBoundingClientRect() is measured against the scrollbar-excluded
+    // area, so using innerWidth here made the canvas a few px too wide — just
+    // enough to push the page into horizontal scroll.
+    const w = Math.max(1, Math.floor(document.documentElement.clientWidth))
     const h = Math.max(1, Math.round(wrapper.offsetHeight)) + CANVAS_BLEED_Y * 2
     if (sizeRef.current.w === w && sizeRef.current.h === h && leftOffsetRef.current === leftOffset) return
     sizeRef.current = { w, h }
