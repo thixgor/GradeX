@@ -110,11 +110,15 @@ export async function POST(request: NextRequest) {
     const orderId = purchase.providerPaymentId || purchase.providerOrderId || String(purchase._id)
     const now = new Date()
 
-    // Baixa + aplica marca d'água em paralelo (importante quando o item é um
-    // pacote com vários materiais — processar em série somaria os tempos e
-    // aumentaria o risco de estourar o limite de execução da função).
-    const results = await Promise.allSettled(
-      materialsWithPdf.map(async (material) => {
+    // Processa um PDF de cada vez (em série). Isso mantém o pico de memória
+    // baixo — o pdf-lib carrega e duplica cada arquivo ao aplicar a marca
+    // d'água, então processar vários grandes ao mesmo tempo pode estourar a
+    // memória da função (OOM = 500 no navegador). Com o tempo de execução
+    // ampliado, a série cobre bem o caso comum (1 material ou pacote pequeno).
+    const items: { title: string; filename: string; buffer: Buffer }[] = []
+    const sentMaterialIds: string[] = []
+    for (const material of materialsWithPdf) {
+      try {
         const original = await fetchMaterialPdfBytes(material.pdfFile.blobUrl)
         const watermarked = await applyWatermark(original, {
           userName,
@@ -123,25 +127,16 @@ export async function POST(request: NextRequest) {
           orderId,
           downloadedAt: now,
         })
-        return {
+        items.push({
           title: material.title || 'Material',
           filename: safeFilename(material.title),
           buffer: Buffer.from(watermarked),
-        }
-      })
-    )
-
-    const items: { title: string; filename: string; buffer: Buffer }[] = []
-    const sentMaterialIds: string[] = []
-    for (let i = 0; i < results.length; i++) {
-      const result = results[i]
-      if (result.status === 'fulfilled') {
-        items.push(result.value)
-        sentMaterialIds.push(String(materialsWithPdf[i]._id))
-      } else {
+        })
+        sentMaterialIds.push(String(material._id))
+      } catch (err) {
         console.error(
-          `[admin-send-pdf-email] Falha ao preparar PDF do material ${materialsWithPdf[i]._id}:`,
-          result.reason
+          `[admin-send-pdf-email] Falha ao preparar PDF do material ${material._id}:`,
+          err
         )
       }
     }

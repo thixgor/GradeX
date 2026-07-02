@@ -573,12 +573,22 @@ function AdminMateriaisContent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ purchaseId }),
       })
-      const data = await res.json()
-      if (!res.ok) { alert(data.error || 'Erro ao enviar o PDF por e-mail'); return }
+      // A resposta pode não ser JSON quando a função quebra no nível da
+      // plataforma (ex.: OOM/timeout retorna uma página de erro). Lemos como
+      // texto primeiro e tentamos parsear, para nunca esconder a causa real.
+      const raw = await res.text()
+      let data: any = null
+      try { data = raw ? JSON.parse(raw) : null } catch { /* resposta não-JSON */ }
+
+      if (!res.ok) {
+        const detail = data?.error || (raw ? raw.slice(0, 300) : '') || `HTTP ${res.status}`
+        alert(`Erro ao enviar o PDF por e-mail (${res.status}): ${detail}`)
+        return
+      }
       setPdfEmailSentId(purchaseId)
       setTimeout(() => setPdfEmailSentId(prev => (prev === purchaseId ? null : prev)), 2500)
-    } catch {
-      alert('Erro ao enviar o PDF por e-mail')
+    } catch (err: any) {
+      alert(`Erro ao enviar o PDF por e-mail: ${err?.message || 'falha de rede'}`)
     } finally {
       setSendingPdfEmailId(null)
     }
