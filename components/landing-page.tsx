@@ -371,20 +371,20 @@ export default function LandingPage({
     {
       icon: Compass,
       step: '02',
-      title: 'Escolha curso e período',
-      description: 'Medicina (SOI/HAM), Psicossociais, Biomédicas, Odontológicas, ENEM ou UERJ. Tudo já vem organizado por módulo e tópico.',
+      title: 'Diga seu curso e período',
+      description: 'Medicina (SOI/HAM), Psicossociais, Biomédicas, Odontológicas, ENEM ou UERJ. Em segundos a plataforma já sabe o que você precisa estudar.',
     },
     {
       icon: Brain,
       step: '03',
-      title: 'Estude com o método certo',
-      description: 'Banco de questões, flashcards com repetição espaçada, cronogramas personalizados e provas com IA, no seu ritmo.',
+      title: 'Treine como cai na prova',
+      description: 'Questões reais e simulados com IA no estilo da sua banca, flashcards que sabem a hora de te cobrar e cronograma que se ajusta ao seu tempo. Feedback na hora.',
     },
     {
       icon: BarChart3,
       step: '04',
-      title: 'Acompanhe sua evolução',
-      description: 'Estatísticas de acerto, ranking dos simulados e revisões automáticas mostram exatamente onde focar.',
+      title: 'Veja a agulha se mexer',
+      description: 'Estatísticas de acerto, ranking dos simulados e revisões automáticas mostram exatamente o que revisar antes da prova e o que já está dominado.',
     },
   ]
 
@@ -692,7 +692,7 @@ export default function LandingPage({
 
               {/* Headline */}
               <h1 className="font-bold tracking-tight leading-[1.08] mb-6 text-4xl sm:text-5xl xl:text-6xl">
-                <span className="text-slate-50">Seja o Foco.</span>
+                <span className="text-slate-50">Estude com método.</span>
                 <br />
                 <span
                   style={{
@@ -702,14 +702,29 @@ export default function LandingPage({
                     backgroundClip: 'text',
                   }}
                 >
-                  Seja a Referência.
+                  Passe com folga.
                 </span>
               </h1>
 
               {/* Subtitle */}
               <p className="text-base sm:text-lg text-slate-300 max-w-lg mb-5 leading-relaxed">
-                Plataforma completa de estudo para alunos de saúde. Tudo integrado para você dominar.
+                Banco de questões com IA, flashcards com repetição espaçada, cronograma que se adapta ao seu ritmo e o raciocínio clínico de 220+ patologias na palma da mão. Da primeira prova à residência, numa plataforma só.
               </p>
+
+              {/* Barra de prova social: números fixos e honestos, nunca "0" */}
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-8 text-xs sm:text-sm text-slate-400">
+                {[
+                  '1.000+ questões catalogadas',
+                  '4 cursos + ENEM e UERJ',
+                  'Manual Clínico com 220+ patologias',
+                  'Conteúdo novo toda semana',
+                ].map((item, i) => (
+                  <span key={item} className="inline-flex items-center gap-2">
+                    {i > 0 && <span className="text-slate-600">·</span>}
+                    <span className="font-medium text-slate-300">{item}</span>
+                  </span>
+                ))}
+              </div>
 
               {/* Feature tags */}
               <div className="flex flex-wrap gap-2 mb-10">
@@ -731,13 +746,13 @@ export default function LandingPage({
               </div>
 
               {/* CTAs */}
-              <div className="flex flex-col sm:flex-row gap-3 mb-10">
+              <div className="flex flex-col sm:flex-row gap-3 mb-3">
                 <button
                   onClick={() => router.push('/auth/login?mode=register')}
                   className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl text-base font-bold text-[#040816] transition-all hover:opacity-90 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(74,222,128,0.35)] shadow-[0_0_20px_rgba(74,222,128,0.20)]"
                   style={{ background: 'linear-gradient(135deg, #4ADE80 0%, #2DD4BF 100%)' }}
                 >
-                  Começar Gratuitamente
+                  Criar conta grátis
                   <ArrowRight className="w-4 h-4" />
                 </button>
                 <button
@@ -747,6 +762,11 @@ export default function LandingPage({
                   Já tenho conta
                 </button>
               </div>
+
+              {/* Microcopy: reduz atrito antes do cadastro */}
+              <p className="text-xs text-slate-400 mb-10">
+                Grátis no essencial. Sem cartão. Acesso na hora.
+              </p>
 
               {/* Course badges */}
               <div className="flex flex-wrap gap-2">
