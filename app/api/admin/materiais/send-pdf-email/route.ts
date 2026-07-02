@@ -69,6 +69,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Usuário sem e-mail cadastrado' }, { status: 422 })
     }
 
+    if (!purchase.itemId || !isValidObjectId(String(purchase.itemId))) {
+      return NextResponse.json({ error: 'Compra sem item associado válido.' }, { status: 422 })
+    }
+
     // Resolver material(is) com PDF associado(s) à compra.
     let materials: any[] = []
     if (purchase.itemType === 'material') {
@@ -85,10 +89,14 @@ export async function POST(request: NextRequest) {
       const materialIds: string[] = Array.isArray(pkg?.materialIds) ? pkg!.materialIds : []
       if (materialIds.length > 0) {
         const objectIds = materialIds.filter(isValidObjectId).map((id) => new ObjectId(id))
-        materials = await db.collection('materials')
-          .find({ _id: { $in: objectIds } }, { projection: { title: 1, pdfFile: 1 } })
-          .toArray()
+        materials = objectIds.length
+          ? await db.collection('materials')
+              .find({ _id: { $in: objectIds } }, { projection: { title: 1, pdfFile: 1 } })
+              .toArray()
+          : []
       }
+    } else {
+      return NextResponse.json({ error: `Tipo de item não suportado: ${purchase.itemType}` }, { status: 422 })
     }
 
     const materialsWithPdf = materials.filter((m) => m.pdfFile?.blobUrl)
@@ -104,14 +112,34 @@ export async function POST(request: NextRequest) {
 
     const items: { title: string; filename: string; buffer: Buffer }[] = []
     for (const material of materialsWithPdf) {
-      const original = await fetchMaterialPdfBytes(material.pdfFile.blobUrl)
-      const watermarked = await applyWatermark(original, {
-        userName,
-        userEmail,
-        userId: userId || String(purchase._id),
-        orderId,
-        downloadedAt: now,
-      })
+      let original: ArrayBuffer
+      try {
+        original = await fetchMaterialPdfBytes(material.pdfFile.blobUrl)
+      } catch (err) {
+        console.error(`[admin-send-pdf-email] Falha ao baixar PDF do material ${material._id}:`, err)
+        return NextResponse.json(
+          { error: `Falha ao baixar o arquivo original de "${material.title || 'material'}". Tente novamente.` },
+          { status: 502 }
+        )
+      }
+
+      let watermarked: Uint8Array
+      try {
+        watermarked = await applyWatermark(original, {
+          userName,
+          userEmail,
+          userId: userId || String(purchase._id),
+          orderId,
+          downloadedAt: now,
+        })
+      } catch (err) {
+        console.error(`[admin-send-pdf-email] Falha ao aplicar marca d'água no material ${material._id}:`, err)
+        return NextResponse.json(
+          { error: `Falha ao gerar o PDF com marca d'água de "${material.title || 'material'}".` },
+          { status: 500 }
+        )
+      }
+
       items.push({
         title: material.title || 'Material',
         filename: safeFilename(material.title),
@@ -119,7 +147,27 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    await sendMaterialPdfDeliveryEmail({ email: userEmail, name: userName, items })
+    const totalBytes = items.reduce((sum, item) => sum + item.buffer.byteLength, 0)
+    const MAX_TOTAL_BYTES = 18 * 1024 * 1024 // margem de segurança abaixo dos limites usuais de SMTP (~20-25MB)
+    if (totalBytes > MAX_TOTAL_BYTES) {
+      return NextResponse.json(
+        {
+          error: `O(s) arquivo(s) somam ${(totalBytes / 1024 / 1024).toFixed(1)}MB, acima do limite para envio por e-mail (18MB). Reduza o tamanho do PDF ou envie por outro meio.`,
+        },
+        { status: 413 }
+      )
+    }
+
+    try {
+      await sendMaterialPdfDeliveryEmail({ email: userEmail, name: userName, items })
+    } catch (err: any) {
+      console.error('[admin-send-pdf-email] Falha ao enviar e-mail (SMTP):', err)
+      const detail = err?.responseCode || err?.code || err?.message
+      return NextResponse.json(
+        { error: `Falha ao enviar o e-mail${detail ? ` (${detail})` : ''}. Verifique a configuração de SMTP.` },
+        { status: 502 }
+      )
+    }
 
     await db.collection('audit_logs').insertOne({
       action: 'material_pdf_email_delivery',
