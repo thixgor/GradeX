@@ -34,7 +34,6 @@ import {
   Loader2,
   AlertCircle,
   X,
-  StickyNote,
   ZoomIn,
   Flag,
   Copy,
@@ -43,7 +42,7 @@ import {
 } from 'lucide-react'
 import { BancoQuestaoComHierarquia, BancoListaUsuario } from '@/lib/types/banco-questoes'
 import { QuestionAnnotation, TextHighlight } from '@/lib/types'
-import { QuestionNotesCanvas } from '@/components/question-notes-canvas'
+import { InlineAnnotationCanvas } from '@/components/inline-annotation-canvas'
 import { HighlightableText } from '@/components/highlightable-text'
 import { ImageModal } from '@/components/image-modal'
 import { ReportQuestionModal } from '@/components/report-question-modal'
@@ -94,7 +93,6 @@ export default function QuestaoPage() {
 
   // Estados de Anotações
   const [annotations, setAnnotations] = useState<QuestionAnnotation[]>([])
-  const [editingNotesFor, setEditingNotesFor] = useState<string | null>(null)
 
   // Modal de imagem expandida
   const [showImageModal, setShowImageModal] = useState(false)
@@ -452,6 +450,13 @@ ${respostaAluno}`
         </div>
 
         {/* Enunciado */}
+        <InlineAnnotationCanvas
+          questionId={String(questao._id)}
+          questionNumber={1}
+          annotation={getAnnotationForQuestion(String(questao._id))}
+          onChange={handleSaveAnnotation}
+          className="space-y-6"
+        >
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-lg flex items-center gap-2">
@@ -512,18 +517,6 @@ ${respostaAluno}`
               </div>
             )}
 
-            {/* Botão de Anotações */}
-            <div className="flex justify-start pt-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setEditingNotesFor(String(questao._id))}
-                className="bg-primary/10 hover:bg-primary/20 backdrop-blur-sm text-primary border border-primary/20"
-              >
-                <StickyNote className="h-4 w-4 mr-2" />
-                {getAnnotationForQuestion(String(questao._id)) ? 'Editar Anotações' : 'Adicionar Anotações'}
-              </Button>
-            </div>
           </CardContent>
         </Card>
 
@@ -626,6 +619,7 @@ ${respostaAluno}`
             </CardContent>
           </Card>
         )}
+        </InlineAnnotationCanvas>
 
         {/* Botão de responder */}
         {!mostrarResposta && (
@@ -929,16 +923,6 @@ ${respostaAluno}`
           </DialogContent>
         </Dialog>
 
-        {/* Modal de Anotações */}
-        {editingNotesFor && questao && (
-          <QuestionNotesCanvas
-            questionId={String(questao._id)}
-            questionNumber={1}
-            initialAnnotation={getAnnotationForQuestion(String(questao._id))}
-            onSave={handleSaveAnnotation}
-            onClose={() => setEditingNotesFor(null)}
-          />
-        )}
 
         {/* Modal de Imagem Expandida */}
         <ImageModal

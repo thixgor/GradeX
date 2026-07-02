@@ -23,7 +23,7 @@ import { formatDate } from '@/lib/utils'
 import { downloadUserReportPDF } from '@/lib/user-report-generator'
 import { ProctoringConsent } from '@/components/proctoring-consent'
 import { ProctoringMonitor } from '@/components/proctoring-monitor'
-import { QuestionNotesCanvas } from '@/components/question-notes-canvas'
+import { InlineAnnotationCanvas } from '@/components/inline-annotation-canvas'
 import { ReportQuestionModal } from '@/components/report-question-modal'
 import { PracticeExamConfig, PracticeExamSettings } from '@/components/practice-exam-config'
 import { ExamQuestionPalette, PaletteQuestion } from '@/components/exam-question-palette'
@@ -75,7 +75,6 @@ export default function ExamPage({ params }: { params: { id: string } }) {
 
   // Estados de Anotações
   const [annotations, setAnnotations] = useState<QuestionAnnotation[]>([])
-  const [editingNotesFor, setEditingNotesFor] = useState<string | null>(null)
 
   // Estados de Proctoring
   const [showProctoringConsent, setShowProctoringConsent] = useState(false)
@@ -592,7 +591,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       if (!target) return
       // Ignorar quando usuário digita em inputs/textareas/contenteditable
       if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) return
-      if (editingNotesFor || showFeedbackModal || showUnansweredModal || reportQuestionId) return
+      if (showFeedbackModal || showUnansweredModal || reportQuestionId) return
 
       // Modo paginado apenas (em scroll mode, atalhos atrapalhariam)
       if (exam.navigationMode === 'scroll') return
@@ -627,7 +626,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [started, submitted, alreadySubmitted, exam, currentQuestionIndex, editingNotesFor, showFeedbackModal, showUnansweredModal, reportQuestionId, lockedQuestions])
+  }, [started, submitted, alreadySubmitted, exam, currentQuestionIndex, showFeedbackModal, showUnansweredModal, reportQuestionId, lockedQuestions])
 
   // Mostrar tela de configuração para provas práticas ao invés de auto-iniciar
   useEffect(() => {
@@ -2640,7 +2639,14 @@ ${respostaAluno}`
                       )}
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-6">
+                  <CardContent>
+                  <InlineAnnotationCanvas
+                    questionId={question.id}
+                    questionNumber={question.number}
+                    annotation={getAnnotationForQuestion(question.id)}
+                    onChange={handleSaveAnnotation}
+                    className="space-y-6"
+                  >
                     {/* Enunciado */}
                     <div className="space-y-2">
                       <div className="prose dark:prose-invert max-w-none">
@@ -2703,24 +2709,6 @@ ${respostaAluno}`
                         onHighlightsChange={(highlights) => handleHighlights(question.id, highlights)}
                         className="font-medium"
                       />
-                    </div>
-
-                    {/* Botão de Anotações */}
-                    <div className="flex justify-start">
-                      <button
-                        onClick={() => setEditingNotesFor(question.id)}
-                        className={`group flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all border ${
-                          getAnnotationForQuestion(question.id)
-                            ? 'bg-gradient-to-br from-violet-500/15 to-fuchsia-500/10 border-violet-500/30 text-violet-700 dark:text-violet-300 hover:from-violet-500/20 hover:to-fuchsia-500/15 hover:border-violet-500/50'
-                            : 'bg-muted/50 hover:bg-primary/10 border-border/50 hover:border-primary/30 text-muted-foreground hover:text-primary'
-                        }`}
-                      >
-                        <StickyNote className="h-3.5 w-3.5 transition-transform group-hover:rotate-[-6deg]" />
-                        {getAnnotationForQuestion(question.id) ? 'Editar anotações' : 'Anotar questão'}
-                        {getAnnotationForQuestion(question.id) && (
-                          <span className="h-1.5 w-1.5 rounded-full bg-violet-500 animate-pulse" />
-                        )}
-                      </button>
                     </div>
 
                     {/* Alternativas (Múltipla Escolha) */}
@@ -2981,6 +2969,7 @@ ${respostaAluno}`
                         </div>
                       </div>
                     )}
+                  </InlineAnnotationCanvas>
                   </CardContent>
                 </Card>
               )
@@ -3062,7 +3051,14 @@ ${respostaAluno}`
               )}
             </div>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent>
+          <InlineAnnotationCanvas
+            questionId={currentQuestion.id}
+            questionNumber={currentQuestion.number}
+            annotation={getAnnotationForQuestion(currentQuestion.id)}
+            onChange={handleSaveAnnotation}
+            className="space-y-6"
+          >
             {/* Barcode do Usuário */}
             <div className="border-b pb-4">
               <Barcode
@@ -3137,24 +3133,6 @@ ${respostaAluno}`
                 onHighlightsChange={(highlights) => handleHighlights(currentQuestion.id, highlights)}
                 className="font-medium"
               />
-            </div>
-
-            {/* Botão de Anotações */}
-            <div className="flex justify-start">
-              <button
-                onClick={() => setEditingNotesFor(currentQuestion.id)}
-                className={`group flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all border ${
-                  getAnnotationForQuestion(currentQuestion.id)
-                    ? 'bg-gradient-to-br from-violet-500/15 to-fuchsia-500/10 border-violet-500/30 text-violet-700 dark:text-violet-300 hover:from-violet-500/20 hover:to-fuchsia-500/15 hover:border-violet-500/50'
-                    : 'bg-muted/50 hover:bg-primary/10 border-border/50 hover:border-primary/30 text-muted-foreground hover:text-primary'
-                }`}
-              >
-                <StickyNote className="h-3.5 w-3.5 transition-transform group-hover:rotate-[-6deg]" />
-                {getAnnotationForQuestion(currentQuestion.id) ? 'Editar anotações' : 'Anotar questão'}
-                {getAnnotationForQuestion(currentQuestion.id) && (
-                  <span className="h-1.5 w-1.5 rounded-full bg-violet-500 animate-pulse" />
-                )}
-              </button>
             </div>
 
             {/* Indicador de Questão Bloqueada */}
@@ -3431,6 +3409,7 @@ ${respostaAluno}`
                 </div>
               </div>
             )}
+          </InlineAnnotationCanvas>
 
             {/* Navegação */}
             <div className="flex justify-between pt-6 border-t gap-2">
@@ -3764,22 +3743,6 @@ ${respostaAluno}`
           </Card>
         </div>
       )}
-
-      {/* Modal de Anotações */}
-      {editingNotesFor && (() => {
-        const question = exam.questions.find(q => q.id === editingNotesFor)
-        if (!question) return null
-
-        return (
-          <QuestionNotesCanvas
-            questionId={question.id}
-            questionNumber={question.number}
-            initialAnnotation={getAnnotationForQuestion(question.id)}
-            onSave={handleSaveAnnotation}
-            onClose={() => setEditingNotesFor(null)}
-          />
-        )
-      })()}
 
       {/* Modal de imagem expandida */}
       {examImageModal && (

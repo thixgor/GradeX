@@ -26,7 +26,6 @@ import {
   RotateCcw,
   List,
   X,
-  StickyNote,
   ZoomIn,
   Flag,
   Copy,
@@ -44,7 +43,7 @@ import {
 import { cn } from '@/lib/utils'
 import { BancoListaUsuario, BancoQuestaoComHierarquia } from '@/lib/types/banco-questoes'
 import { QuestionAnnotation, TextHighlight } from '@/lib/types'
-import { QuestionNotesCanvas } from '@/components/question-notes-canvas'
+import { InlineAnnotationCanvas } from '@/components/inline-annotation-canvas'
 import { HighlightableText } from '@/components/highlightable-text'
 import { ImageModal } from '@/components/image-modal'
 import { ReportQuestionModal } from '@/components/report-question-modal'
@@ -87,7 +86,6 @@ export default function ListaDetalhePage() {
 
   // Estados de Anotações
   const [annotations, setAnnotations] = useState<QuestionAnnotation[]>([])
-  const [editingNotesFor, setEditingNotesFor] = useState<string | null>(null)
 
   // Report Modal
   const [reportQuestionId, setReportQuestionId] = useState<string | null>(null)
@@ -515,7 +513,14 @@ ${respostaAluno}`
                 Relatar Erro
               </Button>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent>
+            <InlineAnnotationCanvas
+              questionId={String(questao._id)}
+              questionNumber={questaoAtual + 1}
+              annotation={getAnnotationForQuestion(String(questao._id))}
+              onChange={handleSaveAnnotation}
+              className="space-y-6"
+            >
               {/* Enunciado */}
               <div className="prose dark:prose-invert max-w-none">
                 <HighlightableText
@@ -548,19 +553,6 @@ ${respostaAluno}`
                   />
                 </div>
               )}
-
-              {/* Botão de Anotações */}
-              <div className="flex justify-start">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setEditingNotesFor(String(questao._id))}
-                  className="bg-primary/10 hover:bg-primary/20 backdrop-blur-sm text-primary border border-primary/20"
-                >
-                  <StickyNote className="h-4 w-4 mr-2" />
-                  {getAnnotationForQuestion(String(questao._id)) ? 'Editar Anotações' : 'Adicionar Anotações'}
-                </Button>
-              </div>
 
               {/* Alternativas (objetiva) */}
               {questao.tipo === 'objetiva' && questao.alternativas && (
@@ -751,6 +743,7 @@ ${respostaAluno}`
                   )}
                 </div>
               )}
+            </InlineAnnotationCanvas>
 
               {/* Botões de ação */}
               <div className="flex items-center justify-between pt-4">
@@ -840,24 +833,6 @@ ${respostaAluno}`
               </div>
             </CardContent>
           </Card>
-
-          {/* Modal de Anotações (modo simulado) */}
-          {editingNotesFor && (() => {
-            const questaoParaAnotar = questoes.find(q => String(q._id) === editingNotesFor)
-            if (!questaoParaAnotar) return null
-
-            const indexQuestao = questoes.findIndex(q => String(q._id) === editingNotesFor)
-
-            return (
-              <QuestionNotesCanvas
-                questionId={String(questaoParaAnotar._id)}
-                questionNumber={indexQuestao + 1}
-                initialAnnotation={getAnnotationForQuestion(String(questaoParaAnotar._id))}
-                onSave={handleSaveAnnotation}
-                onClose={() => setEditingNotesFor(null)}
-              />
-            )
-          })()}
 
           {/* Modal de Imagem Expandida */}
           <ImageModal
@@ -1102,24 +1077,6 @@ ${respostaAluno}`
             </div>
           </>
         )}
-
-        {/* Modal de Anotações */}
-        {editingNotesFor && (() => {
-          const questaoParaAnotar = questoes.find(q => String(q._id) === editingNotesFor)
-          if (!questaoParaAnotar) return null
-
-          const indexQuestao = questoes.findIndex(q => String(q._id) === editingNotesFor)
-
-          return (
-            <QuestionNotesCanvas
-              questionId={String(questaoParaAnotar._id)}
-              questionNumber={indexQuestao + 1}
-              initialAnnotation={getAnnotationForQuestion(String(questaoParaAnotar._id))}
-              onSave={handleSaveAnnotation}
-              onClose={() => setEditingNotesFor(null)}
-            />
-          )
-        })()}
 
         {/* Modal de Imagem Expandida */}
         <ImageModal
