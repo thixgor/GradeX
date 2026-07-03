@@ -70,6 +70,25 @@ function sanitizePdfViewerConfig(raw: any): {
   }
 }
 
+// Normaliza a lista de materiais complementares: mantém apenas ObjectIds
+// válidos, remove o próprio material (evita auto-referência), deduplica e
+// limita a quantidade — preservando a ordem definida pelo admin.
+function sanitizeComplementaryIds(raw: any, selfId: string | null): string[] {
+  if (!Array.isArray(raw)) return []
+  const seen = new Set<string>()
+  const out: string[] = []
+  for (const item of raw) {
+    const id = String(item || '').trim()
+    if (!ObjectId.isValid(id)) continue
+    if (selfId && id === String(selfId)) continue
+    if (seen.has(id)) continue
+    seen.add(id)
+    out.push(id)
+    if (out.length >= 30) break
+  }
+  return out
+}
+
 // GET - Listar materiais (público para usuários logados)
 export async function GET(request: NextRequest) {
   try {
@@ -284,8 +303,19 @@ export async function GET(request: NextRequest) {
           }
         : undefined
 
-      // Remover pdfFile (com blobUrl) da resposta — substituído por _hasPdf/_pdfFile
-      const { pdfFile: _removed, ...rest } = m
+      // HTML interno: nunca expor blobUrl ao cliente
+      const hasHtml = !!m.htmlFile?.blobUrl
+      const htmlFileMeta = isAdmin && m.htmlFile
+        ? {
+            originalFilename: m.htmlFile.originalFilename,
+            sizeBytes: m.htmlFile.sizeBytes,
+            uploadedByName: m.htmlFile.uploadedByName,
+            uploadedAt: m.htmlFile.uploadedAt,
+          }
+        : undefined
+
+      // Remover pdfFile/htmlFile (com blobUrl) da resposta — substituídos por flags
+      const { pdfFile: _removed, htmlFile: _removedHtml, ...rest } = m
 
       // Resolve pricing event state if this material has one
       const pricingEventState = m.pricingEventId
@@ -300,10 +330,13 @@ export async function GET(request: NextRequest) {
         _hasGroupAccess: hasGroupAccess,
         _hasAccess: hasAccess,
         _hasPdf: hasPdf,
+        _hasHtml: hasHtml,
         pdfViewerEnabled: m.pdfViewerEnabled === true,
         pdfDownloadEnabled: m.pdfDownloadEnabled !== false,
+        htmlViewerEnabled: m.htmlViewerEnabled === true,
         ...(hasPdf && m.pdfFile?.pageCount ? { _pageCount: m.pdfFile.pageCount } : {}),
         ...(pdfFileMeta && { _pdfFile: pdfFileMeta }),
+        ...(htmlFileMeta && { _htmlFile: htmlFileMeta }),
         ...(m.type === 'flashcard_deck' && { _cardCount: cardCountByMaterialId[idStr] ?? 0 }),
         _pricingEventState: serializePricingEventState(pricingEventState),
       }
@@ -353,6 +386,8 @@ export async function POST(request: NextRequest) {
       pdfViewerEnabled: body.pdfViewerEnabled === true,
       pdfDownloadEnabled: body.pdfDownloadEnabled !== false,
       pdfViewerConfig: sanitizePdfViewerConfig(body.pdfViewerConfig) || { summary: [], navigation: [], preview: { enabled: false, ranges: [] } },
+      htmlViewerEnabled: body.htmlViewerEnabled === true,
+      complementaryMaterialIds: sanitizeComplementaryIds(body.complementaryMaterialIds, null),
       downloadCount: 0,
       viewCount: 0,
       isHidden: body.isHidden || false,
@@ -398,6 +433,12 @@ export async function PUT(request: NextRequest) {
     }
     if ('pdfViewerConfig' in updates) {
       updates.pdfViewerConfig = sanitizePdfViewerConfig(updates.pdfViewerConfig) || { summary: [], navigation: [], preview: { enabled: false, ranges: [] } }
+    }
+    if ('htmlViewerEnabled' in updates) {
+      updates.htmlViewerEnabled = updates.htmlViewerEnabled === true
+    }
+    if ('complementaryMaterialIds' in updates) {
+      updates.complementaryMaterialIds = sanitizeComplementaryIds(updates.complementaryMaterialIds, _id)
     }
 
     await db.collection('materials').updateOne(

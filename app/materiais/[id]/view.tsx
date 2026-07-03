@@ -35,6 +35,8 @@ import {
   CheckCheck,
   Layers,
   TrendingDown,
+  Code2,
+  MonitorPlay,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { AppShell } from '@/components/app-shell'
@@ -83,16 +85,27 @@ interface Material {
   viewCount: number
   createdAt: string
   _hasPdf?: boolean
+  _hasHtml?: boolean
   _pageCount?: number
   _cardCount?: number
   pdfViewerEnabled?: boolean
   pdfDownloadEnabled?: boolean
+  htmlViewerEnabled?: boolean
   pdfViewerConfig?: {
     preview?: {
       enabled?: boolean
       ranges?: Array<{ start: number; end: number }>
     }
   }
+}
+
+interface ComplementaryMaterial {
+  _id: string
+  title: string
+  coverImage: string
+  type: string
+  pricing: 'free' | 'paid'
+  price: number
 }
 
 interface PageData {
@@ -104,6 +117,7 @@ interface PageData {
   userGroups: string[]
   isAuthenticated: boolean
   watermark: { name: string; cpf: string }
+  complementaryMaterials?: ComplementaryMaterial[]
 }
 
 // ─── Constants ───────────────────────────────────────────────
@@ -117,6 +131,7 @@ const GROUP_META: Record<string, { label: string; color: string; icon: React.Rea
 
 const TYPE_ICONS: Record<string, React.ReactNode> = {
   pdf:         <FileText className="h-4 w-4" />,
+  html:        <Code2 className="h-4 w-4" />,
   video:       <Video className="h-4 w-4" />,
   video_embed: <Play className="h-4 w-4" />,
   link:        <Link2 className="h-4 w-4" />,
@@ -128,6 +143,7 @@ const TYPE_ICONS: Record<string, React.ReactNode> = {
 
 const TYPE_LABELS: Record<string, string> = {
   pdf:         'PDF',
+  html:        'Experiência HTML',
   video:       'Vídeo',
   video_embed: 'Vídeo',
   link:        'Link',
@@ -300,6 +316,11 @@ export default function MaterialViewPage() {
     router.push(`/materiais/${data.material._id}/viewer`)
   }, [data, router])
 
+  const handleOpenHtmlViewer = useCallback(() => {
+    if (!data) return
+    router.push(`/materiais/${data.material._id}/html`)
+  }, [data, router])
+
   const showCartMessage = useCallback((message: string) => {
     setCartMessage(message)
     setTimeout(() => setCartMessage(''), 3500)
@@ -434,6 +455,9 @@ export default function MaterialViewPage() {
   const isPdf = material._hasPdf || material.type === 'pdf'
   const canViewPdf = hasAccess && !!material._hasPdf && material.pdfViewerEnabled === true
   const canDownload = hasAccess && (!material._hasPdf || material.pdfDownloadEnabled !== false)
+  const isHtml = material._hasHtml || material.type === 'html'
+  const canViewHtml = hasAccess && !!material._hasHtml && material.htmlViewerEnabled === true
+  const complementaryMaterials = data.complementaryMaterials || []
 
   // Prévia: quem NÃO tem acesso pode abrir o viewer e ver só as páginas
   // liberadas pelo admin. Segurança real é no servidor; aqui é só o convite.
@@ -789,6 +813,29 @@ export default function MaterialViewPage() {
                             O viewer e o download deste PDF estão indisponíveis no momento.
                           </div>
                         )}
+                        {canViewHtml && (
+                          <Button
+                            onClick={handleOpenHtmlViewer}
+                            className="relative w-full h-12 overflow-hidden rounded-2xl font-bold text-white border border-emerald-200/30 bg-gradient-to-r from-emerald-700 via-emerald-600 to-amber-500 hover:from-emerald-600 hover:via-emerald-500 hover:to-amber-400 shadow-xl shadow-emerald-500/25 transition-all active:scale-[0.98]"
+                          >
+                            <span className="absolute inset-0 bg-white/15 backdrop-blur-sm opacity-40" />
+                            <span className="relative flex items-center">
+                              <MonitorPlay className="h-4 w-4 mr-2" />
+                              Abrir Leitor HTML
+                            </span>
+                          </Button>
+                        )}
+                        {isHtml && canViewHtml && (
+                          <p className="text-center text-[10px] text-muted-foreground/70 leading-relaxed">
+                            Experiência protegida com marca d&apos;água exclusiva para sua conta
+                          </p>
+                        )}
+                        {isHtml && !canViewHtml && (
+                          <div className="flex items-start gap-2 rounded-2xl border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
+                            <ShieldAlert className="h-4 w-4 shrink-0 mt-0.5" />
+                            O leitor desta experiência está indisponível no momento.
+                          </div>
+                        )}
                       </>
                     )
                   ) : (
@@ -900,6 +947,55 @@ export default function MaterialViewPage() {
                         : <><ChevronDown className="h-3 w-3" /> Ver mais</>}
                     </button>
                   )}
+                </motion.div>
+              )}
+
+              {/* Materiais complementares */}
+              {complementaryMaterials.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.18 }}
+                  className="mt-4 glass-card rounded-2xl px-5 py-4 border border-border/40"
+                >
+                  <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-1.5">
+                    <Layers className="h-3.5 w-3.5" />
+                    Materiais complementares
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {complementaryMaterials.map((cm) => (
+                      <Link
+                        key={cm._id}
+                        href={`/materiais/${cm._id}`}
+                        className="group flex items-center gap-3 rounded-xl border border-border/40 glass-button p-2.5 transition-all hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10 active:scale-[0.99]"
+                      >
+                        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-gradient-to-br from-primary/15 to-accent/10">
+                          {cm.coverImage ? (
+                            <Image src={cm.coverImage} alt={cm.title} fill className="object-cover" sizes="56px" />
+                          ) : (
+                            <span className="flex h-full w-full items-center justify-center text-primary">
+                              {TYPE_ICONS[cm.type] || <File className="h-5 w-5" />}
+                            </span>
+                          )}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                            {cm.title}
+                          </p>
+                          <p className="mt-0.5 flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                            <span className="inline-flex items-center gap-1">
+                              {TYPE_ICONS[cm.type]}
+                              {TYPE_LABELS[cm.type] || 'Material'}
+                            </span>
+                            <span className="text-muted-foreground/40">·</span>
+                            <span className={cm.pricing === 'free' ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'font-medium'}>
+                              {cm.pricing === 'free' ? 'Gratuito' : `R$ ${cm.price.toFixed(2)}`}
+                            </span>
+                          </p>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
                 </motion.div>
               )}
 
@@ -1123,6 +1219,29 @@ export default function MaterialViewPage() {
                             <div className="flex items-start gap-2 rounded-2xl border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
                               <ShieldAlert className="h-4 w-4 shrink-0 mt-0.5" />
                               O viewer e o download deste PDF estao indisponiveis no momento.
+                            </div>
+                          )}
+                          {canViewHtml && (
+                            <Button
+                              onClick={handleOpenHtmlViewer}
+                              className="relative w-full h-12 overflow-hidden rounded-2xl font-bold text-white border border-emerald-200/30 bg-gradient-to-r from-emerald-700 via-emerald-600 to-amber-500 hover:from-emerald-600 hover:via-emerald-500 hover:to-amber-400 shadow-xl shadow-emerald-500/25 transition-all active:scale-[0.98]"
+                            >
+                              <span className="absolute inset-0 bg-white/15 backdrop-blur-sm opacity-40" />
+                              <span className="relative flex items-center">
+                                <MonitorPlay className="h-4 w-4 mr-2" />
+                                Abrir Leitor HTML
+                              </span>
+                            </Button>
+                          )}
+                          {isHtml && canViewHtml && (
+                            <p className="text-center text-[10px] text-muted-foreground/70 leading-relaxed">
+                              Experiência protegida com marca d&apos;água exclusiva para sua conta
+                            </p>
+                          )}
+                          {isHtml && !canViewHtml && (
+                            <div className="flex items-start gap-2 rounded-2xl border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
+                              <ShieldAlert className="h-4 w-4 shrink-0 mt-0.5" />
+                              O leitor desta experiência está indisponível no momento.
                             </div>
                           )}
                         </>

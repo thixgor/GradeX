@@ -1181,7 +1181,7 @@ export interface Doacao {
 
 // ─── Sistema de Materiais (Marketplace) ──────────────────────
 
-export type MaterialType = 'pdf' | 'video' | 'video_embed' | 'link' | 'image' | 'document' | 'other'
+export type MaterialType = 'pdf' | 'html' | 'video' | 'video_embed' | 'link' | 'image' | 'document' | 'other'
 
 // Grupos de acesso disponíveis para restrição de materiais
 export type MaterialAccessGroup = 'gratuito' | 'trial' | 'essential' | 'premium' | 'monitor'
@@ -1256,6 +1256,24 @@ export interface MaterialPdfFile {
   pageCount?: number
 }
 
+/** Metadados do HTML interno armazenado no Vercel Blob (arquivo .html único) */
+export interface MaterialHtmlFile {
+  /** Pathname no Vercel Blob — nunca expor ao cliente */
+  blobPathname: string
+  /** URL completa no Vercel Blob — nunca expor ao cliente */
+  blobUrl: string
+  /** Nome original do arquivo (sanitizado) */
+  originalFilename: string
+  /** Tamanho em bytes */
+  sizeBytes: number
+  /** userId do admin que fez o upload */
+  uploadedBy: string
+  /** Nome do admin que fez o upload */
+  uploadedByName: string
+  /** Data do upload */
+  uploadedAt: Date
+}
+
 export interface Material {
   _id?: string | import('mongodb').ObjectId
   title: string
@@ -1274,6 +1292,14 @@ export interface Material {
   pdfViewerEnabled?: boolean  // Permite abrir o viewer protegido
   pdfDownloadEnabled?: boolean // Permite baixar PDF protegido
   pdfViewerConfig?: MaterialPdfViewerConfig // Capa, sumário e navegação (admin)
+
+  // HTML interno (leitor de experiências — arquivo .html autocontido)
+  htmlFile?: MaterialHtmlFile // Presente quando admin fez upload direto do HTML
+  htmlViewerEnabled?: boolean // Permite abrir o leitor HTML protegido (com watermark)
+
+  // Materiais complementares — IDs de outros materiais anexados a este
+  // (qualquer tipo). Exibidos como "Materiais complementares" na página.
+  complementaryMaterialIds?: string[]
 
   // Controle de acesso por grupo (vazio = todos podem acessar)
   allowedGroups?: MaterialAccessGroup[] // Ex: ['premium', 'essential'] = só premium e essential

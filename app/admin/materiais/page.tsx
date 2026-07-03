@@ -53,6 +53,8 @@ import {
   ArrowUp,
   ArrowDown,
   Mail,
+  Code2,
+  Layers,
 } from 'lucide-react'
 import { upload } from '@vercel/blob/client'
 import { Button } from '@/components/ui/button'
@@ -103,6 +105,17 @@ interface Material {
     uploadedByName: string
     uploadedAt: string
   }
+  // HTML interno
+  _hasHtml?: boolean
+  htmlViewerEnabled?: boolean
+  _htmlFile?: {
+    originalFilename: string
+    sizeBytes: number
+    uploadedByName: string
+    uploadedAt: string
+  }
+  // Materiais complementares
+  complementaryMaterialIds?: string[]
 }
 
 interface PdfSummaryEntry {
@@ -258,6 +271,7 @@ interface MaterialTraceResult {
 
 const typeOptions = [
   { value: 'pdf', label: 'PDF', icon: <FileText className="h-4 w-4" /> },
+  { value: 'html', label: 'HTML (experiência)', icon: <Code2 className="h-4 w-4" /> },
   { value: 'video', label: 'Vídeo (download)', icon: <Video className="h-4 w-4" /> },
   { value: 'video_embed', label: 'Vídeo Embed', icon: <Play className="h-4 w-4" /> },
   { value: 'link', label: 'Link', icon: <Link2 className="h-4 w-4" /> },
@@ -395,6 +409,15 @@ function AdminMateriaisContent() {
   const [pdfUploadError, setPdfUploadError] = useState('')
   const [pdfRemoving, setPdfRemoving] = useState(false)
   const pdfInputRef = useRef<HTMLInputElement>(null)
+
+  // ─── Estado do upload de HTML ────────────────────────────────────────
+  type HtmlInfo = { originalFilename: string; sizeBytes: number; uploadedByName: string; uploadedAt: string }
+  const [htmlInfo, setHtmlInfo] = useState<HtmlInfo | null>(null)
+  const [htmlUploading, setHtmlUploading] = useState(false)
+  const [htmlUploadProgress, setHtmlUploadProgress] = useState(0)
+  const [htmlUploadError, setHtmlUploadError] = useState('')
+  const [htmlRemoving, setHtmlRemoving] = useState(false)
+  const htmlInputRef = useRef<HTMLInputElement>(null)
 
   const copyLink = (type: 'folder' | 'material' | 'package', id: string) => {
     const base = window.location.origin
@@ -622,6 +645,8 @@ function AdminMateriaisContent() {
     pdfViewerEnabled: false,
     pdfDownloadEnabled: true,
     pdfViewerConfig: EMPTY_PDF_VIEWER_CONFIG as PdfViewerConfig,
+    htmlViewerEnabled: false,
+    complementaryMaterialIds: [] as string[],
     order: 0,
   })
 
@@ -870,10 +895,13 @@ function AdminMateriaisContent() {
             ranges: material.pdfViewerConfig?.preview?.ranges || [],
           },
         },
+        htmlViewerEnabled: material.htmlViewerEnabled === true,
+        complementaryMaterialIds: material.complementaryMaterialIds || [],
         order: material.order || 0,
       })
       setPdfInfo(material._pdfFile || null)
       setPdfPageCount(material._pageCount || 0)
+      setHtmlInfo(material._htmlFile || null)
     } else {
       setMaterialForm({
         _id: '', title: '', description: '', coverImage: '', type: 'pdf',
@@ -882,18 +910,22 @@ function AdminMateriaisContent() {
         pricing: 'free', price: 0, pricingEventId: null, stripePriceId: '', isHidden: false, isFeatured: false,
         pdfViewerEnabled: false, pdfDownloadEnabled: true,
         pdfViewerConfig: { coverPage: undefined, summary: [], navigation: [], preview: { enabled: false, ranges: [] } },
+        htmlViewerEnabled: false, complementaryMaterialIds: [],
         order: 0,
       })
       setPdfInfo(null)
       setPdfPageCount(0)
+      setHtmlInfo(null)
     }
+    setHtmlUploadError('')
+    setHtmlUploadProgress(0)
     setShowMaterialModal(true)
   }
 
   const saveMaterial = async () => {
-    // Para tipo PDF: URL e arquivo são ambos opcionais — o admin faz upload após criar.
+    // Para tipo PDF/HTML: URL e arquivo são opcionais — o admin faz upload após criar.
     // Para outros tipos: URL é obrigatória.
-    const needsUrl = materialForm.type !== 'pdf' && !materialForm.downloadUrl.trim()
+    const needsUrl = materialForm.type !== 'pdf' && materialForm.type !== 'html' && !materialForm.downloadUrl.trim()
     if (!materialForm.title || needsUrl) {
       alert('Título e URL/código embed são obrigatórios')
       return
@@ -920,8 +952,8 @@ function AdminMateriaisContent() {
       })
       if (!res.ok) { alert((await res.json()).error || 'Erro ao salvar'); return }
 
-      // Ao criar um PDF, reabre o modal em modo edição para o admin fazer o upload
-      if (modalMode === 'create' && materialForm.type === 'pdf') {
+      // Ao criar um PDF/HTML, reabre o modal em modo edição para o admin fazer o upload
+      if (modalMode === 'create' && (materialForm.type === 'pdf' || materialForm.type === 'html')) {
         const created = await res.json()
         fetchAll()
         setMaterialForm(p => ({ ...p, _id: String(created._id) }))
@@ -1024,6 +1056,93 @@ function AdminMateriaisContent() {
       setPdfUploadError('Erro ao remover PDF.')
     } finally {
       setPdfRemoving(false)
+    }
+  }
+
+  // ─── HTML Upload ──────────────────────────────────────────────────────
+  const handleHtmlFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validação client-side (o servidor re-valida — não confiar só nessa)
+    const isHtmlType = file.type === 'text/html' || /\.html?$/i.test(file.name)
+    if (!isHtmlType) {
+      setHtmlUploadError('Envie um arquivo .html (autocontido).')
+      return
+    }
+    const maxMb = parseInt(process.env.NEXT_PUBLIC_MATERIAL_HTML_UPLOAD_MAX_MB || '25', 10) || 25
+    if (file.size > maxMb * 1024 * 1024) {
+      setHtmlUploadError(`Arquivo muito grande. Máximo: ${maxMb} MB.`)
+      return
+    }
+    if (!materialForm._id) {
+      setHtmlUploadError('Salve o material primeiro antes de fazer o upload do HTML.')
+      return
+    }
+
+    setHtmlUploadError('')
+    setHtmlUploading(true)
+    setHtmlUploadProgress(0)
+
+    try {
+      const pathname = `material-html/${materialForm._id}/${Date.now()}-${crypto.randomUUID()}.html`
+      const blob = await upload(pathname, file, {
+        access: 'private',
+        contentType: 'text/html',
+        multipart: true,
+        handleUploadUrl: '/api/materiais/html-upload',
+        clientPayload: JSON.stringify({ materialId: materialForm._id }),
+        onUploadProgress: (ev) => setHtmlUploadProgress(Math.round(ev.percentage)),
+      })
+
+      const confirmRes = await fetch('/api/materiais/html-upload', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          materialId: materialForm._id,
+          blobUrl: blob.url,
+          blobPathname: blob.pathname,
+          originalFilename: file.name,
+          sizeBytes: file.size,
+        }),
+      })
+      if (!confirmRes.ok) {
+        const d = await confirmRes.json().catch(() => ({}))
+        throw new Error(d.error || 'Erro ao confirmar upload')
+      }
+
+      const res = await fetch(`/api/materiais/html-upload?materialId=${materialForm._id}`)
+      const data = await res.json()
+      if (data.hasHtml) {
+        setHtmlInfo(data.htmlFile)
+      }
+      fetchAll()
+    } catch (err: any) {
+      setHtmlUploadError(err?.message || 'Erro ao fazer upload do HTML.')
+    } finally {
+      setHtmlUploading(false)
+      setHtmlUploadProgress(0)
+      if (htmlInputRef.current) htmlInputRef.current.value = ''
+    }
+  }
+
+  const handleHtmlRemove = async () => {
+    if (!materialForm._id || !confirm('Remover HTML deste material?')) return
+    setHtmlRemoving(true)
+    try {
+      const res = await fetch(`/api/materiais/html-upload?materialId=${materialForm._id}`, { method: 'DELETE' })
+      if (res.ok) {
+        setHtmlInfo(null)
+        setMaterialForm(p => ({ ...p, htmlViewerEnabled: false }))
+        fetchAll()
+      } else {
+        const d = await res.json()
+        setHtmlUploadError(d.error || 'Erro ao remover HTML.')
+      }
+    } catch {
+      setHtmlUploadError('Erro ao remover HTML.')
+    } finally {
+      setHtmlRemoving(false)
     }
   }
 
@@ -2121,6 +2240,125 @@ function AdminMateriaisContent() {
                   </div>
                 )}
 
+                {/* ── Upload de HTML Interno (apenas type=html) ── */}
+                {materialForm.type === 'html' && (
+                  <div className="rounded-xl border-2 border-dashed border-muted p-4 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <Code2 className="h-4 w-4 text-emerald-500" />
+                      <span className="text-sm font-medium">HTML da Experiência (com marca d&apos;água)</span>
+                    </div>
+
+                    {/* Info do HTML atual */}
+                    {htmlInfo ? (
+                      <div className="rounded-lg bg-green-500/10 border border-green-500/20 p-3 flex items-start justify-between gap-3">
+                        <div className="flex items-start gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
+                          <div>
+                            <p className="text-sm font-medium text-green-700 dark:text-green-400">{htmlInfo.originalFilename}</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">
+                              {(htmlInfo.sizeBytes / 1024 / 1024).toFixed(2)} MB · Enviado por {htmlInfo.uploadedByName} · {new Date(htmlInfo.uploadedAt).toLocaleDateString('pt-BR')}
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={handleHtmlRemove}
+                          disabled={htmlRemoving}
+                          className="text-red-500 hover:text-red-700 disabled:opacity-50 shrink-0"
+                          title="Remover HTML"
+                        >
+                          {htmlRemoving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash className="h-4 w-4" />}
+                        </button>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-muted-foreground">Nenhum HTML enviado ainda.</p>
+                    )}
+
+                    <div className={`rounded-lg border p-3 space-y-3 ${htmlInfo ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-muted/30 border-muted'}`}>
+                      <div className="flex items-center gap-2">
+                        <ShieldCheck className={`h-4 w-4 ${htmlInfo ? 'text-emerald-500' : 'text-muted-foreground'}`} />
+                        <span className="text-sm font-medium">Segurança do leitor HTML</span>
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-2 text-[11px]">
+                        <span className={`rounded-lg px-2 py-1 border ${htmlInfo ? 'text-emerald-600 border-emerald-500/25 bg-emerald-500/10' : 'text-muted-foreground border-border bg-muted/30'}`}>
+                          HTML {htmlInfo ? 'vinculado' : 'não vinculado'}
+                        </span>
+                        <span className={`rounded-lg px-2 py-1 border ${materialForm.htmlViewerEnabled && htmlInfo ? 'text-emerald-600 border-emerald-500/25 bg-emerald-500/10' : 'text-muted-foreground border-border bg-muted/30'}`}>
+                          Leitor {materialForm.htmlViewerEnabled && htmlInfo ? 'permitido' : 'bloqueado'}
+                        </span>
+                      </div>
+                      <label className={`flex items-center gap-2 rounded-lg border p-2 text-sm ${htmlInfo ? 'cursor-pointer hover:bg-muted/40' : 'opacity-50 cursor-not-allowed'}`}>
+                        <input
+                          type="checkbox"
+                          disabled={!htmlInfo}
+                          checked={htmlInfo ? materialForm.htmlViewerEnabled : false}
+                          onChange={e => setMaterialForm(p => ({ ...p, htmlViewerEnabled: e.target.checked }))}
+                          className="rounded"
+                        />
+                        Habilitar leitor HTML (somente leitura, com marca d&apos;água)
+                      </label>
+                      {!htmlInfo && (
+                        <p className="text-[11px] text-muted-foreground">
+                          Envie um arquivo .html autocontido (CSS/JS inline) para liberar o leitor protegido.
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Upload */}
+                    {!materialForm._id || modalMode === 'create' ? (
+                      <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                        <AlertCircle className="h-3 w-3" />
+                        Salve o material primeiro para habilitar o upload de HTML.
+                      </p>
+                    ) : (
+                      <div className="space-y-2">
+                        <input
+                          ref={htmlInputRef}
+                          type="file"
+                          accept=".html,text/html"
+                          onChange={handleHtmlFileChange}
+                          disabled={htmlUploading}
+                          className="hidden"
+                          id="html-upload-input"
+                        />
+                        <label
+                          htmlFor="html-upload-input"
+                          className={`flex items-center gap-2 justify-center w-full rounded-lg border px-3 py-2 text-sm cursor-pointer transition-colors
+                            ${htmlUploading
+                              ? 'bg-muted text-muted-foreground cursor-not-allowed'
+                              : 'hover:bg-muted/50 hover:border-emerald-400 text-emerald-600 dark:text-emerald-400 border-emerald-300 dark:border-emerald-700'
+                            }`}
+                        >
+                          {htmlUploading ? (
+                            <><Loader2 className="h-4 w-4 animate-spin" /> Enviando... {htmlUploadProgress}%</>
+                          ) : (
+                            <><Upload className="h-4 w-4" /> {htmlInfo ? 'Substituir HTML' : 'Selecionar HTML'}</>
+                          )}
+                        </label>
+
+                        {htmlUploading && (
+                          <div className="w-full bg-muted rounded-full h-1.5">
+                            <div
+                              className="bg-emerald-500 h-1.5 rounded-full transition-all"
+                              style={{ width: `${htmlUploadProgress}%` }}
+                            />
+                          </div>
+                        )}
+
+                        {htmlUploadError && (
+                          <p className="text-xs text-red-500 flex items-center gap-1">
+                            <AlertCircle className="h-3 w-3" />
+                            {htmlUploadError}
+                          </p>
+                        )}
+
+                        <p className="text-[11px] text-muted-foreground">
+                          Máx. {process.env.NEXT_PUBLIC_MATERIAL_HTML_UPLOAD_MAX_MB || '25'} MB · Arquivo .html autocontido · Upload direto ao storage
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {materialForm.type !== 'video_embed' && (
                   <Field label="URL de Preview (opcional)">
                     <Input value={materialForm.previewUrl} onChange={e => setMaterialForm(p => ({ ...p, previewUrl: e.target.value }))} placeholder="https://..." />
@@ -2203,6 +2441,49 @@ function AdminMateriaisContent() {
                       Apenas {materialForm.allowedGroups.map(g => ACCESS_GROUPS.find(ag => ag.id === g)?.label).join(', ')} poderão acessar
                     </p>
                   )}
+                </div>
+
+                {/* Materiais complementares */}
+                <div className="rounded-xl border p-3 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Layers className="h-4 w-4 text-primary" />
+                    <span className="text-sm font-medium">
+                      Materiais complementares ({materialForm.complementaryMaterialIds.length})
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Anexe outros materiais que aparecerão como &quot;complementares&quot; na página deste material.
+                  </p>
+                  <div className="max-h-52 overflow-y-auto rounded-lg border divide-y divide-border/40">
+                    {materials.filter(m => m._id !== materialForm._id).length === 0 ? (
+                      <p className="p-3 text-xs text-muted-foreground">Nenhum outro material disponível.</p>
+                    ) : (
+                      materials.filter(m => m._id !== materialForm._id).map(m => {
+                        const checked = materialForm.complementaryMaterialIds.includes(m._id)
+                        return (
+                          <label key={m._id} className={`flex items-center gap-2 p-2 cursor-pointer transition-colors ${checked ? 'bg-primary/10' : 'hover:bg-muted/50'}`}>
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={e => setMaterialForm(p => ({
+                                ...p,
+                                complementaryMaterialIds: e.target.checked
+                                  ? [...p.complementaryMaterialIds, m._id]
+                                  : p.complementaryMaterialIds.filter(id => id !== m._id)
+                              }))}
+                              className="rounded"
+                            />
+                            <span className="flex items-center gap-1.5 text-sm min-w-0">
+                              <span className="shrink-0 text-muted-foreground">
+                                {typeOptions.find(t => t.value === m.type)?.icon || <File className="h-4 w-4" />}
+                              </span>
+                              <span className="truncate">{m.title}</span>
+                            </span>
+                          </label>
+                        )
+                      })
+                    )}
+                  </div>
                 </div>
 
                 <PricingSelector

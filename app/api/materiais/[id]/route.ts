@@ -117,9 +117,10 @@ export async function GET(
         ? { ...material, downloadUrl: '' }
         : material
 
-    // Computed flags (never expose pdfFile.blobUrl to client)
+    // Computed flags (never expose pdfFile.blobUrl / htmlFile.blobUrl to client)
     const _hasPdf = !!(material.pdfFile?.blobUrl)
-    const { pdfFile: _stripped, ...materialWithoutPdf } = safeMaterial
+    const _hasHtml = !!(material.htmlFile?.blobUrl)
+    const { pdfFile: _strippedPdf, htmlFile: _strippedHtml, ...materialWithoutPdf } = safeMaterial
 
     // For flashcard_deck materials, fetch linked deck card count
     let _cardCount: number | undefined
@@ -156,17 +157,53 @@ export async function GET(
       ? await getPricingEventStateById(db, String(material.pricingEventId))
       : null
 
+    // Materiais complementares — resumos de outros materiais anexados a este.
+    // Preserva a ordem definida pelo admin; oculta os isHidden (exceto admin).
+    let complementaryMaterials: any[] = []
+    const complementaryIds: string[] = Array.isArray(material.complementaryMaterialIds)
+      ? material.complementaryMaterialIds
+          .map((cid: any) => String(cid))
+          .filter((cid: string) => ObjectId.isValid(cid) && cid !== String(material._id))
+      : []
+    if (complementaryIds.length > 0) {
+      const docs = await db.collection('materials')
+        .find(
+          {
+            _id: { $in: complementaryIds.map((cid) => new ObjectId(cid)) },
+            ...(isAdmin ? {} : { isHidden: false }),
+          },
+          { projection: { title: 1, coverImage: 1, type: 1, pricing: 1, price: 1 } }
+        )
+        .toArray()
+        .catch(() => [])
+      const byId = new Map(docs.map((d: any) => [String(d._id), d]))
+      complementaryMaterials = complementaryIds
+        .map((cid) => byId.get(cid))
+        .filter(Boolean)
+        .map((d: any) => ({
+          _id: String(d._id),
+          title: d.title || '',
+          coverImage: d.coverImage || '',
+          type: d.type || 'other',
+          pricing: d.pricing || 'free',
+          price: Number(d.price || 0),
+        }))
+    }
+
     const res = NextResponse.json({
       material: {
         ...materialWithoutPdf,
         _id: String(safeMaterial._id),
         _hasPdf,
+        _hasHtml,
         pdfViewerEnabled: material.pdfViewerEnabled === true,
         pdfDownloadEnabled: material.pdfDownloadEnabled !== false,
+        htmlViewerEnabled: material.htmlViewerEnabled === true,
         pricingEventId: material.pricingEventId ? String(material.pricingEventId) : null,
         ...(_hasPdf && material.pdfFile?.pageCount ? { _pageCount: material.pdfFile.pageCount } : {}),
         ...(material.type === 'flashcard_deck' ? { _cardCount: _cardCount ?? 0 } : {}),
       },
+      complementaryMaterials,
       folderName,
       hasAccess: canAccess,
       isPurchased,
