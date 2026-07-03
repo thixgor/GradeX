@@ -37,6 +37,9 @@ import {
   TrendingDown,
   Code2,
   MonitorPlay,
+  Headphones,
+  BookOpen,
+  ArrowRight,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { AppShell } from '@/components/app-shell'
@@ -99,13 +102,19 @@ interface Material {
   }
 }
 
-interface ComplementaryMaterial {
-  _id: string
+interface ComplementaryItem {
+  id: string
+  kind: 'material' | 'custom'
+  materialId?: string
+  materialType?: string
+  template?: string
   title: string
-  coverImage: string
-  type: string
-  pricing: 'free' | 'paid'
-  price: number
+  description?: string
+  coverImage?: string
+  buttonLabel?: string
+  href?: string
+  pricing?: 'free' | 'paid'
+  price?: number
 }
 
 interface PageData {
@@ -117,7 +126,7 @@ interface PageData {
   userGroups: string[]
   isAuthenticated: boolean
   watermark: { name: string; cpf: string }
-  complementaryMaterials?: ComplementaryMaterial[]
+  complementaryItems?: ComplementaryItem[]
 }
 
 // ─── Constants ───────────────────────────────────────────────
@@ -151,6 +160,71 @@ const TYPE_LABELS: Record<string, string> = {
   document:    'Documento',
   other:       'Arquivo',
   flashcard_deck: 'Flashcards',
+}
+
+// Templates dos itens complementares avulsos → ícone, rótulo e CTA padrão.
+const COMPLEMENTARY_TEMPLATE_META: Record<string, { label: string; icon: React.ReactNode; cta: string }> = {
+  experiencia: { label: 'Experiência', icon: <MonitorPlay className="h-4 w-4" />, cta: 'Acessar' },
+  pdf:         { label: 'PDF',         icon: <FileText className="h-4 w-4" />,    cta: 'Abrir' },
+  aula:        { label: 'Aula',        icon: <GraduationCap className="h-4 w-4" />, cta: 'Assistir' },
+  podcast:     { label: 'Podcast',     icon: <Headphones className="h-4 w-4" />,  cta: 'Ouvir agora' },
+  ebook:       { label: 'Ebook',       icon: <BookOpen className="h-4 w-4" />,    cta: 'Ler agora' },
+}
+
+function ComplementaryCard({ item }: { item: ComplementaryItem }) {
+  const isMaterial = item.kind === 'material'
+  const tmplMeta = !isMaterial ? (COMPLEMENTARY_TEMPLATE_META[item.template || 'experiencia'] || COMPLEMENTARY_TEMPLATE_META.experiencia) : null
+  const icon = isMaterial ? (TYPE_ICONS[item.materialType || 'other'] || <File className="h-4 w-4" />) : tmplMeta!.icon
+  const badgeLabel = isMaterial ? (TYPE_LABELS[item.materialType || 'other'] || 'Material') : tmplMeta!.label
+  const ctaLabel = item.buttonLabel || (isMaterial ? 'Acessar' : tmplMeta!.cta)
+  const href = item.href || ''
+  const isInternal = href.startsWith('/')
+
+  const inner = (
+    <>
+      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-gradient-to-br from-primary/15 to-accent/10">
+        {item.coverImage ? (
+          <Image src={item.coverImage} alt={item.title} fill className="object-cover" sizes="64px" />
+        ) : (
+          <span className="flex h-full w-full items-center justify-center text-primary">{icon}</span>
+        )}
+      </div>
+      <div className="min-w-0 flex-1">
+        <span className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
+          {icon}
+          {badgeLabel}
+        </span>
+        <p className="mt-1 truncate text-sm font-bold text-foreground group-hover:text-primary transition-colors">
+          {item.title}
+        </p>
+        {item.description ? (
+          <p className="mt-0.5 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+            {item.description}
+          </p>
+        ) : null}
+      </div>
+      {href ? (
+        <span className="ml-1 flex shrink-0 items-center gap-1 self-center rounded-xl bg-gradient-to-r from-emerald-600 to-amber-500 px-3 py-2 text-xs font-bold text-white shadow-md shadow-emerald-500/20 transition-transform group-hover:scale-[1.03]">
+          {ctaLabel}
+          <ArrowRight className="h-3.5 w-3.5" />
+        </span>
+      ) : null}
+    </>
+  )
+
+  const cardClass = "group flex items-center gap-3 rounded-2xl border border-border/40 glass-button p-3 transition-all hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10 active:scale-[0.99]"
+
+  if (!href) {
+    return <div className={cardClass}>{inner}</div>
+  }
+  if (isInternal) {
+    return <Link href={href} className={cardClass}>{inner}</Link>
+  }
+  return (
+    <a href={href} target="_blank" rel="noopener noreferrer" className={cardClass}>
+      {inner}
+    </a>
+  )
 }
 
 function formatDuration(seconds: number): string {
@@ -457,7 +531,7 @@ export default function MaterialViewPage() {
   const canDownload = hasAccess && (!material._hasPdf || material.pdfDownloadEnabled !== false)
   const isHtml = material._hasHtml || material.type === 'html'
   const canViewHtml = hasAccess && !!material._hasHtml && material.htmlViewerEnabled === true
-  const complementaryMaterials = data.complementaryMaterials || []
+  const complementaryItems = data.complementaryItems || []
 
   // Prévia: quem NÃO tem acesso pode abrir o viewer e ver só as páginas
   // liberadas pelo admin. Segurança real é no servidor; aqui é só o convite.
@@ -950,50 +1024,25 @@ export default function MaterialViewPage() {
                 </motion.div>
               )}
 
-              {/* Materiais complementares */}
-              {complementaryMaterials.length > 0 && (
+              {/* Você também leva … (materiais complementares) */}
+              {complementaryItems.length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.18 }}
                   className="mt-4 glass-card rounded-2xl px-5 py-4 border border-border/40"
                 >
-                  <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-1.5">
-                    <Layers className="h-3.5 w-3.5" />
-                    Materiais complementares
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {complementaryMaterials.map((cm) => (
-                      <Link
-                        key={cm._id}
-                        href={`/materiais/${cm._id}`}
-                        className="group flex items-center gap-3 rounded-xl border border-border/40 glass-button p-2.5 transition-all hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10 active:scale-[0.99]"
-                      >
-                        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-gradient-to-br from-primary/15 to-accent/10">
-                          {cm.coverImage ? (
-                            <Image src={cm.coverImage} alt={cm.title} fill className="object-cover" sizes="56px" />
-                          ) : (
-                            <span className="flex h-full w-full items-center justify-center text-primary">
-                              {TYPE_ICONS[cm.type] || <File className="h-5 w-5" />}
-                            </span>
-                          )}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                            {cm.title}
-                          </p>
-                          <p className="mt-0.5 flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                            <span className="inline-flex items-center gap-1">
-                              {TYPE_ICONS[cm.type]}
-                              {TYPE_LABELS[cm.type] || 'Material'}
-                            </span>
-                            <span className="text-muted-foreground/40">·</span>
-                            <span className={cm.pricing === 'free' ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'font-medium'}>
-                              {cm.pricing === 'free' ? 'Gratuito' : `R$ ${cm.price.toFixed(2)}`}
-                            </span>
-                          </p>
-                        </div>
-                      </Link>
+                  <div className="mb-3 flex items-center gap-2">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                      <Gift className="h-4 w-4" />
+                    </span>
+                    <h3 className="font-heading text-base font-bold text-foreground">
+                      Você também leva…
+                    </h3>
+                  </div>
+                  <div className="grid grid-cols-1 gap-3">
+                    {complementaryItems.map((item) => (
+                      <ComplementaryCard key={item.id} item={item} />
                     ))}
                   </div>
                 </motion.div>

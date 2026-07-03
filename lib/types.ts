@@ -1274,6 +1274,35 @@ export interface MaterialHtmlFile {
   uploadedAt: Date
 }
 
+/** Template visual de um item complementar avulso. */
+export type ComplementaryTemplate = 'experiencia' | 'pdf' | 'aula' | 'podcast' | 'ebook'
+
+/**
+ * Item da seção "Você também leva …". Pode ser:
+ *  - kind 'material': referência a um material existente (link automático).
+ *  - kind 'custom'  : item avulso (não vira material), com template, descrição
+ *                     e botão (CTA) definidos manualmente pelo admin.
+ */
+export interface ComplementaryItem {
+  /** id estável para React keys / edição no admin */
+  id: string
+  kind: 'material' | 'custom'
+  /** Referência ao material (kind === 'material') */
+  materialId?: string
+  /** Template visual do item avulso (kind === 'custom') */
+  template?: ComplementaryTemplate
+  /** Título exibido (obrigatório em custom; opcional em material = usa o do material) */
+  title?: string
+  /** Descrição curta exibida abaixo do título */
+  description?: string
+  /** Capa/thumbnail (URL). Opcional — cai no ícone do template/tipo. */
+  coverImage?: string
+  /** Rótulo do botão (CTA). Ex.: "Acessar", "Ouvir agora". */
+  buttonLabel?: string
+  /** Destino do botão (kind === 'custom'). Em material, o link é automático. */
+  buttonUrl?: string
+}
+
 export interface Material {
   _id?: string | import('mongodb').ObjectId
   title: string
@@ -1297,9 +1326,14 @@ export interface Material {
   htmlFile?: MaterialHtmlFile // Presente quando admin fez upload direto do HTML
   htmlViewerEnabled?: boolean // Permite abrir o leitor HTML protegido (com watermark)
 
-  // Materiais complementares — IDs de outros materiais anexados a este
-  // (qualquer tipo). Exibidos como "Materiais complementares" na página.
+  // Materiais complementares (legado) — IDs de outros materiais anexados.
+  // Mantido apenas para leitura/compatibilidade; a UI nova usa complementaryItems.
   complementaryMaterialIds?: string[]
+
+  // Materiais complementares (novo) — itens ricos exibidos como "Você também
+  // leva …". Cada item pode referenciar um material existente OU ser um item
+  // avulso (sem criar material), com template visual, descrição e botão (CTA).
+  complementaryItems?: ComplementaryItem[]
 
   // Controle de acesso por grupo (vazio = todos podem acessar)
   allowedGroups?: MaterialAccessGroup[] // Ex: ['premium', 'essential'] = só premium e essential

@@ -116,6 +116,31 @@ interface Material {
   }
   // Materiais complementares
   complementaryMaterialIds?: string[]
+  complementaryItems?: ComplementaryItemForm[]
+}
+
+type ComplementaryItemForm = {
+  id: string
+  kind: 'material' | 'custom'
+  materialId?: string
+  template?: string
+  title?: string
+  description?: string
+  coverImage?: string
+  buttonLabel?: string
+  buttonUrl?: string
+}
+
+const COMPLEMENTARY_TEMPLATES: { value: string; label: string; cta: string }[] = [
+  { value: 'experiencia', label: 'Experiência', cta: 'Acessar' },
+  { value: 'pdf', label: 'PDF', cta: 'Abrir' },
+  { value: 'aula', label: 'Aula', cta: 'Assistir' },
+  { value: 'podcast', label: 'Podcast', cta: 'Ouvir agora' },
+  { value: 'ebook', label: 'Ebook', cta: 'Ler agora' },
+]
+
+function newComplementaryId(): string {
+  try { return `ci-${crypto.randomUUID().slice(0, 8)}` } catch { return `ci-${Math.random().toString(36).slice(2, 10)}` }
 }
 
 interface PdfSummaryEntry {
@@ -646,7 +671,7 @@ function AdminMateriaisContent() {
     pdfDownloadEnabled: true,
     pdfViewerConfig: EMPTY_PDF_VIEWER_CONFIG as PdfViewerConfig,
     htmlViewerEnabled: false,
-    complementaryMaterialIds: [] as string[],
+    complementaryItems: [] as ComplementaryItemForm[],
     order: 0,
   })
 
@@ -896,7 +921,9 @@ function AdminMateriaisContent() {
           },
         },
         htmlViewerEnabled: material.htmlViewerEnabled === true,
-        complementaryMaterialIds: material.complementaryMaterialIds || [],
+        complementaryItems: (material.complementaryItems && material.complementaryItems.length > 0)
+          ? material.complementaryItems.map((it) => ({ ...it, id: it.id || newComplementaryId() }))
+          : (material.complementaryMaterialIds || []).map((mid) => ({ id: newComplementaryId(), kind: 'material' as const, materialId: mid })),
         order: material.order || 0,
       })
       setPdfInfo(material._pdfFile || null)
@@ -910,7 +937,7 @@ function AdminMateriaisContent() {
         pricing: 'free', price: 0, pricingEventId: null, stripePriceId: '', isHidden: false, isFeatured: false,
         pdfViewerEnabled: false, pdfDownloadEnabled: true,
         pdfViewerConfig: { coverPage: undefined, summary: [], navigation: [], preview: { enabled: false, ranges: [] } },
-        htmlViewerEnabled: false, complementaryMaterialIds: [],
+        htmlViewerEnabled: false, complementaryItems: [],
         order: 0,
       })
       setPdfInfo(null)
@@ -944,6 +971,9 @@ function AdminMateriaisContent() {
         videoDuration: totalSeconds || undefined,
         // Capa/sumário/navegação só fazem sentido para PDF interno com viewer
         pdfViewerConfig: materialForm.type === 'pdf' ? materialForm.pdfViewerConfig : undefined,
+        complementaryItems: materialForm.complementaryItems,
+        // Migra/limpa o campo legado ao salvar com a UI nova.
+        complementaryMaterialIds: [],
       }
       const res = await fetch('/api/materiais', {
         method: modalMode === 'edit' ? 'PUT' : 'POST',
@@ -1144,6 +1174,30 @@ function AdminMateriaisContent() {
     } finally {
       setHtmlRemoving(false)
     }
+  }
+
+  // ─── Itens complementares ("Você também leva …") ──────────────────────
+  const addComplementaryItem = (kind: 'material' | 'custom') => {
+    const item: ComplementaryItemForm = kind === 'material'
+      ? { id: newComplementaryId(), kind: 'material', materialId: '', buttonLabel: '' }
+      : { id: newComplementaryId(), kind: 'custom', template: 'experiencia', title: '', description: '', coverImage: '', buttonLabel: '', buttonUrl: '' }
+    setMaterialForm(p => ({ ...p, complementaryItems: [...p.complementaryItems, item] }))
+  }
+  const updateComplementaryItem = (id: string, patch: Partial<ComplementaryItemForm>) => {
+    setMaterialForm(p => ({ ...p, complementaryItems: p.complementaryItems.map(it => it.id === id ? { ...it, ...patch } : it) }))
+  }
+  const removeComplementaryItem = (id: string) => {
+    setMaterialForm(p => ({ ...p, complementaryItems: p.complementaryItems.filter(it => it.id !== id) }))
+  }
+  const moveComplementaryItem = (id: string, dir: -1 | 1) => {
+    setMaterialForm(p => {
+      const arr = [...p.complementaryItems]
+      const i = arr.findIndex(x => x.id === id)
+      const j = i + dir
+      if (i < 0 || j < 0 || j >= arr.length) return p
+      ;[arr[i], arr[j]] = [arr[j], arr[i]]
+      return { ...p, complementaryItems: arr }
+    })
   }
 
   const deleteMaterial = async (id: string) => {
@@ -2443,46 +2497,122 @@ function AdminMateriaisContent() {
                   )}
                 </div>
 
-                {/* Materiais complementares */}
-                <div className="rounded-xl border p-3 space-y-2">
+                {/* Você também leva… (itens complementares) */}
+                <div className="rounded-xl border p-3 space-y-3">
                   <div className="flex items-center gap-2">
                     <Layers className="h-4 w-4 text-primary" />
                     <span className="text-sm font-medium">
-                      Materiais complementares ({materialForm.complementaryMaterialIds.length})
+                      Você também leva… ({materialForm.complementaryItems.length})
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Anexe outros materiais que aparecerão como &quot;complementares&quot; na página deste material.
+                    Anexe itens complementares. Referencie um material existente ou crie um item avulso
+                    (Experiência, PDF, Aula, Podcast, Ebook) com descrição e botão — sem precisar criar um material.
                   </p>
-                  <div className="max-h-52 overflow-y-auto rounded-lg border divide-y divide-border/40">
-                    {materials.filter(m => m._id !== materialForm._id).length === 0 ? (
-                      <p className="p-3 text-xs text-muted-foreground">Nenhum outro material disponível.</p>
-                    ) : (
-                      materials.filter(m => m._id !== materialForm._id).map(m => {
-                        const checked = materialForm.complementaryMaterialIds.includes(m._id)
-                        return (
-                          <label key={m._id} className={`flex items-center gap-2 p-2 cursor-pointer transition-colors ${checked ? 'bg-primary/10' : 'hover:bg-muted/50'}`}>
-                            <input
-                              type="checkbox"
-                              checked={checked}
-                              onChange={e => setMaterialForm(p => ({
-                                ...p,
-                                complementaryMaterialIds: e.target.checked
-                                  ? [...p.complementaryMaterialIds, m._id]
-                                  : p.complementaryMaterialIds.filter(id => id !== m._id)
-                              }))}
-                              className="rounded"
+
+                  {/* Lista de itens */}
+                  <div className="space-y-3">
+                    {materialForm.complementaryItems.map((item, idx) => (
+                      <div key={item.id} className="rounded-lg border bg-muted/20 p-3 space-y-2">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                            {item.kind === 'material' ? 'Material existente' : 'Item avulso'} #{idx + 1}
+                          </span>
+                          <div className="flex items-center gap-1">
+                            <button type="button" onClick={() => moveComplementaryItem(item.id, -1)} disabled={idx === 0}
+                              className="p-1 rounded hover:bg-muted disabled:opacity-30" title="Subir">
+                              <ArrowUp className="h-3.5 w-3.5" />
+                            </button>
+                            <button type="button" onClick={() => moveComplementaryItem(item.id, 1)} disabled={idx === materialForm.complementaryItems.length - 1}
+                              className="p-1 rounded hover:bg-muted disabled:opacity-30" title="Descer">
+                              <ArrowDown className="h-3.5 w-3.5" />
+                            </button>
+                            <button type="button" onClick={() => removeComplementaryItem(item.id)}
+                              className="p-1 rounded text-red-500 hover:bg-red-500/10" title="Remover">
+                              <Trash className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+                        </div>
+
+                        {item.kind === 'material' ? (
+                          <>
+                            <select
+                              value={item.materialId || ''}
+                              onChange={e => updateComplementaryItem(item.id, { materialId: e.target.value })}
+                              className="w-full rounded-lg border bg-background px-3 py-2 text-sm h-10"
+                            >
+                              <option value="">Selecione o material…</option>
+                              {materials.filter(m => m._id !== materialForm._id).map(m => (
+                                <option key={m._id} value={m._id}>{m.title}</option>
+                              ))}
+                            </select>
+                            <Input
+                              value={item.buttonLabel || ''}
+                              onChange={e => updateComplementaryItem(item.id, { buttonLabel: e.target.value })}
+                              placeholder="Texto do botão (padrão: Acessar)"
                             />
-                            <span className="flex items-center gap-1.5 text-sm min-w-0">
-                              <span className="shrink-0 text-muted-foreground">
-                                {typeOptions.find(t => t.value === m.type)?.icon || <File className="h-4 w-4" />}
-                              </span>
-                              <span className="truncate">{m.title}</span>
-                            </span>
-                          </label>
-                        )
-                      })
-                    )}
+                          </>
+                        ) : (
+                          <>
+                            <div className="grid grid-cols-2 gap-2">
+                              <select
+                                value={item.template || 'experiencia'}
+                                onChange={e => updateComplementaryItem(item.id, { template: e.target.value })}
+                                className="w-full rounded-lg border bg-background px-3 py-2 text-sm h-10"
+                              >
+                                {COMPLEMENTARY_TEMPLATES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                              </select>
+                              <Input
+                                value={item.buttonLabel || ''}
+                                onChange={e => updateComplementaryItem(item.id, { buttonLabel: e.target.value })}
+                                placeholder={`Botão (padrão: ${COMPLEMENTARY_TEMPLATES.find(t => t.value === (item.template || 'experiencia'))?.cta})`}
+                              />
+                            </div>
+                            <Input
+                              value={item.title || ''}
+                              onChange={e => updateComplementaryItem(item.id, { title: e.target.value })}
+                              placeholder="Título *"
+                            />
+                            <textarea
+                              value={item.description || ''}
+                              onChange={e => updateComplementaryItem(item.id, { description: e.target.value })}
+                              placeholder="Descrição do item complementar"
+                              className="w-full rounded-lg border bg-background px-3 py-2 text-sm min-h-[56px] resize-y"
+                            />
+                            <div className="grid grid-cols-2 gap-2">
+                              <Input
+                                value={item.coverImage || ''}
+                                onChange={e => updateComplementaryItem(item.id, { coverImage: e.target.value })}
+                                placeholder="URL da capa (opcional)"
+                              />
+                              <Input
+                                value={item.buttonUrl || ''}
+                                onChange={e => updateComplementaryItem(item.id, { buttonUrl: e.target.value })}
+                                placeholder="Link do botão (https:// ou /caminho)"
+                              />
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Botões de adicionar */}
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => addComplementaryItem('material')}
+                      className="flex items-center gap-1.5 rounded-lg border border-primary/30 bg-primary/5 px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/10"
+                    >
+                      <Plus className="h-3.5 w-3.5" /> Material existente
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => addComplementaryItem('custom')}
+                      className="flex items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/5 px-3 py-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10"
+                    >
+                      <Plus className="h-3.5 w-3.5" /> Item avulso
+                    </button>
                   </div>
                 </div>
 

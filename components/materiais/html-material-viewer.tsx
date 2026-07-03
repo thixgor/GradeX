@@ -109,7 +109,9 @@ export function HtmlMaterialViewer({ materialId }: HtmlMaterialViewerProps) {
     <div
       ref={shellRef}
       className="relative flex flex-col bg-background"
-      style={{ height: '100dvh' }}
+      // height com fallbacks: navegadores antigos/in-app usam 100vh; modernos
+      // sobrescrevem para 100dvh (barra de endereço dinâmica no mobile).
+      style={{ height: '100vh', maxHeight: '100dvh', minHeight: '100svh' }}
     >
       {/* Ambient glow blobs (3D depth) */}
       <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
@@ -167,7 +169,7 @@ export function HtmlMaterialViewer({ materialId }: HtmlMaterialViewerProps) {
       </motion.header>
 
       {/* ─── Conteúdo ─── */}
-      <div className="relative z-10 flex-1 overflow-hidden p-2 sm:p-4">
+      <div className="relative z-10 flex-1 min-h-0 overflow-hidden p-2 sm:p-4">
         <div className="relative h-full w-full overflow-hidden rounded-2xl border border-border/40 bg-white shadow-2xl shadow-primary/10">
           {state === 'ready' && (
             <>
@@ -177,6 +179,9 @@ export function HtmlMaterialViewer({ materialId }: HtmlMaterialViewerProps) {
                   <p className="text-sm text-muted-foreground">Carregando experiência…</p>
                 </div>
               )}
+              {/* iframe com posicionamento absoluto para preencher o container de
+                  forma confiável em mobile (evita colapso de altura percentual do
+                  iOS Safari que resultava em tela branca). */}
               <iframe
                 key={reloadKey}
                 src={contentUrl}
@@ -185,9 +190,10 @@ export function HtmlMaterialViewer({ materialId }: HtmlMaterialViewerProps) {
                 loading="eager"
                 // Origem opaca: JS/CSS da experiência rodam, mas sem acesso a
                 // cookies/sessão do pai. allow-same-origin PROPOSITALMENTE ausente.
-                sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-forms allow-modals allow-downloads"
+                sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-forms allow-modals allow-downloads allow-presentation"
                 referrerPolicy="no-referrer"
-                className="h-full w-full border-0 bg-white"
+                className="absolute inset-0 h-full w-full border-0 bg-white"
+                style={{ width: '100%', height: '100%' }}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; gyroscope; picture-in-picture"
               />
             </>

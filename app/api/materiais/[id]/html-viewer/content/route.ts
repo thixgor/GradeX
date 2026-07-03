@@ -24,20 +24,23 @@ import {
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
 
-// CSP permissiva-porém-segura: bloqueia navegação/base indesejada, mas libera
-// estilos/scripts inline e sub-recursos https (fontes, imagens, mídia) para
-// preservar a fidelidade da experiência HTML.
+// CSP permissiva-porém-segura: o conteúdo é autorado pelo próprio vendedor
+// (admin) e a real isolação vem do `sandbox` do iframe (origem opaca, sem
+// acesso à sessão do pai). Aqui liberamos amplamente estilos/scripts inline,
+// workers e sub-recursos (https/data/blob) para garantir que experiências
+// ricas — inclusive as renderizadas 100% por JS — não fiquem em branco.
 const CONTENT_SECURITY_POLICY = [
-  "default-src 'none'",
-  "img-src https: data: blob:",
-  "style-src 'unsafe-inline' https:",
-  "font-src https: data:",
-  "script-src 'unsafe-inline' 'unsafe-eval' https:",
-  "media-src https: data: blob:",
-  "frame-src https:",
-  "connect-src https:",
-  "base-uri 'none'",
-  "form-action 'none'",
+  "default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:",
+  "img-src 'self' https: http: data: blob:",
+  "style-src 'self' 'unsafe-inline' https: data:",
+  "font-src 'self' https: data:",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https: blob: data:",
+  "media-src 'self' https: http: data: blob:",
+  "connect-src 'self' https: data: blob:",
+  "worker-src 'self' blob: data:",
+  "child-src 'self' https: blob:",
+  "frame-src 'self' https: blob:",
+  "base-uri 'self'",
 ].join('; ')
 
 export async function GET(

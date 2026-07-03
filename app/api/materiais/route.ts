@@ -70,9 +70,8 @@ function sanitizePdfViewerConfig(raw: any): {
   }
 }
 
-// Normaliza a lista de materiais complementares: mantém apenas ObjectIds
-// válidos, remove o próprio material (evita auto-referência), deduplica e
-// limita a quantidade — preservando a ordem definida pelo admin.
+// Normaliza a lista de materiais complementares (legado): mantém apenas
+// ObjectIds válidos, remove o próprio material, deduplica e limita.
 function sanitizeComplementaryIds(raw: any, selfId: string | null): string[] {
   if (!Array.isArray(raw)) return []
   const seen = new Set<string>()
@@ -84,6 +83,62 @@ function sanitizeComplementaryIds(raw: any, selfId: string | null): string[] {
     if (seen.has(id)) continue
     seen.add(id)
     out.push(id)
+    if (out.length >= 30) break
+  }
+  return out
+}
+
+const COMPLEMENTARY_TEMPLATES = ['experiencia', 'pdf', 'aula', 'podcast', 'ebook']
+
+// Normaliza os itens complementares ("Você também leva …"). Cada item é
+// referência a material (kind 'material') ou avulso (kind 'custom'). Valida
+// tipos/limites, gera ids estáveis e descarta itens inválidos.
+function sanitizeComplementaryItems(raw: any, selfId: string | null): any[] {
+  if (!Array.isArray(raw)) return []
+  const clean = (s: any, max: number) => String(s ?? '').replace(/\s+/g, ' ').trim().slice(0, max)
+  const cleanMultiline = (s: any, max: number) => String(s ?? '').trim().slice(0, max)
+  const makeId = () => `ci-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`
+  const sanitizeUrl = (raw: any): string => {
+    const u = String(raw ?? '').trim().slice(0, 2000)
+    if (!u) return ''
+    if (u.startsWith('/')) return u // caminho relativo interno
+    if (/^https?:\/\//i.test(u)) return u
+    return '' // rejeita esquemas potencialmente perigosos (javascript:, data:, etc.)
+  }
+
+  const out: any[] = []
+  for (const item of raw) {
+    if (!item || typeof item !== 'object') continue
+    const id = clean(item.id, 40) || makeId()
+    const kind = item.kind === 'custom' ? 'custom' : 'material'
+    if (kind === 'material') {
+      const materialId = String(item.materialId || '').trim()
+      if (!ObjectId.isValid(materialId)) continue
+      if (selfId && materialId === String(selfId)) continue
+      out.push({
+        id,
+        kind: 'material',
+        materialId,
+        title: clean(item.title, 160),
+        description: cleanMultiline(item.description, 500),
+        coverImage: clean(item.coverImage, 2000),
+        buttonLabel: clean(item.buttonLabel, 40),
+      })
+    } else {
+      const title = clean(item.title, 160)
+      if (!title) continue // item avulso precisa de título
+      const template = COMPLEMENTARY_TEMPLATES.includes(item.template) ? item.template : 'experiencia'
+      out.push({
+        id,
+        kind: 'custom',
+        template,
+        title,
+        description: cleanMultiline(item.description, 500),
+        coverImage: clean(item.coverImage, 2000),
+        buttonLabel: clean(item.buttonLabel, 40),
+        buttonUrl: sanitizeUrl(item.buttonUrl),
+      })
+    }
     if (out.length >= 30) break
   }
   return out
@@ -388,6 +443,7 @@ export async function POST(request: NextRequest) {
       pdfViewerConfig: sanitizePdfViewerConfig(body.pdfViewerConfig) || { summary: [], navigation: [], preview: { enabled: false, ranges: [] } },
       htmlViewerEnabled: body.htmlViewerEnabled === true,
       complementaryMaterialIds: sanitizeComplementaryIds(body.complementaryMaterialIds, null),
+      complementaryItems: sanitizeComplementaryItems(body.complementaryItems, null),
       downloadCount: 0,
       viewCount: 0,
       isHidden: body.isHidden || false,
@@ -439,6 +495,9 @@ export async function PUT(request: NextRequest) {
     }
     if ('complementaryMaterialIds' in updates) {
       updates.complementaryMaterialIds = sanitizeComplementaryIds(updates.complementaryMaterialIds, _id)
+    }
+    if ('complementaryItems' in updates) {
+      updates.complementaryItems = sanitizeComplementaryItems(updates.complementaryItems, _id)
     }
 
     await db.collection('materials').updateOne(

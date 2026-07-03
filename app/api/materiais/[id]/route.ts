@@ -157,38 +157,70 @@ export async function GET(
       ? await getPricingEventStateById(db, String(material.pricingEventId))
       : null
 
-    // Materiais complementares — resumos de outros materiais anexados a este.
-    // Preserva a ordem definida pelo admin; oculta os isHidden (exceto admin).
-    let complementaryMaterials: any[] = []
-    const complementaryIds: string[] = Array.isArray(material.complementaryMaterialIds)
-      ? material.complementaryMaterialIds
-          .map((cid: any) => String(cid))
-          .filter((cid: string) => ObjectId.isValid(cid) && cid !== String(material._id))
-      : []
-    if (complementaryIds.length > 0) {
+    // ─── Complementares — seção "Você também leva …" ──────────────────────
+    // Fonte nova: complementaryItems (itens ricos: referência a material OU
+    // avulso). Fallback para o legado complementaryMaterialIds. Preserva a
+    // ordem definida pelo admin; materiais ocultos são omitidos (exceto admin).
+    const rawItems: any[] = Array.isArray(material.complementaryItems) && material.complementaryItems.length > 0
+      ? material.complementaryItems
+      : (Array.isArray(material.complementaryMaterialIds)
+          ? material.complementaryMaterialIds.map((cid: any) => ({ kind: 'material', materialId: String(cid) }))
+          : [])
+
+    // Coleta os ids de materiais referenciados para resolver em 1 query.
+    const refIds = Array.from(new Set(
+      rawItems
+        .filter((it: any) => it?.kind === 'material')
+        .map((it: any) => String(it.materialId || ''))
+        .filter((rid: string) => ObjectId.isValid(rid) && rid !== String(material._id))
+    ))
+    const refById = new Map<string, any>()
+    if (refIds.length > 0) {
       const docs = await db.collection('materials')
         .find(
           {
-            _id: { $in: complementaryIds.map((cid) => new ObjectId(cid)) },
+            _id: { $in: refIds.map((rid) => new ObjectId(rid)) },
             ...(isAdmin ? {} : { isHidden: false }),
           },
-          { projection: { title: 1, coverImage: 1, type: 1, pricing: 1, price: 1 } }
+          { projection: { title: 1, description: 1, coverImage: 1, type: 1, pricing: 1, price: 1 } }
         )
         .toArray()
         .catch(() => [])
-      const byId = new Map(docs.map((d: any) => [String(d._id), d]))
-      complementaryMaterials = complementaryIds
-        .map((cid) => byId.get(cid))
-        .filter(Boolean)
-        .map((d: any) => ({
-          _id: String(d._id),
-          title: d.title || '',
-          coverImage: d.coverImage || '',
-          type: d.type || 'other',
-          pricing: d.pricing || 'free',
-          price: Number(d.price || 0),
-        }))
+      for (const d of docs) refById.set(String(d._id), d)
     }
+
+    const complementaryItems = rawItems.map((it: any, idx: number) => {
+      const id = String(it?.id || `ci-${idx}`)
+      if (it?.kind === 'custom') {
+        return {
+          id,
+          kind: 'custom' as const,
+          template: it.template || 'experiencia',
+          title: it.title || '',
+          description: it.description || '',
+          coverImage: it.coverImage || '',
+          buttonLabel: it.buttonLabel || '',
+          href: it.buttonUrl || '',
+        }
+      }
+      // kind === 'material'
+      const ref = refById.get(String(it?.materialId || ''))
+      if (!ref) return null
+      return {
+        id,
+        kind: 'material' as const,
+        materialId: String(it.materialId),
+        materialType: ref.type || 'other',
+        template: '' as const,
+        title: it.title || ref.title || '',
+        description: it.description || '',
+        coverImage: it.coverImage || ref.coverImage || '',
+        buttonLabel: it.buttonLabel || '',
+        href: `/materiais/${String(it.materialId)}`,
+        pricing: ref.pricing || 'free',
+        price: Number(ref.price || 0),
+      }
+    }).filter(Boolean)
 
     const res = NextResponse.json({
       material: {
@@ -203,7 +235,7 @@ export async function GET(
         ...(_hasPdf && material.pdfFile?.pageCount ? { _pageCount: material.pdfFile.pageCount } : {}),
         ...(material.type === 'flashcard_deck' ? { _cardCount: _cardCount ?? 0 } : {}),
       },
-      complementaryMaterials,
+      complementaryItems,
       folderName,
       hasAccess: canAccess,
       isPurchased,
