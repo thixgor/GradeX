@@ -265,14 +265,48 @@ function buildWatermarkTile(lines: string[], opacity: number, angle: number, fon
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`
 }
 
+// Shim de compatibilidade para <iframe sandbox> sem `allow-same-origin`: o
+// frame recebe uma origem opaca, e por spec `localStorage`/`sessionStorage`
+// lançam SecurityError ao serem acessados nessa condição. O WebKit (Safari/
+// iOS) lança de forma síncrona logo no primeiro acesso — se o bootstrap da
+// experiência usa storage sem try/catch (comum em templates/bundlers), a
+// exceção não tratada aborta a renderização inteira, resultando em tela
+// branca. Substituímos por um storage em memória ANTES de qualquer outro
+// script rodar, para que o acesso nunca lance.
+const SANDBOX_COMPAT_SHIM = `<script>(function(){
+function __gxMemStore(){var d=Object.create(null);return{getItem:function(k){return Object.prototype.hasOwnProperty.call(d,k)?d[k]:null},setItem:function(k,v){d[k]=String(v)},removeItem:function(k){delete d[k]},clear:function(){d=Object.create(null)},key:function(i){return Object.keys(d)[i]||null},get length(){return Object.keys(d).length}}}
+function __gxShim(name){try{var s=window[name];s.getItem('__gx_probe__')}catch(e){try{Object.defineProperty(window,name,{value:__gxMemStore(),configurable:true,writable:true})}catch(e2){}}}
+__gxShim('localStorage');__gxShim('sessionStorage');
+})();</script>`
+
+// Insere `scriptTag` o mais cedo possível no documento — logo após a
+// abertura de <head> (ou <html>, na ausência de <head>) — para que rode
+// antes de qualquer script próprio da experiência.
+function injectEarlyScript(html: string, scriptTag: string): string {
+  const headOpen = /<head(\s[^>]*)?>/i
+  if (headOpen.test(html)) {
+    return html.replace(headOpen, (m) => `${m}\n${scriptTag}`)
+  }
+  const htmlOpen = /<html(\s[^>]*)?>/i
+  if (htmlOpen.test(html)) {
+    return html.replace(htmlOpen, (m) => `${m}\n${scriptTag}`)
+  }
+  return `${scriptTag}\n${html}`
+}
+
 /**
  * Injeta a watermark indexada + reforços forenses + CSS anti-cópia leve no
  * HTML servido. O overlay é `position:fixed pointer-events:none` com tiles
  * repetidos — sempre visível, sem interferir na interação com a experiência.
+ * Também injeta o shim de compatibilidade de storage (ver acima) antes de
+ * qualquer script da própria experiência, evitando tela branca em iframes
+ * sandboxed no Safari/iOS.
  */
 export function buildWatermarkedHtml(rawHtml: string, identity: HtmlWatermarkIdentity): string {
+  const withShim = injectEarlyScript(rawHtml, SANDBOX_COMPAT_SHIM)
+
   if (!envBoolean('HTML_VIEWER_WATERMARK_ENABLED', true)) {
-    return rawHtml
+    return withShim
   }
 
   const lines = buildWatermarkLines(identity)
@@ -309,10 +343,10 @@ export function buildWatermarkedHtml(rawHtml: string, identity: HtmlWatermarkIde
 
   // Insere antes de </body> quando existir; senão, ao final do documento.
   const closingBody = /<\/body\s*>/i
-  if (closingBody.test(rawHtml)) {
-    return rawHtml.replace(closingBody, `${overlay}\n</body>`)
+  if (closingBody.test(withShim)) {
+    return withShim.replace(closingBody, `${overlay}\n</body>`)
   }
-  return `${rawHtml}\n${overlay}`
+  return `${withShim}\n${overlay}`
 }
 
 /**
