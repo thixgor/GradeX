@@ -119,16 +119,24 @@ interface Material {
   complementaryItems?: ComplementaryItemForm[]
 }
 
+type ComplementaryContentKind = 'link' | 'html' | 'pdf' | 'video_embed'
+
 type ComplementaryItemForm = {
   id: string
   kind: 'material' | 'custom'
   materialId?: string
   template?: string
+  contentKind?: ComplementaryContentKind
   title?: string
   description?: string
   coverImage?: string
   buttonLabel?: string
   buttonUrl?: string
+  viewerEnabled?: boolean
+  _hasPdf?: boolean
+  _hasHtml?: boolean
+  _pdfFile?: { originalFilename: string; sizeBytes: number; uploadedByName: string; uploadedAt: string }
+  _htmlFile?: { originalFilename: string; sizeBytes: number; uploadedByName: string; uploadedAt: string }
 }
 
 const COMPLEMENTARY_TEMPLATES: { value: string; label: string; cta: string }[] = [
@@ -137,6 +145,13 @@ const COMPLEMENTARY_TEMPLATES: { value: string; label: string; cta: string }[] =
   { value: 'aula', label: 'Aula', cta: 'Assistir' },
   { value: 'podcast', label: 'Podcast', cta: 'Ouvir agora' },
   { value: 'ebook', label: 'Ebook', cta: 'Ler agora' },
+]
+
+const COMPLEMENTARY_CONTENT_KINDS: { value: ComplementaryContentKind; label: string }[] = [
+  { value: 'link', label: 'Link' },
+  { value: 'html', label: 'HTML (upload)' },
+  { value: 'pdf', label: 'PDF (upload)' },
+  { value: 'video_embed', label: 'Aula (vídeo embed)' },
 ]
 
 function newComplementaryId(): string {
@@ -443,6 +458,12 @@ function AdminMateriaisContent() {
   const [htmlUploadError, setHtmlUploadError] = useState('')
   const [htmlRemoving, setHtmlRemoving] = useState(false)
   const htmlInputRef = useRef<HTMLInputElement>(null)
+
+  // ─── Estado do upload de arquivos por item complementar (keyed por itemId) ──
+  const [complementaryUploading, setComplementaryUploading] = useState<Record<string, boolean>>({})
+  const [complementaryUploadProgress, setComplementaryUploadProgress] = useState<Record<string, number>>({})
+  const [complementaryUploadError, setComplementaryUploadError] = useState<Record<string, string>>({})
+  const complementaryInputRefs = useRef<Record<string, HTMLInputElement | null>>({})
 
   const copyLink = (type: 'folder' | 'material' | 'package', id: string) => {
     const base = window.location.origin
@@ -1180,7 +1201,7 @@ function AdminMateriaisContent() {
   const addComplementaryItem = (kind: 'material' | 'custom') => {
     const item: ComplementaryItemForm = kind === 'material'
       ? { id: newComplementaryId(), kind: 'material', materialId: '', buttonLabel: '' }
-      : { id: newComplementaryId(), kind: 'custom', template: 'experiencia', title: '', description: '', coverImage: '', buttonLabel: '', buttonUrl: '' }
+      : { id: newComplementaryId(), kind: 'custom', template: 'experiencia', contentKind: 'link', title: '', description: '', coverImage: '', buttonLabel: '', buttonUrl: '', viewerEnabled: false }
     setMaterialForm(p => ({ ...p, complementaryItems: [...p.complementaryItems, item] }))
   }
   const updateComplementaryItem = (id: string, patch: Partial<ComplementaryItemForm>) => {
@@ -1198,6 +1219,92 @@ function AdminMateriaisContent() {
       ;[arr[i], arr[j]] = [arr[j], arr[i]]
       return { ...p, complementaryItems: arr }
     })
+  }
+
+  // Upload de PDF/HTML para um item complementar específico. Requer que o
+  // material E o item já estejam salvos (mesma regra do upload principal).
+  const handleComplementaryFileChange = async (itemId: string, fileKind: 'pdf' | 'html', e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const isValidType = fileKind === 'pdf'
+      ? file.type === 'application/pdf'
+      : (file.type === 'text/html' || /\.html?$/i.test(file.name))
+    if (!isValidType) {
+      setComplementaryUploadError(p => ({ ...p, [itemId]: fileKind === 'pdf' ? 'Envie um arquivo PDF.' : 'Envie um arquivo .html.' }))
+      return
+    }
+    if (!materialForm._id) {
+      setComplementaryUploadError(p => ({ ...p, [itemId]: 'Salve o material primeiro.' }))
+      return
+    }
+
+    setComplementaryUploadError(p => ({ ...p, [itemId]: '' }))
+    setComplementaryUploading(p => ({ ...p, [itemId]: true }))
+    setComplementaryUploadProgress(p => ({ ...p, [itemId]: 0 }))
+
+    try {
+      const ext = fileKind === 'pdf' ? 'pdf' : 'html'
+      const pathname = `material-complementary/${materialForm._id}/${itemId}/${Date.now()}-${crypto.randomUUID()}.${ext}`
+      const blob = await upload(pathname, file, {
+        access: 'private',
+        contentType: fileKind === 'pdf' ? 'application/pdf' : 'text/html',
+        multipart: true,
+        handleUploadUrl: '/api/materiais/complementary-upload',
+        clientPayload: JSON.stringify({ materialId: materialForm._id, itemId, fileKind }),
+        onUploadProgress: (ev) => setComplementaryUploadProgress(p => ({ ...p, [itemId]: Math.round(ev.percentage) })),
+      })
+
+      const confirmRes = await fetch('/api/materiais/complementary-upload', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          materialId: materialForm._id,
+          itemId,
+          fileKind,
+          blobUrl: blob.url,
+          blobPathname: blob.pathname,
+          originalFilename: file.name,
+          sizeBytes: file.size,
+        }),
+      })
+      if (!confirmRes.ok) {
+        const d = await confirmRes.json().catch(() => ({}))
+        throw new Error(d.error || 'Erro ao confirmar upload')
+      }
+
+      const fileMeta = {
+        originalFilename: file.name,
+        sizeBytes: file.size,
+        uploadedByName: '',
+        uploadedAt: new Date().toISOString(),
+      }
+      updateComplementaryItem(itemId, fileKind === 'pdf' ? { _hasPdf: true, _pdfFile: fileMeta } : { _hasHtml: true, _htmlFile: fileMeta })
+      fetchAll()
+    } catch (err: any) {
+      setComplementaryUploadError(p => ({ ...p, [itemId]: err?.message || 'Erro ao fazer upload.' }))
+    } finally {
+      setComplementaryUploading(p => ({ ...p, [itemId]: false }))
+      setComplementaryUploadProgress(p => ({ ...p, [itemId]: 0 }))
+      const inputEl = complementaryInputRefs.current[itemId]
+      if (inputEl) inputEl.value = ''
+    }
+  }
+
+  const handleComplementaryFileRemove = async (itemId: string, fileKind: 'pdf' | 'html') => {
+    if (!materialForm._id || !confirm('Remover este arquivo?')) return
+    try {
+      const res = await fetch(`/api/materiais/complementary-upload?materialId=${materialForm._id}&itemId=${itemId}&fileKind=${fileKind}`, { method: 'DELETE' })
+      if (res.ok) {
+        updateComplementaryItem(itemId, fileKind === 'pdf' ? { _hasPdf: false, _pdfFile: undefined, viewerEnabled: false } : { _hasHtml: false, _htmlFile: undefined, viewerEnabled: false })
+        fetchAll()
+      } else {
+        const d = await res.json()
+        setComplementaryUploadError(p => ({ ...p, [itemId]: d.error || 'Erro ao remover arquivo.' }))
+      }
+    } catch {
+      setComplementaryUploadError(p => ({ ...p, [itemId]: 'Erro ao remover arquivo.' }))
+    }
   }
 
   const deleteMaterial = async (id: string) => {
@@ -2579,17 +2686,54 @@ function AdminMateriaisContent() {
                               placeholder="Descrição do item complementar"
                               className="w-full rounded-lg border bg-background px-3 py-2 text-sm min-h-[56px] resize-y"
                             />
-                            <div className="grid grid-cols-2 gap-2">
-                              <Input
-                                value={item.coverImage || ''}
-                                onChange={e => updateComplementaryItem(item.id, { coverImage: e.target.value })}
-                                placeholder="URL da capa (opcional)"
-                              />
-                              <Input
-                                value={item.buttonUrl || ''}
-                                onChange={e => updateComplementaryItem(item.id, { buttonUrl: e.target.value })}
-                                placeholder="Link do botão (https:// ou /caminho)"
-                              />
+                            <Input
+                              value={item.coverImage || ''}
+                              onChange={e => updateComplementaryItem(item.id, { coverImage: e.target.value })}
+                              placeholder="URL da capa (opcional)"
+                            />
+
+                            {/* Tipo de conteúdo do CTA: Link / HTML / PDF / Aula */}
+                            <div className="rounded-lg border bg-background/50 p-2.5 space-y-2">
+                              <div className="flex items-center gap-2">
+                                <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                                  Conteúdo do botão
+                                </span>
+                                <select
+                                  value={item.contentKind || 'link'}
+                                  onChange={e => updateComplementaryItem(item.id, { contentKind: e.target.value as ComplementaryContentKind })}
+                                  className="ml-auto rounded-lg border bg-background px-2 py-1 text-xs h-8"
+                                >
+                                  {COMPLEMENTARY_CONTENT_KINDS.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+                                </select>
+                              </div>
+
+                              {item.contentKind === 'video_embed' ? (
+                                <Textarea
+                                  value={item.buttonUrl || ''}
+                                  onChange={e => updateComplementaryItem(item.id, { buttonUrl: e.target.value })}
+                                  placeholder="Cole o código embed completo (Wistia, YouTube, Vimeo, etc.) ou a URL do embed"
+                                  rows={3}
+                                />
+                              ) : item.contentKind === 'html' || item.contentKind === 'pdf' ? (
+                                <ComplementaryFileUpload
+                                  item={item}
+                                  fileKind={item.contentKind}
+                                  materialSaved={!!materialForm._id}
+                                  uploading={!!complementaryUploading[item.id]}
+                                  progress={complementaryUploadProgress[item.id] || 0}
+                                  error={complementaryUploadError[item.id] || ''}
+                                  onFileChange={(e) => handleComplementaryFileChange(item.id, item.contentKind as 'pdf' | 'html', e)}
+                                  onRemove={() => handleComplementaryFileRemove(item.id, item.contentKind as 'pdf' | 'html')}
+                                  onToggleViewer={(checked) => updateComplementaryItem(item.id, { viewerEnabled: checked })}
+                                  inputRef={(el) => { complementaryInputRefs.current[item.id] = el }}
+                                />
+                              ) : (
+                                <Input
+                                  value={item.buttonUrl || ''}
+                                  onChange={e => updateComplementaryItem(item.id, { buttonUrl: e.target.value })}
+                                  placeholder="Link do botão (https:// ou /caminho)"
+                                />
+                              )}
                             </div>
                           </>
                         )}
@@ -3019,6 +3163,120 @@ function AdminMateriaisContent() {
 }
 
 // ─── Shared UI Components ───────────────────────────────────
+
+// Upload de PDF/HTML para um item complementar avulso — mesma UX do upload
+// principal (arquivo, progresso, remover, habilitar leitor), porém escopado
+// a um único item dentro do repeater de complementares.
+function ComplementaryFileUpload({
+  item,
+  fileKind,
+  materialSaved,
+  uploading,
+  progress,
+  error,
+  onFileChange,
+  onRemove,
+  onToggleViewer,
+  inputRef,
+}: {
+  item: ComplementaryItemForm
+  fileKind: 'pdf' | 'html'
+  materialSaved: boolean
+  uploading: boolean
+  progress: number
+  error: string
+  onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onRemove: () => void
+  onToggleViewer: (checked: boolean) => void
+  inputRef: (el: HTMLInputElement | null) => void
+}) {
+  const fileInfo = fileKind === 'pdf' ? item._pdfFile : item._htmlFile
+  const hasFile = fileKind === 'pdf' ? item._hasPdf : item._hasHtml
+  const inputId = `complementary-upload-${item.id}`
+  const accent = fileKind === 'pdf' ? 'blue' : 'emerald'
+
+  if (!materialSaved) {
+    return (
+      <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
+        <AlertCircle className="h-3 w-3" />
+        Salve o material primeiro para habilitar o upload.
+      </p>
+    )
+  }
+
+  return (
+    <div className="space-y-2">
+      {hasFile && fileInfo ? (
+        <div className="rounded-lg bg-green-500/10 border border-green-500/20 p-2.5 flex items-start justify-between gap-2">
+          <div className="flex items-start gap-2 min-w-0">
+            <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
+            <div className="min-w-0">
+              <p className="text-xs font-medium text-green-700 dark:text-green-400 truncate">{fileInfo.originalFilename}</p>
+              <p className="text-[11px] text-muted-foreground mt-0.5">
+                {(fileInfo.sizeBytes / 1024 / 1024).toFixed(2)} MB
+              </p>
+            </div>
+          </div>
+          <button onClick={onRemove} className="text-red-500 hover:text-red-700 shrink-0" title="Remover arquivo">
+            <Trash className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      ) : (
+        <p className="text-[11px] text-muted-foreground">Nenhum arquivo enviado ainda.</p>
+      )}
+
+      <input
+        ref={inputRef}
+        type="file"
+        accept={fileKind === 'pdf' ? 'application/pdf' : '.html,text/html'}
+        onChange={onFileChange}
+        disabled={uploading}
+        className="hidden"
+        id={inputId}
+      />
+      <label
+        htmlFor={inputId}
+        className={`flex items-center gap-2 justify-center w-full rounded-lg border px-3 py-1.5 text-xs cursor-pointer transition-colors
+          ${uploading
+            ? 'bg-muted text-muted-foreground cursor-not-allowed'
+            : accent === 'blue'
+              ? 'hover:bg-muted/50 hover:border-blue-400 text-blue-600 dark:text-blue-400 border-blue-300 dark:border-blue-700'
+              : 'hover:bg-muted/50 hover:border-emerald-400 text-emerald-600 dark:text-emerald-400 border-emerald-300 dark:border-emerald-700'
+          }`}
+      >
+        {uploading ? (
+          <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Enviando... {progress}%</>
+        ) : (
+          <><Upload className="h-3.5 w-3.5" /> {hasFile ? `Substituir ${fileKind.toUpperCase()}` : `Selecionar ${fileKind.toUpperCase()}`}</>
+        )}
+      </label>
+
+      {uploading && (
+        <div className="w-full bg-muted rounded-full h-1">
+          <div className={`h-1 rounded-full transition-all ${accent === 'blue' ? 'bg-blue-500' : 'bg-emerald-500'}`} style={{ width: `${progress}%` }} />
+        </div>
+      )}
+
+      {error && (
+        <p className="text-[11px] text-red-500 flex items-center gap-1">
+          <AlertCircle className="h-3 w-3" />
+          {error}
+        </p>
+      )}
+
+      <label className={`flex items-center gap-2 rounded-lg border p-2 text-xs ${hasFile ? 'cursor-pointer hover:bg-muted/40' : 'opacity-50 cursor-not-allowed'}`}>
+        <input
+          type="checkbox"
+          disabled={!hasFile}
+          checked={hasFile ? item.viewerEnabled === true : false}
+          onChange={e => onToggleViewer(e.target.checked)}
+          className="rounded"
+        />
+        Habilitar leitor protegido (com marca d&apos;água)
+      </label>
+    </div>
+  )
+}
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (

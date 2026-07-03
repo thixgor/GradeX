@@ -89,11 +89,17 @@ function sanitizeComplementaryIds(raw: any, selfId: string | null): string[] {
 }
 
 const COMPLEMENTARY_TEMPLATES = ['experiencia', 'pdf', 'aula', 'podcast', 'ebook']
+const COMPLEMENTARY_CONTENT_KINDS = ['link', 'html', 'pdf', 'video_embed']
 
 // Normaliza os itens complementares ("Você também leva …"). Cada item é
 // referência a material (kind 'material') ou avulso (kind 'custom'). Valida
 // tipos/limites, gera ids estáveis e descarta itens inválidos.
-function sanitizeComplementaryItems(raw: any, selfId: string | null): any[] {
+//
+// `existingById` traz os itens já persistidos (por id) — o formulário do
+// admin nunca recebe blobUrl de volta, então pdfFile/htmlFile enviados por
+// upload (via /api/materiais/complementary-upload) são preservados aqui ao
+// salvar o material por cima, em vez de serem apagados silenciosamente.
+function sanitizeComplementaryItems(raw: any, selfId: string | null, existingById?: Map<string, any>): any[] {
   if (!Array.isArray(raw)) return []
   const clean = (s: any, max: number) => String(s ?? '').replace(/\s+/g, ' ').trim().slice(0, max)
   const cleanMultiline = (s: any, max: number) => String(s ?? '').trim().slice(0, max)
@@ -101,6 +107,7 @@ function sanitizeComplementaryItems(raw: any, selfId: string | null): any[] {
   const sanitizeUrl = (raw: any): string => {
     const u = String(raw ?? '').trim().slice(0, 2000)
     if (!u) return ''
+    if (u.startsWith('<')) return u.slice(0, 20000) // código embed (video_embed)
     if (u.startsWith('/')) return u // caminho relativo interno
     if (/^https?:\/\//i.test(u)) return u
     return '' // rejeita esquemas potencialmente perigosos (javascript:, data:, etc.)
@@ -128,15 +135,23 @@ function sanitizeComplementaryItems(raw: any, selfId: string | null): any[] {
       const title = clean(item.title, 160)
       if (!title) continue // item avulso precisa de título
       const template = COMPLEMENTARY_TEMPLATES.includes(item.template) ? item.template : 'experiencia'
+      const contentKind = COMPLEMENTARY_CONTENT_KINDS.includes(item.contentKind) ? item.contentKind : 'link'
+      const existing = existingById?.get(id)
       out.push({
         id,
         kind: 'custom',
         template,
+        contentKind,
         title,
         description: cleanMultiline(item.description, 500),
         coverImage: clean(item.coverImage, 2000),
         buttonLabel: clean(item.buttonLabel, 40),
         buttonUrl: sanitizeUrl(item.buttonUrl),
+        viewerEnabled: item.viewerEnabled === true,
+        // Preserva arquivos já enviados (upload grava direto no Mongo; o
+        // formulário nunca os carrega de volta no payload de salvar).
+        ...(existing?.pdfFile ? { pdfFile: existing.pdfFile } : {}),
+        ...(existing?.htmlFile ? { htmlFile: existing.htmlFile } : {}),
       })
     }
     if (out.length >= 30) break
@@ -372,6 +387,22 @@ export async function GET(request: NextRequest) {
       // Remover pdfFile/htmlFile (com blobUrl) da resposta — substituídos por flags
       const { pdfFile: _removed, htmlFile: _removedHtml, ...rest } = m
 
+      // Itens complementares avulsos podem ter seu próprio pdfFile/htmlFile —
+      // nunca expor blobUrl; admin recebe metadados (sem URL), demais só o flag.
+      if (Array.isArray(rest.complementaryItems)) {
+        rest.complementaryItems = rest.complementaryItems.map((it: any) => {
+          if (it?.kind !== 'custom') return it
+          const { pdfFile, htmlFile, ...itemRest } = it
+          return {
+            ...itemRest,
+            _hasPdf: !!pdfFile?.blobUrl,
+            _hasHtml: !!htmlFile?.blobUrl,
+            ...(isAdmin && pdfFile ? { _pdfFile: { originalFilename: pdfFile.originalFilename, sizeBytes: pdfFile.sizeBytes, uploadedByName: pdfFile.uploadedByName, uploadedAt: pdfFile.uploadedAt } } : {}),
+            ...(isAdmin && htmlFile ? { _htmlFile: { originalFilename: htmlFile.originalFilename, sizeBytes: htmlFile.sizeBytes, uploadedByName: htmlFile.uploadedByName, uploadedAt: htmlFile.uploadedAt } } : {}),
+          }
+        })
+      }
+
       // Resolve pricing event state if this material has one
       const pricingEventState = m.pricingEventId
         ? eventStates.get(String(m.pricingEventId)) || null
@@ -497,7 +528,16 @@ export async function PUT(request: NextRequest) {
       updates.complementaryMaterialIds = sanitizeComplementaryIds(updates.complementaryMaterialIds, _id)
     }
     if ('complementaryItems' in updates) {
-      updates.complementaryItems = sanitizeComplementaryItems(updates.complementaryItems, _id)
+      // Busca os itens já persistidos para preservar pdfFile/htmlFile enviados
+      // por upload direto (o formulário do admin nunca os carrega de volta).
+      const current = await db.collection('materials').findOne(
+        { _id: new ObjectId(_id) },
+        { projection: { complementaryItems: 1 } }
+      )
+      const existingById = new Map<string, any>(
+        (current?.complementaryItems || []).map((it: any) => [String(it.id), it])
+      )
+      updates.complementaryItems = sanitizeComplementaryItems(updates.complementaryItems, _id, existingById)
     }
 
     await db.collection('materials').updateOne(

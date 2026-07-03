@@ -1278,10 +1278,21 @@ export interface MaterialHtmlFile {
 export type ComplementaryTemplate = 'experiencia' | 'pdf' | 'aula' | 'podcast' | 'ebook'
 
 /**
+ * Como o CTA de um item avulso entrega o conteúdo:
+ *  - 'link'        : abre uma URL externa (ou interna) diretamente.
+ *  - 'html'        : arquivo .html enviado (upload), aberto no leitor protegido
+ *                     com marca d'água — igual ao material do tipo html.
+ *  - 'pdf'         : arquivo .pdf enviado (upload), aberto com marca d'água —
+ *                     igual ao material do tipo pdf.
+ *  - 'video_embed' : código embed ou URL de vídeo (aula), com marca d'água de vídeo.
+ */
+export type ComplementaryContentKind = 'link' | 'html' | 'pdf' | 'video_embed'
+
+/**
  * Item da seção "Você também leva …". Pode ser:
  *  - kind 'material': referência a um material existente (link automático).
- *  - kind 'custom'  : item avulso (não vira material), com template, descrição
- *                     e botão (CTA) definidos manualmente pelo admin.
+ *  - kind 'custom'  : item avulso (não vira material), com template, descrição,
+ *                     conteúdo próprio (link/html/pdf/aula) e botão (CTA).
  */
 export interface ComplementaryItem {
   /** id estável para React keys / edição no admin */
@@ -1291,6 +1302,8 @@ export interface ComplementaryItem {
   materialId?: string
   /** Template visual do item avulso (kind === 'custom') */
   template?: ComplementaryTemplate
+  /** Como o conteúdo é entregue (kind === 'custom'). Padrão: 'link'. */
+  contentKind?: ComplementaryContentKind
   /** Título exibido (obrigatório em custom; opcional em material = usa o do material) */
   title?: string
   /** Descrição curta exibida abaixo do título */
@@ -1299,8 +1312,15 @@ export interface ComplementaryItem {
   coverImage?: string
   /** Rótulo do botão (CTA). Ex.: "Acessar", "Ouvir agora". */
   buttonLabel?: string
-  /** Destino do botão (kind === 'custom'). Em material, o link é automático. */
+  /** Destino do botão. contentKind 'link': URL externa/interna.
+   *  contentKind 'video_embed': código embed completo OU URL do vídeo. */
   buttonUrl?: string
+  /** Habilita o leitor protegido (contentKind 'html' | 'pdf'). */
+  viewerEnabled?: boolean
+  /** Arquivo HTML enviado (contentKind === 'html') — nunca expor blobUrl ao cliente */
+  htmlFile?: MaterialHtmlFile
+  /** Arquivo PDF enviado (contentKind === 'pdf') — nunca expor blobUrl ao cliente */
+  pdfFile?: MaterialPdfFile
 }
 
 export interface Material {

@@ -108,6 +108,7 @@ interface ComplementaryItem {
   materialId?: string
   materialType?: string
   template?: string
+  contentKind?: 'link' | 'html' | 'pdf' | 'video_embed'
   title: string
   description?: string
   coverImage?: string

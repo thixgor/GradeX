@@ -192,15 +192,35 @@ export async function GET(
     const complementaryItems = rawItems.map((it: any, idx: number) => {
       const id = String(it?.id || `ci-${idx}`)
       if (it?.kind === 'custom') {
+        const contentKind = it.contentKind || 'link'
+        const hasHtmlFile = !!it.htmlFile?.blobUrl
+        const hasPdfFile = !!it.pdfFile?.blobUrl
+        const viewerEnabled = it.viewerEnabled === true
+        // O botão/CTA:
+        //  - pdf/html: sempre aponta para o leitor protegido (a rota valida
+        //    acesso — o front mostra estado bloqueado quando aplicável).
+        //  - video_embed/link: destino é o buttonUrl, só exposto com acesso
+        //    (mesmo tratamento que downloadUrl no material).
+        const href =
+          contentKind === 'pdf' || contentKind === 'html'
+            ? `/materiais/${String(material._id)}/complementary/${id}`
+            : (canAccess ? (it.buttonUrl || '') : '')
         return {
           id,
           kind: 'custom' as const,
           template: it.template || 'experiencia',
+          contentKind,
           title: it.title || '',
           description: it.description || '',
           coverImage: it.coverImage || '',
           buttonLabel: it.buttonLabel || '',
-          href: it.buttonUrl || '',
+          href,
+          viewerEnabled,
+          _hasHtml: hasHtmlFile,
+          _hasPdf: hasPdfFile,
+          // Embed cru (código/URL) só quando o usuário já tem acesso ao pai —
+          // igual ao downloadUrl de um material video_embed.
+          ...(contentKind === 'video_embed' && canAccess ? { embedCode: it.buttonUrl || '' } : {}),
         }
       }
       // kind === 'material'
