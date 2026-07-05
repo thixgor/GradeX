@@ -1,4 +1,7 @@
+'use client'
+
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Instagram, Mail, MessageCircle, Users, ArrowUpRight } from 'lucide-react'
 
 // Canais de comunicação oficiais da plataforma
@@ -6,7 +9,40 @@ const WHATSAPP_GROUP_URL = 'https://chat.whatsapp.com/GPAbMSy9dBk3O8ZesnkRfR'
 const INSTAGRAM_URL = 'https://instagram.com/domineaqui.br'
 const CONTACT_EMAIL = 'contato@domineaqui.com.br'
 
+// Rotas internas (pós-login) que usam o AppShell com sidebar fixa em tela
+// cheia. Esse rodapé de marketing não deve aparecer nelas: além de não fazer
+// sentido no contexto de app logado, ele ficaria atrás da sidebar fixa e
+// aumentaria bastante a altura da página, forçando scroll extra.
+const APP_SHELL_PREFIXES = [
+  '/admin',
+  '/aulas',
+  '/banco-questoes',
+  '/buy',
+  '/cronogramas',
+  '/dashboard',
+  '/flashcards',
+  '/forum',
+  '/games',
+  '/manual-clinico',
+  '/mapa-mental',
+  '/materiais',
+  '/pacotes',
+  '/profile',
+  '/provas',
+]
+
+function isAppShellRoute(pathname: string | null): boolean {
+  if (!pathname) return false
+  return APP_SHELL_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))
+}
+
 export function Footer() {
+  const pathname = usePathname()
+
+  if (isAppShellRoute(pathname)) {
+    return null
+  }
+
   return (
     <footer className="relative mt-auto overflow-hidden border-t border-white/10 bg-card/40 backdrop-blur-xl">
       {/* Glows decorativos de fundo (efeito 3D / profundidade) */}
