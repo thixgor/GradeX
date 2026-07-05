@@ -41,8 +41,12 @@ const GLASS_CARD =
   'bg-white/[0.055] border border-white/[0.09] backdrop-blur-2xl rounded-3xl shadow-[0_0_80px_rgba(45,212,191,0.07),0_24px_80px_rgba(0,0,0,0.5)]'
 
 // Só permite redirecionamentos internos (evita open-redirect via ?redirect=).
+// Sem um "?redirect=" explícito, o destino padrão é direto o dashboard — ir
+// para "/" faria essa rota re-renderizar a landing page (e seu loading.tsx)
+// por um instante antes do redirect server-side para o dashboard, causando
+// um flash visível da landing (com o rodapé) logo após o login.
 function safeInternalPath(target: string | null | undefined): string {
-  if (!target || !target.startsWith('/') || target.startsWith('//')) return '/'
+  if (!target || !target.startsWith('/') || target.startsWith('//')) return '/dashboard'
   return target
 }
 
