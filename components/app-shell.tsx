@@ -3,6 +3,7 @@
 import { useState, useEffect, createContext, useContext, useMemo } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { Sidebar } from '@/components/sidebar'
+import { Footer } from '@/components/footer'
 import { CreateExamModal } from '@/components/create-exam-modal'
 import { BanChecker } from '@/components/ban-checker'
 import { SupportChat } from '@/components/support-chat'
@@ -290,6 +291,8 @@ export function AppShell({
               {children}
             </main>
 
+            <Footer forceVisible />
+
             {guestNotice && <GuestAccessNotice />}
           </div>
         </FocusSessionProvider>
@@ -390,6 +393,11 @@ export function AppShell({
           <main className="flex-1">
             {children}
           </main>
+
+          {/* Rodapé com os canais de comunicação — dentro da área de
+              conteúdo (já deslocada pela sidebar), para não sobrepor a
+              barra lateral fixa nem quebrar o layout. */}
+          <Footer forceVisible />
         </div>
 
         {/* Create Exam Modal */}

@@ -36,10 +36,18 @@ function isAppShellRoute(pathname: string | null): boolean {
   return APP_SHELL_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))
 }
 
-export function Footer() {
+interface FooterProps {
+  // O AppShell (sidebar fixa das páginas internas) renderiza o próprio
+  // <Footer forceVisible /> já deslocado para dentro da área de conteúdo
+  // (respeitando o espaço da sidebar). Nesse caso ele deve ignorar o
+  // ocultamento automático por rota.
+  forceVisible?: boolean
+}
+
+export function Footer({ forceVisible = false }: FooterProps) {
   const pathname = usePathname()
 
-  if (isAppShellRoute(pathname)) {
+  if (!forceVisible && isAppShellRoute(pathname)) {
     return null
   }
 
