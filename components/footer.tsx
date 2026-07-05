@@ -36,18 +36,13 @@ function isAppShellRoute(pathname: string | null): boolean {
   return APP_SHELL_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))
 }
 
-interface FooterProps {
-  // O AppShell (sidebar fixa das páginas internas) renderiza o próprio
-  // <Footer forceVisible /> já deslocado para dentro da área de conteúdo
-  // (respeitando o espaço da sidebar). Nesse caso ele deve ignorar o
-  // ocultamento automático por rota.
-  forceVisible?: boolean
-}
-
-export function Footer({ forceVisible = false }: FooterProps) {
+export function Footer() {
   const pathname = usePathname()
 
-  if (!forceVisible && isAppShellRoute(pathname)) {
+  // Nas páginas internas (pós-login, com sidebar fixa) esse rodapé de
+  // marketing não deve aparecer: além de não fazer sentido no contexto de
+  // app logado, ele piscava no meio da tela enquanto a dashboard carregava.
+  if (isAppShellRoute(pathname)) {
     return null
   }
 
