@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Instagram, Mail, MessageCircle, Users, ArrowUpRight } from 'lucide-react'
@@ -38,11 +39,17 @@ function isAppShellRoute(pathname: string | null): boolean {
 
 export function Footer() {
   const pathname = usePathname()
+  const [mounted, setMounted] = useState(false)
 
-  // Nas páginas internas (pós-login, com sidebar fixa) esse rodapé de
-  // marketing não deve aparecer: além de não fazer sentido no contexto de
-  // app logado, ele piscava no meio da tela enquanto a dashboard carregava.
-  if (isAppShellRoute(pathname)) {
+  useEffect(() => setMounted(true), [])
+
+  // Não renderiza durante SSR / primeiro paint. Nesses instantes o
+  // usePathname() pode voltar null e o layout ainda está vazio — foi o que
+  // fazia os canais de comunicação "piscarem" no centro da tela junto com o
+  // loading logo após o login. Só mostramos o rodapé depois que a página
+  // montou no cliente E temos certeza de que é uma rota pública (fail-closed:
+  // pathname desconhecido ou rota interna do app => não renderiza nada).
+  if (!mounted || !pathname || isAppShellRoute(pathname)) {
     return null
   }
 
