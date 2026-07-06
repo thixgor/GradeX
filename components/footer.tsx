@@ -10,11 +10,16 @@ const WHATSAPP_GROUP_URL = 'https://chat.whatsapp.com/GPAbMSy9dBk3O8ZesnkRfR'
 const INSTAGRAM_URL = 'https://instagram.com/domineaqui.br'
 const CONTACT_EMAIL = 'contato@domineaqui.com.br'
 
-// Rotas internas (pós-login) que usam o AppShell com sidebar fixa em tela
-// cheia. Esse rodapé de marketing não deve aparecer nelas: além de não fazer
-// sentido no contexto de app logado, ele ficaria atrás da sidebar fixa e
-// aumentaria bastante a altura da página, forçando scroll extra.
-const APP_SHELL_PREFIXES = [
+// Rotas onde este rodapé de marketing NÃO deve aparecer:
+//  - '/' e '/auth': landing e telas de login já têm layout/rodapé próprios.
+//    O bloco grande de canais aparecia por cima da landing na entrada do
+//    site (antes do loading), então fica de fora aqui.
+//  - Rotas internas (pós-login) que usam o AppShell com sidebar fixa em tela
+//    cheia: além de não fazer sentido no app logado, o rodapé ficaria atrás
+//    da sidebar e piscava durante o carregamento.
+const HIDDEN_EXACT = ['/']
+const HIDDEN_PREFIXES = [
+  '/auth',
   '/admin',
   '/aulas',
   '/banco-questoes',
@@ -32,9 +37,11 @@ const APP_SHELL_PREFIXES = [
   '/provas',
 ]
 
-function isAppShellRoute(pathname: string | null): boolean {
-  if (!pathname) return false
-  return APP_SHELL_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))
+function isHiddenRoute(pathname: string | null): boolean {
+  // fail-closed: sem pathname conhecido, não renderiza (evita flash no loading).
+  if (!pathname) return true
+  if (HIDDEN_EXACT.includes(pathname)) return true
+  return HIDDEN_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))
 }
 
 export function Footer() {
@@ -46,10 +53,9 @@ export function Footer() {
   // Não renderiza durante SSR / primeiro paint. Nesses instantes o
   // usePathname() pode voltar null e o layout ainda está vazio — foi o que
   // fazia os canais de comunicação "piscarem" no centro da tela junto com o
-  // loading logo após o login. Só mostramos o rodapé depois que a página
-  // montou no cliente E temos certeza de que é uma rota pública (fail-closed:
-  // pathname desconhecido ou rota interna do app => não renderiza nada).
-  if (!mounted || !pathname || isAppShellRoute(pathname)) {
+  // loading. Só mostramos o rodapé depois que a página montou no cliente E
+  // temos certeza de que é uma rota pública de conteúdo.
+  if (!mounted || isHiddenRoute(pathname)) {
     return null
   }
 
