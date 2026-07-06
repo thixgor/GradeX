@@ -598,6 +598,11 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // Espelha a página atual para leitura síncrona dentro de callbacks estáveis
   // (goToPage) sem recriá-los a cada mudança de página.
   const currentPageRef = useRef(1)
+  // Retomada de leitura nos modos contínuo/largura: página para onde rolar
+  // assim que o layout existir, e janela de tempo em que o foco por scroll é
+  // ignorado — senão o IntersectionObserver do topo reverteria para a pág. 1.
+  const pendingResumeRef = useRef<number | null>(null)
+  const suppressFocusUntilRef = useRef(0)
   const [access, setAccess] = useState<ViewerAccess | null>(null)
   const [annotations, setAnnotations] = useState<PdfAnnotation[]>([])
   const [loading, setLoading] = useState(true)
@@ -698,6 +703,10 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
 
   const handlePageFocused = useCallback((page: number) => {
     if (mode === 'single') return
+    // Durante a retomada (rolagem programática até a última página salva),
+    // ignora o foco por scroll para as callbacks pendentes do observer no topo
+    // não reverterem `currentPage` para a pág. 1.
+    if (Date.now() < suppressFocusUntilRef.current) return
     setCurrentPage((current) => current === page ? current : page)
   }, [mode])
 
@@ -782,7 +791,16 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         }
         setCurrentPage(startPage)
         setPageInput(String(startPage))
-        setMode(saved?.mode || json.viewer?.defaultMode || 'single')
+        const resolvedMode: ViewerMode = saved?.mode || json.viewer?.defaultMode || 'single'
+        setMode(resolvedMode)
+        // Em contínuo/largura a lista começa na primeira página, então apenas
+        // restaurar `currentPage` não basta: é preciso rolar até a página salva
+        // quando ela existir no DOM — e suprimir o foco por scroll por um
+        // instante para o observer não reverter para a pág. 1 no topo.
+        if (resolvedMode !== 'single' && startPage > 1) {
+          pendingResumeRef.current = startPage
+          suppressFocusUntilRef.current = Date.now() + 1500
+        }
         if (!json.preview?.active && savedPage && savedPage > 1 && startPage === savedPage) {
           setNotice(`Retomando da pagina ${savedPage}`)
         }
@@ -810,6 +828,30 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     if (!access) return
     writeSavedPosition(materialId, { page: currentPage, mode })
   }, [access, currentPage, mode, materialId])
+
+  // Retomada em modo contínuo/largura: rola até a última página salva assim que
+  // o layout existe. Tenta por alguns frames porque o elemento-alvo pode montar
+  // um tick depois. Corrige o bug de abrir sempre no início mesmo tendo salvo a
+  // última página vista.
+  useEffect(() => {
+    if (!access || mode === 'single') return
+    const target = pendingResumeRef.current
+    if (target == null) return
+    let cancelled = false
+    let frame = 0
+    const attempt = () => {
+      if (cancelled) return
+      const element = document.getElementById(`pdf-page-${target}`)
+      if (element) {
+        element.scrollIntoView({ behavior: 'auto', block: 'start' })
+        pendingResumeRef.current = null
+        return
+      }
+      if (frame++ < 30) window.requestAnimationFrame(attempt)
+    }
+    window.requestAnimationFrame(attempt)
+    return () => { cancelled = true }
+  }, [access, mode])
 
   useEffect(() => {
     if (!pageSize || !contentWidth || zoomTouchedRef.current) return
@@ -2111,6 +2153,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   useEffect(() => {
     if ((!visible && !active) || requestedRef.current || pageBytes) return
     let cancelled = false
+    let settled = false
 
     async function loadPageBytes() {
       requestedRef.current = true
@@ -2118,11 +2161,13 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
       setError('')
       try {
         const result = await fetchPdfPageBytes(materialId, pageNumber)
+        settled = true
         if (!cancelled) {
           onPageCount(result.pageCount)
           setPageBytes(result.bytes)
         }
       } catch (err: any) {
+        settled = true
         if (!cancelled) setError(err?.message || 'Pagina indisponivel')
       } finally {
         if (!cancelled) setLoading(false)
@@ -2130,7 +2175,16 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     }
 
     loadPageBytes()
-    return () => { cancelled = true }
+    return () => {
+      cancelled = true
+      // Se a limpeza rodou por uma mudança de dependência (ex.: `active`
+      // alternando durante o scroll) ANTES de a requisição concluir, o guard
+      // `requestedRef` ficaria travado em true e a próxima execução do efeito
+      // sairia cedo — deixando a página presa no spinner até um F5. Liberar o
+      // guard quando não houve conclusão permite a retomada; a requisição em si
+      // é deduplicada/cacheada, então não há refetch duplicado.
+      if (!settled) requestedRef.current = false
+    }
   }, [active, loadAttempt, materialId, onPageCount, pageBytes, pageNumber, visible])
 
   useEffect(() => {
