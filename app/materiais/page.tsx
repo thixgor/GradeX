@@ -59,6 +59,9 @@ import {
 import { useMaterialCart } from '@/context/MaterialCartContext'
 import type { PricingEventStatePayload } from '@/components/pricing-events/PricingEventCountdown'
 import { PricingEventBadge, PricingEventCardPrice } from '@/components/pricing-events/PricingEventBadge'
+import { Product3DCard, type Product3DCardData } from '@/components/shop/product-3d-card'
+
+type PhysicalProductCard = Product3DCardData
 
 interface Material {
   _id: string
@@ -257,7 +260,7 @@ function MateriaisContent() {
   const [activeFilter, setActiveFilter] = useState<'all' | 'free' | 'paid'>('all')
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null)
   const [folderPath, setFolderPath] = useState<Folder[]>([])
-  const [activeTab, setActiveTab] = useState<'materials' | 'packages' | 'mine'>('materials')
+  const [activeTab, setActiveTab] = useState<'materials' | 'packages' | 'mine' | 'loja'>('materials')
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState('')
   const [highlightedMaterialId, setHighlightedMaterialId] = useState<string | null>(null)
@@ -279,6 +282,19 @@ function MateriaisContent() {
   const packagesCacheRef = useRef<Pick<BrowseSnapshot, 'packages' | 'purchasedPackageIds' | 'userGroups'> | null>(null)
   const { copiedId, copy } = useCopyLink()
   const { addItem } = useMaterialCart()
+
+  // Produtos físicos (loja) — carregados sob demanda quando a aba abre.
+  const [physicalProducts, setPhysicalProducts] = useState<PhysicalProductCard[]>([])
+  const [physicalLoaded, setPhysicalLoaded] = useState(false)
+
+  useEffect(() => {
+    if (activeTab !== 'loja' || physicalLoaded) return
+    fetch('/api/loja/produtos')
+      .then((r) => r.json())
+      .then((d) => setPhysicalProducts(Array.isArray(d.products) ? d.products : []))
+      .catch(() => {})
+      .finally(() => setPhysicalLoaded(true))
+  }, [activeTab, physicalLoaded])
 
   useEffect(() => () => { stepTimersRef.current.forEach(clearTimeout) }, [])
 
@@ -437,6 +453,7 @@ function MateriaisContent() {
 
     if (tabParam === 'packages') setActiveTab('packages')
     if (tabParam === 'mine') setActiveTab('mine')
+    if (tabParam === 'loja') setActiveTab('loja')
     if (folderParam) setCurrentFolderId(folderParam)
     // Redirect old ?material= share links to the individual page
     if (materialParam) { router.replace(`/materiais/${materialParam}`); return }
@@ -458,7 +475,7 @@ function MateriaisContent() {
       const params = new URLSearchParams(window.location.search)
       const folderId = params.get('folder')
       const tabParam = params.get('tab')
-      const nextTab = tabParam === 'packages' || tabParam === 'mine' ? tabParam : 'materials'
+      const nextTab = tabParam === 'packages' || tabParam === 'mine' || tabParam === 'loja' ? tabParam : 'materials'
       const nextFolderId = nextTab === 'materials' ? folderId : null
       const cached = browseCacheRef.current.get(getBrowseKey(nextFolderId, debouncedSearch, activeFilter))
 
@@ -505,12 +522,13 @@ function MateriaisContent() {
     }
   }, [highlightedMaterialId, highlightedPackageId, loading])
 
-  const updateBrowserUrl = useCallback((folderId: string | null, tab: 'materials' | 'packages' | 'mine' = activeTab) => {
+  const updateBrowserUrl = useCallback((folderId: string | null, tab: 'materials' | 'packages' | 'mine' | 'loja' = activeTab) => {
     if (typeof window === 'undefined') return
 
     const params = new URLSearchParams()
     if (tab === 'packages') params.set('tab', 'packages')
     if (tab === 'mine') params.set('tab', 'mine')
+    if (tab === 'loja') params.set('tab', 'loja')
     if (tab === 'materials' && folderId) params.set('folder', folderId)
 
     const nextUrl = params.toString() ? `/materiais?${params}` : '/materiais'
@@ -903,6 +921,7 @@ function MateriaisContent() {
             {([
               { id: 'materials', label: 'Materiais', icon: <FileText className="h-4 w-4" /> },
               { id: 'packages', label: 'Pacotes', icon: <Package className="h-4 w-4" /> },
+              { id: 'loja', label: 'Loja', icon: <Package className="h-4 w-4" /> },
               { id: 'mine', label: 'Meus Materiais', icon: <Check className="h-4 w-4" /> },
             ] as const).map(tab => (
               <button
@@ -1207,6 +1226,50 @@ function MateriaisContent() {
                 </div>
               )}
             </>
+        )}
+
+        {/* ─── Loja (produtos físicos) Tab ─── */}
+        {activeTab === 'loja' && (
+          <>
+            <div className="mb-5 flex items-center gap-3 rounded-2xl border border-primary/20 bg-primary/5 px-4 py-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
+                <Package className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold">Materiais impressos & produtos físicos</h3>
+                <p className="text-xs text-muted-foreground">Receba em casa ou retire na Afya Unigranrio Barra. Entregue por DomineAqui LTDA.</p>
+              </div>
+            </div>
+            {!physicalLoaded ? (
+              <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="rounded-2xl glass-card animate-pulse">
+                    <div className="aspect-[4/5] rounded-t-2xl bg-muted" />
+                    <div className="p-4 space-y-2">
+                      <div className="h-4 bg-muted rounded w-3/4" />
+                      <div className="h-3 bg-muted rounded w-1/2" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : physicalProducts.length === 0 ? (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
+                <div className="h-20 w-20 rounded-full glass-card mx-auto flex items-center justify-center mb-4">
+                  <Package className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <h3 className="text-lg font-heading font-bold mb-2">Nenhum produto na loja ainda</h3>
+                <p className="text-muted-foreground text-sm">Em breve novos materiais impressos por aqui.</p>
+              </motion.div>
+            ) : (
+              <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {physicalProducts
+                  .filter((p) => (p.linkMode || 'standalone') !== 'addon')
+                  .map((p) => (
+                    <Product3DCard key={p._id} product={p} href={`/loja/${p._id}`} />
+                  ))}
+              </div>
+            )}
+          </>
         )}
       </div>
 

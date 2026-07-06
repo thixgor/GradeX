@@ -146,6 +146,8 @@ export function NotificationsBell() {
       router.push('/admin/tickets')
     } else if (notification.type === 'ticket_reopened') {
       router.push('/')
+    } else if (notification.type === 'order_update') {
+      router.push('/profile?tab=pedidos')
     } else {
       router.push(`/exam/${notification.examId}/user/${notification.userId}`)
     }

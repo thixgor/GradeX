@@ -1191,3 +1191,133 @@ export async function sendSerialKeyCartPurchaseEmail(input: {
     attachments,
   })
 }
+
+// ─── Loja física (produtos físicos / pedidos) ────────────────────────
+
+const SHOP_STATUS_EMAIL: Record<string, { label: string; emoji: string; blurb: string }> = {
+  awaiting_payment: { label: 'Aguardando pagamento', emoji: '⏳', blurb: 'Estamos aguardando a confirmação do pagamento.' },
+  paid: { label: 'Pagamento confirmado', emoji: '✅', blurb: 'Seu pagamento foi confirmado e já estamos preparando seu pedido.' },
+  in_production: { label: 'Em produção', emoji: '🖨️', blurb: 'Seu material está sendo produzido (impresso) especialmente para você.' },
+  ready: { label: 'Pronto', emoji: '📦', blurb: 'Seu pedido está pronto!' },
+  shipped: { label: 'Enviado', emoji: '🚚', blurb: 'Seu pedido foi enviado e está a caminho.' },
+  out_for_delivery: { label: 'Saiu para entrega', emoji: '🛵', blurb: 'Seu pedido saiu para entrega e chega em breve.' },
+  delivered: { label: 'Entregue', emoji: '🎉', blurb: 'Seu pedido foi entregue. Bons estudos!' },
+  cancelled: { label: 'Cancelado', emoji: '❌', blurb: 'Seu pedido foi cancelado.' },
+  refunded: { label: 'Reembolsado', emoji: '↩️', blurb: 'Seu pedido foi reembolsado.' },
+}
+
+export async function sendShopOrderConfirmedEmail(input: {
+  to: string
+  userName: string
+  orderNumber: string
+  items: { title: string; quantity: number; unitPrice: number }[]
+  subtotal: number
+  freight: number
+  total: number
+  deliveryType: 'pickup' | 'shipping'
+  pickupPointName?: string
+  deliveryMethodName?: string
+  estimatedDeliveryDate?: Date | string
+  madeToOrder?: boolean
+}) {
+  const firstName = input.userName ? input.userName.split(' ')[0] : 'Aluno'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
+  const brl = (n: number) => `R$ ${Number(n).toFixed(2).replace('.', ',')}`
+  const eta = input.estimatedDeliveryDate
+    ? new Date(input.estimatedDeliveryDate).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
+    : null
+
+  const itemsRows = input.items
+    .map(
+      (it) => `
+      <tr>
+        <td style="padding:8px 0;color:#4a5568;">${it.quantity}× ${it.title}</td>
+        <td style="padding:8px 0;text-align:right;color:#0f3d2e;font-weight:600;">${brl(it.unitPrice * it.quantity)}</td>
+      </tr>`
+    )
+    .join('')
+
+  const deliveryLine =
+    input.deliveryType === 'pickup'
+      ? `Retirada em <strong>${input.pickupPointName || 'ponto de retirada'}</strong>`
+      : `Entrega no endereço via <strong>${input.deliveryMethodName || 'transportadora'}</strong>`
+
+  const content = `
+    <h1 class="h1">Pedido confirmado! 🎉</h1>
+    <p>Olá, ${firstName}!</p>
+    <p>Recebemos o seu pedido <span class="highlight">#${input.orderNumber}</span> e o pagamento foi confirmado.
+    ${input.madeToOrder ? 'Como é um item sob encomenda, ele será produzido especialmente para você.' : 'Já estamos preparando tudo.'}</p>
+
+    <div style="background-color:#f7fafc;border:1px solid #e2e8f0;border-radius:10px;padding:18px 20px;margin:20px 0;">
+      <p style="margin:0 0 10px 0;font-size:13px;text-transform:uppercase;letter-spacing:0.05em;color:#0f3d2e;font-weight:700;">Resumo do pedido</p>
+      <table style="width:100%;border-collapse:collapse;font-size:15px;">
+        ${itemsRows}
+        <tr><td colspan="2"><hr/></td></tr>
+        <tr><td style="color:#718096;">Subtotal</td><td style="text-align:right;color:#4a5568;">${brl(input.subtotal)}</td></tr>
+        <tr><td style="color:#718096;">Frete</td><td style="text-align:right;color:#4a5568;">${input.freight > 0 ? brl(input.freight) : 'Grátis'}</td></tr>
+        <tr><td style="font-weight:700;color:#0f3d2e;padding-top:6px;">Total</td><td style="text-align:right;font-weight:700;color:#0f3d2e;padding-top:6px;">${brl(input.total)}</td></tr>
+      </table>
+    </div>
+
+    <p style="font-size:15px;">${deliveryLine}.${eta ? ` Previsão: <strong>${eta}</strong>.` : ''}</p>
+
+    <div style="text-align:center;">
+      <a href="${appUrl}/profile?tab=pedidos" class="button" target="_blank">Acompanhar meu pedido</a>
+    </div>
+
+    <p style="margin-top:24px;font-size:12px;color:#a0aec0;text-align:center;">Entregue por DomineAqui LTDA — Rio de Janeiro</p>
+  `
+
+  const html = getEmailTemplate('Pedido confirmado 🎉', content)
+  await transporter.sendMail({
+    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+    to: input.to,
+    subject: `Pedido #${input.orderNumber} confirmado — DomineAqui`,
+    html,
+  })
+}
+
+export async function sendShopOrderStatusEmail(input: {
+  to: string
+  userName: string
+  orderNumber: string
+  status: string
+  note?: string
+  tracking?: { code?: string; url?: string; carrier?: string }
+}) {
+  const firstName = input.userName ? input.userName.split(' ')[0] : 'Aluno'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
+  const meta = SHOP_STATUS_EMAIL[input.status] || { label: input.status, emoji: '📦', blurb: '' }
+
+  const trackingBlock =
+    input.tracking && (input.tracking.code || input.tracking.url)
+      ? `
+    <div style="background-color:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:16px 20px;margin:20px 0;">
+      <p style="margin:0 0 6px 0;font-size:13px;text-transform:uppercase;letter-spacing:0.05em;color:#1d4ed8;font-weight:700;">Rastreamento</p>
+      ${input.tracking.carrier ? `<p style="margin:0 0 4px 0;color:#4a5568;">Transportadora: <strong>${input.tracking.carrier}</strong></p>` : ''}
+      ${input.tracking.code ? `<p style="margin:0 0 4px 0;color:#4a5568;">Código: <strong>${input.tracking.code}</strong></p>` : ''}
+      ${input.tracking.url ? `<p style="margin:8px 0 0 0;"><a href="${input.tracking.url}" class="social-link" target="_blank">Rastrear entrega →</a></p>` : ''}
+    </div>`
+      : ''
+
+  const content = `
+    <h1 class="h1">${meta.emoji} ${meta.label}</h1>
+    <p>Olá, ${firstName}!</p>
+    <p>Há uma atualização no seu pedido <span class="highlight">#${input.orderNumber}</span>.</p>
+    <p>${meta.blurb}</p>
+    ${input.note ? `<p style="background:#f7fafc;border-left:3px solid #f57c00;padding:10px 14px;color:#4a5568;">${input.note}</p>` : ''}
+    ${trackingBlock}
+    <div style="text-align:center;">
+      <a href="${appUrl}/profile?tab=pedidos" class="button" target="_blank">Ver meu pedido</a>
+    </div>
+    <p style="margin-top:24px;font-size:12px;color:#a0aec0;text-align:center;">Entregue por DomineAqui LTDA — Rio de Janeiro</p>
+  `
+
+  const html = getEmailTemplate(`${meta.label} — Pedido #${input.orderNumber}`, content)
+  await transporter.sendMail({
+    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+    to: input.to,
+    subject: `${meta.emoji} Pedido #${input.orderNumber}: ${meta.label}`,
+    html,
+  })
+}

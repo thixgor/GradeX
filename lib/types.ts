@@ -740,7 +740,10 @@ export interface Notification {
   examTitle?: string
   ticketId?: string
   ticketTitle?: string
-  type: 'correction_ready' | 'ticket_created' | 'ticket_reopened' // Tipo de notificação
+  /** Pedido físico relacionado (type === 'order_update') */
+  orderId?: string
+  orderNumber?: string
+  type: 'correction_ready' | 'ticket_created' | 'ticket_reopened' | 'order_update' // Tipo de notificação
   message: string
   read: boolean
   createdAt: Date
@@ -1434,6 +1437,185 @@ export interface MaterialPurchase {
   status: 'pending' | 'completed' | 'refunded'
   purchasedAt: Date
   refundedAt?: Date
+}
+
+// ─── Loja física (produtos físicos / impressos) ──────────────────
+
+/**
+ * Como o produto físico é vinculado à loja:
+ *  - 'standalone': vendido sozinho (avulso), aparece na loja/catálogo.
+ *  - 'material'  : listado no catálogo como um material normal (com selo Físico),
+ *                  opcionalmente atrelado a um material digital (linkedMaterialId).
+ *  - 'addon'     : add-on de um material digital — na página do material X, o
+ *                  usuário leva a versão impressa por +addonSurcharge.
+ */
+export type PhysicalLinkMode = 'standalone' | 'material' | 'addon'
+
+export interface PhysicalProduct {
+  _id?: string | import('mongodb').ObjectId
+  title: string
+  description?: string
+  slug?: string
+  /** Galeria de imagens (URLs Vercel Blob). images[0] é a capa. */
+  images: string[]
+  /** Preço base em R$ (avulso/material). */
+  price: number
+  /** Preço "de" (riscado) para promoção. */
+  compareAtPrice?: number
+
+  // Vínculo
+  linkMode: PhysicalLinkMode
+  /** Material digital vinculado (usado em 'addon' e opcional em 'material'). */
+  linkedMaterialId?: string
+  /** Acréscimo em R$ quando linkMode === 'addon'. */
+  addonSurcharge?: number
+
+  // Produção sob encomenda
+  madeToOrder: boolean
+  /** Prazo extra de produção em dias (quando madeToOrder). */
+  productionDays?: number
+
+  // Estoque (opcional)
+  trackStock: boolean
+  /** Quantidade em estoque (usado quando trackStock === true). */
+  stock?: number
+
+  // Catálogo
+  tags: string[]
+  allowedGroups?: MaterialAccessGroup[]
+  isHidden: boolean
+  isFeatured: boolean
+  order: number
+
+  // Estatísticas
+  salesCount: number
+  viewCount: number
+
+  createdBy: string
+  createdByName: string
+  createdAt: Date
+  updatedAt: Date
+}
+
+/** Método de entrega configurado pelo admin. Frete por região/UF. */
+export interface DeliveryMethod {
+  id: string
+  name: string
+  enabled: boolean
+  estimatedDaysMin: number
+  estimatedDaysMax: number
+  /**
+   * Frete (R$) por região. Chave = sigla da UF (ex.: 'RJ', 'SP') OU uma das
+   * chaves de macro-região ('N','NE','CO','SE','S') OU 'default' (fallback).
+   * Ausente/undefined => usa 'default' (ou 0 se também ausente).
+   */
+  freightByRegion: Record<string, number>
+  /** Detalhes opcionais exibidos ao usuário. */
+  details?: string
+}
+
+/** Ponto de retirada configurado pelo admin (ex.: Afya Unigranrio Barra). */
+export interface PickupPoint {
+  id: string
+  name: string
+  address?: string
+  enabled: boolean
+  /** Detalhes opcionais (horário, instruções). */
+  details?: string
+}
+
+export interface ShopSettings {
+  _id?: string | import('mongodb').ObjectId
+  settingsId: 'shop'
+  deliveryMethods: DeliveryMethod[]
+  pickupPoints: PickupPoint[]
+  /** Rodapé de entrega. Ex.: "Entregue por DomineAqui LTDA — Rio de Janeiro". */
+  sellerFooter: string
+  updatedAt: Date
+  updatedBy?: string
+}
+
+export interface ShippingAddress {
+  name: string
+  phone?: string
+  cep: string
+  street: string
+  number: string
+  complement?: string
+  district: string
+  city: string
+  uf: string
+}
+
+export interface ShopOrderItem {
+  productId: string
+  title: string
+  imageUrl?: string
+  unitPrice: number
+  quantity: number
+  /** Se é um add-on da versão impressa de um material digital. */
+  isAddon?: boolean
+  linkedMaterialId?: string
+  madeToOrder?: boolean
+  productionDays?: number
+}
+
+export type ShopOrderStatus =
+  | 'awaiting_payment'
+  | 'paid'
+  | 'in_production'
+  | 'ready'
+  | 'shipped'
+  | 'out_for_delivery'
+  | 'delivered'
+  | 'cancelled'
+  | 'refunded'
+
+export interface ShopOrderStatusEntry {
+  status: ShopOrderStatus
+  note?: string
+  at: Date
+  byName?: string
+}
+
+export interface ShopOrder {
+  _id?: string | import('mongodb').ObjectId
+  orderNumber: string
+  userId: string
+  userName: string
+  userEmail: string
+  items: ShopOrderItem[]
+
+  subtotal: number
+  freight: number
+  discount: number
+  total: number
+  couponCode?: string
+
+  // Entrega
+  deliveryType: 'pickup' | 'shipping'
+  pickupPointId?: string
+  pickupPointName?: string
+  shippingAddress?: ShippingAddress
+  deliveryMethodId?: string
+  deliveryMethodName?: string
+  /** Prazo estimado (produção + entrega) — data alvo. */
+  estimatedDeliveryDate?: Date | null
+
+  // Pagamento
+  provider?: 'mercado_pago'
+  providerOrderId?: string
+  providerPaymentId?: string
+  paymentStatus: PaymentStatus
+
+  // Ciclo de vida do pedido físico
+  status: ShopOrderStatus
+  statusHistory: ShopOrderStatusEntry[]
+  /** Rastreio opcional definido pelo admin. */
+  tracking?: { code?: string; url?: string; carrier?: string }
+
+  createdAt: Date
+  updatedAt: Date
 }
 
 // ─── Produto avulso: Manual Clínico Premium ──────────────────────

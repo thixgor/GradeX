@@ -27,6 +27,7 @@ import {
   Music,
   HeartPulse,
   ShoppingCart,
+  Package,
   BadgeDollarSign,
   BadgePercent,
   Star,
@@ -214,6 +215,13 @@ export default function AdminDashboard() {
       icon: ShoppingCart,
       href: '/admin/materiais',
       color: 'from-emerald-500 to-teal-500'
+    },
+    {
+      title: 'Loja Física',
+      description: 'Produtos físicos/impressos, galeria de imagens, métodos de entrega, frete por região e pedidos.',
+      icon: Package,
+      href: '/admin/loja',
+      color: 'from-orange-500 to-amber-500'
     },
     {
       title: 'Flashcards Manuais',

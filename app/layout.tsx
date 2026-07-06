@@ -11,6 +11,7 @@ import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { LiteModeProvider } from '@/context/LiteModeContext'
 import { MaterialCartProvider } from '@/context/MaterialCartContext'
+import { ShopCartProvider } from '@/context/ShopCartContext'
 import {
   CANONICAL_ORIGIN,
   DEFAULT_OG_IMAGE,
@@ -177,6 +178,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <MaterialCartProvider>
+           <ShopCartProvider>
             <VerifyEmailBanner />
             <ImageProtectionProvider>
               <div className="flex-1 flex flex-col">
@@ -185,6 +187,7 @@ export default function RootLayout({
               <Footer />
               <AppChrome />
             </ImageProtectionProvider>
+           </ShopCartProvider>
           </MaterialCartProvider>
           <Analytics />
           <SpeedInsights />

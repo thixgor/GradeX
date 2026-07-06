@@ -23,7 +23,7 @@ export type SubscriptionStatus =
 
 export type PaymentMethodKind = 'credit_card' | 'debit_card' | 'pix' | 'boleto' | 'unknown'
 
-export type PaymentOrderType = 'plan' | 'material' | 'donation' | 'subscription' | 'product' | 'raffle'
+export type PaymentOrderType = 'plan' | 'material' | 'donation' | 'subscription' | 'product' | 'raffle' | 'physical'
 
 export type PaymentProviderId = 'mercado_pago'
 

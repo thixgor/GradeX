@@ -82,6 +82,15 @@ if (process.env.NODE_ENV === 'development') {
         db.collection('raffle_purchases').createIndex({ orderId: 1 }, { sparse: true }),
         db.collection('raffle_purchases').createIndex({ mercadoPagoPaymentId: 1 }, { unique: true, sparse: true }),
         db.collection('raffle_winners').createIndex({ raffleId: 1, number: 1 }, { unique: true }),
+        // ── Loja física (produtos físicos / pedidos) ──
+        db.collection('physical_products').createIndex({ isHidden: 1, order: 1 }),
+        db.collection('physical_products').createIndex({ linkedMaterialId: 1 }, { sparse: true }),
+        db.collection('physical_products').createIndex({ slug: 1 }, { unique: true, sparse: true }),
+        db.collection('shop_orders').createIndex({ userId: 1, createdAt: -1 }),
+        db.collection('shop_orders').createIndex({ status: 1, createdAt: -1 }),
+        db.collection('shop_orders').createIndex({ providerOrderId: 1 }, { sparse: true }),
+        db.collection('shop_orders').createIndex({ orderNumber: 1 }, { unique: true }),
+        db.collection('shop_settings').createIndex({ settingsId: 1 }, { unique: true }),
       ]).catch(err => console.error('Erro ao criar índices iniciais:', err))
       return client
     })
@@ -167,6 +176,15 @@ if (process.env.NODE_ENV === 'development') {
       db.collection('raffle_purchases').createIndex({ orderId: 1 }, { sparse: true }),
       db.collection('raffle_purchases').createIndex({ mercadoPagoPaymentId: 1 }, { unique: true, sparse: true }),
       db.collection('raffle_winners').createIndex({ raffleId: 1, number: 1 }, { unique: true }),
+      // ── Loja física (produtos físicos / pedidos) ──
+      db.collection('physical_products').createIndex({ isHidden: 1, order: 1 }),
+      db.collection('physical_products').createIndex({ linkedMaterialId: 1 }, { sparse: true }),
+      db.collection('physical_products').createIndex({ slug: 1 }, { unique: true, sparse: true }),
+      db.collection('shop_orders').createIndex({ userId: 1, createdAt: -1 }),
+      db.collection('shop_orders').createIndex({ status: 1, createdAt: -1 }),
+      db.collection('shop_orders').createIndex({ providerOrderId: 1 }, { sparse: true }),
+      db.collection('shop_orders').createIndex({ orderNumber: 1 }, { unique: true }),
+      db.collection('shop_settings').createIndex({ settingsId: 1 }, { unique: true }),
     ]).catch(err => console.error('Erro ao criar índices iniciais:', err))
     return client
   })

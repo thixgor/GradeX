@@ -37,6 +37,11 @@ const publicRoutes = [
   '/api/admin/settings',
   '/api/display-settings',
   '/api/doacoes/settings',
+  // Loja física: listagem de produtos e config pública de entrega são leitura
+  // pública (o catálogo aparece na página pública /materiais). As mutações em
+  // /api/loja/produtos e /api/loja/settings validam admin internamente.
+  '/api/loja/produtos',
+  '/api/loja/settings/public',
 ]
 
 // Prefixos públicos
@@ -86,6 +91,9 @@ function isPublicRoute(pathname: string): boolean {
   if (/^\/api\/materiais\/[a-fA-F0-9]{24}\/pdf-viewer\/access$/.test(pathname)) return true
   if (/^\/api\/materiais\/[a-fA-F0-9]{24}\/pdf-viewer\/page$/.test(pathname)) return true
   if (/^\/pacotes\/[a-fA-F0-9]{24}$/.test(pathname)) return true
+  // Loja física: página do produto e leitura de um produto (público).
+  if (/^\/loja\/[a-fA-F0-9]{24}$/.test(pathname)) return true
+  if (/^\/api\/loja\/produtos\/[a-fA-F0-9]{24}$/.test(pathname)) return true
   if (/^\/flashcards\/d\/[^/]+$/.test(pathname)) return true
   // Mapas mentais compartilhados (público/não listado/com senha) podem ser
   // abertos por visitantes via link. As rotas validam o acesso internamente.

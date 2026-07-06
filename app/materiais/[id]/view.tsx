@@ -68,6 +68,7 @@ import type { ReviewSummary } from '@/lib/reviews-shared'
 import { PricingEventCountdown } from '@/components/pricing-events/PricingEventCountdown'
 import { PricingEventBadge } from '@/components/pricing-events/PricingEventBadge'
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
+import { PrintedAddon } from '@/components/shop/printed-addon'
 
 // ─── Types ───────────────────────────────────────────────────
 interface Material {
@@ -603,6 +604,9 @@ export default function MaterialViewPage() {
               {material.title}
             </span>
           </motion.div>
+
+          {/* Oferta de versão impressa (add-on de produto físico) */}
+          <PrintedAddon materialId={material._id} />
 
           {/* Main layout */}
           <div className="flex flex-col xl:flex-row gap-6">

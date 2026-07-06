@@ -9,7 +9,7 @@
 
 import { ObjectId } from 'mongodb'
 import { getDb } from '../mongodb'
-import { sendPlanPurchasedEmail, sendDonationThanksEmail, sendMaterialPurchasedEmail, sendCartPurchasedEmail, sendManualClinicoPurchasedEmail, sendRafflePurchaseEmail } from '../mail'
+import { sendPlanPurchasedEmail, sendDonationThanksEmail, sendMaterialPurchasedEmail, sendCartPurchasedEmail, sendManualClinicoPurchasedEmail, sendRafflePurchaseEmail, sendShopOrderConfirmedEmail } from '../mail'
 import { markNumbersSold, releaseReservation } from '../raffles'
 import type { Raffle, RafflePurchase } from '../types'
 import { getPersonalExamsQuota } from '../tier-limits'
@@ -21,6 +21,8 @@ import type {
   MaterialPurchase,
   User,
   AccountType,
+  ShopOrder,
+  Notification,
 } from '../types'
 import type { PaymentStatus, ProviderOrder } from './types'
 import { audit } from './audit'
@@ -159,6 +161,9 @@ async function runApprovedEffects(order: PaymentOrder, result: ProviderOrder) {
     case 'raffle':
       await applyRafflePurchase(order, result)
       break
+    case 'physical':
+      await applyPhysicalOrder(order, result)
+      break
   }
 }
 
@@ -214,6 +219,29 @@ async function runRevocationEffects(order: PaymentOrder, newStatus: PaymentStatu
       { _id: new ObjectId(raffleId) as any },
       { $set: { soldCount, updatedAt: new Date() } },
     )
+  }
+  if (order.type === 'physical') {
+    const db = await getDb()
+    const shopOrderId = (order.metadata?.shopOrderId as string) || order.refId
+    if (!shopOrderId || !ObjectId.isValid(String(shopOrderId))) return
+    const shopOrder = await db.collection<ShopOrder>('shop_orders').findOne({ _id: new ObjectId(String(shopOrderId)) as any })
+    if (!shopOrder || shopOrder.status === 'refunded') return
+    const now = new Date()
+    await db.collection<ShopOrder>('shop_orders').updateOne(
+      { _id: shopOrder._id as any },
+      {
+        $set: { status: 'refunded', paymentStatus: newStatus, updatedAt: now },
+        $push: { statusHistory: { status: 'refunded', note: `Pagamento ${newStatus}`, at: now } } as any,
+      }
+    )
+    // Devolve estoque dos itens com controle de estoque.
+    for (const item of shopOrder.items || []) {
+      if (!ObjectId.isValid(item.productId)) continue
+      await db.collection('physical_products').updateOne(
+        { _id: new ObjectId(item.productId), trackStock: true },
+        { $inc: { stock: item.quantity, salesCount: -item.quantity } }
+      )
+    }
   }
 }
 
@@ -276,6 +304,96 @@ async function applyPlanPurchase(order: PaymentOrder) {
 }
 
 // ── Material/Pacote ──
+
+/**
+ * Pedido físico aprovado: marca o pedido como pago (ou em produção quando sob
+ * encomenda), decrementa estoque, notifica e envia e-mail de confirmação.
+ */
+async function applyPhysicalOrder(order: PaymentOrder, result?: ProviderOrder) {
+  const db = await getDb()
+  const shopOrderId = (order.metadata?.shopOrderId as string) || order.refId
+  if (!shopOrderId || !ObjectId.isValid(String(shopOrderId))) return
+
+  const shopOrders = db.collection<ShopOrder>('shop_orders')
+  const shopOrder = await shopOrders.findOne({ _id: new ObjectId(String(shopOrderId)) as any })
+  if (!shopOrder) return
+
+  // Idempotência: só processa se ainda estava aguardando pagamento.
+  if (shopOrder.status !== 'awaiting_payment') {
+    await shopOrders.updateOne(
+      { _id: shopOrder._id as any },
+      { $set: { paymentStatus: 'approved', providerPaymentId: result?.providerOrderId || shopOrder.providerPaymentId, updatedAt: new Date() } }
+    )
+    return
+  }
+
+  const hasMadeToOrder = (shopOrder.items || []).some((it) => it.madeToOrder)
+  const nextStatus = hasMadeToOrder ? 'in_production' : 'paid'
+  const now = new Date()
+
+  await shopOrders.updateOne(
+    { _id: shopOrder._id as any },
+    {
+      $set: {
+        status: nextStatus,
+        paymentStatus: 'approved',
+        providerPaymentId: result?.providerOrderId || shopOrder.providerPaymentId,
+        updatedAt: now,
+      },
+      $push: {
+        statusHistory: {
+          $each: [
+            { status: 'paid', note: 'Pagamento confirmado', at: now },
+            ...(hasMadeToOrder ? [{ status: 'in_production', note: 'Produção iniciada (sob encomenda)', at: now }] : []),
+          ],
+        },
+      } as any,
+    }
+  )
+
+  // Decrementa estoque dos produtos com controle de estoque (best-effort).
+  for (const item of shopOrder.items || []) {
+    if (!ObjectId.isValid(item.productId)) continue
+    await db.collection('physical_products').updateOne(
+      { _id: new ObjectId(item.productId), trackStock: true },
+      { $inc: { stock: -item.quantity, salesCount: item.quantity } }
+    )
+    await db.collection('physical_products').updateOne(
+      { _id: new ObjectId(item.productId), trackStock: { $ne: true } },
+      { $inc: { salesCount: item.quantity } }
+    )
+  }
+
+  // Notificação in-app
+  const notif: Omit<Notification, '_id'> = {
+    userId: shopOrder.userId,
+    orderId: String(shopOrder._id),
+    orderNumber: shopOrder.orderNumber,
+    type: 'order_update',
+    message: `Pedido ${shopOrder.orderNumber} confirmado! ${hasMadeToOrder ? 'Já entrou em produção.' : 'Estamos preparando seu envio.'}`,
+    read: false,
+    createdAt: now,
+  }
+  await db.collection('notifications').insertOne(notif as any)
+
+  // E-mail de confirmação (best-effort)
+  if (shopOrder.userEmail) {
+    sendShopOrderConfirmedEmail({
+      to: shopOrder.userEmail,
+      userName: shopOrder.userName,
+      orderNumber: shopOrder.orderNumber,
+      items: shopOrder.items.map((it) => ({ title: it.title, quantity: it.quantity, unitPrice: it.unitPrice })),
+      subtotal: shopOrder.subtotal,
+      freight: shopOrder.freight,
+      total: shopOrder.total,
+      deliveryType: shopOrder.deliveryType,
+      pickupPointName: shopOrder.pickupPointName,
+      deliveryMethodName: shopOrder.deliveryMethodName,
+      estimatedDeliveryDate: shopOrder.estimatedDeliveryDate || undefined,
+      madeToOrder: hasMadeToOrder,
+    }).catch((e) => console.error('[effects] e-mail pedido físico falhou:', e))
+  }
+}
 
 async function applyMaterialPurchase(order: PaymentOrder, result?: ProviderOrder) {
   if (!order.userId || !order.refId) return
