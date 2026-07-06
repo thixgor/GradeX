@@ -85,6 +85,10 @@ export async function GET(
         'Content-Type': 'text/html; charset=utf-8',
         'Content-Security-Policy': CONTENT_SECURITY_POLICY,
         'X-Content-Type-Options': 'nosniff',
+        // Sobrescreve o X-Frame-Options: DENY global (next.config.js) — esta
+        // rota é servida DENTRO de um <iframe> pelo leitor; sem isso o
+        // navegador recusa exibir o frame (tela em branco).
+        'X-Frame-Options': 'SAMEORIGIN',
         'Cache-Control': 'private, no-store, max-age=0',
         'Referrer-Policy': 'no-referrer',
       },
