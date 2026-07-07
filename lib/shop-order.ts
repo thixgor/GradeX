@@ -9,8 +9,8 @@
  */
 
 import { ObjectId, type Db } from 'mongodb'
-import { computeFreight, estimateDeliveryDate, generateOrderNumber, defaultShopSettings } from './shop'
-import type { PhysicalProduct, ShopOrder, ShopOrderItem, ShopSettings, ShippingAddress } from './types'
+import { computeFreight, estimateDeliveryDate, generateOrderNumber, defaultShopSettings, physicalFullPrice, physicalAddonPrice } from './shop'
+import type { PhysicalProduct, PhysicalProductVersion, ShopOrder, ShopOrderItem, ShopSettings, ShippingAddress } from './types'
 
 export interface PhysicalCheckoutInput {
   items: { productId: string; quantity: number; versionId?: string }[]
@@ -62,29 +62,27 @@ export async function buildPhysicalShopOrder(
       skipped.push({ title: p?.title || 'Item', reason: 'unavailable' })
       continue
     }
-    // Add-on: só entra se o material OU o pacote vinculado estiver sendo comprado.
-    if (p.linkMode === 'addon') {
-      const matOk = !!(p.linkedMaterialId && opts.eligibleMaterialIds.has(String(p.linkedMaterialId)))
-      const pkgOk = !!(p.linkedPackageId && opts.eligiblePackageIds?.has(String(p.linkedPackageId)))
-      if (!matOk && !pkgOk) {
-        skipped.push({ title: p.title, reason: 'addon_requires_material' })
-        continue
-      }
-    }
     if (p.trackStock && typeof p.stock === 'number' && p.stock < line.quantity) {
       return { ok: false, error: `Estoque insuficiente para "${p.title}"`, status: 409 }
     }
-    const baseUnit = p.linkMode === 'addon' ? (p.addonSurcharge ?? p.price) : p.price
+    // Preço de add-on só quando o material/pacote vinculado está na MESMA compra;
+    // caso contrário, cobra o preço cheio (avulso).
+    const withLinked =
+      p.linkMode === 'addon' &&
+      (!!(p.linkedMaterialId && opts.eligibleMaterialIds.has(String(p.linkedMaterialId))) ||
+        !!(p.linkedPackageId && opts.eligiblePackageIds?.has(String(p.linkedPackageId))))
+
     let versionId: string | undefined
     let versionName: string | undefined
-    let unitPrice = baseUnit
+    let version: PhysicalProductVersion | undefined
     if (Array.isArray(p.versions) && p.versions.length > 0) {
-      const version = p.versions.find((v) => v.id === line.versionId)
-      if (!version) return { ok: false, error: `Selecione uma versão para "${p.title}"`, status: 400 }
-      versionId = version.id
-      versionName = version.name
-      unitPrice = typeof version.price === 'number' ? version.price : baseUnit
+      const found = p.versions.find((v) => v.id === line.versionId)
+      if (!found) return { ok: false, error: `Selecione uma versão para "${p.title}"`, status: 400 }
+      versionId = found.id
+      versionName = found.name
+      version = found as any
     }
+    const unitPrice = withLinked ? physicalAddonPrice(p, version) : physicalFullPrice(p, version)
     subtotal += unitPrice * line.quantity
     if (p.madeToOrder && p.productionDays) maxProductionDays = Math.max(maxProductionDays, p.productionDays)
     orderItems.push({

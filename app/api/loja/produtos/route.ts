@@ -26,11 +26,15 @@ function sanitizeVersions(input: any) {
     .slice(0, 20)
     .map((v, i) => {
       const priceNum = Number(v.price)
+      const addonNum = Number(v.addonSurcharge)
       return {
         id: v.id ? String(v.id) : `ver-${Date.now()}-${i}`,
         name: String(v.name).trim().slice(0, 120),
         price: v.price !== undefined && v.price !== null && v.price !== '' && !isNaN(priceNum) && priceNum >= 0
           ? Math.round(priceNum * 100) / 100
+          : undefined,
+        addonSurcharge: v.addonSurcharge !== undefined && v.addonSurcharge !== null && v.addonSurcharge !== '' && !isNaN(addonNum) && addonNum >= 0
+          ? Math.round(addonNum * 100) / 100
           : undefined,
         details: v.details ? String(v.details).slice(0, 1000) : undefined,
       }

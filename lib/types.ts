@@ -1459,8 +1459,11 @@ export type PhysicalLinkMode = 'standalone' | 'material' | 'addon'
 export interface PhysicalProductVersion {
   id: string
   name: string
-  /** Preço em R$ desta versão. Ausente => usa o preço/acréscimo base do produto. */
+  /** Preço cheio (avulso) desta versão em R$. Ausente => usa `price` do produto. */
   price?: number
+  /** Acréscimo (preço de add-on) desta versão, aplicado quando comprado junto ao
+   *  material/pacote vinculado. Ausente => usa `addonSurcharge` do produto. */
+  addonSurcharge?: number
   /** Detalhes opcionais desta versão. */
   details?: string
 }

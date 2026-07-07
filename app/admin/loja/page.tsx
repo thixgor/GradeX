@@ -335,7 +335,7 @@ function ProductModal({
               <select
                 value={form.linkMode || 'standalone'}
                 onChange={(e) => set({ linkMode: e.target.value as any })}
-                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground [&>option]:bg-background [&>option]:text-foreground"
               >
                 <option value="standalone">Avulso (loja)</option>
                 <option value="material">Material normal (catálogo)</option>
@@ -353,7 +353,7 @@ function ProductModal({
                     // Limpa o id do outro tipo ao trocar.
                     set(t === 'package' ? { linkedMaterialId: undefined } : { linkedPackageId: undefined })
                   }}
-                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground [&>option]:bg-background [&>option]:text-foreground"
                 >
                   <option value="material">Material</option>
                   <option value="package">Pacote</option>
@@ -371,7 +371,7 @@ function ProductModal({
                 <select
                   value={form.linkedPackageId || ''}
                   onChange={(e) => set({ linkedPackageId: e.target.value || undefined })}
-                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground [&>option]:bg-background [&>option]:text-foreground"
                 >
                   <option value="">— selecionar pacote —</option>
                   {packages.map((p) => <option key={p._id} value={p._id}>{p.title}</option>)}
@@ -380,7 +380,7 @@ function ProductModal({
                 <select
                   value={form.linkedMaterialId || ''}
                   onChange={(e) => set({ linkedMaterialId: e.target.value || undefined })}
-                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground [&>option]:bg-background [&>option]:text-foreground"
                 >
                   <option value="">— selecionar material —</option>
                   {materials.map((m) => <option key={m._id} value={m._id}>{m.title}</option>)}
@@ -432,9 +432,9 @@ function ProductModal({
                       }}
                     />
                     <Input
-                      className="w-32" type="number" step="0.01"
-                      placeholder={form.linkMode === 'addon' ? 'Acréscimo +R$' : 'Preço'}
-                      title={form.linkMode === 'addon' ? 'Acréscimo desta versão (+R$)' : 'Preço desta versão'}
+                      className="w-28" type="number" step="0.01"
+                      placeholder="Preço cheio"
+                      title="Preço cheio (avulso) desta versão"
                       value={v.price ?? ''}
                       onChange={(e) => {
                         const list = [...((form.versions as any[]) || [])]
@@ -442,6 +442,19 @@ function ProductModal({
                         set({ versions: list })
                       }}
                     />
+                    {form.linkMode === 'addon' && (
+                      <Input
+                        className="w-28" type="number" step="0.01"
+                        placeholder="Add-on +R$"
+                        title="Preço de add-on desta versão (comprado junto ao material/pacote)"
+                        value={v.addonSurcharge ?? ''}
+                        onChange={(e) => {
+                          const list = [...((form.versions as any[]) || [])]
+                          list[i] = { ...list[i], addonSurcharge: e.target.value === '' ? undefined : Number(e.target.value) }
+                          set({ versions: list })
+                        }}
+                      />
+                    )}
                     <button
                       type="button"
                       onClick={() => set({ versions: ((form.versions as any[]) || []).filter((_, idx) => idx !== i) })}
@@ -734,7 +747,7 @@ function PedidosTab() {
     <div>
       <div className="mb-4 flex items-center gap-3">
         <h2 className="text-lg font-bold">Pedidos</h2>
-        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="ml-auto h-9 rounded-md border border-input bg-background px-3 text-sm">
+        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="ml-auto h-9 rounded-md border border-input bg-background px-3 text-sm text-foreground [&>option]:bg-background [&>option]:text-foreground">
           <option value="">Todos os status</option>
           {STATUS_OPTIONS.map((s) => <option key={s} value={s}>{SHOP_STATUS_LABELS[s]}</option>)}
         </select>
@@ -858,7 +871,7 @@ function OrderModal({ order, onClose, onSaved }: { order: ShopOrder; onClose: ()
         <div className="mt-4 space-y-3">
           <div>
             <label className="mb-1 block text-xs font-semibold text-muted-foreground">Atualizar status</label>
-            <select value={status} onChange={(e) => setStatus(e.target.value as ShopOrderStatus)} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
+            <select value={status} onChange={(e) => setStatus(e.target.value as ShopOrderStatus)} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground [&>option]:bg-background [&>option]:text-foreground">
               {STATUS_OPTIONS.map((s) => <option key={s} value={s}>{SHOP_STATUS_LABELS[s]}</option>)}
             </select>
           </div>

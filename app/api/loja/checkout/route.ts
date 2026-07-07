@@ -7,7 +7,7 @@ import { checkRateLimit } from '@/lib/rate-limit'
 import { getPaymentProvider, deriveIdempotencyKey } from '@/lib/payments'
 import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
-import { computeFreight, estimateDeliveryDate, generateOrderNumber, defaultShopSettings } from '@/lib/shop'
+import { computeFreight, estimateDeliveryDate, generateOrderNumber, defaultShopSettings, physicalFullPrice } from '@/lib/shop'
 import type { PaymentOrder, PhysicalProduct, ShopOrder, ShopOrderItem, ShopSettings } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -82,30 +82,23 @@ export async function POST(request: NextRequest) {
     if (!p || p.isHidden) {
       return NextResponse.json({ error: 'Produto indisponível' }, { status: 404 })
     }
-    // Add-on só pode ser comprado junto ao material digital (via /materiais/checkout).
-    if (p.linkMode === 'addon') {
-      return NextResponse.json({
-        error: `"${p.title}" só pode ser comprado junto ao material digital vinculado.`,
-      }, { status: 400 })
-    }
     if (p.trackStock && typeof p.stock === 'number' && p.stock < line.quantity) {
       return NextResponse.json({ error: `Estoque insuficiente para "${p.title}"` }, { status: 409 })
     }
-    const baseUnit = p.price // add-ons já rejeitados acima
 
-    // Resolve a versão escolhida (quando o produto tem versões).
+    // Checkout só-físico: sem material na compra → sempre preço cheio (avulso).
     let versionId: string | undefined
     let versionName: string | undefined
-    let unitPrice = baseUnit
+    let version: any
     if (Array.isArray(p.versions) && p.versions.length > 0) {
-      const version = p.versions.find((v) => v.id === line.versionId)
+      version = p.versions.find((v) => v.id === line.versionId)
       if (!version) {
         return NextResponse.json({ error: `Selecione uma versão para "${p.title}"` }, { status: 400 })
       }
       versionId = version.id
       versionName = version.name
-      unitPrice = typeof version.price === 'number' ? version.price : baseUnit
     }
+    const unitPrice = physicalFullPrice(p, version)
 
     subtotal += unitPrice * line.quantity
     if (p.madeToOrder && p.productionDays) {
@@ -119,8 +112,9 @@ export async function POST(request: NextRequest) {
       quantity: line.quantity,
       versionId,
       versionName,
-      isAddon: false,
+      isAddon: p.linkMode === 'addon',
       linkedMaterialId: p.linkedMaterialId,
+      linkedPackageId: p.linkedPackageId,
       madeToOrder: p.madeToOrder,
       productionDays: p.productionDays,
     })

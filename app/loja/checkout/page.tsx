@@ -249,7 +249,7 @@ export default function ShopCheckoutPage() {
                     <select
                       value={address.uf}
                       onChange={(e) => setAddress({ ...address, uf: e.target.value })}
-                      className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+                      className="h-10 rounded-md border border-input bg-background px-3 text-sm text-foreground [&>option]:bg-background [&>option]:text-foreground"
                     >
                       <option value="">UF</option>
                       {UFS.map((uf) => (

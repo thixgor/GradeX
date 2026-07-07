@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Printer, Check, Plus, Truck, LogIn, Info } from 'lucide-react'
 import { useShopCart } from '@/context/ShopCartContext'
 import { useAuthUser } from '@/hooks/use-auth-user'
+import { physicalAddonPrice, physicalFullPrice } from '@/lib/shop'
 import type { PhysicalProduct } from '@/lib/types'
 
 export function PrintedAddon({ materialId, packageId }: { materialId?: string; packageId?: string }) {
@@ -60,11 +61,12 @@ export function PrintedAddon({ materialId, packageId }: { materialId?: string; p
       )}
       {products.map((p) => {
         const pid = String(p._id)
-        const base = p.addonSurcharge ?? p.price
         const versions = p.versions || []
         const verId = versions.length > 0 ? (selectedVersions[pid] || versions[0].id) : undefined
         const ver = versions.find((v) => v.id === verId)
-        const price = ver && typeof ver.price === 'number' ? ver.price : base
+        const addonPrice = physicalAddonPrice(p, ver)   // preço com o material (exibido)
+        const fullPrice = physicalFullPrice(p, ver)      // preço cheio (avulso)
+        const price = addonPrice
         const inCart = isInCart(pid, verId)
         return (
           <motion.div
@@ -93,7 +95,7 @@ export function PrintedAddon({ materialId, packageId }: { materialId?: string; p
                 <select
                   value={verId}
                   onChange={(e) => setSelectedVersions((s) => ({ ...s, [pid]: e.target.value }))}
-                  className="mt-1.5 h-7 rounded-md border border-input bg-background px-2 text-xs"
+                  className="mt-1.5 h-7 rounded-md border border-input bg-background px-2 text-xs text-foreground [&>option]:bg-background [&>option]:text-foreground"
                 >
                   {versions.map((v) => (
                     <option key={v.id} value={v.id}>{v.name}</option>
@@ -131,7 +133,8 @@ export function PrintedAddon({ materialId, packageId }: { materialId?: string; p
                       addItem({
                         productId: pid,
                         title: p.title,
-                        price,
+                        price: fullPrice,
+                        addonPrice,
                         imageUrl: p.images?.[0],
                         versionId: ver?.id,
                         versionName: ver?.name,

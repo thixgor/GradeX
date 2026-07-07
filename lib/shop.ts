@@ -6,9 +6,29 @@
 
 import type {
   DeliveryMethod,
+  PhysicalProduct,
+  PhysicalProductVersion,
   ShopOrderStatus,
   ShopSettings,
 } from './types'
+
+/** Preço cheio (avulso) de um produto físico, considerando a versão escolhida. */
+export function physicalFullPrice(p: Pick<PhysicalProduct, 'price'>, version?: PhysicalProductVersion | null): number {
+  return typeof version?.price === 'number' ? version.price : p.price
+}
+
+/**
+ * Preço de add-on (aplicado quando comprado JUNTO ao material/pacote vinculado):
+ * versão.addonSurcharge → produto.addonSurcharge → preço cheio (fallback).
+ */
+export function physicalAddonPrice(
+  p: Pick<PhysicalProduct, 'price' | 'addonSurcharge'>,
+  version?: PhysicalProductVersion | null
+): number {
+  if (typeof version?.addonSurcharge === 'number') return version.addonSurcharge
+  if (typeof p.addonSurcharge === 'number') return p.addonSurcharge
+  return physicalFullPrice(p, version)
+}
 
 /** Mapa UF → macro-região (para frete por região quando não há valor por UF). */
 export const UF_TO_REGION: Record<string, 'N' | 'NE' | 'CO' | 'SE' | 'S'> = {

@@ -9,11 +9,11 @@
  */
 
 import { useMemo, type ReactNode } from 'react'
-import { MapPin, Home, Truck, Clock, Printer } from 'lucide-react'
+import { MapPin, Home, Truck, Clock, Printer, CalendarClock } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
 import { useShopCart } from '@/context/ShopCartContext'
 import { useDeliverySelection } from '@/components/shop/use-delivery-selection'
-import { UFS, resolveFreight } from '@/lib/shop'
+import { UFS, resolveFreight, estimateDeliveryDate } from '@/lib/shop'
 
 const brl = (n: number) => `R$ ${Number(n).toFixed(2).replace('.', ',')}`
 const inputStyle: React.CSSProperties = {
@@ -46,21 +46,42 @@ export function UnifiedCheckoutPayment({
 }) {
   const { items, removeItem } = useShopCart()
 
+  const matSet = useMemo(() => new Set(purchaseMaterialIds), [purchaseMaterialIds])
+  const pkgSet = useMemo(() => new Set(purchasePackageIds || []), [purchasePackageIds])
+
+  // Preço unitário: add-on cujo material/pacote está na compra → preço de add-on;
+  // caso contrário, preço cheio (avulso).
+  const unitOf = useMemo(
+    () => (si: { isAddon?: boolean; linkedMaterialId?: string; linkedPackageId?: string; price: number; addonPrice?: number }) => {
+      const linked =
+        !!si.isAddon &&
+        (!!(si.linkedMaterialId && matSet.has(si.linkedMaterialId)) || !!(si.linkedPackageId && pkgSet.has(si.linkedPackageId)))
+      return linked ? (si.addonPrice ?? si.price) : si.price
+    },
+    [matSet, pkgSet]
+  )
+
   const eligible = useMemo(() => {
-    const matSet = new Set(purchaseMaterialIds)
-    const pkgSet = new Set(purchasePackageIds || [])
+    // No carrinho (includeStandalone) todos os físicos entram; no item único só os
+    // add-ons vinculados àquele material/pacote.
     return items.filter((si) =>
-      si.isAddon
-        ? !!(si.linkedMaterialId && matSet.has(si.linkedMaterialId)) ||
-          !!(si.linkedPackageId && pkgSet.has(si.linkedPackageId))
-        : includeStandalone
+      includeStandalone
+        ? true
+        : !!si.isAddon &&
+          (!!(si.linkedMaterialId && matSet.has(si.linkedMaterialId)) || !!(si.linkedPackageId && pkgSet.has(si.linkedPackageId)))
     )
-  }, [items, purchaseMaterialIds, purchasePackageIds, includeStandalone])
+  }, [items, matSet, pkgSet, includeStandalone])
 
   const physicalSubtotal = useMemo(
-    () => Math.round(eligible.reduce((s, i) => s + i.price * i.quantity, 0) * 100) / 100,
+    () => Math.round(eligible.reduce((s, i) => s + unitOf(i) * i.quantity, 0) * 100) / 100,
+    [eligible, unitOf]
+  )
+
+  const maxProductionDays = useMemo(
+    () => eligible.reduce((m, i) => (i.madeToOrder && i.productionDays ? Math.max(m, i.productionDays) : m), 0),
     [eligible]
   )
+  const anyMadeToOrder = useMemo(() => eligible.some((i) => i.madeToOrder), [eligible])
 
   const delivery = useDeliverySelection(physicalSubtotal)
 
@@ -88,7 +109,7 @@ export function UnifiedCheckoutPayment({
               {i.quantity}× {i.title}{i.versionName ? ` (${i.versionName})` : ''}
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-              <strong style={{ color: 'white' }}>{brl(i.price * i.quantity)}</strong>
+              <strong style={{ color: 'white' }}>{brl(unitOf(i) * i.quantity)}</strong>
               <button onClick={() => removeItem(i.productId, i.versionId)} style={{ background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: 11 }}>remover</button>
             </span>
           </div>
@@ -160,6 +181,17 @@ export function UnifiedCheckoutPayment({
         )}
       </div>
 
+      {/* Sob encomenda */}
+      {anyMadeToOrder && (
+        <div style={{ marginBottom: 12, display: 'flex', gap: 8, alignItems: 'flex-start', borderRadius: 10, border: '1px solid rgba(245,158,11,0.3)', background: 'rgba(245,158,11,0.10)', padding: '10px 12px', fontSize: 12, color: 'rgba(253,230,138,0.98)' }}>
+          <Clock size={15} style={{ flexShrink: 0, marginTop: 1 }} />
+          <span>
+            <strong>Sob encomenda:</strong> impresso após a compra
+            {maxProductionDays > 0 ? ` (~${maxProductionDays} ${maxProductionDays === 1 ? 'dia' : 'dias'} de produção)` : ''}. O prazo já está somado na previsão abaixo.
+          </span>
+        </div>
+      )}
+
       {/* Resumo combinado */}
       <div style={{ marginBottom: 14, fontSize: 13, color: 'rgba(255,255,255,0.7)' }}>
         <Row label="Digital" value={brl(digitalPayable)} />
@@ -168,6 +200,15 @@ export function UnifiedCheckoutPayment({
         <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.1)', marginTop: 6, paddingTop: 6, fontSize: 16, fontWeight: 800, color: 'white' }}>
           <span>Total</span><span>{brl(combined)}</span>
         </div>
+        {delivery.valid && (
+          <div style={{ marginTop: 8, display: 'flex', gap: 6, alignItems: 'center', fontSize: 12, color: 'rgba(255,255,255,0.85)' }}>
+            <CalendarClock size={14} style={{ color: '#7ee2a0' }} />
+            {deliveryType === 'pickup' ? 'Disponível para retirada até ' : 'Previsão de entrega: '}
+            <strong style={{ color: 'white' }}>
+              {estimateDeliveryDate({ deliveryType, method: delivery.selectedMethod, maxProductionDays }).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' })}
+            </strong>
+          </div>
+        )}
       </div>
 
       {!delivery.valid ? (

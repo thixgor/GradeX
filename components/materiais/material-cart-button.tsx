@@ -205,6 +205,18 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
   const hasPhysical = shopItems.length > 0
   const totalCount = itemCount + shopCount
 
+  // Preço efetivo dos físicos: add-on cujo material/pacote está no carrinho digital
+  // paga o preço de add-on; caso contrário, preço cheio.
+  const digitalMatIds = new Set(items.filter((i) => i.itemType === 'material').map((i) => i.itemId))
+  const digitalPkgIds = new Set(items.filter((i) => i.itemType === 'package').map((i) => i.itemId))
+  const shopUnit = (si: typeof shopItems[number]) => {
+    const linked =
+      !!si.isAddon &&
+      (!!(si.linkedMaterialId && digitalMatIds.has(si.linkedMaterialId)) || !!(si.linkedPackageId && digitalPkgIds.has(si.linkedPackageId)))
+    return linked ? (si.addonPrice ?? si.price) : si.price
+  }
+  const shopSubtotalEffective = shopItems.reduce((s, si) => s + shopUnit(si) * si.quantity, 0)
+
   const goToShopCheckout = () => {
     setOpen(false)
     if (!isAuthenticated) {
@@ -403,7 +415,7 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
                                     <button type="button" onClick={() => setShopQty(si.productId, si.quantity - 1, si.versionId)} className="flex h-6 w-6 items-center justify-center rounded-md border border-slate-200 text-sm dark:border-white/10" aria-label="Diminuir">−</button>
                                     <span className="min-w-4 text-center text-sm font-bold">{si.quantity}</span>
                                     <button type="button" onClick={() => setShopQty(si.productId, si.quantity + 1, si.versionId)} className="flex h-6 w-6 items-center justify-center rounded-md border border-slate-200 text-sm dark:border-white/10" aria-label="Aumentar">+</button>
-                                    <span className="ml-1 text-sm font-black text-emerald-700 dark:text-emerald-300">{formatBRL(si.price * si.quantity)}</span>
+                                    <span className="ml-1 text-sm font-black text-emerald-700 dark:text-emerald-300">{formatBRL(shopUnit(si) * si.quantity)}</span>
                                   </div>
                                   <button
                                     type="button"
@@ -520,7 +532,7 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
                       <div className="mb-3 rounded-xl border border-emerald-300/40 bg-emerald-50 p-3 dark:border-emerald-400/25 dark:bg-emerald-500/10">
                         <div className="flex items-center justify-between">
                           <span className="inline-flex items-center gap-1 text-sm text-muted-foreground"><Truck className="h-3.5 w-3.5" /> Materiais físicos</span>
-                          <span className="text-base font-black text-emerald-700 dark:text-emerald-300">{formatBRL(shopSubtotal)}</span>
+                          <span className="text-base font-black text-emerald-700 dark:text-emerald-300">{formatBRL(shopSubtotalEffective)}</span>
                         </div>
                         {hasDigital ? (
                           <p className="mt-0.5 text-[11px] text-muted-foreground">Incluídos na mesma compra — entrega e frete no checkout.</p>

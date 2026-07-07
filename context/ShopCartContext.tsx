@@ -13,7 +13,10 @@ import {
 export interface ShopCartItem {
   productId: string
   title: string
+  /** Preço cheio (avulso). */
   price: number
+  /** Preço de add-on (aplicado quando o material/pacote vinculado está na compra). */
+  addonPrice?: number
   imageUrl?: string
   /** Versão/variante escolhida (opcional). */
   versionId?: string
@@ -52,6 +55,7 @@ function normalize(item: any): ShopCartItem | null {
     productId: String(item.productId),
     title: String(item.title || 'Produto'),
     price: Math.max(0, Number(item.price || 0)),
+    addonPrice: item.addonPrice !== undefined && item.addonPrice !== null ? Math.max(0, Number(item.addonPrice)) : undefined,
     imageUrl: item.imageUrl ? String(item.imageUrl) : undefined,
     versionId: item.versionId ? String(item.versionId) : undefined,
     versionName: item.versionName ? String(item.versionName) : undefined,

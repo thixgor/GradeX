@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { ImageGallery } from '@/components/shop/image-gallery'
 import { useShopCart } from '@/context/ShopCartContext'
 import { useAuthUser } from '@/hooks/use-auth-user'
+import { physicalFullPrice, physicalAddonPrice } from '@/lib/shop'
 import type { PhysicalProduct } from '@/lib/types'
 
 export default function ProductPage() {
@@ -34,7 +35,7 @@ export default function ProductPage() {
         if (!alive) return
         if (d.product) {
           setProduct(d.product)
-          setLinkedTitle(d.linkedMaterialTitle)
+          setLinkedTitle(d.linkedMaterialTitle || d.linkedPackageTitle)
           if (Array.isArray(d.product.versions) && d.product.versions.length > 0) {
             setSelectedVersionId(d.product.versions[0].id)
           }
@@ -51,8 +52,9 @@ export default function ProductPage() {
   const outOfStock = !!product && product.trackStock && typeof product.stock === 'number' && product.stock <= 0
   const versions = product?.versions || []
   const selectedVersion = versions.find((v) => v.id === selectedVersionId)
-  const baseUnit = product ? (product.linkMode === 'addon' ? product.addonSurcharge ?? product.price : product.price) : 0
-  const unitPrice = selectedVersion && typeof selectedVersion.price === 'number' ? selectedVersion.price : baseUnit
+  // Na página do produto (contexto avulso) exibimos/cobramos o preço CHEIO.
+  const unitPrice = product ? physicalFullPrice(product, selectedVersion) : 0
+  const addonPrice = product ? physicalAddonPrice(product, selectedVersion) : 0
 
   function goLogin() {
     const redirect = typeof window !== 'undefined' ? window.location.pathname + window.location.search : `/loja/${id}`
@@ -69,11 +71,13 @@ export default function ProductPage() {
       productId: String(product._id),
       title: product.title,
       price: unitPrice,
+      addonPrice: product.linkMode === 'addon' ? addonPrice : undefined,
       imageUrl: product.images?.[0],
       versionId: selectedVersion?.id,
       versionName: selectedVersion?.name,
       isAddon: product.linkMode === 'addon',
       linkedMaterialId: product.linkedMaterialId,
+      linkedPackageId: product.linkedPackageId,
       madeToOrder: product.madeToOrder,
       productionDays: product.productionDays,
       quantity: qty,
@@ -157,7 +161,7 @@ export default function ProductPage() {
                   <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Escolha a versão</p>
                   <div className="flex flex-wrap gap-2">
                     {versions.map((v) => {
-                      const vPrice = typeof v.price === 'number' ? v.price : baseUnit
+                      const vPrice = product ? physicalFullPrice(product, v) : 0
                       const active = v.id === selectedVersionId
                       return (
                         <button
@@ -225,22 +229,21 @@ export default function ProductPage() {
                 </div>
               </div>
 
-              {/* add-on só pode ser comprado junto ao material vinculado */}
-              {product.linkMode === 'addon' ? (
+              {/* Add-on: preço cheio avulso; add-on (mais barato) ao comprar junto */}
+              {product.linkMode === 'addon' && linkedTitle && (
                 <div className="mt-6 rounded-xl border border-primary/25 bg-primary/5 px-4 py-3 text-sm">
-                  <p className="font-semibold text-foreground">Disponível apenas junto ao material digital</p>
-                  <p className="mt-0.5 text-muted-foreground">
-                    Esta versão impressa é um add-on{linkedTitle ? <> de <strong>{linkedTitle}</strong></> : null} e só pode ser
-                    adquirida ao comprar o material digital vinculado.
+                  <p className="text-muted-foreground">
+                    Comprando junto com <strong className="text-foreground">{linkedTitle}</strong> você paga só{' '}
+                    <strong className="text-foreground">R$ {brl(addonPrice)}</strong> pela versão impressa.
+                    {product.linkedMaterialId && (
+                      <button className="ml-1 font-semibold text-primary hover:underline" onClick={() => router.push(`/materiais/${product.linkedMaterialId}`)}>
+                        Ver o material →
+                      </button>
+                    )}
                   </p>
-                  {product.linkedMaterialId && (
-                    <Button className="mt-3 gap-2" onClick={() => router.push(`/materiais/${product.linkedMaterialId}`)}>
-                      <BookOpen className="h-4 w-4" /> Ir para o material
-                    </Button>
-                  )}
                 </div>
-              ) : (
-              <>
+              )}
+
               {/* aviso de login para produtos físicos */}
               {!authLoading && !isAuthenticated && (
                 <div className="mt-6 flex items-start gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2.5 text-xs text-amber-700 dark:text-amber-300">
@@ -278,9 +281,6 @@ export default function ProductPage() {
                   </>
                 )}
               </div>
-
-              </>
-              )}
 
               <div className="mt-6 flex items-center gap-2 rounded-xl bg-muted/40 px-4 py-3 text-xs text-muted-foreground">
                 <ShieldCheck className="h-4 w-4 text-primary" />
