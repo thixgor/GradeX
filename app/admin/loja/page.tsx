@@ -350,6 +350,9 @@ function ProductModal({
             <div>
               <label className="mb-1 block text-xs font-semibold text-muted-foreground">Acréscimo do add-on (+R$)</label>
               <Input type="number" step="0.01" value={form.addonSurcharge ?? 0} onChange={(e) => set({ addonSurcharge: Number(e.target.value) })} />
+              <p className="mt-1 text-[11px] text-muted-foreground/70">
+                Valor padrão. Se houver versões, cada uma pode ter seu próprio acréscimo abaixo — o valor da versão prevalece.
+              </p>
             </div>
           )}
 
@@ -358,7 +361,9 @@ function ProductModal({
             <div className="mb-2 flex items-center justify-between">
               <div>
                 <p className="text-xs font-semibold text-muted-foreground">Versões (opcional)</p>
-                <p className="text-[11px] text-muted-foreground/70">Ex.: Capa dura / Capa mole. Preço e detalhes opcionais por versão.</p>
+                <p className="text-[11px] text-muted-foreground/70">
+                  Ex.: Capa dura / Capa mole. {form.linkMode === 'addon' ? 'Acréscimo (+R$)' : 'Preço'} e detalhes opcionais por versão.
+                </p>
               </div>
               <Button
                 type="button" size="sm" variant="outline" className="gap-1"
@@ -381,7 +386,9 @@ function ProductModal({
                       }}
                     />
                     <Input
-                      className="w-28" type="number" step="0.01" placeholder="Preço"
+                      className="w-32" type="number" step="0.01"
+                      placeholder={form.linkMode === 'addon' ? 'Acréscimo +R$' : 'Preço'}
+                      title={form.linkMode === 'addon' ? 'Acréscimo desta versão (+R$)' : 'Preço desta versão'}
                       value={v.price ?? ''}
                       onChange={(e) => {
                         const list = [...((form.versions as any[]) || [])]
