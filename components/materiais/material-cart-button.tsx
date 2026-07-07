@@ -4,9 +4,10 @@ import { useEffect, useMemo, useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
-import { AlertCircle, ArrowRight, FileText, Flame, Loader2, Package, Percent, ShoppingCart, Trash2, X } from 'lucide-react'
+import { AlertCircle, ArrowRight, FileText, Flame, Loader2, Package, Percent, ShoppingCart, Trash2, X, Printer, Truck, LogIn } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useMaterialCart } from '@/context/MaterialCartContext'
+import { useShopCart } from '@/context/ShopCartContext'
 
 function formatBRL(value: number): string {
   return `R$ ${Number(value || 0).toFixed(2).replace('.', ',')}`
@@ -50,6 +51,14 @@ interface AppliedCoupon {
 export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boolean }) {
   const router = useRouter()
   const { items, itemCount, subtotal, removeItem, clearCart } = useMaterialCart()
+  const {
+    items: shopItems,
+    itemCount: shopCount,
+    subtotal: shopSubtotal,
+    removeItem: removeShopItem,
+    setQuantity: setShopQty,
+    clearCart: clearShopCart,
+  } = useShopCart()
   const [open, setOpen] = useState(false)
   const [checkoutChecking, setCheckoutChecking] = useState(false)
   const [notice, setNotice] = useState('')
@@ -192,6 +201,24 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
     }
   }
 
+  const hasDigital = items.length > 0
+  const hasPhysical = shopItems.length > 0
+  const totalCount = itemCount + shopCount
+
+  const goToShopCheckout = () => {
+    setOpen(false)
+    if (!isAuthenticated) {
+      router.push(`/auth/login?redirect=${encodeURIComponent('/loja/checkout')}`)
+      return
+    }
+    router.push('/loja/checkout')
+  }
+
+  const clearAll = () => {
+    clearCart()
+    clearShopCart()
+  }
+
   return (
     <>
       <Button
@@ -201,9 +228,9 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
       >
         <ShoppingCart className="h-5 w-5" />
         <span className="ml-2 hidden text-sm font-bold sm:inline">Carrinho</span>
-        {itemCount > 0 && (
+        {totalCount > 0 && (
           <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-black text-white ring-2 ring-background">
-            {itemCount > 99 ? '99+' : itemCount}
+            {totalCount > 99 ? '99+' : totalCount}
           </span>
         )}
       </Button>
@@ -234,7 +261,7 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
                   <div>
                     <p className="text-sm font-bold">Carrinho</p>
                     <p className="text-xs text-muted-foreground">
-                      {itemCount} {itemCount === 1 ? 'item' : 'itens'}
+                      {totalCount} {totalCount === 1 ? 'item' : 'itens'}
                     </p>
                   </div>
                 </div>
@@ -243,7 +270,7 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
                 </Button>
               </div>
 
-              {itemCount === 0 ? (
+              {totalCount === 0 ? (
                 <div className="flex min-h-72 flex-1 flex-col items-center justify-center bg-slate-50 px-6 text-center dark:bg-zinc-950">
                   {notice ? (
                     <div className="mb-5 flex max-w-sm gap-2 rounded-xl border border-amber-300/40 bg-amber-50 p-3 text-left text-sm text-amber-900 shadow-sm dark:border-amber-400/25 dark:bg-amber-500/10 dark:text-amber-100">
@@ -271,7 +298,11 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
                         <p className="leading-relaxed">{notice}</p>
                       </div>
                     ) : null}
+                    {hasDigital && (
                     <div className="space-y-3">
+                      {hasPhysical && (
+                        <p className="px-0.5 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">Materiais digitais</p>
+                      )}
                       {sortedItems.map(item => {
                         const localPrice = item.effectivePrice ?? item.price
                         const previewMatch = previewByKey.get(`${item.itemType}:${item.itemId}`)
@@ -337,6 +368,58 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
                         )
                       })}
                     </div>
+                    )}
+
+                    {hasPhysical && (
+                      <div className={hasDigital ? 'mt-4' : ''}>
+                        <p className="mb-2 flex items-center gap-1 px-0.5 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+                          <Printer className="h-3 w-3" /> Materiais físicos (impressos)
+                        </p>
+                        <div className="space-y-3">
+                          {shopItems.map(si => (
+                            <div key={`${si.productId}::${si.versionId || ''}`} className="flex gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-sm dark:border-white/10 dark:bg-zinc-900">
+                              <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded-lg bg-muted sm:h-16">
+                                {si.imageUrl ? (
+                                  // eslint-disable-next-line @next/next/no-img-element
+                                  <img src={si.imageUrl} alt="" className="h-full w-full object-cover" />
+                                ) : (
+                                  <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+                                    <Package className="h-5 w-5" />
+                                  </div>
+                                )}
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <div className="mb-1 flex flex-wrap items-center gap-1.5">
+                                  <span className="inline-flex items-center gap-1 rounded-md bg-emerald-600/10 px-1.5 py-0.5 text-[10px] font-bold text-emerald-700 dark:text-emerald-300">
+                                    <Truck className="h-3 w-3" /> Físico
+                                  </span>
+                                  {si.versionName && (
+                                    <span className="rounded-md bg-slate-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">{si.versionName}</span>
+                                  )}
+                                </div>
+                                <p className="line-clamp-2 text-sm font-semibold leading-snug">{si.title}</p>
+                                <div className="mt-1 flex items-center justify-between gap-2">
+                                  <div className="flex items-center gap-1.5">
+                                    <button type="button" onClick={() => setShopQty(si.productId, si.quantity - 1, si.versionId)} className="flex h-6 w-6 items-center justify-center rounded-md border border-slate-200 text-sm dark:border-white/10" aria-label="Diminuir">−</button>
+                                    <span className="min-w-4 text-center text-sm font-bold">{si.quantity}</span>
+                                    <button type="button" onClick={() => setShopQty(si.productId, si.quantity + 1, si.versionId)} className="flex h-6 w-6 items-center justify-center rounded-md border border-slate-200 text-sm dark:border-white/10" aria-label="Aumentar">+</button>
+                                    <span className="ml-1 text-sm font-black text-emerald-700 dark:text-emerald-300">{formatBRL(si.price * si.quantity)}</span>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => removeShopItem(si.productId, si.versionId)}
+                                    className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-red-500/10 hover:text-red-500"
+                                    aria-label={`Remover ${si.title}`}
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="shrink-0 border-t border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-zinc-950">
@@ -406,10 +489,11 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
                         <span className="line-through">{formatBRL(subtotal)}</span>
                       </div>
                     )}
+                    {hasDigital && (
                     <div className="mb-4">
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-muted-foreground">
-                          {tierTotal > 0 || appliedCoupon ? 'Total com desconto' : 'Subtotal estimado'}
+                          {tierTotal > 0 || appliedCoupon ? 'Total com desconto (digitais)' : 'Subtotal estimado (digitais)'}
                         </span>
                         <span className="text-xl font-black text-emerald-700 dark:text-emerald-300">{formatBRL(finalSubtotal)}</span>
                       </div>
@@ -424,27 +508,50 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
                         </p>
                       )}
                     </div>
-                    {previewLoading && !preview && (
+                    )}
+                    {hasDigital && previewLoading && !preview && (
                       <p className="mb-3 inline-flex items-center gap-1.5 text-[11px] text-muted-foreground">
                         <Loader2 className="h-3 w-3 animate-spin" />
                         Calculando descontos...
                       </p>
                     )}
+
+                    {hasPhysical && (
+                      <div className="mb-3 rounded-xl border border-emerald-300/40 bg-emerald-50 p-3 dark:border-emerald-400/25 dark:bg-emerald-500/10">
+                        <div className="flex items-center justify-between">
+                          <span className="inline-flex items-center gap-1 text-sm text-muted-foreground"><Truck className="h-3.5 w-3.5" /> Materiais físicos</span>
+                          <span className="text-base font-black text-emerald-700 dark:text-emerald-300">{formatBRL(shopSubtotal)}</span>
+                        </div>
+                        <p className="mt-0.5 text-[11px] text-muted-foreground">Pagos e enviados à parte (entrega/retirada) · + frete no checkout</p>
+                        <Button onClick={goToShopCheckout} className="mt-2 h-10 w-full rounded-xl bg-emerald-700 text-white hover:bg-emerald-600">
+                          {isAuthenticated ? (
+                            <>Finalizar pedido físico <ArrowRight className="ml-2 h-4 w-4" /></>
+                          ) : (
+                            <><LogIn className="mr-2 h-4 w-4" /> Entrar para comprar físicos</>
+                          )}
+                        </Button>
+                      </div>
+                    )}
+
                     <div className="flex gap-2">
-                      <Button variant="outline" onClick={clearCart} className="h-11 rounded-xl">
-                        Limpar
+                      <Button variant="outline" onClick={clearAll} className={hasDigital ? 'h-11 rounded-xl' : 'h-11 flex-1 rounded-xl'}>
+                        Limpar tudo
                       </Button>
-                      <Button onClick={goToCheckout} disabled={checkoutChecking} className="h-11 flex-1 rounded-xl bg-emerald-700 text-white hover:bg-emerald-600">
-                        {checkoutChecking ? (
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        ) : null}
-                        {checkoutChecking ? 'Revisando...' : 'Finalizar compra'}
-                        {!checkoutChecking ? <ArrowRight className="ml-2 h-4 w-4" /> : null}
-                      </Button>
+                      {hasDigital && (
+                        <Button onClick={goToCheckout} disabled={checkoutChecking} className="h-11 flex-1 rounded-xl bg-emerald-700 text-white hover:bg-emerald-600">
+                          {checkoutChecking ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          ) : null}
+                          {checkoutChecking ? 'Revisando...' : 'Finalizar digitais'}
+                          {!checkoutChecking ? <ArrowRight className="ml-2 h-4 w-4" /> : null}
+                        </Button>
+                      )}
                     </div>
-                    <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
-                      O valor final é recalculado com segurança no checkout antes do pagamento.
-                    </p>
+                    {hasDigital && (
+                      <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+                        O valor final é recalculado com segurança no checkout antes do pagamento.
+                      </p>
+                    )}
                   </div>
                 </>
               )}
