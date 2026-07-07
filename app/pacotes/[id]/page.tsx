@@ -47,6 +47,7 @@ import {
   type PricingEventStatePayload,
 } from '@/components/pricing-events/PricingEventCountdown'
 import { PricingEventBadge } from '@/components/pricing-events/PricingEventBadge'
+import { PrintedAddon } from '@/components/shop/printed-addon'
 
 // ─── Types ───────────────────────────────────────────────────
 interface PackageMaterial {
@@ -340,6 +341,9 @@ export default function PackageDetailPage() {
               {pkg.title}
             </span>
           </motion.div>
+
+          {/* Oferta de versão impressa (add-on vinculado ao pacote) */}
+          <PrintedAddon packageId={id} />
 
           {/* Main layout */}
           <div className="flex flex-col xl:flex-row gap-6">

@@ -40,7 +40,7 @@ export async function buildPhysicalShopOrder(
   db: Db,
   session: { userId: string; name: string; email: string },
   input: PhysicalCheckoutInput,
-  opts: { eligibleMaterialIds: Set<string> }
+  opts: { eligibleMaterialIds: Set<string>; eligiblePackageIds?: Set<string> }
 ): Promise<BuildPhysicalResult> {
   const ids = (input.items || []).map((i) => i.productId).filter((id) => ObjectId.isValid(id))
   const products = ids.length
@@ -62,9 +62,11 @@ export async function buildPhysicalShopOrder(
       skipped.push({ title: p?.title || 'Item', reason: 'unavailable' })
       continue
     }
-    // Add-on: só entra se o material vinculado estiver sendo comprado.
+    // Add-on: só entra se o material OU o pacote vinculado estiver sendo comprado.
     if (p.linkMode === 'addon') {
-      if (!p.linkedMaterialId || !opts.eligibleMaterialIds.has(String(p.linkedMaterialId))) {
+      const matOk = !!(p.linkedMaterialId && opts.eligibleMaterialIds.has(String(p.linkedMaterialId)))
+      const pkgOk = !!(p.linkedPackageId && opts.eligiblePackageIds?.has(String(p.linkedPackageId)))
+      if (!matOk && !pkgOk) {
         skipped.push({ title: p.title, reason: 'addon_requires_material' })
         continue
       }
@@ -95,6 +97,7 @@ export async function buildPhysicalShopOrder(
       versionName,
       isAddon: p.linkMode === 'addon',
       linkedMaterialId: p.linkedMaterialId,
+      linkedPackageId: p.linkedPackageId,
       madeToOrder: p.madeToOrder,
       productionDays: p.productionDays,
     })

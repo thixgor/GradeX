@@ -1088,6 +1088,7 @@ export default function MateriaisCheckoutPage() {
                   digitalPayable={payableAmount}
                   digitalBody={{ items: cartPayload, couponCode: appliedCoupon?.code }}
                   purchaseMaterialIds={cartPreview.items.filter(i => i.itemType === 'material').map(i => i.itemId)}
+                  purchasePackageIds={cartPreview.items.filter(i => i.itemType === 'package').map(i => i.itemId)}
                   includeStandalone={true}
                   description={`Carrinho DomineAqui - ${cartPreview.payableItems.length} itens`}
                   onSuccess={(resp) => {
@@ -1323,6 +1324,7 @@ export default function MateriaisCheckoutPage() {
               digitalPayable={Math.max(0, payablePrice)}
               digitalBody={{ itemType, itemId, couponCode: appliedCoupon?.code }}
               purchaseMaterialIds={itemType === 'material' ? [itemId] : ((item.materialIds || []) as any[]).map(String)}
+              purchasePackageIds={itemType === 'package' ? [itemId] : []}
               includeStandalone={false}
               description={item.title}
               onSuccess={(resp) => {

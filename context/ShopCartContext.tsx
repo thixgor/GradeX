@@ -20,6 +20,7 @@ export interface ShopCartItem {
   versionName?: string
   isAddon?: boolean
   linkedMaterialId?: string
+  linkedPackageId?: string
   madeToOrder?: boolean
   productionDays?: number
   quantity: number
@@ -56,6 +57,7 @@ function normalize(item: any): ShopCartItem | null {
     versionName: item.versionName ? String(item.versionName) : undefined,
     isAddon: item.isAddon === true,
     linkedMaterialId: item.linkedMaterialId ? String(item.linkedMaterialId) : undefined,
+    linkedPackageId: item.linkedPackageId ? String(item.linkedPackageId) : undefined,
     madeToOrder: item.madeToOrder === true,
     productionDays: Number.isFinite(Number(item.productionDays)) ? Number(item.productionDays) : undefined,
     quantity: Math.max(1, Math.floor(Number(item.quantity) || 1)),

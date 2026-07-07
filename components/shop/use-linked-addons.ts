@@ -21,9 +21,9 @@ export function useLinkedAddons(opts: { materialIds?: string[]; packageIds?: str
       setLoading(true)
       try {
         const ids = new Set<string>((materialsKey ? materialsKey.split(',') : []).filter(Boolean))
-
-        // Resolve materiais dos pacotes.
         const pkgIds = (packagesKey ? packagesKey.split(',') : []).filter(Boolean)
+
+        // Resolve materiais dos pacotes (add-ons vinculados a materiais internos).
         if (pkgIds.length > 0) {
           const results = await Promise.all(
             pkgIds.map((pid) =>
@@ -38,13 +38,16 @@ export function useLinkedAddons(opts: { materialIds?: string[]; packageIds?: str
           }
         }
 
-        if (ids.size === 0) {
+        if (ids.size === 0 && pkgIds.length === 0) {
           if (alive) { setProducts([]); setLoading(false) }
           return
         }
 
-        const query = Array.from(ids).join(',')
-        const data = await fetch(`/api/loja/produtos?linkedMaterialIds=${encodeURIComponent(query)}`)
+        // Busca add-ons vinculados aos materiais E diretamente aos pacotes.
+        const params = new URLSearchParams()
+        if (ids.size > 0) params.set('linkedMaterialIds', Array.from(ids).join(','))
+        if (pkgIds.length > 0) params.set('linkedPackageIds', pkgIds.join(','))
+        const data = await fetch(`/api/loja/produtos?${params.toString()}`)
           .then((r) => r.json())
           .catch(() => ({ products: [] }))
         const list: PhysicalProduct[] = (Array.isArray(data.products) ? data.products : []).filter(

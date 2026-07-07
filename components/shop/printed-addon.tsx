@@ -14,7 +14,7 @@ import { useShopCart } from '@/context/ShopCartContext'
 import { useAuthUser } from '@/hooks/use-auth-user'
 import type { PhysicalProduct } from '@/lib/types'
 
-export function PrintedAddon({ materialId }: { materialId: string }) {
+export function PrintedAddon({ materialId, packageId }: { materialId?: string; packageId?: string }) {
   const router = useRouter()
   const { addItem, isInCart } = useShopCart()
   const { isAuthenticated, loading: authLoading } = useAuthUser({})
@@ -28,9 +28,12 @@ export function PrintedAddon({ materialId }: { materialId: string }) {
       : '/auth/login'
 
   useEffect(() => {
-    if (!materialId) return
+    if (!materialId && !packageId) return
     let alive = true
-    fetch(`/api/loja/produtos?linkedMaterialId=${encodeURIComponent(materialId)}`)
+    const qs = materialId
+      ? `linkedMaterialId=${encodeURIComponent(materialId)}`
+      : `linkedPackageIds=${encodeURIComponent(packageId!)}`
+    fetch(`/api/loja/produtos?${qs}`)
       .then((r) => r.json())
       .then((d) => {
         if (!alive) return
@@ -41,7 +44,7 @@ export function PrintedAddon({ materialId }: { materialId: string }) {
     return () => {
       alive = false
     }
-  }, [materialId])
+  }, [materialId, packageId])
 
   if (products.length === 0) return null
 
@@ -133,7 +136,8 @@ export function PrintedAddon({ materialId }: { materialId: string }) {
                         versionId: ver?.id,
                         versionName: ver?.name,
                         isAddon: true,
-                        linkedMaterialId: materialId,
+                        linkedMaterialId: p.linkedMaterialId || materialId,
+                        linkedPackageId: p.linkedPackageId || packageId,
                         madeToOrder: p.madeToOrder,
                         productionDays: p.productionDays,
                       })

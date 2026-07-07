@@ -50,8 +50,11 @@ function buildProductDoc(body: any, session: { userId: string; name: string }) {
     price: Math.max(0, Number(body.price) || 0),
     compareAtPrice: body.compareAtPrice ? Math.max(0, Number(body.compareAtPrice)) : undefined,
     linkMode,
-    linkedMaterialId: (linkMode === 'addon' || linkMode === 'material') && body.linkedMaterialId
+    linkedMaterialId: (linkMode === 'addon' || linkMode === 'material') && body.linkedTarget !== 'package' && body.linkedMaterialId
       ? String(body.linkedMaterialId)
+      : undefined,
+    linkedPackageId: (linkMode === 'addon' || linkMode === 'material') && body.linkedTarget === 'package' && body.linkedPackageId
+      ? String(body.linkedPackageId)
       : undefined,
     addonSurcharge: linkMode === 'addon' ? Math.max(0, Number(body.addonSurcharge) || 0) : undefined,
     versions: sanitizeVersions(body.versions),
@@ -79,14 +82,20 @@ export async function GET(request: NextRequest) {
     const wantAdmin = searchParams.get('admin') === '1'
     const linkedMaterialId = searchParams.get('linkedMaterialId')
     const linkedMaterialIds = searchParams.get('linkedMaterialIds')
+    const linkedPackageIds = searchParams.get('linkedPackageIds')
 
     const filter: any = {}
     if (!(wantAdmin && session?.role === 'admin')) {
       filter.isHidden = { $ne: true }
     }
-    if (linkedMaterialIds) {
-      const ids = linkedMaterialIds.split(',').map((s) => s.trim()).filter(Boolean).slice(0, 100)
-      if (ids.length > 0) filter.linkedMaterialId = { $in: ids }
+    const parseIds = (v: string | null) => (v ? v.split(',').map((s) => s.trim()).filter(Boolean).slice(0, 100) : [])
+    const matIds = parseIds(linkedMaterialIds)
+    const pkgIds = parseIds(linkedPackageIds)
+    if (matIds.length > 0 || pkgIds.length > 0) {
+      const or: any[] = []
+      if (matIds.length > 0) or.push({ linkedMaterialId: { $in: matIds } })
+      if (pkgIds.length > 0) or.push({ linkedPackageId: { $in: pkgIds } })
+      filter.$or = or
     } else if (linkedMaterialId) {
       filter.linkedMaterialId = linkedMaterialId
     }

@@ -39,10 +39,18 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         .findOne({ _id: new ObjectId(product.linkedMaterialId) }, { projection: { title: 1 } })
       linkedMaterialTitle = mat?.title
     }
+    let linkedPackageTitle: string | undefined
+    if (product.linkedPackageId && ObjectId.isValid(product.linkedPackageId)) {
+      const pkg = await db
+        .collection('material_packages')
+        .findOne({ _id: new ObjectId(product.linkedPackageId) }, { projection: { title: 1 } })
+      linkedPackageTitle = pkg?.title
+    }
 
     return NextResponse.json({
       product: { ...product, _id: String(product._id) },
       linkedMaterialTitle,
+      linkedPackageTitle,
     })
   } catch (error) {
     console.error('Error fetching product:', error)

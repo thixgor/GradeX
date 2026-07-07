@@ -26,6 +26,7 @@ export function UnifiedCheckoutPayment({
   digitalPayable,
   digitalBody,
   purchaseMaterialIds,
+  purchasePackageIds,
   includeStandalone,
   description,
   payerNameHint,
@@ -36,6 +37,7 @@ export function UnifiedCheckoutPayment({
   digitalPayable: number
   digitalBody: Record<string, any>
   purchaseMaterialIds: string[]
+  purchasePackageIds?: string[]
   includeStandalone: boolean
   description: string
   payerNameHint?: string
@@ -46,10 +48,14 @@ export function UnifiedCheckoutPayment({
 
   const eligible = useMemo(() => {
     const matSet = new Set(purchaseMaterialIds)
+    const pkgSet = new Set(purchasePackageIds || [])
     return items.filter((si) =>
-      si.isAddon ? !!(si.linkedMaterialId && matSet.has(si.linkedMaterialId)) : includeStandalone
+      si.isAddon
+        ? !!(si.linkedMaterialId && matSet.has(si.linkedMaterialId)) ||
+          !!(si.linkedPackageId && pkgSet.has(si.linkedPackageId))
+        : includeStandalone
     )
-  }, [items, purchaseMaterialIds, includeStandalone])
+  }, [items, purchaseMaterialIds, purchasePackageIds, includeStandalone])
 
   const physicalSubtotal = useMemo(
     () => Math.round(eligible.reduce((s, i) => s + i.price * i.quantity, 0) * 100) / 100,

@@ -90,6 +90,7 @@ export default function AdminLojaPage() {
 function ProdutosTab() {
   const [products, setProducts] = useState<PhysicalProduct[]>([])
   const [materials, setMaterials] = useState<{ _id: string; title: string }[]>([])
+  const [packages, setPackages] = useState<{ _id: string; title: string }[]>([])
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState<Partial<PhysicalProduct> | null>(null)
 
@@ -108,6 +109,13 @@ function ProdutosTab() {
       .then((d) => {
         const list = (d.materials || d || []) as any[]
         setMaterials(Array.isArray(list) ? list.map((m) => ({ _id: String(m._id), title: m.title })) : [])
+      })
+      .catch(() => {})
+    fetch('/api/materiais/packages')
+      .then((r) => r.json())
+      .then((d) => {
+        const list = (d.packages || d || []) as any[]
+        setPackages(Array.isArray(list) ? list.map((p) => ({ _id: String(p._id), title: p.title })) : [])
       })
       .catch(() => {})
   }, [load])
@@ -175,6 +183,7 @@ function ProdutosTab() {
         <ProductModal
           initial={editing}
           materials={materials}
+          packages={packages}
           onClose={() => setEditing(null)}
           onSaved={() => { setEditing(null); load() }}
         />
@@ -184,14 +193,16 @@ function ProdutosTab() {
 }
 
 function ProductModal({
-  initial, materials, onClose, onSaved,
+  initial, materials, packages, onClose, onSaved,
 }: {
   initial: Partial<PhysicalProduct>
   materials: { _id: string; title: string }[]
+  packages: { _id: string; title: string }[]
   onClose: () => void
   onSaved: () => void
 }) {
   const [form, setForm] = useState<Partial<PhysicalProduct>>({ ...initial })
+  const [linkedTarget, setLinkedTarget] = useState<'material' | 'package'>(initial.linkedPackageId ? 'package' : 'material')
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
@@ -241,7 +252,7 @@ function ProductModal({
       const res = await fetch('/api/loja/produtos', {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, linkedTarget }),
       })
       if (!res.ok) {
         const d = await res.json()
@@ -333,18 +344,53 @@ function ProductModal({
             </div>
             {(form.linkMode === 'addon' || form.linkMode === 'material') && (
               <div>
-                <label className="mb-1 block text-xs font-semibold text-muted-foreground">Material vinculado</label>
+                <label className="mb-1 block text-xs font-semibold text-muted-foreground">Vincular a</label>
+                <select
+                  value={linkedTarget}
+                  onChange={(e) => {
+                    const t = e.target.value as 'material' | 'package'
+                    setLinkedTarget(t)
+                    // Limpa o id do outro tipo ao trocar.
+                    set(t === 'package' ? { linkedMaterialId: undefined } : { linkedPackageId: undefined })
+                  }}
+                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                >
+                  <option value="material">Material</option>
+                  <option value="package">Pacote</option>
+                </select>
+              </div>
+            )}
+          </div>
+
+          {(form.linkMode === 'addon' || form.linkMode === 'material') && (
+            <div>
+              <label className="mb-1 block text-xs font-semibold text-muted-foreground">
+                {linkedTarget === 'package' ? 'Pacote vinculado' : 'Material vinculado'}
+              </label>
+              {linkedTarget === 'package' ? (
+                <select
+                  value={form.linkedPackageId || ''}
+                  onChange={(e) => set({ linkedPackageId: e.target.value || undefined })}
+                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                >
+                  <option value="">— selecionar pacote —</option>
+                  {packages.map((p) => <option key={p._id} value={p._id}>{p.title}</option>)}
+                </select>
+              ) : (
                 <select
                   value={form.linkedMaterialId || ''}
                   onChange={(e) => set({ linkedMaterialId: e.target.value || undefined })}
                   className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                 >
-                  <option value="">— selecionar —</option>
+                  <option value="">— selecionar material —</option>
                   {materials.map((m) => <option key={m._id} value={m._id}>{m.title}</option>)}
                 </select>
-              </div>
-            )}
-          </div>
+              )}
+              {form.linkMode === 'addon' && linkedTarget === 'package' && (
+                <p className="mt-1 text-[11px] text-muted-foreground/70">Ex.: um caderno impresso que acompanha todos os materiais do pacote (um só frete).</p>
+              )}
+            </div>
+          )}
 
           {form.linkMode === 'addon' && (
             <div>

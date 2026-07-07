@@ -1479,8 +1479,10 @@ export interface PhysicalProduct {
 
   // Vínculo
   linkMode: PhysicalLinkMode
-  /** Material digital vinculado (usado em 'addon' e opcional em 'material'). */
+  /** Material digital vinculado (usado em 'addon'/'material' quando o alvo é um material). */
   linkedMaterialId?: string
+  /** Pacote vinculado (usado em 'addon'/'material' quando o alvo é um pacote). */
+  linkedPackageId?: string
   /** Acréscimo em R$ quando linkMode === 'addon'. */
   addonSurcharge?: number
 
@@ -1583,6 +1585,7 @@ export interface ShopOrderItem {
   /** Se é um add-on da versão impressa de um material digital. */
   isAddon?: boolean
   linkedMaterialId?: string
+  linkedPackageId?: string
   madeToOrder?: boolean
   productionDays?: number
 }

@@ -315,12 +315,16 @@ export async function POST(request: NextRequest) {
   let physicalTotal = 0
   const rawPhysical = body?.physical
   if (rawPhysical && Array.isArray(rawPhysical.items) && rawPhysical.items.length > 0) {
-    // Materiais elegíveis desta compra (para validar add-ons "só junto ao material").
+    // Materiais/pacotes elegíveis desta compra (para validar add-ons "só junto").
     const eligibleMaterialIds = new Set<string>()
+    const eligiblePackageIds = new Set<string>()
     if (data.itemType === 'material') {
       eligibleMaterialIds.add(data.itemId)
-    } else if (Array.isArray(item.materialIds)) {
-      for (const mid of item.materialIds) eligibleMaterialIds.add(String(mid))
+    } else if (data.itemType === 'package') {
+      eligiblePackageIds.add(data.itemId)
+      if (Array.isArray(item.materialIds)) {
+        for (const mid of item.materialIds) eligibleMaterialIds.add(String(mid))
+      }
     }
     const built = await buildPhysicalShopOrder(
       db,
@@ -336,7 +340,7 @@ export async function POST(request: NextRequest) {
         shippingAddress: rawPhysical.shippingAddress,
         deliveryMethodId: rawPhysical.deliveryMethodId,
       },
-      { eligibleMaterialIds }
+      { eligibleMaterialIds, eligiblePackageIds }
     )
     if (!built.ok) {
       return NextResponse.json({ error: built.error }, { status: built.status })
@@ -708,8 +712,10 @@ async function handleCartCheckout(
   const rawPhysical = (data as any).physical
   if (rawPhysical && Array.isArray(rawPhysical.items) && rawPhysical.items.length > 0) {
     const eligibleMaterialIds = new Set<string>()
+    const eligiblePackageIds = new Set<string>()
     for (const it of resolution.items) {
       if (it.itemType === 'material') eligibleMaterialIds.add(String(it.itemId))
+      if (it.itemType === 'package') eligiblePackageIds.add(String(it.itemId))
       const matIds = (it as any).materialIds
       if (Array.isArray(matIds)) for (const m of matIds) eligibleMaterialIds.add(String(m))
     }
@@ -727,7 +733,7 @@ async function handleCartCheckout(
         shippingAddress: rawPhysical.shippingAddress,
         deliveryMethodId: rawPhysical.deliveryMethodId,
       },
-      { eligibleMaterialIds }
+      { eligibleMaterialIds, eligiblePackageIds }
     )
     if (!built.ok) {
       return NextResponse.json({ error: built.error }, { status: built.status })
