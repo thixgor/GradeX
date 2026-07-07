@@ -55,6 +55,9 @@ function buildProductDoc(body: any, session: { userId: string; name: string }) {
       : undefined,
     addonSurcharge: linkMode === 'addon' ? Math.max(0, Number(body.addonSurcharge) || 0) : undefined,
     versions: sanitizeVersions(body.versions),
+    pageCount: body.pageCount !== undefined && body.pageCount !== null && body.pageCount !== '' && Number(body.pageCount) > 0
+      ? Math.floor(Number(body.pageCount))
+      : undefined,
     madeToOrder,
     productionDays: madeToOrder ? Math.max(0, Number(body.productionDays) || 0) : undefined,
     trackStock,

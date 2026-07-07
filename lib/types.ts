@@ -1487,6 +1487,9 @@ export interface PhysicalProduct {
   /** Versões/variantes opcionais (com preço e detalhes opcionais por versão). */
   versions?: PhysicalProductVersion[]
 
+  /** Número de páginas do material impresso (opcional). */
+  pageCount?: number
+
   // Produção sob encomenda
   madeToOrder: boolean
   /** Prazo extra de produção em dias (quando madeToOrder). */

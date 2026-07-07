@@ -454,6 +454,18 @@ function ProductModal({
             </div>
           </div>
 
+          <div>
+            <label className="mb-1 block text-xs font-semibold text-muted-foreground">Nº de páginas (opcional)</label>
+            <Input
+              type="number"
+              min={0}
+              className="w-40"
+              value={form.pageCount ?? ''}
+              onChange={(e) => set({ pageCount: e.target.value === '' ? undefined : Number(e.target.value) })}
+              placeholder="Ex.: 120"
+            />
+          </div>
+
           <div className="flex gap-4">
             <label className="flex items-center gap-2 text-sm">
               <input type="checkbox" checked={!!form.isFeatured} onChange={(e) => set({ isFeatured: e.target.checked })} /> Destaque

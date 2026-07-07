@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ShoppingCart, Zap, Clock, Truck, Package, Minus, Plus, Check, ArrowLeft, ShieldCheck, BookOpen } from 'lucide-react'
+import { ShoppingCart, Zap, Clock, Truck, Package, Minus, Plus, Check, ArrowLeft, ShieldCheck, BookOpen, FileText } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
 import { ImageGallery } from '@/components/shop/image-gallery'
@@ -184,6 +184,11 @@ export default function ProductPage() {
                 )}
                 {product.madeToOrder && product.productionDays ? (
                   <span className="ml-3 text-muted-foreground">Produção: ~{product.productionDays} dias</span>
+                ) : null}
+                {product.pageCount ? (
+                  <span className="ml-3 inline-flex items-center gap-1 text-muted-foreground">
+                    <FileText className="h-3.5 w-3.5" /> {product.pageCount} páginas
+                  </span>
                 ) : null}
               </div>
 
