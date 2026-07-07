@@ -78,12 +78,16 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const wantAdmin = searchParams.get('admin') === '1'
     const linkedMaterialId = searchParams.get('linkedMaterialId')
+    const linkedMaterialIds = searchParams.get('linkedMaterialIds')
 
     const filter: any = {}
     if (!(wantAdmin && session?.role === 'admin')) {
       filter.isHidden = { $ne: true }
     }
-    if (linkedMaterialId) {
+    if (linkedMaterialIds) {
+      const ids = linkedMaterialIds.split(',').map((s) => s.trim()).filter(Boolean).slice(0, 100)
+      if (ids.length > 0) filter.linkedMaterialId = { $in: ids }
+    } else if (linkedMaterialId) {
       filter.linkedMaterialId = linkedMaterialId
     }
 

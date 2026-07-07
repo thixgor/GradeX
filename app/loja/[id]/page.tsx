@@ -4,11 +4,12 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ShoppingCart, Zap, Clock, Truck, Package, Minus, Plus, Check, ArrowLeft, ShieldCheck, BookOpen, FileText } from 'lucide-react'
+import { ShoppingCart, Zap, Clock, Truck, Package, Minus, Plus, Check, ArrowLeft, ShieldCheck, BookOpen, FileText, LogIn, Info } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
 import { ImageGallery } from '@/components/shop/image-gallery'
 import { useShopCart } from '@/context/ShopCartContext'
+import { useAuthUser } from '@/hooks/use-auth-user'
 import type { PhysicalProduct } from '@/lib/types'
 
 export default function ProductPage() {
@@ -16,6 +17,7 @@ export default function ProductPage() {
   const router = useRouter()
   const id = String(params?.id || '')
   const { addItem, itemCount } = useShopCart()
+  const { isAuthenticated, loading: authLoading } = useAuthUser({})
 
   const [product, setProduct] = useState<PhysicalProduct | null>(null)
   const [linkedTitle, setLinkedTitle] = useState<string | undefined>()
@@ -52,8 +54,17 @@ export default function ProductPage() {
   const baseUnit = product ? (product.linkMode === 'addon' ? product.addonSurcharge ?? product.price : product.price) : 0
   const unitPrice = selectedVersion && typeof selectedVersion.price === 'number' ? selectedVersion.price : baseUnit
 
+  function goLogin() {
+    const redirect = typeof window !== 'undefined' ? window.location.pathname + window.location.search : `/loja/${id}`
+    router.push(`/auth/login?redirect=${encodeURIComponent(redirect)}`)
+  }
+
   function handleAdd(buyNow = false) {
     if (!product || outOfStock) return
+    if (!isAuthenticated) {
+      goLogin()
+      return
+    }
     addItem({
       productId: String(product._id),
       title: product.title,
@@ -214,26 +225,42 @@ export default function ProductPage() {
                 </div>
               </div>
 
+              {/* aviso de login para produtos físicos */}
+              {!authLoading && !isAuthenticated && (
+                <div className="mt-6 flex items-start gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2.5 text-xs text-amber-700 dark:text-amber-300">
+                  <Info className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
+                  <span>É necessário fazer login para comprar materiais físicos. Você será direcionado ao login ao continuar.</span>
+                </div>
+              )}
+
               {/* ações */}
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                <Button
-                  size="lg"
-                  className="flex-1 gap-2"
-                  onClick={() => handleAdd(true)}
-                  disabled={outOfStock}
-                >
-                  <Zap className="h-5 w-5" /> Comprar agora
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="flex-1 gap-2"
-                  onClick={() => handleAdd(false)}
-                  disabled={outOfStock}
-                >
-                  {added ? <Check className="h-5 w-5 text-emerald-500" /> : <ShoppingCart className="h-5 w-5" />}
-                  {added ? 'Adicionado!' : 'Adicionar ao carrinho'}
-                </Button>
+                {!authLoading && !isAuthenticated ? (
+                  <Button size="lg" className="flex-1 gap-2" onClick={goLogin} disabled={outOfStock}>
+                    <LogIn className="h-5 w-5" /> Entrar para comprar
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      size="lg"
+                      className="flex-1 gap-2"
+                      onClick={() => handleAdd(true)}
+                      disabled={outOfStock}
+                    >
+                      <Zap className="h-5 w-5" /> Comprar agora
+                    </Button>
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="flex-1 gap-2"
+                      onClick={() => handleAdd(false)}
+                      disabled={outOfStock}
+                    >
+                      {added ? <Check className="h-5 w-5 text-emerald-500" /> : <ShoppingCart className="h-5 w-5" />}
+                      {added ? 'Adicionado!' : 'Adicionar ao carrinho'}
+                    </Button>
+                  </>
+                )}
               </div>
 
               <div className="mt-6 flex items-center gap-2 rounded-xl bg-muted/40 px-4 py-3 text-xs text-muted-foreground">

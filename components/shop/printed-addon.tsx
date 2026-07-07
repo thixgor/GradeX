@@ -9,16 +9,23 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Printer, Check, Plus, Truck } from 'lucide-react'
+import { Printer, Check, Plus, Truck, LogIn, Info } from 'lucide-react'
 import { useShopCart } from '@/context/ShopCartContext'
+import { useAuthUser } from '@/hooks/use-auth-user'
 import type { PhysicalProduct } from '@/lib/types'
 
 export function PrintedAddon({ materialId }: { materialId: string }) {
   const router = useRouter()
   const { addItem, isInCart } = useShopCart()
+  const { isAuthenticated, loading: authLoading } = useAuthUser({})
   const [products, setProducts] = useState<PhysicalProduct[]>([])
   const [justAdded, setJustAdded] = useState<string | null>(null)
   const [selectedVersions, setSelectedVersions] = useState<Record<string, string>>({})
+
+  const loginHref =
+    typeof window !== 'undefined'
+      ? `/auth/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`
+      : '/auth/login'
 
   useEffect(() => {
     if (!materialId) return
@@ -42,6 +49,12 @@ export function PrintedAddon({ materialId }: { materialId: string }) {
 
   return (
     <div className="my-6 space-y-3">
+      {!authLoading && !isAuthenticated && (
+        <div className="flex items-start gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
+          <Info className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
+          <span>É necessário fazer login para comprar materiais físicos.</span>
+        </div>
+      )}
       {products.map((p) => {
         const pid = String(p._id)
         const base = p.addonSurcharge ?? p.price
@@ -87,6 +100,14 @@ export function PrintedAddon({ materialId }: { materialId: string }) {
             </div>
             <div className="text-right">
               <p className="text-sm font-extrabold text-primary">+ R$ {brl(price)}</p>
+              {!authLoading && !isAuthenticated ? (
+                <a
+                  href={loginHref}
+                  className="mt-1 inline-flex items-center gap-1 rounded-lg bg-muted px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted/70"
+                >
+                  <LogIn className="h-3.5 w-3.5" /> Entrar
+                </a>
+              ) : (
               <AnimatePresence mode="wait">
                 {inCart || justAdded === `${pid}::${verId || ''}` ? (
                   <motion.button
@@ -124,6 +145,7 @@ export function PrintedAddon({ materialId }: { materialId: string }) {
                   </motion.button>
                 )}
               </AnimatePresence>
+              )}
             </div>
           </motion.div>
         )

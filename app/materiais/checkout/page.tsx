@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { AlertCircle, Check, ChevronLeft, FileText, Flame, Loader2, Package, Percent, ShoppingCart, Sparkles, Trash2, X } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
+import { CheckoutAddonOffers } from '@/components/shop/checkout-addon-offers'
 import { useMaterialCart } from '@/context/MaterialCartContext'
 import { PricingEventCountdown, type PricingEventStatePayload } from '@/components/pricing-events/PricingEventCountdown'
 
@@ -711,6 +712,11 @@ export default function MateriaisCheckoutPage() {
             </div>
           )}
 
+          <CheckoutAddonOffers
+            materialIds={cartPreview.items.filter(i => i.itemType === 'material').map(i => i.itemId)}
+            packageIds={cartPreview.items.filter(i => i.itemType === 'package').map(i => i.itemId)}
+          />
+
           <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] gap-6 items-start">
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div style={{ ...glassCard, padding: '24px' }}>
@@ -1172,6 +1178,11 @@ export default function MateriaisCheckoutPage() {
         <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', marginBottom: '32px' }}>
           Você está adquirindo: <strong style={{ color: '#34d399' }}>{item.title}</strong>
         </p>
+
+        <CheckoutAddonOffers
+          materialIds={itemType === 'material' ? [itemId] : []}
+          packageIds={itemType === 'package' ? [itemId] : []}
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-6 items-start">
           {/* Left: Item summary */}

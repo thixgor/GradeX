@@ -1,14 +1,13 @@
 'use client'
 
 /**
- * Card 3D de produto físico para a vitrine. Usa CSS 3D + framer-motion:
- * inclina (tilt) seguindo o cursor com profundidade em camadas. Leve, sem
- * dependências de WebGL.
+ * Card 3D de produto físico para a vitrine. Tilt em CSS puro (sem framer-motion
+ * por card): o mousemove escreve variáveis CSS direto no elemento (sem re-render
+ * React), e o transform é interpolado por transition. Leve e rápido em listas.
  */
 
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import Link from 'next/link'
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { Package, Truck, Clock } from 'lucide-react'
 
 export interface Product3DCardData {
@@ -24,24 +23,23 @@ export interface Product3DCardData {
 
 export function Product3DCard({ product, href }: { product: Product3DCardData; href?: string }) {
   const ref = useRef<HTMLDivElement>(null)
-  const [hovered, setHovered] = useState(false)
 
-  const mx = useMotionValue(0)
-  const my = useMotionValue(0)
-  const rotateX = useSpring(useTransform(my, [-0.5, 0.5], [9, -9]), { stiffness: 200, damping: 18 })
-  const rotateY = useSpring(useTransform(mx, [-0.5, 0.5], [-9, 9]), { stiffness: 200, damping: 18 })
-
-  function onMouseMove(e: React.MouseEvent) {
+  function onMove(e: React.MouseEvent) {
     const el = ref.current
     if (!el) return
     const rect = el.getBoundingClientRect()
-    mx.set((e.clientX - rect.left) / rect.width - 0.5)
-    my.set((e.clientY - rect.top) / rect.height - 0.5)
+    const px = (e.clientX - rect.left) / rect.width
+    const py = (e.clientY - rect.top) / rect.height
+    el.style.setProperty('--ry', `${(px - 0.5) * 16}deg`)
+    el.style.setProperty('--rx', `${(0.5 - py) * 16}deg`)
+    el.style.setProperty('--gx', `${px * 100}%`)
+    el.style.setProperty('--gy', `${py * 100}%`)
   }
   function onLeave() {
-    mx.set(0)
-    my.set(0)
-    setHovered(false)
+    const el = ref.current
+    if (!el) return
+    el.style.setProperty('--ry', '0deg')
+    el.style.setProperty('--rx', '0deg')
   }
 
   const brl = (n: number) => n.toFixed(2).replace('.', ',')
@@ -52,32 +50,32 @@ export function Product3DCard({ product, href }: { product: Product3DCardData; h
       : 0
 
   const inner = (
-    <motion.div
+    <div
       ref={ref}
-      onMouseMove={onMouseMove}
-      onMouseEnter={() => setHovered(true)}
+      onMouseMove={onMove}
       onMouseLeave={onLeave}
-      style={{ rotateX, rotateY, transformStyle: 'preserve-3d', transformPerspective: 900 }}
-      className="group relative h-full rounded-2xl border border-border/50 bg-card/70 backdrop-blur-sm overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-primary/10 transition-shadow"
+      className="group relative h-full overflow-hidden rounded-2xl border border-border/50 bg-card/70 shadow-sm transition-[transform,box-shadow] duration-200 ease-out will-change-transform hover:shadow-2xl hover:shadow-primary/10"
+      style={{
+        transformStyle: 'preserve-3d',
+        transform: 'perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg))',
+      }}
     >
       {/* brilho que segue o hover */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         style={{
-          background:
-            'radial-gradient(600px circle at var(--x,50%) var(--y,50%), hsl(var(--primary)/0.12), transparent 40%)',
+          background: 'radial-gradient(500px circle at var(--gx,50%) var(--gy,50%), hsl(var(--primary)/0.12), transparent 40%)',
         }}
       />
       {/* imagem */}
-      <div
-        className="relative aspect-[4/5] w-full overflow-hidden bg-gradient-to-br from-muted/60 to-muted/20"
-        style={{ transform: 'translateZ(30px)' }}
-      >
+      <div className="relative aspect-[4/5] w-full overflow-hidden bg-gradient-to-br from-muted/60 to-muted/20">
         {cover ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={cover}
             alt={product.title}
+            loading="lazy"
+            decoding="async"
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
@@ -87,7 +85,7 @@ export function Product3DCard({ product, href }: { product: Product3DCardData; h
         )}
 
         {/* selos */}
-        <div className="absolute left-3 top-3 flex flex-col gap-1.5" style={{ transform: 'translateZ(50px)' }}>
+        <div className="absolute left-3 top-3 flex flex-col gap-1.5">
           <span className="inline-flex items-center gap-1 rounded-full bg-primary/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-primary-foreground shadow-lg">
             <Truck className="h-3 w-3" /> Físico
           </span>
@@ -98,20 +96,15 @@ export function Product3DCard({ product, href }: { product: Product3DCardData; h
           )}
         </div>
         {discount > 0 && (
-          <span
-            className="absolute right-3 top-3 rounded-full bg-red-500 px-2.5 py-1 text-[11px] font-extrabold text-white shadow-lg"
-            style={{ transform: 'translateZ(50px)' }}
-          >
+          <span className="absolute right-3 top-3 rounded-full bg-red-500 px-2.5 py-1 text-[11px] font-extrabold text-white shadow-lg">
             -{discount}%
           </span>
         )}
       </div>
 
       {/* corpo */}
-      <div className="p-4" style={{ transform: 'translateZ(24px)' }}>
-        <h3 className="line-clamp-2 min-h-[2.5rem] text-sm font-semibold leading-tight text-foreground">
-          {product.title}
-        </h3>
+      <div className="p-4">
+        <h3 className="line-clamp-2 min-h-[2.5rem] text-sm font-semibold leading-tight text-foreground">{product.title}</h3>
         <div className="mt-2 flex items-end gap-2">
           <span className="text-lg font-extrabold text-foreground">R$ {brl(product.price)}</span>
           {product.compareAtPrice && product.compareAtPrice > product.price && (
@@ -120,22 +113,16 @@ export function Product3DCard({ product, href }: { product: Product3DCardData; h
         </div>
       </div>
 
-      <motion.div
-        className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-primary via-domina-yellow to-secondary"
-        initial={{ scaleX: 0 }}
-        animate={{ scaleX: hovered ? 1 : 0 }}
-        style={{ originX: 0 }}
-        transition={{ duration: 0.3 }}
-      />
-    </motion.div>
+      <div className="absolute inset-x-0 bottom-0 h-1 origin-left scale-x-0 bg-gradient-to-r from-primary via-domina-yellow to-secondary transition-transform duration-300 group-hover:scale-x-100" />
+    </div>
   )
 
   if (href) {
     return (
-      <Link href={href} className="block h-full [perspective:900px]">
+      <Link href={href} className="block h-full">
         {inner}
       </Link>
     )
   }
-  return <div className="h-full [perspective:900px]">{inner}</div>
+  return <div className="h-full">{inner}</div>
 }
