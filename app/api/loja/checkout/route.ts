@@ -29,6 +29,7 @@ const Schema = z.object({
   items: z.array(z.object({
     productId: z.string().min(1),
     quantity: z.number().int().min(1).max(20),
+    versionId: z.string().optional(),
   })).min(1).max(20),
   deliveryType: z.enum(['pickup', 'shipping']),
   pickupPointId: z.string().optional(),
@@ -84,7 +85,22 @@ export async function POST(request: NextRequest) {
     if (p.trackStock && typeof p.stock === 'number' && p.stock < line.quantity) {
       return NextResponse.json({ error: `Estoque insuficiente para "${p.title}"` }, { status: 409 })
     }
-    const unitPrice = p.linkMode === 'addon' ? (p.addonSurcharge ?? p.price) : p.price
+    const baseUnit = p.linkMode === 'addon' ? (p.addonSurcharge ?? p.price) : p.price
+
+    // Resolve a versão escolhida (quando o produto tem versões).
+    let versionId: string | undefined
+    let versionName: string | undefined
+    let unitPrice = baseUnit
+    if (Array.isArray(p.versions) && p.versions.length > 0) {
+      const version = p.versions.find((v) => v.id === line.versionId)
+      if (!version) {
+        return NextResponse.json({ error: `Selecione uma versão para "${p.title}"` }, { status: 400 })
+      }
+      versionId = version.id
+      versionName = version.name
+      unitPrice = typeof version.price === 'number' ? version.price : baseUnit
+    }
+
     subtotal += unitPrice * line.quantity
     if (p.madeToOrder && p.productionDays) {
       maxProductionDays = Math.max(maxProductionDays, p.productionDays)
@@ -95,6 +111,8 @@ export async function POST(request: NextRequest) {
       imageUrl: p.images?.[0],
       unitPrice,
       quantity: line.quantity,
+      versionId,
+      versionName,
       isAddon: p.linkMode === 'addon',
       linkedMaterialId: p.linkedMaterialId,
       madeToOrder: p.madeToOrder,

@@ -1282,12 +1282,32 @@ export async function sendShopOrderStatusEmail(input: {
   userName: string
   orderNumber: string
   status: string
+  /** Se false (ou omitido com updateSummary), trata como atualização de informações. */
+  statusChanged?: boolean
+  /** Campos alterados (edição manual de informações). */
+  updateSummary?: string[]
   note?: string
   tracking?: { code?: string; url?: string; carrier?: string }
 }) {
   const firstName = input.userName ? input.userName.split(' ')[0] : 'Aluno'
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
-  const meta = SHOP_STATUS_EMAIL[input.status] || { label: input.status, emoji: '📦', blurb: '' }
+  const statusMeta = SHOP_STATUS_EMAIL[input.status] || { label: input.status, emoji: '📦', blurb: '' }
+  // Modo "atualização de informações": nenhuma mudança de status, mas o admin
+  // editou dados do pedido (endereço, previsão, rastreio, etc.).
+  const isInfoUpdate = input.statusChanged === false
+  const meta = isInfoUpdate
+    ? { label: 'Pedido atualizado', emoji: '📦', blurb: 'As informações do seu pedido foram atualizadas.' }
+    : statusMeta
+
+  const summaryBlock =
+    isInfoUpdate && input.updateSummary && input.updateSummary.length > 0
+      ? `
+    <div style="background-color:#f7fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px 18px;margin:16px 0;">
+      <p style="margin:0 0 6px 0;font-size:13px;text-transform:uppercase;letter-spacing:0.05em;color:#0f3d2e;font-weight:700;">O que mudou</p>
+      <p style="margin:0;color:#4a5568;">${input.updateSummary.join(' · ')}</p>
+      <p style="margin:8px 0 0 0;font-size:13px;color:#718096;">Situação atual: <strong>${statusMeta.label}</strong></p>
+    </div>`
+      : ''
 
   const trackingBlock =
     input.tracking && (input.tracking.code || input.tracking.url)
@@ -1305,6 +1325,7 @@ export async function sendShopOrderStatusEmail(input: {
     <p>Olá, ${firstName}!</p>
     <p>Há uma atualização no seu pedido <span class="highlight">#${input.orderNumber}</span>.</p>
     <p>${meta.blurb}</p>
+    ${summaryBlock}
     ${input.note ? `<p style="background:#f7fafc;border-left:3px solid #f57c00;padding:10px 14px;color:#4a5568;">${input.note}</p>` : ''}
     ${trackingBlock}
     <div style="text-align:center;">

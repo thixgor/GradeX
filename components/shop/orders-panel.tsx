@@ -141,6 +141,7 @@ function OrderCard({ order, index }: { order: ShopOrder; index: number }) {
             </div>
             <div>
               <p className="max-w-[160px] truncate text-xs font-medium">{it.title}</p>
+              {it.versionName && <p className="max-w-[160px] truncate text-[10px] text-muted-foreground">{it.versionName}</p>}
               <p className="text-[11px] text-muted-foreground">{it.quantity}× R$ {brl(it.unitPrice)}</p>
             </div>
           </div>

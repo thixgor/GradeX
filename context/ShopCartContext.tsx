@@ -15,6 +15,9 @@ export interface ShopCartItem {
   title: string
   price: number
   imageUrl?: string
+  /** Versão/variante escolhida (opcional). */
+  versionId?: string
+  versionName?: string
   isAddon?: boolean
   linkedMaterialId?: string
   madeToOrder?: boolean
@@ -28,14 +31,19 @@ interface ShopCartContextType {
   itemCount: number
   subtotal: number
   addItem: (item: Omit<ShopCartItem, 'addedAt' | 'quantity'> & { quantity?: number }) => 'added' | 'incremented'
-  removeItem: (productId: string) => void
-  setQuantity: (productId: string, quantity: number) => void
+  removeItem: (productId: string, versionId?: string) => void
+  setQuantity: (productId: string, quantity: number, versionId?: string) => void
   clearCart: () => void
-  isInCart: (productId: string) => boolean
+  isInCart: (productId: string, versionId?: string) => boolean
 }
 
 const CART_STORAGE_KEY = 'domineaqui-shop-cart'
 const ShopCartContext = createContext<ShopCartContextType | null>(null)
+
+/** Chave de linha: mesmo produto com versões diferentes = linhas distintas. */
+function lineKey(productId: string, versionId?: string): string {
+  return `${productId}::${versionId || ''}`
+}
 
 function normalize(item: any): ShopCartItem | null {
   if (!item || !item.productId) return null
@@ -44,6 +52,8 @@ function normalize(item: any): ShopCartItem | null {
     title: String(item.title || 'Produto'),
     price: Math.max(0, Number(item.price || 0)),
     imageUrl: item.imageUrl ? String(item.imageUrl) : undefined,
+    versionId: item.versionId ? String(item.versionId) : undefined,
+    versionName: item.versionName ? String(item.versionName) : undefined,
     isAddon: item.isAddon === true,
     linkedMaterialId: item.linkedMaterialId ? String(item.linkedMaterialId) : undefined,
     madeToOrder: item.madeToOrder === true,
@@ -82,12 +92,13 @@ export function ShopCartProvider({ children }: { children: ReactNode }) {
     const normalized = normalize({ ...item, quantity: item.quantity ?? 1, addedAt: new Date().toISOString() })
     let outcome: 'added' | 'incremented' = 'added'
     if (!normalized) return outcome
+    const key = lineKey(normalized.productId, normalized.versionId)
     setItems((prev) => {
-      const existing = prev.find((p) => p.productId === normalized.productId)
+      const existing = prev.find((p) => lineKey(p.productId, p.versionId) === key)
       if (existing) {
         outcome = 'incremented'
         return prev.map((p) =>
-          p.productId === normalized.productId ? { ...p, quantity: p.quantity + normalized.quantity } : p
+          lineKey(p.productId, p.versionId) === key ? { ...p, quantity: p.quantity + normalized.quantity } : p
         )
       }
       return [...prev, normalized]
@@ -95,18 +106,26 @@ export function ShopCartProvider({ children }: { children: ReactNode }) {
     return outcome
   }, [])
 
-  const removeItem = useCallback((productId: string) => {
-    setItems((prev) => prev.filter((p) => p.productId !== productId))
+  const removeItem = useCallback((productId: string, versionId?: string) => {
+    const key = lineKey(productId, versionId)
+    setItems((prev) => prev.filter((p) => lineKey(p.productId, p.versionId) !== key))
   }, [])
 
-  const setQuantity = useCallback((productId: string, quantity: number) => {
+  const setQuantity = useCallback((productId: string, quantity: number, versionId?: string) => {
     const q = Math.max(1, Math.floor(quantity))
-    setItems((prev) => prev.map((p) => (p.productId === productId ? { ...p, quantity: q } : p)))
+    const key = lineKey(productId, versionId)
+    setItems((prev) => prev.map((p) => (lineKey(p.productId, p.versionId) === key ? { ...p, quantity: q } : p)))
   }, [])
 
   const clearCart = useCallback(() => setItems([]), [])
 
-  const isInCart = useCallback((productId: string) => items.some((p) => p.productId === productId), [items])
+  const isInCart = useCallback(
+    (productId: string, versionId?: string) => {
+      const key = lineKey(productId, versionId)
+      return items.some((p) => lineKey(p.productId, p.versionId) === key)
+    },
+    [items]
+  )
 
   const value = useMemo<ShopCartContextType>(() => {
     const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0)

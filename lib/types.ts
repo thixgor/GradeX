@@ -1451,6 +1451,20 @@ export interface MaterialPurchase {
  */
 export type PhysicalLinkMode = 'standalone' | 'material' | 'addon'
 
+/**
+ * Versão (variante) de um produto físico — ex.: "Capa dura" / "Capa mole".
+ * Preço e detalhes são opcionais: sem preço, usa o preço base do produto
+ * (ou o acréscimo, quando add-on).
+ */
+export interface PhysicalProductVersion {
+  id: string
+  name: string
+  /** Preço em R$ desta versão. Ausente => usa o preço/acréscimo base do produto. */
+  price?: number
+  /** Detalhes opcionais desta versão. */
+  details?: string
+}
+
 export interface PhysicalProduct {
   _id?: string | import('mongodb').ObjectId
   title: string
@@ -1469,6 +1483,9 @@ export interface PhysicalProduct {
   linkedMaterialId?: string
   /** Acréscimo em R$ quando linkMode === 'addon'. */
   addonSurcharge?: number
+
+  /** Versões/variantes opcionais (com preço e detalhes opcionais por versão). */
+  versions?: PhysicalProductVersion[]
 
   // Produção sob encomenda
   madeToOrder: boolean
@@ -1553,6 +1570,9 @@ export interface ShopOrderItem {
   imageUrl?: string
   unitPrice: number
   quantity: number
+  /** Versão/variante escolhida (opcional). */
+  versionId?: string
+  versionName?: string
   /** Se é um add-on da versão impressa de um material digital. */
   isAddon?: boolean
   linkedMaterialId?: string

@@ -353,6 +353,67 @@ function ProductModal({
             </div>
           )}
 
+          {/* Versões (opcional) */}
+          <div className="rounded-xl border border-border/40 p-3">
+            <div className="mb-2 flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-muted-foreground">Versões (opcional)</p>
+                <p className="text-[11px] text-muted-foreground/70">Ex.: Capa dura / Capa mole. Preço e detalhes opcionais por versão.</p>
+              </div>
+              <Button
+                type="button" size="sm" variant="outline" className="gap-1"
+                onClick={() => set({ versions: [...((form.versions as any[]) || []), { id: `ver-${Date.now()}`, name: '' }] })}
+              >
+                <Plus className="h-3.5 w-3.5" /> Versão
+              </Button>
+            </div>
+            <div className="space-y-2">
+              {((form.versions as any[]) || []).map((v, i) => (
+                <div key={v.id || i} className="rounded-lg border border-border/30 p-2">
+                  <div className="flex items-center gap-2">
+                    <Input
+                      className="flex-1" placeholder="Nome da versão"
+                      value={v.name || ''}
+                      onChange={(e) => {
+                        const list = [...((form.versions as any[]) || [])]
+                        list[i] = { ...list[i], name: e.target.value }
+                        set({ versions: list })
+                      }}
+                    />
+                    <Input
+                      className="w-28" type="number" step="0.01" placeholder="Preço"
+                      value={v.price ?? ''}
+                      onChange={(e) => {
+                        const list = [...((form.versions as any[]) || [])]
+                        list[i] = { ...list[i], price: e.target.value === '' ? undefined : Number(e.target.value) }
+                        set({ versions: list })
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => set({ versions: ((form.versions as any[]) || []).filter((_, idx) => idx !== i) })}
+                      className="rounded p-1 text-muted-foreground hover:bg-red-500/10 hover:text-red-500"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                  <Input
+                    className="mt-2" placeholder="Detalhes desta versão (opcional)"
+                    value={v.details || ''}
+                    onChange={(e) => {
+                      const list = [...((form.versions as any[]) || [])]
+                      list[i] = { ...list[i], details: e.target.value }
+                      set({ versions: list })
+                    }}
+                  />
+                </div>
+              ))}
+              {(!form.versions || (form.versions as any[]).length === 0) && (
+                <p className="text-[11px] text-muted-foreground/60">Sem versões — o produto usa o preço base.</p>
+              )}
+            </div>
+          </div>
+
           {/* Produção / estoque */}
           <div className="grid grid-cols-2 gap-3">
             <label className="flex items-center gap-2 text-sm">
@@ -621,20 +682,39 @@ function PedidosTab() {
   )
 }
 
+function toDateInput(d?: Date | string | null): string {
+  if (!d) return ''
+  const dt = new Date(d)
+  if (isNaN(dt.getTime())) return ''
+  return dt.toISOString().slice(0, 10)
+}
+
 function OrderModal({ order, onClose, onSaved }: { order: ShopOrder; onClose: () => void; onSaved: () => void }) {
   const [status, setStatus] = useState<ShopOrderStatus>(order.status)
   const [note, setNote] = useState('')
   const [tracking, setTracking] = useState(order.tracking || { code: '', url: '', carrier: '' })
+  const [address, setAddress] = useState({ ...(order.shippingAddress || {} as any) })
+  const [deliveryMethodName, setDeliveryMethodName] = useState(order.deliveryMethodName || '')
+  const [pickupPointName, setPickupPointName] = useState(order.pickupPointName || '')
+  const [estimatedDate, setEstimatedDate] = useState(toDateInput(order.estimatedDeliveryDate))
+  const [notifyCustomer, setNotifyCustomer] = useState(true)
   const [saving, setSaving] = useState(false)
   const brl = (n: number) => n.toFixed(2).replace('.', ',')
 
   async function handleSave() {
     setSaving(true)
     try {
+      const payload: any = { status, note: note || undefined, tracking, notifyCustomer, estimatedDeliveryDate: estimatedDate || null }
+      if (order.deliveryType === 'shipping') {
+        payload.shippingAddress = address
+        payload.deliveryMethodName = deliveryMethodName
+      } else {
+        payload.pickupPointName = pickupPointName
+      }
       await fetch(`/api/loja/orders/${order._id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status, note: note || undefined, tracking }),
+        body: JSON.stringify(payload),
       })
       onSaved()
     } finally {
@@ -642,7 +722,7 @@ function OrderModal({ order, onClose, onSaved }: { order: ShopOrder; onClose: ()
     }
   }
 
-  const addr = order.shippingAddress
+  const setAddr = (patch: any) => setAddress((a: any) => ({ ...a, ...patch }))
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 p-4 backdrop-blur-sm">
       <div className="my-8 w-full max-w-lg rounded-2xl border border-border/50 bg-background p-6 shadow-2xl">
@@ -654,25 +734,41 @@ function OrderModal({ order, onClose, onSaved }: { order: ShopOrder; onClose: ()
         <div className="space-y-1 rounded-xl bg-muted/40 p-3 text-sm">
           <p className="font-medium">{order.userName} · {order.userEmail}</p>
           {order.items.map((it, i) => (
-            <p key={i} className="text-xs text-muted-foreground">{it.quantity}× {it.title} — R$ {brl(it.unitPrice * it.quantity)}</p>
+            <p key={i} className="text-xs text-muted-foreground">
+              {it.quantity}× {it.title}{it.versionName ? ` (${it.versionName})` : ''} — R$ {brl(it.unitPrice * it.quantity)}
+            </p>
           ))}
           <p className="mt-1 text-xs">Subtotal R$ {brl(order.subtotal)} · Frete R$ {brl(order.freight)} · <strong>Total R$ {brl(order.total)}</strong></p>
         </div>
 
-        <div className="mt-3 rounded-xl border border-border/40 p-3 text-sm">
+        {/* Informações de entrega — editáveis */}
+        <div className="mt-3 space-y-2 rounded-xl border border-border/40 p-3">
           {order.deliveryType === 'pickup' ? (
-            <p><MapPin className="mr-1 inline h-3.5 w-3.5" /> Retirada: <strong>{order.pickupPointName}</strong></p>
-          ) : addr ? (
-            <div className="text-xs text-muted-foreground">
-              <p className="text-sm font-medium text-foreground">Entrega · {order.deliveryMethodName}</p>
-              <p>{addr.name} — {addr.phone}</p>
-              <p>{addr.street}, {addr.number} {addr.complement}</p>
-              <p>{addr.district}, {addr.city}/{addr.uf} — CEP {addr.cep}</p>
+            <div>
+              <label className="mb-1 block text-xs font-semibold text-muted-foreground"><MapPin className="mr-1 inline h-3.5 w-3.5" /> Ponto de retirada</label>
+              <Input value={pickupPointName} onChange={(e) => setPickupPointName(e.target.value)} placeholder="Ponto de retirada" />
             </div>
-          ) : null}
-          {order.estimatedDeliveryDate && (
-            <p className="mt-1 text-xs text-muted-foreground">Previsão: {new Date(order.estimatedDeliveryDate).toLocaleDateString('pt-BR')}</p>
+          ) : (
+            <div className="space-y-2">
+              <label className="block text-xs font-semibold text-muted-foreground">Entrega no endereço</label>
+              <Input value={deliveryMethodName} onChange={(e) => setDeliveryMethodName(e.target.value)} placeholder="Método de entrega" />
+              <div className="grid grid-cols-2 gap-2">
+                <Input value={address.name || ''} onChange={(e) => setAddr({ name: e.target.value })} placeholder="Nome" />
+                <Input value={address.phone || ''} onChange={(e) => setAddr({ phone: e.target.value })} placeholder="Telefone" />
+                <Input value={address.cep || ''} onChange={(e) => setAddr({ cep: e.target.value })} placeholder="CEP" />
+                <Input value={address.city || ''} onChange={(e) => setAddr({ city: e.target.value })} placeholder="Cidade" />
+                <Input value={address.street || ''} onChange={(e) => setAddr({ street: e.target.value })} placeholder="Rua" />
+                <Input value={address.number || ''} onChange={(e) => setAddr({ number: e.target.value })} placeholder="Número" />
+                <Input value={address.district || ''} onChange={(e) => setAddr({ district: e.target.value })} placeholder="Bairro" />
+                <Input value={address.complement || ''} onChange={(e) => setAddr({ complement: e.target.value })} placeholder="Complemento" />
+                <Input value={address.uf || ''} onChange={(e) => setAddr({ uf: e.target.value })} placeholder="UF" maxLength={2} />
+              </div>
+            </div>
           )}
+          <div>
+            <label className="mb-1 block text-xs font-semibold text-muted-foreground">Previsão de entrega</label>
+            <Input type="date" value={estimatedDate} onChange={(e) => setEstimatedDate(e.target.value)} />
+          </div>
         </div>
 
         <div className="mt-4 space-y-3">
@@ -690,6 +786,12 @@ function OrderModal({ order, onClose, onSaved }: { order: ShopOrder; onClose: ()
             <Input value={tracking.code || ''} onChange={(e) => setTracking({ ...tracking, code: e.target.value })} placeholder="Código de rastreio" />
             <Input value={tracking.url || ''} onChange={(e) => setTracking({ ...tracking, url: e.target.value })} placeholder="Link de rastreio (opcional)" />
           </div>
+
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={notifyCustomer} onChange={(e) => setNotifyCustomer(e.target.checked)} />
+            Notificar cliente por e-mail
+          </label>
+          <p className="text-[11px] text-muted-foreground/70">Ao salvar, as alterações são registradas na timeline e {notifyCustomer ? 'enviadas ao e-mail do cliente' : 'NÃO serão enviadas por e-mail'}.</p>
         </div>
 
         {order.statusHistory?.length > 0 && (

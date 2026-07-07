@@ -382,7 +382,7 @@ async function applyPhysicalOrder(order: PaymentOrder, result?: ProviderOrder) {
       to: shopOrder.userEmail,
       userName: shopOrder.userName,
       orderNumber: shopOrder.orderNumber,
-      items: shopOrder.items.map((it) => ({ title: it.title, quantity: it.quantity, unitPrice: it.unitPrice })),
+      items: shopOrder.items.map((it) => ({ title: it.versionName ? `${it.title} — ${it.versionName}` : it.title, quantity: it.quantity, unitPrice: it.unitPrice })),
       subtotal: shopOrder.subtotal,
       freight: shopOrder.freight,
       total: shopOrder.total,

@@ -22,6 +22,7 @@ export default function ProductPage() {
   const [loading, setLoading] = useState(true)
   const [qty, setQty] = useState(1)
   const [added, setAdded] = useState(false)
+  const [selectedVersionId, setSelectedVersionId] = useState<string | undefined>()
 
   useEffect(() => {
     let alive = true
@@ -32,6 +33,9 @@ export default function ProductPage() {
         if (d.product) {
           setProduct(d.product)
           setLinkedTitle(d.linkedMaterialTitle)
+          if (Array.isArray(d.product.versions) && d.product.versions.length > 0) {
+            setSelectedVersionId(d.product.versions[0].id)
+          }
         }
       })
       .catch(() => {})
@@ -43,7 +47,10 @@ export default function ProductPage() {
 
   const brl = (n: number) => n.toFixed(2).replace('.', ',')
   const outOfStock = !!product && product.trackStock && typeof product.stock === 'number' && product.stock <= 0
-  const unitPrice = product ? (product.linkMode === 'addon' ? product.addonSurcharge ?? product.price : product.price) : 0
+  const versions = product?.versions || []
+  const selectedVersion = versions.find((v) => v.id === selectedVersionId)
+  const baseUnit = product ? (product.linkMode === 'addon' ? product.addonSurcharge ?? product.price : product.price) : 0
+  const unitPrice = selectedVersion && typeof selectedVersion.price === 'number' ? selectedVersion.price : baseUnit
 
   function handleAdd(buyNow = false) {
     if (!product || outOfStock) return
@@ -52,6 +59,8 @@ export default function ProductPage() {
       title: product.title,
       price: unitPrice,
       imageUrl: product.images?.[0],
+      versionId: selectedVersion?.id,
+      versionName: selectedVersion?.name,
       isAddon: product.linkMode === 'addon',
       linkedMaterialId: product.linkedMaterialId,
       madeToOrder: product.madeToOrder,
@@ -129,6 +138,37 @@ export default function ProductPage() {
 
               {product.description && (
                 <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">{product.description}</p>
+              )}
+
+              {/* versões */}
+              {versions.length > 0 && (
+                <div className="mt-5">
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Escolha a versão</p>
+                  <div className="flex flex-wrap gap-2">
+                    {versions.map((v) => {
+                      const vPrice = typeof v.price === 'number' ? v.price : baseUnit
+                      const active = v.id === selectedVersionId
+                      return (
+                        <button
+                          key={v.id}
+                          onClick={() => setSelectedVersionId(v.id)}
+                          className={
+                            'rounded-xl border-2 px-3 py-2 text-left transition-all ' +
+                            (active ? 'border-primary bg-primary/5' : 'border-border/50 hover:border-border')
+                          }
+                        >
+                          <span className="block text-sm font-semibold">{v.name}</span>
+                          <span className="block text-xs text-muted-foreground">R$ {brl(vPrice)}</span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                  {selectedVersion?.details && (
+                    <p className="mt-2 whitespace-pre-line rounded-lg bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
+                      {selectedVersion.details}
+                    </p>
+                  )}
+                </div>
               )}
 
               {/* estoque */}

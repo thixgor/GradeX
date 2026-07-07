@@ -19,6 +19,25 @@ function sanitizeLinkMode(v: any): PhysicalLinkMode {
   return v === 'addon' || v === 'material' ? v : 'standalone'
 }
 
+function sanitizeVersions(input: any) {
+  if (!Array.isArray(input)) return undefined
+  const versions = input
+    .filter((v) => v && String(v.name || '').trim())
+    .slice(0, 20)
+    .map((v, i) => {
+      const priceNum = Number(v.price)
+      return {
+        id: v.id ? String(v.id) : `ver-${Date.now()}-${i}`,
+        name: String(v.name).trim().slice(0, 120),
+        price: v.price !== undefined && v.price !== null && v.price !== '' && !isNaN(priceNum) && priceNum >= 0
+          ? Math.round(priceNum * 100) / 100
+          : undefined,
+        details: v.details ? String(v.details).slice(0, 1000) : undefined,
+      }
+    })
+  return versions.length > 0 ? versions : undefined
+}
+
 function buildProductDoc(body: any, session: { userId: string; name: string }) {
   const linkMode = sanitizeLinkMode(body.linkMode)
   const trackStock = body.trackStock === true
@@ -35,6 +54,7 @@ function buildProductDoc(body: any, session: { userId: string; name: string }) {
       ? String(body.linkedMaterialId)
       : undefined,
     addonSurcharge: linkMode === 'addon' ? Math.max(0, Number(body.addonSurcharge) || 0) : undefined,
+    versions: sanitizeVersions(body.versions),
     madeToOrder,
     productionDays: madeToOrder ? Math.max(0, Number(body.productionDays) || 0) : undefined,
     trackStock,

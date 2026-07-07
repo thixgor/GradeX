@@ -94,7 +94,7 @@ export default function ShopCheckoutPage() {
 
   const extraBody = useMemo(() => {
     const base: Record<string, any> = {
-      items: items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
+      items: items.map((i) => ({ productId: i.productId, quantity: i.quantity, versionId: i.versionId })),
       deliveryType,
     }
     if (deliveryType === 'pickup') {
@@ -138,7 +138,7 @@ export default function ShopCheckoutPage() {
               <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Itens do pedido</h2>
               <div className="space-y-3">
                 {items.map((i) => (
-                  <div key={i.productId} className="flex items-center gap-3">
+                  <div key={`${i.productId}::${i.versionId || ''}`} className="flex items-center gap-3">
                     <div className="h-14 w-14 flex-shrink-0 overflow-hidden rounded-lg bg-muted/50">
                       {i.imageUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
@@ -151,18 +151,19 @@ export default function ShopCheckoutPage() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium">{i.title}</p>
+                      {i.versionName && <p className="truncate text-[11px] text-muted-foreground">Versão: {i.versionName}</p>}
                       <p className="text-xs text-muted-foreground">R$ {brl(i.price)}</p>
                     </div>
                     <div className="flex items-center gap-1 rounded-lg border border-border/60 p-0.5">
-                      <button className="flex h-7 w-7 items-center justify-center rounded hover:bg-muted" onClick={() => setQuantity(i.productId, i.quantity - 1)}>
+                      <button className="flex h-7 w-7 items-center justify-center rounded hover:bg-muted" onClick={() => setQuantity(i.productId, i.quantity - 1, i.versionId)}>
                         <Minus className="h-3.5 w-3.5" />
                       </button>
                       <span className="w-6 text-center text-xs font-semibold">{i.quantity}</span>
-                      <button className="flex h-7 w-7 items-center justify-center rounded hover:bg-muted" onClick={() => setQuantity(i.productId, i.quantity + 1)}>
+                      <button className="flex h-7 w-7 items-center justify-center rounded hover:bg-muted" onClick={() => setQuantity(i.productId, i.quantity + 1, i.versionId)}>
                         <Plus className="h-3.5 w-3.5" />
                       </button>
                     </div>
-                    <button className="text-muted-foreground hover:text-red-500" onClick={() => removeItem(i.productId)}>
+                    <button className="text-muted-foreground hover:text-red-500" onClick={() => removeItem(i.productId, i.versionId)}>
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
