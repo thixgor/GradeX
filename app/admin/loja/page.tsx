@@ -574,8 +574,12 @@ function EntregaTab() {
                 <label className="flex items-center gap-1 text-xs">
                   <input type="checkbox" checked={m.enabled} onChange={(e) => updateMethod(i, { enabled: e.target.checked })} /> Ativo
                 </label>
+                <label className="flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                  <input type="checkbox" checked={!!m.freeShipping} onChange={(e) => updateMethod(i, { freeShipping: e.target.checked })} /> Frete grátis
+                </label>
                 <button onClick={() => removeMethod(i)} className="ml-auto rounded p-1 text-muted-foreground hover:bg-red-500/10 hover:text-red-500"><Trash2 className="h-4 w-4" /></button>
               </div>
+              {!m.freeShipping && (
               <div className="mt-3">
                 <p className="mb-1 text-xs font-semibold text-muted-foreground">Frete por região (R$)</p>
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -597,6 +601,7 @@ function EntregaTab() {
                   ))}
                 </div>
               </div>
+              )}
               <Input
                 className="mt-2"
                 value={m.details || ''}
@@ -626,6 +631,20 @@ function EntregaTab() {
             </div>
           ))}
         </div>
+      </section>
+
+      {/* Frete grátis por valor */}
+      <section className="rounded-2xl border border-border/50 bg-card/60 p-4">
+        <label className="mb-1 block text-xs font-semibold text-muted-foreground">Frete grátis acima de (R$)</label>
+        <Input
+          type="number"
+          step="0.01"
+          className="w-40"
+          value={settings.freeShippingThreshold ?? ''}
+          onChange={(e) => update({ freeShippingThreshold: e.target.value === '' ? undefined : Number(e.target.value) })}
+          placeholder="Ex.: 150"
+        />
+        <p className="mt-1 text-[11px] text-muted-foreground/70">Quando o subtotal dos itens físicos atingir este valor, o frete é zerado. Deixe em branco para desativar.</p>
       </section>
 
       {/* Rodapé */}

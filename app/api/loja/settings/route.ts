@@ -35,6 +35,7 @@ function sanitizeMethods(input: any): DeliveryMethod[] {
       estimatedDaysMin: Math.max(0, Math.floor(Number(m.estimatedDaysMin) || 0)),
       estimatedDaysMax: Math.max(0, Math.floor(Number(m.estimatedDaysMax) || 0)),
       freightByRegion: freight,
+      freeShipping: m.freeShipping === true,
       details: m.details ? String(m.details) : undefined,
     }
   })
@@ -77,10 +78,12 @@ export async function PUT(request: NextRequest) {
     const body = await request.json()
     await readOrCreateSettings() // garante existência
 
+    const threshold = Number(body.freeShippingThreshold)
     const updates = {
       deliveryMethods: sanitizeMethods(body.deliveryMethods),
       pickupPoints: sanitizePickupPoints(body.pickupPoints),
       sellerFooter: String(body.sellerFooter || 'Entregue por DomineAqui LTDA — Rio de Janeiro'),
+      freeShippingThreshold: !isNaN(threshold) && threshold > 0 ? Math.round(threshold * 100) / 100 : undefined,
       updatedAt: new Date(),
       updatedBy: session.userId,
     }

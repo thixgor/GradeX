@@ -1530,6 +1530,8 @@ export interface DeliveryMethod {
    * Ausente/undefined => usa 'default' (ou 0 se também ausente).
    */
   freightByRegion: Record<string, number>
+  /** Quando true, o frete deste método é sempre R$0 (frete grátis). */
+  freeShipping?: boolean
   /** Detalhes opcionais exibidos ao usuário. */
   details?: string
 }
@@ -1551,6 +1553,8 @@ export interface ShopSettings {
   pickupPoints: PickupPoint[]
   /** Rodapé de entrega. Ex.: "Entregue por DomineAqui LTDA — Rio de Janeiro". */
   sellerFooter: string
+  /** Frete grátis automático quando o subtotal físico ≥ este valor (0/undefined = desligado). */
+  freeShippingThreshold?: number
   updatedAt: Date
   updatedBy?: string
 }

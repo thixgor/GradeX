@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { AlertCircle, Check, ChevronLeft, FileText, Flame, Loader2, Package, Percent, ShoppingCart, Sparkles, Trash2, X } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
 import { CheckoutAddonOffers } from '@/components/shop/checkout-addon-offers'
+import { UnifiedCheckoutPayment } from '@/components/shop/unified-checkout-payment'
 import { useMaterialCart } from '@/context/MaterialCartContext'
 import { PricingEventCountdown, type PricingEventStatePayload } from '@/components/pricing-events/PricingEventCountdown'
 
@@ -1082,25 +1083,41 @@ export default function MateriaisCheckoutPage() {
                   </>
                 )
               ) : (
-                <MercadoPagoCheckout
-                  key={`cart-${payableAmount}-${appliedCoupon?.code || 'sem-cupom'}`}
+                <UnifiedCheckoutPayment
                   publicKey={publicKey}
-                  amount={payableAmount}
+                  digitalPayable={payableAmount}
+                  digitalBody={{ items: cartPayload, couponCode: appliedCoupon?.code }}
+                  purchaseMaterialIds={cartPreview.items.filter(i => i.itemType === 'material').map(i => i.itemId)}
+                  includeStandalone={true}
                   description={`Carrinho DomineAqui - ${cartPreview.payableItems.length} itens`}
-                  endpoint="/api/materiais/checkout"
-                  extraBody={{ items: cartPayload, couponCode: appliedCoupon?.code }}
-                  analytics={{
-                    productId: 'cart',
-                    productTitle: `Carrinho (${cartPreview.items.length} itens)`,
-                    productType: 'material',
-                    source: 'Carrinho',
-                  }}
-                  onApproved={(resp) => {
+                  onSuccess={(resp) => {
                     clearCart()
                     setTimeout(() => {
                       window.location.href = resp.successRedirect || '/materiais?tab=mine&purchase=success'
                     }, 1200)
                   }}
+                  fallback={(
+                    <MercadoPagoCheckout
+                      key={`cart-${payableAmount}-${appliedCoupon?.code || 'sem-cupom'}`}
+                      publicKey={publicKey}
+                      amount={payableAmount}
+                      description={`Carrinho DomineAqui - ${cartPreview.payableItems.length} itens`}
+                      endpoint="/api/materiais/checkout"
+                      extraBody={{ items: cartPayload, couponCode: appliedCoupon?.code }}
+                      analytics={{
+                        productId: 'cart',
+                        productTitle: `Carrinho (${cartPreview.items.length} itens)`,
+                        productType: 'material',
+                        source: 'Carrinho',
+                      }}
+                      onApproved={(resp) => {
+                        clearCart()
+                        setTimeout(() => {
+                          window.location.href = resp.successRedirect || '/materiais?tab=mine&purchase=success'
+                        }, 1200)
+                      }}
+                    />
+                  )}
                 />
               )}
             </div>
@@ -1301,7 +1318,19 @@ export default function MateriaisCheckoutPage() {
 
           {/* Right: Payment */}
           <div style={{ ...glassCard, padding: '28px' }}>
-            {payablePrice <= 0 ? (
+            <UnifiedCheckoutPayment
+              publicKey={publicKey}
+              digitalPayable={Math.max(0, payablePrice)}
+              digitalBody={{ itemType, itemId, couponCode: appliedCoupon?.code }}
+              purchaseMaterialIds={itemType === 'material' ? [itemId] : ((item.materialIds || []) as any[]).map(String)}
+              includeStandalone={false}
+              description={item.title}
+              onSuccess={(resp) => {
+                setTimeout(() => {
+                  window.location.href = resp.successRedirect || '/materiais?purchase=success'
+                }, 1200)
+              }}
+              fallback={payablePrice <= 0 ? (
               <div style={{ textAlign: 'center', color: 'white' }}>
                 <div style={{
                   width: '56px',
@@ -1359,6 +1388,7 @@ export default function MateriaisCheckoutPage() {
                 }}
               />
             )}
+            />
           </div>
         </div>
       </div>

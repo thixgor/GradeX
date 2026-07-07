@@ -11,8 +11,7 @@
  */
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Printer, Plus, Check, Truck, LogIn, Info, ArrowRight, Trash2, ShoppingBag } from 'lucide-react'
+import { Printer, Plus, Check, Truck, LogIn, Info } from 'lucide-react'
 import { useShopCart } from '@/context/ShopCartContext'
 import { useAuthUser } from '@/hooks/use-auth-user'
 import { useLinkedAddons } from '@/components/shop/use-linked-addons'
@@ -26,9 +25,8 @@ export function CheckoutAddonOffers({
   materialIds?: string[]
   packageIds?: string[]
 }) {
-  const router = useRouter()
   const { products, loading } = useLinkedAddons({ materialIds, packageIds })
-  const { addItem, isInCart, items: cartItems, subtotal, itemCount, removeItem } = useShopCart()
+  const { addItem, isInCart } = useShopCart()
   const { isAuthenticated, loading: authLoading } = useAuthUser({})
   const [selectedVersions, setSelectedVersions] = useState<Record<string, string>>({})
   const [justAdded, setJustAdded] = useState<string | null>(null)
@@ -175,25 +173,21 @@ export function CheckoutAddonOffers({
                     <LogIn size={13} /> Entrar
                   </a>
                 ) : added ? (
-                  <button
-                    type="button"
-                    onClick={() => router.push('/loja/checkout')}
+                  <span
                     style={{
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: '5px',
                       padding: '6px 12px',
                       borderRadius: '9px',
-                      border: 'none',
                       background: 'rgba(52,211,153,0.15)',
                       color: '#7ee2a0',
                       fontSize: '12px',
                       fontWeight: 700,
-                      cursor: 'pointer',
                     }}
                   >
-                    <Check size={13} /> No carrinho
-                  </button>
+                    <Check size={13} /> Adicionado
+                  </span>
                 ) : (
                   <button
                     type="button"
@@ -235,71 +229,10 @@ export function CheckoutAddonOffers({
         })}
       </div>
 
-      {isAuthenticated && cartItems.length > 0 && (
-        <div
-          style={{
-            marginTop: '14px',
-            paddingTop: '14px',
-            borderTop: '1px solid rgba(255,255,255,0.10)',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-            <ShoppingBag size={14} style={{ color: '#7ee2a0' }} />
-            <p style={{ margin: 0, fontSize: '12px', fontWeight: 800, color: 'white' }}>
-              Materiais físicos no carrinho ({itemCount})
-            </p>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '10px' }}>
-            {cartItems.map((ci) => (
-              <div
-                key={`${ci.productId}::${ci.versionId || ''}`}
-                style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'rgba(255,255,255,0.8)' }}
-              >
-                <span style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {ci.quantity}× {ci.title}{ci.versionName ? ` (${ci.versionName})` : ''}
-                </span>
-                <span style={{ fontWeight: 700, color: 'white' }}>{brl(ci.price * ci.quantity)}</span>
-                <button
-                  type="button"
-                  onClick={() => removeItem(ci.productId, ci.versionId)}
-                  aria-label="Remover"
-                  style={{ background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', padding: '2px', lineHeight: 0 }}
-                >
-                  <Trash2 size={13} />
-                </button>
-              </div>
-            ))}
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
-            <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}>
-              Subtotal físico: <strong style={{ color: 'white' }}>{brl(subtotal)}</strong>
-              <span style={{ display: 'block', fontSize: '10px', color: 'rgba(255,255,255,0.4)' }}>+ frete no checkout físico</span>
-            </span>
-            <button
-              type="button"
-              onClick={() => router.push('/loja/checkout')}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '9px 16px',
-                borderRadius: '10px',
-                border: 'none',
-                background: '#468152',
-                color: 'white',
-                fontSize: '13px',
-                fontWeight: 800,
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              Finalizar pedido físico <ArrowRight size={15} />
-            </button>
-          </div>
-          <p style={{ margin: '10px 0 0 0', fontSize: '11px', color: 'rgba(255,255,255,0.45)' }}>
-            Os materiais físicos são pagos e enviados <strong>à parte</strong> da compra digital (com entrega/retirada). Entregue por DomineAqui LTDA — Rio de Janeiro.
-          </p>
-        </div>
+      {isAuthenticated && (
+        <p style={{ margin: '10px 0 0 0', fontSize: '11px', color: 'rgba(255,255,255,0.45)' }}>
+          Os impressos entram na mesma compra do material digital, com entrega/retirada no pagamento abaixo.
+        </p>
       )}
     </div>
   )

@@ -6,7 +6,6 @@
 
 import type {
   DeliveryMethod,
-  PickupPoint,
   ShopOrderStatus,
   ShopSettings,
 } from './types'
@@ -42,6 +41,26 @@ export function resolveFreight(method: DeliveryMethod, uf?: string | null): numb
   if (region && typeof table[region] === 'number') return Math.max(0, table[region])
   if (typeof table.default === 'number') return Math.max(0, table.default)
   return 0
+}
+
+/**
+ * Frete final considerando regras de frete grátis:
+ *  - método marcado como `freeShipping` → 0;
+ *  - `freeShippingThreshold` das settings atingido pelo subtotal físico → 0;
+ *  - senão, `resolveFreight(method, uf)`.
+ */
+export function computeFreight(opts: {
+  method?: DeliveryMethod | null
+  uf?: string | null
+  physicalSubtotal: number
+  settings?: Pick<ShopSettings, 'freeShippingThreshold'> | null
+}): number {
+  const { method, uf, physicalSubtotal, settings } = opts
+  if (!method) return 0
+  if (method.freeShipping) return 0
+  const threshold = settings?.freeShippingThreshold
+  if (typeof threshold === 'number' && threshold > 0 && physicalSubtotal >= threshold) return 0
+  return resolveFreight(method, uf)
 }
 
 /**

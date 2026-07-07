@@ -7,7 +7,7 @@ import { checkRateLimit } from '@/lib/rate-limit'
 import { getPaymentProvider, deriveIdempotencyKey } from '@/lib/payments'
 import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
-import { resolveFreight, estimateDeliveryDate, generateOrderNumber, defaultShopSettings } from '@/lib/shop'
+import { computeFreight, estimateDeliveryDate, generateOrderNumber, defaultShopSettings } from '@/lib/shop'
 import type { PaymentOrder, PhysicalProduct, ShopOrder, ShopOrderItem, ShopSettings } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -82,10 +82,16 @@ export async function POST(request: NextRequest) {
     if (!p || p.isHidden) {
       return NextResponse.json({ error: 'Produto indisponível' }, { status: 404 })
     }
+    // Add-on só pode ser comprado junto ao material digital (via /materiais/checkout).
+    if (p.linkMode === 'addon') {
+      return NextResponse.json({
+        error: `"${p.title}" só pode ser comprado junto ao material digital vinculado.`,
+      }, { status: 400 })
+    }
     if (p.trackStock && typeof p.stock === 'number' && p.stock < line.quantity) {
       return NextResponse.json({ error: `Estoque insuficiente para "${p.title}"` }, { status: 409 })
     }
-    const baseUnit = p.linkMode === 'addon' ? (p.addonSurcharge ?? p.price) : p.price
+    const baseUnit = p.price // add-ons já rejeitados acima
 
     // Resolve a versão escolhida (quando o produto tem versões).
     let versionId: string | undefined
@@ -113,7 +119,7 @@ export async function POST(request: NextRequest) {
       quantity: line.quantity,
       versionId,
       versionName,
-      isAddon: p.linkMode === 'addon',
+      isAddon: false,
       linkedMaterialId: p.linkedMaterialId,
       madeToOrder: p.madeToOrder,
       productionDays: p.productionDays,
@@ -144,7 +150,7 @@ export async function POST(request: NextRequest) {
     }
     const method = (settings.deliveryMethods || []).find((m) => m.id === data.deliveryMethodId && m.enabled)
     if (!method) return NextResponse.json({ error: 'Método de entrega inválido' }, { status: 400 })
-    freight = resolveFreight(method, data.shippingAddress.uf)
+    freight = computeFreight({ method, uf: data.shippingAddress.uf, physicalSubtotal: subtotal, settings })
     deliveryMeta = {
       deliveryType: 'shipping',
       shippingAddress: { ...data.shippingAddress, uf: data.shippingAddress.uf.toUpperCase() },

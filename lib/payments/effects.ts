@@ -147,6 +147,11 @@ async function runApprovedEffects(order: PaymentOrder, result: ProviderOrder) {
       break
     case 'material':
       await applyMaterialPurchase(order, result)
+      // Checkout unificado: quando há uma parte física paga junto (add-on/produto
+      // impresso), finaliza também o pedido físico ligado por metadata.shopOrderId.
+      if (order.metadata?.shopOrderId) {
+        await applyPhysicalOrder(order, result)
+      }
       break
     case 'donation':
       await applyDonationApproved(order, result)
@@ -180,6 +185,10 @@ async function runRevocationEffects(order: PaymentOrder, newStatus: PaymentStatu
   }
   if (order.type === 'material' && order.userId && order.refId) {
     const db = await getDb()
+    // Checkout unificado: estorna também a parte física ligada (se houver).
+    if (order.metadata?.shopOrderId) {
+      await revokePhysicalShopOrder(order.metadata.shopOrderId as string, newStatus)
+    }
     if (Array.isArray(order.metadata?.cartItems) && order.metadata.cartItems.length > 0) {
       await db.collection<MaterialPurchase>('material_purchases').updateMany(
         { userId: order.userId, providerOrderId: String(order._id) },
@@ -221,27 +230,30 @@ async function runRevocationEffects(order: PaymentOrder, newStatus: PaymentStatu
     )
   }
   if (order.type === 'physical') {
-    const db = await getDb()
-    const shopOrderId = (order.metadata?.shopOrderId as string) || order.refId
-    if (!shopOrderId || !ObjectId.isValid(String(shopOrderId))) return
-    const shopOrder = await db.collection<ShopOrder>('shop_orders').findOne({ _id: new ObjectId(String(shopOrderId)) as any })
-    if (!shopOrder || shopOrder.status === 'refunded') return
-    const now = new Date()
-    await db.collection<ShopOrder>('shop_orders').updateOne(
-      { _id: shopOrder._id as any },
-      {
-        $set: { status: 'refunded', paymentStatus: newStatus, updatedAt: now },
-        $push: { statusHistory: { status: 'refunded', note: `Pagamento ${newStatus}`, at: now } } as any,
-      }
-    )
-    // Devolve estoque dos itens com controle de estoque.
-    for (const item of shopOrder.items || []) {
-      if (!ObjectId.isValid(item.productId)) continue
-      await db.collection('physical_products').updateOne(
-        { _id: new ObjectId(item.productId), trackStock: true },
-        { $inc: { stock: item.quantity, salesCount: -item.quantity } }
-      )
+    await revokePhysicalShopOrder((order.metadata?.shopOrderId as string) || order.refId, newStatus)
+  }
+}
+
+/** Reembolsa/estorna um pedido físico (shop_orders) e devolve o estoque. */
+async function revokePhysicalShopOrder(shopOrderId: string | undefined, newStatus: PaymentStatus) {
+  if (!shopOrderId || !ObjectId.isValid(String(shopOrderId))) return
+  const db = await getDb()
+  const shopOrder = await db.collection<ShopOrder>('shop_orders').findOne({ _id: new ObjectId(String(shopOrderId)) as any })
+  if (!shopOrder || shopOrder.status === 'refunded') return
+  const now = new Date()
+  await db.collection<ShopOrder>('shop_orders').updateOne(
+    { _id: shopOrder._id as any },
+    {
+      $set: { status: 'refunded', paymentStatus: newStatus, updatedAt: now },
+      $push: { statusHistory: { status: 'refunded', note: `Pagamento ${newStatus}`, at: now } } as any,
     }
+  )
+  for (const item of shopOrder.items || []) {
+    if (!ObjectId.isValid(item.productId)) continue
+    await db.collection('physical_products').updateOne(
+      { _id: new ObjectId(item.productId), trackStock: true },
+      { $inc: { stock: item.quantity, salesCount: -item.quantity } }
+    )
   }
 }
 

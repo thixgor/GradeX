@@ -31,6 +31,7 @@ import {
   serializePricingEventState,
 } from '@/lib/pricing-events'
 import type { PaymentOrder, MaterialPurchase } from '@/lib/types'
+import { buildPhysicalShopOrder } from '@/lib/shop-order'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -76,7 +77,8 @@ export async function POST(request: NextRequest) {
 
   const parsedCart = CartSchema.safeParse(body)
   if (parsedCart.success) {
-    return handleCartCheckout(request, ip, session, parsedCart.data)
+    // physical é passado à parte (zod remove chaves desconhecidas do schema).
+    return handleCartCheckout(request, ip, session, { ...parsedCart.data, physical: body?.physical } as any)
   }
 
   const parsed = Schema.safeParse(body)
@@ -308,13 +310,51 @@ export async function POST(request: NextRequest) {
     couponValidation = null
   }
 
-  // Free path — item gratuito OR descontos/cupom cobriram todo o valor
-  const isFreePath =
+  // ── Parte física (add-ons/produtos impressos pagos junto ao digital) ──
+  let physicalShopOrderId: string | undefined
+  let physicalTotal = 0
+  const rawPhysical = body?.physical
+  if (rawPhysical && Array.isArray(rawPhysical.items) && rawPhysical.items.length > 0) {
+    // Materiais elegíveis desta compra (para validar add-ons "só junto ao material").
+    const eligibleMaterialIds = new Set<string>()
+    if (data.itemType === 'material') {
+      eligibleMaterialIds.add(data.itemId)
+    } else if (Array.isArray(item.materialIds)) {
+      for (const mid of item.materialIds) eligibleMaterialIds.add(String(mid))
+    }
+    const built = await buildPhysicalShopOrder(
+      db,
+      { userId: session.userId, name: session.name, email: session.email },
+      {
+        items: rawPhysical.items.map((i: any) => ({
+          productId: String(i.productId),
+          quantity: Math.max(1, Math.min(20, Math.floor(Number(i.quantity) || 1))),
+          versionId: i.versionId ? String(i.versionId) : undefined,
+        })),
+        deliveryType: rawPhysical.deliveryType === 'shipping' ? 'shipping' : 'pickup',
+        pickupPointId: rawPhysical.pickupPointId,
+        shippingAddress: rawPhysical.shippingAddress,
+        deliveryMethodId: rawPhysical.deliveryMethodId,
+      },
+      { eligibleMaterialIds }
+    )
+    if (!built.ok) {
+      return NextResponse.json({ error: built.error }, { status: built.status })
+    }
+    if (!built.empty) {
+      physicalShopOrderId = built.shopOrderId
+      physicalTotal = built.total
+    }
+  }
+
+  // Free path — só quando digital gratuito E sem parte física a pagar.
+  const digitalFree =
     item.pricing === 'free' ||
     !item.price ||
     item.price <= 0 ||
     effectivePrice <= 0 ||
     amount <= 0
+  const isFreePath = digitalFree && physicalTotal <= 0
 
   if (isFreePath) {
     if (couponValidation) {
@@ -403,6 +443,7 @@ export async function POST(request: NextRequest) {
   }
 
   const description = item.title
+  const paidAmount = Math.round((amount + physicalTotal) * 100) / 100
 
   // Cria order interna
   const now = new Date()
@@ -414,13 +455,14 @@ export async function POST(request: NextRequest) {
     type: 'material',
     refId: data.itemId,
     refSlug: item.linkedDeckSlug || undefined,
-    amount,
+    amount: paidAmount,
     currency: 'BRL',
     status: 'pending',
     idempotencyKey: '',
     metadata: {
       itemType: data.itemType,
       itemTitle: item.title,
+      ...(physicalShopOrderId ? { shopOrderId: physicalShopOrderId } : {}),
       ...(pricingMeta && pricingMeta.discountApplied > 0
         ? {
             packageOriginalPrice: pricingMeta.originalPackagePrice,
@@ -449,6 +491,12 @@ export async function POST(request: NextRequest) {
     { _id: inserted.insertedId },
     { $set: { idempotencyKey } }
   )
+  if (physicalShopOrderId) {
+    await db.collection('shop_orders').updateOne(
+      { _id: new ObjectId(physicalShopOrderId) },
+      { $set: { providerOrderId: orderId, updatedAt: new Date() } }
+    )
+  }
   if (couponValidation) {
     try {
       await reserveCouponRedemption(db, {
@@ -481,7 +529,7 @@ export async function POST(request: NextRequest) {
     const provider = getPaymentProvider()
     const result = await provider.createPayment({
       externalReference: orderId,
-      amount,
+      amount: paidAmount,
       currency: 'BRL',
       description,
       payerEmail: session.email,
@@ -521,15 +569,23 @@ export async function POST(request: NextRequest) {
       pix: result.pix || null,
       boleto: result.boleto || null,
       statusDetail: result.statusDetail,
-      amount,
-      successRedirect: item.type === 'flashcard_deck' && item.linkedDeckSlug
-        ? `/flashcards/d/${item.linkedDeckSlug}`
-        : '/materiais',
+      amount: paidAmount,
+      successRedirect: physicalShopOrderId
+        ? '/profile?tab=pedidos'
+        : item.type === 'flashcard_deck' && item.linkedDeckSlug
+          ? `/flashcards/d/${item.linkedDeckSlug}`
+          : '/materiais',
     })
   } catch (err: any) {
     console.error('[materiais/checkout] erro:', err)
     if (couponValidation) {
       await releaseCouponRedemption(db, orderId, 'provider_error')
+    }
+    if (physicalShopOrderId) {
+      await db.collection('shop_orders').updateOne(
+        { _id: new ObjectId(physicalShopOrderId) },
+        { $set: { paymentStatus: 'rejected', updatedAt: new Date() } }
+      )
     }
     await db.collection<PaymentOrder>('payment_orders').updateOne(
       { _id: inserted.insertedId },
@@ -646,13 +702,49 @@ async function handleCartCheckout(
     couponValidation = null
   }
 
+  // ── Parte física do carrinho (add-ons/produtos impressos pagos junto) ──
+  let physicalShopOrderId: string | undefined
+  let physicalTotal = 0
+  const rawPhysical = (data as any).physical
+  if (rawPhysical && Array.isArray(rawPhysical.items) && rawPhysical.items.length > 0) {
+    const eligibleMaterialIds = new Set<string>()
+    for (const it of resolution.items) {
+      if (it.itemType === 'material') eligibleMaterialIds.add(String(it.itemId))
+      const matIds = (it as any).materialIds
+      if (Array.isArray(matIds)) for (const m of matIds) eligibleMaterialIds.add(String(m))
+    }
+    const built = await buildPhysicalShopOrder(
+      db,
+      { userId: session.userId, name: session.name, email: session.email },
+      {
+        items: rawPhysical.items.map((i: any) => ({
+          productId: String(i.productId),
+          quantity: Math.max(1, Math.min(20, Math.floor(Number(i.quantity) || 1))),
+          versionId: i.versionId ? String(i.versionId) : undefined,
+        })),
+        deliveryType: rawPhysical.deliveryType === 'shipping' ? 'shipping' : 'pickup',
+        pickupPointId: rawPhysical.pickupPointId,
+        shippingAddress: rawPhysical.shippingAddress,
+        deliveryMethodId: rawPhysical.deliveryMethodId,
+      },
+      { eligibleMaterialIds }
+    )
+    if (!built.ok) {
+      return NextResponse.json({ error: built.error }, { status: built.status })
+    }
+    if (!built.empty) {
+      physicalShopOrderId = built.shopOrderId
+      physicalTotal = built.total
+    }
+  }
+
   if (resolution.freeItems.length > 0) {
     await grantMaterialCartItems(db, session, resolution.freeItems, {
       auditMetadata: { free: true, source: 'cart' },
     })
   }
 
-  if (amount <= 0) {
+  if (amount <= 0 && physicalTotal <= 0) {
     if (couponValidation) {
       try {
         await reserveCouponRedemption(db, {
@@ -715,6 +807,7 @@ async function handleCartCheckout(
 
   const itemCount = payableItemsForOrder.length
   const description = `Carrinho DomineAqui - ${itemCount} ${itemCount === 1 ? 'item' : 'itens'}`
+  const paidAmount = Math.round((amount + physicalTotal) * 100) / 100
   const now = new Date()
   const orderDoc: Omit<PaymentOrder, '_id'> = {
     userId: session.userId,
@@ -723,13 +816,14 @@ async function handleCartCheckout(
     provider: 'mercado_pago',
     type: 'material',
     refId: payableItemsForOrder[0]?.itemId,
-    amount,
+    amount: paidAmount,
     currency: 'BRL',
     status: 'pending',
     idempotencyKey: '',
     metadata: {
       itemType: 'cart',
       itemTitle: description,
+      ...(physicalShopOrderId ? { shopOrderId: physicalShopOrderId } : {}),
       cartItems: serializedPayableItemsForOrder,
       freeItems: serializedFreeItems,
       skippedItems: resolution.skippedItems,
@@ -762,6 +856,12 @@ async function handleCartCheckout(
     { _id: inserted.insertedId },
     { $set: { idempotencyKey } }
   )
+  if (physicalShopOrderId) {
+    await db.collection('shop_orders').updateOne(
+      { _id: new ObjectId(physicalShopOrderId) },
+      { $set: { providerOrderId: orderId, updatedAt: new Date() } }
+    )
+  }
 
   if (couponValidation) {
     try {
@@ -804,7 +904,7 @@ async function handleCartCheckout(
     const provider = getPaymentProvider()
     const result = await provider.createPayment({
       externalReference: orderId,
-      amount,
+      amount: paidAmount,
       currency: 'BRL',
       description,
       payerEmail: session.email,
@@ -844,15 +944,21 @@ async function handleCartCheckout(
       pix: result.pix || null,
       boleto: result.boleto || null,
       statusDetail: result.statusDetail,
-      amount,
+      amount: paidAmount,
       freeItems: serializedFreeItems,
       skippedItems: resolution.skippedItems,
-      successRedirect: '/materiais?tab=mine&purchase=success',
+      successRedirect: physicalShopOrderId ? '/profile?tab=pedidos' : '/materiais?tab=mine&purchase=success',
     })
   } catch (err: any) {
     console.error('[materiais/checkout/cart] erro:', err)
     if (couponValidation) {
       await releaseCouponRedemption(db, orderId, 'provider_error')
+    }
+    if (physicalShopOrderId) {
+      await db.collection('shop_orders').updateOne(
+        { _id: new ObjectId(physicalShopOrderId) },
+        { $set: { paymentStatus: 'rejected', updatedAt: new Date() } }
+      )
     }
     await db.collection<PaymentOrder>('payment_orders').updateOne(
       { _id: inserted.insertedId },

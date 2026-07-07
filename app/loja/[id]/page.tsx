@@ -225,6 +225,22 @@ export default function ProductPage() {
                 </div>
               </div>
 
+              {/* add-on só pode ser comprado junto ao material vinculado */}
+              {product.linkMode === 'addon' ? (
+                <div className="mt-6 rounded-xl border border-primary/25 bg-primary/5 px-4 py-3 text-sm">
+                  <p className="font-semibold text-foreground">Disponível apenas junto ao material digital</p>
+                  <p className="mt-0.5 text-muted-foreground">
+                    Esta versão impressa é um add-on{linkedTitle ? <> de <strong>{linkedTitle}</strong></> : null} e só pode ser
+                    adquirida ao comprar o material digital vinculado.
+                  </p>
+                  {product.linkedMaterialId && (
+                    <Button className="mt-3 gap-2" onClick={() => router.push(`/materiais/${product.linkedMaterialId}`)}>
+                      <BookOpen className="h-4 w-4" /> Ir para o material
+                    </Button>
+                  )}
+                </div>
+              ) : (
+              <>
               {/* aviso de login para produtos físicos */}
               {!authLoading && !isAuthenticated && (
                 <div className="mt-6 flex items-start gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2.5 text-xs text-amber-700 dark:text-amber-300">
@@ -262,6 +278,9 @@ export default function ProductPage() {
                   </>
                 )}
               </div>
+
+              </>
+              )}
 
               <div className="mt-6 flex items-center gap-2 rounded-xl bg-muted/40 px-4 py-3 text-xs text-muted-foreground">
                 <ShieldCheck className="h-4 w-4 text-primary" />

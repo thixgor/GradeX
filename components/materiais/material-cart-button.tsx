@@ -522,14 +522,20 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
                           <span className="inline-flex items-center gap-1 text-sm text-muted-foreground"><Truck className="h-3.5 w-3.5" /> Materiais físicos</span>
                           <span className="text-base font-black text-emerald-700 dark:text-emerald-300">{formatBRL(shopSubtotal)}</span>
                         </div>
-                        <p className="mt-0.5 text-[11px] text-muted-foreground">Pagos e enviados à parte (entrega/retirada) · + frete no checkout</p>
-                        <Button onClick={goToShopCheckout} className="mt-2 h-10 w-full rounded-xl bg-emerald-700 text-white hover:bg-emerald-600">
-                          {isAuthenticated ? (
-                            <>Finalizar pedido físico <ArrowRight className="ml-2 h-4 w-4" /></>
-                          ) : (
-                            <><LogIn className="mr-2 h-4 w-4" /> Entrar para comprar físicos</>
-                          )}
-                        </Button>
+                        {hasDigital ? (
+                          <p className="mt-0.5 text-[11px] text-muted-foreground">Incluídos na mesma compra — entrega e frete no checkout.</p>
+                        ) : (
+                          <>
+                            <p className="mt-0.5 text-[11px] text-muted-foreground">Entrega/retirada e frete no checkout.</p>
+                            <Button onClick={goToShopCheckout} className="mt-2 h-10 w-full rounded-xl bg-emerald-700 text-white hover:bg-emerald-600">
+                              {isAuthenticated ? (
+                                <>Finalizar pedido físico <ArrowRight className="ml-2 h-4 w-4" /></>
+                              ) : (
+                                <><LogIn className="mr-2 h-4 w-4" /> Entrar para comprar</>
+                              )}
+                            </Button>
+                          </>
+                        )}
                       </div>
                     )}
 
@@ -542,14 +548,14 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
                           {checkoutChecking ? (
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                           ) : null}
-                          {checkoutChecking ? 'Revisando...' : 'Finalizar digitais'}
+                          {checkoutChecking ? 'Revisando...' : 'Finalizar compra'}
                           {!checkoutChecking ? <ArrowRight className="ml-2 h-4 w-4" /> : null}
                         </Button>
                       )}
                     </div>
                     {hasDigital && (
                       <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
-                        O valor final é recalculado com segurança no checkout antes do pagamento.
+                        {hasPhysical ? 'Digital + impressos são pagos juntos. ' : ''}O valor final é recalculado com segurança no checkout antes do pagamento.
                       </p>
                     )}
                   </div>

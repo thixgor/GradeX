@@ -21,6 +21,7 @@ export async function GET() {
       deliveryMethods: (settings.deliveryMethods || []).filter((m) => m.enabled),
       pickupPoints: (settings.pickupPoints || []).filter((p) => p.enabled),
       sellerFooter: settings.sellerFooter,
+      freeShippingThreshold: settings.freeShippingThreshold,
     })
   } catch (error) {
     console.error('Error fetching public shop settings:', error)
