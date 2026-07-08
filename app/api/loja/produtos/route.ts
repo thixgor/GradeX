@@ -19,6 +19,21 @@ function sanitizeLinkMode(v: any): PhysicalLinkMode {
   return v === 'addon' || v === 'material' ? v : 'standalone'
 }
 
+/**
+ * Remove chaves com valor `undefined` de um objeto (raso). Necessário porque o
+ * driver do Mongo (ignoreUndefined=false por padrão) serializa `undefined` como
+ * `null`. Campos como `slug` têm índice único esparso — gravar `null` colide
+ * entre produtos sem slug (E11000 → 500 ao criar/editar produtos). Omitir a
+ * chave mantém o índice esparso funcionando corretamente.
+ */
+function stripUndefined<T extends Record<string, any>>(obj: T): Partial<T> {
+  const out: Record<string, any> = {}
+  for (const [k, v] of Object.entries(obj)) {
+    if (v !== undefined) out[k] = v
+  }
+  return out as Partial<T>
+}
+
 function sanitizeVersions(input: any) {
   if (!Array.isArray(input)) return undefined
   const versions = input
@@ -132,7 +147,7 @@ export async function POST(request: NextRequest) {
     }
 
     const now = new Date()
-    const doc = {
+    const doc = stripUndefined({
       ...buildProductDoc(body, session),
       salesCount: 0,
       viewCount: 0,
@@ -140,7 +155,7 @@ export async function POST(request: NextRequest) {
       createdByName: session.name,
       createdAt: now,
       updatedAt: now,
-    }
+    })
     const result = await db.collection('physical_products').insertOne(doc as any)
     return NextResponse.json({ _id: String(result.insertedId), ...doc }, { status: 201 })
   } catch (error) {
@@ -162,10 +177,17 @@ export async function PUT(request: NextRequest) {
     if (!_id || !ObjectId.isValid(String(_id))) {
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
     }
-    const updates = { ...buildProductDoc(body, session), updatedAt: new Date() }
+    const built = { ...buildProductDoc(body, session), updatedAt: new Date() }
+    const $set = stripUndefined(built)
+    // Campos opcionais deixados em branco são REMOVIDOS (não gravados como null),
+    // preservando o índice único esparso de `slug` e a semântica de "limpar campo".
+    const $unset: Record<string, ''> = {}
+    for (const [k, v] of Object.entries(built)) {
+      if (v === undefined) $unset[k] = ''
+    }
     await db.collection('physical_products').updateOne(
       { _id: new ObjectId(String(_id)) },
-      { $set: updates }
+      Object.keys($unset).length > 0 ? { $set, $unset } : { $set }
     )
     return NextResponse.json({ success: true })
   } catch (error) {
