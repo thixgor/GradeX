@@ -15,6 +15,7 @@ import { Printer, Plus, Check, Truck, LogIn, Info } from 'lucide-react'
 import { useShopCart } from '@/context/ShopCartContext'
 import { useAuthUser } from '@/hooks/use-auth-user'
 import { useLinkedAddons } from '@/components/shop/use-linked-addons'
+import { physicalAddonPrice, physicalFullPrice } from '@/lib/shop'
 
 const brl = (n: number) => `R$ ${Number(n).toFixed(2).replace('.', ',')}`
 
@@ -81,11 +82,12 @@ export function CheckoutAddonOffers({
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {products.map((p) => {
           const pid = String(p._id)
-          const base = p.addonSurcharge ?? p.price
           const versions = p.versions || []
           const verId = versions.length > 0 ? selectedVersions[pid] || versions[0].id : undefined
           const ver = versions.find((v) => v.id === verId)
-          const price = ver && typeof ver.price === 'number' ? ver.price : base
+          const addonPrice = physicalAddonPrice(p, ver)  // preço com o material/pacote (exibido)
+          const fullPrice = physicalFullPrice(p, ver)     // preço cheio (avulso)
+          const price = addonPrice
           const inCart = isInCart(pid, verId)
           const added = inCart || justAdded === `${pid}::${verId || ''}`
 
@@ -195,12 +197,14 @@ export function CheckoutAddonOffers({
                       addItem({
                         productId: pid,
                         title: p.title,
-                        price,
+                        price: fullPrice,
+                        addonPrice,
                         imageUrl: p.images?.[0],
                         versionId: ver?.id,
                         versionName: ver?.name,
                         isAddon: true,
                         linkedMaterialId: p.linkedMaterialId,
+                        linkedPackageId: p.linkedPackageId,
                         madeToOrder: p.madeToOrder,
                         productionDays: p.productionDays,
                       })
