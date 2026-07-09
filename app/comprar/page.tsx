@@ -5,6 +5,8 @@ import { useSearchParams } from 'next/navigation'
 import { ArrowRight, BookOpen, Check, ChevronLeft, Clock, Crown, Flame, Loader2, Lock, Mail, Percent, Phone, ShieldCheck, Sparkles, User, X } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
 import { usePricingEventState, usePricingEventStates } from '@/components/pricing-events/usePricingEventState'
+import { PublicPageShell } from '@/components/public-page-shell'
+import Link from 'next/link'
 
 interface AppliedCoupon {
   couponId: string
@@ -20,25 +22,13 @@ function formatBRL(value: number): string {
   return `R$ ${Number(value || 0).toFixed(2).replace('.', ',')}`
 }
 
-const pageStyle: React.CSSProperties = {
-  minHeight: '100vh',
-  background: 'linear-gradient(135deg, #020d06 0%, #031a0b 40%, #041408 100%)',
-  padding: '28px 16px',
-}
-const glassCard: React.CSSProperties = {
-  background: 'rgba(6,20,10,0.85)',
-  backdropFilter: 'blur(20px)',
-  WebkitBackdropFilter: 'blur(20px)',
-  border: '1px solid rgba(52,211,153,0.15)',
-  borderRadius: '20px',
-}
 const labelStyle: React.CSSProperties = {
-  display: 'block', fontSize: '12px', fontWeight: 600, color: 'rgba(52,211,153,0.8)',
+  display: 'block', fontSize: '12px', fontWeight: 600, color: 'hsl(var(--primary))',
   marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em',
 }
 const inputStyle: React.CSSProperties = {
-  width: '100%', boxSizing: 'border-box', background: 'rgba(255,255,255,0.05)',
-  border: '1px solid rgba(52,211,153,0.2)', color: 'white', borderRadius: '10px',
+  width: '100%', boxSizing: 'border-box', background: 'hsl(var(--background))',
+  border: '1px solid hsl(var(--border))', color: 'hsl(var(--foreground))', borderRadius: '10px',
   padding: '12px 14px', fontSize: '14px', outline: 'none',
 }
 
@@ -138,16 +128,16 @@ function ManualClinicoCouponBox({
 
   if (!product.allowCoupons) {
     return (
-      <div className="rounded-xl border border-white/10 bg-white/[0.04] p-4 text-sm text-white/55">
+      <div className="rounded-lg border border-border bg-muted/40 p-4 text-sm text-muted-foreground">
         Cupons nao estao habilitados para este produto.
       </div>
     )
   }
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.055] p-4 backdrop-blur-xl">
-      <div className="mb-3 flex items-center gap-2 text-sm font-bold text-white/75">
-        <Percent className="h-4 w-4 text-emerald-300" />
+    <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
+      <div className="mb-3 flex items-center gap-2 text-sm font-bold text-foreground">
+        <Percent className="h-4 w-4 text-primary" />
         Cupom de desconto
       </div>
 
@@ -155,12 +145,12 @@ function ManualClinicoCouponBox({
         <div className="space-y-3">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <p className="font-black text-emerald-300">{appliedCoupon.code} aplicado</p>
-              <p className="text-xs text-white/50">
+              <p className="font-black text-primary">{appliedCoupon.code} aplicado</p>
+              <p className="text-xs text-muted-foreground">
                 {formatBRL(appliedCoupon.discountAmount)} de desconto
               </p>
             </div>
-            <span className="rounded-full bg-emerald-300/15 px-3 py-1 text-xs font-black text-emerald-200">
+            <span className="rounded-full bg-primary/15 px-3 py-1 text-xs font-black text-primary">
               {appliedCoupon.label}
             </span>
           </div>
@@ -171,7 +161,7 @@ function ManualClinicoCouponBox({
               setError('')
               onRemoved()
             }}
-            className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-red-300/20 bg-red-400/10 text-sm font-bold text-red-200 transition hover:bg-red-400/15"
+            className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-destructive/25 bg-destructive/10 text-sm font-bold text-destructive transition hover:bg-destructive/15"
           >
             <X className="h-4 w-4" />
             Remover cupom
@@ -190,20 +180,20 @@ function ManualClinicoCouponBox({
                 if (event.key === 'Enter') applyCoupon()
               }}
               disabled={loading || product.currentPrice <= 0}
-              className="h-10 min-w-0 flex-1 rounded-xl border border-white/10 bg-black/25 px-3 text-sm font-bold uppercase text-white outline-none transition focus:border-emerald-300/50"
+              className="h-10 min-w-0 flex-1 rounded-lg border border-border bg-background px-3 text-sm font-bold uppercase text-foreground outline-none transition focus:border-primary/45 focus:ring-2 focus:ring-primary/15"
               placeholder="Digite seu cupom"
             />
             <button
               type="button"
               onClick={applyCoupon}
               disabled={loading || !code.trim() || product.currentPrice <= 0}
-              className="inline-flex h-10 items-center gap-2 rounded-xl bg-emerald-300 px-4 text-sm font-black text-emerald-950 transition hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex h-10 items-center gap-2 rounded-lg bg-secondary px-4 text-sm font-black text-secondary-foreground transition hover:bg-secondary/90 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
               Aplicar
             </button>
           </div>
-          {error ? <p className="text-xs font-semibold text-red-300">{error}</p> : null}
+          {error ? <p className="text-xs font-semibold text-destructive">{error}</p> : null}
         </div>
       )}
     </div>
@@ -281,7 +271,7 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
 
   if (loading) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center text-emerald-200">
+      <div className="flex min-h-[50vh] items-center justify-center text-primary">
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     )
@@ -289,8 +279,8 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
 
   if (error || !product) {
     return (
-      <div style={{ maxWidth: '520px', margin: '0 auto' }}>
-        <div style={{ ...glassCard, padding: '28px', color: '#f87171', textAlign: 'center' }}>
+      <div className="mx-auto max-w-lg">
+        <div className="rounded-lg border border-destructive/25 bg-destructive/10 px-6 py-7 text-center text-sm text-destructive">
           {error || 'Produto indisponível.'}
         </div>
       </div>
@@ -327,37 +317,37 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
   }
 
   return (
-    <div className="mx-auto max-w-6xl text-white">
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-        <div className="rounded-3xl border border-white/10 bg-white/[0.07] p-5 shadow-2xl shadow-black/20 backdrop-blur-2xl sm:p-7">
-          <div className="relative mb-5 overflow-hidden rounded-2xl border border-white/10">
+    <div className="mx-auto max-w-6xl text-foreground">
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+        <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
+          <div className="relative mb-5 overflow-hidden rounded-lg border border-border">
             {product.coverImageUrl ? (
-              <img src={product.coverImageUrl} alt="" className="h-48 w-full object-cover opacity-80" />
+              <img src={product.coverImageUrl} alt="" className="h-48 w-full object-cover" />
             ) : (
-              <div className="h-48 bg-emerald-400/10" />
+              <div className="h-48 bg-primary/10" />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#031109] via-[#031109]/15 to-transparent" />
-            <div className="absolute bottom-4 left-4 flex items-center gap-2 rounded-full border border-white/10 bg-black/35 px-3 py-1.5 text-xs font-black uppercase tracking-wide backdrop-blur-xl">
-              <Sparkles className="h-3.5 w-3.5 text-amber-200" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
+            <div className="absolute bottom-4 left-4 flex items-center gap-2 rounded-full border border-border bg-card/95 px-3 py-1.5 text-xs font-black uppercase tracking-wide shadow-sm">
+              <Sparkles className="h-3.5 w-3.5 text-amber-600 dark:text-amber-300" />
               Produto avulso
             </div>
           </div>
 
           <div className="mb-5 flex items-start gap-3">
-            <div className="rounded-2xl bg-emerald-300/15 p-3 text-emerald-200">
+            <div className="rounded-lg bg-primary/10 p-3 text-primary">
               <BookOpen className="h-6 w-6" />
             </div>
             <div>
-              <h1 className="text-2xl font-black tracking-tight sm:text-3xl">{product.label}</h1>
-              <p className="mt-2 text-sm leading-relaxed text-white/58">{product.shortDescription}</p>
+              <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">{product.label}</h1>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{product.shortDescription}</p>
             </div>
           </div>
 
           {enabledPlans.length > 1 && (
-            <div className="mb-5 flex items-start gap-2.5 rounded-2xl border border-amber-300/25 bg-gradient-to-r from-amber-300/12 to-emerald-300/[0.06] p-3.5">
-              <Crown className="mt-0.5 h-4 w-4 flex-none text-amber-300" />
-              <p className="text-xs font-semibold leading-snug text-amber-100/90">
-                Boas notícias: dá pra ter o Manual <span className="font-black text-amber-200">para sempre</span> por um valor único.
+            <div className="mb-5 flex items-start gap-2.5 rounded-lg border border-amber-500/25 bg-amber-500/10 p-3.5 dark:border-amber-300/25 dark:bg-amber-300/10">
+              <Crown className="mt-0.5 h-4 w-4 flex-none text-amber-600 dark:text-amber-300" />
+              <p className="text-xs font-semibold leading-snug text-amber-900 dark:text-amber-100/90">
+                Boas notícias: dá pra ter o Manual <span className="font-black">para sempre</span> por um valor único.
                 Compare as opções abaixo — o melhor custo costuma ser o que você nunca precisa renovar.
               </p>
             </div>
@@ -366,8 +356,8 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
           {enabledPlans.length > 0 && (
             <div className="mb-5">
               <div className="mb-3">
-                <p className="text-base font-black text-white">Escolha como quer seu acesso</p>
-                <p className="mt-0.5 text-xs text-white/55">
+                <p className="text-base font-bold text-foreground">Escolha como quer seu acesso</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">
                   Todos liberam o Manual completo — a diferença é só por quanto tempo.
                 </p>
               </div>
@@ -384,31 +374,31 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
                       key={plan.key}
                       type="button"
                       onClick={() => setSelectedPlanKey(plan.key)}
-                      className={`relative flex items-center justify-between gap-3 rounded-2xl border p-4 text-left transition ${
+                      className={`relative flex items-center justify-between gap-3 rounded-lg border p-4 text-left transition ${
                         isActive
                           ? isLifetime
-                            ? 'border-amber-300/60 bg-gradient-to-r from-amber-300/15 to-emerald-300/[0.07] shadow-lg shadow-amber-300/15'
-                            : 'border-emerald-300/50 bg-emerald-300/10 shadow-lg shadow-emerald-300/10'
+                            ? 'border-amber-500/50 bg-amber-500/10 shadow-sm dark:border-amber-300/50'
+                            : 'border-primary/50 bg-primary/10 shadow-sm'
                           : isLifetime
-                            ? 'border-amber-300/30 bg-amber-300/[0.05] hover:bg-amber-300/[0.09]'
-                            : 'border-white/10 bg-white/[0.04] hover:bg-white/[0.07]'
+                            ? 'border-amber-500/25 bg-amber-500/5 hover:bg-amber-500/10 dark:border-amber-300/30'
+                            : 'border-border bg-background hover:bg-muted/50'
                       }`}
                     >
                       {isLifetime && (
-                        <span className="absolute -top-2.5 left-4 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-300 to-amber-200 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wide text-amber-950 shadow-md shadow-amber-400/30">
+                        <span className="absolute -top-2.5 left-4 inline-flex items-center gap-1 rounded-full bg-amber-400 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wide text-amber-950 shadow-sm">
                           <Crown className="h-3 w-3" /> Melhor escolha · pra sempre
                         </span>
                       )}
                       <div className="flex min-w-0 items-center gap-3">
-                        <span className={`flex h-5 w-5 flex-none items-center justify-center rounded-full border-2 transition ${isActive ? 'border-emerald-300 bg-emerald-300' : 'border-white/25'}`}>
-                          {isActive && <Check className="h-3 w-3 text-emerald-950" />}
+                        <span className={`flex h-5 w-5 flex-none items-center justify-center rounded-full border-2 transition ${isActive ? 'border-primary bg-primary' : 'border-border'}`}>
+                          {isActive && <Check className="h-3 w-3 text-primary-foreground" />}
                         </span>
                         <div className="min-w-0">
                           <div className="flex items-center gap-1.5">
-                            <span className="text-base font-black">{plan.label}</span>
-                            {isLifetime ? <Crown className="h-4 w-4 text-amber-300" /> : <Clock className="h-3.5 w-3.5 text-white/45" />}
+                            <span className="text-base font-bold">{plan.label}</span>
+                            {isLifetime ? <Crown className="h-4 w-4 text-amber-600 dark:text-amber-300" /> : <Clock className="h-3.5 w-3.5 text-muted-foreground" />}
                           </div>
-                          <p className="mt-0.5 text-xs text-white/55">
+                          <p className="mt-0.5 text-xs text-muted-foreground">
                             {isLifetime
                               ? 'Pague uma vez e use para sempre — sem renovação'
                               : `${plan.durationMonths} ${plan.durationMonths === 1 ? 'mês' : 'meses'} de acesso completo`}
@@ -417,24 +407,24 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
                       </div>
                       <div className="flex-none text-right">
                         {pricing.hasDiscount && (
-                          <p className="text-[11px] font-semibold text-white/40 line-through">{formatBRL(pricing.original)}</p>
+                          <p className="text-[11px] font-semibold text-muted-foreground line-through">{formatBRL(pricing.original)}</p>
                         )}
-                        <p className={`text-xl font-black ${isLifetime ? 'text-amber-200' : 'text-emerald-200'}`}>{formatBRL(pricing.final)}</p>
+                        <p className={`text-xl font-black tabular-nums ${isLifetime ? 'text-amber-700 dark:text-amber-200' : 'text-primary'}`}>{formatBRL(pricing.final)}</p>
                         {pricing.hasDiscount && (
-                          <p className="inline-flex items-center gap-0.5 text-[10px] font-bold text-emerald-300">
+                          <p className="inline-flex items-center gap-0.5 text-[10px] font-bold text-primary">
                             <Flame className="h-2.5 w-2.5" /> −{Math.round(pricing.pct)}% no lote
                           </p>
                         )}
                         {perMonth
-                          ? <p className="text-[10px] text-white/45">≈ {formatBRL(perMonth)}/mês</p>
-                          : <p className="text-[10px] font-bold text-amber-300/80">pagamento único</p>}
+                          ? <p className="text-[10px] text-muted-foreground">≈ {formatBRL(perMonth)}/mês</p>
+                          : <p className="text-[10px] font-bold text-amber-700 dark:text-amber-300/80">pagamento único</p>}
                       </div>
                     </button>
                   )
                 })}
               </div>
               {lifetimeBreakEven && (
-                <p className="mt-2.5 flex items-start gap-1.5 text-[11px] font-semibold leading-snug text-amber-200/90">
+                <p className="mt-2.5 flex items-start gap-1.5 text-[11px] font-semibold leading-snug text-amber-800 dark:text-amber-200/90">
                   <Sparkles className="mt-px h-3.5 w-3.5 flex-none" />
                   Com o Vitalício você nunca mais paga: em cerca de {lifetimeBreakEven} renovações do {longestTemporary?.label} ele já se paga — e segue seu para sempre.
                 </p>
@@ -442,7 +432,7 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
             </div>
           )}
 
-          <div className="grid gap-2 text-sm text-white/70">
+          <div className="grid gap-2 text-sm text-muted-foreground">
             {[
               product.benefitText,
               'Diagnostico, tratamento, diferenciais, farmacologia e fluxogramas',
@@ -451,25 +441,25 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
                 : 'Acesso vitalicio liberado apos pagamento aprovado',
               'Serial Key enviada por e-mail — não precisa criar conta agora',
             ].map((item) => (
-              <div key={item} className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5">
-                <Check className="h-4 w-4 text-emerald-300" />
+              <div key={item} className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2.5">
+                <Check className="h-4 w-4 shrink-0 text-primary" />
                 <span>{item}</span>
               </div>
             ))}
           </div>
 
-          <div className="mt-5 rounded-2xl border border-emerald-300/15 bg-emerald-300/10 p-4">
-            <p className="text-xs font-bold uppercase tracking-wide text-white/45">Total</p>
+          <div className="mt-5 rounded-lg border border-primary/20 bg-primary/5 p-4">
+            <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Total</p>
             {product.hasActivePromotion && (
-              <p className="mt-1 text-sm font-bold text-white/40 line-through">{formatBRL(product.price)}</p>
+              <p className="mt-1 text-sm font-bold text-muted-foreground line-through">{formatBRL(product.price)}</p>
             )}
             {hasActiveTier && baseAmount > payableAmount && (
-              <p className="mt-1 text-sm font-bold text-white/40 line-through">{formatBRL(baseAmount)}</p>
+              <p className="mt-1 text-sm font-bold text-muted-foreground line-through">{formatBRL(baseAmount)}</p>
             )}
-            <p className={`text-4xl font-black ${selectedIsLifetime ? 'text-amber-200' : 'text-emerald-200'}`}>
+            <p className={`font-heading text-4xl font-semibold tabular-nums ${selectedIsLifetime ? 'text-amber-700 dark:text-amber-200' : 'text-primary'}`}>
               {formatBRL(payableAmount)}
             </p>
-            <p className="mt-1 text-xs font-bold text-white/60">
+            <p className="mt-1 text-xs font-bold text-muted-foreground">
               {selectedIsLifetime
                 ? 'Pagamento único · acesso para sempre, sem mensalidade'
                 : selectedPlan?.durationMonths
@@ -477,64 +467,64 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
                   : 'Acesso completo liberado na hora'}
             </p>
             {hasActiveTier && tierBeatsCoupon && tierDiscountAmount > 0 ? (
-              <p className="mt-1 inline-flex items-center gap-1 text-xs font-bold text-emerald-200">
+              <p className="mt-1 inline-flex items-center gap-1 text-xs font-bold text-primary">
                 <Flame className="h-3 w-3" />
                 Lote {pricingEventState?.activeTier?.label || ''}: − {formatBRL(tierDiscountAmount)} ({Math.round(tierPct)}% OFF)
               </p>
             ) : null}
             {appliedCoupon && !tierBeatsCoupon ? (
-              <p className="mt-1 text-xs font-bold text-emerald-200">
+              <p className="mt-1 text-xs font-bold text-primary">
                 Cupom {appliedCoupon.code}: - {formatBRL(appliedCoupon.discountAmount)}
               </p>
             ) : null}
             {appliedCoupon && tierBeatsCoupon && tierDiscountAmount > 0 ? (
-              <p className="mt-1 text-[10px] font-medium text-emerald-200/70">
+              <p className="mt-1 text-[10px] font-medium text-primary/80">
                 Cupom {appliedCoupon.code} mantido — o desconto do lote já é maior.
               </p>
             ) : null}
           </div>
 
-          <div className="mt-4 flex flex-col gap-2 text-xs text-white/50">
+          <div className="mt-4 flex flex-col gap-2 text-xs text-muted-foreground">
             <div className="flex items-center gap-2">
-              <ShieldCheck className="h-4 w-4 text-emerald-300" /> Pagamento 100% seguro · Mercado Pago
+              <ShieldCheck className="h-4 w-4 text-primary" /> Pagamento 100% seguro · Mercado Pago
             </div>
             <div className="flex items-center gap-2">
-              <Mail className="h-4 w-4 text-emerald-300" /> Serial Key enviada por e-mail com QR e comprovante
+              <Mail className="h-4 w-4 text-primary" /> Serial Key enviada por e-mail com QR e comprovante
             </div>
           </div>
         </div>
 
-        <div className="rounded-3xl border border-white/10 bg-white/[0.07] p-5 shadow-2xl shadow-black/20 backdrop-blur-2xl sm:p-7">
+        <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
           {!product.isActive ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
-              <Lock className="mb-4 h-10 w-10 text-white/35" />
-              <h2 className="text-xl font-black">Produto indisponivel</h2>
-              <p className="mt-2 text-sm text-white/55">A compra do Manual Clinico Premium esta pausada no momento.</p>
+              <Lock className="mb-4 h-10 w-10 text-muted-foreground" />
+              <h2 className="text-xl font-bold">Produto indisponivel</h2>
+              <p className="mt-2 text-sm text-muted-foreground">A compra do Manual Clinico Premium esta pausada no momento.</p>
             </div>
           ) : step === 'buyer' ? (
             <div className="flex flex-col gap-4">
               <div>
                 <label style={labelStyle}><User size={12} style={{ display: 'inline', marginRight: 4 }} /> Nome completo</label>
                 <input value={name} onChange={(e) => setName(e.target.value)} onBlur={() => setTouched(true)} placeholder="Seu nome completo" style={inputStyle} />
-                {touched && !nameValid && <span style={{ fontSize: '11px', color: '#f87171' }}>Informe nome e sobrenome.</span>}
+                {touched && !nameValid && <span className="text-[11px] text-destructive">Informe nome e sobrenome.</span>}
               </div>
               <div>
                 <label style={labelStyle}><Mail size={12} style={{ display: 'inline', marginRight: 4 }} /> E-mail</label>
                 <input value={email} onChange={(e) => setEmail(e.target.value)} onBlur={() => setTouched(true)} type="email" placeholder="seu@email.com" style={inputStyle} />
-                {touched && !emailValid && <span style={{ fontSize: '11px', color: '#f87171' }}>E-mail inválido.</span>}
+                {touched && !emailValid && <span className="text-[11px] text-destructive">E-mail inválido.</span>}
               </div>
               <div>
                 <label style={labelStyle}><Phone size={12} style={{ display: 'inline', marginRight: 4 }} /> Telefone (com DDD)</label>
                 <input value={phone} onChange={(e) => setPhone(e.target.value)} onBlur={() => setTouched(true)} placeholder="(00) 00000-0000" style={inputStyle} />
-                {touched && !phoneValid && <span style={{ fontSize: '11px', color: '#f87171' }}>Telefone inválido.</span>}
+                {touched && !phoneValid && <span className="text-[11px] text-destructive">Telefone inválido.</span>}
               </div>
-              <p className="text-xs leading-relaxed text-white/40">
+              <p className="text-xs leading-relaxed text-muted-foreground">
                 Usamos esses dados para vincular sua compra, gerar sua Serial Key e enviar o comprovante. Não é necessário criar conta agora.
               </p>
               <button
                 onClick={() => { setTouched(true); if (buyerValid) setStep('payment') }}
                 disabled={!buyerValid}
-                className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-300 text-sm font-black text-emerald-950 shadow-[0_0_30px_rgba(52,211,153,0.3)] transition disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-secondary text-sm font-bold text-secondary-foreground shadow-sm transition hover:bg-secondary/90 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 Ir para pagamento <ArrowRight className="h-4 w-4" />
               </button>
@@ -543,12 +533,12 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
             <div className="space-y-4">
               <button
                 onClick={() => setStep('buyer')}
-                className="inline-flex items-center gap-1 text-sm font-semibold text-white/50 transition hover:text-white/80"
+                className="inline-flex items-center gap-1 text-sm font-semibold text-muted-foreground transition hover:text-foreground"
               >
                 <ChevronLeft className="h-3.5 w-3.5" /> Editar meus dados
               </button>
-              <div className="rounded-xl bg-white/[0.03] px-3.5 py-3 text-xs text-white/55">
-                Comprando como <strong className="text-white">{name}</strong> · {email} · {phone}
+              <div className="rounded-lg border border-border bg-muted/40 px-3.5 py-3 text-xs text-muted-foreground">
+                Comprando como <strong className="text-foreground">{name}</strong> · {email} · {phone}
               </div>
 
               <ManualClinicoCouponBox
@@ -680,132 +670,152 @@ function GenericComprarContent({ productType }: { productType: string }) {
   }
 
   if (loading) {
-    return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}><Loader2 size={32} style={{ color: '#34d399', animation: 'spin 1s linear infinite' }} /></div>
+    return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}><Loader2 size={32} style={{ color: 'hsl(var(--primary))', animation: 'spin 1s linear infinite' }} /></div>
   }
   if (error || !product) {
-    return <div style={{ maxWidth: '520px', margin: '0 auto' }}><div style={{ ...glassCard, padding: '28px', color: '#f87171', textAlign: 'center' }}>{error || 'Produto indisponível.'}</div></div>
+    return (
+      <div className="mx-auto max-w-lg">
+        <div className="rounded-lg border border-destructive/25 bg-destructive/10 px-6 py-7 text-center text-sm text-destructive">
+          {error || 'Produto indisponível.'}
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-      <h1 style={{ fontSize: '26px', fontWeight: 800, color: 'white', marginBottom: '6px', letterSpacing: '-0.02em' }}>Finalizar compra</h1>
-      <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', marginBottom: '28px' }}>
-        Compra rápida e segura — você recebe sua <strong style={{ color: '#34d399' }}>Serial Key</strong> por e-mail, mesmo sem ter conta.
+    <div className="mx-auto max-w-5xl">
+      <p className="editorial-mark mb-2">Compra sem login</p>
+      <h1 className="mb-1.5 font-heading text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+        Finalizar compra
+      </h1>
+      <p className="mb-7 text-sm text-muted-foreground">
+        Compra rápida e segura — você recebe sua <strong className="font-semibold text-primary">Serial Key</strong> por e-mail, mesmo sem ter conta.
       </p>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1.4fr)', gap: '24px', alignItems: 'start' }} className="checkout-grid">
-        {/* Resumo do produto */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <div style={{ ...glassCard, padding: '26px' }}>
-            <div style={{ display: 'inline-block', background: 'linear-gradient(135deg, #059669, #34d399)', borderRadius: '10px', padding: '5px 12px', fontSize: '12px', fontWeight: 700, color: 'white', marginBottom: '12px' }}>
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:items-start">
+        <div className="flex flex-col gap-4">
+          <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
+            <span className="mb-3 inline-flex rounded-md bg-secondary px-3 py-1 text-xs font-bold text-secondary-foreground">
               {product.productTypeLabel}
-            </div>
-            <h2 style={{ fontSize: '20px', fontWeight: 800, color: 'white', marginBottom: '16px' }}>{product.productTitle}</h2>
-            <div style={{ padding: '16px', background: 'rgba(52,211,153,0.06)', border: '1px solid rgba(52,211,153,0.12)', borderRadius: '12px' }}>
-              <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', marginBottom: '2px' }}>Valor</p>
+            </span>
+            <h2 className="mb-4 font-heading text-xl font-semibold tracking-tight text-foreground">
+              {product.productTitle}
+            </h2>
+            <div className="rounded-lg border border-primary/15 bg-primary/5 p-4">
+              <p className="mb-0.5 text-xs text-muted-foreground">Valor</p>
               {appliedCoupon && (
-                <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.4)', textDecoration: 'line-through', marginBottom: '2px' }}>
+                <p className="mb-0.5 text-sm text-muted-foreground line-through">
                   {formatBRL(product.amount)}
                 </p>
               )}
-              <p style={{ fontSize: '30px', fontWeight: 800, color: '#34d399', letterSpacing: '-0.03em' }}>{formatBRL(payableAmount)}</p>
+              <p className="font-heading text-3xl font-semibold tabular-nums tracking-tight text-primary">
+                {formatBRL(payableAmount)}
+              </p>
               {appliedCoupon && (
-                <p style={{ fontSize: '12px', color: '#34d399', marginTop: '4px', fontWeight: 700 }}>
+                <p className="mt-1 text-xs font-bold text-primary">
                   Cupom {appliedCoupon.code}: − {formatBRL(appliedCoupon.discountAmount)}
                 </p>
               )}
             </div>
 
             {couponEligible && (
-              <div style={{ marginTop: '14px', padding: '14px', borderRadius: '12px', border: '1px solid rgba(52,211,153,0.16)', background: 'rgba(255,255,255,0.035)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', color: 'rgba(255,255,255,0.72)', fontSize: '13px', fontWeight: 700 }}>
-                  <Percent size={15} style={{ color: '#34d399' }} /> Cupom de desconto
+              <div className="mt-3.5 rounded-lg border border-border bg-background p-3.5">
+                <div className="mb-2.5 flex items-center gap-2 text-sm font-bold text-foreground">
+                  <Percent className="h-4 w-4 text-primary" /> Cupom de desconto
                 </div>
                 {appliedCoupon ? (
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
-                    <div style={{ minWidth: 0 }}>
-                      <p style={{ margin: 0, color: '#34d399', fontSize: '14px', fontWeight: 800 }}>{appliedCoupon.code} aplicado</p>
-                      <p style={{ margin: '2px 0 0 0', color: 'rgba(255,255,255,0.45)', fontSize: '12px' }}>
+                  <div className="flex items-center justify-between gap-2.5">
+                    <div className="min-w-0">
+                      <p className="text-sm font-extrabold text-primary">{appliedCoupon.code} aplicado</p>
+                      <p className="text-xs text-muted-foreground">
                         {formatBRL(appliedCoupon.discountAmount)} de desconto
                       </p>
                     </div>
-                    <button type="button" onClick={removeCoupon} style={{ flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: '6px', borderRadius: '10px', border: '1px solid rgba(248,113,113,0.26)', background: 'rgba(248,113,113,0.08)', color: '#fca5a5', padding: '7px 10px', cursor: 'pointer', fontSize: '12px', fontWeight: 800 }}>
-                      <X size={14} /> Remover
+                    <button
+                      type="button"
+                      onClick={removeCoupon}
+                      className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-destructive/25 bg-destructive/10 px-2.5 py-1.5 text-xs font-extrabold text-destructive"
+                    >
+                      <X className="h-3.5 w-3.5" /> Remover
                     </button>
                   </div>
                 ) : (
                   <>
-                    <div style={{ display: 'flex', gap: '8px' }}>
+                    <div className="flex gap-2">
                       <input
                         value={couponCode}
                         onChange={(e) => { setCouponCode(e.target.value.toUpperCase()); setCouponError('') }}
                         onKeyDown={(e) => { if (e.key === 'Enter') applyCoupon() }}
                         disabled={couponLoading}
                         placeholder="Digite seu cupom"
-                        style={{ flex: 1, minWidth: 0, height: '38px', borderRadius: '10px', border: '1px solid rgba(52,211,153,0.16)', background: 'rgba(0,0,0,0.22)', color: 'white', padding: '0 12px', outline: 'none', textTransform: 'uppercase' }}
+                        className="h-9 min-w-0 flex-1 rounded-lg border border-border bg-card px-3 text-sm uppercase text-foreground outline-none focus:border-primary/45 focus:ring-2 focus:ring-primary/15"
                       />
-                      <button type="button" onClick={applyCoupon} disabled={couponLoading || !couponCode.trim()} style={{ height: '38px', borderRadius: '10px', border: 'none', background: '#34d399', color: '#04130a', fontSize: '12px', fontWeight: 900, padding: '0 14px', cursor: couponLoading || !couponCode.trim() ? 'not-allowed' : 'pointer', opacity: couponLoading || !couponCode.trim() ? 0.55 : 1, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                        {couponLoading && <Loader2 size={13} style={{ animation: 'spin 1s linear infinite' }} />} Aplicar
+                      <button
+                        type="button"
+                        onClick={applyCoupon}
+                        disabled={couponLoading || !couponCode.trim()}
+                        className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-secondary px-3.5 text-xs font-black text-secondary-foreground disabled:cursor-not-allowed disabled:opacity-55"
+                      >
+                        {couponLoading && <Loader2 className="h-3.5 w-3.5 animate-spin" />} Aplicar
                       </button>
                     </div>
-                    {couponError ? <p style={{ color: '#f87171', fontSize: '12px', marginTop: '8px' }}>{couponError}</p> : null}
+                    {couponError ? <p className="mt-2 text-xs text-destructive">{couponError}</p> : null}
                   </>
                 )}
               </div>
             )}
           </div>
-          <div style={{ ...glassCard, padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
-              <ShieldCheck size={16} style={{ color: '#34d399' }} /> Pagamento 100% seguro · Mercado Pago
+          <div className="flex flex-col gap-2.5 rounded-lg border border-border bg-card p-4 text-xs text-muted-foreground shadow-sm">
+            <div className="flex items-center gap-2.5">
+              <ShieldCheck className="h-4 w-4 text-primary" /> Pagamento 100% seguro · Mercado Pago
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
-              <Mail size={16} style={{ color: '#34d399' }} /> Serial Key enviada por e-mail com QR e comprovante
+            <div className="flex items-center gap-2.5">
+              <Mail className="h-4 w-4 text-primary" /> Serial Key enviada por e-mail com QR e comprovante
             </div>
           </div>
         </div>
 
-        {/* Formulário / pagamento */}
-        <div style={{ ...glassCard, padding: '28px' }}>
+        <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
           {step === 'buyer' ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div className="flex flex-col gap-4">
               <div>
                 <label style={labelStyle}><User size={12} style={{ display: 'inline', marginRight: 4 }} /> Nome completo</label>
                 <input value={name} onChange={(e) => setName(e.target.value)} onBlur={() => setTouched(true)} placeholder="Seu nome completo" style={inputStyle} />
-                {touched && !nameValid && <span style={{ fontSize: '11px', color: '#f87171' }}>Informe nome e sobrenome.</span>}
+                {touched && !nameValid && <span className="text-[11px] text-destructive">Informe nome e sobrenome.</span>}
               </div>
               <div>
                 <label style={labelStyle}><Mail size={12} style={{ display: 'inline', marginRight: 4 }} /> E-mail</label>
                 <input value={email} onChange={(e) => setEmail(e.target.value)} onBlur={() => setTouched(true)} type="email" placeholder="seu@email.com" style={inputStyle} />
-                {touched && !emailValid && <span style={{ fontSize: '11px', color: '#f87171' }}>E-mail inválido.</span>}
+                {touched && !emailValid && <span className="text-[11px] text-destructive">E-mail inválido.</span>}
               </div>
               <div>
                 <label style={labelStyle}><Phone size={12} style={{ display: 'inline', marginRight: 4 }} /> Telefone (com DDD)</label>
                 <input value={phone} onChange={(e) => setPhone(e.target.value)} onBlur={() => setTouched(true)} placeholder="(00) 00000-0000" style={inputStyle} />
-                {touched && !phoneValid && <span style={{ fontSize: '11px', color: '#f87171' }}>Telefone inválido.</span>}
+                {touched && !phoneValid && <span className="text-[11px] text-destructive">Telefone inválido.</span>}
               </div>
-              <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', lineHeight: 1.5 }}>
+              <p className="text-xs leading-relaxed text-muted-foreground">
                 Usamos esses dados para vincular sua compra, gerar sua Serial Key e enviar o comprovante. Não é necessário criar conta agora.
               </p>
               <button
+                type="button"
                 onClick={() => { setTouched(true); if (buyerValid) setStep('payment') }}
                 disabled={!buyerValid}
-                style={{
-                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                  background: 'linear-gradient(135deg, #059669, #34d399)', boxShadow: '0 0 30px rgba(52,211,153,0.3)',
-                  border: 'none', borderRadius: '12px', color: 'white', fontWeight: 700, fontSize: '15px',
-                  padding: '14px 24px', width: '100%', cursor: buyerValid ? 'pointer' : 'not-allowed', opacity: buyerValid ? 1 : 0.6,
-                }}
+                className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-secondary text-[15px] font-bold text-secondary-foreground shadow-sm transition hover:bg-secondary/90 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Ir para pagamento <ArrowRight size={16} />
+                Ir para pagamento <ArrowRight className="h-4 w-4" />
               </button>
             </div>
           ) : (
             <div>
-              <button onClick={() => setStep('buyer')} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: '13px', marginBottom: '16px', padding: 0 }}>
-                <ChevronLeft size={14} /> Editar meus dados
+              <button
+                type="button"
+                onClick={() => setStep('buyer')}
+                className="mb-4 inline-flex items-center gap-1 text-sm font-semibold text-muted-foreground transition hover:text-foreground"
+              >
+                <ChevronLeft className="h-3.5 w-3.5" /> Editar meus dados
               </button>
-              <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '10px', padding: '12px 14px', marginBottom: '18px', fontSize: '12px', color: 'rgba(255,255,255,0.55)' }}>
-                Comprando como <strong style={{ color: 'white' }}>{name}</strong> · {email} · {phone}
+              <div className="mb-4 rounded-lg border border-border bg-muted/40 px-3.5 py-3 text-xs text-muted-foreground">
+                Comprando como <strong className="text-foreground">{name}</strong> · {email} · {phone}
               </div>
               <MercadoPagoCheckout
                 key={`comprar-${payableAmount}-${appliedCoupon?.code || 'sem-cupom'}`}
@@ -823,7 +833,6 @@ function GenericComprarContent({ productType }: { productType: string }) {
           )}
         </div>
       </div>
-      <style>{`@media (max-width: 860px){ .checkout-grid{ grid-template-columns: 1fr !important; } }`}</style>
     </div>
   )
 }
@@ -842,10 +851,16 @@ function ComprarContent() {
 
 export default function ComprarPage() {
   return (
-    <div style={pageStyle}>
-      <Suspense fallback={<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}><Loader2 size={32} style={{ color: '#34d399', animation: 'spin 1s linear infinite' }} /></div>}>
+    <PublicPageShell maxWidth="max-w-6xl" contentClassName="py-6 sm:py-8">
+      <Suspense
+        fallback={
+          <div className="flex min-h-[50vh] items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        }
+      >
         <ComprarContent />
       </Suspense>
-    </div>
+    </PublicPageShell>
   )
 }

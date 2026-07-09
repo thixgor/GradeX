@@ -562,7 +562,7 @@ function ProvasContent() {
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+      <div className="surface-page">
         <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
           <div className="h-20 rounded-2xl skeleton-pulse" />
           <div className="grid grid-cols-2 gap-4">
@@ -584,7 +584,7 @@ function ProvasContent() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, delay: 0.1 + index * 0.04 }}
         className={cn(
-          "glass-page-card glass-rim rounded-2xl overflow-hidden group cursor-pointer",
+          "glass-page-card rounded-lg overflow-hidden group cursor-pointer",
           "hover-glow-green hover-lift transition-all duration-300",
           "border-l-[3px]",
           exam.isPersonalExam ? 'border-l-violet-500' : 'border-l-[#468152]'
@@ -698,30 +698,27 @@ function ProvasContent() {
   // ═══════════════════════════════════════════════════
   if (viewMode === 'home') {
     return (
-      <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-background via-background to-muted/30">
-        {/* Ambient depth — soft brand-colored blobs the glass cards below refract */}
-        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -top-24 -left-20 w-80 h-80 rounded-full bg-red-500/20 dark:bg-red-500/[0.14] blur-3xl animate-float" />
-          <div className="absolute top-1/3 -right-24 w-96 h-96 rounded-full bg-[#468152]/20 dark:bg-[#468152]/[0.16] blur-3xl animate-float" style={{ animationDelay: '1.2s' }} />
-          <div className="absolute bottom-0 left-1/4 w-72 h-72 rounded-full bg-[#E2A43E]/20 dark:bg-[#E2A43E]/[0.12] blur-3xl animate-float" style={{ animationDelay: '2.1s' }} />
-        </div>
-
+      <div className="relative surface-page overflow-hidden">
         <div className="relative max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
           {/* Header */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="text-center space-y-2 pt-4"
+            transition={{ duration: 0.35 }}
+            className="space-y-3 pt-2 sm:pt-4"
           >
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Provas</h1>
-            <p className="text-muted-foreground">O que voce quer treinar hoje?</p>
-            <div className="flex items-center justify-center gap-2 flex-wrap pt-1">
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <p className="editorial-mark">Simulados</p>
+            <h1 className="font-heading text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">
+              Provas
+            </h1>
+            <p className="text-muted-foreground text-sm sm:text-[15px] max-w-xl">
+              O que você quer treinar hoje?
+            </p>
+            <div className="flex items-center gap-2 flex-wrap pt-1">
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-md border border-border bg-card text-primary">
                 <CountUp value={exams.filter(e => getExamStatus(e).canTake).length} /> disponíveis agora
               </span>
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-full bg-muted text-muted-foreground">
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-md border border-border bg-muted text-muted-foreground">
                 <Layers className="h-3 w-3" />
                 <CountUp value={exams.length} /> totais
               </span>
@@ -889,7 +886,7 @@ function ProvasContent() {
       .map(key => [key, courseMap.get(key)!] as [string, Group[]])
 
     return (
-      <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+      <div className="surface-page">
         <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
           {/* Header */}
           <motion.div
@@ -925,7 +922,7 @@ function ProvasContent() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.05 }}
-            className="rounded-2xl glass-rim border border-border/40 bg-background/70 p-3 shadow-sm backdrop-blur-md"
+            className="rounded-lg border border-border bg-card p-3 shadow-sm"
           >
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -966,7 +963,7 @@ function ProvasContent() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.1 + idx * 0.08 }}
-                className="rounded-2xl glass-rim border border-border/30 bg-background/40 p-3 sm:p-4"
+                className="rounded-lg border border-border bg-card p-3 sm:p-4"
               >
                 <div className="flex items-center gap-3 mb-3 flex-wrap">
                   <div className="flex items-center gap-2 min-w-0">
@@ -1028,7 +1025,7 @@ function ProvasContent() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.3 }}
-              className="rounded-2xl glass-rim border border-border/30 bg-background/40 p-3 sm:p-4"
+              className="rounded-lg border border-border bg-card p-3 sm:p-4"
             >
               <div className="flex items-center gap-3 mb-3">
                 <Layers className="h-4 w-4 text-muted-foreground" />
@@ -1113,7 +1110,7 @@ function ProvasContent() {
   const hasPlatformResults = filteredUngrouped.length > 0 || filteredPlatformGroups.length > 0
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+    <div className="surface-page">
       <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
         {/* Header */}
         <motion.div
@@ -1176,7 +1173,7 @@ function ProvasContent() {
                   <button
                     onClick={() => setStatusFilter(prev => prev === stat.key ? 'all' : stat.key)}
                     className={cn(
-                      "w-full h-full glass-stat glass-rim rounded-2xl p-4 hover-glow-brand hover-lift transition-all duration-300 group text-left cursor-pointer",
+                      "w-full h-full glass-stat rounded-lg p-4 hover-lift transition-all duration-200 group text-left cursor-pointer",
                       active && "ring-2 ring-primary/40 shadow-lg shadow-primary/10"
                     )}
                   >

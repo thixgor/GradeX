@@ -217,7 +217,7 @@ export default function AulaDetalhePage() {
 
   return (
     <AppShell headerTitle={aula.titulo} headerSubtitle={aula.tipo === 'ao-vivo' ? 'Ao Vivo' : 'Gravada'}>
-      <div className="min-h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      <div className="surface-page min-h-full">
       <style>{`
         @keyframes fadeInUp {
           from {
@@ -230,25 +230,18 @@ export default function AulaDetalhePage() {
           }
         }
         
-        .animate-fadeInUp {
+        . {
           animation: fadeInUp 0.6s ease-out;
         }
         
-        .hover-lift {
+        . {
           transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         
-        .hover-lift:hover {
+        .:hover {
           transform: translateY(-4px);
         }
       `}</style>
-
-      {/* Background effects */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-emerald-600/5 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
-      </div>
-
       {/* Back button */}
       <div className="container mx-auto px-4 pt-4">
         <Button
@@ -261,7 +254,7 @@ export default function AulaDetalhePage() {
               router.push('/aulas')
             }
           }}
-          className="text-white hover:bg-emerald-500/20 transition-colors"
+          className="text-foreground hover:bg-muted transition-colors"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Voltar para Aulas
@@ -272,17 +265,17 @@ export default function AulaDetalhePage() {
       <main className="relative z-30 container mx-auto px-4 py-8 max-w-5xl">
         {/* Bloqueio de Acesso Premium */}
         {!temAcesso && (
-          <div className="mb-8 backdrop-blur-md bg-red-500/10 border border-red-500/30 rounded-2xl p-8 shadow-xl shadow-red-500/10 animate-fadeInUp">
+          <div className="mb-8 bg-red-500/10 border border-red-500/30 rounded-lg p-8 shadow-xl shadow-red-500/10 ">
             <div className="flex items-start gap-4">
               <Lock className="h-8 w-8 text-red-400 flex-shrink-0 mt-1" />
               <div className="flex-1">
-                <h2 className="text-2xl font-bold text-red-300 mb-2">Aula Premium</h2>
-                <p className="text-red-200/80 mb-4">
+                <h2 className="text-2xl font-bold text-red-600 dark:text-red-300 mb-2">Aula Premium</h2>
+                <p className="text-muted-foreground mb-4">
                   Esta aula é exclusiva para usuários premium. Faça upgrade da sua conta para acessar este conteúdo.
                 </p>
                 <Button
                   onClick={() => router.push('/buy')}
-                  className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white transition-all duration-300"
+                  className="bg-secondary hover:bg-secondary/90 text-secondary-foreground transition-all duration-300"
                 >
                   Fazer Upgrade para Premium
                 </Button>
@@ -293,12 +286,12 @@ export default function AulaDetalhePage() {
 
         {/* Bloqueio por Data de Liberação */}
         {bloqueadaPorData && (
-          <div className="mb-8 backdrop-blur-md bg-cyan-500/10 border border-cyan-500/30 rounded-2xl p-8 shadow-xl shadow-cyan-500/10 animate-fadeInUp">
+          <div className="mb-8 bg-cyan-500/10 border border-cyan-500/30 rounded-lg p-8 shadow-xl shadow-cyan-500/10 ">
             <div className="flex items-start gap-4">
-              <Lock className="h-8 w-8 text-cyan-300 flex-shrink-0 mt-1" />
+              <Lock className="h-8 w-8 text-cyan-600 dark:text-cyan-300 flex-shrink-0 mt-1" />
               <div className="flex-1">
-                <h2 className="text-2xl font-bold text-cyan-200 mb-2">Aula ainda não liberada</h2>
-                <p className="text-cyan-100/80 mb-4">
+                <h2 className="text-2xl font-bold text-cyan-700 dark:text-cyan-200 mb-2">Aula ainda não liberada</h2>
+                <p className="text-muted-foreground mb-4">
                   Esta aula está agendada para liberação em{' '}
                   {new Date(aula.dataLiberacao).toLocaleDateString('pt-BR', {
                     day: '2-digit',
@@ -310,7 +303,7 @@ export default function AulaDetalhePage() {
                 </p>
                 <Button
                   onClick={() => router.push('/aulas')}
-                  className="bg-white/10 hover:bg-white/20 text-white border border-white/20 backdrop-blur-md transition-all duration-300"
+                  className="bg-muted hover:bg-muted/80 text-foreground border border-border transition-all duration-300"
                 >
                   Voltar para Aulas
                 </Button>
@@ -321,7 +314,7 @@ export default function AulaDetalhePage() {
 
         {/* Capa da Aula */}
         {aula.capa && (
-          <div className="mb-8 rounded-2xl overflow-hidden border border-emerald-500/20 shadow-xl shadow-emerald-500/10 animate-fadeInUp">
+          <div className="mb-8 rounded-2xl overflow-hidden border border-emerald-500/20 shadow-xl shadow-emerald-500/10 ">
             {aula.capa.tipo === 'imagem' && aula.capa.imagem ? (
               <img 
                 src={aula.capa.imagem} 
@@ -333,19 +326,19 @@ export default function AulaDetalhePage() {
                 className="w-full h-64 flex items-center justify-center"
                 style={{ backgroundColor: aula.capa.cor || '#3b82f6' }}
               >
-                <p className="text-4xl font-bold text-white text-center px-4">{aula.capa.titulo}</p>
+                <p className="text-4xl font-bold text-foreground text-center px-4">{aula.capa.titulo}</p>
               </div>
             ) : null}
           </div>
         )}
 
         {/* Informações da Aula */}
-        <div className="mb-8 backdrop-blur-md bg-white/5 border border-emerald-500/20 rounded-2xl p-6 shadow-xl shadow-emerald-500/10 animate-fadeInUp" style={{animationDelay: '0.1s'}}>
+        <div className="mb-8 bg-white/5 border border-emerald-500/20 rounded-2xl p-6 shadow-xl shadow-emerald-500/10 " style={{animationDelay: '0.1s'}}>
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-4 flex-wrap">
                 {aula.tipo === 'ao-vivo' ? (
-                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-500/20 text-red-300 text-xs font-semibold border border-red-500/30 animate-pulse">
+                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-500/20 text-red-600 dark:text-red-300 text-xs font-semibold border border-red-500/30 animate-pulse">
                     <Zap className="h-3 w-3" />
                     Ao Vivo
                   </span>
@@ -374,9 +367,9 @@ export default function AulaDetalhePage() {
                 )}
               </div>
               {aula.descricao && (
-                <p className="text-white/80 mb-4 text-base leading-relaxed">{aula.descricao}</p>
+                <p className="text-foreground/80 mb-4 text-base leading-relaxed">{aula.descricao}</p>
               )}
-              <p className="text-xs text-white/50">
+              <p className="text-xs text-foreground/50">
                 Postada em {new Date(aula.criadoEm).toLocaleDateString('pt-BR', {
                   day: '2-digit',
                   month: '2-digit',
@@ -402,8 +395,8 @@ export default function AulaDetalhePage() {
                 className={`${
                   aulaConcluida
                     ? 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30'
-                    : 'bg-white/10 hover:bg-white/20 text-white border border-white/20'
-                } backdrop-blur-md transition-all duration-300 hover-lift`}
+                    : 'bg-muted hover:bg-muted/80 text-foreground border border-border'
+                } transition-all duration-300 `}
               >
                 <CheckCircle2 className="h-4 w-4 mr-2" />
                 {aulaConcluida ? 'Concluída' : 'Marcar como Concluída'}
@@ -411,7 +404,7 @@ export default function AulaDetalhePage() {
               {(isAdmin || user?.secondaryRole === 'monitor') && (
                 <Button
                   onClick={() => router.push(`/aulas/gerenciar/aulas/${aula._id}/editar`)}
-                  className="bg-white/10 hover:bg-white/20 text-white border border-white/20 backdrop-blur-md transition-all duration-300 hover-lift"
+                  className="bg-muted hover:bg-muted/80 text-foreground border border-border transition-all duration-300 "
                   size="sm"
                 >
                   Editar
@@ -426,8 +419,8 @@ export default function AulaDetalhePage() {
         <div className="space-y-6 mb-8">
           {/* Botões de Acesso */}
           {aula.botoesAcesso && aula.botoesAcesso.length > 0 && (
-            <div className="backdrop-blur-md bg-white/5 border border-emerald-500/20 rounded-2xl p-6 shadow-xl shadow-emerald-500/10 animate-fadeInUp" style={{animationDelay: '0.15s'}}>
-              <h3 className="text-lg font-semibold text-white mb-4">Acessos Rápidos</h3>
+            <div className="bg-white/5 border border-emerald-500/20 rounded-2xl p-6 shadow-xl shadow-emerald-500/10 " style={{animationDelay: '0.15s'}}>
+              <h3 className="text-lg font-semibold text-foreground mb-4">Acessos Rápidos</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {aula.botoesAcesso.map((botao, idx) => (
                   <a
@@ -435,7 +428,7 @@ export default function AulaDetalhePage() {
                     href={botao.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white rounded-lg transition-all duration-300 hover-lift font-medium"
+                    className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg transition-all duration-300  font-medium"
                   >
                     {botao.nome}
                   </a>
@@ -446,8 +439,8 @@ export default function AulaDetalhePage() {
 
           {/* Vídeo/Link */}
           {aula.tipo === 'ao-vivo' && aula.linkOuEmbed && (
-            <div className="backdrop-blur-md bg-white/5 border border-emerald-500/20 rounded-2xl p-6 shadow-xl shadow-emerald-500/10 animate-fadeInUp" style={{animationDelay: '0.2s'}}>
-              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <div className="bg-white/5 border border-emerald-500/20 rounded-2xl p-6 shadow-xl shadow-emerald-500/10 " style={{animationDelay: '0.2s'}}>
+              <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
                 <Zap className="h-5 w-5 text-red-400" />
                 Acesso à Aula Ao Vivo
               </h3>
@@ -461,7 +454,7 @@ export default function AulaDetalhePage() {
                   href={aula.linkOuEmbed}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg transition-all duration-300 hover-lift"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-secondary hover:bg-secondary/90 text-secondary-foreground rounded-lg transition-all duration-300 "
                 >
                   <Zap className="h-4 w-4" />
                   Entrar na Aula Ao Vivo
@@ -471,8 +464,8 @@ export default function AulaDetalhePage() {
           )}
 
           {aula.tipo === 'gravada' && aula.videoEmbed && (
-            <div className="backdrop-blur-md bg-white/5 border border-emerald-500/20 rounded-2xl p-6 shadow-xl shadow-emerald-500/10 animate-fadeInUp" style={{animationDelay: '0.2s'}}>
-              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <div className="bg-white/5 border border-emerald-500/20 rounded-2xl p-6 shadow-xl shadow-emerald-500/10 " style={{animationDelay: '0.2s'}}>
+              <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
                 <Video className="h-5 w-5 text-blue-400" />
                 Vídeo da Aula
               </h3>
@@ -498,8 +491,8 @@ export default function AulaDetalhePage() {
 
           {/* PDFs */}
           {aula.pdfs && aula.pdfs.length > 0 && (
-            <div className="backdrop-blur-md bg-white/5 border border-emerald-500/20 rounded-2xl p-6 shadow-xl shadow-emerald-500/10 animate-fadeInUp" style={{animationDelay: '0.3s'}}>
-              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <div className="bg-white/5 border border-emerald-500/20 rounded-2xl p-6 shadow-xl shadow-emerald-500/10 " style={{animationDelay: '0.3s'}}>
+              <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
                 <Download className="h-5 w-5 text-emerald-400" />
                 Materiais de Apoio
               </h3>
@@ -510,12 +503,12 @@ export default function AulaDetalhePage() {
                     href={pdf.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-3 border border-white/10 rounded-lg hover:bg-white/10 hover:border-emerald-500/30 transition-all duration-300 hover-lift"
+                    className="flex items-center gap-3 p-3 border border-white/10 rounded-lg hover:bg-white/10 hover:border-emerald-500/30 transition-all duration-300 "
                   >
                     <Download className="h-4 w-4 text-emerald-400 flex-shrink-0" />
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-white truncate">{pdf.nome}</p>
-                      <p className="text-xs text-white/50">
+                      <p className="font-medium text-foreground truncate">{pdf.nome}</p>
+                      <p className="text-xs text-foreground/50">
                         {(pdf.tamanho / 1024 / 1024).toFixed(2)} MB
                       </p>
                     </div>
@@ -529,23 +522,23 @@ export default function AulaDetalhePage() {
 
         {/* Comentários */}
         {temAcesso && !bloqueadaPorData && (
-        <div className="backdrop-blur-md bg-white/5 border border-emerald-500/20 rounded-2xl p-6 shadow-xl shadow-emerald-500/10 animate-fadeInUp" style={{animationDelay: '0.4s'}}>
-          <h3 className="text-lg font-semibold text-white mb-6">Comentários ({comentarios.length})</h3>
+        <div className="bg-white/5 border border-emerald-500/20 rounded-2xl p-6 shadow-xl shadow-emerald-500/10 " style={{animationDelay: '0.4s'}}>
+          <h3 className="text-lg font-semibold text-foreground mb-6">Comentários ({comentarios.length})</h3>
           <div className="space-y-6">
             {/* Novo Comentário */}
             <div className="space-y-3 pb-6 border-b border-white/10">
-              <label className="text-sm font-medium text-white">Seu Comentário</label>
+              <label className="text-sm font-medium text-foreground">Seu Comentário</label>
               <Textarea
                 placeholder="Compartilhe suas dúvidas ou observações..."
                 value={novoComentario}
                 onChange={(e) => setNovoComentario(e.target.value)}
-                className="resize-none bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-lg"
+                className="resize-none bg-white/5 border-white/10 text-foreground placeholder:text-foreground/40 rounded-lg"
                 rows={3}
               />
               <Button
                 onClick={enviarComentario}
                 disabled={!novoComentario.trim() || enviandoComentario}
-                className="w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transition-all duration-300 hover-lift"
+                className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 "
               >
                 <Send className="h-4 w-4 mr-2" />
                 {enviandoComentario ? 'Enviando...' : 'Enviar Comentário'}
@@ -555,7 +548,7 @@ export default function AulaDetalhePage() {
             {/* Lista de Comentários */}
             <div className="space-y-4">
               {comentarios.length === 0 ? (
-                <p className="text-center text-white/50 py-4">
+                <p className="text-center text-foreground/50 py-4">
                   Nenhum comentário ainda. Seja o primeiro a comentar!
                 </p>
               ) : (
@@ -563,9 +556,9 @@ export default function AulaDetalhePage() {
                   <div key={String(comentario._id)} className="flex gap-4 p-4 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-all duration-300">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <span className="font-medium text-sm text-white">{comentario.nomeUsuario}</span>
+                        <span className="font-medium text-sm text-foreground">{comentario.nomeUsuario}</span>
                         {comentario.isAdmin && (
-                          <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-semibold">
+                          <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-600 dark:text-red-300 border border-red-500/30 text-xs font-semibold">
                             Administrador
                           </span>
                         )}
@@ -575,7 +568,7 @@ export default function AulaDetalhePage() {
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-white/50 mb-2">
+                      <p className="text-xs text-foreground/50 mb-2">
                         {new Date(comentario.criadoEm).toLocaleDateString('pt-BR', {
                           day: '2-digit',
                           month: '2-digit',
@@ -584,14 +577,14 @@ export default function AulaDetalhePage() {
                           minute: '2-digit'
                         })}
                       </p>
-                      <p className="text-sm text-white/80 break-words">{comentario.conteudo}</p>
+                      <p className="text-sm text-foreground/80 break-words">{comentario.conteudo}</p>
                     </div>
                     {isAdmin && (
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => deletarComentario(String(comentario._id))}
-                        className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                        className="text-red-400 hover:text-red-600 dark:text-red-300 hover:bg-red-500/10"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

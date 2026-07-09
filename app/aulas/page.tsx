@@ -394,47 +394,43 @@ function AulasPageContent() {
           }
         }
 
-        .animate-fadeInUp {
-          animation: fadeInUp 0.6s ease-out;
+        . {
+          animation: fadeInUp 0.25s ease-out;
         }
 
         .animate-slideInLeft {
-          animation: slideInLeft 0.6s ease-out;
+          animation: slideInLeft 0.2s ease-out;
         }
 
-        .animate-glowPulse {
+        . {
           animation: glowPulse 3s ease-in-out infinite;
         }
 
-        .hover-lift {
+        . {
           transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .hover-lift:hover {
+        .:hover {
           transform: translateY(-4px);
         }
       `}</style>
 
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-        {/* Background effects */}
-        <div className="fixed inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-emerald-600/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        </div>
+      <div className="surface-page aulas-browser">
+        {/* no decorative orbs — theme-aware canvas */}
 
         {/* Aviso do Admin */}
         {aviso && !avisoFechado && (
           <div className="relative z-40 px-3 sm:px-4 pt-4">
-            <div className={`relative backdrop-blur-md rounded-2xl p-4 sm:p-6 border-2 ${aviso.tipo === 'info' ? 'bg-blue-500/20 border-blue-400/50' :
+            <div className={`relative rounded-lg p-4 sm:p-6 border-2 ${aviso.tipo === 'info' ? 'bg-blue-500/20 border-blue-400/50' :
               aviso.tipo === 'warning' ? 'bg-yellow-500/20 border-yellow-400/50' :
                 aviso.tipo === 'success' ? 'bg-emerald-500/20 border-emerald-400/50' :
                   'bg-red-500/20 border-red-400/50'
               }`}>
               <button
                 onClick={() => setAvisoFechado(true)}
-                className="absolute top-2 right-2 p-1 rounded-full hover:bg-white/10 transition-colors"
+                className="absolute top-2 right-2 p-1 rounded-full hover:bg-muted transition-colors"
               >
-                <X className="h-4 w-4 text-white/70" />
+                <X className="h-4 w-4 text-muted-foreground" />
               </button>
               <div className="flex items-start gap-3">
                 <Bell className={`h-6 w-6 flex-shrink-0 ${aviso.tipo === 'info' ? 'text-blue-400' :
@@ -443,12 +439,12 @@ function AulasPageContent() {
                       'text-red-400'
                   }`} />
                 <div className="flex-1">
-                  <h3 className="text-lg font-bold text-white">{aviso.titulo}</h3>
+                  <h3 className="text-lg font-bold text-foreground">{aviso.titulo}</h3>
                   <div
-                    className="text-white/80 mt-1 prose prose-sm prose-invert max-w-none"
+                    className="text-muted-foreground mt-1 prose prose-sm dark:prose-invert max-w-none"
                     dangerouslySetInnerHTML={{ __html: aviso.mensagem }}
                   />
-                  <p className="text-xs text-white/50 mt-2">
+                  <p className="text-xs text-muted-foreground mt-2">
                     Por {aviso.criadoPorNome} • {aviso.criadoEm.toLocaleDateString('pt-BR', {
                       day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
                     })}
@@ -456,11 +452,11 @@ function AulasPageContent() {
                 </div>
               </div>
               {isAdmin && (
-                <div className="flex gap-2 mt-3 pt-3 border-t border-white/10">
+                <div className="flex gap-2 mt-3 pt-3 border-t border-border">
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="text-white/70 hover:text-white hover:bg-white/10"
+                    className="text-muted-foreground hover:text-foreground hover:bg-muted"
                     onClick={() => setEditarAvisoDialog(true)}
                   >
                     <Pencil className="h-3 w-3 mr-1" />
@@ -486,7 +482,7 @@ function AulasPageContent() {
           {(isAdmin || user?.secondaryRole === 'monitor') && (
             <Button
               onClick={() => router.push('/aulas/gerenciar')}
-              className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transition-all duration-300 hover-lift"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 "
               size="sm"
             >
               <Plus className="h-4 w-4 mr-2" />
@@ -499,7 +495,7 @@ function AulasPageContent() {
             <Button
               onClick={() => setEditarAvisoDialog(true)}
               variant="outline"
-              className="border-white/20 text-white hover:bg-white/10"
+              className="border-border text-foreground hover:bg-muted"
               size="sm"
             >
               <Bell className="h-4 w-4 mr-2" />
@@ -512,7 +508,7 @@ function AulasPageContent() {
             <Button
               onClick={() => router.push('/admin/anuncios')}
               variant="outline"
-              className="border-white/20 text-white hover:bg-white/10"
+              className="border-border text-foreground hover:bg-muted"
               size="sm"
             >
               <Info className="h-4 w-4 mr-2" />
@@ -524,17 +520,147 @@ function AulasPageContent() {
 
 
         {/* Main Content */}
-        <main className="relative z-30 container mx-auto px-3 sm:px-4 py-6 sm:py-8 max-w-7xl">
+        <main className="relative z-30 container mx-auto px-3 sm:px-4 py-5 sm:py-7 max-w-7xl">
+          {/* Intro band — only at root of cascade */}
+          {!selectedSetor && (
+            <section className="mb-6 overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+              <div className="relative px-5 py-6 sm:px-7 sm:py-7">
+                <div
+                  className="pointer-events-none absolute inset-y-0 right-0 w-1/2 opacity-40 dark:opacity-25"
+                  style={{
+                    background:
+                      'radial-gradient(ellipse at 80% 30%, rgba(70,129,82,0.22), transparent 65%)',
+                  }}
+                  aria-hidden
+                />
+                <p className="editorial-mark mb-2">Biblioteca de aulas</p>
+                <h2 className="font-heading text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
+                  Escolha o setor e desça na ementa
+                </h2>
+                <p className="mt-2 max-w-2xl text-sm text-muted-foreground leading-relaxed">
+                  Navegue por setor → tópico → módulo até a aula. Seu progresso fica na URL — você
+                  volta exatamente de onde parou.
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <span className="inline-flex items-center rounded-md border border-border bg-muted/40 px-2.5 py-1 text-xs font-semibold text-foreground">
+                    {setores.filter((s) => !s.oculta).length} setores
+                  </span>
+                  <span className="inline-flex items-center rounded-md border border-border bg-muted/40 px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                    {aulas.length} aulas no catálogo
+                  </span>
+                  {ultimaAula && (
+                    <span className="inline-flex items-center rounded-md border border-secondary/30 bg-secondary/10 px-2.5 py-1 text-xs font-semibold text-secondary">
+                      Continuação disponível
+                    </span>
+                  )}
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* Breadcrumb rápido — contexto da cascata sem recarregar */}
+          {(selectedSetor || selectedTopico || selectedSubtopico || selectedModulo || selectedSubmodulo) && (
+            <nav aria-label="Cascata" className="mb-4 flex flex-wrap items-center gap-1 text-xs sm:text-[13px]">
+              <button
+                type="button"
+                className="font-semibold text-muted-foreground hover:text-primary transition-colors"
+                onClick={() => {
+                  setSelectedSetor(null)
+                  setSelectedTopico(null)
+                  setSelectedSubtopico(null)
+                  setSelectedModulo(null)
+                  setSelectedSubmodulo(null)
+                }}
+              >
+                Setores
+              </button>
+              {selectedSetor && (
+                <>
+                  <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/60" />
+                  <button
+                    type="button"
+                    className="font-semibold text-muted-foreground hover:text-primary transition-colors max-w-[140px] truncate"
+                    onClick={() => {
+                      setSelectedTopico(null)
+                      setSelectedSubtopico(null)
+                      setSelectedModulo(null)
+                      setSelectedSubmodulo(null)
+                    }}
+                  >
+                    {setores.find(s => String(s._id) === selectedSetor)?.nome || 'Setor'}
+                  </button>
+                </>
+              )}
+              {selectedTopico && (
+                <>
+                  <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/60" />
+                  <button
+                    type="button"
+                    className="font-semibold text-muted-foreground hover:text-primary transition-colors max-w-[140px] truncate"
+                    onClick={() => {
+                      setSelectedSubtopico(null)
+                      setSelectedModulo(null)
+                      setSelectedSubmodulo(null)
+                    }}
+                  >
+                    {topicos.find(t => String(t._id) === selectedTopico)?.nome || 'Tópico'}
+                  </button>
+                </>
+              )}
+              {selectedSubtopico && (
+                <>
+                  <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/60" />
+                  <button
+                    type="button"
+                    className="font-semibold text-muted-foreground hover:text-primary transition-colors max-w-[140px] truncate"
+                    onClick={() => {
+                      setSelectedModulo(null)
+                      setSelectedSubmodulo(null)
+                    }}
+                  >
+                    {subtopicos.find(t => String(t._id) === selectedSubtopico)?.nome || 'Subtópico'}
+                  </button>
+                </>
+              )}
+              {selectedModulo && (
+                <>
+                  <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/60" />
+                  <button
+                    type="button"
+                    className="font-semibold text-muted-foreground hover:text-primary transition-colors max-w-[140px] truncate"
+                    onClick={() => setSelectedSubmodulo(null)}
+                  >
+                    {modulos.find(m => String(m._id) === selectedModulo)?.nome || 'Módulo'}
+                  </button>
+                </>
+              )}
+              {selectedSubmodulo && (
+                <>
+                  <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/60" />
+                  <span className="font-semibold text-foreground max-w-[160px] truncate">
+                    {submodulos.find(m => String(m._id) === selectedSubmodulo)?.nome || 'Submódulo'}
+                  </span>
+                </>
+              )}
+            </nav>
+          )}
+
           {/* Navegação em Cascata com Cards */}
           {!selectedSetor ? (
             // Tela de Setores
             <div>
+              <div className="mb-5 flex items-end justify-between gap-3">
+                <div>
+                  <h3 className="font-heading text-lg sm:text-xl font-semibold text-foreground">Setores</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">Toque em um card para abrir a ementa</p>
+                </div>
+              </div>
               {/* Botão Continuar Última Aula */}
               {ultimaAula && (
                 <div className="mb-6 animate-slideInLeft">
                   <Link
                     href={`/aulas/${ultimaAula.aulaId}`}
-                    className="group inline-flex items-center gap-3 bg-gradient-to-r from-[#E2A43E] via-orange-500 to-[#E2A43E] hover:via-orange-600 text-white px-5 py-3 rounded-2xl shadow-2xl shadow-orange-500/30 hover:shadow-orange-500/50 transition-all duration-300 hover:scale-105 backdrop-blur-md border-2 border-orange-400/50"
+                    className="group inline-flex items-center gap-3 bg-secondary hover:bg-secondary/90 text-secondary-foreground px-5 py-3 rounded-lg shadow-md shadow-secondary/20 transition-all hover:-translate-y-0.5 border border-secondary/20"
                   >
                     <div className="relative flex-shrink-0">
                       <div className="relative">
@@ -555,7 +681,7 @@ function AulasPageContent() {
                 </div>
               )}
 
-              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6 sm:mb-8 flex items-center gap-2 sm:gap-3">
+              <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-6 sm:mb-8 flex items-center gap-2 sm:gap-3">
                 <BookOpen className="h-6 w-6 sm:h-8 sm:w-8 text-emerald-400" />
                 Setores de Ensino
               </h2>
@@ -564,11 +690,11 @@ function AulasPageContent() {
                 {aulasSemSetor.map((aula, idx) => (
                   <div
                     key={String(aula._id)}
-                    className={`backdrop-blur-md rounded-2xl overflow-hidden transition-all animate-fadeInUp hover-lift relative ${aula.visibilidade === 'premium'
+                    className={`rounded-lg overflow-hidden transition-all   relative ${aula.visibilidade === 'premium'
                       ? 'bg-gradient-to-br from-yellow-500/10 to-amber-500/10 border-2 border-yellow-500/40 shadow-xl shadow-yellow-500/20 hover:border-yellow-500/60 hover:shadow-yellow-500/30'
-                      : 'bg-white/5 border border-emerald-500/20 shadow-xl shadow-emerald-500/5 hover:border-emerald-500/40'
+                      : 'bg-card border border-border shadow-sm hover:border-primary/35'
                       }`}
-                    style={{ animationDelay: `${idx * 0.1}s` }}
+                    
                   >
                     {(isAdmin || user?.secondaryRole === 'monitor') && (
                       <button
@@ -577,15 +703,15 @@ function AulasPageContent() {
                           e.stopPropagation()
                           router.push(`/aulas/gerenciar/aulas/${aula._id}/editar`)
                         }}
-                        className="absolute bottom-2 right-2 z-20 p-2 rounded-lg bg-black/30 border border-white/20 hover:bg-black/40 transition-colors"
+                        className="absolute bottom-2 right-2 z-20 p-2 rounded-lg bg-black/30 border border-border hover:bg-black/40 transition-colors"
                         title="Editar aula"
                       >
-                        <Pencil className="h-3.5 w-3.5 text-white" />
+                        <Pencil className="h-3.5 w-3.5 text-foreground" />
                       </button>
                     )}
                     {/* Bloqueio Premium */}
                     {aula.visibilidade === 'premium' && user?.accountType !== 'premium' && !isAdmin && user?.secondaryRole !== 'monitor' && (
-                      <div className="absolute inset-0 bg-black/40 rounded-2xl flex items-center justify-center backdrop-blur-sm z-10">
+                      <div className="absolute inset-0 bg-black/40 rounded-lg flex items-center justify-center z-10">
                         <div className="text-center">
                           <Lock className="h-8 w-8 text-yellow-300 mx-auto mb-2" />
                           <p className="text-sm font-semibold text-yellow-300">Conteúdo Premium</p>
@@ -595,14 +721,14 @@ function AulasPageContent() {
 
                     {/* Bloqueio por Data de Liberação */}
                     {isAulaBloqueadaPorData(aula) && (
-                      <div className="absolute inset-0 bg-black/35 rounded-2xl flex items-center justify-center backdrop-blur-sm z-10">
+                      <div className="absolute inset-0 bg-black/35 rounded-lg flex items-center justify-center z-10">
                         <div className="text-center px-6">
                           <AlertCircle className="h-8 w-8 text-[#468152] mx-auto mb-2" />
                           <p className="text-sm font-semibold text-[#468152]/80">Ainda não liberada</p>
-                          <p className="text-xs text-white/70 mt-1">
+                          <p className="text-xs text-muted-foreground mt-1">
                             Disponível em {formatarDataLiberacao(new Date(aula.dataLiberacao))}
                           </p>
-                          <p className="text-xs text-white/60 mt-1">
+                          <p className="text-xs text-muted-foreground mt-1">
                             Faltam {formatarTempoRestante(new Date(aula.dataLiberacao))}
                           </p>
                         </div>
@@ -626,7 +752,7 @@ function AulasPageContent() {
                             className="w-full h-full flex items-center justify-center"
                             style={{ backgroundColor: aula.capa.cor || '#3b82f6' }}
                           >
-                            <p className="text-lg sm:text-2xl font-bold text-white text-center px-4">{aula.capa.titulo}</p>
+                            <p className="text-lg sm:text-2xl font-bold text-foreground text-center px-4">{aula.capa.titulo}</p>
                           </div>
                         ) : null}
                       </div>
@@ -636,10 +762,10 @@ function AulasPageContent() {
                       <div className="flex items-start justify-between gap-3 sm:gap-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2 flex-wrap">
-                            <h3 className="text-base sm:text-lg font-semibold text-white line-clamp-2">{aula.titulo}</h3>
+                            <h3 className="text-base sm:text-lg font-semibold text-foreground line-clamp-2">{aula.titulo}</h3>
                             <div className="flex gap-2 flex-wrap">
                               {aula.tipo === 'ao-vivo' ? (
-                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-semibold animate-glowPulse">
+                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-semibold ">
                                   <Zap className="h-3 w-3" />
                                   Ao Vivo
                                 </span>
@@ -655,7 +781,7 @@ function AulasPageContent() {
                                   Premium
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold">
+                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 text-primary border border-border text-xs font-semibold">
                                   <Globe className="h-3 w-3" />
                                   Gratuita
                                 </span>
@@ -664,7 +790,7 @@ function AulasPageContent() {
                           </div>
                           {aula.descricao && (
                             <div className="flex items-start gap-2 mb-2">
-                              <p className="text-xs sm:text-sm text-white/70 line-clamp-2 flex-1">{aula.descricao}</p>
+                              <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 flex-1">{aula.descricao}</p>
                               {aula.descricao && (
                                 <button
                                   onClick={(e) => {
@@ -679,7 +805,7 @@ function AulasPageContent() {
                               )}
                             </div>
                           )}
-                          <p className="text-xs text-white/50">
+                          <p className="text-xs text-muted-foreground">
                             Postada em {new Date(aula.criadoEm).toLocaleDateString('pt-BR')}
                             {aula.criadoEm !== aula.atualizadoEm && (
                               <> • Atualizada em {new Date(aula.atualizadoEm).toLocaleDateString('pt-BR')}</>
@@ -694,7 +820,7 @@ function AulasPageContent() {
                                 mensagem: `Esta aula será liberada em ${formatarDataLiberacao(new Date(aula.dataLiberacao))}.\n\nVocê pode ver a aula na lista, mas não pode acessá-la antes do lançamento.`
                               })
                             }}
-                            className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transition-all duration-300 hover-lift opacity-70"
+                            className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300  opacity-70"
                             size="sm"
                           >
                             Ver Aula
@@ -702,7 +828,7 @@ function AulasPageContent() {
                         ) : (
                           <Link
                             href={`/aulas/${aula._id}`}
-                            className="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-3 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transition-all duration-300 hover-lift"
+                            className="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-3 bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 "
                           >
                             Ver Aula
                           </Link>
@@ -728,7 +854,7 @@ function AulasPageContent() {
                           setSelectedModulo(null)
                           setSelectedSubmodulo(null)
                         }}
-                        className="backdrop-blur-md bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30 rounded-2xl overflow-hidden hover:border-emerald-500/60 hover:bg-emerald-500/30 transition-all cursor-pointer shadow-xl shadow-emerald-500/10 hover-lift group block"
+                        className="group block overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md cursor-pointer"
                       >
                         {setor.imagem && (
                           <div className="w-full h-36 overflow-hidden">
@@ -742,7 +868,7 @@ function AulasPageContent() {
                         <div className="p-6">
                           <div className="flex items-start justify-between mb-4">
                             <div className="flex-1">
-                              <h3 className="text-xl font-bold text-white group-hover:text-emerald-200 transition-colors line-clamp-2">{setor.nome}</h3>
+                              <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2">{setor.nome}</h3>
                             </div>
                             <div className="flex items-center gap-1 flex-shrink-0 ml-2">
                               {setor.descricao && (
@@ -753,7 +879,7 @@ function AulasPageContent() {
                                     e.stopPropagation()
                                     setDescricaoDialog({ titulo: setor.nome, descricao: setor.descricao || '' })
                                   }}
-                                  className="p-1.5 rounded-lg hover:bg-white/10 transition-colors"
+                                  className="p-1.5 rounded-lg hover:bg-muted transition-colors"
                                   title="Ver descrição"
                                 >
                                   <Info className="h-5 w-5 text-emerald-400" />
@@ -763,11 +889,11 @@ function AulasPageContent() {
                             </div>
                           </div>
                           {setor.descricao && (
-                            <p className="text-white/60 text-sm mb-4 line-clamp-2">{setor.descricao}</p>
+                            <p className="text-muted-foreground text-sm mb-4 line-clamp-2">{setor.descricao}</p>
                           )}
-                          <div className="flex items-center justify-between pt-4 border-t border-white/10">
-                            <span className="text-white/70 text-sm">Aulas</span>
-                            <span className="text-2xl font-bold text-emerald-300">{aulaCount}</span>
+                          <div className="flex items-center justify-between pt-4 border-t border-border">
+                            <span className="text-muted-foreground text-sm">Aulas</span>
+                            <span className="text-2xl font-bold text-primary">{aulaCount}</span>
                           </div>
                         </div>
                       </Link>
@@ -778,8 +904,8 @@ function AulasPageContent() {
           ) : !selectedTopico ? (
             // Tela de Tópicos
             <div>
-              <div className="sticky top-16 sm:top-20 z-40 mb-6">
-                <div className="inline-flex backdrop-blur-md bg-white/5 border border-white/10 rounded-xl p-1">
+              <div className="sticky top-14 sm:top-16 z-20 mb-4 -mx-1">
+                <div className="inline-flex bg-card border border-border rounded-md p-0.5 shadow-sm">
                   <Button
                     onClick={() => {
                       setSelectedSetor(null)
@@ -789,25 +915,25 @@ function AulasPageContent() {
                       setSelectedSubmodulo(null)
                     }}
                     variant="ghost"
-                    className="text-white hover:bg-white/10"
+                    className="text-foreground hover:bg-muted"
                   >
                     <ChevronRight className="h-4 w-4 rotate-180 mr-2" />
                     Voltar aos Setores
                   </Button>
                 </div>
               </div>
-              <h2 className="text-3xl font-bold text-white mb-8">Tópicos</h2>
+              <h2 className="font-heading text-2xl sm:text-3xl font-semibold text-foreground mb-5">Tópicos</h2>
 
               {/* Aulas do setor sem tópico */}
               {aulasSetor.length > 0 && (
                 <div className="mb-8">
-                  <h3 className="text-xl font-semibold text-white mb-4">Aulas do Setor</h3>
+                  <h3 className="text-xl font-semibold text-foreground mb-4">Aulas do Setor</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     {aulasSetor.map((aula, idx) => (
                       <div
                         key={String(aula._id)}
-                        className="backdrop-blur-md bg-white/5 border border-emerald-500/20 rounded-2xl overflow-hidden hover:border-emerald-500/40 transition-all shadow-xl shadow-emerald-500/5 animate-fadeInUp hover-lift relative"
-                        style={{ animationDelay: `${idx * 0.1}s` }}
+                        className="bg-card border border-border rounded-lg overflow-hidden hover:border-primary/35 transition-all shadow-sm   relative"
+                        
                       >
                         {(isAdmin || user?.secondaryRole === 'monitor') && (
                           <button
@@ -816,22 +942,22 @@ function AulasPageContent() {
                               e.stopPropagation()
                               router.push(`/aulas/gerenciar/aulas/${aula._id}/editar`)
                             }}
-                            className="absolute bottom-2 right-2 z-20 p-2 rounded-lg bg-black/30 border border-white/20 hover:bg-black/40 transition-colors"
+                            className="absolute bottom-2 right-2 z-20 p-2 rounded-lg bg-black/30 border border-border hover:bg-black/40 transition-colors"
                             title="Editar aula"
                           >
-                            <Pencil className="h-3.5 w-3.5 text-white" />
+                            <Pencil className="h-3.5 w-3.5 text-foreground" />
                           </button>
                         )}
                         {/* Bloqueio por Data de Liberação */}
                         {isAulaBloqueadaPorData(aula) && (
-                          <div className="absolute inset-0 bg-black/35 rounded-2xl flex items-center justify-center backdrop-blur-sm z-10">
+                          <div className="absolute inset-0 bg-black/35 rounded-lg flex items-center justify-center z-10">
                             <div className="text-center px-6">
                               <AlertCircle className="h-8 w-8 text-[#468152] mx-auto mb-2" />
                               <p className="text-sm font-semibold text-[#468152]/80">Ainda não liberada</p>
-                              <p className="text-xs text-white/70 mt-1">
+                              <p className="text-xs text-muted-foreground mt-1">
                                 Disponível em {formatarDataLiberacao(new Date(aula.dataLiberacao))}
                               </p>
-                              <p className="text-xs text-white/60 mt-1">
+                              <p className="text-xs text-muted-foreground mt-1">
                                 Faltam {formatarTempoRestante(new Date(aula.dataLiberacao))}
                               </p>
                             </div>
@@ -854,7 +980,7 @@ function AulasPageContent() {
                                 className="w-full h-full flex items-center justify-center"
                                 style={{ backgroundColor: aula.capa.cor || '#3b82f6' }}
                               >
-                                <p className="text-lg sm:text-2xl font-bold text-white text-center px-4">{aula.capa.titulo}</p>
+                                <p className="text-lg sm:text-2xl font-bold text-foreground text-center px-4">{aula.capa.titulo}</p>
                               </div>
                             ) : null}
                           </div>
@@ -864,10 +990,10 @@ function AulasPageContent() {
                           <div className="flex items-start justify-between gap-3 sm:gap-4">
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-2 flex-wrap">
-                                <h3 className="text-base sm:text-lg font-semibold text-white line-clamp-2">{aula.titulo}</h3>
+                                <h3 className="text-base sm:text-lg font-semibold text-foreground line-clamp-2">{aula.titulo}</h3>
                                 <div className="flex gap-2 flex-wrap">
                                   {aula.tipo === 'ao-vivo' ? (
-                                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-semibold animate-glowPulse">
+                                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-semibold ">
                                       <Zap className="h-3 w-3" />
                                       Ao Vivo
                                     </span>
@@ -883,7 +1009,7 @@ function AulasPageContent() {
                                       Premium
                                     </span>
                                   ) : (
-                                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold">
+                                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 text-primary border border-border text-xs font-semibold">
                                       <Globe className="h-3 w-3" />
                                       Gratuita
                                     </span>
@@ -892,7 +1018,7 @@ function AulasPageContent() {
                               </div>
                               {aula.descricao && (
                                 <div className="flex items-start gap-2 mb-2">
-                                  <p className="text-xs sm:text-sm text-white/70 line-clamp-2 flex-1">{aula.descricao}</p>
+                                  <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 flex-1">{aula.descricao}</p>
                                   {aula.descricao && (
                                     <button
                                       onClick={(e) => {
@@ -907,7 +1033,7 @@ function AulasPageContent() {
                                   )}
                                 </div>
                               )}
-                              <p className="text-xs text-white/50">
+                              <p className="text-xs text-muted-foreground">
                                 Postada em {new Date(aula.criadoEm).toLocaleDateString('pt-BR')}
                                 {aula.criadoEm !== aula.atualizadoEm && (
                                   <> • Atualizada em {new Date(aula.atualizadoEm).toLocaleDateString('pt-BR')}</>
@@ -922,7 +1048,7 @@ function AulasPageContent() {
                                     mensagem: `Esta aula será liberada em ${formatarDataLiberacao(new Date(aula.dataLiberacao))}.\n\nVocê pode ver a aula na lista, mas não pode acessá-la antes do lançamento.`
                                   })
                                 }}
-                                className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transition-all duration-300 hover-lift opacity-70"
+                                className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300  opacity-70"
                                 size="sm"
                               >
                                 Ver Aula
@@ -930,7 +1056,7 @@ function AulasPageContent() {
                             ) : (
                               <Link
                                 href={`/aulas/${aula._id}`}
-                                className="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-3 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transition-all duration-300 hover-lift"
+                                className="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-3 bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 "
                               >
                                 Ver Aula
                               </Link>
@@ -946,7 +1072,7 @@ function AulasPageContent() {
               {/* Tópicos do setor */}
               {topicosSetor.length > 0 && (
                 <div>
-                  <h3 className="text-xl font-semibold text-white mb-4">Tópicos</h3>
+                  <h3 className="text-xl font-semibold text-foreground mb-4">Tópicos</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     {topicosSetor.map(topico => {
                       const aulaCount = countAulasTopico(String(topico._id))
@@ -961,11 +1087,11 @@ function AulasPageContent() {
                             setSelectedModulo(null)
                             setSelectedSubmodulo(null)
                           }}
-                          className="backdrop-blur-md bg-gradient-to-br from-[#468152]/20 to-[#E2A43E]/20 border border-[#468152]/30 rounded-2xl p-6 hover:border-[#468152]/60 hover:bg-[#468152]/30 transition-all cursor-pointer shadow-xl shadow-[#468152]/10 hover-lift group block"
+                          className="bg-gradient-to-br from-[#468152]/20 to-[#E2A43E]/20 border border-[#468152]/30 rounded-lg p-6 hover:border-[#468152]/60 hover:bg-[#468152]/30 transition-all cursor-pointer shadow-xl shadow-[#468152]/10  group block"
                         >
                           <div className="flex items-start justify-between mb-4">
                             <div className="flex-1">
-                              <h3 className="text-xl font-bold text-white group-hover:text-[#468152]/80 transition-colors line-clamp-2">{topico.nome}</h3>
+                              <h3 className="text-xl font-bold text-foreground group-hover:text-[#468152]/80 transition-colors line-clamp-2">{topico.nome}</h3>
                             </div>
                             <div className="flex gap-2 flex-shrink-0 ml-2">
                               {topico.descricao && (
@@ -985,10 +1111,10 @@ function AulasPageContent() {
                             </div>
                           </div>
                           {topico.descricao && (
-                            <p className="text-white/60 text-sm mb-4 line-clamp-2">{topico.descricao}</p>
+                            <p className="text-muted-foreground text-sm mb-4 line-clamp-2">{topico.descricao}</p>
                           )}
-                          <div className="flex items-center justify-between pt-4 border-t border-white/10">
-                            <span className="text-white/70 text-sm">Aulas</span>
+                          <div className="flex items-center justify-between pt-4 border-t border-border">
+                            <span className="text-muted-foreground text-sm">Aulas</span>
                             <span className="text-2xl font-bold text-[#468152]">{aulaCount}</span>
                           </div>
                         </Link>
@@ -1001,8 +1127,8 @@ function AulasPageContent() {
           ) : !selectedSubtopico ? (
             // Tela de Subtópicos
             <div>
-              <div className="sticky top-16 sm:top-20 z-40 mb-6">
-                <div className="inline-flex backdrop-blur-md bg-white/5 border border-white/10 rounded-xl p-1">
+              <div className="sticky top-14 sm:top-16 z-20 mb-4 -mx-1">
+                <div className="inline-flex bg-card border border-border rounded-md p-0.5 shadow-sm">
                   <Button
                     onClick={() => {
                       setSelectedTopico(null)
@@ -1011,25 +1137,25 @@ function AulasPageContent() {
                       setSelectedSubmodulo(null)
                     }}
                     variant="ghost"
-                    className="text-white hover:bg-white/10"
+                    className="text-foreground hover:bg-muted"
                   >
                     <ChevronRight className="h-4 w-4 rotate-180 mr-2" />
                     Voltar aos Tópicos
                   </Button>
                 </div>
               </div>
-              <h2 className="text-3xl font-bold text-white mb-8">Subtópicos</h2>
+              <h2 className="font-heading text-2xl sm:text-3xl font-semibold text-foreground mb-5">Subtópicos</h2>
 
               {/* Aulas do tópico sem subtópico */}
               {aulasTopico.length > 0 && (
                 <div className="mb-8">
-                  <h3 className="text-xl font-semibold text-white mb-4">Aulas do Tópico</h3>
+                  <h3 className="text-xl font-semibold text-foreground mb-4">Aulas do Tópico</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     {aulasTopico.map((aula, idx) => (
                       <div
                         key={String(aula._id)}
-                        className="backdrop-blur-md bg-white/5 border border-emerald-500/20 rounded-2xl overflow-hidden hover:border-emerald-500/40 transition-all shadow-xl shadow-emerald-500/5 animate-fadeInUp hover-lift relative"
-                        style={{ animationDelay: `${idx * 0.1}s` }}
+                        className="bg-card border border-border rounded-lg overflow-hidden hover:border-primary/35 transition-all shadow-sm   relative"
+                        
                       >
                         {(isAdmin || user?.secondaryRole === 'monitor') && (
                           <button
@@ -1038,22 +1164,22 @@ function AulasPageContent() {
                               e.stopPropagation()
                               router.push(`/aulas/gerenciar/aulas/${aula._id}/editar`)
                             }}
-                            className="absolute bottom-2 right-2 z-20 p-2 rounded-lg bg-black/30 border border-white/20 hover:bg-black/40 transition-colors"
+                            className="absolute bottom-2 right-2 z-20 p-2 rounded-lg bg-black/30 border border-border hover:bg-black/40 transition-colors"
                             title="Editar aula"
                           >
-                            <Pencil className="h-3.5 w-3.5 text-white" />
+                            <Pencil className="h-3.5 w-3.5 text-foreground" />
                           </button>
                         )}
                         {/* Bloqueio por Data de Liberação */}
                         {isAulaBloqueadaPorData(aula) && (
-                          <div className="absolute inset-0 bg-black/35 rounded-2xl flex items-center justify-center backdrop-blur-sm z-10">
+                          <div className="absolute inset-0 bg-black/35 rounded-lg flex items-center justify-center z-10">
                             <div className="text-center px-6">
                               <AlertCircle className="h-8 w-8 text-[#468152] mx-auto mb-2" />
                               <p className="text-sm font-semibold text-[#468152]/80">Ainda não liberada</p>
-                              <p className="text-xs text-white/70 mt-1">
+                              <p className="text-xs text-muted-foreground mt-1">
                                 Disponível em {formatarDataLiberacao(new Date(aula.dataLiberacao))}
                               </p>
-                              <p className="text-xs text-white/60 mt-1">
+                              <p className="text-xs text-muted-foreground mt-1">
                                 Faltam {formatarTempoRestante(new Date(aula.dataLiberacao))}
                               </p>
                             </div>
@@ -1076,7 +1202,7 @@ function AulasPageContent() {
                                 className="w-full h-full flex items-center justify-center"
                                 style={{ backgroundColor: aula.capa.cor || '#3b82f6' }}
                               >
-                                <p className="text-lg sm:text-2xl font-bold text-white text-center px-4">{aula.capa.titulo}</p>
+                                <p className="text-lg sm:text-2xl font-bold text-foreground text-center px-4">{aula.capa.titulo}</p>
                               </div>
                             ) : null}
                           </div>
@@ -1086,10 +1212,10 @@ function AulasPageContent() {
                           <div className="flex items-start justify-between gap-3 sm:gap-4">
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-2 flex-wrap">
-                                <h3 className="text-base sm:text-lg font-semibold text-white line-clamp-2">{aula.titulo}</h3>
+                                <h3 className="text-base sm:text-lg font-semibold text-foreground line-clamp-2">{aula.titulo}</h3>
                                 <div className="flex gap-2 flex-wrap">
                                   {aula.tipo === 'ao-vivo' ? (
-                                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-semibold animate-glowPulse">
+                                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-semibold ">
                                       <Zap className="h-3 w-3" />
                                       Ao Vivo
                                     </span>
@@ -1105,7 +1231,7 @@ function AulasPageContent() {
                                       Premium
                                     </span>
                                   ) : (
-                                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold">
+                                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 text-primary border border-border text-xs font-semibold">
                                       <Globe className="h-3 w-3" />
                                       Gratuita
                                     </span>
@@ -1114,7 +1240,7 @@ function AulasPageContent() {
                               </div>
                               {aula.descricao && (
                                 <div className="flex items-start gap-2 mb-2">
-                                  <p className="text-xs sm:text-sm text-white/70 line-clamp-2 flex-1">{aula.descricao}</p>
+                                  <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 flex-1">{aula.descricao}</p>
                                   {aula.descricao && (
                                     <button
                                       onClick={(e) => {
@@ -1129,7 +1255,7 @@ function AulasPageContent() {
                                   )}
                                 </div>
                               )}
-                              <p className="text-xs text-white/50">
+                              <p className="text-xs text-muted-foreground">
                                 Postada em {new Date(aula.criadoEm).toLocaleDateString('pt-BR')}
                                 {aula.criadoEm !== aula.atualizadoEm && (
                                   <> • Atualizada em {new Date(aula.atualizadoEm).toLocaleDateString('pt-BR')}</>
@@ -1144,7 +1270,7 @@ function AulasPageContent() {
                                     mensagem: `Esta aula será liberada em ${formatarDataLiberacao(new Date(aula.dataLiberacao))}.\n\nVocê pode ver a aula na lista, mas não pode acessá-la antes do lançamento.`
                                   })
                                 }}
-                                className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transition-all duration-300 hover-lift opacity-70"
+                                className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300  opacity-70"
                                 size="sm"
                               >
                                 Ver Aula
@@ -1152,7 +1278,7 @@ function AulasPageContent() {
                             ) : (
                               <Link
                                 href={`/aulas/${aula._id}`}
-                                className="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-3 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transition-all duration-300 hover-lift"
+                                className="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-3 bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 "
                               >
                                 Ver Aula
                               </Link>
@@ -1168,7 +1294,7 @@ function AulasPageContent() {
               {/* Subtópicos do tópico */}
               {subtopicosTopico.length > 0 && (
                 <div>
-                  <h3 className="text-xl font-semibold text-white mb-4">Subtópicos</h3>
+                  <h3 className="text-xl font-semibold text-foreground mb-4">Subtópicos</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     {subtopicosTopico.map(subtopico => {
                       const aulaCount = countAulasSubtopico(String(subtopico._id))
@@ -1182,11 +1308,11 @@ function AulasPageContent() {
                             setSelectedModulo(null)
                             setSelectedSubmodulo(null)
                           }}
-                          className="backdrop-blur-md bg-gradient-to-br from-[#468152]/20 to-[#E2A43E]/20 border border-[#468152]/30 rounded-2xl p-6 hover:border-[#468152]/60 hover:bg-[#468152]/30 transition-all cursor-pointer shadow-xl shadow-[#468152]/10 hover-lift group block"
+                          className="bg-gradient-to-br from-[#468152]/20 to-[#E2A43E]/20 border border-[#468152]/30 rounded-lg p-6 hover:border-[#468152]/60 hover:bg-[#468152]/30 transition-all cursor-pointer shadow-xl shadow-[#468152]/10  group block"
                         >
                           <div className="flex items-start justify-between mb-4">
                             <div className="flex-1">
-                              <h3 className="text-xl font-bold text-white group-hover:text-[#468152]/80 transition-colors line-clamp-2">{subtopico.nome}</h3>
+                              <h3 className="text-xl font-bold text-foreground group-hover:text-[#468152]/80 transition-colors line-clamp-2">{subtopico.nome}</h3>
                             </div>
                             <div className="flex gap-2 flex-shrink-0 ml-2">
                               {subtopico.descricao && (
@@ -1206,10 +1332,10 @@ function AulasPageContent() {
                             </div>
                           </div>
                           {subtopico.descricao && (
-                            <p className="text-white/60 text-sm mb-4 line-clamp-2">{subtopico.descricao}</p>
+                            <p className="text-muted-foreground text-sm mb-4 line-clamp-2">{subtopico.descricao}</p>
                           )}
-                          <div className="flex items-center justify-between pt-4 border-t border-white/10">
-                            <span className="text-white/70 text-sm">Aulas</span>
+                          <div className="flex items-center justify-between pt-4 border-t border-border">
+                            <span className="text-muted-foreground text-sm">Aulas</span>
                             <span className="text-2xl font-bold text-[#468152]">{aulaCount}</span>
                           </div>
                         </Link>
@@ -1222,8 +1348,8 @@ function AulasPageContent() {
           ) : !selectedModulo ? (
             // Tela de Módulos
             <div>
-              <div className="sticky top-16 sm:top-20 z-40 mb-6">
-                <div className="inline-flex backdrop-blur-md bg-white/5 border border-white/10 rounded-xl p-1">
+              <div className="sticky top-14 sm:top-16 z-20 mb-4 -mx-1">
+                <div className="inline-flex bg-card border border-border rounded-md p-0.5 shadow-sm">
                   <Button
                     onClick={() => {
                       setSelectedSubtopico(null)
@@ -1231,21 +1357,21 @@ function AulasPageContent() {
                       setSelectedSubmodulo(null)
                     }}
                     variant="ghost"
-                    className="text-white hover:bg-white/10"
+                    className="text-foreground hover:bg-muted"
                   >
                     <ChevronRight className="h-4 w-4 rotate-180 mr-2" />
                     Voltar aos Subtópicos
                   </Button>
                 </div>
               </div>
-              <h2 className="text-3xl font-bold text-white mb-8">Módulos</h2>
+              <h2 className="font-heading text-2xl sm:text-3xl font-semibold text-foreground mb-5">Módulos</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {/* Aulas do subtópico sem módulo - renderizadas como cards */}
                 {aulasSubtopico.map((aula, idx) => (
                   <div
                     key={String(aula._id)}
-                    className="backdrop-blur-md bg-white/5 border border-emerald-500/20 rounded-2xl overflow-hidden hover:border-emerald-500/40 transition-all shadow-xl shadow-emerald-500/5 animate-fadeInUp hover-lift relative"
-                    style={{ animationDelay: `${idx * 0.1}s` }}
+                    className="bg-card border border-border rounded-lg overflow-hidden hover:border-primary/35 transition-all shadow-sm   relative"
+                    
                   >
                     {(isAdmin || user?.secondaryRole === 'monitor') && (
                       <button
@@ -1254,22 +1380,22 @@ function AulasPageContent() {
                           e.stopPropagation()
                           router.push(`/aulas/gerenciar/aulas/${aula._id}/editar`)
                         }}
-                        className="absolute bottom-2 right-2 z-20 p-2 rounded-lg bg-black/30 border border-white/20 hover:bg-black/40 transition-colors"
+                        className="absolute bottom-2 right-2 z-20 p-2 rounded-lg bg-black/30 border border-border hover:bg-black/40 transition-colors"
                         title="Editar aula"
                       >
-                        <Pencil className="h-3.5 w-3.5 text-white" />
+                        <Pencil className="h-3.5 w-3.5 text-foreground" />
                       </button>
                     )}
                     {/* Bloqueio por Data de Liberação */}
                     {isAulaBloqueadaPorData(aula) && (
-                      <div className="absolute inset-0 bg-black/35 rounded-2xl flex items-center justify-center backdrop-blur-sm z-10">
+                      <div className="absolute inset-0 bg-black/35 rounded-lg flex items-center justify-center z-10">
                         <div className="text-center px-6">
                           <AlertCircle className="h-8 w-8 text-[#468152] mx-auto mb-2" />
                           <p className="text-sm font-semibold text-[#468152]/80">Ainda não liberada</p>
-                          <p className="text-xs text-white/70 mt-1">
+                          <p className="text-xs text-muted-foreground mt-1">
                             Disponível em {formatarDataLiberacao(new Date(aula.dataLiberacao))}
                           </p>
-                          <p className="text-xs text-white/60 mt-1">
+                          <p className="text-xs text-muted-foreground mt-1">
                             Faltam {formatarTempoRestante(new Date(aula.dataLiberacao))}
                           </p>
                         </div>
@@ -1292,7 +1418,7 @@ function AulasPageContent() {
                             className="w-full h-full flex items-center justify-center"
                             style={{ backgroundColor: aula.capa.cor || '#3b82f6' }}
                           >
-                            <p className="text-lg sm:text-2xl font-bold text-white text-center px-4">{aula.capa.titulo}</p>
+                            <p className="text-lg sm:text-2xl font-bold text-foreground text-center px-4">{aula.capa.titulo}</p>
                           </div>
                         ) : null}
                       </div>
@@ -1302,10 +1428,10 @@ function AulasPageContent() {
                       <div className="flex items-start justify-between gap-3 sm:gap-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2 flex-wrap">
-                            <h3 className="text-base sm:text-lg font-semibold text-white line-clamp-2">{aula.titulo}</h3>
+                            <h3 className="text-base sm:text-lg font-semibold text-foreground line-clamp-2">{aula.titulo}</h3>
                             <div className="flex gap-2 flex-wrap">
                               {aula.tipo === 'ao-vivo' ? (
-                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-semibold animate-glowPulse">
+                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-semibold ">
                                   <Zap className="h-3 w-3" />
                                   Ao Vivo
                                 </span>
@@ -1321,7 +1447,7 @@ function AulasPageContent() {
                                   Premium
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold">
+                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 text-primary border border-border text-xs font-semibold">
                                   <Globe className="h-3 w-3" />
                                   Gratuita
                                 </span>
@@ -1330,7 +1456,7 @@ function AulasPageContent() {
                           </div>
                           {aula.descricao && (
                             <div className="flex items-start gap-2 mb-2">
-                              <p className="text-xs sm:text-sm text-white/70 line-clamp-2 flex-1">{aula.descricao}</p>
+                              <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 flex-1">{aula.descricao}</p>
                               {aula.descricao && (
                                 <button
                                   onClick={(e) => {
@@ -1345,7 +1471,7 @@ function AulasPageContent() {
                               )}
                             </div>
                           )}
-                          <p className="text-xs text-white/50">
+                          <p className="text-xs text-muted-foreground">
                             Postada em {new Date(aula.criadoEm).toLocaleDateString('pt-BR')}
                             {aula.criadoEm !== aula.atualizadoEm && (
                               <> • Atualizada em {new Date(aula.atualizadoEm).toLocaleDateString('pt-BR')}</>
@@ -1360,7 +1486,7 @@ function AulasPageContent() {
                                 mensagem: `Esta aula será liberada em ${formatarDataLiberacao(new Date(aula.dataLiberacao))}.\n\nVocê pode ver a aula na lista, mas não pode acessá-la antes do lançamento.`
                               })
                             }}
-                            className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transition-all duration-300 hover-lift opacity-70"
+                            className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300  opacity-70"
                             size="sm"
                           >
                             Ver Aula
@@ -1368,7 +1494,7 @@ function AulasPageContent() {
                         ) : (
                           <Link
                             href={`/aulas/${aula._id}`}
-                            className="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-3 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transition-all duration-300 hover-lift"
+                            className="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-3 bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 "
                           >
                             Ver Aula
                           </Link>
@@ -1388,11 +1514,11 @@ function AulasPageContent() {
                         setSelectedModulo(String(modulo._id))
                         setSelectedSubmodulo(null)
                       }}
-                      className="backdrop-blur-md bg-gradient-to-br from-[#E2A43E]/20 to-[#468152]/20 border border-[#E2A43E]/30 rounded-2xl p-6 hover:border-[#E2A43E]/60 hover:bg-[#E2A43E]/30 transition-all cursor-pointer shadow-xl shadow-[#E2A43E]/10 hover-lift group block"
+                      className="bg-gradient-to-br from-[#E2A43E]/20 to-[#468152]/20 border border-[#E2A43E]/30 rounded-lg p-6 hover:border-[#E2A43E]/60 hover:bg-[#E2A43E]/30 transition-all cursor-pointer shadow-xl shadow-[#E2A43E]/10  group block"
                     >
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex-1">
-                          <h3 className="text-xl font-bold text-white group-hover:text-pink-200 transition-colors line-clamp-2">{modulo.nome}</h3>
+                          <h3 className="text-xl font-bold text-foreground group-hover:text-pink-200 transition-colors line-clamp-2">{modulo.nome}</h3>
                         </div>
                         <div className="flex gap-2 flex-shrink-0 ml-2">
                           {modulo.descricao && (
@@ -1412,10 +1538,10 @@ function AulasPageContent() {
                         </div>
                       </div>
                       {modulo.descricao && (
-                        <p className="text-white/60 text-sm mb-4 line-clamp-2">{modulo.descricao}</p>
+                        <p className="text-muted-foreground text-sm mb-4 line-clamp-2">{modulo.descricao}</p>
                       )}
-                      <div className="flex items-center justify-between pt-4 border-t border-white/10">
-                        <span className="text-white/70 text-sm">Aulas</span>
+                      <div className="flex items-center justify-between pt-4 border-t border-border">
+                        <span className="text-muted-foreground text-sm">Aulas</span>
                         <span className="text-2xl font-bold text-pink-300">{aulaCount}</span>
                       </div>
                     </Link>
@@ -1426,29 +1552,29 @@ function AulasPageContent() {
           ) : !selectedSubmodulo ? (
             // Tela de Submódulos
             <div>
-              <div className="sticky top-16 sm:top-20 z-40 mb-6">
-                <div className="inline-flex backdrop-blur-md bg-white/5 border border-white/10 rounded-xl p-1">
+              <div className="sticky top-14 sm:top-16 z-20 mb-4 -mx-1">
+                <div className="inline-flex bg-card border border-border rounded-md p-0.5 shadow-sm">
                   <Button
                     onClick={() => {
                       setSelectedModulo(null)
                       setSelectedSubmodulo(null)
                     }}
                     variant="ghost"
-                    className="text-white hover:bg-white/10"
+                    className="text-foreground hover:bg-muted"
                   >
                     <ChevronRight className="h-4 w-4 rotate-180 mr-2" />
                     Voltar aos Módulos
                   </Button>
                 </div>
               </div>
-              <h2 className="text-3xl font-bold text-white mb-8">Submódulos</h2>
+              <h2 className="font-heading text-2xl sm:text-3xl font-semibold text-foreground mb-5">Submódulos</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {/* Aulas do módulo sem submódulo - renderizadas como cards */}
                 {aulasModulo.map((aula, idx) => (
                   <div
                     key={String(aula._id)}
-                    className="backdrop-blur-md bg-white/5 border border-emerald-500/20 rounded-2xl overflow-hidden hover:border-emerald-500/40 transition-all shadow-xl shadow-emerald-500/5 animate-fadeInUp hover-lift relative"
-                    style={{ animationDelay: `${idx * 0.1}s` }}
+                    className="bg-card border border-border rounded-lg overflow-hidden hover:border-primary/35 transition-all shadow-sm   relative"
+                    
                   >
                     {(isAdmin || user?.secondaryRole === 'monitor') && (
                       <button
@@ -1457,22 +1583,22 @@ function AulasPageContent() {
                           e.stopPropagation()
                           router.push(`/aulas/gerenciar/aulas/${aula._id}/editar`)
                         }}
-                        className="absolute bottom-2 right-2 z-20 p-2 rounded-lg bg-black/30 border border-white/20 hover:bg-black/40 transition-colors"
+                        className="absolute bottom-2 right-2 z-20 p-2 rounded-lg bg-black/30 border border-border hover:bg-black/40 transition-colors"
                         title="Editar aula"
                       >
-                        <Pencil className="h-3.5 w-3.5 text-white" />
+                        <Pencil className="h-3.5 w-3.5 text-foreground" />
                       </button>
                     )}
                     {/* Bloqueio por Data de Liberação */}
                     {isAulaBloqueadaPorData(aula) && (
-                      <div className="absolute inset-0 bg-black/35 rounded-2xl flex items-center justify-center backdrop-blur-sm z-10">
+                      <div className="absolute inset-0 bg-black/35 rounded-lg flex items-center justify-center z-10">
                         <div className="text-center px-6">
                           <AlertCircle className="h-8 w-8 text-[#468152] mx-auto mb-2" />
                           <p className="text-sm font-semibold text-[#468152]/80">Ainda não liberada</p>
-                          <p className="text-xs text-white/70 mt-1">
+                          <p className="text-xs text-muted-foreground mt-1">
                             Disponível em {formatarDataLiberacao(new Date(aula.dataLiberacao))}
                           </p>
-                          <p className="text-xs text-white/60 mt-1">
+                          <p className="text-xs text-muted-foreground mt-1">
                             Faltam {formatarTempoRestante(new Date(aula.dataLiberacao))}
                           </p>
                         </div>
@@ -1495,7 +1621,7 @@ function AulasPageContent() {
                             className="w-full h-full flex items-center justify-center"
                             style={{ backgroundColor: aula.capa.cor || '#3b82f6' }}
                           >
-                            <p className="text-lg sm:text-2xl font-bold text-white text-center px-4">{aula.capa.titulo}</p>
+                            <p className="text-lg sm:text-2xl font-bold text-foreground text-center px-4">{aula.capa.titulo}</p>
                           </div>
                         ) : null}
                       </div>
@@ -1505,10 +1631,10 @@ function AulasPageContent() {
                       <div className="flex items-start justify-between gap-3 sm:gap-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2 flex-wrap">
-                            <h3 className="text-base sm:text-lg font-semibold text-white line-clamp-2">{aula.titulo}</h3>
+                            <h3 className="text-base sm:text-lg font-semibold text-foreground line-clamp-2">{aula.titulo}</h3>
                             <div className="flex gap-2 flex-wrap">
                               {aula.tipo === 'ao-vivo' ? (
-                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-semibold animate-glowPulse">
+                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-semibold ">
                                   <Zap className="h-3 w-3" />
                                   Ao Vivo
                                 </span>
@@ -1524,7 +1650,7 @@ function AulasPageContent() {
                                   Premium
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold">
+                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 text-primary border border-border text-xs font-semibold">
                                   <Globe className="h-3 w-3" />
                                   Gratuita
                                 </span>
@@ -1533,7 +1659,7 @@ function AulasPageContent() {
                           </div>
                           {aula.descricao && (
                             <div className="flex items-start gap-2 mb-2">
-                              <p className="text-xs sm:text-sm text-white/70 line-clamp-2 flex-1">{aula.descricao}</p>
+                              <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 flex-1">{aula.descricao}</p>
                               {aula.descricao && (
                                 <button
                                   onClick={(e) => {
@@ -1548,7 +1674,7 @@ function AulasPageContent() {
                               )}
                             </div>
                           )}
-                          <p className="text-xs text-white/50">
+                          <p className="text-xs text-muted-foreground">
                             Postada em {new Date(aula.criadoEm).toLocaleDateString('pt-BR')}
                             {aula.criadoEm !== aula.atualizadoEm && (
                               <> • Atualizada em {new Date(aula.atualizadoEm).toLocaleDateString('pt-BR')}</>
@@ -1563,7 +1689,7 @@ function AulasPageContent() {
                                 mensagem: `Esta aula será liberada em ${formatarDataLiberacao(new Date(aula.dataLiberacao))}.\n\nVocê pode ver a aula na lista, mas não pode acessá-la antes do lançamento.`
                               })
                             }}
-                            className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transition-all duration-300 hover-lift opacity-70"
+                            className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300  opacity-70"
                             size="sm"
                           >
                             Ver Aula
@@ -1571,7 +1697,7 @@ function AulasPageContent() {
                         ) : (
                           <Link
                             href={`/aulas/${aula._id}`}
-                            className="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-3 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white transition-all duration-300 hover-lift"
+                            className="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-3 bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 "
                           >
                             Ver Aula
                           </Link>
@@ -1586,11 +1712,11 @@ function AulasPageContent() {
                     <div
                       key={String(submodulo._id)}
                       onClick={() => setSelectedSubmodulo(String(submodulo._id))}
-                      className="backdrop-blur-md bg-gradient-to-br from-orange-500/20 to-red-500/20 border border-orange-500/30 rounded-2xl p-6 hover:border-orange-500/60 hover:bg-orange-500/30 transition-all cursor-pointer shadow-xl shadow-orange-500/10 hover-lift group"
+                      className="bg-gradient-to-br from-orange-500/20 to-red-500/20 border border-orange-500/30 rounded-lg p-6 hover:border-orange-500/60 hover:bg-orange-500/30 transition-all cursor-pointer shadow-xl shadow-orange-500/10  group"
                     >
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex-1">
-                          <h3 className="text-xl font-bold text-white group-hover:text-orange-200 transition-colors line-clamp-2">{submodulo.nome}</h3>
+                          <h3 className="text-xl font-bold text-foreground group-hover:text-orange-200 transition-colors line-clamp-2">{submodulo.nome}</h3>
                         </div>
                         <div className="flex gap-2 flex-shrink-0 ml-2">
                           {submodulo.descricao && (
@@ -1609,10 +1735,10 @@ function AulasPageContent() {
                         </div>
                       </div>
                       {submodulo.descricao && (
-                        <p className="text-white/60 text-sm mb-4 line-clamp-2">{submodulo.descricao}</p>
+                        <p className="text-muted-foreground text-sm mb-4 line-clamp-2">{submodulo.descricao}</p>
                       )}
-                      <div className="flex items-center justify-between pt-4 border-t border-white/10">
-                        <span className="text-white/70 text-sm">Aulas</span>
+                      <div className="flex items-center justify-between pt-4 border-t border-border">
+                        <span className="text-muted-foreground text-sm">Aulas</span>
                         <span className="text-2xl font-bold text-orange-300">{aulaCount}</span>
                       </div>
                     </div>
@@ -1623,12 +1749,12 @@ function AulasPageContent() {
           ) : (
             // Tela de Aulas
             <div>
-              <div className="sticky top-16 sm:top-20 z-40 mb-6">
-                <div className="inline-flex backdrop-blur-md bg-white/5 border border-white/10 rounded-xl p-1">
+              <div className="sticky top-14 sm:top-16 z-20 mb-4 -mx-1">
+                <div className="inline-flex bg-card border border-border rounded-md p-0.5 shadow-sm">
                   <Button
                     onClick={() => setSelectedSubmodulo(null)}
                     variant="ghost"
-                    className="text-white hover:bg-white/10"
+                    className="text-foreground hover:bg-muted"
                   >
                     <ChevronRight className="h-4 w-4 rotate-180 mr-2" />
                     Voltar aos Submódulos
@@ -1636,16 +1762,16 @@ function AulasPageContent() {
                 </div>
               </div>
 
-              <h2 className="text-3xl font-bold text-white mb-8">Aulas</h2>
+              <h2 className="font-heading text-2xl sm:text-3xl font-semibold text-foreground mb-5">Aulas</h2>
               {searchTerm && (
                 <div className="mb-6">
                   <div className="relative">
-                    <Search className="absolute left-3 top-3 h-4 w-4 text-white/40" />
+                    <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       placeholder="Buscar por título ou descrição..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-white/40"
+                      className="pl-10 bg-card border-border text-foreground placeholder:text-muted-foreground"
                     />
                   </div>
                 </div>
@@ -1669,18 +1795,18 @@ function AulasPageContent() {
                 return (
                   <>
                     {aulasParaMostrar.length === 0 ? (
-                      <div className="backdrop-blur-md bg-white/5 border border-emerald-500/20 rounded-2xl p-12 text-center animate-fadeInUp">
-                        <p className="text-white/60 text-lg">Nenhuma aula encontrada</p>
+                      <div className="bg-card border border-border rounded-lg p-12 text-center ">
+                        <p className="text-muted-foreground text-lg">Nenhuma aula encontrada</p>
                       </div>
                     ) : (
                       <>
-                        <h3 className="text-2xl font-bold text-white mb-6">Aulas ({aulasParaMostrar.length})</h3>
+                        <h3 className="text-2xl font-bold text-foreground mb-6">Aulas ({aulasParaMostrar.length})</h3>
                         <div className="space-y-4">
                           {aulasParaMostrar.map((aula, idx) => (
                             <div
                               key={String(aula._id)}
-                              className="backdrop-blur-md bg-white/5 border border-emerald-500/20 rounded-2xl overflow-hidden hover:border-emerald-500/40 transition-all shadow-xl shadow-emerald-500/5 animate-fadeInUp hover-lift relative"
-                              style={{ animationDelay: `${idx * 0.1}s` }}
+                              className="bg-card border border-border rounded-lg overflow-hidden hover:border-primary/35 transition-all shadow-sm   relative"
+                              
                             >
                               {(isAdmin || user?.secondaryRole === 'monitor') && (
                                 <button
@@ -1689,22 +1815,22 @@ function AulasPageContent() {
                                     e.stopPropagation()
                                     router.push(`/aulas/gerenciar/aulas/${aula._id}/editar`)
                                   }}
-                                  className="absolute bottom-2 right-2 z-20 p-2 rounded-lg bg-black/30 border border-white/20 hover:bg-black/40 transition-colors"
+                                  className="absolute bottom-2 right-2 z-20 p-2 rounded-lg bg-black/30 border border-border hover:bg-black/40 transition-colors"
                                   title="Editar aula"
                                 >
-                                  <Pencil className="h-3.5 w-3.5 text-white" />
+                                  <Pencil className="h-3.5 w-3.5 text-foreground" />
                                 </button>
                               )}
                               {/* Bloqueio por Data de Liberação */}
                               {isAulaBloqueadaPorData(aula) && (
-                                <div className="absolute inset-0 bg-black/35 rounded-2xl flex items-center justify-center backdrop-blur-sm z-10">
+                                <div className="absolute inset-0 bg-black/35 rounded-lg flex items-center justify-center z-10">
                                   <div className="text-center px-6">
                                     <AlertCircle className="h-8 w-8 text-[#468152] mx-auto mb-2" />
                                     <p className="text-sm font-semibold text-[#468152]/80">Ainda não liberada</p>
-                                    <p className="text-xs text-white/70 mt-1">
+                                    <p className="text-xs text-muted-foreground mt-1">
                                       Disponível em {formatarDataLiberacao(new Date(aula.dataLiberacao))}
                                     </p>
-                                    <p className="text-xs text-white/60 mt-1">
+                                    <p className="text-xs text-muted-foreground mt-1">
                                       Faltam {formatarTempoRestante(new Date(aula.dataLiberacao))}
                                     </p>
                                   </div>
@@ -1727,7 +1853,7 @@ function AulasPageContent() {
                                       className="w-full h-full flex items-center justify-center"
                                       style={{ backgroundColor: aula.capa.cor || '#3b82f6' }}
                                     >
-                                      <p className="text-2xl font-bold text-white text-center px-4">{aula.capa.titulo}</p>
+                                      <p className="text-2xl font-bold text-foreground text-center px-4">{aula.capa.titulo}</p>
                                     </div>
                                   ) : null}
                                 </div>
@@ -1737,10 +1863,10 @@ function AulasPageContent() {
                                 <div className="flex items-start justify-between gap-4">
                                   <div className="flex-1">
                                     <div className="flex items-center gap-2 mb-2 flex-wrap">
-                                      <h3 className="text-lg font-semibold text-white">{aula.titulo}</h3>
+                                      <h3 className="text-lg font-semibold text-foreground">{aula.titulo}</h3>
                                       <div className="flex gap-2 flex-wrap">
                                         {aula.tipo === 'ao-vivo' ? (
-                                          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-semibold animate-glowPulse">
+                                          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-semibold ">
                                             <Zap className="h-3 w-3" />
                                             Ao Vivo
                                           </span>
@@ -1756,7 +1882,7 @@ function AulasPageContent() {
                                             Premium
                                           </span>
                                         ) : (
-                                          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold">
+                                          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 text-primary border border-border text-xs font-semibold">
                                             <Globe className="h-3 w-3" />
                                             Gratuita
                                           </span>
@@ -1764,9 +1890,9 @@ function AulasPageContent() {
                                       </div>
                                     </div>
                                     {aula.descricao && (
-                                      <p className="text-sm text-white/70 mb-2">{aula.descricao}</p>
+                                      <p className="text-sm text-muted-foreground mb-2">{aula.descricao}</p>
                                     )}
-                                    <p className="text-xs text-white/50">
+                                    <p className="text-xs text-muted-foreground">
                                       Postada em {new Date(aula.criadoEm).toLocaleDateString('pt-BR')}
                                       {aula.criadoEm !== aula.atualizadoEm && (
                                         <> • Atualizada em {new Date(aula.atualizadoEm).toLocaleDateString('pt-BR')}</>
@@ -1781,14 +1907,14 @@ function AulasPageContent() {
                                           mensagem: `Esta aula será liberada em ${formatarDataLiberacao(new Date(aula.dataLiberacao))}.\n\nVocê pode ver a aula na lista, mas não pode acessá-la antes do lançamento.`
                                         })
                                       }}
-                                      className="w-full mt-3 sm:mt-4 px-3 sm:px-4 py-2 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white rounded-lg font-semibold transition-all duration-300 hover-lift flex items-center justify-center gap-2 text-sm sm:text-base opacity-70"
+                                      className="w-full mt-3 sm:mt-4 px-3 sm:px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-semibold transition-all duration-300  flex items-center justify-center gap-2 text-sm sm:text-base opacity-70"
                                     >
                                       Ver Aula
                                     </button>
                                   ) : (
                                     <Link
                                       href={`/aulas/${aula._id}`}
-                                      className="w-full mt-3 sm:mt-4 px-3 sm:px-4 py-2 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white rounded-lg font-semibold transition-all duration-300 hover-lift flex items-center justify-center gap-2 text-sm sm:text-base"
+                                      className="w-full mt-3 sm:mt-4 px-3 sm:px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-semibold transition-all duration-300  flex items-center justify-center gap-2 text-sm sm:text-base"
                                     >
                                       Ver Aula
                                     </Link>
@@ -1809,17 +1935,17 @@ function AulasPageContent() {
           {/* Dialog de Descrição */}
           {descricaoDialog && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-              <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-2xl">
+              <div className="bg-muted border border-border rounded-lg p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-2xl">
                 <div className="flex items-start justify-between mb-4">
-                  <h2 className="text-2xl font-bold text-white">{descricaoDialog.titulo}</h2>
+                  <h2 className="text-2xl font-bold text-foreground">{descricaoDialog.titulo}</h2>
                   <button
                     onClick={() => setDescricaoDialog(null)}
-                    className="text-white/60 hover:text-white transition-colors"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
                   >
                     ✕
                   </button>
                 </div>
-                <p className="text-white/80 whitespace-pre-wrap leading-relaxed">{descricaoDialog.descricao}</p>
+                <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">{descricaoDialog.descricao}</p>
               </div>
             </div>
           )}
@@ -1827,16 +1953,16 @@ function AulasPageContent() {
           {/* Dialog de Bloqueio */}
           {bloqueioDialog && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-              <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-6 max-w-lg w-full shadow-2xl">
+              <div className="bg-muted border border-border rounded-lg p-6 max-w-lg w-full shadow-2xl">
                 <div className="flex items-start gap-3">
                   <AlertCircle className="h-6 w-6 text-[#468152] mt-0.5" />
                   <div className="flex-1">
-                    <h2 className="text-xl font-bold text-white">{bloqueioDialog.titulo}</h2>
-                    <p className="text-white/80 whitespace-pre-wrap leading-relaxed mt-2">{bloqueioDialog.mensagem}</p>
+                    <h2 className="text-xl font-bold text-foreground">{bloqueioDialog.titulo}</h2>
+                    <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed mt-2">{bloqueioDialog.mensagem}</p>
                     <div className="mt-4 flex justify-end">
                       <Button
                         onClick={() => setBloqueioDialog(null)}
-                        className="bg-white/10 hover:bg-white/20 text-white border border-white/20"
+                        className="bg-muted hover:bg-white/20 text-foreground border border-border"
                       >
                         Entendi
                       </Button>
@@ -1850,15 +1976,15 @@ function AulasPageContent() {
           {/* Dialog de Editar/Criar Aviso (Admin) */}
           {editarAvisoDialog && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-              <div className="backdrop-blur-md bg-slate-800/95 border border-white/20 rounded-2xl p-6 max-w-lg w-full shadow-2xl">
+              <div className="bg-slate-800/95 border border-border rounded-lg p-6 max-w-lg w-full shadow-2xl">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                  <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
                     <Bell className="h-5 w-5 text-[#E2A43E]" />
                     {aviso ? 'Editar Aviso' : 'Criar Aviso'}
                   </h2>
                   <button
                     onClick={() => setEditarAvisoDialog(false)}
-                    className="text-white/60 hover:text-white transition-colors"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
                   >
                     ✕
                   </button>
@@ -1866,28 +1992,28 @@ function AulasPageContent() {
 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-white/80 mb-1">Título</label>
+                    <label className="block text-sm font-medium text-muted-foreground mb-1">Título</label>
                     <input
                       type="text"
                       value={avisoForm.titulo}
                       onChange={(e) => setAvisoForm({ ...avisoForm, titulo: e.target.value })}
-                      className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder:text-white/40"
+                      className="w-full px-3 py-2 bg-muted border border-border rounded-lg text-foreground placeholder:text-muted-foreground"
                       placeholder="Título do aviso"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-white/80 mb-1">Mensagem (HTML permitido)</label>
+                    <label className="block text-sm font-medium text-muted-foreground mb-1">Mensagem (HTML permitido)</label>
                     <textarea
                       value={avisoForm.mensagem}
                       onChange={(e) => setAvisoForm({ ...avisoForm, mensagem: e.target.value })}
-                      className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder:text-white/40 min-h-[100px]"
+                      className="w-full px-3 py-2 bg-muted border border-border rounded-lg text-foreground placeholder:text-muted-foreground min-h-[100px]"
                       placeholder="Mensagem do aviso..."
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-white/80 mb-2">Tipo</label>
+                    <label className="block text-sm font-medium text-muted-foreground mb-2">Tipo</label>
                     <div className="flex flex-wrap gap-2">
                       {(['info', 'warning', 'success', 'error'] as const).map((tipo) => (
                         <button
@@ -1896,9 +2022,9 @@ function AulasPageContent() {
                           className={`px-3 py-1.5 rounded-lg border transition-all ${avisoForm.tipo === tipo
                             ? tipo === 'info' ? 'bg-blue-500/30 border-blue-400 text-blue-300' :
                               tipo === 'warning' ? 'bg-yellow-500/30 border-yellow-400 text-yellow-300' :
-                                tipo === 'success' ? 'bg-emerald-500/30 border-emerald-400 text-emerald-300' :
+                                tipo === 'success' ? 'bg-emerald-500/30 border-emerald-400 text-primary' :
                                   'bg-red-500/30 border-red-400 text-red-300'
-                            : 'bg-white/5 border-white/20 text-white/60 hover:bg-white/10'
+                            : 'bg-card border-border text-muted-foreground hover:bg-muted'
                             }`}
                         >
                           {tipo === 'info' ? 'Informação' :
@@ -1914,14 +2040,14 @@ function AulasPageContent() {
                   <Button
                     onClick={salvarAviso}
                     disabled={salvandoAviso || !avisoForm.titulo || !avisoForm.mensagem}
-                    className="flex-1 bg-gradient-to-r from-[#468152] to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white"
+                    className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
                   >
                     {salvandoAviso ? 'Salvando...' : 'Salvar Aviso'}
                   </Button>
                   <Button
                     onClick={() => setEditarAvisoDialog(false)}
                     variant="outline"
-                    className="border-white/20 text-white hover:bg-white/10"
+                    className="border-border text-foreground hover:bg-muted"
                   >
                     Cancelar
                   </Button>
@@ -1940,7 +2066,7 @@ function AulasPageContent() {
 export default function AulasPage() {
   return (
     <Suspense fallback={<LogoLoading message="Iniciando módulo de aulas..." size="lg" fullscreen />}>
-      <AppShell headerTitle="Aulas" headerSubtitle="Aprenda com aulas ao-vivo e gravadas">
+      <AppShell headerTitle="Aulas" headerSubtitle="Cascata por setor e módulo">
         <AulasPageContent />
       </AppShell>
     </Suspense>

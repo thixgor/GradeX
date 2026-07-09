@@ -125,7 +125,8 @@ export default function ShopCheckoutPage() {
 
   return (
     <AppShell headerTitle="Finalizar pedido">
-      <div className="container mx-auto max-w-5xl px-4 py-6">
+      <div className="surface-page container mx-auto max-w-5xl px-4 py-6">
+        <p className="editorial-mark mb-3">Checkout · loja</p>
         <Button variant="ghost" size="sm" onClick={() => router.back()} className="mb-4 gap-1.5">
           <ArrowLeft className="h-4 w-4" /> Voltar
         </Button>
@@ -134,7 +135,7 @@ export default function ShopCheckoutPage() {
           {/* Coluna esquerda: itens + entrega */}
           <div className="space-y-6">
             {/* Itens */}
-            <section className="rounded-2xl border border-border/50 bg-card/60 p-4 backdrop-blur-sm">
+            <section className="rounded-lg border border-border bg-card p-4 shadow-sm">
               <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Itens do pedido</h2>
               <div className="space-y-3">
                 {items.map((i) => (
@@ -172,7 +173,7 @@ export default function ShopCheckoutPage() {
             </section>
 
             {/* Entrega */}
-            <section className="rounded-2xl border border-border/50 bg-card/60 p-4 backdrop-blur-sm">
+            <section className="rounded-lg border border-border bg-card p-4 shadow-sm">
               <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Forma de entrega</h2>
               <div className="grid gap-3 sm:grid-cols-2">
                 <button
@@ -304,7 +305,7 @@ export default function ShopCheckoutPage() {
             <motion.section
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="sticky top-4 rounded-2xl border border-border/50 bg-card/70 p-5 backdrop-blur-sm shadow-lg"
+              className="sticky top-4 rounded-lg border border-border bg-card p-5 shadow-sm"
             >
               <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Resumo</h2>
               <div className="space-y-1.5 text-sm">

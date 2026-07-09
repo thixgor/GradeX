@@ -839,24 +839,21 @@ function MateriaisContent() {
   const isSoftLoading = refreshing || isRoutePending
 
   return (
-    <div className="min-h-screen pb-20">
+    <div className="surface-page pb-20">
       {/* ─── Hero / Header ─── */}
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
-        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/3" />
-        <div className="absolute bottom-0 left-0 w-[350px] h-[350px] bg-accent/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/3" />
-
-        <div className="relative px-4 sm:px-6 lg:px-8 pt-8 pb-6">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/20">
-                <ShoppingCart className="h-6 w-6 text-white" />
+      <div className="relative border-b border-border bg-card/40">
+        <div className="relative px-4 sm:px-6 lg:px-8 pt-7 pb-6">
+          <motion.div initial={false}>
+            <p className="editorial-mark mb-2">Marketplace</p>
+            <div className="flex items-center gap-3 mb-1">
+              <div className="h-11 w-11 rounded-md bg-primary flex items-center justify-center shrink-0">
+                <ShoppingCart className="h-5 w-5 text-primary-foreground" />
               </div>
-              <div>
-                <h1 className="text-3xl sm:text-4xl font-heading font-bold bg-gradient-to-r from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent">
+              <div className="min-w-0">
+                <h1 className="text-2xl sm:text-3xl font-heading font-semibold tracking-tight text-foreground">
                   Materiais
                 </h1>
-                <p className="text-sm text-muted-foreground">Marketplace de materiais de estudo</p>
+                <p className="text-sm text-muted-foreground">Resumos, apostilas e pacotes por disciplina</p>
               </div>
             </div>
           </motion.div>
@@ -868,7 +865,7 @@ function MateriaisContent() {
                 initial={{ opacity: 0, y: -10, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                className="mt-4 p-4 rounded-2xl glass-card border-green-500/30 bg-green-500/10"
+                className="mt-4 p-4 rounded-2xl border border-border bg-card rounded-lg border-green-500/30 bg-green-500/10"
               >
                 <div className="flex items-center gap-3">
                   <div className="h-8 w-8 rounded-full bg-green-500/20 flex items-center justify-center">
@@ -888,7 +885,7 @@ function MateriaisContent() {
                 initial={{ opacity: 0, y: -10, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                className="mt-4 p-4 rounded-2xl glass-card border-red-500/30 bg-red-500/10"
+                className="mt-4 p-4 rounded-2xl border border-border bg-card rounded-lg border-red-500/30 bg-red-500/10"
               >
                 <div className="flex items-center gap-3">
                   <div className="h-8 w-8 rounded-full bg-red-500/20 flex items-center justify-center">
@@ -905,11 +902,11 @@ function MateriaisContent() {
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mt-6 flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Buscar materiais..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10 glass-input rounded-xl h-11 border-white/20" />
+              <Input placeholder="Buscar materiais..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10 border border-border bg-card rounded-xl h-11 border-white/20" />
             </div>
             <div className="flex gap-2">
               {(['all', 'free', 'paid'] as const).map((f) => (
-                <button key={f} onClick={() => setActiveFilter(f)} className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${activeFilter === f ? 'bg-primary text-white shadow-lg shadow-primary/25' : 'glass-button text-muted-foreground hover:text-foreground'}`}>
+                <button key={f} onClick={() => setActiveFilter(f)} className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${activeFilter === f ? 'bg-primary text-white shadow-lg shadow-primary/25' : 'border border-border bg-muted text-muted-foreground hover:text-foreground'}`}>
                   {f === 'all' ? 'Todos' : f === 'free' ? 'Gratuitos' : 'Pagos'}
                 </button>
               ))}
@@ -917,7 +914,7 @@ function MateriaisContent() {
           </motion.div>
 
           {/* Tabs */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mt-4 flex gap-1 p-1 rounded-xl glass-sm w-fit">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mt-4 flex gap-1 p-1 rounded-xl border border-border bg-muted/40 w-fit">
             {([
               { id: 'materials', label: 'Materiais', icon: <FileText className="h-4 w-4" /> },
               { id: 'packages', label: 'Pacotes', icon: <Package className="h-4 w-4" /> },
@@ -1088,7 +1085,7 @@ function MateriaisContent() {
             {loading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="rounded-2xl glass-card p-4 animate-pulse">
+                  <div key={i} className="rounded-2xl border border-border bg-card rounded-lg p-4 animate-pulse">
                     <div className="h-40 rounded-xl bg-muted mb-3" />
                     <div className="h-4 bg-muted rounded w-3/4 mb-2" />
                     <div className="h-3 bg-muted rounded w-1/2" />
@@ -1097,7 +1094,7 @@ function MateriaisContent() {
               </div>
             ) : visibleMaterials.length === 0 && folders.length === 0 && featuredMaterials.length === 0 ? (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
-                <div className="h-20 w-20 rounded-full glass-card mx-auto flex items-center justify-center mb-4">
+                <div className="h-20 w-20 rounded-full border border-border bg-card rounded-lg mx-auto flex items-center justify-center mb-4">
                   <Package className="h-8 w-8 text-muted-foreground" />
                 </div>
                 <h3 className="text-lg font-heading font-bold mb-2">Nenhum material encontrado</h3>
@@ -1136,7 +1133,7 @@ function MateriaisContent() {
             {loading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="rounded-2xl glass-card p-6 animate-pulse">
+                  <div key={i} className="rounded-2xl border border-border bg-card rounded-lg p-6 animate-pulse">
                     <div className="aspect-[16/10] rounded-xl bg-muted mb-4" />
                     <div className="h-5 bg-muted rounded w-3/4 mb-3" />
                     <div className="h-3 bg-muted rounded w-1/2" />
@@ -1145,7 +1142,7 @@ function MateriaisContent() {
               </div>
             ) : packages.length === 0 ? (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
-                <div className="h-20 w-20 rounded-full glass-card mx-auto flex items-center justify-center mb-4">
+                <div className="h-20 w-20 rounded-full border border-border bg-card rounded-lg mx-auto flex items-center justify-center mb-4">
                   <Package className="h-8 w-8 text-muted-foreground" />
                 </div>
                 <h3 className="text-lg font-heading font-bold mb-2">Nenhum pacote disponível</h3>
@@ -1181,7 +1178,7 @@ function MateriaisContent() {
               {loading ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {Array.from({ length: 6 }).map((_, i) => (
-                    <div key={i} className="rounded-2xl glass-card animate-pulse">
+                    <div key={i} className="rounded-2xl border border-border bg-card rounded-lg animate-pulse">
                       <div className="aspect-[16/10] rounded-t-2xl bg-muted" />
                       <div className="p-4 space-y-2">
                         <div className="h-4 bg-muted rounded w-3/4" />
@@ -1192,7 +1189,7 @@ function MateriaisContent() {
                 </div>
               ) : myMaterials.length === 0 ? (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
-                  <div className="h-20 w-20 rounded-full glass-card mx-auto flex items-center justify-center mb-4">
+                  <div className="h-20 w-20 rounded-full border border-border bg-card rounded-lg mx-auto flex items-center justify-center mb-4">
                     <Check className="h-8 w-8 text-muted-foreground" />
                   </div>
                   <h3 className="text-lg font-heading font-bold mb-2">Nenhum material ainda</h3>
@@ -1243,7 +1240,7 @@ function MateriaisContent() {
             {!physicalLoaded ? (
               <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="rounded-2xl glass-card animate-pulse">
+                  <div key={i} className="rounded-2xl border border-border bg-card rounded-lg animate-pulse">
                     <div className="aspect-[4/5] rounded-t-2xl bg-muted" />
                     <div className="p-4 space-y-2">
                       <div className="h-4 bg-muted rounded w-3/4" />
@@ -1254,7 +1251,7 @@ function MateriaisContent() {
               </div>
             ) : physicalProducts.length === 0 ? (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
-                <div className="h-20 w-20 rounded-full glass-card mx-auto flex items-center justify-center mb-4">
+                <div className="h-20 w-20 rounded-full border border-border bg-card rounded-lg mx-auto flex items-center justify-center mb-4">
                   <Package className="h-8 w-8 text-muted-foreground" />
                 </div>
                 <h3 className="text-lg font-heading font-bold mb-2">Nenhum produto na loja ainda</h3>
@@ -1401,7 +1398,7 @@ function FolderCard({
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: Math.min(index * 0.03, 0.15), duration: 0.2 }}
-      className="group relative rounded-2xl glass-card hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer"
+      className="group relative rounded-2xl border border-border bg-card rounded-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer"
       onClick={onClick}
       onMouseEnter={onPrefetch}
       onPointerEnter={onPrefetch}
@@ -1481,7 +1478,7 @@ function MaterialCard({
         <LockedGroupOverlay allowedGroups={material.allowedGroups} onPreview={onPreview} />
       )}
 
-      <div className={`glass-card h-full flex flex-col transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/10 ${showLocked ? 'pointer-events-none select-none' : ''}`}>
+      <div className={`border border-border bg-card rounded-lg h-full flex flex-col transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/10 ${showLocked ? 'pointer-events-none select-none' : ''}`}>
         <Link href={`/materiais/${material._id}`} className="block relative aspect-[16/10] overflow-hidden cursor-pointer">
           {material.coverImage ? (
             <Image src={material.coverImage} alt={material.title} fill className="object-cover transition-transform duration-500 group-hover:scale-110" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw" />
@@ -1666,7 +1663,7 @@ function FeaturedCard({
         <LockedGroupOverlay allowedGroups={material.allowedGroups} onPreview={onPreview} />
       )}
 
-      <div className={`relative glass-card border-primary/20 transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/20 group-hover:border-primary/40 ${showLocked ? 'pointer-events-none select-none' : ''}`}>
+      <div className={`relative border border-border bg-card rounded-lg border-primary/20 transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/20 group-hover:border-primary/40 ${showLocked ? 'pointer-events-none select-none' : ''}`}>
         <div className="absolute -top-1 -right-1 z-10">
           <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl rounded-tr-2xl shadow-lg">
             <Star className="h-3 w-3 inline mr-0.5 -mt-0.5" /> DESTAQUE
@@ -1830,7 +1827,7 @@ function PackageCard({
       {showLocked && (
         <LockedGroupOverlay allowedGroups={pkg.allowedGroups} onPreview={onPreview} />
       )}
-      <div className={`glass-card rounded-2xl overflow-hidden transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/15 h-full flex flex-col ${showLocked ? 'pointer-events-none select-none' : ''}`}>
+      <div className={`border border-border bg-card rounded-lg rounded-2xl overflow-hidden transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/15 h-full flex flex-col ${showLocked ? 'pointer-events-none select-none' : ''}`}>
         <Link href={`/pacotes/${pkg._id}`} className="block relative aspect-[16/10] overflow-hidden cursor-pointer">
           {pkg.coverImage ? (
             <Image src={pkg.coverImage} alt={pkg.title} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 768px) 100vw, 50vw" />
@@ -2162,7 +2159,7 @@ function PreviewModal({
 // ─── Page Export with AppShell ───────────────────────────────
 export default function MateriaisPage() {
   return (
-    <AppShell allowGuest headerTitle="Materiais" headerSubtitle="Marketplace de materiais de estudo">
+    <AppShell allowGuest headerTitle="Materiais" headerSubtitle="Pastas, pacotes e loja">
       <MateriaisContent />
     </AppShell>
   )

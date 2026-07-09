@@ -139,10 +139,23 @@ export async function getSession(): Promise<TokenPayload | null> {
   const cookieStore = await cookies()
   const token = cookieStore.get('auth-token')
 
-  if (!token) return null
+  if (!token) {
+    // Local UI testing without login (see lib/dev-auth.ts + DEV_BYPASS_AUTH)
+    if (process.env.NODE_ENV !== 'production' && process.env.DEV_BYPASS_AUTH === 'true') {
+      const { getDevMockSession } = await import('./dev-auth')
+      return getDevMockSession()
+    }
+    return null
+  }
 
   const payload = await verifyToken(token.value)
-  if (!payload) return null
+  if (!payload) {
+    if (process.env.NODE_ENV !== 'production' && process.env.DEV_BYPASS_AUTH === 'true') {
+      const { getDevMockSession } = await import('./dev-auth')
+      return getDevMockSession()
+    }
+    return null
+  }
 
   // Cache key vincula payload+token para evitar reuso após troca de conta
   // no mesmo browser, e usa só os últimos chars do token para limitar

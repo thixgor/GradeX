@@ -522,7 +522,7 @@ function DashboardContent() {
   }, [stats])
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+    <div className="surface-page">
 
       {/* ═══ SPOTIFY LYRICS OVERLAY ═══════════════════════════════ */}
       <AnimatePresence>
@@ -628,23 +628,21 @@ function DashboardContent() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="relative overflow-hidden rounded-2xl hero-gradient text-white"
+          className="relative overflow-hidden rounded-lg hero-gradient"
         >
-          <div className="relative z-10 p-6 sm:p-8 lg:p-10">
+          <div className="relative z-10 p-5 sm:p-7 lg:p-9">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
               {/* Left: Greeting + Context */}
-              <div className="space-y-3 flex-1">
+              <div className="space-y-3 flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-sm font-medium text-white/70 tracking-wide uppercase">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#E2A43E]" />
+                  <span className="font-clinical text-[11px] font-semibold tracking-[0.14em] uppercase text-[#F0EBE0]/70">
                     {greeting}
                   </span>
                 </div>
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
+                <h1 className="font-heading text-2xl sm:text-3xl lg:text-[2.15rem] font-semibold tracking-tight text-[#F0EBE0] leading-tight">
                   {firstName ? `${firstName}, ` : ''}
-                  <span className="bg-gradient-to-r from-emerald-300 via-emerald-200 to-amber-200 bg-clip-text text-transparent">
-                    seja o foco.
-                  </span>
+                  <em className="not-italic text-[#6BA876]">seja o foco.</em>
                 </h1>
 
                 {/* Rotating Motivational Phrase */}
@@ -679,22 +677,14 @@ function DashboardContent() {
 
                 {/* Academic Focus Badges */}
                 <div className="flex flex-wrap items-center gap-2 pt-1">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-medium border border-white/10">
-                    <GraduationCap className="h-3.5 w-3.5" />
-                    Ciências Médicas
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-medium border border-white/10">
-                    <BookOpen className="h-3.5 w-3.5" />
-                    Ciências Psicossociais
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-medium border border-white/10">
-                    <BookOpen className="h-3.5 w-3.5" />
-                    Ciências Biomédicas
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-medium border border-white/10">
-                    <BookOpen className="h-3.5 w-3.5" />
-                    Ciências Odontológicas
-                  </span>
+                  {['Médicas', 'Psicossociais', 'Biomédicas', 'Odontológicas'].map((label) => (
+                    <span
+                      key={label}
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium border border-white/15 bg-white/5 text-[#F0EBE0]/85"
+                    >
+                      {label}
+                    </span>
+                  ))}
                 </div>
               </div>
 
@@ -702,11 +692,11 @@ function DashboardContent() {
               <div className="flex flex-col items-start sm:items-end gap-3">
                 <Button
                   onClick={() => router.push('/provas')}
-                  className="bg-white/15 hover:bg-white/25 text-white border border-white/20 backdrop-blur-sm rounded-xl px-6 h-12 text-sm font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-white/5 group"
+                  className="bg-[#CE5929] hover:bg-[#CE5929]/90 text-white border-0 rounded-md px-5 h-11 text-sm font-semibold shadow-[0_8px_20px_-10px_rgba(206,89,41,0.6)] group"
                 >
-                  <Play className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
-                  Continuar Estudando
-                  <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  <Play className="h-4 w-4 mr-2" />
+                  Continuar estudando
+                  <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-0.5 transition-transform" />
                 </Button>
 
                 {/* Streak Indicator */}

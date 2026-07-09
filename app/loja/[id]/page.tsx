@@ -92,7 +92,8 @@ export default function ProductPage() {
 
   return (
     <AppShell headerTitle="Loja">
-      <div className="container mx-auto max-w-5xl px-4 py-6">
+      <div className="surface-page container mx-auto max-w-5xl px-4 py-6">
+        <p className="editorial-mark mb-3">Loja física</p>
         <div className="mb-4 flex items-center justify-between">
           <Button variant="ghost" size="sm" onClick={() => router.push('/materiais?tab=loja')} className="gap-1.5">
             <ArrowLeft className="h-4 w-4" /> Voltar
@@ -136,7 +137,7 @@ export default function ProductPage() {
                 )}
               </div>
 
-              <h1 className="text-2xl font-extrabold leading-tight text-foreground">{product.title}</h1>
+              <h1 className="font-heading text-2xl font-semibold leading-tight tracking-tight text-foreground sm:text-3xl">{product.title}</h1>
 
               {product.linkMode === 'addon' && linkedTitle && (
                 <p className="mt-1.5 inline-flex items-center gap-1.5 text-sm text-muted-foreground">

@@ -426,9 +426,9 @@ export function Sidebar({
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-50 h-screen min-h-[100svh] max-h-[100dvh] bg-background border-r flex flex-col overflow-hidden',
+          'fixed inset-y-0 left-0 z-50 h-screen min-h-[100svh] max-h-[100dvh] bg-card border-r border-border flex flex-col overflow-hidden',
           collapsed ? 'lg:w-[72px]' : 'lg:w-[280px]',
-          'w-[280px]',
+          'w-[min(280px,88vw)]',
           isOpen ? 'translate-x-0' : '-translate-x-full',
           'lg:translate-x-0'
         )}
@@ -538,7 +538,7 @@ export function Sidebar({
             <Button
               onClick={onCreateExam}
               disabled={tierLimitExceeded}
-              className="w-full bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90 text-white font-semibold soul-light soul-light-brand overflow-hidden"
+              className="w-full rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold overflow-hidden shadow-sm"
               style={{
                 justifyContent: isCollapsed ? 'center' : 'flex-start',
                 gap: isCollapsed ? 0 : 12,

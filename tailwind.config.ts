@@ -9,8 +9,9 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        heading: ['var(--font-rowdies)', 'sans-serif'],
-        body: ['var(--font-space-grotesk)', 'sans-serif'],
+        heading: ['var(--font-heading)', 'Georgia', 'serif'],
+        body: ['var(--font-body)', 'system-ui', 'sans-serif'],
+        clinical: ['var(--font-clinical)', 'ui-monospace', 'monospace'],
       },
       colors: {
         border: 'hsl(var(--border))',

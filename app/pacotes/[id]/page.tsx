@@ -303,7 +303,7 @@ export default function PackageDetailPage() {
 
   return (
     <AppShell allowGuest headerTitle={pkg.title} headerSubtitle="Pacote">
-      <div className={`min-h-full relative ${showMobilePurchaseBar ? 'pb-28 xl:pb-0' : ''}`}>
+      <div className={`surface-page min-h-full relative ${showMobilePurchaseBar ? 'pb-28 xl:pb-0' : ''}`}>
         {/* Ambient blobs */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
           <div className="absolute -top-24 -left-24 w-[380px] h-[380px] rounded-full bg-primary/10 blur-2xl" />
@@ -314,16 +314,16 @@ export default function PackageDetailPage() {
 
           {/* Breadcrumb */}
           <motion.div
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.25 }}
+            initial={false}
+            
+            
             className="flex items-center gap-2 mb-6 flex-wrap"
           >
             <Link
               href="/materiais"
               className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors group"
             >
-              <span className="h-7 w-7 rounded-lg glass-card flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+              <span className="h-7 w-7 rounded-lg bg-card border border-border flex items-center justify-center group-hover:bg-primary/10 transition-colors">
                 <ArrowLeft className="h-3.5 w-3.5" />
               </span>
               Materiais
@@ -350,13 +350,13 @@ export default function PackageDetailPage() {
 
             {/* LEFT: Media + Items */}
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35 }}
+              initial={false}
+              
+              
               className="flex-1 min-w-0 space-y-4"
             >
               {/* Cover */}
-              <div className="rounded-3xl overflow-hidden glass-card shadow-2xl shadow-primary/8 border border-border/40">
+              <div className="rounded-xl overflow-hidden bg-card border border-border shadow-sm border border-border/40">
                 {pkg.coverImage ? (
                   <div className="relative w-full overflow-hidden" style={{ aspectRatio: '16/9' }}>
                     <Image
@@ -369,7 +369,7 @@ export default function PackageDetailPage() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                     <div className="absolute bottom-4 left-4 flex items-center gap-2 flex-wrap">
-                      <span className="px-3 py-1.5 rounded-xl backdrop-blur-md bg-violet-500/30 border border-violet-400/30 text-violet-50 text-sm font-bold flex items-center gap-1.5">
+                      <span className="px-3 py-1.5 rounded-xl backdrop-blur-md bg-primary/80 border border-primary/40 text-primary-foreground text-sm font-bold flex items-center gap-1.5">
                         <Package className="h-3.5 w-3.5" />
                         Pacote · {totalItems} {totalItems === 1 ? 'item' : 'itens'}
                       </span>
@@ -381,7 +381,7 @@ export default function PackageDetailPage() {
                     </div>
                   </div>
                 ) : (
-                  <div className="w-full flex items-center justify-center bg-gradient-to-br from-violet-500/20 via-primary/15 to-accent/20" style={{ aspectRatio: '16/9' }}>
+                  <div className="w-full flex items-center justify-center bg-gradient-to-br from-primary/15 via-muted to-accent/10" style={{ aspectRatio: '16/9' }}>
                     <Package className="h-20 w-20 text-primary" />
                   </div>
                 )}
@@ -407,7 +407,7 @@ export default function PackageDetailPage() {
                     className={`ml-auto flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg transition-all font-medium border ${
                       copied
                         ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
-                        : 'text-muted-foreground hover:text-foreground glass-button border-border/40'
+                        : 'text-muted-foreground hover:text-foreground bg-muted border border-border border-border/40'
                     }`}
                   >
                     {copied ? <CheckCheck className="h-3.5 w-3.5" /> : <Share2 className="h-3.5 w-3.5" />}
@@ -419,9 +419,9 @@ export default function PackageDetailPage() {
               {/* Lote dinâmico por evento */}
               {hasTier && eventState && !access.hasAccess && (
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.05 }}
+                  initial={false}
+                  
+                  
                 >
                   <PricingEventCountdown state={eventState} />
                 </motion.div>
@@ -429,10 +429,10 @@ export default function PackageDetailPage() {
 
               {/* Mobile purchase summary */}
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="rounded-2xl border border-border/40 glass-card p-4 xl:hidden"
+                initial={false}
+                
+                
+                className="rounded-lg border border-border/40 bg-card border border-border p-4 xl:hidden"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
@@ -477,7 +477,7 @@ export default function PackageDetailPage() {
                     className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border transition-all ${
                       copied
                         ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
-                        : 'text-muted-foreground hover:text-foreground glass-button border-border/40'
+                        : 'text-muted-foreground hover:text-foreground bg-muted border border-border border-border/40'
                     }`}
                     aria-label={copied ? 'Link copiado' : 'Compartilhar pacote'}
                   >
@@ -486,7 +486,7 @@ export default function PackageDetailPage() {
                 </div>
 
                 {!isFree && (
-                  <div className="mt-3 rounded-2xl border border-border/40 bg-muted/20 px-3 py-2.5">
+                  <div className="mt-3 rounded-lg border border-border/40 bg-muted/20 px-3 py-2.5">
                     {hasStaticDiscount && !hasDiscount && (
                       <div className="mb-1 flex items-center justify-between text-xs">
                         <span className="text-muted-foreground">De</span>
@@ -540,7 +540,7 @@ export default function PackageDetailPage() {
                     <>
                       <Button
                         disabled
-                        className="w-full h-11 rounded-2xl font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-500 cursor-default"
+                        className="w-full h-11 rounded-lg font-semibold text-white bg-primary cursor-default"
                       >
                         <Check className="h-4 w-4 mr-2" /> Pacote adquirido
                       </Button>
@@ -554,7 +554,7 @@ export default function PackageDetailPage() {
                         <Button
                           onClick={handleAcquire}
                           disabled={checkoutLoading}
-                          className="h-11 w-full rounded-2xl bg-gradient-to-r from-emerald-500 to-green-600 font-semibold text-white shadow-lg shadow-emerald-500/20 transition-all hover:from-emerald-600 hover:to-green-700 active:scale-[0.98]"
+                          className="h-11 w-full rounded-lg bg-primary font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors active:scale-[0.98]"
                         >
                           {checkoutLoading
                             ? <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -567,14 +567,14 @@ export default function PackageDetailPage() {
                           <Button
                             onClick={handleBuyNow}
                             disabled={checkoutLoading}
-                            className="h-11 rounded-2xl bg-gradient-to-r from-accent to-secondary font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:from-accent/90 hover:to-secondary/90 active:scale-[0.98]"
+                            className="h-11 rounded-lg bg-secondary font-semibold text-secondary-foreground shadow-sm hover:bg-secondary/90 transition-colors active:scale-[0.98]"
                           >
                             Comprar agora
                           </Button>
                           <Button
                             onClick={handleAcquire}
                             disabled={checkoutLoading}
-                            className="h-11 rounded-2xl border border-emerald-500/25 bg-emerald-500/10 font-semibold text-emerald-700 shadow-sm transition-all hover:bg-emerald-500/15 active:scale-[0.98] dark:text-emerald-300"
+                            className="h-11 rounded-lg border border-emerald-500/25 bg-emerald-500/10 font-semibold text-emerald-700 shadow-sm transition-all hover:bg-emerald-500/15 active:scale-[0.98] dark:text-emerald-300"
                           >
                             <ShoppingCart className="h-4 w-4 mr-2" />
                             Adicionar
@@ -599,10 +599,10 @@ export default function PackageDetailPage() {
               {/* Description */}
               {pkg.description && (
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 }}
-                  className="glass-card rounded-2xl px-5 py-4 border border-border/40"
+                  initial={false}
+                  
+                  
+                  className="bg-card border border-border rounded-lg px-5 py-4 border border-border/40"
                 >
                   <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2.5">
                     Sobre o pacote
@@ -625,10 +625,10 @@ export default function PackageDetailPage() {
 
               {/* Items list */}
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={false}
+                
                 transition={{ delay: 0.15 }}
-                className="glass-card rounded-2xl border border-border/40 overflow-hidden"
+                className="bg-card border border-border rounded-lg border border-border/40 overflow-hidden"
               >
                 <div className="px-5 py-3.5 border-b border-border/40 flex items-center justify-between gap-3 flex-wrap">
                   <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
@@ -711,12 +711,12 @@ export default function PackageDetailPage() {
             {/* RIGHT: Sidebar */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
+              
               transition={{ duration: 0.35, delay: 0.08 }}
               className="xl:w-[340px] flex-shrink-0 space-y-3"
             >
               {/* CTA Card */}
-              <div className="hidden xl:block rounded-3xl overflow-hidden border border-border/40 glass-card">
+              <div className="hidden xl:block rounded-xl overflow-hidden border border-border/40 bg-card border border-border">
                 {pkg.coverImage && (
                   <div className="relative h-32 overflow-hidden">
                     <Image src={pkg.coverImage} alt="" fill className="object-cover" sizes="340px" />
@@ -777,7 +777,7 @@ export default function PackageDetailPage() {
 
                   {/* Price breakdown */}
                   {!isFree && (
-                    <div className="mb-3 rounded-2xl border border-border/40 overflow-hidden">
+                    <div className="mb-3 rounded-lg border border-border/40 overflow-hidden">
                       <div className="px-3 py-2 border-b border-border/30 bg-muted/20">
                         <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                           {hasDiscount ? 'Seu preço com desconto' : 'Valor do pacote'}
@@ -855,7 +855,7 @@ export default function PackageDetailPage() {
                       <>
                         <Button
                           disabled
-                          className="w-full h-11 rounded-2xl font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-500 cursor-default"
+                          className="w-full h-11 rounded-lg font-semibold text-white bg-primary cursor-default"
                         >
                           <Check className="h-4 w-4 mr-2" /> Pacote adquirido
                         </Button>
@@ -869,7 +869,7 @@ export default function PackageDetailPage() {
                           <Button
                             onClick={handleAcquire}
                             disabled={checkoutLoading}
-                            className="h-11 w-full rounded-2xl bg-gradient-to-r from-emerald-500 to-green-600 font-semibold text-white shadow-lg shadow-emerald-500/20 transition-all hover:from-emerald-600 hover:to-green-700 active:scale-[0.98]"
+                            className="h-11 w-full rounded-lg bg-primary font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors active:scale-[0.98]"
                           >
                             {checkoutLoading
                               ? <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -882,7 +882,7 @@ export default function PackageDetailPage() {
                             <Button
                               onClick={handleAcquire}
                               disabled={checkoutLoading}
-                              className="h-11 rounded-2xl border border-emerald-500/25 bg-emerald-500/10 font-semibold text-emerald-700 shadow-sm transition-all hover:bg-emerald-500/15 active:scale-[0.98] dark:text-emerald-300"
+                              className="h-11 rounded-lg border border-emerald-500/25 bg-emerald-500/10 font-semibold text-emerald-700 shadow-sm transition-all hover:bg-emerald-500/15 active:scale-[0.98] dark:text-emerald-300"
                             >
                               <ShoppingCart className="h-4 w-4 mr-2" />
                               Adicionar ao carrinho
@@ -890,7 +890,7 @@ export default function PackageDetailPage() {
                             <Button
                               onClick={handleBuyNow}
                               disabled={checkoutLoading}
-                              className="h-11 rounded-2xl bg-gradient-to-r from-accent to-secondary font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:from-accent/90 hover:to-secondary/90 active:scale-[0.98]"
+                              className="h-11 rounded-lg bg-secondary font-semibold text-secondary-foreground shadow-sm hover:bg-secondary/90 transition-colors active:scale-[0.98]"
                             >
                               Comprar agora
                             </Button>
@@ -917,9 +917,9 @@ export default function PackageDetailPage() {
                 {pkg.allowedGroups?.length > 0 && (
                   <motion.div
                     initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    
                     transition={{ delay: 0.2 }}
-                    className="glass-card rounded-2xl p-4 border border-violet-500/20"
+                    className="bg-card border border-border rounded-lg p-4 border border-border"
                   >
                     <div className="flex items-center gap-2 mb-2.5">
                       <div className="h-6 w-6 rounded-lg bg-violet-500/15 flex items-center justify-center">
@@ -957,9 +957,9 @@ export default function PackageDetailPage() {
               {hasDiscount && !access.hasAccess && (
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  
                   transition={{ delay: 0.25 }}
-                  className="flex items-start gap-2.5 px-3.5 py-3 rounded-2xl bg-emerald-500/8 border border-emerald-500/20"
+                  className="flex items-start gap-2.5 px-3.5 py-3 rounded-lg bg-emerald-500/8 border border-emerald-500/20"
                 >
                   <TrendingDown className="h-4 w-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" />
                   <p className="text-[11px] text-emerald-700 dark:text-emerald-300 leading-relaxed">
@@ -995,7 +995,7 @@ export default function PackageDetailPage() {
             <Button
               onClick={isFree || pricing.effectivePrice <= 0 ? handleAcquire : handleBuyNow}
               disabled={checkoutLoading}
-              className="h-11 min-w-[9rem] rounded-2xl bg-gradient-to-r from-accent to-secondary px-4 font-bold text-white shadow-lg shadow-accent/20 transition-all active:scale-[0.98]"
+              className="h-11 min-w-[9rem] rounded-lg bg-secondary px-4 font-bold text-secondary-foreground shadow-md shadow-secondary/20 transition-all active:scale-[0.98]"
             >
               {checkoutLoading ? (
                 <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -1019,15 +1019,15 @@ function LoadingSkeleton() {
         <div className="h-7 w-48 rounded-xl bg-muted animate-pulse mb-6" />
         <div className="flex flex-col xl:flex-row gap-6">
           <div className="flex-1 space-y-4">
-            <div className="rounded-3xl bg-muted animate-pulse" style={{ aspectRatio: '16/9' }} />
-            <div className="rounded-2xl bg-muted animate-pulse h-28" />
-            <div className="rounded-2xl bg-muted animate-pulse h-64" />
+            <div className="rounded-xl bg-muted animate-pulse" style={{ aspectRatio: '16/9' }} />
+            <div className="rounded-lg bg-muted animate-pulse h-28" />
+            <div className="rounded-lg bg-muted animate-pulse h-64" />
           </div>
           <div className="xl:w-[340px] space-y-3">
-            <div className="rounded-3xl glass-card p-4 space-y-3">
+            <div className="rounded-xl bg-card border border-border p-4 space-y-3">
               <div className="h-28 w-full rounded-xl bg-muted animate-pulse" />
               <div className="h-5 w-full bg-muted rounded animate-pulse" />
-              <div className="h-11 w-full bg-muted rounded-2xl animate-pulse mt-2" />
+              <div className="h-11 w-full bg-muted rounded-lg animate-pulse mt-2" />
             </div>
           </div>
         </div>
@@ -1040,7 +1040,7 @@ function ErrorState({ message, onBack }: { message: string; onBack: () => void }
   return (
     <AppShell allowGuest headerTitle="Erro">
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4 px-4">
-        <div className="h-20 w-20 rounded-3xl glass-card flex items-center justify-center mb-2">
+        <div className="h-20 w-20 rounded-xl bg-card border border-border flex items-center justify-center mb-2">
           <Package className="h-9 w-9 text-muted-foreground" />
         </div>
         <h2 className="font-heading font-bold text-xl">Pacote não encontrado</h2>

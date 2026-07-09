@@ -19,6 +19,25 @@ export async function GET() {
       )
     }
 
+    // Local UI testing: mock user without Mongo document
+    if (process.env.NODE_ENV !== 'production' && process.env.DEV_BYPASS_AUTH === 'true') {
+      const { isDevMockUserId, getDevMockBootstrap } = await import('@/lib/dev-auth')
+      if (isDevMockUserId(session.userId)) {
+        const mock = getDevMockBootstrap()
+        return NextResponse.json({
+          user: {
+            id: mock.user._id,
+            _id: mock.user._id,
+            email: mock.user.email,
+            name: mock.user.name,
+            role: mock.user.role,
+            accountType: mock.user.accountType === 'premium' ? 'premium' : mock.user.accountType,
+            emailVerified: true,
+          },
+        })
+      }
+    }
+
     const db = await getDb()
     const usersCollection = db.collection<User>('users')
 

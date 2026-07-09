@@ -260,14 +260,14 @@ export function AppShell({
     return (
       <AppShellContext.Provider value={contextValue}>
         <FocusSessionProvider>
-          <div className="min-h-screen bg-background">
-            {showHeader && (
-              <header className="sticky top-0 z-30 border-b border-white/20 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/65">
-                <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4">
+          <div className="min-h-screen surface-page">
+            {showHeader ? (
+              <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/90">
+                <div className="mx-auto flex h-14 sm:h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
                   <div className="flex items-center gap-3 min-w-0">
                     <Logo variant="icon" size="sm" />
                     <div className="min-w-0">
-                      <h1 className="truncate text-sm font-semibold sm:text-lg">
+                      <h1 className="truncate font-heading text-sm font-semibold sm:text-base">
                         {headerTitle || 'DomineAqui'}
                       </h1>
                       {headerSubtitle && (
@@ -277,13 +277,24 @@ export function AppShell({
                       )}
                     </div>
                   </div>
-                  <a href={loginHref} className={cn(buttonVariants({ size: 'sm' }), 'h-9 rounded-xl')}>
-                    <LogIn className="mr-2 h-4 w-4" />
-                    Entrar
-                  </a>
-                  <MaterialCartButton isAuthenticated={false} />
+                  <div className="flex items-center gap-2">
+                    <ThemeToggle />
+                    <a
+                      href={loginHref}
+                      className={cn(
+                        buttonVariants({ size: 'sm' }),
+                        'h-9 rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/90'
+                      )}
+                    >
+                      <LogIn className="mr-2 h-4 w-4" />
+                      Entrar
+                    </a>
+                    <MaterialCartButton isAuthenticated={false} />
+                  </div>
                 </div>
               </header>
+            ) : (
+              <ThemeToggle floating />
             )}
 
             <main className="min-h-screen">
@@ -300,7 +311,7 @@ export function AppShell({
   return (
     <AppShellContext.Provider value={contextValue}>
       <FocusSessionProvider>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen surface-page">
         <BanChecker />
 
         {/* Sidebar */}
@@ -318,65 +329,68 @@ export function AppShell({
           sidebarSections={sidebarSections}
         />
 
-        {/* Floating mobile menu button — visible when header is hidden */}
+        {/* Floating controls when shell header is hidden */}
         {!showHeader && (
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setSidebarOpen(true)}
-            className="fixed top-3 left-3 z-40 lg:hidden h-10 w-10 rounded-xl bg-background/80 backdrop-blur-md border-border/50 shadow-lg"
-          >
-            <Menu className="h-5 w-5" />
-          </Button>
+          <>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setSidebarOpen(true)}
+              className="fixed top-3 left-3 z-40 lg:hidden h-10 w-10 rounded-md bg-card border-border shadow-md"
+              aria-label="Abrir menu"
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+            <ThemeToggle floating className="!top-3 !right-3" />
+          </>
         )}
 
         {/* Main Content Area - no padding on mobile (sidebar is overlay), padding on desktop */}
         <div
           className={cn(
-            "min-h-screen flex flex-col transition-[padding-left] duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)]",
-            sidebarCollapsed ? "lg:pl-[72px]" : "lg:pl-[280px]"
+            'min-h-screen flex flex-col transition-[padding-left] duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)]',
+            sidebarCollapsed ? 'lg:pl-[72px]' : 'lg:pl-[280px]'
           )}
         >
           {/* Header */}
           {showHeader && (
-            <header className="glass sticky top-0 z-30 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-              <div className="flex items-center justify-between h-16 px-4">
-                {/* Left side */}
-                <div className="flex items-center gap-3">
-                  {/* Menu button for mobile */}
+            <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/90">
+              <div className="flex h-14 sm:h-16 items-center justify-between gap-3 px-3 sm:px-4 lg:px-6">
+                <div className="flex min-w-0 items-center gap-2 sm:gap-3">
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => setSidebarOpen(true)}
-                    className="lg:hidden h-9 w-9"
+                    className="lg:hidden h-9 w-9 shrink-0 rounded-md"
+                    aria-label="Abrir menu"
                   >
                     <Menu className="h-5 w-5" />
                   </Button>
 
-                  {/* Logo - only visible on mobile */}
-                  <div className="lg:hidden">
+                  <div className="lg:hidden shrink-0">
                     <Logo variant="icon" size="sm" />
                   </div>
 
-                  {/* Page title or greeting */}
-                  <div className="hidden sm:block">
+                  <div className="hidden min-w-0 sm:block">
                     {headerTitle ? (
-                      <div>
-                        <h1 className="text-lg font-semibold">{headerTitle}</h1>
+                      <div className="min-w-0">
+                        <h1 className="truncate font-heading text-base font-semibold tracking-tight sm:text-lg">
+                          {headerTitle}
+                        </h1>
                         {headerSubtitle && (
-                          <p className="text-xs text-muted-foreground">{headerSubtitle}</p>
+                          <p className="truncate text-xs text-muted-foreground">{headerSubtitle}</p>
                         )}
                       </div>
                     ) : (
-                      <p className="text-sm text-muted-foreground">
-                        Ola, <span className="font-medium text-foreground">{user?.name}</span>
+                      <p className="truncate text-sm text-muted-foreground">
+                        Olá,{' '}
+                        <span className="font-medium text-foreground">{user?.name}</span>
                       </p>
                     )}
                   </div>
                 </div>
 
-                {/* Right side */}
-                <div className="flex items-center gap-2">
+                <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
                   <MaterialCartButton isAuthenticated={!!user} />
                   <FocusSessionButton />
                   <NotificationsBell />
@@ -386,10 +400,7 @@ export function AppShell({
             </header>
           )}
 
-          {/* Page Content */}
-          <main className="flex-1">
-            {children}
-          </main>
+          <main className="flex-1 min-w-0">{children}</main>
         </div>
 
         {/* Create Exam Modal */}
@@ -421,17 +432,17 @@ function BootstrapErrorState({
   onLogin: () => void
 }) {
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-5 text-center shadow-xl">
-        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+    <div className="min-h-screen surface-page flex items-center justify-center p-4">
+      <div className="w-full max-w-sm rounded-lg border border-border bg-card p-5 text-center shadow-sm">
+        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-md bg-primary/10 text-primary">
           <WifiOff className="h-5 w-5" />
         </div>
-        <h1 className="text-base font-semibold">Nao consegui confirmar sua sessao</h1>
+        <h1 className="font-heading text-base font-semibold">Não consegui confirmar sua sessão</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          A conexao demorou demais. Tente novamente ou entre de novo para continuar.
+          A conexão demorou demais. Tente novamente ou entre de novo para continuar.
         </p>
         <div className="mt-5 grid gap-2">
-          <Button onClick={onRetry} disabled={retrying} className="rounded-xl">
+          <Button onClick={onRetry} disabled={retrying} className="rounded-md">
             {retrying ? (
               <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
             ) : (
@@ -439,7 +450,7 @@ function BootstrapErrorState({
             )}
             Tentar novamente
           </Button>
-          <Button variant="outline" onClick={onLogin} className="rounded-xl">
+          <Button variant="outline" onClick={onLogin} className="rounded-md">
             <LogIn className="mr-2 h-4 w-4" />
             Ir para login
           </Button>

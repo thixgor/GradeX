@@ -345,52 +345,64 @@ export default function ProfilePage() {
   const badge = getAccountBadge()
 
   return (
-    <AppShell headerTitle="Meu Perfil" headerSubtitle={userName}>
+    <AppShell headerTitle="Meu Perfil" headerSubtitle={userName || 'Conta'}>
       <BanChecker />
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="surface-page">
+      <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-8">
 
-        {/* ====== SECTION 1: Profile Header (3D) ====== */}
-        <section className="mb-6">
-          <div className="relative overflow-hidden rounded-3xl border border-border/50 bg-gradient-to-br from-card/80 to-card/40 p-6 shadow-xl backdrop-blur-sm [perspective:1000px]">
-            {/* blobs de fundo */}
-            <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary/10 blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-16 -left-10 h-40 w-40 rounded-full bg-[#E2A43E]/10 blur-3xl" />
-            <div className="relative flex flex-col items-center gap-5 sm:flex-row sm:items-start">
-              {/* Avatar 3D */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9, rotateY: -20 }}
-                animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-                transition={{ type: 'spring', stiffness: 140, damping: 14 }}
-                whileHover={{ rotateX: 8, rotateY: -8, scale: 1.04 }}
-                style={{ transformStyle: 'preserve-3d' }}
-                className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#468152] to-[#E2A43E] shadow-2xl shadow-primary/20"
-              >
-                <span className="text-3xl font-bold text-white" style={{ transform: 'translateZ(20px)' }}>
-                  {userName.charAt(0).toUpperCase()}
-                </span>
-              </motion.div>
-              {/* Info */}
-              <div className="flex-1 text-center sm:text-left">
-                <h1 className="text-2xl font-bold tracking-tight">{userName}</h1>
-                <div className={cn('mt-1.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold text-white bg-gradient-to-r shadow-sm', badge.colors)}>
+        {/* ====== Profile header ====== */}
+        <section className="mb-5">
+          <div className="relative overflow-hidden rounded-xl border border-border bg-card p-5 sm:p-6 shadow-sm">
+            <div
+              className="pointer-events-none absolute inset-0 opacity-40 dark:opacity-25"
+              style={{
+                background:
+                  'radial-gradient(ellipse at 100% 0%, rgba(70,129,82,0.14), transparent 55%), radial-gradient(ellipse at 0% 100%, rgba(226,164,62,0.1), transparent 50%)',
+              }}
+              aria-hidden
+            />
+            <div className="relative flex flex-col items-center gap-4 sm:flex-row sm:items-center">
+              <div className="flex h-16 w-16 sm:h-20 sm:w-20 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md font-heading text-2xl sm:text-3xl font-semibold">
+                {(userName || '?').charAt(0).toUpperCase()}
+              </div>
+              <div className="min-w-0 flex-1 text-center sm:text-left">
+                <p className="editorial-mark mb-1 justify-center sm:justify-start">Conta</p>
+                <h1 className="font-heading text-xl sm:text-2xl font-semibold tracking-tight truncate">
+                  {userName || 'Carregando…'}
+                </h1>
+                {userEmail && (
+                  <p className="mt-0.5 truncate text-xs sm:text-sm text-muted-foreground">{userEmail}</p>
+                )}
+                <div
+                  className={cn(
+                    'mt-2 inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold text-white bg-gradient-to-r',
+                    badge.colors
+                  )}
+                >
                   {badge.icon}
                   {badge.label}
                 </div>
               </div>
-              {/* Quick Actions */}
-              <div className="flex gap-2 shrink-0">
+              <div className="flex flex-wrap justify-center gap-2 shrink-0">
                 {userRole !== 'admin' && accountType === 'gratuito' && (
-                  <Button size="sm" onClick={() => setUpgradeDialogOpen(true)}
-                    className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white text-xs h-8 gap-1.5">
+                  <Button
+                    size="sm"
+                    onClick={() => setUpgradeDialogOpen(true)}
+                    className="h-9 gap-1.5 rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/90 text-xs font-bold"
+                  >
                     <Sparkles className="h-3.5 w-3.5" />
-                    Upgrade
+                    Upgrade Premium
                   </Button>
                 )}
                 {userRole !== 'admin' && (
-                  <Button size="sm" variant="outline" onClick={() => setActivateDialogOpen(true)}
-                    className="text-xs h-8 gap-1.5">
-                    <Crown className="h-3.5 w-3.5" />
-                    Ativar Key
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setActivateDialogOpen(true)}
+                    className="h-9 gap-1.5 rounded-md text-xs font-semibold"
+                  >
+                    <KeyRound className="h-3.5 w-3.5" />
+                    Ativar key
                   </Button>
                 )}
               </div>
@@ -398,22 +410,25 @@ export default function ProfilePage() {
           </div>
         </section>
 
-        {/* ====== Tab bar: Perfil / Meus Pedidos ====== */}
-        <div className="mb-8 flex gap-1 rounded-xl bg-muted/40 p-1 w-fit">
+        {/* Tabs */}
+        <div className="mb-6 flex w-full gap-1 overflow-x-auto rounded-lg border border-border bg-muted/40 p-1 sm:w-fit scrollbar-hide">
           {([
             { id: 'perfil', label: 'Visão geral', icon: <UserIcon className="h-4 w-4" /> },
-            { id: 'pedidos', label: 'Meus Pedidos', icon: <PackageIcon className="h-4 w-4" /> },
+            { id: 'pedidos', label: 'Meus pedidos', icon: <PackageIcon className="h-4 w-4" /> },
           ] as const).map((t) => (
             <button
               key={t.id}
+              type="button"
               onClick={() => {
                 setProfileTab(t.id)
                 const url = t.id === 'pedidos' ? '/profile?tab=pedidos' : '/profile'
                 window.history.replaceState(null, '', url)
               }}
               className={cn(
-                'flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all',
-                profileTab === t.id ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'
+                'flex flex-1 sm:flex-initial items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-semibold transition-colors',
+                profileTab === t.id
+                  ? 'bg-card text-foreground shadow-sm border border-border'
+                  : 'text-muted-foreground hover:text-foreground'
               )}
             >
               {t.icon} {t.label}
@@ -429,75 +444,50 @@ export default function ProfilePage() {
 
         {profileTab === 'perfil' && (
         <>
-        {/* ====== SECTION 2: Statistics Overview ====== */}
-        <section className="mb-10">
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Estatisticas</h2>
+        {/* Stats */}
+        <section className="mb-8">
+          <h2 className="editorial-mark mb-3">Estatísticas</h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            <div className="p-4 rounded-xl bg-muted/40 border border-border/50">
-              <div className="flex items-center gap-2.5 mb-2">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
-                  <GraduationCap className="h-4 w-4 text-white" />
+            {[
+              { icon: GraduationCap, label: 'Questões', value: questionsAnswered, tone: 'text-primary bg-primary/10 border-primary/20' },
+              { icon: FileText, label: 'Provas', value: examsCompleted, tone: 'text-primary bg-primary/10 border-primary/20' },
+              { icon: BookOpen, label: 'Banco', value: questionsAnsweredBank, tone: 'text-secondary bg-secondary/10 border-secondary/20' },
+              { icon: BarChart3, label: 'Acerto', value: `${bankAccuracyRate}%`, tone: bankAccuracyRate >= 70 ? 'text-primary bg-primary/10 border-primary/20' : bankAccuracyRate >= 50 ? 'text-amber-700 dark:text-amber-300 bg-amber-500/10 border-amber-500/25' : 'text-red-600 bg-red-500/10 border-red-500/25' },
+            ].map(({ icon: Icon, label, value, tone }) => (
+              <div key={label} className="rounded-lg border border-border bg-card p-4 shadow-sm">
+                <div className="mb-2 flex items-center gap-2.5">
+                  <div className={cn('flex h-8 w-8 items-center justify-center rounded-md border', tone)}>
+                    <Icon className="h-4 w-4" />
+                  </div>
+                  <span className="text-xs font-medium text-muted-foreground">{label}</span>
                 </div>
-                <span className="text-xs text-muted-foreground">Questoes</span>
+                <p className="font-heading text-2xl font-semibold tabular-nums text-foreground">{value}</p>
               </div>
-              <p className="text-2xl font-bold">{questionsAnswered}</p>
-            </div>
-            <div className="p-4 rounded-xl bg-muted/40 border border-border/50">
-              <div className="flex items-center gap-2.5 mb-2">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
-                  <FileText className="h-4 w-4 text-white" />
-                </div>
-                <span className="text-xs text-muted-foreground">Provas</span>
-              </div>
-              <p className="text-2xl font-bold">{examsCompleted}</p>
-            </div>
-            <div className="p-4 rounded-xl bg-muted/40 border border-border/50">
-              <div className="flex items-center gap-2.5 mb-2">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center">
-                  <BookOpen className="h-4 w-4 text-white" />
-                </div>
-                <span className="text-xs text-muted-foreground">Banco</span>
-              </div>
-              <p className="text-2xl font-bold">{questionsAnsweredBank}</p>
-            </div>
-            <div className="p-4 rounded-xl bg-muted/40 border border-border/50">
-              <div className="flex items-center gap-2.5 mb-2">
-                <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br',
-                  bankAccuracyRate >= 70 ? 'from-green-500 to-emerald-600'
-                    : bankAccuracyRate >= 50 ? 'from-yellow-500 to-orange-600'
-                    : 'from-red-500 to-rose-600'
-                )}>
-                  <BarChart3 className="h-4 w-4 text-white" />
-                </div>
-                <span className="text-xs text-muted-foreground">Acerto</span>
-              </div>
-              <p className="text-2xl font-bold">{bankAccuracyRate}%</p>
-            </div>
+            ))}
           </div>
         </section>
 
-        {/* ====== SECTION 3: Performance Detail (if has bank data) ====== */}
         {questionsAnsweredBank > 0 && (
-          <section className="mb-10">
-            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Desempenho no Banco</h2>
-            <div className="p-5 rounded-xl bg-muted/30 border border-border/50">
-              <div className="grid grid-cols-3 gap-4 mb-4">
+          <section className="mb-8">
+            <h2 className="editorial-mark mb-3">Desempenho no banco</h2>
+            <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
+              <div className="mb-4 grid grid-cols-3 gap-4">
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-green-600">{questionsCorrectBank}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Acertos</p>
+                  <p className="font-heading text-2xl font-semibold text-primary tabular-nums">{questionsCorrectBank}</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">Acertos</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-red-500">{questionsWrongBank}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Erros</p>
+                  <p className="font-heading text-2xl font-semibold text-red-500 tabular-nums">{questionsWrongBank}</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">Erros</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-blue-600">{bankAccuracyRate}%</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Aproveitamento</p>
+                  <p className="font-heading text-2xl font-semibold text-foreground tabular-nums">{bankAccuracyRate}%</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">Aproveitamento</p>
                 </div>
               </div>
-              <div className="h-2 bg-muted rounded-full overflow-hidden">
+              <div className="h-2 overflow-hidden rounded-full bg-muted">
                 <div
-                  className="h-full bg-gradient-to-r from-green-500 to-emerald-600 transition-all duration-700 rounded-full"
+                  className="h-full rounded-full bg-primary transition-[width] duration-500"
                   style={{ width: `${bankAccuracyRate}%` }}
                 />
               </div>
@@ -505,10 +495,9 @@ export default function ProfilePage() {
           </section>
         )}
 
-        {/* ====== SECTION 4: Plan Limits ====== */}
         {!loading && (
-          <section className="mb-10">
-            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Limites do Plano</h2>
+          <section className="mb-8">
+            <h2 className="editorial-mark mb-3">Limites do plano</h2>
             <PlanLimitsCard
               accountType={accountType}
               isAdmin={userRole === 'admin'}
@@ -522,7 +511,7 @@ export default function ProfilePage() {
 
         {/* ====== SECTION 5: Focus Sessions ====== */}
         <section className="mb-10">
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Sessoes de Foco</h2>
+          <h2 className="editorial-mark mb-3">Sessões de foco</h2>
           <FocusSessionsProfile />
         </section>
 
@@ -535,7 +524,7 @@ export default function ProfilePage() {
               onClick={() => setPurchasesExpanded(e => !e)}
             >
               <div className="flex items-center gap-2">
-                <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Histórico de Compras</h2>
+                <h2 className="editorial-mark mb-0">Histórico de compras</h2>
                 {!purchasesLoading && (
                   <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-primary/10 text-primary">
                     {purchases.length}
@@ -655,7 +644,7 @@ export default function ProfilePage() {
           {loading ? (
             <div className="text-center py-12 text-sm text-muted-foreground">Carregando...</div>
           ) : submissions.length === 0 ? (
-            <div className="text-center py-12 rounded-xl bg-muted/30 border border-border/50">
+            <div className="text-center py-12 rounded-lg border border-border bg-card shadow-sm">
               <FileText className="h-10 w-10 mx-auto text-muted-foreground/30 mb-3" />
               <p className="text-sm text-muted-foreground mb-4">Nenhuma prova realizada</p>
               <Button size="sm" variant="outline" onClick={() => router.push('/')}>
@@ -783,7 +772,7 @@ export default function ProfilePage() {
         {/* ====== SECTION 7: Preferences ====== */}
         <section className="mb-10">
           <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Preferencias</h2>
-          <div className="p-4 rounded-xl bg-muted/30 border border-border/50">
+          <div className="p-4 rounded-lg border border-border bg-card shadow-sm">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium">Lite Mode</p>
@@ -1015,6 +1004,7 @@ export default function ProfilePage() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+      </div>
       </div>
     </AppShell>
   )

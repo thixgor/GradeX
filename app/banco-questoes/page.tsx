@@ -78,7 +78,7 @@ interface ListaComContagem extends BancoListaUsuario {
 
 export default function BancoQuestoesPage() {
   return (
-    <AppShell headerTitle="Banco de Questoes">
+    <AppShell headerTitle="Banco de Questões">
       <BancoQuestoesContent />
     </AppShell>
   )
@@ -602,7 +602,7 @@ function BancoQuestoesContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+      <div className="surface-page">
         <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
           <div className="h-12 w-64 rounded-xl skeleton-pulse" />
           <div className="grid gap-3 md:grid-cols-4">
@@ -620,7 +620,7 @@ function BancoQuestoesContent() {
   // Modal de seletor de periodo para usuarios gratuitos
   if (showPeriodSelector) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+      <div className="surface-page">
         <div className="mx-auto w-full max-w-2xl px-4 py-12">
           <div className="glass-page-card rounded-2xl overflow-hidden">
             <div className="p-8 text-center space-y-4">
@@ -698,7 +698,7 @@ function BancoQuestoesContent() {
 
   if (requiresPremium) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+      <div className="surface-page">
         <div className="mx-auto w-full max-w-2xl px-4 py-12">
           <div className="glass-page-card rounded-2xl overflow-hidden text-center">
             <div className="p-8 space-y-4">
@@ -753,7 +753,7 @@ function BancoQuestoesContent() {
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+      <div className="surface-page">
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
           {/* Banner */}

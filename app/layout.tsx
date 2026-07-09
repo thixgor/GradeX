@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter, Rowdies, Space_Grotesk } from 'next/font/google'
+import { Newsreader, Source_Sans_3, IBM_Plex_Mono } from 'next/font/google'
 import './globals.css'
 import './globals-button-feedback.css'
 import { ThemeProvider } from '@/components/theme-provider'
@@ -24,15 +24,25 @@ import {
   publicIndexingRobots,
 } from '@/lib/seo'
 
-const inter = Inter({ subsets: ['latin'] })
-const rowdies = Rowdies({
-  weight: ['400', '700'],
+// Editorial / textbook serif — medical journal feel (not Space Grotesk / Rowdies AI stack)
+const newsreader = Newsreader({
   subsets: ['latin'],
-  variable: '--font-rowdies'
+  variable: '--font-heading',
+  display: 'swap',
+  style: ['normal', 'italic'],
 })
-const spaceGrotesk = Space_Grotesk({
+// Clinical readable sans — used in health products, highly legible
+const sourceSans = Source_Sans_3({
   subsets: ['latin'],
-  variable: '--font-space-grotesk'
+  variable: '--font-body',
+  display: 'swap',
+})
+// Mono for labels clínicos (CID, ECG leads, etc.)
+const plexMono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-clinical',
+  display: 'swap',
 })
 
 export const metadata: Metadata = {
@@ -148,7 +158,11 @@ export default function RootLayout({
   }
 
   return (
-    <html lang="pt-BR" suppressHydrationWarning className={`${rowdies.variable} ${spaceGrotesk.variable}`}>
+    <html
+      lang="pt-BR"
+      suppressHydrationWarning
+      className={`${newsreader.variable} ${sourceSans.variable} ${plexMono.variable}`}
+    >
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -169,12 +183,13 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: buildJsonLd(websiteJsonLd) }}
         />
       </head>
-      <body className={`${spaceGrotesk.className} gradient-overlay gradient-overlay-dark flex flex-col min-h-screen`}>
+      <body className={`${sourceSans.className} gradient-overlay gradient-overlay-dark flex flex-col min-h-screen`}>
         <LiteModeProvider>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
+          /* Color transitions handled by View Transitions / .theme-animating — not per-node all */
           disableTransitionOnChange
         >
           <MaterialCartProvider>

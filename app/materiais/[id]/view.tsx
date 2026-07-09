@@ -214,7 +214,7 @@ function ComplementaryCard({ item }: { item: ComplementaryItem }) {
     </>
   )
 
-  const cardClass = "group flex items-center gap-3 rounded-2xl border border-border/40 glass-button p-3 transition-all hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10 active:scale-[0.99]"
+  const cardClass = "group flex items-center gap-3 rounded-lg border border-border/40 glass-button p-3 transition-all hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10 active:scale-[0.99]"
 
   if (!href) {
     return <div className={cardClass}>{inner}</div>
@@ -582,7 +582,7 @@ export default function MaterialViewPage() {
               href="/materiais"
               className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors group"
             >
-              <span className="h-7 w-7 rounded-lg glass-card flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+              <span className="h-7 w-7 rounded-lg border border-border bg-card rounded-lg flex items-center justify-center group-hover:bg-primary/10 transition-colors">
                 <ArrowLeft className="h-3.5 w-3.5" />
               </span>
               Materiais
@@ -619,7 +619,7 @@ export default function MaterialViewPage() {
               className="flex-1 min-w-0"
             >
               {/* Media area */}
-              <div className="rounded-3xl overflow-hidden glass-card shadow-2xl shadow-primary/8 border border-border/40">
+              <div className="rounded-3xl overflow-hidden border border-border bg-card rounded-lg shadow-2xl shadow-primary/8 border border-border/40">
                 {isEmbed && hasAccess ? (
                   <VideoWatermark userName={data.watermark.name} userCpf={data.watermark.cpf}>
                     {material.downloadUrl.trim().startsWith('<') ? (
@@ -762,7 +762,7 @@ export default function MaterialViewPage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="mt-4 rounded-2xl border border-border/40 glass-card p-4 xl:hidden"
+                className="mt-4 rounded-lg border border-border/40 border border-border bg-card rounded-lg p-4 xl:hidden"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
@@ -842,7 +842,7 @@ export default function MaterialViewPage() {
                 <div className="mt-4 space-y-2">
                   {hasAccess ? (
                     isEmbed ? (
-                      <div className="flex items-center gap-2 py-2 px-3 rounded-2xl bg-primary/6 border border-primary/15">
+                      <div className="flex items-center gap-2 py-2 px-3 rounded-lg bg-primary/6 border border-primary/15">
                         <Sparkles className="h-4 w-4 text-primary flex-shrink-0" />
                         <p className="text-xs text-muted-foreground">
                           O vídeo está disponível acima.
@@ -853,7 +853,7 @@ export default function MaterialViewPage() {
                         {canViewPdf && (
                           <Button
                             onClick={handleOpenPdfViewer}
-                            className="relative w-full h-12 overflow-hidden rounded-2xl font-bold text-white border border-emerald-200/30 bg-gradient-to-r from-emerald-700 via-emerald-600 to-amber-500 hover:from-emerald-600 hover:via-emerald-500 hover:to-amber-400 shadow-xl shadow-emerald-500/25 transition-all active:scale-[0.98]"
+                            className="relative w-full h-12 overflow-hidden rounded-lg font-bold text-white border border-emerald-200/30 bg-gradient-to-r from-emerald-700 via-emerald-600 to-amber-500 hover:from-emerald-600 hover:via-emerald-500 hover:to-amber-400 shadow-xl shadow-emerald-500/25 transition-all active:scale-[0.98]"
                           >
                             <span className="absolute inset-0 bg-white/15 backdrop-blur-sm opacity-40" />
                             <span className="relative flex items-center">
@@ -866,7 +866,7 @@ export default function MaterialViewPage() {
                           <Button
                             onClick={handleDownload}
                             disabled={downloadState.status === 'running'}
-                            className="w-full h-11 rounded-2xl font-semibold text-white bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
+                            className="w-full h-11 rounded-lg font-semibold text-white bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
                           >
                             {downloadState.status === 'running' ? (
                               <>
@@ -887,7 +887,7 @@ export default function MaterialViewPage() {
                           </p>
                         )}
                         {isPdf && !canViewPdf && !canDownload && (
-                          <div className="flex items-start gap-2 rounded-2xl border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
+                          <div className="flex items-start gap-2 rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
                             <ShieldAlert className="h-4 w-4 shrink-0 mt-0.5" />
                             O viewer e o download deste PDF estão indisponíveis no momento.
                           </div>
@@ -895,7 +895,7 @@ export default function MaterialViewPage() {
                         {canViewHtml && (
                           <Button
                             onClick={handleOpenHtmlViewer}
-                            className="relative w-full h-12 overflow-hidden rounded-2xl font-bold text-white border border-emerald-200/30 bg-gradient-to-r from-emerald-700 via-emerald-600 to-amber-500 hover:from-emerald-600 hover:via-emerald-500 hover:to-amber-400 shadow-xl shadow-emerald-500/25 transition-all active:scale-[0.98]"
+                            className="relative w-full h-12 overflow-hidden rounded-lg font-bold text-white border border-emerald-200/30 bg-gradient-to-r from-emerald-700 via-emerald-600 to-amber-500 hover:from-emerald-600 hover:via-emerald-500 hover:to-amber-400 shadow-xl shadow-emerald-500/25 transition-all active:scale-[0.98]"
                           >
                             <span className="absolute inset-0 bg-white/15 backdrop-blur-sm opacity-40" />
                             <span className="relative flex items-center">
@@ -910,7 +910,7 @@ export default function MaterialViewPage() {
                           </p>
                         )}
                         {isHtml && !canViewHtml && (
-                          <div className="flex items-start gap-2 rounded-2xl border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
+                          <div className="flex items-start gap-2 rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
                             <ShieldAlert className="h-4 w-4 shrink-0 mt-0.5" />
                             O leitor desta experiência está indisponível no momento.
                           </div>
@@ -923,14 +923,14 @@ export default function MaterialViewPage() {
                         <Button
                           onClick={handleOpenPdfViewer}
                           variant="outline"
-                          className="mb-1 h-11 w-full rounded-2xl border-amber-500/40 bg-amber-500/10 font-semibold text-amber-700 hover:bg-amber-500/15 dark:text-amber-300"
+                          className="mb-1 h-11 w-full rounded-lg border-amber-500/40 bg-amber-500/10 font-semibold text-amber-700 hover:bg-amber-500/15 dark:text-amber-300"
                         >
                           <Eye className="h-4 w-4 mr-2" />
                           Ver prévia grátis (págs. {previewLabel})
                         </Button>
                       )}
                       {hasActiveTier && pricingEventState && (
-                        <div className="mb-3 rounded-2xl border border-border/40 bg-muted/20 px-3 py-2.5">
+                        <div className="mb-3 rounded-lg border border-border/40 bg-muted/20 px-3 py-2.5">
                           <div className="mb-1 flex items-center justify-between gap-3 text-xs">
                             <span className="text-muted-foreground">Valor sem lote</span>
                             <span className="text-muted-foreground line-through">
@@ -960,7 +960,7 @@ export default function MaterialViewPage() {
                         <Button
                           onClick={() => handleAcquire()}
                           disabled={checkoutLoading}
-                          className="h-11 w-full rounded-2xl bg-gradient-to-r from-emerald-500 to-green-600 font-semibold text-white shadow-lg shadow-emerald-500/20 transition-all hover:from-emerald-600 hover:to-green-700 active:scale-[0.98]"
+                          className="h-11 w-full rounded-lg bg-gradient-to-r from-emerald-500 to-green-600 font-semibold text-white shadow-lg shadow-emerald-500/20 transition-all hover:from-emerald-600 hover:to-green-700 active:scale-[0.98]"
                         >
                           {checkoutLoading
                             ? <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -973,14 +973,14 @@ export default function MaterialViewPage() {
                           <Button
                             onClick={() => handleBuyNow()}
                             disabled={checkoutLoading}
-                            className="h-11 rounded-2xl bg-gradient-to-r from-accent to-secondary font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:from-accent/90 hover:to-secondary/90 active:scale-[0.98]"
+                            className="h-11 rounded-lg bg-gradient-to-r from-accent to-secondary font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:from-accent/90 hover:to-secondary/90 active:scale-[0.98]"
                           >
                             Comprar agora
                           </Button>
                           <Button
                             onClick={() => handleAcquire()}
                             disabled={checkoutLoading}
-                            className="h-11 rounded-2xl border border-emerald-500/25 bg-emerald-500/10 font-semibold text-emerald-700 shadow-sm transition-all hover:bg-emerald-500/15 active:scale-[0.98] dark:text-emerald-300"
+                            className="h-11 rounded-lg border border-emerald-500/25 bg-emerald-500/10 font-semibold text-emerald-700 shadow-sm transition-all hover:bg-emerald-500/15 active:scale-[0.98] dark:text-emerald-300"
                           >
                             <ShoppingCart className="h-4 w-4 mr-2" />
                             Adicionar
@@ -1008,7 +1008,7 @@ export default function MaterialViewPage() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.15 }}
-                  className="mt-4 glass-card rounded-2xl px-5 py-4 border border-border/40"
+                  className="mt-4 border border-border bg-card rounded-lg rounded-lg px-5 py-4 border border-border/40"
                 >
                   <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2.5">
                     Sobre este material
@@ -1035,7 +1035,7 @@ export default function MaterialViewPage() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.18 }}
-                  className="mt-4 glass-card rounded-2xl px-5 py-4 border border-border/40"
+                  className="mt-4 border border-border bg-card rounded-lg rounded-lg px-5 py-4 border border-border/40"
                 >
                   <div className="mb-3 flex items-center gap-2">
                     <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -1072,7 +1072,7 @@ export default function MaterialViewPage() {
               className="xl:w-[300px] flex-shrink-0 space-y-3"
             >
               {/* ── CTA Card ── */}
-              <div className="hidden xl:block rounded-3xl overflow-hidden border border-border/40 glass-card">
+              <div className="hidden xl:block rounded-3xl overflow-hidden border border-border/40 border border-border bg-card rounded-lg">
 
                 {/* Card header with cover thumb */}
                 {material.coverImage && !isEmbed && (
@@ -1185,7 +1185,7 @@ export default function MaterialViewPage() {
 
                   {/* Lote dinâmico por evento — desktop sidebar breakdown */}
                   {hasActiveTier && !hasAccess && pricingEventState && (
-                    <div className="mb-3 rounded-2xl border border-border/40 overflow-hidden">
+                    <div className="mb-3 rounded-lg border border-border/40 overflow-hidden">
                       <div className="px-3 py-2 border-b border-border/30 bg-muted/20">
                         <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                           Seu preço com desconto
@@ -1225,7 +1225,7 @@ export default function MaterialViewPage() {
                   <div className="mt-1 space-y-2">
                     {hasAccess ? (
                       isEmbed ? (
-                        <div className="flex items-center gap-2 py-2 px-3 rounded-2xl bg-primary/6 border border-primary/15">
+                        <div className="flex items-center gap-2 py-2 px-3 rounded-lg bg-primary/6 border border-primary/15">
                           <Sparkles className="h-4 w-4 text-primary flex-shrink-0" />
                           <p className="text-xs text-muted-foreground">
                             O vídeo está disponível acima ↑
@@ -1236,7 +1236,7 @@ export default function MaterialViewPage() {
                           {canViewPdf && (
                             <Button
                               onClick={handleOpenPdfViewer}
-                              className="relative w-full h-12 overflow-hidden rounded-2xl font-bold text-white border border-emerald-200/30 bg-gradient-to-r from-emerald-700 via-emerald-600 to-amber-500 hover:from-emerald-600 hover:via-emerald-500 hover:to-amber-400 shadow-xl shadow-emerald-500/25 transition-all active:scale-[0.98]"
+                              className="relative w-full h-12 overflow-hidden rounded-lg font-bold text-white border border-emerald-200/30 bg-gradient-to-r from-emerald-700 via-emerald-600 to-amber-500 hover:from-emerald-600 hover:via-emerald-500 hover:to-amber-400 shadow-xl shadow-emerald-500/25 transition-all active:scale-[0.98]"
                             >
                               <span className="absolute inset-0 bg-white/15 backdrop-blur-sm opacity-40" />
                               <span className="relative flex items-center">
@@ -1249,7 +1249,7 @@ export default function MaterialViewPage() {
                             <Button
                               onClick={handleDownload}
                               disabled={downloadState.status === 'running'}
-                              className="w-full h-11 rounded-2xl font-semibold text-white bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
+                              className="w-full h-11 rounded-lg font-semibold text-white bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
                             >
                               {downloadState.status === 'running' ? (
                                 <>
@@ -1270,7 +1270,7 @@ export default function MaterialViewPage() {
                             </p>
                           )}
                           {isPdf && !canViewPdf && !canDownload && (
-                            <div className="flex items-start gap-2 rounded-2xl border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
+                            <div className="flex items-start gap-2 rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
                               <ShieldAlert className="h-4 w-4 shrink-0 mt-0.5" />
                               O viewer e o download deste PDF estao indisponiveis no momento.
                             </div>
@@ -1278,7 +1278,7 @@ export default function MaterialViewPage() {
                           {canViewHtml && (
                             <Button
                               onClick={handleOpenHtmlViewer}
-                              className="relative w-full h-12 overflow-hidden rounded-2xl font-bold text-white border border-emerald-200/30 bg-gradient-to-r from-emerald-700 via-emerald-600 to-amber-500 hover:from-emerald-600 hover:via-emerald-500 hover:to-amber-400 shadow-xl shadow-emerald-500/25 transition-all active:scale-[0.98]"
+                              className="relative w-full h-12 overflow-hidden rounded-lg font-bold text-white border border-emerald-200/30 bg-gradient-to-r from-emerald-700 via-emerald-600 to-amber-500 hover:from-emerald-600 hover:via-emerald-500 hover:to-amber-400 shadow-xl shadow-emerald-500/25 transition-all active:scale-[0.98]"
                             >
                               <span className="absolute inset-0 bg-white/15 backdrop-blur-sm opacity-40" />
                               <span className="relative flex items-center">
@@ -1293,7 +1293,7 @@ export default function MaterialViewPage() {
                             </p>
                           )}
                           {isHtml && !canViewHtml && (
-                            <div className="flex items-start gap-2 rounded-2xl border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
+                            <div className="flex items-start gap-2 rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
                               <ShieldAlert className="h-4 w-4 shrink-0 mt-0.5" />
                               O leitor desta experiência está indisponível no momento.
                             </div>
@@ -1306,7 +1306,7 @@ export default function MaterialViewPage() {
                           <Button
                             onClick={handleOpenPdfViewer}
                             variant="outline"
-                            className="mb-1 h-11 w-full rounded-2xl border-amber-500/40 bg-amber-500/10 font-semibold text-amber-700 hover:bg-amber-500/15 dark:text-amber-300"
+                            className="mb-1 h-11 w-full rounded-lg border-amber-500/40 bg-amber-500/10 font-semibold text-amber-700 hover:bg-amber-500/15 dark:text-amber-300"
                           >
                             <Eye className="h-4 w-4 mr-2" />
                             Ver prévia grátis (págs. {previewLabel})
@@ -1316,7 +1316,7 @@ export default function MaterialViewPage() {
                           <Button
                             onClick={() => handleAcquire()}
                             disabled={checkoutLoading}
-                            className="h-11 w-full rounded-2xl bg-gradient-to-r from-emerald-500 to-green-600 font-semibold text-white shadow-lg shadow-emerald-500/20 transition-all hover:from-emerald-600 hover:to-green-700 active:scale-[0.98]"
+                            className="h-11 w-full rounded-lg bg-gradient-to-r from-emerald-500 to-green-600 font-semibold text-white shadow-lg shadow-emerald-500/20 transition-all hover:from-emerald-600 hover:to-green-700 active:scale-[0.98]"
                           >
                             {checkoutLoading
                               ? <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -1329,7 +1329,7 @@ export default function MaterialViewPage() {
                             <Button
                               onClick={() => handleAcquire()}
                               disabled={checkoutLoading}
-                              className="h-11 rounded-2xl border border-emerald-500/25 bg-emerald-500/10 font-semibold text-emerald-700 shadow-sm transition-all hover:bg-emerald-500/15 active:scale-[0.98] dark:text-emerald-300"
+                              className="h-11 rounded-lg border border-emerald-500/25 bg-emerald-500/10 font-semibold text-emerald-700 shadow-sm transition-all hover:bg-emerald-500/15 active:scale-[0.98] dark:text-emerald-300"
                             >
                               <ShoppingCart className="h-4 w-4 mr-2" />
                               Adicionar ao carrinho
@@ -1337,7 +1337,7 @@ export default function MaterialViewPage() {
                             <Button
                               onClick={() => handleBuyNow()}
                               disabled={checkoutLoading}
-                              className="h-11 rounded-2xl bg-gradient-to-r from-accent to-secondary font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:from-accent/90 hover:to-secondary/90 active:scale-[0.98]"
+                              className="h-11 rounded-lg bg-gradient-to-r from-accent to-secondary font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:from-accent/90 hover:to-secondary/90 active:scale-[0.98]"
                             >
                               Comprar agora
                             </Button>
@@ -1366,7 +1366,7 @@ export default function MaterialViewPage() {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
-                    className="glass-card rounded-2xl p-4 border border-violet-500/20"
+                    className="border border-border bg-card rounded-lg rounded-lg p-4 border border-violet-500/20"
                   >
                     <div className="flex items-center gap-2 mb-2.5">
                       <div className="h-6 w-6 rounded-lg bg-violet-500/15 flex items-center justify-center">
@@ -1406,7 +1406,7 @@ export default function MaterialViewPage() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.25 }}
-                  className="flex items-start gap-2.5 px-3.5 py-3 rounded-2xl bg-muted/30 border border-border/30"
+                  className="flex items-start gap-2.5 px-3.5 py-3 rounded-lg bg-muted/30 border border-border/30"
                 >
                   <ShieldAlert className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0 mt-0.5" />
                   <p className="text-[11px] text-muted-foreground leading-relaxed">
@@ -1439,7 +1439,7 @@ export default function MaterialViewPage() {
             <Button
               onClick={isFree ? () => handleAcquire() : () => handleBuyNow()}
               disabled={checkoutLoading}
-              className="h-11 min-w-[9rem] rounded-2xl bg-gradient-to-r from-accent to-secondary px-4 font-bold text-white shadow-lg shadow-accent/20 transition-all active:scale-[0.98]"
+              className="h-11 min-w-[9rem] rounded-lg bg-gradient-to-r from-accent to-secondary px-4 font-bold text-white shadow-lg shadow-accent/20 transition-all active:scale-[0.98]"
             >
               {checkoutLoading ? (
                 <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -1519,15 +1519,15 @@ function LoadingSkeleton() {
         <div className="flex flex-col xl:flex-row gap-6">
           <div className="flex-1">
             <div className="rounded-3xl bg-muted animate-pulse" style={{ aspectRatio: '16/9' }} />
-            <div className="mt-4 rounded-2xl bg-muted animate-pulse h-28" />
+            <div className="mt-4 rounded-lg bg-muted animate-pulse h-28" />
           </div>
           <div className="xl:w-[300px] space-y-3">
-            <div className="rounded-3xl glass-card p-4 space-y-3">
+            <div className="rounded-3xl border border-border bg-card rounded-lg p-4 space-y-3">
               <div className="h-28 w-full rounded-xl bg-muted animate-pulse" />
               <div className="h-4 w-20 bg-muted rounded animate-pulse" />
               <div className="h-5 w-full bg-muted rounded animate-pulse" />
               <div className="h-5 w-3/4 bg-muted rounded animate-pulse" />
-              <div className="h-11 w-full bg-muted rounded-2xl animate-pulse mt-2" />
+              <div className="h-11 w-full bg-muted rounded-lg animate-pulse mt-2" />
             </div>
           </div>
         </div>
@@ -1541,7 +1541,7 @@ function ErrorState({ message, onBack }: { message: string; onBack: () => void }
   return (
     <AppShell allowGuest headerTitle="Erro">
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4 px-4">
-        <div className="h-20 w-20 rounded-3xl glass-card flex items-center justify-center mb-2">
+        <div className="h-20 w-20 rounded-3xl border border-border bg-card rounded-lg flex items-center justify-center mb-2">
           <Package className="h-9 w-9 text-muted-foreground" />
         </div>
         <h2 className="font-heading font-bold text-xl">Material não encontrado</h2>

@@ -1,7 +1,5 @@
 import { redirect } from 'next/navigation'
 import LandingPage from '@/components/landing-page'
-import { getSession } from '@/lib/auth'
-import { getDb } from '@/lib/mongodb'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,12 +15,32 @@ const DEFAULTS: Required<LandingSettings> = {
   landingPageEnabled: true,
 }
 
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('timeout')), ms)
+    promise.then(
+      (v) => {
+        clearTimeout(timer)
+        resolve(v)
+      },
+      (e) => {
+        clearTimeout(timer)
+        reject(e)
+      }
+    )
+  })
+}
+
 async function loadLandingSettings(): Promise<Required<LandingSettings>> {
   try {
-    const db = await getDb()
-    const settings = await db
-      .collection<LandingSettings>('landing_settings')
-      .findOne({}, { projection: { videoEmbedUrl: 1, videoEnabled: 1, landingPageEnabled: 1 } })
+    const { getDb } = await import('@/lib/mongodb')
+    const db = await withTimeout(getDb(), 2500)
+    const settings = await withTimeout(
+      db
+        .collection<LandingSettings>('landing_settings')
+        .findOne({}, { projection: { videoEmbedUrl: 1, videoEnabled: 1, landingPageEnabled: 1 } }),
+      2500
+    )
 
     if (!settings) return DEFAULTS
 
@@ -36,6 +54,15 @@ async function loadLandingSettings(): Promise<Required<LandingSettings>> {
   }
 }
 
+async function loadSession() {
+  try {
+    const { getSession } = await import('@/lib/auth')
+    return await withTimeout(getSession(), 2500)
+  } catch {
+    return null
+  }
+}
+
 export default async function HomePage({
   searchParams,
 }: {
@@ -43,10 +70,7 @@ export default async function HomePage({
 }) {
   const forceLanding = searchParams?.landing === 'true'
 
-  const [session, settings] = await Promise.all([
-    getSession().catch(() => null),
-    loadLandingSettings(),
-  ])
+  const [session, settings] = await Promise.all([loadSession(), loadLandingSettings()])
 
   const isLoggedIn = !!session
 

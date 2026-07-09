@@ -132,6 +132,13 @@ const secret = new TextEncoder().encode(
   process.env.JWT_SECRET || 'your-secret-key-change-this'
 )
 
+function isDevAuthBypass(): boolean {
+  // Edge-safe: only env checks. Never true in production builds.
+  if (process.env.NODE_ENV === 'production') return false
+  const flag = process.env.DEV_BYPASS_AUTH
+  return flag === 'true' || flag === '1'
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const response = NextResponse.next()
@@ -160,6 +167,17 @@ export async function middleware(request: NextRequest) {
 
   // Rotas públicas: permitir acesso sem autenticação
   if (isPublicRoute(pathname)) {
+    return response
+  }
+
+  // ── Local UI testing without login ────────────────────────────
+  // .env.local → DEV_BYPASS_AUTH=true  (ignored when NODE_ENV=production)
+  // Injects mock user headers so pages/APIs that read x-user-* still work.
+  if (isDevAuthBypass()) {
+    response.headers.set('x-user-id', '000000000000000000000001')
+    response.headers.set('x-user-role', 'admin')
+    response.headers.set('x-dev-bypass-auth', '1')
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow')
     return response
   }
 

@@ -20,13 +20,24 @@ export async function getSidebarSectionSettings(): Promise<SidebarSectionSetting
 }
 
 export async function canAccessSidebarSection(sectionKey: SidebarSectionKey): Promise<boolean> {
+  // Local UI testing: all sections open without DB/login
+  if (process.env.NODE_ENV !== 'production' && process.env.DEV_BYPASS_AUTH === 'true') {
+    return true
+  }
+
   const session = await getSession()
 
   if (!session) return false
   if (session.role === 'admin') return true
 
-  const sections = await getSidebarSectionSettings()
-  return isSidebarSectionEnabled(sections, sectionKey)
+  try {
+    const sections = await getSidebarSectionSettings()
+    return isSidebarSectionEnabled(sections, sectionKey)
+  } catch {
+    // Mongo offline in local dev: don't block the page
+    if (process.env.NODE_ENV !== 'production') return true
+    return false
+  }
 }
 
 export async function requireSidebarSectionAccess(sectionKey: SidebarSectionKey): Promise<void> {

@@ -551,35 +551,23 @@ function ManualClinicoContent() {
   const hasFilters = busca || areasAtivas.length > 0 || sistemaAtivo
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Floating focus session (glassmorphism + iridescent wave) */}
+    <div className="surface-page">
+      {/* Floating focus session */}
       <FloatingFocusGlass enabled={isAuthenticated === true} />
 
       {/* ══════════ HERO ══════════ */}
-      <div className="relative overflow-hidden">
-        {/* Background image — visible */}
-        <div className="absolute inset-0">
-          <img
-            src="https://i.imgur.com/0JXm4Au.png"
-            alt=""
-            className="w-full h-full object-cover opacity-30"
-            aria-hidden="true"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/50 to-background" />
-        </div>
+      <div className="relative overflow-hidden border-b border-border">
+        <div className="absolute inset-0 bg-muted/30" aria-hidden />
 
         {/* Hero Content */}
-        <div className="relative z-10 container mx-auto px-4 pt-10 pb-12 max-w-6xl">
+        <div className="relative z-10 container mx-auto px-4 pt-8 sm:pt-10 pb-10 max-w-6xl">
           <div className="text-center mb-7">
             <div className="inline-flex flex-col items-center">
-              <div className="inline-flex items-center gap-3 mb-3 px-5 py-2 rounded-full bg-white/[0.08] dark:bg-white/[0.06] backdrop-blur-xl border border-white/[0.12] shadow-[0_8px_32px_rgba(0,0,0,0.12)]">
-                <Sparkles className="h-4 w-4 text-primary" />
-                <span className="text-xs font-medium tracking-wider uppercase text-muted-foreground">A conduta inteira na palma da mão</span>
-              </div>
-              <h1 className="text-4xl sm:text-5xl font-bold font-heading bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent">
+              <p className="editorial-mark mb-3 justify-center">Produto carro-chefe</p>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold font-heading tracking-tight text-foreground">
                 Manual Clínico
               </h1>
-              <p className="text-muted-foreground mt-3 max-w-xl text-base sm:text-lg leading-relaxed">
+              <p className="text-muted-foreground mt-3 max-w-xl text-sm sm:text-base leading-relaxed">
                 Pare de abrir 5 abas pra resolver 1 patologia. Diagnóstico, diferenciais, conduta e farmacologia em segundos, pesquisáveis por nome, sinônimo ou CID-10.
               </p>
               {total > 0 && (
@@ -654,7 +642,7 @@ function ManualClinicoContent() {
                     <div className="mt-6 flex flex-col items-center gap-2">
                       <button
                         onClick={() => goToCheckout()}
-                        className="group inline-flex h-14 items-center justify-center gap-2.5 rounded-2xl bg-gradient-to-r from-amber-300 via-amber-200 to-emerald-300 px-7 text-base font-black text-emerald-950 shadow-xl shadow-amber-500/30 ring-1 ring-amber-200/40 transition hover:brightness-105 hover:shadow-amber-500/40 active:scale-[0.97]"
+                        className="group inline-flex h-12 sm:h-14 items-center justify-center gap-2.5 rounded-md bg-secondary px-6 sm:px-7 text-sm sm:text-base font-bold text-secondary-foreground shadow-md transition hover:bg-secondary/90 active:scale-[0.98]"
                       >
                         <Crown className="h-5 w-5" />
                         {isAuthenticated ? 'Desbloquear o Manual Clínico' : 'Entrar e desbloquear'}
@@ -765,10 +753,10 @@ function ManualClinicoContent() {
               <button
                 key={area}
                 onClick={() => toggleArea(area)}
-                className={`px-4 py-2 rounded-xl text-sm font-medium border backdrop-blur-xl transition-all duration-300 ${
+                className={`px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold border transition-colors ${
                   areasAtivas.includes(area)
                     ? AREA_COLORS_ACTIVE[area]
-                    : `${AREA_COLORS[area]} bg-white/[0.05] dark:bg-white/[0.03] border-white/[0.1] hover:border-white/[0.2] hover:bg-white/[0.08]`
+                    : `${AREA_COLORS[area]} bg-card border-border hover:border-primary/35 hover:bg-muted/40`
                 }`}
                 aria-label={`Filtrar por ${area}`}
                 aria-pressed={areasAtivas.includes(area)}
@@ -791,7 +779,7 @@ function ManualClinicoContent() {
         {/* ══════════ MAIN CONTENT ══════════ */}
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         {ctasReady && !manualAccess.hasFullAccess && product?.isActive && (
-          <div className="mb-7 overflow-hidden rounded-2xl border border-amber-300/25 bg-gradient-to-r from-amber-400/15 via-white/[0.04] to-emerald-400/15 p-4 backdrop-blur-xl shadow-lg shadow-amber-500/5">
+          <div className="mb-7 overflow-hidden rounded-lg border border-amber-500/25 bg-amber-500/10 p-4">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-3">
                 <div className="rounded-xl bg-amber-300/15 p-2 text-amber-300">
@@ -814,7 +802,7 @@ function ManualClinicoContent() {
               </div>
               <button
                 onClick={() => goToCheckout()}
-                className="group inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-300 to-emerald-300 px-5 text-sm font-black text-emerald-950 shadow-lg shadow-amber-500/25 transition hover:brightness-105 hover:shadow-amber-500/35 active:scale-[0.97] ring-1 ring-amber-200/40"
+                className="group inline-flex h-11 items-center justify-center gap-2 rounded-md bg-primary px-5 text-sm font-bold text-primary-foreground shadow-sm transition hover:bg-primary/90 active:scale-[0.98]"
               >
                 Desbloquear agora
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
@@ -826,7 +814,7 @@ function ManualClinicoContent() {
         {/* ══════════ FARMACOLOGIA ENTRY ══════════ */}
         <button
           onClick={() => router.push('/manual-clinico/farmacologia')}
-          className="group mb-7 w-full overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-r from-primary/[0.08] via-white/[0.03] to-emerald-400/[0.08] p-4 text-left backdrop-blur-xl transition-all hover:border-primary/35 hover:shadow-lg hover:shadow-primary/10"
+          className="group mb-7 w-full overflow-hidden rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary/35"
         >
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">

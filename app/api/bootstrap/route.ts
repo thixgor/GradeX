@@ -82,6 +82,22 @@ interface BootstrapResponse {
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
+  // Local UI testing: mock premium admin without Mongo/login
+  try {
+    const { isDevAuthBypassEnabled, isDevMockUserId, getDevMockBootstrap } = await import(
+      '@/lib/dev-auth'
+    )
+    if (isDevAuthBypassEnabled()) {
+      const { getSession } = await import('@/lib/auth')
+      const session = await getSession()
+      if (!session || isDevMockUserId(session.userId)) {
+        return NextResponse.json(getDevMockBootstrap())
+      }
+    }
+  } catch {
+    // fall through to normal auth
+  }
+
   // Security: Require authentication
   const security = await secureApiEndpoint(request, {
     rateLimit: 'READ',
@@ -89,6 +105,15 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   })
 
   if (!security.success) {
+    // Last-chance bypass if security failed for any reason in local dev
+    try {
+      const { isDevAuthBypassEnabled, getDevMockBootstrap } = await import('@/lib/dev-auth')
+      if (isDevAuthBypassEnabled()) {
+        return NextResponse.json(getDevMockBootstrap())
+      }
+    } catch {
+      /* ignore */
+    }
     return security.errorResponse!
   }
 

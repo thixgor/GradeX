@@ -489,7 +489,7 @@ function NavGlassBubble({
     <AnimatePresence>
       {visible && hoveredIndex !== null && (
         <motion.div
-          className="liquid-glass-bubble"
+          className="rounded-lg border border-border bg-card shadow-sm"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.92 }}
@@ -508,9 +508,9 @@ function NavGlassBubble({
             willChange: 'transform',
           }}
         >
-          <div className="liquid-glass-surface" />
-          <div className="liquid-glass-refraction-top" />
-          <div className="liquid-glass-refraction-bottom" />
+          
+          
+          
         </motion.div>
       )}
     </AnimatePresence>
@@ -676,9 +676,9 @@ function MediaGalleryModal({
           rounded-t-3xl sm:rounded-2xl overflow-hidden"
       >
         {/* Glass background */}
-        <div className="liquid-glass-surface !rounded-t-3xl sm:!rounded-2xl" />
-        <div className="liquid-glass-refraction-top !left-[5%] !right-[5%]" style={{ borderRadius: '24px 24px 0 0' }} />
-        <div className="liquid-glass-refraction-bottom !left-[10%] !right-[10%]" />
+        
+        
+        
 
         {/* ── Header ── */}
         <div className="relative z-10 flex items-center justify-between px-5 sm:px-6 pt-5 pb-3">
@@ -863,8 +863,8 @@ function MediaCard({ item, onExpand }: { item: MediaItem; onExpand: () => void }
   if (item.type === 'video') {
     const ytId = item.ytId || extractYouTubeId(item.url)
     return (
-      <div className="relative rounded-xl overflow-hidden liquid-glass-bubble group">
-        <div className="liquid-glass-surface !rounded-xl" />
+      <div className="relative rounded-xl overflow-hidden rounded-lg border border-border bg-card shadow-sm group">
+        
         <div className="relative z-10 p-1.5">
           {ytId ? (
             <div className="relative rounded-lg overflow-hidden" style={{ paddingBottom: '56.25%' }}>
@@ -906,10 +906,10 @@ function MediaCard({ item, onExpand }: { item: MediaItem; onExpand: () => void }
   // image or figure — clickable with thumbnail
   return (
     <div
-      className="relative rounded-xl overflow-hidden liquid-glass-bubble cursor-pointer group"
+      className="relative rounded-xl overflow-hidden rounded-lg border border-border bg-card shadow-sm cursor-pointer group"
       onClick={onExpand}
     >
-      <div className="liquid-glass-surface !rounded-xl" />
+      
       <div className="relative z-10 p-1.5">
         <div className="relative rounded-lg overflow-hidden">
           <img
@@ -949,11 +949,11 @@ function FloatingFocusSession() {
   if (!mounted) return null
   return createPortal(
     <div className="fixed top-3 right-3 sm:top-4 sm:right-4 z-[55]">
-      <div className="relative liquid-glass-bubble overflow-visible rounded-full">
+      <div className="relative rounded-lg border border-border bg-card shadow-sm overflow-visible rounded-full">
         {/* Glass surface + iridescent wave */}
-        <div className="liquid-glass-surface !rounded-full" />
-        <div className="liquid-glass-refraction-top !left-[10%] !right-[10%] !rounded-full" />
-        <div className="liquid-glass-refraction-bottom !left-[14%] !right-[14%] !rounded-full" />
+        
+        
+        
         {/* The actual button — sits above glass layers */}
         <div className="relative z-10">
           <FocusSessionButton />
@@ -1061,11 +1061,11 @@ function FloatingDiseaseName({ nome, heroRef, slug }: { nome: string; heroRef: R
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
       >
-        <div className="relative px-4 py-2.5 rounded-2xl liquid-glass-bubble overflow-visible cursor-grab active:cursor-grabbing">
+        <div className="relative px-4 py-2.5 rounded-2xl rounded-lg border border-border bg-card shadow-sm overflow-visible cursor-grab active:cursor-grabbing">
           {/* Glass surface + iridescent border wave */}
-          <div className="liquid-glass-surface !rounded-2xl" />
-          <div className="liquid-glass-refraction-top !left-[6%] !right-[6%]" style={{ borderRadius: '16px' }} />
-          <div className="liquid-glass-refraction-bottom !left-[10%] !right-[10%]" style={{ borderRadius: '16px' }} />
+          
+          
+          
 
           {/* Content */}
           <div className="relative z-10 flex items-center gap-2.5 min-w-0">
@@ -1098,12 +1098,12 @@ function FloatingDiseaseName({ nome, heroRef, slug }: { nome: string; heroRef: R
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -20, scale: 0.9 }}
               transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="relative w-full max-w-sm rounded-2xl overflow-visible liquid-glass-bubble"
+              className="relative w-full max-w-sm rounded-2xl overflow-visible rounded-lg border border-border bg-card shadow-sm"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="liquid-glass-surface !rounded-2xl" />
-              <div className="liquid-glass-refraction-top !left-[6%] !right-[6%]" style={{ borderRadius: '16px' }} />
-              <div className="liquid-glass-refraction-bottom !left-[10%] !right-[10%]" style={{ borderRadius: '16px' }} />
+              
+              
+              
 
               <div className="relative z-10 p-6">
                 {/* Close button */}
@@ -1361,9 +1361,9 @@ function SectionNav({ sections, media = [], slug }: { sections: SectionEntry[]; 
         }`}
         aria-label="Navegação de seções"
       >
-        <div className="liquid-glass-surface !rounded-2xl" />
-        <div className="liquid-glass-refraction-top" style={{ borderRadius: '16px' }} />
-        <div className="liquid-glass-refraction-bottom" style={{ borderRadius: '16px' }} />
+        
+        
+        
         <div className="relative z-10 flex flex-col items-center gap-1">
           <span className="block w-4 sm:w-5 h-[2.5px] rounded-full bg-foreground/60" />
           <span className="block w-3 sm:w-3.5 h-[2.5px] rounded-full bg-foreground/40" />
@@ -1388,9 +1388,9 @@ function SectionNav({ sections, media = [], slug }: { sections: SectionEntry[]; 
           >
             <div className="relative min-w-[180px]">
               {/* Glass background */}
-              <div className="liquid-glass-surface !rounded-2xl" />
-              <div className="liquid-glass-refraction-top !left-[8%] !right-[8%]" style={{ borderRadius: '16px' }} />
-              <div className="liquid-glass-refraction-bottom !left-[12%] !right-[12%]" style={{ borderRadius: '16px' }} />
+              
+              
+              
 
               {/* Header with drag handle + close */}
               <div className="relative z-10 flex items-center justify-between px-3 pt-2.5 pb-1">

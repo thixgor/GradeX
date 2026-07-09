@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Logo } from '@/components/logo'
+import { ThemeToggle } from '@/components/theme-toggle'
 import {
   Eye,
   EyeOff,
@@ -38,7 +39,7 @@ declare global {
 }
 
 const GLASS_CARD =
-  'bg-white/[0.055] border border-white/[0.09] backdrop-blur-2xl rounded-3xl shadow-[0_0_80px_rgba(45,212,191,0.07),0_24px_80px_rgba(0,0,0,0.5)]'
+  'auth-glass-card rounded-2xl border border-border bg-card shadow-sm'
 
 // Só permite redirecionamentos internos (evita open-redirect via ?redirect=).
 // Sem um "?redirect=" explícito, o destino padrão é direto o dashboard — ir
@@ -413,67 +414,37 @@ export default function LoginPage() {
     setError('')
   }
 
-  // ─── Input style (always dark) ────────────────────────────────────────────
+  // Editorial inputs — light/dark via tokens
   const inputCls =
-    'h-11 rounded-xl text-slate-100 placeholder:text-slate-500 bg-white/[0.06] border border-white/[0.10] focus:border-emerald-400/50 focus:ring-0 focus:bg-white/[0.10] transition-all'
+    'h-11 rounded-lg text-foreground placeholder:text-muted-foreground bg-card border border-border focus:border-primary/45 focus:ring-2 focus:ring-primary/15 focus:bg-background transition-colors'
 
   const selectCls =
-    'flex h-11 w-full rounded-xl px-3 py-2 text-sm text-slate-100 bg-white/[0.06] border border-white/[0.10] focus:border-emerald-400/50 focus:outline-none focus:bg-white/[0.10] transition-all'
+    'flex h-11 w-full rounded-lg px-3 py-2 text-sm text-foreground bg-card border border-border focus:border-primary/45 focus:outline-none focus:ring-2 focus:ring-primary/15 transition-colors'
 
   return (
-    <div
-      className="min-h-screen text-slate-50 overflow-x-hidden relative"
-      style={{ backgroundColor: '#040816' }}
-    >
-      {/* ── Background image ── */}
-      <div className="fixed inset-0 z-0">
-        <Image
-          src="https://i.imgur.com/5BA1wF8.png"
-          alt=""
-          fill
-          priority
-          className="object-cover object-center"
-          sizes="100vw"
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              'linear-gradient(to bottom, rgba(4,8,22,0.88) 0%, rgba(4,8,22,0.80) 50%, rgba(4,8,22,0.97) 100%)',
-          }}
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              'linear-gradient(to right, rgba(4,8,22,0.70) 0%, transparent 35%, transparent 65%, rgba(4,8,22,0.70) 100%)',
-          }}
-        />
-      </div>
+    <div className="min-h-screen surface-page text-foreground overflow-x-hidden relative">
+      {/* Soft brand wash — no forced navy */}
+      <div
+        className="pointer-events-none fixed inset-0 z-0 opacity-60 dark:opacity-40"
+        style={{
+          background:
+            'radial-gradient(ellipse 70% 50% at 10% 0%, rgba(70,129,82,0.14), transparent 55%), radial-gradient(ellipse 50% 40% at 90% 100%, rgba(206,89,41,0.08), transparent 50%)',
+        }}
+        aria-hidden
+      />
 
-      {/* ── Radial glows ── */}
-      <div className="pointer-events-none fixed inset-0 z-0" aria-hidden>
-        <div
-          className="absolute top-0 left-1/4 w-[600px] h-[350px] rounded-full opacity-20 blur-[130px]"
-          style={{ background: 'radial-gradient(ellipse, #2DD4BF22 0%, transparent 70%)' }}
-        />
-        <div
-          className="absolute bottom-0 right-1/4 w-[500px] h-[300px] rounded-full opacity-15 blur-[100px]"
-          style={{ background: 'radial-gradient(ellipse, #4ADE8018 0%, transparent 70%)' }}
-        />
+      {/* Top chrome */}
+      <div className="absolute top-4 left-4 right-4 z-20 flex items-center justify-between gap-3">
+        <button
+          type="button"
+          onClick={() => router.push('/')}
+          className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm font-semibold text-muted-foreground shadow-sm hover:bg-muted hover:text-foreground transition"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Início
+        </button>
+        <ThemeToggle />
       </div>
-
-      {/* ── Back button ── */}
-      <motion.button
-        initial={{ opacity: 0, x: -12 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        onClick={() => router.push('/')}
-        className="absolute top-5 left-5 z-20 flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-slate-300 border border-white/[0.10] bg-white/[0.05] hover:bg-white/[0.10] hover:text-slate-100 backdrop-blur-sm transition-all"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Início
-      </motion.button>
 
       {/* ── Main layout ── */}
       <div className="relative z-10 min-h-screen flex">
@@ -530,30 +501,25 @@ export default function LoginPage() {
           </div>
 
           {/* Headline */}
-          <h2 className="text-3xl xl:text-4xl font-bold leading-tight mb-4 tracking-tight">
-            <span className="text-slate-50">Estude mais</span>
+          <h2 className="mb-4 font-heading text-3xl font-semibold leading-tight tracking-tight xl:text-4xl">
+            <span className="text-foreground">Estude mais</span>
             <br />
-            <span
-              className="bg-clip-text text-transparent"
-              style={{ backgroundImage: 'linear-gradient(135deg, #4ADE80 0%, #2DD4BF 100%)' }}
-            >
-              inteligente.
-            </span>
+            <span className="text-primary">inteligente.</span>
           </h2>
 
-          <p className="text-slate-400 text-base mb-10 leading-relaxed max-w-sm">
+          <p className="text-muted-foreground text-base mb-10 leading-relaxed max-w-sm">
             Plataforma completa de estudo para alunos de saúde: questões, flashcards, resumos e muito mais.
           </p>
 
           {/* Feature bullets */}
           <ul className="space-y-3 mb-12">
             {highlights.map(({ icon: Icon, text }) => (
-              <li key={text} className="flex items-center gap-3 text-sm text-slate-300">
+              <li key={text} className="flex items-center gap-3 text-sm text-muted-foreground">
                 <span
                   className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center"
                   style={{ background: 'rgba(74,222,128,0.12)', border: '1px solid rgba(74,222,128,0.20)' }}
                 >
-                  <Icon className="w-3.5 h-3.5 text-emerald-400" />
+                  <Icon className="w-3.5 h-3.5 text-primary" />
                 </span>
                 {text}
               </li>
@@ -563,7 +529,7 @@ export default function LoginPage() {
           {/* Social proof pill */}
           <div className="flex items-center gap-3">
             <div
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold text-emerald-400"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold text-primary"
               style={{ background: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.20)' }}
             >
               <span className="relative flex h-1.5 w-1.5">
@@ -634,10 +600,10 @@ export default function LoginPage() {
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.25 }}
                 >
-                  <h1 className="text-2xl font-bold text-slate-50 tracking-tight">
+                  <h1 className="text-2xl font-bold text-foreground tracking-tight">
                     {isLogin ? 'Entrar na plataforma' : 'Criar sua conta'}
                   </h1>
-                  <p className="text-sm text-slate-400 mt-1">
+                  <p className="text-sm text-muted-foreground mt-1">
                     {isLogin
                       ? 'Bem-vindo de volta, continue de onde parou'
                       : 'Grátis para começar, sem cartão de crédito'}
@@ -657,16 +623,16 @@ export default function LoginPage() {
                     <Mail className="h-8 w-8 text-teal-300" />
                   </div>
                   <div className="space-y-1">
-                    <h3 className="text-lg font-bold text-slate-50">Verificação de administrador</h3>
-                    <p className="text-sm text-slate-400">
+                    <h3 className="text-lg font-bold text-foreground">Verificação de administrador</h3>
+                    <p className="text-sm text-muted-foreground">
                       Enviamos um código de 6 dígitos para<br />
-                      <span className="font-semibold text-slate-200">{pendingEmail}</span>
+                      <span className="font-semibold text-foreground/90">{pendingEmail}</span>
                     </p>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="loginCode" className="text-xs font-medium text-slate-400">
+                  <Label htmlFor="loginCode" className="text-xs font-medium text-muted-foreground">
                     Código de verificação
                   </Label>
                   <Input
@@ -697,8 +663,8 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={codeLoading}
-                  className="w-full h-11 rounded-xl font-semibold text-sm text-[#040816] flex items-center justify-center gap-2 transition-all hover:opacity-90 hover:scale-[1.01] disabled:opacity-60 disabled:cursor-not-allowed disabled:scale-100"
-                  style={{ background: 'linear-gradient(135deg, #4ADE80 0%, #2DD4BF 100%)' }}
+                  className="w-full h-11 rounded-xl font-semibold text-sm text-secondary-foreground flex items-center justify-center gap-2 transition-all hover:opacity-90 hover:scale-[1.01] disabled:opacity-60 disabled:cursor-not-allowed disabled:scale-100"
+                  style={{ background: 'hsl(var(--secondary))' }}
                 >
                   {codeLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ChevronRight className="h-4 w-4" />}
                   {codeLoading ? 'Verificando...' : 'Confirmar e entrar'}
@@ -708,7 +674,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={cancelEmailCode}
-                    className="text-slate-500 hover:text-slate-300 transition-colors flex items-center gap-1"
+                    className="text-foreground0 hover:text-muted-foreground transition-colors flex items-center gap-1"
                   >
                     <ArrowLeft className="h-3.5 w-3.5" /> Voltar
                   </button>
@@ -716,7 +682,7 @@ export default function LoginPage() {
                     type="button"
                     onClick={handleResendCode}
                     disabled={resendCooldown > 0}
-                    className="text-slate-500 hover:text-emerald-400 transition-colors disabled:opacity-50 disabled:hover:text-slate-500"
+                    className="text-foreground0 hover:text-primary transition-colors disabled:opacity-50 disabled:hover:text-foreground0"
                   >
                     {resendCooldown > 0 ? `Reenviar em ${resendCooldown}s` : 'Reenviar código'}
                   </button>
@@ -732,13 +698,13 @@ export default function LoginPage() {
                   className="h-20 w-20 rounded-full flex items-center justify-center"
                   style={{ background: 'rgba(74,222,128,0.12)', border: '1px solid rgba(74,222,128,0.25)' }}
                 >
-                  <CheckCircle2 className="h-10 w-10 text-emerald-400" />
+                  <CheckCircle2 className="h-10 w-10 text-primary" />
                 </div>
                 <div className="text-center space-y-2">
-                  <h3 className="text-xl font-bold text-slate-50">Conta criada com sucesso!</h3>
-                  <p className="text-sm text-slate-400">
+                  <h3 className="text-xl font-bold text-foreground">Conta criada com sucesso!</h3>
+                  <p className="text-sm text-muted-foreground">
                     Enviamos um link de confirmação para:<br />
-                    <span className="font-semibold text-slate-200">{formData.email}</span>
+                    <span className="font-semibold text-foreground/90">{formData.email}</span>
                   </p>
                 </div>
                 <div
@@ -752,14 +718,14 @@ export default function LoginPage() {
                 <div className="w-full space-y-2">
                   <button
                     onClick={() => router.push('/')}
-                    className="w-full h-11 rounded-xl font-semibold text-sm text-[#040816] flex items-center justify-center gap-2 transition-all hover:opacity-90 hover:scale-[1.01]"
-                    style={{ background: 'linear-gradient(135deg, #4ADE80 0%, #2DD4BF 100%)' }}
+                    className="w-full h-11 rounded-xl font-semibold text-sm text-secondary-foreground flex items-center justify-center gap-2 transition-all hover:opacity-90 hover:scale-[1.01]"
+                    style={{ background: 'hsl(var(--secondary))' }}
                   >
                     Ir para o Início
                   </button>
                   <button
                     onClick={() => setIsLogin(true)}
-                    className="w-full h-11 rounded-xl text-sm font-medium text-slate-300 border border-white/[0.10] bg-white/[0.05] hover:bg-white/[0.09] transition-all"
+                    className="w-full h-11 rounded-xl text-sm font-medium text-muted-foreground border border-border bg-card hover:bg-muted transition-all"
                   >
                     Fazer Login Agora
                   </button>
@@ -780,7 +746,7 @@ export default function LoginPage() {
                         transition={{ duration: 0.3 }}
                         className="space-y-2"
                       >
-                        <Label htmlFor="name" className="text-xs font-medium text-slate-400">Nome Completo</Label>
+                        <Label htmlFor="name" className="text-xs font-medium text-muted-foreground">Nome Completo</Label>
                         <Input
                           id="name"
                           type="text"
@@ -796,7 +762,7 @@ export default function LoginPage() {
 
                   {/* Email */}
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-xs font-medium text-slate-400">Email</Label>
+                    <Label htmlFor="email" className="text-xs font-medium text-muted-foreground">Email</Label>
                     <Input
                       id="email"
                       type="email"
@@ -811,11 +777,11 @@ export default function LoginPage() {
                   {/* Password */}
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="password" className="text-xs font-medium text-slate-400">Senha</Label>
+                      <Label htmlFor="password" className="text-xs font-medium text-muted-foreground">Senha</Label>
                       {isLogin && (
                         <Link
                           href="/auth/forgot-password"
-                          className="text-xs text-slate-500 hover:text-emerald-400 transition-colors"
+                          className="text-xs text-foreground0 hover:text-primary transition-colors"
                           tabIndex={-1}
                         >
                           Esqueceu a senha?
@@ -835,7 +801,7 @@ export default function LoginPage() {
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground0 hover:text-muted-foreground transition-colors"
                       >
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
@@ -854,7 +820,7 @@ export default function LoginPage() {
                         className="space-y-4"
                       >
                         <div className="space-y-2">
-                          <Label htmlFor="dateOfBirth" className="text-xs font-medium text-slate-400">Data de Nascimento *</Label>
+                          <Label htmlFor="dateOfBirth" className="text-xs font-medium text-muted-foreground">Data de Nascimento *</Label>
                           <Input
                             id="dateOfBirth"
                             type="date"
@@ -869,7 +835,7 @@ export default function LoginPage() {
                           className="space-y-3 p-4 rounded-xl"
                           style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
                         >
-                          <p className="text-sm font-medium text-slate-300">
+                          <p className="text-sm font-medium text-muted-foreground">
                             Você é estudante de Ciências Médicas?
                           </p>
                           <div className="flex gap-2">
@@ -877,12 +843,12 @@ export default function LoginPage() {
                               type="button"
                               className={`flex-1 h-9 rounded-xl text-sm font-semibold transition-all ${
                                 formData.isAfyaMedicineStudent
-                                  ? 'text-[#040816]'
-                                  : 'text-slate-400 border border-white/[0.10] bg-white/[0.04] hover:bg-white/[0.08]'
+                                  ? 'text-secondary-foreground'
+                                  : 'text-muted-foreground border border-border bg-muted/40 hover:bg-muted'
                               }`}
                               style={
                                 formData.isAfyaMedicineStudent
-                                  ? { background: 'linear-gradient(135deg, #4ADE80 0%, #2DD4BF 100%)' }
+                                  ? { background: 'hsl(var(--secondary))' }
                                   : {}
                               }
                               onClick={() => setFormData({ ...formData, isAfyaMedicineStudent: true })}
@@ -893,8 +859,8 @@ export default function LoginPage() {
                               type="button"
                               className={`flex-1 h-9 rounded-xl text-sm font-semibold transition-all ${
                                 !formData.isAfyaMedicineStudent
-                                  ? 'text-[#040816] bg-slate-400'
-                                  : 'text-slate-400 border border-white/[0.10] bg-white/[0.04] hover:bg-white/[0.08]'
+                                  ? 'text-secondary-foreground bg-muted-foreground'
+                                  : 'text-muted-foreground border border-border bg-muted/40 hover:bg-muted'
                               }`}
                               onClick={() =>
                                 setFormData({ ...formData, isAfyaMedicineStudent: false, afyaUnit: '' })
@@ -912,7 +878,7 @@ export default function LoginPage() {
                             exit={{ opacity: 0, height: 0 }}
                             className="space-y-2"
                           >
-                            <Label htmlFor="afyaUnit" className="text-xs font-medium text-slate-400">Sua Unidade *</Label>
+                            <Label htmlFor="afyaUnit" className="text-xs font-medium text-muted-foreground">Sua Unidade *</Label>
                             <select
                               id="afyaUnit"
                               className={selectCls}
@@ -930,7 +896,7 @@ export default function LoginPage() {
                         )}
 
                         <div className="space-y-2">
-                          <Label htmlFor="periodo" className="text-xs font-medium text-slate-400">Período (opcional)</Label>
+                          <Label htmlFor="periodo" className="text-xs font-medium text-muted-foreground">Período (opcional)</Label>
                           <select
                             id="periodo"
                             className={selectCls}
@@ -947,7 +913,7 @@ export default function LoginPage() {
 
                         {canBeAdmin && (
                           <div className="space-y-2">
-                            <Label htmlFor="role" className="text-xs font-medium text-slate-400">Tipo de Conta</Label>
+                            <Label htmlFor="role" className="text-xs font-medium text-muted-foreground">Tipo de Conta</Label>
                             <select
                               id="role"
                               className={selectCls}
@@ -982,8 +948,8 @@ export default function LoginPage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full h-11 rounded-xl font-semibold text-sm text-[#040816] flex items-center justify-center gap-2 transition-all hover:opacity-90 hover:scale-[1.01] disabled:opacity-60 disabled:cursor-not-allowed disabled:scale-100"
-                    style={{ background: 'linear-gradient(135deg, #4ADE80 0%, #2DD4BF 100%)' }}
+                    className="w-full h-11 rounded-xl font-semibold text-sm text-secondary-foreground flex items-center justify-center gap-2 transition-all hover:opacity-90 hover:scale-[1.01] disabled:opacity-60 disabled:cursor-not-allowed disabled:scale-100"
+                    style={{ background: 'hsl(var(--secondary))' }}
                   >
                     {loading ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -997,10 +963,10 @@ export default function LoginPage() {
                     <>
                       <div className="relative">
                         <div className="absolute inset-0 flex items-center">
-                          <span className="w-full border-t border-white/[0.08]" />
+                          <span className="w-full border-t border-border" />
                         </div>
                         <div className="relative flex justify-center text-xs uppercase">
-                          <span className="px-3 text-slate-600" style={{ backgroundColor: 'transparent' }}>
+                          <span className="px-3 text-muted-foreground" style={{ backgroundColor: 'transparent' }}>
                             ou continue com
                           </span>
                         </div>
@@ -1010,10 +976,10 @@ export default function LoginPage() {
                             para o Google ter controle total do DOM. */}
                         <div id="google-signin-button" className="flex justify-center" />
                         {googleStatus === 'loading' && (
-                          <Loader2 className="h-4 w-4 animate-spin text-slate-500" />
+                          <Loader2 className="h-4 w-4 animate-spin text-foreground0" />
                         )}
                         {googleStatus === 'error' && (
-                          <p className="text-xs text-center text-slate-500">
+                          <p className="text-xs text-center text-foreground0">
                             Login com Google indisponível no momento. Use seu e-mail e senha acima.
                           </p>
                         )}
@@ -1023,7 +989,7 @@ export default function LoginPage() {
 
                   <button
                     type="button"
-                    className="w-full text-sm text-slate-500 hover:text-emerald-400 transition-colors py-1"
+                    className="w-full text-sm text-foreground0 hover:text-primary transition-colors py-1"
                     onClick={() => { setIsLogin(!isLogin); setError('') }}
                   >
                     {isLogin
@@ -1063,7 +1029,7 @@ export default function LoginPage() {
                   className="p-4 rounded-xl"
                   style={{ background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.10)' }}
                 >
-                  <p className="text-sm text-slate-300">{blockedMessage}</p>
+                  <p className="text-sm text-muted-foreground">{blockedMessage}</p>
                 </div>
               </div>
             </DialogDescription>
@@ -1071,7 +1037,7 @@ export default function LoginPage() {
           <div className="flex justify-center pt-4">
             <button
               onClick={() => setShowBlockedModal(false)}
-              className="w-full h-10 rounded-xl text-sm text-slate-300 border border-white/[0.10] bg-white/[0.05] hover:bg-white/[0.10] transition-all"
+              className="w-full h-10 rounded-xl text-sm text-muted-foreground border border-border bg-card hover:bg-muted transition-all"
             >
               Fechar
             </button>
@@ -1105,26 +1071,26 @@ export default function LoginPage() {
                   className="p-4 rounded-xl"
                   style={{ background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.10)' }}
                 >
-                  <p className="text-sm font-medium mb-2 text-slate-200">Sua conta foi banida da plataforma.</p>
+                  <p className="text-sm font-medium mb-2 text-foreground/90">Sua conta foi banida da plataforma.</p>
                   {banInfo.reason && (
                     <div className="space-y-1 mt-2">
-                      <p className="text-xs font-semibold text-slate-400">Motivo:</p>
-                      <p className="text-sm text-slate-300">{BanReasonLabels[banInfo.reason]}</p>
+                      <p className="text-xs font-semibold text-muted-foreground">Motivo:</p>
+                      <p className="text-sm text-muted-foreground">{BanReasonLabels[banInfo.reason]}</p>
                     </div>
                   )}
                   {banInfo.details && (
                     <div className="space-y-1 mt-3">
-                      <p className="text-xs font-semibold text-slate-400">Detalhes:</p>
-                      <p className="text-sm text-slate-300">{banInfo.details}</p>
+                      <p className="text-xs font-semibold text-muted-foreground">Detalhes:</p>
+                      <p className="text-sm text-muted-foreground">{banInfo.details}</p>
                     </div>
                   )}
                   {banInfo.bannedAt && (
-                    <p className="text-xs mt-3 text-slate-500">
+                    <p className="text-xs mt-3 text-foreground0">
                       Data: {new Date(banInfo.bannedAt).toLocaleDateString('pt-BR')}
                     </p>
                   )}
                 </div>
-                <p className="text-sm text-slate-500 text-center">
+                <p className="text-sm text-foreground0 text-center">
                   Se acredita que é um erro, entre em contato com o administrador.
                 </p>
               </div>
@@ -1133,7 +1099,7 @@ export default function LoginPage() {
           <div className="flex justify-center pt-4">
             <button
               onClick={() => setShowBannedDialog(false)}
-              className="w-full h-10 rounded-xl text-sm text-slate-300 border border-white/[0.10] bg-white/[0.05] hover:bg-white/[0.10] transition-all"
+              className="w-full h-10 rounded-xl text-sm text-muted-foreground border border-border bg-card hover:bg-muted transition-all"
             >
               Fechar
             </button>

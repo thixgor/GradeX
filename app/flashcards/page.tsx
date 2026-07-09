@@ -387,48 +387,60 @@ export default function FlashcardsHubPage() {
   const showSection = (key: Filter) => filter === 'all' || filter === key
 
   return (
-    <AppShell allowGuest>
-      {/* Ambient background */}
-      <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute -top-40 -left-32 h-[380px] w-[380px] rounded-full bg-violet-500/20 blur-2xl" />
-        <div className="absolute top-1/3 -right-40 h-[380px] w-[380px] rounded-full bg-fuchsia-500/15 blur-2xl" />
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 py-6 space-y-8">
-        {/* Header */}
-        <header className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-          <div>
-            <div className="inline-flex items-center gap-2 mb-3 rounded-full border border-white/40 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur-md px-3 py-1 text-[11px] font-medium text-violet-600 dark:text-violet-300 shadow-sm">
-              <Sparkles className="h-3 w-3" /> Flashcards manuais · novo
+    <AppShell allowGuest headerTitle="Flashcards" headerSubtitle="Decks, loja e comunidade">
+      <div className="surface-page">
+      <div className="max-w-7xl mx-auto px-4 py-5 sm:px-6 sm:py-6 space-y-6">        {/* Hero header — richer presence */}
+        <header className="relative overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+          <div
+            className="pointer-events-none absolute inset-0 opacity-50 dark:opacity-30"
+            style={{
+              background:
+                'radial-gradient(ellipse at 0% 0%, rgba(70,129,82,0.16), transparent 55%), radial-gradient(ellipse at 100% 100%, rgba(226,164,62,0.12), transparent 50%)',
+            }}
+            aria-hidden
+          />
+          <div className="relative flex flex-col gap-4 p-5 sm:flex-row sm:items-end sm:justify-between sm:p-7">
+            <div className="min-w-0 max-w-2xl">
+              <p className="editorial-mark mb-2">Estudo ativo · repetição espaçada</p>
+              <h1 className="font-heading text-2xl sm:text-3xl lg:text-[2.1rem] font-semibold tracking-tight text-foreground leading-tight">
+                Flashcards com método
+              </h1>
+              <p className="mt-2 text-sm sm:text-[15px] text-muted-foreground leading-relaxed">
+                Crie decks do seu jeito, estude com a comunidade e acelere com os{' '}
+                <strong className="font-semibold text-primary">decks oficiais</strong> dos especialistas.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <span className="inline-flex items-center rounded-md border border-border bg-background/80 px-2.5 py-1 text-xs font-semibold text-foreground">
+                  {counts.mine} meus
+                </span>
+                <span className="inline-flex items-center rounded-md border border-border bg-background/80 px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                  {counts.store} na loja
+                </span>
+                <span className="inline-flex items-center rounded-md border border-border bg-background/80 px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                  {counts.community} comunidade
+                </span>
+              </div>
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-slate-900 via-violet-700 to-fuchsia-600 dark:from-white dark:via-violet-200 dark:to-fuchsia-300 bg-clip-text text-transparent">
-              Flashcards
-            </h1>
-            <p className="mt-2 max-w-xl text-sm text-slate-600 dark:text-slate-300">
-              Crie decks do seu jeito, estude com a comunidade e acelere com os{' '}
-              <strong className="text-amber-600 dark:text-amber-300">decks oficiais</strong> dos especialistas.
-            </p>
+            {!isGuest && (
+              <div className="flex flex-wrap items-center gap-2 shrink-0">
+                <Link href="/flashcards/ia">
+                  <button className="inline-flex items-center gap-2 rounded-lg border border-border bg-background px-4 py-2.5 text-sm font-semibold text-foreground shadow-sm hover:bg-muted transition">
+                    <Wand2 className="h-4 w-4 text-primary" /> Flashcards de IA
+                  </button>
+                </Link>
+                <button
+                  onClick={() => setCreateOpen(true)}
+                  className="inline-flex items-center gap-2 rounded-lg bg-secondary px-5 py-2.5 text-sm font-bold text-secondary-foreground shadow-md shadow-secondary/20 hover:bg-secondary/90 transition"
+                >
+                  <Plus className="h-4 w-4" /> Novo deck
+                </button>
+              </div>
+            )}
           </div>
-          {!isGuest && (
-          <div className="flex flex-wrap items-center gap-2">
-            <Link href="/flashcards/ia">
-              <button className="inline-flex items-center gap-2 rounded-2xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-white/5 backdrop-blur-md px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-white hover:bg-white/90 dark:hover:bg-white/10 transition shadow-sm">
-                <Wand2 className="h-4 w-4 text-violet-500" /> Flashcards de IA
-              </button>
-            </Link>
-            <button
-              onClick={() => setCreateOpen(true)}
-              className="group inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 via-fuchsia-600 to-rose-500 px-5 py-2.5 text-sm font-semibold text-white shadow-xl shadow-violet-500/25 hover:shadow-2xl hover:shadow-fuchsia-500/30 hover:scale-[1.02] transition"
-            >
-              <Plus className="h-4 w-4" /> Novo deck
-              <ArrowRight className="h-4 w-4 -ml-1 opacity-0 group-hover:opacity-100 group-hover:ml-0 transition-all" />
-            </button>
-          </div>
-          )}
         </header>
 
         {isGuest && (
-          <div className="rounded-3xl border border-amber-300/40 bg-amber-50/80 px-4 py-3 text-sm text-amber-900 shadow-sm backdrop-blur-xl dark:border-amber-400/20 dark:bg-amber-500/10 dark:text-amber-100">
+          <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-900 dark:text-amber-100">
             Você está na loja oficial de flashcards. Meus decks, comunidade, recebidos, criação e estudo exigem login.
           </div>
         )}
@@ -468,13 +480,13 @@ export default function FlashcardsHubPage() {
         {/* Content — cada seção renderiza seu próprio skeleton assim que a
             página monta; não há mais um spinner de página inteira travando
             tudo atrás da requisição mais lenta. */}
-        <div className="space-y-12">
+        <div className="space-y-10">
             {showSection('mine') && (
               <Section
                 title="Meus decks"
                 subtitle={loadingMine ? 'Carregando...' : mine.length === 0 ? 'Você ainda não criou nenhum deck.' : `${mine.length} ${mine.length === 1 ? 'deck' : 'decks'}`}
                 icon={<Inbox className="h-5 w-5" />}
-                accent="from-violet-500 to-fuchsia-500"
+                accent="from-primary to-primary/80"
                 action={mine.length > 6 && filter === 'all' ? <SectionLink onClick={() => selectSection('mine')}>Ver todos</SectionLink> : undefined}
               >
                 {loadingMine ? (
@@ -486,7 +498,7 @@ export default function FlashcardsHubPage() {
                     cta={
                       <button
                         onClick={() => setCreateOpen(true)}
-                        className="inline-flex items-center gap-1.5 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 hover:shadow-fuchsia-500/30 transition"
+                        className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition"
                       >
                         <Plus className="h-4 w-4" /> Criar deck
                       </button>
@@ -515,7 +527,7 @@ export default function FlashcardsHubPage() {
                     cta={
                       <button
                         onClick={() => selectSection('store')}
-                        className="inline-flex items-center gap-1.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-amber-500/25 hover:shadow-orange-500/30 transition"
+                        className="inline-flex items-center gap-1.5 rounded-md bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-amber-500/25 hover:shadow-orange-500/30 transition"
                       >
                         <Crown className="h-4 w-4" /> Ir para a loja
                       </button>
@@ -577,7 +589,7 @@ export default function FlashcardsHubPage() {
                         key={opt}
                         onClick={() => setCommunitySort(opt)}
                         className={cn(
-                          'rounded-full px-3 py-1 text-[11px] font-semibold border backdrop-blur-md transition',
+                          'rounded-full px-3 py-1 text-[11px] font-semibold border transition',
                           communitySort === opt
                             ? 'bg-emerald-500/20 border-emerald-400/40 text-emerald-700 dark:text-emerald-200'
                             : 'border-white/30 dark:border-white/10 bg-white/40 dark:bg-white/5 text-slate-500 hover:text-slate-700 dark:hover:text-white'
@@ -611,6 +623,7 @@ export default function FlashcardsHubPage() {
               </Section>
             )}
         </div>
+      </div>
       </div>
 
       {createOpen && (
@@ -670,7 +683,7 @@ function StoreFolderNav({ tree, selected, store, folderCounts, pending, onSelect
   onSelect: (id: string | null) => void
 }) {
   return (
-    <aside className="relative overflow-hidden rounded-3xl border border-emerald-200/60 dark:border-emerald-400/15 bg-white/75 dark:bg-emerald-950/20 backdrop-blur-2xl shadow-xl shadow-emerald-900/5 lg:sticky lg:top-20">
+    <aside className="relative overflow-hidden rounded-lg border border-emerald-200/60 dark:border-emerald-400/15 bg-white/75 dark:bg-emerald-950/20 shadow-xl shadow-emerald-900/5 lg:sticky lg:top-20">
       <div aria-hidden className="absolute inset-0 bg-[linear-gradient(135deg,rgba(16,185,129,0.16),rgba(255,255,255,0.22)_42%,rgba(245,158,11,0.12))] dark:bg-[linear-gradient(135deg,rgba(16,185,129,0.16),rgba(15,23,42,0.30)_46%,rgba(245,158,11,0.10))]" />
       <div className="relative px-4 py-3 border-b border-emerald-200/50 dark:border-emerald-400/10">
         <div className="flex items-center justify-between gap-3">
@@ -678,7 +691,7 @@ function StoreFolderNav({ tree, selected, store, folderCounts, pending, onSelect
             <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">Coleções oficiais</p>
             <p className="text-[11px] text-slate-500 dark:text-slate-400">{store.length} {store.length === 1 ? 'deck' : 'decks'} na loja</p>
           </div>
-          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-200 ring-1 ring-emerald-400/20">
+          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-emerald-500/15 text-emerald-700 dark:text-emerald-200 ring-1 ring-emerald-400/20">
             {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Crown className="h-4 w-4" />}
           </div>
         </div>
@@ -756,7 +769,7 @@ function FolderNavItem({ label, count, active, onClick, depth, color, hasChildre
       <button
         onClick={onClick}
         className={cn(
-          'flex-1 min-w-0 flex items-center justify-between gap-2 rounded-2xl px-2.5 py-2.5 text-sm text-left transition overflow-hidden ring-1',
+          'flex-1 min-w-0 flex items-center justify-between gap-2 rounded-md px-2.5 py-2.5 text-sm text-left transition overflow-hidden ring-1',
           active
             ? 'bg-emerald-500/[0.18] text-emerald-800 dark:text-emerald-100 font-semibold ring-emerald-400/35 shadow-sm'
             : 'bg-white/40 dark:bg-white/[0.03] text-slate-600 dark:text-slate-300 ring-white/45 dark:ring-white/10 hover:bg-white/75 dark:hover:bg-white/10 hover:text-emerald-800 dark:hover:text-white'
@@ -793,30 +806,30 @@ function StoreHero({ decks, totalStore, onSeeAll, metricSettings }: {
   const [hero, ...rest] = decks
   if (!hero) return null
   return (
-    <section className="relative isolate overflow-hidden rounded-[2rem] border border-white/40 dark:border-white/10 bg-gradient-to-br from-amber-50/70 via-white/50 to-fuchsia-50/70 dark:from-amber-950/20 dark:via-slate-900/40 dark:to-fuchsia-950/20 backdrop-blur-2xl shadow-xl">
+    <section className="relative isolate overflow-hidden rounded-lg border border-border bg-gradient-to-br from-amber-50/80 via-card to-primary/5 dark:from-amber-950/20 dark:via-card dark:to-primary/10 shadow-xl">
       <div aria-hidden className="absolute inset-0 pointer-events-none">
         <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-amber-400/20 blur-2xl" />
-        <div className="absolute -bottom-16 -left-16 h-56 w-56 rounded-full bg-fuchsia-500/15 blur-2xl" />
+        <div className="absolute -bottom-16 -left-16 h-56 w-56 rounded-full bg-accent/10 blur-2xl" />
       </div>
       <GlassHeroSurface className="opacity-60" />
 
       <div className="relative grid lg:grid-cols-[1.15fr,1fr] gap-5 p-5 lg:p-7">
         {/* Featured deck */}
-        <TiltCard maxTilt={4} scale={1.012} className="rounded-3xl">
-        <Link href={`/flashcards/d/${hero.slug}`} className="group relative block overflow-hidden rounded-3xl border border-white/40 dark:border-white/10 bg-slate-900 shadow-2xl">
+        <TiltCard maxTilt={4} scale={1.012} className="rounded-lg">
+        <Link href={`/flashcards/d/${hero.slug}`} className="group relative block overflow-hidden rounded-lg border border-border bg-slate-900 shadow-2xl">
           <div className="relative aspect-[16/10]">
             {hero.coverImage ? (
               <Image src={hero.coverImage} alt="" fill priority className="object-cover group-hover:scale-105 transition duration-700" sizes="(max-width: 1024px) 100vw, 60vw" />
             ) : (
-              <div className="absolute inset-0 bg-gradient-to-br from-violet-600 via-fuchsia-600 to-rose-500" />
+              <div className="absolute inset-0 bg-gradient-to-br bg-secondary" />
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
 
-            <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-amber-400/95 backdrop-blur-md px-3 py-1 text-[11px] font-bold text-amber-950 shadow-lg">
+            <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-amber-400/95 px-3 py-1 text-[11px] font-bold text-amber-950 shadow-lg">
               <Crown className="h-3 w-3" /> Loja oficial
             </div>
             {hero.isFeatured && (
-              <div className="absolute top-4 right-4 inline-flex items-center gap-1.5 rounded-full bg-white/15 border border-white/30 backdrop-blur-md px-3 py-1 text-[11px] font-bold text-white">
+              <div className="absolute top-4 right-4 inline-flex items-center gap-1.5 rounded-full bg-white/15 border border-white/30 px-3 py-1 text-[11px] font-bold text-white">
                 <Star className="h-3 w-3 fill-current text-amber-300" /> Destaque
               </div>
             )}
@@ -845,7 +858,7 @@ function StoreHero({ decks, totalStore, onSeeAll, metricSettings }: {
                 ) : (
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/95 px-3 py-1.5 text-sm font-bold text-white shadow-lg">Grátis</span>
                 )}
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 border border-white/25 backdrop-blur-md px-3 py-1.5 text-sm font-semibold text-white group-hover:bg-white/25 transition">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 border border-white/25 px-3 py-1.5 text-sm font-semibold text-white group-hover:bg-white/25 transition">
                   Estudar agora <ChevronRight className="h-4 w-4" />
                 </span>
               </div>
@@ -856,18 +869,18 @@ function StoreHero({ decks, totalStore, onSeeAll, metricSettings }: {
 
         {/* Sidebar */}
         <div className="flex flex-col gap-3.5">
-          <div className="rounded-3xl border border-white/40 dark:border-white/10 bg-white/75 dark:bg-white/5 backdrop-blur-xl p-5 shadow-lg">
+          <div className="rounded-lg border border-border bg-card p-5 shadow-lg">
             <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 mb-2">
               <ShoppingBag className="h-4 w-4" />
               <span className="text-[11px] font-bold uppercase tracking-wider">Loja oficial · {totalStore} {totalStore === 1 ? 'deck' : 'decks'}</span>
             </div>
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white leading-tight">Decks dos especialistas</h3>
-            <p className="mt-1.5 text-sm text-slate-600 dark:text-slate-300">
+            <h3 className="text-xl font-bold text-foreground leading-tight">Decks dos especialistas</h3>
+            <p className="mt-1.5 text-sm text-muted-foreground">
               Material curado pela equipe DomineAqui. Comprou uma vez, estuda para sempre.
             </p>
             <button
               onClick={onSeeAll}
-              className="mt-4 group inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-amber-500/30 hover:shadow-rose-500/40 hover:scale-[1.02] transition"
+              className="mt-4 group inline-flex w-full items-center justify-center gap-2 rounded-md bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-amber-500/30 hover:shadow-rose-500/40 hover:scale-[1.02] transition"
             >
               <Crown className="h-4 w-4" /> Explorar loja completa
               <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition" />
@@ -888,16 +901,16 @@ function StoreHero({ decks, totalStore, onSeeAll, metricSettings }: {
 function CompactStoreCard({ deck }: { deck: DeckWithId }) {
   const priceLabel = deck._isPurchased ? '✓ Adquirido' : deck.pricing === 'paid' ? `R$ ${deck.price?.toFixed(2)}` : 'Grátis'
   return (
-    <TiltCard maxTilt={6} scale={1.03} className="rounded-2xl">
+    <TiltCard maxTilt={6} scale={1.03} className="rounded-md">
     <Link
       href={`/flashcards/d/${deck.slug}`}
-      className="group relative overflow-hidden rounded-2xl glass-rim border border-white/40 dark:border-white/10 bg-white/75 dark:bg-white/5 backdrop-blur-xl shadow hover:shadow-xl hover:border-amber-300/50 transition-shadow block"
+      className="group relative overflow-hidden rounded-md border border-border bg-card shadow hover:shadow-xl hover:border-amber-300/50 transition-shadow block"
     >
       <div className="relative aspect-[16/10]">
         {deck.coverImage ? (
           <Image src={deck.coverImage} alt="" fill className="object-cover group-hover:scale-110 transition duration-500" sizes="(max-width: 1024px) 50vw, 20vw" />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-violet-500 via-fuchsia-500 to-rose-500" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary/80" />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
         <div className="absolute top-1.5 left-1.5 inline-flex items-center gap-1 rounded-full bg-amber-400/95 px-2 py-0.5 text-[9px] font-bold text-amber-950 shadow">
@@ -929,12 +942,12 @@ function Toolbar({ search, setSearch, filter, setFilter, counts, foldersOpen, se
 }) {
   return (
     <div className={cn(
-      'sticky top-16 z-20 rounded-3xl border backdrop-blur-2xl p-3 shadow-lg transition-[background-color,border-color,box-shadow] duration-300 ease-out',
+      'sticky top-16 z-20 rounded-lg border p-3 shadow-lg transition-[background-color,border-color,box-shadow] duration-300 ease-out',
       filter === 'store'
         ? 'border-emerald-200/60 dark:border-emerald-400/15 bg-white/[0.78] dark:bg-emerald-950/25 shadow-emerald-900/5'
         : filter === 'purchased'
         ? 'border-emerald-200/60 dark:border-emerald-400/15 bg-white/[0.78] dark:bg-emerald-950/25 shadow-emerald-900/5'
-        : 'border-white/40 dark:border-white/10 bg-white/70 dark:bg-slate-900/40 shadow-slate-900/5'
+        : 'border-white/40 dark:border-white/10 bg-card shadow-slate-900/5'
     )}>
       <div className="flex flex-col lg:flex-row gap-3">
         <div className="relative flex-1">
@@ -943,7 +956,7 @@ function Toolbar({ search, setSearch, filter, setFilter, counts, foldersOpen, se
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Buscar decks por título, descrição, tags..."
-            className="w-full rounded-2xl bg-white/80 dark:bg-white/5 border border-white/40 dark:border-white/10 pl-11 pr-4 py-2.5 text-sm placeholder:text-slate-400 outline-none focus:border-violet-400 focus:bg-white dark:focus:bg-white/10 transition"
+            className="w-full rounded-md bg-card border border-border pl-11 pr-4 py-2.5 text-sm placeholder:text-muted-foreground outline-none focus:border-primary/50 focus:bg-background transition"
           />
         </div>
         <div className="flex gap-1.5 overflow-x-auto pb-0.5 -mb-0.5 overscroll-x-contain">
@@ -967,11 +980,11 @@ function Toolbar({ search, setSearch, filter, setFilter, counts, foldersOpen, se
               aria-hidden={!(filter === 'mine' || filter === 'all')}
               tabIndex={filter === 'mine' || filter === 'all' ? 0 : -1}
               className={cn(
-                'inline-flex h-9 items-center gap-1.5 rounded-2xl px-3 text-xs font-semibold border whitespace-nowrap transition-[background-color,border-color,color,opacity] duration-200 ease-out',
+                'inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-xs font-semibold border whitespace-nowrap transition-[background-color,border-color,color,opacity] duration-200 ease-out',
                 filter === 'mine' || filter === 'all' ? 'opacity-100' : 'pointer-events-none opacity-0',
                 foldersOpen
-                  ? 'bg-violet-500/15 border-violet-400/40 text-violet-700 dark:text-violet-200 shadow-sm'
-                  : 'bg-white/70 dark:bg-white/5 border-white/40 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-white/90 dark:hover:bg-white/10'
+                  ? 'bg-primary/10 border-primary/35 text-primary shadow-sm'
+                  : 'bg-card border-white/40 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-white/90 dark:hover:bg-white/10'
               )}
             >
               <Folder className="h-3.5 w-3.5" /> Pastas
@@ -989,21 +1002,21 @@ function ChipFilter({ active, onClick, count, icon, accent = 'violet', children 
   const gradientClasses = {
     amber: 'from-amber-500 to-orange-500',
     emerald: 'from-emerald-500 to-teal-500',
-    violet: 'from-violet-600 to-fuchsia-600',
+    violet: 'bg-primary',
   }[accent]
   const shadowClasses = {
     amber: 'shadow-amber-500/30',
     emerald: 'shadow-emerald-500/30',
-    violet: 'shadow-violet-500/30',
+    violet: 'shadow-primary/15',
   }[accent]
   return (
     <button
       onClick={onClick}
       className={cn(
-        'relative inline-flex h-9 items-center gap-1.5 overflow-hidden rounded-2xl border px-3 text-xs font-semibold whitespace-nowrap transition-[border-color,color,box-shadow] duration-200 ease-out',
+        'relative inline-flex h-9 items-center gap-1.5 overflow-hidden rounded-md border px-3 text-xs font-semibold whitespace-nowrap transition-[border-color,color,box-shadow] duration-200 ease-out',
         active
           ? cn('border-transparent text-white shadow-lg', shadowClasses)
-          : 'bg-white/70 dark:bg-white/5 border-white/40 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-white/90 dark:hover:bg-white/10'
+          : 'bg-card border-white/40 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-white/90 dark:hover:bg-white/10'
       )}
     >
       <span
@@ -1030,7 +1043,7 @@ function FoldersPanel({ folders, mineCount, activeFolder, setActiveFolder, onAdd
   onAdd: () => void
 }) {
   return (
-    <div className="rounded-3xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl p-3 shadow-sm">
+    <div className="rounded-lg border border-border bg-card p-3 shadow-sm">
       <div className="flex items-center gap-2 flex-wrap">
         <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 px-2">Pastas</span>
         <FolderPill active={activeFolder === 'all'} onClick={() => setActiveFolder('all')} icon={<Inbox className="h-3.5 w-3.5" />}>Todos · {mineCount}</FolderPill>
@@ -1040,7 +1053,7 @@ function FoldersPanel({ folders, mineCount, activeFolder, setActiveFolder, onAdd
         ))}
         <button
           onClick={onAdd}
-          className="inline-flex items-center gap-1.5 rounded-2xl border border-dashed border-violet-400/50 bg-violet-500/5 px-3 py-1.5 text-xs font-semibold text-violet-600 dark:text-violet-300 hover:bg-violet-500/10 transition"
+          className="inline-flex items-center gap-1.5 rounded-md border border-dashed border-primary/40 bg-primary/5 px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/10 transition"
         >
           <FolderPlus className="h-3.5 w-3.5" /> Nova pasta
         </button>
@@ -1054,10 +1067,10 @@ function FolderPill({ active, onClick, icon, children }: { active: boolean; onCl
     <button
       onClick={onClick}
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-2xl px-3 py-1.5 text-xs font-medium transition border',
+        'inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition border',
         active
-          ? 'bg-violet-500/15 border-violet-400/40 text-violet-700 dark:text-violet-200 shadow-sm'
-          : 'bg-white/70 dark:bg-white/5 border-white/30 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-white/90 dark:hover:bg-white/10'
+          ? 'bg-primary/10 border-primary/35 text-primary shadow-sm'
+          : 'bg-card border-white/30 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-white/90 dark:hover:bg-white/10'
       )}
       style={{ touchAction: 'manipulation' }}
     >
@@ -1080,13 +1093,15 @@ function Section({ title, subtitle, icon, accent, action, toolbar, children }: {
   children: React.ReactNode
 }) {
   return (
-    <section>
+    <section className="rounded-xl border border-border bg-card/40 p-4 sm:p-5 shadow-sm">
       <header className="mb-5 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className={cn('h-11 w-11 rounded-2xl flex items-center justify-center text-white shadow-lg bg-gradient-to-br', accent)}>{icon}</div>
+          <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary shadow-sm">
+            {icon}
+          </div>
           <div>
-            <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white leading-tight">{title}</h2>
-            {subtitle && <p className="text-xs text-slate-500 dark:text-slate-400">{subtitle}</p>}
+            <h2 className="font-heading text-xl md:text-2xl font-semibold text-foreground leading-tight">{title}</h2>
+            {subtitle && <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>}
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -1103,7 +1118,7 @@ function SectionLink({ children, onClick }: { children: React.ReactNode; onClick
   return (
     <button
       onClick={onClick}
-      className="inline-flex items-center gap-1 rounded-full border border-white/40 dark:border-white/10 bg-white/70 dark:bg-white/5 backdrop-blur-md px-3 py-1.5 text-xs font-semibold text-violet-600 dark:text-violet-300 hover:bg-violet-500/10 hover:border-violet-400/50 transition"
+      className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/10 hover:border-primary/40 transition"
     >
       {children} <ArrowRight className="h-3.5 w-3.5" />
     </button>
@@ -1114,7 +1129,7 @@ function DeckGridSkeleton({ count = 3 }: { count?: number }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" aria-hidden>
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="overflow-hidden rounded-3xl border border-white/40 dark:border-white/10 bg-white/60 dark:bg-slate-900/40 backdrop-blur-xl shadow-sm animate-pulse">
+        <div key={i} className="overflow-hidden rounded-lg border border-border bg-white/60 dark:bg-slate-900/40 shadow-sm animate-pulse">
           <div className="aspect-[16/10] skeleton-pulse" />
           <div className="p-4 space-y-2.5">
             <div className="h-4 w-4/5 rounded skeleton-pulse" />
@@ -1129,11 +1144,11 @@ function DeckGridSkeleton({ count = 3 }: { count?: number }) {
 
 function EmptyCallout({ title, hint, cta }: { title: string; hint: string; cta?: React.ReactNode }) {
   return (
-    <div className="rounded-3xl border border-dashed border-white/40 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-md p-10 text-center">
-      <div className="mx-auto mb-3 h-12 w-12 rounded-2xl bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 flex items-center justify-center">
-        <Sparkles className="h-6 w-6 text-violet-500" />
+    <div className="rounded-lg border border-dashed border-white/40 dark:border-white/10 bg-white/40 dark:bg-white/5 p-10 text-center">
+      <div className="mx-auto mb-3 h-12 w-12 rounded-md bg-gradient-to-br from-primary/15 to-primary/10 flex items-center justify-center">
+        <Sparkles className="h-6 w-6 text-primary" />
       </div>
-      <h3 className="text-base font-semibold text-slate-800 dark:text-white">{title}</h3>
+      <h3 className="text-base font-semibold text-foreground">{title}</h3>
       <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">{hint}</p>
       {cta && <div className="mt-4 flex justify-center">{cta}</div>}
     </div>
@@ -1173,42 +1188,42 @@ const DeckCard = memo(function DeckCard({ deck, owned, onDelete, showStoreState,
   const hasPublicMetrics = metricSettings.showLikes || metricSettings.showViews
 
   return (
-    <TiltCard maxTilt={6} scale={1.02} className="rounded-3xl h-full">
-    <div className="group relative isolate overflow-hidden rounded-3xl glass-rim border border-white/40 dark:border-white/10 bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl shadow-sm hover:shadow-2xl hover:shadow-violet-500/10 hover:border-violet-400/50 transition-shadow duration-300 h-full">
+    <TiltCard maxTilt={5} scale={1.015} className="rounded-xl h-full">
+    <div className="group relative isolate overflow-hidden rounded-xl border border-border bg-card shadow-sm hover:shadow-lg hover:shadow-primary/10 hover:border-primary/40 transition-all duration-300 h-full">
       <Link href={`/flashcards/d/${deck.slug}`} className="block">
         <div className="relative aspect-[16/10] overflow-hidden">
           {deck.coverImage ? (
             <Image src={deck.coverImage} alt="" fill className="object-cover group-hover:scale-110 transition duration-500" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" />
           ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-violet-500 via-fuchsia-500 to-rose-500" />
+            <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary/80" />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
           <div className="absolute top-2 left-2 flex flex-wrap gap-1">
             {deck.ownerType === 'admin' && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-amber-400/95 backdrop-blur-md text-amber-950 text-[10px] font-bold px-2 py-0.5 shadow"><Crown className="h-3 w-3" /> Oficial</span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-amber-400/95 text-amber-950 text-[10px] font-bold px-2 py-0.5 shadow"><Crown className="h-3 w-3" /> Oficial</span>
             )}
             {deck.isFeatured && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-white/30 backdrop-blur-md border border-white/30 text-white text-[10px] font-bold px-2 py-0.5 shadow"><Star className="h-3 w-3 fill-current" /> Destaque</span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-white/30 border border-white/30 text-white text-[10px] font-bold px-2 py-0.5 shadow"><Star className="h-3 w-3 fill-current" /> Destaque</span>
             )}
           </div>
           <div className="absolute top-2 right-2 flex flex-wrap gap-1 justify-end">
             {deck.pricing === 'paid' && (
               showStoreState && deck._isPurchased ? (
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/95 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 shadow"><Check className="h-3 w-3" /> Adquirido</span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/95 text-white text-[10px] font-bold px-2 py-0.5 shadow"><Check className="h-3 w-3" /> Adquirido</span>
               ) : (
-                <span className="inline-flex items-center gap-1 rounded-full bg-rose-500/95 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 shadow"><Lock className="h-3 w-3" /> R$ {deck.price?.toFixed(2)}</span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-rose-500/95 text-white text-[10px] font-bold px-2 py-0.5 shadow"><Lock className="h-3 w-3" /> R$ {deck.price?.toFixed(2)}</span>
               )
             )}
             {deck.pricing !== 'paid' && deck.visibility === 'public' && !owned && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/85 backdrop-blur-md text-white text-[10px] font-medium px-2 py-0.5"><Globe className="h-3 w-3" /> Público</span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/85 text-white text-[10px] font-medium px-2 py-0.5"><Globe className="h-3 w-3" /> Público</span>
             )}
           </div>
-          <div className="absolute bottom-2 left-2 inline-flex items-center gap-1 text-[11px] text-white font-semibold bg-black/40 backdrop-blur-md rounded-full px-2 py-0.5">
+          <div className="absolute bottom-2 left-2 inline-flex items-center gap-1 text-[11px] text-white font-semibold bg-black/40 rounded-full px-2 py-0.5">
             <Sparkles className="h-3 w-3" /> {deck.cardCount}
           </div>
         </div>
         <div className="p-4">
-          <h3 className="font-semibold text-slate-800 dark:text-white line-clamp-2 group-hover:text-violet-600 dark:group-hover:text-violet-300 transition">{deck.title}</h3>
+          <h3 className="font-semibold text-foreground line-clamp-2 group-hover:text-primary transition">{deck.title}</h3>
           {deck.description && <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 line-clamp-2">{deck.description}</p>}
           <div className="mt-3 flex items-center gap-3 text-xs text-slate-500">
             {metricSettings.showLikes && (
@@ -1255,12 +1270,12 @@ function SharedList({ shares, onUpdate }: { shares: any[]; onUpdate: () => void 
   return (
     <ul className="space-y-3">
       {shares.map(s => (
-        <li key={s._id} className="rounded-3xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl p-4 flex flex-col md:flex-row md:items-center gap-4 shadow-sm">
+        <li key={s._id} className="rounded-lg border border-border bg-card p-4 flex flex-col md:flex-row md:items-center gap-4 shadow-sm">
           <div className="min-w-0 flex-1">
             <p className="text-sm">
-              <strong className="text-slate-800 dark:text-white">{s.fromUserName}</strong>
+              <strong className="text-foreground">{s.fromUserName}</strong>
               <span className="text-slate-500"> compartilhou </span>
-              <strong className="text-slate-800 dark:text-white">{s.deck?.title || 'um deck'}</strong>
+              <strong className="text-foreground">{s.deck?.title || 'um deck'}</strong>
               <span className="text-slate-500"> com você.</span>
             </p>
             {s.message && <p className="mt-1 text-xs text-slate-500 italic">"{s.message}"</p>}
@@ -1271,13 +1286,13 @@ function SharedList({ shares, onUpdate }: { shares: any[]; onUpdate: () => void 
               <>
                 <button
                   onClick={() => respond(s._id, 'accepted')}
-                  className="inline-flex items-center gap-1 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-3 py-1.5 text-xs font-semibold text-white shadow hover:shadow-lg transition"
+                  className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-white shadow hover:shadow-lg transition"
                 >
                   Aceitar
                 </button>
                 <button
                   onClick={() => respond(s._id, 'dismissed')}
-                  className="inline-flex items-center gap-1 rounded-2xl border border-white/40 dark:border-white/10 bg-white/60 dark:bg-white/5 px-3 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-white/90 dark:hover:bg-white/10 transition"
+                  className="inline-flex items-center gap-1 rounded-md border border-border bg-white/60 dark:bg-white/5 px-3 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-white/90 dark:hover:bg-white/10 transition"
                 >
                   Dispensar
                 </button>
@@ -1285,7 +1300,7 @@ function SharedList({ shares, onUpdate }: { shares: any[]; onUpdate: () => void 
             )}
             {s.deck?.slug && (
               <Link href={`/flashcards/d/${s.deck.slug}`}>
-                <button className="inline-flex items-center gap-1 rounded-2xl border border-white/40 dark:border-white/10 bg-white/60 dark:bg-white/5 px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-white hover:bg-white/90 dark:hover:bg-white/10 transition">
+                <button className="inline-flex items-center gap-1 rounded-md border border-border bg-white/60 dark:bg-white/5 px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-white hover:bg-white/90 dark:hover:bg-white/10 transition">
                   Abrir <ChevronRight className="h-3.5 w-3.5" />
                 </button>
               </Link>
@@ -1394,20 +1409,20 @@ function CreateDeckDialog({ open, onOpenChange, isAdmin, folders, onCreated }: {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl !bg-transparent !border-0 !shadow-none !rounded-none !p-0">
-        <div className="relative overflow-hidden rounded-[2rem] border border-white/40 dark:border-white/10 bg-white/85 dark:bg-slate-900/85 backdrop-blur-2xl shadow-2xl">
+        <div className="relative overflow-hidden rounded-lg border border-border bg-white/85 dark:bg-slate-900/85 shadow-2xl">
           <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-            <div className="absolute -top-32 -right-32 h-72 w-72 rounded-full bg-violet-500/20 blur-3xl" />
-            <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-fuchsia-500/15 blur-3xl" />
+            <div className="absolute -top-32 -right-32 h-72 w-72 rounded-full bg-primary/15 blur-3xl" />
+            <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-accent/10 blur-3xl" />
           </div>
 
           {/* Header */}
           <div className="relative px-7 pt-6 pb-5 border-b border-white/40 dark:border-white/10">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <div className="inline-flex items-center gap-1.5 rounded-full border border-violet-400/40 bg-violet-500/10 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-violet-600 dark:text-violet-300">
+                <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/35 bg-primary/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary">
                   <Sparkles className="h-3 w-3" /> Novo deck
                 </div>
-                <h2 className="mt-2 text-2xl font-bold text-slate-900 dark:text-white leading-tight">Vamos criar seu deck</h2>
+                <h2 className="mt-2 text-2xl font-bold text-foreground leading-tight">Vamos criar seu deck</h2>
                 <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Defina o básico. Você poderá editar tudo e adicionar cartões depois.</p>
               </div>
               <button onClick={() => onOpenChange(false)} className="rounded-full p-2 hover:bg-white/60 dark:hover:bg-white/10 transition">
@@ -1427,7 +1442,7 @@ function CreateDeckDialog({ open, onOpenChange, isAdmin, folders, onCreated }: {
                   maxLength={120}
                   autoFocus
                   placeholder="Título do deck, ex: Anatomia Cardiovascular"
-                  className="w-full rounded-2xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-white/5 backdrop-blur-md px-4 py-3 text-base font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 placeholder:font-normal outline-none focus:border-violet-400 focus:bg-white dark:focus:bg-white/10 transition"
+                  className="w-full rounded-md border border-border bg-card px-4 py-3 text-base font-semibold text-foreground placeholder:text-muted-foreground placeholder:font-normal outline-none focus:border-primary/50 focus:bg-background transition"
                 />
                 <div className="mt-1 text-[10px] text-slate-400 text-right">{title.length}/120</div>
               </div>
@@ -1437,14 +1452,14 @@ function CreateDeckDialog({ open, onOpenChange, isAdmin, folders, onCreated }: {
                 rows={2}
                 maxLength={400}
                 placeholder="Descrição (opcional): sobre o que é este deck"
-                className="w-full rounded-2xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-white/5 backdrop-blur-md px-4 py-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 outline-none focus:border-violet-400 focus:bg-white dark:focus:bg-white/10 transition resize-none"
+                className="w-full rounded-md border border-border bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary/50 focus:bg-background transition resize-none"
               />
               <div>
                 <input
                   value={coverImage}
                   onChange={e => setCoverImage(e.target.value)}
                   placeholder="URL da capa (opcional)"
-                  className="w-full rounded-2xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-white/5 backdrop-blur-md px-4 py-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 outline-none focus:border-violet-400 focus:bg-white dark:focus:bg-white/10 transition"
+                  className="w-full rounded-md border border-border bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary/50 focus:bg-background transition"
                 />
                 <p className="mt-1 text-[10px] text-slate-400">Recomendado: 1280 × 720 px · proporção 16:9</p>
               </div>
@@ -1499,7 +1514,7 @@ function CreateDeckDialog({ open, onOpenChange, isAdmin, folders, onCreated }: {
 
                 {/* Configurações de deck oficial */}
                 {asAdmin && (
-                  <div className="space-y-4 rounded-2xl border border-amber-300/40 dark:border-amber-500/20 bg-amber-50/50 dark:bg-amber-500/5 backdrop-blur-md p-4">
+                  <div className="space-y-4 rounded-md border border-amber-300/40 dark:border-amber-500/20 bg-amber-50/50 dark:bg-amber-500/5 p-4">
                     {/* Monetização */}
                     <div className="space-y-3">
                       <FieldLabel icon={<ShoppingCart className="h-3.5 w-3.5" />} accent="amber">Monetização</FieldLabel>
@@ -1533,7 +1548,7 @@ function CreateDeckDialog({ open, onOpenChange, isAdmin, folders, onCreated }: {
                               value={price}
                               onChange={e => setPrice(e.target.value)}
                               placeholder="0,00"
-                              className="w-full rounded-2xl border border-white/40 dark:border-white/10 bg-white/80 dark:bg-white/5 backdrop-blur-md pl-12 pr-4 py-3 text-base font-bold text-slate-900 dark:text-white outline-none focus:border-amber-400 transition"
+                              className="w-full rounded-md border border-border bg-card pl-12 pr-4 py-3 text-base font-bold text-foreground outline-none focus:border-amber-400 transition"
                             />
                           </div>
                         </div>
@@ -1564,7 +1579,7 @@ function CreateDeckDialog({ open, onOpenChange, isAdmin, folders, onCreated }: {
                       <select
                         value={materialsFolderId}
                         onChange={e => setMaterialsFolderId(e.target.value)}
-                        className="w-full rounded-2xl border border-white/40 dark:border-white/10 bg-white/80 dark:bg-white/5 backdrop-blur-md px-4 py-2.5 text-sm text-slate-900 dark:text-white outline-none focus:border-amber-400 transition"
+                        className="w-full rounded-md border border-border bg-card px-4 py-2.5 text-sm text-foreground outline-none focus:border-amber-400 transition"
                       >
                         <option value="">Raiz (sem pasta)</option>
                         {materiaisPaths.map(f => (
@@ -1578,7 +1593,7 @@ function CreateDeckDialog({ open, onOpenChange, isAdmin, folders, onCreated }: {
             )}
 
             {error && (
-              <div className="rounded-2xl border border-rose-300/50 bg-rose-50/70 dark:bg-rose-500/10 px-4 py-2.5 text-xs font-medium text-rose-700 dark:text-rose-300">
+              <div className="rounded-md border border-rose-300/50 bg-rose-50/70 dark:bg-rose-500/10 px-4 py-2.5 text-xs font-medium text-rose-700 dark:text-rose-300">
                 {error}
               </div>
             )}
@@ -1589,14 +1604,14 @@ function CreateDeckDialog({ open, onOpenChange, isAdmin, folders, onCreated }: {
             <div className="flex gap-2 ml-auto">
               <button
                 onClick={() => onOpenChange(false)}
-                className="rounded-2xl px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-white/60 dark:hover:bg-white/10 transition"
+                className="rounded-md px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-white/60 dark:hover:bg-white/10 transition"
               >
                 Cancelar
               </button>
               <button
                 onClick={submit}
                 disabled={busy || !title.trim()}
-                className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 via-fuchsia-600 to-rose-500 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-violet-500/25 hover:shadow-fuchsia-500/30 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 transition"
+                className="inline-flex items-center gap-2 rounded-md bg-secondary px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-primary/15 hover:shadow-primary/10 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 transition"
               >
                 {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />} Criar e editar
               </button>
@@ -1609,7 +1624,7 @@ function CreateDeckDialog({ open, onOpenChange, isAdmin, folders, onCreated }: {
 }
 
 function FieldLabel({ children, icon, accent = 'violet' }: { children: React.ReactNode; icon?: React.ReactNode; accent?: 'violet' | 'amber' }) {
-  const color = accent === 'amber' ? 'text-amber-600 dark:text-amber-400' : 'text-violet-600 dark:text-violet-400'
+  const color = accent === 'amber' ? 'text-amber-600 dark:text-amber-400' : 'text-primary'
   return (
     <div className={cn('inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider', color)}>
       {icon} {children}
@@ -1622,10 +1637,10 @@ function ChoicePill({ active, onClick, icon, children }: { active: boolean; onCl
     <button
       onClick={onClick}
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-2xl px-3 py-1.5 text-xs font-medium transition border',
+        'inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition border',
         active
-          ? 'bg-violet-500/15 border-violet-400/40 text-violet-700 dark:text-violet-200 shadow-sm'
-          : 'bg-white/70 dark:bg-white/5 border-white/40 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-white/90 dark:hover:bg-white/10'
+          ? 'bg-primary/10 border-primary/35 text-primary shadow-sm'
+          : 'bg-card border-white/40 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-white/90 dark:hover:bg-white/10'
       )}
     >
       {icon} {children}
@@ -1642,19 +1657,19 @@ function RadioCard({ active, onClick, title, description, icon, accent = 'violet
   accent?: 'violet' | 'amber' | 'emerald' | 'rose'
 }) {
   const activeBorder = {
-    violet: 'border-violet-400/60 bg-violet-500/10 text-violet-700 dark:text-violet-200',
+    violet: 'border-primary/45 bg-primary/10 text-primary',
     amber: 'border-amber-400/60 bg-amber-500/10 text-amber-700 dark:text-amber-200',
     emerald: 'border-emerald-400/60 bg-emerald-500/10 text-emerald-700 dark:text-emerald-200',
     rose: 'border-rose-400/60 bg-rose-500/10 text-rose-700 dark:text-rose-200',
   } as const
   const iconBg = {
-    violet: 'bg-gradient-to-br from-violet-500 to-fuchsia-500',
+    violet: 'bg-gradient-to-br from-primary to-primary/80',
     amber: 'bg-gradient-to-br from-amber-500 to-orange-500',
     emerald: 'bg-gradient-to-br from-emerald-500 to-teal-500',
     rose: 'bg-gradient-to-br from-rose-500 to-pink-500',
   } as const
   const checkBg = {
-    violet: 'bg-violet-500',
+    violet: 'bg-primary',
     amber: 'bg-amber-500',
     emerald: 'bg-emerald-500',
     rose: 'bg-rose-500',
@@ -1663,7 +1678,7 @@ function RadioCard({ active, onClick, title, description, icon, accent = 'violet
     <button
       onClick={onClick}
       className={cn(
-        'relative rounded-2xl border-2 p-4 text-left transition backdrop-blur-md',
+        'relative rounded-md border-2 p-4 text-left transition backdrop-blur-md',
         active
           ? cn('shadow-md', activeBorder[accent])
           : 'border-white/30 dark:border-white/10 bg-white/40 dark:bg-white/5 hover:bg-white/70 dark:hover:bg-white/10 text-slate-600 dark:text-slate-300'
@@ -1713,14 +1728,14 @@ function CreateFolderDialog({ open, onOpenChange, onCreated }: { open: boolean; 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md !bg-transparent !border-0 !shadow-none !rounded-none !p-0">
-        <div className="relative overflow-hidden rounded-[2rem] border border-white/40 dark:border-white/10 bg-white/85 dark:bg-slate-900/85 backdrop-blur-2xl shadow-2xl">
+        <div className="relative overflow-hidden rounded-lg border border-border bg-white/85 dark:bg-slate-900/85 shadow-2xl">
           <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-            <div className="absolute -top-20 -right-20 h-48 w-48 rounded-full bg-violet-500/15 blur-3xl" />
-            <div className="absolute -bottom-16 -left-16 h-40 w-40 rounded-full bg-fuchsia-500/10 blur-3xl" />
+            <div className="absolute -top-20 -right-20 h-48 w-48 rounded-full bg-primary/10 blur-3xl" />
+            <div className="absolute -bottom-16 -left-16 h-40 w-40 rounded-full bg-accent/10 blur-3xl" />
           </div>
           <div className="relative px-6 pt-6 pb-3 border-b border-white/40 dark:border-white/10 flex items-start justify-between">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Nova pasta</h2>
+              <h2 className="text-lg font-bold text-foreground">Nova pasta</h2>
               <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Organize seus decks em pastas coloridas.</p>
             </div>
             <button onClick={() => onOpenChange(false)} className="rounded-full p-1.5 hover:bg-white/60 dark:hover:bg-white/10 transition">
@@ -1736,7 +1751,7 @@ function CreateFolderDialog({ open, onOpenChange, onCreated }: { open: boolean; 
                 placeholder="Ex: Patologia, Provas..."
                 maxLength={50}
                 autoFocus
-                className="mt-1 w-full rounded-2xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-white/5 backdrop-blur-md px-4 py-2.5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 outline-none focus:border-violet-400 transition"
+                className="mt-1 w-full rounded-md border border-border bg-card px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary/50 transition"
               />
             </div>
             <div>
@@ -1748,7 +1763,7 @@ function CreateFolderDialog({ open, onOpenChange, onCreated }: { open: boolean; 
                     onClick={() => setColor(c)}
                     style={{ backgroundColor: c }}
                     className={cn(
-                      'h-9 w-9 rounded-2xl shadow transition border-2 relative',
+                      'h-9 w-9 rounded-md shadow transition border-2 relative',
                       color === c ? 'border-white scale-110 shadow-lg' : 'border-transparent hover:scale-105'
                     )}
                     aria-label={`Cor ${c}`}
@@ -1756,20 +1771,20 @@ function CreateFolderDialog({ open, onOpenChange, onCreated }: { open: boolean; 
                     {color === c && <Check className="absolute inset-0 m-auto h-4 w-4 text-white drop-shadow" strokeWidth={3} />}
                   </button>
                 ))}
-                <label className="h-9 w-9 rounded-2xl border-2 border-dashed border-white/40 dark:border-white/15 cursor-pointer flex items-center justify-center hover:border-violet-400 transition">
+                <label className="h-9 w-9 rounded-md border-2 border-dashed border-white/40 dark:border-white/15 cursor-pointer flex items-center justify-center hover:border-primary/40 transition">
                   <input type="color" value={color} onChange={e => setColor(e.target.value)} className="opacity-0 w-0 h-0" aria-label="Cor personalizada" />
                   <span className="text-[10px] font-bold text-slate-500">+</span>
                 </label>
               </div>
             </div>
-            {error && <div className="rounded-2xl border border-rose-300/50 bg-rose-50/70 dark:bg-rose-500/10 px-4 py-2 text-xs text-rose-600 dark:text-rose-300">{error}</div>}
+            {error && <div className="rounded-md border border-rose-300/50 bg-rose-50/70 dark:bg-rose-500/10 px-4 py-2 text-xs text-rose-600 dark:text-rose-300">{error}</div>}
           </div>
           <div className="relative px-6 py-4 border-t border-white/40 dark:border-white/10 flex justify-end gap-2 bg-white/40 dark:bg-white/5">
-            <button onClick={() => onOpenChange(false)} className="rounded-2xl px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-white/60 dark:hover:bg-white/10 transition">Cancelar</button>
+            <button onClick={() => onOpenChange(false)} className="rounded-md px-4 py-2 text-sm text-muted-foreground hover:bg-white/60 dark:hover:bg-white/10 transition">Cancelar</button>
             <button
               onClick={submit}
               disabled={busy || !name.trim()}
-              className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 py-2 text-sm font-bold text-white shadow-lg shadow-violet-500/25 hover:shadow-fuchsia-500/30 disabled:opacity-50 transition"
+              className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-bold text-white shadow-lg shadow-primary/15 hover:shadow-primary/10 disabled:opacity-50 transition"
             >
               {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <FolderPlus className="h-4 w-4" />} Criar
             </button>

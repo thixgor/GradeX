@@ -130,7 +130,7 @@ function DeckPageSkeleton() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-6 animate-pulse">
       <div className="h-9 w-36 rounded-xl skeleton-pulse mb-4" />
-      <div className="rounded-[2rem] overflow-hidden border border-white/40 dark:border-white/10 mb-6">
+      <div className="rounded-[2rem] overflow-hidden border border-white/40 dark:border-border mb-6">
         <div className="min-h-[220px] sm:min-h-[240px] md:min-h-[260px] skeleton-pulse" />
         <div className="p-5 md:p-6 flex flex-col md:flex-row gap-3 md:items-center md:justify-between bg-white/60 dark:bg-slate-900/60">
           <div className="flex gap-2">
@@ -596,7 +596,7 @@ export default function DeckPage() {
           fullscreen ? 'max-w-5xl lg:max-w-6xl' : 'max-w-3xl lg:max-w-5xl',
         )}>
           <div className={cn(
-            'mb-4 rounded-2xl border border-slate-200 bg-white/90 p-3 shadow-sm backdrop-blur dark:border-white/10 dark:bg-slate-900/90',
+            'mb-4 rounded-2xl border border-slate-200 bg-white/90 p-3 shadow-sm backdrop-blur dark:border-border dark:bg-slate-900/90',
             fullscreen && 'mb-3 border-transparent bg-transparent p-0 shadow-none backdrop-blur-none dark:border-transparent dark:bg-transparent',
           )}>
             <div className="flex items-center justify-between gap-2">
@@ -609,7 +609,7 @@ export default function DeckPage() {
                     <CalendarClock className="h-3.5 w-3.5" /> Fixação intensa
                   </span>
                 )}
-                <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold tabular-nums text-slate-700 dark:bg-white/10 dark:text-slate-100">
+                <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold tabular-nums text-slate-700 dark:bg-muted dark:text-slate-100">
                   {currentIndex + 1} / {total}
                 </span>
                 {/* Botão de tela cheia / foco — sempre visível (mobile, iPad, PC) */}
@@ -619,8 +619,8 @@ export default function DeckPage() {
                   className={cn(
                     'inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold shadow-sm transition active:scale-95',
                     fullscreen
-                      ? 'bg-slate-900 text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900'
-                      : 'bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white shadow-violet-500/30 hover:brightness-110',
+                      ? 'bg-slate-900 text-foreground hover:bg-slate-800 dark:bg-white dark:text-slate-900'
+                      : 'bg-gradient-to-r from-violet-600 to-fuchsia-600 text-foreground shadow-violet-500/30 hover:brightness-110',
                   )}
                   aria-label={fullscreen ? 'Sair da tela cheia' : 'Expandir para tela cheia'}
                   title={fullscreen ? 'Sair da tela cheia (F)' : 'Expandir para tela cheia (F)'}
@@ -631,7 +631,7 @@ export default function DeckPage() {
               </div>
             </div>
           </div>
-          <div className="h-1.5 bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden mb-3">
+          <div className="h-1.5 bg-slate-200 dark:bg-muted rounded-full overflow-hidden mb-3">
             <motion.div
               className={cn('h-full bg-gradient-to-r', activeStudyMode === 'spaced' ? 'from-emerald-500 via-lime-400 to-amber-400' : 'from-violet-500 to-fuchsia-500')}
               animate={{ width: `${progress}%` }}
@@ -651,10 +651,10 @@ export default function DeckPage() {
                     className={cn(
                       'flex h-10 min-w-10 items-center justify-center rounded-xl border px-3 text-sm font-bold tabular-nums transition sm:h-9 sm:min-w-9 sm:text-xs',
                       selected
-                        ? 'border-violet-500 bg-violet-600 text-white shadow-md shadow-violet-500/25'
+                        ? 'border-violet-500 bg-violet-600 text-foreground shadow-md shadow-violet-500/25'
                         : rated
                           ? 'border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200'
-                          : 'border-slate-200 bg-white text-slate-700 hover:border-violet-300 dark:border-white/10 dark:bg-slate-900 dark:text-slate-200'
+                          : 'border-slate-200 bg-white text-slate-700 hover:border-violet-300 dark:border-border dark:bg-slate-900 dark:text-slate-200'
                     )}
                     aria-label={`Ir para card ${index + 1}`}
                   >
@@ -687,7 +687,7 @@ export default function DeckPage() {
               Funciona em PC, tablet e celular (com área segura de notch). */}
           <div
             className={cn(
-              'sticky bottom-0 z-30 mt-5 -mx-3 space-y-2.5 border-t border-slate-200/70 bg-white/85 px-3 pt-3 backdrop-blur-xl sm:-mx-4 sm:px-4 dark:border-white/10 dark:bg-slate-950/80',
+              'sticky bottom-0 z-30 mt-5 -mx-3 space-y-2.5 border-t border-border bg-background/95 px-3 pt-3 backdrop-blur-md sm:-mx-4 sm:px-4',
               'shadow-[0_-16px_40px_-28px_rgba(15,23,42,0.55)]',
             )}
             style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
@@ -718,7 +718,7 @@ export default function DeckPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.16 }}
-                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-5 py-3.5 text-base font-bold text-white shadow-lg shadow-violet-500/25 transition active:scale-[0.98]"
+                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-5 py-3.5 text-base font-bold text-foreground shadow-lg shadow-violet-500/25 transition active:scale-[0.98]"
                 >
                   <Sparkles className="h-5 w-5" /> Mostrar resposta
                 </motion.button>
@@ -740,7 +740,7 @@ export default function DeckPage() {
                         onClick={() => rate(r.value)}
                         disabled={ratingBusyCard === card?._id}
                         className={cn(
-                          'flex min-h-[52px] flex-col items-center justify-center gap-0.5 rounded-2xl bg-gradient-to-r px-2 py-2.5 text-sm font-bold leading-tight text-white shadow-md transition active:scale-95',
+                          'flex min-h-[52px] flex-col items-center justify-center gap-0.5 rounded-2xl bg-gradient-to-r px-2 py-2.5 text-sm font-bold leading-tight text-foreground shadow-md transition active:scale-95',
                           r.color,
                           ratingBusyCard === card?._id && 'cursor-wait opacity-60',
                           ratings[card?._id] === r.value && 'ring-2 ring-white ring-offset-2 ring-offset-white dark:ring-offset-slate-950',
@@ -767,7 +767,7 @@ export default function DeckPage() {
                 type="button"
                 onClick={goPrev}
                 disabled={currentIndex === 0}
-                className="inline-flex h-10 items-center gap-1 rounded-xl px-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 disabled:opacity-35 dark:text-slate-300 dark:hover:bg-white/5"
+                className="inline-flex h-10 items-center gap-1 rounded-xl px-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 disabled:opacity-35 dark:text-slate-300 dark:hover:bg-card"
               >
                 <ChevronLeft className="h-4 w-4" /> Anterior
               </button>
@@ -776,7 +776,7 @@ export default function DeckPage() {
                 <button
                   type="button"
                   onClick={goNext}
-                  className="inline-flex h-10 items-center gap-1 rounded-xl px-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"
+                  className="inline-flex h-10 items-center gap-1 rounded-xl px-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-card"
                 >
                   {flipped ? 'Pular' : 'Próximo'} <ChevronRight className="h-4 w-4" />
                 </button>
@@ -784,7 +784,7 @@ export default function DeckPage() {
                 <button
                   type="button"
                   onClick={finishSession}
-                  className="inline-flex h-10 items-center gap-1.5 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 text-sm font-bold text-white shadow-md transition active:scale-95"
+                  className="inline-flex h-10 items-center gap-1.5 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 text-sm font-bold text-foreground shadow-md transition active:scale-95"
                 >
                   <Trophy className="h-4 w-4" /> Concluir
                 </button>
@@ -814,14 +814,14 @@ export default function DeckPage() {
         {/* Hero — altura flexível (nunca corta título/tags longos), com acabamento
             glass iridescente (GlassHeroSurface) sobre a capa. */}
         <TiltCard maxTilt={3} scale={1.004} className="rounded-[2rem] mb-6">
-        <div className="relative isolate overflow-hidden rounded-[2rem] border border-white/40 dark:border-white/10 bg-white dark:bg-slate-900 shadow-xl shadow-slate-900/10 dark:shadow-black/40">
+        <div className="relative isolate overflow-hidden rounded-[2rem] border border-white/40 dark:border-border bg-white dark:bg-slate-900 shadow-xl shadow-slate-900/10 dark:shadow-black/40">
           <div className="relative bg-gradient-to-br from-violet-500 via-fuchsia-500 to-rose-500">
             {deck.coverImage && (
               <Image src={deck.coverImage} alt="" fill priority className="object-cover opacity-90" sizes="(max-width: 1024px) 100vw, 1024px" />
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-black/5" />
             <GlassHeroSurface className="opacity-70" />
-            <div className="relative z-10 flex min-h-[220px] sm:min-h-[240px] md:min-h-[260px] flex-col justify-end p-5 md:p-7 text-white">
+            <div className="relative z-10 flex min-h-[220px] sm:min-h-[240px] md:min-h-[260px] flex-col justify-end p-5 md:p-7 text-foreground">
               <div className="flex items-center gap-2 mb-2 text-xs font-medium flex-wrap">
                 <VisibilityBadge visibility={deck.visibility} />
                 {deck.ownerType === 'admin' && (
@@ -846,14 +846,14 @@ export default function DeckPage() {
                 )}
               </div>
               {folderPath && (
-                <div className="mb-2 flex items-center gap-1.5 text-xs text-white/65">
+                <div className="mb-2 flex items-center gap-1.5 text-xs text-foreground/65">
                   <Folder className="h-3 w-3 shrink-0" />
                   <span>{folderPath}</span>
                 </div>
               )}
               <h1 className="text-2xl md:text-4xl font-bold leading-tight drop-shadow line-clamp-3">{deck.title}</h1>
-              {deck.description && <p className="mt-2 text-sm md:text-base text-white/85 line-clamp-2 max-w-3xl">{deck.description}</p>}
-              <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-white/80">
+              {deck.description && <p className="mt-2 text-sm md:text-base text-foreground/85 line-clamp-2 max-w-3xl">{deck.description}</p>}
+              <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                 <span>por <strong className="font-semibold">{deck.ownerName}</strong></span>
                 <span>·</span>
                 <span>{deck.cardCount} cartões</span>
@@ -889,7 +889,7 @@ export default function DeckPage() {
                   className={cn('inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium ring-1',
                     liked
                       ? 'bg-rose-500/15 text-rose-600 dark:text-rose-300 ring-rose-500/30'
-                      : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 ring-slate-200 dark:ring-white/10 hover:bg-slate-200/70')}
+                      : 'bg-slate-100 dark:bg-card text-slate-600 dark:text-slate-300 ring-slate-200 dark:ring-white/10 hover:bg-slate-200/70')}
                 >
                   <Heart className={cn('h-4 w-4', liked && 'fill-current')} /> {likeCount}
                 </button>
@@ -915,7 +915,7 @@ export default function DeckPage() {
                 <button
                   onClick={() => buy()}
                   disabled={purchasing}
-                  className="relative overflow-hidden inline-flex items-center gap-2.5 rounded-2xl px-7 py-3.5 text-sm font-bold tracking-wide text-white transition-all duration-200 active:scale-[0.97] hover:brightness-110 disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="relative overflow-hidden inline-flex items-center gap-2.5 rounded-2xl px-7 py-3.5 text-sm font-bold tracking-wide text-foreground transition-all duration-200 active:scale-[0.97] hover:brightness-110 disabled:opacity-60 disabled:cursor-not-allowed"
                   style={{
                     background: 'linear-gradient(135deg, rgba(109,40,217,0.95) 0%, rgba(147,51,234,0.90) 50%, rgba(192,38,211,0.85) 100%)',
                     backdropFilter: 'blur(16px)',
@@ -939,7 +939,7 @@ export default function DeckPage() {
               ) : isLocked ? (
                 <button
                   onClick={() => router.push(`/auth/login?redirect=${encodeURIComponent(`/flashcards/d/${deck.slug}`)}`)}
-                  className="inline-flex items-center gap-1.5 rounded-2xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-200"
+                  className="inline-flex items-center gap-1.5 rounded-2xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-foreground transition hover:bg-slate-800 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-200"
                 >
                   <Lock className="h-3.5 w-3.5" />
                   Entrar para acessar
@@ -948,7 +948,7 @@ export default function DeckPage() {
                 <button
                   onClick={() => startStudy(studyModeChoice, savedProgress)}
                   disabled={cards.length === 0}
-                  className="relative overflow-hidden inline-flex items-center gap-2.5 rounded-2xl px-8 py-3.5 text-base font-bold tracking-wide text-white transition-all duration-200 active:scale-[0.97] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55"
+                  className="relative overflow-hidden inline-flex items-center gap-2.5 rounded-2xl px-8 py-3.5 text-base font-bold tracking-wide text-foreground transition-all duration-200 active:scale-[0.97] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55"
                   style={{
                     background: savedProgress
                       ? 'linear-gradient(135deg, rgba(67,56,202,1) 0%, rgba(109,40,217,0.95) 50%, rgba(168,85,247,0.90) 100%)'
@@ -1012,7 +1012,7 @@ export default function DeckPage() {
             />
             <button
               onClick={() => setShowCards(s => !s)}
-              className="w-full flex items-center justify-between gap-3 rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 px-5 py-4 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors mb-3"
+              className="w-full flex items-center justify-between gap-3 rounded-2xl border border-slate-200 dark:border-border bg-white dark:bg-slate-900 px-5 py-4 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-card transition-colors mb-3"
             >
               <span className="flex items-center gap-2">
                 {showCards ? <ChevronUp className="h-4 w-4 text-slate-400" /> : <ChevronDown className="h-4 w-4 text-slate-400" />}
@@ -1109,12 +1109,12 @@ function StudyModePanel({
           className={cn(
             'flex-1 rounded-2xl border p-4 text-left transition',
             selected === 'normal'
-              ? 'border-slate-300 bg-white text-slate-900 shadow-sm dark:border-white/15 dark:bg-white/10 dark:text-white'
-              : 'border-white/50 bg-white/45 text-slate-600 hover:bg-white/75 dark:border-white/10 dark:bg-white/5 dark:text-slate-300'
+              ? 'border-slate-300 bg-white text-slate-900 shadow-sm dark:border-white/15 dark:bg-muted dark:text-foreground'
+              : 'border-white/50 bg-white/45 text-slate-600 hover:bg-white/75 dark:border-border dark:bg-card dark:text-slate-300'
           )}
         >
           <div className="flex items-center gap-3">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-900 text-white dark:bg-white dark:text-slate-950">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-900 text-foreground dark:bg-white dark:text-slate-950">
               <Play className="h-4 w-4 fill-current" />
             </span>
             <div>
@@ -1136,7 +1136,7 @@ function StudyModePanel({
         >
           <span className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/70 to-transparent" />
           <div className="flex items-center gap-3">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600 via-lime-500 to-amber-400 text-white shadow-lg shadow-emerald-700/25">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600 via-lime-500 to-amber-400 text-foreground shadow-lg shadow-emerald-700/25">
               <Brain className="h-5 w-5" />
             </span>
             <div>
@@ -1151,7 +1151,7 @@ function StudyModePanel({
         <motion.div
           initial={{ opacity: 0, y: -6 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mt-4 rounded-2xl border border-emerald-200/55 bg-white/55 p-4 backdrop-blur-xl dark:border-emerald-300/15 dark:bg-white/5"
+          className="mt-4 rounded-2xl border border-emerald-200/55 bg-card5 p-4 backdrop-blur-xl dark:border-emerald-300/15 dark:bg-card"
         >
           <div className="grid gap-4 lg:grid-cols-[1.1fr,0.9fr]">
             <div>
@@ -1180,7 +1180,7 @@ function StudyModePanel({
             <button
               type="button"
               onClick={() => setOpen(v => !v)}
-              className="inline-flex items-center gap-2 rounded-full border border-white/50 bg-white/60 px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10"
+              className="inline-flex items-center gap-2 rounded-full border border-white/50 bg-white/60 px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-white dark:border-border dark:bg-card dark:text-slate-300 dark:hover:bg-muted"
             >
               {open ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
               {open ? 'Ocultar desempenho' : 'Ver desempenho por card'}
@@ -1194,7 +1194,7 @@ function StudyModePanel({
                   exit={{ opacity: 0, height: 0 }}
                   className="overflow-hidden"
                 >
-                  <div className="mt-3 max-h-72 overflow-auto rounded-2xl border border-white/50 bg-white/45 backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
+                  <div className="mt-3 max-h-72 overflow-auto rounded-2xl border border-white/50 bg-white/45 backdrop-blur-xl dark:border-border dark:bg-card">
                     {cards.length === 0 ? (
                       <p className="p-4 text-sm text-slate-500">Esse deck ainda não tem cartões.</p>
                     ) : (
@@ -1247,7 +1247,7 @@ function StatTile({ icon, label, value, tone }: { icon: React.ReactNode; label: 
     rose: 'from-rose-500/20 to-rose-500/5 text-rose-800 dark:text-rose-100',
   }
   return (
-    <div className={cn('rounded-2xl border border-white/55 bg-gradient-to-br p-3 backdrop-blur-xl dark:border-white/10', colors[tone])}>
+    <div className={cn('rounded-2xl border border-white/55 bg-gradient-to-br p-3 backdrop-blur-xl dark:border-border', colors[tone])}>
       <div className="flex items-center justify-between gap-2">
         <span className="text-current opacity-75">{icon}</span>
         <span className="text-xl font-black tabular-nums">{value}</span>
@@ -1338,7 +1338,7 @@ function ResumeBanner({
         type="button"
         onClick={onDismiss}
         aria-label="Descartar progresso salvo"
-        className="absolute right-3 top-3 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white/70 ring-1 ring-white/20 transition hover:bg-white/20 hover:text-white"
+        className="absolute right-3 top-3 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground ring-1 ring-white/20 transition hover:bg-white/20 hover:text-foreground"
       >
         <X className="h-4 w-4" />
       </button>
@@ -1347,7 +1347,7 @@ function ResumeBanner({
         <div>
           <div className="flex items-center gap-2">
             <span
-              className="inline-flex h-9 w-9 items-center justify-center rounded-2xl text-white shadow-lg"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-2xl text-foreground shadow-lg"
               style={{
                 background: 'linear-gradient(135deg, rgba(167,139,250,0.95), rgba(217,70,239,0.95))',
                 boxShadow: '0 6px 18px rgba(139,92,246,0.45), inset 0 1px 0 rgba(255,255,255,0.30)',
@@ -1359,7 +1359,7 @@ function ResumeBanner({
               <p className="text-xs font-semibold uppercase tracking-wider text-violet-100/85">
                 Sessão pendente
               </p>
-              <h3 className="text-lg font-bold leading-tight text-white">
+              <h3 className="text-lg font-bold leading-tight text-foreground">
                 Você parou no card {safeIndex + 1} de {safeTotal}
               </h3>
             </div>
@@ -1370,7 +1370,7 @@ function ResumeBanner({
               <span>Progresso</span>
               <span className="tabular-nums">{percent}%</span>
             </div>
-            <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-white/10 ring-1 ring-white/15">
+            <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-muted ring-1 ring-white/15">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${percent}%` }}
@@ -1383,8 +1383,8 @@ function ResumeBanner({
                 }}
               />
             </div>
-            <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-medium text-white/85">
-              <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 ring-1 ring-white/15 backdrop-blur">
+            <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-medium text-foreground/85">
+              <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 ring-1 ring-white/15 backdrop-blur">
                 {isSpaced ? (
                   <>
                     <Brain className="h-3 w-3" /> Fixação intensa
@@ -1395,14 +1395,14 @@ function ResumeBanner({
                   </>
                 )}
               </span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 ring-1 ring-white/15 backdrop-blur">
+              <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 ring-1 ring-white/15 backdrop-blur">
                 <CheckCircle2 className="h-3 w-3" /> {ratedCount} avaliados
               </span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 ring-1 ring-white/15 backdrop-blur">
+              <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 ring-1 ring-white/15 backdrop-blur">
                 <ChevronRight className="h-3 w-3" /> {remaining} restantes
               </span>
               {savedAgo && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 ring-1 ring-white/15 backdrop-blur">
+                <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 ring-1 ring-white/15 backdrop-blur">
                   <CalendarClock className="h-3 w-3" /> {savedAgo}
                 </span>
               )}
@@ -1414,7 +1414,7 @@ function ResumeBanner({
           <button
             type="button"
             onClick={onContinue}
-            className="group relative inline-flex flex-1 items-center justify-center gap-2 overflow-hidden rounded-2xl px-5 py-3 text-sm font-bold text-white transition-all duration-200 active:scale-[0.97] hover:brightness-110"
+            className="group relative inline-flex flex-1 items-center justify-center gap-2 overflow-hidden rounded-2xl px-5 py-3 text-sm font-bold text-foreground transition-all duration-200 active:scale-[0.97] hover:brightness-110"
             style={{
               background:
                 'linear-gradient(135deg, rgba(124,58,237,1) 0%, rgba(168,85,247,0.95) 50%, rgba(217,70,239,0.90) 100%)',
@@ -1430,7 +1430,7 @@ function ResumeBanner({
           <button
             type="button"
             onClick={onRestart}
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold text-white transition-all duration-200 active:scale-[0.97]"
+            className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold text-foreground transition-all duration-200 active:scale-[0.97]"
             style={{
               background: 'rgba(255,255,255,0.10)',
               border: '1px solid rgba(255,255,255,0.22)',
@@ -1463,12 +1463,12 @@ function formatRelativeTime(timestamp: number): string {
 
 function VisibilityBadge({ visibility }: { visibility: string }) {
   if (visibility === 'public') {
-    return <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/90 px-2.5 py-0.5 text-white"><Globe className="h-3 w-3" /> Público</span>
+    return <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/90 px-2.5 py-0.5 text-foreground"><Globe className="h-3 w-3" /> Público</span>
   }
   if (visibility === 'unlisted') {
-    return <span className="inline-flex items-center gap-1 rounded-full bg-sky-500/90 px-2.5 py-0.5 text-white"><LinkIcon className="h-3 w-3" /> Não-listado</span>
+    return <span className="inline-flex items-center gap-1 rounded-full bg-sky-500/90 px-2.5 py-0.5 text-foreground"><LinkIcon className="h-3 w-3" /> Não-listado</span>
   }
-  return <span className="inline-flex items-center gap-1 rounded-full bg-slate-700/80 px-2.5 py-0.5 text-white"><EyeOff className="h-3 w-3" /> Privado</span>
+  return <span className="inline-flex items-center gap-1 rounded-full bg-slate-700/80 px-2.5 py-0.5 text-foreground"><EyeOff className="h-3 w-3" /> Privado</span>
 }
 
 function LockedPreview({ deck, access }: { deck: any; access: AccessFlags }) {
@@ -1477,12 +1477,12 @@ function LockedPreview({ deck, access }: { deck: any; access: AccessFlags }) {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35 }}
-      className="rounded-3xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl shadow-sm p-8 text-center"
+      className="rounded-3xl border border-white/40 dark:border-border bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl shadow-sm p-8 text-center"
     >
       <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500/15 to-fuchsia-500/15">
         <Lock className="h-6 w-6 text-violet-500" />
       </div>
-      <h2 className="text-xl font-semibold text-slate-800 dark:text-white">Conteúdo restrito</h2>
+      <h2 className="text-xl font-semibold text-slate-800 dark:text-foreground">Conteúdo restrito</h2>
       <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">
         {deck.pricing === 'paid'
           ? 'Adquira este deck para acessar todos os cartões.'
@@ -1539,7 +1539,7 @@ function CardsList({
 
   if (!cards.length) {
     return (
-      <div className="rounded-3xl border border-dashed border-violet-300/50 dark:border-white/15 bg-white/40 dark:bg-white/5 backdrop-blur-md p-10 text-center">
+      <div className="rounded-3xl border border-dashed border-violet-300/50 dark:border-white/15 bg-white/40 dark:bg-card backdrop-blur-md p-10 text-center">
         <Sparkles className="h-8 w-8 mx-auto text-slate-400 mb-3" />
         <p className="text-slate-500 dark:text-slate-400">Esse deck ainda não tem cartões.</p>
         {canManage && (
@@ -1553,9 +1553,9 @@ function CardsList({
 
   return (
     <>
-      <div className="rounded-3xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl shadow-sm overflow-hidden">
+      <div className="rounded-3xl border border-white/40 dark:border-border bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl shadow-sm overflow-hidden">
         {/* Header */}
-        <div className="flex items-center gap-3 px-5 py-4 border-b border-slate-100 dark:border-white/10">
+        <div className="flex items-center gap-3 px-5 py-4 border-b border-slate-100 dark:border-border">
           {canManage && (
             <button
               type="button"
@@ -1572,7 +1572,7 @@ function CardsList({
               )}
             </button>
           )}
-          <h2 className="text-sm font-semibold text-slate-800 dark:text-white flex-1">{cards.length} cartões</h2>
+          <h2 className="text-sm font-semibold text-slate-800 dark:text-foreground flex-1">{cards.length} cartões</h2>
           {canManage && (
             <Link href={`/flashcards/d/${slug}/editar`}>
               <Button variant="outline" size="sm"><Edit3 className="h-3.5 w-3.5 mr-1" />Editar deck</Button>
@@ -1604,7 +1604,7 @@ function CardsList({
                 <Button
                   size="sm"
                   onClick={() => setConfirmDelete(true)}
-                  className="bg-rose-600 hover:bg-rose-700 text-white gap-1.5"
+                  className="bg-rose-600 hover:bg-rose-700 text-foreground gap-1.5"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                   Excluir selecionados
@@ -1623,7 +1623,7 @@ function CardsList({
                 'flex items-start gap-3 px-5 py-3 transition-colors',
                 selected.has(c._id)
                   ? 'bg-violet-50 dark:bg-violet-500/10'
-                  : 'hover:bg-slate-50/60 dark:hover:bg-white/5',
+                  : 'hover:bg-slate-50/60 dark:hover:bg-card',
                 canManage && 'cursor-pointer'
               )}
               onClick={() => canManage && toggleCard(c._id)}
@@ -1673,7 +1673,7 @@ function CardsList({
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-white/10 p-6 max-w-sm w-full shadow-2xl"
+              className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-border p-6 max-w-sm w-full shadow-2xl"
               onClick={e => e.stopPropagation()}
             >
               <div className="flex items-center gap-3 mb-4">
@@ -1681,7 +1681,7 @@ function CardsList({
                   <Trash2 className="h-5 w-5 text-rose-600 dark:text-rose-400" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-800 dark:text-white">Excluir cartões?</h3>
+                  <h3 className="font-semibold text-slate-800 dark:text-foreground">Excluir cartões?</h3>
                   <p className="text-sm text-slate-500 dark:text-slate-400">
                     {selected.size} {selected.size === 1 ? 'cartão será excluído' : 'cartões serão excluídos'} permanentemente.
                   </p>
@@ -1694,7 +1694,7 @@ function CardsList({
                 <Button
                   onClick={deleteSelected}
                   disabled={deleting}
-                  className="bg-rose-600 hover:bg-rose-700 text-white gap-1.5"
+                  className="bg-rose-600 hover:bg-rose-700 text-foreground gap-1.5"
                 >
                   {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                   {deleting ? 'Excluindo...' : 'Excluir'}
@@ -1752,11 +1752,11 @@ function ShareDialog({ deckSlug, onClose, onSuccess }: { deckSlug: string; onClo
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-end md:items-center justify-center" onClick={onClose}>
-      <div className="bg-white dark:bg-slate-900 w-full md:max-w-lg md:rounded-3xl rounded-t-3xl border border-slate-200 dark:border-white/10 p-6" onClick={e => e.stopPropagation()}>
+      <div className="bg-white dark:bg-slate-900 w-full md:max-w-lg md:rounded-3xl rounded-t-3xl border border-slate-200 dark:border-border p-6" onClick={e => e.stopPropagation()}>
         <h3 className="text-lg font-semibold mb-1">Compartilhar deck</h3>
         <p className="text-sm text-slate-500 mb-4">Convide outros usuários ou compartilhe o link.</p>
 
-        <div className="rounded-2xl border border-slate-200 dark:border-white/10 p-3 flex items-center gap-2 mb-4 bg-slate-50 dark:bg-white/5">
+        <div className="rounded-2xl border border-slate-200 dark:border-border p-3 flex items-center gap-2 mb-4 bg-slate-50 dark:bg-card">
           <LinkIcon className="h-4 w-4 text-slate-500" />
           <span className="flex-1 text-xs text-slate-600 dark:text-slate-300 truncate">{`${typeof window !== 'undefined' ? window.location.origin : ''}/flashcards/d/${deckSlug}`}</span>
           <button onClick={copyLink} className="text-xs font-semibold text-violet-600 hover:text-violet-700">
@@ -1769,12 +1769,12 @@ function ShareDialog({ deckSlug, onClose, onSuccess }: { deckSlug: string; onClo
           value={query}
           onChange={e => setQuery(e.target.value)}
           placeholder="Buscar por nome ou email..."
-          className="w-full rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 px-4 py-2.5 text-sm"
+          className="w-full rounded-2xl border border-slate-200 dark:border-border bg-white dark:bg-slate-800 px-4 py-2.5 text-sm"
         />
 
         <ul className="mt-3 space-y-2 max-h-64 overflow-auto">
           {users.map(u => (
-            <li key={u._id} className="flex items-center justify-between rounded-2xl border border-slate-100 dark:border-white/10 px-3 py-2">
+            <li key={u._id} className="flex items-center justify-between rounded-2xl border border-slate-100 dark:border-border px-3 py-2">
               <div className="min-w-0">
                 <p className="text-sm font-medium truncate">{u.name}</p>
                 <p className="text-xs text-slate-500">{u.emailMasked}</p>
