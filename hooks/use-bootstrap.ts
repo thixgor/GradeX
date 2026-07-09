@@ -310,6 +310,34 @@ export function useBootstrap(options: {
     })
   }, [skip, redirectOnUnauth, router])
 
+  // Revalidação ao restaurar do back-forward cache (bfcache).
+  // Ao voltar pelo botão do navegador, a página é restaurada com o heap
+  // congelado: nenhum efeito de mount roda de novo, então o fetch inicial não
+  // dispara. Se globalBootstrapData tiver sido limpo (ex.: clearBootstrapCache
+  // antes de um login/logout), a UI congela em "deslogado"/"Redirecionando..."
+  // mesmo com o cookie ainda válido. O evento `pageshow` com persisted=true
+  // sinaliza a restauração do bfcache — revalidamos a partir do cookie atual.
+  useEffect(() => {
+    if (skip) return
+
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        fetchBootstrap(true).catch(error => {
+          const status = (error as any).status
+          const isAuthError = status === 401 || status === 403 ||
+            error.message.includes('401') || error.message.includes('403')
+
+          if (redirectOnUnauth && isAuthError) {
+            router.push('/auth/login')
+          }
+        })
+      }
+    }
+
+    window.addEventListener('pageshow', handlePageShow)
+    return () => window.removeEventListener('pageshow', handlePageShow)
+  }, [skip, redirectOnUnauth, router])
+
   // Auto-refetch interval
   useEffect(() => {
     if (skip || refetchInterval <= 0) return

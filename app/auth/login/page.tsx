@@ -111,6 +111,40 @@ export default function LoginPage() {
     formData.email.toLowerCase().trim()
   )
 
+  // Se o usuário já está autenticado, não faz sentido mostrar o formulário de
+  // login. Isso acontece quando ele aperta "Voltar" no navegador depois de
+  // logar (página restaurada do bfcache, com o form "deslogado" congelado) ou
+  // navega para /auth/login com a sessão ainda válida. Verificamos a sessão no
+  // mount e a cada `pageshow` (que dispara na restauração do bfcache) e, se
+  // autenticado, mandamos direto para o destino em vez do formulário.
+  useEffect(() => {
+    let cancelled = false
+
+    const checkSessionAndRedirect = () => {
+      fetch('/api/auth/me', { cache: 'no-store' })
+        .then((r) => {
+          if (!cancelled && r.ok) {
+            window.location.replace(redirectTo)
+          }
+        })
+        .catch(() => {})
+    }
+
+    checkSessionAndRedirect()
+
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        checkSessionAndRedirect()
+      }
+    }
+    window.addEventListener('pageshow', handlePageShow)
+
+    return () => {
+      cancelled = true
+      window.removeEventListener('pageshow', handlePageShow)
+    }
+  }, [redirectTo])
+
   useEffect(() => {
     const loadRecaptchaScript = () => {
       const script = document.createElement('script')

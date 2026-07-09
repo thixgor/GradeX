@@ -820,6 +820,22 @@ export default function LandingPage({
     }
   }, [mobileMenuOpen])
 
+  // Ao voltar pelo botão do navegador, a landing pode ser restaurada do
+  // back-forward cache (bfcache) com o estado congelado em "deslogado"
+  // (isLoggedIn capturado no SSR), mesmo com a sessão ainda válida — o usuário
+  // vê "Entrar" e os botões apontam para /auth/login. Um reload força
+  // app/page.tsx (force-dynamic) a reavaliar getSession() e redirecionar quem
+  // está logado para /dashboard. Não há loop: um load fresco tem persisted=false.
+  useEffect(() => {
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        window.location.reload()
+      }
+    }
+    window.addEventListener('pageshow', handlePageShow)
+    return () => window.removeEventListener('pageshow', handlePageShow)
+  }, [])
+
   useEffect(() => {
     if (initialIsLoggedIn === undefined) {
       fetch('/api/auth/me')
