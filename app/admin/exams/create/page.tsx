@@ -469,8 +469,8 @@ export default function CreateExamPage() {
 
       // Validar questões
       for (const question of questions) {
-        if (!question.statement || !question.command) {
-          alert(`Questão ${question.number}: Preencha o enunciado e o comando`)
+        if (!question.statement) {
+          alert(`Questão ${question.number}: Preencha o enunciado`)
           return
         }
 
@@ -524,16 +524,23 @@ export default function CreateExamPage() {
         endTimeISO = endDate.toISOString()
       }
 
+      // Preencher comando padrão quando não informado
+      let processedQuestions: Question[] = questions.map(q => {
+        if (q.command && q.command.trim()) return q
+        if (q.type === 'multiple-choice') return { ...q, command: 'Assinale a alternativa correta' }
+        if (q.type === 'discursive') return { ...q, command: 'Responda a questão corretamente' }
+        return q
+      })
+
       // Aplicar tempo generalizado em todas as questões se timeMode = 'generalized'
-      let processedQuestions = [...questions]
       if (examData.timeMode === 'generalized' && examData.generalizedTimeSeconds && examData.generalizedTimeSeconds > 0) {
-        processedQuestions = questions.map(q => ({
+        processedQuestions = processedQuestions.map(q => ({
           ...q,
           timePerQuestionSeconds: examData.generalizedTimeSeconds
         }))
       } else if (examData.timeMode === 'none') {
         // Remover timePerQuestionSeconds se timeMode = 'none'
-        processedQuestions = questions.map(q => ({
+        processedQuestions = processedQuestions.map(q => ({
           ...q,
           timePerQuestionSeconds: undefined
         }))
@@ -1557,11 +1564,17 @@ export default function CreateExamPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Comando da Questão *</Label>
+                  <Label>Comando da Questão (opcional)</Label>
                   <Input
                     value={currentQuestion.command}
                     onChange={(e) => updateQuestion(currentQuestionIndex, { command: e.target.value })}
-                    placeholder="Ex: Assinale a alternativa correta"
+                    placeholder={
+                      currentQuestion.type === 'multiple-choice'
+                        ? 'Se deixado em branco: "Assinale a alternativa correta"'
+                        : currentQuestion.type === 'discursive'
+                        ? 'Se deixado em branco: "Responda a questão corretamente"'
+                        : 'Ex: Assinale a alternativa correta'
+                    }
                   />
                 </div>
 
