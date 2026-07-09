@@ -91,6 +91,7 @@ export function ThemeToggle({
       ref={btnRef}
       type="button"
       onClick={(e) => toggle(e)}
+      style={{ '--thumb-travel': floating ? '2.1rem' : '1.6rem' } as React.CSSProperties}
       className={cn(
         'theme-toggle-3d group relative inline-flex h-9 w-[3.85rem] shrink-0 items-center rounded-full border p-1',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40',
