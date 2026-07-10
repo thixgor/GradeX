@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { TiltCard } from '@/components/tilt-card'
+import { FloatingMenu } from '@/components/floating-menu'
 import {
   MoreHorizontal,
   FolderPlus,
@@ -69,6 +70,8 @@ export function GroupCard({
   const [copiedLink, setCopiedLink] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [isSorting, setIsSorting] = useState(false)
+  const actionsButtonRef = useRef<HTMLButtonElement>(null)
+  const downloadButtonRef = useRef<HTMLButtonElement>(null)
 
   const accentColor = group.color || '#3B82F6'
 
@@ -156,59 +159,55 @@ export function GroupCard({
             {canManage && (
               <div className="absolute right-2 top-2" onClick={(e) => e.stopPropagation()}>
                 <button
+                  ref={actionsButtonRef}
                   onClick={() => setShowActions((v) => !v)}
                   className="rounded-lg bg-black/40 p-1.5 text-white backdrop-blur-sm transition-colors hover:bg-black/60"
                   aria-label="Ações do grupo"
                 >
                   <MoreHorizontal className="h-3.5 w-3.5" />
                 </button>
-                {showActions && (
-                  <>
-                    <div className="fixed inset-0 z-40" onClick={() => setShowActions(false)} />
-                    <div className="absolute right-0 top-full z-50 mt-1.5 w-48 overflow-hidden rounded-xl border border-border bg-popover py-1 shadow-2xl animate-in fade-in slide-in-from-top-1 duration-150">
-                      {onCreateSubgroup && (
-                        <button
-                          onClick={() => { onCreateSubgroup(group._id); setShowActions(false) }}
-                          className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-muted/60"
-                        >
-                          <FolderPlus className="h-3.5 w-3.5" /> Subgrupo
-                        </button>
-                      )}
-                      {isAdmin && (
-                        <button
-                          onClick={handleSortAlpha}
-                          disabled={isSorting}
-                          className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-muted/60 disabled:opacity-50"
-                        >
-                          <ArrowDownAZ className="h-3.5 w-3.5" /> {isSorting ? 'Ordenando…' : 'A→Z reverso'}
-                        </button>
-                      )}
-                      {onEditGroup && (
-                        <button
-                          onClick={() => { onEditGroup(group); setShowActions(false) }}
-                          className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-muted/60"
-                        >
-                          <Edit2 className="h-3.5 w-3.5" /> Editar
-                        </button>
-                      )}
-                      <button
-                        onClick={() => { handleShareLink(); setShowActions(false) }}
-                        className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-muted/60"
-                      >
-                        <Share2 className="h-3.5 w-3.5" /> {copiedLink ? 'Copiado!' : 'Link'}
-                      </button>
-                      {onDeleteGroup && (
-                        <button
-                          onClick={() => { handleDelete(); setShowActions(false) }}
-                          disabled={isDeleting}
-                          className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-destructive hover:bg-muted/60 disabled:opacity-50"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" /> {isDeleting ? 'Deletando…' : 'Deletar'}
-                        </button>
-                      )}
-                    </div>
-                  </>
-                )}
+                <FloatingMenu open={showActions} onClose={() => setShowActions(false)} anchorRef={actionsButtonRef} width={192}>
+                  {onCreateSubgroup && (
+                    <button
+                      onClick={() => { onCreateSubgroup(group._id); setShowActions(false) }}
+                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-muted/60"
+                    >
+                      <FolderPlus className="h-3.5 w-3.5" /> Subgrupo
+                    </button>
+                  )}
+                  {isAdmin && (
+                    <button
+                      onClick={handleSortAlpha}
+                      disabled={isSorting}
+                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-muted/60 disabled:opacity-50"
+                    >
+                      <ArrowDownAZ className="h-3.5 w-3.5" /> {isSorting ? 'Ordenando…' : 'A→Z reverso'}
+                    </button>
+                  )}
+                  {onEditGroup && (
+                    <button
+                      onClick={() => { onEditGroup(group); setShowActions(false) }}
+                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-muted/60"
+                    >
+                      <Edit2 className="h-3.5 w-3.5" /> Editar
+                    </button>
+                  )}
+                  <button
+                    onClick={() => { handleShareLink(); setShowActions(false) }}
+                    className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-muted/60"
+                  >
+                    <Share2 className="h-3.5 w-3.5" /> {copiedLink ? 'Copiado!' : 'Link'}
+                  </button>
+                  {onDeleteGroup && (
+                    <button
+                      onClick={() => { handleDelete(); setShowActions(false) }}
+                      disabled={isDeleting}
+                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-destructive hover:bg-muted/60 disabled:opacity-50"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" /> {isDeleting ? 'Deletando…' : 'Deletar'}
+                    </button>
+                  )}
+                </FloatingMenu>
               </div>
             )}
           </div>
@@ -236,35 +235,31 @@ export function GroupCard({
               {directPracticeExams.length > 0 && onGroupDownloadPDF && (
                 <div className="relative" onClick={(e) => e.stopPropagation()}>
                   <button
+                    ref={downloadButtonRef}
                     onClick={() => setShowDownload((v) => !v)}
                     className="rounded-lg p-1.5 text-emerald-600 transition-colors hover:bg-emerald-500/10 dark:text-emerald-400"
                     title={`Baixar PDFs (${directPracticeExams.length} provas)`}
                   >
                     <FileDown className="h-3.5 w-3.5" />
                   </button>
-                  {showDownload && (
-                    <>
-                      <div className="fixed inset-0 z-40" onClick={() => setShowDownload(false)} />
-                      <div className="absolute bottom-full right-0 z-50 mb-1.5 w-56 overflow-hidden rounded-xl border border-border bg-popover py-1 shadow-2xl animate-in fade-in slide-in-from-bottom-1 duration-150">
-                        {([
-                          { type: 'exam', label: 'PDF da Prova' },
-                          { type: 'with-answers', label: 'Prova + Gabarito' },
-                          { type: 'gabarito', label: 'Só o Gabarito' },
-                        ] as const).map((opt) => (
-                          <button
-                            key={opt.type}
-                            onClick={() => {
-                              setShowDownload(false)
-                              onGroupDownloadPDF([...directPracticeExams].reverse(), opt.type, group.name)
-                            }}
-                            className="w-full px-3 py-2 text-left text-xs hover:bg-muted/60"
-                          >
-                            {opt.label}
-                          </button>
-                        ))}
-                      </div>
-                    </>
-                  )}
+                  <FloatingMenu open={showDownload} onClose={() => setShowDownload(false)} anchorRef={downloadButtonRef} width={224}>
+                    {([
+                      { type: 'exam', label: 'PDF da Prova' },
+                      { type: 'with-answers', label: 'Prova + Gabarito' },
+                      { type: 'gabarito', label: 'Só o Gabarito' },
+                    ] as const).map((opt) => (
+                      <button
+                        key={opt.type}
+                        onClick={() => {
+                          setShowDownload(false)
+                          onGroupDownloadPDF([...directPracticeExams].reverse(), opt.type, group.name)
+                        }}
+                        className="w-full px-3 py-2 text-left text-xs hover:bg-muted/60"
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </FloatingMenu>
                 </div>
               )}
             </div>
