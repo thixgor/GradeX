@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ExamContextMenu } from '@/components/exam-context-menu'
 import { ExamGroup } from '@/components/exam-group'
 import { GroupCard } from '@/components/group-card'
+import { FileUpload } from '@/components/file-upload'
 import { PremiumPdfCtaModal } from '@/components/premium-pdf-cta-modal'
 import { canDownloadExamPdf } from '@/lib/tier-limits'
 import { Exam } from '@/lib/types'
@@ -1949,21 +1950,13 @@ function ProvasContent() {
                 />
               </div>
             </div>
-            <div>
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">URL da Imagem (opcional)</label>
-              <input
-                type="url"
-                value={editGroupForm.imageUrl}
-                onChange={(e) => setEditGroupForm({ ...editGroupForm, imageUrl: e.target.value })}
-                className="w-full px-3 py-2 rounded-xl border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-                placeholder="https://..."
-              />
-              {editGroupForm.imageUrl && (
-                <div className="mt-2 w-16 h-16 rounded-xl overflow-hidden border">
-                  <img src={editGroupForm.imageUrl} alt="Preview" className="w-full h-full object-cover" />
-                </div>
-              )}
-            </div>
+            <FileUpload
+              label="Capa do Grupo (opcional)"
+              value={editGroupForm.imageUrl}
+              onChange={(url) => setEditGroupForm({ ...editGroupForm, imageUrl: url })}
+              supportPaste
+              placeholder="Cole a URL de uma capa ou faça upload"
+            />
             {isAdmin && editingGroup.type === 'general' && (
               <>
                 <div>
