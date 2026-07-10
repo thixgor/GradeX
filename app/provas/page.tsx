@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ExamContextMenu } from '@/components/exam-context-menu'
 import { ExamGroup } from '@/components/exam-group'
+import { GroupCard } from '@/components/group-card'
 import { PremiumPdfCtaModal } from '@/components/premium-pdf-cta-modal'
 import { canDownloadExamPdf } from '@/lib/tier-limits'
 import { Exam } from '@/lib/types'
@@ -45,6 +46,11 @@ import {
   Search,
   X,
   SlidersHorizontal,
+  MoreHorizontal,
+  FolderPlus,
+  Trash2,
+  Share2,
+  ArrowDownAZ,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -127,6 +133,11 @@ function ProvasContent() {
   const [pdfCtaExam, setPdfCtaExam] = useState<Exam | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'available' | 'finished' | 'personal' | 'general'>('all')
+  const [facDrillPath, setFacDrillPath] = useState<Group[]>([])
+  const [drillActionsOpen, setDrillActionsOpen] = useState(false)
+  const [drillDownloadOpen, setDrillDownloadOpen] = useState(false)
+  const [drillCopiedLink, setDrillCopiedLink] = useState(false)
+  const [isSortingDrillGroup, setIsSortingDrillGroup] = useState(false)
 
   // Handle ?view=faculdade|plataforma direct entry
   useEffect(() => {
@@ -142,19 +153,23 @@ function ProvasContent() {
     if (grupoParam && groups.length > 0) {
       const targetGroup = groups.find(g => g._id === grupoParam)
       if (targetGroup) {
-        // Walk up parent chain to find root group and determine category
-        let rootGroup = targetGroup
+        // Walk up parent chain (root → target) to determine category and build the drill path
+        const chain: Group[] = [targetGroup]
+        let current = targetGroup
         let safety = 0
-        while (rootGroup.parentGroupId && safety < 20) {
-          const parent = groups.find(g => g._id === rootGroup.parentGroupId)
-          if (parent) rootGroup = parent
-          else break
+        while (current.parentGroupId && safety < 20) {
+          const parent = groups.find(g => g._id === current.parentGroupId)
+          if (!parent) break
+          chain.unshift(parent)
+          current = parent
           safety++
         }
+        const rootGroup = chain[0]
         // Use root group's category, or the target's own category
         const effectiveCategory = rootGroup.category || targetGroup.category
         if (effectiveCategory === 'faculdade') {
           setViewMode('faculdade')
+          setFacDrillPath(chain)
         } else {
           setViewMode('plataforma')
         }
@@ -885,6 +900,9 @@ function ProvasContent() {
       .filter(key => courseMap.has(key))
       .map(key => [key, courseMap.get(key)!] as [string, Group[]])
 
+    const isSearching = !!searchQuery.trim()
+    const drillActive = facDrillPath.length > 0 && !isSearching
+
     return (
       <div className="surface-page">
         <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
@@ -898,7 +916,7 @@ function ProvasContent() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setViewMode('home')}
+              onClick={() => { setViewMode('home'); setFacDrillPath([]) }}
               className="rounded-xl"
             >
               <ArrowLeft className="h-4 w-4 mr-1" />
@@ -953,139 +971,197 @@ function ProvasContent() {
             )}
           </motion.section>
 
-          {/* Grupos por curso */}
-          {orderedCourseEntries.map(([courseKey, courseGroups], idx) => {
-            const courseInfo = COURSE_LABELS[courseKey]
-            const courseExamCount = courseGroups.reduce((sum, group) => sum + countGroupExamsForSearch(group._id), 0)
-            return (
-              <motion.section
-                key={courseKey}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.1 + idx * 0.08 }}
-                className="rounded-lg border border-border bg-card p-3 sm:p-4"
-              >
-                <div className="flex items-center gap-3 mb-3 flex-wrap">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className="text-lg">{courseInfo.icon}</span>
-                    <h2 className="text-lg font-semibold" style={{ color: courseInfo.color }}>
-                      {courseInfo.label}
-                    </h2>
+          {drillActive ? renderFacDrillView() : (
+            <>
+              {/* Grupos por curso */}
+              {orderedCourseEntries.map(([courseKey, courseGroups], idx) => {
+                const courseInfo = COURSE_LABELS[courseKey]
+                const courseExamCount = courseGroups.reduce((sum, group) => sum + countGroupExamsForSearch(group._id), 0)
+                return (
+                  <motion.section
+                    key={courseKey}
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.1 + idx * 0.08 }}
+                    className="rounded-lg border border-border bg-card p-3 sm:p-4"
+                  >
+                    <div className="flex items-center gap-3 mb-3 flex-wrap">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-lg">{courseInfo.icon}</span>
+                        <h2 className="text-lg font-semibold" style={{ color: courseInfo.color }}>
+                          {courseInfo.label}
+                        </h2>
+                      </div>
+                      <span className="text-[11px] rounded-full bg-muted px-2 py-0.5 text-muted-foreground">
+                        {courseExamCount} provas
+                      </span>
+                      <span className="text-[11px] rounded-full bg-muted px-2 py-0.5 text-muted-foreground">
+                        {courseGroups.length} grupos
+                      </span>
+                      <div className="flex-1 h-px bg-border/50 min-w-8" />
+                    </div>
+
+                    {isSearching ? (
+                      <div className="space-y-1">
+                        {courseGroups.map((group) => {
+                          const groupExams = exams.filter(e => e.groupId === group._id)
+                          return (
+                            <ExamGroup
+                              key={group._id}
+                              group={group}
+                              exams={groupExams}
+                              allGroups={groups}
+                              allExams={exams}
+                              currentUserId={user?.id || ''}
+                              userRole={user?.role || 'user'}
+                              highlightGroupId={highlightGroupId}
+                              onExamClick={(exam) => {
+                                const status = getExamStatus(exam)
+                                if (status.canTake) router.push(`/exam/${exam._id}`)
+                                else if (new Date() > new Date(exam.endTime)) router.push(`/exam/${exam._id}/results`)
+                              }}
+                              onExamContextMenu={handleExamContextMenu}
+                              onDeleteGroup={handleDeleteGroup}
+                              onEditGroup={handleEditGroup}
+                              onReorderExam={handleReorderExam}
+                              onSortGroup={handleSortGroup}
+                              onDownloadPDF={setPdfModalExam}
+                              onGroupDownloadPDF={handleGroupDownloadPDF}
+                              filterQuery={groupSelfMatchesSearch(group) ? '' : searchQuery}
+                              onCreateSubgroup={(parentGroupId) => {
+                                const name = prompt('Nome do subgrupo:')
+                                if (name) handleCreateGroup(name, 'general', parentGroupId)
+                              }}
+                            />
+                          )
+                        })}
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                        {courseGroups.map((group, gIdx) => (
+                          <GroupCard
+                            key={group._id}
+                            group={group}
+                            examCount={countGroupExams(group._id)}
+                            subgroupCount={groups.filter(g => g.parentGroupId === group._id).length}
+                            directPracticeExams={exams.filter(e => e.groupId === group._id && e.isPracticeExam)}
+                            canManage={user?.role === 'admin' || (group.createdBy === user?.id && group.type === 'personal')}
+                            isAdmin={user?.role === 'admin'}
+                            highlighted={highlightGroupId === group._id}
+                            index={gIdx}
+                            onOpen={() => setFacDrillPath([group])}
+                            onEditGroup={handleEditGroup}
+                            onDeleteGroup={handleDeleteGroup}
+                            onCreateSubgroup={(parentGroupId) => {
+                              const name = prompt('Nome do subgrupo:')
+                              if (name) handleCreateGroup(name, 'general', parentGroupId)
+                            }}
+                            onSortGroup={handleSortGroup}
+                            onGroupDownloadPDF={handleGroupDownloadPDF}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </motion.section>
+                )
+              })}
+
+              {/* Grupos de faculdade sem curso */}
+              {uncategorizedFacGroups.length > 0 && (
+                <motion.section
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.3 }}
+                  className="rounded-lg border border-border bg-card p-3 sm:p-4"
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <Layers className="h-4 w-4 text-muted-foreground" />
+                    <h2 className="text-lg font-semibold">Outros</h2>
+                    <div className="flex-1 h-px bg-border/50" />
                   </div>
-                  <span className="text-[11px] rounded-full bg-muted px-2 py-0.5 text-muted-foreground">
-                    {courseExamCount} provas
-                  </span>
-                  <span className="text-[11px] rounded-full bg-muted px-2 py-0.5 text-muted-foreground">
-                    {courseGroups.length} grupos
-                  </span>
-                  <div className="flex-1 h-px bg-border/50 min-w-8" />
-                </div>
 
-                <div className="space-y-1">
-                  {courseGroups.map((group) => {
-                    const groupExams = exams.filter(e => e.groupId === group._id)
-                    return (
-                      <ExamGroup
-                        key={group._id}
-                        group={group}
-                        exams={groupExams}
-                        allGroups={groups}
-                        allExams={exams}
-                        currentUserId={user?.id || ''}
-                        userRole={user?.role || 'user'}
-                        highlightGroupId={highlightGroupId}
-                        onExamClick={(exam) => {
-                          const status = getExamStatus(exam)
-                          if (status.canTake) router.push(`/exam/${exam._id}`)
-                          else if (new Date() > new Date(exam.endTime)) router.push(`/exam/${exam._id}/results`)
-                        }}
-                        onExamContextMenu={handleExamContextMenu}
-                        onDeleteGroup={handleDeleteGroup}
-                        onEditGroup={handleEditGroup}
-                        onReorderExam={handleReorderExam}
-                        onSortGroup={handleSortGroup}
-                        onDownloadPDF={setPdfModalExam}
-                        onGroupDownloadPDF={handleGroupDownloadPDF}
-                        filterQuery={groupSelfMatchesSearch(group) ? '' : searchQuery}
-                        onCreateSubgroup={(parentGroupId) => {
-                          const name = prompt('Nome do subgrupo:')
-                          if (name) handleCreateGroup(name, 'general', parentGroupId)
-                        }}
-                      />
-                    )
-                  })}
-                </div>
-              </motion.section>
-            )
-          })}
+                  {isSearching ? (
+                    <div className="space-y-1">
+                      {uncategorizedFacGroups.map((group) => {
+                        const groupExams = exams.filter(e => e.groupId === group._id)
+                        return (
+                          <ExamGroup
+                            key={group._id}
+                            group={group}
+                            exams={groupExams}
+                            allGroups={groups}
+                            allExams={exams}
+                            currentUserId={user?.id || ''}
+                            userRole={user?.role || 'user'}
+                            highlightGroupId={highlightGroupId}
+                            onExamClick={(exam) => {
+                              const status = getExamStatus(exam)
+                              if (status.canTake) router.push(`/exam/${exam._id}`)
+                              else if (new Date() > new Date(exam.endTime)) router.push(`/exam/${exam._id}/results`)
+                            }}
+                            onExamContextMenu={handleExamContextMenu}
+                            onDeleteGroup={handleDeleteGroup}
+                            onEditGroup={handleEditGroup}
+                            onReorderExam={handleReorderExam}
+                            onDownloadPDF={setPdfModalExam}
+                            onGroupDownloadPDF={handleGroupDownloadPDF}
+                            filterQuery={groupSelfMatchesSearch(group) ? '' : searchQuery}
+                            onCreateSubgroup={(parentGroupId) => {
+                              const name = prompt('Nome do subgrupo:')
+                              if (name) handleCreateGroup(name, 'general', parentGroupId)
+                            }}
+                          />
+                        )
+                      })}
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                      {uncategorizedFacGroups.map((group, gIdx) => (
+                        <GroupCard
+                          key={group._id}
+                          group={group}
+                          examCount={countGroupExams(group._id)}
+                          subgroupCount={groups.filter(g => g.parentGroupId === group._id).length}
+                          directPracticeExams={exams.filter(e => e.groupId === group._id && e.isPracticeExam)}
+                          canManage={user?.role === 'admin' || (group.createdBy === user?.id && group.type === 'personal')}
+                          isAdmin={user?.role === 'admin'}
+                          highlighted={highlightGroupId === group._id}
+                          index={gIdx}
+                          onOpen={() => setFacDrillPath([group])}
+                          onEditGroup={handleEditGroup}
+                          onDeleteGroup={handleDeleteGroup}
+                          onCreateSubgroup={(parentGroupId) => {
+                            const name = prompt('Nome do subgrupo:')
+                            if (name) handleCreateGroup(name, 'general', parentGroupId)
+                          }}
+                          onSortGroup={handleSortGroup}
+                          onGroupDownloadPDF={handleGroupDownloadPDF}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </motion.section>
+              )}
 
-          {/* Grupos de faculdade sem curso */}
-          {uncategorizedFacGroups.length > 0 && (
-            <motion.section
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.3 }}
-              className="rounded-lg border border-border bg-card p-3 sm:p-4"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <Layers className="h-4 w-4 text-muted-foreground" />
-                <h2 className="text-lg font-semibold">Outros</h2>
-                <div className="flex-1 h-px bg-border/50" />
-              </div>
-
-              <div className="space-y-1">
-                {uncategorizedFacGroups.map((group) => {
-                  const groupExams = exams.filter(e => e.groupId === group._id)
-                  return (
-                    <ExamGroup
-                      key={group._id}
-                      group={group}
-                      exams={groupExams}
-                      allGroups={groups}
-                      allExams={exams}
-                      currentUserId={user?.id || ''}
-                      userRole={user?.role || 'user'}
-                      highlightGroupId={highlightGroupId}
-                      onExamClick={(exam) => {
-                        const status = getExamStatus(exam)
-                        if (status.canTake) router.push(`/exam/${exam._id}`)
-                        else if (new Date() > new Date(exam.endTime)) router.push(`/exam/${exam._id}/results`)
-                      }}
-                      onExamContextMenu={handleExamContextMenu}
-                      onDeleteGroup={handleDeleteGroup}
-                      onEditGroup={handleEditGroup}
-                      onReorderExam={handleReorderExam}
-                      onDownloadPDF={setPdfModalExam}
-                      onGroupDownloadPDF={handleGroupDownloadPDF}
-                      filterQuery={groupSelfMatchesSearch(group) ? '' : searchQuery}
-                      onCreateSubgroup={(parentGroupId) => {
-                        const name = prompt('Nome do subgrupo:')
-                        if (name) handleCreateGroup(name, 'general', parentGroupId)
-                      }}
-                    />
-                  )
-                })}
-              </div>
-            </motion.section>
-          )}
-
-          {/* Empty */}
-          {!hasFaculdadeResults && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="text-center py-16"
-            >
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-red-500/10 mb-4">
-                <GraduationCap className="h-8 w-8 text-red-500" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Nenhuma prova da faculdade</h3>
-              <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                {searchQuery
-                  ? 'Nenhum curso, grupo ou prova corresponde a sua busca.'
-                  : 'Provas antigas da faculdade serao adicionadas aqui pelo administrador.'}
-              </p>
-            </motion.div>
+              {/* Empty */}
+              {!hasFaculdadeResults && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="text-center py-16"
+                >
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-red-500/10 mb-4">
+                    <GraduationCap className="h-8 w-8 text-red-500" />
+                  </div>
+                  <h3 className="text-lg font-semibold mb-2">Nenhuma prova da faculdade</h3>
+                  <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                    {searchQuery
+                      ? 'Nenhum curso, grupo ou prova corresponde a sua busca.'
+                      : 'Provas antigas da faculdade serao adicionadas aqui pelo administrador.'}
+                  </p>
+                </motion.div>
+              )}
+            </>
           )}
         </div>
 
@@ -1397,6 +1473,271 @@ function ProvasContent() {
       )}
     </div>
   )
+
+  // ─── Faculdade drill-down (grid navigation into a group/subgroup) ──
+  function FacBreadcrumb({ path }: { path: Group[] }) {
+    const rootCourse = normalizeCourseKey(path[0]?.course)
+    const courseInfo = rootCourse ? COURSE_LABELS[rootCourse] : null
+    return (
+      <div className="flex items-center gap-1.5 flex-wrap text-xs text-muted-foreground min-w-0">
+        <button onClick={() => setFacDrillPath([])} className="font-medium hover:text-foreground transition-colors flex-shrink-0">
+          {courseInfo ? <>{courseInfo.icon} {courseInfo.label}</> : 'Faculdade'}
+        </button>
+        {path.map((g, i) => (
+          <span key={g._id} className="flex items-center gap-1.5 min-w-0">
+            <ChevronRight className="h-3 w-3 opacity-40 flex-shrink-0" />
+            <button
+              onClick={() => setFacDrillPath(path.slice(0, i + 1))}
+              className={cn(
+                'truncate hover:text-foreground transition-colors',
+                i === path.length - 1 ? 'text-foreground font-semibold' : 'font-medium'
+              )}
+            >
+              {g.name}
+            </button>
+          </span>
+        ))}
+      </div>
+    )
+  }
+
+  function renderFacDrillView() {
+    const currentGroup = facDrillPath[facDrillPath.length - 1]
+    if (!currentGroup) return null
+
+    const childGroups = groups.filter(g => g.parentGroupId === currentGroup._id)
+    const directExams = exams.filter(e => e.groupId === currentGroup._id)
+    const directPracticeExams = directExams.filter(e => e.isPracticeExam)
+    const isCreator = currentGroup.createdBy === user?.id
+    const isAdmin = user?.role === 'admin'
+    const canManageGroup = isAdmin || (isCreator && currentGroup.type === 'personal')
+    const accentColor = currentGroup.color || '#3B82F6'
+    const isHighlighted = highlightGroupId === currentGroup._id
+
+    return (
+      <div className="space-y-6">
+        {/* Back + breadcrumb */}
+        <div className="flex items-center gap-3 flex-wrap">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setFacDrillPath(p => p.slice(0, -1))}
+            className="rounded-xl flex-shrink-0"
+          >
+            <ArrowLeft className="h-4 w-4 mr-1" />
+            Voltar
+          </Button>
+          <FacBreadcrumb path={facDrillPath} />
+        </div>
+
+        {/* Group header */}
+        <div className={cn(
+          'rounded-2xl border bg-card p-4 sm:p-5 transition-all',
+          isHighlighted ? 'border-primary/50 ring-2 ring-primary/25 shadow-lg shadow-primary/10' : 'border-border'
+        )}>
+          <div className="flex items-start gap-4">
+            {currentGroup.imageUrl ? (
+              <div className="w-14 h-14 rounded-2xl overflow-hidden border border-border/40 flex-shrink-0">
+                <img src={currentGroup.imageUrl} alt="" className="w-full h-full object-cover" />
+              </div>
+            ) : (
+              <div
+                className="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-xl font-bold shadow-sm flex-shrink-0"
+                style={{ background: `linear-gradient(140deg, ${accentColor} 0%, ${accentColor}cc 100%)` }}
+              >
+                {currentGroup.icon && currentGroup.icon !== '📁' ? currentGroup.icon : currentGroup.name.charAt(0).toUpperCase()}
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <h2 className="text-lg font-bold leading-snug break-words">{currentGroup.name}</h2>
+              {currentGroup.description && (
+                <p className="text-sm text-muted-foreground mt-0.5">{currentGroup.description}</p>
+              )}
+              <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
+                <span className="tabular-nums">{countGroupExams(currentGroup._id)} {countGroupExams(currentGroup._id) === 1 ? 'prova' : 'provas'}</span>
+                {childGroups.length > 0 && (
+                  <span>· {childGroups.length} {childGroups.length === 1 ? 'subgrupo' : 'subgrupos'}</span>
+                )}
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center gap-1.5 flex-shrink-0" onClick={e => e.stopPropagation()}>
+              {directPracticeExams.length > 0 && (
+                <div className="relative">
+                  <button
+                    onClick={() => setDrillDownloadOpen(v => !v)}
+                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 border border-emerald-500/25 hover:border-emerald-500/50"
+                    title={`Baixar PDFs (${directPracticeExams.length} provas)`}
+                  >
+                    <FileDown className="h-3.5 w-3.5" />
+                    <span className="hidden sm:inline font-semibold">{directPracticeExams.length}</span>
+                  </button>
+                  {drillDownloadOpen && (
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={() => setDrillDownloadOpen(false)} />
+                      <div className="absolute right-0 top-full mt-1.5 z-50 w-64 rounded-2xl border border-border bg-popover shadow-2xl overflow-hidden py-1 animate-in fade-in slide-in-from-top-2 duration-150">
+                        {([
+                          { type: 'exam', label: 'PDF da Prova', desc: 'Apenas as questões' },
+                          { type: 'with-answers', label: 'Prova + Gabarito Comentado', desc: 'Com respostas e explicações' },
+                          { type: 'gabarito', label: 'Só o Gabarito', desc: 'Gabarito de todas as provas' },
+                        ] as const).map(opt => (
+                          <button
+                            key={opt.type}
+                            onClick={() => {
+                              setDrillDownloadOpen(false)
+                              handleGroupDownloadPDF([...directPracticeExams].reverse(), opt.type, currentGroup.name)
+                            }}
+                            className="w-full flex flex-col items-start gap-0.5 px-3.5 py-2.5 hover:bg-muted/60 active:bg-muted transition-colors text-left"
+                          >
+                            <span className="text-xs font-semibold text-foreground">{opt.label}</span>
+                            <span className="text-[10px] text-muted-foreground">{opt.desc}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+              {canManageGroup && (
+                <div className="relative">
+                  <button
+                    onClick={() => setDrillActionsOpen(v => !v)}
+                    className={cn(
+                      'p-2 rounded-xl transition-colors',
+                      drillActionsOpen ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                    )}
+                  >
+                    <MoreHorizontal className="h-4 w-4" />
+                  </button>
+                  {drillActionsOpen && (
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={() => setDrillActionsOpen(false)} />
+                      <div className="absolute right-0 top-full mt-1.5 z-50 w-52 rounded-xl border border-border bg-popover shadow-2xl overflow-hidden py-1 animate-in fade-in slide-in-from-top-2 duration-150">
+                        <button
+                          onClick={() => {
+                            setDrillActionsOpen(false)
+                            const name = prompt('Nome do subgrupo:')
+                            if (name) handleCreateGroup(name, 'general', currentGroup._id)
+                          }}
+                          className="w-full flex items-center gap-2 px-3.5 py-2.5 text-xs hover:bg-muted/60 text-left"
+                        >
+                          <FolderPlus className="h-3.5 w-3.5" /> Novo subgrupo
+                        </button>
+                        {isAdmin && directExams.length > 0 && (
+                          <button
+                            onClick={async () => {
+                              if (!confirm(`Ordenar todas as provas de "${currentGroup.name}" em ordem alfanumérica reversa?\nIsso sobrescreve a ordem atual.`)) return
+                              setIsSortingDrillGroup(true)
+                              try {
+                                await fetch(`/api/groups/${currentGroup._id}/sort-exams`, { method: 'PATCH' })
+                                handleSortGroup(currentGroup._id)
+                              } finally {
+                                setIsSortingDrillGroup(false)
+                                setDrillActionsOpen(false)
+                              }
+                            }}
+                            disabled={isSortingDrillGroup}
+                            className="w-full flex items-center gap-2 px-3.5 py-2.5 text-xs hover:bg-muted/60 text-left disabled:opacity-50"
+                          >
+                            <ArrowDownAZ className="h-3.5 w-3.5" /> {isSortingDrillGroup ? 'Ordenando…' : 'A→Z reverso'}
+                          </button>
+                        )}
+                        <button
+                          onClick={() => { handleEditGroup(currentGroup); setDrillActionsOpen(false) }}
+                          className="w-full flex items-center gap-2 px-3.5 py-2.5 text-xs hover:bg-muted/60 text-left"
+                        >
+                          <Edit2 className="h-3.5 w-3.5" /> Editar
+                        </button>
+                        <button
+                          onClick={() => {
+                            const url = `${window.location.origin}/provas?grupo=${currentGroup._id}`
+                            navigator.clipboard.writeText(url).then(() => {
+                              setDrillCopiedLink(true)
+                              setTimeout(() => setDrillCopiedLink(false), 2000)
+                            })
+                            setDrillActionsOpen(false)
+                          }}
+                          className="w-full flex items-center gap-2 px-3.5 py-2.5 text-xs hover:bg-muted/60 text-left"
+                        >
+                          <Share2 className="h-3.5 w-3.5" /> {drillCopiedLink ? 'Copiado!' : 'Copiar link'}
+                        </button>
+                        <button
+                          onClick={async () => {
+                            setDrillActionsOpen(false)
+                            if (!confirm(`Deletar "${currentGroup.name}"? Subgrupos serão movidos para o nível acima.`)) return
+                            await handleDeleteGroup(currentGroup._id)
+                            setFacDrillPath(p => p.slice(0, -1))
+                          }}
+                          className="w-full flex items-center gap-2 px-3.5 py-2.5 text-xs hover:bg-muted/60 text-left text-destructive"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" /> Deletar
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Subgroups grid */}
+        {childGroups.length > 0 && (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Layers className="h-4 w-4 text-muted-foreground" />
+              <h3 className="text-sm font-semibold text-muted-foreground">Subgrupos</h3>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+              {childGroups.map((cg, idx) => (
+                <GroupCard
+                  key={cg._id}
+                  group={cg}
+                  examCount={countGroupExams(cg._id)}
+                  subgroupCount={groups.filter(g => g.parentGroupId === cg._id).length}
+                  directPracticeExams={exams.filter(e => e.groupId === cg._id && e.isPracticeExam)}
+                  canManage={isAdmin || (cg.createdBy === user?.id && cg.type === 'personal')}
+                  isAdmin={isAdmin}
+                  highlighted={highlightGroupId === cg._id}
+                  index={idx}
+                  onOpen={() => setFacDrillPath(p => [...p, cg])}
+                  onEditGroup={handleEditGroup}
+                  onDeleteGroup={handleDeleteGroup}
+                  onCreateSubgroup={(parentGroupId) => {
+                    const name = prompt('Nome do subgrupo:')
+                    if (name) handleCreateGroup(name, 'general', parentGroupId)
+                  }}
+                  onSortGroup={handleSortGroup}
+                  onGroupDownloadPDF={handleGroupDownloadPDF}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Direct exams */}
+        {directExams.length > 0 ? (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-muted-foreground" />
+              <h3 className="text-sm font-semibold text-muted-foreground">Provas</h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {directExams.map((exam, index) => (
+                <ExamCard key={exam._id?.toString()} exam={exam} index={index} />
+              ))}
+            </div>
+          </div>
+        ) : childGroups.length === 0 && (
+          <div className="text-center py-12 rounded-2xl border border-dashed border-border/50">
+            <BookOpen className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
+            <p className="text-sm text-muted-foreground/60">Nenhuma prova neste grupo</p>
+          </div>
+        )}
+      </div>
+    )
+  }
 
   // ─── Shared Modals ──────────────────────────────────────────
   function renderPdfModal() {
