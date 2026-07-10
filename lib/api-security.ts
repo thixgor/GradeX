@@ -46,6 +46,29 @@ export function sanitizeHtml(input: string): string {
   return input.replace(/[&<>"'`=/]/g, char => HTML_ENTITIES[char] || char)
 }
 
+// Reverso de HTML_ENTITIES, usado para recuperar URLs que passaram por sanitizeHtml
+// por engano (ex: imageUrl salvo antes da correção, deixando "https:&#x2F;&#x2F;..." no lugar de "https://...")
+const HTML_ENTITY_DECODE: Record<string, string> = Object.fromEntries(
+  Object.entries(HTML_ENTITIES).map(([char, entity]) => [entity, char])
+)
+const HTML_ENTITY_PATTERN = new RegExp(Object.values(HTML_ENTITIES).map(e => e.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'g')
+
+export function decodeHtmlEntities(input: string): string {
+  if (!input || typeof input !== 'string') return input
+  return input.replace(HTML_ENTITY_PATTERN, entity => HTML_ENTITY_DECODE[entity] || entity)
+}
+
+// Valida e normaliza uma URL de imagem (capa de grupo, exame, etc.)
+// Diferente de sanitizeHtml, não deve HTML-encodar a URL (isso a quebra) —
+// apenas garante que é http(s) absoluta ou um caminho local (/uploads/...).
+export function normalizeImageUrl(input: unknown, maxLength = 2000): string | null {
+  if (typeof input !== 'string') return null
+  const trimmed = input.trim()
+  if (!trimmed || trimmed.length > maxLength) return null
+  if (/^https?:\/\//i.test(trimmed) || trimmed.startsWith('/')) return trimmed
+  return null
+}
+
 // Sanitiza objeto recursivamente
 export function sanitizeObject<T extends Record<string, any>>(obj: T, fieldsToSanitize?: string[]): T {
   if (!obj || typeof obj !== 'object') return obj

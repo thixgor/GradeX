@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import clientPromise from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
+import { normalizeImageUrl, decodeHtmlEntities } from '@/lib/api-security'
 
 export const dynamic = 'force-dynamic'
 
@@ -28,7 +29,12 @@ export async function GET(req: NextRequest) {
       .sort({ order: 1, createdAt: 1 })
       .toArray()
 
-    return NextResponse.json({ groups })
+    // Corrige capas salvas antes da correção do bug de sanitização (URLs com "&#x2F;" no lugar de "/")
+    const fixedGroups = groups.map(g =>
+      g.imageUrl ? { ...g, imageUrl: decodeHtmlEntities(g.imageUrl) } : g
+    )
+
+    return NextResponse.json({ groups: fixedGroups })
   } catch (error: any) {
     console.error('Erro ao buscar grupos:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
@@ -107,7 +113,10 @@ export async function POST(req: NextRequest) {
     }
 
     // Campos opcionais
-    if (imageUrl) newGroup.imageUrl = imageUrl
+    if (imageUrl) {
+      const normalizedImageUrl = normalizeImageUrl(imageUrl)
+      if (normalizedImageUrl) newGroup.imageUrl = normalizedImageUrl
+    }
     if (category && session.role === 'admin') {
       newGroup.category = category
     }
