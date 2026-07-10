@@ -18,6 +18,7 @@ import { useBootstrap, clearBootstrapCache } from '@/hooks/use-bootstrap'
 import { FocusSessionProvider } from '@/hooks/use-focus-session'
 import { FocusSessionButton } from '@/components/focus-session-button'
 import { DoacaoFloatingButton } from '@/components/doacoes/doacao-floating-button'
+import { useUIPreferences } from '@/hooks/use-ui-preferences'
 import type { SidebarSectionSettings } from '@/lib/sidebar-sections'
 
 /**
@@ -92,6 +93,7 @@ export function AppShell({
 }: AppShellProps) {
   const router = useRouter()
   const pathname = usePathname()
+  const { showSupport, showDonation } = useUIPreferences()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -412,10 +414,10 @@ export function AppShell({
         />
 
         {/* Support Chat */}
-        <SupportChat />
+        {showSupport && <SupportChat />}
 
         {/* Floating donation button */}
-        <DoacaoFloatingButton />
+        {showDonation && <DoacaoFloatingButton />}
       </div>
       </FocusSessionProvider>
     </AppShellContext.Provider>

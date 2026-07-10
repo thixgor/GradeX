@@ -10,6 +10,7 @@ import { AppChrome } from '@/components/app-chrome'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { LiteModeProvider } from '@/context/LiteModeContext'
+import { UIPreferencesProvider } from '@/context/UIPreferencesContext'
 import { MaterialCartProvider } from '@/context/MaterialCartContext'
 import { ShopCartProvider } from '@/context/ShopCartContext'
 import {
@@ -185,6 +186,7 @@ export default function RootLayout({
       </head>
       <body className={`${sourceSans.className} gradient-overlay gradient-overlay-dark flex flex-col min-h-screen`}>
         <LiteModeProvider>
+        <UIPreferencesProvider>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -207,6 +209,7 @@ export default function RootLayout({
           <Analytics />
           <SpeedInsights />
         </ThemeProvider>
+        </UIPreferencesProvider>
         </LiteModeProvider>
       </body>
     </html>

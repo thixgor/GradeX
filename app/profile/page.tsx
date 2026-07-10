@@ -21,6 +21,8 @@ import { AccountType } from '@/lib/types'
 import { ActivationSuccessDialog } from '@/components/activation-success-dialog'
 import { cn } from '@/lib/utils'
 import { useLiteMode } from '@/hooks/use-lite-mode'
+import { useUIPreferences } from '@/hooks/use-ui-preferences'
+import { Heart, Music, MessageCircle } from 'lucide-react'
 
 interface UserSubmission {
   _id: string
@@ -101,6 +103,7 @@ export default function ProfilePage() {
   const [userId, setUserId] = useState('')
   const [generatingReceipt, setGeneratingReceipt] = useState(false)
   const { liteMode, toggleLiteMode } = useLiteMode()
+  const { showDonation, showMusic, showSupport, toggle: toggleUIPref } = useUIPreferences()
 
   useEffect(() => {
     loadSubmissions()
@@ -772,30 +775,43 @@ export default function ProfilePage() {
         {/* ====== SECTION 7: Preferences ====== */}
         <section className="mb-10">
           <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Preferencias</h2>
-          <div className="p-4 rounded-lg border border-border bg-card shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium">Lite Mode</p>
-                <p className="text-xs text-muted-foreground mt-0.5">Melhora o desempenho em dispositivos mais lentos</p>
-              </div>
-              <button
-                onClick={toggleLiteMode}
-                className={cn(
-                  'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-                  liteMode ? 'bg-green-600' : 'bg-muted-foreground/30'
-                )}
-                role="switch"
-                aria-checked={liteMode}
-                aria-label="Ativar Lite Mode"
-              >
-                <span
-                  className={cn(
-                    'pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-lg ring-0 transition-transform duration-200 ease-in-out',
-                    liteMode ? 'translate-x-5' : 'translate-x-0'
-                  )}
-                />
-              </button>
-            </div>
+          <div className="rounded-lg border border-border bg-card shadow-sm divide-y divide-border">
+            <PreferenceToggle
+              label="Lite Mode"
+              description="Melhora o desempenho em dispositivos mais lentos"
+              checked={liteMode}
+              onToggle={toggleLiteMode}
+            />
+          </div>
+
+          <h3 className="mt-6 mb-3 text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider">
+            Botões flutuantes
+          </h3>
+          <p className="mb-3 text-xs text-muted-foreground">
+            Desative os botões flutuantes que você não usa para deixar a tela mais limpa.
+          </p>
+          <div className="rounded-lg border border-border bg-card shadow-sm divide-y divide-border">
+            <PreferenceToggle
+              icon={<Heart className="h-4 w-4 text-rose-500" />}
+              label="Botão Apoiar"
+              description="Botão de doação (Pix) no canto inferior"
+              checked={showDonation}
+              onToggle={() => toggleUIPref('showDonation')}
+            />
+            <PreferenceToggle
+              icon={<Music className="h-4 w-4 text-primary" />}
+              label="Player de Música"
+              description="Player de música ambiente para estudo"
+              checked={showMusic}
+              onToggle={() => toggleUIPref('showMusic')}
+            />
+            <PreferenceToggle
+              icon={<MessageCircle className="h-4 w-4 text-secondary" />}
+              label="Botão de Suporte"
+              description="Abre o chat de suporte / tickets"
+              checked={showSupport}
+              onToggle={() => toggleUIPref('showSupport')}
+            />
           </div>
         </section>
 
@@ -1007,5 +1023,52 @@ export default function ProfilePage() {
       </div>
       </div>
     </AppShell>
+  )
+}
+
+function PreferenceToggle({
+  icon,
+  label,
+  description,
+  checked,
+  onToggle,
+}: {
+  icon?: React.ReactNode
+  label: string
+  description: string
+  checked: boolean
+  onToggle: () => void
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3 p-4">
+      <div className="flex items-start gap-3 min-w-0">
+        {icon && (
+          <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border bg-muted/40">
+            {icon}
+          </div>
+        )}
+        <div className="min-w-0">
+          <p className="text-sm font-medium">{label}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
+        </div>
+      </div>
+      <button
+        onClick={onToggle}
+        className={cn(
+          'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+          checked ? 'bg-green-600' : 'bg-muted-foreground/30'
+        )}
+        role="switch"
+        aria-checked={checked}
+        aria-label={label}
+      >
+        <span
+          className={cn(
+            'pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-lg ring-0 transition-transform duration-200 ease-in-out',
+            checked ? 'translate-x-5' : 'translate-x-0'
+          )}
+        />
+      </button>
+    </div>
   )
 }

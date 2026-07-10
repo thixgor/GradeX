@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
+import { useUIPreferences } from '@/hooks/use-ui-preferences'
 
 // Componentes pesados de "chrome" da aplicação. Carregados via next/dynamic
 // (ssr:false) para que NÃO entrem no bundle inicial nem bloqueiem a hidratação
@@ -36,13 +37,14 @@ function hideMusicPlayer(pathname: string | null): boolean {
 
 export function AppChrome() {
   const pathname = usePathname()
+  const { showMusic } = useUIPreferences()
   const authless = isAuthlessRoute(pathname)
   const noMusic = hideMusicPlayer(pathname)
 
   return (
     <>
       {!authless && <TrialExpirationChecker />}
-      {!authless && !noMusic && <StudyMusicPlayer />}
+      {!authless && !noMusic && showMusic && <StudyMusicPlayer />}
       <PlatformAds />
     </>
   )
