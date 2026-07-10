@@ -109,10 +109,12 @@ function MindMapHome() {
    * Importa um mapa a partir de um JSON no mesmo formato do "Exportar > JSON"
    * (`{ title, nodes, style }`). Também aceita, de forma tolerante, um array
    * puro de nós. O servidor (`POST /api/mindmaps`) re-saneia tudo via
-   * `sanitizeNodes`/`sanitizeStyle`, então a validação aqui é só para dar
-   * mensagens amigáveis antes de enviar.
+   * `sanitizeNodes`/`sanitizeStyle` (limite de 5000 nós — nada é descartado
+   * abaixo disso), então a validação aqui é só para dar mensagens amigáveis
+   * antes de enviar. Restrito a administradores.
    */
   const importFromJSON = useCallback(async (raw: string) => {
+    if (!isAdmin) return
     let parsed: any
     try {
       parsed = JSON.parse(raw)
@@ -152,13 +154,17 @@ function MindMapHome() {
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) { setToast({ msg: data.error || 'Erro ao importar', type: 'error' }); return }
-      router.push(`/mapa-mental/${data.map.slug || data.map._id}`)
+      // Confirma quantos nós foram realmente salvos (após saneamento no servidor),
+      // para o usuário verificar que nada foi perdido antes de abrir o editor.
+      const savedCount = data.map?.nodeCount ?? data.map?.nodes?.length ?? nodes.length
+      setToast({ msg: `Mapa importado com ${savedCount} nó${savedCount === 1 ? '' : 's'}.`, type: 'success' })
+      setTimeout(() => router.push(`/mapa-mental/${data.map.slug || data.map._id}`), 900)
     } catch {
       setToast({ msg: 'Erro ao importar mapa', type: 'error' })
     } finally {
       setCreating(false)
     }
-  }, [router])
+  }, [router, isAdmin])
 
   const doDelete = useCallback(async () => {
     if (!confirmDelete) return
@@ -207,9 +213,11 @@ function MindMapHome() {
             </p>
           </div>
           <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-            <Button onClick={() => setShowImport(true)} disabled={creating} variant="outline" className="h-11 gap-2 border-emerald-500/40 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/20 hover:text-white">
-              <Upload className="h-4 w-4" /> Importar JSON
-            </Button>
+            {isAdmin && (
+              <Button onClick={() => setShowImport(true)} disabled={creating} variant="outline" className="h-11 gap-2 border-emerald-500/40 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/20 hover:text-white">
+                <Upload className="h-4 w-4" /> Importar JSON
+              </Button>
+            )}
             <Button onClick={openTemplates} disabled={creating} className="h-11 gap-2 bg-emerald-500 text-emerald-950 hover:bg-emerald-400">
               {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-5 w-5" />}
               Novo mapa
@@ -275,7 +283,7 @@ function MindMapHome() {
       {loading ? (
         <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-emerald-500" /></div>
       ) : maps.length === 0 ? (
-        <EmptyState tab={tab} onCreate={openTemplates} onImport={() => setShowImport(true)} />
+        <EmptyState tab={tab} onCreate={openTemplates} onImport={isAdmin ? () => setShowImport(true) : undefined} />
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {maps.map(m => (
@@ -318,8 +326,8 @@ function MindMapHome() {
         <TemplatesModal onClose={() => setShowTemplates(false)} onPick={createFromTemplate} creating={creating} />
       )}
 
-      {/* Importar de JSON */}
-      {showImport && (
+      {/* Importar de JSON — restrito a administradores */}
+      {showImport && isAdmin && (
         <ImportModal onClose={() => setShowImport(false)} onImport={importFromJSON} creating={creating} />
       )}
 
@@ -548,7 +556,7 @@ function ImportModal({ onClose, onImport, creating }: {
   )
 }
 
-function EmptyState({ tab, onCreate, onImport }: { tab: Tab; onCreate: () => void; onImport: () => void }) {
+function EmptyState({ tab, onCreate, onImport }: { tab: Tab; onCreate: () => void; onImport?: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border py-16 text-center">
       <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-500">
@@ -565,9 +573,11 @@ function EmptyState({ tab, onCreate, onImport }: { tab: Tab; onCreate: () => voi
           <Button onClick={onCreate} className="gap-2 bg-emerald-500 text-emerald-950 hover:bg-emerald-400">
             <Plus className="h-4 w-4" /> Criar meu primeiro mapa
           </Button>
-          <Button onClick={onImport} variant="outline" className="gap-2">
-            <Upload className="h-4 w-4" /> Importar JSON
-          </Button>
+          {onImport && (
+            <Button onClick={onImport} variant="outline" className="gap-2">
+              <Upload className="h-4 w-4" /> Importar JSON
+            </Button>
+          )}
         </div>
       )}
     </div>
