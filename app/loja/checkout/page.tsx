@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
 import { useShopCart } from '@/context/ShopCartContext'
-import { resolveFreight, estimateDeliveryDate, UFS } from '@/lib/shop'
+import { computeFreight, estimateDeliveryDate, UFS } from '@/lib/shop'
 import type { DeliveryMethod, PickupPoint } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
@@ -18,6 +18,7 @@ interface PublicSettings {
   deliveryMethods: DeliveryMethod[]
   pickupPoints: PickupPoint[]
   sellerFooter: string
+  freeShippingThreshold?: number
 }
 
 const emptyAddress = {
@@ -62,10 +63,12 @@ export default function ShopCheckoutPage() {
   const freight = useMemo(() => {
     if (deliveryType === 'pickup') return 0
     if (!selectedMethod) return 0
-    return resolveFreight(selectedMethod, address.uf)
-  }, [deliveryType, selectedMethod, address.uf])
+    return computeFreight({ method: selectedMethod, uf: address.uf, physicalSubtotal: subtotal, settings })
+  }, [deliveryType, selectedMethod, address.uf, subtotal, settings])
 
   const total = Math.round((subtotal + freight) * 100) / 100
+  /** Pedido sem custo (produto grátis + frete grátis): concluído sem pagamento. */
+  const isFreeOrder = total <= 0
 
   const eta = useMemo(() => {
     if (deliveryType === 'shipping' && !selectedMethod) return null
@@ -89,7 +92,6 @@ export default function ShopCheckoutPage() {
 
   const canPay =
     itemCount > 0 &&
-    total > 0 &&
     (deliveryType === 'pickup' ? !!pickupPointId : !!deliveryMethodId && addressValid)
 
   const extraBody = useMemo(() => {
@@ -265,7 +267,7 @@ export default function ShopCheckoutPage() {
                       <p className="text-xs text-muted-foreground">Nenhum método configurado. Escolha retirada.</p>
                     )}
                     {(settings?.deliveryMethods || []).map((m) => {
-                      const f = resolveFreight(m, address.uf)
+                      const f = computeFreight({ method: m, uf: address.uf, physicalSubtotal: subtotal, settings })
                       return (
                         <label
                           key={m.id}
@@ -290,7 +292,7 @@ export default function ShopCheckoutPage() {
                               </p>
                             </div>
                           </div>
-                          <span className="text-sm font-semibold">{address.uf ? (f > 0 ? `R$ ${brl(f)}` : 'Grátis') : '—'}</span>
+                          <span className="text-sm font-semibold">{m.freeShipping ? 'Grátis' : address.uf ? (f > 0 ? `R$ ${brl(f)}` : 'Grátis') : '—'}</span>
                         </label>
                       )
                     })}
@@ -342,6 +344,14 @@ export default function ShopCheckoutPage() {
                       ? 'Preencha o endereço e escolha o método de entrega para pagar.'
                       : 'Selecione a forma de entrega para continuar.'}
                   </div>
+                ) : isFreeOrder ? (
+                  <FreeOrderCheckout
+                    extraBody={extraBody}
+                    onApproved={() => {
+                      clearCart()
+                      setTimeout(() => router.push('/profile?tab=pedidos'), 300)
+                    }}
+                  />
                 ) : publicKey ? (
                   <MercadoPagoCheckout
                     publicKey={publicKey}
@@ -369,5 +379,52 @@ export default function ShopCheckoutPage() {
         </div>
       </div>
     </AppShell>
+  )
+}
+
+/**
+ * Conclusão de um pedido físico gratuito (total R$ 0): não passa pelo Mercado
+ * Pago — envia `paymentMethodId: 'free'` para o checkout, que libera o pedido
+ * diretamente. Usado para brindes/produtos grátis com frete grátis.
+ */
+function FreeOrderCheckout({
+  extraBody,
+  onApproved,
+}: {
+  extraBody: Record<string, any>
+  onApproved: () => void
+}) {
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  async function submit() {
+    setError(null)
+    setSubmitting(true)
+    try {
+      const res = await fetch('/api/loja/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...extraBody, paymentMethodId: 'free' }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Falha ao concluir o pedido')
+      onApproved()
+    } catch (e: any) {
+      setError(e?.message || 'Erro ao concluir o pedido')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <div>
+      <Button className="w-full gap-2" disabled={submitting} onClick={submit}>
+        {submitting ? 'Processando...' : 'Concluir pedido gratuito'}
+      </Button>
+      {error && <p className="mt-2 text-center text-xs text-red-500">{error}</p>}
+      <p className="mt-2 text-center text-[11px] text-muted-foreground">
+        Sem custo — nenhum pagamento necessário.
+      </p>
+    </div>
   )
 }

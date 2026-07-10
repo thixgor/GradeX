@@ -8,6 +8,7 @@ import { getPaymentProvider, deriveIdempotencyKey } from '@/lib/payments'
 import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
 import { computeFreight, estimateDeliveryDate, generateOrderNumber, defaultShopSettings, physicalFullPrice } from '@/lib/shop'
+import type { ProviderOrder } from '@/lib/payments/types'
 import type { PaymentOrder, PhysicalProduct, ShopOrder, ShopOrderItem, ShopSettings } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -155,8 +156,14 @@ export async function POST(request: NextRequest) {
   }
 
   const total = Math.round((subtotal + freight) * 100) / 100
-  if (total <= 0) {
+  if (total < 0) {
     return NextResponse.json({ error: 'Valor total inválido' }, { status: 400 })
+  }
+  // Pedido gratuito (produto grátis + frete grátis): concluído sem passar pelo
+  // provedor de pagamento. Um produto pago nunca pode usar a via 'free'.
+  const isFreeOrder = total === 0
+  if (!isFreeOrder && data.paymentMethodId === 'free') {
+    return NextResponse.json({ error: 'Pedido pago exige uma forma de pagamento válida.' }, { status: 400 })
   }
 
   const now = new Date()
@@ -211,6 +218,59 @@ export async function POST(request: NextRequest) {
     { _id: shopInsert.insertedId },
     { $set: { providerOrderId: orderId, updatedAt: new Date() } }
   )
+
+  // ── Pedido gratuito: libera direto, sem provedor de pagamento ──
+  if (isFreeOrder) {
+    try {
+      const result: ProviderOrder = {
+        providerOrderId: `free-${orderId}`,
+        status: 'approved',
+        amount: 0,
+        currency: 'BRL',
+        paymentMethod: 'unknown',
+        statusDetail: 'free_order',
+        paidAt: now,
+      }
+      await db.collection('shop_orders').updateOne(
+        { _id: shopInsert.insertedId },
+        { $set: { providerPaymentId: result.providerOrderId, paymentStatus: 'approved', updatedAt: new Date() } }
+      )
+      await applyPaymentResult(orderId, result)
+
+      await audit({
+        action: 'order_created',
+        actorUserId: session.userId,
+        targetUserId: session.userId,
+        resourceType: 'physical',
+        resourceId: shopOrderId,
+        metadata: { orderNumber, amount: 0, freight, paymentMethod: 'free', providerPaymentId: result.providerOrderId },
+        ip,
+      })
+
+      return NextResponse.json({
+        orderId,
+        shopOrderId,
+        orderNumber,
+        providerPaymentId: result.providerOrderId,
+        status: 'approved',
+        amount: 0,
+        freight,
+        free: true,
+        successRedirect: '/profile?tab=pedidos',
+      })
+    } catch (err: any) {
+      console.error('[loja/checkout] erro (pedido gratuito):', err)
+      await db.collection<PaymentOrder>('payment_orders').updateOne(
+        { _id: inserted.insertedId },
+        { $set: { status: 'rejected', statusDetail: 'free_order_error', updatedAt: new Date() } }
+      )
+      await db.collection('shop_orders').updateOne(
+        { _id: shopInsert.insertedId },
+        { $set: { paymentStatus: 'rejected', updatedAt: new Date() } }
+      )
+      return NextResponse.json({ error: err?.message || 'Falha ao concluir o pedido' }, { status: 500 })
+    }
+  }
 
   try {
     const provider = getPaymentProvider()
