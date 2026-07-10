@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import {
   Plus, Search, Globe, EyeOff, Link2, Lock, Heart, Eye, Trash2, Loader2,
   GitBranch, ShieldCheck, Users, Sparkles, ArrowRight, X, Network,
-  LayoutTemplate, ChevronRight,
+  LayoutTemplate, ChevronRight, Upload, FileJson, FileUp, BookOpen,
 } from 'lucide-react'
 import { AppShell, useAppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
@@ -59,6 +59,7 @@ function MindMapHome() {
   const [confirmDelete, setConfirmDelete] = useState<MapItem | null>(null)
   const [deleting, setDeleting] = useState(false)
   const [showTemplates, setShowTemplates] = useState(false)
+  const [showImport, setShowImport] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -103,6 +104,61 @@ function MindMapHome() {
   }, [router])
 
   const openTemplates = useCallback(() => setShowTemplates(true), [])
+
+  /**
+   * Importa um mapa a partir de um JSON no mesmo formato do "Exportar > JSON"
+   * (`{ title, nodes, style }`). Também aceita, de forma tolerante, um array
+   * puro de nós. O servidor (`POST /api/mindmaps`) re-saneia tudo via
+   * `sanitizeNodes`/`sanitizeStyle`, então a validação aqui é só para dar
+   * mensagens amigáveis antes de enviar.
+   */
+  const importFromJSON = useCallback(async (raw: string) => {
+    let parsed: any
+    try {
+      parsed = JSON.parse(raw)
+    } catch {
+      setToast({ msg: 'JSON inválido — verifique o conteúdo colado ou o arquivo.', type: 'error' })
+      return
+    }
+
+    // Formato completo `{ title, nodes, style }` ou array puro de nós.
+    const nodes = Array.isArray(parsed) ? parsed : parsed?.nodes
+    if (!Array.isArray(nodes) || nodes.length === 0) {
+      setToast({ msg: 'Nenhum nó encontrado. O JSON precisa ter um array "nodes".', type: 'error' })
+      return
+    }
+    const invalid = nodes.some((n: any) => !n || typeof n !== 'object' || typeof n.id !== 'string' || !n.id.trim())
+    if (invalid) {
+      setToast({ msg: 'Cada nó precisa de um "id" (texto) único. Confira as instruções de formato.', type: 'error' })
+      return
+    }
+    if (!nodes.some((n: any) => n.parentId == null)) {
+      setToast({ msg: 'Nenhum nó raiz encontrado. Ao menos um nó deve ter "parentId": null.', type: 'error' })
+      return
+    }
+
+    const title = (!Array.isArray(parsed) && typeof parsed?.title === 'string' && parsed.title.trim())
+      ? parsed.title.trim()
+      : (nodes.find((n: any) => n.parentId == null)?.text || 'Mapa importado')
+    const style = !Array.isArray(parsed) ? parsed?.style : undefined
+
+    setCreating(true)
+    setShowImport(false)
+    try {
+      const res = await fetch('/api/mindmaps', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, nodes, style }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) { setToast({ msg: data.error || 'Erro ao importar', type: 'error' }); return }
+      router.push(`/mapa-mental/${data.map.slug || data.map._id}`)
+    } catch {
+      setToast({ msg: 'Erro ao importar mapa', type: 'error' })
+    } finally {
+      setCreating(false)
+    }
+  }, [router])
 
   const doDelete = useCallback(async () => {
     if (!confirmDelete) return
@@ -150,10 +206,15 @@ function MindMapHome() {
               Organize ideias com um editor visual rápido. Crie, conecte e compartilhe seus mapas — públicos, com link ou protegidos por senha.
             </p>
           </div>
-          <Button onClick={openTemplates} disabled={creating} className="h-11 shrink-0 gap-2 bg-emerald-500 text-emerald-950 hover:bg-emerald-400">
-            {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-5 w-5" />}
-            Novo mapa
-          </Button>
+          <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
+            <Button onClick={() => setShowImport(true)} disabled={creating} variant="outline" className="h-11 gap-2 border-emerald-500/40 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/20 hover:text-white">
+              <Upload className="h-4 w-4" /> Importar JSON
+            </Button>
+            <Button onClick={openTemplates} disabled={creating} className="h-11 gap-2 bg-emerald-500 text-emerald-950 hover:bg-emerald-400">
+              {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-5 w-5" />}
+              Novo mapa
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -214,7 +275,7 @@ function MindMapHome() {
       {loading ? (
         <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-emerald-500" /></div>
       ) : maps.length === 0 ? (
-        <EmptyState tab={tab} onCreate={openTemplates} />
+        <EmptyState tab={tab} onCreate={openTemplates} onImport={() => setShowImport(true)} />
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {maps.map(m => (
@@ -255,6 +316,11 @@ function MindMapHome() {
       {/* Galeria de templates */}
       {showTemplates && (
         <TemplatesModal onClose={() => setShowTemplates(false)} onPick={createFromTemplate} creating={creating} />
+      )}
+
+      {/* Importar de JSON */}
+      {showImport && (
+        <ImportModal onClose={() => setShowImport(false)} onImport={importFromJSON} creating={creating} />
       )}
 
       <ToastAlert open={!!toast} onOpenChange={(o) => !o && setToast(null)} message={toast?.msg || ''} type={toast?.type || 'info'} />
@@ -382,7 +448,107 @@ function TemplatesModal({ onClose, onPick, creating }: { onClose: () => void; on
   )
 }
 
-function EmptyState({ tab, onCreate }: { tab: Tab; onCreate: () => void }) {
+function ImportModal({ onClose, onImport, creating }: {
+  onClose: () => void
+  onImport: (raw: string) => void
+  creating: boolean
+}) {
+  const [text, setText] = useState('')
+  const [fileName, setFileName] = useState<string | null>(null)
+  const [fileError, setFileError] = useState<string | null>(null)
+
+  const handleFile = (file: File | undefined) => {
+    setFileError(null)
+    if (!file) return
+    if (file.size > 8 * 1024 * 1024) { setFileError('Arquivo muito grande (máx. 8 MB).'); return }
+    const reader = new FileReader()
+    reader.onload = () => {
+      setText(String(reader.result || ''))
+      setFileName(file.name)
+    }
+    reader.onerror = () => setFileError('Não foi possível ler o arquivo.')
+    reader.readAsText(file)
+  }
+
+  return (
+    <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/60 p-4" onClick={() => !creating && onClose()}>
+      <div className="flex max-h-[88vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between border-b border-border px-5 py-4">
+          <div>
+            <h2 className="flex items-center gap-2 text-lg font-bold"><FileJson className="h-5 w-5 text-emerald-500" /> Importar mapa mental (JSON)</h2>
+            <p className="text-xs text-muted-foreground">Cole o JSON ou envie o arquivo exportado (<span className="font-medium">Exportar &gt; JSON</span>). Um novo mapa privado será criado.</p>
+          </div>
+          <button onClick={onClose} disabled={creating} className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted disabled:opacity-50"><X className="h-5 w-5" /></button>
+        </div>
+
+        <div className="relative flex-1 space-y-4 overflow-y-auto px-5 py-5">
+          {creating && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-card/70 backdrop-blur-sm">
+              <Loader2 className="h-7 w-7 animate-spin text-emerald-500" />
+            </div>
+          )}
+
+          {/* Enviar arquivo */}
+          <div>
+            <label className="mb-1.5 block text-sm font-semibold">Enviar arquivo</label>
+            <div className="flex flex-wrap items-center gap-2">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm font-medium transition-colors hover:border-emerald-500/50">
+                <FileUp className="h-4 w-4 text-emerald-500" /> Escolher arquivo .json
+                <input
+                  type="file"
+                  accept="application/json,.json"
+                  className="hidden"
+                  onChange={(e) => handleFile(e.target.files?.[0])}
+                />
+              </label>
+              {fileName && <span className="truncate text-xs text-muted-foreground">{fileName}</span>}
+            </div>
+            {fileError && <p className="mt-1.5 text-xs text-red-500">{fileError}</p>}
+          </div>
+
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+            <span className="h-px flex-1 bg-border" /> ou cole o conteúdo <span className="h-px flex-1 bg-border" />
+          </div>
+
+          {/* Colar JSON */}
+          <div>
+            <label className="mb-1.5 block text-sm font-semibold">Colar JSON</label>
+            <textarea
+              value={text}
+              onChange={(e) => { setText(e.target.value); setFileName(null) }}
+              placeholder={'{\n  "title": "Meu mapa",\n  "nodes": [ { "id": "root", "parentId": null, "text": "Tema central", "x": 0, "y": 0 } ],\n  "style": { "theme": "forest", "edgeStyle": "curved", "nodeShape": "rounded" }\n}'}
+              spellCheck={false}
+              rows={9}
+              className="w-full resize-y rounded-xl border border-border bg-background p-3 font-mono text-xs outline-none focus:border-emerald-500"
+            />
+          </div>
+
+          <a
+            href="/docs/importar-mapa-mental.md"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600 hover:underline dark:text-emerald-400"
+          >
+            <BookOpen className="h-4 w-4" /> Como formatar — instruções completas para a IA
+          </a>
+        </div>
+
+        <div className="flex items-center justify-end gap-2 border-t border-border px-5 py-4">
+          <Button variant="outline" onClick={onClose} disabled={creating}>Cancelar</Button>
+          <Button
+            onClick={() => onImport(text)}
+            disabled={creating || !text.trim()}
+            className="gap-2 bg-emerald-500 text-emerald-950 hover:bg-emerald-400"
+          >
+            {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />} Importar mapa
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function EmptyState({ tab, onCreate, onImport }: { tab: Tab; onCreate: () => void; onImport: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border py-16 text-center">
       <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-500">
@@ -395,9 +561,14 @@ function EmptyState({ tab, onCreate }: { tab: Tab; onCreate: () => void }) {
         {tab === 'mine' ? 'Comece criando seu primeiro mapa mental e dê vida às suas ideias.' : tab === 'community' ? 'Quando usuários publicarem mapas, eles aparecerão aqui.' : 'Ajuste a busca para encontrar mapas.'}
       </p>
       {tab === 'mine' && (
-        <Button onClick={onCreate} className="mt-5 gap-2 bg-emerald-500 text-emerald-950 hover:bg-emerald-400">
-          <Plus className="h-4 w-4" /> Criar meu primeiro mapa
-        </Button>
+        <div className="mt-5 flex flex-col gap-2 sm:flex-row">
+          <Button onClick={onCreate} className="gap-2 bg-emerald-500 text-emerald-950 hover:bg-emerald-400">
+            <Plus className="h-4 w-4" /> Criar meu primeiro mapa
+          </Button>
+          <Button onClick={onImport} variant="outline" className="gap-2">
+            <Upload className="h-4 w-4" /> Importar JSON
+          </Button>
+        </div>
       )}
     </div>
   )
