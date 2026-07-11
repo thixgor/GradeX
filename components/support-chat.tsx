@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
+import { useFloatingDock } from '@/context/FloatingDockContext'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Label } from './ui/label'
@@ -29,7 +30,14 @@ import { notificationSound } from '@/lib/notification-sound'
 const POLLING_INTERVAL = 30000 // 30 seconds - reduced from 15s
 
 export function SupportChat() {
-  const [isOpen, setIsOpen] = useState(false)
+  const dock = useFloatingDock()
+  // Estado de abertura vem do dock compartilhado (garante um só painel aberto
+  // por vez e permite abrir tanto pelo gatilho desktop quanto pelo FAB mobile).
+  const isOpen = dock?.activePanel === 'support'
+  const setOpen = (open: boolean) => {
+    if (open) dock?.open('support')
+    else dock?.close()
+  }
   const [tickets, setTickets] = useState<Ticket[]>([])
   const [activeTicket, setActiveTicket] = useState<Ticket | null>(null)
   const [showNewTicket, setShowNewTicket] = useState(false)
@@ -40,6 +48,15 @@ export function SupportChat() {
   const [currentUserId, setCurrentUserId] = useState<string>('')
   const previousMessageCount = useRef<number>(0)
   const loadingMessagesRef = useRef(false)
+
+  // Registra a ação "Suporte" no dock flutuante (usado no mobile).
+  const register = dock?.register
+  const unregister = dock?.unregister
+  useEffect(() => {
+    if (!register || !unregister) return
+    register({ id: 'support', label: 'Suporte', order: 1 })
+    return () => unregister('support')
+  }, [register, unregister])
 
   useEffect(() => {
     // Carregar tickets quando o chat está aberto OU quando há ticket ativo
@@ -195,21 +212,31 @@ export function SupportChat() {
 
   return (
     <>
-      {/* Botão Flutuante */}
+      {/* Botão Flutuante — desktop apenas (no mobile o dock consolidado assume) */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg hover:scale-110 transition-transform flex items-center justify-center"
+        onClick={() => setOpen(!isOpen)}
+        aria-label={isOpen ? 'Fechar suporte' : 'Abrir suporte'}
+        className="fixed bottom-6 right-6 z-50 hidden lg:flex w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg hover:scale-110 transition-transform items-center justify-center"
       >
         {isOpen ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
       </button>
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 z-50 w-96 h-[600px] bg-background border rounded-lg shadow-2xl flex flex-col">
+        <div className="fixed bottom-20 right-4 left-4 sm:left-auto z-50 sm:w-96 w-auto h-[70vh] max-h-[600px] lg:bottom-24 lg:right-6 bg-background border border-border rounded-lg shadow-2xl flex flex-col">
           {/* Header */}
-          <div className="p-4 border-b bg-primary text-primary-foreground rounded-t-lg">
-            <h3 className="font-semibold">Suporte</h3>
-            <p className="text-xs opacity-90">Tire suas dúvidas conosco</p>
+          <div className="p-4 border-b border-border bg-primary text-primary-foreground rounded-t-lg flex items-start justify-between gap-2">
+            <div>
+              <h3 className="font-semibold">Suporte</h3>
+              <p className="text-xs opacity-90">Tire suas dúvidas conosco</p>
+            </div>
+            <button
+              onClick={() => setOpen(false)}
+              aria-label="Fechar suporte"
+              className="-mr-1 -mt-1 rounded-md p-1.5 text-primary-foreground/80 transition hover:bg-white/15 hover:text-primary-foreground"
+            >
+              <X className="h-5 w-5" />
+            </button>
           </div>
 
           {/* Content */}

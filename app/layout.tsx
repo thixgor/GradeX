@@ -7,6 +7,8 @@ import { Footer } from '@/components/footer'
 import { ImageProtectionProvider } from '@/components/image-protection-provider'
 import { VerifyEmailBanner } from '@/components/verify-email-banner'
 import { AppChrome } from '@/components/app-chrome'
+import { MobileFloatingDock } from '@/components/mobile-floating-dock'
+import { FloatingDockProvider } from '@/context/FloatingDockContext'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { LiteModeProvider } from '@/context/LiteModeContext'
@@ -196,14 +198,17 @@ export default function RootLayout({
         >
           <MaterialCartProvider>
            <ShopCartProvider>
-            <VerifyEmailBanner />
-            <ImageProtectionProvider>
-              <div className="flex-1 flex flex-col">
-                {children}
-              </div>
-              <Footer />
-              <AppChrome />
-            </ImageProtectionProvider>
+            <FloatingDockProvider>
+             <VerifyEmailBanner />
+             <ImageProtectionProvider>
+               <div className="flex-1 flex flex-col">
+                 {children}
+               </div>
+               <Footer />
+               <AppChrome />
+               <MobileFloatingDock />
+             </ImageProtectionProvider>
+            </FloatingDockProvider>
            </ShopCartProvider>
           </MaterialCartProvider>
           <Analytics />
