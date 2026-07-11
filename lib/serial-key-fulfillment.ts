@@ -19,9 +19,46 @@ import {
   buildReceiptText,
   type SerialKeyReceiptData,
 } from './serial-key-receipt'
-import { sendSerialKeyPurchaseEmail, sendSerialKeyCartPurchaseEmail } from './mail'
+import { sendSerialKeyPurchaseEmail, sendSerialKeyCartPurchaseEmail, type MaterialEmailAttachment } from './mail'
+import { buildAutoEmailPdfAttachments } from './material-pdf-email'
 import type { PaymentOrder, SerialKey, SerialKeyEmailLog } from './types'
 import type { ProviderOrder } from './payments/types'
+
+/**
+ * Resolve os anexos de PDF (com marca d'água do comprador) para uma serial key
+ * de compra de material/pacote — apenas quando o material tem o envio
+ * automático habilitado. `eligible` indica que a compra deve ter ativação
+ * restrita ao e-mail do comprador. Nunca lança.
+ */
+async function buildSerialMaterialAttachments(
+  db: Db,
+  serial: SerialKey
+): Promise<{ attachments: MaterialEmailAttachment[]; eligible: boolean }> {
+  const grant = serial.grant
+  if (!grant || !serial.buyerEmail) return { attachments: [], eligible: false }
+  const itemType = grant.itemType || (grant.productType === 'package' ? 'package' : 'material')
+  const itemId = grant.itemId ? String(grant.itemId) : ''
+  if (!itemId || (itemType !== 'material' && itemType !== 'package')) {
+    return { attachments: [], eligible: false }
+  }
+  const { items, eligible } = await buildAutoEmailPdfAttachments(db, itemType, itemId, {
+    userName: serial.buyerName || '',
+    userEmail: serial.buyerEmail,
+    userId: String(serial._id),
+    orderId: serial.providerPaymentId || serial.orderId || String(serial._id),
+  })
+  return { attachments: items, eligible }
+}
+
+/** Marca a(s) key(s) como de ativação restrita ao e-mail da compra. */
+async function markKeysRestricted(db: Db, keyIds: (string | ObjectId | undefined)[]): Promise<void> {
+  const ids = keyIds.filter(Boolean).map(id => new ObjectId(String(id)))
+  if (ids.length === 0) return
+  await db.collection<SerialKey>(SERIAL_KEYS_COLLECTION).updateMany(
+    { _id: { $in: ids } as any },
+    { $set: { restrictActivationToBuyerEmail: true } }
+  ).catch(err => console.error('[serial-key] falha ao marcar restrição de ativação:', err))
+}
 
 const PAYMENT_METHOD_LABELS: Record<string, string> = {
   credit_card: 'Cartão de crédito',
@@ -64,7 +101,7 @@ export async function sendSerialKeyEmail(
 
   let log: SerialKeyEmailLog
   try {
-    const [pdfBuffer, qrBuffer] = await Promise.all([
+    const [pdfBuffer, qrBuffer, material] = await Promise.all([
       generateReceiptPdf(receipt).catch(err => {
         console.error('[serial-key] falha ao gerar PDF:', err)
         return undefined
@@ -73,7 +110,14 @@ export async function sendSerialKeyEmail(
         console.error('[serial-key] falha ao gerar QR:', err)
         return undefined
       }),
+      buildSerialMaterialAttachments(db, serial),
     ])
+
+    // Compra sem login de material com envio automático: a ativação passa a
+    // ser restrita ao e-mail da compra. Grava a flag antes de enviar.
+    if (material.eligible) {
+      await markKeysRestricted(db, [serial._id])
+    }
 
     await sendSerialKeyPurchaseEmail({
       email: serial.buyerEmail,
@@ -92,6 +136,8 @@ export async function sendSerialKeyEmail(
       pdfBuffer,
       qrBuffer,
       kind,
+      materialAttachments: material.attachments,
+      restrictActivationToBuyerEmail: material.eligible,
     })
 
     log = { to: serial.buyerEmail, status: 'sent', kind, sentAt: new Date(), sentBy: opts.sentBy }
@@ -157,6 +203,21 @@ export async function sendSerialKeyCartEmail(
     }
     const pdfBuffer = await generateReceiptPdf(receipt).catch(() => undefined)
 
+    // Envio automático dos PDFs dos materiais elegíveis do carrinho, com marca
+    // d'água. Marca as respectivas keys com ativação restrita ao e-mail.
+    const materialAttachments: MaterialEmailAttachment[] = []
+    const restrictedKeyIds: (string | ObjectId | undefined)[] = []
+    for (const k of keys) {
+      const res = await buildSerialMaterialAttachments(db, k)
+      if (res.eligible) {
+        materialAttachments.push(...res.attachments)
+        restrictedKeyIds.push(k._id)
+      }
+    }
+    if (restrictedKeyIds.length > 0) {
+      await markKeysRestricted(db, restrictedKeyIds)
+    }
+
     await sendSerialKeyCartPurchaseEmail({
       email: first.buyerEmail,
       buyerName: first.buyerName || '',
@@ -168,6 +229,8 @@ export async function sendSerialKeyCartEmail(
       receiptText: buildReceiptText(receipt),
       pdfBuffer,
       kind,
+      materialAttachments,
+      restrictActivationToBuyerEmail: restrictedKeyIds.length > 0,
     })
     ok = true
   } catch (err: any) {

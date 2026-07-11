@@ -27,124 +27,16 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { Db, ObjectId } from 'mongodb'
 import { isValidObjectId } from '@/lib/api-security'
-import { fetchMaterialPdfBytes } from '@/lib/material-pdf-viewer'
-import { applyWatermark } from '@/lib/pdf-watermark'
 import { sendMaterialPdfDeliveryEmail, sendMaterialAcquiredEmail } from '@/lib/mail'
 import { getActivationUrl } from '@/lib/serial-keys'
+import {
+  type PdfEmailItem as PdfItem,
+  resolveMaterialsWithPdf,
+  prepareWatermarkedItems,
+} from '@/lib/material-pdf-email'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
-
-// Teto do PDF de origem, alinhado ao limite de upload de materiais (100MB).
-// Serve como salvaguarda: o pdf-lib carrega e duplica o arquivo ao aplicar a
-// marca d'água, então arquivos acima disso tendem a estourar a memória da
-// função. Ajustável via env.
-const MAX_ORIGINAL_MB = Number(process.env.PDF_EMAIL_MAX_ORIGINAL_MB) || 100
-const MAX_ORIGINAL_BYTES = MAX_ORIGINAL_MB * 1024 * 1024
-
-function safeFilename(title: string): string {
-  return (title || 'material')
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/[^a-zA-Z0-9_\- ]/g, '')
-    .replace(/\s+/g, '_')
-    .substring(0, 80) + '.pdf'
-}
-
-type PdfItem = { title: string; filename: string; buffer: Buffer }
-
-/** Identidade aplicada na marca d'água de cada PDF. */
-interface WatermarkIdentity {
-  userName: string
-  userEmail: string
-  userId: string
-  orderId: string
-}
-
-/**
- * Resolve os materiais (com PDF) associados a um item comprado — material
- * único ou pacote (vários materiais).
- */
-async function resolveMaterialsWithPdf(
-  db: Db,
-  itemType: string,
-  itemId: string
-): Promise<any[]> {
-  let materials: any[] = []
-  if (itemType === 'material' || itemType === 'flashcard') {
-    const material = await db.collection('materials').findOne(
-      { _id: new ObjectId(itemId) },
-      { projection: { title: 1, pdfFile: 1 } }
-    )
-    if (material) materials = [material]
-  } else if (itemType === 'package') {
-    const pkg = await db.collection('material_packages').findOne(
-      { _id: new ObjectId(itemId) },
-      { projection: { materialIds: 1 } }
-    )
-    const materialIds: string[] = Array.isArray(pkg?.materialIds) ? pkg!.materialIds : []
-    if (materialIds.length > 0) {
-      const objectIds = materialIds.filter(isValidObjectId).map((id) => new ObjectId(id))
-      materials = objectIds.length
-        ? await db.collection('materials')
-            .find({ _id: { $in: objectIds } }, { projection: { title: 1, pdfFile: 1 } })
-            .toArray()
-        : []
-    }
-  }
-  return materials.filter((m) => m.pdfFile?.blobUrl)
-}
-
-/**
- * Baixa e aplica marca d'água em cada PDF, em série (mantém o pico de memória
- * baixo). Retorna os anexos prontos e o que foi pulado (tamanho/falha).
- */
-async function prepareWatermarkedItems(
-  materials: any[],
-  identity: WatermarkIdentity
-): Promise<{ items: PdfItem[]; sentMaterialIds: string[]; skipped: { title: string; reason: string }[] }> {
-  const now = new Date()
-  const items: PdfItem[] = []
-  const sentMaterialIds: string[] = []
-  const skipped: { title: string; reason: string }[] = []
-
-  for (const material of materials) {
-    const title = material.title || 'Material'
-    try {
-      const original = await fetchMaterialPdfBytes(material.pdfFile.blobUrl)
-      const originalBytes = original.byteLength
-      if (originalBytes > MAX_ORIGINAL_BYTES) {
-        const sizeMb = (originalBytes / 1024 / 1024).toFixed(1)
-        console.warn(
-          `[admin-send-pdf-email] PDF "${title}" (${material._id}) tem ${sizeMb}MB, acima do limite de ${MAX_ORIGINAL_MB}MB — pulado.`
-        )
-        skipped.push({ title, reason: `${sizeMb}MB (máx. ${MAX_ORIGINAL_MB}MB)` })
-        continue
-      }
-      const watermarked = await applyWatermark(original, {
-        userName: identity.userName,
-        userEmail: identity.userEmail,
-        userId: identity.userId,
-        orderId: identity.orderId,
-        downloadedAt: now,
-      })
-      items.push({
-        title,
-        filename: safeFilename(material.title),
-        buffer: Buffer.from(watermarked),
-      })
-      sentMaterialIds.push(String(material._id))
-    } catch (err) {
-      console.error(
-        `[admin-send-pdf-email] Falha ao preparar PDF do material ${material._id}:`,
-        err
-      )
-      skipped.push({ title, reason: 'falha ao processar' })
-    }
-  }
-
-  return { items, sentMaterialIds, skipped }
-}
 
 /**
  * Valida os limites de tamanho após preparar os anexos. Retorna uma resposta

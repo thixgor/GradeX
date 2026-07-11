@@ -29,6 +29,7 @@ import { audit } from './audit'
 import { recordOrderCheckoutEvent } from '../analytics'
 import { approveCouponRedemption, releaseCouponRedemption } from '../coupons'
 import { grantMaterialCartItems, type MaterialCartResolvedItem } from '../material-cart'
+import { buildAutoEmailPdfAttachments, type PdfEmailItem } from '../material-pdf-email'
 import {
   getManualClinicoConfig,
   getManualClinicoPlan,
@@ -464,6 +465,23 @@ async function applyMaterialPurchase(order: PaymentOrder, result?: ProviderOrder
           }))
         : []
 
+      // Envio automático do PDF por e-mail dos itens do carrinho cujo material
+      // tem a opção habilitada. Em série para manter o pico de memória baixo.
+      const orderIdWm = result?.providerOrderId || order.providerPaymentId || String(order._id)
+      const autoPdfs: PdfEmailItem[] = []
+      for (const item of cartItems) {
+        const { items } = await buildAutoEmailPdfAttachments(db, item.itemType, item.itemId, {
+          userName: order.payerName || '',
+          userEmail: order.payerEmail,
+          userId: order.userId || String(order._id),
+          orderId: orderIdWm,
+        }).catch(err => {
+          console.error('[effects] preparar PDF automático (carrinho) falhou:', err)
+          return { items: [] as PdfEmailItem[], eligible: false }
+        })
+        autoPdfs.push(...items)
+      }
+
       sendCartPurchasedEmail(
         order.payerEmail,
         order.payerName || '',
@@ -473,7 +491,8 @@ async function applyMaterialPurchase(order: PaymentOrder, result?: ProviderOrder
           price: item.price,
         })),
         order.amount,
-        skippedItems
+        skippedItems,
+        autoPdfs
       ).catch(err => console.error('[effects] e-mail carrinho falhou:', err))
     }
     return
@@ -525,11 +544,29 @@ async function applyMaterialPurchase(order: PaymentOrder, result?: ProviderOrder
   })
 
   if (order.payerEmail) {
+    // Envio automático do PDF por e-mail (quando o material tem a opção
+    // habilitada). Não bloqueia nem falha a confirmação de compra.
+    const { items: autoPdfs } = await buildAutoEmailPdfAttachments(
+      db,
+      itemType,
+      order.refId,
+      {
+        userName: order.payerName || '',
+        userEmail: order.payerEmail,
+        userId: order.userId || String(order._id),
+        orderId: result?.providerOrderId || order.providerPaymentId || String(order._id),
+      }
+    ).catch(err => {
+      console.error('[effects] preparar PDF automático falhou:', err)
+      return { items: [] as PdfEmailItem[], eligible: false }
+    })
+
     sendMaterialPurchasedEmail(
       order.payerEmail,
       order.payerName || '',
       item.title || 'Material',
-      order.amount
+      order.amount,
+      autoPdfs
     ).catch(err => console.error('[effects] e-mail material falhou:', err))
   }
 }

@@ -127,6 +127,22 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Esta serial key já foi ativada em outra conta.' }, { status: 409 })
       }
 
+      // Ativação restrita ao e-mail da compra (materiais com envio automático de
+      // PDF): só ativa em uma conta cujo e-mail seja igual ao do comprador.
+      if (serialKey.restrictActivationToBuyerEmail && serialKey.buyerEmail) {
+        const sessionEmail = String(session.email || '').trim().toLowerCase()
+        const buyerEmail = String(serialKey.buyerEmail).trim().toLowerCase()
+        if (!sessionEmail || sessionEmail !== buyerEmail) {
+          await logSerialKeySecurity({
+            kind: 'activation_blocked', ip, userAgent, userId: session.userId, email: session.email,
+            keyMasked: maskSerialKey(serialKey.key), detail: 'email_mismatch_restricted',
+          })
+          return NextResponse.json({
+            error: 'Esta compra é restrita ao e-mail usado no pagamento. Entre com a conta desse e-mail (ou crie uma com ele) para ativar.',
+          }, { status: 403 })
+        }
+      }
+
       // Concede exatamente o produto comprado.
       const grantResult = await grantSerialKeyProduct(db, serialKey, {
         userId: session.userId,

@@ -688,5 +688,6 @@ export function serializeSerialKeyForActivation(serial: SerialKey) {
     buyerEmail: serial.buyerEmail,
     alreadyActivated: serial.status === 'activated' || serial.used,
     cancelled: serial.status === 'cancelled',
+    restrictActivationToBuyerEmail: serial.restrictActivationToBuyerEmail === true,
   }
 }

@@ -721,6 +721,7 @@ function AdminMateriaisContent() {
     isFeatured: false,
     pdfViewerEnabled: false,
     pdfDownloadEnabled: true,
+    autoEmailPdfOnPurchase: false,
     pdfViewerConfig: EMPTY_PDF_VIEWER_CONFIG as PdfViewerConfig,
     htmlViewerEnabled: false,
     complementaryItems: [] as ComplementaryItemForm[],
@@ -963,6 +964,7 @@ function AdminMateriaisContent() {
         isFeatured: material.isFeatured,
         pdfViewerEnabled: material.pdfViewerEnabled === true,
         pdfDownloadEnabled: material.pdfDownloadEnabled !== false,
+        autoEmailPdfOnPurchase: (material as any).autoEmailPdfOnPurchase === true,
         pdfViewerConfig: {
           coverPage: material.pdfViewerConfig?.coverPage,
           summary: material.pdfViewerConfig?.summary || [],
@@ -987,7 +989,7 @@ function AdminMateriaisContent() {
         downloadUrl: '', previewUrl: '', folderId: '', moduloId: '', tags: '',
         allowedGroups: [], videoDurationH: 0, videoDurationM: 0, videoDurationS: 0,
         pricing: 'free', price: 0, pricingEventId: null, stripePriceId: '', isHidden: false, isFeatured: false,
-        pdfViewerEnabled: false, pdfDownloadEnabled: true,
+        pdfViewerEnabled: false, pdfDownloadEnabled: true, autoEmailPdfOnPurchase: false,
         pdfViewerConfig: { coverPage: undefined, summary: [], navigation: [], preview: { enabled: false, ranges: [] } },
         htmlViewerEnabled: false, complementaryItems: [],
         order: 0,
@@ -2364,6 +2366,27 @@ function AdminMateriaisContent() {
                           Envie um PDF interno para liberar as configuracoes de viewer e download protegido.
                         </p>
                       )}
+
+                      {/* Envio automático do PDF por e-mail na compra.
+                          Só faz sentido com PDF interno + download ativado. */}
+                      <label className={`flex items-start gap-2 rounded-lg border p-2 text-sm ${pdfInfo && materialForm.pdfDownloadEnabled ? 'cursor-pointer hover:bg-muted/40' : 'opacity-50 cursor-not-allowed'}`}>
+                        <input
+                          type="checkbox"
+                          disabled={!pdfInfo || !materialForm.pdfDownloadEnabled}
+                          checked={pdfInfo && materialForm.pdfDownloadEnabled ? materialForm.autoEmailPdfOnPurchase : false}
+                          onChange={e => setMaterialForm(p => ({ ...p, autoEmailPdfOnPurchase: e.target.checked }))}
+                          className="rounded mt-0.5"
+                        />
+                        <span>
+                          <span className="flex items-center gap-1.5 font-medium">
+                            <MailCheck className="h-3.5 w-3.5 text-emerald-500" />
+                            Enviar o PDF por e-mail automaticamente na compra
+                          </span>
+                          <span className="block text-[11px] text-muted-foreground mt-0.5">
+                            O comprador recebe o PDF (com marca d&apos;água) no e-mail da compra. Em compras sem login, a serial key é enviada junto e sua ativação fica restrita ao e-mail usado na compra.
+                          </span>
+                        </span>
+                      </label>
                     </div>
 
                     {/* Capa, Sumário e Navegação (somente com PDF + viewer ativo) */}

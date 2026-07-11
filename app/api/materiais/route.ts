@@ -471,6 +471,7 @@ export async function POST(request: NextRequest) {
       allowedGroups: body.allowedGroups || [],
       pdfViewerEnabled: body.pdfViewerEnabled === true,
       pdfDownloadEnabled: body.pdfDownloadEnabled !== false,
+      autoEmailPdfOnPurchase: body.autoEmailPdfOnPurchase === true,
       pdfViewerConfig: sanitizePdfViewerConfig(body.pdfViewerConfig) || { summary: [], navigation: [], preview: { enabled: false, ranges: [] } },
       htmlViewerEnabled: body.htmlViewerEnabled === true,
       complementaryMaterialIds: sanitizeComplementaryIds(body.complementaryMaterialIds, null),
@@ -523,6 +524,9 @@ export async function PUT(request: NextRequest) {
     }
     if ('htmlViewerEnabled' in updates) {
       updates.htmlViewerEnabled = updates.htmlViewerEnabled === true
+    }
+    if ('autoEmailPdfOnPurchase' in updates) {
+      updates.autoEmailPdfOnPurchase = updates.autoEmailPdfOnPurchase === true
     }
     if ('complementaryMaterialIds' in updates) {
       updates.complementaryMaterialIds = sanitizeComplementaryIds(updates.complementaryMaterialIds, _id)

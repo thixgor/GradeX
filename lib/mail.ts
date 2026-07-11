@@ -343,10 +343,12 @@ export async function sendMaterialPurchasedEmail(
   email: string,
   name: string,
   itemTitle: string,
-  amount: number
+  amount: number,
+  attachments: MaterialEmailAttachment[] = []
 ) {
   const firstName = name ? name.split(' ')[0] : 'Aluno'
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
+  const hasPdf = attachments.length > 0
 
   const content = `
     <h1 class="h1">Material liberado! 📚</h1>
@@ -360,6 +362,8 @@ export async function sendMaterialPurchasedEmail(
       <p style="margin: 4px 0 0 0; font-size: 13px; color: #718096;">Data: ${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
     </div>
 
+    ${hasPdf ? `<p>Para facilitar, enviamos o material também em anexo, em PDF.</p>${materialAttachmentsBlock(attachments)}` : ''}
+
     <div style="text-align: center;">
       <a href="${appUrl}/materiais" class="button" target="_blank">Acessar Meus Materiais</a>
     </div>
@@ -372,6 +376,7 @@ export async function sendMaterialPurchasedEmail(
     to: email,
     subject: `Acesso liberado: ${itemTitle}`,
     html,
+    attachments: hasPdf ? toPdfMailAttachments(attachments) : undefined,
   })
 }
 
@@ -507,14 +512,70 @@ function formatBRLEmail(value: number) {
   return `R$ ${Number(value || 0).toFixed(2).replace('.', ',')}`
 }
 
+/** Anexo de PDF de material (com marca d'água) para os e-mails de compra. */
+export interface MaterialEmailAttachment {
+  title: string
+  filename: string
+  buffer: Buffer
+}
+
+/**
+ * Bloco HTML que lista o(s) PDF(s) anexado(s) + aviso de direitos autorais, e
+ * (opcional) o aviso de ativação restrita ao e-mail da compra.
+ */
+function materialAttachmentsBlock(
+  attachments: MaterialEmailAttachment[],
+  opts?: { restrictedEmail?: string }
+): string {
+  if (!attachments || attachments.length === 0) return ''
+  const multiple = attachments.length > 1
+  const list = attachments
+    .map(a => `<li style="margin-bottom: 4px;">${escapeHtml(a.title)}</li>`)
+    .join('')
+  const restrictNote = opts?.restrictedEmail
+    ? `
+    <div style="background-color: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px; padding: 14px 16px; margin: 16px 0;">
+      <p style="margin: 0; font-size: 13px; color: #7c2d12;">
+        <strong>Acesso restrito:</strong> a ativação da sua Serial Key é privativa e só pode ser feita em uma conta com o e-mail <strong>${escapeHtml(opts.restrictedEmail)}</strong> — o mesmo usado na compra. Não é possível ativar em uma conta com outro e-mail.
+      </p>
+    </div>
+    `
+    : ''
+  return `
+    <div style="background-color: #f0faf4; border: 1px solid #c6f0d8; border-radius: 10px; padding: 18px 20px; margin: 20px 0;">
+      <p style="margin: 0 0 10px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #43a047; font-weight: 700;">
+        Material${multiple ? 's' : ''} em anexo (PDF)
+      </p>
+      <ul style="margin: 0; padding-left: 18px; color: #0f3d2e; font-weight: 600; font-size: 14px;">
+        ${list}
+      </ul>
+    </div>
+    ${restrictNote}
+    <p style="font-size: 12px; color: #718096;">
+      <strong>Direitos autorais:</strong> o(s) arquivo(s) contêm uma marca d'água exclusiva vinculada à sua compra e são protegidos por direitos autorais. O uso é pessoal e intransferível — a reprodução, o compartilhamento ou a redistribuição, total ou parcial, são proibidos.
+    </p>
+  `
+}
+
+/** Converte os anexos de material para o formato do nodemailer. */
+function toPdfMailAttachments(attachments: MaterialEmailAttachment[]) {
+  return (attachments || []).map(a => ({
+    filename: a.filename,
+    content: a.buffer,
+    contentType: 'application/pdf',
+  }))
+}
+
 export async function sendCartPurchasedEmail(
   email: string,
   name: string,
   items: CartPurchasedEmailItem[],
   totalAmount: number,
-  skippedItems: CartPurchasedEmailSkippedItem[] = []
+  skippedItems: CartPurchasedEmailSkippedItem[] = [],
+  attachments: MaterialEmailAttachment[] = []
 ) {
   const firstName = name ? name.split(' ')[0] : 'Aluno'
+  const hasPdf = attachments.length > 0
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
   const dateLabel = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
 
@@ -579,6 +640,8 @@ export async function sendCartPurchasedEmail(
 
     ${skippedHtml}
 
+    ${hasPdf ? `<p>Para facilitar, enviamos em anexo o(s) PDF(s) dos materiais elegíveis.</p>${materialAttachmentsBlock(attachments)}` : ''}
+
     <div style="text-align: center;">
       <a href="${appUrl}/materiais?tab=mine" class="button" target="_blank">Acessar Meus Materiais</a>
     </div>
@@ -591,6 +654,7 @@ export async function sendCartPurchasedEmail(
     to: email,
     subject: `Acesso liberado: ${items.length} ${items.length === 1 ? 'item' : 'itens'} do carrinho`,
     html,
+    attachments: hasPdf ? toPdfMailAttachments(attachments) : undefined,
   })
 }
 
@@ -1099,12 +1163,18 @@ export async function sendSerialKeyPurchaseEmail(input: {
   pdfBuffer?: Buffer
   qrBuffer?: Buffer
   kind?: 'purchase' | 'resend'
+  // PDF(s) do material comprado, com marca d'água (envio automático na compra).
+  materialAttachments?: MaterialEmailAttachment[]
+  // Quando true, informa que a ativação é restrita ao e-mail da compra.
+  restrictActivationToBuyerEmail?: boolean
 }) {
   const firstName = input.buyerName ? input.buyerName.split(' ')[0] : 'Comprador'
   const dateStr = new Intl.DateTimeFormat('pt-BR', {
     day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',
     timeZone: 'America/Sao_Paulo',
   }).format(input.purchasedAt)
+  const materialPdfs = input.materialAttachments || []
+  const hasMaterialPdf = materialPdfs.length > 0
 
   const content = `
     <h1 class="h1">Compra aprovada, ${firstName}! 🎉</h1>
@@ -1154,6 +1224,8 @@ export async function sendSerialKeyPurchaseEmail(input: {
       <p style="margin: 0; color: #795548; font-size: 13px;"><strong>Como ativar:</strong> clique em "Ativar meu produto", faça login ou crie sua conta (é rápido) e o produto aparecerá liberado automaticamente. O comprovante completo está anexado em PDF.</p>
     </div>
 
+    ${hasMaterialPdf ? `<hr><p>Seu material também segue em anexo, em PDF, para acesso imediato.</p>${materialAttachmentsBlock(materialPdfs, input.restrictActivationToBuyerEmail ? { restrictedEmail: input.email } : undefined)}` : ''}
+
     <p style="font-size: 12px; color: #a0aec0;">Teve algum problema? Responda com sua Serial Key que nós ajudamos.</p>
   `
 
@@ -1174,6 +1246,9 @@ export async function sendSerialKeyPurchaseEmail(input: {
       content: input.pdfBuffer,
       contentType: 'application/pdf',
     })
+  }
+  if (hasMaterialPdf) {
+    attachments.push(...toPdfMailAttachments(materialPdfs))
   }
 
   await transporter.sendMail({
@@ -1209,12 +1284,18 @@ export async function sendSerialKeyCartPurchaseEmail(input: {
   receiptText: string
   pdfBuffer?: Buffer
   kind?: 'purchase' | 'resend'
+  // PDF(s) dos materiais elegíveis do carrinho, com marca d'água.
+  materialAttachments?: MaterialEmailAttachment[]
+  // Quando true, informa que a ativação é restrita ao e-mail da compra.
+  restrictActivationToBuyerEmail?: boolean
 }) {
   const firstName = input.buyerName ? input.buyerName.split(' ')[0] : 'Comprador'
   const dateStr = new Intl.DateTimeFormat('pt-BR', {
     day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',
     timeZone: 'America/Sao_Paulo',
   }).format(input.purchasedAt)
+  const materialPdfs = input.materialAttachments || []
+  const hasMaterialPdf = materialPdfs.length > 0
 
   const attachments: any[] = []
   const itemsHtml = input.items.map((item, i) => {
@@ -1266,12 +1347,17 @@ export async function sendSerialKeyCartPurchaseEmail(input: {
     <div style="background-color: #fff8e1; border-left: 4px solid #f57c00; padding: 15px; margin: 20px 0; border-radius: 4px;">
       <p style="margin: 0; color: #795548; font-size: 13px;"><strong>Como ativar:</strong> ative cada produto clicando no botão correspondente. Faça login ou crie sua conta (rápido) e os produtos aparecerão liberados. O comprovante completo está anexado em PDF.</p>
     </div>
+
+    ${hasMaterialPdf ? `<hr><p>Os materiais em PDF elegíveis seguem em anexo, para acesso imediato.</p>${materialAttachmentsBlock(materialPdfs, input.restrictActivationToBuyerEmail ? { restrictedEmail: input.email } : undefined)}` : ''}
   `
 
   const html = getEmailTemplate('Compra aprovada', content)
 
   if (input.pdfBuffer) {
     attachments.push({ filename: 'comprovante-domineaqui.pdf', content: input.pdfBuffer, contentType: 'application/pdf' })
+  }
+  if (hasMaterialPdf) {
+    attachments.push(...toPdfMailAttachments(materialPdfs))
   }
 
   await transporter.sendMail({

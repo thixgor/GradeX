@@ -636,6 +636,12 @@ export interface SerialKey {
   activatedByEmail?: string
   activatedAt?: Date
   expiresAt?: Date
+  /**
+   * Restringe a ativação à conta cujo e-mail seja igual ao `buyerEmail` (o
+   * e-mail usado na compra). Definido quando o material comprado envia o PDF
+   * automaticamente por e-mail (`autoEmailPdfOnPurchase`).
+   */
+  restrictActivationToBuyerEmail?: boolean
   // Auditoria / anti-fraude
   ip?: string
   userAgent?: string
@@ -1343,6 +1349,11 @@ export interface Material {
   pdfFile?: MaterialPdfFile   // Presente quando admin fez upload direto
   pdfViewerEnabled?: boolean  // Permite abrir o viewer protegido
   pdfDownloadEnabled?: boolean // Permite baixar PDF protegido
+  // Envia o PDF (com marca d'água) automaticamente por e-mail ao comprador na
+  // compra. Só surte efeito quando há PDF interno e o download está ativado.
+  // Para compras sem login, a serial key passa a ter ativação restrita ao
+  // e-mail usado na compra.
+  autoEmailPdfOnPurchase?: boolean
   pdfViewerConfig?: MaterialPdfViewerConfig // Capa, sumário e navegação (admin)
 
   // HTML interno (leitor de experiências — arquivo .html autocontido)

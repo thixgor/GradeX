@@ -45,8 +45,10 @@ interface KeyInfo {
   status?: string
   amount?: number
   buyerFirstName?: string
+  buyerEmail?: string
   alreadyActivated?: boolean
   cancelled?: boolean
+  restrictActivationToBuyerEmail?: boolean
 }
 
 function ActivarContent() {
@@ -160,6 +162,15 @@ function ActivarContent() {
         <div style={{ background: 'rgba(52,211,153,0.06)', border: '1px solid rgba(52,211,153,0.15)', borderRadius: '12px', padding: '16px', marginBottom: '18px' }}>
           <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.45)', marginBottom: '4px' }}>Produto</p>
           <p style={{ fontSize: '16px', fontWeight: 700, color: 'white' }}>{info.productTitle || 'Produto'}</p>
+        </div>
+      )}
+
+      {info?.restrictActivationToBuyerEmail && !cancelled && (
+        <div style={{ display: 'flex', gap: '10px', padding: '12px 16px', background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: '10px', color: '#fbbf24', fontSize: '13px', marginBottom: '16px' }}>
+          <AlertCircle size={16} style={{ flexShrink: 0, marginTop: '1px' }} />
+          <span>
+            Ativação restrita ao e-mail da compra{info.buyerEmail ? <> (<strong>{info.buyerEmail}</strong>)</> : ''}. Entre com a conta desse e-mail — ou crie uma com ele — para ativar.
+          </span>
         </div>
       )}
 
