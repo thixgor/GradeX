@@ -914,7 +914,7 @@ function MateriaisContent() {
           </motion.div>
 
           {/* Tabs */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mt-4 flex gap-1 p-1 rounded-xl border border-border bg-muted/40 w-fit">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mt-4 flex gap-1 p-1 rounded-xl border border-border bg-muted/40 w-fit max-w-full overflow-x-auto scrollbar-hide">
             {([
               { id: 'materials', label: 'Materiais', icon: <FileText className="h-4 w-4" /> },
               { id: 'packages', label: 'Pacotes', icon: <Package className="h-4 w-4" /> },
@@ -927,7 +927,7 @@ function MateriaisContent() {
                   setActiveTab(tab.id)
                   updateBrowserUrl(tab.id === 'materials' ? currentFolderId : null, tab.id)
                 }}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${activeTab === tab.id ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                className={`shrink-0 whitespace-nowrap px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${activeTab === tab.id ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
               >
                 <span className="flex items-center gap-2">
                   {tab.icon}
