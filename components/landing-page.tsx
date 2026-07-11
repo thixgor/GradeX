@@ -837,13 +837,36 @@ export default function LandingPage({
   }, [])
 
   useEffect(() => {
-    if (initialIsLoggedIn === undefined) {
-      fetch('/api/auth/me')
-        .then((r) => {
-          if (r.ok) setIsLoggedIn(true)
-        })
-        .catch(() => {})
-    }
+    // Verificação de auth no cliente — SEMPRE, não só quando initialIsLoggedIn
+    // é undefined. O cookie de sessão usa SameSite=strict (lib/auth.ts), então
+    // numa navegação de nível superior vinda de outro site (link de e-mail,
+    // WhatsApp, Instagram, Google, bookmark...) o cookie NÃO acompanha o
+    // request do SSR: getSession() vê null e a landing renderiza como
+    // "deslogado" mesmo com sessão válida. Um fetch same-site para
+    // /api/auth/me envia o cookie e revela o estado real, evitando que o
+    // usuário logado veja "Entrar" e ainda passe pela tela de login antes de
+    // finalmente cair no dashboard.
+    let cancelled = false
+    fetch('/api/auth/me', { cache: 'no-store' })
+      .then((r) => {
+        if (cancelled) return
+        if (r.ok) {
+          // Sessão válida que o SSR não enxergou. Espelha o comportamento de
+          // app/page.tsx: logado sem ?landing=true vai direto pro dashboard.
+          const forceLanding =
+            new URLSearchParams(window.location.search).get('landing') === 'true'
+          if (!initialIsLoggedIn && !forceLanding) {
+            router.replace('/dashboard')
+            return
+          }
+          setIsLoggedIn(true)
+        } else {
+          // 401 = realmente deslogado. (Erro de rede cai no .catch e mantém o
+          // estado atual, para não deslogar por intermitência.)
+          setIsLoggedIn(false)
+        }
+      })
+      .catch(() => {})
     if (initialVideoEmbedUrl === undefined) {
       fetch('/api/admin/settings', { cache: 'no-store' })
         .then(async (r) => {
@@ -854,6 +877,9 @@ export default function LandingPage({
           }
         })
         .catch(() => {})
+    }
+    return () => {
+      cancelled = true
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
