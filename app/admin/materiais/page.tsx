@@ -53,6 +53,8 @@ import {
   ArrowUp,
   ArrowDown,
   Mail,
+  MailCheck,
+  KeyRound,
   Code2,
   Layers,
 } from 'lucide-react'
@@ -426,11 +428,14 @@ function AdminMateriaisContent() {
   // Access management
   const [accessModal, setAccessModal] = useState<{ itemId: string; itemType: 'material' | 'package'; title: string } | null>(null)
   const [accessPurchases, setAccessPurchases] = useState<any[]>([])
+  const [accessGuests, setAccessGuests] = useState<any[]>([])
   const [accessLoading, setAccessLoading] = useState(false)
   const [grantEmail, setGrantEmail] = useState('')
   const [grantLoading, setGrantLoading] = useState(false)
   const [grantError, setGrantError] = useState('')
-  const [sendingPdfEmailId, setSendingPdfEmailId] = useState<string | null>(null)
+  // `id` é o purchaseId (com conta) ou o serialKeyId (compra sem login);
+  // `mode` distingue qual botão da linha está em envio.
+  const [sendingPdfEmail, setSendingPdfEmail] = useState<{ id: string; mode: string } | null>(null)
   const [pdfEmailSentId, setPdfEmailSentId] = useState<string | null>(null)
   // User picker
   const [userSearch, setUserSearch] = useState('')
@@ -592,7 +597,11 @@ function AdminMateriaisContent() {
     setAccessLoading(true)
     try {
       const res = await fetch(`/api/materiais/admin-access?itemId=${itemId}&itemType=${itemType}`)
-      if (res.ok) setAccessPurchases((await res.json()).purchases || [])
+      if (res.ok) {
+        const data = await res.json()
+        setAccessPurchases(data.purchases || [])
+        setAccessGuests(data.guests || [])
+      }
     } finally {
       setAccessLoading(false)
     }
@@ -620,7 +629,11 @@ function AdminMateriaisContent() {
       setUserResults([])
       // Refresh list
       const listRes = await fetch(`/api/materiais/admin-access?itemId=${accessModal.itemId}&itemType=${accessModal.itemType}`)
-      if (listRes.ok) setAccessPurchases((await listRes.json()).purchases || [])
+      if (listRes.ok) {
+        const listData = await listRes.json()
+        setAccessPurchases(listData.purchases || [])
+        setAccessGuests(listData.guests || [])
+      }
     } catch { setGrantError('Erro ao conceder acesso') }
     finally { setGrantLoading(false) }
   }
@@ -633,14 +646,32 @@ function AdminMateriaisContent() {
     } catch { alert('Erro ao revogar acesso') }
   }
 
-  const sendPdfByEmail = async (purchaseId: string, userEmail: string) => {
-    if (!confirm(`Enviar o PDF (com marca d'água) para ${userEmail || 'este usuário'}?`)) return
-    setSendingPdfEmailId(purchaseId)
+  // Envia o PDF (com marca d'água) por e-mail.
+  //  - target 'purchase' + mode 'requested': "conforme solicitado" (padrão).
+  //  - target 'purchase' + mode 'acquired':  "você adquiriu e já tem acesso".
+  //  - target 'serial': compra sem login → PDF + serial key para o e-mail da
+  //    compra (sempre com enquadramento de aquisição).
+  const sendPdfByEmail = async (
+    id: string,
+    email: string,
+    opts: { target?: 'purchase' | 'serial'; mode?: 'requested' | 'acquired' } = {}
+  ) => {
+    const target = opts.target || 'purchase'
+    const mode = opts.mode || 'requested'
+    const confirmMsg = target === 'serial'
+      ? `Enviar o PDF (com marca d'água) + a Serial Key de ativação para ${email || 'este comprador'}?`
+      : mode === 'acquired'
+        ? `Enviar o PDF avisando que ${email || 'o usuário'} adquiriu o produto e já tem acesso?`
+        : `Enviar o PDF (com marca d'água) para ${email || 'este usuário'}?`
+    if (!confirm(confirmMsg)) return
+
+    setSendingPdfEmail({ id, mode: target === 'serial' ? 'serial' : mode })
     try {
+      const body = target === 'serial' ? { serialKeyId: id } : { purchaseId: id, mode }
       const res = await fetch('/api/admin/materiais/send-pdf-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ purchaseId }),
+        body: JSON.stringify(body),
       })
       // A resposta pode não ser JSON quando a função quebra no nível da
       // plataforma (ex.: OOM/timeout retorna uma página de erro). Lemos como
@@ -657,12 +688,12 @@ function AdminMateriaisContent() {
       if (Array.isArray(data?.skipped) && data.skipped.length > 0) {
         alert(`E-mail enviado, mas alguns arquivos foram ignorados:\n\n${data.skipped.join('\n')}`)
       }
-      setPdfEmailSentId(purchaseId)
-      setTimeout(() => setPdfEmailSentId(prev => (prev === purchaseId ? null : prev)), 2500)
+      setPdfEmailSentId(id)
+      setTimeout(() => setPdfEmailSentId(prev => (prev === id ? null : prev)), 2500)
     } catch (err: any) {
       alert(`Erro ao enviar o PDF por e-mail: ${err?.message || 'falha de rede'}`)
     } finally {
-      setSendingPdfEmailId(null)
+      setSendingPdfEmail(null)
     }
   }
 
@@ -3130,15 +3161,29 @@ function AdminMateriaisContent() {
                               variant="ghost"
                               size="icon"
                               className="h-6 w-6 text-blue-500 hover:text-blue-600 flex-shrink-0"
-                              onClick={() => sendPdfByEmail(p._id, p.userEmail)}
-                              disabled={sendingPdfEmailId === p._id}
-                              title="Enviar PDF com marca d'água por e-mail"
+                              onClick={() => sendPdfByEmail(p._id, p.userEmail, { mode: 'requested' })}
+                              disabled={sendingPdfEmail?.id === p._id}
+                              title="Enviar PDF com marca d'água por e-mail (conforme solicitado)"
                             >
-                              {sendingPdfEmailId === p._id
+                              {sendingPdfEmail?.id === p._id && sendingPdfEmail?.mode === 'requested'
                                 ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
                                 : pdfEmailSentId === p._id
                                   ? <CheckCheck className="h-3.5 w-3.5 text-green-500" />
                                   : <Mail className="h-3.5 w-3.5" />}
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-6 w-6 text-emerald-500 hover:text-emerald-600 flex-shrink-0"
+                              onClick={() => sendPdfByEmail(p._id, p.userEmail, { mode: 'acquired' })}
+                              disabled={sendingPdfEmail?.id === p._id}
+                              title="Enviar PDF avisando que adquiriu o produto e já tem acesso"
+                            >
+                              {sendingPdfEmail?.id === p._id && sendingPdfEmail?.mode === 'acquired'
+                                ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                : pdfEmailSentId === p._id
+                                  ? <CheckCheck className="h-3.5 w-3.5 text-green-500" />
+                                  : <MailCheck className="h-3.5 w-3.5" />}
                             </Button>
                             <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive hover:text-destructive flex-shrink-0" onClick={() => revokeAccess(p._id)} title="Revogar acesso">
                               <UserMinus className="h-3.5 w-3.5" />
@@ -3150,6 +3195,53 @@ function AdminMateriaisContent() {
                   </div>
                 )}
               </div>
+
+              {/* Compras sem login (serial keys ainda não ativadas) */}
+              {accessGuests.length > 0 && (
+                <div className="mt-5 border-t pt-4">
+                  <p className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
+                    <KeyRound className="h-3.5 w-3.5 text-amber-500" />
+                    {accessGuests.length} compra{accessGuests.length !== 1 ? 's' : ''} sem login (aguardando ativação)
+                  </p>
+                  <div className="max-h-56 overflow-y-auto space-y-1 pr-1">
+                    {accessGuests.map(g => (
+                      <div key={g._id} className="flex items-center gap-3 p-2.5 rounded-lg border border-amber-500/20 bg-amber-500/5 hover:bg-amber-500/10 transition-colors">
+                        <div className="h-8 w-8 rounded-full bg-amber-500/15 flex items-center justify-center flex-shrink-0 text-xs font-bold text-amber-600">
+                          {(g.buyerName || g.buyerEmail || '?')[0].toUpperCase()}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">{g.buyerName || '—'}</p>
+                          <p className="text-xs text-muted-foreground truncate">{g.buyerEmail}</p>
+                        </div>
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
+                          <span className="flex items-center gap-0.5 text-[10px] text-muted-foreground">
+                            <KeyRound className="h-3 w-3 text-amber-500" /> {g.amount > 0 ? `R$ ${Number(g.amount).toFixed(2)}` : 'Serial'}
+                          </span>
+                          {g.purchasedAt && (
+                            <span className="text-[10px] text-muted-foreground hidden sm:block">
+                              {new Date(g.purchasedAt).toLocaleDateString('pt-BR')}
+                            </span>
+                          )}
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 text-emerald-500 hover:text-emerald-600 flex-shrink-0"
+                            onClick={() => sendPdfByEmail(g._id, g.buyerEmail, { target: 'serial' })}
+                            disabled={sendingPdfEmail?.id === g._id}
+                            title="Enviar PDF + Serial Key para o e-mail da compra"
+                          >
+                            {sendingPdfEmail?.id === g._id
+                              ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                              : pdfEmailSentId === g._id
+                                ? <CheckCheck className="h-3.5 w-3.5 text-green-500" />
+                                : <MailCheck className="h-3.5 w-3.5" />}
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div className="mt-4 flex justify-end">
                 <Button variant="outline" onClick={() => setAccessModal(null)}>Fechar</Button>

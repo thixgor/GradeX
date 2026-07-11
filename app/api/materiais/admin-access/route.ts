@@ -47,7 +47,32 @@ export async function GET(request: NextRequest) {
       userSecondaryRole: usersMap[p.userId]?.secondaryRole || null,
     }))
 
-    return NextResponse.json({ purchases: enriched })
+    // Compras feitas SEM login: serial keys de compra ainda NÃO ativadas para
+    // este item. Ao ativar, viram material_purchases (aparecem na lista acima),
+    // então aqui listamos apenas as pendentes. O admin pode reenviar o PDF +
+    // serial key para o e-mail usado na compra.
+    const guestKeys = await db
+      .collection('serial_keys')
+      .find({
+        origin: 'purchase',
+        status: 'unactivated',
+        'grant.itemId': itemId,
+      })
+      .sort({ generatedAt: -1 })
+      .project({ key: 0, activationToken: 0 })
+      .toArray()
+
+    const guests = guestKeys.map((k: any) => ({
+      _id: k._id.toString(),
+      buyerName: k.buyerName || '',
+      buyerEmail: k.buyerEmail || '',
+      buyerPhone: k.buyerPhone || '',
+      amount: k.amount ?? k.price ?? 0,
+      productTitle: k.productTitle || k.grant?.itemTitle || '',
+      purchasedAt: k.generatedAt || k.createdAt || null,
+    }))
+
+    return NextResponse.json({ purchases: enriched, guests })
   } catch (error) {
     console.error('Error fetching admin access:', error)
     return NextResponse.json({ error: 'Erro ao buscar acessos' }, { status: 500 })

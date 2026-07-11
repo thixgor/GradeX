@@ -732,6 +732,98 @@ export async function sendMaterialPdfDeliveryEmail(input: {
   })
 }
 
+/**
+ * Confirmação de aquisição enviada pelo admin: avisa o comprador que ele
+ * adquiriu o produto e já tem acesso, anexando o(s) PDF(s) com marca d'água.
+ *
+ * Diferente de `sendMaterialPdfDeliveryEmail` (enquadrado como "conforme
+ * solicitado", para quem não conseguiu baixar), aqui o enquadramento é o de
+ * uma confirmação de compra/entrega.
+ *
+ * Para compras feitas SEM login (convidado), informe `serialKey` e
+ * `activationUrl`: o e-mail passa a incluir a serial key em destaque e o botão
+ * de ativação, deixando claro que o acesso fica vinculado exclusivamente ao
+ * e-mail usado na compra.
+ */
+export async function sendMaterialAcquiredEmail(input: {
+  email: string
+  name: string
+  items: { title: string; filename: string; buffer: Buffer }[]
+  serialKey?: string
+  activationUrl?: string
+}) {
+  const firstName = input.name ? input.name.split(' ')[0] : 'Aluno'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
+  const multiple = input.items.length > 1
+  const hasSerial = Boolean(input.serialKey && input.activationUrl)
+
+  const itemsList = input.items
+    .map(item => `<li style="margin-bottom: 4px;">${escapeHtml(item.title)}</li>`)
+    .join('')
+
+  const serialBlock = hasSerial
+    ? `
+    <hr>
+    <p style="margin-top: 20px;">Como esta compra foi feita <strong>sem login</strong>, use a sua <strong>Serial Key</strong> abaixo para liberar o acesso no site. O acesso fica vinculado exclusivamente a este e-mail (<strong>${escapeHtml(input.email)}</strong>).</p>
+
+    <div style="background: linear-gradient(135deg, #0f3d2e, #1a5c45); border-radius: 12px; padding: 22px 20px; margin: 20px 0; text-align: center;">
+      <p style="margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: #a7f3d0; font-weight: 700;">Sua Serial Key</p>
+      <p style="margin: 0; font-family: 'Courier New', Courier, monospace; font-size: 24px; font-weight: 800; color: #ffffff; letter-spacing: 2px; word-break: break-all;">${escapeHtml(input.serialKey!)}</p>
+    </div>
+
+    <div style="text-align: center;">
+      <a href="${input.activationUrl}" class="button" target="_blank">Ativar meu acesso</a>
+    </div>
+
+    <p style="margin-top: 16px; font-size: 13px; color: #718096; text-align: center;">
+      Ou copie e cole este link de ativação no seu navegador:<br>
+      <a href="${input.activationUrl}" style="color: #0f3d2e; word-break: break-all;">${input.activationUrl}</a>
+    </p>
+    `
+    : `
+    <div style="text-align: center;">
+      <a href="${appUrl}/materiais" class="button" target="_blank">Acessar meus materiais</a>
+    </div>
+    `
+
+  const content = `
+    <h1 class="h1">Produto adquirido — acesso liberado! 🎉</h1>
+    <p>Olá, ${firstName}!</p>
+    <p>Este e-mail confirma que você <strong>adquiriu o produto</strong> e <strong>já tem acesso</strong>. Para facilitar, enviamos o material abaixo diretamente em anexo, em PDF.</p>
+
+    <div style="background-color: #f0faf4; border: 1px solid #c6f0d8; border-radius: 10px; padding: 18px 20px; margin: 20px 0;">
+      <p style="margin: 0 0 10px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #43a047; font-weight: 700;">
+        Material${multiple ? 's' : ''} em anexo
+      </p>
+      <ul style="margin: 0; padding-left: 18px; color: #0f3d2e; font-weight: 600; font-size: 14px;">
+        ${itemsList}
+      </ul>
+    </div>
+
+    <p style="font-size: 13px; color: #718096;">
+      Este arquivo contém uma marca d'água exclusiva vinculada à sua compra, para uso pessoal e intransferível — assim como o restante do conteúdo da plataforma.
+    </p>
+
+    ${serialBlock}
+  `
+
+  const html = getEmailTemplate('Produto adquirido', content)
+
+  await transporter.sendMail({
+    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+    to: input.email,
+    subject: multiple
+      ? `Acesso liberado — seus materiais em anexo (${input.items.length} arquivos)`
+      : `Acesso liberado — ${input.items[0]?.title || 'seu material'} em anexo`,
+    html,
+    attachments: input.items.map(item => ({
+      filename: item.filename,
+      content: item.buffer,
+      contentType: 'application/pdf',
+    })),
+  })
+}
+
 // Interface para blocos de lead
 interface LeadBlockForEmail {
   id: string
