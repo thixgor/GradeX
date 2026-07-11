@@ -62,6 +62,15 @@
   * {
     @apply border-border;
   }
+  /* Impede o "vazamento" horizontal no mobile (o limite ultrapassando pelo
+     lado direito). Usa overflow-x: clip em vez de hidden para NÃO criar um
+     container de rolagem — assim headers/elementos position: sticky e fixed
+     continuam funcionando normalmente. */
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: clip;
+  }
   body {
     @apply bg-background text-foreground font-body;
   }
