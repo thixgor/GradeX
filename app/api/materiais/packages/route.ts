@@ -178,6 +178,7 @@ export async function POST(request: NextRequest) {
       coverImage: body.coverImage || '',
       materialIds: body.materialIds || [],
       tags: body.tags || [],
+      autoEmailPdfOnPurchase: body.autoEmailPdfOnPurchase === true,
       allowedGroups: body.allowedGroups || [],
       pricing: body.pricing || 'free',
       price: body.pricing === 'paid' ? (body.price || 0) : 0,
@@ -226,6 +227,9 @@ export async function PUT(request: NextRequest) {
     }
     if ('pricingEventId' in updates) {
       updates.pricingEventId = updates.pricingEventId ? String(updates.pricingEventId) : null
+    }
+    if ('autoEmailPdfOnPurchase' in updates) {
+      updates.autoEmailPdfOnPurchase = updates.autoEmailPdfOnPurchase === true
     }
 
     await db.collection('material_packages').updateOne(

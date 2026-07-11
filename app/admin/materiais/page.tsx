@@ -748,6 +748,7 @@ function AdminMateriaisContent() {
     coverImage: '',
     materialIds: [] as string[],
     tags: '',
+    autoEmailPdfOnPurchase: false,
     allowedGroups: [] as string[],
     pricing: 'free' as 'free' | 'paid',
     price: 0,
@@ -1405,7 +1406,9 @@ function AdminMateriaisContent() {
       setPackageForm({
         _id: pkg._id, title: pkg.title, description: pkg.description || '',
         coverImage: pkg.coverImage || '', materialIds: pkg.materialIds || [],
-        tags: (pkg.tags || []).join(', '), allowedGroups: pkg.allowedGroups || [],
+        tags: (pkg.tags || []).join(', '),
+        autoEmailPdfOnPurchase: (pkg as any).autoEmailPdfOnPurchase === true,
+        allowedGroups: pkg.allowedGroups || [],
         pricing: pkg.pricing, price: pkg.price || 0, originalPrice: pkg.originalPrice || 0,
         pricingEventId: (pkg as any).pricingEventId || null,
         stripePriceId: pkg.stripePriceId || '', isHidden: pkg.isHidden,
@@ -1414,7 +1417,7 @@ function AdminMateriaisContent() {
     } else {
       setPackageForm({
         _id: '', title: '', description: '', coverImage: '', materialIds: [],
-        tags: '', allowedGroups: [], pricing: 'free', price: 0, originalPrice: 0,
+        tags: '', autoEmailPdfOnPurchase: false, allowedGroups: [], pricing: 'free', price: 0, originalPrice: 0,
         pricingEventId: null,
         stripePriceId: '', isHidden: false, isFeatured: false, order: 0,
       })
@@ -2989,6 +2992,25 @@ function AdminMateriaisContent() {
                     onChange={(id) => setPackageForm(p => ({ ...p, pricingEventId: id }))}
                   />
                 )}
+
+                <label className={`flex items-start gap-2 rounded-lg border p-2 text-sm ${packageForm.materialIds.length > 0 ? 'cursor-pointer hover:bg-muted/40' : 'opacity-50 cursor-not-allowed'}`}>
+                  <input
+                    type="checkbox"
+                    disabled={packageForm.materialIds.length === 0}
+                    checked={packageForm.materialIds.length > 0 ? packageForm.autoEmailPdfOnPurchase : false}
+                    onChange={e => setPackageForm(p => ({ ...p, autoEmailPdfOnPurchase: e.target.checked }))}
+                    className="rounded mt-0.5"
+                  />
+                  <span>
+                    <span className="flex items-center gap-1.5 font-medium">
+                      <MailCheck className="h-3.5 w-3.5 text-emerald-500" />
+                      Enviar os PDFs por e-mail automaticamente na compra
+                    </span>
+                    <span className="block text-[11px] text-muted-foreground mt-0.5">
+                      O comprador recebe o PDF (com marca d&apos;água) de todos os materiais do pacote que tenham PDF interno com download ativado. Em compras sem login, a serial key é enviada junto e sua ativação fica restrita ao e-mail usado na compra.
+                    </span>
+                  </span>
+                </label>
 
                 <div className="flex items-center gap-4">
                   <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={packageForm.isFeatured} onChange={e => setPackageForm(p => ({ ...p, isFeatured: e.target.checked }))} className="rounded" /><span className="text-sm">Destaque</span></label>

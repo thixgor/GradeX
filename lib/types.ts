@@ -1402,6 +1402,13 @@ export interface MaterialPackage {
   materialIds: string[]       // IDs dos materiais incluídos no pacote
   tags: string[]
 
+  /**
+   * Envia por e-mail, na compra, o PDF (com marca d'água) de TODOS os materiais
+   * incluídos que tenham PDF interno com download ativado. Para compras sem
+   * login, a serial key passa a ter ativação restrita ao e-mail da compra.
+   */
+  autoEmailPdfOnPurchase?: boolean
+
   // Controle de acesso por grupo (vazio = todos podem acessar)
   allowedGroups?: MaterialAccessGroup[]
 

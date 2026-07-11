@@ -84,15 +84,50 @@ export async function resolveMaterialsWithPdf(
 }
 
 /**
- * Um material é elegível ao envio automático de PDF por e-mail quando o admin
- * habilitou a opção, o download está ativado e há um PDF interno.
+ * Um material tem PDF interno entregável quando existe o arquivo e o download
+ * não foi desativado. (Não considera a opção de envio automático.)
+ */
+export function hasInternalDownloadablePdf(material: any): boolean {
+  return material?.pdfDownloadEnabled !== false && Boolean(material?.pdfFile?.blobUrl)
+}
+
+/**
+ * Um material (avulso) é elegível ao envio automático de PDF por e-mail quando o
+ * admin habilitou a opção, o download está ativado e há um PDF interno.
  */
 export function isAutoEmailEligible(material: any): boolean {
-  return (
-    material?.autoEmailPdfOnPurchase === true &&
-    material?.pdfDownloadEnabled !== false &&
-    Boolean(material?.pdfFile?.blobUrl)
+  return material?.autoEmailPdfOnPurchase === true && hasInternalDownloadablePdf(material)
+}
+
+/**
+ * Materiais a anexar no envio automático de uma compra de PACOTE.
+ *
+ * Ao comprar um pacote, o comprador deve receber o PDF de TODOS os materiais
+ * incluídos (não apenas os que têm a opção marcada individualmente). O pacote é
+ * elegível quando ele próprio tem `autoEmailPdfOnPurchase` OU quando qualquer um
+ * dos materiais incluídos tem — cobrindo pacotes configurados antes de o pacote
+ * ganhar o próprio controle. Sendo elegível, retorna todos os materiais com PDF
+ * interno + download ativo.
+ */
+async function resolvePackageAutoEmailMaterials(db: Db, packageId: string): Promise<any[]> {
+  if (!packageId || !isValidObjectId(packageId)) return []
+  const pkg = await db.collection('material_packages').findOne(
+    { _id: new ObjectId(packageId) },
+    { projection: { materialIds: 1, autoEmailPdfOnPurchase: 1 } }
   )
+  const materialIds: string[] = Array.isArray(pkg?.materialIds) ? pkg!.materialIds : []
+  const objectIds = materialIds.filter(isValidObjectId).map((id) => new ObjectId(id))
+  if (objectIds.length === 0) return []
+
+  const children = await db.collection('materials')
+    .find({ _id: { $in: objectIds } }, { projection: MATERIAL_PDF_PROJECTION })
+    .toArray()
+
+  const deliverable = children.filter(hasInternalDownloadablePdf)
+  const packageEligible =
+    pkg?.autoEmailPdfOnPurchase === true || children.some(isAutoEmailEligible)
+
+  return packageEligible ? deliverable : []
 }
 
 /**
@@ -161,8 +196,13 @@ export async function buildAutoEmailPdfAttachments(
   identity: WatermarkIdentity
 ): Promise<{ items: PdfEmailItem[]; eligible: boolean }> {
   try {
-    const materials = await resolveMaterialsWithPdf(db, itemType, itemId)
-    const eligibleMaterials = materials.filter(isAutoEmailEligible)
+    // Pacote: entrega o PDF de TODOS os materiais incluídos (quando elegível).
+    // Material avulso/flashcard: entrega apenas se o próprio material está
+    // marcado para envio automático.
+    const eligibleMaterials = itemType === 'package'
+      ? await resolvePackageAutoEmailMaterials(db, itemId)
+      : (await resolveMaterialsWithPdf(db, itemType, itemId)).filter(isAutoEmailEligible)
+
     if (eligibleMaterials.length === 0) return { items: [], eligible: false }
     const { items } = await prepareWatermarkedItems(eligibleMaterials, identity)
     return { items, eligible: true }
