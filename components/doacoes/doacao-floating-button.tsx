@@ -1,17 +1,34 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Heart, X, Trophy } from 'lucide-react'
 import { useAppShell } from '@/components/app-shell'
+import { useFloatingDock } from '@/context/FloatingDockContext'
 import { DoacaoContent } from './doacao-content'
 import { DoacaoForm } from './doacao-form'
 import { DoacaoRanking } from './doacao-ranking'
 import { DoacaoEcgAnimation } from './doacao-ecg-animation'
 
 export function DoacaoFloatingButton() {
-  const [open, setOpen] = useState(false)
+  const dock = useFloatingDock()
+  // Abertura controlada pelo dock compartilhado (um painel por vez; abre pelo
+  // gatilho desktop ou pelo FAB consolidado no mobile).
+  const open = dock?.activePanel === 'donation'
+  const setOpen = (value: boolean) => {
+    if (value) dock?.open('donation')
+    else dock?.close()
+  }
   const [formOpen, setFormOpen] = useState(false)
   const { sidebarCollapsed } = useAppShell()
+
+  // Registra a ação "Apoiar" no dock flutuante (usado no mobile).
+  const register = dock?.register
+  const unregister = dock?.unregister
+  useEffect(() => {
+    if (!register || !unregister) return
+    register({ id: 'donation', label: 'Apoiar', order: 2 })
+    return () => unregister('donation')
+  }, [register, unregister])
 
   // Empurra o botão para não ficar atrás do sidebar no desktop
   // Mobile: sidebar é overlay (não empurra), fica em bottom-5 left-5
@@ -20,11 +37,11 @@ export function DoacaoFloatingButton() {
 
   return (
     <>
-      {/* ── Botão flutuante — canto inferior esquerdo ── */}
+      {/* ── Botão flutuante — canto inferior esquerdo (desktop apenas) ── */}
       <button
         onClick={() => setOpen(true)}
         aria-label="Apoiar com doação Pix"
-        className={`fixed bottom-5 left-5 ${leftOffset} z-40 group flex items-center gap-2.5 doacao-float-idle transition-[left] duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)]`}
+        className={`fixed bottom-5 left-5 ${leftOffset} z-40 group hidden lg:flex items-center gap-2.5 doacao-float-idle transition-[left] duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)]`}
         style={{ filter: 'drop-shadow(0 0 16px rgba(70,129,82,0.45))' }}
       >
         {/* Anel de pulso externo */}

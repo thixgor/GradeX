@@ -17,8 +17,8 @@ import { UFS, resolveFreight, estimateDeliveryDate } from '@/lib/shop'
 
 const brl = (n: number) => `R$ ${Number(n).toFixed(2).replace('.', ',')}`
 const inputStyle: React.CSSProperties = {
-  height: 38, borderRadius: 9, border: '1px solid rgba(255,255,255,0.14)',
-  background: 'rgba(0,0,0,0.25)', color: 'white', fontSize: 13, padding: '0 10px', width: '100%',
+  height: 38, borderRadius: 9, border: '1px solid hsl(var(--border))',
+  background: 'hsl(var(--background))', color: 'hsl(var(--foreground))', fontSize: 13, padding: '0 10px', width: '100%',
 }
 
 export function UnifiedCheckoutPayment({
@@ -99,18 +99,18 @@ export function UnifiedCheckoutPayment({
   return (
     <div>
       {/* Itens físicos incluídos */}
-      <div style={{ marginBottom: 14, borderRadius: 12, border: '1px solid rgba(70,129,82,0.35)', background: 'rgba(70,129,82,0.10)', padding: 12 }}>
-        <p style={{ margin: '0 0 8px', display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 800, color: 'white' }}>
-          <Printer size={14} style={{ color: '#7ee2a0' }} /> Impressos nesta compra
+      <div style={{ marginBottom: 14, borderRadius: 12, border: '1px solid hsl(var(--primary) / 0.4)', background: 'hsl(var(--primary) / 0.12)', padding: 12 }}>
+        <p style={{ margin: '0 0 8px', display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 800, color: 'hsl(var(--foreground))' }}>
+          <Printer size={14} style={{ color: 'hsl(var(--primary))' }} /> Impressos nesta compra
         </p>
         {eligible.map((i) => (
-          <div key={`${i.productId}::${i.versionId || ''}`} style={{ display: 'flex', justifyContent: 'space-between', gap: 8, fontSize: 12, color: 'rgba(255,255,255,0.8)', marginBottom: 3 }}>
+          <div key={`${i.productId}::${i.versionId || ''}`} style={{ display: 'flex', justifyContent: 'space-between', gap: 8, fontSize: 12, color: 'hsl(var(--foreground))', marginBottom: 3 }}>
             <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {i.quantity}× {i.title}{i.versionName ? ` (${i.versionName})` : ''}
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-              <strong style={{ color: 'white' }}>{brl(unitOf(i) * i.quantity)}</strong>
-              <button onClick={() => removeItem(i.productId, i.versionId)} style={{ background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: 11 }}>remover</button>
+              <strong style={{ color: 'hsl(var(--foreground))' }}>{brl(unitOf(i) * i.quantity)}</strong>
+              <button onClick={() => removeItem(i.productId, i.versionId)} style={{ background: 'transparent', border: 'none', color: 'hsl(var(--muted-foreground) / 0.75)', cursor: 'pointer', fontSize: 11 }}>remover</button>
             </span>
           </div>
         ))}
@@ -118,7 +118,7 @@ export function UnifiedCheckoutPayment({
 
       {/* Entrega */}
       <div style={{ marginBottom: 14 }}>
-        <p style={{ margin: '0 0 8px', fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'rgba(255,255,255,0.6)' }}>Entrega dos impressos</p>
+        <p style={{ margin: '0 0 8px', fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'hsl(var(--muted-foreground))' }}>Entrega dos impressos</p>
         <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
           <button onClick={() => setDeliveryType('pickup')} style={tabStyle(deliveryType === 'pickup')}>
             <MapPin size={15} /> Retirar
@@ -130,13 +130,13 @@ export function UnifiedCheckoutPayment({
 
         {deliveryType === 'pickup' ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            {(settings?.pickupPoints || []).length === 0 && <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>Nenhum ponto disponível.</p>}
+            {(settings?.pickupPoints || []).length === 0 && <p style={{ fontSize: 12, color: 'hsl(var(--muted-foreground))' }}>Nenhum ponto disponível.</p>}
             {(settings?.pickupPoints || []).map((pp) => (
-              <label key={pp.id} style={{ display: 'flex', gap: 8, alignItems: 'flex-start', cursor: 'pointer', borderRadius: 9, border: `1px solid ${pickupPointId === pp.id ? 'rgba(70,129,82,0.7)' : 'rgba(255,255,255,0.12)'}`, padding: 10, background: pickupPointId === pp.id ? 'rgba(70,129,82,0.12)' : 'transparent' }}>
+              <label key={pp.id} style={{ display: 'flex', gap: 8, alignItems: 'flex-start', cursor: 'pointer', borderRadius: 9, border: `1px solid ${pickupPointId === pp.id ? 'hsl(var(--primary) / 0.6)' : 'hsl(var(--border))'}`, padding: 10, background: pickupPointId === pp.id ? 'hsl(var(--primary) / 0.12)' : 'transparent' }}>
                 <input type="radio" checked={pickupPointId === pp.id} onChange={() => setPickupPointId(pp.id)} style={{ marginTop: 3 }} />
                 <span>
-                  <span style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'white' }}>{pp.name}</span>
-                  {pp.address && <span style={{ display: 'block', fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>{pp.address}</span>}
+                  <span style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'hsl(var(--foreground))' }}>{pp.name}</span>
+                  {pp.address && <span style={{ display: 'block', fontSize: 11, color: 'hsl(var(--muted-foreground))' }}>{pp.address}</span>}
                 </span>
               </label>
             ))}
@@ -158,19 +158,19 @@ export function UnifiedCheckoutPayment({
               </select>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              {(settings?.deliveryMethods || []).length === 0 && <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>Nenhum método configurado.</p>}
+              {(settings?.deliveryMethods || []).length === 0 && <p style={{ fontSize: 12, color: 'hsl(var(--muted-foreground))' }}>Nenhum método configurado.</p>}
               {(settings?.deliveryMethods || []).map((m) => {
                 const f = m.freeShipping ? 0 : resolveFreight(m, address.uf)
                 return (
-                  <label key={m.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 8, alignItems: 'center', cursor: 'pointer', borderRadius: 9, border: `1px solid ${deliveryMethodId === m.id ? 'rgba(70,129,82,0.7)' : 'rgba(255,255,255,0.12)'}`, padding: 10 }}>
+                  <label key={m.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 8, alignItems: 'center', cursor: 'pointer', borderRadius: 9, border: `1px solid ${deliveryMethodId === m.id ? 'hsl(var(--primary) / 0.6)' : 'hsl(var(--border))'}`, padding: 10 }}>
                     <span style={{ display: 'flex', gap: 8 }}>
                       <input type="radio" checked={deliveryMethodId === m.id} onChange={() => setDeliveryMethodId(m.id)} />
                       <span>
-                        <span style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'white' }}>{m.name}</span>
-                        <span style={{ display: 'block', fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>{m.estimatedDaysMin}–{m.estimatedDaysMax} dias úteis</span>
+                        <span style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'hsl(var(--foreground))' }}>{m.name}</span>
+                        <span style={{ display: 'block', fontSize: 11, color: 'hsl(var(--muted-foreground))' }}>{m.estimatedDaysMin}–{m.estimatedDaysMax} dias úteis</span>
                       </span>
                     </span>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: m.freeShipping ? '#7ee2a0' : 'white' }}>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: m.freeShipping ? 'hsl(var(--primary))' : 'hsl(var(--foreground))' }}>
                       {m.freeShipping ? 'Grátis' : address.uf ? (f > 0 ? brl(f) : 'Grátis') : '—'}
                     </span>
                   </label>
@@ -183,7 +183,7 @@ export function UnifiedCheckoutPayment({
 
       {/* Sob encomenda */}
       {anyMadeToOrder && (
-        <div style={{ marginBottom: 12, display: 'flex', gap: 8, alignItems: 'flex-start', borderRadius: 10, border: '1px solid rgba(245,158,11,0.3)', background: 'rgba(245,158,11,0.10)', padding: '10px 12px', fontSize: 12, color: 'rgba(253,230,138,0.98)' }}>
+        <div style={{ marginBottom: 12, display: 'flex', gap: 8, alignItems: 'flex-start', borderRadius: 10, border: '1px solid hsl(var(--accent) / 0.4)', background: 'hsl(var(--accent) / 0.15)', padding: '10px 12px', fontSize: 12, color: 'hsl(var(--foreground))' }}>
           <Clock size={15} style={{ flexShrink: 0, marginTop: 1 }} />
           <span>
             <strong>Sob encomenda:</strong> impresso após a compra
@@ -193,18 +193,18 @@ export function UnifiedCheckoutPayment({
       )}
 
       {/* Resumo combinado */}
-      <div style={{ marginBottom: 14, fontSize: 13, color: 'rgba(255,255,255,0.7)' }}>
+      <div style={{ marginBottom: 14, fontSize: 13, color: 'hsl(var(--muted-foreground))' }}>
         <Row label="Digital" value={brl(digitalPayable)} />
         <Row label="Impressos" value={brl(physicalSubtotal)} />
         <Row label="Frete" value={deliveryType === 'pickup' ? 'Grátis' : address.uf || pickupPointId ? (delivery.freight > 0 ? brl(delivery.freight) : 'Grátis') : '—'} />
-        <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.1)', marginTop: 6, paddingTop: 6, fontSize: 16, fontWeight: 800, color: 'white' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid hsl(var(--border))', marginTop: 6, paddingTop: 6, fontSize: 16, fontWeight: 800, color: 'hsl(var(--foreground))' }}>
           <span>Total</span><span>{brl(combined)}</span>
         </div>
         {delivery.valid && (
-          <div style={{ marginTop: 8, display: 'flex', gap: 6, alignItems: 'center', fontSize: 12, color: 'rgba(255,255,255,0.85)' }}>
-            <CalendarClock size={14} style={{ color: '#7ee2a0' }} />
+          <div style={{ marginTop: 8, display: 'flex', gap: 6, alignItems: 'center', fontSize: 12, color: 'hsl(var(--foreground))' }}>
+            <CalendarClock size={14} style={{ color: 'hsl(var(--primary))' }} />
             {deliveryType === 'pickup' ? 'Disponível para retirada até ' : 'Previsão de entrega: '}
-            <strong style={{ color: 'white' }}>
+            <strong style={{ color: 'hsl(var(--foreground))' }}>
               {estimateDeliveryDate({ deliveryType, method: delivery.selectedMethod, maxProductionDays }).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' })}
             </strong>
           </div>
@@ -212,7 +212,7 @@ export function UnifiedCheckoutPayment({
       </div>
 
       {!delivery.valid ? (
-        <div style={{ borderRadius: 10, background: 'rgba(255,255,255,0.05)', padding: '12px 14px', fontSize: 12, color: 'rgba(255,255,255,0.6)', textAlign: 'center' }}>
+        <div style={{ borderRadius: 10, background: 'hsl(var(--muted) / 0.5)', padding: '12px 14px', fontSize: 12, color: 'hsl(var(--muted-foreground))', textAlign: 'center' }}>
           Escolha a entrega dos impressos {deliveryType === 'shipping' ? '(endereço + método)' : ''} para pagar.
         </div>
       ) : (
@@ -232,7 +232,7 @@ export function UnifiedCheckoutPayment({
         />
       )}
 
-      <p style={{ margin: '12px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>
+      <p style={{ margin: '12px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, fontSize: 11, color: 'hsl(var(--muted-foreground) / 0.75)' }}>
         <Truck size={12} /> {settings?.sellerFooter || 'Entregue por DomineAqui LTDA — Rio de Janeiro'}
       </p>
     </div>
@@ -242,7 +242,7 @@ export function UnifiedCheckoutPayment({
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
-      <span>{label}</span><span style={{ color: 'white' }}>{value}</span>
+      <span>{label}</span><span style={{ color: 'hsl(var(--foreground))' }}>{value}</span>
     </div>
   )
 }
@@ -251,8 +251,8 @@ function tabStyle(active: boolean): React.CSSProperties {
   return {
     flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
     height: 40, borderRadius: 10, cursor: 'pointer', fontSize: 13, fontWeight: 700,
-    border: `1.5px solid ${active ? 'rgba(70,129,82,0.8)' : 'rgba(255,255,255,0.14)'}`,
-    background: active ? 'rgba(70,129,82,0.15)' : 'transparent',
-    color: active ? 'white' : 'rgba(255,255,255,0.6)',
+    border: `1.5px solid ${active ? 'hsl(var(--primary) / 0.7)' : 'hsl(var(--border))'}`,
+    background: active ? 'hsl(var(--primary) / 0.15)' : 'transparent',
+    color: active ? 'hsl(var(--foreground))' : 'hsl(var(--muted-foreground))',
   }
 }

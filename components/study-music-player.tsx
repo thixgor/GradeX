@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useAuthUser } from '@/hooks/use-auth-user'
+import { useFloatingDock } from '@/context/FloatingDockContext'
 
 interface StudyPlaylist {
     _id: string
@@ -93,6 +94,10 @@ declare global {
 export function StudyMusicPlayer() {
     const pathname = usePathname()
     const { isAuthenticated, loading: authLoading } = useAuthUser()
+    const dock = useFloatingDock()
+    // Expansão controlada pelo dock compartilhado (um painel por vez; no mobile
+    // o player é aberto pelo FAB consolidado em vez de um orbe solto na tela).
+    const isExpanded = dock?.activePanel === 'music'
     const [playlists, setPlaylists] = useState<StudyPlaylist[]>([])
     const [loading, setLoading] = useState(true)
     const [playerReady, setPlayerReady] = useState(false)
@@ -317,18 +322,18 @@ export function StudyMusicPlayer() {
 
     // Floating animation
     useEffect(() => {
-        if (!state.isExpanded) {
+        if (!isExpanded) {
             const interval = setInterval(() => {
                 floatY.set(Math.sin(Date.now() / 2000) * 3)
                 floatX.set(Math.cos(Date.now() / 3000) * 2)
             }, 50)
             return () => clearInterval(interval)
         }
-    }, [state.isExpanded, floatY, floatX])
+    }, [isExpanded, floatY, floatX])
 
     // Subtle pulse when playing
     useEffect(() => {
-        if (state.isPlaying && !state.isExpanded) {
+        if (state.isPlaying && !isExpanded) {
             const interval = setInterval(() => {
                 pulseScale.set(1 + Math.sin(Date.now() / 800) * 0.02)
             }, 50)
@@ -336,7 +341,7 @@ export function StudyMusicPlayer() {
         } else {
             pulseScale.set(1)
         }
-    }, [state.isPlaying, state.isExpanded, pulseScale])
+    }, [state.isPlaying, isExpanded, pulseScale])
 
     const handlePlayPause = () => {
         if (!playerRef.current) return
@@ -397,18 +402,27 @@ export function StudyMusicPlayer() {
     }
 
     const toggleExpand = () => {
-        setState(prev => ({ ...prev, isExpanded: !prev.isExpanded }))
+        if (isExpanded) dock?.close()
+        else dock?.open('music')
         setShowPlaylistSelector(false)
         setShowVolumeSlider(false)
         setShowSpeedPicker(false)
     }
 
-    // Don't render until hydrated (prevents SSR flash)
-    if (!hydrated) return null
-    // Don't render if user is not authenticated
-    if (authLoading || !isAuthenticated) return null
-    // Don't render if no playlists
-    if (loading || playlists.length === 0) return null
+    // Só renderiza quando hidratado, autenticado e com playlists disponíveis.
+    const shouldRender = hydrated && !authLoading && isAuthenticated && !loading && playlists.length > 0
+
+    // Registra a ação "Música" no dock flutuante (mobile). `active` reflete se
+    // está tocando, para o dock exibir o indicador pulsante.
+    const register = dock?.register
+    const unregister = dock?.unregister
+    useEffect(() => {
+        if (!register || !unregister || !shouldRender) return
+        register({ id: 'music', label: 'Música', order: 0, active: state.isPlaying })
+        return () => unregister('music')
+    }, [register, unregister, shouldRender, state.isPlaying])
+
+    if (!shouldRender) return null
 
     return (
         <>
@@ -436,7 +450,7 @@ export function StudyMusicPlayer() {
                 }}
             >
                 <AnimatePresence mode="wait">
-                    {state.isExpanded ? (
+                    {isExpanded ? (
                         /* Expanded State */
                         <motion.div
                             key="expanded"
@@ -728,7 +742,7 @@ export function StudyMusicPlayer() {
                         <motion.button
                             key="minimized"
                             onClick={toggleExpand}
-                            className="relative group"
+                            className="relative group hidden lg:block"
                             initial={{ opacity: 0, scale: 0.5 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.5 }}

@@ -105,18 +105,22 @@ const STATUS_LABELS: Record<CheckoutOrderResponse['status'], string> = {
   expired: 'Expirado',
 }
 
+/**
+ * Estilos baseados nos tokens de tema (CSS variables) para funcionar tanto no
+ * dark quanto no light mode. Nada de cores fixas escuras/brancas — assim o
+ * checkout acompanha o tema da página.
+ */
 const glassCard: React.CSSProperties = {
-  background: 'rgba(6,20,10,0.85)',
-  backdropFilter: 'blur(20px)',
-  WebkitBackdropFilter: 'blur(20px)',
-  border: '1px solid rgba(52,211,153,0.15)',
+  background: 'hsl(var(--card))',
+  border: '1px solid hsl(var(--border))',
   borderRadius: '16px',
+  boxShadow: '0 8px 32px hsl(var(--foreground) / 0.06)',
 }
 
 const glassInput: React.CSSProperties = {
-  background: 'rgba(255,255,255,0.05)',
-  border: '1px solid rgba(52,211,153,0.2)',
-  color: 'white',
+  background: 'hsl(var(--background))',
+  border: '1px solid hsl(var(--border))',
+  color: 'hsl(var(--foreground))',
   borderRadius: '10px',
   padding: '10px 14px',
   width: '100%',
@@ -126,10 +130,9 @@ const glassInput: React.CSSProperties = {
 }
 
 const activeTab: React.CSSProperties = {
-  background: 'rgba(52,211,153,0.2)',
-  border: '1px solid rgba(52,211,153,0.5)',
-  boxShadow: '0 0 20px rgba(52,211,153,0.2)',
-  color: '#34d399',
+  background: 'hsl(var(--primary) / 0.12)',
+  border: '1px solid hsl(var(--primary) / 0.5)',
+  color: 'hsl(var(--primary))',
   borderRadius: '10px',
   padding: '8px 18px',
   cursor: 'pointer',
@@ -142,9 +145,9 @@ const activeTab: React.CSSProperties = {
 }
 
 const inactiveTab: React.CSSProperties = {
-  background: 'rgba(255,255,255,0.05)',
-  border: '1px solid rgba(255,255,255,0.1)',
-  color: 'rgba(255,255,255,0.6)',
+  background: 'hsl(var(--muted))',
+  border: '1px solid hsl(var(--border))',
+  color: 'hsl(var(--muted-foreground))',
   borderRadius: '10px',
   padding: '8px 18px',
   cursor: 'pointer',
@@ -157,11 +160,11 @@ const inactiveTab: React.CSSProperties = {
 }
 
 const submitBtn: React.CSSProperties = {
-  background: 'linear-gradient(135deg, #059669, #34d399)',
-  boxShadow: '0 0 30px rgba(52,211,153,0.3)',
+  background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.82))',
+  boxShadow: '0 8px 24px hsl(var(--primary) / 0.28)',
   border: 'none',
   borderRadius: '12px',
-  color: 'white',
+  color: 'hsl(var(--primary-foreground))',
   fontWeight: 700,
   fontSize: '15px',
   padding: '12px 28px',
@@ -176,7 +179,7 @@ const labelStyle: React.CSSProperties = {
   display: 'block',
   fontSize: '12px',
   fontWeight: 600,
-  color: 'rgba(52,211,153,0.8)',
+  color: 'hsl(var(--primary))',
   marginBottom: '6px',
   textTransform: 'uppercase',
   letterSpacing: '0.05em',
@@ -444,7 +447,7 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
                   style={{ ...glassInput, cursor: 'pointer' }}
                 >
                   {[1, 2, 3, 4, 5, 6, 8, 10, 12].map(n => (
-                    <option key={n} value={n} style={{ background: '#06140a' }}>
+                    <option key={n} value={n} style={{ background: 'hsl(var(--card))' }}>
                       {n}x de R$ {(props.amount / n).toFixed(2).replace('.', ',')}
                     </option>
                   ))}
@@ -457,16 +460,16 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
         {method === 'pix' && (
           <div style={{
             padding: '16px',
-            background: 'rgba(52,211,153,0.05)',
-            border: '1px solid rgba(52,211,153,0.15)',
+            background: 'hsl(var(--primary) / 0.06)',
+            border: '1px solid hsl(var(--primary) / 0.18)',
             borderRadius: '12px',
-            color: 'rgba(255,255,255,0.7)',
+            color: 'hsl(var(--muted-foreground))',
             fontSize: '14px',
             lineHeight: '1.6',
           }}>
-            <QrCode size={32} style={{ color: '#34d399', marginBottom: '8px' }} />
+            <QrCode size={32} style={{ color: 'hsl(var(--primary))', marginBottom: '8px' }} />
             <p>Após confirmar, geraremos o QR Code e o código copia-e-cola para você pagar pelo app do seu banco.</p>
-            <p style={{ marginTop: '8px', fontSize: '12px', color: 'rgba(52,211,153,0.7)' }}>O pagamento é confirmado em instantes.</p>
+            <p style={{ marginTop: '8px', fontSize: '12px', color: 'hsl(var(--primary))' }}>O pagamento é confirmado em instantes.</p>
           </div>
         )}
 
@@ -493,7 +496,7 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
                 style={glassInput}
               />
             </div>
-            <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', padding: '10px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px' }}>
+            <p style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', padding: '10px', background: 'hsl(var(--muted) / 0.5)', borderRadius: '8px' }}>
               O boleto vence em 24h. Liberação ocorre automaticamente em até 2h após o pagamento ser compensado.
             </p>
           </div>
@@ -505,10 +508,10 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
             alignItems: 'flex-start',
             gap: '10px',
             padding: '12px 16px',
-            background: 'rgba(239,68,68,0.1)',
-            border: '1px solid rgba(239,68,68,0.3)',
+            background: 'hsl(var(--destructive) / 0.1)',
+            border: '1px solid hsl(var(--destructive) / 0.35)',
             borderRadius: '10px',
-            color: '#f87171',
+            color: 'hsl(var(--destructive))',
             fontSize: '14px',
           }}>
             <AlertCircle size={16} style={{ marginTop: '2px', flexShrink: 0 }} />
@@ -518,12 +521,12 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
 
         {/* Footer with amount + submit */}
         <div
-          style={{ borderTop: '1px solid rgba(52,211,153,0.1)', paddingTop: '16px' }}
+          style={{ borderTop: '1px solid hsl(var(--primary) / 0.12)', paddingTop: '16px' }}
           className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
         >
           <div>
-            <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', marginBottom: '2px' }}>{props.description}</p>
-            <p style={{ fontSize: '26px', fontWeight: 800, color: '#34d399', letterSpacing: '-0.02em' }}>
+            <p style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '2px' }}>{props.description}</p>
+            <p style={{ fontSize: '26px', fontWeight: 800, color: 'hsl(var(--primary))', letterSpacing: '-0.02em' }}>
               R$ {props.amount.toFixed(2).replace('.', ',')}
             </p>
           </div>
@@ -543,7 +546,7 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
         </div>
 
         {/* Trust footer */}
-        <p style={{ textAlign: 'center', fontSize: '11px', color: 'rgba(255,255,255,0.3)', marginTop: '4px' }}>
+        <p style={{ textAlign: 'center', fontSize: '11px', color: 'hsl(var(--muted-foreground) / 0.6)', marginTop: '4px' }}>
           🔒 Pagamento seguro · Mercado Pago · Dados criptografados
         </p>
       </form>
@@ -569,12 +572,12 @@ function ResultPanel({ order, method, onReset }: { order: CheckoutOrderResponse;
         ...glassCard,
         padding: '32px',
         textAlign: 'center',
-        border: '1px solid rgba(52,211,153,0.4)',
-        boxShadow: '0 0 40px rgba(52,211,153,0.15)',
+        border: '1px solid hsl(var(--primary) / 0.45)',
+        boxShadow: '0 0 40px hsl(var(--primary) / 0.18)',
       }}>
-        <CheckCircle2 size={48} style={{ color: '#34d399', margin: '0 auto 16px' }} />
-        <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#34d399', marginBottom: '8px' }}>Pagamento aprovado!</h3>
-        <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', marginBottom: '20px' }}>Tudo certo! Seu acesso foi liberado.</p>
+        <CheckCircle2 size={48} style={{ color: 'hsl(var(--primary))', margin: '0 auto 16px' }} />
+        <h3 style={{ fontSize: '20px', fontWeight: 700, color: 'hsl(var(--primary))', marginBottom: '8px' }}>Pagamento aprovado!</h3>
+        <p style={{ color: 'hsl(var(--muted-foreground))', fontSize: '14px', marginBottom: '20px' }}>Tudo certo! Seu acesso foi liberado.</p>
         {order.successRedirect && (
           <button
             onClick={() => (window.location.href = order.successRedirect!)}
@@ -593,20 +596,20 @@ function ResultPanel({ order, method, onReset }: { order: CheckoutOrderResponse;
         ...glassCard,
         padding: '32px',
         textAlign: 'center',
-        border: '1px solid rgba(239,68,68,0.4)',
-        boxShadow: '0 0 40px rgba(239,68,68,0.1)',
+        border: '1px solid hsl(var(--destructive) / 0.4)',
+        boxShadow: '0 0 40px hsl(var(--destructive) / 0.1)',
       }}>
-        <AlertCircle size={48} style={{ color: '#f87171', margin: '0 auto 16px' }} />
-        <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#f87171', marginBottom: '8px' }}>{STATUS_LABELS[order.status]}</h3>
+        <AlertCircle size={48} style={{ color: 'hsl(var(--destructive))', margin: '0 auto 16px' }} />
+        <h3 style={{ fontSize: '20px', fontWeight: 700, color: 'hsl(var(--destructive))', marginBottom: '8px' }}>{STATUS_LABELS[order.status]}</h3>
         {order.statusDetail && (
-          <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '13px', marginBottom: '20px' }}>Detalhe: {order.statusDetail}</p>
+          <p style={{ color: 'hsl(var(--muted-foreground))', fontSize: '13px', marginBottom: '20px' }}>Detalhe: {order.statusDetail}</p>
         )}
         <button
           onClick={onReset}
           style={{
             ...inactiveTab,
             padding: '10px 24px',
-            color: 'white',
+            color: 'hsl(var(--foreground))',
           }}
         >
           Tentar novamente
@@ -620,10 +623,10 @@ function ResultPanel({ order, method, onReset }: { order: CheckoutOrderResponse;
     return (
       <div style={{ ...glassCard, padding: '28px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <QrCode size={22} style={{ color: '#34d399' }} />
-          <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'white' }}>Pague com Pix</h3>
+          <QrCode size={22} style={{ color: 'hsl(var(--primary))' }} />
+          <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'hsl(var(--foreground))' }}>Pague com Pix</h3>
         </div>
-        <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', marginTop: '-8px' }}>
+        <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginTop: '-8px' }}>
           Escaneie o QR Code abaixo com o app do seu banco ou copie o código.
         </p>
         {order.pix.qrCodeBase64 && (
@@ -635,7 +638,7 @@ function ResultPanel({ order, method, onReset }: { order: CheckoutOrderResponse;
                 width: '200px',
                 height: '200px',
                 borderRadius: '12px',
-                border: '2px solid rgba(52,211,153,0.3)',
+                border: '2px solid hsl(var(--primary) / 0.35)',
                 padding: '8px',
                 background: 'white',
               }}
@@ -669,7 +672,7 @@ function ResultPanel({ order, method, onReset }: { order: CheckoutOrderResponse;
             </button>
           </div>
         </div>
-        <p style={{ fontSize: '12px', color: 'rgba(52,211,153,0.7)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <p style={{ fontSize: '12px', color: 'hsl(var(--primary))', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Loader2 size={14} className="animate-spin" />
           Aguardando confirmação — sua tela atualiza automaticamente.
         </p>
@@ -682,8 +685,8 @@ function ResultPanel({ order, method, onReset }: { order: CheckoutOrderResponse;
     return (
       <div style={{ ...glassCard, padding: '28px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Barcode size={22} style={{ color: '#34d399' }} />
-          <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'white' }}>Boleto gerado</h3>
+          <Barcode size={22} style={{ color: 'hsl(var(--primary))' }} />
+          <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'hsl(var(--foreground))' }}>Boleto gerado</h3>
         </div>
         {order.boleto.ticketUrl && (
           <a
@@ -705,7 +708,7 @@ function ResultPanel({ order, method, onReset }: { order: CheckoutOrderResponse;
             />
           </div>
         )}
-        <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>
+        <p style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground) / 0.75)' }}>
           Liberação ocorre automaticamente após a compensação (até 2 dias úteis).
         </p>
       </div>
@@ -715,9 +718,9 @@ function ResultPanel({ order, method, onReset }: { order: CheckoutOrderResponse;
   // Generic pending
   return (
     <div style={{ ...glassCard, padding: '28px', textAlign: 'center' }}>
-      <Loader2 size={36} style={{ color: '#34d399', margin: '0 auto 12px', animation: 'spin 1s linear infinite' }} />
-      <h3 style={{ fontSize: '17px', fontWeight: 600, color: 'white', marginBottom: '6px' }}>{STATUS_LABELS[order.status]}</h3>
-      <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>{order.statusDetail || 'Processando...'}</p>
+      <Loader2 size={36} style={{ color: 'hsl(var(--primary))', margin: '0 auto 12px', animation: 'spin 1s linear infinite' }} />
+      <h3 style={{ fontSize: '17px', fontWeight: 600, color: 'hsl(var(--foreground))', marginBottom: '6px' }}>{STATUS_LABELS[order.status]}</h3>
+      <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>{order.statusDetail || 'Processando...'}</p>
     </div>
   )
 }
