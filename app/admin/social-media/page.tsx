@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -8,10 +8,11 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Mail, MessageCircle, Send, History, Route, Loader2, Check, AlertCircle } from 'lucide-react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Mail, MessageCircle, Send, History, Route, Loader2, Check, AlertCircle, Eye, Sparkles } from 'lucide-react'
 
 type Channel = 'email' | 'whatsapp'
-type Audience = 'all-users' | 'contacts' | 'campaign'
+type Audience = 'all-users' | 'contacts' | 'campaign' | 'manual'
 type Tab = 'compose' | 'history' | 'journeys'
 
 interface HistoryMsg {
@@ -44,6 +45,63 @@ const STATUS_COLORS: Record<string, string> = {
     skipped: 'bg-gray-500/15 text-gray-500',
 }
 
+// Tokens de personalização disponíveis (resolvidos por destinatário no envio real).
+const TOKENS: { token: string; label: string }[] = [
+    { token: '{{firstName}}', label: 'Nome' },
+    { token: '{{persuasiveTag}}', label: 'Tag persuasiva' },
+    { token: '{{totalStudents}}', label: 'Total de estudantes' },
+    { token: '{{campaignLeads}}', label: 'Leads da campanha' },
+    { token: '{{campaignName}}', label: 'Nome da campanha' },
+    { token: '{{authority}}', label: 'Autoridade' },
+]
+
+function insertAtCursor(
+    el: HTMLTextAreaElement | HTMLInputElement | null,
+    value: string,
+    setValue: (v: string) => void,
+    token: string,
+) {
+    if (!el) {
+        setValue(value + token)
+        return
+    }
+    const start = el.selectionStart ?? value.length
+    const end = el.selectionEnd ?? value.length
+    const next = value.slice(0, start) + token + value.slice(end)
+    setValue(next)
+    requestAnimationFrame(() => {
+        el.focus()
+        const pos = start + token.length
+        el.setSelectionRange(pos, pos)
+    })
+}
+
+function TokenToolbar({
+    fieldRef,
+    value,
+    setValue,
+}: {
+    fieldRef: React.RefObject<HTMLTextAreaElement | HTMLInputElement>
+    value: string
+    setValue: (v: string) => void
+}) {
+    return (
+        <div className="flex flex-wrap gap-1.5">
+            {TOKENS.map((t) => (
+                <button
+                    key={t.token}
+                    type="button"
+                    onClick={() => insertAtCursor(fieldRef.current, value, setValue, t.token)}
+                    className="rounded-full border border-dashed border-input px-2.5 py-0.5 text-xs text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+                    title={t.token}
+                >
+                    + {t.label}
+                </button>
+            ))}
+        </div>
+    )
+}
+
 export default function SocialMediaPage() {
     const [tab, setTab] = useState<Tab>('compose')
 
@@ -55,9 +113,24 @@ export default function SocialMediaPage() {
     const [content, setContent] = useState('')
     const [previewText, setPreviewText] = useState('')
     const [waText, setWaText] = useState('')
+    const [manualRecipients, setManualRecipients] = useState('')
+    const [manualPersuasiveTag, setManualPersuasiveTag] = useState('')
     const [checkConsent, setCheckConsent] = useState(true)
+    const [assumeGranted, setAssumeGranted] = useState(false)
     const [sending, setSending] = useState(false)
-    const [result, setResult] = useState<{ ok: boolean; message: string } | null>(null)
+    const [result, setResult] = useState<{ ok: boolean; message: string; skipped?: Record<string, number>; invalid?: string[] } | null>(null)
+
+    const subjectRef = useRef<HTMLInputElement>(null)
+    const contentRef = useRef<HTMLTextAreaElement>(null)
+    const waTextRef = useRef<HTMLTextAreaElement>(null)
+
+    // Preview modal state
+    const [previewOpen, setPreviewOpen] = useState(false)
+    const [previewLoading, setPreviewLoading] = useState(false)
+    const [previewSampleName, setPreviewSampleName] = useState('Maria Estudante')
+    const [previewTag, setPreviewTag] = useState('')
+    const [previewData, setPreviewData] = useState<{ emailSubject?: string; emailHtml?: string; whatsappText?: string } | null>(null)
+    const [previewChannel, setPreviewChannel] = useState<Channel>('email')
 
     // History state
     const [messages, setMessages] = useState<HistoryMsg[]>([])
@@ -71,9 +144,51 @@ export default function SocialMediaPage() {
     const toggleChannel = (c: Channel) =>
         setChannels((prev) => (prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c]))
 
+    // Assume consentimento por padrão para público "manual" ou "todos os usuários".
+    useEffect(() => {
+        setAssumeGranted(audience === 'manual' || audience === 'all-users')
+    }, [audience])
+
+    useEffect(() => {
+        if (audience === 'manual' && manualPersuasiveTag) setPreviewTag(manualPersuasiveTag)
+    }, [audience, manualPersuasiveTag])
+
+    const manualCount = manualRecipients
+        .split(/[\n,;]+/)
+        .map((l) => l.trim())
+        .filter(Boolean).length
+
+    const openPreview = async () => {
+        setPreviewOpen(true)
+        setPreviewLoading(true)
+        setPreviewChannel(channels.includes('email') ? 'email' : 'whatsapp')
+        try {
+            const res = await fetch('/api/admin/social-media/preview', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    subject: channels.includes('email') ? subject : undefined,
+                    content: channels.includes('email') ? content : undefined,
+                    previewText: channels.includes('email') ? previewText : undefined,
+                    whatsappText: channels.includes('whatsapp') ? waText : undefined,
+                    sampleName: previewSampleName,
+                    persuasiveTag: previewTag || manualPersuasiveTag,
+                    campaignId: audience === 'campaign' ? campaignId : undefined,
+                }),
+            })
+            const data = await res.json()
+            setPreviewData(data)
+        } finally {
+            setPreviewLoading(false)
+        }
+    }
+
     const send = async () => {
         setResult(null)
         if (channels.length === 0) return setResult({ ok: false, message: 'Selecione ao menos um canal' })
+        if (audience === 'manual' && manualCount === 0) {
+            return setResult({ ok: false, message: 'Cole ao menos um e-mail ou telefone na lista manual' })
+        }
         setSending(true)
         try {
             const res = await fetch('/api/admin/social-media/send', {
@@ -83,13 +198,21 @@ export default function SocialMediaPage() {
                     channels,
                     audience,
                     campaignId: audience === 'campaign' ? campaignId : undefined,
+                    manualRecipients: audience === 'manual' ? manualRecipients : undefined,
+                    manualPersuasiveTag: audience === 'manual' ? manualPersuasiveTag : undefined,
                     email: channels.includes('email') ? { subject, content, previewText } : undefined,
                     whatsapp: channels.includes('whatsapp') ? { text: waText } : undefined,
                     checkConsent,
+                    assumeGranted,
                 }),
             })
             const data = await res.json()
-            setResult({ ok: res.ok, message: res.ok ? data.message : data.error || 'Erro' })
+            setResult({
+                ok: res.ok,
+                message: res.ok ? data.message : data.error || 'Erro',
+                skipped: data.skipped,
+                invalid: data.invalidManualEntries,
+            })
         } catch {
             setResult({ ok: false, message: 'Erro de rede' })
         } finally {
@@ -199,7 +322,9 @@ export default function SocialMediaPage() {
                                     <option value="contacts">Contatos (base unificada com consentimento)</option>
                                     <option value="all-users">Todos os usuários cadastrados (e-mail)</option>
                                     <option value="campaign">Leads de uma campanha específica</option>
+                                    <option value="manual">Lista manual (colar e-mails/telefones)</option>
                                 </select>
+
                                 {audience === 'campaign' && (
                                     <Input
                                         value={campaignId}
@@ -208,6 +333,36 @@ export default function SocialMediaPage() {
                                         className="mt-2"
                                     />
                                 )}
+
+                                {audience === 'manual' && (
+                                    <div className="mt-3 space-y-3 rounded-lg border border-dashed p-4">
+                                        <div>
+                                            <Label htmlFor="manual-recipients">
+                                                Destinatários (um e-mail ou telefone por linha) — {manualCount} detectado(s)
+                                            </Label>
+                                            <Textarea
+                                                id="manual-recipients"
+                                                value={manualRecipients}
+                                                onChange={(e) => setManualRecipients(e.target.value)}
+                                                rows={6}
+                                                placeholder={'aluno1@gmail.com\n+55 11 99999-8888\naluno2@hotmail.com'}
+                                                className="mt-1 font-mono text-xs"
+                                            />
+                                            <p className="mt-1 text-xs text-muted-foreground">
+                                                Detecção automática: e-mails vão pro canal E-mail, telefones vão pro canal WhatsApp.
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="manual-tag">Tag persuasiva (opcional, aplicada a todos)</Label>
+                                            <Input
+                                                id="manual-tag"
+                                                value={manualPersuasiveTag}
+                                                onChange={(e) => setManualPersuasiveTag(e.target.value)}
+                                                placeholder="ex.: aprovação em Clínica Médica"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             {channels.includes('email') && (
@@ -215,7 +370,8 @@ export default function SocialMediaPage() {
                                     <div className="flex items-center gap-2 text-sm font-medium"><Mail className="h-4 w-4" /> E-mail</div>
                                     <div>
                                         <Label htmlFor="subject">Assunto</Label>
-                                        <Input id="subject" value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Assunto (aceita %nome%)" />
+                                        <Input id="subject" ref={subjectRef} value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Assunto — aceita %nome% e {{tokens}}" />
+                                        <div className="mt-1.5"><TokenToolbar fieldRef={subjectRef} value={subject} setValue={setSubject} /></div>
                                     </div>
                                     <div>
                                         <Label htmlFor="preview">Preview (opcional)</Label>
@@ -223,7 +379,8 @@ export default function SocialMediaPage() {
                                     </div>
                                     <div>
                                         <Label htmlFor="content">Conteúdo (HTML dos blocos)</Label>
-                                        <Textarea id="content" value={content} onChange={(e) => setContent(e.target.value)} rows={6} placeholder="<div class='hero-block'><h1>Olá %nome%</h1>...</div>" />
+                                        <Textarea id="content" ref={contentRef} value={content} onChange={(e) => setContent(e.target.value)} rows={6} placeholder="<div class='hero-block'><h1>Olá %nome%</h1>...</div>" />
+                                        <div className="mt-1.5"><TokenToolbar fieldRef={contentRef} value={content} setValue={setContent} /></div>
                                     </div>
                                 </div>
                             )}
@@ -231,26 +388,54 @@ export default function SocialMediaPage() {
                             {channels.includes('whatsapp') && (
                                 <div className="space-y-3 rounded-lg border border-dashed p-4">
                                     <div className="flex items-center gap-2 text-sm font-medium"><MessageCircle className="h-4 w-4" /> WhatsApp</div>
-                                    <Textarea value={waText} onChange={(e) => setWaText(e.target.value)} rows={4} placeholder="Texto da mensagem. Aceita {{nome}}, {{persuasiveTag}}." />
+                                    <Textarea ref={waTextRef} value={waText} onChange={(e) => setWaText(e.target.value)} rows={4} placeholder="Texto da mensagem. Aceita {{nome}}, {{persuasiveTag}}." />
+                                    <TokenToolbar fieldRef={waTextRef} value={waText} setValue={setWaText} />
                                 </div>
                             )}
 
-                            <label className="flex items-center gap-2 text-sm text-muted-foreground">
-                                <input type="checkbox" checked={checkConsent} onChange={(e) => setCheckConsent(e.target.checked)} className="accent-primary" />
-                                Respeitar consentimento (LGPD) — recomendado
-                            </label>
+                            <div className="space-y-2">
+                                <label className="flex items-center gap-2 text-sm text-muted-foreground">
+                                    <input type="checkbox" checked={checkConsent} onChange={(e) => setCheckConsent(e.target.checked)} className="accent-primary" />
+                                    Respeitar consentimento (LGPD) — recomendado
+                                </label>
+                                {checkConsent && (
+                                    <label className="flex items-center gap-2 pl-6 text-sm text-muted-foreground">
+                                        <input type="checkbox" checked={assumeGranted} onChange={(e) => setAssumeGranted(e.target.checked)} className="accent-primary" />
+                                        Assumir consentimento quando não houver registro prévio
+                                        {audience === 'manual' && <span className="text-xs">(padrão ligado para listas manuais)</span>}
+                                    </label>
+                                )}
+                            </div>
 
                             {result && (
-                                <div className={`flex items-center gap-2 rounded-lg p-3 text-sm ${result.ok ? 'bg-green-500/10 text-green-600' : 'bg-red-500/10 text-red-600'}`}>
-                                    {result.ok ? <Check className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
-                                    {result.message}
+                                <div className={`space-y-1 rounded-lg p-3 text-sm ${result.ok ? 'bg-green-500/10 text-green-600' : 'bg-red-500/10 text-red-600'}`}>
+                                    <div className="flex items-center gap-2">
+                                        {result.ok ? <Check className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+                                        {result.message}
+                                    </div>
+                                    {result.skipped && Object.keys(result.skipped).length > 0 && (
+                                        <div className="pl-6 text-xs text-muted-foreground">
+                                            Pulados: {Object.entries(result.skipped).map(([reason, n]) => `${reason} (${n})`).join(', ')}
+                                        </div>
+                                    )}
+                                    {result.invalid && result.invalid.length > 0 && (
+                                        <div className="pl-6 text-xs text-muted-foreground">
+                                            Não reconhecidos: {result.invalid.join(', ')}
+                                        </div>
+                                    )}
                                 </div>
                             )}
 
-                            <Button onClick={send} disabled={sending} className="w-full sm:w-auto">
-                                {sending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
-                                Enfileirar envio
-                            </Button>
+                            <div className="flex flex-wrap gap-3">
+                                <Button onClick={send} disabled={sending} className="sm:w-auto">
+                                    {sending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
+                                    Enfileirar envio
+                                </Button>
+                                <Button type="button" variant="outline" onClick={openPreview} disabled={channels.length === 0}>
+                                    <Eye className="mr-2 h-4 w-4" />
+                                    Pré-visualizar
+                                </Button>
+                            </div>
                         </CardContent>
                     </Card>
                 )}
@@ -352,6 +537,78 @@ export default function SocialMediaPage() {
                     </Card>
                 )}
             </div>
+
+            {/* ── Modal de pré-visualização ── */}
+            <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+                <DialogContent className="max-w-2xl">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2"><Sparkles className="h-4 w-4" /> Pré-visualização</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 px-6 pb-6">
+                        <div className="flex flex-wrap gap-3">
+                            <div className="flex-1 min-w-[160px]">
+                                <Label htmlFor="pv-name" className="text-xs">Nome de exemplo</Label>
+                                <Input id="pv-name" value={previewSampleName} onChange={(e) => setPreviewSampleName(e.target.value)} />
+                            </div>
+                            <div className="flex-1 min-w-[160px]">
+                                <Label htmlFor="pv-tag" className="text-xs">Tag persuasiva de exemplo</Label>
+                                <Input id="pv-tag" value={previewTag} onChange={(e) => setPreviewTag(e.target.value)} placeholder="ex.: revalida" />
+                            </div>
+                            <div className="flex items-end">
+                                <Button type="button" size="sm" onClick={openPreview} disabled={previewLoading}>
+                                    {previewLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Atualizar prévia'}
+                                </Button>
+                            </div>
+                        </div>
+
+                        {channels.length > 1 && (
+                            <div className="flex gap-2 border-b">
+                                {channels.map((c) => (
+                                    <button
+                                        key={c}
+                                        onClick={() => setPreviewChannel(c)}
+                                        className={`flex items-center gap-1.5 border-b-2 px-3 py-1.5 text-sm ${
+                                            previewChannel === c ? 'border-primary text-primary' : 'border-transparent text-muted-foreground'
+                                        }`}
+                                    >
+                                        {c === 'email' ? <Mail className="h-3.5 w-3.5" /> : <MessageCircle className="h-3.5 w-3.5" />}
+                                        {c === 'email' ? 'E-mail' : 'WhatsApp'}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+
+                        {previewLoading && (
+                            <div className="flex items-center justify-center py-10 text-muted-foreground">
+                                <Loader2 className="h-5 w-5 animate-spin" />
+                            </div>
+                        )}
+
+                        {!previewLoading && previewData && previewChannel === 'email' && channels.includes('email') && (
+                            <div className="overflow-hidden rounded-lg border">
+                                <div className="border-b bg-muted/50 px-3 py-2 text-sm">
+                                    <span className="text-muted-foreground">Assunto: </span>
+                                    <span className="font-medium">{previewData.emailSubject || '(sem assunto)'}</span>
+                                </div>
+                                <iframe
+                                    title="Prévia do e-mail"
+                                    srcDoc={previewData.emailHtml || '<p style="padding:16px;font-family:sans-serif">Sem conteúdo</p>'}
+                                    className="h-[420px] w-full bg-white"
+                                    sandbox=""
+                                />
+                            </div>
+                        )}
+
+                        {!previewLoading && previewData && previewChannel === 'whatsapp' && channels.includes('whatsapp') && (
+                            <div className="rounded-lg bg-[#0b141a] p-4">
+                                <div className="ml-auto max-w-[80%] whitespace-pre-wrap rounded-lg rounded-tr-none bg-[#005c4b] px-3 py-2 text-sm text-white shadow">
+                                    {previewData.whatsappText || '(sem texto)'}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </DialogContent>
+            </Dialog>
         </AppShell>
     )
 }

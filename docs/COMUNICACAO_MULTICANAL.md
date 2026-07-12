@@ -195,11 +195,32 @@ e dispense o acionador externo.
 ## Parte 3 — Central "Social-Media" (unificada)
 
 - **UI:** `app/admin/social-media` — abas *Nova comunicação* (escolhe canal:
-  e-mail, WhatsApp ou ambos; público: contatos/usuários/campanha), *Histórico*
-  unificado e *Jornadas*. Card no painel admin.
+  e-mail, WhatsApp ou ambos; público: contatos/usuários/campanha/**lista
+  manual**), *Histórico* unificado e *Jornadas*. Card no painel admin.
 - **APIs:** `POST /api/admin/social-media/send` (enfileira multicanal),
+  `POST /api/admin/social-media/preview` (renderiza sem enviar),
   `GET /api/admin/social-media/history` (auditoria a partir da outbox),
   `GET|POST /api/admin/social-media/sequences` (listar / criar jornada padrão).
+- **Personalização:** botões de token (`{{firstName}}`, `{{persuasiveTag}}`,
+  `{{totalStudents}}`, `{{campaignLeads}}`, `{{campaignName}}`, `{{authority}}`)
+  inserem a variável no cursor do campo (assunto/conteúdo/texto do WhatsApp).
+  Cada destinatário recebe o conteúdo renderizado com seu **próprio** nome e
+  tag persuasiva antes de ser enfileirado (mesmo mecanismo das jornadas). O
+  e-mail também aceita `%nome%`/`%nome completo%` (resolvido pelo adapter no
+  envio). As variáveis de prova social (`totalStudents`, `campaignLeads`) são
+  calculadas **uma vez por disparo**, não por destinatário — evita milhares de
+  queries redundantes em campanhas grandes.
+- **Envio manual (lista colada):** público "Lista manual" aceita e-mails e/ou
+  telefones colados (um por linha ou separados por vírgula/`;`). Detecção
+  automática por regex/E.164 — cada linha vira e-mail ou WhatsApp. Uma tag
+  persuasiva única pode ser aplicada a toda a lista. Por padrão assume
+  consentimento concedido (é uma ação explícita do admin), mas o checkbox de
+  LGPD continua disponível para desligar isso.
+- **Pré-visualização:** botão "Pré-visualizar" renderiza o e-mail (iframe
+  sandboxed com o HTML final, com assunto) e o WhatsApp (balão de chat) usando
+  um nome/tag de exemplo editáveis — sem enviar nada. Mesma função de
+  renderização usada no envio real (`lib/comms/persuasion.ts` +
+  `lib/comms/email-render.ts`), então a prévia é fiel.
 - **Consentimento (LGPD):** `lib/comms/contacts.ts` + coleção `comms_contacts`
   guardam consentimento por canal. `dispatch({ checkConsent: true })` pula quem
   não consentiu e anexa um snapshot do consentimento a cada mensagem.

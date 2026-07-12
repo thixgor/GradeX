@@ -1,24 +1,71 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { ObjectId } from 'mongodb'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { dispatch } from '@/lib/comms/dispatch'
+import { normalizeBRPhone } from '@/lib/comms/phone'
+import { buildPersuasionVars, renderPersuasion } from '@/lib/comms/persuasion'
 import type { OutboxTarget, CommChannel } from '@/lib/comms/types'
 
 export const dynamic = 'force-dynamic'
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+interface ManualTarget extends OutboxTarget {
+    persuasiveTag?: string
+}
+
 interface SendBody {
     channels: CommChannel[] // ['email'], ['whatsapp'] ou ['email','whatsapp']
-    audience: 'all-users' | 'contacts' | 'campaign'
+    audience: 'all-users' | 'contacts' | 'campaign' | 'manual'
     campaignId?: string
+    /** Linhas cruas (uma por linha) com e-mail ou telefone — audience 'manual'. */
+    manualRecipients?: string
+    /** Aplicada a todos os destinatários manuais (não há lead individual). */
+    manualPersuasiveTag?: string
     email?: { subject?: string; content?: string; previewText?: string }
     whatsapp?: { text?: string }
-    /** Verificar consentimento (LGPD). Recomendado true para WhatsApp/marketing. */
+    /** Verificar consentimento (LGPD). Recomendado true, exceto para listas manuais confiáveis. */
     checkConsent?: boolean
+    /** Assumir consentimento concedido quando não há registro prévio. */
+    assumeGranted?: boolean
+}
+
+/** Interpreta uma lista de linhas em e-mails e telefones (detecção automática). */
+function parseManualRecipients(raw: string): { targets: ManualTarget[]; invalid: string[] } {
+    const lines = raw
+        .split(/[\n,;]+/)
+        .map((l) => l.trim())
+        .filter(Boolean)
+
+    const targets: ManualTarget[] = []
+    const invalid: string[] = []
+    const seen = new Set<string>()
+
+    for (const line of lines) {
+        if (EMAIL_RE.test(line)) {
+            const email = line.toLowerCase()
+            if (seen.has(`e:${email}`)) continue
+            seen.add(`e:${email}`)
+            targets.push({ email })
+            continue
+        }
+        const phone = normalizeBRPhone(line)
+        if (phone) {
+            if (seen.has(`p:${phone}`)) continue
+            seen.add(`p:${phone}`)
+            targets.push({ phoneE164: phone })
+            continue
+        }
+        invalid.push(line)
+    }
+    return { targets, invalid }
 }
 
 /**
  * Central unificada: cria uma comunicação e escolhe o canal (só e-mail, só
- * WhatsApp ou ambos). Enfileira na outbox; o cron `comms-dispatcher` envia.
+ * WhatsApp ou ambos). Personaliza por destinatário (tokens {{...}} + %nome%) e
+ * enfileira na outbox; o cron `comms-dispatcher` envia.
  */
 export async function POST(request: NextRequest) {
     try {
@@ -42,12 +89,19 @@ export async function POST(request: NextRequest) {
         const db = await getDb()
 
         // ── Resolve o público em alvos multicanal ──
-        let targets: OutboxTarget[] = []
+        let targets: ManualTarget[] = []
+        let campaignName: string | undefined
+        let invalidManualEntries: string[] = []
 
         if (body.audience === 'all-users') {
             const users = await db.collection('users').find({}).project({ email: 1, name: 1 }).toArray()
             targets = users.map((u) => ({ email: u.email, name: u.name || '' }))
         } else if (body.audience === 'campaign' && body.campaignId) {
+            if (!ObjectId.isValid(body.campaignId)) {
+                return NextResponse.json({ error: 'ID de campanha inválido' }, { status: 400 })
+            }
+            const campaign = await db.collection('lead_campaigns').findOne({ _id: new ObjectId(body.campaignId) })
+            campaignName = campaign?.name
             const leads = await db
                 .collection('leads')
                 .find({ campaignId: body.campaignId })
@@ -58,7 +112,12 @@ export async function POST(request: NextRequest) {
                 name: l.name || '',
                 phoneE164: l.phoneE164,
                 leadUuid: l.leadUuid,
+                persuasiveTag: l.persuasiveTag,
             }))
+        } else if (body.audience === 'manual') {
+            const parsed = parseManualRecipients(body.manualRecipients || '')
+            targets = parsed.targets.map((t) => ({ ...t, persuasiveTag: body.manualPersuasiveTag }))
+            invalidManualEntries = parsed.invalid
         } else {
             // 'contacts' — base unificada com consentimento.
             const contacts = await db.collection('comms_contacts').find({}).toArray()
@@ -72,35 +131,67 @@ export async function POST(request: NextRequest) {
         }
 
         if (targets.length === 0) {
-            return NextResponse.json({ error: 'Nenhum destinatário encontrado' }, { status: 400 })
+            return NextResponse.json(
+                {
+                    error:
+                        body.audience === 'manual' && invalidManualEntries.length
+                            ? `Nenhum e-mail/telefone válido encontrado. Não reconhecidos: ${invalidManualEntries.slice(0, 5).join(', ')}`
+                            : 'Nenhum destinatário encontrado',
+                },
+                { status: 400 },
+            )
         }
 
-        // Snapshot do HTML de e-mail (renderizado por destinatário no envio).
-        const emailPayload = body.email
-            ? {
-                  subject: body.email.subject || '',
-                  content: body.email.content || '',
-                  previewText: body.email.previewText,
-              }
-            : undefined
-        const waPayload = body.whatsapp ? { text: body.whatsapp.text || '' } : undefined
-        const campaignId = `social:${Date.now()}`
+        const rawSubject = body.email?.subject || ''
+        const rawContent = body.email?.content || ''
+        const rawPreview = body.email?.previewText
+        const rawWaText = body.whatsapp?.text || ''
+        const campaignIdTag = `social:${Date.now()}`
+        const assumeGranted = body.assumeGranted ?? (body.audience === 'all-users' || body.audience === 'manual')
 
-        // Enfileira por destinatário, respeitando consentimento quando pedido.
+        // Variáveis de prova social (totalStudents/campaignLeads) exigem consultas
+        // ao banco — resolvidas UMA vez para o lote inteiro (não por destinatário),
+        // senão uma campanha com milhares de leads faria milhares de queries extras.
+        const baseVars = await buildPersuasionVars({
+            campaignId: body.audience === 'campaign' ? body.campaignId : undefined,
+            campaignName,
+        })
+
+        // Enfileira por destinatário: personaliza nome/tag persuasiva de CADA um em
+        // cima das variáveis-base, e renderiza subject/content/texto antes de
+        // enfileirar — mesma lógica usada nas jornadas automáticas.
         const totals: Record<string, number> = { email: 0, whatsapp: 0 }
         const skippedByReason: Record<string, number> = {}
 
         const CAP = 20000
         for (const to of targets.slice(0, CAP)) {
+            const firstName = (to.name || '').trim().split(/\s+/)[0] || 'estudante'
+            const vars = {
+                ...baseVars,
+                firstName,
+                nome: firstName,
+                name: to.name || firstName,
+                persuasiveTag: to.persuasiveTag || baseVars.persuasiveTag || '',
+            }
+
+            const emailPayload = channels.includes('email')
+                ? {
+                      subject: renderPersuasion(rawSubject, vars),
+                      content: renderPersuasion(rawContent, vars),
+                      previewText: rawPreview ? renderPersuasion(rawPreview, vars) : undefined,
+                  }
+                : {}
+            const waPayload = channels.includes('whatsapp') ? { text: renderPersuasion(rawWaText, vars) } : {}
+
             const { enqueued, skipped } = await dispatch({
                 channels,
                 to,
                 templateKey: 'social-broadcast',
-                payload: { ...(emailPayload || {}), ...(waPayload || {}) },
-                campaignId,
+                payload: { ...emailPayload, ...waPayload },
+                campaignId: campaignIdTag,
                 checkConsent: body.checkConsent !== false,
-                assumeGranted: body.audience === 'all-users', // usuários cadastrados já opt-in do produto
-                idempotencyKey: `${campaignId}:${to.email || to.phoneE164}`,
+                assumeGranted,
+                idempotencyKey: `${campaignIdTag}:${to.email || to.phoneE164}`,
             })
             for (const ch of enqueued) totals[ch] = (totals[ch] || 0) + 1
             for (const s of skipped) skippedByReason[s.reason] = (skippedByReason[s.reason] || 0) + 1
@@ -109,10 +200,11 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
             success: true,
             message: `Enfileirado — e-mail: ${totals.email || 0}, WhatsApp: ${totals.whatsapp || 0}`,
-            campaignId,
+            campaignId: campaignIdTag,
             totals,
             skipped: skippedByReason,
             audienceSize: targets.length,
+            invalidManualEntries: invalidManualEntries.length > 0 ? invalidManualEntries.slice(0, 20) : undefined,
         })
     } catch (error) {
         console.error('Social-media send error:', error)
