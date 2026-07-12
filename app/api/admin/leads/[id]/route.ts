@@ -102,6 +102,12 @@ export async function PUT(
             sendEmail,
             emailSubject,
             emailBlocks,
+            channels,
+            collectPhone,
+            requirePhone,
+            whatsappTemplate,
+            defaultPersuasiveTag,
+            sequenceId,
             isActive
         } = body
 
@@ -121,6 +127,12 @@ export async function PUT(
         if (sendEmail !== undefined) updateData.sendEmail = sendEmail
         if (emailSubject !== undefined) updateData.emailSubject = emailSubject?.trim()
         if (emailBlocks !== undefined) updateData.emailBlocks = emailBlocks
+        if (channels !== undefined) updateData.channels = Array.isArray(channels) && channels.length ? channels : ['email']
+        if (collectPhone !== undefined) updateData.collectPhone = collectPhone
+        if (requirePhone !== undefined) updateData.requirePhone = requirePhone
+        if (whatsappTemplate !== undefined) updateData.whatsappTemplate = whatsappTemplate?.trim() || null
+        if (defaultPersuasiveTag !== undefined) updateData.defaultPersuasiveTag = defaultPersuasiveTag?.trim() || null
+        if (sequenceId !== undefined) updateData.sequenceId = sequenceId?.trim() || null
         if (isActive !== undefined) updateData.isActive = isActive
 
         const result = await db.collection('lead_campaigns').updateOne(

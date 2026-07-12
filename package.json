@@ -11,7 +11,8 @@
     "start": "next start",
     "lint": "next lint",
     "create-admin": "node scripts/create-admin.js",
-    "make-admin": "node scripts/make-admin.js"
+    "make-admin": "node scripts/make-admin.js",
+    "backfill-lead-uuid": "node scripts/backfill-lead-uuid.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",

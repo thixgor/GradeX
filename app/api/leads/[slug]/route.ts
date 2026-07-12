@@ -1,7 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { ObjectId } from 'mongodb'
+import { v4 as uuidv4 } from 'uuid'
 import clientPromise from '@/lib/mongodb'
 import { sendLeadMaterialEmail } from '@/lib/mail'
+import { upsertContact } from '@/lib/comms/contacts'
+import { dispatch } from '@/lib/comms/dispatch'
+import { recordHistory } from '@/lib/comms/history'
+import { enroll } from '@/lib/comms/sequences'
+import { normalizeBRPhone } from '@/lib/comms/phone'
+import { renderPersuasion, buildPersuasionVars } from '@/lib/comms/persuasion'
+import type { OutboxMessage } from '@/lib/comms/types'
 
 // Função para verificar email real (formato + MX record simples)
 async function isValidEmail(email: string): Promise<boolean> {
@@ -81,7 +89,9 @@ export async function GET(
                 _id: campaign._id,
                 name: campaign.name,
                 imageUrl: campaign.imageUrl,
-                collectButtonText: campaign.collectButtonText || 'Acessar Material'
+                collectButtonText: campaign.collectButtonText || 'Acessar Material',
+                collectPhone: campaign.collectPhone || false,
+                requirePhone: campaign.requirePhone || false
             }
         })
     } catch (error) {
@@ -97,7 +107,7 @@ export async function POST(
     try {
         const { slug } = params
         const body = await req.json()
-        const { name, email } = body
+        const { name, email, phone, consentWhatsapp } = body
 
         if (!name?.trim()) {
             return NextResponse.json({ error: 'Nome é obrigatório' }, { status: 400 })
@@ -127,6 +137,14 @@ export async function POST(
 
         const normalizedEmail = email.trim().toLowerCase()
         const normalizedName = name.trim()
+        const phoneE164 = normalizeBRPhone(phone)
+
+        // Canais de entrega da campanha (default: só e-mail).
+        const channels: ('email' | 'whatsapp')[] =
+            Array.isArray(campaign.channels) && campaign.channels.length
+                ? campaign.channels
+                : ['email']
+        const persuasiveTag = campaign.defaultPersuasiveTag || undefined
 
         // Capturar IP do usuário
         const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
@@ -140,6 +158,9 @@ export async function POST(
             email: normalizedEmail
         })
 
+        // UUID: reaproveita o do lead existente ou gera um novo.
+        const leadUuid: string = existingLead?.leadUuid || uuidv4()
+
         let emailSent = false
         let alreadySentBefore = false
 
@@ -147,6 +168,14 @@ export async function POST(
             // Lead já existe - verificar se email já foi enviado
             if (existingLead.emailSent) {
                 alreadySentBefore = true
+            }
+            // Retrofit: garante UUID e telefone em leads antigos.
+            const patch: Record<string, unknown> = {}
+            if (!existingLead.leadUuid) patch.leadUuid = leadUuid
+            if (phoneE164 && !existingLead.phoneE164) patch.phoneE164 = phoneE164
+            if (persuasiveTag && !existingLead.persuasiveTag) patch.persuasiveTag = persuasiveTag
+            if (Object.keys(patch).length) {
+                await db.collection('leads').updateOne({ _id: existingLead._id }, { $set: patch })
             }
         } else {
             // Buscar geolocalização do IP
@@ -176,14 +205,18 @@ export async function POST(
             // Criar novo lead com IP e localização
             await db.collection('leads').insertOne({
                 campaignId: campaign._id.toString(),
+                leadUuid,
                 name: normalizedName,
                 email: normalizedEmail,
+                phoneE164: phoneE164 || undefined,
+                persuasiveTag,
                 ip: ip,
                 state: geoData.state,
                 stateCode: geoData.stateCode,
                 city: geoData.city,
                 country: geoData.country,
                 emailSent: false,
+                whatsappQueued: false,
                 createdAt: new Date()
             })
 
@@ -194,8 +227,29 @@ export async function POST(
             )
         }
 
-        // Enviar email se configurado e ainda não foi enviado
-        if (campaign.sendEmail && !alreadySentBefore) {
+        // Registra o contato nos dois sistemas (e-mail + WhatsApp) com consentimento
+        // (LGPD): e-mail é consentido pelo próprio envio do formulário; WhatsApp só
+        // se o usuário marcou o opt-in e informou telefone.
+        const wantsWhatsapp = channels.includes('whatsapp') && !!phoneE164 && consentWhatsapp === true
+        try {
+            await upsertContact({
+                leadUuid,
+                email: normalizedEmail,
+                phoneE164: phoneE164 || undefined,
+                name: normalizedName,
+                grant: { email: true, ...(wantsWhatsapp ? { whatsapp: true } : {}) },
+                source: `lead-form:${campaign.slug}`,
+                ip: ip !== 'unknown' ? ip : undefined,
+                tags: [`campaign:${campaign.slug}`],
+            })
+        } catch (e) {
+            console.error('Erro ao registrar contato:', e)
+        }
+
+        const target = { leadUuid, email: normalizedEmail, phoneE164: phoneE164 || undefined, name: normalizedName }
+
+        // ── E-mail: entrega imediata do material (template de blocos existente) ──
+        if (channels.includes('email') && campaign.sendEmail && !alreadySentBefore) {
             try {
                 await sendLeadMaterialEmail(
                     normalizedEmail,
@@ -205,16 +259,67 @@ export async function POST(
                     campaign.emailBlocks || campaign.blocks
                 )
 
-                // Marcar como enviado
                 await db.collection('leads').updateOne(
                     { campaignId: campaign._id.toString(), email: normalizedEmail },
                     { $set: { emailSent: true, emailSentAt: new Date() } }
                 )
-
+                // Registra no histórico unificado.
+                await recordHistory(
+                    { channel: 'email', to: target, templateKey: 'lead-material', campaignId: campaign._id.toString() } as OutboxMessage,
+                    'sent',
+                )
                 emailSent = true
             } catch (emailError) {
                 console.error('Erro ao enviar email:', emailError)
                 // Continua mesmo se falhar o email
+            }
+        }
+
+        // ── WhatsApp: primeiro toque (enfileirado, enviado pelo worker) ──
+        if (wantsWhatsapp && !existingLead?.whatsappQueued) {
+            try {
+                const waVars = await buildPersuasionVars({
+                    name: normalizedName,
+                    persuasiveTag,
+                    campaignId: campaign._id.toString(),
+                    campaignName: campaign.name,
+                })
+                const waText = renderPersuasion(
+                    campaign.whatsappTemplate ||
+                        'Olá {{firstName}}! 👋 Aqui está seu material *{{campaignName}}*. Qualquer dúvida, é só responder por aqui.',
+                    waVars,
+                )
+                await dispatch({
+                    channels: ['whatsapp'],
+                    to: target,
+                    templateKey: 'lead-material',
+                    payload: { text: waText },
+                    campaignId: campaign._id.toString(),
+                    checkConsent: true,
+                    assumeGranted: true,
+                    idempotencyKey: `lead-material:${leadUuid}`,
+                })
+                await db.collection('leads').updateOne(
+                    { campaignId: campaign._id.toString(), email: normalizedEmail },
+                    { $set: { whatsappQueued: true, whatsappSentAt: new Date() } }
+                )
+            } catch (waError) {
+                console.error('Erro ao enfileirar WhatsApp:', waError)
+            }
+        }
+
+        // ── Jornada/sequência de nurturing (se a campanha tiver uma) ──
+        if (campaign.sequenceId && !existingLead) {
+            try {
+                await enroll({
+                    sequenceKey: campaign.sequenceId,
+                    to: target,
+                    campaignId: campaign._id.toString(),
+                    campaignName: campaign.name,
+                    persuasiveTag,
+                })
+            } catch (seqError) {
+                console.error('Erro ao matricular na jornada:', seqError)
             }
         }
 

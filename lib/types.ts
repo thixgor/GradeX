@@ -1137,6 +1137,14 @@ export interface LeadCampaign {
   emailSubject?: string // Assunto do email
   emailBlocks?: LeadBlock[] // Blocos de conteúdo do email (pode ser diferente da página)
 
+  // Comunicação multicanal (F3/F4)
+  channels?: ('email' | 'whatsapp')[] // Canais em que o material é entregue (default: ['email'])
+  collectPhone?: boolean // Se o formulário coleta telefone (para WhatsApp)
+  requirePhone?: boolean // Se o telefone é obrigatório
+  whatsappTemplate?: string // Texto do 1º toque no WhatsApp (aceita {{nome}}, {{persuasiveTag}})
+  defaultPersuasiveTag?: string // Metatag persuasiva padrão aplicada aos leads desta campanha
+  sequenceId?: string // Sequência/jornada de nurturing a matricular o lead ao capturar
+
   // Status
   isActive: boolean
 
@@ -1153,11 +1161,16 @@ export interface LeadCampaign {
 
 export interface Lead {
   _id?: string | import('mongodb').ObjectId
+  leadUuid?: string // Identificador único universal (UUID v4). Seguro para URLs públicas.
   campaignId: string // ID da campanha
   name: string // Nome do lead
   email: string // Email do lead
+  phoneE164?: string // Telefone em formato E.164 (ex.: +5511999998888), para WhatsApp
+  persuasiveTag?: string // Copy persuasiva personalizada usada para personalizar as mensagens
   emailSentAt?: Date // Quando o email foi enviado (se enviado)
   emailSent: boolean // Se o email já foi enviado para este lead
+  whatsappSentAt?: Date // Quando a 1ª mensagem de WhatsApp foi enfileirada
+  whatsappQueued?: boolean // Se o WhatsApp já foi enfileirado para este lead
   createdAt: Date
 }
 

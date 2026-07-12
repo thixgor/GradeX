@@ -33,6 +33,7 @@ import {
   Star,
   Network,
   Ticket,
+  MessagesSquare,
 } from 'lucide-react'
 
 interface User {
@@ -166,6 +167,13 @@ export default function AdminDashboard() {
       icon: Mail,
       href: '/admin/emails',
       color: 'from-sky-500 to-blue-500'
+    },
+    {
+      title: 'Social-Media',
+      description: 'Central unificada E-mail + WhatsApp. Escolha o canal, respeite o consentimento (LGPD) e acompanhe o histórico e as jornadas de nurturing.',
+      icon: MessagesSquare,
+      href: '/admin/social-media',
+      color: 'from-emerald-500 to-teal-500'
     },
     {
       title: 'Pesquisas e Formulários',

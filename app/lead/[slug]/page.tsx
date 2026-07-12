@@ -24,7 +24,8 @@ import {
     Music,
     Sparkles,
     Lock,
-    ChevronDown
+    ChevronDown,
+    MessageCircle
 } from 'lucide-react'
 
 interface LeadBlock {
@@ -49,6 +50,8 @@ interface Campaign {
     name: string
     imageUrl?: string
     collectButtonText: string
+    collectPhone?: boolean
+    requirePhone?: boolean
 }
 
 // Animações
@@ -101,6 +104,8 @@ export default function LeadCapturePage() {
     // Form state
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
+    const [phone, setPhone] = useState('')
+    const [consentWhatsapp, setConsentWhatsapp] = useState(false)
 
     // Material state
     const [welcomeMessage, setWelcomeMessage] = useState('')
@@ -153,12 +158,22 @@ export default function LeadCapturePage() {
             return
         }
 
+        if (campaign?.requirePhone && !phone.trim()) {
+            setError('Por favor, informe seu WhatsApp')
+            return
+        }
+
         setSubmitting(true)
         try {
             const res = await fetch(`/api/leads/${slug}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: name.trim(), email: email.trim() })
+                body: JSON.stringify({
+                    name: name.trim(),
+                    email: email.trim(),
+                    phone: phone.trim() || undefined,
+                    consentWhatsapp: !!phone.trim() && consentWhatsapp,
+                })
             })
 
             const data = await res.json()
@@ -598,6 +613,41 @@ export default function LeadCapturePage() {
                                             />
                                         </div>
                                     </motion.div>
+
+                                    {campaign?.collectPhone && (
+                                        <motion.div
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: 0.35 }}
+                                            className="space-y-2"
+                                        >
+                                            <Label htmlFor="phone" className="text-gray-300 text-sm font-medium">
+                                                Seu WhatsApp {campaign?.requirePhone ? '' : '(opcional)'}
+                                            </Label>
+                                            <div className="relative group">
+                                                <MessageCircle className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-gray-500 group-focus-within:text-[#E2A43E] transition-colors" />
+                                                <Input
+                                                    id="phone"
+                                                    type="tel"
+                                                    value={phone}
+                                                    onChange={(e) => setPhone(e.target.value)}
+                                                    placeholder="(11) 99999-8888"
+                                                    className="pl-10 sm:pl-11 bg-[#0a1f13] border-[#1a4d28] text-white placeholder:text-gray-500 h-11 sm:h-12 rounded-xl focus:border-[#E2A43E] focus:ring-[#E2A43E]/20 text-sm sm:text-base transition-all"
+                                                />
+                                            </div>
+                                            {phone.trim() && (
+                                                <label className="flex items-start gap-2 text-xs text-gray-400 cursor-pointer select-none">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={consentWhatsapp}
+                                                        onChange={(e) => setConsentWhatsapp(e.target.checked)}
+                                                        className="mt-0.5 accent-[#E2A43E]"
+                                                    />
+                                                    <span>Autorizo receber o material e novidades pelo WhatsApp. Posso cancelar quando quiser.</span>
+                                                </label>
+                                            )}
+                                        </motion.div>
+                                    )}
 
                                     <AnimatePresence mode="wait">
                                         {error && (

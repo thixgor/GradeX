@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { claimBatch, markSent, markFailed } from '@/lib/comms/outbox'
 import { takeToken } from '@/lib/comms/rate-limit'
 import { getAdapter, registeredChannels } from '@/lib/comms/registry'
+import { recordHistory } from '@/lib/comms/history'
+import { advanceSequences } from '@/lib/comms/sequences'
 import { PermanentSendError } from '@/lib/comms/types'
 import type { CommChannel } from '@/lib/comms/types'
 
@@ -48,13 +50,19 @@ async function processChannel(channel: CommChannel) {
         try {
             const { providerMessageId } = await adapter.send(msg)
             await markSent(msg._id, providerMessageId)
+            await recordHistory(msg, 'sent', { providerMessageId })
             result.sent++
         } catch (err) {
             const permanent = err instanceof PermanentSendError
             const message = err instanceof Error ? err.message : String(err)
             await markFailed(msg, message, permanent)
-            if (permanent || msg.attempts + 1 >= msg.maxAttempts) result.dead++
-            else result.failed++
+            const dead = permanent || msg.attempts + 1 >= msg.maxAttempts
+            if (dead) {
+                await recordHistory(msg, 'dead', { error: message })
+                result.dead++
+            } else {
+                result.failed++
+            }
         }
     }
     return result
@@ -65,12 +73,16 @@ async function handle(request: NextRequest) {
         return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
     }
 
+    // 1) Avança as jornadas/sequências: matrícula devida → enfileira o próximo passo.
+    const sequences = await advanceSequences()
+
+    // 2) Drena a fila de cada canal.
     const results = []
     for (const channel of registeredChannels()) {
         results.push(await processChannel(channel))
     }
 
-    return NextResponse.json({ ok: true, at: new Date().toISOString(), results })
+    return NextResponse.json({ ok: true, at: new Date().toISOString(), sequences, results })
 }
 
 export async function GET(request: NextRequest) {

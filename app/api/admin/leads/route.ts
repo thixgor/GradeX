@@ -59,6 +59,12 @@ export async function POST(req: NextRequest) {
             sendEmail,
             emailSubject,
             emailBlocks,
+            channels,
+            collectPhone,
+            requirePhone,
+            whatsappTemplate,
+            defaultPersuasiveTag,
+            sequenceId,
             isActive = true
         } = body
 
@@ -89,6 +95,12 @@ export async function POST(req: NextRequest) {
             sendEmail: sendEmail || false,
             emailSubject: emailSubject?.trim() || `Seu material: ${name}`,
             emailBlocks: emailBlocks || [],
+            channels: Array.isArray(channels) && channels.length ? channels : ['email'],
+            collectPhone: collectPhone || false,
+            requirePhone: requirePhone || false,
+            whatsappTemplate: whatsappTemplate?.trim() || undefined,
+            defaultPersuasiveTag: defaultPersuasiveTag?.trim() || undefined,
+            sequenceId: sequenceId?.trim() || undefined,
             isActive: isActive,
             totalLeads: 0,
             totalViews: 0,

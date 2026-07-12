@@ -168,10 +168,44 @@ transitórios (retry com backoff); 4xx (exceto 429) são permanentes.
 
 ---
 
-## Próximas fases (do plano aprovado)
+---
 
-- **F3 — Central "Social-Media"**: UI unificada, preferências/consentimento
-  (LGPD) em `comms_contacts`, histórico unificado.
-- **F4 — Leads**: `leadUuid`, metatag persuasiva, captura de telefone/consentimento.
-- **F5 — Persuasão**: motor de sequência (jornada), gatilhos de prova social,
-  autoridade, escassez legítima, reciprocidade, personalização.
+## Parte 3 — Central "Social-Media" (unificada)
+
+- **UI:** `app/admin/social-media` — abas *Nova comunicação* (escolhe canal:
+  e-mail, WhatsApp ou ambos; público: contatos/usuários/campanha), *Histórico*
+  unificado e *Jornadas*. Card no painel admin.
+- **APIs:** `POST /api/admin/social-media/send` (enfileira multicanal),
+  `GET /api/admin/social-media/history` (auditoria a partir da outbox),
+  `GET|POST /api/admin/social-media/sequences` (listar / criar jornada padrão).
+- **Consentimento (LGPD):** `lib/comms/contacts.ts` + coleção `comms_contacts`
+  guardam consentimento por canal. `dispatch({ checkConsent: true })` pula quem
+  não consentiu e anexa um snapshot do consentimento a cada mensagem.
+- **Histórico unificado:** `lib/comms/history.ts` grava em `email_history` e
+  `whatsapp_history` a cada envio, além da outbox (fonte da verdade).
+
+## Parte 4 — Leads aprimorados
+
+- **UUID:** `leadUuid` (v4) em cada lead — seguro para URLs, não vaza volume/ordem.
+  Migração idempotente: `npm run backfill-lead-uuid`. Novos leads já nascem com UUID.
+- **Metatag persuasiva:** `Lead.persuasiveTag` (+ `LeadCampaign.defaultPersuasiveTag`).
+  Editável por lead via `POST /api/admin/leads/update-lead`.
+- **Contato em e-mail E WhatsApp:** o formulário do lead coleta telefone
+  (opcional) + opt-in de WhatsApp; o contato é gravado em `comms_contacts` e o
+  material é entregue por e-mail (imediato) e/ou WhatsApp (fila), conforme
+  `LeadCampaign.channels`.
+
+## Parte 5 — Persuasão e jornada
+
+- **Variáveis dinâmicas** (`lib/comms/persuasion.ts`): `{{firstName}}`,
+  `{{persuasiveTag}}`, `{{totalStudents}}`, `{{campaignLeads}}`, `{{authority}}`,
+  escassez legítima (`{{spotsLeft}}`, `{{offerEndsAt}}` — só com dados reais).
+- **Motor de sequência** (`lib/comms/sequences.ts`): `sequences` +
+  `sequence_enrollments`. O lead é matriculado na captura (se a campanha tiver
+  `sequenceId`); o cron `comms-dispatcher` chama `advanceSequences()` a cada
+  minuto e enfileira cada passo na hora certa.
+- **Jornada padrão** (`lib/comms/default-journey.ts`, chave
+  `lead-journey-default`): reciprocidade → autoridade/prova social → compromisso
+  → prova social → oferta → urgência, com timing psicológico (T+1h … T+7d).
+  Crie pelo painel (aba Jornadas → "Criar jornada padrão") e associe a chave ao
+  campo `sequenceId` da campanha.

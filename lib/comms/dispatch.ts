@@ -10,6 +10,7 @@
 import { enqueue, enqueueMany } from './outbox'
 import type { EnqueueInput } from './outbox'
 import { getAdapter } from './registry'
+import { resolveConsent } from './contacts'
 import type { CommChannel, OutboxTarget } from './types'
 
 export interface DispatchInput {
@@ -22,18 +23,55 @@ export interface DispatchInput {
     sequenceId?: string
     scheduledAt?: Date
     idempotencyKey?: string
+    /** Se true, verifica o consentimento (LGPD) do canal antes de enfileirar. */
+    checkConsent?: boolean
+    /** Se não houver registro de consentimento, assumir concedido (ex.: opt-in no ato). */
+    assumeGranted?: boolean
+}
+
+export interface DispatchResult {
+    enqueued: CommChannel[]
+    skipped: { channel: CommChannel; reason: string }[]
 }
 
 /**
- * Enfileira uma comunicação nos canais escolhidos, pulando os canais para os
- * quais o destinatário não tem dados de contato (ex.: sem telefone → sem WhatsApp).
- * Retorna quais canais foram efetivamente enfileirados.
+ * Enfileira uma comunicação nos canais escolhidos, pulando canais sem contato
+ * (ex.: sem telefone → sem WhatsApp) ou sem consentimento (quando checkConsent).
+ * Retorna quais canais foram enfileirados e quais foram pulados (com motivo).
  */
-export async function dispatch(input: DispatchInput): Promise<{ enqueued: CommChannel[] }> {
+export async function dispatch(input: DispatchInput): Promise<DispatchResult> {
     const enqueued: CommChannel[] = []
+    const skipped: { channel: CommChannel; reason: string }[] = []
+
     for (const channel of input.channels) {
         const adapter = getAdapter(channel)
-        if (!adapter || !adapter.supports(input.to)) continue
+        if (!adapter) {
+            skipped.push({ channel, reason: 'canal não registrado' })
+            continue
+        }
+        if (!adapter.supports(input.to)) {
+            skipped.push({ channel, reason: 'sem dado de contato para o canal' })
+            continue
+        }
+
+        let consentSnapshot
+        if (input.checkConsent) {
+            const { allowed, snapshot } = await resolveConsent(
+                {
+                    email: input.to.email,
+                    phoneE164: input.to.phoneE164,
+                    leadUuid: input.to.leadUuid,
+                    userId: input.to.userId,
+                },
+                channel,
+                input.assumeGranted,
+            )
+            if (!allowed) {
+                skipped.push({ channel, reason: 'sem consentimento (LGPD)' })
+                continue
+            }
+            consentSnapshot = snapshot
+        }
 
         const id = await enqueue({
             channel,
@@ -43,13 +81,14 @@ export async function dispatch(input: DispatchInput): Promise<{ enqueued: CommCh
             campaignId: input.campaignId,
             sequenceId: input.sequenceId,
             scheduledAt: input.scheduledAt,
+            consentSnapshot,
             idempotencyKey: input.idempotencyKey
                 ? `${input.idempotencyKey}:${channel}`
                 : undefined,
         })
         if (id !== null) enqueued.push(channel)
     }
-    return { enqueued }
+    return { enqueued, skipped }
 }
 
 /**
