@@ -76,7 +76,7 @@
     },
     {
       "path": "/api/cron/comms-dispatcher",
-      "schedule": "* * * * *"
+      "schedule": "0 5 * * *"
     }
   ],
   "redirects": [

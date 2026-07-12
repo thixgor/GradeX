@@ -154,6 +154,28 @@ transitórios (retry com backoff); 4xx (exceto 429) são permanentes.
 
 ---
 
+## Acionando o dispatcher (cadência de 1 minuto)
+
+O ideal é o dispatcher rodar a cada minuto. O **Vercel Cron no plano Hobby só
+permite 1×/dia**, então o `vercel.json` mantém apenas um disparo diário como
+**rede de segurança**. A cadência real de 1 minuto vem de um acionador externo:
+
+**Opção A — Ticker no host sempre-ligado (mesmo PC do worker):**
+```bash
+export APP_URL="https://domineaqui.com.br"
+export CRON_SECRET="<mesmo do .env>"
+npm run comms:ticker
+# Com PM2 (junto do worker):
+pm2 start "npm run comms:ticker" --name comms-ticker && pm2 save
+```
+
+**Opção B — Serviço de cron externo (sem instalar nada):** aponte um serviço
+gratuito (ex.: cron-job.org) para `POST https://SEU_APP/api/cron/comms-dispatcher`
+a cada minuto, com header `Authorization: Bearer <CRON_SECRET>`.
+
+**Opção C — Plano Vercel Pro:** troque o schedule para `* * * * *` no `vercel.json`
+e dispense o acionador externo.
+
 ## Operação
 
 - **Forçar processamento da fila** (sem esperar o cron):
