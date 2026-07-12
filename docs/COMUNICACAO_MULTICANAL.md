@@ -208,8 +208,16 @@ e dispense o acionador externo.
 
 ## Parte 4 — Leads aprimorados
 
-- **UUID:** `leadUuid` (v4) em cada lead — seguro para URLs, não vaza volume/ordem.
-  Migração idempotente: `npm run backfill-lead-uuid`. Novos leads já nascem com UUID.
+- **UUID do registro do lead:** `leadUuid` (v4) em cada lead (o formulário
+  preenchido por e-mail/nome/telefone) — usado internamente pela fila/histórico,
+  nunca aparece em URL. Migração idempotente: `npm run backfill-lead-uuid`.
+- **UUID da campanha (o que aparece em `/lead/[slug]`):** `LeadCampaign.campaignUuid`
+  (v4) é o identificador interno estável da campanha. A **URL pública continua
+  pelo `slug`** (legível, bom pra marketing — ex.: `/lead/ebook-anatomia`), mas
+  em colisão de nome o desempate agora usa um **sufixo aleatório** (`randomSlugSuffix`,
+  hex de 6 chars) em vez do contador sequencial antigo (`-1`, `-2`, `-3`), que
+  expunha quantas campanhas parecidas você já tinha criado. Migração idempotente
+  e não-destrutiva (não altera slugs já divulgados): `npm run backfill-campaign-uuid`.
 - **Metatag persuasiva:** `Lead.persuasiveTag` (+ `LeadCampaign.defaultPersuasiveTag`).
   Editável por lead via `POST /api/admin/leads/update-lead`.
 - **Contato em e-mail E WhatsApp:** o formulário do lead coleta telefone

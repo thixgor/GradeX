@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { ObjectId } from 'mongodb'
+import { randomUUID, randomBytes } from 'crypto'
 import clientPromise from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { LeadCampaign, LeadBlock } from '@/lib/types'
@@ -14,6 +15,13 @@ function generateSlug(name: string): string {
         .replace(/\s+/g, '-') // Espaços para hífens
         .replace(/-+/g, '-') // Múltiplos hífens para um
         .trim()
+}
+
+// Sufixo curto e ALEATÓRIO (não sequencial) para desempate de colisão de slug.
+// Um contador (-1, -2, -3...) expõe quantas campanhas com nome parecido já
+// existem; um sufixo aleatório não revela ordem/volume.
+function randomSlugSuffix(): string {
+    return randomBytes(3).toString('hex') // 6 chars hex, ex.: "a1b2c3"
 }
 
 // GET - Listar todas as campanhas de leads
@@ -75,16 +83,20 @@ export async function POST(req: NextRequest) {
         const client = await clientPromise
         const db = client.db()
 
-        // Gerar slug único
-        let baseSlug = generateSlug(name)
+        // Gerar slug único. Em colisão, usa sufixo ALEATÓRIO (não sequencial):
+        // um contador -1, -2, -3 exporia quantas campanhas com nome parecido
+        // já existem, o que é justamente o que o UUID/slug seguro evita.
+        const baseSlug = generateSlug(name)
         let slug = baseSlug
-        let counter = 1
+        let attempts = 0
         while (await db.collection('lead_campaigns').findOne({ slug })) {
-            slug = `${baseSlug}-${counter}`
-            counter++
+            slug = `${baseSlug}-${randomSlugSuffix()}`
+            attempts++
+            if (attempts > 10) throw new Error('Não foi possível gerar slug único')
         }
 
         const campaign: Omit<LeadCampaign, '_id'> = {
+            campaignUuid: randomUUID(),
             name: name.trim(),
             slug,
             description: description?.trim() || undefined,

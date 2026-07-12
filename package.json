@@ -13,7 +13,8 @@
     "lint": "next lint",
     "create-admin": "node scripts/create-admin.js",
     "make-admin": "node scripts/make-admin.js",
-    "backfill-lead-uuid": "node scripts/backfill-lead-uuid.js"
+    "backfill-lead-uuid": "node scripts/backfill-lead-uuid.js",
+    "backfill-campaign-uuid": "node scripts/backfill-campaign-uuid.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",

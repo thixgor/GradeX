@@ -1122,8 +1122,9 @@ export interface LeadBlock {
 
 export interface LeadCampaign {
   _id?: string | import('mongodb').ObjectId
+  campaignUuid?: string // Identificador interno estável (UUID v4), não sequencial
   name: string // Nome da campanha (ex: "E-book Estudos")
-  slug: string // URL amigável (ex: "ebook-estudos")
+  slug: string // URL amigável (ex: "ebook-estudos"), usada em /lead/[slug]
   description?: string // Descrição opcional (para admin)
   imageUrl?: string // Imagem de capa opcional
 
