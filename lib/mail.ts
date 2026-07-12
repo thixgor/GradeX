@@ -1,7 +1,11 @@
 
 import nodemailer from 'nodemailer'
 
-const transporter = nodemailer.createTransport({
+// Transporter compartilhado (pooled). O SMTP da Hostinger derruba conexões sob
+// rajada — daí os erros de "auth limit". O pool reaproveita poucas conexões e
+// limita a taxa de saída, eliminando a maior parte das falhas em lote mesmo
+// antes da fila assíncrona (lib/comms) entrar em ação.
+export const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || 'smtp.hostinger.com',
   port: Number(process.env.SMTP_PORT) || 465,
   secure: true, // true for 465, false for other ports
@@ -9,6 +13,12 @@ const transporter = nodemailer.createTransport({
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
+  pool: true,
+  maxConnections: Number(process.env.SMTP_MAX_CONNECTIONS) || 2,
+  maxMessages: Number(process.env.SMTP_MAX_MESSAGES) || 50,
+  // No máx. `rateLimit` mensagens por `rateDelta` ms (padrão: 3/seg).
+  rateDelta: 1000,
+  rateLimit: Number(process.env.SMTP_RATE_LIMIT) || 3,
 })
 
 // Estilos e Layout Base (Verde: #0f3d2e, Laranja: #f57c00)

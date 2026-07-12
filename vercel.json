@@ -52,6 +52,9 @@
     },
     "app/api/cron/revisao-espacada/route.ts": {
       "maxDuration": 300
+    },
+    "app/api/cron/comms-dispatcher/route.ts": {
+      "maxDuration": 60
     }
   },
   "crons": [
@@ -70,6 +73,10 @@
     {
       "path": "/api/cron/revisao-espacada",
       "schedule": "0 21 * * *"
+    },
+    {
+      "path": "/api/cron/comms-dispatcher",
+      "schedule": "* * * * *"
     }
   ],
   "redirects": [

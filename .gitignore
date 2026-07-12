@@ -37,3 +37,7 @@ next-env.d.ts
 
 # uploads
 /public/uploads
+
+# WhatsApp worker (sessão/credenciais Baileys — NUNCA commitar)
+/.wa-session
+.wa-session/

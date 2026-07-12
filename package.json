@@ -6,6 +6,7 @@
     "dev": "next dev",
     "dev:ws": "node server/websocket-server.js",
     "dev:all": "concurrently \"npm run dev\" \"npm run dev:ws\"",
+    "wa:worker": "node server/whatsapp-worker.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
