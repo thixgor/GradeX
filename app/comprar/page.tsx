@@ -44,6 +44,28 @@ interface Product {
 function isEmail(v: string) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) }
 function digits(v: string) { return v.replace(/\D/g, '') }
 
+const SECURITY_BADGES = [
+  { src: '/img/badges/ssl-secure.png', alt: 'Conexão segura (SSL)', height: 28 },
+  { src: '/img/badges/site-protegido.png', alt: 'Ambiente protegido', height: 28 },
+  { src: '/img/badges/mercado-pago.png', alt: 'Pagamento processado por Mercado Pago', height: 22 },
+]
+
+/** Selos visuais de confiança exibidos no checkout (aumentam a confiabilidade da compra). */
+function SecurityBadges({ className = '' }: { className?: string }) {
+  return (
+    <div className={`flex flex-wrap items-center gap-2 ${className}`}>
+      {SECURITY_BADGES.map((badge) => (
+        <span
+          key={badge.src}
+          className="inline-flex h-11 items-center justify-center rounded-lg border border-border bg-white px-3"
+        >
+          <img src={badge.src} alt={badge.alt} title={badge.alt} style={{ height: badge.height }} className="w-auto object-contain" />
+        </span>
+      ))}
+    </div>
+  )
+}
+
 // ─────────────────────────────────────────────────────────────────────────
 // Manual Clinico — mesmo visual e seletor de planos do /manual-clinico/checkout,
 // adaptado para compra sem login (nome/e-mail/telefone + Serial Key por e-mail).
@@ -492,6 +514,7 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
               <Mail className="h-4 w-4 text-primary" /> Serial Key enviada por e-mail com QR e comprovante
             </div>
           </div>
+          <SecurityBadges className="mt-3" />
         </div>
 
         <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
@@ -772,6 +795,7 @@ function GenericComprarContent({ productType }: { productType: string }) {
             <div className="flex items-center gap-2.5">
               <Mail className="h-4 w-4 text-primary" /> Serial Key enviada por e-mail com QR e comprovante
             </div>
+            <SecurityBadges className="mt-1" />
           </div>
         </div>
 
