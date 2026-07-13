@@ -7,12 +7,19 @@
 // destinatário; o HTML completo é renderizado no momento do envio.
 // ────────────────────────────────────────────────────────────────────────────
 
-export function personalize(text: string, name: string): string {
+/**
+ * Substitui tokens simples por-destinatário: %nome% (primeiro nome), %nome
+ * completo% (nome completo, se houver sobrenome cadastrado) e %cidade%
+ * (cidade geolocalizada na captura do lead, quando disponível). Usado tanto
+ * pelo canal de e-mail quanto pelo de WhatsApp, no momento do envio.
+ */
+export function personalize(text: string, name: string, city?: string): string {
     const fullName = name || 'você'
     const firstName = fullName.split(' ')[0]
     return text
         .replace(/%nome completo%/gi, fullName)
         .replace(/%nome%/gi, firstName)
+        .replace(/%cidade%/gi, city?.trim() || '')
 }
 
 // Template base para e-mails em massa

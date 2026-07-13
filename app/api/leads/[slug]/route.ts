@@ -9,6 +9,7 @@ import { recordHistory } from '@/lib/comms/history'
 import { enroll } from '@/lib/comms/sequences'
 import { normalizeBRPhone } from '@/lib/comms/phone'
 import { renderPersuasion, buildPersuasionVars } from '@/lib/comms/persuasion'
+import { personalize } from '@/lib/comms/email-render'
 import type { OutboxMessage } from '@/lib/comms/types'
 
 // Função para verificar email real (formato + MX record simples)
@@ -163,6 +164,9 @@ export async function POST(
 
         let emailSent = false
         let alreadySentBefore = false
+        // Cidade geolocalizada do lead (existente ou recém-capturada) — usada para
+        // personalizar mensagens com %cidade%.
+        let leadCity: string | undefined = existingLead?.city
 
         if (existingLead) {
             // Lead já existe - verificar se email já foi enviado
@@ -201,6 +205,8 @@ export async function POST(
                 console.error('Erro ao buscar geolocalização:', geoError)
                 // Continua mesmo se falhar geolocalização
             }
+
+            leadCity = geoData.city
 
             // Criar novo lead com IP e localização
             await db.collection('leads').insertOne({
@@ -246,7 +252,7 @@ export async function POST(
             console.error('Erro ao registrar contato:', e)
         }
 
-        const target = { leadUuid, email: normalizedEmail, phoneE164: phoneE164 || undefined, name: normalizedName }
+        const target = { leadUuid, email: normalizedEmail, phoneE164: phoneE164 || undefined, name: normalizedName, city: leadCity }
 
         // ── E-mail: entrega imediata do material (template de blocos existente) ──
         if (channels.includes('email') && campaign.sendEmail && !alreadySentBefore) {
@@ -256,7 +262,8 @@ export async function POST(
                     normalizedName,
                     campaign.name,
                     campaign.emailSubject || `Seu material: ${campaign.name}`,
-                    campaign.emailBlocks || campaign.blocks
+                    campaign.emailBlocks || campaign.blocks,
+                    leadCity
                 )
 
                 await db.collection('leads').updateOne(
@@ -280,6 +287,7 @@ export async function POST(
             try {
                 const waVars = await buildPersuasionVars({
                     name: normalizedName,
+                    city: leadCity,
                     persuasiveTag,
                     campaignId: campaign._id.toString(),
                     campaignName: campaign.name,
@@ -323,9 +331,13 @@ export async function POST(
             }
         }
 
-        // Retornar material completo
-        const welcomeMessage = (campaign.welcomeMessage || 'Aqui está seu material, {nome}!')
-            .replace('{nome}', normalizedName)
+        // Retornar material completo. Suporta {nome} (legado) e %nome%/%nome
+        // completo%/%cidade% (mesma sintaxe usada no e-mail e no WhatsApp).
+        const welcomeMessage = personalize(
+            (campaign.welcomeMessage || 'Aqui está seu material, {nome}!').replace('{nome}', normalizedName),
+            normalizedName,
+            leadCity,
+        )
 
         return NextResponse.json({
             success: true,

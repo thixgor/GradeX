@@ -13,6 +13,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import { PermanentSendError } from '../types'
+import { personalize } from '../email-render'
 import type { ChannelAdapter, OutboxMessage, OutboxTarget, SendResult } from '../types'
 
 const WORKER_URL = process.env.WHATSAPP_WORKER_URL || ''
@@ -27,14 +28,18 @@ function toJidNumber(phone: string): string {
 /**
  * Renderiza o texto do WhatsApp a partir do payload.
  * Para o primeiro toque (fora da janela de 24h) o worker é responsável por usar
- * um "template" — aqui só montamos o texto e substituímos variáveis simples.
+ * um "template" — aqui só montamos o texto e substituímos variáveis simples:
+ * %nome%, %nome completo% (mesma sintaxe do e-mail) e %cidade% — resolvidas
+ * com os dados do destinatário (só se disponíveis; sem sobrenome/cidade
+ * cadastrados, o texto degrada graciosamente para o primeiro nome / vazio).
+ * Mantém {{nome}}/{{nome_completo}} por compatibilidade com mensagens antigas.
  */
 function renderText(msg: OutboxMessage): string {
     const p = msg.payload as { text?: string; templateText?: string }
     const raw = msg.renderedBody || p.text || p.templateText || ''
     const name = msg.to.name || ''
     const firstName = name.split(' ')[0] || 'você'
-    return raw
+    return personalize(raw, name, msg.to.city)
         .replace(/\{\{\s*nome\s*\}\}/gi, firstName)
         .replace(/\{\{\s*nome_completo\s*\}\}/gi, name || 'você')
         .replace(/\{nome\}/gi, firstName)

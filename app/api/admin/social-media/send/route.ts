@@ -5,6 +5,7 @@ import { getSession } from '@/lib/auth'
 import { dispatch } from '@/lib/comms/dispatch'
 import { normalizeBRPhone } from '@/lib/comms/phone'
 import { buildPersuasionVars, renderPersuasion } from '@/lib/comms/persuasion'
+import { drainQueueNow } from '@/lib/comms/process'
 import type { OutboxTarget, CommChannel } from '@/lib/comms/types'
 
 export const dynamic = 'force-dynamic'
@@ -105,7 +106,7 @@ export async function POST(request: NextRequest) {
             const leads = await db
                 .collection('leads')
                 .find({ campaignId: body.campaignId })
-                .project({ email: 1, name: 1, phoneE164: 1, leadUuid: 1, persuasiveTag: 1 })
+                .project({ email: 1, name: 1, phoneE164: 1, leadUuid: 1, persuasiveTag: 1, city: 1 })
                 .toArray()
             targets = leads.map((l) => ({
                 email: l.email,
@@ -113,6 +114,7 @@ export async function POST(request: NextRequest) {
                 phoneE164: l.phoneE164,
                 leadUuid: l.leadUuid,
                 persuasiveTag: l.persuasiveTag,
+                city: l.city,
             }))
         } else if (body.audience === 'manual') {
             const parsed = parseManualRecipients(body.manualRecipients || '')
@@ -171,6 +173,8 @@ export async function POST(request: NextRequest) {
                 firstName,
                 nome: firstName,
                 name: to.name || firstName,
+                city: to.city || baseVars.city || '',
+                cidade: to.city || baseVars.cidade || '',
                 persuasiveTag: to.persuasiveTag || baseVars.persuasiveTag || '',
             }
 
@@ -197,11 +201,31 @@ export async function POST(request: NextRequest) {
             for (const s of skipped) skippedByReason[s.reason] = (skippedByReason[s.reason] || 0) + 1
         }
 
+        // Envia AGORA (não espera o cron, que no plano Hobby só roda 1x/dia, nem o
+        // ticker externo). Respeita o rate-limit normalmente — só evita a espera.
+        // Se o lote for grande, o que não couber no orçamento de tempo continua
+        // "pending" e é pego pelo próximo tick do cron/ticker.
+        const drainResults = await drainQueueNow(channels, { timeBudgetMs: 20_000 })
+        const sentNow: Record<string, number> = {}
+        const deadNow: Record<string, number> = {}
+        for (const r of drainResults) {
+            sentNow[r.channel] = r.sent
+            deadNow[r.channel] = r.dead
+        }
+        const totalSentNow = drainResults.reduce((a, r) => a + r.sent, 0)
+        const totalQueued = (totals.email || 0) + (totals.whatsapp || 0)
+        const stillPending = totalQueued - totalSentNow
+
         return NextResponse.json({
             success: true,
-            message: `Enfileirado — e-mail: ${totals.email || 0}, WhatsApp: ${totals.whatsapp || 0}`,
+            message:
+                stillPending > 0
+                    ? `Enviado agora: ${totalSentNow} de ${totalQueued} — o restante (${stillPending}) continua na fila e será enviado em instantes.`
+                    : `Enviado: ${totalSentNow} de ${totalQueued}.`,
             campaignId: campaignIdTag,
             totals,
+            sentNow,
+            deadNow,
             skipped: skippedByReason,
             audienceSize: targets.length,
             invalidManualEntries: invalidManualEntries.length > 0 ? invalidManualEntries.slice(0, 20) : undefined,

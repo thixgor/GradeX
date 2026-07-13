@@ -108,7 +108,8 @@ export async function POST(req: NextRequest) {
             emailSubject: emailSubject?.trim() || `Seu material: ${name}`,
             emailBlocks: emailBlocks || [],
             channels: Array.isArray(channels) && channels.length ? channels : ['email'],
-            collectPhone: collectPhone || false,
+            // Coleta de WhatsApp habilitada por padrão (o admin pode desligar).
+            collectPhone: collectPhone !== undefined ? !!collectPhone : true,
             requirePhone: requirePhone || false,
             whatsappTemplate: whatsappTemplate?.trim() || undefined,
             defaultPersuasiveTag: defaultPersuasiveTag?.trim() || undefined,

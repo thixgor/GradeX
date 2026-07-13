@@ -1,5 +1,6 @@
 
 import nodemailer from 'nodemailer'
+import { personalize } from '@/lib/comms/email-render'
 
 // Transporter compartilhado (pooled). O SMTP da Hostinger derruba conexões sob
 // rajada — daí os erros de "auth limit". O pool reaproveita poucas conexões e
@@ -970,34 +971,37 @@ export async function sendLeadMaterialEmail(
   name: string,
   campaignName: string,
   subject: string,
-  blocks: LeadBlockForEmail[]
+  blocks: LeadBlockForEmail[],
+  city?: string
 ) {
   const firstName = name.split(' ')[0]
-  const blocksHtml = renderLeadBlocksToHtml(blocks)
+  // Blocos são autorados pelo admin e podem conter %nome%, %nome completo% e
+  // %cidade% — personalizados aqui com os dados reais do lead.
+  const blocksHtml = personalize(renderLeadBlocksToHtml(blocks), name, city)
 
   const content = `
     <h1 class="h1">Olá, ${firstName}! 🎁</h1>
     <p>Obrigado pelo seu interesse em <strong>"${campaignName}"</strong>.</p>
     <p>Aqui está seu material exclusivo:</p>
-    
+
     <hr style="border: 0; height: 1px; background: #edf2f7; margin: 25px 0;" />
-    
+
     ${blocksHtml}
-    
+
     <hr style="border: 0; height: 1px; background: #edf2f7; margin: 25px 0;" />
-    
+
     <div style="background-color: #fff8e1; border-left: 4px solid #f57c00; padding: 15px; margin: 20px 0; border-radius: 4px;">
       <p style="margin: 0; color: #795548;"><strong>Gostou do conteúdo?</strong> Siga-nos no Instagram para mais materiais exclusivos!</p>
       <p style="margin-top: 10px;"><a href="https://instagram.com/domineaqui.br" style="color: #f57c00; font-weight: bold; text-decoration: none;">👉 Seguir @domineaqui.br</a></p>
     </div>
   `
 
-  const html = getEmailTemplate(subject, content)
+  const html = getEmailTemplate(personalize(subject, name, city), content)
 
   await transporter.sendMail({
     from: '"DomineAqui" <no-reply@domineaqui.com.br>',
     to: email,
-    subject: subject,
+    subject: personalize(subject, name, city),
     html,
   })
 }

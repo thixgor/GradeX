@@ -178,7 +178,16 @@ e dispense o acionador externo.
 
 ## Operação
 
-- **Forçar processamento da fila** (sem esperar o cron):
+- **Envio instantâneo:** desde esta versão, `POST /api/admin/social-media/send`
+  não só enfileira — ele mesmo drena a fila recém-criada antes de responder
+  (`lib/comms/process.ts`, `drainQueueNow`), então o admin já vê "Enviado: X de
+  Y" na hora, sem depender do cron/ticker para lotes pequenos/médios. Só o que
+  não couber no orçamento de tempo da função (20s no envio, para caber nos 60s
+  do plano Hobby) fica "pending" à espera do próximo processamento.
+- **"Processar fila agora"** (botão na aba Histórico de `/admin/social-media`,
+  ou `POST /api/admin/social-media/dispatch-now`, admin-autenticado): drena o
+  que sobrou manualmente, sem precisar do CRON_SECRET.
+- **Forçar processamento da fila via cron** (sem esperar o schedule):
   ```bash
   curl -X POST https://SEU_APP/api/cron/comms-dispatcher \
        -H "Authorization: Bearer $CRON_SECRET"
@@ -196,18 +205,38 @@ e dispense o acionador externo.
 
 - **UI:** `app/admin/social-media` — abas *Nova comunicação* (escolhe canal:
   e-mail, WhatsApp ou ambos; público: contatos/usuários/campanha/**lista
-  manual**), *Histórico* unificado e *Jornadas*. Card no painel admin.
+  manual**), *Histórico* unificado e *Jornadas* (com cancelamento de matrículas).
+  Card no painel admin.
 - **APIs:** `POST /api/admin/social-media/send` (enfileira multicanal),
   `POST /api/admin/social-media/preview` (renderiza sem enviar),
   `GET /api/admin/social-media/history` (auditoria a partir da outbox),
-  `GET|POST /api/admin/social-media/sequences` (listar / criar jornada padrão).
-- **Personalização:** botões de token (`{{firstName}}`, `{{persuasiveTag}}`,
-  `{{totalStudents}}`, `{{campaignLeads}}`, `{{campaignName}}`, `{{authority}}`)
-  inserem a variável no cursor do campo (assunto/conteúdo/texto do WhatsApp).
-  Cada destinatário recebe o conteúdo renderizado com seu **próprio** nome e
-  tag persuasiva antes de ser enfileirado (mesmo mecanismo das jornadas). O
-  e-mail também aceita `%nome%`/`%nome completo%` (resolvido pelo adapter no
-  envio). As variáveis de prova social (`totalStudents`, `campaignLeads`) são
+  `GET|POST /api/admin/social-media/sequences` (listar / criar jornada padrão),
+  `GET|POST /api/admin/social-media/enrollments` (listar/cancelar matrículas),
+  `POST /api/admin/social-media/dispatch-now` (drena a fila sob demanda).
+- **Editor visual de e-mail (blocos):** o composer de e-mail agora tem dois
+  modos — *Blocos* (padrão) e *HTML avançado*. No modo Blocos, monta-se o
+  e-mail com os mesmos tipos de bloco de `/admin/emails` (título, texto,
+  destaque, lista, botão, imagem, citação); o HTML final usa as mesmas classes
+  CSS do template de marketing (`lib/comms/email-blocks.ts`, compartilhado).
+  Trocar para HTML avançado dá acesso ao HTML bruto para quem precisar de algo
+  fora dos blocos padrão.
+- **Templates de WhatsApp:** biblioteca com ~13 mensagens prontas
+  (`lib/comms/whatsapp-templates.ts`), organizadas por categoria de persuasão
+  (reciprocidade, check-in, prova social, autoridade, compromisso, escassez,
+  reengajamento). Seletor disponível no composer do Social-Media e no campo
+  "Mensagem do 1º toque" das campanhas de leads — insere o texto pronto, que
+  o admin pode editar livremente antes de enviar.
+- **Personalização:** botões de token (`{{firstName}}`, `{{cidade}}`,
+  `{{persuasiveTag}}`, `{{totalStudents}}`, `{{campaignLeads}}`,
+  `{{campaignName}}`, `{{authority}}`) inserem a variável no cursor do campo
+  (assunto/conteúdo/texto do WhatsApp). Cada destinatário recebe o conteúdo
+  renderizado com seu **próprio** nome, cidade e tag persuasiva antes de ser
+  enfileirado (mesmo mecanismo das jornadas). Além disso, e-mail **e** WhatsApp
+  aceitam `%nome%`, `%nome completo%` (se houver sobrenome cadastrado) e
+  `%cidade%` (se o lead tiver cidade geolocalizada) — resolvidos pelo adapter
+  no momento do envio, com fallback gracioso quando o dado não existe
+  (`personalize()` em `lib/comms/email-render.ts`, reaproveitado pelos dois
+  canais). As variáveis de prova social (`totalStudents`, `campaignLeads`) são
   calculadas **uma vez por disparo**, não por destinatário — evita milhares de
   queries redundantes em campanhas grandes.
 - **Envio manual (lista colada):** público "Lista manual" aceita e-mails e/ou
@@ -226,6 +255,12 @@ e dispense o acionador externo.
   não consentiu e anexa um snapshot do consentimento a cada mensagem.
 - **Histórico unificado:** `lib/comms/history.ts` grava em `email_history` e
   `whatsapp_history` a cada envio, além da outbox (fonte da verdade).
+- **Cancelar jornada de nurturing:** na aba *Jornadas*, "Ver matrículas ativas"
+  lista quem está numa sequência (nome/contato, passo atual, próximo envio) com
+  botão "Cancelar" por lead, ou "Cancelar todas" para pausar a jornada inteira.
+  Cancelar não desfaz mensagens já enviadas, só impede os próximos passos.
+  Backend: `stopEnrollment`/`stopAllEnrollments`/`stopEnrollmentsForTarget` em
+  `lib/comms/sequences.ts`.
 
 ## Parte 4 — Leads aprimorados
 
@@ -241,10 +276,16 @@ e dispense o acionador externo.
   e não-destrutiva (não altera slugs já divulgados): `npm run backfill-campaign-uuid`.
 - **Metatag persuasiva:** `Lead.persuasiveTag` (+ `LeadCampaign.defaultPersuasiveTag`).
   Editável por lead via `POST /api/admin/leads/update-lead`.
-- **Contato em e-mail E WhatsApp:** o formulário do lead coleta telefone
-  (opcional) + opt-in de WhatsApp; o contato é gravado em `comms_contacts` e o
-  material é entregue por e-mail (imediato) e/ou WhatsApp (fila), conforme
-  `LeadCampaign.channels`.
+- **Contato em e-mail E WhatsApp:** o formulário do lead pede telefone
+  (**`collectPhone: true` por padrão** em campanhas novas) + checkbox de opt-in
+  de WhatsApp; o contato é gravado em `comms_contacts` e o material é entregue
+  por e-mail (imediato) e/ou WhatsApp (fila), conforme `LeadCampaign.channels`.
+  Configurável por campanha em `app/admin/leads/new` e `app/admin/leads/[id]`
+  (card "Comunicação Multicanal": pedir/obrigar WhatsApp, ativar entrega por
+  WhatsApp, mensagem do 1º toque, tag persuasiva padrão, jornada de nurturing).
+  **Campanhas criadas antes desta versão** não pediam telefone (a UI não
+  existia) — rode `npm run backfill-collect-phone` uma vez para ligar a coleta
+  em todas elas (não sobrescreve o que já estiver ligado).
 
 ## Parte 5 — Persuasão e jornada
 

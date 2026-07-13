@@ -13,6 +13,7 @@ interface PreviewBody {
     previewText?: string
     whatsappText?: string
     sampleName?: string
+    sampleCity?: string
     persuasiveTag?: string
     campaignId?: string
 }
@@ -32,6 +33,7 @@ export async function POST(request: NextRequest) {
 
         const body: PreviewBody = await request.json()
         const sampleName = body.sampleName?.trim() || 'Maria Estudante'
+        const sampleCity = body.sampleCity?.trim() || 'São Paulo'
 
         let campaignName: string | undefined
         if (body.campaignId && ObjectId.isValid(body.campaignId)) {
@@ -42,6 +44,7 @@ export async function POST(request: NextRequest) {
 
         const vars = await buildPersuasionVars({
             name: sampleName,
+            city: sampleCity,
             persuasiveTag: body.persuasiveTag?.trim() || 'aprovação em Clínica Médica',
             campaignId: body.campaignId,
             campaignName,
@@ -54,14 +57,14 @@ export async function POST(request: NextRequest) {
             const subject = renderPersuasion(body.subject || '', vars)
             const content = renderPersuasion(body.content || '', vars)
             const previewText = body.previewText ? renderPersuasion(body.previewText, vars) : undefined
-            emailSubject = personalize(subject, sampleName)
-            emailHtml = personalize(getMarketingEmailTemplate(content, previewText), sampleName)
+            emailSubject = personalize(subject, sampleName, sampleCity)
+            emailHtml = personalize(getMarketingEmailTemplate(content, previewText), sampleName, sampleCity)
         }
 
         let whatsappText: string | undefined
         if (body.whatsappText !== undefined) {
             const firstName = sampleName.split(/\s+/)[0]
-            whatsappText = renderPersuasion(body.whatsappText || '', vars)
+            whatsappText = personalize(renderPersuasion(body.whatsappText || '', vars), sampleName, sampleCity)
                 .replace(/\{\{\s*nome\s*\}\}/gi, firstName)
                 .replace(/\{nome\}/gi, firstName)
         }

@@ -18,6 +18,8 @@ export type PersuasionVars = Record<string, string>
 
 export interface PersuasionContext {
     name?: string
+    /** Cidade do destinatário (geolocalizada na captura), se disponível. */
+    city?: string
     persuasiveTag?: string
     campaignId?: string
     campaignName?: string
@@ -60,6 +62,8 @@ export async function buildPersuasionVars(ctx: PersuasionContext): Promise<Persu
         firstName,
         nome: firstName,
         name: ctx.name || firstName,
+        city: ctx.city || '',
+        cidade: ctx.city || '',
         persuasiveTag: ctx.persuasiveTag || '',
         campaignName: ctx.campaignName || '',
         authority: ctx.authority || '',

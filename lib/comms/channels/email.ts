@@ -21,6 +21,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
  */
 function render(msg: OutboxMessage): { subject: string; html: string } {
     const name = msg.to.name || ''
+    const city = msg.to.city
     const p = msg.payload as {
         subject?: string
         content?: string
@@ -30,16 +31,16 @@ function render(msg: OutboxMessage): { subject: string; html: string } {
 
     if (msg.renderedBody) {
         return {
-            subject: personalize(msg.renderedSubject || p.subject || '', name),
-            html: personalize(msg.renderedBody, name),
+            subject: personalize(msg.renderedSubject || p.subject || '', name, city),
+            html: personalize(msg.renderedBody, name, city),
         }
     }
 
     // Template de campanha: content = HTML dos blocos, envolvido no layout base.
     const html = p.html || getMarketingEmailTemplate(p.content || '', p.previewText)
     return {
-        subject: personalize(p.subject || '', name),
-        html: personalize(html, name),
+        subject: personalize(p.subject || '', name, city),
+        html: personalize(html, name, city),
     }
 }
 

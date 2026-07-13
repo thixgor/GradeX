@@ -11,6 +11,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 import { getDb } from '@/lib/mongodb'
+import { ObjectId } from 'mongodb'
 import type { Collection } from 'mongodb'
 import { dispatch } from './dispatch'
 import { buildPersuasionVars, renderPersuasion } from './persuasion'
@@ -192,4 +193,73 @@ export async function advanceSequences(limit = 100): Promise<{ advanced: number;
     }
 
     return stats
+}
+
+/**
+ * Cancela UMA matrícula (o lead não recebe mais os próximos passos da
+ * jornada). Passos já enviados não são desfeitos. Idempotente.
+ */
+export async function stopEnrollment(enrollmentId: string): Promise<{ stopped: boolean }> {
+    if (!ObjectId.isValid(enrollmentId)) return { stopped: false }
+    const col = await enrollments()
+    const res = await col.updateOne(
+        { _id: new ObjectId(enrollmentId), status: 'active' },
+        { $set: { status: 'stopped', updatedAt: new Date() } },
+    )
+    return { stopped: res.modifiedCount > 0 }
+}
+
+/**
+ * Cancela TODAS as matrículas ativas de uma sequência (ex.: pausar uma
+ * jornada inteira sem desativar a sequência em si).
+ */
+export async function stopAllEnrollments(sequenceKey: string): Promise<{ stopped: number }> {
+    const col = await enrollments()
+    const res = await col.updateMany(
+        { sequenceKey, status: 'active' },
+        { $set: { status: 'stopped', updatedAt: new Date() } },
+    )
+    return { stopped: res.modifiedCount }
+}
+
+/**
+ * Cancela a(s) matrícula(s) ativa(s) de um lead/contato específico — permite
+ * um "descadastro" pontual de uma jornada por e-mail, telefone ou leadUuid.
+ */
+export async function stopEnrollmentsForTarget(match: {
+    email?: string
+    phoneE164?: string
+    leadUuid?: string
+}): Promise<{ stopped: number }> {
+    const col = await enrollments()
+    const or: Record<string, unknown>[] = []
+    if (match.email) or.push({ 'to.email': match.email.toLowerCase() })
+    if (match.phoneE164) or.push({ 'to.phoneE164': match.phoneE164 })
+    if (match.leadUuid) or.push({ 'to.leadUuid': match.leadUuid })
+    if (!or.length) return { stopped: 0 }
+
+    const res = await col.updateMany(
+        { $or: or, status: 'active' },
+        { $set: { status: 'stopped', updatedAt: new Date() } },
+    )
+    return { stopped: res.modifiedCount }
+}
+
+export interface ListEnrollmentsOptions {
+    sequenceKey?: string
+    status?: EnrollmentStatus
+    limit?: number
+}
+
+/** Lista matrículas (para o painel admin visualizar e cancelar). */
+export async function listEnrollments(opts: ListEnrollmentsOptions = {}): Promise<SequenceEnrollment[]> {
+    const col = await enrollments()
+    const filter: Record<string, unknown> = {}
+    if (opts.sequenceKey) filter.sequenceKey = opts.sequenceKey
+    if (opts.status) filter.status = opts.status
+    return col
+        .find(filter)
+        .sort({ enrolledAt: -1 })
+        .limit(Math.min(opts.limit || 100, 500))
+        .toArray()
 }

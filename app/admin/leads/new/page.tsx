@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -32,6 +32,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { WHATSAPP_TEMPLATES, WHATSAPP_TEMPLATE_CATEGORY_LABELS } from '@/lib/comms/whatsapp-templates'
 
 type BlockType = 'text' | 'button' | 'card' | 'embed'
 type EmbedType = 'video' | 'podcast' | 'audio'
@@ -71,6 +72,22 @@ export default function NewLeadCampaignPage() {
     const [sendEmail, setSendEmail] = useState(false)
     const [emailSubject, setEmailSubject] = useState('')
     const [isActive, setIsActive] = useState(true)
+
+    // Comunicação multicanal
+    const [collectPhone, setCollectPhone] = useState(true)
+    const [requirePhone, setRequirePhone] = useState(false)
+    const [sendWhatsapp, setSendWhatsapp] = useState(false)
+    const [whatsappTemplate, setWhatsappTemplate] = useState('Olá %nome%! 👋 Aqui está seu material *{{campaignName}}*. Qualquer dúvida, é só responder por aqui.')
+    const [defaultPersuasiveTag, setDefaultPersuasiveTag] = useState('')
+    const [sequenceId, setSequenceId] = useState('')
+    const [sequences, setSequences] = useState<{ key: string; name: string }[]>([])
+
+    useEffect(() => {
+        fetch('/api/admin/social-media/sequences', { cache: 'no-store' })
+            .then((r) => r.json())
+            .then((d) => setSequences(d.sequences || []))
+            .catch(() => {})
+    }, [])
 
     const addBlock = (type: BlockType) => {
         const newBlock: LeadBlock = {
@@ -125,6 +142,12 @@ export default function NewLeadCampaignPage() {
                     sendEmail,
                     emailSubject: emailSubject || `Seu material: ${name}`,
                     emailBlocks: sendEmail ? blocks : [],
+                    channels: sendWhatsapp ? ['email', 'whatsapp'] : ['email'],
+                    collectPhone,
+                    requirePhone: collectPhone && requirePhone,
+                    whatsappTemplate: sendWhatsapp ? whatsappTemplate : undefined,
+                    defaultPersuasiveTag: defaultPersuasiveTag || undefined,
+                    sequenceId: sequenceId || undefined,
                     isActive
                 })
             })
@@ -368,6 +391,87 @@ export default function NewLeadCampaignPage() {
                             <div className="flex items-center gap-2">
                                 <Switch checked={isActive} onCheckedChange={setIsActive} />
                                 <Label>Campanha ativa</Label>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* Comunicação Multicanal */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Comunicação Multicanal</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="flex items-center gap-2">
+                                <Switch checked={collectPhone} onCheckedChange={setCollectPhone} />
+                                <Label>Pedir WhatsApp no formulário</Label>
+                            </div>
+                            {collectPhone && (
+                                <div className="flex items-center gap-2 pl-6">
+                                    <Switch checked={requirePhone} onCheckedChange={setRequirePhone} />
+                                    <Label>Tornar WhatsApp obrigatório</Label>
+                                </div>
+                            )}
+                            <div className="flex items-center gap-2">
+                                <Switch checked={sendWhatsapp} onCheckedChange={setSendWhatsapp} />
+                                <Label>Enviar o material também por WhatsApp (quem der opt-in)</Label>
+                            </div>
+                            {sendWhatsapp && (
+                                <div>
+                                    <div className="flex items-center justify-between">
+                                        <Label>Mensagem do 1º toque no WhatsApp</Label>
+                                        <select
+                                            defaultValue=""
+                                            onChange={(e) => {
+                                                const tpl = WHATSAPP_TEMPLATES.find((t) => t.key === e.target.value)
+                                                if (tpl) setWhatsappTemplate(tpl.text)
+                                                e.target.value = ''
+                                            }}
+                                            className="h-7 rounded-md border border-input bg-background px-2 text-xs"
+                                        >
+                                            <option value="" disabled>Usar template...</option>
+                                            {Object.entries(WHATSAPP_TEMPLATE_CATEGORY_LABELS).map(([cat, catLabel]) => (
+                                                <optgroup key={cat} label={catLabel}>
+                                                    {WHATSAPP_TEMPLATES.filter((t) => t.category === cat).map((t) => (
+                                                        <option key={t.key} value={t.key}>{t.label}</option>
+                                                    ))}
+                                                </optgroup>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <Textarea
+                                        value={whatsappTemplate}
+                                        onChange={(e) => setWhatsappTemplate(e.target.value)}
+                                        rows={3}
+                                        placeholder="Olá %nome%! Aqui está seu material..."
+                                        className="mt-1"
+                                    />
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                        Aceita %nome%, %nome completo%, %cidade% e {'{{campaignName}}'}, {'{{persuasiveTag}}'}, {'{{totalStudents}}'}.
+                                    </p>
+                                </div>
+                            )}
+                            <div className="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <Label>Tag persuasiva padrão (opcional)</Label>
+                                    <Input
+                                        value={defaultPersuasiveTag}
+                                        onChange={(e) => setDefaultPersuasiveTag(e.target.value)}
+                                        placeholder="ex.: aprovação em Clínica Médica"
+                                    />
+                                </div>
+                                <div>
+                                    <Label>Jornada de nurturing (opcional)</Label>
+                                    <select
+                                        value={sequenceId}
+                                        onChange={(e) => setSequenceId(e.target.value)}
+                                        className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                                    >
+                                        <option value="">Nenhuma</option>
+                                        {sequences.map((s) => (
+                                            <option key={s.key} value={s.key}>{s.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
                         </CardContent>
                     </Card>

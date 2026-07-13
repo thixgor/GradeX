@@ -14,7 +14,8 @@
     "create-admin": "node scripts/create-admin.js",
     "make-admin": "node scripts/make-admin.js",
     "backfill-lead-uuid": "node scripts/backfill-lead-uuid.js",
-    "backfill-campaign-uuid": "node scripts/backfill-campaign-uuid.js"
+    "backfill-campaign-uuid": "node scripts/backfill-campaign-uuid.js",
+    "backfill-collect-phone": "node scripts/backfill-collect-phone.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",

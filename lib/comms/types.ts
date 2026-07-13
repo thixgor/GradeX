@@ -33,6 +33,8 @@ export interface OutboxTarget {
     phoneE164?: string
     /** Nome usado para personalização. */
     name?: string
+    /** Cidade (geolocalizada na captura do lead), usada para personalização. */
+    city?: string
 }
 
 /** Snapshot do consentimento no momento em que a mensagem foi enfileirada (LGPD). */

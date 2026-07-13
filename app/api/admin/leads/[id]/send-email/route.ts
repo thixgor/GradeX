@@ -54,7 +54,8 @@ export async function POST(
                 lead.name,
                 campaign.name,
                 campaign.emailSubject || `Seu material: ${campaign.name}`,
-                campaign.emailBlocks || campaign.blocks
+                campaign.emailBlocks || campaign.blocks,
+                lead.city
             )
 
             // Marcar como enviado
