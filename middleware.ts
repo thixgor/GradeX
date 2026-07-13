@@ -33,6 +33,9 @@ const publicRoutes = [
   '/api/amostra',
   '/manual-clinico',
   '/manual-clinico/farmacologia',
+  // Manual do Eletrocardiograma: página pública que exibe o paywall a visitantes;
+  // o acesso ao simulador é validado no handler /api/manual-clinico/eletrocardiograma.
+  '/manual-clinico/eletrocardiograma',
   // Landing page lê settings publicamente (videoEmbedUrl, landingPageEnabled,
   // etc). A própria rota faz checagem de admin internamente para PUT.
   '/api/admin/settings',
@@ -111,6 +114,7 @@ function isPublicRoute(pathname: string): boolean {
     pathname === '/api/flashcards/manual/folders' ||
     pathname === '/api/manual-clinico' ||
     pathname === '/api/manual-clinico/product' ||
+    pathname === '/api/manual-clinico/eletrocardiograma' ||
     pathname === '/api/farmacologia'
   ) return true
   if (/^\/api\/materiais\/[a-fA-F0-9]{24}$/.test(pathname)) return true

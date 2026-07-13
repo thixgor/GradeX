@@ -814,7 +814,7 @@ function ManualClinicoContent() {
         {/* ══════════ FARMACOLOGIA ENTRY ══════════ */}
         <button
           onClick={() => router.push('/manual-clinico/farmacologia')}
-          className="group mb-7 w-full overflow-hidden rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary/35"
+          className="group mb-3 w-full overflow-hidden rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary/35"
         >
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
@@ -829,6 +829,32 @@ function ManualClinicoContent() {
               </div>
             </div>
             <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+          </div>
+        </button>
+
+        {/* ══════════ ELETROCARDIOGRAMA ENTRY (premium) ══════════ */}
+        <button
+          onClick={() => router.push('/manual-clinico/eletrocardiograma')}
+          className="group mb-7 w-full overflow-hidden rounded-lg border border-red-500/20 bg-gradient-to-r from-red-500/[0.06] to-card p-4 text-left transition-colors hover:border-red-500/40"
+        >
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="rounded-xl bg-red-500/10 p-2.5">
+                <Activity className="h-5 w-5 text-red-500" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-bold leading-snug">Manual do Eletrocardiograma</p>
+                  <span className="inline-flex items-center gap-1 rounded-md border border-amber-300/25 bg-amber-400/10 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-amber-700 dark:text-amber-200">
+                    <Crown className="h-2.5 w-2.5" /> Premium
+                  </span>
+                </div>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  Simulador interativo de ECG: 12 derivações em tempo real, papel milimetrado real, medidas automáticas, régua, banco de traçados com critérios diagnósticos e exercícios. Privativo para assinantes.
+                </p>
+              </div>
+            </div>
+            <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-red-500" />
           </div>
         </button>
 
