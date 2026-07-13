@@ -3,6 +3,7 @@ import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { User } from '@/lib/types'
 import { dispatchBulk } from '@/lib/comms/dispatch'
+import { drainQueueNow } from '@/lib/comms/process'
 import type { OutboxTarget } from '@/lib/comms/types'
 
 export const dynamic = 'force-dynamic'
@@ -28,9 +29,12 @@ interface Recipient {
  *
  * Antes, esta rota enviava até 50 e-mails simultâneos por lote via
  * `Promise.all` dentro do request — o que estourava o limite do SMTP e gerava
- * os erros de "auth limit" (~67 falhas). Agora ela apenas ENFILEIRA na outbox
- * (lib/comms); o cron `comms-dispatcher` envia de forma assíncrona, com
- * rate-limit, retry/backoff e log por destinatário. A resposta é imediata.
+ * os erros de "auth limit" (~67 falhas). Agora ela ENFILEIRA na outbox
+ * (lib/comms) e já drena a fila antes de responder (com rate-limit,
+ * retry/backoff e log por destinatário) — sem depender de cron: este projeto
+ * não usa Vercel Cron para a fila. Lotes grandes que não couberem no
+ * orçamento de tempo continuam "pending" e são pegos pelo botão "Processar
+ * fila agora" (`/admin/social-media`) ou por um ticker externo opcional.
  */
 export async function POST(request: NextRequest) {
     try {
@@ -102,13 +106,22 @@ export async function POST(request: NextRequest) {
             { campaignId },
         )
 
+        // Envia AGORA — não espera cron/ticker. O que não couber no orçamento de
+        // tempo continua "pending" (botão "Processar fila agora" cobre o resto).
+        const [drainResult] = await drainQueueNow(['email'], { timeBudgetMs: 20_000 })
+        const sentNow = drainResult?.sent || 0
+        const stillPending = queued - sentNow
+
         return NextResponse.json({
             success: true,
-            message: `${queued} e-mail(s) enfileirado(s). O envio ocorre em segundo plano.`,
+            message:
+                stillPending > 0
+                    ? `Enviado agora: ${sentNow} de ${queued} — o restante (${stillPending}) continua na fila e será enviado em instantes.`
+                    : `Enviado: ${sentNow} de ${queued}.`,
             stats: {
                 total: recipientList.length,
-                sent: 0,
-                failed: 0,
+                sent: sentNow,
+                failed: drainResult?.dead || 0,
                 queued,
             },
             campaignId,

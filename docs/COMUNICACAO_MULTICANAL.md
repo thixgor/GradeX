@@ -1,8 +1,9 @@
 # Comunicação Multicanal (E-mail + WhatsApp)
 
 Sistema de envio resiliente baseado em **fila persistente (outbox) no MongoDB**,
-drenada por um **worker cron**, com **adapters plugáveis por canal**. Rotas
-serverless nunca enviam direto — elas só enfileiram.
+com **adapters plugáveis por canal**. Rotas serverless nunca enviam direto —
+elas só enfileiram, e o próprio endpoint de envio drena a fila na hora (sem
+depender de Vercel Cron, que não é usado por este projeto).
 
 Esta é a **Fase 0 + Fase 1 (e-mail) + adapter/worker de WhatsApp** do plano. As
 fases seguintes (central "Social-Media", leads com UUID/metatag, sequências de
@@ -18,13 +19,20 @@ Rota serverless (campanha, lead, etc.)
       ▼
 MongoDB: outbox_messages   ← fila + log de auditoria por destinatário
       ▲                    (status: pending→processing→sent/delivered/failed/dead/skipped)
-      │  Vercel Cron (* * * * *) → GET /api/cron/comms-dispatcher
+      │  drainQueueNow() chamado DIRETO pelo endpoint de envio (sem cron)
       │  claimBatch() reserva com lease atômico + takeToken() (rate-limit)
       ▼
   ChannelAdapter (email | whatsapp | …)
       ├─ email    → transporter pooled (lib/mail.ts) → SMTP Hostinger
       └─ whatsapp → HTTP POST → server/whatsapp-worker.js (Baileys, always-on)
 ```
+
+> **Este projeto NÃO usa Vercel Cron para a fila** (o plano Hobby já usa o teto
+> de cron jobs com outras rotinas do sistema). O processamento acontece por
+> três vias, sem depender de agendamento algum: (1) o próprio envio drena a
+> fila antes de responder, (2) o botão "Processar fila agora" no admin, e (3)
+> opcionalmente um ticker externo (`scripts/comms-ticker.js`) rodando fora da
+> Vercel. Ver seção "Acionando o dispatcher" abaixo.
 
 ### Arquivos
 
@@ -33,12 +41,14 @@ MongoDB: outbox_messages   ← fila + log de auditoria por destinatário
 | `lib/comms/types.ts` | Tipos + interface `ChannelAdapter` (Strategy/Adapter) |
 | `lib/comms/outbox.ts` | Fila: `enqueue`, `enqueueMany`, `claimBatch`, `markSent`, `markFailed`, backoff |
 | `lib/comms/rate-limit.ts` | Token bucket de saída por canal (respeita o provedor) |
+| `lib/comms/process.ts` | Núcleo do processamento (`processChannel`, `drainQueueNow`) |
 | `lib/comms/channels/email.ts` | Adapter de e-mail (transporter pooled) |
 | `lib/comms/channels/whatsapp.ts` | Adapter de WhatsApp → chama o worker via HTTP |
 | `lib/comms/email-render.ts` | Template de marketing + `personalize` (compartilhado) |
 | `lib/comms/registry.ts` | Mapa canal → adapter (adicionar SMS/push aqui) |
 | `lib/comms/dispatch.ts` | `dispatch`/`dispatchBulk`: enfileira nos canais escolhidos |
-| `app/api/cron/comms-dispatcher/route.ts` | Worker cron que drena a fila |
+| `app/api/cron/comms-dispatcher/route.ts` | Endpoint de processamento (**não** agendado no Vercel Cron) |
+| `app/api/admin/social-media/dispatch-now/route.ts` | Botão "Processar fila agora" (admin) |
 | `server/whatsapp-worker.js` | Cliente Baileys **always-on** (fora da Vercel) |
 
 ### Coleções MongoDB (criadas sob demanda)
@@ -154,27 +164,36 @@ transitórios (retry com backoff); 4xx (exceto 429) são permanentes.
 
 ---
 
-## Acionando o dispatcher (cadência de 1 minuto)
+## Acionando o dispatcher (sem Vercel Cron)
 
-O ideal é o dispatcher rodar a cada minuto. O **Vercel Cron no plano Hobby só
-permite 1×/dia**, então o `vercel.json` mantém apenas um disparo diário como
-**rede de segurança**. A cadência real de 1 minuto vem de um acionador externo:
+**Este projeto não registra `comms-dispatcher` no `vercel.json`** — o Hobby já
+usa o teto de cron jobs com as outras rotinas do sistema (subscriptions-sweeper,
+manual-clinico-expirations, raffles-sweeper, revisao-espacada), e adicionar
+mais um quebrava o deploy. Em vez de cron, o processamento acontece assim:
 
-**Opção A — Ticker no host sempre-ligado (mesmo PC do worker):**
-```bash
-export APP_URL="https://domineaqui.com.br"
-export CRON_SECRET="<mesmo do .env>"
-npm run comms:ticker
-# Com PM2 (junto do worker):
-pm2 start "npm run comms:ticker" --name comms-ticker && pm2 save
-```
+1. **Instantâneo (padrão):** todo envio pela Central Social-Media já drena a
+   própria fila antes de responder (`drainQueueNow`, até ~20s de orçamento) —
+   cobre a grande maioria dos casos sem nenhuma configuração extra.
+2. **Botão "Processar fila agora"** (aba Histórico de `/admin/social-media`):
+   drena manualmente o que sobrou de lotes grandes. Sempre disponível, admin-autenticado.
+3. **Ticker externo (opcional):** se quiser processamento contínuo mesmo sem
+   ninguém no admin (ex.: para as jornadas de nurturing avançarem sozinhas),
+   rode o ticker num host sempre-ligado:
+   ```bash
+   export APP_URL="https://domineaqui.com.br"
+   export CRON_SECRET="<mesmo do .env>"
+   npm run comms:ticker
+   # Com PM2 (junto do worker de WhatsApp):
+   pm2 start "npm run comms:ticker" --name comms-ticker && pm2 save
+   ```
+   Alternativa sem instalar nada: um serviço de cron externo gratuito (ex.:
+   cron-job.org) apontando pra `POST https://SEU_APP/api/cron/comms-dispatcher`
+   com header `Authorization: Bearer <CRON_SECRET>`.
 
-**Opção B — Serviço de cron externo (sem instalar nada):** aponte um serviço
-gratuito (ex.: cron-job.org) para `POST https://SEU_APP/api/cron/comms-dispatcher`
-a cada minuto, com header `Authorization: Bearer <CRON_SECRET>`.
-
-**Opção C — Plano Vercel Pro:** troque o schedule para `* * * * *` no `vercel.json`
-e dispense o acionador externo.
+Sem nenhuma das duas últimas opções configuradas, as jornadas de nurturing
+(que dependem de `advanceSequences()` rodando periodicamente) só avançam
+quando alguém aciona o processamento manualmente ou faz um novo envio pela
+Central. Para jornadas 100% automáticas, configure o ticker.
 
 ## Operação
 
@@ -187,7 +206,7 @@ e dispense o acionador externo.
 - **"Processar fila agora"** (botão na aba Histórico de `/admin/social-media`,
   ou `POST /api/admin/social-media/dispatch-now`, admin-autenticado): drena o
   que sobrou manualmente, sem precisar do CRON_SECRET.
-- **Forçar processamento da fila via cron** (sem esperar o schedule):
+- **Forçar processamento via curl** (equivalente ao ticker, sem instalar nada):
   ```bash
   curl -X POST https://SEU_APP/api/cron/comms-dispatcher \
        -H "Authorization: Bearer $CRON_SECRET"
@@ -294,8 +313,10 @@ e dispense o acionador externo.
   escassez legítima (`{{spotsLeft}}`, `{{offerEndsAt}}` — só com dados reais).
 - **Motor de sequência** (`lib/comms/sequences.ts`): `sequences` +
   `sequence_enrollments`. O lead é matriculado na captura (se a campanha tiver
-  `sequenceId`); o cron `comms-dispatcher` chama `advanceSequences()` a cada
-  minuto e enfileira cada passo na hora certa.
+  `sequenceId`); `advanceSequences()` enfileira cada passo na hora certa, mas
+  só roda quando algo aciona o processamento (envio pela Central, botão
+  "Processar fila agora" ou o ticker externo) — **sem o ticker configurado, as
+  jornadas não avançam sozinhas**, já que este projeto não usa Vercel Cron.
 - **Jornada padrão** (`lib/comms/default-journey.ts`, chave
   `lead-journey-default`): reciprocidade → autoridade/prova social → compromisso
   → prova social → oferta → urgência, com timing psicológico (T+1h … T+7d).

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { drainQueueNow } from '@/lib/comms/process'
 import { advanceSequences } from '@/lib/comms/sequences'
@@ -8,9 +8,10 @@ export const dynamic = 'force-dynamic'
 
 /**
  * "Processar fila agora" — versão admin-autenticada do dispatcher, para o
- * botão manual no painel. Existe porque no plano Hobby da Vercel o Cron só
- * roda 1x/dia; isso dá ao admin um jeito de destravar a fila na hora sem
- * depender do ticker externo (scripts/comms-ticker.js) estar rodando.
+ * botão manual no painel. Este projeto não usa Vercel Cron para a fila de
+ * comunicação (removido de vercel.json); a maior parte do envio já sai na
+ * hora pelo próprio endpoint de envio, e este botão cobre o restante (lotes
+ * grandes) sem precisar do CRON_SECRET nem de um ticker externo rodando.
  */
 export async function POST() {
     try {

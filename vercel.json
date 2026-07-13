@@ -79,10 +79,6 @@
     {
       "path": "/api/cron/revisao-espacada",
       "schedule": "0 21 * * *"
-    },
-    {
-      "path": "/api/cron/comms-dispatcher",
-      "schedule": "0 5 * * *"
     }
   ],
   "redirects": [

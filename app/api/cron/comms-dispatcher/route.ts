@@ -8,12 +8,18 @@ export const runtime = 'nodejs'
 /**
  * Dispatcher da fila de comunicação multicanal.
  *
- * Acionado pelo Vercel Cron (ver vercel.json — no plano Hobby só pode ser
- * diário, por isso ele funciona como REDE DE SEGURANÇA) e/ou por um ticker
- * externo (scripts/comms-ticker.js) rodando a cada minuto. A maioria dos
- * envios, porém, já sai na hora: o próprio endpoint de envio
- * (app/api/admin/social-media/send) drena a fila que acabou de criar antes
- * de responder — ver lib/comms/process.ts.
+ * NÃO é registrado no Vercel Cron (removido de vercel.json — o plano Hobby
+ * do projeto já usa o teto de cron jobs com as outras rotinas existentes).
+ * Este endpoint continua existindo e funcionando; ele só é acionado por:
+ *  1. O próprio envio (`app/api/admin/social-media/send`), que drena a fila
+ *     que acabou de criar antes de responder — ver lib/comms/process.ts. Isso
+ *     cobre a maioria dos casos (envio parece instantâneo).
+ *  2. O botão "Processar fila agora" no admin (`/api/admin/social-media/
+ *     dispatch-now`), para o que sobrar de lotes grandes.
+ *  3. Um ticker externo opcional (scripts/comms-ticker.js), rodando fora da
+ *     Vercel (ex.: no mesmo host do worker de WhatsApp), que chama este
+ *     endpoint a cada minuto — útil se quiser processamento contínuo mesmo
+ *     sem ninguém abrir o admin.
  *
  * A cada execução:
  *  1. Avança jornadas/sequências (matrícula devida → enfileira o próximo passo).
@@ -23,8 +29,8 @@ export const runtime = 'nodejs'
  *
  * É seguro rodar concorrentemente e é idempotente por mensagem.
  *
- * Autenticação: header `x-vercel-cron` (Vercel) ou `Bearer ${CRON_SECRET}`.
- * Também aceita POST manual (mesmo auth) para "drenar" a fila sob demanda.
+ * Autenticação: `Bearer ${CRON_SECRET}` (o header `x-vercel-cron` continua
+ * aceito, mas não é mais enviado por nada nesta configuração).
  */
 async function handle(request: NextRequest) {
     if (!isAuthorized(request)) {

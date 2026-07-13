@@ -5,6 +5,7 @@ import clientPromise from '@/lib/mongodb'
 import { sendLeadMaterialEmail } from '@/lib/mail'
 import { upsertContact } from '@/lib/comms/contacts'
 import { dispatch } from '@/lib/comms/dispatch'
+import { drainQueueNow } from '@/lib/comms/process'
 import { recordHistory } from '@/lib/comms/history'
 import { enroll } from '@/lib/comms/sequences'
 import { normalizeBRPhone } from '@/lib/comms/phone'
@@ -311,6 +312,8 @@ export async function POST(
                     { campaignId: campaign._id.toString(), email: normalizedEmail },
                     { $set: { whatsappQueued: true, whatsappSentAt: new Date() } }
                 )
+                // Envia agora — não espera cron/ticker (mensagem única, custo baixo).
+                await drainQueueNow(['whatsapp'], { timeBudgetMs: 8_000 })
             } catch (waError) {
                 console.error('Erro ao enfileirar WhatsApp:', waError)
             }
