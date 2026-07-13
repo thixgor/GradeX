@@ -172,6 +172,10 @@ export interface ResolvedSerialKeyProduct {
   pricingEventId?: string | null
   /** Se cupons são permitidos para este produto (apenas manual_clinico, por enquanto). */
   allowCoupons?: boolean
+  /** Capa do material/pacote (exibida no checkout). */
+  coverImageUrl?: string
+  /** Descrição longa do material/pacote (exibida no checkout). */
+  productDescription?: string
 }
 
 export function isSerialKeyProductType(v: unknown): v is SerialKeyProductType {
@@ -297,6 +301,8 @@ export async function resolveSerialKeyProduct(
     productTitle: item.title || 'Material',
     amount,
     description: item.title || 'Material',
+    coverImageUrl: item.coverImage || undefined,
+    productDescription: item.description || undefined,
     grant: {
       productType: itemType === 'package' ? 'package' : (isFlashcard ? 'flashcard' : 'material'),
       itemType,

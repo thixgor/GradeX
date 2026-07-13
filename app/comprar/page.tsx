@@ -39,6 +39,8 @@ interface Product {
   productTitle: string
   amount: number
   description: string
+  coverImageUrl?: string
+  productDescription?: string
 }
 
 function isEmail(v: string) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) }
@@ -271,8 +273,32 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
 
   if (loading) {
     return (
-      <div className="flex min-h-[50vh] items-center justify-center text-primary">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="mx-auto max-w-6xl">
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+          <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
+            <div className="mb-5 h-48 w-full animate-pulse rounded-lg bg-muted" />
+            <div className="mb-5 flex items-start gap-3">
+              <div className="h-12 w-12 flex-none animate-pulse rounded-lg bg-muted" />
+              <div className="flex-1 space-y-2">
+                <div className="h-7 w-2/3 animate-pulse rounded bg-muted" />
+                <div className="h-4 w-full animate-pulse rounded bg-muted" />
+              </div>
+            </div>
+            <div className="mb-5 space-y-2.5">
+              <div className="h-16 w-full animate-pulse rounded-lg bg-muted" />
+              <div className="h-16 w-full animate-pulse rounded-lg bg-muted" />
+            </div>
+            <div className="h-20 w-full animate-pulse rounded-lg bg-muted" />
+          </div>
+          <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
+            <div className="space-y-4">
+              <div className="h-12 w-full animate-pulse rounded-lg bg-muted" />
+              <div className="h-12 w-full animate-pulse rounded-lg bg-muted" />
+              <div className="h-12 w-full animate-pulse rounded-lg bg-muted" />
+              <div className="h-12 w-full animate-pulse rounded-lg bg-muted" />
+            </div>
+          </div>
+        </div>
       </div>
     )
   }
@@ -670,7 +696,33 @@ function GenericComprarContent({ productType }: { productType: string }) {
   }
 
   if (loading) {
-    return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}><Loader2 size={32} style={{ color: 'hsl(var(--primary))', animation: 'spin 1s linear infinite' }} /></div>
+    return (
+      <div className="mx-auto max-w-5xl">
+        <div className="mb-2 h-4 w-32 animate-pulse rounded bg-muted" />
+        <div className="mb-1.5 h-8 w-72 max-w-full animate-pulse rounded bg-muted" />
+        <div className="mb-7 h-4 w-96 max-w-full animate-pulse rounded bg-muted" />
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:items-start">
+          <div className="flex flex-col gap-4">
+            <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
+              <div className="mb-5 h-48 w-full animate-pulse rounded-lg bg-muted" />
+              <div className="mb-3 h-6 w-24 animate-pulse rounded-md bg-muted" />
+              <div className="mb-2 h-6 w-3/4 animate-pulse rounded bg-muted" />
+              <div className="mb-4 h-4 w-full animate-pulse rounded bg-muted" />
+              <div className="h-24 w-full animate-pulse rounded-lg bg-muted" />
+            </div>
+            <div className="h-16 w-full animate-pulse rounded-lg bg-muted" />
+          </div>
+          <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
+            <div className="space-y-4">
+              <div className="h-12 w-full animate-pulse rounded-lg bg-muted" />
+              <div className="h-12 w-full animate-pulse rounded-lg bg-muted" />
+              <div className="h-12 w-full animate-pulse rounded-lg bg-muted" />
+              <div className="h-12 w-full animate-pulse rounded-lg bg-muted" />
+            </div>
+          </div>
+        </div>
+      </div>
+    )
   }
   if (error || !product) {
     return (
@@ -695,12 +747,23 @@ function GenericComprarContent({ productType }: { productType: string }) {
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:items-start">
         <div className="flex flex-col gap-4">
           <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
+            {product.coverImageUrl && (
+              <div className="relative mb-5 overflow-hidden rounded-lg border border-border">
+                <img src={product.coverImageUrl} alt="" className="h-48 w-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
+              </div>
+            )}
             <span className="mb-3 inline-flex rounded-md bg-secondary px-3 py-1 text-xs font-bold text-secondary-foreground">
               {product.productTypeLabel}
             </span>
-            <h2 className="mb-4 font-heading text-xl font-semibold tracking-tight text-foreground">
+            <h2 className={`font-heading text-xl font-semibold tracking-tight text-foreground ${product.productDescription ? 'mb-2' : 'mb-4'}`}>
               {product.productTitle}
             </h2>
+            {product.productDescription && (
+              <p className="mb-4 line-clamp-4 text-sm leading-relaxed text-muted-foreground">
+                {product.productDescription}
+              </p>
+            )}
             <div className="rounded-lg border border-primary/15 bg-primary/5 p-4">
               <p className="mb-0.5 text-xs text-muted-foreground">Valor</p>
               {appliedCoupon && (

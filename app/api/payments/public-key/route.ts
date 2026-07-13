@@ -15,7 +15,10 @@ export async function GET(request: NextRequest) {
 
   try {
     const cfg = getPaymentConfig()
-    return NextResponse.json({ publicKey: cfg.mp.publicKey, env: cfg.mp.env })
+    return NextResponse.json(
+      { publicKey: cfg.mp.publicKey, env: cfg.mp.env },
+      { headers: { 'Cache-Control': 'public, max-age=300, stale-while-revalidate=600' } }
+    )
   } catch (err: any) {
     return NextResponse.json({ publicKey: '', error: err?.message }, { status: 500 })
   }
