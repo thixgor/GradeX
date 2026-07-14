@@ -1,9 +1,10 @@
 'use client'
 
 import React, { useMemo, useState } from 'react'
+import dynamic from 'next/dynamic'
 import {
   Search, Activity, Ruler, GraduationCap, ZoomIn, ZoomOut, Play, Pause,
-  Sun, Moon, GitCompare, Grid3x3, Monitor, Rows3, LineChart, Heart,
+  Sun, Moon, GitCompare, Grid3x3, Monitor, Rows3, LineChart, Heart, Box, Loader2,
   X, ListFilter, Gauge, Star, StickyNote,
 } from 'lucide-react'
 import { ECG_CATALOG, CATEGORIES, searchCatalog, type EcgEntry, type EcgCategory, type Urgency } from '@/lib/ecg/catalog'
@@ -15,6 +16,17 @@ import { Ecg12Lead } from './ecg-12-lead'
 import { ConductionSystem, type WallKey } from './conduction-system'
 import { EcgClinicalPanel } from './ecg-clinical-panel'
 import { EcgQuiz } from './ecg-quiz'
+
+// Coração 3D (WebGL/three.js) carregado sob demanda — three.js só entra no
+// bundle quando o modo 3D é ativado.
+const Heart3D = dynamic(() => import('./heart-3d').then((m) => m.Heart3D), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-[340px] items-center justify-center">
+      <Loader2 className="h-6 w-6 animate-spin text-primary" />
+    </div>
+  ),
+})
 
 type ViewMode = '12' | 'individual' | '3' | 'monitor' | 'rhythm'
 const SPEEDS = [25, 50, 100]
@@ -65,6 +77,7 @@ export function EcgSimulator() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [onlyFavorites, setOnlyFavorites] = useState(false)
   const [showNotes, setShowNotes] = useState(false)
+  const [heartMode, setHeartMode] = useState<'3d' | '2d'>('3d')
   const { isFavorite, toggleFavorite, notes, setNote } = useEcgFavorites()
 
   const entry = useMemo(() => ECG_CATALOG.find((e) => e.id === selectedId) || ECG_CATALOG[0], [selectedId])
@@ -295,10 +308,44 @@ export function EcgSimulator() {
             {/* ── ANATOMIA / LOCALIZAÇÃO + CONDUÇÃO ── */}
             <div className="grid gap-4 md:grid-cols-2">
               <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-4">
-                <h3 className="mb-2 flex items-center gap-2 text-sm font-bold"><Heart className="h-4 w-4 text-red-500" /> Propagação elétrica e localização</h3>
-                <ConductionSystem rate={entry.pattern.rate || 60} dark={dark} highlightWalls={walls} arteryLabel={entry.clinical.arteriaCulpada} ectopicOrigin={ectopic}
-                  axisDeg={entry.pattern.qrs.axis} axisLabel={measures.axisLabel}
-                  abnormalConduction={['complete_block', 'vt', 'vfib', 'torsades', 'paced'].includes(entry.pattern.rhythm)} />
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <h3 className="flex items-center gap-2 text-sm font-bold"><Heart className="h-4 w-4 text-red-500" /> Propagação elétrica e localização</h3>
+                  <div className="flex items-center gap-1 rounded-lg bg-black/20 p-1">
+                    <button onClick={() => setHeartMode('3d')} className={`inline-flex items-center gap-1 rounded px-2 py-1 text-[11px] font-bold transition ${heartMode === '3d' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}>
+                      <Box className="h-3.5 w-3.5" /> 3D
+                    </button>
+                    <button onClick={() => setHeartMode('2d')} className={`rounded px-2 py-1 text-[11px] font-bold transition ${heartMode === '2d' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}>
+                      2D
+                    </button>
+                  </div>
+                </div>
+                {heartMode === '3d' ? (
+                  <div>
+                    <Heart3D rate={entry.pattern.rate || 60} dark={dark} highlightWalls={walls} arteryLabel={entry.clinical.arteriaCulpada} ectopicOrigin={ectopic}
+                      axisDeg={entry.pattern.qrs.axis} axisLabel={measures.axisLabel}
+                      abnormalConduction={['complete_block', 'vt', 'vfib', 'torsades', 'paced'].includes(entry.pattern.rhythm)} />
+                    <div className="mt-2 flex flex-col gap-1.5">
+                      <div className="flex items-center gap-1.5 rounded-lg border border-sky-400/40 bg-sky-500/10 px-3 py-1.5 text-xs font-bold text-sky-600 dark:text-sky-300">
+                        <span className="inline-block h-2 w-2 rounded-full bg-sky-400" /> Vetor elétrico: {measures.axis}° · {measures.axisLabel}
+                      </div>
+                      {entry.clinical.arteriaCulpada && (
+                        <div className="rounded-lg border border-red-400/40 bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-500 dark:text-red-300">
+                          Artéria culpada provável: {entry.clinical.arteriaCulpada}
+                          {entry.clinical.paredeAfetada ? ` · parede ${entry.clinical.paredeAfetada.join(', ')}` : ''}
+                        </div>
+                      )}
+                      {ectopic && (
+                        <div className="rounded-lg border border-amber-400/40 bg-amber-500/10 px-3 py-1.5 text-xs font-bold text-amber-600 dark:text-amber-300">
+                          Origem: {ectopic.label}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <ConductionSystem rate={entry.pattern.rate || 60} dark={dark} highlightWalls={walls} arteryLabel={entry.clinical.arteriaCulpada} ectopicOrigin={ectopic}
+                    axisDeg={entry.pattern.qrs.axis} axisLabel={measures.axisLabel}
+                    abnormalConduction={['complete_block', 'vt', 'vfib', 'torsades', 'paced'].includes(entry.pattern.rhythm)} />
+                )}
               </div>
               <EcgClinicalPanel entry={entry} />
             </div>
