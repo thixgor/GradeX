@@ -7,7 +7,13 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js'
 import { ImprovedNoise } from 'three/examples/jsm/math/ImprovedNoise.js'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import type { WallKey } from './conduction-system'
+
+// Modelo 3D opcional: se existir um GLB neste caminho (public/models/heart.glb),
+// ele é carregado e usado no lugar do coração procedural, com o shader de
+// despolarização aplicado à malha real. Ausente → mantém o coração procedural.
+const MODEL_URL = '/models/heart.glb'
 
 interface Props {
   rate: number
@@ -155,12 +161,15 @@ export function Heart3D(props: Props) {
         vertexShader: MYO_VERT, fragmentShader: MYO_FRAG,
         transparent: true, depthWrite: false, side: THREE.DoubleSide, blending: THREE.NormalBlending,
       })
+      m.userData.baseHex = hex
       myoMats.push(m); return m
     }
     const lvMat = mkMyo(0xc0454a, 0.26)
     const rvMat = mkMyo(0xb15070, 0.24)
     const laMat = mkMyo(0xc06a6a, 0.24)
     const raMat = mkMyo(0xa86078, 0.24)
+    const ventWaveMats: THREE.ShaderMaterial[] = [lvMat, rvMat]
+    const atriaWaveMats: THREE.ShaderMaterial[] = [laMat, raMat]
 
     const mesh = (geo: THREE.BufferGeometry, mat: THREE.Material, pos: [number, number, number]) => {
       const m = new THREE.Mesh(geo, mat); m.position.set(...pos); m.renderOrder = 2; return m
@@ -235,6 +244,39 @@ export function Heart3D(props: Props) {
     // ── origem ectópica ──
     const ectopic = new THREE.Mesh(new THREE.SphereGeometry(0.22, 18, 14), new THREE.MeshStandardMaterial({ color: 0xffc23a, emissive: 0xffb020, emissiveIntensity: 1.0, toneMapped: false }))
     ectopic.visible = false; ectopic.renderOrder = 4; heart.add(ectopic)
+
+    // ── modelo 3D opcional (GLTF) com fallback para o procedural ──
+    let modelGroup: THREE.Group | null = null
+    let modelFit = 1
+    const proceduralChambers = [lv, rv, la, ra]
+    try {
+      new GLTFLoader().load(
+        MODEL_URL,
+        (gltf) => {
+          if (disposed) { gltf.scene.traverse((o: any) => { o.geometry?.dispose?.() }); return }
+          const root = gltf.scene
+          const box = new THREE.Box3().setFromObject(root)
+          const size = new THREE.Vector3(); box.getSize(size)
+          const center = new THREE.Vector3(); box.getCenter(center)
+          const maxDim = Math.max(size.x, size.y, size.z) || 1
+          modelFit = 5.2 / maxDim
+          root.position.sub(center) // centraliza na origem
+          root.traverse((o) => {
+            const m = o as THREE.Mesh
+            if ((m as any).isMesh) {
+              if (!m.geometry.attributes.normal) m.geometry.computeVertexNormals()
+              const mat = mkMyo(0xc0454a, 0.32); m.material = mat; m.renderOrder = 2
+              ventWaveMats.push(mat)
+            }
+          })
+          const g = new THREE.Group(); g.add(root); g.scale.setScalar(modelFit); g.position.set(0, -0.3, 0)
+          heart.add(g); modelGroup = g
+          for (const c of proceduralChambers) c.visible = false // usa o modelo real
+        },
+        undefined,
+        () => { /* modelo ausente/erro → mantém o coração procedural */ },
+      )
+    } catch { /* ignore */ }
 
     // ── pós-processamento (bloom) ──
     let composer: EffectComposer | null = null
@@ -314,15 +356,14 @@ export function Heart3D(props: Props) {
       const inAtria = phase > 0.05 && phase < 0.2
       const atriaWaveY = inAtria ? 2.4 - ((phase - 0.05) / 0.15) * 1.6 : -999
       for (const m of myoMats) { m.uniforms.uTime.value = t; m.uniforms.uGroupInv.value = groupInv }
-      lvMat.uniforms.uWaveY.value = waveY; lvMat.uniforms.uWaveColor.value.setHex(0x4dff9e)
-      rvMat.uniforms.uWaveY.value = waveY; rvMat.uniforms.uWaveColor.value.setHex(0x4dff9e)
-      laMat.uniforms.uWaveY.value = atriaWaveY; laMat.uniforms.uWaveColor.value.setHex(0x5ad0ff)
-      raMat.uniforms.uWaveY.value = atriaWaveY; raMat.uniforms.uWaveColor.value.setHex(0x5ad0ff)
+      for (const m of ventWaveMats) { m.uniforms.uWaveY.value = waveY; m.uniforms.uWaveColor.value.setHex(0x4dff9e) }
+      for (const m of atriaWaveMats) { m.uniforms.uWaveY.value = atriaWaveY; m.uniforms.uWaveColor.value.setHex(0x5ad0ff) }
 
       // contração mecânica (sístole ventricular após o QRS)
       const ventSys = phase > 0.5 && phase < 0.82 ? Math.sin(((phase - 0.5) / 0.32) * Math.PI) : 0
       const vs = 1 - 0.06 * ventSys
       for (const vm of ventMeshes) vm.scale.setScalar(vs)
+      if (modelGroup) modelGroup.scale.setScalar(modelFit * vs)
       const atrSys = inAtria ? Math.sin(((phase - 0.05) / 0.15) * Math.PI) : 0
       for (const am of atrialMeshes) am.scale.setScalar(1 - 0.05 * atrSys)
       innerGlow.intensity = 0.7 + 1.6 * ventSys
@@ -338,8 +379,8 @@ export function Heart3D(props: Props) {
         if (on) (m.material as THREE.MeshStandardMaterial).emissiveIntensity = 0.7 + 0.7 * Math.abs(Math.sin(t * 3))
       }
       const lvInfarct = walls.some((w) => ['anterior', 'septal', 'inferior', 'lateral', 'posterior', 'lv'].includes(w))
-      lvMat.uniforms.uColor.value.setHex(lvInfarct ? 0xe23838 : 0xc0454a)
-      rvMat.uniforms.uColor.value.setHex(walls.includes('rv') ? 0xe23870 : 0xb15070)
+      const anyInfarct = lvInfarct || walls.includes('rv')
+      for (const m of ventWaveMats) m.uniforms.uColor.value.setHex(anyInfarct ? 0xe23838 : (m.userData.baseHex ?? 0xc0454a))
 
       // artéria culpada
       const al = (p.arteryLabel || '').toLowerCase()
