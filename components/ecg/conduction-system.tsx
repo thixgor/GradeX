@@ -15,6 +15,9 @@ interface Props {
   ectopicOrigin?: { x: number; y: number; label: string } | null
   /** desativa a sequência normal (ritmos sem condução AV normal) */
   abnormalConduction?: boolean
+  /** eixo elétrico médio do QRS (graus) — desenha o vetor no plano frontal */
+  axisDeg?: number
+  axisLabel?: string
 }
 
 // estágios da despolarização normal (fração do ciclo em que cada estrutura acende)
@@ -32,7 +35,7 @@ const STAGES: { id: string; t: number; label: string }[] = [
  * Coração esquemático com o sistema de condução animado em tempo real,
  * sincronizado à frequência. Realça paredes (IAM) e origem de arritmias.
  */
-export function ConductionSystem({ rate, dark, highlightWalls = [], arteryLabel, ectopicOrigin, abnormalConduction }: Props) {
+export function ConductionSystem({ rate, dark, highlightWalls = [], arteryLabel, ectopicOrigin, abnormalConduction, axisDeg, axisLabel }: Props) {
   const [phase, setPhase] = useState(0)
   const [activeStage, setActiveStage] = useState('sa')
   const rafRef = useRef<number>(0)
@@ -106,6 +109,25 @@ export function ConductionSystem({ rate, dark, highlightWalls = [], arteryLabel,
           </g>
         )}
 
+        {/* vetor elétrico médio do QRS (plano frontal) */}
+        {typeof axisDeg === 'number' && (() => {
+          const cx = 160, cy = 185, len = 78
+          const rad = (axisDeg * Math.PI) / 180
+          const ex = cx + Math.cos(rad) * len
+          const ey = cy + Math.sin(rad) * len // +y = para baixo (aVF +90°)
+          return (
+            <g>
+              <defs>
+                <marker id="ecgvec" markerWidth="8" markerHeight="8" refX="5" refY="4" orient="auto">
+                  <path d="M0 0 L8 4 L0 8 z" fill="#38bdf8" />
+                </marker>
+              </defs>
+              <line x1={cx} y1={cy} x2={ex} y2={ey} stroke="#38bdf8" strokeWidth={3} markerEnd="url(#ecgvec)" opacity={0.9} />
+              <circle cx={cx} cy={cy} r={3} fill="#38bdf8" />
+            </g>
+          )
+        })()}
+
         <text x={224} y={90} fontSize={9} fill={dark ? '#7fe6a5' : '#9a2b2b'}>SA</text>
         <text x={175} y={158} fontSize={9} fill={dark ? '#7fe6a5' : '#9a2b2b'}>AV</text>
       </svg>
@@ -124,6 +146,11 @@ export function ConductionSystem({ rate, dark, highlightWalls = [], arteryLabel,
         ))}
       </div>
 
+      {typeof axisDeg === 'number' && (
+        <div className="flex items-center gap-1.5 rounded-lg border border-sky-400/40 bg-sky-500/10 px-3 py-1.5 text-center text-xs font-bold text-sky-600 dark:text-sky-300">
+          <span className="inline-block h-2 w-2 rounded-full bg-sky-400" /> Vetor elétrico: {Math.round(axisDeg)}°{axisLabel ? ` · ${axisLabel}` : ''}
+        </div>
+      )}
       {arteryLabel && (
         <div className="rounded-lg border border-red-400/40 bg-red-500/10 px-3 py-1.5 text-center text-xs font-bold text-red-500 dark:text-red-300">
           Artéria culpada provável: {arteryLabel}

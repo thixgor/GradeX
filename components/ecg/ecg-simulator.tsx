@@ -4,11 +4,12 @@ import React, { useMemo, useState } from 'react'
 import {
   Search, Activity, Ruler, GraduationCap, ZoomIn, ZoomOut, Play, Pause,
   Sun, Moon, GitCompare, Grid3x3, Monitor, Rows3, LineChart, Heart,
-  X, ListFilter, Gauge,
+  X, ListFilter, Gauge, Star, StickyNote,
 } from 'lucide-react'
 import { ECG_CATALOG, CATEGORIES, searchCatalog, type EcgEntry, type EcgCategory, type Urgency } from '@/lib/ecg/catalog'
 import { computeMeasurements, LEADS, type LeadName } from '@/lib/ecg/engine'
 import { useEcg12 } from './use-ecg-signal'
+import { useEcgFavorites } from './use-ecg-favorites'
 import { EcgLeadCanvas } from './ecg-lead-canvas'
 import { Ecg12Lead } from './ecg-12-lead'
 import { ConductionSystem, type WallKey } from './conduction-system'
@@ -62,9 +63,15 @@ export function EcgSimulator() {
   const [compare, setCompare] = useState(false)
   const [indLead, setIndLead] = useState<LeadName>('II')
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [onlyFavorites, setOnlyFavorites] = useState(false)
+  const [showNotes, setShowNotes] = useState(false)
+  const { isFavorite, toggleFavorite, notes, setNote } = useEcgFavorites()
 
   const entry = useMemo(() => ECG_CATALOG.find((e) => e.id === selectedId) || ECG_CATALOG[0], [selectedId])
-  const results = useMemo(() => searchCatalog(query, cat), [query, cat])
+  const results = useMemo(() => {
+    const base = searchCatalog(query, cat)
+    return onlyFavorites ? base.filter((e) => isFavorite(e.id)) : base
+  }, [query, cat, onlyFavorites, isFavorite])
   const { map: signals, fs } = useEcg12(entry.pattern, 12000, 250)
   const normalEntry = ECG_CATALOG[0]
   const { map: normalSignals } = useEcg12(normalEntry.pattern, 12000, 250)
@@ -107,9 +114,13 @@ export function EcgSimulator() {
                 className="w-full rounded-xl border border-white/[0.1] bg-white/[0.04] py-2.5 pl-9 pr-3 text-sm outline-none focus:border-primary/40" />
             </div>
             <div className="mt-3 flex flex-wrap gap-1.5">
-              <button onClick={() => setCat(null)}
-                className={`rounded-md px-2 py-1 text-[11px] font-semibold transition ${!cat ? 'bg-primary text-primary-foreground' : 'bg-white/[0.05] text-muted-foreground hover:text-foreground'}`}>
+              <button onClick={() => { setCat(null); setOnlyFavorites(false) }}
+                className={`rounded-md px-2 py-1 text-[11px] font-semibold transition ${!cat && !onlyFavorites ? 'bg-primary text-primary-foreground' : 'bg-white/[0.05] text-muted-foreground hover:text-foreground'}`}>
                 Todas
+              </button>
+              <button onClick={() => setOnlyFavorites((v) => !v)}
+                className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-semibold transition ${onlyFavorites ? 'bg-amber-500 text-white' : 'bg-white/[0.05] text-muted-foreground hover:text-foreground'}`}>
+                <Star className={`h-3 w-3 ${onlyFavorites ? 'fill-current' : ''}`} /> Favoritos
               </button>
               {CATEGORIES.map((c) => (
                 <button key={c} onClick={() => setCat(c === cat ? null : c)}
@@ -123,7 +134,10 @@ export function EcgSimulator() {
                 <button key={e.id} onClick={() => { setSelectedId(e.id); setSidebarOpen(false) }}
                   className={`w-full rounded-xl border p-2.5 text-left transition ${e.id === selectedId ? 'border-primary/50 bg-primary/10' : 'border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05]'}`}>
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-[13px] font-bold leading-tight">{e.nome}</span>
+                    <span className="flex items-center gap-1 text-[13px] font-bold leading-tight">
+                      {isFavorite(e.id) && <Star className="h-3 w-3 shrink-0 fill-amber-400 text-amber-400" />}
+                      {e.nome}
+                    </span>
                     <span className={`shrink-0 rounded border px-1.5 py-0.5 text-[9px] font-black uppercase ${URGENCY_STYLE[e.urgencia]}`}>
                       {URGENCY_LABEL[e.urgencia]}
                     </span>
@@ -150,7 +164,31 @@ export function EcgSimulator() {
                   </span>
                 </div>
               </div>
+              <div className="flex items-center gap-2">
+                <button onClick={() => toggleFavorite(entry.id)}
+                  className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold transition ${isFavorite(entry.id) ? 'bg-amber-500 text-white' : 'bg-white/[0.06] text-muted-foreground hover:text-foreground'}`}
+                  title="Salvar nos favoritos">
+                  <Star className={`h-4 w-4 ${isFavorite(entry.id) ? 'fill-current' : ''}`} /> {isFavorite(entry.id) ? 'Salvo' : 'Favoritar'}
+                </button>
+                <button onClick={() => setShowNotes((v) => !v)}
+                  className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold transition ${showNotes || notes[entry.id] ? 'bg-violet-500 text-white' : 'bg-white/[0.06] text-muted-foreground hover:text-foreground'}`}
+                  title="Anotações pessoais">
+                  <StickyNote className="h-4 w-4" /> Notas{notes[entry.id] ? ' •' : ''}
+                </button>
+              </div>
             </div>
+
+            {showNotes && (
+              <div className="rounded-xl border border-violet-500/25 bg-violet-500/[0.04] p-3">
+                <label className="mb-1.5 flex items-center gap-1.5 text-xs font-bold text-violet-500"><StickyNote className="h-3.5 w-3.5" /> Suas anotações — {entry.nome}</label>
+                <textarea
+                  value={notes[entry.id] || ''}
+                  onChange={(e) => setNote(entry.id, e.target.value)}
+                  placeholder="Registre mnemônicos, pegadinhas de prova, casos que você viu... (salvo automaticamente neste dispositivo)"
+                  className="min-h-[80px] w-full resize-y rounded-lg border border-white/[0.12] bg-white/[0.03] p-2.5 text-sm outline-none focus:border-violet-500/40"
+                />
+              </div>
+            )}
 
             {/* ── Toolbar ── */}
             <div className="flex flex-wrap items-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.03] p-2">
@@ -259,6 +297,7 @@ export function EcgSimulator() {
               <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-4">
                 <h3 className="mb-2 flex items-center gap-2 text-sm font-bold"><Heart className="h-4 w-4 text-red-500" /> Propagação elétrica e localização</h3>
                 <ConductionSystem rate={entry.pattern.rate || 60} dark={dark} highlightWalls={walls} arteryLabel={entry.clinical.arteriaCulpada} ectopicOrigin={ectopic}
+                  axisDeg={entry.pattern.qrs.axis} axisLabel={measures.axisLabel}
                   abnormalConduction={['complete_block', 'vt', 'vfib', 'torsades', 'paced'].includes(entry.pattern.rhythm)} />
               </div>
               <EcgClinicalPanel entry={entry} />

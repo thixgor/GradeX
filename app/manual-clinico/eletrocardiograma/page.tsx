@@ -123,7 +123,7 @@ function PaywallCard({ onCheckout, isAuthenticated, price, product }: { onChecko
     { icon: Activity, t: '12 derivações em tempo real', d: 'Traçados vetoriais gerados por parâmetros eletrofisiológicos — nunca imagens prontas.' },
     { icon: Gauge, t: 'Papel milimetrado real', d: 'Velocidades 25/50/100 mm/s e ganhos 5/10/20 mm/mV, calibração 10 mm = 1 mV.' },
     { icon: Ruler, t: 'Medidas automáticas e régua', d: 'FC, PR, QRS, QT, QTc, eixo e amplitudes; paquímetro para medir intervalos.' },
-    { icon: GraduationCap, t: 'Banco de traçados + exercícios', d: 'Arritmias, IAM, bloqueios, distúrbios eletrolíticos e canalopatias com critérios diagnósticos e modo prova.' },
+    { icon: GraduationCap, t: '90 traçados + exercícios', d: 'Arritmias, IAM, bloqueios, hipertrofias, distúrbios eletrolíticos e canalopatias com critérios diagnósticos e modo prova/residência.' },
   ]
   return (
     <div className="mx-auto max-w-3xl">
