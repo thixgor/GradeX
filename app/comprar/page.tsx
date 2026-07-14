@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { ArrowRight, BookOpen, Check, ChevronLeft, Clock, Crown, Flame, Loader2, Lock, Mail, Percent, Phone, ShieldCheck, Sparkles, User, X } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
 import { usePricingEventState, usePricingEventStates } from '@/components/pricing-events/usePricingEventState'
+import { PricingEventCountdown } from '@/components/pricing-events/PricingEventCountdown'
 import { PublicPageShell } from '@/components/public-page-shell'
 import Link from 'next/link'
 
@@ -41,6 +42,7 @@ interface Product {
   description: string
   coverImageUrl?: string
   productDescription?: string
+  pricingEventId?: string | null
 }
 
 function isEmail(v: string) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) }
@@ -671,12 +673,27 @@ function GenericComprarContent({ productType }: { productType: string }) {
       .finally(() => setLoading(false))
   }, [productType, productId, planKey, itemType])
 
+  // Lote dinâmico (pricing event) do material/pacote/flashcard. O servidor é a
+  // fonte autoritativa do preço; aqui só espelhamos para exibir o valor correto.
+  const pricingEventStateData = usePricingEventState(product?.pricingEventId || null)
+  const pricingEventState = pricingEventStateData.state
+
   const nameValid = name.trim().includes(' ') && name.trim().length >= 3
   const emailValid = isEmail(email.trim())
   const phoneValid = digits(phone).length >= 10 && digits(phone).length <= 15
   const buyerValid = nameValid && emailValid && phoneValid
 
-  const payableAmount = appliedCoupon ? appliedCoupon.amountAfterCoupon : (product?.amount ?? 0)
+  const baseAmount = Number(product?.amount ?? 0)
+  const tierPct = pricingEventState?.activeTier?.discountPercent || 0
+  const hasActiveTier = !!pricingEventState?.activeTier && pricingEventState?.isActive !== false && tierPct > 0 && baseAmount > 0
+  const tierDiscountAmount = hasActiveTier
+    ? Math.max(0, Math.round(baseAmount * (tierPct / 100) * 100) / 100)
+    : 0
+  const couponDiscountAmount = appliedCoupon ? appliedCoupon.discountAmount : 0
+  // Regra "maior dos dois" — mesma do servidor (combineTierAndCouponDiscount).
+  const effectiveDiscount = Math.max(tierDiscountAmount, couponDiscountAmount)
+  const tierBeatsCoupon = hasActiveTier && tierDiscountAmount >= couponDiscountAmount
+  const payableAmount = Math.max(0, Math.round((baseAmount - effectiveDiscount) * 100) / 100)
 
   const extraBody = useMemo(() => ({
     productType, productId: productId || undefined, planKey: planKey || undefined,
@@ -789,20 +806,37 @@ function GenericComprarContent({ productType }: { productType: string }) {
             )}
             <div className="rounded-lg border border-primary/15 bg-primary/5 p-4">
               <p className="mb-0.5 text-xs text-muted-foreground">Valor</p>
-              {appliedCoupon && (
+              {baseAmount > payableAmount && (
                 <p className="mb-0.5 text-sm text-muted-foreground line-through">
-                  {formatBRL(product.amount)}
+                  {formatBRL(baseAmount)}
                 </p>
               )}
               <p className="font-heading text-3xl font-semibold tabular-nums tracking-tight text-primary">
                 {formatBRL(payableAmount)}
               </p>
-              {appliedCoupon && (
+              {hasActiveTier && tierBeatsCoupon && tierDiscountAmount > 0 ? (
+                <p className="mt-1 inline-flex items-center gap-1 text-xs font-bold text-primary">
+                  <Flame className="h-3 w-3" />
+                  Lote {pricingEventState?.activeTier?.label || ''}: − {formatBRL(tierDiscountAmount)} ({Math.round(tierPct)}% OFF)
+                </p>
+              ) : null}
+              {appliedCoupon && !tierBeatsCoupon ? (
                 <p className="mt-1 text-xs font-bold text-primary">
                   Cupom {appliedCoupon.code}: − {formatBRL(appliedCoupon.discountAmount)}
                 </p>
-              )}
+              ) : null}
+              {appliedCoupon && tierBeatsCoupon && tierDiscountAmount > 0 ? (
+                <p className="mt-1 text-[10px] font-medium text-primary/80">
+                  Cupom {appliedCoupon.code} mantido — o desconto do lote já é maior.
+                </p>
+              ) : null}
             </div>
+
+            {hasActiveTier && pricingEventState ? (
+              <div className="mt-3.5">
+                <PricingEventCountdown state={pricingEventState} compact />
+              </div>
+            ) : null}
 
             {couponEligible && (
               <div className="mt-3.5 rounded-lg border border-border bg-background p-3.5">

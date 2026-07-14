@@ -168,7 +168,7 @@ export interface ResolvedSerialKeyProduct {
   amount: number
   description: string
   grant: SerialKeyGrant
-  /** Lote dinâmico aplicável (apenas manual_clinico, por enquanto). */
+  /** Lote dinâmico aplicável (manual_clinico, material, pacote e flashcard). */
   pricingEventId?: string | null
   /** Se cupons são permitidos para este produto (apenas manual_clinico, por enquanto). */
   allowCoupons?: boolean
@@ -303,6 +303,7 @@ export async function resolveSerialKeyProduct(
     description: item.title || 'Material',
     coverImageUrl: item.coverImage || undefined,
     productDescription: item.description || undefined,
+    pricingEventId: item.pricingEventId ? String(item.pricingEventId) : null,
     grant: {
       productType: itemType === 'package' ? 'package' : (isFlashcard ? 'flashcard' : 'material'),
       itemType,
