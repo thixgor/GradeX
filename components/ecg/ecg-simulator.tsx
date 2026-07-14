@@ -22,7 +22,7 @@ import { EcgQuiz } from './ecg-quiz'
 const Heart3D = dynamic(() => import('./heart-3d').then((m) => m.Heart3D), {
   ssr: false,
   loading: () => (
-    <div className="flex h-[340px] items-center justify-center">
+    <div className="flex h-[380px] items-center justify-center">
       <Loader2 className="h-6 w-6 animate-spin text-primary" />
     </div>
   ),

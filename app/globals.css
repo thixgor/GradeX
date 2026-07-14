@@ -1808,3 +1808,15 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Manual do Eletrocardiograma — realce pulsante de parede/artéria (SVG) */
+@keyframes ecgWallPulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.85; }
+}
+.ecg-wall-pulse {
+  animation: ecgWallPulse 1.1s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ecg-wall-pulse { animation: none; opacity: 0.6; }
+}
