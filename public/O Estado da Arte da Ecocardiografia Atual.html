@@ -24,9 +24,9 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { background: #f4f7fa; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
-    #__bundler_loading { position: fixed; bottom: 20px; right: 20px; font: 13px/1.4 -apple-system, BlinkMacSystemFont, sans-serif; color: #666; background: #fff; padding: 8px 14px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.12); z-index: 10000; }
+    #__bundler_loading { position: fixed; bottom: 20px; right: 20px; font: 13px/1.4 -apple-system, BlinkMacSystemFont, sans-serif; color: #666; background: #fff; padding: 8px 14px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.12); z-index: 10000; display: none; }
     #__bundler_thumbnail { position: fixed; inset: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #f4f7fa; z-index: 9999; }
-    #__bundler_thumbnail svg { width: 100%; height: 100%; object-fit: contain; }
+    #__bundler_thumbnail svg { width: 100%; height: 100%; object-fit: contain; display: none; }
     #__bundler_placeholder { color: #999; font-size: 14px; }
   </style>
   <noscript>
@@ -177,7 +177,14 @@ document.addEventListener('DOMContentLoaded', async function() {
     // createElement so they execute, awaiting onload for src scripts to
     // preserve ordering (React before ReactDOM before Babel before text/babel).
     const doc = new DOMParser().parseFromString(template, 'text/html');
-    document.documentElement.replaceWith(doc.documentElement);
+    // Fade the real page in instead of popping it in abruptly. Cache the
+    // element itself (not `doc`) — once its root is adopted into the main
+    // document below, `doc.documentElement` goes null on the now-rootless
+    // parsed Document.
+    const newRoot = doc.documentElement;
+    newRoot.style.opacity = '0';
+    newRoot.style.transition = 'opacity .25s ease';
+    document.documentElement.replaceWith(newRoot);
     const dead = Array.from(document.scripts);
     for (const old of dead) {
       const s = document.createElement('script');
@@ -201,7 +208,14 @@ document.addEventListener('DOMContentLoaded', async function() {
     if (window.Babel && typeof window.Babel.transformScriptTags === 'function') {
       window.Babel.transformScriptTags();
     }
+    // Reveal only once the app has actually rendered — double rAF gives the
+    // browser a layout pass first, so the fade starts from a painted frame
+    // instead of flashing empty/unstyled markup.
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() { newRoot.style.opacity = '1'; });
+    });
   } catch (err) {
+    document.documentElement.style.opacity = '1';
     setStatus('Error unpacking: ' + err.message);
     console.error('Bundle unpack error:', err);
   }
