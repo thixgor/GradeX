@@ -27,6 +27,7 @@ const publicRoutes = [
   '/flashcards',
   '/ldpg-mnclinico',
   '/prescricao-real-no-sus',
+  '/ecorj-ebook',
   // Amostra pública: 10 questões comentadas + 1 patologia, sem login. A rota da
   // API valida rate limit por IP internamente.
   '/amostra',
