@@ -38,6 +38,13 @@ export interface CreateOrderInput {
   metadata?: Record<string, string>
   /** chave de idempotência derivada do externalReference. */
   idempotencyKey: string
+  /**
+   * Parte do `amount` sujeita à comissão do sócio (split de marketplace).
+   * Quando omitido, a comissão incide sobre o valor total (comportamento padrão).
+   * Usado para excluir da comissão certos materiais/pacotes marcados no admin —
+   * a `application_fee` é calculada sobre este valor, não sobre `amount`.
+   */
+  commissionableAmount?: number
   /** Métodos de pagamento permitidos. Se omitido, todos. */
   allowedMethods?: PaymentMethodKind[]
   /** URL de retorno após Pix/boleto, opcional. */

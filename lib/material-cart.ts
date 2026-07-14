@@ -30,6 +30,8 @@ export interface MaterialCartResolvedItem {
   ownedMaterialIds: string[]
   /** Evento de lote dinâmico associado a este item (null se sem evento). */
   pricingEventId?: string | null
+  /** Quando true, este item não entra na comissão do sócio (split marketplace). */
+  excludeFromCommission?: boolean
 }
 
 export interface MaterialCartSkippedItem {
@@ -168,13 +170,13 @@ export async function resolveMaterialCart(
     materialIds.length
       ? db.collection('materials')
           .find({ _id: { $in: materialIds.map(id => new ObjectId(id)) } })
-          .project({ title: 1, pricing: 1, price: 1, type: 1, linkedDeckSlug: 1, allowedGroups: 1, pricingEventId: 1 })
+          .project({ title: 1, pricing: 1, price: 1, type: 1, linkedDeckSlug: 1, allowedGroups: 1, pricingEventId: 1, excludeFromCommission: 1 })
           .toArray()
       : Promise.resolve([]),
     packageIds.length
       ? db.collection('material_packages')
           .find({ _id: { $in: packageIds.map(id => new ObjectId(id)) } })
-          .project({ title: 1, pricing: 1, price: 1, materialIds: 1, allowedGroups: 1, pricingEventId: 1 })
+          .project({ title: 1, pricing: 1, price: 1, materialIds: 1, allowedGroups: 1, pricingEventId: 1, excludeFromCommission: 1 })
           .toArray()
       : Promise.resolve([]),
     getCompletedPurchases(db, session),
@@ -309,6 +311,7 @@ export async function resolveMaterialCart(
       discountApplied: pricingMeta.discountApplied,
       ownedMaterialIds: pricingMeta.ownedMaterialIds,
       pricingEventId: pkg.pricingEventId ? String(pkg.pricingEventId) : null,
+      excludeFromCommission: pkg.excludeFromCommission === true,
     })
 
     for (const materialId of materialIdsInPackage) {
@@ -368,6 +371,7 @@ export async function resolveMaterialCart(
       discountApplied: 0,
       ownedMaterialIds: [],
       pricingEventId: material.pricingEventId ? String(material.pricingEventId) : null,
+      excludeFromCommission: material.excludeFromCommission === true,
     })
   }
 
@@ -397,6 +401,7 @@ export function serializeMaterialCartItem(item: MaterialCartResolvedItem) {
     discountApplied: item.discountApplied,
     ownedMaterialIds: item.ownedMaterialIds,
     pricingEventId: item.pricingEventId || null,
+    excludeFromCommission: item.excludeFromCommission === true,
   }
 }
 
