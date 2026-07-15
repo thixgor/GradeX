@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic'
 import {
   Search, Activity, Ruler, GraduationCap, ZoomIn, ZoomOut, Play, Pause,
   Sun, Moon, GitCompare, Grid3x3, Monitor, Rows3, LineChart, Heart, Box, Loader2,
-  X, ListFilter, Gauge, Star, StickyNote, ChevronRight,
+  X, ListFilter, Gauge, Star, StickyNote, ChevronRight, HelpCircle,
 } from 'lucide-react'
 import { ECG_CATALOG, CATEGORIES, searchCatalog, type EcgEntry, type EcgCategory, type Urgency } from '@/lib/ecg/catalog'
 import { computeMeasurements, LEADS, type LeadName } from '@/lib/ecg/engine'
@@ -16,6 +16,7 @@ import { Ecg12Lead } from './ecg-12-lead'
 import { ConductionSystem, type WallKey } from './conduction-system'
 import { EcgClinicalPanel } from './ecg-clinical-panel'
 import { EcgQuiz } from './ecg-quiz'
+import { EcgTutorial, useEcgTour } from './ecg-tutorial'
 
 // Coração 3D (WebGL/three.js) carregado sob demanda — three.js só entra no
 // bundle quando o modo 3D é ativado.
@@ -79,6 +80,7 @@ export function EcgSimulator() {
   const [showNotes, setShowNotes] = useState(false)
   const [heartMode, setHeartMode] = useState<'3d' | '2d'>('3d')
   const { isFavorite, toggleFavorite, notes, setNote } = useEcgFavorites()
+  const { open: tourOpen, setOpen: setTourOpen, close: closeTour } = useEcgTour()
 
   const entry = useMemo(() => ECG_CATALOG.find((e) => e.id === selectedId) || ECG_CATALOG[0], [selectedId])
   const results = useMemo(() => {
@@ -108,7 +110,14 @@ export function EcgSimulator() {
           className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold transition ${tab === 'quiz' ? 'bg-primary text-primary-foreground' : 'bg-white/[0.05] text-muted-foreground hover:text-foreground'}`}>
           <GraduationCap className="h-4 w-4" /> Exercícios
         </button>
+        <button onClick={() => setTourOpen(true)}
+          className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-white/[0.1] bg-white/[0.04] px-3 py-2 text-xs font-bold text-muted-foreground transition hover:border-primary/30 hover:text-primary"
+          title="Como usar o simulador">
+          <HelpCircle className="h-4 w-4" /> Tutorial
+        </button>
       </div>
+
+      <EcgTutorial open={tourOpen} onClose={closeTour} />
 
       {tab === 'quiz' ? (
         <EcgQuiz dark={dark} />
