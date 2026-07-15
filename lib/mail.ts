@@ -536,13 +536,25 @@ export interface MaterialEmailAttachment {
  */
 function materialAttachmentsBlock(
   attachments: MaterialEmailAttachment[],
-  opts?: { restrictedEmail?: string }
+  opts?: { restrictedEmail?: string; deliveredToEmail?: string }
 ): string {
   if (!attachments || attachments.length === 0) return ''
   const multiple = attachments.length > 1
   const list = attachments
     .map(a => `<li style="margin-bottom: 4px;">${escapeHtml(a.title)}</li>`)
     .join('')
+  // Aviso explícito de que o PDF foi entregue na conta de e-mail da compra —
+  // exibido quando o material tem o envio automático de PDF habilitado (junto
+  // do download), deixando claro que o arquivo já está anexado neste e-mail.
+  const deliveredNote = opts?.deliveredToEmail
+    ? `
+    <div style="background-color: #ecfdf5; border: 1px solid #a7f3d0; border-left: 4px solid #059669; border-radius: 8px; padding: 14px 16px; margin: 16px 0;">
+      <p style="margin: 0; font-size: 14px; color: #065f46;">
+        <strong>📎 PDF enviado para o seu e-mail:</strong> como o download deste material está habilitado, o${multiple ? 's' : ''} arquivo${multiple ? 's' : ''} em PDF ${multiple ? 'já seguem anexados' : 'já segue anexado'} neste e-mail, na conta <strong>${escapeHtml(opts.deliveredToEmail)}</strong>. Você não precisa fazer login para baixá-lo${multiple ? 's' : ''}.
+      </p>
+    </div>
+    `
+    : ''
   const restrictNote = opts?.restrictedEmail
     ? `
     <div style="background-color: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px; padding: 14px 16px; margin: 16px 0;">
@@ -553,6 +565,7 @@ function materialAttachmentsBlock(
     `
     : ''
   return `
+    ${deliveredNote}
     <div style="background-color: #f0faf4; border: 1px solid #c6f0d8; border-radius: 10px; padding: 18px 20px; margin: 20px 0;">
       <p style="margin: 0 0 10px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #43a047; font-weight: 700;">
         Material${multiple ? 's' : ''} em anexo (PDF)
@@ -1238,7 +1251,7 @@ export async function sendSerialKeyPurchaseEmail(input: {
       <p style="margin: 0; color: #795548; font-size: 13px;"><strong>Como ativar:</strong> clique em "Ativar meu produto", faça login ou crie sua conta (é rápido) e o produto aparecerá liberado automaticamente. O comprovante completo está anexado em PDF.</p>
     </div>
 
-    ${hasMaterialPdf ? `<hr><p>Seu material também segue em anexo, em PDF, para acesso imediato.</p>${materialAttachmentsBlock(materialPdfs, input.restrictActivationToBuyerEmail ? { restrictedEmail: input.email } : undefined)}` : ''}
+    ${hasMaterialPdf ? `<hr><p>Seu material também segue em anexo, em PDF, para acesso imediato.</p>${materialAttachmentsBlock(materialPdfs, { deliveredToEmail: input.email, ...(input.restrictActivationToBuyerEmail ? { restrictedEmail: input.email } : {}) })}` : ''}
 
     <p style="font-size: 12px; color: #a0aec0;">Teve algum problema? Responda com sua Serial Key que nós ajudamos.</p>
   `
@@ -1362,7 +1375,7 @@ export async function sendSerialKeyCartPurchaseEmail(input: {
       <p style="margin: 0; color: #795548; font-size: 13px;"><strong>Como ativar:</strong> ative cada produto clicando no botão correspondente. Faça login ou crie sua conta (rápido) e os produtos aparecerão liberados. O comprovante completo está anexado em PDF.</p>
     </div>
 
-    ${hasMaterialPdf ? `<hr><p>Os materiais em PDF elegíveis seguem em anexo, para acesso imediato.</p>${materialAttachmentsBlock(materialPdfs, input.restrictActivationToBuyerEmail ? { restrictedEmail: input.email } : undefined)}` : ''}
+    ${hasMaterialPdf ? `<hr><p>Os materiais em PDF elegíveis seguem em anexo, para acesso imediato.</p>${materialAttachmentsBlock(materialPdfs, { deliveredToEmail: input.email, ...(input.restrictActivationToBuyerEmail ? { restrictedEmail: input.email } : {}) })}` : ''}
   `
 
   const html = getEmailTemplate('Compra aprovada', content)
