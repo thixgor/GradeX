@@ -35,18 +35,33 @@ const WALL_POS: Record<string, [number, number, number]> = {
   lateral: [1.7, -0.5, 0.1], posterior: [0.35, -0.5, -1.5], rv: [-1.3, -0.4, 1.0], lv: [1.0, -0.7, 0.6],
 }
 
-const LABELS: { k: string; t: string; p: [number, number, number] }[] = [
-  { k: 'aorta', t: 'Aorta', p: [-0.55, 2.9, -0.5] },
-  { k: 'pa', t: 'Artéria pulmonar', p: [0.75, 2.6, -0.05] },
-  { k: 'vcs', t: 'Veia cava sup.', p: [-1.55, 2.5, 0.2] },
-  { k: 'ra', t: 'Átrio direito', p: [-1.55, 1.5, 0.6] },
-  { k: 'la', t: 'Átrio esquerdo', p: [1.1, 1.7, -0.3] },
-  { k: 'rv', t: 'Ventrículo direito', p: [-1.45, -0.5, 1.0] },
-  { k: 'lv', t: 'Ventrículo esquerdo', p: [1.75, -0.6, 0.4] },
-  { k: 'apex', t: 'Ápice', p: [0.35, -2.55, 0.2] },
-  { k: 'sa', t: 'Nó sinoatrial (SA)', p: [-1.55, 2.05, 0.6] },
-  { k: 'av', t: 'Nó AV', p: [-0.35, 0.55, 0.25] },
+const LABELS: { k: string; t: string }[] = [
+  { k: 'apex', t: 'Ápice' },
+  { k: 'aorta', t: 'Aorta' },
+  { k: 'pa', t: 'Tronco pulmonar' },
+  { k: 'vcs', t: 'Veia cava sup.' },
+  { k: 'ra', t: 'Átrio direito' },
+  { k: 'la', t: 'Átrio esquerdo' },
+  { k: 'rv', t: 'Ventrículo direito' },
+  { k: 'lv', t: 'Ventrículo esquerdo' },
+  { k: 'sa', t: 'Nó sinoatrial (SA)' },
+  { k: 'av', t: 'Nó AV' },
+  { k: 'lad', t: 'Coronária (DA)' },
 ]
+
+// Âncoras dos marcadores no frame local do coração — calibradas por render
+// para cada geometria (o modelo GLB e o coração procedural têm proporções
+// diferentes, então cada um tem seu conjunto para ficar fidedigno).
+const MODEL_ANCHORS: Record<string, [number, number, number]> = {
+  apex: [-0.15, -3.0, 0.25], aorta: [0.15, 1.7, -0.15], pa: [-0.35, 1.75, 0.55], vcs: [-0.85, 1.55, 0.05],
+  ra: [-1.05, 0.55, 0.35], la: [0.9, 1.15, -0.55], rv: [-0.5, -0.7, 0.75], lv: [1.0, -1.1, 0.15],
+  sa: [-0.9, 1.25, 0.35], av: [-0.15, 0.25, 0.3], lad: [-0.05, -0.5, 1.15],
+}
+const PROC_ANCHORS: Record<string, [number, number, number]> = {
+  apex: [0.35, -2.55, 0.2], aorta: [-0.55, 2.9, -0.5], pa: [0.75, 2.6, -0.05], vcs: [-1.55, 2.5, 0.2],
+  ra: [-1.55, 1.5, 0.6], la: [1.1, 1.7, -0.3], rv: [-1.45, -0.5, 1.0], lv: [1.75, -0.6, 0.4],
+  sa: [-1.55, 2.05, 0.6], av: [-0.35, 0.55, 0.25], lad: [0.15, -0.8, 1.5],
+}
 
 const noise = new ImprovedNoise()
 
@@ -211,6 +226,26 @@ export function Heart3D(props: Props) {
     const ectopic = new THREE.Mesh(new THREE.SphereGeometry(0.2, 18, 14), new THREE.MeshStandardMaterial({ color: 0xffc23a, emissive: 0xffb020, emissiveIntensity: 0.9, toneMapped: false }))
     ectopic.visible = false; ectopic.renderOrder = 7; heart.add(ectopic)
 
+    // ═══ efeito de sangue (líquido torcendo a cada contração) ═══
+    // Coluna helicoidal de partículas vermelhas translúcidas ejetada pela via de
+    // saída (aorta/tronco pulmonar) a cada sístole — como sangue sendo bombeado.
+    const BN = 64
+    const bPos = new Float32Array(BN * 3)
+    const bAlpha = new Float32Array(BN)
+    const bSeed = Array.from({ length: BN }, () => ({ a0: Math.random() * Math.PI * 2, r0: 0.1 + Math.random() * 0.42, off: Math.random(), sw: 0.8 + Math.random() * 0.5 }))
+    const bGeo = new THREE.BufferGeometry()
+    bGeo.setAttribute('position', new THREE.BufferAttribute(bPos, 3))
+    bGeo.setAttribute('aAlpha', new THREE.BufferAttribute(bAlpha, 1))
+    const bMat = new THREE.ShaderMaterial({
+      uniforms: { uSize: { value: 150 }, uColor: { value: new THREE.Color(0x9e1622) } },
+      vertexShader: `attribute float aAlpha; varying float vA; uniform float uSize;
+        void main(){ vA=aAlpha; vec4 mv=modelViewMatrix*vec4(position,1.0); gl_PointSize=uSize/max(0.2,-mv.z); gl_Position=projectionMatrix*mv; }`,
+      fragmentShader: `varying float vA; uniform vec3 uColor;
+        void main(){ float d=length(gl_PointCoord-0.5); float m=smoothstep(0.5,0.14,d); if(m*vA<0.015) discard; gl_FragColor=vec4(uColor, m*vA*0.8); }`,
+      transparent: true, depthWrite: false, depthTest: true, blending: THREE.NormalBlending, toneMapped: false,
+    })
+    const blood = new THREE.Points(bGeo, bMat); blood.renderOrder = 8; blood.frustumCulled = false; heart.add(blood)
+
     // ═══ modelo 3D (GLTF) ═══
     let modelGroup: THREE.Group | null = null
     let modelFit = 1
@@ -259,7 +294,8 @@ export function Heart3D(props: Props) {
     const ro = new ResizeObserver(() => { curW = mount.clientWidth || curW; renderer.setSize(curW, curH); composer?.setSize(curW, curH); camera.aspect = curW / curH; camera.updateProjectionMatrix() })
     ro.observe(mount)
 
-    const labelVecs = LABELS.map((l) => ({ k: l.k, v: new THREE.Vector3(...l.p) }))
+    const labelVec: Record<string, THREE.Vector3> = {}
+    for (const l of LABELS) labelVec[l.k] = new THREE.Vector3()
     const tmp = new THREE.Vector3()
     const clock = new THREE.Clock()
     let raf = 0
@@ -283,10 +319,29 @@ export function Heart3D(props: Props) {
       heart.rotation.x += (targetRX - heart.rotation.x) * 0.1
       heart.updateMatrixWorld()
 
-      // contração
+      // contração realista: sístole ventricular = encurtamento longitudinal (Y),
+      // espessamento radial (X/Z) e leve torção (wringing) do coração.
       const ventSys = phase > 0.5 && phase < 0.82 ? Math.sin(((phase - 0.5) / 0.32) * Math.PI) : 0
-      const vs = 1 - 0.05 * ventSys
-      if (usingModel && modelGroup) modelGroup.scale.setScalar(modelFit * vs)
+      if (usingModel && modelGroup) {
+        modelGroup.scale.set(modelFit * (1 + 0.04 * ventSys), modelFit * (1 - 0.085 * ventSys), modelFit * (1 + 0.04 * ventSys))
+        modelGroup.rotation.y = 0.07 * ventSys           // torção sistólica
+        modelGroup.position.y = -0.3 - 0.14 * ventSys     // base desce em direção ao ápice
+      }
+
+      // sangue líquido: coluna helicoidal ejetada pela via de saída na sístole
+      const eject = Math.max(ventSys, phase > 0.46 && phase < 0.86 ? 0.25 : 0)
+      for (let i = 0; i < BN; i++) {
+        const s = bSeed[i]
+        const u = (t * 0.5 + s.off) % 1
+        const ang = s.a0 + u * s.sw * 2.4 * Math.PI + t * 0.7
+        const rad = s.r0 * (1 - 0.42 * u)
+        bPos[i * 3] = Math.cos(ang) * rad
+        bPos[i * 3 + 1] = 0.2 + u * 2.55
+        bPos[i * 3 + 2] = 0.05 + Math.sin(ang) * rad
+        bAlpha[i] = eject * Math.sin(u * Math.PI)
+      }
+      bGeo.attributes.position.needsUpdate = true
+      ;(bGeo.attributes.aAlpha as THREE.BufferAttribute).needsUpdate = true
 
       if (!usingModel) {
         ;(nodes.sa.material as THREE.MeshStandardMaterial).emissiveIntensity = abn ? 0.25 : stageOn('sa', phase)
@@ -299,9 +354,10 @@ export function Heart3D(props: Props) {
         const atriaGlow = phase > 0.05 && phase < 0.2 && !abn ? 0.4 : 0.12
         const ventGlow = phase > 0.44 && phase < 0.72 ? 0.45 : 0.12
         for (const m of atrialMeshes) (m.material as THREE.MeshStandardMaterial).emissiveIntensity = atriaGlow
-        for (const vm of ventMeshes) { vm.scale.setScalar(vs); (vm.material as THREE.MeshStandardMaterial).emissiveIntensity = ventGlow }
+        // contração não-uniforme: encurta no eixo longo (Y), engrossa no plano (X/Z)
+        for (const vm of ventMeshes) { vm.scale.set(1 + 0.03 * ventSys, 1 - 0.07 * ventSys, 1 + 0.03 * ventSys); (vm.material as THREE.MeshStandardMaterial).emissiveIntensity = ventGlow }
         const atrSys = phase > 0.05 && phase < 0.2 ? Math.sin(((phase - 0.05) / 0.15) * Math.PI) : 0
-        for (const am of atrialMeshes) am.scale.setScalar(1 - 0.04 * atrSys)
+        for (const am of atrialMeshes) am.scale.set(1 - 0.03 * atrSys, 1 - 0.05 * atrSys, 1 - 0.03 * atrSys)
         if (!abn) { const fp = Math.min(0.999, Math.max(0, phase / 0.55)); front.visible = phase < 0.6; frontPath.getPoint(fp, front.position) } else front.visible = false
         const walls0 = p.highlightWalls || []
         const lvInfarct = walls0.some((w) => ['anterior', 'septal', 'inferior', 'lateral', 'posterior', 'lv'].includes(w))
@@ -327,12 +383,15 @@ export function Heart3D(props: Props) {
 
       const layerOn = labelsOnRef.current
       if (labelLayerRef.current) labelLayerRef.current.style.display = layerOn ? 'block' : 'none'
-      if (layerOn) for (const { k, v } of labelVecs) {
-        const elm = labelEls.current.get(k); if (!elm) continue
-        tmp.copy(v).applyMatrix4(heart.matrixWorld).project(camera)
-        const x = (tmp.x * 0.5 + 0.5) * curW, y = (-tmp.y * 0.5 + 0.5) * curH
-        elm.style.transform = `translate(-50%,-50%) translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`
-        elm.style.opacity = tmp.z < 1 && x > -20 && x < curW + 20 ? '1' : '0'
+      if (layerOn) {
+        const anchors = usingModel ? MODEL_ANCHORS : PROC_ANCHORS
+        for (const { k } of LABELS) {
+          const elm = labelEls.current.get(k); const a = anchors[k]; if (!elm || !a) continue
+          tmp.copy(labelVec[k].set(a[0], a[1], a[2])).applyMatrix4(heart.matrixWorld).project(camera)
+          const x = (tmp.x * 0.5 + 0.5) * curW, y = (-tmp.y * 0.5 + 0.5) * curH
+          elm.style.transform = `translate(-50%,-50%) translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`
+          elm.style.opacity = tmp.z < 1 && x > -20 && x < curW + 20 ? '1' : '0'
+        }
       }
     }
     animate()
@@ -385,6 +444,13 @@ export function Heart3D(props: Props) {
         className={`absolute right-2.5 top-2.5 rounded-md px-2 py-1 text-[10px] font-bold backdrop-blur transition ${showLabels ? 'bg-cyan-500/80 text-white' : 'bg-black/45 text-white/80 hover:bg-black/60'}`}>
         {showLabels ? 'Ocultar marcadores' : 'Mostrar marcadores'}
       </button>
+
+      {/* Atribuição exigida pela licença CC BY 4.0 do modelo */}
+      {modelAvailable && mode === 'model' && (
+        <div className="pointer-events-auto absolute bottom-1.5 right-2 text-[8px] leading-tight text-white/45">
+          Modelo: <a href="https://sketchfab.com/3d-models/realistic-human-heart-3f8072336ce94d18b3d0d055a1ece089" target="_blank" rel="noopener noreferrer" className="underline hover:text-white/70">“Realistic Human Heart”</a> por neshallads · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer" className="underline hover:text-white/70">CC BY 4.0</a>
+        </div>
+      )}
     </div>
   )
 }
