@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic'
 import {
   Search, Activity, Ruler, GraduationCap, ZoomIn, ZoomOut, Play, Pause,
   Sun, Moon, GitCompare, Grid3x3, Monitor, Rows3, LineChart, Heart, Box, Loader2,
-  X, ListFilter, Gauge, Star, StickyNote,
+  X, ListFilter, Gauge, Star, StickyNote, ChevronRight,
 } from 'lucide-react'
 import { ECG_CATALOG, CATEGORIES, searchCatalog, type EcgEntry, type EcgCategory, type Urgency } from '@/lib/ecg/catalog'
 import { computeMeasurements, LEADS, type LeadName } from '@/lib/ecg/engine'
@@ -167,8 +167,10 @@ export function EcgSimulator() {
             {/* Cabeçalho do padrão */}
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <button onClick={() => setSidebarOpen(true)} className="inline-flex items-center gap-1.5 rounded-lg bg-white/[0.06] px-3 py-2 text-xs font-bold lg:hidden">
-                  <ListFilter className="h-4 w-4" /> Banco
+                <button onClick={() => setSidebarOpen(true)} className="inline-flex items-center gap-1.5 rounded-lg border border-primary/30 bg-primary/10 px-3 py-2 text-xs font-bold text-primary lg:hidden">
+                  <ListFilter className="h-4 w-4" /> Banco de ECG
+                  <span className="rounded-full bg-primary/20 px-1.5 py-0.5 text-[10px] font-black leading-none">{ECG_CATALOG.length}</span>
+                  <ChevronRight className="h-3.5 w-3.5" />
                 </button>
                 <div>
                   <h2 className="text-xl font-black leading-tight">{entry.nome}</h2>
