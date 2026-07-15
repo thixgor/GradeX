@@ -350,14 +350,15 @@ export function Heart3D(props: Props) {
         setEm(nodes.av, cs.glow.av * 1.6, cs.avBlockFlash)
         setEm(atrialBeam, cs.glow.atria * 1.4)
         setEm(hisBeam, cs.glow.his * 1.6, cs.infraBlockFlash)
-        setEm(lbb, cs.glow.branch * 1.4); setEm(rbb, cs.glow.branch * 1.4)
-        for (const f of purkinje) setEm(f, cs.glow.purk * 1.4)
-        // câmaras acendem conforme a ativação (átrios via condução, ventrículos via QRS)
+        setEm(lbb, cs.glow.lbb * 1.4); setEm(rbb, cs.glow.rbb * 1.4)   // ramo direito apaga no BRD
+        // Purkinje: esquerda pelo ramo esq., direita pelo ramo dir. (apaga no BRD)
+        for (let i = 0; i < purkinje.length; i++) setEm(purkinje[i], (i < 3 ? cs.glow.lbb : cs.glow.rbb) * 1.4)
+        // câmaras acendem conforme a ativação (átrios via condução; ventrículos separadamente)
         const atriaGlow = 0.12 + 0.5 * cs.glow.atria
-        const ventGlow = 0.12 + 0.5 * cs.glow.vent
         for (const m of atrialMeshes) (m.material as THREE.MeshStandardMaterial).emissiveIntensity = atriaGlow
-        // contração não-uniforme: encurta no eixo longo (Y), engrossa no plano (X/Z)
-        for (const vm of ventMeshes) { vm.scale.set(1 + 0.03 * ventSys, 1 - 0.07 * ventSys, 1 + 0.03 * ventSys); (vm.material as THREE.MeshStandardMaterial).emissiveIntensity = ventGlow }
+        // contração não-uniforme + o ventrículo dependente do ramo bloqueado acende tardiamente
+        const ventG = [cs.glow.lv, cs.glow.rv]
+        for (let i = 0; i < ventMeshes.length; i++) { const vm = ventMeshes[i]; vm.scale.set(1 + 0.03 * ventSys, 1 - 0.07 * ventSys, 1 + 0.03 * ventSys); (vm.material as THREE.MeshStandardMaterial).emissiveIntensity = 0.12 + 0.5 * ventG[i] }
         const atrSys = phase > 0.05 && phase < 0.2 ? Math.sin(((phase - 0.05) / 0.15) * Math.PI) : 0
         for (const am of atrialMeshes) am.scale.set(1 - 0.03 * atrSys, 1 - 0.05 * atrSys, 1 - 0.03 * atrSys)
         // frentes de despolarização (até 2 — atrial + escape)

@@ -94,8 +94,8 @@ export function ConductionSystem({ dark, highlightWalls = [], arteryLabel, ectop
       const op = (el: SVGElement | null, v: number) => { if (el) el.setAttribute('opacity', String(v)) }
       op(beamRefs.atria.current, st.glow.atria)
       op(beamRefs.his.current, st.glow.his)
-      op(beamRefs.lbb.current, st.glow.branch)
-      op(beamRefs.rbb.current, st.glow.branch)
+      op(beamRefs.lbb.current, st.glow.lbb)   // ramo esquerdo
+      op(beamRefs.rbb.current, st.glow.rbb)   // ramo direito (apagado no BRD)
       op(beamRefs.pk.current, st.glow.purk)
       if (saNodeRef.current) { saNodeRef.current.setAttribute('opacity', String(0.4 + 0.6 * st.glow.sa)); saNodeRef.current.setAttribute('r', String(6 + 3 * st.glow.sa)) }
       if (avNodeRef.current) { avNodeRef.current.setAttribute('opacity', String(0.4 + 0.6 * st.glow.av)); avNodeRef.current.setAttribute('fill', st.avBlockFlash ? '#ff4d4d' : (dark ? '#3ff0a0' : '#12b06a')) }
@@ -105,9 +105,9 @@ export function ConductionSystem({ dark, highlightWalls = [], arteryLabel, ectop
       const atriaOp = chaos ? 0.18 + 0.32 * Math.abs(Math.sin(t * 22 + Math.sin(t * 7))) : 0.12 + 0.5 * st.glow.atria
       if (laRef.current) laRef.current.setAttribute('fill-opacity', String(atriaOp))
       if (raRef.current) raRef.current.setAttribute('fill-opacity', String(atriaOp))
-      const ventOp = 0.12 + 0.5 * st.glow.vent
-      if (lvRef.current) lvRef.current.setAttribute('fill-opacity', String(ventOp))
-      if (rvRef.current) rvRef.current.setAttribute('fill-opacity', String(ventOp))
+      // ventrículos acendem separadamente (o dependente do ramo bloqueado acende tardiamente)
+      if (lvRef.current) lvRef.current.setAttribute('fill-opacity', String(0.12 + 0.5 * st.glow.lv))
+      if (rvRef.current) rvRef.current.setAttribute('fill-opacity', String(0.12 + 0.5 * st.glow.rv))
 
       // frentes de despolarização (até 2)
       setWave(w1.current, w1g.current, st.fronts[0])
