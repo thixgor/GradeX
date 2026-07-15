@@ -2,11 +2,17 @@
 <html lang="pt-BR"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Manual Clínico. O raciocínio clínico na palma da mão. Acesso completo a 220+ patologias por apenas {{LDPG_META_PRICE}}.">
+<meta name="description" content="Manual Clínico. O raciocínio clínico na palma da mão. Mais de 300 patologias e o Manual do Eletrocardiograma inclusos por apenas {{LDPG_META_PRICE}}.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Manual Clínico: o raciocínio clínico na palma da mão">
+<meta property="og:description" content="Mais de 300 patologias indexadas e o Manual do Eletrocardiograma inclusos. CIDs, fisiopatologia, diagnósticos diferenciais, farmacologia e fluxogramas de tratamento.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Manual Clínico: o raciocínio clínico na palma da mão">
+<meta name="twitter:description" content="Mais de 300 patologias indexadas e o Manual do Eletrocardiograma inclusos.">
 <link rel="preload" as="image" href="/ldpg-mnclinico-assets/657d2cbf-54e2-46a1-9acd-f2213f68e77e.webp" fetchpriority="high">
 <link rel="preload" as="image" href="/ldpg-mnclinico-assets/e2bcb04c-3934-4cf8-b02e-c25c9f12bc2e.webp">
 
-<title>Manual Clínico: o raciocínio clínico na palma da mão</title>
+<title>Manual Clínico: o raciocínio clínico na palma da mão + Manual do ECG</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <style>/* cyrillic-ext */
@@ -1080,6 +1086,22 @@
     display: grid; place-items: center;
     color: #2a1607; font-size: 12px;
   }
+  .badge-new {
+    border-color: rgba(48, 224, 147, .55);
+    background: linear-gradient(180deg, rgba(48,224,147,.12), rgba(48,224,147,.04));
+    color: #bdf3d3;
+    box-shadow: 0 0 0 1px rgba(48,224,147,.06), 0 0 40px -10px rgba(48,224,147,.45);
+    cursor: pointer;
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+  .badge-new:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 1px rgba(48,224,147,.10), 0 0 48px -8px rgba(48,224,147,.6);
+  }
+  .badge-new .star {
+    background: radial-gradient(circle at 30% 30%, #7dffb8, #0d8a54);
+    color: #04150c;
+  }
 
   .eyebrow {
     margin-top: 22px;
@@ -1553,6 +1575,44 @@
     font-size: 28px;
     line-height: 1.15;
     color: #f1faf4;
+  }
+  .ecg-new-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: #6bf0a0;
+    background: rgba(48,224,147,.12);
+    border: 1px solid rgba(48,224,147,.35);
+    padding: 5px 12px;
+    border-radius: 999px;
+    margin-bottom: 12px;
+  }
+  .ecg-sub {
+    margin: 12px 0 16px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: #cfded3;
+    max-width: 480px;
+  }
+  .ecg-sub strong { color: #ecf7f0; }
+  .ecg-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .ecg-chip {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #d6e9dc;
+    background: rgba(140,220,180,.08);
+    border: 1px solid var(--line-strong);
+    padding: 6px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
   }
   .ecg-wide { width: 100%; height: 80px; position: relative; z-index: 1; }
   @media (max-width: 700px) {
@@ -2609,6 +2669,7 @@
     .ecg-banner { padding: 22px 22px; gap: 18px; }
     .ecg-title { font-size: 22px; }
     .ecg-eyebrow { font-size: 11px; }
+    .ecg-sub { font-size: 13px; margin: 10px 0 14px; }
     .ecg-wide { height: 60px; }
 
     /* Override the 3D entrance final state on mobile so scale isn't reset to 1 */
@@ -2747,7 +2808,7 @@
     <div class="promo-row2">
       <span class="promo-bens">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-        <b>220+ patologias</b>
+        <b>300+ patologias</b>
       </span>
       <span class="promo-bens">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
@@ -2775,10 +2836,18 @@
   <!-- ============== HERO ============== -->
   <section class="hero" data-screen-label="01 Hero">
     <div class="hero-text">
-      <span class="badge-gold">
-        <span class="star">★</span>
-        Evidência científica de alto nível
-      </span>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <span class="badge-gold">
+          <span class="star">★</span>
+          Evidência científica de alto nível
+        </span>
+        <a href="#ecg-manual" class="badge-gold badge-new">
+          <span class="star">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h4l2-8 4 16 3-11 2 3h5"></path></svg>
+          </span>
+          Novo: Manual do Eletrocardiograma incluso
+        </a>
+      </div>
 
       <div class="eyebrow">Manual Clínico</div>
 
@@ -2789,9 +2858,10 @@
       </h1>
 
       <p class="lede">
-        Mais de 220 patologias indexadas. CIDs, fisiopatologias
+        Mais de 300 patologias indexadas. CIDs, fisiopatologias
         aprofundadas, diagnósticos diferenciais, farmacologia
-        completa e fluxogramas de tratamento. Tudo em um
+        completa e fluxogramas de tratamento — agora com o
+        <strong>Manual do Eletrocardiograma incluso</strong>. Tudo em um
         único material, construído sobre as melhores bibliografias
         da medicina.
       </p>
@@ -2811,7 +2881,7 @@
       </a>
 
       <div class="trust">
-        <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 L21 6 V12 a9 9 0 0 1 -18 0 V6 Z"></path><polyline points="8 12 11 15 16 9"></polyline></svg> <strong>220+ patologias</strong> indexadas</span>
+        <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 L21 6 V12 a9 9 0 0 1 -18 0 V6 Z"></path><polyline points="8 12 11 15 16 9"></polyline></svg> <strong>300+ patologias</strong> indexadas</span>
         <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M9 9a3 3 0 0 1 5.5-1.5"></path><path d="M12 7v10"></path><path d="M9 15a3 3 0 0 0 5.5 1.5"></path></svg> <strong>Pix</strong>, <strong>cartão</strong> ou <strong>boleto</strong></span>
         <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="currentColor"></polygon></svg> Acesso <strong>imediato</strong></span>
       </div>
@@ -2957,11 +3027,23 @@
     </div>
   </section>
 
-  <!-- ============== ECG BANNER ============== -->
-  <section class="ecg-banner" data-screen-label="02 ECG Banner">
+  <!-- ============== ECG BANNER / MANUAL DO ELETROCARDIOGRAMA ============== -->
+  <section class="ecg-banner" id="ecg-manual" data-screen-label="02 ECG Banner">
     <div class="ecg-text">
-      <div class="ecg-eyebrow">Pensado para a beira do leito</div>
-      <div class="ecg-title">Decisão rápida. Raciocínio sólido. Conduta segura.</div>
+      <span class="ecg-new-tag">Novidade · Incluso sem custo adicional</span>
+      <div class="ecg-eyebrow">Manual do Eletrocardiograma</div>
+      <div class="ecg-title">Um simulador de ECG de nível hospitalar, agora dentro do Manual Clínico.</div>
+      <p class="ecg-sub">
+        12 derivações geradas matematicamente em tempo real, papel milimetrado real,
+        medidas automáticas, régua digital e um banco com <strong>90+ traçados</strong>
+        comentados segundo critérios diagnósticos internacionais (AHA, ACC, ESC e SBC).
+      </p>
+      <div class="ecg-chips">
+        <span class="ecg-chip">12 derivações em tempo real</span>
+        <span class="ecg-chip">Papel milimetrado real</span>
+        <span class="ecg-chip">Medidas automáticas + régua</span>
+        <span class="ecg-chip">90+ traçados e exercícios</span>
+      </div>
     </div>
     <!-- Ritmo: Fibrilação Atrial — R-R irregularmente irregular, sem ondas P, baseline com ondas f -->
     <svg class="ecg ecg-wide" viewBox="0 0 600 80" preserveAspectRatio="none">
@@ -3027,7 +3109,7 @@
         <div class="feat">
           <div class="head">
             <div class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"></rect><line x1="12" y1="8" x2="12" y2="14"></line><line x1="9" y1="11" x2="15" y2="11"></line></svg></div>
-            <div class="name"><span class="stat">220+</span> patologias indexadas</div>
+            <div class="name"><span class="stat">300+</span> patologias indexadas</div>
           </div>
         </div>
         <div class="feat">
@@ -3074,6 +3156,14 @@
             <div class="name">Fluxograma de tratamento</div>
           </div>
           <div class="desc">Passo a passo claro do manejo, do primeiro atendimento à resolução</div>
+        </div>
+
+        <div class="feat full" style="border-color:rgba(244,160,43,.30); background:rgba(244,160,43,.06);">
+          <div class="head">
+            <div class="ico" style="color:#f6cf90; background:rgba(244,160,43,.12); border-color:rgba(244,160,43,.25);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h4l2-8 4 16 3-11 2 3h5"></path></svg></div>
+            <div class="name">Manual do Eletrocardiograma <span style="font-size:9px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#f6cf90; background:rgba(244,160,43,.15); padding:2px 7px; border-radius:999px; margin-left:4px;">Novo · incluso</span></div>
+          </div>
+          <div class="desc">Simulador com 12 derivações em tempo real, medidas automáticas, régua e banco com 90+ traçados comentados</div>
         </div>
       </div>
     </div>
@@ -3216,7 +3306,7 @@
       </div>
       <div class="gtext">
         <div class="gtitle">Acesso completo</div>
-        <div class="gsub">Mais de 220 patologias indexadas</div>
+        <div class="gsub">Mais de 300 patologias indexadas</div>
       </div>
     </div>
     <div class="gtee">
@@ -3242,11 +3332,11 @@
   <!-- ============== PLANOS ============== -->
   <section class="final-cta" data-screen-label="04c Planos" style="padding-bottom:0;">
     <h2 style="margin-bottom:8px;">Desbloqueie o Manual Clínico</h2>
-    <p style="margin-bottom:24px;">Acesso completo a mais de 220 patologias indexadas.</p>
+    <p style="margin-bottom:24px;">Acesso completo a mais de 300 patologias indexadas e ao Manual do Eletrocardiograma.</p>
     <div style="display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));max-width:420px;margin:0 auto 24px;"><!--LDPG_PLAN_GRID_START-->
       <a href="https://domineaqui.com.br/manual-clinico" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:8px;padding:20px;border-radius:18px;border:1px solid rgba(48,224,147,.30);background:rgba(48,224,147,.06);">
         <span style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;opacity:.7;">Manual Clínico</span>
-        <span style="font-size:13px;opacity:.7;">Acesso completo: 220+ patologias</span>
+        <span style="font-size:13px;opacity:.7;">Acesso completo: 300+ patologias</span>
         <span style="font-size:32px;font-weight:900;color:#f3d999;">R$ 29,90</span>
         <span style="margin-top:auto;font-size:13px;font-weight:700;color:#30e093;">Desbloquear agora →</span>
       </a>
@@ -3272,7 +3362,7 @@
     </a>
 
     <div class="trust" style="justify-content:center; margin-top: 20px;">
-      <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 L21 6 V12 a9 9 0 0 1 -18 0 V6 Z"></path><polyline points="8 12 11 15 16 9"></polyline></svg> <strong>220+ patologias</strong> indexadas</span>
+      <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 L21 6 V12 a9 9 0 0 1 -18 0 V6 Z"></path><polyline points="8 12 11 15 16 9"></polyline></svg> <strong>300+ patologias</strong> indexadas</span>
       <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v10"></path></svg> <strong>Pix</strong>, cartão ou boleto</span>
       <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="currentColor"></polygon></svg> Acesso <strong>imediato</strong></span>
     </div>
