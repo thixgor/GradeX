@@ -1,5 +1,5 @@
 import { Db, ObjectId } from 'mongodb'
-import type { ManualClinicoPurchase, MaterialPurchase, User } from '@/lib/types'
+import type { ManualClinicoPlanKey, ManualClinicoPurchase, MaterialPurchase, User } from '@/lib/types'
 import { MANUAL_CLINICO_PURCHASES_COLLECTION } from '@/lib/manual-clinico-product'
 
 export type CouponDiscountType = 'percentage' | 'fixed'
@@ -29,6 +29,17 @@ export interface Coupon {
   minimumCartAmount?: number | null
   firstPurchaseOnly?: boolean
   allowedAfyaUnits?: string[]
+  /**
+   * Planos do Manual Clínico aos quais o cupom se restringe. Vazio/ausente =
+   * vale para todos os planos. Só tem efeito quando o item é manual_clinico.
+   */
+  allowedManualPlans?: ManualClinicoPlanKey[] | null
+  /**
+   * Se true, o desconto do cupom é aplicado EM CIMA do desconto de lote
+   * (pricing event) — cupom sobre cupom. Se false (padrão), vale a regra do
+   * "maior dos dois" (lote OU cupom, o que for maior).
+   */
+  stackWithTier?: boolean
   usageCount: number
   expiresAt?: Date | null
   durationValue?: number | null
@@ -210,6 +221,12 @@ export function applyCouponDiscountsToItems<T extends CouponCheckoutItem>(
   })
 }
 
+export const MANUAL_PLAN_LABELS: Record<ManualClinicoPlanKey, string> = {
+  semestral: 'Semestral',
+  anual: 'Anual',
+  vitalicio: 'Vitalício',
+}
+
 export async function validateCouponForCheckout(
   db: Db,
   input: {
@@ -219,6 +236,14 @@ export async function validateCouponForCheckout(
     userId?: string
     userEmail?: string
     now?: Date
+    /** Plano do Manual Clínico selecionado (para restrição por plano). */
+    manualPlanKey?: ManualClinicoPlanKey | string
+    /**
+     * Desconto de lote (pricing event) já calculado sobre a base. Usado apenas
+     * quando o cupom é `stackWithTier`, para calcular o cupom sobre o preço já
+     * com o lote aplicado (cupom sobre cupom).
+     */
+    tierDiscountAmount?: number
   }
 ): Promise<CouponValidationResult> {
   const codeNormalized = normalizeCouponCode(input.code)
@@ -256,7 +281,27 @@ export async function validateCouponForCheckout(
     throw new CouponError('Este cupom não é válido para os itens selecionados.')
   }
 
-  const discountAmount = computeCouponDiscount(coupon.discountType, coupon.discountValue, eligibleAmount)
+  // Restrição por plano do Manual Clínico. Só se aplica quando o item elegível
+  // é o Manual Clínico e o cupom define planos permitidos.
+  if (coupon.allowedManualPlans?.length && eligibleItems.some((item) => item.itemType === 'manual_clinico')) {
+    const allowedPlans = coupon.allowedManualPlans
+    const planKey = input.manualPlanKey as ManualClinicoPlanKey | undefined
+    if (!planKey || !allowedPlans.includes(planKey)) {
+      const labels = allowedPlans.map((plan) => MANUAL_PLAN_LABELS[plan] || plan).join(', ')
+      throw new CouponError(`Este cupom é válido apenas para o plano: ${labels}.`)
+    }
+  }
+
+  // Empilhamento (cupom sobre lote): quando o cupom é stackWithTier e há lote
+  // ativo, o cupom incide sobre o preço JÁ com o desconto do lote.
+  const stack = coupon.stackWithTier === true
+  const tierDiscount = stack ? Math.max(0, roundMoney(input.tierDiscountAmount || 0)) : 0
+  const couponBaseAmount = roundMoney(Math.max(0, eligibleAmount - Math.min(eligibleAmount, tierDiscount)))
+  if (couponBaseAmount <= 0) {
+    throw new CouponError('Este cupom não gera desconto nesta compra.')
+  }
+
+  const discountAmount = computeCouponDiscount(coupon.discountType, coupon.discountValue, couponBaseAmount)
   if (discountAmount <= 0) throw new CouponError('Este cupom não gera desconto nesta compra.')
 
   const discountedItems = buildItemDiscounts(items, discountAmount, coupon)
@@ -268,7 +313,8 @@ export async function validateCouponForCheckout(
     amountBeforeCoupon,
     eligibleAmount,
     discountAmount,
-    amountAfterCoupon: roundMoney(amountBeforeCoupon - discountAmount),
+    // Quando empilha, o valor final desconta lote + cupom.
+    amountAfterCoupon: roundMoney(Math.max(0, amountBeforeCoupon - tierDiscount - discountAmount)),
     items: discountedItems,
   }
 }

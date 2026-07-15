@@ -254,6 +254,8 @@ export async function POST(request: NextRequest) {
         amountBeforeCoupon: amount,
         userId: session?.userId,
         userEmail: buyer.email,
+        manualPlanKey: resolved.productType === 'manual_clinico' ? data.planKey : undefined,
+        tierDiscountAmount,
         items: [{
           itemType: couponItemType,
           itemId: resolved.productId,
@@ -271,7 +273,12 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  if (tierDiscountAmount > 0 || couponDiscountAmount > 0) {
+  // Empilhamento (cupom sobre lote) quando o cupom é stackWithTier: aplica lote
+  // e cupom (já calculado pós-lote). Senão, vale o "maior dos dois".
+  const stackCoupon = couponValidation?.coupon.stackWithTier === true
+  if (stackCoupon && tierDiscountAmount > 0 && couponValidation) {
+    amount = Math.max(0, Math.round((amount - tierDiscountAmount - couponValidation.discountAmount) * 100) / 100)
+  } else if (tierDiscountAmount > 0 || couponDiscountAmount > 0) {
     const combined = combineTierAndCouponDiscount({
       basePrice: amount,
       tierDiscountAmount,

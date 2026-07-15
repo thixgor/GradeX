@@ -32,6 +32,7 @@ import { INSTITUTION_UNITS } from '@/lib/institution-units'
 
 type CouponScope = 'all' | 'materials' | 'flashcards' | 'manual_clinico' | 'specific'
 type DiscountType = 'percentage' | 'fixed'
+type ManualPlanKey = 'semestral' | 'anual' | 'vitalicio'
 type ExpirationMode = 'none' | 'date' | 'duration'
 type DurationUnit = 'hours' | 'days' | 'weeks' | 'months'
 type ProductKind = 'material' | 'flashcard' | 'package' | 'product'
@@ -56,6 +57,8 @@ type Coupon = {
   minimumCartAmount: number | null
   firstPurchaseOnly: boolean
   allowedAfyaUnits: string[]
+  allowedManualPlans: ManualPlanKey[]
+  stackWithTier: boolean
   usageCount: number
   expiresAt: string | null
   durationValue: number | null
@@ -95,6 +98,12 @@ const durationLabels: Record<DurationUnit, string> = {
   months: 'Meses',
 }
 
+const MANUAL_PLAN_OPTIONS: { key: ManualPlanKey; label: string }[] = [
+  { key: 'semestral', label: 'Semestral' },
+  { key: 'anual', label: 'Anual' },
+  { key: 'vitalicio', label: 'Vitalício' },
+]
+
 function emptyForm() {
   return {
     code: '',
@@ -108,6 +117,8 @@ function emptyForm() {
     minimumCartAmount: '',
     firstPurchaseOnly: false,
     allowedAfyaUnits: [] as string[],
+    allowedManualPlans: [] as ManualPlanKey[],
+    stackWithTier: false,
     expirationMode: 'none' as ExpirationMode,
     expiresAt: '',
     durationValue: 7,
@@ -221,6 +232,8 @@ export default function AdminCouponsPage() {
       minimumCartAmount: coupon.minimumCartAmount ? String(coupon.minimumCartAmount) : '',
       firstPurchaseOnly: coupon.firstPurchaseOnly === true,
       allowedAfyaUnits: coupon.allowedAfyaUnits || [],
+      allowedManualPlans: coupon.allowedManualPlans || [],
+      stackWithTier: coupon.stackWithTier === true,
       expirationMode: coupon.durationValue && coupon.durationUnit ? 'duration' : coupon.expiresAt ? 'date' : 'none',
       expiresAt: coupon.expiresAt ? coupon.expiresAt.slice(0, 16) : '',
       durationValue: coupon.durationValue || 7,
@@ -270,6 +283,8 @@ export default function AdminCouponsPage() {
         minimumCartAmount: form.minimumCartAmount ? Number(form.minimumCartAmount) : null,
         firstPurchaseOnly: form.firstPurchaseOnly,
         allowedAfyaUnits: form.allowedAfyaUnits,
+        allowedManualPlans: form.allowedManualPlans,
+        stackWithTier: form.stackWithTier,
         expirationMode: form.expirationMode,
         expiresAt: form.expirationMode === 'date' ? form.expiresAt : undefined,
         durationValue: form.expirationMode === 'duration' ? Number(form.durationValue || 0) : undefined,
@@ -311,6 +326,15 @@ export default function AdminCouponsPage() {
       allowedAfyaUnits: current.allowedAfyaUnits.includes(unit)
         ? current.allowedAfyaUnits.filter((item) => item !== unit)
         : [...current.allowedAfyaUnits, unit],
+    }))
+  }
+
+  function toggleManualPlan(plan: ManualPlanKey) {
+    setForm((current) => ({
+      ...current,
+      allowedManualPlans: current.allowedManualPlans.includes(plan)
+        ? current.allowedManualPlans.filter((item) => item !== plan)
+        : [...current.allowedManualPlans, plan],
     }))
   }
 
@@ -451,6 +475,16 @@ export default function AdminCouponsPage() {
                 Somente primeira compra
               </label>
 
+              <label className="flex items-start gap-2 rounded-md border border-amber-300/30 bg-amber-400/5 px-3 py-2.5 text-sm">
+                <input type="checkbox" className="mt-0.5" checked={form.stackWithTier} onChange={(e) => setForm((f) => ({ ...f, stackWithTier: e.target.checked }))} />
+                <span>
+                  <span className="font-semibold">Empilhar com o lote (cupom sobre cupom)</span>
+                  <span className="mt-0.5 block text-xs text-muted-foreground">
+                    Aplica este cupom <strong>em cima</strong> do desconto de lote (pricing event). Se desligado, vale o maior desconto entre lote e cupom.
+                  </span>
+                </span>
+              </label>
+
               <div className="space-y-2 rounded-lg border bg-muted/30 p-3">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <div>
@@ -517,6 +551,44 @@ export default function AdminCouponsPage() {
                   <span>
                     O cupom valerá exclusivamente para o <strong>Manual Clínico</strong> — aplicável tanto em <strong>/comprar</strong> (compra sem login) quanto em <strong>/manual-clinico/checkout</strong>. Certifique-se de que os cupons estão habilitados nas configurações do Manual Clínico.
                   </span>
+                </div>
+              ) : null}
+
+              {form.scope === 'manual_clinico' || form.scope === 'all' || form.scope === 'specific' ? (
+                <div className="space-y-2 rounded-lg border bg-muted/30 p-3">
+                  <div className="flex items-center gap-2">
+                    <BookOpen className="h-4 w-4 text-primary" />
+                    <Label className="!mb-0">Planos do Manual Clínico</Label>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {form.allowedManualPlans.length === 0
+                      ? 'Vale para todos os planos (Semestral, Anual e Vitalício).'
+                      : `Restrito a: ${form.allowedManualPlans.map((p) => MANUAL_PLAN_OPTIONS.find((o) => o.key === p)?.label || p).join(', ')}.`}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {MANUAL_PLAN_OPTIONS.map((option) => {
+                      const active = form.allowedManualPlans.includes(option.key)
+                      return (
+                        <button
+                          key={option.key}
+                          type="button"
+                          onClick={() => toggleManualPlan(option.key)}
+                          className={`rounded-md border px-3 py-1.5 text-xs font-semibold transition ${active ? 'border-primary/40 bg-primary/10 text-primary' : 'border-border bg-background text-muted-foreground hover:bg-muted'}`}
+                        >
+                          {option.label}
+                        </button>
+                      )
+                    })}
+                    {form.allowedManualPlans.length > 0 ? (
+                      <button
+                        type="button"
+                        onClick={() => setForm((f) => ({ ...f, allowedManualPlans: [] }))}
+                        className="rounded-md border border-border px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:bg-muted"
+                      >
+                        Todos os planos
+                      </button>
+                    ) : null}
+                  </div>
                 </div>
               ) : null}
 
@@ -620,6 +692,14 @@ export default function AdminCouponsPage() {
                           {coupon.isActive ? 'Ativo' : 'Inativo'}
                         </span>
                         <span className="rounded-md border px-2 py-1 text-xs text-muted-foreground">{scopeLabels[coupon.scope]}</span>
+                        {coupon.stackWithTier ? (
+                          <span className="rounded-md border border-amber-300/30 bg-amber-400/10 px-2 py-1 text-xs font-semibold text-amber-700 dark:text-amber-200">Empilha com lote</span>
+                        ) : null}
+                        {coupon.allowedManualPlans?.length ? (
+                          <span className="rounded-md border border-emerald-300/25 bg-emerald-400/10 px-2 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-200">
+                            Planos: {coupon.allowedManualPlans.map((p) => MANUAL_PLAN_OPTIONS.find((o) => o.key === p)?.label || p).join(', ')}
+                          </span>
+                        ) : null}
                       </div>
 
                       {coupon.description ? <p className="mt-2 text-sm text-muted-foreground">{coupon.description}</p> : null}

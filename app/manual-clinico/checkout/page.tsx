@@ -47,6 +47,7 @@ interface AppliedCoupon {
   eligibleAmount: number
   discountAmount: number
   amountAfterCoupon: number
+  stackWithTier?: boolean
 }
 
 const currency = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
@@ -57,11 +58,13 @@ function formatBRL(value: number) {
 
 function CouponBox({
   product,
+  planKey,
   appliedCoupon,
   onApplied,
   onRemoved,
 }: {
   product: ProductInfo
+  planKey: PlanKey
   appliedCoupon: AppliedCoupon | null
   onApplied: (coupon: AppliedCoupon) => void
   onRemoved: () => void
@@ -83,6 +86,7 @@ function CouponBox({
           code: normalized,
           itemType: 'manual_clinico',
           itemId: MANUAL_CLINICO_PRODUCT_ID,
+          planKey,
         }),
       })
       const data = await res.json()
@@ -200,6 +204,11 @@ export default function ManualClinicoCheckoutPage() {
     }
   }, [enabledPlans, selectedPlanKey])
 
+  // Cupom pode ser restrito a planos (ou empilhar sobre o lote); limpa ao trocar.
+  useEffect(() => {
+    setAppliedCoupon(null)
+  }, [selectedPlanKey])
+
   const pricingEventStateData = usePricingEventState(selectedPlan?.pricingEventId || product?.pricingEventId || null)
   const pricingEventState = pricingEventStateData.state
 
@@ -299,8 +308,13 @@ export default function ManualClinicoCheckoutPage() {
     ? Math.max(0, Math.round(baseAmount * (tierPct / 100) * 100) / 100)
     : 0
   const couponDiscountAmount = appliedCoupon ? appliedCoupon.discountAmount : 0
-  const effectiveDiscount = Math.max(tierDiscountAmount, couponDiscountAmount)
-  const tierBeatsCoupon = hasActiveTier && tierDiscountAmount >= couponDiscountAmount
+  // Empilhamento: cupom stackWithTier soma-se ao lote (cupom já vem do servidor
+  // calculado sobre o preço pós-lote). Senão, vale o maior dos dois.
+  const stackCoupon = appliedCoupon?.stackWithTier === true && hasActiveTier
+  const effectiveDiscount = stackCoupon
+    ? Math.min(baseAmount, tierDiscountAmount + couponDiscountAmount)
+    : Math.max(tierDiscountAmount, couponDiscountAmount)
+  const tierBeatsCoupon = !stackCoupon && hasActiveTier && tierDiscountAmount >= couponDiscountAmount
   const payableAmount = Math.max(0, Math.round((baseAmount - effectiveDiscount) * 100) / 100)
 
   const lifetimePlan = enabledPlans.find((p) => p.key === 'vitalicio') || null
@@ -472,7 +486,7 @@ export default function ManualClinicoCheckoutPage() {
                     ? `${selectedPlan.label} · ${selectedPlan.durationMonths} ${selectedPlan.durationMonths === 1 ? 'mês' : 'meses'} de acesso`
                     : 'Acesso completo liberado na hora'}
               </p>
-              {hasActiveTier && tierBeatsCoupon && tierDiscountAmount > 0 ? (
+              {hasActiveTier && (tierBeatsCoupon || stackCoupon) && tierDiscountAmount > 0 ? (
                 <p className="mt-1 inline-flex items-center gap-1 text-xs font-bold text-emerald-200">
                   <Flame className="h-3 w-3" />
                   Lote {pricingEventState?.activeTier?.label || ''}: − {formatBRL(tierDiscountAmount)} ({Math.round(tierPct)}% OFF)
@@ -481,6 +495,7 @@ export default function ManualClinicoCheckoutPage() {
               {appliedCoupon && !tierBeatsCoupon ? (
                 <p className="mt-1 text-xs font-bold text-emerald-200">
                   Cupom {appliedCoupon.code}: - {formatBRL(appliedCoupon.discountAmount)}
+                  {stackCoupon ? ' (sobre o lote)' : ''}
                 </p>
               ) : null}
               {appliedCoupon && tierBeatsCoupon && tierDiscountAmount > 0 ? (
@@ -502,6 +517,7 @@ export default function ManualClinicoCheckoutPage() {
               <div className="space-y-4">
                 <CouponBox
                   product={product}
+                  planKey={selectedPlanKey}
                   appliedCoupon={appliedCoupon}
                   onApplied={setAppliedCoupon}
                   onRemoved={() => setAppliedCoupon(null)}

@@ -119,6 +119,8 @@ export async function POST(request: NextRequest) {
         amountBeforeCoupon: amount,
         userId: session.userId,
         userEmail: session.email,
+        manualPlanKey: plan.key,
+        tierDiscountAmount,
         items: [buildManualClinicoCouponItem(config, amount)],
       })
       couponDiscountAmount = couponValidation.discountAmount
@@ -137,14 +139,25 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  const combined = combineTierAndCouponDiscount({
-    basePrice: amount,
-    tierDiscountAmount,
-    couponDiscountAmount,
-  })
-  amount = combined.finalPrice
-  if (combined.appliedSource !== 'coupon') {
-    couponValidation = null
+  // Empilhamento (cupom sobre lote) quando o cupom é stackWithTier: aplica o
+  // lote e, por cima, o cupom (já calculado sobre o preço pós-lote). Senão,
+  // vale o "maior dos dois".
+  const stackCoupon = couponValidation?.coupon.stackWithTier === true
+  let appliedTierDiscount = 0
+  if (stackCoupon && tierDiscountAmount > 0 && couponValidation) {
+    appliedTierDiscount = tierDiscountAmount
+    amount = Math.max(0, Math.round((amount - tierDiscountAmount - couponValidation.discountAmount) * 100) / 100)
+  } else {
+    const combined = combineTierAndCouponDiscount({
+      basePrice: amount,
+      tierDiscountAmount,
+      couponDiscountAmount,
+    })
+    amount = combined.finalPrice
+    if (combined.appliedSource !== 'coupon') {
+      couponValidation = null
+    }
+    appliedTierDiscount = combined.appliedSource === 'tier' ? combined.appliedDiscountAmount : 0
   }
 
   if (amount <= 0 || data.paymentMethodId === 'free') {
@@ -247,13 +260,14 @@ export async function POST(request: NextRequest) {
       planLabel: plan.label,
       planDurationMonths: plan.durationMonths,
       plannedExpiresAt: plannedExpiresAt ? plannedExpiresAt.toISOString() : null,
-      ...(combined.appliedSource === 'tier' && pricingEventState?.activeTier
+      ...(appliedTierDiscount > 0 && pricingEventState?.activeTier
         ? {
             pricingEventId: pricingEventState.eventId,
             pricingEventName: pricingEventState.name,
             pricingEventTierIndex: pricingEventState.activeTier.index,
             pricingEventTierDiscountPercent: pricingEventState.activeTier.discountPercent,
-            pricingEventTierDiscountAmount: combined.appliedDiscountAmount,
+            pricingEventTierDiscountAmount: appliedTierDiscount,
+            pricingEventStackedWithCoupon: stackCoupon && !!couponValidation,
           }
         : {}),
       ...couponAnalyticsMetadata(couponValidation),

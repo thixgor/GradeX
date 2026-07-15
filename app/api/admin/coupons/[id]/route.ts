@@ -39,6 +39,8 @@ const CouponUpdateSchema = z.object({
   minimumCartAmount: z.number().positive().nullable().optional(),
   firstPurchaseOnly: z.boolean().default(false),
   allowedAfyaUnits: AllowedAfyaUnitsSchema,
+  allowedManualPlans: z.array(z.enum(['semestral', 'anual', 'vitalicio'])).max(3).optional(),
+  stackWithTier: z.boolean().default(false),
   expirationMode: z.enum(['none', 'date', 'duration']).default('none'),
   expiresAt: z.string().optional(),
   durationValue: z.number().int().positive().optional(),
@@ -116,6 +118,10 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       minimumCartAmount: data.minimumCartAmount ?? null,
       firstPurchaseOnly: data.firstPurchaseOnly,
       allowedAfyaUnits: data.allowedAfyaUnits,
+      allowedManualPlans: data.allowedManualPlans?.length
+        ? Array.from(new Set(data.allowedManualPlans))
+        : null,
+      stackWithTier: data.stackWithTier === true,
       expiresAt: buildExpiresAt(data, Number.isNaN(createdAt.getTime()) ? now : createdAt),
       durationValue: data.expirationMode === 'duration' ? data.durationValue || null : null,
       durationUnit: data.expirationMode === 'duration' ? data.durationUnit || null : null,

@@ -38,6 +38,8 @@ const CouponCreateSchema = z.object({
   minimumCartAmount: z.number().positive().nullable().optional(),
   firstPurchaseOnly: z.boolean().default(false),
   allowedAfyaUnits: AllowedAfyaUnitsSchema,
+  allowedManualPlans: z.array(z.enum(['semestral', 'anual', 'vitalicio'])).max(3).optional(),
+  stackWithTier: z.boolean().default(false),
   expirationMode: z.enum(['none', 'date', 'duration']).default('none'),
   expiresAt: z.string().optional(),
   durationValue: z.number().int().positive().optional(),
@@ -79,6 +81,8 @@ function serializeCoupon(coupon: Coupon, stats?: any) {
     minimumCartAmount: coupon.minimumCartAmount ?? null,
     firstPurchaseOnly: coupon.firstPurchaseOnly === true,
     allowedAfyaUnits: coupon.allowedAfyaUnits || [],
+    allowedManualPlans: coupon.allowedManualPlans || [],
+    stackWithTier: coupon.stackWithTier === true,
     usageCount: Number(coupon.usageCount || 0),
     expiresAt: serializeDate(coupon.expiresAt),
     durationValue: coupon.durationValue ?? null,
@@ -184,6 +188,10 @@ export async function POST(request: NextRequest) {
       minimumCartAmount: data.minimumCartAmount ?? null,
       firstPurchaseOnly: data.firstPurchaseOnly,
       allowedAfyaUnits: data.allowedAfyaUnits,
+      allowedManualPlans: data.allowedManualPlans?.length
+        ? Array.from(new Set(data.allowedManualPlans))
+        : null,
+      stackWithTier: data.stackWithTier === true,
       usageCount: 0,
       expiresAt: buildExpiresAt(data, now),
       durationValue: data.expirationMode === 'duration' ? data.durationValue || null : null,
