@@ -364,6 +364,9 @@ export async function POST(request: NextRequest) {
     const result = await provider.createPayment({
       externalReference: orderId,
       amount,
+      // Se o material/pacote está marcado como "sem comissão do sócio", tira o
+      // valor digital do split (o sócio não recebe percentual sobre ele).
+      commissionableAmount: resolved.excludeFromCommission === true ? 0 : amount,
       currency: 'BRL',
       description: resolved.description,
       payerEmail: buyer.email,
@@ -544,6 +547,14 @@ async function handleCartCheckout(
     return NextResponse.json({ error: 'Valor inválido' }, { status: 400 })
   }
 
+  // Comissão do sócio: soma só os itens (já com desconto) que NÃO estão
+  // marcados como "sem comissão". Os excluídos ficam fora do split.
+  const commissionableAmount = Math.round(
+    pricedItems
+      .filter((item) => item.excludeFromCommission !== true)
+      .reduce((sum, item) => sum + Math.max(0, item.price), 0) * 100
+  ) / 100
+
   const receiptToken = generateReceiptToken()
   const now = new Date()
   const itemCount = serialKeyCart.length
@@ -624,6 +635,7 @@ async function handleCartCheckout(
     const result = await provider.createPayment({
       externalReference: orderId,
       amount,
+      commissionableAmount,
       currency: 'BRL',
       description,
       payerEmail: buyer.email,
