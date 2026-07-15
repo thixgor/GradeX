@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import { ECG_CATALOG, CATEGORIES, searchCatalog, type EcgEntry, type EcgCategory, type Urgency } from '@/lib/ecg/catalog'
 import { computeMeasurements, LEADS, type LeadName } from '@/lib/ecg/engine'
+import { conductionFor } from '@/lib/ecg/conduction'
 import { useEcg12 } from './use-ecg-signal'
 import { useEcgFavorites } from './use-ecg-favorites'
 import { EcgLeadCanvas } from './ecg-lead-canvas'
@@ -95,6 +96,7 @@ export function EcgSimulator() {
 
   const walls = (entry.clinical.paredeAfetada || []).map((w) => WALL_MAP[w]).filter(Boolean) as WallKey[]
   const ectopic = ectopicFor(entry)
+  const conduction = useMemo(() => conductionFor(entry.pattern), [entry])
 
   return (
     <div className="w-full">
@@ -322,8 +324,7 @@ export function EcgSimulator() {
                 {heartMode === '3d' ? (
                   <div>
                     <Heart3D rate={entry.pattern.rate || 60} dark={dark} highlightWalls={walls} arteryLabel={entry.clinical.arteriaCulpada} ectopicOrigin={ectopic}
-                      axisDeg={entry.pattern.qrs.axis} axisLabel={measures.axisLabel}
-                      abnormalConduction={['complete_block', 'vt', 'vfib', 'torsades', 'paced'].includes(entry.pattern.rhythm)} />
+                      axisDeg={entry.pattern.qrs.axis} axisLabel={measures.axisLabel} conduction={conduction} />
                     <div className="mt-2 flex flex-col gap-1.5">
                       <div className="flex items-center gap-1.5 rounded-lg border border-sky-400/40 bg-sky-500/10 px-3 py-1.5 text-xs font-bold text-sky-600 dark:text-sky-300">
                         <span className="inline-block h-2 w-2 rounded-full bg-sky-400" /> Vetor elétrico: {measures.axis}° · {measures.axisLabel}
@@ -343,8 +344,7 @@ export function EcgSimulator() {
                   </div>
                 ) : (
                   <ConductionSystem rate={entry.pattern.rate || 60} dark={dark} highlightWalls={walls} arteryLabel={entry.clinical.arteriaCulpada} ectopicOrigin={ectopic}
-                    axisDeg={entry.pattern.qrs.axis} axisLabel={measures.axisLabel}
-                    abnormalConduction={['complete_block', 'vt', 'vfib', 'torsades', 'paced'].includes(entry.pattern.rhythm)} />
+                    axisDeg={entry.pattern.qrs.axis} axisLabel={measures.axisLabel} conduction={conduction} />
                 )}
               </div>
               <EcgClinicalPanel entry={entry} />

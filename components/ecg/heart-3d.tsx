@@ -8,6 +8,7 @@ import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPa
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js'
 import { ImprovedNoise } from 'three/examples/jsm/math/ImprovedNoise.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { conductionState, sampleAtU, type ConductionSpec } from '@/lib/ecg/conduction'
 import type { WallKey } from './conduction-system'
 
 // Coloque um GLB em public/models/heart.glb para habilitar o modo "Modelo 3D".
@@ -22,13 +23,8 @@ interface Props {
   axisDeg?: number
   axisLabel?: string
   abnormalConduction?: boolean
+  conduction?: ConductionSpec
 }
-
-const SEQ = [
-  { id: 'sa', t: 0.0 }, { id: 'atria', t: 0.06 }, { id: 'av', t: 0.2 },
-  { id: 'his', t: 0.3 }, { id: 'lbb', t: 0.38 }, { id: 'rbb', t: 0.38 },
-  { id: 'purkinje', t: 0.46 }, { id: 'ventricles', t: 0.54 },
-]
 
 const WALL_POS: Record<string, [number, number, number]> = {
   anterior: [0.4, -0.4, 1.5], septal: [-0.4, -0.5, 0.5], inferior: [0.35, -1.9, 0.3],
@@ -213,9 +209,14 @@ export function Heart3D(props: Props) {
     const purkinje: THREE.Mesh[] = []
     const spread = (base: THREE.Vector3, dirs: number[][]) => { for (const d of dirs) purkinje.push(beam(base, base.clone().add(new THREE.Vector3(d[0], d[1], d[2])), undefined, 0.028)) }
     spread(P.lv, [[0.6, -0.4, 0.35], [0.25, -0.5, -0.45], [0.85, -0.15, -0.1]]); spread(P.rv, [[-0.5, -0.4, 0.35], [-0.1, -0.55, 0.45], [-0.7, -0.2, 0.15]])
-    const front = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 12), new THREE.MeshBasicMaterial({ color: 0xd8fff0, toneMapped: false }))
-    front.renderOrder = 6; proc.add(front)
-    const frontPath = new THREE.CatmullRomCurve3([P.sa, new THREE.Vector3(-1.0, 1.3, 0.45), P.av, P.his, new THREE.Vector3(-0.2, -0.2, 0.25), P.lv])
+    const mkFront = () => { const m = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 12), new THREE.MeshBasicMaterial({ color: 0xd8fff0, toneMapped: false })); m.renderOrder = 6; m.visible = false; proc.add(m); return m }
+    const front = mkFront(), front2 = mkFront()
+    // marcos do caminho de condução (coincidem com U_BREAKS): sa, átrios, av, avExit, his, ramos, purkinje, vent
+    const COND_PTS = [
+      P.sa, new THREE.Vector3(-1.0, 1.3, 0.45), P.av, new THREE.Vector3(-0.28, 0.25, 0.22),
+      P.his, new THREE.Vector3(-0.05, -0.5, 0.15), new THREE.Vector3(0.3, -1.2, 0.1), P.lv,
+    ]
+    const lerpV = (a: THREE.Vector3, b: THREE.Vector3, s: number) => a.clone().lerp(b, s)
 
     // ═══ overlays compartilhados (funcionam nos dois modos) ═══
     const wallMarkers: Record<string, THREE.Mesh> = {}
@@ -299,7 +300,6 @@ export function Heart3D(props: Props) {
     const tmp = new THREE.Vector3()
     const clock = new THREE.Clock()
     let raf = 0
-    const stageOn = (id: string, phase: number) => { const s = SEQ.find((x) => x.id === id); if (!s) return 0.3; const next = SEQ[SEQ.indexOf(s) + 1]?.t ?? s.t + 0.14; return phase >= s.t && phase < next + 0.05 ? 1.6 : 0.3 }
 
     const animate = () => {
       if (disposed) return
@@ -308,7 +308,6 @@ export function Heart3D(props: Props) {
       const t = clock.getElapsedTime()
       const cycle = 60 / Math.max(30, p.rate || 60)
       const phase = (t % cycle) / cycle
-      const abn = p.abnormalConduction
       const usingModel = modeRef.current === 'model' && !!modelGroup
 
       proc.visible = !usingModel
@@ -344,21 +343,31 @@ export function Heart3D(props: Props) {
       ;(bGeo.attributes.aAlpha as THREE.BufferAttribute).needsUpdate = true
 
       if (!usingModel) {
-        ;(nodes.sa.material as THREE.MeshStandardMaterial).emissiveIntensity = abn ? 0.25 : stageOn('sa', phase)
-        ;(nodes.av.material as THREE.MeshStandardMaterial).emissiveIntensity = abn ? 0.25 : stageOn('av', phase)
-        ;(atrialBeam.material as THREE.MeshStandardMaterial).emissiveIntensity = abn ? 0.18 : stageOn('atria', phase)
-        ;(hisBeam.material as THREE.MeshStandardMaterial).emissiveIntensity = stageOn('his', phase)
-        ;(lbb.material as THREE.MeshStandardMaterial).emissiveIntensity = stageOn('lbb', phase)
-        ;(rbb.material as THREE.MeshStandardMaterial).emissiveIntensity = stageOn('rbb', phase)
-        const pk = stageOn('purkinje', phase); for (const f of purkinje) (f.material as THREE.MeshStandardMaterial).emissiveIntensity = pk
-        const atriaGlow = phase > 0.05 && phase < 0.2 && !abn ? 0.4 : 0.12
-        const ventGlow = phase > 0.44 && phase < 0.72 ? 0.45 : 0.12
+        // ── propagação fisiológica (nó AV vs infra-His, escapes dissociados) ──
+        const cs = conductionState(p.conduction || { kind: 'normal', atrialRate: p.rate || 70, ventRate: p.rate || 70 }, t)
+        const setEm = (m: THREE.Mesh, v: number, red = false) => { const mat = m.material as THREE.MeshStandardMaterial; mat.emissiveIntensity = v; mat.emissive.setHex(red ? 0xff3030 : 0x2fe0a0); mat.color.setHex(red ? 0xff5050 : 0x2fe0a0) }
+        setEm(nodes.sa, cs.glow.sa * 1.6)
+        setEm(nodes.av, cs.glow.av * 1.6, cs.avBlockFlash)
+        setEm(atrialBeam, cs.glow.atria * 1.4)
+        setEm(hisBeam, cs.glow.his * 1.6, cs.infraBlockFlash)
+        setEm(lbb, cs.glow.branch * 1.4); setEm(rbb, cs.glow.branch * 1.4)
+        for (const f of purkinje) setEm(f, cs.glow.purk * 1.4)
+        // câmaras acendem conforme a ativação (átrios via condução, ventrículos via QRS)
+        const atriaGlow = 0.12 + 0.5 * cs.glow.atria
+        const ventGlow = 0.12 + 0.5 * cs.glow.vent
         for (const m of atrialMeshes) (m.material as THREE.MeshStandardMaterial).emissiveIntensity = atriaGlow
         // contração não-uniforme: encurta no eixo longo (Y), engrossa no plano (X/Z)
         for (const vm of ventMeshes) { vm.scale.set(1 + 0.03 * ventSys, 1 - 0.07 * ventSys, 1 + 0.03 * ventSys); (vm.material as THREE.MeshStandardMaterial).emissiveIntensity = ventGlow }
         const atrSys = phase > 0.05 && phase < 0.2 ? Math.sin(((phase - 0.05) / 0.15) * Math.PI) : 0
         for (const am of atrialMeshes) am.scale.set(1 - 0.03 * atrSys, 1 - 0.05 * atrSys, 1 - 0.03 * atrSys)
-        if (!abn) { const fp = Math.min(0.999, Math.max(0, phase / 0.55)); front.visible = phase < 0.6; frontPath.getPoint(fp, front.position) } else front.visible = false
+        // frentes de despolarização (até 2 — atrial + escape)
+        const setF = (m: THREE.Mesh, f?: { u: number; blocked: boolean }) => {
+          if (!f) { m.visible = false; return }
+          m.visible = true
+          m.position.copy(sampleAtU(COND_PTS, f.u, lerpV))
+          ;(m.material as THREE.MeshBasicMaterial).color.setHex(f.blocked ? 0xff4040 : 0xd8fff0)
+        }
+        setF(front, cs.fronts[0]); setF(front2, cs.fronts[1])
         const walls0 = p.highlightWalls || []
         const lvInfarct = walls0.some((w) => ['anterior', 'septal', 'inferior', 'lateral', 'posterior', 'lv'].includes(w))
         lvMat.color.setHex(lvInfarct ? 0xba3838 : 0x9c3636); rvMat.color.setHex(walls0.includes('rv') ? 0xba385a : 0x93374a)
