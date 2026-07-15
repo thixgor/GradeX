@@ -1206,7 +1206,10 @@ export async function sendSerialKeyPurchaseEmail(input: {
   const content = `
     <h1 class="h1">Compra aprovada, ${firstName}! 🎉</h1>
     <p>Seu acesso foi aprovado com sucesso. Enviamos todas as informações da compra e de ativação para o e-mail <strong>${input.email}</strong>.</p>
-    <p>Guarde sua Serial Key com segurança e use o botão abaixo para ativar seu produto.</p>
+
+    ${hasMaterialPdf ? `<p>Seu material já está disponível: ele segue em anexo, em PDF, para acesso imediato — sem precisar fazer login.</p>${materialAttachmentsBlock(materialPdfs, { deliveredToEmail: input.email, ...(input.restrictActivationToBuyerEmail ? { restrictedEmail: input.email } : {}) })}<hr>` : ''}
+
+    <p>Guarde sua Serial Key com segurança e use o botão abaixo para ativar seu produto${hasMaterialPdf ? ' na plataforma' : ''}.</p>
 
     <!-- Serial Key em destaque -->
     <div style="background: linear-gradient(135deg, #0f3d2e, #1a5c45); border-radius: 12px; padding: 22px 20px; margin: 24px 0; text-align: center;">
@@ -1250,8 +1253,6 @@ export async function sendSerialKeyPurchaseEmail(input: {
     <div style="background-color: #fff8e1; border-left: 4px solid #f57c00; padding: 15px; margin: 20px 0; border-radius: 4px;">
       <p style="margin: 0; color: #795548; font-size: 13px;"><strong>Como ativar:</strong> clique em "Ativar meu produto", faça login ou crie sua conta (é rápido) e o produto aparecerá liberado automaticamente. O comprovante completo está anexado em PDF.</p>
     </div>
-
-    ${hasMaterialPdf ? `<hr><p>Seu material também segue em anexo, em PDF, para acesso imediato.</p>${materialAttachmentsBlock(materialPdfs, { deliveredToEmail: input.email, ...(input.restrictActivationToBuyerEmail ? { restrictedEmail: input.email } : {}) })}` : ''}
 
     <p style="font-size: 12px; color: #a0aec0;">Teve algum problema? Responda com sua Serial Key que nós ajudamos.</p>
   `
@@ -1350,6 +1351,9 @@ export async function sendSerialKeyCartPurchaseEmail(input: {
   const content = `
     <h1 class="h1">Compra aprovada, ${firstName}! 🎉</h1>
     <p>Seu acesso foi aprovado com sucesso. Você comprou <strong>${input.items.length} produtos</strong> e recebeu uma Serial Key para cada um.</p>
+
+    ${hasMaterialPdf ? `<p>Os materiais em PDF já estão disponíveis: seguem em anexo, para acesso imediato — sem precisar fazer login.</p>${materialAttachmentsBlock(materialPdfs, { deliveredToEmail: input.email, ...(input.restrictActivationToBuyerEmail ? { restrictedEmail: input.email } : {}) })}<hr>` : ''}
+
     <p>Enviamos todas as informações para <strong>${input.email}</strong>. Guarde suas Serial Keys com segurança e ative cada produto pelos botões abaixo.</p>
 
     <div style="margin: 24px 0;">
@@ -1374,8 +1378,6 @@ export async function sendSerialKeyCartPurchaseEmail(input: {
     <div style="background-color: #fff8e1; border-left: 4px solid #f57c00; padding: 15px; margin: 20px 0; border-radius: 4px;">
       <p style="margin: 0; color: #795548; font-size: 13px;"><strong>Como ativar:</strong> ative cada produto clicando no botão correspondente. Faça login ou crie sua conta (rápido) e os produtos aparecerão liberados. O comprovante completo está anexado em PDF.</p>
     </div>
-
-    ${hasMaterialPdf ? `<hr><p>Os materiais em PDF elegíveis seguem em anexo, para acesso imediato.</p>${materialAttachmentsBlock(materialPdfs, { deliveredToEmail: input.email, ...(input.restrictActivationToBuyerEmail ? { restrictedEmail: input.email } : {}) })}` : ''}
   `
 
   const html = getEmailTemplate('Compra aprovada', content)
