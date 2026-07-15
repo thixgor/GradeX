@@ -176,6 +176,8 @@ export interface ResolvedSerialKeyProduct {
   coverImageUrl?: string
   /** Descrição longa do material/pacote (exibida no checkout). */
   productDescription?: string
+  /** Quando true, o item não entra na comissão do sócio (split marketplace). */
+  excludeFromCommission?: boolean
 }
 
 export function isSerialKeyProductType(v: unknown): v is SerialKeyProductType {
@@ -304,6 +306,7 @@ export async function resolveSerialKeyProduct(
     coverImageUrl: item.coverImage || undefined,
     productDescription: item.description || undefined,
     pricingEventId: item.pricingEventId ? String(item.pricingEventId) : null,
+    excludeFromCommission: item.excludeFromCommission === true,
     grant: {
       productType: itemType === 'package' ? 'package' : (isFlashcard ? 'flashcard' : 'material'),
       itemType,

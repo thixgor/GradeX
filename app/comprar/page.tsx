@@ -17,6 +17,7 @@ interface AppliedCoupon {
   eligibleAmount: number
   discountAmount: number
   amountAfterCoupon: number
+  stackWithTier?: boolean
 }
 
 function formatBRL(value: number): string {
@@ -111,12 +112,14 @@ interface ManualClinicoProductInfo {
 function ManualClinicoCouponBox({
   product,
   email,
+  planKey,
   appliedCoupon,
   onApplied,
   onRemoved,
 }: {
   product: ManualClinicoProductInfo
   email: string
+  planKey: PlanKey
   appliedCoupon: AppliedCoupon | null
   onApplied: (coupon: AppliedCoupon) => void
   onRemoved: () => void
@@ -138,6 +141,7 @@ function ManualClinicoCouponBox({
           code: normalized,
           itemType: 'manual_clinico',
           itemId: MANUAL_CLINICO_PRODUCT_ID,
+          planKey,
           buyerEmail: email.trim().toLowerCase() || undefined,
         }),
       })
@@ -256,6 +260,12 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
     }
   }, [enabledPlans, selectedPlanKey])
 
+  // Cupom pode ser restrito a planos (ou empilhar sobre o lote do plano); ao
+  // trocar de plano, limpamos o cupom aplicado para forçar nova validação.
+  useEffect(() => {
+    setAppliedCoupon(null)
+  }, [selectedPlanKey])
+
   const pricingEventStateData = usePricingEventState(selectedPlan?.pricingEventId || product?.pricingEventId || null)
   const pricingEventState = pricingEventStateData.state
 
@@ -344,8 +354,13 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
     ? Math.max(0, Math.round(baseAmount * (tierPct / 100) * 100) / 100)
     : 0
   const couponDiscountAmount = appliedCoupon ? appliedCoupon.discountAmount : 0
-  const effectiveDiscount = Math.max(tierDiscountAmount, couponDiscountAmount)
-  const tierBeatsCoupon = hasActiveTier && tierDiscountAmount >= couponDiscountAmount
+  // Empilhamento: quando o cupom é stackWithTier e há lote ativo, soma lote +
+  // cupom (o cupom já vem calculado pelo servidor sobre o preço pós-lote).
+  const stackCoupon = appliedCoupon?.stackWithTier === true && hasActiveTier
+  const effectiveDiscount = stackCoupon
+    ? Math.min(baseAmount, tierDiscountAmount + couponDiscountAmount)
+    : Math.max(tierDiscountAmount, couponDiscountAmount)
+  const tierBeatsCoupon = !stackCoupon && hasActiveTier && tierDiscountAmount >= couponDiscountAmount
   const payableAmount = Math.max(0, Math.round((baseAmount - effectiveDiscount) * 100) / 100)
 
   const lifetimePlan = enabledPlans.find((p) => p.key === 'vitalicio') || null
@@ -516,7 +531,7 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
                   ? `${selectedPlan.label} · ${selectedPlan.durationMonths} ${selectedPlan.durationMonths === 1 ? 'mês' : 'meses'} de acesso`
                   : 'Acesso completo liberado na hora'}
             </p>
-            {hasActiveTier && tierBeatsCoupon && tierDiscountAmount > 0 ? (
+            {hasActiveTier && (tierBeatsCoupon || stackCoupon) && tierDiscountAmount > 0 ? (
               <p className="mt-1 inline-flex items-center gap-1 text-xs font-bold text-primary">
                 <Flame className="h-3 w-3" />
                 Lote {pricingEventState?.activeTier?.label || ''}: − {formatBRL(tierDiscountAmount)} ({Math.round(tierPct)}% OFF)
@@ -525,6 +540,7 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
             {appliedCoupon && !tierBeatsCoupon ? (
               <p className="mt-1 text-xs font-bold text-primary">
                 Cupom {appliedCoupon.code}: - {formatBRL(appliedCoupon.discountAmount)}
+                {stackCoupon ? ' (sobre o lote)' : ''}
               </p>
             ) : null}
             {appliedCoupon && tierBeatsCoupon && tierDiscountAmount > 0 ? (
@@ -595,6 +611,7 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
               <ManualClinicoCouponBox
                 product={product}
                 email={email}
+                planKey={selectedPlanKey}
                 appliedCoupon={appliedCoupon}
                 onApplied={setAppliedCoupon}
                 onRemoved={() => setAppliedCoupon(null)}

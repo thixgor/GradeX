@@ -9,9 +9,10 @@ import {
   buildManualClinicoCouponItem,
   getManualClinicoAccess,
   getManualClinicoConfig,
-  getManualClinicoCurrentPrice,
+  getManualClinicoPlan,
   MANUAL_CLINICO_PRODUCT_ID,
 } from '@/lib/manual-clinico-product'
+import { getPricingEventStateById } from '@/lib/pricing-events'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -20,6 +21,8 @@ const Schema = z.object({
   code: z.string().min(1),
   itemType: z.enum(['material', 'package', 'manual_clinico']).optional(),
   itemId: z.string().min(1).optional(),
+  // Plano selecionado do Manual Clínico (restrição por plano + preço correto).
+  planKey: z.enum(['semestral', 'anual', 'vitalicio']).optional(),
   items: z.array(z.object({
     itemType: z.enum(['material', 'package']),
     itemId: z.string().min(1),
@@ -82,9 +85,29 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Cupons nao estao habilitados para este produto.' }, { status: 400 })
       }
 
-      const amount = getManualClinicoCurrentPrice(config)
+      // Preço da fonte autoritativa é o do plano selecionado (mesma base do
+      // checkout). O lote (pricing event) é calculado separadamente para
+      // permitir empilhamento de cupom quando o cupom for stackWithTier.
+      const planKey = parsed.data.planKey || 'vitalicio'
+      const plan = getManualClinicoPlan(config, planKey)
+      if (!plan.enabled) {
+        return NextResponse.json({ error: 'Este plano nao esta disponivel.' }, { status: 400 })
+      }
+      const amount = Number(plan.price || 0)
       if (amount <= 0) {
         return NextResponse.json({ error: 'Cupom so pode ser aplicado a compras pagas.' }, { status: 400 })
+      }
+
+      const pricingEventId = plan.pricingEventId || config.pricingEventId
+      const pricingEventState = pricingEventId
+        ? await getPricingEventStateById(db, String(pricingEventId))
+        : null
+      let tierDiscountAmount = 0
+      if (pricingEventState?.activeTier && pricingEventState.isActive !== false && amount > 0) {
+        tierDiscountAmount = Math.max(
+          0,
+          Math.round(amount * (pricingEventState.activeTier.discountPercent / 100) * 100) / 100
+        )
       }
 
       const validation = await validateCouponForCheckout(db, {
@@ -92,6 +115,8 @@ export async function POST(request: NextRequest) {
         amountBeforeCoupon: amount,
         userId: session?.userId,
         userEmail: session?.email || parsed.data.buyerEmail,
+        manualPlanKey: planKey,
+        tierDiscountAmount,
         items: [buildManualClinicoCouponItem(config, amount)],
       })
 
@@ -103,6 +128,8 @@ export async function POST(request: NextRequest) {
         eligibleAmount: validation.eligibleAmount,
         discountAmount: validation.discountAmount,
         amountAfterCoupon: validation.amountAfterCoupon,
+        stackWithTier: validation.coupon.stackWithTier === true,
+        tierDiscountAmount,
         items: validation.items.map((item) => ({
           itemType: item.itemType,
           itemId: item.itemId,
@@ -153,6 +180,7 @@ export async function POST(request: NextRequest) {
       eligibleAmount: validation.eligibleAmount,
       discountAmount: validation.discountAmount,
       amountAfterCoupon: validation.amountAfterCoupon,
+      stackWithTier: false,
       items: validation.items.map((item) => ({
         itemType: item.itemType,
         itemId: item.itemId,
