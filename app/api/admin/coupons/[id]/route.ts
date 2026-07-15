@@ -32,7 +32,7 @@ const CouponUpdateSchema = z.object({
   description: z.string().max(140).optional(),
   discountType: z.enum(['percentage', 'fixed']),
   discountValue: z.number().positive(),
-  scope: z.enum(['all', 'materials', 'flashcards', 'specific']),
+  scope: z.enum(['all', 'materials', 'flashcards', 'manual_clinico', 'specific']),
   productRefs: z.array(ProductRefSchema).max(100).optional(),
   usageLimit: z.number().int().positive().nullable().optional(),
   perUserLimit: z.number().int().positive().nullable().optional(),

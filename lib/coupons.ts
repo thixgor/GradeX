@@ -3,7 +3,7 @@ import type { ManualClinicoPurchase, MaterialPurchase, User } from '@/lib/types'
 import { MANUAL_CLINICO_PURCHASES_COLLECTION } from '@/lib/manual-clinico-product'
 
 export type CouponDiscountType = 'percentage' | 'fixed'
-export type CouponScope = 'all' | 'materials' | 'flashcards' | 'specific'
+export type CouponScope = 'all' | 'materials' | 'flashcards' | 'manual_clinico' | 'specific'
 export type CouponDurationUnit = 'hours' | 'days' | 'weeks' | 'months'
 export type CouponProductType = 'material' | 'package' | 'manual_clinico'
 export type CouponRedemptionStatus = 'reserved' | 'approved' | 'released'
@@ -137,6 +137,7 @@ export function isCouponItemEligible(coupon: Coupon, item: CouponCheckoutItem) {
   if (coupon.scope === 'all') return true
   if (coupon.scope === 'materials') return kind === 'material' || kind === 'package'
   if (coupon.scope === 'flashcards') return kind === 'flashcard'
+  if (coupon.scope === 'manual_clinico') return item.itemType === 'manual_clinico'
   if (coupon.scope === 'specific') {
     return (coupon.productRefs || []).some((ref) =>
       ref.itemType === item.itemType && String(ref.itemId) === String(item.itemId)

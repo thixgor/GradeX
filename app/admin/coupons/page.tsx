@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import {
   ArrowLeft,
   BadgePercent,
+  BookOpen,
   Building2,
   CalendarClock,
   Check,
@@ -29,7 +30,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { INSTITUTION_UNITS } from '@/lib/institution-units'
 
-type CouponScope = 'all' | 'materials' | 'flashcards' | 'specific'
+type CouponScope = 'all' | 'materials' | 'flashcards' | 'manual_clinico' | 'specific'
 type DiscountType = 'percentage' | 'fixed'
 type ExpirationMode = 'none' | 'date' | 'duration'
 type DurationUnit = 'hours' | 'days' | 'weeks' | 'months'
@@ -83,6 +84,7 @@ const scopeLabels: Record<CouponScope, string> = {
   all: 'Todos os Materiais, Flashcards e Produtos',
   materials: 'Todos os Materiais',
   flashcards: 'Todos os Flashcards',
+  manual_clinico: 'Somente Manual Clínico',
   specific: 'Itens específicos',
 }
 
@@ -508,6 +510,15 @@ export default function AdminCouponsPage() {
                   {Object.entries(scopeLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
                 </select>
               </Field>
+
+              {form.scope === 'manual_clinico' ? (
+                <div className="flex items-start gap-2.5 rounded-lg border border-emerald-300/25 bg-emerald-400/10 p-3 text-xs text-emerald-800 dark:text-emerald-200">
+                  <BookOpen className="mt-0.5 h-4 w-4 flex-none" />
+                  <span>
+                    O cupom valerá exclusivamente para o <strong>Manual Clínico</strong> — aplicável tanto em <strong>/comprar</strong> (compra sem login) quanto em <strong>/manual-clinico/checkout</strong>. Certifique-se de que os cupons estão habilitados nas configurações do Manual Clínico.
+                  </span>
+                </div>
+              ) : null}
 
               {form.scope === 'specific' ? (
                 <div className="space-y-3 rounded-lg border bg-muted/30 p-3">
