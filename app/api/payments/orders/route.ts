@@ -96,6 +96,8 @@ export async function POST(request: NextRequest) {
   const orderUserId = session?.userId
   let payerEmail = session?.email
   let payerName = session?.name
+  // Comissão do sócio (split): materiais/pacotes marcados ficam de fora.
+  let commissionExcluded = false
 
   if (data.type === 'plan') {
     const settings = await db.collection('admin_settings').findOne({})
@@ -121,6 +123,7 @@ export async function POST(request: NextRequest) {
     if (existing) return NextResponse.json({ error: 'Você já adquiriu este item' }, { status: 400 })
     amount = Number(item.price)
     description = item.title
+    commissionExcluded = item.excludeFromCommission === true
   } else if (data.type === 'donation') {
     const donAmt = Number(data.donationAmount || 0)
     if (!donAmt || donAmt < 1) {
@@ -196,6 +199,7 @@ export async function POST(request: NextRequest) {
     const result = await provider.createPayment({
       externalReference: orderId,
       amount,
+      ...(commissionExcluded ? { commissionableAmount: 0 } : {}),
       currency: 'BRL',
       description,
       payerEmail,
