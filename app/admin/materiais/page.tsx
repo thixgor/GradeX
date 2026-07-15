@@ -88,6 +88,7 @@ interface Material {
   pricing: 'free' | 'paid'
   price: number
   stripePriceId: string
+  excludeFromCommission?: boolean
   downloadCount: number
   viewCount: number
   isHidden: boolean
@@ -225,6 +226,7 @@ interface MaterialPackage {
   price: number
   originalPrice: number
   stripePriceId: string
+  excludeFromCommission?: boolean
   downloadCount: number
   viewCount: number
   isHidden: boolean
@@ -717,6 +719,7 @@ function AdminMateriaisContent() {
     price: 0,
     pricingEventId: null as string | null,
     stripePriceId: '',
+    excludeFromCommission: false,
     isHidden: false,
     isFeatured: false,
     pdfViewerEnabled: false,
@@ -755,6 +758,7 @@ function AdminMateriaisContent() {
     originalPrice: 0,
     pricingEventId: null as string | null,
     stripePriceId: '',
+    excludeFromCommission: false,
     isHidden: false,
     isFeatured: false,
     order: 0,
@@ -961,6 +965,7 @@ function AdminMateriaisContent() {
         price: material.price || 0,
         pricingEventId: (material as any).pricingEventId || null,
         stripePriceId: material.stripePriceId || '',
+        excludeFromCommission: material.excludeFromCommission === true,
         isHidden: material.isHidden,
         isFeatured: material.isFeatured,
         pdfViewerEnabled: material.pdfViewerEnabled === true,
@@ -989,7 +994,7 @@ function AdminMateriaisContent() {
         _id: '', title: '', description: '', coverImage: '', type: 'pdf',
         downloadUrl: '', previewUrl: '', folderId: '', moduloId: '', tags: '',
         allowedGroups: [], videoDurationH: 0, videoDurationM: 0, videoDurationS: 0,
-        pricing: 'free', price: 0, pricingEventId: null, stripePriceId: '', isHidden: false, isFeatured: false,
+        pricing: 'free', price: 0, pricingEventId: null, stripePriceId: '', excludeFromCommission: false, isHidden: false, isFeatured: false,
         pdfViewerEnabled: false, pdfDownloadEnabled: true, autoEmailPdfOnPurchase: false,
         pdfViewerConfig: { coverPage: undefined, summary: [], navigation: [], preview: { enabled: false, ranges: [] } },
         htmlViewerEnabled: false, complementaryItems: [],
@@ -1411,7 +1416,9 @@ function AdminMateriaisContent() {
         allowedGroups: pkg.allowedGroups || [],
         pricing: pkg.pricing, price: pkg.price || 0, originalPrice: pkg.originalPrice || 0,
         pricingEventId: (pkg as any).pricingEventId || null,
-        stripePriceId: pkg.stripePriceId || '', isHidden: pkg.isHidden,
+        stripePriceId: pkg.stripePriceId || '',
+        excludeFromCommission: (pkg as any).excludeFromCommission === true,
+        isHidden: pkg.isHidden,
         isFeatured: pkg.isFeatured, order: pkg.order || 0,
       })
     } else {
@@ -1419,7 +1426,7 @@ function AdminMateriaisContent() {
         _id: '', title: '', description: '', coverImage: '', materialIds: [],
         tags: '', autoEmailPdfOnPurchase: false, allowedGroups: [], pricing: 'free', price: 0, originalPrice: 0,
         pricingEventId: null,
-        stripePriceId: '', isHidden: false, isFeatured: false, order: 0,
+        stripePriceId: '', excludeFromCommission: false, isHidden: false, isFeatured: false, order: 0,
       })
     }
     setShowPackageModal(true)
@@ -2833,6 +2840,26 @@ function AdminMateriaisContent() {
                   />
                 )}
 
+                {materialForm.pricing === 'paid' && (
+                  <label className="flex items-start gap-2 rounded-lg border p-2 text-sm cursor-pointer hover:bg-muted/40">
+                    <input
+                      type="checkbox"
+                      checked={materialForm.excludeFromCommission}
+                      onChange={e => setMaterialForm(p => ({ ...p, excludeFromCommission: e.target.checked }))}
+                      className="rounded mt-0.5"
+                    />
+                    <span>
+                      <span className="flex items-center gap-1.5 font-medium">
+                        <DollarSign className="h-3.5 w-3.5 text-amber-500" />
+                        Sem comissão do sócio
+                      </span>
+                      <span className="block text-[11px] text-muted-foreground mt-0.5">
+                        Quando marcado, a venda deste material não entra no split de pagamento — o sócio não recebe o percentual sobre ele. Add-ons físicos comprados junto seguem comissionados normalmente.
+                      </span>
+                    </span>
+                  </label>
+                )}
+
                 <div className="flex items-center gap-4">
                   <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={materialForm.isFeatured} onChange={e => setMaterialForm(p => ({ ...p, isFeatured: e.target.checked }))} className="rounded" /><span className="text-sm">Destaque</span></label>
                   <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={materialForm.isHidden} onChange={e => setMaterialForm(p => ({ ...p, isHidden: e.target.checked }))} className="rounded" /><span className="text-sm">Oculto</span></label>
@@ -2991,6 +3018,26 @@ function AdminMateriaisContent() {
                     value={packageForm.pricingEventId}
                     onChange={(id) => setPackageForm(p => ({ ...p, pricingEventId: id }))}
                   />
+                )}
+
+                {packageForm.pricing === 'paid' && (
+                  <label className="flex items-start gap-2 rounded-lg border p-2 text-sm cursor-pointer hover:bg-muted/40">
+                    <input
+                      type="checkbox"
+                      checked={packageForm.excludeFromCommission}
+                      onChange={e => setPackageForm(p => ({ ...p, excludeFromCommission: e.target.checked }))}
+                      className="rounded mt-0.5"
+                    />
+                    <span>
+                      <span className="flex items-center gap-1.5 font-medium">
+                        <DollarSign className="h-3.5 w-3.5 text-amber-500" />
+                        Sem comissão do sócio
+                      </span>
+                      <span className="block text-[11px] text-muted-foreground mt-0.5">
+                        Quando marcado, a venda deste pacote não entra no split de pagamento — o sócio não recebe o percentual sobre ele. Add-ons físicos comprados junto seguem comissionados normalmente.
+                      </span>
+                    </span>
+                  </label>
                 )}
 
                 <label className={`flex items-start gap-2 rounded-lg border p-2 text-sm ${packageForm.materialIds.length > 0 ? 'cursor-pointer hover:bg-muted/40' : 'opacity-50 cursor-not-allowed'}`}>

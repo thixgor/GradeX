@@ -134,6 +134,7 @@ export async function GET(request: NextRequest) {
       description: resolved.description,
       coverImageUrl: resolved.coverImageUrl,
       productDescription: resolved.productDescription,
+      pricingEventId: resolved.pricingEventId || null,
     }, { headers: { 'Cache-Control': 'public, max-age=30, stale-while-revalidate=120' } })
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || 'Produto indisponível' }, { status: 400 })
@@ -216,11 +217,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Valor inválido' }, { status: 400 })
   }
 
-  // Lote dinâmico (pricing event) — hoje só o manual clínico usa isso na
-  // compra avulsa. Mesma regra do checkout autenticado: o maior desconto
-  // entre lote e cupom vence (ver combineTierAndCouponDiscount abaixo).
+  // Lote dinâmico (pricing event) — aplicável a manual clínico, material,
+  // pacote e flashcard na compra avulsa. Mesma regra do checkout autenticado:
+  // o maior desconto entre lote e cupom vence (ver combineTierAndCouponDiscount abaixo).
   let tierDiscountAmount = 0
-  if (resolved.productType === 'manual_clinico' && resolved.pricingEventId) {
+  if (resolved.pricingEventId) {
     const pricingEventState = await getPricingEventStateById(db, resolved.pricingEventId)
     if (pricingEventState?.activeTier && pricingEventState.isActive !== false && amount > 0) {
       tierDiscountAmount = Math.max(

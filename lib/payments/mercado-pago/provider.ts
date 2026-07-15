@@ -92,7 +92,14 @@ export class MercadoPagoProvider implements PaymentProvider {
     // Só aplica quando a conta está conectada via OAuth (token de marketplace);
     // com o token do ambiente o MP rejeitaria o application_fee.
     if (auth.source === 'marketplace' && cfg.mp.split.enabled && cfg.mp.split.partnerPercent > 0) {
-      const fee = round2((round2(input.amount) * cfg.mp.split.partnerPercent) / 100)
+      // Base da comissão: por padrão o valor total, mas o checkout pode passar
+      // `commissionableAmount` menor para excluir da comissão certos itens
+      // (materiais/pacotes marcados como "sem comissão do sócio" no admin).
+      const base =
+        input.commissionableAmount != null
+          ? Math.max(0, Math.min(round2(input.commissionableAmount), round2(input.amount)))
+          : round2(input.amount)
+      const fee = round2((base * cfg.mp.split.partnerPercent) / 100)
       if (fee > 0 && fee < round2(input.amount)) {
         body.application_fee = fee
       }

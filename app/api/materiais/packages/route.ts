@@ -185,6 +185,7 @@ export async function POST(request: NextRequest) {
       originalPrice: body.originalPrice || 0,
       pricingEventId: body.pricingEventId ? String(body.pricingEventId) : null,
       stripePriceId: body.stripePriceId || '',
+      excludeFromCommission: body.excludeFromCommission === true,
       downloadCount: 0,
       viewCount: 0,
       isHidden: body.isHidden || false,
@@ -230,6 +231,9 @@ export async function PUT(request: NextRequest) {
     }
     if ('autoEmailPdfOnPurchase' in updates) {
       updates.autoEmailPdfOnPurchase = updates.autoEmailPdfOnPurchase === true
+    }
+    if ('excludeFromCommission' in updates) {
+      updates.excludeFromCommission = updates.excludeFromCommission === true
     }
 
     await db.collection('material_packages').updateOne(

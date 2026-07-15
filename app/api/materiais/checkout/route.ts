@@ -449,6 +449,13 @@ export async function POST(request: NextRequest) {
   const description = item.title
   const paidAmount = Math.round((amount + physicalTotal) * 100) / 100
 
+  // Comissão do sócio (split marketplace): se este material/pacote está marcado
+  // como "sem comissão", a parte digital fica de fora da comissão. Add-ons
+  // físicos continuam comissionáveis. Ver docs/mercado-pago-split.md.
+  const commissionableAmount = item.excludeFromCommission === true
+    ? Math.max(0, Math.round(physicalTotal * 100) / 100)
+    : paidAmount
+
   // Cria order interna
   const now = new Date()
   const orderDoc: Omit<PaymentOrder, '_id'> = {
@@ -534,6 +541,7 @@ export async function POST(request: NextRequest) {
     const result = await provider.createPayment({
       externalReference: orderId,
       amount: paidAmount,
+      commissionableAmount,
       currency: 'BRL',
       description,
       payerEmail: session.email,
@@ -814,6 +822,15 @@ async function handleCartCheckout(
   const itemCount = payableItemsForOrder.length
   const description = `Carrinho DomineAqui - ${itemCount} ${itemCount === 1 ? 'item' : 'itens'}`
   const paidAmount = Math.round((amount + physicalTotal) * 100) / 100
+
+  // Comissão do sócio: exclui do split o valor (já com desconto) dos itens do
+  // carrinho marcados como "sem comissão". Add-ons físicos seguem comissionáveis.
+  const excludedFromCommission = Math.round(
+    payableItemsForOrder
+      .filter((it) => it.excludeFromCommission === true)
+      .reduce((sum, it) => sum + Number(it.price || 0), 0) * 100
+  ) / 100
+  const commissionableAmount = Math.max(0, Math.round((paidAmount - excludedFromCommission) * 100) / 100)
   const now = new Date()
   const orderDoc: Omit<PaymentOrder, '_id'> = {
     userId: session.userId,
@@ -911,6 +928,7 @@ async function handleCartCheckout(
     const result = await provider.createPayment({
       externalReference: orderId,
       amount: paidAmount,
+      commissionableAmount,
       currency: 'BRL',
       description,
       payerEmail: session.email,

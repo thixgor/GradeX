@@ -468,6 +468,7 @@ export async function POST(request: NextRequest) {
       price: body.pricing === 'paid' ? (body.price || 0) : 0,
       pricingEventId: body.pricingEventId ? String(body.pricingEventId) : null,
       stripePriceId: body.stripePriceId || '',
+      excludeFromCommission: body.excludeFromCommission === true,
       allowedGroups: body.allowedGroups || [],
       pdfViewerEnabled: body.pdfViewerEnabled === true,
       pdfDownloadEnabled: body.pdfDownloadEnabled !== false,
@@ -527,6 +528,9 @@ export async function PUT(request: NextRequest) {
     }
     if ('autoEmailPdfOnPurchase' in updates) {
       updates.autoEmailPdfOnPurchase = updates.autoEmailPdfOnPurchase === true
+    }
+    if ('excludeFromCommission' in updates) {
+      updates.excludeFromCommission = updates.excludeFromCommission === true
     }
     if ('complementaryMaterialIds' in updates) {
       updates.complementaryMaterialIds = sanitizeComplementaryIds(updates.complementaryMaterialIds, _id)
