@@ -320,27 +320,27 @@ export function EcgSimulator() {
             {/* ── DISPLAY ── */}
             <div className="rounded-xl border border-white/[0.1] p-1 shadow-inner">
               {view === '12' && (
-                <Ecg12Lead signals={signals} fs={fs} speedMmS={speed} gainMmMv={gain} zoom={zoom} dark={dark} live={isLive} compareSignals={compareSignals} />
+                <Ecg12Lead signals={signals} fs={fs} speedMmS={speed} gainMmMv={gain} zoom={zoom} dark={dark} live={isLive} compareSignals={compareSignals} calipers={calipers} fiducials={fiducials} />
               )}
               {view === 'monitor' && (
                 <div className="space-y-1">
                   {(['II', 'V1', 'V5'] as LeadName[]).map((l) => (
-                    <EcgLeadCanvas key={l} signal={signals[l]} fs={fs} lead={l} label={l} speedMmS={speed} gainMmMv={gain} zoom={zoom} dark={dark} live height={110} showCalibration teaching={teaching && l === 'II'} calipers={calipers} fiducials={fiducials} />
+                    <EcgLeadCanvas key={l} signal={signals[l]} fs={fs} lead={l} label={l} speedMmS={speed} gainMmMv={gain} zoom={zoom} dark={dark} live height={110} showCalibration teaching={teaching && l === 'II'} calipers={calipers} fiducials={fiducials} compareSignal={compareSignals ? compareSignals[l] : null} />
                   ))}
                 </div>
               )}
               {view === '3' && (
                 <div className="space-y-1">
                   {(['I', 'II', 'III'] as LeadName[]).map((l) => (
-                    <EcgLeadCanvas key={l} signal={signals[l]} fs={fs} lead={l} label={l} speedMmS={speed} gainMmMv={gain} zoom={zoom} dark={dark} live={isLive} height={130} showCalibration teaching={teaching && l === 'II'} calipers={calipers} fiducials={fiducials} />
+                    <EcgLeadCanvas key={l} signal={signals[l]} fs={fs} lead={l} label={l} speedMmS={speed} gainMmMv={gain} zoom={zoom} dark={dark} live={isLive} height={130} showCalibration teaching={teaching && l === 'II'} calipers={calipers} fiducials={fiducials} compareSignal={compareSignals ? compareSignals[l] : null} />
                   ))}
                 </div>
               )}
               {view === 'individual' && (
-                <EcgLeadCanvas signal={signals[indLead]} fs={fs} lead={indLead} label={indLead} speedMmS={speed} gainMmMv={gain} zoom={zoom} dark={dark} live={isLive} height={230} showCalibration teaching={teaching} calipers={calipers} fiducials={fiducials} />
+                <EcgLeadCanvas signal={signals[indLead]} fs={fs} lead={indLead} label={indLead} speedMmS={speed} gainMmMv={gain} zoom={zoom} dark={dark} live={isLive} height={230} showCalibration teaching={teaching} calipers={calipers} fiducials={fiducials} compareSignal={compareSignals ? compareSignals[indLead] : null} />
               )}
               {view === 'rhythm' && (
-                <EcgLeadCanvas signal={signals['II']} fs={fs} lead="II" label="DII — ritmo" speedMmS={speed} gainMmMv={gain} zoom={zoom} dark={dark} live={isLive} height={200} showCalibration teaching={teaching} calipers={calipers} fiducials={fiducials} />
+                <EcgLeadCanvas signal={signals['II']} fs={fs} lead="II" label="DII — ritmo" speedMmS={speed} gainMmMv={gain} zoom={zoom} dark={dark} live={isLive} height={200} showCalibration teaching={teaching} calipers={calipers} fiducials={fiducials} compareSignal={compareSignals ? compareSignals['II'] : null} />
               )}
             </div>
 

@@ -21,14 +21,14 @@ interface Caliper {
 }
 
 // pares de fiduciais que formam um intervalo clínico nomeado
-const INTERVAL_NAMES: Record<string, string> = {
+export const INTERVAL_NAMES: Record<string, string> = {
   'Pon>Qon': 'PR', 'Qon>Pon': 'PR',
   'Qon>J': 'QRS', 'J>Qon': 'QRS',
   'Qon>Tend': 'QT', 'Tend>Qon': 'QT',
   'R>R': 'RR',
   'Pon>Poff': 'onda P', 'Poff>Pon': 'onda P',
 }
-const KIND_COLOR: Record<FiducialKind, string> = {
+export const KIND_COLOR: Record<FiducialKind, string> = {
   Pon: '#38bdf8', Poff: '#38bdf8', Qon: '#f472b6', J: '#fbbf24', Tend: '#fb923c', R: '#e5e7eb',
 }
 
@@ -49,6 +49,8 @@ interface Props {
   teaching?: boolean
   /** pontos fiduciais (ms) para o paquímetro grudar; só ativos em modo estático */
   fiducials?: Fiducial[]
+  /** traçado de referência (ECG normal) sobreposto em azul para comparação */
+  compareSignal?: Float32Array | null
 }
 
 const BASE_PX_PER_MM = 4
@@ -61,7 +63,7 @@ const BASE_PX_PER_MM = 4
 export function EcgLeadCanvas({
   signal, fs, lead, label, speedMmS, gainMmMv, zoom, dark, live,
   height = 140, showCalibration = false, calipers = false, onMeasure, teaching = false,
-  fiducials,
+  fiducials, compareSignal,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const wrapRef = useRef<HTMLDivElement>(null)
@@ -74,7 +76,10 @@ export function EcgLeadCanvas({
   const pxPerMm = BASE_PX_PER_MM * zoom
   const cfg: RenderConfig = { pxPerMm, speedMmS, gainMmMv, theme }
   const pxPerMs = (speedMmS * pxPerMm) / 1000
-  const snapOn = calipers && !live && !!fiducials && fiducials.length > 0
+  // A anatomia congela o traçado (estático) para as legendas ficarem legíveis e
+  // sem tremulação — não faz sentido rotular P/QRS/T num traçado que corre.
+  const animate = live && !teaching
+  const snapOn = calipers && !animate && !!fiducials && fiducials.length > 0
   // x0 (offset esquerdo) coerente com o render: reserva espaço p/ a barra de calibração
   const x0 = showCalibration ? pxPerMm * 6 : 6
 
@@ -106,21 +111,28 @@ export function EcgLeadCanvas({
       drawCalibration(ctx, 4, baselineY, cfg)
       x0 = pxPerMm * 6
     }
+    // traçado de referência (ECG normal) sobreposto em azul
+    if (compareSignal) {
+      drawTrace(ctx, compareSignal, fs, cfg, {
+        x0, width: width - x0, baselineY, startMs: offsetMs,
+        color: dark ? 'rgba(120,160,255,0.55)' : 'rgba(60,90,200,0.45)', lineWidth: 1.3,
+      })
+    }
     drawTrace(ctx, signal, fs, cfg, {
       x0, width: width - x0, baselineY, startMs: offsetMs, lineWidth: 1.7 + zoom * 0.15,
     })
     if (label) drawLeadLabel(ctx, label, x0 + 4, 6, theme)
 
     // linha de varredura no modo monitor
-    if (live) {
+    if (animate) {
       const visMs = visibleDurationMs(width - x0, cfg)
       const sweepX = x0 + ((offsetMs % visMs) / visMs) * (width - x0)
       ctx.fillStyle = dark ? 'rgba(63,240,138,0.10)' : 'rgba(0,0,0,0.05)'
       ctx.fillRect(sweepX, 0, 22, height)
     }
 
-    // overlay didático (anatomia do ECG)
-    if (teaching) drawTeaching(ctx, signal, fs, cfg, { x0, width: width - x0, baselineY, startMs: offsetMs })
+    // overlay didático (anatomia do ECG) — estático, ancorado nos pontos fiduciais
+    if (teaching) drawTeaching(ctx, { x0, width: width - x0, baselineY, height, theme, dark, pxPerMs, fiducials })
 
     // marcadores fiduciais (pontos onde o paquímetro "gruda") — modo estático
     if (snapOn && fiducials) {
@@ -163,11 +175,11 @@ export function EcgLeadCanvas({
       }
       ctx.setLineDash([])
     }
-  }, [width, height, cfg, signal, fs, label, live, showCalibration, pxPerMm, pxPerMs, x0, theme, zoom, teaching, caliper, snapOn, fiducials, dark])
+  }, [width, height, cfg, signal, compareSignal, fs, label, animate, showCalibration, pxPerMm, pxPerMs, x0, theme, zoom, teaching, caliper, snapOn, fiducials, dark])
 
-  // loop de animação (monitor) ou render único (estático)
+  // loop de animação (monitor) ou render único (estático/anatomia)
   useEffect(() => {
-    if (live) {
+    if (animate) {
       startRef.current = performance.now()
       const loop = () => {
         const elapsed = performance.now() - startRef.current
@@ -178,7 +190,7 @@ export function EcgLeadCanvas({
       return () => cancelAnimationFrame(rafRef.current)
     }
     render(0)
-  }, [live, render])
+  }, [animate, render])
 
   // interação da régua — com "grude" (snap) aos pontos fiduciais em modo estático
   const handlePointer = useCallback((e: React.PointerEvent) => {
@@ -220,49 +232,85 @@ export function EcgLeadCanvas({
   )
 }
 
-/** Sobrepõe setas/legendas apontando P, PR, QRS, ST, ponto J, QT e T no primeiro batimento visível. */
+/**
+ * Anatomia do ECG: ancorada nos PONTOS FIDUCIAIS reais (não numa heurística de
+ * pico) e desenhada em modo estático — estável, sem tremulação. Rotula as ondas
+ * (P, QRS, ST, T) acima do traçado, em duas fileiras alternadas para não se
+ * sobreporem, e os intervalos (PR, QT) como colchetes abaixo da linha de base.
+ */
 function drawTeaching(
   ctx: CanvasRenderingContext2D,
-  signal: Float32Array,
-  fs: number,
-  cfg: RenderConfig,
-  o: { x0: number; width: number; baselineY: number; startMs: number },
+  o: {
+    x0: number; width: number; baselineY: number; height: number
+    theme: { text: string }; dark: boolean; pxPerMs: number; fiducials?: Fiducial[]
+  },
 ) {
-  const pxPerMs = (cfg.speedMmS * cfg.pxPerMm) / 1000
-  // detecta o R mais proeminente na janela para ancorar as legendas
-  const dt = 1000 / fs
-  let rIdxPx = -1, rVal = -Infinity
-  for (let px = 0; px < o.width; px++) {
-    const tMs = o.startMs + px / pxPerMs
-    let idx = Math.floor(tMs / dt)
-    idx = ((idx % signal.length) + signal.length) % signal.length
-    if (signal[idx] > rVal) { rVal = signal[idx]; rIdxPx = px }
+  const { x0, width, baselineY, height, pxPerMs, dark, fiducials } = o
+  if (!fiducials || fiducials.length === 0) return
+  const toX = (ms: number) => x0 + ms * pxPerMs
+  const visEndMs = width / pxPerMs
+
+  // escolhe o primeiro batimento com espaço para rotular P antes e T depois
+  const rList = fiducials.filter((f) => f.kind === 'R').map((f) => f.ms).sort((a, b) => a - b)
+  let rms: number | null = null
+  for (const r of rList) { if (r > 260 && toX(r) < x0 + width - 60) { rms = r; break } }
+  if (rms == null) return
+  const near = (kind: FiducialKind, lo: number, hi: number): number | null => {
+    let best: number | null = null, bd = Infinity
+    for (const f of fiducials) if (f.kind === kind) { const d = f.ms - rms!; if (d >= lo && d <= hi && Math.abs(d) < bd) { bd = Math.abs(d); best = f.ms } }
+    return best
   }
-  if (rIdxPx < 0) return
-  const rx = o.x0 + rIdxPx
-  const items: { label: string; dxMs: number; color: string }[] = [
-    { label: 'P', dxMs: -170, color: '#38bdf8' },
-    { label: 'PR', dxMs: -110, color: '#a78bfa' },
-    { label: 'QRS', dxMs: 0, color: '#f472b6' },
-    { label: 'ponto J', dxMs: 55, color: '#fbbf24' },
-    { label: 'ST', dxMs: 110, color: '#34d399' },
-    { label: 'T', dxMs: 250, color: '#fb923c' },
-  ]
-  ctx.font = 'bold 10px ui-sans-serif, system-ui'
-  for (const it of items) {
-    const x = rx + it.dxMs * pxPerMs
-    if (x < o.x0 || x > o.x0 + o.width) continue
-    ctx.strokeStyle = it.color
-    ctx.fillStyle = it.color
-    ctx.lineWidth = 1.2
-    ctx.setLineDash([2, 2])
-    ctx.beginPath(); ctx.moveTo(x, 22); ctx.lineTo(x, o.baselineY - 6); ctx.stroke()
-    ctx.setLineDash([])
-    ctx.fillRect(x - 14, 8, 28, 13)
-    ctx.fillStyle = '#000'
-    ctx.textAlign = 'center'
-    ctx.fillText(it.label, x, 18)
-    ctx.fillStyle = it.color
+  const pOn = near('Pon', -340, -40)
+  const qOn = near('Qon', -90, 20) ?? rms - 40
+  const j = near('J', -10, 160) ?? rms + 45
+  const tEnd = near('Tend', 60, 560)
+
+  // ── colchetes de intervalo abaixo da linha de base ──
+  const bracket = (a: number | null, b: number | null, label: string, color: string, level: number) => {
+    if (a == null || b == null) return
+    const xa = toX(a), xb = toX(b)
+    if (xb <= xa) return
+    const y = Math.min(height - 4, baselineY + 16 + level * 15)
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 1.2; ctx.setLineDash([])
+    ctx.beginPath()
+    ctx.moveTo(xa, y - 4); ctx.lineTo(xa, y); ctx.lineTo(xb, y); ctx.lineTo(xb, y - 4); ctx.stroke()
+    ctx.font = 'bold 10px ui-sans-serif, system-ui'
+    const tw = ctx.measureText(label).width
+    const mid = (xa + xb) / 2
+    ctx.fillStyle = dark ? '#0a0f0d' : '#fff5f5'
+    ctx.fillRect(mid - tw / 2 - 3, y + 1, tw + 6, 12)
+    ctx.fillStyle = color; ctx.textAlign = 'center'; ctx.textBaseline = 'top'
+    ctx.fillText(label, mid, y + 2)
     ctx.textAlign = 'left'
   }
+  bracket(pOn, qOn, 'PR', '#a78bfa', 0)
+  bracket(qOn, tEnd, 'QT', '#34d399', 1)
+
+  // ── rótulos das ondas acima do traçado (duas fileiras alternadas) ──
+  // extensão aproximada da onda P (não temos Poff nos fiduciais): ~100 ms a partir de Pon
+  const pEnd = pOn != null ? Math.min(pOn + 100, qOn) : null
+  const waves: { label: string; a: number | null; b: number | null; color: string }[] = [
+    { label: 'P', a: pOn, b: pEnd, color: '#38bdf8' },
+    { label: 'QRS', a: qOn, b: j, color: '#f472b6' },
+    { label: 'ST', a: j, b: tEnd != null ? (j + tEnd) / 2 : null, color: '#fbbf24' },
+    { label: 'T', a: tEnd != null ? (j + tEnd) / 2 : null, b: tEnd, color: '#fb923c' },
+  ]
+  ctx.font = 'bold 10px ui-sans-serif, system-ui'
+  waves.forEach((w, i) => {
+    if (w.a == null || w.b == null) return
+    const mid = toX((w.a + w.b) / 2)
+    if (mid < x0 || mid > x0 + width) return
+    const rowY = i % 2 === 0 ? 4 : 19
+    const tw = ctx.measureText(w.label).width
+    // linha-guia da etiqueta até o traçado
+    ctx.strokeStyle = w.color; ctx.globalAlpha = 0.55; ctx.lineWidth = 1; ctx.setLineDash([2, 2])
+    ctx.beginPath(); ctx.moveTo(mid, rowY + 13); ctx.lineTo(mid, baselineY - 4); ctx.stroke()
+    ctx.setLineDash([]); ctx.globalAlpha = 1
+    ctx.fillStyle = w.color
+    ctx.fillRect(mid - tw / 2 - 4, rowY, tw + 8, 13)
+    ctx.fillStyle = dark ? '#0a0f0d' : '#fff5f5'
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top'
+    ctx.fillText(w.label, mid, rowY + 2)
+    ctx.textAlign = 'left'
+  })
 }
