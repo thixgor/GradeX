@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic'
 import {
   Search, Activity, Ruler, GraduationCap, ZoomIn, ZoomOut, Play, Pause,
   Sun, Moon, GitCompare, Grid3x3, Monitor, Rows3, LineChart, Heart, Box, Loader2,
-  X, ListFilter, Gauge, Star, StickyNote, ChevronRight, HelpCircle,
+  X, ListFilter, Gauge, Star, StickyNote, ChevronRight, HelpCircle, FlaskConical,
 } from 'lucide-react'
 import { ECG_CATALOG, CATEGORIES, searchCatalog, type EcgEntry, type EcgCategory, type Urgency } from '@/lib/ecg/catalog'
 import { computeMeasurements, LEADS, type LeadName } from '@/lib/ecg/engine'
@@ -18,6 +18,7 @@ import { Ecg12Lead } from './ecg-12-lead'
 import { ConductionSystem, type WallKey } from './conduction-system'
 import { EcgClinicalPanel } from './ecg-clinical-panel'
 import { EcgReport } from './ecg-report'
+import { EcgPlayground } from './ecg-playground'
 import { EcgQuiz } from './ecg-quiz'
 import { EcgTutorial, useEcgTour } from './ecg-tutorial'
 
@@ -63,6 +64,19 @@ function ectopicFor(entry: EcgEntry): { x: number; y: number; label: string } | 
   return null
 }
 
+/** Sugere o cenário do laboratório vivo mais relacionado ao padrão atual. */
+function playgroundScenarioFor(entry: EcgEntry): string | undefined {
+  const id = entry.id
+  if (id.includes('hyperkal') || id.includes('hipercal')) return 'potassio'
+  if (id.includes('brady') || id.includes('tachy') || id.includes('sinus')) return 'cronotropismo'
+  if (id === 'lafb' || id === 'lpfb' || id.includes('axis') || id.includes('eixo')) return 'eixo'
+  if (id.includes('av-block-1') || id.includes('bav')) return 'conducaoAV'
+  if (id.includes('rbbb') || id.includes('lbbb') || id.includes('brd') || id.includes('bre')) return 'conducaoIV'
+  if (id.includes('stemi') || id.includes('iam') || id.includes('isquem')) return 'isquemia'
+  if (id.includes('qt') || id.includes('torsades') || id.includes('hipocal')) return 'qt'
+  return undefined
+}
+
 export function EcgSimulator() {
   const [tab, setTab] = useState<'sim' | 'quiz'>('sim')
   const [selectedId, setSelectedId] = useState<string>('sinus-normal')
@@ -82,6 +96,7 @@ export function EcgSimulator() {
   const [onlyFavorites, setOnlyFavorites] = useState(false)
   const [showNotes, setShowNotes] = useState(false)
   const [heartMode, setHeartMode] = useState<'3d' | '2d'>('3d')
+  const [playgroundOpen, setPlaygroundOpen] = useState(false)
   const { isFavorite, toggleFavorite, notes, setNote } = useEcgFavorites()
   const { open: tourOpen, setOpen: setTourOpen, close: closeTour } = useEcgTour()
 
@@ -163,6 +178,10 @@ export function EcgSimulator() {
       </div>
 
       <EcgTutorial open={tourOpen} onClose={closeTour} />
+
+      {playgroundOpen && (
+        <EcgPlayground dark={dark} onClose={() => setPlaygroundOpen(false)} initialScenario={playgroundScenarioFor(entry)} />
+      )}
 
       {tab === 'quiz' ? (
         <EcgQuiz dark={dark} />
@@ -296,6 +315,9 @@ export function EcgSimulator() {
               </button>
               <button onClick={() => setCompare((v) => !v)} className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold transition ${compare ? 'bg-blue-500 text-white' : 'bg-black/20 text-muted-foreground hover:text-foreground'}`} title="Comparar com ECG normal">
                 <GitCompare className="h-3.5 w-3.5" /> Comparar
+              </button>
+              <button onClick={() => setPlaygroundOpen(true)} className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-teal-500 px-3 py-2 text-xs font-bold text-white shadow-sm transition hover:brightness-110" title="Laboratório vivo — sliders interativos">
+                <FlaskConical className="h-3.5 w-3.5" /> Laboratório vivo
               </button>
               <button onClick={() => setDark((v) => !v)} className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-black/20 px-3 py-2 text-xs font-bold text-muted-foreground hover:text-foreground" title="Tema hospitalar / claro">
                 {dark ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />} {dark ? 'Claro' : 'Hospitalar'}
