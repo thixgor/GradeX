@@ -180,7 +180,8 @@ export function EcgSimulator() {
       <EcgTutorial open={tourOpen} onClose={closeTour} />
 
       {playgroundOpen && (
-        <EcgPlayground dark={dark} onClose={() => setPlaygroundOpen(false)} initialScenario={playgroundScenarioFor(entry)} />
+        <EcgPlayground dark={dark} onClose={() => setPlaygroundOpen(false)} initialScenario={playgroundScenarioFor(entry)}
+          onOpenPattern={(id) => { if (ECG_CATALOG.some((e) => e.id === id)) { setSelectedId(id); setTab('sim') } }} />
       )}
 
       {tab === 'quiz' ? (

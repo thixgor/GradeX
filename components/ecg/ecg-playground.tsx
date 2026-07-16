@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { X, FlaskConical, Play, Pause, RotateCcw } from 'lucide-react'
+import { X, FlaskConical, Play, Pause, RotateCcw, Ghost, Zap, ExternalLink } from 'lucide-react'
 import { synthesizeLead, computeMeasurements, type LeadName } from '@/lib/ecg/engine'
 import {
   PLAYGROUND_SCENARIOS, defaultValues, type PlaygroundScenario, type Tone,
@@ -25,9 +25,9 @@ const TONE_ZONE: Record<Tone, string> = {
   warn: 'rgba(245,158,11,0.6)', danger: 'rgba(239,68,68,0.65)',
 }
 
-interface Props { dark: boolean; onClose: () => void; initialScenario?: string }
+interface Props { dark: boolean; onClose: () => void; initialScenario?: string; onOpenPattern?: (id: string) => void }
 
-export function EcgPlayground({ dark, onClose, initialScenario }: Props) {
+export function EcgPlayground({ dark, onClose, initialScenario, onOpenPattern }: Props) {
   const [scenarioId, setScenarioId] = useState(initialScenario ?? PLAYGROUND_SCENARIOS[0].id)
   const scenario = useMemo<PlaygroundScenario>(
     () => PLAYGROUND_SCENARIOS.find((s) => s.id === scenarioId) ?? PLAYGROUND_SCENARIOS[0],
@@ -35,7 +35,10 @@ export function EcgPlayground({ dark, onClose, initialScenario }: Props) {
   )
   const [values, setValues] = useState<Record<string, number>>(() => defaultValues(scenario))
   const [live, setLive] = useState(false)
+  const [ghost, setGhost] = useState(true)
+  const [playing, setPlaying] = useState(false)
   const rafRef = useRef<number>(0)
+  const playRef = useRef<number>(0)
 
   // sincroniza valores↔cenário NO RENDER (evita ler chaves inexistentes ao trocar)
   const [syncedId, setSyncedId] = useState(scenario.id)
@@ -43,13 +46,16 @@ export function EcgPlayground({ dark, onClose, initialScenario }: Props) {
     setSyncedId(scenario.id)
     setValues(defaultValues(scenario))
   }
-  const selectScenario = (id: string) => { cancelAnimationFrame(rafRef.current); setScenarioId(id) }
+  const stopAll = useCallback(() => {
+    cancelAnimationFrame(rafRef.current); cancelAnimationFrame(playRef.current); setPlaying(false)
+  }, [])
+  const selectScenario = (id: string) => { stopAll(); setScenarioId(id) }
 
   // ESC fecha
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
     window.addEventListener('keydown', onKey)
-    return () => { window.removeEventListener('keydown', onKey); cancelAnimationFrame(rafRef.current) }
+    return () => { window.removeEventListener('keydown', onKey); cancelAnimationFrame(rafRef.current); cancelAnimationFrame(playRef.current) }
   }, [onClose])
 
   // valores efetivos (com fallback ao default, blindando contra desync momentâneo)
@@ -66,12 +72,36 @@ export function EcgPlayground({ dark, onClose, initialScenario }: Props) {
     for (const l of leads) m[l] = synthesizeLead(pattern, l, { durationMs: 8000, fs: 250, seed: 7 })
     return m
   }, [pattern, leads])
+  // traçado BASAL (valores default = normal) para sobrepor como "fantasma" azul
+  const baseSignals = useMemo(() => {
+    const bp = scenario.build(defaultValues(scenario))
+    const m = {} as Record<LeadName, Float32Array>
+    for (const l of leads) m[l] = synthesizeLead(bp, l, { durationMs: 8000, fs: 250, seed: 7 })
+    return m
+  }, [scenario, leads])
   const measures = useMemo(() => computeMeasurements(pattern), [pattern])
   const findings = useMemo(() => scenario.findings(vals), [scenario, vals])
 
+  // "Evoluir": varre automaticamente o controle principal (min→max→min) ao vivo
+  const togglePlay = useCallback(() => {
+    if (playing) { cancelAnimationFrame(playRef.current); setPlaying(false); return }
+    cancelAnimationFrame(rafRef.current)
+    setPlaying(true)
+    const c = scenario.controls[0]
+    const span = c.max - c.min, period = 7000 // ida e volta em ~14 s
+    const t0 = performance.now()
+    const tick = () => {
+      const ph = ((performance.now() - t0) % (period * 2)) / period // 0..2
+      const tri = ph <= 1 ? ph : 2 - ph // triângulo 0→1→0
+      setValues((s) => ({ ...s, [c.id]: c.min + span * tri }))
+      playRef.current = requestAnimationFrame(tick)
+    }
+    playRef.current = requestAnimationFrame(tick)
+  }, [playing, scenario])
+
   // animação de preset (infusão de droga / manobra): tween suave até o alvo
   const animateTo = useCallback((targets: Record<string, number>) => {
-    cancelAnimationFrame(rafRef.current)
+    cancelAnimationFrame(rafRef.current); cancelAnimationFrame(playRef.current); setPlaying(false)
     const start = { ...vals }
     const t0 = performance.now(), dur = 1100
     const tick = () => {
@@ -85,8 +115,8 @@ export function EcgPlayground({ dark, onClose, initialScenario }: Props) {
     rafRef.current = requestAnimationFrame(tick)
   }, [vals])
 
-  const setVal = (id: string, v: number) => { cancelAnimationFrame(rafRef.current); setValues((s) => ({ ...s, [id]: v })) }
-  const reset = () => { cancelAnimationFrame(rafRef.current); setValues(defaultValues(scenario)) }
+  const setVal = (id: string, v: number) => { stopAll(); setValues((s) => ({ ...s, [id]: v })) }
+  const reset = () => { stopAll(); setValues(defaultValues(scenario)) }
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4">
@@ -120,18 +150,30 @@ export function EcgPlayground({ dark, onClose, initialScenario }: Props) {
         <div className="grid min-h-0 flex-1 grid-cols-1 overflow-y-auto md:grid-cols-[1.35fr_1fr]">
           {/* ECG ao vivo */}
           <div className="border-b border-border p-3 md:border-b-0 md:border-r">
-            <div className="mb-2 flex items-center justify-between gap-2">
-              <p className="text-[11px] font-semibold leading-snug text-muted-foreground">{scenario.blurb}</p>
+            <p className="mb-2 text-[11px] font-semibold leading-snug text-muted-foreground">{scenario.blurb}</p>
+            <div className="mb-2 flex flex-wrap items-center gap-1.5">
+              <button onClick={togglePlay}
+                className={`inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-bold transition ${playing ? 'bg-primary text-primary-foreground' : 'bg-foreground/[0.06] text-muted-foreground hover:text-foreground'}`}
+                title="Varre o controle automaticamente para ver a evolução">
+                <Zap className="h-3 w-3" /> {playing ? 'Parar' : 'Evoluir'}
+              </button>
+              <button onClick={() => setGhost((v) => !v)}
+                className={`inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-bold transition ${ghost ? 'bg-sky-500/20 text-sky-600 dark:text-sky-300' : 'bg-foreground/[0.06] text-muted-foreground hover:text-foreground'}`}
+                title="Sobrepõe o traçado basal (normal) em azul">
+                <Ghost className="h-3 w-3" /> Basal
+              </button>
               <button onClick={() => setLive((v) => !v)}
-                className={`inline-flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-bold transition ${live ? 'bg-emerald-500 text-white' : 'bg-foreground/[0.06] text-muted-foreground hover:text-foreground'}`}>
+                className={`inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-bold transition ${live ? 'bg-emerald-500 text-white' : 'bg-foreground/[0.06] text-muted-foreground hover:text-foreground'}`}>
                 {live ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3" />} {live ? 'Monitor' : 'Estático'}
               </button>
+              {ghost && <span className="ml-auto inline-flex items-center gap-1 text-[10px] font-semibold text-sky-500"><span className="inline-block h-1.5 w-4 rounded bg-sky-400/70" /> basal</span>}
             </div>
             <div className="space-y-1">
               {leads.map((l, i) => (
                 <EcgLeadCanvas key={l} signal={signals[l]} fs={250} lead={l} label={l}
                   speedMmS={25} gainMmMv={10} zoom={1} dark={dark} live={live}
-                  height={i === 0 ? 104 : 82} showCalibration={i === 0} />
+                  height={i === 0 ? 104 : 82} showCalibration={i === 0}
+                  compareSignal={ghost ? baseSignals[l] : null} />
               ))}
             </div>
             <div className="mt-2 grid grid-cols-5 gap-1.5">
@@ -204,10 +246,18 @@ export function EcgPlayground({ dark, onClose, initialScenario }: Props) {
               </ul>
             </div>
 
-            <button onClick={reset}
-              className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-border bg-foreground/[0.03] px-3 py-2 text-xs font-bold text-muted-foreground transition hover:text-foreground">
-              <RotateCcw className="h-3.5 w-3.5" /> Restaurar valores basais
-            </button>
+            <div className="flex gap-1.5">
+              <button onClick={reset}
+                className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-border bg-foreground/[0.03] px-3 py-2 text-xs font-bold text-muted-foreground transition hover:text-foreground">
+                <RotateCcw className="h-3.5 w-3.5" /> Restaurar basal
+              </button>
+              {scenario.relatedId && onOpenPattern && (
+                <button onClick={() => { onOpenPattern(scenario.relatedId!); onClose() }}
+                  className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-primary/40 bg-primary/10 px-3 py-2 text-xs font-bold text-primary transition hover:bg-primary/20">
+                  <ExternalLink className="h-3.5 w-3.5" /> Ver no simulador
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
