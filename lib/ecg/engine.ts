@@ -611,7 +611,16 @@ export function synthesizeLead(p: EcgPattern, lead: LeadName, opts: SynthOptions
 
 function beatComps(p: EcgPattern, lead: LeadName, b: BeatEvent, seed: number): GaussComp[] {
   if (b.kind === 'normal') return ventricularWaves(p, lead, { ampScale: b.ampScale })
-  // EV/escape/paced: QRS largo e bizarro, discordância de T
+  // Escape (dissociação AV): a morfologia já está declarada no próprio padrão —
+  // juncional = QRS estreito e normal (His-Purkinje intacto);
+  // ventricular = QRS largo/bizarro (padrão traz width≥120, ivcd, eixo e T discordante).
+  // Renderizar o padrão como está faz a medida bater com o declarado.
+  if (b.kind === 'escape') return ventricularWaves(p, lead, { ampScale: b.ampScale })
+  // TV/marca-passo/AIVR/torsades: o padrão-base JÁ é a morfologia ectópica larga
+  // (width≥120). Aplicar outro alargamento duplicaria a largura → medida irreal.
+  if ((b.kind === 'pvc' || b.kind === 'paced') && (p.qrs.width ?? 0) >= 120)
+    return ventricularWaves(p, lead, { ampScale: b.ampScale })
+  // EV isolada sobre base sinusal estreita: QRS largo e bizarro, T discordante.
   const widthScale = b.widthScale ?? 2.4
   const wideP: EcgPattern = {
     ...p,

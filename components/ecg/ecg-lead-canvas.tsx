@@ -7,10 +7,29 @@ import {
 } from '@/lib/ecg/render'
 import type { LeadName } from '@/lib/ecg/engine'
 
+export type FiducialKind = 'Pon' | 'Poff' | 'Qon' | 'J' | 'Tend' | 'R'
+
+/** Ponto fiducial em ms (tempo absoluto no sinal) para o paquímetro "grudar". */
+export interface Fiducial { ms: number; kind: FiducialKind }
+
 interface Caliper {
   active: boolean
   x1: number | null
   x2: number | null
+  k1: FiducialKind | null
+  k2: FiducialKind | null
+}
+
+// pares de fiduciais que formam um intervalo clínico nomeado
+const INTERVAL_NAMES: Record<string, string> = {
+  'Pon>Qon': 'PR', 'Qon>Pon': 'PR',
+  'Qon>J': 'QRS', 'J>Qon': 'QRS',
+  'Qon>Tend': 'QT', 'Tend>Qon': 'QT',
+  'R>R': 'RR',
+  'Pon>Poff': 'onda P', 'Poff>Pon': 'onda P',
+}
+const KIND_COLOR: Record<FiducialKind, string> = {
+  Pon: '#38bdf8', Poff: '#38bdf8', Qon: '#f472b6', J: '#fbbf24', Tend: '#fb923c', R: '#e5e7eb',
 }
 
 interface Props {
@@ -28,6 +47,8 @@ interface Props {
   calipers?: boolean
   onMeasure?: (ms: number, mv: number | null) => void
   teaching?: boolean
+  /** pontos fiduciais (ms) para o paquímetro grudar; só ativos em modo estático */
+  fiducials?: Fiducial[]
 }
 
 const BASE_PX_PER_MM = 4
@@ -40,17 +61,22 @@ const BASE_PX_PER_MM = 4
 export function EcgLeadCanvas({
   signal, fs, lead, label, speedMmS, gainMmMv, zoom, dark, live,
   height = 140, showCalibration = false, calipers = false, onMeasure, teaching = false,
+  fiducials,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const wrapRef = useRef<HTMLDivElement>(null)
   const rafRef = useRef<number>(0)
   const startRef = useRef<number>(0)
   const [width, setWidth] = useState(600)
-  const [caliper, setCaliper] = useState<Caliper>({ active: false, x1: null, x2: null })
+  const [caliper, setCaliper] = useState<Caliper>({ active: false, x1: null, x2: null, k1: null, k2: null })
 
   const theme = dark ? ECG_THEME_DARK : ECG_THEME_LIGHT
   const pxPerMm = BASE_PX_PER_MM * zoom
   const cfg: RenderConfig = { pxPerMm, speedMmS, gainMmMv, theme }
+  const pxPerMs = (speedMmS * pxPerMm) / 1000
+  const snapOn = calipers && !live && !!fiducials && fiducials.length > 0
+  // x0 (offset esquerdo) coerente com o render: reserva espaço p/ a barra de calibração
+  const x0 = showCalibration ? pxPerMm * 6 : 6
 
   // responsivo: acompanha a largura do container
   useEffect(() => {
@@ -96,6 +122,21 @@ export function EcgLeadCanvas({
     // overlay didático (anatomia do ECG)
     if (teaching) drawTeaching(ctx, signal, fs, cfg, { x0, width: width - x0, baselineY, startMs: offsetMs })
 
+    // marcadores fiduciais (pontos onde o paquímetro "gruda") — modo estático
+    if (snapOn && fiducials) {
+      for (const f of fiducials) {
+        const fx = x0 + f.ms * pxPerMs
+        if (fx < x0 || fx > width) continue
+        ctx.strokeStyle = KIND_COLOR[f.kind]
+        ctx.globalAlpha = 0.35
+        ctx.lineWidth = 1
+        ctx.setLineDash([1, 3])
+        ctx.beginPath(); ctx.moveTo(fx, 0); ctx.lineTo(fx, height); ctx.stroke()
+        ctx.globalAlpha = 1
+        ctx.setLineDash([])
+      }
+    }
+
     // régua
     if (caliper.x1 != null) {
       ctx.strokeStyle = '#22d3ee'
@@ -105,20 +146,24 @@ export function EcgLeadCanvas({
       if (caliper.x2 != null) {
         ctx.beginPath(); ctx.moveTo(caliper.x2, 0); ctx.lineTo(caliper.x2, height); ctx.stroke()
         ctx.setLineDash([])
-        const pxPerMs = (speedMmS * pxPerMm) / 1000
         const dtMs = Math.abs(caliper.x2 - caliper.x1) / pxPerMs
         const midX = (caliper.x1 + caliper.x2) / 2
-        ctx.fillStyle = '#22d3ee'
-        ctx.fillRect(midX - 34, 2, 68, 18)
-        ctx.fillStyle = '#00131a'
+        // se os dois cursores grudaram em fiduciais que formam um intervalo nomeado, rotula
+        const name = caliper.k1 && caliper.k2 ? INTERVAL_NAMES[`${caliper.k1}>${caliper.k2}`] : undefined
+        const bpm = name === 'RR' && dtMs > 0 ? ` · ${Math.round(60000 / dtMs)} bpm` : ''
+        const txt = `${name ? name + ' ' : ''}${Math.round(dtMs)} ms${bpm}`
         ctx.font = 'bold 11px ui-monospace, monospace'
+        const w = ctx.measureText(txt).width + 14
+        ctx.fillStyle = '#22d3ee'
+        ctx.fillRect(midX - w / 2, 2, w, 18)
+        ctx.fillStyle = '#00131a'
         ctx.textAlign = 'center'
-        ctx.fillText(`${Math.round(dtMs)} ms`, midX, 15)
+        ctx.fillText(txt, midX, 15)
         ctx.textAlign = 'left'
       }
       ctx.setLineDash([])
     }
-  }, [width, height, cfg, signal, fs, label, live, showCalibration, pxPerMm, theme, zoom, teaching, caliper, speedMmS, dark])
+  }, [width, height, cfg, signal, fs, label, live, showCalibration, pxPerMm, pxPerMs, x0, theme, zoom, teaching, caliper, snapOn, fiducials, dark])
 
   // loop de animação (monitor) ou render único (estático)
   useEffect(() => {
@@ -135,16 +180,26 @@ export function EcgLeadCanvas({
     render(0)
   }, [live, render])
 
-  // interação da régua
+  // interação da régua — com "grude" (snap) aos pontos fiduciais em modo estático
   const handlePointer = useCallback((e: React.PointerEvent) => {
     if (!calipers) return
     const rect = canvasRef.current!.getBoundingClientRect()
-    const x = e.clientX - rect.left
+    const rawX = e.clientX - rect.left
+    // procura o fiducial mais próximo dentro de ~9px e "gruda" o cursor nele
+    let x = rawX, kind: FiducialKind | null = null
+    if (snapOn && fiducials) {
+      let best = 9
+      for (const f of fiducials) {
+        const fx = x0 + f.ms * pxPerMs
+        const d = Math.abs(fx - rawX)
+        if (d < best) { best = d; x = fx; kind = f.kind }
+      }
+    }
     setCaliper((c) => {
-      if (c.x1 == null || c.x2 != null) return { active: true, x1: x, x2: null }
-      return { active: true, x1: c.x1, x2: x }
+      if (c.x1 == null || c.x2 != null) return { active: true, x1: x, x2: null, k1: kind, k2: null }
+      return { active: true, x1: c.x1, x2: x, k1: c.k1, k2: kind }
     })
-  }, [calipers])
+  }, [calipers, snapOn, fiducials, x0, pxPerMs])
 
   return (
     <div ref={wrapRef} className="relative w-full overflow-hidden rounded-lg" style={{ touchAction: 'none' }}>
@@ -155,7 +210,7 @@ export function EcgLeadCanvas({
       />
       {calipers && caliper.x1 != null && (
         <button
-          onClick={() => setCaliper({ active: false, x1: null, x2: null })}
+          onClick={() => setCaliper({ active: false, x1: null, x2: null, k1: null, k2: null })}
           className="absolute right-2 top-2 rounded-md bg-black/60 px-2 py-1 text-[10px] font-bold text-white hover:bg-black/80"
         >
           Limpar régua

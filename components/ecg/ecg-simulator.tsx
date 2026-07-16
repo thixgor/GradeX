@@ -9,13 +9,15 @@ import {
 } from 'lucide-react'
 import { ECG_CATALOG, CATEGORIES, searchCatalog, type EcgEntry, type EcgCategory, type Urgency } from '@/lib/ecg/catalog'
 import { computeMeasurements, LEADS, type LeadName } from '@/lib/ecg/engine'
+import { measureEcg } from '@/lib/ecg/measure'
 import { conductionFor } from '@/lib/ecg/conduction'
 import { useEcg12 } from './use-ecg-signal'
 import { useEcgFavorites } from './use-ecg-favorites'
-import { EcgLeadCanvas } from './ecg-lead-canvas'
+import { EcgLeadCanvas, type Fiducial } from './ecg-lead-canvas'
 import { Ecg12Lead } from './ecg-12-lead'
 import { ConductionSystem, type WallKey } from './conduction-system'
 import { EcgClinicalPanel } from './ecg-clinical-panel'
+import { EcgReport } from './ecg-report'
 import { EcgQuiz } from './ecg-quiz'
 import { EcgTutorial, useEcgTour } from './ecg-tutorial'
 
@@ -91,7 +93,48 @@ export function EcgSimulator() {
   const { map: signals, fs } = useEcg12(entry.pattern, 12000, 250)
   const normalEntry = ECG_CATALOG[0]
   const { map: normalSignals } = useEcg12(normalEntry.pattern, 12000, 250)
-  const measures = useMemo(() => computeMeasurements(entry.pattern), [entry])
+  const declared = useMemo(() => computeMeasurements(entry.pattern), [entry])
+  // MEDIDAS REAIS: detectadas nos pontos fiduciais do sinal renderizado (não
+  // apenas declaradas). É o que o paquímetro "mede" — e o que o laudo usa.
+  const measured = useMemo(() => measureEcg(signals, fs), [signals, fs])
+
+  // pontos fiduciais em ms, replicados a cada batimento detectado, para o
+  // paquímetro "grudar" (início de P, início/fim de QRS, fim de T, pico de R)
+  const fiducials = useMemo<Fiducial[]>(() => {
+    const b = measured.beat
+    if (!b) return []
+    const toMs = (idx: number) => (idx / fs) * 1000
+    const rel = (idx: number | null) => (idx == null ? null : idx - b.rPeak)
+    const dP = rel(b.pOn), dQon = rel(b.qOn), dJ = rel(b.qOff), dT = rel(b.tOff)
+    const out: Fiducial[] = []
+    for (const rp of measured.rPeaks) {
+      out.push({ ms: toMs(rp), kind: 'R' })
+      if (dP != null) out.push({ ms: toMs(rp + dP), kind: 'Pon' })
+      if (dQon != null) out.push({ ms: toMs(rp + dQon), kind: 'Qon' })
+      if (dJ != null) out.push({ ms: toMs(rp + dJ), kind: 'J' })
+      if (dT != null) out.push({ ms: toMs(rp + dT), kind: 'Tend' })
+    }
+    return out
+  }, [measured, fs])
+
+  // Medidas exibidas: as MEDIDAS quando confiáveis; senão as declaradas.
+  const measures = useMemo(() => {
+    const m = measured
+    const ok = m.quality === 'ok'
+    return {
+      hr: m.hr ?? declared.hr,
+      pr: ok ? m.pr : declared.pr,
+      qrs: ok && m.qrs != null ? m.qrs : declared.qrs,
+      qt: ok && m.qt != null ? m.qt : declared.qt,
+      qtc: ok && m.qtc != null ? m.qtc : declared.qtc,
+      axis: ok && m.axis != null ? m.axis : declared.axis,
+      axisLabel: ok && m.axis != null ? m.axisLabel : declared.axisLabel,
+      rr: m.rr ?? declared.rr,
+      rAmp: ok && m.rAmp != null ? m.rAmp : declared.rAmp,
+      interpretation: declared.interpretation,
+      source: ok ? ('medido' as const) : ('declarado' as const),
+    }
+  }, [measured, declared])
 
   const isLive = live || view === 'monitor'
   const compareSignals = compare && entry.id !== 'sinus-normal' ? normalSignals : null
@@ -282,26 +325,36 @@ export function EcgSimulator() {
               {view === 'monitor' && (
                 <div className="space-y-1">
                   {(['II', 'V1', 'V5'] as LeadName[]).map((l) => (
-                    <EcgLeadCanvas key={l} signal={signals[l]} fs={fs} lead={l} label={l} speedMmS={speed} gainMmMv={gain} zoom={zoom} dark={dark} live height={110} showCalibration teaching={teaching && l === 'II'} calipers={calipers} />
+                    <EcgLeadCanvas key={l} signal={signals[l]} fs={fs} lead={l} label={l} speedMmS={speed} gainMmMv={gain} zoom={zoom} dark={dark} live height={110} showCalibration teaching={teaching && l === 'II'} calipers={calipers} fiducials={fiducials} />
                   ))}
                 </div>
               )}
               {view === '3' && (
                 <div className="space-y-1">
                   {(['I', 'II', 'III'] as LeadName[]).map((l) => (
-                    <EcgLeadCanvas key={l} signal={signals[l]} fs={fs} lead={l} label={l} speedMmS={speed} gainMmMv={gain} zoom={zoom} dark={dark} live={isLive} height={130} showCalibration teaching={teaching && l === 'II'} calipers={calipers} />
+                    <EcgLeadCanvas key={l} signal={signals[l]} fs={fs} lead={l} label={l} speedMmS={speed} gainMmMv={gain} zoom={zoom} dark={dark} live={isLive} height={130} showCalibration teaching={teaching && l === 'II'} calipers={calipers} fiducials={fiducials} />
                   ))}
                 </div>
               )}
               {view === 'individual' && (
-                <EcgLeadCanvas signal={signals[indLead]} fs={fs} lead={indLead} label={indLead} speedMmS={speed} gainMmMv={gain} zoom={zoom} dark={dark} live={isLive} height={230} showCalibration teaching={teaching} calipers={calipers} />
+                <EcgLeadCanvas signal={signals[indLead]} fs={fs} lead={indLead} label={indLead} speedMmS={speed} gainMmMv={gain} zoom={zoom} dark={dark} live={isLive} height={230} showCalibration teaching={teaching} calipers={calipers} fiducials={fiducials} />
               )}
               {view === 'rhythm' && (
-                <EcgLeadCanvas signal={signals['II']} fs={fs} lead="II" label="DII — ritmo" speedMmS={speed} gainMmMv={gain} zoom={zoom} dark={dark} live={isLive} height={200} showCalibration teaching={teaching} calipers={calipers} />
+                <EcgLeadCanvas signal={signals['II']} fs={fs} lead="II" label="DII — ritmo" speedMmS={speed} gainMmMv={gain} zoom={zoom} dark={dark} live={isLive} height={200} showCalibration teaching={teaching} calipers={calipers} fiducials={fiducials} />
               )}
             </div>
 
             {/* ── MEDIDAS AUTOMÁTICAS ── */}
+            <div className="flex items-center justify-between gap-2">
+              <h3 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                <Gauge className="h-3.5 w-3.5" /> Medidas
+              </h3>
+              <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold ${measures.source === 'medido' ? 'border-emerald-400/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300' : 'border-amber-400/40 bg-amber-500/10 text-amber-600 dark:text-amber-300'}`}
+                title={measures.source === 'medido' ? 'Valores detectados nos pontos fiduciais do traçado renderizado' : 'Traçado sem complexos organizados — exibindo parâmetros de referência do padrão'}>
+                <span className={`inline-block h-1.5 w-1.5 rounded-full ${measures.source === 'medido' ? 'bg-emerald-400' : 'bg-amber-400'}`} />
+                {measures.source === 'medido' ? 'Medido no traçado' : 'Referência do padrão'}
+              </span>
+            </div>
             <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-8">
               <Measure label="FC" value={`${measures.hr}`} unit="bpm" />
               <Measure label="PR" value={measures.pr != null ? `${measures.pr}` : '—'} unit="ms" />
@@ -312,11 +365,22 @@ export function EcgSimulator() {
               <Measure label="RR" value={`${measures.rr}`} unit="ms" />
               <Measure label="R" value={`${measures.rAmp}`} unit="mV" />
             </div>
+            {calipers && (
+              <div className="rounded-lg border border-cyan-400/30 bg-cyan-500/[0.06] px-3 py-2 text-[11px] text-cyan-700 dark:text-cyan-300">
+                <Ruler className="mr-1 inline h-3.5 w-3.5" />
+                Régua ativa: clique para marcar dois pontos. O cursor <b>gruda</b> nos pontos fiduciais
+                (início de P, início/fim do QRS, fim da T, pico de R) — ao unir dois deles a régua nomeia o
+                intervalo (PR, QRS, QT, RR) e as medidas batem com as automáticas.
+              </div>
+            )}
             <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-xs">
               <span className="font-bold text-muted-foreground">Interpretação automática: </span>
               <span className="font-semibold">{measures.axisLabel}</span>
               {measures.interpretation.length > 0 && <span> · {measures.interpretation.join(' · ')}</span>}
             </div>
+
+            {/* ── LEITURA SISTEMÁTICA + LAUDO + MODO GUIADO ── */}
+            <EcgReport entry={entry} measured={measured} />
 
             {/* ── ANATOMIA / LOCALIZAÇÃO + CONDUÇÃO ── */}
             <div className="grid gap-4 md:grid-cols-2">
