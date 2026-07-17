@@ -93,6 +93,15 @@ const AREA_COLORS: Record<AreaSaude, string> = {
   'Biomedicina': 'bg-orange-500/10 text-orange-700 dark:text-orange-400 border-orange-500/30 hover:bg-orange-500/20',
 }
 
+const PESQUISAS_SUGERIDAS: { label: string; slug: string }[] = [
+  { label: 'Epilepsia', slug: 'epilepsia' },
+  { label: 'Febre reumática', slug: 'febre-reumatica' },
+  { label: 'Cefaleia', slug: 'cefaleia' },
+  { label: 'Derrame pleural', slug: 'derrame-pleural' },
+  { label: 'Principais valvopatias', slug: 'principais-valvopatias' },
+  { label: 'Sons pulmonares anormais', slug: 'sons-pulmonares-anormais' },
+]
+
 const AREA_COLORS_ACTIVE: Record<AreaSaude, string> = {
   'Medicina': 'bg-blue-500 text-white border-blue-600 shadow-blue-500/25 shadow-lg',
   'Psicologia': 'bg-purple-500 text-white border-purple-600 shadow-purple-500/25 shadow-lg',
@@ -741,6 +750,24 @@ function ManualClinicoContent() {
                 )}
               </div>
             </div>
+
+            {!busca && (
+              <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
+                <div className="flex items-center gap-1.5 mr-0.5 text-muted-foreground/50">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  <span className="text-xs font-medium uppercase tracking-wide">Sugestões</span>
+                </div>
+                {PESQUISAS_SUGERIDAS.map(({ label, slug }) => (
+                  <button
+                    key={slug}
+                    onClick={() => router.push(`/manual-clinico/${slug}`)}
+                    className="px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium bg-white/[0.05] dark:bg-white/[0.04] border border-white/[0.1] text-muted-foreground hover:text-foreground hover:border-primary/35 hover:bg-primary/10 transition-colors"
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* ══════════ AREA FILTER PILLS ══════════ */}
