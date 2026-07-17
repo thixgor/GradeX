@@ -1,6 +1,6 @@
-// Faculdades de Medicina do Brasil, agrupadas por estado (UF). Cobre as
-// principais instituições públicas e privadas de cada estado — não é uma
-// lista exaustiva de todas as ~380 escolas médicas do país, por isso cada
+// Faculdades de Medicina do Brasil, agrupadas por estado (UF). Cobre um
+// conjunto amplo de instituições públicas e privadas de cada estado — não é
+// uma lista exaustiva de todas as ~400 escolas médicas do país, por isso cada
 // estado tem uma opção de fallback para quem não encontrar sua instituição.
 export const MEDICAL_SCHOOLS_BY_STATE: Record<string, string[]> = {
   AC: [
@@ -12,6 +12,7 @@ export const MEDICAL_SCHOOLS_BY_STATE: Record<string, string[]> = {
     'Universidade Estadual de Ciências da Saúde de Alagoas (UNCISAL)',
     'Centro Universitário CESMAC',
     'Universidade Tiradentes - Alagoas (UNIT-AL)',
+    'Centro Universitário FITS - Maceió',
   ],
   AP: [
     'Universidade Federal do Amapá (UNIFAP)',
@@ -20,11 +21,13 @@ export const MEDICAL_SCHOOLS_BY_STATE: Record<string, string[]> = {
     'Universidade Federal do Amazonas (UFAM)',
     'Universidade do Estado do Amazonas (UEA)',
     'Centro Universitário UNINORTE - Manaus',
+    'Centro Universitário FAMETRO - Manaus',
   ],
   BA: [
     'Universidade Federal da Bahia (UFBA)',
     'Escola Bahiana de Medicina e Saúde Pública (EBMSP)',
     'Universidade Estadual de Feira de Santana (UEFS)',
+    'Universidade Estadual do Sudoeste da Bahia (UESB) - Vitória da Conquista',
     'Universidade Federal do Recôncavo da Bahia (UFRB)',
     'Universidade Federal do Oeste da Bahia (UFOB)',
     'Universidade Federal do Sul da Bahia (UFSB)',
@@ -32,6 +35,9 @@ export const MEDICAL_SCHOOLS_BY_STATE: Record<string, string[]> = {
     'UniFTC - Faculdade de Tecnologia e Ciências',
     'Universidade Salvador (UNIFACS)',
     'Faculdade Nobre (FAN) - Feira de Santana',
+    'Faculdade Independente do Nordeste (FAINOR) - Vitória da Conquista',
+    'Centro Universitário UniAGES - Paripiranga',
+    'Faculdade Adventista da Bahia (FADBA)',
   ],
   CE: [
     'Universidade Federal do Ceará (UFC)',
@@ -40,6 +46,8 @@ export const MEDICAL_SCHOOLS_BY_STATE: Record<string, string[]> = {
     'Centro Universitário Christus (Unichristus)',
     'Faculdade de Medicina de Juazeiro do Norte (FMJ)',
     'Centro Universitário Dr. Leão Sampaio (UNILEÃO)',
+    'Centro Universitário INTA (UNINTA) - Sobral',
+    'Faculdade Nordeste (FANOR)',
   ],
   DF: [
     'Universidade de Brasília (UnB)',
@@ -47,12 +55,14 @@ export const MEDICAL_SCHOOLS_BY_STATE: Record<string, string[]> = {
     'Centro Universitário de Brasília (UniCEUB)',
     'Universidade Católica de Brasília (UCB)',
     'Centro Universitário IESB',
+    'Instituto de Educação Superior de Brasília (Iesb Medicina)',
   ],
   ES: [
     'Universidade Federal do Espírito Santo (UFES)',
     'Escola Superior de Ciências da Santa Casa de Misericórdia de Vitória (EMESCAM)',
     'Universidade Vila Velha (UVV)',
     'Faculdade Brasileira Multivix',
+    'Faculdade Católica Salesiana do Espírito Santo',
   ],
   GO: [
     'Universidade Federal de Goiás (UFG)',
@@ -60,20 +70,25 @@ export const MEDICAL_SCHOOLS_BY_STATE: Record<string, string[]> = {
     'Universidade Estadual de Goiás (UEG)',
     'Universidade de Rio Verde (UniRV)',
     'Faculdade Uni-Anhanguera',
+    'Centro Universitário de Anápolis (UniEVANGÉLICA)',
+    'Universidade Salgado de Oliveira (Universo) - Goiânia',
   ],
   MA: [
     'Universidade Federal do Maranhão (UFMA)',
     'Universidade Estadual do Maranhão (UEMA)',
     'Universidade CEUMA',
     'Universidade UNDB',
+    'Universidade CEUMA - Imperatriz',
   ],
   MT: [
     'Universidade Federal de Mato Grosso (UFMT)',
+    'Universidade Federal de Mato Grosso - campus Sinop (UFMT)',
     'Universidade de Cuiabá (UNIC)',
     'Universidade de Várzea Grande (UNIVAG)',
   ],
   MS: [
     'Universidade Federal de Mato Grosso do Sul (UFMS)',
+    'Universidade Federal da Grande Dourados (UFGD)',
     'Universidade Católica Dom Bosco (UCDB)',
     'Universidade Anhanguera-Uniderp',
     'Faculdade UNIGRAN - Dourados',
@@ -93,38 +108,51 @@ export const MEDICAL_SCHOOLS_BY_STATE: Record<string, string[]> = {
     'Faculdade de Medicina de Barbacena (FAME)',
     'Faculdade Ciências Médicas de Montes Claros (UNIFIPMoc)',
     'Universidade de Itaúna',
+    'Universidade de Uberaba (UNIUBE)',
+    'Centro Universitário de Patos de Minas (UNIPAM)',
+    'Faculdade Dinâmica do Vale do Piranga (FADIP) - Ponte Nova',
+    'Faculdade de Ciências Médicas de Pouso Alegre',
   ],
   PA: [
     'Universidade Federal do Pará (UFPA)',
     'Universidade do Estado do Pará (UEPA)',
     'Centro Universitário do Estado do Pará (CESUPA)',
+    'Universidade Federal do Sul e Sudeste do Pará (UNIFESSPA) - Marabá',
+    'Centro Universitário Metropolitano da Amazônia (UNIFAMAZ)',
   ],
   PB: [
     'Universidade Federal da Paraíba (UFPB)',
     'Universidade Federal de Campina Grande (UFCG)',
     'Centro Universitário de João Pessoa (UNIPÊ)',
     'Faculdade de Ciências Médicas da Paraíba (FCM-PB)',
+    'Faculdade de Medicina Nova Esperança (FAMENE) - João Pessoa',
   ],
   PR: [
     'Universidade Federal do Paraná (UFPR)',
     'Universidade Estadual de Londrina (UEL)',
     'Universidade Estadual de Maringá (UEM)',
     'Universidade Estadual do Oeste do Paraná (UNIOESTE)',
+    'Universidade Estadual do Norte do Paraná (UENP) - Jacarezinho',
+    'Universidade Estadual de Ponta Grossa (UEPG)',
     'Pontifícia Universidade Católica do Paraná (PUCPR)',
     'Universidade Positivo',
     'Universidade Cesumar (UniCesumar) - Maringá',
-    'Universidade Estadual de Ponta Grossa (UEPG)',
+    'Centro Universitário Ingá (Uningá) - Maringá',
+    'Universidade Paranaense (UNIPAR) - Umuarama',
   ],
   PE: [
     'Universidade Federal de Pernambuco (UFPE)',
-    'Universidade de Pernambuco (UPE)',
+    'Universidade de Pernambuco (UPE) - Recife',
+    'Universidade de Pernambuco (UPE) - Serra Talhada',
     'Faculdade Pernambucana de Saúde (FPS)',
     'Faculdade de Ciências Médicas de Pernambuco',
+    'Faculdade Integrada de Pernambuco (FACIPE)',
   ],
   PI: [
     'Universidade Federal do Piauí (UFPI)',
     'UNINOVAFAPI',
     'Faculdade Integral Diferencial (FACID)',
+    'Faculdade Maurício de Nassau - Teresina',
   ],
   RJ: [
     'Universidade Federal do Rio de Janeiro (UFRJ)',
@@ -133,16 +161,20 @@ export const MEDICAL_SCHOOLS_BY_STATE: Record<string, string[]> = {
     'Universidade Federal do Estado do Rio de Janeiro (UNIRIO)',
     'Universidade Estácio de Sá (UNESA)',
     'Universidade Iguaçu (UNIG)',
-    'Universidade Severino Sombra (USS) - Vassouras',
+    'Universidade de Vassouras (antiga Severino Sombra)',
     'Fundação Técnico-Educacional Souza Marques',
     'Centro Universitário de Volta Redonda (UniFOA)',
     'Universidade do Grande Rio (Unigranrio) - Duque de Caxias',
     'Universidade do Grande Rio (Unigranrio) - Barra da Tijuca',
+    'Fundação Educacional Serra dos Órgãos (UNIFESO) - Teresópolis',
+    'Faculdade de Medicina de Petrópolis (FASE)',
+    'Universidade Federal do Rio de Janeiro - Campus Macaé (UFRJ)',
   ],
   RN: [
     'Universidade Federal do Rio Grande do Norte (UFRN)',
     'Universidade Potiguar (UnP)',
     'Faculdade de Ciências da Saúde do Trairi (UFRN)',
+    'Universidade Federal Rural do Semi-Árido (UFERSA) - Mossoró',
   ],
   RS: [
     'Universidade Federal do Rio Grande do Sul (UFRGS)',
@@ -150,9 +182,11 @@ export const MEDICAL_SCHOOLS_BY_STATE: Record<string, string[]> = {
     'Pontifícia Universidade Católica do Rio Grande do Sul (PUCRS)',
     'Universidade Federal de Pelotas (UFPel)',
     'Universidade Federal de Santa Maria (UFSM)',
+    'Universidade Federal do Rio Grande (FURG)',
     'Universidade de Caxias do Sul (UCS)',
     'Universidade de Passo Fundo (UPF)',
     'Universidade Luterana do Brasil (ULBRA)',
+    'Universidade Regional Integrada do Alto Uruguai e das Missões (URI) - Erechim',
   ],
   RO: [
     'Universidade Federal de Rondônia (UNIR)',
@@ -163,10 +197,12 @@ export const MEDICAL_SCHOOLS_BY_STATE: Record<string, string[]> = {
   ],
   SC: [
     'Universidade Federal de Santa Catarina (UFSC)',
+    'Universidade Federal da Fronteira Sul (UFFS) - Chapecó',
     'Universidade do Sul de Santa Catarina (UNISUL)',
     'Universidade da Região de Joinville (UNIVILLE)',
     'Universidade do Extremo Sul Catarinense (UNESC)',
     'Universidade do Oeste de Santa Catarina (UNOESC)',
+    'Universidade do Contestado (UnC) - Mafra',
   ],
   SP: [
     'Universidade de São Paulo (USP) - Faculdade de Medicina',
@@ -178,6 +214,7 @@ export const MEDICAL_SCHOOLS_BY_STATE: Record<string, string[]> = {
     'Faculdade de Medicina do ABC (FMABC)',
     'Faculdade de Medicina de São José do Rio Preto (FAMERP)',
     'Faculdade de Medicina de Jundiaí (FMJ)',
+    'Faculdade de Medicina São Leopoldo Mandic - Campinas',
     'Pontifícia Universidade Católica de Campinas (PUC-Campinas)',
     'Universidade São Francisco (USF) - Bragança Paulista',
     'Universidade de Santo Amaro (UNISA)',
@@ -186,9 +223,14 @@ export const MEDICAL_SCHOOLS_BY_STATE: Record<string, string[]> = {
     'Universidade de Sorocaba (UNISO)',
     'Universidade do Oeste Paulista (UNOESTE) - Presidente Prudente',
     'Universidade Metropolitana de Santos (UNIMES)',
+    'Universidade de Franca (UNIFRAN)',
+    'Universidade do Vale do Paraíba (UNIVAP) - São José dos Campos',
+    'Universidade Anhembi Morumbi - São José dos Campos',
+    'Universidade Brasil - Fernandópolis',
     'Centro Universitário Padre Albino (UNIFIPA) - Catanduva',
     'Centro Universitário Barão de Mauá - Ribeirão Preto',
     'Centro Universitário Lusíada (UNILUS) - Santos',
+    'Centro Universitário Fundação Educacional de Barretos (UNIFEB)',
   ],
   SE: [
     'Universidade Federal de Sergipe (UFS)',

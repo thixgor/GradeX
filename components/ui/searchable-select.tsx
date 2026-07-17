@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { ChevronDown, Search } from 'lucide-react'
 
 interface SearchableSelectProps {
@@ -14,6 +15,18 @@ interface SearchableSelectProps {
   className?: string
 }
 
+interface Position {
+  top: number
+  left: number
+  width: number
+  maxHeight: number
+  dropUp: boolean
+}
+
+const MARGIN = 8
+const MIN_PANEL_HEIGHT = 160
+const MAX_PANEL_HEIGHT = 360
+
 export function SearchableSelect({
   id,
   value,
@@ -26,22 +39,82 @@ export function SearchableSelect({
 }: SearchableSelectProps) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
-  const containerRef = useRef<HTMLDivElement>(null)
+  const [mounted, setMounted] = useState(false)
+  const [position, setPosition] = useState<Position | null>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
 
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setOpen(false)
-        setQuery('')
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+  useEffect(() => setMounted(true), [])
 
   useEffect(() => {
     if (disabled) setOpen(false)
   }, [disabled])
+
+  const updatePosition = () => {
+    const trigger = buttonRef.current
+    if (!trigger) return
+    const rect = trigger.getBoundingClientRect()
+    const spaceBelow = window.innerHeight - rect.bottom - MARGIN
+    const spaceAbove = rect.top - MARGIN
+    const dropUp = spaceBelow < MIN_PANEL_HEIGHT && spaceAbove > spaceBelow
+
+    const available = dropUp ? spaceAbove : spaceBelow
+    const maxHeight = Math.max(MIN_PANEL_HEIGHT, Math.min(MAX_PANEL_HEIGHT, available))
+
+    setPosition({
+      top: dropUp ? rect.top - maxHeight - 4 : rect.bottom + 4,
+      left: rect.left,
+      width: rect.width,
+      maxHeight,
+      dropUp,
+    })
+  }
+
+  useLayoutEffect(() => {
+    if (!open) return
+    updatePosition()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open])
+
+  useEffect(() => {
+    if (!open) return
+
+    const handleReposition = () => updatePosition()
+    const handlePointerDown = (e: MouseEvent) => {
+      const target = e.target as Node
+      if (buttonRef.current?.contains(target)) return
+      if (panelRef.current?.contains(target)) return
+      setOpen(false)
+      setQuery('')
+    }
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setOpen(false)
+        setQuery('')
+        buttonRef.current?.focus()
+      }
+    }
+
+    window.addEventListener('resize', handleReposition)
+    window.addEventListener('scroll', handleReposition, true)
+    document.addEventListener('mousedown', handlePointerDown)
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('resize', handleReposition)
+      window.removeEventListener('scroll', handleReposition, true)
+      document.removeEventListener('mousedown', handlePointerDown)
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [open])
+
+  useEffect(() => {
+    if (open) {
+      // Foco no campo de busca só depois do painel montar/posicionar.
+      const t = setTimeout(() => searchInputRef.current?.focus(), 0)
+      return () => clearTimeout(t)
+    }
+  }, [open])
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -50,8 +123,9 @@ export function SearchableSelect({
   }, [options, query])
 
   return (
-    <div ref={containerRef} className="relative">
+    <>
       <button
+        ref={buttonRef}
         type="button"
         id={id}
         disabled={disabled}
@@ -62,19 +136,23 @@ export function SearchableSelect({
         <ChevronDown className="h-4 w-4 opacity-50 flex-shrink-0 ml-2" />
       </button>
 
-      {open && !disabled && (
-        <div className="absolute z-50 mt-1 w-full rounded-lg border border-border bg-card shadow-lg overflow-hidden">
-          <div className="flex items-center gap-2 border-b border-border p-2">
+      {mounted && open && !disabled && position && createPortal(
+        <div
+          ref={panelRef}
+          className="fixed z-[200] flex flex-col rounded-lg border border-border bg-card shadow-xl overflow-hidden"
+          style={{ top: position.top, left: position.left, width: position.width, maxHeight: position.maxHeight }}
+        >
+          <div className="flex items-center gap-2 border-b border-border p-2 flex-shrink-0">
             <Search className="h-3.5 w-3.5 flex-shrink-0 text-muted-foreground" />
             <input
-              autoFocus
+              ref={searchInputRef}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={searchPlaceholder}
               className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
             />
           </div>
-          <div className="max-h-56 overflow-y-auto py-1">
+          <div className="overflow-y-auto py-1">
             {filtered.length === 0 && (
               <div className="px-3 py-2 text-sm text-muted-foreground">Nenhum resultado encontrado</div>
             )}
@@ -95,8 +173,9 @@ export function SearchableSelect({
               </button>
             ))}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
-    </div>
+    </>
   )
 }
