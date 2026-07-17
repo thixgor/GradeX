@@ -8,12 +8,19 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { User, BanReason, BanReasonLabels, AccountType, TrialPlanType, PremiumPlanType } from '@/lib/types'
-import { ArrowLeft, Trash2, Ban, CheckCircle, AlertTriangle, Shield, Crown, Timer, Settings, Info, Zap, Activity, Users, UserCheck, Clock, Search, RefreshCw, Mail, CalendarDays, ShoppingBag, FileDown, Package as PackageIcon, FileText as FileTextIcon, Receipt, GraduationCap, MonitorSmartphone, Wifi, LogOut } from 'lucide-react'
+import { ArrowLeft, Trash2, Ban, CheckCircle, AlertTriangle, Shield, Crown, Timer, Settings, Info, Zap, Activity, Users, UserCheck, Clock, Search, RefreshCw, Mail, CalendarDays, ShoppingBag, FileDown, Package as PackageIcon, FileText as FileTextIcon, Receipt, GraduationCap, MonitorSmartphone, Wifi, LogOut, Phone, MapPin, Stethoscope } from 'lucide-react'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { PERIODO_OPTIONS, computeCurrentPeriodo, formatPeriodoLabel } from '@/lib/user-periodo'
+import { formatStateLabel } from '@/lib/brazil-states'
+
+const PROFESSION_LABELS: Record<string, string> = {
+  medico: 'Médico',
+  academico: 'Acadêmico',
+  residente: 'Residente',
+}
 
 type OnlineUser = {
   id?: string
@@ -906,7 +913,7 @@ export default function AdminUsersPage() {
                     </div>
                   )}
 
-                  <div className="mb-4 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
+                  <div className="mb-4 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
                     <div className="rounded-lg border bg-muted/20 p-3">
                       <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
                         <Clock className="h-3.5 w-3.5" />
@@ -937,6 +944,24 @@ export default function AdminUsersPage() {
                       </div>
                       <div className="mt-1 text-foreground">
                         {formatPeriodoLabel(computeCurrentPeriodo(user.periodoBase, user.periodoBaseRef))}
+                      </div>
+                    </div>
+                    <div className="rounded-lg border bg-muted/20 p-3">
+                      <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                        <Stethoscope className="h-3.5 w-3.5" />
+                        Profissão
+                      </div>
+                      <div className="mt-1 text-foreground">
+                        {user.profession ? PROFESSION_LABELS[user.profession] : '—'}
+                      </div>
+                    </div>
+                    <div className="rounded-lg border bg-muted/20 p-3">
+                      <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                        <MapPin className="h-3.5 w-3.5" />
+                        Estado
+                      </div>
+                      <div className="mt-1 text-foreground">
+                        {user.state || '—'}
                       </div>
                     </div>
                   </div>
@@ -1392,7 +1417,7 @@ export default function AdminUsersPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="py-4 space-y-4 overflow-x-hidden">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="rounded-xl border bg-muted/40 p-4 min-w-0">
                 <p className="text-xs font-semibold text-muted-foreground">CPF</p>
                 <p className="mt-2 font-mono text-sm break-words">
@@ -1412,6 +1437,24 @@ export default function AdminUsersPage() {
               </div>
 
               <div className="rounded-xl border bg-muted/40 p-4 min-w-0">
+                <p className="text-xs font-semibold text-muted-foreground">Telefone</p>
+                <p className="mt-2 text-sm break-words">
+                  {selectedUser?.phone
+                    ? selectedUser.phone
+                    : <span className="text-muted-foreground italic">Não informado</span>}
+                </p>
+              </div>
+
+              <div className="rounded-xl border bg-muted/40 p-4 min-w-0">
+                <p className="text-xs font-semibold text-muted-foreground">Estado</p>
+                <p className="mt-2 text-sm break-words">
+                  {selectedUser?.state
+                    ? formatStateLabel(selectedUser.state)
+                    : <span className="text-muted-foreground italic">Não informado</span>}
+                </p>
+              </div>
+
+              <div className="rounded-xl border bg-muted/40 p-4 min-w-0">
                 <p className="text-xs font-semibold text-muted-foreground">Período</p>
                 <p className="mt-2 text-sm break-words">
                   {selectedUser?.periodoBase
@@ -1422,24 +1465,86 @@ export default function AdminUsersPage() {
             </div>
 
             <div className="rounded-xl border bg-muted/40 p-4 min-w-0">
-              <p className="text-xs font-semibold text-muted-foreground">Estudante de Ciências Médicas</p>
-              <p className="mt-2 text-sm">
-                {selectedUser?.isAfyaMedicineStudent ? (
-                  <span className="text-green-600 dark:text-green-400 font-medium">✓ Sim</span>
-                ) : (
-                  <span className="text-gray-600 dark:text-gray-400">Não</span>
-                )}
-              </p>
+              <p className="text-xs font-semibold text-muted-foreground">Profissão</p>
 
-              {selectedUser?.isAfyaMedicineStudent && (
-                <div className="mt-4">
-                  <p className="text-xs font-semibold text-muted-foreground">Unidade</p>
-                  <p className="mt-2 text-sm break-words">
-                    {selectedUser?.afyaUnit
-                      ? selectedUser.afyaUnit
-                      : <span className="text-muted-foreground italic">Não informado</span>}
+              {selectedUser?.profession ? (
+                <>
+                  <p className="mt-2 text-sm break-words font-medium">
+                    {PROFESSION_LABELS[selectedUser.profession] || selectedUser.profession}
                   </p>
-                </div>
+
+                  {selectedUser.profession === 'medico' && (
+                    <div className="mt-4">
+                      <p className="text-xs font-semibold text-muted-foreground">Especialidade</p>
+                      <p className="mt-2 text-sm break-words">
+                        {selectedUser.specialty
+                          ? selectedUser.specialty
+                          : <span className="text-muted-foreground italic">Não informado</span>}
+                      </p>
+                    </div>
+                  )}
+
+                  {selectedUser.profession === 'residente' && (
+                    <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-xs font-semibold text-muted-foreground">Área da Residência</p>
+                        <p className="mt-2 text-sm break-words">
+                          {selectedUser.residencySpecialty
+                            ? selectedUser.residencySpecialty
+                            : <span className="text-muted-foreground italic">Não informado</span>}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-muted-foreground">Ano</p>
+                        <p className="mt-2 text-sm break-words">
+                          {selectedUser.residencyYear
+                            ? selectedUser.residencyYear
+                            : <span className="text-muted-foreground italic">Não informado</span>}
+                        </p>
+                      </div>
+                      <div className="sm:col-span-2">
+                        <p className="text-xs font-semibold text-muted-foreground">Hospital da Residência</p>
+                        <p className="mt-2 text-sm break-words">
+                          {selectedUser.residencyHospital
+                            ? selectedUser.residencyHospital
+                            : <span className="text-muted-foreground italic">Não informado</span>}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedUser.profession === 'academico' && (
+                    <div className="mt-4">
+                      <p className="text-xs font-semibold text-muted-foreground">Unidade</p>
+                      <p className="mt-2 text-sm break-words">
+                        {selectedUser.afyaUnit
+                          ? selectedUser.afyaUnit
+                          : <span className="text-muted-foreground italic">Não informado</span>}
+                      </p>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  <p className="mt-2 text-sm">
+                    {selectedUser?.isAfyaMedicineStudent ? (
+                      <span className="text-green-600 dark:text-green-400 font-medium">✓ Estudante de Ciências Médicas</span>
+                    ) : (
+                      <span className="text-muted-foreground italic">Não informado (cadastro antigo)</span>
+                    )}
+                  </p>
+
+                  {selectedUser?.isAfyaMedicineStudent && (
+                    <div className="mt-4">
+                      <p className="text-xs font-semibold text-muted-foreground">Unidade</p>
+                      <p className="mt-2 text-sm break-words">
+                        {selectedUser?.afyaUnit
+                          ? selectedUser.afyaUnit
+                          : <span className="text-muted-foreground italic">Não informado</span>}
+                      </p>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>
