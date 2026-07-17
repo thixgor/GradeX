@@ -36,3 +36,10 @@ export const BRAZIL_STATES: BrazilState[] = [
 export function isValidStateUf(uf: unknown): uf is string {
   return typeof uf === 'string' && BRAZIL_STATES.some((s) => s.uf === uf)
 }
+
+/** Rótulo amigável de um estado: "SP" → "São Paulo (SP)". */
+export function formatStateLabel(uf?: string | null): string {
+  if (!uf) return ''
+  const state = BRAZIL_STATES.find((s) => s.uf === uf)
+  return state ? `${state.name} (${state.uf})` : uf
+}
