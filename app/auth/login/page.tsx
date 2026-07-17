@@ -26,8 +26,14 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { BanReasonLabels, BanReason } from '@/lib/types'
 import { Ban, AlertCircle } from 'lucide-react'
-import { INSTITUTION_UNITS } from '@/lib/institution-units'
 import { PERIODO_OPTIONS, formatPeriodoLabel } from '@/lib/user-periodo'
+import { BRAZIL_STATES } from '@/lib/brazil-states'
+import { MEDICAL_SPECIALTIES } from '@/lib/medical-specialties'
+import { RESIDENCY_YEARS } from '@/lib/residency-years'
+import { getMedicalSchoolsByState } from '@/lib/medical-schools-brazil'
+import { getResidencyHospitalsByState } from '@/lib/residency-hospitals-brazil'
+import { formatBrazilPhone, isValidBrazilPhone } from '@/lib/phone'
+import { SearchableSelect } from '@/components/ui/searchable-select'
 import { GoogleProfileSetupDialog } from '@/components/google-profile-setup-dialog'
 import { clearBootstrapCache } from '@/hooks/use-bootstrap'
 
@@ -92,6 +98,13 @@ export default function LoginPage() {
     password: '',
     name: '',
     dateOfBirth: '',
+    profession: '' as '' | 'medico' | 'academico' | 'residente',
+    state: '',
+    phone: '',
+    specialty: '',
+    residencySpecialty: '',
+    residencyHospital: '',
+    residencyYear: '',
     isAfyaMedicineStudent: false,
     afyaUnit: '',
     periodo: '',
@@ -244,7 +257,35 @@ export default function LoginPage() {
           setLoading(false)
           return
         }
-        if (formData.isAfyaMedicineStudent && !formData.afyaUnit) {
+        if (!formData.profession) {
+          setError('Selecione se você é médico, acadêmico ou residente')
+          setLoading(false)
+          return
+        }
+        if (!formData.state) {
+          setError('Selecione seu estado')
+          setLoading(false)
+          return
+        }
+        if (!isValidBrazilPhone(formData.phone)) {
+          setError('Informe um telefone válido com DDD')
+          setLoading(false)
+          return
+        }
+        if (formData.profession === 'medico' && !formData.specialty) {
+          setError('Selecione sua especialidade')
+          setLoading(false)
+          return
+        }
+        if (
+          formData.profession === 'residente' &&
+          (!formData.residencySpecialty || !formData.residencyHospital || !formData.residencyYear)
+        ) {
+          setError('Preencha os dados da sua residência')
+          setLoading(false)
+          return
+        }
+        if (formData.profession === 'academico' && !formData.afyaUnit) {
           setError('Selecione sua unidade')
           setLoading(false)
           return
@@ -409,6 +450,13 @@ export default function LoginPage() {
   async function handleProfileSetupComplete(setupData: {
     profileName: string
     dateOfBirth: string
+    profession: 'medico' | 'academico' | 'residente'
+    state: string
+    phone: string
+    specialty?: string
+    residencySpecialty?: string
+    residencyHospital?: string
+    residencyYear?: string
     isAfyaMedicineStudent: boolean
     afyaUnit?: string
     periodo?: string
@@ -423,6 +471,13 @@ export default function LoginPage() {
           email: googleData.email,
           profileName: setupData.profileName,
           dateOfBirth: setupData.dateOfBirth,
+          profession: setupData.profession,
+          state: setupData.state,
+          phone: setupData.phone,
+          specialty: setupData.specialty,
+          residencySpecialty: setupData.residencySpecialty,
+          residencyHospital: setupData.residencyHospital,
+          residencyYear: setupData.residencyYear,
           isAfyaMedicineStudent: setupData.isAfyaMedicineStudent,
           afyaUnit: setupData.afyaUnit,
           periodo: setupData.periodo,
@@ -870,80 +925,195 @@ export default function LoginPage() {
                           style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
                         >
                           <p className="text-sm font-medium text-muted-foreground">
-                            Você é estudante de Ciências Médicas?
+                            Você é médico, acadêmico ou residente? *
                           </p>
-                          <div className="flex gap-2">
-                            <button
-                              type="button"
-                              className={`flex-1 h-9 rounded-xl text-sm font-semibold transition-all ${
-                                formData.isAfyaMedicineStudent
-                                  ? 'text-secondary-foreground'
-                                  : 'text-muted-foreground border border-border bg-muted/40 hover:bg-muted'
-                              }`}
-                              style={
-                                formData.isAfyaMedicineStudent
-                                  ? { background: 'hsl(var(--secondary))' }
-                                  : {}
-                              }
-                              onClick={() => setFormData({ ...formData, isAfyaMedicineStudent: true })}
-                            >
-                              Sim
-                            </button>
-                            <button
-                              type="button"
-                              className={`flex-1 h-9 rounded-xl text-sm font-semibold transition-all ${
-                                !formData.isAfyaMedicineStudent
-                                  ? 'text-secondary-foreground bg-muted-foreground'
-                                  : 'text-muted-foreground border border-border bg-muted/40 hover:bg-muted'
-                              }`}
-                              onClick={() =>
-                                setFormData({ ...formData, isAfyaMedicineStudent: false, afyaUnit: '' })
-                              }
-                            >
-                              Não
-                            </button>
+                          <div className="grid grid-cols-3 gap-2">
+                            {(
+                              [
+                                { value: 'medico', label: 'Médico' },
+                                { value: 'academico', label: 'Acadêmico' },
+                                { value: 'residente', label: 'Residente' },
+                              ] as const
+                            ).map((opt) => (
+                              <button
+                                key={opt.value}
+                                type="button"
+                                className={`h-9 rounded-xl text-sm font-semibold transition-all ${
+                                  formData.profession === opt.value
+                                    ? 'text-secondary-foreground'
+                                    : 'text-muted-foreground border border-border bg-muted/40 hover:bg-muted'
+                                }`}
+                                style={
+                                  formData.profession === opt.value
+                                    ? { background: 'hsl(var(--secondary))' }
+                                    : {}
+                                }
+                                onClick={() =>
+                                  setFormData({
+                                    ...formData,
+                                    profession: opt.value,
+                                    isAfyaMedicineStudent: opt.value === 'academico',
+                                    afyaUnit: opt.value === 'academico' ? formData.afyaUnit : '',
+                                    specialty: opt.value === 'medico' ? formData.specialty : '',
+                                    residencySpecialty: opt.value === 'residente' ? formData.residencySpecialty : '',
+                                    residencyHospital: opt.value === 'residente' ? formData.residencyHospital : '',
+                                    residencyYear: opt.value === 'residente' ? formData.residencyYear : '',
+                                  })
+                                }
+                              >
+                                {opt.label}
+                              </button>
+                            ))}
                           </div>
                         </div>
 
-                        {formData.isAfyaMedicineStudent && (
+                        <div className="space-y-2">
+                          <Label htmlFor="state" className="text-xs font-medium text-muted-foreground">Estado *</Label>
+                          <select
+                            id="state"
+                            className={selectCls}
+                            value={formData.state}
+                            onChange={(e) =>
+                              setFormData({ ...formData, state: e.target.value, afyaUnit: '', residencyHospital: '' })
+                            }
+                            required
+                            style={{ colorScheme: 'dark' }}
+                          >
+                            <option value="">Selecione seu estado...</option>
+                            {BRAZIL_STATES.map((s) => (
+                              <option key={s.uf} value={s.uf}>{s.name} ({s.uf})</option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="phone" className="text-xs font-medium text-muted-foreground">Telefone (com DDD) *</Label>
+                          <Input
+                            id="phone"
+                            type="tel"
+                            inputMode="numeric"
+                            placeholder="(11) 91234-5678"
+                            value={formData.phone}
+                            onChange={(e) => setFormData({ ...formData, phone: formatBrazilPhone(e.target.value) })}
+                            required
+                            className={inputCls}
+                          />
+                        </div>
+
+                        {formData.profession === 'medico' && (
                           <motion.div
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: 'auto' }}
                             exit={{ opacity: 0, height: 0 }}
                             className="space-y-2"
                           >
-                            <Label htmlFor="afyaUnit" className="text-xs font-medium text-muted-foreground">Sua Unidade *</Label>
-                            <select
-                              id="afyaUnit"
+                            <Label htmlFor="specialty" className="text-xs font-medium text-muted-foreground">Qual sua especialidade? *</Label>
+                            <SearchableSelect
+                              id="specialty"
+                              value={formData.specialty}
+                              onChange={(value) => setFormData({ ...formData, specialty: value })}
+                              options={MEDICAL_SPECIALTIES}
+                              placeholder="Selecione sua especialidade..."
+                              searchPlaceholder="Buscar especialidade..."
                               className={selectCls}
-                              value={formData.afyaUnit}
-                              onChange={(e) => setFormData({ ...formData, afyaUnit: e.target.value })}
-                              required={formData.isAfyaMedicineStudent}
-                              style={{ colorScheme: 'dark' }}
-                            >
-                              <option value="">Selecione sua unidade...</option>
-                              {INSTITUTION_UNITS.map((unit) => (
-                                <option key={unit} value={unit}>{unit}</option>
-                              ))}
-                            </select>
+                            />
                           </motion.div>
                         )}
 
-                        <div className="space-y-2">
-                          <Label htmlFor="periodo" className="text-xs font-medium text-muted-foreground">Período (opcional)</Label>
-                          <select
-                            id="periodo"
-                            className={selectCls}
-                            value={formData.periodo}
-                            onChange={(e) => setFormData({ ...formData, periodo: e.target.value })}
-                            style={{ colorScheme: 'dark' }}
+                        {formData.profession === 'residente' && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="space-y-4"
                           >
-                            <option value="">Selecione seu período...</option>
-                            {PERIODO_OPTIONS.map((periodo) => (
-                              <option key={periodo} value={periodo}>{formatPeriodoLabel(periodo)}</option>
-                            ))}
-                          </select>
-                        </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="residencySpecialty" className="text-xs font-medium text-muted-foreground">Qual sua residência? *</Label>
+                              <SearchableSelect
+                                id="residencySpecialty"
+                                value={formData.residencySpecialty}
+                                onChange={(value) => setFormData({ ...formData, residencySpecialty: value })}
+                                options={MEDICAL_SPECIALTIES}
+                                placeholder="Selecione a área da residência..."
+                                searchPlaceholder="Buscar área da residência..."
+                                className={selectCls}
+                              />
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label htmlFor="residencyHospital" className="text-xs font-medium text-muted-foreground">
+                                Hospital da residência {formData.state ? '*' : '(selecione o estado primeiro)'}
+                              </Label>
+                              <SearchableSelect
+                                id="residencyHospital"
+                                value={formData.residencyHospital}
+                                onChange={(value) => setFormData({ ...formData, residencyHospital: value })}
+                                options={getResidencyHospitalsByState(formData.state)}
+                                placeholder="Selecione o hospital..."
+                                searchPlaceholder="Buscar hospital..."
+                                className={selectCls}
+                                disabled={!formData.state}
+                              />
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label htmlFor="residencyYear" className="text-xs font-medium text-muted-foreground">Qual ano de residência? *</Label>
+                              <select
+                                id="residencyYear"
+                                className={selectCls}
+                                value={formData.residencyYear}
+                                onChange={(e) => setFormData({ ...formData, residencyYear: e.target.value })}
+                                style={{ colorScheme: 'dark' }}
+                              >
+                                <option value="">Selecione...</option>
+                                {RESIDENCY_YEARS.map((year) => (
+                                  <option key={year} value={year}>{year}</option>
+                                ))}
+                              </select>
+                            </div>
+                          </motion.div>
+                        )}
+
+                        {formData.profession === 'academico' && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="space-y-4"
+                          >
+                            <div className="space-y-2">
+                              <Label htmlFor="afyaUnit" className="text-xs font-medium text-muted-foreground">
+                                Sua Unidade {formData.state ? '*' : '(selecione o estado primeiro)'}
+                              </Label>
+                              <SearchableSelect
+                                id="afyaUnit"
+                                value={formData.afyaUnit}
+                                onChange={(value) => setFormData({ ...formData, afyaUnit: value })}
+                                options={getMedicalSchoolsByState(formData.state)}
+                                placeholder="Selecione sua instituição..."
+                                searchPlaceholder="Buscar sua instituição..."
+                                className={selectCls}
+                                disabled={!formData.state}
+                              />
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label htmlFor="periodo" className="text-xs font-medium text-muted-foreground">Período (opcional)</Label>
+                              <select
+                                id="periodo"
+                                className={selectCls}
+                                value={formData.periodo}
+                                onChange={(e) => setFormData({ ...formData, periodo: e.target.value })}
+                                style={{ colorScheme: 'dark' }}
+                              >
+                                <option value="">Selecione seu período...</option>
+                                {PERIODO_OPTIONS.map((periodo) => (
+                                  <option key={periodo} value={periodo}>{formatPeriodoLabel(periodo)}</option>
+                                ))}
+                              </select>
+                            </div>
+                          </motion.div>
+                        )}
 
                         {canBeAdmin && (
                           <div className="space-y-2">

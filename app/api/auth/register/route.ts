@@ -10,6 +10,8 @@ import { sendWelcomeEmail, sendVerificationEmail } from '@/lib/mail'
 import crypto from 'crypto'
 import { secureApiEndpoint } from '@/lib/api-security'
 import { normalizePeriodo, getCurrentSemesterRef } from '@/lib/user-periodo'
+import { isValidStateUf } from '@/lib/brazil-states'
+import { isValidBrazilPhone } from '@/lib/phone'
 
 export const dynamic = 'force-dynamic'
 
@@ -26,11 +28,52 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { email, password, name, dateOfBirth, isAfyaMedicineStudent, afyaUnit, periodo, role = 'user', recaptchaToken } = body
+    const {
+      email, password, name, dateOfBirth,
+      profession, state, phone,
+      specialty, residencySpecialty, residencyHospital, residencyYear,
+      isAfyaMedicineStudent, afyaUnit, periodo,
+      role = 'user', recaptchaToken,
+    } = body
 
     if (!email || !password || !name || !dateOfBirth) {
       return NextResponse.json(
         { error: 'Email, senha, nome e data de nascimento são obrigatórios' },
+        { status: 400 }
+      )
+    }
+
+    if (!['medico', 'academico', 'residente'].includes(profession)) {
+      return NextResponse.json(
+        { error: 'Selecione se você é médico, acadêmico ou residente' },
+        { status: 400 }
+      )
+    }
+
+    if (!isValidStateUf(state)) {
+      return NextResponse.json(
+        { error: 'Selecione um estado válido' },
+        { status: 400 }
+      )
+    }
+
+    if (!isValidBrazilPhone(phone)) {
+      return NextResponse.json(
+        { error: 'Informe um telefone válido com DDD' },
+        { status: 400 }
+      )
+    }
+
+    if (profession === 'medico' && !specialty) {
+      return NextResponse.json(
+        { error: 'Especialidade é obrigatória para médicos' },
+        { status: 400 }
+      )
+    }
+
+    if (profession === 'residente' && (!residencySpecialty || !residencyHospital || !residencyYear)) {
+      return NextResponse.json(
+        { error: 'Dados da residência são obrigatórios para residentes' },
         { status: 400 }
       )
     }
@@ -44,9 +87,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (isAfyaMedicineStudent && !afyaUnit) {
+    if (profession === 'academico' && !afyaUnit) {
       return NextResponse.json(
-        { error: 'Unidade é obrigatória para estudantes de Ciências Médicas' },
+        { error: 'Unidade é obrigatória para acadêmicos' },
         { status: 400 }
       )
     }
@@ -99,8 +142,15 @@ export async function POST(request: NextRequest) {
       password: hashedPassword,
       name,
       dateOfBirth: new Date(dateOfBirth),
-      isAfyaMedicineStudent: isAfyaMedicineStudent || false,
-      afyaUnit: isAfyaMedicineStudent ? afyaUnit : undefined,
+      profession,
+      state,
+      phone,
+      specialty: profession === 'medico' ? specialty : undefined,
+      residencySpecialty: profession === 'residente' ? residencySpecialty : undefined,
+      residencyHospital: profession === 'residente' ? residencyHospital : undefined,
+      residencyYear: profession === 'residente' ? residencyYear : undefined,
+      isAfyaMedicineStudent: profession === 'academico',
+      afyaUnit: profession === 'academico' ? afyaUnit : undefined,
       role: role as 'admin' | 'user',
       createdAt: new Date(),
       lastLoginAt: new Date(),

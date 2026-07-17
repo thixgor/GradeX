@@ -4,13 +4,21 @@ import { createToken, setAuthCookie, generateSessionId } from '@/lib/auth'
 import { recordLoginSession } from '@/lib/sessions'
 import { User } from '@/lib/types'
 import { normalizePeriodo, getCurrentSemesterRef } from '@/lib/user-periodo'
+import { isValidStateUf } from '@/lib/brazil-states'
+import { isValidBrazilPhone } from '@/lib/phone'
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { email, profileName, dateOfBirth, isAfyaMedicineStudent, afyaUnit, periodo, picture, googleId } = body
+    const {
+      email, profileName, dateOfBirth,
+      profession, state, phone,
+      specialty, residencySpecialty, residencyHospital, residencyYear,
+      isAfyaMedicineStudent, afyaUnit, periodo,
+      picture, googleId,
+    } = body
 
     if (!email || !profileName || !dateOfBirth) {
       return NextResponse.json(
@@ -19,9 +27,44 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (isAfyaMedicineStudent && !afyaUnit) {
+    if (!['medico', 'academico', 'residente'].includes(profession)) {
       return NextResponse.json(
-        { error: 'Unidade é obrigatória para estudantes de Ciências Médicas' },
+        { error: 'Selecione se você é médico, acadêmico ou residente' },
+        { status: 400 }
+      )
+    }
+
+    if (!isValidStateUf(state)) {
+      return NextResponse.json(
+        { error: 'Selecione um estado válido' },
+        { status: 400 }
+      )
+    }
+
+    if (!isValidBrazilPhone(phone)) {
+      return NextResponse.json(
+        { error: 'Informe um telefone válido com DDD' },
+        { status: 400 }
+      )
+    }
+
+    if (profession === 'medico' && !specialty) {
+      return NextResponse.json(
+        { error: 'Especialidade é obrigatória para médicos' },
+        { status: 400 }
+      )
+    }
+
+    if (profession === 'residente' && (!residencySpecialty || !residencyHospital || !residencyYear)) {
+      return NextResponse.json(
+        { error: 'Dados da residência são obrigatórios para residentes' },
+        { status: 400 }
+      )
+    }
+
+    if (profession === 'academico' && !afyaUnit) {
+      return NextResponse.json(
+        { error: 'Unidade é obrigatória para acadêmicos' },
         { status: 400 }
       )
     }
@@ -52,8 +95,15 @@ export async function POST(request: NextRequest) {
       createdAt: new Date(),
       lastLoginAt: new Date(),
       dateOfBirth: new Date(dateOfBirth),
-      isAfyaMedicineStudent: isAfyaMedicineStudent || false,
-      afyaUnit: isAfyaMedicineStudent ? afyaUnit : undefined,
+      profession,
+      state,
+      phone,
+      specialty: profession === 'medico' ? specialty : undefined,
+      residencySpecialty: profession === 'residente' ? residencySpecialty : undefined,
+      residencyHospital: profession === 'residente' ? residencyHospital : undefined,
+      residencyYear: profession === 'residente' ? residencyYear : undefined,
+      isAfyaMedicineStudent: profession === 'academico',
+      afyaUnit: profession === 'academico' ? afyaUnit : undefined,
       googleId,
       profilePicture: picture,
       ...(periodoBase !== null

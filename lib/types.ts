@@ -229,9 +229,17 @@ export interface User {
   // Informações pessoais obrigatórias
   cpf?: string // CPF do usuário (único, obrigatório no cadastro)
   dateOfBirth?: Date // Data de nascimento (obrigatória no cadastro)
+  // Perfil profissional coletado no cadastro
+  profession?: 'medico' | 'academico' | 'residente'
+  state?: string // Estado (UF) do usuário, ex.: "SP"
+  phone?: string // Telefone com DDD
+  specialty?: string // Especialidade médica (profession = 'medico')
+  residencySpecialty?: string // Área da residência (profession = 'residente')
+  residencyHospital?: string // Hospital/instituição da residência (profession = 'residente')
+  residencyYear?: string // Ano da residência: R1, R2, ... (profession = 'residente')
   // Informações sobre a instituição do estudante
-  isAfyaMedicineStudent?: boolean // Se é estudante de Medicina
-  afyaUnit?: string // Unidade/campus do estudante (se isAfyaMedicineStudent = true)
+  isAfyaMedicineStudent?: boolean // Se é estudante de Medicina (profession = 'academico')
+  afyaUnit?: string // Unidade/faculdade do estudante (se isAfyaMedicineStudent = true)
   // Período acadêmico (semestre). Definido no cadastro ou pelo admin.
   // O período exibido avança automaticamente a cada virada de semestre a
   // partir de periodoBaseRef (ver lib/user-periodo.ts). Cadastros antigos que
