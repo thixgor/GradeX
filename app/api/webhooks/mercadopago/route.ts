@@ -57,7 +57,10 @@ export async function POST(request: NextRequest) {
     validation.eventId ||
     `${queryParams.type || ''}:${queryParams['data.id'] || queryParams.id || ''}:${Date.now()}`
 
-  // Idempotência: insere; se duplicado, retorna 200 sem reprocessar.
+  // Idempotência: insere; se duplicado E já processado com sucesso, retorna 200
+  // sem reprocessar. Se o duplicado ainda NÃO foi processado (ex.: a 1ª entrega
+  // falhou e o MP está reentregando), seguimos em frente para reprocessar — do
+  // contrário um pagamento aprovado ficaria preso em "pending" para sempre.
   try {
     await eventsCol.insertOne({
       provider: 'mercado_pago',
@@ -71,12 +74,18 @@ export async function POST(request: NextRequest) {
       createdAt: new Date(),
     })
   } catch (err: any) {
-    // Duplicate key — já processado. Responder 200.
+    // Duplicate key — evento já visto.
     if (err?.code === 11000) {
+      const existing = await eventsCol.findOne({ provider: 'mercado_pago', eventId })
       await eventsCol.updateOne({ provider: 'mercado_pago', eventId }, { $inc: { attempts: 1 } })
-      return NextResponse.json({ ok: true, deduped: true })
+      // Só é seguro pular o reprocessamento se a entrega anterior concluiu sem erro.
+      if (existing?.processedAt && !existing?.processingError) {
+        return NextResponse.json({ ok: true, deduped: true })
+      }
+      // Caso contrário, cai para o processamento abaixo (reentrega do MP).
+    } else {
+      console.error('[mp-webhook] erro ao gravar evento:', err)
     }
-    console.error('[mp-webhook] erro ao gravar evento:', err)
   }
 
   if (!validation.valid) {
@@ -116,7 +125,7 @@ export async function POST(request: NextRequest) {
 
     await eventsCol.updateOne(
       { provider: 'mercado_pago', eventId },
-      { $set: { processedAt: new Date() } }
+      { $set: { processedAt: new Date() }, $unset: { processingError: '' } }
     )
     return NextResponse.json({ ok: true })
   } catch (err: any) {

@@ -411,13 +411,40 @@ function Funnel({ steps }: { steps: FunnelStep[] }) {
   )
 }
 
-function OrdersTable({ rows }: { rows: OrderRow[] }) {
+function OrdersTable({ rows, onApproved }: { rows: OrderRow[]; onApproved: () => void }) {
+  const [approvingId, setApprovingId] = useState('')
+  const [feedback, setFeedback] = useState<{ id: string; ok: boolean; msg: string } | null>(null)
+
+  async function approve(row: OrderRow) {
+    if (approvingId) return
+    const ok = window.confirm(
+      `Aprovar manualmente o pedido de ${row.userName || row.userEmail || 'usuário'} (${formatCurrency(row.value)})?\n\n` +
+        'Isso libera o produto/acesso e envia o e-mail de confirmação, exatamente como uma aprovação automática.'
+    )
+    if (!ok) return
+    setApprovingId(row.id)
+    setFeedback(null)
+    try {
+      const res = await fetch(`/api/admin/payments/${row.id}/approve`, { method: 'POST' })
+      const payload = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(payload.error || 'Falha ao aprovar')
+      setFeedback({ id: row.id, ok: true, msg: payload.source === 'mercado_pago' ? 'Aprovado (confirmado no MP)' : 'Aprovado manualmente' })
+      onApproved()
+    } catch (err: any) {
+      setFeedback({ id: row.id, ok: false, msg: err?.message || 'Falha ao aprovar' })
+    } finally {
+      setApprovingId('')
+    }
+  }
+
+  const PENDING = ['Pendente', 'Criado']
+
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[1260px] text-left text-sm">
+      <table className="w-full min-w-[1360px] text-left text-sm">
         <thead className="text-xs uppercase text-white/40">
           <tr className="border-b border-white/10">
-            {['Usuário', 'Produto', 'Tipo', 'Valor', 'Cupom', 'Status', 'Método', 'Pagamento MP', 'Preferência MP', 'Criação', 'Pagamento', 'Origem'].map((head) => (
+            {['Usuário', 'Produto', 'Tipo', 'Valor', 'Cupom', 'Status', 'Método', 'Pagamento MP', 'Preferência MP', 'Criação', 'Pagamento', 'Origem', 'Ações'].map((head) => (
               <th key={head} className="px-3 py-3 font-bold">{head}</th>
             ))}
           </tr>
@@ -447,6 +474,25 @@ function OrdersTable({ rows }: { rows: OrderRow[] }) {
               <td className="px-3 py-3">{formatDate(row.createdAt)}</td>
               <td className="px-3 py-3">{formatDate(row.paidAt)}</td>
               <td className="px-3 py-3">{row.origin}</td>
+              <td className="px-3 py-3">
+                {PENDING.includes(row.status) ? (
+                  <div className="flex flex-col gap-1">
+                    <button
+                      type="button"
+                      onClick={() => approve(row)}
+                      disabled={approvingId === row.id}
+                      className="whitespace-nowrap rounded-lg border border-emerald-300/25 bg-emerald-400/10 px-3 py-1.5 text-xs font-bold text-emerald-100 transition hover:bg-emerald-400/20 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {approvingId === row.id ? 'Aprovando…' : 'Aprovar manualmente'}
+                    </button>
+                    {feedback && feedback.id === row.id ? (
+                      <span className={`text-[11px] ${feedback.ok ? 'text-emerald-300' : 'text-rose-300'}`}>{feedback.msg}</span>
+                    ) : null}
+                  </div>
+                ) : (
+                  <span className="text-xs text-white/30">-</span>
+                )}
+              </td>
             </tr>
           ))}
         </tbody>
@@ -995,7 +1041,7 @@ export default function AdminAnalyticsPage() {
                 <FilterInput label="Valor mínimo" type="number" value={minValue} onChange={setMinValue} />
                 <FilterInput label="Valor máximo" type="number" value={maxValue} onChange={setMaxValue} />
               </div>
-              <OrdersTable rows={filteredOrders} />
+              <OrdersTable rows={filteredOrders} onApproved={load} />
             </GlassPanel>
 
             <GlassPanel title="Cancelamentos" description="Quem cancelou, origem, tempo como assinante, motivo e valor pago">

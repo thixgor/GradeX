@@ -2,6 +2,7 @@ import { getDb } from '../mongodb'
 
 export type AuditAction =
   | 'order_created'
+  | 'order_approved_manually'
   | 'payment_approved'
   | 'payment_rejected'
   | 'payment_refunded'
