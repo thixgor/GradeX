@@ -8,12 +8,9 @@ export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
 const DAY = 24 * 60 * 60 * 1000
-// Não muito frequente (pedido explícito): no máximo 1 lembrete a cada 30 dias
+// Não muito frequente (pedido explícito): no máximo 1 lembrete a cada 14 dias
 // por usuário, mesmo que o cron externo rode com mais frequência.
-const REENVIO_MIN_DIAS = 30
-// Dá um tempo pro usuário recém-cadastrado — ele acabou de preencher tudo
-// no cadastro, não faz sentido cobrar de novo nos primeiros dias.
-const CONTA_MIN_DIAS = 5
+const REENVIO_MIN_DIAS = 14
 const MAX_POR_EXECUCAO = 300
 
 /**
@@ -26,7 +23,9 @@ const MAX_POR_EXECUCAO = 300
  * Lembra usuários com dados de perfil incompletos (telefone, estado e os
  * campos específicos da profissão atual — especialidade pro médico,
  * área/hospital/ano pro residente, instituição pro acadêmico) de
- * completá-los em /profile.
+ * completá-los em /profile. Usuários com e-mail ainda não verificado também
+ * são elegíveis (não são mais excluídos) e recebem um item extra na lista
+ * pedindo pra confirmar o e-mail.
  *
  * Auth: header `x-cron-token` deve bater com process.env.CRON_TOKEN (se
  * setado). Configure esse header na chamada HTTP do cron-job.org.
@@ -42,14 +41,11 @@ export async function GET(request: NextRequest) {
   const usersCollection = db.collection<User>('users')
   const now = new Date()
   const cooldownCutoff = new Date(now.getTime() - REENVIO_MIN_DIAS * DAY)
-  const minAccountAge = new Date(now.getTime() - CONTA_MIN_DIAS * DAY)
 
   const candidatos = await usersCollection
     .find(
       {
         banned: { $ne: true },
-        emailVerified: true,
-        createdAt: { $lte: minAccountAge },
         $or: [
           { profileReminderLastSentAt: { $exists: false } },
           { profileReminderLastSentAt: { $lte: cooldownCutoff } },
@@ -67,6 +63,7 @@ export async function GET(request: NextRequest) {
           residencyHospital: 1,
           residencyYear: 1,
           afyaUnit: 1,
+          emailVerified: 1,
         },
       }
     )
@@ -83,6 +80,9 @@ export async function GET(request: NextRequest) {
     }
 
     const missing = getMissingProfileFields(user)
+    if (!user.emailVerified) {
+      missing.push({ key: 'emailVerified', label: 'Confirmar seu e-mail (verifique sua caixa de entrada ou o spam)' })
+    }
     if (missing.length === 0) {
       pulados++
       continue
