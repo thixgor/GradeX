@@ -90,40 +90,64 @@ function useParallaxVars<T extends HTMLElement>() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
     let raf = 0
-    let running = false
+    let listening = false
+    let animating = false
+    let visible = false
     let tx = 0
     let ty = 0
     let cx = 0
     let cy = 0
     let sy = 0
+    let csy = 0
 
     const onMove = (e: PointerEvent) => {
       tx = (e.clientX / window.innerWidth - 0.5) * 2
       ty = (e.clientY / window.innerHeight - 0.5) * 2
+      wake()
     }
     const onScroll = () => {
       sy = window.scrollY
+      wake()
     }
     const loop = () => {
-      cx += (tx - cx) * 0.07
-      cy += (ty - cy) * 0.07
+      const dx = tx - cx
+      const dy = ty - cy
+      cx += dx * 0.07
+      cy += dy * 0.07
+      csy = sy
       el.style.setProperty('--da-mx', cx.toFixed(4))
       el.style.setProperty('--da-my', cy.toFixed(4))
-      el.style.setProperty('--da-sy', sy.toFixed(1))
+      el.style.setProperty('--da-sy', csy.toFixed(1))
+      // Assim que o easing converge, o loop dorme em vez de continuar pedindo
+      // frames pra sempre — nada de queimar CPU/bateria com o mouse parado.
+      if (Math.abs(dx) < 0.0005 && Math.abs(dy) < 0.0005) {
+        animating = false
+        return
+      }
+      raf = requestAnimationFrame(loop)
+    }
+    const wake = () => {
+      if (!visible || animating) return
+      animating = true
       raf = requestAnimationFrame(loop)
     }
     const start = () => {
-      if (running) return
-      running = true
-      window.addEventListener('pointermove', onMove, { passive: true })
-      window.addEventListener('scroll', onScroll, { passive: true })
-      raf = requestAnimationFrame(loop)
+      visible = true
+      if (!listening) {
+        listening = true
+        window.addEventListener('pointermove', onMove, { passive: true })
+        window.addEventListener('scroll', onScroll, { passive: true })
+      }
+      wake()
     }
     const stop = () => {
-      if (!running) return
-      running = false
-      window.removeEventListener('pointermove', onMove)
-      window.removeEventListener('scroll', onScroll)
+      visible = false
+      if (listening) {
+        listening = false
+        window.removeEventListener('pointermove', onMove)
+        window.removeEventListener('scroll', onScroll)
+      }
+      animating = false
       cancelAnimationFrame(raf)
     }
 
@@ -519,7 +543,12 @@ function Nav({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: boole
         </nav>
 
         <div className="flex items-center gap-3">
-          <ThemeToggle variant="icon" />
+          {/* Botão redondo da landing: tailwind-merge deixa estas classes
+              sobrescreverem o visual padrão (quadrado, bg-card) do app. */}
+          <ThemeToggle
+            variant="icon"
+            className="h-10 w-10 rounded-full border-[color:var(--da-neutral-line)] bg-transparent text-da-paper shadow-none transition hover:border-da-amber/50 hover:bg-da-panel/40 active:scale-95"
+          />
           <PrimaryCTA href={signupHref} className="!hidden !px-5 !py-2.5 text-sm sm:!inline-flex">
             {isLoggedIn ? 'Ir para o dashboard' : 'Criar conta grátis'}
           </PrimaryCTA>

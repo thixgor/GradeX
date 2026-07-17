@@ -463,9 +463,15 @@
   .theme-toggle-icon {
     display: flex;
     transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  /* Só faz sentido dentro do switch: o thumb vira 180° e o ícone contra-gira
+     para não sair espelhado (180 + 180 = 360, volta pra frente). Fora do thumb
+     (variant="icon") nada cancela essa rotação — com backface-visibility:hidden
+     o ícone virava o verso escondido pra tela e sumia no modo escuro. */
+  .theme-toggle-thumb .theme-toggle-icon {
     backface-visibility: hidden;
   }
-  .theme-toggle-icon[data-dark='true'] {
+  .theme-toggle-thumb .theme-toggle-icon[data-dark='true'] {
     transform: rotateY(180deg);
   }
   @media (prefers-reduced-motion: reduce) {
