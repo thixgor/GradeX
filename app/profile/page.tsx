@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
 import { OrdersPanel } from '@/components/shop/orders-panel'
@@ -11,7 +11,7 @@ import { ToastAlert } from '@/components/ui/toast-alert'
 import { BanChecker } from '@/components/ban-checker'
 import { AppShell } from '@/components/app-shell'
 import { PlanLimitsCard } from '@/components/plan-limits-card'
-import { CheckCircle, Clock, FileText, Download, Printer, ClipboardList, Trophy, BookOpen, Crown, Timer, Sparkles, Phone, Mail, XCircle, Ticket, AlertTriangle, ChevronDown, ChevronUp, Target, BarChart3, GraduationCap, ShoppingBag, Receipt, KeyRound } from 'lucide-react'
+import { CheckCircle, Clock, FileText, Download, Printer, ClipboardList, Trophy, BookOpen, Crown, Timer, Sparkles, Phone, Mail, XCircle, Ticket, AlertTriangle, ChevronDown, ChevronUp, Target, BarChart3, GraduationCap, ShoppingBag, Receipt, KeyRound, MapPin, Stethoscope, Pencil, Save, Loader2 } from 'lucide-react'
 import { FocusSessionsProfile } from '@/components/focus-sessions-profile'
 // PDF generator loaded dynamically to reduce initial bundle size (~200KB)
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
@@ -23,6 +23,47 @@ import { cn } from '@/lib/utils'
 import { useLiteMode } from '@/hooks/use-lite-mode'
 import { useUIPreferences } from '@/hooks/use-ui-preferences'
 import { Heart, Music, MessageCircle } from 'lucide-react'
+import { SearchableSelect } from '@/components/ui/searchable-select'
+import { BRAZIL_STATES, formatStateLabel } from '@/lib/brazil-states'
+import { MEDICAL_SPECIALTIES } from '@/lib/medical-specialties'
+import { RESIDENCY_YEARS } from '@/lib/residency-years'
+import { getMedicalSchoolsByState } from '@/lib/medical-schools-brazil'
+import { getResidencyHospitalsByState } from '@/lib/residency-hospitals-brazil'
+import { formatBrazilPhone, isValidBrazilPhone } from '@/lib/phone'
+import { PERIODO_OPTIONS, formatPeriodoLabel } from '@/lib/user-periodo'
+import { getMissingProfileFields } from '@/lib/profile-completeness'
+
+const PROFESSION_LABELS: Record<string, string> = {
+  medico: 'Médico',
+  academico: 'Acadêmico',
+  residente: 'Residente',
+}
+
+type ProfileFormState = {
+  name: string
+  phone: string
+  state: string
+  profession: '' | 'medico' | 'academico' | 'residente'
+  specialty: string
+  residencySpecialty: string
+  residencyHospital: string
+  residencyYear: string
+  afyaUnit: string
+  periodo: string
+}
+
+const EMPTY_PROFILE_FORM: ProfileFormState = {
+  name: '',
+  phone: '',
+  state: '',
+  profession: '',
+  specialty: '',
+  residencySpecialty: '',
+  residencyHospital: '',
+  residencyYear: '',
+  afyaUnit: '',
+  periodo: '',
+}
 
 interface UserSubmission {
   _id: string
@@ -105,13 +146,137 @@ export default function ProfilePage() {
   const { liteMode, toggleLiteMode } = useLiteMode()
   const { showDonation, showMusic, showSupport, toggle: toggleUIPref } = useUIPreferences()
 
+  // ====== Dados de perfil (editáveis) ======
+  const [profileForm, setProfileForm] = useState<ProfileFormState>(EMPTY_PROFILE_FORM)
+  const [profileLoading, setProfileLoading] = useState(true)
+  const [profileEmailVerified, setProfileEmailVerified] = useState(true)
+  const [editingProfile, setEditingProfile] = useState(false)
+  const [savingProfile, setSavingProfile] = useState(false)
+  const [toastType, setToastType] = useState<'success' | 'error'>('success')
+  const [changeEmailOpen, setChangeEmailOpen] = useState(false)
+  const [newEmailInput, setNewEmailInput] = useState('')
+  const [emailPasswordInput, setEmailPasswordInput] = useState('')
+  const [changingEmail, setChangingEmail] = useState(false)
+
   useEffect(() => {
     loadSubmissions()
     loadUserData()
     loadStatistics()
     loadSubscriptionStatus()
     loadPurchases()
+    loadProfileData()
   }, [])
+
+  async function loadProfileData() {
+    setProfileLoading(true)
+    try {
+      const res = await fetch('/api/user/profile')
+      if (res.ok) {
+        const data = await res.json()
+        const p = data.profile || {}
+        setProfileForm({
+          name: p.name || '',
+          phone: p.phone || '',
+          state: p.state || '',
+          profession: p.profession || '',
+          specialty: p.specialty || '',
+          residencySpecialty: p.residencySpecialty || '',
+          residencyHospital: p.residencyHospital || '',
+          residencyYear: p.residencyYear || '',
+          afyaUnit: p.afyaUnit || '',
+          periodo: p.periodo || '',
+        })
+        setProfileEmailVerified(!!p.emailVerified)
+      }
+    } catch (error) {
+      console.error('Erro ao carregar dados de perfil:', error)
+    } finally {
+      setProfileLoading(false)
+    }
+  }
+
+  function showToast(message: string, type: 'success' | 'error' = 'success') {
+    setToastType(type)
+    setToastMessage(message)
+    setToastOpen(true)
+  }
+
+  async function handleSaveProfile() {
+    if (profileForm.phone && !isValidBrazilPhone(profileForm.phone)) {
+      showToast('Informe um telefone válido com DDD', 'error')
+      return
+    }
+    setSavingProfile(true)
+    try {
+      const res = await fetch('/api/user/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: profileForm.name,
+          phone: profileForm.phone,
+          state: profileForm.state,
+          profession: profileForm.profession,
+          specialty: profileForm.specialty,
+          residencySpecialty: profileForm.residencySpecialty,
+          residencyHospital: profileForm.residencyHospital,
+          residencyYear: profileForm.residencyYear,
+          afyaUnit: profileForm.afyaUnit,
+          periodo: profileForm.periodo,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erro ao salvar dados')
+      showToast('Dados atualizados com sucesso!')
+      setEditingProfile(false)
+      if (profileForm.name) setUserName(profileForm.name)
+      loadProfileData()
+    } catch (error: any) {
+      showToast(error.message, 'error')
+    } finally {
+      setSavingProfile(false)
+    }
+  }
+
+  async function handleChangeEmail() {
+    if (!newEmailInput.trim() || !emailPasswordInput) {
+      showToast('Preencha o novo e-mail e sua senha atual', 'error')
+      return
+    }
+    setChangingEmail(true)
+    try {
+      const res = await fetch('/api/user/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: newEmailInput.trim(), currentPassword: emailPasswordInput }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erro ao alterar e-mail')
+      showToast('E-mail alterado! Confira sua caixa de entrada para confirmar o novo endereço.')
+      setChangeEmailOpen(false)
+      setNewEmailInput('')
+      setEmailPasswordInput('')
+      loadUserData()
+      loadProfileData()
+    } catch (error: any) {
+      showToast(error.message, 'error')
+    } finally {
+      setChangingEmail(false)
+    }
+  }
+
+  const missingProfileFields = useMemo(
+    () => getMissingProfileFields({
+      phone: profileForm.phone || undefined,
+      state: profileForm.state || undefined,
+      profession: (profileForm.profession || undefined) as 'medico' | 'academico' | 'residente' | undefined,
+      specialty: profileForm.specialty || undefined,
+      residencySpecialty: profileForm.residencySpecialty || undefined,
+      residencyHospital: profileForm.residencyHospital || undefined,
+      residencyYear: profileForm.residencyYear || undefined,
+      afyaUnit: profileForm.afyaUnit || undefined,
+    }),
+    [profileForm]
+  )
 
   async function loadSubmissions() {
     try {
@@ -447,6 +612,318 @@ export default function ProfilePage() {
 
         {profileTab === 'perfil' && (
         <>
+        {/* ====== Meus Dados ====== */}
+        <section className="mb-8">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="editorial-mark mb-0">Meus dados</h2>
+            {!profileLoading && !editingProfile && (
+              <button
+                type="button"
+                onClick={() => setEditingProfile(true)}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:opacity-80 transition-opacity"
+              >
+                <Pencil className="h-3.5 w-3.5" />
+                Editar
+              </button>
+            )}
+          </div>
+
+          {!profileLoading && missingProfileFields.length > 0 && !editingProfile && (
+            <div className="mb-4 rounded-lg border border-amber-300/60 dark:border-amber-800/60 bg-amber-50 dark:bg-amber-950/40 p-4">
+              <p className="text-sm font-medium text-amber-900 dark:text-amber-100 mb-1.5">
+                Falta pouco pra completar seu perfil ✍️
+              </p>
+              <p className="text-xs text-amber-800/90 dark:text-amber-200/80 mb-2">
+                Isso ajuda a gente a te dar uma experiência mais na sua cara: {missingProfileFields.map(f => f.label).join(', ')}.
+              </p>
+              <button
+                type="button"
+                onClick={() => setEditingProfile(true)}
+                className="text-xs font-semibold text-amber-900 dark:text-amber-100 underline underline-offset-2"
+              >
+                Completar agora
+              </button>
+            </div>
+          )}
+
+          <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
+            {profileLoading ? (
+              <div className="text-center py-8 text-sm text-muted-foreground">Carregando...</div>
+            ) : !editingProfile ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <div className="flex items-start gap-2.5">
+                  <Mail className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-xs text-muted-foreground">E-mail</p>
+                    <p className="font-medium truncate">{userEmail}</p>
+                    {!profileEmailVerified && (
+                      <span className="text-[11px] text-amber-600 dark:text-amber-400">Não verificado</span>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => setChangeEmailOpen(true)}
+                      className="mt-0.5 block text-[11px] font-semibold text-primary hover:opacity-80"
+                    >
+                      Alterar e-mail
+                    </button>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <Phone className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-xs text-muted-foreground">Telefone</p>
+                    <p className="font-medium">{profileForm.phone || <span className="text-muted-foreground italic font-normal">Não informado</span>}</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <MapPin className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-xs text-muted-foreground">Estado</p>
+                    <p className="font-medium">{profileForm.state ? formatStateLabel(profileForm.state) : <span className="text-muted-foreground italic font-normal">Não informado</span>}</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <Stethoscope className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-xs text-muted-foreground">Profissão</p>
+                    <p className="font-medium">{profileForm.profession ? PROFESSION_LABELS[profileForm.profession] : <span className="text-muted-foreground italic font-normal">Não informado</span>}</p>
+                  </div>
+                </div>
+
+                {profileForm.profession === 'medico' && (
+                  <div className="flex items-start gap-2.5 sm:col-span-2">
+                    <GraduationCap className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-xs text-muted-foreground">Especialidade</p>
+                      <p className="font-medium">{profileForm.specialty || <span className="text-muted-foreground italic font-normal">Não informado</span>}</p>
+                    </div>
+                  </div>
+                )}
+
+                {profileForm.profession === 'residente' && (
+                  <>
+                    <div className="flex items-start gap-2.5">
+                      <GraduationCap className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                      <div className="min-w-0">
+                        <p className="text-xs text-muted-foreground">Área da residência</p>
+                        <p className="font-medium">{profileForm.residencySpecialty || <span className="text-muted-foreground italic font-normal">Não informado</span>}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2.5">
+                      <GraduationCap className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                      <div className="min-w-0">
+                        <p className="text-xs text-muted-foreground">Ano</p>
+                        <p className="font-medium">{profileForm.residencyYear || <span className="text-muted-foreground italic font-normal">Não informado</span>}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2.5 sm:col-span-2">
+                      <GraduationCap className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                      <div className="min-w-0">
+                        <p className="text-xs text-muted-foreground">Hospital da residência</p>
+                        <p className="font-medium">{profileForm.residencyHospital || <span className="text-muted-foreground italic font-normal">Não informado</span>}</p>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {profileForm.profession === 'academico' && (
+                  <>
+                    <div className="flex items-start gap-2.5 sm:col-span-2">
+                      <GraduationCap className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                      <div className="min-w-0">
+                        <p className="text-xs text-muted-foreground">Instituição</p>
+                        <p className="font-medium">{profileForm.afyaUnit || <span className="text-muted-foreground italic font-normal">Não informado</span>}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2.5">
+                      <GraduationCap className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                      <div className="min-w-0">
+                        <p className="text-xs text-muted-foreground">Período</p>
+                        <p className="font-medium">{profileForm.periodo ? formatPeriodoLabel(Number(profileForm.periodo)) : <span className="text-muted-foreground italic font-normal">Não informado</span>}</p>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="profileName" className="text-xs font-medium text-muted-foreground">Nome</Label>
+                    <Input
+                      id="profileName"
+                      value={profileForm.name}
+                      onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="profilePhone" className="text-xs font-medium text-muted-foreground">Telefone (com DDD)</Label>
+                    <Input
+                      id="profilePhone"
+                      type="tel"
+                      inputMode="numeric"
+                      placeholder="(11) 91234-5678"
+                      value={profileForm.phone}
+                      onChange={(e) => setProfileForm({ ...profileForm, phone: formatBrazilPhone(e.target.value) })}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="profileState" className="text-xs font-medium text-muted-foreground">Estado</Label>
+                  <select
+                    id="profileState"
+                    className="flex h-10 w-full rounded-md border border-input bg-background text-foreground px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:[color-scheme:dark]"
+                    value={profileForm.state}
+                    onChange={(e) => setProfileForm({ ...profileForm, state: e.target.value, afyaUnit: '', residencyHospital: '' })}
+                  >
+                    <option value="">Selecione seu estado...</option>
+                    {BRAZIL_STATES.map((s) => (
+                      <option key={s.uf} value={s.uf}>{s.name} ({s.uf})</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-medium text-muted-foreground">Você é médico, acadêmico ou residente?</Label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {(
+                      [
+                        { value: 'medico', label: 'Médico' },
+                        { value: 'academico', label: 'Acadêmico' },
+                        { value: 'residente', label: 'Residente' },
+                      ] as const
+                    ).map((opt) => (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() =>
+                          setProfileForm({
+                            ...profileForm,
+                            profession: opt.value,
+                            specialty: opt.value === 'medico' ? profileForm.specialty : '',
+                            residencySpecialty: opt.value === 'residente' ? profileForm.residencySpecialty : '',
+                            residencyHospital: opt.value === 'residente' ? profileForm.residencyHospital : '',
+                            residencyYear: opt.value === 'residente' ? profileForm.residencyYear : '',
+                            afyaUnit: opt.value === 'academico' ? profileForm.afyaUnit : '',
+                          })
+                        }
+                        className={cn(
+                          'h-9 rounded-md text-sm font-semibold transition-all border',
+                          profileForm.profession === opt.value
+                            ? 'bg-primary text-primary-foreground border-primary'
+                            : 'text-muted-foreground border-border bg-muted/40 hover:bg-muted'
+                        )}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {profileForm.profession === 'medico' && (
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-medium text-muted-foreground">Sua especialidade</Label>
+                    <SearchableSelect
+                      value={profileForm.specialty}
+                      onChange={(v) => setProfileForm({ ...profileForm, specialty: v })}
+                      options={MEDICAL_SPECIALTIES}
+                      placeholder="Selecione sua especialidade..."
+                      searchPlaceholder="Buscar especialidade..."
+                      className="flex h-10 w-full rounded-md border border-input bg-background text-foreground px-3 py-2 text-sm"
+                    />
+                  </div>
+                )}
+
+                {profileForm.profession === 'residente' && (
+                  <>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-medium text-muted-foreground">Sua residência</Label>
+                      <SearchableSelect
+                        value={profileForm.residencySpecialty}
+                        onChange={(v) => setProfileForm({ ...profileForm, residencySpecialty: v })}
+                        options={MEDICAL_SPECIALTIES}
+                        placeholder="Selecione a área..."
+                        searchPlaceholder="Buscar área da residência..."
+                        className="flex h-10 w-full rounded-md border border-input bg-background text-foreground px-3 py-2 text-sm"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-medium text-muted-foreground">
+                        Hospital da residência {profileForm.state ? '' : '(selecione o estado primeiro)'}
+                      </Label>
+                      <SearchableSelect
+                        value={profileForm.residencyHospital}
+                        onChange={(v) => setProfileForm({ ...profileForm, residencyHospital: v })}
+                        options={getResidencyHospitalsByState(profileForm.state)}
+                        placeholder="Selecione o hospital..."
+                        searchPlaceholder="Buscar hospital..."
+                        className="flex h-10 w-full rounded-md border border-input bg-background text-foreground px-3 py-2 text-sm"
+                        disabled={!profileForm.state}
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-medium text-muted-foreground">Ano de residência</Label>
+                      <select
+                        className="flex h-10 w-full rounded-md border border-input bg-background text-foreground px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:[color-scheme:dark]"
+                        value={profileForm.residencyYear}
+                        onChange={(e) => setProfileForm({ ...profileForm, residencyYear: e.target.value })}
+                      >
+                        <option value="">Selecione...</option>
+                        {RESIDENCY_YEARS.map((y) => (
+                          <option key={y} value={y}>{y}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </>
+                )}
+
+                {profileForm.profession === 'academico' && (
+                  <>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-medium text-muted-foreground">
+                        Sua unidade {profileForm.state ? '' : '(selecione o estado primeiro)'}
+                      </Label>
+                      <SearchableSelect
+                        value={profileForm.afyaUnit}
+                        onChange={(v) => setProfileForm({ ...profileForm, afyaUnit: v })}
+                        options={getMedicalSchoolsByState(profileForm.state)}
+                        placeholder="Selecione sua instituição..."
+                        searchPlaceholder="Buscar sua instituição..."
+                        className="flex h-10 w-full rounded-md border border-input bg-background text-foreground px-3 py-2 text-sm"
+                        disabled={!profileForm.state}
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-medium text-muted-foreground">Período (opcional)</Label>
+                      <select
+                        className="flex h-10 w-full rounded-md border border-input bg-background text-foreground px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:[color-scheme:dark]"
+                        value={profileForm.periodo}
+                        onChange={(e) => setProfileForm({ ...profileForm, periodo: e.target.value })}
+                      >
+                        <option value="">Selecione seu período...</option>
+                        {PERIODO_OPTIONS.map((p) => (
+                          <option key={p} value={p}>{formatPeriodoLabel(p)}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </>
+                )}
+
+                <div className="flex gap-2 pt-2">
+                  <Button size="sm" onClick={handleSaveProfile} disabled={savingProfile} className="gap-1.5">
+                    {savingProfile ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
+                    {savingProfile ? 'Salvando...' : 'Salvar alterações'}
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => { setEditingProfile(false); loadProfileData() }} disabled={savingProfile}>
+                    Cancelar
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+
         {/* Stats */}
         <section className="mb-8">
           <h2 className="editorial-mark mb-3">Estatísticas</h2>
@@ -837,7 +1314,7 @@ export default function ProfilePage() {
         )}
 
         {/* ====== DIALOGS ====== */}
-        <ToastAlert open={toastOpen} onOpenChange={setToastOpen} message={toastMessage} type="success" />
+        <ToastAlert open={toastOpen} onOpenChange={setToastOpen} message={toastMessage} type={toastType} />
 
         {/* Upgrade Dialog */}
         <Dialog open={upgradeDialogOpen} onOpenChange={setUpgradeDialogOpen}>
@@ -1016,6 +1493,50 @@ export default function ProfilePage() {
               <Button variant="outline" onClick={() => setCancelDialogOpen(false)} className="w-full">Manter Assinatura</Button>
               <Button variant="destructive" onClick={handleCancelSubscription} disabled={cancelling} className="w-full">
                 {cancelling ? 'Cancelando...' : 'Sim, Cancelar'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Change Email Dialog */}
+        <Dialog open={changeEmailOpen} onOpenChange={(open) => { if (!changingEmail) { setChangeEmailOpen(open); if (!open) { setNewEmailInput(''); setEmailPasswordInput('') } } }}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Alterar e-mail</DialogTitle>
+              <DialogDescription>
+                Por segurança, confirme sua senha atual. Você receberá um link de confirmação no novo e-mail.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="newEmail" className="text-xs font-medium text-muted-foreground">Novo e-mail</Label>
+                <Input
+                  id="newEmail"
+                  type="email"
+                  placeholder="novo@email.com"
+                  value={newEmailInput}
+                  onChange={(e) => setNewEmailInput(e.target.value)}
+                  disabled={changingEmail}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="currentPasswordForEmail" className="text-xs font-medium text-muted-foreground">Senha atual</Label>
+                <Input
+                  id="currentPasswordForEmail"
+                  type="password"
+                  placeholder="••••••••"
+                  value={emailPasswordInput}
+                  onChange={(e) => setEmailPasswordInput(e.target.value)}
+                  disabled={changingEmail}
+                />
+              </div>
+            </div>
+            <DialogFooter className="flex-col gap-2 sm:flex-row">
+              <Button variant="outline" onClick={() => setChangeEmailOpen(false)} disabled={changingEmail} className="w-full sm:w-auto">
+                Cancelar
+              </Button>
+              <Button onClick={handleChangeEmail} disabled={changingEmail} className="w-full sm:w-auto">
+                {changingEmail ? 'Alterando...' : 'Alterar e-mail'}
               </Button>
             </DialogFooter>
           </DialogContent>

@@ -169,6 +169,49 @@ export async function sendSpacedReviewEmail(input: {
   })
 }
 
+// E-mail de perfil incompleto: lembrete leve e pouco frequente (cron
+// /api/cron/profile-reminder) pedindo pra completar telefone/estado/dados da
+// profissão — usado pra melhorar recomendações e experiência no site.
+export async function sendProfileReminderEmail(input: {
+  email: string
+  name: string
+  missing: string[]
+}) {
+  const firstName = (input.name || '').split(' ')[0] || 'por aí'
+  const profileUrl = `${process.env.NEXT_PUBLIC_APP_URL}/profile`
+
+  const itemsHtml = input.missing
+    .map((label) => `<li style="margin-bottom: 8px;">${label}</li>`)
+    .join('')
+
+  const content = `
+    <h1 class="h1">Ei, ${firstName}! Falta pouquinho 👋</h1>
+    <p>Reparei aqui que seu perfil no <strong>DomineAqui</strong> ainda tá com alguns dados em branco. Nada grave — só um detalhe rápido que ajuda a gente a te entregar questões, materiais e recomendações mais na sua cara, de acordo com o seu momento.</p>
+    <div style="background-color: #fff8e1; border-left: 4px solid #f57c00; padding: 15px; margin: 20px 0; border-radius: 4px;">
+      <p style="margin: 0 0 10px 0; color: #795548;"><strong>O que falta preencher:</strong></p>
+      <ul style="margin: 0; padding-left: 20px; color: #795548;">
+        ${itemsHtml}
+      </ul>
+    </div>
+    <p>Leva menos de 1 minuto, prometo. Bora lá?</p>
+    <div style="text-align: center;">
+      <a href="${profileUrl}" class="button" target="_blank">Atualizar meus dados</a>
+    </div>
+    <p style="margin-top: 30px; font-size: 0.85em; color: #718096;">
+      Relaxa que a gente não vai ficar te enchendo com isso toda hora — é só um lembrete de vez em quando. 😉
+    </p>
+  `
+
+  const html = getEmailTemplate('Atualize seu perfil', content)
+
+  await transporter.sendMail({
+    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+    to: input.email,
+    subject: `${firstName}, falta pouco pra completar seu perfil ✍️`,
+    html,
+  })
+}
+
 export async function sendVerificationEmail(email: string, token: string, name: string) {
   const verifyUrl = `${process.env.NEXT_PUBLIC_APP_URL}/auth/verify?token=${token}`
   const firstName = name.split(' ')[0]

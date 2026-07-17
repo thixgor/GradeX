@@ -246,6 +246,8 @@ export interface User {
   // não preencheram nada ficam sem período (campos ausentes).
   periodoBase?: number // Período definido (1-12)
   periodoBaseRef?: string // Semestre-âncora "AAAA.S" de quando periodoBase foi definido
+  // Lembrete de perfil incompleto (cron /api/cron/profile-reminder)
+  profileReminderLastSentAt?: Date
   // Campos de banimento
   banned?: boolean
   banReason?: BanReason

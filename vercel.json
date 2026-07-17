@@ -56,6 +56,9 @@
     "app/api/cron/revisao-espacada/route.ts": {
       "maxDuration": 300
     },
+    "app/api/cron/profile-reminder/route.ts": {
+      "maxDuration": 120
+    },
     "app/api/cron/comms-dispatcher/route.ts": {
       "maxDuration": 60
     },
