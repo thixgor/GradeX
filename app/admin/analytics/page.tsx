@@ -181,6 +181,7 @@ type AnalyticsPayload = {
     estimatedRecurringRevenue: number
   }
   funnel: FunnelStep[]
+  funnelFailed: number
   orders: OrderRow[]
   abandoned: AbandonedRow[]
   subscriptions: SubscriptionRow[]
@@ -265,26 +266,52 @@ function GlassPanel({ title, description, children, action }: { title: string; d
   )
 }
 
+function EmptyChartState({ compact = false, label = 'Sem dados no período selecionado' }: { compact?: boolean; label?: string }) {
+  return (
+    <div className={`flex items-center justify-center rounded-2xl border border-dashed border-white/10 bg-black/10 px-4 text-center text-sm text-white/35 ${compact ? 'h-44' : 'h-64'}`}>
+      {label}
+    </div>
+  )
+}
+
 function BarChart({ data, formatter = number.format, compact = false }: { data: SeriesPoint[]; formatter?: (value: number) => string; compact?: boolean }) {
   const max = getMax(data)
+  const hasData = data.some((item) => (item.value || 0) > 0)
+  // Com muitos pontos (ex.: 30 dias) cada barra precisa de uma largura mínima
+  // para o rótulo não virar uma sopa de letrinhas — a partir daí o gráfico
+  // rola horizontalmente em vez de espremer infinitamente.
+  const minBarWidth = data.length > 10 ? 44 : 0
+
+  if (!hasData) return <EmptyChartState compact={compact} />
+
   return (
     <div className="space-y-3">
-      <div className={`flex items-end gap-2 ${compact ? 'h-44' : 'h-64'}`}>
-        {data.map((item, index) => {
-          const h = Math.max(4, ((item.value || 0) / max) * 100)
-          return (
-            <div key={`${item.label}-${index}`} className="flex min-w-0 flex-1 flex-col items-center gap-2">
-              <div className="flex h-full w-full items-end rounded-t-xl bg-white/[0.03]">
-                <div
-                  className="w-full rounded-t-xl shadow-[0_0_24px_rgba(52,211,153,0.18)]"
-                  style={{ height: `${h}%`, background: `linear-gradient(180deg, ${trackColor(index)}, rgba(5,46,22,0.72))` }}
-                  title={`${item.label}: ${formatter(item.value)}`}
-                />
+      <div className="overflow-x-auto scrollbar-hide">
+        <div className={`flex items-stretch gap-2 ${compact ? 'h-44' : 'h-64'}`}>
+          {data.map((item, index) => {
+            const h = Math.max(4, ((item.value || 0) / max) * 100)
+            return (
+              <div
+                key={`${item.label}-${index}`}
+                className="group flex min-w-0 flex-1 shrink-0 flex-col items-center gap-2"
+                style={minBarWidth ? { minWidth: minBarWidth } : undefined}
+              >
+                <div className="flex w-full flex-1 items-end justify-center overflow-hidden rounded-t-xl bg-white/[0.03]">
+                  <div
+                    className="relative w-full rounded-t-xl shadow-[0_0_24px_rgba(52,211,153,0.18)] transition-[height] duration-500 ease-out"
+                    style={{ height: `${h}%`, background: `linear-gradient(180deg, ${trackColor(index)}, rgba(5,46,22,0.72))` }}
+                    title={`${item.label}: ${formatter(item.value)}`}
+                  >
+                    <span className="pointer-events-none absolute -top-5 left-1/2 hidden -translate-x-1/2 whitespace-nowrap text-[10px] font-bold text-white/80 group-hover:block">
+                      {formatter(item.value)}
+                    </span>
+                  </div>
+                </div>
+                <span className="w-full truncate text-center text-[10px] font-semibold text-white/45">{item.label}</span>
               </div>
-              <span className="w-full truncate text-center text-[10px] font-semibold text-white/45">{item.label}</span>
-            </div>
-          )
-        })}
+            )
+          })}
+        </div>
       </div>
       <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
         {data.slice(0, 6).map((item, index) => (
@@ -306,6 +333,7 @@ function LineChartBlock({ data, formatter = formatCurrency }: { data: SeriesPoin
   const height = 260
   const pad = 26
   const max = getMax(data)
+  if (data.length === 0) return <EmptyChartState />
   const points = data.map((item, index) => {
     const x = pad + ((width - pad * 2) * index) / Math.max(data.length - 1, 1)
     const y = height - pad - ((item.value || 0) / max) * (height - pad * 2)
@@ -349,6 +377,7 @@ function LineChartBlock({ data, formatter = formatCurrency }: { data: SeriesPoin
 
 function DonutChart({ data }: { data: SeriesPoint[] }) {
   const total = data.reduce((acc, item) => acc + item.value, 0) || 1
+  if (data.length === 0 || data.every((item) => !item.value)) return <EmptyChartState />
   let offset = 25
   return (
     <div className="grid gap-5 sm:grid-cols-[220px_1fr] sm:items-center">
@@ -389,7 +418,7 @@ function DonutChart({ data }: { data: SeriesPoint[] }) {
   )
 }
 
-function Funnel({ steps }: { steps: FunnelStep[] }) {
+function Funnel({ steps, failed }: { steps: FunnelStep[]; failed?: number }) {
   const max = Math.max(...steps.map((step) => step.count), 1)
   return (
     <div className="space-y-3">
@@ -407,6 +436,15 @@ function Funnel({ steps }: { steps: FunnelStep[] }) {
           </p>
         </div>
       ))}
+      {typeof failed === 'number' ? (
+        <div className="flex items-center justify-between gap-3 rounded-2xl border border-rose-300/20 bg-rose-400/10 p-3">
+          <span className="flex items-center gap-2 text-sm font-semibold text-rose-100">
+            <XCircle className="h-4 w-4" />
+            Pagamentos falharam, cancelaram ou expiraram
+          </span>
+          <span className="text-sm font-black text-rose-200">{number.format(failed)}</span>
+        </div>
+      ) : null}
     </div>
   )
 }
@@ -797,7 +835,7 @@ export default function AdminAnalyticsPage() {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid h-auto grid-cols-2 rounded-2xl border border-white/10 bg-white/[0.06] p-1.5 backdrop-blur-xl md:grid-cols-7">
+          <TabsList className="flex h-auto w-full items-center justify-start gap-1 overflow-x-auto rounded-2xl border border-white/10 bg-white/[0.06] p-1.5 backdrop-blur-xl scrollbar-hide md:grid md:grid-cols-7 md:justify-center md:overflow-visible">
             {[
               ['overview', 'Visão geral'],
               ['sales', 'Vendas'],
@@ -807,7 +845,7 @@ export default function AdminAnalyticsPage() {
               ['orders', 'Histórico'],
               ['serialkeys', 'Serial Keys'],
             ].map(([value, label]) => (
-              <TabsTrigger key={value} value={value} className="rounded-xl py-2 text-white/70 data-[state=active]:bg-emerald-400/20 data-[state=active]:text-white">
+              <TabsTrigger key={value} value={value} className="shrink-0 whitespace-nowrap rounded-xl py-2 text-white/70 data-[state=active]:bg-emerald-400/20 data-[state=active]:text-white md:shrink md:whitespace-normal">
                 {label}
               </TabsTrigger>
             ))}
@@ -931,7 +969,7 @@ export default function AdminAnalyticsPage() {
           <TabsContent value="conversion" className="space-y-6">
             <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
               <GlassPanel title="Funil de compra" description="Taxa de conversão entre cada etapa de intenção, checkout, pedido e pagamento">
-                <Funnel steps={data.funnel} />
+                <Funnel steps={data.funnel} failed={data.funnelFailed} />
               </GlassPanel>
               <GlassPanel title="Checkouts abandonados" description="Pedidos/tentativas sem pagamento aprovado após a janela de abandono">
                 <div className="space-y-3">

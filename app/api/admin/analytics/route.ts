@@ -597,17 +597,20 @@ export async function GET() {
       paymentApproved: revenueItems.length,
       paymentFailed: orders.filter((order) => FAILED.has(order.status)).length + checkoutEvents.filter((event) => event.event === 'payment_failed').length,
     }
+    // payment_failed é um desfecho paralelo (não uma etapa depois de "aprovado"),
+    // então fica de fora da cadeia sequencial — encadeá-lo gerava conversões
+    // "da etapa anterior" acima de 100% (parecia que o funil estava quebrado).
     const funnel = [
       { key: 'buy_click', label: 'Usuário clicou para comprar', count: funnelCounts.buyClick },
       { key: 'checkout_submit', label: 'Usuário clicou em finalizar compra', count: funnelCounts.checkoutSubmit },
       { key: 'order_created', label: 'Pedido foi criado no MercadoPago', count: funnelCounts.orderCreated },
       { key: 'payment_approved', label: 'Pagamento foi aprovado', count: funnelCounts.paymentApproved },
-      { key: 'payment_failed', label: 'Pagamento falhou/cancelou/expirou', count: funnelCounts.paymentFailed },
     ].map((step, index, all) => ({
       ...step,
       conversionFromPrevious: index === 0 ? 100 : all[index - 1].count > 0 ? (step.count / all[index - 1].count) * 100 : 0,
       conversionFromStart: all[0].count > 0 ? (step.count / all[0].count) * 100 : 0,
     }))
+    const funnelFailed = funnelCounts.paymentFailed
 
     return NextResponse.json({
       updatedAt: now.toISOString(),
@@ -663,6 +666,7 @@ export async function GET() {
       },
       couponStats,
       funnel,
+      funnelFailed,
       orders: orderRows,
       abandoned: abandonedRows.sort((a, b) => new Date(b.startedAt || 0).getTime() - new Date(a.startedAt || 0).getTime()).slice(0, 250),
       subscriptions: subscriptionRows.sort((a, b) => new Date(b.purchasedAt || 0).getTime() - new Date(a.purchasedAt || 0).getTime()).slice(0, 500),
