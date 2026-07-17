@@ -1,858 +1,422 @@
 'use client'
 
-import { useState, useEffect, useRef, type ReactNode } from 'react'
-import { useRouter } from 'next/navigation'
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import Image from 'next/image'
-import { useTheme } from 'next-themes'
-import {
-  motion,
-  AnimatePresence,
-  useMotionValue,
-  useSpring,
-} from 'framer-motion'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Logo } from '@/components/logo'
 import { ThemeToggle } from '@/components/theme-toggle'
-import {
-  ChevronDown,
-  ArrowRight,
-  Instagram,
-  Mail,
-  Brain,
-  Calendar,
-  Database,
-  Video,
-  BookMarked,
-  Scale,
-  Menu,
-  X,
-  Heart,
-  Stethoscope,
-  FlaskConical,
-  GraduationCap,
-  Check,
-  Play,
-  Sparkles,
-} from 'lucide-react'
-import { DoacaoContent } from '@/components/doacoes/doacao-content'
-import { DoacaoRanking } from '@/components/doacoes/doacao-ranking'
-import { DoacaoForm } from '@/components/doacoes/doacao-form'
-import { DoacaoEcgAnimation } from '@/components/doacoes/doacao-ecg-animation'
 
-// ─── Brand palettes ───────────────────────────────────────────────────────────
+// Import estático: o Next lê as dimensões no build (zero layout shift) e gera o
+// blurDataURL embutido — as fotos aparecem borradas na hora em vez de deixar um
+// buraco na tela enquanto baixam. Só nos JPEG opacos: nos PNG com transparência
+// o placeholder viraria um retângulo cinza por cima do recorte.
+import heroBg from '@/public/landing/hero-bg.jpg'
+import heroMidLight from '@/public/landing/hero-mid-light.png'
+import heroMid from '@/public/landing/hero-mid.png'
+import heroFront from '@/public/landing/hero-front.png'
+import ausculta from '@/public/landing/ausculta.jpg'
+import manualImg from '@/public/landing/manual.jpg'
+import logoManual from '@/public/landing/logo-manual.png'
+import provas3d from '@/public/landing/provas-3d.png'
+import flashcards3d from '@/public/landing/flashcards-3d.png'
+import susCover from '@/public/landing/sus-cover.jpg'
 
-type Palette = {
-  cream: string
-  paper: string
-  ink: string
-  muted: string
-  line: string
-  green: string
-  greenDeep: string
-  greenForest: string
-  gold: string
-  orange: string
-  soft: string
-  isDark: boolean
+/* =================== ROTAS =================== */
+
+// Rotas servidas por route handlers (HTML pronto, fora do router do React).
+// Precisam de <a> nativo — <Link> tentaria uma navegação client-side.
+const HTML_ROUTES = new Set(['/ldpg-mnclinico', '/prescricao-real-no-sus'])
+
+const LINKS = {
+  amostra: '/amostra',
+  materiais: '/materiais',
+  flashcards: '/flashcards',
+  provas: '/provas',
+  bancoQuestoes: '/banco-questoes',
+  mapaMental: '/mapa-mental',
+  cronogramas: '/cronogramas',
+  manual: '/ldpg-mnclinico',
+  sus: '/prescricao-real-no-sus',
+  buy: '/buy',
+  equipe: '/equipe',
+  termos: '/termos-de-servico',
+  privacidade: '/politica-de-privacidade',
+  suporte: 'mailto:contato@domineaqui.com.br',
 }
 
-const LIGHT: Palette = {
-  cream: '#F6F1E8',
-  paper: '#FFFCF7',
-  ink: '#1A2419',
-  muted: '#5C6B5A',
-  line: '#D9D0C1',
-  green: '#468152',
-  greenDeep: '#153D1F',
-  greenForest: '#0F2418',
-  gold: '#E2A43E',
-  orange: '#CE5929',
-  soft: '#E8F0E9',
-  isDark: false,
+/** Link interno do app → <Link> (com prefetch). O resto → <a> nativo. */
+function SmartLink({
+  href,
+  className,
+  children,
+  ...rest
+}: {
+  href: string
+  className?: string
+  children: ReactNode
+  'aria-label'?: string
+}) {
+  const isAppRoute = href.startsWith('/') && !HTML_ROUTES.has(href)
+  if (isAppRoute) {
+    return (
+      <Link href={href} className={className} {...rest}>
+        {children}
+      </Link>
+    )
+  }
+  return (
+    <a href={href} className={className} {...rest}>
+      {children}
+    </a>
+  )
 }
 
-const DARK: Palette = {
-  cream: '#0C1410',
-  paper: '#131C16',
-  ink: '#F0EBE0',
-  muted: '#9AAB97',
-  line: '#2A3A2E',
-  green: '#6BA876',
-  greenDeep: '#1A3D24',
-  greenForest: '#08140C',
-  gold: '#E8B84A',
-  orange: '#E06A3A',
-  soft: '#1A2A1E',
-  isDark: true,
-}
+/* =================== PARALLAX =================== */
 
-// ─── Hooks ────────────────────────────────────────────────────────────────────
+/**
+ * Escreve a posição do ponteiro/scroll em CSS vars (--da-mx/--da-my/--da-sy)
+ * no elemento raiz da landing. As vars são herdadas, então UM único loop de
+ * rAF alimenta hero, celular e livro 3D — sem re-render do React a 60fps
+ * (o protótipo fazia setState por frame e redesenhava a página inteira).
+ * O loop só roda enquanto a seção está visível.
+ */
+function useParallaxVars<T extends HTMLElement>() {
+  const ref = useRef<T>(null)
 
-function useInView(threshold = 0.12) {
-  const ref = useRef<HTMLDivElement>(null)
-  const [isVisible, setIsVisible] = useState(false)
   useEffect(() => {
     const el = ref.current
     if (!el) return
-    const rect = el.getBoundingClientRect()
-    if (rect.top < window.innerHeight && rect.bottom > 0) {
-      setIsVisible(true)
-      return
-    }
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-          obs.disconnect()
-        }
-      },
-      { threshold }
-    )
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [threshold])
-  return { ref, isVisible }
-}
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
-function useTilt3D(strength = 14) {
-  const rotateX = useMotionValue(0)
-  const rotateY = useMotionValue(0)
-  const springCfg = { stiffness: 220, damping: 22, mass: 0.45 }
-  const sX = useSpring(rotateX, springCfg)
-  const sY = useSpring(rotateY, springCfg)
-
-  const onMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect()
-    const px = (e.clientX - rect.left) / rect.width - 0.5
-    const py = (e.clientY - rect.top) / rect.height - 0.5
-    rotateY.set(px * strength)
-    rotateX.set(py * -strength)
-  }
-  const onMouseLeave = () => {
-    rotateX.set(0)
-    rotateY.set(0)
-  }
-  return { rotateX: sX, rotateY: sY, onMouseMove, onMouseLeave }
-}
-
-function usePrefersReducedMotion() {
-  const [reduced, setReduced] = useState(false)
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
-    setReduced(mq.matches)
-    const onChange = () => setReduced(mq.matches)
-    mq.addEventListener('change', onChange)
-    return () => mq.removeEventListener('change', onChange)
-  }, [])
-  return reduced
-}
-
-function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: string }) {
-  // Always start at final value so SSR + first client paint match (no hydration flash to 0).
-  const [count, setCount] = useState(target)
-  const { ref, isVisible } = useInView()
-  const prefersReduced = usePrefersReducedMotion()
-  const animated = useRef(false)
-  useEffect(() => {
-    if (!isVisible || animated.current || prefersReduced) return
-    animated.current = true
-    let start = 0
     let raf = 0
-    let cancelled = false
-    const duration = 1400
-    setCount(0)
-    const step = (ts: number) => {
-      if (cancelled) return
-      if (!start) start = ts
-      const progress = Math.min((ts - start) / duration, 1)
-      const eased = 1 - Math.pow(1 - progress, 3)
-      setCount(Math.floor(eased * target))
-      if (progress < 1) raf = requestAnimationFrame(step)
+    let running = false
+    let tx = 0
+    let ty = 0
+    let cx = 0
+    let cy = 0
+    let sy = 0
+
+    const onMove = (e: PointerEvent) => {
+      tx = (e.clientX / window.innerWidth - 0.5) * 2
+      ty = (e.clientY / window.innerHeight - 0.5) * 2
     }
-    raf = requestAnimationFrame(step)
-    return () => {
-      cancelled = true
+    const onScroll = () => {
+      sy = window.scrollY
+    }
+    const loop = () => {
+      cx += (tx - cx) * 0.07
+      cy += (ty - cy) * 0.07
+      el.style.setProperty('--da-mx', cx.toFixed(4))
+      el.style.setProperty('--da-my', cy.toFixed(4))
+      el.style.setProperty('--da-sy', sy.toFixed(1))
+      raf = requestAnimationFrame(loop)
+    }
+    const start = () => {
+      if (running) return
+      running = true
+      window.addEventListener('pointermove', onMove, { passive: true })
+      window.addEventListener('scroll', onScroll, { passive: true })
+      raf = requestAnimationFrame(loop)
+    }
+    const stop = () => {
+      if (!running) return
+      running = false
+      window.removeEventListener('pointermove', onMove)
+      window.removeEventListener('scroll', onScroll)
       cancelAnimationFrame(raf)
     }
-  }, [isVisible, target, prefersReduced])
-  return (
-    <span ref={ref}>
-      {count.toLocaleString('pt-BR')}
-      {suffix}
-    </span>
-  )
-}
 
-const easeOutExpo = [0.22, 1, 0.36, 1] as const
+    // Só anima o que está na tela.
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) start()
+          else stop()
+        }
+      },
+      { threshold: 0 }
+    )
+    io.observe(el)
 
-interface LandingPageProps {
-  initialIsLoggedIn?: boolean
-  initialVideoEmbedUrl?: string
-  initialVideoEnabled?: boolean
-}
-
-// ─── 3D medical ornaments ─────────────────────────────────────────────────────
-
-/** DNA double helix — CSS spin only (constant speed) */
-function DnaHelix3D({ color, accent }: { color: string; accent: string }) {
-  const pairs = 8
-  return (
-    <div className="relative w-16 h-40" style={{ perspective: 600 }}>
-      <div className="relative w-full h-full da-spin-y" style={{ transformStyle: 'preserve-3d' }}>
-        {Array.from({ length: pairs }).map((_, i) => {
-          const t = i / (pairs - 1)
-          const angle = t * Math.PI * 2.4
-          const y = i * 18
-          const r = 18
-          const x1 = Math.cos(angle) * r
-          const x2 = Math.cos(angle + Math.PI) * r
-          const z1 = Math.sin(angle) * r
-          const z2 = Math.sin(angle + Math.PI) * r
-          return (
-            <div key={i} className="absolute left-1/2 top-0" style={{ transform: `translateY(${y}px)` }}>
-              <div
-                className="absolute w-2.5 h-2.5 rounded-full"
-                style={{
-                  background: color,
-                  transform: `translate3d(${x1}px, 0, ${z1}px)`,
-                  boxShadow: `0 0 8px ${color}66`,
-                }}
-              />
-              <div
-                className="absolute w-2.5 h-2.5 rounded-full"
-                style={{
-                  background: accent,
-                  transform: `translate3d(${x2}px, 0, ${z2}px)`,
-                  boxShadow: `0 0 8px ${accent}55`,
-                }}
-              />
-              <div
-                className="absolute h-px origin-left"
-                style={{
-                  width: Math.hypot(x2 - x1, z2 - z1),
-                  background: `linear-gradient(90deg, ${color}, ${accent})`,
-                  opacity: 0.55,
-                  transform: `translate3d(${x1}px, 5px, ${z1}px) rotateY(${(angle * 180) / Math.PI}deg)`,
-                }}
-              />
-            </div>
-          )
-        })}
-      </div>
-    </div>
-  )
-}
-
-/** Anatomical heart — CSS beat + soft tilt */
-function Heart3D({ color }: { color: string }) {
-  return (
-    <div className="relative da-spin-y-soft" style={{ perspective: 500 }}>
-      <div className="da-heart-beat">
-        <svg width="72" height="72" viewBox="0 0 24 24" fill="none" aria-hidden>
-          <defs>
-            <linearGradient id="heartGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor={color} stopOpacity="1" />
-              <stop offset="100%" stopColor={color} stopOpacity="0.65" />
-            </linearGradient>
-          </defs>
-          <path
-            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
-            fill="url(#heartGrad)"
-          />
-        </svg>
-      </div>
-    </div>
-  )
-}
-
-/** Orbiting molecule — CSS only */
-function Molecule3D({ color, accent }: { color: string; accent: string }) {
-  const atoms = [
-    { x: 0, y: 0, s: 14, c: color },
-    { x: 28, y: -16, s: 10, c: accent },
-    { x: -26, y: -14, s: 10, c: accent },
-    { x: 18, y: 24, s: 9, c: color },
-    { x: -22, y: 20, s: 9, c: color },
-  ]
-  return (
-    <div className="relative w-24 h-24" style={{ perspective: 500 }}>
-      <div className="relative w-full h-full da-orbit" style={{ transformStyle: 'preserve-3d' }}>
-        <svg className="absolute inset-0 w-full h-full" viewBox="-40 -40 80 80" aria-hidden>
-          <line x1="0" y1="0" x2="28" y2="-16" stroke={color} strokeWidth="1.5" opacity="0.45" />
-          <line x1="0" y1="0" x2="-26" y2="-14" stroke={color} strokeWidth="1.5" opacity="0.45" />
-          <line x1="0" y1="0" x2="18" y2="24" stroke={color} strokeWidth="1.5" opacity="0.45" />
-          <line x1="0" y1="0" x2="-22" y2="20" stroke={color} strokeWidth="1.5" opacity="0.45" />
-        </svg>
-        {atoms.map((a, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full left-1/2 top-1/2"
-            style={{
-              width: a.s,
-              height: a.s,
-              marginLeft: -a.s / 2,
-              marginTop: -a.s / 2,
-              background: a.c,
-              transform: `translate3d(${a.x}px, ${a.y}px, ${i * 4}px)`,
-              boxShadow: `0 0 12px ${a.c}55`,
-            }}
-          />
-        ))}
-      </div>
-    </div>
-  )
-}
-
-/** ECG strip in perspective plane — CSS draw */
-function EcgPlane3D({ color }: { color: string }) {
-  return (
-    <div
-      className="w-40 h-16 rounded-md border overflow-hidden"
-      style={{
-        borderColor: `${color}44`,
-        background: `${color}10`,
-        transform: 'rotateX(52deg) rotateZ(-8deg)',
-        boxShadow: `0 18px 30px -16px ${color}55`,
-      }}
-    >
-      <svg viewBox="0 0 200 40" className="w-full h-full" preserveAspectRatio="none" aria-hidden>
-        <path
-          className="da-ecg-path"
-          d="M0 20 H30 L38 20 L44 6 L52 34 L60 12 L66 20 H100 L108 20 L114 4 L122 36 L130 14 L136 20 H200"
-          fill="none"
-          stroke={color}
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </div>
-  )
-}
-
-/** Flipping clinical flashcard — single interval, no stack */
-function Flashcard3D({ C, enableFlip }: { C: Palette; enableFlip: boolean }) {
-  const [flipped, setFlipped] = useState(false)
-  useEffect(() => {
-    if (!enableFlip) return
-    const id = window.setInterval(() => setFlipped((f) => !f), 3600)
-    return () => window.clearInterval(id)
-  }, [enableFlip])
-
-  return (
-    <div className="w-[148px] h-[96px]" style={{ perspective: 900 }}>
-      <div
-        className="relative w-full h-full transition-transform duration-700 ease-out"
-        style={{
-          transformStyle: 'preserve-3d',
-          transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-        }}
-      >
-        <div
-          className="absolute inset-0 rounded-md border p-3 flex flex-col justify-between"
-          style={{
-            background: C.paper,
-            borderColor: C.line,
-            backfaceVisibility: 'hidden',
-            WebkitBackfaceVisibility: 'hidden',
-            boxShadow: '0 12px 28px -14px rgba(0,0,0,0.35)',
-          }}
-        >
-          <span className="font-clinical text-[9px] uppercase tracking-wider" style={{ color: C.orange }}>
-            Flashcard
-          </span>
-          <p className="text-[11px] font-semibold leading-snug" style={{ color: C.ink }}>
-            Derivações no IAM inferior?
-          </p>
-        </div>
-        <div
-          className="absolute inset-0 rounded-md border p-3 flex flex-col justify-between"
-          style={{
-            background: C.soft,
-            borderColor: C.green,
-            backfaceVisibility: 'hidden',
-            WebkitBackfaceVisibility: 'hidden',
-            transform: 'rotateY(180deg)',
-            boxShadow: '0 12px 28px -14px rgba(0,0,0,0.35)',
-          }}
-        >
-          <span className="font-clinical text-[9px] uppercase tracking-wider" style={{ color: C.green }}>
-            Resposta
-          </span>
-          <p className="text-[12px] font-bold font-clinical" style={{ color: C.ink }}>
-            DII · DIII · aVF
-          </p>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-// ─── Exam mockup with mouse tilt (no RAF float — CSS only) ────────────────────
-
-function ExamMockup({ C, enableMotion }: { C: Palette; enableMotion: boolean }) {
-  const tilt = useTilt3D(12)
-
-  return (
-    <div className="relative w-full max-w-md mx-auto" style={{ perspective: 1400 }}>
-      {/* Ornaments — only mount after client ready to avoid hydration / stack bugs */}
-      {enableMotion && (
-        <>
-          <div className="absolute -left-4 sm:-left-10 top-2 z-20 scale-75 sm:scale-100 pointer-events-none">
-            <DnaHelix3D color={C.green} accent={C.gold} />
-          </div>
-          <div className="absolute -right-2 sm:-right-8 top-0 z-20 scale-90 pointer-events-none">
-            <Heart3D color={C.orange} />
-          </div>
-          <div className="absolute right-0 sm:-right-6 bottom-24 z-20 scale-90 pointer-events-none hidden sm:block">
-            <Molecule3D color={C.green} accent={C.gold} />
-          </div>
-          <div className="absolute left-4 -bottom-2 z-20 hidden sm:block pointer-events-none">
-            <EcgPlane3D color={C.green} />
-          </div>
-          <div className="absolute -left-2 sm:-left-8 bottom-28 z-30">
-            <Flashcard3D C={C} enableFlip />
-          </div>
-        </>
-      )}
-
-      {/* Outer: CSS float only. Inner: mouse tilt. Never mix both on same transform. */}
-      <div className={enableMotion ? 'da-float' : undefined}>
-      <motion.div
-        className="relative"
-        style={{
-          rotateX: enableMotion ? tilt.rotateX : 0,
-          rotateY: enableMotion ? tilt.rotateY : 0,
-          transformStyle: 'preserve-3d',
-        }}
-        onMouseMove={enableMotion ? tilt.onMouseMove : undefined}
-        onMouseLeave={enableMotion ? tilt.onMouseLeave : undefined}
-      >
-        {/* Desk shadow */}
-        <div
-          className="absolute -bottom-5 left-8 right-8 h-10 rounded-[100%] blur-xl opacity-40"
-          style={{ background: C.isDark ? '#000' : C.greenDeep }}
-        />
-
-        {/* Notebook stack — layered depth */}
-        <div
-          className="absolute -right-2 top-8 w-full h-[92%] rounded-r-md"
-          style={{
-            background: C.isDark ? '#1E2C22' : C.line,
-            transform: 'translateZ(-24px) rotateY(-4deg) rotate(2deg)',
-          }}
-        />
-        <div
-          className="absolute -right-1 top-4 w-full h-[95%] rounded-r-md"
-          style={{
-            background: C.isDark ? '#243528' : '#EDE6D9',
-            transform: 'translateZ(-12px) rotateY(-2deg) rotate(1deg)',
-          }}
-        />
-
-        {/* Main card */}
-        <div
-          className="relative rounded-md overflow-hidden border"
-          style={{
-            background: C.paper,
-            borderColor: C.line,
-            boxShadow: C.isDark
-              ? '0 28px 56px -20px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.04)'
-              : '0 24px 48px -20px rgba(21,61,31,0.35)',
-            transform: 'translateZ(0)',
-          }}
-        >
-          <div
-            className="flex items-center justify-between px-4 py-3 border-b"
-            style={{ borderColor: C.line, background: C.soft }}
-          >
-            <div className="flex items-center gap-2">
-              <span
-                className="inline-flex h-6 w-6 items-center justify-center rounded text-[10px] font-bold text-white font-clinical"
-                style={{ background: C.green }}
-              >
-                Q
-              </span>
-              <div>
-                <p className="text-[11px] font-bold leading-none" style={{ color: C.ink }}>
-                  Banco de Questões
-                </p>
-                <p className="text-[10px] mt-0.5 font-clinical" style={{ color: C.muted }}>
-                  Medicina · SOI II · Cardio
-                </p>
-              </div>
-            </div>
-            <span
-              className="text-[10px] font-bold px-2 py-1 rounded font-clinical"
-              style={{ background: `${C.gold}33`, color: C.orange }}
-            >
-              N2
-            </span>
-          </div>
-
-          <div className="px-4 pt-3">
-            <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[10px] font-semibold font-clinical" style={{ color: C.muted }}>
-                Q 7 / 20
-              </span>
-              <span className="text-[10px] font-semibold tabular-nums font-clinical" style={{ color: C.green }}>
-                12:48
-              </span>
-            </div>
-            <div className="h-1.5 rounded-full overflow-hidden" style={{ background: C.line }}>
-              <div className="h-full rounded-full w-[35%]" style={{ background: C.green }} />
-            </div>
-          </div>
-
-          <div className="px-4 py-4">
-            <p className="text-[13px] leading-relaxed font-medium mb-4" style={{ color: C.ink }}>
-              Paciente de 58 anos chega à emergência com dor torácica em aperto, irradiando para
-              mandíbula. ECG mostra supradesnivelamento de ST em DII, DIII e aVF. Conduta inicial?
-            </p>
-            <div className="space-y-2">
-              {[
-                { letter: 'A', text: 'Trombólise imediata sem confirmação' },
-                { letter: 'B', text: 'AAS + anticoagulação + reperfusão urgente', active: true },
-                { letter: 'C', text: 'Observação e troponina seriada apenas' },
-                { letter: 'D', text: 'Cateterismo eletivo em 72h' },
-              ].map((opt) => (
-                <div
-                  key={opt.letter}
-                  className="flex items-start gap-2.5 rounded-md px-3 py-2.5 border text-[12px] leading-snug"
-                  style={
-                    opt.active
-                      ? { borderColor: C.green, background: `${C.green}18`, color: C.ink }
-                      : { borderColor: C.line, background: C.paper, color: C.muted }
-                  }
-                >
-                  <span
-                    className="flex h-5 w-5 shrink-0 items-center justify-center rounded text-[10px] font-bold font-clinical"
-                    style={
-                      opt.active
-                        ? { background: C.green, color: '#fff' }
-                        : { background: C.cream, color: C.muted }
-                    }
-                  >
-                    {opt.active ? <Check className="w-3 h-3" /> : opt.letter}
-                  </span>
-                  <span className={opt.active ? 'font-semibold' : ''}>{opt.text}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div
-            className="mx-4 mb-4 rounded-md px-3 py-2.5 border"
-            style={{ borderColor: `${C.green}50`, background: `${C.green}12` }}
-          >
-            <p className="text-[11px] font-bold mb-0.5" style={{ color: C.green }}>
-              Correto · STEMI de parede inferior
-            </p>
-            <p className="text-[11px] leading-relaxed" style={{ color: C.muted }}>
-              Tempo é músculo: reperfusão o mais cedo possível + dupla antiagregação.
-            </p>
-          </div>
-        </div>
-      </motion.div>
-      </div>
-    </div>
-  )
-}
-
-// ─── Section label ────────────────────────────────────────────────────────────
-
-function SectionMark({
-  children,
-  light = false,
-  C,
-}: {
-  children: ReactNode
-  light?: boolean
-  C: Palette
-}) {
-  return (
-    <div className="flex items-center gap-3 mb-3">
-      <span
-        className="block h-px w-8"
-        style={{ background: light ? 'rgba(240,235,224,0.35)' : C.orange }}
-      />
-      <span
-        className="text-[11px] sm:text-xs font-semibold tracking-[0.16em] uppercase font-clinical"
-        style={{ color: light ? 'rgba(240,235,224,0.7)' : C.orange }}
-      >
-        {children}
-      </span>
-    </div>
-  )
-}
-
-// ─── 3D step card ─────────────────────────────────────────────────────────────
-
-function StepCard3D({
-  step,
-  i,
-  C,
-  reduced,
-}: {
-  step: { n: string; title: string; text: string }
-  i: number
-  C: Palette
-  reduced: boolean
-}) {
-  const tilt = useTilt3D(10)
-  return (
-    <motion.div
-      initial={reduced ? false : { opacity: 0, y: 24, rotateX: -18 }}
-      whileInView={reduced ? undefined : { opacity: 1, y: 0, rotateX: 0 }}
-      viewport={{ once: true, amount: 0.35 }}
-      transition={{ duration: 0.55, delay: i * 0.08, ease: easeOutExpo }}
-      onMouseMove={reduced ? undefined : tilt.onMouseMove}
-      onMouseLeave={reduced ? undefined : tilt.onMouseLeave}
-      style={{
-        rotateX: reduced ? 0 : tilt.rotateX,
-        rotateY: reduced ? 0 : tilt.rotateY,
-        transformPerspective: 800,
-        background: i % 2 === 0 ? C.paper : C.cream,
-        borderColor: C.line,
-        borderRight: i < 3 ? `1px solid ${C.line}` : undefined,
-      }}
-      className="relative p-5 sm:p-6 border-b sm:border-b-0 last:border-b-0"
-    >
-      <span
-        className="font-heading text-4xl italic leading-none block mb-4 opacity-30"
-        style={{ color: C.green }}
-      >
-        {step.n}
-      </span>
-      <h3 className="relative text-[15px] font-bold mb-1.5" style={{ color: C.ink }}>
-        {step.title}
-      </h3>
-      <p className="relative text-[13px] leading-relaxed" style={{ color: C.muted }}>
-        {step.text}
-      </p>
-    </motion.div>
-  )
-}
-
-// ─── Theme toggle (landing-styled) ────────────────────────────────────────────
-
-function LandingThemeToggle({ C }: { C: Palette }) {
-  // Use global 3D switch; C kept for API compatibility with call sites
-  void C
-  return <ThemeToggle />
-}
-
-// ─── Main ─────────────────────────────────────────────────────────────────────
-
-export default function LandingPage({
-  initialIsLoggedIn,
-  initialVideoEmbedUrl,
-  initialVideoEnabled,
-}: LandingPageProps) {
-  const router = useRouter()
-  const prefersReduced = usePrefersReducedMotion()
-  const { resolvedTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
-
-  // Theme only after mount → first paint matches SSR (avoids hydration mismatch).
-  const C = mounted && resolvedTheme === 'dark' ? DARK : LIGHT
-  // Motion decorations only after mount + when user allows motion.
-  const enableMotion = mounted && !prefersReduced
-  const reduced = !enableMotion
-
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [videoEmbedUrl, setVideoEmbedUrl] = useState(
-    initialVideoEmbedUrl ?? 'https://www.youtube.com/embed/dQw4w9WgXcQ'
-  )
-  const [videoEnabled, setVideoEnabled] = useState(initialVideoEnabled ?? true)
-  const [isLoggedIn, setIsLoggedIn] = useState(initialIsLoggedIn ?? false)
-  const [openFaq, setOpenFaq] = useState<number | null>(null)
-  const [doacaoFormOpen, setDoacaoFormOpen] = useState(false)
-  const [activeTool, setActiveTool] = useState(0)
-
-  const faqs = [
-    {
-      question: 'Como funciona o Banco de Questões?',
-      answer:
-        'Nosso banco é focado 100% nas questões que realmente caem nas provas do seu curso. Tudo organizado para você filtrar, montar listas personalizadas, baixar PDF e treinar. Toda semana entra conteúdo novo.\n\nEstamos catalogando centenas de questões de estilo institucional, além de questões autorais idênticas no estilo, pegada e dificuldade, seguindo a mesma bibliografia.',
-    },
-    {
-      question: 'As aulas realmente aprofundam o conteúdo?',
-      answer:
-        'Sem enrolação. As aulas são densas e aprofundadas, do jeito que precisa para residência. Slides didáticos + material complementar para treinar na hora: questões, resumos, fluxogramas.\n\nAs aulas de HAM usam formato OSCE com dinâmica em POV (primeira pessoa), baseado em estudos que mostram melhora na performance prática e habilidades não-técnicas.',
-    },
-    {
-      question: 'Como funcionam os Flashcards?',
-      answer:
-        'Cada flashcard é criado com base na Taxonomia de Bloom, do básico (lembrar, entender) até o avançado (analisar, avaliar, criar), com dificuldade ajustável. Após cada card, rola revisão pós-card imediata para fixação.\n\nTudo atrelado às ementas de 4 cursos, com revisões espaçadas e integração com o banco de questões.',
-    },
-    {
-      question: 'Os cronogramas são personalizáveis?',
-      answer:
-        '100% personalizados e atrelados às ementas do seu curso. Ajuste por hora do dia, dificuldade por conteúdo, cobrindo todos os módulos, submódulos, tópicos e subtópicos.\n\nCursos: Ciências Médicas (SOI/HAM I-V), Ciências Psicossociais (1°-10°), Ciências Biomédicas (1°-7°), Ciências Odontológicas (1°-10°), além de ENEM e UERJ. A IA adapta ao seu ritmo automaticamente.',
-    },
-    {
-      question: 'Como funcionam as provas com IA?',
-      answer:
-        'Provas individuais totalmente customizáveis: escolha o curso, período, módulos, tópicos, dificuldade, número de questões e tempo limite. A IA gera questões adaptadas ao seu histórico.\n\nTambém temos provas gerais: simulados coletivos com ranking, análise completa de acertos, erros e tempo gasto.',
-    },
-    {
-      question: 'A plataforma recebe atualizações?',
-      answer:
-        'Constantemente. Já temos mais de 20 atualizações mapeadas no roadmap: melhorias de usabilidade, novas funcionalidades, mais questões e ferramentas de revisão inteligente. A plataforma evolui junto com você.',
-    },
-    {
-      question: 'Posso sugerir melhorias?',
-      answer:
-        'Claro! Feedback, sugestões de tema, dúvidas, tudo é bem-vindo. Entre em contato pelo email contato@domineaqui.com.br.',
-    },
-  ]
-
-  const tools = [
-    {
-      id: 'questoes',
-      icon: Database,
-      title: 'Banco de Questões',
-      blurb: '1.000+ questões por período, módulo e tópico — objetivas, discursivas e TRI.',
-      detail:
-        'Monte listas, treine no modo prova, baixe PDF com gabarito e revise só o que errou. Conteúdo novo toda semana, no estilo da sua banca.',
-    },
-    {
-      id: 'flashcards',
-      icon: Brain,
-      title: 'Flashcards com repetição',
-      blurb: 'Taxonomia de Bloom + espaçamento inteligente. Estilo Anki, atrelado às ementas.',
-      detail:
-        'Do lembrar ao criar: cards progressivos com revisão pós-card. Integra com o banco de questões e com o seu cronograma.',
-    },
-    {
-      id: 'cronograma',
-      icon: Calendar,
-      title: 'Cronogramas por ementa',
-      blurb: 'SOI/HAM, Psicossociais, Biomédicas, Odontológicas, ENEM e UERJ.',
-      detail:
-        'Ajuste por hora do dia e dificuldade. A plataforma reorganiza o que estudar quando a rotina muda — sem planilha manual.',
-    },
-    {
-      id: 'provas',
-      icon: Sparkles,
-      title: 'Provas reais + IA',
-      blurb: 'Simulados da faculdade, provas personalizadas e ranking coletivo.',
-      detail:
-        'Escolha curso, período, tópicos e tempo. Receba feedback questão a questão e veja onde a agulha se mexe.',
-    },
-    {
-      id: 'manual',
-      icon: Stethoscope,
-      title: 'Manual Clínico',
-      blurb: '220+ patologias: CID, fisiopatologia, diferenciais, conduta e farmaco.',
-      detail:
-        'Pesquise em segundos o que costuma exigir 5 abas abertas. Feito para plantão, OSCE e revisão rápida pré-prova.',
-    },
-    {
-      id: 'aulas',
-      icon: Video,
-      title: 'Aulas densas',
-      blurb: 'Ao vivo e gravadas. HAM em formato OSCE com dinâmica POV.',
-      detail:
-        'Sem enrolação: slides + material complementar (questões, resumos, fluxogramas) para treinar na hora.',
-    },
-    {
-      id: 'resumos',
-      icon: BookMarked,
-      title: 'Resumos grátis e premium',
-      blurb: 'Materiais por disciplina — versões livres e aprofundadas para download.',
-      detail:
-        'Inclui parcerias como os resumos da Giulia Modesto (OSCE, N1, Multiestação · SOI/HAM).',
-    },
-  ]
-
-  const stats = [
-    { value: 1000, suffix: '+', label: 'questões catalogadas' },
-    { value: 220, suffix: '+', label: 'patologias no Manual' },
-    { value: 4, suffix: '', label: 'cursos da saúde' },
-    { value: 10, suffix: '+', label: 'ferramentas de estudo' },
-  ]
-
-  const courses = [
-    { icon: Stethoscope, name: 'Ciências Médicas', detail: 'SOI e HAM · 1° ao 5°' },
-    { icon: Brain, name: 'Ciências Psicossociais', detail: '1° ao 10° período' },
-    { icon: FlaskConical, name: 'Ciências Biomédicas', detail: '1° ao 7° período' },
-    { icon: GraduationCap, name: 'Ciências Odontológicas', detail: '1° ao 10° período' },
-  ]
-
-  const navLinks = [
-    { label: 'Ferramentas', href: '#ferramentas' },
-    { label: 'Manual Clínico', href: '/manual-clinico' },
-    { label: 'Materiais', href: '/materiais' },
-    { label: 'Amostra', href: '/amostra' },
-    { label: 'Apoie', href: '#apoie' },
-  ]
-
-  const steps = [
-    { n: '01', title: 'Crie a conta', text: 'Sem cartão. Acesso imediato ao essencial gratuito.' },
-    { n: '02', title: 'Curso e período', text: 'A plataforma monta o contexto da sua ementa.' },
-    {
-      n: '03',
-      title: 'Treine no estilo da prova',
-      text: 'Questões, flashcards e simulados com feedback na hora.',
-    },
-    {
-      n: '04',
-      title: 'Revise o que importa',
-      text: 'Estatísticas e ranking mostram o que ainda dói.',
-    },
-  ]
-
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 24)
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
+    return () => {
+      io.disconnect()
+      stop()
+    }
   }, [])
 
+  return ref
+}
+
+/* =================== REVEAL =================== */
+
+function Reveal({
+  children,
+  className = '',
+  delay = 0,
+}: {
+  children: ReactNode
+  className?: string
+  delay?: number
+}) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [shown, setShown] = useState(false)
+
   useEffect(() => {
-    if (!mobileMenuOpen) return
-    const original = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.body.style.overflow = original
+    const el = ref.current
+    if (!el) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setShown(true)
+      return
     }
-  }, [mobileMenuOpen])
+    if (el.getBoundingClientRect().top < window.innerHeight) {
+      setShown(true)
+      return
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setShown(true)
+            io.disconnect()
+          }
+        }
+      },
+      { threshold: 0.12 }
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        transform: shown ? 'translateY(0)' : 'translateY(20px)',
+        opacity: shown ? 1 : 0.001,
+        filter: shown ? 'blur(0)' : 'blur(5px)',
+        transition: `transform .7s cubic-bezier(.2,.7,.2,1) ${delay}ms, opacity .7s ease ${delay}ms, filter .7s ease ${delay}ms`,
+      }}
+    >
+      {children}
+    </div>
+  )
+}
+
+/** Tilt no hover — escreve direto no DOM, sem state por movimento. */
+function TiltCard({
+  children,
+  className = '',
+  intensity = 6,
+}: {
+  children: ReactNode
+  className?: string
+  intensity?: number
+}) {
+  const ref = useRef<HTMLDivElement>(null)
+
+  const onMove = useCallback(
+    (e: React.PointerEvent) => {
+      const el = ref.current
+      if (!el) return
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      const r = el.getBoundingClientRect()
+      const px = (e.clientX - r.left) / r.width - 0.5
+      const py = (e.clientY - r.top) / r.height - 0.5
+      el.style.transition = 'transform .1s ease-out'
+      el.style.transform = `perspective(900px) rotateY(${px * intensity}deg) rotateX(${-py * intensity}deg)`
+    },
+    [intensity]
+  )
+
+  const reset = useCallback(() => {
+    const el = ref.current
+    if (!el) return
+    el.style.transition = 'transform .5s ease'
+    el.style.transform = 'perspective(900px) rotateY(0) rotateX(0)'
+  }, [])
+
+  return (
+    <div
+      ref={ref}
+      onPointerMove={onMove}
+      onPointerLeave={reset}
+      className={'da-preserve-3d ' + className}
+    >
+      {children}
+    </div>
+  )
+}
+
+/* =================== ÍCONES =================== */
+
+const st = {
+  fill: 'none',
+  stroke: '#E8763A',
+  strokeWidth: 1.5,
+  strokeLinecap: 'round' as const,
+  strokeLinejoin: 'round' as const,
+}
+const IconPulse = () => (
+  <svg viewBox="0 0 24 24" className="h-5 w-5" {...st}>
+    <path d="M2 12h4l2-6 4 12 2-6h8" />
+  </svg>
+)
+const IconManual = () => (
+  <svg viewBox="0 0 24 24" className="h-6 w-6" {...st}>
+    <path d="M4 5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2V5Z" />
+    <path d="M8 3v18M12 8h4M12 12h4" />
+  </svg>
+)
+const IconCards = () => (
+  <svg viewBox="0 0 24 24" className="h-6 w-6" {...st}>
+    <rect x="4" y="5" width="12" height="15" rx="2" />
+    <path d="M9 5V4a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-1" />
+  </svg>
+)
+const IconCheck = () => (
+  <svg viewBox="0 0 24 24" className="h-6 w-6" {...st}>
+    <rect x="3" y="3" width="18" height="18" rx="3" />
+    <path d="M8 12l3 3 5-6" />
+  </svg>
+)
+const IconBank = () => (
+  <svg viewBox="0 0 24 24" className="h-6 w-6" {...st}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M8 12l3 3 5-6" />
+  </svg>
+)
+const IconLayers = () => (
+  <svg viewBox="0 0 24 24" className="h-5 w-5" {...st}>
+    <path d="M12 3 3 8l9 5 9-5-9-5Z" />
+    <path d="M3 13l9 5 9-5" />
+  </svg>
+)
+const IconMap = () => (
+  <svg viewBox="0 0 24 24" className="h-6 w-6" {...st}>
+    <circle cx="6" cy="6" r="2.5" />
+    <circle cx="18" cy="7" r="2.5" />
+    <circle cx="12" cy="18" r="2.5" />
+    <path d="M8 7l8 0M7.5 8l3.5 8M16.5 9l-3.5 7" />
+  </svg>
+)
+
+/* =================== CTAs =================== */
+
+function PrimaryCTA({
+  children,
+  className = '',
+  href,
+}: {
+  children: ReactNode
+  className?: string
+  href: string
+}) {
+  return (
+    <SmartLink
+      href={href}
+      className={
+        'group relative inline-flex items-center justify-center gap-2 rounded-full bg-da-amber px-7 py-3.5 font-da-display font-semibold text-[#0B1F1A] transition-[transform,box-shadow] duration-200 hover:shadow-[0_0_34px_-6px_rgba(232,118,58,.7)] active:scale-[0.98] ' +
+        className
+      }
+    >
+      {children}
+      <svg
+        viewBox="0 0 24 24"
+        className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden
+      >
+        <path d="M5 12h14M13 6l6 6-6 6" />
+      </svg>
+    </SmartLink>
+  )
+}
+
+function GhostCTA({ children, href }: { children: ReactNode; href: string }) {
+  return (
+    <SmartLink
+      href={href}
+      className="group relative inline-flex items-center justify-center overflow-hidden rounded-full border border-da-amber/60 px-7 py-3.5 font-da-display font-semibold text-da-amber transition active:scale-[0.98]"
+    >
+      <span className="absolute inset-0 origin-bottom scale-y-0 bg-da-amber transition-transform duration-300 ease-out group-hover:scale-y-100" />
+      <span className="relative z-10 transition-colors duration-200 group-hover:text-[#0B1F1A]">
+        {children}
+      </span>
+    </SmartLink>
+  )
+}
+
+function TextLink({ children, href }: { children: ReactNode; href: string }) {
+  return (
+    <SmartLink
+      href={href}
+      className="group inline-flex items-center gap-1.5 font-da-mono text-sm text-da-amber"
+    >
+      <span className="bg-[linear-gradient(currentColor,currentColor)] bg-[length:0%_1px] bg-left-bottom bg-no-repeat pb-0.5 transition-[background-size] duration-300 group-hover:bg-[length:100%_1px]">
+        {children}
+      </span>
+      <span aria-hidden>→</span>
+    </SmartLink>
+  )
+}
+
+/** Marcador editorial de seção: 01 / 06 com a régua. */
+function SectionMark({ n, label }: { n: string; label: string }) {
+  return (
+    <div className="mb-6 flex items-center gap-4">
+      <span className="font-da-mono text-xs text-da-amber">{n}</span>
+      <span className="h-px flex-1 bg-[color:var(--da-neutral-line)]" />
+      <span className="font-da-mono text-[10px] uppercase tracking-[0.3em] text-da-muted">
+        {label}
+      </span>
+    </div>
+  )
+}
+
+/* =================== PÁGINA =================== */
+
+export interface LandingPageProps {
+  initialIsLoggedIn?: boolean
+}
+
+export default function LandingPage({ initialIsLoggedIn }: LandingPageProps) {
+  const router = useRouter()
+  const rootRef = useParallaxVars<HTMLDivElement>()
+  const [isLoggedIn, setIsLoggedIn] = useState(initialIsLoggedIn ?? false)
 
   // Ao voltar pelo botão do navegador, a landing pode ser restaurada do
   // back-forward cache (bfcache) com o estado congelado em "deslogado"
-  // (isLoggedIn capturado no SSR), mesmo com a sessão ainda válida — o usuário
-  // vê "Entrar" e os botões apontam para /auth/login. Um reload força
-  // app/page.tsx (force-dynamic) a reavaliar getSession() e redirecionar quem
-  // está logado para /dashboard. Não há loop: um load fresco tem persisted=false.
+  // (isLoggedIn capturado no SSR), mesmo com a sessão ainda válida. Um reload
+  // força app/page.tsx (force-dynamic) a reavaliar getSession() e redirecionar
+  // quem está logado. Não há loop: um load fresco tem persisted=false.
   useEffect(() => {
     const handlePageShow = (event: PageTransitionEvent) => {
-      if (event.persisted) {
-        window.location.reload()
-      }
+      if (event.persisted) window.location.reload()
     }
     window.addEventListener('pageshow', handlePageShow)
     return () => window.removeEventListener('pageshow', handlePageShow)
   }, [])
 
   useEffect(() => {
-    // Verificação de auth no cliente — SEMPRE, não só quando initialIsLoggedIn
-    // é undefined. O cookie de sessão usa SameSite=strict (lib/auth.ts), então
-    // numa navegação de nível superior vinda de outro site (link de e-mail,
-    // WhatsApp, Instagram, Google, bookmark...) o cookie NÃO acompanha o
-    // request do SSR: getSession() vê null e a landing renderiza como
-    // "deslogado" mesmo com sessão válida. Um fetch same-site para
-    // /api/auth/me envia o cookie e revela o estado real, evitando que o
-    // usuário logado veja "Entrar" e ainda passe pela tela de login antes de
-    // finalmente cair no dashboard.
+    // Verificação de auth no cliente — SEMPRE. O cookie de sessão usa
+    // SameSite=strict (lib/auth.ts), então numa navegação de nível superior
+    // vinda de outro site (e-mail, WhatsApp, Instagram, Google, bookmark...) o
+    // cookie NÃO acompanha o request do SSR: getSession() vê null e a landing
+    // renderiza como "deslogado" mesmo com sessão válida. Um fetch same-site
+    // para /api/auth/me envia o cookie e revela o estado real.
     let cancelled = false
     fetch('/api/auth/me', { cache: 'no-store' })
       .then((r) => {
         if (cancelled) return
         if (r.ok) {
-          // Sessão válida que o SSR não enxergou. Espelha o comportamento de
-          // app/page.tsx: logado sem ?landing=true vai direto pro dashboard.
+          // Sessão válida que o SSR não enxergou. Espelha app/page.tsx: logado
+          // sem ?landing=true vai direto pro dashboard.
           const forceLanding =
             new URLSearchParams(window.location.search).get('landing') === 'true'
           if (!initialIsLoggedIn && !forceLanding) {
@@ -867,1063 +431,1311 @@ export default function LandingPage({
         }
       })
       .catch(() => {})
-    if (initialVideoEmbedUrl === undefined) {
-      fetch('/api/admin/settings', { cache: 'no-store' })
-        .then(async (r) => {
-          if (r.ok) {
-            const data = await r.json()
-            if (data.videoEmbedUrl) setVideoEmbedUrl(data.videoEmbedUrl)
-            setVideoEnabled(data.videoEnabled !== false)
-          }
-        })
-        .catch(() => {})
-    }
     return () => {
       cancelled = true
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  useEffect(() => {
-    if (!enableMotion) return
-    const id = window.setInterval(() => setActiveTool((i) => (i + 1) % tools.length), 4500)
-    return () => window.clearInterval(id)
-  }, [enableMotion, tools.length])
-
-  const doacaoSection = useInView(0.1)
-  const videoSection = useInView()
-  const ctaSection = useInView()
-
-  const fadeUp = (delay = 0): Record<string, unknown> =>
-    reduced
-      ? {}
-      : {
-          initial: { opacity: 0, y: 20 },
-          whileInView: { opacity: 1, y: 0 },
-          viewport: { once: true, amount: 0.2 },
-          transition: { duration: 0.5, delay, ease: easeOutExpo },
-        }
-
-  const goRegister = () => router.push(isLoggedIn ? '/dashboard' : '/auth/login?mode=register')
-  const goLogin = () => router.push(isLoggedIn ? '/dashboard' : '/auth/login')
-  const ActiveIcon = tools[activeTool].icon
-
-  const navBg = isScrolled
-    ? C.isDark
-      ? 'rgba(12,20,16,0.92)'
-      : 'rgba(246,241,232,0.92)'
-    : 'transparent'
+  const signupHref = isLoggedIn ? '/dashboard' : '/auth/login?mode=register'
 
   return (
     <div
-      className="min-h-screen overflow-x-hidden transition-colors duration-300 font-body"
-      style={{ background: C.cream, color: C.ink }}
-      suppressHydrationWarning
+      ref={rootRef}
+      className="da-landing relative overflow-x-clip bg-da-ground font-da-body text-da-paper"
     >
-      {/* Grain */}
+      <Nav signupHref={signupHref} isLoggedIn={isLoggedIn} />
+      <Hero signupHref={signupHref} />
+      <Marquee />
+      <SampleBand />
+      <PlatformOverview />
+      <ProblemBand />
+      <ManualClinico />
+      <ManualEletro />
+      <ToolsConsole />
+      <Differentiators />
+      <Plans />
+      <Prescricao />
+      <FaqAndCTA signupHref={signupHref} />
+      <Footer />
+    </div>
+  )
+}
+
+/* ---------- NAV ---------- */
+
+function Nav({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: boolean }) {
+  const [solid, setSolid] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => setSolid(window.scrollY > 40)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  useEffect(() => {
+    if (!menuOpen) return
+    const original = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = original
+    }
+  }, [menuOpen])
+
+  const navLinks = [
+    { label: 'Plataforma', href: '#plataforma' },
+    { label: 'Manual Clínico', href: '#manual' },
+    { label: 'Materiais', href: LINKS.materiais },
+    { label: 'Planos', href: '#planos' },
+  ]
+
+  return (
+    <header
+      className={
+        'fixed inset-x-0 top-0 z-50 transition-colors duration-300 ' +
+        (solid
+          ? 'border-b border-[color:var(--da-neutral-line)] bg-da-ground/85 backdrop-blur-md'
+          : '')
+      }
+    >
+      <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 md:px-8">
+        <a href="#top" className="flex items-center gap-2.5" aria-label="Domine Aqui">
+          <Logo variant="icon" size="md" className="h-9" />
+          <span className="font-da-display text-lg font-semibold tracking-tight">Domine Aqui</span>
+        </a>
+
+        <nav className="hidden items-center gap-8 lg:flex">
+          {navLinks.map((l) => (
+            <SmartLink
+              key={l.label}
+              href={l.href}
+              className="text-sm text-da-muted transition hover:text-da-paper"
+            >
+              {l.label}
+            </SmartLink>
+          ))}
+        </nav>
+
+        <div className="flex items-center gap-3">
+          <ThemeToggle variant="icon" />
+          <PrimaryCTA href={signupHref} className="!hidden !px-5 !py-2.5 text-sm sm:!inline-flex">
+            {isLoggedIn ? 'Ir para o dashboard' : 'Criar conta grátis'}
+          </PrimaryCTA>
+          <button
+            type="button"
+            onClick={() => setMenuOpen((v) => !v)}
+            aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'}
+            aria-expanded={menuOpen}
+            className="grid h-10 w-10 place-items-center rounded-full border border-[color:var(--da-neutral-line)] text-da-paper transition hover:border-da-amber/50 lg:hidden"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              className="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              aria-hidden
+            >
+              {menuOpen ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {menuOpen && (
+        <div className="border-t border-[color:var(--da-neutral-line)] bg-da-ground/95 backdrop-blur-md lg:hidden">
+          <nav className="mx-auto flex max-w-7xl flex-col px-5 py-3 md:px-8">
+            {navLinks.map((l) => (
+              <SmartLink
+                key={l.label}
+                href={l.href}
+                className="border-b border-[color:var(--da-neutral-line)] py-3.5 text-sm text-da-muted transition last:border-b-0 hover:text-da-paper"
+              >
+                {l.label}
+              </SmartLink>
+            ))}
+            <div className="pb-2 pt-4 sm:hidden">
+              <PrimaryCTA href={signupHref} className="w-full">
+                {isLoggedIn ? 'Ir para o dashboard' : 'Criar conta grátis'}
+              </PrimaryCTA>
+            </div>
+          </nav>
+        </div>
+      )}
+    </header>
+  )
+}
+
+/* ---------- HERO ---------- */
+
+// Parallax via CSS vars herdadas do root (--da-mx/--da-my/--da-sy).
+const heroBgStyle: CSSProperties = {
+  transform:
+    'translate3d(calc(var(--da-mx, 0) * 6px), calc(var(--da-my, 0) * 6px - var(--da-sy, 0) * 0.04px), 0) scale(1.06)',
+}
+const heroMidStyle: CSSProperties = {
+  transform:
+    'perspective(1200px) translate3d(calc(var(--da-mx, 0) * 22px), calc(var(--da-my, 0) * 16px - var(--da-sy, 0) * 0.06px), 0) rotateY(calc(var(--da-mx, 0) * 3deg)) rotateX(calc(var(--da-my, 0) * -2deg))',
+}
+const heroFrontStyle: CSSProperties = {
+  transform:
+    'translate3d(calc(var(--da-mx, 0) * 42px), calc(var(--da-my, 0) * 30px - var(--da-sy, 0) * 0.1px), 0)',
+}
+
+function Hero({ signupHref }: { signupHref: string }) {
+  return (
+    <section id="top" className="da-scene relative min-h-dvh overflow-hidden pt-[72px]">
+      <div className="pointer-events-none absolute inset-0" style={heroBgStyle}>
+        <Image
+          src={heroBg}
+          alt=""
+          aria-hidden
+          fill
+          priority
+          placeholder="blur"
+          sizes="100vw"
+          className="object-cover opacity-30"
+        />
+      </div>
       <div
-        className="pointer-events-none fixed inset-0 z-0 mix-blend-multiply dark:mix-blend-soft-light"
         aria-hidden
+        className="pointer-events-none absolute inset-0"
         style={{
-          opacity: C.isDark ? 0.2 : 0.35,
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E")`,
+          background:
+            'linear-gradient(90deg, rgb(var(--da-ground)) 0%, rgb(var(--da-ground) / 0.82) 42%, transparent 100%)',
+        }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-40"
+        style={{ background: 'linear-gradient(0deg, rgb(var(--da-ground)), transparent)' }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: 'radial-gradient(1000px 600px at 82% 30%, rgba(232,118,58,.14), transparent 60%)',
         }}
       />
 
-      {/* ══ NAV ═══════════════════════════════════════════════════════════════ */}
-      <header
-        className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
-        style={{
-          background: navBg,
-          borderBottom: isScrolled ? `1px solid ${C.line}` : '1px solid transparent',
-          backdropFilter: isScrolled ? 'blur(10px)' : undefined,
-        }}
-      >
-        <div className="relative max-w-[1200px] mx-auto px-4 sm:px-6 h-[60px] flex items-center justify-between">
-          <a href="#topo" className="flex items-center gap-2 shrink-0" aria-label="DomineAqui">
-            <Logo variant={C.isDark ? 'dark' : 'full'} size="md" />
-          </a>
-
-          <nav className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center gap-1">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="px-3 py-1.5 text-[13px] font-semibold rounded-md transition-opacity hover:opacity-80"
-                style={{ color: C.muted }}
-              >
-                {link.label}
-              </a>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-2">
-            <LandingThemeToggle C={C} />
-            <button
-              onClick={goLogin}
-              className="hidden sm:inline-flex items-center px-3.5 py-2 rounded-md text-[13px] font-semibold transition-opacity hover:opacity-80"
-              style={{ color: C.ink }}
-            >
-              {isLoggedIn ? 'Dashboard' : 'Entrar'}
-            </button>
-            <button
-              onClick={goRegister}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-md text-[13px] font-bold text-white transition-all hover:brightness-110 active:scale-[0.98]"
-              style={{ background: C.orange }}
-            >
-              {isLoggedIn ? 'Abrir painel' : 'Criar conta'}
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-            <button
-              onClick={() => setMobileMenuOpen((v) => !v)}
-              className="lg:hidden p-2 rounded-md"
-              style={{ color: C.ink }}
-              aria-label={mobileMenuOpen ? 'Fechar menu' : 'Abrir menu'}
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
-          </div>
+      {/* faixa editorial do topo */}
+      <div className="relative mx-auto max-w-7xl px-5 md:px-8">
+        <div className="flex items-center gap-4 border-b border-[color:var(--da-neutral-line)] py-3 font-da-mono text-[10px] uppercase tracking-[0.3em] text-da-muted">
+          <span className="text-da-amber">Domine Aqui</span>
+          <span className="hidden sm:inline">Educação médica de precisão</span>
+          <span className="ml-auto hidden items-center gap-2 sm:flex">
+            <IconPulse /> Estudantes · Residentes · Médicos
+          </span>
         </div>
+      </div>
 
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2 }}
-              className="lg:hidden border-t overflow-hidden"
-              style={{ background: C.paper, borderColor: C.line }}
-            >
-              <div className="px-4 py-3 space-y-0.5">
-                {navLinks.map((link) => (
-                  <a
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block px-3 py-3 rounded-md text-sm font-semibold"
-                    style={{ color: C.ink }}
-                  >
-                    {link.label}
-                  </a>
-                ))}
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false)
-                    goLogin()
-                  }}
-                  className="w-full text-left px-3 py-3 rounded-md text-sm font-semibold sm:hidden"
-                  style={{ color: C.muted }}
-                >
-                  {isLoggedIn ? 'Dashboard' : 'Entrar'}
-                </button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </header>
-
-      {/* ══ HERO ══════════════════════════════════════════════════════════════ */}
-      <section id="topo" className="relative pt-[60px]">
-        <div
-          className="absolute inset-x-0 top-0 h-[72%] sm:h-[68%] pointer-events-none"
-          style={{
-            background: C.isDark
-              ? `linear-gradient(165deg, ${C.soft} 0%, ${C.cream} 50%, transparent 75%)`
-              : `linear-gradient(165deg, ${C.soft} 0%, ${C.cream} 45%, transparent 70%)`,
-          }}
-        />
-
-        <div className="relative max-w-[1200px] mx-auto px-4 sm:px-6 pt-10 sm:pt-14 pb-16 sm:pb-20">
-          <div className="grid lg:grid-cols-[1.05fr_0.95fr] gap-12 lg:gap-10 items-center">
-            <motion.div
-              {...(reduced
-                ? {}
-                : {
-                    initial: { opacity: 0, y: 24 },
-                    animate: { opacity: 1, y: 0 },
-                    transition: { duration: 0.6, ease: easeOutExpo },
-                  })}
-            >
-              <div
-                className="inline-flex items-center gap-2 mb-5 text-[12px] font-semibold font-clinical tracking-wide"
-                style={{ color: C.green }}
-              >
-                <span className="h-1.5 w-1.5 rounded-full" style={{ background: C.green }} />
-                Educação em saúde — método, não improviso
-              </div>
-
-              <h1
-                className="font-heading text-[2.4rem] sm:text-5xl xl:text-[3.45rem] leading-[1.08] tracking-tight mb-5"
-                style={{ color: C.ink }}
-              >
-                Estudo de verdade
-                <br />
-                para quem vai{' '}
-                <em className="not-italic relative inline-block" style={{ color: C.green }}>
-                  atender
-                  <svg
-                    className="absolute -bottom-1 left-0 w-full h-2"
-                    viewBox="0 0 120 8"
-                    preserveAspectRatio="none"
-                    aria-hidden
-                  >
-                    <path
-                      d="M0 6 Q30 0 60 5 T120 4"
-                      fill="none"
-                      stroke={C.gold}
-                      strokeWidth="3"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                </em>
-                .
-              </h1>
-
-              <p className="text-base sm:text-lg leading-relaxed max-w-xl mb-6" style={{ color: C.muted }}>
-                Questões no estilo da sua prova, flashcards com repetição, cronograma pela ementa e o
-                raciocínio clínico de 220+ patologias — numa plataforma só. Da primeira prova à
-                residência.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-3 mb-3">
-                <button
-                  onClick={goRegister}
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-md text-[15px] font-bold text-white shadow-[0_8px_24px_-8px_rgba(206,89,41,0.55)] transition-all hover:brightness-110 active:scale-[0.98]"
-                  style={{ background: C.orange }}
-                >
-                  Criar conta grátis
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => router.push('/amostra')}
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-md text-[15px] font-bold border transition-all hover:opacity-90 active:scale-[0.98]"
-                  style={{ borderColor: C.line, color: C.ink, background: C.paper }}
-                >
-                  <Play className="w-4 h-4" style={{ color: C.green }} />
-                  Ver 10 questões sem cadastro
-                </button>
-              </div>
-              <p className="text-xs mb-8 font-clinical" style={{ color: C.muted }}>
-                Essencial gratuito · sem cartão · acesso na hora
-              </p>
-
-              <div className="flex flex-wrap gap-2">
-                {courses.map((c) => (
-                  <span
-                    key={c.name}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded border text-[11px] font-semibold"
-                    style={{ borderColor: C.line, background: C.paper, color: C.muted }}
-                  >
-                    <c.icon className="w-3 h-3" style={{ color: C.green }} />
-                    {c.name.replace('Ciências ', '')}
-                  </span>
-                ))}
-                <span
-                  className="inline-flex items-center px-2.5 py-1.5 rounded border text-[11px] font-semibold font-clinical"
-                  style={{ borderColor: C.line, background: C.paper, color: C.muted }}
-                >
-                  ENEM · UERJ
-                </span>
-              </div>
-            </motion.div>
-
-            <motion.div
-              {...(reduced
-                ? {}
-                : {
-                    initial: { opacity: 0, y: 28, rotateX: 12 },
-                    animate: { opacity: 1, y: 0, rotateX: 0 },
-                    transition: { duration: 0.75, delay: 0.1, ease: easeOutExpo },
-                  })}
-              className="relative lg:pl-4"
-              style={{ perspective: 1400 }}
-            >
-              <ExamMockup C={C} enableMotion={enableMotion} />
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* ══ STATS ═════════════════════════════════════════════════════════════ */}
-      <section className="relative border-y" style={{ borderColor: C.line, background: C.paper }}>
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-8 sm:py-10">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-4">
-            {stats.map((s, i) => (
-              <div
-                key={s.label}
-                className={`text-center md:text-left ${i > 0 ? 'md:border-l md:pl-6' : ''}`}
-                style={{ borderColor: C.line }}
-              >
-                <div
-                  className="font-heading text-3xl sm:text-4xl tabular-nums leading-none mb-1.5 italic"
-                  style={{ color: C.isDark ? C.gold : C.greenDeep }}
-                >
-                  <AnimatedCounter target={s.value} suffix={s.suffix} />
-                </div>
-                <div className="text-[12px] sm:text-sm font-medium" style={{ color: C.muted }}>
-                  {s.label}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══ COMO FUNCIONA ═════════════════════════════════════════════════════ */}
-      <section className="relative py-16 sm:py-20 px-4 sm:px-6">
-        <div className="max-w-[1200px] mx-auto">
-          <motion.div {...fadeUp()} className="max-w-xl mb-10 sm:mb-12">
-            <SectionMark C={C}>Do zero ao domínio</SectionMark>
-            <h2 className="font-heading text-3xl sm:text-4xl leading-tight mb-3" style={{ color: C.ink }}>
-              Quatro passos. Zero firula.
-            </h2>
-            <p className="text-[15px] leading-relaxed" style={{ color: C.muted }}>
-              Você fala o curso. A plataforma organiza o resto — questões, revisão e ritmo.
+      <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-5 pb-16 pt-10 md:px-8 lg:grid-cols-[1.05fr_1fr] lg:pt-16">
+        <div className="relative z-10 max-w-2xl">
+          <Reveal>
+            <p className="font-da-mono text-xs uppercase tracking-[0.28em] text-da-amber">
+              A plataforma completa de Medicina
             </p>
-          </motion.div>
-
-          <div
-            className="grid sm:grid-cols-2 lg:grid-cols-4 gap-0 border rounded-lg overflow-hidden"
-            style={{ borderColor: C.line, perspective: 1000 }}
-          >
-            {steps.map((step, i) => (
-              <StepCard3D key={step.n} step={step} i={i} C={C} reduced={reduced} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══ FERRAMENTAS ═══════════════════════════════════════════════════════ */}
-      <section
-        id="ferramentas"
-        className="relative py-16 sm:py-20 px-4 sm:px-6 overflow-hidden"
-        style={{ background: C.greenForest }}
-      >
-        {/* Subtle 3D DNA in background */}
-        <div className="absolute right-8 top-16 opacity-30 pointer-events-none hidden lg:block">
-          {enableMotion && <DnaHelix3D color={C.gold} accent={C.green} />}
-        </div>
-
-        <div className="max-w-[1200px] mx-auto relative">
-          <motion.div {...fadeUp()} className="mb-10 sm:mb-12 max-w-xl">
-            <SectionMark C={C} light>
-              Ferramentas
-            </SectionMark>
-            <h2 className="font-heading text-3xl sm:text-4xl leading-tight text-[#F0EBE0] mb-3">
-              O kit completo de quem leva a prova a sério
-            </h2>
-            <p className="text-[15px] leading-relaxed text-[#F0EBE0]/70">
-              Explore cada ferramenta. Detalhe clínico, não card genérico.
+          </Reveal>
+          <Reveal delay={80}>
+            <h1 className="mt-5 font-da-display text-[2.7rem] font-semibold leading-[0.98] tracking-tighter md:text-[4.4rem]">
+              Pare de estudar
+              <br />
+              com cinco abas abertas.
+            </h1>
+          </Reveal>
+          <Reveal delay={160}>
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-da-muted">
+              Manual Clínico, flashcards, provas e questões por IA, banco de questões e cronograma.
+              Tudo o que você abre em cinco lugares diferentes, reunido em um ecossistema que você
+              usa por dentro. E que continua ali quando você fecha o notebook.
             </p>
-          </motion.div>
-
-          <div className="grid lg:grid-cols-[1fr_1.1fr] gap-6 lg:gap-10 items-start">
-            <div className="space-y-1">
-              {tools.map((tool, i) => {
-                const Icon = tool.icon
-                const active = activeTool === i
-                return (
-                  <button
-                    key={tool.id}
-                    type="button"
-                    onClick={() => setActiveTool(i)}
-                    onMouseEnter={() => setActiveTool(i)}
-                    className="w-full text-left flex items-start gap-3 px-3.5 py-3 rounded-md transition-all"
-                    style={{
-                      background: active ? 'rgba(240,235,224,0.08)' : 'transparent',
-                      borderLeft: active ? `3px solid ${C.gold}` : '3px solid transparent',
-                    }}
-                  >
-                    <Icon
-                      className="mt-0.5 shrink-0"
-                      style={{
-                        color: active ? C.gold : 'rgba(240,235,224,0.45)',
-                        width: 18,
-                        height: 18,
-                      }}
-                    />
-                    <div>
-                      <p
-                        className="text-[14px] font-bold"
-                        style={{ color: active ? '#F0EBE0' : 'rgba(240,235,224,0.75)' }}
-                      >
-                        {tool.title}
-                      </p>
-                      <p
-                        className="text-[12px] leading-relaxed mt-0.5"
-                        style={{ color: active ? 'rgba(240,235,224,0.65)' : 'rgba(240,235,224,0.4)' }}
-                      >
-                        {tool.blurb}
-                      </p>
-                    </div>
-                  </button>
-                )
-              })}
+          </Reveal>
+          <Reveal delay={240}>
+            <div className="mt-9 flex flex-wrap items-center gap-4">
+              <PrimaryCTA href={signupHref}>Criar conta grátis</PrimaryCTA>
+              <GhostCTA href="#plataforma">Ver a plataforma</GhostCTA>
             </div>
+          </Reveal>
+          <Reveal delay={320}>
+            <p className="mt-4 font-da-mono text-xs text-da-muted">
+              Comece de graça. Sem cartão. Sem pegadinha.
+            </p>
+          </Reveal>
+        </div>
 
-            <motion.div
-              key={activeTool}
-              initial={reduced ? false : { opacity: 0, rotateY: -12, x: 12 }}
-              animate={{ opacity: 1, rotateY: 0, x: 0 }}
-              transition={{ duration: 0.4, ease: easeOutExpo }}
-              className="rounded-lg p-6 sm:p-8 border sticky top-24"
+        <div className="relative">
+          <div className="relative aspect-square w-full">
+            <div
+              aria-hidden
+              className="absolute -inset-6 rounded-[2rem]"
               style={{
-                background: 'rgba(240,235,224,0.04)',
-                borderColor: 'rgba(240,235,224,0.12)',
-                transformStyle: 'preserve-3d',
-                perspective: 800,
+                background: 'radial-gradient(60% 60% at 50% 45%, rgba(232,118,58,.2), transparent 70%)',
+              }}
+            />
+            {/* Duas artes (clara/escura) trocadas por CSS: sem flash na primeira
+                pintura e sem depender do mount do JS pra saber o tema. */}
+            <div className="absolute inset-0 z-10 dark:hidden" style={heroMidStyle}>
+              <Image
+                src={heroMidLight}
+                alt="Ecossistema do Domine Aqui: Manual Clínico, flashcards, provas, banco de questões, cronograma e ECG conectados"
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 45vw"
+                className="object-contain drop-shadow-[0_40px_80px_rgba(0,0,0,.5)]"
+              />
+            </div>
+            <div className="absolute inset-0 z-10 hidden dark:block" style={heroMidStyle}>
+              <Image
+                src={heroMid}
+                alt="Ecossistema do Domine Aqui: Manual Clínico, flashcards, provas, banco de questões, cronograma e ECG conectados"
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 45vw"
+                className="object-contain drop-shadow-[0_40px_80px_rgba(0,0,0,.5)]"
+              />
+            </div>
+            <div className="pointer-events-none absolute inset-0 z-20" style={heroFrontStyle}>
+              <Image
+                src={heroFront}
+                alt=""
+                aria-hidden
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 45vw"
+                className="object-contain"
+              />
+            </div>
+            <div
+              className="absolute right-2 top-4 z-30 hidden rounded-xl border border-[color:var(--da-amber-line)] bg-[color:var(--da-glass)] px-4 py-3 backdrop-blur-sm lg:block"
+              style={{
+                transform:
+                  'translate3d(calc(var(--da-mx, 0) * 34px), calc(var(--da-my, 0) * -22px), 0)',
               }}
             >
-              <div
-                className="inline-flex h-11 w-11 items-center justify-center rounded-md mb-5"
-                style={{ background: `${C.gold}22`, color: C.gold }}
-              >
-                <ActiveIcon className="w-5 h-5" />
-              </div>
-              <h3 className="font-heading text-2xl text-[#F0EBE0] mb-3">{tools[activeTool].title}</h3>
-              <p className="text-[15px] leading-relaxed text-[#F0EBE0]/75 mb-6">
-                {tools[activeTool].detail}
+              <p className="font-da-mono text-[10px] uppercase tracking-widest text-da-amber">
+                Interativo
               </p>
-              <button
-                onClick={goRegister}
-                className="inline-flex items-center gap-2 text-sm font-bold transition-opacity hover:opacity-80"
-                style={{ color: C.gold }}
-              >
-                Experimentar grátis
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </motion.div>
+              <p className="mt-1 text-xs">Som, imagem e camadas</p>
+            </div>
+            <div
+              className="absolute -right-1 bottom-6 z-30 hidden rounded-xl border border-[color:var(--da-amber-line)] bg-[color:var(--da-glass)] px-4 py-3 backdrop-blur-sm lg:block"
+              style={{
+                transform:
+                  'translate3d(calc(var(--da-mx, 0) * 40px), calc(var(--da-my, 0) * 28px), 0)',
+              }}
+            >
+              <p className="font-da-mono text-[10px] uppercase tracking-widest text-da-amber">
+                Por IA
+              </p>
+              <p className="mt-1 text-xs">Na sua ementa</p>
+            </div>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* ══ MANUAL CLÍNICO ════════════════════════════════════════════════════ */}
-      <section id="manual-clinico" className="relative py-16 sm:py-20 px-4 sm:px-6">
-        <div className="max-w-[1200px] mx-auto">
-          <motion.div
-            {...fadeUp()}
-            className="rounded-lg overflow-hidden border grid lg:grid-cols-[1.25fr_0.85fr]"
-            style={{ borderColor: C.line, background: C.paper }}
+      {/* trilho de números */}
+      <div className="relative mx-auto max-w-7xl px-5 md:px-8">
+        <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-[color:var(--da-neutral-line)] bg-[color:var(--da-neutral-line)] sm:grid-cols-4">
+          {[
+            ['300+', 'patologias no Manual'],
+            ['6', 'produtos integrados'],
+            ['Provas', 'reais da sua faculdade'],
+            ['Grátis', 'para começar hoje'],
+          ].map(([n, l]) => (
+            <div key={l} className="bg-da-ground p-5">
+              <dt className="font-da-display text-2xl font-semibold">{n}</dt>
+              <dd className="mt-1 font-da-mono text-[11px] leading-tight text-da-muted">{l}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+  )
+}
+
+/* ---------- MARQUEE ---------- */
+
+function Marquee() {
+  const items = [
+    'Manual Clínico',
+    'Flashcards de anatomia',
+    'Provas por IA',
+    'Banco de Questões',
+    'Cronograma',
+    'Prescrição no SUS',
+    'Ausculta com áudio real',
+    'Repetição espaçada',
+  ]
+  const row = [...items, ...items]
+  return (
+    <div className="relative overflow-hidden border-y border-[color:var(--da-neutral-line)] bg-da-panel/40 py-4">
+      <div className="da-marquee-track flex w-max gap-8 whitespace-nowrap">
+        {row.map((t, i) => (
+          <span
+            key={i}
+            className="flex items-center gap-8 font-da-mono text-xs uppercase tracking-[0.2em] text-da-muted"
           >
-            <div className="p-6 sm:p-10 flex flex-col justify-center">
-              <SectionMark C={C}>Produto carro-chefe</SectionMark>
-              <h2
-                className="font-heading text-3xl sm:text-[2.4rem] leading-[1.12] mb-3"
-                style={{ color: C.ink }}
-              >
-                Manual Clínico —{' '}
-                <span style={{ color: C.green }}>220+ patologias</span> na palma da mão
-              </h2>
-              <p className="text-[15px] leading-relaxed mb-5 max-w-lg" style={{ color: C.muted }}>
-                CIDs, fisiopatologia, diagnósticos diferenciais, farmacologia e fluxogramas. Pare de
-                abrir 5 abas pra resolver 1 patologia.
-              </p>
-              <ul className="grid sm:grid-cols-2 gap-2 mb-7">
-                {['Semestral · Anual · Vitalício', 'Pix, cartão ou boleto', 'Acesso imediato', 'Busca em segundos'].map(
-                  (t) => (
-                    <li
-                      key={t}
-                      className="flex items-center gap-2 text-[13px] font-medium"
-                      style={{ color: C.ink }}
-                    >
-                      <Check className="w-4 h-4 shrink-0" style={{ color: C.green }} />
-                      {t}
-                    </li>
-                  )
-                )}
-              </ul>
-              <div className="flex flex-wrap gap-3">
-                <a
-                  href="/manual-clinico"
-                  className="inline-flex items-center gap-2 px-5 py-3 rounded-md text-sm font-bold text-white transition-all hover:brightness-110"
-                  style={{ background: C.green }}
-                >
-                  Abrir o Manual Clínico
-                  <ArrowRight className="w-4 h-4" />
-                </a>
-                <a
-                  href="/ldpg-mnclinico"
-                  className="inline-flex items-center gap-2 px-5 py-3 rounded-md text-sm font-bold border transition-opacity hover:opacity-80"
-                  style={{ borderColor: C.line, color: C.ink }}
-                >
-                  Ver os planos
-                </a>
-              </div>
-            </div>
+            {t}
+            <span className="text-da-amber">/</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
 
-            <div
-              className="p-6 sm:p-8 border-t lg:border-t-0 lg:border-l flex flex-col justify-center relative overflow-hidden"
-              style={{ borderColor: C.line, background: C.soft }}
-            >
-              <div className="absolute right-4 top-4 opacity-40 pointer-events-none">
-                {enableMotion && <Heart3D color={C.orange} />}
-              </div>
-              <p
-                className="text-[11px] font-semibold uppercase tracking-wider mb-4 font-clinical"
-                style={{ color: C.muted }}
-              >
-                Índice rápido
-              </p>
-              <ol className="space-y-0">
-                {[
-                  { n: '01', t: 'Cardiologia & emergência' },
-                  { n: '02', t: 'Neurologia clínica' },
-                  { n: '03', t: 'Farmacologia aplicada' },
-                  { n: '04', t: 'Condutas e fluxogramas' },
-                  { n: '05', t: 'Diagnósticos diferenciais' },
-                ].map((row) => (
-                  <li
-                    key={row.n}
-                    className="flex items-center gap-3 py-3 border-b last:border-b-0"
-                    style={{ borderColor: `${C.line}99` }}
-                  >
-                    <span className="font-heading text-lg italic tabular-nums" style={{ color: C.green }}>
-                      {row.n}
-                    </span>
-                    <span className="text-sm font-semibold" style={{ color: C.ink }}>
-                      {row.t}
-                    </span>
-                  </li>
-                ))}
-              </ol>
-            </div>
-          </motion.div>
+/* ---------- PLATAFORMA ---------- */
+
+function PlatformOverview() {
+  const modules: [ReactNode, string, string][] = [
+    [<IconManual key="i" />, 'Manual Clínico', '300+ patologias com imagem, áudio e referência. Com teste grátis.'],
+    [<IconCheck key="i" />, 'Provas da Faculdade', 'As provas reais do seu curso, prontas para resolver e treinar.'],
+    [<IconCards key="i" />, 'Flashcards próprios', 'Decks feitos por especialistas, com repetição espaçada.'],
+    [<IconMap key="i" />, 'Mapas mentais', 'Editor visual para criar, conectar e compartilhar suas ideias.'],
+    [<IconBank key="i" />, 'Banco de Questões', 'Uso ilimitado no Essential e no Premium.'],
+    [<IconPulse key="i" />, 'Manual do Eletro', 'Exclusivo de quem assina o Manual Clínico. Treina o raciocínio do traçado.'],
+  ]
+  return (
+    <section id="plataforma" className="relative border-t border-[color:var(--da-neutral-line)]">
+      <div className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
+        <Reveal>
+          <SectionMark n="01 / 06" label="A plataforma" />
+          <h2 className="max-w-3xl font-da-display text-4xl font-semibold leading-[1.04] tracking-tighter md:text-5xl">
+            Seis ferramentas. Um lugar. Zero abas perdidas.
+          </h2>
+          <p className="mt-5 max-w-2xl text-lg leading-relaxed text-da-muted">
+            Cada produto resolve um buraco que a faculdade deixa. Juntos, viram um ecossistema que
+            você não consegue mais largar.
+          </p>
+        </Reveal>
+        <div className="mt-12 grid grid-cols-1 divide-y divide-[color:var(--da-neutral-line)] border-y border-[color:var(--da-neutral-line)] sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-3">
+          {modules.map(([icon, title, desc], i) => (
+            <Reveal key={title} delay={i * 50}>
+              <article className="group flex h-full flex-col border-[color:var(--da-neutral-line)] p-7 transition-colors hover:bg-da-panel/40 sm:min-h-[220px] sm:[&:nth-child(odd)]:border-r lg:[&:not(:nth-child(3n))]:border-r">
+                <div className="flex items-center justify-between">
+                  <span className="text-da-amber">{icon}</span>
+                  <span className="font-da-mono text-[10px] text-da-muted">0{i + 1}</span>
+                </div>
+                <h3 className="mt-5 font-da-display text-xl font-semibold tracking-tight">{title}</h3>
+                <p className="mt-2 text-da-muted">{desc}</p>
+              </article>
+            </Reveal>
+          ))}
         </div>
-      </section>
+      </div>
+    </section>
+  )
+}
 
-      {/* ══ PARCERIA GIULIA ═══════════════════════════════════════════════════ */}
-      <section className="relative pb-16 sm:pb-20 px-4 sm:px-6">
-        <div className="max-w-[1200px] mx-auto">
-          <motion.a
-            href="https://domineaqui.com.br/materiais?folder=6a00eb6af5b0dd58adb5fcab"
-            target="_blank"
-            rel="noopener noreferrer"
-            {...fadeUp()}
-            className="group block rounded-lg overflow-hidden border transition-shadow hover:shadow-[0_20px_40px_-24px_rgba(21,61,31,0.45)]"
-            style={{ borderColor: C.line, background: C.paper }}
-          >
-            <div className="lg:hidden">
-              <Image
-                src="https://i.imgur.com/9h3bMzL.png"
-                alt="Resumos da Giulia Modesto"
-                width={2073}
-                height={758}
-                className="w-full h-auto block"
-                sizes="100vw"
-              />
-              <div className="p-5">
-                <p
-                  className="text-[11px] font-semibold uppercase tracking-wider mb-2 font-clinical"
-                  style={{ color: C.orange }}
-                >
-                  Parceria exclusiva
-                </p>
-                <h3 className="font-heading text-xl mb-1.5" style={{ color: C.ink }}>
-                  Resumos da Giulia Modesto
-                </h3>
-                <p className="text-sm leading-relaxed mb-4" style={{ color: C.muted }}>
-                  OSCE, N1 e Multiestação. SOI e HAM · Medicina · 1° e 2° períodos.
-                </p>
-                <span className="inline-flex items-center gap-2 text-sm font-bold" style={{ color: C.green }}>
-                  Ver resumos <ArrowRight className="w-4 h-4" />
+/* ---------- O PROBLEMA ---------- */
+
+function ProblemBand() {
+  return (
+    <section className="relative overflow-hidden border-t border-[color:var(--da-neutral-line)]">
+      <Image
+        src={ausculta}
+        alt=""
+        aria-hidden
+        fill
+        placeholder="blur"
+        sizes="100vw"
+        className="object-cover opacity-40"
+      />
+      <div aria-hidden className="absolute inset-0 bg-da-ground/75" />
+      <div className="relative mx-auto max-w-5xl px-5 py-24 md:px-8 md:py-32">
+        <Reveal>
+          <p className="font-da-mono text-xs uppercase tracking-[0.28em] text-da-amber">
+            O problema que ninguém te conta
+          </p>
+          <h2 className="mt-5 max-w-3xl font-da-display text-3xl font-semibold leading-[1.1] tracking-tight md:text-5xl">
+            O material que você baixou hoje já morreu na pasta de Downloads.
+          </h2>
+        </Reveal>
+        <Reveal delay={120}>
+          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-da-muted">
+            Você abre o PDF, lê metade, fecha e nunca mais volta. Junta cinco fontes, cada uma pela
+            metade, e ainda sai com dúvida na véspera da prova. O problema nunca foi você. Foi
+            estudar com material morto. Aqui é o contrário: tudo é interativo, tudo tem som, imagem e
+            profundidade, e tudo continua vivo dentro da plataforma no dia que você mais precisa.
+          </p>
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+/* ---------- MANUAL CLÍNICO ---------- */
+
+function ManualClinico() {
+  const features = [
+    'Classificação, etiologia, fisiopatologia e farmacologia, aprofundadas sem lacuna',
+    'Os sopros cardíacos e a ausculta pulmonar tocam de verdade, dentro do card',
+    'As lesões você vê em foto clínica, da erisipela à dermatologia, com referência',
+    'Atualizado de momento em momento, sem aquele tópico raso com pontinho de IA',
+  ]
+  return (
+    <section id="manual" className="relative mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
+      <Reveal>
+        <SectionMark n="02 / 06" label="Carro-chefe" />
+      </Reveal>
+      <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
+        <Reveal className="order-2 lg:order-1">
+          <Image
+            src={logoManual}
+            alt="Manual Clínico"
+            sizes="160px"
+            className="mb-6 h-16 w-auto"
+          />
+          <h2 className="font-da-display text-4xl font-semibold leading-[1.04] tracking-tighter md:text-5xl">
+            Cinco livros abertos. Uma busca só.
+          </h2>
+          <p className="mt-5 max-w-lg text-lg leading-relaxed text-da-muted">
+            Mais de 300 patologias, cada uma destrinchada na profundidade que a prova e o plantão
+            exigem. Você digita a doença e vê tudo, do mecanismo à conduta. O aluno que precisava de
+            cinco livros na mesa agora precisa de uma aba. E dá para experimentar com o teste grátis
+            antes de assinar.
+          </p>
+          <ul className="mt-8 space-y-4">
+            {features.map((f) => (
+              <li key={f} className="flex items-start gap-3">
+                <span className="mt-0.5 shrink-0 text-da-amber">
+                  <IconLayers />
                 </span>
-              </div>
-            </div>
-
-            <div className="hidden lg:block relative" style={{ aspectRatio: '2073/758' }}>
-              <Image
-                src="https://i.imgur.com/9h3bMzL.png"
-                alt="Resumos da Giulia Modesto"
-                fill
-                className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.015]"
-                sizes="1200px"
-              />
+                <span>{f}</span>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-9 flex flex-wrap items-center gap-4">
+            <GhostCTA href={LINKS.manual}>Abrir o Manual Clínico</GhostCTA>
+            <span className="font-da-mono text-xs text-da-muted">Teste grátis disponível</span>
+          </div>
+        </Reveal>
+        <Reveal delay={120} className="order-1 lg:order-2">
+          <TiltCard intensity={5}>
+            <figure className="relative">
               <div
-                className="absolute inset-0"
+                aria-hidden
+                className="absolute -inset-4 rounded-[2rem]"
                 style={{
                   background:
-                    'linear-gradient(to right, transparent 30%, rgba(15,36,24,0.88) 78%, rgba(15,36,24,0.95) 100%)',
+                    'radial-gradient(60% 60% at 50% 50%, rgba(232,118,58,.18), transparent 70%)',
                 }}
               />
-              <div className="absolute inset-0 flex items-center justify-end p-10">
-                <div className="w-[40%]">
-                  <p className="text-[11px] font-semibold uppercase tracking-wider mb-3 text-[#E2A43E] font-clinical">
-                    Parceria exclusiva
-                  </p>
-                  <h3 className="font-heading text-[1.7rem] text-[#F0EBE0] mb-2 leading-tight">
-                    Resumos da Giulia Modesto
-                  </h3>
-                  <p className="text-sm text-[#F0EBE0]/75 mb-5 leading-relaxed">
-                    Resumos aprofundados no formato da prova: OSCE, N1 e Multiestação. SOI e HAM · 1°
-                    e 2° períodos.
-                  </p>
-                  <span
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-bold text-white"
-                    style={{ background: C.orange }}
-                  >
-                    Ver resumos <ArrowRight className="w-4 h-4" />
-                  </span>
-                </div>
-              </div>
-            </div>
-          </motion.a>
-        </div>
-      </section>
-
-      {/* ══ CURSOS ════════════════════════════════════════════════════════════ */}
-      <section className="relative py-16 sm:py-20 px-4 sm:px-6 border-t" style={{ borderColor: C.line }}>
-        <div className="max-w-[1200px] mx-auto">
-          <motion.div
-            {...fadeUp()}
-            className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8"
-          >
-            <div>
-              <SectionMark C={C}>Cobertura</SectionMark>
-              <h2 className="font-heading text-3xl sm:text-4xl leading-tight" style={{ color: C.ink }}>
-                Ciências da Saúde, de ponta a ponta
-              </h2>
-            </div>
-            <p className="text-sm max-w-xs sm:text-right" style={{ color: C.muted }}>
-              Cronogramas, questões e flashcards por curso, período, módulo e tópico.
-            </p>
-          </motion.div>
-
-          <div className="grid sm:grid-cols-2 gap-3">
-            {courses.map((course, i) => (
-              <motion.div
-                key={course.name}
-                {...fadeUp(i * 0.05)}
-                whileHover={reduced ? undefined : { y: -4, rotateX: 4, scale: 1.01 }}
-                style={{ transformPerspective: 700, borderColor: C.line, background: C.paper }}
-                className="flex items-center gap-4 p-4 sm:p-5 rounded-md border transition-colors"
-              >
-                <div
-                  className="h-12 w-12 rounded-md flex items-center justify-center shrink-0"
-                  style={{ background: C.soft, color: C.green }}
-                >
-                  <course.icon className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-[15px]" style={{ color: C.ink }}>
-                    {course.name}
-                  </h3>
-                  <p className="text-[13px] font-clinical" style={{ color: C.muted }}>
-                    {course.detail}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="flex flex-wrap gap-2 mt-4">
-            {['ENEM', 'UERJ'].map((label) => (
-              <span
-                key={label}
-                className="px-3 py-1.5 rounded-md border text-xs font-bold font-clinical"
-                style={{ borderColor: C.line, color: C.muted, background: C.cream }}
-              >
-                {label}
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══ VIDEO ═════════════════════════════════════════════════════════════ */}
-      {videoEnabled && (
-        <section className="relative py-16 sm:py-20 px-4 sm:px-6" style={{ background: C.soft }}>
-          <div
-            ref={videoSection.ref}
-            className={`max-w-3xl mx-auto transition-all duration-700 ${
-              videoSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-            }`}
-          >
-            <div className="text-center mb-8">
-              <SectionMark C={C}>Demonstração</SectionMark>
-              <h2 className="font-heading text-3xl sm:text-4xl mb-2" style={{ color: C.ink }}>
-                Veja a plataforma em ação
-              </h2>
-              <p className="text-sm" style={{ color: C.muted }}>
-                Um tour rápido pelas ferramentas do dia a dia.
-              </p>
-            </div>
-            <div
-              className="aspect-video rounded-lg overflow-hidden border"
-              style={{
-                borderColor: C.line,
-                background: C.greenDeep,
-                boxShadow: C.isDark
-                  ? '0 20px 50px -24px rgba(0,0,0,0.7)'
-                  : '0 16px 40px -20px rgba(21,61,31,0.3)',
-              }}
-            >
-              <iframe
-                width="100%"
-                height="100%"
-                src={videoEmbedUrl}
-                title="Demonstração da Plataforma DomineAqui"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerPolicy="strict-origin-when-cross-origin"
-                allowFullScreen
-                className="w-full h-full"
+              <Image
+                src={manualImg}
+                alt="Camadas de vidro do dossiê clínico com lesão, pulmão e miniaturas de patologia"
+                placeholder="blur"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="relative w-full rounded-2xl border border-[color:var(--da-amber-line)]"
               />
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ══ PROVAS ════════════════════════════════════════════════════════════ */}
-      <section className="relative py-16 sm:py-20 px-4 sm:px-6">
-        <div className="max-w-[1200px] mx-auto">
-          <motion.div {...fadeUp()} className="max-w-2xl mb-10">
-            <SectionMark C={C}>Provas por curso</SectionMark>
-            <h2 className="font-heading text-3xl sm:text-4xl leading-tight mb-3" style={{ color: C.ink }}>
-              Treine com a pegada da sua faculdade
-            </h2>
-            <p className="text-[15px] leading-relaxed" style={{ color: C.muted }}>
-              Simulados por curso, período e disciplina — gabarito comentado e modo treino.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
-            {[
-              { icon: '🩺', label: 'Médicas', sub: 'SOI / HAM · 1°–5°' },
-              { icon: '🧠', label: 'Psicossociais', sub: '1°–10° período' },
-              { icon: '🔬', label: 'Biomédicas', sub: '1°–7° período' },
-              { icon: '🦷', label: 'Odontológicas', sub: '1°–10° período' },
-            ].map((c, i) => (
-              <motion.div
-                key={c.label}
-                {...fadeUp(i * 0.05)}
-                whileHover={reduced ? undefined : { y: -6, rotateX: 8, scale: 1.02 }}
-                className="rounded-md border p-4 text-center"
-                style={{
-                  borderColor: C.line,
-                  background: C.paper,
-                  transformPerspective: 600,
-                }}
-              >
-                <div className="text-2xl mb-2">{c.icon}</div>
-                <p className="font-bold text-sm" style={{ color: C.ink }}>
-                  {c.label}
-                </p>
-                <p className="text-[11px] mt-0.5 font-clinical" style={{ color: C.muted }}>
-                  {c.sub}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="grid sm:grid-cols-3 gap-3 mb-8">
-            {[
-              {
-                title: 'Organizadas de verdade',
-                desc: 'Por disciplina, período e semestre — acha o que precisa em segundos.',
-              },
-              {
-                title: 'Gabarito comentado',
-                desc: 'Baixe PDF com respostas comentadas para revisar offline.',
-              },
-              {
-                title: 'Modo treino',
-                desc: 'Feedback imediato questão a questão enquanto pratica.',
-              },
-            ].map((item) => (
-              <div
-                key={item.title}
-                className="rounded-md border p-4"
-                style={{ borderColor: C.line, background: C.cream }}
-              >
-                <p className="font-bold text-sm mb-1" style={{ color: C.ink }}>
-                  {item.title}
-                </p>
-                <p className="text-[12px] leading-relaxed" style={{ color: C.muted }}>
-                  {item.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <div
-            className="flex items-start gap-3 p-4 sm:p-5 rounded-md border"
-            style={{ borderColor: `${C.gold}55`, background: `${C.gold}14` }}
-          >
-            <Scale className="w-4 h-4 shrink-0 mt-0.5" style={{ color: C.orange }} />
-            <div>
-              <p className="text-xs font-bold mb-1" style={{ color: C.orange }}>
-                Aviso legal
-              </p>
-              <p className="text-[11px] sm:text-xs leading-relaxed" style={{ color: C.muted }}>
-                Conteúdo exclusivamente educacional. Questões de banca adaptadas de enunciados de
-                domínio público ou compartilhados por estudantes. Conteúdo gerado por IA é de autoria
-                da plataforma (Lei nº 9.610/1998, art. 11). A DomineAqui não possui vínculo ou endosso
-                com nenhuma instituição de ensino.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ══ DOAÇÃO ════════════════════════════════════════════════════════════ */}
-      <section
-        id="apoie"
-        className="relative py-16 sm:py-20 px-4 sm:px-6 overflow-hidden"
-        style={{ background: C.greenForest }}
-      >
-        <div className="absolute inset-0 pointer-events-none opacity-20">
-          <DoacaoEcgAnimation color="#E2A43E" opacity={1} />
-        </div>
-
-        <div
-          ref={doacaoSection.ref}
-          className={`relative z-10 max-w-[1200px] mx-auto transition-all duration-700 ${
-            doacaoSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-          }`}
-        >
-          <div className="mb-10 max-w-2xl">
-            <SectionMark C={C} light>
-              Comunidade
-            </SectionMark>
-            <h2 className="font-heading text-3xl sm:text-4xl text-[#F0EBE0] mb-3 leading-tight">
-              Apoie quem mantém o essencial gratuito
-            </h2>
-            <p className="text-[15px] leading-relaxed text-[#F0EBE0]/70">
-              Banco de questões, provas e simulados são mantidos pela comunidade. IA e aulas são
-              pagas — cada doação ajuda a manter o núcleo livre e acessível.
-            </p>
-          </div>
-
-          <div
-            className="relative rounded-lg overflow-hidden border"
-            style={{
-              background: 'rgba(240,235,224,0.04)',
-              borderColor: 'rgba(240,235,224,0.12)',
-            }}
-          >
-            <div className="relative z-10 p-5 sm:p-8">
-              <div className="grid lg:grid-cols-2 gap-8 items-start">
-                <DoacaoContent onDonateClick={() => setDoacaoFormOpen(true)} />
-                <div>
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="h-px flex-1 bg-gradient-to-r from-transparent to-[#E2A43E]/40" />
-                    <span className="text-xs font-semibold text-[#E2A43E]/80 font-clinical">
-                      Quem já apoiou
-                    </span>
-                    <div className="h-px flex-1 bg-gradient-to-l from-transparent to-[#E2A43E]/40" />
-                  </div>
-                  {doacaoSection.isVisible && <DoacaoRanking glass />}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {doacaoFormOpen && (
-        <DoacaoForm open={doacaoFormOpen} onClose={() => setDoacaoFormOpen(false)} />
-      )}
-
-      {/* ══ FAQ ═══════════════════════════════════════════════════════════════ */}
-      <section className="relative py-16 sm:py-20 px-4 sm:px-6">
-        <div className="max-w-2xl mx-auto">
-          <motion.div {...fadeUp()} className="mb-10">
-            <SectionMark C={C}>Dúvidas</SectionMark>
-            <h2 className="font-heading text-3xl sm:text-4xl mb-2" style={{ color: C.ink }}>
-              Perguntas frequentes
-            </h2>
-            <p className="text-sm" style={{ color: C.muted }}>
-              Direto ao ponto — se faltar algo, manda e-mail.
-            </p>
-          </motion.div>
-
-          <div className="border rounded-lg overflow-hidden" style={{ borderColor: C.line }}>
-            {faqs.map((faq, index) => {
-              const open = openFaq === index
-              return (
-                <div
-                  key={index}
-                  className="border-b last:border-b-0"
-                  style={{ borderColor: C.line, background: open ? C.paper : C.cream }}
-                >
-                  <button
-                    onClick={() => setOpenFaq(open ? null : index)}
-                    className="w-full px-5 py-4 flex items-center justify-between text-left gap-3"
-                  >
-                    <span className="font-semibold text-[14px] sm:text-[15px]" style={{ color: C.ink }}>
-                      {faq.question}
-                    </span>
-                    <ChevronDown
-                      className={`h-4 w-4 shrink-0 transition-transform duration-300 ${open ? 'rotate-180' : ''}`}
-                      style={{ color: C.orange }}
-                    />
-                  </button>
-                  <div
-                    className="grid transition-[grid-template-rows] duration-300 ease-out"
-                    style={{ gridTemplateRows: open ? '1fr' : '0fr' }}
-                  >
-                    <div className="overflow-hidden min-h-0">
-                      <div className="px-5 pb-4">
-                        <p
-                          className="text-sm leading-relaxed whitespace-pre-line"
-                          style={{ color: C.muted }}
-                        >
-                          {faq.answer}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ══ CTA ═══════════════════════════════════════════════════════════════ */}
-      <section className="relative py-16 sm:py-20 px-4 sm:px-6 overflow-hidden" style={{ background: C.greenDeep }}>
-        <div className="absolute left-10 bottom-8 opacity-25 pointer-events-none hidden md:block">
-          {enableMotion && <Molecule3D color={C.gold} accent={C.green} />}
-        </div>
-        <div
-          ref={ctaSection.ref}
-          className={`max-w-3xl mx-auto text-center transition-all duration-700 ${
-            ctaSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-          }`}
-        >
-          <h2 className="font-heading text-3xl sm:text-4xl text-[#F0EBE0] mb-3 leading-tight">
-            Chega de estudar no improviso
-          </h2>
-          <p className="text-[15px] text-[#F0EBE0]/70 mb-8 max-w-md mx-auto">
-            Crie a conta, escolha o curso e comece com o essencial grátis — agora.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-10">
-            <button
-              onClick={goRegister}
-              className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-md text-[15px] font-bold text-white transition-all hover:brightness-110 active:scale-[0.98]"
-              style={{ background: C.orange }}
-            >
-              Começar grátis
-              <ArrowRight className="w-4 h-4" />
-            </button>
-            <button
-              onClick={goLogin}
-              className="inline-flex items-center justify-center px-7 py-3.5 rounded-md text-[15px] font-bold border transition-colors hover:bg-white/[0.06]"
-              style={{ borderColor: 'rgba(240,235,224,0.2)', color: '#F0EBE0' }}
-            >
-              Já tenho conta
-            </button>
-          </div>
-
-          <p className="mb-4 text-[11px] font-semibold uppercase tracking-wider text-[#F0EBE0]/40 font-clinical">
-            Canais
-          </p>
-          <div className="grid gap-2 sm:grid-cols-3">
-            <a
-              href="https://chat.whatsapp.com/GPAbMSy9dBk3O8ZesnkRfR"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 rounded-md border px-3 py-3 text-sm font-semibold text-[#F0EBE0]/90 transition-colors hover:bg-white/[0.06]"
-              style={{ borderColor: 'rgba(240,235,224,0.12)' }}
-            >
-              <Heart className="w-4 h-4 text-[#25D366]" />
-              Grupo no WhatsApp
-            </a>
-            <a
-              href="https://instagram.com/domineaqui.br"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 rounded-md border px-3 py-3 text-sm font-semibold text-[#F0EBE0]/90 transition-colors hover:bg-white/[0.06]"
-              style={{ borderColor: 'rgba(240,235,224,0.12)' }}
-            >
-              <Instagram className="w-4 h-4" style={{ color: C.gold }} />
-              @domineaqui.br
-            </a>
-            <a
-              href="mailto:contato@domineaqui.com.br"
-              className="flex items-center justify-center gap-2 rounded-md border px-3 py-3 text-sm font-semibold text-[#F0EBE0]/90 transition-colors hover:bg-white/[0.06] truncate"
-              style={{ borderColor: 'rgba(240,235,224,0.12)' }}
-            >
-              <Mail className="w-4 h-4" style={{ color: C.gold }} />
-              <span className="truncate">contato@domineaqui.com.br</span>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* ══ FOOTER ════════════════════════════════════════════════════════════ */}
-      <footer className="border-t py-8 px-4 sm:px-6" style={{ borderColor: C.line, background: C.cream }}>
-        <div className="max-w-[1200px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <Logo variant={C.isDark ? 'dark' : 'icon'} size="sm" />
-            <span className="text-sm" style={{ color: C.muted }}>
-              © {new Date().getFullYear()} DomineAqui
-            </span>
-          </div>
-          <div className="flex items-center gap-5">
-            <LandingThemeToggle C={C} />
-            <a
-              href="/politica-de-privacidade"
-              className="text-xs font-medium hover:underline"
-              style={{ color: C.muted }}
-            >
-              Privacidade
-            </a>
-            <a
-              href="/termos-de-servico"
-              className="text-xs font-medium hover:underline"
-              style={{ color: C.muted }}
-            >
-              Termos
-            </a>
-            <a
-              href="https://instagram.com/domineaqui.br"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition-opacity hover:opacity-70"
-              style={{ color: C.muted }}
-              title="Instagram"
-            >
-              <Instagram size={17} />
-            </a>
-            <a
-              href="https://discord.gg/vdfHcvDdMw"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition-opacity hover:opacity-70"
-              style={{ color: C.muted }}
-              title="Discord"
-            >
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-                <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.29a.074.074 0 0 1 .077-.01c3.927 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.196.373.29a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.874.89.076.076 0 0 0-.041.106c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
-              </svg>
-            </a>
-          </div>
-        </div>
-      </footer>
-
-      {/* Mobile sticky CTA */}
-      <div
-        className="fixed bottom-0 inset-x-0 z-40 p-3 sm:hidden border-t"
-        style={{
-          background: C.isDark ? 'rgba(12,20,16,0.94)' : 'rgba(246,241,232,0.94)',
-          borderColor: C.line,
-          backdropFilter: 'blur(8px)',
-          paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))',
-        }}
-      >
-        <button
-          onClick={goRegister}
-          className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-md text-sm font-bold text-white"
-          style={{ background: C.orange }}
-        >
-          {isLoggedIn ? 'Ir para o Dashboard' : 'Criar conta grátis'}
-          <ArrowRight className="w-4 h-4" />
-        </button>
+            </figure>
+          </TiltCard>
+        </Reveal>
       </div>
-      <div className="h-16 sm:hidden" aria-hidden />
+    </section>
+  )
+}
+
+/* ---------- AMOSTRA GRÁTIS ---------- */
+
+function SampleBand() {
+  return (
+    <section className="relative border-t border-[color:var(--da-neutral-line)]">
+      <div className="mx-auto max-w-7xl px-5 py-14 md:px-8 md:py-16">
+        <div className="relative overflow-hidden rounded-2xl border border-da-amber/50 bg-da-tint/40 p-8 md:p-10">
+          <div
+            aria-hidden
+            className="absolute -right-20 -top-20 h-56 w-56 rounded-full"
+            style={{ background: 'radial-gradient(circle, rgba(232,118,58,.3), transparent 70%)' }}
+          />
+          <div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="max-w-2xl">
+              <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--da-amber-line)] px-3 py-1 font-da-mono text-[10px] uppercase tracking-widest text-da-amber">
+                <IconPulse /> Amostra grátis · sem cadastro
+              </span>
+              <h2 className="mt-4 font-da-display text-2xl font-semibold leading-tight tracking-tight md:text-3xl">
+                10 questões comentadas para testar agora
+              </h2>
+              <p className="mt-3 leading-relaxed text-da-muted">
+                Responda, veja o gabarito na hora e leia o comentário. É só uma fatia do banco. A
+                plataforma completa tem provas, flashcards, cronograma e o Manual Clínico esperando
+                você do outro lado.
+              </p>
+            </div>
+            <div className="shrink-0">
+              <PrimaryCTA href={LINKS.amostra}>Ver 10 questões sem cadastro</PrimaryCTA>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ---------- MANUAL DO ELETRO ---------- */
+
+const phoneStyle: CSSProperties = {
+  width: 'clamp(230px, 30vw, 300px)',
+  aspectRatio: '9 / 19.5',
+  transform:
+    'perspective(1500px) rotateX(calc(var(--da-my, 0) * -4deg)) rotateY(calc(var(--da-mx, 0) * 6deg))',
+  transition: 'transform .2s ease-out',
+}
+
+function PhoneMockup() {
+  const [play, setPlay] = useState(false)
+  const VIDEO_ID = 'ETqxxCibi40'
+  const embed = `https://www.youtube-nocookie.com/embed/${VIDEO_ID}?autoplay=1&controls=0&modestbranding=1&rel=0&playsinline=1&loop=1&playlist=${VIDEO_ID}&iv_load_policy=3`
+
+  return (
+    <div className="da-scene flex justify-center">
+      <div className="relative" style={phoneStyle}>
+        {/* corpo do aparelho */}
+        <div className="absolute inset-0 rounded-[2.4rem] border border-[color:var(--da-amber-line)] bg-[#05100D] p-2.5 shadow-[0_50px_100px_-30px_rgba(0,0,0,.8)]">
+          {/* tela */}
+          <div className="relative h-full w-full overflow-hidden rounded-[2rem] bg-black">
+            {play ? (
+              <iframe
+                src={embed}
+                title="Manual do Eletrocardiograma"
+                className="absolute inset-0 h-full w-full"
+                style={{ border: 0 }}
+                allow="autoplay; encrypted-media; picture-in-picture"
+                allowFullScreen
+              />
+            ) : (
+              // O iframe do YouTube só entra no DOM depois do clique — nada de
+              // ~1MB de player carregado à toa em quem nunca aperta o play.
+              <button
+                type="button"
+                onClick={() => setPlay(true)}
+                className="group absolute inset-0 flex items-center justify-center"
+                aria-label="Reproduzir vídeo do Manual do Eletrocardiograma"
+              >
+                <div
+                  className="absolute inset-0"
+                  style={{ background: 'radial-gradient(120% 80% at 50% 20%, #10352b, #05100D 70%)' }}
+                />
+                <svg
+                  viewBox="0 0 400 200"
+                  className="absolute inset-x-0 top-1/3 w-full opacity-60"
+                  fill="none"
+                  stroke="#E8763A"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  preserveAspectRatio="none"
+                  aria-hidden
+                >
+                  <path d="M0 100h140l14-40 18 80 12-40h40l10-30 14 60 10-30h128" />
+                </svg>
+                <span className="relative z-10 grid h-16 w-16 place-items-center rounded-full bg-da-amber text-[#0B1F1A] transition-transform duration-300 group-hover:scale-110">
+                  <svg viewBox="0 0 24 24" className="h-7 w-7 translate-x-0.5" fill="currentColor" aria-hidden>
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </span>
+                <span className="absolute bottom-6 left-0 right-0 px-6 text-center font-da-mono text-[10px] uppercase tracking-[0.25em] text-da-amber">
+                  Manual do Eletro · assista
+                </span>
+              </button>
+            )}
+          </div>
+        </div>
+        <div
+          aria-hidden
+          className="absolute -right-[3px] top-24 h-14 w-[3px] rounded-r bg-[color:var(--da-amber-line)]"
+        />
+        <div
+          aria-hidden
+          className="absolute -bottom-10 left-1/2 h-10 w-2/3 -translate-x-1/2 rounded-[50%]"
+          style={{
+            background: 'radial-gradient(closest-side, rgba(232,118,58,.3), transparent)',
+            filter: 'blur(8px)',
+          }}
+        />
+      </div>
+    </div>
+  )
+}
+
+function ManualEletro() {
+  return (
+    <section className="relative border-t border-[color:var(--da-neutral-line)] bg-da-panel/40">
+      <div className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
+        <Reveal>
+          <SectionMark n="Premium" label="Exclusivo de assinante" />
+        </Reveal>
+        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1.1fr_1fr]">
+          <Reveal>
+            <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--da-amber-line)] px-3 py-1 font-da-mono text-[10px] uppercase tracking-widest text-da-amber">
+              <IconPulse /> Incluso só no Manual Clínico
+            </span>
+            <h2 className="mt-5 font-da-display text-4xl font-semibold leading-[1.04] tracking-tighter md:text-5xl">
+              O que esse traçado está te dizendo?
+            </h2>
+            <p className="mt-5 max-w-xl text-lg leading-relaxed text-da-muted">
+              Tem uma pergunta que todo preceptor faz e que a maioria trava na resposta. Não é sobre
+              decorar o nome da arritmia. É sobre entender a história que o coração está contando ali
+              no papel. Isso não se decora, se treina.
+            </p>
+            <p className="mt-4 max-w-xl leading-relaxed text-da-muted">
+              O Manual do Eletrocardiograma treina exatamente esse raciocínio, do ritmo normal à
+              emergência. Ele é exclusivo de quem assina o Manual Clínico, então não entra no teste
+              grátis. É o tipo de conteúdo que separa quem lê ECG de quem adivinha.
+            </p>
+            <div className="mt-9">
+              <PrimaryCTA href={LINKS.manual}>Assinar o Manual Clínico</PrimaryCTA>
+            </div>
+          </Reveal>
+          <Reveal delay={120}>
+            <PhoneMockup />
+          </Reveal>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ---------- CONSOLE DE FERRAMENTAS ---------- */
+
+const TOOL_CHANNELS = [
+  {
+    key: 'provas-fac',
+    label: 'Provas da Faculdade',
+    reading: 'PROVAS REAIS',
+    title: 'As provas da sua faculdade, no site',
+    desc: 'As provas que a sua faculdade já aplicou, prontas para você resolver e treinar do jeito que cai de verdade. Faça quantas quiser. Baixe em PDF sendo assinante.',
+    img: provas3d,
+    cta: 'Resolver provas',
+    stat: 'Provas oficiais',
+    href: LINKS.provas,
+  },
+  {
+    key: 'flashcards',
+    label: 'Flashcards',
+    reading: 'REPETIÇÃO ESPAÇADA',
+    title: 'Flashcards próprios do Domine Aqui',
+    desc: 'Decks de anatomia e além, criados e revisados por quem entende, com repetição espaçada que finca o conteúdo na memória de longo prazo. À venda no site, prontos para usar.',
+    img: flashcards3d,
+    cta: 'Ver os flashcards',
+    stat: 'Feitos por especialistas',
+    href: LINKS.flashcards,
+  },
+  {
+    key: 'mapas',
+    label: 'Mapas mentais',
+    reading: 'EDITOR VISUAL',
+    title: 'Pense em rede, não em lista',
+    desc: 'Um editor visual rápido para criar, conectar e compartilhar suas ideias. Deixe públicos, envie por link ou proteja com senha. A anatomia do seu raciocínio, desenhada. Teste um mapa de graça.',
+    img: flashcards3d,
+    cta: 'Testar um mapa grátis',
+    stat: 'Público, link ou senha',
+    href: LINKS.mapaMental,
+  },
+  {
+    key: 'banco',
+    label: 'Banco de Questões',
+    reading: 'USO ILIMITADO',
+    title: 'Banco de Questões sem limite',
+    desc: 'Milhares de questões para resolver à vontade, no Essential e no Premium. Errar aqui é de graça. Errar na prova custa o ano inteiro.',
+    img: provas3d,
+    cta: 'Entrar no banco',
+    stat: 'Ilimitado',
+    href: LINKS.bancoQuestoes,
+  },
+  {
+    key: 'ia',
+    label: 'Provas e Flashcards por IA',
+    reading: 'NO TESTE GRÁTIS',
+    title: 'Gerados por IA na sua ementa',
+    desc: 'Precisa de algo sob medida? A IA monta provas e flashcards a partir do conteúdo exato do seu curso. Disponível já no acesso gratuito, para você experimentar antes de assinar.',
+    img: flashcards3d,
+    cta: 'Testar de graça',
+    stat: 'Incluso no grátis',
+    href: LINKS.amostra,
+  },
+  {
+    key: 'cronograma',
+    label: 'Cronograma',
+    reading: 'VINCULADO AO CURSO',
+    title: 'Cronograma da sua faculdade',
+    desc: 'Um plano de estudo vinculado ao ritmo real do seu curso. Você abre e sabe exatamente o que estudar hoje, sem perder tempo decidindo por onde começar.',
+    img: flashcards3d,
+    cta: 'Montar cronograma',
+    stat: 'No seu ritmo',
+    href: LINKS.cronogramas,
+  },
+]
+
+function ToolsConsole() {
+  const [active, setActive] = useState(0)
+  const ch = TOOL_CHANNELS[active]
+  return (
+    <section
+      id="ferramentas"
+      className="relative border-t border-[color:var(--da-neutral-line)] bg-da-panel/40"
+    >
+      <div className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
+        <Reveal>
+          <SectionMark n="03 / 06" label="Estudo ativo" />
+          <h2 className="max-w-2xl font-da-display text-4xl font-semibold leading-[1.04] tracking-tighter md:text-5xl">
+            Treine nas provas de verdade. Não em simulado genérico.
+          </h2>
+          <p className="mt-5 max-w-2xl text-lg leading-relaxed text-da-muted">
+            Sintonize o canal e veja o que cada instrumento faz por você.
+          </p>
+        </Reveal>
+
+        <Reveal delay={80}>
+          <div className="mt-12 overflow-hidden rounded-2xl border border-[color:var(--da-amber-line)] bg-da-ground">
+            <div className="flex items-center gap-3 border-b border-[color:var(--da-neutral-line)] px-5 py-3">
+              <span className="h-2.5 w-2.5 rounded-full bg-da-amber" />
+              <span className="font-da-mono text-[10px] uppercase tracking-[0.3em] text-da-muted">
+                Domine Aqui · console de ferramentas
+              </span>
+              <span className="ml-auto hidden font-da-mono text-[10px] text-da-amber sm:block">
+                {ch.reading}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr]">
+              <div className="flex flex-row overflow-x-auto border-b border-[color:var(--da-neutral-line)] [scrollbar-width:none] lg:flex-col lg:border-b-0 lg:border-r [&::-webkit-scrollbar]:hidden">
+                {TOOL_CHANNELS.map((c, i) => {
+                  const on = i === active
+                  return (
+                    <button
+                      key={c.key}
+                      type="button"
+                      onMouseEnter={() => setActive(i)}
+                      onClick={() => setActive(i)}
+                      className={
+                        'group flex shrink-0 items-center gap-3 px-5 py-4 text-left transition-colors lg:border-b lg:border-[color:var(--da-neutral-line)] ' +
+                        (on ? 'bg-da-panel/60' : 'hover:bg-da-panel/30')
+                      }
+                    >
+                      <span className={'font-da-mono text-xs ' + (on ? 'text-da-amber' : 'text-da-muted')}>
+                        0{i + 1}
+                      </span>
+                      <span
+                        className={
+                          'whitespace-nowrap font-da-display text-sm font-medium ' +
+                          (on ? 'text-da-paper' : 'text-da-muted')
+                        }
+                      >
+                        {c.label}
+                      </span>
+                      <span
+                        className={
+                          'ml-auto hidden transition-transform lg:block ' +
+                          (on ? 'translate-x-0 text-da-amber opacity-100' : '-translate-x-1 opacity-0')
+                        }
+                        aria-hidden
+                      >
+                        →
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+
+              <div
+                key={ch.key}
+                className="da-panel-fade relative grid grid-cols-1 gap-6 p-7 md:grid-cols-[1fr_240px] md:p-9"
+              >
+                <div className="flex flex-col justify-center">
+                  <span className="font-da-mono text-[10px] uppercase tracking-[0.3em] text-da-amber">
+                    {ch.reading}
+                  </span>
+                  <h3 className="mt-3 font-da-display text-2xl font-semibold tracking-tight md:text-3xl">
+                    {ch.title}
+                  </h3>
+                  <p className="mt-3 max-w-md leading-relaxed text-da-muted">{ch.desc}</p>
+                  <div className="mt-6 flex items-center gap-5">
+                    <TextLink href={ch.href}>{ch.cta}</TextLink>
+                    <span className="font-da-mono text-xs text-da-muted">· {ch.stat}</span>
+                  </div>
+                </div>
+                <div className="relative flex items-center justify-center">
+                  <div
+                    aria-hidden
+                    className="absolute inset-0"
+                    style={{
+                      background:
+                        'radial-gradient(60% 55% at 50% 50%, rgba(232,118,58,.16), transparent 70%)',
+                    }}
+                  />
+                  <Image
+                    src={ch.img}
+                    alt={ch.title}
+                    sizes="240px"
+                    className="relative z-10 max-h-[240px] w-auto object-contain drop-shadow-[0_24px_50px_rgba(0,0,0,.5)]"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-[color:var(--da-neutral-line)] px-5 py-3">
+              <svg
+                viewBox="0 0 1200 24"
+                className="h-5 w-full"
+                preserveAspectRatio="none"
+                fill="none"
+                stroke="#E8763A"
+                strokeWidth="1.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                opacity="0.55"
+                aria-hidden
+              >
+                <path d="M0 12h420l10-8 12 16 10-8h30l8-10 10 20 8-10h520l10-6 12 12 10-6h108" />
+              </svg>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+/* ---------- DIFERENCIAIS ---------- */
+
+function Differentiators() {
+  const items = [
+    [
+      'Vive dentro, não na sua caixa de e-mail',
+      'O Manual, o eletro e os flashcards não têm botão de download. Você entra para usar, e é isso que constrói o hábito que passa você de ano.',
+    ],
+    [
+      'Interação, não decoração',
+      'Sons de ausculta, coração em wireframe, camadas de patologia. Você opera a ferramenta com a mão, não assiste de braços cruzados.',
+    ],
+    [
+      'Moldado na sua ementa',
+      'Flashcards e provas por IA montados sobre o que a sua faculdade cobra de verdade. Não um genérico que serve pra todo mundo e pra ninguém.',
+    ],
+    [
+      'Difícil de copiar, fácil de amar',
+      'Ferramenta interativa que os gigantes ainda não fizeram. O tipo de diferencial que prende, não a commodity que qualquer PDF entrega.',
+    ],
+  ]
+  return (
+    <section className="relative mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
+      <Reveal>
+        <SectionMark n="04 / 06" label="Diferencial" />
+        <h2 className="max-w-3xl font-da-display text-4xl font-semibold leading-[1.04] tracking-tighter md:text-5xl">
+          O que uma plataforma viva faz e um arquivo morto nunca vai fazer
+        </h2>
+      </Reveal>
+      <div className="mt-12 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-[color:var(--da-neutral-line)] bg-[color:var(--da-neutral-line)] md:grid-cols-2">
+        {items.map(([t, d], i) => (
+          <Reveal key={t} delay={i * 70}>
+            <article className="flex h-full flex-col bg-da-ground p-8 transition-colors hover:bg-da-panel/40">
+              <span className="font-da-mono text-sm text-da-amber">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <h3 className="mt-4 font-da-display text-xl font-semibold tracking-tight">{t}</h3>
+              <p className="mt-3 text-da-muted">{d}</p>
+            </article>
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+/* ---------- PLANOS ---------- */
+
+function Plans() {
+  const essential = [
+    'Banco de Questões ilimitado',
+    'Download de todas as provas',
+    '400 provas por IA por dia',
+    '500 flashcards por IA por dia',
+    'Cronogramas ilimitados',
+  ]
+  const premium = [
+    'Tudo do Essential, e mais',
+    'Manual Clínico completo e liberado',
+    'Aulas ao vivo e vídeo-aulas pós-aula',
+    'Todas as provas e flashcards por IA',
+    'Prioridade nas novidades',
+  ]
+  return (
+    <section
+      id="planos"
+      className="relative border-t border-[color:var(--da-neutral-line)] bg-da-panel/40"
+    >
+      <div className="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
+        <Reveal>
+          <SectionMark n="05 / 06" label="Planos" />
+          <h2 className="max-w-2xl font-da-display text-4xl font-semibold leading-[1.04] tracking-tighter md:text-5xl">
+            Comece de graça. Suba de nível quando a prova apertar.
+          </h2>
+        </Reveal>
+        <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <Reveal>
+            <div className="flex h-full flex-col rounded-2xl border border-[color:var(--da-neutral-line)] bg-da-ground p-8">
+              <h3 className="font-da-display text-2xl font-semibold tracking-tight">Essential</h3>
+              <p className="mt-2 text-da-muted">Toda a máquina de estudo ativo. Sem o Manual.</p>
+              <ul className="mt-7 space-y-3">
+                {essential.map((f) => (
+                  <li key={f} className="flex items-start gap-3">
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-da-amber" />
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-8">
+                <GhostCTA href={LINKS.buy}>Assinar Essential</GhostCTA>
+              </div>
+            </div>
+          </Reveal>
+          <Reveal delay={120}>
+            <div className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-da-amber bg-da-tint p-8">
+              <div
+                aria-hidden
+                className="absolute -right-16 -top-16 h-48 w-48 rounded-full"
+                style={{ background: 'radial-gradient(circle, rgba(232,118,58,.35), transparent 70%)' }}
+              />
+              <div className="relative flex items-center gap-3">
+                <h3 className="font-da-display text-2xl font-semibold tracking-tight">Premium</h3>
+                <span className="rounded-full bg-da-amber px-3 py-1 font-da-mono text-[10px] uppercase tracking-widest text-[#0B1F1A]">
+                  O Manual liberado
+                </span>
+              </div>
+              <p className="mt-2 text-da-muted">A plataforma inteira, sem trava.</p>
+              <ul className="relative mt-7 space-y-3">
+                {premium.map((f) => (
+                  <li key={f} className="flex items-start gap-3">
+                    <span className="mt-0.5 shrink-0 text-da-amber">
+                      <IconCheck />
+                    </span>
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="relative mt-8">
+                <PrimaryCTA href={LINKS.buy}>Assinar Premium</PrimaryCTA>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+        <Reveal>
+          <p className="mt-8 font-da-mono text-sm text-da-muted">
+            Na dúvida?{' '}
+            <Link href={LINKS.amostra} className="text-da-amber underline underline-offset-4">
+              veja 10 questões sem cadastro
+            </Link>{' '}
+            e sinta a plataforma antes de pagar.
+          </p>
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+/* ---------- PRESCRIÇÃO NO SUS ---------- */
+
+const bookStyle: CSSProperties = {
+  width: 'clamp(200px, 26vw, 300px)',
+  aspectRatio: '1024 / 1536',
+  transformStyle: 'preserve-3d',
+  transform:
+    'perspective(1600px) rotateX(calc(-6deg + var(--da-my, 0) * -4deg)) rotateY(calc(28deg + var(--da-mx, 0) * 8deg))',
+  transition: 'transform .2s ease-out',
+}
+
+function Book3D() {
+  return (
+    <div className="da-scene flex justify-center py-6">
+      <div className="relative" style={bookStyle}>
+        {/* capa */}
+        <Image
+          src={susCover}
+          alt="Capa do ebook Prescrição Real no SUS, Guia Clínico Edição 2026"
+          fill
+          placeholder="blur"
+          sizes="300px"
+          className="rounded-l-[3px] rounded-r-[6px] object-cover shadow-[0_50px_90px_-30px_rgba(0,0,0,.75)]"
+          style={{ transform: 'translateZ(18px)', backfaceVisibility: 'hidden' }}
+        />
+        {/* lombada */}
+        <div
+          aria-hidden
+          className="absolute left-0 top-0 h-full"
+          style={{
+            width: '36px',
+            transform: 'rotateY(-90deg) translateZ(18px)',
+            transformOrigin: 'left center',
+            background: 'linear-gradient(90deg, #061512, #0B1F1A 60%, #12352b)',
+            borderRight: '1px solid rgba(232,118,58,.4)',
+          }}
+        />
+        {/* miolo de páginas */}
+        <div
+          aria-hidden
+          className="absolute right-0 top-0 h-full"
+          style={{
+            width: '36px',
+            transform: 'rotateY(90deg) translateZ(calc(100% - 18px))',
+            transformOrigin: 'right center',
+            background:
+              'repeating-linear-gradient(90deg, #efe9dc, #efe9dc 1px, #d8cfba 2px, #efe9dc 3px)',
+          }}
+        />
+        {/* sombra no chão */}
+        <div
+          aria-hidden
+          className="absolute -bottom-10 left-1/2 h-10 w-3/4 -translate-x-1/2 rounded-[50%]"
+          style={{
+            background: 'radial-gradient(closest-side, rgba(232,118,58,.28), transparent)',
+            filter: 'blur(8px)',
+            transform: 'translateZ(-40px)',
+          }}
+        />
+      </div>
+    </div>
+  )
+}
+
+function Prescricao() {
+  return (
+    <section id="sus" className="relative border-t border-[color:var(--da-neutral-line)]">
+      <div className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
+        <Reveal>
+          <SectionMark n="Bônus" label="Manual de guerra" />
+        </Reveal>
+        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_1.1fr]">
+          <Reveal className="order-2 lg:order-1">
+            <Book3D />
+            <div className="mt-6 text-center">
+              <div className="flex items-center justify-center gap-3">
+                <span className="font-da-mono text-lg text-da-muted line-through">R$147</span>
+                <span className="font-da-display text-4xl font-semibold tracking-tighter text-da-amber">
+                  R$47
+                </span>
+              </div>
+              <p className="mt-2 font-da-mono text-xs text-da-muted">
+                330 páginas · pagamento único · seu para sempre
+              </p>
+              <div className="mt-6 flex justify-center">
+                <GhostCTA href={LINKS.sus}>Conhecer o Ebook</GhostCTA>
+              </div>
+            </div>
+          </Reveal>
+          <Reveal delay={120} className="order-1 lg:order-2">
+            <h2 className="font-da-display text-4xl font-semibold leading-[1.04] tracking-tighter md:text-5xl">
+              O único material que você vai querer que seja um PDF.
+            </h2>
+            <p className="mt-5 max-w-xl text-lg leading-relaxed text-da-muted">
+              Sentiu aquela sensação de abrir o guideline e ver um remédio que não existe na farmácia
+              do posto? Ela some quando você tem um manual escrito para a realidade do SUS, não para
+              a prova. Este não morre na pasta de Downloads. Ele vive no bolso do seu jaleco, aberto
+              às três da manhã na UPA lotada.
+            </p>
+            <p className="mt-4 max-w-xl leading-relaxed text-da-muted">
+              Prescrição Real traz as 50 queixas mais comuns, os medicamentos reais da REMUME, as
+              doses e o plano B para quando falta o ideal. Do soro na diarreia à manobra de Epley na
+              vertigem, do captopril que se engole e nunca é sublingual à adrenalina que muda o
+              desfecho. 330 páginas, 100% REMUME e SUS. Prescrever bem não é saber o melhor remédio
+              do mundo. É saber o melhor que existe na prateleira hoje, e o que fazer quando nem esse
+              existe.
+            </p>
+            <p className="mt-6 font-da-display text-lg font-medium text-da-amber">
+              De colega para colega.
+            </p>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ---------- FAQ + CTA ---------- */
+
+function FaqAndCTA({ signupHref }: { signupHref: string }) {
+  const faqs = [
+    [
+      'Preciso pagar para começar?',
+      'Não. Você cria uma conta grátis e já entra usando. Essential e Premium liberam mais quando você quiser, no seu tempo.',
+    ],
+    [
+      'Para quem é o Domine Aqui?',
+      'Estudantes de Medicina, residentes e médicos. Algumas ferramentas, como os flashcards de neuroanatomia, também servem a áreas como Psicologia.',
+    ],
+    [
+      'O que exatamente está incluído?',
+      'Manual Clínico, flashcards, provas e questões por IA, banco de questões e cronograma. Tudo interativo e vivo dentro da plataforma.',
+    ],
+    [
+      'As provas e flashcards por IA seguem a minha faculdade?',
+      'Seguem. Você escolhe o conteúdo da ementa e a IA gera em cima do que o seu curso cobra, não um genérico.',
+    ],
+    [
+      'Qual a diferença entre Essential e Premium?',
+      'Os dois têm Banco de Questões ilimitado, provas e flashcards por IA e cronogramas. O Premium libera o Manual Clínico completo e as aulas.',
+    ],
+  ]
+  return (
+    <section className="relative border-t border-[color:var(--da-neutral-line)] bg-da-panel/40">
+      <div className="mx-auto max-w-3xl px-5 py-20 md:px-8 md:py-24">
+        <Reveal>
+          <SectionMark n="FAQ" label="Antes de começar" />
+          <h2 className="font-da-display text-4xl font-semibold tracking-tighter md:text-5xl">
+            Perguntas justas, respostas diretas
+          </h2>
+        </Reveal>
+        <div className="mt-10 divide-y divide-[color:var(--da-neutral-line)]">
+          {faqs.map(([q, a], i) => (
+            <Reveal key={q} delay={i * 40}>
+              <Faq q={q} a={a} />
+            </Reveal>
+          ))}
+        </div>
+      </div>
+      <div className="relative overflow-hidden border-t border-[color:var(--da-amber-line)]">
+        <div
+          aria-hidden
+          className="absolute inset-0"
+          style={{
+            background: 'radial-gradient(800px 400px at 50% 120%, rgba(232,118,58,.2), transparent 65%)',
+          }}
+        />
+        <div className="relative mx-auto max-w-4xl px-5 py-24 text-center md:px-8 md:py-28">
+          <Reveal>
+            <p className="font-da-mono text-xs uppercase tracking-[0.28em] text-da-amber">
+              Sua próxima prova começa agora
+            </p>
+            <h2 className="mx-auto mt-5 max-w-2xl font-da-display text-4xl font-semibold leading-[1.04] tracking-tighter md:text-6xl">
+              Enquanto você decide, alguém já está estudando aqui.
+            </h2>
+          </Reveal>
+          <Reveal delay={120}>
+            <div className="mt-9 flex justify-center">
+              <PrimaryCTA href={signupHref}>Criar conta grátis</PrimaryCTA>
+            </div>
+          </Reveal>
+          <Reveal delay={200}>
+            <p className="mt-4 font-da-mono text-xs text-da-muted">Grátis para começar. Sem cartão.</p>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Faq({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="py-5">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center justify-between gap-4 text-left"
+        aria-expanded={open}
+      >
+        <span className="font-da-display text-lg font-medium">{q}</span>
+        <span
+          className="shrink-0 text-da-amber transition-transform duration-300"
+          style={{ transform: open ? 'rotate(45deg)' : 'rotate(0)' }}
+          aria-hidden
+        >
+          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+        </span>
+      </button>
+      <div
+        className="grid transition-all duration-300 ease-out"
+        style={{ gridTemplateRows: open ? '1fr' : '0fr', opacity: open ? 1 : 0.6 }}
+      >
+        <div className="overflow-hidden">
+          <p className="pt-3 leading-relaxed text-da-muted">{a}</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ---------- RODAPÉ ---------- */
+
+function Footer() {
+  return (
+    <footer className="border-t border-[color:var(--da-neutral-line)] bg-da-ground">
+      <div className="mx-auto max-w-7xl px-5 py-14 md:px-8">
+        <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
+          <div className="max-w-sm">
+            <div className="flex items-center gap-2.5">
+              <Logo variant="icon" size="md" className="h-9" />
+              <span className="font-da-display text-lg font-semibold tracking-tight">Domine Aqui</span>
+            </div>
+            <p className="mt-4 text-sm leading-relaxed text-da-muted">
+              Educação em saúde com foco em Medicina. Ferramentas interativas para estudar de forma
+              ativa, não passiva.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-10 sm:grid-cols-3">
+            <FooterCol
+              title="Plataforma"
+              links={[
+                ['Manual Clínico', LINKS.manual],
+                ['Provas', LINKS.provas],
+                ['Flashcards', LINKS.flashcards],
+                ['Mapas mentais', LINKS.mapaMental],
+              ]}
+            />
+            <FooterCol
+              title="Materiais"
+              links={[
+                ['Todos os materiais', LINKS.materiais],
+                ['Cronogramas', LINKS.cronogramas],
+                ['Prescrição no SUS', LINKS.sus],
+              ]}
+            />
+            <FooterCol
+              title="Domine Aqui"
+              links={[
+                ['Amostra grátis', LINKS.amostra],
+                ['Assinar', LINKS.buy],
+                ['Equipe', LINKS.equipe],
+                ['Suporte', LINKS.suporte],
+              ]}
+            />
+          </div>
+        </div>
+        <div className="mt-12 flex flex-col gap-3 border-t border-[color:var(--da-neutral-line)] pt-6 text-xs text-da-muted sm:flex-row sm:items-center sm:justify-between">
+          <p>© {new Date().getFullYear()} Domine Aqui. Todos os direitos reservados.</p>
+          <div className="flex flex-wrap items-center gap-4">
+            <Link href={LINKS.termos} className="transition hover:text-da-paper">
+              Termos de Serviço
+            </Link>
+            <Link href={LINKS.privacidade} className="transition hover:text-da-paper">
+              Política de Privacidade
+            </Link>
+            <span className="font-da-mono">domineaqui.com.br</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+  )
+}
+
+function FooterCol({ title, links }: { title: string; links: [string, string][] }) {
+  return (
+    <div>
+      <p className="font-da-mono text-[11px] uppercase tracking-[0.22em] text-da-amber">{title}</p>
+      <ul className="mt-4 space-y-2.5">
+        {links.map(([l, href]) => (
+          <li key={l}>
+            <SmartLink href={href} className="text-sm text-da-muted transition hover:text-da-paper">
+              {l}
+            </SmartLink>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

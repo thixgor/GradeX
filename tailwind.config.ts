@@ -12,6 +12,10 @@ const config: Config = {
         heading: ['var(--font-heading)', 'Georgia', 'serif'],
         body: ['var(--font-body)', 'system-ui', 'sans-serif'],
         clinical: ['var(--font-clinical)', 'ui-monospace', 'monospace'],
+        // Landing (rota '/'): carregadas com next/font só nessa rota.
+        'da-display': ['var(--font-da-display)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        'da-body': ['var(--font-da-body)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        'da-mono': ['var(--font-da-mono)', 'ui-monospace', 'monospace'],
       },
       colors: {
         border: 'hsl(var(--border))',
@@ -77,6 +81,16 @@ const config: Config = {
         'irish-forest': '#0B5236',
         'irish-gold': '#F0C563',
         'irish-gold-soft': '#F7DE9C',
+        // Landing (rota '/'). Escopo em `.da-landing` (globals.css), seguindo o
+        // tema do site via next-themes. Canais RGB para os modificadores de
+        // opacidade do Tailwind (bg-da-panel/40) funcionarem.
+        'da-amber': 'rgb(var(--da-amber) / <alpha-value>)',
+        'da-amber-lift': 'rgb(var(--da-amber-lift) / <alpha-value>)',
+        'da-ground': 'rgb(var(--da-ground) / <alpha-value>)',
+        'da-panel': 'rgb(var(--da-panel) / <alpha-value>)',
+        'da-tint': 'rgb(var(--da-tint) / <alpha-value>)',
+        'da-paper': 'rgb(var(--da-paper) / <alpha-value>)',
+        'da-muted': 'rgb(var(--da-muted) / <alpha-value>)',
       },
       borderRadius: {
         lg: 'var(--radius)',

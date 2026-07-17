@@ -24,9 +24,7 @@ interface AIKeySettings {
 }
 
 interface LandingSettings {
-  videoEmbedUrl: string
   landingPageEnabled: boolean
-  videoEnabled: boolean
   personalExamsEnabled?: boolean
   registrationBlocked?: boolean
   registrationBlockedMessage?: string
@@ -35,9 +33,7 @@ interface LandingSettings {
 }
 
 const DEFAULT_LANDING_SETTINGS: LandingSettings = {
-  videoEmbedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
   landingPageEnabled: true,
-  videoEnabled: true,
   personalExamsEnabled: true,
   registrationBlocked: false,
   registrationBlockedMessage: 'Cadastro temporariamente desativado',
@@ -87,14 +83,6 @@ export async function PUT(req: NextRequest) {
 
     const body: Partial<LandingSettings> = await req.json()
 
-    // Validar URL do vídeo
-    if (body.videoEmbedUrl && !isValidEmbedUrl(body.videoEmbedUrl)) {
-      return NextResponse.json(
-        { error: 'URL de embed inválida' },
-        { status: 400, headers: NO_STORE_HEADERS }
-      )
-    }
-
     const sanitizedBody: Partial<LandingSettings> = {
       ...body,
       sidebarSections: normalizeSidebarSections(body.sidebarSections),
@@ -135,18 +123,3 @@ export async function PUT(req: NextRequest) {
   }
 }
 
-function isValidEmbedUrl(url: string): boolean {
-  try {
-    // Aceita URLs do YouTube embed
-    if (url.includes('youtube.com/embed/') || url.includes('youtu.be/')) {
-      return true
-    }
-    // Aceita outras URLs de embed comuns
-    if (url.includes('vimeo.com/') || url.includes('dailymotion.com/')) {
-      return true
-    }
-    return false
-  } catch {
-    return false
-  }
-}

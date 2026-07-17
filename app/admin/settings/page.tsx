@@ -32,9 +32,7 @@ interface AIKeySettings {
 }
 
 interface LandingSettings {
-  videoEmbedUrl: string
   landingPageEnabled: boolean
-  videoEnabled: boolean
   personalExamsEnabled?: boolean
   registrationBlocked?: boolean
   registrationBlockedMessage?: string
@@ -86,9 +84,7 @@ export default function SettingsPage() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [settings, setSettings] = useState<LandingSettings>({
-    videoEmbedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
     landingPageEnabled: true,
-    videoEnabled: true,
     personalExamsEnabled: true,
     registrationBlocked: false,
     registrationBlockedMessage: 'Cadastro temporariamente desativado',
@@ -99,7 +95,6 @@ export default function SettingsPage() {
     },
     sidebarSections: normalizeSidebarSections(),
   })
-  const [videoPreview, setVideoPreview] = useState(true)
   const [mpStatus, setMpStatus] = useState<MercadoPagoStatus | null>(null)
   const [mpEvents, setMpEvents] = useState<MercadoPagoEvent[]>([])
   const [mpTesting, setMpTesting] = useState(false)
@@ -213,9 +208,7 @@ export default function SettingsPage() {
         const data = await res.json()
         // Garantir que personalExamsEnabled é um booleano
         const settings: LandingSettings = {
-          videoEmbedUrl: data.videoEmbedUrl || 'https://www.youtube.com/embed/dQw4w9WgXcQ',
           landingPageEnabled: data.landingPageEnabled !== false,
-          videoEnabled: data.videoEnabled !== false,
           personalExamsEnabled: data.personalExamsEnabled !== false,
           registrationBlocked: data.registrationBlocked || false,
           registrationBlockedMessage: data.registrationBlockedMessage || 'Cadastro temporariamente desativado',
@@ -462,26 +455,6 @@ export default function SettingsPage() {
                 </button>
               </div>
 
-              {/* Video Toggle */}
-              <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                <div className="space-y-1">
-                  <Label className="text-base font-semibold">Habilitar Vídeo de Demonstração</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Se desabilitado, a seção de vídeo não será exibida na landing page
-                  </p>
-                </div>
-                <button
-                  onClick={() => setSettings({ ...settings, videoEnabled: !settings.videoEnabled })}
-                  className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${settings.videoEnabled ? 'bg-primary' : 'bg-muted'
-                    }`}
-                >
-                  <span
-                    className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${settings.videoEnabled ? 'translate-x-7' : 'translate-x-1'
-                      }`}
-                  />
-                </button>
-              </div>
-
               {/* Personal Exams Toggle */}
               <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
                 <div className="space-y-1">
@@ -669,61 +642,15 @@ export default function SettingsPage() {
             </Card>
           )}
 
-          {/* Video Embed Settings */}
+          {/* Salvar */}
           <Card>
             <CardHeader>
-              <CardTitle>Vídeo de Demonstração</CardTitle>
+              <CardTitle>Salvar alterações</CardTitle>
               <CardDescription>
-                Configure a URL do vídeo embed que aparece na landing page
+                Aplica as configurações acima na plataforma
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Input */}
-              <div className="space-y-2">
-                <Label htmlFor="videoUrl">URL do Embed do Vídeo</Label>
-                <Input
-                  id="videoUrl"
-                  placeholder="https://www.youtube.com/embed/..."
-                  value={settings.videoEmbedUrl}
-                  onChange={(e) => setSettings({ ...settings, videoEmbedUrl: e.target.value })}
-                  className="font-mono text-sm"
-                />
-                <p className="text-xs text-muted-foreground">
-                  Suporta YouTube, Vimeo e Dailymotion. Use URLs de embed (ex: youtube.com/embed/...)
-                </p>
-              </div>
-
-              {/* Preview */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label>Prévia do Vídeo</Label>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setVideoPreview(!videoPreview)}
-                  >
-                    {videoPreview ? 'Ocultar' : 'Mostrar'} Prévia
-                  </Button>
-                </div>
-                {videoPreview && (
-                  <div className="bg-black/50 rounded-lg overflow-hidden">
-                    <div className="aspect-video">
-                      <iframe
-                        width="100%"
-                        height="100%"
-                        src={settings.videoEmbedUrl}
-                        title="Prévia do Vídeo"
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        referrerPolicy="strict-origin-when-cross-origin"
-                        allowFullScreen
-                        className="w-full h-full"
-                      ></iframe>
-                    </div>
-                  </div>
-                )}
-              </div>
-
               {/* Messages */}
               {error && (
                 <div className="flex gap-2 p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg">
@@ -756,24 +683,6 @@ export default function SettingsPage() {
                   Cancelar
                 </Button>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Info Card */}
-          <Card className="bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800">
-            <CardHeader>
-              <CardTitle className="text-blue-900 dark:text-blue-100">Dicas</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-blue-800 dark:text-blue-200 space-y-2">
-              <p>
-                <strong>YouTube:</strong> Use URLs como <code className="bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded">https://www.youtube.com/embed/dQw4w9WgXcQ</code>
-              </p>
-              <p>
-                <strong>Vimeo:</strong> Use URLs como <code className="bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded">https://vimeo.com/123456789</code>
-              </p>
-              <p>
-                <strong>Dailymotion:</strong> Use URLs como <code className="bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded">https://www.dailymotion.com/embed/video/...</code>
-              </p>
             </CardContent>
           </Card>
 

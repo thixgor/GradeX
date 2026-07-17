@@ -1,17 +1,37 @@
 import { redirect } from 'next/navigation'
+import { Space_Grotesk, Inter, JetBrains_Mono } from 'next/font/google'
 import LandingPage from '@/components/landing-page'
 
 export const dynamic = 'force-dynamic'
 
+// Fontes da landing. Declaradas aqui (e não no layout raiz) para que só a rota
+// '/' baixe e faça preload desses arquivos — o resto do app segue com
+// Newsreader / Source Sans / IBM Plex Mono. next/font auto-hospeda, então não
+// há request pro Google nem CSS externo bloqueando a renderização.
+const daDisplay = Space_Grotesk({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-da-display',
+  display: 'swap',
+})
+const daBody = Inter({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-da-body',
+  display: 'swap',
+})
+const daMono = JetBrains_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  variable: '--font-da-mono',
+  display: 'swap',
+})
+
 interface LandingSettings {
-  videoEmbedUrl?: string
-  videoEnabled?: boolean
   landingPageEnabled?: boolean
 }
 
 const DEFAULTS: Required<LandingSettings> = {
-  videoEmbedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-  videoEnabled: true,
   landingPageEnabled: true,
 }
 
@@ -38,15 +58,13 @@ async function loadLandingSettings(): Promise<Required<LandingSettings>> {
     const settings = await withTimeout(
       db
         .collection<LandingSettings>('landing_settings')
-        .findOne({}, { projection: { videoEmbedUrl: 1, videoEnabled: 1, landingPageEnabled: 1 } }),
+        .findOne({}, { projection: { landingPageEnabled: 1 } }),
       2500
     )
 
     if (!settings) return DEFAULTS
 
     return {
-      videoEmbedUrl: settings.videoEmbedUrl || DEFAULTS.videoEmbedUrl,
-      videoEnabled: settings.videoEnabled !== false,
       landingPageEnabled: settings.landingPageEnabled !== false,
     }
   } catch {
@@ -83,10 +101,8 @@ export default async function HomePage({
   }
 
   return (
-    <LandingPage
-      initialIsLoggedIn={isLoggedIn}
-      initialVideoEmbedUrl={settings.videoEmbedUrl}
-      initialVideoEnabled={settings.videoEnabled}
-    />
+    <div className={`${daDisplay.variable} ${daBody.variable} ${daMono.variable}`}>
+      <LandingPage initialIsLoggedIn={isLoggedIn} />
+    </div>
   )
 }

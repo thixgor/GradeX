@@ -1820,3 +1820,76 @@
 @media (prefers-reduced-motion: reduce) {
   .ecg-wall-pulse { animation: none; opacity: 0.6; }
 }
+
+/* ==========================================================================
+   LANDING (rota '/') — paleta verde-profundo/âmbar da nova home.
+   Escopo em `.da-landing` para não vazar nos tokens do resto do site
+   (background/foreground/muted... continuam sendo os do app).
+   Segue o tema global do next-themes: `.dark` no <html> troca a paleta.
+   Canais RGB puros → habilita bg-da-panel/40, border-da-amber/50 etc.
+   ========================================================================== */
+.da-landing {
+  /* Claro (papel) */
+  --da-amber: 232 118 58;
+  --da-amber-lift: 240 138 75;
+  --da-ground: 244 241 234;
+  --da-panel: 236 231 219;
+  --da-tint: 227 220 203;
+  --da-paper: 11 31 26;
+  --da-muted: 74 90 80;
+  --da-amber-line: rgba(232, 118, 58, 0.35);
+  --da-neutral-line: rgba(11, 31, 26, 0.12);
+  --da-glass: rgba(255, 255, 255, 0.6);
+}
+
+.dark .da-landing {
+  /* Escuro (verde profundo) */
+  --da-ground: 11 31 26;
+  --da-panel: 14 42 34;
+  --da-tint: 15 51 42;
+  --da-paper: 244 241 234;
+  --da-muted: 184 196 188;
+  --da-amber-line: rgba(232, 118, 58, 0.22);
+  --da-neutral-line: rgba(244, 241, 234, 0.1);
+  --da-glass: rgba(14, 42, 34, 0.65);
+}
+
+.da-landing ::selection {
+  background: rgb(var(--da-amber));
+  color: #0b1f1a;
+}
+
+/* Cena 3D (parallax do hero, livro do SUS, mockup do celular) */
+.da-landing .da-scene {
+  perspective: 1400px;
+  perspective-origin: 50% 40%;
+}
+.da-landing .da-preserve-3d {
+  transform-style: preserve-3d;
+}
+
+/* Marquee da faixa de produtos */
+@keyframes da-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.da-marquee-track {
+  animation: da-marquee 38s linear infinite;
+  will-change: transform;
+}
+
+/* Troca de canal no console de ferramentas */
+@keyframes da-panel-fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.da-panel-fade {
+  animation: da-panel-fade 0.4s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .da-marquee-track,
+  .da-panel-fade {
+    animation: none !important;
+  }
+}
