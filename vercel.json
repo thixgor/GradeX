@@ -26,7 +26,7 @@
       "maxDuration": 300
     },
     "app/api/cron/fulfillment-sweeper/route.ts": {
-      "maxDuration": 300,
+      "maxDuration": 60,
       "memory": 1024
     },
     "app/api/questions/generate/route.ts": {
@@ -74,10 +74,6 @@
     }
   },
   "crons": [
-    {
-      "path": "/api/cron/fulfillment-sweeper",
-      "schedule": "*/30 * * * *"
-    },
     {
       "path": "/api/cron/subscriptions-sweeper",
       "schedule": "0 3 * * *"

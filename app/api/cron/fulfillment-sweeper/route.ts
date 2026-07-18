@@ -12,9 +12,19 @@ import type { PaymentOrder, SerialKey } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
+// Vercel Free (Hobby) limita a duração; 60s é o teto. O handler ainda se
+// autolimita a um orçamento de tempo bem menor (default 25s) para responder
+// antes do timeout de 30s do cron-job.org.
+export const maxDuration = 60
 
 /**
  * Cron de reentrega de material/serial key (rede de segurança de fulfillment).
+ *
+ * Disparado por um agendador EXTERNO (ex.: cron-job.org), já que o Vercel Free
+ * não roda cron nativo. Como o cron-job.org corta a conexão em ~30s, este
+ * handler trabalha por LOTES com ORÇAMENTO DE TEMPO: processa poucas ordens por
+ * chamada e retorna antes do timeout. Chamado a cada poucos minutos, drena o
+ * backlog aos poucos. É idempotente — reprocessar não duplica key nem e-mail.
  *
  * Problema que resolve: quando um pagamento é aprovado, geramos a serial key e
  * disparamos o e-mail com o material (PDF) + a key de ativação. Se esse e-mail
@@ -24,8 +34,7 @@ export const runtime = 'nodejs'
  *     (idempotência por `prevStatus === newStatus`);
  *   - o payments-sweeper só varre ordens `pending`/`in_process`.
  *
- * Este sweeper varre as compras de serial key JÁ APROVADAS cujo e-mail de
- * entrega ainda não teve sucesso e:
+ * Para cada compra de serial key JÁ APROVADA cujo e-mail ainda não teve sucesso:
  *   1. reexecuta `fulfillSerialKeyOrder` (idempotente): gera a key se faltar e
  *      reenvia o e-mail com backoff;
  *   2. respeita um cooldown para não reenviar em execuções muito próximas;
@@ -33,13 +42,21 @@ export const runtime = 'nodejs'
  *   4. desiste após `MAX_FULFILLMENT_EMAIL_ATTEMPTS` tentativas (o admin ainda
  *      pode reenviar manualmente pelo painel — a key já existe e é ativável).
  *
- * Autenticação: header `x-vercel-cron` (Vercel Cron) ou
- * `Authorization: Bearer ${CRON_SECRET}`.
+ * Autenticação: header `Authorization: Bearer ${CRON_SECRET}` (configurável no
+ * cron-job.org) ou o header `x-vercel-cron`.
  */
 export async function GET(request: NextRequest) {
   if (!isAuthorized(request)) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
+
+  const startedAt = Date.now()
+  // Orçamento de tempo: para de pegar novas ordens quando estourar, garantindo
+  // resposta antes do timeout de 30s do cron-job.org (margem de segurança).
+  const TIME_BUDGET_MS = Number(process.env.FULFILLMENT_SWEEPER_BUDGET_MS) || 25_000
+  // Teto de ordens efetivamente reprocessadas por chamada (cada reenvio pode
+  // envolver marca d'água de PDF, que é pesado). Ajustável por env.
+  const MAX_PER_RUN = Number(process.env.FULFILLMENT_SWEEPER_MAX_PER_RUN) || 5
 
   const db = await getDb()
   const ordersCol = db.collection<PaymentOrder>('payment_orders')
@@ -48,23 +65,31 @@ export async function GET(request: NextRequest) {
   const now = Date.now()
   // Janela: cobre retries perdidos sem varrer o histórico inteiro.
   const since = new Date(now - 14 * 24 * 60 * 60 * 1000)
-  // Evita reenvio duplicado quando o cron é disparado manualmente logo após
-  // uma execução (a cadência normal do cron já é bem maior que isto).
+  // Evita reenvio duplicado quando o cron é disparado logo após uma execução.
   const COOLDOWN_MS = 10 * 60 * 1000
 
-  const stats = { checked: 0, retried: 0, recovered: 0, missingKeys: 0, alerted: 0, givenUp: 0, errors: 0 }
+  const stats = { checked: 0, retried: 0, recovered: 0, missingKeys: 0, alerted: 0, givenUp: 0, errors: 0, budgetHit: false }
 
+  // Candidatos: compras de serial key aprovadas na janela. Ordenadas da mais
+  // antiga para a mais nova para drenar o backlog sem "starvation".
   const candidates = await ordersCol
     .find({
       status: 'approved',
       'metadata.serialKeyPurchase': true,
       createdAt: { $gte: since },
     } as any)
-    .sort({ createdAt: -1 })
-    .limit(200)
+    .sort({ createdAt: 1 })
+    .limit(100)
     .toArray()
 
   for (const order of candidates) {
+    // Orçamento de tempo estourado: encerra e deixa o resto para a próxima call.
+    if (Date.now() - startedAt > TIME_BUDGET_MS) {
+      stats.budgetHit = true
+      break
+    }
+    if (stats.retried >= MAX_PER_RUN) break
+
     stats.checked++
     try {
       const keys = await keysCol.find({ orderId: String(order._id) }).toArray()
@@ -115,7 +140,7 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  return NextResponse.json({ ok: true, ...stats })
+  return NextResponse.json({ ok: true, tookMs: Date.now() - startedAt, ...stats })
 }
 
 function isAuthorized(request: NextRequest): boolean {
