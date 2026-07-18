@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { AppShell, useAppShell } from '@/components/app-shell'
-import { Activity, ArrowLeft, Crown, Lock, ArrowRight, HeartPulse, Loader2, Gauge, Ruler, GraduationCap } from 'lucide-react'
+import { Activity, ArrowLeft, Crown, Lock, ArrowRight, Loader2, Gauge, Ruler, GraduationCap } from 'lucide-react'
 
 // Carregado sob demanda apenas quando o acesso é confirmado — o simulador
 // (motor de ECG + banco de traçados) não é enviado a quem não é assinante.
@@ -82,17 +82,28 @@ function EcgManualContent() {
             <ArrowLeft className="h-4 w-4" /> Voltar ao Manual Clínico
           </button>
           <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3">
-              <div className="rounded-2xl bg-red-500/10 p-3 text-red-500">
-                <HeartPulse className="h-7 w-7" />
-              </div>
-              <div>
-                <p className="editorial-mark">Seção premium · Manual Clínico</p>
-                <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">Manual do Eletrocardiograma</h1>
-                <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-                  Simulador interativo de ECG: 12 derivações geradas matematicamente em tempo real, medidas automáticas, régua, modo monitor e banco de traçados com critérios diagnósticos internacionais.
-                </p>
-              </div>
+            <div>
+              <p className="editorial-mark">Seção premium · Manual Clínico</p>
+              <h1 className="sr-only">Manual do Eletrocardiograma</h1>
+              <>
+                <img
+                  src="/img/eletro/manual-eletrocardiograma-light.webp"
+                  alt="Manual do Eletrocardiograma"
+                  width={958}
+                  height={461}
+                  className="mt-1.5 block h-auto w-full max-w-[320px] dark:hidden sm:max-w-[380px]"
+                />
+                <img
+                  src="/img/eletro/manual-eletrocardiograma-dark.webp"
+                  alt="Manual do Eletrocardiograma"
+                  width={958}
+                  height={461}
+                  className="mt-1.5 hidden h-auto w-full max-w-[320px] dark:block sm:max-w-[380px]"
+                />
+              </>
+              <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+                Simulador interativo de ECG: 12 derivações geradas matematicamente em tempo real, medidas automáticas, régua, modo monitor e banco de traçados com critérios diagnósticos internacionais.
+              </p>
             </div>
             {ready && hasAccess && (
               <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300/30 bg-amber-400/10 px-3 py-1.5 text-xs font-bold text-amber-700 dark:text-amber-300">

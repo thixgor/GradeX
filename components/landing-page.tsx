@@ -1099,6 +1099,22 @@ function ManualEletro() {
         </Reveal>
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1.1fr_1fr]">
           <Reveal>
+            <>
+              <img
+                src="/img/eletro/manual-eletrocardiograma-light.webp"
+                alt="Manual do Eletrocardiograma"
+                width={958}
+                height={461}
+                className="mb-6 block h-auto w-full max-w-[300px] dark:hidden md:max-w-[360px]"
+              />
+              <img
+                src="/img/eletro/manual-eletrocardiograma-dark.webp"
+                alt="Manual do Eletrocardiograma"
+                width={958}
+                height={461}
+                className="mb-6 hidden h-auto w-full max-w-[300px] dark:block md:max-w-[360px]"
+              />
+            </>
             <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--da-amber-line)] px-3 py-1 font-da-mono text-[10px] uppercase tracking-widest text-da-amber">
               <IconPulse /> Incluso só no Manual Clínico
             </span>
