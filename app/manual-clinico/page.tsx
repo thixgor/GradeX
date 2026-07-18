@@ -27,6 +27,7 @@ import {
   Bug,
   Target,
   BookOpen,
+  Box,
   ChevronLeft,
   ChevronRight,
   X,
@@ -853,6 +854,29 @@ function ManualClinicoContent() {
                   <p className="text-sm font-bold leading-snug">Farmacologia por classes</p>
                   <p className="mt-0.5 text-xs text-muted-foreground">
                     Fármacos organizados por classe e subclasse: mecanismo, metabolismo, excreção, efeitos, posologia e calculadora de dose.
+                  </p>
+                </div>
+              </div>
+              <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+            </div>
+          </button>
+        )}
+
+        {/* ══════════ ANATOMIA 3D ENTRY ══════════ */}
+        {!busca && (
+          <button
+            onClick={() => router.push('/manual-clinico/anatomia-3d')}
+            className="group mb-3 w-full overflow-hidden rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary/35"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="rounded-xl bg-primary/10 p-2.5">
+                  <Box className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold leading-snug">Anatomia 3D</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    Modelos anatômicos 3D interativos e rotacionáveis, organizados por sistema: coração, pulmões, cérebro, crânio e mais. Fonte: Universidade de Dundee.
                   </p>
                 </div>
               </div>
