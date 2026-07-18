@@ -1,243 +1,76 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { AppShell } from '@/components/app-shell'
+import { Input } from '@/components/ui/input'
 import {
   ArrowLeft,
+  ArrowRight,
+  Search,
+  X,
   Sparkles,
-  Box,
-  Heart,
-  Activity,
-  Droplets,
-  Brain,
-  Bone,
-  Wind,
   RotateCw,
   GraduationCap,
+  Box,
 } from 'lucide-react'
+import {
+  CATEGORIAS,
+  MODELOS,
+  FONTE,
+  TOTAL_MODELOS,
+  getDestaques,
+  getModelosPorCategoria,
+  type CategoriaId,
+  type Modelo3D,
+} from '@/lib/anatomia-3d/modelos'
+import { TEMA, ICONS, FALLBACK_ICON, corDaCategoria } from '@/components/anatomia-3d/tema'
 
-/**
- * Modelos anatômicos 3D (embeds do Sketchfab) organizados por categoria.
- * Fonte de todos os modelos: Universidade de Dundee.
- */
-interface Modelo3D {
-  titulo: string
-  descricao: string
-  // URL do embed do Sketchfab. `null` quando o modelo não possui embed disponível.
-  embedUrl: string | null
-  // Sinaliza pontos que precisam de revisão posterior (ex.: URL duplicada).
-  nota?: string
-}
-
-interface CategoriaAnatomia {
-  titulo: string
-  icon: typeof Heart
-  modelos: Modelo3D[]
-}
-
-const FONTE = 'Universidade de Dundee'
-
-const CATEGORIAS: CategoriaAnatomia[] = [
-  {
-    titulo: 'Coração e Sistema Cardiovascular',
-    icon: Heart,
-    modelos: [
-      {
-        titulo: 'Modelo 3D do coração humano',
-        descricao:
-          'Modelo rotacionável do coração humano, baseado em escaneamento 3D de um coração plastinado.',
-        // ⚠️ REVISÃO: esta URL é idêntica à do card "Artérias coronárias do coração".
-        // Uma das duas provavelmente está incorreta nos dados de origem — validar embeds.
-        embedUrl: 'https://sketchfab.com/models/8e86582b400843eba805f5ad81747911/embed',
-        nota: 'URL de embed duplicada com "Artérias coronárias do coração" — revisar.',
-      },
-      {
-        titulo: 'Artérias coronárias do coração',
-        descricao:
-          'Mostra as artérias coronárias do coração humano, criado no ZBrush como recurso educacional sobre a vascularização cardíaca.',
-        // ⚠️ REVISÃO: esta URL é idêntica à do card "Modelo 3D do coração humano".
-        // Uma das duas provavelmente está incorreta nos dados de origem — validar embeds.
-        embedUrl: 'https://sketchfab.com/models/8e86582b400843eba805f5ad81747911/embed',
-        nota: 'URL de embed duplicada com "Modelo 3D do coração humano" — revisar.',
-      },
-      {
-        titulo: 'Vista externa do coração',
-        descricao:
-          'Mostra a anatomia externa do coração humano, com anotações das características gerais. Criado no ZBrush.',
-        embedUrl:
-          'https://sketchfab.com/3d-models/cardiac-anatomy-external-view-of-human-heart-a3f0ea2030214a6bbaa97e7357eebd58/embed',
-      },
-      {
-        titulo: 'Veias cardíacas',
-        descricao: 'Mostra as veias cardíacas do coração humano. Criado no ZBrush.',
-        embedUrl:
-          'https://sketchfab.com/3d-models/cardiac-anatomy-cardiac-veins-of-the-heart-faa6c5b169ec4928bda1f6bf36e0fcb6/embed',
-      },
-      {
-        titulo: 'Sistema de condução cardíaca',
-        descricao:
-          'Mostra os principais componentes do sistema de condução: nó SA, nó AV, feixe de His, ramos e fibras de Purkinje. Baseado em impressão 3D. Rótulos numerados em inglês.',
-        embedUrl: 'https://sketchfab.com/models/20a5e36391474f2b99e1a4c94c707b47/embed',
-      },
-      {
-        titulo: 'Fluxo sanguíneo no coração',
-        descricao:
-          'Mostra o percurso do sangue: desoxigenado entrando no átrio direito, indo aos pulmões, retornando oxigenado ao átrio esquerdo e sendo bombeado para a aorta. Colaboração das Universidades de Groningen, Leiden e Delft. Rótulos em inglês.',
-        // NOTA: a especificação da tarefa afirma que este modelo "não tem URL de embed",
-        // mas os dados fornecidos listaram a URL abaixo. Mantemos o embed funcional e
-        // sinalizamos a divergência para revisão posterior.
-        embedUrl: 'https://sketchfab.com/models/395666697531489aa445674a133969b9/embed',
-        nota: 'A especificação indicou ausência de URL, mas os dados traziam uma — confirmar embed.',
-      },
-    ],
-  },
-  {
-    titulo: 'Coração e Pulmões',
-    icon: Activity,
-    modelos: [
-      {
-        titulo: 'Coração e pulmões normais',
-        descricao:
-          'Mostra ventrículos esquerdo e direito, átrios, aorta, veias cavas superior e inferior, tronco e artérias pulmonares, veias pulmonares e ambos os pulmões. Colaboração das Universidades de Groningen, Leiden e Delft. Rótulos numerados em inglês.',
-        embedUrl: 'https://sketchfab.com/models/5c62cd4d4ba04243be1062d2263d3ef0/embed',
-      },
-    ],
-  },
-  {
-    titulo: 'Sistema Linfático',
-    icon: Droplets,
-    modelos: [
-      {
-        titulo: 'Sistema linfático',
-        descricao:
-          'Visão geral do sistema linfático humano. Mostra também a traqueia (branco), parte da aorta (vermelho), o esqueleto (marrom claro) e partes do sistema venoso, já que os linfáticos acompanham as veias nos membros e as artérias no tronco.',
-        embedUrl: 'https://sketchfab.com/models/14800d739ecb46678d7584a401b0aa77/embed',
-      },
-    ],
-  },
-  {
-    titulo: 'Cérebro e Sistema Nervoso',
-    icon: Brain,
-    modelos: [
-      {
-        titulo: 'Nervos cranianos',
-        descricao:
-          'Modelo do cérebro para visualizar os pontos de saída dos 12 nervos cranianos em 3D. As anotações detalham origem, saída craniana, inervação, função e tipo de nervo.',
-        embedUrl: 'https://sketchfab.com/models/82d87cb89d6c48f0984a59c4f2a4cf9a/embed',
-      },
-      {
-        titulo: 'Vista inferior do cérebro',
-        descricao:
-          'Vista inferior de um cérebro normal, de autópsia. Modelo de fotogrametria capturado com 123D Capture.',
-        embedUrl:
-          'https://sketchfab.com/3d-models/normal-brain-0de8a436e4c4411a903e35267ba1d254/embed',
-      },
-      {
-        titulo: 'Ventrículos do cérebro',
-        descricao: 'Mostra os ventrículos do cérebro e as estruturas adjacentes.',
-        embedUrl:
-          'https://sketchfab.com/3d-models/ventricles-a5c44ec4384a423f8df9c17d3dab43fc/embed',
-      },
-      {
-        titulo: 'Regiões do cérebro',
-        descricao: 'Destaca as diferentes regiões do cérebro.',
-        embedUrl:
-          'https://sketchfab.com/3d-models/regions-of-the-brain-b2aac93ee4c440ed911f5765158edc9f/embed',
-      },
-    ],
-  },
-  {
-    titulo: 'Crânio e Ossos da Cabeça',
-    icon: Bone,
-    modelos: [
-      {
-        titulo: 'Ossos da órbita, incluindo ossos palatinos',
-        descricao: 'Destaca os ossos da órbita, incluindo os ossos palatinos.',
-        embedUrl:
-          'https://sketchfab.com/3d-models/bones-of-the-orbit-including-palatine-bones-4d76805781d34070926dd9797a4e5013/embed',
-      },
-      {
-        titulo: 'Corte sagital do crânio e mandíbula',
-        descricao:
-          'Ossos do crânio individualmente coloridos e anotados, usando nomenclatura em inglês. Rótulos em inglês.',
-        embedUrl: 'https://sketchfab.com/models/7565dbc2297149d29ee76b7bd270e7d2/embed',
-      },
-    ],
-  },
-  {
-    titulo: 'Vias Aéreas Superiores',
-    icon: Wind,
-    modelos: [
-      {
-        titulo: 'Anatomia da laringe',
-        descricao: 'Mostra a anatomia da laringe. Rótulos numerados em inglês.',
-        embedUrl:
-          'https://sketchfab.com/3d-models/anatomy-of-the-larynx-a00bc73a303c46248db6a13a88b23404/embed',
-      },
-    ],
-  },
-]
-
-/**
- * Embed 3D com carregamento sob demanda: até o usuário tocar/clicar no
- * placeholder, o iframe do Sketchfab NÃO é montado. Isso evita pesar a página
- * em mobile (são muitos modelos) e garante que o arraste em 360° só capture o
- * toque depois que o usuário decide interagir, sem travar o scroll vertical.
- */
-function ModeloEmbed({ modelo }: { modelo: Modelo3D }) {
-  const [ativo, setAtivo] = useState(false)
+function ModeloCard({ modelo, index }: { modelo: Modelo3D; index: number }) {
+  const tema = TEMA[corDaCategoria(modelo.categoriaId)]
+  const cat = CATEGORIAS.find(c => c.id === modelo.categoriaId)
+  const Icon = cat ? ICONS[cat.icon] : FALLBACK_ICON
 
   return (
-    <div className="relative w-full aspect-[4/3] overflow-hidden rounded-xl border border-white/[0.08] bg-black/25">
-      {!modelo.embedUrl ? (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 p-4 text-center">
-          <Box className="h-8 w-8 text-muted-foreground/40" />
-          <p className="text-xs text-muted-foreground">Modelo 3D indisponível no momento.</p>
-        </div>
-      ) : ativo ? (
-        <iframe
-          title={modelo.titulo}
-          src={modelo.embedUrl}
-          loading="lazy"
-          frameBorder={0}
-          allow="autoplay; fullscreen; xr-spatial-tracking"
-          allowFullScreen
-          // Prefixos de fornecedor mantidos conforme o formato de embed do Sketchfab.
-          {...({ mozallowfullscreen: 'true', webkitallowfullscreen: 'true' } as any)}
-          className="absolute inset-0 h-full w-full"
-        />
-      ) : (
-        <button
-          type="button"
-          onClick={() => setAtivo(true)}
-          className="group/embed absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-primary/[0.06] to-transparent transition-colors hover:from-primary/[0.12]"
-          aria-label={`Carregar modelo 3D: ${modelo.titulo}`}
-        >
-          <div className="rounded-full bg-primary/15 p-4 transition-transform group-hover/embed:scale-110">
-            <RotateCw className="h-7 w-7 text-primary" />
+    <Link
+      href={`/manual-clinico/anatomia-3d/${modelo.slug}`}
+      prefetch={false}
+      style={{ animationDelay: `${Math.min(index, 12) * 40}ms` }}
+      className={`group relative flex flex-col overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.02] opacity-0 animate-fade-in-up shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/[0.04] hover:shadow-xl ${tema.hoverBorder} ${tema.glow}`}
+    >
+      {/* Thumbnail 3D (leve — sem iframe; o viewer fica na página de detalhe) */}
+      <div className="relative aspect-[4/3] w-full overflow-hidden">
+        <div className={`absolute inset-0 bg-gradient-to-br ${tema.grad}`} />
+        <div className="absolute inset-0 opacity-[0.15] [background-image:radial-gradient(circle_at_1px_1px,currentColor_1px,transparent_0)] [background-size:16px_16px]" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className={`rounded-2xl border border-white/10 ${tema.bg} p-5 backdrop-blur-sm transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3`}>
+            <Icon className={`h-10 w-10 ${tema.text}`} />
           </div>
-          <span className="text-sm font-semibold text-foreground">Carregar modelo 3D</span>
-          <span className="text-[11px] text-muted-foreground">Toque para girar em 360°</span>
-        </button>
-      )}
-    </div>
-  )
-}
+        </div>
+        <div className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full border border-white/15 bg-black/30 px-2 py-1 text-[10px] font-black uppercase tracking-wider text-white/90 backdrop-blur">
+          <RotateCw className="h-3 w-3" /> 3D
+        </div>
+        {modelo.destaque && (
+          <div className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full border border-amber-300/30 bg-amber-400/20 px-2 py-1 text-[10px] font-black uppercase tracking-wider text-amber-200 backdrop-blur">
+            <Sparkles className="h-3 w-3" /> Destaque
+          </div>
+        )}
+      </div>
 
-function CardModelo({ modelo }: { modelo: Modelo3D }) {
-  return (
-    <div className="group overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] transition-all hover:border-white/[0.12] hover:bg-white/[0.04]">
-      <ModeloEmbed modelo={modelo} />
-      <div className="p-4">
-        <h3 className="font-semibold leading-snug">{modelo.titulo}</h3>
-        <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">{modelo.descricao}</p>
-        <div className="mt-3 flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground/60">
-          <GraduationCap className="h-3.5 w-3.5" />
-          <span>Fonte: {FONTE}</span>
+      <div className="flex flex-1 flex-col p-4">
+        <h3 className="font-semibold leading-snug transition-colors group-hover:text-foreground">{modelo.titulo}</h3>
+        <p className="mt-1.5 line-clamp-2 flex-1 text-sm text-muted-foreground leading-relaxed">{modelo.legenda}</p>
+        <div className="mt-3 flex items-center justify-between">
+          <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground/60">
+            <GraduationCap className="h-3.5 w-3.5" /> {FONTE}
+          </span>
+          <span className={`inline-flex items-center gap-1 text-xs font-bold ${tema.text}`}>
+            Ver anatomia <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+          </span>
         </div>
       </div>
-    </div>
+    </Link>
   )
 }
 
@@ -251,89 +84,223 @@ export default function Anatomia3DPage() {
 
 function Anatomia3DContent() {
   const router = useRouter()
-  const totalModelos = CATEGORIAS.reduce((n, c) => n + c.modelos.length, 0)
+  const [busca, setBusca] = useState('')
+  const [catAtiva, setCatAtiva] = useState<CategoriaId | null>(null)
+  const destaques = useMemo(() => getDestaques(), [])
+  const observando = useRef(false)
+
+  const termo = busca.trim().toLowerCase()
+  const resultados = useMemo(() => {
+    if (!termo) return []
+    return MODELOS.filter(
+      m =>
+        m.titulo.toLowerCase().includes(termo) ||
+        m.legenda.toLowerCase().includes(termo) ||
+        m.resumo.toLowerCase().includes(termo),
+    )
+  }, [termo])
+
+  // Destaca a categoria visível na navegação fixa (efeito "scrollspy").
+  useEffect(() => {
+    if (termo || observando.current) return
+    observando.current = true
+    const secoes = CATEGORIAS.map(c => document.getElementById(`cat-${c.id}`)).filter(Boolean) as HTMLElement[]
+    const obs = new IntersectionObserver(
+      entries => {
+        const visivel = entries.filter(e => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0]
+        if (visivel) setCatAtiva(visivel.target.id.replace('cat-', '') as CategoriaId)
+      },
+      { rootMargin: '-40% 0px -55% 0px' },
+    )
+    secoes.forEach(s => obs.observe(s))
+    return () => {
+      obs.disconnect()
+      observando.current = false
+    }
+  }, [termo])
+
+  function irParaCategoria(id: CategoriaId) {
+    document.getElementById(`cat-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
 
   return (
     <div className="min-h-screen bg-background">
-      {/* ══════════ HERO ══════════ */}
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-primary/10 via-background/60 to-background" />
+      {/* ══════════ HERO (aurora) ══════════ */}
+      <div className="relative overflow-hidden border-b border-white/[0.06]">
+        {/* Blobs de cor desfocados */}
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
+          <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-rose-500/20 blur-3xl" />
+          <div className="absolute right-0 top-10 h-72 w-72 rounded-full bg-sky-500/20 blur-3xl" />
+          <div className="absolute bottom-0 left-1/3 h-64 w-64 rounded-full bg-violet-500/20 blur-3xl" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/70 to-background" />
         </div>
+
         <div className="relative z-10 container mx-auto px-4 pt-8 pb-10 max-w-6xl">
           <button
             onClick={() => router.push('/manual-clinico')}
-            className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="h-4 w-4" /> Voltar ao Manual Clínico
           </button>
 
-          <div className="text-center mb-2">
-            <div className="inline-flex flex-col items-center">
-              <div className="inline-flex items-center gap-3 mb-3 px-5 py-2 rounded-full bg-white/[0.08] backdrop-blur-xl border border-white/[0.12]">
-                <Sparkles className="h-4 w-4 text-primary" />
-                <span className="text-xs font-medium tracking-wider uppercase text-muted-foreground">
-                  Anatomia interativa
-                </span>
-              </div>
-              <h1 className="text-4xl sm:text-5xl font-bold font-heading bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent">
+          <div className="max-w-3xl">
+            <div className="inline-flex items-center gap-2 mb-4 rounded-full border border-white/[0.12] bg-white/[0.06] px-4 py-1.5 backdrop-blur-xl">
+              <Box className="h-4 w-4 text-primary" />
+              <span className="text-xs font-bold tracking-wider uppercase text-muted-foreground">Atlas 3D interativo</span>
+            </div>
+            <h1 className="text-4xl sm:text-6xl font-bold font-heading leading-[1.05] tracking-tight">
+              <span className="bg-gradient-to-br from-rose-500 via-fuchsia-500 to-sky-500 bg-clip-text text-transparent">
                 Anatomia 3D
-              </h1>
-              <p className="text-muted-foreground mt-3 max-w-xl text-base sm:text-lg leading-relaxed">
-                Modelos anatômicos 3D interativos e rotacionáveis, organizados por sistema. Toque em
-                cada modelo para carregá-lo e explorá-lo em 360°.
-              </p>
-              {totalModelos > 0 && (
-                <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20">
-                  <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-                  <span className="text-xs font-medium text-primary">
-                    {totalModelos} modelos disponíveis
-                  </span>
-                </div>
-              )}
+              </span>
+            </h1>
+            <p className="mt-4 max-w-2xl text-base sm:text-lg text-muted-foreground leading-relaxed">
+              {TOTAL_MODELOS} modelos anatômicos rotacionáveis em 360°, dissecados por sistema e acompanhados de uma
+              explicação clínica aprofundada em cada peça. Gire, aproxime e estude — do coração às vértebras torácicas.
+            </p>
 
-              {/* Atribuição obrigatória, visível no topo da seção */}
-              <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/[0.1] bg-white/[0.04] text-xs font-semibold text-muted-foreground">
-                <GraduationCap className="h-4 w-4 text-primary" />
-                Fonte: {FONTE}
+            <div className="mt-6 flex flex-wrap items-center gap-2.5">
+              <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 border border-primary/20 px-3 py-1.5 text-xs font-bold text-primary">
+                <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                {TOTAL_MODELOS} modelos
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/[0.05] border border-white/[0.1] px-3 py-1.5 text-xs font-bold text-muted-foreground">
+                {CATEGORIAS.length} categorias
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/[0.05] border border-white/[0.1] px-3 py-1.5 text-xs font-bold text-muted-foreground">
+                <GraduationCap className="h-3.5 w-3.5 text-primary" /> Fonte: {FONTE}
+              </span>
+            </div>
+
+            {/* Busca */}
+            <div className="mt-6 max-w-xl">
+              <div className="relative flex items-center bg-white/[0.07] backdrop-blur-2xl rounded-2xl border border-white/[0.12] overflow-hidden transition-colors focus-within:border-primary/30">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/60" />
+                <Input
+                  placeholder="Buscar modelo (coração, vértebra T5, laringe...)"
+                  value={busca}
+                  onChange={e => setBusca(e.target.value)}
+                  className="pl-12 pr-12 h-14 text-base bg-transparent border-0 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                  aria-label="Buscar modelo 3D"
+                />
+                {busca && (
+                  <button
+                    onClick={() => setBusca('')}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full bg-white/10 hover:bg-white/20 text-muted-foreground"
+                    aria-label="Limpar busca"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* ══════════ CATEGORIAS ══════════ */}
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        <div className="space-y-12">
-          {CATEGORIAS.map((categoria) => {
-            const Icon = categoria.icon
-            return (
-              <section key={categoria.titulo}>
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="p-2 rounded-xl bg-primary/10">
-                    <Icon className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-bold">{categoria.titulo}</h2>
-                    <p className="text-xs text-muted-foreground">
-                      {categoria.modelos.length} modelo{categoria.modelos.length !== 1 ? 's' : ''}
-                    </p>
-                  </div>
-                </div>
+      {/* ══════════ NAVEGAÇÃO FIXA POR CATEGORIA ══════════ */}
+      {!termo && (
+        <div className="sticky top-0 z-30 border-b border-white/[0.06] bg-background/80 backdrop-blur-xl">
+          <div className="container mx-auto px-4 max-w-6xl">
+            <div className="flex gap-2 overflow-x-auto py-3 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+              {CATEGORIAS.map(cat => {
+                const tema = TEMA[cat.cor]
+                const ativa = catAtiva === cat.id
+                const n = getModelosPorCategoria(cat.id).length
+                if (n === 0) return null
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => irParaCategoria(cat.id)}
+                    className={`shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                      ativa ? tema.chipActive : `bg-white/[0.04] ${tema.text} border-white/[0.1] hover:bg-white/[0.08]`
+                    }`}
+                  >
+                    {cat.titulo}
+                    <span className={`rounded-full px-1.5 text-[10px] ${ativa ? 'bg-white/25' : 'bg-white/[0.08]'}`}>{n}</span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
-                {/* Mobile: 1 por linha · Tablet: 2 · Desktop: 3 */}
-                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                  {categoria.modelos.map((modelo) => (
-                    <CardModelo key={modelo.titulo} modelo={modelo} />
+      {/* ══════════ CONTEÚDO ══════════ */}
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+        {termo ? (
+          /* ── Resultados de busca ── */
+          <div>
+            <p className="mb-5 text-sm text-muted-foreground">
+              {resultados.length > 0
+                ? `${resultados.length} modelo${resultados.length !== 1 ? 's' : ''} para "${busca}"`
+                : `Nenhum modelo encontrado para "${busca}"`}
+            </p>
+            {resultados.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                {resultados.map((m, i) => (
+                  <ModeloCard key={m.slug} modelo={m} index={i} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-16">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-muted/50 mb-4">
+                  <Box className="h-8 w-8 text-muted-foreground/30" />
+                </div>
+                <p className="text-muted-foreground text-sm">Tente outro termo, como um sistema ou o nome de um osso.</p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <>
+            {/* ── Em destaque ── */}
+            {destaques.length > 0 && (
+              <section className="mb-12">
+                <div className="flex items-center gap-2 mb-5">
+                  <Sparkles className="h-5 w-5 text-amber-400" />
+                  <h2 className="text-lg font-bold">Em destaque</h2>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                  {destaques.map((m, i) => (
+                    <ModeloCard key={m.slug} modelo={m} index={i} />
                   ))}
                 </div>
               </section>
-            )
-          })}
-        </div>
+            )}
 
-        {/* Atribuição também no rodapé da seção */}
-        <div className="mt-12 border-t border-white/[0.06] pt-6 text-center">
+            {/* ── Categorias ── */}
+            <div className="space-y-14">
+              {CATEGORIAS.map(cat => {
+                const modelos = getModelosPorCategoria(cat.id)
+                if (modelos.length === 0) return null
+                const tema = TEMA[cat.cor]
+                const Icon = ICONS[cat.icon]
+                return (
+                  <section key={cat.id} id={`cat-${cat.id}`} className="scroll-mt-20">
+                    <div className="flex items-center gap-4 mb-5">
+                      <div className={`rounded-2xl border ${tema.border} ${tema.bg} p-3`}>
+                        <Icon className={`h-6 w-6 ${tema.text}`} />
+                      </div>
+                      <div>
+                        <h2 className="text-xl font-bold leading-tight">{cat.titulo}</h2>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {cat.subtitulo} · {modelos.length} modelo{modelos.length !== 1 ? 's' : ''}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                      {modelos.map((m, i) => (
+                        <ModeloCard key={m.slug} modelo={m} index={i} />
+                      ))}
+                    </div>
+                  </section>
+                )
+              })}
+            </div>
+          </>
+        )}
+
+        {/* Atribuição no rodapé */}
+        <div className="mt-16 border-t border-white/[0.06] pt-6 text-center">
           <p className="inline-flex items-center gap-2 text-xs text-muted-foreground">
             <GraduationCap className="h-4 w-4 text-primary" />
             Todos os modelos anatômicos têm como fonte a <strong className="font-semibold">{FONTE}</strong>.

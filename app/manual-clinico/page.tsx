@@ -876,7 +876,7 @@ function ManualClinicoContent() {
                 <div>
                   <p className="text-sm font-bold leading-snug">Anatomia 3D</p>
                   <p className="mt-0.5 text-xs text-muted-foreground">
-                    Modelos anatômicos 3D interativos e rotacionáveis, organizados por sistema: coração, pulmões, cérebro, crânio e mais. Fonte: Universidade de Dundee.
+                    Atlas 3D interativo com dezenas de modelos rotacionáveis em 360° — coração, cardiopatias congênitas, pulmões, coluna torácica, ossos e mais — cada um com explicação anatômica aprofundada. Fonte: Universidade de Dundee.
                   </p>
                 </div>
               </div>
