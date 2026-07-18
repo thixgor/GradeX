@@ -17,11 +17,12 @@ const REENVIO_MIN_DIAS = 14
 // (às vezes 30s no plano free). Mantemos isso baixo e confiamos no orçamento
 // de tempo abaixo pra garantir resposta rápida mesmo assim.
 const MAX_POR_EXECUCAO = 40
-// Para de mandar novos e-mails depois desse tempo de execução, mesmo que
-// ainda sobrem candidatos — eles são pegos na próxima chamada do cron. Fica
-// com boa folga do timeout típico de serviços de cron externos e do
-// maxDuration configurado em vercel.json pra essa rota.
-const TIME_BUDGET_MS = 20_000
+// Para de mandar novos e-mails depois desse tempo de execução (contado desde
+// o início do handler, antes até de conectar no banco), mesmo que ainda
+// sobrem candidatos — eles são pegos na próxima chamada do cron. cron-job.org
+// usa timeout de 30s, então isso deixa ~8s de folga pra resposta voltar,
+// contabilizando handshake/rede.
+const TIME_BUDGET_MS = 22_000
 
 /**
  * Cron externo (rodar via cron-job.org — NÃO está no vercel.json porque o
@@ -44,13 +45,14 @@ const TIME_BUDGET_MS = 20_000
  * setado). Configure esse header na chamada HTTP do cron-job.org.
  */
 export async function GET(request: NextRequest) {
+  const startedAt = Date.now()
+
   const token = process.env.CRON_TOKEN
   if (token) {
     const header = request.headers.get('x-cron-token') || ''
     if (header !== token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const startedAt = Date.now()
   const db = await getDb()
   const usersCollection = db.collection<User>('users')
   const now = new Date()
