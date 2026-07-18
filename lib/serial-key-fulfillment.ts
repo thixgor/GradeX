@@ -68,6 +68,72 @@ const PAYMENT_METHOD_LABELS: Record<string, string> = {
   unknown: '—',
 }
 
+/**
+ * Nº de tentativas de ENVIO imediato (dentro da mesma chamada) antes de desistir
+ * e registrar `failed`. Combate falhas transitórias do SMTP (rajada/queda de
+ * conexão da Hostinger). O sweeper de fulfillment cuida das falhas persistentes.
+ */
+const MAX_EMAIL_SEND_RETRIES = Number(process.env.SERIAL_KEY_EMAIL_RETRIES) || 3
+
+/**
+ * Nº máximo de tentativas de ENVIO (somando webhook + execuções do cron) antes
+ * de o sweeper parar de tentar. Cada tentativa falha vira um log em
+ * `emailHistory` com `kind:'purchase', status:'failed'`.
+ */
+export const MAX_FULFILLMENT_EMAIL_ATTEMPTS = Number(process.env.SERIAL_KEY_FULFILLMENT_MAX_ATTEMPTS) || 8
+
+/** A partir de quantas falhas o admin é alertado (uma única vez) por e-mail. */
+export const FULFILLMENT_ALERT_AFTER_ATTEMPTS = Number(process.env.SERIAL_KEY_FULFILLMENT_ALERT_AFTER) || 2
+
+/** Executa `fn` com algumas retentativas e backoff linear. Relança no fim. */
+async function sendWithRetry(label: string, fn: () => Promise<void>): Promise<void> {
+  let lastErr: any
+  for (let attempt = 1; attempt <= MAX_EMAIL_SEND_RETRIES; attempt++) {
+    try {
+      await fn()
+      return
+    } catch (err) {
+      lastErr = err
+      console.error(`[serial-key] ${label} — tentativa ${attempt}/${MAX_EMAIL_SEND_RETRIES} falhou:`, err)
+      if (attempt < MAX_EMAIL_SEND_RETRIES) {
+        await new Promise(r => setTimeout(r, attempt * 1500)) // 1.5s, 3s, ...
+      }
+    }
+  }
+  throw lastErr
+}
+
+/**
+ * Resume o estado de entrega por e-mail de uma compra, a partir do histórico
+ * gravado nas key(s). Usado pelo sweeper para decidir retry/desistência.
+ */
+export function getFulfillmentEmailState(keys: SerialKey[]): {
+  hasKeys: boolean
+  alreadySent: boolean
+  failedAttempts: number
+  lastAttemptAt: Date | null
+  lastError?: string
+} {
+  const logs = keys.flatMap(k => k.emailHistory || []).filter(e => e.kind === 'purchase')
+  const alreadySent = logs.some(e => e.status === 'sent')
+  const failed = logs.filter(e => e.status === 'failed')
+  // Compra de carrinho grava o MESMO log em todas as keys (updateMany), então a
+  // contagem por key evita inflar o número de tentativas.
+  const failedAttempts = keys.length > 0
+    ? Math.max(0, ...keys.map(k => (k.emailHistory || []).filter(e => e.kind === 'purchase' && e.status === 'failed').length))
+    : 0
+  let lastAttemptAt: Date | null = null
+  let lastError: string | undefined
+  for (const e of logs) {
+    const at = e.sentAt ? new Date(e.sentAt) : null
+    if (at && (!lastAttemptAt || at > lastAttemptAt)) {
+      lastAttemptAt = at
+      lastError = e.error
+    }
+  }
+  return { hasKeys: keys.length > 0, alreadySent, failedAttempts, lastAttemptAt, lastError }
+}
+
 function buildReceiptData(serial: SerialKey, paymentMethod?: string): SerialKeyReceiptData {
   const activationUrl = serial.activationToken ? getActivationUrl(serial.activationToken) : ''
   return {
@@ -119,8 +185,8 @@ export async function sendSerialKeyEmail(
       await markKeysRestricted(db, [serial._id])
     }
 
-    await sendSerialKeyPurchaseEmail({
-      email: serial.buyerEmail,
+    await sendWithRetry('envio serial key', () => sendSerialKeyPurchaseEmail({
+      email: serial.buyerEmail!,
       buyerName: serial.buyerName || '',
       buyerPhone: serial.buyerPhone || '',
       productTitle: receipt.productTitle,
@@ -138,7 +204,7 @@ export async function sendSerialKeyEmail(
       kind,
       materialAttachments: material.attachments,
       restrictActivationToBuyerEmail: material.eligible,
-    })
+    }))
 
     log = { to: serial.buyerEmail, status: 'sent', kind, sentAt: new Date(), sentBy: opts.sentBy }
   } catch (err: any) {
@@ -218,8 +284,8 @@ export async function sendSerialKeyCartEmail(
       await markKeysRestricted(db, restrictedKeyIds)
     }
 
-    await sendSerialKeyCartPurchaseEmail({
-      email: first.buyerEmail,
+    await sendWithRetry('envio serial key (carrinho)', () => sendSerialKeyCartPurchaseEmail({
+      email: first.buyerEmail!,
       buyerName: first.buyerName || '',
       buyerPhone: first.buyerPhone || '',
       totalAmount: receipt.amount,
@@ -231,7 +297,7 @@ export async function sendSerialKeyCartEmail(
       kind,
       materialAttachments,
       restrictActivationToBuyerEmail: restrictedKeyIds.length > 0,
-    })
+    }))
     ok = true
   } catch (err: any) {
     console.error('[serial-key] falha ao enviar e-mail do carrinho:', err)

@@ -1,6 +1,7 @@
 
 import nodemailer from 'nodemailer'
 import { personalize } from '@/lib/comms/email-render'
+import { ADMIN_EMAILS } from '@/lib/constants'
 
 // Transporter compartilhado (pooled). O SMTP da Hostinger derruba conexões sob
 // rajada — daí os erros de "auth limit". O pool reaproveita poucas conexões e
@@ -1591,4 +1592,62 @@ export async function sendShopOrderStatusEmail(input: {
     subject: `${meta.emoji} Pedido #${input.orderNumber}: ${meta.label}`,
     html,
   })
+}
+
+/**
+ * Alerta INTERNO para os administradores quando a entrega automática de um
+ * material/serial key (e-mail com o PDF + a key de ativação) falhou repetidas
+ * vezes após um pagamento aprovado. Serve como rede de segurança: mesmo que o
+ * comprador não receba o e-mail automático, um humano é avisado para reenviar
+ * manualmente pelo painel de Serial Keys. Nunca lança (best-effort).
+ */
+export async function sendFulfillmentFailureAlert(input: {
+  orderId: string
+  buyerEmail?: string
+  buyerName?: string
+  productTitle?: string
+  amount?: number
+  attempts: number
+  transactionId?: string
+  reason?: string
+}): Promise<void> {
+  const recipients = (process.env.ADMIN_ALERT_EMAIL || ADMIN_EMAILS.join(',')).trim()
+  if (!recipients) return
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.domineaqui.com.br'
+  const amountStr = typeof input.amount === 'number'
+    ? input.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+    : '—'
+
+  const content = `
+    <h1 class="h1" style="color:#b91c1c;">⚠️ Entrega automática falhou</h1>
+    <p>Um pagamento foi <strong>aprovado</strong>, mas o e-mail automático com o material
+    e/ou a serial key <strong>não pôde ser enviado</strong> após ${input.attempts} tentativa(s).</p>
+    <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:16px 20px;margin:20px 0;">
+      <p style="margin:0 0 6px 0;color:#4a5568;">Comprador: <strong>${input.buyerName || '—'}</strong></p>
+      <p style="margin:0 0 6px 0;color:#4a5568;">E-mail: <strong>${input.buyerEmail || '—'}</strong></p>
+      <p style="margin:0 0 6px 0;color:#4a5568;">Produto: <strong>${input.productTitle || '—'}</strong></p>
+      <p style="margin:0 0 6px 0;color:#4a5568;">Valor: <strong>${amountStr}</strong></p>
+      <p style="margin:0 0 6px 0;color:#4a5568;">Order: <strong>${input.orderId}</strong></p>
+      ${input.transactionId ? `<p style="margin:0 0 6px 0;color:#4a5568;">Transação (MP): <strong>${input.transactionId}</strong></p>` : ''}
+      ${input.reason ? `<p style="margin:8px 0 0 0;color:#4a5568;">Último erro: <code>${input.reason}</code></p>` : ''}
+    </div>
+    <p><strong>Ação recomendada:</strong> abra o painel de Serial Keys, localize a compra
+    e use <em>Reenviar e-mail</em>. A serial key já foi gerada e o comprador já pode
+    ativá-la — apenas o e-mail automático não chegou.</p>
+    <div style="text-align:center;">
+      <a href="${appUrl}/admin/keys" class="button" target="_blank">Abrir painel de Serial Keys</a>
+    </div>
+  `
+
+  try {
+    await transporter.sendMail({
+      from: '"DomineAqui Alertas" <no-reply@domineaqui.com.br>',
+      to: recipients,
+      subject: `⚠️ Falha na entrega automática — order ${input.orderId}`,
+      html: getEmailTemplate('Falha na entrega automática', content),
+    })
+  } catch (err) {
+    console.error('[mail] falha ao enviar alerta de fulfillment ao admin:', err)
+  }
 }

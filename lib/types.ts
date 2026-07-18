@@ -1826,6 +1826,12 @@ export interface PaymentOrder {
   updatedAt: Date
   paidAt?: Date
   expiresAt?: Date
+  /**
+   * Marca quando o alerta interno de falha de entrega automática (e-mail com
+   * material/serial key que não pôde ser enviado após várias tentativas) já foi
+   * disparado aos admins — evita alertas duplicados a cada execução do sweeper.
+   */
+  fulfillmentAlertSentAt?: Date
 }
 
 export interface PaymentRecord {
