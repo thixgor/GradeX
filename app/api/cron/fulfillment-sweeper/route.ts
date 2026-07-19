@@ -42,8 +42,10 @@ export const maxDuration = 60
  *   4. desiste após `MAX_FULFILLMENT_EMAIL_ATTEMPTS` tentativas (o admin ainda
  *      pode reenviar manualmente pelo painel — a key já existe e é ativável).
  *
- * Autenticação: header `Authorization: Bearer ${CRON_SECRET}` (configurável no
- * cron-job.org) ou o header `x-vercel-cron`.
+ * Autenticação (qualquer uma serve): header `Authorization: Bearer ${CRON_SECRET}`,
+ * header `x-cron-secret: ${CRON_SECRET}`, query-param `?secret=${CRON_SECRET}`
+ * (mais simples no cron-job.org — sem precisar configurar header), ou o header
+ * `x-vercel-cron`. Exige `CRON_SECRET` definida no ambiente.
  */
 export async function GET(request: NextRequest) {
   if (!isAuthorized(request)) {
@@ -145,7 +147,27 @@ export async function GET(request: NextRequest) {
 
 function isAuthorized(request: NextRequest): boolean {
   if (request.headers.get('x-vercel-cron')) return true
-  const auth = request.headers.get('authorization') || ''
-  const expected = `Bearer ${process.env.CRON_SECRET || ''}`
-  return !!process.env.CRON_SECRET && auth === expected
+
+  const secret = (process.env.CRON_SECRET || '').trim()
+  if (!secret) return false
+
+  const url = new URL(request.url)
+  // Aceita o segredo por várias vias — tolerante a como o cron-job.org é
+  // configurado (com ou sem prefixo "Bearer", em header dedicado ou na URL).
+  const candidates = [
+    (request.headers.get('authorization') || '').replace(/^Bearer\s+/i, ''),
+    request.headers.get('x-cron-secret') || '',
+    url.searchParams.get('secret') || '',
+    url.searchParams.get('token') || '',
+  ].map(s => s.trim())
+
+  return candidates.some(c => c.length > 0 && safeEqual(c, secret))
+}
+
+/** Comparação de tempo constante para o segredo. */
+function safeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false
+  let diff = 0
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i)
+  return diff === 0
 }
