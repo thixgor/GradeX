@@ -597,8 +597,8 @@ export default function DeckPage() {
           fullscreen ? 'flex min-h-full flex-col max-w-5xl lg:max-w-6xl' : 'max-w-3xl lg:max-w-5xl',
         )}>
           <div className={cn(
-            'mb-4 rounded-2xl border border-slate-200 bg-white/90 p-3 shadow-sm backdrop-blur dark:border-border dark:bg-slate-900/90',
-            fullscreen && 'mb-3 border-transparent bg-transparent p-0 shadow-none backdrop-blur-none dark:border-transparent dark:bg-transparent',
+            'mb-4 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm dark:border-border dark:bg-slate-900',
+            fullscreen && 'mb-3 border-transparent bg-transparent p-0 shadow-none dark:border-transparent dark:bg-transparent',
           )}>
             <div className="relative flex items-center justify-between gap-2">
               {/* Logo DomineAqui — só na tela cheia, onde o cabeçalho do app some.
@@ -661,17 +661,10 @@ export default function DeckPage() {
             /* Em tela cheia, o card cresce e fica centralizado no espaço livre
                entre o cabeçalho e a barra de ações — evitando o vazio inferior
                quando o conteúdo é mais curto que a viewport.
-               A troca de card entra com fade + leve subida/escala (só transform
-               e opacity, compostos na GPU) — fluido no mobile e sem risco de
-               scroll horizontal. A key por índice reinicia a animação a cada
-               navegação. */
-            <motion.div
-              key={currentIndex}
-              initial={{ opacity: 0, y: 8, scale: 0.99 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ type: 'spring', stiffness: 460, damping: 34, mass: 0.55 }}
-              className={cn(fullscreen && 'flex flex-1 flex-col justify-center')}
-            >
+               Troca de card sem animação de wrapper: animar opacity/scale num
+               ancestral do card 3D forçava re-rasterização (flicker) e custo a
+               cada navegação. A troca instantânea é a mais fluida no mobile. */
+            <div className={cn(fullscreen && 'flex flex-1 flex-col justify-center')}>
               <FlashcardCardView
                 key={card._id}
                 card={card}
@@ -683,7 +676,7 @@ export default function DeckPage() {
                 showHint={showHint}
                 onToggleHint={() => setShowHint(s => !s)}
               />
-            </motion.div>
+            </div>
           )}
 
           {/* Barra de ações fixa — sempre acessível sem rolar a página.

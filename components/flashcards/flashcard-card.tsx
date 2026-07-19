@@ -427,27 +427,25 @@ export function FlashcardCardView({
     fn()
   }
 
-  // Gira o card e — a cada virada — dá um leve "pop" de escala, reforçando a
-  // sensação de profundidade 3D. Disparo imperativo (não via prop `animate`)
-  // para garantir que o pop sempre toque de novo, mesmo que o alvo de escala
-  // (1 → 0.965 → 1) seja idêntico entre uma virada e outra.
+  // Giro do card. Só rotação (sem o "pop" de escala): no mobile, animar a
+  // escala de um elemento preserve-3d fica re-rasterizando as camadas a cada
+  // frame — causava travadas e flicker. A rotação sozinha compõe na GPU.
   useEffect(() => {
     if (!flipMountedRef.current) {
       flipMountedRef.current = true
-      flipControls.set({ rotateY: flipped ? 180 : 0, scale: 1 })
+      flipControls.set({ rotateY: flipped ? 180 : 0 })
       return
     }
     flipControls.start({
       rotateY: flipped ? 180 : 0,
-      scale: [1, 0.965, 1],
       transition: {
-        rotateY: { type: 'spring', stiffness: 220, damping: 28 },
-        scale: { duration: 0.45, times: [0, 0.5, 1], ease: 'easeInOut' },
+        rotateY: { type: 'spring', stiffness: 260, damping: 30 },
       },
     })
   }, [flipped, flipControls])
 
   useIsomorphicLayoutEffect(() => {
+    let raf = 0
     function measure() {
       const frontHeight = frontRef.current?.scrollHeight ?? 0
       const backHeight = backRef.current?.scrollHeight ?? 0
@@ -458,10 +456,17 @@ export function FlashcardCardView({
         setCardHeight(prev => (prev != null && Math.abs(prev - nextHeight) < 1 ? prev : nextHeight))
       }
     }
+    // Agrupa medições num único frame: durante animações de conteúdo (dica/
+    // comentário) o ResizeObserver dispara muitas vezes — sem isso, seria um
+    // re-render por frame, travando no mobile.
+    function scheduleMeasure() {
+      if (raf) return
+      raf = requestAnimationFrame(() => { raf = 0; measure() })
+    }
 
     measure()
     const resizeObserver = typeof ResizeObserver !== 'undefined'
-      ? new ResizeObserver(measure)
+      ? new ResizeObserver(scheduleMeasure)
       : null
 
     if (resizeObserver) {
@@ -469,28 +474,30 @@ export function FlashcardCardView({
       if (backRef.current) resizeObserver.observe(backRef.current)
     }
 
-    window.addEventListener('resize', measure)
+    window.addEventListener('resize', scheduleMeasure)
     return () => {
+      if (raf) cancelAnimationFrame(raf)
       resizeObserver?.disconnect()
-      window.removeEventListener('resize', measure)
+      window.removeEventListener('resize', scheduleMeasure)
     }
-  }, [card, flipped, showComment, showHint, revealedHidden])
+    // `flipped` fora das deps de proposito: virar nao muda a altura das faces,
+    // entao nao precisa remedir (evita reflow sincrono a cada virada).
+  }, [card, showComment, showHint, revealedHidden])
 
   return (
     <div className={cn('w-full max-w-2xl lg:max-w-4xl mx-auto', className)}>
-      {/* Sombra ambiente — dá a sensação de o card flutuar sobre a mesa;
-          respira em conjunto com o giro para reforçar a profundidade 3D. */}
-      <motion.div
+      {/* Sombra ambiente estática — dá a sensação de o card flutuar sobre a
+          mesa. Sem animação: animar um elemento com blur re-rasteriza o
+          desfoque a cada frame (caro no mobile) e causava travadas/flicker. */}
+      <div
         aria-hidden
-        className="mx-auto -mb-6 h-8 max-w-[85%] rounded-full bg-slate-900/25 blur-2xl dark:bg-black/50"
-        animate={{ scaleX: flipped ? 0.92 : 1, opacity: flipped ? 0.55 : 0.4 }}
-        transition={{ duration: 0.5, ease: 'easeInOut' }}
+        className="mx-auto -mb-6 h-8 max-w-[85%] rounded-full bg-slate-900/20 opacity-40 blur-2xl dark:bg-black/50"
       />
       <div className="relative w-full [perspective:1100px] sm:[perspective:1500px] lg:[perspective:2200px]">
         <motion.div
           className="relative w-full"
           animate={flipControls}
-          style={{ transformStyle: 'preserve-3d', height: cardHeight ? `${cardHeight}px` : undefined, willChange: 'transform' }}
+          style={{ transformStyle: 'preserve-3d', WebkitTransformStyle: 'preserve-3d', height: cardHeight ? `${cardHeight}px` : undefined, willChange: 'transform' }}
         >
           {/* Front — clicável para virar */}
           <div
