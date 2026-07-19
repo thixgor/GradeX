@@ -1,11 +1,16 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import Image from 'next/image'
 import { Eye, EyeOff, Lightbulb, MessageSquare, Sparkles, X, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react'
 import { motion, AnimatePresence, useAnimationControls } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import type { FlashcardManualCard } from '@/lib/types'
+
+// useLayoutEffect no cliente, useEffect no SSR — evita o warning de hidratação
+// e garante que a altura do card seja medida ANTES da pintura, eliminando o
+// "salto" de layout (texto que aparece/pula) ao trocar de card.
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 interface Props {
   card: FlashcardManualCard
@@ -411,6 +416,9 @@ export function FlashcardCardView({
 }: Props) {
   const isHidden = card.kind === 'hidden_word'
   const [revealedHidden, setRevealedHidden] = useState(false)
+  const [cardHeight, setCardHeight] = useState<number | null>(null)
+  const frontRef = useRef<HTMLDivElement>(null)
+  const backRef = useRef<HTMLDivElement>(null)
   const flipControls = useAnimationControls()
   const flipMountedRef = useRef(false)
 
@@ -439,6 +447,35 @@ export function FlashcardCardView({
     })
   }, [flipped, flipControls])
 
+  useIsomorphicLayoutEffect(() => {
+    function measure() {
+      const frontHeight = frontRef.current?.scrollHeight ?? 0
+      const backHeight = backRef.current?.scrollHeight ?? 0
+      const nextHeight = Math.max(frontHeight, backHeight)
+      // Só atualiza quando há mudança real (>1px) para não disparar re-render
+      // em cada frame do ResizeObserver — evita o "tremido" (stuttering).
+      if (nextHeight > 0) {
+        setCardHeight(prev => (prev != null && Math.abs(prev - nextHeight) < 1 ? prev : nextHeight))
+      }
+    }
+
+    measure()
+    const resizeObserver = typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(measure)
+      : null
+
+    if (resizeObserver) {
+      if (frontRef.current) resizeObserver.observe(frontRef.current)
+      if (backRef.current) resizeObserver.observe(backRef.current)
+    }
+
+    window.addEventListener('resize', measure)
+    return () => {
+      resizeObserver?.disconnect()
+      window.removeEventListener('resize', measure)
+    }
+  }, [card, flipped, showComment, showHint, revealedHidden])
+
   return (
     <div className={cn('w-full max-w-2xl lg:max-w-4xl mx-auto', className)}>
       {/* Sombra ambiente — dá a sensação de o card flutuar sobre a mesa;
@@ -450,19 +487,17 @@ export function FlashcardCardView({
         transition={{ duration: 0.5, ease: 'easeInOut' }}
       />
       <div className="relative w-full [perspective:1100px] sm:[perspective:1500px] lg:[perspective:2200px]">
-        {/* Empilhamento em CSS grid: as duas faces ocupam a MESMA célula
-            (grid-area 1/1), então o card assume sempre a altura da face mais
-            alta e NUNCA muda de tamanho ao virar — sem medição por JS. */}
         <motion.div
-          className="grid w-full"
+          className="relative w-full"
           animate={flipControls}
-          style={{ transformStyle: 'preserve-3d', willChange: 'transform' }}
+          style={{ transformStyle: 'preserve-3d', height: cardHeight ? `${cardHeight}px` : undefined, willChange: 'transform' }}
         >
           {/* Front — clicável para virar */}
           <div
+            ref={frontRef}
             onClick={onFlip}
             className={cn(
-              '[grid-area:1/1] relative overflow-hidden rounded-3xl p-4 sm:p-7 md:p-9 lg:p-12 min-h-[300px] sm:min-h-[320px] md:min-h-[380px] lg:min-h-[500px] flex flex-col cursor-pointer select-none',
+              'relative overflow-hidden rounded-3xl p-4 sm:p-7 md:p-9 lg:p-12 min-h-[300px] sm:min-h-[320px] md:min-h-[380px] lg:min-h-[500px] flex flex-col cursor-pointer select-none',
               'bg-gradient-to-br from-white via-white to-slate-50',
               'dark:from-slate-900 dark:via-slate-900 dark:to-slate-950',
               'border border-slate-200 dark:border-white/10',
@@ -476,8 +511,6 @@ export function FlashcardCardView({
                 que é fluxo normal e não precisa de z-index próprio. */}
             <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-white/70 via-white/0 to-transparent opacity-60 dark:from-white/10 dark:via-transparent" />
             <div aria-hidden className="pointer-events-none absolute inset-x-6 top-0 -z-10 h-px bg-gradient-to-r from-transparent via-amber-400/40 to-transparent" />
-            {/* Brilho ambiente sutil no canto — profundidade + toque da marca */}
-            <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 -z-10 h-64 w-64 rounded-full bg-emerald-400/10 blur-3xl dark:bg-emerald-500/10" />
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-medium uppercase tracking-[0.2em] text-emerald-700 dark:text-emerald-300">
                 {isHidden ? 'Palavra oculta' : 'Frente'}
@@ -557,9 +590,10 @@ export function FlashcardCardView({
 
           {/* Back — também clicável para voltar */}
           <div
+            ref={backRef}
             onClick={onFlip}
             className={cn(
-              '[grid-area:1/1] relative rounded-3xl p-4 sm:p-7 md:p-9 lg:p-12 min-h-[300px] sm:min-h-[320px] md:min-h-[380px] lg:min-h-[500px] flex flex-col cursor-pointer select-none overflow-hidden',
+              'absolute inset-x-0 top-0 rounded-3xl p-4 sm:p-7 md:p-9 lg:p-12 min-h-[300px] sm:min-h-[320px] md:min-h-[380px] lg:min-h-[500px] flex flex-col cursor-pointer select-none overflow-hidden',
               'bg-gradient-to-br from-emerald-700 via-emerald-800 to-emerald-900',
               'text-white border border-white/15',
               'shadow-[0_30px_120px_-40px_rgba(6,78,59,0.6)]',
@@ -569,9 +603,6 @@ export function FlashcardCardView({
           >
             <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-white/25 via-white/0 to-black/10" />
             <div aria-hidden className="pointer-events-none absolute inset-x-6 top-0 -z-10 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent" />
-            {/* Brilho âmbar quente no canto — realça a profundidade no verso */}
-            <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 -z-10 h-64 w-64 rounded-full bg-amber-300/20 blur-3xl" />
-            <div aria-hidden className="pointer-events-none absolute -bottom-28 -left-20 -z-10 h-72 w-72 rounded-full bg-emerald-400/15 blur-3xl" />
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-medium uppercase tracking-[0.2em] text-white/80">
                 Resposta
