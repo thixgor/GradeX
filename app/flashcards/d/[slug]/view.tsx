@@ -163,7 +163,6 @@ export default function DeckPage() {
   const [studying, setStudying] = useState(false)
   const [fullscreen, setFullscreen] = useState(false)
   const studyRef = useRef<HTMLDivElement>(null)
-  const activeCardBtnRef = useRef<HTMLButtonElement>(null)
   const [studyModeChoice, setStudyModeChoice] = useState<StudyMode>('normal')
   const [activeStudyMode, setActiveStudyMode] = useState<StudyMode>('normal')
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -332,13 +331,6 @@ export default function DeckPage() {
     return () => window.removeEventListener('keydown', onKey)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [studying, currentIndex, flipped, data, fullscreen, toggleFullscreen])
-
-  // Mantém o número do card atual sempre visível na régua de navegação,
-  // rolando horizontalmente para centralizá-lo (sem mexer no scroll vertical).
-  useEffect(() => {
-    if (!studying || fullscreen) return
-    activeCardBtnRef.current?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })
-  }, [currentIndex, studying, fullscreen])
 
   function goNext() {
     if (!data) return
@@ -591,7 +583,7 @@ export default function DeckPage() {
           ref={studyRef}
           className={cn(
             fullscreen &&
-              'fixed inset-0 z-[60] overflow-y-auto overscroll-contain bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900',
+              'surface-page fixed inset-0 z-[60] overflow-y-auto overscroll-contain',
           )}
           style={fullscreen ? {
             paddingTop: 'env(safe-area-inset-top)',
@@ -657,35 +649,13 @@ export default function DeckPage() {
               animate={{ width: `${progress}%` }}
             />
           </div>
-          {!fullscreen && (
-          <div className="-mx-3 mb-4 overflow-x-auto px-3 pb-2 sm:-mx-4 sm:px-4">
-            <div className="flex w-max gap-2">
-              {cards.map((item, index) => {
-                const selected = index === currentIndex
-                const rated = ratings[item._id] != null
-                return (
-                  <button
-                    key={item._id}
-                    ref={selected ? activeCardBtnRef : undefined}
-                    type="button"
-                    onClick={() => goToIndex(index)}
-                    className={cn(
-                      'flex h-10 min-w-10 items-center justify-center rounded-xl border px-3 text-sm font-bold tabular-nums transition sm:h-9 sm:min-w-9 sm:text-xs',
-                      selected
-                        ? 'border-emerald-500 bg-emerald-600 text-white shadow-md shadow-emerald-500/25'
-                        : rated
-                          ? 'border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200'
-                          : 'border-slate-200 bg-white text-slate-700 hover:border-emerald-300 dark:border-border dark:bg-slate-900 dark:text-slate-200'
-                    )}
-                    aria-label={`Ir para card ${index + 1}`}
-                  >
-                    {index + 1}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-          )}
+          <CardPager
+            total={total}
+            current={currentIndex}
+            ratings={ratings}
+            cards={cards}
+            onJump={goToIndex}
+          />
 
           {card && (
             /* Em tela cheia, o card cresce e fica centralizado no espaço livre
@@ -1109,6 +1079,110 @@ export default function DeckPage() {
         />
       )}
     </AppShell>
+  )
+}
+
+// Constrói os itens do paginador: sempre o primeiro e o último, mais uma
+// janela ao redor do card atual, com reticências (…) preenchendo os saltos.
+// Evita a régua horizontal infinita — funciona bem de 3 a 300+ cards.
+function buildPagerItems(current: number, total: number): (number | 'gap')[] {
+  const pages = new Set<number>()
+  pages.add(0)
+  pages.add(total - 1)
+  for (let i = current - 1; i <= current + 1; i++) {
+    if (i >= 0 && i < total) pages.add(i)
+  }
+  const sorted = Array.from(pages).sort((a, b) => a - b)
+  const items: (number | 'gap')[] = []
+  let prev = -1
+  for (const p of sorted) {
+    if (prev !== -1 && p - prev > 1) items.push('gap')
+    items.push(p)
+    prev = p
+  }
+  return items
+}
+
+// Navegação de cards — paginador enxuto no lugar do rolador horizontal.
+// Setas ← → para passo a passo e números para saltar direto. Usado tanto no
+// modo normal quanto na tela cheia, com a paleta verde do site.
+function CardPager({
+  total,
+  current,
+  ratings,
+  cards,
+  onJump,
+}: {
+  total: number
+  current: number
+  ratings: Record<string, 'facil' | 'equilibrado' | 'porrada'>
+  cards: { _id: string }[]
+  onJump: (index: number) => void
+}) {
+  if (total <= 1) return null
+  const items = buildPagerItems(current, total)
+  const stepClass =
+    'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border bg-card text-muted-foreground transition hover:border-emerald-400 hover:text-emerald-600 disabled:pointer-events-none disabled:opacity-30'
+
+  return (
+    <nav
+      aria-label="Navegação de cards"
+      className="mb-4 flex items-center justify-center gap-1.5"
+    >
+      <button
+        type="button"
+        onClick={() => onJump(current - 1)}
+        disabled={current === 0}
+        className={stepClass}
+        aria-label="Card anterior"
+      >
+        <ChevronLeft className="h-4 w-4" />
+      </button>
+
+      {items.map((item, i) => {
+        if (item === 'gap') {
+          return (
+            <span
+              key={`gap-${i}`}
+              className="select-none px-0.5 text-sm font-semibold text-muted-foreground/50"
+            >
+              …
+            </span>
+          )
+        }
+        const selected = item === current
+        const rated = ratings[cards[item]?._id] != null
+        return (
+          <button
+            key={item}
+            type="button"
+            onClick={() => onJump(item)}
+            aria-current={selected ? 'true' : undefined}
+            aria-label={`Ir para card ${item + 1}`}
+            className={cn(
+              'inline-flex h-9 min-w-9 items-center justify-center rounded-xl border px-2.5 text-sm font-bold tabular-nums transition',
+              selected
+                ? 'scale-105 border-transparent bg-gradient-to-br from-emerald-600 to-emerald-500 text-white shadow-md shadow-emerald-500/30'
+                : rated
+                  ? 'border-emerald-300/60 bg-emerald-50 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200'
+                  : 'border-border bg-card text-foreground/70 hover:border-emerald-400 hover:text-emerald-600',
+            )}
+          >
+            {item + 1}
+          </button>
+        )
+      })}
+
+      <button
+        type="button"
+        onClick={() => onJump(current + 1)}
+        disabled={current === total - 1}
+        className={stepClass}
+        aria-label="Próximo card"
+      >
+        <ChevronRight className="h-4 w-4" />
+      </button>
+    </nav>
   )
 }
 
