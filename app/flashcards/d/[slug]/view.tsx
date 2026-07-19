@@ -660,8 +660,18 @@ export default function DeckPage() {
           {card && (
             /* Em tela cheia, o card cresce e fica centralizado no espaço livre
                entre o cabeçalho e a barra de ações — evitando o vazio inferior
-               quando o conteúdo é mais curto que a viewport. */
-            <div className={cn(fullscreen && 'flex flex-1 flex-col justify-center')}>
+               quando o conteúdo é mais curto que a viewport.
+               A troca de card entra com fade + leve subida/escala (só transform
+               e opacity, compostos na GPU) — fluido no mobile e sem risco de
+               scroll horizontal. A key por índice reinicia a animação a cada
+               navegação. */
+            <motion.div
+              key={currentIndex}
+              initial={{ opacity: 0, y: 8, scale: 0.99 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ type: 'spring', stiffness: 460, damping: 34, mass: 0.55 }}
+              className={cn(fullscreen && 'flex flex-1 flex-col justify-center')}
+            >
               <FlashcardCardView
                 key={card._id}
                 card={card}
@@ -673,7 +683,7 @@ export default function DeckPage() {
                 showHint={showHint}
                 onToggleHint={() => setShowHint(s => !s)}
               />
-            </div>
+            </motion.div>
           )}
 
           {/* Barra de ações fixa — sempre acessível sem rolar a página.
@@ -683,10 +693,17 @@ export default function DeckPage() {
               Funciona em PC, tablet e celular (com área segura de notch). */}
           <div
             className={cn(
-              'sticky bottom-0 z-30 mt-5 -mx-3 space-y-2.5 border-t border-border bg-background/95 px-3 pt-3 backdrop-blur-md sm:-mx-4 sm:px-4',
+              'sticky bottom-0 z-30 mt-5 -mx-3 space-y-2.5 border-t border-border bg-background px-3 pt-3 sm:-mx-4 sm:px-4',
               'shadow-[0_-16px_40px_-28px_rgba(15,23,42,0.55)]',
             )}
-            style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
+            style={{
+              paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))',
+              // Fundo opaco + camada própria de composição (translateZ) elimina
+              // o flicker do "Mostrar resposta" e das avaliações ao rolar no
+              // mobile — antes o backdrop-blur recalculava a cada frame.
+              transform: 'translateZ(0)',
+              backfaceVisibility: 'hidden',
+            }}
           >
             {activeStudyMode === 'spaced' && (
               <AnimatePresence>
@@ -695,7 +712,7 @@ export default function DeckPage() {
                     initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 6 }}
-                    className="mx-auto max-w-md rounded-2xl border border-emerald-300/40 bg-emerald-500/10 px-4 py-2 text-center text-sm font-medium text-emerald-800 backdrop-blur-md dark:text-emerald-100"
+                    className="mx-auto max-w-md rounded-2xl border border-emerald-300/40 bg-emerald-500/10 px-4 py-2 text-center text-sm font-medium text-emerald-800 dark:text-emerald-100"
                   >
                     {scheduleFeedback}
                   </motion.div>
