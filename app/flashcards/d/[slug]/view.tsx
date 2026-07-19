@@ -45,6 +45,7 @@ import {
   Minimize2,
 } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
+import { Logo } from '@/components/logo'
 import { Button } from '@/components/ui/button'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { PackageUpsellModal, UpsellPackage } from '@/components/materiais/package-upsell-modal'
@@ -607,7 +608,18 @@ export default function DeckPage() {
             'mb-4 rounded-2xl border border-slate-200 bg-white/90 p-3 shadow-sm backdrop-blur dark:border-border dark:bg-slate-900/90',
             fullscreen && 'mb-3 border-transparent bg-transparent p-0 shadow-none backdrop-blur-none dark:border-transparent dark:bg-transparent',
           )}>
-            <div className="flex items-center justify-between gap-2">
+            <div className="relative flex items-center justify-between gap-2">
+              {/* Logo DomineAqui — só na tela cheia, onde o cabeçalho do app some.
+                  Centralizada e sem captura de clique para nunca cobrir os botões.
+                  No mobile mostra só o ícone (compacto); em telas maiores, a
+                  logo completa. Alterna entre a versão clara/escura pelo tema. */}
+              {fullscreen && (
+                <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-90">
+                  <Logo variant="full" size="sm" className="hidden sm:block dark:sm:hidden" />
+                  <Logo variant="dark" size="sm" className="hidden dark:sm:block" />
+                  <Logo variant="icon" size="sm" className="sm:hidden" />
+                </div>
+              )}
               <Button variant="ghost" onClick={() => setStudying(false)} className="h-10 gap-1 px-2 sm:px-3">
                 <ArrowLeft className="h-4 w-4" />Sair
               </Button>
