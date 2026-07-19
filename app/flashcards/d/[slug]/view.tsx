@@ -162,6 +162,7 @@ export default function DeckPage() {
   const [studying, setStudying] = useState(false)
   const [fullscreen, setFullscreen] = useState(false)
   const studyRef = useRef<HTMLDivElement>(null)
+  const activeCardBtnRef = useRef<HTMLButtonElement>(null)
   const [studyModeChoice, setStudyModeChoice] = useState<StudyMode>('normal')
   const [activeStudyMode, setActiveStudyMode] = useState<StudyMode>('normal')
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -330,6 +331,13 @@ export default function DeckPage() {
     return () => window.removeEventListener('keydown', onKey)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [studying, currentIndex, flipped, data, fullscreen, toggleFullscreen])
+
+  // Mantém o número do card atual sempre visível na régua de navegação,
+  // rolando horizontalmente para centralizá-lo (sem mexer no scroll vertical).
+  useEffect(() => {
+    if (!studying || fullscreen) return
+    activeCardBtnRef.current?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })
+  }, [currentIndex, studying, fullscreen])
 
   function goNext() {
     if (!data) return
@@ -620,7 +628,7 @@ export default function DeckPage() {
                     'inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold shadow-sm transition active:scale-95',
                     fullscreen
                       ? 'bg-slate-900 text-foreground hover:bg-slate-800 dark:bg-white dark:text-slate-900'
-                      : 'bg-gradient-to-r from-violet-600 to-fuchsia-600 text-foreground shadow-violet-500/30 hover:brightness-110',
+                      : 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-amber-500/30 hover:brightness-110',
                   )}
                   aria-label={fullscreen ? 'Sair da tela cheia' : 'Expandir para tela cheia'}
                   title={fullscreen ? 'Sair da tela cheia (F)' : 'Expandir para tela cheia (F)'}
@@ -633,7 +641,7 @@ export default function DeckPage() {
           </div>
           <div className="h-1.5 bg-slate-200 dark:bg-muted rounded-full overflow-hidden mb-3">
             <motion.div
-              className={cn('h-full bg-gradient-to-r', activeStudyMode === 'spaced' ? 'from-emerald-500 via-lime-400 to-amber-400' : 'from-violet-500 to-fuchsia-500')}
+              className={cn('h-full bg-gradient-to-r', activeStudyMode === 'spaced' ? 'from-emerald-500 via-lime-400 to-amber-400' : 'from-emerald-500 to-amber-400')}
               animate={{ width: `${progress}%` }}
             />
           </div>
@@ -646,15 +654,16 @@ export default function DeckPage() {
                 return (
                   <button
                     key={item._id}
+                    ref={selected ? activeCardBtnRef : undefined}
                     type="button"
                     onClick={() => goToIndex(index)}
                     className={cn(
                       'flex h-10 min-w-10 items-center justify-center rounded-xl border px-3 text-sm font-bold tabular-nums transition sm:h-9 sm:min-w-9 sm:text-xs',
                       selected
-                        ? 'border-violet-500 bg-violet-600 text-foreground shadow-md shadow-violet-500/25'
+                        ? 'border-emerald-500 bg-emerald-600 text-white shadow-md shadow-emerald-500/25'
                         : rated
                           ? 'border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200'
-                          : 'border-slate-200 bg-white text-slate-700 hover:border-violet-300 dark:border-border dark:bg-slate-900 dark:text-slate-200'
+                          : 'border-slate-200 bg-white text-slate-700 hover:border-emerald-300 dark:border-border dark:bg-slate-900 dark:text-slate-200'
                     )}
                     aria-label={`Ir para card ${index + 1}`}
                   >
@@ -718,7 +727,7 @@ export default function DeckPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.16 }}
-                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-5 py-3.5 text-base font-bold text-foreground shadow-lg shadow-violet-500/25 transition active:scale-[0.98]"
+                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-3.5 text-base font-bold text-white shadow-lg shadow-amber-500/25 transition active:scale-[0.98]"
                 >
                   <Sparkles className="h-5 w-5" /> Mostrar resposta
                 </motion.button>
@@ -784,7 +793,7 @@ export default function DeckPage() {
                 <button
                   type="button"
                   onClick={finishSession}
-                  className="inline-flex h-10 items-center gap-1.5 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 text-sm font-bold text-foreground shadow-md transition active:scale-95"
+                  className="inline-flex h-10 items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-4 text-sm font-bold text-white shadow-md transition active:scale-95"
                 >
                   <Trophy className="h-4 w-4" /> Concluir
                 </button>
@@ -815,7 +824,7 @@ export default function DeckPage() {
             glass iridescente (GlassHeroSurface) sobre a capa. */}
         <TiltCard maxTilt={3} scale={1.004} className="rounded-[2rem] mb-6">
         <div className="relative isolate overflow-hidden rounded-[2rem] border border-white/40 dark:border-border bg-white dark:bg-slate-900 shadow-xl shadow-slate-900/10 dark:shadow-black/40">
-          <div className="relative bg-gradient-to-br from-violet-500 via-fuchsia-500 to-rose-500">
+          <div className="relative bg-gradient-to-br from-emerald-700 via-emerald-600 to-amber-500">
             {deck.coverImage && (
               <Image src={deck.coverImage} alt="" fill priority className="object-cover opacity-90" sizes="(max-width: 1024px) 100vw, 1024px" />
             )}
@@ -917,11 +926,11 @@ export default function DeckPage() {
                   disabled={purchasing}
                   className="relative overflow-hidden inline-flex items-center gap-2.5 rounded-2xl px-7 py-3.5 text-sm font-bold tracking-wide text-foreground transition-all duration-200 active:scale-[0.97] hover:brightness-110 disabled:opacity-60 disabled:cursor-not-allowed"
                   style={{
-                    background: 'linear-gradient(135deg, rgba(109,40,217,0.95) 0%, rgba(147,51,234,0.90) 50%, rgba(192,38,211,0.85) 100%)',
+                    background: 'linear-gradient(135deg, rgba(217,119,6,0.97) 0%, rgba(234,88,12,0.93) 50%, rgba(220,38,38,0.88) 100%)',
                     backdropFilter: 'blur(16px)',
                     WebkitBackdropFilter: 'blur(16px)',
-                    border: '1px solid rgba(216,180,254,0.40)',
-                    boxShadow: '0 0 28px rgba(139,92,246,0.50), 0 8px 24px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.20)',
+                    border: '1px solid rgba(253,230,138,0.45)',
+                    boxShadow: '0 0 28px rgba(234,88,12,0.45), 0 8px 24px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.20)',
                   }}
                 >
                   <span className="absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none" />
@@ -951,15 +960,15 @@ export default function DeckPage() {
                   className="relative overflow-hidden inline-flex items-center gap-2.5 rounded-2xl px-8 py-3.5 text-base font-bold tracking-wide text-foreground transition-all duration-200 active:scale-[0.97] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55"
                   style={{
                     background: savedProgress
-                      ? 'linear-gradient(135deg, rgba(67,56,202,1) 0%, rgba(109,40,217,0.95) 50%, rgba(168,85,247,0.90) 100%)'
+                      ? 'linear-gradient(135deg, rgba(217,119,6,1) 0%, rgba(234,88,12,0.95) 50%, rgba(245,158,11,0.90) 100%)'
                       : 'linear-gradient(135deg, rgba(4,120,87,1) 0%, rgba(5,150,105,0.95) 50%, rgba(16,185,129,0.90) 100%)',
                     backdropFilter: 'blur(16px)',
                     WebkitBackdropFilter: 'blur(16px)',
                     border: savedProgress
-                      ? '1px solid rgba(196,181,253,0.55)'
+                      ? '1px solid rgba(253,230,138,0.55)'
                       : '1px solid rgba(52,211,153,0.55)',
                     boxShadow: savedProgress
-                      ? '0 0 30px rgba(139,92,246,0.50), 0 8px 24px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.25)'
+                      ? '0 0 30px rgba(234,88,12,0.50), 0 8px 24px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.25)'
                       : '0 0 30px rgba(16,185,129,0.50), 0 8px 24px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.25)',
                   }}
                 >
@@ -1151,7 +1160,7 @@ function StudyModePanel({
         <motion.div
           initial={{ opacity: 0, y: -6 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mt-4 rounded-2xl border border-emerald-200/55 bg-card5 p-4 backdrop-blur-xl dark:border-emerald-300/15 dark:bg-card"
+          className="mt-4 rounded-2xl border border-emerald-200/55 bg-white/60 p-4 backdrop-blur-xl dark:border-emerald-300/15 dark:bg-card"
         >
           <div className="grid gap-4 lg:grid-cols-[1.1fr,0.9fr]">
             <div>
@@ -1321,17 +1330,17 @@ function ResumeBanner({
       className="relative mb-4 overflow-hidden rounded-3xl"
       style={{
         background:
-          'linear-gradient(135deg, rgba(76,29,149,0.55) 0%, rgba(109,40,217,0.45) 40%, rgba(192,38,211,0.40) 100%)',
+          'linear-gradient(135deg, rgba(6,78,59,0.60) 0%, rgba(4,120,87,0.48) 40%, rgba(180,83,9,0.42) 100%)',
         backdropFilter: 'blur(22px) saturate(160%)',
         WebkitBackdropFilter: 'blur(22px) saturate(160%)',
-        border: '1px solid rgba(196,181,253,0.30)',
+        border: '1px solid rgba(167,243,208,0.30)',
         boxShadow:
-          '0 0 35px rgba(139,92,246,0.30), 0 18px 50px -20px rgba(76,29,149,0.55), inset 0 1px 0 rgba(255,255,255,0.18)',
+          '0 0 35px rgba(16,185,129,0.28), 0 18px 50px -20px rgba(6,78,59,0.55), inset 0 1px 0 rgba(255,255,255,0.18)',
       }}
     >
       {/* Decorative glow blobs */}
-      <div className="pointer-events-none absolute -top-16 -left-12 h-56 w-56 rounded-full bg-fuchsia-500/35 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-20 -right-10 h-60 w-60 rounded-full bg-violet-500/30 blur-3xl" />
+      <div className="pointer-events-none absolute -top-16 -left-12 h-56 w-56 rounded-full bg-amber-500/30 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 -right-10 h-60 w-60 rounded-full bg-emerald-500/30 blur-3xl" />
       <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
 
       <button
@@ -1349,14 +1358,14 @@ function ResumeBanner({
             <span
               className="inline-flex h-9 w-9 items-center justify-center rounded-2xl text-foreground shadow-lg"
               style={{
-                background: 'linear-gradient(135deg, rgba(167,139,250,0.95), rgba(217,70,239,0.95))',
-                boxShadow: '0 6px 18px rgba(139,92,246,0.45), inset 0 1px 0 rgba(255,255,255,0.30)',
+                background: 'linear-gradient(135deg, rgba(52,211,153,0.95), rgba(245,158,11,0.95))',
+                boxShadow: '0 6px 18px rgba(16,185,129,0.45), inset 0 1px 0 rgba(255,255,255,0.30)',
               }}
             >
               <Bookmark className="h-4 w-4 fill-current" />
             </span>
             <div className="min-w-0">
-              <p className="text-xs font-semibold uppercase tracking-wider text-violet-100/85">
+              <p className="text-xs font-semibold uppercase tracking-wider text-emerald-100/85">
                 Sessão pendente
               </p>
               <h3 className="text-lg font-bold leading-tight text-foreground">
@@ -1366,7 +1375,7 @@ function ResumeBanner({
           </div>
 
           <div className="mt-4">
-            <div className="flex items-center justify-between text-[11px] font-semibold text-violet-100/80">
+            <div className="flex items-center justify-between text-[11px] font-semibold text-emerald-100/80">
               <span>Progresso</span>
               <span className="tabular-nums">{percent}%</span>
             </div>
@@ -1378,8 +1387,8 @@ function ResumeBanner({
                 className="h-full rounded-full"
                 style={{
                   background:
-                    'linear-gradient(90deg, rgba(167,139,250,1) 0%, rgba(232,121,249,1) 60%, rgba(244,114,182,1) 100%)',
-                  boxShadow: '0 0 16px rgba(217,70,239,0.55)',
+                    'linear-gradient(90deg, rgba(52,211,153,1) 0%, rgba(163,230,53,1) 55%, rgba(245,158,11,1) 100%)',
+                  boxShadow: '0 0 16px rgba(245,158,11,0.55)',
                 }}
               />
             </div>
@@ -1417,10 +1426,10 @@ function ResumeBanner({
             className="group relative inline-flex flex-1 items-center justify-center gap-2 overflow-hidden rounded-2xl px-5 py-3 text-sm font-bold text-foreground transition-all duration-200 active:scale-[0.97] hover:brightness-110"
             style={{
               background:
-                'linear-gradient(135deg, rgba(124,58,237,1) 0%, rgba(168,85,247,0.95) 50%, rgba(217,70,239,0.90) 100%)',
-              border: '1px solid rgba(232,121,249,0.55)',
+                'linear-gradient(135deg, rgba(217,119,6,1) 0%, rgba(234,88,12,0.95) 50%, rgba(245,158,11,0.90) 100%)',
+              border: '1px solid rgba(253,230,138,0.55)',
               boxShadow:
-                '0 0 24px rgba(168,85,247,0.55), 0 8px 22px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.25)',
+                '0 0 24px rgba(234,88,12,0.55), 0 8px 22px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.25)',
             }}
           >
             <span className="absolute inset-x-3 top-0 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent" />
@@ -1479,8 +1488,8 @@ function LockedPreview({ deck, access }: { deck: any; access: AccessFlags }) {
       transition={{ duration: 0.35 }}
       className="rounded-3xl border border-white/40 dark:border-border bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl shadow-sm p-8 text-center"
     >
-      <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500/15 to-fuchsia-500/15">
-        <Lock className="h-6 w-6 text-violet-500" />
+      <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500/15 to-amber-500/15">
+        <Lock className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
       </div>
       <h2 className="text-xl font-semibold text-slate-800 dark:text-foreground">Conteúdo restrito</h2>
       <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">
@@ -1539,7 +1548,7 @@ function CardsList({
 
   if (!cards.length) {
     return (
-      <div className="rounded-3xl border border-dashed border-violet-300/50 dark:border-white/15 bg-white/40 dark:bg-card backdrop-blur-md p-10 text-center">
+      <div className="rounded-3xl border border-dashed border-emerald-300/50 dark:border-white/15 bg-white/40 dark:bg-card backdrop-blur-md p-10 text-center">
         <Sparkles className="h-8 w-8 mx-auto text-slate-400 mb-3" />
         <p className="text-slate-500 dark:text-slate-400">Esse deck ainda não tem cartões.</p>
         {canManage && (
@@ -1560,11 +1569,11 @@ function CardsList({
             <button
               type="button"
               onClick={toggleAll}
-              className="shrink-0 text-slate-400 hover:text-violet-600 dark:hover:text-violet-300 transition-colors"
+              className="shrink-0 text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-300 transition-colors"
               aria-label={allSelected ? 'Desselecionar todos' : 'Selecionar todos'}
             >
               {allSelected ? (
-                <CheckSquare className="h-4 w-4 text-violet-600 dark:text-violet-300" />
+                <CheckSquare className="h-4 w-4 text-emerald-600 dark:text-emerald-300" />
               ) : someSelected ? (
                 <Square className="h-4 w-4 opacity-50" />
               ) : (
@@ -1622,7 +1631,7 @@ function CardsList({
               className={cn(
                 'flex items-start gap-3 px-5 py-3 transition-colors',
                 selected.has(c._id)
-                  ? 'bg-violet-50 dark:bg-violet-500/10'
+                  ? 'bg-emerald-50 dark:bg-emerald-500/10'
                   : 'hover:bg-slate-50/60 dark:hover:bg-card',
                 canManage && 'cursor-pointer'
               )}
@@ -1631,7 +1640,7 @@ function CardsList({
               {canManage && (
                 <div className="shrink-0 mt-0.5 text-slate-300 dark:text-slate-600">
                   {selected.has(c._id) ? (
-                    <CheckSquare className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+                    <CheckSquare className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                   ) : (
                     <Square className="h-4 w-4" />
                   )}
@@ -1651,7 +1660,7 @@ function CardsList({
                   <span className="rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 text-[10px] px-2 py-0.5 font-medium">Palavra oculta</span>
                 )}
                 {c.comment && (
-                  <span className="rounded-full bg-violet-500/15 text-violet-700 dark:text-violet-300 text-[10px] px-2 py-0.5 font-medium">Comentado</span>
+                  <span className="rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300 text-[10px] px-2 py-0.5 font-medium">Comentado</span>
                 )}
               </div>
             </li>
@@ -1759,7 +1768,7 @@ function ShareDialog({ deckSlug, onClose, onSuccess }: { deckSlug: string; onClo
         <div className="rounded-2xl border border-slate-200 dark:border-border p-3 flex items-center gap-2 mb-4 bg-slate-50 dark:bg-card">
           <LinkIcon className="h-4 w-4 text-slate-500" />
           <span className="flex-1 text-xs text-slate-600 dark:text-slate-300 truncate">{`${typeof window !== 'undefined' ? window.location.origin : ''}/flashcards/d/${deckSlug}`}</span>
-          <button onClick={copyLink} className="text-xs font-semibold text-violet-600 hover:text-violet-700">
+          <button onClick={copyLink} className="text-xs font-semibold text-emerald-600 hover:text-emerald-700">
             {copyState === 'copied' ? 'Copiado!' : 'Copiar'}
           </button>
         </div>
