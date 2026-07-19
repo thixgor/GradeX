@@ -602,7 +602,7 @@ export default function DeckPage() {
         >
         <div className={cn(
           'mx-auto px-3 sm:px-4 py-4 sm:py-6',
-          fullscreen ? 'max-w-5xl lg:max-w-6xl' : 'max-w-3xl lg:max-w-5xl',
+          fullscreen ? 'flex min-h-full flex-col max-w-5xl lg:max-w-6xl' : 'max-w-3xl lg:max-w-5xl',
         )}>
           <div className={cn(
             'mb-4 rounded-2xl border border-slate-200 bg-white/90 p-3 shadow-sm backdrop-blur dark:border-border dark:bg-slate-900/90',
@@ -688,17 +688,22 @@ export default function DeckPage() {
           )}
 
           {card && (
-            <FlashcardCardView
-              key={card._id}
-              card={card}
-              className={fullscreen ? 'max-w-3xl lg:max-w-5xl' : undefined}
-              flipped={flipped}
-              onFlip={() => setFlipped(f => !f)}
-              showComment={showComment}
-              onToggleComment={() => setShowComment(s => !s)}
-              showHint={showHint}
-              onToggleHint={() => setShowHint(s => !s)}
-            />
+            /* Em tela cheia, o card cresce e fica centralizado no espaço livre
+               entre o cabeçalho e a barra de ações — evitando o vazio inferior
+               quando o conteúdo é mais curto que a viewport. */
+            <div className={cn(fullscreen && 'flex flex-1 flex-col justify-center')}>
+              <FlashcardCardView
+                key={card._id}
+                card={card}
+                className={fullscreen ? 'max-w-3xl lg:max-w-5xl' : undefined}
+                flipped={flipped}
+                onFlip={() => setFlipped(f => !f)}
+                showComment={showComment}
+                onToggleComment={() => setShowComment(s => !s)}
+                showHint={showHint}
+                onToggleHint={() => setShowHint(s => !s)}
+              />
+            </div>
           )}
 
           {/* Barra de ações fixa — sempre acessível sem rolar a página.
