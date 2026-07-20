@@ -33,6 +33,11 @@ const BATCH_PER_CHANNEL = Number(process.env.COMMS_BATCH_PER_CHANNEL) || 40
 export async function processChannel(
     channel: CommChannel,
     limit = BATCH_PER_CHANNEL,
+    // Instante (Date.now()) a partir do qual paramos de enviar mesmo com itens
+    // no lote. Garante que UM lote longo (envios sequenciais sob rate-limit, ou
+    // um SMTP lento) não estoure o maxDuration da função serverless — o que faz
+    // o gateway responder 504/texto em vez do JSON esperado.
+    deadline?: number,
 ): Promise<ChannelProcessResult> {
     const adapter = getAdapter(channel)
     const result: ChannelProcessResult = { channel, sent: 0, failed: 0, dead: 0, throttled: 0 }
@@ -41,6 +46,12 @@ export async function processChannel(
     const batch = await claimBatch(channel, limit)
 
     for (const msg of batch) {
+        // Estourou o orçamento de tempo: devolve o restante do lote para a fila
+        // (o lease expira e eles voltam a ser elegíveis no próximo tick/drain).
+        if (deadline && Date.now() >= deadline) {
+            await markFailed(msg, 'time-budget esgotado (reenfileirado)', false)
+            continue
+        }
         // Respeita o ritmo do provedor. Sem token: devolve à fila (status volta a
         // ser elegível assim que o lease expirar).
         const allowed = await takeToken(channel)
@@ -93,6 +104,7 @@ export async function drainQueueNow(
     const timeBudgetMs = opts.timeBudgetMs ?? 45_000 // margem sob os 60s do plano Hobby
     const limitPerChannel = opts.limitPerChannel ?? BATCH_PER_CHANNEL
     const startedAt = Date.now()
+    const deadline = startedAt + timeBudgetMs
     const totals = new Map<CommChannel, ChannelProcessResult>()
 
     for (const channel of channels) {
@@ -100,10 +112,13 @@ export async function drainQueueNow(
     }
 
     // Repete em rodadas curtas até não sobrar nada elegível ou o tempo acabar.
-    while (Date.now() - startedAt < timeBudgetMs) {
+    while (Date.now() < deadline) {
         let anyProcessed = false
         for (const channel of channels) {
-            const round = await processChannel(channel, limitPerChannel)
+            // Passa o deadline: o envio para no meio do lote se o tempo acabar,
+            // em vez de só verificar entre rodadas (um lote de 40 envios a 3/seg
+            // já leva ~13s e poderia furar o orçamento sozinho).
+            const round = await processChannel(channel, limitPerChannel, deadline)
             const acc = totals.get(channel)!
             acc.sent += round.sent
             acc.failed += round.failed

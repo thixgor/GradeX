@@ -1029,7 +1029,22 @@ export default function AdminEmailsPage() {
                 }),
             })
 
-            const data = await res.json()
+            // Lê como texto primeiro: em erros de gateway (504) a resposta vem em
+            // HTML/texto puro, e res.json() direto quebrava com "Unexpected token".
+            const raw = await res.text()
+            let data: SendResult & { error?: string } = {} as SendResult
+            try {
+                data = raw ? JSON.parse(raw) : ({} as SendResult)
+            } catch {
+                if (res.status === 504) {
+                    throw new Error(
+                        'O envio demorou mais que o esperado e o servidor encerrou a conexão. Os e-mails foram enfileirados e continuam sendo enviados — verifique em instantes ou use "Processar fila agora".'
+                    )
+                }
+                throw new Error(
+                    res.ok ? 'Resposta inesperada do servidor.' : `Falha no envio (HTTP ${res.status}).`
+                )
+            }
 
             if (!res.ok) {
                 throw new Error(data.error || 'Erro ao enviar e-mails')

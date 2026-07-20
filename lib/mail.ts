@@ -21,6 +21,14 @@ export const transporter = nodemailer.createTransport({
   // No máx. `rateLimit` mensagens por `rateDelta` ms (padrão: 3/seg).
   rateDelta: 1000,
   rateLimit: Number(process.env.SMTP_RATE_LIMIT) || 3,
+  // Timeouts explícitos: sem eles, quando a Hostinger derruba/segura a conexão
+  // sob rajada ("auth limit"), o sendMail fica pendurado até o serverless
+  // estourar o maxDuration — o gateway então responde 504 com corpo em texto
+  // ("An error occurred…"), que o front tenta ler como JSON e quebra. Falhar
+  // rápido devolve o erro para o retry/backoff da fila em vez de travar tudo.
+  connectionTimeout: Number(process.env.SMTP_CONNECTION_TIMEOUT) || 10_000,
+  greetingTimeout: Number(process.env.SMTP_GREETING_TIMEOUT) || 10_000,
+  socketTimeout: Number(process.env.SMTP_SOCKET_TIMEOUT) || 20_000,
 })
 
 // Estilos e Layout Base (Verde: #0f3d2e, Laranja: #f57c00)

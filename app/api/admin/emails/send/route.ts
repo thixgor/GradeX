@@ -108,8 +108,21 @@ export async function POST(request: NextRequest) {
 
         // Envia AGORA — não espera cron/ticker. O que não couber no orçamento de
         // tempo continua "pending" (botão "Processar fila agora" cobre o resto).
-        const [drainResult] = await drainQueueNow(['email'], { timeBudgetMs: 20_000 })
-        const sentNow = drainResult?.sent || 0
+        //
+        // O orçamento fica BEM abaixo do maxDuration (60s) da função: assim o
+        // drain nunca segura a resposta até o gateway estourar e devolver um 504
+        // com corpo em texto ("An error occurred…") — que o front quebrava ao
+        // fazer res.json(). Se o drain falhar por qualquer motivo, ainda
+        // respondemos com sucesso do enfileiramento (a fila é drenada depois).
+        let sentNow = 0
+        let failedNow = 0
+        try {
+            const [drainResult] = await drainQueueNow(['email'], { timeBudgetMs: 15_000 })
+            sentNow = drainResult?.sent || 0
+            failedNow = drainResult?.dead || 0
+        } catch (drainError) {
+            console.error('Drain email queue error (mensagens seguem na fila):', drainError)
+        }
         const stillPending = queued - sentNow
 
         return NextResponse.json({
@@ -121,7 +134,7 @@ export async function POST(request: NextRequest) {
             stats: {
                 total: recipientList.length,
                 sent: sentNow,
-                failed: drainResult?.dead || 0,
+                failed: failedNow,
                 queued,
             },
             campaignId,
