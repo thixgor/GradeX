@@ -150,6 +150,7 @@ function NavItemButton({
   onRelease,
   onClick,
   staggerDelay,
+  skipEntrance,
 }: {
   item: NavItem
   index: number
@@ -162,6 +163,10 @@ function NavItemButton({
   onRelease: () => void
   onClick: () => void
   staggerDelay: number
+  // On remount after a route change the whole sidebar re-renders; replaying the
+  // staggered slide-in every navigation is what reads as "flickering". After the
+  // first mount of the session we skip the entrance and the item is simply there.
+  skipEntrance: boolean
 }) {
   const isHovered = hoveredIndex === index
   const isPressed = pressedIndex === index
@@ -174,13 +179,13 @@ function NavItemButton({
   return (
     <motion.button
       data-nav-item
-      initial={{ opacity: 0, x: -12 }}
+      initial={skipEntrance ? false : { opacity: 0, x: -12 }}
       animate={{ opacity: 1, x: 0, scale: isPressed ? 0.97 : 1 }}
-      transition={{
-        duration: 0.35,
-        delay: staggerDelay,
-        ease: [0.16, 1, 0.3, 1],
-      }}
+      transition={
+        skipEntrance
+          ? { duration: 0.15, ease: [0.16, 1, 0.3, 1] }
+          : { duration: 0.35, delay: staggerDelay, ease: [0.16, 1, 0.3, 1] }
+      }
       onMouseEnter={() => onHover(index)}
       onPointerDown={(event) => {
         if (event.pointerType === 'touch' || event.pointerType === 'pen') onPress(index)
@@ -277,6 +282,11 @@ function NavItemButton({
 // ─── Module-level state (survives component remount across navigations) ───
 let _mouseInsideSidebar = false
 let _lastClickedIndex: number | null = null
+// True once the sidebar has mounted at least once this session. Because AppShell
+// (and the sidebar with it) is mounted per-page, every navigation remounts this
+// component; without this flag the entrance stagger replays on each route change
+// and reads as flickering. First mount animates in; every later mount is instant.
+let _hasMountedOnce = false
 
 // ─── Sidebar ─────────────────────────────────────────────────
 export function Sidebar({
@@ -300,6 +310,13 @@ export function Sidebar({
   const [isInNav, setIsInNav] = useState(_mouseInsideSidebar)
   const [pressedIndex, setPressedIndex] = useState<number | null>(null)
   const [canCollapse, setCanCollapse] = useState(false)
+
+  // Snapshot the "already mounted" flag before flipping it, so the first mount
+  // still animates in while every subsequent navigation renders the nav instantly.
+  const skipEntranceRef = useRef(_hasMountedOnce)
+  useEffect(() => {
+    _hasMountedOnce = true
+  }, [])
 
   const isAdmin = user?.role === 'admin'
   const isCollapsed = !!collapsed && canCollapse
@@ -426,7 +443,7 @@ export function Sidebar({
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-50 h-screen min-h-[100svh] max-h-[100dvh] bg-card border-r border-border flex flex-col overflow-hidden',
+          'sidebar-glass fixed inset-y-0 left-0 z-50 h-screen min-h-[100svh] max-h-[100dvh] flex flex-col overflow-hidden',
           collapsed ? 'lg:w-[72px]' : 'lg:w-[280px]',
           'w-[min(280px,88vw)]',
           isOpen ? 'translate-x-0' : '-translate-x-full',
@@ -616,6 +633,7 @@ export function Sidebar({
                 onRelease={handleNavRelease}
                 onClick={() => handleNavClick(item, index)}
                 staggerDelay={index * 0.03}
+                skipEntrance={skipEntranceRef.current}
               />
             ))}
           </div>
@@ -639,6 +657,7 @@ export function Sidebar({
                   onRelease={handleNavRelease}
                   onClick={() => handleNavClick(item, globalIndex)}
                   staggerDelay={(mainNavItems.length + index) * 0.03}
+                  skipEntrance={skipEntranceRef.current}
                 />
               )
             })}
@@ -660,6 +679,7 @@ export function Sidebar({
                 onLogout()
               }}
               staggerDelay={(logoutIndex) * 0.03}
+              skipEntrance={skipEntranceRef.current}
             />
           </div>
         </nav>
