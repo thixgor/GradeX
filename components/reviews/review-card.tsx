@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { Pencil, Trash2, ShieldCheck, Sparkles } from 'lucide-react'
+import { Pencil, Trash2, ShieldCheck, Sparkles, FileText } from 'lucide-react'
 import { StarRatingDisplay } from './star-rating'
 import type { PublicReview } from '@/lib/reviews-shared'
 
@@ -13,6 +13,8 @@ interface ReviewCardProps {
   onEdit?: (review: PublicReview) => void
   onDelete?: (review: PublicReview) => void
   highlight?: boolean
+  /** Nome do material de origem — usado na visão agregada de pacotes. */
+  sourceTitle?: string | null
 }
 
 function initials(name: string) {
@@ -40,6 +42,7 @@ export function ReviewCard({
   onEdit,
   onDelete,
   highlight,
+  sourceTitle,
 }: ReviewCardProps) {
   const [imgError, setImgError] = useState(false)
   const showImage = !!review.avatarUrl && !imgError
@@ -127,6 +130,13 @@ export function ReviewCard({
         <p className="mt-3 text-sm leading-relaxed text-foreground/85 whitespace-pre-wrap break-words">
           {review.comment}
         </p>
+      )}
+
+      {sourceTitle && (
+        <div className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-foreground/[0.04] dark:bg-white/[0.04] px-2.5 py-1 text-[11px] font-medium text-muted-foreground max-w-full">
+          <FileText className="h-3 w-3 flex-shrink-0" />
+          <span className="truncate">Sobre: {sourceTitle}</span>
+        </div>
       )}
     </article>
   )

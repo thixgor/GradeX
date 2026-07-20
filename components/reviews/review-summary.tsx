@@ -85,6 +85,8 @@ export function ReviewSummaryBlock({
 
   // variant === 'full'
   const distribution = summary?.distribution ?? { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+  const recommendCount = (distribution[4] ?? 0) + (distribution[5] ?? 0)
+  const recommendPct = count > 0 ? Math.round((recommendCount / count) * 100) : 0
   return (
     <div className={`glass-irish px-5 py-5 sm:px-7 sm:py-6 ${className}`}>
       <div className="flex flex-col sm:flex-row sm:items-center gap-5">
@@ -99,6 +101,11 @@ export function ReviewSummaryBlock({
           <div className="flex flex-col items-center gap-1">
             <StarRatingDisplay value={avg} size="md" />
             <span className="text-xs font-medium text-muted-foreground">{formatCount(count)}</span>
+            {hasReviews && recommendPct >= 60 && (
+              <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-irish-emerald/10 px-2 py-0.5 text-[10px] font-bold text-irish-emerald">
+                {recommendPct}% recomendam
+              </span>
+            )}
           </div>
         </div>
 

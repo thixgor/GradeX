@@ -47,6 +47,11 @@ const publicRoutes = [
   // /api/loja/produtos e /api/loja/settings validam admin internamente.
   '/api/loja/produtos',
   '/api/loja/settings/public',
+  // Avaliações (prova social) são leitura pública nas páginas de material,
+  // deck e pacote — visitantes precisam ver as notas e comentários. A rota
+  // GET não exige login; POST/PATCH/DELETE continuam validando a sessão
+  // internamente no handler (retornam 401 para quem não está logado).
+  '/api/reviews',
 ]
 
 // Prefixos públicos
@@ -120,6 +125,8 @@ function isPublicRoute(pathname: string): boolean {
   ) return true
   if (/^\/api\/materiais\/[a-fA-F0-9]{24}$/.test(pathname)) return true
   if (/^\/api\/materiais\/packages\/[a-fA-F0-9]{24}$/.test(pathname)) return true
+  // Avaliações agregadas de um pacote (prova social pública para visitantes).
+  if (/^\/api\/materiais\/packages\/[a-fA-F0-9]{24}\/reviews$/.test(pathname)) return true
   if (/^\/api\/flashcards\/manual\/[^/]+$/.test(pathname)) return true
   return publicPrefixes.some(prefix => pathname.startsWith(prefix))
 }

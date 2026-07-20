@@ -48,6 +48,9 @@ import {
 } from '@/components/pricing-events/PricingEventCountdown'
 import { PricingEventBadge } from '@/components/pricing-events/PricingEventBadge'
 import { PrintedAddon } from '@/components/shop/printed-addon'
+import { PackageReviews } from '@/components/reviews/package-reviews'
+import { ReviewSummaryBlock } from '@/components/reviews/review-summary'
+import type { ReviewSummary } from '@/lib/reviews-shared'
 
 // ─── Types ───────────────────────────────────────────────────
 interface PackageMaterial {
@@ -159,6 +162,7 @@ export default function PackageDetailPage() {
   const [descExpanded, setDescExpanded] = useState(false)
   const [copied, setCopied] = useState(false)
   const [metricSettings, setMetricSettings] = useState<PublicMetricSettings>(DEFAULT_PUBLIC_METRIC_SETTINGS)
+  const [reviewSummary, setReviewSummary] = useState<ReviewSummary | null>(null)
   const { addItem } = useMaterialCart()
 
   const fetchData = useCallback(async () => {
@@ -389,7 +393,7 @@ export default function PackageDetailPage() {
                 {/* Info bar */}
                 <div className="px-5 py-3.5 border-t border-border/40 flex items-center gap-4 flex-wrap">
                   {hasInfoMetrics && (
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground flex-1">
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
                       {showMaterialViews && (
                         <span className="flex items-center gap-1.5">
                           <Eye className="h-3.5 w-3.5" /> {pkg.viewCount}
@@ -401,6 +405,18 @@ export default function PackageDetailPage() {
                         </span>
                       )}
                     </div>
+                  )}
+                  {(reviewSummary?.count ?? 0) > 0 && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        document.getElementById('reviews-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                      }
+                      className="transition-opacity hover:opacity-80"
+                      aria-label="Ver avaliações do pacote"
+                    >
+                      <ReviewSummaryBlock summary={reviewSummary} variant="inline" />
+                    </button>
                   )}
                   <button
                     onClick={copyShareLink}
@@ -706,6 +722,13 @@ export default function PackageDetailPage() {
                   </ul>
                 )}
               </motion.div>
+
+              {/* Prova social: avaliações agregadas dos materiais do pacote */}
+              <PackageReviews
+                id="reviews-section"
+                packageId={id}
+                onSummaryChange={setReviewSummary}
+              />
             </motion.div>
 
             {/* RIGHT: Sidebar */}
