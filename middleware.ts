@@ -28,6 +28,11 @@ const publicRoutes = [
   '/ldpg-mnclinico',
   '/prescricao-real-no-sus',
   '/ecorj-ebook',
+  // Landing page dos Cadernos de APG servida direto do public/ (bundle
+  // autocontido). A dinâmica interna (seleção de período, ?periodo=) e o
+  // preço/avaliações são preenchidos pelas rotas públicas /api/materiais/[id]
+  // e /api/reviews. Visitante sem login precisa abrir sem redirect.
+  '/apg',
   // Amostra pública: 10 questões comentadas + 1 patologia, sem login. A rota da
   // API valida rate limit por IP internamente.
   '/amostra',
