@@ -4,6 +4,7 @@ import { getSession } from '@/lib/auth'
 import { User } from '@/lib/types'
 import { dispatchBulk } from '@/lib/comms/dispatch'
 import { drainQueueNow } from '@/lib/comms/process'
+import { statsByStatus } from '@/lib/comms/outbox'
 import type { OutboxTarget } from '@/lib/comms/types'
 
 export const dynamic = 'force-dynamic'
@@ -114,27 +115,43 @@ export async function POST(request: NextRequest) {
         // com corpo em texto ("An error occurred…") — que o front quebrava ao
         // fazer res.json(). Se o drain falhar por qualquer motivo, ainda
         // respondemos com sucesso do enfileiramento (a fila é drenada depois).
-        let sentNow = 0
-        let failedNow = 0
+        //
+        // IMPORTANTE: o drain esvazia a fila do CANAL inteiro (inclusive e-mails
+        // de outras campanhas que estavam pendentes), então o total retornado por
+        // ele NÃO corresponde a esta campanha — usá-lo direto gerava mensagens
+        // absurdas como "Enviado: 9 de 1". Por isso, para o relatório, contamos o
+        // status apenas DESTA campanha (statsByStatus por campaignId).
         try {
-            const [drainResult] = await drainQueueNow(['email'], { timeBudgetMs: 15_000 })
-            sentNow = drainResult?.sent || 0
-            failedNow = drainResult?.dead || 0
+            await drainQueueNow(['email'], { timeBudgetMs: 15_000 })
         } catch (drainError) {
             console.error('Drain email queue error (mensagens seguem na fila):', drainError)
         }
-        const stillPending = queued - sentNow
+
+        const stats = await statsByStatus({ channel: 'email', campaignId })
+        const sentNow = stats.sent || 0
+        const failedNow = stats.dead || 0
+        // Tudo que ainda não saiu desta campanha (aguardando fila/retry).
+        const stillPending = Math.max(queued - sentNow - failedNow, 0)
+
+        const parts: string[] = []
+        if (sentNow > 0) parts.push(`${sentNow} enviado${sentNow > 1 ? 's' : ''}`)
+        if (stillPending > 0) parts.push(`${stillPending} na fila`)
+        if (failedNow > 0) parts.push(`${failedNow} com falha`)
+        const message =
+            stillPending > 0
+                ? `${parts.join(', ')} de ${queued} — o restante sai em instantes.`
+                : failedNow > 0
+                    ? `${parts.join(', ')} de ${queued}.`
+                    : `Enviado: ${sentNow} de ${queued}.`
 
         return NextResponse.json({
             success: true,
-            message:
-                stillPending > 0
-                    ? `Enviado agora: ${sentNow} de ${queued} — o restante (${stillPending}) continua na fila e será enviado em instantes.`
-                    : `Enviado: ${sentNow} de ${queued}.`,
+            message,
             stats: {
                 total: recipientList.length,
                 sent: sentNow,
                 failed: failedNow,
+                pending: stillPending,
                 queued,
             },
             campaignId,

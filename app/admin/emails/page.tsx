@@ -124,6 +124,7 @@ interface SendResult {
         total: number
         sent: number
         failed: number
+        pending?: number
         queued?: number
     }
     errors?: string[]
@@ -1916,9 +1917,11 @@ export default function AdminEmailsPage() {
                                             <div>
                                                 <p className="font-medium">{sendResult.message}</p>
                                                 <p className="text-sm text-muted-foreground">
-                                                    {typeof sendResult.stats.queued === 'number'
-                                                        ? `Enfileirados: ${sendResult.stats.queued} de ${sendResult.stats.total} — envio em segundo plano`
-                                                        : `Enviados: ${sendResult.stats.sent} | Falhas: ${sendResult.stats.failed}`}
+                                                    {`Enviados: ${sendResult.stats.sent}`}
+                                                    {sendResult.stats.pending
+                                                        ? ` | Na fila: ${sendResult.stats.pending}`
+                                                        : ''}
+                                                    {` | Falhas: ${sendResult.stats.failed}`}
                                                 </p>
                                                 {sendResult.errors && sendResult.errors.length > 0 && (
                                                     <details className="mt-2">

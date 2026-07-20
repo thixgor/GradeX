@@ -10,7 +10,7 @@
 // instantâneo mesmo sem o ticker externo (scripts/comms-ticker.js) rodando.
 // ────────────────────────────────────────────────────────────────────────────
 
-import { claimBatch, markSent, markFailed } from './outbox'
+import { claimBatch, markSent, markFailed, releaseClaim } from './outbox'
 import { takeToken } from './rate-limit'
 import { getAdapter, registeredChannels } from './registry'
 import { recordHistory } from './history'
@@ -47,9 +47,10 @@ export async function processChannel(
 
     for (const msg of batch) {
         // Estourou o orçamento de tempo: devolve o restante do lote para a fila
-        // (o lease expira e eles voltam a ser elegíveis no próximo tick/drain).
+        // sem contar como tentativa/falha (não foi erro de envio, só não deu
+        // tempo). Volta a ser elegível já no próximo tick/drain.
         if (deadline && Date.now() >= deadline) {
-            await markFailed(msg, 'time-budget esgotado (reenfileirado)', false)
+            await releaseClaim(msg._id)
             continue
         }
         // Respeita o ritmo do provedor. Sem token: devolve à fila (status volta a

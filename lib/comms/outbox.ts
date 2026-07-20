@@ -225,6 +225,25 @@ export async function markFailed(
     )
 }
 
+/**
+ * Devolve uma mensagem reservada para a fila SEM contar como tentativa/falha.
+ * Usado quando o worker para por orçamento de tempo (não por erro de envio):
+ * a mensagem volta a ser elegível imediatamente, sem backoff nem consumir uma
+ * das `maxAttempts` — senão lotes grandes esvaziariam as tentativas só por
+ * timeout e cairiam em dead-letter sem nunca terem sido enviados.
+ */
+export async function releaseClaim(id: OutboxMessage['_id']): Promise<void> {
+    const col = await collection()
+    const now = new Date()
+    await col.updateOne(
+        { _id: id },
+        {
+            $set: { status: 'pending', nextAttemptAt: now, updatedAt: now },
+            $unset: { leaseUntil: '' },
+        },
+    )
+}
+
 /** Marca como ignorada (ex.: sem consentimento no canal). */
 export async function markSkipped(
     id: OutboxMessage['_id'],
