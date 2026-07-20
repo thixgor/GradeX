@@ -2,10 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { User } from '@/lib/types'
-import { dispatchBulk } from '@/lib/comms/dispatch'
-import { drainQueueNow } from '@/lib/comms/process'
-import { statsByStatus } from '@/lib/comms/outbox'
-import type { OutboxTarget } from '@/lib/comms/types'
+import { transporter } from '@/lib/mail'
+import { getMarketingEmailTemplate, personalize } from '@/lib/comms/email-render'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,17 +23,18 @@ interface Recipient {
     name: string
 }
 
+const FROM = process.env.SMTP_FROM || '"DomineAqui" <no-reply@domineaqui.com.br>'
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 /**
- * Disparo de campanha por e-mail.
+ * Disparo de campanha por e-mail — envio DIRETO, sem fila.
  *
- * Antes, esta rota enviava até 50 e-mails simultâneos por lote via
- * `Promise.all` dentro do request — o que estourava o limite do SMTP e gerava
- * os erros de "auth limit" (~67 falhas). Agora ela ENFILEIRA na outbox
- * (lib/comms) e já drena a fila antes de responder (com rate-limit,
- * retry/backoff e log por destinatário) — sem depender de cron: este projeto
- * não usa Vercel Cron para a fila. Lotes grandes que não couberem no
- * orçamento de tempo continuam "pending" e são pegos pelo botão "Processar
- * fila agora" (`/admin/social-media`) ou por um ticker externo opcional.
+ * O transporter (lib/mail) é pooled e com rate-limit (poucas conexões,
+ * ~3 msg/seg), então mandar direto daqui NÃO estoura o "auth limit" da
+ * Hostinger — o próprio pool serializa e segura o ritmo. Sem outbox, sem
+ * cron, sem "na fila": clicou, mandou, e a resposta já traz o resultado real
+ * (quantos foram e quantos falharam). Ideal para os envios do dia a dia
+ * (dezenas de destinatários), que cabem folgado no tempo da função.
  */
 export async function POST(request: NextRequest) {
     try {
@@ -74,14 +73,15 @@ export async function POST(request: NextRequest) {
         // Adicionar e-mails extras (sem nome cadastrado)
         if (recipients.additionalEmails && recipients.additionalEmails.length > 0) {
             const validExtras = recipients.additionalEmails
-                .filter(email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+                .filter(email => EMAIL_RE.test(email))
                 .map(email => ({ email, name: '' }))
             recipientList = [...recipientList, ...validExtras]
         }
 
-        // Remover duplicatas por e-mail
+        // Remover duplicatas e endereços inválidos
         const seen = new Set<string>()
         recipientList = recipientList.filter(r => {
+            if (!r.email || !EMAIL_RE.test(r.email)) return false
             if (seen.has(r.email)) return false
             seen.add(r.email)
             return true
@@ -94,72 +94,52 @@ export async function POST(request: NextRequest) {
             )
         }
 
-        // Enfileira na outbox. O template completo é renderizado pelo adapter no
-        // momento do envio (guardamos só content/subject/previewText por destinatário).
-        const targets: OutboxTarget[] = recipientList.map(r => ({ email: r.email, name: r.name }))
-        const campaignId = `broadcast:${Date.now()}`
-
-        const queued = await dispatchBulk(
-            'email',
-            targets,
-            'campaign-broadcast',
-            { subject, content, previewText },
-            { campaignId },
+        // Envia DIRETO pelo transporter pooled. O pool respeita o rate-limit e o
+        // número de conexões configurados em lib/mail, então disparar tudo de uma
+        // vez aqui não gera rajada — as mensagens saem no ritmo seguro do SMTP.
+        const results = await Promise.allSettled(
+            recipientList.map(async (r) => {
+                const html = personalize(
+                    getMarketingEmailTemplate(content, previewText),
+                    r.name,
+                )
+                await transporter.sendMail({
+                    from: FROM,
+                    to: r.email,
+                    subject: personalize(subject, r.name),
+                    html,
+                })
+            })
         )
 
-        // Envia AGORA — não espera cron/ticker. O que não couber no orçamento de
-        // tempo continua "pending" (botão "Processar fila agora" cobre o resto).
-        //
-        // O orçamento fica BEM abaixo do maxDuration (60s) da função: assim o
-        // drain nunca segura a resposta até o gateway estourar e devolver um 504
-        // com corpo em texto ("An error occurred…") — que o front quebrava ao
-        // fazer res.json(). Se o drain falhar por qualquer motivo, ainda
-        // respondemos com sucesso do enfileiramento (a fila é drenada depois).
-        //
-        // IMPORTANTE: o drain esvazia a fila do CANAL inteiro (inclusive e-mails
-        // de outras campanhas que estavam pendentes), então o total retornado por
-        // ele NÃO corresponde a esta campanha — usá-lo direto gerava mensagens
-        // absurdas como "Enviado: 9 de 1". Por isso, para o relatório, contamos o
-        // status apenas DESTA campanha (statsByStatus por campaignId).
-        try {
-            await drainQueueNow(['email'], { timeBudgetMs: 15_000 })
-        } catch (drainError) {
-            console.error('Drain email queue error (mensagens seguem na fila):', drainError)
-        }
+        const failures: { email: string; error: string }[] = []
+        results.forEach((res, i) => {
+            if (res.status === 'rejected') {
+                const reason = res.reason
+                failures.push({
+                    email: recipientList[i].email,
+                    error: reason instanceof Error ? reason.message : String(reason),
+                })
+            }
+        })
 
-        const stats = await statsByStatus({ channel: 'email', campaignId })
-        const sentNow = stats.sent || 0
-        const failedNow = stats.dead || 0
-        // Tudo que ainda não saiu desta campanha (aguardando fila/retry).
-        const stillPending = Math.max(queued - sentNow - failedNow, 0)
-
-        const parts: string[] = []
-        if (sentNow > 0) parts.push(`${sentNow} enviado${sentNow > 1 ? 's' : ''}`)
-        if (stillPending > 0) parts.push(`${stillPending} na fila`)
-        if (failedNow > 0) parts.push(`${failedNow} com falha`)
-        const message =
-            stillPending > 0
-                ? `${parts.join(', ')} de ${queued} — o restante sai em instantes.`
-                : failedNow > 0
-                    ? `${parts.join(', ')} de ${queued}.`
-                    : `Enviado: ${sentNow} de ${queued}.`
+        const total = recipientList.length
+        const failed = failures.length
+        const sent = total - failed
 
         return NextResponse.json({
             success: true,
-            message,
-            stats: {
-                total: recipientList.length,
-                sent: sentNow,
-                failed: failedNow,
-                pending: stillPending,
-                queued,
-            },
-            campaignId,
+            message:
+                failed > 0
+                    ? `Enviado para ${sent} de ${total}. ${failed} falhou${failed > 1 ? 'ram' : ''}.`
+                    : `Enviado para ${sent} ${sent > 1 ? 'pessoas' : 'pessoa'}. ✅`,
+            stats: { total, sent, failed },
+            errors: failures.slice(0, 20).map(f => `${f.email}: ${f.error}`),
         })
     } catch (error) {
         console.error('Send email error:', error)
         return NextResponse.json(
-            { error: 'Erro ao enviar e-mails' },
+            { error: error instanceof Error ? error.message : 'Erro ao enviar e-mails' },
             { status: 500 }
         )
     }

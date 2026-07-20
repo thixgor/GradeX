@@ -1039,7 +1039,7 @@ export default function AdminEmailsPage() {
             } catch {
                 if (res.status === 504) {
                     throw new Error(
-                        'O envio demorou mais que o esperado e o servidor encerrou a conexão. Os e-mails foram enfileirados e continuam sendo enviados — verifique em instantes ou use "Processar fila agora".'
+                        'O envio demorou demais e o servidor encerrou a conexão. Parte dos e-mails pode ter saído. Tente enviar para menos destinatários por vez (até ~50).'
                     )
                 }
                 throw new Error(
