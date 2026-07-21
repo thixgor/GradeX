@@ -37,7 +37,7 @@ function ModeloCard({ modelo, index }: { modelo: Modelo3D; index: number }) {
       href={`/manual-clinico/anatomia-3d/${modelo.slug}`}
       prefetch={false}
       style={{ animationDelay: `${Math.min(index, 12) * 40}ms` }}
-      className={`group relative flex flex-col overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.02] opacity-0 animate-fade-in-up shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/[0.04] hover:shadow-xl ${tema.hoverBorder} ${tema.glow}`}
+      className={`group relative flex flex-col overflow-hidden rounded-xl border border-border bg-card opacity-0 animate-fade-in-up shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md ${tema.hoverBorder}`}
     >
       {/* Thumbnail 3D (leve — sem iframe; o viewer fica na página de detalhe) */}
       <div className="relative aspect-[4/3] w-full overflow-hidden">
@@ -124,16 +124,10 @@ function Anatomia3DContent() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* ══════════ HERO (aurora) ══════════ */}
-      <div className="relative overflow-hidden border-b border-white/[0.06]">
-        {/* Blobs de cor desfocados */}
-        <div className="pointer-events-none absolute inset-0" aria-hidden>
-          <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-rose-500/20 blur-3xl" />
-          <div className="absolute right-0 top-10 h-72 w-72 rounded-full bg-sky-500/20 blur-3xl" />
-          <div className="absolute bottom-0 left-1/3 h-64 w-64 rounded-full bg-violet-500/20 blur-3xl" />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/70 to-background" />
-        </div>
+    <div className="surface-page min-h-screen">
+      {/* ══════════ HERO ══════════ */}
+      <div className="relative overflow-hidden border-b border-border">
+        <div className="absolute inset-0 bg-muted/30" aria-hidden />
 
         <div className="relative z-10 container mx-auto px-4 pt-8 pb-10 max-w-6xl">
           <button
@@ -144,14 +138,9 @@ function Anatomia3DContent() {
           </button>
 
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 mb-4 rounded-full border border-white/[0.12] bg-white/[0.06] px-4 py-1.5 backdrop-blur-xl">
-              <Box className="h-4 w-4 text-primary" />
-              <span className="text-xs font-bold tracking-wider uppercase text-muted-foreground">Atlas 3D interativo</span>
-            </div>
-            <h1 className="text-4xl sm:text-6xl font-bold font-heading leading-[1.05] tracking-tight">
-              <span className="bg-gradient-to-br from-rose-500 via-fuchsia-500 to-sky-500 bg-clip-text text-transparent">
-                Anatomia 3D
-              </span>
+            <p className="editorial-mark mb-3">Manual Clínico · Atlas 3D interativo</p>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold font-heading leading-[1.05] tracking-tight text-foreground">
+              Anatomia 3D
             </h1>
             <p className="mt-4 max-w-2xl text-base sm:text-lg text-muted-foreground leading-relaxed">
               {TOTAL_MODELOS} modelos anatômicos rotacionáveis em 360°, dissecados por sistema e acompanhados de uma
@@ -163,29 +152,29 @@ function Anatomia3DContent() {
                 <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
                 {TOTAL_MODELOS} modelos
               </span>
-              <span className="inline-flex items-center gap-2 rounded-full bg-white/[0.05] border border-white/[0.1] px-3 py-1.5 text-xs font-bold text-muted-foreground">
+              <span className="inline-flex items-center gap-2 rounded-full bg-card border border-border px-3 py-1.5 text-xs font-bold text-muted-foreground">
                 {CATEGORIAS.length} categorias
               </span>
-              <span className="inline-flex items-center gap-2 rounded-full bg-white/[0.05] border border-white/[0.1] px-3 py-1.5 text-xs font-bold text-muted-foreground">
+              <span className="inline-flex items-center gap-2 rounded-full bg-card border border-border px-3 py-1.5 text-xs font-bold text-muted-foreground">
                 <GraduationCap className="h-3.5 w-3.5 text-primary" /> Fonte: {FONTE}
               </span>
             </div>
 
             {/* Busca */}
             <div className="mt-6 max-w-xl">
-              <div className="relative flex items-center bg-white/[0.07] backdrop-blur-2xl rounded-2xl border border-white/[0.12] overflow-hidden transition-colors focus-within:border-primary/30">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/60" />
+              <div className="relative group flex items-center bg-card rounded-xl border border-border shadow-sm overflow-hidden transition-colors focus-within:border-primary/50">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/60 transition-colors group-focus-within:text-primary" />
                 <Input
                   placeholder="Buscar modelo (coração, vértebra T5, laringe...)"
                   value={busca}
                   onChange={e => setBusca(e.target.value)}
-                  className="pl-12 pr-12 h-14 text-base bg-transparent border-0 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                  className="pl-12 pr-12 h-14 text-base bg-transparent border-0 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/40"
                   aria-label="Buscar modelo 3D"
                 />
                 {busca && (
                   <button
                     onClick={() => setBusca('')}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full bg-white/10 hover:bg-white/20 text-muted-foreground"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full bg-muted hover:bg-muted-foreground/20 text-muted-foreground hover:text-foreground transition-colors"
                     aria-label="Limpar busca"
                   >
                     <X className="h-4 w-4" />
@@ -199,7 +188,7 @@ function Anatomia3DContent() {
 
       {/* ══════════ NAVEGAÇÃO FIXA POR CATEGORIA ══════════ */}
       {!termo && (
-        <div className="sticky top-0 z-30 border-b border-white/[0.06] bg-background/80 backdrop-blur-xl">
+        <div className="sticky top-0 z-30 border-b border-border bg-background/95 supports-[backdrop-filter]:bg-background/80 supports-[backdrop-filter]:backdrop-blur-md">
           <div className="container mx-auto px-4 max-w-6xl">
             <div className="flex gap-2 overflow-x-auto py-3 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
               {CATEGORIAS.map(cat => {
@@ -212,11 +201,11 @@ function Anatomia3DContent() {
                     key={cat.id}
                     onClick={() => irParaCategoria(cat.id)}
                     className={`shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
-                      ativa ? tema.chipActive : `bg-white/[0.04] ${tema.text} border-white/[0.1] hover:bg-white/[0.08]`
+                      ativa ? tema.chipActive : `bg-card ${tema.text} border-border hover:bg-muted`
                     }`}
                   >
                     {cat.titulo}
-                    <span className={`rounded-full px-1.5 text-[10px] ${ativa ? 'bg-white/25' : 'bg-white/[0.08]'}`}>{n}</span>
+                    <span className={`rounded-full px-1.5 text-[10px] ${ativa ? 'bg-white/25' : 'bg-muted-foreground/15'}`}>{n}</span>
                   </button>
                 )
               })}
@@ -256,8 +245,8 @@ function Anatomia3DContent() {
             {destaques.length > 0 && (
               <section className="mb-12">
                 <div className="flex items-center gap-2 mb-5">
-                  <Sparkles className="h-5 w-5 text-amber-400" />
-                  <h2 className="text-lg font-bold">Em destaque</h2>
+                  <Sparkles className="h-5 w-5 text-amber-500" />
+                  <h2 className="text-xl font-heading font-semibold tracking-tight">Em destaque</h2>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                   {destaques.map((m, i) => (
@@ -277,11 +266,11 @@ function Anatomia3DContent() {
                 return (
                   <section key={cat.id} id={`cat-${cat.id}`} className="scroll-mt-20">
                     <div className="flex items-center gap-4 mb-5">
-                      <div className={`rounded-2xl border ${tema.border} ${tema.bg} p-3`}>
+                      <div className={`rounded-xl border ${tema.border} ${tema.bg} p-3`}>
                         <Icon className={`h-6 w-6 ${tema.text}`} />
                       </div>
                       <div>
-                        <h2 className="text-xl font-bold leading-tight">{cat.titulo}</h2>
+                        <h2 className="text-xl font-heading font-semibold tracking-tight leading-tight">{cat.titulo}</h2>
                         <p className="text-xs text-muted-foreground mt-0.5">
                           {cat.subtitulo} · {modelos.length} modelo{modelos.length !== 1 ? 's' : ''}
                         </p>
@@ -300,7 +289,7 @@ function Anatomia3DContent() {
         )}
 
         {/* Atribuição no rodapé */}
-        <div className="mt-16 border-t border-white/[0.06] pt-6 text-center">
+        <div className="mt-16 border-t border-border pt-6 text-center">
           <p className="inline-flex items-center gap-2 text-xs text-muted-foreground">
             <GraduationCap className="h-4 w-4 text-primary" />
             Todos os modelos anatômicos têm como fonte a <strong className="font-semibold">{FONTE}</strong>.

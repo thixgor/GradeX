@@ -138,12 +138,14 @@ function PaywallCard({ onCheckout, isAuthenticated, price, product }: { onChecko
   ]
   return (
     <div className="mx-auto max-w-3xl">
-      <div className="relative overflow-hidden rounded-3xl border border-amber-300/20 bg-gradient-to-br from-amber-400/10 via-card/70 to-emerald-400/10 p-6 shadow-2xl backdrop-blur-xl sm:p-8">
+      <div className="relative overflow-hidden rounded-2xl border border-amber-500/25 bg-card p-6 shadow-sm sm:p-8">
+        {/* Régua ECG discreta no topo — assinatura da seção, sem gradiente-sopa */}
+        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" aria-hidden />
         <div className="mb-5 flex items-start gap-3">
-          <div className="rounded-2xl bg-amber-300/15 p-3 text-amber-400"><Lock className="h-6 w-6" /></div>
+          <div className="rounded-xl bg-amber-400/15 p-3 text-amber-600 dark:text-amber-400"><Lock className="h-6 w-6" /></div>
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.16em] text-amber-500">Conteúdo privativo</p>
-            <h2 className="mt-1 text-2xl font-black tracking-tight">Manual do Eletrocardiograma</h2>
+            <p className="editorial-mark">Conteúdo privativo</p>
+            <h2 className="mt-2 text-2xl font-heading font-semibold tracking-tight">Manual do Eletrocardiograma</h2>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
               Uma seção exclusiva para <strong>assinantes do Manual Clínico e Premium</strong>. Um simulador de ECG de nível hospitalar, com traçados dinâmicos, medidas automáticas e um banco completo de padrões comentados segundo AHA, ACC, ESC e SBC.
             </p>
@@ -152,7 +154,7 @@ function PaywallCard({ onCheckout, isAuthenticated, price, product }: { onChecko
 
         <div className="mb-6 grid gap-3 sm:grid-cols-2">
           {features.map((f) => (
-            <div key={f.t} className="rounded-2xl border border-white/10 bg-background/40 p-4">
+            <div key={f.t} className="rounded-xl border border-border bg-muted/30 p-4 transition-colors hover:border-primary/30">
               <f.icon className="mb-2 h-5 w-5 text-primary" />
               <p className="text-sm font-bold">{f.t}</p>
               <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">{f.d}</p>
@@ -170,7 +172,7 @@ function PaywallCard({ onCheckout, isAuthenticated, price, product }: { onChecko
             <p className="mt-0.5 text-xs text-muted-foreground">Acesso imediato · atualizações inclusas.</p>
           </div>
           <button onClick={onCheckout}
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-black text-primary-foreground transition hover:bg-primary/90 active:scale-[0.98]">
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-primary px-6 text-sm font-bold text-primary-foreground shadow-sm transition hover:bg-primary/90 active:scale-[0.98]">
             <Crown className="h-4 w-4" />
             {isAuthenticated ? 'Desbloquear o Manual Clínico' : 'Entrar e desbloquear'}
             <ArrowRight className="h-4 w-4" />

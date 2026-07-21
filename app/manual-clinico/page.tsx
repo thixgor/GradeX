@@ -69,22 +69,24 @@ const SISTEMA_ICONS: Record<string, any> = {
   'Oncologia Geral': Target,
 }
 
-const SISTEMA_COLORS: string[] = [
-  'from-red-500/20 to-red-600/5',
-  'from-sky-500/20 to-sky-600/5',
-  'from-violet-500/20 to-violet-600/5',
-  'from-amber-500/20 to-amber-600/5',
-  'from-teal-500/20 to-teal-600/5',
-  'from-blue-500/20 to-blue-600/5',
-  'from-orange-500/20 to-orange-600/5',
-  'from-indigo-500/20 to-indigo-600/5',
-  'from-rose-500/20 to-rose-600/5',
-  'from-emerald-500/20 to-emerald-600/5',
-  'from-pink-500/20 to-pink-600/5',
-  'from-purple-500/20 to-purple-600/5',
-  'from-cyan-500/20 to-cyan-600/5',
-  'from-lime-500/20 to-lime-600/5',
-  'from-fuchsia-500/20 to-fuchsia-600/5',
+// Tinte discreto por sistema (só o ícone recebe cor) — cor serve para orientação
+// visual, não para pintar o card inteiro. Evita o "arco-íris de gradientes".
+const SISTEMA_TINTS: { bg: string; text: string; border: string }[] = [
+  { bg: 'bg-red-500/10', text: 'text-red-600 dark:text-red-400', border: 'group-hover:border-red-500/40' },
+  { bg: 'bg-sky-500/10', text: 'text-sky-600 dark:text-sky-400', border: 'group-hover:border-sky-500/40' },
+  { bg: 'bg-violet-500/10', text: 'text-violet-600 dark:text-violet-400', border: 'group-hover:border-violet-500/40' },
+  { bg: 'bg-amber-500/10', text: 'text-amber-600 dark:text-amber-400', border: 'group-hover:border-amber-500/40' },
+  { bg: 'bg-teal-500/10', text: 'text-teal-600 dark:text-teal-400', border: 'group-hover:border-teal-500/40' },
+  { bg: 'bg-blue-500/10', text: 'text-blue-600 dark:text-blue-400', border: 'group-hover:border-blue-500/40' },
+  { bg: 'bg-orange-500/10', text: 'text-orange-600 dark:text-orange-400', border: 'group-hover:border-orange-500/40' },
+  { bg: 'bg-indigo-500/10', text: 'text-indigo-600 dark:text-indigo-400', border: 'group-hover:border-indigo-500/40' },
+  { bg: 'bg-rose-500/10', text: 'text-rose-600 dark:text-rose-400', border: 'group-hover:border-rose-500/40' },
+  { bg: 'bg-emerald-500/10', text: 'text-emerald-600 dark:text-emerald-400', border: 'group-hover:border-emerald-500/40' },
+  { bg: 'bg-pink-500/10', text: 'text-pink-600 dark:text-pink-400', border: 'group-hover:border-pink-500/40' },
+  { bg: 'bg-purple-500/10', text: 'text-purple-600 dark:text-purple-400', border: 'group-hover:border-purple-500/40' },
+  { bg: 'bg-cyan-500/10', text: 'text-cyan-600 dark:text-cyan-400', border: 'group-hover:border-cyan-500/40' },
+  { bg: 'bg-lime-500/10', text: 'text-lime-600 dark:text-lime-400', border: 'group-hover:border-lime-500/40' },
+  { bg: 'bg-fuchsia-500/10', text: 'text-fuchsia-600 dark:text-fuchsia-400', border: 'group-hover:border-fuchsia-500/40' },
 ]
 
 const AREA_COLORS: Record<AreaSaude, string> = {
@@ -210,7 +212,7 @@ function SubscriptionInfoBanner({ subscription }: { subscription: ManualSubscrip
   if (!subscription) return null
 
   return (
-    <div className="mt-5 mx-auto max-w-2xl rounded-2xl border border-emerald-300/30 bg-emerald-400/10 p-4 backdrop-blur-xl">
+    <div className="mt-5 mx-auto max-w-2xl rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2.5">
           <Crown className="h-5 w-5 text-emerald-400 flex-shrink-0" />
@@ -268,7 +270,7 @@ function RenewalBanner({
 }) {
   const isCard = subscription.paymentMethod === 'credit_card' || subscription.paymentMethod === 'card'
   return (
-    <div className="mt-4 mx-auto max-w-2xl rounded-2xl border border-amber-300/40 bg-gradient-to-r from-amber-400/15 to-orange-400/15 p-4 backdrop-blur-xl">
+    <div className="mt-4 mx-auto max-w-2xl rounded-xl border border-amber-500/40 bg-amber-500/10 p-4">
       <div className="flex items-start gap-3">
         <CalendarClock className="h-5 w-5 text-amber-400 flex-shrink-0" />
         <div className="flex-1">
@@ -296,7 +298,7 @@ function RenewalBanner({
                 className={`inline-flex h-9 items-center gap-1.5 rounded-lg border px-3 text-xs font-bold transition disabled:opacity-60 ${
                   declineConfirm
                     ? 'border-red-400/40 bg-red-500/15 text-red-300'
-                    : 'border-white/15 bg-white/[0.05] text-muted-foreground hover:text-foreground'
+                    : 'border-border bg-card text-muted-foreground hover:text-foreground'
                 }`}
               >
                 {declining ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <XCircle className="h-3.5 w-3.5" />}
@@ -643,8 +645,8 @@ function ManualClinicoContent() {
               {/* ── Action buttons ── */}
               {!ctasReady ? (
                 <div className="mt-5 flex flex-wrap items-center justify-center gap-3" aria-hidden="true">
-                  <div className="h-12 w-64 rounded-xl bg-white/[0.05] border border-white/[0.08] animate-pulse" />
-                  <div className="h-12 w-52 rounded-xl bg-white/[0.04] border border-white/[0.06] animate-pulse" />
+                  <div className="h-12 w-64 rounded-xl bg-muted border border-border animate-pulse" />
+                  <div className="h-12 w-52 rounded-xl bg-muted/70 border border-border animate-pulse" />
                 </div>
               ) : (
                 <>
@@ -694,7 +696,7 @@ function ManualClinicoContent() {
                         className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold border transition-all duration-200 active:scale-[0.97]
                           ${resetConfirm
                             ? 'bg-red-500/10 text-red-400 border-red-500/30 hover:bg-red-500/20'
-                            : 'bg-white/[0.05] text-muted-foreground border-white/[0.12] hover:bg-white/[0.1] hover:text-foreground'
+                            : 'bg-card text-muted-foreground border-border hover:bg-muted hover:text-foreground'
                           }`}
                       >
                         {resetConfirm
@@ -726,13 +728,11 @@ function ManualClinicoContent() {
             </div>
           </div>
 
-          {/* ══════════ GLASS SEARCH BAR ══════════ */}
+          {/* ══════════ SEARCH BAR ══════════ */}
           <div className="max-w-2xl mx-auto">
             <div className="relative group">
-              {/* Glow effect behind search */}
-              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20 opacity-0 group-focus-within:opacity-100 blur-xl transition-opacity duration-500" />
-              <div className="relative flex items-center bg-white/[0.07] dark:bg-white/[0.05] backdrop-blur-2xl rounded-2xl border border-white/[0.12] shadow-[0_8px_32px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.08)] overflow-hidden transition-all duration-300 group-focus-within:border-primary/30 group-focus-within:shadow-[0_8px_32px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.1)]">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/60" />
+              <div className="relative flex items-center bg-card rounded-xl border border-border shadow-sm overflow-hidden transition-colors duration-200 group-focus-within:border-primary/50">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/60 transition-colors group-focus-within:text-primary" />
                 <Input
                   placeholder="Pesquisar por nome, sinônimo, CID-10..."
                   value={busca}
@@ -743,7 +743,7 @@ function ManualClinicoContent() {
                 {busca && (
                   <button
                     onClick={() => setBusca('')}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full bg-white/10 hover:bg-white/20 text-muted-foreground hover:text-foreground transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full bg-muted hover:bg-muted-foreground/20 text-muted-foreground hover:text-foreground transition-colors"
                     aria-label="Limpar pesquisa"
                   >
                     <X className="h-4 w-4" />
@@ -762,7 +762,7 @@ function ManualClinicoContent() {
                   <button
                     key={slug}
                     onClick={() => router.push(`/manual-clinico/${slug}`)}
-                    className="px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium bg-white/[0.05] dark:bg-white/[0.04] border border-white/[0.1] text-muted-foreground hover:text-foreground hover:border-primary/35 hover:bg-primary/10 transition-colors"
+                    className="px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium bg-card border border-border text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-primary/5 transition-colors"
                   >
                     {label}
                   </button>
@@ -926,38 +926,29 @@ function ManualClinicoContent() {
         {/* ══════════ SISTEMAS GRID ══════════ */}
         {!busca && areasAtivas.length === 0 && !sistemaAtivo && (
           <div className="mb-10">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="p-2 rounded-xl bg-primary/10">
-                <Stethoscope className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <h2 className="text-lg font-semibold">Sistemas Fisiológicos</h2>
-                <p className="text-xs text-muted-foreground">Selecione um sistema para filtrar as patologias</p>
-              </div>
+            <div className="mb-5">
+              <p className="editorial-mark mb-2">Índice por sistema</p>
+              <h2 className="text-xl font-heading font-semibold tracking-tight">Sistemas Fisiológicos</h2>
+              <p className="text-sm text-muted-foreground mt-1">Selecione um sistema para filtrar as patologias.</p>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
               {SISTEMAS_FISIOLOGICOS.map((sistema, idx) => {
                 const Icon = SISTEMA_ICONS[sistema] || Stethoscope
+                const tint = SISTEMA_TINTS[idx % SISTEMA_TINTS.length]
                 return (
                   <button
                     key={sistema}
                     onClick={() => selectSistema(sistema)}
-                    className={`group relative flex flex-col items-center gap-2.5 p-4 rounded-2xl border transition-all duration-300 overflow-hidden
-                      bg-white/[0.03] dark:bg-white/[0.02] border-white/[0.08]
-                      hover:border-white/[0.15] hover:bg-white/[0.06] hover:shadow-[0_8px_32px_rgba(0,0,0,0.12)]
-                      hover:scale-[1.02] active:scale-[0.98]`}
+                    className={`group flex flex-col items-start gap-3 p-4 rounded-xl border border-border bg-card text-left transition duration-200
+                      hover:-translate-y-0.5 hover:shadow-sm ${tint.border}
+                      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:translate-y-0`}
                     aria-label={`Ver patologias do ${sistema}`}
                   >
-                    {/* Subtle gradient background on hover */}
-                    <div className={`absolute inset-0 bg-gradient-to-br ${SISTEMA_COLORS[idx % SISTEMA_COLORS.length]} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-
-                    {/* Glass icon container */}
-                    <div className="relative z-10 p-2.5 rounded-xl bg-white/[0.06] dark:bg-white/[0.04] border border-white/[0.08] group-hover:border-white/[0.15] group-hover:bg-white/[0.1] backdrop-blur-sm transition-all duration-300">
-                      <Icon className="h-5 w-5 text-primary group-hover:scale-110 transition-transform duration-300" />
+                    <div className={`rounded-lg p-2.5 ${tint.bg} transition-colors`}>
+                      <Icon className={`h-5 w-5 ${tint.text}`} />
                     </div>
-
-                    <span className="relative z-10 text-[11px] font-medium leading-tight text-center text-muted-foreground group-hover:text-foreground transition-colors line-clamp-2">
+                    <span className="text-[11px] sm:text-xs font-semibold leading-tight text-foreground/80 group-hover:text-foreground transition-colors line-clamp-2">
                       {sistema}
                     </span>
                   </button>
@@ -970,7 +961,7 @@ function ManualClinicoContent() {
         {/* Sistema ativo badge */}
         {sistemaAtivo && (
           <div className="flex items-center gap-2 mb-6">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary/10 border border-primary/20 backdrop-blur-sm">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 border border-primary/25">
               {(() => { const Icon = SISTEMA_ICONS[sistemaAtivo] || Stethoscope; return <Icon className="h-4 w-4 text-primary" /> })()}
               <span className="text-sm font-medium">{sistemaAtivo}</span>
               <button
@@ -1017,15 +1008,14 @@ function ManualClinicoContent() {
                   onClick={() => {
                     router.push(`/manual-clinico/${patologia.slug}`)
                   }}
-                  className={`group relative rounded-2xl border border-white/[0.06] bg-white/[0.02] dark:bg-white/[0.015]
-                    hover:bg-white/[0.05] hover:border-white/[0.12] hover:shadow-[0_4px_24px_rgba(0,0,0,0.1)]
-                    backdrop-blur-sm transition-all duration-300 cursor-pointer overflow-hidden ${
-                      patologia.isPremiumLocked ? 'border-amber-300/15 bg-amber-400/[0.025]' : ''
+                  className={`group relative rounded-xl border border-border bg-card
+                    hover:border-primary/40 hover:shadow-sm
+                    transition-colors duration-200 cursor-pointer overflow-hidden ${
+                      patologia.isPremiumLocked ? 'border-amber-400/30 bg-amber-400/[0.04]' : ''
                     }`}
-                  style={{ animationDelay: `${idx * 30}ms` }}
                 >
-                  {/* Hover gradient accent */}
-                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primary to-primary/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-l-2xl" />
+                  {/* Editorial left-rule accent on hover */}
+                  <div className={`absolute left-0 top-0 bottom-0 w-[3px] ${patologia.isPremiumLocked ? 'bg-amber-500' : 'bg-primary'} opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-l-xl`} />
 
                   <div className="p-4 sm:p-5 pl-5">
                     <div className="flex items-start justify-between gap-4">
@@ -1035,7 +1025,7 @@ function ManualClinicoContent() {
                             {patologia.nome}
                           </h3>
                           {patologia.cid10 && (
-                            <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-medium bg-white/[0.06] border border-white/[0.1] text-muted-foreground">
+                            <span className="px-2 py-0.5 rounded-md text-[10px] font-clinical font-medium bg-muted border border-border text-muted-foreground">
                               {patologia.cid10}
                             </span>
                           )}
@@ -1082,7 +1072,7 @@ function ManualClinicoContent() {
                           </span>
                         </div>
                       </div>
-                      <div className="flex-shrink-0 mt-2 p-1.5 rounded-lg bg-white/[0.04] group-hover:bg-primary/10 transition-colors duration-300">
+                      <div className="flex-shrink-0 mt-2 p-1.5 rounded-lg bg-muted group-hover:bg-primary/10 transition-colors duration-200">
                         {patologia.accessStatus === 'login_required'
                           ? <LogIn className="h-4 w-4 text-emerald-500/70 group-hover:text-emerald-400 transition-all duration-300" />
                           : patologia.isPremiumLocked
@@ -1124,12 +1114,12 @@ function ManualClinicoContent() {
                   size="sm"
                   disabled={page <= 1}
                   onClick={() => setPage(p => p - 1)}
-                  className="rounded-xl backdrop-blur-sm bg-white/[0.03] border-white/[0.1]"
+                  className="rounded-lg bg-card border-border"
                 >
                   <ChevronLeft className="h-4 w-4 mr-1" />
                   Anterior
                 </Button>
-                <div className="px-4 py-1.5 rounded-xl bg-white/[0.05] border border-white/[0.08] text-sm text-muted-foreground">
+                <div className="px-4 py-1.5 rounded-lg bg-card border border-border text-sm text-muted-foreground">
                   <span className="font-medium text-foreground">{page}</span> de <span className="font-medium text-foreground">{totalPages}</span>
                 </div>
                 <Button
@@ -1137,7 +1127,7 @@ function ManualClinicoContent() {
                   size="sm"
                   disabled={page >= totalPages}
                   onClick={() => setPage(p => p + 1)}
-                  className="rounded-xl backdrop-blur-sm bg-white/[0.03] border-white/[0.1]"
+                  className="rounded-lg bg-card border-border"
                 >
                   Próxima
                   <ChevronRight className="h-4 w-4 ml-1" />
