@@ -88,7 +88,7 @@ export function TrialExpirationChecker() {
               <Phone className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Telefone/WhatsApp</p>
-                <p className="text-lg font-semibold text-blue-600 dark:text-blue-400">(21) 99777-0936</p>
+                <p className="text-lg font-semibold text-blue-600 dark:text-blue-400">(24) 99223-0908</p>
               </div>
             </div>
           </div>

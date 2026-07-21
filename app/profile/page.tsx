@@ -1333,7 +1333,7 @@ export default function ProfilePage() {
                 <Phone className="h-4 w-4 text-blue-600 shrink-0" />
                 <div>
                   <p className="text-xs text-muted-foreground">WhatsApp</p>
-                  <p className="text-sm font-semibold">(21) 99777-0936</p>
+                  <p className="text-sm font-semibold">(24) 99223-0908</p>
                 </div>
               </div>
               <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-xl">
@@ -1348,7 +1348,7 @@ export default function ProfilePage() {
               <Button
                 onClick={() => {
                   const msg = encodeURIComponent(`Ola, eu sou ${userName} e quero fazer o upgrade do meu plano no DomineAqui!`)
-                  window.open(`https://wa.me/5521997770936?text=${msg}`, '_blank')
+                  window.open(`https://wa.me/5524992230908?text=${msg}`, '_blank')
                 }}
                 className="bg-green-600 hover:bg-green-700 text-white w-full"
               >
@@ -1482,7 +1482,7 @@ export default function ProfilePage() {
                 <Phone className="h-4 w-4 text-blue-600 shrink-0" />
                 <div>
                   <p className="text-xs text-muted-foreground">Fale comigo antes</p>
-                  <p className="text-sm font-semibold">(21) 99777-0936</p>
+                  <p className="text-sm font-semibold">(24) 99223-0908</p>
                 </div>
               </div>
             </div>

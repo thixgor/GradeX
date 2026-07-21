@@ -263,7 +263,7 @@ export default function PoliticaDePrivacidadePage() {
               </p>
               <ul className="list-none text-muted-foreground space-y-2 mt-3">
                 <li>• Chat de suporte na plataforma</li>
-                <li>• Telefone: (21) 99777-0936</li>
+                <li>• Telefone: (24) 99223-0908</li>
                 <li>• DomineAqui LTDA</li>
               </ul>
             </section>

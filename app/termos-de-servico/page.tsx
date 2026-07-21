@@ -136,7 +136,7 @@ export default function TermosDeServicoPage() {
             <section>
               <h2 className="text-2xl font-semibold mb-3">12. Contato</h2>
               <p className="text-muted-foreground leading-relaxed">
-                Para questões sobre estes Termos de Serviço, entre em contato conosco através do chat de suporte na plataforma ou pelo telefone (21) 99777-0936.
+                Para questões sobre estes Termos de Serviço, entre em contato conosco através do chat de suporte na plataforma ou pelo telefone (24) 99223-0908.
               </p>
             </section>
           </div>

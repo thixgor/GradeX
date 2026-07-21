@@ -411,7 +411,7 @@ function BuyContent() {
                     const msg = encodeURIComponent(
                       `Olá! Sou ${userName} do DomineAqui e quero falar sobre meu plano.`
                     )
-                    window.open(`https://wa.me/5521997770936?text=${msg}`, '_blank')
+                    window.open(`https://wa.me/5524992230908?text=${msg}`, '_blank')
                   }}
                   className="inline-flex items-center gap-1.5 rounded-lg border border-border px-4 py-2 text-sm font-semibold text-muted-foreground hover:bg-muted"
                 >
@@ -606,7 +606,7 @@ function BuyContent() {
           <p className="text-sm text-muted-foreground">
             Dúvida antes de assinar?{' '}
             <a
-              href="https://wa.me/5521997770936"
+              href="https://wa.me/5524992230908"
               target="_blank"
               rel="noopener noreferrer"
               className="font-semibold text-primary hover:underline"

@@ -25,7 +25,7 @@ export function CreateExamModal({
       alert(`Você atingiu seu limite de criação de provas.
 Faça upgrade para Premium para 10 provas por dia com até 20 questões por prova.
 
-Contato: (21) 99777-0936`)
+Contato: (24) 99223-0908`)
       return
     }
     router.push('/exams/create-personal')

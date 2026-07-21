@@ -118,5 +118,5 @@ export function getUpgradeMessage(currentTier: AccountType | undefined): string 
   return `You've reached your creation limit.
 Upgrade to Premium for ${premiumLimits.examsPerDay} exams per day with up to ${premiumLimits.questionsPerExam} questions per exam.
 
-Contact: (21) 99777-0936`
+Contact: (24) 99223-0908`
 }

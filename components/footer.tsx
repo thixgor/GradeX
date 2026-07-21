@@ -3,11 +3,13 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Instagram, Mail, MessageCircle, Users, ArrowUpRight } from 'lucide-react'
+import { Instagram, Mail, MessageCircle, ArrowUpRight } from 'lucide-react'
 
 // Canais de comunicação oficiais da plataforma
-const WHATSAPP_GROUP_URL = 'https://chat.whatsapp.com/GPAbMSy9dBk3O8ZesnkRfR'
+const WHATSAPP_URL =
+  'https://wa.me/5524992230908?text=Ol%C3%A1%2C%20estou%20em%20contato%20com%20o%20WhatsApp%20da%20plataforma%20DomineAqui%21'
 const INSTAGRAM_URL = 'https://instagram.com/domineaqui.br'
+const DISCORD_URL = 'https://discord.gg/vdfHcvDdMw'
 const CONTACT_EMAIL = 'contato@domineaqui.com.br'
 
 // Rotas onde este rodapé de marketing NÃO deve aparecer:
@@ -84,17 +86,17 @@ export function Footer() {
             Nossos canais de comunicação
           </h2>
           <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
-            Prefira o <span className="font-semibold text-foreground">Instagram</span> e o{' '}
-            <span className="font-semibold text-foreground">WhatsApp</span> — são os nossos
-            canais principais. Também respondemos por e-mail.
+            Prefira o <span className="font-semibold text-foreground">WhatsApp</span> e o{' '}
+            <span className="font-semibold text-foreground">Instagram</span> — são os nossos
+            canais principais. Também estamos no Discord e respondemos por e-mail.
           </p>
         </div>
 
         {/* Cards 3D / glassmorphism dos canais principais */}
-        <div className="mx-auto mt-8 grid max-w-4xl gap-5 sm:grid-cols-3">
-          {/* WhatsApp — Grupo */}
+        <div className="mx-auto mt-8 grid max-w-4xl gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {/* WhatsApp — contato direto com a plataforma */}
           <a
-            href={WHATSAPP_GROUP_URL}
+            href={WHATSAPP_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="group relative flex flex-col items-center gap-3 rounded-3xl border border-white/20 bg-white/10 p-6 text-center shadow-xl backdrop-blur-2xl transition-all duration-300 hover:-translate-y-1.5 hover:border-[#25D366]/50 hover:shadow-2xl hover:shadow-[#25D366]/25"
@@ -110,13 +112,13 @@ export function Footer() {
               </svg>
             </span>
             <div>
-              <p className="text-base font-bold text-foreground">Grupo no WhatsApp</p>
+              <p className="text-base font-bold text-foreground">WhatsApp</p>
               <p className="mt-1 flex items-center justify-center gap-1 text-xs text-muted-foreground">
-                <Users size={12} /> Entre na comunidade
+                <MessageCircle size={12} /> Fale com a plataforma
               </p>
             </div>
             <span className="mt-1 inline-flex items-center gap-1.5 rounded-full bg-[#25D366]/15 px-3 py-1 text-xs font-semibold text-[#128C7E] dark:text-[#25D366]">
-              Toque para participar
+              +55 24 99223-0908
             </span>
           </a>
 
@@ -141,6 +143,32 @@ export function Footer() {
             </div>
             <span className="mt-1 inline-flex items-center gap-1.5 rounded-full bg-[#E4405F]/15 px-3 py-1 text-xs font-semibold text-[#E4405F]">
               @domineaqui.br
+            </span>
+          </a>
+
+          {/* Discord */}
+          <a
+            href={DISCORD_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative flex flex-col items-center gap-3 rounded-3xl border border-white/20 bg-white/10 p-6 text-center shadow-xl backdrop-blur-2xl transition-all duration-300 hover:-translate-y-1.5 hover:border-[#5865F2]/50 hover:shadow-2xl hover:shadow-[#5865F2]/25"
+          >
+            <span className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent opacity-70" />
+            <ArrowUpRight
+              size={16}
+              className="absolute right-4 top-4 text-muted-foreground opacity-0 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100"
+            />
+            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#5865F2] to-[#404EED] text-white shadow-lg shadow-[#5865F2]/40 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[6deg]">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                <path d="M20.317 4.369a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.211.375-.444.865-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.009c.12.099.246.198.373.292a.077.077 0 0 1-.006.127 12.3 12.3 0 0 1-1.873.891.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028ZM8.02 15.331c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.418 2.157-2.418 1.21 0 2.176 1.094 2.157 2.418 0 1.334-.956 2.419-2.157 2.419Zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.418 2.157-2.418 1.21 0 2.176 1.094 2.157 2.418 0 1.334-.946 2.419-2.157 2.419Z" />
+              </svg>
+            </span>
+            <div>
+              <p className="text-base font-bold text-foreground">Discord</p>
+              <p className="mt-1 text-xs text-muted-foreground">Comunidade e avisos</p>
+            </div>
+            <span className="mt-1 inline-flex items-center gap-1.5 rounded-full bg-[#5865F2]/15 px-3 py-1 text-xs font-semibold text-[#5865F2]">
+              Entrar no servidor
             </span>
           </a>
 
