@@ -295,6 +295,12 @@ export default function MateriaisCheckoutPage() {
   const [buyer, setBuyer] = useState({ name: '', email: '', phone: '' })
   const [buyerConfirmed, setBuyerConfirmed] = useState(false)
 
+  // Usuário logado que já possui o item avulso: mostramos um aviso claro (em vez
+  // de redirecionar em silêncio para a página do material, o que confundia).
+  const [alreadyOwnedInfo, setAlreadyOwnedInfo] = useState<
+    { redirect: string; title: string; type: 'material' | 'package' | 'flashcard' } | null
+  >(null)
+
   useEffect(() => {
     let active = true
     fetch('/api/auth/me', { cache: 'no-store' })
@@ -397,6 +403,8 @@ export default function MateriaisCheckoutPage() {
       return
     }
 
+    setAlreadyOwnedInfo(null)
+
     if (!itemId) {
       setError('Item não informado')
       setLoading(false)
@@ -443,7 +451,13 @@ export default function MateriaisCheckoutPage() {
           ? !!(itemResp?.access?.hasAccess || itemResp?.access?.isPurchased)
           : !!(itemResp?.hasAccess || itemResp?.isPurchased || found?._hasAccess || found?._isPurchased)
         if (alreadyOwned) {
-          router.replace(getOwnedRedirect(found))
+          setAlreadyOwnedInfo({
+            redirect: getOwnedRedirect(found),
+            title: found.title || found.name || (itemType === 'package' ? 'Este pacote' : 'Este material'),
+            type: itemType === 'package'
+              ? 'package'
+              : (found?.type === 'flashcard_deck' ? 'flashcard' : 'material'),
+          })
           return
         }
         setItem(found)
@@ -499,6 +513,65 @@ export default function MateriaisCheckoutPage() {
       <div style={pageStyle}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
           <Loader2 size={32} style={{ color: '#34d399', animation: 'spin 1s linear infinite' }} />
+        </div>
+      </div>
+    )
+  }
+
+  if (!isCartMode && alreadyOwnedInfo) {
+    const typeWord = alreadyOwnedInfo.type === 'package'
+      ? 'pacote'
+      : alreadyOwnedInfo.type === 'flashcard' ? 'baralho' : 'material'
+    const goToItem = () => {
+      if (/^https?:\/\//.test(alreadyOwnedInfo.redirect)) window.location.href = alreadyOwnedInfo.redirect
+      else router.push(alreadyOwnedInfo.redirect)
+    }
+    return (
+      <div style={pageStyle}>
+        <div style={{ maxWidth: '540px', margin: '0 auto', paddingTop: '48px' }}>
+          <div style={{ ...glassCard, padding: '40px 32px', textAlign: 'center' }}>
+            <div style={{
+              width: '64px', height: '64px', borderRadius: '18px',
+              background: 'rgba(52,211,153,0.12)', border: '1px solid rgba(52,211,153,0.22)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 22px',
+            }}>
+              <Check size={34} style={{ color: '#34d399' }} />
+            </div>
+            <span style={{ ...emeraldBadge, marginBottom: '14px' }}>Você já tem acesso</span>
+            <h1 style={{ fontSize: '24px', fontWeight: 800, color: 'white', letterSpacing: '-0.02em', lineHeight: 1.25, marginBottom: '12px' }}>
+              Este {typeWord} já é seu
+            </h1>
+            <p style={{ fontSize: '15px', color: 'rgba(255,255,255,0.65)', lineHeight: 1.6, marginBottom: '6px' }}>
+              <strong style={{ color: '#34d399' }}>{alreadyOwnedInfo.title}</strong> já está liberado na sua conta — sem
+              precisar comprar de novo nem gastar nada.
+            </p>
+            <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.42)', lineHeight: 1.6, marginBottom: '30px' }}>
+              É só abrir e continuar de onde você parou.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <button
+                onClick={goToItem}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                  width: '100%', height: '50px', borderRadius: '13px', border: 'none',
+                  background: '#34d399', color: '#04140d', fontWeight: 800, fontSize: '15px', cursor: 'pointer',
+                }}
+              >
+                Abrir meu {typeWord}
+              </button>
+              <button
+                onClick={() => router.push('/materiais?tab=mine')}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                  width: '100%', height: '46px', borderRadius: '13px',
+                  border: '1px solid rgba(255,255,255,0.15)', background: 'transparent',
+                  color: 'rgba(255,255,255,0.72)', fontWeight: 600, fontSize: '14px', cursor: 'pointer',
+                }}
+              >
+                Ver todos os meus materiais
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     )
