@@ -701,6 +701,7 @@ function Hero({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: bool
           <Reveal delay={240}>
             <div className="mt-9 flex flex-wrap items-center gap-4">
               <PrimaryCTA href={signupHref}>Criar conta grátis</PrimaryCTA>
+              {!isLoggedIn && <GhostCTA href="/auth/login">Entrar</GhostCTA>}
               <GhostCTA href="#plataforma">Ver a plataforma</GhostCTA>
             </div>
           </Reveal>
@@ -709,19 +710,6 @@ function Hero({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: bool
               Comece de graça. Sem cartão. Sem pegadinha.
             </p>
           </Reveal>
-          {!isLoggedIn && (
-            <Reveal delay={360}>
-              <p className="mt-3 text-sm text-da-muted">
-                Já tem conta?{' '}
-                <SmartLink
-                  href="/auth/login"
-                  className="font-medium text-da-amber underline underline-offset-4 transition hover:text-da-paper"
-                >
-                  Entrar
-                </SmartLink>
-              </p>
-            </Reveal>
-          )}
         </div>
 
         <div className="relative">
