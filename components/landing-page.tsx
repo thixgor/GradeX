@@ -469,7 +469,7 @@ export default function LandingPage({ initialIsLoggedIn }: LandingPageProps) {
       className="da-landing relative overflow-x-clip bg-da-ground font-da-body text-da-paper"
     >
       <Nav signupHref={signupHref} isLoggedIn={isLoggedIn} />
-      <Hero signupHref={signupHref} />
+      <Hero signupHref={signupHref} isLoggedIn={isLoggedIn} />
       <Marquee />
       <SampleBand />
       <PlatformOverview />
@@ -630,7 +630,7 @@ const heroFrontStyle: CSSProperties = {
     'translate3d(calc(var(--da-mx, 0) * 42px), calc(var(--da-my, 0) * 30px - var(--da-sy, 0) * 0.1px), 0)',
 }
 
-function Hero({ signupHref }: { signupHref: string }) {
+function Hero({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: boolean }) {
   return (
     <section id="top" className="da-scene relative min-h-dvh overflow-hidden pt-[72px]">
       <div className="pointer-events-none absolute inset-0" style={heroBgStyle}>
@@ -709,6 +709,19 @@ function Hero({ signupHref }: { signupHref: string }) {
               Comece de graça. Sem cartão. Sem pegadinha.
             </p>
           </Reveal>
+          {!isLoggedIn && (
+            <Reveal delay={360}>
+              <p className="mt-3 text-sm text-da-muted">
+                Já tem conta?{' '}
+                <SmartLink
+                  href="/auth/login"
+                  className="font-medium text-da-amber underline underline-offset-4 transition hover:text-da-paper"
+                >
+                  Entrar
+                </SmartLink>
+              </p>
+            </Reveal>
+          )}
         </div>
 
         <div className="relative">
