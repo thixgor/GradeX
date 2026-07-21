@@ -549,6 +549,14 @@ function Nav({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: boole
             variant="icon"
             className="h-10 w-10 rounded-full border-[color:var(--da-neutral-line)] bg-transparent text-da-paper shadow-none transition hover:border-da-amber/50 hover:bg-da-panel/40 active:scale-95"
           />
+          {!isLoggedIn && (
+            <SmartLink
+              href="/auth/login"
+              className="hidden text-sm font-medium text-da-muted transition hover:text-da-paper sm:inline-flex"
+            >
+              Entrar
+            </SmartLink>
+          )}
           <PrimaryCTA href={signupHref} className="!hidden !px-5 !py-2.5 text-sm sm:!inline-flex">
             {isLoggedIn ? 'Ir para o dashboard' : 'Criar conta grátis'}
           </PrimaryCTA>
@@ -586,7 +594,15 @@ function Nav({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: boole
                 {l.label}
               </SmartLink>
             ))}
-            <div className="pb-2 pt-4 sm:hidden">
+            <div className="flex flex-col gap-3 pb-2 pt-4 sm:hidden">
+              {!isLoggedIn && (
+                <SmartLink
+                  href="/auth/login"
+                  className="inline-flex w-full items-center justify-center rounded-full border border-[color:var(--da-neutral-line)] px-5 py-2.5 text-sm font-medium text-da-paper transition hover:border-da-amber/50"
+                >
+                  Entrar
+                </SmartLink>
+              )}
               <PrimaryCTA href={signupHref} className="w-full">
                 {isLoggedIn ? 'Ir para o dashboard' : 'Criar conta grátis'}
               </PrimaryCTA>
