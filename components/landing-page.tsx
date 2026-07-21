@@ -480,7 +480,7 @@ export default function LandingPage({ initialIsLoggedIn }: LandingPageProps) {
       <Differentiators />
       <Plans />
       <Prescricao />
-      <FaqAndCTA signupHref={signupHref} />
+      <FaqAndCTA signupHref={signupHref} isLoggedIn={isLoggedIn} />
       <Footer />
     </div>
   )
@@ -700,7 +700,9 @@ function Hero({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: bool
           </Reveal>
           <Reveal delay={240}>
             <div className="mt-9 flex flex-wrap items-center gap-4">
-              <PrimaryCTA href={signupHref}>Criar conta grátis</PrimaryCTA>
+              <PrimaryCTA href={signupHref}>
+                {isLoggedIn ? 'Ir para o dashboard' : 'Criar conta grátis'}
+              </PrimaryCTA>
               {!isLoggedIn && <GhostCTA href="/auth/login">Entrar</GhostCTA>}
               <GhostCTA href="#plataforma">Ver a plataforma</GhostCTA>
             </div>
@@ -1618,7 +1620,7 @@ function Prescricao() {
 
 /* ---------- FAQ + CTA ---------- */
 
-function FaqAndCTA({ signupHref }: { signupHref: string }) {
+function FaqAndCTA({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: boolean }) {
   const faqs = [
     [
       'Preciso pagar para começar?',
@@ -1677,7 +1679,9 @@ function FaqAndCTA({ signupHref }: { signupHref: string }) {
           </Reveal>
           <Reveal delay={120}>
             <div className="mt-9 flex justify-center">
-              <PrimaryCTA href={signupHref}>Criar conta grátis</PrimaryCTA>
+              <PrimaryCTA href={signupHref}>
+                {isLoggedIn ? 'Ir para o dashboard' : 'Criar conta grátis'}
+              </PrimaryCTA>
             </div>
           </Reveal>
           <Reveal delay={200}>
