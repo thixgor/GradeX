@@ -44,11 +44,13 @@ import {
   Info,
   CalendarClock,
   XCircle,
-  CreditCard
+  CreditCard,
+  GraduationCap
 } from 'lucide-react'
 import { AREAS_SAUDE, SISTEMAS_FISIOLOGICOS, type AreaSaude, type SistemaFisiologico } from '@/lib/types/manual-clinico'
 import { clearAllManualHighlights, hasAnyManualHighlights } from '@/lib/manual-clinico-highlights'
 import { trackMeta } from '@/lib/meta-pixel'
+import { GuidedTour, type TourStep } from '@/components/manual-clinico/guided-tour'
 import { PricingEventCountdown } from '@/components/pricing-events/PricingEventCountdown'
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
 
@@ -313,9 +315,74 @@ function RenewalBanner({
   )
 }
 
+// Passos do tour guiado. Passos com `target` só entram se o elemento existir na
+// tela no momento em que o tour abre (ver startTour), então nada quebra quando
+// uma seção está oculta (ex.: botão de PDF desativado). Versão no localStorage
+// controla o disparo automático — subir o número reexibe para todos.
+const TOUR_STORAGE_KEY = 'manual-clinico-tour-v1'
+const TOUR_STEPS: TourStep[] = [
+  {
+    title: 'Bem-vindo ao Manual Clínico',
+    body: 'Em 1 minuto te mostro tudo: como buscar, filtrar, abrir patologias e usar os módulos extras. Pode pular quando quiser.',
+  },
+  {
+    target: '[data-tour="search"]',
+    title: 'Busca inteligente',
+    body: 'Pesquise por nome da doença, sinônimo popular ou código CID-10. Os resultados aparecem enquanto você digita.',
+  },
+  {
+    target: '[data-tour="filtros"]',
+    title: 'Filtros por área',
+    body: 'Refine por área da saúde (Cardiologia, Pneumologia, etc.). Pode combinar vários filtros ao mesmo tempo.',
+  },
+  {
+    target: '[data-tour="sistemas"]',
+    title: 'Índice por sistema',
+    body: 'Prefere navegar por sistema fisiológico? Toque em um sistema para ver todas as patologias relacionadas.',
+  },
+  {
+    target: '[data-tour="patologia"]',
+    title: 'Abra uma patologia',
+    body: 'Cada card leva à ficha completa: fisiopatologia, diagnósticos diferenciais, conduta e farmacologia. As etiquetas mostram o que está grátis, liberado ou premium.',
+  },
+  {
+    target: '[data-tour="access"]',
+    title: 'Seu acesso',
+    body: 'Aqui você acompanha suas aberturas gratuitas ou desbloqueia o Manual inteiro — pagamento único, acesso imediato.',
+  },
+  {
+    target: '[data-tour="farmacologia"]',
+    title: 'Farmacologia por classes',
+    body: 'Fármacos organizados por classe: mecanismo, metabolismo, efeitos, posologia e uma calculadora de dose.',
+  },
+  {
+    target: '[data-tour="anatomia"]',
+    title: 'Anatomia 3D',
+    body: 'Atlas 3D interativo: modelos rotacionáveis em 360° com explicação anatômica aprofundada.',
+  },
+  {
+    target: '[data-tour="ecg"]',
+    title: 'Manual do Eletrocardiograma',
+    body: 'Simulador de ECG com 12 derivações, papel milimetrado real, medidas automáticas e banco de traçados. Exclusivo de assinantes.',
+  },
+  {
+    target: '[data-tour="pdf"]',
+    title: 'Leve no PDF',
+    body: 'Assinantes podem baixar o Manual completo em PDF para estudar offline, com marca d’água personalizada.',
+  },
+  {
+    target: '[data-tour="tutorial-btn"]',
+    title: 'Pronto! Bom estudo 🎓',
+    body: 'Sempre que quiser rever este passo a passo, é só clicar em Tutorial aqui. Bons estudos!',
+  },
+]
+
 export default function ManualClinicoPage() {
   const [showInterstitial, setShowInterstitial] = useState(false)
   const [interstitialChecked, setInterstitialChecked] = useState(false)
+  const [tourOpen, setTourOpen] = useState(false)
+  const [tourSteps, setTourSteps] = useState<TourStep[]>([])
+  const tourAutoChecked = useRef(false)
 
   useEffect(() => {
     setShowInterstitial(true)
@@ -582,6 +649,35 @@ function ManualClinicoContent() {
     router.push(`/auth/login?mode=register&redirect=${encodeURIComponent(dest)}`)
   }
 
+  // ── Tour guiado ──
+  const startTour = useCallback(() => {
+    // Só entram os passos cujo alvo existe agora na tela (evita cartão órfão
+    // apontando para uma seção oculta). Passos sem alvo (boas-vindas/fim) ficam.
+    const visible = TOUR_STEPS.filter((s) => !s.target || document.querySelector(s.target))
+    setTourSteps(visible.length ? visible : TOUR_STEPS)
+    setTourOpen(true)
+  }, [])
+
+  const dismissTour = useCallback(() => {
+    setTourOpen(false)
+    try { localStorage.setItem(TOUR_STORAGE_KEY, 'done') } catch {}
+  }, [])
+
+  // Auto-início: usuário logado, página pronta, com patologias carregadas e sem
+  // busca/filtro ativo — e apenas se ainda não viu o tour nesta versão.
+  useEffect(() => {
+    if (tourAutoChecked.current) return
+    if (isAuthenticated !== true || !ctasReady || patologias.length === 0) return
+    if (busca || areasAtivas.length > 0 || sistemaAtivo) return
+    tourAutoChecked.current = true
+    let done = false
+    try { done = localStorage.getItem(TOUR_STORAGE_KEY) === 'done' } catch {}
+    if (!done) {
+      const t = setTimeout(() => startTour(), 600)
+      return () => clearTimeout(t)
+    }
+  }, [isAuthenticated, ctasReady, patologias.length, busca, areasAtivas, sistemaAtivo, startTour])
+
   async function handleDeclineRenewal() {
     if (!renewalDeclineConfirm) {
       setRenewalDeclineConfirm(true)
@@ -612,6 +708,7 @@ function ManualClinicoContent() {
     <div className="surface-page">
       {/* Floating focus session */}
       <FloatingFocusGlass enabled={isAuthenticated === true} />
+      <GuidedTour open={tourOpen} steps={tourSteps} onClose={dismissTour} onFinish={dismissTour} />
 
       {/* ══════════ HERO ══════════ */}
       <div className="relative overflow-hidden border-b border-border">
@@ -697,7 +794,7 @@ function ManualClinicoContent() {
               ) : (
                 <>
                   {!manualAccess.hasFullAccess && product?.isActive && enabledPlans.length > 0 && (
-                    <div className="mt-6 flex flex-col items-center gap-2.5">
+                    <div className="mt-6 flex flex-col items-center gap-2.5" data-tour="access">
                       {!isAuthenticated && freeQuota?.mode === 'quantity' && freeQuota.limit > 0 ? (
                         <>
                           {/* Deslogado com teste grátis: registro-primeiro */}
@@ -746,6 +843,7 @@ function ManualClinicoContent() {
                       <button
                         onClick={handleGeneratePDF}
                         disabled={pdfLoading}
+                        data-tour="pdf"
                         className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
                           bg-primary text-primary-foreground shadow-lg shadow-primary/25
                           hover:bg-primary/90 active:scale-[0.97] transition-all duration-200
@@ -779,6 +877,15 @@ function ManualClinicoContent() {
                         }
                       </button>
                     )}
+
+                    <button
+                      onClick={startTour}
+                      data-tour="tutorial-btn"
+                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold border border-emerald-400/30 bg-emerald-400/5 text-emerald-700 dark:text-emerald-300 transition-all duration-200 hover:bg-emerald-400/10 active:scale-[0.97]"
+                    >
+                      <GraduationCap className="h-4 w-4" />
+                      Tutorial
+                    </button>
                   </div>
 
                   {!manualAccess.hasFullAccess && product?.isActive && (
@@ -803,7 +910,7 @@ function ManualClinicoContent() {
           </div>
 
           {/* ══════════ SEARCH BAR ══════════ */}
-          <div className="max-w-2xl mx-auto">
+          <div className="max-w-2xl mx-auto" data-tour="search">
             <div className="relative group">
               <div className="relative flex items-center bg-card rounded-xl border border-border shadow-sm overflow-hidden transition-colors duration-200 group-focus-within:border-primary/50">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/60 transition-colors group-focus-within:text-primary" />
@@ -846,7 +953,7 @@ function ManualClinicoContent() {
           </div>
 
           {/* ══════════ AREA FILTER PILLS ══════════ */}
-          <div className="flex flex-wrap items-center justify-center gap-2.5 mt-6">
+          <div className="flex flex-wrap items-center justify-center gap-2.5 mt-6" data-tour="filtros">
             <div className="flex items-center gap-1.5 mr-1 text-muted-foreground/50">
               <Filter className="h-3.5 w-3.5" />
               <span className="text-xs font-medium uppercase tracking-wide">Filtros</span>
@@ -928,6 +1035,7 @@ function ManualClinicoContent() {
         {!busca && (
           <button
             onClick={() => router.push('/manual-clinico/farmacologia')}
+            data-tour="farmacologia"
             className="group mb-3 w-full overflow-hidden rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary/35"
           >
             <div className="flex items-center justify-between gap-3">
@@ -951,6 +1059,7 @@ function ManualClinicoContent() {
         {!busca && (
           <button
             onClick={() => router.push('/manual-clinico/anatomia-3d')}
+            data-tour="anatomia"
             className="group mb-3 w-full overflow-hidden rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary/35"
           >
             <div className="flex items-center justify-between gap-3">
@@ -974,6 +1083,7 @@ function ManualClinicoContent() {
         {!busca && (
           <button
             onClick={() => router.push('/manual-clinico/eletrocardiograma')}
+            data-tour="ecg"
             className="group mb-7 w-full overflow-hidden rounded-lg border border-red-500/20 bg-gradient-to-r from-red-500/[0.06] to-card p-4 text-left transition-colors hover:border-red-500/40"
           >
             <div className="flex items-center justify-between gap-3">
@@ -1010,7 +1120,7 @@ function ManualClinicoContent() {
 
         {/* ══════════ SISTEMAS GRID ══════════ */}
         {!busca && areasAtivas.length === 0 && !sistemaAtivo && (
-          <div className="mb-10">
+          <div className="mb-10" data-tour="sistemas">
             <div className="mb-5">
               <p className="editorial-mark mb-2">Índice por sistema</p>
               <h2 className="text-xl font-heading font-semibold tracking-tight">Sistemas Fisiológicos</h2>
@@ -1093,6 +1203,7 @@ function ManualClinicoContent() {
               {patologias.map((patologia, idx) => (
                 <div
                   key={patologia._id}
+                  data-tour={idx === 0 ? 'patologia' : undefined}
                   onClick={() => {
                     // Patologia grátis mas exige login: manda criar conta e volta
                     // direto pra ela (abre de graça). Antes caía num muro de login.
