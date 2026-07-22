@@ -188,6 +188,27 @@ export default function ManualClinicoCheckoutPage() {
   const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null)
   const [freeLoading, setFreeLoading] = useState(false)
   const [selectedPlanKey, setSelectedPlanKey] = useState<PlanKey>(planQuery || 'vitalicio')
+  // O Manual é assinatura (dá acesso à plataforma), então exige conta — ao
+  // contrário da Prescrição, que é PDF avulso com compra sem login. Para o
+  // comprador impaciente não bater numa parede (preencher o cartão e receber
+  // "Não autenticado"), detectamos a sessão na entrada: sem conta, mostramos um
+  // único passo — criar conta grátis em 10s — que volta direto pro checkout.
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null)
+
+  useEffect(() => {
+    let active = true
+    fetch('/api/auth/me', { cache: 'no-store' })
+      .then((r) => { if (active) setIsLoggedIn(r.ok) })
+      .catch(() => { if (active) setIsLoggedIn(false) })
+    return () => { active = false }
+  }, [])
+
+  // Cria a conta grátis (3 campos) e retorna exatamente pra este checkout, com
+  // o plano escolhido preservado — o comprador só precisa clicar em pagar ao voltar.
+  function goCreateAccountAndReturn() {
+    const back = `/manual-clinico/checkout?plan=${selectedPlanKey}`
+    router.push(`/auth/login?mode=register&redirect=${encodeURIComponent(back)}`)
+  }
 
   const enabledPlans = useMemo<ProductPlan[]>(
     () => (product?.plans || []).filter(p => p.enabled),
@@ -262,6 +283,11 @@ export default function ManualClinicoCheckoutPage() {
   }, [])
 
   async function unlockFree() {
+    // Sem conta não há onde liberar o acesso — manda criar (10s) e voltar.
+    if (isLoggedIn === false) {
+      goCreateAccountAndReturn()
+      return
+    }
     setFreeLoading(true)
     setError('')
     try {
@@ -551,6 +577,27 @@ export default function ManualClinicoCheckoutPage() {
                     >
                       {freeLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
                       Liberar acesso
+                    </button>
+                  </div>
+                ) : isLoggedIn === null ? (
+                  <div className="flex items-center justify-center py-12">
+                    <Loader2 className="h-6 w-6 animate-spin text-emerald-300" />
+                  </div>
+                ) : isLoggedIn === false ? (
+                  // Comprador deslogado: um único passo antes do pagamento. Nada de
+                  // preencher cartão pra só então descobrir que precisa de conta.
+                  <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/[0.07] p-6 text-center">
+                    <Crown className="mx-auto mb-3 h-9 w-9 text-emerald-300" />
+                    <h2 className="text-xl font-black">Falta só criar sua conta</h2>
+                    <p className="mt-2 text-sm text-white/60">
+                      Leva 10 segundos (nome, email e senha). Você volta direto pra
+                      cá com o plano já escolhido — é só pagar.
+                    </p>
+                    <button
+                      onClick={goCreateAccountAndReturn}
+                      className="mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald-300 text-sm font-black text-emerald-950 transition hover:bg-emerald-200"
+                    >
+                      Criar conta grátis e continuar
                     </button>
                   </div>
                 ) : (

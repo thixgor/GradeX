@@ -281,6 +281,15 @@ export default function LoginPage() {
         // prometido no anúncio). É o evento que o algoritmo do Meta usa para
         // aprender a encontrar quem se cadastra.
         trackMeta('CompleteRegistration', { content_name: 'Cadastro gratuito' })
+        // Se o cadastro veio de um destino explícito (?redirect=, ex.: o checkout
+        // do Manual), o cookie de sessão já foi setado no registro — leva direto
+        // pra lá em vez da tela "confirme seu email", pra não cortar o comprador
+        // impaciente no meio da compra. Sem redirect explícito, mantém o aviso.
+        if (searchParams.get('redirect')) {
+          clearBootstrapCache()
+          window.location.assign(redirectTo)
+          return
+        }
         setIsRegistered(true)
       } else if (data.requiresEmailCode) {
         // Conta de administrador: exige código enviado por email antes de entrar.
