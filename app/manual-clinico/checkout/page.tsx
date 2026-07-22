@@ -1,7 +1,8 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { trackMeta } from '@/lib/meta-pixel'
 import { ArrowLeft, BookOpen, Check, Flame, Lock, Loader2, Percent, Sparkles, TrendingDown, X, Clock, Crown } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
 import { usePricingEventState, usePricingEventStates } from '@/components/pricing-events/usePricingEventState'
@@ -208,6 +209,21 @@ export default function ManualClinicoCheckoutPage() {
   useEffect(() => {
     setAppliedCoupon(null)
   }, [selectedPlanKey])
+
+  // Conversão de meio de funil: usuário chegou no checkout. Dispara uma única
+  // vez, assim que há um plano selecionado, para o Meta poder otimizar a
+  // campanha por quem realmente avança para a compra.
+  const initiateCheckoutFired = useRef(false)
+  useEffect(() => {
+    if (initiateCheckoutFired.current || !selectedPlan) return
+    initiateCheckoutFired.current = true
+    trackMeta('InitiateCheckout', {
+      value: selectedPlan.price,
+      currency: 'BRL',
+      content_name: 'Manual Clínico',
+      content_type: 'product',
+    })
+  }, [selectedPlan])
 
   const pricingEventStateData = usePricingEventState(selectedPlan?.pricingEventId || product?.pricingEventId || null)
   const pricingEventState = pricingEventStateData.state

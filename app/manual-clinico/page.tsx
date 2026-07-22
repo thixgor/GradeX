@@ -48,6 +48,7 @@ import {
 } from 'lucide-react'
 import { AREAS_SAUDE, SISTEMAS_FISIOLOGICOS, type AreaSaude, type SistemaFisiologico } from '@/lib/types/manual-clinico'
 import { clearAllManualHighlights, hasAnyManualHighlights } from '@/lib/manual-clinico-highlights'
+import { trackMeta } from '@/lib/meta-pixel'
 import { PricingEventCountdown } from '@/components/pricing-events/PricingEventCountdown'
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
 
@@ -413,6 +414,30 @@ function ManualClinicoContent() {
 
   useEffect(() => {
     setHasHighlights(hasAnyManualHighlights())
+  }, [])
+
+  // Conversão de venda: ao voltar do checkout com ?purchase=success, dispara o
+  // Purchase para o Meta (valor real pago vem na URL). Limpa os parâmetros em
+  // seguida para não recontar a compra caso o usuário recarregue a página.
+  // Nota: captura pagamentos aprovados na hora (cartão) e liberações gratuitas.
+  // Pix/boleto confirmam depois via webhook — a captura precisa desses exige a
+  // Conversions API (server-side), planejada como segunda etapa.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('purchase') !== 'success') return
+    const parsed = Number(params.get('value'))
+    trackMeta('Purchase', {
+      value: Number.isFinite(parsed) ? parsed : 0,
+      currency: 'BRL',
+      content_name: 'Manual Clínico',
+      content_type: 'product',
+    })
+    params.delete('purchase')
+    params.delete('value')
+    params.delete('plan')
+    const qs = params.toString()
+    window.history.replaceState({}, '', window.location.pathname + (qs ? `?${qs}` : ''))
   }, [])
 
   async function handleGeneratePDF() {

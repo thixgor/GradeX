@@ -11,6 +11,7 @@ import { MobileFloatingDock } from '@/components/mobile-floating-dock'
 import { FloatingDockProvider } from '@/context/FloatingDockContext'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import { MetaPixel } from '@/components/meta-pixel'
 import { LiteModeProvider } from '@/context/LiteModeContext'
 import { UIPreferencesProvider } from '@/context/UIPreferencesContext'
 import { MaterialCartProvider } from '@/context/MaterialCartContext'
@@ -213,6 +214,7 @@ export default function RootLayout({
           </MaterialCartProvider>
           <Analytics />
           <SpeedInsights />
+          <MetaPixel />
         </ThemeProvider>
         </UIPreferencesProvider>
         </LiteModeProvider>

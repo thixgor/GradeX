@@ -136,6 +136,21 @@ function setMetaPrice(html: string, price: number): string {
   return html.split('{{LDPG_META_PRICE}}').join(formatBRL(price))
 }
 
+// Injeta o Meta Pixel no <head> da landing estática. Esta página é servida
+// como HTML puro, fora da árvore React, então o <MetaPixel> do layout raiz não
+// a cobre — o Pixel precisa ser inserido aqui para registrar a chegada do
+// tráfego do anúncio (PageView) e a visualização do produto (ViewContent).
+// Fica desligado enquanto NEXT_PUBLIC_META_PIXEL_ID não estiver definido.
+function injectMetaPixel(html: string): string {
+  const pixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID || ''
+  if (!pixelId) return html
+  const id = JSON.stringify(pixelId)
+  const snippet = `<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init',${id});fbq('track','PageView');fbq('track','ViewContent',{content_name:'Manual Clínico',content_type:'product'});</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=${encodeURIComponent(pixelId)}&ev=PageView&noscript=1" alt=""/></noscript>
+</head>`
+  return html.replace('</head>', snippet)
+}
+
 function cheapestDefaultPrice(): number {
   const enabled = DEFAULT_MANUAL_CLINICO_PLANS.filter(p => p.enabled)
   const prices = (enabled.length ? enabled : DEFAULT_MANUAL_CLINICO_PLANS).map(p => p.price)
@@ -143,7 +158,7 @@ function cheapestDefaultPrice(): number {
 }
 
 function fallbackResponse() {
-  const html = setMetaPrice(loadTemplate(), cheapestDefaultPrice())
+  const html = injectMetaPixel(setMetaPrice(loadTemplate(), cheapestDefaultPrice()))
   return new Response(html, {
     headers: {
       'content-type': 'text/html; charset=utf-8',
@@ -194,6 +209,8 @@ export async function GET() {
     console.error('[ldpg-mnclinico] render error:', error)
     return fallbackResponse()
   }
+
+  html = injectMetaPixel(html)
 
   return new Response(html, {
     headers: {

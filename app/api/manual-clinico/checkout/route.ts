@@ -233,7 +233,7 @@ export async function POST(request: NextRequest) {
       free: true,
       success: true,
       amount: 0,
-      successRedirect: '/manual-clinico?purchase=success',
+      successRedirect: `/manual-clinico?purchase=success&value=0&plan=${plan.key}`,
     })
   }
 
@@ -366,7 +366,7 @@ export async function POST(request: NextRequest) {
       boleto: result.boleto || null,
       statusDetail: result.statusDetail,
       amount,
-      successRedirect: '/manual-clinico?purchase=success',
+      successRedirect: `/manual-clinico?purchase=success&value=${amount}&plan=${plan.key}`,
     })
   } catch (error: any) {
     console.error('[manual-clinico/checkout] erro:', error)

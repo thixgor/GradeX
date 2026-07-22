@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Logo } from '@/components/logo'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { trackMeta } from '@/lib/meta-pixel'
 import {
   Eye,
   EyeOff,
@@ -315,6 +316,10 @@ export default function LoginPage() {
       }
 
       if (!isLogin) {
+        // Conversão de topo do funil: conta grátis criada (o "teste grátis"
+        // prometido no anúncio). É o evento que o algoritmo do Meta usa para
+        // aprender a encontrar quem se cadastra.
+        trackMeta('CompleteRegistration', { content_name: 'Cadastro gratuito' })
         setIsRegistered(true)
       } else if (data.requiresEmailCode) {
         // Conta de administrador: exige código enviado por email antes de entrar.
