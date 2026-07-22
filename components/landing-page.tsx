@@ -362,11 +362,22 @@ function PrimaryCTA({
   )
 }
 
-function GhostCTA({ children, href }: { children: ReactNode; href: string }) {
+function GhostCTA({
+  children,
+  href,
+  className = '',
+}: {
+  children: ReactNode
+  href: string
+  className?: string
+}) {
   return (
     <SmartLink
       href={href}
-      className="group relative inline-flex items-center justify-center overflow-hidden rounded-full border border-da-amber/60 px-7 py-3.5 font-da-display font-semibold text-da-amber transition active:scale-[0.98]"
+      className={
+        'group relative inline-flex items-center justify-center overflow-hidden rounded-full border border-da-amber/60 px-7 py-3.5 font-da-display font-semibold text-da-amber transition active:scale-[0.98] ' +
+        className
+      }
     >
       <span className="absolute inset-0 origin-bottom scale-y-0 bg-da-amber transition-transform duration-300 ease-out group-hover:scale-y-100" />
       <span className="relative z-10 transition-colors duration-200 group-hover:text-[#0B1F1A]">
@@ -699,27 +710,27 @@ function Hero({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: bool
             </p>
           </Reveal>
           <Reveal delay={240}>
-            {/* Um único caminho. Sem botões concorrentes disputando a atenção:
-                cria a conta grátis agora — o resto da página convence quem rola. */}
-            <div className="mt-9 flex flex-col items-start gap-3">
-              <PrimaryCTA href={signupHref} className="!px-9 !py-4 text-lg">
+            {/* Dois botões grandes, do mesmo tamanho: criar conta e entrar. Alvos
+                de toque generosos — o comprador impaciente não caça link pequeno. */}
+            <div className="mt-9 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+              <PrimaryCTA
+                href={signupHref}
+                className="!px-9 !py-4 text-lg w-full justify-center sm:w-auto"
+              >
                 {isLoggedIn ? 'Ir para o dashboard' : 'Criar minha conta grátis'}
               </PrimaryCTA>
-              <p className="font-da-mono text-xs text-da-muted">
-                Leva 10 segundos. Sem cartão. Sem pegadinha.
-                {!isLoggedIn && (
-                  <>
-                    {' · '}
-                    <SmartLink
-                      href="/auth/login"
-                      className="text-da-amber underline underline-offset-4 hover:text-da-paper"
-                    >
-                      Já tenho conta
-                    </SmartLink>
-                  </>
-                )}
-              </p>
+              {!isLoggedIn && (
+                <GhostCTA
+                  href="/auth/login"
+                  className="!px-9 !py-4 text-lg w-full justify-center sm:w-auto"
+                >
+                  Já tenho conta
+                </GhostCTA>
+              )}
             </div>
+            <p className="mt-4 font-da-mono text-xs text-da-muted">
+              Leva 10 segundos. Sem cartão. Sem pegadinha.
+            </p>
           </Reveal>
         </div>
 
