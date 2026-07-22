@@ -41,6 +41,7 @@ import {
   Lock,
   Crown,
   ArrowRight,
+  MousePointerClick,
 } from 'lucide-react'
 import { type Patologia, type AreaSaude } from '@/lib/types/manual-clinico'
 import { FocusSessionButton } from '@/components/focus-session-button'
@@ -1197,6 +1198,7 @@ function SectionNav({ sections, media = [], slug }: { sections: SectionEntry[]; 
   const [isTouching, setIsTouching] = useState(false)
   const [showMediaGallery, setShowMediaGallery] = useState(false)
   const [mediaHighlightUrl, setMediaHighlightUrl] = useState<string | null>(null)
+  const [showHint, setShowHint] = useState(false)
   const searchParams = useSearchParams()
   const navRef = useRef<HTMLElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -1235,6 +1237,29 @@ function SectionNav({ sections, media = [], slug }: { sections: SectionEntry[]; 
       }
     }
   }, [searchParams, media])
+
+  // ── First-visit coach mark for the nav button ──────────────────
+  const dismissHint = useCallback(() => {
+    setShowHint(false)
+    try { localStorage.setItem('mc-nav-hint-seen', '1') } catch {}
+  }, [])
+
+  // Show the hint shortly after entering (only until the user has seen it)
+  useEffect(() => {
+    if (sections.length === 0 || typeof window === 'undefined') return
+    try {
+      if (localStorage.getItem('mc-nav-hint-seen') === '1') return
+    } catch {}
+    const t = setTimeout(() => setShowHint(true), 1100)
+    // Auto-dismiss if ignored for a while so it never gets in the way
+    const auto = setTimeout(() => setShowHint(false), 13000)
+    return () => { clearTimeout(t); clearTimeout(auto) }
+  }, [sections.length])
+
+  // Opening the nav means the user got the message — retire the hint for good
+  useEffect(() => {
+    if (expanded) dismissHint()
+  }, [expanded, dismissHint])
 
   // ── Intersection Observer ───────────────────────────────────────
   useEffect(() => {
@@ -1357,23 +1382,76 @@ function SectionNav({ sections, media = [], slug }: { sections: SectionEntry[]; 
         className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center transition-all duration-300 touch-none select-none ${
           expanded
             ? 'opacity-0 pointer-events-none scale-75'
-            : 'opacity-70 hover:opacity-100 active:scale-95'
+            : showHint
+              ? 'opacity-100 bg-primary/10 border border-primary/40 shadow-lg shadow-primary/20 active:scale-95'
+              : 'opacity-70 hover:opacity-100 active:scale-95'
         }`}
         aria-label="Navegação de seções"
       >
-        
-        
-        
+        {/* Attention ring while the coach mark is active */}
+        {showHint && !expanded && (
+          <>
+            <span className="absolute inset-0 rounded-2xl ring-2 ring-primary/50 animate-ping" />
+            <span className="absolute inset-0 rounded-2xl ring-2 ring-primary/50" />
+          </>
+        )}
         <div className="relative z-10 flex flex-col items-center gap-1">
-          <span className="block w-4 sm:w-5 h-[2.5px] rounded-full bg-foreground/60" />
-          <span className="block w-3 sm:w-3.5 h-[2.5px] rounded-full bg-foreground/40" />
-          <span className="block w-4 sm:w-5 h-[2.5px] rounded-full bg-foreground/60" />
+          <span className={`block w-4 sm:w-5 h-[2.5px] rounded-full ${showHint ? 'bg-primary' : 'bg-foreground/60'}`} />
+          <span className={`block w-3 sm:w-3.5 h-[2.5px] rounded-full ${showHint ? 'bg-primary/70' : 'bg-foreground/40'}`} />
+          <span className={`block w-4 sm:w-5 h-[2.5px] rounded-full ${showHint ? 'bg-primary' : 'bg-foreground/60'}`} />
         </div>
         {/* Active section dot indicator */}
         {activeId && (
           <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-primary shadow-sm shadow-primary/50 border border-background" />
         )}
       </button>
+
+      {/* ── First-visit coach mark ── */}
+      <AnimatePresence>
+        {showHint && !expanded && (
+          <motion.div
+            initial={{ opacity: 0, y: -8, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.9 }}
+            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute top-full mt-3 z-20 w-max max-w-[250px]"
+            style={{ [opensLeft ? 'right' : 'left']: 0 }}
+          >
+            {/* Arrow pointing up at the button */}
+            <div
+              className={`absolute -top-1.5 h-3 w-3 rotate-45 rounded-[3px] bg-primary ${opensLeft ? 'right-4' : 'left-4'}`}
+            />
+            <div className="relative rounded-2xl bg-primary px-3.5 py-3 text-primary-foreground shadow-xl shadow-primary/30">
+              <button
+                onClick={dismissHint}
+                className="absolute top-2 right-2 rounded-lg p-1 text-primary-foreground/70 transition-colors hover:bg-white/15 hover:text-primary-foreground"
+                aria-label="Fechar aviso"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+              <div className="flex items-start gap-2.5 pr-4">
+                <div className="mt-0.5 shrink-0 rounded-lg bg-white/15 p-1.5">
+                  <MousePointerClick className="h-4 w-4" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[13px] font-bold leading-snug">Navegue por aqui 👆</p>
+                  <p className="mt-1 text-[11.5px] leading-snug text-primary-foreground/85">
+                    Use este botão para pular entre as seções da patologia e abrir a galeria de mídia.
+                  </p>
+                </div>
+              </div>
+              <div className="mt-2.5 flex justify-end">
+                <button
+                  onClick={() => { setExpanded(true) }}
+                  className="rounded-lg bg-white/15 px-2.5 py-1 text-[11px] font-bold transition-colors hover:bg-white/25"
+                >
+                  Mostrar seções
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── Expanded panel ── */}
       <AnimatePresence>
