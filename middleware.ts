@@ -210,7 +210,17 @@ export async function middleware(request: NextRequest) {
         { status: 401 }
       ))
     }
-    // Pages redirecionam para login
+    // Checkout do Manual sem login → manda pra compra sem login (/comprar), que
+    // vende o Manual por Serial Key (nome/email/telefone), em vez de obrigar a
+    // criar conta. Preserva o plano escolhido (?plan= → ?planKey=).
+    if (pathname === '/manual-clinico/checkout') {
+      const comprarUrl = new URL('/comprar', request.url)
+      comprarUrl.searchParams.set('productType', 'manual_clinico')
+      const plan = request.nextUrl.searchParams.get('plan')
+      if (plan) comprarUrl.searchParams.set('planKey', plan)
+      return withNoIndex(NextResponse.redirect(comprarUrl))
+    }
+    // Demais páginas protegidas redirecionam para login
     const loginUrl = new URL('/auth/login', request.url)
     loginUrl.searchParams.set('redirect', pathname + request.nextUrl.search)
     return withNoIndex(NextResponse.redirect(loginUrl))
