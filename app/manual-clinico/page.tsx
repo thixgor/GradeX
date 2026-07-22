@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import { AppShell, useAppShell } from '@/components/app-shell'
@@ -526,7 +526,15 @@ function ManualClinicoContent() {
     }
   }, [busca, areasAtivas, sistemaAtivo, page])
 
+  // Pula o disparo no mount: o efeito de [page] abaixo já faz a busca inicial.
+  // Sem isso a página abria com DUAS buscas simultâneas (uma imediata e outra
+  // após o debounce), causando o "pisca-pisca" da lista logo ao carregar.
+  const didMountFetch = useRef(false)
   useEffect(() => {
+    if (!didMountFetch.current) {
+      didMountFetch.current = true
+      return
+    }
     const timer = setTimeout(() => {
       setPage(1)
       fetchPatologias()
@@ -563,6 +571,15 @@ function ManualClinicoContent() {
       return
     }
     router.push(target)
+  }
+
+  // Teste grátis: leva o visitante deslogado direto para criar a conta, já
+  // apontando o retorno para o Manual (ou para uma patologia específica), onde
+  // as aberturas gratuitas ficam liberadas. É o caminho que faltava — antes o
+  // único botão mandava todo mundo para o checkout.
+  function goToFreeTrial(slug?: string) {
+    const dest = slug ? `/manual-clinico/${slug}` : '/manual-clinico'
+    router.push(`/auth/login?mode=register&redirect=${encodeURIComponent(dest)}`)
   }
 
   async function handleDeclineRenewal() {
@@ -680,20 +697,48 @@ function ManualClinicoContent() {
               ) : (
                 <>
                   {!manualAccess.hasFullAccess && product?.isActive && enabledPlans.length > 0 && (
-                    <div className="mt-6 flex flex-col items-center gap-2">
-                      <button
-                        onClick={() => goToCheckout()}
-                        className="group inline-flex h-12 sm:h-14 items-center justify-center gap-2.5 rounded-md bg-secondary px-6 sm:px-7 text-sm sm:text-base font-bold text-secondary-foreground shadow-md transition hover:bg-secondary/90 active:scale-[0.98]"
-                      >
-                        <Crown className="h-5 w-5" />
-                        {isAuthenticated ? 'Desbloquear o Manual Clínico' : 'Entrar e desbloquear'}
-                        <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />
-                      </button>
-                      <p className="text-xs font-bold text-emerald-700 dark:text-emerald-300">
-                        {hasActiveTier
-                          ? <>Por apenas <span className="font-black">{formatBRL(cheapestAfterTier)}</span> <span className="line-through text-muted-foreground/60 ml-1 font-bold">{formatBRL(cheapestPlanPrice)}</span></>
-                          : <>Por apenas <span className="font-black">{formatBRL(cheapestPlanPrice)}</span></>}
-                      </p>
+                    <div className="mt-6 flex flex-col items-center gap-2.5">
+                      {!isAuthenticated && freeQuota?.mode === 'quantity' && freeQuota.limit > 0 ? (
+                        <>
+                          {/* Deslogado com teste grátis: registro-primeiro */}
+                          <button
+                            onClick={() => goToFreeTrial()}
+                            className="group inline-flex h-12 sm:h-14 items-center justify-center gap-2.5 rounded-md bg-emerald-500 px-6 sm:px-7 text-sm sm:text-base font-bold text-white shadow-md shadow-emerald-500/25 transition hover:bg-emerald-500/90 active:scale-[0.98]"
+                          >
+                            <Sparkles className="h-5 w-5" />
+                            Criar conta grátis e testar {freeQuota.limit} patologias
+                            <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />
+                          </button>
+                          <button
+                            onClick={() => goToCheckout()}
+                            className="text-xs font-bold text-muted-foreground underline-offset-4 transition hover:text-foreground hover:underline"
+                          >
+                            Já quero desbloquear tudo · {formatBRL(hasActiveTier ? cheapestAfterTier : cheapestPlanPrice)}
+                          </button>
+                          <p className="text-[11px] font-medium text-muted-foreground/70">Sem cartão · leva menos de 1 minuto</p>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => goToCheckout()}
+                            className="group inline-flex h-12 sm:h-14 items-center justify-center gap-2.5 rounded-md bg-secondary px-6 sm:px-7 text-sm sm:text-base font-bold text-secondary-foreground shadow-md transition hover:bg-secondary/90 active:scale-[0.98]"
+                          >
+                            <Crown className="h-5 w-5" />
+                            Desbloquear o Manual Clínico
+                            <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />
+                          </button>
+                          <p className="text-xs font-bold text-emerald-700 dark:text-emerald-300">
+                            {hasActiveTier
+                              ? <>Por apenas <span className="font-black">{formatBRL(cheapestAfterTier)}</span> <span className="line-through text-muted-foreground/60 ml-1 font-bold">{formatBRL(cheapestPlanPrice)}</span></>
+                              : <>Por apenas <span className="font-black">{formatBRL(cheapestPlanPrice)}</span></>}
+                          </p>
+                          {isAuthenticated && freeQuota?.mode === 'quantity' && freeQuota.limit > 0 && freeQuota.remaining > 0 && (
+                            <p className="text-[11px] font-medium text-muted-foreground/70">
+                              Ou escolha uma patologia abaixo — você tem {freeQuota.remaining} de {freeQuota.limit} aberturas grátis
+                            </p>
+                          )}
+                        </>
+                      )}
                     </div>
                   )}
                   <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
@@ -857,13 +902,24 @@ function ManualClinicoContent() {
                   </p>
                 </div>
               </div>
-              <button
-                onClick={() => goToCheckout()}
-                className="group inline-flex h-11 items-center justify-center gap-2 rounded-md bg-primary px-5 text-sm font-bold text-primary-foreground shadow-sm transition hover:bg-primary/90 active:scale-[0.98]"
-              >
-                Desbloquear agora
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-              </button>
+              {!isAuthenticated && freeQuota?.mode === 'quantity' && freeQuota.limit > 0 ? (
+                <button
+                  onClick={() => goToFreeTrial()}
+                  className="group inline-flex h-11 items-center justify-center gap-2 rounded-md bg-emerald-500 px-5 text-sm font-bold text-white shadow-sm transition hover:bg-emerald-500/90 active:scale-[0.98]"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  Criar conta grátis
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                </button>
+              ) : (
+                <button
+                  onClick={() => goToCheckout()}
+                  className="group inline-flex h-11 items-center justify-center gap-2 rounded-md bg-primary px-5 text-sm font-bold text-primary-foreground shadow-sm transition hover:bg-primary/90 active:scale-[0.98]"
+                >
+                  Desbloquear agora
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                </button>
+              )}
             </div>
           </div>
         )}
@@ -1005,7 +1061,10 @@ function ManualClinicoContent() {
         )}
 
         {/* ══════════ RESULTS ══════════ */}
-        {loading ? (
+        {/* Spinner grande só na PRIMEIRA carga (lista vazia). Nas buscas/filtros
+            seguintes a lista antiga fica visível (levemente esmaecida), então a
+            página não "pisca" a cada tecla — a maior fonte da sensação de travado. */}
+        {loading && patologias.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
             <div className="relative">
               <div className="h-10 w-10 rounded-full border-2 border-primary/20" />
@@ -1030,12 +1089,18 @@ function ManualClinicoContent() {
           </div>
         ) : patologias.length > 0 ? (
           <>
-            <div className="grid gap-2.5">
+            <div className={`grid gap-2.5 transition-opacity duration-200 ${loading ? 'opacity-50 pointer-events-none' : ''}`}>
               {patologias.map((patologia, idx) => (
                 <div
                   key={patologia._id}
                   onClick={() => {
-                    router.push(`/manual-clinico/${patologia.slug}`)
+                    // Patologia grátis mas exige login: manda criar conta e volta
+                    // direto pra ela (abre de graça). Antes caía num muro de login.
+                    if (patologia.accessStatus === 'login_required') {
+                      goToFreeTrial(patologia.slug)
+                    } else {
+                      router.push(`/manual-clinico/${patologia.slug}`)
+                    }
                   }}
                   className={`group relative rounded-xl border border-border bg-card
                     hover:border-primary/40 hover:shadow-sm
