@@ -380,9 +380,6 @@ const TOUR_STEPS: TourStep[] = [
 export default function ManualClinicoPage() {
   const [showInterstitial, setShowInterstitial] = useState(false)
   const [interstitialChecked, setInterstitialChecked] = useState(false)
-  const [tourOpen, setTourOpen] = useState(false)
-  const [tourSteps, setTourSteps] = useState<TourStep[]>([])
-  const tourAutoChecked = useRef(false)
 
   useEffect(() => {
     setShowInterstitial(true)
@@ -454,6 +451,9 @@ function ManualClinicoContent() {
   const [accessLoaded, setAccessLoaded] = useState(false)
   const [renewalDeclining, setRenewalDeclining] = useState(false)
   const [renewalDeclineConfirm, setRenewalDeclineConfirm] = useState(false)
+  const [tourOpen, setTourOpen] = useState(false)
+  const [tourSteps, setTourSteps] = useState<TourStep[]>([])
+  const tourAutoChecked = useRef(false)
   const { user, loading: appShellLoading } = useAppShell()
   const isAuthenticated = !!user
   const freeQuota = manualAccess.freeQuota
