@@ -65,7 +65,7 @@ function renderPromoPrice(cheapestFinal: number, cheapestOriginal: number, hasDi
     : ''
   return `
         <span class="from">
-          <span class="from-lbl">Por apenas</span>
+          <span class="from-lbl">Acesso completo a partir de</span>
           <span class="from-row">${oldPart}<span class="from-val">${formatBRL(cheapestFinal)}</span></span>
         </span>
       `
@@ -118,10 +118,10 @@ function renderPlanGrid(plan: ManualClinicoPublicPlan, eventMap: Map<string, Pri
     ? `<span style="font-size:13px;opacity:.55;text-decoration:line-through;">De ${formatBRL(original)}</span>`
     : ''
   return `
-      <a href="https://domineaqui.com.br/manual-clinico" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:8px;padding:20px;border-radius:18px;border:1px solid rgba(48,224,147,.30);background:rgba(48,224,147,.06);position:relative;">
+      <a href="/manual-clinico/checkout" rel="noopener" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:8px;padding:20px;border-radius:18px;border:1px solid rgba(48,224,147,.30);background:rgba(48,224,147,.06);position:relative;">
         ${tierBadge}
-        <span style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;opacity:.85;">Manual Clínico</span>
-        <span style="font-size:13px;opacity:.7;">Acesso completo — 300+ patologias</span>
+        <span style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;opacity:.85;">Acesso completo</span>
+        <span style="font-size:13px;opacity:.7;">300+ patologias + Manual do ECG</span>
         ${oldPriceLine}
         <span style="font-size:32px;font-weight:900;color:#f3d999;">${formatBRL(final)}</span>
         <span style="margin-top:auto;font-size:13px;font-weight:700;color:#30e093;">Desbloquear agora →</span>
