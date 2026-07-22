@@ -37,44 +37,37 @@ export async function POST(request: NextRequest) {
       role = 'user', recaptchaToken,
     } = body
 
-    if (!email || !password || !name || !dateOfBirth) {
+    // Funil de baixa fricção: o cadastro grátis pede só o essencial (nome, email
+    // e senha). Todo o resto — data de nascimento, profissão, estado, telefone,
+    // especialidade/residência/unidade — é opcional aqui e coletado depois,
+    // dentro do app (progressive profiling). Menos campos no topo do funil =
+    // mais contas criadas. Os campos, quando enviados, ainda são validados e
+    // gravados; quando ausentes, o cadastro segue normalmente.
+    if (!email || !password || !name) {
       return NextResponse.json(
-        { error: 'Email, senha, nome e data de nascimento são obrigatórios' },
+        { error: 'Nome, email e senha são obrigatórios' },
         { status: 400 }
       )
     }
 
-    if (!['medico', 'academico', 'residente'].includes(profession)) {
+    // Validação leniente: só rejeita valores presentes E inválidos. Ausência é ok.
+    if (profession && !['medico', 'academico', 'residente'].includes(profession)) {
       return NextResponse.json(
-        { error: 'Selecione se você é médico, acadêmico ou residente' },
+        { error: 'Profissão inválida' },
         { status: 400 }
       )
     }
 
-    if (!isValidStateUf(state)) {
+    if (state && !isValidStateUf(state)) {
       return NextResponse.json(
-        { error: 'Selecione um estado válido' },
+        { error: 'Estado inválido' },
         { status: 400 }
       )
     }
 
-    if (!isValidBrazilPhone(phone)) {
+    if (phone && !isValidBrazilPhone(phone)) {
       return NextResponse.json(
-        { error: 'Informe um telefone válido com DDD' },
-        { status: 400 }
-      )
-    }
-
-    if (profession === 'medico' && !specialty) {
-      return NextResponse.json(
-        { error: 'Especialidade é obrigatória para médicos' },
-        { status: 400 }
-      )
-    }
-
-    if (profession === 'residente' && (!residencySpecialty || !residencyHospital || !residencyYear)) {
-      return NextResponse.json(
-        { error: 'Dados da residência são obrigatórios para residentes' },
+        { error: 'Telefone inválido' },
         { status: 400 }
       )
     }
@@ -84,13 +77,6 @@ export async function POST(request: NextRequest) {
     if (!recaptchaResult.success) {
       return NextResponse.json(
         { error: recaptchaResult.error || 'Falha na verificação do reCAPTCHA' },
-        { status: 400 }
-      )
-    }
-
-    if (profession === 'academico' && !afyaUnit) {
-      return NextResponse.json(
-        { error: 'Unidade é obrigatória para acadêmicos' },
         { status: 400 }
       )
     }
@@ -136,27 +122,29 @@ export async function POST(request: NextRequest) {
     // e o semestre-âncora atual para permitir o avanço automático por semestre.
     const periodoBase = normalizePeriodo(periodo)
 
-    // Cria o usuário
+    // Cria o usuário. Só o essencial é garantido; os demais campos entram apenas
+    // quando o cadastro os enviou (o perfil é completado depois, dentro do app).
     const hashedPassword = await hashPassword(password)
     const newUser: User = {
       email,
       password: hashedPassword,
       name,
-      dateOfBirth: new Date(dateOfBirth),
-      profession,
-      state,
-      phone,
-      specialty: profession === 'medico' ? specialty : undefined,
-      residencySpecialty: profession === 'residente' ? residencySpecialty : undefined,
-      residencyHospital: profession === 'residente' ? residencyHospital : undefined,
-      residencyYear: profession === 'residente' ? residencyYear : undefined,
-      isAfyaMedicineStudent: profession === 'academico',
-      afyaUnit: profession === 'academico' ? afyaUnit : undefined,
       role: role as 'admin' | 'user',
       createdAt: new Date(),
       lastLoginAt: new Date(),
       emailVerified: false,
       verificationToken,
+      ...(dateOfBirth ? { dateOfBirth: new Date(dateOfBirth) } : {}),
+      ...(profession ? { profession } : {}),
+      ...(state ? { state } : {}),
+      ...(phone ? { phone } : {}),
+      ...(profession === 'medico' && specialty ? { specialty } : {}),
+      ...(profession === 'residente'
+        ? { residencySpecialty, residencyHospital, residencyYear }
+        : {}),
+      ...(profession === 'academico'
+        ? { isAfyaMedicineStudent: true, ...(afyaUnit ? { afyaUnit } : {}) }
+        : {}),
       ...(periodoBase !== null
         ? { periodoBase, periodoBaseRef: getCurrentSemesterRef() }
         : {}),

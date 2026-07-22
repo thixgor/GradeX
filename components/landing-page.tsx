@@ -681,36 +681,45 @@ function Hero({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: bool
         <div className="relative z-10 max-w-2xl">
           <Reveal>
             <p className="font-da-mono text-xs uppercase tracking-[0.28em] text-da-amber">
-              A plataforma completa de Medicina
+              Feito pra quem não tem tempo a perder
             </p>
           </Reveal>
           <Reveal delay={80}>
             <h1 className="mt-5 font-da-display text-[2.7rem] font-semibold leading-[0.98] tracking-tighter md:text-[4.4rem]">
-              Pare de estudar
+              Tudo pra passar
               <br />
-              com cinco abas abertas.
+              na prova. Num lugar só.
             </h1>
           </Reveal>
           <Reveal delay={160}>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-da-muted">
-              Manual Clínico, flashcards, provas e questões por IA, banco de questões e cronograma.
-              Tudo o que você abre em cinco lugares diferentes, reunido em um ecossistema que você
-              usa por dentro. E que continua ali quando você fecha o notebook.
+              Você abre e o próximo passo já está na sua frente. Manual Clínico, questões,
+              flashcards e cronograma prontos — sem decidir por onde começar, sem dez abas
+              abertas, sem aquela sensação de que não vai dar conta.
             </p>
           </Reveal>
           <Reveal delay={240}>
-            <div className="mt-9 flex flex-wrap items-center gap-4">
-              <PrimaryCTA href={signupHref}>
-                {isLoggedIn ? 'Ir para o dashboard' : 'Criar conta grátis'}
+            {/* Um único caminho. Sem botões concorrentes disputando a atenção:
+                cria a conta grátis agora — o resto da página convence quem rola. */}
+            <div className="mt-9 flex flex-col items-start gap-3">
+              <PrimaryCTA href={signupHref} className="!px-9 !py-4 text-lg">
+                {isLoggedIn ? 'Ir para o dashboard' : 'Criar minha conta grátis'}
               </PrimaryCTA>
-              {!isLoggedIn && <GhostCTA href="/auth/login">Entrar</GhostCTA>}
-              <GhostCTA href="#plataforma">Ver a plataforma</GhostCTA>
+              <p className="font-da-mono text-xs text-da-muted">
+                Leva 10 segundos. Sem cartão. Sem pegadinha.
+                {!isLoggedIn && (
+                  <>
+                    {' · '}
+                    <SmartLink
+                      href="/auth/login"
+                      className="text-da-amber underline underline-offset-4 hover:text-da-paper"
+                    >
+                      Já tenho conta
+                    </SmartLink>
+                  </>
+                )}
+              </p>
             </div>
-          </Reveal>
-          <Reveal delay={320}>
-            <p className="mt-4 font-da-mono text-xs text-da-muted">
-              Comece de graça. Sem cartão. Sem pegadinha.
-            </p>
           </Reveal>
         </div>
 
@@ -782,6 +791,33 @@ function Hero({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: bool
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Pista de rolagem: muito visitante de anúncio não percebe que a página
+          continua abaixo da dobra. Uma seta que pulsa (e leva pra próxima seção
+          num toque) resolve sem exigir que ele "descubra" o scroll. */}
+      <div className="relative mx-auto mb-2 mt-4 flex max-w-7xl justify-center px-5 md:px-8">
+        <a
+          href="#plataforma"
+          aria-label="Ver a plataforma"
+          className="group inline-flex flex-col items-center gap-1 text-da-muted transition hover:text-da-amber"
+        >
+          <span className="font-da-mono text-[10px] uppercase tracking-[0.3em]">
+            Role para ver tudo
+          </span>
+          <svg
+            viewBox="0 0 24 24"
+            className="h-5 w-5 animate-bounce"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden
+          >
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </a>
       </div>
 
       {/* trilho de números */}

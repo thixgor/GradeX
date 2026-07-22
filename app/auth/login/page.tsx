@@ -27,14 +27,6 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { BanReasonLabels, BanReason } from '@/lib/types'
 import { Ban, AlertCircle } from 'lucide-react'
-import { PERIODO_OPTIONS, formatPeriodoLabel } from '@/lib/user-periodo'
-import { BRAZIL_STATES } from '@/lib/brazil-states'
-import { MEDICAL_SPECIALTIES } from '@/lib/medical-specialties'
-import { RESIDENCY_YEARS } from '@/lib/residency-years'
-import { getMedicalSchoolsByState } from '@/lib/medical-schools-brazil'
-import { getResidencyHospitalsByState } from '@/lib/residency-hospitals-brazil'
-import { formatBrazilPhone, isValidBrazilPhone } from '@/lib/phone'
-import { SearchableSelect } from '@/components/ui/searchable-select'
 import { GoogleProfileSetupDialog } from '@/components/google-profile-setup-dialog'
 import { clearBootstrapCache } from '@/hooks/use-bootstrap'
 
@@ -253,41 +245,10 @@ export default function LoginPage() {
       }
 
       if (!isLogin) {
-        if (!formData.name || !formData.email || !formData.password || !formData.dateOfBirth) {
-          setError('Nome, email, senha e data de nascimento sao obrigatorios')
-          setLoading(false)
-          return
-        }
-        if (!formData.profession) {
-          setError('Selecione se você é médico, acadêmico ou residente')
-          setLoading(false)
-          return
-        }
-        if (!formData.state) {
-          setError('Selecione seu estado')
-          setLoading(false)
-          return
-        }
-        if (!isValidBrazilPhone(formData.phone)) {
-          setError('Informe um telefone válido com DDD')
-          setLoading(false)
-          return
-        }
-        if (formData.profession === 'medico' && !formData.specialty) {
-          setError('Selecione sua especialidade')
-          setLoading(false)
-          return
-        }
-        if (
-          formData.profession === 'residente' &&
-          (!formData.residencySpecialty || !formData.residencyHospital || !formData.residencyYear)
-        ) {
-          setError('Preencha os dados da sua residência')
-          setLoading(false)
-          return
-        }
-        if (formData.profession === 'academico' && !formData.afyaUnit) {
-          setError('Selecione sua unidade')
+        // Cadastro de baixa fricção: só nome, email e senha. O restante do perfil
+        // é completado depois, dentro do app. Menos campos = mais contas criadas.
+        if (!formData.name || !formData.email || !formData.password) {
+          setError('Preencha nome, email e senha')
           setLoading(false)
           return
         }
@@ -695,12 +656,12 @@ export default function LoginPage() {
                   transition={{ duration: 0.25 }}
                 >
                   <h1 className="text-2xl font-bold text-foreground tracking-tight">
-                    {isLogin ? 'Entrar na plataforma' : 'Criar sua conta'}
+                    {isLogin ? 'Entrar na plataforma' : 'Sua conta grátis em 10 segundos'}
                   </h1>
                   <p className="text-sm text-muted-foreground mt-1">
                     {isLogin
                       ? 'Bem-vindo de volta, continue de onde parou'
-                      : 'Grátis para começar, sem cartão de crédito'}
+                      : 'Só nome, email e senha. Sem cartão. Comece agora mesmo.'}
                   </p>
                 </motion.div>
               </AnimatePresence>
@@ -902,242 +863,31 @@ export default function LoginPage() {
                     </div>
                   </div>
 
-                  {/* Register extra fields */}
-                  <AnimatePresence mode="wait">
-                    {!isLogin && (
-                      <motion.div
-                        key="register-fields"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="space-y-4"
+                  {/* Register: só o essencial. Perfil (profissão, estado,
+                      telefone, etc.) é completado depois, dentro do app. */}
+                  {!isLogin && (
+                    <p className="text-xs text-center text-muted-foreground">
+                      Sem cartão. Sem formulário longo. Você entra agora e
+                      personaliza o resto depois.
+                    </p>
+                  )}
+
+                  {/* Admin: seletor de tipo de conta (apenas emails autorizados) */}
+                  {!isLogin && canBeAdmin && (
+                    <div className="space-y-2">
+                      <Label htmlFor="role" className="text-xs font-medium text-muted-foreground">Tipo de Conta</Label>
+                      <select
+                        id="role"
+                        className={selectCls}
+                        value={formData.role}
+                        onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                        style={{ colorScheme: 'dark' }}
                       >
-                        <div className="space-y-2">
-                          <Label htmlFor="dateOfBirth" className="text-xs font-medium text-muted-foreground">Data de Nascimento *</Label>
-                          <Input
-                            id="dateOfBirth"
-                            type="date"
-                            value={formData.dateOfBirth}
-                            onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
-                            required
-                            className={inputCls}
-                          />
-                        </div>
-
-                        <div
-                          className="space-y-3 p-4 rounded-xl"
-                          style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
-                        >
-                          <p className="text-sm font-medium text-muted-foreground">
-                            Você é médico, acadêmico ou residente? *
-                          </p>
-                          <div className="grid grid-cols-3 gap-2">
-                            {(
-                              [
-                                { value: 'medico', label: 'Médico' },
-                                { value: 'academico', label: 'Acadêmico' },
-                                { value: 'residente', label: 'Residente' },
-                              ] as const
-                            ).map((opt) => (
-                              <button
-                                key={opt.value}
-                                type="button"
-                                className={`h-9 rounded-xl text-sm font-semibold transition-all ${
-                                  formData.profession === opt.value
-                                    ? 'text-secondary-foreground'
-                                    : 'text-muted-foreground border border-border bg-muted/40 hover:bg-muted'
-                                }`}
-                                style={
-                                  formData.profession === opt.value
-                                    ? { background: 'hsl(var(--secondary))' }
-                                    : {}
-                                }
-                                onClick={() =>
-                                  setFormData({
-                                    ...formData,
-                                    profession: opt.value,
-                                    isAfyaMedicineStudent: opt.value === 'academico',
-                                    afyaUnit: opt.value === 'academico' ? formData.afyaUnit : '',
-                                    specialty: opt.value === 'medico' ? formData.specialty : '',
-                                    residencySpecialty: opt.value === 'residente' ? formData.residencySpecialty : '',
-                                    residencyHospital: opt.value === 'residente' ? formData.residencyHospital : '',
-                                    residencyYear: opt.value === 'residente' ? formData.residencyYear : '',
-                                  })
-                                }
-                              >
-                                {opt.label}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="state" className="text-xs font-medium text-muted-foreground">Estado *</Label>
-                          <select
-                            id="state"
-                            className={selectCls}
-                            value={formData.state}
-                            onChange={(e) =>
-                              setFormData({ ...formData, state: e.target.value, afyaUnit: '', residencyHospital: '' })
-                            }
-                            required
-                            style={{ colorScheme: 'dark' }}
-                          >
-                            <option value="">Selecione seu estado...</option>
-                            {BRAZIL_STATES.map((s) => (
-                              <option key={s.uf} value={s.uf}>{s.name} ({s.uf})</option>
-                            ))}
-                          </select>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="phone" className="text-xs font-medium text-muted-foreground">Telefone (com DDD) *</Label>
-                          <Input
-                            id="phone"
-                            type="tel"
-                            inputMode="numeric"
-                            placeholder="(11) 91234-5678"
-                            value={formData.phone}
-                            onChange={(e) => setFormData({ ...formData, phone: formatBrazilPhone(e.target.value) })}
-                            required
-                            className={inputCls}
-                          />
-                        </div>
-
-                        {formData.profession === 'medico' && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            className="space-y-2"
-                          >
-                            <Label htmlFor="specialty" className="text-xs font-medium text-muted-foreground">Qual sua especialidade? *</Label>
-                            <SearchableSelect
-                              id="specialty"
-                              value={formData.specialty}
-                              onChange={(value) => setFormData({ ...formData, specialty: value })}
-                              options={MEDICAL_SPECIALTIES}
-                              placeholder="Selecione sua especialidade..."
-                              searchPlaceholder="Buscar especialidade..."
-                              className={selectCls}
-                            />
-                          </motion.div>
-                        )}
-
-                        {formData.profession === 'residente' && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            className="space-y-4"
-                          >
-                            <div className="space-y-2">
-                              <Label htmlFor="residencySpecialty" className="text-xs font-medium text-muted-foreground">Qual sua residência? *</Label>
-                              <SearchableSelect
-                                id="residencySpecialty"
-                                value={formData.residencySpecialty}
-                                onChange={(value) => setFormData({ ...formData, residencySpecialty: value })}
-                                options={MEDICAL_SPECIALTIES}
-                                placeholder="Selecione a área da residência..."
-                                searchPlaceholder="Buscar área da residência..."
-                                className={selectCls}
-                              />
-                            </div>
-
-                            <div className="space-y-2">
-                              <Label htmlFor="residencyHospital" className="text-xs font-medium text-muted-foreground">
-                                Hospital da residência {formData.state ? '*' : '(selecione o estado primeiro)'}
-                              </Label>
-                              <SearchableSelect
-                                id="residencyHospital"
-                                value={formData.residencyHospital}
-                                onChange={(value) => setFormData({ ...formData, residencyHospital: value })}
-                                options={getResidencyHospitalsByState(formData.state)}
-                                placeholder="Selecione o hospital..."
-                                searchPlaceholder="Buscar hospital..."
-                                className={selectCls}
-                                disabled={!formData.state}
-                              />
-                            </div>
-
-                            <div className="space-y-2">
-                              <Label htmlFor="residencyYear" className="text-xs font-medium text-muted-foreground">Qual ano de residência? *</Label>
-                              <select
-                                id="residencyYear"
-                                className={selectCls}
-                                value={formData.residencyYear}
-                                onChange={(e) => setFormData({ ...formData, residencyYear: e.target.value })}
-                                style={{ colorScheme: 'dark' }}
-                              >
-                                <option value="">Selecione...</option>
-                                {RESIDENCY_YEARS.map((year) => (
-                                  <option key={year} value={year}>{year}</option>
-                                ))}
-                              </select>
-                            </div>
-                          </motion.div>
-                        )}
-
-                        {formData.profession === 'academico' && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            className="space-y-4"
-                          >
-                            <div className="space-y-2">
-                              <Label htmlFor="afyaUnit" className="text-xs font-medium text-muted-foreground">
-                                Sua Unidade {formData.state ? '*' : '(selecione o estado primeiro)'}
-                              </Label>
-                              <SearchableSelect
-                                id="afyaUnit"
-                                value={formData.afyaUnit}
-                                onChange={(value) => setFormData({ ...formData, afyaUnit: value })}
-                                options={getMedicalSchoolsByState(formData.state)}
-                                placeholder="Selecione sua instituição..."
-                                searchPlaceholder="Buscar sua instituição..."
-                                className={selectCls}
-                                disabled={!formData.state}
-                              />
-                            </div>
-
-                            <div className="space-y-2">
-                              <Label htmlFor="periodo" className="text-xs font-medium text-muted-foreground">Período (opcional)</Label>
-                              <select
-                                id="periodo"
-                                className={selectCls}
-                                value={formData.periodo}
-                                onChange={(e) => setFormData({ ...formData, periodo: e.target.value })}
-                                style={{ colorScheme: 'dark' }}
-                              >
-                                <option value="">Selecione seu período...</option>
-                                {PERIODO_OPTIONS.map((periodo) => (
-                                  <option key={periodo} value={periodo}>{formatPeriodoLabel(periodo)}</option>
-                                ))}
-                              </select>
-                            </div>
-                          </motion.div>
-                        )}
-
-                        {canBeAdmin && (
-                          <div className="space-y-2">
-                            <Label htmlFor="role" className="text-xs font-medium text-muted-foreground">Tipo de Conta</Label>
-                            <select
-                              id="role"
-                              className={selectCls}
-                              value={formData.role}
-                              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                              style={{ colorScheme: 'dark' }}
-                            >
-                              <option value="user">Usuário</option>
-                              <option value="admin">Administrador</option>
-                            </select>
-                          </div>
-                        )}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                        <option value="user">Usuário</option>
+                        <option value="admin">Administrador</option>
+                      </select>
+                    </div>
+                  )}
 
                   {/* Error */}
                   {error && (
@@ -1165,7 +915,7 @@ export default function LoginPage() {
                     ) : (
                       <ChevronRight className="h-4 w-4" />
                     )}
-                    {loading ? 'Carregando...' : isLogin ? 'Entrar' : 'Criar Conta'}
+                    {loading ? 'Carregando...' : isLogin ? 'Entrar' : 'Começar agora — é grátis'}
                   </button>
 
                   {isLogin && (
