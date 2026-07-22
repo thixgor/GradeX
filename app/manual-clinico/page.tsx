@@ -427,15 +427,19 @@ function ManualClinicoContent() {
     const params = new URLSearchParams(window.location.search)
     if (params.get('purchase') !== 'success') return
     const parsed = Number(params.get('value'))
+    // eventID = id do pedido: o mesmo Purchase enviado pelo servidor (CAPI) usa
+    // este id, então o Meta conta a venda uma única vez (dedup navegador+server).
+    const orderId = params.get('oid') || undefined
     trackMeta('Purchase', {
       value: Number.isFinite(parsed) ? parsed : 0,
       currency: 'BRL',
       content_name: 'Manual Clínico',
       content_type: 'product',
-    })
+    }, orderId)
     params.delete('purchase')
     params.delete('value')
     params.delete('plan')
+    params.delete('oid')
     const qs = params.toString()
     window.history.replaceState({}, '', window.location.pathname + (qs ? `?${qs}` : ''))
   }, [])

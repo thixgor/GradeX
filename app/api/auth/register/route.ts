@@ -9,6 +9,7 @@ import { ADMIN_EMAILS } from '@/lib/constants'
 import { sendWelcomeEmail, sendVerificationEmail } from '@/lib/mail'
 import crypto from 'crypto'
 import { secureApiEndpoint } from '@/lib/api-security'
+import { recordCheckoutEvent, getRequestAnalyticsMeta } from '@/lib/analytics'
 import { normalizePeriodo, getCurrentSemesterRef } from '@/lib/user-periodo'
 import { isValidStateUf } from '@/lib/brazil-states'
 import { isValidBrazilPhone } from '@/lib/phone'
@@ -182,6 +183,20 @@ export async function POST(request: NextRequest) {
     } catch (sessErr) {
       console.error('Falha ao registrar sessão (registro):', sessErr)
     }
+
+    // Topo do funil: conta grátis criada (o "teste grátis" do anúncio). Alimenta
+    // o funil de conversão em /admin/analytics (cadastro grátis → compra).
+    // recordCheckoutEvent engole erros próprios, então não trava o registro.
+    await recordCheckoutEvent({
+      event: 'lead_signup',
+      userId: result.insertedId.toString(),
+      userName: name,
+      userEmail: email,
+      productType: 'unknown',
+      source: 'Cadastro gratuito',
+      metadata: { role: newUser.role, profession: (newUser as any).profession },
+      ...getRequestAnalyticsMeta(request),
+    })
 
     // Enviar emails em paralelo para não travar
     Promise.allSettled([

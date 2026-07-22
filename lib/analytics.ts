@@ -3,6 +3,7 @@ import { getDb } from './mongodb'
 import type { PaymentOrder, SubscriptionRecord } from './types'
 
 export type CheckoutEventName =
+  | 'lead_signup'
   | 'buy_click'
   | 'checkout_view'
   | 'checkout_submit'

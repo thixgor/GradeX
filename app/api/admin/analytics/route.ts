@@ -591,6 +591,7 @@ export async function GET() {
     const expiring30 = subscriptionRows.filter((row) => row.expiresAt && new Date(row.expiresAt) <= new Date(now.getTime() + 30 * 86_400_000) && new Date(row.expiresAt) >= now).length
 
     const funnelCounts = {
+      leadSignup: checkoutEvents.filter((event) => event.event === 'lead_signup').length,
       buyClick: checkoutEvents.filter((event) => event.event === 'buy_click').length,
       checkoutSubmit: checkoutEvents.filter((event) => event.event === 'checkout_submit').length,
       orderCreated: orders.length + subscriptions.length,
@@ -600,7 +601,10 @@ export async function GET() {
     // payment_failed é um desfecho paralelo (não uma etapa depois de "aprovado"),
     // então fica de fora da cadeia sequencial — encadeá-lo gerava conversões
     // "da etapa anterior" acima de 100% (parecia que o funil estava quebrado).
+    // "lead_signup" (conta grátis criada) é o topo real do funil de ADS: mostra
+    // a jornada completa do teste grátis até a compra.
     const funnel = [
+      { key: 'lead_signup', label: 'Criou conta grátis (teste grátis)', count: funnelCounts.leadSignup },
       { key: 'buy_click', label: 'Usuário clicou para comprar', count: funnelCounts.buyClick },
       { key: 'checkout_submit', label: 'Usuário clicou em finalizar compra', count: funnelCounts.checkoutSubmit },
       { key: 'order_created', label: 'Pedido foi criado no MercadoPago', count: funnelCounts.orderCreated },
@@ -611,6 +615,19 @@ export async function GET() {
       conversionFromStart: all[0].count > 0 ? (step.count / all[0].count) * 100 : 0,
     }))
     const funnelFailed = funnelCounts.paymentFailed
+    // Conversão geral do funil de aquisição: cadastros grátis que viraram venda.
+    const leadToSaleRate = funnelCounts.leadSignup > 0
+      ? (funnelCounts.paymentApproved / funnelCounts.leadSignup) * 100
+      : 0
+    // Estado do rastreamento de conversão do Meta (para o admin saber se o
+    // Pixel/Conversions API estão ligados). O ID do Pixel é público; o token do
+    // CAPI é secreto — aqui só expomos se ESTÁ configurado, nunca os valores.
+    const tracking = {
+      metaPixel: Boolean(process.env.NEXT_PUBLIC_META_PIXEL_ID),
+      metaCapi: Boolean(process.env.NEXT_PUBLIC_META_PIXEL_ID && process.env.META_CONVERSIONS_API_TOKEN),
+      leadSignups: funnelCounts.leadSignup,
+      leadToSaleRate,
+    }
 
     return NextResponse.json({
       updatedAt: now.toISOString(),
@@ -667,6 +684,7 @@ export async function GET() {
       couponStats,
       funnel,
       funnelFailed,
+      tracking,
       orders: orderRows,
       abandoned: abandonedRows.sort((a, b) => new Date(b.startedAt || 0).getTime() - new Date(a.startedAt || 0).getTime()).slice(0, 250),
       subscriptions: subscriptionRows.sort((a, b) => new Date(b.purchasedAt || 0).getTime() - new Date(a.purchasedAt || 0).getTime()).slice(0, 500),

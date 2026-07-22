@@ -27,6 +27,7 @@ import type {
 import type { PaymentStatus, ProviderOrder } from './types'
 import { audit } from './audit'
 import { recordOrderCheckoutEvent } from '../analytics'
+import { sendMetaCapiEvent } from '../meta-capi'
 import { approveCouponRedemption, releaseCouponRedemption } from '../coupons'
 import { grantMaterialCartItems, type MaterialCartResolvedItem } from '../material-cart'
 import { buildAutoEmailPdfAttachments, type PdfEmailItem } from '../material-pdf-email'
@@ -107,6 +108,22 @@ export async function applyPaymentResult(
   if (TERMINAL_APPROVED.includes(newStatus) && !TERMINAL_APPROVED.includes(prevStatus)) {
     await approveCouponRedemption(db, String(order._id))
     await recordOrderCheckoutEvent('payment_approved', updatedOrder)
+    // Conversão para o Meta pelo servidor (Conversions API). É o único caminho
+    // que captura Pix/boleto, que confirmam aqui no webhook depois que o usuário
+    // já saiu da página. Deduplicado com o Pixel do navegador pelo id do pedido.
+    // Auto-desligado sem as env vars; nunca lança (não afeta o pagamento).
+    const capiAmount = result.amount || updatedOrder.amount || 0
+    if (capiAmount > 0) {
+      await sendMetaCapiEvent({
+        eventName: 'Purchase',
+        eventId: String(order._id),
+        value: capiAmount,
+        currency: 'BRL',
+        email: updatedOrder.payerEmail,
+        userId: updatedOrder.userId,
+        contentName: updatedOrder.metadata?.itemTitle || updatedOrder.metadata?.planName || 'Compra',
+      })
+    }
     await runApprovedEffects(order, result)
   }
 

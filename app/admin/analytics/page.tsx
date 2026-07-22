@@ -182,6 +182,12 @@ type AnalyticsPayload = {
   }
   funnel: FunnelStep[]
   funnelFailed: number
+  tracking?: {
+    metaPixel: boolean
+    metaCapi: boolean
+    leadSignups: number
+    leadToSaleRate: number
+  }
   orders: OrderRow[]
   abandoned: AbandonedRow[]
   subscriptions: SubscriptionRow[]
@@ -414,6 +420,19 @@ function DonutChart({ data }: { data: SeriesPoint[] }) {
           </div>
         ))}
       </div>
+    </div>
+  )
+}
+
+function TrackingStat({ label, ok, okText, offText, hint }: { label: string; ok: boolean; okText: string; offText: string; hint?: string }) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-black/10 p-4">
+      <p className="text-xs font-bold uppercase tracking-wide text-white/45">{label}</p>
+      <div className="mt-2 flex items-center gap-2">
+        <span className={`h-2.5 w-2.5 rounded-full ${ok ? 'bg-emerald-400' : 'bg-white/25'}`} />
+        <span className={`text-lg font-black tracking-tight ${ok ? 'text-emerald-300' : 'text-white/50'}`}>{ok ? okText : offText}</span>
+      </div>
+      {hint && <p className="mt-1 text-xs text-white/45">{hint}</p>}
     </div>
   )
 }
@@ -967,8 +986,41 @@ export default function AdminAnalyticsPage() {
           </TabsContent>
 
           <TabsContent value="conversion" className="space-y-6">
+            {data.tracking && (
+              <GlassPanel
+                title="Rastreamento de conversão (Meta Ads)"
+                description="Estado do Pixel e da Conversions API, e a conversão do teste grátis até a venda"
+              >
+                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                  <TrackingStat
+                    label="Meta Pixel"
+                    ok={data.tracking.metaPixel}
+                    okText="Ativo"
+                    offText="Desligado"
+                    hint={data.tracking.metaPixel ? 'Eventos do navegador ativos' : 'Defina NEXT_PUBLIC_META_PIXEL_ID'}
+                  />
+                  <TrackingStat
+                    label="Conversions API"
+                    ok={data.tracking.metaCapi}
+                    okText="Ativo"
+                    offText="Desligado"
+                    hint={data.tracking.metaCapi ? 'Captura Pix/boleto no servidor' : 'Defina META_CONVERSIONS_API_TOKEN'}
+                  />
+                  <div className="rounded-2xl border border-white/10 bg-black/10 p-4">
+                    <p className="text-xs font-bold uppercase tracking-wide text-white/45">Cadastros grátis</p>
+                    <p className="mt-2 text-2xl font-black tracking-tight text-white">{data.tracking.leadSignups}</p>
+                    <p className="mt-1 text-xs text-white/45">no período selecionado</p>
+                  </div>
+                  <div className="rounded-2xl border border-white/10 bg-black/10 p-4">
+                    <p className="text-xs font-bold uppercase tracking-wide text-white/45">Conversão grátis → venda</p>
+                    <p className="mt-2 text-2xl font-black tracking-tight text-emerald-300">{formatPercent(data.tracking.leadToSaleRate)}</p>
+                    <p className="mt-1 text-xs text-white/45">cadastros que viraram compra</p>
+                  </div>
+                </div>
+              </GlassPanel>
+            )}
             <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-              <GlassPanel title="Funil de compra" description="Taxa de conversão entre cada etapa de intenção, checkout, pedido e pagamento">
+              <GlassPanel title="Funil de compra" description="Do cadastro grátis (teste grátis) à intenção, checkout, pedido e pagamento">
                 <Funnel steps={data.funnel} failed={data.funnelFailed} />
               </GlassPanel>
               <GlassPanel title="Checkouts abandonados" description="Pedidos/tentativas sem pagamento aprovado após a janela de abandono">
