@@ -23,6 +23,19 @@ export type SubscriptionStatus =
 
 export type PaymentMethodKind = 'credit_card' | 'debit_card' | 'pix' | 'boleto' | 'unknown'
 
+/**
+ * Endereço do pagador. Obrigatório para boleto no Mercado Pago — sem ele a
+ * criação do pagamento é recusada ("payer.address ... required").
+ */
+export interface PayerAddress {
+  zipCode: string
+  streetName: string
+  streetNumber: string
+  neighborhood?: string
+  city?: string
+  federalUnit?: string
+}
+
 export type PaymentOrderType = 'plan' | 'material' | 'donation' | 'subscription' | 'product' | 'raffle' | 'physical'
 
 export type PaymentProviderId = 'mercado_pago'
@@ -101,6 +114,7 @@ export interface PaymentProvider {
     issuer?: string
     payerDocumentType?: 'CPF' | 'CNPJ'
     payerDocumentNumber?: string
+    payerAddress?: PayerAddress
   }): Promise<ProviderOrder>
 
   getPayment(providerPaymentId: string): Promise<ProviderOrder>

@@ -9,6 +9,7 @@ import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
 import { getRequestAnalyticsMeta, recordCheckoutEvent, recordOrderCheckoutEvent } from '@/lib/analytics'
 import { computeEffectivePackagePrice } from '@/lib/material-package-pricing'
+import { DEFAULT_PAYMENT_METHODS, paymentMethodDisabledError } from '@/lib/payment-methods'
 import {
   applyCouponDiscountsToItems,
   couponAnalyticsMetadata,
@@ -40,6 +41,15 @@ export const runtime = 'nodejs'
  * Cria pagamento para material/pacote via Mercado Pago.
  * Para itens gratuitos, libera diretamente.
  */
+const PayerAddressSchema = z.object({
+  zipCode: z.string().max(20),
+  streetName: z.string().max(160),
+  streetNumber: z.string().max(20),
+  neighborhood: z.string().max(120).optional(),
+  city: z.string().max(120).optional(),
+  federalUnit: z.string().max(4).optional(),
+})
+
 const paymentFields = {
   paymentMethodId: z.string().min(1),
   cardToken: z.string().optional(),
@@ -47,6 +57,7 @@ const paymentFields = {
   issuer: z.string().optional(),
   payerDocumentType: z.enum(['CPF', 'CNPJ']).optional(),
   payerDocumentNumber: z.string().optional(),
+  payerAddress: PayerAddressSchema.optional(),
   couponCode: z.string().max(80).optional(),
 }
 
@@ -446,6 +457,16 @@ export async function POST(request: NextRequest) {
     })
   }
 
+  // Bloqueia métodos desabilitados pelo admin (Pix/cartão/boleto).
+  const adminSettings = await db.collection('admin_settings').findOne({})
+  const enabledMethods = { ...DEFAULT_PAYMENT_METHODS, ...(adminSettings?.paymentMethods || {}) }
+  const methodDisabled = paymentMethodDisabledError(data.paymentMethodId, enabledMethods, {
+    hasCardToken: Boolean(data.cardToken),
+  })
+  if (methodDisabled) {
+    return NextResponse.json({ error: methodDisabled }, { status: 400 })
+  }
+
   const description = item.title
   const paidAmount = Math.round((amount + physicalTotal) * 100) / 100
 
@@ -553,6 +574,7 @@ export async function POST(request: NextRequest) {
       issuer: data.issuer,
       payerDocumentType: data.payerDocumentType,
       payerDocumentNumber: data.payerDocumentNumber,
+      payerAddress: data.payerAddress,
       metadata: {
         orderId,
         type: 'material',
@@ -819,6 +841,16 @@ async function handleCartCheckout(
     return NextResponse.json({ error: 'Carrinho pago requer uma forma de pagamento válida.' }, { status: 400 })
   }
 
+  // Bloqueia métodos desabilitados pelo admin (Pix/cartão/boleto).
+  const adminSettings = await db.collection('admin_settings').findOne({})
+  const enabledMethods = { ...DEFAULT_PAYMENT_METHODS, ...(adminSettings?.paymentMethods || {}) }
+  const methodDisabled = paymentMethodDisabledError(data.paymentMethodId, enabledMethods, {
+    hasCardToken: Boolean(data.cardToken),
+  })
+  if (methodDisabled) {
+    return NextResponse.json({ error: methodDisabled }, { status: 400 })
+  }
+
   const itemCount = payableItemsForOrder.length
   const description = `Carrinho DomineAqui - ${itemCount} ${itemCount === 1 ? 'item' : 'itens'}`
   const paidAmount = Math.round((amount + physicalTotal) * 100) / 100
@@ -940,6 +972,7 @@ async function handleCartCheckout(
       issuer: data.issuer,
       payerDocumentType: data.payerDocumentType,
       payerDocumentNumber: data.payerDocumentNumber,
+      payerAddress: data.payerAddress,
       metadata: {
         orderId,
         type: 'material',

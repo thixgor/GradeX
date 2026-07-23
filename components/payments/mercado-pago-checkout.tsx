@@ -307,14 +307,29 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
       } else if (method === 'pix') {
         body = { ...body, paymentMethodId: 'pix' }
       } else if (method === 'boleto') {
-        const docNumber = (form.elements.namedItem('docNumber') as HTMLInputElement).value
-        const payerName = (form.elements.namedItem('payerName') as HTMLInputElement).value
+        const getVal = (name: string) =>
+          ((form.elements.namedItem(name) as HTMLInputElement | null)?.value || '').trim()
+        const docNumber = getVal('docNumber')
+        const payerName = getVal('payerName')
+        const zip = getVal('addrZip').replace(/\D/g, '')
+        const streetName = getVal('addrStreet')
+        const streetNumber = getVal('addrNumber')
+        const neighborhood = getVal('addrNeighborhood')
+        const city = getVal('addrCity')
+        const federalUnit = getVal('addrState').toUpperCase()
+
+        if (!docNumber.replace(/\D/g, '')) throw new Error('Informe um CPF válido para o boleto.')
+        if (!zip || !streetName || !streetNumber) {
+          throw new Error('Preencha o endereço completo (CEP, rua e número) para gerar o boleto.')
+        }
+
         body = {
           ...body,
           paymentMethodId: 'bolbradesco',
           payerDocumentType: 'CPF',
           payerDocumentNumber: docNumber.replace(/\D/g, ''),
           donationName: body.donationName || payerName,
+          payerAddress: { zipCode: zip, streetName, streetNumber, neighborhood, city, federalUnit },
         }
       }
 
@@ -495,6 +510,75 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
                 placeholder="000.000.000-00"
                 style={glassInput}
               />
+            </div>
+            {/* Endereço — o Mercado Pago exige para gerar o boleto. */}
+            <div className="grid grid-cols-3 gap-2.5">
+              <div>
+                <label style={labelStyle}>CEP</label>
+                <input
+                  id="addrZip"
+                  name="addrZip"
+                  inputMode="numeric"
+                  required
+                  placeholder="00000-000"
+                  style={glassInput}
+                />
+              </div>
+              <div style={{ gridColumn: 'span 2' }}>
+                <label style={labelStyle}>Rua / Logradouro</label>
+                <input
+                  id="addrStreet"
+                  name="addrStreet"
+                  required
+                  placeholder="Nome da rua"
+                  style={glassInput}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-3 gap-2.5">
+              <div>
+                <label style={labelStyle}>Número</label>
+                <input
+                  id="addrNumber"
+                  name="addrNumber"
+                  required
+                  placeholder="Nº"
+                  style={glassInput}
+                />
+              </div>
+              <div style={{ gridColumn: 'span 2' }}>
+                <label style={labelStyle}>Bairro</label>
+                <input
+                  id="addrNeighborhood"
+                  name="addrNeighborhood"
+                  required
+                  placeholder="Bairro"
+                  style={glassInput}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-3 gap-2.5">
+              <div style={{ gridColumn: 'span 2' }}>
+                <label style={labelStyle}>Cidade</label>
+                <input
+                  id="addrCity"
+                  name="addrCity"
+                  required
+                  placeholder="Cidade"
+                  style={glassInput}
+                />
+              </div>
+              <div>
+                <label style={labelStyle}>UF</label>
+                <input
+                  id="addrState"
+                  name="addrState"
+                  required
+                  maxLength={2}
+                  placeholder="UF"
+                  style={{ ...glassInput, textTransform: 'uppercase' }}
+                />
+              </div>
             </div>
             <p style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', padding: '10px', background: 'hsl(var(--muted) / 0.5)', borderRadius: '8px' }}>
               O boleto vence em 24h. Liberação ocorre automaticamente em até 2h após o pagamento ser compensado.

@@ -5,6 +5,7 @@ import type {
   CreatePreapprovalInput,
   ProviderOrder,
   ProviderSubscription,
+  PayerAddress,
 } from '../types'
 import { getMpPaymentWithToken, getMpPreApprovalWithToken } from './client'
 import { mapMpPaymentStatus, mapMpPreapprovalStatus, mapMpPaymentMethod } from './status-mapper'
@@ -29,9 +30,12 @@ export class MercadoPagoProvider implements PaymentProvider {
       issuer?: string
       payerDocumentType?: 'CPF' | 'CNPJ'
       payerDocumentNumber?: string
+      payerAddress?: PayerAddress
     }
   ): Promise<ProviderOrder> {
     const cfg = getPaymentConfig()
+    const isBoleto =
+      input.paymentMethodId === 'bolbradesco' || input.paymentMethodId === 'boleto'
     const auth = await getEffectiveMpAuth()
     const payment = getMpPaymentWithToken(auth.accessToken)
 
@@ -58,8 +62,16 @@ export class MercadoPagoProvider implements PaymentProvider {
       },
     }
 
-    if (input.payerName) {
-      const [first, ...rest] = input.payerName.split(' ')
+    const payerName = (input.payerName || '').trim()
+    if (payerName) {
+      const [first, ...rest] = payerName.split(/\s+/)
+      body.payer.first_name = first
+      body.payer.last_name = rest.join(' ') || first
+    } else if (isBoleto) {
+      // O Mercado Pago recusa o boleto sem nome do pagador. Como fallback,
+      // derivamos um nome a partir do e-mail para não quebrar o pagamento.
+      const fallback = (resolvedPayerEmail.split('@')[0] || 'Cliente').replace(/[^\p{L}]+/gu, ' ').trim() || 'Cliente'
+      const [first, ...rest] = fallback.split(/\s+/)
       body.payer.first_name = first
       body.payer.last_name = rest.join(' ') || first
     }
@@ -68,6 +80,22 @@ export class MercadoPagoProvider implements PaymentProvider {
       body.payer.identification = {
         type: input.payerDocumentType,
         number: input.payerDocumentNumber.replace(/\D/g, ''),
+      }
+    }
+
+    // Boleto exige endereço do pagador. Sem ele o MP recusa a criação do
+    // pagamento. Preenchemos com o que o checkout enviou (fallbacks mínimos
+    // para os campos que o MP trata como opcionais).
+    if (isBoleto && input.payerAddress) {
+      const addr = input.payerAddress
+      const zip = (addr.zipCode || '').replace(/\D/g, '')
+      body.payer.address = {
+        zip_code: zip,
+        street_name: (addr.streetName || '').trim(),
+        street_number: (addr.streetNumber || '').trim() || 'S/N',
+        neighborhood: (addr.neighborhood || '').trim() || undefined,
+        city: (addr.city || '').trim() || undefined,
+        federal_unit: (addr.federalUnit || '').trim().toUpperCase() || undefined,
       }
     }
 
@@ -80,7 +108,7 @@ export class MercadoPagoProvider implements PaymentProvider {
     }
 
     // Para Pix/boleto, precisamos avisar o vencimento (24h padrão)
-    if (input.paymentMethodId === 'pix' || input.paymentMethodId === 'bolbradesco' || input.paymentMethodId === 'boleto') {
+    if (input.paymentMethodId === 'pix' || isBoleto) {
       const expires = new Date(Date.now() + 24 * 60 * 60 * 1000)
       body.date_of_expiration = expires.toISOString()
     }
@@ -209,9 +237,15 @@ function mpPaymentToProviderOrder(p: any): ProviderOrder {
         }
       : undefined
   const boleto =
-    (p?.payment_type_id === 'ticket' || p?.payment_method_id === 'bolbradesco') && p?.transaction_details
+    p?.payment_type_id === 'ticket' || p?.payment_method_id === 'bolbradesco'
       ? {
-          barcode: p?.barcode?.content || undefined,
+          // "Linha digitável" é o número que o cliente digita no banco —
+          // fica em transaction_details.digitable_line. barcode.content é o
+          // código de barras cru (fallback).
+          barcode:
+            p?.transaction_details?.digitable_line ||
+            p?.barcode?.content ||
+            undefined,
           ticketUrl: p?.transaction_details?.external_resource_url || undefined,
         }
       : undefined

@@ -7,7 +7,7 @@ import { getPaymentProvider, deriveIdempotencyKey } from '@/lib/payments'
 import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
 import { getRequestAnalyticsMeta, recordOrderCheckoutEvent } from '@/lib/analytics'
-import { DEFAULT_PAYMENT_METHODS } from '@/lib/payment-methods'
+import { DEFAULT_PAYMENT_METHODS, paymentMethodDisabledError } from '@/lib/payment-methods'
 import {
   resolveSerialKeyProduct,
   parseBuyerInfo,
@@ -51,6 +51,15 @@ export const runtime = 'nodejs'
  *  - IP/user-agent/horário registrados na order (e depois na serial key).
  */
 
+const PayerAddressSchema = z.object({
+  zipCode: z.string().max(20),
+  streetName: z.string().max(160),
+  streetNumber: z.string().max(20),
+  neighborhood: z.string().max(120).optional(),
+  city: z.string().max(120).optional(),
+  federalUnit: z.string().max(4).optional(),
+})
+
 const Schema = z.object({
   productType: z.enum(['manual_clinico', 'material', 'flashcard', 'package', 'premium', 'essential']),
   productId: z.string().max(80).optional(),
@@ -67,6 +76,7 @@ const Schema = z.object({
   issuer: z.string().optional(),
   payerDocumentType: z.enum(['CPF', 'CNPJ']).optional(),
   payerDocumentNumber: z.string().max(20).optional(),
+  payerAddress: PayerAddressSchema.optional(),
   couponCode: z.string().max(80).optional(),
 })
 
@@ -82,6 +92,7 @@ const paymentFields = {
   issuer: z.string().optional(),
   payerDocumentType: z.enum(['CPF', 'CNPJ']).optional(),
   payerDocumentNumber: z.string().max(20).optional(),
+  payerAddress: PayerAddressSchema.optional(),
   couponCode: z.string().max(80).optional(),
 }
 
@@ -188,15 +199,11 @@ export async function POST(request: NextRequest) {
   // Métodos de pagamento habilitados.
   const adminSettings = await db.collection('admin_settings').findOne({})
   const enabledMethods = { ...DEFAULT_PAYMENT_METHODS, ...(adminSettings?.paymentMethods || {}) }
-  const method = data.paymentMethodId
-  if (method === 'pix' && !enabledMethods.pix) {
-    return NextResponse.json({ error: 'Pagamento por Pix não está disponível no momento.' }, { status: 400 })
-  }
-  if ((method === 'credit_card' || method === 'debit_card') && !enabledMethods.credit_card) {
-    return NextResponse.json({ error: 'Pagamento por cartão não está disponível no momento.' }, { status: 400 })
-  }
-  if (method === 'boleto' && !enabledMethods.boleto) {
-    return NextResponse.json({ error: 'Pagamento por boleto não está disponível no momento.' }, { status: 400 })
+  const methodDisabled = paymentMethodDisabledError(data.paymentMethodId, enabledMethods, {
+    hasCardToken: Boolean(data.cardToken),
+  })
+  if (methodDisabled) {
+    return NextResponse.json({ error: methodDisabled }, { status: 400 })
   }
 
   // Resolve produto + preço na fonte autoritativa.
@@ -386,6 +393,7 @@ export async function POST(request: NextRequest) {
       issuer: data.issuer,
       payerDocumentType: data.payerDocumentType,
       payerDocumentNumber: data.payerDocumentNumber,
+      payerAddress: data.payerAddress,
       metadata: {
         orderId,
         type: 'serial_key',
@@ -456,10 +464,10 @@ async function handleCartCheckout(
   // Métodos de pagamento habilitados.
   const adminSettings = await db.collection('admin_settings').findOne({})
   const enabledMethods = { ...DEFAULT_PAYMENT_METHODS, ...(adminSettings?.paymentMethods || {}) }
-  const method = data.paymentMethodId
-  if (method === 'pix' && !enabledMethods.pix) return NextResponse.json({ error: 'Pagamento por Pix não está disponível no momento.' }, { status: 400 })
-  if ((method === 'credit_card' || method === 'debit_card') && !enabledMethods.credit_card) return NextResponse.json({ error: 'Pagamento por cartão não está disponível no momento.' }, { status: 400 })
-  if (method === 'boleto' && !enabledMethods.boleto) return NextResponse.json({ error: 'Pagamento por boleto não está disponível no momento.' }, { status: 400 })
+  const methodDisabled = paymentMethodDisabledError(data.paymentMethodId, enabledMethods, {
+    hasCardToken: Boolean(data.cardToken),
+  })
+  if (methodDisabled) return NextResponse.json({ error: methodDisabled }, { status: 400 })
 
   // Resolve o carrinho na fonte autoritativa (guest não possui nada).
   // Para visitante (sem sessão) não checamos posse por e-mail — mantém o preço
@@ -655,6 +663,7 @@ async function handleCartCheckout(
       issuer: data.issuer,
       payerDocumentType: data.payerDocumentType,
       payerDocumentNumber: data.payerDocumentNumber,
+      payerAddress: data.payerAddress,
       metadata: { orderId, type: 'serial_key_cart', cartSize: String(itemCount) },
     })
 
