@@ -185,7 +185,12 @@ export async function sendSerialKeyEmail(
       await markKeysRestricted(db, [serial._id])
     }
 
-    await sendWithRetry('envio serial key', () => sendSerialKeyPurchaseEmail({
+    // Envia com o PDF do material (com marca d'água) anexado. Se TODAS as
+    // retentativas do envio COM o PDF falharem — tipicamente por tamanho ou
+    // rejeição do anexo pelo SMTP — reenvia uma versão mínima SEM anexos de PDF,
+    // garantindo que o comprador receba ao menos a serial key + o link de
+    // ativação. Melhor entregar a ativação sem o PDF do que não entregar nada.
+    const sendEmail = (includePdf: boolean) => sendSerialKeyPurchaseEmail({
       email: serial.buyerEmail!,
       buyerName: serial.buyerName || '',
       buyerPhone: serial.buyerPhone || '',
@@ -199,12 +204,21 @@ export async function sendSerialKeyEmail(
       serialKey: serial.key,
       activationUrl: receipt.activationUrl,
       receiptText: buildReceiptText(receipt),
-      pdfBuffer,
+      pdfBuffer: includePdf ? pdfBuffer : undefined,
       qrBuffer,
       kind,
-      materialAttachments: material.attachments,
+      materialAttachments: includePdf ? material.attachments : [],
       restrictActivationToBuyerEmail: material.eligible,
-    }))
+    })
+
+    const hasPdfAttachment = material.attachments.length > 0 || Boolean(pdfBuffer)
+    try {
+      await sendWithRetry('envio serial key', () => sendEmail(true))
+    } catch (err) {
+      if (!hasPdfAttachment) throw err
+      console.warn('[serial-key] envio COM PDF falhou após as retentativas — reenviando só com a serial key + link de ativação (sem PDF)')
+      await sendWithRetry('envio serial key (sem PDF)', () => sendEmail(false))
+    }
 
     log = { to: serial.buyerEmail, status: 'sent', kind, sentAt: new Date(), sentBy: opts.sentBy }
   } catch (err: any) {
@@ -284,7 +298,10 @@ export async function sendSerialKeyCartEmail(
       await markKeysRestricted(db, restrictedKeyIds)
     }
 
-    await sendWithRetry('envio serial key (carrinho)', () => sendSerialKeyCartPurchaseEmail({
+    // Igual ao envio avulso: tenta com os PDFs anexados e, se todas as
+    // retentativas falharem por causa dos anexos, reenvia só com as serial keys
+    // + links de ativação (sem PDF), garantindo a entrega das ativações.
+    const sendCart = (includePdf: boolean) => sendSerialKeyCartPurchaseEmail({
       email: first.buyerEmail!,
       buyerName: first.buyerName || '',
       buyerPhone: first.buyerPhone || '',
@@ -293,11 +310,20 @@ export async function sendSerialKeyCartEmail(
       purchasedAt: receipt.purchasedAt,
       items,
       receiptText: buildReceiptText(receipt),
-      pdfBuffer,
+      pdfBuffer: includePdf ? pdfBuffer : undefined,
       kind,
-      materialAttachments,
+      materialAttachments: includePdf ? materialAttachments : [],
       restrictActivationToBuyerEmail: restrictedKeyIds.length > 0,
-    }))
+    })
+
+    const hasPdfAttachment = materialAttachments.length > 0 || Boolean(pdfBuffer)
+    try {
+      await sendWithRetry('envio serial key (carrinho)', () => sendCart(true))
+    } catch (err) {
+      if (!hasPdfAttachment) throw err
+      console.warn('[serial-key] envio do carrinho COM PDF falhou após as retentativas — reenviando só com as serial keys + links de ativação (sem PDF)')
+      await sendWithRetry('envio serial key (carrinho, sem PDF)', () => sendCart(false))
+    }
     ok = true
   } catch (err: any) {
     console.error('[serial-key] falha ao enviar e-mail do carrinho:', err)
