@@ -85,7 +85,7 @@ export const metadata: Metadata = {
       { url: '/favicon.png', type: 'image/png' },
     ],
     shortcut: '/favicon.ico',
-    apple: [{ url: '/favicon.png', sizes: '180x180', type: 'image/png' }],
+    apple: [{ url: '/apple-icon.png', sizes: '180x180', type: 'image/png' }],
   },
   openGraph: {
     title: 'DomineAqui — Plataforma de Estudo Inteligente para Medicina',
