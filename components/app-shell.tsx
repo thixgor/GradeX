@@ -17,7 +17,6 @@ import { LogIn, Menu, RefreshCw, ShieldAlert, WifiOff } from 'lucide-react'
 import { useBootstrap, clearBootstrapCache } from '@/hooks/use-bootstrap'
 import { FocusSessionProvider } from '@/hooks/use-focus-session'
 import { FocusSessionButton } from '@/components/focus-session-button'
-import { DoacaoFloatingButton } from '@/components/doacoes/doacao-floating-button'
 import { useUIPreferences } from '@/hooks/use-ui-preferences'
 import type { SidebarSectionSettings } from '@/lib/sidebar-sections'
 
@@ -93,7 +92,7 @@ export function AppShell({
 }: AppShellProps) {
   const router = useRouter()
   const pathname = usePathname()
-  const { showSupport, showDonation } = useUIPreferences()
+  const { showSupport } = useUIPreferences()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -415,9 +414,6 @@ export function AppShell({
 
         {/* Support Chat */}
         {showSupport && <SupportChat />}
-
-        {/* Floating donation button */}
-        {showDonation && <DoacaoFloatingButton />}
       </div>
       </FocusSessionProvider>
     </AppShellContext.Provider>

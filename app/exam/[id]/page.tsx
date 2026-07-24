@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -45,9 +45,6 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const [started, setStarted] = useState(false)
   const [inWaitingRoom, setInWaitingRoom] = useState(false)
   const [canStart, setCanStart] = useState(false)
-  const [showDoacaoInterstitial, setShowDoacaoInterstitial] = useState(false)
-  const [DoacaoInterstitialComp, setDoacaoInterstitialComp] = useState<React.ComponentType<{ context: 'manual-clinico' | 'exam'; onClose: () => void }> | null>(null)
-  const pendingStartRef = useRef<(() => void) | null>(null)
   const [examImageModal, setExamImageModal] = useState<{ src: string } | null>(null)
   const [pdfGenerating, setPdfGenerating] = useState<string | null>(null)
   const [accountType, setAccountType] = useState<string | undefined>(undefined)
@@ -370,15 +367,9 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     }
   }
 
-  // Mostra o interstitial de doação antes de iniciar — se disponível.
-  // Caso contrário (componente ainda carregando ou API desativada), executa startFn diretamente.
+  // Inicia a prova diretamente.
   function triggerInterstitialThenStart(startFn: () => void) {
-    if (DoacaoInterstitialComp) {
-      pendingStartRef.current = startFn
-      setShowDoacaoInterstitial(true)
-    } else {
-      startFn()
-    }
+    startFn()
   }
 
   // Função para rejeitar termo de proctoring
@@ -1137,16 +1128,6 @@ ${respostaAluno}`
       setSubmitting(false)
     }
   }
-
-  // Pré-carregar o componente do interstitial (não mostrar ainda — será mostrado ao clicar em iniciar)
-  useEffect(() => {
-    let cancelled = false
-    import('@/components/doacoes/doacao-interstitial').then(m => {
-      if (!cancelled) setDoacaoInterstitialComp(() => m.DoacaoInterstitial)
-    })
-    return () => { cancelled = true }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   if (loading) {
     return <LogoLoading message="Carregando prova..." size="lg" fullscreen />
@@ -2053,15 +2034,6 @@ ${respostaAluno}`
     return (
       <>
         {proctoringModal}
-        {/* Interstitial de doação antes da prova */}
-        {showDoacaoInterstitial && DoacaoInterstitialComp && (
-          <DoacaoInterstitialComp context="exam" onClose={() => {
-            setShowDoacaoInterstitial(false)
-            const fn = pendingStartRef.current
-            pendingStartRef.current = null
-            fn?.()
-          }} />
-        )}
         <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/40 flex items-center justify-center p-4 sm:p-6">
           <div className="max-w-3xl w-full">
             <Button
