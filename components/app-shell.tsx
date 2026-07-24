@@ -263,7 +263,7 @@ export function AppShell({
         <FocusSessionProvider>
           <div className="min-h-screen surface-page">
             {showHeader ? (
-              <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/90">
+              <header className="pwa-safe-top sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/90">
                 <div className="mx-auto flex h-14 sm:h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
                   <div className="flex items-center gap-3 min-w-0">
                     <Logo variant="icon" size="sm" />
@@ -337,12 +337,12 @@ export function AppShell({
               variant="outline"
               size="icon"
               onClick={() => setSidebarOpen(true)}
-              className="fixed top-3 left-3 z-40 lg:hidden h-10 w-10 rounded-md bg-card border-border shadow-md"
+              className="pwa-safe-fixed-top fixed top-3 left-3 z-40 lg:hidden h-10 w-10 rounded-md bg-card border-border shadow-md"
               aria-label="Abrir menu"
             >
               <Menu className="h-5 w-5" />
             </Button>
-            <ThemeToggle floating className="!top-3 !right-3" />
+            <ThemeToggle floating className="pwa-safe-fixed-top !top-3 !right-3" />
           </>
         )}
 

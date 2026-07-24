@@ -68,10 +68,11 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     title: 'DomineAqui',
-    // 'default' faz o iOS RESERVAR a barra de status (relógio/bateria) e começar
-    // o conteúdo abaixo dela. Com 'black-translucent' o conteúdo passava por
-    // baixo da barra e o topo das telas ficava coberto.
-    statusBarStyle: 'default',
+    // Barra de status translúcida: o conteúdo flui por baixo dela (visual
+    // imersivo, nativo). O respiro do topo é garantido pelas classes
+    // .pwa-safe-* (globals.css) aplicadas às barras do app, então nada fica
+    // escondido sob o relógio/bateria.
+    statusBarStyle: 'black-translucent',
   },
   alternates: {
     canonical: '/',
@@ -120,10 +121,10 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  // 'auto' (padrão): o iOS insere automaticamente as margens de segurança
-  // (barra de status no topo, indicador de home embaixo), então nenhum conteúdo
-  // fica escondido sob o notch/barra. A cor do tema pinta essas margens.
-  viewportFit: 'auto',
+  // 'cover': o app ocupa a tela inteira, inclusive sob o notch/Dynamic Island e
+  // barra de status (visual imersivo). As margens seguras são reintroduzidas
+  // pontualmente via env(safe-area-inset-*) nas barras do app (.pwa-safe-*).
+  viewportFit: 'cover',
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#F4F1EA' },
     { media: '(prefers-color-scheme: dark)', color: '#0B1F1A' },

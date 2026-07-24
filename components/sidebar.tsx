@@ -443,7 +443,7 @@ export function Sidebar({
       {/* Sidebar */}
       <aside
         className={cn(
-          'sidebar-glass fixed inset-y-0 left-0 z-50 h-screen min-h-[100svh] max-h-[100dvh] flex flex-col overflow-hidden',
+          'pwa-safe-top pwa-safe-bottom sidebar-glass fixed inset-y-0 left-0 z-50 h-screen min-h-[100svh] max-h-[100dvh] flex flex-col overflow-hidden',
           collapsed ? 'lg:w-[72px]' : 'lg:w-[280px]',
           'w-[min(280px,88vw)]',
           isOpen ? 'translate-x-0' : '-translate-x-full',

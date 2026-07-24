@@ -531,7 +531,7 @@ function Nav({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: boole
   return (
     <header
       className={
-        'fixed inset-x-0 top-0 z-50 transition-colors duration-300 ' +
+        'pwa-safe-top fixed inset-x-0 top-0 z-50 transition-colors duration-300 ' +
         (solid
           ? 'border-b border-[color:var(--da-neutral-line)] bg-da-ground/85 backdrop-blur-md'
           : '')
@@ -645,7 +645,7 @@ const heroFrontStyle: CSSProperties = {
 
 function Hero({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: boolean }) {
   return (
-    <section id="top" className="da-scene relative min-h-dvh overflow-hidden pt-[72px]">
+    <section id="top" className="pwa-safe-hero da-scene relative min-h-dvh overflow-hidden pt-[72px]">
       <div className="pointer-events-none absolute inset-0" style={heroBgStyle}>
         <Image
           src={heroBg}

@@ -66,7 +66,7 @@ export function MobileFloatingDock() {
     <div
       ref={rootRef}
       className={cn(
-        'fixed bottom-5 z-40 flex flex-col items-end gap-2.5 lg:hidden',
+        'pwa-safe-bottom fixed bottom-5 z-40 flex flex-col items-end gap-2.5 lg:hidden',
         isExamResolver ? 'left-4 items-start' : 'right-4 items-end',
       )}
     >

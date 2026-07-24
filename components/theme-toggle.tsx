@@ -50,7 +50,7 @@ export function ThemeToggle({
       <span
         className={cn(
           floating
-            ? 'fixed top-3 right-3 z-[60] h-10 w-[4.25rem] rounded-full border border-border bg-card/90 shadow-md'
+            ? 'pwa-safe-fixed-top fixed top-3 right-3 z-[60] h-10 w-[4.25rem] rounded-full border border-border bg-card/90 shadow-md'
             : variant === 'icon'
               ? 'inline-flex h-9 w-9 rounded-md border border-border bg-card'
               : 'inline-flex h-9 w-[3.85rem] rounded-full border border-border bg-muted/60',
@@ -69,7 +69,7 @@ export function ThemeToggle({
         onClick={(e) => toggle(e)}
         className={cn(
           'theme-toggle-3d relative inline-flex h-9 w-9 items-center justify-center rounded-md border border-border bg-card text-foreground shadow-sm hover:bg-muted',
-          floating && 'fixed top-3 right-3 z-[60] h-10 w-10 shadow-md',
+          floating && 'pwa-safe-fixed-top fixed top-3 right-3 z-[60] h-10 w-10 shadow-md',
           className
         )}
         aria-label={isDark ? 'Ativar modo claro' : 'Ativar modo escuro'}
@@ -97,7 +97,7 @@ export function ThemeToggle({
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40',
         isDark ? 'border-primary/30 bg-[#0f2418]' : 'border-border bg-muted',
         floating &&
-          'fixed top-3 right-3 z-[60] h-10 w-[4.35rem] border-border bg-card/95 shadow-lg backdrop-blur-md',
+          'pwa-safe-fixed-top fixed top-3 right-3 z-[60] h-10 w-[4.35rem] border-border bg-card/95 shadow-lg backdrop-blur-md',
         className
       )}
       aria-label={isDark ? 'Ativar modo claro' : 'Ativar modo escuro'}

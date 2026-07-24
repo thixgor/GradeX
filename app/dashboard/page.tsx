@@ -532,7 +532,7 @@ function DashboardContent() {
             className="fixed inset-0 z-[200] bg-black/95 backdrop-blur-2xl flex flex-col"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
+            <div className="pwa-safe-top flex items-center justify-between px-6 py-4 border-b border-white/8">
               <div className="flex flex-col gap-0.5">
                 <Logo variant="dark" size="sm" />
                 <div className="flex items-center gap-2 pl-0.5">
