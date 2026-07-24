@@ -10,7 +10,7 @@ import {
 } from 'react'
 
 /**
- * Coordena os botões flutuantes da aplicação (Música, Suporte e Apoiar).
+ * Coordena os botões flutuantes da aplicação (Música e Suporte).
  *
  * Antes, cada um desses botões vivia solto num canto da tela — em telas de
  * celular isso gerava "poluição visual" (três controles espalhados sobre o
@@ -23,7 +23,7 @@ import {
  * painel fique aberto por vez, mantendo a tela limpa.
  */
 
-export type DockPanel = 'music' | 'support' | 'donation'
+export type DockPanel = 'music' | 'support'
 
 export interface DockActionMeta {
   id: DockPanel

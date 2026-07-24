@@ -144,7 +144,7 @@ export default function ProfilePage() {
   const [userId, setUserId] = useState('')
   const [generatingReceipt, setGeneratingReceipt] = useState(false)
   const { liteMode, toggleLiteMode } = useLiteMode()
-  const { showDonation, showMusic, showSupport, toggle: toggleUIPref } = useUIPreferences()
+  const { showMusic, showSupport, toggle: toggleUIPref } = useUIPreferences()
 
   // ====== Dados de perfil (editáveis) ======
   const [profileForm, setProfileForm] = useState<ProfileFormState>(EMPTY_PROFILE_FORM)
@@ -1268,13 +1268,6 @@ export default function ProfilePage() {
             Desative os botões flutuantes que você não usa para deixar a tela mais limpa.
           </p>
           <div className="rounded-lg border border-border bg-card shadow-sm divide-y divide-border">
-            <PreferenceToggle
-              icon={<Heart className="h-4 w-4 text-rose-500" />}
-              label="Botão Apoiar"
-              description="Botão de doação (Pix) no canto inferior"
-              checked={showDonation}
-              onToggle={() => toggleUIPref('showDonation')}
-            />
             <PreferenceToggle
               icon={<Music className="h-4 w-4 text-primary" />}
               label="Player de Música"

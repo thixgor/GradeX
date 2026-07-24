@@ -2,12 +2,12 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { Heart, MessageCircle, Music, Plus } from 'lucide-react'
+import { MessageCircle, Music, Plus } from 'lucide-react'
 import { useFloatingDock, type DockPanel } from '@/context/FloatingDockContext'
 import { cn } from '@/lib/utils'
 
 /**
- * FAB expansível que consolida os botões flutuantes (Música, Suporte, Apoiar)
+ * FAB expansível que consolida os botões flutuantes (Música e Suporte)
  * num único controle no mobile — reduzindo a poluição visual sobre o conteúdo.
  * Some no desktop (`lg:hidden`), onde cada botão volta a ter seu próprio gatilho.
  *
@@ -18,14 +18,12 @@ import { cn } from '@/lib/utils'
 const ICONS: Record<DockPanel, typeof Music> = {
   music: Music,
   support: MessageCircle,
-  donation: Heart,
 }
 
 // Cor de destaque por ação — sutil, funciona em light e dark.
 const ACCENTS: Record<DockPanel, string> = {
   music: 'text-violet-500 dark:text-violet-300',
   support: 'text-primary',
-  donation: 'text-rose-500 dark:text-rose-300',
 }
 
 export function MobileFloatingDock() {

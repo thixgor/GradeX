@@ -367,11 +367,6 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     }
   }
 
-  // Inicia a prova diretamente.
-  function triggerInterstitialThenStart(startFn: () => void) {
-    startFn()
-  }
-
   // Função para rejeitar termo de proctoring
   const handleProctoringReject = () => {
     setShowProctoringConsent(false)
@@ -652,23 +647,21 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       setPracticeTimeLimitMs(config.timeLimitMinutes * 60 * 1000)
     }
 
-    // Iniciar prova (via interstitial de doação se disponível)
     setShowPracticeConfig(false)
-    triggerInterstitialThenStart(() => {
-      const startTime = new Date()
-      setExamStartTime(startTime)
-      localStorage.setItem(`exam-${id}-start-time`, startTime.toISOString())
-      setStarted(true)
 
-      // Verificar se tem questões com tempo individual
-      const hasTimedQuestions = exam.questions.some(q => q.timePerQuestionSeconds && q.timePerQuestionSeconds > 0)
-      if (hasTimedQuestions) {
-        setShowTimeWarningPopup(true)
-        setTimeWarningCountdown(3)
-      } else {
-        initializeQuestionTimer(0)
-      }
-    })
+    const startTime = new Date()
+    setExamStartTime(startTime)
+    localStorage.setItem(`exam-${id}-start-time`, startTime.toISOString())
+    setStarted(true)
+
+    // Verificar se tem questões com tempo individual
+    const hasTimedQuestions = exam.questions.some(q => q.timePerQuestionSeconds && q.timePerQuestionSeconds > 0)
+    if (hasTimedQuestions) {
+      setShowTimeWarningPopup(true)
+      setTimeWarningCountdown(3)
+    } else {
+      initializeQuestionTimer(0)
+    }
   }
 
   // Função para inicializar o timer de uma questão específica
@@ -2147,7 +2140,7 @@ ${respostaAluno}`
                   size="lg"
                   onClick={() => {
                     if (canStart) {
-                      triggerInterstitialThenStart(handleStartExam)
+                      handleStartExam()
                     } else {
                       setInWaitingRoom(true)
                     }

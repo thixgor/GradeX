@@ -378,39 +378,11 @@ const TOUR_STEPS: TourStep[] = [
 ]
 
 export default function ManualClinicoPage() {
-  const [showInterstitial, setShowInterstitial] = useState(false)
-  const [interstitialChecked, setInterstitialChecked] = useState(false)
-
-  useEffect(() => {
-    setShowInterstitial(true)
-    setInterstitialChecked(true)
-  }, [])
-
   return (
     <AppShell allowGuest showHeader={false}>
-      {interstitialChecked && showInterstitial && (
-        <DoacaoInterstitialLazy
-          context="manual-clinico"
-          onClose={() => setShowInterstitial(false)}
-        />
-      )}
       <ManualClinicoContent />
     </AppShell>
   )
-}
-
-// Lazy interstitial to avoid SSR issues
-function DoacaoInterstitialLazy({ context, onClose }: { context: 'manual-clinico' | 'exam'; onClose: () => void }) {
-  const [Component, setComponent] = useState<React.ComponentType<{ context: 'manual-clinico' | 'exam'; onClose: () => void }> | null>(null)
-
-  useEffect(() => {
-    import('@/components/doacoes/doacao-interstitial').then(m => {
-      setComponent(() => m.DoacaoInterstitial)
-    })
-  }, [])
-
-  if (!Component) return null
-  return <Component context={context} onClose={onClose} />
 }
 
 function FloatingFocusGlass({ enabled }: { enabled: boolean }) {

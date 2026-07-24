@@ -283,6 +283,11 @@ export function useBootstrap(options: {
 
   // Subscribe to global state changes
   useEffect(() => {
+    // Rearmar aqui é essencial: o cleanup abaixo zera `mountedRef` e, no
+    // StrictMode (dev), o React monta → desmonta → monta. Sem esta linha o
+    // listener continuava registrado mas silencioso, e toda página protegida
+    // ficava presa em "Carregando..." mesmo com o /api/bootstrap já respondido.
+    mountedRef.current = true
     const listener = () => {
       if (mountedRef.current) {
         forceUpdate({})

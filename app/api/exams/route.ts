@@ -50,10 +50,14 @@ export async function GET(request: NextRequest) {
     // de pontos (mostrava "undefined pts"). Mantemos o documento
     // completo aqui; a otimização de CPU vem do cache abaixo + do
     // session cache em lib/auth.ts.
-    const exams = await examsCollection
-      .find(query)
-      .sort({ createdAt: -1 })
-      .toArray()
+    // `?limit=` é opcional e usado por quem só precisa das mais recentes (a
+    // dashboard pede 3). Antes o parâmetro era ignorado: o servidor devolvia
+    // todas as provas visíveis e o cliente jogava fora todas menos três.
+    const limitParam = Number(request.nextUrl.searchParams.get('limit'))
+    const limit = Number.isFinite(limitParam) && limitParam > 0 ? Math.min(limitParam, 200) : 0
+
+    const cursor = examsCollection.find(query).sort({ createdAt: -1 })
+    const exams = await (limit ? cursor.limit(limit) : cursor).toArray()
 
     // Cache privado curto: lista pessoal de provas raramente muda em
     // alguns segundos. SWR mantém UI responsiva sem regerar imediato.

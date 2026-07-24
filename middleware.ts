@@ -46,7 +46,6 @@ const publicRoutes = [
   // etc). A própria rota faz checagem de admin internamente para PUT.
   '/api/admin/settings',
   '/api/display-settings',
-  '/api/doacoes/settings',
   // Loja física: listagem de produtos e config pública de entrega são leitura
   // pública (o catálogo aparece na página pública /materiais). As mutações em
   // /api/loja/produtos e /api/loja/settings validam admin internamente.
@@ -65,7 +64,6 @@ const publicPrefixes = [
   '/api/auth/',
   '/api/webhooks/mercadopago',
   '/api/payments/public-key',
-  '/api/donations/checkout',
   '/api/payments/orders',
   // Compra avulsa com Serial Key (funciona sem login). As rotas validam
   // internamente (rate limit, token, sessão para ativar).
@@ -88,8 +86,6 @@ const publicPrefixes = [
   '/_next/',
   '/img/',
   '/favicon',
-  '/doar',
-  '/doar/',
 ]
 
 // Rotas que exigem role admin

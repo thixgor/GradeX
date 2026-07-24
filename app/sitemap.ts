@@ -40,12 +40,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     },
     {
-      url: canonical('/doar'),
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-    {
       url: canonical('/termos-de-servico'),
       lastModified: now,
       changeFrequency: 'yearly',

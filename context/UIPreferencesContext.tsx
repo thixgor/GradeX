@@ -5,14 +5,13 @@ import { createContext, useCallback, useEffect, useMemo, useState, type ReactNod
 /**
  * Preferências de interface controladas pelo usuário.
  *
- * Alguns botões flutuantes (Apoiar, Música e Suporte/Ticket) ficam fixos na
+ * Alguns botões flutuantes (Música e Suporte/Ticket) ficam fixos na
  * tela e, em telas menores ou durante o estudo, podem atrapalhar/poluir a
  * interface. Aqui o usuário decide quais desses botões quer manter visíveis.
  * A preferência é persistida em localStorage e compartilhada por toda a app
  * via contexto, então alternar no Perfil reflete imediatamente nos botões.
  */
 export interface UIPreferences {
-  showDonation: boolean
   showMusic: boolean
   showSupport: boolean
 }
@@ -27,7 +26,6 @@ export const UIPreferencesContext = createContext<UIPreferencesContextType | nul
 const STORAGE_KEY = 'ui-preferences'
 
 const DEFAULT_PREFERENCES: UIPreferences = {
-  showDonation: true,
   showMusic: true,
   showSupport: true,
 }
@@ -39,7 +37,6 @@ function readStoredPreferences(): UIPreferences {
     if (!raw) return DEFAULT_PREFERENCES
     const parsed = JSON.parse(raw) as Partial<UIPreferences>
     return {
-      showDonation: parsed.showDonation ?? DEFAULT_PREFERENCES.showDonation,
       showMusic: parsed.showMusic ?? DEFAULT_PREFERENCES.showMusic,
       showSupport: parsed.showSupport ?? DEFAULT_PREFERENCES.showSupport,
     }

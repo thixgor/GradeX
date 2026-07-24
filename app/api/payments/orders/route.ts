@@ -16,7 +16,7 @@ export const runtime = 'nodejs'
 
 /**
  * Cria uma Order (pagamento único) no Mercado Pago.
- * Suporta: plano vitalício, materiais, doações, compras avulsas.
+ * Suporta: plano vitalício, materiais e compras avulsas.
  *
  * Para assinaturas recorrentes (mensal/trimestral/anual), use /api/subscriptions.
  *
@@ -37,12 +37,6 @@ const Schema = z.object({
   issuer: z.string().optional(),
   payerDocumentType: z.enum(['CPF', 'CNPJ']).optional(),
   payerDocumentNumber: z.string().optional(),
-  // Doação (anônima permitida)
-  donationName: z.string().optional(),
-  donationAlias: z.string().optional(),
-  donationMessage: z.string().optional(),
-  donationAmount: z.number().positive().optional(),
-  donationEmail: z.string().email().optional(),
 })
 
 export async function POST(request: NextRequest) {
@@ -65,10 +59,17 @@ export async function POST(request: NextRequest) {
   }
   const data = parsed.data
 
+  // Captação de doações descontinuada. O tipo 'donation' segue no schema para
+  // que pedidos antigos continuem sendo lidos e reconciliados, mas esta rota é
+  // pública e dispensava sessão para esse tipo — sem a página /doar, ficaria um
+  // endpoint aberto de criação de doação sem nenhuma tela que o alimentasse.
+  if (data.type === 'donation') {
+    return NextResponse.json({ error: 'Tipo de pedido indisponível' }, { status: 410 })
+  }
+
   const session = await getSession()
 
-  // Doação anônima é permitida; demais tipos exigem login.
-  if (data.type !== 'donation' && !session) {
+  if (!session) {
     return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
   }
 
@@ -124,19 +125,6 @@ export async function POST(request: NextRequest) {
     amount = Number(item.price)
     description = item.title
     commissionExcluded = item.excludeFromCommission === true
-  } else if (data.type === 'donation') {
-    const donAmt = Number(data.donationAmount || 0)
-    if (!donAmt || donAmt < 1) {
-      return NextResponse.json({ error: 'Valor mínimo de doação: R$ 1,00' }, { status: 400 })
-    }
-    if (donAmt > 10000) {
-      return NextResponse.json({ error: 'Valor máximo de doação: R$ 10.000,00' }, { status: 400 })
-    }
-    amount = donAmt
-    description = `Doação DomineAqui — ${data.donationAlias || 'Anônimo'}`
-    payerEmail = data.donationEmail || session?.email
-    payerName = data.donationName || session?.name
-    refId = 'donation'
   }
 
   if (!Number.isFinite(amount) || amount <= 0) {
@@ -174,24 +162,6 @@ export async function POST(request: NextRequest) {
     paymentMethod: data.paymentMethodId,
     ...getRequestAnalyticsMeta(request),
   })
-
-  // Para doação, criar registro espelho em donation_payments
-  if (data.type === 'donation') {
-    await db.collection('donation_payments').insertOne({
-      userId: orderUserId,
-      nomeCompleto: data.donationName,
-      apelido: data.donationAlias,
-      email: payerEmail,
-      mensagem: data.donationMessage,
-      amount,
-      currency: 'BRL',
-      provider: 'mercado_pago',
-      providerOrderId: orderId,
-      status: 'pending',
-      createdAt: now,
-      updatedAt: now,
-    })
-  }
 
   // Chamar provider
   try {

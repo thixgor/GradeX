@@ -46,11 +46,6 @@ interface Doacao {
   createdAt: string
 }
 
-interface DoacaoSettings {
-  doacaoInterstitialManualClinico: boolean
-  doacaoInterstitialExams: boolean
-}
-
 const STATUS_LABELS = {
   pending: { label: 'Pendente', color: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-500/10' },
   approved: { label: 'Aprovada', color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-500/10' },
@@ -68,10 +63,8 @@ export default function AdminDoacoesPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [doacoes, setDoacoes] = useState<Doacao[]>([])
-  const [settings, setSettings] = useState<DoacaoSettings>({ doacaoInterstitialManualClinico: false, doacaoInterstitialExams: false })
   const [tab, setTab] = useState<'all' | 'pending' | 'approved' | 'rejected'>('pending')
   const [actionLoading, setActionLoading] = useState<string | null>(null)
-  const [settingsLoading, setSettingsLoading] = useState<string | null>(null)
 
   // Modals
   const [editModal, setEditModal] = useState<Doacao | null>(null)
@@ -91,14 +84,10 @@ export default function AdminDoacoesPage() {
   async function loadAll() {
     setLoading(true)
     try {
-      const [dRes, sRes] = await Promise.all([
-        fetch('/api/admin/doacoes'),
-        fetch('/api/admin/doacoes/settings'),
-      ])
+      const dRes = await fetch('/api/admin/doacoes')
       if (dRes.status === 403) { router.push('/admin'); return }
-      const [dData, sData] = await Promise.all([dRes.json(), sRes.json()])
+      const dData = await dRes.json()
       setDoacoes(Array.isArray(dData) ? dData : [])
-      setSettings(sData)
     } finally {
       setLoading(false)
     }
@@ -128,21 +117,6 @@ export default function AdminDoacoesPage() {
       }
     } finally {
       setActionLoading(null)
-    }
-  }
-
-  async function handleToggle(field: keyof DoacaoSettings) {
-    setSettingsLoading(field)
-    const newVal = !settings[field]
-    try {
-      const res = await fetch('/api/admin/doacoes/settings', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ [field]: newVal }),
-      })
-      if (res.ok) setSettings(prev => ({ ...prev, [field]: newVal }))
-    } finally {
-      setSettingsLoading(null)
     }
   }
 
@@ -202,69 +176,6 @@ export default function AdminDoacoesPage() {
         </Button>
 
         {/* ─── Settings ─── */}
-        <Card>
-          <div className="h-1.5 bg-gradient-to-r from-rose-500 to-pink-500 rounded-t-lg" />
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <HeartPulse className="h-5 w-5 text-rose-500" />
-              Exibição da Seção de Doação
-            </CardTitle>
-            <CardDescription>Controle onde o interstitial de doação aparece automaticamente.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {([
-              {
-                key: 'doacaoInterstitialManualClinico' as const,
-                icon: BookOpen,
-                label: 'Antes do Manual Clínico',
-                desc: 'Mostra o convite sempre ao acessar /manual-clinico, alternando textos e visual',
-              },
-              {
-                key: 'doacaoInterstitialExams' as const,
-                icon: FileText,
-                label: 'Antes das Provas',
-                desc: 'Mostra o convite sempre antes de iniciar uma prova, alternando abordagens',
-              },
-            ]).map(({ key, icon: Icon, label, desc }) => {
-              const active = settings[key]
-              const loading = settingsLoading === key
-              return (
-                <div
-                  key={key}
-                  className="flex items-center justify-between gap-4 p-4 rounded-xl border border-border bg-muted/30"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg ${active ? 'bg-emerald-500/10' : 'bg-muted'}`}>
-                      <Icon className={`h-4 w-4 ${active ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground'}`} />
-                    </div>
-                    <div>
-                      <p className="font-medium text-sm">{label}</p>
-                      <p className="text-xs text-muted-foreground">{desc}</p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => handleToggle(key)}
-                    disabled={!!settingsLoading}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all border ${
-                      active
-                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20'
-                        : 'bg-muted border-border text-muted-foreground hover:bg-muted/80'
-                    }`}
-                  >
-                    {loading
-                      ? <Loader2 className="h-4 w-4 animate-spin" />
-                      : active
-                      ? <ToggleRight className="h-5 w-5" />
-                      : <ToggleLeft className="h-5 w-5" />
-                    }
-                    {active ? 'Ativo' : 'Inativo'}
-                  </button>
-                </div>
-              )
-            })}
-          </CardContent>
-        </Card>
-
         {/* ─── Doações ─── */}
         <Card>
           <div className="h-1.5 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-t-lg" />

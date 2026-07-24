@@ -7,7 +7,6 @@ import { CANONICAL_ORIGIN } from '@/lib/seo'
 // Termos e Política eram bloqueados por engano e agora estão liberados.
 const ALLOW = [
   '/',
-  '/doar',
   '/amostra',
   '/flashcards/',
   '/materiais/',
@@ -32,9 +31,6 @@ const DISALLOW = [
   '/exams/',
   '/buy/',
   '/lead/',
-  '/doar/sucesso',
-  '/doar/pendente',
-  '/doar/falha',
   '/games/',
   '/*.json$',
 ]

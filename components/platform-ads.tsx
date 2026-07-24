@@ -44,10 +44,6 @@ const DISMISS_MS = 30 * 60 * 1000
 const AD_HIDDEN_EXACT_PATHS = new Set([
   '/buy',
   '/buy/checkout',
-  '/doar',
-  '/doar/falha',
-  '/doar/pendente',
-  '/doar/sucesso',
   '/materiais/checkout',
 ])
 

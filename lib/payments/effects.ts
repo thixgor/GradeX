@@ -9,7 +9,7 @@
 
 import { ObjectId } from 'mongodb'
 import { getDb } from '../mongodb'
-import { sendPlanPurchasedEmail, sendDonationThanksEmail, sendMaterialPurchasedEmail, sendCartPurchasedEmail, sendManualClinicoPurchasedEmail, sendRafflePurchaseEmail, sendShopOrderConfirmedEmail } from '../mail'
+import { sendPlanPurchasedEmail, sendMaterialPurchasedEmail, sendCartPurchasedEmail, sendManualClinicoPurchasedEmail, sendRafflePurchaseEmail, sendShopOrderConfirmedEmail } from '../mail'
 import { markNumbersSold, releaseReservation } from '../raffles'
 import type { Raffle, RafflePurchase } from '../types'
 import { getPersonalExamsQuota } from '../tier-limits'
@@ -634,24 +634,9 @@ async function applyDonationApproved(order: PaymentOrder, _result: ProviderOrder
     metadata: { orderId: String(order._id), amount: donation.amount },
   })
 
-  // Envia comprovante para o e-mail do doador (se informado) ou do usuário logado
-  const donorEmail = donation.email
-  const donorName = donation.apelido || donation.nomeCompleto || 'Apoiador'
-  if (donorEmail) {
-    sendDonationThanksEmail(donorEmail, donorName, donation.amount, donation.paidAt).catch(
-      err => console.error('[effects] e-mail doação falhou:', err)
-    )
-  } else if (donation.userId) {
-    // Tenta buscar o e-mail do usuário autenticado
-    getDb().then(async db => {
-      const user = await db.collection<User>('users').findOne({ _id: new ObjectId(donation.userId!) as any })
-      if (user?.email) {
-        sendDonationThanksEmail(user.email, user.name || donorName, donation.amount, donation.paidAt).catch(
-          err => console.error('[effects] e-mail doação (user) falhou:', err)
-        )
-      }
-    }).catch(() => {})
-  }
+  // Nenhum e-mail é enviado: a captação foi descontinuada. O efeito continua
+  // existindo apenas para que pedidos antigos ainda pendentes reconciliem sem
+  // estourar quando o sweeper de pagamentos passar por eles.
 }
 
 // ── Produto avulso: Manual Clínico ──
