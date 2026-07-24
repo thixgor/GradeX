@@ -31,7 +31,6 @@ import {
   X,
   Check,
 } from 'lucide-react'
-import { motion } from 'framer-motion'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
@@ -66,6 +65,11 @@ type Filter = 'all' | 'mine' | 'purchased' | 'community' | 'store' | 'shared'
 type FlashcardMetricSettings = PublicMetricSettings['flashcards']
 
 const FILTERS: Filter[] = ['all', 'mine', 'purchased', 'community', 'store', 'shared']
+
+// Na visão "Tudo" cada seção mostra apenas uma fileira de decks. O objetivo é
+// dar um panorama navegável — quem quiser mais clica em "Ver todos" e entra na
+// seção cheia, em vez de encarar quatro grades empilhadas de uma vez.
+const OVERVIEW_LIMIT = 3
 
 function parseSectionFromUrl(url: URL): Filter {
   const hashValue = url.hash.replace(/^#/, '')
@@ -121,6 +125,7 @@ export default function FlashcardsHubPage() {
   const [metricSettings, setMetricSettings] = useState<PublicMetricSettings>(DEFAULT_PUBLIC_METRIC_SETTINGS)
   const [isFolderPending, startFolderTransition] = useTransition()
   const initialLoadDoneRef = useRef(false)
+  const toolbarRef = useRef<HTMLDivElement>(null)
   const mineCacheRef = useRef<Map<string, DeckWithId[]>>(new Map())
   const communityCacheRef = useRef<Map<string, DeckWithId[]>>(new Map())
   const {
@@ -153,6 +158,17 @@ export default function FlashcardsHubPage() {
     window.history.pushState(null, '', `${url.pathname}${url.search}${url.hash}`)
   }, [])
 
+  // Ao trocar de seção, traz a barra de filtros de volta ao campo de visão.
+  // Sem isso, quem estava no meio de uma grade longa mudava de aba e continuava
+  // parado no meio da página, sem entender o que mudou.
+  const scrollToSections = useCallback(() => {
+    if (typeof window === 'undefined') return
+    const el = toolbarRef.current
+    if (!el) return
+    const top = el.getBoundingClientRect().top + window.scrollY - 72
+    if (window.scrollY > top + 8) window.scrollTo({ top: Math.max(top, 0), behavior: 'smooth' })
+  }, [])
+
   const selectSection = useCallback((nextFilter: Filter) => {
     if (isGuest && nextFilter !== 'store') {
       router.push(`/auth/login?redirect=${encodeURIComponent('/flashcards')}`)
@@ -161,7 +177,8 @@ export default function FlashcardsHubPage() {
     setFilter(nextFilter)
     if (nextFilter !== 'store') setStoreFolder(null)
     updateFlashcardsUrl(nextFilter, nextFilter === 'store' ? storeFolder : null)
-  }, [isGuest, router, storeFolder, updateFlashcardsUrl])
+    scrollToSections()
+  }, [isGuest, router, scrollToSections, storeFolder, updateFlashcardsUrl])
 
   const selectStoreFolder = useCallback((folderId: string | null) => {
     startFolderTransition(() => {
@@ -375,21 +392,26 @@ export default function FlashcardsHubPage() {
     return counts
   }, [store])
 
-  const counts = {
+  const counts = useMemo(() => ({
     all: mine.length + community.length + store.length + shared.length,
     mine: mine.length,
     purchased: purchasedStore.length,
     community: community.length,
     store: store.length,
     shared: shared.length,
-  }
+  }), [community.length, mine.length, purchasedStore.length, shared.length, store.length])
 
-  const showSection = (key: Filter) => filter === 'all' || filter === key
+  // Numa seção específica mostra sempre. No panorama ("Tudo"), só entra quem
+  // tem conteúdo — seções vazias viravam blocos de texto sem utilidade.
+  const showSection = (key: Filter, hasContent = true) =>
+    filter === key || (filter === 'all' && hasContent)
 
   return (
     <AppShell allowGuest headerTitle="Flashcards" headerSubtitle="Decks, loja e comunidade">
       <div className="surface-page">
-      <div className="max-w-7xl mx-auto px-4 py-5 sm:px-6 sm:py-6 space-y-6">        {/* Hero header — richer presence */}
+      <div className="max-w-7xl mx-auto px-4 py-5 sm:px-6 sm:py-6 space-y-5">
+        {/* Cabeçalho enxuto — a navegação real acontece na barra de seções logo
+            abaixo, então aqui fica só a identidade da área e as duas ações. */}
         <header className="relative overflow-hidden rounded-xl border border-border bg-card shadow-sm">
           <div
             className="pointer-events-none absolute inset-0 opacity-50 dark:opacity-30"
@@ -399,38 +421,26 @@ export default function FlashcardsHubPage() {
             }}
             aria-hidden
           />
-          <div className="relative flex flex-col gap-4 p-5 sm:flex-row sm:items-end sm:justify-between sm:p-7">
+          <div className="relative flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-5 sm:p-5">
             <div className="min-w-0 max-w-2xl">
-              <p className="editorial-mark mb-2">Estudo ativo · repetição espaçada</p>
-              <h1 className="font-heading text-2xl sm:text-3xl lg:text-[2.1rem] font-semibold tracking-tight text-foreground leading-tight">
+              <p className="editorial-mark mb-1.5">Estudo ativo · repetição espaçada</p>
+              <h1 className="font-heading text-xl sm:text-2xl font-semibold tracking-tight text-foreground leading-tight">
                 Flashcards com método
               </h1>
-              <p className="mt-2 text-sm sm:text-[15px] text-muted-foreground leading-relaxed">
-                Crie decks do seu jeito, estude com a comunidade e acelere com os{' '}
-                <strong className="font-semibold text-primary">decks oficiais</strong> dos especialistas.
+              <p className="mt-1 text-sm text-muted-foreground leading-relaxed">
+                Escolha uma seção e comece a estudar.
               </p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                <span className="inline-flex items-center rounded-md border border-border bg-background/80 px-2.5 py-1 text-xs font-semibold text-foreground">
-                  {counts.mine} meus
-                </span>
-                <span className="inline-flex items-center rounded-md border border-border bg-background/80 px-2.5 py-1 text-xs font-semibold text-muted-foreground">
-                  {counts.store} na loja
-                </span>
-                <span className="inline-flex items-center rounded-md border border-border bg-background/80 px-2.5 py-1 text-xs font-semibold text-muted-foreground">
-                  {counts.community} comunidade
-                </span>
-              </div>
             </div>
             {!isGuest && (
               <div className="flex flex-wrap items-center gap-2 shrink-0">
                 <Link href="/flashcards/ia">
-                  <button className="inline-flex items-center gap-2 rounded-lg border border-border bg-background px-4 py-2.5 text-sm font-semibold text-foreground shadow-sm hover:bg-muted transition">
+                  <button className="inline-flex items-center gap-2 rounded-lg border border-border bg-background px-3.5 py-2 text-sm font-semibold text-foreground shadow-sm hover:bg-muted transition">
                     <Wand2 className="h-4 w-4 text-primary" /> Flashcards de IA
                   </button>
                 </Link>
                 <button
                   onClick={() => setCreateOpen(true)}
-                  className="inline-flex items-center gap-2 rounded-lg bg-secondary px-5 py-2.5 text-sm font-bold text-secondary-foreground shadow-md shadow-secondary/20 hover:bg-secondary/90 transition"
+                  className="inline-flex items-center gap-2 rounded-lg bg-secondary px-4 py-2 text-sm font-bold text-secondary-foreground shadow-md shadow-secondary/20 hover:bg-secondary/90 transition"
                 >
                   <Plus className="h-4 w-4" /> Novo deck
                 </button>
@@ -445,8 +455,10 @@ export default function FlashcardsHubPage() {
           </div>
         )}
 
-        {/* Loja oficial — Hero (oculto se filter=='store' para não duplicar) */}
-        {filter !== 'store' && featuredStore.length > 0 && (
+        {/* Vitrine da loja — só no panorama e sem busca ativa. Em qualquer
+            seção específica (ou durante uma busca) ela seria só ruído entre o
+            usuário e o que ele foi procurar. */}
+        {filter === 'all' && !debouncedSearch && featuredStore.length > 0 && (
           <StoreHero
             decks={featuredStore}
             totalStore={store.length}
@@ -454,6 +466,10 @@ export default function FlashcardsHubPage() {
             metricSettings={metricSettings.flashcards}
           />
         )}
+
+        {/* Âncora fora do elemento sticky: medir a barra depois de grudada
+            devolveria sempre a posição travada, nunca a original. */}
+        <div ref={toolbarRef} aria-hidden className="h-0" style={{ marginTop: 0 }} />
 
         {/* Toolbar */}
         <Toolbar
@@ -480,14 +496,14 @@ export default function FlashcardsHubPage() {
         {/* Content — cada seção renderiza seu próprio skeleton assim que a
             página monta; não há mais um spinner de página inteira travando
             tudo atrás da requisição mais lenta. */}
-        <div className="space-y-10">
-            {showSection('mine') && (
+        <div className="space-y-6">
+            {!isGuest && showSection('mine') && (
               <Section
                 title="Meus decks"
                 subtitle={loadingMine ? 'Carregando...' : mine.length === 0 ? 'Você ainda não criou nenhum deck.' : `${mine.length} ${mine.length === 1 ? 'deck' : 'decks'}`}
                 icon={<Inbox className="h-5 w-5" />}
                 accent="from-primary to-primary/80"
-                action={mine.length > 6 && filter === 'all' ? <SectionLink onClick={() => selectSection('mine')}>Ver todos</SectionLink> : undefined}
+                action={mine.length > OVERVIEW_LIMIT && filter === 'all' ? <SectionLink onClick={() => selectSection('mine')}>Ver todos</SectionLink> : undefined}
               >
                 {loadingMine ? (
                   <DeckGridSkeleton />
@@ -505,7 +521,7 @@ export default function FlashcardsHubPage() {
                     }
                   />
                 ) : (
-                  <DeckGrid decks={filter === 'mine' ? mine : mine.slice(0, 6)} owned onDelete={deleteDeck} metricSettings={metricSettings.flashcards} />
+                  <DeckGrid decks={filter === 'mine' ? mine : mine.slice(0, OVERVIEW_LIMIT)} owned onDelete={deleteDeck} metricSettings={metricSettings.flashcards} />
                 )}
               </Section>
             )}
@@ -516,7 +532,7 @@ export default function FlashcardsHubPage() {
                 subtitle={loadingStore ? 'Carregando...' : purchasedStore.length === 0 ? 'Seus decks oficiais comprados ou liberados aparecem aqui.' : `${purchasedStore.length} ${purchasedStore.length === 1 ? 'deck oficial disponível' : 'decks oficiais disponíveis'}`}
                 icon={<ShoppingBag className="h-5 w-5" />}
                 accent="from-emerald-500 to-teal-500"
-                action={purchasedStore.length > 6 && filter === 'all' ? <SectionLink onClick={() => selectSection('purchased')}>Ver todos</SectionLink> : undefined}
+                action={purchasedStore.length > OVERVIEW_LIMIT && filter === 'all' ? <SectionLink onClick={() => selectSection('purchased')}>Ver todos</SectionLink> : undefined}
               >
                 {loadingStore ? (
                   <DeckGridSkeleton />
@@ -534,7 +550,7 @@ export default function FlashcardsHubPage() {
                     }
                   />
                 ) : (
-                  <DeckGrid decks={filter === 'purchased' ? purchasedStore : purchasedStore.slice(0, 6)} showStoreState metricSettings={metricSettings.flashcards} />
+                  <DeckGrid decks={filter === 'purchased' ? purchasedStore : purchasedStore.slice(0, OVERVIEW_LIMIT)} showStoreState metricSettings={metricSettings.flashcards} />
                 )}
               </Section>
             )}
@@ -576,7 +592,7 @@ export default function FlashcardsHubPage() {
               </div>
             )}
 
-            {showSection('community') && (
+            {!isGuest && showSection('community', loadingCommunity || community.length > 0) && (
               <Section
                 title="Em alta na comunidade"
                 subtitle="Decks públicos compartilhados por outros usuários"
@@ -600,19 +616,19 @@ export default function FlashcardsHubPage() {
                     ))}
                   </div>
                 }
-                action={community.length > 6 && filter === 'all' ? <SectionLink onClick={() => selectSection('community')}>Ver todos</SectionLink> : undefined}
+                action={community.length > OVERVIEW_LIMIT && filter === 'all' ? <SectionLink onClick={() => selectSection('community')}>Ver todos</SectionLink> : undefined}
               >
                 {loadingCommunity ? (
                   <DeckGridSkeleton />
                 ) : community.length === 0 ? (
                   <EmptyCallout title="A comunidade está silenciosa" hint="Seja o primeiro a publicar um deck público." />
                 ) : (
-                  <DeckGrid decks={filter === 'community' ? community : community.slice(0, 6)} metricSettings={metricSettings.flashcards} />
+                  <DeckGrid decks={filter === 'community' ? community : community.slice(0, OVERVIEW_LIMIT)} metricSettings={metricSettings.flashcards} />
                 )}
               </Section>
             )}
 
-            {showSection('shared') && (
+            {!isGuest && showSection('shared', loadingShared || shared.length > 0) && (
               <Section
                 title="Compartilhados com você"
                 subtitle={loadingShared ? 'Carregando...' : shared.length === 0 ? 'Quando alguém te enviar um deck, ele aparece aqui.' : `${shared.length} ${shared.length === 1 ? 'compartilhamento' : 'compartilhamentos'}`}
@@ -901,10 +917,9 @@ function StoreHero({ decks, totalStore, onSeeAll, metricSettings }: {
 function CompactStoreCard({ deck }: { deck: DeckWithId }) {
   const priceLabel = deck._isPurchased ? '✓ Adquirido' : deck.pricing === 'paid' ? `R$ ${deck.price?.toFixed(2)}` : 'Grátis'
   return (
-    <TiltCard maxTilt={6} scale={1.03} className="rounded-md">
     <Link
       href={`/flashcards/d/${deck.slug}`}
-      className="group relative overflow-hidden rounded-md border border-border bg-card shadow hover:shadow-xl hover:border-amber-300/50 transition-shadow block"
+      className="group relative block overflow-hidden rounded-md border border-border bg-card shadow transition duration-200 hover:-translate-y-0.5 hover:border-amber-300/50 hover:shadow-xl"
     >
       <div className="relative aspect-[16/10]">
         {deck.coverImage ? (
@@ -922,7 +937,6 @@ function CompactStoreCard({ deck }: { deck: DeckWithId }) {
         </div>
       </div>
     </Link>
-    </TiltCard>
   )
 }
 
@@ -1094,13 +1108,13 @@ function Section({ title, subtitle, icon, accent, action, toolbar, children }: {
 }) {
   return (
     <section className="rounded-xl border border-border bg-card/40 p-4 sm:p-5 shadow-sm">
-      <header className="mb-5 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary shadow-sm">
+      <header className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary shadow-sm">
             {icon}
           </div>
-          <div>
-            <h2 className="font-heading text-xl md:text-2xl font-semibold text-foreground leading-tight">{title}</h2>
+          <div className="min-w-0">
+            <h2 className="font-heading text-lg md:text-xl font-semibold text-foreground leading-tight">{title}</h2>
             {subtitle && <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>}
           </div>
         </div>
@@ -1155,7 +1169,10 @@ function EmptyCallout({ title, hint, cta }: { title: string; hint: string; cta?:
   )
 }
 
-function DeckGrid({ decks, owned = false, onDelete, showStoreState = false, metricSettings }: {
+// Entrada em CSS puro: antes cada card era um `motion.div` com spring próprio,
+// o que colocava dezenas de animações JS na thread principal a cada troca de
+// seção. A mesma leitura visual sai de graça com uma keyframe do compositor.
+const DeckGrid = memo(function DeckGrid({ decks, owned = false, onDelete, showStoreState = false, metricSettings }: {
   decks: DeckWithId[]
   owned?: boolean
   onDelete?: (id: string) => void
@@ -1165,18 +1182,17 @@ function DeckGrid({ decks, owned = false, onDelete, showStoreState = false, metr
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {decks.map((d, i) => (
-        <motion.div
+        <div
           key={d._id}
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, delay: Math.min(i, 8) * 0.045 }}
+          className="deck-card-rise"
+          style={{ animationDelay: `${Math.min(i, 8) * 45}ms` }}
         >
           <DeckCard deck={d} owned={owned} onDelete={onDelete} showStoreState={showStoreState} metricSettings={metricSettings} />
-        </motion.div>
+        </div>
       ))}
     </div>
   )
-}
+})
 
 const DeckCard = memo(function DeckCard({ deck, owned, onDelete, showStoreState, metricSettings }: {
   deck: DeckWithId
@@ -1187,9 +1203,11 @@ const DeckCard = memo(function DeckCard({ deck, owned, onDelete, showStoreState,
 }) {
   const hasPublicMetrics = metricSettings.showLikes || metricSettings.showViews
 
+  // Sem TiltCard aqui: cada card do grid registrava mousemove + dois springs do
+  // framer-motion. Numa grade de 20 decks isso é jank puro no scroll. O hover
+  // agora é uma elevação em CSS, que o compositor resolve sozinho.
   return (
-    <TiltCard maxTilt={5} scale={1.015} className="rounded-xl h-full">
-    <div className="group relative isolate overflow-hidden rounded-xl border border-border bg-card shadow-sm hover:shadow-lg hover:shadow-primary/10 hover:border-primary/40 transition-all duration-300 h-full">
+    <div className="group relative isolate h-full overflow-hidden rounded-xl border border-border bg-card shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
       <Link href={`/flashcards/d/${deck.slug}`} className="block">
         <div className="relative aspect-[16/10] overflow-hidden">
           {deck.coverImage ? (
@@ -1249,7 +1267,6 @@ const DeckCard = memo(function DeckCard({ deck, owned, onDelete, showStoreState,
         </div>
       )}
     </div>
-    </TiltCard>
   )
 })
 
