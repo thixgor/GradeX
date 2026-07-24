@@ -61,6 +61,11 @@ export function MobileFloatingDock() {
 
   // Rota do resolvedor de provas usa o canto esquerdo pra não cobrir a paleta.
   const isExamResolver = /^\/exams?\/[^/]+$/.test(pathname || '')
+  // A tela de estudo de flashcards usa a barra inferior inteira (avaliação
+  // Suave/No ponto/Porrete + navegação) — o FAB por cima cobria o canto
+  // direito dessa barra e bloqueava o toque no botão "Porrete".
+  const isFlashcardDeck = /^\/flashcards\/d\/[^/]+$/.test(pathname || '')
+  if (isFlashcardDeck) return null
 
   return (
     <div
