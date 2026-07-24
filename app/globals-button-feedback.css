@@ -23,9 +23,13 @@
   ) {
     transition-duration: 120ms;
     transition-property: background-color, border-color, box-shadow, color, opacity, transform;
-    will-change: transform;
   }
 
+  /* will-change só durante o toque: materializa a camada GPU no momento do
+     press e a descarta ao soltar. Aplicar permanentemente (como antes) criava
+     uma camada de composição por botão o tempo todo — em páginas com muitos
+     botões (listas de questões, banco) isso inflava memória e causava jank de
+     scroll no mobile. */
   :where(
     button:not(:disabled):active,
     [role="button"]:not([aria-disabled="true"]):active,
@@ -38,6 +42,7 @@
   ) {
     filter: brightness(0.96);
     transform: translateY(1px) scale(0.98);
+    will-change: transform;
   }
 }
 

@@ -10,6 +10,7 @@ import { AppChrome } from '@/components/app-chrome'
 import { RegisterSW } from '@/components/pwa/register-sw'
 import { IosInstallPrompt } from '@/components/pwa/ios-install-prompt'
 import { MobileFloatingDock } from '@/components/mobile-floating-dock'
+import { TactileFeedback } from '@/components/tactile-feedback'
 import { FloatingDockProvider } from '@/context/FloatingDockContext'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
@@ -235,6 +236,7 @@ export default function RootLayout({
                <MobileFloatingDock />
                <RegisterSW />
                <IosInstallPrompt />
+               <TactileFeedback />
              </ImageProtectionProvider>
             </FloatingDockProvider>
            </ShopCartProvider>
