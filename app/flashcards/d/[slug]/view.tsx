@@ -383,7 +383,7 @@ export default function DeckPage() {
     if (!data) return
     const card = data.cards[currentIndex]
     if (!card) return
-    if (ratingBusyCard) return
+    if (ratingBusyCard === card._id) return
     setRatings(prev => ({ ...prev, [card._id]: value }))
     if (activeStudyMode === 'spaced') {
       setRatingBusyCard(card._id)
