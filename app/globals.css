@@ -1033,6 +1033,22 @@
   animation: shimmer 1.5s ease-in-out infinite;
 }
 
+/* Régua horizontal (chips de seção): desbota o próprio conteúdo na borda
+   direita para indicar que há mais para o lado. Como é máscara e não um
+   degradê pintado, funciona sobre qualquer cor de barra, nos dois temas.
+   No desktop a régua não rola, então a máscara sai de cena. */
+.fade-scroll-x {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+}
+
+@media (min-width: 1024px) {
+  .fade-scroll-x {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
+
 /* Entrada dos cards de deck (/flashcards). Substitui um motion.div por card:
    a mesma leitura visual, sem uma animação JS por item na thread principal. */
 @keyframes deck-card-rise {
