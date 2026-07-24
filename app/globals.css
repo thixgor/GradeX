@@ -1939,38 +1939,32 @@
 }
 
 /* =========================================================================
-   PWA INSTALADA — MARGENS SEGURAS (SAFE-AREA) DO iPHONE / ANDROID
+   MARGENS SEGURAS (SAFE-AREA) DO iPHONE / ANDROID
    -------------------------------------------------------------------------
-   Estas regras SÓ valem quando o site roda como app instalado na tela de
-   início (display-mode: standalone). No navegador comum nada muda.
+   Aplicadas SEMPRE (não dependem da media query display-mode, que no iOS pode
+   falhar). env(safe-area-inset-*) vale 0 em telas sem notch/barra, então no
+   navegador comum e no desktop nada muda. Só têm efeito real quando o app roda
+   em tela cheia (instalado na tela de início), onde o conteúdo ocuparia a área
+   do relógio/bateria e do indicador de home.
 
-   O app abre em modo imersivo (viewport-fit: cover + barra de status
-   translúcida), então o conteúdo ocuparia a área do relógio/bateria e do
-   indicador de home. Aqui devolvemos esse "respiro": as barras de topo recuam
-   o conteúdo para baixo da barra de status (e pintam o fundo atrás dela,
-   ficando com cara de app nativo), e os elementos de baixo respeitam o
-   indicador de home.
+   As barras de topo recuam o conteúdo para baixo da barra de status (e o fundo
+   próprio da barra preenche atrás do relógio, com cara de app nativo); os
+   elementos de baixo respeitam o indicador de home.
    ========================================================================== */
-@media (display-mode: standalone) {
-  /* Barras de topo (headers sticky, nav da landing, sidebar): empurram o
-     conteúdo para baixo da barra de status; o fundo próprio da barra preenche
-     atrás do relógio. */
-  .pwa-safe-top {
-    padding-top: env(safe-area-inset-top);
-  }
+.pwa-safe-top {
+  padding-top: env(safe-area-inset-top) !important;
+}
 
-  /* Rodapés / docks flutuantes: afastam do indicador de home. */
-  .pwa-safe-bottom {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
+.pwa-safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom) !important;
+}
 
-  /* Botões fixos no canto superior (menu, tema) descem abaixo da barra. */
-  .pwa-safe-fixed-top {
-    top: calc(0.75rem + env(safe-area-inset-top)) !important;
-  }
+/* Botões fixos no canto superior (menu, tema) descem abaixo da barra. */
+.pwa-safe-fixed-top {
+  top: calc(0.75rem + env(safe-area-inset-top)) !important;
+}
 
-  /* Hero da landing: os 72px reservados para o nav + a altura da barra. */
-  .da-landing .pwa-safe-hero {
-    padding-top: calc(72px + env(safe-area-inset-top));
-  }
+/* Hero da landing: os 72px reservados para o nav + a altura da barra. */
+.da-landing .pwa-safe-hero {
+  padding-top: calc(72px + env(safe-area-inset-top));
 }
