@@ -68,7 +68,10 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     title: 'DomineAqui',
-    statusBarStyle: 'black-translucent',
+    // 'default' faz o iOS RESERVAR a barra de status (relógio/bateria) e começar
+    // o conteúdo abaixo dela. Com 'black-translucent' o conteúdo passava por
+    // baixo da barra e o topo das telas ficava coberto.
+    statusBarStyle: 'default',
   },
   alternates: {
     canonical: '/',
@@ -117,8 +120,10 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  // Permite que o app ocupe a área do notch/Dynamic Island quando instalado.
-  viewportFit: 'cover',
+  // 'auto' (padrão): o iOS insere automaticamente as margens de segurança
+  // (barra de status no topo, indicador de home embaixo), então nenhum conteúdo
+  // fica escondido sob o notch/barra. A cor do tema pinta essas margens.
+  viewportFit: 'auto',
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#F4F1EA' },
     { media: '(prefers-color-scheme: dark)', color: '#0B1F1A' },
