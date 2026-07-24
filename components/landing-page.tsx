@@ -491,6 +491,7 @@ export default function LandingPage({ initialIsLoggedIn }: LandingPageProps) {
       <Differentiators />
       <Plans />
       <Prescricao />
+      <InstallApp />
       <FaqAndCTA signupHref={signupHref} isLoggedIn={isLoggedIn} />
       <Footer />
     </div>
@@ -524,6 +525,7 @@ function Nav({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: boole
     { label: 'Manual Clínico', href: '#manual' },
     { label: 'Materiais', href: LINKS.materiais },
     { label: 'Planos', href: '#planos' },
+    { label: 'App', href: '#app' },
   ]
 
   return (
@@ -1658,6 +1660,218 @@ function Prescricao() {
             <p className="mt-6 font-da-display text-lg font-medium text-da-amber">
               De colega para colega.
             </p>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ---------- INSTALAR APP (PWA) ---------- */
+
+// Evento beforeinstallprompt (Chrome/Android/desktop). Tipado localmente porque
+// não faz parte da lib DOM padrão.
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
+}
+
+function InstallShareIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M12 15V3M8 7l4-4 4 4" />
+      <path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+    </svg>
+  )
+}
+
+function InstallPlusIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <rect x="3" y="3" width="18" height="18" rx="4" />
+      <path d="M12 8v8M8 12h8" />
+    </svg>
+  )
+}
+
+function InstallRocketIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09z" />
+      <path d="M12 15l-3-3a22 22 0 014-9 11.5 11.5 0 015 5 22 22 0 01-9 4z" />
+      <path d="M9 12H4s.55-3.03 2-4a5 5 0 014-1" />
+      <path d="M12 15v5s3.03-.55 4-2a5 5 0 001-4" />
+    </svg>
+  )
+}
+
+function InstallApp() {
+  const [isIos, setIsIos] = useState(false)
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(
+    null,
+  )
+  const [installed, setInstalled] = useState(false)
+
+  useEffect(() => {
+    const ua = navigator.userAgent || ''
+    const iOS =
+      /iPhone|iPod|iPad/.test(ua) ||
+      (navigator.platform === 'MacIntel' && (navigator.maxTouchPoints || 0) > 1)
+    setIsIos(iOS)
+
+    const isStandalone =
+      (window.navigator as unknown as { standalone?: boolean }).standalone === true ||
+      window.matchMedia?.('(display-mode: standalone)').matches === true
+    if (isStandalone) setInstalled(true)
+
+    const onBeforeInstall = (e: Event) => {
+      e.preventDefault()
+      setDeferredPrompt(e as BeforeInstallPromptEvent)
+    }
+    const onInstalled = () => {
+      setInstalled(true)
+      setDeferredPrompt(null)
+    }
+    window.addEventListener('beforeinstallprompt', onBeforeInstall)
+    window.addEventListener('appinstalled', onInstalled)
+    return () => {
+      window.removeEventListener('beforeinstallprompt', onBeforeInstall)
+      window.removeEventListener('appinstalled', onInstalled)
+    }
+  }, [])
+
+  const handleInstall = async () => {
+    if (!deferredPrompt) return
+    await deferredPrompt.prompt()
+    await deferredPrompt.userChoice
+    setDeferredPrompt(null)
+  }
+
+  const steps: [ReactNode, string, string][] = [
+    [
+      <InstallShareIcon key="i" />,
+      'Toque em Compartilhar',
+      'Na barra do Safari, toque no ícone de compartilhar (o quadrado com a seta para cima).',
+    ],
+    [
+      <InstallPlusIcon key="i" />,
+      'Adicionar à Tela de Início',
+      'Role a lista de opções e escolha “Adicionar à Tela de Início”. Confirme em Adicionar.',
+    ],
+    [
+      <InstallRocketIcon key="i" />,
+      'Abra como app',
+      'O ícone do DomineAqui aparece na sua tela. Abra e use em tela cheia, como um aplicativo.',
+    ],
+  ]
+
+  return (
+    <section
+      id="app"
+      className="relative border-t border-[color:var(--da-neutral-line)] bg-da-panel/40"
+    >
+      <div className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
+        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_1.15fr]">
+          <Reveal>
+            <SectionMark n="App" label="No seu bolso" />
+            <h2 className="font-da-display text-4xl font-semibold leading-[1.04] tracking-tighter md:text-5xl">
+              Leve o DomineAqui no bolso.
+            </h2>
+            <p className="mt-5 max-w-lg text-lg leading-relaxed text-da-muted">
+              Instale a plataforma como um aplicativo no seu iPhone em segundos —
+              sem App Store, sem download pesado, sem ocupar espaço. Abre em tela
+              cheia, com ícone próprio e a mesma velocidade do site.
+            </p>
+
+            <div className="mt-8 flex flex-wrap items-center gap-4">
+              {!isIos && deferredPrompt && !installed && (
+                <button
+                  type="button"
+                  onClick={handleInstall}
+                  className="group relative inline-flex items-center justify-center gap-2 rounded-full bg-da-amber px-7 py-3.5 font-da-display font-semibold text-[#0B1F1A] transition-[transform,box-shadow] duration-200 hover:shadow-[0_0_34px_-6px_rgba(232,118,58,.7)] active:scale-[0.98]"
+                >
+                  Instalar o app
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden
+                  >
+                    <path d="M12 3v12M7 10l5 5 5-5" />
+                    <path d="M5 21h14" />
+                  </svg>
+                </button>
+              )}
+              {installed && (
+                <span className="inline-flex items-center gap-2 rounded-full border border-da-amber/50 px-5 py-2.5 font-da-mono text-sm text-da-amber">
+                  ✓ App instalado
+                </span>
+              )}
+              {!installed && (
+                <span className="font-da-mono text-xs text-da-muted">
+                  {isIos
+                    ? 'iPhone: siga os 3 passos ao lado →'
+                    : deferredPrompt
+                      ? 'Grátis · instala em segundos'
+                      : 'Android: menu do navegador → “Instalar app”'}
+                </span>
+              )}
+            </div>
+          </Reveal>
+
+          <Reveal delay={120}>
+            <ol className="space-y-4">
+              {steps.map(([icon, title, desc], i) => (
+                <li
+                  key={title}
+                  className="flex items-start gap-4 rounded-2xl border border-[color:var(--da-neutral-line)] bg-da-ground/40 p-5"
+                >
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-da-amber/12 text-da-amber">
+                    {icon}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="flex items-center gap-2 font-da-display font-semibold">
+                      <span className="font-da-mono text-xs text-da-amber">
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      {title}
+                    </p>
+                    <p className="mt-1 text-sm leading-relaxed text-da-muted">{desc}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
           </Reveal>
         </div>
       </div>

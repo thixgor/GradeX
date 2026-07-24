@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Newsreader, Source_Sans_3, IBM_Plex_Mono } from 'next/font/google'
 import './globals.css'
 import './globals-button-feedback.css'
@@ -7,6 +7,8 @@ import { Footer } from '@/components/footer'
 import { ImageProtectionProvider } from '@/components/image-protection-provider'
 import { VerifyEmailBanner } from '@/components/verify-email-banner'
 import { AppChrome } from '@/components/app-chrome'
+import { RegisterSW } from '@/components/pwa/register-sw'
+import { IosInstallPrompt } from '@/components/pwa/ios-install-prompt'
 import { MobileFloatingDock } from '@/components/mobile-floating-dock'
 import { FloatingDockProvider } from '@/context/FloatingDockContext'
 import { Analytics } from '@vercel/analytics/react'
@@ -62,6 +64,12 @@ export const metadata: Metadata = {
   creator: SITE_NAME,
   publisher: SITE_NAME,
   category: 'education',
+  manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    title: 'DomineAqui',
+    statusBarStyle: 'black-translucent',
+  },
   alternates: {
     canonical: '/',
     languages: { 'pt-BR': '/' },
@@ -73,7 +81,7 @@ export const metadata: Metadata = {
       { url: '/favicon.png', type: 'image/png' },
     ],
     shortcut: '/favicon.ico',
-    apple: '/favicon.png',
+    apple: [{ url: '/favicon.png', sizes: '180x180', type: 'image/png' }],
   },
   openGraph: {
     title: 'DomineAqui — Plataforma de Estudo Inteligente para Medicina',
@@ -104,6 +112,17 @@ export const metadata: Metadata = {
   other: {
     'google-site-verification': process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || '',
   },
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  // Permite que o app ocupe a área do notch/Dynamic Island quando instalado.
+  viewportFit: 'cover',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#F4F1EA' },
+    { media: '(prefers-color-scheme: dark)', color: '#0B1F1A' },
+  ],
 }
 
 export default function RootLayout({
@@ -208,6 +227,8 @@ export default function RootLayout({
                <Footer />
                <AppChrome />
                <MobileFloatingDock />
+               <RegisterSW />
+               <IosInstallPrompt />
              </ImageProtectionProvider>
             </FloatingDockProvider>
            </ShopCartProvider>

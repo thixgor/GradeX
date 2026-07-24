@@ -165,6 +165,10 @@ export async function middleware(request: NextRequest) {
   if (
     pathname.startsWith('/_next/') ||
     pathname.startsWith('/img/') ||
+    // Service worker da PWA (public/sw.js). Precisa ser servido como JS puro;
+    // sem isso o middleware trataria como rota protegida e redirecionaria o
+    // visitante sem cookie para /auth/login, quebrando o registro do worker.
+    pathname === '/sw.js' ||
     pathname.startsWith('/favicon') ||
     pathname.endsWith('.ico') ||
     pathname.endsWith('.png') ||
