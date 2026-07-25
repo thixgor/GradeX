@@ -51,7 +51,19 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   })
 }
 
+// Cache de módulo para o flag da landing. `landing_settings` muda raríssimas
+// vezes (é um toggle do admin), mas antes toda visita à landing pagava um
+// findOne no Atlas — com timeout de 2,5s — antes do primeiro byte. Com 60s de
+// TTL, o flag continua respeitado quase em tempo real e o TTFB deixa de
+// depender do banco. O cache vive por instância de lambda.
+let cachedLanding: { value: Required<LandingSettings>; at: number } | null = null
+const LANDING_TTL_MS = 60_000
+
 async function loadLandingSettings(): Promise<Required<LandingSettings>> {
+  if (cachedLanding && Date.now() - cachedLanding.at < LANDING_TTL_MS) {
+    return cachedLanding.value
+  }
+
   try {
     const { getDb } = await import('@/lib/mongodb')
     const db = await withTimeout(getDb(), 2500)
@@ -62,12 +74,14 @@ async function loadLandingSettings(): Promise<Required<LandingSettings>> {
       2500
     )
 
-    if (!settings) return DEFAULTS
+    const value: Required<LandingSettings> = settings
+      ? { landingPageEnabled: settings.landingPageEnabled !== false }
+      : DEFAULTS
 
-    return {
-      landingPageEnabled: settings.landingPageEnabled !== false,
-    }
+    cachedLanding = { value, at: Date.now() }
+    return value
   } catch {
+    // Falha de rede/timeout: não cacheia, para tentar de novo na próxima visita.
     return DEFAULTS
   }
 }

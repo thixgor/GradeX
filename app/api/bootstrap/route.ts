@@ -140,7 +140,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     // `users.findOne` e `landing_settings.findOne` continuam separados
     // porque vivem em coleções diferentes e são leves (lookups indexados).
     // ────────────────────────────────────────────────────────────
-    const [userDoc, landingSettings, usageFacet] = await Promise.all([
+    // As cinco queries vão numa única onda. Antes eram dois `Promise.all`
+    // sequenciais, mas o segundo (personal_exams + notifications) só depende
+    // de `userId` — nunca do resultado do primeiro. Fundir elimina um
+    // round-trip inteiro ao Atlas do caminho que bloqueia o dashboard.
+    const [userDoc, landingSettings, usageFacet, customExams, notificationCount] = await Promise.all([
       db.collection('users').findOne(
         { _id: userId },
         {
@@ -168,6 +172,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           },
         },
       ]).toArray(),
+      db.collection('personal_exams').countDocuments({ createdBy: userId }),
+      db.collection('notifications').countDocuments({
+        userId: userIdString,
+        read: false,
+      }),
     ])
 
     if (!userDoc) {
@@ -176,15 +185,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     // Calculate tier limits based on subscription
     const tierLimits = getTierLimits(userDoc.accountType || 'free')
-
-    // Notification count + custom exams em paralelo (índices separados).
-    const [customExams, notificationCount] = await Promise.all([
-      db.collection('personal_exams').countDocuments({ createdBy: userId }),
-      db.collection('notifications').countDocuments({
-        userId: userIdString,
-        read: false,
-      }),
-    ])
 
     const examsUsed = usageFacet[0]?.month?.[0]?.n ?? 0
     const questionsUsedToday = usageFacet[0]?.today?.[0]?.n ?? 0

@@ -5,7 +5,16 @@ if (!process.env.MONGODB_URI) {
 }
 
 const uri: string = process.env.MONGODB_URI
-const options = {}
+// Opções afinadas para serverless (Vercel): cada lambda mantém um pool pequeno,
+// devolve conexões ociosas rápido e — crucialmente — desiste da seleção de
+// servidor em 5s. Sem `serverSelectionTimeoutMS` o driver usa 30s por padrão,
+// então uma eleição lenta no Atlas travava o login por meio minuto.
+const options = {
+  maxPoolSize: 10,
+  minPoolSize: 0,
+  maxIdleTimeMS: 60_000,
+  serverSelectionTimeoutMS: 5_000,
+}
 
 let client: MongoClient
 let clientPromise: Promise<MongoClient>
@@ -17,10 +26,22 @@ declare global {
 if (process.env.NODE_ENV === 'development') {
   if (!global._mongoClientPromise) {
     client = new MongoClient(uri, options)
-    global._mongoClientPromise = client.connect().then(async (client) => {
+    global._mongoClientPromise = client.connect().then((client) => {
       const db = client.db('gradex')
-      // Criar índices essenciais uma única vez
-      await Promise.all([
+      // Índices criados em BACKGROUND (sem await): antes, as ~139 chamadas de
+      // createIndex abaixo bloqueavam a resolução de clientPromise, então a
+      // primeira query de toda lambda fria esperava 139 round-trips ao Atlas.
+      // Elas são idempotentes e não precisam existir para a query funcionar.
+      void Promise.all([
+        // ── Autenticação / usuário (crítico: login fazia collection scan) ──
+        // Não-único de propósito: impor unicidade agora seria mudança de regra
+        // de negócio e falharia se já existir e-mail duplicado — o ganho de
+        // performance da busca é o mesmo.
+        db.collection('users').createIndex({ email: 1 }),
+        db.collection('submissions').createIndex({ userId: 1 }),
+        db.collection('exam_submissions').createIndex({ userId: 1 }),
+        db.collection('notifications').createIndex({ userId: 1, read: 1 }),
+        db.collection('personal_exams').createIndex({ createdBy: 1 }),
         db.collection('leads').createIndex({ campaignId: 1, email: 1 }),
         db.collection('lead_page_views').createIndex({ campaignId: 1, ip: 1 }),
         db.collection('patologias').createIndex({ slug: 1 }, { unique: true }),
@@ -98,10 +119,22 @@ if (process.env.NODE_ENV === 'development') {
   clientPromise = global._mongoClientPromise
 } else {
   client = new MongoClient(uri, options)
-  clientPromise = client.connect().then(async (client) => {
+  clientPromise = client.connect().then((client) => {
     const db = client.db('gradex')
-    // Criar índices essenciais uma única vez
-    await Promise.all([
+    // Índices criados em BACKGROUND (sem await): antes, as ~139 chamadas de
+    // createIndex abaixo bloqueavam a resolução de clientPromise, então a
+    // primeira query de toda lambda fria esperava 139 round-trips ao Atlas.
+    // Elas são idempotentes e não precisam existir para a query funcionar.
+    void Promise.all([
+      // ── Autenticação / usuário (crítico: login fazia collection scan) ──
+      // Não-único de propósito: impor unicidade agora seria mudança de regra
+      // de negócio e falharia se já existir e-mail duplicado — o ganho de
+      // performance da busca é o mesmo.
+      db.collection('users').createIndex({ email: 1 }),
+      db.collection('submissions').createIndex({ userId: 1 }),
+      db.collection('exam_submissions').createIndex({ userId: 1 }),
+      db.collection('notifications').createIndex({ userId: 1, read: 1 }),
+      db.collection('personal_exams').createIndex({ createdBy: 1 }),
       db.collection('leads').createIndex({ campaignId: 1, email: 1 }),
       db.collection('lead_page_views').createIndex({ campaignId: 1, ip: 1 }),
       db.collection('patologias').createIndex({ slug: 1 }, { unique: true }),
