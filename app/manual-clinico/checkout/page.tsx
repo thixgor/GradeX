@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { trackMeta } from '@/lib/meta-pixel'
 import { ArrowLeft, BookOpen, Check, Flame, Lock, Loader2, Percent, Sparkles, TrendingDown, X, Clock, Crown } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
+import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-notice'
 import { usePricingEventState, usePricingEventStates } from '@/components/pricing-events/usePricingEventState'
 
 const MANUAL_CLINICO_PRODUCT_ID = 'manual-clinico-premium'
@@ -531,6 +532,8 @@ export default function ManualClinicoCheckoutPage() {
               </div>
             ) : (
               <div className="space-y-4">
+                <CheckoutAccountNotice tone="dark" />
+
                 <CouponBox
                   product={product}
                   planKey={selectedPlanKey}

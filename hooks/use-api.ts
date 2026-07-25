@@ -95,8 +95,14 @@ export function useApi<T = any>(
     }
   }, [refetchInterval, skip, fetchData])
 
-  // Cleanup on unmount
+  // Cleanup on unmount.
+  // O `mountedRef.current = true` na entrada é obrigatório, não redundante: em
+  // StrictMode (dev) o React monta, desmonta e remonta: o cleanup zera a flag e,
+  // sem restaurá-la aqui, ela fica false para sempre. A partir daí todo
+  // setData/setLoading é descartado e o componente congela em "carregando" —
+  // só no dev, porque em produção o efeito roda uma vez só.
   useEffect(() => {
+    mountedRef.current = true
     return () => {
       mountedRef.current = false
     }

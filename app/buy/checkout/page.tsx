@@ -6,6 +6,7 @@ import { Loader2, ChevronLeft, CreditCard, Zap, CheckCircle2, Star } from 'lucid
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
 import type { PlanConfig } from '@/lib/types'
 import { AppShell } from '@/components/app-shell'
+import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-notice'
 import { cn } from '@/lib/utils'
 
 type PayMode = 'subscription' | 'one_time'
@@ -260,6 +261,8 @@ function BuyCheckoutContent() {
                 </div>
               </div>
             )}
+
+            <CheckoutAccountNotice className="mb-4" />
 
             {payMode === 'subscription' && isRecurring ? (
               <SubscriptionCheckout plan={plan} publicKey={publicKey} months={months as 1 | 3 | 12} />

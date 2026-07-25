@@ -84,7 +84,14 @@ export function useAuthUser(options: {
     refetchInterval = 0, // No polling by default - user rarely changes during session
   } = options
 
-  const { data, loading, error, refetch: apiRefetch } = useApi<AuthUser>(
+  // /api/bootstrap responde um envelope ({ user, tierLimits, sidebarSections… }),
+  // e o fetchAPI entrega o JSON cru — então `data` NÃO é o usuário. Quem lia
+  // data.email/data.name recebia undefined em silêncio. O desembrulho abaixo faz
+  // o hook cumprir o tipo que ele declara; o formato plano é aceito junto porque
+  // /api/auth/me devolve o usuário direto e já foi o endpoint deste hook.
+  const { data: payload, loading, error, refetch: apiRefetch } = useApi<
+    AuthUser | { user?: AuthUser | null }
+  >(
     '/api/bootstrap', // Use optimized bootstrap endpoint (see below)
     {
       skip,
@@ -92,6 +99,11 @@ export function useAuthUser(options: {
       refetchInterval,
     }
   )
+
+  const data: AuthUser | null =
+    payload && typeof payload === 'object' && 'user' in payload
+      ? ((payload as { user?: AuthUser | null }).user ?? null)
+      : ((payload as AuthUser | null) ?? null)
 
   const mountedRef = useRef(true)
 
