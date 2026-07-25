@@ -155,7 +155,13 @@ export async function GET(
           openedAt: now.toISOString(),
         },
         viewer: {
-          defaultMode: 'single',
+          // Rolagem contínua é o padrão: é o gesto que o leitor já conhece de
+          // qualquer app. O modo 'single' (uma página por vez) exigia clicar
+          // para avançar e era a reclamação nº 1 dos usuários — pior ainda
+          // porque o seletor de modo estava escondido no celular. Quem já tem
+          // um modo salvo no localStorage continua com o dele (o cliente
+          // resolve `saved.mode || defaultMode`).
+          defaultMode: 'continuous',
           minZoom: 0.35,
           maxZoom: 2.8,
           coverPage,
