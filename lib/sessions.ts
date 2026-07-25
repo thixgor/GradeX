@@ -32,10 +32,14 @@ async function ensureIndexes() {
   if (indexesEnsured) return
   try {
     const col = await sessionsCollection()
-    await col.createIndex({ jti: 1 }, { unique: true })
-    await col.createIndex({ userId: 1, lastActiveAt: -1 })
-    // Expira sessões 30 dias após a última atividade (mais que os 7d do token).
-    await col.createIndex({ lastActiveAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 30 })
+    // Em paralelo: eram três round-trips sequenciais no primeiro login de cada
+    // lambda fria, todos no caminho crítico da resposta.
+    await Promise.all([
+      col.createIndex({ jti: 1 }, { unique: true }),
+      col.createIndex({ userId: 1, lastActiveAt: -1 }),
+      // Expira sessões 30 dias após a última atividade (mais que os 7d do token).
+      col.createIndex({ lastActiveAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 30 }),
+    ])
     indexesEnsured = true
   } catch (err) {
     // Não falha o login se a criação de índice der erro (ex: concorrência).
@@ -92,7 +96,10 @@ export async function recordLoginSession(input: {
   maxDevices?: number
 }): Promise<void> {
   const { request, userId, jti } = input
-  await ensureIndexes()
+  // Índices em background: são idempotentes e o insert abaixo funciona sem
+  // eles. Antes, o primeiro login de cada lambda fria pagava três round-trips
+  // de createIndex antes de sequer inserir a sessão.
+  void ensureIndexes()
   const col = await sessionsCollection()
   const now = new Date()
   const userAgent = request.headers.get('user-agent') || ''
@@ -107,7 +114,13 @@ export async function recordLoginSession(input: {
     lastActiveAt: now,
   })
 
-  await enforceDeviceLimit(userId, input.maxDevices ?? DEFAULT_MAX_DEVICES, jti)
+  // O limite de dispositivos continua sendo aplicado, mas fora do caminho da
+  // resposta: ele só revoga sessões ANTIGAS (preserva `keepJti`), então nada
+  // do login atual depende do resultado. Antes custava um find().sort() +
+  // updateMany antes do usuário receber o cookie.
+  enforceDeviceLimit(userId, input.maxDevices ?? DEFAULT_MAX_DEVICES, jti).catch(
+    (err) => console.error('[sessions] enforceDeviceLimit error:', err),
+  )
 }
 
 /**

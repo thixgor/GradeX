@@ -37,8 +37,20 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Usar score mais alto para login (acao de alto risco)
-    const recaptchaResult = await verifyRecaptcha(recaptchaToken, 'HIGH_RISK', 'login')
+    // reCAPTCHA (POST server-to-server ao Google) e a busca do usuário rodam
+    // em PARALELO — antes eram estritamente sequenciais, somando duas esperas
+    // de rede. A ordem de decisão continua idêntica: o resultado do reCAPTCHA
+    // é avaliado ANTES de qualquer verificação de senha, então nenhum bcrypt
+    // roda para requisição não verificada.
+    const recaptchaPromise = verifyRecaptcha(recaptchaToken, 'HIGH_RISK', 'login')
+    const dbPromise = getDb()
+    const userPromise = dbPromise.then((db) =>
+      db.collection<User>('users').findOne({ email })
+    )
+    // Evita "unhandled rejection" caso o reCAPTCHA rejeite antes deste resolver.
+    userPromise.catch(() => {})
+
+    const recaptchaResult = await recaptchaPromise
     if (!recaptchaResult.success) {
       return NextResponse.json(
         { error: recaptchaResult.error || 'Falha na verificação do reCAPTCHA' },
@@ -46,11 +58,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const db = await getDb()
+    const db = await dbPromise
     const usersCollection = db.collection<User>('users')
 
     // Busca o usuário
-    const user = await usersCollection.findOne({ email })
+    const user = await userPromise
     if (!user) {
       return NextResponse.json(
         { error: 'Credenciais inválidas' },
@@ -115,11 +127,11 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Atualiza último login
-    await usersCollection.updateOne(
-      { _id: user._id },
-      { $set: { lastLoginAt: new Date() } }
-    )
+    // Atualiza último login em background: é bookkeeping puro, ninguém no
+    // fluxo depende do resultado e o usuário estava esperando por ele.
+    usersCollection
+      .updateOne({ _id: user._id }, { $set: { lastLoginAt: new Date() } })
+      .catch((err) => console.error('Falha ao atualizar lastLoginAt:', err))
 
     // Cria o token vinculado a uma sessão de dispositivo (jti)
     const jti = generateSessionId()

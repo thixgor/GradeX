@@ -7,6 +7,7 @@ import { CreateExamModal } from '@/components/create-exam-modal'
 import { BanChecker } from '@/components/ban-checker'
 import { SupportChat } from '@/components/support-chat'
 import { PageLoading } from '@/components/page-loading'
+import { SectionSkeleton } from '@/components/section-skeleton'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { NotificationsBell } from '@/components/notifications-bell'
@@ -71,6 +72,24 @@ export function useAppShell() {
     throw new Error('useAppShell must be used within AppShellProvider')
   }
   return context
+}
+
+/**
+ * Escolhe o formato do esqueleto conforme a rota, para que o molde exibido
+ * durante o bootstrap case com o conteúdo que vai aparecer. Espelha os
+ * variants usados pelos `loading.tsx` de cada seção.
+ */
+function skeletonVariantForPath(
+  pathname: string | null,
+): 'cards' | 'list' | 'dashboard' {
+  if (!pathname) return 'cards'
+  if (pathname.startsWith('/dashboard') || pathname.startsWith('/profile')) {
+    return 'dashboard'
+  }
+  if (pathname.startsWith('/banco-questoes') || pathname.startsWith('/forum')) {
+    return 'list'
+  }
+  return 'cards'
 }
 
 interface AppShellProps {
@@ -215,8 +234,14 @@ export function AppShell({
 
   // Protected pages should wait for session data. Guest-enabled pages can render
   // immediately and upgrade themselves when bootstrap eventually finishes.
+  //
+  // Enquanto o bootstrap não chega, mostramos o ESQUELETO do shell em vez de um
+  // spinner fullscreen. É o mesmo molde (sidebar + header + conteúdo) que o
+  // AppShell real vai ocupar, então a troca acontece sem pulo de layout e a
+  // espera não parece "o app recarregando do zero" — que é exatamente a
+  // sensação logo depois do login, quando o cache foi limpo de propósito.
   if (loading && !isGuest) {
-    return <PageLoading variant="fullscreen" message="Carregando..." />
+    return <SectionSkeleton variant={skeletonVariantForPath(pathname)} />
   }
 
   // Handle error or unauthenticated state

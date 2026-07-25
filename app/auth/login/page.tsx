@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -221,6 +221,62 @@ export default function LoginPage() {
     }
   }, [isLogin])
 
+  // ── reCAPTCHA pré-aquecido ────────────────────────────────────────────
+  // O token v3 leva 150-600ms para ser emitido e antes isso acontecia DEPOIS
+  // do clique, com o botão travado. Emitimos assim que o usuário toca no
+  // formulário, então na hora do submit ele normalmente já está pronto.
+  // Tokens v3 valem 120s e são de uso único — daí o TTL com margem e o
+  // descarte após consumir.
+  const RECAPTCHA_TOKEN_TTL_MS = 100_000
+  const primedRecaptchaRef = useRef<{
+    action: string
+    at: number
+    promise: Promise<string>
+  } | null>(null)
+
+  const primeRecaptcha = useCallback(() => {
+    if (typeof window === 'undefined') return
+    const g = window.grecaptcha
+    const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY
+    if (!g || typeof g.execute !== 'function' || !siteKey) return
+
+    const action = isLogin ? 'login' : 'register'
+    const current = primedRecaptchaRef.current
+    if (
+      current &&
+      current.action === action &&
+      Date.now() - current.at < RECAPTCHA_TOKEN_TTL_MS
+    ) {
+      return
+    }
+
+    try {
+      const promise: Promise<string> = g.execute(siteKey, { action })
+      // Sem handler, uma falha aqui viraria unhandled rejection no console.
+      promise.catch(() => {})
+      primedRecaptchaRef.current = { action, at: Date.now(), promise }
+    } catch {
+      // grecaptcha ainda não pronto — o submit executa na hora, como antes.
+    }
+  }, [isLogin])
+
+  const consumePrimedRecaptcha = useCallback(
+    async (action: string): Promise<string | undefined> => {
+      const primed = primedRecaptchaRef.current
+      if (!primed) return undefined
+      // Consome: token v3 é de uso único.
+      primedRecaptchaRef.current = null
+      if (primed.action !== action) return undefined
+      if (Date.now() - primed.at >= RECAPTCHA_TOKEN_TTL_MS) return undefined
+      try {
+        return await primed.promise
+      } catch {
+        return undefined
+      }
+    },
+    [],
+  )
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
@@ -233,10 +289,19 @@ export default function LoginPage() {
         return
       }
 
-      const token = await window.grecaptcha.execute(
-        process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
-        { action: isLogin ? 'login' : 'register' }
-      )
+      // Usa o token pré-aquecido quando existir (ver `primeRecaptcha`). Assim o
+      // clique em Entrar não paga os 150-600ms da ida ao Google — ela já
+      // aconteceu enquanto o usuário digitava. Se não houver token válido,
+      // executa na hora, exatamente como antes.
+      const action = isLogin ? 'login' : 'register'
+      let token: string | undefined = await consumePrimedRecaptcha(action)
+
+      if (!token) {
+        token = await window.grecaptcha.execute(
+          process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
+          { action }
+        )
+      }
 
       if (!token) {
         setError('Falha ao verificar reCAPTCHA. Tente novamente.')
@@ -824,6 +889,7 @@ export default function LoginPage() {
                       placeholder="seu@email.com"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onFocus={primeRecaptcha}
                       required
                       className={inputCls}
                     />
@@ -850,6 +916,7 @@ export default function LoginPage() {
                         placeholder="••••••••"
                         value={formData.password}
                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                        onFocus={primeRecaptcha}
                         required
                         className={`${inputCls} pr-10`}
                       />
