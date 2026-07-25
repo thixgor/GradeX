@@ -60,7 +60,12 @@ const PREVIEW_IMAGE = '/img/eletro/simulador-ecg-preview.webp'
 
 export default function EletrocardiogramaPage() {
   return (
-    <AppShell allowGuest showHeader={false}>
+    // guestNotice desligado: o aviso flutuante do shell é `position: fixed` no
+    // canto inferior direito e cobria o preview do simulador no desktop e a
+    // barra de compra no celular. Aqui ele também é redundante e fora de
+    // contexto — fala de catálogo, download e viewer de PDF, enquanto o paywall
+    // desta página já explica, no lugar certo, o que está trancado e como abrir.
+    <AppShell allowGuest showHeader={false} guestNotice={false}>
       <EcgManualContent />
     </AppShell>
   )
@@ -202,8 +207,19 @@ function Paywall({
     : basePrice
   const showPrice = isActive && basePrice > 0
 
-  const ctaLabel = isAuthenticated ? 'Desbloquear o Manual Clínico' : 'Entrar e desbloquear'
+  // Visitante não vai para o login: /comprar é compra sem conta, com a Serial
+  // Key indo por e-mail. O rótulo antigo ("Entrar e desbloquear") prometia uma
+  // tela de login que não aparece — e agora que o aviso de visitante saiu daqui,
+  // esta é a única explicação do fluxo que a pessoa recebe.
+  const ctaLabel = isAuthenticated ? 'Desbloquear o Manual Clínico' : 'Comprar e desbloquear'
   const totalTracings = catalog?.total ?? 90
+
+  const perks = [
+    'Acesso imediato após o pagamento',
+    `Os ${totalTracings} traçados e as atualizações inclusos`,
+    'Leva junto as 300+ patologias do Manual',
+    ...(isAuthenticated ? [] : ['Sem conta? A Serial Key vai por e-mail']),
+  ]
 
   return (
     <>
@@ -319,11 +335,7 @@ function Paywall({
             </button>
 
             <ul className="mt-4 space-y-1.5">
-              {[
-                'Acesso imediato após o pagamento',
-                `Os ${totalTracings} traçados e as atualizações inclusos`,
-                'Leva junto as 300+ patologias do Manual',
-              ].map((t) => (
+              {perks.map((t) => (
                 <li key={t} className="flex items-start gap-2 text-xs text-muted-foreground">
                   <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" />
                   {t}
@@ -361,7 +373,7 @@ function Paywall({
             className="ml-auto inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-md bg-primary px-4 text-sm font-bold text-primary-foreground shadow-sm transition active:scale-[0.98]"
           >
             <Crown className="h-4 w-4" />
-            {isAuthenticated ? 'Desbloquear' : 'Entrar e desbloquear'}
+            {isAuthenticated ? 'Desbloquear' : 'Comprar agora'}
           </button>
         </div>
       </div>
