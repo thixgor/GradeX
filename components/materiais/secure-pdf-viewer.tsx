@@ -120,6 +120,22 @@ const EMPTY_ANNOTATIONS: PdfAnnotation[] = []
 // e travava o navegador. O raio dá folga suficiente para leitura fluida e
 // pré-carrega algumas páginas à frente/atrás.
 const LIVE_PAGE_RADIUS = 3
+
+// O raio encolhe conforme o zoom sobe: numa página ampliada as vizinhas nem
+// aparecem na tela, mas cada canvas vivo custa dezenas de MB. Manter 3 páginas
+// vivas em zoom alto era o que estourava a memória no celular.
+function liveRadiusForZoom(zoom: number) {
+  if (zoom > 1.8) return 1
+  if (zoom > 1.2) return 2
+  return LIVE_PAGE_RADIUS
+}
+
+// Quantas páginas ficam materializadas no DOM (como página real OU espaçador)
+// ao redor da atual. O resto vira dois blocos de preenchimento com a altura
+// somada. Sem isso, o modo contínuo — agora o padrão — criaria um nó por
+// página do documento inteiro logo no primeiro paint: num material de 3000
+// páginas são 3000 nós antes de o leitor rolar um pixel.
+const RENDERED_WINDOW_RADIUS = 60
 // Dimensões-padrão de página (A4 em pt) usadas como fallback do espaçador antes
 // de a primeira página real reportar o tamanho verdadeiro.
 const DEFAULT_PAGE_WIDTH = 595
@@ -229,28 +245,63 @@ const PAGE_FETCH_MAX_CONCURRENCY = 3
 const PAGE_FETCH_TIMEOUT_MS = 25000
 const PAGE_FETCH_MAX_ATTEMPTS = 4
 
-let pageFetchActive = 0
-const pageFetchQueue: Array<() => void> = []
+// Prioridade da requisição. As miniaturas do painel lateral usam exatamente o
+// mesmo endpoint caro das páginas de leitura; como o painel abre ligado por
+// padrão, ~10 miniaturas entravam na fila ANTES da página que o usuário quer
+// ler e ficavam com os 3 slots. Era o "uma carrega e a outra não". Agora a
+// leitura tem precedência absoluta: miniatura só ganha slot quando não há
+// nenhuma página de leitura ativa nem esperando.
+type FetchPriority = 'reader' | 'thumb'
 
-function acquirePageFetchSlot(): Promise<() => void> {
+let pageFetchActive = 0
+let readerFetchActive = 0
+const pageFetchQueues: Record<FetchPriority, Array<() => void>> = { reader: [], thumb: [] }
+
+function drainPageFetchQueue() {
+  // Leitura primeiro, sempre.
+  if (pageFetchActive < PAGE_FETCH_MAX_CONCURRENCY) {
+    const nextReader = pageFetchQueues.reader.shift()
+    if (nextReader) {
+      nextReader()
+      return
+    }
+  }
+  // Miniatura só entra com a leitura totalmente quieta — nada ativo e nada na
+  // fila. Assim o painel se preenche sozinho depois, sem competir na abertura.
+  if (readerFetchActive === 0 && pageFetchQueues.reader.length === 0 && pageFetchActive < PAGE_FETCH_MAX_CONCURRENCY) {
+    const nextThumb = pageFetchQueues.thumb.shift()
+    if (nextThumb) nextThumb()
+  }
+}
+
+function acquirePageFetchSlot(priority: FetchPriority): Promise<() => void> {
   return new Promise((resolve) => {
     const grant = () => {
       pageFetchActive += 1
+      if (priority === 'reader') readerFetchActive += 1
       let released = false
       resolve(() => {
         if (released) return
         released = true
         pageFetchActive -= 1
-        const next = pageFetchQueue.shift()
-        if (next) next()
+        if (priority === 'reader') readerFetchActive -= 1
+        drainPageFetchQueue()
       })
     }
-    if (pageFetchActive < PAGE_FETCH_MAX_CONCURRENCY) grant()
-    else pageFetchQueue.push(grant)
+    const canRunNow = priority === 'reader'
+      ? pageFetchActive < PAGE_FETCH_MAX_CONCURRENCY
+      : readerFetchActive === 0 && pageFetchQueues.reader.length === 0 && pageFetchActive < PAGE_FETCH_MAX_CONCURRENCY
+    if (canRunNow) grant()
+    else pageFetchQueues[priority].push(grant)
   })
 }
 
 const pageFetchSleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+// Erro de carregamento de página enriquecido: `status` distingue rate limit
+// (429) de falha real, e `retryAfterMs` carrega a espera pedida pelo servidor
+// até a UI, que mostra uma contagem regressiva em vez de um erro vermelho.
+type PageFetchError = Error & { status?: number; retryAfterMs?: number }
 
 async function fetchPdfPageBytesOnce(materialId: string, pageNumber: number) {
   const controller = new AbortController()
@@ -262,8 +313,14 @@ async function fetchPdfPageBytesOnce(materialId: string, pageNumber: number) {
     )
     if (!response.ok) {
       const data = await response.json().catch(() => ({}))
-      const err = new Error(data.error || 'Falha ao carregar pagina') as Error & { status?: number }
+      const err = new Error(data.error || 'Falha ao carregar pagina') as PageFetchError
       err.status = response.status
+      // O servidor manda Retry-After junto do 429. Respeitar esse valor evita
+      // que o backoff cego bata de novo antes de a janela do rate limit virar.
+      const retryAfter = Number(response.headers.get('Retry-After') || 0)
+      if (Number.isFinite(retryAfter) && retryAfter > 0) {
+        err.retryAfterMs = Math.min(60_000, retryAfter * 1000)
+      }
       throw err
     }
 
@@ -277,7 +334,11 @@ async function fetchPdfPageBytesOnce(materialId: string, pageNumber: number) {
   }
 }
 
-async function fetchPdfPageBytes(materialId: string, pageNumber: number) {
+async function fetchPdfPageBytes(
+  materialId: string,
+  pageNumber: number,
+  priority: FetchPriority = 'reader'
+) {
   const key = `${materialId}:${pageNumber}`
   const now = Date.now()
   const cached = pageBytesCache.get(key)
@@ -290,7 +351,7 @@ async function fetchPdfPageBytes(materialId: string, pageNumber: number) {
   if (pending) return pending
 
   const request = (async () => {
-    const release = await acquirePageFetchSlot()
+    const release = await acquirePageFetchSlot(priority)
     try {
       let lastError: unknown
       for (let attempt = 1; attempt <= PAGE_FETCH_MAX_ATTEMPTS; attempt += 1) {
@@ -311,11 +372,13 @@ async function fetchPdfPageBytes(materialId: string, pageNumber: number) {
           lastError = err
           // Só re-tenta falhas transitórias (rede/abort, 5xx, 408, 429);
           // erros de cliente reais (ex.: 403) falham rápido.
-          const status = (err as { status?: number })?.status
+          const { status, retryAfterMs } = (err || {}) as PageFetchError
           const retriable =
             status === undefined || status >= 500 || status === 408 || status === 429
           if (!retriable || attempt >= PAGE_FETCH_MAX_ATTEMPTS) break
-          await pageFetchSleep(Math.min(8000, 500 * 2 ** (attempt - 1)))
+          // Quando o servidor disse quanto esperar (429), obedecemos; senão,
+          // backoff exponencial como antes.
+          await pageFetchSleep(retryAfterMs || Math.min(8000, 500 * 2 ** (attempt - 1)))
         }
       }
       throw lastError
@@ -331,6 +394,185 @@ async function fetchPdfPageBytes(materialId: string, pageNumber: number) {
     pageBytesInflight.delete(key)
   }
 }
+
+// ─── Cache de documentos pdf.js já parseados ────────────────────────────────
+// Antes, o efeito de render tinha `zoom` nas dependências e fazia
+// getDocument → getPage → render → doc.destroy() a cada passo de zoom. Ou
+// seja: arrastar o zoom re-parseava o PDF de TODAS as páginas vivas, uma vez
+// por passo, e jogava fora o resultado. Era a maior fonte de travamento.
+// Agora o parse acontece uma vez por página e o proxy fica vivo num LRU; o
+// zoom só re-rasteriza (ver `rasterScaleFor` e o debounce de `renderScale`).
+//
+// A contagem de referências é obrigatória: destruir um doc enquanto um
+// `page.render()` ainda está em curso quebra a página. Na eviction marcamos
+// `doomed` e só destruímos quando o último consumidor solta.
+const PAGE_PROXY_CACHE_MAX = 8
+
+interface PageProxyEntry {
+  doc: any
+  page: any
+  totalPages: number
+  refs: number
+  doomed: boolean
+  lastUsed: number
+}
+
+const pageProxyCache = new Map<string, PageProxyEntry>()
+const pageProxyInflight = new Map<string, Promise<PageProxyEntry>>()
+
+function destroyProxyEntry(entry: PageProxyEntry) {
+  try {
+    entry.doc?.destroy?.()
+  } catch {}
+}
+
+function evictPageProxies() {
+  if (pageProxyCache.size <= PAGE_PROXY_CACHE_MAX) return
+  // Só entradas ociosas podem sair; as em uso ficam até serem soltas.
+  const idle = Array.from(pageProxyCache.entries())
+    .filter(([, entry]) => entry.refs === 0)
+    .sort((a, b) => a[1].lastUsed - b[1].lastUsed)
+  let excess = pageProxyCache.size - PAGE_PROXY_CACHE_MAX
+  for (const [key, entry] of idle) {
+    if (excess <= 0) break
+    pageProxyCache.delete(key)
+    destroyProxyEntry(entry)
+    excess -= 1
+  }
+  if (excess > 0 && process.env.NODE_ENV !== 'production') {
+    // Sinal de vazamento: todo mundo referenciado e nada pôde ser liberado.
+    console.warn('[pdf-viewer] cache de proxies acima do teto com todas as entradas em uso')
+  }
+}
+
+async function acquirePageProxy(
+  materialId: string,
+  pageNumber: number,
+  priority: FetchPriority = 'reader'
+): Promise<PageProxyEntry> {
+  const key = `${materialId}:${pageNumber}`
+  const cached = pageProxyCache.get(key)
+  if (cached && !cached.doomed) {
+    cached.refs += 1
+    cached.lastUsed = Date.now()
+    return cached
+  }
+
+  const pending = pageProxyInflight.get(key)
+  if (pending) {
+    const entry = await pending
+    entry.refs += 1
+    entry.lastUsed = Date.now()
+    return entry
+  }
+
+  const load = (async () => {
+    const { bytes, pageCount } = await fetchPdfPageBytes(materialId, pageNumber, priority)
+    const pdfjs = await getPdfJs()
+    // `slice()` porque o pdf.js assume a posse do buffer que recebe e os
+    // mesmos bytes ficam no `pageBytesCache` para reuso.
+    const doc = await pdfjs.getDocument({ data: bytes.slice() }).promise
+    const page = await doc.getPage(1)
+    const entry: PageProxyEntry = {
+      doc,
+      page,
+      totalPages: pageCount || 0,
+      refs: 0,
+      doomed: false,
+      lastUsed: Date.now(),
+    }
+    pageProxyCache.set(key, entry)
+    evictPageProxies()
+    return entry
+  })()
+
+  pageProxyInflight.set(key, load)
+  try {
+    const entry = await load
+    entry.refs += 1
+    entry.lastUsed = Date.now()
+    return entry
+  } finally {
+    pageProxyInflight.delete(key)
+  }
+}
+
+function releasePageProxy(materialId: string, pageNumber: number) {
+  const key = `${materialId}:${pageNumber}`
+  const entry = pageProxyCache.get(key)
+  if (!entry) return
+  entry.refs = Math.max(0, entry.refs - 1)
+  entry.lastUsed = Date.now()
+  if (entry.doomed && entry.refs === 0) {
+    pageProxyCache.delete(key)
+    destroyProxyEntry(entry)
+    return
+  }
+  evictPageProxies()
+}
+
+// ─── Orçamento de pixels do canvas ──────────────────────────────────────────
+// A versão anterior forçava um PISO de DPR (2 no celular, 2,5 no desktop) e
+// multiplicava por `zoom` sem teto nenhum. Em zoom 2,6 com DPR 3,5 a escala
+// chegava a 9,1 — uma A4 virava ~5400x7660px, ~41 Mpx, ~165 MB de canvas.
+// Vezes as páginas vivas, passava de 1 GB e a aba morria no celular.
+// Agora: DPR real limitado a 2 e um TETO de megapixels por canvas. A escala
+// continua crescendo com o zoom (a página fica mesmo mais nítida ao ampliar),
+// só que dentro de um orçamento fixo de memória.
+const MAX_CANVAS_MPX_MOBILE = 4.5
+const MAX_CANVAS_MPX_DESKTOP = 9
+
+function rasterScaleFor(baseWidth: number, baseHeight: number, scale: number) {
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+  const deviceDpr = (typeof window !== 'undefined' && window.devicePixelRatio) || 1
+  const dpr = Math.min(Math.max(deviceDpr, 1), 2)
+  let effective = scale * dpr
+  const budget = (isMobile ? MAX_CANVAS_MPX_MOBILE : MAX_CANVAS_MPX_DESKTOP) * 1_000_000
+  const wanted = baseWidth * baseHeight * effective * effective
+  if (wanted > budget) effective *= Math.sqrt(budget / wanted)
+  return effective
+}
+
+// ─── IntersectionObservers compartilhados ───────────────────────────────────
+// Cada página e cada espaçador criava o SEU próprio IntersectionObserver. Num
+// material de milhares de páginas em modo contínuo — que agora é o padrão —
+// isso significava milhares de observers no primeiro paint. O painel de
+// miniaturas já usava um observer compartilhado; aqui aplicamos o mesmo
+// desenho para o foco de leitura e para a visibilidade das páginas.
+function createSharedObserver(rootMargin: string) {
+  let observer: IntersectionObserver | null = null
+  const callbacks = new WeakMap<Element, () => void>()
+
+  function ensure() {
+    if (observer || typeof window === 'undefined') return observer
+    observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue
+          callbacks.get(entry.target)?.()
+        }
+      },
+      { rootMargin, threshold: 0 }
+    )
+    return observer
+  }
+
+  return function observe(element: Element, onEnter: () => void) {
+    const instance = ensure()
+    if (!instance) return () => {}
+    callbacks.set(element, onEnter)
+    instance.observe(element)
+    return () => {
+      callbacks.delete(element)
+      instance.unobserve(element)
+    }
+  }
+}
+
+// Foco de leitura: a página passa a ser "a atual" quando cruza a faixa central.
+const observePageFocus = createSharedObserver('-18% 0px -68% 0px')
+// Visibilidade: dispara o carregamento um pouco antes de a página entrar.
+const observePageVisible = createSharedObserver('220px 0px')
 
 // Retomada de leitura: guarda a última página/modo por material no
 // localStorage, para reabrir exatamente de onde o usuário parou.
@@ -843,15 +1085,22 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       if (cancelled) return
       const element = document.getElementById(`pdf-page-${target}`)
       if (element) {
+        // Cada passada da retomada renova a janela em que o foco por scroll é
+        // ignorado, senão o observer do topo reverte para a página 1.
+        suppressFocusUntilRef.current = Math.max(suppressFocusUntilRef.current, Date.now() + 500)
         element.scrollIntoView({ behavior: 'auto', block: 'start' })
-        pendingResumeRef.current = null
+        // Só damos a retomada por concluída quando a altura real da página já
+        // é conhecida. Antes disso os blocos de preenchimento usam a estimativa
+        // A4, e a posição desliza quando a medida verdadeira chega — o efeito
+        // roda de novo (via `pageSize`) e corrige o destino.
+        if (pageSize) pendingResumeRef.current = null
         return
       }
       if (frame++ < 30) window.requestAnimationFrame(attempt)
     }
     window.requestAnimationFrame(attempt)
     return () => { cancelled = true }
-  }, [access, mode])
+  }, [access, mode, pageSize])
 
   useEffect(() => {
     if (!pageSize || !contentWidth || zoomTouchedRef.current) return
@@ -1168,8 +1417,20 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // atual. Nos modos contínuo/largura, só o raio ao redor da página atual é
   // montado como componente pesado; as demais ficam como espaçadores leves.
   const centerIndex = mode === 'single' ? 0 : Math.max(0, pages.indexOf(currentPage))
-  const liveStart = centerIndex - LIVE_PAGE_RADIUS
-  const liveEnd = centerIndex + LIVE_PAGE_RADIUS
+  const liveRadius = liveRadiusForZoom(zoom)
+  const liveStart = centerIndex - liveRadius
+  const liveEnd = centerIndex + liveRadius
+
+  // Segunda camada de virtualização: fora desta janela nem espaçador é criado.
+  // Os dois blocos de preenchimento abaixo reservam a altura das páginas
+  // ocultas para o scrollbar continuar proporcional ao documento inteiro.
+  const windowStart = mode === 'single' ? 0 : Math.max(0, centerIndex - RENDERED_WINDOW_RADIUS)
+  const windowEnd = mode === 'single' ? pages.length - 1 : Math.min(pages.length - 1, centerIndex + RENDERED_WINDOW_RADIUS)
+  const renderedPages = mode === 'single' ? pages : pages.slice(windowStart, windowEnd + 1)
+  // Altura de uma página no fluxo: moldura (16px de respiro) + gap-5 (20px).
+  const pageSlotHeight = spacerSize.height + 16 + 20
+  const fillerTopHeight = Math.max(0, windowStart * pageSlotHeight)
+  const fillerBottomHeight = Math.max(0, (pages.length - 1 - windowEnd) * pageSlotHeight)
 
   return (
     <ViewerShell>
@@ -1533,7 +1794,11 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             }`}
           >
             <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-5">
-              {pages.map((page, index) => {
+              {fillerTopHeight > 0 && (
+                <div aria-hidden style={{ height: fillerTopHeight }} className="w-full shrink-0" />
+              )}
+              {renderedPages.map((page, offset) => {
+                const index = mode === 'single' ? offset : windowStart + offset
                 const isLive = mode === 'single' || (index >= liveStart && index <= liveEnd)
                 if (!isLive) {
                   return (
@@ -1570,6 +1835,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                   />
                 )
               })}
+              {fillerBottomHeight > 0 && (
+                <div aria-hidden style={{ height: fillerBottomHeight }} className="w-full shrink-0" />
+              )}
             </div>
           </section>
 
@@ -1886,7 +2154,9 @@ const PdfThumbnail = memo(function PdfThumbnail({
     async function renderThumb() {
       setStatus('loading')
       try {
-        const { bytes } = await fetchPdfPageBytes(materialId, pageNumber)
+        // Prioridade baixa: a miniatura nunca pode atrasar a página que o
+        // usuário está de fato lendo (ver acquirePageFetchSlot).
+        const { bytes } = await fetchPdfPageBytes(materialId, pageNumber, 'thumb')
         if (cancelled) return
         const pdfjs = await getPdfJs()
         doc = await pdfjs.getDocument({ data: bytes.slice() }).promise
@@ -1968,15 +2238,30 @@ function ViewerShell({ children }: { children: React.ReactNode }) {
   )
 }
 
+// Esqueleto no FORMATO do leitor (barra + moldura de página), não um cartão
+// centralizado. Um esqueleto que já tem a silhueta da tela final faz a espera
+// parecer mais curta e evita o salto de layout quando o conteúdo entra.
 function ViewerLoading() {
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 text-white">
-      <div className="w-full max-w-sm rounded-2xl border border-white/15 bg-white/10 p-6 shadow-2xl backdrop-blur-xl">
-        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-emerald-300/30 bg-emerald-400/15">
-          <div className="h-6 w-6 animate-spin rounded-full border-2 border-emerald-200/30 border-t-emerald-200" />
+    <div className="min-h-screen text-white">
+      <div className="sticky top-0 z-40 border-b border-white/10 bg-zinc-950/80 backdrop-blur-2xl">
+        <div className="flex items-center gap-2 px-3 py-3 sm:px-4">
+          <div className="h-10 w-10 shrink-0 animate-pulse rounded-xl bg-white/10" />
+          <div className="min-w-0 flex-1 space-y-2">
+            <div className="h-3.5 w-2/5 max-w-xs animate-pulse rounded bg-white/15" />
+            <div className="h-2.5 w-1/4 max-w-[10rem] animate-pulse rounded bg-white/10" />
+          </div>
+          <div className="h-10 w-24 shrink-0 animate-pulse rounded-xl bg-white/10" />
         </div>
-        <div className="h-4 w-40 mx-auto rounded bg-white/20 animate-pulse" />
-        <div className="mt-3 h-3 w-56 mx-auto rounded bg-white/10 animate-pulse" />
+      </div>
+      <div className="flex justify-center px-3 py-6 sm:px-4 sm:py-8">
+        <div className="w-full max-w-3xl">
+          <div
+            className="w-full animate-pulse rounded-xl border border-white/10 bg-white/[0.06]"
+            style={{ aspectRatio: '595 / 842' }}
+          />
+          <p className="mt-4 text-center text-xs text-white/45">Preparando seu material…</p>
+        </div>
       </div>
     </div>
   )
@@ -2001,14 +2286,7 @@ const PdfPageSpacer = memo(function PdfPageSpacer({
   useEffect(() => {
     const element = ref.current
     if (!element) return
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) onPageFocus(pageNumber)
-      },
-      { rootMargin: '-18% 0px -68% 0px', threshold: 0 }
-    )
-    observer.observe(element)
-    return () => observer.disconnect()
+    return observePageFocus(element, () => onPageFocus(pageNumber))
   }, [onPageFocus, pageNumber])
 
   const frameWidth = Math.ceil(size.width + 16)
@@ -2100,19 +2378,28 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   const [visible, setVisible] = useState(active)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [pageBytes, setPageBytes] = useState<Uint8Array | null>(null)
+  // Espera pedida pelo servidor num 429. Quando presente, a UI mostra uma
+  // contagem regressiva amigável em vez de um erro vermelho — o retry é
+  // automático, então não é um beco sem saída para o leitor.
+  const [waitSeconds, setWaitSeconds] = useState(0)
+  const [pageProxy, setPageProxy] = useState<PageProxyEntry | null>(null)
   const [loadAttempt, setLoadAttempt] = useState(0)
   const [renderSize, setRenderSize] = useState<PageSize | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [editor, setEditor] = useState<EditorState | null>(null)
   const requestedRef = useRef(false)
   const autoRetryRef = useRef(0)
+  // Escala já rasterizada no canvas. O zoom muda na hora (o frame redimensiona
+  // e o bitmap é reescalado pela GPU); a rasterização nítida vem depois, com
+  // debounce, e só quando a diferença for grande o bastante para ser visível.
+  const [renderScale, setRenderScale] = useState(zoom)
 
   useEffect(() => {
     requestedRef.current = false
     autoRetryRef.current = 0
-    setPageBytes(null)
+    setPageProxy(null)
     setError('')
+    setWaitSeconds(0)
     setRenderSize(null)
     setSelectedId(null)
     setEditor(null)
@@ -2127,54 +2414,61 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   useEffect(() => {
     const element = wrapperRef.current
     if (!element) return
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setVisible(true)
-      },
-      { rootMargin: '220px 0px' }
-    )
-    observer.observe(element)
-    return () => observer.disconnect()
+    return observePageVisible(element, () => setVisible(true))
   }, [pageNumber])
 
   useEffect(() => {
     const element = wrapperRef.current
     if (!element) return
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) onPageFocus(pageNumber)
-      },
-      { rootMargin: '-18% 0px -68% 0px', threshold: 0 }
-    )
-    observer.observe(element)
-    return () => observer.disconnect()
+    return observePageFocus(element, () => onPageFocus(pageNumber))
   }, [onPageFocus, pageNumber])
 
+  // Efeito de CARGA: busca os bytes e parseia o documento uma única vez por
+  // página. O zoom não entra aqui — antes entrava, e era por isso que cada
+  // passo de zoom re-parseava o PDF de todas as páginas vivas.
   useEffect(() => {
-    if ((!visible && !active) || requestedRef.current || pageBytes) return
+    if ((!visible && !active) || requestedRef.current || pageProxy) return
     let cancelled = false
     let settled = false
+    // `owned` = temos uma referência que ninguém mais vai devolver. Fica true
+    // apenas entre o acquire e o momento em que o estado assume a posse (ou em
+    // que a soltamos aqui mesmo). Sem esse controle, o cleanup soltaria a
+    // mesma referência que o efeito de posse também solta — release duplo, e o
+    // documento seria destruído embaixo de uma página ainda montada.
+    let owned = false
 
-    async function loadPageBytes() {
+    async function loadPage() {
       requestedRef.current = true
       setLoading(true)
       setError('')
+      setWaitSeconds(0)
       try {
-        const result = await fetchPdfPageBytes(materialId, pageNumber)
+        const entry = await acquirePageProxy(materialId, pageNumber, 'reader')
+        owned = true
         settled = true
-        if (!cancelled) {
-          onPageCount(result.pageCount)
-          setPageBytes(result.bytes)
+        if (cancelled) {
+          releasePageProxy(materialId, pageNumber)
+          owned = false
+          return
         }
+        onPageCount(entry.totalPages || undefined)
+        setPageProxy(entry)
+        owned = false
       } catch (err: any) {
         settled = true
-        if (!cancelled) setError(err?.message || 'Pagina indisponivel')
+        if (!cancelled) {
+          const { status, retryAfterMs } = (err || {}) as PageFetchError
+          if (status === 429) {
+            setWaitSeconds(Math.max(1, Math.ceil((retryAfterMs || 5000) / 1000)))
+          }
+          setError(err?.message || 'Pagina indisponivel')
+        }
       } finally {
         if (!cancelled) setLoading(false)
       }
     }
 
-    loadPageBytes()
+    loadPage()
     return () => {
       cancelled = true
       // Se a limpeza rodou por uma mudança de dependência (ex.: `active`
@@ -2184,36 +2478,57 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
       // guard quando não houve conclusão permite a retomada; a requisição em si
       // é deduplicada/cacheada, então não há refetch duplicado.
       if (!settled) requestedRef.current = false
+      // Só solta se a posse ainda estiver com o efeito; quando o estado
+      // assumiu, quem devolve é o efeito de posse abaixo.
+      if (owned) {
+        owned = false
+        releasePageProxy(materialId, pageNumber)
+      }
     }
-  }, [active, loadAttempt, materialId, onPageCount, pageBytes, pageNumber, visible])
+  }, [active, loadAttempt, materialId, onPageCount, pageProxy, pageNumber, visible])
 
+  // Posse do proxy enquanto esta página estiver montada. Ao desmontar (a
+  // página sai da janela de virtualização) a referência é devolvida e o LRU
+  // fica livre para destruir o documento.
   useEffect(() => {
-    const bytes = pageBytes
-    if (!bytes) return
+    if (!pageProxy) return
+    return () => {
+      releasePageProxy(materialId, pageNumber)
+    }
+  }, [materialId, pageNumber, pageProxy])
+
+  // Debounce do zoom: o frame já reescala o bitmap na hora, então a
+  // rasterização nítida pode esperar o usuário parar de mexer. E só vale a
+  // pena refazer quando a diferença é perceptível — reescalar um bitmap entre
+  // 0,8x e 1,25x é indistinguível de re-rasterizar, e custa zero.
+  useEffect(() => {
+    const ratio = zoom / renderScale
+    if (ratio > 0.8 && ratio < 1.25) return
+    const timer = window.setTimeout(() => setRenderScale(zoom), 180)
+    return () => window.clearTimeout(timer)
+  }, [zoom, renderScale])
+
+  // Efeito de RASTERIZAÇÃO: só desenha. Sem parse, sem destroy.
+  useEffect(() => {
+    const entry = pageProxy
+    if (!entry) return
     let cancelled = false
     let renderTask: any
-    let doc: any
 
     async function renderPage() {
       setLoading(true)
       setError('')
       try {
-        const pdfjs = await getPdfJs()
-        doc = await pdfjs.getDocument({ data: bytes!.slice() }).promise
-        const page = await doc.getPage(1)
+        const page = entry!.page
         const baseViewport = page.getViewport({ scale: 1 })
         onPageSize({ width: baseViewport.width, height: baseViewport.height })
 
-        // DPR fixo (não depende de `active`): manter a qualidade estável evita
-        // reparsear e re-renderizar o PDF inteiro toda vez que o foco muda de
-        // página durante o scroll (era a principal causa de travamento).
-        const isMobile = window.innerWidth < 768
-        const maxDpr = isMobile ? 3 : 3.5
-        const minDpr = isMobile ? 2 : 2.5
-        const deviceDpr = window.devicePixelRatio || 1
-        const dpr = Math.min(Math.max(deviceDpr, minDpr), maxDpr)
-        const viewport = page.getViewport({ scale: zoom * dpr })
-        const displayViewport = page.getViewport({ scale: zoom })
+        // Escala de rasterização com teto de megapixels (ver rasterScaleFor).
+        // Independe de `active`: manter a qualidade estável evita re-render de
+        // todas as páginas vivas toda vez que o foco muda durante o scroll.
+        const scale = rasterScaleFor(baseViewport.width, baseViewport.height, renderScale)
+        const viewport = page.getViewport({ scale })
+        const displayViewport = page.getViewport({ scale: renderScale })
         const canvas = canvasRef.current
         const context = canvas?.getContext('2d', { alpha: false })
         if (!canvas || !context || cancelled) return
@@ -2233,9 +2548,6 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
           setError(err?.message || 'Pagina indisponivel')
         }
       } finally {
-        try {
-          await doc?.destroy?.()
-        } catch {}
         if (!cancelled) setLoading(false)
       }
     }
@@ -2244,9 +2556,19 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     return () => {
       cancelled = true
       renderTask?.cancel?.()
-      doc?.destroy?.()
     }
-  }, [onPageSize, pageBytes, zoom])
+  }, [onPageSize, pageProxy, renderScale])
+
+  // Libera a memória do canvas ao desmontar. O Safari do iOS segura o backing
+  // store mesmo depois de o nó sair do DOM; zerar as dimensões devolve na hora.
+  useEffect(() => {
+    const canvas = canvasRef.current
+    return () => {
+      if (!canvas) return
+      canvas.width = 0
+      canvas.height = 0
+    }
+  }, [])
 
   useEffect(() => {
     return () => {
@@ -2271,36 +2593,54 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
 
   const retryLoad = () => {
     requestedRef.current = false
-    setPageBytes(null)
+    setPageProxy(null)
     setRenderSize(null)
     setError('')
+    setWaitSeconds(0)
     setLoadAttempt((attempt) => attempt + 1)
   }
 
   // Auto-recuperação: se uma página falhar mesmo após os retries da requisição,
   // ela tenta sozinha mais 2 vezes antes de exibir o botão manual — assim o
-  // usuário nunca precisa dar F5 para a página aparecer.
+  // usuário nunca precisa dar F5 para a página aparecer. Num 429 a espera vem
+  // do próprio servidor (Retry-After), então respeitamos esse tempo.
   useEffect(() => {
     if (!error || autoRetryRef.current >= 2) return
-    const delay = 1000 * (autoRetryRef.current + 1)
+    const delay = waitSeconds > 0
+      ? waitSeconds * 1000
+      : 1000 * (autoRetryRef.current + 1)
     const timer = window.setTimeout(() => {
       autoRetryRef.current += 1
       requestedRef.current = false
-      setPageBytes(null)
+      setPageProxy(null)
       setRenderSize(null)
       setError('')
+      setWaitSeconds(0)
       setLoadAttempt((attempt) => attempt + 1)
     }, delay)
     return () => window.clearTimeout(timer)
-  }, [error])
+  }, [error, waitSeconds])
+
+  // Contagem regressiva visível durante a espera de um 429.
+  useEffect(() => {
+    if (waitSeconds <= 0) return
+    const timer = window.setTimeout(() => setWaitSeconds((value) => Math.max(0, value - 1)), 1000)
+    return () => window.clearTimeout(timer)
+  }, [waitSeconds])
 
   useEffect(() => {
-    if (pageBytes) autoRetryRef.current = 0
-  }, [pageBytes])
+    if (pageProxy) autoRetryRef.current = 0
+  }, [pageProxy])
 
-  const pageFrameSize = renderSize ?? (fallbackSize
-    ? { width: fallbackSize.width * zoom, height: fallbackSize.height * zoom }
-    : { width: 595 * zoom, height: 842 * zoom })
+  // A moldura acompanha o zoom NA HORA, mesmo antes de a rasterização nítida
+  // chegar: o canvas ocupa 100% dela, então o bitmap já existente é reescalado
+  // pela GPU. É isso que faz o zoom parecer instantâneo sem re-parsear nada.
+  const zoomRatio = renderScale > 0 ? zoom / renderScale : 1
+  const pageFrameSize = renderSize
+    ? { width: renderSize.width * zoomRatio, height: renderSize.height * zoomRatio }
+    : fallbackSize
+      ? { width: fallbackSize.width * zoom, height: fallbackSize.height * zoom }
+      : { width: 595 * zoom, height: 842 * zoom }
 
   const getPosition = useCallback((clientX: number, clientY: number) => {
     const rect = overlayRef.current?.getBoundingClientRect()
@@ -2848,7 +3188,18 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
             <div className="h-7 w-7 rounded-full border-2 border-emerald-700/20 border-t-emerald-700 animate-spin" />
           </div>
         )}
-        {error && (
+        {/* Rate limit não é erro do leitor: a página volta sozinha. Mostramos
+            uma espera calma em vez do cartão vermelho de falha. */}
+        {error && waitSeconds > 0 && (
+          <div className="absolute inset-2 z-20 flex flex-col items-center justify-center gap-2 rounded-lg bg-amber-950/85 p-6 text-center text-sm text-white">
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-amber-200/30 border-t-amber-200" />
+            <span className="font-semibold">Muitas páginas de uma vez</span>
+            <span className="text-xs text-white/75">
+              Retomando em {waitSeconds}s — não precisa fazer nada.
+            </span>
+          </div>
+        )}
+        {error && waitSeconds <= 0 && (
           <div className="absolute inset-2 z-20 rounded-lg bg-rose-950/85 flex flex-col items-center justify-center gap-3 p-6 text-center text-sm text-white">
             <span>{error}</span>
             <Button onClick={retryLoad} className="h-8 rounded-xl bg-white/15 px-3 text-xs text-white hover:bg-white/25">
