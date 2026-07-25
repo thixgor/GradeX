@@ -154,6 +154,92 @@ function insertPriceMarkers(html) {
   return html
 }
 
+// ── Seção do Manual do Eletrocardiograma ─────────────────────────────────────
+// O export trata o Manual do ECG como se fosse um brinde solto ("Incluído · sem
+// custo extra", sem dizer incluído em quê) e manda o CTA da seção para a home do
+// Manual Clínico, não para o simulador. As três correções abaixo dão à seção uma
+// âncora própria (#ecg), deixam explícito que o ECG entra junto com a assinatura
+// e apontam o botão para a página do simulador.
+
+const ECG_SECTION_OPEN_ANCHOR =
+  '  <!-- ECG SECTION (DARK) -->\n  <section style="position:relative; overflow:hidden; background-color:var(--dark);'
+
+const ECG_BADGE_ANCHOR =
+  '<span style="width:6px; height:6px; border-radius:50%; background:var(--ecg); box-shadow:0 0 8px oklch(78% 0.18 155 / 0.9);"></span> Incluído · sem custo extra</div>'
+
+const ECG_CTA_ANCHOR =
+  '<a href="/manual-clinico" style="display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; min-height:58px; padding:0 30px; border-radius:15px; font-weight:700; font-size:1.06rem; color:#08130d; background:var(--ecg);'
+
+const NAV_ANCHOR = '      <nav style="display:flex; align-items:center; gap:9px;">\n'
+
+const ECG_TAGLINE_ANCHOR =
+  '<p style="font-size:1.09rem; line-height:1.6; color:#a3aeb3; margin:18px 0 28px; max-width:46ch; text-wrap:pretty;">12 derivações geradas matematicamente em tempo real, em papel milimetrado de verdade. Meça, arraste a régua e treine com traçados comentados.</p>'
+
+// Fim da folha de estilo global da página (dentro do <helmet>). O atributo
+// style-* do dc-runtime só compila pseudo-CLASSE (`.cls:hover`) — passar uma
+// media query por ali gera um seletor inválido e o insertRule estoura. Regra
+// responsiva de verdade precisa entrar no CSS.
+const GLOBAL_STYLE_END_ANCHOR =
+  '  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto; } }\n</style>'
+
+function applyEcgSectionEdits(html) {
+  // 1. Âncora da seção. scroll-margin-top compensa o header sticky, senão o
+  // topo da seção fica escondido atrás dele ao pular via #ecg.
+  html = anchorReplace(
+    html,
+    'ecg-section-open',
+    ECG_SECTION_OPEN_ANCHOR,
+    '  <!-- ECG SECTION (DARK) -->\n  <section id="ecg" style="scroll-margin-top:72px; position:relative; overflow:hidden; background-color:var(--dark);'
+  )
+
+  // 2. "Incluído · sem custo extra" sozinho sugere que o ECG é gratuito. Ele é
+  // gratuito em relação ao preço do Manual — não em relação a não pagar nada.
+  html = anchorReplace(
+    html,
+    'ecg-badge',
+    ECG_BADGE_ANCHOR,
+    '<span style="width:6px; height:6px; border-radius:50%; background:var(--ecg); box-shadow:0 0 8px oklch(78% 0.18 155 / 0.9);"></span> Incluído na assinatura · sem custo extra</div>'
+  )
+
+  // 3. Linha explícita de que o simulador é da parte paga, logo abaixo da
+  // descrição da seção — é onde a pessoa está decidindo se aquilo é acessível.
+  html = anchorReplace(
+    html,
+    'ecg-tagline',
+    ECG_TAGLINE_ANCHOR,
+    `<p style="font-size:1.09rem; line-height:1.6; color:#a3aeb3; margin:18px 0 16px; max-width:46ch; text-wrap:pretty;">12 derivações geradas matematicamente em tempo real, em papel milimetrado de verdade. Meça, arraste a régua e treine com traçados comentados.</p>
+        <p style="display:flex; align-items:flex-start; gap:9px; font-family:var(--fmono); font-size:0.78rem; line-height:1.55; color:#8f9a96; margin:0 0 28px; max-width:58ch; letter-spacing:0.02em;"><span style="flex:none; margin-top:1px; color:var(--ecg);">◆</span><span>O simulador faz parte do conteúdo pago: entra junto com a assinatura do Manual Clínico, sem cobrança separada. O teste grátis não inclui esta seção.</span></p>`
+  )
+
+  // 4. O CTA da seção mandava para a home do Manual. Agora vai para o simulador.
+  html = anchorReplace(
+    html,
+    'ecg-cta',
+    ECG_CTA_ANCHOR,
+    '<a href="/manual-clinico/eletrocardiograma" style="display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; min-height:58px; padding:0 30px; border-radius:15px; font-weight:700; font-size:1.06rem; color:#08130d; background:var(--ecg);'
+  )
+
+  // 5. Atalho no menu, com a regra responsiva que o esconde no celular — lá os
+  // dois botões de conversão precisam do espaço, e o atalho vira ruído.
+  html = anchorReplace(
+    html,
+    'global-style-end',
+    GLOBAL_STYLE_END_ANCHOR,
+    `  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto; } }
+  @media (max-width: 860px) { .ldpg-nav-shortcut { display: none !important; } }
+</style>`
+  )
+
+  html = anchorReplace(
+    html,
+    'nav-open',
+    NAV_ANCHOR,
+    `${NAV_ANCHOR}        <a class="ldpg-nav-shortcut" href="#ecg" style="display:inline-flex; align-items:center; white-space:nowrap; min-height:44px; padding:0 13px; border-radius:11px; font-weight:600; color:var(--ink-2); font-size:0.94rem; transition:var(--tr);" style-hover="color:var(--accent-2); background:var(--accent-soft);">Simulador de ECG</a>\n`
+  )
+
+  return html
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 function main() {
@@ -233,12 +319,15 @@ function main() {
   // 6. <html> sem lang atrapalha leitor de tela e SEO em pt-BR.
   template = template.replace(/<html(\s[^>]*)?>/i, '<html lang="pt-BR">')
 
-  // 7. Marcadores de preco.
+  // 7. Seção do ECG: âncora, aviso de conteúdo pago e destino do CTA.
+  template = applyEcgSectionEdits(template)
+
+  // 8. Marcadores de preco.
   template = insertPriceMarkers(template)
 
   fs.writeFileSync(OUT_HTML, template, 'utf8')
 
-  // 8. Assets da versao anterior que ninguem mais referencia.
+  // 9. Assets da versao anterior que ninguem mais referencia.
   const orphans = fs.readdirSync(ASSETS_DIR).filter((f) => !written.has(f))
   if (orphans.length > 0) {
     if (keepOrphans) {

@@ -4,7 +4,11 @@ import React, { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { AppShell, useAppShell } from '@/components/app-shell'
-import { Activity, ArrowLeft, Crown, Lock, ArrowRight, Loader2, Gauge, Ruler, GraduationCap } from 'lucide-react'
+import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
+import {
+  Activity, ArrowLeft, Crown, Lock, ArrowRight, Loader2, Gauge, Ruler,
+  GraduationCap, Check, Flame, ShieldCheck, Zap,
+} from 'lucide-react'
 
 // Carregado sob demanda apenas quando o acesso é confirmado — o simulador
 // (motor de ECG + banco de traçados) não é enviado a quem não é assinante.
@@ -17,6 +21,21 @@ const EcgSimulator = dynamic(() => import('@/components/ecg/ecg-simulator').then
   ),
 })
 
+interface ProductPlan {
+  key: string
+  label?: string
+  price: number
+  enabled: boolean
+  durationMonths?: number | null
+  pricingEventId?: string | null
+}
+
+interface CatalogSummary {
+  total: number
+  emergencies: number
+  categories: { name: string; count: number }[]
+}
+
 interface AccessResp {
   isAuthenticated: boolean
   access: { hasFullAccess: boolean; reason: string; includedPlan: 'premium' | 'essential' | null }
@@ -27,13 +46,17 @@ interface AccessResp {
     currentPrice: number
     hasActivePromotion: boolean
     price: number
-    plans?: { key: string; price: number; enabled: boolean }[]
+    pricingEventId?: string | null
+    plans?: ProductPlan[]
   }
+  catalog?: CatalogSummary
 }
 
 function formatBRL(v: number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(v || 0))
 }
+
+const PREVIEW_IMAGE = '/img/eletro/simulador-ecg-preview.webp'
 
 export default function EletrocardiogramaPage() {
   return (
@@ -70,8 +93,16 @@ function EcgManualContent() {
     router.push('/manual-clinico/checkout')
   }
 
-  const cheapest = (data?.product?.plans || []).filter((p) => p.enabled).reduce<number | null>((min, p) => (min == null ? p.price : Math.min(min, p.price)), null)
-  const price = cheapest ?? data?.product?.currentPrice ?? 0
+  // Plano mais barato entre os habilitados — é o "a partir de" que a landing
+  // também anuncia. Guarda o plano inteiro (e não só o preço) porque o lote
+  // que desconta o valor está amarrado ao plano, não ao produto.
+  const enabledPlans = (data?.product?.plans || []).filter((p) => p.enabled && p.price > 0)
+  const cheapestPlan = enabledPlans.reduce<ProductPlan | null>(
+    (min, p) => (min == null || p.price < min.price ? p : min),
+    null
+  )
+  const basePrice = cheapestPlan?.price ?? data?.product?.currentPrice ?? 0
+  const eventId = cheapestPlan?.pricingEventId || data?.product?.pricingEventId || null
 
   return (
     <div className="surface-page min-h-screen">
@@ -122,63 +153,249 @@ function EcgManualContent() {
         ) : hasAccess ? (
           <EcgSimulator />
         ) : (
-          <PaywallCard onCheckout={goToCheckout} isAuthenticated={isAuthenticated} price={price} product={data?.product} />
+          <Paywall
+            onCheckout={goToCheckout}
+            isAuthenticated={isAuthenticated}
+            basePrice={basePrice}
+            eventId={eventId}
+            planLabel={cheapestPlan?.label || null}
+            isActive={data?.product?.isActive !== false}
+            catalog={data?.catalog}
+          />
         )}
       </div>
     </div>
   )
 }
 
-function PaywallCard({ onCheckout, isAuthenticated, price, product }: { onCheckout: () => void; isAuthenticated: boolean; price: number; product?: AccessResp['product'] }) {
-  const features = [
-    { icon: Activity, t: '12 derivações em tempo real', d: 'Traçados vetoriais gerados por parâmetros eletrofisiológicos — nunca imagens prontas.' },
-    { icon: Gauge, t: 'Papel milimetrado real', d: 'Velocidades 25/50/100 mm/s e ganhos 5/10/20 mm/mV, calibração 10 mm = 1 mV.' },
-    { icon: Ruler, t: 'Medidas automáticas e régua', d: 'FC, PR, QRS, QT, QTc, eixo e amplitudes; paquímetro para medir intervalos.' },
-    { icon: GraduationCap, t: '90 traçados + exercícios', d: 'Arritmias, IAM, bloqueios, hipertrofias, distúrbios eletrolíticos e canalopatias com critérios diagnósticos e modo prova/residência.' },
-  ]
+const FEATURES = [
+  { icon: Activity, t: '12 derivações em tempo real', d: 'Traçados vetoriais gerados por parâmetros eletrofisiológicos — nunca imagens prontas.' },
+  { icon: Gauge, t: 'Papel milimetrado real', d: 'Velocidades 25/50/100 mm/s e ganhos 5/10/20 mm/mV, calibração 10 mm = 1 mV.' },
+  { icon: Ruler, t: 'Medidas automáticas e régua', d: 'FC, PR, QRS, QT, QTc, eixo e amplitudes; paquímetro para medir intervalos.' },
+  { icon: GraduationCap, t: 'Exercícios e modo prova', d: 'Treine o reconhecimento com correção comentada e simulação de residência.' },
+]
+
+/**
+ * Tela que o visitante e o usuário sem assinatura veem no lugar do simulador.
+ * Duas colunas no desktop (argumento à esquerda, prova visual + preço à direita,
+ * este último grudado enquanto se rola) e uma pilha no celular, onde o preço e o
+ * botão também ficam numa barra fixa — sem ela o CTA some depois do primeiro
+ * scroll e a pessoa fica sem saber quanto custa.
+ */
+function Paywall({
+  onCheckout, isAuthenticated, basePrice, eventId, planLabel, isActive, catalog,
+}: {
+  onCheckout: () => void
+  isAuthenticated: boolean
+  basePrice: number
+  eventId: string | null
+  planLabel: string | null
+  isActive: boolean
+  catalog?: CatalogSummary
+}) {
+  const { state: pricingEvent } = usePricingEventState(eventId)
+
+  const tierPct = pricingEvent?.activeTier?.discountPercent || 0
+  const hasTier = !!pricingEvent?.activeTier && pricingEvent?.isActive !== false && tierPct > 0 && basePrice > 0
+  const finalPrice = hasTier
+    ? Math.max(0, Math.round(basePrice * (1 - tierPct / 100) * 100) / 100)
+    : basePrice
+  const showPrice = isActive && basePrice > 0
+
+  const ctaLabel = isAuthenticated ? 'Desbloquear o Manual Clínico' : 'Entrar e desbloquear'
+  const totalTracings = catalog?.total ?? 90
+
   return (
-    <div className="mx-auto max-w-3xl">
-      <div className="relative overflow-hidden rounded-2xl border border-amber-500/25 bg-card p-6 shadow-sm sm:p-8">
-        {/* Régua ECG discreta no topo — assinatura da seção, sem gradiente-sopa */}
-        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" aria-hidden />
-        <div className="mb-5 flex items-start gap-3">
-          <div className="rounded-xl bg-amber-400/15 p-3 text-amber-600 dark:text-amber-400"><Lock className="h-6 w-6" /></div>
-          <div>
-            <p className="editorial-mark">Conteúdo privativo</p>
-            <h2 className="mt-2 text-2xl font-heading font-semibold tracking-tight">Manual do Eletrocardiograma</h2>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Uma seção exclusiva para <strong>assinantes do Manual Clínico e Premium</strong>. Um simulador de ECG de nível hospitalar, com traçados dinâmicos, medidas automáticas e um banco completo de padrões comentados segundo AHA, ACC, ESC e SBC.
+    <>
+      {/* pb no celular reserva o espaço da barra fixa, senão ela cobre o rodapé do card */}
+      <div className="grid gap-6 pb-28 lg:grid-cols-[1.05fr_0.95fr] lg:items-start lg:gap-8 lg:pb-0">
+        {/* ── Coluna do argumento ── */}
+        <div className="space-y-6">
+          <div className="relative overflow-hidden rounded-2xl border border-amber-500/25 bg-card p-5 shadow-sm sm:p-7">
+            <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" aria-hidden />
+            <div className="flex items-start gap-3">
+              <div className="shrink-0 rounded-xl bg-amber-400/15 p-2.5 text-amber-600 dark:text-amber-400">
+                <Lock className="h-5 w-5" />
+              </div>
+              <div className="min-w-0">
+                <p className="editorial-mark">Conteúdo exclusivo de assinantes</p>
+                <h2 className="mt-2 font-heading text-xl font-semibold tracking-tight sm:text-2xl">
+                  O simulador de ECG faz parte do Manual Clínico
+                </h2>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  Ele não é vendido à parte nem entra no teste grátis: vem incluído, sem custo extra,
+                  para quem assina o <strong className="text-foreground">Manual Clínico</strong> — e para
+                  as contas <strong className="text-foreground">Premium</strong>.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Prova visual — no celular vem cedo, antes da lista de recursos */}
+          <SimulatorPreview className="lg:hidden" />
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            {FEATURES.map((f) => (
+              <div key={f.t} className="rounded-xl border border-border bg-muted/30 p-4 transition-colors hover:border-primary/30">
+                <f.icon className="mb-2 h-5 w-5 text-primary" />
+                <p className="text-sm font-bold">{f.t}</p>
+                <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">{f.d}</p>
+              </div>
+            ))}
+          </div>
+
+          {catalog && catalog.categories.length > 0 && (
+            <div className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <h3 className="font-heading text-base font-semibold tracking-tight">
+                  {catalog.total} traçados comentados
+                </h3>
+                {catalog.emergencies > 0 && (
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-rose-600 dark:text-rose-400">
+                    <Zap className="h-3.5 w-3.5" /> {catalog.emergencies} de emergência
+                  </span>
+                )}
+              </div>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                Cada padrão vem com critérios diagnósticos segundo AHA, ACC, ESC e SBC.
+              </p>
+              <ul className="mt-4 flex flex-wrap gap-2">
+                {catalog.categories.map((c) => (
+                  <li
+                    key={c.name}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/40 px-3 py-1.5 text-xs"
+                  >
+                    <span className="font-medium">{c.name}</span>
+                    <span className="font-mono text-[11px] font-bold text-primary">{c.count}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+
+        {/* ── Coluna da prova visual + preço ── */}
+        <div className="space-y-5 lg:sticky lg:top-6">
+          <SimulatorPreview className="hidden lg:block" />
+
+          <div className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+            {showPrice ? (
+              <>
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Incluso no Manual Clínico{planLabel ? ` · plano ${planLabel}` : ''}
+                </p>
+                <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  {hasTier && (
+                    <span className="text-base text-muted-foreground line-through">{formatBRL(basePrice)}</span>
+                  )}
+                  <span className="text-3xl font-black tracking-tight text-primary sm:text-4xl">
+                    {formatBRL(finalPrice)}
+                  </span>
+                  {hasTier && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-xs font-bold text-emerald-700 dark:text-emerald-300">
+                      <Flame className="h-3 w-3" /> −{Math.round(tierPct)}%
+                    </span>
+                  )}
+                </div>
+                {hasTier && pricingEvent?.activeTier?.label && (
+                  <p className="mt-1.5 text-xs text-emerald-700 dark:text-emerald-400">
+                    Lote {pricingEvent.activeTier.label} — você economiza {formatBRL(basePrice - finalPrice)}.
+                  </p>
+                )}
+              </>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Acesso liberado para assinantes do Manual Clínico e contas Premium.
+              </p>
+            )}
+
+            <button
+              onClick={onCheckout}
+              className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-md bg-primary px-6 text-sm font-bold text-primary-foreground shadow-sm transition hover:bg-primary/90 active:scale-[0.98]"
+            >
+              <Crown className="h-4 w-4" />
+              {ctaLabel}
+              <ArrowRight className="h-4 w-4" />
+            </button>
+
+            <ul className="mt-4 space-y-1.5">
+              {[
+                'Acesso imediato após o pagamento',
+                `Os ${totalTracings} traçados e as atualizações inclusos`,
+                'Leva junto as 300+ patologias do Manual',
+              ].map((t) => (
+                <li key={t} className="flex items-start gap-2 text-xs text-muted-foreground">
+                  <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                  {t}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-3 flex items-center gap-1.5 border-t border-border pt-3 text-[11px] text-muted-foreground">
+              <ShieldCheck className="h-3.5 w-3.5 shrink-0" /> Pix, cartão ou boleto · pagamento processado com segurança.
             </p>
           </div>
         </div>
+      </div>
 
-        <div className="mb-6 grid gap-3 sm:grid-cols-2">
-          {features.map((f) => (
-            <div key={f.t} className="rounded-xl border border-border bg-muted/30 p-4 transition-colors hover:border-primary/30">
-              <f.icon className="mb-2 h-5 w-5 text-primary" />
-              <p className="text-sm font-bold">{f.t}</p>
-              <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">{f.d}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            {product?.isActive && price > 0 && (
-              <p className="text-sm text-muted-foreground">
-                Incluso no Manual Clínico · a partir de <span className="text-lg font-black text-primary">{formatBRL(price)}</span>
+      {/* Barra fixa do celular: mantém preço e CTA sempre à mão. O recuo de baixo
+          soma o safe-area do iPhone ao respiro normal — a classe .pwa-safe-bottom
+          não serve aqui porque o !important dela zeraria o padding no aparelho
+          que não tem inset, colando o botão na borda. */}
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-md lg:hidden">
+        <div className="flex items-center gap-3">
+          {showPrice && (
+            <div className="min-w-0">
+              <p className="truncate text-[11px] text-muted-foreground">
+                {hasTier ? `−${Math.round(tierPct)}% no lote atual` : 'Manual Clínico completo'}
               </p>
-            )}
-            <p className="mt-0.5 text-xs text-muted-foreground">Acesso imediato · atualizações inclusas.</p>
-          </div>
-          <button onClick={onCheckout}
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-primary px-6 text-sm font-bold text-primary-foreground shadow-sm transition hover:bg-primary/90 active:scale-[0.98]">
+              <p className="flex items-baseline gap-1.5">
+                {hasTier && (
+                  <span className="text-[11px] text-muted-foreground line-through">{formatBRL(basePrice)}</span>
+                )}
+                <span className="text-lg font-black leading-tight text-primary">{formatBRL(finalPrice)}</span>
+              </p>
+            </div>
+          )}
+          <button
+            onClick={onCheckout}
+            className="ml-auto inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-md bg-primary px-4 text-sm font-bold text-primary-foreground shadow-sm transition active:scale-[0.98]"
+          >
             <Crown className="h-4 w-4" />
-            {isAuthenticated ? 'Desbloquear o Manual Clínico' : 'Entrar e desbloquear'}
-            <ArrowRight className="h-4 w-4" />
+            {isAuthenticated ? 'Desbloquear' : 'Entrar e desbloquear'}
           </button>
         </div>
       </div>
-    </div>
+    </>
+  )
+}
+
+/** Print real do simulador em moldura de aparelho — mostra o que se compra. */
+function SimulatorPreview({ className = '' }: { className?: string }) {
+  return (
+    <figure className={`m-0 ${className}`}>
+      <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-b from-slate-900 to-slate-950 p-5 shadow-sm">
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.18]"
+          style={{
+            backgroundImage:
+              'linear-gradient(rgba(52,211,153,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(52,211,153,0.6) 1px, transparent 1px)',
+            backgroundSize: '18px 18px',
+          }}
+          aria-hidden
+        />
+        <img
+          src={PREVIEW_IMAGE}
+          alt="Simulador de ECG do Manual Clínico: 12 derivações em papel milimetrado, com medidas de FC, PR e QRS calculadas automaticamente."
+          width={760}
+          height={1647}
+          loading="lazy"
+          decoding="async"
+          className="relative mx-auto block h-auto w-full max-w-[260px] rounded-xl border border-white/10 shadow-2xl"
+        />
+      </div>
+      <figcaption className="mt-2 text-center text-[11px] text-muted-foreground">
+        Tela real do simulador — medidas calculadas a partir do traçado gerado.
+      </figcaption>
+    </figure>
   )
 }
