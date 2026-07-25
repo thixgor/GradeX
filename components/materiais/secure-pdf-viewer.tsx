@@ -488,6 +488,7 @@ async function acquirePageProxy(
     const entry = await pending
     entry.refs += 1
     entry.lastUsed = Date.now()
+    evictPageProxies()
     return entry
   }
 
@@ -507,7 +508,10 @@ async function acquirePageProxy(
       lastUsed: Date.now(),
     }
     pageProxyCache.set(key, entry)
-    evictPageProxies()
+    // A eviction NÃO roda aqui: neste ponto a entrada recém-criada ainda está
+    // com refs = 0 e, se todas as outras estivessem em uso, ela seria a única
+    // candidata — seria destruída no instante anterior a quem a pediu
+    // contabilizar a referência. Evictamos depois do incremento, abaixo.
     return entry
   })()
 
@@ -516,6 +520,7 @@ async function acquirePageProxy(
     const entry = await load
     entry.refs += 1
     entry.lastUsed = Date.now()
+    evictPageProxies()
     return entry
   } finally {
     pageProxyInflight.delete(key)
