@@ -183,6 +183,34 @@ export async function middleware(request: NextRequest) {
     return response
   }
 
+  // Checkout de item único do catálogo, visitante: /comprar é quem vende sem
+  // conta. A página já fazia esse desvio, mas só depois de montar e consultar
+  // /api/auth/me — o visitante via o checkout errado piscar antes de ser levado
+  // ao certo. Resolvido aqui, antes de qualquer byte de HTML sair.
+  // O carrinho (?cart=1) NÃO entra: ele trata visitante na própria página, com
+  // formulário de comprador, e continua público.
+  if (
+    pathname === '/materiais/checkout' &&
+    !isDevAuthBypass() &&
+    !request.cookies.get('auth-token')?.value
+  ) {
+    const params = request.nextUrl.searchParams
+    const id = params.get('id')
+    const type = params.get('type')
+    if (params.get('cart') !== '1' && id && type) {
+      const comprarUrl = new URL('/comprar', request.url)
+      // Aqui não dá para separar flashcard de material — isso depende do
+      // documento, que o Edge não consulta. Mandar 'material' é seguro:
+      // resolveSerialKeyProduct reclassifica pelo próprio item
+      // (materialType === 'flashcard_deck' ou linkedDeckSlug), ignorando o
+      // productType que vem do cliente.
+      comprarUrl.searchParams.set('productType', type === 'package' ? 'package' : 'material')
+      comprarUrl.searchParams.set('productId', id)
+      comprarUrl.searchParams.set('itemType', type)
+      return withNoIndex(NextResponse.redirect(comprarUrl))
+    }
+  }
+
   // Rotas públicas: permitir acesso sem autenticação
   if (isPublicRoute(pathname)) {
     return response
@@ -218,6 +246,16 @@ export async function middleware(request: NextRequest) {
       comprarUrl.searchParams.set('productType', 'manual_clinico')
       const plan = request.nextUrl.searchParams.get('plan')
       if (plan) comprarUrl.searchParams.set('planKey', plan)
+      return withNoIndex(NextResponse.redirect(comprarUrl))
+    }
+    // Plano Premium sem login → mesma ideia: /comprar vende o plano por Serial
+    // Key. Sem isto o visitante batia no login, que é justamente o passo que a
+    // compra sem conta existe para evitar.
+    if (pathname === '/buy/checkout') {
+      const comprarUrl = new URL('/comprar', request.url)
+      comprarUrl.searchParams.set('productType', 'premium')
+      const plan = request.nextUrl.searchParams.get('plan')
+      if (plan) comprarUrl.searchParams.set('productId', plan)
       return withNoIndex(NextResponse.redirect(comprarUrl))
     }
     // Demais páginas protegidas redirecionam para login

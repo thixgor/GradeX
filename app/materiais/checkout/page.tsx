@@ -6,6 +6,7 @@ import { AlertCircle, Check, ChevronLeft, FileText, Flame, Loader2, Package, Per
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
 import { CheckoutAddonOffers } from '@/components/shop/checkout-addon-offers'
 import { UnifiedCheckoutPayment } from '@/components/shop/unified-checkout-payment'
+import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-notice'
 import { useMaterialCart } from '@/context/MaterialCartContext'
 import { PricingEventCountdown, type PricingEventStatePayload } from '@/components/pricing-events/PricingEventCountdown'
 
@@ -1156,6 +1157,8 @@ export default function MateriaisCheckoutPage() {
                   </>
                 )
               ) : (
+                <>
+                <CheckoutAccountNotice tone="dark" className="mb-4" />
                 <UnifiedCheckoutPayment
                   publicKey={publicKey}
                   digitalPayable={payableAmount}
@@ -1193,6 +1196,7 @@ export default function MateriaisCheckoutPage() {
                     />
                   )}
                 />
+                </>
               )}
             </div>
           </div>
@@ -1392,6 +1396,8 @@ export default function MateriaisCheckoutPage() {
 
           {/* Right: Payment */}
           <div style={{ ...glassCard, padding: '28px' }}>
+            <>
+            <CheckoutAccountNotice tone="dark" className="mb-4" />
             <UnifiedCheckoutPayment
               publicKey={publicKey}
               digitalPayable={Math.max(0, payablePrice)}
@@ -1464,6 +1470,7 @@ export default function MateriaisCheckoutPage() {
               />
             )}
             />
+            </>
           </div>
         </div>
       </div>

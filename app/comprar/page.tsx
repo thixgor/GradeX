@@ -7,6 +7,7 @@ import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout
 import { usePricingEventState, usePricingEventStates } from '@/components/pricing-events/usePricingEventState'
 import { PricingEventCountdown } from '@/components/pricing-events/PricingEventCountdown'
 import { PublicPageShell } from '@/components/public-page-shell'
+import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-notice'
 import Link from 'next/link'
 
 interface AppliedCoupon {
@@ -570,6 +571,7 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
             </div>
           ) : step === 'buyer' ? (
             <div className="flex flex-col gap-4">
+              <CheckoutAccountNotice variant="serial-key" />
               <div>
                 <label style={labelStyle}><User size={12} style={{ display: 'inline', marginRight: 4 }} /> Nome completo</label>
                 <input value={name} onChange={(e) => setName(e.target.value)} onBlur={() => setTouched(true)} placeholder="Seu nome completo" style={inputStyle} />
@@ -916,6 +918,7 @@ function GenericComprarContent({ productType }: { productType: string }) {
         <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
           {step === 'buyer' ? (
             <div className="flex flex-col gap-4">
+              <CheckoutAccountNotice variant="serial-key" />
               <div>
                 <label style={labelStyle}><User size={12} style={{ display: 'inline', marginRight: 4 }} /> Nome completo</label>
                 <input value={name} onChange={(e) => setName(e.target.value)} onBlur={() => setTouched(true)} placeholder="Seu nome completo" style={inputStyle} />
