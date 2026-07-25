@@ -242,6 +242,12 @@ function BancoQuestoesContent() {
         accountType !== 'admin'
 
       // Parallelize all independent API calls
+      // A primeira página de questões entra AQUI para usuários premium/admin.
+      // Antes ela era buscada com `await loadQuestoes()` só depois deste lote
+      // resolver, criando dois round-trips em série antes de qualquer pixel —
+      // o skeleton ficava em tela pelo tempo somado das duas idas. No mount os
+      // filtros e a busca estão nos valores padrão, então a URL é exatamente a
+      // que `loadQuestoes()` montaria.
       const [periodosRes, anosRes, ...extraResults] = await Promise.all([
         fetch('/api/banco/periodos'),
         fetch('/api/banco/anos'),
@@ -249,6 +255,7 @@ function BancoQuestoesContent() {
         ...(!isFreeUser ? [
           fetch('/api/banco/estatisticas'),
           fetch('/api/banco/listas'),
+          fetch('/api/banco/questoes?page=1&limit=20'),
         ] : []),
       ])
 
@@ -296,7 +303,7 @@ function BancoQuestoesContent() {
 
       // Process parallel results for premium/admin users
       if (extraResults.length >= 2) {
-        const [statsRes, listasRes] = extraResults
+        const [statsRes, listasRes, questoesRes] = extraResults
 
         if (statsRes.ok) {
           const statsData = await statsRes.json()
@@ -311,8 +318,15 @@ function BancoQuestoesContent() {
           setListas(listasData.listas)
         }
 
-        // Load initial questions for premium users
-        await loadQuestoes()
+        // Aplica a primeira página de questões que já veio no lote paralelo.
+        // Só cai no fetch avulso se aquela requisição tiver falhado.
+        if (questoesRes?.ok) {
+          const questoesData = await questoesRes.json()
+          setQuestoes(questoesData.questoes)
+          setPaginacao(questoesData.paginacao)
+        } else {
+          await loadQuestoes()
+        }
       }
     } catch (error) {
       console.error('Erro ao carregar dados:', error)

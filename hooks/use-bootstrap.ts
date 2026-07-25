@@ -19,6 +19,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { fetchWithTimeout, invalidateCache, clearCache } from '@/lib/api-client'
+import { clearPageCache } from '@/lib/page-cache'
 import type { SidebarSectionSettings } from '@/lib/sidebar-sections'
 
 // Types matching the bootstrap endpoint response
@@ -485,6 +486,10 @@ export function clearBootstrapCache() {
   // Importante limpar localStorage também — senão depois de logout
   // o próximo mount hidrataria com dados do usuário anterior.
   removeBootstrapFromStorage()
+  // Mesmo motivo para o cache de dados de página (listas de provas,
+  // materiais, etc.): sem isso, quem entrasse depois no mesmo aparelho veria
+  // o conteúdo em cache do usuário anterior.
+  clearPageCache()
   clearCache()
   invalidateCache('/api/bootstrap')
   invalidateCache('/api/auth/me')

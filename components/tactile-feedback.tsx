@@ -73,18 +73,31 @@ export function TactileFeedback() {
         }
       }
 
-      // 2) Aquecimento de navegação — prefetch de links internos.
+      // 2) Aquecimento de navegação — prefetch do destino.
+      // Além de <a href>, aceitamos qualquer controle que declare
+      // `data-prefetch-href`. Muitos menus do app navegam por <button> +
+      // router.push (a sidebar, por exemplo), e esses nunca seriam aquecidos
+      // se olhássemos só para âncoras.
       const anchor = control.closest('a[href]') as HTMLAnchorElement | null
-      if (!anchor) return
-      if (anchor.target && anchor.target !== '_self') return
-      if (anchor.hasAttribute('download')) return
+      const declared = control
+        .closest('[data-prefetch-href]')
+        ?.getAttribute('data-prefetch-href')
 
-      const href = anchor.getAttribute('href')
+      if (!anchor && !declared) return
+      if (anchor) {
+        if (anchor.target && anchor.target !== '_self') return
+        if (anchor.hasAttribute('download')) return
+      }
+
+      const href = declared ?? anchor!.getAttribute('href')
       if (!href || href.startsWith('#')) return
 
       let url: URL
       try {
-        url = new URL(anchor.href, window.location.href)
+        // Resolve a partir do href declarado (que pode ser relativo). Usar
+        // `anchor.href` aqui quebraria o caso data-prefetch-href, em que não
+        // existe âncora nenhuma.
+        url = new URL(href, window.location.href)
       } catch {
         return
       }

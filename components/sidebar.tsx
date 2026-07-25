@@ -287,6 +287,10 @@ let _lastClickedIndex: number | null = null
 // component; without this flag the entrance stagger replays on each route change
 // and reads as flickering. First mount animates in; every later mount is instant.
 let _hasMountedOnce = false
+// Rotas do menu já aquecidas nesta sessão. Vive no módulo porque a sidebar
+// remonta a cada navegação — num ref o conjunto seria perdido e o prefetch
+// rodaria de novo toda vez.
+const _prefetchedRoutes = new Set<string>()
 
 // ─── Sidebar ─────────────────────────────────────────────────
 export function Sidebar({
@@ -359,6 +363,58 @@ export function Sidebar({
   }
 
   const logoutIndex = mainNavItems.length + secondaryNavItems.length
+
+  // ── Aquecimento das rotas do menu ────────────────────────────────────
+  // Os itens são <button> com router.push, não <Link>, então o Next nunca
+  // aquecia nada: o chunk JS e o payload RSC do destino só começavam a baixar
+  // DEPOIS do clique. Aqui pedimos o prefetch de todas as rotas visíveis do
+  // menu assim que o browser fica ocioso — uma única vez por sessão. Depois
+  // disso, cada navegação da sidebar já encontra o destino em cache.
+  const navHrefsKey = [...mainNavItems, ...secondaryNavItems]
+    .map((item) => item.href ?? '')
+    .filter(Boolean)
+    .join(',')
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const hrefs = navHrefsKey.split(',').filter(Boolean)
+    if (hrefs.length === 0) return
+
+    const run = () => {
+      for (const href of hrefs) {
+        if (_prefetchedRoutes.has(href)) continue
+        _prefetchedRoutes.add(href)
+        try {
+          router.prefetch(href)
+        } catch {
+          // rota não prefetchável — ignora, o clique continua funcionando
+        }
+      }
+    }
+
+    const ric = (window as any).requestIdleCallback
+    if (typeof ric === 'function') {
+      const handle = ric(run, { timeout: 3000 })
+      return () => (window as any).cancelIdleCallback?.(handle)
+    }
+    const timer = window.setTimeout(run, 1500)
+    return () => window.clearTimeout(timer)
+  }, [navHrefsKey, router])
+
+  // Prefetch imediato no toque/hover: cobre o caso de o usuário clicar antes
+  // do aquecimento ocioso acontecer.
+  const handleNavPrefetch = useCallback(
+    (item: NavItem) => {
+      if (!item.href || _prefetchedRoutes.has(item.href)) return
+      _prefetchedRoutes.add(item.href)
+      try {
+        router.prefetch(item.href)
+      } catch {
+        // ignora
+      }
+    },
+    [router],
+  )
 
   const handleNavClick = (item: NavItem, index: number) => {
     _lastClickedIndex = index
@@ -628,8 +684,14 @@ export function Sidebar({
                 pressedIndex={pressedIndex}
                 collapsed={isCollapsed}
                 isItemActive={isActive(item.href)}
-                onHover={setHoveredIndex}
-                onPress={handleNavPress}
+                onHover={(i) => {
+                  setHoveredIndex(i)
+                  handleNavPrefetch(item)
+                }}
+                onPress={(i) => {
+                  handleNavPress(i)
+                  handleNavPrefetch(item)
+                }}
                 onRelease={handleNavRelease}
                 onClick={() => handleNavClick(item, index)}
                 staggerDelay={index * 0.03}
@@ -652,8 +714,14 @@ export function Sidebar({
                   pressedIndex={pressedIndex}
                   collapsed={isCollapsed}
                   isItemActive={isActive(item.href)}
-                  onHover={setHoveredIndex}
-                  onPress={handleNavPress}
+                  onHover={(i) => {
+                    setHoveredIndex(i)
+                    handleNavPrefetch(item)
+                  }}
+                  onPress={(i) => {
+                    handleNavPress(i)
+                    handleNavPrefetch(item)
+                  }}
                   onRelease={handleNavRelease}
                   onClick={() => handleNavClick(item, globalIndex)}
                   staggerDelay={(mainNavItems.length + index) * 0.03}

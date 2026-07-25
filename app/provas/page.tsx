@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, Suspense } from 'react'
+import { readPageCache, writePageCache } from '@/lib/page-cache'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { AppShell, useAppShell } from '@/components/app-shell'
 import { PageLoading } from '@/components/page-loading'
@@ -108,15 +109,28 @@ function CountUp({ value, className }: { value: number; className?: string }) {
 
 type ViewMode = 'home' | 'faculdade' | 'plataforma'
 
+// Chaves do cache de página (ver lib/page-cache.ts). Listas de provas e grupos
+// não são dados sensíveis, então podem ser exibidas na hora e revalidadas.
+const PROVAS_EXAMS_CACHE_KEY = 'provas:exams'
+const PROVAS_GROUPS_CACHE_KEY = 'provas:groups'
+
 function ProvasContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user, handleCreateExam, tierLimitExceeded, accountType } = useAppShell()
   const canDownloadPdf = canDownloadExamPdf(accountType, user?.role === 'admin')
 
-  const [exams, setExams] = useState<Exam[]>([])
-  const [groups, setGroups] = useState<Group[]>([])
-  const [loading, setLoading] = useState(true)
+  // Hidrata da última visita (síncrono, no primeiro frame). Se houver cache,
+  // a página já monta com conteúdo e revalida por baixo — sem skeleton.
+  const [exams, setExams] = useState<Exam[]>(
+    () => readPageCache<Exam[]>(PROVAS_EXAMS_CACHE_KEY) ?? [],
+  )
+  const [groups, setGroups] = useState<Group[]>(
+    () => readPageCache<Group[]>(PROVAS_GROUPS_CACHE_KEY) ?? [],
+  )
+  const [loading, setLoading] = useState(
+    () => readPageCache<Exam[]>(PROVAS_EXAMS_CACHE_KEY) === null,
+  )
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null)
   const [selectedExam, setSelectedExam] = useState<Exam | null>(null)
   const [deleteConfirmation, setDeleteConfirmation] = useState<{ examId: string; examTitle: string } | null>(null)
@@ -196,8 +210,14 @@ function ProvasContent() {
       const examsData = await examsRes.json()
       const groupsData = await groupsRes.json()
 
-      setExams(examsData.exams || [])
-      setGroups(groupsData.groups || [])
+      const nextExams: Exam[] = examsData.exams || []
+      const nextGroups: Group[] = groupsData.groups || []
+
+      setExams(nextExams)
+      setGroups(nextGroups)
+      // Guarda para a próxima visita abrir instantânea.
+      writePageCache(PROVAS_EXAMS_CACHE_KEY, nextExams)
+      writePageCache(PROVAS_GROUPS_CACHE_KEY, nextGroups)
     } catch (error) {
       console.error('Erro ao carregar provas e grupos:', error)
     } finally {
