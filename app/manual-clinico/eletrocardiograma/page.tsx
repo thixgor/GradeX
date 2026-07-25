@@ -90,11 +90,10 @@ function EcgManualContent() {
   const hasAccess = data?.access?.hasFullAccess === true
   const isAuthenticated = !!user
 
+  // Destino único: o middleware é quem manda quem não tem sessão para /comprar
+  // (venda por Serial Key, sem conta). Duplicar essa decisão aqui só criava mais
+  // um lugar para desencontrar da regra do servidor.
   function goToCheckout() {
-    if (!isAuthenticated) {
-      router.push('/comprar?productType=manual_clinico')
-      return
-    }
     router.push('/manual-clinico/checkout')
   }
 

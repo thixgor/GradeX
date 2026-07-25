@@ -36,7 +36,11 @@ function loadTemplate(): string {
 
 const PLAN_ORDER: ManualClinicoPublicPlan['key'][] = ['semestral', 'anual', 'vitalicio']
 
-const CHECKOUT_PATH = '/comprar?productType=manual_clinico'
+// Destino único de compra. Quem está logado cai no checkout do Manual; quem não
+// está é redirecionado pelo middleware para /comprar (venda por Serial Key, sem
+// conta). Mandar direto para /comprar jogaria o usuário logado no fluxo sem
+// conta, e a compra dele não ficaria vinculada à conta.
+const CHECKOUT_PATH = '/manual-clinico/checkout'
 
 /** Preço já resolvido de um plano, com a origem do desconto para exibir na página. */
 interface PlanPriceView {
