@@ -18,18 +18,24 @@ import {
   Highlighter,
   Image as ImageIcon,
   Italic,
+  Keyboard,
   List,
+  Lock,
   Maximize2,
   MessageSquare,
+  Minimize2,
   Minus,
+  MoreHorizontal,
   MousePointer2,
   Palette,
   PanelLeftClose,
   PanelLeftOpen,
   PenLine,
   Plus,
+  Rows3,
   SearchX,
   ShieldCheck,
+  Sparkles,
   StickyNote,
   Trash2,
   Type,
@@ -38,8 +44,22 @@ import {
   Zap,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { GuidedTour, type TourStep } from '@/components/manual-clinico/guided-tour'
 
 type ViewerMode = 'single' | 'width' | 'continuous'
+// Folhas do celular. O cabeçalho antigo empilhava até cinco linhas de rolagem
+// horizontal — num telefone isso comia metade da tela e escondia controles
+// atrás de scroll lateral. Agora cada grupo vira uma folha sob demanda.
+type MobileSheet = null | 'nav' | 'tools' | 'mode' | 'goto' | 'more'
+
+// Rótulos em linguagem de gente. "Pagina/Largura/Continuo" só faz sentido para
+// quem já conhece leitores de PDF; o público aqui não conhece.
+const MODE_OPTIONS: Array<{ value: ViewerMode; label: string; hint: string }> = [
+  { value: 'continuous', label: 'Rolagem contínua', hint: 'Deslize para baixo, como numa página comum' },
+  { value: 'single', label: 'Uma página por vez', hint: 'Vira de página em página' },
+  { value: 'width', label: 'Largura da tela', hint: 'Ajusta a página à largura do aparelho' },
+]
+
 type AnnotationType = 'highlight' | 'note' | 'bookmark' | 'text' | 'drawing'
 type AnnotationTool = 'cursor' | AnnotationType | 'eraser' | 'laser'
 type DrawingMode = 'free' | 'marker' | 'line' | 'dash' | 'circle'
@@ -71,6 +91,11 @@ interface ViewerAccess {
     title: string
     pageCount: number
     viewerEnabled: boolean
+    // O leitor NÃO oferece download, nem quando esta flag é true — decisão de
+    // produto, não esquecimento. O download continua sendo feito só a partir
+    // da página do material, com o termo de uso e a marca d'água do
+    // /api/materiais/download. Aqui a flag serve apenas para decidir se
+    // mostramos a explicação "por que não posso baixar?" no menu de ajuda.
     downloadEnabled: boolean
   }
   audit: {
@@ -120,6 +145,22 @@ const EMPTY_ANNOTATIONS: PdfAnnotation[] = []
 // e travava o navegador. O raio dá folga suficiente para leitura fluida e
 // pré-carrega algumas páginas à frente/atrás.
 const LIVE_PAGE_RADIUS = 3
+
+// O raio encolhe conforme o zoom sobe: numa página ampliada as vizinhas nem
+// aparecem na tela, mas cada canvas vivo custa dezenas de MB. Manter 3 páginas
+// vivas em zoom alto era o que estourava a memória no celular.
+function liveRadiusForZoom(zoom: number) {
+  if (zoom > 1.8) return 1
+  if (zoom > 1.2) return 2
+  return LIVE_PAGE_RADIUS
+}
+
+// Quantas páginas ficam materializadas no DOM (como página real OU espaçador)
+// ao redor da atual. O resto vira dois blocos de preenchimento com a altura
+// somada. Sem isso, o modo contínuo — agora o padrão — criaria um nó por
+// página do documento inteiro logo no primeiro paint: num material de 3000
+// páginas são 3000 nós antes de o leitor rolar um pixel.
+const RENDERED_WINDOW_RADIUS = 60
 // Dimensões-padrão de página (A4 em pt) usadas como fallback do espaçador antes
 // de a primeira página real reportar o tamanho verdadeiro.
 const DEFAULT_PAGE_WIDTH = 595
@@ -229,28 +270,63 @@ const PAGE_FETCH_MAX_CONCURRENCY = 3
 const PAGE_FETCH_TIMEOUT_MS = 25000
 const PAGE_FETCH_MAX_ATTEMPTS = 4
 
-let pageFetchActive = 0
-const pageFetchQueue: Array<() => void> = []
+// Prioridade da requisição. As miniaturas do painel lateral usam exatamente o
+// mesmo endpoint caro das páginas de leitura; como o painel abre ligado por
+// padrão, ~10 miniaturas entravam na fila ANTES da página que o usuário quer
+// ler e ficavam com os 3 slots. Era o "uma carrega e a outra não". Agora a
+// leitura tem precedência absoluta: miniatura só ganha slot quando não há
+// nenhuma página de leitura ativa nem esperando.
+type FetchPriority = 'reader' | 'thumb'
 
-function acquirePageFetchSlot(): Promise<() => void> {
+let pageFetchActive = 0
+let readerFetchActive = 0
+const pageFetchQueues: Record<FetchPriority, Array<() => void>> = { reader: [], thumb: [] }
+
+function drainPageFetchQueue() {
+  // Leitura primeiro, sempre.
+  if (pageFetchActive < PAGE_FETCH_MAX_CONCURRENCY) {
+    const nextReader = pageFetchQueues.reader.shift()
+    if (nextReader) {
+      nextReader()
+      return
+    }
+  }
+  // Miniatura só entra com a leitura totalmente quieta — nada ativo e nada na
+  // fila. Assim o painel se preenche sozinho depois, sem competir na abertura.
+  if (readerFetchActive === 0 && pageFetchQueues.reader.length === 0 && pageFetchActive < PAGE_FETCH_MAX_CONCURRENCY) {
+    const nextThumb = pageFetchQueues.thumb.shift()
+    if (nextThumb) nextThumb()
+  }
+}
+
+function acquirePageFetchSlot(priority: FetchPriority): Promise<() => void> {
   return new Promise((resolve) => {
     const grant = () => {
       pageFetchActive += 1
+      if (priority === 'reader') readerFetchActive += 1
       let released = false
       resolve(() => {
         if (released) return
         released = true
         pageFetchActive -= 1
-        const next = pageFetchQueue.shift()
-        if (next) next()
+        if (priority === 'reader') readerFetchActive -= 1
+        drainPageFetchQueue()
       })
     }
-    if (pageFetchActive < PAGE_FETCH_MAX_CONCURRENCY) grant()
-    else pageFetchQueue.push(grant)
+    const canRunNow = priority === 'reader'
+      ? pageFetchActive < PAGE_FETCH_MAX_CONCURRENCY
+      : readerFetchActive === 0 && pageFetchQueues.reader.length === 0 && pageFetchActive < PAGE_FETCH_MAX_CONCURRENCY
+    if (canRunNow) grant()
+    else pageFetchQueues[priority].push(grant)
   })
 }
 
 const pageFetchSleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+// Erro de carregamento de página enriquecido: `status` distingue rate limit
+// (429) de falha real, e `retryAfterMs` carrega a espera pedida pelo servidor
+// até a UI, que mostra uma contagem regressiva em vez de um erro vermelho.
+type PageFetchError = Error & { status?: number; retryAfterMs?: number }
 
 async function fetchPdfPageBytesOnce(materialId: string, pageNumber: number) {
   const controller = new AbortController()
@@ -262,8 +338,14 @@ async function fetchPdfPageBytesOnce(materialId: string, pageNumber: number) {
     )
     if (!response.ok) {
       const data = await response.json().catch(() => ({}))
-      const err = new Error(data.error || 'Falha ao carregar pagina') as Error & { status?: number }
+      const err = new Error(data.error || 'Falha ao carregar pagina') as PageFetchError
       err.status = response.status
+      // O servidor manda Retry-After junto do 429. Respeitar esse valor evita
+      // que o backoff cego bata de novo antes de a janela do rate limit virar.
+      const retryAfter = Number(response.headers.get('Retry-After') || 0)
+      if (Number.isFinite(retryAfter) && retryAfter > 0) {
+        err.retryAfterMs = Math.min(60_000, retryAfter * 1000)
+      }
       throw err
     }
 
@@ -277,7 +359,11 @@ async function fetchPdfPageBytesOnce(materialId: string, pageNumber: number) {
   }
 }
 
-async function fetchPdfPageBytes(materialId: string, pageNumber: number) {
+async function fetchPdfPageBytes(
+  materialId: string,
+  pageNumber: number,
+  priority: FetchPriority = 'reader'
+) {
   const key = `${materialId}:${pageNumber}`
   const now = Date.now()
   const cached = pageBytesCache.get(key)
@@ -290,7 +376,7 @@ async function fetchPdfPageBytes(materialId: string, pageNumber: number) {
   if (pending) return pending
 
   const request = (async () => {
-    const release = await acquirePageFetchSlot()
+    const release = await acquirePageFetchSlot(priority)
     try {
       let lastError: unknown
       for (let attempt = 1; attempt <= PAGE_FETCH_MAX_ATTEMPTS; attempt += 1) {
@@ -311,11 +397,13 @@ async function fetchPdfPageBytes(materialId: string, pageNumber: number) {
           lastError = err
           // Só re-tenta falhas transitórias (rede/abort, 5xx, 408, 429);
           // erros de cliente reais (ex.: 403) falham rápido.
-          const status = (err as { status?: number })?.status
+          const { status, retryAfterMs } = (err || {}) as PageFetchError
           const retriable =
             status === undefined || status >= 500 || status === 408 || status === 429
           if (!retriable || attempt >= PAGE_FETCH_MAX_ATTEMPTS) break
-          await pageFetchSleep(Math.min(8000, 500 * 2 ** (attempt - 1)))
+          // Quando o servidor disse quanto esperar (429), obedecemos; senão,
+          // backoff exponencial como antes.
+          await pageFetchSleep(retryAfterMs || Math.min(8000, 500 * 2 ** (attempt - 1)))
         }
       }
       throw lastError
@@ -330,6 +418,279 @@ async function fetchPdfPageBytes(materialId: string, pageNumber: number) {
   } finally {
     pageBytesInflight.delete(key)
   }
+}
+
+// ─── Cache de documentos pdf.js já parseados ────────────────────────────────
+// Antes, o efeito de render tinha `zoom` nas dependências e fazia
+// getDocument → getPage → render → doc.destroy() a cada passo de zoom. Ou
+// seja: arrastar o zoom re-parseava o PDF de TODAS as páginas vivas, uma vez
+// por passo, e jogava fora o resultado. Era a maior fonte de travamento.
+// Agora o parse acontece uma vez por página e o proxy fica vivo num LRU; o
+// zoom só re-rasteriza (ver `rasterScaleFor` e o debounce de `renderScale`).
+//
+// A contagem de referências é obrigatória: destruir um doc enquanto um
+// `page.render()` ainda está em curso quebra a página. Na eviction marcamos
+// `doomed` e só destruímos quando o último consumidor solta.
+const PAGE_PROXY_CACHE_MAX = 8
+
+interface PageProxyEntry {
+  doc: any
+  page: any
+  totalPages: number
+  refs: number
+  doomed: boolean
+  lastUsed: number
+}
+
+const pageProxyCache = new Map<string, PageProxyEntry>()
+const pageProxyInflight = new Map<string, Promise<PageProxyEntry>>()
+
+function destroyProxyEntry(entry: PageProxyEntry) {
+  try {
+    entry.doc?.destroy?.()
+  } catch {}
+}
+
+function evictPageProxies() {
+  if (pageProxyCache.size <= PAGE_PROXY_CACHE_MAX) return
+  // Só entradas ociosas podem sair; as em uso ficam até serem soltas.
+  const idle = Array.from(pageProxyCache.entries())
+    .filter(([, entry]) => entry.refs === 0)
+    .sort((a, b) => a[1].lastUsed - b[1].lastUsed)
+  let excess = pageProxyCache.size - PAGE_PROXY_CACHE_MAX
+  for (const [key, entry] of idle) {
+    if (excess <= 0) break
+    pageProxyCache.delete(key)
+    destroyProxyEntry(entry)
+    excess -= 1
+  }
+  if (excess > 0 && process.env.NODE_ENV !== 'production') {
+    // Sinal de vazamento: todo mundo referenciado e nada pôde ser liberado.
+    console.warn('[pdf-viewer] cache de proxies acima do teto com todas as entradas em uso')
+  }
+}
+
+async function acquirePageProxy(
+  materialId: string,
+  pageNumber: number,
+  priority: FetchPriority = 'reader'
+): Promise<PageProxyEntry> {
+  const key = `${materialId}:${pageNumber}`
+  const cached = pageProxyCache.get(key)
+  if (cached && !cached.doomed) {
+    cached.refs += 1
+    cached.lastUsed = Date.now()
+    return cached
+  }
+
+  const pending = pageProxyInflight.get(key)
+  if (pending) {
+    const entry = await pending
+    entry.refs += 1
+    entry.lastUsed = Date.now()
+    evictPageProxies()
+    return entry
+  }
+
+  const load = (async () => {
+    const { bytes, pageCount } = await fetchPdfPageBytes(materialId, pageNumber, priority)
+    const pdfjs = await getPdfJs()
+    // `slice()` porque o pdf.js assume a posse do buffer que recebe e os
+    // mesmos bytes ficam no `pageBytesCache` para reuso.
+    const doc = await pdfjs.getDocument({ data: bytes.slice() }).promise
+    const page = await doc.getPage(1)
+    const entry: PageProxyEntry = {
+      doc,
+      page,
+      totalPages: pageCount || 0,
+      refs: 0,
+      doomed: false,
+      lastUsed: Date.now(),
+    }
+    pageProxyCache.set(key, entry)
+    // A eviction NÃO roda aqui: neste ponto a entrada recém-criada ainda está
+    // com refs = 0 e, se todas as outras estivessem em uso, ela seria a única
+    // candidata — seria destruída no instante anterior a quem a pediu
+    // contabilizar a referência. Evictamos depois do incremento, abaixo.
+    return entry
+  })()
+
+  pageProxyInflight.set(key, load)
+  try {
+    const entry = await load
+    entry.refs += 1
+    entry.lastUsed = Date.now()
+    evictPageProxies()
+    return entry
+  } finally {
+    pageProxyInflight.delete(key)
+  }
+}
+
+function releasePageProxy(materialId: string, pageNumber: number) {
+  const key = `${materialId}:${pageNumber}`
+  const entry = pageProxyCache.get(key)
+  if (!entry) return
+  entry.refs = Math.max(0, entry.refs - 1)
+  entry.lastUsed = Date.now()
+  if (entry.doomed && entry.refs === 0) {
+    pageProxyCache.delete(key)
+    destroyProxyEntry(entry)
+    return
+  }
+  evictPageProxies()
+}
+
+// ─── Orçamento de pixels do canvas ──────────────────────────────────────────
+// A versão anterior forçava um PISO de DPR (2 no celular, 2,5 no desktop) e
+// multiplicava por `zoom` sem teto nenhum. Em zoom 2,6 com DPR 3,5 a escala
+// chegava a 9,1 — uma A4 virava ~5400x7660px, ~41 Mpx, ~165 MB de canvas.
+// Vezes as páginas vivas, passava de 1 GB e a aba morria no celular.
+// Agora: DPR real limitado a 2 e um TETO de megapixels por canvas. A escala
+// continua crescendo com o zoom (a página fica mesmo mais nítida ao ampliar),
+// só que dentro de um orçamento fixo de memória.
+const MAX_CANVAS_MPX_MOBILE = 4.5
+const MAX_CANVAS_MPX_DESKTOP = 9
+
+function rasterScaleFor(baseWidth: number, baseHeight: number, scale: number) {
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+  const deviceDpr = (typeof window !== 'undefined' && window.devicePixelRatio) || 1
+  const dpr = Math.min(Math.max(deviceDpr, 1), 2)
+  let effective = scale * dpr
+  const budget = (isMobile ? MAX_CANVAS_MPX_MOBILE : MAX_CANVAS_MPX_DESKTOP) * 1_000_000
+  const wanted = baseWidth * baseHeight * effective * effective
+  if (wanted > budget) effective *= Math.sqrt(budget / wanted)
+  return effective
+}
+
+// ─── IntersectionObservers compartilhados ───────────────────────────────────
+// Cada página e cada espaçador criava o SEU próprio IntersectionObserver. Num
+// material de milhares de páginas em modo contínuo — que agora é o padrão —
+// isso significava milhares de observers no primeiro paint. O painel de
+// miniaturas já usava um observer compartilhado; aqui aplicamos o mesmo
+// desenho para o foco de leitura e para a visibilidade das páginas.
+function createSharedObserver(rootMargin: string) {
+  let observer: IntersectionObserver | null = null
+  const callbacks = new WeakMap<Element, () => void>()
+
+  function ensure() {
+    if (observer || typeof window === 'undefined') return observer
+    observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue
+          callbacks.get(entry.target)?.()
+        }
+      },
+      { rootMargin, threshold: 0 }
+    )
+    return observer
+  }
+
+  return function observe(element: Element, onEnter: () => void) {
+    const instance = ensure()
+    if (!instance) return () => {}
+    callbacks.set(element, onEnter)
+    instance.observe(element)
+    return () => {
+      callbacks.delete(element)
+      instance.unobserve(element)
+    }
+  }
+}
+
+// Foco de leitura: a página passa a ser "a atual" quando cruza a faixa central.
+const observePageFocus = createSharedObserver('-18% 0px -68% 0px')
+// Visibilidade: dispara o carregamento um pouco antes de a página entrar.
+const observePageVisible = createSharedObserver('220px 0px')
+
+// ─── Tutorial da primeira visita ────────────────────────────────────────────
+// Reusa o GuidedTour do Manual Clínico (holofote + cartão), mesmo padrão de
+// flag no localStorage. A versão vai no nome da chave: mexeu nos passos a
+// ponto de valer remostrar, sobe para v2.
+const TOUR_STORAGE_KEY = 'domineaqui:pdf-viewer:tour:v1'
+
+// Escrito para quem nunca usou um leitor de PDF.
+//
+// `targets` é uma LISTA de candidatos em ordem de preferência, e não um
+// seletor com vírgulas: os controles de desktop continuam no HTML sob
+// `hidden lg:flex` no celular, então um `querySelector('a, b')` devolveria
+// sempre o primeiro do DOM (o de desktop) mesmo com ele invisível — e o passo
+// do celular sumiria. Aqui escolhemos o primeiro candidato realmente VISÍVEL.
+interface ViewerTourStep {
+  targets?: string[]
+  title: string
+  body: string
+}
+
+const TOUR_STEPS: ViewerTourStep[] = [
+  {
+    title: 'Bem-vindo ao seu material',
+    body: 'Vou te mostrar o essencial em 30 segundos. Pode pular a qualquer momento — este tutorial fica guardado no botão de ajuda.',
+  },
+  {
+    targets: ['[data-tour="viewer-mode"]', '[data-tour="viewer-mode-mobile"]'],
+    title: 'Escolha como quer ler',
+    body: 'O padrão é rolagem contínua: é só deslizar para baixo, como numa página comum. Se preferir virar de página em página, troque aqui — e é aqui também que você aumenta o tamanho da letra.',
+  },
+  {
+    targets: ['[data-tour="viewer-pagenav"]', '[data-tour="viewer-pagenav-mobile"]'],
+    title: 'Onde você está',
+    body: 'Este número mostra a página atual e o total. Toque nele para pular direto para qualquer página.',
+  },
+  {
+    targets: ['[data-tour="viewer-zoom"]'],
+    title: 'Deixe a letra do seu tamanho',
+    body: 'Aumente ou diminua o texto quando quiser. No celular, junte e afaste dois dedos sobre a página que funciona igual.',
+  },
+  {
+    targets: ['[data-tour="viewer-summary"]', '[data-tour="viewer-summary-strip"]'],
+    title: 'Pule direto para o capítulo',
+    body: 'O sumário lista as seções do material. Um toque e você já está lá — não precisa procurar rolando.',
+  },
+  {
+    targets: ['[data-tour="viewer-thumbs"]', '[data-tour="viewer-nav-mobile"]'],
+    title: 'Reconheça a página pela imagem',
+    body: 'Aqui ficam miniaturas de todas as páginas. Ajuda quando você lembra da aparência da página, mas não do número.',
+  },
+  {
+    targets: ['[data-tour="viewer-tools"]', '[data-tour="viewer-tools-mobile"]'],
+    title: 'Grife e escreva, como num caderno',
+    body: 'Marca-texto, notas, caneta, texto e marcadores. Tudo fica salvo na sua conta e reaparece quando você voltar, em qualquer aparelho.',
+  },
+  {
+    targets: ['[data-tour="viewer-fit"]'],
+    title: 'Perdeu o tamanho ideal?',
+    body: '"Ajustar à tela" devolve a página inteira à tela de uma vez, sem você ter que acertar o zoom na mão. No celular, dois toques na página fazem o mesmo.',
+  },
+  {
+    title: 'Pronto, é só ler',
+    body: 'Seu progresso é salvo sozinho: na próxima vez você volta exatamente nesta página. O botão de ajuda tem este tutorial e a lista de atalhos.',
+  },
+]
+
+// Um alvo só conta se estiver de fato ocupando espaço na tela.
+function findVisibleTourTarget(candidates: string[]): string | null {
+  for (const selector of candidates) {
+    const element = document.querySelector(selector) as HTMLElement | null
+    if (!element) continue
+    const rect = element.getBoundingClientRect()
+    if (rect.width > 0 && rect.height > 0) return selector
+  }
+  return null
+}
+
+function buildTourSteps(): TourStep[] {
+  const steps: TourStep[] = []
+  for (const step of TOUR_STEPS) {
+    if (!step.targets) {
+      steps.push({ title: step.title, body: step.body })
+      continue
+    }
+    const target = findVisibleTourTarget(step.targets)
+    if (target) steps.push({ target, title: step.title, body: step.body })
+  }
+  return steps
 }
 
 // Retomada de leitura: guarda a última página/modo por material no
@@ -359,6 +720,59 @@ function writeSavedPosition(materialId: string, position: { page: number; mode: 
   try {
     window.localStorage.setItem(POSITION_STORAGE_PREFIX + materialId, JSON.stringify(position))
   } catch {}
+}
+
+// ─── Preferências do leitor (globais, não por material) ─────────────────────
+// Só a posição de leitura era guardada. Zoom, modo, ferramenta, cores,
+// espessura e os painéis voltavam ao padrão a cada abertura — quem finalmente
+// achava uma configuração confortável perdia tudo no F5. Mesmo molde do
+// UIPreferencesContext do projeto: leitura tolerante a falha, escrita com
+// debounce, sem hook genérico (o projeto não tem um).
+const PREFS_STORAGE_KEY = 'domineaqui:pdf-viewer:prefs:v1'
+
+interface ViewerPrefs {
+  zoom?: number
+  mode?: ViewerMode
+  tool?: AnnotationTool
+  showThumbs?: boolean
+  sidePanelTab?: 'pages' | 'summary'
+  showAnnotations?: boolean
+  showGuide?: boolean
+  highlightColor?: string
+  highlightWidth?: number
+  noteColor?: string
+  laserColor?: string
+  drawingStyle?: DrawingStyle
+  textStyle?: TextStyle
+}
+
+function readViewerPrefs(): ViewerPrefs {
+  if (typeof window === 'undefined') return {}
+  try {
+    const raw = window.localStorage.getItem(PREFS_STORAGE_KEY)
+    if (!raw) return {}
+    const parsed = JSON.parse(raw)
+    return parsed && typeof parsed === 'object' ? (parsed as ViewerPrefs) : {}
+  } catch {
+    return {}
+  }
+}
+
+let prefsWriteTimer: number | null = null
+let prefsPending: ViewerPrefs = {}
+
+function writeViewerPrefs(patch: ViewerPrefs) {
+  if (typeof window === 'undefined') return
+  prefsPending = { ...prefsPending, ...patch }
+  if (prefsWriteTimer) window.clearTimeout(prefsWriteTimer)
+  prefsWriteTimer = window.setTimeout(() => {
+    prefsWriteTimer = null
+    const merged = { ...readViewerPrefs(), ...prefsPending }
+    prefsPending = {}
+    try {
+      window.localStorage.setItem(PREFS_STORAGE_KEY, JSON.stringify(merged))
+    } catch {}
+  }, 300)
 }
 
 function clampZoom(value: number, min = 0.55, max = 2.6) {
@@ -590,11 +1004,147 @@ function useResizeWidth(ref: React.RefObject<HTMLElement>, deps: React.Dependenc
   return width
 }
 
+// ─── Gestos de toque ────────────────────────────────────────────────────────
+// O leitor não tinha NENHUM gesto. O `touchAction: pinch-zoom` liberava só o
+// pinch do NAVEGADOR, que é desacoplado do zoom do viewer: a página ampliava
+// borrada e nunca re-rasterizava nítida. Aqui a pinça escreve no zoom real,
+// então a página é redesenhada na resolução certa.
+//
+// Tudo só vale com a ferramenta "navegar" ativa e com o dedo (não mouse, não
+// caneta): desenhar não pode disparar gesto, e gesto não pode roubar o traço.
+const SWIPE_MIN_DISTANCE = 60
+const DOUBLE_TAP_MS = 300
+
+function useViewerGestures(
+  ref: React.RefObject<HTMLElement>,
+  {
+    enabled,
+    onPinch,
+    onPinchEnd,
+    onSwipe,
+    onDoubleTap,
+  }: {
+    enabled: boolean
+    onPinch: (ratio: number) => void
+    onPinchEnd: () => void
+    onSwipe: (direction: 1 | -1) => void
+    onDoubleTap: () => void
+  }
+) {
+  const [pinching, setPinching] = useState(false)
+  const pointersRef = useRef(new Map<number, { x: number; y: number }>())
+  const pinchStartRef = useRef(0)
+  const swipeStartRef = useRef<{ x: number; y: number; t: number } | null>(null)
+  const lastTapRef = useRef(0)
+  // Handlers em ref para os listeners nativos não precisarem ser reanexados a
+  // cada render (o zoom muda a toda hora durante a pinça).
+  const handlersRef = useRef({ onPinch, onPinchEnd, onSwipe, onDoubleTap })
+  handlersRef.current = { onPinch, onPinchEnd, onSwipe, onDoubleTap }
+
+  useEffect(() => {
+    const element = ref.current
+    if (!element || !enabled) return
+
+    const pointers = pointersRef.current
+    pointers.clear()
+
+    const distance = () => {
+      const [a, b] = Array.from(pointers.values())
+      if (!a || !b) return 0
+      return Math.hypot(a.x - b.x, a.y - b.y)
+    }
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.pointerType !== 'touch') return
+      pointers.set(event.pointerId, { x: event.clientX, y: event.clientY })
+      if (pointers.size === 1) {
+        swipeStartRef.current = { x: event.clientX, y: event.clientY, t: Date.now() }
+      } else if (pointers.size === 2) {
+        // Virou pinça: o que quer que fosse um swipe deixa de ser.
+        swipeStartRef.current = null
+        pinchStartRef.current = distance()
+        setPinching(true)
+      }
+    }
+
+    const onPointerMove = (event: PointerEvent) => {
+      if (event.pointerType !== 'touch') return
+      if (!pointers.has(event.pointerId)) return
+      pointers.set(event.pointerId, { x: event.clientX, y: event.clientY })
+      if (pointers.size !== 2 || pinchStartRef.current <= 0) return
+      const current = distance()
+      if (current <= 0) return
+      handlersRef.current.onPinch(current / pinchStartRef.current)
+    }
+
+    const finishPointer = (event: PointerEvent) => {
+      if (event.pointerType !== 'touch') return
+      const wasPinching = pointers.size === 2
+      pointers.delete(event.pointerId)
+
+      if (wasPinching) {
+        pinchStartRef.current = 0
+        setPinching(false)
+        handlersRef.current.onPinchEnd()
+        swipeStartRef.current = null
+        return
+      }
+
+      if (pointers.size > 0) return
+
+      const start = swipeStartRef.current
+      swipeStartRef.current = null
+      if (!start) return
+
+      const dx = event.clientX - start.x
+      const dy = event.clientY - start.y
+      const elapsed = Date.now() - start.t
+
+      // Swipe: horizontal claro, e claramente mais horizontal que vertical —
+      // senão qualquer rolagem em diagonal viraria virada de página.
+      if (Math.abs(dx) > SWIPE_MIN_DISTANCE && Math.abs(dx) > Math.abs(dy) * 2 && elapsed < 800) {
+        handlersRef.current.onSwipe(dx < 0 ? 1 : -1)
+        lastTapRef.current = 0
+        return
+      }
+
+      // Toque parado e curto: candidato a duplo toque.
+      if (Math.abs(dx) < 12 && Math.abs(dy) < 12 && elapsed < 260) {
+        const now = Date.now()
+        if (now - lastTapRef.current < DOUBLE_TAP_MS) {
+          lastTapRef.current = 0
+          handlersRef.current.onDoubleTap()
+        } else {
+          lastTapRef.current = now
+        }
+      }
+    }
+
+    element.addEventListener('pointerdown', onPointerDown, { passive: true })
+    element.addEventListener('pointermove', onPointerMove, { passive: true })
+    element.addEventListener('pointerup', finishPointer, { passive: true })
+    element.addEventListener('pointercancel', finishPointer, { passive: true })
+    return () => {
+      element.removeEventListener('pointerdown', onPointerDown)
+      element.removeEventListener('pointermove', onPointerMove)
+      element.removeEventListener('pointerup', finishPointer)
+      element.removeEventListener('pointercancel', finishPointer)
+      pointers.clear()
+      setPinching(false)
+    }
+  }, [enabled, ref])
+
+  return pinching
+}
+
 export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const router = useRouter()
   const viewerRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLElement>(null)
   const zoomTouchedRef = useRef(false)
+  // Zoom atual num ref: a pinça precisa do valor no INÍCIO do gesto, sem
+  // reanexar os listeners nativos a cada quadro de zoom.
+  const zoomRef = useRef(1)
   // Espelha a página atual para leitura síncrona dentro de callbacks estáveis
   // (goToPage) sem recriá-los a cada mudança de página.
   const currentPageRef = useRef(1)
@@ -615,12 +1165,25 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const [pageSize, setPageSize] = useState<PageSize | null>(null)
   const [showThumbs, setShowThumbs] = useState(true)
   const [sidePanelTab, setSidePanelTab] = useState<'pages' | 'summary'>('pages')
-  const [mobilePanelOpen, setMobilePanelOpen] = useState(false)
   const [showAnnotations, setShowAnnotations] = useState(true)
-  const [showGuide, setShowGuide] = useState(true)
+  // Começa fechado: o guia estático ocupava o painel de anotações desde a
+  // abertura, empurrando as anotações do usuário para baixo. Ele continua
+  // existindo, agora pelo menu de ajuda — e o estado passa a ser lembrado.
+  const [showGuide, setShowGuide] = useState(false)
   const [showDeleteAllConfirm, setShowDeleteAllConfirm] = useState(false)
   const [notice, setNotice] = useState('')
   const [isPrinting, setIsPrinting] = useState(false)
+  const [isFullscreen, setIsFullscreen] = useState(false)
+  // Folha (bottom sheet) aberta no celular. Uma de cada vez.
+  const [mobileSheet, setMobileSheet] = useState<MobileSheet>(null)
+  const [helpMenuOpen, setHelpMenuOpen] = useState(false)
+  const [showShortcuts, setShowShortcuts] = useState(false)
+  const [showDownloadInfo, setShowDownloadInfo] = useState(false)
+  const [tourSteps, setTourSteps] = useState<TourStep[]>([])
+  const [tourOpen, setTourOpen] = useState(false)
+  // O tour escuta as setas do teclado; o leitor também, para virar página.
+  // Sem este ref as duas coisas aconteceriam ao mesmo tempo.
+  const tourOpenRef = useRef(false)
   const [highlightColor, setHighlightColor] = useState('#facc15')
   const [highlightWidth, setHighlightWidth] = useState(20)
   const [noteColor, setNoteColor] = useState('#fde68a')
@@ -823,6 +1386,60 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     setPageInput(String(currentPage))
   }, [currentPage])
 
+  useEffect(() => {
+    zoomRef.current = zoom
+  }, [zoom])
+
+  // ── Preferências ─────────────────────────────────────────────────────────
+  // Hidratação depois da montagem (e não em useState inicial) para o HTML do
+  // servidor bater com o do cliente — mesmo padrão do UIPreferencesContext.
+  const prefsHydratedRef = useRef(false)
+  useEffect(() => {
+    const prefs = readViewerPrefs()
+    if (typeof prefs.zoom === 'number' && Number.isFinite(prefs.zoom)) {
+      setZoom(prefs.zoom)
+      // Sem isto, o auto-ajuste-à-largura sobrescreveria a escolha do usuário
+      // logo na primeira medição da página.
+      zoomTouchedRef.current = true
+    }
+    if (prefs.tool) setTool(prefs.tool)
+    if (typeof prefs.showThumbs === 'boolean') setShowThumbs(prefs.showThumbs)
+    if (prefs.sidePanelTab) setSidePanelTab(prefs.sidePanelTab)
+    if (typeof prefs.showAnnotations === 'boolean') setShowAnnotations(prefs.showAnnotations)
+    if (typeof prefs.showGuide === 'boolean') setShowGuide(prefs.showGuide)
+    if (prefs.highlightColor) setHighlightColor(prefs.highlightColor)
+    if (typeof prefs.highlightWidth === 'number') setHighlightWidth(prefs.highlightWidth)
+    if (prefs.noteColor) setNoteColor(prefs.noteColor)
+    if (prefs.laserColor) setLaserColor(prefs.laserColor)
+    if (prefs.drawingStyle) setDrawingStyle((current) => ({ ...current, ...prefs.drawingStyle }))
+    if (prefs.textStyle) setTextStyle((current) => ({ ...current, ...prefs.textStyle }))
+    prefsHydratedRef.current = true
+  }, [])
+
+  // Salva as preferências conforme mudam. O guard evita gravar os valores
+  // padrão por cima dos salvos no primeiro render, antes da hidratação.
+  useEffect(() => {
+    if (!prefsHydratedRef.current) return
+    writeViewerPrefs({
+      zoom,
+      mode,
+      tool,
+      showThumbs,
+      sidePanelTab,
+      showAnnotations,
+      showGuide,
+      highlightColor,
+      highlightWidth,
+      noteColor,
+      laserColor,
+      drawingStyle,
+      textStyle,
+    })
+  }, [
+    zoom, mode, tool, showThumbs, sidePanelTab, showAnnotations, showGuide,
+    highlightColor, highlightWidth, noteColor, laserColor, drawingStyle, textStyle,
+  ])
+
   // Salva continuamente a posição de leitura para retomar na próxima abertura.
   useEffect(() => {
     if (!access) return
@@ -843,15 +1460,22 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       if (cancelled) return
       const element = document.getElementById(`pdf-page-${target}`)
       if (element) {
+        // Cada passada da retomada renova a janela em que o foco por scroll é
+        // ignorado, senão o observer do topo reverte para a página 1.
+        suppressFocusUntilRef.current = Math.max(suppressFocusUntilRef.current, Date.now() + 500)
         element.scrollIntoView({ behavior: 'auto', block: 'start' })
-        pendingResumeRef.current = null
+        // Só damos a retomada por concluída quando a altura real da página já
+        // é conhecida. Antes disso os blocos de preenchimento usam a estimativa
+        // A4, e a posição desliza quando a medida verdadeira chega — o efeito
+        // roda de novo (via `pageSize`) e corrige o destino.
+        if (pageSize) pendingResumeRef.current = null
         return
       }
       if (frame++ < 30) window.requestAnimationFrame(attempt)
     }
     window.requestAnimationFrame(attempt)
     return () => { cancelled = true }
-  }, [access, mode])
+  }, [access, mode, pageSize])
 
   useEffect(() => {
     if (!pageSize || !contentWidth || zoomTouchedRef.current) return
@@ -885,6 +1509,15 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     const timer = window.setTimeout(() => setNotice(''), 2600)
     return () => window.clearTimeout(timer)
   }, [notice])
+
+  // Sem este listener o ícone de tela cheia ficava sempre em "entrar", mesmo
+  // já estando em tela cheia — inclusive quando o usuário saía pelo Esc.
+  useEffect(() => {
+    const sync = () => setIsFullscreen(Boolean(document.fullscreenElement))
+    sync()
+    document.addEventListener('fullscreenchange', sync)
+    return () => document.removeEventListener('fullscreenchange', sync)
+  }, [])
 
   useEffect(() => {
     const block = (event: Event) => {
@@ -955,9 +1588,20 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       // caminho, disparando o carregamento de cada uma. Passos curtos
       // (próxima/anterior) mantêm o scroll suave, que é agradável e barato.
       const behavior: ScrollBehavior = Math.abs(next - currentPageRef.current) <= 2 ? 'smooth' : 'auto'
-      requestAnimationFrame(() => {
-        document.getElementById(`pdf-page-${next}`)?.scrollIntoView({ behavior, block: 'start' })
-      })
+      // Num salto longo a página de destino pode ainda não existir no DOM: ela
+      // só entra quando o React re-renderiza com a nova janela de páginas
+      // materializadas. Tentamos por alguns quadros em vez de uma vez só —
+      // senão um clique no sumário para uma seção distante não sairia do lugar.
+      let frame = 0
+      const scrollToTarget = () => {
+        const element = document.getElementById(`pdf-page-${next}`)
+        if (element) {
+          element.scrollIntoView({ behavior, block: 'start' })
+          return
+        }
+        if (frame++ < 10) requestAnimationFrame(scrollToTarget)
+      }
+      requestAnimationFrame(scrollToTarget)
     } else {
       // Em modo página única, sobe suavemente para o topo da nova página.
       requestAnimationFrame(() => {
@@ -995,48 +1639,26 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     if (Number.isFinite(next)) goToPage(next)
   }
 
-  // Navegação por teclado: setas, PageUp/Down, Home/End. Ignora quando o foco
-  // está em um campo de edição (anotações, input de página, etc).
-  useEffect(() => {
-    if (!access) return
-    const onKey = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement | null
-      if (target && (
-        target.closest('[data-pdf-editor="true"]') ||
-        ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)
-      )) return
-      if (event.ctrlKey || event.metaKey || event.altKey) return
-      switch (event.key) {
-        case 'ArrowRight':
-        case 'PageDown':
-          event.preventDefault(); stepPage(1); break
-        case 'ArrowLeft':
-        case 'PageUp':
-          event.preventDefault(); stepPage(-1); break
-        case 'Home':
-          event.preventDefault(); goToPage(previewActive && allowedPages.length ? allowedPages[0] : 1); break
-        case 'End':
-          event.preventDefault(); goToPage(previewActive && allowedPages.length ? allowedPages[allowedPages.length - 1] : pageCount); break
-      }
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [access, currentPage, pageCount, goToPage, stepPage, previewActive, allowedPages])
-
   // Atalho unificado para abrir o painel lateral (miniaturas ou sumário):
   // em telas grandes garante a coluna visível; em telas menores abre o drawer.
   const openSidePanel = useCallback((tab: 'pages' | 'summary') => {
     setSidePanelTab(tab)
     if (typeof window !== 'undefined' && window.innerWidth < 1024) {
-      setMobilePanelOpen(true)
+      // No celular tudo passa pela folha inferior — mesma SidePanel, só que
+      // ancorada onde o polegar alcança. Antes havia um drawer lateral
+      // separado fazendo exatamente isto, com dois estados para manter.
+      setMobileSheet('nav')
     } else {
       setShowThumbs(true)
     }
   }, [])
 
+  // Ir para a página e fechar a folha que originou o clique: no celular o
+  // painel cobre o material, e ficar aberto depois do pulo esconderia
+  // justamente o que o leitor acabou de pedir para ver.
   const navigateTo = useCallback((page: number) => {
     goToPage(page)
-    setMobilePanelOpen(false)
+    setMobileSheet(null)
   }, [goToPage])
 
   const fitToWidth = useCallback(() => {
@@ -1058,7 +1680,82 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     setMode('single')
   }, [maxZoom, minZoom, pageSize])
 
-  const toggleFullScreen = async () => {
+  // Troca de modo em um lugar só: "Largura" precisa recalcular o zoom, os
+  // outros dois não. Antes essa diferença estava espalhada pelo JSX e o modo
+  // nem existia no celular.
+  const applyMode = useCallback((next: ViewerMode) => {
+    if (next === 'width') fitToWidth()
+    else setMode(next)
+  }, [fitToWidth])
+
+  // ── Gestos ──────────────────────────────────────────────────────────────
+  const pinchBaseZoomRef = useRef(1)
+  const handlePinch = useCallback((ratio: number) => {
+    if (!pinchBaseZoomRef.current) pinchBaseZoomRef.current = zoomRef.current
+    zoomTouchedRef.current = true
+    setZoom(clampZoom(pinchBaseZoomRef.current * ratio, minZoom, maxZoom))
+  }, [maxZoom, minZoom])
+  const handlePinchEnd = useCallback(() => {
+    pinchBaseZoomRef.current = 0
+  }, [])
+  const handleSwipe = useCallback((direction: 1 | -1) => {
+    stepPage(direction)
+  }, [stepPage])
+  // Duplo toque alterna entre "página inteira na tela" e "largura da tela" —
+  // as duas coisas que o leitor quer 90% das vezes, sem precisar achar botão.
+  const handleDoubleTap = useCallback(() => {
+    if (mode === 'width') fitToPage()
+    else fitToWidth()
+  }, [fitToPage, fitToWidth, mode])
+
+  const gesturesEnabled = tool === 'cursor'
+  const isPinching = useViewerGestures(contentRef, {
+    enabled: gesturesEnabled,
+    onPinch: handlePinch,
+    onPinchEnd: handlePinchEnd,
+    // Swipe só faz sentido em "uma página por vez"; nos modos de rolagem o
+    // gesto natural é o scroll vertical, que continua nativo.
+    onSwipe: mode === 'single' ? handleSwipe : () => {},
+    onDoubleTap: handleDoubleTap,
+  })
+
+  // ── Tutorial ────────────────────────────────────────────────────────────
+  // Resolve cada passo para o alvo visível daquele tamanho de tela (ver
+  // buildTourSteps): é assim que a mesma lista serve para desktop e celular
+  // sem duas versões para manter.
+  const startTour = useCallback(() => {
+    const steps = buildTourSteps()
+    if (steps.length === 0) return
+    setTourSteps(steps)
+    setTourOpen(true)
+    tourOpenRef.current = true
+  }, [])
+
+  const closeTour = useCallback(() => {
+    setTourOpen(false)
+    tourOpenRef.current = false
+    try {
+      window.localStorage.setItem(TOUR_STORAGE_KEY, 'done')
+    } catch {}
+  }, [])
+
+  // Abre sozinho na primeira visita. Nunca na prévia: quem ainda não comprou
+  // está avaliando o material, não aprendendo a ferramenta.
+  useEffect(() => {
+    if (!access || previewActive) return
+    let seen = false
+    try {
+      seen = window.localStorage.getItem(TOUR_STORAGE_KEY) === 'done'
+    } catch {
+      seen = true
+    }
+    if (seen) return
+    // Espera o layout assentar para os alvos já estarem medidos.
+    const timer = window.setTimeout(startTour, 700)
+    return () => window.clearTimeout(timer)
+  }, [access, previewActive, startTour])
+
+  const toggleFullScreen = useCallback(async () => {
     const element = viewerRef.current
     if (!element) return
     if (!document.fullscreenElement) {
@@ -1066,7 +1763,69 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     } else {
       await document.exitFullscreen().catch(() => {})
     }
-  }
+  }, [])
+
+  // Navegação por teclado: setas, PageUp/Down, Home/End, mais os atalhos de
+  // zoom/modo/painéis. Ignora quando o foco está em um campo de edição
+  // (anotações, input de página, etc). Fica DEPOIS dos callbacks que usa —
+  // o array de dependências é avaliado durante o render, então referenciar um
+  // `const` declarado abaixo estouraria em TDZ.
+  useEffect(() => {
+    if (!access) return
+    const onKey = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null
+      if (target && (
+        target.closest('[data-pdf-editor="true"]') ||
+        ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)
+      )) return
+      if (event.ctrlKey || event.metaKey || event.altKey) return
+      // Com o tutorial aberto as setas são dele (avançar/voltar passo). Sem
+      // este guard, uma seta avançaria o passo E viraria a página junto.
+      if (tourOpenRef.current) return
+      switch (event.key) {
+        case 'ArrowRight':
+        case 'PageDown':
+          event.preventDefault(); stepPage(1); break
+        case 'ArrowLeft':
+        case 'PageUp':
+          event.preventDefault(); stepPage(-1); break
+        case 'Home':
+          event.preventDefault(); goToPage(previewActive && allowedPages.length ? allowedPages[0] : 1); break
+        case 'End':
+          event.preventDefault(); goToPage(previewActive && allowedPages.length ? allowedPages[allowedPages.length - 1] : pageCount); break
+        // Atalhos novos. Todos passam pelos mesmos guards acima (campo de
+        // edição, Ctrl/Cmd do anti-pirataria, tutorial aberto).
+        case '+':
+        case '=':
+          event.preventDefault(); zoomTouchedRef.current = true; setZoom((z) => clampZoom(z + 0.12, minZoom, maxZoom)); break
+        case '-':
+        case '_':
+          event.preventDefault(); zoomTouchedRef.current = true; setZoom((z) => clampZoom(z - 0.12, minZoom, maxZoom)); break
+        case '0':
+          event.preventDefault(); fitToPage(); break
+        case 'f':
+        case 'F':
+          event.preventDefault(); toggleFullScreen(); break
+        case 't':
+        case 'T':
+          event.preventDefault(); openSidePanel('pages'); break
+        case 's':
+        case 'S':
+          if (!hasSummary) break
+          event.preventDefault(); openSidePanel('summary'); break
+        case '1':
+          event.preventDefault(); applyMode('continuous'); break
+        case '2':
+          event.preventDefault(); applyMode('single'); break
+        case '3':
+          event.preventDefault(); applyMode('width'); break
+        case '?':
+          event.preventDefault(); setShowShortcuts(true); break
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [access, pageCount, goToPage, stepPage, previewActive, allowedPages, minZoom, maxZoom, fitToPage, toggleFullScreen, openSidePanel, applyMode, hasSummary])
 
   const createAnnotation = useCallback(async (annotation: Partial<PdfAnnotation>) => {
     const local = createEmptyAnnotation(annotation, materialId)
@@ -1168,8 +1927,20 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // atual. Nos modos contínuo/largura, só o raio ao redor da página atual é
   // montado como componente pesado; as demais ficam como espaçadores leves.
   const centerIndex = mode === 'single' ? 0 : Math.max(0, pages.indexOf(currentPage))
-  const liveStart = centerIndex - LIVE_PAGE_RADIUS
-  const liveEnd = centerIndex + LIVE_PAGE_RADIUS
+  const liveRadius = liveRadiusForZoom(zoom)
+  const liveStart = centerIndex - liveRadius
+  const liveEnd = centerIndex + liveRadius
+
+  // Segunda camada de virtualização: fora desta janela nem espaçador é criado.
+  // Os dois blocos de preenchimento abaixo reservam a altura das páginas
+  // ocultas para o scrollbar continuar proporcional ao documento inteiro.
+  const windowStart = mode === 'single' ? 0 : Math.max(0, centerIndex - RENDERED_WINDOW_RADIUS)
+  const windowEnd = mode === 'single' ? pages.length - 1 : Math.min(pages.length - 1, centerIndex + RENDERED_WINDOW_RADIUS)
+  const renderedPages = mode === 'single' ? pages : pages.slice(windowStart, windowEnd + 1)
+  // Altura de uma página no fluxo: moldura (16px de respiro) + gap-5 (20px).
+  const pageSlotHeight = spacerSize.height + 16 + 20
+  const fillerTopHeight = Math.max(0, windowStart * pageSlotHeight)
+  const fillerBottomHeight = Math.max(0, (pages.length - 1 - windowEnd) * pageSlotHeight)
 
   return (
     <ViewerShell>
@@ -1241,8 +2012,16 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         style={{ WebkitUserSelect: 'none', userSelect: 'none', touchAction: 'pan-x pan-y pinch-zoom' }}
       >
         <header className="sticky top-0 z-40 border-b border-white/10 bg-zinc-950/82 shadow-xl shadow-black/25 backdrop-blur-2xl">
+          {/* Progresso de leitura. Uma linha fina no topo responde à pergunta
+              "quanto falta?" sem ocupar espaço nenhum. */}
+          <div className="h-0.5 w-full bg-white/5">
+            <div
+              className="h-full bg-emerald-400 transition-[width] duration-200"
+              style={{ width: `${pageCount > 0 ? Math.min(100, (currentPage / pageCount) * 100) : 0}%` }}
+            />
+          </div>
           <div className="px-2 py-2 sm:px-4">
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 sm:gap-2">
+            <div className="flex items-center gap-1.5 pb-1.5 sm:gap-2 lg:overflow-x-auto">
               <Button
                 size="icon"
                 variant="ghost"
@@ -1253,7 +2032,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                 <ArrowLeft className="h-5 w-5" />
               </Button>
 
-              <div className="min-w-36 flex-1">
+              <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="h-4 w-4 text-emerald-300 shrink-0" />
                   <h1 className="truncate text-sm font-semibold sm:text-base">{access.material.title}</h1>
@@ -1261,25 +2040,29 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                 <p className="hidden text-[11px] text-emerald-100/60 sm:block">DomineAqui PDF Viewer protegido</p>
               </div>
 
-              <ToolbarButton onClick={() => stepPage(-1)} disabled={!canStepPrev} title="Pagina anterior">
-                <ChevronLeft className="h-4 w-4" />
-              </ToolbarButton>
-              <div className="flex h-10 shrink-0 items-center gap-1 rounded-xl border border-white/10 bg-white/10 px-2">
-                <input
-                  value={pageInput}
-                  onChange={(event) => setPageInput(event.target.value.replace(/\D/g, ''))}
-                  onKeyDown={(event) => event.key === 'Enter' && submitPageInput()}
-                  onBlur={submitPageInput}
-                  className="w-10 bg-transparent text-center text-sm text-white outline-none"
-                  inputMode="numeric"
-                />
-                <span className="text-xs text-white/55">/ {pageCount}</span>
+              {/* ── Controles de desktop ─────────────────────────────────── */}
+              <div className="hidden items-center gap-1.5 lg:flex" data-tour="viewer-pagenav">
+                <ToolbarButton onClick={() => stepPage(-1)} disabled={!canStepPrev} title="Pagina anterior">
+                  <ChevronLeft className="h-4 w-4" />
+                </ToolbarButton>
+                <div className="flex h-10 shrink-0 items-center gap-1 rounded-xl border border-white/10 bg-white/10 px-2">
+                  <input
+                    value={pageInput}
+                    onChange={(event) => setPageInput(event.target.value.replace(/\D/g, ''))}
+                    onKeyDown={(event) => event.key === 'Enter' && submitPageInput()}
+                    onBlur={submitPageInput}
+                    className="w-10 bg-transparent text-center text-sm text-white outline-none"
+                    inputMode="numeric"
+                    aria-label="Ir para a página"
+                  />
+                  <span className="text-xs text-white/55">/ {pageCount}</span>
+                </div>
+                <ToolbarButton onClick={() => stepPage(1)} disabled={!canStepNext} title="Proxima pagina">
+                  <ChevronRight className="h-4 w-4" />
+                </ToolbarButton>
               </div>
-              <ToolbarButton onClick={() => stepPage(1)} disabled={!canStepNext} title="Proxima pagina">
-                <ChevronRight className="h-4 w-4" />
-              </ToolbarButton>
 
-              <div className="hidden items-center gap-1 rounded-xl border border-white/10 bg-white/10 p-1 md:flex">
+              <div className="hidden items-center gap-1 rounded-xl border border-white/10 bg-white/10 p-1 lg:flex" data-tour="viewer-zoom">
                 <ToolbarButton compact onClick={() => { zoomTouchedRef.current = true; setZoom((z) => clampZoom(z - 0.12, minZoom, maxZoom)) }} title="Diminuir zoom">
                   <Minus className="h-4 w-4" />
                 </ToolbarButton>
@@ -1289,21 +2072,46 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                 </ToolbarButton>
               </div>
 
-              <div className="hidden items-center gap-1 lg:flex">
-                <ToolbarTextButton active={mode === 'single'} onClick={() => setMode('single')}>Pagina</ToolbarTextButton>
-                <ToolbarTextButton active={mode === 'width'} onClick={fitToWidth}>Largura</ToolbarTextButton>
-                <ToolbarTextButton active={mode === 'continuous'} onClick={() => setMode('continuous')}>Continuo</ToolbarTextButton>
+              {/* Seletor de modo: antes era `hidden lg:flex`, ou seja, no
+                  celular não havia como sair do "uma página por vez". Agora
+                  existe nos dois lugares — aqui e na barra inferior. */}
+              <div className="hidden items-center gap-1 lg:flex" data-tour="viewer-mode">
+                {MODE_OPTIONS.map((option) => (
+                  <ToolbarTextButton
+                    key={option.value}
+                    active={mode === option.value}
+                    onClick={() => applyMode(option.value)}
+                  >
+                    {option.label}
+                  </ToolbarTextButton>
+                ))}
               </div>
 
-              <ToolbarButton onClick={toggleFullScreen} title="Tela cheia">
-                <Maximize2 className="h-4 w-4" />
+              <ToolbarButton
+                className="hidden lg:inline-flex"
+                onClick={toggleFullScreen}
+                title={isFullscreen ? 'Sair da tela cheia' : 'Tela cheia'}
+              >
+                {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
               </ToolbarButton>
+
+              {/* ── Único controle extra do celular: tudo o mais mora nas
+                  folhas de baixo, para o cabeçalho caber em uma linha. ── */}
+              <button
+                type="button"
+                onClick={() => setMobileSheet('more')}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-white transition-colors hover:bg-white/15 lg:hidden"
+                title="Mais opções"
+                aria-label="Mais opções"
+              >
+                <MoreHorizontal className="h-5 w-5" />
+              </button>
             </div>
 
-            <div className="flex items-center gap-1 overflow-x-auto pb-1">
+            <div className="hidden items-center gap-1 overflow-x-auto pb-1 lg:flex">
               {/* Ferramentas de anotação ficam ocultas na prévia (leitura apenas). */}
               {!previewActive && (
-                <>
+                <div className="flex items-center gap-1" data-tour="viewer-tools">
                   <ToolButton active={tool === 'cursor'} onClick={() => setTool('cursor')} title="Navegar">
                     <MousePointer2 className="h-4 w-4" />
                   </ToolButton>
@@ -1330,40 +2138,34 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                   </ToolButton>
 
                   <div className="mx-1 h-6 w-px shrink-0 bg-white/10" />
-                </>
+                </div>
               )}
-              <div className="flex items-center gap-1 md:hidden">
-                <ToolButton active={false} onClick={() => { zoomTouchedRef.current = true; setZoom((z) => clampZoom(z - 0.12, minZoom, maxZoom)) }} title="Diminuir zoom">
-                  <Minus className="h-4 w-4" />
-                </ToolButton>
-                <ToolButton active={false} onClick={() => { zoomTouchedRef.current = true; setZoom((z) => clampZoom(z + 0.12, minZoom, maxZoom)) }} title="Aumentar zoom">
-                  <Plus className="h-4 w-4" />
-                </ToolButton>
-              </div>
-
               <div className="mx-1 h-6 w-px shrink-0 bg-white/10" />
               {hasSummary && (
                 <button
                   type="button"
+                  data-tour="viewer-summary"
                   onClick={() => openSidePanel('summary')}
                   title="Abrir sumário"
-                  className={`flex h-10 shrink-0 items-center gap-1.5 rounded-xl border px-2.5 text-xs font-bold transition-colors sm:px-3 ${
-                    (mobilePanelOpen ? sidePanelTab === 'summary' : showThumbs && sidePanelTab === 'summary')
+                  className={`flex h-10 shrink-0 items-center gap-1.5 rounded-xl border px-3 text-xs font-bold transition-colors ${
+                    showThumbs && sidePanelTab === 'summary'
                       ? 'border-emerald-300/60 bg-emerald-400/25 text-white'
                       : 'border-emerald-300/30 bg-emerald-400/10 text-emerald-200 hover:border-emerald-300/50 hover:bg-emerald-400/20 hover:text-white'
                   }`}
                 >
                   <List className="h-4 w-4 shrink-0" />
-                  <span className="hidden sm:inline">Sumário</span>
+                  Sumário
                 </button>
               )}
-              <ToolButton
-                active={showThumbs || mobilePanelOpen}
+              {/* Rótulo visível ao lado do ícone: para quem não é familiarizado
+                  com leitores de PDF, um tooltip que só aparece no hover não
+                  ensina nada. */}
+              <ToolbarTextButton
+                data-tour="viewer-thumbs"
+                active={showThumbs}
+                icon={showThumbs ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeftOpen className="h-4 w-4" />}
                 onClick={() => {
-                  if (typeof window !== 'undefined' && window.innerWidth < 1024) {
-                    setSidePanelTab('pages')
-                    setMobilePanelOpen((value) => !value)
-                  } else if (showThumbs && sidePanelTab === 'summary') {
+                  if (showThumbs && sidePanelTab === 'summary') {
                     // Painel já aberto noutra aba: troca para miniaturas em vez de fechar.
                     setSidePanelTab('pages')
                   } else {
@@ -1371,45 +2173,54 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                     setShowThumbs((value) => !value)
                   }
                 }}
-                title="Miniaturas"
               >
-                {showThumbs ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeftOpen className="h-4 w-4" />}
-              </ToolButton>
+                Páginas
+              </ToolbarTextButton>
               {!previewActive && (
                 <>
-                  <ToolButton active={showAnnotations} onClick={() => setShowAnnotations((value) => !value)} title="Painel de anotacoes">
-                    <StickyNote className="h-4 w-4" />
-                  </ToolButton>
-                  <ToolButton active={showGuide} onClick={() => setShowGuide((value) => !value)} title="Guia das ferramentas">
-                    <HelpCircle className="h-4 w-4" />
-                  </ToolButton>
+                  <ToolbarTextButton
+                    active={showAnnotations}
+                    icon={<StickyNote className="h-4 w-4" />}
+                    onClick={() => setShowAnnotations((value) => !value)}
+                  >
+                    Anotações
+                  </ToolbarTextButton>
+                  <ToolbarTextButton
+                    active={helpMenuOpen}
+                    icon={<HelpCircle className="h-4 w-4" />}
+                    onClick={() => setHelpMenuOpen((value) => !value)}
+                  >
+                    Ajuda
+                  </ToolbarTextButton>
                 </>
               )}
-              <Button onClick={fitToPage} className="h-10 shrink-0 rounded-xl border border-white/10 bg-white/10 px-3 text-xs text-white hover:bg-white/15">
-                Ajustar
-              </Button>
+              <ToolbarTextButton data-tour="viewer-fit" onClick={fitToPage}>
+                Ajustar à tela
+              </ToolbarTextButton>
             </div>
 
             {!previewActive && (
-              <ToolOptionsBar
-                tool={tool}
-                drawingStyle={drawingStyle}
-                onDrawingStyleChange={setDrawingStyle}
-                highlightColor={highlightColor}
-                onHighlightColorChange={setHighlightColor}
-                highlightWidth={highlightWidth}
-                onHighlightWidthChange={setHighlightWidth}
-                noteColor={noteColor}
-                onNoteColorChange={setNoteColor}
-                laserColor={laserColor}
-                onLaserColorChange={setLaserColor}
-                textStyle={textStyle}
-                onTextStyleChange={setTextStyle}
-              />
+              <div className="hidden lg:block">
+                <ToolOptionsBar
+                  tool={tool}
+                  drawingStyle={drawingStyle}
+                  onDrawingStyleChange={setDrawingStyle}
+                  highlightColor={highlightColor}
+                  onHighlightColorChange={setHighlightColor}
+                  highlightWidth={highlightWidth}
+                  onHighlightWidthChange={setHighlightWidth}
+                  noteColor={noteColor}
+                  onNoteColorChange={setNoteColor}
+                  laserColor={laserColor}
+                  onLaserColorChange={setLaserColor}
+                  textStyle={textStyle}
+                  onTextStyleChange={setTextStyle}
+                />
+              </div>
             )}
 
             {(navigation.length > 0 || coverPage) && (
-              <div className="mt-1 flex items-center gap-1.5 overflow-x-auto pb-0.5">
+              <div className="mt-1 hidden items-center gap-1.5 overflow-x-auto pb-0.5 lg:flex">
                 {coverPage ? (
                   <button
                     type="button"
@@ -1446,6 +2257,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             {hasSummary && (
               <button
                 type="button"
+                data-tour="viewer-summary-strip"
                 onClick={() => openSidePanel('summary')}
                 title="Abrir sumário — pular para seções"
                 className="mt-1 flex w-full items-center gap-2 rounded-lg border border-emerald-300/25 bg-emerald-400/[0.07] px-2.5 py-1.5 text-left text-white/75 transition-colors hover:border-emerald-300/40 hover:bg-emerald-400/15 hover:text-white"
@@ -1524,6 +2336,12 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
 
           <section
             ref={contentRef}
+            // Com a ferramenta "navegar" ativa assumimos a pinça: tiramos o
+            // `pinch-zoom` nativo (que só ampliava o bitmap, borrado) e
+            // deixamos a nossa, que escreve no zoom real e re-rasteriza. Com
+            // qualquer ferramenta de marcação ativa, devolvemos o pinch ao
+            // navegador e não interceptamos nada — o traço vem primeiro.
+            style={{ touchAction: isPinching ? 'none' : gesturesEnabled ? 'pan-x pan-y' : 'pan-x pan-y pinch-zoom' }}
             className={`min-w-0 overflow-hidden px-2 py-4 sm:px-4 sm:py-7 ${
               showThumbs ? 'lg:col-start-2' : 'lg:col-start-1'
             } ${
@@ -1533,7 +2351,11 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             }`}
           >
             <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-5">
-              {pages.map((page, index) => {
+              {fillerTopHeight > 0 && (
+                <div aria-hidden style={{ height: fillerTopHeight }} className="w-full shrink-0" />
+              )}
+              {renderedPages.map((page, offset) => {
+                const index = mode === 'single' ? offset : windowStart + offset
                 const isLive = mode === 'single' || (index >= liveStart && index <= liveEnd)
                 if (!isLive) {
                   return (
@@ -1570,6 +2392,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                   />
                 )
               })}
+              {fillerBottomHeight > 0 && (
+                <div aria-hidden style={{ height: fillerBottomHeight }} className="w-full shrink-0" />
+              )}
             </div>
           </section>
 
@@ -1585,41 +2410,261 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
           )}
         </main>
 
-        {/* Drawer lateral (miniaturas/sumário) para celulares e tablets */}
-        {mobilePanelOpen && (
-          <div className="fixed inset-0 z-[60] lg:hidden" role="dialog" aria-modal="true">
-            <div
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-              onClick={() => setMobilePanelOpen(false)}
-            />
-            <div className="absolute inset-y-0 left-0 flex w-[82%] max-w-xs flex-col border-r border-white/10 bg-zinc-950/95 p-3 shadow-2xl">
-              <div className="mb-2 flex items-center justify-between">
-                <span className="text-sm font-semibold text-white">Navegação</span>
-                <button
-                  type="button"
-                  onClick={() => setMobilePanelOpen(false)}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg text-white/70 hover:bg-white/10"
-                  title="Fechar"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-              <div className="min-h-0 flex-1 overflow-hidden">
-                <SidePanel
-                  tab={sidePanelTab}
-                  onTabChange={setSidePanelTab}
-                  hasSummary={hasSummary}
-                  summary={summary}
-                  materialId={materialId}
-                  pageCount={pageCount}
-                  currentPage={currentPage}
-                  coverPage={coverPage}
-                  onGoTo={navigateTo}
-                />
-              </div>
+        {/* ── Barra inferior do celular ──────────────────────────────────────
+            O cabeçalho antigo empilhava até cinco linhas de rolagem horizontal
+            e comia metade da tela do telefone. Agora os controles ficam onde o
+            polegar alcança, e cada grupo abre uma folha sob demanda. */}
+        <div className="pwa-safe-bottom sticky bottom-0 z-40 border-t border-white/10 bg-zinc-950/92 backdrop-blur-2xl lg:hidden">
+          <div className="flex items-center justify-between gap-1 px-2 py-2">
+            <button
+              type="button"
+              onClick={() => stepPage(-1)}
+              disabled={!canStepPrev}
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-white disabled:opacity-35"
+              aria-label="Página anterior"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              type="button"
+              data-tour="viewer-pagenav-mobile"
+              onClick={() => setMobileSheet('goto')}
+              className="flex h-11 min-w-0 flex-1 items-center justify-center gap-1 rounded-xl border border-white/10 bg-white/10 px-2 text-sm font-semibold text-white"
+            >
+              {currentPage}
+              <span className="text-white/45">/ {pageCount || '—'}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => stepPage(1)}
+              disabled={!canStepNext}
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-white disabled:opacity-35"
+              aria-label="Próxima página"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+            <button
+              type="button"
+              data-tour="viewer-mode-mobile"
+              onClick={() => setMobileSheet('mode')}
+              className="flex h-11 shrink-0 flex-col items-center justify-center rounded-xl border border-white/10 bg-white/10 px-2.5 text-[10px] font-semibold text-white"
+            >
+              <Rows3 className="h-4 w-4" />
+              Modo
+            </button>
+            <button
+              type="button"
+              data-tour="viewer-nav-mobile"
+              onClick={() => { setSidePanelTab(hasSummary ? 'summary' : 'pages'); setMobileSheet('nav') }}
+              className="flex h-11 shrink-0 flex-col items-center justify-center rounded-xl border border-white/10 bg-white/10 px-2.5 text-[10px] font-semibold text-white"
+            >
+              <List className="h-4 w-4" />
+              Navegar
+            </button>
+            {!previewActive && (
+              <button
+                type="button"
+                data-tour="viewer-tools-mobile"
+                onClick={() => setMobileSheet('tools')}
+                className={`flex h-11 shrink-0 flex-col items-center justify-center rounded-xl border px-2.5 text-[10px] font-semibold ${
+                  tool === 'cursor'
+                    ? 'border-white/10 bg-white/10 text-white'
+                    : 'border-emerald-300/50 bg-emerald-400/25 text-white'
+                }`}
+              >
+                <PenLine className="h-4 w-4" />
+                Marcar
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Folha: ir para a página */}
+        <ViewerSheet open={mobileSheet === 'goto'} title="Ir para a página" onClose={() => setMobileSheet(null)}>
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <input
+                value={pageInput}
+                onChange={(event) => setPageInput(event.target.value.replace(/\D/g, ''))}
+                onKeyDown={(event) => {
+                  if (event.key !== 'Enter') return
+                  submitPageInput()
+                  setMobileSheet(null)
+                }}
+                className="h-12 w-full rounded-xl border border-white/15 bg-white/10 px-3 text-center text-lg font-semibold text-white outline-none focus:border-emerald-300/60"
+                inputMode="numeric"
+                aria-label="Número da página"
+                autoFocus
+              />
+              <Button
+                onClick={() => { submitPageInput(); setMobileSheet(null) }}
+                className="h-12 shrink-0 rounded-xl bg-emerald-500 px-5 font-bold text-white hover:bg-emerald-600"
+              >
+                Ir
+              </Button>
+            </div>
+            <p className="text-xs text-white/50">
+              Este material tem {pageCount || '—'} páginas. Você está na {currentPage}.
+            </p>
+            <div className="flex items-center gap-2">
+              <ToolbarTextButton onClick={() => { navigateTo(coverPage || 1); setMobileSheet(null) }}>
+                Ir para o início
+              </ToolbarTextButton>
+              {pageCount > 0 && (
+                <ToolbarTextButton onClick={() => { navigateTo(pageCount); setMobileSheet(null) }}>
+                  Ir para o fim
+                </ToolbarTextButton>
+              )}
             </div>
           </div>
+        </ViewerSheet>
+
+        {/* Folha: modo de leitura */}
+        <ViewerSheet open={mobileSheet === 'mode'} title="Como você quer ler?" onClose={() => setMobileSheet(null)}>
+          <div className="space-y-2">
+            {MODE_OPTIONS.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => { applyMode(option.value); setMobileSheet(null) }}
+                className={`flex w-full items-start gap-3 rounded-xl border p-3 text-left transition-colors ${
+                  mode === option.value
+                    ? 'border-emerald-300/60 bg-emerald-400/20'
+                    : 'border-white/10 bg-white/5 hover:bg-white/10'
+                }`}
+              >
+                <div className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
+                  mode === option.value ? 'border-emerald-300 bg-emerald-400 text-emerald-950' : 'border-white/25'
+                }`}>
+                  {mode === option.value && <Check className="h-3 w-3" />}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-white">{option.label}</p>
+                  <p className="text-xs text-white/55">{option.hint}</p>
+                </div>
+              </button>
+            ))}
+          </div>
+          <div className="mt-4 border-t border-white/10 pt-3">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-white/40">Tamanho da letra</p>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => { zoomTouchedRef.current = true; setZoom((z) => clampZoom(z - 0.12, minZoom, maxZoom)) }}
+                className="flex h-11 flex-1 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-white"
+                aria-label="Diminuir"
+              >
+                <Minus className="h-5 w-5" />
+              </button>
+              <span className="min-w-16 text-center text-sm font-semibold text-white">{Math.round(zoom * 100)}%</span>
+              <button
+                type="button"
+                onClick={() => { zoomTouchedRef.current = true; setZoom((z) => clampZoom(z + 0.12, minZoom, maxZoom)) }}
+                className="flex h-11 flex-1 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-white"
+                aria-label="Aumentar"
+              >
+                <Plus className="h-5 w-5" />
+              </button>
+            </div>
+            <p className="mt-2 text-xs text-white/45">
+              Você também pode juntar e afastar dois dedos sobre a página.
+            </p>
+          </div>
+        </ViewerSheet>
+
+        {/* Folha: navegação (miniaturas + sumário) */}
+        <ViewerSheet open={mobileSheet === 'nav'} title="Navegar pelo material" onClose={() => setMobileSheet(null)} tall>
+          <div className="h-full min-h-0">
+            <SidePanel
+              tab={sidePanelTab}
+              onTabChange={setSidePanelTab}
+              hasSummary={hasSummary}
+              summary={summary}
+              materialId={materialId}
+              pageCount={pageCount}
+              pageList={previewActive ? allowedPages : undefined}
+              currentPage={currentPage}
+              coverPage={coverPage}
+              onGoTo={(page) => { navigateTo(page); setMobileSheet(null) }}
+            />
+          </div>
+        </ViewerSheet>
+
+        {/* Folha: ferramentas de anotação (as mesmas do desktop) */}
+        {!previewActive && (
+          <ViewerSheet open={mobileSheet === 'tools'} title="Grifar e escrever" onClose={() => setMobileSheet(null)}>
+            <div className="grid grid-cols-4 gap-2">
+              {[
+                { value: 'cursor' as AnnotationTool, label: 'Navegar', icon: <MousePointer2 className="h-5 w-5" /> },
+                { value: 'highlight' as AnnotationTool, label: 'Marca-texto', icon: <Highlighter className="h-5 w-5" /> },
+                { value: 'note' as AnnotationTool, label: 'Nota', icon: <MessageSquare className="h-5 w-5" /> },
+                { value: 'drawing' as AnnotationTool, label: 'Caneta', icon: <PenLine className="h-5 w-5" /> },
+                { value: 'laser' as AnnotationTool, label: 'Laser', icon: <Zap className="h-5 w-5" /> },
+                { value: 'text' as AnnotationTool, label: 'Texto', icon: <Type className="h-5 w-5" /> },
+                { value: 'bookmark' as AnnotationTool, label: 'Marcador', icon: <Bookmark className="h-5 w-5" /> },
+                { value: 'eraser' as AnnotationTool, label: 'Apagar', icon: <Eraser className="h-5 w-5" /> },
+              ].map((item) => (
+                <button
+                  key={item.value}
+                  type="button"
+                  onClick={() => setTool(item.value)}
+                  className={`flex flex-col items-center gap-1 rounded-xl border p-2.5 text-[10px] font-semibold transition-colors ${
+                    tool === item.value
+                      ? 'border-emerald-300/60 bg-emerald-400/25 text-white'
+                      : 'border-white/10 bg-white/5 text-white/75'
+                  }`}
+                >
+                  {item.icon}
+                  {item.label}
+                </button>
+              ))}
+            </div>
+            <div className="mt-3 border-t border-white/10 pt-2">
+              <ToolOptionsBar
+                tool={tool}
+                drawingStyle={drawingStyle}
+                onDrawingStyleChange={setDrawingStyle}
+                highlightColor={highlightColor}
+                onHighlightColorChange={setHighlightColor}
+                highlightWidth={highlightWidth}
+                onHighlightWidthChange={setHighlightWidth}
+                noteColor={noteColor}
+                onNoteColorChange={setNoteColor}
+                laserColor={laserColor}
+                onLaserColorChange={setLaserColor}
+                textStyle={textStyle}
+                onTextStyleChange={setTextStyle}
+              />
+            </div>
+            <p className="mt-3 text-xs text-white/50">
+              Tudo o que você marcar fica salvo na sua conta e reaparece quando voltar, em qualquer aparelho.
+            </p>
+          </ViewerSheet>
         )}
+
+        {/* Folha: mais opções */}
+        <ViewerSheet open={mobileSheet === 'more'} title="Mais opções" onClose={() => setMobileSheet(null)}>
+          <div className="space-y-2">
+            <SheetAction icon={<Maximize2 className="h-4 w-4" />} label="Ajustar página à tela" onClick={() => { fitToPage(); setMobileSheet(null) }} />
+            <SheetAction
+              icon={isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+              label={isFullscreen ? 'Sair da tela cheia' : 'Tela cheia'}
+              onClick={() => { toggleFullScreen(); setMobileSheet(null) }}
+            />
+            {!previewActive && (
+              <SheetAction
+                icon={<StickyNote className="h-4 w-4" />}
+                label={showAnnotations ? 'Ocultar minhas anotações' : 'Ver minhas anotações'}
+                onClick={() => { setShowAnnotations((value) => !value); setMobileSheet(null) }}
+              />
+            )}
+            <SheetAction icon={<Sparkles className="h-4 w-4" />} label="Ver o tutorial de novo" onClick={() => { setMobileSheet(null); startTour() }} />
+            <SheetAction icon={<Keyboard className="h-4 w-4" />} label="Atalhos do teclado" onClick={() => { setMobileSheet(null); setShowShortcuts(true) }} />
+            {!previewActive && !access.material.downloadEnabled && (
+              <SheetAction icon={<Lock className="h-4 w-4" />} label="Por que não posso baixar?" onClick={() => { setMobileSheet(null); setShowDownloadInfo(true) }} />
+            )}
+          </div>
+        </ViewerSheet>
 
         {showDeleteAllConfirm && (
           <ConfirmDialog
@@ -1630,6 +2675,48 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             onConfirm={deleteAllAnnotations}
           />
         )}
+
+        {/* Menu de ajuda do desktop. Reúne o tutorial, o guia das ferramentas
+            (que antes ocupava o painel de anotações desde a abertura), os
+            atalhos e a explicação sobre download. */}
+        {helpMenuOpen && (
+          <ViewerDialog title="Ajuda" onClose={() => setHelpMenuOpen(false)}>
+            <div className="space-y-2">
+              <SheetAction
+                icon={<Sparkles className="h-4 w-4" />}
+                label="Ver o tutorial de novo"
+                onClick={() => { setHelpMenuOpen(false); startTour() }}
+              />
+              <SheetAction
+                icon={<HelpCircle className="h-4 w-4" />}
+                label={showGuide ? 'Ocultar guia das ferramentas' : 'Mostrar guia das ferramentas'}
+                onClick={() => { setShowGuide((value) => !value); setShowAnnotations(true); setHelpMenuOpen(false) }}
+              />
+              <SheetAction
+                icon={<Keyboard className="h-4 w-4" />}
+                label="Atalhos do teclado"
+                onClick={() => { setHelpMenuOpen(false); setShowShortcuts(true) }}
+              />
+              {!previewActive && !access.material.downloadEnabled && (
+                <SheetAction
+                  icon={<Lock className="h-4 w-4" />}
+                  label="Por que não posso baixar?"
+                  onClick={() => { setHelpMenuOpen(false); setShowDownloadInfo(true) }}
+                />
+              )}
+            </div>
+          </ViewerDialog>
+        )}
+
+        {showShortcuts && <ShortcutsDialog onClose={() => setShowShortcuts(false)} />}
+        {showDownloadInfo && <DownloadInfoDialog onClose={() => setShowDownloadInfo(false)} />}
+
+        <GuidedTour
+          open={tourOpen}
+          steps={tourSteps}
+          onClose={closeTour}
+          onFinish={closeTour}
+        />
       </div>
     </ViewerShell>
   )
@@ -1886,7 +2973,9 @@ const PdfThumbnail = memo(function PdfThumbnail({
     async function renderThumb() {
       setStatus('loading')
       try {
-        const { bytes } = await fetchPdfPageBytes(materialId, pageNumber)
+        // Prioridade baixa: a miniatura nunca pode atrasar a página que o
+        // usuário está de fato lendo (ver acquirePageFetchSlot).
+        const { bytes } = await fetchPdfPageBytes(materialId, pageNumber, 'thumb')
         if (cancelled) return
         const pdfjs = await getPdfJs()
         doc = await pdfjs.getDocument({ data: bytes.slice() }).promise
@@ -1968,15 +3057,30 @@ function ViewerShell({ children }: { children: React.ReactNode }) {
   )
 }
 
+// Esqueleto no FORMATO do leitor (barra + moldura de página), não um cartão
+// centralizado. Um esqueleto que já tem a silhueta da tela final faz a espera
+// parecer mais curta e evita o salto de layout quando o conteúdo entra.
 function ViewerLoading() {
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 text-white">
-      <div className="w-full max-w-sm rounded-2xl border border-white/15 bg-white/10 p-6 shadow-2xl backdrop-blur-xl">
-        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-emerald-300/30 bg-emerald-400/15">
-          <div className="h-6 w-6 animate-spin rounded-full border-2 border-emerald-200/30 border-t-emerald-200" />
+    <div className="min-h-screen text-white">
+      <div className="sticky top-0 z-40 border-b border-white/10 bg-zinc-950/80 backdrop-blur-2xl">
+        <div className="flex items-center gap-2 px-3 py-3 sm:px-4">
+          <div className="h-10 w-10 shrink-0 animate-pulse rounded-xl bg-white/10" />
+          <div className="min-w-0 flex-1 space-y-2">
+            <div className="h-3.5 w-2/5 max-w-xs animate-pulse rounded bg-white/15" />
+            <div className="h-2.5 w-1/4 max-w-[10rem] animate-pulse rounded bg-white/10" />
+          </div>
+          <div className="h-10 w-24 shrink-0 animate-pulse rounded-xl bg-white/10" />
         </div>
-        <div className="h-4 w-40 mx-auto rounded bg-white/20 animate-pulse" />
-        <div className="mt-3 h-3 w-56 mx-auto rounded bg-white/10 animate-pulse" />
+      </div>
+      <div className="flex justify-center px-3 py-6 sm:px-4 sm:py-8">
+        <div className="w-full max-w-3xl">
+          <div
+            className="w-full animate-pulse rounded-xl border border-white/10 bg-white/[0.06]"
+            style={{ aspectRatio: '595 / 842' }}
+          />
+          <p className="mt-4 text-center text-xs text-white/45">Preparando seu material…</p>
+        </div>
       </div>
     </div>
   )
@@ -2001,14 +3105,7 @@ const PdfPageSpacer = memo(function PdfPageSpacer({
   useEffect(() => {
     const element = ref.current
     if (!element) return
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) onPageFocus(pageNumber)
-      },
-      { rootMargin: '-18% 0px -68% 0px', threshold: 0 }
-    )
-    observer.observe(element)
-    return () => observer.disconnect()
+    return observePageFocus(element, () => onPageFocus(pageNumber))
   }, [onPageFocus, pageNumber])
 
   const frameWidth = Math.ceil(size.width + 16)
@@ -2100,19 +3197,28 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   const [visible, setVisible] = useState(active)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [pageBytes, setPageBytes] = useState<Uint8Array | null>(null)
+  // Espera pedida pelo servidor num 429. Quando presente, a UI mostra uma
+  // contagem regressiva amigável em vez de um erro vermelho — o retry é
+  // automático, então não é um beco sem saída para o leitor.
+  const [waitSeconds, setWaitSeconds] = useState(0)
+  const [pageProxy, setPageProxy] = useState<PageProxyEntry | null>(null)
   const [loadAttempt, setLoadAttempt] = useState(0)
   const [renderSize, setRenderSize] = useState<PageSize | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [editor, setEditor] = useState<EditorState | null>(null)
   const requestedRef = useRef(false)
   const autoRetryRef = useRef(0)
+  // Escala já rasterizada no canvas. O zoom muda na hora (o frame redimensiona
+  // e o bitmap é reescalado pela GPU); a rasterização nítida vem depois, com
+  // debounce, e só quando a diferença for grande o bastante para ser visível.
+  const [renderScale, setRenderScale] = useState(zoom)
 
   useEffect(() => {
     requestedRef.current = false
     autoRetryRef.current = 0
-    setPageBytes(null)
+    setPageProxy(null)
     setError('')
+    setWaitSeconds(0)
     setRenderSize(null)
     setSelectedId(null)
     setEditor(null)
@@ -2127,54 +3233,61 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   useEffect(() => {
     const element = wrapperRef.current
     if (!element) return
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setVisible(true)
-      },
-      { rootMargin: '220px 0px' }
-    )
-    observer.observe(element)
-    return () => observer.disconnect()
+    return observePageVisible(element, () => setVisible(true))
   }, [pageNumber])
 
   useEffect(() => {
     const element = wrapperRef.current
     if (!element) return
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) onPageFocus(pageNumber)
-      },
-      { rootMargin: '-18% 0px -68% 0px', threshold: 0 }
-    )
-    observer.observe(element)
-    return () => observer.disconnect()
+    return observePageFocus(element, () => onPageFocus(pageNumber))
   }, [onPageFocus, pageNumber])
 
+  // Efeito de CARGA: busca os bytes e parseia o documento uma única vez por
+  // página. O zoom não entra aqui — antes entrava, e era por isso que cada
+  // passo de zoom re-parseava o PDF de todas as páginas vivas.
   useEffect(() => {
-    if ((!visible && !active) || requestedRef.current || pageBytes) return
+    if ((!visible && !active) || requestedRef.current || pageProxy) return
     let cancelled = false
     let settled = false
+    // `owned` = temos uma referência que ninguém mais vai devolver. Fica true
+    // apenas entre o acquire e o momento em que o estado assume a posse (ou em
+    // que a soltamos aqui mesmo). Sem esse controle, o cleanup soltaria a
+    // mesma referência que o efeito de posse também solta — release duplo, e o
+    // documento seria destruído embaixo de uma página ainda montada.
+    let owned = false
 
-    async function loadPageBytes() {
+    async function loadPage() {
       requestedRef.current = true
       setLoading(true)
       setError('')
+      setWaitSeconds(0)
       try {
-        const result = await fetchPdfPageBytes(materialId, pageNumber)
+        const entry = await acquirePageProxy(materialId, pageNumber, 'reader')
+        owned = true
         settled = true
-        if (!cancelled) {
-          onPageCount(result.pageCount)
-          setPageBytes(result.bytes)
+        if (cancelled) {
+          releasePageProxy(materialId, pageNumber)
+          owned = false
+          return
         }
+        onPageCount(entry.totalPages || undefined)
+        setPageProxy(entry)
+        owned = false
       } catch (err: any) {
         settled = true
-        if (!cancelled) setError(err?.message || 'Pagina indisponivel')
+        if (!cancelled) {
+          const { status, retryAfterMs } = (err || {}) as PageFetchError
+          if (status === 429) {
+            setWaitSeconds(Math.max(1, Math.ceil((retryAfterMs || 5000) / 1000)))
+          }
+          setError(err?.message || 'Pagina indisponivel')
+        }
       } finally {
         if (!cancelled) setLoading(false)
       }
     }
 
-    loadPageBytes()
+    loadPage()
     return () => {
       cancelled = true
       // Se a limpeza rodou por uma mudança de dependência (ex.: `active`
@@ -2184,36 +3297,57 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
       // guard quando não houve conclusão permite a retomada; a requisição em si
       // é deduplicada/cacheada, então não há refetch duplicado.
       if (!settled) requestedRef.current = false
+      // Só solta se a posse ainda estiver com o efeito; quando o estado
+      // assumiu, quem devolve é o efeito de posse abaixo.
+      if (owned) {
+        owned = false
+        releasePageProxy(materialId, pageNumber)
+      }
     }
-  }, [active, loadAttempt, materialId, onPageCount, pageBytes, pageNumber, visible])
+  }, [active, loadAttempt, materialId, onPageCount, pageProxy, pageNumber, visible])
 
+  // Posse do proxy enquanto esta página estiver montada. Ao desmontar (a
+  // página sai da janela de virtualização) a referência é devolvida e o LRU
+  // fica livre para destruir o documento.
   useEffect(() => {
-    const bytes = pageBytes
-    if (!bytes) return
+    if (!pageProxy) return
+    return () => {
+      releasePageProxy(materialId, pageNumber)
+    }
+  }, [materialId, pageNumber, pageProxy])
+
+  // Debounce do zoom: o frame já reescala o bitmap na hora, então a
+  // rasterização nítida pode esperar o usuário parar de mexer. E só vale a
+  // pena refazer quando a diferença é perceptível — reescalar um bitmap entre
+  // 0,8x e 1,25x é indistinguível de re-rasterizar, e custa zero.
+  useEffect(() => {
+    const ratio = zoom / renderScale
+    if (ratio > 0.8 && ratio < 1.25) return
+    const timer = window.setTimeout(() => setRenderScale(zoom), 180)
+    return () => window.clearTimeout(timer)
+  }, [zoom, renderScale])
+
+  // Efeito de RASTERIZAÇÃO: só desenha. Sem parse, sem destroy.
+  useEffect(() => {
+    const entry = pageProxy
+    if (!entry) return
     let cancelled = false
     let renderTask: any
-    let doc: any
 
     async function renderPage() {
       setLoading(true)
       setError('')
       try {
-        const pdfjs = await getPdfJs()
-        doc = await pdfjs.getDocument({ data: bytes!.slice() }).promise
-        const page = await doc.getPage(1)
+        const page = entry!.page
         const baseViewport = page.getViewport({ scale: 1 })
         onPageSize({ width: baseViewport.width, height: baseViewport.height })
 
-        // DPR fixo (não depende de `active`): manter a qualidade estável evita
-        // reparsear e re-renderizar o PDF inteiro toda vez que o foco muda de
-        // página durante o scroll (era a principal causa de travamento).
-        const isMobile = window.innerWidth < 768
-        const maxDpr = isMobile ? 3 : 3.5
-        const minDpr = isMobile ? 2 : 2.5
-        const deviceDpr = window.devicePixelRatio || 1
-        const dpr = Math.min(Math.max(deviceDpr, minDpr), maxDpr)
-        const viewport = page.getViewport({ scale: zoom * dpr })
-        const displayViewport = page.getViewport({ scale: zoom })
+        // Escala de rasterização com teto de megapixels (ver rasterScaleFor).
+        // Independe de `active`: manter a qualidade estável evita re-render de
+        // todas as páginas vivas toda vez que o foco muda durante o scroll.
+        const scale = rasterScaleFor(baseViewport.width, baseViewport.height, renderScale)
+        const viewport = page.getViewport({ scale })
+        const displayViewport = page.getViewport({ scale: renderScale })
         const canvas = canvasRef.current
         const context = canvas?.getContext('2d', { alpha: false })
         if (!canvas || !context || cancelled) return
@@ -2233,9 +3367,6 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
           setError(err?.message || 'Pagina indisponivel')
         }
       } finally {
-        try {
-          await doc?.destroy?.()
-        } catch {}
         if (!cancelled) setLoading(false)
       }
     }
@@ -2244,9 +3375,19 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     return () => {
       cancelled = true
       renderTask?.cancel?.()
-      doc?.destroy?.()
     }
-  }, [onPageSize, pageBytes, zoom])
+  }, [onPageSize, pageProxy, renderScale])
+
+  // Libera a memória do canvas ao desmontar. O Safari do iOS segura o backing
+  // store mesmo depois de o nó sair do DOM; zerar as dimensões devolve na hora.
+  useEffect(() => {
+    const canvas = canvasRef.current
+    return () => {
+      if (!canvas) return
+      canvas.width = 0
+      canvas.height = 0
+    }
+  }, [])
 
   useEffect(() => {
     return () => {
@@ -2271,36 +3412,54 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
 
   const retryLoad = () => {
     requestedRef.current = false
-    setPageBytes(null)
+    setPageProxy(null)
     setRenderSize(null)
     setError('')
+    setWaitSeconds(0)
     setLoadAttempt((attempt) => attempt + 1)
   }
 
   // Auto-recuperação: se uma página falhar mesmo após os retries da requisição,
   // ela tenta sozinha mais 2 vezes antes de exibir o botão manual — assim o
-  // usuário nunca precisa dar F5 para a página aparecer.
+  // usuário nunca precisa dar F5 para a página aparecer. Num 429 a espera vem
+  // do próprio servidor (Retry-After), então respeitamos esse tempo.
   useEffect(() => {
     if (!error || autoRetryRef.current >= 2) return
-    const delay = 1000 * (autoRetryRef.current + 1)
+    const delay = waitSeconds > 0
+      ? waitSeconds * 1000
+      : 1000 * (autoRetryRef.current + 1)
     const timer = window.setTimeout(() => {
       autoRetryRef.current += 1
       requestedRef.current = false
-      setPageBytes(null)
+      setPageProxy(null)
       setRenderSize(null)
       setError('')
+      setWaitSeconds(0)
       setLoadAttempt((attempt) => attempt + 1)
     }, delay)
     return () => window.clearTimeout(timer)
-  }, [error])
+  }, [error, waitSeconds])
+
+  // Contagem regressiva visível durante a espera de um 429.
+  useEffect(() => {
+    if (waitSeconds <= 0) return
+    const timer = window.setTimeout(() => setWaitSeconds((value) => Math.max(0, value - 1)), 1000)
+    return () => window.clearTimeout(timer)
+  }, [waitSeconds])
 
   useEffect(() => {
-    if (pageBytes) autoRetryRef.current = 0
-  }, [pageBytes])
+    if (pageProxy) autoRetryRef.current = 0
+  }, [pageProxy])
 
-  const pageFrameSize = renderSize ?? (fallbackSize
-    ? { width: fallbackSize.width * zoom, height: fallbackSize.height * zoom }
-    : { width: 595 * zoom, height: 842 * zoom })
+  // A moldura acompanha o zoom NA HORA, mesmo antes de a rasterização nítida
+  // chegar: o canvas ocupa 100% dela, então o bitmap já existente é reescalado
+  // pela GPU. É isso que faz o zoom parecer instantâneo sem re-parsear nada.
+  const zoomRatio = renderScale > 0 ? zoom / renderScale : 1
+  const pageFrameSize = renderSize
+    ? { width: renderSize.width * zoomRatio, height: renderSize.height * zoomRatio }
+    : fallbackSize
+      ? { width: fallbackSize.width * zoom, height: fallbackSize.height * zoom }
+      : { width: 595 * zoom, height: 842 * zoom }
 
   const getPosition = useCallback((clientX: number, clientY: number) => {
     const rect = overlayRef.current?.getBoundingClientRect()
@@ -2848,7 +4007,18 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
             <div className="h-7 w-7 rounded-full border-2 border-emerald-700/20 border-t-emerald-700 animate-spin" />
           </div>
         )}
-        {error && (
+        {/* Rate limit não é erro do leitor: a página volta sozinha. Mostramos
+            uma espera calma em vez do cartão vermelho de falha. */}
+        {error && waitSeconds > 0 && (
+          <div className="absolute inset-2 z-20 flex flex-col items-center justify-center gap-2 rounded-lg bg-amber-950/85 p-6 text-center text-sm text-white">
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-amber-200/30 border-t-amber-200" />
+            <span className="font-semibold">Muitas páginas de uma vez</span>
+            <span className="text-xs text-white/75">
+              Retomando em {waitSeconds}s — não precisa fazer nada.
+            </span>
+          </div>
+        )}
+        {error && waitSeconds <= 0 && (
           <div className="absolute inset-2 z-20 rounded-lg bg-rose-950/85 flex flex-col items-center justify-center gap-3 p-6 text-center text-sm text-white">
             <span>{error}</span>
             <Button onClick={retryLoad} className="h-8 rounded-xl bg-white/15 px-3 text-xs text-white hover:bg-white/25">
@@ -3575,6 +4745,210 @@ function ToolGuide() {
   )
 }
 
+// Folha inferior do celular. O projeto não tem primitivo de Sheet/Drawer em
+// components/ui (nem Radix instalado para isso), então seguimos o mesmo
+// desenho do drawer lateral que já existia aqui: backdrop clicável, painel
+// preso à borda, respeito à safe-area do PWA.
+function ViewerSheet({
+  open,
+  title,
+  onClose,
+  children,
+  tall,
+}: {
+  open: boolean
+  title: string
+  onClose: () => void
+  children: React.ReactNode
+  tall?: boolean
+}) {
+  // Esc fecha — no tablet com teclado é o reflexo natural.
+  useEffect(() => {
+    if (!open) return
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open, onClose])
+
+  if (!open) return null
+
+  return (
+    <div className="fixed inset-0 z-[70] lg:hidden" role="dialog" aria-modal="true" aria-label={title}>
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div
+        className={`pwa-safe-bottom absolute inset-x-0 bottom-0 flex flex-col rounded-t-2xl border-t border-white/15 bg-zinc-950/97 shadow-2xl ${
+          tall ? 'h-[78vh]' : 'max-h-[80vh]'
+        }`}
+      >
+        <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-4 py-3">
+          <h2 className="text-sm font-bold text-white">{title}</h2>
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-white/70 hover:bg-white/10"
+            aria-label="Fechar"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+        <div className="min-h-0 flex-1 overflow-y-auto p-4">{children}</div>
+      </div>
+    </div>
+  )
+}
+
+// Diálogo simples do leitor, no mesmo desenho do ConfirmDialog que já existia
+// aqui (o Dialog de components/ui não tem trap de foco nem Esc, e o leitor é
+// tela escura própria — não vale arrastar o primitivo genérico para cá).
+function ViewerDialog({
+  title,
+  onClose,
+  children,
+  wide,
+}: {
+  title: string
+  onClose: () => void
+  children: React.ReactNode
+  wide?: boolean
+}) {
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
+
+  return (
+    <div
+      className="fixed inset-0 z-[80] flex items-center justify-center bg-black/60 px-4 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-label={title}
+      onClick={onClose}
+    >
+      <div
+        className={`max-h-[85vh] w-full overflow-y-auto rounded-2xl border border-white/15 bg-zinc-950 p-4 text-white shadow-2xl ${wide ? 'max-w-lg' : 'max-w-sm'}`}
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-base font-bold">{title}</h2>
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-white/70 hover:bg-white/10"
+            aria-label="Fechar"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+        {children}
+      </div>
+    </div>
+  )
+}
+
+function ShortcutsDialog({ onClose }: { onClose: () => void }) {
+  const groups: Array<{ title: string; items: Array<[string, string]> }> = [
+    {
+      title: 'Navegar',
+      items: [
+        ['→  ou  Page Down', 'Próxima página'],
+        ['←  ou  Page Up', 'Página anterior'],
+        ['Home', 'Primeira página'],
+        ['End', 'Última página'],
+        ['T', 'Abrir as miniaturas'],
+        ['S', 'Abrir o sumário'],
+      ],
+    },
+    {
+      title: 'Ver',
+      items: [
+        ['+  /  −', 'Aumentar / diminuir o tamanho'],
+        ['0', 'Ajustar a página à tela'],
+        ['F', 'Tela cheia'],
+        ['1  /  2  /  3', 'Rolagem contínua / uma página / largura'],
+        ['?', 'Abrir esta lista'],
+      ],
+    },
+  ]
+
+  return (
+    <ViewerDialog title="Atalhos do teclado" onClose={onClose} wide>
+      <div className="space-y-4">
+        {groups.map((group) => (
+          <div key={group.title}>
+            <p className="mb-2 text-[11px] font-bold uppercase tracking-wide text-emerald-300/80">{group.title}</p>
+            <div className="space-y-1">
+              {group.items.map(([keys, description]) => (
+                <div key={keys} className="flex items-center justify-between gap-3 rounded-lg bg-white/5 px-3 py-2">
+                  <span className="shrink-0 font-clinical text-xs text-emerald-100">{keys}</span>
+                  <span className="text-right text-xs text-white/65">{description}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+        <p className="text-[11px] text-white/40">
+          No celular: deslize para os lados para virar de página (no modo &quot;uma página por vez&quot;),
+          junte e afaste dois dedos para mudar o tamanho, e toque duas vezes para ajustar à tela.
+        </p>
+      </div>
+    </ViewerDialog>
+  )
+}
+
+// Explicação para quando o download está desativado pelo admin. O objetivo é
+// não deixar o leitor com a sensação de que faltou alguma coisa: dizer por que
+// é assim e mostrar o que o leitor faz no lugar. Nada aqui promete acesso
+// offline — o leitor precisa de internet, e afirmar o contrário seria mentira.
+function DownloadInfoDialog({ onClose }: { onClose: () => void }) {
+  const points = [
+    ['Continua de onde parou', 'Ao voltar, o material abre exatamente na página em que você estava.'],
+    ['Suas marcas ficam salvas', 'Grifos, notas, desenhos e marcadores ficam na sua conta e aparecem em qualquer aparelho onde você entrar.'],
+    ['Do jeito que enxerga melhor', 'Você escolhe o tamanho da letra e o modo de leitura, e o leitor lembra da sua preferência.'],
+  ]
+
+  return (
+    <ViewerDialog title="Por que não posso baixar?" onClose={onClose} wide>
+      <p className="text-sm leading-relaxed text-white/75">
+        Este material é protegido: cada página que você abre recebe uma marca d&apos;água com os
+        seus dados. É isso que permite ao autor disponibilizar o conteúdo aqui — por isso a
+        leitura acontece dentro do leitor, e não como arquivo solto.
+      </p>
+      <p className="mt-3 text-sm font-semibold text-white">O que você ganha em troca:</p>
+      <div className="mt-2 space-y-2">
+        {points.map(([title, text]) => (
+          <div key={title} className="rounded-xl border border-white/10 bg-white/5 p-3">
+            <p className="text-xs font-bold text-emerald-200">{title}</p>
+            <p className="mt-0.5 text-xs leading-relaxed text-white/65">{text}</p>
+          </div>
+        ))}
+      </div>
+      <p className="mt-3 text-[11px] text-white/40">
+        O leitor precisa de internet para carregar as páginas.
+      </p>
+    </ViewerDialog>
+  )
+}
+
+function SheetAction({ icon, label, onClick }: { icon: React.ReactNode; label: string; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-left text-sm font-semibold text-white transition-colors hover:bg-white/10"
+    >
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/10 text-emerald-200">
+        {icon}
+      </span>
+      {label}
+    </button>
+  )
+}
+
 function ConfirmDialog({
   title,
   body,
@@ -3619,12 +4993,14 @@ function ToolbarButton({
   disabled,
   title,
   compact,
+  className,
 }: {
   children: React.ReactNode
   onClick: () => void
   disabled?: boolean
   title: string
   compact?: boolean
+  className?: string
 }) {
   return (
     <Button
@@ -3633,7 +5009,8 @@ function ToolbarButton({
       onClick={onClick}
       disabled={disabled}
       title={title}
-      className={`${compact ? 'h-8 w-8 rounded-lg' : 'h-10 w-10 rounded-xl'} shrink-0 border border-white/10 bg-white/10 text-white hover:bg-white/15 hover:text-white disabled:opacity-40`}
+      aria-label={title}
+      className={`${compact ? 'h-8 w-8 rounded-lg' : 'h-10 w-10 rounded-xl'} shrink-0 border border-white/10 bg-white/10 text-white hover:bg-white/15 hover:text-white disabled:opacity-40 ${className || ''}`}
     >
       {children}
     </Button>
@@ -3656,14 +5033,32 @@ function ToolButton({ children, active, onClick, title }: { children: React.Reac
   )
 }
 
-function ToolbarTextButton({ children, active, onClick }: { children: React.ReactNode; active: boolean; onClick: () => void }) {
+// Botão de barra com rótulo escrito (e ícone opcional). Rótulo visível é a
+// diferença entre um leitor que se explica sozinho e um que exige descobrir
+// tudo por hover — que no celular nem existe.
+function ToolbarTextButton({
+  children,
+  active,
+  onClick,
+  icon,
+  'data-tour': dataTour,
+}: {
+  children: React.ReactNode
+  active?: boolean
+  onClick: () => void
+  icon?: React.ReactNode
+  'data-tour'?: string
+}) {
   return (
     <button
+      type="button"
       onClick={onClick}
-      className={`h-9 rounded-xl border px-3 text-xs font-semibold transition-colors ${
-        active ? 'border-emerald-300/50 bg-emerald-400/25 text-white' : 'border-white/10 bg-white/10 text-white/70 hover:bg-white/15'
+      data-tour={dataTour}
+      className={`flex h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xl border px-3 text-xs font-semibold transition-colors ${
+        active ? 'border-emerald-300/50 bg-emerald-400/25 text-white' : 'border-white/10 bg-white/10 text-white/70 hover:bg-white/15 hover:text-white'
       }`}
     >
+      {icon}
       {children}
     </button>
   )

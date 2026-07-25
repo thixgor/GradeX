@@ -64,6 +64,11 @@ export function MobileFloatingDock() {
   // direito dessa barra e bloqueava o toque no botão "Porrete".
   const isFlashcardDeck = /^\/flashcards\/d\/[^/]+$/.test(pathname || '')
   if (isFlashcardDeck) return null
+  // O leitor de PDF tem barra de controles fixa no rodapé (voltar/avançar
+  // página, zoom, ferramentas); o FAB por cima cobria o canto direito dela.
+  // Mesmo tratamento que o Footer e o PlatformAds já dão a estas rotas.
+  const isPdfViewer = (pathname || '').includes('/viewer')
+  if (isPdfViewer) return null
 
   return (
     <div
