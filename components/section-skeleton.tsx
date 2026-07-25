@@ -142,15 +142,26 @@ function DashboardBody() {
           </div>
         ))}
       </div>
-      {/* Grade de atalhos */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="rounded-2xl border border-border bg-card/50 p-5">
+      {/* Carrossel de experiências — espelha o trilho real (cards de ~80% da
+          largura no celular), senão haveria um salto grade→carrossel quando os
+          dados chegam. */}
+      <Skeleton className="mb-3 h-5 w-48 rounded" />
+      <div className="flex gap-3 overflow-hidden">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div
+            key={i}
+            className="w-[80%] shrink-0 rounded-2xl border border-border bg-card/50 p-4 sm:w-[46%] lg:w-[31%] xl:w-[23%]"
+          >
             <Skeleton className="h-11 w-11 rounded-xl" />
-            <Skeleton className="mt-4 h-5 w-2/3 rounded" />
+            <Skeleton className="mt-3 h-4 w-2/3 rounded" />
             <Skeleton className="mt-2 h-3 w-full rounded" />
             <Skeleton className="mt-2 h-3 w-4/5 rounded" />
           </div>
+        ))}
+      </div>
+      <div className="mt-3 flex justify-center gap-1.5">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Skeleton key={i} className="h-1.5 w-1.5 rounded-full" />
         ))}
       </div>
     </>

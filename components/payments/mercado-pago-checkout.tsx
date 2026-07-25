@@ -60,7 +60,7 @@ export interface MercadoPagoCheckoutProps {
   analytics?: {
     productId?: string
     productTitle?: string
-    productType?: 'material' | 'flashcard' | 'package' | 'subscription' | 'plan' | 'donation' | 'product' | 'unknown'
+    productType?: 'material' | 'flashcard' | 'package' | 'subscription' | 'plan' | 'product' | 'unknown'
     source?: string
   }
 }
@@ -328,7 +328,6 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
           paymentMethodId: 'bolbradesco',
           payerDocumentType: 'CPF',
           payerDocumentNumber: docNumber.replace(/\D/g, ''),
-          donationName: body.donationName || payerName,
           payerAddress: { zipCode: zip, streetName, streetNumber, neighborhood, city, federalUnit },
         }
       }

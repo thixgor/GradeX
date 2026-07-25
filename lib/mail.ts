@@ -360,48 +360,6 @@ export async function sendPlanPurchasedEmail(
   })
 }
 
-export async function sendDonationThanksEmail(
-  email: string,
-  name: string,
-  amount: number,
-  paidAt?: Date
-) {
-  const firstName = name && name !== 'Anônimo' ? name.split(' ')[0] : 'Apoiador'
-  const dateStr = (paidAt || new Date()).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
-
-  const content = `
-    <h1 class="h1">Obrigado pelo seu apoio! ❤️</h1>
-    <p>Olá, ${firstName}!</p>
-    <p>Recebemos sua doação com sucesso. Muito obrigado por acreditar no projeto e ajudar a manter a plataforma acessível para milhares de estudantes!</p>
-
-    <div style="background-color: #fff5f5; border: 1px solid #fed7d7; border-radius: 10px; padding: 18px 20px; margin: 20px 0;">
-      <p style="margin: 0 0 6px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #e53e3e; font-weight: 700;">Comprovante de Doação</p>
-      <p style="margin: 0 0 4px 0; font-size: 22px; font-weight: 800; color: #c53030;">R$ ${amount.toFixed(2).replace('.', ',')}</p>
-      <p style="margin: 4px 0 0 0; font-size: 13px; color: #718096;">Data: ${dateStr}</p>
-    </div>
-
-    <p>Sua doação contribui diretamente para:</p>
-    <ul style="padding-left: 20px; color: #4a5568;">
-      <li>Manutenção dos servidores e infraestrutura</li>
-      <li>Desenvolvimento de novos conteúdos e funcionalidades</li>
-      <li>Manter o acesso gratuito para quem não pode pagar</li>
-    </ul>
-
-    <p>Você pode acompanhar seu nome no <a href="${process.env.NEXT_PUBLIC_APP_URL}/doar" style="color: #0f3d2e; font-weight: bold;">ranking de doadores</a>.</p>
-
-    <p>Com carinho,<br><strong>Equipe DomineAqui</strong></p>
-  `
-
-  const html = getEmailTemplate('Obrigado pelo seu apoio!', content)
-
-  await transporter.sendMail({
-    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
-    to: email,
-    subject: `Obrigado pela sua doação de R$ ${amount.toFixed(2).replace('.', ',')} 💚`,
-    html,
-  })
-}
-
 export async function sendMaterialPurchasedEmail(
   email: string,
   name: string,

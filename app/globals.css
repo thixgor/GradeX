@@ -843,28 +843,6 @@
   gap: 1.5rem;
 }
 
-.stat-card-glow {
-  position: relative;
-  overflow: hidden;
-}
-
-.stat-card-glow::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.05),
-    transparent
-  );
-  animation: shimmer 3s ease-in-out infinite;
-  background-size: 200% 100%;
-}
-
 /* Editorial surfaces — solid paper/card, no frosted glass slop */
 .glass-stat,
 .glass-action,
@@ -1031,6 +1009,58 @@
   background: linear-gradient(90deg, hsl(var(--muted)) 0%, hsl(var(--muted-foreground) / 0.1) 50%, hsl(var(--muted)) 100%);
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* Régua horizontal (chips de seção): desbota o próprio conteúdo na borda
+   direita para indicar que há mais para o lado. Como é máscara e não um
+   degradê pintado, funciona sobre qualquer cor de barra, nos dois temas.
+   No desktop a régua não rola, então a máscara sai de cena. */
+.fade-scroll-x {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+}
+
+@media (min-width: 1024px) {
+  .fade-scroll-x {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
+
+/* Entrada das seções e cards da dashboard. Substitui ~25 nós do framer-motion
+   com `delay` escalonado até 0.85s — a página inteira se montava encenada por
+   quase um segundo, inclusive blocos fora da tela. Aqui é o compositor. */
+@keyframes dash-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.dash-rise {
+  animation: dash-rise 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dash-rise {
+    animation: none;
+  }
+}
+
+/* Entrada dos cards de deck (/flashcards). Substitui um motion.div por card:
+   a mesma leitura visual, sem uma animação JS por item na thread principal. */
+@keyframes deck-card-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.deck-card-rise {
+  height: 100%;
+  animation: deck-card-rise 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deck-card-rise {
+    animation: none;
+  }
 }
 
 /* Solid brand CTA — no neon dual-gradient */
@@ -1744,68 +1774,6 @@
 
 .streak-fade-out {
   animation: streak-fade-out 0.4s ease-out forwards;
-}
-
-/* ─── Doações Pix Animations ─── */
-@keyframes ecg-trace {
-  0% { stroke-dashoffset: 800; opacity: 0.3; }
-  30% { opacity: 1; }
-  100% { stroke-dashoffset: 0; opacity: 0.7; }
-}
-@keyframes ecg-loop {
-  0% { stroke-dashoffset: 0; opacity: 0.7; }
-  50% { stroke-dashoffset: -400; opacity: 1; }
-  100% { stroke-dashoffset: -800; opacity: 0.7; }
-}
-@keyframes heartbeat-pulse {
-  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0px rgba(239,68,68,0)); }
-  14% { transform: scale(1.25); filter: drop-shadow(0 0 8px rgba(239,68,68,0.8)); }
-  28% { transform: scale(1); filter: drop-shadow(0 0 3px rgba(239,68,68,0.3)); }
-  42% { transform: scale(1.15); filter: drop-shadow(0 0 6px rgba(239,68,68,0.6)); }
-  70% { transform: scale(1); filter: drop-shadow(0 0 0px rgba(239,68,68,0)); }
-}
-@keyframes doacao-glow {
-  0%, 100% { box-shadow: 0 0 16px 2px rgba(70,129,82,0.25), 0 0 40px 6px rgba(70,129,82,0.1); }
-  50% { box-shadow: 0 0 28px 6px rgba(70,129,82,0.4), 0 0 60px 12px rgba(70,129,82,0.18); }
-}
-@keyframes doacao-float-btn {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
-}
-@keyframes copy-success {
-  0% { transform: scale(1); }
-  40% { transform: scale(1.2); }
-  100% { transform: scale(1); }
-}
-@keyframes heartbeat-confirm {
-  0% { transform: scale(0.6); opacity: 0; }
-  30% { transform: scale(1.3); opacity: 1; }
-  50% { transform: scale(0.95); }
-  70% { transform: scale(1.1); }
-  100% { transform: scale(1); }
-}
-
-.ecg-path {
-  stroke-dasharray: 800;
-  stroke-dashoffset: 800;
-  animation: ecg-trace 1.8s ease-out forwards, ecg-loop 3s linear 1.8s infinite;
-}
-.doacao-heart {
-  animation: heartbeat-pulse 1.4s ease-in-out infinite;
-  display: inline-block;
-  transform-origin: center;
-}
-.doacao-heart-confirm {
-  animation: heartbeat-confirm 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-.doacao-card-glow {
-  animation: doacao-glow 3s ease-in-out infinite;
-}
-.doacao-float-idle {
-  animation: doacao-float-btn 3s ease-in-out infinite;
-}
-.copy-success-anim {
-  animation: copy-success 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* ==========================================

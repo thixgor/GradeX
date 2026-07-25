@@ -50,7 +50,6 @@ import { Button } from '@/components/ui/button'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { PackageUpsellModal, UpsellPackage } from '@/components/materiais/package-upsell-modal'
 import { FlashcardCardView } from '@/components/flashcards/flashcard-card'
-import { TiltCard } from '@/components/tilt-card'
 import { GlassHeroSurface } from '@/components/glass-hero-surface'
 import { cn } from '@/lib/utils'
 import type { FlashcardManualCard, FlashcardManualDeck } from '@/lib/types'
@@ -67,6 +66,7 @@ import {
   clearProgress,
   type FlashcardProgress,
 } from '@/lib/flashcard-progress'
+import { sortCardsForSpacedRepetition } from '@/lib/flashcard-spaced-repetition'
 import {
   PricingEventCountdown,
   type PricingEventStatePayload,
@@ -119,6 +119,23 @@ interface SpacedRepetitionStats {
   difficult: number
 }
 
+type DeckCard = FlashcardManualCard & { _id: string; spacedProgress?: SpacedProgressResponse | null }
+
+const FULLSCREEN_HINT_KEY = 'gdx:flashcard-fullscreen-hint'
+const FULLSCREEN_PREF_KEY = 'gdx:flashcard-fullscreen-pref'
+
+// A ordem da fixação intensa é determinística e depende só do progresso que já
+// veio junto com os cards — dá para calcular aqui e entrar no estudo na hora,
+// em vez de refazer a requisição do deck inteiro e piscar a página.
+function orderCardsForStudy(cards: DeckCard[], mode: StudyMode): DeckCard[] {
+  if (mode !== 'spaced') return cards
+  const progressByCardId = new Map<string, any>()
+  for (const card of cards) {
+    if (card.spacedProgress) progressByCardId.set(String(card._id), card.spacedProgress)
+  }
+  return sortCardsForSpacedRepetition(cards as any, progressByCardId as any) as DeckCard[]
+}
+
 const RATINGS = [
   { value: 'facil' as const, label: 'Suave', color: 'from-emerald-500 to-emerald-600', shortcut: '1' },
   { value: 'equilibrado' as const, label: 'No ponto', color: 'from-amber-500 to-amber-600', shortcut: '2' },
@@ -165,6 +182,13 @@ export default function DeckPage() {
   const studyRef = useRef<HTMLDivElement>(null)
   const [studyModeChoice, setStudyModeChoice] = useState<StudyMode>('normal')
   const [activeStudyMode, setActiveStudyMode] = useState<StudyMode>('normal')
+  // Ordem congelada no início da sessão: avaliar um card atualiza o progresso
+  // dele e, sem isso, o baralho se reordenaria embaixo do usuário no meio do
+  // estudo — o índice atual passaria a apontar para outro card.
+  const [studyOrder, setStudyOrder] = useState<string[] | null>(null)
+  const [fullscreenHint, setFullscreenHint] = useState(false)
+  const [fullscreenPref, setFullscreenPref] = useState(false)
+  const autoFullscreenRef = useRef(false)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [flipped, setFlipped] = useState(false)
   const [showComment, setShowComment] = useState(false)
@@ -188,6 +212,19 @@ export default function DeckPage() {
   const purchaseSuccess = search?.get('purchase') === 'success'
   const userKey = data?.viewer.userId || 'guest'
 
+  // Cards da sessão: fora do estudo é a ordem do deck; dentro, a ordem que foi
+  // congelada quando a sessão começou (resolvida por id para continuar válida
+  // mesmo se o deck for recarregado no meio).
+  const studyCards = useMemo<DeckCard[]>(() => {
+    const all = (data?.cards ?? []) as DeckCard[]
+    if (!studyOrder) return all
+    const byId = new Map(all.map(card => [String(card._id), card]))
+    const ordered = studyOrder
+      .map(id => byId.get(id))
+      .filter((card): card is DeckCard => !!card)
+    return ordered.length > 0 ? ordered : all
+  }, [data?.cards, studyOrder])
+
   useEffect(() => {
     if (purchaseSuccess) {
       setToast({ open: true, message: 'Compra confirmada! O deck está liberado.', type: 'success' })
@@ -205,11 +242,12 @@ export default function DeckPage() {
     return () => { cancelled = true }
   }, [])
 
-  const load = useCallback(async (mode: StudyMode = 'normal') => {
-    setLoading(true)
+  // `silent` recarrega sem trocar a página pelo skeleton — usado quando já há
+  // conteúdo na tela e a atualização é só para manter os dados frescos.
+  const load = useCallback(async (opts?: { silent?: boolean }) => {
+    if (!opts?.silent) setLoading(true)
     try {
       const url = new URL(`/api/flashcards/manual/${encodeURIComponent(slug)}`, window.location.origin)
-      if (mode === 'spaced') url.searchParams.set('studyMode', 'spaced')
       const res = await fetch(url.toString(), { cache: 'no-store' })
       const json = await res.json()
       if (!res.ok) throw new Error(json?.error || 'Erro ao carregar deck')
@@ -220,11 +258,36 @@ export default function DeckPage() {
       setToast({ open: true, message: err.message || 'Erro ao carregar', type: 'error' })
       return false
     } finally {
-      setLoading(false)
+      if (!opts?.silent) setLoading(false)
     }
   }, [slug])
 
   useEffect(() => { load() }, [load])
+
+  const reload = useCallback(() => { load() }, [load])
+
+  // Preferências de tela cheia (dica já dispensada / abrir sempre expandido).
+  useEffect(() => {
+    try {
+      setFullscreenHint(window.localStorage.getItem(FULLSCREEN_HINT_KEY) !== 'dismissed')
+      setFullscreenPref(window.localStorage.getItem(FULLSCREEN_PREF_KEY) === '1')
+    } catch {
+      setFullscreenHint(true)
+    }
+  }, [])
+
+  const dismissFullscreenHint = useCallback(() => {
+    setFullscreenHint(false)
+    try { window.localStorage.setItem(FULLSCREEN_HINT_KEY, 'dismissed') } catch {}
+  }, [])
+
+  const toggleFullscreenPref = useCallback(() => {
+    setFullscreenPref(prev => {
+      const next = !prev
+      try { window.localStorage.setItem(FULLSCREEN_PREF_KEY, next ? '1' : '0') } catch {}
+      return next
+    })
+  }, [])
 
   // Detect resumable progress whenever deck data refreshes.
   useEffect(() => {
@@ -250,10 +313,17 @@ export default function DeckPage() {
     saveProgress(slug, userKey, {
       mode: activeStudyMode,
       index: currentIndex,
-      total: data.cards.length,
+      total: studyCards.length,
       ratings,
     })
-  }, [studying, currentIndex, ratings, activeStudyMode, data, slug, userKey])
+  }, [studying, currentIndex, ratings, activeStudyMode, data, slug, studyCards.length, userKey])
+
+  // A revalidação em segundo plano pode voltar com menos cards (alguém apagou
+  // um enquanto a sessão rodava) — o índice não pode ficar fora do baralho.
+  useEffect(() => {
+    if (!studying || studyCards.length === 0) return
+    setCurrentIndex(i => (i > studyCards.length - 1 ? studyCards.length - 1 : i))
+  }, [studying, studyCards.length])
 
   // Load folder path for deck breadcrumb
   useEffect(() => {
@@ -285,12 +355,14 @@ export default function DeckPage() {
     const isNativeFs = typeof document !== 'undefined' && !!document.fullscreenElement
     if (!fullscreen) {
       setFullscreen(true)
+      // Quem já usou a tela cheia não precisa mais da sugestão.
+      dismissFullscreenHint()
       el?.requestFullscreen?.().catch(() => {})
     } else {
       setFullscreen(false)
       if (isNativeFs) document.exitFullscreen?.().catch(() => {})
     }
-  }, [fullscreen])
+  }, [dismissFullscreenHint, fullscreen])
 
   // Sincroniza o estado quando o usuário sai da tela cheia nativa (ex.: Esc).
   useEffect(() => {
@@ -302,6 +374,17 @@ export default function DeckPage() {
     document.addEventListener('fullscreenchange', onFsChange)
     return () => document.removeEventListener('fullscreenchange', onFsChange)
   }, [])
+
+  // Preferência "abrir em tela cheia": o pedido nativo precisa do elemento já
+  // montado, então sai no primeiro frame do estudo — ainda dentro da janela de
+  // ativação do clique. Se o navegador recusar, o overlay em CSS assume.
+  useEffect(() => {
+    if (!studying || !fullscreenPref || !fullscreen || autoFullscreenRef.current) return
+    autoFullscreenRef.current = true
+    if (typeof document !== 'undefined' && !document.fullscreenElement) {
+      studyRef.current?.requestFullscreen?.().catch(() => {})
+    }
+  }, [studying, fullscreen, fullscreenPref])
 
   // Garante saída da tela cheia ao encerrar o estudo.
   useEffect(() => {
@@ -333,39 +416,81 @@ export default function DeckPage() {
   }, [studying, currentIndex, flipped, data, fullscreen, toggleFullscreen])
 
   function goNext() {
-    if (!data) return
-    if (currentIndex < data.cards.length - 1) {
+    if (currentIndex < studyCards.length - 1) {
       setCurrentIndex(i => i + 1)
       setFlipped(false); setShowComment(false); setShowHint(false); setScheduleFeedback(null)
     }
   }
   function goPrev() {
-    if (!data) return
     if (currentIndex > 0) {
       setCurrentIndex(i => i - 1)
       setFlipped(false); setShowComment(false); setShowHint(false); setScheduleFeedback(null)
     }
   }
   function goToIndex(index: number) {
-    if (!data) return
-    const nextIndex = Math.max(0, Math.min(index, data.cards.length - 1))
+    if (studyCards.length === 0) return
+    const nextIndex = Math.max(0, Math.min(index, studyCards.length - 1))
     setCurrentIndex(nextIndex)
     setFlipped(false); setShowComment(false); setShowHint(false); setScheduleFeedback(null)
   }
 
-  async function startStudy(mode: StudyMode, resumeFrom?: FlashcardProgress | null) {
+  // Entra no estudo imediatamente: a ordem é calculada aqui e os dados só são
+  // revalidados em segundo plano. Antes isso disparava um fetch bloqueante que
+  // trocava a página inteira pelo skeleton antes do primeiro card aparecer.
+  function startStudy(mode: StudyMode, resumeFrom?: FlashcardProgress | null) {
     if (!data || data.cards.length === 0) return
     const effectiveMode: StudyMode = resumeFrom?.mode ?? mode
+    const ordered = orderCardsForStudy(data.cards as DeckCard[], effectiveMode)
+    setStudyOrder(ordered.map(card => String(card._id)))
     setActiveStudyMode(effectiveMode)
     setRatings(resumeFrom?.ratings ?? {})
-    setCurrentIndex(resumeFrom?.index ?? 0)
+    setCurrentIndex(Math.min(Math.max(resumeFrom?.index ?? 0, 0), Math.max(ordered.length - 1, 0)))
     setFlipped(false)
     setShowComment(false)
     setShowHint(false)
     setScheduleFeedback(null)
-    const loaded = await load(effectiveMode)
-    if (!loaded) return
+    autoFullscreenRef.current = false
+    if (fullscreenPref) setFullscreen(true)
     setStudying(true)
+    load({ silent: true })
+  }
+
+  function exitStudy() {
+    setStudying(false)
+    setStudyOrder(null)
+  }
+
+  // Deslizar para trocar de card. Só entra em ação quando o gesto é claramente
+  // horizontal, então a rolagem vertical da página continua intacta; o clique
+  // que o navegador emite no fim do gesto é engolido para não virar o card.
+  const swipeRef = useRef({ x: 0, y: 0, active: false })
+  // Janela de tempo em vez de um booleano: trocar de card desmonta o alvo do
+  // clique, então o evento pode nunca chegar — uma flag ficaria pendurada e
+  // engoliria o próximo toque legítimo.
+  const swallowClickUntilRef = useRef(0)
+
+  function onCardPointerDown(e: React.PointerEvent) {
+    if (e.pointerType === 'mouse') return
+    swipeRef.current = { x: e.clientX, y: e.clientY, active: true }
+  }
+
+  function onCardPointerUp(e: React.PointerEvent) {
+    const start = swipeRef.current
+    if (!start.active) return
+    swipeRef.current = { ...start, active: false }
+    const dx = e.clientX - start.x
+    const dy = e.clientY - start.y
+    if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.4) return
+    swallowClickUntilRef.current = Date.now() + 400
+    if (dx < 0) goNext()
+    else goPrev()
+  }
+
+  function onCardClickCapture(e: React.MouseEvent) {
+    if (Date.now() > swallowClickUntilRef.current) return
+    swallowClickUntilRef.current = 0
+    e.preventDefault()
+    e.stopPropagation()
   }
 
   function discardSavedProgress() {
@@ -381,7 +506,7 @@ export default function DeckPage() {
 
   async function rate(value: 'facil' | 'equilibrado' | 'porrada') {
     if (!data) return
-    const card = data.cards[currentIndex]
+    const card = studyCards[currentIndex]
     if (!card) return
     if (ratingBusyCard === card._id) return
     setRatings(prev => ({ ...prev, [card._id]: value }))
@@ -410,7 +535,7 @@ export default function DeckPage() {
         setRatingBusyCard(null)
       }
     }
-    if (currentIndex < data.cards.length - 1) {
+    if (currentIndex < studyCards.length - 1) {
       setTimeout(() => goNext(), activeStudyMode === 'spaced' ? 850 : 250)
     }
   }
@@ -427,7 +552,7 @@ export default function DeckPage() {
     } catch {}
     clearProgress(slug, userKey)
     setSavedProgress(null)
-    setStudying(false)
+    exitStudy()
     setToast({ open: true, message: 'Sessão concluída!', type: 'success' })
   }
 
@@ -574,8 +699,8 @@ export default function DeckPage() {
     : originalDeckPrice
 
   if (studying) {
-    const card = cards[currentIndex]
-    const total = cards.length
+    const card = studyCards[currentIndex]
+    const total = studyCards.length
     const progress = total > 0 ? ((currentIndex + 1) / total) * 100 : 0
     return (
       <AppShell allowGuest>
@@ -612,7 +737,7 @@ export default function DeckPage() {
                   <Logo variant="icon" size="sm" className="sm:hidden" />
                 </div>
               )}
-              <Button variant="ghost" onClick={() => setStudying(false)} className="h-10 gap-1 px-2 sm:px-3">
+              <Button variant="ghost" onClick={exitStudy} className="h-10 gap-1 px-2 sm:px-3">
                 <ArrowLeft className="h-4 w-4" />Sair
               </Button>
               <div className="flex min-w-0 items-center gap-2">
@@ -653,9 +778,40 @@ export default function DeckPage() {
             total={total}
             current={currentIndex}
             ratings={ratings}
-            cards={cards}
+            cards={studyCards}
             onJump={goToIndex}
           />
+
+          {/* Sugestão de tela cheia — some para sempre assim que o usuário
+              aceita ou dispensa. O botão de expandir continua no topo. */}
+          {fullscreenHint && !fullscreen && (
+            <div className="mb-4 flex flex-col gap-2.5 rounded-2xl border border-amber-400/35 bg-amber-500/10 px-3.5 py-3 sm:flex-row sm:items-center sm:gap-3">
+              <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 text-white shadow-sm">
+                <Maximize2 className="h-4 w-4" />
+              </span>
+              <p className="flex-1 text-sm leading-snug text-amber-900 dark:text-amber-100">
+                <strong className="font-semibold">Estude em tela cheia.</strong>{' '}
+                <span className="opacity-80">O card ocupa a tela inteira e o resto da página some.</span>
+              </p>
+              <div className="flex shrink-0 items-center gap-2">
+                <button
+                  type="button"
+                  onClick={toggleFullscreen}
+                  className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-3.5 text-sm font-bold text-white shadow-sm transition active:scale-95"
+                >
+                  <Maximize2 className="h-3.5 w-3.5" /> Expandir
+                </button>
+                <button
+                  type="button"
+                  onClick={dismissFullscreenHint}
+                  aria-label="Dispensar sugestão de tela cheia"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-xl text-amber-800/70 transition hover:bg-amber-500/15 dark:text-amber-100/70"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          )}
 
           {card && (
             /* Em tela cheia, o card cresce e fica centralizado no espaço livre
@@ -664,7 +820,13 @@ export default function DeckPage() {
                Troca de card sem animação de wrapper: animar opacity/scale num
                ancestral do card 3D forçava re-rasterização (flicker) e custo a
                cada navegação. A troca instantânea é a mais fluida no mobile. */
-            <div className={cn(fullscreen && 'flex flex-1 flex-col justify-center')}>
+            <div
+              className={cn(fullscreen && 'flex flex-1 flex-col justify-center')}
+              onPointerDown={onCardPointerDown}
+              onPointerUp={onCardPointerUp}
+              onPointerCancel={() => { swipeRef.current = { ...swipeRef.current, active: false } }}
+              onClickCapture={onCardClickCapture}
+            >
               <FlashcardCardView
                 key={card._id}
                 card={card}
@@ -777,7 +939,6 @@ export default function DeckPage() {
               >
                 <ChevronLeft className="h-4 w-4" /> Anterior
               </button>
-              <span className="text-xs font-semibold tabular-nums text-slate-400">{currentIndex + 1} / {total}</span>
               {currentIndex < total - 1 ? (
                 <button
                   type="button"
@@ -797,6 +958,9 @@ export default function DeckPage() {
               )}
             </div>
 
+            <p className="text-center text-[11px] text-slate-400 sm:hidden">
+              Deslize ← → para trocar de card · toque para virar
+            </p>
             <p className="hidden text-center text-[11px] text-slate-400 sm:block">
               {fullscreen
                 ? 'Espaço: virar · ← →: navegar · 1/2/3: avaliar · Esc ou F: sair da tela cheia'
@@ -818,9 +982,10 @@ export default function DeckPage() {
         </div>
 
         {/* Hero — altura flexível (nunca corta título/tags longos), com acabamento
-            glass iridescente (GlassHeroSurface) sobre a capa. */}
-        <TiltCard maxTilt={3} scale={1.004} className="rounded-[2rem] mb-6">
-        <div className="relative isolate overflow-hidden rounded-[2rem] border border-white/40 dark:border-border bg-white dark:bg-slate-900 shadow-xl shadow-slate-900/10 dark:shadow-black/40">
+            glass iridescente (GlassHeroSurface) sobre a capa. Sem TiltCard: uma
+            superfície desse tamanho seguindo o mouse com spring custa caro e
+            atrapalhava a leitura do próprio título. */}
+        <div className="relative isolate mb-6 overflow-hidden rounded-[2rem] border border-white/40 dark:border-border bg-white dark:bg-slate-900 shadow-xl shadow-slate-900/10 dark:shadow-black/40">
           <div className="relative bg-gradient-to-br from-emerald-700 via-emerald-600 to-amber-500">
             {deck.coverImage && (
               <Image src={deck.coverImage} alt="" fill priority className="object-cover opacity-90" sizes="(max-width: 1024px) 100vw, 1024px" />
@@ -951,10 +1116,11 @@ export default function DeckPage() {
                   Entrar para acessar
                 </button>
               ) : (
+                <div className="flex flex-col items-stretch gap-2 sm:items-end">
                 <button
                   onClick={() => startStudy(studyModeChoice, savedProgress)}
                   disabled={cards.length === 0}
-                  className="relative overflow-hidden inline-flex items-center gap-2.5 rounded-2xl px-8 py-3.5 text-base font-bold tracking-wide text-foreground transition-all duration-200 active:scale-[0.97] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55"
+                  className="relative overflow-hidden inline-flex items-center justify-center gap-2.5 rounded-2xl px-8 py-3.5 text-base font-bold tracking-wide text-foreground transition-all duration-200 active:scale-[0.97] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55"
                   style={{
                     background: savedProgress
                       ? 'linear-gradient(135deg, rgba(217,119,6,1) 0%, rgba(234,88,12,0.95) 50%, rgba(245,158,11,0.90) 100%)'
@@ -981,11 +1147,30 @@ export default function DeckPage() {
                     ? 'Iniciar fixação intensa'
                     : 'Estudar agora'}
                 </button>
+                {/* Sugestão de estudar em tela cheia — fica ao lado do botão de
+                    começar, que é onde a decisão realmente acontece. */}
+                {cards.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={toggleFullscreenPref}
+                    aria-pressed={fullscreenPref}
+                    className={cn(
+                      'inline-flex items-center justify-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold transition',
+                      fullscreenPref
+                        ? 'border-amber-400/50 bg-amber-500/15 text-amber-700 dark:text-amber-200'
+                        : 'border-border bg-card text-muted-foreground hover:text-foreground',
+                    )}
+                  >
+                    <Maximize2 className="h-3.5 w-3.5" />
+                    {fullscreenPref ? 'Começa em tela cheia' : 'Começar em tela cheia'}
+                    {fullscreenPref && <CheckCircle2 className="h-3.5 w-3.5" />}
+                  </button>
+                )}
+                </div>
               )}
             </div>
           </div>
         </div>
-        </TiltCard>
 
         {hasTier && isLocked && eventState && (
           <div className="mb-4">
@@ -1039,7 +1224,7 @@ export default function DeckPage() {
                     cards={cards}
                     canManage={access.canManage ?? access.isOwner}
                     slug={deck.slug}
-                    onCardsDeleted={load}
+                    onCardsDeleted={reload}
                   />
                 </motion.div>
               )}
@@ -1208,28 +1393,29 @@ function StudyModePanel({
   cards: (FlashcardManualCard & { _id: string; spacedProgress?: SpacedProgressResponse | null })[]
 }) {
   const [open, setOpen] = useState(false)
+  const [explained, setExplained] = useState(false)
   const safeStats = stats || { dueToday: 0, newCards: cards.length, mastered: 0, difficult: 0 }
 
   return (
     <section className="mb-4 overflow-hidden rounded-3xl border border-emerald-200/50 bg-white/70 p-4 shadow-[0_18px_70px_-35px_rgba(4,120,87,0.45)] backdrop-blur-2xl dark:border-emerald-300/15 dark:bg-slate-950/55">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-stretch">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
         <button
           type="button"
           onClick={() => onSelect('normal')}
           className={cn(
-            'flex-1 rounded-2xl border p-4 text-left transition',
+            'flex-1 rounded-2xl border p-3.5 text-left transition',
             selected === 'normal'
               ? 'border-slate-300 bg-white text-slate-900 shadow-sm dark:border-white/15 dark:bg-muted dark:text-foreground'
               : 'border-white/50 bg-white/45 text-slate-600 hover:bg-white/75 dark:border-border dark:bg-card dark:text-slate-300'
           )}
         >
           <div className="flex items-center gap-3">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-900 text-foreground dark:bg-white dark:text-slate-950">
+            <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-slate-900 text-foreground dark:bg-white dark:text-slate-950">
               <Play className="h-4 w-4 fill-current" />
             </span>
             <div>
               <h2 className="text-sm font-bold">Estudo normal</h2>
-              <p className="mt-0.5 text-xs opacity-75">Segue a ordem do deck, como antes.</p>
+              <p className="mt-0.5 text-xs opacity-75">Na ordem do deck.</p>
             </div>
           </div>
         </button>
@@ -1238,7 +1424,7 @@ function StudyModePanel({
           type="button"
           onClick={() => onSelect('spaced')}
           className={cn(
-            'relative flex-1 overflow-hidden rounded-2xl border p-4 text-left transition',
+            'relative flex-1 overflow-hidden rounded-2xl border p-3.5 text-left transition',
             selected === 'spaced'
               ? 'border-emerald-300/60 bg-emerald-500/15 text-emerald-950 shadow-lg shadow-emerald-900/10 dark:text-emerald-50'
               : 'border-emerald-200/40 bg-emerald-50/55 text-slate-700 hover:bg-emerald-50 dark:border-emerald-300/15 dark:bg-emerald-500/10 dark:text-slate-200'
@@ -1246,12 +1432,12 @@ function StudyModePanel({
         >
           <span className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/70 to-transparent" />
           <div className="flex items-center gap-3">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600 via-lime-500 to-amber-400 text-foreground shadow-lg shadow-emerald-700/25">
-              <Brain className="h-5 w-5" />
+            <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600 via-lime-500 to-amber-400 text-foreground shadow-lg shadow-emerald-700/25">
+              <Brain className="h-4 w-4" />
             </span>
             <div>
-              <h2 className="text-sm font-bold">Repetição espaçada para fixação intensa</h2>
-              <p className="mt-0.5 text-xs opacity-80">Perfeito para fixação intensa antes de provas.</p>
+              <h2 className="text-sm font-bold">Fixação intensa</h2>
+              <p className="mt-0.5 text-xs opacity-80">Repetição espaçada antes da prova.</p>
             </div>
           </div>
         </button>
@@ -1261,40 +1447,57 @@ function StudyModePanel({
         <motion.div
           initial={{ opacity: 0, y: -6 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mt-4 rounded-2xl border border-emerald-200/55 bg-white/60 p-4 backdrop-blur-xl dark:border-emerald-300/15 dark:bg-card"
+          className="mt-3 rounded-2xl border border-emerald-200/55 bg-white/60 p-3.5 backdrop-blur-xl dark:border-emerald-300/15 dark:bg-card"
         >
-          <div className="grid gap-4 lg:grid-cols-[1.1fr,0.9fr]">
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300/40 bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-700 dark:text-emerald-200">
-                <Leaf className="h-3.5 w-3.5" /> Quer revisar de forma mais inteligente?
-              </div>
-              <p className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
-                Na repetição espaçada, os cards que você erra ou acha difíceis aparecem novamente mais cedo. Os cards fáceis aparecem com menos frequência. Isso ajuda a fixar melhor o conteúdo e evitar esquecer depois.
-              </p>
-              <div className="mt-3 grid gap-2 sm:grid-cols-3">
-                <RatingExplain label="Suave" tone="emerald" text="Você lembrou com facilidade, então o card volta depois de mais tempo." />
-                <RatingExplain label="No ponto" tone="amber" text="Você lembrou, mas ainda precisa revisar em breve." />
-                <RatingExplain label="Porrete" tone="rose" text="Você teve dificuldade ou errou, então o card volta logo." />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              <StatTile icon={<CalendarClock className="h-4 w-4" />} label="Vencidos hoje" value={safeStats.dueToday} tone="emerald" />
-              <StatTile icon={<Sparkles className="h-4 w-4" />} label="Novos" value={safeStats.newCards} tone="sky" />
-              <StatTile icon={<BarChart3 className="h-4 w-4" />} label="Dominados" value={safeStats.mastered} tone="lime" />
-              <StatTile icon={<Flame className="h-4 w-4" />} label="Difíceis" value={safeStats.difficult} tone="rose" />
-            </div>
+          {/* Os números primeiro; a explicação completa fica atrás de um toque
+              para quem ainda não conhece o método. */}
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <StatTile icon={<CalendarClock className="h-4 w-4" />} label="Vencidos hoje" value={safeStats.dueToday} tone="emerald" />
+            <StatTile icon={<Sparkles className="h-4 w-4" />} label="Novos" value={safeStats.newCards} tone="sky" />
+            <StatTile icon={<BarChart3 className="h-4 w-4" />} label="Dominados" value={safeStats.mastered} tone="lime" />
+            <StatTile icon={<Flame className="h-4 w-4" />} label="Difíceis" value={safeStats.difficult} tone="rose" />
           </div>
 
-          <div className="mt-4">
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => setExplained(v => !v)}
+              className="inline-flex items-center gap-2 rounded-full border border-emerald-300/40 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-500/20 dark:text-emerald-200"
+            >
+              <Leaf className="h-3.5 w-3.5" />
+              {explained ? 'Ocultar explicação' : 'Como funciona?'}
+            </button>
             <button
               type="button"
               onClick={() => setOpen(v => !v)}
               className="inline-flex items-center gap-2 rounded-full border border-white/50 bg-white/60 px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-white dark:border-border dark:bg-card dark:text-slate-300 dark:hover:bg-muted"
             >
               {open ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
-              {open ? 'Ocultar desempenho' : 'Ver desempenho por card'}
+              {open ? 'Ocultar desempenho' : 'Desempenho por card'}
             </button>
+          </div>
+
+          <AnimatePresence>
+            {explained && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="overflow-hidden"
+              >
+                <p className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+                  Os cards que você erra voltam mais cedo; os fáceis voltam depois de mais tempo. É assim que o conteúdo fixa sem você revisar tudo toda vez.
+                </p>
+                <div className="mt-3 grid gap-2 sm:grid-cols-3">
+                  <RatingExplain label="Suave" tone="emerald" text="Você lembrou com facilidade, então o card volta depois de mais tempo." />
+                  <RatingExplain label="No ponto" tone="amber" text="Você lembrou, mas ainda precisa revisar em breve." />
+                  <RatingExplain label="Porrete" tone="rose" text="Você teve dificuldade ou errou, então o card volta logo." />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <div className="mt-1">
 
             <AnimatePresence>
               {open && (

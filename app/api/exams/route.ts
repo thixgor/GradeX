@@ -50,20 +50,16 @@ export async function GET(request: NextRequest) {
     // de pontos (mostrava "undefined pts"). Mantemos o documento
     // completo aqui; a otimização de CPU vem do cache abaixo + do
     // session cache em lib/auth.ts.
-    // `?limit=N` agora é respeitado. O dashboard pede `?limit=3` e antes
-    // recebia TODAS as provas do usuário com o array `questions` completo,
-    // só para descartar tudo com um `.slice(0, 3)` no cliente — de longe o
-    // maior payload do caminho pós-login. Quem não envia o parâmetro
-    // (ex.: /provas, /admin/exams) continua recebendo a lista inteira.
+    // `?limit=` é opcional e usado por quem só precisa das mais recentes (a
+    // dashboard pede 3). Antes o parâmetro era ignorado: o servidor devolvia
+    // todas as provas visíveis — com o array `questions` completo — e o
+    // cliente jogava fora todas menos três. Quem não envia o parâmetro
+    // (/provas, /admin/exams) continua recebendo a lista inteira.
     const limitParam = Number(request.nextUrl.searchParams.get('limit'))
-    const limit =
-      Number.isFinite(limitParam) && limitParam > 0
-        ? Math.floor(limitParam)
-        : 0
+    const limit = Number.isFinite(limitParam) && limitParam > 0 ? Math.min(limitParam, 200) : 0
 
     const cursor = examsCollection.find(query).sort({ createdAt: -1 })
-    if (limit > 0) cursor.limit(limit)
-    const exams = await cursor.toArray()
+    const exams = await (limit ? cursor.limit(limit) : cursor).toArray()
 
     // Cache privado curto: lista pessoal de provas raramente muda em
     // alguns segundos. SWR mantém UI responsiva sem regerar imediato.
