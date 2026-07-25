@@ -1,6 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { useUIPreferences } from '@/hooks/use-ui-preferences'
 
@@ -35,17 +36,43 @@ function hideMusicPlayer(pathname: string | null): boolean {
   return pathname.startsWith('/rifas')
 }
 
+/**
+ * Adia o mount até o browser ficar ocioso (com teto de tempo). Usado para o
+ * chrome que não faz parte do conteúdo principal: ele continua aparecendo
+ * exatamente como antes, só deixa de competir com a primeira pintura.
+ */
+function useIdleReady(timeoutMs = 2500): boolean {
+  const [ready, setReady] = useState(false)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const ric = (window as any).requestIdleCallback
+    if (typeof ric === 'function') {
+      const handle = ric(() => setReady(true), { timeout: timeoutMs })
+      return () => (window as any).cancelIdleCallback?.(handle)
+    }
+    const timer = window.setTimeout(() => setReady(true), 800)
+    return () => window.clearTimeout(timer)
+  }, [timeoutMs])
+
+  return ready
+}
+
 export function AppChrome() {
   const pathname = usePathname()
   const { showMusic } = useUIPreferences()
   const authless = isAuthlessRoute(pathname)
   const noMusic = hideMusicPlayer(pathname)
+  // Os anúncios fazem fetch em /api/anuncios (Mongo) e mantêm um intervalo de
+  // rotação. Nada disso precisa acontecer enquanto a página ainda está
+  // pintando — sobretudo na landing, onde o visitante nem está logado.
+  const adsReady = useIdleReady()
 
   return (
     <>
       {!authless && <TrialExpirationChecker />}
       {!authless && !noMusic && showMusic && <StudyMusicPlayer />}
-      <PlatformAds />
+      {adsReady && <PlatformAds />}
     </>
   )
 }

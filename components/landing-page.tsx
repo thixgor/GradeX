@@ -773,7 +773,10 @@ function Hero({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: bool
                 alt=""
                 aria-hidden
                 fill
-                priority
+                // Sem `priority`: esta arte é puramente decorativa (aria-hidden)
+                // e 280KB dela competiam em prioridade máxima com o LCP real e
+                // com o preload das fontes. Continua carregando junto do hero,
+                // só deixa de disputar a frente da fila em rede móvel.
                 sizes="(max-width: 1024px) 100vw, 45vw"
                 className="object-contain"
               />
@@ -1168,11 +1171,16 @@ function ManualEletro() {
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1.1fr_1fr]">
           <Reveal>
             <>
+              {/* Bem abaixo da dobra: `lazy` evita que estas duas artes
+                  (~250KB somadas) disputem banda com o hero na primeira
+                  pintura. Continuam trocando por CSS conforme o tema. */}
               <img
                 src="/img/eletro/manual-eletrocardiograma-light.webp"
                 alt="Manual do Eletrocardiograma"
                 width={958}
                 height={461}
+                loading="lazy"
+                decoding="async"
                 className="mb-6 block h-auto w-full max-w-[300px] dark:hidden md:max-w-[360px]"
               />
               <img
@@ -1180,6 +1188,8 @@ function ManualEletro() {
                 alt="Manual do Eletrocardiograma"
                 width={958}
                 height={461}
+                loading="lazy"
+                decoding="async"
                 className="mb-6 hidden h-auto w-full max-w-[300px] dark:block md:max-w-[360px]"
               />
             </>

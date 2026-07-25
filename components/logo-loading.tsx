@@ -63,7 +63,7 @@ export function LogoLoading({
           {/* Logo */}
           <div className="relative z-10 rounded-xl overflow-hidden bg-background/80 backdrop-blur-sm p-2 shadow-lg animate-pulse">
             <Image
-              src="/logo.png"
+              src="/logo-icon.webp"
               alt="Carregando"
               width={sizes[size].logo}
               height={sizes[size].logo}
@@ -122,7 +122,7 @@ export function LogoSpinnerInline({ size = 24 }: { size?: number }) {
         style={{ width: size + 8, height: size + 8 }}
       />
       <Image
-        src="/logo.png"
+        src="/logo-icon.webp"
         alt=""
         width={size}
         height={size}

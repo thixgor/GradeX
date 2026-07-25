@@ -61,7 +61,7 @@ export function PageLoading({
             style={{ transform: 'translate(-50%, -50%)' }}
           >
             <Image
-              src="/logo.png"
+              src="/logo-icon.webp"
               alt=""
               width={logoSize}
               height={logoSize}
@@ -173,7 +173,7 @@ export function LogoSpinner({
     >
       <span className="absolute inset-0 rounded-full border-2 border-primary/30 border-t-primary page-loading-spin" />
       <Image
-        src="/logo.png"
+        src="/logo-icon.webp"
         alt=""
         width={sizes[size].logo}
         height={sizes[size].logo}

@@ -10,7 +10,12 @@ export function MetaPixel() {
   if (!META_PIXEL_ID) return null
   return (
     <>
-      <Script id="meta-pixel" strategy="afterInteractive">
+      {/* lazyOnload: o fbevents.js (~70KB + handshake TLS de terceiro) entrava
+          exatamente quando o hero e as fontes disputavam a banda no mobile.
+          Com lazyOnload ele carrega depois do `load`, que dispara para
+          qualquer visitante real — o PageView continua sendo enviado.
+          Se a atribuição do Meta cair, basta voltar para "afterInteractive". */}
+      <Script id="meta-pixel" strategy="lazyOnload">
         {`!function(f,b,e,v,n,t,s)
         {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
         n.callMethod.apply(n,arguments):n.queue.push(arguments)};
