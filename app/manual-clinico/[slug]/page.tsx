@@ -1869,14 +1869,10 @@ function PatologiaContent() {
         {patologia.isPremiumLocked && (
           <PremiumPreviewCard
             patologia={patologia}
-            onCheckout={() => {
-              if (patologia.accessStatus === 'login_required') {
-                // Compra sem login via Serial Key (nome/e-mail/telefone no checkout).
-                router.push('/comprar?productType=manual_clinico')
-                return
-              }
-              router.push('/manual-clinico/checkout')
-            }}
+            // Quem não tem sessão é redirecionado pelo middleware para /comprar
+            // (venda sem conta por Serial Key), então o destino aqui é sempre o
+            // checkout do Manual.
+            onCheckout={() => router.push('/manual-clinico/checkout')}
           />
         )}
 

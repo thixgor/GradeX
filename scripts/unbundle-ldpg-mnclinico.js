@@ -61,6 +61,19 @@ function decodeAsset(entry) {
   return entry.compressed ? zlib.gunzipSync(raw) : raw
 }
 
+/** Substitui TODAS as ocorrencias e aborta se a contagem mudar em relacao ao esperado. */
+function replaceAllExpecting(html, name, from, to, expected) {
+  const found = html.split(from).length - 1
+  if (found !== expected) {
+    fail(
+      `esperava ${expected} ocorrencia(s) de "${name}" no HTML novo, encontrei ${found}.\n` +
+      `A landing mudou. Confira se todos os botoes de compra ainda apontam para o mesmo lugar\n` +
+      `antes de publicar.\n\nTrecho procurado:\n${from}`
+    )
+  }
+  return html.split(from).join(to)
+}
+
 /** Substitui exatamente uma ocorrencia da ancora; aborta se sumiu ou duplicou. */
 function anchorReplace(html, name, anchor, replacement) {
   const first = html.indexOf(anchor)
@@ -302,6 +315,19 @@ function main() {
   template = template.replace(
     /<link rel="preconnect" href="https:\/\/(fonts\.googleapis\.com|fonts\.gstatic\.com|domineaqui\.com\.br)"[^>]*>\n?/g,
     ''
+  )
+
+  // 4b. Botoes de compra: o export aponta todos para /comprar, que e a venda sem
+  // conta por Serial Key. Isso joga quem JA esta logado no fluxo de visitante, e a
+  // compra nao fica vinculada a conta. Apontando para o checkout do Manual, o
+  // middleware e quem decide: logado segue para o checkout, deslogado e redirecionado
+  // para /comprar (preservando o plano em ?plan= → ?planKey=).
+  template = replaceAllExpecting(
+    template,
+    'botao de compra',
+    'href="/comprar?productType=manual_clinico"',
+    'href="/manual-clinico/checkout"',
+    3
   )
 
   // 5. Cabecalho proprio (o export vem sem title/description/OG).

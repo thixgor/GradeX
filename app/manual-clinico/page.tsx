@@ -602,14 +602,11 @@ function ManualClinicoContent() {
     setPage(1)
   }
 
+  // O middleware redireciona quem não tem sessão para /comprar (venda sem conta
+  // por Serial Key), já convertendo ?plan= em ?planKey=. Repetir essa decisão no
+  // cliente só abria espaço para as duas versões divergirem.
   function goToCheckout(planKey?: 'semestral' | 'anual' | 'vitalicio') {
-    const target = `/manual-clinico/checkout${planKey ? `?plan=${planKey}` : ''}`
-    if (!isAuthenticated) {
-      // Compra sem login via Serial Key (nome/e-mail/telefone no checkout).
-      router.push(`/comprar?productType=manual_clinico${planKey ? `&planKey=${planKey}` : ''}`)
-      return
-    }
-    router.push(target)
+    router.push(`/manual-clinico/checkout${planKey ? `?plan=${planKey}` : ''}`)
   }
 
   // Teste grátis: leva o visitante deslogado direto para criar a conta, já
