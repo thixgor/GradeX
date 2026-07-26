@@ -651,7 +651,7 @@ const TOUR_STEPS: ViewerTourStep[] = [
   {
     targets: ['[data-tour="viewer-zoom"]'],
     title: 'Deixe a letra do seu tamanho',
-    body: 'Aumente ou diminua o texto quando quiser. No celular, junte e afaste dois dedos sobre a página que funciona igual.',
+    body: 'Aumente ou diminua o texto quando quiser. Ampliado, a página fica mais larga que a tela e você arrasta para o lado para ler — aparece um aviso embaixo com o tamanho atual, e um toque nele volta ao normal.',
   },
   {
     targets: ['[data-tour="viewer-summary"]', '[data-tour="viewer-summary-strip"]'],
@@ -671,7 +671,7 @@ const TOUR_STEPS: ViewerTourStep[] = [
   {
     targets: ['[data-tour="viewer-fit"]'],
     title: 'Perdeu o tamanho ideal?',
-    body: '"Ajustar à tela" devolve a página inteira à tela de uma vez, sem você ter que acertar o zoom na mão. No celular, dois toques na página fazem o mesmo.',
+    body: '"Ajustar à tela" devolve a página inteira à tela de uma vez, sem você ter que acertar o zoom na mão.',
   },
   {
     title: 'Pronto, é só ler',
@@ -1015,146 +1015,96 @@ function useResizeWidth(ref: React.RefObject<HTMLElement>, deps: React.Dependenc
 }
 
 // ─── Gestos de toque ────────────────────────────────────────────────────────
-// O leitor não tinha NENHUM gesto. O `touchAction: pinch-zoom` liberava só o
-// pinch do NAVEGADOR, que é desacoplado do zoom do viewer: a página ampliava
-// borrada e nunca re-rasterizava nítida. Aqui a pinça escreve no zoom real,
-// então a página é redesenhada na resolução certa.
+// Aqui houve uma tentativa de pinça PRÓPRIA (escrevendo no zoom do viewer para
+// re-rasterizar nítido) e ela foi revertida, porque quebrava na prática:
+// o `touchAction` só virava 'none' DEPOIS do re-render que sinalizava "estou
+// pinçando". Nos primeiros quadros o navegador já havia começado a rolar, o
+// flip cancelava os ponteiros (pointercancel), o gesto reiniciava com os dedos
+// já afastados — ou seja, com uma distância-base grande registrada como se
+// fosse o início — e o movimento seguinte produzia uma razão enorme. Resultado:
+// saltos absurdos de zoom. Corrigir isso exigiria `touchAction: none` fixo, o
+// que mataria a rolagem vertical da leitura.
 //
-// Tudo só vale com a ferramenta "navegar" ativa e com o dedo (não mouse, não
-// caneta): desenhar não pode disparar gesto, e gesto não pode roubar o traço.
+// Então a pinça voltou a ser a do NAVEGADOR (`touchAction: pinch-zoom`): amplia
+// o bitmap sem re-rasterizar, mas é previsível e é o que o leitor já conhece.
+// Para ler com letra maior de verdade existem os botões de zoom, que mexem no
+// zoom real e redesenham nítido.
+//
+// Sobrou só o swipe para virar página: um dedo, sem disputa com o pinch, e
+// apenas com a ferramenta "navegar" ativa — desenhar não pode virar página.
 const SWIPE_MIN_DISTANCE = 60
-const DOUBLE_TAP_MS = 300
 
 function useViewerGestures(
   ref: React.RefObject<HTMLElement>,
   {
     enabled,
-    onPinchStart,
-    onPinch,
-    onPinchEnd,
     onSwipe,
-    onDoubleTap,
   }: {
     enabled: boolean
-    onPinchStart: () => void
-    onPinch: (ratio: number) => void
-    onPinchEnd: () => void
     onSwipe: (direction: 1 | -1) => void
-    onDoubleTap: () => void
   }
 ) {
-  const [pinching, setPinching] = useState(false)
-  const pointersRef = useRef(new Map<number, { x: number; y: number }>())
-  const pinchStartRef = useRef(0)
   const swipeStartRef = useRef<{ x: number; y: number; t: number; canPan: boolean } | null>(null)
-  const lastTapRef = useRef(0)
-  // Handlers em ref para os listeners nativos não precisarem ser reanexados a
-  // cada render (o zoom muda a toda hora durante a pinça).
-  const handlersRef = useRef({ onPinchStart, onPinch, onPinchEnd, onSwipe, onDoubleTap })
-  handlersRef.current = { onPinchStart, onPinch, onPinchEnd, onSwipe, onDoubleTap }
+  const activePointersRef = useRef(0)
+  const onSwipeRef = useRef(onSwipe)
+  onSwipeRef.current = onSwipe
 
   useEffect(() => {
     const element = ref.current
     if (!element || !enabled) return
 
-    const pointers = pointersRef.current
-    pointers.clear()
-
-    const distance = () => {
-      const [a, b] = Array.from(pointers.values())
-      if (!a || !b) return 0
-      return Math.hypot(a.x - b.x, a.y - b.y)
-    }
+    activePointersRef.current = 0
 
     const onPointerDown = (event: PointerEvent) => {
       if (event.pointerType !== 'touch') return
-      pointers.set(event.pointerId, { x: event.clientX, y: event.clientY })
-      if (pointers.size === 1) {
-        // Numa página ampliada, arrastar na horizontal é panorâmica (a linha da
-        // página rola), não virada de página. Marcamos aqui, no início do
-        // gesto, se a linha tocada tem rolagem horizontal disponível.
-        const row = (event.target as HTMLElement | null)?.closest?.('[data-pdf-page-row]') as HTMLElement | null
-        const canPan = !!row && row.scrollWidth > row.clientWidth + 1
-        swipeStartRef.current = { x: event.clientX, y: event.clientY, t: Date.now(), canPan }
-      } else if (pointers.size === 2) {
-        // Virou pinça: o que quer que fosse um swipe deixa de ser.
+      activePointersRef.current += 1
+      if (activePointersRef.current > 1) {
+        // Dois dedos = pinça do navegador. Nada de swipe.
         swipeStartRef.current = null
-        pinchStartRef.current = distance()
-        handlersRef.current.onPinchStart()
-        setPinching(true)
+        return
       }
-    }
-
-    const onPointerMove = (event: PointerEvent) => {
-      if (event.pointerType !== 'touch') return
-      if (!pointers.has(event.pointerId)) return
-      pointers.set(event.pointerId, { x: event.clientX, y: event.clientY })
-      if (pointers.size !== 2 || pinchStartRef.current <= 0) return
-      const current = distance()
-      if (current <= 0) return
-      handlersRef.current.onPinch(current / pinchStartRef.current)
+      // Numa página ampliada, arrastar na horizontal é panorâmica (a linha da
+      // página rola), não virada de página. Marcamos no início do gesto se a
+      // linha tocada tem rolagem horizontal disponível.
+      const row = (event.target as HTMLElement | null)?.closest?.('[data-pdf-page-row]') as HTMLElement | null
+      const canPan = !!row && row.scrollWidth > row.clientWidth + 1
+      swipeStartRef.current = { x: event.clientX, y: event.clientY, t: Date.now(), canPan }
     }
 
     const finishPointer = (event: PointerEvent) => {
       if (event.pointerType !== 'touch') return
-      const wasPinching = pointers.size === 2
-      pointers.delete(event.pointerId)
-
-      if (wasPinching) {
-        pinchStartRef.current = 0
-        setPinching(false)
-        handlersRef.current.onPinchEnd()
+      activePointersRef.current = Math.max(0, activePointersRef.current - 1)
+      if (activePointersRef.current > 0) {
         swipeStartRef.current = null
         return
       }
 
-      if (pointers.size > 0) return
-
       const start = swipeStartRef.current
       swipeStartRef.current = null
-      if (!start) return
+      if (!start || start.canPan) return
 
       const dx = event.clientX - start.x
       const dy = event.clientY - start.y
       const elapsed = Date.now() - start.t
 
-      // Swipe: horizontal claro, e claramente mais horizontal que vertical —
-      // senão qualquer rolagem em diagonal viraria virada de página. E nunca
-      // quando a página estava ampliada a ponto de rolar na horizontal: ali o
-      // arrasto é panorâmica, e virar a página seria roubar o gesto.
-      if (!start.canPan && Math.abs(dx) > SWIPE_MIN_DISTANCE && Math.abs(dx) > Math.abs(dy) * 2 && elapsed < 800) {
-        handlersRef.current.onSwipe(dx < 0 ? 1 : -1)
-        lastTapRef.current = 0
-        return
-      }
-
-      // Toque parado e curto: candidato a duplo toque.
-      if (Math.abs(dx) < 12 && Math.abs(dy) < 12 && elapsed < 260) {
-        const now = Date.now()
-        if (now - lastTapRef.current < DOUBLE_TAP_MS) {
-          lastTapRef.current = 0
-          handlersRef.current.onDoubleTap()
-        } else {
-          lastTapRef.current = now
-        }
+      // Horizontal claro, e claramente mais horizontal que vertical — senão
+      // qualquer rolagem em diagonal viraria virada de página.
+      if (Math.abs(dx) > SWIPE_MIN_DISTANCE && Math.abs(dx) > Math.abs(dy) * 2 && elapsed < 800) {
+        onSwipeRef.current(dx < 0 ? 1 : -1)
       }
     }
 
     element.addEventListener('pointerdown', onPointerDown, { passive: true })
-    element.addEventListener('pointermove', onPointerMove, { passive: true })
     element.addEventListener('pointerup', finishPointer, { passive: true })
     element.addEventListener('pointercancel', finishPointer, { passive: true })
     return () => {
       element.removeEventListener('pointerdown', onPointerDown)
-      element.removeEventListener('pointermove', onPointerMove)
       element.removeEventListener('pointerup', finishPointer)
       element.removeEventListener('pointercancel', finishPointer)
-      pointers.clear()
-      setPinching(false)
+      swipeStartRef.current = null
+      activePointersRef.current = 0
     }
   }, [enabled, ref])
-
-  return pinching
 }
 
 export function SecurePdfViewer({ materialId }: { materialId: string }) {
@@ -1198,9 +1148,6 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const [notice, setNotice] = useState('')
   const [isPrinting, setIsPrinting] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
-  // Distingue "estava em tela cheia NATIVA" de "está no modo imersivo em CSS",
-  // para o evento de saída da API não desligar o imersivo do iOS.
-  const wasNativeFullscreenRef = useRef(false)
   // Folha (bottom sheet) aberta no celular. Uma de cada vez.
   const [mobileSheet, setMobileSheet] = useState<MobileSheet>(null)
   const [helpMenuOpen, setHelpMenuOpen] = useState(false)
@@ -1233,7 +1180,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   })
 
   const minZoom = access?.viewer.minZoom ?? 0.55
-  const maxZoom = access?.viewer.maxZoom ?? 2.6
+  const apiMaxZoom = access?.viewer.maxZoom ?? 2.6
   const pageCount = access?.material.pageCount ?? 0
   const summary = useMemo(() => access?.viewer.summary ?? [], [access])
   const navigation = useMemo(() => access?.viewer.navigation ?? [], [access])
@@ -1281,6 +1228,28 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     return continuousPages
   }, [mode, currentPage, previewActive, continuousPages])
   const contentWidth = useResizeWidth(contentRef, [loading, showAnnotations, showThumbs])
+
+  // Zoom em que a página cabe exatamente na largura disponível. É a referência
+  // do que é "tamanho normal" para ESTE aparelho — no celular costuma ser bem
+  // menos que 100%, porque uma A4 é mais larga que a tela.
+  const fitWidthZoom = useMemo(() => {
+    if (!pageSize?.width || !contentWidth) return null
+    return (contentWidth - 24) / pageSize.width
+  }, [contentWidth, pageSize])
+
+  // Teto de zoom relativo ao aparelho, não absoluto. O teto da API (280%)
+  // significava, num celular onde a página cabe a ~45%, uma página SEIS vezes
+  // mais larga que a tela: impossível de navegar, e foi o que gerou o "zoom
+  // ficando muito". Amarrando a 2,5x o tamanho que cabe, o limite faz sentido
+  // em qualquer tela.
+  const maxZoom = useMemo(() => {
+    if (!fitWidthZoom) return apiMaxZoom
+    return Math.min(apiMaxZoom, Math.max(1, fitWidthZoom * 2.5))
+  }, [apiMaxZoom, fitWidthZoom])
+
+  // Está ampliado além do que cabe na tela? É o que o indicador mostra.
+  const zoomedIn = fitWidthZoom != null && zoom > fitWidthZoom * 1.02
+
   const annotationsByPage = useMemo(() => {
     const grouped = new Map<number, PdfAnnotation[]>()
     for (const annotation of annotations) {
@@ -1419,6 +1388,13 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   useEffect(() => {
     zoomRef.current = zoom
   }, [zoom])
+
+  // O teto de zoom depende do aparelho, então um zoom salvo no computador pode
+  // chegar acima do teto do celular. Reamarra em vez de deixar a página numa
+  // largura que não dá para navegar.
+  useEffect(() => {
+    if (zoom > maxZoom) setZoom(maxZoom)
+  }, [maxZoom, zoom])
 
   // Histerese da janela de renderização. Se ela fosse recentrada a cada página
   // focada, cada página rolada mexeria na altura dos dois blocos de
@@ -1566,17 +1542,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     return () => window.clearTimeout(timer)
   }, [notice])
 
-  // Sair pelo Esc ou pelo gesto do sistema tem que refletir no estado. Só
-  // reagimos à SAÍDA: a entrada já foi decidida pelo nosso próprio estado, e
-  // no modo imersivo (iOS) não existe elemento em tela cheia para observar.
-  useEffect(() => {
-    return onFullscreenChange((active) => {
-      if (!active && getFullscreenElement() === null) {
-        setIsFullscreen((current) => (current && wasNativeFullscreenRef.current ? false : current))
-      }
-      wasNativeFullscreenRef.current = active
-    })
-  }, [])
+  // O ícone precisa acompanhar a saída pelo Esc ou pelo gesto do sistema, não
+  // só o clique no botão.
+  useEffect(() => onFullscreenChange(setIsFullscreen), [])
 
   useEffect(() => {
     const block = (event: Event) => {
@@ -1748,42 +1716,16 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   }, [fitToWidth])
 
   // ── Gestos ──────────────────────────────────────────────────────────────
-  // O zoom-base é capturado quando o segundo dedo encosta. Antes o ref era
-  // inicializado em 1 e "capturado" por um guard `if (!ref.current)` — como 1 é
-  // truthy, a PRIMEIRA pinça da sessão calculava em cima de 1 em vez do zoom
-  // atual e a página dava um salto.
-  const pinchBaseZoomRef = useRef(0)
-  const handlePinchStart = useCallback(() => {
-    pinchBaseZoomRef.current = zoomRef.current
-  }, [])
-  const handlePinch = useCallback((ratio: number) => {
-    if (!pinchBaseZoomRef.current) pinchBaseZoomRef.current = zoomRef.current
-    zoomTouchedRef.current = true
-    setZoom(clampZoom(pinchBaseZoomRef.current * ratio, minZoom, maxZoom))
-  }, [maxZoom, minZoom])
-  const handlePinchEnd = useCallback(() => {
-    pinchBaseZoomRef.current = 0
-  }, [])
   const handleSwipe = useCallback((direction: 1 | -1) => {
     stepPage(direction)
   }, [stepPage])
-  // Duplo toque alterna entre "página inteira na tela" e "largura da tela" —
-  // as duas coisas que o leitor quer 90% das vezes, sem precisar achar botão.
-  const handleDoubleTap = useCallback(() => {
-    if (mode === 'width') fitToPage()
-    else fitToWidth()
-  }, [fitToPage, fitToWidth, mode])
 
   const gesturesEnabled = tool === 'cursor'
-  const isPinching = useViewerGestures(contentRef, {
+  useViewerGestures(contentRef, {
     enabled: gesturesEnabled,
-    onPinchStart: handlePinchStart,
-    onPinch: handlePinch,
-    onPinchEnd: handlePinchEnd,
     // Swipe só faz sentido em "uma página por vez"; nos modos de rolagem o
     // gesto natural é o scroll vertical, que continua nativo.
-    onSwipe: mode === 'single' ? handleSwipe : () => {},
-    onDoubleTap: handleDoubleTap,
+    onSwipe: mode === 'single' && gesturesEnabled ? handleSwipe : () => {},
   })
 
   // ── Tutorial ────────────────────────────────────────────────────────────
@@ -1822,22 +1764,22 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     return () => window.clearTimeout(timer)
   }, [access, previewActive, startTour])
 
-  // Tela cheia com fonte da verdade no React e a API nativa como best-effort.
-  // No Safari do iOS `requestFullscreen` não existe para elementos que não
-  // sejam <video> — antes a chamada estourava um TypeError e o botão não fazia
-  // nada no celular. Agora, quando o navegador não aceita, entra o modo
-  // imersivo em CSS (mesmo padrão da tela de estudo de flashcards).
+  // Tela cheia SÓ com a API nativa, e só onde ela existe — ou seja, no
+  // desktop. Houve uma tentativa de fallback "imersivo" em CSS para o celular
+  // (onde o Safari do iOS não implementa requestFullscreen fora de <video>) e
+  // ela foi revertida: transformar o shell em `fixed inset-0` troca o contêiner
+  // de rolagem no meio da leitura, e o resultado no aparelho ficou pior que não
+  // ter o botão. No celular a barra do navegador já se esconde sozinha ao
+  // rolar, que é o ganho que o usuário queria.
   const toggleFullScreen = useCallback(async () => {
     const element = viewerRef.current
     if (!element) return
-    if (isFullscreen) {
-      setIsFullscreen(false)
+    if (getFullscreenElement()) {
       await exitAppFullscreen()
       return
     }
-    setIsFullscreen(true)
     await requestAppFullscreen(element)
-  }, [isFullscreen])
+  }, [])
 
   // Navegação por teclado: setas, PageUp/Down, Home/End, mais os atalhos de
   // zoom/modo/painéis. Ignora quando o foco está em um campo de edição
@@ -2083,27 +2025,14 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
           </div>
         </div>
       ) : null}
-      {/* Modo imersivo: quando a tela cheia nativa não existe (Safari do iOS)
-          o shell vira ele mesmo a tela — `fixed inset-0` com rolagem própria e
-          respeito à safe-area. Quando a nativa funcionou, essas classes são
-          inofensivas (o elemento já ocupa a tela inteira). */}
+      {/* Sem modo "imersivo" em CSS aqui: transformar o shell em `fixed
+          inset-0` troca o contêiner de rolagem no meio da leitura e no celular
+          o resultado ficou pior que não ter tela cheia. A tela cheia nativa
+          (desktop) usa o `:fullscreen` já definido no <style> acima. */}
       <div
         ref={viewerRef}
-        className={`pdf-viewer-shell min-h-screen overflow-x-clip text-white select-none ${
-          isFullscreen ? 'fixed inset-0 z-[60] overflow-y-auto overscroll-contain bg-zinc-950' : ''
-        }`}
-        style={{
-          WebkitUserSelect: 'none',
-          userSelect: 'none',
-          touchAction: 'pan-x pan-y pinch-zoom',
-          ...(isFullscreen
-            ? {
-                paddingTop: 'env(safe-area-inset-top)',
-                paddingLeft: 'env(safe-area-inset-left)',
-                paddingRight: 'env(safe-area-inset-right)',
-              }
-            : null),
-        }}
+        className="pdf-viewer-shell min-h-screen overflow-x-clip text-white select-none"
+        style={{ WebkitUserSelect: 'none', userSelect: 'none', touchAction: 'pan-x pan-y pinch-zoom' }}
       >
         {/* /95 e não /82: opacidade fora da escala do Tailwind não vira regra
             nenhuma, e o cabeçalho ficava sem fundo sobre página branca. */}
@@ -2432,12 +2361,11 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
 
           <section
             ref={contentRef}
-            // Com a ferramenta "navegar" ativa assumimos a pinça: tiramos o
-            // `pinch-zoom` nativo (que só ampliava o bitmap, borrado) e
-            // deixamos a nossa, que escreve no zoom real e re-rasteriza. Com
-            // qualquer ferramenta de marcação ativa, devolvemos o pinch ao
-            // navegador e não interceptamos nada — o traço vem primeiro.
-            style={{ touchAction: isPinching ? 'none' : gesturesEnabled ? 'pan-x pan-y' : 'pan-x pan-y pinch-zoom' }}
+            // A pinça é a do NAVEGADOR. Uma pinça própria foi tentada e
+            // revertida (ver o comentário em useViewerGestures): alternar o
+            // `touchAction` no meio do gesto cancelava os ponteiros e produzia
+            // saltos absurdos de zoom.
+            style={{ touchAction: 'pan-x pan-y pinch-zoom' }}
             // Sem `overflow-hidden`: junto com o `max-w-full` da moldura ele
             // impedia a página de passar da largura do container, então
             // aumentar o zoom não mudava nada na tela. Cada página agora rola
@@ -2511,6 +2439,20 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             />
           )}
         </main>
+
+        {/* Indicador de zoom. Ampliado, a página passa da largura da tela e o
+            leitor precisa arrastar para o lado — sem aviso, isso parece defeito
+            ("sumiu metade do texto"). A pastilha diz o tamanho atual e volta ao
+            normal num toque. Aparece só quando há zoom de verdade. */}
+        {zoomedIn && (
+          <button
+            type="button"
+            onClick={() => { zoomTouchedRef.current = true; if (fitWidthZoom) setZoom(clampZoom(fitWidthZoom, minZoom, maxZoom)) }}
+            className="pointer-events-auto fixed bottom-20 left-1/2 z-40 -translate-x-1/2 rounded-full border border-white/20 bg-zinc-950/90 px-3 py-1.5 text-[11px] font-semibold text-white shadow-lg backdrop-blur-sm lg:bottom-6"
+          >
+            {Math.round((fitWidthZoom ? zoom / fitWidthZoom : zoom) * 100)}% · toque para ajustar
+          </button>
+        )}
 
         {/* ── Barra inferior do celular ──────────────────────────────────────
             O cabeçalho antigo empilhava até cinco linhas de rolagem horizontal
@@ -2685,7 +2627,8 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
               </button>
             </div>
             <p className="mt-2 text-xs text-white/45">
-              Você também pode juntar e afastar dois dedos sobre a página.
+              Ampliado, a página fica mais larga que a tela: arraste para o lado
+              para ler. O aviso embaixo mostra o tamanho e volta ao normal num toque.
             </p>
           </div>
         </ViewerSheet>
@@ -2764,11 +2707,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         <ViewerSheet open={mobileSheet === 'more'} title="Mais opções" onClose={() => setMobileSheet(null)}>
           <div className="space-y-2">
             <SheetAction icon={<Maximize2 className="h-4 w-4" />} label="Ajustar página à tela" onClick={() => { fitToPage(); setMobileSheet(null) }} />
-            <SheetAction
-              icon={isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-              label={isFullscreen ? 'Sair da tela cheia' : 'Tela cheia'}
-              onClick={() => { toggleFullScreen(); setMobileSheet(null) }}
-            />
+            {/* Nada de "Tela cheia" aqui: no celular a API nativa não existe
+                (Safari do iOS) e o fallback em CSS ficou pior que não ter a
+                opção. O botão continua no cabeçalho do desktop, onde funciona. */}
             {!previewActive && (
               <SheetAction
                 icon={<StickyNote className="h-4 w-4" />}
@@ -5051,8 +4992,8 @@ function ShortcutsDialog({ onClose }: { onClose: () => void }) {
           </div>
         ))}
         <p className="text-[11px] text-white/40">
-          No celular: deslize para os lados para virar de página (no modo &quot;uma página por vez&quot;),
-          junte e afaste dois dedos para mudar o tamanho, e toque duas vezes para ajustar à tela.
+          No celular: deslize para os lados para virar de página (no modo &quot;uma página por vez&quot;)
+          e use os botões de tamanho em &quot;Modo&quot; para aumentar a letra.
         </p>
       </div>
     </ViewerDialog>
