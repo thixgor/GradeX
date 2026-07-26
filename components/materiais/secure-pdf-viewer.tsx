@@ -156,6 +156,11 @@ const LIVE_PAGE_RADIUS = 3
 // aparecem na tela, mas cada canvas vivo custa dezenas de MB. Manter 3 páginas
 // vivas em zoom alto era o que estourava a memória no celular.
 function liveRadiusForZoom(zoom: number) {
+  // No celular fica sempre 1 (a página atual + uma de cada lado). Cada página
+  // viva é um canvas grande, e no Safari do iOS 7 deles ao mesmo tempo estouram
+  // o limite de memória de canvas da aba: a tela fica branca e o processo cai.
+  // Uma de folga em cada lado já cobre a leitura contínua.
+  if (isMobileViewport()) return 1
   if (zoom > 1.8) return 1
   if (zoom > 1.2) return 2
   return LIVE_PAGE_RADIUS
@@ -559,18 +564,41 @@ function releasePageProxy(materialId: string, pageNumber: number) {
 // Agora: DPR real limitado a 2 e um TETO de megapixels por canvas. A escala
 // continua crescendo com o zoom (a página fica mesmo mais nítida ao ampliar),
 // só que dentro de um orçamento fixo de memória.
-const MAX_CANVAS_MPX_MOBILE = 4.5
+// Teto de megapixels por canvas. O valor do celular era 4,5 e provocou tela
+// branca e queda da aba no Safari do iOS: ele tem um limite duro de memória de
+// canvas por aba e, ao estourar, primeiro pinta os canvas de branco e depois
+// mata o processo. 2,2 Mpx numa A4 dá ~1140x1610px — acima da densidade real
+// que um celular consegue mostrar (tela de ~390pt), então não se perde nitidez
+// perceptível e o consumo cai pela metade.
+const MAX_CANVAS_MPX_MOBILE = 2.2
 const MAX_CANVAS_MPX_DESKTOP = 9
 
+function isMobileViewport() {
+  return typeof window !== 'undefined' && window.innerWidth < 768
+}
+
 function rasterScaleFor(baseWidth: number, baseHeight: number, scale: number) {
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
   const deviceDpr = (typeof window !== 'undefined' && window.devicePixelRatio) || 1
   const dpr = Math.min(Math.max(deviceDpr, 1), 2)
   let effective = scale * dpr
-  const budget = (isMobile ? MAX_CANVAS_MPX_MOBILE : MAX_CANVAS_MPX_DESKTOP) * 1_000_000
+  const budget = (isMobileViewport() ? MAX_CANVAS_MPX_MOBILE : MAX_CANVAS_MPX_DESKTOP) * 1_000_000
   const wanted = baseWidth * baseHeight * effective * effective
   if (wanted > budget) effective *= Math.sqrt(budget / wanted)
   return effective
+}
+
+// Rasterização em fila de UM. O render vai para um canvas fora da tela antes de
+// ser copiado para o visível (para a página não piscar em branco), e isso dobra
+// a memória daquela página enquanto acontece. Sem esta fila, um evento que
+// invalidasse todas as páginas vivas ao mesmo tempo alocava um canvas extra
+// para CADA uma — o pico multiplicado por 7 era o que derrubava a aba no iOS.
+let rasterQueue: Promise<unknown> = Promise.resolve()
+
+function enqueueRaster<T>(task: () => Promise<T>): Promise<T> {
+  const run = rasterQueue.then(task, task)
+  // A cauda ignora o resultado (e a falha) para a fila nunca travar.
+  rasterQueue = run.catch(() => {})
+  return run
 }
 
 // ─── IntersectionObservers compartilhados ───────────────────────────────────
@@ -1392,8 +1420,10 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // O teto de zoom depende do aparelho, então um zoom salvo no computador pode
   // chegar acima do teto do celular. Reamarra em vez de deixar a página numa
   // largura que não dá para navegar.
+  // Margem de tolerância para o reamarre não brigar com arredondamento de
+  // ponto flutuante: sem ela, uma diferença de 0,0001 vira setZoom em loop.
   useEffect(() => {
-    if (zoom > maxZoom) setZoom(maxZoom)
+    if (zoom > maxZoom + 0.005) setZoom(maxZoom)
   }, [maxZoom, zoom])
 
   // Histerese da janela de renderização. Se ela fosse recentrada a cada página
@@ -3453,7 +3483,11 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
       }
     }
 
-    renderPage()
+    // Enfileirado: nunca dois canvas fora da tela vivos ao mesmo tempo.
+    enqueueRaster(async () => {
+      if (cancelled) return
+      await renderPage()
+    })
     return () => {
       cancelled = true
       renderTask?.cancel?.()
@@ -4081,7 +4115,10 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
       style={{ justifyContent: overflowing ? 'flex-start' : 'center' }}
     >
       <div
-        className="relative shrink-0 overflow-hidden rounded-xl border border-white/15 bg-white/10 p-2 shadow-2xl shadow-black/35 backdrop-blur-sm"
+        // Sem `backdrop-blur`: o blur fica atrás de um canvas opaco, ou seja,
+        // não aparece — mas o navegador recalcula a camada desfocada a cada
+        // quadro de pinça e de rolagem. Num celular isso é caro de graça.
+        className="relative shrink-0 overflow-hidden rounded-xl border border-white/15 bg-white/10 p-2 shadow-2xl shadow-black/35"
         style={{ width: frameOuterWidth }}
       >
         <div className="absolute left-3 top-3 z-10 rounded-lg border border-zinc-200/30 bg-zinc-950/65 px-2 py-1 text-[11px] font-semibold text-zinc-50 backdrop-blur-md">
