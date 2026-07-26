@@ -280,7 +280,7 @@ function ImageLightbox({ src, onClose, initialClick }: { src: string; onClose: (
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.18 }}
-      className="fixed inset-0 z-[100] flex flex-col bg-black/92 backdrop-blur-md"
+      className="fixed inset-0 z-[100] flex flex-col bg-black/90 backdrop-blur-md"
       onClick={onClose}
     >
       {/* Toolbar */}

@@ -14,6 +14,12 @@ import {
   ShieldCheck,
   Sparkles,
 } from 'lucide-react'
+import {
+  exitAppFullscreen,
+  getFullscreenElement,
+  onFullscreenChange,
+  requestAppFullscreen,
+} from '@/lib/fullscreen'
 
 interface HtmlMaterialViewerProps {
   materialId: string
@@ -85,21 +91,21 @@ export function HtmlMaterialViewer({ materialId }: HtmlMaterialViewerProps) {
   }, [materialId, reloadKey])
 
   // ─── Fullscreen ────────────────────────────────────────────────────────────
+  // `el.requestFullscreen?.().catch(...)` parecia seguro, mas o `?.` cobre só a
+  // chamada: no Safari do iOS o método não existe, a expressão vira `undefined`
+  // e ler `.catch` dela estoura um TypeError — o botão não fazia nada no
+  // celular. O util centraliza os prefixos e nunca lança.
   const toggleFullscreen = useCallback(() => {
     const el = shellRef.current
     if (!el) return
-    if (!document.fullscreenElement) {
-      el.requestFullscreen?.().catch(() => {})
+    if (getFullscreenElement()) {
+      exitAppFullscreen()
     } else {
-      document.exitFullscreen?.().catch(() => {})
+      requestAppFullscreen(el)
     }
   }, [])
 
-  useEffect(() => {
-    const onChange = () => setIsFullscreen(!!document.fullscreenElement)
-    document.addEventListener('fullscreenchange', onChange)
-    return () => document.removeEventListener('fullscreenchange', onChange)
-  }, [])
+  useEffect(() => onFullscreenChange(setIsFullscreen), [])
 
   const goBack = useCallback(() => {
     router.push(`/materiais/${materialId}`)

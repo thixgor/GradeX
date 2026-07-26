@@ -325,7 +325,7 @@ export function PlatformAds() {
         <div
           className={cn(
             'group relative overflow-hidden rounded-xl border text-slate-950 shadow-[0_24px_80px_-24px_rgba(15,23,42,0.72)] backdrop-blur-2xl transition duration-300 dark:text-white',
-            'border-white/60 bg-white/82 dark:border-white/18 dark:bg-slate-950/82',
+            'border-white/60 bg-white/80 dark:border-white/18 dark:bg-slate-950/80',
             isLinkAd && 'shadow-[#468152]/25 ring-1 ring-[#E2A43E]/35',
           )}
         >

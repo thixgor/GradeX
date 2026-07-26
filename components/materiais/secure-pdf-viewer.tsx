@@ -45,6 +45,12 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { GuidedTour, type TourStep } from '@/components/manual-clinico/guided-tour'
+import {
+  exitAppFullscreen,
+  getFullscreenElement,
+  onFullscreenChange,
+  requestAppFullscreen,
+} from '@/lib/fullscreen'
 
 type ViewerMode = 'single' | 'width' | 'continuous'
 // Folhas do celular. O cabeçalho antigo empilhava até cinco linhas de rolagem
@@ -161,6 +167,10 @@ function liveRadiusForZoom(zoom: number) {
 // página do documento inteiro logo no primeiro paint: num material de 3000
 // páginas são 3000 nós antes de o leitor rolar um pixel.
 const RENDERED_WINDOW_RADIUS = 60
+// De quantas páginas a leitura precisa se afastar do centro da janela para ela
+// ser recentrada. Bem menor que o raio, para a página atual nunca chegar perto
+// da borda da janela materializada.
+const WINDOW_RECENTER_THRESHOLD = 20
 // Dimensões-padrão de página (A4 em pt) usadas como fallback do espaçador antes
 // de a primeira página real reportar o tamanho verdadeiro.
 const DEFAULT_PAGE_WIDTH = 595
@@ -1019,12 +1029,14 @@ function useViewerGestures(
   ref: React.RefObject<HTMLElement>,
   {
     enabled,
+    onPinchStart,
     onPinch,
     onPinchEnd,
     onSwipe,
     onDoubleTap,
   }: {
     enabled: boolean
+    onPinchStart: () => void
     onPinch: (ratio: number) => void
     onPinchEnd: () => void
     onSwipe: (direction: 1 | -1) => void
@@ -1034,12 +1046,12 @@ function useViewerGestures(
   const [pinching, setPinching] = useState(false)
   const pointersRef = useRef(new Map<number, { x: number; y: number }>())
   const pinchStartRef = useRef(0)
-  const swipeStartRef = useRef<{ x: number; y: number; t: number } | null>(null)
+  const swipeStartRef = useRef<{ x: number; y: number; t: number; canPan: boolean } | null>(null)
   const lastTapRef = useRef(0)
   // Handlers em ref para os listeners nativos não precisarem ser reanexados a
   // cada render (o zoom muda a toda hora durante a pinça).
-  const handlersRef = useRef({ onPinch, onPinchEnd, onSwipe, onDoubleTap })
-  handlersRef.current = { onPinch, onPinchEnd, onSwipe, onDoubleTap }
+  const handlersRef = useRef({ onPinchStart, onPinch, onPinchEnd, onSwipe, onDoubleTap })
+  handlersRef.current = { onPinchStart, onPinch, onPinchEnd, onSwipe, onDoubleTap }
 
   useEffect(() => {
     const element = ref.current
@@ -1058,11 +1070,17 @@ function useViewerGestures(
       if (event.pointerType !== 'touch') return
       pointers.set(event.pointerId, { x: event.clientX, y: event.clientY })
       if (pointers.size === 1) {
-        swipeStartRef.current = { x: event.clientX, y: event.clientY, t: Date.now() }
+        // Numa página ampliada, arrastar na horizontal é panorâmica (a linha da
+        // página rola), não virada de página. Marcamos aqui, no início do
+        // gesto, se a linha tocada tem rolagem horizontal disponível.
+        const row = (event.target as HTMLElement | null)?.closest?.('[data-pdf-page-row]') as HTMLElement | null
+        const canPan = !!row && row.scrollWidth > row.clientWidth + 1
+        swipeStartRef.current = { x: event.clientX, y: event.clientY, t: Date.now(), canPan }
       } else if (pointers.size === 2) {
         // Virou pinça: o que quer que fosse um swipe deixa de ser.
         swipeStartRef.current = null
         pinchStartRef.current = distance()
+        handlersRef.current.onPinchStart()
         setPinching(true)
       }
     }
@@ -1101,8 +1119,10 @@ function useViewerGestures(
       const elapsed = Date.now() - start.t
 
       // Swipe: horizontal claro, e claramente mais horizontal que vertical —
-      // senão qualquer rolagem em diagonal viraria virada de página.
-      if (Math.abs(dx) > SWIPE_MIN_DISTANCE && Math.abs(dx) > Math.abs(dy) * 2 && elapsed < 800) {
+      // senão qualquer rolagem em diagonal viraria virada de página. E nunca
+      // quando a página estava ampliada a ponto de rolar na horizontal: ali o
+      // arrasto é panorâmica, e virar a página seria roubar o gesto.
+      if (!start.canPan && Math.abs(dx) > SWIPE_MIN_DISTANCE && Math.abs(dx) > Math.abs(dy) * 2 && elapsed < 800) {
         handlersRef.current.onSwipe(dx < 0 ? 1 : -1)
         lastTapRef.current = 0
         return
@@ -1160,6 +1180,10 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const [currentPage, setCurrentPage] = useState(1)
   const [pageInput, setPageInput] = useState('1')
   const [zoom, setZoom] = useState(1)
+  const [settledZoom, setSettledZoom] = useState(1)
+  // Índice em torno do qual a janela de páginas materializadas é centrada. É
+  // separado da página atual de propósito — ver o efeito de histerese.
+  const [windowAnchor, setWindowAnchor] = useState(0)
   const [mode, setMode] = useState<ViewerMode>('single')
   const [tool, setTool] = useState<AnnotationTool>('cursor')
   const [pageSize, setPageSize] = useState<PageSize | null>(null)
@@ -1174,6 +1198,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const [notice, setNotice] = useState('')
   const [isPrinting, setIsPrinting] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
+  // Distingue "estava em tela cheia NATIVA" de "está no modo imersivo em CSS",
+  // para o evento de saída da API não desligar o imersivo do iOS.
+  const wasNativeFullscreenRef = useRef(false)
   // Folha (bottom sheet) aberta no celular. Uma de cada vez.
   const [mobileSheet, setMobileSheet] = useState<MobileSheet>(null)
   const [helpMenuOpen, setHelpMenuOpen] = useState(false)
@@ -1292,10 +1319,13 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // Memoizado para manter a MESMA referência enquanto tamanho/zoom não mudam,
   // evitando re-render de todos os espaçadores a cada rolagem (mudança de
   // página atual).
+  // Usa o zoom ASSENTADO, não o cru: durante uma pinça o zoom muda a cada
+  // quadro, e com o zoom cru aqui todos os espaçadores da janela re-renderizam
+  // 60 vezes por segundo no meio do gesto. Fora da tela ninguém vê a diferença.
   const spacerSize = useMemo<PageSize>(() => ({
-    width: (pageSize?.width ?? DEFAULT_PAGE_WIDTH) * zoom,
-    height: (pageSize?.height ?? DEFAULT_PAGE_HEIGHT) * zoom,
-  }), [pageSize, zoom])
+    width: (pageSize?.width ?? DEFAULT_PAGE_WIDTH) * settledZoom,
+    height: (pageSize?.height ?? DEFAULT_PAGE_HEIGHT) * settledZoom,
+  }), [pageSize, settledZoom])
 
   const updateKnownPageCount = useCallback((totalPages?: number) => {
     if (!totalPages || totalPages < 1) return
@@ -1390,6 +1420,27 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     zoomRef.current = zoom
   }, [zoom])
 
+  // Histerese da janela de renderização. Se ela fosse recentrada a cada página
+  // focada, cada página rolada mexeria na altura dos dois blocos de
+  // preenchimento — um reflow por página, que aparece como tremida na rolagem.
+  // Recentrando só quando o leitor sai de uma banda, isso vira um reflow a cada
+  // ~20 páginas. Um salto longo (sumário) passa da banda e recentra na hora.
+  useEffect(() => {
+    if (mode === 'single') return
+    const index = Math.max(0, pages.indexOf(currentPage))
+    if (Math.abs(index - windowAnchor) > WINDOW_RECENTER_THRESHOLD) setWindowAnchor(index)
+  }, [currentPage, mode, pages, windowAnchor])
+
+  // Zoom "assentado": acompanha o zoom com atraso, para que decisões de LAYOUT
+  // (altura dos espaçadores, quantas páginas ficam vivas) não sejam refeitas a
+  // cada quadro de uma pinça. Sem isso, o gesto montava e desmontava páginas no
+  // meio do caminho — origem de boa parte do flicker.
+  useEffect(() => {
+    if (settledZoom === zoom) return
+    const timer = window.setTimeout(() => setSettledZoom(zoom), 150)
+    return () => window.clearTimeout(timer)
+  }, [zoom, settledZoom])
+
   // ── Preferências ─────────────────────────────────────────────────────────
   // Hidratação depois da montagem (e não em useState inicial) para o HTML do
   // servidor bater com o do cliente — mesmo padrão do UIPreferencesContext.
@@ -1440,10 +1491,15 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     highlightColor, highlightWidth, noteColor, laserColor, drawingStyle, textStyle,
   ])
 
-  // Salva continuamente a posição de leitura para retomar na próxima abertura.
+  // Salva a posição de leitura para retomar na próxima abertura. Com atraso:
+  // rolar rápido troca de página dezenas de vezes por segundo, e gravar no
+  // localStorage a cada troca é escrita síncrona no meio da rolagem.
   useEffect(() => {
     if (!access) return
-    writeSavedPosition(materialId, { page: currentPage, mode })
+    const timer = window.setTimeout(() => {
+      writeSavedPosition(materialId, { page: currentPage, mode })
+    }, 400)
+    return () => window.clearTimeout(timer)
   }, [access, currentPage, mode, materialId])
 
   // Retomada em modo contínuo/largura: rola até a última página salva assim que
@@ -1510,13 +1566,16 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     return () => window.clearTimeout(timer)
   }, [notice])
 
-  // Sem este listener o ícone de tela cheia ficava sempre em "entrar", mesmo
-  // já estando em tela cheia — inclusive quando o usuário saía pelo Esc.
+  // Sair pelo Esc ou pelo gesto do sistema tem que refletir no estado. Só
+  // reagimos à SAÍDA: a entrada já foi decidida pelo nosso próprio estado, e
+  // no modo imersivo (iOS) não existe elemento em tela cheia para observar.
   useEffect(() => {
-    const sync = () => setIsFullscreen(Boolean(document.fullscreenElement))
-    sync()
-    document.addEventListener('fullscreenchange', sync)
-    return () => document.removeEventListener('fullscreenchange', sync)
+    return onFullscreenChange((active) => {
+      if (!active && getFullscreenElement() === null) {
+        setIsFullscreen((current) => (current && wasNativeFullscreenRef.current ? false : current))
+      }
+      wasNativeFullscreenRef.current = active
+    })
   }, [])
 
   useEffect(() => {
@@ -1689,7 +1748,14 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   }, [fitToWidth])
 
   // ── Gestos ──────────────────────────────────────────────────────────────
-  const pinchBaseZoomRef = useRef(1)
+  // O zoom-base é capturado quando o segundo dedo encosta. Antes o ref era
+  // inicializado em 1 e "capturado" por um guard `if (!ref.current)` — como 1 é
+  // truthy, a PRIMEIRA pinça da sessão calculava em cima de 1 em vez do zoom
+  // atual e a página dava um salto.
+  const pinchBaseZoomRef = useRef(0)
+  const handlePinchStart = useCallback(() => {
+    pinchBaseZoomRef.current = zoomRef.current
+  }, [])
   const handlePinch = useCallback((ratio: number) => {
     if (!pinchBaseZoomRef.current) pinchBaseZoomRef.current = zoomRef.current
     zoomTouchedRef.current = true
@@ -1711,6 +1777,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const gesturesEnabled = tool === 'cursor'
   const isPinching = useViewerGestures(contentRef, {
     enabled: gesturesEnabled,
+    onPinchStart: handlePinchStart,
     onPinch: handlePinch,
     onPinchEnd: handlePinchEnd,
     // Swipe só faz sentido em "uma página por vez"; nos modos de rolagem o
@@ -1755,15 +1822,22 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     return () => window.clearTimeout(timer)
   }, [access, previewActive, startTour])
 
+  // Tela cheia com fonte da verdade no React e a API nativa como best-effort.
+  // No Safari do iOS `requestFullscreen` não existe para elementos que não
+  // sejam <video> — antes a chamada estourava um TypeError e o botão não fazia
+  // nada no celular. Agora, quando o navegador não aceita, entra o modo
+  // imersivo em CSS (mesmo padrão da tela de estudo de flashcards).
   const toggleFullScreen = useCallback(async () => {
     const element = viewerRef.current
     if (!element) return
-    if (!document.fullscreenElement) {
-      await element.requestFullscreen().catch(() => {})
-    } else {
-      await document.exitFullscreen().catch(() => {})
+    if (isFullscreen) {
+      setIsFullscreen(false)
+      await exitAppFullscreen()
+      return
     }
-  }, [])
+    setIsFullscreen(true)
+    await requestAppFullscreen(element)
+  }, [isFullscreen])
 
   // Navegação por teclado: setas, PageUp/Down, Home/End, mais os atalhos de
   // zoom/modo/painéis. Ignora quando o foco está em um campo de edição
@@ -1927,15 +2001,18 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // atual. Nos modos contínuo/largura, só o raio ao redor da página atual é
   // montado como componente pesado; as demais ficam como espaçadores leves.
   const centerIndex = mode === 'single' ? 0 : Math.max(0, pages.indexOf(currentPage))
-  const liveRadius = liveRadiusForZoom(zoom)
+  const liveRadius = liveRadiusForZoom(settledZoom)
   const liveStart = centerIndex - liveRadius
   const liveEnd = centerIndex + liveRadius
 
   // Segunda camada de virtualização: fora desta janela nem espaçador é criado.
   // Os dois blocos de preenchimento abaixo reservam a altura das páginas
   // ocultas para o scrollbar continuar proporcional ao documento inteiro.
-  const windowStart = mode === 'single' ? 0 : Math.max(0, centerIndex - RENDERED_WINDOW_RADIUS)
-  const windowEnd = mode === 'single' ? pages.length - 1 : Math.min(pages.length - 1, centerIndex + RENDERED_WINDOW_RADIUS)
+  // Centrada na ÂNCORA (com histerese), não na página atual — senão cada página
+  // rolada mudaria a altura dos preenchimentos e a rolagem tremeria.
+  const anchorIndex = Math.min(Math.max(0, windowAnchor), Math.max(0, pages.length - 1))
+  const windowStart = mode === 'single' ? 0 : Math.max(0, anchorIndex - RENDERED_WINDOW_RADIUS)
+  const windowEnd = mode === 'single' ? pages.length - 1 : Math.min(pages.length - 1, anchorIndex + RENDERED_WINDOW_RADIUS)
   const renderedPages = mode === 'single' ? pages : pages.slice(windowStart, windowEnd + 1)
   // Altura de uma página no fluxo: moldura (16px de respiro) + gap-5 (20px).
   const pageSlotHeight = spacerSize.height + 16 + 20
@@ -2006,12 +2083,31 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
           </div>
         </div>
       ) : null}
+      {/* Modo imersivo: quando a tela cheia nativa não existe (Safari do iOS)
+          o shell vira ele mesmo a tela — `fixed inset-0` com rolagem própria e
+          respeito à safe-area. Quando a nativa funcionou, essas classes são
+          inofensivas (o elemento já ocupa a tela inteira). */}
       <div
         ref={viewerRef}
-        className="pdf-viewer-shell min-h-screen overflow-x-clip text-white select-none"
-        style={{ WebkitUserSelect: 'none', userSelect: 'none', touchAction: 'pan-x pan-y pinch-zoom' }}
+        className={`pdf-viewer-shell min-h-screen overflow-x-clip text-white select-none ${
+          isFullscreen ? 'fixed inset-0 z-[60] overflow-y-auto overscroll-contain bg-zinc-950' : ''
+        }`}
+        style={{
+          WebkitUserSelect: 'none',
+          userSelect: 'none',
+          touchAction: 'pan-x pan-y pinch-zoom',
+          ...(isFullscreen
+            ? {
+                paddingTop: 'env(safe-area-inset-top)',
+                paddingLeft: 'env(safe-area-inset-left)',
+                paddingRight: 'env(safe-area-inset-right)',
+              }
+            : null),
+        }}
       >
-        <header className="sticky top-0 z-40 border-b border-white/10 bg-zinc-950/82 shadow-xl shadow-black/25 backdrop-blur-2xl">
+        {/* /95 e não /82: opacidade fora da escala do Tailwind não vira regra
+            nenhuma, e o cabeçalho ficava sem fundo sobre página branca. */}
+        <header className="sticky top-0 z-40 border-b border-white/10 bg-zinc-950/95 shadow-xl shadow-black/25 backdrop-blur-2xl">
           {/* Progresso de leitura. Uma linha fina no topo responde à pergunta
               "quanto falta?" sem ocupar espaço nenhum. */}
           <div className="h-0.5 w-full bg-white/5">
@@ -2342,7 +2438,11 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             // qualquer ferramenta de marcação ativa, devolvemos o pinch ao
             // navegador e não interceptamos nada — o traço vem primeiro.
             style={{ touchAction: isPinching ? 'none' : gesturesEnabled ? 'pan-x pan-y' : 'pan-x pan-y pinch-zoom' }}
-            className={`min-w-0 overflow-hidden px-2 py-4 sm:px-4 sm:py-7 ${
+            // Sem `overflow-hidden`: junto com o `max-w-full` da moldura ele
+            // impedia a página de passar da largura do container, então
+            // aumentar o zoom não mudava nada na tela. Cada página agora rola
+            // na horizontal por conta própria (ver PdfCanvasPage).
+            className={`min-w-0 px-2 py-4 sm:px-4 sm:py-7 ${
               showThumbs ? 'lg:col-start-2' : 'lg:col-start-1'
             } ${
               annotationsVisible
@@ -2363,6 +2463,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                       key={`spacer-${page}`}
                       pageNumber={page}
                       size={spacerSize}
+                      containerWidth={contentWidth}
                       onPageFocus={handlePageFocused}
                     />
                   )
@@ -2385,6 +2486,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                     onPageFocus={handlePageFocused}
                     onPageSize={handlePageSize}
                     fallbackSize={pageSize}
+                    containerWidth={contentWidth}
                     onPageCount={updateKnownPageCount}
                     onCreateAnnotation={createAnnotation}
                     onUpdateAnnotation={updateAnnotation}
@@ -2414,13 +2516,29 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             O cabeçalho antigo empilhava até cinco linhas de rolagem horizontal
             e comia metade da tela do telefone. Agora os controles ficam onde o
             polegar alcança, e cada grupo abre uma folha sob demanda. */}
-        <div className="pwa-safe-bottom sticky bottom-0 z-40 border-t border-white/10 bg-zinc-950/92 backdrop-blur-2xl lg:hidden">
-          <div className="flex items-center justify-between gap-1 px-2 py-2">
+        {/* Fundo OPACO e sem backdrop-blur, de propósito. `bg-zinc-950/92` não
+            existia: o Tailwind só gera opacidades da escala padrão (…90, 95,
+            100), então a classe era descartada e a barra ficava só com blur —
+            sobre uma página branca ela sumia junto com os botões. E o blur num
+            elemento sticky recalcula a cada quadro da rolagem, que era outra
+            fonte de flicker (o deck de flashcards já tinha documentado isso).
+            `translateZ(0)` dá camada própria de composição.
+            O padding usa max(): `.pwa-safe-bottom` aplica env() puro, que
+            colapsa para 0 em aparelho sem notch e cola os botões na borda. */}
+        <div
+          className="sticky bottom-0 z-40 border-t border-white/15 bg-zinc-950 lg:hidden"
+          style={{
+            paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))',
+            transform: 'translateZ(0)',
+            backfaceVisibility: 'hidden',
+          }}
+        >
+          <div className="flex items-center justify-between gap-1 px-2 pt-2">
             <button
               type="button"
               onClick={() => stepPage(-1)}
               disabled={!canStepPrev}
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-white disabled:opacity-35"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/20 bg-white/15 text-white disabled:opacity-35"
               aria-label="Página anterior"
             >
               <ChevronLeft className="h-5 w-5" />
@@ -2429,7 +2547,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
               type="button"
               data-tour="viewer-pagenav-mobile"
               onClick={() => setMobileSheet('goto')}
-              className="flex h-11 min-w-0 flex-1 items-center justify-center gap-1 rounded-xl border border-white/10 bg-white/10 px-2 text-sm font-semibold text-white"
+              className="flex h-11 min-w-0 flex-1 items-center justify-center gap-1 rounded-xl border border-white/20 bg-white/15 px-2 text-sm font-semibold text-white"
             >
               {currentPage}
               <span className="text-white/45">/ {pageCount || '—'}</span>
@@ -2438,7 +2556,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
               type="button"
               onClick={() => stepPage(1)}
               disabled={!canStepNext}
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-white disabled:opacity-35"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/20 bg-white/15 text-white disabled:opacity-35"
               aria-label="Próxima página"
             >
               <ChevronRight className="h-5 w-5" />
@@ -2447,7 +2565,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
               type="button"
               data-tour="viewer-mode-mobile"
               onClick={() => setMobileSheet('mode')}
-              className="flex h-11 shrink-0 flex-col items-center justify-center rounded-xl border border-white/10 bg-white/10 px-2.5 text-[10px] font-semibold text-white"
+              className="flex h-11 shrink-0 flex-col items-center justify-center rounded-xl border border-white/20 bg-white/15 px-2.5 text-[10px] font-semibold text-white"
             >
               <Rows3 className="h-4 w-4" />
               Modo
@@ -2456,7 +2574,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
               type="button"
               data-tour="viewer-nav-mobile"
               onClick={() => { setSidePanelTab(hasSummary ? 'summary' : 'pages'); setMobileSheet('nav') }}
-              className="flex h-11 shrink-0 flex-col items-center justify-center rounded-xl border border-white/10 bg-white/10 px-2.5 text-[10px] font-semibold text-white"
+              className="flex h-11 shrink-0 flex-col items-center justify-center rounded-xl border border-white/20 bg-white/15 px-2.5 text-[10px] font-semibold text-white"
             >
               <List className="h-4 w-4" />
               Navegar
@@ -2468,7 +2586,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                 onClick={() => setMobileSheet('tools')}
                 className={`flex h-11 shrink-0 flex-col items-center justify-center rounded-xl border px-2.5 text-[10px] font-semibold ${
                   tool === 'cursor'
-                    ? 'border-white/10 bg-white/10 text-white'
+                    ? 'border-white/20 bg-white/15 text-white'
                     : 'border-emerald-300/50 bg-emerald-400/25 text-white'
                 }`}
               >
@@ -2899,7 +3017,7 @@ const SummaryList = memo(function SummaryList({
               className={`group relative flex w-full items-start gap-2 rounded-lg border py-2 pr-2 text-left transition-all ${
                 isActive
                   ? 'border-emerald-300/50 bg-emerald-400/15 text-white'
-                  : 'border-transparent text-white/72 hover:border-white/10 hover:bg-white/5'
+                  : 'border-transparent text-white/70 hover:border-white/10 hover:bg-white/5'
               }`}
             >
               {isActive && (
@@ -3094,10 +3212,12 @@ function ViewerLoading() {
 const PdfPageSpacer = memo(function PdfPageSpacer({
   pageNumber,
   size,
+  containerWidth,
   onPageFocus,
 }: {
   pageNumber: number
   size: PageSize
+  containerWidth: number
   onPageFocus: (page: number) => void
 }) {
   const ref = useRef<HTMLDivElement>(null)
@@ -3110,15 +3230,20 @@ const PdfPageSpacer = memo(function PdfPageSpacer({
 
   const frameWidth = Math.ceil(size.width + 16)
   const frameHeight = Math.ceil(size.height + 16)
+  // Precisa reservar a MESMA altura que a página real ocupa; se o espaçador
+  // fosse clampado à largura do container (como era, com `max-w-full`) e a
+  // página real não, o scroll saltaria toda vez que um virasse o outro.
+  const overflowing = containerWidth > 0 && frameWidth > containerWidth
 
   return (
     <div
       id={`pdf-page-${pageNumber}`}
       ref={ref}
-      className="flex w-full scroll-mt-36 justify-center px-0 sm:px-2"
+      className="flex w-full scroll-mt-36 overflow-x-auto px-0 sm:px-2"
+      style={{ justifyContent: overflowing ? 'flex-start' : 'center' }}
     >
       <div
-        className="relative flex max-w-full items-center justify-center rounded-xl border border-white/10 bg-white/[0.04]"
+        className="relative flex shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04]"
         style={{
           width: frameWidth,
           height: frameHeight,
@@ -3148,6 +3273,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   onPageFocus,
   onPageSize,
   fallbackSize,
+  containerWidth,
   onPageCount,
   onCreateAnnotation,
   onUpdateAnnotation,
@@ -3157,6 +3283,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   pageNumber: number
   active: boolean
   zoom: number
+  containerWidth: number
   annotations: PdfAnnotation[]
   tool: AnnotationTool
   drawingStyle: DrawingStyle
@@ -3195,7 +3322,6 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   const laserRafRef = useRef<number | null>(null)
   const ignoreNextClickRef = useRef(false)
   const [visible, setVisible] = useState(active)
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   // Espera pedida pelo servidor num 429. Quando presente, a UI mostra uma
   // contagem regressiva amigável em vez de um erro vermelho — o retry é
@@ -3258,7 +3384,6 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
 
     async function loadPage() {
       requestedRef.current = true
-      setLoading(true)
       setError('')
       setWaitSeconds(0)
       try {
@@ -3282,8 +3407,6 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
           }
           setError(err?.message || 'Pagina indisponivel')
         }
-      } finally {
-        if (!cancelled) setLoading(false)
       }
     }
 
@@ -3335,8 +3458,12 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     let renderTask: any
 
     async function renderPage() {
-      setLoading(true)
       setError('')
+      // Canvas fora da tela: rasterizamos nele e só then copiamos para o
+      // visível. Antes desenhávamos direto no visível, e o
+      // `canvas.width = ...` APAGA o bitmap — a página ficava em branco até o
+      // render terminar. Em cada passo de zoom isso era uma piscada.
+      let offscreen: HTMLCanvasElement | null = null
       try {
         const page = entry!.page
         const baseViewport = page.getViewport({ scale: 1 })
@@ -3348,26 +3475,40 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
         const scale = rasterScaleFor(baseViewport.width, baseViewport.height, renderScale)
         const viewport = page.getViewport({ scale })
         const displayViewport = page.getViewport({ scale: renderScale })
+        if (cancelled) return
+
+        offscreen = document.createElement('canvas')
+        offscreen.width = Math.floor(viewport.width)
+        offscreen.height = Math.floor(viewport.height)
+        const offContext = offscreen.getContext('2d', { alpha: false })
+        if (!offContext) return
+        offContext.imageSmoothingEnabled = true
+        offContext.imageSmoothingQuality = 'high'
+
+        renderTask = page.render({ canvasContext: offContext, viewport })
+        await renderTask.promise
+        if (cancelled) return
+
+        // Troca atômica: o bitmap antigo fica na tela até este instante.
         const canvas = canvasRef.current
         const context = canvas?.getContext('2d', { alpha: false })
-        if (!canvas || !context || cancelled) return
-
-        canvas.width = Math.floor(viewport.width)
-        canvas.height = Math.floor(viewport.height)
+        if (!canvas || !context) return
+        canvas.width = offscreen.width
+        canvas.height = offscreen.height
         canvas.style.width = '100%'
         canvas.style.height = 'auto'
-        context.imageSmoothingEnabled = true
-        context.imageSmoothingQuality = 'high'
+        context.drawImage(offscreen, 0, 0)
         setRenderSize({ width: displayViewport.width, height: displayViewport.height })
-
-        renderTask = page.render({ canvasContext: context, viewport })
-        await renderTask.promise
       } catch (err: any) {
         if (!cancelled && err?.name !== 'RenderingCancelledException') {
           setError(err?.message || 'Pagina indisponivel')
         }
       } finally {
-        if (!cancelled) setLoading(false)
+        // Libera o backing store do offscreen também no caminho de erro.
+        if (offscreen) {
+          offscreen.width = 0
+          offscreen.height = 0
+        }
       }
     }
 
@@ -3460,6 +3601,10 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     : fallbackSize
       ? { width: fallbackSize.width * zoom, height: fallbackSize.height * zoom }
       : { width: 595 * zoom, height: 842 * zoom }
+
+  // +16 = padding p-2 da moldura nos dois lados.
+  const frameOuterWidth = Math.ceil(pageFrameSize.width + 16)
+  const overflowing = containerWidth > 0 && frameOuterWidth > containerWidth
 
   const getPosition = useCallback((clientX: number, clientY: number) => {
     const rect = overlayRef.current?.getBoundingClientRect()
@@ -3982,17 +4127,21 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   const annotationPointerEvents = tool === 'drawing' || tool === 'highlight' || tool === 'laser' ? 'none' : 'auto'
 
   return (
-    <div id={`pdf-page-${pageNumber}`} ref={wrapperRef} className="pdf-page-fade flex w-full scroll-mt-36 justify-center px-0 sm:px-2">
+    <div
+      id={`pdf-page-${pageNumber}`}
+      ref={wrapperRef}
+      data-pdf-page-row="true"
+      // A linha de cada página é o container de rolagem horizontal. Sem isso a
+      // moldura era clampada em `max-w-full` e ampliar o zoom não mudava nada.
+      // `justify-center` num container com overflow deixa a borda esquerda
+      // inalcançável (armadilha clássica do flexbox), por isso alternamos para
+      // `flex-start` quando a página passa da largura disponível.
+      className="pdf-page-fade flex w-full scroll-mt-36 overflow-x-auto px-0 sm:px-2"
+      style={{ justifyContent: overflowing ? 'flex-start' : 'center' }}
+    >
       <div
-        className="relative max-w-full overflow-hidden rounded-xl border border-white/15 bg-white/10 p-2 shadow-2xl shadow-black/35 backdrop-blur-sm"
-        style={{
-          width: Math.ceil(pageFrameSize.width + 16),
-          // Páginas fora da tela pulam layout/paint (custo de blur+sombra em
-          // dezenas de páginas simultâneas era a principal causa do lag no
-          // scroll). O tamanho intrínseco evita saltos de altura ao rolar.
-          contentVisibility: 'auto',
-          containIntrinsicSize: `${Math.ceil(pageFrameSize.width + 16)}px ${Math.ceil(pageFrameSize.height + 16)}px`,
-        }}
+        className="relative shrink-0 overflow-hidden rounded-xl border border-white/15 bg-white/10 p-2 shadow-2xl shadow-black/35 backdrop-blur-sm"
+        style={{ width: frameOuterWidth }}
       >
         <div className="absolute left-3 top-3 z-10 rounded-lg border border-zinc-200/30 bg-zinc-950/65 px-2 py-1 text-[11px] font-semibold text-zinc-50 backdrop-blur-md">
           Pag. {pageNumber}
@@ -4002,7 +4151,12 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
           className="block h-auto w-full rounded-lg bg-white"
           style={{ aspectRatio: `${Math.max(1, pageFrameSize.width)} / ${Math.max(1, pageFrameSize.height)}` }}
         />
-        {((!renderSize && (visible || active)) || loading) && (
+        {/* Só na PRIMEIRA pintura. Antes a condição incluía `loading`, que o
+            efeito de rasterização liga a cada mudança de escala — resultado:
+            um flash branco com spinner por cima da página já desenhada a cada
+            passo de zoom. Com o render em offscreen, re-rasterizar não precisa
+            mais esconder nada. */}
+        {!renderSize && (visible || active) && (
           <div className="absolute inset-2 rounded-lg bg-white/90 flex items-center justify-center">
             <div className="h-7 w-7 rounded-full border-2 border-emerald-700/20 border-t-emerald-700 animate-spin" />
           </div>
@@ -4362,7 +4516,7 @@ function AnnotationActionBar({
 
   return (
     <div
-      className="absolute z-30 flex items-center gap-1 rounded-xl border border-zinc-900/15 bg-zinc-950/88 p-1 text-white shadow-xl backdrop-blur-md"
+      className="absolute z-30 flex items-center gap-1 rounded-xl border border-zinc-900/15 bg-zinc-950/90 p-1 text-white shadow-xl backdrop-blur-md"
       style={{ left: `${left * 100}%`, top: `${top * 100}%`, transform: 'translateX(-100%)' }}
       onPointerDown={(event) => event.stopPropagation()}
       onClick={(event) => event.stopPropagation()}
@@ -4777,10 +4931,15 @@ function ViewerSheet({
   return (
     <div className="fixed inset-0 z-[70] lg:hidden" role="dialog" aria-modal="true" aria-label={title}>
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      {/* Fundo opaco: `bg-zinc-950/97` não gerava regra (fora da escala de
+          opacidade do Tailwind) e a folha aparecia transparente por cima da
+          página. O padding usa max() porque `.pwa-safe-bottom` aplica env()
+          puro, que vale 0 em aparelho sem notch. */}
       <div
-        className={`pwa-safe-bottom absolute inset-x-0 bottom-0 flex flex-col rounded-t-2xl border-t border-white/15 bg-zinc-950/97 shadow-2xl ${
+        className={`absolute inset-x-0 bottom-0 flex flex-col rounded-t-2xl border-t border-white/15 bg-zinc-950 shadow-2xl ${
           tall ? 'h-[78vh]' : 'max-h-[80vh]'
         }`}
+        style={{ paddingBottom: 'max(0.25rem, env(safe-area-inset-bottom))' }}
       >
         <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-4 py-3">
           <h2 className="text-sm font-bold text-white">{title}</h2>
@@ -4971,7 +5130,7 @@ function ConfirmDialog({
           </div>
           <div>
             <h2 className="text-base font-bold">{title}</h2>
-            <p className="mt-1 text-sm text-white/62">{body}</p>
+            <p className="mt-1 text-sm text-white/60">{body}</p>
           </div>
         </div>
         <div className="flex justify-end gap-2">

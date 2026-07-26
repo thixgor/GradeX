@@ -15,6 +15,12 @@ import {
   Sparkles,
 } from 'lucide-react'
 import { VideoWatermark } from '@/components/video-watermark'
+import {
+  exitAppFullscreen,
+  getFullscreenElement,
+  onFullscreenChange,
+  requestAppFullscreen,
+} from '@/lib/fullscreen'
 
 interface ComplementaryItemViewerProps {
   materialId: string
@@ -99,21 +105,19 @@ export function ComplementaryItemViewer({ materialId, itemId }: ComplementaryIte
     }
   }, [materialId, itemId, reloadKey])
 
+  // Ver o comentário em html-material-viewer: `el.requestFullscreen?.().catch()`
+  // estoura no Safari do iOS, onde o método não existe.
   const toggleFullscreen = useCallback(() => {
     const el = shellRef.current
     if (!el) return
-    if (!document.fullscreenElement) {
-      el.requestFullscreen?.().catch(() => {})
+    if (getFullscreenElement()) {
+      exitAppFullscreen()
     } else {
-      document.exitFullscreen?.().catch(() => {})
+      requestAppFullscreen(el)
     }
   }, [])
 
-  useEffect(() => {
-    const onChange = () => setIsFullscreen(!!document.fullscreenElement)
-    document.addEventListener('fullscreenchange', onChange)
-    return () => document.removeEventListener('fullscreenchange', onChange)
-  }, [])
+  useEffect(() => onFullscreenChange(setIsFullscreen), [])
 
   const goBack = useCallback(() => {
     router.push(`/materiais/${materialId}`)

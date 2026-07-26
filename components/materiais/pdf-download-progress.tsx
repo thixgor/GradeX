@@ -132,7 +132,7 @@ export function PdfDownloadProgress({
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0, y: 12 }}
             transition={{ type: 'spring', damping: 30, stiffness: 340 }}
-            className="relative w-full max-w-sm overflow-hidden rounded-3xl border border-border/50 bg-background/97 shadow-2xl backdrop-blur-2xl"
+            className="relative w-full max-w-sm overflow-hidden rounded-3xl border border-border/50 bg-background shadow-2xl backdrop-blur-2xl"
             onClick={e => e.stopPropagation()}
           >
             {/* Accent line top */}
