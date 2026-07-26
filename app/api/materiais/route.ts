@@ -28,6 +28,8 @@ function sanitizePdfViewerConfig(raw: any): {
   const clean = (s: any, max: number) =>
     String(s ?? '').replace(/\s+/g, ' ').trim().slice(0, max)
 
+  // Sem teto de entradas: sumários importados de PDFs longos passavam de 500 e
+  // o excedente era descartado silenciosamente ao salvar.
   const summary = Array.isArray(raw.summary)
     ? raw.summary
         .map((item: any) => {
@@ -38,7 +40,6 @@ function sanitizePdfViewerConfig(raw: any): {
           return { id: clean(item?.id, 40) || makeId('toc'), title, page, level }
         })
         .filter(Boolean)
-        .slice(0, 500)
     : []
 
   const navigation = Array.isArray(raw.navigation)
